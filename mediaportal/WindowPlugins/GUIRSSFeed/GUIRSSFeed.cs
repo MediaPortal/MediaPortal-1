@@ -319,7 +319,7 @@ namespace MediaPortal.GUI.RSS
 		{
 			String firstSite = "";
 			m_sites.Clear();
-			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				for (int i=0; i < NUM_STORIES; i++)
 				{

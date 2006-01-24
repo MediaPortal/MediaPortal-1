@@ -65,7 +65,7 @@ namespace MediaPortal.Topbar
       GetID=(int)GUIWindow.Window.WINDOW_TOPBAR;
       m_bEnabled=PluginManager.IsPluginNameEnabled("Topbar");    
 
-      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         m_iAutoHideTimeOut = xmlreader.GetValueAsInt("TopBar", "autohidetimeout", 15);
 

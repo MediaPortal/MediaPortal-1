@@ -101,7 +101,7 @@ namespace MediaPortal.Configuration
 			//
 
 			string strLanguage ;
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				strLanguage = xmlreader.GetValueAsString("skin","language","English");
 			}
@@ -597,7 +597,7 @@ namespace MediaPortal.Configuration
 		{
 			int MaximumShares = 20;
 			//Do we have 1 or more music,picture,video shares?
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				string playlistFolder = xmlreader.GetValueAsString("music", "playlists", "");
 				if (playlistFolder==String.Empty)
@@ -674,7 +674,7 @@ namespace MediaPortal.Configuration
 				//
 				SaveSectionSettings(treeNode);
 			}		
-			MediaPortal.Profile.Xml.SaveCache();
+			MediaPortal.Profile.Settings.SaveCache();
 		}
 		private void applyButton_Click(object sender, System.EventArgs e)
 		{

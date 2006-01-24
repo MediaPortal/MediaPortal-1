@@ -1670,7 +1670,7 @@ namespace MediaPortal.TV.Recording
       }
 
       _isGraphRunning = true;
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
         if (strValue.Equals("zoom")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
@@ -2265,7 +2265,7 @@ namespace MediaPortal.TV.Recording
       string strAudioCodec = "";
       string strAudioRenderer = "";
       bool bAddFFDshow = false;
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         bAddFFDshow = xmlreader.GetValueAsBool("mytv", "ffdshow", false);
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
@@ -2515,7 +2515,7 @@ namespace MediaPortal.TV.Recording
       try
       {
         int iTimeShiftBuffer = 30;
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           iTimeShiftBuffer = xmlreader.GetValueAsInt("capture", "timeshiftbuffer", 30);
           if (iTimeShiftBuffer < 5) iTimeShiftBuffer = 5;
@@ -3374,7 +3374,7 @@ namespace MediaPortal.TV.Recording
         int cbandMHZ = 0;
         int circularMHZ = 0;
 
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
         {
           lnb0MHZ = xmlreader.GetValueAsInt("dvbs", "LNB0", 9750);
           lnb1MHZ = xmlreader.GetValueAsInt("dvbs", "LNB1", 10600);

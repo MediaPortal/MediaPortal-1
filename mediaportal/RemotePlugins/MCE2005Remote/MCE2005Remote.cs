@@ -177,7 +177,7 @@ namespace MediaPortal.InputDevices
 		public void Init(IntPtr hwnd)
 		{
 			if (RemoteFound) return;// already registered
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				RemoteEnabled= xmlreader.GetValueAsBool("remote", "mce2005", false);
 				USAModel= xmlreader.GetValueAsBool("remote", "USAModel", false);

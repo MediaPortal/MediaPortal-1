@@ -268,7 +268,7 @@ namespace MyMail
       applicationPath = Path.GetFullPath(applicationPath);
       applicationPath = Path.GetDirectoryName(applicationPath);
 
-      using (Xml xmlwriter = new Xml("MediaPortal.xml"))
+      using (Settings xmlwriter = new Settings("MediaPortal.xml"))
       {
         MailBox tmpBox;
         int boxCount = m_mailBox.Count;
@@ -322,7 +322,7 @@ namespace MyMail
 
     void LoadSettings()
     {
-      using (Xml xmlreader = new Xml("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings("MediaPortal.xml"))
       {
         int boxCount = 0;
         MailBox tmpBox;

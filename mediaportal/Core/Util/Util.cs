@@ -108,7 +108,7 @@ namespace MediaPortal.Util
     }
     static Utils()
     {
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         m_bHideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
 
@@ -919,7 +919,7 @@ namespace MediaPortal.Util
 
     static public bool PlayDVD()
     {
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         string strPath = xmlreader.GetValueAsString("dvdplayer", "path", "");
         string strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
@@ -982,7 +982,7 @@ namespace MediaPortal.Util
           strFile.IndexOf("record2.") > 0 || strFile.IndexOf("record3.") > 0 ||
           strFile.IndexOf("record4.") > 0 || strFile.IndexOf("record5.") > 0) return false;
 
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           bool bInternal = xmlreader.GetValueAsBool("movieplayer", "internal", true);
           if (bInternal) return false;

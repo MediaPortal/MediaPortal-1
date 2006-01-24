@@ -56,7 +56,7 @@ namespace MediaPortal.HCWBlaster
 
 		private void LoadSettings()
 		{
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				this.chkExtendedLog.Checked = xmlreader.GetValueAsBool("HCWBlaster", "ExtendedLogging", false);
 			}
@@ -64,7 +64,7 @@ namespace MediaPortal.HCWBlaster
 
 		private bool SaveSettings()
 		{
-			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("HCWBlaster", "ExtendedLogging", this.chkExtendedLog.Checked);
 			}

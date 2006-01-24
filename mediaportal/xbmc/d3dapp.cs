@@ -278,7 +278,7 @@ namespace MediaPortal
       showCursorWhenFullscreen = false;
 
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
@@ -350,7 +350,7 @@ namespace MediaPortal
         oldBounds = new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height);
 
 
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           string strStartFull = (string)xmlreader.GetValue("general", "startfullscreen");
           if (strStartFull != null && strStartFull == "yes")
@@ -1518,7 +1518,7 @@ namespace MediaPortal
       Cursor.Show();
       Invalidate(true);
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlreader.Clear();
       }
@@ -2204,7 +2204,7 @@ namespace MediaPortal
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true, true);
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlreader.Clear();
       }
@@ -2216,7 +2216,7 @@ namespace MediaPortal
       g_Player.Stop();
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true, true);
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlreader.Clear();
       }
@@ -2228,7 +2228,7 @@ namespace MediaPortal
       g_Player.Stop();
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true, true);
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlreader.Clear();
       }
@@ -2240,7 +2240,7 @@ namespace MediaPortal
       g_Player.Stop();
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true, true);
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlreader.Clear();
       }
@@ -2253,7 +2253,7 @@ namespace MediaPortal
       g_Player.Stop();
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
         SwitchFullScreenOrWindowed(true, true);
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlreader.Clear();
       }

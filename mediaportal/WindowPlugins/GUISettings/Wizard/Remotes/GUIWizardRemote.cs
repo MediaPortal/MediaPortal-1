@@ -103,7 +103,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 		}
 		void LoadSettings()
 		{
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				bool useMCE=xmlreader.GetValueAsBool("remote", "mce2005", false);
 				bool useMCEUSA=xmlreader.GetValueAsBool("remote", "USAModel", false);
@@ -119,7 +119,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 		void OnNextPage()
 		{
 
-			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("remote", "mce2005", (cmMicrosoftUSA.Selected||cmMicrosoftEU.Selected));
 				xmlwriter.SetValueAsBool("remote", "USAModel", cmMicrosoftUSA.Selected);

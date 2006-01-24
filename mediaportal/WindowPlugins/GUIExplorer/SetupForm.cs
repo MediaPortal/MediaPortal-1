@@ -290,7 +290,7 @@ namespace GUIExplorer
 
 		private void LoadSettings() 
 		{
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml")) 
 			{
 				textBox1.Text=xmlreader.GetValueAsString("myexplorer","temp_folder","");
 				checkBox1.Checked=xmlreader.GetValueAsBool("myexplorer","show_only_shares",false);
@@ -302,7 +302,7 @@ namespace GUIExplorer
 
 		private void SaveSettings() 
 		{
-			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
+			using(MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml")) 
 			{
 				xmlwriter.SetValue("myexplorer","temp_folder",textBox1.Text);
 				xmlwriter.SetValueAsBool("myexplorer","show_only_shares",checkBox1.Checked);

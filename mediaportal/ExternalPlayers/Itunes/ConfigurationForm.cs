@@ -122,7 +122,7 @@ namespace MediaPortal.ITunesPlayer
 
     private void ConfigurationForm_Load(object sender, System.EventArgs e)
     {
-      using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         m_enabledExt = xmlreader.GetValueAsString("itunesplugin", "enabledextensions","");
         m_enabledExt.Replace(":", ","); // in case it was using the old plugin code where the separator was ":"
@@ -133,7 +133,7 @@ namespace MediaPortal.ITunesPlayer
 
     private void ConfigurationForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      using (MediaPortal.Profile.Xml   xmlWriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings   xmlWriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlWriter.SetValue("itunesplugin", "enabledextensions", extensionBox.Text);
       }
@@ -141,7 +141,7 @@ namespace MediaPortal.ITunesPlayer
 
     private void buttonEnable_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Xml   xmlWriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings   xmlWriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlWriter.SetValue("itunesplugin", "enabledextensions", extensionBox.Text);
       }

@@ -684,7 +684,7 @@ namespace GUIBurner
 
 		private void LoadSettings() 
 		{
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml")) 
 			{
 				string tempPath = Path.GetTempPath();
 				textBox1.Text=xmlreader.GetValueAsString("burner","temp_folder",tempPath);
@@ -715,7 +715,7 @@ namespace GUIBurner
 
 		private void SaveSettings() 
 		{
-			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
+			using(MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml")) 
 			{
 				xmlwriter.SetValue("burner","temp_folder",textBox1.Text);
 				if(checkBox5.Checked==true) 

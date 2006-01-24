@@ -288,7 +288,7 @@ namespace ProcessPlugins.CallerId
         Log.Write("ISDN: CAPI error. No ISDN card installed? Caller-ID disabled.");
       }
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         useOutlook    = xmlreader.GetValueAsBool("isdn", "useoutlook", false);
         stopMedia     = xmlreader.GetValueAsBool("isdn", "stopmedia", true);

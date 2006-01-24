@@ -325,7 +325,7 @@ namespace MediaPortal.Configuration.Sections
 			{
 				if (country.ToLower().IndexOf(analogCountry.Country.ToLower())>=0)
 				{
-					using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+					using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 					{
 						xmlwriter.SetValue("capture", "countryname", analogCountry.Country);
 						xmlwriter.SetValue("capture", "country", analogCountry.Id);
@@ -564,7 +564,7 @@ namespace MediaPortal.Configuration.Sections
 		}
         public override void LoadSettings()
         {
-            using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
             {
                 inputComboBox.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
                 //
@@ -577,7 +577,7 @@ namespace MediaPortal.Configuration.Sections
 
         public override void SaveSettings()
         {
-            using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
             {
                 xmlwriter.SetValue("capture", "tuner", inputComboBox.Text);
                 if (countryComboBox.Text.Length > 0)

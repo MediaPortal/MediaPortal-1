@@ -592,6 +592,7 @@
     <Compile Include="guilib\CachedTexture.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="guilib\CacheSettingsProvider.cs" />
     <Compile Include="guilib\CPosition.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -763,6 +764,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\IRenderLayer.cs" />
+    <Compile Include="guilib\ISettingsPrefetchable.cs" />
+    <Compile Include="guilib\ISettingsProvider.cs" />
     <Compile Include="guilib\ISetupForm.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -784,6 +787,7 @@
     <Compile Include="guilib\PropertyManager.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="guilib\Settings.cs" />
     <Compile Include="guilib\SkinControlAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -814,9 +818,7 @@
     <Compile Include="guilib\Win32Support.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="guilib\Xml.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="guilib\XmlSettingsProvider.cs" />
     <Compile Include="guilib\XMLSkinElementAttribute.cs">
       <SubType>Code</SubType>
     </Compile>

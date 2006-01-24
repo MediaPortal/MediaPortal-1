@@ -367,7 +367,7 @@ namespace MediaPortal.Player
           return false;
         }
 
-		  using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+		  using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 		  {
 			  _audioLanguage   =xmlreader.GetValueAsString("dvdplayer","audiolanguage","english");
 			  _subtitleLanguage=xmlreader.GetValueAsString("dvdplayer","subtitlelanguage","english");
@@ -589,7 +589,7 @@ namespace MediaPortal.Player
       string aspectRatioMode="";
       string displayMode="";
       bool  useAC3Filter=false;
-      using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         dvdNavigator=xmlreader.GetValueAsString("dvdplayer","navigator","");
         aspectRatioMode=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
@@ -1546,7 +1546,7 @@ namespace MediaPortal.Player
         m_geometry.ScreenWidth =nw;
         m_geometry.ScreenHeight=nh;
         m_geometry.ARType=GUIGraphicsContext.ARType;
-				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           bool bUseAR=xmlreader.GetValueAsBool("dvdplayer","pixelratiocorrection",false);
           if (bUseAR) m_geometry.PixelRatio=GUIGraphicsContext.PixelRatio;
@@ -1918,7 +1918,7 @@ namespace MediaPortal.Player
 			string strAudioCodec="";
 			string strAudiorenderer="";
       bool   bAddFFDshow=false;
-      using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         bAddFFDshow=xmlreader.GetValueAsBool("dvdplayer","ffdshow",false);
 				strVideoCodec=xmlreader.GetValueAsString("dvdplayer","videocodec","");

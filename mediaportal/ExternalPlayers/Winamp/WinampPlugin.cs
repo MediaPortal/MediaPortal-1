@@ -118,7 +118,7 @@ namespace MediaPortal.WinampPlayer
     private void readConfig()
     {
       string strExt = null;
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         strExt = xmlreader.GetValueAsString("winampplugin", "enabledextensions", "");
       }

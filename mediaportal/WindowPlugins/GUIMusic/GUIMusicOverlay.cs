@@ -574,7 +574,7 @@ namespace MediaPortal.GUI.Music
 			bFound=dbs.GetSongByFileName(strFile, ref song);
       
       bool UseID3=false;
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         UseID3 = xmlreader.GetValueAsBool("musicfiles","showid3",true);
       }

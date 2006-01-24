@@ -149,7 +149,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			{
 				string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
 
-				using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml(filename))
+				using(MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings(filename))
 				{
 					if (lnbConfig[1]!=null)
 						xmlwriter.SetValue("dvbs","sat1",lnbConfig[1].FileName);

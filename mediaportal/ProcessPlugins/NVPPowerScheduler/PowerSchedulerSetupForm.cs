@@ -77,7 +77,7 @@ namespace MediaPortal.PowerScheduler
 
 		void LoadSettings()
 		{
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				nud_wakeup.Value = xmlreader.GetValueAsInt("powerscheduler","wakeupinterval",1);
 				nud_shutdown.Value = xmlreader.GetValueAsInt("powerscheduler","shutdowninterval",3);
@@ -91,7 +91,7 @@ namespace MediaPortal.PowerScheduler
 
 		bool SaveSettings()
 		{
-			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("powerscheduler","wakeupinterval",nud_wakeup.Value);
 				xmlwriter.SetValue("powerscheduler","shutdowninterval",nud_shutdown.Value);

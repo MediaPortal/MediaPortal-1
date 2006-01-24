@@ -175,7 +175,7 @@ namespace MediaPortal.TV.Recording
       _graphHelper = new GraphHelper();
       int countryCode = 31;
       string tunerInput = "Antenna";
-      using (MediaPortal.Profile.Xml xmlReader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
           tunerInput = xmlReader.GetValueAsString("capture", "tuner", "Antenna");
           countryCode = xmlReader.GetValueAsInt("capture", "country", 31);
@@ -812,7 +812,7 @@ namespace MediaPortal.TV.Recording
       _recordedTvObject.End = Utils.datetolong(DateTime.Now);
       TVDatabase.AddRecordedTV(_recordedTvObject);
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         bool addMovieToDatabase = xmlreader.GetValueAsBool("capture", "addrecordingstomoviedatabase", true);
         if (addMovieToDatabase)
@@ -1390,7 +1390,7 @@ namespace MediaPortal.TV.Recording
 
         timeProgStart = currentRunningProgram.StartTime;
 
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
           if (isMovie)
             strInput = xmlreader.GetValueAsString("capture", "moviesformat", string.Empty);
           else
@@ -1567,7 +1567,7 @@ namespace MediaPortal.TV.Recording
       try
       {
         string filename = String.Format(@"database\card_{0}.xml", _friendlyName);
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
         {
           int contrast = xmlreader.GetValueAsInt("tv", "contrast", -1);
           int brightness = xmlreader.GetValueAsInt("tv", "brightness", -1);
@@ -1589,7 +1589,7 @@ namespace MediaPortal.TV.Recording
       if (_friendlyName != null && _friendlyName != String.Empty)
       {
         string filename = String.Format(@"database\card_{0}.xml", _friendlyName);
-        using (MediaPortal.Profile.Xml xmlWriter = new MediaPortal.Profile.Xml(filename))
+        using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(filename))
         {
           xmlWriter.SetValue("tv", "contrast", GUIGraphicsContext.Contrast);
           xmlWriter.SetValue("tv", "brightness", GUIGraphicsContext.Brightness);

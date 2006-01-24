@@ -446,7 +446,7 @@ namespace MediaPortal.Configuration.Sections
 
 						string filename=String.Format(@"database\card_{0}.xml",cd.FriendlyName);
 						// save settings for get the filename in mp.xml
-						using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+						using(MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 						{
 							xmlwriter.SetValue("dvb_ts_cards","filename",filename);
 						}

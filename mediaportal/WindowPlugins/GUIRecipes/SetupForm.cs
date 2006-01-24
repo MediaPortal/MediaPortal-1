@@ -309,7 +309,7 @@ namespace GUIRecipes
 		/// </summary>
 		
 		private void SaveSettings() {
-			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml")) {
+			using(MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml")) {
 				xmlwriter.SetValueAsBool("recipe","subcats",checkBox1.Checked); 
 				xmlwriter.SetValueAsBool("recipe","online",checkBox2.Checked); 
 			}
@@ -319,7 +319,7 @@ namespace GUIRecipes
 		/// Loads my status settings from the profile xml.
 		/// </summary>
 		private void LoadSettings() {
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) {
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml")) {
 				checkBox1.Checked = xmlreader.GetValueAsBool("recipe","subcats",false);
 				checkBox2.Checked = xmlreader.GetValueAsBool("recipe","online",false);
 			}

@@ -173,7 +173,7 @@ namespace MediaPortal.GUI.WebBrowser
         /// </summary>
         private void SaveSettings()
         {
-            using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
             {
                 xmlwriter.SetValue("webbrowser", "favoritesFolder", FavoritesFolder.Text);
                 xmlwriter.SetValue("webbrowser", "homePage", HomePage.Text);
@@ -185,7 +185,7 @@ namespace MediaPortal.GUI.WebBrowser
         /// </summary>
         private void LoadSettings()
         {
-            using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
             {
                 FavoritesFolder.Text = xmlreader.GetValueAsString("webbrowser", "favoritesFolder", string.Empty);
                 HomePage.Text = xmlreader.GetValueAsString("webbrowser", "homePage", string.Empty);

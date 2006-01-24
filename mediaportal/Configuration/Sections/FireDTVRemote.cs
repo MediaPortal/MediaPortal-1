@@ -183,7 +183,7 @@ namespace MediaPortal.Configuration.Sections
 		public override void LoadSettings()
 		{
 			LoadDrivers();
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				comboBoxAction.DataSource = Enum.GetValues(typeof(Action.ActionType));;
 				comboBoxAction.DisplayMember = "Name";
@@ -220,7 +220,7 @@ namespace MediaPortal.Configuration.Sections
 		#region SaveSettings
 		public override void SaveSettings()
 		{
-			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("remote", "FireDTV", checkBoxFireDTVEnabled.Checked);
 				xmlwriter.SetValue("remote", "FireDTVKeyFile", textBoxFireDTVKeyFile.Text);

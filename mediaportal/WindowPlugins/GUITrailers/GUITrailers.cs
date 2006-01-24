@@ -714,7 +714,7 @@ namespace MediaPortal.GUI.Video
             MainListMenu[2] = MainListOptions[2];
             //MainListOptions[3] = "GameTrailers";
 			string language="";
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml")) 
 			{
 				language = xmlreader.GetValue("skin","language");
 			}
@@ -875,7 +875,7 @@ namespace MediaPortal.GUI.Video
             //    listview.Visible = false;
             //}
 
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml")) 
 			{
 				bitrate = xmlreader.GetValue("mytrailers","speed");
 				Show_GT = xmlreader.GetValueAsBool("mytrailers","Show german trailers",false);

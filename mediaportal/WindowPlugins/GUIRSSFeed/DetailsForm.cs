@@ -76,7 +76,7 @@ namespace GUIRSSFeed
 				string tempText;
 				for (int i=0; i<20; i++)
 				{
-					using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+					using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       				{
 						tempText = xmlreader.GetValueAsString("rss","siteName"+i,"");
       					if (tempText == "")
@@ -128,7 +128,7 @@ namespace GUIRSSFeed
 		
 		void LoadSettings()
 		{
-			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       		{
       		
 				textName.Text = xmlreader.GetValueAsString("rss","siteName"+ID,"");
@@ -140,7 +140,7 @@ namespace GUIRSSFeed
 		
 		void SaveSettings()
 		{			
-      		using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      		using(MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       		{
         		xmlwriter.SetValue("rss","siteName"+this.ID,textName.Text);
         		xmlwriter.SetValue("rss","siteURL"+this.ID,textURL.Text);      

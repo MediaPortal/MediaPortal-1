@@ -38,7 +38,7 @@ namespace WindowPlugins.GUISettings.TV
 		void OnVideoCodec()
 		{
 			string strVideoCodec="";
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				strVideoCodec=xmlreader.GetValueAsString("movieplayer","videocodec","");
 			}
@@ -62,7 +62,7 @@ namespace WindowPlugins.GUISettings.TV
 			}
 			dlg.DoModal(GetID);
 			if (dlg.SelectedLabel<0) return;
-			using (MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("movieplayer","videocodec",(string)availableVideoFilters[dlg.SelectedLabel]);
 			}
@@ -71,7 +71,7 @@ namespace WindowPlugins.GUISettings.TV
 		void OnAudioCodec()
 		{
 			string strAudioCodec="";
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				strAudioCodec=xmlreader.GetValueAsString("movieplayer","audiocodec","");
 			}
@@ -95,7 +95,7 @@ namespace WindowPlugins.GUISettings.TV
 			}
 			dlg.DoModal(GetID);
 			if (dlg.SelectedLabel<0) return;
-			using (MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("movieplayer","audiocodec",(string)availableAudioFilters[dlg.SelectedLabel]);
 			}
@@ -128,7 +128,7 @@ namespace WindowPlugins.GUISettings.TV
 		{
 			string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 			string defaultAspectRatio ="";
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				defaultAspectRatio = xmlreader.GetValueAsString("movieplayer","defaultar", "normal");
 			}
@@ -150,7 +150,7 @@ namespace WindowPlugins.GUISettings.TV
 				dlg.SelectedLabel=selected;
 				dlg.DoModal(GetID);
 				if (dlg.SelectedLabel<0) return;
-				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 				{
 					xmlwriter.SetValue("movieplayer", "defaultar", aspectRatio[dlg.SelectedLabel]);
 				}
@@ -159,7 +159,7 @@ namespace WindowPlugins.GUISettings.TV
 		void OnAudioRenderer()
 		{
 			string strAudioRenderer="";
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				strAudioRenderer=xmlreader.GetValueAsString("movieplayer","audiorenderer","");
 			}
@@ -183,7 +183,7 @@ namespace WindowPlugins.GUISettings.TV
 			}
 			dlg.DoModal(GetID);
 			if (dlg.SelectedLabel<0) return;
-			using (MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("movieplayer","audiorenderer",(string)availableAudioFilters[dlg.SelectedLabel]);
 			}

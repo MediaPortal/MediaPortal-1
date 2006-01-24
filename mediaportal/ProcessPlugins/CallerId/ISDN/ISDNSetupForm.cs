@@ -35,7 +35,7 @@ namespace ProcessPlugins.CallerId
 			//
 			// TODO: Add any constructor code after InitializeComponent call
 			//
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         checkBoxOutlook.Checked         = xmlreader.GetValueAsBool("isdn", "useoutlook", false);
         checkBoxTimeOut.Checked         = (xmlreader.GetValueAsInt("isdn", "timeout", 0) > 0);
@@ -208,7 +208,7 @@ namespace ProcessPlugins.CallerId
 
     private void okButton_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("isdn", "useoutlook", checkBoxOutlook.Checked);
         xmlwriter.SetValueAsBool("isdn", "stopmedia", checkBoxStopMedia.Checked);

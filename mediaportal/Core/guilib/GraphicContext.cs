@@ -167,7 +167,7 @@ namespace MediaPortal.GUI.Library
 		{
 			string strFileName=String.Format("calibration{0}x{1}.xml", Width,Height);
 			// Log.Write("save {0}" ,strFileName);
-			using (MediaPortal.Profile.Xml xmlWriter= new MediaPortal.Profile.Xml(strFileName))
+			using (MediaPortal.Profile.Settings xmlWriter= new MediaPortal.Profile.Settings(strFileName))
 			{
 				xmlWriter.SetValue("screen","offsetx",m_iOffsetX.ToString() );
 				xmlWriter.SetValue("screen","offsety",m_iOffsetY.ToString() );
@@ -198,7 +198,7 @@ namespace MediaPortal.GUI.Library
 
 			string strFileName=String.Format("calibration{0}x{1}.xml", Width,Height);
 			Log.Write("  load {0}" ,strFileName);
-			using (MediaPortal.Profile.Xml xmlReader= new MediaPortal.Profile.Xml(strFileName))
+			using (MediaPortal.Profile.Settings xmlReader= new MediaPortal.Profile.Settings(strFileName))
 			{
 				m_iOffsetX=xmlReader.GetValueAsInt("screen","offsetx",0);
 				m_iOffsetY=xmlReader.GetValueAsInt("screen","offsety",0);
@@ -211,7 +211,7 @@ namespace MediaPortal.GUI.Library
 				m_fPixelRatio=xmlReader.GetValueAsFloat("screen","pixelratio",1.0f);
 			}
 
-			using (MediaPortal.Profile.Xml xmlReader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlReader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				m_iMaxFPS=xmlReader.GetValueAsInt("screen","maxfps",50);
 				SyncFrameTime();

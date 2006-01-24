@@ -929,7 +929,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void btnImport_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         string strTVGuideFile = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         strTVGuideFile = RemoveTrailingSlash(strTVGuideFile);
@@ -1221,7 +1221,7 @@ namespace MediaPortal.Configuration.Sections
       //Current version number of this exporter (change when needed)
       int CURRENT_VERSION = 1;  //<--- Make sure this same number is given to Import_from_XML
 
-      using (MediaPortal.Profile.Xml channels = new MediaPortal.Profile.Xml(fileStr, false))
+      using (MediaPortal.Profile.Settings channels = new MediaPortal.Profile.Settings(fileStr, false))
       {
         //Channel Data
         //channels.Clear();
@@ -1517,7 +1517,7 @@ namespace MediaPortal.Configuration.Sections
       //Current Version change to reflect the above exporter in order for compatibility
       int CURRENT_VER = 1;   //<--- Make sure that is the same number as in Export_to_XML
       int VER = 1;			 //Set to:  0 = old ; 1 = current ; 2 = newer
-      using (MediaPortal.Profile.Xml channels = new MediaPortal.Profile.Xml(fileStr))
+      using (MediaPortal.Profile.Settings channels = new MediaPortal.Profile.Settings(fileStr))
       {
         //Check version if not the right version prompt/do stuff/accomodate/change
         int version_check = channels.GetValueAsInt("MP channel export list", "version", -1);

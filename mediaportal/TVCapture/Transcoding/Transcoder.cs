@@ -113,7 +113,7 @@ namespace MediaPortal.TV.Recording
       int bitRate, FPS, Priority, QualityIndex, ScreenSizeIndex, Type, AutoHours;
       bool deleteOriginal, AutoDeleteOriginal, AutoCompress;
       Size ScreenSize = new Size(0, 0);
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         bitRate = xmlreader.GetValueAsInt("compression", "bitrate", 4);
         FPS = xmlreader.GetValueAsInt("compression", "fps", 1);

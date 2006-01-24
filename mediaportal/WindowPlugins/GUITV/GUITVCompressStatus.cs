@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.TV
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         string strTmp = String.Empty;
         strTmp = (string)xmlreader.GetValue("tvcompressstatus", "sort");
@@ -112,7 +112,7 @@ namespace MediaPortal.GUI.TV
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         switch (currentSortMethod)
         {

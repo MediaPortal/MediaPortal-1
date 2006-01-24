@@ -520,7 +520,7 @@ namespace MediaPortal.Configuration.Sections
 						strDefaultStation=radioStation.Name;
 					}
         }
-        using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           xmlwriter.SetValue("myradio", "default", strDefaultStation);
         }
@@ -531,7 +531,7 @@ namespace MediaPortal.Configuration.Sections
 			stationsListView.Items.Clear();
       string defaultStation = string.Empty;
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         defaultStation = xmlreader.GetValueAsString("myradio", "default", "");
       }

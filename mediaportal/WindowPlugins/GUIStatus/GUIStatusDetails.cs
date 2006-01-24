@@ -87,7 +87,7 @@ namespace MediaPortal.GUI.GUIStatus {
 		}
 
 		private void SaveSettings() {
-			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml")) {
+			using(MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml")) {
 				xmlwriter.SetValueAsBool("status","status_"+GUIStatus.GetName()+"al",((GUIToggleButtonControl)GetControl((int)Controls.CONTROL_ALARM)).Selected);
 				GUIStatus.SetAlarm(((GUIToggleButtonControl)GetControl((int)Controls.CONTROL_ALARM)).Selected);
 			}

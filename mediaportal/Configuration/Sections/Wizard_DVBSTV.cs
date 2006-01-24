@@ -344,7 +344,7 @@ namespace MediaPortal.Configuration.Sections
 
 			if (captureCard==null) return;
 			string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
-			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
+			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings(filename))
 			{
 				if(xmlreader.GetValueAsBool("dvbs","useLNB2",false)==true)
 				{

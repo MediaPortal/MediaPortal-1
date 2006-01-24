@@ -610,7 +610,7 @@ namespace MediaPortal.TV.Recording
       _mpeg2DemuxHelper.StartViewing(GUIGraphicsContext.ActiveForm, _vmr9);
 
       DirectShowUtil.EnableDeInterlace(_graphBuilderInterface);
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
         if (strValue.Equals("zoom")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
@@ -761,7 +761,7 @@ namespace MediaPortal.TV.Recording
       string strAudioRenderer = "";
       bool bAddFFDshow = false;
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         bAddFFDshow = xmlreader.GetValueAsBool("mytv", "ffdshow", false);
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
@@ -1134,7 +1134,7 @@ namespace MediaPortal.TV.Recording
     protected void SetQuality(int Quality)
     {
       string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
       {
         bool enabled = xmlreader.GetValueAsBool("quality", "enabled", false);
         if (!enabled) return;

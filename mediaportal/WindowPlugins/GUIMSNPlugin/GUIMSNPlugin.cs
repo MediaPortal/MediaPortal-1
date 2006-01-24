@@ -102,7 +102,7 @@ namespace MediaPortal.GUI.MSN
     public override void PreInit()
     {
       bool autosignin = false;
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         autosignin = xmlreader.GetValueAsInt("MSNmessenger", "autosignin", 0) != 0;
       }
@@ -712,7 +712,7 @@ namespace MediaPortal.GUI.MSN
       Log.Write("MSN:Start MSN");
       string emailadres = "";
       string password = "";
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         emailadres = xmlreader.GetValueAsString("MSNmessenger", "email", "");
         password = xmlreader.GetValueAsString("MSNmessenger", "password", "");
@@ -752,7 +752,7 @@ namespace MediaPortal.GUI.MSN
           _messenger.Credentials.ClientCode = "12345";
           _messenger.Credentials.ClientID = "12345";
           Log.Write("MSN: email:{0} pwd:*********", emailadres);
-          using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
           {
             bool useProxy = xmlreader.GetValueAsBool("MSNmessenger", "useproxy", false);
             if (useProxy)

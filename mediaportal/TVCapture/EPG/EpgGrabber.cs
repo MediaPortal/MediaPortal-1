@@ -104,7 +104,7 @@ namespace MediaPortal.TV.Epg
     {
       _epgTvChannelName = tvChannelName;
       _timeoutTimer = DateTime.Now;
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         bool enabled = xmlreader.GetValueAsBool("xmltv", "epgdvb", true);
         if (!enabled)
@@ -512,7 +512,7 @@ namespace MediaPortal.TV.Epg
         Log.WriteFile(Log.LogType.EPG, "epg-grab: updating tv database:{0}", events.Count);
         TVDatabase.SupressEvents = true;
         string languagesToGrab = String.Empty;
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           languagesToGrab = xmlreader.GetValueAsString("epg-grabbing", "grabLanguages", "");
         }

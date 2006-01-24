@@ -91,7 +91,7 @@ namespace MediaPortal.GUI.Settings
         {
             TunerCountry country = (TunerCountry)lblCountry.Data;
 
-            using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
             {
                 xmlwriter.SetValue("general", "country", country.CountryCode);
                 xmlwriter.SetValue("capture", "countryname", country.Country);
@@ -133,7 +133,7 @@ namespace MediaPortal.GUI.Settings
             string countryCode = "";
             string language = "";
 
-            using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
             {
                 countryCode = xmlreader.GetValueAsString("general", "country", "");
                 language = xmlreader.GetValueAsString("skin", "language", "");

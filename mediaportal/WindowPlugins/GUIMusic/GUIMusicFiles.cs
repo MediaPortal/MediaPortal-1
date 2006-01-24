@@ -120,7 +120,7 @@ namespace MediaPortal.GUI.Music
       m_directory.AddDrives();
       m_directory.SetExtensions(Utils.AudioExtensions);
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", String.Empty);
@@ -151,7 +151,7 @@ namespace MediaPortal.GUI.Music
     protected override void LoadSettings()
     {
       base.LoadSettings();
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         m_bFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         m_strFileMenuPinCode = xmlreader.GetValueAsString("filemenu", "pincode", String.Empty);

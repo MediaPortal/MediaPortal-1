@@ -860,7 +860,7 @@ namespace MediaPortal.Player
 				string strAudioCodec="";
 				string strAudiorenderer="";
         bool   bAddFFDshow=false;
-				using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           bAddFFDshow=xmlreader.GetValueAsBool("mytv","ffdshow",false);
 					strVideoCodec=xmlreader.GetValueAsString("mytv","videocodec","");

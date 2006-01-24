@@ -159,7 +159,7 @@ namespace MediaPortal.GUI.TV
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _currentTvChannel = xmlreader.GetValueAsString("tvguide", "channel", String.Empty);
         _cursorX = xmlreader.GetValueAsInt("tvguide", "ypos", 0);
@@ -169,7 +169,7 @@ namespace MediaPortal.GUI.TV
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValue("tvguide", "channel", _currentTvChannel);
         xmlwriter.SetValue("tvguide", "ypos", _cursorX.ToString());
@@ -191,7 +191,7 @@ namespace MediaPortal.GUI.TV
     public override bool Init()
     {
       _tvGuideFileName = "xmltv";
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _tvGuideFileName = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         _tvGuideFileName = Utils.RemoveTrailingSlash(_tvGuideFileName);
@@ -797,7 +797,7 @@ namespace MediaPortal.GUI.TV
     void CheckNewTVGuide()
     {
       bool shouldImportTvGuide = false;
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         string strTmp = String.Empty;
         strTmp = xmlreader.GetValueAsString("tvguide", "date", String.Empty);
@@ -2185,7 +2185,7 @@ namespace MediaPortal.GUI.TV
         //
         if (File.Exists(_tvGuideFileName))
         {
-          using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
           {
             string strFileTime = System.IO.File.GetLastWriteTime(_tvGuideFileName).ToString();
             xmlreader.SetValue("tvguide", "date", strFileTime);

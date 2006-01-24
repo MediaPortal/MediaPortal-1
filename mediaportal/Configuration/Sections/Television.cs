@@ -386,7 +386,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void LoadSettings()
 		{
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
 				inputComboBox.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
@@ -477,7 +477,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void SaveSettings()
 		{
-			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				if (cbDeinterlace.SelectedIndex>=0)
 					xmlwriter.SetValue("mytv", "deinterlace", cbDeinterlace.SelectedIndex.ToString());

@@ -134,7 +134,7 @@ namespace MediaPortal.GUI.Settings
     #region Serialisation
     void LoadSettings()
     {
-      using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         m_iSpeedHorizontal=xmlreader.GetValueAsInt("general","scrollspeedhorizontal",5);
         m_iSpeedVertical=xmlreader.GetValueAsInt("general","scrollspeedvertical",5);
@@ -144,7 +144,7 @@ namespace MediaPortal.GUI.Settings
 
     void SaveSettings()
     {
-      using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValue("general","scrollspeedhorizontal",m_iSpeedHorizontal.ToString());
         xmlwriter.SetValue("general","scrollspeedvertical",m_iSpeedVertical.ToString());

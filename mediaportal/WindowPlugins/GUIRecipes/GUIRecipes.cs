@@ -536,7 +536,7 @@ namespace GUIRecipes
 		/// </summary>
 		/// 
 		private void LoadSettings() {
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) {
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml")) {
 				subcat = xmlreader.GetValueAsBool("recipe","subcats",false);
 				online = xmlreader.GetValueAsBool("recipe","online",false);
 			}

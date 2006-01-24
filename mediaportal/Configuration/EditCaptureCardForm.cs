@@ -1546,7 +1546,7 @@ namespace MediaPortal.Configuration
       if (CaptureCard != null && CaptureCard.FriendlyName != String.Empty)
       {
         string filename = String.Format(@"database\card_{0}.xml", CaptureCard.FriendlyName);
-        using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(filename))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
         {
           xmlwriter.SetValueAsBool("quality", "enabled", checkBoxHiQuality.Checked);
           xmlwriter.SetValue("mapping", "audio1", comboBox1Audio.SelectedIndex);
@@ -1683,7 +1683,7 @@ namespace MediaPortal.Configuration
         if (CaptureCard.FriendlyName != String.Empty)
         {
           string filename = String.Format(@"database\card_{0}.xml", CaptureCard.FriendlyName);
-          using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
           {
             checkBoxHiQuality.Checked = xmlreader.GetValueAsBool("quality", "enabled", false);
 
@@ -1832,7 +1832,7 @@ namespace MediaPortal.Configuration
       string filename = String.Format(@"database\card_{0}.xml", CaptureCard.FriendlyName);
 
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
       {
         lnb0MHZ.Text = xmlreader.GetValueAsInt("dvbs", "LNB0", 9750).ToString();
         lnb1MHZ.Text = xmlreader.GetValueAsInt("dvbs", "LNB1", 10600).ToString();
@@ -1966,7 +1966,7 @@ namespace MediaPortal.Configuration
         string filename = String.Format(@"database\card_{0}.xml", CaptureCard.FriendlyName);
 
 
-        using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml(filename))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
         {
           xmlwriter.SetValue("dvbs", "LNB0", lnb0MHZ.Text);
           xmlwriter.SetValue("dvbs", "LNB1", lnb1MHZ.Text);
@@ -2069,7 +2069,7 @@ namespace MediaPortal.Configuration
         {
           string filename = String.Format(@"database\card_{0}.xml", CaptureCard.FriendlyName);
           // save settings for get the filename in mp.xml
-          using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
           {
             xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
           }

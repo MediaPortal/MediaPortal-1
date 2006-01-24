@@ -79,7 +79,7 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		public override void LoadSettings()
 		{
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				fileNameTextBox.Text = xmlreader.GetValueAsString("movieplayer", "path", "");
 				parametersTextBox.Text = xmlreader.GetValueAsString("movieplayer", "arguments", "");
@@ -103,7 +103,7 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		public override void SaveSettings()
 		{
-			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("movieplayer", "path", fileNameTextBox.Text);
 				xmlwriter.SetValue("movieplayer", "arguments", parametersTextBox.Text);

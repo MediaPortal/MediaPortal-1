@@ -69,7 +69,7 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		public override void LoadSettings()
 		{
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "repeat", true);
 				showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", false);
@@ -98,7 +98,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void SaveSettings()
 		{
-			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("musicfiles", "repeat", repeatPlaylistCheckBox.Checked);
 				xmlwriter.SetValueAsBool("musicfiles", "showid3", showID3CheckBox.Checked);

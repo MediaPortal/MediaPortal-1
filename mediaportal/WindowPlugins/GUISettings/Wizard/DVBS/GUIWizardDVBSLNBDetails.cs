@@ -56,7 +56,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			{
 				string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
 
-				using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml(filename))
+				using(MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings(filename))
 				{
 					xmlwriter.SetValueAsBool("dvbs","useLNB1",maxLNBs>=1);
 					xmlwriter.SetValueAsBool("dvbs","useLNB2",maxLNBs>=2);
@@ -163,7 +163,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			if (captureCard==null) return;
 			string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
 			
-			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
+			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings(filename))
 			{
 				string lnbKey=String.Format("lnb{0}",LNBNumber);
 				if (LNBNumber==1) lnbKey="lnb";
@@ -208,7 +208,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			TVCaptureDevice captureCard= Recorder.Get(card);
 			if (captureCard==null) return;
 			string filename=String.Format(@"database\card_{0}.xml",captureCard.FriendlyName);
-			using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml(filename))
+			using(MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings(filename))
 			{
 				string lnbKey=String.Format("useLNB{0}",LNBNumber);
 				xmlwriter.SetValueAsBool("dvbs",lnbKey,true);

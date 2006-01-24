@@ -329,7 +329,7 @@ public class MediaPortalApp : D3DApp, IRender
       splashScreen = null;
     }
 #endif
-    MediaPortal.Profile.Xml.SaveCache();
+      MediaPortal.Profile.Settings.SaveCache();
     Log.Write("MediaPortal done");
     Win32API.EnableStartBar(true);
     Win32API.ShowStartBar(true);
@@ -351,7 +351,7 @@ public class MediaPortalApp : D3DApp, IRender
   public MediaPortalApp()
   {
     // check to load plugins
-    using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
     {
       useScreenSaver = xmlreader.GetValueAsBool("general", "screensaver", true);
     }
@@ -390,7 +390,7 @@ public class MediaPortalApp : D3DApp, IRender
     GUIGraphicsContext.RenderGUI = this;
     try
     {
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         m_strSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
         m_strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
@@ -614,7 +614,7 @@ public class MediaPortalApp : D3DApp, IRender
     tMouseClickTimer.Elapsed += new System.Timers.ElapsedEventHandler(tMouseClickTimer_Elapsed);
     tMouseClickTimer.SynchronizingObject = this;
 
-    using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
     {
       string strDefault = xmlreader.GetValueAsString("myradio", "default", "");
       if (strDefault != "")
@@ -744,7 +744,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     Log.Write("  WindowManager.ActivateWindow");
     // Edit Michel
-    using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
     {
         startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
     }
@@ -2202,7 +2202,7 @@ public class MediaPortalApp : D3DApp, IRender
     //
     // Only load the USBUIRT device if it has been enabled in the configuration
     //
-    using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
     {
       bool inputEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
       bool outputEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false);
@@ -2318,7 +2318,7 @@ public class MediaPortalApp : D3DApp, IRender
     catch (Exception)
     {
     }
-    using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
     {
       m_iDateLayout = xmlreader.GetValueAsInt("home", "datelayout", 0);
     }

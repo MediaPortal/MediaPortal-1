@@ -186,7 +186,7 @@ namespace MediaPortal.Configuration
 				AddSection(new Sections.Wizard_Finished(), "Congratulations", "You have now finished the setup wizard.");
 			}
 
-			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("capture", "tuner", "Cable");
 			}			
@@ -743,7 +743,7 @@ namespace MediaPortal.Configuration
 			DVDClass.SaveSettings();
 			DVDClass.Dispose();
 
-			MediaPortal.Profile.Xml.SaveCache();
+			MediaPortal.Profile.Settings.SaveCache();
 		}
 	}
 }

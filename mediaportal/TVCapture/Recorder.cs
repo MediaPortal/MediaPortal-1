@@ -122,7 +122,7 @@ namespace MediaPortal.TV.Recording
       RecorderProperties.Init();
       _commandProcessor = new CommandProcessor();
        
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _commandProcessor.TVChannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
       }

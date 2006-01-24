@@ -704,7 +704,7 @@ namespace MediaPortal.GUI.GUIStatus
 
     private void LoadSound() 
     {
-      using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
+      using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml")) 
       {	
         soundFolder=xmlreader.GetValueAsString("status","status_sound_folder","");
         sound=xmlreader.GetValueAsString("status","status_sound","");
@@ -714,7 +714,7 @@ namespace MediaPortal.GUI.GUIStatus
     private void LoadSettings() 
     {
       int num=0;
-      using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) 
+      using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml")) 
       {
         isMbm=xmlreader.GetValueAsBool("status","status_is_mbm",false);
         showStatusBar=xmlreader.GetValueAsBool("status","status_bar_show",false);

@@ -178,7 +178,7 @@ namespace MediaPortal.GUI.GUIStatus {
 		}
 
 		private void SaveSettings() {
-			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml")) {
+			using(MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml")) {
 				xmlwriter.SetValueAsBool("status","status_shutdown",((GUIToggleButtonControl)GetControl((int)Controls.CONTROL_SHUT)).Selected);
 				xmlwriter.SetValue("status","status_sound",sound);
 				xmlwriter.SetValue("status","status_sound_delay",spin);
@@ -186,7 +186,7 @@ namespace MediaPortal.GUI.GUIStatus {
 		}
 
 		private void LoadSettings() {
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml")) {
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml")) {
 				soundFolder=xmlreader.GetValueAsString("status","status_sound_folder","");
 				sound=xmlreader.GetValueAsString("status","status_sound","");		
 			}

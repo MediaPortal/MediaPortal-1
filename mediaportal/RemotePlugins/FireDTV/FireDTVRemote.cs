@@ -91,7 +91,7 @@ namespace MediaPortal.RemoteControls
 				if (!_FireSAPapiFound) 
 					_remoteEnabled=false;
 
-				using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 				{
 					_remoteEnabled	= ((xmlreader.GetValueAsBool("remote", "FireDTV", false)) && (_FireSAPapiFound));
 					_FileName		= (xmlreader.GetValueAsString("remote", "FireDTVKeyFile", "FireDTVKeyMap.XML"));

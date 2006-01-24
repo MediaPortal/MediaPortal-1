@@ -155,7 +155,7 @@ namespace MediaPortal.GUI.WebBrowser
 		    {
 			    get
 			    {
-                    using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+                    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
                     {
                        return xmlreader.GetValueAsString("webbrowser", "favoritesFolder", string.Empty);
                     }

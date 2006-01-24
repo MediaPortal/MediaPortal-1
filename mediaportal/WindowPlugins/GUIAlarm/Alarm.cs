@@ -538,7 +538,7 @@ namespace MediaPortal.GUI.Alarm
     {
       AlarmCollection Alarms = new AlarmCollection();
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         for (int i = 0; i < _MaxAlarms; i++)
         {
@@ -600,7 +600,7 @@ namespace MediaPortal.GUI.Alarm
     {
       int id = alarmToSave.Id;
 
-      using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
 
         xmlwriter.SetValue("alarm", "alarmName" + id, alarmToSave.Name);
@@ -633,7 +633,7 @@ namespace MediaPortal.GUI.Alarm
     /// <returns>true if suceeded</returns>
     public static bool DeleteAlarm(int id)
     {
-      using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.RemoveEntry("alarm", "alarmName" + id);
         xmlwriter.RemoveEntry("alarm", "alarmEnabled" + id);
@@ -666,7 +666,7 @@ namespace MediaPortal.GUI.Alarm
         string tempText;
         for (int i = 0; i < _MaxAlarms; i++)
         {
-          using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
           {
             tempText = xmlreader.GetValueAsString("alarm", "alarmName" + i, "");
             if (tempText.Length == 0)
@@ -743,7 +743,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           return Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("alarm", "alarmSoundsFolder", ""));
         }
@@ -757,7 +757,7 @@ namespace MediaPortal.GUI.Alarm
 
       get
       {
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           return Utils.RemoveTrailingSlash(xmlreader.GetValueAsString("music", "playlists", ""));
         }
@@ -770,7 +770,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           return xmlreader.GetValueAsInt("alarm", "alarmSnoozeTime", 5);
         }
@@ -784,7 +784,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           return xmlreader.GetValueAsInt("alarm", "alarmMessageDisplayLength", 10);
         }
@@ -798,7 +798,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           return xmlreader.GetValueAsInt("alarm", "alarmRepeatSeconds", 120);
         }
@@ -812,7 +812,7 @@ namespace MediaPortal.GUI.Alarm
     {
       get
       {
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           return xmlreader.GetValueAsInt("alarm", "alarmRepeatCount", 5);
         }

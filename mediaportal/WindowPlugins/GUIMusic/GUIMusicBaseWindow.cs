@@ -135,7 +135,7 @@ namespace MediaPortal.GUI.Music
 
     protected virtual void LoadSettings()
     {
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", (int)View.List);
         currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", (int)View.List);
@@ -157,7 +157,7 @@ namespace MediaPortal.GUI.Music
 
     protected virtual void SaveSettings()
     {
-      using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValue(SerializeName, "view", (int)currentView);
         xmlwriter.SetValue(SerializeName, "viewroot", (int)currentViewRoot);
@@ -507,7 +507,7 @@ namespace MediaPortal.GUI.Music
       SaveSettings();
 
       // Save view
-      using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValue("music", "startWindow", MusicState.StartWindow.ToString());
         xmlwriter.SetValue("music", "startview", MusicState.View);

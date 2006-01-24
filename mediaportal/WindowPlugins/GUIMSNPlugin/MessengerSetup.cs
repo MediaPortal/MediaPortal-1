@@ -350,7 +350,7 @@ namespace MediaPortal.GUI.MSN
 
     private void buttonOK_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Xml xmlWriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlWriter.SetValue("MSNmessenger", "email", textBoxEMail.Text);
         xmlWriter.SetValue("MSNmessenger", "password", textBoxPassword.Text);
@@ -378,7 +378,7 @@ namespace MediaPortal.GUI.MSN
     private void MessengerSetup_Load(object sender, System.EventArgs e)
     {
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         textBoxEMail.Text = xmlreader.GetValueAsString("MSNmessenger", "email", "");
         textBoxPassword.Text = xmlreader.GetValueAsString("MSNmessenger", "password", "");

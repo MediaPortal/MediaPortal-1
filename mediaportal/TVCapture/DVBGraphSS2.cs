@@ -310,7 +310,7 @@ namespace MediaPortal.TV.Recording
     {
       _cardId = cardId;
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _pluginsEnabled = xmlreader.GetValueAsBool("dvb_ts_cards", "enablePlugins", false);
         _cardType = xmlreader.GetValueAsString("DVBSS2", "cardtype", "");
@@ -1092,7 +1092,7 @@ namespace MediaPortal.TV.Recording
       string strAudioCodec = "";
       string strAudioRenderer = "";
       bool bAddFFDshow = false;
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         bAddFFDshow = xmlreader.GetValueAsBool("mytv", "ffdshow", false);
         strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
@@ -2140,7 +2140,7 @@ namespace MediaPortal.TV.Recording
         setVisFlag = true;
 
       }
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
         if (strValue.Equals("zoom")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
@@ -3044,7 +3044,7 @@ namespace MediaPortal.TV.Recording
       int cbandMHZ = 0;
       int circularMHZ = 0;
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(_cardFilename))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_cardFilename))
       {
         lnb0MHZ = xmlreader.GetValueAsInt("dvbs", "LNB0", 9750);
         lnb1MHZ = xmlreader.GetValueAsInt("dvbs", "LNB1", 10600);

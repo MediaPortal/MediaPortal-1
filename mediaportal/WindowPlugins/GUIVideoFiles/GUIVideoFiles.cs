@@ -165,7 +165,7 @@ namespace MediaPortal.GUI.Video
 
 			LoadSettings();
 			bool result=Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{			
 				VideoState.StartWindow=xmlreader.GetValueAsInt("movies","startWindow", GetID);
 			}
@@ -176,7 +176,7 @@ namespace MediaPortal.GUI.Video
     #region Serialisation
     protected override void LoadSettings()
     {
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
 				fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
 				fileMenuPinCode = xmlreader.GetValueAsString("filemenu", "pincode", String.Empty);
@@ -2320,7 +2320,7 @@ namespace MediaPortal.GUI.Video
           
 				bool askBeforePlayingDVDImage = false;
 
-				using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 				{
 					askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
 				}

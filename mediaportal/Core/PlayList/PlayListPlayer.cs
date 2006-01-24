@@ -409,7 +409,7 @@ namespace MediaPortal.Playlists
         {
           _currentPlayList = value;
           _entriesNotFound = 0;
-          using (Xml settings = new Xml("MediaPortal.xml"))
+          using (Settings settings = new Settings("MediaPortal.xml"))
           {
             if (value == PlayListType.PLAYLIST_MUSIC || value == PlayListType.PLAYLIST_MUSIC_TEMP)
             {

@@ -55,7 +55,7 @@ namespace MediaPortal.Configuration.Sections
 			// default default
 			_useClassicHandler.Checked = true;
 
-			using(MediaPortal.Profile.Xml reader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				int volumeStyle = reader.GetValueAsInt("volume", "handler", 0);
 
@@ -90,7 +90,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void SaveSettings()
 		{
-			using(MediaPortal.Profile.Xml writer = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings writer = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				if(_useClassicHandler.Checked)
 					writer.SetValue("volume", "handler", 0);

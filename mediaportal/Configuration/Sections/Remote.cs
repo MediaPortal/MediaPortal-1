@@ -148,7 +148,7 @@ namespace MediaPortal.Configuration.Sections
       string errHCWOutOfDate = "The driver components are not up to date.\n\nUpdate your Hauppauge IR drivers to the current version.";
       string errHCWMissingExe = "IR application not found. You might want to use it to control external applications.\n\nReinstall the Hauppauge IR drivers to fix this problem.";
 
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         checkBoxMCE.Checked = xmlreader.GetValueAsBool("remote", "mce2005", false);
         radioButtonUSA.Checked = xmlreader.GetValueAsBool("remote", "USAModel", false);
@@ -225,7 +225,7 @@ namespace MediaPortal.Configuration.Sections
         checkBoxHCW.Enabled = false;
         groupBoxSettings.Enabled = false;
         groupBoxRepeatDelay.Enabled = false;
-        using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           xmlwriter.SetValueAsBool("remote", "HCW", false);
         }
@@ -241,7 +241,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
-      using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("remote", "mce2005", checkBoxMCE.Checked);
         xmlwriter.SetValueAsBool("remote", "USAModel", radioButtonUSA.Checked);

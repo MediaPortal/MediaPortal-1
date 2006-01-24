@@ -77,7 +77,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
       if (captureCard != null)
       {
         string filename = String.Format(@"database\card_{0}.xml", captureCard.FriendlyName);
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
         {
           if (xmlreader.GetValueAsBool("dvbs", "useLNB2", false) == true)
             m_diseqcLoops++;
@@ -103,7 +103,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
       if (captureCard != null)
       {
         string filename = String.Format(@"database\card_{0}.xml", captureCard.FriendlyName);
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml(filename))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
         {
           string key = String.Format("sat{0}", m_currentDiseqc);
           tplFile = xmlreader.GetValue("dvbs", key);

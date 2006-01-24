@@ -409,7 +409,7 @@ namespace MediaPortal.GUI.Music
         {
             bool useID3 = false;
 
-            using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
             {
                 useID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
             }

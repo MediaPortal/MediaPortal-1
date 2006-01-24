@@ -550,7 +550,7 @@ namespace MediaPortal.Configuration.Sections
 
 		void SaveShare(ArrayList sharesList,string mediaType)
 		{
-			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 
 				for(int index = 0; index < MaximumShares; index++)

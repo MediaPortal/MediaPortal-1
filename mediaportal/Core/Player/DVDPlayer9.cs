@@ -62,7 +62,7 @@ namespace MediaPortal.Player
       string dvdDNavigator="DVD Navigator";
       string aspectRatio="";
       string displayMode="";
-      using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
 				dvdDNavigator=xmlreader.GetValueAsString("dvdplayer","navigator","DVD Navigator");
 				aspectRatio=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();

@@ -60,7 +60,7 @@ namespace WindowPlugins.GUISettings.TV
 		void OnVideoCodec()
 		{
 			string strVideoCodec="";
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				strVideoCodec=xmlreader.GetValueAsString("dvdplayer","videocodec","");
 			}
@@ -84,7 +84,7 @@ namespace WindowPlugins.GUISettings.TV
 			}
 			dlg.DoModal(GetID);
 			if (dlg.SelectedLabel<0) return;
-			using (MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("dvdplayer","videocodec",(string)availableVideoFilters[dlg.SelectedLabel]);
 			}
@@ -93,7 +93,7 @@ namespace WindowPlugins.GUISettings.TV
 		void OnAudioCodec()
 		{
 			string strAudioCodec="";
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				strAudioCodec=xmlreader.GetValueAsString("dvdplayer","audiocodec","");
 			}
@@ -117,7 +117,7 @@ namespace WindowPlugins.GUISettings.TV
 			}
 			dlg.DoModal(GetID);
 			if (dlg.SelectedLabel<0) return;
-			using (MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("dvdplayer","audiocodec",(string)availableAudioFilters[dlg.SelectedLabel]);
 			}
@@ -150,7 +150,7 @@ namespace WindowPlugins.GUISettings.TV
 		{
 			string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 			string defaultAspectRatio ="";
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				defaultAspectRatio = xmlreader.GetValueAsString("dvdplayer","defaultar", "normal");
 			}
@@ -172,7 +172,7 @@ namespace WindowPlugins.GUISettings.TV
 				dlg.SelectedLabel=selected;
 				dlg.DoModal(GetID);
 				if (dlg.SelectedLabel<0) return;
-				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 				{
 					xmlwriter.SetValue("dvdplayer", "defaultar", aspectRatio[dlg.SelectedLabel]);
 				}
@@ -181,7 +181,7 @@ namespace WindowPlugins.GUISettings.TV
 		void OnAudioRenderer()
 		{
 			string strAudioRenderer="";
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				strAudioRenderer=xmlreader.GetValueAsString("dvdplayer","audiorenderer","");
 			}
@@ -205,7 +205,7 @@ namespace WindowPlugins.GUISettings.TV
 			}
 			dlg.DoModal(GetID);
 			if (dlg.SelectedLabel<0) return;
-			using (MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValue("dvdplayer","audiorenderer",(string)availableAudioFilters[dlg.SelectedLabel]);
 			}
@@ -215,7 +215,7 @@ namespace WindowPlugins.GUISettings.TV
 		void OnSubtitle()
 		{
 			string defaultSubtitleLanguage="";
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				defaultSubtitleLanguage= xmlreader.GetValueAsString("dvdplayer","subtitlelanguage", "English");
 			}
@@ -247,7 +247,7 @@ namespace WindowPlugins.GUISettings.TV
 				dlg.SelectedLabel=selected;
 				dlg.DoModal(GetID);
 				if (dlg.SelectedLabel<0) return;
-				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 				{
 					CultureInfo info = (CultureInfo)cultures[dlg.SelectedLabel];
 					xmlwriter.SetValue("dvdplayer", "subtitlelanguage", info.EnglishName);
@@ -257,7 +257,7 @@ namespace WindowPlugins.GUISettings.TV
 		void OnAudioLanguage()
 		{
 			string defaultAudioLanguage="";
-			using (MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				defaultAudioLanguage= xmlreader.GetValueAsString("dvdplayer","audiolanguage", "English");
 			}
@@ -289,7 +289,7 @@ namespace WindowPlugins.GUISettings.TV
 				dlg.SelectedLabel=selected;
 				dlg.DoModal(GetID);
 				if (dlg.SelectedLabel<0) return;
-				using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+				using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 				{
 					CultureInfo info = (CultureInfo)cultures[dlg.SelectedLabel];
 					xmlwriter.SetValue("dvdplayer", "audiolanguage", info.EnglishName);

@@ -165,7 +165,7 @@ namespace WindowPlugins.GUIPrograms
 
     void SaveSettings()
     {
-      using (Xml xmlwriter = new Xml("MediaPortal.xml"))
+      using (Settings xmlwriter = new Settings("MediaPortal.xml"))
       {
         switch ((View) mapSettings.ViewAs)
         {
@@ -212,7 +212,7 @@ namespace WindowPlugins.GUIPrograms
 
     void LoadSettings()
     {
-      using (Xml xmlreader = new Xml("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings("MediaPortal.xml"))
       {
         string curText = "";
         curText = xmlreader.GetValue("myprograms", "viewby");
@@ -260,7 +260,7 @@ namespace WindowPlugins.GUIPrograms
 
     void LoadLastAppIDFromSettings()
     {
-      using (Xml xmlreader = new Xml("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings("MediaPortal.xml"))
       {
         mapSettings.LastAppID = xmlreader.GetValueAsInt("myprograms", "lastAppID", - 1);
         mapSettings.LastViewLevel = xmlreader.GetValueAsInt("myprograms", "lastViewLevel", - 1);

@@ -1287,7 +1287,7 @@ namespace home
 		private void SaveAll_Click(object sender, System.EventArgs e)
 		{
 			saveTree(treeView, Application.StartupPath + @"\menu2.bin");
-			using (MediaPortal.Profile.Xml xmlWriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlWriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				int iLayout=0;
 				if (radioButton2.Checked) iLayout=1;
@@ -1310,7 +1310,7 @@ namespace home
 
 		private void LoadSettings()
 		{
-			using (MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				int iLayout = xmlreader.GetValueAsInt("home","datelayout",0);
 				if (iLayout==0) radioButton1.Checked=true;

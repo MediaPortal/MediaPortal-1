@@ -655,7 +655,7 @@ namespace MediaPortal.GUI.Music
       {
         string strPath = System.IO.Path.GetFileNameWithoutExtension(strNewFileName);
         string strPlayListPath = String.Empty;
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           strPlayListPath = xmlreader.GetValueAsString("music", "playlists", String.Empty);
           strPlayListPath = Utils.RemoveTrailingSlash(strPlayListPath);

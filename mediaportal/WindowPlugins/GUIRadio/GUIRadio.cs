@@ -109,7 +109,7 @@ namespace MediaPortal.GUI.Radio
     #region Serialisation
     void LoadSettings()
     {
-      using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         currentRadioFolder = xmlreader.GetValueAsString("radio", "folder", String.Empty);
 
@@ -139,7 +139,7 @@ namespace MediaPortal.GUI.Radio
 
     void SaveSettings()
     {
-      using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         switch (currentView)
         {

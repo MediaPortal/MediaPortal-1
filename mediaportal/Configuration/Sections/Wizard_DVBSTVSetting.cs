@@ -575,12 +575,12 @@ namespace MediaPortal.Configuration.Sections
 			if (CaptureCard==null) return;
 			string filename=String.Format(@"database\card_{0}.xml",CaptureCard.FriendlyName);
 			
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				checkBox1.Checked=xmlreader.GetValueAsBool("dvb_ts_cards","enablePlugins",false);
 			}
 			
-			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml(filename))
+			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings(filename))
 			{
 				lnb0MHZ.Text=xmlreader.GetValueAsInt("dvbs","LNB0",9750).ToString();
 				lnb1MHZ.Text=xmlreader.GetValueAsInt("dvbs","LNB1",10600).ToString();
@@ -708,7 +708,7 @@ namespace MediaPortal.Configuration.Sections
 
 		void SaveDVBSSettings()
 		{
-			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("dvb_ts_cards","enablePlugins",checkBox1.Checked);
 			}
@@ -722,7 +722,7 @@ namespace MediaPortal.Configuration.Sections
 					string filename=String.Format(@"database\card_{0}.xml",dev.FriendlyName);
 					// save settings
 
-					using(MediaPortal.Profile.Xml   xmlwriter=new MediaPortal.Profile.Xml(filename))
+					using(MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings(filename))
 					{
 						xmlwriter.SetValue("dvbs","LNB0",lnb0MHZ.Text);
 						xmlwriter.SetValue("dvbs","LNB1",lnb1MHZ.Text);

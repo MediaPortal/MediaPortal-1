@@ -503,7 +503,7 @@ namespace MediaPortal.GUI.Alarm
 		/// </summary>
 		private void SaveSettings()
 		{
-			using(MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{		
 				xmlwriter.SetValue("alarm","alarmSoundsFolder",txtAlarmSoundsFolder.Text); 
 				xmlwriter.SetValue("alarm","alarmSnoozeTime",SnoozeLength.Value); 
@@ -518,7 +518,7 @@ namespace MediaPortal.GUI.Alarm
 		/// </summary>
 		private void LoadSettings()
 		{
-			using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				txtAlarmSoundsFolder.Text = xmlreader.GetValueAsString("alarm","alarmSoundsFolder",string.Empty);
 				SnoozeLength.Value = xmlreader.GetValueAsInt("alarm","alarmSnoozeTime",5);

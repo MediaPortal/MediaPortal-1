@@ -804,7 +804,7 @@ namespace MediaPortal.Configuration.Sections
 		{
 			FillInEPGLanguages();
 
-			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				cbGrabDVBEPG.Checked = xmlreader.GetValueAsBool("xmltv", "epgdvb", true);
 				useColorCheckBox.Checked = xmlreader.GetValueAsBool("xmltv", "colors", false);
@@ -876,7 +876,7 @@ namespace MediaPortal.Configuration.Sections
 
 		public override void SaveSettings()
 		{
-			using (MediaPortal.Profile.Xml xmlwriter = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				xmlwriter.SetValueAsBool("xmltv", "epgdvb", cbGrabDVBEPG.Checked);
 				xmlwriter.SetValueAsBool("xmltv", "colors", useColorCheckBox.Checked);

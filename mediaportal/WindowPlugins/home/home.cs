@@ -157,7 +157,7 @@ namespace MediaPortal.GUI.Home
 		{
 			base.OnWindowLoaded();
 
-			using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				m_iDateLayout = xmlreader.GetValueAsInt("home","datelayout",0);   
 				m_bAllowScroll= xmlreader.GetValueAsBool("home","scroll",true);
@@ -1098,7 +1098,7 @@ namespace MediaPortal.GUI.Home
 				foreach (ISetupForm setup in plugins) 
 				{
 					
-					using(MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+					using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 					{
 						bool bHomeDefault=setup.DefaultEnabled();
 						bool inhome;

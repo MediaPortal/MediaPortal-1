@@ -89,7 +89,7 @@ namespace MediaPortal.Player
 
       foreach (IExternalPlayer player in _externalPlayerList)
       {
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           bool enabled = xmlreader.GetValueAsBool("plugins", player.PlayerName, false);
           player.Enabled = enabled;
@@ -161,7 +161,7 @@ namespace MediaPortal.Player
 
       if (Utils.IsAudio(fileName))
       {
-        using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
           if (String.Compare(strAudioPlayer, "Windows Media Player 9", true) == 0)

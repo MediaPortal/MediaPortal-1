@@ -529,7 +529,7 @@ namespace MediaPortal.IR
 		#region serialisation
         private void Initialize()
         {
-            using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
             {
                 ReceiveEnabled = xmlreader.GetValueAsBool("USBUIRT", "internal", false);
                 TransmitEnabled = xmlreader.GetValueAsBool("USBUIRT", "external", false);

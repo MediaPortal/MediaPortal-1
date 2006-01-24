@@ -328,7 +328,7 @@ namespace MediaPortal.FoobarPlugin
 
     {
 
-      using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 
       {
 
@@ -362,7 +362,7 @@ namespace MediaPortal.FoobarPlugin
 
     {
 
-      using (MediaPortal.Profile.Xml   xmlWriter=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings   xmlWriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlWriter.SetValue("foobarplugin", "port", portTextBox.Text);
         xmlWriter.SetValue("foobarplugin", "host", hotnameTextBox.Text);

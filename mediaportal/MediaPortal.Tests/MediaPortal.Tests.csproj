@@ -59,6 +59,10 @@
     <Compile Include="Databases\TV\TestTvDatabase.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\guilib\CacheSettingsProviderTest.cs" />
+    <Compile Include="Core\guilib\SettingsTest.cs" />
+    <Compile Include="Core\guilib\XmlSettingsPrefetchTest.cs" />
+    <Compile Include="Core\guilib\XmlSettingsProviderTest.cs" />
     <Compile Include="Core\Playlists\PlayListB4STest.cs" />
     <Compile Include="Core\Playlists\PlayListM3UTests.cs" />
     <Compile Include="Core\Playlists\PlayListPlayerTest.cs" />
@@ -134,6 +138,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Core\guilib\TestData\MediaPortal.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="InputDeviceMappings\custom\TestCustom.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

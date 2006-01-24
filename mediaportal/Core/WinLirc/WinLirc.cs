@@ -99,7 +99,7 @@ namespace MediaPortal.WINLIRC
 		{
 			Log.Write("Initialising WinLirc...");
 			//load settings
-			using(MediaPortal.Profile.Xml   xmlreader=new MediaPortal.Profile.Xml("MediaPortal.xml"))
+			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
 				m_bEnabled = xmlreader.GetValueAsString("WINLIRC", "enabled", "false") == "true";
 				if(m_bEnabled == false)
