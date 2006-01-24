@@ -412,7 +412,15 @@ namespace MediaPortal.EPG
                 }
 
                 // Create DateTime
-                DateTime dtStart = new DateTime(m_StartGrab.Year, month, guideData.Day, guideData.StartTime[0], guideData.StartTime[1], 0, 0);
+                DateTime dtStart;
+                try
+                {
+                    dtStart = new DateTime(m_StartGrab.Year, month, guideData.Day, guideData.StartTime[0], guideData.StartTime[1], 0, 0);
+                } catch
+                {
+                    Log.WriteFile(Log.LogType.Log, true, "WebEPG: DateTime Error Program: {0}", guideData.Title);
+                    return false; // DateTime error
+                }
                 if (m_bNextDay)
                     dtStart = dtStart.AddDays(addDays);
                 // Check TimeZone 

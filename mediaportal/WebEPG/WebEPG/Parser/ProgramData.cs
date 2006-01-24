@@ -72,26 +72,36 @@ namespace MediaPortal.WebEPG
 
 		private int[] getTime(string strTime)
 		{
+            if(strTime == "")
+                return null;
+
 			int sepPos;
+            bool found = false;
 			int[] iTime = new int[2];
 
 			if ((sepPos = strTime.IndexOf(":")) != -1)
 			{
 				iTime[0] = int.Parse(strTime.Substring(0, sepPos));
 				iTime[1] = int.Parse(strTime.Substring(sepPos+1, 2));
+                found = true;
 			}
 
 			if ((sepPos = strTime.IndexOf(".")) != -1)
 			{
 				iTime[0] = int.Parse(strTime.Substring(0, sepPos));
 				iTime[1] = int.Parse(strTime.Substring(sepPos+1, 2));
+                found = true;
 			}
 
 			if ((sepPos = strTime.IndexOf("h")) != -1)
 			{
 				iTime[0] = int.Parse(strTime.Substring(0, sepPos));
 				iTime[1] = int.Parse(strTime.Substring(sepPos+1, 2));
+                found = true;
 			}
+
+            if (!found)
+                return null;
 
 			if (strTime.ToLower().IndexOf("pm") != -1 && iTime[0] != 0)
 			{
