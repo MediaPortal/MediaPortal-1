@@ -317,8 +317,10 @@ namespace MediaPortal.Configuration
           bool add = false;
           if (ccd.CaptureName != String.Empty)
           {
-            if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
-              ((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1)) add = true;
+            string videoDev = (string)(availableVideoDevices[i]);
+            string videoMon = (string)(availableVideoDeviceMonikers[i]);
+            if ( (String.Compare(videoDev,ccd.CaptureName,true)==0) &&
+                 ( videoMon.ToLower().IndexOf(ccd.DeviceId.ToLower()) > -1)) add = true;
           }
           if (add)
           {
@@ -341,13 +343,13 @@ namespace MediaPortal.Configuration
             int nr = 1;
             foreach (ComboBoxCaptureCard cb in cardComboBox.Items)
             {
-              if (cb.CaptureDevice.CommercialName == cbcc.CaptureDevice.CommercialName) nr++;
+              if (cb.CaptureDevice.CommercialName.ToLower() == cbcc.CaptureDevice.CommercialName.ToLower()) nr++;
             }
             cbcc.Number = nr;
             cbcc.MaxCards = nr;
             foreach (ComboBoxCaptureCard cb in cardComboBox.Items)
             {
-              if (cb.CaptureDevice.CommercialName == cbcc.CaptureDevice.CommercialName)
+              if (cb.CaptureDevice.CommercialName.ToLower() == cbcc.CaptureDevice.CommercialName.ToLower())
               {
                 cb.MaxCards = nr;
               }
@@ -356,13 +358,13 @@ namespace MediaPortal.Configuration
             {
               if (deviceToEdit.DeviceId != null)
               {
-                if (cbcc.CaptureDevice.DeviceId == deviceToEdit.DeviceId)
+                if (cbcc.CaptureDevice.DeviceId.ToLower() == deviceToEdit.DeviceId.ToLower())
                 {
-                  if (deviceToEdit.VideoDeviceMoniker == cbcc.VideoDeviceMoniker &&
-                    deviceToEdit.VideoDevice == cbcc.CaptureDevice.VideoDevice)
+                  if (deviceToEdit.VideoDeviceMoniker.ToLower() == cbcc.VideoDeviceMoniker.ToLower() &&
+                    deviceToEdit.VideoDevice.ToLower() == cbcc.CaptureDevice.VideoDevice.ToLower())
                   {
                     cardComboBox.Items.Add(cbcc);
-                    if (deviceToEdit != null && deviceToEdit.CommercialName == cbcc.CaptureDevice.CommercialName)
+                    if (deviceToEdit != null && deviceToEdit.CommercialName.ToLower() == cbcc.CaptureDevice.CommercialName.ToLower())
                       cardComboBox.SelectedIndex = cardComboBox.Items.Count - 1;
                   }
                 }
@@ -375,10 +377,10 @@ namespace MediaPortal.Configuration
               {
                 if (dev.DeviceId != null)
                 {
-                  if (cbcc.CaptureDevice.DeviceId == dev.DeviceId)
+                  if (cbcc.CaptureDevice.DeviceId.ToLower() == dev.DeviceId.ToLower())
                   {
-                    if (dev.VideoDeviceMoniker == cbcc.VideoDeviceMoniker &&
-                      dev.VideoDevice == cbcc.CaptureDevice.VideoDevice)
+                    if (dev.VideoDeviceMoniker.ToLower() == cbcc.VideoDeviceMoniker.ToLower() &&
+                      dev.VideoDevice.ToLower() == cbcc.CaptureDevice.VideoDevice.ToLower())
                     {
                       alreadyAdded = true;
                     }
@@ -1799,11 +1801,11 @@ namespace MediaPortal.Configuration
             ComboBoxCaptureCard cd = (ComboBoxCaptureCard)cardComboBox.Items[i];
             if (card.DeviceId != null)
             {
-              if (cd.CaptureDevice.DeviceId == card.DeviceId)
+              if (cd.CaptureDevice.DeviceId.ToLower() == card.DeviceId.ToLower())
               {
-                if (card.VideoDeviceMoniker == cd.VideoDeviceMoniker &&
-                  card.VideoDevice == cd.CaptureDevice.VideoDevice &&
-                  card.CommercialName == cd.CaptureDevice.CommercialName)
+                if (card.VideoDeviceMoniker.ToLower() == cd.VideoDeviceMoniker.ToLower() &&
+                  card.VideoDevice.ToLower() == cd.CaptureDevice.VideoDevice.ToLower() &&
+                  card.CommercialName.ToLower() == cd.CaptureDevice.CommercialName.ToLower())
                 {
                   cardComboBox.SelectedIndex = i;
                   break;

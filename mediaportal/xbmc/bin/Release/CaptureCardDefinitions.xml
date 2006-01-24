@@ -10,6 +10,31 @@
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/> 
   </capturecard> -->
 
+  <capturecard commercialname="WinTv USB" capturename="Hauppauge WinTV USB Pro Capture" devid="vid_0573&amp;pid_4d21#5&amp;15184706&amp;0&amp;2">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"  name="Hauppauge WinTV USB Pro Tuner (B/G)" 		checkdevice="true"></filter>
+        <filter cat="tvaudio"  name="Hauppauge WinTV USB Pro Audio"		checkdevice="false"></filter>
+        <filter cat="crossbar" name="Hauppauge WinTV USB Pro Crossbar"		checkdevice="true"></filter>
+        <filter cat="capture"  name="Hauppauge WinTV USB Pro Capture"	checkdevice="true"></filter>
+        <filter cat="audcapture"  name="%Soundcard%"	checkdevice="false"></filter>
+        <filter cat="videncoder"  name="%videoencoder%"		checkdevice="false"></filter>
+        <filter cat="audencoder"  name="%audioencoder%"		checkdevice="false"></filter>
+        <filter cat="mux"  name="%mpegmux%"		checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="audcapture"	sourcepin="4" sinkfilter="tvaudio"	sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"	sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"	sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
   <capturecard commercialname="Hauppauge PVR500MCE (a)" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0016&amp;subsys_e8070070&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>

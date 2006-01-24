@@ -362,7 +362,7 @@ namespace MediaPortal.TV.Recording
         // example:
         //                     <------------------ ID ---------------->
         // @device:pnp:\\?\pci#ven_4444&dev_0016&subsys_40090070&rev_01#4&2e98101c&0&68f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\hauppauge wintv pvr pci ii capture
-        string deviceId = videoDeviceMoniker;
+        string deviceId = videoDeviceMoniker.ToLower();
         string[] tmp1 = videoDeviceMoniker.Split((char[])"#".ToCharArray());
         if (tmp1.Length >= 2)
           deviceId = tmp1[1].ToLower();
@@ -370,7 +370,7 @@ namespace MediaPortal.TV.Recording
         CaptureCardDefinition ccd = null;
         foreach (CaptureCardDefinition cd in CaptureCardDefinitions.CaptureCards)
         {
-          if (cd.DeviceId.IndexOf(deviceId) == 0 && cd.CaptureName == videoDevice && cd.CommercialName == CommercialName)
+          if (cd.DeviceId.ToLower().IndexOf(deviceId) == 0 && cd.CaptureName.ToLower() == videoDevice.ToLower() && cd.CommercialName.ToLower() == CommercialName.ToLower())
           {
             ccd = cd;
             break;
@@ -483,7 +483,7 @@ namespace MediaPortal.TV.Recording
             filter = (Filter)al[0];
 
             // if directshow filter name == video filter name
-            if (filter.Name.Equals(fd.FriendlyName))
+            if (filter.Name.ToLower()==fd.FriendlyName.ToLower())
             {
               // FriendlyName found. Now check if this name should be checked against a (PnP) device
               // to make sure that we found the right filter...z
@@ -546,8 +546,11 @@ namespace MediaPortal.TV.Recording
           // Log the error and return false...
           if (!filterFound)
           {
-            Log.WriteFile(Log.LogType.Capture, true, "  Filter {0} not found in definitions file", friendlyName);
-            return (false);
+            if (fd.FriendlyName.StartsWith("%") == false || fd.FriendlyName.EndsWith("%") == false )
+            {
+              Log.WriteFile(Log.LogType.Capture, true, "  Filter {0} not found in definitions file", friendlyName);
+              return (false);
+            }
           }
         }//foreach (string friendlyName in _captureCardDefinition.Tv.FilterDefinitions.Keys)
       }
