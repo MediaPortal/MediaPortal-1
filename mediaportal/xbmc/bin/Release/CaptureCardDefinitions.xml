@@ -7378,7 +7378,7 @@
       <filters>
         <filter cat="tvtuner"  name="713x BDA Analog Tv Tuner" 		checkdevice="true"></filter>
         <filter cat="tvaudio"  name="713x BDA Analog TV Audio"		checkdevice="true"></filter>
-        <filter cat="crossbar" name="713x BDA Analog Bvar"		checkdevice="true"></filter>
+        <filter cat="crossbar" name="713x BDA Analog Xbar"		checkdevice="true"></filter>
         <filter cat="capture"  name="713x BDA Analog Capture"	checkdevice="true"></filter>
         <filter cat="videncoder"  name="%videoencoder%"		checkdevice="false"></filter>
         <filter cat="audencoder"  name="%audioencoder%"		checkdevice="false"></filter>
