@@ -7372,7 +7372,7 @@
   </capturecard>
 
   <capturecard commercialname="LifeView FlyDVB-T DUO Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_03065168&amp;rev_f0">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
@@ -7394,6 +7394,22 @@
         <connection sourcefilter="capture"	sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
         <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"	sinkpin="0"></connection>
         <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"	sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Compro VideoMate U3 DVB-T Stick" capturename="VideoMate U3 BDA Capture" devid="vid_eb1a&amp;pid_2870">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
+        <filter cat="tunerdevice"     name="VideoMate U3 BDA TVTuner"        checkdevice="true"/>
+        <filter cat="capture"         name="VideoMate U3 BDA Capture"        checkdevice="true"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture" sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
