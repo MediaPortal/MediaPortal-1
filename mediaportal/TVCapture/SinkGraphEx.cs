@@ -327,9 +327,24 @@ namespace MediaPortal.TV.Recording
         _videoCaptureHelper = new VideoCaptureDevice(_graphBuilderInterface, _captureGraphBuilderInterface, _filterCapture, lastFilter.DSFilter);
 
         _videoCaptureHelper.SetFrameRate(25.0d);
-        _videoCaptureHelper.SetFrameSize(new Size(720, 576));
-
+        if (!SetFrameSize(768, 576))
+        {
+          if (!SetFrameSize(720, 576))
+          {
+            if (!SetFrameSize(720,480))
+            {
+              if (!SetFrameSize(640,480))
+              {
+                if (!SetFrameSize(320,240))
+                {
+                  //???
+                }
+              }
+            }
+          }
+        }
         _sizeFrame = _videoCaptureHelper.GetFrameSize();
+        
 
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Capturing:{0}x{1}", _sizeFrame.Width, _sizeFrame.Height);
         _mpeg2DemuxHelper = null;
@@ -841,6 +856,15 @@ namespace MediaPortal.TV.Recording
 
       TeletextGrabber.SaveAnalogData(pBuffer, BufferLen);
       return 0;
+    }
+    bool SetFrameSize( int width, int height)
+    {
+      _videoCaptureHelper.SetFrameSize(new Size(width, height));
+      Size size = _videoCaptureHelper.GetFrameSize();
+      if (size.Width != width) return false;
+      if (size.Height != height) return false;
+      return true;
+        
     }
 
     #endregion
