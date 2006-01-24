@@ -243,11 +243,11 @@ namespace DShowNET.Helper
       {
         try
         {
-          DsBITMAPINFOHEADER bmiHeader;
+          BitmapInfoHeader bmiHeader;
           object obj = getStreamConfigSetting(_interfaceStreamConfigVideoCapture, "BmiHeader");
           if (obj != null)
           {
-            bmiHeader = (DsBITMAPINFOHEADER)obj;
+            bmiHeader = (BitmapInfoHeader)obj;
             return new Size(bmiHeader.Width, bmiHeader.Height);
           }
         }
@@ -260,12 +260,12 @@ namespace DShowNET.Helper
       {
         try
         {
-          DsBITMAPINFOHEADER bmiHeader;
+          BitmapInfoHeader bmiHeader;
           object obj = getStreamConfigSetting(_interfaceStreamConfigPreview, "BmiHeader");
           if (obj != null)
           {
-            bmiHeader = (DsBITMAPINFOHEADER)obj;
-            bmiHeader = (DsBITMAPINFOHEADER)obj;
+            bmiHeader = (BitmapInfoHeader)obj;
+            bmiHeader = (BitmapInfoHeader)obj;
             return new Size(bmiHeader.Width, bmiHeader.Height);
           }
         }
@@ -278,11 +278,11 @@ namespace DShowNET.Helper
       {
         try
         {
-          DsBITMAPINFOHEADER bmiHeader;
+          BitmapInfoHeader bmiHeader;
           object obj = getStreamConfigSetting(_interfaceStreamConfigVideoPort, "BmiHeader");
           if (obj != null)
           {
-            bmiHeader = (DsBITMAPINFOHEADER)obj;
+            bmiHeader = (BitmapInfoHeader)obj;
             return new Size(bmiHeader.Width, bmiHeader.Height);
           }
         }
@@ -303,11 +303,11 @@ namespace DShowNET.Helper
         {
           try
           {
-            DsBITMAPINFOHEADER bmiHeader;
+            BitmapInfoHeader bmiHeader;
             object obj = getStreamConfigSetting(_interfaceStreamConfigVideoCapture, "BmiHeader");
             if (obj != null)
             {
-              bmiHeader = (DsBITMAPINFOHEADER)obj;
+              bmiHeader = (BitmapInfoHeader)obj;
               Log.Write("VideoCaptureDevice:change capture Framesize :{0}x{1} ->{2}x{3}", bmiHeader.Width, bmiHeader.Height, FrameSize.Width, FrameSize.Height);
               bmiHeader.Width = FrameSize.Width;
               bmiHeader.Height = FrameSize.Height;
@@ -324,11 +324,11 @@ namespace DShowNET.Helper
         {
           try
           {
-            DsBITMAPINFOHEADER bmiHeader;
+            BitmapInfoHeader bmiHeader;
             object obj = getStreamConfigSetting(_interfaceStreamConfigPreview, "BmiHeader");
             if (obj != null)
             {
-              bmiHeader = (DsBITMAPINFOHEADER)obj;
+              bmiHeader = (BitmapInfoHeader)obj;
               Log.Write("VideoCaptureDevice:change preview Framesize :{0}x{1} ->{2}x{3}", bmiHeader.Width, bmiHeader.Height, FrameSize.Width, FrameSize.Height);
               bmiHeader.Width = FrameSize.Width;
               bmiHeader.Height = FrameSize.Height;
@@ -345,11 +345,11 @@ namespace DShowNET.Helper
         {
           try
           {
-            DsBITMAPINFOHEADER bmiHeader;
+            BitmapInfoHeader bmiHeader;
             object obj = getStreamConfigSetting(_interfaceStreamConfigVideoPort, "BmiHeader");
             if (obj != null)
             {
-              bmiHeader = (DsBITMAPINFOHEADER)obj;
+              bmiHeader = (BitmapInfoHeader)obj;
               Log.Write("SWGraph:change vport Framesize :{0}x{1} ->{2}x{3}", bmiHeader.Width, bmiHeader.Height, FrameSize.Width, FrameSize.Height);
               bmiHeader.Width = FrameSize.Width;
               bmiHeader.Height = FrameSize.Height;
