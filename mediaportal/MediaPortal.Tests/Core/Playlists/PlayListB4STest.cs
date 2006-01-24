@@ -46,11 +46,5 @@ namespace MediaPortal.Tests.Core.Playlists
 
       Assert.AreEqual(oldXml, newXml);
     }
-
-    [Test]
-    public void FailingTest()
-    {
-      Assert.Fail("Hello ]-high-[");
-    }
   }
 }
