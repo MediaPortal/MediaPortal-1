@@ -72,6 +72,7 @@ namespace MediaPortal.Configuration.Sections
 
       videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
       audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
+      audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
     }
 
 		/// <summary>
@@ -92,7 +93,7 @@ namespace MediaPortal.Configuration.Sections
 
         //
         // Set codecs
-        //
+
         audioCodecComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
         videoCodecComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
 			}
