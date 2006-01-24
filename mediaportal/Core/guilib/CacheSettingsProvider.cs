@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Profile
 {
@@ -113,10 +114,11 @@ namespace MediaPortal.Profile
       provider.SetValue(section, entry, value);
     }
 
+#if DEBUG
     ~CacheSettingsProvider()
-    { //Debugging purposes
-      using (StreamWriter writer = File.CreateText("cache.log"))
-        writer.WriteLine(string.Format("Filename: {2} Cachehit: {0} Cachemiss: {1}", cacheHit, cacheMiss, provider.FileName));
+    { 
+      Log.Write("Filename: {0} Cachehit: {1} Cachemiss: {2}", provider.FileName, cacheHit, cacheMiss);
     }
+#endif
   }
 }
