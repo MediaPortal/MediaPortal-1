@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--   Version 1.0 -->
+
+<profile>
+  <section name="ChannelList">
+    
+	<entry name="abc-vic@abc.net.au">ABC-Vic</entry>			<!-- ABC VIC -->
+	<entry name="abc2@abc.net.au">ABC2</entry>				<!-- ABC2 -->
+	<entry name="7-vic-metro@seven.com.au">Seven-Mel</entry>		<!-- Seven Metro VIC -->
+	<entry name="9-vic-metro@ninemsn.com.au">Nine-Mel</entry>		<!-- Nine Metro VIC -->
+	<entry name="10-vic-metro@ten.com.au">Ten-Vic</entry>			<!-- Ten Metro VIC -->
+	<entry name="sbs@sbs.com.au">SBS-Vic</entry>				<!-- SBS VIC-->
+	<entry name="sbs2@sbs.com.au">SBSWN</entry>				<!-- SBS 2 (SBS news) -->
+	
+	<entry name="abc-nsw@abc.net.au">ABC-NSW</entry>			<!-- ABC NSW -->
+	<entry name="abc2@abc.net.au">ABC2</entry>				<!-- ABC2 -->
+	<entry name="7-nsw-metro@seven.com.au">Seven-Syd</entry>		<!-- Seven Metro NSW -->
+	<entry name="9-nsw-metro@ninemsn.com.au">Nine-Syd</entry>		<!-- Nine Metro NSW -->
+	<entry name="10-nsw-metro@ten.com.au">TEN-NSW</entry>			<!-- Ten Metro NSW -->
+	<entry name="sbs@sbs.com.au">SBS-NSW</entry>				<!-- SBS NSW -->
+	<entry name="sbs2@sbs.com.au">SBSWN</entry>				<!-- SBS 2 (SBS news) -->
+
+	<entry name="abc-sa@abc.net.au">ABC-SA</entry>				<!-- ABC SA -->
+	<entry name="abc2@abc.net.au">ABC2</entry>				<!-- ABC2 -->
+	<entry name="7-sa-metro@seven.com.au">Seven-SA</entry>			<!-- Seven Metro SA -->
+	<entry name="9-sa-metro@ninemsn.com.au">Nine-SA</entry>			<!-- Nine Metro SA -->
+	<entry name="10-sa-metro@ten.com.au">Ten-SA</entry>			<!-- Ten Metro SA -->
+	<entry name="sbs-sa@sbs.com.au">SBS-SA</entry>				<!-- SBS SA -->
+	<entry name="sbs2@sbs.com.au">SBSWN</entry>				<!-- SBS 2 (SBS news) -->
+
+	<entry name="abc-qld@abc.net.au">ABC-Qld</entry>			<!-- ABC QLD -->
+	<entry name="abc2@abc.net.au">ABC2</entry>				<!-- ABC2 -->
+	<entry name="7-qld-metro@seven.com.au">Seven-Bris</entry>		<!-- Seven Metro QLD -->
+	<entry name="9-qld-metro@ninemsn.com.au">Nine-Qld</entry>		<!-- Nine Metro QLD -->
+	<entry name="10-qld-metro@ten.com.au">Ten-Qld</entry>			<!-- Ten Metro QLD -->
+	<entry name="sbs@sbs.com.au">SBS-Qld</entry>				<!-- SBS QLD -->
+	<entry name="sbs2@sbs.com.au">SBSWN</entry>				<!-- SBS 2 (SBS news) -->
+
+	<entry name="abc-tas@abc.net.au">ABC-Tas</entry>			<!-- ABC TAS -->
+	<entry name="abc2@abc.net.au">ABC2</entry>				<!-- ABC2 -->
+	<!--<entry name="7-tas-metro@seven.com.au">?</entry>-->			<!-- Seven Metro TAS -->
+	<!--<entry name="9-tas-metro@ninemsn.com.au">?</entry>-->		<!-- Nine Metro TAS -->
+	<!--<entry name="10-tas-metro@ten.com.au">?</entry>-->			<!-- Ten Metro TAS -->
+	<entry name="sbs@sbs.com.au">SBS-Tas</entry>				<!-- SBS TAS -->
+	<entry name="sbs2@sbs.com.au">SBSWN</entry>				<!-- SBS 2 (SBS news) -->
+
+	<entry name="abc-wa@abc.net.au">ABC-WA</entry>				<!-- ABC WA -->
+	<entry name="abc2@abc.net.au">ABC2</entry>				<!-- ABC2 -->
+	<entry name="7-wa-metro@seven.com.au">Seven-WA</entry>			<!-- Seven Metro WA -->
+	<entry name="9-wa-metro@ninemsn.com.au">Nine-WA</entry>			<!-- Nine Metro WA -->
+	<entry name="10-wa-metro@ten.com.au">Ten-WA</entry>			<!-- Ten Metro WA -->
+	<entry name="sbs-wa@sbs.com.au">SBS-WA</entry>				<!-- SBS WA -->
+	<entry name="sbs2@sbs.com.au">SBSWN</entry>				<!-- SBS 2 (SBS news) -->
+
+	<entry name="abc-act@abc.net.au">ABC-Can</entry>			<!-- ABC ACT -->
+	<entry name="abc2@abc.net.au">ABC2</entry>				<!-- ABC2 -->
+	<!--<entry name="7-act-metro@seven.com.au">?</entry>-->			<!-- Seven Metro ACT -->
+	<!--<entry name="9-act-metro@ninemsn.com.au">?</entry>-->		<!-- Nine Metro ACT -->
+	<entry name="10-act-metro@ten.com.au">Ten-Can</entry>			<!-- Ten Metro ACT -->
+	<entry name="sbs@sbs.com.au">SBS-Can</entry>				<!-- SBS ACT -->
+	<entry name="sbs2@sbs.com.au">SBSWN</entry>				<!-- SBS 2 (SBS news) -->
+
+	<entry name="abc-nt@abc.net.au">ABC-NT</entry>				<!-- ABC NT -->
+	<entry name="abc2@abc.net.au">ABC2</entry>				<!-- ABC2 -->
+	<entry name="7-nt-metro@seven.com.au">Seven-Dar</entry>			<!-- Seven Metro NT -->
+	<entry name="9-nt-metro@ninemsn.com.au">Nine-NT</entry>			<!-- Nine Metro NT -->
+	<entry name="10-nt-metro@ten.com.au">?</entry>				<!-- Ten Metro NT -->
+	<entry name="sbs-nt@sbs.com.au">SBS-NT</entry>				<!-- SBS NT -->
+	<entry name="sbs2@sbs.com.au">SBSWN</entry>				<!-- SBS 2 (SBS news) -->
+
+<!-- Regional areas -->
+	<!-- Southern Cross is regional version of Ten -->
+	<entry name="sc-tas@ten.com.au">SC-Tas</entry>			<!-- Southern Cross Tas -->
+	<entry name="sc-gc@ten.com.au">SC10-GC</entry>				<!-- Southern Cross Gold Coast -->
+	<entry name="sc-nsw@ten.com.au">SC10-NSW</entry>			<!-- Southern Cross NSW -->
+	<entry name="sc-qld@ten.com.au">SC10-Qld</entry>			<!-- Southern Cross Qld -->
+	<entry name="sc-vic@ten.com.au">SC10-Vic</entry>			<!-- Southern Cross Vic -->
+
+	<!-- WIN TV is regional version of Nine -->
+	<entry name="win-can@ninemsn.com.au">WIN-Can</entry>			<!-- WIN Canberra -->
+	<entry name="win-nsw@ninemsn.com.au">WIN-NSW</entry>			<!-- WIN NSW -->
+	<entry name="win-qld@ninemsn.com.au">WIN-Qld</entry>			<!-- WIN Qld -->
+	<entry name="win-tas@ninemsn.com.au">WIN-Tas</entry>			<!-- WIN Tas -->
+	<entry name="win-vic@ninemsn.com.au">WIN-Vic</entry>			<!-- WIN Vic -->
+	<entry name="win-wa@ninemsn.com.au">WIN-WA</entry>			<!-- WIN WA -->
+
+	<!-- Prime is regional version of Seven -->
+	<entry name="prime-can@seven.com.au">Prime-Can</entry>			<!-- Prime Canberra -->
+	<entry name="prime-gc@seven.com.au">Prime-GC</entry>			<!-- Prime Gold Coast -->
+	<entry name="prime-vic@seven.com.au">Prime-Vic</entry>			<!-- Prime Victoria -->
+
+	<!-- Channel 31 is a capital city public broadcaster -->
+	<entry name="channel31-adl@channel31.com.au">31-Adl</entry>		<!-- Channel 31 Adelaide -->
+	<entry name="channel31-mel@channel31.com.au">31-Mel</entry>		<!-- Channel 31 Melbourne -->
+	<entry name="channel31-per@channel31.com.au">31-Per</entry>		<!-- Channel 31 Melbourne -->
+
+
+
+  </section>
+<!-- Formating of Listing -->
+  <section name="Listing"> 
+    <entry name="BaseURL">http://minnie.tuhs.org/tivo-bin/tvguide.pl</entry>
+    <entry name="SearchURL">?page=rawstationday&amp;type=view&amp;data=#EPOCH_DATE&amp;data2=#ID</entry>
+    <entry name="ListingType">XML</entry>
+    <entry name="XPath">//programme</entry>
+    <entry name="StartEntry">start</entry>
+    <entry name="EndEntry">stop</entry>
+    <entry name="TitleEntry">title</entry>
+    <entry name="DescEntry">desc</entry>
+    <entry name="GenreEntry">category</entry>
+  </section>
+  <section name="Info">
+    <entry name="GuideDays">7</entry>
+    <entry name="Lang">en</entry>
+    <entry name="Login">yes</entry>   
+  </section>
+</profile>
