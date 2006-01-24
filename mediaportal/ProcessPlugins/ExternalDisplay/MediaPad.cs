@@ -62,7 +62,7 @@ namespace ProcessPlugins.ExternalDisplay
 
     public string ErrorMessage
     {
-      get { return ErrorMessage; }
+      get { return errorMessage; }
     }
 
 

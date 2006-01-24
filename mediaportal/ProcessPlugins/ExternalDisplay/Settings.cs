@@ -20,6 +20,7 @@
  */
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -28,7 +29,6 @@ using System.Xml.Serialization;
 using ExternalDisplay.Setting;
 using MediaPortal.GUI.Library;
 using ProcessPlugins.ExternalDisplay.Setting;
-using System.Collections.Generic;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -46,6 +46,7 @@ namespace ProcessPlugins.ExternalDisplay
     #region Singleton implementation
 
     private static Settings m_Instance; //Reference to the single instance of this task
+
     /// <summary>
     /// Gets the single instance
     /// </summary>
@@ -64,23 +65,13 @@ namespace ProcessPlugins.ExternalDisplay
 
     #endregion
 
-    #region Lifecycle
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <remarks>
-    /// Never call this method yourself!!!  Please use the static <see cref="Instance"/ property to get a
-    /// reference to the single instance of this class>
-    /// </remarks>
-    public Settings() //Has to be public for XmlSerializer
-    {}
-
-    #endregion
-
     #region Properties
 
-    [XmlAttribute] public string Type = null; //String representation of the selected display type.  Used for (de)serializing
+    /// <summary>
+    /// String representation of the selected display type.  Used for (de)serializing
+    /// </summary>
+    [XmlAttribute] public string Type = null;
+
 
     /// <summary>
     /// The selected display type
@@ -90,22 +81,37 @@ namespace ProcessPlugins.ExternalDisplay
     {
       get
       {
-        if (ExtensiveLogging) Log.Write("ExternalDisplay: Determining configured display type...");
+        if (ExtensiveLogging)
+        {
+          Log.Write("ExternalDisplay: Determining configured display type...");
+        }
         if (Type == null) //If no type selected, take the first one in the list
         {
-          if (ExtensiveLogging) Log.Write("ExternalDisplay: Requested type was NULL.  Returning first type found...");
+          if (ExtensiveLogging)
+          {
+            Log.Write("ExternalDisplay: Requested type was NULL.  Returning first type found...");
+          }
           return Drivers[0];
         }
-        if (ExtensiveLogging) Log.Write("ExternalDisplay: Searching type {0}...",Type);
+        if (ExtensiveLogging)
+        {
+          Log.Write("ExternalDisplay: Searching type {0}...", Type);
+        }
         foreach (IDisplay disp in Drivers) //otherwise get the instance with the correct name
         {
-          if (string.Compare(disp.Name,Type,true,CultureInfo.InvariantCulture)==0)
+          if (string.Compare(disp.Name, Type, true, CultureInfo.InvariantCulture) == 0)
           {
-            if (ExtensiveLogging) Log.Write("ExternalDisplay: Requested type was found.");
+            if (ExtensiveLogging)
+            {
+              Log.Write("ExternalDisplay: Requested type was found.");
+            }
             return disp;
           }
         }
-        if (ExtensiveLogging) Log.Write("ExternalDisplay: Requested type not found.");
+        if (ExtensiveLogging)
+        {
+          Log.Write("ExternalDisplay: Requested type not found.");
+        }
         return null;
       }
       set { Type = value.Name; }
@@ -124,6 +130,7 @@ namespace ProcessPlugins.ExternalDisplay
     }
 
     private string m_Port = "378"; //LPT1:0x378 LPT2:0x278 LPT3:3BC LPT4:178
+
     /// <summary>
     /// The port the display is attached to
     /// </summary>
@@ -139,8 +146,8 @@ namespace ProcessPlugins.ExternalDisplay
     {
       get
       {
-        string p = this.Port;
-        switch(p)
+        string p = Port;
+        switch (p)
         {
           case "378":
             return "LPT1";
@@ -156,22 +163,22 @@ namespace ProcessPlugins.ExternalDisplay
       }
       set
       {
-        switch(value)
+        switch (value)
         {
           case "LPT1":
-            m_Port="378";
+            m_Port = "378";
             break;
           case "LPT2":
-            m_Port="278";
+            m_Port = "278";
             break;
           case "LPT3":
-            m_Port="3BC";
+            m_Port = "3BC";
             break;
           case "LPT4":
-            m_Port="178";
+            m_Port = "178";
             break;
           default:
-            m_Port=value;
+            m_Port = value;
             break;
         }
       }
@@ -262,7 +269,7 @@ namespace ProcessPlugins.ExternalDisplay
     }
 
     private int m_Contrast = 127;
-    
+
     /// <summary>
     /// Contrast
     /// </summary>
@@ -289,6 +296,7 @@ namespace ProcessPlugins.ExternalDisplay
     //
 
     private int m_ScrollDelay = 300;
+
     /// <summary>
     /// Scrolling delay
     /// </summary>
@@ -301,25 +309,21 @@ namespace ProcessPlugins.ExternalDisplay
 
 
     private bool m_ExtensiveLogging = true;
+
     [XmlAttribute]
     public bool ExtensiveLogging
     {
-      get
-      {
-        return m_ExtensiveLogging;
-      }
-      set
-      {
-        m_ExtensiveLogging=value;
-      }
+      get { return m_ExtensiveLogging; }
+      set { m_ExtensiveLogging = value; }
     }
 
     /// <summary>
     /// List of message rules
     /// </summary>
-    [XmlElement("Message", typeof (Message))] public List<Message> Messages = new List<Message>();
+    [XmlElement("Message", typeof(Message))] public List<Message> Messages = new List<Message>();
 
     private IDisplay[] m_Drivers = null;
+
     /// <summary>
     /// List of display drivers
     /// </summary>
@@ -337,33 +341,22 @@ namespace ProcessPlugins.ExternalDisplay
     }
 
     private string[] m_TranslateFrom;
+
     [XmlArray]
     public string[] TranslateFrom
     {
-      get
-      {
-        return m_TranslateFrom;
-      }
-      set
-      {
-        m_TranslateFrom = value;
-      }
+      get { return m_TranslateFrom; }
+      set { m_TranslateFrom = value; }
     }
 
     private string[] m_TranslateTo;
+
     [XmlArray]
     public string[] TranslateTo
     {
-      get
-      {
-        return m_TranslateTo;
-      }
-      set
-      {
-        m_TranslateTo = value;
-      }
+      get { return m_TranslateTo; }
+      set { m_TranslateTo = value; }
     }
-
 
     #endregion
 
@@ -375,10 +368,10 @@ namespace ProcessPlugins.ExternalDisplay
     /// <returns>The loaded settings</returns>
     private static Settings Load()
     {
-      Settings settings = null;
+      Settings settings;
       if (File.Exists("ExternalDisplay.xml"))
       {
-        XmlSerializer ser = new XmlSerializer(typeof (Settings));
+        XmlSerializer ser = new XmlSerializer(typeof(Settings));
         XmlTextReader rdr = new XmlTextReader("ExternalDisplay.xml");
         settings = (Settings) ser.Deserialize(rdr);
         rdr.Close();
@@ -397,11 +390,11 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public static void Save()
     {
-      XmlSerializer ser = new XmlSerializer(typeof (Settings));
+      XmlSerializer ser = new XmlSerializer(typeof(Settings));
       XmlTextWriter w = new XmlTextWriter("ExternalDisplay.xml", Encoding.UTF8);
       w.Formatting = Formatting.Indented;
       w.Indentation = 2;
-      ser.Serialize(w, Settings.Instance);
+      ser.Serialize(w, Instance);
       w.Close();
     }
 
@@ -414,20 +407,46 @@ namespace ProcessPlugins.ExternalDisplay
     {
       Log.Write("ExternalDisplay: Loading drivers...");
       ArrayList list = new ArrayList();
-      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading DebugForm...");
+      if (ExtensiveLogging)
+      {
+        Log.Write("ExternalDisplay: Loading DebugForm...");
+      }
       list.Add(new DebugForm());
-      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading VLSYSLis2...");
+      if (ExtensiveLogging)
+      {
+        Log.Write("ExternalDisplay: Loading VLSYSLis2...");
+      }
       list.Add(new VLSYSLis2()); // Added by Nopap
-      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading iMON...");
+      if (ExtensiveLogging)
+      {
+        Log.Write("ExternalDisplay: Loading iMON...");
+      }
       list.Add(new iMON());
-      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading ClipBoard...");
+      if (ExtensiveLogging)
+      {
+        Log.Write("ExternalDisplay: Loading ClipBoard...");
+      }
       list.Add(new Clipboard());
-      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading Girder...");
+      if (ExtensiveLogging)
+      {
+        Log.Write("ExternalDisplay: Loading Girder...");
+      }
       list.Add(new Girder());
-      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading MediaPad...");
+      if (ExtensiveLogging)
+      {
+        Log.Write("ExternalDisplay: Loading MediaPad...");
+      }
       list.Add(new MediaPad());
-      if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading PropertySetter...");
+      if (ExtensiveLogging)
+      {
+        Log.Write("ExternalDisplay: Loading PropertySetter...");
+      }
       list.Add(new None());
+      if (ExtensiveLogging)
+      {
+        Log.Write("ExternalDisplay: Loading CrystalFontz634...");
+      }
+      list.Add(new CrystalFontz634());
       DirectoryInfo dinfo = new DirectoryInfo(@"plugins\process\LCDDrivers");
       if (!dinfo.Exists)
       {
@@ -435,12 +454,18 @@ namespace ProcessPlugins.ExternalDisplay
       }
       foreach (FileInfo fi in dinfo.GetFiles("*.dll"))
       {
-        if (ExtensiveLogging) Log.Write("ExternalDisplay: Loading {0}...",fi.FullName);
+        if (ExtensiveLogging)
+        {
+          Log.Write("ExternalDisplay: Loading {0}...", fi.FullName);
+        }
         list.Add(new LCDHypeWrapper(fi.FullName));
       }
       m_Drivers = new IDisplay[list.Count];
       list.CopyTo(m_Drivers);
-      if (ExtensiveLogging) Log.Write("ExternalDisplay: Driver loading complete...");
+      if (ExtensiveLogging)
+      {
+        Log.Write("ExternalDisplay: Driver loading complete...");
+      }
     }
 
     /// <summary>
@@ -449,8 +474,8 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="_settings"></param>
     private static void Default(Settings _settings)
     {
-      _settings.TranslateFrom = new string[] {"©","®"};
-      _settings.TranslateTo = new string[]   {"(c)","(R)"};
+      _settings.TranslateFrom = new string[] {"©", "®"};
+      _settings.TranslateTo = new string[] {"(c)", "(R)"};
 
       Message msg;
       Line line;
@@ -467,7 +492,7 @@ namespace ProcessPlugins.ExternalDisplay
       //
       msg = new Message();
       msg.Status = Status.Action;
-      msg.Windows.Add((int)GUIWindow.Window.WINDOW_TV);
+      msg.Windows.Add((int) GUIWindow.Window.WINDOW_TV);
       msg.Lines.Add(new Line(new Property("#currentmodule")));
       line = new Line();
       line.values.Add(new Property("#TV.View.channel"));
@@ -530,7 +555,8 @@ namespace ProcessPlugins.ExternalDisplay
       msg.Status = Status.PlayingTV;
       msg.Lines.Add(new Line(new Property("#TV.View.channel")));
       line = new Line();
-      line.values.Add(new Parse("#TV.View.title (#TV.View.start->#TV.View.stop)", new NotNullCondition("#TV.View.title")));
+      line.values.Add(
+        new Parse("#TV.View.title (#TV.View.start->#TV.View.stop)", new NotNullCondition("#TV.View.title")));
       line.values.Add(new Text(": #736", new IsNullCondition("#TV.View.title")));
       msg.Lines.Add(line);
       _settings.Messages.Add(msg);
@@ -541,8 +567,10 @@ namespace ProcessPlugins.ExternalDisplay
       msg.Status = Status.Timeshifting;
       msg.Lines.Add(new Line(new Property("#TV.View.channel")));
       line = new Line();
-      line.values.Add(new Parse("#TV.View.title (#TV.View.start->#TV.View.stop)", new NotNullCondition("#TV.View.title")));
-      line.values.Add(new Text(" (#112)", new AndCondition(new NotNullCondition("#paused"), new NotNullCondition("#TV.View.title"))));
+      line.values.Add(
+        new Parse("#TV.View.title (#TV.View.start->#TV.View.stop)", new NotNullCondition("#TV.View.title")));
+      line.values.Add(
+        new Text(" (#112)", new AndCondition(new NotNullCondition("#paused"), new NotNullCondition("#TV.View.title"))));
       line.values.Add(new Text(": #736", new IsNullCondition("#TV.View.title")));
       msg.Lines.Add(line);
       _settings.Messages.Add(msg);
@@ -584,6 +612,5 @@ namespace ProcessPlugins.ExternalDisplay
       msg.Lines.Add(new Line(new Property("#selecteditem")));
       _settings.Messages.Add(msg);
     }
-
   }
 }

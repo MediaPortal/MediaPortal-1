@@ -21,7 +21,6 @@
 
 using System;
 using System.ComponentModel;
-using System.IO;
 using System.Windows.Forms;
 
 namespace ProcessPlugins.ExternalDisplay
@@ -31,7 +30,6 @@ namespace ProcessPlugins.ExternalDisplay
   /// </summary>
   public class SetupForm : Form
   {
-
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -60,9 +58,9 @@ namespace ProcessPlugins.ExternalDisplay
     private CheckBox cbPropertyBrowser;
     private Button btnOK;
     private Button btnAdvanced;
-    private System.Windows.Forms.TrackBar tbContrast;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.ErrorProvider errorProvider;
+    private TrackBar tbContrast;
+    private Label label5;
+    private ErrorProvider errorProvider;
     private IDisplay lcd = null;
 
     public SetupForm()
@@ -85,7 +83,7 @@ namespace ProcessPlugins.ExternalDisplay
       txtRowsG.DataBindings.Add("Text", Settings.Instance, "GraphicHeight");
       txtTim.DataBindings.Add("Text", Settings.Instance, "TextComDelay");
       txtTimG.DataBindings.Add("Text", Settings.Instance, "GraphicComDelay");
-      tbContrast.DataBindings.Add ("Value", Settings.Instance, "Contrast");
+      tbContrast.DataBindings.Add("Value", Settings.Instance, "Contrast");
       lcd = Settings.Instance.LCDType;
       cmbType.SelectedItem = lcd;
       VerifyLCDType();
@@ -141,14 +139,16 @@ namespace ProcessPlugins.ExternalDisplay
       this.btnOK = new System.Windows.Forms.Button();
       this.errorProvider = new System.Windows.Forms.ErrorProvider();
       this.groupBox1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize) (this.tbContrast)).BeginInit();
       this.gbGraphMode.SuspendLayout();
       this.gbTextMode.SuspendLayout();
       this.SuspendLayout();
       // 
       // btnAdvanced
       // 
-      this.btnAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnAdvanced.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnAdvanced.Location = new System.Drawing.Point(226, 208);
       this.btnAdvanced.Name = "btnAdvanced";
       this.btnAdvanced.Size = new System.Drawing.Size(88, 23);
@@ -159,17 +159,24 @@ namespace ProcessPlugins.ExternalDisplay
       // cmbPort
       // 
       this.cmbPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbPort.Items.AddRange(new object[] {
-                                                 "LPT1",
-                                                 "LPT2",
-                                                 "LPT3",
-                                                 "LPT4",
-                                                 "USB",
-                                                 "COM1",
-                                                 "COM2",
-                                                 "COM3",
-                                                 "COM4",
-                                                 "NONE"});
+      this.cmbPort.Items.AddRange(new object[]
+                                    {
+                                      "LPT1",
+                                      "LPT2",
+                                      "LPT3",
+                                      "LPT4",
+                                      "USB",
+                                      "COM1",
+                                      "COM2",
+                                      "COM3",
+                                      "COM4",
+                                      "COM5",
+                                      "COM6",
+                                      "COM7",
+                                      "COM8",
+                                      "NONE",
+                                      "localhost"
+                                    });
       this.cmbPort.Location = new System.Drawing.Point(40, 48);
       this.cmbPort.Name = "cmbPort";
       this.cmbPort.Size = new System.Drawing.Size(64, 21);
@@ -186,8 +193,10 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label5);
       this.groupBox1.Controls.Add(this.tbContrast);
       this.groupBox1.Controls.Add(this.gbGraphMode);
@@ -367,8 +376,10 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // cmbType
       // 
-      this.cmbType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.cmbType.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbType.Location = new System.Drawing.Point(40, 16);
       this.cmbType.Name = "cmbType";
@@ -416,7 +427,7 @@ namespace ProcessPlugins.ExternalDisplay
       this.Name = "SetupForm";
       this.Text = "ExternalDisplay Configuration";
       this.groupBox1.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).EndInit();
+      ((System.ComponentModel.ISupportInitialize) (this.tbContrast)).EndInit();
       this.gbGraphMode.ResumeLayout(false);
       this.gbTextMode.ResumeLayout(false);
       this.ResumeLayout(false);
@@ -426,21 +437,21 @@ namespace ProcessPlugins.ExternalDisplay
 
     private void btnAdvanced_Click(object sender, EventArgs e)
     {
-      this.Cursor = Cursors.WaitCursor;
+      Cursor = Cursors.WaitCursor;
       try
       {
         lcd.Configure();
       }
       finally
       {
-        this.Cursor = Cursors.Default;
+        Cursor = Cursors.Default;
       }
     }
 
     private void btnOK_Click(object sender, EventArgs e)
     {
       Settings.Save();
-      this.Close();
+      Close();
     }
 
     private void cmbType_SelectionChangeCommitted(object sender, EventArgs e)
@@ -453,27 +464,17 @@ namespace ProcessPlugins.ExternalDisplay
       lcd = cmbType.SelectedItem as IDisplay;
       if (lcd.IsDisabled)
       {
-        if (!ExternalDisplay.VerifyDriverLynxDriver())
-        {
-          errorProvider.SetError(cmbType, "This driver needs the DriverLYNX Port I/O Driver installed on your system\nYou can download it here: http://www.driverlinx.com/DownLoad/DlPortIO.htm");
-        }
-        else
-        {
-          errorProvider.SetError(cmbType, "This driver is disabled because it is missing an unknown required DLL");
-        }
+        errorProvider.SetError(cmbType, lcd.ErrorMessage);
         btnOK.Enabled = false;
       }
       else
       {
-        errorProvider.SetError(cmbType,null);
+        errorProvider.SetError(cmbType, null);
         btnOK.Enabled = true;
       }
       gbGraphMode.Visible = lcd.SupportsGraphics;
       gbTextMode.Visible = lcd.SupportsText;
       Settings.Instance.LCDType = lcd;
     }
-
-
-
   }
 }

@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -21,19 +21,20 @@
 
 using System;
 using System.IO.Ports;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 
 namespace ProcessPlugins.ExternalDisplay
 {
   /// <summary>
-  /// VL System L.I.S. 2 Driver
+  /// CrystalFontz 634 driver
   /// </summary>
   /// <author>Nopap</author>
-  public class VLSYSLis2 : IDisplay
+  public class CrystalFontz634 : IDisplay
   {
     private SerialPort commPort = null;
-    private int lines = 2;
-    private int cols = 40;
+    private int lines = 4;
+
     private bool isDisabled = false;
     private string errorMessage = "";
 
@@ -57,23 +58,20 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="message">The message to display</param>
     public void SetLine(int line, string message)
     {
-      commPort.Write(new byte[] {0},0,1);
-      if (line == 0)
+      if (line >= lines)
       {
-        commPort.Write(new byte[] {0xA1},0,1);
-      }
-      else if (line == 1)
-      {
-        commPort.Write(new byte[] {0xA2},0,1);
-      }
-      else
-      {
-        Log.Write("VLSYSLis2.SetLine: error bad line number" + line);
+        Log.Write("CrystalFontz634.SetLine: error bad line number" + line);
         return;
       }
-      commPort.Write(new byte[] { 0, 0xA7},0,2);
-      commPort.Write(message);
-      commPort.Write(new byte[] {0},0,1);
+      try
+      {
+        commPort.Write(new byte[] {17, 0, (byte) line}, 0, 3);
+        commPort.Write(message);
+      }
+      catch (Exception ex)
+      {
+        Log.Write("CrystalFontz634.SetLine: " + ex.Message);
+      }
     }
 
     /// <summary>
@@ -81,7 +79,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public string Name
     {
-      get { return "VLSYSLis2"; }
+      get { return "CrystalFontz634"; }
     }
 
     /// <summary>
@@ -89,7 +87,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public string Description
     {
-      get { return "VL System L.I.S 2 driver V1.0, by Nopap"; }
+      get { return "CrystalFontz 634 driver"; }
     }
 
     /// <summary>
@@ -113,7 +111,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public void Configure()
     {
-      //Nothing to configure
+      MessageBox.Show("No advanced configuration", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     /// <summary>
@@ -130,24 +128,29 @@ namespace ProcessPlugins.ExternalDisplay
     public void Initialize(string _port, int _lines, int _cols, int _delay, int _linesG, int _colsG, int _delayG,
                            bool _backLight, int _contrast)
     {
+      lines = _lines;
       try
       {
         commPort = new SerialPort(_port, 19200, Parity.None, 8, StopBits.One);
+        commPort.Handshake = Handshake.None;
+        //enable RTS and DTR lines to power the display
+        commPort.DtrEnable = true;
+        commPort.RtsEnable = true;
         commPort.Open();
+        commPort.Write(new byte[] {20, 24}, 0, 2); //Turn off scrolling and wrapping
       }
       catch (Exception ex)
       {
-        Log.Write("VLSYSLis2.Initialize: " + ex.Message);
+        Log.Write("CrystalFontz634.Initialize: " + ex.Message);
       }
     }
 
+    /// <summary>
+    /// Clears the display
+    /// </summary>
     public void Clear()
     {
-      string s = new string(' ', cols);
-      for (int i = 0; i < lines; i++)
-      {
-        SetLine(i, s);
-      }
+      commPort.Write(new byte[] {12}, 0, 1);
     }
 
     #endregion
@@ -165,7 +168,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Write("VLSYSLis2.Dispose: " + ex.Message);
+        Log.Write("CrystalFontz634.Dispose: " + ex.Message);
       }
     }
 

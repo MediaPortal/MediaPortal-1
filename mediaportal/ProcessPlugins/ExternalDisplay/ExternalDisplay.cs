@@ -27,7 +27,7 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using Microsoft.Win32;
-using Message = ProcessPlugins.ExternalDisplay.Setting.Message;
+using Message=ProcessPlugins.ExternalDisplay.Setting.Message;
 
 namespace ProcessPlugins.ExternalDisplay
 {
@@ -37,13 +37,13 @@ namespace ProcessPlugins.ExternalDisplay
   /// <author>JoeDalton</author>
   public class ExternalDisplay : IPlugin, ISetupForm
   {
-    private const int WindowID        = 9876;               //The ID for this plugin
-    private IDisplay display          = null;
-    private bool stopRequested        = false;
+    private const int WindowID = 9876; //The ID for this plugin
+    private IDisplay display = null;
+    private bool stopRequested = false;
     private DisplayHandler handler;
-    private Status status             = Status.Idle;
-    private DateTime lastAction       = DateTime.MinValue;  //Keeps track of when last action occurred
-    private PropertyBrowser browser   = null;
+    private Status status = Status.Idle;
+    private DateTime lastAction = DateTime.MinValue; //Keeps track of when last action occurred
+    private PropertyBrowser browser = null;
     private Thread t;
 
     #region IPlugin implementation
@@ -81,10 +81,14 @@ namespace ProcessPlugins.ExternalDisplay
         }
         if (display is LCDHypeWrapper && !VerifyDriverLynxDriver())
         {
-          Log.Write("ExternalDisplay: DriverLYNX Port I/O Driver (needed for the choosen display type) not detected.  Plugin not started!");
+          Log.Write(
+            "ExternalDisplay: DriverLYNX Port I/O Driver (needed for the choosen display type) not detected.  Plugin not started!");
           return;
         }
-        display.Initialize(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth, Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight, Settings.Instance.GraphicWidth, Settings.Instance.GraphicComDelay, Settings.Instance.BackLight, Settings.Instance.Contrast);
+        display.Initialize(Settings.Instance.Port, Settings.Instance.TextHeight, Settings.Instance.TextWidth,
+                           Settings.Instance.TextComDelay, Settings.Instance.GraphicHeight,
+                           Settings.Instance.GraphicWidth, Settings.Instance.GraphicComDelay,
+                           Settings.Instance.BackLight, Settings.Instance.Contrast);
         //Start the background thread
         stopRequested = false;
         t = new Thread(new ThreadStart(Run));
@@ -112,7 +116,7 @@ namespace ProcessPlugins.ExternalDisplay
         handler = new DisplayHandler(display);
         handler.Start();
         //Start property browser if needed
-        while(!stopRequested)
+        while (!stopRequested)
         {
           DoWork();
           handler.DisplayLines();
@@ -150,7 +154,7 @@ namespace ProcessPlugins.ExternalDisplay
         stopRequested = true;
         while (t.IsAlive)
         {
-          System.Windows.Forms.Application.DoEvents();
+          Application.DoEvents();
           Thread.Sleep(100);
         }
         t = null;
@@ -160,6 +164,7 @@ namespace ProcessPlugins.ExternalDisplay
         Log.Write("ExternalDisplay.Stop: " + ex.Message);
       }
     }
+
     #endregion
 
     #region ISetupForm implementation
@@ -246,12 +251,13 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="strButtonImageFocus">image for the button, or empty for default</param>
     /// <param name="strPictureImage">subpicture for the button or empty for none</param>
     /// <returns>false : plugin does not need its own button on home</returns>
-    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus,
+                        out string strPictureImage)
     {
-      strButtonText       = null;
-      strButtonImage      = null;
+      strButtonText = null;
+      strButtonImage = null;
       strButtonImageFocus = null;
-      strPictureImage     = null;
+      strPictureImage = null;
       return false;
     }
 
@@ -262,8 +268,6 @@ namespace ProcessPlugins.ExternalDisplay
     /// composing the wanted message, and sending that message to the <see cref="DisplayHandler"/>
     /// that will send it to the attached display.
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     /// <remarks>
     /// This method is automatically called every 100ms when mediaportal is running
     /// </remarks>
@@ -329,7 +333,7 @@ namespace ProcessPlugins.ExternalDisplay
         foreach (Message msg in Settings.Instance.Messages)
         {
           if ((msg.Status == Status.Any || msg.Status == status) &&
-            (msg.Windows.Count == 0 || msg.Windows.Contains((int)activeWindow)))
+              (msg.Windows.Count == 0 || msg.Windows.Contains((int) activeWindow)))
           {
             if (msg.Process(handler))
             {
@@ -374,36 +378,36 @@ namespace ProcessPlugins.ExternalDisplay
     }
 
     /// <summary>
-    /// Gets called when an <see cref="Action"/> occured in MediaPortal
+    /// Gets called when an <see cref="MediaPortal.GUI.Library.Action"/> occured in MediaPortal
     /// </summary>
     /// <remarks>95% of the time, actions are caused by the user pressing a key</remarks>
-    /// <param name="action">The <see cref="Action"/> that occurred.</param>
+    /// <param name="action">The <see cref="MediaPortal.GUI.Library.Action"/> that occurred.</param>
     private void GUIWindowManager_OnNewAction(Action action)
     {
-      lastAction = DateTime.Now;  //Update last action time
+      lastAction = DateTime.Now; //Update last action time
     }
 
-    bool IsTVWindow(int windowId)
+    private bool IsTVWindow(int windowId)
     {
-      if (windowId== (int)GUIWindow.Window.WINDOW_TV) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_TVGUIDE) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_RECORDEDTV) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_SCHEDULER) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_SEARCHTV) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_TELETEXT) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_TV_CONFLICTS) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL) return true;
-      if (windowId== (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TVFULLSCREEN) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TVGUIDE) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_RECORDEDTV) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_RECORDEDTVGENRE) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_SCHEDULER) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_SEARCHTV) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TELETEXT) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_CONFLICTS) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_NO_SIGNAL) return true;
+      if (windowId == (int) GUIWindow.Window.WINDOW_TV_PROGRAM_INFO) return true;
       return false;
     }
 
@@ -413,13 +417,12 @@ namespace ProcessPlugins.ExternalDisplay
     internal static bool VerifyDriverLynxDriver()
     {
       FileInfo dll = new FileInfo(string.Concat(Environment.SystemDirectory, @"\DLPORTIO.dll"));
-      FileInfo sys = new FileInfo(string.Concat(Environment.SystemDirectory,@"\DRIVERS\DLPORTIO.SYS"));
+      FileInfo sys = new FileInfo(string.Concat(Environment.SystemDirectory, @"\DRIVERS\DLPORTIO.SYS"));
       if (!(dll.Exists && sys.Exists))
       {
         return false;
       }
       return true;
     }
-
   }
 }

@@ -23,14 +23,13 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
-using System.Diagnostics;
 
 namespace ProcessPlugins.ExternalDisplay
 {
-
   public class LCDHypeWrapper : IDisplay
   {
-    private const MethodAttributes METHOD_ATTRIBUTES = MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig;
+    private const MethodAttributes METHOD_ATTRIBUTES =
+      MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.PinvokeImpl | MethodAttributes.HideBySig;
     private const BindingFlags BINDING_FLAGS = BindingFlags.InvokeMethod | BindingFlags.Static | BindingFlags.Public;
     private string dllFile;
     private static ModuleBuilder s_mb;
@@ -54,6 +53,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
+        isDisabled = true;
         if (ex is TargetInvocationException)
         {
           Exception innerException = ex.InnerException;
@@ -74,19 +74,21 @@ namespace ProcessPlugins.ExternalDisplay
 
     public string ErrorMessage
     {
-      get { return ErrorMessage; }
+      get { return errorMessage; }
     }
 
     public void Configure()
     {
       try
       {
-        m_tDllReg.InvokeMember("LCD_ConfigDialog",BINDING_FLAGS,null,null,null);
+        m_tDllReg.InvokeMember("LCD_ConfigDialog", BINDING_FLAGS, null, null, null);
       }
-      catch(TargetInvocationException ex)
+      catch (TargetInvocationException ex)
       {
         if (ex.InnerException is EntryPointNotFoundException)
+        {
           return;
+        }
         throw;
       }
     }
@@ -95,26 +97,29 @@ namespace ProcessPlugins.ExternalDisplay
 
     public string Name
     {
-      get {return name;}
+      get { return name; }
     }
 
     private string m_Description = null;
 
-      public string Description
+    public string Description
+    {
+      get
       {
-          get
+        if (m_Description == null)
+        {
+          if (info.IDArray == null || isDisabled)
           {
-              if (m_Description == null)
-              {
-                  if (info.IDArray==null || isDisabled)
-                      return Name + " (disabled)";
-                  int i = 0;
-                  for (; i < 256 && info.IDArray[i] != 0; i++) ;
-                  m_Description = new string(info.IDArray, 0, i);
-              }
-              return m_Description;
+            return Name + " (disabled)";
           }
+          int i = 0;
+          for (; i < 256 && info.IDArray[i] != 0; i++)
+          {}
+          m_Description = new string(info.IDArray, 0, i);
+        }
+        return m_Description;
       }
+    }
 
     public bool SupportsText
     {
@@ -126,21 +131,27 @@ namespace ProcessPlugins.ExternalDisplay
       get { return info.SupportGfxLCD; }
     }
 
-    public void Initialize(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG, bool _backLight, int _contrast)
+    public void Initialize(string _port, int _lines, int _cols, int _time, int _linesG, int _colsG, int _timeG,
+                           bool _backLight, int _contrast)
     {
       if (!SupportsGraphics)
       {
-        _linesG=0;
-        _colsG=0;
-        _timeG=0;
+        _linesG = 0;
+        _colsG = 0;
+        _timeG = 0;
       }
 
-      m_tDllReg.InvokeMember("LCD_SetIOPropertys",BINDING_FLAGS,null,null,new object[] {_port ,_time, _timeG, _cols, _lines, _colsG, _linesG,_backLight,(byte)127,info.SupportContrastSlider,(byte) _contrast,0,false,false});
+      m_tDllReg.InvokeMember("LCD_SetIOPropertys", BINDING_FLAGS, null, null,
+                             new object[]
+                               {
+                                 _port, _time, _timeG, _cols, _lines, _colsG, _linesG, _backLight, (byte) 127,
+                                 info.SupportContrastSlider, (byte) _contrast, 0, false, false
+                               });
     }
 
     public void Cleanup()
     {
-      m_tDllReg.InvokeMember("LCD_CleanUp",BINDING_FLAGS,null,null,null);
+      m_tDllReg.InvokeMember("LCD_CleanUp", BINDING_FLAGS, null, null, null);
     }
 
     /// <summary>
@@ -150,24 +161,26 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="_message">The message to show.</param>
     public void SetLine(int _line, string _message)
     {
-      SetPosition(0,_line);
+      SetPosition(0, _line);
       SendText(_message);
     }
 
     protected void SetPosition(int x, int y)
     {
-      m_tDllReg.InvokeMember("LCD_SetOutputAddress",BINDING_FLAGS,null,null,new object[] {x,y});
+      m_tDllReg.InvokeMember("LCD_SetOutputAddress", BINDING_FLAGS, null, null, new object[] {x, y});
     }
 
     private void SendText(string _text)
     {
-      for(int i=0; i<_text.Length;i++)
-        m_tDllReg.InvokeMember("LCD_SendToMemory",BINDING_FLAGS,null,null, new object[] {_text[i]});
+      for (int i = 0; i < _text.Length; i++)
+      {
+        m_tDllReg.InvokeMember("LCD_SendToMemory", BINDING_FLAGS, null, null, new object[] {_text[i]});
+      }
     }
 
     public void Clear()
     {
-      m_tDllReg.InvokeMember("LCD_Init",BINDING_FLAGS,null,null,null);
+      m_tDllReg.InvokeMember("LCD_Init", BINDING_FLAGS, null, null, null);
     }
 
     #endregion
@@ -176,80 +189,94 @@ namespace ProcessPlugins.ExternalDisplay
     {
       object[] p = new object[1];
       m_tDllReg.InvokeMember("DLL_GetInfo", BINDING_FLAGS, null, null, p);
-      info = (DLLInfo)p[0];
+      info = (DLLInfo) p[0];
     }
 
     public bool IsReadyToReceive()
     {
-      return (bool)m_tDllReg.InvokeMember("LCD_IsReadyToReceive",BINDING_FLAGS , null, null, null);
+      return (bool) m_tDllReg.InvokeMember("LCD_IsReadyToReceive", BINDING_FLAGS, null, null, null);
     }
 
     private void CreateLCDHypeWrapper()
     {
-      if ( s_mb == null ) 
+      if (s_mb == null)
       {
         // Create dynamic assembly    
         AssemblyName an = new AssemblyName();
-        an.Name = "LCDHypeWrapper" + Guid.NewGuid().ToString( "N" );
-        AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly( an, AssemblyBuilderAccess.Run );
+        an.Name = "LCDHypeWrapper" + Guid.NewGuid().ToString("N");
+        AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly(an, AssemblyBuilderAccess.Run);
 
         // Add module to assembly
-        s_mb = ab.DefineDynamicModule( "LCDDriverModule" );
+        s_mb = ab.DefineDynamicModule("LCDDriverModule");
       }
 
       // Add class to module
-      TypeBuilder tb = s_mb.DefineType( name + Guid.NewGuid().ToString( "N" ) );
+      TypeBuilder tb = s_mb.DefineType(name + Guid.NewGuid().ToString("N"));
 
       MethodBuilder meb;
 
       //DLL_GetInfo
       meb = tb.DefinePInvokeMethod("DLL_GetInfo", dllFile, METHOD_ATTRIBUTES,
-        CallingConventions.Standard, typeof(void), new Type[] {Type.GetType("ProcessPlugins.ExternalDisplay.DLLInfo&")}, CallingConvention.StdCall, CharSet.Auto );
-      meb.DefineParameter(1,ParameterAttributes.Out,"_info");
+                                   CallingConventions.Standard, typeof(void),
+                                   new Type[] {Type.GetType("ProcessPlugins.ExternalDisplay.DLLInfo&")},
+                                   CallingConvention.StdCall, CharSet.Auto);
+      meb.DefineParameter(1, ParameterAttributes.Out, "_info");
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
-      meb.SetImplementationFlags( MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags() );
+      meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_IsReadyToReceive
       meb = tb.DefinePInvokeMethod("LCD_IsReadyToReceive", dllFile, METHOD_ATTRIBUTES,
-        CallingConventions.Standard, typeof(bool), null, CallingConvention.StdCall, CharSet.Auto );
+                                   CallingConventions.Standard, typeof(bool), null, CallingConvention.StdCall,
+                                   CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
-      meb.SetImplementationFlags( MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags() );
+      meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_Init
       meb = tb.DefinePInvokeMethod("LCD_Init", dllFile, METHOD_ATTRIBUTES,
-        CallingConventions.Standard, typeof(void), null, CallingConvention.StdCall, CharSet.Auto );
+                                   CallingConventions.Standard, typeof(void), null, CallingConvention.StdCall,
+                                   CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
-      meb.SetImplementationFlags( MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags() );
+      meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_ConfigDialog
       meb = tb.DefinePInvokeMethod("LCD_ConfigDialog", dllFile, METHOD_ATTRIBUTES,
-        CallingConventions.Standard, typeof(void), null, CallingConvention.StdCall, CharSet.Auto );
+                                   CallingConventions.Standard, typeof(void), null, CallingConvention.StdCall,
+                                   CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
-      meb.SetImplementationFlags( MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags() );
+      meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_CleanUp
       meb = tb.DefinePInvokeMethod("LCD_CleanUp", dllFile, METHOD_ATTRIBUTES,
-        CallingConventions.Standard, typeof(void), null, CallingConvention.StdCall, CharSet.Auto );
+                                   CallingConventions.Standard, typeof(void), null, CallingConvention.StdCall,
+                                   CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
-      meb.SetImplementationFlags( MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags() );
+      meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_SendToMemory
       meb = tb.DefinePInvokeMethod("LCD_SendToMemory", dllFile, METHOD_ATTRIBUTES,
-        CallingConventions.Standard, typeof(void),new Type[] {typeof(char)}, CallingConvention.StdCall, CharSet.Auto );
+                                   CallingConventions.Standard, typeof(void), new Type[] {typeof(char)},
+                                   CallingConvention.StdCall, CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
-      meb.SetImplementationFlags( MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags() );
+      meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_SetOutputAddress
       meb = tb.DefinePInvokeMethod("LCD_SetOutputAddress", dllFile, METHOD_ATTRIBUTES,
-        CallingConventions.Standard, typeof(void),new Type[] {typeof(int),typeof(int)}, CallingConvention.StdCall, CharSet.Auto );
+                                   CallingConventions.Standard, typeof(void), new Type[] {typeof(int), typeof(int)},
+                                   CallingConvention.StdCall, CharSet.Auto);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
-      meb.SetImplementationFlags( MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags() );
+      meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
 
       //LCD_SetIOPropertys
       meb = tb.DefinePInvokeMethod("LCD_SetIOPropertys", dllFile, METHOD_ATTRIBUTES,
-        CallingConventions.Standard, typeof(void),new Type[] {typeof(string),typeof(int),typeof(int),typeof(int),typeof(int),typeof(int),typeof(int),typeof(bool),typeof(byte),typeof(bool),typeof(byte),typeof(int),typeof(bool),typeof(bool)}, CallingConvention.StdCall, CharSet.Ansi);
+                                   CallingConventions.Standard, typeof(void),
+                                   new Type[]
+                                     {
+                                       typeof(string), typeof(int), typeof(int), typeof(int), typeof(int), typeof(int),
+                                       typeof(int), typeof(bool), typeof(byte), typeof(bool), typeof(byte), typeof(int),
+                                       typeof(bool), typeof(bool)
+                                     }, CallingConvention.StdCall, CharSet.Ansi);
       // Apply preservesig metadata attribute so we can handle return HRESULT ourselves
-      meb.SetImplementationFlags( MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags() );
+      meb.SetImplementationFlags(MethodImplAttributes.PreserveSig | meb.GetMethodImplementationFlags());
       //            meb.DefineParameter(1,ParameterAttributes.HasFieldMarshal,"_port");
 
       // Create the type
