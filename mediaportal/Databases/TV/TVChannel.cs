@@ -58,7 +58,7 @@ namespace MediaPortal.TV.Database
 		svhs =250000,
 		cvbs1=250001,
 		cvbs2=250002,
-		rgb=250002
+		rgb=250003
   }
   #endregion
 
