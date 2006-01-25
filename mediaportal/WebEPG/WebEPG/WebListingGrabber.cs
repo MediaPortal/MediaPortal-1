@@ -59,6 +59,7 @@ namespace MediaPortal.EPG
 			string m_strSubtitles;
 			string m_strEpNum;
 			string m_strEpTotal;
+            string m_removeProgramsList;
 			string[] m_strDayNames = null;
             string m_strWeekDay;
 			bool m_grabLinked;
@@ -118,6 +119,7 @@ namespace MediaPortal.EPG
                 m_maxListingCount = m_xmlreader.GetValueAsInt("Listing", "MaxCount", 0);
 				m_offsetStart = m_xmlreader.GetValueAsInt("Listing", "OffsetStart", 0);
 				m_guideDays = m_xmlreader.GetValueAsInt("Info", "GuideDays", 0);
+
                 string strTimeZone = m_xmlreader.GetValueAsString("Info", "TimeZone", "");
                 if (strTimeZone != "")
                 {
@@ -487,6 +489,9 @@ namespace MediaPortal.EPG
 				if(guideData.StartTime == null || guideData.Title == "")
 					return null;
 
+                if (guideData.IsProgram(m_removeProgramsList))
+                    return null;
+
 				program.Channel = m_strID;
 				program.Title = guideData.Title;
 
@@ -535,6 +540,9 @@ namespace MediaPortal.EPG
 							ProgramData SubData =  new ProgramData();
 							ParserData refdata = (ParserData) SubData;
 							SubProfile.GetParserData(0, ref refdata);
+
+                            if (SubData.IsProgram(m_removeProgramsList))
+                                return null;
 							
 							if (SubData.Description != "")
 								program.Description = SubData.Description;
@@ -623,6 +631,15 @@ namespace MediaPortal.EPG
                 m_strWeekDay = m_xmlreader.GetValueAsString("Listing", "WeekdayString", "dddd");
 				CultureInfo culture = new CultureInfo(searchLang);
 
+                m_removeProgramsList = m_xmlreader.GetValueAsString("RemovePrograms", "*", "");
+                if (m_removeProgramsList != "")
+                    m_removeProgramsList += ";";
+                string chanRemovePrograms = m_xmlreader.GetValueAsString("RemovePrograms", strChannelID, "");
+                if (chanRemovePrograms != "")
+                {
+                    m_removeProgramsList += chanRemovePrograms;
+                    m_removeProgramsList += ";";
+                }
 
                 if (searchID == "")
                 {

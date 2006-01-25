@@ -70,22 +70,92 @@ namespace MediaPortal.WebEPG
 			}
 		}
 
-		private int[] getTime(string strTime)
+        public bool IsProgram(string SearchList)
+        {
+            string[,] Params = GetSearchParams(SearchList);
+
+            for (int i = 0; i < Params.Length / 2; i++)
+            {
+                switch (Params[i, 0])
+                {
+                    case "TITLE":
+                        if (Title.Contains(Params[i, 1]))
+                            return true;
+                        break;
+                    case "DESC":
+                        if (Description.Contains(Params[i, 1]))
+                            return true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return false;
+        }
+
+        private string[,] GetSearchParams(string SearchList)
+        {
+            int pos = 0;
+            int num = 0;
+            int offset;
+
+            while ((offset = SearchList.IndexOf(';', pos)) != -1)
+            {
+                pos = offset + 1;
+                num++;
+            }
+
+            string[,] SearchParams = new string[num, 2];
+
+            int startPos = 0;
+            int endPos = 0;
+            for (int i = 0; i < num; i++)
+            {
+                if ((startPos = SearchList.IndexOf('[', startPos)) != -1)
+                {
+                    if ((endPos = SearchList.IndexOf(']', startPos + 1)) != -1)
+                    {
+                        SearchParams[i, 0] = SearchList.Substring(startPos + 1, endPos - startPos - 1);
+                    }
+                }
+
+                if ((startPos = SearchList.IndexOf('"', endPos)) != -1)
+                {
+                    if ((endPos = SearchList.IndexOf('"', startPos + 1)) != -1)
+                    {
+                        SearchParams[i, 1] = SearchList.Substring(startPos + 1, endPos - startPos - 1);
+                    }
+                }
+
+                startPos = SearchList.IndexOf(';', startPos);
+            }
+
+            return SearchParams;
+        }
+
+        private int[] getTime(string strTime)
 		{
             if(strTime == "")
                 return null;
 
 			int sepPos;
-            bool found = false;
+            //bool found = false;
 			int[] iTime = new int[2];
+            char[] timeSeperators = { ':', '.', 'h' };
 
-			if ((sepPos = strTime.IndexOf(":")) != -1)
-			{
-				iTime[0] = int.Parse(strTime.Substring(0, sepPos));
-				iTime[1] = int.Parse(strTime.Substring(sepPos+1, 2));
-                found = true;
-			}
+            if ((sepPos = strTime.IndexOfAny(timeSeperators)) != -1) // IndexOf(":")) != -1)
+            {
+                iTime[0] = int.Parse(strTime.Substring(0, sepPos));
+                iTime[1] = int.Parse(strTime.Substring(sepPos + 1, 2));
+                //found = true;
+            }
+            else
+            {
+                return null;
+            }
 
+            /*
 			if ((sepPos = strTime.IndexOf(".")) != -1)
 			{
 				iTime[0] = int.Parse(strTime.Substring(0, sepPos));
@@ -101,7 +171,7 @@ namespace MediaPortal.WebEPG
 			}
 
             if (!found)
-                return null;
+              */  
 
 			if (strTime.ToLower().IndexOf("pm") != -1 && iTime[0] != 0)
 			{
