@@ -704,9 +704,14 @@ namespace MediaPortal.TV.Recording
         FilterCollection audioInputs = filters.AudioInputDevices;
 
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", audioInputs[0].Name, audioInputs[0].MonikerString);
-
-        IBaseFilter audioInputFilter = Marshal.BindToMoniker(audioInputs[0].MonikerString) as IBaseFilter;
-        return audioInputFilter;
+        try
+        {
+          IBaseFilter audioInputFilter = Marshal.BindToMoniker(audioInputs[0].MonikerString) as IBaseFilter;
+          return audioInputFilter;
+        }
+        catch
+        {
+        }
       }
 
       if (String.Compare(filterName, "%audioencoder%", true) == 0)
@@ -721,9 +726,15 @@ namespace MediaPortal.TV.Recording
           {
             if (String.Compare(audioCodec.Name,audioEncoders[i],true)==0)
             {
-              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", audioCodec.Name, audioCodec.MonikerString);
-              IBaseFilter audioCodecFilter = Marshal.BindToMoniker(audioCodec.MonikerString) as IBaseFilter;
-              return audioCodecFilter;
+              try
+              {
+                Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", audioCodec.Name, audioCodec.MonikerString);
+                IBaseFilter audioCodecFilter = Marshal.BindToMoniker(audioCodec.MonikerString) as IBaseFilter;
+                return audioCodecFilter;
+              }
+              catch
+              {
+              }
             }
           }
         }
@@ -741,9 +752,15 @@ namespace MediaPortal.TV.Recording
           {
             if (String.Compare(videoCodec.Name, videoEncoders[i], true) == 0)
             {
-              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", videoCodec.Name, videoCodec.MonikerString);
-              IBaseFilter videoCodecFilter = Marshal.BindToMoniker(videoCodec.MonikerString) as IBaseFilter;
-              return videoCodecFilter;
+              try
+              {
+                Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", videoCodec.Name, videoCodec.MonikerString);
+                IBaseFilter videoCodecFilter = Marshal.BindToMoniker(videoCodec.MonikerString) as IBaseFilter;
+                return videoCodecFilter;
+              }
+              catch
+              {
+              }
             }
           }
         }
@@ -761,9 +778,15 @@ namespace MediaPortal.TV.Recording
           {
             if (String.Compare(filter.Name, multiplexers[i], true) == 0)
             {
-              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", filter.Name, filter.MonikerString);
-              IBaseFilter multiplexerFilter = Marshal.BindToMoniker(filter.MonikerString) as IBaseFilter;
-              return multiplexerFilter;
+              try
+              {
+                Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", filter.Name, filter.MonikerString);
+                IBaseFilter multiplexerFilter = Marshal.BindToMoniker(filter.MonikerString) as IBaseFilter;
+                return multiplexerFilter;
+              }
+              catch
+              {
+              }
             }
           }
         }
