@@ -440,6 +440,9 @@
     <Compile Include="Sections\Plugins.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\PowerDVD6AudioFilter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\Project.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -721,6 +724,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Plugins.resx">
       <DependentUpon>Plugins.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\PowerDVD6AudioFilter.resx">
+      <DependentUpon>PowerDVD6AudioFilter.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Project.resx">
       <DependentUpon>Project.cs</DependentUpon>

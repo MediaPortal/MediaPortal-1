@@ -228,6 +228,8 @@ namespace MediaPortal.Configuration
       AddChildSection(filterSection, new DScalerAudioFilter());
       AddChildSection(filterSection, new DScalerVideoFilter());
 
+      AddChildSection(filterSection, new PowerDVD6AudioFilter());
+
       Log.Write("add weather section");
       AddSection(new Weather());
       Log.Write("add plugins section");
