@@ -1106,10 +1106,8 @@ namespace MediaPortal.TV.Recording
     static public void SetAudioLanguage(int audioPid)
     {
       if (_state != State.Initialized) return;
-      if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return;
-      TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
-
-      dev.SetAudioLanguage(audioPid);
+      SetAudioLanguageCommand cmd = new SetAudioLanguageCommand(audioPid);
+      _commandProcessor.AddCommand(cmd);
     }
 
     static public ArrayList GetAudioLanguageList()

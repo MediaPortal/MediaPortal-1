@@ -230,6 +230,7 @@
     <Compile Include="CommandProcessor\Commands\CardCommand.cs" />
     <Compile Include="CommandProcessor\Commands\CheckRecordingsCommand.cs" />
     <Compile Include="CommandProcessor\Commands\PauseCommand.cs" />
+    <Compile Include="CommandProcessor\Commands\SetAudioLanguageCommand.cs" />
     <Compile Include="CommandProcessor\Commands\StopTimeShiftingCommand.cs" />
     <Compile Include="CommandProcessor\EPGProcessor.cs" />
     <Compile Include="CommandProcessor\MultiCardBase.cs" />
