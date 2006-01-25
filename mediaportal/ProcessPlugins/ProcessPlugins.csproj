@@ -297,6 +297,7 @@
     <Compile Include="ExternalDisplay\Setting\Condition.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ExternalDisplay\Setting\CrystalFontz634.cs" />
     <Compile Include="ExternalDisplay\Setting\IsNullCondition.cs">
       <SubType>Code</SubType>
     </Compile>
