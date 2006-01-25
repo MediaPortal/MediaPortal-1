@@ -1123,7 +1123,6 @@
     </tv>
   </capturecard>
 
-<!--  Requires 0.1.2.0 or later  -->
 <!--  Requires Catalyst 5.5 WDM_NSP drivers or later -->
 
   <capturecard commercialname="ATI AIW 9600 Cards or later" capturename="ATI Rage Theater Video Capture" devid="ntativrv40">
@@ -1141,18 +1140,18 @@
         <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"/>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbaraudio" sinkpin="2"/>
-        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"   sinkpin="0"/>
-        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbaraudio" sinkpin="4"/>
-        <connection sourcefilter="crossbaraudio" sourcepin="0" sinkfilter="crossbarvideo" sinkpin="0"/>
-        <connection sourcefilter="crossbaraudio" sourcepin="1" sinkfilter="crossbarvideo" sinkpin="2"/>
-        <connection sourcefilter="crossbaraudio" sourcepin="2" sinkfilter="crossbarvideo" sinkpin="1"/>
-        <connection sourcefilter="crossbaraudio" sourcepin="3" sinkfilter="capture"   sinkpin="1"/>
-        <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture"   sinkpin="0"/>
-        <connection sourcefilter="capture"       sourcepin="0" sinkfilter="encodervideo" sinkpin="0"/>
-        <connection sourcefilter="capture"       sourcepin="3" sinkfilter="encoderaudio" sinkpin="0"/>
-        <connection sourcefilter="encodervideo"  sourcepin="0" sinkfilter="mux"   sinkpin="1"/>
-        <connection sourcefilter="encoderaudio"  sourcepin="0" sinkfilter="mux"   sinkpin="0"/>
+        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="2"/>
+        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"			sinkpin="0"/>
+        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="4"/>
+        <connection sourcefilter="crossbaraudio" sourcepin="0" sinkfilter="crossbarvideo"	sinkpin="0"/>
+        <connection sourcefilter="crossbaraudio" sourcepin="1" sinkfilter="crossbarvideo"	sinkpin="2"/>
+        <connection sourcefilter="crossbaraudio" sourcepin="2" sinkfilter="crossbarvideo"	sinkpin="1"/>
+        <connection sourcefilter="crossbaraudio" sourcepin="3" sinkfilter="capture"			sinkpin="1"/>
+        <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture"			sinkpin="0"/>
+        <connection sourcefilter="capture"       sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"/>
+        <connection sourcefilter="capture"       sourcepin="3" sinkfilter="encoderaudio"	sinkpin="0"/>
+        <connection sourcefilter="encodervideo"  sourcepin="0" sinkfilter="mux"				sinkpin="1"/>
+        <connection sourcefilter="encoderaudio"  sourcepin="0" sinkfilter="mux"				sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -3368,39 +3367,46 @@
         <filter cat="encoder"	name="AVerMedia Encoder"   	checkdevice="true"/>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner" sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
-        <connection sourcefilter="tvtuner" sourcepin="1" sinkfilter="tvaudio" sinkpin="0"/>
-        <connection sourcefilter="tvaudio" sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
-        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"/>
-		<connection sourcefilter="capture" sourcepin="5" sinkfilter="encoder" sinkpin="0"/>
-        <connection sourcefilter="capture" sourcepin="6" sinkfilter="encoder" sinkpin="1"/>
+        <connection sourcefilter="tvtuner"	sourcepin="0"	sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"	sourcepin="1"	sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"	sourcepin="0"	sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"	sourcepin="0"	sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar"	sourcepin="1"	sinkfilter="capture"	sinkpin="1"/>
+		<connection sourcefilter="capture"	sourcepin="5"	sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"	sourcepin="6"	sinkfilter="encoder"	sinkpin="1"/>
       </connections>
     </tv>
   </capturecard> 
 
-<!--  Requires 0.1.2.0 or later  -->
 <!--  Requires Catalyst 5.5 WDM_SP drivers or later -->
 
   <capturecard commercialname="ATI AIW 9200 Cards or earlier" capturename="ATI Rage Theater Video Capture" devid="ntativrv35">
-    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"/>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
-      <interface cat="capture" video="0" audio="" mpeg2=""/>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
         <filter cat="tvtuner"		name="ATI TV Tuner"						checkdevice="true"/>
         <filter cat="tvaudio"		name="ATI TV Audio"						checkdevice="true"/>
         <filter cat="crossbaraudio" name="ATI TV Audio Crossbar"    		checkdevice="true"/>      
         <filter cat="crossbarvideo" name="ATI Rage Theater Video Crossbar"	checkdevice="true"/>
         <filter cat="capture"  		name="ATI Rage Theater Video Capture"  	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"						checkdevice="false"/>
+        <filter cat="encodervideo"  name="ATI Media Center Video Encoder"	checkdevice="false"/>
+        <filter cat="encoderaudio"  name="ATI Media Center Audio Encoder" 	checkdevice="false"/>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"/>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"       sourcepin="0" sinkfilter="crossbaraudio" sinkpin="2"/>
-        <connection sourcefilter="tvtuner"       sourcepin="1" sinkfilter="tvaudio"   sinkpin="0"/>
-        <connection sourcefilter="tvaudio"       sourcepin="0" sinkfilter="crossbaraudio" sinkpin="4"/>
-        <connection sourcefilter="crossbaraudio" sourcepin="0" sinkfilter="crossbarvideo" sinkpin="0"/>
-        <connection sourcefilter="crossbaraudio" sourcepin="1" sinkfilter="crossbarvideo" sinkpin="2"/>
-        <connection sourcefilter="crossbaraudio" sourcepin="2" sinkfilter="crossbarvideo" sinkpin="1"/>
-        <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture"   sinkpin="0"/>
+        <connection sourcefilter="tvtuner"			sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="2"/>
+        <connection sourcefilter="tvtuner"			sourcepin="1" sinkfilter="tvaudio"			sinkpin="0"/>
+        <connection sourcefilter="tvaudio"			sourcepin="0" sinkfilter="crossbaraudio"	sinkpin="4"/>
+        <connection sourcefilter="crossbaraudio"	sourcepin="0" sinkfilter="crossbarvideo"	sinkpin="0"/>
+        <connection sourcefilter="crossbaraudio"	sourcepin="1" sinkfilter="crossbarvideo"	sinkpin="2"/>
+        <connection sourcefilter="crossbaraudio"	sourcepin="2" sinkfilter="crossbarvideo"	sinkpin="1"/>
+        <connection sourcefilter="crossbarvideo"	sourcepin="0" sinkfilter="capture"			sinkpin="0"/>
+        <connection sourcefilter="capture"			sourcepin="0" sinkfilter="encodervideo"		sinkpin="0"/>
+        <connection sourcefilter="audcapture"		sourcepin="0" sinkfilter="encoderaudio"		sinkpin="0"/>
+        <connection sourcefilter="encodervideo"		sourcepin="0" sinkfilter="mux"				sinkpin="1"/>
+        <connection sourcefilter="encoderaudio"		sourcepin="0" sinkfilter="mux"				sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -7376,24 +7382,24 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"  name="713x BDA Analog Tv Tuner" 		checkdevice="true"></filter>
-        <filter cat="tvaudio"  name="713x BDA Analog TV Audio"		checkdevice="true"></filter>
-        <filter cat="crossbar" name="713x BDA Analog Xbar"		checkdevice="true"></filter>
-        <filter cat="capture"  name="713x BDA Analog Capture"	checkdevice="true"></filter>
-        <filter cat="videncoder"  name="%videoencoder%"		checkdevice="false"></filter>
-        <filter cat="audencoder"  name="%audioencoder%"		checkdevice="false"></filter>
-        <filter cat="mux"  name="%mpegmux%"		checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner" checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"		checkdevice="true"></filter>
+        <filter cat="capture"		name="713x BDA Analog Capture"	checkdevice="true"></filter>
+        <filter cat="videncoder"	name="%videoencoder%"			checkdevice="false"></filter>
+        <filter cat="audencoder"	name="%audioencoder%"			checkdevice="false"></filter>
+        <filter cat="mux"			name="%mpegmux%"				checkdevice="false"></filter>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"	sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"></connection>
-        <connection sourcefilter="tvtuner"	sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"></connection>
-        <connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"	sinkpin="0"></connection>
-        <connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"	sinkpin="1"></connection>
-        <connection sourcefilter="capture"	sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
-        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"	sinkpin="0"></connection>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"	sinkpin="1"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
@@ -7403,13 +7409,13 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
-        <filter cat="tunerdevice"     name="VideoMate U3 BDA TVTuner"        checkdevice="true"/>
-        <filter cat="capture"         name="VideoMate U3 BDA Capture"        checkdevice="true"/>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"/>
+        <filter cat="tunerdevice"     name="VideoMate U3 BDA TVTuner"			checkdevice="true"/>
+        <filter cat="capture"         name="VideoMate U3 BDA Capture"			checkdevice="true"/>
       </filters>
       <connections>
-		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
-		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
