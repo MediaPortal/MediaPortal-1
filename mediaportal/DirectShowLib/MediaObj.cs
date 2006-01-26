@@ -41,16 +41,6 @@ namespace DirectShowLib.DMO
         Enabled	= 0x1
     }
 
-    /// <summary>
-    /// From DMO_VIDEO_OUTPUT_STREAM_FLAGS
-    /// </summary>
-    [Flags]
-    public enum DMOVideoOutputStream
-    {
-        None = 0x0,
-        NeedsPreviousSample	= 0x1
-    }
-
 #endif
 
     /// <summary>
@@ -130,7 +120,7 @@ namespace DirectShowLib.DMO
     }
 
     /// <summary>
-    /// DMO_OUTPUT_STREAM_INFO_FLAGS
+    /// From DMO_OUTPUT_STREAM_INFO_FLAGS
     /// </summary>
     [Flags]
     public enum DMOOutputStreamInfo
@@ -164,6 +154,16 @@ namespace DirectShowLib.DMO
         AcceptData = 0x1
     }
 
+
+    /// <summary>
+    /// From DMO_VIDEO_OUTPUT_STREAM_FLAGS
+    /// </summary>
+    [Flags]
+    public enum DMOVideoOutputStream
+    {
+        None = 0x0,
+        NeedsPreviousSample	= 0x1
+    }
 
     /// <summary>
     /// From DMO_PARTIAL_MEDIATYPE
@@ -400,36 +400,6 @@ namespace DirectShowLib.DMO
     }
 
 
-    [Guid("BE8F4F4E-5B16-4D29-B350-7F6B5D9298AC"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IDMOVideoOutputOptimizations
-    {
-        [PreserveSig]
-        int QueryOperationModePreferences(
-            int ulOutputStreamIndex,
-            out DMOVideoOutputStream pdwRequestedCapabilities
-            );
-
-        [PreserveSig]
-        int SetOperationMode(
-            int ulOutputStreamIndex,
-            DMOVideoOutputStream dwEnabledFeatures
-            );
-
-        [PreserveSig]
-        int GetCurrentOperationMode(
-            int ulOutputStreamIndex,
-            out DMOVideoOutputStream pdwEnabledFeatures
-            );
-
-        [PreserveSig]
-        int GetCurrentSampleRequirements(
-            int ulOutputStreamIndex,
-            out DMOVideoOutputStream pdwRequestedFeatures
-            );
-    }
-
-
 #endif
 
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
@@ -636,6 +606,36 @@ namespace DirectShowLib.DMO
             [MarshalAs(UnmanagedType.Bool)] bool bLock
             );
     }
+
+    [Guid("BE8F4F4E-5B16-4D29-B350-7F6B5D9298AC"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IDMOVideoOutputOptimizations
+    {
+        [PreserveSig]
+        int QueryOperationModePreferences(
+            int ulOutputStreamIndex,
+            out DMOVideoOutputStream pdwRequestedCapabilities
+            );
+
+        [PreserveSig]
+        int SetOperationMode(
+            int ulOutputStreamIndex,
+            DMOVideoOutputStream dwEnabledFeatures
+            );
+
+        [PreserveSig]
+        int GetCurrentOperationMode(
+            int ulOutputStreamIndex,
+            out DMOVideoOutputStream pdwEnabledFeatures
+            );
+
+        [PreserveSig]
+        int GetCurrentSampleRequirements(
+            int ulOutputStreamIndex,
+            out DMOVideoOutputStream pdwRequestedFeatures
+            );
+    }
+
 
     #endregion
 }

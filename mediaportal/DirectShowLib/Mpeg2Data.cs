@@ -106,7 +106,7 @@ namespace DirectShowLib
     /// From MPEG2_FILTER
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack=1)]
-    public struct MPEG2Filter
+    public class MPEG2Filter
     {
         public byte bVersionNumber;
         public short wFilterSize;
@@ -198,7 +198,7 @@ namespace DirectShowLib
         int GetSection(
             [In] short pid, 
             [In] byte tid, 
-            [In, MarshalAs(UnmanagedType.LPStruct)] MPEG2Filter pFilter, 
+            [In] MPEG2Filter pFilter, 
             [In] int dwTimeout, 
             [MarshalAs(UnmanagedType.Interface)] out ISectionList ppSectionList
             );
@@ -207,7 +207,7 @@ namespace DirectShowLib
         int GetTable(
             [In] short pid, 
             [In] byte tid, 
-            [In, MarshalAs(UnmanagedType.LPStruct)] MPEG2Filter pFilter, 
+            [In] MPEG2Filter pFilter, 
             [In] int dwTimeout, 
             [MarshalAs(UnmanagedType.Interface)] out ISectionList ppSectionList
             );
@@ -216,7 +216,7 @@ namespace DirectShowLib
         int GetStreamOfSections(
             [In] short pid, 
             [In] byte tid, 
-            [In, MarshalAs(UnmanagedType.LPStruct)] MPEG2Filter pFilter, 
+            [In] MPEG2Filter pFilter, 
             [In] IntPtr hDataReadyEvent, 
             [MarshalAs(UnmanagedType.Interface)] out IMpeg2Stream ppMpegStream
             );

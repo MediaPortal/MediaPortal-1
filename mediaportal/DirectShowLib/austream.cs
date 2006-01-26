@@ -40,7 +40,7 @@ namespace DirectShowLib.MultimediaStreaming
         [PreserveSig]
         int SetBuffer(
             [In] int cbSize, 
-            [In] ref byte pbData, 
+            [In] IntPtr pbData, 
             [In] int dwFlags
             );
 
@@ -67,7 +67,7 @@ namespace DirectShowLib.MultimediaStreaming
         [PreserveSig]
         new int SetBuffer(
             [In] int cbSize, 
-            [In] ref byte pbData, 
+            [In] IntPtr pbData, 
             [In] int dwFlags
             );
 
@@ -87,15 +87,64 @@ namespace DirectShowLib.MultimediaStreaming
 
         [PreserveSig]
         int GetFormat(
-            out WaveFormatEx pWaveFormatCurrent
+            [Out] WaveFormatEx pWaveFormatCurrent
             );
 
         [PreserveSig]
         int SetFormat(
-            [In] ref WaveFormatEx lpWaveFormat
+            [In, MarshalAs(UnmanagedType.LPStruct)] WaveFormatEx lpWaveFormat
             );
     }
 
+
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
+    Guid("345FEE00-ABA5-11D0-8212-00C04FC32C45")]
+    public interface IAudioStreamSample : IStreamSample
+    {
+        #region IStreamSample Methods
+
+        [PreserveSig]
+        new int GetMediaStream(
+            [MarshalAs(UnmanagedType.Interface)] out IMediaStream ppMediaStream
+            );
+
+        [PreserveSig]
+        new int GetSampleTimes(
+            out long pStartTime, 
+            out long pEndTime, 
+            out long pCurrentTime
+            );
+
+        [PreserveSig]
+        new int SetSampleTimes(
+            [In] DsLong pStartTime, 
+            [In] DsLong pEndTime
+            );
+
+        [PreserveSig]
+        new int Update(
+            [In] SSUpdate dwFlags, 
+            [In] IntPtr hEvent, 
+            [In] IntPtr pfnAPC, 
+            [In] IntPtr dwAPCData
+            );
+
+        [PreserveSig]
+        new int CompletionStatus(
+            [In] CompletionStatusFlags dwFlags, 
+            [In] int dwMilliseconds
+            );
+
+        #endregion
+
+        [PreserveSig]
+        int GetAudioData(
+            [MarshalAs(UnmanagedType.Interface)] out IAudioData ppAudio
+            );
+    }
+
+
+#endif
 
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
     Guid("F7537560-A3BE-11D0-8212-00C04FC32C45")]
@@ -140,71 +189,28 @@ namespace DirectShowLib.MultimediaStreaming
 
         [PreserveSig]
         int GetFormat(
-            out WaveFormatEx pWaveFormatCurrent
+            [Out, MarshalAs(UnmanagedType.LPStruct)] WaveFormatEx pWaveFormatCurrent
             );
 
         [PreserveSig]
         int SetFormat(
-            [In] ref WaveFormatEx lpWaveFormat
+            [In] WaveFormatEx lpWaveFormat
             );
 
         [PreserveSig]
         int CreateSample(
+#if ALLOW_UNTESTED_INTERFACES
             [In, MarshalAs(UnmanagedType.Interface)] IAudioData pAudioData, 
             [In] int dwFlags, 
             [MarshalAs(UnmanagedType.Interface)] out IAudioStreamSample ppSample
-            );
-    }
-
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
-    Guid("345FEE00-ABA5-11D0-8212-00C04FC32C45")]
-    public interface IAudioStreamSample : IStreamSample
-    {
-        #region IStreamSample Methods
-
-        [PreserveSig]
-        new int GetMediaStream(
-            [MarshalAs(UnmanagedType.Interface)] out IMediaStream ppMediaStream
-            );
-
-        [PreserveSig]
-        new int GetSampleTimes(
-            out long pStartTime, 
-            out long pEndTime, 
-            out long pCurrentTime
-            );
-
-        [PreserveSig]
-        new int SetSampleTimes(
-            [In] ref long pStartTime, 
-            [In] ref long pEndTime
-            );
-
-        [PreserveSig]
-        new int Update(
-            [In] SSUpdate dwFlags, 
-            [In] IntPtr hEvent, 
-            [In, MarshalAs(UnmanagedType.Interface)] IStreamSample pfnAPC, 
-            [In] IntPtr dwAPCData
-            );
-
-        [PreserveSig]
-        new int CompletionStatus(
-            [In] CompletionStatusFlags dwFlags, 
-            [In] int dwMilliseconds
-            );
-
-        #endregion
-
-        [PreserveSig]
-        int GetAudioData(
-            [MarshalAs(UnmanagedType.Interface)] out IAudioData ppAudio
-            );
-    }
-
-
+#else
+            [In, MarshalAs(UnmanagedType.Interface)] object pAudioData, 
+            [In] int dwFlags, 
+            [MarshalAs(UnmanagedType.Interface)] out object ppSample
 #endif
+            );
+    }
+
 
     #endregion
 }

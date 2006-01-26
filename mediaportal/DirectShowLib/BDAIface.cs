@@ -31,14 +31,25 @@ namespace DirectShowLib.BDA
     #region Declarations
 
 #if ALLOW_UNTESTED_INTERFACES
+
+    /// <summary>
+    /// From BDA_MULTICAST_MODE
+    /// </summary>
+    public enum MulticastMode
+    {
+        PromiscuousMulticast = 0,
+        FilteredMulticast,
+        NoMulticast
+    }
+
     /// <summary>
     /// From KSPROPERTY_IPSINK
     /// </summary>
     public enum KSPropertyIPSink
     {
-        MULTICASTLIST,
-        ADAPTER_DESCRIPTION,
-        ADAPTER_ADDRESS
+        MulticastList,
+        AdapterDescription,
+        AdapterAddress
     }
 
     /// <summary>
@@ -46,17 +57,26 @@ namespace DirectShowLib.BDA
     /// </summary>
     public enum MediaSampleContent
     {
-        TRANSPORT_PACKET, //  complete TS packet e.g. pass-through mode
-        ELEMENTARY_STREAM, //  PES payloads; audio/video only
-        MPEG2_PSI, //  PAT, PMT, CAT, Private
-        TRANSPORT_PAYLOAD //  gathered TS packet payloads (PES packets, etc...)
+        TransportPacket,
+        ElementaryStream,
+        Mpeg2PSI,
+        TransportPayload
+    }
+
+    /// <summary>
+    /// From BDA_CHANGE_STATE
+    /// </summary>
+    public enum BDAChangeState
+    {
+      ChangesComplete = 0,
+      ChangesPending 
     }
 
     /// <summary>
     /// From PID_MAP
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct PIDMap
+    public class PIDMap
     {
         public int ulPID;
         public MediaSampleContent MediaSampleContent;
@@ -120,20 +140,20 @@ namespace DirectShowLib.BDA
         [PreserveSig]
         int PutMulticastList( 
             int ulcbAddresses,
-            IntPtr pAddressList); // BYTE []
+            IntPtr pAddressList);
         
         [PreserveSig]
         int GetMulticastList( 
-            int pulcbAddresses,
-            IntPtr pAddressList); // BYTE []
+            ref int pulcbAddresses,
+            IntPtr pAddressList);
         
         [PreserveSig]
         int PutMulticastMode( 
-            int ulModeMask);
+            MulticastMode ulModeMask);
         
         [PreserveSig]
         int GetMulticastMode( 
-            out int pulModeMask);
+            out MulticastMode pulModeMask);
         
     }
 
@@ -148,20 +168,20 @@ namespace DirectShowLib.BDA
         [PreserveSig]
         int PutMulticastList( 
             int ulcbAddresses,
-            IntPtr pAddressList); // BYTE []
+            IntPtr pAddressList);
         
         [PreserveSig]
         int GetMulticastList( 
-            out int pulcbAddresses,
-            IntPtr pAddressList);  // BYTE []
+            ref int pulcbAddresses,
+            IntPtr pAddressList);
         
         [PreserveSig]
         int PutMulticastMode( 
-            int ulModeMask);
+            MulticastMode ulModeMask);
         
         [PreserveSig]
         int GetMulticastMode( 
-            out int pulModeMask);
+            out MulticastMode pulModeMask);
         
     }
 
@@ -180,16 +200,16 @@ namespace DirectShowLib.BDA
         
         [PreserveSig]
         int GetMulticastList( 
-            out int pulcbAddresses,
+            ref int pulcbAddresses,
             IntPtr pAddressList);  // BYTE []
         
         [PreserveSig]
         int PutMulticastMode( 
-            int ulModeMask);
+            MulticastMode ulModeMask);
         
         [PreserveSig]
         int GetMulticastMode( 
-            out int pulModeMask);
+            out MulticastMode pulModeMask);
     }
 
 
@@ -207,7 +227,7 @@ namespace DirectShowLib.BDA
         int CommitChanges();
 
         [PreserveSig]
-        int GetChangeState([Out] out int pState);
+        int GetChangeState([Out] out BDAChangeState pState);
     }
 
     [Guid("0DED49D5-A8B7-4d5d-97A1-12B0C195874D"),
@@ -389,7 +409,8 @@ namespace DirectShowLib.BDA
     }
 
     [Guid("3F4DC8E2-4050-11d3-8F4B-00C04F7971E2"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    Obsolete("IBDA_IPSinkControl is no longer being supported for Ring 3 clients. Use the BDA_IPSinkInfo interface instead.")]
     public interface IBDA_IPSinkControl
     {
         [PreserveSig]
@@ -410,7 +431,7 @@ namespace DirectShowLib.BDA
         [PreserveSig]
         int get_MulticastList( 
             out int pulcbAddresses,
-            IntPtr ppbAddressList); // BYTE **
+            out IntPtr ppbAddressList); // BYTE **
         
         [PreserveSig]
         int get_AdapterIPAddress( 
@@ -428,7 +449,7 @@ namespace DirectShowLib.BDA
         [PreserveSig]
         int Next(
             [In] int cRequest,
-            [Out] out PIDMap pPIDMap,
+            [Out, MarshalAs(UnmanagedType.LPArray)] PIDMap[] pPIDMap,
             [Out] out int pcReceived
             );
 
@@ -449,14 +470,14 @@ namespace DirectShowLib.BDA
         [PreserveSig]
         int MapPID(
             [In] int culPID,
-            [In] ref int pulPID,
+            [In, MarshalAs(UnmanagedType.LPArray)] int [] pulPID,
             [In] MediaSampleContent MediaSampleContent
             );
 
         [PreserveSig]
         int UnmapPID(
             [In] int culPID,
-            [In] ref int pulPID
+            [In, MarshalAs(UnmanagedType.LPArray)] int [] pulPID
             );
 
         [PreserveSig]

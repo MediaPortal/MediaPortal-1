@@ -398,7 +398,7 @@ namespace DirectShowLib.DES
 
 
     /// <summary>
-    /// DEXTER_PARAM
+    /// From DEXTER_PARAM
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack=4)]
     public struct DexterParam

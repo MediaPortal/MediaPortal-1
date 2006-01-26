@@ -34,87 +34,12 @@ namespace DirectShowLib
 #if ALLOW_UNTESTED_INTERFACES
 
     /// <summary>
-    /// From AM_MPEG_AUDIO_DUAL_* defines
-    /// </summary>
-    public enum MPEGAudioDual
-    {
-        Merge,
-        Left,
-        Right
-    }
-
-    /// <summary>
-    /// From AM_WST_LEVEL
-    /// </summary>
-    public enum WSTLevel 
-    {
-        Level1_5 = 0
-    }
-
-    /// <summary>
-    /// From AM_WST_SERVICE
-    /// </summary>
-    public enum WSTService
-    {
-        None = 0,
-        Text,
-        IDS,
-        Invalid
-    }
-
-    /// <summary>
-    /// From AM_WST_STATE
-    /// </summary>
-    public enum WSTState
-    {
-        Off = 0,
-        On
-    }
-
-    /// <summary>
     /// From AM_WST_STYLE
     /// </summary>
     public enum WSTStyle
     {
         None = 0,
         Invers
-    }
-
-    /// <summary>
-    /// From AM_WST_DRAWBGMODE
-    /// </summary>
-    public enum WSTDrawBGMode
-    {
-        Opaque,
-        Transparent
-    }
-
-    /// <summary>
-    /// From AM_WST_PAGE
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct WSTPage
-    {
-        public int	dwPageNr ;
-        public int	dwSubPageNr ;
-        public IntPtr pucPageData; // BYTE	*
-    }
-
-    /// <summary>
-    /// From MPEG1WAVEFORMAT
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct MPEG1WaveFormat
-    {
-        public WaveFormatEx    wfx;
-        public short            fwHeadLayer;
-        public int           dwHeadBitrate;
-        public short            fwHeadMode;
-        public short            fwHeadModeExt;
-        public short            wHeadEmphasis;
-        public short            fwHeadFlags;
-        public int           dwPTSLow;
-        public int           dwPTSHigh;
     }
 
     /// <summary>
@@ -212,6 +137,110 @@ namespace DirectShowLib
 
 #endif
 
+    /// <summary>
+    /// From AM_WST_LEVEL
+    /// </summary>
+    public enum WSTLevel 
+    {
+        Level1_5 = 0
+    }
+
+    /// <summary>
+    /// From AM_WST_SERVICE
+    /// </summary>
+    public enum WSTService
+    {
+        None = 0,
+        Text,
+        IDS,
+        Invalid
+    }
+
+    /// <summary>
+    /// From AM_WST_STATE
+    /// </summary>
+    public enum WSTState
+    {
+        Off = 0,
+        On
+    }
+
+    /// <summary>
+    /// From AM_WST_DRAWBGMODE
+    /// </summary>
+    public enum WSTDrawBGMode
+    {
+        Opaque,
+        Transparent
+    }
+
+    /// <summary>
+    /// Not from DirectShow
+    /// </summary>
+    public enum MPEGAudioDivider
+    {
+        CDAudio = 1,
+        FMRadio = 2,
+        AMRadio = 4
+    }
+
+    /// <summary>
+    /// From AM_MPEG_AUDIO_DUAL_* defines
+    /// </summary>
+    public enum MPEGAudioDual
+    {
+        Merge,
+        Left,
+        Right
+    }
+
+    /// <summary>
+    /// Not from DirectShow
+    /// </summary>
+    public enum MPEGAudioAccuracy
+    {
+        Best = 0x0000,
+        High = 0x4000,
+        Full = 0x8000
+    }
+
+    /// <summary>
+    /// Not from DirectShow
+    /// </summary>
+    public enum MPEGAudioChannels
+    {
+        Mono = 1,
+        Stereo = 2
+    }
+
+    /// <summary>
+    /// From AM_WST_PAGE
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WSTPage
+    {
+        public int	dwPageNr ;
+        public int	dwSubPageNr ;
+        public IntPtr pucPageData; // BYTE	*
+    }
+
+    /// <summary>
+    /// From MPEG1WAVEFORMAT
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MPEG1WaveFormat
+    {
+        public WaveFormatEx    wfx;
+        public short            fwHeadLayer;
+        public int           dwHeadBitrate;
+        public short            fwHeadMode;
+        public short            fwHeadModeExt;
+        public short            wHeadEmphasis;
+        public short            fwHeadFlags;
+        public int           dwPTSLow;
+        public int           dwPTSHigh;
+    }
+
     #endregion
 
     #region Interfaces
@@ -238,135 +267,6 @@ namespace DirectShowLib
     {
         [PreserveSig]
         int GetCapabilitiesKey( [Out] out IntPtr pHKey ); // HKEY
-    }
-
-    [Guid("C056DE21-75C2-11d3-A184-00105AEF9F33"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IAMWstDecoder
-    {
-        [PreserveSig]
-        int GetDecoderLevel(out WSTLevel lpLevel);
-
-        [PreserveSig]
-        int GetCurrentService(out WSTService lpService);
-
-        [PreserveSig]
-        int GetServiceState(out WSTState lpState);
-
-        [PreserveSig]
-        int SetServiceState(WSTState State);
-
-        [PreserveSig]
-        int GetOutputFormat([MarshalAs(UnmanagedType.LPStruct)] BitmapInfoHeader lpbmih);
-
-        [PreserveSig]
-        int SetOutputFormat(BitmapInfoHeader lpbmi);
-
-        [PreserveSig]
-        int GetBackgroundColor(out int pdwPhysColor);
-
-        [PreserveSig]
-        int SetBackgroundColor(int dwPhysColor);
-
-        [PreserveSig]
-        int GetRedrawAlways([MarshalAs(UnmanagedType.Bool)] out bool lpbOption);
-
-        [PreserveSig]
-        int SetRedrawAlways([MarshalAs(UnmanagedType.Bool)] bool bOption);
-
-        [PreserveSig]
-        int GetDrawBackgroundMode(out WSTDrawBGMode lpMode);
-
-        [PreserveSig]
-        int SetDrawBackgroundMode(WSTDrawBGMode Mode);
-
-        [PreserveSig]
-        int SetAnswerMode([MarshalAs(UnmanagedType.Bool)] bool bAnswer);
-
-        [PreserveSig]
-        int GetAnswerMode([MarshalAs(UnmanagedType.Bool)] out bool pbAnswer);
-
-        [PreserveSig]
-        int SetHoldPage([MarshalAs(UnmanagedType.Bool)] bool bHoldPage);
-
-        [PreserveSig]
-        int GetHoldPage([MarshalAs(UnmanagedType.Bool)] out bool pbHoldPage);
-
-        [PreserveSig]
-        int GetCurrentPage([In, Out] WSTPage pWstPage);
-
-        [PreserveSig]
-        int SetCurrentPage([In] WSTPage WstPage);
-    }
-
-    [Guid("b45dd570-3c77-11d1-abe1-00a0c905f375"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IMpegAudioDecoder
-    {
-        [PreserveSig]
-        int get_FrequencyDivider(
-            out int pDivider
-            );
-
-        [PreserveSig]
-        int put_FrequencyDivider(
-            int Divider
-            );
-
-        [PreserveSig]
-        int get_DecoderAccuracy(
-            out int pAccuracy
-            );
-
-        [PreserveSig]
-        int put_DecoderAccuracy(
-            int Accuracy
-            );
-
-        [PreserveSig]
-        int get_Stereo(
-            out int pStereo
-            );
-
-        [PreserveSig]
-        int put_Stereo(
-            int Stereo
-            );
-
-        [PreserveSig]
-        int get_DecoderWordSize(
-            out int pWordSize
-            );
-
-        [PreserveSig]
-        int put_DecoderWordSize(
-            int WordSize
-            );
-
-        [PreserveSig]
-        int get_IntegerDecode(
-            out int pIntDecode
-            );
-
-        [PreserveSig]
-        int put_IntegerDecode(
-            int IntDecode
-            );
-
-        [PreserveSig]
-        int get_DualMode(
-            out MPEGAudioDual pIntDecode
-            );
-
-        [PreserveSig]
-        int put_DualMode(
-            MPEGAudioDual IntDecode
-            );
-
-        [PreserveSig]
-        int get_AudioFormat(
-            out MPEG1WaveFormat lpFmt
-            );
     }
 
     [Guid("256A6A21-FBAD-11d1-82BF-00A0C9696C8F"),
@@ -460,35 +360,6 @@ namespace DirectShowLib
         int UnableToRender(IPin pPin);
     }
 
-    [Guid("546F4260-D53E-11cf-B3F0-00AA003761C5"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IAMDirectSound
-    {
-        [PreserveSig]
-        int GetDirectSoundInterface([MarshalAs(UnmanagedType.IUnknown)] out object lplpds); // IDirectSound
-
-        [PreserveSig]
-        int GetPrimaryBufferInterface([MarshalAs(UnmanagedType.IUnknown)] out object lplpdsb); // IDirectSoundBuffer
-
-        [PreserveSig]
-        int GetSecondaryBufferInterface([MarshalAs(UnmanagedType.IUnknown)] out object lplpdsb); // IDirectSoundBuffer
-
-        [PreserveSig]
-        int ReleaseDirectSoundInterface([MarshalAs(UnmanagedType.IUnknown)] object lpds); // IDirectSound
-
-        [PreserveSig]
-        int ReleasePrimaryBufferInterface([MarshalAs(UnmanagedType.IUnknown)] object lpdsb); // IDirectSoundBuffer
-
-        [PreserveSig]
-        int ReleaseSecondaryBufferInterface([MarshalAs(UnmanagedType.IUnknown)] object lpdsb); // IDirectSoundBuffer
-
-        [PreserveSig]
-        int SetFocusWindow(IntPtr hWnd, [In, MarshalAs(UnmanagedType.Bool)] bool bSet);
-
-        [PreserveSig]
-        int GetFocusWindow(out IntPtr hWnd, [Out, MarshalAs(UnmanagedType.Bool)] out bool bSet);
-    }
-
     [Guid("AB6B4AFE-F6E4-11d0-900D-00C04FD9189D"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IDirectDrawMediaSample
@@ -547,6 +418,164 @@ namespace DirectShowLib
 
         [PreserveSig]
         int GetIndexMode([Out, MarshalAs(UnmanagedType.Bool)] out bool pbIndexFile);
+    }
+
+    [Guid("546F4260-D53E-11cf-B3F0-00AA003761C5"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IAMDirectSound
+    {
+        [PreserveSig]
+        int GetDirectSoundInterface([MarshalAs(UnmanagedType.IUnknown)] out object lplpds); // IDirectSound
+
+        [PreserveSig]
+        int GetPrimaryBufferInterface([MarshalAs(UnmanagedType.IUnknown)] out object lplpdsb); // IDirectSoundBuffer
+
+        [PreserveSig]
+        int GetSecondaryBufferInterface([MarshalAs(UnmanagedType.IUnknown)] out object lplpdsb); // IDirectSoundBuffer
+
+        [PreserveSig]
+        int ReleaseDirectSoundInterface([MarshalAs(UnmanagedType.IUnknown)] object lpds); // IDirectSound
+
+        [PreserveSig]
+        int ReleasePrimaryBufferInterface([MarshalAs(UnmanagedType.IUnknown)] object lpdsb); // IDirectSoundBuffer
+
+        [PreserveSig]
+        int ReleaseSecondaryBufferInterface([MarshalAs(UnmanagedType.IUnknown)] object lpdsb); // IDirectSoundBuffer
+
+        [PreserveSig]
+        int SetFocusWindow(IntPtr hWnd, [In, MarshalAs(UnmanagedType.Bool)] bool bSet);
+
+        [PreserveSig]
+        int GetFocusWindow(out IntPtr hWnd, [Out, MarshalAs(UnmanagedType.Bool)] out bool bSet);
+    }
+
+    [Guid("C056DE21-75C2-11d3-A184-00105AEF9F33"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IAMWstDecoder
+    {
+        [PreserveSig]
+        int GetDecoderLevel(out WSTLevel lpLevel);
+
+        [PreserveSig]
+        int GetCurrentService(out WSTService lpService);
+
+        [PreserveSig]
+        int GetServiceState(out WSTState lpState);
+
+        [PreserveSig]
+        int SetServiceState(WSTState State);
+
+        [PreserveSig]
+        int GetOutputFormat([MarshalAs(UnmanagedType.LPStruct)] BitmapInfoHeader lpbmih);
+
+        [PreserveSig]
+        int SetOutputFormat(BitmapInfoHeader lpbmi);
+
+        [PreserveSig]
+        int GetBackgroundColor(out int pdwPhysColor);
+
+        [PreserveSig]
+        int SetBackgroundColor(int dwPhysColor);
+
+        [PreserveSig]
+        int GetRedrawAlways([MarshalAs(UnmanagedType.Bool)] out bool lpbOption);
+
+        [PreserveSig]
+        int SetRedrawAlways([MarshalAs(UnmanagedType.Bool)] bool bOption);
+
+        [PreserveSig]
+        int GetDrawBackgroundMode(out WSTDrawBGMode lpMode);
+
+        [PreserveSig]
+        int SetDrawBackgroundMode(WSTDrawBGMode Mode);
+
+        [PreserveSig]
+        int SetAnswerMode([MarshalAs(UnmanagedType.Bool)] bool bAnswer);
+
+        [PreserveSig]
+        int GetAnswerMode([MarshalAs(UnmanagedType.Bool)] out bool pbAnswer);
+
+        [PreserveSig]
+        int SetHoldPage([MarshalAs(UnmanagedType.Bool)] bool bHoldPage);
+
+        [PreserveSig]
+        int GetHoldPage([MarshalAs(UnmanagedType.Bool)] out bool pbHoldPage);
+
+        [PreserveSig]
+        int GetCurrentPage([In, Out] WSTPage pWstPage);
+
+        [PreserveSig]
+        int SetCurrentPage([In] WSTPage WstPage);
+    }
+
+    [Guid("b45dd570-3c77-11d1-abe1-00a0c905f375"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IMpegAudioDecoder
+    {
+        [PreserveSig]
+        int get_FrequencyDivider(
+            out MPEGAudioDivider pDivider
+            );
+
+        [PreserveSig]
+        int put_FrequencyDivider(
+            MPEGAudioDivider Divider
+            );
+
+        [PreserveSig]
+        int get_DecoderAccuracy(
+            out MPEGAudioAccuracy pAccuracy
+            );
+
+        [PreserveSig]
+        int put_DecoderAccuracy(
+            MPEGAudioAccuracy Accuracy
+            );
+
+        [PreserveSig]
+        int get_Stereo(
+            out MPEGAudioChannels pStereo
+            );
+
+        [PreserveSig]
+        int put_Stereo(
+            MPEGAudioChannels Stereo
+            );
+
+        [PreserveSig]
+        int get_DecoderWordSize(
+            out int pWordSize
+            );
+
+        [PreserveSig]
+        int put_DecoderWordSize(
+            int WordSize
+            );
+
+        [PreserveSig]
+        int get_IntegerDecode(
+            out int pIntDecode
+            );
+
+        [PreserveSig]
+        int put_IntegerDecode(
+            int IntDecode
+            );
+
+        [PreserveSig]
+        int get_DualMode(
+            out MPEGAudioDual pIntDecode
+            );
+
+        [PreserveSig]
+        int put_DualMode(
+            MPEGAudioDual IntDecode
+            );
+
+        [PreserveSig]
+        int get_AudioFormat(
+            out MPEG1WaveFormat lpFmt
+            );
     }
 
     #endregion

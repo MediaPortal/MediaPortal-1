@@ -145,6 +145,29 @@ namespace DirectShowLib
     {
     }
 
+    /// <summary>
+    /// CLSID_SectionList
+    /// </summary>
+    [ComImport, Guid("73DA5D04-4347-45d3-A9DC-FAE9DDBE558D")]
+    public class SectionList
+    {
+    }
+  
+    /// <summary>
+    /// CLSID_Mpeg2Stream
+    /// </summary>
+    [ComImport, Guid("F91D96C7-8509-4d0b-AB26-A0DD10904BB7")]
+    public class Mpeg2Stream
+    {
+    }
+  
+    /// <summary>
+    /// CLSID_Mpeg2Data
+    /// </summary>
+    [ComImport, Guid("C666E115-BB62-4027-A113-82D643FE2D99")]
+    public class Mpeg2Data
+    {
+    }
 
     #endregion
 

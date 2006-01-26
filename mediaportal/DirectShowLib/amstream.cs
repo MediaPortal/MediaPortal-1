@@ -31,8 +31,6 @@ namespace DirectShowLib.MultimediaStreaming
 
     #region Declarations
 
-#if ALLOW_UNTESTED_INTERFACES
-
     /// <summary>
     /// From unnamed enum
     /// </summary>
@@ -53,7 +51,7 @@ namespace DirectShowLib.MultimediaStreaming
     public enum AMMMultiStream
     {
         None = 0x0,
-        NOGRAPHTHREAD = 0x1
+        NoGraphThread = 0x1
     }
 
     /// <summary>
@@ -70,7 +68,6 @@ namespace DirectShowLib.MultimediaStreaming
         Run = 0x8
     }
 
-#endif
     #endregion
 
     #region Interfaces
@@ -150,6 +147,7 @@ namespace DirectShowLib.MultimediaStreaming
     }
 
 
+#endif
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
     Guid("BEBE595C-9A6F-11D0-8FDE-00C04FD9189D")]
     public interface IAMMultiMediaStream : IMultiMediaStream
@@ -226,9 +224,9 @@ namespace DirectShowLib.MultimediaStreaming
         [PreserveSig]
         int AddMediaStream(
             [In, MarshalAs(UnmanagedType.IUnknown)] object pStreamObject,
-            [In, MarshalAs(UnmanagedType.LPStruct)] Guid PurposeId,
+            [In] DsGuid PurposeId,
             [In] AMMStream dwFlags,
-            [MarshalAs(UnmanagedType.Interface)] out IMediaStream ppNewStream
+            [Out] IMediaStream ppNewStream
             );
 
         [PreserveSig]
@@ -250,6 +248,203 @@ namespace DirectShowLib.MultimediaStreaming
             );
     }
 
+
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
+    Guid("AB6B4AFA-F6E4-11D0-900D-00C04FD9189D")]
+    public interface IAMMediaTypeStream : IMediaStream
+    {
+        #region IMediaStream Methods
+
+        [PreserveSig]
+        new int GetMultiMediaStream(
+            [MarshalAs(UnmanagedType.Interface)] out IMultiMediaStream ppMultiMediaStream
+            );
+
+        [PreserveSig]
+        new int GetInformation(
+            out Guid pPurposeId,
+            out StreamType pType
+            );
+
+        [PreserveSig]
+        new int SetSameFormat(
+            [In, MarshalAs(UnmanagedType.Interface)] IMediaStream pStreamThatHasDesiredFormat,
+            [In] int dwFlags
+            );
+
+        [PreserveSig]
+        new int AllocateSample(
+            [In] int dwFlags,
+            [MarshalAs(UnmanagedType.Interface)] out IStreamSample ppSample
+            );
+
+        [PreserveSig]
+        new int CreateSharedSample(
+            [In, MarshalAs(UnmanagedType.Interface)] IStreamSample pExistingSample,
+            [In] int dwFlags,
+            [MarshalAs(UnmanagedType.Interface)] out IStreamSample ppNewSample
+            );
+
+        [PreserveSig]
+        new int SendEndOfStream(
+            int dwFlags
+            );
+
+        #endregion
+
+        [PreserveSig]
+        int GetFormat(
+            [Out, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pMediaType,
+            [In] int dwFlags
+            );
+
+        [PreserveSig]
+        int SetFormat(
+            [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pMediaType,
+            [In] int dwFlags
+            );
+
+        [PreserveSig]
+        int CreateSample(
+            [In] int lSampleSize,
+            [In] IntPtr pbBuffer,
+            [In] int dwFlags,
+            [In, MarshalAs(UnmanagedType.IUnknown)] object pUnkOuter,
+            [MarshalAs(UnmanagedType.Interface)] out IAMMediaTypeSample ppAMMediaTypeSample
+            );
+
+        [PreserveSig]
+        int GetStreamAllocatorRequirements(
+            out AllocatorProperties pProps
+            );
+
+        [PreserveSig]
+        int SetStreamAllocatorRequirements(
+            [In, MarshalAs(UnmanagedType.LPStruct)] AllocatorProperties pProps
+            );
+    }
+
+
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
+    Guid("AB6B4AFB-F6E4-11D0-900D-00C04FD9189D")]
+    public interface IAMMediaTypeSample : IStreamSample
+    {
+        #region IStreamSample Methods
+
+        [PreserveSig]
+        new int GetMediaStream(
+            [MarshalAs(UnmanagedType.Interface)] out IMediaStream ppMediaStream
+            );
+
+        [PreserveSig]
+        new int GetSampleTimes(
+            out long pStartTime,
+            out long pEndTime,
+            out long pCurrentTime
+            );
+
+        [PreserveSig]
+        new int SetSampleTimes(
+            [In] DsLong pStartTime,
+            [In] DsLong pEndTime
+            );
+
+        [PreserveSig]
+        new int Update(
+            [In] SSUpdate dwFlags,
+            [In] IntPtr hEvent,
+            [In] IntPtr pfnAPC,
+            [In] IntPtr dwAPCData
+            );
+
+        [PreserveSig]
+        new int CompletionStatus(
+            [In] CompletionStatusFlags dwFlags,
+            [In] int dwMilliseconds
+            );
+
+        #endregion
+
+        [PreserveSig]
+        int SetPointer(
+            [In] IntPtr pBuffer,
+            [In] int lSize
+            );
+
+        [PreserveSig]
+        int GetPointer(
+            [Out] out IntPtr ppBuffer
+            );
+
+        [PreserveSig]
+        int GetSize();
+
+        [PreserveSig]
+        int GetTime(
+            out long pTimeStart,
+            out long pTimeEnd
+            );
+
+        [PreserveSig]
+        int SetTime(
+            [In] DsLong pTimeStart,
+            [In] DsLong pTimeEnd
+            );
+
+        [PreserveSig]
+        int IsSyncPoint();
+
+        [PreserveSig]
+        int SetSyncPoint(
+            [In, MarshalAs(UnmanagedType.Bool)] bool IsSyncPoint
+            );
+
+        [PreserveSig]
+        int IsPreroll();
+
+        [PreserveSig]
+        int SetPreroll(
+            [In, MarshalAs(UnmanagedType.Bool)] bool IsPreroll
+            );
+
+        [PreserveSig]
+        int GetActualDataLength();
+
+        [PreserveSig]
+        int SetActualDataLength(
+            int Size
+            );
+
+        [PreserveSig]
+        int GetMediaType(
+            out AMMediaType ppMediaType
+            );
+
+        [PreserveSig]
+        int SetMediaType(
+            [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pMediaType
+            );
+
+        [PreserveSig]
+        int IsDiscontinuity();
+
+        [PreserveSig]
+        int SetDiscontinuity(
+            [In, MarshalAs(UnmanagedType.Bool)] bool Discontinuity
+            );
+
+        [PreserveSig]
+        int GetMediaTime(
+            out long pTimeStart,
+            out long pTimeEnd
+            );
+
+        [PreserveSig]
+        int SetMediaTime(
+            [In] DsLong pTimeStart,
+            [In] DsLong pTimeEnd
+            );
+    }
 
     [Guid("BEBE595E-9A6F-11D0-8FDE-00C04FD9189D"), 
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -328,7 +523,11 @@ namespace DirectShowLib.MultimediaStreaming
 
         [PreserveSig]
         int AddMediaStream(
+#if ALLOW_UNTESTED_INTERFACES
             [In, MarshalAs(UnmanagedType.Interface)] IAMMediaStream pAMMediaStream
+#else
+            [In, MarshalAs(UnmanagedType.Interface)] object pAMMediaStream
+#endif
             );
 
         [PreserveSig]
@@ -373,205 +572,6 @@ namespace DirectShowLib.MultimediaStreaming
     }
 
 
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
-    Guid("AB6B4AFA-F6E4-11D0-900D-00C04FD9189D")]
-    public interface IAMMediaTypeStream : IMediaStream
-    {
-        #region IMediaStream Methods
-
-        [PreserveSig]
-        new int GetMultiMediaStream(
-            [MarshalAs(UnmanagedType.Interface)] out IMultiMediaStream ppMultiMediaStream
-            );
-
-        [PreserveSig]
-        new int GetInformation(
-            out Guid pPurposeId,
-            out StreamType pType
-            );
-
-        [PreserveSig]
-        new int SetSameFormat(
-            [In, MarshalAs(UnmanagedType.Interface)] IMediaStream pStreamThatHasDesiredFormat,
-            [In] int dwFlags
-            );
-
-        [PreserveSig]
-        new int AllocateSample(
-            [In] int dwFlags,
-            [MarshalAs(UnmanagedType.Interface)] out IStreamSample ppSample
-            );
-
-        [PreserveSig]
-        new int CreateSharedSample(
-            [In, MarshalAs(UnmanagedType.Interface)] IStreamSample pExistingSample,
-            [In] int dwFlags,
-            [MarshalAs(UnmanagedType.Interface)] out IStreamSample ppNewSample
-            );
-
-        [PreserveSig]
-        new int SendEndOfStream(
-            int dwFlags
-            );
-
-        #endregion
-
-        [PreserveSig]
-        int GetFormat(
-            out AMMediaType pMediaType,
-            [In] int dwFlags
-            );
-
-        [PreserveSig]
-        int SetFormat(
-            [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pMediaType,
-            [In] int dwFlags
-            );
-
-        [PreserveSig]
-        int CreateSample(
-            [In] int lSampleSize,
-            [In] ref byte pbBuffer,
-            [In] int dwFlags,
-            [In, MarshalAs(UnmanagedType.IUnknown)] object pUnkOuter,
-            [MarshalAs(UnmanagedType.Interface)] out IAMMediaTypeSample ppAMMediaTypeSample
-            );
-
-        [PreserveSig]
-        int GetStreamAllocatorRequirements(
-            out AllocatorProperties pProps
-            );
-
-        [PreserveSig]
-        int SetStreamAllocatorRequirements(
-            [In] ref AllocatorProperties pProps
-            );
-    }
-
-
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
-    Guid("AB6B4AFB-F6E4-11D0-900D-00C04FD9189D")]
-    public interface IAMMediaTypeSample : IStreamSample
-    {
-        #region IStreamSample Methods
-
-        [PreserveSig]
-        new int GetMediaStream(
-            [MarshalAs(UnmanagedType.Interface)] out IMediaStream ppMediaStream
-            );
-
-        [PreserveSig]
-        new int GetSampleTimes(
-            out long pStartTime,
-            out long pEndTime,
-            out long pCurrentTime
-            );
-
-        [PreserveSig]
-        new int SetSampleTimes(
-            [In] ref long pStartTime,
-            [In] ref long pEndTime
-            );
-
-        [PreserveSig]
-        new int Update(
-            [In] SSUpdate dwFlags,
-            [In] IntPtr hEvent,
-            [In, MarshalAs(UnmanagedType.Interface)] IStreamSample pfnAPC,
-            [In] IntPtr dwAPCData
-            );
-
-        [PreserveSig]
-        new int CompletionStatus(
-            [In] CompletionStatusFlags dwFlags,
-            [In] int dwMilliseconds
-            );
-
-        #endregion
-
-        [PreserveSig]
-        int SetPointer(
-            [In] ref byte pBuffer,
-            [In] int lSize
-            );
-
-        [PreserveSig]
-        int GetPointer(
-            [Out] IntPtr ppBuffer
-            );
-
-        [PreserveSig]
-        int GetSize();
-
-        [PreserveSig]
-        int GetTime(
-            out long pTimeStart,
-            out long pTimeEnd
-            );
-
-        [PreserveSig]
-        int SetTime(
-            [In] ref long pTimeStart,
-            [In] ref long pTimeEnd
-            );
-
-        [PreserveSig]
-        int IsSyncPoint();
-
-        [PreserveSig]
-        int SetSyncPoint(
-            [In, MarshalAs(UnmanagedType.Bool)] bool IsSyncPoint
-            );
-
-        [PreserveSig]
-        int IsPreroll();
-
-        [PreserveSig]
-        int SetPreroll(
-            [In, MarshalAs(UnmanagedType.Bool)] bool IsPreroll
-            );
-
-        [PreserveSig]
-        int GetActualDataLength();
-
-        [PreserveSig]
-        int SetActualDataLength(
-            int Size
-            );
-
-        [PreserveSig]
-        int GetMediaType(
-            IntPtr ppMediaType
-            );
-
-        [PreserveSig]
-        int SetMediaType(
-            [In, MarshalAs(UnmanagedType.LPStruct)] AMMediaType pMediaType
-            );
-
-        [PreserveSig]
-        int IsDiscontinuity();
-
-        [PreserveSig]
-        int SetDiscontinuity(
-            [In, MarshalAs(UnmanagedType.Bool)] bool Discontinuity
-            );
-
-        [PreserveSig]
-        int GetMediaTime(
-            out long pTimeStart,
-            out long pTimeEnd
-            );
-
-        [PreserveSig]
-        int SetMediaTime(
-            [In] ref long pTimeStart,
-            [In] ref long pTimeEnd
-            );
-    }
-
-
-#endif
     #endregion
 }
 

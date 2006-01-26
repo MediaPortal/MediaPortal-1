@@ -31,7 +31,6 @@ namespace DirectShowLib
 
     #region Declarations
 
-#if ALLOW_UNTESTED_INTERFACES
     /// <summary>
     /// From AMExtendedSeekingCapabilities
     /// </summary>
@@ -40,13 +39,12 @@ namespace DirectShowLib
     {
         CanSeek = 1,
         CanScan = 2,
-        MarmerSeek = 4,
+        MarkerSeek = 4,
         ScanWithoutClock = 8,
         NoStandardRepaint = 16,
         Buffering = 32,
         SendsVideoFrameReady = 64
     }
-#endif
     
     #endregion
 
@@ -177,33 +175,6 @@ namespace DirectShowLib
 
     }
 
-    [Guid("FA2AA8F9-8B62-11D0-A520-000000000000"),
-    InterfaceType(ComInterfaceType.InterfaceIsDual)]
-    public interface IAMExtendedSeeking
-    {
-        [PreserveSig]
-        int get_ExSeekCapabilities(out AMExtendedSeekingCapabilities pExCapabilities);
-
-        [PreserveSig]
-        int get_MarkerCount(out int pMarkerCount);
-
-        [PreserveSig]
-        int get_CurrentMarker(out int pCurrentMarker);
-
-        [PreserveSig]
-        int GetMarkerTime(int MarkerNum, out double pMarkerTime);
-
-        [PreserveSig]
-        int GetMarkerName(int MarkerNum, [MarshalAs(UnmanagedType.BStr)] out string pbstrMarkerName);
-
-        [PreserveSig]
-        int put_PlaybackSpeed(double Speed);
-
-        [PreserveSig]
-        int get_PlaybackSpeed(out double pSpeed);
-
-    }
-
     [Guid("FA2AA8F5-8B62-11D0-A520-000000000000"),
     InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IAMNetShowExProps
@@ -249,21 +220,6 @@ namespace DirectShowLib
 
         [PreserveSig]
         int get_ErrorCode(out int pErrorCode);
-
-    }
-
-    [Guid("CE8F78C1-74D9-11D2-B09D-00A0C9A81117"),
-    InterfaceType(ComInterfaceType.InterfaceIsDual)]
-    public interface IAMMediaContent2
-    {
-        [PreserveSig]
-        int get_MediaParameter(int EntryNum, [MarshalAs(UnmanagedType.BStr)] string bstrName, [MarshalAs(UnmanagedType.BStr)] out string pbstrValue);
-
-        [PreserveSig]
-        int get_MediaParameterName(int EntryNum, int Index, [MarshalAs(UnmanagedType.BStr)] out string pbstrName);
-
-        [PreserveSig]
-        int get_PlaylistCount(out int pNumberEntries);
 
     }
 
@@ -334,6 +290,51 @@ namespace DirectShowLib
 
         [PreserveSig]
         int get_MoreInfoText([MarshalAs(UnmanagedType.BStr)] out string pbstrMoreInfoText);
+
+    }
+
+    [Guid("FA2AA8F9-8B62-11D0-A520-000000000000"),
+    InterfaceType(ComInterfaceType.InterfaceIsDual)]
+    public interface IAMExtendedSeeking
+    {
+        [PreserveSig]
+        int get_ExSeekCapabilities(out AMExtendedSeekingCapabilities pExCapabilities);
+
+        [PreserveSig]
+        int get_MarkerCount(out int pMarkerCount);
+
+        [PreserveSig]
+        int get_CurrentMarker(out int pCurrentMarker);
+
+        [PreserveSig]
+        int GetMarkerTime(int MarkerNum, out double pMarkerTime);
+
+        [PreserveSig]
+        int GetMarkerName(
+            int MarkerNum, 
+            [MarshalAs(UnmanagedType.BStr)] out string pbstrMarkerName
+            );
+
+        [PreserveSig]
+        int put_PlaybackSpeed(double Speed);
+
+        [PreserveSig]
+        int get_PlaybackSpeed(out double pSpeed);
+
+    }
+
+    [Guid("CE8F78C1-74D9-11D2-B09D-00A0C9A81117"),
+    InterfaceType(ComInterfaceType.InterfaceIsDual)]
+    public interface IAMMediaContent2
+    {
+        [PreserveSig]
+        int get_MediaParameter(int EntryNum, [MarshalAs(UnmanagedType.BStr)] string bstrName, [MarshalAs(UnmanagedType.BStr)] out string pbstrValue);
+
+        [PreserveSig]
+        int get_MediaParameterName(int EntryNum, int Index, [MarshalAs(UnmanagedType.BStr)] out string pbstrName);
+
+        [PreserveSig]
+        int get_PlaylistCount(out int pNumberEntries);
 
     }
 

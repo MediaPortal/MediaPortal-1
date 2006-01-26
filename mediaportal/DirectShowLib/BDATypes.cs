@@ -28,105 +28,106 @@ using System.Runtime.InteropServices;
 namespace DirectShowLib.BDA
 {
 
-	#region Declarations
+    #region Declarations
 
 #if ALLOW_UNTESTED_INTERFACES
 
-	/// <summary>
-	/// From BDA_EVENT_ID
-	/// </summary>
-	public enum BDAEventID
-	{
-		SignalLoss = 0,
-		SignalLock,
-		DataStart,
-		DataStop,
-		ChannelAcquired,
-		ChannelLost,
-		ChannelSourceChanged,
-		ChannelActivated,
-		ChannelDeactivated,
-		SubChannelAcquired,
-		SubChannelLost,
-		SubChannelSourceChanged,
-		SubChannelActivated,
-		SubChannelDeactivated,
-		AccessGranted,
-		AccessDenied,
-		OfferExtended,
-		PurchaseCompleted,
-		SmartCardInserted,
-		SmartCardRemoved
-	}
+    /// <summary>
+    /// From BDA_EVENT_ID
+    /// </summary>
+    public enum BDAEventID
+    {
+        SignalLoss = 0,
+        SignalLock,
+        DataStart,
+        DataStop,
+        ChannelAcquired,
+        ChannelLost,
+        ChannelSourceChanged,
+        ChannelActivated,
+        ChannelDeactivated,
+        SubChannelAcquired,
+        SubChannelLost,
+        SubChannelSourceChanged,
+        SubChannelActivated,
+        SubChannelDeactivated,
+        AccessGranted,
+        AccessDenied,
+        OfferExtended,
+        PurchaseCompleted,
+        SmartCardInserted,
+        SmartCardRemoved
+    }
 
-	/// <summary>
-	/// From MPEG2StreamType
-	/// </summary>
-	public enum MPEG2StreamType
-	{
-		BdaUninitializedMpeg2StreamType = -1,
-		Reserved1 = 0x0,
-		IsoIec11172_2_Video = Reserved1 + 1,
-		IsoIec13818_2_Video = IsoIec11172_2_Video + 1,
-		IsoIec11172_3_Audio = IsoIec13818_2_Video + 1,
-		IsoIec13818_3_Audio = IsoIec11172_3_Audio + 1,
-		IsoIec13818_1_PrivateSection = IsoIec13818_3_Audio + 1,
-		IsoIec13818_1_Pes = IsoIec13818_1_PrivateSection + 1,
-		IsoIec13522_Mheg = IsoIec13818_1_Pes + 1,
-		AnnexADsmCC = IsoIec13522_Mheg + 1,
-		ItuTRecH222_1 = AnnexADsmCC + 1,
-		IsoIec13818_6_TypeA = ItuTRecH222_1 + 1,
-		IsoIec13818_6_TypeB = IsoIec13818_6_TypeA + 1,
-		IsoIec13818_6_TypeC = IsoIec13818_6_TypeB + 1,
-		IsoIec13818_6_TypeD = IsoIec13818_6_TypeC + 1,
-		IsoIec13818_1_Auxiliary = IsoIec13818_6_TypeD + 1,
-		IsoIec13818_1_Reserved = IsoIec13818_1_Auxiliary + 1,
-		UserPrivate = IsoIec13818_1_Reserved + 1
-	}
+    /// <summary>
+    /// From MPEG2StreamType
+    /// </summary>
+    public enum MPEG2StreamType
+    {
+        BdaUninitializedMpeg2StreamType = -1,
+        Reserved1 = 0x0,
+        IsoIec11172_2_Video = Reserved1 + 1,
+        IsoIec13818_2_Video = IsoIec11172_2_Video + 1,
+        IsoIec11172_3_Audio = IsoIec13818_2_Video + 1,
+        IsoIec13818_3_Audio = IsoIec11172_3_Audio + 1,
+        IsoIec13818_1_PrivateSection = IsoIec13818_3_Audio + 1,
+        IsoIec13818_1_Pes = IsoIec13818_1_PrivateSection + 1,
+        IsoIec13522_Mheg = IsoIec13818_1_Pes + 1,
+        AnnexADsmCC = IsoIec13522_Mheg + 1,
+        ItuTRecH222_1 = AnnexADsmCC + 1,
+        IsoIec13818_6_TypeA = ItuTRecH222_1 + 1,
+        IsoIec13818_6_TypeB = IsoIec13818_6_TypeA + 1,
+        IsoIec13818_6_TypeC = IsoIec13818_6_TypeB + 1,
+        IsoIec13818_6_TypeD = IsoIec13818_6_TypeC + 1,
+        IsoIec13818_1_Auxiliary = IsoIec13818_6_TypeD + 1,
+        IsoIec13818_1_Reserved = IsoIec13818_1_Auxiliary + 1,
+        UserPrivate = IsoIec13818_1_Reserved + 1
+    }
 
-	/// <summary>
-	/// From ATSCComponentTypeFlags
-	/// </summary>
-	[Flags]
-	public enum ATSCComponentTypeFlags
-	{
-		ATSCCT_AC3 = 0x00000001
-	}
+    /// <summary>
+    /// From ATSCComponentTypeFlags
+    /// </summary>
+    [Flags]
+    public enum ATSCComponentTypeFlags
+    {
+        None = 0x0,
+        ATSCCT_AC3 = 0x00000001
+    }
 
-	/// <summary>
-	/// From BDA_TEMPLATE_PIN_JOINT
-	/// </summary>
-	[StructLayout(LayoutKind.Sequential)]
-	public struct BDATemplatePinJoint
-	{
-		public int uliTemplateConnection;
-		public int ulcInstancesMax;
-	}
+    /// <summary>
+    /// From BDA_TEMPLATE_PIN_JOINT
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct BDATemplatePinJoint
+    {
+        public int uliTemplateConnection;
+        public int ulcInstancesMax;
+    }
 
-	/// <summary>
-	/// From KS_BDA_FRAME_INFO
-	/// </summary>
-	[StructLayout(LayoutKind.Sequential)]
-	public struct KSBDAFrameInfo
-	{
-		public int ExtendedHeaderSize; // Size of this extended header
-		public int dwFrameFlags; //
-		public int ulEvent; //
-		public int ulChannelNumber; //
-		public int ulSubchannelNumber; //
-		public int ulReason; //
-	}
+    /// <summary>
+    /// From KS_BDA_FRAME_INFO
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct KSBDAFrameInfo
+    {
+        public int ExtendedHeaderSize; // Size of this extended header
+        public int dwFrameFlags; //
+        public int ulEvent; //
+        public int ulChannelNumber; //
+        public int ulSubchannelNumber; //
+        public int ulReason; //
+    }
 
-	/// <summary>
-	/// From MPEG2_TRANSPORT_STRIDE
-	/// </summary>
-	[StructLayout(LayoutKind.Sequential)]
-	public struct MPEG2TransportStride
-	{
-		public int dwOffset;
-		public int dwPacketLength;
-		public int dwStride;
-	}
+    /// <summary>
+    /// From MPEG2_TRANSPORT_STRIDE
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MPEG2TransportStride
+    {
+        public int dwOffset;
+        public int dwPacketLength;
+        public int dwStride;
+    }
 
 #endif
 

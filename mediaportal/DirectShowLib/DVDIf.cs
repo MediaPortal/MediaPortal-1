@@ -137,7 +137,7 @@ namespace DirectShowLib.Dvd
     }
 
     /// <summary>
-    /// DVD_TIMECODE_FLAGS
+    /// From DVD_TIMECODE_FLAGS
     /// </summary>
     [Flags]
     public enum DvdTimeCodeFlags

@@ -1116,10 +1116,10 @@ namespace DirectShowLib.BDA
         #endregion
 
         [PreserveSig]
-        int get_Flags([Out] out int Flags);
+        int get_Flags([Out] out ATSCComponentTypeFlags Flags);
 
         [PreserveSig]
-        int put_Flags([In] int Flags);
+        int put_Flags([In] ATSCComponentTypeFlags Flags);
     }
 
 
