@@ -61,7 +61,7 @@
 
 <!-- Formating of Listing -->
   <section name="Listing">
-    <entry name="BaseURL">http://www.telemoustique.be/fr/</entry>
+    <entry name="BaseURL">http://www.telepocket.be/fr/</entry>
     <entry name="SearchURL">zender.asp?move=full&amp;channel=#ID&amp;dag=#_M/#_D/#YYYY</entry>
 
 <!-- Unique Listing Start string -->
@@ -77,7 +77,7 @@
 	&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
 	&#60;td&#62;&#60;#END&#62;&#60;/td&#62;
 	&#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#GENRE&#62;&#60;/td&#62;
 	&#60;td&#62;&#60;/td&#62;
 	&#60;/tr&#62;
 	&#60;tr&#62;
@@ -90,7 +90,7 @@
   <section name="Info">
     <entry name="GuideDays">3</entry>
     <entry name="Language">fr</entry>
-    <entry name="SiteDescription">...</entry>
+    <entry name="SiteDescription">Telepocket</entry>
     <entry name="TimeZone">W. Europe Standard Time</entry>
   </section>
 </profile>
