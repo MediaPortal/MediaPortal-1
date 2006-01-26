@@ -62,7 +62,7 @@ namespace WindowPlugins.GUISettings.Epg
           item.Path = country[i];
           if (localCountry == country[i])
           {
-            OnGrabberSelected(item);
+            OnChangeGrabber(item);
             return;
           }
           listGrabbers.Add(item);
@@ -72,10 +72,6 @@ namespace WindowPlugins.GUISettings.Epg
       }
 
       listGrabbers.Sort(this);
-      //GUIListItem manualItem = new GUIListItem();
-      //manualItem.Label = GUILocalizeStrings.Get(200004);//Manual supplied tvguide.xml
-      //manualItem.Path = "";
-      //listGrabbers.Add(manualItem);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -83,7 +79,7 @@ namespace WindowPlugins.GUISettings.Epg
       if (control == listGrabbers)
       {
         if (!epgGrabberSelected)
-          OnGrabberSelected(listGrabbers.SelectedListItem);
+          OnChangeGrabber(listGrabbers.SelectedListItem);
         else
           OnMap();
       }
@@ -95,36 +91,31 @@ namespace WindowPlugins.GUISettings.Epg
     }
 
 
-    protected void OnGrabberSelected(GUIListItem item)
+    protected void OnChangeGrabber(GUIListItem item)
     {
       if (item == null)
         return;
 
       // Channel List
       _epgChannels = _channelList.GetChannelArrayList(item.Path);
-      string country = item.Label;
-      GUIPropertyManager.SetProperty("#WizardCountryCode", country);
+      string country =  GUIPropertyManager.GetProperty("#WizardCountryCode");
 
-      OnCountryChanged(country);
-
-      EPGConfig config = new EPGConfig(@"webepg");
-      config.Country = country;
-      ShowChannelMappingList(config);
+      ShowChannelMappingList(country);
       epgGrabberSelected = true;
     }
-    protected virtual void OnCountryChanged(string country)
-    {
-    }
 
-    protected void ShowChannelMappingList(EPGConfig config)
+    protected void ShowChannelMappingList(string country)
     {
+      EPGConfig config = new EPGConfig("webepg");
+      config.Load();
+      ArrayList list = config.GetAll();
+
       listGrabbers.Clear();
       epgGrabberSelected = true;
       ArrayList channels = new ArrayList();
       TVDatabase.GetChannels(ref channels);
 
       GUIListItem ch; // = new GUIListItem();
-      ArrayList list = config.GetAll();
       //channels.Sort (this);
       foreach (TVChannel chan in channels)
       {
@@ -132,7 +123,7 @@ namespace WindowPlugins.GUISettings.Epg
         ch.Label = chan.Name;
         ch.Path = "";
 
-        int chID = _channelList.FindChannel(chan.Name, config.Country);
+        int chID = _channelList.FindChannel(chan.Name, country);
         if (chID != -1)
         {
           ChannelInfo chInfo = (ChannelInfo)_epgChannels[chID];
@@ -144,10 +135,9 @@ namespace WindowPlugins.GUISettings.Epg
         {
           foreach (EPGConfigData data in list)
           {
-            if (String.Compare(data.DisplayName, chan.Name, true) == 0)
+            if (String.Compare(data.DisplayName, ch.Label, true) == 0)
             {
               ch.Label2 = data.ChannelID;
-              break;
             }
           }
         }
@@ -162,14 +152,12 @@ namespace WindowPlugins.GUISettings.Epg
     }
 
 
-    protected void MapChannels(string country)
+    protected void MapChannels()
     {
-      if (country == String.Empty || country == null) return;
       if (epgGrabberSelected == false) return;
 
       EPGConfig config = new EPGConfig(@"webepg");
-      config.Country = country;
-
+      
 
       config.MaxGrab = 7;
 

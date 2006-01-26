@@ -36,36 +36,26 @@ namespace WindowPlugins.GUISettings.Epg
 
     }
 
-    protected override void OnCountryChanged(string country)
-    {
-      _country = country;
-    }
 
     protected override void OnPageDestroy(int new_windowId)
     {
       base.OnPageDestroy(new_windowId);
-      MapChannels(_country);
+      MapChannels();
     }
 
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      EPGConfig config = new EPGConfig(@"webepg");
-      config.Load();
-      ArrayList list=config.GetAll();
-      if (list.Count != 0)
+
+      using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        _country = config.Country;
-        if (_country.Length > 0)
-        {
-          _epgChannels = _channelList.GetChannelArrayList(config.Country);
-          ShowChannelMappingList(config);
-          return;
-        }
+        string countryCode = xmlReader.GetValueAsString("general", "country", "");
+        string country = xmlReader.GetValueAsString("capture", "countryname", "");
+        GUIPropertyManager.SetProperty("#WizardCountryCode", countryCode);
+        GUIPropertyManager.SetProperty("#WizardCountry", country);
       }
       LoadGrabbers();
 
     }
-
   }
 }

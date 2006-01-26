@@ -65,7 +65,7 @@ namespace WindowPlugins.GUISettings.Epg
     {
       string country = GUIPropertyManager.GetProperty("#WizardCountryCode");
 
-      MapChannels(country);
+      MapChannels();
       GUIPropertyManager.SetProperty("#Wizard.EPG.Done", "yes");
       GUIWizardCardsDetected.ScanNextCardType();
     }
