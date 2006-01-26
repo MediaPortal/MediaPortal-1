@@ -3411,6 +3411,28 @@
     </tv>
   </capturecard>
 
+  <capturecard commercialname="ATI AIW 9200 VIVO Cards or earlier" capturename="ATI Rage Theater Video Capture" devid="ntativrv35">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="crossbar"		name="ATI Rage Theater Video Crossbar"	checkdevice="true"/>
+        <filter cat="capture"  		name="ATI Rage Theater Video Capture"  	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"						checkdevice="false"/>
+        <filter cat="encodervideo"  name="ATI Media Center Video Encoder"	checkdevice="false"/>
+        <filter cat="encoderaudio"  name="ATI Media Center Audio Encoder" 	checkdevice="false"/>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="crossbar"			sourcepin="0" sinkfilter="capture"			sinkpin="0"/>
+        <connection sourcefilter="capture"			sourcepin="0" sinkfilter="encodervideo"		sinkpin="0"/>
+        <connection sourcefilter="audcapture"		sourcepin="0" sinkfilter="encoderaudio"		sinkpin="0"/>
+        <connection sourcefilter="encodervideo"		sourcepin="0" sinkfilter="mux"				sinkpin="1"/>
+        <connection sourcefilter="encoderaudio"		sourcepin="0" sinkfilter="mux"				sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
   <capturecard commercialname="Creatix SAA7134 DVB-T" capturename="Creatix BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
@@ -3508,16 +3530,24 @@
   </capturecard>
 
 <!--  
-  <capturecard commercialname="ATI AIW VIVO Cards" capturename="ATI Rage Theater Video Capture" devid="ntativrv34">
-    <capabilities tv="true" radio="false" mpeg2="false" mce="false" sw="true" bda="false"/>
+  <capturecard commercialname="ATI AIW 9600> VIVO Cards" capturename="ATI Rage Theater Video Capture" devid="ntativrv34">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
-      <interface cat="capture" video="0" audio="" mpeg2=""/>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="crossbar"	name="ATI Rage Theater Video Crossbar"	checkdevice="true"/>
-        <filter cat="capture"	name="ATI Rage Theater Video Capture"	checkdevice="true"/>
+        <filter cat="crossbar"		name="ATI Rage Theater Video Crossbar"	checkdevice="true"/>
+        <filter cat="capture"  		name="ATI Rage Theater Video Capture"  	checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"						checkdevice="false"/>
+        <filter cat="encodervideo"  name="ATI Media Center Video Encoder"	checkdevice="false"/>
+        <filter cat="encoderaudio"  name="ATI Media Center Audio Encoder" 	checkdevice="false"/>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"		checkdevice="false"/>
       </filters>
       <connections>
-        <connection sourcefilter="crossbarvideo" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+        <connection sourcefilter="crossbar"			sourcepin="0" sinkfilter="capture"			sinkpin="0"/>
+        <connection sourcefilter="capture"			sourcepin="0" sinkfilter="encodervideo"		sinkpin="0"/>
+        <connection sourcefilter="audcapture"		sourcepin="0" sinkfilter="encoderaudio"		sinkpin="0"/>
+        <connection sourcefilter="encodervideo"		sourcepin="0" sinkfilter="mux"				sinkpin="1"/>
+        <connection sourcefilter="encoderaudio"		sourcepin="0" sinkfilter="mux"				sinkpin="0"/>
       </connections>
     </tv>
   </capturecard> -->
