@@ -672,6 +672,7 @@
     <Compile Include="GUISettings\General\GUISettingsGeneral.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUISettings\GUIEpgSelectBase.cs" />
     <Compile Include="GUISettings\GUISettings.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -700,6 +701,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUISettings\TV\GUISettingsEpg.cs" />
+    <Compile Include="GUISettings\TV\GUISettingsEpgMapping.cs" />
     <Compile Include="GUISettings\TV\GUISettingsRecordings.cs">
       <SubType>Code</SubType>
     </Compile>
