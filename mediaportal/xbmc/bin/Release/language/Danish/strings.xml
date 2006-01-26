@@ -123,7 +123,7 @@
 	</string>
 	<string>
 		<id>50</id>
-		<value>Mine DVDer</value>
+		<value>DVDer</value>
 	</string>
 	<string>
 		<id>100</id>
@@ -175,7 +175,7 @@
 	</string>
 	<string>
 		<id>112</id>
-		<value>PAUSET</value>
+		<value>PAUSE</value>
 	</string>
 	<string>
 		<id>113</id>
@@ -207,7 +207,7 @@
 	</string>
 	<string>
 		<id>120</id>
-		<value>Bekreft Filkopiering</value>
+		<value>Bekræft Filkopiering</value>
 	</string>
 	<string>
 		<id>121</id>
@@ -219,15 +219,15 @@
 	</string>
 	<string>
 		<id>123</id>
-		<value>Kopier følgende filer?</value>
+		<value>Kopier disse filer?</value>
 	</string>
 	<string>
 		<id>124</id>
-		<value>Flyt følgende filer?</value>
+		<value>Flyt disse filer?</value>
 	</string>
 	<string>
 		<id>125</id>
-		<value>Slet følgende filer?</value>
+		<value>Slet disse filer?</value>
 	</string>
 	<string>
 		<id>126</id>
@@ -247,7 +247,7 @@
 	</string>
 	<string>
 		<id>130</id>
-		<value>Systeminformation</value>
+		<value>System info</value>
 	</string>
 	<string>
 		<id>131</id>
@@ -355,7 +355,7 @@
 	</string>
 	<string>
 		<id>157</id>
-		<value>Film</value>
+		<value>Video</value>
 	</string>
 	<string>
 		<id>158</id>
@@ -475,7 +475,7 @@
 	</string>
 	<string>
 		<id>187</id>
-		<value>Ingen fundet!</value>
+		<value>Intet album fundet!</value>
 	</string>
 	<string>
 		<id>188</id>
@@ -495,7 +495,7 @@
 	</string>
 	<string>
 		<id>192</id>
-		<value>Rens</value>
+		<value>Ryd</value>
 	</string>
 	<string>
 		<id>193</id>
@@ -739,7 +739,7 @@
 	</string>
 	<string>
 		<id>254</id>
-		<value>DD Stereo Passthrough</value>
+		<value>DD Stereo gennemgng</value>
 	</string>
 	<string>
 		<id>255</id>
@@ -827,7 +827,7 @@
 	</string>
 	<string>
 		<id>276</id>
-		<value>-Advarsel!- Sæt til 0,0 for bedste kvalitet, ret værdien for at mindskes billedet til at passe til skærmen.</value>
+		<value>-Advarsel!- Sæt til 0,0 for bedste kvalitet, ret værdien for at mindske billedet så det passer.</value>
 	</string>
 	<string>
 		<id>277</id>
@@ -843,7 +843,7 @@
 	</string>
 	<string>
 		<id>280</id>
-		<value>Benytter standard opsætningen</value>
+		<value>benytter standard opsætningen</value>
 	</string>
 	<string>
 		<id>281</id>
@@ -851,11 +851,11 @@
 	</string>
 	<string>
 		<id>282</id>
-		<value>Fandt %i punkter</value>
+		<value>fandt %i punkter</value>
 	</string>
 	<string>
 		<id>283</id>
-		<value>Søgeresultat</value>
+		<value>Søgeresultater</value>
 	</string>
 	<string>
 		<id>284</id>
@@ -963,7 +963,7 @@
 	</string>
 	<string>
 		<id>310</id>
-		<value>Auto Lysstyrke/Kontrast</value>
+		<value>Auto lysstyrke/kontrast</value>
 	</string>
 	<string>
 		<id>311</id>
@@ -987,7 +987,7 @@
 	</string>
 	<string>
 		<id>316</id>
-		<value>Søger efter sange...</value>
+		<value>Søger sange...</value>
 	</string>
 	<string>
 		<id>317</id>
@@ -1051,7 +1051,7 @@
 	</string>
 	<string>
 		<id>332</id>
-		<value>Fejl ved Komprimering af database</value>
+		<value>Fejl ved komprimering af database</value>
 	</string>
 	<string>
 		<id>333</id>
@@ -1067,7 +1067,7 @@
 	</string>
 	<string>
 		<id>336</id>
-		<value>Juster Framerate</value>
+		<value>Juster opdateringshastighed</value>
 	</string>
 	<string>
 		<id>337</id>
@@ -1095,7 +1095,7 @@
 	</string>
 	<string>
 		<id>343</id>
-		<value>Juster Framerate</value>
+		<value>Juster opdateringshastighed</value>
 	</string>
 	<string>
 		<id>344</id>
@@ -1299,7 +1299,7 @@
 	</string>
 	<string>
 		<id>394</id>
-		<value>ukendt</value>
+		<value>Ikke tilgængelig</value>
 	</string>
 	<string>
 		<id>396</id>
@@ -1307,7 +1307,7 @@
 	</string>
 	<string>
 		<id>397</id>
-		<value>Opdater tid</value>
+		<value>Opdateringstid</value>
 	</string>
 	<string>
 		<id>398</id>
@@ -1367,7 +1367,7 @@
 	</string>
 	<string>
 		<id>413</id>
-		<value>Manuel optagelse</value>
+		<value>Manuel</value>
 	</string>
 	<string>
 		<id>414</id>
@@ -1675,7 +1675,7 @@
 	</string>
 	<string>
 		<id>490</id>
-		<value>Automatisk skift liste og sange i playlist</value>
+		<value>Skift automatisk liste og ikoner i sange</value>
 	</string>
 	<string>
 		<id>491</id>
@@ -1747,15 +1747,15 @@
 	</string>
 	<string>
 		<id>514</id>
-		<value>Kan ikke oprette Mappe, handling ikke udført</value>
+		<value>Kan ikke oprette mppe, handling ikke udført</value>
 	</string>
 	<string>
 		<id>515</id>
-		<value>Kan ikke slette Mappe, handling ikke udført</value>
+		<value>Kan ikke slette mppe, handling ikke udført</value>
 	</string>
 	<string>
 		<id>516</id>
-		<value>kan ikke slette destinationsfil, handling ikke udført</value>
+		<value>Kan ikke slette destinationsfil, handling ikke udført</value>
 	</string>
 	<string>
 		<id>517</id>
@@ -1767,15 +1767,15 @@
 	</string>
 	<string>
 		<id>530</id>
-		<value>Foto-disk isat, vil du åbne den ?</value>
+		<value>Foto disk isat, vil du åbne den ?</value>
 	</string>
 	<string>
 		<id>531</id>
-		<value>Film-disk isat, vil du åbne den ?</value>
+		<value>Film disk isat, vil du åbne den ?</value>
 	</string>
 	<string>
 		<id>532</id>
-		<value>Lyd-disk isat, vil du åbne den ?</value>
+		<value>Musik CD isat, vil du åbne den ?</value>
 	</string>
 	<string>
 		<id>550</id>
@@ -1783,7 +1783,7 @@
 	</string>
 	<string>
 		<id>600</id>
-		<value>TV-Guide</value>
+		<value>TVGuide</value>
 	</string>
 	<string>
 		<id>601</id>
@@ -1807,7 +1807,7 @@
 	</string>
 	<string>
 		<id>606</id>
-		<value>Indlæser ny TV-Guide</value>
+		<value>Indlæser ny TV Guide</value>
 	</string>
 	<string>
 		<id>607</id>
@@ -1815,15 +1815,15 @@
 	</string>
 	<string>
 		<id>608</id>
-		<value>TV-Guide Import fejlede</value>
+		<value>TV Guide Import fejlede</value>
 	</string>
 	<string>
 		<id>609</id>
-		<value>TV-Guide Import fuldført</value>
+		<value>TV  Guide Import fuldført</value>
 	</string>
 	<string>
 		<id>610</id>
-		<value>Ingen</value>
+		<value>Optag ikke</value>
 	</string>
 	<string>
 		<id>611</id>
@@ -1883,7 +1883,7 @@
 	</string>
 	<string>
 		<id>625</id>
-		<value>Slet optagelser:</value>
+		<value>Optagelser slettet:</value>
 	</string>
 	<string>
 		<id>626</id>
@@ -2171,7 +2171,7 @@
 	</string>
 	<string>
 		<id>705</id>
-		<value>Henter RSS kilde for</value>
+		<value>Henter RSS kilde fra</value>
 	</string>
 	<string>
 		<id>706</id>
@@ -2179,7 +2179,7 @@
 	</string>
 	<string>
 		<id>707</id>
-		<value>TV til/fra</value>
+		<value>TV Til</value>
 	</string>
 	<string>
 		<id>708</id>
@@ -2195,7 +2195,7 @@
 	</string>
 	<string>
 		<id>711</id>
-		<value>Opgrader fra v#old til v#new?</value>
+		<value>Opgrader fra v#gammel til v#ny?</value>
 	</string>
 	<string>
 		<id>712</id>
@@ -2223,7 +2223,7 @@
 	</string>
 	<string>
 		<id>718</id>
-		<value>Slet Top100</value>
+		<value>Slet Top 100</value>
 	</string>
 	<string>
 		<id>719</id>
@@ -2235,15 +2235,15 @@
 	</string>
 	<string>
 		<id>721</id>
-		<value>Vis: antal gange afspillet</value>
+		<value>Vis: Antal gange afspillet</value>
 	</string>
 	<string>
 		<id>722</id>
-		<value>Kan ikke afspille DVD</value>
+		<value>Kan ikke afspille Disk</value>
 	</string>
 	<string>
 		<id>723</id>
-		<value>Har du indsat en DVD?</value>
+		<value>Har du indsat en Disk?</value>
 	</string>
 	<string>
 		<id>724</id>
@@ -2259,11 +2259,11 @@
 	</string>
 	<string>
 		<id>727</id>
-		<value>Live TV i baggrunden</value>
+		<value>Direkte TV i baggrunden</value>
 	</string>
 	<string>
 		<id>728</id>
-		<value>Live TV kunne ikke startes!</value>
+		<value>Direkte TV kunne ikke startes!</value>
 	</string>
 	<string>
 		<id>729</id>
@@ -2295,7 +2295,7 @@
 	</string>
 	<string>
 		<id>736</id>
-		<value>Ingen data for denne kanal</value>
+		<value>Ingen EPG for denne kanal</value>
 	</string>
 	<string>
 		<id>737</id>
@@ -2319,7 +2319,7 @@
 	</string>
 	<string>
 		<id>742</id>
-		<value>Vis: Precipitation</value>
+		<value>Vis: Nedbør</value>
 	</string>
 	<string>
 		<id>743</id>
@@ -2343,11 +2343,15 @@
 	</string>
 	<string>
 		<id>748</id>
-		<value>Precipitation</value>
+		<value>Nedbør</value>
 	</string>
 	<string>
 		<id>750</id>
 		<value>Billeder</value>
+	</string>
+	<string>
+		<id>751</id>
+		<value>Vis alle sange med denne kunstner</value>
 	</string>
 	<string>
 		<id>800</id>
@@ -2355,7 +2359,7 @@
 	</string>
 	<string>
 		<id>801</id>
-		<value>indeholdt</value>
+		<value>Indeholder</value>
 	</string>
 	<string>
 		<id>802</id>
@@ -2371,7 +2375,7 @@
 	</string>
 	<string>
 		<id>805</id>
-		<value>Rens</value>
+		<value>Ryd</value>
 	</string>
 	<string>
 		<id>806</id>
@@ -2379,7 +2383,7 @@
 	</string>
 	<string>
 		<id>807</id>
-		<value>Yield</value>
+		<value>Mål</value>
 	</string>
 	<string>
 		<id>808</id>
@@ -2403,11 +2407,11 @@
 	</string>
 	<string>
 		<id>852</id>
-		<value>Alarm til/fra</value>
+		<value>Alarm Til</value>
 	</string>
 	<string>
 		<id>853</id>
-		<value>Navn</value>
+		<value>Navn:</value>
 	</string>
 	<string>
 		<id>854</id>
@@ -2419,15 +2423,15 @@
 	</string>
 	<string>
 		<id>856</id>
-		<value>Sleeptimer</value>
+		<value>Sleeptimer Til</value>
 	</string>
 	<string>
 		<id>857</id>
-		<value>Snooze</value>
+		<value>Slumre</value>
 	</string>
 	<string>
 		<id>858</id>
-		<value>Snoozetid</value>
+		<value>Slumretid</value>
 	</string>
 	<string>
 		<id>859</id>
@@ -2435,7 +2439,7 @@
 	</string>
 	<string>
 		<id>860</id>
-		<value>Øg lyd over tid</value>
+		<value>Hæv lydstyrke</value>
 	</string>
 	<string>
 		<id>861</id>
@@ -2459,7 +2463,7 @@
 	</string>
 	<string>
 		<id>866</id>
-		<value>Dæmp lyd over tid</value>
+		<value>Dæmp lydstyrke</value>
 	</string>
 	<string>
 		<id>867</id>
@@ -2467,11 +2471,11 @@
 	</string>
 	<string>
 		<id>868</id>
-		<value>Genstart</value>
+		<value>Reset</value>
 	</string>
 	<string>
 		<id>869</id>
-		<value>NyAlarm</value>
+		<value>Ny Alarm</value>
 	</string>
 	<string>
 		<id>870</id>
@@ -2479,7 +2483,7 @@
 	</string>
 	<string>
 		<id>871</id>
-		<value>Væk pc&apos;en</value>
+		<value>Væk pc&apos;en for denne alarm</value>
 	</string>
 	<string>
 		<id>872</id>
@@ -2503,7 +2507,7 @@
 	</string>
 	<string>
 		<id>877</id>
-		<value>prioriteter</value>
+		<value>Prioriteter</value>
 	</string>
 	<string>
 		<id>878</id>
@@ -2523,7 +2527,7 @@
 	</string>
 	<string>
 		<id>882</id>
-		<value>Kvalitet</value>
+		<value>Kvalitets indstilling</value>
 	</string>
 	<string>
 		<id>883</id>
@@ -2659,7 +2663,7 @@
 	</string>
 	<string>
 		<id>916</id>
-		<value>Fjernfil</value>
+		<value>Ekstern fil</value>
 	</string>
 	<string>
 		<id>917</id>
@@ -2667,15 +2671,15 @@
 	</string>
 	<string>
 		<id>918</id>
-		<value>Skal den downloades til det lokale</value>
+		<value>Skal den downloades til dit lokale</value>
 	</string>
 	<string>
 		<id>919</id>
-		<value>standard bibliotek?</value>
+		<value>lokal deling?</value>
 	</string>
 	<string>
 		<id>920</id>
-		<value>Kunne ikke hente filen</value>
+		<value>Kunne ikke hente extern fil</value>
 	</string>
 	<string>
 		<id>921</id>
@@ -2727,7 +2731,7 @@
 	</string>
 	<string>
 		<id>933</id>
-		<value>Slet fra favoritter</value>
+		<value>Fjern fra favoritter</value>
 	</string>
 	<string>
 		<id>934</id>
@@ -2743,7 +2747,7 @@
 	</string>
 	<string>
 		<id>937</id>
-		<value>Importer TV-Guide</value>
+		<value>Importer TV Guide</value>
 	</string>
 	<string>
 		<id>938</id>
@@ -2871,19 +2875,19 @@
 	</string>
 	<string>
 		<id>977</id>
-		<value>There is no free card available</value>
+		<value>Der er intet frit kort</value>
 	</string>
 	<string>
 		<id>978</id>
-		<value>which can watch this channel</value>
+		<value>der kan vise denne kanal</value>
 	</string>
 	<string>
 		<id>979</id>
-		<value>Afspil fra starten</value>
+		<value>Afspil optagelsen fra starten</value>
 	</string>
 	<string>
 		<id>980</id>
-		<value>Play recording from live point</value>
+		<value>Afspil optagelse fra "live" punktet</value>
 	</string>
 	<string>
 		<id>981</id>
@@ -2895,7 +2899,7 @@
 	</string>
 	<string>
 		<id>983</id>
-		<value>Playlists</value>
+		<value>Playlister</value>
 	</string>
 	<string>
 		<id>984</id>
@@ -2959,19 +2963,19 @@
 	</string>
 	<string>
 		<id>999</id>
-		<value>Dette plugin tillader at forvandle dine</value>
+		<value>Dette plugin kan forvandle dine</value>
 	</string>
 	<string>
 		<id>1000</id>
-		<value>Optagelser fra dvr-ms til mpg, xvid eller Wmv</value>
+		<value>TV optagelser fra dvr-ms til mpg, xvid eller wmv</value>
 	</string>
 	<string>
 		<id>1001</id>
-		<value>Bemærk. Du skal have</value>
+		<value>Bemærk at du skal have</value>
 	</string>
 	<string>
 		<id>1002</id>
-		<value>Elecard MPEG2 video dekoder</value>
+		<value>Elecard MPEG2 video dekoder installeret</value>
 	</string>
 	<string>
 		<id>1003</id>
@@ -3150,6 +3154,46 @@
 		<value>Indstillinger</value>
 	</string>
 	<string>
+		<id>1049</id>
+		<value>Hibernate</value>
+	</string>
+	<string>
+		<id>1050</id>
+		<value>Lør-Søn</value>
+	</string>
+	<string>
+		<id>1051</id>
+		<value>Optag Lør-Søn</value>
+	</string>
+	<string>
+		<id>1052</id>
+		<value>Sange</value>
+	</string>
+	<string>
+		<id>1100</id>
+		<value>Importer CD</value>
+	</string>
+	<string>
+		<id>1101</id>
+		<value>Importer valgte numre</value>
+	</string>
+	<string>
+		<id>1102</id>
+		<value>Anuller import af CD</value>
+	</string>
+	<string>
+		<id>1103</id>
+		<value>Importerer nummer</value>
+	</string>
+	<string>
+		<id>1104</id>
+		<value>resterende</value>
+	</string>
+	<string>
+		<id>1105</id>
+		<value>Importerer numre</value>
+	</string>
+	<string>
 		<id>1440</id>
 		<value>Tekst-TV</value>
 	</string>
@@ -3180,6 +3224,10 @@
 	<string>
 		<id>1447</id>
 		<value>Optagelse stoppet:</value>
+	</string>
+	<string>
+		<id>1448</id>
+		<value>Vælg intet</value>
 	</string>
 	<string>
 		<id>1449</id>
@@ -3295,7 +3343,7 @@
 	</string>
 	<string>
 		<id>1976</id>
-		<value>opm</value>
+		<value>omdr/min</value>
 	</string>
 	<string>
 		<id>1977</id>
@@ -3315,7 +3363,7 @@
 	</string>
 	<string>
 		<id>2007</id>
-		<value>Yield</value>
+		<value>Mål</value>
 	</string>
 	<string>
 		<id>2008</id>
@@ -3355,7 +3403,7 @@
 	</string>
 	<string>
 		<id>2017</id>
-		<value>væske ounce</value>
+		<value>flydende ounce</value>
 	</string>
 	<string>
 		<id>2018</id>
@@ -3551,7 +3599,7 @@
 	</string>
 	<string>
 		<id>2111</id>
-		<value>Fuldført!</value>
+		<value>Fuldført !</value>
 	</string>
 	<string>
 		<id>2112</id>
@@ -3591,7 +3639,7 @@
 	</string>
 	<string>
 		<id>2121</id>
-		<value>Kunne ikke konvertere fil!</value>
+		<value>Kunne ikke konvertere fil(er)!</value>
 	</string>
 	<string>
 		<id>2122</id>
@@ -3599,7 +3647,7 @@
 	</string>
 	<string>
 		<id>2123</id>
-		<value>Disk information</value>
+		<value>Disk info</value>
 	</string>
 	<string>
 		<id>2124</id>
@@ -3619,11 +3667,11 @@
 	</string>
 	<string>
 		<id>2128</id>
-		<value>Forbereder brænding: estimerer tid:</value>
+		<value>Forbereder brænding: forventet tid:</value>
 	</string>
 	<string>
 		<id>2129</id>
-		<value>Forbereder brænding</value>
+		<value>Forbereder at brænde</value>
 	</string>
 	<string>
 		<id>2130</id>
@@ -3703,7 +3751,7 @@
 	</string>
 	<string>
 		<id>2205</id>
-		<value>Fjern markeringer</value>
+		<value>Gendan markeringer</value>
 	</string>
 	<string>
 		<id>2206</id>
@@ -3715,11 +3763,11 @@
 	</string>
 	<string>
 		<id>2208</id>
-		<value>Opret folder?</value>
+		<value>oprette folderen?</value>
 	</string>
 	<string>
 		<id>2209</id>
-		<value>Vil du kopiere de valgte filer?</value>
+		<value>Vil du kopiere filerne?</value>
 	</string>
 	<string>
 		<id>2210</id>
@@ -3751,27 +3799,27 @@
 	</string>
 	<string>
 		<id>2217</id>
-		<value>Destination File exists!</value>
+		<value>Destinations Filen eksistere!</value>
 	</string>
 	<string>
 		<id>2218</id>
-		<value>File overwrite?</value>
+		<value>Overskriv filen?</value>
 	</string>
 	<string>
 		<id>2219</id>
-		<value>From selected drive cant move!</value>
+		<value>Kan ikke flytte fra valgte drev!</value>
 	</string>
 	<string>
 		<id>2220</id>
-		<value>Copy the selected file?</value>
+		<value>Kopier den valgte fil?</value>
 	</string>
 	<string>
 		<id>2221</id>
-		<value>Do you want to delete the selected files?</value>
+		<value>Vil du slette den valgte fil?</value>
 	</string>
 	<string>
 		<id>2222</id>
-		<value>Files deleted!</value>
+		<value>Filen er slettet!</value>
 	</string>
 	<string>
 		<id>2223</id>
@@ -3851,7 +3899,7 @@
 	</string>
 	<string>
 		<id>3016</id>
-		<value>Afsluttet</value>
+		<value>Allerede afsluttet</value>
 	</string>
 	<string>
 		<id>3017</id>
@@ -3915,7 +3963,7 @@
 	</string>
 	<string>
 		<id>5909</id>
-		<value>Film kan ikke streames</value>
+		<value>Film kan ikke streames!</value>
 	</string>
 	<string>
 		<id>5910</id>
@@ -3948,6 +3996,10 @@
 	<string>
 		<id>5917</id>
 		<value>Tyske trailere</value>
+	</string>
+	<string>
+		<id>5918</id>
+		<value>Schweiz TV Romande VOD</value>
 	</string>
 	<string>
 		<id>8000</id>
@@ -4003,11 +4055,11 @@
 	</string>
 	<string>
 		<id>8014</id>
-		<value>Serveren &apos;{0}&apos; svarer ikke!</value>
+		<value>Serveren&apos;{0}&apos;varer ikke!</value>
 	</string>
 	<string>
 		<id>8015</id>
-		<value>Kontroller opsætning for &apos;{0}&apos; postkassen</value>
+		<value>Kontroller opsætning for&apos;{0}&apos;postkassen</value>
 	</string>
 	<string>
 		<id>8016</id>
@@ -4047,11 +4099,11 @@
 	</string>
 	<string>
 		<id>8025</id>
-		<value>Parser beskeden</value>
+		<value>Behandler besked</value>
 	</string>
 	<string>
 		<id>8030</id>
-		<value>tilsluttet til server</value>
+		<value>Tilsluttet til server</value>
 	</string>
 	<string>
 		<id>8031</id>
@@ -4131,7 +4183,7 @@
 	</string>
 	<string>
 		<id>13002</id>
-		<value>Launch</value>
+		<value>Udsendt</value>
 	</string>
 	<string>
 		<id>13003</id>
@@ -4139,7 +4191,7 @@
 	</string>
 	<string>
 		<id>13004</id>
-		<value>Importerer*.fil</value>
+		<value>Importerer *.my fil</value>
 	</string>
 	<string>
 		<id>13005</id>
@@ -4167,7 +4219,7 @@
 	</string>
 	<string>
 		<id>13011</id>
-		<value>ken Burns hastighed</value>
+		<value>Ken Burns hastighed</value>
 	</string>
 	<string>
 		<id>13012</id>
@@ -4175,7 +4227,7 @@
 	</string>
 	<string>
 		<id>13013</id>
-		<value>henter video, vent venligst</value>
+		<value>Henter video, vent venligst</value>
 	</string>
 	<string>
 		<id>13014</id>
@@ -4183,19 +4235,19 @@
 	</string>
 	<string>
 		<id>13015</id>
-		<value>Importerer gamebass fil</value>
+		<value>Importerer spilbase fil</value>
 	</string>
 	<string>
 		<id>13016</id>
-		<value>Sortere ffter: Launches</value>
+		<value>Sortere efter: Antal afspilninger</value>
 	</string>
 	<string>
 		<id>13017</id>
-		<value>Sortere efter: Recent</value>
+		<value>Sortere efter: Seneste</value>
 	</string>
 	<string>
 		<id>13018</id>
-		<value>Sortere efter: Rating</value>
+		<value>Sortere efter: Point</value>
 	</string>
 	<string>
 		<id>16001</id>
@@ -4219,23 +4271,23 @@
 	</string>
 	<string>
 		<id>19004</id>
-		<value>Lyd</value>
+		<value>Lyde</value>
 	</string>
 	<string>
 		<id>19005</id>
-		<value>Score:</value>
+		<value>Point</value>
 	</string>
 	<string>
 		<id>19006</id>
-		<value>Linier:</value>
+		<value>Niveau</value>
 	</string>
 	<string>
 		<id>19007</id>
-		<value>Level:</value>
+		<value>Linier</value>
 	</string>
 	<string>
 		<id>19008</id>
-		<value>Hi-Score:</value>
+		<value>Hi-Score</value>
 	</string>
 	<string>
 		<id>19009</id>
@@ -4251,11 +4303,11 @@
 	</string>
 	<string>
 		<id>19012</id>
-		<value>Game Over</value>
+		<value>Spillet er slut</value>
 	</string>
 	<string>
 		<id>19100</id>
-		<value>GeoClock</value>
+		<value>Geografisk ur</value>
 	</string>
 	<string>
 		<id>100000</id>
@@ -4291,7 +4343,7 @@
 	</string>
 	<string>
 		<id>100008</id>
-		<value>Indstillinger-&gt;General</value>
+		<value>Indstillinger-&gt;Generel</value>
 	</string>
 	<string>
 		<id>100009</id>
@@ -4303,7 +4355,7 @@
 	</string>
 	<string>
 		<id>100011</id>
-		<value>Indstillinger-&gt;Skærm-&gt;Skærm Calibration</value>
+		<value>Indstillinger-&gt;Skærm-&gt;Skærm Kalibrering</value>
 	</string>
 	<string>
 		<id>100012</id>
@@ -4359,7 +4411,7 @@
 	</string>
 	<string>
 		<id>100027</id>
-		<value>Indstillinger-&gt;Generel-&gt;Autorun</value>
+		<value>Indstillinger-&gt;Generel-&gt;Autostart</value>
 	</string>
 	<string>
 		<id>100028</id>
@@ -4383,7 +4435,7 @@
 	</string>
 	<string>
 		<id>100033</id>
-		<value>MSN Messenger chat</value>
+		<value>MSN Messenger snak</value>
 	</string>
 	<string>
 		<id>100034</id>
@@ -4395,7 +4447,7 @@
 	</string>
 	<string>
 		<id>100101</id>
-		<value>Progress dialog</value>
+		<value>Fremskridts dialog</value>
 	</string>
 	<string>
 		<id>100500</id>
@@ -4415,11 +4467,11 @@
 	</string>
 	<string>
 		<id>100504</id>
-		<value>Musik/Genrer</value>
+		<value>Musik/genrer</value>
 	</string>
 	<string>
 		<id>100505</id>
-		<value>Musik/Top100</value>
+		<value>Musik/top100</value>
 	</string>
 	<string>
 		<id>100506</id>
@@ -4431,7 +4483,7 @@
 	</string>
 	<string>
 		<id>100601</id>
-		<value>TV/Scheduler</value>
+		<value>TV/Planlægning</value>
 	</string>
 	<string>
 		<id>100602</id>
@@ -4454,16 +4506,36 @@
 		<value>TV/Optagelser/kanaler</value>
 	</string>
 	<string>
+		<id>100607</id>
+		<value>TV/Planlægning/Prioriteter</value>
+	</string>
+	<string>
+		<id>100608</id>
+		<value>TV/Planlægning/Konflikter</value>
+	</string>
+	<string>
+		<id>100609</id>
+		<value>TV/Komprimer/Hoved</value>
+	</string>
+	<string>
 		<id>100610</id>
-		<value>TV/Kompression/Indstillinger</value>
+		<value>TV/Komprimer/Indstillinger</value>
+	</string>
+	<string>
+		<id>100611</id>
+		<value>TV/Komprimer/Auto</value>
 	</string>
 	<string>
 		<id>100612</id>
-		<value>TV/Kompression/Komprimer</value>
+		<value>TV/Komprimer/Komprimer</value>
 	</string>
 	<string>
 		<id>100613</id>
-		<value>TV/Kompression/Status</value>
+		<value>TV/Komprimer/Status</value>
+	</string>
+	<string>
+		<id>100614</id>
+		<value>Video Skuespiller info</value>
 	</string>
 	<string>
 		<id>100615</id>
@@ -4478,12 +4550,36 @@
 		<value>Wizard/Land</value>
 	</string>
 	<string>
+		<id>100618</id>
+		<value>Wizard/Søg</value>
+	</string>
+	<string>
 		<id>100619</id>
 		<value>Wizard/DVBC/Land</value>
 	</string>
 	<string>
+		<id>100620</id>
+		<value>Wizard/DVBC/Søg</value>
+	</string>
+	<string>
+		<id>100621</id>
+		<value>Wizard/DVBS/LBN</value>
+	</string>
+	<string>
+		<id>100622</id>
+		<value>Wizard/DVBS/LBN detaljer</value>
+	</string>
+	<string>
 		<id>100623</id>
 		<value>Wizard/DVBS/Transponder</value>
+	</string>
+	<string>
+		<id>100624</id>
+		<value>Wizard/DVBS/Søg</value>
+	</string>
+	<string>
+		<id>100625</id>
+		<value>Wizard/ATSC/Søg</value>
 	</string>
 	<string>
 		<id>100626</id>
@@ -4492,101 +4588,6 @@
 	<string>
 		<id>100627</id>
 		<value>Wizard/Analog/By</value>
-	</string>
-	<string>
-		<id>100631</id>
-		<value>Wizard/Analog/Omdøb</value>
-	</string>
-	<string>
-		<id>100632</id>
-		<value>Wizard/Analog/Radio</value>
-	</string>
-	<string>
-		<id>100633</id>
-		<value>Wizard/Analog/Omdøb radio</value>
-	</string>
-	<string>
-		<id>100700</id>
-		<value>TV Indstillinger</value>
-	</string>
-	<string>
-		<id>100701</id>
-		<value>Indstillinger for TV optagelser</value>
-	</string>
-	<string>
-		<id>100703</id>
-		<value>Indstilliner for TV Film</value>
-	</string>
-	<string>
-		<id>100704</id>
-		<value>DVD indstillinger</value>
-	</string>
-	<string>
-		<id>100748</id>
-		<value>Program information</value>
-	</string>
-	<string>
-		<id>100749</id>
-		<value>TV/Intet signal</value>
-	</string>
-	<string>
-		<id>100750</id>
-		<value>Opskrifter</value>
-	</string>
-	<string>
-		<id>100755</id>
-		<value>Status</value>
-	</string>
-	<string>
-		<id>100756</id>
-		<value>Statusdetaljer</value>
-	</string>
-	<string>
-		<id>100757</id>
-		<value>Statusindstillinger</value>
-	</string>
-	<string>
-		<id>100758</id>
-		<value>Fil dialog</value>
-	</string>
-	<string>
-		<id>100759</id>
-		<value>Optaget TV info</value>
-	</string>
-	<string>
-		<id>100760</id>
-		<value>Burner</value>
-	</string>
-	<string>
-		<id>100770</id>
-		<value>Explorer</value>
-	</string>
-	<string>
-		<id>101000</id>
-		<value>Tastatur</value>
-	</string>
-	<string>
-		<id>102000</id>
-		<value>Valg dialog</value>
-	</string>
-	<string>
-		<id>102001</id>
-		<value>Musik/Information</value>
-	</string>
-	<string>
-		<id>102002</id>
-		<value>Bekræft</value>
-	</string>
-	<string>
-		<id>102003</id>
-		<value>Film/Information</value>
-	</string>
-	<string>
-		<id>102004</id>
-		<value>Scripts/Information</value>
-	</string>
-	<string>
-		<id>102005<rd/Analog/By</value>
 	</string>
 	<string>
 		<id>100628</id>
@@ -5034,7 +5035,7 @@
 	</string>
 	<string>
 		<id>4518</id>
-		<value>Album titel ikke fundet\r\nProver: {0}</value>
+		<value>Album titel blev ikke fundet\r\nPrøver med: {0}</value>
 	</string>
 	<string>
 		<id>4519</id>
@@ -5051,6 +5052,22 @@
 	<string>
 		<id>4522</id>
 		<value>Henter: {0}...</value>
+	</string>
+	<string>
+		<id>4540</id>
+		<value>Spiller nu</value>
+	</string>
+	<string>
+		<id>4541</id>
+		<value>Spiller næste</value>
+	</string>
+	<string>
+		<id>4542</id>
+		<value>Ingen playliste indlæst</value>
+	</string>
+	<string>
+		<id>4543</id>
+		<value>Information ikke tilgængelig</value>
 	</string>
 	<string>
 		<id>10100</id>
