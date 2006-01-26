@@ -137,7 +137,18 @@ namespace WindowPlugins.GUISettings.Epg
           {
             if (String.Compare(data.DisplayName, ch.Label, true) == 0)
             {
-              ch.Label2 = data.ChannelID;
+              for (int i=0; i < _epgChannels.Count;++i)
+              {
+                ChannelInfo info =(ChannelInfo)_epgChannels[i];
+                if (info.ChannelID == data.ChannelID)
+                {
+                  ch.ItemId = i;
+                  ch.Path = info.ChannelID;
+                  ch.Label2 = info.FullName;
+                  break;
+                }
+              }
+              break;
             }
           }
         }

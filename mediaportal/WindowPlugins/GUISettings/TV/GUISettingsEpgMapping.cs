@@ -45,7 +45,6 @@ namespace WindowPlugins.GUISettings.Epg
 
     protected override void OnPageLoad()
     {
-      base.OnPageLoad();
 
       using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
@@ -54,7 +53,7 @@ namespace WindowPlugins.GUISettings.Epg
         GUIPropertyManager.SetProperty("#WizardCountryCode", countryCode);
         GUIPropertyManager.SetProperty("#WizardCountry", country);
       }
-      LoadGrabbers();
+      base.OnPageLoad();
 
     }
   }
