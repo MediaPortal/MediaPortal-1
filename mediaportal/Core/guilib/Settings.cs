@@ -77,7 +77,9 @@ namespace MediaPortal.Profile
 
     public string GetValueAsString(string section, string entry, string strDefault)
     {
-      string strValue = (string)xmlDoc.GetValue(section, entry);
+      object obj = xmlDoc.GetValue(section, entry);
+      if (obj == null) return strDefault;
+      string strValue = obj.ToString();
       if (strValue == null) return strDefault;
       if (strValue.Length == 0) return strDefault;
       return strValue;
@@ -93,7 +95,9 @@ namespace MediaPortal.Profile
     }
     public int GetValueAsInt(string section, string entry, int iDefault)
     {
-      string strValue = (string)xmlDoc.GetValue(section, entry);
+      object obj = xmlDoc.GetValue(section, entry);
+      if (obj==null) return iDefault;
+      string strValue = obj.ToString();
       if (strValue == null) return iDefault;
       if (strValue.Length == 0) return iDefault;
       try
@@ -108,7 +112,9 @@ namespace MediaPortal.Profile
     }
     public float GetValueAsFloat(string section, string entry, float fDefault)
     {
-      string strValue = (string)xmlDoc.GetValue(section, entry);
+      object obj = xmlDoc.GetValue(section, entry);
+      if (obj == null) return fDefault;
+      string strValue = obj.ToString();
       if (strValue == null) return fDefault;
       if (strValue.Length == 0) return fDefault;
       try
