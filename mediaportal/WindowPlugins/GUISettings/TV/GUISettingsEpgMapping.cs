@@ -18,7 +18,7 @@ namespace WindowPlugins.GUISettings.Epg
   /// </summary>
   public class GUIWizardEpgMapping : GUIEpgSelectBase
   {
-
+    string _country="";
     public GUIWizardEpgMapping()
     {
       GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_TV_EPG_MAPPING;
@@ -38,43 +38,27 @@ namespace WindowPlugins.GUISettings.Epg
     protected override void OnPageDestroy(int new_windowId)
     {
       base.OnPageDestroy(new_windowId);
-      if (epgGrabberSelected)
-        MapChannels();
+      MapChannels(_country);
     }
 
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      LoadEpgGrabberConfig();
-    }
-
-    void LoadEpgGrabberConfig()
-    {
-
       EPGConfig config = new EPGConfig(@"webepg");
       config.Load();
-      if (config.GetAll().Count == 0) return;
-      epgGrabberSelected = true;
-      ArrayList mappings = config.GetAll();
-      
-      listGrabbers.Clear();
-      foreach (EPGConfigData data in mappings)
+      ArrayList list=config.GetAll();
+      if (list.Count != 0)
       {
-        GUIListItem item = new GUIListItem();
-        item.Label = data.DisplayName;
-        item.Path = data.ChannelID;
-
-        int idChannel;
-        string strTvChannel;
-        if (TVDatabase.GetEPGMapping(item.Path, out idChannel, out strTvChannel))
+        _country = config.Country;
+        if (_country.Length > 0)
         {
-          item.Label2 = strTvChannel;
-          item.ItemId = idChannel;
+          ShowChannelMappingList(_country);
+          return;
         }
-        listGrabbers.Add(item);
       }
-    }
+      LoadGrabbers();
 
+    }
 
   }
 }

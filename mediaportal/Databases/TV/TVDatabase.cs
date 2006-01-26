@@ -68,7 +68,7 @@ namespace MediaPortal.TV.Database
       {
         idChannel = id;
         iChannelNr = number;
-        strChannel=name;
+        strChannel = name;
       }
     };
     #endregion
@@ -110,7 +110,7 @@ namespace MediaPortal.TV.Database
     /// </summary>
     static TVDatabase()
     {
-      
+
       Open();
     }
     static void Open()
@@ -981,12 +981,12 @@ namespace MediaPortal.TV.Database
 
             strSQL = String.Format("insert into channel (idChannel, strChannel,iChannelNr ,frequency,iSort, bExternal, ExternalChannel,standard, Visible, Country, scrambled,grabEpg,epgHours,epgLastUpdate) values ( NULL, '{0}', {1}, {2}, {3}, {4},'{5}', {6}, {7}, {8}, {9},{10},{11},'{12}' )",
               strChannel, channel.Number, channel.Frequency.ToString(),
-              totalchannels + 1, iExternal, strExternal, (int)channel.TVStandard, iVisible, channel.Country, scrambled,grabepg,channel.EpgHours,
-              Utils.datetolong(channel.LastDateTimeEpgGrabbed) );
+              totalchannels + 1, iExternal, strExternal, (int)channel.TVStandard, iVisible, channel.Country, scrambled, grabepg, channel.EpgHours,
+              Utils.datetolong(channel.LastDateTimeEpgGrabbed));
             m_db.Execute(strSQL);
             int iNewID = m_db.LastInsertID();
 
-            CachedChannel chan = new CachedChannel(iNewID,channel.Number,strChannel);
+            CachedChannel chan = new CachedChannel(iNewID, channel.Number, strChannel);
             m_channelCache.Add(chan);
             channel.ID = iNewID;
             channel.Sort = totalchannels + 1;
@@ -997,7 +997,7 @@ namespace MediaPortal.TV.Database
           {
             int iNewID = DatabaseUtility.GetAsInt(results, 0, "idChannel");
 
-            CachedChannel chan = new CachedChannel(iNewID,channel.Number,strChannel);
+            CachedChannel chan = new CachedChannel(iNewID, channel.Number, strChannel);
             m_channelCache.Add(chan);
             channel.ID = iNewID;
             return iNewID;
@@ -1040,7 +1040,7 @@ namespace MediaPortal.TV.Database
             m_db.Execute(strSQL);
             int iNewId = m_db.LastInsertID();
 
-            CachedGenre genre = new CachedGenre(iNewId,strGenre1);
+            CachedGenre genre = new CachedGenre(iNewId, strGenre1);
             m_genreCache.Add(genre);
             return iNewId;
 
@@ -1048,7 +1048,7 @@ namespace MediaPortal.TV.Database
           else
           {
             int iID = DatabaseUtility.GetAsInt(results, 0, "idGenre");
-            CachedGenre genre = new CachedGenre(iID,strGenre1);
+            CachedGenre genre = new CachedGenre(iID, strGenre1);
             m_genreCache.Add(genre);
             return iID;
           }
@@ -1156,12 +1156,12 @@ namespace MediaPortal.TV.Database
           //check if other programs exist between the start - finish time of this program
           long endTime = Utils.datetolong(prog.EndTime.AddMinutes(-1));
 
-          strSQL = String.Format("SELECT * FROM tblPrograms WHERE idChannel={0} AND ",iChannelId);
+          strSQL = String.Format("SELECT * FROM tblPrograms WHERE idChannel={0} AND ", iChannelId);
           strSQL += String.Format("  ( ('{0}' <= iStartTime and '{1}' >= iStartTime) or  ",
                                 prog.Start.ToString(), endTime.ToString());
           strSQL += String.Format("    ('{0}' >= iStartTime and '{1}' >= iStartTime and '{2}' < iEndTime) )",
                       prog.Start.ToString(), endTime.ToString(), prog.Start.ToString());
-        //  Log.WriteFile(Log.LogType.EPG, "sql:{0} {1}-{2} {3}", prog.Channel, prog.Start.ToString(), endTime.ToString(), strSQL);
+          //  Log.WriteFile(Log.LogType.EPG, "sql:{0} {1}-{2} {3}", prog.Channel, prog.Start.ToString(), endTime.ToString(), strSQL);
           SQLiteResultSet results2;
           results2 = m_db.Execute(strSQL);
           if (results2.Rows.Count > 0)
@@ -1182,7 +1182,7 @@ namespace MediaPortal.TV.Database
           strSQL = String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')",
             iChannelId, iGenreId, strTitle, prog.Start.ToString(),
             prog.End.ToString(), strDescription, strEpisode, strRepeat, strSeriesNum, strEpisodeNum, strEpisodePart, strDate, strStarRating, strClassification);
-//          Log.WriteFile(Log.LogType.EPG,strSQL);
+          //          Log.WriteFile(Log.LogType.EPG,strSQL);
           m_db.Execute(strSQL);
           lRetId = m_db.LastInsertID();
         }
@@ -1381,7 +1381,7 @@ namespace MediaPortal.TV.Database
           SQLiteResultSet results;
           results = m_db.Execute(strSQL);
           if (results.Rows.Count == 0) return null;
-          
+
           TVChannel chan = new TVChannel();
           chan.ID = DatabaseUtility.GetAsInt(results, 0, "idChannel");
           chan.Number = DatabaseUtility.GetAsInt(results, 0, "iChannelNr");
@@ -1454,8 +1454,8 @@ namespace MediaPortal.TV.Database
           if (results.Rows.Count == 0) return false;
           for (int i = 0; i < results.Rows.Count; ++i)
           {
-            string genre=DatabaseUtility.Get(results, i, "strGenre");
-            int idGenre=DatabaseUtility.GetAsInt(results, i, "idGenre");
+            string genre = DatabaseUtility.Get(results, i, "strGenre");
+            int idGenre = DatabaseUtility.GetAsInt(results, i, "idGenre");
             genres.Add(genres);
             m_genreCache.Add(new CachedGenre(idGenre, genre));
           }
@@ -2017,7 +2017,7 @@ namespace MediaPortal.TV.Database
         try
         {
           if (null == m_db) return;
-          string strSQL = String.Format("update recorded set keepMethod={0}, keepDate='{1}' where idRecorded={2}", 
+          string strSQL = String.Format("update recorded set keepMethod={0}, keepDate='{1}' where idRecorded={2}",
               (int)rec.KeepRecordingMethod, Utils.datetolong(rec.KeepRecordingTill), rec.ID);
           m_db.Execute(strSQL);
         }
@@ -3457,7 +3457,7 @@ namespace MediaPortal.TV.Database
       }
     }
 
-    static public void GetDVBTTuneRequest(int idChannel, out string strProvider, out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int videoPid, out int teletextPid, out int pmtPid, out int bandwidth, out int audio1, out int audio2, out int audio3, out int ac3Pid, out string audioLanguage, out string audioLanguage1, out string audioLanguage2, out string audioLanguage3, out bool HasEITPresentFollow, out bool HasEITSchedule, out int pcrPid)
+    static public bool GetDVBTTuneRequest(int idChannel, out string strProvider, out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int videoPid, out int teletextPid, out int pmtPid, out int bandwidth, out int audio1, out int audio2, out int audio3, out int ac3Pid, out string audioLanguage, out string audioLanguage1, out string audioLanguage2, out string audioLanguage3, out bool HasEITPresentFollow, out bool HasEITSchedule, out int pcrPid)
     {
       HasEITPresentFollow = HasEITSchedule = false;
       audio1 = audio2 = audio3 = ac3Pid = -1;
@@ -3471,18 +3471,18 @@ namespace MediaPortal.TV.Database
       TSID = -1;
       SID = -1;
       pcrPid = -1;
-      if (m_db == null) return;
+      if (m_db == null) return false;
       //Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
       lock (typeof(TVDatabase))
       {
         try
         {
-          if (null == m_db) return;
+          if (null == m_db) return false;
           string strSQL;
           strSQL = String.Format("select * from tblDVBTMapping where iLCN={0}", idChannel);
           SQLiteResultSet results;
           results = m_db.Execute(strSQL);
-          if (results.Rows.Count != 1) return;
+          if (results.Rows.Count != 1) return false;
           frequency = DatabaseUtility.GetAsInt(results, 0, "frequency");
           ONID = DatabaseUtility.GetAsInt(results, 0, "ONID");
           TSID = DatabaseUtility.GetAsInt(results, 0, "TSID");
@@ -3504,7 +3504,7 @@ namespace MediaPortal.TV.Database
           HasEITPresentFollow = DatabaseUtility.GetAsInt(results, 0, "HasEITPresentFollow") != 0;
           HasEITSchedule = DatabaseUtility.GetAsInt(results, 0, "HasEITSchedule") != 0;
           pcrPid = DatabaseUtility.GetAsInt(results, 0, "pcrPid");
-          return;
+          return true;
         }
         catch (Exception ex)
         {
@@ -3512,8 +3512,10 @@ namespace MediaPortal.TV.Database
           Open();
         }
       }
+      return false;
     }
-    static public void GetDVBCTuneRequest(int idChannel, out string strProvider, out int frequency, out int symbolrate, out int innerFec, out int modulation, out int ONID, out int TSID, out int SID, out int audioPid, out int videoPid, out int teletextPid, out int pmtPid, out int audio1, out int audio2, out int audio3, out int ac3Pid, out string audioLanguage, out string audioLanguage1, out string audioLanguage2, out string audioLanguage3, out bool HasEITPresentFollow, out bool HasEITSchedule, out int pcrPid)
+
+    static public bool GetDVBCTuneRequest(int idChannel, out string strProvider, out int frequency, out int symbolrate, out int innerFec, out int modulation, out int ONID, out int TSID, out int SID, out int audioPid, out int videoPid, out int teletextPid, out int pmtPid, out int audio1, out int audio2, out int audio3, out int ac3Pid, out string audioLanguage, out string audioLanguage1, out string audioLanguage2, out string audioLanguage3, out bool HasEITPresentFollow, out bool HasEITSchedule, out int pcrPid)
     {
       HasEITPresentFollow = HasEITSchedule = false;
       audio1 = audio2 = audio3 = ac3Pid = -1;
@@ -3529,18 +3531,18 @@ namespace MediaPortal.TV.Database
       TSID = -1;
       SID = -1;
       pcrPid = -1;
-      if (m_db == null) return;
+      if (m_db == null) return false;
       //Log.WriteFile(Log.LogType.Log,true,"GetTuneRequest for iLCN:{0}", iLCN);
       lock (typeof(TVDatabase))
       {
         try
         {
-          if (null == m_db) return;
+          if (null == m_db) return false;
           string strSQL;
           strSQL = String.Format("select * from tblDVBCMapping where iLCN={0}", idChannel);
           SQLiteResultSet results;
           results = m_db.Execute(strSQL);
-          if (results.Rows.Count != 1) return;
+          if (results.Rows.Count != 1) return false;
           frequency = DatabaseUtility.GetAsInt(results, 0, "frequency");
           symbolrate = DatabaseUtility.GetAsInt(results, 0, "symbolrate");
           innerFec = DatabaseUtility.GetAsInt(results, 0, "innerFec");
@@ -3565,7 +3567,7 @@ namespace MediaPortal.TV.Database
           HasEITPresentFollow = DatabaseUtility.GetAsInt(results, 0, "HasEITPresentFollow") != 0;
           HasEITSchedule = DatabaseUtility.GetAsInt(results, 0, "HasEITSchedule") != 0;
           pcrPid = DatabaseUtility.GetAsInt(results, 0, "pcrPid");
-          return;
+          return true;
         }
         catch (Exception ex)
         {
@@ -3573,6 +3575,7 @@ namespace MediaPortal.TV.Database
           Open();
         }
       }
+      return false;
     }
 
     static public void GetATSCTuneRequest(int idChannel, out int physicalChannel, out string strProvider, out int frequency, out int symbolrate, out int innerFec, out int modulation, out int ONID, out int TSID, out int SID, out int audioPid, out int videoPid, out int teletextPid, out int pmtPid, out int audio1, out int audio2, out int audio3, out int ac3Pid, out string audioLanguage, out string audioLanguage1, out string audioLanguage2, out string audioLanguage3, out int minorChannel, out int majorChannel, out bool HasEITPresentFollow, out bool HasEITSchedule, out int pcrPid)
@@ -4062,7 +4065,7 @@ namespace MediaPortal.TV.Database
 
             chan.EpgHours = DatabaseUtility.GetAsInt(results, i, "channel.epgHours");
             chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, "channel.epgLastUpdate"));
-            
+
             chan.ExternalTunerChannel = DatabaseUtility.Get(results, i, "channel.ExternalChannel");
             chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results, i, "channel.standard");
             chan.Country = DatabaseUtility.GetAsInt(results, i, "channel.Country");
@@ -4396,6 +4399,26 @@ namespace MediaPortal.TV.Database
       provider = "";
       return null;
     }
+    static public bool IsDigitalChannel(TVChannel channel)
+    {
+      int freq, symbolrate, innerFec, modulation, ONID, TSID, SID;
+      int audioPid, videoPid, teletextPid, pmtPid, bandWidth;
+      int audio1, audio2, audio3, ac3Pid, pcrPid;
+      string audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3;
+      bool HasEITPresentFollow, HasEITSchedule;
+      string provider = "";
+      bool result = TVDatabase.GetDVBCTuneRequest(channel.ID, out provider, out freq, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
+      if (result) return true;
+
+      DVBChannel ch = new DVBChannel();
+      result = TVDatabase.GetSatChannel(channel.ID, 1, ref ch);
+      if (result) return true;
+
+      result = TVDatabase.GetDVBTTuneRequest(channel.ID, out provider, out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
+      if (result) return true;
+
+      return false;
+    }
 
     #region generics methods
     static public bool GetChannels(ref List<TVChannel> channels)
@@ -4454,13 +4477,13 @@ namespace MediaPortal.TV.Database
 
             chan.EpgHours = DatabaseUtility.GetAsInt(results, i, "epgHours");
             chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, "epgLastUpdate"));
-            
+
             chan.ExternalTunerChannel = DatabaseUtility.Get(results, i, "ExternalChannel");
             chan.TVStandard = (AnalogVideoStandard)DatabaseUtility.GetAsInt(results, i, "standard");
             chan.Country = DatabaseUtility.GetAsInt(results, i, "Country");
             channels.Add(chan);
 
-            CachedChannel ch = new CachedChannel(chan.ID,chan.Number,chan.Name);
+            CachedChannel ch = new CachedChannel(chan.ID, chan.Number, chan.Name);
             m_channelCache.Add(ch);
           }
 
@@ -5106,11 +5129,11 @@ namespace MediaPortal.TV.Database
               return genre.strGenre;
           }
           string strSQL;
-          strSQL = String.Format("select * from genre where idGenre={0}",idGenre);
+          strSQL = String.Format("select * from genre where idGenre={0}", idGenre);
           SQLiteResultSet results;
           results = m_db.Execute(strSQL);
           if (results.Rows.Count == 0) return String.Empty;
-          string genreLabel=DatabaseUtility.Get(results, 0, "strGenre");
+          string genreLabel = DatabaseUtility.Get(results, 0, "strGenre");
 
           m_genreCache.Add(new CachedGenre(idGenre, genreLabel));
           return genreLabel;
@@ -5133,7 +5156,7 @@ namespace MediaPortal.TV.Database
         string strSQL;
         if (null == m_db) return null;
         strSQL = String.Format("select * from tblPrograms where tblPrograms.idChannel={0} and '{1}' >= tblPrograms.iStartTime and '{2}' < tblPrograms.iEndTime ",
-                                idChannel, Utils.datetolong(dtTime), Utils.datetolong(dtTime) );
+                                idChannel, Utils.datetolong(dtTime), Utils.datetolong(dtTime));
         SQLiteResultSet results;
         results = m_db.Execute(strSQL);
         if (results.Rows.Count >= 1)

@@ -105,6 +105,12 @@ namespace WindowPlugins.GUISettings.Epg
       _epgChannels = _channelList.GetChannelArrayList(item.Path);
       string country = GUIPropertyManager.GetProperty("#WizardCountryCode");
 
+      ShowChannelMappingList(country);
+      epgGrabberSelected = true;
+    }
+
+    protected void ShowChannelMappingList(string country)
+    {
       ArrayList channels = new ArrayList();
       TVDatabase.GetChannels(ref channels);
 
@@ -134,15 +140,17 @@ namespace WindowPlugins.GUISettings.Epg
       //setup and import epg...
       lblLine1.Label = GUILocalizeStrings.Get(200002);
       lblLine2.Label = GUILocalizeStrings.Get(200003);
-      epgGrabberSelected = true;
     }
 
 
-    protected void MapChannels()
+    protected void MapChannels(string country)
     {
+      if (country == String.Empty || country == null) return;
       if (epgGrabberSelected == false) return;
 
       EPGConfig config = new EPGConfig(@"webepg");
+      config.Country = country;
+
 
       config.MaxGrab = 7;
 

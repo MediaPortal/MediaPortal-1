@@ -86,6 +86,17 @@ namespace MediaPortal.Tests.Core.Profile
       doc.SetValueAsBool("general", "minimizeonstartup", !val);
       Assert.AreEqual(!val, doc.GetValueAsBool("general", "minimizeonstartup", val));
     }
+    [Test]
+    public void SetGet()
+    {
+      Settings doc = CreateXml();
+      doc.SetValue("test", "test", "123");
+      doc.Dispose();
+
+      doc = CreateXml();
+      int intValue=doc.GetValueAsInt("test", "test",444);
+      Assert.AreEqual(intValue, 123);
+    }
 
     [Test]
     public void RemoveEntryRemovesEntry()

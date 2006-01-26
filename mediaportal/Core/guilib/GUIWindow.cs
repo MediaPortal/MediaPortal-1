@@ -241,10 +241,12 @@ namespace MediaPortal.GUI.Library
       WINDOW_SETTINGS_SKIN = 705
       ,
       WINDOW_SETTINGS_TV_EPG = 706
+      ,
+      WINDOW_SETTINGS_TV_EPG_MAPPING = 707
 
 
 
-    ,
+  ,
       WINDOW_TV_PROGRAM_INFO = 748
      ,
       WINDOW_TV_NO_SIGNAL = 749

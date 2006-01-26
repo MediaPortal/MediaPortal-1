@@ -32,7 +32,8 @@ namespace MediaPortal.EPG.config
 	{
 		ArrayList _ConfigList;
 		int _MaxGrab;
-		string _strPath="";
+    string _strPath = "";
+    string _country = "";
 
 		public EPGConfig(string path)
 		{
@@ -47,6 +48,11 @@ namespace MediaPortal.EPG.config
 			get { return _MaxGrab;}
 			set { _MaxGrab=value;}
 		}
+    public string Country
+    {
+      get { return _country; }
+      set { _country = value; }
+    }
 
 		public ArrayList GetAll()
 		{
@@ -121,7 +127,7 @@ namespace MediaPortal.EPG.config
 			Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing WebEPG.xml");
 			MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(configFile);
 			_MaxGrab = xmlreader.GetValueAsInt("General", "MaxDays", 1);
-
+      _country = xmlreader.GetValueAsString("General", "country", "");
 			int channelCount = xmlreader.GetValueAsInt("ChannelMap", "Count", 0);	
 			for (int i = 1; i <= channelCount; i++)
 			{
@@ -161,6 +167,7 @@ namespace MediaPortal.EPG.config
                 }
                 MediaPortal.Webepg.Profile.Xml xmlwriter = new MediaPortal.Webepg.Profile.Xml(confFile);
 
+                xmlwriter.SetValue("General", "country", _country);
                 xmlwriter.SetValue("General", "MaxDays", _MaxGrab.ToString());
                 xmlwriter.SetValue("ChannelMap", "Count", _ConfigList.Count.ToString());
 

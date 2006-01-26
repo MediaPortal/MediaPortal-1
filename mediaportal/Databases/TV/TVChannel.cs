@@ -440,6 +440,13 @@ namespace MediaPortal.TV.Database
       get { return _epgHours; }
       set { _epgHours = value; }
     }
+    public bool IsDigital
+    {
+      get
+      {
+        return TVDatabase.IsDigitalChannel(this);
+      }
+    }
     #endregion
 
     #region methods
