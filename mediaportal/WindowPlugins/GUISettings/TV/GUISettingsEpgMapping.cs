@@ -35,6 +35,12 @@ namespace WindowPlugins.GUISettings.Epg
       base.OnClicked(controlId, control, actionType);
 
     }
+
+    protected override void OnCountryChanged(string country)
+    {
+      _country = country;
+    }
+
     protected override void OnPageDestroy(int new_windowId)
     {
       base.OnPageDestroy(new_windowId);
@@ -52,7 +58,8 @@ namespace WindowPlugins.GUISettings.Epg
         _country = config.Country;
         if (_country.Length > 0)
         {
-          ShowChannelMappingList(_country);
+          _epgChannels = _channelList.GetChannelArrayList(config.Country);
+          ShowChannelMappingList(config);
           return;
         }
       }
