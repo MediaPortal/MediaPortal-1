@@ -142,7 +142,7 @@ namespace WindowPlugins.GUISettings.Epg
                 ChannelInfo info =(ChannelInfo)_epgChannels[i];
                 if (info.ChannelID == data.ChannelID)
                 {
-                  ch.ItemId = i;
+                  ach.ItemId = i;
                   ch.Path = info.ChannelID;
                   ch.Label2 = info.FullName;
                   break;
