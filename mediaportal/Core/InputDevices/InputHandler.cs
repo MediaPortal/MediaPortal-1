@@ -287,7 +287,8 @@ namespace MediaPortal.InputDevices
           SendKeys.SendWait(map.CmdProperty);
           break;
         case "WINDOW":  // activate Window x
-          GUIWindowManager.ActivateWindow(Convert.ToInt32(map.CmdProperty));
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, Convert.ToInt32(map.CmdProperty), 0, null);
+          GUIWindowManager.SendThreadMessage(msg);
           break;
         case "TOGGLE":  // toggle Layer 1/2
           if (currentLayer == 1)

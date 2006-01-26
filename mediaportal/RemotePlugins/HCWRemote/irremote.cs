@@ -121,9 +121,9 @@ namespace MediaPortal.InputDevices
         throw new IRFailedException();
     }
 
-    public static void IRSetDllDirectory(string PathName)
+    public static bool IRSetDllDirectory(string PathName)
     {
-      bool result = SetDllDirectory(PathName);
+      return SetDllDirectory(PathName);
     }
   }
 }

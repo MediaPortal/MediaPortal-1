@@ -46,6 +46,7 @@ namespace MediaPortal.InputDevices.HCWHelper
 
     private bool cancelWait = false;
     private bool logVerbose = false;
+    private bool hcwEnabled = false;
     private UdpHelper.Connection connection;
     private int port = 2110;
     private bool registered = false;
@@ -57,30 +58,54 @@ namespace MediaPortal.InputDevices.HCWHelper
     public HCWHelper()
     {
       InitializeComponent();
-      notifyIcon.Visible = true;
+
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         logVerbose = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
         port = xmlreader.GetValueAsInt("remote", "HCWHelperPort", 2110);
+        hcwEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
       }
-
       connection = new UdpHelper.Connection(logVerbose);
-      if (connection.Start(port))
+      if (hcwEnabled)
       {
-        irremote.IRSetDllDirectory(GetDllPath());
-        Thread checkThread = new Thread(new ThreadStart(CheckThread));
-        checkThread.IsBackground = true;
-        checkThread.Priority = ThreadPriority.Highest;
-        checkThread.Start();
-        connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
-        //connection.DisconnectEvent += new NetHelper.Connection.DisconnectHandler(OnDisconnect);
+        string dllPath = GetDllPath();
+        if (dllPath == string.Empty)
+        {
+          Exit();
+        }
+
+        notifyIcon.Visible = true;
+        if (connection.Start(port))
+        {
+          Thread checkThread = new Thread(new ThreadStart(CheckThread));
+          checkThread.IsBackground = true;
+          checkThread.Priority = ThreadPriority.Highest;
+          checkThread.Start();
+          connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
+        }
+        else
+        {
+          Exit();
+        }
+        if (irremote.IRSetDllDirectory(dllPath))
+          StartIR();
+        else
+        {
+          Exit();
+        }
       }
       else
       {
-        notifyIcon.Icon = notifyIconRed.Icon;
-        this.Close();
+        Exit();
       }
-      StartIR();
+    }
+
+
+    private void Exit()
+    {
+      connection.Send(port + 1, "HCWAPP", "STOP", DateTime.Now);
+      notifyIcon.Icon = notifyIconRed.Icon;
+      this.Close();
     }
 
 
@@ -93,20 +118,6 @@ namespace MediaPortal.InputDevices.HCWHelper
       StopIR();
       base.OnClosing(e);
     }
-
-
-    //private void OnDisconnect()
-    //{
-    //  if (logVerbose) Log.Write("HCW Helper: remote disconnected");
-    //  StopIR();
-    //  if (!cancelWait)
-    //  {
-    //    Thread waitThread = new Thread(new ThreadStart(WaitForConnect));
-    //    waitThread.IsBackground = true;
-    //    waitThread.Priority = ThreadPriority.Highest;
-    //    waitThread.Start();
-    //  }
-    //}
 
 
     private void CheckThread()
@@ -313,7 +324,7 @@ namespace MediaPortal.InputDevices.HCWHelper
     /// <returns>Installation path of the Hauppauge IR components</returns>
     private string GetHCWPath()
     {
-      string dllPath = null;
+      string dllPath = string.Empty;
       try
       {
         RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Hauppauge WinTV Infrared Remote");
@@ -325,7 +336,6 @@ namespace MediaPortal.InputDevices.HCWHelper
       }
       catch (System.NullReferenceException)
       {
-        Log.Write("HCW Helper: Could not find registry entries for driver components! (Not installed?)");
       }
       return dllPath;
     }
@@ -338,8 +348,14 @@ namespace MediaPortal.InputDevices.HCWHelper
     private string GetDllPath()
     {
       string dllPath = GetHCWPath();
+      if (dllPath == string.Empty)
+        dllPath = System.Environment.ExpandEnvironmentVariables("%ProgramFiles%\\WinTV\\");
+
       if (!File.Exists(dllPath + "irremote.DLL"))
-        dllPath = null;
+        dllPath = string.Empty;
+
+      if (dllPath == string.Empty)
+        Log.Write("HCW Helper: Could not find registry entries for driver components! (Not installed?)");
       return dllPath;
     }
 

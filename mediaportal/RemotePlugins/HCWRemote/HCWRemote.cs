@@ -118,6 +118,9 @@ namespace MediaPortal.InputDevices
       {
         connection = new UdpHelper.Connection(logVerbose);
 
+        connection.Start(port + 1);
+        connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
+
         Process process = Process.GetCurrentProcess();
         Log.Write("Process: {0}", process.ProcessName);
 
@@ -156,8 +159,6 @@ namespace MediaPortal.InputDevices
       if (!controlEnabled)
         return;
 
-      connection.Start(port + 1);
-      connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
       Thread checkThread = new Thread(new ThreadStart(CheckThread));
       checkThread.IsBackground = true;
       checkThread.Priority = ThreadPriority.Highest;
@@ -170,13 +171,21 @@ namespace MediaPortal.InputDevices
       do
       {
         Thread.Sleep(1000);
+
         while (!exit && (Process.GetProcessesByName("HCWHelper").Length > 0))
         {
           Thread.Sleep(1000);
         }
         if (!exit)
         {
-          Process.Start(System.Windows.Forms.Application.StartupPath + @"\HCWHelper.exe");
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          {
+            controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
+          }
+          if (controlEnabled)
+            Process.Start(System.Windows.Forms.Application.StartupPath + @"\HCWHelper.exe");
+          else
+            exit = true;
         }
       }
       while (!exit);
@@ -314,6 +323,17 @@ namespace MediaPortal.InputDevices
               if (logVerbose) Log.Write("HCW: repeat filter accepted: {0}", newCommand.ToString());
             }
             lastTime = sentTime;
+          }
+          break;
+        case "HCWAPP":
+          {
+            if (msg.Split('|')[1] == "STOP")
+            {
+              Log.Write("HCW: received HCWSTOP from HCWHelper");
+              controlEnabled = false;
+              exit = true;
+              StopHCW();
+            }
           }
           break;
       }
