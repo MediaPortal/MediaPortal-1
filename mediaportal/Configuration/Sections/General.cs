@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Globalization;
@@ -293,7 +297,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 64);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 256);
+      this.groupBox1.Size = new System.Drawing.Size(472, 288);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "General Settings";
@@ -304,25 +308,25 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.settingsCheckedListBox.Items.AddRange(new object[] {
-                                                                "Start Media Portal in fullscreen mode",
-                                                                "Minimize to tray on start up",
-                                                                "Minimize to tray on GUI exit", 
-                                                                "Auto hide mouse cursor when inactive",
-                                                                "Show special mouse controls (scrollbars, etc)",
-                                                                "Dont show file extensions like .mp3, .avi, .mpg,...",
-                                                                "Enable animations",
-                                                                "Autostart Mediaportal when windows starts",
-                                                                "Disable Windows XP balloon tips",
-                                                                "Use mouse left double click as right click",
-                                                                "Hide taskbar in fullscreen mode",
-                                                                "MediaPortal always on top",
-                                                                "use Exclusive DirectX Mode for fullscreen tv/video",
-                                                                "enable GUI sound effects",
-                                                                "enable Screensaver in fullscreen mode",
-                                                                "start with basic home screen"});
+            "Start Media Portal in fullscreen mode",
+            "Minimize to tray on start up",
+            "Minimize to tray on GUI exit",
+            "Auto hide mouse cursor when inactive",
+            "Show special mouse controls (scrollbars, etc)",
+            "Dont show file extensions like .mp3, .avi, .mpg,...",
+            "Enable animations",
+            "Autostart Mediaportal when windows starts",
+            "Disable Windows XP balloon tips",
+            "Use mouse left double click as right click",
+            "Hide taskbar in fullscreen mode",
+            "MediaPortal always on top",
+            "use Exclusive DirectX Mode for fullscreen tv/video",
+            "enable GUI sound effects",
+            "enable Screensaver in fullscreen mode",
+            "start with basic home screen"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 214);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 244);
       this.settingsCheckedListBox.TabIndex = 0;
       // 
       // groupBox2
@@ -333,7 +337,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.numericUpDown1);
       this.groupBox2.Controls.Add(this.label3);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox2.Location = new System.Drawing.Point(0, 328);
+      this.groupBox2.Location = new System.Drawing.Point(0, 368);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 56);
       this.groupBox2.TabIndex = 2;
