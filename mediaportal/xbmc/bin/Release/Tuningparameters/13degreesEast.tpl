@@ -1,4 +1,4 @@
-satname=Hotbird 1/2/3/4/6 (13°E)
+satname=Eutelsat Hotbird 1-6 (13°E)
 10719,V,27500
 10723,H,29900
 10758,V,27500
