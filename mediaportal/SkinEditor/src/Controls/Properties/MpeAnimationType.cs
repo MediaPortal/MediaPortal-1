@@ -1,12 +1,11 @@
-using System;
-
 namespace Mpe.Controls.Properties
 {
-	public enum MpeAnimationType {
-		None,
-		FlyInFromLeft,
-		FlyInFromRight,
-		FlyInFromTop,
-		FlyInFromBottom
-	};
+  public enum MpeAnimationType
+  {
+    None,
+    FlyInFromLeft,
+    FlyInFromRight,
+    FlyInFromTop,
+    FlyInFromBottom
+  } ;
 }

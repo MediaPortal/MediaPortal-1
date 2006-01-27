@@ -1,347 +1,410 @@
 using System;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
+using System.Resources;
 using System.Windows.Forms;
 
 namespace Mpe.Forms
 {
-	public class MpeSkinBrowserDialog : System.Windows.Forms.Form {
-	
-		#region Variables
-		private System.Windows.Forms.Button okButton;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.Button cancelButton;
-		private System.Windows.Forms.Label label3;
-		private System.ComponentModel.Container components = null;
-		private MpePreferences preferences;
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.ListView skinList;
-		private System.Windows.Forms.ColumnHeader colName;
-		private System.Windows.Forms.Splitter splitter1;
-		private System.Windows.Forms.PictureBox previewBox;
-		private System.Windows.Forms.TextBox nameTextBox;
-		private Hashtable previews;
-		private System.Windows.Forms.Label nameLabel;
-		private System.Windows.Forms.Label listLabel;
-		private MpeSkinBrowserMode mode;
-		private DirectoryInfo skinDir;
-		#endregion
+  public class MpeSkinBrowserDialog : Form
+  {
+    #region Variables
 
-		#region Constructors
-		public MpeSkinBrowserDialog() : this(MpeSkinBrowserMode.New) {
-			//
-		}
-		public MpeSkinBrowserDialog(MpeSkinBrowserMode browserMode) {
-			InitializeComponent();
-			mode = browserMode;
-			preferences = MediaPortalEditor.Global.Preferences;
-			previews = new Hashtable();
-			if (preferences == null)
-				throw new Exception("Could not load preferences");
-		}
-		#endregion
+    private Button okButton;
+    private GroupBox groupBox1;
+    private Button cancelButton;
+    private Label label3;
+    private Container components = null;
+    private MpePreferences preferences;
+    private Panel panel1;
+    private ListView skinList;
+    private ColumnHeader colName;
+    private Splitter splitter1;
+    private PictureBox previewBox;
+    private TextBox nameTextBox;
+    private Hashtable previews;
+    private Label nameLabel;
+    private Label listLabel;
+    private MpeSkinBrowserMode mode;
+    private DirectoryInfo skinDir;
 
-		#region Properties
-		public Image SelectedSkinPreview {
-			get {
-				if (skinList.SelectedItems.Count > 0) {
-					return (Image)previews[skinList.SelectedItems[0].Text];
-				}
-				return null;
-			}
-		}
-		public DirectoryInfo SelectedSkinDir {
-			get {
-				if (skinList.SelectedItems.Count > 0) {
-					return (DirectoryInfo)skinList.SelectedItems[0].Tag;
-				}
-				return null;
-			}
-		}
-		public DirectoryInfo NewSkinDir {
-			get {
-				return skinDir;
-			}
-		}
-		public string SkinName {
-			get {
-				return nameTextBox.Text.Trim();
-			}
-		}
-		#endregion
+    #endregion
 
-		#region Methods
-		
-		#endregion
+    #region Constructors
 
-		#region Event Handlers
-		private void OnLoad(object sender, System.EventArgs e) {
-			CenterToParent();
-			if (mode == MpeSkinBrowserMode.Open) {
-				listLabel.Text = "Skins";
-				Height = 336;
-				Text = "Open Skin";
-			} else {
-				listLabel.Text = "Templates";
-				Height = 368;
-				Text = "New Skin";
-			}
-			DirectoryInfo[] skins = preferences.MediaPortalSkins;
-			for (int i = 0; i < skins.Length; i++) {
-				ListViewItem item = skinList.Items.Add(skins[i].Name);
-				item.Tag = skins[i];
-				FileInfo[] f = skins[i].GetFiles("preview.jpg");
-				if (f != null && f.Length > 0) {
-					Bitmap b = new Bitmap(f[0].FullName);
-					previews.Add(skins[i].Name, b);
-				}
-			}
-		}
-		private void OnCancelClick(object sender, System.EventArgs e) {
-			DialogResult = DialogResult.Cancel;
-			Close();
-		}
-		private void OnOkClick(object sender, System.EventArgs e) {
-			if (mode == MpeSkinBrowserMode.New) {
-				if (SelectedSkinDir == null) {
-					MessageBox.Show(this, "Please select the skin that will be used a template for your new skin.", "Skin Required", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					return;
-				}
-				if (SkinName.Length == 0) {
-					MessageBox.Show(this, "Please specify a name for the new skin.", "Name Required", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					nameTextBox.Focus();
-					return;
-				}
-				if (SkinName.IndexOfAny(new char[] { '\\', '/', ':', '*', '?', '\"', '<', '>', '|' }) >= 0) {
-					MessageBox.Show(this, "The skin name cannot contain any of the following characters:" + Environment.NewLine + "/ \\ : * ? \" < > | ", "Invalid Name", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					nameTextBox.Focus();
-					return;
-				}
-				try {
-					skinDir = new DirectoryInfo(preferences.MediaPortalSkinDir.FullName + "\\" + SkinName);
-					if (skinDir.Exists) {
-						MessageBox.Show(this, "A skin with the specified name already exists.", "Invalid Skin Name", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						nameTextBox.Focus();
-						return;
-					}
-				} catch (Exception ee) {
-					MessageBox.Show(this, ee.Message, "Invalid Skin Name", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					nameTextBox.Focus();
-					return;
-				}
-			} else {
-				if (SelectedSkinDir == null) {
-					MessageBox.Show(this, "Please select the skin that you want to open.", "Skin Required", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					return;
-				}
-			}
-			DialogResult = DialogResult.OK;
-			Close();
-		}
-		private void OnIndexChanged(object sender, System.EventArgs e) {
-			previewBox.Image = SelectedSkinPreview;
-		}
-		private void OnDoubleClick(object sender, System.EventArgs e) {
-			if (mode == MpeSkinBrowserMode.Open) {
-				OnOkClick(sender, e);
-			}
-		}
-		#endregion
+    public MpeSkinBrowserDialog() : this(MpeSkinBrowserMode.New)
+    {
+      //
+    }
 
-		#region Windows Form Designer Generated Code
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing ) {
-			if( disposing ) {
-				if(components != null) {
-					components.Dispose();
-				}
-				if (previews != null) {
-					ICollection c = previews.Values;
-					IEnumerator e = c.GetEnumerator();
-					while (e.MoveNext()) {
-						Bitmap b = (Bitmap)e.Current;
-						b.Dispose();
-					}
-				}
-			}
-			base.Dispose( disposing );
-		}
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent() {
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(MpeSkinBrowserDialog));
-			this.okButton = new System.Windows.Forms.Button();
-			this.nameLabel = new System.Windows.Forms.Label();
-			this.nameTextBox = new System.Windows.Forms.TextBox();
-			this.cancelButton = new System.Windows.Forms.Button();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.listLabel = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.previewBox = new System.Windows.Forms.PictureBox();
-			this.splitter1 = new System.Windows.Forms.Splitter();
-			this.skinList = new System.Windows.Forms.ListView();
-			this.colName = new System.Windows.Forms.ColumnHeader();
-			this.panel1.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// okButton
-			// 
-			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.okButton.Location = new System.Drawing.Point(304, 304);
-			this.okButton.Name = "okButton";
-			this.okButton.TabIndex = 1;
-			this.okButton.Text = "OK";
-			this.okButton.Click += new System.EventHandler(this.OnOkClick);
-			// 
-			// nameLabel
-			// 
-			this.nameLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.nameLabel.AutoSize = true;
-			this.nameLabel.Location = new System.Drawing.Point(8, 267);
-			this.nameLabel.Name = "nameLabel";
-			this.nameLabel.Size = new System.Drawing.Size(88, 16);
-			this.nameLabel.TabIndex = 3;
-			this.nameLabel.Text = "New Skin Name:";
-			// 
-			// nameTextBox
-			// 
-			this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.nameTextBox.Location = new System.Drawing.Point(96, 264);
-			this.nameTextBox.Name = "nameTextBox";
-			this.nameTextBox.Size = new System.Drawing.Size(368, 20);
-			this.nameTextBox.TabIndex = 4;
-			this.nameTextBox.Text = "";
-			// 
-			// cancelButton
-			// 
-			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.cancelButton.Location = new System.Drawing.Point(384, 304);
-			this.cancelButton.Name = "cancelButton";
-			this.cancelButton.TabIndex = 5;
-			this.cancelButton.Text = "Cancel";
-			this.cancelButton.Click += new System.EventHandler(this.OnCancelClick);
-			// 
-			// groupBox1
-			// 
-			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Location = new System.Drawing.Point(8, 296);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(456, 3);
-			this.groupBox1.TabIndex = 6;
-			this.groupBox1.TabStop = false;
-			// 
-			// listLabel
-			// 
-			this.listLabel.AutoSize = true;
-			this.listLabel.Location = new System.Drawing.Point(8, 8);
-			this.listLabel.Name = "listLabel";
-			this.listLabel.Size = new System.Drawing.Size(57, 16);
-			this.listLabel.TabIndex = 7;
-			this.listLabel.Text = "Templates";
-			// 
-			// label3
-			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(416, 8);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(45, 16);
-			this.label3.TabIndex = 8;
-			this.label3.Text = "Preview";
-			// 
-			// panel1
-			// 
-			this.panel1.Controls.Add(this.previewBox);
-			this.panel1.Controls.Add(this.splitter1);
-			this.panel1.Controls.Add(this.skinList);
-			this.panel1.Location = new System.Drawing.Point(8, 24);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(456, 232);
-			this.panel1.TabIndex = 10;
-			// 
-			// previewBox
-			// 
-			this.previewBox.BackColor = System.Drawing.Color.White;
-			this.previewBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.previewBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.previewBox.Location = new System.Drawing.Point(163, 0);
-			this.previewBox.Name = "previewBox";
-			this.previewBox.Size = new System.Drawing.Size(293, 232);
-			this.previewBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.previewBox.TabIndex = 12;
-			this.previewBox.TabStop = false;
-			// 
-			// splitter1
-			// 
-			this.splitter1.Location = new System.Drawing.Point(160, 0);
-			this.splitter1.Name = "splitter1";
-			this.splitter1.Size = new System.Drawing.Size(3, 232);
-			this.splitter1.TabIndex = 11;
-			this.splitter1.TabStop = false;
-			// 
-			// skinList
-			// 
-			this.skinList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-																											  this.colName});
-			this.skinList.Dock = System.Windows.Forms.DockStyle.Left;
-			this.skinList.FullRowSelect = true;
-			this.skinList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-			this.skinList.HideSelection = false;
-			this.skinList.Location = new System.Drawing.Point(0, 0);
-			this.skinList.MultiSelect = false;
-			this.skinList.Name = "skinList";
-			this.skinList.Size = new System.Drawing.Size(160, 232);
-			this.skinList.Sorting = System.Windows.Forms.SortOrder.Ascending;
-			this.skinList.TabIndex = 10;
-			this.skinList.View = System.Windows.Forms.View.Details;
-			this.skinList.DoubleClick += new System.EventHandler(this.OnDoubleClick);
-			this.skinList.SelectedIndexChanged += new System.EventHandler(this.OnIndexChanged);
-			// 
-			// colName
-			// 
-			this.colName.Text = "Name";
-			this.colName.Width = 120;
-			// 
-			// MpeSkinBrowserDialog
-			// 
-			this.AcceptButton = this.okButton;
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.CancelButton = this.cancelButton;
-			this.ClientSize = new System.Drawing.Size(474, 336);
-			this.Controls.Add(this.panel1);
-			this.Controls.Add(this.label3);
-			this.Controls.Add(this.listLabel);
-			this.Controls.Add(this.nameTextBox);
-			this.Controls.Add(this.nameLabel);
-			this.Controls.Add(this.groupBox1);
-			this.Controls.Add(this.cancelButton);
-			this.Controls.Add(this.okButton);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "MpeSkinBrowserDialog";
-			this.ShowInTaskbar = false;
-			this.Text = "New Skin";
-			this.Load += new System.EventHandler(this.OnLoad);
-			this.panel1.ResumeLayout(false);
-			this.ResumeLayout(false);
+    public MpeSkinBrowserDialog(MpeSkinBrowserMode browserMode)
+    {
+      InitializeComponent();
+      mode = browserMode;
+      preferences = MediaPortalEditor.Global.Preferences;
+      previews = new Hashtable();
+      if (preferences == null)
+      {
+        throw new Exception("Could not load preferences");
+      }
+    }
 
-		}
-		#endregion
+    #endregion
 
-		
-	}
+    #region Properties
 
-	public enum MpeSkinBrowserMode {	
-		New, 
-		Open 
-	};
+    public Image SelectedSkinPreview
+    {
+      get
+      {
+        if (skinList.SelectedItems.Count > 0)
+        {
+          return (Image) previews[skinList.SelectedItems[0].Text];
+        }
+        return null;
+      }
+    }
+
+    public DirectoryInfo SelectedSkinDir
+    {
+      get
+      {
+        if (skinList.SelectedItems.Count > 0)
+        {
+          return (DirectoryInfo) skinList.SelectedItems[0].Tag;
+        }
+        return null;
+      }
+    }
+
+    public DirectoryInfo NewSkinDir
+    {
+      get { return skinDir; }
+    }
+
+    public string SkinName
+    {
+      get { return nameTextBox.Text.Trim(); }
+    }
+
+    #endregion
+
+    #region Methods
+
+    #endregion
+
+    #region Event Handlers
+
+    private void OnLoad(object sender, EventArgs e)
+    {
+      CenterToParent();
+      if (mode == MpeSkinBrowserMode.Open)
+      {
+        listLabel.Text = "Skins";
+        Height = 336;
+        Text = "Open Skin";
+      }
+      else
+      {
+        listLabel.Text = "Templates";
+        Height = 368;
+        Text = "New Skin";
+      }
+      DirectoryInfo[] skins = preferences.MediaPortalSkins;
+      for (int i = 0; i < skins.Length; i++)
+      {
+        ListViewItem item = skinList.Items.Add(skins[i].Name);
+        item.Tag = skins[i];
+        FileInfo[] f = skins[i].GetFiles("preview.jpg");
+        if (f != null && f.Length > 0)
+        {
+          Bitmap b = new Bitmap(f[0].FullName);
+          previews.Add(skins[i].Name, b);
+        }
+      }
+    }
+
+    private void OnCancelClick(object sender, EventArgs e)
+    {
+      DialogResult = DialogResult.Cancel;
+      Close();
+    }
+
+    private void OnOkClick(object sender, EventArgs e)
+    {
+      if (mode == MpeSkinBrowserMode.New)
+      {
+        if (SelectedSkinDir == null)
+        {
+          MessageBox.Show(this, "Please select the skin that will be used a template for your new skin.",
+                          "Skin Required", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          return;
+        }
+        if (SkinName.Length == 0)
+        {
+          MessageBox.Show(this, "Please specify a name for the new skin.", "Name Required", MessageBoxButtons.OK,
+                          MessageBoxIcon.Information);
+          nameTextBox.Focus();
+          return;
+        }
+        if (SkinName.IndexOfAny(new char[] {'\\', '/', ':', '*', '?', '\"', '<', '>', '|'}) >= 0)
+        {
+          MessageBox.Show(this,
+                          "The skin name cannot contain any of the following characters:" + Environment.NewLine +
+                          "/ \\ : * ? \" < > | ", "Invalid Name", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          nameTextBox.Focus();
+          return;
+        }
+        try
+        {
+          skinDir = new DirectoryInfo(preferences.MediaPortalSkinDir.FullName + "\\" + SkinName);
+          if (skinDir.Exists)
+          {
+            MessageBox.Show(this, "A skin with the specified name already exists.", "Invalid Skin Name",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+            nameTextBox.Focus();
+            return;
+          }
+        }
+        catch (Exception ee)
+        {
+          MessageBox.Show(this, ee.Message, "Invalid Skin Name", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          nameTextBox.Focus();
+          return;
+        }
+      }
+      else
+      {
+        if (SelectedSkinDir == null)
+        {
+          MessageBox.Show(this, "Please select the skin that you want to open.", "Skin Required", MessageBoxButtons.OK,
+                          MessageBoxIcon.Information);
+          return;
+        }
+      }
+      DialogResult = DialogResult.OK;
+      Close();
+    }
+
+    private void OnIndexChanged(object sender, EventArgs e)
+    {
+      previewBox.Image = SelectedSkinPreview;
+    }
+
+    private void OnDoubleClick(object sender, EventArgs e)
+    {
+      if (mode == MpeSkinBrowserMode.Open)
+      {
+        OnOkClick(sender, e);
+      }
+    }
+
+    #endregion
+
+    #region Windows Form Designer Generated Code
+
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+        if (previews != null)
+        {
+          ICollection c = previews.Values;
+          IEnumerator e = c.GetEnumerator();
+          while (e.MoveNext())
+          {
+            Bitmap b = (Bitmap) e.Current;
+            b.Dispose();
+          }
+        }
+      }
+      base.Dispose(disposing);
+    }
+
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+      ResourceManager resources = new ResourceManager(typeof(MpeSkinBrowserDialog));
+      okButton = new Button();
+      nameLabel = new Label();
+      nameTextBox = new TextBox();
+      cancelButton = new Button();
+      groupBox1 = new GroupBox();
+      listLabel = new Label();
+      label3 = new Label();
+      panel1 = new Panel();
+      previewBox = new PictureBox();
+      splitter1 = new Splitter();
+      skinList = new ListView();
+      colName = new ColumnHeader();
+      panel1.SuspendLayout();
+      SuspendLayout();
+      // 
+      // okButton
+      // 
+      okButton.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      okButton.Location = new Point(304, 304);
+      okButton.Name = "okButton";
+      okButton.TabIndex = 1;
+      okButton.Text = "OK";
+      okButton.Click += new EventHandler(OnOkClick);
+      // 
+      // nameLabel
+      // 
+      nameLabel.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      nameLabel.AutoSize = true;
+      nameLabel.Location = new Point(8, 267);
+      nameLabel.Name = "nameLabel";
+      nameLabel.Size = new Size(88, 16);
+      nameLabel.TabIndex = 3;
+      nameLabel.Text = "New Skin Name:";
+      // 
+      // nameTextBox
+      // 
+      nameTextBox.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      nameTextBox.Location = new Point(96, 264);
+      nameTextBox.Name = "nameTextBox";
+      nameTextBox.Size = new Size(368, 20);
+      nameTextBox.TabIndex = 4;
+      nameTextBox.Text = "";
+      // 
+      // cancelButton
+      // 
+      cancelButton.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      cancelButton.DialogResult = DialogResult.Cancel;
+      cancelButton.Location = new Point(384, 304);
+      cancelButton.Name = "cancelButton";
+      cancelButton.TabIndex = 5;
+      cancelButton.Text = "Cancel";
+      cancelButton.Click += new EventHandler(OnCancelClick);
+      // 
+      // groupBox1
+      // 
+      groupBox1.Anchor = ((AnchorStyles) ((AnchorStyles.Bottom | AnchorStyles.Right)));
+      groupBox1.Location = new Point(8, 296);
+      groupBox1.Name = "groupBox1";
+      groupBox1.Size = new Size(456, 3);
+      groupBox1.TabIndex = 6;
+      groupBox1.TabStop = false;
+      // 
+      // listLabel
+      // 
+      listLabel.AutoSize = true;
+      listLabel.Location = new Point(8, 8);
+      listLabel.Name = "listLabel";
+      listLabel.Size = new Size(57, 16);
+      listLabel.TabIndex = 7;
+      listLabel.Text = "Templates";
+      // 
+      // label3
+      // 
+      label3.AutoSize = true;
+      label3.Location = new Point(416, 8);
+      label3.Name = "label3";
+      label3.Size = new Size(45, 16);
+      label3.TabIndex = 8;
+      label3.Text = "Preview";
+      // 
+      // panel1
+      // 
+      panel1.Controls.Add(previewBox);
+      panel1.Controls.Add(splitter1);
+      panel1.Controls.Add(skinList);
+      panel1.Location = new Point(8, 24);
+      panel1.Name = "panel1";
+      panel1.Size = new Size(456, 232);
+      panel1.TabIndex = 10;
+      // 
+      // previewBox
+      // 
+      previewBox.BackColor = Color.White;
+      previewBox.BorderStyle = BorderStyle.Fixed3D;
+      previewBox.Dock = DockStyle.Fill;
+      previewBox.Location = new Point(163, 0);
+      previewBox.Name = "previewBox";
+      previewBox.Size = new Size(293, 232);
+      previewBox.SizeMode = PictureBoxSizeMode.StretchImage;
+      previewBox.TabIndex = 12;
+      previewBox.TabStop = false;
+      // 
+      // splitter1
+      // 
+      splitter1.Location = new Point(160, 0);
+      splitter1.Name = "splitter1";
+      splitter1.Size = new Size(3, 232);
+      splitter1.TabIndex = 11;
+      splitter1.TabStop = false;
+      // 
+      // skinList
+      // 
+      skinList.Columns.AddRange(new ColumnHeader[]
+                                  {
+                                    colName
+                                  });
+      skinList.Dock = DockStyle.Left;
+      skinList.FullRowSelect = true;
+      skinList.HeaderStyle = ColumnHeaderStyle.None;
+      skinList.HideSelection = false;
+      skinList.Location = new Point(0, 0);
+      skinList.MultiSelect = false;
+      skinList.Name = "skinList";
+      skinList.Size = new Size(160, 232);
+      skinList.Sorting = SortOrder.Ascending;
+      skinList.TabIndex = 10;
+      skinList.View = View.Details;
+      skinList.DoubleClick += new EventHandler(OnDoubleClick);
+      skinList.SelectedIndexChanged += new EventHandler(OnIndexChanged);
+      // 
+      // colName
+      // 
+      colName.Text = "Name";
+      colName.Width = 120;
+      // 
+      // MpeSkinBrowserDialog
+      // 
+      AcceptButton = okButton;
+      AutoScaleBaseSize = new Size(5, 13);
+      CancelButton = cancelButton;
+      ClientSize = new Size(474, 336);
+      Controls.Add(panel1);
+      Controls.Add(label3);
+      Controls.Add(listLabel);
+      Controls.Add(nameTextBox);
+      Controls.Add(nameLabel);
+      Controls.Add(groupBox1);
+      Controls.Add(cancelButton);
+      Controls.Add(okButton);
+      FormBorderStyle = FormBorderStyle.FixedDialog;
+      Icon = ((Icon) (resources.GetObject("$this.Icon")));
+      MaximizeBox = false;
+      MinimizeBox = false;
+      Name = "MpeSkinBrowserDialog";
+      ShowInTaskbar = false;
+      Text = "New Skin";
+      Load += new EventHandler(OnLoad);
+      panel1.ResumeLayout(false);
+      ResumeLayout(false);
+    }
+
+    #endregion
+  }
+
+
+  public enum MpeSkinBrowserMode
+  {
+    New,
+    Open
+  } ;
 }

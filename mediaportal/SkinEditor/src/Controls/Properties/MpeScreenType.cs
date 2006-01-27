@@ -1,10 +1,9 @@
-using System;
-
 namespace Mpe.Controls.Properties
 {
-	public enum MpeScreenType { 
-		Window,
-		Dialog,
-		OnScreenDisplay
-	};
+  public enum MpeScreenType
+  {
+    Window,
+    Dialog,
+    OnScreenDisplay
+  } ;
 }

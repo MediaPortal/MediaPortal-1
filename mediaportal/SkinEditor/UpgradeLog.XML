@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="MediaPortalEditor">
+</Property><Property Name="Solution File" Value="c:\Development\Projects\mediaportal\SkinEditor\MediaPortalEditor.sln">
+</Property><Property Name="Date" Value="woensdag 25 januari 2006">
+</Property><Property Name="Time" Value="21:06">
+</Property></Properties><Event ErrorLevel="0" Project="MediaPortalEditor" Source="MediaPortalEditor.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="MediaPortalEditor" Source="MediaPortalEditor.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="MediaPortalEditor.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="MediaPortalEditor.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="MediaPortalEditor" Source="MediaPortalEditor.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="Installer.vdproj" Source="setup\Installer.vdproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="Installer.vdproj" Source="setup\Installer.vdproj" Description="Converted">
+</Event></UpgradeLog>

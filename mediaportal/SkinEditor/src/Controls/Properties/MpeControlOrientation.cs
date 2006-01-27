@@ -1,8 +1,8 @@
-using System;
-
-namespace Mpe.Controls.Properties {
-	public enum MpeControlOrientation {
-		Horizontal,
-		Vertical
-	}
+namespace Mpe.Controls.Properties
+{
+  public enum MpeControlOrientation
+  {
+    Horizontal,
+    Vertical
+  }
 }

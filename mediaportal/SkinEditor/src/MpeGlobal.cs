@@ -1,39 +1,22 @@
-using System;
-
 using Mpe.Forms;
 
 namespace Mpe
 {
-	/// <summary>
-	/// Global Static References
-	/// </summary>
-	public interface MpeGlobal {
+  /// <summary>
+  /// Global Static References
+  /// </summary>
+  public interface MpeGlobal
+  {
+    MpeStatusBar StatusBar { get; }
 
-		MpeStatusBar StatusBar {
-			get;
-		}
+    MpeParser Parser { get; set; }
 
-		MpeParser Parser {
-			get;
-			set;
-		}
+    MpePreferences Preferences { get; }
 
-		MpePreferences Preferences {
-			get;
-		}
+    MpePropertyManager PropertyManager { get; }
 
-		MpePropertyManager PropertyManager {
-			get;
-		}
+    MpeExplorer Explorer { get; }
 
-		MpeExplorer Explorer {
-			get;
-		}
-
-		object Clipboard {
-			get;
-			set;
-		}
-
-	}
+    object Clipboard { get; set; }
+  }
 }
