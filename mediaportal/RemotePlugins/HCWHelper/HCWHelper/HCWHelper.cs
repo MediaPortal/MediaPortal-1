@@ -74,7 +74,6 @@ namespace MediaPortal.InputDevices.HCWHelper
           Exit();
         }
 
-        notifyIcon.Visible = true;
         if (connection.Start(port))
         {
           Thread checkThread = new Thread(new ThreadStart(CheckThread));
@@ -104,7 +103,6 @@ namespace MediaPortal.InputDevices.HCWHelper
     private void Exit()
     {
       connection.Send(port + 1, "HCWAPP", "STOP", DateTime.Now);
-      notifyIcon.Icon = notifyIconRed.Icon;
       this.Close();
     }
 
@@ -112,7 +110,6 @@ namespace MediaPortal.InputDevices.HCWHelper
     protected override void OnClosing(CancelEventArgs e)
     {
       if (logVerbose) Log.Write("HCW Helper: OnClosing");
-      notifyIcon.Icon = notifyIconRed.Icon;
       connection.ReceiveEvent -= new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
       //connection.DisconnectEvent -= new NetHelper.Connection.DisconnectHandler(OnDisconnect);
       StopIR();
@@ -126,7 +123,6 @@ namespace MediaPortal.InputDevices.HCWHelper
         Thread.Sleep(1000);
 
       if (logVerbose) Log.Write("HCW Helper: MediaPortal is not running");
-      notifyIcon.Icon = notifyIconRed.Icon;
       this.Close();
     }
 
@@ -153,7 +149,6 @@ namespace MediaPortal.InputDevices.HCWHelper
         }
         if (Process.GetProcessesByName("Ir").Length != 0)
         {
-          notifyIcon.Icon = notifyIconRed.Icon;
           Log.Write("HCW Helper: external control could not be terminated!");
           this.Close();
         }
@@ -162,11 +157,9 @@ namespace MediaPortal.InputDevices.HCWHelper
       {
         irremote.IROpen(this.Handle, 0, false, 0);
         registered = true;
-        notifyIcon.Icon = notifyIconGreen.Icon;
       }
       catch (irremote.IRFailedException ex)
       {
-        notifyIcon.Icon = notifyIconRed.Icon;
         Log.Write("HCW Helper: {0}", ex.Message);
         this.Close();
       }
@@ -189,7 +182,6 @@ namespace MediaPortal.InputDevices.HCWHelper
       {
         Log.Write("HCW Helper: closing driver failed");
       }
-      notifyIcon.Icon = notifyIconYellow.Icon;
     }
 
 
@@ -281,40 +273,6 @@ namespace MediaPortal.InputDevices.HCWHelper
           break;
       }
       base.WndProc(ref msg);
-    }
-
-
-    /// <summary>
-    /// Exit (Context Menu)
-    /// </summary>
-    private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-      this.Close();
-    }
-
-
-    /// <summary>
-    /// Status (Context Menu)
-    /// </summary>
-    private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
-    {
-      //if (connection != null)
-      //{
-      //  statusOfflineToolStripMenuItem.Text = "Status: ";
-      //  peerStatusToolStripMenuItem.Text = "Peer   : ";
-      //  if (NetHelper.Connection2.IsOnline)
-      //    statusOfflineToolStripMenuItem.Text += "Online (";
-      //  else
-      //    statusOfflineToolStripMenuItem.Text += "Offline (";
-      //  if (NetHelper.Connection2.IsServer)
-      //    statusOfflineToolStripMenuItem.Text += "Server)";
-      //  else
-      //    statusOfflineToolStripMenuItem.Text += "Client)";
-      //  if (NetHelper.Connection2.IsConnected)
-      //    peerStatusToolStripMenuItem.Text += "Connected";
-      //  else
-      //    peerStatusToolStripMenuItem.Text += "Disconnected";
-      //}
     }
 
 

@@ -149,10 +149,10 @@
     <Compile Include="FireDTV\MPRemoteInterface.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="HCWRemote\HCWRemote.cs">
+    <Compile Include="HcwRemote\HcwRemote.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="HCWRemote\irremote.cs" />
+    <Compile Include="HcwRemote\irremote.cs" />
     <Compile Include="HID\HIDListener.cs">
       <SubType>Code</SubType>
     </Compile>

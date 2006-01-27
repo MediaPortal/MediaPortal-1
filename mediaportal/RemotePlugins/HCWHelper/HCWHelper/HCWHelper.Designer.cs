@@ -53,74 +53,7 @@ namespace MediaPortal.InputDevices.HCWHelper
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HCWHelper));
-      this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-      this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-      this.statusOfflineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.peerStatusToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.notifyIconGreen = new System.Windows.Forms.NotifyIcon(this.components);
-      this.notifyIconRed = new System.Windows.Forms.NotifyIcon(this.components);
-      this.notifyIconYellow = new System.Windows.Forms.NotifyIcon(this.components);
-      this.contextMenuStrip.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // notifyIcon
-      // 
-      this.notifyIcon.ContextMenuStrip = this.contextMenuStrip;
-      this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
-      this.notifyIcon.Text = "MediaPortal HCW Control";
-      // 
-      // contextMenuStrip
-      // 
-      this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusOfflineToolStripMenuItem,
-            this.peerStatusToolStripMenuItem,
-            this.exitToolStripMenuItem});
-      this.contextMenuStrip.Name = "contextMenuStrip";
-      this.contextMenuStrip.ShowImageMargin = false;
-      this.contextMenuStrip.Size = new System.Drawing.Size(128, 92);
-      this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
-      // 
-      // statusOfflineToolStripMenuItem
-      // 
-      this.statusOfflineToolStripMenuItem.Name = "statusOfflineToolStripMenuItem";
-      this.statusOfflineToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
-      this.statusOfflineToolStripMenuItem.Text = "Status:";
-      this.statusOfflineToolStripMenuItem.Visible = false;
-      // 
-      // peerStatusToolStripMenuItem
-      // 
-      this.peerStatusToolStripMenuItem.Name = "peerStatusToolStripMenuItem";
-      this.peerStatusToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
-      this.peerStatusToolStripMenuItem.Text = "Peer   :";
-      this.peerStatusToolStripMenuItem.Visible = false;
-      // 
-      // exitToolStripMenuItem
-      // 
-      this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-      this.exitToolStripMenuItem.Size = new System.Drawing.Size(127, 22);
-      this.exitToolStripMenuItem.Text = "Exit";
-      this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-      // 
-      // notifyIconGreen
-      // 
-      this.notifyIconGreen.ContextMenuStrip = this.contextMenuStrip;
-      this.notifyIconGreen.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIconGreen.Icon")));
-      this.notifyIconGreen.Text = "MediaPortal HCW Control";
-      // 
-      // notifyIconRed
-      // 
-      this.notifyIconRed.ContextMenuStrip = this.contextMenuStrip;
-      this.notifyIconRed.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIconRed.Icon")));
-      this.notifyIconRed.Text = "MediaPortal HCW Control";
-      // 
-      // notifyIconYellow
-      // 
-      this.notifyIconYellow.ContextMenuStrip = this.contextMenuStrip;
-      this.notifyIconYellow.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIconYellow.Icon")));
-      this.notifyIconYellow.Text = "MediaPortal HCW Control";
       // 
       // HCWHelper
       // 
@@ -132,21 +65,12 @@ namespace MediaPortal.InputDevices.HCWHelper
       this.ShowInTaskbar = false;
       this.Text = "MediaPortal HCW Control";
       this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
-      this.contextMenuStrip.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
 
     #endregion
 
-    private System.Windows.Forms.NotifyIcon notifyIcon;
-    private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
-    private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-    private System.Windows.Forms.ToolStripMenuItem statusOfflineToolStripMenuItem;
-    private System.Windows.Forms.ToolStripMenuItem peerStatusToolStripMenuItem;
-    private System.Windows.Forms.NotifyIcon notifyIconGreen;
-    private System.Windows.Forms.NotifyIcon notifyIconRed;
-    private System.Windows.Forms.NotifyIcon notifyIconYellow;
   }
 }
 

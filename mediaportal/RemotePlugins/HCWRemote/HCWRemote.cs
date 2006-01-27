@@ -38,7 +38,7 @@ namespace MediaPortal.InputDevices
   /// Hauppauge HCW remote control class / by mPod
   /// all remotes are supported, if the buttons are defined in the XML file
   /// </summary>
-  public class HCWRemote
+  public class HcwRemote
   {
     bool controlEnabled;                      // HCW remote enabled
     bool allowExternal;                       // External processes are controlled by the Hauppauge app
@@ -79,7 +79,7 @@ namespace MediaPortal.InputDevices
     /// <summary>
     /// Constructor: Initializes remote control settings
     /// </summary>
-    public HCWRemote()
+    public HcwRemote()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
@@ -215,7 +215,7 @@ namespace MediaPortal.InputDevices
     /// <summary>
     /// Start HCW control
     /// </summary>
-    public void StartHCW()
+    public void StartHcw()
     {
       connection.Send(port, "APP", "IR_START", DateTime.Now);
     }
@@ -224,7 +224,7 @@ namespace MediaPortal.InputDevices
     /// <summary>
     /// Stop HCW control
     /// </summary>
-    public void StopHCW()
+    public void StopHcw()
     {
       if (restartIRApp)
       {
@@ -332,7 +332,7 @@ namespace MediaPortal.InputDevices
               Log.Write("HCW: received HCWSTOP from HCWHelper");
               controlEnabled = false;
               exit = true;
-              StopHCW();
+              StopHcw();
             }
           }
           break;
@@ -347,7 +347,7 @@ namespace MediaPortal.InputDevices
     /// <param name="waitForExit"></param>
     public void OnStartExternal(Process proc, bool waitForExit)
     {
-      StopHCW();
+      StopHcw();
     }
 
 
@@ -358,7 +358,7 @@ namespace MediaPortal.InputDevices
     /// <param name="waitForExit"></param>
     public void OnStopExternal(Process proc, bool waitForExit)
     {
-      StartHCW();
+      StartHcw();
     }
 
 
@@ -373,7 +373,7 @@ namespace MediaPortal.InputDevices
         {
           case WM_POWERBROADCAST:
             if (msg.WParam.ToInt32() == PBT_APMRESUMEAUTOMATIC)
-              StartHCW();
+              StartHcw();
             break;
 
           case WM_ACTIVATE:
@@ -383,11 +383,11 @@ namespace MediaPortal.InputDevices
               {
                 case WA_INACTIVE:
                   Log.Write("HCW: WA_INACTIVE");
-                  StopHCW();
+                  StopHcw();
                   break;
                 case WA_ACTIVE:
                 case WA_CLICKACTIVE:
-                  StartHCW();
+                  StartHcw();
                   break;
               }
             }
