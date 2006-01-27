@@ -1047,7 +1047,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Diamond XtremeTV PVR550" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;sybsys_0070ff92&amp;rev_01">
+  <capturecard commercialname="Diamond XtremeTV PVR550" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;subsys_0070ff92&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -1055,7 +1055,7 @@
         <filter cat="tvtuner"  name="Conexant Falcon Tuner"  		checkdevice="true"/>
         <filter cat="tvaudio"  name="Conexant Falcon TvAudio"  		checkdevice="true"/>
         <filter cat="crossbar" name="Conexant Falcon Crossbar" 		checkdevice="true"/>
-        <filter cat="capture"  name="Conexant Falcon Audio Capture" checkdevice="true"/>
+        <filter cat="capture"  name="Conexant Falcon Video Capture" checkdevice="true"/>
         <filter cat="encoder"  name="Conexant Falcon Encoder"  		checkdevice="true"/>
       </filters>
       <connections>
@@ -1063,6 +1063,7 @@
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"/>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder" sinkpin="0"/>
       </connections>
     </tv>
@@ -2790,7 +2791,7 @@
         <filter cat="tvtuner"  name="Conexant Falcon Tuner"  		checkdevice="true"/>
         <filter cat="tvaudio"  name="Conexant Falcon TvAudio"  		checkdevice="true"/>
         <filter cat="crossbar" name="Conexant Falcon Crossbar" 		checkdevice="true"/>
-        <filter cat="capture"  name="Conexant Falcon Audio Capture" checkdevice="true"/>
+        <filter cat="capture"  name="Conexant Falcon Video Capture" checkdevice="true"/>
         <filter cat="encoder"  name="Conexant Falcon Encoder"  		checkdevice="true"/>
       </filters>
       <connections>
@@ -2798,6 +2799,7 @@
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"/>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder" sinkpin="0"/>
       </connections>
     </tv>
@@ -2851,7 +2853,7 @@
         <filter cat="tvtuner"  name="Conexant Falcon Tuner"  		checkdevice="true"/>
         <filter cat="tvaudio"  name="Conexant Falcon TvAudio"  		checkdevice="true"/>
         <filter cat="crossbar" name="Conexant Falcon Crossbar" 		checkdevice="true"/>
-        <filter cat="capture"  name="Conexant Falcon Audio Capture"	checkdevice="true"/>
+        <filter cat="capture"  name="Conexant Falcon Video Capture"	checkdevice="true"/>
         <filter cat="encoder"  name="Conexant Falcon Encoder"  		checkdevice="true"/>
       </filters>
       <connections>
@@ -2859,6 +2861,7 @@
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture" sinkpin="1"/>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder" sinkpin="0"/>
       </connections>
     </tv>
@@ -7449,4 +7452,44 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="LifeView TV MCE mini (Digital)" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_22195168&amp;rev_d1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
+        <filter cat="tunerdevice"     name="713x BDA DVBT Tuner"                checkdevice="true"/>
+        <filter cat="capture"         name="713x BDA Digital Capture"           checkdevice="true"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView TV MCE mini (Analogue)" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_22195168&amp;rev_d1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner" checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"	checkdevice="true"></filter>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"		checkdevice="true"></filter>
+        <filter cat="capture"		name="713x BDA Analog Capture"	checkdevice="true"></filter>
+        <filter cat="encoderaudio"  name="HT MPEG1 Audio Encoder"	checkdevice="false"/>
+        <filter cat="mux"			name="HT MPEG Multiplexer"		checkdevice="false"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="encoderaudio" sinkpin="0"/>
+        <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard> 
 </capturecards>
