@@ -76,7 +76,7 @@ namespace MediaPortal.Configuration.Sections
     private Label label2;
     private Label label3;
     private CheckBox checkBoxFilterDoubleKlicks;
-    private ToolTip hcwToolTip;
+    private ToolTip toolTip;
     private System.ComponentModel.IContainer components = null;
     private enum hcwRepeatSpeed { slow, medium, fast };
 
@@ -233,10 +233,12 @@ namespace MediaPortal.Configuration.Sections
 
       fireDTVRemote.LoadSettings();
 
-      hcwToolTip.SetToolTip(this.hScrollBarButtonRelease, string.Format("{0} msec.", hScrollBarButtonRelease.Value));
-      hcwToolTip.SetToolTip(this.hScrollBarRepeatFilter, hScrollBarRepeatFilter.Value.ToString());
+      toolTip.SetToolTip(this.hScrollBarButtonRelease, string.Format("{0} msec.", hScrollBarButtonRelease.Value));
+      toolTip.SetToolTip(this.hScrollBarRepeatFilter, hScrollBarRepeatFilter.Value.ToString());
       Type repeatSpeed = typeof(hcwRepeatSpeed);
-      hcwToolTip.SetToolTip(this.hScrollBarRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarRepeatSpeed.Value));
+      toolTip.SetToolTip(this.hScrollBarRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarRepeatSpeed.Value));
+      toolTip.SetToolTip(this.checkBoxKeepControl, "If checked, MediaPortal keeps control of the remote. Only applications launched by\nMediaPortal can steal focus (external Players, MyPrograms, ...).");
+      toolTip.SetToolTip(this.checkBoxAllowExternal, "If checked, MediaPortal does not keep control of the remote\nwhen it looses focus.");
     }
 
     public override void SaveSettings()
@@ -318,7 +320,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxVerboseLog = new System.Windows.Forms.CheckBox();
       this.tabPageFireDTV = new System.Windows.Forms.TabPage();
       this.fireDTVRemote = new MediaPortal.Configuration.Sections.FireDTVRemote();
-      this.hcwToolTip = new System.Windows.Forms.ToolTip(this.components);
+      this.toolTip = new System.Windows.Forms.ToolTip(this.components);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxUSA)).BeginInit();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMCE.SuspendLayout();
@@ -336,7 +338,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.pictureBoxUSA.BackColor = System.Drawing.Color.Transparent;
       this.pictureBoxUSA.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxUSA.Image")));
-      this.pictureBoxUSA.Location = new System.Drawing.Point(208, 24);
+      this.pictureBoxUSA.Location = new System.Drawing.Point(248, 24);
       this.pictureBoxUSA.Name = "pictureBoxUSA";
       this.pictureBoxUSA.Size = new System.Drawing.Size(100, 310);
       this.pictureBoxUSA.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -409,16 +411,16 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonUSA.AutoSize = true;
       this.radioButtonUSA.Location = new System.Drawing.Point(32, 48);
       this.radioButtonUSA.Name = "radioButtonUSA";
-      this.radioButtonUSA.Size = new System.Drawing.Size(84, 17);
+      this.radioButtonUSA.Size = new System.Drawing.Size(204, 17);
       this.radioButtonUSA.TabIndex = 1;
-      this.radioButtonUSA.Text = "USA version";
+      this.radioButtonUSA.Text = "USA version / Hauppauge MCE OEM";
       this.radioButtonUSA.CheckedChanged += new System.EventHandler(this.radioButtonUSA_CheckedChanged);
       // 
       // pictureBoxEU
       // 
       this.pictureBoxEU.BackColor = System.Drawing.Color.Transparent;
       this.pictureBoxEU.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxEU.Image")));
-      this.pictureBoxEU.Location = new System.Drawing.Point(208, 24);
+      this.pictureBoxEU.Location = new System.Drawing.Point(248, 24);
       this.pictureBoxEU.Name = "pictureBoxEU";
       this.pictureBoxEU.Size = new System.Drawing.Size(100, 310);
       this.pictureBoxEU.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -483,7 +485,6 @@ namespace MediaPortal.Configuration.Sections
       this.label4.BackColor = System.Drawing.Color.Transparent;
       this.label4.Location = new System.Drawing.Point(368, 82);
       this.label4.Name = "label4";
-      this.label4.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
       this.label4.Size = new System.Drawing.Size(24, 13);
       this.label4.TabIndex = 11;
       this.label4.Text = "fast";
@@ -529,7 +530,6 @@ namespace MediaPortal.Configuration.Sections
       this.label1.BackColor = System.Drawing.Color.Transparent;
       this.label1.Location = new System.Drawing.Point(368, 54);
       this.label1.Name = "label1";
-      this.label1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
       this.label1.Size = new System.Drawing.Size(29, 13);
       this.label1.TabIndex = 7;
       this.label1.Text = "max.";
@@ -722,24 +722,27 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageFireDTV
       // 
+      this.tabPageFireDTV.BackColor = System.Drawing.Color.Transparent;
       this.tabPageFireDTV.Controls.Add(this.fireDTVRemote);
       this.tabPageFireDTV.Location = new System.Drawing.Point(4, 22);
       this.tabPageFireDTV.Name = "tabPageFireDTV";
       this.tabPageFireDTV.Size = new System.Drawing.Size(464, 374);
       this.tabPageFireDTV.TabIndex = 2;
       this.tabPageFireDTV.Text = "FireDTV Remote";
+      this.tabPageFireDTV.UseVisualStyleBackColor = true;
       // 
       // fireDTVRemote
       // 
       this.fireDTVRemote.AutoScroll = true;
-      this.fireDTVRemote.Location = new System.Drawing.Point(0, 8);
+      this.fireDTVRemote.BackColor = System.Drawing.Color.Transparent;
+      this.fireDTVRemote.Location = new System.Drawing.Point(0, 0);
       this.fireDTVRemote.Name = "fireDTVRemote";
       this.fireDTVRemote.Size = new System.Drawing.Size(520, 368);
       this.fireDTVRemote.TabIndex = 0;
       // 
       // toolTip
       // 
-      this.hcwToolTip.ShowAlways = true;
+      this.toolTip.ShowAlways = true;
       // 
       // Remote
       // 
@@ -873,18 +876,18 @@ namespace MediaPortal.Configuration.Sections
 
     private void hScrollBarButtonRelease_ValueChanged(object sender, EventArgs e)
     {
-      hcwToolTip.SetToolTip(this.hScrollBarButtonRelease, string.Format("{0} msec.", hScrollBarButtonRelease.Value));
+      toolTip.SetToolTip(this.hScrollBarButtonRelease, string.Format("{0} msec.", hScrollBarButtonRelease.Value));
     }
 
     private void hScrollBarRepeatFilter_ValueChanged(object sender, EventArgs e)
     {
-      hcwToolTip.SetToolTip(this.hScrollBarRepeatFilter, hScrollBarRepeatFilter.Value.ToString());
+      toolTip.SetToolTip(this.hScrollBarRepeatFilter, hScrollBarRepeatFilter.Value.ToString());
     }
 
     private void hScrollBarRepeatSpeed_ValueChanged(object sender, EventArgs e)
     {
       Type repeatSpeed = typeof(hcwRepeatSpeed);
-      hcwToolTip.SetToolTip(this.hScrollBarRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarRepeatSpeed.Value));
+      toolTip.SetToolTip(this.hScrollBarRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarRepeatSpeed.Value));
     }
 
   }

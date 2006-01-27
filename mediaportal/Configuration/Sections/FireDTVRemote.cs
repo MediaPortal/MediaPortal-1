@@ -40,8 +40,7 @@ namespace MediaPortal.Configuration.Sections
 	/// </summary>
 	public class FireDTVRemote : MediaPortal.Configuration.SectionSettings
 	{
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.Splitter splitter1;
+    private System.Windows.Forms.Panel panel1;
 		private System.Data.DataSet dataSet1;
 		private System.Windows.Forms.Panel panel2;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
@@ -265,7 +264,7 @@ namespace MediaPortal.Configuration.Sections
 		/// </summary>
 		private void InitializeComponent()
 		{
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FireDTVRemote));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FireDTVRemote));
       this.panel1 = new System.Windows.Forms.Panel();
       this.dataGrid1 = new System.Windows.Forms.DataGrid();
       this.contextMenu1 = new System.Windows.Forms.ContextMenu();
@@ -296,7 +295,6 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxRemoteControl = new System.Windows.Forms.ComboBox();
       this.textBoxFireDTVKeyFile = new System.Windows.Forms.TextBox();
       this.checkBoxFireDTVEnabled = new System.Windows.Forms.CheckBox();
-      this.splitter1 = new System.Windows.Forms.Splitter();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.panel3 = new System.Windows.Forms.Panel();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -323,6 +321,7 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.RemoteControlKeys)).BeginInit();
       this.panel2.SuspendLayout();
       this.panel3.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // panel1
@@ -340,7 +339,7 @@ namespace MediaPortal.Configuration.Sections
       this.dataGrid1.AlternatingBackColor = System.Drawing.Color.Silver;
       this.dataGrid1.BackColor = System.Drawing.Color.White;
       this.dataGrid1.CaptionBackColor = System.Drawing.Color.Maroon;
-      this.dataGrid1.CaptionFont = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.dataGrid1.CaptionFont = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.dataGrid1.CaptionForeColor = System.Drawing.Color.White;
       this.dataGrid1.CaptionText = "Remote Keys";
       this.dataGrid1.ContextMenu = this.contextMenu1;
@@ -363,15 +362,15 @@ namespace MediaPortal.Configuration.Sections
       this.dataGrid1.Size = new System.Drawing.Size(216, 256);
       this.dataGrid1.TabIndex = 9;
       this.dataGrid1.TableStyles.AddRange(new System.Windows.Forms.DataGridTableStyle[] {
-                                                                                          this.RemoteKeys});
+            this.RemoteKeys});
       this.dataGrid1.Tag = "1";
       this.dataGrid1.CurrentCellChanged += new System.EventHandler(this.dataGrid1_CurrentCellChanged);
       // 
       // contextMenu1
       // 
       this.contextMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-                                                                                 this.menuAdd,
-                                                                                 this.menuDelete});
+            this.menuAdd,
+            this.menuDelete});
       // 
       // menuAdd
       // 
@@ -389,26 +388,26 @@ namespace MediaPortal.Configuration.Sections
       this.dataSet1.DataSetName = "NewDataSet";
       this.dataSet1.Locale = new System.Globalization.CultureInfo("en-GB");
       this.dataSet1.Relations.AddRange(new System.Data.DataRelation[] {
-                                                                        new System.Data.DataRelation("Relation_RemoteID", "RemoteControl", "RemoteControlKeys", new string[] {
-                                                                                                                                                                               "RemoteID"}, new string[] {
-                                                                                                                                                                                                           "RemoteID"}, false)});
+            new System.Data.DataRelation("Relation_RemoteID", "RemoteControl", "RemoteControlKeys", new string[] {
+                        "RemoteID"}, new string[] {
+                        "RemoteID"}, false)});
       this.dataSet1.Tables.AddRange(new System.Data.DataTable[] {
-                                                                  this.RemoteControl,
-                                                                  this.RemoteControlKeys});
+            this.RemoteControl,
+            this.RemoteControlKeys});
       // 
       // RemoteControl
       // 
       this.RemoteControl.Columns.AddRange(new System.Data.DataColumn[] {
-                                                                         this.dataColumn1,
-                                                                         this.dataColumn2,
-                                                                         this.dataColumn3});
+            this.dataColumn1,
+            this.dataColumn2,
+            this.dataColumn3});
       this.RemoteControl.Constraints.AddRange(new System.Data.Constraint[] {
-                                                                             new System.Data.UniqueConstraint("Constraint1", new string[] {
-                                                                                                                                            "RemoteID"}, false),
-                                                                             new System.Data.UniqueConstraint("Constraint2", new string[] {
-                                                                                                                                            "RemoteName"}, true)});
+            new System.Data.UniqueConstraint("Constraint1", new string[] {
+                        "RemoteID"}, false),
+            new System.Data.UniqueConstraint("Constraint2", new string[] {
+                        "RemoteName"}, true)});
       this.RemoteControl.PrimaryKey = new System.Data.DataColumn[] {
-                                                                     this.dataColumn2};
+        this.dataColumn2};
       this.RemoteControl.TableName = "RemoteControl";
       // 
       // dataColumn1
@@ -431,26 +430,26 @@ namespace MediaPortal.Configuration.Sections
       // RemoteControlKeys
       // 
       this.RemoteControlKeys.Columns.AddRange(new System.Data.DataColumn[] {
-                                                                             this.RemoteID,
-                                                                             this.KeyCode,
-                                                                             this.ActionType,
-                                                                             this.ActionName,
-                                                                             this.Key_Value,
-                                                                             this.Key_Code,
-                                                                             this.DestinationWindow,
-                                                                             this.cSharpCode,
-                                                                             this.keyDescription,
-                                                                             this.dataColumn4});
+            this.RemoteID,
+            this.KeyCode,
+            this.ActionType,
+            this.ActionName,
+            this.Key_Value,
+            this.Key_Code,
+            this.DestinationWindow,
+            this.cSharpCode,
+            this.keyDescription,
+            this.dataColumn4});
       this.RemoteControlKeys.Constraints.AddRange(new System.Data.Constraint[] {
-                                                                                 new System.Data.UniqueConstraint("Constraint1", new string[] {
-                                                                                                                                                "RemoteID",
-                                                                                                                                                "KeyCode"}, true),
-                                                                                 new System.Data.ForeignKeyConstraint("Relation1", "RemoteControl", new string[] {
-                                                                                                                                                                   "RemoteID"}, new string[] {
-                                                                                                                                                                                               "RemoteID"}, System.Data.AcceptRejectRule.None, System.Data.Rule.Cascade, System.Data.Rule.Cascade)});
+            new System.Data.UniqueConstraint("Constraint1", new string[] {
+                        "RemoteID",
+                        "KeyCode"}, true),
+            new System.Data.ForeignKeyConstraint("Relation1", "RemoteControl", new string[] {
+                        "RemoteID"}, new string[] {
+                        "RemoteID"}, System.Data.AcceptRejectRule.None, System.Data.Rule.Cascade, System.Data.Rule.Cascade)});
       this.RemoteControlKeys.PrimaryKey = new System.Data.DataColumn[] {
-                                                                         this.RemoteID,
-                                                                         this.KeyCode};
+        this.RemoteID,
+        this.KeyCode};
       this.RemoteControlKeys.TableName = "RemoteControlKeys";
       // 
       // RemoteID
@@ -503,8 +502,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.RemoteKeys.DataGrid = this.dataGrid1;
       this.RemoteKeys.GridColumnStyles.AddRange(new System.Windows.Forms.DataGridColumnStyle[] {
-                                                                                                 this.dataGridKeyCode,
-                                                                                                 this.dataGridKeyDescription});
+            this.dataGridKeyCode,
+            this.dataGridKeyDescription});
       this.RemoteKeys.HeaderForeColor = System.Drawing.SystemColors.ControlText;
       this.RemoteKeys.MappingName = "RemoteControlKeys";
       this.RemoteKeys.RowHeadersVisible = false;
@@ -540,13 +539,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxAdvanceMode
       // 
+      this.checkBoxAdvanceMode.BackColor = System.Drawing.Color.Transparent;
       this.checkBoxAdvanceMode.Dock = System.Windows.Forms.DockStyle.Top;
-      this.checkBoxAdvanceMode.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxAdvanceMode.Location = new System.Drawing.Point(0, 86);
       this.checkBoxAdvanceMode.Name = "checkBoxAdvanceMode";
       this.checkBoxAdvanceMode.Size = new System.Drawing.Size(216, 19);
       this.checkBoxAdvanceMode.TabIndex = 10;
       this.checkBoxAdvanceMode.Text = "Enable Advance Mode (Beta)";
+      this.checkBoxAdvanceMode.UseVisualStyleBackColor = false;
       this.checkBoxAdvanceMode.CheckedChanged += new System.EventHandler(this.checkBoxAdvanceMode_CheckedChanged);
       // 
       // comboBoxFireDTVDevice
@@ -571,6 +571,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxFireDTVKeyFile
       // 
+      this.textBoxFireDTVKeyFile.BackColor = System.Drawing.SystemColors.Window;
       this.textBoxFireDTVKeyFile.Dock = System.Windows.Forms.DockStyle.Top;
       this.textBoxFireDTVKeyFile.Location = new System.Drawing.Point(0, 24);
       this.textBoxFireDTVKeyFile.Name = "textBoxFireDTVKeyFile";
@@ -582,21 +583,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxFireDTVEnabled
       // 
+      this.checkBoxFireDTVEnabled.BackColor = System.Drawing.Color.Transparent;
       this.checkBoxFireDTVEnabled.Dock = System.Windows.Forms.DockStyle.Top;
-      this.checkBoxFireDTVEnabled.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxFireDTVEnabled.Location = new System.Drawing.Point(0, 0);
       this.checkBoxFireDTVEnabled.Name = "checkBoxFireDTVEnabled";
       this.checkBoxFireDTVEnabled.Size = new System.Drawing.Size(216, 24);
       this.checkBoxFireDTVEnabled.TabIndex = 4;
       this.checkBoxFireDTVEnabled.Text = "Enable FireDTV Remote Control";
-      // 
-      // splitter1
-      // 
-      this.splitter1.Location = new System.Drawing.Point(216, 0);
-      this.splitter1.Name = "splitter1";
-      this.splitter1.Size = new System.Drawing.Size(3, 368);
-      this.splitter1.TabIndex = 1;
-      this.splitter1.TabStop = false;
+      this.checkBoxFireDTVEnabled.UseVisualStyleBackColor = false;
       // 
       // openFileDialog1
       // 
@@ -623,9 +617,9 @@ namespace MediaPortal.Configuration.Sections
       this.panel3.Controls.Add(this.labelAction);
       this.panel3.Controls.Add(this.comboBoxAction);
       this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.panel3.Location = new System.Drawing.Point(219, 0);
+      this.panel3.Location = new System.Drawing.Point(216, 0);
       this.panel3.Name = "panel3";
-      this.panel3.Size = new System.Drawing.Size(301, 368);
+      this.panel3.Size = new System.Drawing.Size(304, 368);
       this.panel3.TabIndex = 2;
       // 
       // pictureBox1
@@ -642,40 +636,41 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxEnabled
       // 
-      this.checkBoxEnabled.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.dataSet1, "RemoteControlKeys.Enabled"));
-      this.checkBoxEnabled.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.checkBoxEnabled.BackColor = System.Drawing.Color.Transparent;
+      this.checkBoxEnabled.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.dataSet1, "RemoteControlKeys.Enabled", true));
       this.checkBoxEnabled.Location = new System.Drawing.Point(86, 4);
       this.checkBoxEnabled.Name = "checkBoxEnabled";
       this.checkBoxEnabled.Size = new System.Drawing.Size(104, 20);
       this.checkBoxEnabled.TabIndex = 17;
       this.checkBoxEnabled.Tag = "1";
       this.checkBoxEnabled.Text = "Enabled";
+      this.checkBoxEnabled.UseVisualStyleBackColor = false;
       // 
       // textBoxDescription
       // 
-      this.textBoxDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.keyDescription"));
+      this.textBoxDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxDescription.BackColor = System.Drawing.SystemColors.Window;
+      this.textBoxDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.keyDescription", true));
       this.textBoxDescription.Location = new System.Drawing.Point(62, 46);
       this.textBoxDescription.Name = "textBoxDescription";
       this.textBoxDescription.ReadOnly = true;
-      this.textBoxDescription.Size = new System.Drawing.Size(182, 20);
+      this.textBoxDescription.Size = new System.Drawing.Size(185, 20);
       this.textBoxDescription.TabIndex = 16;
       this.textBoxDescription.Tag = "1";
-      this.textBoxDescription.Text = "";
       // 
       // textBoxCode
       // 
-      this.textBoxCode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.KeyCode"));
+      this.textBoxCode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxCode.BackColor = System.Drawing.SystemColors.Window;
+      this.textBoxCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.KeyCode", true));
       this.textBoxCode.Location = new System.Drawing.Point(62, 26);
       this.textBoxCode.Name = "textBoxCode";
       this.textBoxCode.ReadOnly = true;
-      this.textBoxCode.Size = new System.Drawing.Size(124, 20);
+      this.textBoxCode.Size = new System.Drawing.Size(127, 20);
       this.textBoxCode.TabIndex = 15;
       this.textBoxCode.Tag = "1";
-      this.textBoxCode.Text = "";
       // 
       // label3
       // 
@@ -702,21 +697,20 @@ namespace MediaPortal.Configuration.Sections
       this.labelcSharp.Dock = System.Windows.Forms.DockStyle.Bottom;
       this.labelcSharp.Location = new System.Drawing.Point(0, 156);
       this.labelcSharp.Name = "labelcSharp";
-      this.labelcSharp.Size = new System.Drawing.Size(301, 14);
+      this.labelcSharp.Size = new System.Drawing.Size(304, 14);
       this.labelcSharp.TabIndex = 12;
       this.labelcSharp.Text = "cSharp Code";
       this.labelcSharp.Visible = false;
       // 
       // textBoxcSharp
       // 
-      this.textBoxcSharp.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.cSharpCode"));
+      this.textBoxcSharp.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.cSharpCode", true));
       this.textBoxcSharp.Dock = System.Windows.Forms.DockStyle.Bottom;
       this.textBoxcSharp.Location = new System.Drawing.Point(0, 170);
       this.textBoxcSharp.Multiline = true;
       this.textBoxcSharp.Name = "textBoxcSharp";
-      this.textBoxcSharp.Size = new System.Drawing.Size(301, 198);
+      this.textBoxcSharp.Size = new System.Drawing.Size(304, 198);
       this.textBoxcSharp.TabIndex = 11;
-      this.textBoxcSharp.Text = "";
       this.textBoxcSharp.Visible = false;
       // 
       // buttonLearn
@@ -724,6 +718,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonLearn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonLearn.Location = new System.Drawing.Point(4, 2);
       this.buttonLearn.Name = "buttonLearn";
+      this.buttonLearn.Size = new System.Drawing.Size(75, 23);
       this.buttonLearn.TabIndex = 10;
       this.buttonLearn.Tag = "0";
       this.buttonLearn.Text = "Learn";
@@ -732,13 +727,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxGotoWindow
       // 
-      this.comboBoxGotoWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxGotoWindow.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.DestinationWindow"));
+      this.comboBoxGotoWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxGotoWindow.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.DestinationWindow", true));
       this.comboBoxGotoWindow.Location = new System.Drawing.Point(62, 131);
       this.comboBoxGotoWindow.MaxDropDownItems = 20;
       this.comboBoxGotoWindow.Name = "comboBoxGotoWindow";
-      this.comboBoxGotoWindow.Size = new System.Drawing.Size(182, 21);
+      this.comboBoxGotoWindow.Size = new System.Drawing.Size(185, 21);
       this.comboBoxGotoWindow.TabIndex = 7;
       this.comboBoxGotoWindow.Tag = "1";
       // 
@@ -754,28 +749,27 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxKeyCode
       // 
-      this.comboBoxKeyCode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxKeyCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.Key_Code"));
+      this.comboBoxKeyCode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxKeyCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.Key_Code", true));
       this.comboBoxKeyCode.Location = new System.Drawing.Point(62, 108);
       this.comboBoxKeyCode.MaxDropDownItems = 20;
       this.comboBoxKeyCode.Name = "comboBoxKeyCode";
-      this.comboBoxKeyCode.Size = new System.Drawing.Size(182, 21);
+      this.comboBoxKeyCode.Size = new System.Drawing.Size(185, 21);
       this.comboBoxKeyCode.TabIndex = 5;
       this.comboBoxKeyCode.Tag = "1";
       // 
       // textBoxKey
       // 
-      this.textBoxKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.textBoxKey.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.Key_Value"));
+      this.textBoxKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxKey.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.Key_Value", true));
       this.textBoxKey.Location = new System.Drawing.Point(62, 88);
       this.textBoxKey.MaxLength = 1;
       this.textBoxKey.Name = "textBoxKey";
-      this.textBoxKey.Size = new System.Drawing.Size(20, 20);
+      this.textBoxKey.Size = new System.Drawing.Size(23, 20);
       this.textBoxKey.TabIndex = 4;
       this.textBoxKey.Tag = "1";
-      this.textBoxKey.Text = "";
       // 
       // labelKeyCode
       // 
@@ -810,20 +804,19 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxAction
       // 
-      this.comboBoxAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.comboBoxAction.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.ActionName"));
+      this.comboBoxAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxAction.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.ActionName", true));
       this.comboBoxAction.Location = new System.Drawing.Point(62, 66);
       this.comboBoxAction.MaxDropDownItems = 20;
       this.comboBoxAction.Name = "comboBoxAction";
-      this.comboBoxAction.Size = new System.Drawing.Size(182, 21);
+      this.comboBoxAction.Size = new System.Drawing.Size(185, 21);
       this.comboBoxAction.TabIndex = 0;
       this.comboBoxAction.Tag = "1";
       // 
       // FireDTVRemote
       // 
       this.Controls.Add(this.panel3);
-      this.Controls.Add(this.splitter1);
       this.Controls.Add(this.panel1);
       this.Name = "FireDTVRemote";
       this.Size = new System.Drawing.Size(520, 368);
@@ -833,7 +826,10 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.RemoteControl)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.RemoteControlKeys)).EndInit();
       this.panel2.ResumeLayout(false);
+      this.panel2.PerformLayout();
       this.panel3.ResumeLayout(false);
+      this.panel3.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
 
     }
