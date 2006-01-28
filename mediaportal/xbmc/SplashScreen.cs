@@ -88,14 +88,26 @@ namespace MediaPortal
 			base.Dispose( disposing );
 		}
 
+	  //JoeDalton: cross-thread updating of controls is not supported in .NET
+    //A control can only be (safely) changed from the thread it is created.
+    //Sometimes it works, sometimes it crashes.  
+	  //When starting from VS.NET, an exception will occur whenever you try to
+	  //update a control that was created on another thread.
+	  //So we need to change the way the splash screen is created/handled.
+	  //See Control.InvokeRequired property and Control.Invoke method for more information.
+	  //I tried to fix the fadein method using the methods described in the documentation, 
+	  //but then it isn't show at all, because the main thread (= the thread that created the
+	  //splash screen) is too busy starting MediaPortal.  Whenever the thread gets some time
+	  //the splash screen is already closed, and then these methods crash because the splash 
+	  //screen is already disposed.
     public void FadeIn()
     {
-      Thread fadeInThread = new Thread(new ThreadStart(FadeInThread));
-      fadeInThread.Start();
-    }
+    //  Thread fadeInThread = new Thread(new ThreadStart(FadeInThread));
+    //  fadeInThread.Start();
+    //}
 
-    void FadeInThread()
-    {
+    //void FadeInThread()
+    //{
       while (Opacity <= 0.9)
       {
         Opacity += 0.02;
