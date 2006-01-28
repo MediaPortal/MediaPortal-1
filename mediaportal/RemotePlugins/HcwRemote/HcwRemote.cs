@@ -36,7 +36,7 @@ namespace MediaPortal.InputDevices
 {
   /// <summary>
   /// Hauppauge HCW remote control class / by mPod
-  /// all remotes are supported, if the buttons are defined in the XML file
+  /// all remotes are supported, if the buttons are defined in the XML file 
   /// </summary>
   public class HcwRemote
   {

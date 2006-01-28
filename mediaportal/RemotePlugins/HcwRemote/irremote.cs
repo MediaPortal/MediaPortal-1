@@ -35,7 +35,7 @@ namespace MediaPortal.InputDevices
     #region DLL-Imports
 
     /// <summary>
-    /// The SetDllDirectory function adds a directory to the search path used to locate DLLs for the application.
+    /// The SetDllDirectory function adds a directory to the search path used to locate DLLs for the application. 
     /// http://msdn.microsoft.com/library/en-us/dllproc/base/setdlldirectory.asp
     /// </summary>
     /// <param name="PathName">Pointer to a null-terminated string that specifies the directory to be added to the search path.</param>
