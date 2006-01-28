@@ -85,7 +85,7 @@ namespace UdpHelper
       }
       catch (SocketException se)
       {
-        Log.Write("NetHelper: Send port {0}: {1} - {2}", udpPort, se.ErrorCode, se.Message);
+        Log.Write("UDPHelper: Send port {0}: {1} - {2}", udpPort, se.ErrorCode, se.Message);
         return false;
       }
     }
@@ -95,7 +95,7 @@ namespace UdpHelper
     {
       try
       {
-        if (logVerbose) Log.Write("NetHelper: starting listener on port {0}", udpPort);
+        if (logVerbose) Log.Write("UDPHelper: Starting listener on port {0}", udpPort);
 
         // Port already used?
         IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
@@ -103,7 +103,7 @@ namespace UdpHelper
         foreach (TcpConnectionInformation c in connections)
           if (c.RemoteEndPoint.Port == udpPort)
           {
-            Log.Write("NetHelper: udp port {0} is already in use", udpPort);
+            Log.Write("UDPHelper: UDP port {0} is already in use", udpPort);
             return false;
           }
         IPAddress hostIP = IPAddress.Parse("127.0.0.1");
@@ -113,12 +113,12 @@ namespace UdpHelper
         state.EndPoint = endPoint;
         state.UdpClient = udpClient;
         udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), state);
-        if (logVerbose) Log.Write("NetHelper: listening for messages on port {0}", udpPort);
+        if (logVerbose) Log.Write("UDPHelper: Listening for messages on port {0}", udpPort);
         return true;
       }
       catch (SocketException se)
       {
-        Log.Write("NetHelper: Start port {0}: {1} - {2}", udpPort, se.ErrorCode, se.Message);
+        Log.Write("UDPHelper: Start port {0}: {1} - {2}", udpPort, se.ErrorCode, se.Message);
         return false;
       }
     }

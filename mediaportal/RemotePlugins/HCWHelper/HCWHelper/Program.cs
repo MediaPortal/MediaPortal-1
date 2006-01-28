@@ -30,7 +30,7 @@ using System.Diagnostics;
 using System.Threading;
 using MediaPortal.GUI.Library;
 
-namespace MediaPortal.InputDevices.HCWHelper
+namespace MediaPortal.InputDevices.HcwHelper
 {
   static class Program
   {
@@ -42,27 +42,27 @@ namespace MediaPortal.InputDevices.HCWHelper
     {
       try
       {
-        Log.Write("HCW Helper: Starting up");
+        Log.Write("HCWHelper: Starting up");
         Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
-        if ((Process.GetProcessesByName("HCWHelper").Length == 1) &&
+        if ((Process.GetProcessesByName("HcwHelper").Length == 1) &&
           ((Process.GetProcessesByName("MediaPortal").Length > 0) ||
           (Process.GetProcessesByName("MediaPortal.vshost").Length > 0)))
         {
           System.Windows.Forms.Application.EnableVisualStyles();
           System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
           Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
-          System.Windows.Forms.Application.Run(new HCWHelper());
+          System.Windows.Forms.Application.Run(new HcwHelper());
         }
         else
-          if (Process.GetProcessesByName("HCWHelper").Length != 1)
-            Log.Write("HCW Helper: HCWHelper already running - exiting");
+          if (Process.GetProcessesByName("HcwHelper").Length != 1)
+            Log.Write("HCWHelper: HCWHelper already running - exiting");
           else
-            Log.Write("HCW Helper: MediaPortal not running - exiting");
+            Log.Write("HCWHelper: MediaPortal not running - exiting");
       }
       catch (Exception ex)
       {
-        Log.Write("HCW Helper: Main: {0}", ex.Message);
+        Log.Write("HCWHelper: Main: {0}", ex.Message);
       }
     }
   }

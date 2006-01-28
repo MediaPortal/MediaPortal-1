@@ -7,9 +7,9 @@
     <ProjectGuid>{596BDC58-35E0-488F-BED2-FC7A133BC047}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HCWHelper</RootNamespace>
-    <AssemblyName>HCWHelper</AssemblyName>
-    <ApplicationIcon>HCWHelper_Green.ico</ApplicationIcon>
+    <RootNamespace>HcwHelper</RootNamespace>
+    <AssemblyName>HcwHelper</AssemblyName>
+    <ApplicationIcon>HcwHelper_Green.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -53,11 +53,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HCWHelper.cs">
+    <Compile Include="HcwHelper.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="HCWHelper.Designer.cs">
-      <DependentUpon>HCWHelper.cs</DependentUpon>
+    <Compile Include="HcwHelper.Designer.cs">
+      <DependentUpon>HcwHelper.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -66,9 +66,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="HCWHelper.resx">
+    <EmbeddedResource Include="HcwHelper.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>HCWHelper.cs</DependentUpon>
+      <DependentUpon>HcwHelper.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -86,7 +86,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="HCWHelper_Green.ico" />
+    <Content Include="HcwHelper_Green.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Core\Core.csproj">

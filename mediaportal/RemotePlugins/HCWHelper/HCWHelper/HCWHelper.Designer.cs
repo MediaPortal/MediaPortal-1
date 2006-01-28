@@ -23,9 +23,9 @@
 
 #endregion
 
-namespace MediaPortal.InputDevices.HCWHelper
+namespace MediaPortal.InputDevices.HcwHelper
 {
-  partial class HCWHelper
+  partial class HcwHelper
   {
     /// <summary>
     /// Required designer variable.
@@ -60,7 +60,7 @@ namespace MediaPortal.InputDevices.HCWHelper
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(292, 266);
-      this.Name = "HCWHelper";
+      this.Name = "HcwHelper";
       this.Opacity = 0;
       this.ShowInTaskbar = false;
       this.Text = "MediaPortal HCW Control";

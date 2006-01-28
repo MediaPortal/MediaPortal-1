@@ -69,8 +69,9 @@
     <Compile Include="Core\Playlists\PlayListPLSTest.cs" />
     <Compile Include="Core\Playlists\PlayListTest.cs" />
     <Compile Include="Core\Playlists\PlayListWPLTest.cs" />
-    <Compile Include="Plugins\HCWHelper\NetHelper\NetHelperTest.cs" />
+    <Compile Include="Core\UdpHelper\UdpHelperTest.cs" />
     <Compile Include="Core\InputDevices\InputHandlerTest.cs" />
+    <Compile Include="Plugins\ProcessPlugins\CallerId\ISDN\OutlookHelperTest.cs" />
     <Compile Include="TVCapture\DiskManagement\DeleteOldRecordings.cs" />
     <Compile Include="TVCapture\DiskManagement\TestEpisodeManagement.cs" />
     <Compile Include="TVCapture\Teletext\RendererTest.cs" />
@@ -93,6 +94,10 @@
     <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ProcessPlugins\ProcessPlugins.csproj">
+      <Project>{3333B71D-6304-452C-BEA5-D037E7B3AA6B}</Project>
+      <Name>ProcessPlugins</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
       <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>

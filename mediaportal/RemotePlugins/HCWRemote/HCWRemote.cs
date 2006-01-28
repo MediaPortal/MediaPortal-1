@@ -125,7 +125,7 @@ namespace MediaPortal.InputDevices
         Log.Write("Process: {0}", process.ProcessName);
 
         Process procHelper = new Process();
-        procHelper.StartInfo.FileName = string.Format("{0}\\HCWHelper.exe", System.Windows.Forms.Application.StartupPath);
+        procHelper.StartInfo.FileName = string.Format("{0}\\HcwHelper.exe", System.Windows.Forms.Application.StartupPath);
         procHelper.Start();
         if (allowExternal)
         {
@@ -172,7 +172,7 @@ namespace MediaPortal.InputDevices
       {
         Thread.Sleep(1000);
 
-        while (!exit && (Process.GetProcessesByName("HCWHelper").Length > 0))
+        while (!exit && (Process.GetProcessesByName("HcwHelper").Length > 0))
         {
           Thread.Sleep(1000);
         }
@@ -183,7 +183,7 @@ namespace MediaPortal.InputDevices
             controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
           }
           if (controlEnabled)
-            Process.Start(System.Windows.Forms.Application.StartupPath + @"\HCWHelper.exe");
+            Process.Start(System.Windows.Forms.Application.StartupPath + @"\HcwHelper.exe");
           else
             exit = true;
         }
@@ -329,7 +329,7 @@ namespace MediaPortal.InputDevices
           {
             if (msg.Split('|')[1] == "STOP")
             {
-              Log.Write("HCW: received HCWSTOP from HCWHelper");
+              Log.Write("HCW: received HCWSTOP from HcwHelper");
               controlEnabled = false;
               exit = true;
               StopHcw();
