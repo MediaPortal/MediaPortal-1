@@ -3383,7 +3383,7 @@
 
 <!--  Requires Catalyst 5.5 WDM_SP drivers or later -->
 
-  <capturecard commercialname="ATI AIW 9200 Cards or earlier" capturename="ATI Rage Theater Video Capture" devid="ntativrv35">
+<!--  <capturecard commercialname="ATI AIW 9200 Cards or earlier" capturename="ATI Rage Theater Video Capture" devid="ntativrv35">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
@@ -3434,7 +3434,7 @@
         <connection sourcefilter="encoderaudio"		sourcepin="0" sinkfilter="mux"				sinkpin="0"/>
       </connections>
     </tv>
-  </capturecard>
+  </capturecard> -->
 
   <capturecard commercialname="Creatix SAA7134 DVB-T" capturename="Creatix BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
@@ -7491,5 +7491,21 @@
         <connection sourcefilter="encoderaudio" sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
       </connections>
     </tv>
-  </capturecard> 
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV 110i DVB-T" capturename="Pinnacle PCTV 110i BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_002e11bd&amp'rev_d0">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Pinnacle PCTV 110i BDA Digital Tuner"                checkdevice="true"/>
+        <filter cat="capture"         name="Pinnacle PCTV 110i BDA Digital Capture"           checkdevice="true"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
