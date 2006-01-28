@@ -190,6 +190,12 @@ namespace MediaPortal.GUI.Library
         _imageNonFocused.Render(timePassed);
       }
 
+      int labelWidth = _width - 2 * _textOffsetX;
+      if (labelWidth <= 0)
+      {
+        return;
+      }
+      _labelControl._width = labelWidth;
       _labelControl.TextAlignment = _textAlignment;
       _labelControl.Label = _label;
       _labelControl.TextColor = Disabled ? _disabledColor : _textColor;
@@ -204,7 +210,7 @@ namespace MediaPortal.GUI.Library
           break;
 
         case Alignment.ALIGN_RIGHT:
-          x = _positionX + _width - _textOffsetY;
+          x = _positionX + _width - _textOffsetX;
           break;
       }
 
