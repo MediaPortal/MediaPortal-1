@@ -45,13 +45,13 @@ namespace MediaPortal.Tests.Plugins.HCWHelper.NetHelper
       Assert.IsTrue(connection.Send(udpPort, "CMD", "0", DateTime.Now));
     }
 
-    [Test]
-    public void Start()
-    {
-      Connection connection = new Connection(true);
-      Assert.IsTrue(connection.Start(udpPort + 1));
-      connection.Stop();
-    }
+    //[Test]
+    //public void Start()
+    //{
+    //  Connection connection = new Connection(true);
+    //  Assert.IsTrue(connection.Start(udpPort + 1));
+    //  connection.Stop();
+    //}
 
   }
 }
