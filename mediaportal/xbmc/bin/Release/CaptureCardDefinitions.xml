@@ -7493,7 +7493,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Pinnacle PCTV 110i DVB-T" capturename="Pinnacle PCTV 110i BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_002e11bd&amp'rev_d0">
+  <capturecard commercialname="Pinnacle PCTV 110i DVB-T" capturename="Pinnacle PCTV 110i BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_002e11bd&amp;rev_d0">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
