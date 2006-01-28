@@ -82,13 +82,13 @@ namespace MediaPortal.GUI.Library
 		  base.FinalizeConstruction ();
 		  
 		  _imageCheckMarkFocused = new GUIImage
-			  (_parentControlId, _controlId, _positionX, _positionX,
+			  (_parentControlId, _controlId, _positionX, _positionY,
 			   _checkMarkWidth, _checkMarkHeight, _checkMarkFocusTextureName ,0);
 
       _imageCheckMarkFocused.ParentControl = this;
 		  
 		  _imageCheckMarkNonFocused = new GUIImage
-			  (_parentControlId, _controlId, _positionX, _positionX,
+			  (_parentControlId, _controlId, _positionX, _positionY,
 			   _checkMarkWidth, _checkMarkHeight, _checkMarkNoFocusTextureName,0);
 
       _imageCheckMarkNonFocused.ParentControl = this;
@@ -115,8 +115,8 @@ namespace MediaPortal.GUI.Library
 			}
       int dwTextPosX=_positionX;
       int dwCheckMarkPosX=_positionX;
-			_rectangle.X=_positionX;
-			_rectangle.Y=_positionX;
+			_rectangle.X=_positionY;
+			_rectangle.Y=_positionY;
 			_rectangle.Height=_imageCheckMarkFocused.Height;
       if (null!=_font) 
       {
@@ -143,7 +143,7 @@ namespace MediaPortal.GUI.Library
         if (Disabled )
         {
 					// If disabled, draw the text in the disabled color.
-					_font.DrawText((float)dwTextPosX, (float)_positionX, _disabledColor, _label,GUIControl.Alignment.ALIGN_LEFT,-1);
+					_font.DrawText((float)dwTextPosX, (float)_positionY, _disabledColor, _label,GUIControl.Alignment.ALIGN_LEFT,-1);
         }
         else
         {
@@ -151,17 +151,17 @@ namespace MediaPortal.GUI.Library
           if (Focus)
           {
             if (_shadow)
-              _font.DrawShadowText((float)dwTextPosX, (float)_positionX, _textColor, _label,GUIControl.Alignment.ALIGN_LEFT,5,5,0xff000000);
+              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, _textColor, _label,GUIControl.Alignment.ALIGN_LEFT,5,5,0xff000000);
             else
-              _font.DrawText((float)dwTextPosX, (float)_positionX, _textColor, _label,GUIControl.Alignment.ALIGN_LEFT,-1);
+              _font.DrawText((float)dwTextPosX, (float)_positionY, _textColor, _label,GUIControl.Alignment.ALIGN_LEFT,-1);
           }
 					// Draw non-focused text and shadow
           else
           {
             if (_shadow)
-              _font.DrawShadowText((float)dwTextPosX, (float)_positionX, _disabledColor, _label,GUIControl.Alignment.ALIGN_LEFT,5,5,0xff000000);
+              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, _disabledColor, _label,GUIControl.Alignment.ALIGN_LEFT,5,5,0xff000000);
             else
-              _font.DrawText((float)dwTextPosX, (float)_positionX, _disabledColor, _label,GUIControl.Alignment.ALIGN_LEFT,-1);
+              _font.DrawText((float)dwTextPosX, (float)_positionY, _disabledColor, _label,GUIControl.Alignment.ALIGN_LEFT,-1);
           }
         }
       }
@@ -169,13 +169,13 @@ namespace MediaPortal.GUI.Library
 			// Render the selected checkmark image
       if (_isSelected)
       {
-        _imageCheckMarkFocused.SetPosition(dwCheckMarkPosX, _positionX); 
+        _imageCheckMarkFocused.SetPosition(dwCheckMarkPosX, _positionY); 
         _imageCheckMarkFocused.Render(timePassed);
       }
       else
       {
 				// Render the non-selected checkmark image
-				_imageCheckMarkNonFocused.SetPosition(dwCheckMarkPosX, _positionX); 
+				_imageCheckMarkNonFocused.SetPosition(dwCheckMarkPosX, _positionY); 
         _imageCheckMarkNonFocused.Render(timePassed);
       }
     }
