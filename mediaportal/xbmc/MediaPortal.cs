@@ -192,10 +192,8 @@ public class MediaPortalApp : D3DApp, IRender
     string version = System.Configuration.ConfigurationManager.AppSettings["version"];
     //ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
     splashScreen = new SplashScreen();
-    splashScreen.SetVersion(version);
-    splashScreen.Show();
-    splashScreen.Update();
-    splashScreen.FadeIn();
+    splashScreen.Version = version;
+    splashScreen.Run();
     //clientInfo=null;
 #endif
 
@@ -321,11 +319,10 @@ public class MediaPortalApp : D3DApp, IRender
       Log.WriteFile(Log.LogType.Log, true, "MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
     }
 #endif
-#if DEBUG
-#else
+#if !DEBUG
     if (splashScreen != null)
     {
-      splashScreen.Close();
+      splashScreen.Stop();
       splashScreen = null;
     }
 #endif
@@ -634,9 +631,7 @@ public class MediaPortalApp : D3DApp, IRender
     //
     if (splashScreen != null)
     {
-      splashScreen.FadeOut();
-      splashScreen.Close();
-      splashScreen.Dispose();
+      splashScreen.Stop();
       splashScreen = null;
     }
   }
