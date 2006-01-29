@@ -1733,8 +1733,6 @@ namespace MediaPortal
         this.Bounds = new Rectangle(0, 0, Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
         this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
         this.Update();
-        GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth = Screen.PrimaryScreen.Bounds.Width;
-        GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight = Screen.PrimaryScreen.Bounds.Height;
         Log.Write("windowed->fullscreen done {0}", isMaximized);
         Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
           this.ClientSize.Width, this.ClientSize.Height,

@@ -110,24 +110,16 @@ namespace MediaPortal.TV.Scanning
                 float percent = (((float)currentChannel)-(float)minChannel) / ((float)maxChannel-(float)minChannel);
                 percent *= 100.0f;
                 callback.OnProgress((int)percent);
-                TuneChannel();
                 float frequency = (float)captureCard.VideoFrequency();
-                if (frequency != lastFrequency)
+                frequency /= 1000000f;
+                string description = String.Format("channel:{0} frequency:{1:###.##} MHz.", currentChannel, frequency);
+                callback.OnStatus(description);
+                TuneChannel();
+                callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
+                if (captureCard.SignalPresent())
                 {
-                    lastFrequency = frequency;
-                    frequency /= 1000000f;
-                    string description = String.Format("channel:{0} frequency:{1:###.##} MHz.", currentChannel, frequency);
-                    callback.OnStatus(description);
-                    callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
-                    if (captureCard.SignalPresent())
-                    {
-                        callback.OnNewChannel();
-                        return;
-                    }
-                }
-                else
-                {
-                    callback.OnSignal(0, 0);
+                    callback.OnNewChannel();
+                    return;
                 }
                 Continue();
             }

@@ -272,11 +272,11 @@ namespace MediaPortal.TV.Recording
     bool _isUsingAC3 = false;
     bool _isOverlayVisible = true;
     DateTime _signalLostTimer = DateTime.Now;
-    DateTime _signalLostTimer2 = DateTime.Now;
     int _pmtRetyCount = 0;
     int _signalQuality;
     int _signalLevel;
     bool _signalPresent;
+    bool _tunerLocked;
     DateTime _pmtTimer;
     //bool										_graphIsPaused;
 
@@ -2065,6 +2065,20 @@ namespace MediaPortal.TV.Recording
     {
       return _signalPresent;
     }
+    /// <summary>
+    /// returns true if tuner is locked to a frequency and signalstrength/quality is > 0
+    /// </summary>
+    /// <returns>
+    /// true: tuner has a signal and is locked
+    /// false: tuner is not locked
+    /// </returns>
+    /// <remarks>
+    /// Graph should be created and GetTunerSignalStatistics() should be called
+    /// </remarks>
+    public bool TunerLocked()
+    {
+        return _tunerLocked;
+    }
 
     void UpdateSignalPresent()
     {
@@ -2147,13 +2161,16 @@ namespace MediaPortal.TV.Recording
         {
           //Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
         }
-
-        if (GUIGraphicsContext.DX9Device == null)
-          Log.WriteFile(Log.LogType.Capture, "  #{0}  locked:{1} present:{2} quality:{3}", i, isLocked, isPresent, quality);
+        //Log.WriteFile(Log.LogType.Log, "  #{0}  locked:{1} present:{2} quality:{3} strength:{4}", i, isLocked, isPresent, quality, strength);
       }
-
-      _signalQuality = (int)signalQuality;
-      _signalLevel = (int)signalStrength;
+      if (_tunerStatistics.Count>0) {
+          _signalQuality = (int)signalQuality / _tunerStatistics.Count;
+          _signalLevel = (int)signalStrength / _tunerStatistics.Count;
+      }
+      if (isTunerLocked)
+          _tunerLocked = true;
+      else
+          _tunerLocked = false;
 
       //some devices give different results about signal status
       //on some signalpresent is only true when tuned to a channel
@@ -2166,20 +2183,15 @@ namespace MediaPortal.TV.Recording
           _signalPresent = true;
         else
           _signalPresent = false;
-        return;
       }
-      if (GUIGraphicsContext.DX9Device == null)
-        Log.WriteFile(Log.LogType.Capture, "  locked:{0} present:{1} quality:{2}", isTunerLocked, isSignalPresent, signalQuality);
-      if (isTunerLocked || isSignalPresent || (_signalQuality > 0))
+      else if (isTunerLocked || isSignalPresent || (_signalQuality > 0))
       {
-        _signalPresent = true;
-        if (GUIGraphicsContext.DX9Device == null)
-          Log.WriteFile(Log.LogType.Log, "DVBGraphBDA:UpdateSignalPresent() signal=present");
-        return;
+          _signalPresent = true;
       }
-      if (GUIGraphicsContext.DX9Device == null)
-        Log.WriteFile(Log.LogType.Log, "DVBGraphBDA:UpdateSignalPresent() signal=not present");
-      _signalPresent = false;
+      else
+      {
+          _signalPresent = false;
+      }
     }//public bool SignalPresent()
 
     public int SignalQuality()
@@ -3529,39 +3541,44 @@ namespace MediaPortal.TV.Recording
     {
       bool isViewing = Recorder.IsCardViewing(_cardId);
       if (!isViewing) return;
-      TimeSpan ts = DateTime.Now - _signalLostTimer;
-
-      if (ts.TotalSeconds < 10)
-      {
-        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-        _signalLostTimer2 = DateTime.Now;
-        return;
-      }
-      //check if this card is used for watching tv
-      ts = DateTime.Now - _signalLostTimer2;
-      if (ts.TotalSeconds < 2) return;
-      _signalLostTimer2 = DateTime.Now;
-
-      //Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3} locked:{4} quality:{5} level:{6}",
-      //	_streamDemuxer.RecevingPackets,_lastPMTVersion,GUIGraphicsContext.Vmr9Active ,GUIGraphicsContext.Vmr9FPS,SignalPresent(), SignalQuality(), SignalStrength());
+//      Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3} locked:{4} quality:{5} level:{6}",
+  //      _streamDemuxer.ReceivingPackets, _lastPMTVersion, GUIGraphicsContext.Vmr9Active, GUIGraphicsContext.Vmr9FPS, TunerLocked(), SignalQuality(), SignalStrength());
 
       // do we receive any packets?
-      if (!_streamDemuxer.RecevingPackets)
+      if (!_streamDemuxer.ReceivingPackets)
       {
-        //no, then state = no signal
-        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
+          TimeSpan ts = DateTime.Now - _signalLostTimer;
+          if (ts.TotalSeconds < 5)
+          {
+            VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+            return;
+          }
+          //no, then state = no signal
+          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
+          return;
       }
-      else
+      else  if (_streamDemuxer.IsScrambled)
       {
-        // we receive packets, got a PMT.
-        // is channel scrambled ?
-        if (_streamDemuxer.IsScrambled)
-        {
           VideoRendererStatistics.VideoState = VideoRendererStatistics.State.Scrambled;
-        }
-        else
-          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+          _signalLostTimer = DateTime.Now;
+          return;
+      } 
+      else if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+      {
+            if ((g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing))
+            {
+                TimeSpan ts = DateTime.Now - _signalLostTimer;
+                if (ts.TotalSeconds < 5)
+                {
+                    VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+                    return;
+                }
+                VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
+                return;
+            }
       }
+      VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+      _signalLostTimer = DateTime.Now;
     }
 
     public void Process()
@@ -3569,13 +3586,6 @@ namespace MediaPortal.TV.Recording
       if (_graphState == State.None) return;
 
 
-      if (_graphState == State.Viewing)
-      {
-        if (GUIGraphicsContext.Vmr9Active && _vmr9 != null)
-        {
-          _vmr9.Process();
-        }
-      }
 
       UpdateSignalPresent();
       if (_graphState == State.Created) return;
@@ -3601,6 +3611,13 @@ namespace MediaPortal.TV.Recording
       {
         UpdateVideoState();
 
+        if (_graphState == State.Viewing)
+        {
+            if (GUIGraphicsContext.Vmr9Active && _vmr9 != null)
+            {
+                _vmr9.Process();
+            }
+        }
 
         TimeSpan ts = DateTime.Now - _updateTimer;
 
@@ -4008,10 +4025,8 @@ namespace MediaPortal.TV.Recording
                                             _currentTuningObject.VideoPid, _currentTuningObject.PMTPid,
                                             _currentTuningObject.AC3Pid, _currentTuningObject.TeletextPid);
 
-
         SendPMT();
         _refreshPmtTable = true;
-
         _lastPMTVersion = -1;
         _pmtRetyCount = 0;
         _analyzerInterface.ResetParser();
@@ -4019,15 +4034,12 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, false, "DVBGraphBDA:set mpeg2demuxer video:0x{0:x} audio:0x{1:X} ac3:0x{2:X}",
                         _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, _currentTuningObject.AC3Pid);
         SetupDemuxer(_pinDemuxerVideo, _currentTuningObject.VideoPid, _pinDemuxerAudio, _currentTuningObject.AudioPid, _pinAC3Out, _currentTuningObject.AC3Pid);
-
         if (_streamDemuxer != null)
         {
-          _streamDemuxer.OnTuneNewChannel();
-          _streamDemuxer.SetChannelData(_currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.AC3Pid, _currentTuningObject.TeletextPid, _currentTuningObject.Audio3, _currentTuningObject.ServiceName, _currentTuningObject.PMTPid, _currentTuningObject.ProgramNumber);
-
+            _streamDemuxer.SetChannelData(_currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.AC3Pid, _currentTuningObject.TeletextPid, _currentTuningObject.Audio3, _currentTuningObject.ServiceName, _currentTuningObject.PMTPid, _currentTuningObject.ProgramNumber);
+            _streamDemuxer.OnTuneNewChannel();
         }
-
-      }
+    }
       finally
       {
 #if USEMTSWRITER

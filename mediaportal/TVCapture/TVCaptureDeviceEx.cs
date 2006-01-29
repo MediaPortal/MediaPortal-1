@@ -1154,7 +1154,7 @@ namespace MediaPortal.TV.Recording
       if (_currentGraphState != State.Radio)
       {
         DeleteGraph();
-        CreateGraph();
+        if (!CreateGraph()) return;
         _currentGraphState = State.Radio;
         _currentGraph.StartRadio(station);
         if (_currentGraph.IsTimeShifting())
@@ -1173,7 +1173,7 @@ namespace MediaPortal.TV.Recording
       if (_currentGraphState != State.Radio)
       {
         DeleteGraph();
-        CreateGraph();
+        if (!CreateGraph()) return;
         _currentGraph.StartRadio(station);
         _currentGraphState = State.Radio;
       }
@@ -1188,7 +1188,7 @@ namespace MediaPortal.TV.Recording
       if (_currentGraphState != State.Radio)
       {
         DeleteGraph();
-        CreateGraph();
+        if (!CreateGraph()) return;
         RadioStation station = new RadioStation();
         _currentGraph.StartRadio(station);
         _currentGraphState = State.Radio;
@@ -1203,7 +1203,12 @@ namespace MediaPortal.TV.Recording
       {
           bool deleteGraph = false;
           if (_currentGraph == null) {
-              CreateGraph();
+              if (!CreateGraph())
+              {
+                  chanmin = -1;
+                  chanmax = -1;
+                  return;
+              }
               deleteGraph = true;
           }
           _currentGraph.RadioChannelMinMax(out chanmin, out chanmax);
@@ -1218,7 +1223,12 @@ namespace MediaPortal.TV.Recording
           bool deleteGraph = false;
           if (_currentGraph == null)
           {
-              CreateGraph();
+              if (!CreateGraph())
+              {
+                  chanmin = -1;
+                  chanmax = -1;
+                  return;
+              } 
               deleteGraph = true;
           }
           _currentGraph.TVChannelMinMax(out chanmin, out chanmax);
@@ -1274,7 +1284,12 @@ namespace MediaPortal.TV.Recording
       {
         //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() recreate timeshifting graph");
         _currentGraph = GraphFactory.CreateGraph(this);
-        _currentGraph.CreateGraph(Quality);
+        bool isCreated = _currentGraph.CreateGraph(Quality);
+        if (!isCreated)
+        {
+            _currentGraph = null;
+            return;
+        }
         //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() start timeshifting");
         _currentGraph.StartTimeShifting(channel, Recorder.GetTimeShiftFileName(ID - 1));
         _lastChannelChange = DateTime.Now;
@@ -1290,7 +1305,12 @@ namespace MediaPortal.TV.Recording
       {
         // Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() recreate viewing graph");
         _currentGraph = GraphFactory.CreateGraph(this);
-        _currentGraph.CreateGraph(Quality);
+        bool isCreated = _currentGraph.CreateGraph(Quality);
+        if (!isCreated)
+        {
+            _currentGraph = null;
+            return;
+        }
         _currentGraph.StartViewing(channel);
         _lastChannelChange = DateTime.Now;
       }

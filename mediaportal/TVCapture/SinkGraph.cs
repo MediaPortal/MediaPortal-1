@@ -79,7 +79,6 @@ namespace MediaPortal.TV.Recording
     protected VideoProcAmp _videoProcAmpHelper = null;
     protected VMR9Util _vmr9 = null;
     DateTime _signalLostTimer;
-    DateTime _signalLostTimer2;
     protected string _cardName;
     ArrayList _listAudioPids = new ArrayList();
     int _selectedAudioLanguage = 11;
@@ -964,30 +963,37 @@ namespace MediaPortal.TV.Recording
       //check if this card is used for watching tv
       bool isViewing = Recorder.IsCardViewing(_cardId);
       if (!isViewing) return;
-      TimeSpan ts = DateTime.Now - _signalLostTimer;
-      if (ts.TotalSeconds < 10)
-      {
-        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-        return;
-      }
-      ts = DateTime.Now - _signalLostTimer2;
-      if (ts.TotalSeconds < 5) return;
-      _signalLostTimer2 = DateTime.Now;
 
-      if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+      if (!SignalPresent())
       {
-        if ((g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing))
-        {
+          TimeSpan ts = DateTime.Now - _signalLostTimer;
+          if (ts.TotalSeconds < 5)
+          {
+              VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+              return;
+          }
           VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
-        }
-        else
-        {
-          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-        }
       }
       else
-        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-    }
+      {
+          if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+          {
+              if ((g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing))
+              {
+                  TimeSpan ts = DateTime.Now - _signalLostTimer;
+                  if (ts.TotalSeconds < 5)
+                  {
+                      VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+                      return;
+                  }
+                  VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
+                  return;
+              }
+          }
+          _signalLostTimer = DateTime.Now;
+          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+      }
+  }
 
     public void Process()
     {

@@ -53,6 +53,8 @@ namespace MediaPortal.Dialogs
     bool m_bPrevOverlay = false;
     //bool needRefresh = false;
     DateTime vmr7UpdateTimer = DateTime.Now;
+    DateTime keyTimer = DateTime.Now;
+    string keySelection = string.Empty;
 
     public GUIDialogMenu()
     {
@@ -76,7 +78,7 @@ namespace MediaPortal.Dialogs
     public override void OnAction(Action action)
     {
       //      needRefresh = true;
-      int iSelection;
+      char key = (char)0;
       if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG || action.wID == Action.ActionType.ACTION_PREVIOUS_MENU || action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
       {
         Close();
@@ -86,37 +88,64 @@ namespace MediaPortal.Dialogs
       // if we have a keypress or a remote button press
       if ((action.wID == Action.ActionType.ACTION_KEY_PRESSED) || ((Action.ActionType.REMOTE_0 <= action.wID) && (Action.ActionType.REMOTE_9 >= action.wID)))
       {
-        iSelection = -1;
         if (action.m_key != null)
         {
-          if (action.m_key.KeyChar > '0' && action.m_key.KeyChar <= '9')
+          if (action.m_key.KeyChar >= '0' && action.m_key.KeyChar <= '9')
           {
             // Get offset to item
-            iSelection = action.m_key.KeyChar - '1';
+            key = (char)action.m_key.KeyChar;
           }
         }
         else
         {
-          iSelection = (action.wID - Action.ActionType.REMOTE_1);
+          key = ((char)('0'+ action.wID - Action.ActionType.REMOTE_0));
         }
-
-        if (iSelection >= 0 && iSelection < listItems.Count)
+        if (key == (char)0) return;
+        keySelection += key;
+        if (keySelection.Length == listItems.Count.ToString().Length)
         {
-          // Select dialog item
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, listView.GetID, 0, 0, null);
-          OnMessage(msg);
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, iSelection, 0, null);
-          OnMessage(msg);
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
-          OnMessage(msg);
+            selectOpcion(keySelection);
+            keySelection = string.Empty;
+            return;
         }
+        keyTimer = DateTime.Now;
         return;
-
-
       }
 
       base.OnAction(action);
     }
+      public void selectOpcion(string keySelected)
+      {
+          int selected;
+          try
+          {
+              selected = int.Parse(keySelected)-1;
+          }
+          catch (Exception)
+          {
+              selected = -1;
+          }
+          if (selected >= 0 && selected < listItems.Count)
+          {
+              // Select dialog item
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, listView.GetID, 0, 0, null);
+              OnMessage(msg);
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, selected, 0, null);
+              OnMessage(msg);
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
+              OnMessage(msg);
+          }
+      }
+      public override void Process()
+      {
+          if (keySelection == string.Empty) return;
+          TimeSpan ts = DateTime.Now - keyTimer;
+          if (ts.TotalMilliseconds>= 1000)
+          {
+              selectOpcion(keySelection);
+              keySelection = string.Empty;
+          }
+      }
  
     void Close()
     {
@@ -245,7 +274,7 @@ namespace MediaPortal.Dialogs
     {
       int iItemIndex = listItems.Count + 1;
       GUIListItem pItem = new GUIListItem();
-      if (iItemIndex < 10 && showQuickNumbers)
+      if (showQuickNumbers)
         pItem.Label = iItemIndex.ToString() + " " + strLabel;
       else
         pItem.Label = strLabel;
@@ -257,7 +286,7 @@ namespace MediaPortal.Dialogs
     public void Add(GUIListItem pItem)
     {
       int iItemIndex = listItems.Count + 1;
-      if (iItemIndex < 10 && showQuickNumbers)
+      if (showQuickNumbers)
         pItem.Label = iItemIndex.ToString() + " " + pItem.Label;
       else
         pItem.Label = pItem.Label;
@@ -274,15 +303,16 @@ namespace MediaPortal.Dialogs
     public void AddLocalizedString(int iLocalizedString)
     {
       int iItemIndex = listItems.Count + 1;
+      GUIListItem pItem = new GUIListItem();
       if (showQuickNumbers)
       {
-        GUIListItem pItem = new GUIListItem(iItemIndex.ToString() + " " + GUILocalizeStrings.Get(iLocalizedString));
+        pItem.Label = iItemIndex.ToString() + " " + GUILocalizeStrings.Get(iLocalizedString);
         pItem.ItemId = iLocalizedString;
         listItems.Add(pItem);
       }
       else
       {
-        GUIListItem pItem = new GUIListItem(GUILocalizeStrings.Get(iLocalizedString));
+        pItem.Label = GUILocalizeStrings.Get(iLocalizedString);
         pItem.ItemId = iLocalizedString;
         listItems.Add(pItem);
       }

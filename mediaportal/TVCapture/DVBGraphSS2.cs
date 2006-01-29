@@ -292,8 +292,7 @@ namespace MediaPortal.TV.Recording
     int _aspectRatioY = 1;
     bool _isUsingAc3 = false;
     int _lastPmtVersion = -1;
-    DateTime _timerSignalLost;
-    DateTime _timerSignalLost2;
+    DateTime _signalLostTimer;
 
     DateTime _timeDisplayed = DateTime.Now;
 
@@ -1859,7 +1858,7 @@ namespace MediaPortal.TV.Recording
       finally
       {
         if (_vmr9 != null) _vmr9.Enable(true);
-        _timerSignalLost = DateTime.Now;
+        _signalLostTimer = DateTime.Now;
         if (_interfaceStreamBufferSink != null)
         {
           long refTime = 0;
@@ -2345,38 +2344,44 @@ namespace MediaPortal.TV.Recording
       //check if this card is used for watching tv
       bool isViewing = Recorder.IsCardViewing(_cardId);
       if (!isViewing) return;
-      TimeSpan ts = DateTime.Now - _timerSignalLost;
-
-      if (ts.TotalSeconds < 10)
-      {
-        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-        _timerSignalLost2 = DateTime.Now;
-        return;
-      }
-      ts = DateTime.Now - _timerSignalLost2;
-      if (ts.TotalSeconds < 2) return;
-      _timerSignalLost2 = DateTime.Now;
-
-      //			Log.Write("demuxer:{0} signal:{1} fps:{2}",_dvbDemuxer.RecevingPackets,SignalPresent() ,GUIGraphicsContext._vmr9FPS);
 
       // do we receive any packets?
-      if (!_dvbDemuxer.RecevingPackets)
+      if (!_dvbDemuxer.ReceivingPackets)
       {
-        //no, then state = no signal
-        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
+          TimeSpan ts = DateTime.Now - _signalLostTimer;
+          if (ts.TotalSeconds < 5)
+          {
+              VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+              return;
+          }
+          //no, then state = no signal
+          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
+          return;
       }
-      else
+      else if (_dvbDemuxer.IsScrambled)
       {
-        // we receive packets, got a PMT.
-        // is channel scrambled ?
-        if (_dvbDemuxer.IsScrambled)
-        {
           VideoRendererStatistics.VideoState = VideoRendererStatistics.State.Scrambled;
-        }
-        else
-          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+          _signalLostTimer = DateTime.Now;
+          return;
       }
-    }
+      else if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+      {
+          if ((g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing))
+          {
+              TimeSpan ts = DateTime.Now - _signalLostTimer;
+              if (ts.TotalSeconds < 5)
+              {
+                  VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+                  return;
+              }
+
+              VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
+              return;
+          }
+      }
+      VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+      _signalLostTimer = DateTime.Now;
+  }
 
     public void Process()
     {

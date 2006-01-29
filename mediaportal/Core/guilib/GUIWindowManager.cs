@@ -864,9 +864,9 @@ namespace MediaPortal.GUI.Library
     {
 			try
 			{
-				if (_activeWindowIndex >=0) 
+				if (ActiveWindowEx >=0) 
 				{
-					GUIWindow pWindow=_listWindows[_activeWindowIndex];
+					GUIWindow pWindow=GetWindow(ActiveWindowEx);
 					if (null!=pWindow) 
 					{
 						pWindow.Process();

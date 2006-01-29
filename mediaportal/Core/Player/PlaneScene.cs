@@ -105,6 +105,7 @@ namespace MediaPortal.Player
     static bool _reEntrant = false;
     bool _drawVideoAllowed = true;
     int _debugStep = 0;
+      Texture blackTexture;
     #endregion
 
     #region ctor
@@ -120,6 +121,24 @@ namespace MediaPortal.Player
                                     4, GUIGraphicsContext.DX9Device,
                                     0, CustomVertex.TransformedColoredTextured.Format,
                                     Pool.Managed);
+
+      float _texUoff, _texVoff, _texUmax, _texVmax;
+      int _textureWidth, _textureHeight;
+      int _packedTextureNo;
+
+      if (GUITextureManager.GetPackedTexture("black.bmp", out _texUoff, out _texVoff, out _texUmax, out _texVmax, out _textureWidth, out _textureHeight, out blackTexture, out _packedTextureNo))
+      {
+          return;
+      }
+
+      int iImages = GUITextureManager.Load("black.bmp", 1, 15,15);
+      if (0 == iImages)
+      {
+          blackTexture = null;// unable to load texture
+          return;
+      }
+      CachedTexture.Frame frame = GUITextureManager.GetTexture("black.bmp", 0, out _textureWidth, out _textureHeight);
+      blackTexture = frame.Image;
     }
     #endregion
 
@@ -223,18 +242,28 @@ namespace MediaPortal.Player
     /// </summary>
     public void Deinit()
     {
+
       GUILayerManager.UnRegisterLayer(this);
       if (_renderTarget != null)
       {
-        //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
-        GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
+          //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
+          if (!_renderTarget.Disposed)
+              GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
         _renderTarget.Dispose();
         _renderTarget = null;
       }
       if (_vertexBuffer != null)
       {
-        _vertexBuffer.Dispose();
+          _vertexBuffer.Dispose();
         _vertexBuffer = null;
+      }
+      if (blackTexture != null)
+      {
+          if (GUITextureManager.IsTemporary("black.bmp"))
+          {
+              GUITextureManager.ReleaseTexture("black.bmp");
+          }
+          blackTexture = null;
       }
     }
 
@@ -404,7 +433,6 @@ namespace MediaPortal.Player
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
       if (!_isEnabled) return;
       if (_stopPainting) return;
-      //			Log.Write("scene.repaint");
       try
       {
 
@@ -441,7 +469,7 @@ namespace MediaPortal.Player
     {
       try
       {
-        _textureAddress = pTex;
+          _textureAddress = pTex;
         if (pTex == 0)
         {
           //Log.Write("PlaneScene: dispose surfaces");
@@ -506,6 +534,7 @@ namespace MediaPortal.Player
 
     private void InternalPresentImage(int width, int height, int arWidth, int arHeight, bool isRepaint)
     {
+
       if (_reEntrant)
       {
         Log.WriteFile(Log.LogType.Log, true, "PlaneScene: re-entrancy in presentimage");
@@ -686,7 +715,13 @@ namespace MediaPortal.Player
 
         _debugStep = 5;
         //clear screen
-        GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+        try
+        {
+            GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+        }
+        catch (Exception)
+        {
+        }
         _debugStep = 6;
         GUIGraphicsContext.DX9Device.BeginScene();
         _debugStep = 7;
@@ -783,16 +818,28 @@ namespace MediaPortal.Player
     #region IRenderLayer members
     public void RenderLayer(float timePassed)
     {
-      //Render video texture
-      if (_renderTexture == false) return;
-      if (_surfaceAdress != 0)
-      {
-        DrawSurface(_surfaceAdress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
-      }
-      if (_textureAddress != 0)
-      {
-        DrawTexture(_textureAddress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
-      }
+        if (VideoRendererStatistics.VideoState == VideoRendererStatistics.State.VideoPresent)
+        {
+            //Render video texture
+            if (_renderTexture == false) return;
+            if (_surfaceAdress != 0)
+            {
+                DrawSurface(_surfaceAdress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
+            }
+            if (_textureAddress != 0)
+            {
+                DrawTexture(_textureAddress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
+            }
+        }
+        else
+        {
+            IntPtr ptr = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(blackTexture);
+            uint _blackTextureAddress = (uint)ptr.ToInt32();
+            if (_blackTextureAddress != 0)
+            {
+                DrawTexture(_blackTextureAddress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
+            }
+        }
     }
     public bool ShouldRenderLayer()
     {

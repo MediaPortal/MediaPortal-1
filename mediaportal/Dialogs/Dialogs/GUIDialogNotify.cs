@@ -50,8 +50,10 @@ namespace MediaPortal.Dialogs
 
     bool m_bPrevOverlay = false;
     int timeOutInSeconds = 8;
-    //bool needRefresh = false;
     DateTime vmr7UpdateTimer = DateTime.Now;
+    bool m_bNeedRefresh = false;
+      string logoUrl = string.Empty;
+
 
     public GUIDialogNotify()
     {
@@ -173,6 +175,11 @@ namespace MediaPortal.Dialogs
             base.OnMessage(message);
             GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
+            if (imgLogo != null)
+            {
+                SetImage(logoUrl);
+            }
+
           }
           return true;
 
@@ -187,8 +194,8 @@ namespace MediaPortal.Dialogs
       AllocResources();
       InitControls();
       timeOutInSeconds = 5;
+      logoUrl = string.Empty;
     }
-
     public void SetHeading(string strLine)
     {
       LoadSkin();
@@ -211,13 +218,28 @@ namespace MediaPortal.Dialogs
     }
     public void SetImage(string filename)
     {
-
-      imgLogo.FreeResources();
-      imgLogo.SetFileName(filename);
-      imgLogo.AllocResources();
+        logoUrl = filename;
+        if (System.IO.File.Exists(filename))
+        {
+            if (imgLogo != null)
+            {
+                imgLogo.SetFileName(filename);
+                m_bNeedRefresh = true;
+                imgLogo.IsVisible = true;
+            }
+        }
+        else
+        {
+            if (imgLogo != null)
+            {
+                imgLogo.IsVisible = false;
+                m_bNeedRefresh = true;
+            }
+        }
     }
     public void SetImageDimensions(Size size, bool keepAspectRatio,bool centered)
     {
+      if (imgLogo == null) return;
       imgLogo.Width = size.Width;
       imgLogo.Height = size.Height;
       imgLogo.KeepAspectRatio = keepAspectRatio;
@@ -236,6 +258,16 @@ namespace MediaPortal.Dialogs
       }
 
     }
+      public override bool NeedRefresh()
+      {
+          if (m_bNeedRefresh)
+          {
+              m_bNeedRefresh = false;
+              return true;
+          }
+          return false;
+      }
+
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {

@@ -122,6 +122,16 @@ namespace MediaPortal.GUI.TV
     #endregion
 
     #region overrides
+    /// <summary>
+    /// Gets called by the runtime when a  window will be destroyed
+    /// Every window window should override this method and cleanup any resources
+    /// </summary>
+    /// <returns></returns>
+    public override void DeInit()
+    {
+        OnPageDestroy(-1);
+    }
+
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvhome.xml");
@@ -290,8 +300,8 @@ namespace MediaPortal.GUI.TV
 
       if (channelName != String.Empty)
       {
-        Log.Write("tv home init:{0}", Navigator.CurrentChannel);
-        ViewChannel(Navigator.CurrentChannel);
+        Log.Write("tv home init:{0}", channelName);
+        ViewChannel(channelName);
       }
       UpdateChannelButton();
       UpdateStateOfButtons();
@@ -358,9 +368,12 @@ namespace MediaPortal.GUI.TV
       for (int i = 0; i < Navigator.CurrentGroup.TvChannels.Count; ++i)
       {
         dlg.Add(Navigator.CurrentGroup.TvChannels[i].Name);
-        if (Navigator.CurrentGroup.TvChannels[i].Name == Navigator.CurrentTVChannel.Name)
+        if (Navigator.CurrentTVChannel != null)
         {
-          selected = i;
+            if (Navigator.CurrentGroup.TvChannels[i].Name == Navigator.CurrentTVChannel.Name)
+            {
+                selected = i;
+            }
         }
       }
       dlg.SelectedLabel = selected;
@@ -1349,14 +1362,14 @@ namespace MediaPortal.GUI.TV
       if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count)		// Group no longer exists?
         m_currentgroup = 0;
 
-      if (m_currentchannel.Trim() == String.Empty)
-      {
-        TVGroup group = (TVGroup)m_groups[m_currentgroup];
-        if (group.TvChannels.Count > 0)
-          m_currentchannel = ((TVChannel)group.TvChannels[0]).Name;
-      }
-
-      m_currentTvChannel = GetTVChannel(m_currentchannel);
+        m_currentTvChannel = GetTVChannel(m_currentchannel);
+        if (m_currentTvChannel == null) 
+        {
+            TVGroup group = (TVGroup)m_groups[m_currentgroup];
+            if (group.TvChannels.Count > 0)
+                m_currentchannel = ((TVChannel)group.TvChannels[0]).Name;
+            m_currentTvChannel = GetTVChannel(m_currentchannel);
+        }
     }
 
     public void SaveSettings(MediaPortal.Profile.Settings xmlwriter)

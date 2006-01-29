@@ -197,7 +197,6 @@ int m_bufferPositionPMT=0;
     // card
     static int _currentDVBCard = 0;
     static NetworkType _currentNetworkType;
-    bool _packetsReceived = false;
     //DVBSectionHeader m_sectionHeader=new DVBSectionHeader();
     bool _grabTeletext = false;
 
@@ -285,7 +284,8 @@ int m_bufferPositionPMT=0;
 
     public void SetChannelData(int audio, int video, int ac3,int teletext, int subtitle, string channelName, int pmtPid, int programnumber)
     {
-      _packetsReceived = false;
+      _isReceivingPackets = false;
+      _numberOfPacketsReceived = 0;
       _programNumber = -1;
       if (programnumber > 0)
         _programNumber = programnumber;
@@ -337,7 +337,7 @@ int m_bufferPositionPMT=0;
         channelName, _pidMp2Audio, _pidVideo, _pidTeletext, _pidPmt, _pidSubtitle, _programNumber);
 
     }
-    public bool RecevingPackets
+    public bool ReceivingPackets
     {
       get { return _isReceivingPackets; }
     }
@@ -364,34 +364,24 @@ int m_bufferPositionPMT=0;
     }
     public void Process()
     {
-      TimeSpan ts = DateTime.Now - _packetTimer;
-      if (!_isReceivingPackets && _numberOfPacketsReceived > 0)
-      {
-        _isReceivingPackets = true;
-        Log.Write("DVBDemuxer:receiving DVB packets");
-      }
-      if (ts.TotalMilliseconds >= 1000)
-      {
-        if (_isReceivingPackets && _numberOfPacketsReceived == 0)
+        if (_isReceivingPackets)
         {
-          _isReceivingPackets = false;
-          Log.Write("DVBDemuxer:stopped receiving DVB packets");
+            TimeSpan ts = DateTime.Now - _packetTimer;
+            if (ts.TotalMilliseconds >= 1000)
+            {
+                _isReceivingPackets = false;
+                _numberOfPacketsReceived = 0;
+                Log.Write("DVBDemuxer:stopped receiving DVB packets");
+            }
         }
-
-        //Log.Write("DVBDemuxer: receiving:{0} #:{1}", _isReceivingPackets,_numberOfPacketsReceived);
-
-        _numberOfPacketsReceived = 0;
-        _packetTimer = DateTime.Now;
-      }
-
-			if (_ac3Present)
-			{
-				ts = DateTime.Now - _ac3Timer;
-				if (ts.TotalSeconds >= 2)
-				{
-					_ac3Present=false;
-				}
-			}
+        if (_ac3Present)
+        {
+	        TimeSpan ts = DateTime.Now - _ac3Timer;
+	        if (ts.TotalSeconds >= 2)
+	        {
+		        _ac3Present=false;
+	        }
+	    }
     }
 
     #endregion
@@ -668,8 +658,6 @@ int m_bufferPositionPMT=0;
     public void ProcessPacket(IntPtr ptr)
     {
       if (ptr == IntPtr.Zero) return;
-      _numberOfPacketsReceived++;
-
       _packetHeader = m_tsHelper.GetHeader((IntPtr)ptr);
       if (_packetHeader.SyncByte != 0x47)
       {
@@ -701,7 +689,6 @@ int m_bufferPositionPMT=0;
         }
       }
 
-      _numberOfPacketsReceived++;
       // teletext
       if (_grabTeletext)
       {
@@ -711,10 +698,12 @@ int m_bufferPositionPMT=0;
         }
       }
 
-      if (_packetsReceived == false)
+      if (!_isReceivingPackets)
       {
-        _packetsReceived = true;
+        _isReceivingPackets = true;
       }
+      _numberOfPacketsReceived++;
+      _packetTimer = DateTime.Now;
 
     }
 
