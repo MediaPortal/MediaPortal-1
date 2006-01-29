@@ -46,37 +46,46 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.RadioButton radioButtonUSA;
     private System.Windows.Forms.RadioButton radioButtonEurope;
     private System.Windows.Forms.GroupBox groupBoxSettings;
-    private System.Windows.Forms.Label labelDelay;
-    private System.Windows.Forms.CheckBox checkBoxAllowExternal;
-    private System.Windows.Forms.CheckBox checkBoxKeepControl;
-    private System.Windows.Forms.CheckBox checkBoxVerboseLog;
+    private System.Windows.Forms.Label labelHcwButtonRelease;
+    private System.Windows.Forms.CheckBox checkBoxHcwAllowExternal;
+    private System.Windows.Forms.CheckBox checkBoxHcwKeepControl;
+    private System.Windows.Forms.CheckBox checkBoxHcwExtendedLogging;
     private System.Windows.Forms.Button buttonDefault;
-    private System.Windows.Forms.CheckBox checkBoxHCW;
-    private System.Windows.Forms.Label infoDriverStatus;
-    private System.Windows.Forms.GroupBox groupBoxInformation;
+    private System.Windows.Forms.CheckBox checkBoxHcwEnabled;
+    private System.Windows.Forms.Label labelHcwDriverStatus;
+    private System.Windows.Forms.GroupBox groupBoxHcwStatus;
     private System.Windows.Forms.TabPage tabPageMCE;
     private System.Windows.Forms.TabPage tabPageHCW;
     private System.Windows.Forms.Label label2sec;
     private System.Windows.Forms.Label label0sec;
-    private System.Windows.Forms.Button btnMapping;
+    private System.Windows.Forms.Button btnHcwMapping;
     private MediaPortal.Configuration.Sections.FireDTVRemote fireDTVRemote;
     private System.Windows.Forms.TabControl tabControlRemotes;
     private System.Windows.Forms.TabPage tabPageFireDTV;
     private System.Windows.Forms.PictureBox pictureBoxEU;
     private System.Windows.Forms.GroupBox groupBox1;
-    private System.Windows.Forms.GroupBox groupBox2;
-    private GroupBox groupBoxRepeatDelay;
-    private HScrollBar hScrollBarButtonRelease;
-    private HScrollBar hScrollBarRepeatSpeed;
+    private System.Windows.Forms.GroupBox groupBoxHcwGeneral;
+    private GroupBox groupBoxHcwRepeatDelay;
+    private HScrollBar hScrollBarHcwButtonRelease;
+    private HScrollBar hScrollBarHcwRepeatSpeed;
     private Label label4;
-    private Label label5;
+    private Label labelHcwRepeatSpeed;
     private Label label6;
-    private HScrollBar hScrollBarRepeatFilter;
+    private HScrollBar hScrollBarHcwRepeatFilter;
     private Label label1;
-    private Label label2;
+    private Label labelHcwRepeatFilter;
     private Label label3;
-    private CheckBox checkBoxFilterDoubleKlicks;
+    private CheckBox checkBoxHcwFilterDoubleKlicks;
     private ToolTip toolTip;
+    private TabPage tabPageX10;
+    private GroupBox groupBoxX10General;
+    private Button buttonX10Mapping;
+    private CheckBox checkBoxX10Enabled;
+    private GroupBox groupBoxX10Settings;
+    private CheckBox checkBoxX10ExtendedLogging;
+    private GroupBox groupBoxX10Status;
+    private Button buttonX10Defaults;
+    private Label labelX10DriverStatus;
     private System.ComponentModel.IContainer components = null;
     private enum hcwRepeatSpeed { slow, medium, fast };
 
@@ -152,14 +161,18 @@ namespace MediaPortal.Configuration.Sections
       {
         checkBoxMCE.Checked = xmlreader.GetValueAsBool("remote", "mce2005", false);
         radioButtonUSA.Checked = xmlreader.GetValueAsBool("remote", "USAModel", false);
-        checkBoxHCW.Checked = xmlreader.GetValueAsBool("remote", "HCW", false);
-        checkBoxAllowExternal.Checked = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
-        checkBoxKeepControl.Checked = xmlreader.GetValueAsBool("remote", "HCWKeepControl", false);
-        checkBoxVerboseLog.Checked = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
-        hScrollBarButtonRelease.Value = xmlreader.GetValueAsInt("remote", "HCWButtonRelease", 500);
-        hScrollBarRepeatFilter.Value = xmlreader.GetValueAsInt("remote", "HCWRepeatFilter", 2);
-        hScrollBarRepeatSpeed.Value = xmlreader.GetValueAsInt("remote", "HCWRepeatSpeed", 1);
-        checkBoxFilterDoubleKlicks.Checked = xmlreader.GetValueAsBool("remote", "HCWFilterDoubleKlicks", false);
+
+        checkBoxHcwEnabled.Checked = xmlreader.GetValueAsBool("remote", "HCW", false);
+        checkBoxHcwAllowExternal.Checked = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
+        checkBoxHcwKeepControl.Checked = xmlreader.GetValueAsBool("remote", "HCWKeepControl", false);
+        checkBoxHcwExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
+        hScrollBarHcwButtonRelease.Value = xmlreader.GetValueAsInt("remote", "HCWButtonRelease", 500);
+        hScrollBarHcwRepeatFilter.Value = xmlreader.GetValueAsInt("remote", "HCWRepeatFilter", 2);
+        hScrollBarHcwRepeatSpeed.Value = xmlreader.GetValueAsInt("remote", "HCWRepeatSpeed", 1);
+        checkBoxHcwFilterDoubleKlicks.Checked = xmlreader.GetValueAsBool("remote", "HCWFilterDoubleKlicks", false);
+
+        checkBoxX10Enabled.Checked = xmlreader.GetValueAsBool("remote", "x10", false);
+        checkBoxX10ExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "x10VerboseLog", false);
       }
 
       radioButtonEurope.Checked = !radioButtonUSA.Checked;
@@ -186,15 +199,15 @@ namespace MediaPortal.Configuration.Sections
         pictureBoxUSA.Visible = false;
       }
 
-      if (checkBoxAllowExternal.Checked)
-        checkBoxKeepControl.Enabled = true;
+      if (checkBoxHcwAllowExternal.Checked)
+        checkBoxHcwKeepControl.Enabled = true;
       else
-        checkBoxKeepControl.Enabled = false;
+        checkBoxHcwKeepControl.Enabled = false;
 
-      if (!checkBoxHCW.Checked)
+      if (!checkBoxHcwEnabled.Checked)
       {
         groupBoxSettings.Enabled = false;
-        groupBoxRepeatDelay.Enabled = false;
+        groupBoxHcwRepeatDelay.Enabled = false;
       }
 
       string exePath = GetHCWPath();
@@ -204,27 +217,27 @@ namespace MediaPortal.Configuration.Sections
       {
         FileVersionInfo exeVersionInfo = FileVersionInfo.GetVersionInfo(exePath + "Ir.exe");
         if (exeVersionInfo.FileVersion.CompareTo("2.45.22350") < 0)
-          infoDriverStatus.Text = errHCWOutOfDate;
+          labelHcwDriverStatus.Text = errHCWOutOfDate;
       }
       else
       {
-        infoDriverStatus.Text = errHCWMissingExe;
-        checkBoxAllowExternal.Enabled = false;
-        checkBoxKeepControl.Enabled = false;
+        labelHcwDriverStatus.Text = errHCWMissingExe;
+        checkBoxHcwAllowExternal.Enabled = false;
+        checkBoxHcwKeepControl.Enabled = false;
       }
 
       if (File.Exists(dllPath + "irremote.DLL"))
       {
         FileVersionInfo dllVersionInfo = FileVersionInfo.GetVersionInfo(dllPath + "irremote.DLL");
         if (dllVersionInfo.FileVersion.CompareTo("2.45.22350") < 0)
-          infoDriverStatus.Text = errHCWOutOfDate;
+          labelHcwDriverStatus.Text = errHCWOutOfDate;
       }
       else
       {
-        infoDriverStatus.Text = errHCWNotInstalled;
-        checkBoxHCW.Enabled = false;
+        labelHcwDriverStatus.Text = errHCWNotInstalled;
+        checkBoxHcwEnabled.Enabled = false;
         groupBoxSettings.Enabled = false;
-        groupBoxRepeatDelay.Enabled = false;
+        groupBoxHcwRepeatDelay.Enabled = false;
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           xmlwriter.SetValueAsBool("remote", "HCW", false);
@@ -233,12 +246,12 @@ namespace MediaPortal.Configuration.Sections
 
       fireDTVRemote.LoadSettings();
 
-      toolTip.SetToolTip(this.hScrollBarButtonRelease, string.Format("{0} msec.", hScrollBarButtonRelease.Value));
-      toolTip.SetToolTip(this.hScrollBarRepeatFilter, hScrollBarRepeatFilter.Value.ToString());
+      toolTip.SetToolTip(this.hScrollBarHcwButtonRelease, string.Format("{0} msec.", hScrollBarHcwButtonRelease.Value));
+      toolTip.SetToolTip(this.hScrollBarHcwRepeatFilter, hScrollBarHcwRepeatFilter.Value.ToString());
       Type repeatSpeed = typeof(hcwRepeatSpeed);
-      toolTip.SetToolTip(this.hScrollBarRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarRepeatSpeed.Value));
-      toolTip.SetToolTip(this.checkBoxKeepControl, "If checked, MediaPortal keeps control of the remote. Only applications launched by\nMediaPortal can steal focus (external Players, MyPrograms, ...).");
-      toolTip.SetToolTip(this.checkBoxAllowExternal, "If checked, MediaPortal does not keep control of the remote\nwhen it looses focus.");
+      toolTip.SetToolTip(this.hScrollBarHcwRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarHcwRepeatSpeed.Value));
+      toolTip.SetToolTip(this.checkBoxHcwKeepControl, "If checked, MediaPortal keeps control of the remote. Only applications launched by\nMediaPortal can steal focus (external Players, MyPrograms, ...).");
+      toolTip.SetToolTip(this.checkBoxHcwAllowExternal, "If checked, MediaPortal does not keep control of the remote\nwhen it looses focus.");
     }
 
     public override void SaveSettings()
@@ -247,14 +260,18 @@ namespace MediaPortal.Configuration.Sections
       {
         xmlwriter.SetValueAsBool("remote", "mce2005", checkBoxMCE.Checked);
         xmlwriter.SetValueAsBool("remote", "USAModel", radioButtonUSA.Checked);
-        xmlwriter.SetValueAsBool("remote", "HCW", checkBoxHCW.Checked);
-        xmlwriter.SetValueAsBool("remote", "HCWAllowExternal", checkBoxAllowExternal.Checked);
-        xmlwriter.SetValueAsBool("remote", "HCWKeepControl", checkBoxKeepControl.Checked);
-        xmlwriter.SetValueAsBool("remote", "HCWVerboseLog", checkBoxVerboseLog.Checked);
-        xmlwriter.SetValue("remote", "HCWButtonRelease", hScrollBarButtonRelease.Value);
-        xmlwriter.SetValue("remote", "HCWRepeatFilter", hScrollBarRepeatFilter.Value);
-        xmlwriter.SetValue("remote", "HCWRepeatSpeed", hScrollBarRepeatSpeed.Value);
-        xmlwriter.SetValueAsBool("remote", "HCWFilterDoubleKlicks", checkBoxFilterDoubleKlicks.Checked);
+
+        xmlwriter.SetValueAsBool("remote", "HCW", checkBoxHcwEnabled.Checked);
+        xmlwriter.SetValueAsBool("remote", "HCWAllowExternal", checkBoxHcwAllowExternal.Checked);
+        xmlwriter.SetValueAsBool("remote", "HCWKeepControl", checkBoxHcwKeepControl.Checked);
+        xmlwriter.SetValueAsBool("remote", "HCWVerboseLog", checkBoxHcwExtendedLogging.Checked);
+        xmlwriter.SetValue("remote", "HCWButtonRelease", hScrollBarHcwButtonRelease.Value);
+        xmlwriter.SetValue("remote", "HCWRepeatFilter", hScrollBarHcwRepeatFilter.Value);
+        xmlwriter.SetValue("remote", "HCWRepeatSpeed", hScrollBarHcwRepeatSpeed.Value);
+        xmlwriter.SetValueAsBool("remote", "HCWFilterDoubleKlicks", checkBoxHcwFilterDoubleKlicks.Checked);
+
+        xmlwriter.SetValueAsBool("remote", "x10", checkBoxX10Enabled.Checked);
+        xmlwriter.SetValueAsBool("remote", "x10VerboseLog", checkBoxX10ExtendedLogging.Checked);
       }
 
       fireDTVRemote.SaveSettings();
@@ -294,30 +311,39 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonUSA = new System.Windows.Forms.RadioButton();
       this.pictureBoxEU = new System.Windows.Forms.PictureBox();
       this.tabPageHCW = new System.Windows.Forms.TabPage();
-      this.groupBoxRepeatDelay = new System.Windows.Forms.GroupBox();
-      this.hScrollBarRepeatSpeed = new System.Windows.Forms.HScrollBar();
+      this.groupBoxHcwRepeatDelay = new System.Windows.Forms.GroupBox();
+      this.hScrollBarHcwRepeatSpeed = new System.Windows.Forms.HScrollBar();
       this.label4 = new System.Windows.Forms.Label();
-      this.label5 = new System.Windows.Forms.Label();
+      this.labelHcwRepeatSpeed = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
-      this.hScrollBarRepeatFilter = new System.Windows.Forms.HScrollBar();
+      this.hScrollBarHcwRepeatFilter = new System.Windows.Forms.HScrollBar();
       this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
+      this.labelHcwRepeatFilter = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
-      this.hScrollBarButtonRelease = new System.Windows.Forms.HScrollBar();
+      this.hScrollBarHcwButtonRelease = new System.Windows.Forms.HScrollBar();
       this.label2sec = new System.Windows.Forms.Label();
-      this.labelDelay = new System.Windows.Forms.Label();
+      this.labelHcwButtonRelease = new System.Windows.Forms.Label();
       this.label0sec = new System.Windows.Forms.Label();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.btnMapping = new System.Windows.Forms.Button();
-      this.checkBoxHCW = new System.Windows.Forms.CheckBox();
-      this.groupBoxInformation = new System.Windows.Forms.GroupBox();
+      this.groupBoxHcwGeneral = new System.Windows.Forms.GroupBox();
+      this.btnHcwMapping = new System.Windows.Forms.Button();
+      this.checkBoxHcwEnabled = new System.Windows.Forms.CheckBox();
+      this.groupBoxHcwStatus = new System.Windows.Forms.GroupBox();
       this.buttonDefault = new System.Windows.Forms.Button();
-      this.infoDriverStatus = new System.Windows.Forms.Label();
+      this.labelHcwDriverStatus = new System.Windows.Forms.Label();
       this.groupBoxSettings = new System.Windows.Forms.GroupBox();
-      this.checkBoxFilterDoubleKlicks = new System.Windows.Forms.CheckBox();
-      this.checkBoxAllowExternal = new System.Windows.Forms.CheckBox();
-      this.checkBoxKeepControl = new System.Windows.Forms.CheckBox();
-      this.checkBoxVerboseLog = new System.Windows.Forms.CheckBox();
+      this.checkBoxHcwFilterDoubleKlicks = new System.Windows.Forms.CheckBox();
+      this.checkBoxHcwAllowExternal = new System.Windows.Forms.CheckBox();
+      this.checkBoxHcwKeepControl = new System.Windows.Forms.CheckBox();
+      this.checkBoxHcwExtendedLogging = new System.Windows.Forms.CheckBox();
+      this.tabPageX10 = new System.Windows.Forms.TabPage();
+      this.groupBoxX10Status = new System.Windows.Forms.GroupBox();
+      this.buttonX10Defaults = new System.Windows.Forms.Button();
+      this.labelX10DriverStatus = new System.Windows.Forms.Label();
+      this.groupBoxX10General = new System.Windows.Forms.GroupBox();
+      this.buttonX10Mapping = new System.Windows.Forms.Button();
+      this.checkBoxX10Enabled = new System.Windows.Forms.CheckBox();
+      this.groupBoxX10Settings = new System.Windows.Forms.GroupBox();
+      this.checkBoxX10ExtendedLogging = new System.Windows.Forms.CheckBox();
       this.tabPageFireDTV = new System.Windows.Forms.TabPage();
       this.fireDTVRemote = new MediaPortal.Configuration.Sections.FireDTVRemote();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -327,10 +353,14 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxEU)).BeginInit();
       this.tabPageHCW.SuspendLayout();
-      this.groupBoxRepeatDelay.SuspendLayout();
-      this.groupBox2.SuspendLayout();
-      this.groupBoxInformation.SuspendLayout();
+      this.groupBoxHcwRepeatDelay.SuspendLayout();
+      this.groupBoxHcwGeneral.SuspendLayout();
+      this.groupBoxHcwStatus.SuspendLayout();
       this.groupBoxSettings.SuspendLayout();
+      this.tabPageX10.SuspendLayout();
+      this.groupBoxX10Status.SuspendLayout();
+      this.groupBoxX10General.SuspendLayout();
+      this.groupBoxX10Settings.SuspendLayout();
       this.tabPageFireDTV.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -363,6 +393,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControlRemotes.Controls.Add(this.tabPageMCE);
       this.tabControlRemotes.Controls.Add(this.tabPageHCW);
+      this.tabControlRemotes.Controls.Add(this.tabPageX10);
       this.tabControlRemotes.Controls.Add(this.tabPageFireDTV);
       this.tabControlRemotes.Location = new System.Drawing.Point(0, 8);
       this.tabControlRemotes.Name = "tabControlRemotes";
@@ -430,9 +461,9 @@ namespace MediaPortal.Configuration.Sections
       // tabPageHCW
       // 
       this.tabPageHCW.BackColor = System.Drawing.Color.Transparent;
-      this.tabPageHCW.Controls.Add(this.groupBoxRepeatDelay);
-      this.tabPageHCW.Controls.Add(this.groupBox2);
-      this.tabPageHCW.Controls.Add(this.groupBoxInformation);
+      this.tabPageHCW.Controls.Add(this.groupBoxHcwRepeatDelay);
+      this.tabPageHCW.Controls.Add(this.groupBoxHcwGeneral);
+      this.tabPageHCW.Controls.Add(this.groupBoxHcwStatus);
       this.tabPageHCW.Controls.Add(this.groupBoxSettings);
       this.tabPageHCW.Location = new System.Drawing.Point(4, 22);
       this.tabPageHCW.Name = "tabPageHCW";
@@ -441,42 +472,42 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageHCW.Text = "Hauppauge Remote";
       this.tabPageHCW.UseVisualStyleBackColor = true;
       // 
-      // groupBoxRepeatDelay
+      // groupBoxHcwRepeatDelay
       // 
-      this.groupBoxRepeatDelay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxHcwRepeatDelay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxRepeatDelay.Controls.Add(this.hScrollBarRepeatSpeed);
-      this.groupBoxRepeatDelay.Controls.Add(this.label4);
-      this.groupBoxRepeatDelay.Controls.Add(this.label5);
-      this.groupBoxRepeatDelay.Controls.Add(this.label6);
-      this.groupBoxRepeatDelay.Controls.Add(this.hScrollBarRepeatFilter);
-      this.groupBoxRepeatDelay.Controls.Add(this.label1);
-      this.groupBoxRepeatDelay.Controls.Add(this.label2);
-      this.groupBoxRepeatDelay.Controls.Add(this.label3);
-      this.groupBoxRepeatDelay.Controls.Add(this.hScrollBarButtonRelease);
-      this.groupBoxRepeatDelay.Controls.Add(this.label2sec);
-      this.groupBoxRepeatDelay.Controls.Add(this.labelDelay);
-      this.groupBoxRepeatDelay.Controls.Add(this.label0sec);
-      this.groupBoxRepeatDelay.Location = new System.Drawing.Point(12, 160);
-      this.groupBoxRepeatDelay.Name = "groupBoxRepeatDelay";
-      this.groupBoxRepeatDelay.Size = new System.Drawing.Size(440, 112);
-      this.groupBoxRepeatDelay.TabIndex = 2;
-      this.groupBoxRepeatDelay.TabStop = false;
-      this.groupBoxRepeatDelay.Text = "Repeat Delay";
+      this.groupBoxHcwRepeatDelay.Controls.Add(this.hScrollBarHcwRepeatSpeed);
+      this.groupBoxHcwRepeatDelay.Controls.Add(this.label4);
+      this.groupBoxHcwRepeatDelay.Controls.Add(this.labelHcwRepeatSpeed);
+      this.groupBoxHcwRepeatDelay.Controls.Add(this.label6);
+      this.groupBoxHcwRepeatDelay.Controls.Add(this.hScrollBarHcwRepeatFilter);
+      this.groupBoxHcwRepeatDelay.Controls.Add(this.label1);
+      this.groupBoxHcwRepeatDelay.Controls.Add(this.labelHcwRepeatFilter);
+      this.groupBoxHcwRepeatDelay.Controls.Add(this.label3);
+      this.groupBoxHcwRepeatDelay.Controls.Add(this.hScrollBarHcwButtonRelease);
+      this.groupBoxHcwRepeatDelay.Controls.Add(this.label2sec);
+      this.groupBoxHcwRepeatDelay.Controls.Add(this.labelHcwButtonRelease);
+      this.groupBoxHcwRepeatDelay.Controls.Add(this.label0sec);
+      this.groupBoxHcwRepeatDelay.Location = new System.Drawing.Point(12, 160);
+      this.groupBoxHcwRepeatDelay.Name = "groupBoxHcwRepeatDelay";
+      this.groupBoxHcwRepeatDelay.Size = new System.Drawing.Size(440, 112);
+      this.groupBoxHcwRepeatDelay.TabIndex = 2;
+      this.groupBoxHcwRepeatDelay.TabStop = false;
+      this.groupBoxHcwRepeatDelay.Text = "Repeat Delay";
       // 
-      // hScrollBarRepeatSpeed
+      // hScrollBarHcwRepeatSpeed
       // 
-      this.hScrollBarRepeatSpeed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.hScrollBarHcwRepeatSpeed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.hScrollBarRepeatSpeed.LargeChange = 1;
-      this.hScrollBarRepeatSpeed.Location = new System.Drawing.Point(152, 80);
-      this.hScrollBarRepeatSpeed.Maximum = 2;
-      this.hScrollBarRepeatSpeed.Name = "hScrollBarRepeatSpeed";
-      this.hScrollBarRepeatSpeed.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-      this.hScrollBarRepeatSpeed.Size = new System.Drawing.Size(213, 17);
-      this.hScrollBarRepeatSpeed.TabIndex = 10;
-      this.hScrollBarRepeatSpeed.Value = 1;
-      this.hScrollBarRepeatSpeed.ValueChanged += new System.EventHandler(this.hScrollBarRepeatSpeed_ValueChanged);
+      this.hScrollBarHcwRepeatSpeed.LargeChange = 1;
+      this.hScrollBarHcwRepeatSpeed.Location = new System.Drawing.Point(152, 80);
+      this.hScrollBarHcwRepeatSpeed.Maximum = 2;
+      this.hScrollBarHcwRepeatSpeed.Name = "hScrollBarHcwRepeatSpeed";
+      this.hScrollBarHcwRepeatSpeed.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+      this.hScrollBarHcwRepeatSpeed.Size = new System.Drawing.Size(213, 17);
+      this.hScrollBarHcwRepeatSpeed.TabIndex = 10;
+      this.hScrollBarHcwRepeatSpeed.Value = 1;
+      this.hScrollBarHcwRepeatSpeed.ValueChanged += new System.EventHandler(this.hScrollBarRepeatSpeed_ValueChanged);
       // 
       // label4
       // 
@@ -489,14 +520,14 @@ namespace MediaPortal.Configuration.Sections
       this.label4.TabIndex = 11;
       this.label4.Text = "fast";
       // 
-      // label5
+      // labelHcwRepeatSpeed
       // 
-      this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(12, 82);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(77, 13);
-      this.label5.TabIndex = 8;
-      this.label5.Text = "Repeat speed:";
+      this.labelHcwRepeatSpeed.AutoSize = true;
+      this.labelHcwRepeatSpeed.Location = new System.Drawing.Point(12, 82);
+      this.labelHcwRepeatSpeed.Name = "labelHcwRepeatSpeed";
+      this.labelHcwRepeatSpeed.Size = new System.Drawing.Size(77, 13);
+      this.labelHcwRepeatSpeed.TabIndex = 8;
+      this.labelHcwRepeatSpeed.Text = "Repeat speed:";
       // 
       // label6
       // 
@@ -509,19 +540,19 @@ namespace MediaPortal.Configuration.Sections
       this.label6.Text = "slow";
       this.label6.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
-      // hScrollBarRepeatFilter
+      // hScrollBarHcwRepeatFilter
       // 
-      this.hScrollBarRepeatFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.hScrollBarHcwRepeatFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.hScrollBarRepeatFilter.LargeChange = 2;
-      this.hScrollBarRepeatFilter.Location = new System.Drawing.Point(152, 52);
-      this.hScrollBarRepeatFilter.Maximum = 11;
-      this.hScrollBarRepeatFilter.Minimum = 2;
-      this.hScrollBarRepeatFilter.Name = "hScrollBarRepeatFilter";
-      this.hScrollBarRepeatFilter.Size = new System.Drawing.Size(213, 17);
-      this.hScrollBarRepeatFilter.TabIndex = 6;
-      this.hScrollBarRepeatFilter.Value = 2;
-      this.hScrollBarRepeatFilter.ValueChanged += new System.EventHandler(this.hScrollBarRepeatFilter_ValueChanged);
+      this.hScrollBarHcwRepeatFilter.LargeChange = 2;
+      this.hScrollBarHcwRepeatFilter.Location = new System.Drawing.Point(152, 52);
+      this.hScrollBarHcwRepeatFilter.Maximum = 11;
+      this.hScrollBarHcwRepeatFilter.Minimum = 2;
+      this.hScrollBarHcwRepeatFilter.Name = "hScrollBarHcwRepeatFilter";
+      this.hScrollBarHcwRepeatFilter.Size = new System.Drawing.Size(213, 17);
+      this.hScrollBarHcwRepeatFilter.TabIndex = 6;
+      this.hScrollBarHcwRepeatFilter.Value = 2;
+      this.hScrollBarHcwRepeatFilter.ValueChanged += new System.EventHandler(this.hScrollBarRepeatFilter_ValueChanged);
       // 
       // label1
       // 
@@ -534,14 +565,14 @@ namespace MediaPortal.Configuration.Sections
       this.label1.TabIndex = 7;
       this.label1.Text = "max.";
       // 
-      // label2
+      // labelHcwRepeatFilter
       // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(12, 54);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(67, 13);
-      this.label2.TabIndex = 4;
-      this.label2.Text = "Repeat filter:";
+      this.labelHcwRepeatFilter.AutoSize = true;
+      this.labelHcwRepeatFilter.Location = new System.Drawing.Point(12, 54);
+      this.labelHcwRepeatFilter.Name = "labelHcwRepeatFilter";
+      this.labelHcwRepeatFilter.Size = new System.Drawing.Size(67, 13);
+      this.labelHcwRepeatFilter.TabIndex = 4;
+      this.labelHcwRepeatFilter.Text = "Repeat filter:";
       // 
       // label3
       // 
@@ -554,18 +585,18 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Text = "min.";
       this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
-      // hScrollBarButtonRelease
+      // hScrollBarHcwButtonRelease
       // 
-      this.hScrollBarButtonRelease.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.hScrollBarHcwButtonRelease.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.hScrollBarButtonRelease.Location = new System.Drawing.Point(152, 25);
-      this.hScrollBarButtonRelease.Maximum = 1009;
-      this.hScrollBarButtonRelease.Minimum = 20;
-      this.hScrollBarButtonRelease.Name = "hScrollBarButtonRelease";
-      this.hScrollBarButtonRelease.Size = new System.Drawing.Size(213, 17);
-      this.hScrollBarButtonRelease.TabIndex = 2;
-      this.hScrollBarButtonRelease.Value = 500;
-      this.hScrollBarButtonRelease.ValueChanged += new System.EventHandler(this.hScrollBarButtonRelease_ValueChanged);
+      this.hScrollBarHcwButtonRelease.Location = new System.Drawing.Point(152, 25);
+      this.hScrollBarHcwButtonRelease.Maximum = 1009;
+      this.hScrollBarHcwButtonRelease.Minimum = 20;
+      this.hScrollBarHcwButtonRelease.Name = "hScrollBarHcwButtonRelease";
+      this.hScrollBarHcwButtonRelease.Size = new System.Drawing.Size(213, 17);
+      this.hScrollBarHcwButtonRelease.TabIndex = 2;
+      this.hScrollBarHcwButtonRelease.Value = 500;
+      this.hScrollBarHcwButtonRelease.ValueChanged += new System.EventHandler(this.hScrollBarButtonRelease_ValueChanged);
       // 
       // label2sec
       // 
@@ -578,14 +609,14 @@ namespace MediaPortal.Configuration.Sections
       this.label2sec.TabIndex = 3;
       this.label2sec.Text = "1000 msec.";
       // 
-      // labelDelay
+      // labelHcwButtonRelease
       // 
-      this.labelDelay.AutoSize = true;
-      this.labelDelay.Location = new System.Drawing.Point(12, 27);
-      this.labelDelay.Name = "labelDelay";
-      this.labelDelay.Size = new System.Drawing.Size(78, 13);
-      this.labelDelay.TabIndex = 0;
-      this.labelDelay.Text = "Button release:";
+      this.labelHcwButtonRelease.AutoSize = true;
+      this.labelHcwButtonRelease.Location = new System.Drawing.Point(12, 27);
+      this.labelHcwButtonRelease.Name = "labelHcwButtonRelease";
+      this.labelHcwButtonRelease.Size = new System.Drawing.Size(78, 13);
+      this.labelHcwButtonRelease.TabIndex = 0;
+      this.labelHcwButtonRelease.Text = "Button release:";
       // 
       // label0sec
       // 
@@ -598,51 +629,51 @@ namespace MediaPortal.Configuration.Sections
       this.label0sec.Text = "20 msec.";
       this.label0sec.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
-      // groupBox2
+      // groupBoxHcwGeneral
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxHcwGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox2.Controls.Add(this.btnMapping);
-      this.groupBox2.Controls.Add(this.checkBoxHCW);
-      this.groupBox2.Location = new System.Drawing.Point(12, 8);
-      this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(440, 56);
-      this.groupBox2.TabIndex = 0;
-      this.groupBox2.TabStop = false;
+      this.groupBoxHcwGeneral.Controls.Add(this.btnHcwMapping);
+      this.groupBoxHcwGeneral.Controls.Add(this.checkBoxHcwEnabled);
+      this.groupBoxHcwGeneral.Location = new System.Drawing.Point(12, 8);
+      this.groupBoxHcwGeneral.Name = "groupBoxHcwGeneral";
+      this.groupBoxHcwGeneral.Size = new System.Drawing.Size(440, 56);
+      this.groupBoxHcwGeneral.TabIndex = 0;
+      this.groupBoxHcwGeneral.TabStop = false;
       // 
-      // btnMapping
+      // btnHcwMapping
       // 
-      this.btnMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnMapping.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.btnMapping.Location = new System.Drawing.Point(352, 20);
-      this.btnMapping.Name = "btnMapping";
-      this.btnMapping.Size = new System.Drawing.Size(72, 22);
-      this.btnMapping.TabIndex = 1;
-      this.btnMapping.Text = "Mapping";
-      this.btnMapping.Click += new System.EventHandler(this.btnMapping_Click);
+      this.btnHcwMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnHcwMapping.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.btnHcwMapping.Location = new System.Drawing.Point(352, 20);
+      this.btnHcwMapping.Name = "btnHcwMapping";
+      this.btnHcwMapping.Size = new System.Drawing.Size(72, 22);
+      this.btnHcwMapping.TabIndex = 1;
+      this.btnHcwMapping.Text = "Mapping";
+      this.btnHcwMapping.Click += new System.EventHandler(this.btnMapping_Click);
       // 
-      // checkBoxHCW
+      // checkBoxHcwEnabled
       // 
-      this.checkBoxHCW.AutoSize = true;
-      this.checkBoxHCW.Location = new System.Drawing.Point(16, 24);
-      this.checkBoxHCW.Name = "checkBoxHCW";
-      this.checkBoxHCW.Size = new System.Drawing.Size(139, 17);
-      this.checkBoxHCW.TabIndex = 0;
-      this.checkBoxHCW.Text = "Use Hauppauge remote";
-      this.checkBoxHCW.CheckedChanged += new System.EventHandler(this.checkBoxHCW_CheckedChanged);
+      this.checkBoxHcwEnabled.AutoSize = true;
+      this.checkBoxHcwEnabled.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxHcwEnabled.Name = "checkBoxHcwEnabled";
+      this.checkBoxHcwEnabled.Size = new System.Drawing.Size(139, 17);
+      this.checkBoxHcwEnabled.TabIndex = 0;
+      this.checkBoxHcwEnabled.Text = "Use Hauppauge remote";
+      this.checkBoxHcwEnabled.CheckedChanged += new System.EventHandler(this.checkBoxHCW_CheckedChanged);
       // 
-      // groupBoxInformation
+      // groupBoxHcwStatus
       // 
-      this.groupBoxInformation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxHcwStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxInformation.Controls.Add(this.buttonDefault);
-      this.groupBoxInformation.Controls.Add(this.infoDriverStatus);
-      this.groupBoxInformation.Location = new System.Drawing.Point(12, 280);
-      this.groupBoxInformation.Name = "groupBoxInformation";
-      this.groupBoxInformation.Size = new System.Drawing.Size(440, 80);
-      this.groupBoxInformation.TabIndex = 3;
-      this.groupBoxInformation.TabStop = false;
-      this.groupBoxInformation.Text = "Status";
+      this.groupBoxHcwStatus.Controls.Add(this.buttonDefault);
+      this.groupBoxHcwStatus.Controls.Add(this.labelHcwDriverStatus);
+      this.groupBoxHcwStatus.Location = new System.Drawing.Point(12, 280);
+      this.groupBoxHcwStatus.Name = "groupBoxHcwStatus";
+      this.groupBoxHcwStatus.Size = new System.Drawing.Size(440, 80);
+      this.groupBoxHcwStatus.TabIndex = 3;
+      this.groupBoxHcwStatus.TabStop = false;
+      this.groupBoxHcwStatus.Text = "Status";
       // 
       // buttonDefault
       // 
@@ -655,26 +686,26 @@ namespace MediaPortal.Configuration.Sections
       this.buttonDefault.Text = "&Defaults";
       this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
       // 
-      // infoDriverStatus
+      // labelHcwDriverStatus
       // 
-      this.infoDriverStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.labelHcwDriverStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.infoDriverStatus.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.infoDriverStatus.Location = new System.Drawing.Point(12, 24);
-      this.infoDriverStatus.Name = "infoDriverStatus";
-      this.infoDriverStatus.Size = new System.Drawing.Size(414, 48);
-      this.infoDriverStatus.TabIndex = 0;
-      this.infoDriverStatus.Text = "No problems found.";
+      this.labelHcwDriverStatus.ForeColor = System.Drawing.SystemColors.ControlText;
+      this.labelHcwDriverStatus.Location = new System.Drawing.Point(12, 24);
+      this.labelHcwDriverStatus.Name = "labelHcwDriverStatus";
+      this.labelHcwDriverStatus.Size = new System.Drawing.Size(414, 48);
+      this.labelHcwDriverStatus.TabIndex = 0;
+      this.labelHcwDriverStatus.Text = "No problems found.";
       // 
       // groupBoxSettings
       // 
       this.groupBoxSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxSettings.Controls.Add(this.checkBoxFilterDoubleKlicks);
-      this.groupBoxSettings.Controls.Add(this.checkBoxAllowExternal);
-      this.groupBoxSettings.Controls.Add(this.checkBoxKeepControl);
-      this.groupBoxSettings.Controls.Add(this.checkBoxVerboseLog);
+      this.groupBoxSettings.Controls.Add(this.checkBoxHcwFilterDoubleKlicks);
+      this.groupBoxSettings.Controls.Add(this.checkBoxHcwAllowExternal);
+      this.groupBoxSettings.Controls.Add(this.checkBoxHcwKeepControl);
+      this.groupBoxSettings.Controls.Add(this.checkBoxHcwExtendedLogging);
       this.groupBoxSettings.Location = new System.Drawing.Point(12, 72);
       this.groupBoxSettings.Name = "groupBoxSettings";
       this.groupBoxSettings.Size = new System.Drawing.Size(440, 80);
@@ -682,43 +713,145 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSettings.TabStop = false;
       this.groupBoxSettings.Text = "Settings";
       // 
-      // checkBoxFilterDoubleKlicks
+      // checkBoxHcwFilterDoubleKlicks
       // 
-      this.checkBoxFilterDoubleKlicks.AutoSize = true;
-      this.checkBoxFilterDoubleKlicks.Location = new System.Drawing.Point(288, 24);
-      this.checkBoxFilterDoubleKlicks.Name = "checkBoxFilterDoubleKlicks";
-      this.checkBoxFilterDoubleKlicks.Size = new System.Drawing.Size(110, 17);
-      this.checkBoxFilterDoubleKlicks.TabIndex = 1;
-      this.checkBoxFilterDoubleKlicks.Text = "Filter doubleclicks";
+      this.checkBoxHcwFilterDoubleKlicks.AutoSize = true;
+      this.checkBoxHcwFilterDoubleKlicks.Location = new System.Drawing.Point(288, 24);
+      this.checkBoxHcwFilterDoubleKlicks.Name = "checkBoxHcwFilterDoubleKlicks";
+      this.checkBoxHcwFilterDoubleKlicks.Size = new System.Drawing.Size(110, 17);
+      this.checkBoxHcwFilterDoubleKlicks.TabIndex = 1;
+      this.checkBoxHcwFilterDoubleKlicks.Text = "Filter doubleclicks";
       // 
-      // checkBoxAllowExternal
+      // checkBoxHcwAllowExternal
       // 
-      this.checkBoxAllowExternal.AutoSize = true;
-      this.checkBoxAllowExternal.Location = new System.Drawing.Point(16, 24);
-      this.checkBoxAllowExternal.Name = "checkBoxAllowExternal";
-      this.checkBoxAllowExternal.Size = new System.Drawing.Size(245, 17);
-      this.checkBoxAllowExternal.TabIndex = 0;
-      this.checkBoxAllowExternal.Text = "External processes may use the remote control";
-      this.checkBoxAllowExternal.CheckedChanged += new System.EventHandler(this.checkBoxAllowExternal_CheckedChanged);
+      this.checkBoxHcwAllowExternal.AutoSize = true;
+      this.checkBoxHcwAllowExternal.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxHcwAllowExternal.Name = "checkBoxHcwAllowExternal";
+      this.checkBoxHcwAllowExternal.Size = new System.Drawing.Size(245, 17);
+      this.checkBoxHcwAllowExternal.TabIndex = 0;
+      this.checkBoxHcwAllowExternal.Text = "External processes may use the remote control";
+      this.checkBoxHcwAllowExternal.CheckedChanged += new System.EventHandler(this.checkBoxAllowExternal_CheckedChanged);
       // 
-      // checkBoxKeepControl
+      // checkBoxHcwKeepControl
       // 
-      this.checkBoxKeepControl.AutoSize = true;
-      this.checkBoxKeepControl.Enabled = false;
-      this.checkBoxKeepControl.Location = new System.Drawing.Point(32, 48);
-      this.checkBoxKeepControl.Name = "checkBoxKeepControl";
-      this.checkBoxKeepControl.Size = new System.Drawing.Size(196, 17);
-      this.checkBoxKeepControl.TabIndex = 2;
-      this.checkBoxKeepControl.Text = "Keep control when MP looses focus";
+      this.checkBoxHcwKeepControl.AutoSize = true;
+      this.checkBoxHcwKeepControl.Enabled = false;
+      this.checkBoxHcwKeepControl.Location = new System.Drawing.Point(32, 48);
+      this.checkBoxHcwKeepControl.Name = "checkBoxHcwKeepControl";
+      this.checkBoxHcwKeepControl.Size = new System.Drawing.Size(196, 17);
+      this.checkBoxHcwKeepControl.TabIndex = 2;
+      this.checkBoxHcwKeepControl.Text = "Keep control when MP looses focus";
       // 
-      // checkBoxVerboseLog
+      // checkBoxHcwExtendedLogging
       // 
-      this.checkBoxVerboseLog.AutoSize = true;
-      this.checkBoxVerboseLog.Location = new System.Drawing.Point(288, 48);
-      this.checkBoxVerboseLog.Name = "checkBoxVerboseLog";
-      this.checkBoxVerboseLog.Size = new System.Drawing.Size(108, 17);
-      this.checkBoxVerboseLog.TabIndex = 3;
-      this.checkBoxVerboseLog.Text = "Extended logging";
+      this.checkBoxHcwExtendedLogging.AutoSize = true;
+      this.checkBoxHcwExtendedLogging.Location = new System.Drawing.Point(288, 48);
+      this.checkBoxHcwExtendedLogging.Name = "checkBoxHcwExtendedLogging";
+      this.checkBoxHcwExtendedLogging.Size = new System.Drawing.Size(108, 17);
+      this.checkBoxHcwExtendedLogging.TabIndex = 3;
+      this.checkBoxHcwExtendedLogging.Text = "Extended logging";
+      // 
+      // tabPageX10
+      // 
+      this.tabPageX10.Controls.Add(this.groupBoxX10Status);
+      this.tabPageX10.Controls.Add(this.groupBoxX10General);
+      this.tabPageX10.Controls.Add(this.groupBoxX10Settings);
+      this.tabPageX10.Location = new System.Drawing.Point(4, 22);
+      this.tabPageX10.Name = "tabPageX10";
+      this.tabPageX10.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageX10.Size = new System.Drawing.Size(464, 374);
+      this.tabPageX10.TabIndex = 3;
+      this.tabPageX10.Text = "x10 Remote";
+      this.tabPageX10.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxX10Status
+      // 
+      this.groupBoxX10Status.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxX10Status.Controls.Add(this.buttonX10Defaults);
+      this.groupBoxX10Status.Controls.Add(this.labelX10DriverStatus);
+      this.groupBoxX10Status.Location = new System.Drawing.Point(12, 136);
+      this.groupBoxX10Status.Name = "groupBoxX10Status";
+      this.groupBoxX10Status.Size = new System.Drawing.Size(440, 80);
+      this.groupBoxX10Status.TabIndex = 4;
+      this.groupBoxX10Status.TabStop = false;
+      this.groupBoxX10Status.Text = "Status";
+      // 
+      // buttonX10Defaults
+      // 
+      this.buttonX10Defaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonX10Defaults.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonX10Defaults.Location = new System.Drawing.Point(352, 48);
+      this.buttonX10Defaults.Name = "buttonX10Defaults";
+      this.buttonX10Defaults.Size = new System.Drawing.Size(72, 22);
+      this.buttonX10Defaults.TabIndex = 1;
+      this.buttonX10Defaults.Text = "&Defaults";
+      this.buttonX10Defaults.Click += new System.EventHandler(this.buttonX10Defaults_Click);
+      // 
+      // labelX10DriverStatus
+      // 
+      this.labelX10DriverStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelX10DriverStatus.ForeColor = System.Drawing.SystemColors.ControlText;
+      this.labelX10DriverStatus.Location = new System.Drawing.Point(12, 24);
+      this.labelX10DriverStatus.Name = "labelX10DriverStatus";
+      this.labelX10DriverStatus.Size = new System.Drawing.Size(414, 48);
+      this.labelX10DriverStatus.TabIndex = 0;
+      this.labelX10DriverStatus.Text = "Status is not implemented yet.";
+      // 
+      // groupBoxX10General
+      // 
+      this.groupBoxX10General.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxX10General.Controls.Add(this.buttonX10Mapping);
+      this.groupBoxX10General.Controls.Add(this.checkBoxX10Enabled);
+      this.groupBoxX10General.Location = new System.Drawing.Point(12, 8);
+      this.groupBoxX10General.Name = "groupBoxX10General";
+      this.groupBoxX10General.Size = new System.Drawing.Size(440, 56);
+      this.groupBoxX10General.TabIndex = 2;
+      this.groupBoxX10General.TabStop = false;
+      // 
+      // buttonX10Mapping
+      // 
+      this.buttonX10Mapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonX10Mapping.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.buttonX10Mapping.Location = new System.Drawing.Point(352, 20);
+      this.buttonX10Mapping.Name = "buttonX10Mapping";
+      this.buttonX10Mapping.Size = new System.Drawing.Size(72, 22);
+      this.buttonX10Mapping.TabIndex = 1;
+      this.buttonX10Mapping.Text = "Mapping";
+      this.buttonX10Mapping.Click += new System.EventHandler(this.buttonX10Mapping_Click);
+      // 
+      // checkBoxX10Enabled
+      // 
+      this.checkBoxX10Enabled.AutoSize = true;
+      this.checkBoxX10Enabled.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxX10Enabled.Name = "checkBoxX10Enabled";
+      this.checkBoxX10Enabled.Size = new System.Drawing.Size(100, 17);
+      this.checkBoxX10Enabled.TabIndex = 0;
+      this.checkBoxX10Enabled.Text = "Use x10 remote";
+      // 
+      // groupBoxX10Settings
+      // 
+      this.groupBoxX10Settings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxX10Settings.Controls.Add(this.checkBoxX10ExtendedLogging);
+      this.groupBoxX10Settings.Location = new System.Drawing.Point(12, 72);
+      this.groupBoxX10Settings.Name = "groupBoxX10Settings";
+      this.groupBoxX10Settings.Size = new System.Drawing.Size(440, 56);
+      this.groupBoxX10Settings.TabIndex = 3;
+      this.groupBoxX10Settings.TabStop = false;
+      this.groupBoxX10Settings.Text = "Settings";
+      // 
+      // checkBoxX10ExtendedLogging
+      // 
+      this.checkBoxX10ExtendedLogging.AutoSize = true;
+      this.checkBoxX10ExtendedLogging.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxX10ExtendedLogging.Name = "checkBoxX10ExtendedLogging";
+      this.checkBoxX10ExtendedLogging.Size = new System.Drawing.Size(108, 17);
+      this.checkBoxX10ExtendedLogging.TabIndex = 3;
+      this.checkBoxX10ExtendedLogging.Text = "Extended logging";
       // 
       // tabPageFireDTV
       // 
@@ -756,13 +889,19 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxEU)).EndInit();
       this.tabPageHCW.ResumeLayout(false);
-      this.groupBoxRepeatDelay.ResumeLayout(false);
-      this.groupBoxRepeatDelay.PerformLayout();
-      this.groupBox2.ResumeLayout(false);
-      this.groupBox2.PerformLayout();
-      this.groupBoxInformation.ResumeLayout(false);
+      this.groupBoxHcwRepeatDelay.ResumeLayout(false);
+      this.groupBoxHcwRepeatDelay.PerformLayout();
+      this.groupBoxHcwGeneral.ResumeLayout(false);
+      this.groupBoxHcwGeneral.PerformLayout();
+      this.groupBoxHcwStatus.ResumeLayout(false);
       this.groupBoxSettings.ResumeLayout(false);
       this.groupBoxSettings.PerformLayout();
+      this.tabPageX10.ResumeLayout(false);
+      this.groupBoxX10Status.ResumeLayout(false);
+      this.groupBoxX10General.ResumeLayout(false);
+      this.groupBoxX10General.PerformLayout();
+      this.groupBoxX10Settings.ResumeLayout(false);
+      this.groupBoxX10Settings.PerformLayout();
       this.tabPageFireDTV.ResumeLayout(false);
       this.ResumeLayout(false);
 
@@ -804,7 +943,7 @@ namespace MediaPortal.Configuration.Sections
     //
     private void checkBoxAllowExternal_CheckedChanged(object sender, System.EventArgs e)
     {
-      checkBoxKeepControl.Enabled = checkBoxAllowExternal.Checked;
+      checkBoxHcwKeepControl.Enabled = checkBoxHcwAllowExternal.Checked;
     }
 
     //
@@ -812,8 +951,8 @@ namespace MediaPortal.Configuration.Sections
     //
     private void checkBoxHCW_CheckedChanged(object sender, System.EventArgs e)
     {
-      groupBoxSettings.Enabled = checkBoxHCW.Checked;
-      groupBoxRepeatDelay.Enabled = checkBoxHCW.Checked;
+      groupBoxSettings.Enabled = checkBoxHcwEnabled.Checked;
+      groupBoxHcwRepeatDelay.Enabled = checkBoxHcwEnabled.Checked;
     }
 
     //
@@ -821,13 +960,13 @@ namespace MediaPortal.Configuration.Sections
     //    
     private void buttonDefault_Click(object sender, System.EventArgs e)
     {
-      checkBoxAllowExternal.Checked = false;
-      checkBoxKeepControl.Checked = false;
-      checkBoxVerboseLog.Checked = false;
-      hScrollBarButtonRelease.Value = 500;
-      hScrollBarRepeatFilter.Value = 2;
-      hScrollBarRepeatSpeed.Value = 1;
-      checkBoxFilterDoubleKlicks.Checked = false;
+      checkBoxHcwAllowExternal.Checked = false;
+      checkBoxHcwKeepControl.Checked = false;
+      checkBoxHcwExtendedLogging.Checked = false;
+      hScrollBarHcwButtonRelease.Value = 500;
+      hScrollBarHcwRepeatFilter.Value = 2;
+      hScrollBarHcwRepeatSpeed.Value = 1;
+      checkBoxHcwFilterDoubleKlicks.Checked = false;
     }
     #endregion
 
@@ -876,18 +1015,29 @@ namespace MediaPortal.Configuration.Sections
 
     private void hScrollBarButtonRelease_ValueChanged(object sender, EventArgs e)
     {
-      toolTip.SetToolTip(this.hScrollBarButtonRelease, string.Format("{0} msec.", hScrollBarButtonRelease.Value));
+      toolTip.SetToolTip(this.hScrollBarHcwButtonRelease, string.Format("{0} msec.", hScrollBarHcwButtonRelease.Value));
     }
 
     private void hScrollBarRepeatFilter_ValueChanged(object sender, EventArgs e)
     {
-      toolTip.SetToolTip(this.hScrollBarRepeatFilter, hScrollBarRepeatFilter.Value.ToString());
+      toolTip.SetToolTip(this.hScrollBarHcwRepeatFilter, hScrollBarHcwRepeatFilter.Value.ToString());
     }
 
     private void hScrollBarRepeatSpeed_ValueChanged(object sender, EventArgs e)
     {
       Type repeatSpeed = typeof(hcwRepeatSpeed);
-      toolTip.SetToolTip(this.hScrollBarRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarRepeatSpeed.Value));
+      toolTip.SetToolTip(this.hScrollBarHcwRepeatSpeed, Enum.GetName(repeatSpeed, 2 - hScrollBarHcwRepeatSpeed.Value));
+    }
+
+    private void buttonX10Mapping_Click(object sender, EventArgs e)
+    {
+      InputMappingForm dlg = new InputMappingForm("x10");
+      dlg.ShowDialog(this);
+    }
+
+    private void buttonX10Defaults_Click(object sender, EventArgs e)
+    {
+      checkBoxX10ExtendedLogging.Checked = false;
     }
 
   }

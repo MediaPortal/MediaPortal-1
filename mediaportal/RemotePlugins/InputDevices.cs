@@ -26,79 +26,82 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.InputDevices
 {
-	public sealed class InputDevices
-	{
-		#region Constructors
+  public sealed class InputDevices
+  {
+    #region Constructors
 
-		private InputDevices()
-		{
-		}
+    private InputDevices()
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public static void Init(/* SplashScreen splashScreen */)
-		{
-			MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
-			FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
-  		HCWRemote.Init(GUIGraphicsContext.ActiveForm);
-		}
+    public static void Init(/* SplashScreen splashScreen */)
+    {
+      MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
+      FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
+      HCWRemote.Init(GUIGraphicsContext.ActiveForm);
+      X10Remote.Init(GUIGraphicsContext.ActiveForm);
+    }
 
-		public static void Stop()
-		{
-			MCE2005Remote.DeInit();
-			HCWRemote.DeInit();
-			FireDTVRemote.DeInit();
+    public static void Stop()
+    {
+      MCE2005Remote.DeInit();
+      HCWRemote.DeInit();
+      FireDTVRemote.DeInit();
+      X10Remote.DeInit();
       diRemote.Stop();
-		}
+    }
 
-		public static bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
-		{
-			action = null;
-			key = (char)0;
-			keyCode = Keys.A;
+    public static bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
+    {
+      action = null;
+      key = (char)0;
+      keyCode = Keys.A;
 
-			HCWRemote.WndProc(msg);
+      HCWRemote.WndProc(msg);
 
-			if(HIDListener.WndProc(ref msg, out action, out key, out keyCode))
-				return true;
+      if (HIDListener.WndProc(ref msg, out action, out key, out keyCode))
+        return true;
 
-			if(MCE2005Remote.WndProc(ref msg, out action, out key, out keyCode))
-				return true;
+      if (MCE2005Remote.WndProc(ref msg, out action, out key, out keyCode))
+        return true;
 
-			if(FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
-				return true;
+      if (FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
+        return true;
 
-			return false;
-		}
+      return false;
+    }
 
-		#endregion Methods
+    #endregion Methods
 
-		#region Properties
+    #region Properties
 
-		internal static AppCommands LastHidRequest
-		{
-			get { return _lastHidRequest; }
-			set { _lastHidRequest = value; _lastHidRequestTick = Environment.TickCount; }
-		}	
+    internal static AppCommands LastHidRequest
+    {
+      get { return _lastHidRequest; }
+      set { _lastHidRequest = value; _lastHidRequestTick = Environment.TickCount; }
+    }
 
-		internal static int LastHidRequestTick
-		{
-			get { return _lastHidRequestTick; }
-		}	
+    internal static int LastHidRequestTick
+    {
+      get { return _lastHidRequestTick; }
+    }
 
-		#endregion Properties
+    #endregion Properties
 
-		#region Fields
+    #region Fields
 
-		static MCE2005Remote MCE2005Remote = new MCE2005Remote();
-		static HcwRemote HCWRemote = new HcwRemote();
-		static DirectInputHandler diRemote = new DirectInputHandler();
-		static MediaPortal.RemoteControls.FireDTVRemote FireDTVRemote = new MediaPortal.RemoteControls.FireDTVRemote();
-		static AppCommands			_lastHidRequest;
-		static int					_lastHidRequestTick;
+    static MCE2005Remote MCE2005Remote = new MCE2005Remote();
+    static HcwRemote HCWRemote = new HcwRemote();
+    static X10Remote X10Remote = new X10Remote();
+    static DirectInputHandler diRemote = new DirectInputHandler();
+    static MediaPortal.RemoteControls.FireDTVRemote FireDTVRemote = new MediaPortal.RemoteControls.FireDTVRemote();
+    static AppCommands _lastHidRequest;
+    static int _lastHidRequestTick;
 
-		#endregion Fields
-	}
+    #endregion Fields
+  }
 }
