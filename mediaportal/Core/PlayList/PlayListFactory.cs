@@ -28,36 +28,9 @@ namespace MediaPortal.Playlists
 	/// </summary>
 	public class PlayListFactory
 	{
-    //public PlayListFactory()
-    //{
-    //}
-    //static public PlayList Create(string fileName)
-    //{
-    //  string extension = Path.GetExtension(fileName);
-    //  extension.ToLower();
-    //  if (extension == ".m3u")
-    //  {
-    //    return new PlayListM3U();
-    //  }
-    //  if (extension == ".pls")
-    //  {
-    //    return new PlayListPLS();
-    //  }
-    //  if (extension == ".b4s")
-    //  {
-    //    return new PlayListB4S();
-    //  }
-    //  if (extension == ".wpl")
-    //  {
-    //    return new PlayListWPL();
-    //  }
-    //  return null;
-    //}
-
     static public IPlayListIO CreateIO(string fileName)
     {
-      string extension = Path.GetExtension(fileName);
-      extension.ToLower();
+      string extension = GetLowerCaseExtension(fileName);
       if (extension == ".m3u")
       {
         return new PlayListM3uIO();
@@ -77,11 +50,16 @@ namespace MediaPortal.Playlists
       return null;
     }
 
+    private static string GetLowerCaseExtension(string fileName)
+    {
+      string extension = Path.GetExtension(fileName);
+      return extension.ToLower();
+    }
+
 		static public bool IsPlayList(string fileName)
 		{
-			string extension=Path.GetExtension(fileName);
-			extension.ToLower();
-			if (extension==".m3u") return true;
+      string extension = GetLowerCaseExtension(fileName); 
+      if (extension == ".m3u") return true;
 			if (extension==".pls") return true;
 			if (extension==".b4s") return true;
 			if (extension==".wpl") return true;
