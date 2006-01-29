@@ -257,7 +257,6 @@ namespace MediaPortal.GUI.Video
 		public static void GetMovieDetails(string url, string name)
 		{
 			TempHTML="";
-			string coverurl;
 			PosterUrl="";
 			string Plot="";
 			string Genre="";
