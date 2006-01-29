@@ -3984,15 +3984,15 @@
   </string>
   <string>
     <id>5903</id>
-    <value>Just added movies</value>
+    <value>Most recent trailers</value>
   </string>
   <string>
     <id>5904</id>
-    <value>Most watched movies</value>
+    <value>Top trailers</value>
   </string>
   <string>
     <id>5905</id>
-    <value>All movies</value>
+    <value>All trailers</value>
   </string>
   <string>
     <id>5906</id>
@@ -4040,12 +4040,41 @@
   </string>
   <string>
     <id>5917</id>
-    <value>German Trailers</value>
+    <value>German trailers</value>
   </string>
   <string>
    <id>5918</id>
    <value>Télévision Suisse Romande VOD</value>
  </string>
+ <string>
+   <id>5919</id>
+   <value>Weekend box office</value>
+ </string>
+ <string>
+   <id>5920</id>
+   <value>Movies opening this week</value>
+ </string>
+ <string>
+   <id>5921</id>
+   <value>Movies coming soon</value>
+ </string>
+ <string>
+   <id>5922</id>
+   <value>Top selling DVDs</value>
+ </string>
+ <string>
+   <id>5923</id>
+   <value>New on DVD this week</value>
+ </string>
+ <string>
+   <id>5924</id>
+   <value>New on DVD next week</value>
+ </string>
+ <string>
+   <id>5925</id>
+   <value>DVD pre-orders</value>
+ </string>
+ 
 
   <!-- End of My Trailers Strings -->
   <string Prefix="My ">
