@@ -100,7 +100,6 @@ namespace MediaPortal.InputDevices
         if (msg.Msg == WM_REMOTE)
         {
           COPYDATASTRUCT cds = (COPYDATASTRUCT)msg.GetLParam(typeof(COPYDATASTRUCT));
-          Log.Write("Message received: " + msg.Msg + " " + cds.lpData);
           /* Note: Following keys are sent directly to MP via app.cfg of the IRTrans module. 
            * No need to reinvent the wheel. :-)
            * 0-9, ok, enter, left, right, down, up, back
