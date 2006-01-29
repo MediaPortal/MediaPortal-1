@@ -111,24 +111,37 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public void Run()
     {
+      bool doLog = Settings.Instance.ExtensiveLogging;
+      if (doLog)
+        Log.Write("ExternalDisplay: Entering run loop.");
       try
       {
+        if (doLog)
+          Log.Write("ExternalDisplay: Creating displayhandler.");
         handler = new DisplayHandler(display);
+        if (doLog)
+          Log.Write("ExternalDisplay: Starting displayhandler.");
         handler.Start();
         //Start property browser if needed
         while (!stopRequested)
         {
           DoWork();
           handler.DisplayLines();
+          if (doLog)
+            Log.Write("ExternalDisplay: Sleeping...");
           Thread.Sleep(Settings.Instance.ScrollDelay);
         }
         //stop display handler
+        if (doLog)
+          Log.Write("ExternalDisplay: Stopping displayhandler.");
         handler.Stop();
       }
       catch (Exception ex)
       {
         Log.Write("ExternalDisplay.Run: " + ex.Message);
       }
+      if (doLog)
+        Log.Write("ExternalDisplay: Exiting run loop.");
     }
 
     /// <summary>
@@ -275,6 +288,8 @@ namespace ProcessPlugins.ExternalDisplay
     {
       try
       {
+        if (Settings.Instance.ExtensiveLogging)
+          Log.Write("ExternalDisplay: Processing status.");
         Debug.Assert(display != null);
         GUIWindow.Window activeWindow = (GUIWindow.Window) GUIWindowManager.ActiveWindow;
         //Determine MediaPortal status
@@ -326,6 +341,8 @@ namespace ProcessPlugins.ExternalDisplay
         //Update propertybrowser's Status and ActiveWindow fields
         if (browser != null)
         {
+          if (Settings.Instance.ExtensiveLogging)
+            Log.Write("ExternalDisplay: Updating PropertyBrowser.");
           browser.SetStatus(status);
           browser.SetActiveWindow(activeWindow);
         }
@@ -345,7 +362,7 @@ namespace ProcessPlugins.ExternalDisplay
       }
       catch (Exception ex)
       {
-        Log.Write("ExternalDisplay.Timer: " + ex.Message);
+        Log.Write("ExternalDisplay.DoWork: " + ex.Message);
       }
     }
 

@@ -92,6 +92,8 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     internal void DisplayLines()
     {
+      if (Settings.Instance.ExtensiveLogging)
+        Log.Write("ExternalDisplay: Sending lines to display.");
       try
       {
         for(byte i=0; i<height; i++)

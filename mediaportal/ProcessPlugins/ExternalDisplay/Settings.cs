@@ -308,7 +308,7 @@ namespace ProcessPlugins.ExternalDisplay
     }
 
 
-    private bool m_ExtensiveLogging = true;
+    private bool m_ExtensiveLogging = false;
 
     [XmlAttribute]
     public bool ExtensiveLogging

@@ -30,10 +30,7 @@ namespace ProcessPlugins.ExternalDisplay
   /// </summary>
   public class SetupForm : Form
   {
-    /// <summary>
-    /// Required designer variable.
-    /// </summary>
-    private Container components = null;
+    private IContainer components;
 
     private Label label1;
     private GroupBox groupBox1;
@@ -61,6 +58,7 @@ namespace ProcessPlugins.ExternalDisplay
     private TrackBar tbContrast;
     private Label label5;
     private ErrorProvider errorProvider;
+    private CheckBox cbExtensiveLogging;
     private IDisplay lcd = null;
 
     public SetupForm()
@@ -76,6 +74,7 @@ namespace ProcessPlugins.ExternalDisplay
       cmbType.DataBindings.Add("SelectedItem", Settings.Instance, "LCDType");
       cmbPort.DataBindings.Add("SelectedItem", Settings.Instance, "GUIPort");
       cbPropertyBrowser.DataBindings.Add("Checked", Settings.Instance, "ShowPropertyBrowser");
+      cbExtensiveLogging.DataBindings.Add("Checked", Settings.Instance, "ExtensiveLogging");
       cbLight.DataBindings.Add("Checked", Settings.Instance, "BackLight");
       txtCols.DataBindings.Add("Text", Settings.Instance, "TextWidth");
       txtRows.DataBindings.Add("Text", Settings.Instance, "TextHeight");
@@ -112,6 +111,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       this.btnAdvanced = new System.Windows.Forms.Button();
       this.cmbPort = new System.Windows.Forms.ComboBox();
       this.label1 = new System.Windows.Forms.Label();
@@ -137,18 +137,18 @@ namespace ProcessPlugins.ExternalDisplay
       this.cbLight = new System.Windows.Forms.CheckBox();
       this.cbPropertyBrowser = new System.Windows.Forms.CheckBox();
       this.btnOK = new System.Windows.Forms.Button();
-      this.errorProvider = new System.Windows.Forms.ErrorProvider();
+      this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+      this.cbExtensiveLogging = new System.Windows.Forms.CheckBox();
       this.groupBox1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize) (this.tbContrast)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
       this.gbGraphMode.SuspendLayout();
       this.gbTextMode.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
       this.SuspendLayout();
       // 
       // btnAdvanced
       // 
-      this.btnAdvanced.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnAdvanced.Location = new System.Drawing.Point(226, 208);
       this.btnAdvanced.Name = "btnAdvanced";
       this.btnAdvanced.Size = new System.Drawing.Size(88, 23);
@@ -159,24 +159,22 @@ namespace ProcessPlugins.ExternalDisplay
       // cmbPort
       // 
       this.cmbPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cmbPort.Items.AddRange(new object[]
-                                    {
-                                      "LPT1",
-                                      "LPT2",
-                                      "LPT3",
-                                      "LPT4",
-                                      "USB",
-                                      "COM1",
-                                      "COM2",
-                                      "COM3",
-                                      "COM4",
-                                      "COM5",
-                                      "COM6",
-                                      "COM7",
-                                      "COM8",
-                                      "NONE",
-                                      "localhost"
-                                    });
+      this.cmbPort.Items.AddRange(new object[] {
+            "LPT1",
+            "LPT2",
+            "LPT3",
+            "LPT4",
+            "USB",
+            "COM1",
+            "COM2",
+            "COM3",
+            "COM4",
+            "COM5",
+            "COM6",
+            "COM7",
+            "COM8",
+            "NONE",
+            "localhost"});
       this.cmbPort.Location = new System.Drawing.Point(40, 48);
       this.cmbPort.Name = "cmbPort";
       this.cmbPort.Size = new System.Drawing.Size(64, 21);
@@ -193,10 +191,8 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label5);
       this.groupBox1.Controls.Add(this.tbContrast);
       this.groupBox1.Controls.Add(this.gbGraphMode);
@@ -376,10 +372,8 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // cmbType
       // 
-      this.cmbType.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.cmbType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cmbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cmbType.Location = new System.Drawing.Point(40, 16);
       this.cmbType.Name = "cmbType";
@@ -398,7 +392,7 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // cbPropertyBrowser
       // 
-      this.cbPropertyBrowser.Location = new System.Drawing.Point(8, 264);
+      this.cbPropertyBrowser.Location = new System.Drawing.Point(8, 262);
       this.cbPropertyBrowser.Name = "cbPropertyBrowser";
       this.cbPropertyBrowser.Size = new System.Drawing.Size(168, 24);
       this.cbPropertyBrowser.TabIndex = 4;
@@ -406,8 +400,9 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       // btnOK
       // 
-      this.btnOK.Location = new System.Drawing.Point(264, 264);
+      this.btnOK.Location = new System.Drawing.Point(261, 279);
       this.btnOK.Name = "btnOK";
+      this.btnOK.Size = new System.Drawing.Size(75, 23);
       this.btnOK.TabIndex = 5;
       this.btnOK.Text = "&OK";
       this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -416,21 +411,38 @@ namespace ProcessPlugins.ExternalDisplay
       // 
       this.errorProvider.ContainerControl = this;
       // 
+      // cbExtensiveLogging
+      // 
+      this.cbExtensiveLogging.AutoSize = true;
+      this.cbExtensiveLogging.Location = new System.Drawing.Point(8, 285);
+      this.cbExtensiveLogging.Name = "cbExtensiveLogging";
+      this.cbExtensiveLogging.Size = new System.Drawing.Size(109, 17);
+      this.cbExtensiveLogging.TabIndex = 6;
+      this.cbExtensiveLogging.Text = "Extensive logging";
+      this.cbExtensiveLogging.UseVisualStyleBackColor = true;
+      // 
       // SetupForm
       // 
       this.AcceptButton = this.btnOK;
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(344, 293);
+      this.ClientSize = new System.Drawing.Size(344, 305);
+      this.Controls.Add(this.cbExtensiveLogging);
       this.Controls.Add(this.btnOK);
       this.Controls.Add(this.cbPropertyBrowser);
       this.Controls.Add(this.groupBox1);
       this.Name = "SetupForm";
       this.Text = "ExternalDisplay Configuration";
       this.groupBox1.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize) (this.tbContrast)).EndInit();
+      this.groupBox1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).EndInit();
       this.gbGraphMode.ResumeLayout(false);
+      this.gbGraphMode.PerformLayout();
       this.gbTextMode.ResumeLayout(false);
+      this.gbTextMode.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
       this.ResumeLayout(false);
+      this.PerformLayout();
+
     }
 
     #endregion
