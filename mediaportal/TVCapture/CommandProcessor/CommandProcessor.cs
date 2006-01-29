@@ -172,6 +172,32 @@ namespace MediaPortal.TV.Recording
       get { return _tvcards; }
     }
 
+    /// <summary>
+    /// Shows in the log file which cards are in use and what they are doing
+    /// Also logs which file is currently being played
+    /// </summary>
+    public void LogTvStatistics()
+    {
+      TVCaptureDevice dev;
+      for (int i = 0; i < TVCards.Count; ++i)
+      {
+        dev = TVCards[i];
+        if (!dev.IsRecording)
+        {
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} viewing:{1} recording:{2} timeshifting:{3} epggrabbing:{4} channel:{5}",
+            dev.ID, dev.View, dev.IsRecording, dev.IsTimeShifting, dev.IsEpgGrabbing,dev.TVChannel);
+        }
+        else
+        {
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} viewing:{1} recording:{2} timeshifting:{3} epggrabbing:{4} channel:{5} :{6}",
+            dev.ID, dev.View, dev.IsRecording, dev.IsTimeShifting, dev.TVChannel, dev.IsEpgGrabbing, dev.CurrentTVRecording.Title);
+        }
+      }
+      if (g_Player.Playing)
+      {
+        Log.WriteFile(Log.LogType.Recorder, "Recorder:  currently playing:{0} pos:{0}/{1}", g_Player.CurrentFile, g_Player.CurrentPosition,g_Player.Duration);
+      }
+    }
 
 #endregion
 
@@ -192,6 +218,7 @@ namespace MediaPortal.TV.Recording
             foreach (CardCommand cmd in _listCommands)
             {
               cmd.Execute(this);
+              LogTvStatistics();
             }
             _listCommands.Clear();
           }
@@ -234,6 +261,7 @@ namespace MediaPortal.TV.Recording
               if (ts.TotalSeconds > 10)
               {
                 //then stop the card
+                Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", CurrentCardIndex);
                 dev.Stop();
                 CurrentCardIndex = -1;
                 OnTvStopped(i, dev);

@@ -66,7 +66,7 @@ namespace MediaPortal.TV.Recording
       string timeShiftFileName;
       TVCaptureDevice dev;
       Log.WriteFile(Log.LogType.Recorder, "Command:  view tv channel:{0}", _channelName);
-
+      
       int cardNo = -1;
       // tv should be turned on
       // check if any card is already tuned to this channel...

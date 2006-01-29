@@ -236,13 +236,13 @@ namespace MediaPortal.TV.Recording
       if (GUIGraphicsContext.IsTvWindow(windowId))
       {
         // we enter my tv, enable exclusive mode
-        Log.Write("Recorder:enable dx9 exclusive mode");
+        Log.WriteFile(Log.LogType.Recorder,"Recorder:enable dx9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
       else
       {
-        Log.Write("Recorder:disable dx9 exclusive mode");
+        Log.WriteFile(Log.LogType.Recorder, "Recorder:disable dx9 exclusive mode");
         // we leave my tv, disable exclusive mode
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendMessage(msg);
@@ -1067,32 +1067,6 @@ namespace MediaPortal.TV.Recording
     }//static public void OnMessage(GUIMessage message)
 
 
-    /// <summary>
-    /// Shows in the log file which cards are in use and what they are doing
-    /// Also logs which file is currently being played
-    /// </summary>
-    static private void LogTvStatistics()
-    {
-      TVCaptureDevice dev;
-      for (int i = 0; i < _commandProcessor.TVCards.Count; ++i)
-      {
-        dev = _commandProcessor.TVCards[i];
-        if (!dev.IsRecording)
-        {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} viewing:{1} recording:{2} timeshifting:{3} channel:{4}",
-            dev.ID, dev.View, dev.IsRecording, dev.IsTimeShifting, dev.TVChannel);
-        }
-        else
-        {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} viewing:{1} recording:{2} timeshifting:{3} channel:{4} id:{5}",
-            dev.ID, dev.View, dev.IsRecording, dev.IsTimeShifting, dev.TVChannel, dev.CurrentTVRecording.ID);
-        }
-      }
-      if (g_Player.Playing)
-      {
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:  currently playing:{0}", g_Player.CurrentFile);
-      }
-    }
     
     static public int GetAudioLanguage()
     {
