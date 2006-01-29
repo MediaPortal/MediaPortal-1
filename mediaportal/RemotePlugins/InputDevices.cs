@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Windows.Forms;
@@ -44,6 +48,7 @@ namespace MediaPortal.InputDevices
       FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
       HCWRemote.Init(GUIGraphicsContext.ActiveForm);
       X10Remote.Init(GUIGraphicsContext.ActiveForm);
+      IrTrans.Init(GUIGraphicsContext.ActiveForm);
     }
 
     public static void Stop()
@@ -52,6 +57,7 @@ namespace MediaPortal.InputDevices
       HCWRemote.DeInit();
       FireDTVRemote.DeInit();
       X10Remote.DeInit();
+      IrTrans.DeInit();
       diRemote.Stop();
     }
 
@@ -70,6 +76,9 @@ namespace MediaPortal.InputDevices
         return true;
 
       if (FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
+        return true;
+
+      if (IrTrans.WndProc(ref msg, out action, out  key, out keyCode))
         return true;
 
       return false;
@@ -97,6 +106,7 @@ namespace MediaPortal.InputDevices
     static MCE2005Remote MCE2005Remote = new MCE2005Remote();
     static HcwRemote HCWRemote = new HcwRemote();
     static X10Remote X10Remote = new X10Remote();
+    static IrTransListener IrTrans = new IrTransListener();
     static DirectInputHandler diRemote = new DirectInputHandler();
     static MediaPortal.RemoteControls.FireDTVRemote FireDTVRemote = new MediaPortal.RemoteControls.FireDTVRemote();
     static AppCommands _lastHidRequest;
