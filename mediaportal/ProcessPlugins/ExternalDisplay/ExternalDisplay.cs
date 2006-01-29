@@ -313,13 +313,13 @@ namespace ProcessPlugins.ExternalDisplay
           {
             status = Status.Timeshifting;
           }
-          else if (g_Player.IsTV)
-          {
-            status = Status.PlayingTV;
-          }
           else if (g_Player.IsTVRecording)
           {
             status = Status.PlayingRecording;
+          }
+          else if (g_Player.IsTV)
+          {
+            status = Status.PlayingTV;
           }
           else if (g_Player.IsVideo)
           {

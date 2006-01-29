@@ -561,6 +561,17 @@ namespace ProcessPlugins.ExternalDisplay
       msg.Lines.Add(line);
       _settings.Messages.Add(msg);
       //
+      // Playing Recording
+      //
+      msg = new Message();
+      msg.Status = Status.PlayingRecording;
+      msg.Lines.Add(new Line(new Property("#Play.Current.Title")));
+      line = new Line();
+      line.values.Add(new Parse("#currentplaytime/#duration"));
+      line.values.Add(new Text(" (#112)", new NotNullCondition("#paused")));
+      msg.Lines.Add(line);
+      _settings.Messages.Add(msg);
+      //
       // Timeshifting
       //
       msg = new Message();
