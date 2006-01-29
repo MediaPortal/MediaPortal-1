@@ -65,6 +65,7 @@ namespace MediaPortal.InputDevices
       }
       catch (System.Runtime.InteropServices.COMException)
       {
+        controlEnabled = false;
         Log.Write("x10Remote: Can't initialize");
       }
     }
