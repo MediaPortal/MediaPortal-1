@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Xml;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -15,7 +16,9 @@ namespace MediaPortal.GUI.Video
 	{
 		public static string casturl;
 
+        public static string TempXML = string.Empty;
 		public static string TempHTML = string.Empty;
+        public static string RSSTitle = string.Empty;
 		public static string[] TrailersClipsMore = new string[4];
 
 		public static string[] MovieName = new string[2000];
@@ -24,11 +27,8 @@ namespace MediaPortal.GUI.Video
 		public static string[] LMovieUrl = new string[200]; // strings for letterbutton movies
 		public static string[] LMovieName = new string[200];
 
-		public static string[] JAMovieUrl = new string[50]; // strings for JustAdded movies
-		public static string[] JAMovieName = new string[50];
-
-		public static string[] MWMovieUrl = new string[50]; //  strings for MostWatched movies
-		public static string[] MWMovieName = new string[50];
+		public static string[] RSSMovieUrl = new string[200];
+        public static string[] RSSMovieName = new string[200];
 
 		public static string[] Trailers = new string[25];
 		public static string[] TrailersUrl = new string[25];
@@ -43,14 +43,13 @@ namespace MediaPortal.GUI.Video
 		public static bool foundc = false;
 		public static bool foundm = false;
 
+        public static bool RSSView = false;
 		public static bool allview = false; // bools for reminding which view the user is in
 		public static bool tcmview = false;
 		public static bool tview = false;
 		public static bool cview = false;
 		public static bool mview = false;
-		public static bool jaview = false;
-		public static bool mwview = false;
-
+	
 		public static string PosterUrl= string.Empty;
 
         // mediaportal.xml
@@ -98,7 +97,13 @@ namespace MediaPortal.GUI.Video
 			Array.Clear(TrailersClipsMore,0,4);
 
 			TrailersUtility TU = new TrailersUtility();
-			TU.GetWebPage(@"http://movies.yahoo.com/"+url, out TempHTML);
+			//TU.GetWebPage(@"http://movies.yahoo.com/"+url, out TempHTML);
+            if(url.StartsWith("http://") == false)
+                url = "http://movies.yahoo.com/" + url;
+            if (url.Contains("trailer") == false)
+                url = url.Replace("info", "trailer");
+
+            TU.GetWebPage(url, out TempHTML);
 
 			if(TempHTML == null || TempHTML == string.Empty)
 				return;
@@ -258,11 +263,12 @@ namespace MediaPortal.GUI.Video
 			string Genre="";
 			string Runtime="";
 			string ReleaseDate="";
-			coverurl = "http://movies.yahoo.com/"+url;
-			coverurl = coverurl.Replace("trailer","info");
+            if (url.StartsWith("http://") == false)
+                url = "http://movies.yahoo.com/" + url;
+            url = url.Replace("trailer", "info");
 
             TrailersUtility TU = new TrailersUtility();
-			TU.GetWebPage(coverurl, out TempHTML);
+            TU.GetWebPage(url, out TempHTML);
 
 			if(TempHTML == null || TempHTML == string.Empty)
 				return;
@@ -353,58 +359,6 @@ namespace MediaPortal.GUI.Video
 			
 			//casturl = url;
 		}
-		public static void GetJustAdded()
-		{
-			TrailersUtility TU = new TrailersUtility();
-            TU.GetWebPage("http://movies.yahoo.com/trailers/", out TempHTML);
-
-			if(TempHTML == null || TempHTML == string.Empty)
-				return;
-		
-			int BJA = TempHTML.IndexOf(@"<!-- just added -->");
-			int EJA = TempHTML.IndexOf(@"<!-- /just added -->",BJA);
-			int TJA = EJA-BJA;
-
-			string TempJA;
-			TempJA = TempHTML.Substring(BJA,TJA);
-
-			MatchCollection mc = Regex.Matches(TempJA,@"<a\shref=.(?<movieurl>.*).>(?<moviename>.*)</a>");
-
-			int i = 0;
-
-			foreach(Match m in mc)
-			{
-				JAMovieUrl[i] = m.Groups["movieurl"].Value;
-				JAMovieName[i] = m.Groups["moviename"].Value;
-				i++;
-			}
-		}
-		public static void GetMostWatched()
-		{
-			TrailersUtility TU = new TrailersUtility();
-			TU.GetWebPage("http://movies.yahoo.com/trailers/", out TempHTML);
-		
-			if(TempHTML == null || TempHTML == string.Empty)
-				return;
-
-			int BMW = TempHTML.IndexOf(@"<!-- most watched -->");
-			int EMW = TempHTML.IndexOf(@"<!-- /most watched -->",BMW);
-			int TMW = EMW-BMW;
-
-			string TempMW;
-			TempMW = TempHTML.Substring(BMW,TMW);
-
-			MatchCollection mc = Regex.Matches(TempMW,@"<a\shref=.(?<movieurl>.*).>(?<moviename>.*)</a>");
-
-			int i = 0;
-
-			foreach(Match m in mc)
-			{
-				MWMovieUrl[i] = m.Groups["movieurl"].Value;
-				MWMovieName[i] = m.Groups["moviename"].Value;
-				i++;
-			}
-		}
 		public static void GetCastInfo(string url)
 		{
             TempHTML="";
@@ -438,6 +392,34 @@ namespace MediaPortal.GUI.Video
 			}
 			GUIPropertyManager.SetProperty("#cast", cast);
 		}
+
+        public static void GetYahooTrailersRSS(string xmlurl)
+        {
+            Array.Clear(RSSMovieName, 0, 200);
+            Array.Clear(RSSMovieUrl, 0, 200);
+
+            TrailersUtility TU = new TrailersUtility();
+            TU.GetWebPage(xmlurl, out TempXML);
+
+            if (TempXML == null || TempXML == string.Empty)
+                return;
+
+            XmlDocument XmlDoc = new XmlDocument();
+            XmlDoc.LoadXml(TempXML);
+            XmlNodeList MovieTitle = XmlDoc.SelectNodes("/rss/channel/item/title");
+            XmlNodeList MovieLink = XmlDoc.SelectNodes("/rss/channel/item/link");
+            if (MovieTitle == null)
+                return;
+
+            for (int i = 0; i < MovieTitle.Count; i++)
+            {
+                RSSMovieName[i] = MovieTitle[i].InnerText;
+                Byte[] encodedBytes = Encoding.ASCII.GetBytes(MovieLink[i].InnerText);
+                RSSMovieUrl[i] = Encoding.ASCII.GetString(encodedBytes);
+            }
+        }
+        
+        
 
 
 

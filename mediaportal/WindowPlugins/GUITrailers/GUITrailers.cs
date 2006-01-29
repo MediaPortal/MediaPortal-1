@@ -48,7 +48,6 @@ namespace MediaPortal.GUI.Video
 		[SkinControlAttribute(4)]			protected GUIListControl listview=null;
 		[SkinControlAttribute(5)]			protected GUIToggleButtonControl btntoggleplot = null;
 		[SkinControlAttribute(6)]           protected GUIToggleButtonControl btntogglecast = null;
-       // [SkinControlAttribute(8)]           protected GUIListControl listviewbig = null;
         [SkinControlAttribute(24)]			protected GUIImage poster =null;
 		[SkinControlAttribute(50)]			protected GUILabelControl label0 = null;
 		[SkinControlAttribute(51)]			protected GUIFadeLabel label1 = null;
@@ -125,7 +124,6 @@ namespace MediaPortal.GUI.Video
 		{
 			if (control==btnletter)
 				OnButtonTwo();
-//			if (control==listview||control==listviewbig)
             if (control==listview)
 			{
 				GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
@@ -150,7 +148,6 @@ namespace MediaPortal.GUI.Video
 		}
 		protected override void OnPageDestroy(int newWindowId)
 		{
-			//if(GermanTrailers.G_viewInfoAndTrailer==true || YahooTrailers.tview==true || YahooTrailers.cview==true || YahooTrailers.mview==true || GameTrailers.newgameview==true)
             if(GermanTrailers.G_viewInfoAndTrailer==true || YahooTrailers.tview==true || YahooTrailers.cview==true || YahooTrailers.mview==true)
 			{
 				Prev_SelectedItem = listview.SelectedListItemIndex;
@@ -168,24 +165,15 @@ namespace MediaPortal.GUI.Video
 				btnletter.AddSubItem(k.ToString());
 			}
 			LoadSettings();
-			//if(GermanTrailers.G_viewInfoAndTrailer==true || YahooTrailers.tview==true || YahooTrailers.cview==true || YahooTrailers.mview==true || GameTrailers.newgameview==true)
             if(GermanTrailers.G_viewInfoAndTrailer==true || YahooTrailers.tview==true || YahooTrailers.cview==true || YahooTrailers.mview==true)
 			{
-                //if (listviewbig.IsVisible == true)
-                //{
-                //    listviewbig.SelectedListItemIndex = Prev_SelectedItem;
-                //    listviewbig.Focus = true;
-                //}
-                //else
-                //{
+
                     listview.SelectedListItemIndex = Prev_SelectedItem;
                     listview.Focus = true;
-                //}
 			}
 			else
 			{
 				ShowLabelsFalse();
-                //listviewbig.Visible = false;
 				GUIPropertyManager.SetProperty("#title", "");
 				if(backgroundposter==null)
                     backgroundposter = poster.FileName;
@@ -198,30 +186,7 @@ namespace MediaPortal.GUI.Video
 		{
 			base.OnPreviousWindow ();
 		}
-        // Tryed to create to download file with nice notify window, works for http urls but not
-		// for mms:// urls so this can be used for apple movies maybe?
-//		protected override void OnShowContextMenu()
-//		{
-//			base.OnShowContextMenu ();
-//			GUIListItem item=listview.SelectedListItem;
-//			int itemNo=listview.SelectedListItemIndex;
-//			if (item==null) return;
-//			if (downloadfileview==false) return;
-//
-//			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-//			if (dlg==null) return;
-//			dlg.Reset();
-//			dlg.SetHeading(924); // menu
-//			dlg.Add("Download");
-//			dlg.Add("Download & Play");
-//			dlg.DoModal(GetID);
-//			if(dlg.SelectedLabelText.Equals("Download"))
-//			{
-//				GetMMSURL(TrailersUrl[itemNo]);
-//				DownloadFile();
-//			}
-//		
-        //		}
+
         #endregion
         #region Button/Click functions
         private void OnButtonTwo()
@@ -233,9 +198,8 @@ namespace MediaPortal.GUI.Video
 			mainview=false;
 			letterview=true;
 			YahooTrailers.allview=false;
-			YahooTrailers.jaview=false;
-			YahooTrailers.mwview=false;
 			YahooTrailers.tcmview=false;
+            YahooTrailers.RSSView = false;
 			YahooTrailers.tview=false;
 			YahooTrailers.cview=false;
 			YahooTrailers.mview=false;
@@ -272,22 +236,15 @@ namespace MediaPortal.GUI.Video
 					if(YahooTrailers.allview==true)
 					{
 						ShowLabelsFalse();
-						YahooTrailers.tcmview= false;
+                        YahooTrailers.tcmview= false;
 						ShowListView(YahooTrailers.MovieName, 5905);
 						listview.SelectedListItemIndex = SelectedItem[1];
 					}
-					else if(YahooTrailers.jaview==true)
+					else if(YahooTrailers.RSSView==true)
 					{
 						ShowLabelsFalse();
 						YahooTrailers.tcmview= false;
-						ShowListView(YahooTrailers.JAMovieName, 5903);
-						listview.SelectedListItemIndex = SelectedItem[1];
-					}
-					else if(YahooTrailers.mwview==true)
-					{
-						ShowLabelsFalse();
-						YahooTrailers.tcmview= false;
-						ShowListView(YahooTrailers.MWMovieName, 5904);
+						ShowListView(YahooTrailers.RSSMovieName, YahooTrailers.RSSTitle);
 						listview.SelectedListItemIndex = SelectedItem[1];
 					}
 					else if(letterview==true)
@@ -398,135 +355,154 @@ namespace MediaPortal.GUI.Video
 					PlayTrailer(YahooTrailers.MoreUrl[itemindex-1]);
 				}
 			}
-				// JustAddedview
-			else if(YahooTrailers.jaview==true)
-			{
-				if(itemindex==0)
-				{
-					YahooTrailers.jaview=false;
-					mainview=true;
-					ShowMainListView();
-					listview.SelectedListItemIndex = SelectedItem[0];
-				}
-				else
-				{
-					SelectedItem[1] = listview.SelectedListItemIndex;
-					YahooTrailers.tcmview=true;
-					YahooTrailers.GetMovieInfo(YahooTrailers.JAMovieUrl[itemindex-1], YahooTrailers.JAMovieName[itemindex-1]);
-					ShowListView(YahooTrailers.TrailersClipsMore, false);
-					YahooTrailers.GetMovieDetails(YahooTrailers.JAMovieUrl[itemindex-1], YahooTrailers.JAMovieName[itemindex-1]);
-					ShowMovieInfo(YahooTrailers.JAMovieName[itemindex-1], YahooTrailers.PosterUrl);
-				}
-			}
-				// MostWatchedview
-			else if(YahooTrailers.mwview==true)
-			{
-				if(itemindex==0)
-				{
-					YahooTrailers.mwview=false;
-					mainview=true;
-					ShowMainListView();
-					listview.SelectedListItemIndex = SelectedItem[0];
-				}
-				else
-				{
-					SelectedItem[1] = listview.SelectedListItemIndex;
-					YahooTrailers.tcmview=true;
-					YahooTrailers.GetMovieInfo(YahooTrailers.MWMovieUrl[itemindex-1], YahooTrailers.MWMovieName[itemindex-1]);
-					ShowListView(YahooTrailers.TrailersClipsMore, false);
-					YahooTrailers.GetMovieDetails(YahooTrailers.MWMovieUrl[itemindex-1], YahooTrailers.MWMovieName[itemindex-1]);
-					ShowMovieInfo(YahooTrailers.MWMovieName[itemindex-1], YahooTrailers.PosterUrl);
-				}
-			}
-				// Letterbutton view
-			else if(letterview==true)
-			{
-				if(itemindex==0)
-				{
-					letterview=false;
-					mainview=true;
-					ShowMainListView();
-					listview.SelectedListItemIndex = SelectedItem[0];
-				}
-				else
-				{
-					SelectedItem[1] = listview.SelectedListItemIndex;
-					YahooTrailers.tcmview=true;
-					YahooTrailers.GetMovieInfo(LMovieUrl[itemindex-1], LMovieName[itemindex-1]);
-					ShowListView(YahooTrailers.TrailersClipsMore, false);
-					YahooTrailers.GetMovieDetails(LMovieUrl[itemindex-1], LMovieName[itemindex-1]);
-					ShowMovieInfo(LMovieName[itemindex-1], YahooTrailers.PosterUrl);
-				}
-			}
-				// All movies view
-			else if(YahooTrailers.allview==true)
-			{
-				if(itemindex==0)
-				{
-					YahooTrailers.allview=false;
-					mainview=true;
-					ShowMainListView();
-					listview.SelectedListItemIndex = SelectedItem[0];
-				}
-				else
-				{
-					SelectedItem[1] = listview.SelectedListItemIndex;
-					YahooTrailers.tcmview=true;
-					YahooTrailers.GetMovieInfo(YahooTrailers.MovieURL[itemindex-1], YahooTrailers.MovieName[itemindex-1]);
-					ShowListView(YahooTrailers.TrailersClipsMore, false);
-					YahooTrailers.GetMovieDetails(YahooTrailers.MovieURL[itemindex-1], YahooTrailers.MovieName[itemindex-1]);
-					ShowMovieInfo(YahooTrailers.MovieName[itemindex-1], YahooTrailers.PosterUrl);
-				}
-			}
-				// Main selection view
-			else if(mainview==true)
-			{
-				if(itemindex==0) // just added movies
-				{
-					mainview=false;
-					YahooTrailers.jaview=true;
-					SelectedItem[0] = listview.SelectedListItemIndex;
-					if(RefreshDaily.Equals(DateTime.Now.Date)==false) // For the daily refresh
-						Array.Clear(YahooTrailers.JAMovieName,0,50);
-					if(YahooTrailers.JAMovieName[0]==null)
-                        {YahooTrailers.GetJustAdded();}
-					ShowListView(YahooTrailers.JAMovieName, 5903);
-				}
-				if(itemindex==1) // mostwatched movies
-				{
-					mainview=false;
-					YahooTrailers.mwview=true;
-					SelectedItem[0] = listview.SelectedListItemIndex;
-					if(RefreshDaily.Equals(DateTime.Now.Date)==false)
-						Array.Clear(YahooTrailers.MWMovieName,0,50);
-					if(YahooTrailers.MWMovieName[0]==null)
-					{YahooTrailers.GetMostWatched();}
-					ShowListView(YahooTrailers.MWMovieName, 5904);
-				}
-				if(itemindex==2) // all movies
-				{
-					mainview=false;
-					YahooTrailers.allview=true;
-					SelectedItem[0] = listview.SelectedListItemIndex;
-					if(RefreshDaily.Equals(DateTime.Now.Date)==false)
-						Array.Clear(YahooTrailers.MovieName,0,2000);
-					if(YahooTrailers.MovieName[0]==null)
-					{YahooTrailers.GetTrailers();}
+            // RSSView
+            else if (YahooTrailers.RSSView == true)
+            {
+                if (itemindex == 0)
+                {
+                    YahooTrailers.RSSView = false;
+                    mainview = true;
+                    ShowMainListView();
+                    listview.SelectedListItemIndex = SelectedItem[0];
+                }
+                else
+                {
+                    SelectedItem[1] = listview.SelectedListItemIndex;
+                    YahooTrailers.RSSTitle = GUIPropertyManager.GetProperty("#title");
+                    YahooTrailers.tcmview = true;
+                    YahooTrailers.GetMovieInfo(YahooTrailers.RSSMovieUrl[itemindex - 1], YahooTrailers.RSSMovieName[itemindex - 1]);
+                    ShowListView(YahooTrailers.TrailersClipsMore, false);
+                    YahooTrailers.GetMovieDetails(YahooTrailers.RSSMovieUrl[itemindex - 1], YahooTrailers.RSSMovieName[itemindex - 1]);
+                    ShowMovieInfo(YahooTrailers.RSSMovieName[itemindex - 1], YahooTrailers.PosterUrl);
+                }
+            }
+            // Letterbutton view
+            else if (letterview == true)
+            {
+                if (itemindex == 0)
+                {
+                    letterview = false;
+                    mainview = true;
+                    ShowMainListView();
+                    listview.SelectedListItemIndex = SelectedItem[0];
+                }
+                else
+                {
+                    SelectedItem[1] = listview.SelectedListItemIndex;
+                    YahooTrailers.tcmview = true;
+                    YahooTrailers.GetMovieInfo(LMovieUrl[itemindex - 1], LMovieName[itemindex - 1]);
+                    ShowListView(YahooTrailers.TrailersClipsMore, false);
+                    YahooTrailers.GetMovieDetails(LMovieUrl[itemindex - 1], LMovieName[itemindex - 1]);
+                    ShowMovieInfo(LMovieName[itemindex - 1], YahooTrailers.PosterUrl);
+                }
+            }
+            // All movies view
+            else if (YahooTrailers.allview == true)
+            {
+                if (itemindex == 0)
+                {
+                    YahooTrailers.allview = false;
+                    mainview = true;
+                    ShowMainListView();
+                    listview.SelectedListItemIndex = SelectedItem[0];
+                }
+                else
+                {
+                    SelectedItem[1] = listview.SelectedListItemIndex;
+                    YahooTrailers.tcmview = true;
+                    YahooTrailers.GetMovieInfo(YahooTrailers.MovieURL[itemindex - 1], YahooTrailers.MovieName[itemindex - 1]);
+                    ShowListView(YahooTrailers.TrailersClipsMore, false);
+                    YahooTrailers.GetMovieDetails(YahooTrailers.MovieURL[itemindex - 1], YahooTrailers.MovieName[itemindex - 1]);
+                    ShowMovieInfo(YahooTrailers.MovieName[itemindex - 1], YahooTrailers.PosterUrl);
+                }
+            }
+            // Main selection view
+            else if (mainview == true)
+            {
+                if (itemindex == 0) // just added movies
+                {
+                    mainview = false;
+                    YahooTrailers.RSSView = true;
+                    YahooTrailers.GetYahooTrailersRSS(@"http://rss.ent.yahoo.com/movies/newtrailers.xml");
+                    ShowListView(YahooTrailers.RSSMovieName, 5903);
+                }
+                if (itemindex == 1) // mostwatched movies
+                {
+                    mainview = false;
+                    YahooTrailers.RSSView = true;
+                    SelectedItem[0] = listview.SelectedListItemIndex;
+                    YahooTrailers.GetYahooTrailersRSS(@"http://rss.ent.yahoo.com/movies/top25trailers.xml");
+                    ShowListView(YahooTrailers.RSSMovieName, 5904);
+                }
+                if (itemindex == 2) // weekend box office
+                {
+                    mainview = false;
+                    YahooTrailers.RSSView = true;
+                    SelectedItem[0] = listview.SelectedListItemIndex;
+                    YahooTrailers.GetYahooTrailersRSS(@"http://rss.ent.yahoo.com/movies/boxoffice.xml");
+                    ShowListView(YahooTrailers.RSSMovieName, 5919);
+                }
+                if (itemindex == 3) // opening this week
+                {
+                    mainview = false;
+                    YahooTrailers.RSSView = true;
+                    SelectedItem[0] = listview.SelectedListItemIndex;
+                    YahooTrailers.GetYahooTrailersRSS(@"http://rss.ent.yahoo.com/movies/thisweek.xml");
+                    ShowListView(YahooTrailers.RSSMovieName, 5920);
+                }
+                if (itemindex == 4) // coming soon
+                {
+                    mainview = false;
+                    YahooTrailers.RSSView = true;
+                    SelectedItem[0] = listview.SelectedListItemIndex;
+                    YahooTrailers.GetYahooTrailersRSS(@"http://rss.ent.yahoo.com/movies/upcoming.xml");
+                    ShowListView(YahooTrailers.RSSMovieName, 5921);
+                }
+                if (itemindex == 5) // top selling dvds
+                {
+                    mainview = false;
+                    YahooTrailers.RSSView = true;
+                    SelectedItem[0] = listview.SelectedListItemIndex;
+                    YahooTrailers.GetYahooTrailersRSS(@"http://rss.movies.yahoo.com/dvd/topsellers.xml");
+                    ShowListView(YahooTrailers.RSSMovieName, 5922);
+                }
+                if (itemindex == 6) // new this week on DVD
+                {
+                    mainview = false;
+                    YahooTrailers.RSSView = true;
+                    SelectedItem[0] = listview.SelectedListItemIndex;
+                    YahooTrailers.GetYahooTrailersRSS(@"http://rss.movies.yahoo.com/dvd/newthisweek.xml");
+                    ShowListView(YahooTrailers.RSSMovieName, 5923);
+                }
+                if (itemindex == 7) // new next week on DVD
+                {
+                    mainview = false;
+                    YahooTrailers.RSSView = true;
+                    SelectedItem[0] = listview.SelectedListItemIndex;
+                    YahooTrailers.GetYahooTrailersRSS(@"http://rss.movies.yahoo.com/dvd/newnextweek.xml");
+                    ShowListView(YahooTrailers.RSSMovieName, 5924);
+                }
+                if (itemindex == 8) // pre-order dvds
+                {
+                    mainview = false;
+                    YahooTrailers.RSSView = true;
+                    SelectedItem[0] = listview.SelectedListItemIndex;
+                    YahooTrailers.GetYahooTrailersRSS(@"http://rss.ent.yahoo.com/movies/dvd/preorders.xml");
+                    ShowListView(YahooTrailers.RSSMovieName, 5925);
+                }
+                if (itemindex == 9) // all movies
+                {
+                    mainview = false;
+                    YahooTrailers.allview = true;
+                    SelectedItem[0] = listview.SelectedListItemIndex;
+                    if (RefreshDaily.Equals(DateTime.Now.Date) == false)
+                        Array.Clear(YahooTrailers.MovieName, 0, 2000);
+                    if (YahooTrailers.MovieName[0] == null)
+                    { YahooTrailers.GetTrailers(); }
                     ShowListView(YahooTrailers.MovieName, 5905);
-				}
-                //if(itemindex==3) // gametrailers
-                //{
-                //    mainview=false;
-                //    GameTrailers.newgameview=true;
-                //    SelectedItem[0] = listview.SelectedListItemIndex;
-                //    GameTrailers.GetNewestGameTrailers();
-                //    ShowListViewBig(GameTrailers.NewGameName, GameTrailers.NewGamePlatform, GameTrailers.NewGameNameSub, false);
-                //    listviewbig.Visible = true;
-                //    listview.Visible = false;
-
-                //}
-               	if(itemindex>=3) 
-				{
+                }
+                if (itemindex >= 9)
+                {
                     if (MainListMenu[itemindex] == "GERMAN")// german trailers
                     {
                         mainview = false;
@@ -538,26 +514,14 @@ namespace MediaPortal.GUI.Video
                     {
                         mainview = false;
                         btnletter.Visible = false;
-                        //poster.Visible = false;
                         TSRVodTrailers.menuview = true;
                         SelectedItem[0] = listview.SelectedListItemIndex;
                         if (TSRVodTrailers.MenuName[0] == null)
                         { TSRVodTrailers.GetMenu(); }
                         ShowListView(TSRVodTrailers.MenuName, 5918);
                     }
-				}
-
-                /*if (itemindex == 3) // TSR VOD
-                {
-                    mainview = false;
-                    TSRVodTrailers.menuview = true;
-                    SelectedItem[0] = listview.SelectedListItemIndex;
-                    if (TSRVodTrailers.MenuName[0] == null)
-                    { TSRVodTrailers.GetMenu(); }
-                    ShowListView(TSRVodTrailers.MenuName, 5903);
-                }*/
-				
-			}
+                }
+            }
             else if (TSRVodTrailers.menuview == true)
             {
                 if (itemindex == 0)
@@ -675,50 +639,45 @@ namespace MediaPortal.GUI.Video
                     label2.Visible = false; //runtime info not available
                 }
             }
-            //else if(GameTrailers.newgameview==true)
-            //{
-            //    if(itemindex==0)
-            //    {
-            //        GameTrailers.newgameview=false;
-            //        listviewbig.Visible = false;
-            //        listview.Visible = true;
-            //        mainview=true;
-            //        ShowMainListView();
-            //        listview.SelectedListItemIndex = SelectedItem[0];
-            //    }
-            //    else
-            //    {
-            //        Prev_SelectedItem = listviewbig.SelectedListItemIndex;
-            //        GameTrailers.PlayGameTrailers(GameTrailers.NewGameWMPLink[itemindex-1]);
-            //    }
-            //}
-
-        }
+         }
         #endregion
         void ShowMainListView()
 		{
 			mainview = true;
 			YahooTrailers.allview = false;
-			YahooTrailers.jaview = false;
-			YahooTrailers.mwview = false;
+            YahooTrailers.RSSView = false;
 			letterview = false;
 			poster.SetFileName(GUIGraphicsContext.Skin+@"\media\"+backgroundposter);
 			GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(5902));
 
-			string[] MainListOptions = new string[10];
+			string[] MainListOptions = new string[15];
 			MainListOptions[0] = GUILocalizeStrings.Get(5903);
             MainListMenu[0] = MainListOptions[0];
 			MainListOptions[1] = GUILocalizeStrings.Get(5904);
             MainListMenu[1] = MainListOptions[1];
-            MainListOptions[2] = GUILocalizeStrings.Get(5905);
+            MainListOptions[2] = GUILocalizeStrings.Get(5919);
             MainListMenu[2] = MainListOptions[2];
-            //MainListOptions[3] = "GameTrailers";
-			string language="";
+            MainListOptions[3] = GUILocalizeStrings.Get(5920);
+            MainListMenu[3] = MainListOptions[3];
+            MainListOptions[4] = GUILocalizeStrings.Get(5921);
+            MainListMenu[4] = MainListOptions[4];
+            MainListOptions[5] = GUILocalizeStrings.Get(5922);
+            MainListMenu[5] = MainListOptions[5];
+            MainListOptions[6] = GUILocalizeStrings.Get(5923);
+            MainListMenu[6] = MainListOptions[6];
+            MainListOptions[7] = GUILocalizeStrings.Get(5924);
+            MainListMenu[7] = MainListOptions[7];
+            MainListOptions[8] = GUILocalizeStrings.Get(5925);
+            MainListMenu[8] = MainListOptions[8];
+            MainListOptions[9] = GUILocalizeStrings.Get(5905);
+            MainListMenu[9] = MainListOptions[9];
+          
+    		string language="";
 			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml")) 
 			{
 				language = xmlreader.GetValue("skin","language");
 			}
-            int iNextItem = 3;
+            int iNextItem = 10;
             if (language.Equals("German") == true || Show_GT == true)
             {
                 MainListOptions[iNextItem] = GUILocalizeStrings.Get(5917);
@@ -867,15 +826,7 @@ namespace MediaPortal.GUI.Video
                 if (castview == true)
                     ToggleButtonCast();
 			}
-            //if(GameTrailers.newgameview==true)
-            //{
-            //    ShowLabelsFalse();
-            //    ShowListViewBig(GameTrailers.NewGameName, GameTrailers.NewGamePlatform, GameTrailers.NewGameNameSub, false);
-            //    listviewbig.Visible = true;
-            //    listview.Visible = false;
-            //}
-
-			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml")) 
+        	using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml")) 
 			{
 				bitrate = xmlreader.GetValue("mytrailers","speed");
 				Show_GT = xmlreader.GetValueAsBool("mytrailers","Show german trailers",false);
@@ -934,6 +885,29 @@ namespace MediaPortal.GUI.Video
 				i++;
 			}
 		}
+        public void ShowListView(string[] _TrailerName, string _titlename)
+        {
+            poster.SetFileName(GUIGraphicsContext.Skin + @"\media\" + backgroundposter);
+            GUIPropertyManager.SetProperty("#title", _titlename);
+
+            listview.Clear();
+            GUIListItem item1 = new GUIListItem();
+            item1.Label = "..";
+            item1.IsFolder = true;
+            Utils.SetDefaultIcons(item1);
+            listview.Add(item1);
+
+            int i = 0;
+            while (_TrailerName[i] != null)
+            {
+                GUIListItem item = new GUIListItem();
+                item.IsFolder = true;
+                Utils.SetDefaultIcons(item);
+                item.Label = _TrailerName[i];
+                listview.Add(item);
+                i++;
+            }
+        }
 		public void ShowListView(string[] _TrailerName, string _titlename, bool show_poster)
 		{
 			if(show_poster==false)
@@ -1057,34 +1031,7 @@ namespace MediaPortal.GUI.Video
 			}
 			
 		}
-        //public void ShowListViewBig(string[] _TrailerName, string[] label2, string[] label3, bool show_poster)
-        //{
-        //    listview.Visible = false;
-        //    listviewbig.Visible = true;
 
-        //    if (show_poster == false)
-        //        poster.SetFileName(GUIGraphicsContext.Skin + @"\media\" + backgroundposter);
-
-        //    listviewbig.Clear();
-        //    GUIListItem item1 = new GUIListItem();
-        //    item1.Label = "..";
-        //    item1.IsFolder = true;
-        //    Utils.SetDefaultIcons(item1);
-        //    listviewbig.Add(item1);
-
-        //    int i = 0;
-        //    while (_TrailerName[i] != null)
-        //    {
-        //        GUIListItem item = new GUIListItem();
-        //        item.IsFolder = true;
-        //        item.IconImageBig = "defaultVideoBig.png";
-        //        item.Label = _TrailerName[i];
-        //        item.Label2 = label2[i];
-        //        item.Label3 = label3[i];
-        //        listviewbig.Add(item);
-        //        i++;
-        //    }
-        //}
 		public void ShowPoster(string downloadurl, string moviename)
 		{
 			if(downloadurl ==null| downloadurl ==string.Empty)
@@ -1093,6 +1040,7 @@ namespace MediaPortal.GUI.Video
 			{
 				TrailersUtility TU = new TrailersUtility();
 				TU.DownloadPoster(downloadurl, moviename);
+                moviename = moviename.Replace(":", "-");
 				poster.SetFileName(@"thumbs\MPTemp -"+moviename + ".jpg");
 			}
 		}
@@ -1196,7 +1144,7 @@ namespace MediaPortal.GUI.Video
 				currentletter = letter;
 			}
 		}
-		
+  	
 	}
 }
 
