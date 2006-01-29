@@ -11,7 +11,7 @@
     <entry name="nrk1@nrk.no">nrktv1</entry>                        <!-- NRK1 -->
     <entry name="nrk2@nrk.no">nrktv2</entry>                        <!-- NRK2 -->
     <entry name="tv2.no">tv2</entry>                                <!-- TV2 -->
-    <entry name="tv2xtra.no">tv2xtra</entry>                        <!-- TV2 Xtra -->
+    <entry name="tv2xtra.no">tv2xtra</entry>                        <!-- TV2 Zebra -->
     <entry name="tvnorge.no">tvn</entry>                            <!-- TV Norge -->
     <entry name="tv3.no">tv3</entry>                                <!-- TV3 -->
     <entry name="ztv.no">ztvnor</entry>                             <!-- ZTV -->
@@ -22,8 +22,11 @@
     <entry name="bbcworld.com">bbcworld</entry>                     <!-- BBC World -->
     <entry name="canalplus@canalplus.no">canalpl</entry>            <!-- Canal+ -->
     <entry name="cmorefilm@canalplus.no">cmorefilm</entry>          <!-- CmoreFilm -->
+    <entry name="cmorefilm2@canalplus.no">cmorefilm2</entry>        <!-- CmoreFilm 2 -->
+    <entry name="cmorehd@canalplus.no">cmorehd</entry>              <!-- CmoreHD -->
     <entry name="film1@canalplus.no">canplfilm1</entry>             <!-- Canal+ Film1 -->
     <entry name="film2@canalplus.no">canplfilm2</entry>             <!-- Canal+ Film2 -->
+    <entry name="film3@canalplus.no">canplfilm3</entry>             <!-- Canal+ Film3 -->
     <entry name="sport@canalplus.no">canplspo</entry>               <!-- Canal+ Sport -->
     <entry name="cartoonnetwork.no">cartoon</entry>                 <!-- Cartoon Network -->
     <entry name="cinema@canaldigital.no">cinema</entry>             <!-- Cinema -->

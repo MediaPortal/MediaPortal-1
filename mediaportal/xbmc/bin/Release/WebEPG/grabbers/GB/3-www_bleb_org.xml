@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--   Version 1.0 -->
+<!-- www_bleb_org.xml  Version 1.0 -->
+<!-- 26-01-2006		Added ITV4		Version 1.1 -->
 
 <profile>
   <section name="ChannelList">
 
-        <entry name="abc1@disney.co.uk">abc1</entry>    <!-- ABC1 -->
+	<entry name="abc1@disney.co.uk">abc1</entry>    <!-- ABC1 -->
 	<entry name="bbc1@bbc.co.uk">bbc1</entry>    <!-- BBC 1 -->
 	<entry name="bbc1sc@bbc.co.uk">bbc1_scotland</entry>    <!-- BBC 1 Scotland -->
 	<entry name="bbc1wa@bbc.co.uk">bbc1_wales</entry>    <!-- BBC 1 Wales -->
@@ -45,6 +46,7 @@
 	<entry name="itv1yo@itv.com">itv1</entry>    <!-- ITV1 Yorkshire -->
 	<entry name="itv2@itv.com">itv2</entry>    <!-- ITV2 -->
 	<entry name="itv3@itv.com">itv3</entry>    <!-- ITV3 -->
+	<entry name="itv4@itv.com">itv4</entry>    <!-- ITV4 -->
 	<entry name="jr@nick.co.uk">nick_juniour</entry>    <!-- Nick Junior -->
 	<entry name="livingtv.co.uk">living_tv</entry>    <!-- LIVINGtv -->
 	<entry name="menmot@itv.com">men_and_motors</entry>    <!-- Men & Motors -->
@@ -82,6 +84,8 @@
 	<entry name="uktvpeople@uktv.co.uk">uktv_people</entry>    <!-- UKTV People -->
 	<entry name="uktvstyle@uktv.co.uk">uk_style</entry>    <!-- UKTV Style -->
 	<entry name="vh1.co.uk">vh1</entry>    <!-- VH1 UK -->
+
+        
   </section>
 
 <!-- Formating of Listing -->
@@ -101,8 +105,5 @@
     <entry name="SubtitleEntry">subtitle</entry>
     <entry name="DescEntry">desc</entry>
     <entry name="GenreEntry">type</entry>
-  </section>
-  <section name="Info">
-    <entry name="TimeZone">GMT Standard Time</entry>
   </section>
 </profile>

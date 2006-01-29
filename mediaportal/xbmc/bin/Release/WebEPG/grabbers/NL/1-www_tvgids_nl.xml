@@ -167,4 +167,8 @@
    <entry name="Theater" >Theater</entry>
    <entry name="Wetenschap" >Wetenschap</entry>
   </section>
+
+  <section name="RemovePrograms">
+     <entry name="ned3@omroep.nl">[TITLE]"Z@pp";[TITLE]"Nederland 3"</entry>	
+  </section>
 </profile>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!-- xmltv_radiotimes_com.xml  Version 1.0 -->
+<!-- 26-01-2006		Added ITV4, More4 & More4+1		Version 1.1 -->
 
 <profile>
 	<section name="ChannelList">
@@ -53,8 +54,8 @@
 		<entry name="bbca@bbc.co.uk"></entry>          <!-- BBC America -->
 		<entry name="bbcn@bbc.co.uk">20</entry>          <!-- BBC News 24 -->
 		<entry name="bbcpar@bbc.co.uk">21</entry>          <!-- BBC Parliament -->
-		<entry name="bbcprime.com">84</entry>          <!-- BBC Prime -->
-		<entry name="bbcworld.com">551</entry>          <!-- BBC World -->
+		<entry name="bbcp@bbc.co.uk">84</entry>          <!-- BBC Prime -->
+		<entry name="bbcw@bbc.co.uk">551</entry>          <!-- BBC World -->
 		<entry name="bid.tv">612</entry>          <!-- bid tv -->
 		<entry name="thebiographychannel.co.uk">582</entry>          <!-- Biography Channel -->
 		<entry name="tt@bloomberg.co.uk">50264</entry>          <!-- Bloomberg TV (TopUpTV) -->
@@ -64,8 +65,8 @@
 		<entry name="bravo.co.uk">75</entry>          <!-- Bravo -->
 		<entry name="an@bravo.co.uk">511</entry>          <!-- Bravo Analogue -->
 		<entry name="p1@bravo.co.uk">6448</entry>          <!-- Bravo Plus 1 -->
-		<entry name="eurosport@eurosport.com">519</entry>          <!-- British Eurosport -->
-		<entry name="eurosport2@eurosport.com">614</entry>          <!-- British Eurosport2 -->
+		<entry name="eurosport.co.uk">519</entry>          <!-- British Eurosport -->
+		<entry name="2@eurosport.co.uk">614</entry>          <!-- British Eurosport2 -->
 		<entry name="tt@cartoon-network.co.uk">50266</entry>          <!-- Cartoon Network (TopUpTV) -->
 		<entry name="cartoon-network.co.uk">7</entry>          <!-- Cartoon Network -->
 		<entry name="p1@cartoon-network.co.uk">608</entry>          <!-- Cartoon Network Plus 1 -->
@@ -81,7 +82,7 @@
 		<entry name="tv@chealseafc.com">50286</entry>          <!-- Chelsea TV -->
 		<entry name="tv@classicfm.com">50353</entry>          <!-- Classic FM TV -->
 		<entry name="cnbceurope.com">521</entry>          <!-- CNBC -->
-		<entry name="cnni-emea@cnn.com">548</entry>          <!-- CNN -->
+		<entry name="cnn.com">548</entry>          <!-- CNN -->
 		<entry name="dt@communitychannel.org">6314</entry>          <!-- Community Channel (Digital Terrestrial) -->
 		<entry name="communitychannel.org">6264</entry>          <!-- Community Channel -->
 		<entry name="tt@discoverychannel.co.uk">50269</entry>          <!-- Discovery (TopUpTV) -->
@@ -145,6 +146,7 @@
 		<entry name="itv1yo@itv.com">64</entry>          <!-- ITV1 Yorkshire -->
 		<entry name="itv2@itv.com">32</entry>          <!-- ITV2 -->
 		<entry name="itv3@itv.com">50283</entry>          <!-- ITV3 -->
+		<entry name="itv4@itv.com">50470</entry>          <!-- ITV4 -->
 		<entry name="jetix.co.uk">105</entry>          <!-- Jetix -->
 		<entry name="an@jetix.co.uk">104</entry>          <!-- Jetix Analogue -->
 		<entry name="p1@jetix.co.uk">609</entry>          <!-- Jetix Plus 1 -->
@@ -192,8 +194,8 @@
 		<entry name="tv@rangers.co.uk">50388</entry>          <!-- Rangers TV -->
 		<entry name="realitytv.co.uk">5910</entry>          <!-- Reality TV -->
 		<entry name="p1@realitytv.co.uk">50352</entry>          <!-- Reality TV Plus 1 -->
-		<entry name="rte1@rte.ie">300</entry>          <!-- RTE 1 -->
-		<entry name="rte2@rte.ie">301</entry>          <!-- RTE 2 -->
+		<entry name="1@rte.ie">300</entry>          <!-- RTE 1 -->
+		<entry name="2@rte.ie">301</entry>          <!-- RTE 2 -->
 		<entry name="s4c.co.uk">85</entry>          <!-- S4C -->
 		<entry name="s4cd@s4c.co.uk">87</entry>          <!-- S4C Digital -->
 		<entry name="s4c2@s4c.co.uk">50241</entry>          <!-- S4C-2 -->
@@ -376,6 +378,5 @@
     <entry name="GuideDays">14</entry>
     <entry name="Lang">en</entry>
     <entry name="Description">MAIN</entry>
-    <entry name="TimeZone">GMT Standard Time</entry>
   </section>
 </profile>
