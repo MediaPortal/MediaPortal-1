@@ -59,7 +59,7 @@ copy ..\..\..\Interop.GIRDERLib.dll .
 copy ..\..\..\MediaPadLayer.dll .
 rem 
 copy ..\..\..\KCS.Utilities.dll .
-copy ..\..\..\X10Plugin.* .
+rem copy ..\..\..\X10Plugin.* .
 copy ..\..\..\X10Unified.* .
 copy ..\..\..\xAPMessage.dll .
 copy ..\..\..\xAPTransport.dll .
@@ -74,7 +74,7 @@ copy ..\..\..\madlldlib.dll .
 copy ..\..\..\ECP2Assembly.dll .
 copy ..\..\..\edtftpnet-1.2.2.dll .
 copy ..\..\..\dvblib.dll .
-copy ..\..\..\*.tpl .
+rem copy ..\..\..\*.tpl .
 copy ..\..\..\Interop.WMEncoderLib.dll .
 copy ..\..\..\Interop.TunerLib.dll .
 copy ..\..\..\Interop.iTunesLib.dll .
