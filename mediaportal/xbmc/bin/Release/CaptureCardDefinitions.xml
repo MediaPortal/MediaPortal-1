@@ -7084,9 +7084,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Cinergy 2400i DT Tuner 1"			checkdevice="true"></filter>
-        <filter cat="capture"         name="Cinergy 2400i DT Capture 1"			checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Cinergy 2400i DT Tuner 1"			checkdevice="true"/>
+        <filter cat="capture"         name="Cinergy 2400i DT Capture 1"			checkdevice="true"/>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -7100,9 +7100,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"></interface>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"></filter>
-        <filter cat="tunerdevice"     name="Cinergy 2400i DT Tuner 2"			checkdevice="true"></filter>
-        <filter cat="capture"         name="Cinergy 2400i DT Capture 2"			checkdevice="true"></filter>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Cinergy 2400i DT Tuner 2"			checkdevice="true"/>
+        <filter cat="capture"         name="Cinergy 2400i DT Capture 2"			checkdevice="true"/>
       </filters>
       <connections>
 		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection>
@@ -7478,8 +7478,8 @@
         <filter cat="tvaudio"		name="713x BDA Analog TV Audio"	checkdevice="true"></filter>
         <filter cat="crossbar"		name="713x BDA Analog Xbar"		checkdevice="true"></filter>
         <filter cat="capture"		name="713x BDA Analog Capture"	checkdevice="true"></filter>
-        <filter cat="encoderaudio"  name="HT MPEG1 Audio Encoder"	checkdevice="false"/>
-        <filter cat="mux"			name="HT MPEG Multiplexer"		checkdevice="false"/>
+        <filter cat="encoderaudio"  name="HT MPEG1 Audio Encoder"	checkdevice="false"></filter>
+        <filter cat="mux"			name="HT MPEG Multiplexer"		checkdevice="false"></filter>
       </filters>
       <connections>
 		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -7493,18 +7493,29 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Pinnacle PCTV 110i DVB-T" capturename="Pinnacle PCTV 110i BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_002e11bd&amp;rev_d0">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+  <capturecard commercialname="Pinnacle PCTV 110i" capturename="Pinnacle PCTV 110i BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_002e11bd&amp;rev_d0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
-      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
-        <filter cat="tunerdevice"     name="Pinnacle PCTV 110i BDA Digital Tuner"                checkdevice="true"/>
-        <filter cat="capture"         name="Pinnacle PCTV 110i BDA Digital Capture"           checkdevice="true"/>
+        <filter cat="tvtuner"		name="Pinnacle PCTV 110i BDA Analog Tv Tuner"	checkdevice="true"/>
+        <filter cat="tvaudio"		name="Pinnacle PCTV 110i BDA Analog TV Audio"	checkdevice="true"/>
+        <filter cat="crossbar"		name="Pinnacle PCTV 110i BDA Analog Xbar"		checkdevice="true"/>
+        <filter cat="capture"		name="Pinnacle PCTV 110i BDA Analog Capture"	checkdevice="true"/>
+		<filter cat="videncoder"	name="Pinnacle MPEG 2 Encoder"					checkdevice="false"/>
+		<filter cat="audencoder"	name="Pinnacle MPEG Layer-2 Audio Encoder"		checkdevice="false"/>
+		<filter cat="mux"			name="Pinnacle MPEG 2 Encoder Multiplexer"		checkdevice="false"/>
       </filters>
       <connections>
-		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
-		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture" sinkpin="0"/>
+		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
