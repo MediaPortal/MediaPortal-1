@@ -87,7 +87,7 @@ namespace MediaPortal.InputDevices
     {
       if (e.eKeyState.ToString() == "X10KEY_ON" || e.eKeyState.ToString() == "X10KEY_REPEAT")
       {
-        //x10Handler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), e.bszCommand));
+        x10Handler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString()));
 
         if (logVerbose)
         {
@@ -95,9 +95,8 @@ namespace MediaPortal.InputDevices
           {
             Log.Write("x10Remote: Command Start -----------------------------------");
             Log.Write("x10Remote: e            = {0}", e.ToString());
-            //Log.Write("x10Remote: bszCommand   = {0} - {1}", (int)Enum.Parse(typeof(X10.EX10Command), e.bszCommand), e.bszCommand.ToString());
             Log.Write("x10Remote: bszCommand   = {0}", e.bszCommand.ToString());
-            Log.Write("x10Remote: eCommand     = {0}", e.eCommand.ToString());
+            Log.Write("x10Remote: eCommand     = {0} - {1}", (int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString()), e.eCommand.ToString());
             Log.Write("x10Remote: eCommandType = {0}", e.eCommandType.ToString());
             Log.Write("x10Remote: eKeyState    = {0}", e.eKeyState.ToString());
             Log.Write("x10Remote: lAddress     = {0}", e.lAddress.ToString());
