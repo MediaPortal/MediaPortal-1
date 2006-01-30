@@ -240,6 +240,7 @@ namespace MediaPortal.Configuration.Sections
 			if (listViewAvailableSkins.SelectedItems.Count==0) 
 			{
 				previewPictureBox.Image=null;
+        previewPictureBox.Visible = false;
 				return;
 			}
 			string currentSkin = (string)listViewAvailableSkins.SelectedItems[0].Text;
@@ -249,10 +250,15 @@ namespace MediaPortal.Configuration.Sections
 			// Clear image
 			//
 			previewPictureBox.Image = null;
+      System.Drawing.Image img = null;
 
 			if(File.Exists(previewFile))
 			{
-				previewPictureBox.Image = Image.FromFile(previewFile);
+        img = Image.FromFile(previewFile);
+        previewPictureBox.Width = img.Width;
+        previewPictureBox.Height = img.Height;
+        previewPictureBox.Image = img;
+        previewPictureBox.Visible = true;
 			}
 			else
 			{
@@ -260,7 +266,11 @@ namespace MediaPortal.Configuration.Sections
 
 				if(File.Exists(logoFile))
 				{
-					previewPictureBox.Image = Image.FromFile(logoFile);
+          img = Image.FromFile(logoFile);
+          previewPictureBox.Width = img.Width;
+          previewPictureBox.Height = img.Height;
+          previewPictureBox.Image = img;
+          previewPictureBox.Visible = true;
 				}
 			}
 
