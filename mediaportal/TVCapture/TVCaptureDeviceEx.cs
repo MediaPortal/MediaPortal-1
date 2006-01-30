@@ -101,7 +101,7 @@ namespace MediaPortal.TV.Recording
     int _cardPriority = 1;
     string _recordingPath = String.Empty;
     CardTypes _cardType;
-    
+
     int _defaultRecordingQuality = -1;
     DateTime _lastChannelChange = DateTime.Now;
     enum State
@@ -172,13 +172,17 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public TVCaptureDevice()
     {
+      CtorInit();
+    }
+    void CtorInit()
+    {
       _graphHelper = new GraphHelper();
       int countryCode = 31;
       string tunerInput = "Antenna";
       using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-          tunerInput = xmlReader.GetValueAsString("capture", "tuner", "Antenna");
-          countryCode = xmlReader.GetValueAsInt("capture", "country", 31);
+        tunerInput = xmlReader.GetValueAsString("capture", "tuner", "Antenna");
+        countryCode = xmlReader.GetValueAsInt("capture", "country", 31);
       }
 
       bool isCableInput = false;
@@ -192,10 +196,11 @@ namespace MediaPortal.TV.Recording
     #region properties
     public GraphHelper Graph
     {
-      get {
+      get
+      {
         if (_graphHelper == null)
           LoadDefinitions();
-        return _graphHelper; 
+        return _graphHelper;
       }
     }
     public CardTypes CardType
@@ -402,6 +407,7 @@ namespace MediaPortal.TV.Recording
       get { return _cardId; }
       set
       {
+        CtorInit();
         _cardId = value;
         _currentGraphState = State.Initialized;
       }
@@ -697,14 +703,14 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public int RadioSensitivity
     {
-        get
-        {
-            return _radioSensitivity;
-        }
-        set
-        {
-            _radioSensitivity = value;
-        }
+      get
+      {
+        return _radioSensitivity;
+      }
+      set
+      {
+        _radioSensitivity = value;
+      }
     }
     public string TimeShiftFileName
     {
@@ -743,6 +749,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_graphHelper == null)
       {
+        CtorInit();
         _graphHelper = new GraphHelper();
       }
       _graphHelper.DeviceId = DeviceId;
@@ -779,7 +786,7 @@ namespace MediaPortal.TV.Recording
       _currentGraph.SetAudioLanguage(audioPid);
     }
 
-   
+
     public FilterDefinition GetTvFilterDefinition(string filterCategory)
     {
       foreach (FilterDefinition fd in Graph.TvFilterDefinitions)
@@ -1200,44 +1207,45 @@ namespace MediaPortal.TV.Recording
     }
 
     public void RadioChannelMinMax(out int chanmin, out int chanmax)
+    {
+      bool deleteGraph = false;
+      if (_currentGraph == null)
       {
-          bool deleteGraph = false;
-          if (_currentGraph == null) {
-              if (!CreateGraph())
-              {
-                  chanmin = -1;
-                  chanmax = -1;
-                  return;
-              }
-              deleteGraph = true;
-          }
-          _currentGraph.RadioChannelMinMax(out chanmin, out chanmax);
-
-          if (deleteGraph)
-          {
-              DeleteGraph();
-          }
+        if (!CreateGraph())
+        {
+          chanmin = -1;
+          chanmax = -1;
+          return;
+        }
+        deleteGraph = true;
       }
+      _currentGraph.RadioChannelMinMax(out chanmin, out chanmax);
+
+      if (deleteGraph)
+      {
+        DeleteGraph();
+      }
+    }
     public void TVChannelMinMax(out int chanmin, out int chanmax)
+    {
+      bool deleteGraph = false;
+      if (_currentGraph == null)
       {
-          bool deleteGraph = false;
-          if (_currentGraph == null)
-          {
-              if (!CreateGraph())
-              {
-                  chanmin = -1;
-                  chanmax = -1;
-                  return;
-              } 
-              deleteGraph = true;
-          }
-          _currentGraph.TVChannelMinMax(out chanmin, out chanmax);
-
-          if (deleteGraph)
-          {
-              DeleteGraph();
-          }
+        if (!CreateGraph())
+        {
+          chanmin = -1;
+          chanmax = -1;
+          return;
+        }
+        deleteGraph = true;
       }
+      _currentGraph.TVChannelMinMax(out chanmin, out chanmax);
+
+      if (deleteGraph)
+      {
+        DeleteGraph();
+      }
+    }
     public void GrabTeletext(bool yesNo)
     {
       if (_currentGraph == null) return;
@@ -1287,8 +1295,8 @@ namespace MediaPortal.TV.Recording
         bool isCreated = _currentGraph.CreateGraph(Quality);
         if (!isCreated)
         {
-            _currentGraph = null;
-            return;
+          _currentGraph = null;
+          return;
         }
         //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() start timeshifting");
         _currentGraph.StartTimeShifting(channel, Recorder.GetTimeShiftFileName(ID - 1));
@@ -1308,8 +1316,8 @@ namespace MediaPortal.TV.Recording
         bool isCreated = _currentGraph.CreateGraph(Quality);
         if (!isCreated)
         {
-            _currentGraph = null;
-            return;
+          _currentGraph = null;
+          return;
         }
         _currentGraph.StartViewing(channel);
         _lastChannelChange = DateTime.Now;
@@ -1446,7 +1454,7 @@ namespace MediaPortal.TV.Recording
         else
           fileName = strInput.Trim();
 
-        
+
         if (subDirectory != string.Empty)
         {
           subDirectory = Utils.RemoveTrailingSlash(subDirectory);
