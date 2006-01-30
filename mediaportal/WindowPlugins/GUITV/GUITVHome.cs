@@ -755,7 +755,18 @@ namespace MediaPortal.GUI.TV
       if (GUIGraphicsContext.IsFullScreenVideo)
       {
         GUIFullScreenTV TVWindow = (GUIFullScreenTV)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-        if (TVWindow != null) TVWindow.UpdateOSD();
+        if (TVWindow != null)
+        {
+            Action myaction = new Action();
+            if (Navigator.ZapChannel != channel)
+            {
+                //Keep showing zapping window indefinetely 
+                myaction.fAmount1 = -1;
+            }
+            myaction.wID = Action.ActionType.ACTION_SHOW_INFO;
+            TVWindow.OnAction(myaction);
+            myaction = null;
+        }
       }
     }
 
@@ -905,6 +916,7 @@ namespace MediaPortal.GUI.TV
     private string lastViewedChannel = null; // saves the last viewed Channel  // mPod
     private TVChannel m_currentTvChannel = null;
     private List<TVChannel> channels = new List<TVChannel>();
+    private bool reentrant = false;
     #endregion
 
     #region Constructors
@@ -1018,7 +1030,9 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     public bool CheckChannelChange()
     {
+      if (reentrant) return false;
       if (GUIGraphicsContext.InVmr9Render) return false;
+      reentrant = true;
       UpdateCurrentChannel();
 
       // Zapping to another group or channel?
@@ -1042,13 +1056,15 @@ namespace MediaPortal.GUI.TV
 
           lastViewedChannel = m_currentchannel;
           // Zap to desired channel
-          Log.Write("Channel change:{0}", m_zapchannel);
-          //Log.WriteFile(Log.LogType.Error,"Channel change:{0}", m_zapchannel);
-          GUITVHome.ViewChannel(m_zapchannel);
+          string zappingTo = m_zapchannel;
           m_zapchannel = null;
+          Log.Write("Channel change:{0}", zappingTo);
+          GUITVHome.ViewChannel(zappingTo);
+          reentrant = false;
           return true;
         }
       }
+      reentrant = false;
       return false;
     }
 

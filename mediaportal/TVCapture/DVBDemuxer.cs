@@ -356,7 +356,7 @@ int m_bufferPositionPMT=0;
 		}
     public void OnTuneNewChannel()
     {
-      _isScrambled = true;
+      _isScrambled = false;
       _isReceivingPackets = false;
       _numberOfPacketsReceived = 0;
 			_ac3Present=false;

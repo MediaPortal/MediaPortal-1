@@ -211,6 +211,7 @@ namespace MediaPortal.GUI.TV
 
     public override void OnAction(Action action)
     {
+
       switch (action.wID)
       {
         case Action.ActionType.ACTION_OSD_SHOW_LEFT:
@@ -317,7 +318,14 @@ namespace MediaPortal.GUI.TV
             return;
           }
       }
-
+      if ((action.wID>=Action.ActionType.REMOTE_0)&&(action.wID<=Action.ActionType.REMOTE_9))
+      {
+        GUIFullScreenTV TVWindow = (GUIFullScreenTV)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+        if (TVWindow != null)
+        {
+            TVWindow.OnKeyCode((char)action.m_key.KeyChar);
+        }
+      }
       base.OnAction(action);
     }
 

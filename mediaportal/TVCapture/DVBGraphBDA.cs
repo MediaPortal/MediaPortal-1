@@ -277,6 +277,7 @@ namespace MediaPortal.TV.Recording
     int _signalLevel;
     bool _signalPresent;
     bool _tunerLocked;
+      bool _isTuning = false;
     DateTime _pmtTimer;
     //bool										_graphIsPaused;
 
@@ -3609,8 +3610,10 @@ namespace MediaPortal.TV.Recording
 
       if (_graphState != State.Epg)
       {
-        UpdateVideoState();
-
+          if (!_isTuning)
+          {
+              UpdateVideoState();
+          }
         if (_graphState == State.Viewing)
         {
             if (GUIGraphicsContext.Vmr9Active && _vmr9 != null)
@@ -3749,6 +3752,8 @@ namespace MediaPortal.TV.Recording
       //bool restartGraph=false;
       try
       {
+          _isTuning = true;
+          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
 #if USEMTSWRITER
 				/*if (_graphState==State.TimeShifting)
 				{
@@ -4016,8 +4021,15 @@ namespace MediaPortal.TV.Recording
         if (_currentTuningObject.VideoPid <= 0) _currentTuningObject.VideoPid = -1;
         if (_currentTuningObject.PMTPid <= 0) _currentTuningObject.PMTPid = -1;
         if (_currentTuningObject.PCRPid <= 0) _currentTuningObject.PCRPid = -1;
+        try
+        {
+            DirectShowUtil.EnableDeInterlace(_graphBuilder);
 
-        DirectShowUtil.EnableDeInterlace(_graphBuilder);
+        }
+        catch (Exception ex)
+        {
+            Log.WriteFile(Log.LogType.Error, true, "DVBGraphBDA:TuneChannel cannot set Interlace Mode {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        }
         Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:TuneChannel() done freq:{0} ONID:{1} TSID:{2} prog:{3} audio:{4:X} video:{5:X} pmt:{6:X} ac3:{7:X} txt:{8:X}",
                                             _currentTuningObject.Frequency,
                                             _currentTuningObject.NetworkID, _currentTuningObject.TransportStreamID,
@@ -4055,11 +4067,14 @@ namespace MediaPortal.TV.Recording
 #endif
         if (_vmr9 != null) _vmr9.Enable(true);
         _signalLostTimer = DateTime.Now;
+        UpdateVideoState();
+
         if (m_IStreamBufferSink != null)
         {
           long refTime = 0;
           m_IStreamBufferSink.SetAvailableFilter(ref refTime);
         }
+        _isTuning = false;
       }
     }//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -4353,6 +4368,8 @@ namespace MediaPortal.TV.Recording
       if (_filterNetworkProvider == null) return;
       if (tuningObject == null) return;
 
+      _isTuning = true;
+      VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       //start viewing if we're not yet viewing
       if (!_isGraphRunning)
       {
@@ -4373,7 +4390,11 @@ namespace MediaPortal.TV.Recording
       _currentTuningObject = (DVBChannel)tuningObject;
       _currentTuningObject.DiSEqC = disecqNo;
       SubmitTuneRequest(_currentTuningObject);
-    }//public void Tune(object tuningObject)
+      _signalLostTimer = DateTime.Now;
+      UpdateVideoState();
+      Log.Write("Video State after changing channel:{0}", VideoRendererStatistics.VideoState);
+      _isTuning = false;
+  }//public void Tune(object tuningObject)
 
     /// <summary>
     /// Store any new tv and/or radio channels found in the tvdatabase
@@ -4925,6 +4946,7 @@ namespace MediaPortal.TV.Recording
 
       try
       {
+          _isTuning = true;
 
         _currentChannelNumber = channel.Channel;
         _startTimer = DateTime.Now;
@@ -5082,6 +5104,7 @@ namespace MediaPortal.TV.Recording
       finally
       {
         _signalLostTimer = DateTime.Now;
+        _isTuning = false;
       }
     }//public void TuneRadioChannel(AnalogVideoStandard standard,int iChannel,int country)
 

@@ -84,6 +84,7 @@ namespace MediaPortal.TV.Recording
     int _selectedAudioLanguage = 11;
     protected bool _grabTeletext = false;
     protected bool _hasTeletext = false;
+      bool _isTuning = false;
 
     /// <summary>
     /// Constructor
@@ -440,6 +441,9 @@ namespace MediaPortal.TV.Recording
       //bool restartGraph = false;
       try
       {
+          _isTuning = true;
+          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+
         /*
         if (_graphState == State.TimeShifting)
         {
@@ -459,7 +463,6 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, "SinkGraph:TuneChannel() tune to channel:{0} country:{1} standard:{2} name:{3}",
           _channelNumber, _countryCode, standard, channel.Name);
 
-        _signalLostTimer = DateTime.Now;
         if (_channelNumber < (int)ExternalInputs.svhs)
         {
           if (_tvTunerInterface == null) return;
@@ -535,13 +538,17 @@ namespace MediaPortal.TV.Recording
       {
         if (_mpeg2DemuxHelper != null)
           _mpeg2DemuxHelper.SetStartingPoint();
-        /*
-        if (restartGraph)
-        {
-          string fname = Recorder.GetTimeShiftFileNameByCardId(_cardId);
-          _mpeg2DemuxHelper.StartTimeshifting(fname);
-          g_Player.ContinueGraph();
-        }*/
+
+      _signalLostTimer = DateTime.Now;
+      UpdateVideoState();
+      _isTuning = false;
+      /*
+      if (restartGraph)
+      {
+        string fname = Recorder.GetTimeShiftFileNameByCardId(_cardId);
+        _mpeg2DemuxHelper.StartTimeshifting(fname);
+        g_Player.ContinueGraph();
+      }*/
       }
       _previousChannel = channel.Number;
       _startTime = DateTime.Now;
@@ -1009,7 +1016,10 @@ namespace MediaPortal.TV.Recording
           _vmr9.Process();
         }
       }
-      UpdateVideoState();
+      if (!_isTuning)
+      {
+          UpdateVideoState();
+      }
     }
 
     public PropertyPageCollection PropertyPages()
@@ -1065,7 +1075,7 @@ namespace MediaPortal.TV.Recording
     public void TuneRadioChannel(RadioStation station)
     {
       Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:tune to {0} {1} hz", station.Name, station.Frequency);
-
+      _isTuning = true;
       _tvTunerInterface.put_TuningSpace(0);
       _tvTunerInterface.put_CountryCode(_countryCode);
       _tvTunerInterface.put_Mode(AMTunerModeType.FMRadio);
@@ -1081,7 +1091,8 @@ namespace MediaPortal.TV.Recording
       int frequency;
       _tvTunerInterface.get_AudioFrequency(out frequency);
       Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  tuned to {0} hz", frequency);
-    }
+      _isTuning = false;
+  }
 
     public void StartRadio(RadioStation station)
     {
@@ -1121,6 +1132,7 @@ namespace MediaPortal.TV.Recording
     public void TuneRadioFrequency(int frequency)
     {
       Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:tune to {0} hz", frequency);
+      _isTuning = true;
       _tvTunerInterface.put_TuningSpace(0);
       _tvTunerInterface.put_CountryCode(_countryCode);
       _tvTunerInterface.put_Mode(AMTunerModeType.FMRadio);
@@ -1135,7 +1147,8 @@ namespace MediaPortal.TV.Recording
       _tvTunerInterface.put_Channel(frequency, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
       _tvTunerInterface.get_AudioFrequency(out frequency);
       Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  tuned to {0} hz", frequency);
-    }
+      _isTuning = false;
+  }
 
     protected void SetQuality(int Quality)
     {
