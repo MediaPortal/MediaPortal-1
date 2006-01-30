@@ -12,6 +12,7 @@ extern void Log(const char *fmt, ...) ;
 #define S_FINISHED (S_OK+1)
 CEPGParser::CEPGParser()
 {
+  ResetEPG();
 	m_bParseEPG=false;
 	m_bEpgDone=false;
 
@@ -544,9 +545,9 @@ void CEPGParser::ResetEPG()
 	EPGEvent evt;
 
 	m_prevChannel=ch;
-	m_prevChannelIndex=0;
+	m_prevChannelIndex-1;
 	m_prevEvent = evt;
-	m_prevEventIndex=0;
+	m_prevEventIndex=-1;
 
 	m_mapEPG.clear();
 	//m_bParseEPG=false;
@@ -561,9 +562,9 @@ void CEPGParser::GrabEPG()
 	EPGEvent evt;
 
 	m_prevChannel=ch;
-	m_prevChannelIndex=0;
+	m_prevChannelIndex=-1;
 	m_prevEvent = evt;
-	m_prevEventIndex=0;
+	m_prevEventIndex=-1;
 
 	m_mapEPG.clear();
 	m_bParseEPG=true;
