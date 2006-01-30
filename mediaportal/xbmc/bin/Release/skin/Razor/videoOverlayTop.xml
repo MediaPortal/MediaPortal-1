@@ -1,0 +1,30 @@
+<window>
+  <defaultcontrol>4</defaultcontrol>
+  <id>3008</id>
+  <controls>
+	<control>
+		<description>Pause logo</description> 
+		<type>image</type> 
+		<id>4</id> 
+		<posX>970</posX> 
+		<posY>600</posY> 
+		<texture>logo_pause.png</texture> 
+	</control>
+	<control>
+		<description>FF logo</description> 
+		<type>image</type> 
+		<id>7</id> 
+		<posX>963</posX> 
+		<posY>600</posY>
+		<texture>logo_fastforward.png</texture> 
+	</control>
+	<control>
+		<description>RW logo</description> 
+		<type>image</type> 
+		<id>8</id> 
+		<posX>963</posX> 
+		<posY>600</posY>  
+		<texture>logo_rewind.png</texture> 
+	</control>
+  </controls>
+</window>
