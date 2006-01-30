@@ -664,8 +664,6 @@ namespace MediaPortal.GUI.Library
 						_listWindows[x].Focused=false;
 					}
 				}*/
-
-				// deactivate any window
 				GUIMessage msg;
 				GUIWindow pWindow;        				
 				int _previousActiveWindowId=(int)GUIWindow.Window.WINDOW_HOME;
@@ -680,6 +678,17 @@ namespace MediaPortal.GUI.Library
 				{
 					// deactivate current window
 					pWindow=_listWindows[_activeWindowIndex];
+
+
+
+          // deactivate any window
+          if (_routedWindow != null)
+          {
+            GUIMessage msgDlg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _routedWindow.GetID, 0, 0, pWindow.GetID, 0, null);
+            _routedWindow.OnMessage(msgDlg);
+            _routedWindow = null;
+          }
+
 
 					msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT,pWindow.GetID,0,0,_previousActiveWindowId,0,null);
           pWindow.OnMessage(msg);
