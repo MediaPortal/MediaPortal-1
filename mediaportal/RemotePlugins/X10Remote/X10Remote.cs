@@ -85,12 +85,6 @@ namespace MediaPortal.InputDevices
 
     public void IX10_X10Command(object sender, AxX10._DIX10InterfaceEvents_X10CommandEvent e)
     {
-      if (e.eKeyState.ToString() == "X10KEY_ON" || e.eKeyState.ToString() == "X10KEY_REPEAT")
-      {
-        x10Handler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString()));
-        if (logVerbose)
-          Log.Write("x10Remote: Action mapped");
-      }
       if (logVerbose)
       {
         Log.Write("x10Remote: Command Start --------------------------------------------");
@@ -103,6 +97,21 @@ namespace MediaPortal.InputDevices
         Log.Write("x10Remote: lSequence    = {0}", e.lSequence.ToString());
         Log.Write("x10Remote: varTimestamp = {0}", e.varTimestamp.ToString());
         Log.Write("x10Remote: Command End ----------------------------------------------");
+      }
+
+      if (e.eKeyState.ToString() == "X10KEY_ON" || e.eKeyState.ToString() == "X10KEY_REPEAT")
+      {
+        try
+        {
+          x10Handler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString()));
+          if (logVerbose)
+            Log.Write("x10Remote: Action mapped");
+        }
+        catch (ApplicationException)
+        {
+          if (logVerbose)
+            Log.Write("x10Remote: Action not mapped");
+        }
       }
     }
   }
