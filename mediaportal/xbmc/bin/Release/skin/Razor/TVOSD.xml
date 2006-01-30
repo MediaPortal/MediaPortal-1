@@ -85,7 +85,7 @@
 	<control>		
 		<description>Cover background</description>
 		<type>image</type>
-		<id>102</id>
+		<id>0</id>
 		<posX>36</posX>
 		<posY>487</posY>
 		<texture>osd_cover_back.png</texture>
@@ -109,7 +109,7 @@
 	<control>		
 		<description>Cover glare effect</description>
 		<type>image</type>
-		<id>102</id>
+		<id>0</id>
 		<posX>78</posX>
 		<posY>509</posY>
 		<texture>osd_cover_glare.png</texture>
@@ -185,6 +185,19 @@
 		<align>center</align>
 		<font>font16</font> 
 		<textcolor>FFFFFFFF</textcolor>
+	</control>
+	<control>
+		<description>On tv NEXT</description> 
+		<id>37</id> 
+		<type>textbox</type> 
+		<width>350</width> 
+		<height>30</height>
+		<posX>220</posX> 
+		<posY>430</posY>
+		<align>left</align> 
+		<font>font10</font> 
+		<textcolor>FFFFFFFF</textcolor>
+		<visible>no</visible>
 	</control>
 	<control>
 		<description>Program Button Up</description>

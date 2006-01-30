@@ -67,7 +67,7 @@
 	<control>		
 		<description>Cover background</description>
 		<type>image</type>
-		<id>102</id>
+		<id>0</id>
 		<posX>36</posX>
 		<posY>487</posY>
 		<texture>osd_cover_back.png</texture>
@@ -124,7 +124,7 @@
 	<control>		
 		<description>Cover glare effect</description>
 		<type>image</type>
-		<id>102</id>
+		<id>0</id>
 		<posX>78</posX>
 		<posY>509</posY>
 		<texture>osd_cover_glare.png</texture>
