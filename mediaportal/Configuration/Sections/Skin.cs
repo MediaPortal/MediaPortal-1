@@ -167,13 +167,14 @@ namespace MediaPortal.Configuration.Sections
       this.colVersion = new System.Windows.Forms.ColumnHeader();
       this.previewPictureBox = new System.Windows.Forms.PictureBox();
       this.groupBox1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.previewPictureBox)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.listViewAvailableSkins);
       this.groupBox1.Controls.Add(this.previewPictureBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -185,17 +186,18 @@ namespace MediaPortal.Configuration.Sections
       // 
       // listViewAvailableSkins
       // 
-      this.listViewAvailableSkins.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewAvailableSkins.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewAvailableSkins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                             this.colName,
-                                                                                             this.colVersion});
+            this.colName,
+            this.colVersion});
       this.listViewAvailableSkins.FullRowSelect = true;
       this.listViewAvailableSkins.HideSelection = false;
       this.listViewAvailableSkins.Location = new System.Drawing.Point(16, 24);
       this.listViewAvailableSkins.Name = "listViewAvailableSkins";
-      this.listViewAvailableSkins.Size = new System.Drawing.Size(440, 80);
+      this.listViewAvailableSkins.Size = new System.Drawing.Size(440, 96);
       this.listViewAvailableSkins.TabIndex = 0;
+      this.listViewAvailableSkins.UseCompatibleStateImageBehavior = false;
       this.listViewAvailableSkins.View = System.Windows.Forms.View.Details;
       this.listViewAvailableSkins.SelectedIndexChanged += new System.EventHandler(this.listViewAvailableSkins_SelectedIndexChanged);
       // 
@@ -213,7 +215,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.previewPictureBox.Anchor = System.Windows.Forms.AnchorStyles.None;
       this.previewPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-      this.previewPictureBox.Location = new System.Drawing.Point(86, 132);
+      this.previewPictureBox.Location = new System.Drawing.Point(86, 144);
       this.previewPictureBox.Name = "previewPictureBox";
       this.previewPictureBox.Size = new System.Drawing.Size(300, 240);
       this.previewPictureBox.TabIndex = 2;
@@ -226,6 +228,7 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "Skin";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.previewPictureBox)).EndInit();
       this.ResumeLayout(false);
 
     }
