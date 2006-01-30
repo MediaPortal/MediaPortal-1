@@ -78,6 +78,7 @@ namespace MediaPortal.Player
       m_state = PlayState.Init;
       m_strCurrentFile = strFile;
 
+      VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       Log.Write("AudioPlayerVMR7.play {0}", strFile);
       lock (typeof(AudioPlayerVMR7))
       {

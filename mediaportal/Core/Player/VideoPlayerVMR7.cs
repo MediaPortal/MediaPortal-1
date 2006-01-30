@@ -185,6 +185,7 @@ namespace MediaPortal.Player
       m_bFullScreen=true;
       m_ar=GUIGraphicsContext.ARType;
 
+      VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       _updateNeeded=true;
       Log.Write("VideoPlayer:play {0}", strFile);
       //lock ( typeof(VideoPlayerVMR7) )

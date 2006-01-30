@@ -264,8 +264,10 @@ namespace MediaPortal.GUI.Library
       WINDOW_TV_RECORDED_INFO = 759
      ,
       WINDOW_MY_BURNER = 760
-
      ,
+      WINDOW_DIALOG_TVGUIDE = 761
+
+    ,
       WINDOW_VIRTUAL_KEYBOARD = 10002
      ,
       WINDOW_VIRTUAL_SEARCH_KEYBOARD = 1001,// by Agree

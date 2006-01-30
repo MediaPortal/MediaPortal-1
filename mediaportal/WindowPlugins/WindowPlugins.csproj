@@ -863,6 +863,8 @@
     <Compile Include="GUITV\GUITVGuide.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUITV\GUITvGuideBase.cs" />
+    <Compile Include="GUITV\GUITVGuideDialog.cs" />
     <Compile Include="GUITV\GUITVHome.cs">
       <SubType>Code</SubType>
     </Compile>

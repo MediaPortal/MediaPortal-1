@@ -213,6 +213,7 @@ namespace MediaPortal.Player
 			_mouseMsg  = new ArrayList();
 
 
+      VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       bool result=FirstPlayDvd(file);
       if (!result) 
       {

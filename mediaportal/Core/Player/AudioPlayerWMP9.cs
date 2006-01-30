@@ -199,6 +199,7 @@ namespace MediaPortal.Player
 
       if (_wmp10Player == null) return false;
       if (_wmp10Player.cdromCollection == null) return false;
+      VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
 
       _wmp10Player.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
 
