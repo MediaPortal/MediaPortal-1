@@ -39,39 +39,21 @@
 		<texture>osd_time.png</texture>
 		<visible>yes</visible>
 	</control>
-	<control>
-		<description>TV Progress Bar</description>
-		<type>tvprogress</type>
-		<id>100</id>
-		<posX>-5</posX>
-		<posY>497</posY>
-		<width>1308</width>
-		<height>40</height>
-		<toptexture>osd_progress_indicator.png</toptexture>
-		<TextureOffsetY>22</TextureOffsetY>
-		<bottomtexture>-</bottomtexture>
-		<texturetick>-</texturetick>
-		<lefttexture></lefttexture>
-		<midtexture>-</midtexture>
-		<righttexture>-</righttexture>
-		<logotexture>-</logotexture>
-		<fillbackgroundtexture>-</fillbackgroundtexture>
-		<fillbgxoff>0</fillbgxoff>
-		<fillbgyoff>10</fillbgyoff>
-		<filltexture1></filltexture1>
-		<filltexture2>osd_progress_mid.png</filltexture2>
-		<filltexture3>osd_progress_mid_orange.png</filltexture3>
-		<fillheight>40</fillheight>
-		<visible>yes</visible>
-		<label>#TV.Record.percent1</label>
-		<label1>#TV.Record.percent2</label1>
-		<label2>#TV.Record.percent3</label2>
-		<startlabel></startlabel>
-		<endlabel></endlabel>
-		<toplabel></toplabel>
-		<font>font13</font>
-		<textcolor>FF000000</textcolor>
-	</control>
+    <control>
+        <description>Progress Bar</description>
+        <type>progress</type>
+        <id>1</id>
+        <posX>-8</posX>
+        <posY>503</posY>
+        <width>1308</width>
+        <height>20</height>
+        <texturebg></texturebg>
+        <lefttexture>osd_progress_left.png</lefttexture>
+        <midtexture>osd_progress_mid.png</midtexture>
+        <righttexture>osd_progress_right.png</righttexture>
+        <visible>yes</visible>
+        <label>#TV.View.Percentage</label>
+    </control>
 	<control>
 		<description>background2</description>
 		<type>image</type>
