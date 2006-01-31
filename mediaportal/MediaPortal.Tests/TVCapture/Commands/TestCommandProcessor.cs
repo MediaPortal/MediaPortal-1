@@ -11,6 +11,32 @@ namespace MediaPortal.Tests.Commands
   [TestFixture]
   public class TestCommandProcessor
   {
+    #region dummy command
+    public class DummyCommand : CardCommand
+    {
+      bool _executed = false;
+      public bool Executed
+      {
+        get { return _executed; }
+      }
+      public override void Execute(CommandProcessor handler)
+      {
+        _executed = true;
+      }
+    }
+    #endregion
+
+    [Test]
+    public void TestDummyCommand()
+    {
+      DummyCommand cmd = new DummyCommand();
+      Assert.IsFalse(cmd.Executed);
+      CommandProcessor proc = new CommandProcessor();
+      proc.AddCommand(cmd);
+      proc.ProcessCommands();
+      Assert.IsTrue(cmd.Executed);
+    }
+
     [Test]
     public void TestCheckRecordingsCommand()
     {
