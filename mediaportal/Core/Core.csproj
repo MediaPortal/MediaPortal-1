@@ -1839,6 +1839,7 @@
     <Compile Include="Util\DirectoryHistory.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\DvrMsImageGrabber.cs" />
     <Compile Include="Util\ExifExtractor.cs">
       <SubType>Code</SubType>
     </Compile>

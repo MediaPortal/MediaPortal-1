@@ -23,6 +23,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Dialogs;
@@ -70,6 +71,7 @@ namespace MediaPortal.GUI.TV
     bool _deleteWatchedShows = false;
     int m_iSelectedItem = 0;
     string currentShow = String.Empty;
+    bool _creatingThumbNails = false;
 
     [SkinControlAttribute(2)]
     protected GUIButtonControl btnViewAs = null;
@@ -255,6 +257,7 @@ namespace MediaPortal.GUI.TV
       GUIControl.SelectItemControl(GetID, listAlbums.GetID, m_iSelectedItem);
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
+      CreateThumbnails();
     }
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
@@ -451,10 +454,14 @@ namespace MediaPortal.GUI.TV
             GUIListItem item = new GUIListItem();
             item.Label = rec.Title;
             item.TVTag = rec;
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+            string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
             if (!System.IO.File.Exists(strLogo))
             {
-              strLogo = "defaultVideoBig.png";
+              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+              if (!System.IO.File.Exists(strLogo))
+              {
+                strLogo = "defaultVideoBig.png";
+              }
             }
             item.ThumbnailImage = strLogo;
             item.IconImageBig = strLogo;
@@ -477,10 +484,14 @@ namespace MediaPortal.GUI.TV
             item = new GUIListItem();
             item.Label = rec.Title;
             item.TVTag = rec;
-            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+            string strLogo = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
             if (!System.IO.File.Exists(strLogo))
             {
-              strLogo = "defaultVideoBig.png";
+              strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.Channel);
+              if (!System.IO.File.Exists(strLogo))
+              {
+                strLogo = "defaultVideoBig.png";
+              }
             }
             item.ThumbnailImage = strLogo;
             item.IconImageBig = strLogo;
@@ -993,6 +1004,41 @@ namespace MediaPortal.GUI.TV
     {
       m_bSortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
       OnSort();
+    }
+    void CreateThumbnails()
+    {
+      if (_creatingThumbNails) return;
+      Thread WorkerThread = new Thread(new ThreadStart(WorkerThreadFunction));
+      WorkerThread.SetApartmentState(ApartmentState.STA);
+      WorkerThread.IsBackground = true;
+      WorkerThread.Priority = ThreadPriority.BelowNormal;
+      WorkerThread.Start();
+    }
+
+    void WorkerThreadFunction()
+    {
+      if (_creatingThumbNails) return;
+      try
+      {
+        _creatingThumbNails = true;
+        List<TVRecorded> recordings = new List<TVRecorded>();
+        TVDatabase.GetRecordedTV(ref recordings);
+        foreach (TVRecorded rec in recordings)
+        {
+          string thumbNail = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
+          if (!System.IO.File.Exists(thumbNail))
+          {
+            using (DvrMsImageGrabber grab = new DvrMsImageGrabber(rec.FileName))
+            {
+              grab.GrabFrame(5, thumbNail, System.Drawing.Imaging.ImageFormat.Jpeg, 128, 128);
+            }
+          }
+        }
+      }
+      finally
+      {
+        _creatingThumbNails = false;
+      }
     }
   }
 }
