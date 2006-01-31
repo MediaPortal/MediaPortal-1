@@ -49,17 +49,26 @@ namespace MediaPortal.Util
     {
       try
       {
+        if (!System.IO.File.Exists(fileName)) return false;
         Utils.FileDelete("temp.bmp");
+        Log.Write("dvrms:create thumbnail for {0}", fileName);
         GrabBitmaps(fileName);
 
-        if (!System.IO.File.Exists("temp.bmp")) return false;
+        if (!System.IO.File.Exists("temp.bmp"))
+        {
+          Log.Write("dvrms:failed to create thumbnail for {0}", fileName);
+          return false;
+        }
         using (Image bmp = Image.FromFile("temp.bmp"))
         {
           int arx = bmp.Width;
           int ary = bmp.Height;
+
           //keep aspect ratio:-)
           float ar = ((float)ary) / ((float)arx);
           height = (int)(((float)width) * ar);
+
+          Log.Write("dvrms:scale thumbnail {0}x{1}->{2}x{3}", arx,ary,width,height);
           using (Bitmap result = new Bitmap(width, height))
           {
             using (Graphics g = Graphics.FromImage(result))
@@ -71,8 +80,9 @@ namespace MediaPortal.Util
           }
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        Log.WriteFile(Log.LogType.Error,"dvrms:failed to create thumbnail for {0} {1} {2} {3}", fileName,ex.Message,ex.Source,ex.StackTrace);
         return false;
       }
     }

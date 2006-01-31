@@ -88,6 +88,7 @@ public:
     {
       try
       {
+		  Log("grab:callback");
         //
         // Convert the buffer into a bitmap
         //
@@ -102,7 +103,7 @@ public:
             return 0;
         }
 
-        Log("Found a sample at time %ld ms\t[%s]",   long( SampleTime * 1000 ), szFilename );
+        Log("grab:Found a sample at time %ld ms\t[%s]",   long( SampleTime * 1000 ), szFilename );
 
         // Write out the file header
         //
@@ -137,7 +138,7 @@ public:
       }
       catch(...)
       {
-        Log("bufferCb: exception");
+		  Log("grab:bufferCb: exception");
       }
         return 0;
     }
@@ -160,14 +161,14 @@ int GrabBitmaps(TCHAR * szFile )
     if (!szFile)
         return -1;
 
-    Log("Grabbing bitmaps from %s.", szFile);
+	Log("grab: bitmaps from %s.", szFile);
 
     // Create the sample grabber
     //
     pGrabber.CoCreateInstance( CLSID_SampleGrabber );
     if( !pGrabber )
     {
-        Log("Could not create CLSID_SampleGrabber" );
+        Log("grab:Could not create CLSID_SampleGrabber" );
         return -1;
     }
     CComQIPtr< IBaseFilter, &IID_IBaseFilter > pGrabberBase( pGrabber );
@@ -177,7 +178,7 @@ int GrabBitmaps(TCHAR * szFile )
     pSource.CoCreateInstance( CLSID_StreamBufferSource   );//CLSID_AsyncReader
     if( !pSource )
     {
-        Log("Could not create source filter") ;
+        Log("grab:Could not create source filter") ;
         return -1;
     }
 
@@ -186,7 +187,7 @@ int GrabBitmaps(TCHAR * szFile )
     pGraph.CoCreateInstance( CLSID_FilterGraph );
     if( !pGraph )
     {
-        Log("Could not not create the graph" );
+        Log("grab:Could not not create the graph" );
         return -1;
     }
 
@@ -194,15 +195,23 @@ int GrabBitmaps(TCHAR * szFile )
   // Put them in the graph
     //
     hr = pGraph->AddFilter( pSource, L"Source" );
+	if (!SUCCEEDED(hr))
+	{
+        Log("grab:Could add streambuffersource to grab" );
+	}
     hr = pGraph->AddFilter( pGrabberBase, L"Grabber" );
 
+	if (!SUCCEEDED(hr))
+	{
+        Log("grab:Could add samplegrabber to grab" );
+	}
     // Load the source
     //
     CComQIPtr< IFileSourceFilter, &IID_IFileSourceFilter > pLoad( pSource );
     hr = pLoad->Load( T2W( szFile ), NULL );
     if( FAILED( hr ) )
     {
-        Log("Could not load the media file") ;
+        Log("grab:Could not load the media file") ;
         return -1;
     }
 
@@ -214,6 +223,10 @@ int GrabBitmaps(TCHAR * szFile )
     GrabType.SetSubtype( &MEDIASUBTYPE_RGB24);//&MEDIASUBTYPE_RGB24 );
     hr = pGrabber->SetMediaType( &GrabType );
 
+	if (!SUCCEEDED(hr))
+	{
+        Log("grab:Could set media type on samplegrabber" );
+	}
     // Get the output pin and the input pin
     //
     CComPtr< IPin > pSourcePin;
@@ -227,7 +240,7 @@ int GrabBitmaps(TCHAR * szFile )
     hr = pGraph->Connect( pSourcePin, pGrabPin );
     if( FAILED( hr ) )
     {
-        Log("Could not connect source filter to grabber" );
+        Log("grab:Could not connect source filter to grabber" );
         return -1;
     }
 
@@ -251,7 +264,7 @@ int GrabBitmaps(TCHAR * szFile )
     hr = pGraph->Render( pGrabOutPin );
     if( FAILED( hr ) )
     {
-        Log("Could not render grabber output pin" );
+        Log("grab:Could not render grabber output pin" );
         return -1;
     }
 
@@ -288,30 +301,41 @@ int GrabBitmaps(TCHAR * szFile )
     mediaFilt->SetSyncSource(NULL);
    // for( int i = 0 ; i < NUM_FRAMES_TO_GRAB ; i++ )
     {
-    
-        // set position
-        REFERENCE_TIME Start = (30) * UNITS;
-        hr = pSeeking->SetPositions( &Start, AM_SEEKING_AbsolutePositioning, NULL, AM_SEEKING_NoPositioning );
 
-        // activate the threads
-        CComQIPtr< IMediaControl, &IID_IMediaControl > pControl( pGraph );
-        hr = pControl->Run( );
+		
+		Log("grab:seek.");
+		REFERENCE_TIME Start = (30) * UNITS;
 
-        // wait for the graph to settle
-        CComQIPtr< IMediaEvent, &IID_IMediaEvent > pEvent( pGraph );
-        long EvCode = 0;
+		// set position
+		LONGLONG duration;
+		pSeeking->GetDuration(&duration);
+		if ( duration > (10*60*UNITS) )
+			Start = (10*60*UNITS) ;
 
-        hr = pEvent->WaitForCompletion( INFINITE, &EvCode );
-        
-        // callback wrote the sample
-        pControl->Stop();
-    }
+		hr = pSeeking->SetPositions( &Start, AM_SEEKING_AbsolutePositioning, NULL, AM_SEEKING_NoPositioning );
 
-    Log("Sample grabbing complete.");
+		Log("grab:run.");
+		// activate the threads
+		CComQIPtr< IMediaControl, &IID_IMediaControl > pControl( pGraph );
+		hr = pControl->Run( );
+
+		Log("grab:wait.");
+		// wait for the graph to settle
+		CComQIPtr< IMediaEvent, &IID_IMediaEvent > pEvent( pGraph );
+		long EvCode = 0;
+
+		hr = pEvent->WaitForCompletion( INFINITE, &EvCode );
+
+		Log("grab:done.");
+		// callback wrote the sample
+		pControl->Stop();
+		}
+
+		Log("Sample grabbing complete.");
   }
   catch(...)
   {
-    Log("Sample grabbing exception.");
+	  Log("grab:exception.");
   }
   return 0;
 }
