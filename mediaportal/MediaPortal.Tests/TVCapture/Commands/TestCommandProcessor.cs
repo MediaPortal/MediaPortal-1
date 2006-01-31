@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
@@ -26,6 +27,18 @@ namespace MediaPortal.Tests.Commands
     }
     #endregion
 
+    [SetUp]
+    public void Init()
+    {
+      TVChannel ch;
+      TVDatabase.ClearAll();
+
+      // add 3 channels
+      ch = new TVChannel("RTL 4"); TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL 5"); TVDatabase.AddChannel(ch);
+      ch = new TVChannel("SBS 6"); TVDatabase.AddChannel(ch);
+    }
+
     [Test]
     public void TestDummyCommand()
     {
@@ -44,7 +57,7 @@ namespace MediaPortal.Tests.Commands
       proc.scheduler.UpdateTimer();
       Assert.IsFalse(proc.scheduler.TimeToProcessRecordings);
 
-      proc.AddCommand( new CheckRecordingsCommand());
+      proc.AddCommand(new CheckRecordingsCommand());
       proc.ProcessCommands();
 
       Assert.IsTrue(proc.scheduler.TimeToProcessRecordings);
@@ -59,6 +72,39 @@ namespace MediaPortal.Tests.Commands
       Assert.IsTrue(proc.IsBusy);
       proc.ProcessCommands();
       Assert.IsFalse(proc.IsBusy);
+    }
+
+
+    [Test]
+    public void TestViewTv()
+    {
+      string channelName = "RTL 4";
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+
+      //lets watch TV
+      proc.AddCommand(new ViewTvCommand(channelName));
+      proc.ProcessCommands();
+      Assert.AreEqual(proc.CurrentCardIndex, 0);
+      Assert.AreEqual(proc.TVChannelName, channelName);
+      Assert.AreEqual(card1.TVChannel, channelName);
+      Assert.IsTrue(card1.View);
+
+      //switch channels
+      channelName = "RTL 5";
+      proc.AddCommand(new ViewTvCommand(channelName));
+      proc.ProcessCommands();
+      Assert.AreEqual(proc.TVChannelName, channelName);
+      Assert.AreEqual(card1.TVChannel, channelName);
+      Assert.IsTrue(card1.View);
+
+      //lets stop TV
+      proc.AddCommand(new StopTvCommand());
+      proc.ProcessCommands();
+      Assert.AreEqual(proc.CurrentCardIndex, -1);
+      Assert.AreEqual(proc.TVChannelName, "");
+      Assert.AreEqual(card1.TVChannel, "");
+      Assert.IsFalse(card1.View);
     }
   }
 }

@@ -71,7 +71,7 @@ namespace MediaPortal.TV.Recording
         return new SinkGraphEx(card);
       }
 
-      return null;
+      return new DummyGraph(card);
     }
 	}
 }

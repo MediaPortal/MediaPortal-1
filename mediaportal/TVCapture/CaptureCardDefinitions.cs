@@ -33,6 +33,7 @@ namespace TVCapture
     Digital_BDA,
     Analog,
     Analog_MCE,
+    Dummy,
   }
   public class CapabilityDefinition
   {

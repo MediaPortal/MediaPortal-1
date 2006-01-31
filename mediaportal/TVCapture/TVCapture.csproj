@@ -242,6 +242,7 @@
     <Compile Include="CommandProcessor\TvCardCollection.cs" />
     <Compile Include="CommandProcessor\Commands\ViewTvCommand.cs" />
     <Compile Include="DiskManagement\RecordingImporterWorker.cs" />
+    <Compile Include="DummyGraph.cs" />
     <Compile Include="EPG\AtscEvent.cs" />
     <Compile Include="EPG\EpgChannel.cs" />
     <Compile Include="EPG\EpgChannelUpdate.cs" />

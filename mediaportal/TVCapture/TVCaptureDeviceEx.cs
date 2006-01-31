@@ -1020,6 +1020,7 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, "TVCapture.DeleteGraph() Card:{0}", ID);
         _currentGraph.DeleteGraph();
         _currentGraph = null;
+        _currentTvChannelName = "";
       }
       _currentGraphState = State.Initialized;
       return true;

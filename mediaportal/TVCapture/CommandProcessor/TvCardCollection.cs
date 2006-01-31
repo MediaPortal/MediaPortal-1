@@ -102,6 +102,17 @@ namespace MediaPortal.TV.Recording
       }
 
     }
+    public TVCaptureDevice AddDummyCard(string name)
+    {
+      TVCaptureDevice dev = new TVCaptureDevice();
+      dev.CommercialName = name;
+      dev.FriendlyName = name;
+      dev.CardType = TVCapture.CardTypes.Dummy;
+      dev.ID = _tvcards.Count + 1;
+      dev.RecordingPath=@"C:";
+      _tvcards.Add(dev);
+      return dev;
+    }
     
     public int Count
     {
