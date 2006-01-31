@@ -404,38 +404,6 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Hauppage Nova-T" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_100513c2&amp;rev_01">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
-    <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
-      <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
-        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-T Tuner"        checkdevice="true"/>
-        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"/>
-      </filters>
-      <connections>
-		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
-		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture" sinkpin="0"/>
-      </connections>
-    </tv>
-  </capturecard>
-
-  <capturecard commercialname="Hauppage Nova-T" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_101213c2&amp;rev_01">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
-    <tv>
-      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
-      <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"    checkdevice="false"/>
-        <filter cat="tunerdevice"     name="TechnoTrend BDA/DVB-T Tuner"        checkdevice="true"/>
-        <filter cat="capture"         name="TechnoTrend BDA/DVB Capture"        checkdevice="true"/>
-      </filters>
-      <connections>
-		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
-		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture" sinkpin="0"/>
-      </connections>
-    </tv>
-  </capturecard>
-
   <capturecard commercialname="Hauppage Nova-S" capturename="TechnoTrend BDA/DVB Capture" devid="ven_1131&amp;dev_7146&amp;subsys_100f13c2&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
