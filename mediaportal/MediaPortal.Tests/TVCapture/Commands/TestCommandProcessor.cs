@@ -23,5 +23,16 @@ namespace MediaPortal.Tests.Commands
 
       Assert.IsTrue(proc.scheduler.TimeToProcessRecordings);
     }
+
+    [Test]
+    public void TestIsBusy()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      Assert.IsFalse(proc.IsBusy);
+      proc.AddCommand(new CheckRecordingsCommand());
+      Assert.IsTrue(proc.IsBusy);
+      proc.ProcessCommands();
+      Assert.IsFalse(proc.IsBusy);
+    }
   }
 }
