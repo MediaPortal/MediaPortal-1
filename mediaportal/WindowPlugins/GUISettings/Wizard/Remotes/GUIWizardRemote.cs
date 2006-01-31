@@ -1,11 +1,33 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 using System;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Settings.Wizard
 {
-  /// <summary>
-  /// Summary description for Class1.
-  /// </summary>
   public class GUIWizardRemote : GUIWindow
   {
     [SkinControlAttribute(4)]
@@ -27,22 +49,26 @@ namespace MediaPortal.GUI.Settings.Wizard
     [SkinControlAttribute(10)]
     protected GUIImage imgRemote = null;
 
+
     public GUIWizardRemote()
     {
-
       GetID = (int)GUIWindow.Window.WINDOW_WIZARD_REMOTE;
     }
+
 
     public override bool Init()
     {
       return Load(GUIGraphicsContext.Skin + @"\wizard_remote_control.xml");
     }
+
+
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
       LoadSettings();
       GUIControl.FocusControl(GetID, btnNext.GetID);
     }
+
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
@@ -57,6 +83,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       base.OnClicked(controlId, control, actionType);
     }
 
+
     void OnMicrosoftUSA()
     {
       cmMicrosoftUSA.Selected = true;
@@ -68,6 +95,8 @@ namespace MediaPortal.GUI.Settings.Wizard
       imgRemote.SetFileName(@"Wizards\remote_mce_us.png");
       GUIControl.FocusControl(GetID, cmMicrosoftUSA.GetID);
     }
+
+
     void OnMicrosoftEU()
     {
       cmMicrosoftUSA.Selected = false;
@@ -79,6 +108,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       imgRemote.SetFileName(@"Wizards\remote_mce_eu.png");
       GUIControl.FocusControl(GetID, cmMicrosoftEU.GetID);
     }
+
 
     void OnHauppauge()
     {
@@ -92,6 +122,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       GUIControl.FocusControl(GetID, cmHauppauge.GetID);
     }
 
+
     void OnX10()
     {
       cmMicrosoftUSA.Selected = false;
@@ -103,6 +134,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       imgRemote.SetFileName(@"Wizards\remote_x10.png");
       GUIControl.FocusControl(GetID, cmX10.GetID);
     }
+
 
     void OnFireDTV()
     {
@@ -116,6 +148,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       GUIControl.FocusControl(GetID, cmFireDTV.GetID);
     }
 
+
     void OnOther()
     {
       cmMicrosoftUSA.Selected = false;
@@ -127,6 +160,8 @@ namespace MediaPortal.GUI.Settings.Wizard
       imgRemote.SetFileName("");
       GUIControl.FocusControl(GetID, cmOther.GetID);
     }
+
+
     void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
@@ -144,9 +179,10 @@ namespace MediaPortal.GUI.Settings.Wizard
         else OnOther();
       }
     }
+
+
     void OnNextPage()
     {
-
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("remote", "mce2005", (cmMicrosoftUSA.Selected || cmMicrosoftEU.Selected));
