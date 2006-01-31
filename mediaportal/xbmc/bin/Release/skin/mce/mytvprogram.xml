@@ -98,7 +98,7 @@
 			<type>label</type>
 			<id>11</id>
 			<posX>260</posX>
-			<posY>240</posY>
+			<posY>324</posY>
 			<label>1041</label>
 			<align>left</align>
 			<font>font13</font>
@@ -109,9 +109,9 @@
 			<type>listcontrol</type>
 			<id>10</id>
 			<posX>260</posX>
-			<posY>260</posY>
+			<posY>350</posY>
 			<width>450</width>
-			<height>250</height>		
+			<height>210</height>		
 			<textXOff>50</textXOff>
 			<textYOff>2</textYOff>
 			<textXOff2>420</textXOff2>
@@ -122,7 +122,7 @@
 			<IconYOff>8</IconYOff>
 			<PinIconXOff>45</PinIconXOff>
 			<PinIconYOff>19</PinIconYOff>
-			<spinPosX>580</spinPosX>
+			<spinPosX>590</spinPosX>
 			<spinPosY>530</spinPosY>		
 			<itemWidth>35</itemWidth>
 			<itemHeight>35</itemHeight>
@@ -166,9 +166,9 @@
 			<type>textboxscrollup</type>
 			<id>15</id>
 			<posX>260</posX>
-			<posY>140</posY>
+			<posY>142</posY>
 			<width>430</width> 
-			<height>200</height> 
+			<height>175</height> 
 			<label>#TV.RecordedTV.Description</label>
 			<font>font13</font>
 			<textcolor>FFFFFFFF</textcolor>
