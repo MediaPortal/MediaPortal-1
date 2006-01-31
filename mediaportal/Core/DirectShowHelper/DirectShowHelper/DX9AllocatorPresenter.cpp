@@ -19,7 +19,25 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include "StdAfx.h"
+
+// Windows Header Files:
+#include <windows.h>
+
+#include <streams.h>
+#include <stdio.h>
+#include <atlbase.h>
+
+#include <mmsystem.h>
+#include <d3d9.h>
+#include <d3dx9.h>
+#include <d3d9types.h>
+#include <strsafe.h>
+#include <dshow.h>
+#include <vmr9.h>
+#include <sbe.h>
+#include <dxva.h>
+#include <dvdmedia.h>
+
 #include "dx9allocatorpresenter.h"
 
 void Log(const char *fmt, ...) ;
@@ -33,6 +51,7 @@ CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevic
 	m_pCallback=callback;
 	m_surfaceCount=0;
 	m_bfirstFrame=true;
+  m_UseOffScreenSurface=false;
 }
 
 CVMR9AllocatorPresenter::~CVMR9AllocatorPresenter()
@@ -45,7 +64,10 @@ CVMR9AllocatorPresenter::~CVMR9AllocatorPresenter()
     }
 
 }	
-
+void CVMR9AllocatorPresenter::UseOffScreenSurface(bool yesNo)
+{
+  m_UseOffScreenSurface=yesNo;
+}
 
 // IUnknown
 HRESULT CVMR9AllocatorPresenter::QueryInterface( 
@@ -114,6 +136,8 @@ STDMETHODIMP CVMR9AllocatorPresenter::InitializeDevice(DWORD_PTR dwUserID, VMR9A
 			((char)(lpAllocInfo->Format>>8)&0xff),
 			((char)(lpAllocInfo->Format>>16)&0xff),
 			((char)(lpAllocInfo->Format>>24)&0xff));
+  if (m_UseOffScreenSurface)
+    lpAllocInfo->dwFlags =VMR9AllocFlag_OffscreenSurface;
 	// StretchRect's yv12 -> rgb conversion looks horribly bright compared to the result of yuy2 -> rgb
 /*
 	if(lpAllocInfo->Format == '21VY')

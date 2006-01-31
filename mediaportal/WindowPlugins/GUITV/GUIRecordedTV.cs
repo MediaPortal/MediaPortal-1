@@ -1028,10 +1028,7 @@ namespace MediaPortal.GUI.TV
           string thumbNail = System.IO.Path.ChangeExtension(rec.FileName, ".jpg");
           if (!System.IO.File.Exists(thumbNail))
           {
-            using (DvrMsImageGrabber grab = new DvrMsImageGrabber(rec.FileName))
-            {
-              grab.GrabFrame(5, thumbNail, System.Drawing.Imaging.ImageFormat.Jpeg, 128, 128);
-            }
+              DvrMsImageGrabber.GrabFrame(rec.FileName, thumbNail, System.Drawing.Imaging.ImageFormat.Jpeg, 128, 128);
           }
         }
       }

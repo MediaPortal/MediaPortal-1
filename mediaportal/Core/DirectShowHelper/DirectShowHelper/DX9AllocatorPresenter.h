@@ -1,5 +1,5 @@
 #pragma once
-#include "stdafx.h"
+
 #pragma warning(push, 2)
 #pragma warning(disable : 4995)
 
@@ -22,6 +22,7 @@ class CVMR9AllocatorPresenter
 public:
 	CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevice,IVMR9Callback* callback,HMONITOR monitor);
     virtual ~CVMR9AllocatorPresenter();
+    void UseOffScreenSurface(bool yesNo);
 
     // IVMRSurfaceAllocator9
     virtual HRESULT STDMETHODCALLTYPE  InitializeDevice(DWORD_PTR dwUserID, VMR9AllocationInfo* lpAllocInfo, DWORD* lpNumBuffers);
@@ -67,4 +68,5 @@ protected:
 	long   previousEndFrame;
 	D3DTEXTUREFILTERTYPE m_Filter;
 	bool m_bfirstFrame;
+  bool m_UseOffScreenSurface;
 };

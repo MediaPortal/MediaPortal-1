@@ -21,7 +21,24 @@
  */
 
 
-#include "stdafx.h"
+// Windows Header Files:
+#include <windows.h>
+
+#include <streams.h>
+#include <stdio.h>
+#include <atlbase.h>
+
+#include <mmsystem.h>
+#include <d3d9.h>
+#include <d3dx9.h>
+#include <d3d9types.h>
+#include <strsafe.h>
+#include <dshow.h>
+#include <vmr9.h>
+#include <sbe.h>
+#include <dxva.h>
+#include <dvdmedia.h>
+
 #include "dshowhelper.h"
 #include "DX9AllocatorPresenter.h"
 #include <map>
@@ -63,15 +80,22 @@ Cdshowhelper::Cdshowhelper()
 	return; 
 }
 
-LPDIRECT3DDEVICE9			m_pDevice=NULL;
-CVMR9AllocatorPresenter*	vmr9Presenter=NULL;
-IBaseFilter*				m_pVMR9Filter=NULL;
-IVMRSurfaceAllocator9*		g_allocator=NULL;
-LONG						m_iRecordingId=0;
+LPDIRECT3DDEVICE9			    m_pDevice=NULL;
+CVMR9AllocatorPresenter*	m_vmr9Presenter=NULL;
+IBaseFilter*				      m_pVMR9Filter=NULL;
+IVMRSurfaceAllocator9*		m_allocator=NULL;
+
+LONG						          m_iRecordingId=0;
 
 map<int,IStreamBufferRecordControl*> m_mapRecordControl;
 typedef map<int,IStreamBufferRecordControl*>::iterator imapRecordControl;
+
+
+
+
 #define MY_USER_ID 0x6ABE51
+#define MY_USER_ID2 0x6ABE52
+
 #define IsInterlaced(x) ((x) & AMINTERLACE_IsInterlaced)
 #define IsSingleField(x) ((x) & AMINTERLACE_1FieldPerSample)
 #define IsField1First(x) ((x) & AMINTERLACE_Field1First)
@@ -159,37 +183,39 @@ BOOL Vmr9Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filte
 	if(!pSAN)
 		return FALSE;
 
-	vmr9Presenter = new CVMR9AllocatorPresenter( m_pDevice, callback,(HMONITOR)monitor) ;
-	vmr9Presenter->QueryInterface(IID_IVMRSurfaceAllocator9,(void**)&g_allocator);
+	m_vmr9Presenter = new CVMR9AllocatorPresenter( m_pDevice, callback,(HMONITOR)monitor) ;
+	m_vmr9Presenter->QueryInterface(IID_IVMRSurfaceAllocator9,(void**)&m_allocator);
 
-	if(FAILED(hr = pSAN->AdviseSurfaceAllocator(MY_USER_ID, g_allocator)))
+	if(FAILED(hr = pSAN->AdviseSurfaceAllocator(MY_USER_ID, m_allocator)))
 	{
 		Log("Vmr9:Init() AdviseSurfaceAllocator() failed 0x:%x",hr);
 		return FALSE;
 	}
-	if (FAILED(hr = g_allocator->AdviseNotify(pSAN)))
+	if (FAILED(hr = m_allocator->AdviseNotify(pSAN)))
 	{
 		Log("Vmr9:Init() AdviseNotify() failed 0x:%x",hr);
 		return FALSE;
 	}
 	return TRUE;
 }
+
+
 void Vmr9Deinit()
 {
 
 	int hr;
-	if (g_allocator!=NULL)
+	if (m_allocator!=NULL)
 	{
-		hr=g_allocator->Release();
-		g_allocator=NULL;
+		hr=m_allocator->Release();
+		m_allocator=NULL;
 		Log("Vmr9Deinit:allocator release:%d", hr);
 	}
-	if (vmr9Presenter!=NULL)
+	if (m_vmr9Presenter!=NULL)
 	{
-		delete vmr9Presenter;
-		Log("Vmr9Deinit:vmr9Presenter release:%d", hr);
+		delete m_vmr9Presenter;
+		Log("Vmr9Deinit:m_vmr9Presenter release:%d", hr);
 	}
-	vmr9Presenter=NULL;
+	m_vmr9Presenter=NULL;
 
 	m_pDevice=NULL;
 	m_pVMR9Filter=NULL;
