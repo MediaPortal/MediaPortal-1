@@ -63,12 +63,19 @@ namespace MediaPortal
     }
 
     /// <summary>
+    /// Determine if the Splash has been closed
+    /// </summary>
+    public bool isStopped()
+    {
+        return (frm == null);
+    }
+    /// <summary>
     /// Set the contents of the information label of the splash screen
     /// </summary>
     /// <param name="information">the information to set</param>
     public void SetInformation(string information)
     {
-      info = information;
+        info = information;
     }
 
     /// <summary>
@@ -95,6 +102,7 @@ namespace MediaPortal
       }
       frm.FadeOut();
       frm.Close();  //closes, and disposes the form
+      frm = null;
     }
 
     /// <summary>

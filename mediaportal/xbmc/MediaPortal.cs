@@ -631,10 +631,15 @@ public class MediaPortalApp : D3DApp, IRender
     //
     if (splashScreen != null)
     {
-      splashScreen.Stop();
-      splashScreen = null;
+        splashScreen.Stop();
+        this.Activate();
+        while (!splashScreen.isStopped())
+        {
+            Thread.Sleep(100);
+        }
+        splashScreen = null;
     }
-  }
+}
 
 
   /// <summary>
@@ -1518,7 +1523,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIWindow window = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
       if (window != null)
       {
-        Action action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
+          Action action = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
         action.MouseButton = e.Button;
         GUIGraphicsContext.OnAction(action);
       }
