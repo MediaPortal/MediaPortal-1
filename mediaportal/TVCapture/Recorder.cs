@@ -121,6 +121,7 @@ namespace MediaPortal.TV.Recording
       _state = State.Initializing;
       RecorderProperties.Init();
       _commandProcessor = new CommandProcessor();
+      _commandProcessor.Start();
        
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {

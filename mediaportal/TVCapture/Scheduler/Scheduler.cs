@@ -92,6 +92,10 @@ namespace MediaPortal.TV.Recording
     {
       _scheduleTimer = DateTime.MinValue;
     }
+    public void UpdateTimer()
+    {
+      _scheduleTimer = DateTime.Now;
+    }
     void ReloadRecordingList(CommandProcessor handler)
     {
       // then get (refresh) all recordings from the database
@@ -131,11 +135,19 @@ namespace MediaPortal.TV.Recording
       oldRecs = null;
     }
 
+    public bool TimeToProcessRecordings
+    {
+      get
+      {
+        TimeSpan ts = DateTime.Now - _scheduleTimer;
+        if (ts.TotalSeconds < 10) return false;
+        return true;
+      }
+    }
     public void Process(CommandProcessor handler)
     {
-      TimeSpan ts = DateTime.Now - _scheduleTimer;
-      if (ts.TotalSeconds < 10) return;
-      _scheduleTimer = DateTime.Now;
+      if (!TimeToProcessRecordings) return;
+      UpdateTimer();
 
       DateTime dtCurrentTime = DateTime.Now;
       // If the scheduled recordings have been changed,deleted or added since last time

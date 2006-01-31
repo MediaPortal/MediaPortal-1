@@ -70,7 +70,11 @@ namespace MediaPortal.TV.Recording
       _epgProcessor = new EPGProcessor();
       _scheduler = new Scheduler();
 
-      //start the processing thread
+    }
+
+    //start the processing thread
+    public void Start()
+    {
       _isRunning = true;
       _isStopped = false;
       _processThread = new BackgroundWorker();
@@ -164,7 +168,7 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        return scheduler;
+        return _scheduler;
       }
     }
     public TvCardCollection TVCards
@@ -204,32 +208,44 @@ namespace MediaPortal.TV.Recording
     #region private members
     void ProcessThread(object sender, DoWorkEventArgs e)
     {
-      System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
-      while (_isRunning)
+      try
       {
-        if (_listCommands.Count == 0)
-          System.Threading.Thread.Sleep(500);
-        if (_isPaused) continue;
-
-        lock (_listCommands)
+        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+        while (_isRunning)
         {
-          if (_listCommands.Count > 0)
-          {
-            foreach (CardCommand cmd in _listCommands)
-            {
-              cmd.Execute(this);
-              LogTvStatistics();
-            }
-            _listCommands.Clear();
-          }
-        }
-        ProcessCards();
+          if (_listCommands.Count == 0)
+            System.Threading.Thread.Sleep(500);
+          if (_isPaused) continue;
 
-        _epgProcessor.Process(this);
-        _scheduler.Process(this);
+          ProcessCommands();
+          ProcessCards();
+
+          _epgProcessor.Process(this);
+          _scheduler.Process(this);
+        }
+        StopAllCards();
       }
-      StopAllCards();
+      catch (Exception ex)
+      {
+        Log.Write("{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+      }
       _isStopped = true;
+    }
+
+    public void ProcessCommands()
+    {
+      lock (_listCommands)
+      {
+        if (_listCommands.Count > 0)
+        {
+          foreach (CardCommand cmd in _listCommands)
+          {
+            cmd.Execute(this);
+            LogTvStatistics();
+          }
+          _listCommands.Clear();
+        }
+      }
     }
 
     void StopAllCards()

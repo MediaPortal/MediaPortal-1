@@ -46,7 +46,6 @@ namespace MediaPortal.TV.Recording
   {
     public override void Execute(CommandProcessor handler)
     {
-      if (handler.TVCards.Count == 0) return;
       Log.WriteFile(Log.LogType.Recorder, "Command:CheckRecordingsCommand");
       handler.scheduler.ResetTimer();
     }
