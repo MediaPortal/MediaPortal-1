@@ -77,22 +77,22 @@ namespace MediaPortal.Player
 
       string[] exts = GetAllSupportedExtensions();
 
-      StringBuilder strExts = new StringBuilder();
+      StringBuilder extensions = new StringBuilder();
 
-      strExts.Append("External Player for: ");
+      extensions.Append("External Player for: ");
 
       for (int i = 0; i < exts.Length; i++)
       {
 
         if (i > 0)
 
-          strExts.Append(',');
+          extensions.Append(',');
 
-        strExts.Append(exts[i]);
+        extensions.Append(exts[i]);
 
       }
 
-      return strExts.ToString();
+      return extensions.ToString();
 
     }
 

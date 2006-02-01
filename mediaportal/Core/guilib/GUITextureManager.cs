@@ -179,8 +179,8 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      string strExtension = System.IO.Path.GetExtension(fileName).ToLower();
-      if (strExtension == ".gif")
+      string extensionension = System.IO.Path.GetExtension(fileName).ToLower();
+      if (extensionension == ".gif")
       {
         if (!System.IO.File.Exists(fileName))
         {

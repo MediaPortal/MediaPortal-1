@@ -446,8 +446,8 @@ namespace MediaPortal.Player
           _isInitalized = false;
           return false;
         }
-        string strExt = System.IO.Path.GetExtension(strFile).ToLower();
-        if (strExt == ".ifo" || strExt == ".vob")
+        string extension = System.IO.Path.GetExtension(strFile).ToLower();
+        if (extension == ".ifo" || extension == ".vob")
         {
 
           int iUseVMR9 = 0;

@@ -97,12 +97,12 @@ namespace MediaPortal.Util
 		/// <summary>
 		/// Method to add a new file extension to the file extensions list
 		/// </summary>
-		/// <param name="strExtension">string containg the new extension in the format .mp3</param>
-    public void AddExtension(string strExtension)
+		/// <param name="extensionension">string containg the new extension in the format .mp3</param>
+    public void AddExtension(string extensionension)
     {
 			if (m_extensions == null)
         m_extensions = new List<string>();
-      m_extensions.Add(strExtension.ToLower());
+      m_extensions.Add(extensionension.ToLower());
     }
 
 		/// <summary>
@@ -372,17 +372,17 @@ namespace MediaPortal.Util
 		/// <summary>
 		/// This method check is the given extension is a image file
 		/// </summary>
-		/// <param name="strExtension">file extension</param>
+		/// <param name="extensionension">file extension</param>
 		/// <returns>
 		/// true: if file is an image file (.img, .nrg, .bin, .iso)
 		/// false: if the file is not an image file
 		/// </returns>
-    static public bool IsImageFile(string strExtension)
+    static public bool IsImageFile(string extensionension)
 		{
-			if (strExtension==null) return false;
-			if (strExtension==String.Empty) return false;
-      strExtension=strExtension.ToLower();
-      if (strExtension==".img" ||strExtension==".bin" ||strExtension==".iso" || strExtension==".nrg" )
+			if (extensionension==null) return false;
+			if (extensionension==String.Empty) return false;
+      extensionension=extensionension.ToLower();
+      if (extensionension==".img" ||extensionension==".bin" ||extensionension==".iso" || extensionension==".nrg" )
       {
         return true;
       }
@@ -488,8 +488,8 @@ namespace MediaPortal.Util
       {
         if (DaemonTools.IsEnabled)
         {
-          string strExtension=System.IO.Path.GetExtension(strDir);
-          if ( IsImageFile(strExtension) )
+          string extensionension=System.IO.Path.GetExtension(strDir);
+          if ( IsImageFile(extensionension) )
           {
             bool askBeforePlayingDVDImage = false;
 
@@ -704,8 +704,8 @@ namespace MediaPortal.Util
         {
           for (int i = 0; i < strFiles.Length; ++i)
           {
-            string strExtension=System.IO.Path.GetExtension(strFiles[i]);
-            if (IsImageFile(strExtension))
+            string extensionension=System.IO.Path.GetExtension(strFiles[i]);
+            if (IsImageFile(extensionension))
             {
               if (DaemonTools.IsEnabled)
               {
@@ -777,8 +777,8 @@ namespace MediaPortal.Util
       bool VirtualShare=false;
       if (DaemonTools.IsEnabled)
       {
-        string strExtension=System.IO.Path.GetExtension(strDir);
-        if ( IsImageFile(strExtension) )
+        string extensionension=System.IO.Path.GetExtension(strDir);
+        if ( IsImageFile(extensionension) )
         {
           if (!DaemonTools.IsMounted(strDir))
           {
@@ -866,8 +866,8 @@ namespace MediaPortal.Util
       {
         for (int i = 0; i < strFiles.Length; ++i)
         {
-          string strExtension=System.IO.Path.GetExtension(strFiles[i]);
-          if (IsImageFile(strExtension))
+          string extensionension=System.IO.Path.GetExtension(strFiles[i]);
+          if (IsImageFile(extensionension))
           {
             if (DaemonTools.IsEnabled)
             {
@@ -926,11 +926,11 @@ namespace MediaPortal.Util
         //				if (!System.IO.Path.HasExtension(strPath)) return false;
         // waeberd: allow searching for files without an extension
         if (!System.IO.Path.HasExtension(strPath)) return showFilesWithoutExtension;
-				string strExtFile = System.IO.Path.GetExtension(strPath).ToLower();
+				string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
 				if ((m_extensions[0]as string)=="*") return true;   // added for explorer modul by gucky
 				for (int i=0; i < m_extensions.Count;++i)
 				{
-					if ( (m_extensions[i] as string)==strExtFile) return true;
+					if ( (m_extensions[i] as string)==extensionFile) return true;
 				}
 			}
 			catch(Exception){}
@@ -1241,8 +1241,8 @@ namespace MediaPortal.Util
       {
         if (DaemonTools.IsEnabled)
         {
-          string strExtension = System.IO.Path.GetExtension(strDir);
-          if (IsImageFile(strExtension))
+          string extensionension = System.IO.Path.GetExtension(strDir);
+          if (IsImageFile(extensionension))
           {
             bool askBeforePlayingDVDImage = false;
 
@@ -1457,8 +1457,8 @@ namespace MediaPortal.Util
         {
           for (int i = 0; i < strFiles.Length; ++i)
           {
-            string strExtension = System.IO.Path.GetExtension(strFiles[i]);
-            if (IsImageFile(strExtension))
+            string extensionension = System.IO.Path.GetExtension(strFiles[i]);
+            if (IsImageFile(extensionension))
             {
               if (DaemonTools.IsEnabled)
               {
@@ -1530,8 +1530,8 @@ namespace MediaPortal.Util
       bool VirtualShare = false;
       if (DaemonTools.IsEnabled)
       {
-        string strExtension = System.IO.Path.GetExtension(strDir);
-        if (IsImageFile(strExtension))
+        string extensionension = System.IO.Path.GetExtension(strDir);
+        if (IsImageFile(extensionension))
         {
           if (!DaemonTools.IsMounted(strDir))
           {
@@ -1619,8 +1619,8 @@ namespace MediaPortal.Util
       {
         for (int i = 0; i < strFiles.Length; ++i)
         {
-          string strExtension = System.IO.Path.GetExtension(strFiles[i]);
-          if (IsImageFile(strExtension))
+          string extensionension = System.IO.Path.GetExtension(strFiles[i]);
+          if (IsImageFile(extensionension))
           {
             if (DaemonTools.IsEnabled)
             {

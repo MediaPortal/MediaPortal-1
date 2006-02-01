@@ -120,7 +120,7 @@ namespace MediaPortal.Player
 			_isLive=false;
       _duration=-1d;
 			_seekToEndFlag=false;
-      string strExt=System.IO.Path.GetExtension(strFile).ToLower();
+      string extension=System.IO.Path.GetExtension(strFile).ToLower();
 			
       if (strFile.ToLower().IndexOf("live.ts")>=0 ||
 				  strFile.ToLower().IndexOf("radio.ts")>=0)

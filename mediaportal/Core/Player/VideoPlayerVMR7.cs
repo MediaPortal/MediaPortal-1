@@ -837,8 +837,8 @@ namespace MediaPortal.Player
 					defaultLanguage= xmlreader.GetValueAsString("subtitles", "language", "English");
 
 				}
-				string strExt=System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
-				if (strExt.Equals(".dvr-ms") ||strExt.Equals(".mpg") ||strExt.Equals(".mpeg")||strExt.Equals(".bin")||strExt.Equals(".dat"))
+				string extension=System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
+				if (extension.Equals(".dvr-ms") ||extension.Equals(".mpg") ||extension.Equals(".mpeg")||extension.Equals(".bin")||extension.Equals(".dat"))
 				{
 					if (strVideoCodec.Length>0) videoCodecFilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
 					if (strAudioCodec.Length>0) audioCodecFilter=DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);

@@ -134,10 +134,14 @@ namespace MediaPortal.Player
 			_speedRate = 10000;
 			_isLive=false;
       _duration=-1d;
-      string strExt=System.IO.Path.GetExtension(strFile).ToLower();
-      if (strExt.Equals(".tv"))
+      string extension=System.IO.Path.GetExtension(strFile).ToLower();
+      if (extension.Equals(".tv"))
       {
-        _isLive=true;
+        _isLive = true;
+      }
+      else
+      {
+        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       }
       
 

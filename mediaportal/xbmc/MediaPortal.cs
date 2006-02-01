@@ -561,6 +561,8 @@ public class MediaPortalApp : D3DApp, IRender
     HandleMessage();
     FrameMove();
     FullRender();
+    if (GUIGraphicsContext.Vmr9Active)
+      System.Threading.Thread.Sleep(50);
   }
   #endregion
 

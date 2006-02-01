@@ -114,23 +114,23 @@ namespace MediaPortal.Util
 
         string strTmp = xmlreader.GetValueAsString("music", "extensions", ".mp3,.wma,.ogg,.flac,.wav,.cda,.b4s,.m4a,.m4p");
         Tokens tok = new Tokens(strTmp, new char[] { ',' });
-        foreach (string strExt in tok)
+        foreach (string extension in tok)
         {
-          m_AudioExtensions.Add(strExt.ToLower());
+          m_AudioExtensions.Add(extension.ToLower());
         }
 
         strTmp = xmlreader.GetValueAsString("movies", "extensions", ".avi,.mpg,.ogm,.mpeg,.mkv,.wmv,.ifo,.qt,.rm,.mov,.sbe,.dvr-ms,.ts");
         tok = new Tokens(strTmp, new char[] { ',' });
-        foreach (string strExt in tok)
+        foreach (string extension in tok)
         {
-          m_VideoExtensions.Add(strExt.ToLower());
+          m_VideoExtensions.Add(extension.ToLower());
         }
 
         strTmp = xmlreader.GetValueAsString("pictures", "extensions", ".jpg,.jpeg,.gif,.bmp,.png");
         tok = new Tokens(strTmp, new char[] { ',' });
-        foreach (string strExt in tok)
+        foreach (string extension in tok)
         {
-          m_PictureExtensions.Add(strExt.ToLower());
+          m_PictureExtensions.Add(extension.ToLower());
         }
 
         enableGuiSounds = xmlreader.GetValueAsBool("general", "enableguisounds", true);
@@ -297,15 +297,15 @@ namespace MediaPortal.Util
       {
         if (!System.IO.Path.HasExtension(strPath)) return false;
         if (IsPlayList(strPath)) return false;
-        string strExtFile = System.IO.Path.GetExtension(strPath).ToLower();
-        if (strExtFile.ToLower().Equals(".tv")) return true;
-        if (strExtFile.ToLower().Equals(".ts")) return true;
-        if (strExtFile.ToLower().Equals(".sbe")) return true;
-        if (strExtFile.ToLower().Equals(".dvr-ms")) return true;
-        if (VirtualDirectory.IsImageFile(strExtFile.ToLower())) return true;
-        foreach (string strExt in m_VideoExtensions)
+        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        if (extensionFile.ToLower().Equals(".tv")) return true;
+        if (extensionFile.ToLower().Equals(".ts")) return true;
+        if (extensionFile.ToLower().Equals(".sbe")) return true;
+        if (extensionFile.ToLower().Equals(".dvr-ms")) return true;
+        if (VirtualDirectory.IsImageFile(extensionFile.ToLower())) return true;
+        foreach (string extension in m_VideoExtensions)
         {
-          if (strExt == strExtFile) return true;
+          if (extension == extensionFile) return true;
         }
       }
       catch (Exception)
@@ -321,10 +321,10 @@ namespace MediaPortal.Util
       {
         if (!System.IO.Path.HasExtension(strPath)) return false;
         if (IsPlayList(strPath)) return false;
-        string strExtFile = System.IO.Path.GetExtension(strPath).ToLower();
-        foreach (string strExt in m_AudioExtensions)
+        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        foreach (string extension in m_AudioExtensions)
         {
-          if (strExt == strExtFile) return true;
+          if (extension == extensionFile) return true;
         }
       }
       catch (Exception)
@@ -340,10 +340,10 @@ namespace MediaPortal.Util
       {
         if (!System.IO.Path.HasExtension(strPath)) return false;
         if (IsPlayList(strPath)) return false;
-        string strExtFile = System.IO.Path.GetExtension(strPath).ToLower();
-        foreach (string strExt in m_PictureExtensions)
+        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        foreach (string extension in m_PictureExtensions)
         {
-          if (strExt == strExtFile) return true;
+          if (extension == extensionFile) return true;
         }
       }
       catch (Exception)
@@ -358,11 +358,11 @@ namespace MediaPortal.Util
       try
       {
         if (!System.IO.Path.HasExtension(strPath)) return false;
-        string strExtFile = System.IO.Path.GetExtension(strPath).ToLower();
-        if (strExtFile == ".m3u") return true;
-        if (strExtFile == ".pls") return true;
-        if (strExtFile == ".b4s") return true;
-        if (strExtFile == ".wpl") return true;
+        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        if (extensionFile == ".m3u") return true;
+        if (extensionFile == ".pls") return true;
+        if (extensionFile == ".b4s") return true;
+        if (extensionFile == ".wpl") return true;
       }
       catch (Exception)
       {
@@ -375,8 +375,8 @@ namespace MediaPortal.Util
       try
       {
         if (!System.IO.Path.HasExtension(strPath)) return false;
-        string strExtFile = System.IO.Path.GetExtension(strPath).ToLower();
-        if (strExtFile == ".exe") return true;
+        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        if (extensionFile == ".exe") return true;
       }
       catch (Exception)
       {
@@ -389,8 +389,8 @@ namespace MediaPortal.Util
       try
       {
         if (!System.IO.Path.HasExtension(strPath)) return false;
-        string strExtFile = System.IO.Path.GetExtension(strPath).ToLower();
-        if (strExtFile == ".lnk") return true;
+        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        if (extensionFile == ".lnk") return true;
       }
       catch (Exception)
       {
@@ -972,12 +972,12 @@ namespace MediaPortal.Util
 
       try
       {
-        string strExt = System.IO.Path.GetExtension(strFile).ToLower();
+        string extension = System.IO.Path.GetExtension(strFile).ToLower();
         if (strFile.ToLower().IndexOf("live.ts") >= 0) return false;
         if (strFile.ToLower().IndexOf("live.tv") >= 0) return false;
-        if (strExt.Equals(".sbe")) return false;
-        if (strExt.Equals(".dvr-ms")) return false;
-        if (strExt.Equals(".radio")) return false;
+        if (extension.Equals(".sbe")) return false;
+        if (extension.Equals(".dvr-ms")) return false;
+        if (extension.Equals(".radio")) return false;
         if (strFile.IndexOf("record0.") > 0 || strFile.IndexOf("record1.") > 0 ||
           strFile.IndexOf("record2.") > 0 || strFile.IndexOf("record3.") > 0 ||
           strFile.IndexOf("record4.") > 0 || strFile.IndexOf("record5.") > 0) return false;
@@ -988,7 +988,7 @@ namespace MediaPortal.Util
           if (bInternal) return false;
           string strPath = xmlreader.GetValueAsString("movieplayer", "path", "");
           string strParams = xmlreader.GetValueAsString("movieplayer", "arguments", "");
-          if (strExt.ToLower() == ".ifo" || strExt.ToLower() == ".vob")
+          if (extension.ToLower() == ".ifo" || extension.ToLower() == ".vob")
           {
             strPath = xmlreader.GetValueAsString("dvdplayer", "path", "");
             strParams = xmlreader.GetValueAsString("dvdplayer", "arguments", "");
@@ -1157,15 +1157,15 @@ namespace MediaPortal.Util
       {
         try
         {
-          string strExtURL = System.IO.Path.GetExtension(strURL);
-          string strExtFile = System.IO.Path.GetExtension(strFile);
-          if (strExtURL.Length > 0 && strExtFile.Length > 0)
+          string extensionURL = System.IO.Path.GetExtension(strURL);
+          string extensionFile = System.IO.Path.GetExtension(strFile);
+          if (extensionURL.Length > 0 && extensionFile.Length > 0)
           {
-            strExtURL = strExtURL.ToLower();
-            strExtFile = strExtFile.ToLower();
-            string strLogo = System.IO.Path.ChangeExtension(strFile, strExtURL);
+            extensionURL = extensionURL.ToLower();
+            extensionFile = extensionFile.ToLower();
+            string strLogo = System.IO.Path.ChangeExtension(strFile, extensionURL);
             client.DownloadFile(strURL, strLogo);
-            if (strExtURL != strExtFile)
+            if (extensionURL != extensionFile)
             {
               using (Image imgSrc = Image.FromFile(strLogo))
               {
