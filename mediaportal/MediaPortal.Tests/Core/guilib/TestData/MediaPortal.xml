@@ -5,7 +5,7 @@
     <entry name="timeshiftbuffer">30</entry>
     <entry name="countryname">Netherlands</entry>
     <entry name="country">31</entry>
-    <entry name="floattest">3,141592</entry>
+    <entry name="floattest">3.141592</entry>
     <entry name="prerecord">5</entry>
     <entry name="postrecord">5</entry>
     <entry name="deletewatchedshows">no</entry>

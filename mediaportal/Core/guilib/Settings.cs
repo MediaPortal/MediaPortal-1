@@ -26,6 +26,7 @@ using System.Xml;
 using System.Collections;
 using System.Reflection;
 using MediaPortal.GUI.Library;
+using System.Globalization;
 
 namespace MediaPortal.Profile
 {
@@ -119,7 +120,7 @@ namespace MediaPortal.Profile
       if (strValue.Length == 0) return fDefault;
       try
       {
-        float fRet = (float)System.Double.Parse(strValue);
+        float fRet = (float)System.Double.Parse(strValue, NumberFormatInfo.InvariantInfo);
         return fRet;
       }
       catch (Exception)
