@@ -227,6 +227,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.defaultAudioLanguageComboBox);
       this.groupBox1.Controls.Add(this.defaultSubtitleLanguageComboBox);
       this.groupBox1.Controls.Add(this.showSubtitlesCheckBox);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 104);
@@ -277,9 +278,10 @@ namespace MediaPortal.Configuration.Sections
       // showSubtitlesCheckBox
       // 
       this.showSubtitlesCheckBox.AutoSize = true;
+      this.showSubtitlesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.showSubtitlesCheckBox.Location = new System.Drawing.Point(168, 20);
       this.showSubtitlesCheckBox.Name = "showSubtitlesCheckBox";
-      this.showSubtitlesCheckBox.Size = new System.Drawing.Size(94, 17);
+      this.showSubtitlesCheckBox.Size = new System.Drawing.Size(100, 18);
       this.showSubtitlesCheckBox.TabIndex = 0;
       this.showSubtitlesCheckBox.Text = "Show subtitles";
       // 
@@ -292,6 +294,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.aspectRatioComboBox);
       this.mpGroupBox1.Controls.Add(this.aspectRatioLabel);
       this.mpGroupBox1.Controls.Add(this.pixelRatioCheckBox);
+      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 108);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 104);
@@ -350,9 +353,10 @@ namespace MediaPortal.Configuration.Sections
       // pixelRatioCheckBox
       // 
       this.pixelRatioCheckBox.AutoSize = true;
+      this.pixelRatioCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.pixelRatioCheckBox.Location = new System.Drawing.Point(168, 20);
       this.pixelRatioCheckBox.Name = "pixelRatioCheckBox";
-      this.pixelRatioCheckBox.Size = new System.Drawing.Size(142, 17);
+      this.pixelRatioCheckBox.Size = new System.Drawing.Size(148, 18);
       this.pixelRatioCheckBox.TabIndex = 0;
       this.pixelRatioCheckBox.Text = "Use pixel ratio correction";
       // 
@@ -362,6 +366,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
       this.mpGroupBox2.Controls.Add(this.autoPlayComboBox);
+      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox2.Location = new System.Drawing.Point(0, 216);
       this.mpGroupBox2.Name = "mpGroupBox2";
       this.mpGroupBox2.Size = new System.Drawing.Size(472, 60);
@@ -375,7 +380,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelAutoPlay.Location = new System.Drawing.Point(16, 28);
       this.labelAutoPlay.Name = "labelAutoPlay";
       this.labelAutoPlay.Size = new System.Drawing.Size(77, 13);
-      this.labelAutoPlay.TabIndex = 5;
+      this.labelAutoPlay.TabIndex = 0;
       this.labelAutoPlay.Text = "Autoplay DVD:";
       // 
       // autoPlayComboBox
@@ -384,7 +389,7 @@ namespace MediaPortal.Configuration.Sections
       this.autoPlayComboBox.Location = new System.Drawing.Point(168, 24);
       this.autoPlayComboBox.Name = "autoPlayComboBox";
       this.autoPlayComboBox.Size = new System.Drawing.Size(288, 21);
-      this.autoPlayComboBox.TabIndex = 6;
+      this.autoPlayComboBox.TabIndex = 1;
       // 
       // DVD
       // 

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -42,11 +46,11 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label2;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-		private System.Windows.Forms.ComboBox autoPlayCheckBox;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.ComboBox autoPlayComboBox;
+    private Label labelAutoPlay;
 		private System.ComponentModel.IContainer components = null;
+
+    string[] autoPlayOptions = new string[] { "Autoplay, never ask", "Don't autoplay, never ask", "Ask every time a CD is inserted" };
 
 		public Music() : this("Music")
 		{
@@ -62,6 +66,9 @@ namespace MediaPortal.Configuration.Sections
 			//
 			audioPlayerComboBox.Items.AddRange(new string[] { "Windows Media Player 9",
 																"DirectShow" });
+
+      autoPlayComboBox.Items.Clear();
+      autoPlayComboBox.Items.AddRange(autoPlayOptions);
 		}
 
 		/// <summary>
@@ -92,7 +99,18 @@ namespace MediaPortal.Configuration.Sections
 				}
 
 				audioPlayerComboBox.Text = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
-			    autoPlayCheckBox.Text=xmlreader.GetValueAsString("audioplayer", "autoplay", "Yes");
+
+        string autoPlayText = xmlreader.GetValueAsString("audioplayer", "autoplay", "Yes");
+
+        switch (autoPlayText)
+        {
+          case "No": autoPlayComboBox.Text = autoPlayOptions[1];
+            break;
+          case "Ask": autoPlayComboBox.Text = autoPlayOptions[2];
+            break;
+          default: autoPlayComboBox.Text = autoPlayOptions[0];
+            break;
+        }
       }
 		}
 
@@ -107,8 +125,17 @@ namespace MediaPortal.Configuration.Sections
 				xmlwriter.SetValue("music", "playlists", playlistFolderTextBox.Text);
 
 				xmlwriter.SetValue("audioplayer", "player", audioPlayerComboBox.Text);
-				xmlwriter.SetValue("audioplayer", "autoplay", autoPlayCheckBox.Text);
 
+        string autoPlayText;
+
+        if (autoPlayComboBox.Text == autoPlayOptions[1])
+          autoPlayText = "No";
+        else if (autoPlayComboBox.Text == autoPlayOptions[2])
+          autoPlayText = "Ask";
+        else
+          autoPlayText = "Yes";
+
+        xmlwriter.SetValue("audioplayer", "autoplay", autoPlayText);
 			}
 		}
 
@@ -147,10 +174,8 @@ namespace MediaPortal.Configuration.Sections
       this.audioPlayerComboBox = new System.Windows.Forms.ComboBox();
       this.label4 = new System.Windows.Forms.Label();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.autoPlayCheckBox = new System.Windows.Forms.ComboBox();
-			this.label5 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
+      this.autoPlayComboBox = new System.Windows.Forms.ComboBox();
+      this.labelAutoPlay = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
@@ -158,36 +183,36 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.autoShuffleCheckBox);
       this.groupBox1.Controls.Add(this.repeatPlaylistCheckBox);
       this.groupBox1.Controls.Add(this.playlistButton);
       this.groupBox1.Controls.Add(this.playlistFolderTextBox);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.groupBox1.Location = new System.Drawing.Point(0, 96);
+      this.groupBox1.Location = new System.Drawing.Point(0, 84);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 112);
+      this.groupBox1.Size = new System.Drawing.Size(472, 104);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Playlist Settings";
       // 
       // autoShuffleCheckBox
       // 
-      this.autoShuffleCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.autoShuffleCheckBox.Location = new System.Drawing.Point(16, 48);
+      this.autoShuffleCheckBox.AutoSize = true;
+      this.autoShuffleCheckBox.Location = new System.Drawing.Point(168, 44);
       this.autoShuffleCheckBox.Name = "autoShuffleCheckBox";
-      this.autoShuffleCheckBox.Size = new System.Drawing.Size(120, 16);
+      this.autoShuffleCheckBox.Size = new System.Drawing.Size(121, 17);
       this.autoShuffleCheckBox.TabIndex = 1;
       this.autoShuffleCheckBox.Text = "Auto shuffle playlists";
       // 
       // repeatPlaylistCheckBox
       // 
-      this.repeatPlaylistCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(16, 24);
+      this.repeatPlaylistCheckBox.AutoSize = true;
+      this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(168, 20);
       this.repeatPlaylistCheckBox.Name = "repeatPlaylistCheckBox";
-      this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(216, 16);
+      this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(221, 17);
       this.repeatPlaylistCheckBox.TabIndex = 0;
       this.repeatPlaylistCheckBox.Text = "Repeat/loop music playlists (m3u, b4, pls)";
       // 
@@ -195,7 +220,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.playlistButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.playlistButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.playlistButton.Location = new System.Drawing.Point(384, 75);
+      this.playlistButton.Location = new System.Drawing.Point(384, 68);
       this.playlistButton.Name = "playlistButton";
       this.playlistButton.Size = new System.Drawing.Size(72, 22);
       this.playlistButton.TabIndex = 4;
@@ -204,61 +229,62 @@ namespace MediaPortal.Configuration.Sections
       // 
       // playlistFolderTextBox
       // 
-      this.playlistFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.playlistFolderTextBox.Location = new System.Drawing.Point(168, 76);
+      this.playlistFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.playlistFolderTextBox.Location = new System.Drawing.Point(168, 68);
       this.playlistFolderTextBox.Name = "playlistFolderTextBox";
       this.playlistFolderTextBox.Size = new System.Drawing.Size(208, 20);
       this.playlistFolderTextBox.TabIndex = 3;
-      this.playlistFolderTextBox.Text = "";
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(15, 80);
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(15, 72);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(113, 16);
+      this.label1.Size = new System.Drawing.Size(101, 13);
       this.label1.TabIndex = 2;
       this.label1.Text = "Music playlist folder:";
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.label2);
       this.mpGroupBox1.Controls.Add(this.showID3CheckBox);
       this.mpGroupBox1.Controls.Add(this.audioPlayerComboBox);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(472, 88);
+      this.mpGroupBox1.Size = new System.Drawing.Size(472, 80);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "General Settings";
       // 
       // label2
       // 
-      this.label2.Location = new System.Drawing.Point(16, 56);
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(16, 48);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(112, 16);
+      this.label2.Size = new System.Drawing.Size(106, 13);
       this.label2.TabIndex = 1;
       this.label2.Text = "Internal music player:";
       // 
       // showID3CheckBox
       // 
-      this.showID3CheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.showID3CheckBox.Location = new System.Drawing.Point(16, 24);
+      this.showID3CheckBox.AutoSize = true;
+      this.showID3CheckBox.Location = new System.Drawing.Point(168, 20);
       this.showID3CheckBox.Name = "showID3CheckBox";
-      this.showID3CheckBox.Size = new System.Drawing.Size(352, 16);
+      this.showID3CheckBox.Size = new System.Drawing.Size(291, 17);
       this.showID3CheckBox.TabIndex = 0;
-      this.showID3CheckBox.Text = "Load ID3 tags from music file when file is not in music database (slow)";
+      this.showID3CheckBox.Text = "Load ID3 tags from file if it\'s not in music database (slow)";
       this.showID3CheckBox.CheckedChanged += new System.EventHandler(this.showID3CheckBox_CheckedChanged);
       // 
       // audioPlayerComboBox
       // 
-      this.audioPlayerComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioPlayerComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.audioPlayerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioPlayerComboBox.Location = new System.Drawing.Point(168, 52);
+      this.audioPlayerComboBox.Location = new System.Drawing.Point(168, 44);
       this.audioPlayerComboBox.Name = "audioPlayerComboBox";
       this.audioPlayerComboBox.Size = new System.Drawing.Size(288, 21);
       this.audioPlayerComboBox.TabIndex = 2;
@@ -267,67 +293,53 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label4.Location = new System.Drawing.Point(0, 0);
       this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(100, 23);
       this.label4.TabIndex = 0;
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-			this.mpGroupBox2.Controls.Add(this.label3);
-      this.mpGroupBox2.Controls.Add(this.autoPlayCheckBox);
+      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
+      this.mpGroupBox2.Controls.Add(this.autoPlayComboBox);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.mpGroupBox2.Location = new System.Drawing.Point(0, 216);
+      this.mpGroupBox2.Location = new System.Drawing.Point(0, 192);
       this.mpGroupBox2.Name = "mpGroupBox2";
-			this.mpGroupBox2.Size = new System.Drawing.Size(472, 72);
+      this.mpGroupBox2.Size = new System.Drawing.Size(472, 64);
       this.mpGroupBox2.TabIndex = 2;
       this.mpGroupBox2.TabStop = false;
       this.mpGroupBox2.Text = "Autoplay";
       // 
-			this.label3.Location = new System.Drawing.Point(160, 16);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(272, 23);
-			this.label3.TabIndex = 1;
-			this.label3.Text = "No = Don\'t even ask";
-			this.label3.Click += new System.EventHandler(this.label3_Click);
-			// 
-			// autoPlayCheckBox
-			// 
-			this.autoPlayCheckBox.Items.AddRange(new object[] {
-																  "Yes",
-																  "No",
-																  "Ask"});
-			this.autoPlayCheckBox.Location = new System.Drawing.Point(16, 16);
-			this.autoPlayCheckBox.Name = "autoPlayCheckBox";
-			this.autoPlayCheckBox.Size = new System.Drawing.Size(121, 21);
-			this.autoPlayCheckBox.TabIndex = 0;
-			this.autoPlayCheckBox.Text = "autoPlayCheckBox";
+      // autoPlayComboBox
       // 
-			this.label5.Location = new System.Drawing.Point(160, 248);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(272, 16);
-			this.label5.TabIndex = 2;
-			this.label5.Text = "Yes = Don\'t ask, just play";
-			// 
-			// label6
-			// 
-			this.label6.Location = new System.Drawing.Point(160, 264);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(272, 16);
-			this.label6.TabIndex = 3;
-			this.label6.Text = "Ask = Ask me if I want to play";
-			// 
-			// Music
-			// 
-			this.Controls.Add(this.label5);
-			this.Controls.Add(this.label6);
+      this.autoPlayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.autoPlayComboBox.Location = new System.Drawing.Point(168, 24);
+      this.autoPlayComboBox.Name = "autoPlayComboBox";
+      this.autoPlayComboBox.Size = new System.Drawing.Size(288, 21);
+      this.autoPlayComboBox.TabIndex = 1;
+      // 
+      // labelAutoPlay
+      // 
+      this.labelAutoPlay.AutoSize = true;
+      this.labelAutoPlay.Location = new System.Drawing.Point(16, 28);
+      this.labelAutoPlay.Name = "labelAutoPlay";
+      this.labelAutoPlay.Size = new System.Drawing.Size(69, 13);
+      this.labelAutoPlay.TabIndex = 0;
+      this.labelAutoPlay.Text = "Autoplay CD:";
+      // 
+      // Music
+      // 
       this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.mpGroupBox1);
       this.Controls.Add(this.groupBox1);
       this.Name = "Music";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.mpGroupBox1.ResumeLayout(false);
+      this.mpGroupBox1.PerformLayout();
       this.mpGroupBox2.ResumeLayout(false);
+      this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
 
     }
