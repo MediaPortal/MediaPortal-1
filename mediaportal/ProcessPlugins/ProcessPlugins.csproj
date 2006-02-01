@@ -262,6 +262,7 @@
     <Compile Include="ExternalDisplay\Girder.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ExternalDisplay\HD44780.cs" />
     <Compile Include="ExternalDisplay\HighPerformanceCounter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -283,6 +284,7 @@
     <Compile Include="ExternalDisplay\None.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ExternalDisplay\NoritakeGU7000.cs" />
     <Compile Include="ExternalDisplay\PropertyBrowser.cs">
       <SubType>Form</SubType>
     </Compile>

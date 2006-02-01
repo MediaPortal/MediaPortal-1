@@ -50,6 +50,7 @@ copy ..\..\..\Microsoft.DirectX.DirectInput.dll .
 rem ExternalDisplay plugin LCD driver DLLs
 copy ..\..\..\FTD2XX.DLL .
 copy ..\..\..\SG_VFD.dll .
+copy ..\..\..\inpout32.dll .
 if not exist LUI\. mkdir LUI
 copy ..\..\..\LUI.dll LUI\.
 copy ..\..\..\Communications.dll .

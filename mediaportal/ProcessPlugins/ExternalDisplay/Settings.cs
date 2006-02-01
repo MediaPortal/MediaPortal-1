@@ -447,6 +447,16 @@ namespace ProcessPlugins.ExternalDisplay
         Log.Write("ExternalDisplay: Loading CrystalFontz634...");
       }
       list.Add(new CrystalFontz634());
+      if (ExtensiveLogging)
+      {
+        Log.Write("ExternalDisplay: Loading HD44780JD...");
+      }
+      list.Add(new HD44780());
+      if (ExtensiveLogging)
+      {
+        Log.Write("ExternalDisplay: Loading NoritakeGU7000...");
+      }
+      list.Add(new NoritakeGU7000());
       DirectoryInfo dinfo = new DirectoryInfo(@"plugins\process\LCDDrivers");
       if (!dinfo.Exists)
       {
