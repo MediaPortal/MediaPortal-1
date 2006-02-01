@@ -2,13 +2,13 @@ rem Check for Microsoft Antispyware .BAT bug
 if exist .\kernel32.dll exit 1
 
 cd
-mkdir plugins
-mkdir plugins\windows
-mkdir plugins\TagReaders
-mkdir plugins\subtitle
-mkdir plugins\ExternalPlayers
-mkdir plugins\process
-mkdir Wizards
+if not exist plugins mkdir plugins
+if not exist plugins\windows mkdir plugins\windows
+if not exist plugins\TagReaders mkdir plugins\TagReaders
+if not exist plugins\subtitle mkdir plugins\subtitle
+if not exist plugins\ExternalPlayers mkdir plugins\ExternalPlayers
+if not exist plugins\process mkdir plugins\process
+if not exist Wizards mkdir Wizards
 
 del /F /Q plugins\windows\*.*
 del /F /Q plugins\tagreaders\*.*
@@ -18,7 +18,7 @@ del /F /Q plugins\process\*.*
 del *.dll
 del *.ax
 
-copy ..\..\..\lame_enc.dll .
+if exist ..\..\..\lame_enc.dll copy ..\..\..\lame_enc.dll .
 copy ..\..\..\MPSA.ax .
 copy ..\..\..\TSFileSource.ax .
 copy ..\..\..\MPTSWriter.ax .
@@ -28,15 +28,13 @@ regsvr32 /s MPTSWriter.ax
 
 copy ..\..\..\RemotePlugins\HCWHelper\HCWHelper\bin\debug\HCWHelper.exe .
 copy ..\..\..\RemotePlugins\HCWHelper\HCWHelper\bin\debug\HCWHelper.pdb .
-copy ..\..\..\RemotePlugins\HCWHelper\NetHelper\bin\debug\NetHelper.dll .
-copy ..\..\..\RemotePlugins\HCWHelper\NetHelper\bin\debug\NetHelper.pdb .
 copy ..\..\..\RemotePlugins\X10Remote\AxInterop.X10.dll .
 copy ..\..\..\RemotePlugins\X10Remote\Interop.X10.dll .
 copy ..\..\..\RemotePlugins\IrTrans\IRTrans.NET.dll .
 copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .
 copy ..\..\..\core\fontengine\fontengine\debug\fontengine.dll .
-copy ..\..\..\core\fontengine\fontengine\debug\fontengine.pdb .
-copy ..\..\..\Interop.DirectShowHelperLib.dll .
+if exist ..\..\..\core\fontengine\fontengine\debug\fontengine.pdb copy ..\..\..\core\fontengine\fontengine\debug\fontengine.pdb .
+rem copy ..\..\..\Interop.DirectShowHelperLib.dll .
 copy ..\..\..\mfc71.dll .
 copy ..\..\..\msvcp71.dll .
 copy ..\..\..\msvcr71.dll .
