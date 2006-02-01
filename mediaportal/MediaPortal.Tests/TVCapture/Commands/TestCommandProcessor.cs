@@ -208,6 +208,18 @@ namespace MediaPortal.Tests.Commands
     }
     [Test]
     [Category("Recording")]
+    public void TestStartRecording3()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+
+      //record TV
+      WatchTv(proc, "RTL 5");
+      StartRecord(proc, "RTL 4");
+      StopRecord(proc);
+    }
+    [Test]
+    [Category("Recording")]
     public void TestRecordingInPast()
     {
       CommandProcessor proc = new CommandProcessor();
@@ -251,6 +263,30 @@ namespace MediaPortal.Tests.Commands
 
       //zap to rtl 5 (should fail)
       proc.AddCommand(new TimeShiftTvCommand("RTL 5"));
+      proc.ProcessCommands();
+      Assert.AreEqual(proc.CurrentCardIndex, 0);
+      Assert.AreEqual(proc.TVChannelName, "RTL 4");
+      Assert.AreEqual(proc.TVCards[0].TVChannel, "RTL 4");
+      Assert.IsFalse(proc.TVCards[0].View);
+      Assert.IsTrue(proc.TVCards[0].IsTimeShifting);
+      Assert.AreEqual(proc.TVCards[0].TimeShiftFileName, @"live.tv");
+      Assert.AreEqual(proc.GetTimeShiftFileName(proc.CurrentCardIndex), @"C:\card1\live.tv");
+
+      StopRecord(proc);
+    }
+    [Test]
+    [Category("Recording")]
+    public void TestTurnOffTimeshiftWhileRecording()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+
+      //record TV
+      TimeShiftTv(proc, "RTL 4");
+      StartRecord(proc, "RTL 4");
+
+      //zap to rtl 5 (should fail)
+      proc.AddCommand(new ViewTvCommand("RTL 5"));
       proc.ProcessCommands();
       Assert.AreEqual(proc.CurrentCardIndex, 0);
       Assert.AreEqual(proc.TVChannelName, "RTL 4");

@@ -166,7 +166,6 @@ namespace MediaPortal.TV.Recording
 
       Log.WriteFile(Log.LogType.Recorder, "Recorder:  find free card");
 
-      TurnTvOff(handler, -1);
 
       // Find a card which can view the channel
       int card = -1;
@@ -192,6 +191,7 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Recorder, "Recorder:  No free card which can receive channel [{0}]", _channelName);
         return; // no card available
       }
+      TurnTvOff(handler, card);
 
       handler.CurrentCardIndex = card;
       handler.TVChannelName = _channelName;
