@@ -2,13 +2,13 @@ rem Check for Microsoft Antispyware .BAT bug
 if exist .\kernel32.dll exit 1
 
 cd
-mkdir plugins
-mkdir plugins\windows
-mkdir plugins\TagReaders
-mkdir plugins\subtitle
-mkdir plugins\ExternalPlayers
-mkdir plugins\process
-mkdir Wizards
+if not exist plugins mkdir plugins
+if not exist plugins\windows mkdir plugins\windows
+if not exist plugins\TagReaders mkdir plugins\TagReaders
+if not exist plugins\subtitle mkdir plugins\subtitle
+if not exist plugins\ExternalPlayers mkdir plugins\ExternalPlayers
+if not exist plugins\process mkdir plugins\process
+if not exist Wizards mkdir Wizards
 
 del /F /Q plugins\windows\*.*
 del /F /Q plugins\tagreaders\*.*
