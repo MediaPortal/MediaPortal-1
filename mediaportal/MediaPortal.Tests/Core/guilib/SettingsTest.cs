@@ -15,12 +15,6 @@ namespace MediaPortal.Tests.Core.Profile
       return new Settings("Core\\guilib\\TestData\\MediaPortal.xml");
     }
 
-    [Test]
-    public void fail()
-    {
-      Assert.Fail();
-    }
-
     [SetUp]
     public void Init()
     {
