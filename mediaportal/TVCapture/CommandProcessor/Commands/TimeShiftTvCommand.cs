@@ -142,7 +142,6 @@ namespace MediaPortal.TV.Recording
 
       Log.WriteFile(Log.LogType.Recorder, "Recorder:  find free card");
 
-      TurnTvOff(handler, -1);
 
       // no cards are timeshifting the channel we want.
       // Find a card which can view the channel
@@ -169,6 +168,8 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Recorder, "Recorder:  No free card which can receive channel [{0}]", _channelName);
         return; // no card available
       }
+
+      TurnTvOff(handler, card);
 
       handler.CurrentCardIndex = card;
       handler.TVChannelName = _channelName;

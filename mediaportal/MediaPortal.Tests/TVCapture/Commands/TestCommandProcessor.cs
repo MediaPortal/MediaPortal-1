@@ -194,9 +194,83 @@ namespace MediaPortal.Tests.Commands
       TimeShiftTv(proc, "RTL 4");
       StopRecord(proc);
     }
+    [Test]
+    [Category("Recording")]
+    public void TestStartRecording2()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+
+      //record TV
+      TimeShiftTv(proc, "RTL 5");
+      StartRecord(proc, "RTL 4");
+      StopRecord(proc);
+    }
+    [Test]
+    [Category("Recording")]
+    public void TestRecordingInPast()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+      AddSchedule("RTL 4", DateTime.Now.AddHours(-6), DateTime.Now.AddHours(-5));
+      DoSchedule(proc);
+      Assert.IsFalse(card1.IsRecording);
+    }
+    [Test]
+    [Category("Recording")]
+    public void TestRecordingInFuture()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+      AddSchedule("RTL 4", DateTime.Now.AddHours(+1), DateTime.Now.AddHours(+2));
+      DoSchedule(proc);
+      Assert.IsFalse(card1.IsRecording);
+    }
+    [Test]
+    [Category("Recording")]
+    public void TestPreRecording()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+      AddSchedule("RTL 4", DateTime.Now.AddMinutes(2), DateTime.Now.AddHours(+2));
+      DoSchedule(proc);
+      Assert.IsTrue(card1.IsRecording);
+    }
+
+    [Test]
+    [Category("Recording")]
+    public void TestZapWhileRecording()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+
+      //record TV
+      StartRecord(proc, "RTL 4");
+
+      TimeShiftTv(proc, "RTL 4");
+
+      //zap to rtl 5 (should fail)
+      proc.AddCommand(new TimeShiftTvCommand("RTL 5"));
+      proc.ProcessCommands();
+      Assert.AreEqual(proc.CurrentCardIndex, 0);
+      Assert.AreEqual(proc.TVChannelName, "RTL 4");
+      Assert.AreEqual(proc.TVCards[0].TVChannel, "RTL 4");
+      Assert.IsFalse(proc.TVCards[0].View);
+      Assert.IsTrue(proc.TVCards[0].IsTimeShifting);
+      Assert.AreEqual(proc.TVCards[0].TimeShiftFileName, @"live.tv");
+      Assert.AreEqual(proc.GetTimeShiftFileName(proc.CurrentCardIndex), @"C:\card1\live.tv");
+
+      StopRecord(proc);
+    }
     #endregion
 
     #region helper functions
+    void DoSchedule(CommandProcessor proc)
+    {
+      proc.AddCommand(new CheckRecordingsCommand());
+      proc.ProcessCommands();
+      proc.ProcessScheduler();
+    }
     void StopRecord(CommandProcessor proc)
     {
       DateTime dtNow = DateTime.Now;
@@ -220,11 +294,10 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(rec.Channel, recList[0].Channel);
       Assert.AreEqual(rec.Title, recList[0].Title);
     }
-    void StartRecord(CommandProcessor proc, string channelName)
+    TVRecording AddSchedule(string channelName, DateTime dtStart, DateTime dtEnd)
     {
-      //create a new recording...
-      DateTime startTime = DateTime.Now.AddHours(-1);
-      DateTime endTime = DateTime.Now.AddHours(+1);
+      DateTime startTime = dtStart;
+      DateTime endTime = dtEnd;
       TVRecording rec = new TVRecording();
       rec.Channel = channelName;
       rec.Title = "unknown";
@@ -232,18 +305,25 @@ namespace MediaPortal.Tests.Commands
       rec.End = Utils.datetolong(endTime);
       rec.RecType = TVRecording.RecordingType.Once;
       TVDatabase.AddRecording(ref rec);
+      return rec;
+    }
+    void StartRecord(CommandProcessor proc, string channelName, DateTime dtStart, DateTime dtEnd)
+    {
+      string chanName = proc.TVChannelName;
+      int cardIndex = proc.CurrentCardIndex;
+      TVRecording rec=AddSchedule(channelName,  dtStart,  dtEnd);
 
       //start recording it
-      proc.AddCommand(new CheckRecordingsCommand());
-      proc.ProcessCommands();
-      proc.ProcessScheduler();
+      DoSchedule(proc);
 
       int cardNo;
-      bool result=proc.IsRecordingSchedule(rec, out  cardNo);
+      bool result = proc.IsRecordingSchedule(rec, out  cardNo);
+
       Assert.IsTrue(result);
-      Assert.AreEqual(cardNo,0);
-      Assert.AreEqual(proc.CurrentCardIndex, -1);
-      Assert.AreEqual(proc.TVChannelName, String.Empty);
+      Assert.AreEqual(cardNo, 0);
+      Assert.AreEqual(proc.CurrentCardIndex, cardIndex);
+      if (cardIndex==0)
+        Assert.AreEqual(proc.TVChannelName, channelName);
       Assert.AreEqual(proc.TVCards[0].TVChannel, rec.Channel);
       Assert.IsFalse(proc.TVCards[0].View);
       Assert.IsTrue(proc.TVCards[0].IsTimeShifting);
@@ -256,7 +336,11 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(proc.TVCards[0].CurrentTVRecording.Start, rec.Start);
       Assert.AreEqual(proc.TVCards[0].CurrentTVRecording.End, rec.End);
       Assert.AreEqual(proc.TVCards[0].CurrentTVRecording.Channel, rec.Channel);
-      Assert.IsTrue(proc.TVCards[0].RecordingFileName.Length>0);
+      Assert.IsTrue(proc.TVCards[0].RecordingFileName.Length > 0);
+    }
+    void StartRecord(CommandProcessor proc, string channelName)
+    {
+      StartRecord(proc, channelName, DateTime.Now.AddHours(-1), DateTime.Now.AddHours(+1));
     }
 
     void StopTv(CommandProcessor proc)
