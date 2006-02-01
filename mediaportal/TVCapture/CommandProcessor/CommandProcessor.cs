@@ -219,9 +219,9 @@ namespace MediaPortal.TV.Recording
 
           ProcessCommands();
           ProcessCards();
+          ProcessScheduler();
 
           _epgProcessor.Process(this);
-          _scheduler.Process(this);
         }
         StopAllCards();
       }
@@ -232,18 +232,20 @@ namespace MediaPortal.TV.Recording
       _isStopped = true;
     }
 
+    public void ProcessScheduler()
+    {
+      _scheduler.Process(this);
+    }
     public void ProcessCommands()
     {
       lock (_listCommands)
       {
-        if (_listCommands.Count > 0)
+        while (_listCommands.Count > 0)
         {
-          foreach (CardCommand cmd in _listCommands)
-          {
-            cmd.Execute(this);
-            LogTvStatistics();
-          }
-          _listCommands.Clear();
+          CardCommand cmd = _listCommands[0];
+          _listCommands.RemoveAt(0);
+          cmd.Execute(this);
+          LogTvStatistics();
         }
       }
     }

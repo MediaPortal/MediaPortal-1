@@ -113,6 +113,7 @@ namespace MediaPortal.TV.Recording
       dev.CardType = TVCapture.CardTypes.Dummy;
       dev.ID = _tvcards.Count + 1;
       dev.RecordingPath = @"C:";
+      dev.UseForRecording = true;
       dev.SetCommandProcessor(_processor);
       _tvcards.Add(dev);
       return dev;

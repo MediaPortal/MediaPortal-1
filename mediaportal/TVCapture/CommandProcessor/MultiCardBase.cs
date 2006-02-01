@@ -58,8 +58,8 @@ namespace MediaPortal.TV.Recording
 
 
 
-    protected int _currentCardIndex;
-    string _currentTvChannel;
+    protected int _currentCardIndex=-1;
+    string _currentTvChannel=String.Empty;
     protected DateTime _killTimeshiftingTimer;
 
     static List<TVChannel> _tvChannelsList = new List<TVChannel>();

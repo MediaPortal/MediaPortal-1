@@ -609,6 +609,7 @@ namespace MediaPortal.TV.Database
 
             strManual = GUILocalizeStrings.Get(736);
             if (this.Title.Length == 0 || String.Compare(this.Title, strManual, true) == 0) return true;
+            if (this.Title == "unknown") return true;
             return false;
           }
           break;
