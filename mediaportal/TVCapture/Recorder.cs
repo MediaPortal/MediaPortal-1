@@ -1047,7 +1047,11 @@ namespace MediaPortal.TV.Recording
             if (_commandProcessor == null) return;
             StopTimeShiftingCommand cmd = new StopTimeShiftingCommand();
             _commandProcessor.AddCommand(cmd);
-            while (_commandProcessor.IsBusy) System.Threading.Thread.Sleep(10);
+            while (_commandProcessor.IsBusy)
+            {
+              GUIWindowManager.Process();
+              System.Threading.Thread.Sleep(10);
+            }
           }
 
           break;
