@@ -73,6 +73,7 @@
     <Compile Include="Core\InputDevices\InputHandlerTest.cs" />
     <Compile Include="TVCapture\Commands\TestCommandProcessor.cs" />
     <Compile Include="Plugins\ProcessPlugins\CallerId\ISDN\OutlookHelperTest.cs" />
+    <Compile Include="TVCapture\Commands\TestMultiTunerStrategy.cs" />
     <Compile Include="TVCapture\DiskManagement\DeleteOldRecordings.cs" />
     <Compile Include="TVCapture\DiskManagement\TestEpisodeManagement.cs" />
     <Compile Include="TVCapture\Teletext\RendererTest.cs" />
