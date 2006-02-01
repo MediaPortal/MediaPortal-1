@@ -19,8 +19,6 @@ del *.dll
 del *.ax
 
 copy ..\..\..\RemotePlugins\HCWHelper\HCWHelper\bin\Release\HCWHelper.exe .
-copy ..\..\..\RemotePlugins\HCWHelper\NetHelper\bin\Release\NetHelper.dll .
-if exist NetHelper.pdb del NetHelper.pdb
 copy ..\..\..\RemotePlugins\X10Remote\AxInterop.X10.dll .
 copy ..\..\..\RemotePlugins\X10Remote\Interop.X10.dll .
 copy ..\..\..\RemotePlugins\IrTrans\IRTrans.NET.dll .
@@ -33,7 +31,7 @@ regsvr32 /s TSFileSource.ax.ax
 regsvr32 /s MPTSWriter.ax
 copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .
 copy ..\..\..\core\fontengine\fontengine\release\fontengine.dll .
-copy ..\..\..\Interop.DirectShowHelperLib.dll .
+rem copy ..\..\..\Interop.DirectShowHelperLib.dll .
 copy ..\..\..\AxInterop.MOZILLACONTROLLib.dll .
 copy ..\..\..\Interop.MOZILLACONTROLLib.dll .
 copy ..\..\..\mfc71.dll .
@@ -56,7 +54,7 @@ copy ..\..\..\Interop.GIRDERLib.dll .
 copy ..\..\..\MediaPadLayer.dll .
 rem 
 copy ..\..\..\KCS.Utilities.dll .
-copy ..\..\..\X10Plugin.* .
+rem copy ..\..\..\X10Plugin.* .
 copy ..\..\..\X10Unified.* .
 copy ..\..\..\xAPMessage.dll .
 copy ..\..\..\xAPTransport.dll .
