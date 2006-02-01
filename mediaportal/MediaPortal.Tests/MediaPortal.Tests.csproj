@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\guilib\CacheSettingsProviderTest.cs" />
+    <Compile Include="Core\guilib\Layers.cs" />
     <Compile Include="Core\guilib\SettingsTest.cs" />
     <Compile Include="Core\guilib\XmlSettingsPrefetchTest.cs" />
     <Compile Include="Core\guilib\XmlSettingsProviderTest.cs" />

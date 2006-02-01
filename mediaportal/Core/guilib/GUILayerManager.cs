@@ -61,6 +61,12 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
+    static public IRenderLayer GetLayer(LayerType zOrder)
+    {
+      return _layers[(int)zOrder];
+    }
+
     static public void Render(float timePassed)
     {
       if (GUIGraphicsContext.BlankScreen) return;
