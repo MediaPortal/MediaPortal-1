@@ -59,8 +59,10 @@ namespace MediaPortal.TV.Recording
 
     // list of all tv cards installed
     protected List<TVCaptureDevice> _tvcards = new List<TVCaptureDevice>();
-    public TvCardCollection()
+    CommandProcessor _processor;
+    public TvCardCollection(CommandProcessor processor)
     {
+      _processor = processor;
       try
       {
         using (Stream r = File.Open(@"capturecards.xml", FileMode.Open, FileAccess.Read))
@@ -69,6 +71,7 @@ namespace MediaPortal.TV.Recording
           ArrayList cards = (ArrayList)c.Deserialize(r);
           foreach (TVCaptureDevice dev in cards)
           {
+            dev.SetCommandProcessor(_processor);
             _tvcards.Add(dev);
           }
           r.Close();
@@ -109,7 +112,8 @@ namespace MediaPortal.TV.Recording
       dev.FriendlyName = name;
       dev.CardType = TVCapture.CardTypes.Dummy;
       dev.ID = _tvcards.Count + 1;
-      dev.RecordingPath=@"C:";
+      dev.RecordingPath = @"C:";
+      dev.SetCommandProcessor(_processor);
       _tvcards.Add(dev);
       return dev;
     }

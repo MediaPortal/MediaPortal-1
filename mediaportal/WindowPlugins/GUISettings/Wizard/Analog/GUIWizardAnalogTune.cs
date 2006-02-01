@@ -76,7 +76,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
       if (card >= 0 && card < Recorder.Count)
       {
         captureCard = Recorder.Get(card);
-        captureCard.View = true;
+        captureCard.StartViewing("test");
       }
       else
       {

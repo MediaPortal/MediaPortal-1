@@ -122,7 +122,7 @@ namespace MediaPortal.TV.Recording
           if (!dev.IsRecording && !dev.IsTimeShifting && dev.SupportsTimeShifting)
           {
             Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting on card:{0}", dev.ID);
-            dev.StartTimeShifting();
+            dev.StartTimeShifting(_channelName);
           }
 
           //yes, check if we're already playing/watching it
@@ -157,7 +157,7 @@ namespace MediaPortal.TV.Recording
             handler.TuneExternalChannel(_channelName, true);
             dev.TVChannel = _channelName;
           }
-          dev.View = true;
+          dev.StartViewing(_channelName);
           handler.OnTvStart(handler.CurrentCardIndex, dev);
           handler.ResetTimeshiftTimer();
           return;
@@ -204,9 +204,7 @@ namespace MediaPortal.TV.Recording
       // now start watching on our card
       Log.WriteFile(Log.LogType.Recorder, "Recorder:  start watching on card:{0} channel:{1}", dev.ID, _channelName);
       handler.TuneExternalChannel(_channelName, true);
-      dev.TVChannel = _channelName;
-      dev.View = true;
-      handler.TVChannelName = _channelName;
+      dev.StartViewing(_channelName);
       handler.OnTvStart(handler.CurrentCardIndex, dev);
       handler.ResetTimeshiftTimer();
     }//static public void StartViewing(string channel, bool TVOnOff, bool timeshift)

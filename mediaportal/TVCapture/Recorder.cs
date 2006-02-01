@@ -576,7 +576,7 @@ namespace MediaPortal.TV.Recording
       if (dev.View) return true;
       if (dev.IsTimeShifting)
       {
-        string fileName = GetTimeShiftFileName(_commandProcessor.CurrentCardIndex);
+        string fileName = _commandProcessor.GetTimeShiftFileName(_commandProcessor.CurrentCardIndex);
         if (g_Player.Playing && g_Player.CurrentFile == fileName)
           return true;
         if (System.IO.File.Exists(fileName))
@@ -600,7 +600,7 @@ namespace MediaPortal.TV.Recording
       if (dev.View) return true;
       if (dev.IsTimeShifting)
       {
-        if (g_Player.Playing && g_Player.CurrentFile == GetTimeShiftFileName(_commandProcessor.CurrentCardIndex))
+        if (g_Player.Playing && g_Player.CurrentFile == _commandProcessor.GetTimeShiftFileName(_commandProcessor.CurrentCardIndex))
           return true;
       }
       return false;
@@ -726,19 +726,6 @@ namespace MediaPortal.TV.Recording
       return dev.RecordingFileName;
     }
 
-    /// <summary>
-    /// Property which returns the timeshifting filename for the current selected card
-    /// </summary>
-    /// <returns>filename of the timeshifting file</returns>
-    static public string GetTimeShiftFileName()
-    {
-      if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return String.Empty;
-      TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
-      if (!dev.IsTimeShifting) return String.Empty;
-
-      string FileName = String.Format(@"{0}\card{1}\{2}", dev.RecordingPath, _commandProcessor.CurrentCardIndex + 1, dev.TimeShiftFileName);
-      return FileName;
-    }
 
     /// <summary>
     /// Property which returns the timeshifting filename for a specific card

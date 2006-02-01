@@ -118,10 +118,11 @@ namespace MediaPortal.TV.Recording
           handler.TuneExternalChannel(_channelName, true);
           dev.TVChannel = _channelName;
         }
+
         if (!dev.IsRecording && !dev.IsTimeShifting && dev.SupportsTimeShifting)
         {
           Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting on card:{0}", dev.ID);
-          dev.StartTimeShifting();
+          dev.StartTimeShifting(_channelName);
         }
 
         //yes, check if we're already playing/watching it
@@ -190,7 +191,7 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting card {0} channel:{1}", dev.ID, _channelName);
         handler.TuneExternalChannel(_channelName, true);
         dev.TVChannel = _channelName;
-        dev.StartTimeShifting();
+        dev.StartTimeShifting(_channelName);
         handler.TVChannelName = _channelName;
 
         // and play the timeshift file (if its not already playing it)

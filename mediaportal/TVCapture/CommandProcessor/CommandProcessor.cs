@@ -65,7 +65,7 @@ namespace MediaPortal.TV.Recording
       : base()
     {
       //load tv cards
-      _tvcards = new TvCardCollection();
+      _tvcards = new TvCardCollection(this);
 
       _epgProcessor = new EPGProcessor();
       _scheduler = new Scheduler();
