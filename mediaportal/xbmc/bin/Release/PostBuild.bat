@@ -24,10 +24,10 @@ copy ..\..\..\RemotePlugins\X10Remote\Interop.X10.dll .
 copy ..\..\..\RemotePlugins\IrTrans\IRTrans.NET.dll .
 if exist ..\..\..\lame_enc.dll copy ..\..\..\lame_enc.dll .
 copy ..\..\..\MPSA.ax .
-copy ..\..\..\TsFileSource.ax .
+copy ..\..\..\TSFileSource.ax .
 copy ..\..\..\MPTSWriter.ax .
 regsvr32 /s MPSA.ax
-regsvr32 /s TSFileSource.ax.ax
+regsvr32 /s TSFileSource.ax
 regsvr32 /s MPTSWriter.ax
 copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .
 copy ..\..\..\core\fontengine\fontengine\release\fontengine.dll .
