@@ -33,19 +33,19 @@ using Core.Util;
 
 namespace MyMail
 {
-	/// <summary>
-	/// Summary description for MailDetailSetup.
-	/// </summary>
-	public class MailDetailSetup : System.Windows.Forms.Form
-	{
+  /// <summary>
+  /// Summary description for MailDetailSetup.
+  /// </summary>
+  public class MailDetailSetup : System.Windows.Forms.Form
+  {
     private MediaPortal.UserInterface.Controls.MPButton btnOk;
     private MediaPortal.UserInterface.Controls.MPButton btnCancel;
-    private System.Windows.Forms.GroupBox gbConnection;
+    private MediaPortal.UserInterface.Controls.MPGroupBox gbConnection;
     private System.Windows.Forms.Label lblServerAddress;
     private System.Windows.Forms.Label lblUsername;
     private System.Windows.Forms.Label lblPassword;
     private System.Windows.Forms.Label lblPort;
-    private System.Windows.Forms.GroupBox gbStorage;
+    private MediaPortal.UserInterface.Controls.MPGroupBox gbStorage;
     private System.Windows.Forms.Label lblMailboxFolder;
     private System.Windows.Forms.Label lblAttachmentFolder;
     private System.Windows.Forms.TextBox tbServerAddress;
@@ -54,60 +54,60 @@ namespace MyMail
     private System.Windows.Forms.TextBox tbPassword;
     private System.Windows.Forms.TextBox tbMailboxFolder;
     private System.Windows.Forms.TextBox tbAttachmentFolder;
-    private System.Windows.Forms.GroupBox gbGeneral;
+    private MediaPortal.UserInterface.Controls.MPGroupBox gbGeneral;
     private System.Windows.Forms.TextBox tbBoxLabel;
     private System.Windows.Forms.Label lblBoxLabel;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbEnabled;
     private System.Windows.Forms.FolderBrowserDialog dialogFolder;
     private MediaPortal.UserInterface.Controls.MPButton btnMailboxFolder;
     private MediaPortal.UserInterface.Controls.MPButton btnAttachmentFolder;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
     MailBox m_CurMailBox = null;
     private MediaPortal.UserInterface.Controls.MPButton btnTest;
     ConditionChecker checker = new ConditionChecker();
 
-		public MailDetailSetup()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public MailDetailSetup()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(MailDetailSetup));
       this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.gbConnection = new System.Windows.Forms.GroupBox();
+      this.gbConnection = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.tbPassword = new System.Windows.Forms.TextBox();
       this.tbUsername = new System.Windows.Forms.TextBox();
       this.tbPort = new System.Windows.Forms.TextBox();
@@ -116,14 +116,14 @@ namespace MyMail
       this.lblPassword = new System.Windows.Forms.Label();
       this.lblUsername = new System.Windows.Forms.Label();
       this.lblServerAddress = new System.Windows.Forms.Label();
-      this.gbStorage = new System.Windows.Forms.GroupBox();
+      this.gbStorage = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.btnAttachmentFolder = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnMailboxFolder = new MediaPortal.UserInterface.Controls.MPButton();
       this.tbAttachmentFolder = new System.Windows.Forms.TextBox();
       this.tbMailboxFolder = new System.Windows.Forms.TextBox();
       this.lblAttachmentFolder = new System.Windows.Forms.Label();
       this.lblMailboxFolder = new System.Windows.Forms.Label();
-      this.gbGeneral = new System.Windows.Forms.GroupBox();
+      this.gbGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.tbBoxLabel = new System.Windows.Forms.TextBox();
       this.lblBoxLabel = new System.Windows.Forms.Label();
       this.cbEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -156,7 +156,7 @@ namespace MyMail
       // 
       // gbConnection
       // 
-      this.gbConnection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.gbConnection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.gbConnection.Controls.Add(this.btnTest);
       this.gbConnection.Controls.Add(this.tbPassword);
@@ -176,7 +176,7 @@ namespace MyMail
       // 
       // tbPassword
       // 
-      this.tbPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.tbPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tbPassword.Location = new System.Drawing.Point(112, 94);
       this.tbPassword.Name = "tbPassword";
@@ -187,7 +187,7 @@ namespace MyMail
       // 
       // tbUsername
       // 
-      this.tbUsername.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.tbUsername.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tbUsername.Location = new System.Drawing.Point(112, 70);
       this.tbUsername.Name = "tbUsername";
@@ -205,7 +205,7 @@ namespace MyMail
       // 
       // tbServerAddress
       // 
-      this.tbServerAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.tbServerAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tbServerAddress.Location = new System.Drawing.Point(112, 21);
       this.tbServerAddress.Name = "tbServerAddress";
@@ -247,7 +247,7 @@ namespace MyMail
       // 
       // gbStorage
       // 
-      this.gbStorage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.gbStorage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.gbStorage.Controls.Add(this.btnAttachmentFolder);
       this.gbStorage.Controls.Add(this.btnMailboxFolder);
@@ -284,7 +284,7 @@ namespace MyMail
       // 
       // tbAttachmentFolder
       // 
-      this.tbAttachmentFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.tbAttachmentFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tbAttachmentFolder.Location = new System.Drawing.Point(111, 42);
       this.tbAttachmentFolder.Name = "tbAttachmentFolder";
@@ -294,7 +294,7 @@ namespace MyMail
       // 
       // tbMailboxFolder
       // 
-      this.tbMailboxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.tbMailboxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tbMailboxFolder.Location = new System.Drawing.Point(111, 17);
       this.tbMailboxFolder.Name = "tbMailboxFolder";
@@ -320,7 +320,7 @@ namespace MyMail
       // 
       // gbGeneral
       // 
-      this.gbGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.gbGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.gbGeneral.Controls.Add(this.tbBoxLabel);
       this.gbGeneral.Controls.Add(this.lblBoxLabel);
@@ -334,7 +334,7 @@ namespace MyMail
       // 
       // tbBoxLabel
       // 
-      this.tbBoxLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.tbBoxLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tbBoxLabel.Location = new System.Drawing.Point(112, 42);
       this.tbBoxLabel.Name = "tbBoxLabel";
@@ -390,10 +390,10 @@ namespace MyMail
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     public MailBox CurMailBox
-    { 
+    {
       get { return m_CurMailBox; }
       set { m_CurMailBox = value; }
     }
@@ -479,7 +479,7 @@ namespace MyMail
     {
       try
       {
-        IPHostEntry hostIP = Dns.GetHostEntry(mb.ServerAddress); 
+        IPHostEntry hostIP = Dns.GetHostEntry(mb.ServerAddress);
         IPAddress[] addr = hostIP.AddressList;
       }
       catch
@@ -491,10 +491,10 @@ namespace MyMail
 
     private void btnTest_Click(object sender, System.EventArgs e)
     {
-    
+
     }
 
 
 
-	}
+  }
 }

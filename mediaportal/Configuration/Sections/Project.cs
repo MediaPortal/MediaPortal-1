@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -31,7 +35,7 @@ namespace MediaPortal.Configuration.Sections
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.GroupBox groupBox2;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.LinkLabel linkLabel2;
@@ -45,11 +49,13 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Label label8;
     private System.ComponentModel.IContainer components = null;
 
-    public Project() : this("Project")
+    public Project()
+      : this("Project")
     {
     }
 
-    public Project(string name) : base(name)
+    public Project(string name)
+      : base(name)
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -60,16 +66,16 @@ namespace MediaPortal.Configuration.Sections
     /// <summary>
     /// Clean up any resources being used.
     /// </summary>
-    protected override void Dispose( bool disposing )
+    protected override void Dispose(bool disposing)
     {
-      if( disposing )
+      if (disposing)
       {
-        if (components != null) 
+        if (components != null)
         {
           components.Dispose();
         }
       }
-      base.Dispose( disposing );
+      base.Dispose(disposing);
     }
 
     #region Designer generated code
@@ -82,7 +88,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label8 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.linkLabel4 = new System.Windows.Forms.LinkLabel();
       this.label7 = new System.Windows.Forms.Label();
       this.linkLabel3 = new System.Windows.Forms.LinkLabel();
@@ -257,9 +263,9 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
     {
-      if(linkLabel1.Text==null)
+      if (linkLabel1.Text == null)
         return;
-      if(linkLabel1.Text.Length>0)
+      if (linkLabel1.Text.Length > 0)
       {
         System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabel1.Text);
         System.Diagnostics.Process.Start(sInfo);
@@ -268,9 +274,9 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabel2_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
     {
-      if(linkLabel2.Text==null)
+      if (linkLabel2.Text == null)
         return;
-      if(linkLabel2.Text.Length>0)
+      if (linkLabel2.Text.Length > 0)
       {
         System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabel2.Text);
         System.Diagnostics.Process.Start(sInfo);
@@ -279,9 +285,9 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabel3_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
     {
-      if(linkLabel3.Text==null)
+      if (linkLabel3.Text == null)
         return;
-      if(linkLabel3.Text.Length>0)
+      if (linkLabel3.Text.Length > 0)
       {
         System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabel3.Text);
         System.Diagnostics.Process.Start(sInfo);
@@ -290,9 +296,9 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabel4_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
     {
-      if(linkLabel4.Text==null)
+      if (linkLabel4.Text == null)
         return;
-      if(linkLabel4.Text.Length>0)
+      if (linkLabel4.Text.Length > 0)
       {
         System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabel4.Text);
         System.Diagnostics.Process.Start(sInfo);

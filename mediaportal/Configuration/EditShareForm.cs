@@ -31,20 +31,20 @@ using System.Windows.Forms;
 
 namespace MediaPortal.Configuration
 {
-	/// <summary>
-	/// Summary description for EditShare.
-	/// </summary>
-	public class EditShareForm : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.GroupBox groupBox1;
-		private MediaPortal.UserInterface.Controls.MPButton folderButton;
-		private System.Windows.Forms.TextBox folderTextBox;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox nameTextBox;
-		private System.Windows.Forms.Label label1;
-		private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-		private MediaPortal.UserInterface.Controls.MPButton okButton;
-		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+  /// <summary>
+  /// Summary description for EditShare.
+  /// </summary>
+  public class EditShareForm : System.Windows.Forms.Form
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPButton folderButton;
+    private System.Windows.Forms.TextBox folderTextBox;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.TextBox nameTextBox;
+    private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
+    private MediaPortal.UserInterface.Controls.MPButton okButton;
+    private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.TextBox pinCodeTextBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxRemote;
@@ -58,49 +58,49 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.Label label8;
     private System.Windows.Forms.TextBox textBoxRemoteFolder;
     private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label9;
-		private System.Windows.Forms.ComboBox comboBox1;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    private System.Windows.Forms.Label label9;
+    private System.Windows.Forms.ComboBox comboBox1;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public EditShareForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public EditShareForm()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// Set password character
+      //
+      // Set password character
       //
       pinCodeTextBox.PasswordChar = (char)0x25CF;
-		}
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.comboBox1 = new System.Windows.Forms.ComboBox();
       this.label9 = new System.Windows.Forms.Label();
       this.textBoxRemoteFolder = new System.Windows.Forms.TextBox();
@@ -129,8 +129,8 @@ namespace MediaPortal.Configuration
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.comboBox1);
       this.groupBox1.Controls.Add(this.label9);
@@ -185,7 +185,7 @@ namespace MediaPortal.Configuration
       // 
       // textBoxRemoteFolder
       // 
-      this.textBoxRemoteFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.textBoxRemoteFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxRemoteFolder.Location = new System.Drawing.Point(16, 320);
       this.textBoxRemoteFolder.Name = "textBoxRemoteFolder";
@@ -275,7 +275,7 @@ namespace MediaPortal.Configuration
       // 
       // pinCodeTextBox
       // 
-      this.pinCodeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.pinCodeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.pinCodeTextBox.Location = new System.Drawing.Point(216, 40);
       this.pinCodeTextBox.MaxLength = 4;
@@ -306,7 +306,7 @@ namespace MediaPortal.Configuration
       // 
       // folderTextBox
       // 
-      this.folderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.folderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.folderTextBox.Location = new System.Drawing.Point(16, 88);
       this.folderTextBox.Name = "folderTextBox";
@@ -324,7 +324,7 @@ namespace MediaPortal.Configuration
       // 
       // nameTextBox
       // 
-      this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.nameTextBox.Location = new System.Drawing.Point(16, 40);
       this.nameTextBox.Name = "nameTextBox";
@@ -383,131 +383,131 @@ namespace MediaPortal.Configuration
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		private void folderButton_Click(object sender, System.EventArgs e)
-		{
-			using(folderBrowserDialog = new FolderBrowserDialog())
-			{
-				folderBrowserDialog.Description = "Select the location of the share folder";
-				folderBrowserDialog.ShowNewFolderButton = true;
-				folderBrowserDialog.SelectedPath = folderTextBox.Text;
-				DialogResult dialogResult = folderBrowserDialog.ShowDialog(this);
+    private void folderButton_Click(object sender, System.EventArgs e)
+    {
+      using (folderBrowserDialog = new FolderBrowserDialog())
+      {
+        folderBrowserDialog.Description = "Select the location of the share folder";
+        folderBrowserDialog.ShowNewFolderButton = true;
+        folderBrowserDialog.SelectedPath = folderTextBox.Text;
+        DialogResult dialogResult = folderBrowserDialog.ShowDialog(this);
 
-				if(dialogResult == DialogResult.OK)
-				{
-					folderTextBox.Text = folderBrowserDialog.SelectedPath;
-				}
-			}
-		}
+        if (dialogResult == DialogResult.OK)
+        {
+          folderTextBox.Text = folderBrowserDialog.SelectedPath;
+        }
+      }
+    }
 
-		private void okButton_Click(object sender, System.EventArgs e)
-		{
-			if (nameTextBox.Text==String.Empty)
-			{
-				MessageBox.Show("No name specified.Please fill in a name for this folder", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				return;					
+    private void okButton_Click(object sender, System.EventArgs e)
+    {
+      if (nameTextBox.Text == String.Empty)
+      {
+        MessageBox.Show("No name specified.Please fill in a name for this folder", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        return;
 
-			}
-			
-			if (folderTextBox.Text==String.Empty)
-			{
-				MessageBox.Show("No local folder specified.Please choose a local folder", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				return;					
-			}
-			if (checkBoxRemote.Checked)
-			{
-				if (textBoxRemoteFolder.Text==String.Empty)
-				{	
-					MessageBox.Show("No remote ftp folder specified.Please choose a remote folder", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-					return;					
-				}
-				if (textBoxServer.Text==String.Empty)
-				{	
-					MessageBox.Show("No remote ftp server specified.Please choose a remote ftp server", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-					return;					
-				}
-				if (textBoxLogin.Text==String.Empty)
-				{	
-					MessageBox.Show("No login for the remote ftp server specified.Please choose a loginname", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-					return;					
-				}
-				if (textBoxPassword.Text==String.Empty)
-				{	
-					MessageBox.Show("No password for the remote ftp server specified.Please choose a password", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-					return;					
-				}
-				if (textBoxPort.Text==String.Empty)
-				{	
-					MessageBox.Show("No TCP/IP port for the remote ftp server specified.Please specify a TCP/IP port", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-					return;					
-				}
-			}
-			this.DialogResult = DialogResult.OK;
-			this.Hide();
-		}
+      }
 
-		private void cancelButton_Click(object sender, System.EventArgs e)
-		{
-			this.DialogResult = DialogResult.Cancel;
-			this.Hide();
-		}
+      if (folderTextBox.Text == String.Empty)
+      {
+        MessageBox.Show("No local folder specified.Please choose a local folder", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        return;
+      }
+      if (checkBoxRemote.Checked)
+      {
+        if (textBoxRemoteFolder.Text == String.Empty)
+        {
+          MessageBox.Show("No remote ftp folder specified.Please choose a remote folder", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          return;
+        }
+        if (textBoxServer.Text == String.Empty)
+        {
+          MessageBox.Show("No remote ftp server specified.Please choose a remote ftp server", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          return;
+        }
+        if (textBoxLogin.Text == String.Empty)
+        {
+          MessageBox.Show("No login for the remote ftp server specified.Please choose a loginname", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          return;
+        }
+        if (textBoxPassword.Text == String.Empty)
+        {
+          MessageBox.Show("No password for the remote ftp server specified.Please choose a password", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          return;
+        }
+        if (textBoxPort.Text == String.Empty)
+        {
+          MessageBox.Show("No TCP/IP port for the remote ftp server specified.Please specify a TCP/IP port", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          return;
+        }
+      }
+      this.DialogResult = DialogResult.OK;
+      this.Hide();
+    }
+
+    private void cancelButton_Click(object sender, System.EventArgs e)
+    {
+      this.DialogResult = DialogResult.Cancel;
+      this.Hide();
+    }
 
     private void pinCodeTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
     {
       //
       // Allow only numbers, and backspace.
       //
-      if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+      if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
       {
         e.Handled = true;
-      }        
+      }
     }
 
     private void checkBoxRemote_CheckedChanged(object sender, System.EventArgs e)
     {
       if (checkBoxRemote.Checked)
       {
-        textBoxLogin.Enabled=true;
-        textBoxPassword.Enabled=true;
-        textBoxPort.Enabled=true;
-        textBoxServer.Enabled=true;
-        textBoxRemoteFolder.Enabled=true;
+        textBoxLogin.Enabled = true;
+        textBoxPassword.Enabled = true;
+        textBoxPort.Enabled = true;
+        textBoxServer.Enabled = true;
+        textBoxRemoteFolder.Enabled = true;
       }
       else
       {
-        textBoxLogin.Enabled=false;
-        textBoxPassword.Enabled=false;
-        textBoxPort.Enabled=false;
-        textBoxServer.Enabled=false;
-        textBoxRemoteFolder.Enabled=false;
+        textBoxLogin.Enabled = false;
+        textBoxPassword.Enabled = false;
+        textBoxPort.Enabled = false;
+        textBoxServer.Enabled = false;
+        textBoxRemoteFolder.Enabled = false;
       }
     }
 
     private void groupBox1_Enter(object sender, System.EventArgs e)
     {
-    
+
     }
 
     private void EditShareForm_Load(object sender, System.EventArgs e)
     {
-      bool remote=IsRemote;
-      checkBoxRemote.Checked=!remote;
-      checkBoxRemote.Checked=remote;
-			if (comboBox1.SelectedIndex<0) comboBox1.SelectedIndex=0;
+      bool remote = IsRemote;
+      checkBoxRemote.Checked = !remote;
+      checkBoxRemote.Checked = remote;
+      if (comboBox1.SelectedIndex < 0) comboBox1.SelectedIndex = 0;
     }
 
-		public string Folder
-		{
-			get { return folderTextBox.Text; }
-			set { folderTextBox.Text = value; }
-		}
+    public string Folder
+    {
+      get { return folderTextBox.Text; }
+      set { folderTextBox.Text = value; }
+    }
 
-		public string ShareName
-		{
-			get { return nameTextBox.Text; }
-			set { nameTextBox.Text = value; }
-		}
+    public string ShareName
+    {
+      get { return nameTextBox.Text; }
+      set { nameTextBox.Text = value; }
+    }
 
     public string PinCode
     {
@@ -516,47 +516,48 @@ namespace MediaPortal.Configuration
     }
     public bool IsRemote
     {
-      get { return checkBoxRemote.Checked;}
-      set { checkBoxRemote.Checked=value; }
+      get { return checkBoxRemote.Checked; }
+      set { checkBoxRemote.Checked = value; }
     }
     public int Port
     {
-      get {
-        int port=21;
+      get
+      {
+        int port = 21;
         try
         {
-          port=Int32.Parse(textBoxPort.Text);
+          port = Int32.Parse(textBoxPort.Text);
         }
-        catch(Exception){}
+        catch (Exception) { }
         return port;
       }
-      set { textBoxPort.Text=value.ToString(); }
+      set { textBoxPort.Text = value.ToString(); }
     }
     public string Server
     {
-      get { return textBoxServer.Text;}
-      set { textBoxServer.Text=value; }
+      get { return textBoxServer.Text; }
+      set { textBoxServer.Text = value; }
     }
     public string LoginName
     {
-      get { return textBoxLogin.Text;}
-      set { textBoxLogin.Text=value; }
+      get { return textBoxLogin.Text; }
+      set { textBoxLogin.Text = value; }
     }
     public string PassWord
     {
-      get { return textBoxPassword.Text;}
-      set { textBoxPassword.Text=value; }
+      get { return textBoxPassword.Text; }
+      set { textBoxPassword.Text = value; }
     }
-    
+
     public string RemoteFolder
     {
-      get { return textBoxRemoteFolder.Text;}
-      set { textBoxRemoteFolder.Text=value; }
+      get { return textBoxRemoteFolder.Text; }
+      set { textBoxRemoteFolder.Text = value; }
     }
-		public int View
-		{
-			get { return comboBox1.SelectedIndex;}
-			set {comboBox1.SelectedIndex=value;}
-		}
-	}
+    public int View
+    {
+      get { return comboBox1.SelectedIndex; }
+      set { comboBox1.SelectedIndex = value; }
+    }
+  }
 }

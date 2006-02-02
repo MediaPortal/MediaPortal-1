@@ -120,8 +120,8 @@ namespace MediaPortal.Configuration.Sections
       this.label1 = new System.Windows.Forms.Label();
       this.cbDeleteWatchedShows = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label12 = new System.Windows.Forms.Label();
       this.label10 = new System.Windows.Forms.Label();
       this.label9 = new System.Windows.Forms.Label();
@@ -135,10 +135,10 @@ namespace MediaPortal.Configuration.Sections
       this.label38 = new System.Windows.Forms.Label();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
-      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.comboDrives = new System.Windows.Forms.ComboBox();
       this.label5 = new System.Windows.Forms.Label();
       this.label8 = new System.Windows.Forms.Label();
@@ -591,13 +591,13 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    
+
     private string ShowExample(string strInput, int recType)
     {
       string strName = string.Empty;
       string strDirectory = string.Empty;
       IFormatProvider culture = new CultureInfo("en-US");
-      Example[] example= new Example[2];
+      Example[] example = new Example[2];
       example[0] = new Example("ProSieben", "Philadelphia", "unknown", "unknown", "unknown", "unknown", "Drama", DateTime.Parse("12/23/2005 08:15 PM", culture), DateTime.Parse("12/23/2005 10:45 PM", culture));
       example[1] = new Example("ABC", "Friends", "Joey's Birthday", "4", "32", "part 1 of 1", "Comedy", DateTime.Parse("12/23/2005 08:15 PM", culture), DateTime.Parse("12/23/2005 08:45 PM", culture));
       string strDefaultName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
@@ -672,7 +672,7 @@ namespace MediaPortal.Configuration.Sections
       comboBoxRecording.SelectedIndex = 0;
       textBoxSample.Text = ShowExample(formatString[comboBoxRecording.SelectedIndex], comboBoxRecording.SelectedIndex);
 
-      
+
       comboDrives.Items.Clear();
       for (char drive = 'a'; drive <= 'z'; drive++)
       {
@@ -740,7 +740,7 @@ namespace MediaPortal.Configuration.Sections
     void UpdateDriveInfo(bool save)
     {
       string drive = (string)comboDrives.SelectedItem;
-      ulong freeSpace=Utils.GetFreeDiskSpace(drive);
+      ulong freeSpace = Utils.GetFreeDiskSpace(drive);
       long totalSpace = Utils.GetDiskSize(drive);
       lblFreeDiskSpace.Text = Utils.GetSize((long)freeSpace);
       lblTotalSpace.Text = Utils.GetSize((long)totalSpace);

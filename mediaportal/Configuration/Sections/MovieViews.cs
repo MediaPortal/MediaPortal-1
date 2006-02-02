@@ -67,7 +67,7 @@ namespace MediaPortal.Configuration.Sections
             if (currentCell.RowNumber < ds.Rows.Count)
             {
               DataRow row = ds.Rows[currentCell.RowNumber];
-              this.Checked = (bool) row.ItemArray[Cell];
+              this.Checked = (bool)row.ItemArray[Cell];
             }
           }
         }
@@ -108,7 +108,7 @@ namespace MediaPortal.Configuration.Sections
                 if (currentCell.RowNumber < ds.Rows.Count)
                 {
                   DataRow row = ds.Rows[currentCell.RowNumber];
-                  string currentValue = (string) row.ItemArray[Cell];
+                  string currentValue = (string)row.ItemArray[Cell];
                   if (currentValue == item)
                   {
                     SelectedItem = item;
@@ -121,7 +121,7 @@ namespace MediaPortal.Configuration.Sections
           base.OnLayout(levent);
         }
         catch (Exception)
-        {}
+        { }
       }
     }
 
@@ -162,7 +162,7 @@ namespace MediaPortal.Configuration.Sections
 
       };
 
-		private string[] viewsAs = new string[]
+    private string[] viewsAs = new string[]
 			{
 				"List",
 				"Icons",
@@ -170,10 +170,12 @@ namespace MediaPortal.Configuration.Sections
 				"Filmstrip",
 
 		};
-    public MovieViews() : this("Movie Views")
-    {}
+    public MovieViews()
+      : this("Movie Views")
+    { }
 
-    public MovieViews(string name) : base(name)
+    public MovieViews(string name)
+      : base(name)
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
@@ -188,7 +190,7 @@ namespace MediaPortal.Configuration.Sections
             try
             {
               SoapFormatter formatter = new SoapFormatter();
-              views = (ArrayList) formatter.Deserialize(fileStream);
+              views = (ArrayList)formatter.Deserialize(fileStream);
             }
             finally
             {
@@ -197,7 +199,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
         catch
-        {}
+        { }
       }
       else
       {
@@ -311,34 +313,34 @@ namespace MediaPortal.Configuration.Sections
       dtcCheck.ColumnName = "Sort Ascending";
       datasetFilters.Columns.Add(dtcCheck); //Add the above column to the //Data Table
 
-			dtCol = new DataColumn("ViewAs");
-			dtCol.DataType = Type.GetType("System.String");
-			dtCol.DefaultValue = "";
-			datasetFilters.Columns.Add(dtCol);
+      dtCol = new DataColumn("ViewAs");
+      dtCol.DataType = Type.GetType("System.String");
+      dtCol.DefaultValue = "";
+      datasetFilters.Columns.Add(dtCol);
 
-			SyncedComboBox cbView = new SyncedComboBox();
-			cbView.Cursor = Cursors.Arrow;
-			cbView.DropDownStyle = ComboBoxStyle.DropDownList;
-			cbView.Dock = DockStyle.Fill;
-			cbView.DisplayMember = "ViewAs";
-			foreach (string strText in viewsAs)
-			{
-				cbView.Items.Add(strText);
-			}
-			cbView.Grid = dataGrid1;
-			cbView.Cell = 1;
-			cbView.SelectionChangeCommitted += new EventHandler(cbView_SelectionChangeCommitted);
+      SyncedComboBox cbView = new SyncedComboBox();
+      cbView.Cursor = Cursors.Arrow;
+      cbView.DropDownStyle = ComboBoxStyle.DropDownList;
+      cbView.Dock = DockStyle.Fill;
+      cbView.DisplayMember = "ViewAs";
+      foreach (string strText in viewsAs)
+      {
+        cbView.Items.Add(strText);
+      }
+      cbView.Grid = dataGrid1;
+      cbView.Cell = 1;
+      cbView.SelectionChangeCommitted += new EventHandler(cbView_SelectionChangeCommitted);
 
       //fill in all rows...
       for (int i = 0; i < currentView.Filters.Count; ++i)
       {
-        FilterDefinition def = (FilterDefinition) currentView.Filters[i];
+        FilterDefinition def = (FilterDefinition)currentView.Filters[i];
         string limit = def.Limit.ToString();
         if (def.Limit < 0)
         {
           limit = "";
         }
-        datasetFilters.Rows.Add(new object[] {def.Where, def.SqlOperator, def.Restriction, limit, def.SortAscending,def.DefaultView});
+        datasetFilters.Rows.Add(new object[] { def.Where, def.SqlOperator, def.Restriction, limit, def.SortAscending, def.DefaultView });
       }
 
       //Set the Data Grid Source as the Data Table created above
@@ -359,7 +361,7 @@ namespace MediaPortal.Configuration.Sections
         dgdtblStyle.HeaderBackColor = Color.FromArgb(8, 36, 107);
         dgdtblStyle.RowHeadersVisible = false;
         dgdtblStyle.HeaderForeColor = Color.White;
-        dgdtblStyle.HeaderFont = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold, GraphicsUnit.Point, ((Byte) (0)));
+        dgdtblStyle.HeaderFont = new Font("Microsoft Sans Serif", 9F, FontStyle.Bold, GraphicsUnit.Point, ((Byte)(0)));
         dgdtblStyle.GridLineColor = Color.DarkGray;
         dgdtblStyle.PreferredRowHeight = 22;
         dataGrid1.BackgroundColor = Color.White;
@@ -381,19 +383,19 @@ namespace MediaPortal.Configuration.Sections
 				dgdtblStyle.GridColumnStyles.Add(boolCol);
 				*/
       }
-      DataGridTextBoxColumn dgtb = (DataGridTextBoxColumn) dataGrid1.TableStyles[0].GridColumnStyles[0];
+      DataGridTextBoxColumn dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[0];
       //Add the combo box to the text box taken in the above step 
       dgtb.TextBox.Controls.Add(cbSelection);
 
-      dgtb = (DataGridTextBoxColumn) dataGrid1.TableStyles[0].GridColumnStyles[1];
+      dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[1];
       dgtb.TextBox.Controls.Add(cbOperators);
 
-      DataGridBoolColumn boolColumn = (DataGridBoolColumn) dataGrid1.TableStyles[0].GridColumnStyles[4];
+      DataGridBoolColumn boolColumn = (DataGridBoolColumn)dataGrid1.TableStyles[0].GridColumnStyles[4];
       boolColumn.AllowNull = false;
 
 
-			dgtb = (DataGridTextBoxColumn) dataGrid1.TableStyles[0].GridColumnStyles[5];
-			dgtb.TextBox.Controls.Add(cbView);
+      dgtb = (DataGridTextBoxColumn)dataGrid1.TableStyles[0].GridColumnStyles[5];
+      dgtb.TextBox.Controls.Add(cbView);
       updating = false;
     }
 
@@ -421,7 +423,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.tbViewName = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
       this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
@@ -435,8 +437,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.tbViewName);
       this.groupBox1.Controls.Add(this.label2);
@@ -455,7 +457,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tbViewName
       // 
-      this.tbViewName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.tbViewName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tbViewName.Location = new System.Drawing.Point(168, 44);
       this.tbViewName.Name = "tbViewName";
@@ -495,7 +497,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbViews
       // 
-      this.cbViews.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.cbViews.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.cbViews.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbViews.Location = new System.Drawing.Point(168, 20);
@@ -514,8 +516,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // dataGrid1
       // 
-      this.dataGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.dataGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.dataGrid1.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.dataGrid1.DataMember = "";
@@ -546,7 +548,7 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
       StoreGridInView();
-			dataGrid1.DataSource = null;
+      dataGrid1.DataSource = null;
 
       UpdateView();
     }
@@ -569,35 +571,35 @@ namespace MediaPortal.Configuration.Sections
 
         if (currentCell.RowNumber == table.Rows.Count)
         {
-          table.Rows.Add(new object[] {"", "", "", ""});
+          table.Rows.Add(new object[] { "", "", "", "" });
         }
-        table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string) box.SelectedItem;
+        table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
       }
       catch (Exception)
-      {}
+      { }
     }
 
-		private void cbView_SelectionChangeCommitted(object sender, EventArgs e)
-		{
-			if (updating)
-			{
-				return;
-			}
-			SyncedComboBox box = sender as SyncedComboBox;
-			if (box == null)
-			{
-				return;
-			}
-			DataGridCell currentCell = dataGrid1.CurrentCell;
-			DataTable table = dataGrid1.DataSource as DataTable;
+    private void cbView_SelectionChangeCommitted(object sender, EventArgs e)
+    {
+      if (updating)
+      {
+        return;
+      }
+      SyncedComboBox box = sender as SyncedComboBox;
+      if (box == null)
+      {
+        return;
+      }
+      DataGridCell currentCell = dataGrid1.CurrentCell;
+      DataTable table = dataGrid1.DataSource as DataTable;
 
-			if (currentCell.RowNumber == table.Rows.Count)
-			{
-				table.Rows.Add(new object[] {"", "", "", ""});
-			}
-			table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string) box.SelectedItem;
+      if (currentCell.RowNumber == table.Rows.Count)
+      {
+        table.Rows.Add(new object[] { "", "", "", "" });
+      }
+      table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
 
-		}
+    }
     private void cbOperators_SelectionChangeCommitted(object sender, EventArgs e)
     {
       try
@@ -616,12 +618,12 @@ namespace MediaPortal.Configuration.Sections
 
         if (currentCell.RowNumber == table.Rows.Count)
         {
-          table.Rows.Add(new object[] {"", "", "", ""});
+          table.Rows.Add(new object[] { "", "", "", "" });
         }
-        table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string) box.SelectedItem;
+        table.Rows[currentCell.RowNumber][currentCell.ColumnNumber] = (string)box.SelectedItem;
       }
       catch (Exception)
-      {}
+      { }
     }
 
     private void btnSave_Click(object sender, EventArgs e)
@@ -637,7 +639,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
       catch (Exception)
-      {}
+      { }
 
     }
 
@@ -688,7 +690,7 @@ namespace MediaPortal.Configuration.Sections
           updating = true;
           for (int i = 0; i < cbViews.Items.Count; ++i)
           {
-            string label = (string) cbViews.Items[i];
+            string label = (string)cbViews.Items[i];
             if (label == currentView.Name)
             {
               cbViews.Items[i] = tbViewName.Text;
@@ -718,13 +720,13 @@ namespace MediaPortal.Configuration.Sections
           {
             def.Limit = -1;
           }
-					def.SortAscending = (bool) row[4];
-					def.DefaultView =  row[5].ToString();
+          def.SortAscending = (bool)row[4];
+          def.DefaultView = row[5].ToString();
           view.Filters.Add(def);
         }
       }
       catch (Exception)
-      {}
+      { }
     }
 
     private void btnDelete_Click(object sender, EventArgs e)
@@ -748,12 +750,12 @@ namespace MediaPortal.Configuration.Sections
         LoadViews();
       }
       catch (Exception)
-      {}
+      { }
     }
 
     private void groupBox1_Enter(object sender, System.EventArgs e)
     {
-    
+
     }
   }
 }

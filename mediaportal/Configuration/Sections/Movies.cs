@@ -32,249 +32,251 @@ using System.Globalization;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class Movies : MediaPortal.Configuration.SectionSettings
-	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private MediaPortal.UserInterface.Controls.MPButton fileNameButton;
-		private System.Windows.Forms.TextBox folderNameTextBox;
-		private System.Windows.Forms.Label folderNameLabel;
-		private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label6;
-		private MediaPortal.UserInterface.Controls.MPCheckBox repeatPlaylistCheckBox;
-		private MediaPortal.UserInterface.Controls.MPCheckBox showSubtitlesCheckBox;
-		private MediaPortal.UserInterface.Controls.MPButton subtitlesButton;
-		private System.Windows.Forms.TextBox subtitlesFontTextBox;
-		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-		private System.Windows.Forms.FontDialog fontDialog;
-		private System.ComponentModel.IContainer components = null;
+  public class Movies : MediaPortal.Configuration.SectionSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPButton fileNameButton;
+    private System.Windows.Forms.TextBox folderNameTextBox;
+    private System.Windows.Forms.Label folderNameLabel;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.Label label6;
+    private MediaPortal.UserInterface.Controls.MPCheckBox repeatPlaylistCheckBox;
+    private MediaPortal.UserInterface.Controls.MPCheckBox showSubtitlesCheckBox;
+    private MediaPortal.UserInterface.Controls.MPButton subtitlesButton;
+    private System.Windows.Forms.TextBox subtitlesFontTextBox;
+    private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+    private System.Windows.Forms.FontDialog fontDialog;
+    private System.ComponentModel.IContainer components = null;
 
-		string fontName;
-		string fontColor;
-		bool fontIsBold;
-		private System.Windows.Forms.TextBox dropShadowTextBox;
-		private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-		private System.Windows.Forms.TextBox displayTimoutTextBox;
-		private System.Windows.Forms.Label label5;
-		int fontSize;
-		private System.Windows.Forms.ComboBox defaultZoomModeComboBox;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.ListView lvDatabase;
-		private System.Windows.Forms.ColumnHeader chDatabaseDB;
-		private System.Windows.Forms.ColumnHeader chDatabaseLanguage;
-		private System.Windows.Forms.ColumnHeader chDatabaseLimit;
-		private MediaPortal.UserInterface.Controls.MPButton bDatabaseUp;
-		private MediaPortal.UserInterface.Controls.MPButton bDatabaseDown;
-		private System.Windows.Forms.ComboBox cbDatabaseLimit;
-		private System.Windows.Forms.TabControl tabControl1;
-		private System.Windows.Forms.TabPage tabPage1;
-		private System.Windows.Forms.TabPage tabPage2;
-		private System.Windows.Forms.TabPage tabPage3;
-		private System.Windows.Forms.TabPage tabPage4;
-		private System.Windows.Forms.GroupBox mpGroupBox3;
-		private System.Windows.Forms.TextBox zapDelayTextBox;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.TextBox ZapTimeOutTextBox;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.ComboBox defaultSubtitleLanguageComboBox;
+    string fontName;
+    string fontColor;
+    bool fontIsBold;
+    private System.Windows.Forms.TextBox dropShadowTextBox;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
+    private System.Windows.Forms.TextBox displayTimoutTextBox;
+    private System.Windows.Forms.Label label5;
+    int fontSize;
+    private System.Windows.Forms.ComboBox defaultZoomModeComboBox;
+    private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+    private System.Windows.Forms.ListView lvDatabase;
+    private System.Windows.Forms.ColumnHeader chDatabaseDB;
+    private System.Windows.Forms.ColumnHeader chDatabaseLanguage;
+    private System.Windows.Forms.ColumnHeader chDatabaseLimit;
+    private MediaPortal.UserInterface.Controls.MPButton bDatabaseUp;
+    private MediaPortal.UserInterface.Controls.MPButton bDatabaseDown;
+    private System.Windows.Forms.ComboBox cbDatabaseLimit;
+    private System.Windows.Forms.TabControl tabControl1;
+    private System.Windows.Forms.TabPage tabPage1;
+    private System.Windows.Forms.TabPage tabPage2;
+    private System.Windows.Forms.TabPage tabPage3;
+    private System.Windows.Forms.TabPage tabPage4;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
+    private System.Windows.Forms.TextBox zapDelayTextBox;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.TextBox ZapTimeOutTextBox;
+    private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.ComboBox defaultSubtitleLanguageComboBox;
     private System.Windows.Forms.Label label8;
 
-		string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
+    string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 
-		public Movies() : this("Movies")
-		{
-		}
+    public Movies()
+      : this("Movies")
+    {
+    }
 
-		public Movies(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
-		}
+    public Movies(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
+    }
 
-		public override void LoadSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				string playListFolder=Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-				playListFolder+=@"\My Playlists";
+    public override void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        string playListFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+        playListFolder += @"\My Playlists";
 
-				folderNameTextBox.Text = xmlreader.GetValueAsString("movies", "playlists", playListFolder);
+        folderNameTextBox.Text = xmlreader.GetValueAsString("movies", "playlists", playListFolder);
 
-				if(string.Compare(folderNameTextBox.Text, playListFolder) == 0)
-				{
-					if(System.IO.Directory.Exists(playListFolder) == false)
-					{
-						try
-						{
-							System.IO.Directory.CreateDirectory(playListFolder);
-						}
-						catch(Exception){}
-					}
-				}
+        if (string.Compare(folderNameTextBox.Text, playListFolder) == 0)
+        {
+          if (System.IO.Directory.Exists(playListFolder) == false)
+          {
+            try
+            {
+              System.IO.Directory.CreateDirectory(playListFolder);
+            }
+            catch (Exception) { }
+          }
+        }
 
-				repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("movies", "repeat", true);
+        repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("movies", "repeat", true);
 
-				showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "enabled", true);
-				string defaultLanguage= xmlreader.GetValueAsString("subtitles", "language", "English");
+        showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "enabled", true);
+        string defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
 
-				dropShadowTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("subtitles", "shadow", 5));
-				displayTimoutTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 0));
-				zapDelayTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2));
-				ZapTimeOutTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5));
+        dropShadowTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("subtitles", "shadow", 5));
+        displayTimoutTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 0));
+        zapDelayTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2));
+        ZapTimeOutTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5));
 
-				//
-				// Get font settings
-				//
-				fontName	= xmlreader.GetValueAsString("subtitles", "fontface", "Arial");
-				fontColor	= xmlreader.GetValueAsString("subtitles", "color", "ffffff");
-				fontIsBold	= xmlreader.GetValueAsBool("subtitles", "bold", true);
-				fontSize	= xmlreader.GetValueAsInt("subtitles", "fontsize", 18);
+        //
+        // Get font settings
+        //
+        fontName = xmlreader.GetValueAsString("subtitles", "fontface", "Arial");
+        fontColor = xmlreader.GetValueAsString("subtitles", "color", "ffffff");
+        fontIsBold = xmlreader.GetValueAsBool("subtitles", "bold", true);
+        fontSize = xmlreader.GetValueAsInt("subtitles", "fontsize", 18);
 
-				subtitlesFontTextBox.Text  = String.Format("{0} {1}{2}", fontName, fontSize, fontIsBold ? ", Bold" : "");
+        subtitlesFontTextBox.Text = String.Format("{0} {1}{2}", fontName, fontSize, fontIsBold ? ", Bold" : "");
 
-				//
-				// Try to parse the specified color into a valid color
-				//
-				if (fontColor != null && fontColor.Length > 0)
-				{
-					try
-					{
-						int rgbColor = Int32.Parse(fontColor, NumberStyles.HexNumber);
-						subtitlesFontTextBox.BackColor = Color.Black;
-						subtitlesFontTextBox.ForeColor = Color.FromArgb(rgbColor);
-					}
-					catch {}
-				}
+        //
+        // Try to parse the specified color into a valid color
+        //
+        if (fontColor != null && fontColor.Length > 0)
+        {
+          try
+          {
+            int rgbColor = Int32.Parse(fontColor, NumberStyles.HexNumber);
+            subtitlesFontTextBox.BackColor = Color.Black;
+            subtitlesFontTextBox.ForeColor = Color.FromArgb(rgbColor);
+          }
+          catch { }
+        }
 
-				//
-				// Set default aspect ratio
-				//
-				string defaultAspectRatio = xmlreader.GetValueAsString("movieplayer","defaultar", "normal");
+        //
+        // Set default aspect ratio
+        //
+        string defaultAspectRatio = xmlreader.GetValueAsString("movieplayer", "defaultar", "normal");
 
-				for(int index = 0; index < aspectRatio.Length; index++)
-				{
-					if(aspectRatio[index].Equals(defaultAspectRatio))
-					{
-						defaultZoomModeComboBox.SelectedIndex = index;
-						break;
-					}
-				}
+        for (int index = 0; index < aspectRatio.Length; index++)
+        {
+          if (aspectRatio[index].Equals(defaultAspectRatio))
+          {
+            defaultZoomModeComboBox.SelectedIndex = index;
+            break;
+          }
+        }
 
-				// Load settings for Database
-				int iNumber = xmlreader.GetValueAsInt("moviedatabase","number",0);
-				if (iNumber<=0)
-				{
-					// no given databases in XML - entering default values
-					// create entry for IMDB
-					this.lvDatabase.Items.Add("IMDB");
-					this.lvDatabase.Items[0].SubItems.Add("english");
-					this.lvDatabase.Items[0].SubItems.Add("25");
-					// create entry for OFDB
-					this.lvDatabase.Items.Add("OFDB");
-					this.lvDatabase.Items[1].SubItems.Add("german");
-					this.lvDatabase.Items[1].SubItems.Add("25");
-          
+        // Load settings for Database
+        int iNumber = xmlreader.GetValueAsInt("moviedatabase", "number", 0);
+        if (iNumber <= 0)
+        {
+          // no given databases in XML - entering default values
+          // create entry for IMDB
+          this.lvDatabase.Items.Add("IMDB");
+          this.lvDatabase.Items[0].SubItems.Add("english");
+          this.lvDatabase.Items[0].SubItems.Add("25");
+          // create entry for OFDB
+          this.lvDatabase.Items.Add("OFDB");
+          this.lvDatabase.Items[1].SubItems.Add("german");
+          this.lvDatabase.Items[1].SubItems.Add("25");
+
           // create entry for frdb
           this.lvDatabase.Items.Add("FRDB");
           this.lvDatabase.Items[2].SubItems.Add("french");
           this.lvDatabase.Items[2].SubItems.Add("25");
-				}
-				else
-				{
-					int iCount = 0;
-					string strLimit = "";
-					string strDatabase = "";
-					string strLanguage = "";
-					// Load values
-          bool frenchFound=false;
-					for(int i = 0;i < iNumber;i++)
-					{
-						strLimit = xmlreader.GetValueAsString("moviedatabase","limit"+i.ToString(),"false");
-						strDatabase = xmlreader.GetValueAsString("moviedatabase","database"+i.ToString(),"false");
-						strLanguage = xmlreader.GetValueAsString("moviedatabase","language"+i.ToString(),"false");
-						if ((strLimit!="false") && (strDatabase!="false") && (strLanguage!="false"))
-						{
-							// create entry for the database
-							this.lvDatabase.Items.Add(strDatabase);
-							this.lvDatabase.Items[iCount].SubItems.Add(strLanguage);
-							this.lvDatabase.Items[iCount].SubItems.Add(strLimit);
-							iCount++;
-              if (strLanguage=="french")
-                frenchFound=true;
-						}
-					}
+        }
+        else
+        {
+          int iCount = 0;
+          string strLimit = "";
+          string strDatabase = "";
+          string strLanguage = "";
+          // Load values
+          bool frenchFound = false;
+          for (int i = 0; i < iNumber; i++)
+          {
+            strLimit = xmlreader.GetValueAsString("moviedatabase", "limit" + i.ToString(), "false");
+            strDatabase = xmlreader.GetValueAsString("moviedatabase", "database" + i.ToString(), "false");
+            strLanguage = xmlreader.GetValueAsString("moviedatabase", "language" + i.ToString(), "false");
+            if ((strLimit != "false") && (strDatabase != "false") && (strLanguage != "false"))
+            {
+              // create entry for the database
+              this.lvDatabase.Items.Add(strDatabase);
+              this.lvDatabase.Items[iCount].SubItems.Add(strLanguage);
+              this.lvDatabase.Items[iCount].SubItems.Add(strLimit);
+              iCount++;
+              if (strLanguage == "french")
+                frenchFound = true;
+            }
+          }
           if (!frenchFound)
           {
             this.lvDatabase.Items.Add("FRDB");
             this.lvDatabase.Items[2].SubItems.Add("french");
             this.lvDatabase.Items[2].SubItems.Add("25");
           }
-          
-				}
-				// set the first entry "activ"
-				this.lvDatabase.Items[0].Selected = true;
-				this.cbDatabaseLimit.Text = this.lvDatabase.Items[0].SubItems[2].Text;
-				PopulateLanguages(defaultSubtitleLanguageComboBox,defaultLanguage);
-			}
-		}
 
-		public override void SaveSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				xmlwriter.SetValueAsBool("movies", "repeat", repeatPlaylistCheckBox.Checked);
-				xmlwriter.SetValue("movies", "playlists", folderNameTextBox.Text);
+        }
+        // set the first entry "activ"
+        this.lvDatabase.Items[0].Selected = true;
+        this.cbDatabaseLimit.Text = this.lvDatabase.Items[0].SubItems[2].Text;
+        PopulateLanguages(defaultSubtitleLanguageComboBox, defaultLanguage);
+      }
+    }
 
-				xmlwriter.SetValueAsBool("subtitles", "enabled", showSubtitlesCheckBox.Checked);
-				xmlwriter.SetValue("subtitles", "shadow", dropShadowTextBox.Text);
-				xmlwriter.SetValue("subtitles", "language", defaultSubtitleLanguageComboBox.Text);
+    public override void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValueAsBool("movies", "repeat", repeatPlaylistCheckBox.Checked);
+        xmlwriter.SetValue("movies", "playlists", folderNameTextBox.Text);
 
-				xmlwriter.SetValue("movieplayer", "osdtimeout", displayTimoutTextBox.Text);
-				xmlwriter.SetValue("movieplayer", "zapdelay", zapDelayTextBox.Text);
-				xmlwriter.SetValue("movieplayer", "zaptimeout", ZapTimeOutTextBox.Text);
+        xmlwriter.SetValueAsBool("subtitles", "enabled", showSubtitlesCheckBox.Checked);
+        xmlwriter.SetValue("subtitles", "shadow", dropShadowTextBox.Text);
+        xmlwriter.SetValue("subtitles", "language", defaultSubtitleLanguageComboBox.Text);
 
-				xmlwriter.SetValue("subtitles", "fontface", fontName);
-				xmlwriter.SetValue("subtitles", "color", fontColor);
-				xmlwriter.SetValueAsBool("subtitles", "bold", fontIsBold);
-				xmlwriter.SetValue("subtitles", "fontsize", fontSize);
-      
-				xmlwriter.SetValue("movieplayer","defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
+        xmlwriter.SetValue("movieplayer", "osdtimeout", displayTimoutTextBox.Text);
+        xmlwriter.SetValue("movieplayer", "zapdelay", zapDelayTextBox.Text);
+        xmlwriter.SetValue("movieplayer", "zaptimeout", ZapTimeOutTextBox.Text);
 
-				// Database
-				xmlwriter.SetValue("moviedatabase", "number", this.lvDatabase.Items.Count);
-				for (int i = 0; i < this.lvDatabase.Items.Count; i++)
-				{
-					xmlwriter.SetValue("moviedatabase", "database"+i.ToString(), this.lvDatabase.Items[i].SubItems[0].Text);
-					xmlwriter.SetValue("moviedatabase", "limit"+i.ToString(), this.lvDatabase.Items[i].SubItems[2].Text);
-					xmlwriter.SetValue("moviedatabase", "language"+i.ToString(), this.lvDatabase.Items[i].SubItems[1].Text);
-				}
-			}
-		}
+        xmlwriter.SetValue("subtitles", "fontface", fontName);
+        xmlwriter.SetValue("subtitles", "color", fontColor);
+        xmlwriter.SetValueAsBool("subtitles", "bold", fontIsBold);
+        xmlwriter.SetValue("subtitles", "fontsize", fontSize);
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+        xmlwriter.SetValue("movieplayer", "defaultar", aspectRatio[defaultZoomModeComboBox.SelectedIndex]);
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        // Database
+        xmlwriter.SetValue("moviedatabase", "number", this.lvDatabase.Items.Count);
+        for (int i = 0; i < this.lvDatabase.Items.Count; i++)
+        {
+          xmlwriter.SetValue("moviedatabase", "database" + i.ToString(), this.lvDatabase.Items[i].SubItems[0].Text);
+          xmlwriter.SetValue("moviedatabase", "limit" + i.ToString(), this.lvDatabase.Items[i].SubItems[2].Text);
+          xmlwriter.SetValue("moviedatabase", "language" + i.ToString(), this.lvDatabase.Items[i].SubItems[1].Text);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
+
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.defaultZoomModeComboBox = new System.Windows.Forms.ComboBox();
       this.label1 = new System.Windows.Forms.Label();
@@ -296,7 +298,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.displayTimoutTextBox = new System.Windows.Forms.TextBox();
       this.label5 = new System.Windows.Forms.Label();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label8 = new System.Windows.Forms.Label();
       this.cbDatabaseLimit = new System.Windows.Forms.ComboBox();
       this.bDatabaseDown = new MediaPortal.UserInterface.Controls.MPButton();
@@ -310,7 +312,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.tabPage3 = new System.Windows.Forms.TabPage();
       this.tabPage4 = new System.Windows.Forms.TabPage();
-      this.mpGroupBox3 = new System.Windows.Forms.GroupBox();
+      this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.ZapTimeOutTextBox = new System.Windows.Forms.TextBox();
       this.label3 = new System.Windows.Forms.Label();
       this.zapDelayTextBox = new System.Windows.Forms.TextBox();
@@ -329,7 +331,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
       this.groupBox1.Controls.Add(this.label1);
@@ -347,7 +349,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultZoomModeComboBox
       // 
-      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultZoomModeComboBox.Items.AddRange(new object[] {
@@ -383,7 +385,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // folderNameTextBox
       // 
-      this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.folderNameTextBox.Location = new System.Drawing.Point(136, 52);
       this.folderNameTextBox.Name = "folderNameTextBox";
@@ -410,7 +412,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.label7);
       this.mpGroupBox1.Controls.Add(this.defaultSubtitleLanguageComboBox);
@@ -438,7 +440,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultSubtitleLanguageComboBox
       // 
-      this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(136, 100);
@@ -449,7 +451,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // dropShadowTextBox
       // 
-      this.dropShadowTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.dropShadowTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.dropShadowTextBox.Location = new System.Drawing.Point(136, 76);
       this.dropShadowTextBox.Name = "dropShadowTextBox";
@@ -487,7 +489,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // subtitlesFontTextBox
       // 
-      this.subtitlesFontTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.subtitlesFontTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.subtitlesFontTextBox.Location = new System.Drawing.Point(136, 52);
       this.subtitlesFontTextBox.Name = "subtitlesFontTextBox";
@@ -506,7 +508,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.displayTimoutTextBox);
       this.mpGroupBox2.Controls.Add(this.label5);
@@ -520,7 +522,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // displayTimoutTextBox
       // 
-      this.displayTimoutTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.displayTimoutTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.displayTimoutTextBox.Location = new System.Drawing.Point(160, 20);
       this.displayTimoutTextBox.Name = "displayTimoutTextBox";
@@ -538,8 +540,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.cbDatabaseLimit);
@@ -604,8 +606,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lvDatabase
       // 
-      this.lvDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.lvDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.lvDatabase.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                  this.chDatabaseDB,
@@ -640,8 +642,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControl1
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Controls.Add(this.tabPage2);
@@ -692,7 +694,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
-      this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox3.Controls.Add(this.ZapTimeOutTextBox);
       this.mpGroupBox3.Controls.Add(this.label3);
@@ -708,7 +710,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // ZapTimeOutTextBox
       // 
-      this.ZapTimeOutTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.ZapTimeOutTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.ZapTimeOutTextBox.Location = new System.Drawing.Point(160, 44);
       this.ZapTimeOutTextBox.Name = "ZapTimeOutTextBox";
@@ -726,7 +728,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // zapDelayTextBox
       // 
-      this.zapDelayTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.zapDelayTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.zapDelayTextBox.Location = new System.Drawing.Point(160, 20);
       this.zapDelayTextBox.Name = "zapDelayTextBox";
@@ -760,180 +762,180 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void fileNameButton_Click(object sender, System.EventArgs e)
-		{
-			using(folderBrowserDialog = new FolderBrowserDialog())
-			{
-				folderBrowserDialog.Description = "Select the folder where movie playlists will be stored";
-				folderBrowserDialog.ShowNewFolderButton = true;
-				folderBrowserDialog.SelectedPath = folderNameTextBox.Text;
-				DialogResult dialogResult = folderBrowserDialog.ShowDialog(this);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void fileNameButton_Click(object sender, System.EventArgs e)
+    {
+      using (folderBrowserDialog = new FolderBrowserDialog())
+      {
+        folderBrowserDialog.Description = "Select the folder where movie playlists will be stored";
+        folderBrowserDialog.ShowNewFolderButton = true;
+        folderBrowserDialog.SelectedPath = folderNameTextBox.Text;
+        DialogResult dialogResult = folderBrowserDialog.ShowDialog(this);
 
-				if(dialogResult == DialogResult.OK)
-				{
-					folderNameTextBox.Text = folderBrowserDialog.SelectedPath;
-				}
-			}
-		}
+        if (dialogResult == DialogResult.OK)
+        {
+          folderNameTextBox.Text = folderBrowserDialog.SelectedPath;
+        }
+      }
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void subtitlesButton_Click(object sender, System.EventArgs e)
-		{
-			using(fontDialog = new FontDialog())
-			{
-				fontDialog.AllowScriptChange = false;
-				fontDialog.ShowColor = true;
-				fontDialog.FontMustExist = true;
-				fontDialog.ShowEffects = true;
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void subtitlesButton_Click(object sender, System.EventArgs e)
+    {
+      using (fontDialog = new FontDialog())
+      {
+        fontDialog.AllowScriptChange = false;
+        fontDialog.ShowColor = true;
+        fontDialog.FontMustExist = true;
+        fontDialog.ShowEffects = true;
 
-				fontDialog.Font = new Font(fontName, (float)fontSize, fontIsBold ? FontStyle.Bold : FontStyle.Regular);
+        fontDialog.Font = new Font(fontName, (float)fontSize, fontIsBold ? FontStyle.Bold : FontStyle.Regular);
 
-				if(fontColor != null && fontColor.Length > 0)
-					fontDialog.Color = subtitlesFontTextBox.BackColor;
+        if (fontColor != null && fontColor.Length > 0)
+          fontDialog.Color = subtitlesFontTextBox.BackColor;
 
-				DialogResult dialogResult = fontDialog.ShowDialog(this);
+        DialogResult dialogResult = fontDialog.ShowDialog(this);
 
-				if(dialogResult == DialogResult.OK)
-				{
-					fontName	= fontDialog.Font.Name;
-					fontSize	= (int)fontDialog.Font.Size;
-					fontIsBold	= fontDialog.Font.Style == FontStyle.Bold;
-					fontColor	= String.Format("{0:x}", fontDialog.Color.ToArgb());
+        if (dialogResult == DialogResult.OK)
+        {
+          fontName = fontDialog.Font.Name;
+          fontSize = (int)fontDialog.Font.Size;
+          fontIsBold = fontDialog.Font.Style == FontStyle.Bold;
+          fontColor = String.Format("{0:x}", fontDialog.Color.ToArgb());
 
-					subtitlesFontTextBox.Text  = String.Format("{0} {1}{2}", fontName, fontSize, fontIsBold ? ", Bold" : "");
+          subtitlesFontTextBox.Text = String.Format("{0} {1}{2}", fontName, fontSize, fontIsBold ? ", Bold" : "");
 
-					//
-					// Try to parse the specified color into a valid color
-					//
-					if (fontColor != null && fontColor.Length > 0)
-					{
-						try
-						{
-							int rgbColor = Int32.Parse(fontColor, NumberStyles.HexNumber);
-							subtitlesFontTextBox.BackColor = Color.Black;
-							subtitlesFontTextBox.ForeColor = Color.FromArgb(rgbColor);
-						}
-						catch {}
-					}
+          //
+          // Try to parse the specified color into a valid color
+          //
+          if (fontColor != null && fontColor.Length > 0)
+          {
+            try
+            {
+              int rgbColor = Int32.Parse(fontColor, NumberStyles.HexNumber);
+              subtitlesFontTextBox.BackColor = Color.Black;
+              subtitlesFontTextBox.ForeColor = Color.FromArgb(rgbColor);
+            }
+            catch { }
+          }
 
-				}
-			}
-		}
+        }
+      }
+    }
 
-		private void bDatabaseDown_Click(object sender, System.EventArgs e)
-		{
-			// Moves the selected entry down
-			// get the entry
-			ListView.SelectedIndexCollection indexes = lvDatabase.SelectedIndices;
-			// guilty entry?
-			if (indexes.Count==1)
-			{
-				int index = indexes[0];
-				// not the last entry?
-				if (index < lvDatabase.Items.Count-1)
-				{
-					// save current text
-					string strSub0 = lvDatabase.Items[index+1].SubItems[0].Text;
-					string strSub1 = lvDatabase.Items[index+1].SubItems[1].Text;
-					string strSub2 = lvDatabase.Items[index+1].SubItems[2].Text;
-					// copy text
-					lvDatabase.Items[index+1].SubItems[0].Text = lvDatabase.Items[index].SubItems[0].Text;
-					lvDatabase.Items[index+1].SubItems[1].Text = lvDatabase.Items[index].SubItems[1].Text;
-					lvDatabase.Items[index+1].SubItems[2].Text = lvDatabase.Items[index].SubItems[2].Text;
-					// restore backuped text
-					lvDatabase.Items[index].SubItems[0].Text = strSub0;
-					lvDatabase.Items[index].SubItems[1].Text = strSub1;
-					lvDatabase.Items[index].SubItems[2].Text = strSub2;
-					// move the selection down
-					lvDatabase.Items[index].Selected = false;
-					lvDatabase.Items[index+1].Selected = true;
-				}
-			}			
-		}
+    private void bDatabaseDown_Click(object sender, System.EventArgs e)
+    {
+      // Moves the selected entry down
+      // get the entry
+      ListView.SelectedIndexCollection indexes = lvDatabase.SelectedIndices;
+      // guilty entry?
+      if (indexes.Count == 1)
+      {
+        int index = indexes[0];
+        // not the last entry?
+        if (index < lvDatabase.Items.Count - 1)
+        {
+          // save current text
+          string strSub0 = lvDatabase.Items[index + 1].SubItems[0].Text;
+          string strSub1 = lvDatabase.Items[index + 1].SubItems[1].Text;
+          string strSub2 = lvDatabase.Items[index + 1].SubItems[2].Text;
+          // copy text
+          lvDatabase.Items[index + 1].SubItems[0].Text = lvDatabase.Items[index].SubItems[0].Text;
+          lvDatabase.Items[index + 1].SubItems[1].Text = lvDatabase.Items[index].SubItems[1].Text;
+          lvDatabase.Items[index + 1].SubItems[2].Text = lvDatabase.Items[index].SubItems[2].Text;
+          // restore backuped text
+          lvDatabase.Items[index].SubItems[0].Text = strSub0;
+          lvDatabase.Items[index].SubItems[1].Text = strSub1;
+          lvDatabase.Items[index].SubItems[2].Text = strSub2;
+          // move the selection down
+          lvDatabase.Items[index].Selected = false;
+          lvDatabase.Items[index + 1].Selected = true;
+        }
+      }
+    }
 
-		private void bDatabaseUp_Click(object sender, System.EventArgs e)
-		{
-			// Moves the selected entry up
-			// get the entry
-			ListView.SelectedIndexCollection indexes = lvDatabase.SelectedIndices;
-			// guilty entry?
-			if (indexes.Count==1)
-			{
-				int index = indexes[0];
-				// not the first entry?
-				if (index > 0)
-				{
-					// save current text
-					string strSub0 = lvDatabase.Items[index-1].SubItems[0].Text;
-					string strSub1 = lvDatabase.Items[index-1].SubItems[1].Text;
-					string strSub2 = lvDatabase.Items[index-1].SubItems[2].Text;
-					// copy text
-					lvDatabase.Items[index-1].SubItems[0].Text = lvDatabase.Items[index].SubItems[0].Text;
-					lvDatabase.Items[index-1].SubItems[1].Text = lvDatabase.Items[index].SubItems[1].Text;
-					lvDatabase.Items[index-1].SubItems[2].Text = lvDatabase.Items[index].SubItems[2].Text;
-					// restore backuped text
-					lvDatabase.Items[index].SubItems[0].Text = strSub0;
-					lvDatabase.Items[index].SubItems[1].Text = strSub1;
-					lvDatabase.Items[index].SubItems[2].Text = strSub2;
-					// move the selection up
-					lvDatabase.Items[index].Selected = false;
-					lvDatabase.Items[index-1].Selected = true;
-				}
-			}
-		}
+    private void bDatabaseUp_Click(object sender, System.EventArgs e)
+    {
+      // Moves the selected entry up
+      // get the entry
+      ListView.SelectedIndexCollection indexes = lvDatabase.SelectedIndices;
+      // guilty entry?
+      if (indexes.Count == 1)
+      {
+        int index = indexes[0];
+        // not the first entry?
+        if (index > 0)
+        {
+          // save current text
+          string strSub0 = lvDatabase.Items[index - 1].SubItems[0].Text;
+          string strSub1 = lvDatabase.Items[index - 1].SubItems[1].Text;
+          string strSub2 = lvDatabase.Items[index - 1].SubItems[2].Text;
+          // copy text
+          lvDatabase.Items[index - 1].SubItems[0].Text = lvDatabase.Items[index].SubItems[0].Text;
+          lvDatabase.Items[index - 1].SubItems[1].Text = lvDatabase.Items[index].SubItems[1].Text;
+          lvDatabase.Items[index - 1].SubItems[2].Text = lvDatabase.Items[index].SubItems[2].Text;
+          // restore backuped text
+          lvDatabase.Items[index].SubItems[0].Text = strSub0;
+          lvDatabase.Items[index].SubItems[1].Text = strSub1;
+          lvDatabase.Items[index].SubItems[2].Text = strSub2;
+          // move the selection up
+          lvDatabase.Items[index].Selected = false;
+          lvDatabase.Items[index - 1].Selected = true;
+        }
+      }
+    }
 
-		private void cbDatabaseLimit_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			// changes the limit of the selected DB entry with that from the dropbox
-			ListView.SelectedIndexCollection indexes = lvDatabase.SelectedIndices;
-			if (indexes.Count==1)
-			{
-				// guilty entry
-				int index = indexes[0];
-				// copy the text
-				lvDatabase.Items[index].SubItems[2].Text = this.cbDatabaseLimit.Text;
-			} 
-		}
+    private void cbDatabaseLimit_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      // changes the limit of the selected DB entry with that from the dropbox
+      ListView.SelectedIndexCollection indexes = lvDatabase.SelectedIndices;
+      if (indexes.Count == 1)
+      {
+        // guilty entry
+        int index = indexes[0];
+        // copy the text
+        lvDatabase.Items[index].SubItems[2].Text = this.cbDatabaseLimit.Text;
+      }
+    }
 
-		private void lvDatabase_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			// updates the dropdownbox for the limits with the selected item
-			ListView.SelectedIndexCollection indexes = lvDatabase.SelectedIndices;
-			if (indexes.Count==1)
-			{
-				// guilty entry
-				int index = indexes[0];
-				// copy the text
-				this.cbDatabaseLimit.Text = this.lvDatabase.Items[index].SubItems[2].Text;
-			}
-		}
+    private void lvDatabase_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      // updates the dropdownbox for the limits with the selected item
+      ListView.SelectedIndexCollection indexes = lvDatabase.SelectedIndices;
+      if (indexes.Count == 1)
+      {
+        // guilty entry
+        int index = indexes[0];
+        // copy the text
+        this.cbDatabaseLimit.Text = this.lvDatabase.Items[index].SubItems[2].Text;
+      }
+    }
 
-		void PopulateLanguages(ComboBox comboBox, string defaultLanguage)
-		{
-			comboBox.Items.Clear();
-			
-			foreach(CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures)) 
-			{
-				comboBox.Items.Add(cultureInformation.EnglishName);
-				
-				if(String.Compare(cultureInformation.EnglishName, defaultLanguage, true) == 0) 
-				{
-					comboBox.Text = defaultLanguage;
-				}
-			}
-			comboBox.SelectedItem=defaultLanguage;
-		}
-	}
+    void PopulateLanguages(ComboBox comboBox, string defaultLanguage)
+    {
+      comboBox.Items.Clear();
+
+      foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
+      {
+        comboBox.Items.Add(cultureInformation.EnglishName);
+
+        if (String.Compare(cultureInformation.EnglishName, defaultLanguage, true) == 0)
+        {
+          comboBox.Text = defaultLanguage;
+        }
+      }
+      comboBox.SelectedItem = defaultLanguage;
+    }
+  }
 }
 

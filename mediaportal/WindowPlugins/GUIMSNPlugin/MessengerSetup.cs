@@ -106,8 +106,8 @@ namespace MediaPortal.GUI.MSN
       this.InitialStatusBox = new System.Windows.Forms.ComboBox();
       this.label3 = new System.Windows.Forms.Label();
       this.chkPopupWindow = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label7 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
       this.label5 = new System.Windows.Forms.Label();

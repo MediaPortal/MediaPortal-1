@@ -28,57 +28,59 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Runtime.InteropServices; 
+using System.Runtime.InteropServices;
 
 using DShowNET;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class Radio : MediaPortal.Configuration.SectionSettings
-	{
-		protected System.Windows.Forms.GroupBox groupBox2;
-		protected System.Windows.Forms.TextBox folderNameTextBox;
-		protected System.Windows.Forms.Label folderNameLabel;
-		protected MediaPortal.UserInterface.Controls.MPButton browseFolderButton;
-		protected System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-		protected System.Windows.Forms.OpenFileDialog openFileDialog;
+  public class Radio : MediaPortal.Configuration.SectionSettings
+  {
+    protected MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+    protected System.Windows.Forms.TextBox folderNameTextBox;
+    protected System.Windows.Forms.Label folderNameLabel;
+    protected MediaPortal.UserInterface.Controls.MPButton browseFolderButton;
+    protected System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+    protected System.Windows.Forms.OpenFileDialog openFileDialog;
     private System.Windows.Forms.Label label2;
-		protected System.ComponentModel.IContainer components = null;
+    protected System.ComponentModel.IContainer components = null;
 
-		public Radio() : this("Radio")
-		{
-		}
+    public Radio()
+      : this("Radio")
+    {
+    }
 
-		public Radio(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public Radio(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-		}
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		protected void InitializeComponent()
-		{
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    protected void InitializeComponent()
+    {
+      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.browseFolderButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.folderNameTextBox = new System.Windows.Forms.TextBox();
       this.folderNameLabel = new System.Windows.Forms.Label();
@@ -90,7 +92,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.browseFolderButton);
       this.groupBox2.Controls.Add(this.folderNameTextBox);
@@ -116,7 +118,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // folderNameTextBox
       // 
-      this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.folderNameTextBox.Location = new System.Drawing.Point(168, 20);
       this.folderNameTextBox.Name = "folderNameTextBox";
@@ -148,51 +150,51 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     public override void OnSectionActivated()
     {
-     
+
     }
-		public override void LoadSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				folderNameTextBox.Text = xmlreader.GetValueAsString("radio", "folder", "");
+    public override void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        folderNameTextBox.Text = xmlreader.GetValueAsString("radio", "folder", "");
 
-			}
-		}
+      }
+    }
 
-		public override void SaveSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				xmlwriter.SetValue("radio", "folder", folderNameTextBox.Text);
-			}
-		}
-
-
-		protected void browseFolderButton_Click(object sender, System.EventArgs e)
-		{
-			using(folderBrowserDialog = new FolderBrowserDialog())
-			{
-				folderBrowserDialog.Description = "Select the folder where stream playlists will be stored";
-				folderBrowserDialog.ShowNewFolderButton = true;
-				folderBrowserDialog.SelectedPath = folderNameTextBox.Text;
-				DialogResult dialogResult = folderBrowserDialog.ShowDialog(this);
-
-				if(dialogResult == DialogResult.OK)
-				{
-					folderNameTextBox.Text = folderBrowserDialog.SelectedPath;
-				}
-			}					
-		}
+    public override void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValue("radio", "folder", folderNameTextBox.Text);
+      }
+    }
 
 
-		private void Radio_Load(object sender, System.EventArgs e)
-		{
-		
-		}
-	}
+    protected void browseFolderButton_Click(object sender, System.EventArgs e)
+    {
+      using (folderBrowserDialog = new FolderBrowserDialog())
+      {
+        folderBrowserDialog.Description = "Select the folder where stream playlists will be stored";
+        folderBrowserDialog.ShowNewFolderButton = true;
+        folderBrowserDialog.SelectedPath = folderNameTextBox.Text;
+        DialogResult dialogResult = folderBrowserDialog.ShowDialog(this);
+
+        if (dialogResult == DialogResult.OK)
+        {
+          folderNameTextBox.Text = folderBrowserDialog.SelectedPath;
+        }
+      }
+    }
+
+
+    private void Radio_Load(object sender, System.EventArgs e)
+    {
+
+    }
+  }
 }
 

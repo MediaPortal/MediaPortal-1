@@ -88,12 +88,12 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.Label label17;
     private System.Windows.Forms.ComboBox lnbkind1;
     private System.Windows.Forms.ComboBox lnbconfig1;
-    private System.Windows.Forms.GroupBox groupBox4;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox4;
     private System.Windows.Forms.TextBox circularMHZ;
     private System.Windows.Forms.Label label20;
     private System.Windows.Forms.TextBox cbandMHZ;
     private System.Windows.Forms.Label label21;
-    private System.Windows.Forms.GroupBox groupBox3;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
     private System.Windows.Forms.TextBox lnb1MHZ;
     private System.Windows.Forms.Label lnb1;
     private System.Windows.Forms.TextBox lnbswMHZ;
@@ -107,7 +107,7 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.Label label24;
     private System.Windows.Forms.Label label25;
     private System.Windows.Forms.ComboBox comboBoxQuality;
-    private System.Windows.Forms.GroupBox groupBox2;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
     private System.Windows.Forms.ComboBox lnbkind4;
     private System.Windows.Forms.ComboBox lnbkind3;
     private System.Windows.Forms.ComboBox lnbkind2;
@@ -134,8 +134,8 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.ComboBox cbRgbAudio;
     private System.Windows.Forms.Label label18;
     private System.Windows.Forms.Label label26;
-    private System.Windows.Forms.GroupBox groupBox5;
-    private System.Windows.Forms.GroupBox groupBox7;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox5;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox7;
     private System.Windows.Forms.Label label19;
     private System.Windows.Forms.Label label27;
     private System.Windows.Forms.Label label28;
@@ -323,8 +323,8 @@ namespace MediaPortal.Configuration
           {
             string videoDev = (string)(availableVideoDevices[i]);
             string videoMon = (string)(availableVideoDeviceMonikers[i]);
-            if ( (String.Compare(videoDev,ccd.CaptureName,true)==0) &&
-                 ( videoMon.ToLower().IndexOf(ccd.DeviceId.ToLower()) > -1)) add = true;
+            if ((String.Compare(videoDev, ccd.CaptureName, true) == 0) &&
+                 (videoMon.ToLower().IndexOf(ccd.DeviceId.ToLower()) > -1)) add = true;
           }
           if (add)
           {
@@ -452,7 +452,7 @@ namespace MediaPortal.Configuration
       this.label24 = new System.Windows.Forms.Label();
       this.updownPrio = new System.Windows.Forms.NumericUpDown();
       this.tabPage7 = new System.Windows.Forms.TabPage();
-      this.groupBox5 = new System.Windows.Forms.GroupBox();
+      this.groupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonBrowse = new MediaPortal.UserInterface.Controls.MPButton();
       this.tbRecordingFolder = new System.Windows.Forms.TextBox();
       this.label26 = new System.Windows.Forms.Label();
@@ -471,7 +471,7 @@ namespace MediaPortal.Configuration
       this.label16 = new System.Windows.Forms.Label();
       this.label17 = new System.Windows.Forms.Label();
       this.tabPage5 = new System.Windows.Forms.TabPage();
-      this.groupBox7 = new System.Windows.Forms.GroupBox();
+      this.groupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbHighVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tbHighMax = new System.Windows.Forms.TextBox();
       this.tbHighMin = new System.Windows.Forms.TextBox();
@@ -495,7 +495,7 @@ namespace MediaPortal.Configuration
       this.label25 = new System.Windows.Forms.Label();
       this.comboBoxQuality = new System.Windows.Forms.ComboBox();
       this.tabPage4 = new System.Windows.Forms.TabPage();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.useLNB4 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.useLNB3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.useLNB2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -516,12 +516,12 @@ namespace MediaPortal.Configuration
       this.lnbkind1 = new System.Windows.Forms.ComboBox();
       this.lnbconfig1 = new System.Windows.Forms.ComboBox();
       this.label23 = new System.Windows.Forms.Label();
-      this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.circularMHZ = new System.Windows.Forms.TextBox();
       this.label20 = new System.Windows.Forms.Label();
       this.cbandMHZ = new System.Windows.Forms.TextBox();
       this.label21 = new System.Windows.Forms.Label();
-      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.lnb1MHZ = new System.Windows.Forms.TextBox();
       this.lnb1 = new System.Windows.Forms.Label();
       this.lnbswMHZ = new System.Windows.Forms.TextBox();

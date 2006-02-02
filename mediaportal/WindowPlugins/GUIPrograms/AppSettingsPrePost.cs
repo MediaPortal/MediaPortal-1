@@ -31,81 +31,81 @@ using System.Windows.Forms;
 
 namespace WindowPlugins.GUIPrograms
 {
-	/// <summary>
-	/// Summary description for AppSettingsPrePost.
-	/// </summary>
-	public class AppSettingsPrePost : System.Windows.Forms.Form
-	{
+  /// <summary>
+  /// Summary description for AppSettingsPrePost.
+  /// </summary>
+  public class AppSettingsPrePost : System.Windows.Forms.Form
+  {
     private MediaPortal.UserInterface.Controls.MPButton btnOk;
     private MediaPortal.UserInterface.Controls.MPButton btnCancel;
-    private System.Windows.Forms.GroupBox gbData;
+    private MediaPortal.UserInterface.Controls.MPGroupBox gbData;
     private System.Windows.Forms.Label lblTitle;
     private System.Windows.Forms.TextBox tbPre;
     private System.Windows.Forms.TextBox tbPost;
     private System.Windows.Forms.Label lblPre;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Label lblTitleData;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public AppSettingsPrePost()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public AppSettingsPrePost()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
     public string Title
     {
-      get {return lblTitleData.Text;}
-      set {lblTitleData.Text = value;}
+      get { return lblTitleData.Text; }
+      set { lblTitleData.Text = value; }
     }
 
     public string PreLaunch
     {
-      get {return tbPre.Text;}
-      set {tbPre.Text = value;}
+      get { return tbPre.Text; }
+      set { tbPre.Text = value; }
     }
 
     public string PostLaunch
     {
-      get {return tbPost.Text;}
-      set {tbPost.Text = value;}
+      get { return tbPost.Text; }
+      set { tbPost.Text = value; }
     }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AppSettingsPrePost));
       this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.gbData = new System.Windows.Forms.GroupBox();
+      this.gbData = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.lblTitle = new System.Windows.Forms.Label();
       this.tbPre = new System.Windows.Forms.TextBox();
       this.tbPost = new System.Windows.Forms.TextBox();
@@ -136,8 +136,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // gbData
       // 
-      this.gbData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.gbData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.gbData.Controls.Add(this.label1);
       this.gbData.Controls.Add(this.lblPre);
@@ -161,8 +161,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // tbPre
       // 
-      this.tbPre.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.tbPre.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tbPre.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.tbPre.Location = new System.Drawing.Point(8, 48);
@@ -175,7 +175,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // tbPost
       // 
-      this.tbPost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      this.tbPost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tbPost.Font = new System.Drawing.Font("Courier New", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.tbPost.Location = new System.Drawing.Point(8, 192);
@@ -196,7 +196,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(8, 169);
       this.label1.Name = "label1";
@@ -206,7 +206,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // lblTitleData
       // 
-      this.lblTitleData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.lblTitleData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.lblTitleData.Location = new System.Drawing.Point(91, 16);
       this.lblTitleData.Name = "lblTitleData";
@@ -231,6 +231,6 @@ namespace WindowPlugins.GUIPrograms
       this.ResumeLayout(false);
 
     }
-		#endregion
-	}
+    #endregion
+  }
 }

@@ -38,81 +38,83 @@ using DirectShowLib;
 namespace MediaPortal.Configuration.Sections
 {
 
-	public class MPEG2DecAudioFilter : MediaPortal.Configuration.SectionSettings
-	{
-		//private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.RadioButton radioPCM16Bit;
-		private System.Windows.Forms.RadioButton radioButtonPCM24Bit;
-		private System.Windows.Forms.RadioButton radioButtonPCM32Bit;
-		private System.Windows.Forms.RadioButton radioButtonIEEE;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxNormalize;
-		private System.Windows.Forms.TrackBar trackBarBoost;
-		private System.Windows.Forms.Label label2;
-		//private System.Windows.Forms.Label label3;
-		//private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.RadioButton radioButtonAC3Speakers;
-		private System.Windows.Forms.RadioButton radioButtonAC3SPDIF;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAC3DynamicRange;
-		private System.Windows.Forms.ComboBox comboBoxAC3SpeakerConfig;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAC3LFE;
-		private System.Windows.Forms.ComboBox comboBoxDTSSpeakerConfig;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDTSDynamicRange;
-		private System.Windows.Forms.RadioButton radioButtonDTSSPDIF;
-		private System.Windows.Forms.RadioButton radioButtonDTSSpeakers;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDTSLFE;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAACDownmix;
-		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.GroupBox groupBox3;
-		private System.Windows.Forms.GroupBox groupBox4;
-		private System.Windows.Forms.GroupBox groupBox5;
-		private System.Windows.Forms.Label label4;
-		private System.ComponentModel.IContainer components = null;
+  public class MPEG2DecAudioFilter : MediaPortal.Configuration.SectionSettings
+  {
+    //private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.RadioButton radioPCM16Bit;
+    private System.Windows.Forms.RadioButton radioButtonPCM24Bit;
+    private System.Windows.Forms.RadioButton radioButtonPCM32Bit;
+    private System.Windows.Forms.RadioButton radioButtonIEEE;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxNormalize;
+    private System.Windows.Forms.TrackBar trackBarBoost;
+    private System.Windows.Forms.Label label2;
+    //private System.Windows.Forms.Label label3;
+    //private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.RadioButton radioButtonAC3Speakers;
+    private System.Windows.Forms.RadioButton radioButtonAC3SPDIF;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAC3DynamicRange;
+    private System.Windows.Forms.ComboBox comboBoxAC3SpeakerConfig;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAC3LFE;
+    private System.Windows.Forms.ComboBox comboBoxDTSSpeakerConfig;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDTSDynamicRange;
+    private System.Windows.Forms.RadioButton radioButtonDTSSPDIF;
+    private System.Windows.Forms.RadioButton radioButtonDTSSpeakers;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDTSLFE;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAACDownmix;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox4;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox5;
+    private System.Windows.Forms.Label label4;
+    private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public MPEG2DecAudioFilter() : this("MPEG/AC3/DTS/LPCM Audio Decoder")
-		{
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    public MPEG2DecAudioFilter()
+      : this("MPEG/AC3/DTS/LPCM Audio Decoder")
+    {
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public MPEG2DecAudioFilter(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    public MPEG2DecAudioFilter(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-      this.groupBox4 = new System.Windows.Forms.GroupBox();
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+      this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.radioButtonAC3SPDIF = new System.Windows.Forms.RadioButton();
       this.radioButtonAC3Speakers = new System.Windows.Forms.RadioButton();
       this.checkBoxAC3LFE = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.comboBoxAC3SpeakerConfig = new System.Windows.Forms.ComboBox();
       this.checkBoxAC3DynamicRange = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label4 = new System.Windows.Forms.Label();
       this.radioPCM16Bit = new System.Windows.Forms.RadioButton();
       this.radioButtonPCM24Bit = new System.Windows.Forms.RadioButton();
@@ -120,13 +122,13 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonIEEE = new System.Windows.Forms.RadioButton();
       this.checkBoxNormalize = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.trackBarBoost = new System.Windows.Forms.TrackBar();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.radioButtonDTSSPDIF = new System.Windows.Forms.RadioButton();
       this.radioButtonDTSSpeakers = new System.Windows.Forms.RadioButton();
       this.checkBoxDTSLFE = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.comboBoxDTSSpeakerConfig = new System.Windows.Forms.ComboBox();
       this.checkBoxDTSDynamicRange = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBox5 = new System.Windows.Forms.GroupBox();
+      this.groupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxAACDownmix = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label2 = new System.Windows.Forms.Label();
       this.groupBox4.SuspendLayout();
@@ -138,7 +140,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox4
       // 
-      this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox4.Controls.Add(this.radioButtonAC3SPDIF);
       this.groupBox4.Controls.Add(this.radioButtonAC3Speakers);
@@ -188,7 +190,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxAC3SpeakerConfig
       // 
-      this.comboBoxAC3SpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.comboBoxAC3SpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxAC3SpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxAC3SpeakerConfig.Items.AddRange(new object[] {
@@ -220,7 +222,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.label4);
       this.groupBox3.Controls.Add(this.radioPCM16Bit);
@@ -294,7 +296,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // trackBarBoost
       // 
-      this.trackBarBoost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.trackBarBoost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarBoost.Location = new System.Drawing.Point(48, 52);
       this.trackBarBoost.Maximum = 100;
@@ -305,7 +307,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.radioButtonDTSSPDIF);
       this.groupBox2.Controls.Add(this.radioButtonDTSSpeakers);
@@ -354,7 +356,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxDTSSpeakerConfig
       // 
-      this.comboBoxDTSSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.comboBoxDTSSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDTSSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDTSSpeakerConfig.Items.AddRange(new object[] {
@@ -382,7 +384,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox5
       // 
-      this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox5.Controls.Add(this.checkBoxAACDownmix);
       this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -428,164 +430,164 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		public override void LoadSettings()
-		{
-			RegistryKey hkcu = Registry.CurrentUser;
-			RegistryKey subkey = hkcu.CreateSubKey(@"Software\Mediaportal\Mpeg Audio Filter");
-			if (subkey!=null)
-			{
-				try
-				{
-					Int32 regValue=(Int32)subkey.GetValue("AAC Downmix");
-					if (regValue==1) checkBoxAACDownmix.Checked=true;
-					else checkBoxAACDownmix.Checked=false;
+    public override void LoadSettings()
+    {
+      RegistryKey hkcu = Registry.CurrentUser;
+      RegistryKey subkey = hkcu.CreateSubKey(@"Software\Mediaportal\Mpeg Audio Filter");
+      if (subkey != null)
+      {
+        try
+        {
+          Int32 regValue = (Int32)subkey.GetValue("AAC Downmix");
+          if (regValue == 1) checkBoxAACDownmix.Checked = true;
+          else checkBoxAACDownmix.Checked = false;
 
-					regValue=(Int32)subkey.GetValue("AC3 Dynamic Range");
-					if (regValue==1) checkBoxAC3DynamicRange.Checked=true;
-					else checkBoxAC3DynamicRange.Checked=false;
-					
-					regValue=(Int32)subkey.GetValue("AC3 LFE");
-					if (regValue==1) checkBoxAC3LFE.Checked=true;
-					else checkBoxAC3LFE.Checked=false;
-					
-					regValue=(Int32)subkey.GetValue("DTS Dynamic Range");
-					if (regValue==1) checkBoxDTSDynamicRange.Checked=true;
-					else checkBoxDTSDynamicRange.Checked=false;
-					
-					regValue=(Int32)subkey.GetValue("DTS LFE");
-					if (regValue==1) checkBoxDTSLFE.Checked=true;
-					else checkBoxDTSLFE.Checked=false;
-					
-					regValue=(Int32)subkey.GetValue("Normalize");
-					if (regValue==1) checkBoxNormalize.Checked=true;
-					else checkBoxNormalize.Checked=false;
+          regValue = (Int32)subkey.GetValue("AC3 Dynamic Range");
+          if (regValue == 1) checkBoxAC3DynamicRange.Checked = true;
+          else checkBoxAC3DynamicRange.Checked = false;
 
-					regValue=(Int32)subkey.GetValue("AC3 Speaker Config");
-					comboBoxAC3SpeakerConfig.SelectedIndex=regValue;
+          regValue = (Int32)subkey.GetValue("AC3 LFE");
+          if (regValue == 1) checkBoxAC3LFE.Checked = true;
+          else checkBoxAC3LFE.Checked = false;
 
-					regValue=(Int32)subkey.GetValue("DTS Speaker Config");
-					comboBoxDTSSpeakerConfig.SelectedIndex=regValue;
+          regValue = (Int32)subkey.GetValue("DTS Dynamic Range");
+          if (regValue == 1) checkBoxDTSDynamicRange.Checked = true;
+          else checkBoxDTSDynamicRange.Checked = false;
 
-					
-					regValue=(Int32)subkey.GetValue("Boost");
-					trackBarBoost.Value=regValue;
+          regValue = (Int32)subkey.GetValue("DTS LFE");
+          if (regValue == 1) checkBoxDTSLFE.Checked = true;
+          else checkBoxDTSLFE.Checked = false;
 
-					regValue=(Int32)subkey.GetValue("Output Format");
-					radioPCM16Bit.Checked=(regValue==0);
-					radioButtonPCM24Bit.Checked=(regValue==1);
-					radioButtonPCM32Bit.Checked=(regValue==2);
-					radioButtonIEEE.Checked=(regValue==3);
+          regValue = (Int32)subkey.GetValue("Normalize");
+          if (regValue == 1) checkBoxNormalize.Checked = true;
+          else checkBoxNormalize.Checked = false;
 
-					regValue=(Int32)subkey.GetValue("AC3Decoder");
-					radioButtonAC3Speakers.Checked = (regValue==0);
-					radioButtonAC3SPDIF.Checked= (regValue==1);
+          regValue = (Int32)subkey.GetValue("AC3 Speaker Config");
+          comboBoxAC3SpeakerConfig.SelectedIndex = regValue;
 
-					
-					regValue=(Int32)subkey.GetValue("DTSDecoder");
-					radioButtonDTSSpeakers.Checked = (regValue==0);
-					radioButtonDTSSPDIF.Checked= (regValue==1);
-				}
-				catch (Exception)
-				{
-				}
-				finally
-				{
-					subkey.Close();
-				}
-			}
-		}
-		public override void SaveSettings()
-		{
-			RegistryKey hkcu = Registry.CurrentUser;
-			RegistryKey subkey = hkcu.CreateSubKey(@"Software\Mediaportal\Mpeg Audio Filter");
-			if (subkey!=null)
-			{
-				Int32 regValue;
-				if (checkBoxAACDownmix.Checked) regValue=1;
-				else regValue=0;
-				subkey.SetValue("AAC Downmix",regValue);
+          regValue = (Int32)subkey.GetValue("DTS Speaker Config");
+          comboBoxDTSSpeakerConfig.SelectedIndex = regValue;
 
-				if (checkBoxAC3DynamicRange.Checked) regValue=1;
-				else regValue=0;
-				subkey.SetValue("AC3 Dynamic Range",regValue);
 
-				if (checkBoxAC3LFE.Checked) regValue=1;
-				else regValue=0;
-				subkey.SetValue("AC3 LFE",regValue);
+          regValue = (Int32)subkey.GetValue("Boost");
+          trackBarBoost.Value = regValue;
 
-				if (checkBoxDTSDynamicRange.Checked) regValue=1;
-				else regValue=0;
-				subkey.SetValue("DTS Dynamic Range",regValue);
+          regValue = (Int32)subkey.GetValue("Output Format");
+          radioPCM16Bit.Checked = (regValue == 0);
+          radioButtonPCM24Bit.Checked = (regValue == 1);
+          radioButtonPCM32Bit.Checked = (regValue == 2);
+          radioButtonIEEE.Checked = (regValue == 3);
 
-				if (checkBoxDTSLFE.Checked) regValue=1;
-				else regValue=0;
-				subkey.SetValue("DTS LFE",regValue);
+          regValue = (Int32)subkey.GetValue("AC3Decoder");
+          radioButtonAC3Speakers.Checked = (regValue == 0);
+          radioButtonAC3SPDIF.Checked = (regValue == 1);
 
-				if (checkBoxNormalize.Checked) regValue=1;
-				else regValue=0;
-				subkey.SetValue("Normalize",regValue);
-								
-				subkey.SetValue("AC3 Speaker Config",comboBoxAC3SpeakerConfig.SelectedIndex);
-				subkey.SetValue("DTS Speaker Config",comboBoxDTSSpeakerConfig.SelectedIndex);
-				subkey.SetValue("Boost",trackBarBoost.Value);
-				
-				if (radioPCM16Bit.Checked) regValue=0;
-				if (radioButtonPCM24Bit.Checked) regValue=1;
-				if (radioButtonPCM32Bit.Checked) regValue=2;
-				if (radioButtonIEEE.Checked) regValue=3;
-				subkey.SetValue("Output Format",regValue);
 
-				if (radioButtonAC3Speakers.Checked) regValue=0;
-				if (radioButtonAC3SPDIF.Checked) regValue=1;
-				subkey.SetValue("AC3Decoder",regValue);
+          regValue = (Int32)subkey.GetValue("DTSDecoder");
+          radioButtonDTSSpeakers.Checked = (regValue == 0);
+          radioButtonDTSSPDIF.Checked = (regValue == 1);
+        }
+        catch (Exception)
+        {
+        }
+        finally
+        {
+          subkey.Close();
+        }
+      }
+    }
+    public override void SaveSettings()
+    {
+      RegistryKey hkcu = Registry.CurrentUser;
+      RegistryKey subkey = hkcu.CreateSubKey(@"Software\Mediaportal\Mpeg Audio Filter");
+      if (subkey != null)
+      {
+        Int32 regValue;
+        if (checkBoxAACDownmix.Checked) regValue = 1;
+        else regValue = 0;
+        subkey.SetValue("AAC Downmix", regValue);
 
-				if (radioButtonDTSSpeakers.Checked) regValue=0;
-				if (radioButtonDTSSPDIF.Checked) regValue=1;
-				subkey.SetValue("DTSDecoder",regValue);
+        if (checkBoxAC3DynamicRange.Checked) regValue = 1;
+        else regValue = 0;
+        subkey.SetValue("AC3 Dynamic Range", regValue);
 
-				subkey.Close();
-			}
-		}
+        if (checkBoxAC3LFE.Checked) regValue = 1;
+        else regValue = 0;
+        subkey.SetValue("AC3 LFE", regValue);
 
-		private void radioButtonAC3Speakers_CheckedChanged(object sender, System.EventArgs e)
-		{
-			if (radioButtonAC3Speakers.Checked) 
-			{
-				//comboBoxAC3SpeakerConfig.Enabled=true;
-				//checkBoxAC3LFE.Enabled=true;
-			}
+        if (checkBoxDTSDynamicRange.Checked) regValue = 1;
+        else regValue = 0;
+        subkey.SetValue("DTS Dynamic Range", regValue);
 
-		}
+        if (checkBoxDTSLFE.Checked) regValue = 1;
+        else regValue = 0;
+        subkey.SetValue("DTS LFE", regValue);
 
-		private void radioButtonAC3SPDIF_CheckedChanged(object sender, System.EventArgs e)
-		{
-			if (radioButtonAC3SPDIF.Checked) 
-			{
-				//comboBoxAC3SpeakerConfig.Enabled=false;
-				//checkBoxAC3LFE.Enabled=false;
-			}
-		}
+        if (checkBoxNormalize.Checked) regValue = 1;
+        else regValue = 0;
+        subkey.SetValue("Normalize", regValue);
 
-		private void radioButtonDTSSpeakers_CheckedChanged(object sender, System.EventArgs e)
-		{
-			if (radioButtonDTSSpeakers.Checked) 
-			{
-				//comboBoxDTSSpeakerConfig.Enabled=true;
-				//checkBoxDTSLFE.Enabled=true;
-			}
-		}
+        subkey.SetValue("AC3 Speaker Config", comboBoxAC3SpeakerConfig.SelectedIndex);
+        subkey.SetValue("DTS Speaker Config", comboBoxDTSSpeakerConfig.SelectedIndex);
+        subkey.SetValue("Boost", trackBarBoost.Value);
 
-		private void radioButtonDTSSPDIF_CheckedChanged(object sender, System.EventArgs e)
-		{
-			if (radioButtonDTSSPDIF.Checked) 
-			{
-				//comboBoxDTSSpeakerConfig.Enabled=false;
-				//checkBoxDTSLFE.Enabled=false;
-			}
-		}
+        if (radioPCM16Bit.Checked) regValue = 0;
+        if (radioButtonPCM24Bit.Checked) regValue = 1;
+        if (radioButtonPCM32Bit.Checked) regValue = 2;
+        if (radioButtonIEEE.Checked) regValue = 3;
+        subkey.SetValue("Output Format", regValue);
 
-	}
+        if (radioButtonAC3Speakers.Checked) regValue = 0;
+        if (radioButtonAC3SPDIF.Checked) regValue = 1;
+        subkey.SetValue("AC3Decoder", regValue);
+
+        if (radioButtonDTSSpeakers.Checked) regValue = 0;
+        if (radioButtonDTSSPDIF.Checked) regValue = 1;
+        subkey.SetValue("DTSDecoder", regValue);
+
+        subkey.Close();
+      }
+    }
+
+    private void radioButtonAC3Speakers_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if (radioButtonAC3Speakers.Checked)
+      {
+        //comboBoxAC3SpeakerConfig.Enabled=true;
+        //checkBoxAC3LFE.Enabled=true;
+      }
+
+    }
+
+    private void radioButtonAC3SPDIF_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if (radioButtonAC3SPDIF.Checked)
+      {
+        //comboBoxAC3SpeakerConfig.Enabled=false;
+        //checkBoxAC3LFE.Enabled=false;
+      }
+    }
+
+    private void radioButtonDTSSpeakers_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if (radioButtonDTSSpeakers.Checked)
+      {
+        //comboBoxDTSSpeakerConfig.Enabled=true;
+        //checkBoxDTSLFE.Enabled=true;
+      }
+    }
+
+    private void radioButtonDTSSPDIF_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if (radioButtonDTSSPDIF.Checked)
+      {
+        //comboBoxDTSSpeakerConfig.Enabled=false;
+        //checkBoxDTSLFE.Enabled=false;
+      }
+    }
+
+  }
 }
 

@@ -42,17 +42,17 @@ using MediaPortal.Music.Database;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class MusicDatabase : MediaPortal.Configuration.SectionSettings
-	{
-    private System.Windows.Forms.GroupBox groupBox1;
+  public class MusicDatabase : MediaPortal.Configuration.SectionSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private System.Windows.Forms.CheckedListBox sharesListBox;
     private MediaPortal.UserInterface.Controls.MPButton startButton;
     private MediaPortal.UserInterface.Controls.MPCheckBox buildThumbsCheckBox;
-    private System.Windows.Forms.GroupBox groupBox2;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
     private System.Windows.Forms.ProgressBar progressBar;
     private System.Windows.Forms.Label fileLabel;
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-	private System.ComponentModel.IContainer components = null;
+    private System.ComponentModel.IContainer components = null;
 
     public class MusicData
     {
@@ -66,19 +66,21 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-	MediaPortal.Music.Database.MusicDatabase m_dbs=new MediaPortal.Music.Database.MusicDatabase();
+    MediaPortal.Music.Database.MusicDatabase m_dbs = new MediaPortal.Music.Database.MusicDatabase();
 
-    public MusicDatabase() :  this("Music Database")
+    public MusicDatabase()
+      : this("Music Database")
     {
     }
 
-    public MusicDatabase(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public MusicDatabase(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
       groupBox2.Enabled = false;
-		}
+    }
 
     private string[] Extensions
     {
@@ -99,11 +101,11 @@ namespace MediaPortal.Configuration.Sections
       //
       SectionSettings section = SectionSettings.GetSection("MusicShares");
 
-      if(section != null)
+      if (section != null)
       {
         ArrayList shares = (ArrayList)section.GetSetting("shares");
 
-        foreach(string share in shares)
+        foreach (string share in shares)
         {
           //
           // Add to share to list box and default to selected
@@ -117,7 +119,7 @@ namespace MediaPortal.Configuration.Sections
       //
       section = SectionSettings.GetSection("MusicExtensions");
 
-      if(section != null)
+      if (section != null)
       {
         string extensions = (string)section.GetSetting("extensions");
         Extensions = extensions.Split(new char[] { ',' });
@@ -149,34 +151,34 @@ namespace MediaPortal.Configuration.Sections
     }
 
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buildThumbsCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.startButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.sharesListBox = new System.Windows.Forms.CheckedListBox();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.fileLabel = new System.Windows.Forms.Label();
       this.progressBar = new System.Windows.Forms.ProgressBar();
       this.groupBox1.SuspendLayout();
@@ -185,8 +187,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.buildThumbsCheckBox);
       this.groupBox1.Controls.Add(this.startButton);
@@ -224,8 +226,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // sharesListBox
       // 
-      this.sharesListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.sharesListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.sharesListBox.CheckOnClick = true;
       this.sharesListBox.Location = new System.Drawing.Point(16, 24);
@@ -250,7 +252,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.fileLabel);
       this.groupBox2.Controls.Add(this.progressBar);
@@ -264,7 +266,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileLabel
       // 
-      this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.fileLabel.Location = new System.Drawing.Point(16, 24);
       this.fileLabel.Name = "fileLabel";
@@ -273,7 +275,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBar
       // 
-      this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar.Location = new System.Drawing.Point(16, 48);
       this.progressBar.Name = "progressBar";
@@ -292,7 +294,7 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     private void sharesListBox_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
     {
@@ -329,35 +331,35 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     /// 
 
-	void SetPercentDonebyEvent(object sender, DatabaseReorgEventArgs e)
-		{
-		progressBar.Value = e.progress;
-		SetStatus(e.phase);
-		}
+    void SetPercentDonebyEvent(object sender, DatabaseReorgEventArgs e)
+    {
+      progressBar.Value = e.progress;
+      SetStatus(e.phase);
+    }
 
     private void startButton_Click(object sender, System.EventArgs e)
     {
-			ArrayList shares = new ArrayList();
-			for(int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
-			{
-				string path = sharesListBox.Items[(int)sharesListBox.CheckedIndices[index]].ToString();
-				if(Directory.Exists(path))
-				{
-					shares.Add(path);
-				}
-			}
-	  m_dbs.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent); 
-	  groupBox1.Enabled = false;
-	  groupBox2.Enabled = true;
-      
-	  //RebuildDatabase();
-	  progressBar.Maximum = 100;
-	  int appel = m_dbs.MusicDatabaseReorg( shares);
-	  progressBar.Value = 100;
+      ArrayList shares = new ArrayList();
+      for (int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
+      {
+        string path = sharesListBox.Items[(int)sharesListBox.CheckedIndices[index]].ToString();
+        if (Directory.Exists(path))
+        {
+          shares.Add(path);
+        }
+      }
+      m_dbs.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent);
+      groupBox1.Enabled = false;
+      groupBox2.Enabled = true;
 
-	  groupBox1.Enabled = true;
-	  groupBox2.Enabled = false;
-	}
+      //RebuildDatabase();
+      progressBar.Maximum = 100;
+      int appel = m_dbs.MusicDatabaseReorg(shares);
+      progressBar.Value = 100;
+
+      groupBox1.Enabled = true;
+      groupBox2.Enabled = false;
+    }
 
 
 
@@ -371,7 +373,7 @@ namespace MediaPortal.Configuration.Sections
       System.Windows.Forms.Application.DoEvents();
     }
 
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -380,7 +382,7 @@ namespace MediaPortal.Configuration.Sections
     private void cancelButton_Click(object sender, System.EventArgs e)
     {
       //Not yet an option to stop rebuildin the database
-	  //stopRebuild = true;
+      //stopRebuild = true;
     }
 
 
@@ -388,10 +390,10 @@ namespace MediaPortal.Configuration.Sections
     {
       DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the entire music database?", "Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-      if(dialogResult == DialogResult.Yes)
+      if (dialogResult == DialogResult.Yes)
       {
         string database = @"database\musicdatabase4.db3";
-        if(File.Exists(database))
+        if (File.Exists(database))
         {
           File.Delete(database);
         }
@@ -400,6 +402,6 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-	}
+  }
 }
 

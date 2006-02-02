@@ -35,98 +35,100 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class General : MediaPortal.Configuration.SectionSettings
-	{
-		const string LanguageDirectory = @"language\";
-		private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-		private System.Windows.Forms.ComboBox languageComboBox;
-		private System.Windows.Forms.Label label2;
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
-		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.NumericUpDown numericUpDown1;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label3;
-		private System.ComponentModel.IContainer components = null;
+  public class General : MediaPortal.Configuration.SectionSettings
+  {
+    const string LanguageDirectory = @"language\";
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+    private System.Windows.Forms.ComboBox languageComboBox;
+    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+    private System.Windows.Forms.NumericUpDown numericUpDown1;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label label3;
+    private System.ComponentModel.IContainer components = null;
 
-		public General() : this("General")
-		{
-		}
+    public General()
+      : this("General")
+    {
+    }
 
-		public General(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public General(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			//
-			// Populate comboboxes
-			//
-			LoadLanguages();
-		}
+      //
+      // Populate comboboxes
+      //
+      LoadLanguages();
+    }
 
-		private void LoadLanguages()
-		{
-			// Get system language
-			string strLongLanguage = CultureInfo.CurrentCulture.EnglishName;
-			int iTrimIndex = strLongLanguage.IndexOf(" ", 0, strLongLanguage.Length);
-			string strShortLanguage = strLongLanguage.Substring(0, iTrimIndex);
+    private void LoadLanguages()
+    {
+      // Get system language
+      string strLongLanguage = CultureInfo.CurrentCulture.EnglishName;
+      int iTrimIndex = strLongLanguage.IndexOf(" ", 0, strLongLanguage.Length);
+      string strShortLanguage = strLongLanguage.Substring(0, iTrimIndex);
 
-			bool bExactLanguageFound = false;
-			if(Directory.Exists(LanguageDirectory))
-			{
-				string[] folders = Directory.GetDirectories(LanguageDirectory, "*.*");
+      bool bExactLanguageFound = false;
+      if (Directory.Exists(LanguageDirectory))
+      {
+        string[] folders = Directory.GetDirectories(LanguageDirectory, "*.*");
 
-				foreach(string folder in folders)
-				{
-					string fileName = folder.Substring(@"language\".Length);
+        foreach (string folder in folders)
+        {
+          string fileName = folder.Substring(@"language\".Length);
 
-					//
-					// Exclude cvs folder
-					//
-					if(fileName.ToLower() != "cvs")
-					{
-						if(fileName.Length > 0)
-						{
-							fileName = fileName.Substring(0, 1).ToUpper() + fileName.Substring(1);
-							languageComboBox.Items.Add(fileName);
+          //
+          // Exclude cvs folder
+          //
+          if (fileName.ToLower() != "cvs")
+          {
+            if (fileName.Length > 0)
+            {
+              fileName = fileName.Substring(0, 1).ToUpper() + fileName.Substring(1);
+              languageComboBox.Items.Add(fileName);
 
-							// Check language file to user region language
-							if (fileName.ToLower() == strLongLanguage.ToLower())
-							{
-								languageComboBox.Text = fileName;
-								bExactLanguageFound = true;
-							}
-							else if (!bExactLanguageFound && (fileName.ToLower() == strShortLanguage.ToLower()))
-							{
-								languageComboBox.Text = fileName;
-							}							
-						}
-					}
-				}
-			}
+              // Check language file to user region language
+              if (fileName.ToLower() == strLongLanguage.ToLower())
+              {
+                languageComboBox.Text = fileName;
+                bExactLanguageFound = true;
+              }
+              else if (!bExactLanguageFound && (fileName.ToLower() == strShortLanguage.ToLower()))
+              {
+                languageComboBox.Text = fileName;
+              }
+            }
+          }
+        }
+      }
 
-			if (languageComboBox.Text == "")
-			{
-				languageComboBox.Text = "English";
-			}
-		}
+      if (languageComboBox.Text == "")
+      {
+        languageComboBox.Text = "English";
+      }
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-        string[][] sectionEntries = new string[][] { 
+    string[][] sectionEntries = new string[][] { 
 												new string[] { "general", "startfullscreen", "false" },
 
 												new string[] { "general", "minimizeonstartup", "false" },
@@ -147,106 +149,106 @@ namespace MediaPortal.Configuration.Sections
 												new string[] { "general", "startbasichome", "false" }
 												};
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public override void LoadSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				//
-				// Load general settings
-				//
-				for(int index = 0; index < sectionEntries.Length; index++)
-				{
-					string[] currentSection = sectionEntries[index];
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        //
+        // Load general settings
+        //
+        for (int index = 0; index < sectionEntries.Length; index++)
+        {
+          string[] currentSection = sectionEntries[index];
 
-					settingsCheckedListBox.SetItemChecked(index, xmlreader.GetValueAsBool(currentSection[0], currentSection[1], bool.Parse(currentSection[2])));
-				}
-	
-				//
-				// Set language
-				//
-				languageComboBox.Text = xmlreader.GetValueAsString("skin", "language", languageComboBox.Text);
-				//numericUpDown1.Value=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);
+          settingsCheckedListBox.SetItemChecked(index, xmlreader.GetValueAsBool(currentSection[0], currentSection[1], bool.Parse(currentSection[2])));
+        }
 
-			}
+        //
+        // Set language
+        //
+        languageComboBox.Text = xmlreader.GetValueAsString("skin", "language", languageComboBox.Text);
+        //numericUpDown1.Value=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);
 
-		}
-
-		public override void SaveSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				//
-				// Load general settings
-				//
-				for(int index = 0; index < sectionEntries.Length; index++)
-				{
-					string[] currentSection = sectionEntries[index];
-					xmlwriter.SetValueAsBool(currentSection[0], currentSection[1], settingsCheckedListBox.GetItemChecked(index));
-				}
-	
-				//
-				// Set language
-				string prevLanguage = xmlwriter.GetValueAsString("skin", "language", "English");
-				string skin         = xmlwriter.GetValueAsString("skin", "name", "mce");
-				if (prevLanguage!=languageComboBox.Text)
-				{
-					Utils.DeleteFiles(@"skin\"+skin+@"\fonts","*");
-				}
-				xmlwriter.SetValue("skin", "language", languageComboBox.Text);
-        
-				//xmlwriter.SetValue("vmr9OSDSkin","alphaValue",numericUpDown1.Value);
       }
 
-			try
-			{
-				RegistryKey hkcu=Registry.CurrentUser;
-				RegistryKey subkey;
-				if (settingsCheckedListBox.GetItemChecked(7))
-				{
-					string fileName=String.Format("\"{0}\"",System.IO.Path.GetFullPath("mediaportal.exe"));
-					subkey=hkcu.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run",true);
-					subkey.SetValue("Mediaportal", fileName);
-					subkey.Close();
-				}
-				else
-				{
-					subkey=hkcu.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run",true);
-					subkey.DeleteValue("Mediaportal",false);
-					subkey.Close();
-				}
+    }
 
-				Int32 iValue=1;
-				if (settingsCheckedListBox.GetItemChecked(8))
-				{
-					iValue=0;
-				}
-				subkey=hkcu.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer",true);
-				subkey.SetValue("EnableBalloonTips", iValue);
-				subkey.Close();
-				hkcu.Close();
-				
-			}
-			catch(Exception)
-			{
-			}
-		}
+    public override void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        //
+        // Load general settings
+        //
+        for (int index = 0; index < sectionEntries.Length; index++)
+        {
+          string[] currentSection = sectionEntries[index];
+          xmlwriter.SetValueAsBool(currentSection[0], currentSection[1], settingsCheckedListBox.GetItemChecked(index));
+        }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        //
+        // Set language
+        string prevLanguage = xmlwriter.GetValueAsString("skin", "language", "English");
+        string skin = xmlwriter.GetValueAsString("skin", "name", "mce");
+        if (prevLanguage != languageComboBox.Text)
+        {
+          Utils.DeleteFiles(@"skin\" + skin + @"\fonts", "*");
+        }
+        xmlwriter.SetValue("skin", "language", languageComboBox.Text);
+
+        //xmlwriter.SetValue("vmr9OSDSkin","alphaValue",numericUpDown1.Value);
+      }
+
+      try
+      {
+        RegistryKey hkcu = Registry.CurrentUser;
+        RegistryKey subkey;
+        if (settingsCheckedListBox.GetItemChecked(7))
+        {
+          string fileName = String.Format("\"{0}\"", System.IO.Path.GetFullPath("mediaportal.exe"));
+          subkey = hkcu.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+          subkey.SetValue("Mediaportal", fileName);
+          subkey.Close();
+        }
+        else
+        {
+          subkey = hkcu.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+          subkey.DeleteValue("Mediaportal", false);
+          subkey.Close();
+        }
+
+        Int32 iValue = 1;
+        if (settingsCheckedListBox.GetItemChecked(8))
+        {
+          iValue = 0;
+        }
+        subkey = hkcu.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", true);
+        subkey.SetValue("EnableBalloonTips", iValue);
+        subkey.Close();
+        hkcu.Close();
+
+      }
+      catch (Exception)
+      {
+      }
+    }
+
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.languageComboBox = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label1 = new System.Windows.Forms.Label();
       this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
       this.label3 = new System.Windows.Forms.Label();
@@ -401,9 +403,9 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-    
-	}
+
+  }
 }
 

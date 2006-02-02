@@ -35,362 +35,364 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class Keys : MediaPortal.Configuration.SectionSettings
-	{
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.Label label1;
-		private MediaPortal.UserInterface.Controls.MPButton deleteButton;
-		private MediaPortal.UserInterface.Controls.MPButton addButton;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.TextBox keyTextBox;
-		private System.Windows.Forms.TextBox soundTextBox;
-		private System.Windows.Forms.Label label4;
-		protected MediaPortal.UserInterface.Controls.MPButton fileNameButton;
-		private System.ComponentModel.IContainer components = null;
-
-		//
-		// Private members
-		//
-		ArrayList	globalActions = new ArrayList();
-		private System.Windows.Forms.TreeView keyTreeView;
-		private System.Windows.Forms.TextBox descriptionTextBox;
-		private System.Windows.Forms.OpenFileDialog openFileDialog;
-		ArrayList	windowActions = new ArrayList();
-
-		TreeNode	currentlySelectedNode;
-		TreeNode	globalNode, windowsNode;
-
-		KeyMappings	keyMappings = new KeyMappings();
-		private System.Windows.Forms.ComboBox idComboBox;
-		private System.Windows.Forms.TextBox idTextBox;
-
-		public Keys() : this("Keys and Sounds")
-		{
-		}
-
-		public Keys(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
-
-			//
-			// Load the keys
-			//
-			LoadKeys();
-
-			//
-			// Populate the tree
-			//
-			PopulateKeyTree();
-
-			//
-			// Fill action combo
-			//
-			string[] names = Enum.GetNames(typeof(Action.ActionType));
-			idComboBox.Items.AddRange(names);
-		}
-
-		private void PopulateKeyTree()
-		{
-			globalNode = new TreeNode("Global actions");
-			keyTreeView.Nodes.Add(globalNode);
-
-			//
-			// Populate node with actions
-			//
-			AddActionsToNode(ref globalNode, globalActions);
-
-			windowsNode = new TreeNode("Windows");
-			keyTreeView.Nodes.Add(windowsNode);
-
-			//
-			// Populate node with actions
-			//
-			foreach(ActionWindow actionWindow in windowActions)
-			{
-				TreeNode windowNode = new TreeNode(actionWindow.Description + " (" + actionWindow.Id + ")");
-
-				AddActionsToNode(ref windowNode, actionWindow.Actions);
-
-				windowNode.Tag = actionWindow;
-
-				windowsNode.Nodes.Add(windowNode);
-			}
-		}
-
-		private string GetActionName(int id)
-		{
-			string action = Strings.Unknown;
-
-			try
-			{
-				action = Enum.GetName(typeof(Action.ActionType), id);
-			}
-			catch
-			{
-			}
-
-			return action;
-		}
-
-		private void AddActionsToNode(ref TreeNode treeNode, ArrayList actions)
-		{
-			foreach(KeyAction action in actions)
-			{
-				TreeNode actionNode = new TreeNode(action.Description + " (" + action.Id + ")");
+  public class Keys : MediaPortal.Configuration.SectionSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPButton deleteButton;
+    private MediaPortal.UserInterface.Controls.MPButton addButton;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.TextBox keyTextBox;
+    private System.Windows.Forms.TextBox soundTextBox;
+    private System.Windows.Forms.Label label4;
+    protected MediaPortal.UserInterface.Controls.MPButton fileNameButton;
+    private System.ComponentModel.IContainer components = null;
+
+    //
+    // Private members
+    //
+    ArrayList globalActions = new ArrayList();
+    private System.Windows.Forms.TreeView keyTreeView;
+    private System.Windows.Forms.TextBox descriptionTextBox;
+    private System.Windows.Forms.OpenFileDialog openFileDialog;
+    ArrayList windowActions = new ArrayList();
+
+    TreeNode currentlySelectedNode;
+    TreeNode globalNode, windowsNode;
+
+    KeyMappings keyMappings = new KeyMappings();
+    private System.Windows.Forms.ComboBox idComboBox;
+    private System.Windows.Forms.TextBox idTextBox;
+
+    public Keys()
+      : this("Keys and Sounds")
+    {
+    }
+
+    public Keys(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
+
+      //
+      // Load the keys
+      //
+      LoadKeys();
+
+      //
+      // Populate the tree
+      //
+      PopulateKeyTree();
+
+      //
+      // Fill action combo
+      //
+      string[] names = Enum.GetNames(typeof(Action.ActionType));
+      idComboBox.Items.AddRange(names);
+    }
+
+    private void PopulateKeyTree()
+    {
+      globalNode = new TreeNode("Global actions");
+      keyTreeView.Nodes.Add(globalNode);
+
+      //
+      // Populate node with actions
+      //
+      AddActionsToNode(ref globalNode, globalActions);
+
+      windowsNode = new TreeNode("Windows");
+      keyTreeView.Nodes.Add(windowsNode);
+
+      //
+      // Populate node with actions
+      //
+      foreach (ActionWindow actionWindow in windowActions)
+      {
+        TreeNode windowNode = new TreeNode(actionWindow.Description + " (" + actionWindow.Id + ")");
+
+        AddActionsToNode(ref windowNode, actionWindow.Actions);
+
+        windowNode.Tag = actionWindow;
+
+        windowsNode.Nodes.Add(windowNode);
+      }
+    }
+
+    private string GetActionName(int id)
+    {
+      string action = Strings.Unknown;
+
+      try
+      {
+        action = Enum.GetName(typeof(Action.ActionType), id);
+      }
+      catch
+      {
+      }
+
+      return action;
+    }
+
+    private void AddActionsToNode(ref TreeNode treeNode, ArrayList actions)
+    {
+      foreach (KeyAction action in actions)
+      {
+        TreeNode actionNode = new TreeNode(action.Description + " (" + action.Id + ")");
 
-				actionNode.Nodes.Add("Action = " + GetActionName(action.Id));
-				actionNode.Nodes.Add("Key = " + action.Key);
-				actionNode.Nodes.Add("Sound = " + action.Sound);
+        actionNode.Nodes.Add("Action = " + GetActionName(action.Id));
+        actionNode.Nodes.Add("Key = " + action.Key);
+        actionNode.Nodes.Add("Sound = " + action.Sound);
 
-				actionNode.Tag = action;
+        actionNode.Tag = action;
 
-				treeNode.Nodes.Add(actionNode);
-			}
-		}
-
-		private void SaveKeys()
-		{
-			XmlTextWriter writer = null;
-
-			try
-			{
-				FileStream fileStream = new FileStream("keymap.xml", FileMode.Create);
-				writer = new XmlTextWriter(fileStream, System.Text.Encoding.GetEncoding("iso-8859-1"));
-
-				writer.Formatting = Formatting.Indented;
-
-				writer.WriteStartDocument();
-				writer.WriteComment("This document was auto-generated by MediaPortal Settings program.");
-				writer.WriteComment("Version = " + System.Windows.Forms.Application.ProductVersion);
-				
-				writer.WriteStartElement("keymap");
-
-				writer.WriteStartElement("global");
-
-				foreach(KeyAction action in globalActions)
-				{
-					writer.WriteStartElement("action");
-
-					writer.WriteStartElement("id");
-					writer.WriteString(action.Id.ToString());
-					writer.WriteEndElement();
-
-					writer.WriteStartElement("key");
-					writer.WriteString(action.Key);
-					writer.WriteEndElement();
-
-					writer.WriteStartElement("sound");
-					writer.WriteString(action.Sound);
-					writer.WriteEndElement();
-
-					writer.WriteStartElement("description");
-					writer.WriteString(action.Description);
-					writer.WriteEndElement();
-
-					writer.WriteEndElement();
-				}
-
-				writer.WriteEndElement();
-
-				foreach(ActionWindow window in windowActions)
-				{
-					writer.WriteStartElement("window");
-
-					writer.WriteStartElement("id");
-					writer.WriteString(window.Id.ToString());
-					writer.WriteEndElement();
-
-					writer.WriteStartElement("description");
-					writer.WriteString(window.Description);
-					writer.WriteEndElement();
-
-					foreach(KeyAction action in window.Actions)
-					{
-						writer.WriteStartElement("action");
-
-						writer.WriteStartElement("id");
-						writer.WriteString(action.Id.ToString());
-						writer.WriteEndElement();
-
-						writer.WriteStartElement("key");
-						writer.WriteString(action.Key);
-						writer.WriteEndElement();
-
-						writer.WriteStartElement("sound");
-						writer.WriteString(action.Sound);
-						writer.WriteEndElement();
-
-						writer.WriteStartElement("description");
-						writer.WriteString(action.Description);
-						writer.WriteEndElement();
-
-						writer.WriteEndElement();
-					}
-
-					writer.WriteEndElement();
-				}
-
-				writer.WriteEndElement();
-
-				writer.WriteEndDocument();
-			}
-			finally
-			{
-				if(writer != null)
-					writer.Close();
-			}
-		}
-
-		//		private void CreateActionNodes(ArrayList list, XmlDocument document)
-		//		{
-		//			foreach(KeyAction action in list)
-		//			{
-		//				XmlNode actionNode = document.CreateNode(XmlNodeType.Element, "action", "");
-		//
-		//				XmlNode idNode = document.CreateNode(XmlNodeType.Text, "action", "");
-		//				idNode.InnerText = action.Id.ToString();
-		//
-		//				XmlNode keyNode = new XmlNode();
-		//				keyNode.InnerText = action.Key;
-		//
-		//				XmlNode soundNode = new XmlNode();
-		//				soundNode.InnerText = action.Sound;
-		//
-		//				XmlNode descriptionNode = new XmlNode();
-		//				descriptionNode.InnerText = action.Description;
-		//
-		//				actionNode.AppendChild(idNode);
-		//				actionNode.AppendChild(keyNode);
-		//				actionNode.AppendChild(soundNode);
-		//				actionNode.AppendChild(descriptionNode);
-		//
-		//				node.AppendChild(actionNode);
-		//			}
-		//		}
-
-		public override void SaveSettings()
-		{
-			SaveKeys();
-		}
-
-		private void LoadKeys()
-		{
-			XmlDocument document = new XmlDocument();
-	
-			try
-			{
-				//
-				// Load the xml document
-				//
-				document.Load("keymap.xml");
-
-				XmlElement rootElement = document.DocumentElement;
-
-				//
-				// Make sure we're loading a keymap
-				//
-				if(rootElement != null && rootElement.Name.Equals("keymap"))
-				{
-					//
-					// Fetch global actions
-					//
-					XmlNodeList nodeList = rootElement.SelectNodes("/keymap/global/action");
-
-					foreach(XmlNode node in nodeList)
-					{
-						AddActionNode(ref globalActions, node);
-					}
-
-					//
-					// Fetch all windows
-					//
-					nodeList = rootElement.SelectNodes("/keymap/window");
-
-					foreach(XmlNode node in nodeList)
-					{
-						//
-						// Allocate new window
-						//
-						ActionWindow window = new ActionWindow();
-
-						//
-						// Fetch description and id for this window
-						//
-						XmlNode idNode = node.SelectSingleNode("id");
-						XmlNode descriptionNode = node.SelectSingleNode("description");
-
-						window.Description = descriptionNode.InnerText;
-						window.Id = Convert.ToInt32(idNode.InnerText.Length > 0 ? idNode.InnerText : "0");
-
-						XmlNodeList actionNodeList = node.SelectNodes("action");
-
-						foreach(XmlNode actionNode in actionNodeList)
-						{
-							AddActionNode(ref window.Actions, actionNode);
-						}
-
-						//
-						// Add to the window list
-						//
-						windowActions.Add(window);
-					}
-				}
-			}
-			catch(Exception e)
-			{
-				System.Diagnostics.Debug.WriteLine(e.Message);
-			}
-		}
-
-		private void AddActionNode(ref ArrayList list, XmlNode node)
-		{
-			string id = "0", key = String.Empty, sound = String.Empty, description = String.Empty;
-
-			XmlNode idNode = node.SelectSingleNode("id");
-			XmlNode keyNode = node.SelectSingleNode("key");
-			XmlNode soundNode = node.SelectSingleNode("sound");
-			XmlNode descriptionNode = node.SelectSingleNode("description");
-
-			if(idNode != null)
-				id = idNode.InnerText;
-
-			if(keyNode != null)
-				key = keyNode.InnerText;
-
-			if(soundNode != null)
-				sound = soundNode.InnerText;
-
-			if(descriptionNode != null)
-				description = descriptionNode.InnerText;
-
-			list.Add(new KeyAction(Convert.ToInt32(id), key, description, sound));
-		}
-		
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
-
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
+        treeNode.Nodes.Add(actionNode);
+      }
+    }
+
+    private void SaveKeys()
+    {
+      XmlTextWriter writer = null;
+
+      try
+      {
+        FileStream fileStream = new FileStream("keymap.xml", FileMode.Create);
+        writer = new XmlTextWriter(fileStream, System.Text.Encoding.GetEncoding("iso-8859-1"));
+
+        writer.Formatting = Formatting.Indented;
+
+        writer.WriteStartDocument();
+        writer.WriteComment("This document was auto-generated by MediaPortal Settings program.");
+        writer.WriteComment("Version = " + System.Windows.Forms.Application.ProductVersion);
+
+        writer.WriteStartElement("keymap");
+
+        writer.WriteStartElement("global");
+
+        foreach (KeyAction action in globalActions)
+        {
+          writer.WriteStartElement("action");
+
+          writer.WriteStartElement("id");
+          writer.WriteString(action.Id.ToString());
+          writer.WriteEndElement();
+
+          writer.WriteStartElement("key");
+          writer.WriteString(action.Key);
+          writer.WriteEndElement();
+
+          writer.WriteStartElement("sound");
+          writer.WriteString(action.Sound);
+          writer.WriteEndElement();
+
+          writer.WriteStartElement("description");
+          writer.WriteString(action.Description);
+          writer.WriteEndElement();
+
+          writer.WriteEndElement();
+        }
+
+        writer.WriteEndElement();
+
+        foreach (ActionWindow window in windowActions)
+        {
+          writer.WriteStartElement("window");
+
+          writer.WriteStartElement("id");
+          writer.WriteString(window.Id.ToString());
+          writer.WriteEndElement();
+
+          writer.WriteStartElement("description");
+          writer.WriteString(window.Description);
+          writer.WriteEndElement();
+
+          foreach (KeyAction action in window.Actions)
+          {
+            writer.WriteStartElement("action");
+
+            writer.WriteStartElement("id");
+            writer.WriteString(action.Id.ToString());
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("key");
+            writer.WriteString(action.Key);
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("sound");
+            writer.WriteString(action.Sound);
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("description");
+            writer.WriteString(action.Description);
+            writer.WriteEndElement();
+
+            writer.WriteEndElement();
+          }
+
+          writer.WriteEndElement();
+        }
+
+        writer.WriteEndElement();
+
+        writer.WriteEndDocument();
+      }
+      finally
+      {
+        if (writer != null)
+          writer.Close();
+      }
+    }
+
+    //		private void CreateActionNodes(ArrayList list, XmlDocument document)
+    //		{
+    //			foreach(KeyAction action in list)
+    //			{
+    //				XmlNode actionNode = document.CreateNode(XmlNodeType.Element, "action", "");
+    //
+    //				XmlNode idNode = document.CreateNode(XmlNodeType.Text, "action", "");
+    //				idNode.InnerText = action.Id.ToString();
+    //
+    //				XmlNode keyNode = new XmlNode();
+    //				keyNode.InnerText = action.Key;
+    //
+    //				XmlNode soundNode = new XmlNode();
+    //				soundNode.InnerText = action.Sound;
+    //
+    //				XmlNode descriptionNode = new XmlNode();
+    //				descriptionNode.InnerText = action.Description;
+    //
+    //				actionNode.AppendChild(idNode);
+    //				actionNode.AppendChild(keyNode);
+    //				actionNode.AppendChild(soundNode);
+    //				actionNode.AppendChild(descriptionNode);
+    //
+    //				node.AppendChild(actionNode);
+    //			}
+    //		}
+
+    public override void SaveSettings()
+    {
+      SaveKeys();
+    }
+
+    private void LoadKeys()
+    {
+      XmlDocument document = new XmlDocument();
+
+      try
+      {
+        //
+        // Load the xml document
+        //
+        document.Load("keymap.xml");
+
+        XmlElement rootElement = document.DocumentElement;
+
+        //
+        // Make sure we're loading a keymap
+        //
+        if (rootElement != null && rootElement.Name.Equals("keymap"))
+        {
+          //
+          // Fetch global actions
+          //
+          XmlNodeList nodeList = rootElement.SelectNodes("/keymap/global/action");
+
+          foreach (XmlNode node in nodeList)
+          {
+            AddActionNode(ref globalActions, node);
+          }
+
+          //
+          // Fetch all windows
+          //
+          nodeList = rootElement.SelectNodes("/keymap/window");
+
+          foreach (XmlNode node in nodeList)
+          {
+            //
+            // Allocate new window
+            //
+            ActionWindow window = new ActionWindow();
+
+            //
+            // Fetch description and id for this window
+            //
+            XmlNode idNode = node.SelectSingleNode("id");
+            XmlNode descriptionNode = node.SelectSingleNode("description");
+
+            window.Description = descriptionNode.InnerText;
+            window.Id = Convert.ToInt32(idNode.InnerText.Length > 0 ? idNode.InnerText : "0");
+
+            XmlNodeList actionNodeList = node.SelectNodes("action");
+
+            foreach (XmlNode actionNode in actionNodeList)
+            {
+              AddActionNode(ref window.Actions, actionNode);
+            }
+
+            //
+            // Add to the window list
+            //
+            windowActions.Add(window);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        System.Diagnostics.Debug.WriteLine(e.Message);
+      }
+    }
+
+    private void AddActionNode(ref ArrayList list, XmlNode node)
+    {
+      string id = "0", key = String.Empty, sound = String.Empty, description = String.Empty;
+
+      XmlNode idNode = node.SelectSingleNode("id");
+      XmlNode keyNode = node.SelectSingleNode("key");
+      XmlNode soundNode = node.SelectSingleNode("sound");
+      XmlNode descriptionNode = node.SelectSingleNode("description");
+
+      if (idNode != null)
+        id = idNode.InnerText;
+
+      if (keyNode != null)
+        key = keyNode.InnerText;
+
+      if (soundNode != null)
+        sound = soundNode.InnerText;
+
+      if (descriptionNode != null)
+        description = descriptionNode.InnerText;
+
+      list.Add(new KeyAction(Convert.ToInt32(id), key, description, sound));
+    }
+
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
+
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.idTextBox = new System.Windows.Forms.TextBox();
       this.idComboBox = new System.Windows.Forms.ComboBox();
       this.addButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -410,8 +412,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.idTextBox);
       this.groupBox1.Controls.Add(this.idComboBox);
@@ -449,7 +451,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // idComboBox
       // 
-      this.idComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      this.idComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.idComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.idComboBox.Enabled = false;
@@ -497,7 +499,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // soundTextBox
       // 
-      this.soundTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      this.soundTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.soundTextBox.Enabled = false;
       this.soundTextBox.Location = new System.Drawing.Point(168, 372);
@@ -519,7 +521,7 @@ namespace MediaPortal.Configuration.Sections
       // keyTextBox
       // 
       this.keyTextBox.AcceptsReturn = true;
-      this.keyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      this.keyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.keyTextBox.Enabled = false;
       this.keyTextBox.Location = new System.Drawing.Point(168, 348);
@@ -550,7 +552,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // descriptionTextBox
       // 
-      this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.descriptionTextBox.Enabled = false;
       this.descriptionTextBox.Location = new System.Drawing.Point(168, 300);
@@ -571,8 +573,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // keyTreeView
       // 
-      this.keyTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.keyTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.keyTreeView.FullRowSelect = true;
       this.keyTreeView.HideSelection = false;
@@ -593,511 +595,511 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
-
-		private void keyTreeView_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
-		{
-			currentlySelectedNode = e.Node;
-
-			addButton.Enabled = currentlySelectedNode != null && (!(currentlySelectedNode.Tag is KeyAction) && currentlySelectedNode.Tag != null);
-
-			if(addButton.Enabled == false)
-			{
-				addButton.Enabled = currentlySelectedNode == globalNode || currentlySelectedNode == windowsNode;
-			}
-
-			//
-			// Enable/Disable controls
-			//
-			deleteButton.Enabled = keyTextBox.Enabled = fileNameButton.Enabled = idComboBox.Enabled = idTextBox.Enabled = soundTextBox.Enabled = descriptionTextBox.Enabled = e.Node.Tag is KeyAction;
-
-			if(deleteButton.Enabled == false)
-			{
-				deleteButton.Enabled = currentlySelectedNode.Tag is ActionWindow;
-			}
-
-			if(e.Node.Tag is ActionWindow)
-			{
-				//
-				// Enable correct controls
-				//
-				idTextBox.Visible = true;
-				idComboBox.Visible = false;
-
-				idTextBox.Enabled = true;
-
-				ActionWindow window = e.Node.Tag as ActionWindow;
-
-				descriptionTextBox.Text = window.Description;
-				idTextBox.Text = window.Id.ToString();
-
-				keyTextBox.Text = String.Empty;
-				soundTextBox.Text = String.Empty;
-
-				descriptionTextBox.Enabled = idComboBox.Enabled = true;
-			}
-			else if(e.Node.Tag is KeyAction)
-			{
-				//
-				// Enable correct controls
-				//
-				idTextBox.Visible = false;
-				idComboBox.Visible = true;
-        
-				KeyAction action = e.Node.Tag as KeyAction;
-
-				descriptionTextBox.Text = action.Description;
-				idComboBox.Text = GetActionName(action.Id);
-				keyTextBox.Text = action.Key;
-				soundTextBox.Text = action.Sound;
-			}
-			else
-			{
-				//
-				// None of the above
-				//	
-			}
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void fileNameButton_Click(object sender, System.EventArgs e)
-		{
-			using(openFileDialog = new OpenFileDialog())
-			{
-				openFileDialog.FileName = soundTextBox.Text;
-				openFileDialog.CheckFileExists = true;
-				openFileDialog.RestoreDirectory=true;
-				openFileDialog.Filter= "wav files (*.wav)|*.wav";
-				openFileDialog.FilterIndex = 0;
-				openFileDialog.Title = "Select sound file";
-
-				DialogResult dialogResult = openFileDialog.ShowDialog();
-
-				if(dialogResult == DialogResult.OK)
-				{
-					soundTextBox.Text = System.IO.Path.GetFileName(openFileDialog.FileName);
-				}
-			}		
-		}
-
-		private void descriptionTextBox_TextChanged(object sender, System.EventArgs e)
-		{
-			if(currentlySelectedNode != null)
-			{
-				int id = 0;
-
-				//
-				// Update the actual node
-				//
-				if(currentlySelectedNode.Tag is ActionWindow)
-				{
-					ActionWindow window = currentlySelectedNode.Tag as ActionWindow;
-					window.Description = descriptionTextBox.Text;
-					id = window.Id;
-				}
-				else if(currentlySelectedNode.Tag is KeyAction)
-				{
-					KeyAction action = currentlySelectedNode.Tag as KeyAction;
-					action.Description = descriptionTextBox.Text;
-					id = action.Id;
-				}
-
-				//
-				// Update visible stuff
-				//
-				currentlySelectedNode.Text = String.Format("{0} ({1})", descriptionTextBox.Text, id);
-			}
-		}
-
-		private void keyTextBox_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-		{
-			if(keyMappings.IsValid(e.KeyValue))
-			{
-				keyTextBox.Text = keyMappings.GetName(e.KeyValue);
-
-				if(currentlySelectedNode != null)
-				{
-					if(currentlySelectedNode.Tag is KeyAction)
-					{
-						KeyAction action = currentlySelectedNode.Tag as KeyAction;
-
-						action.Key = keyTextBox.Text;
-
-						currentlySelectedNode.Nodes[1].Text = String.Format("Key = " + keyTextBox.Text);
-					}
-				}
-			}
-		}
-
-		private void addButton_Click(object sender, System.EventArgs e)
-		{
-			if(currentlySelectedNode != null)
-			{
-				if(currentlySelectedNode == globalNode)
-				{
-					//
-					// Add an action to the global node
-					//
-					KeyAction action = new KeyAction(-1, "", "<New Action>", "");
-					globalActions.Add(action);
-
-					TreeNode actionNode = new TreeNode(action.Description + " (" + action.Id + ")");
-
-					actionNode.Nodes.Add("Action = " + GetActionName(action.Id));
-					actionNode.Nodes.Add("Key = " + action.Key);
-					actionNode.Nodes.Add("Sound = " + action.Sound);
-
-					actionNode.Tag = action;
-
-					globalNode.Nodes.Add(actionNode);
-
-					//
-					// Make node visible and select it
-					//
-					actionNode.EnsureVisible();
-					keyTreeView.SelectedNode = actionNode;
-				}
-				else if(currentlySelectedNode == windowsNode)
-				{
-					//
-					// Add window
-					//
-					ActionWindow window = new ActionWindow();
-					windowActions.Add(window);
-		
-					window.Id = -1;
-					window.Description = "<New Window>";
-
-					TreeNode windowNode = new TreeNode(window.Description + " (" + window.Id + ")");
-
-					windowNode.Tag = window;
-
-					windowsNode.Nodes.Add(windowNode);
-
-					//
-					// Make node visible and select it
-					//
-					windowNode.EnsureVisible();
-					keyTreeView.SelectedNode = windowNode;
-				}
-				else if(currentlySelectedNode.Tag is ActionWindow)
-				{
-					ActionWindow window = currentlySelectedNode.Tag as ActionWindow;
-
-					//
-					// Add an action to the selected window
-					//
-					KeyAction action = new KeyAction(-1, "", "<New Action>", "");
-					window.Actions.Add(action);
-
-					TreeNode actionNode = new TreeNode(action.Description + " (" + action.Id + ")");
-
-					actionNode.Nodes.Add("Action = " + GetActionName(action.Id));
-					actionNode.Nodes.Add("Key = " + action.Key);
-					actionNode.Nodes.Add("Sound = " + action.Sound);
-
-					actionNode.Tag = action;
-
-					currentlySelectedNode.Nodes.Add(actionNode);
-
-					//
-					// Make node visible and select it
-					//
-					actionNode.EnsureVisible();
-					keyTreeView.SelectedNode = actionNode;
-				}
-			}
-		}
-
-		private void deleteButton_Click(object sender, System.EventArgs e)
-		{
-			if(currentlySelectedNode != null)
-			{
-				//
-				// Fetch parent node
-				//
-				TreeNode parentNode = currentlySelectedNode.Parent;
-
-				if(parentNode == globalNode)
-				{
-					globalActions.Remove(currentlySelectedNode.Tag);
-				}
-				else if(parentNode == windowsNode)
-				{
-					windowActions.Remove(currentlySelectedNode.Tag);
-				}
-				else if(parentNode.Tag is ActionWindow)
-				{
-					ActionWindow window = parentNode.Tag as ActionWindow;
-
-					window.Actions.Remove(currentlySelectedNode.Tag);
-				}
-
-				parentNode.Nodes.Remove(currentlySelectedNode);
-
-			}
-		}
-
-		private void idTextBox_TextChanged(object sender, System.EventArgs e)
-		{
-			if(currentlySelectedNode != null)
-			{
-				//
-				// Update the actual node
-				//
-				if(currentlySelectedNode.Tag is ActionWindow)
-				{
-					ActionWindow window = currentlySelectedNode.Tag as ActionWindow;
-					
-					if(idTextBox.Text.Length > 0)
-					{
-						window.Id = Convert.ToInt32(idTextBox.Text);
-					}
-					else
-					{
-						window.Id = -1;
-					}
-
-					currentlySelectedNode.Text = window.Description + " (" + window.Id + ")";
-				}
-			}		
-		}
-
-		private void idTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
-		{
-			if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
-			{
-				e.Handled = true;
-			}
-		}
-
-		private void soundTextBox_TextChanged(object sender, System.EventArgs e)
-		{
-			if(currentlySelectedNode != null)
-			{
-				if(currentlySelectedNode.Tag is KeyAction)
-				{
-					KeyAction action = currentlySelectedNode.Tag as KeyAction;
-
-					action.Sound = soundTextBox.Text;
-
-					currentlySelectedNode.Nodes[2].Text = String.Format("Sound = " + action.Sound);
-				}
-			}
-		}
-
-		private void idComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			if(currentlySelectedNode != null)
-			{
-				//
-				// Update the actual node
-				//
-				if(currentlySelectedNode.Tag is ActionWindow)
-				{
-					ActionWindow window = currentlySelectedNode.Tag as ActionWindow;
-					//          window.Id = Convert.ToInt32(idTextBox.Text);
-					//
-					//          currentlySelectedNode.Text = window.Description + " (" + window.Id + ")";
-				}
-				else if(currentlySelectedNode.Tag is KeyAction)
-				{
-					if(idComboBox.Text!=null)
-					{
-						KeyAction action = currentlySelectedNode.Tag as KeyAction;
-
-						try
-						{
-							Action.ActionType actionType = (Action.ActionType)Enum.Parse(typeof(Action.ActionType), idComboBox.Text);
-          
-							action.Id = (int)actionType;
-
-							currentlySelectedNode.Text = action.Description + " (" + action.Id + ")";
-							currentlySelectedNode.Nodes[0].Text = String.Format("Action = " + GetActionName(action.Id));
-						}
-						catch{}
-					}
-				}
-			}		
-		}
-	}
-	public class KeyMappings : Hashtable
-	{
-		public class KeyMap
-		{
-			public int Code;
-			public System.Windows.Forms.Keys Key;
-			public string Name;
-			public string SettingName;
-			public bool Valid = true;
-
-			public KeyMap(int code, System.Windows.Forms.Keys key, string name, string settingName)
-			{
-				this.Code = code;
-				this.Key = key;
-				this.SettingName = settingName;
-				this.Name = name;
-			}
-
-			public KeyMap(int code, System.Windows.Forms.Keys key, string name, string settingName, bool valid)
-			{
-				this.Code = code;
-				this.Key = key;
-				this.SettingName = settingName;
-				this.Name = name;
-				this.Valid = valid;
-			}
-		}
-
-		public KeyMappings()
-		{
-			//
-			// Add valid keys, keys not added are automatically valid
-			//
-			Add(System.Windows.Forms.Keys.F1, "F1");
-			Add(System.Windows.Forms.Keys.F2, "F2");
-			Add(System.Windows.Forms.Keys.F3, "F3");
-			Add(System.Windows.Forms.Keys.F4, "F4");
-			Add(System.Windows.Forms.Keys.F5, "F5");
-			Add(System.Windows.Forms.Keys.F6, "F6");
-			Add(System.Windows.Forms.Keys.F7, "F7");
-			Add(System.Windows.Forms.Keys.F8, "F8");
-			Add(System.Windows.Forms.Keys.F9, "F9");
-			Add(System.Windows.Forms.Keys.F10, "F10");
-			Add(System.Windows.Forms.Keys.F11, "F11");
-			Add(System.Windows.Forms.Keys.F12, "F12");
-
-			Add(System.Windows.Forms.Keys.Back, "Backspace");
-			Add(System.Windows.Forms.Keys.Tab, "Tab");
-			Add(System.Windows.Forms.Keys.End, "End");
-			Add(System.Windows.Forms.Keys.Insert, "Insert");
-			Add(System.Windows.Forms.Keys.Home, "Home");
-			Add(System.Windows.Forms.Keys.PageUp, "PageUp");
-			Add(System.Windows.Forms.Keys.PageDown, "PageDown");
-			Add(System.Windows.Forms.Keys.Left, "Left");
-			Add(System.Windows.Forms.Keys.Right, "Right");
-			Add(System.Windows.Forms.Keys.Down, "Down");
-			Add(System.Windows.Forms.Keys.Up, "Up");
-			Add(System.Windows.Forms.Keys.Enter, "Enter");
-			Add(System.Windows.Forms.Keys.Delete, "Delete");
-			Add(System.Windows.Forms.Keys.Pause, "Pause");
-			Add(System.Windows.Forms.Keys.PrintScreen, "PrintScreen");
-			Add(System.Windows.Forms.Keys.Escape, "Escape");
-			Add(System.Windows.Forms.Keys.Space, "Space");
-			
-			//
-			// Following keys are not valid
-			//
-			Add(System.Windows.Forms.Keys.ShiftKey, "Shift", false);
-			Add(System.Windows.Forms.Keys.CapsLock, "CapsLock", false);
-			Add(System.Windows.Forms.Keys.Alt, "Alt", false);
-			Add(System.Windows.Forms.Keys.NumLock, "NumLock", false);
-		}
-
-		public bool IsValid(int code)
-		{
-			bool result = true;
-
-			if(ContainsKey(code))
-			{
-				KeyMap key = this[code] as KeyMap;
-				result = key.Valid;
-			}
-
-			return result;
-		}
-
-		public void Add(int code, System.Windows.Forms.Keys key, string name, string settingName, bool valid)
-		{
-			Add(code, new KeyMap(code, key, name, settingName, valid));
-		}
-
-		public void Add(System.Windows.Forms.Keys key, string name, string settingName)
-		{
-			Add((int)key, key, name, settingName, true);
-		}
-
-		public void Add(System.Windows.Forms.Keys key, string name)
-		{
-			Add((int)key, key, name, name, true);
-		}
-
-		public void Add(System.Windows.Forms.Keys key, string name, bool valid)
-		{
-			Add((int)key, key, name, name, valid);
-		}
-
-		public string GetName(int code)
-		{
-			string result = String.Empty;
-
-			if(ContainsKey(code))
-			{
-				KeyMap key = this[code] as KeyMap;
-				result = key.Name;
-			}
-			else
-			{
-				//
-				// Item wasn't found in map, this must be a common key
-				//
-				result = String.Format("{0}", (char)code);
-			}
-
-			return result;
-		}
-
-		public string GetSettingName(int code)
-		{
-			string result = String.Empty;
-
-			if(ContainsKey(code))
-			{
-				KeyMap key = this[code] as KeyMap;
-				result = key.SettingName;
-			}
-			else
-			{
-				//
-				// Item wasn't found in map, this must be a common key
-				//
-				result = String.Format("{0}", (char)code);
-			}
-
-			return result;
-		}
-	}
-
-	public class KeyAction
-	{
-		public string Description;
-		public int Id;
-		public string Key;
-		public string Sound;
-
-		public bool HasSound
-		{
-			get { return Sound.Length > 0; }
-		}
-		
-		public KeyAction(int id, string key, string description, string sound)
-		{
-			this.Id = id;
-			this.Key = key;
-			this.Description = description;
-			this.Sound = sound;
-		}
-	}
-
-	public class ActionWindow
-	{
-		public string Description;
-		public int Id;
-		public ArrayList Actions = new ArrayList();
-	}
+    #endregion
+
+    private void keyTreeView_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
+    {
+      currentlySelectedNode = e.Node;
+
+      addButton.Enabled = currentlySelectedNode != null && (!(currentlySelectedNode.Tag is KeyAction) && currentlySelectedNode.Tag != null);
+
+      if (addButton.Enabled == false)
+      {
+        addButton.Enabled = currentlySelectedNode == globalNode || currentlySelectedNode == windowsNode;
+      }
+
+      //
+      // Enable/Disable controls
+      //
+      deleteButton.Enabled = keyTextBox.Enabled = fileNameButton.Enabled = idComboBox.Enabled = idTextBox.Enabled = soundTextBox.Enabled = descriptionTextBox.Enabled = e.Node.Tag is KeyAction;
+
+      if (deleteButton.Enabled == false)
+      {
+        deleteButton.Enabled = currentlySelectedNode.Tag is ActionWindow;
+      }
+
+      if (e.Node.Tag is ActionWindow)
+      {
+        //
+        // Enable correct controls
+        //
+        idTextBox.Visible = true;
+        idComboBox.Visible = false;
+
+        idTextBox.Enabled = true;
+
+        ActionWindow window = e.Node.Tag as ActionWindow;
+
+        descriptionTextBox.Text = window.Description;
+        idTextBox.Text = window.Id.ToString();
+
+        keyTextBox.Text = String.Empty;
+        soundTextBox.Text = String.Empty;
+
+        descriptionTextBox.Enabled = idComboBox.Enabled = true;
+      }
+      else if (e.Node.Tag is KeyAction)
+      {
+        //
+        // Enable correct controls
+        //
+        idTextBox.Visible = false;
+        idComboBox.Visible = true;
+
+        KeyAction action = e.Node.Tag as KeyAction;
+
+        descriptionTextBox.Text = action.Description;
+        idComboBox.Text = GetActionName(action.Id);
+        keyTextBox.Text = action.Key;
+        soundTextBox.Text = action.Sound;
+      }
+      else
+      {
+        //
+        // None of the above
+        //	
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void fileNameButton_Click(object sender, System.EventArgs e)
+    {
+      using (openFileDialog = new OpenFileDialog())
+      {
+        openFileDialog.FileName = soundTextBox.Text;
+        openFileDialog.CheckFileExists = true;
+        openFileDialog.RestoreDirectory = true;
+        openFileDialog.Filter = "wav files (*.wav)|*.wav";
+        openFileDialog.FilterIndex = 0;
+        openFileDialog.Title = "Select sound file";
+
+        DialogResult dialogResult = openFileDialog.ShowDialog();
+
+        if (dialogResult == DialogResult.OK)
+        {
+          soundTextBox.Text = System.IO.Path.GetFileName(openFileDialog.FileName);
+        }
+      }
+    }
+
+    private void descriptionTextBox_TextChanged(object sender, System.EventArgs e)
+    {
+      if (currentlySelectedNode != null)
+      {
+        int id = 0;
+
+        //
+        // Update the actual node
+        //
+        if (currentlySelectedNode.Tag is ActionWindow)
+        {
+          ActionWindow window = currentlySelectedNode.Tag as ActionWindow;
+          window.Description = descriptionTextBox.Text;
+          id = window.Id;
+        }
+        else if (currentlySelectedNode.Tag is KeyAction)
+        {
+          KeyAction action = currentlySelectedNode.Tag as KeyAction;
+          action.Description = descriptionTextBox.Text;
+          id = action.Id;
+        }
+
+        //
+        // Update visible stuff
+        //
+        currentlySelectedNode.Text = String.Format("{0} ({1})", descriptionTextBox.Text, id);
+      }
+    }
+
+    private void keyTextBox_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+    {
+      if (keyMappings.IsValid(e.KeyValue))
+      {
+        keyTextBox.Text = keyMappings.GetName(e.KeyValue);
+
+        if (currentlySelectedNode != null)
+        {
+          if (currentlySelectedNode.Tag is KeyAction)
+          {
+            KeyAction action = currentlySelectedNode.Tag as KeyAction;
+
+            action.Key = keyTextBox.Text;
+
+            currentlySelectedNode.Nodes[1].Text = String.Format("Key = " + keyTextBox.Text);
+          }
+        }
+      }
+    }
+
+    private void addButton_Click(object sender, System.EventArgs e)
+    {
+      if (currentlySelectedNode != null)
+      {
+        if (currentlySelectedNode == globalNode)
+        {
+          //
+          // Add an action to the global node
+          //
+          KeyAction action = new KeyAction(-1, "", "<New Action>", "");
+          globalActions.Add(action);
+
+          TreeNode actionNode = new TreeNode(action.Description + " (" + action.Id + ")");
+
+          actionNode.Nodes.Add("Action = " + GetActionName(action.Id));
+          actionNode.Nodes.Add("Key = " + action.Key);
+          actionNode.Nodes.Add("Sound = " + action.Sound);
+
+          actionNode.Tag = action;
+
+          globalNode.Nodes.Add(actionNode);
+
+          //
+          // Make node visible and select it
+          //
+          actionNode.EnsureVisible();
+          keyTreeView.SelectedNode = actionNode;
+        }
+        else if (currentlySelectedNode == windowsNode)
+        {
+          //
+          // Add window
+          //
+          ActionWindow window = new ActionWindow();
+          windowActions.Add(window);
+
+          window.Id = -1;
+          window.Description = "<New Window>";
+
+          TreeNode windowNode = new TreeNode(window.Description + " (" + window.Id + ")");
+
+          windowNode.Tag = window;
+
+          windowsNode.Nodes.Add(windowNode);
+
+          //
+          // Make node visible and select it
+          //
+          windowNode.EnsureVisible();
+          keyTreeView.SelectedNode = windowNode;
+        }
+        else if (currentlySelectedNode.Tag is ActionWindow)
+        {
+          ActionWindow window = currentlySelectedNode.Tag as ActionWindow;
+
+          //
+          // Add an action to the selected window
+          //
+          KeyAction action = new KeyAction(-1, "", "<New Action>", "");
+          window.Actions.Add(action);
+
+          TreeNode actionNode = new TreeNode(action.Description + " (" + action.Id + ")");
+
+          actionNode.Nodes.Add("Action = " + GetActionName(action.Id));
+          actionNode.Nodes.Add("Key = " + action.Key);
+          actionNode.Nodes.Add("Sound = " + action.Sound);
+
+          actionNode.Tag = action;
+
+          currentlySelectedNode.Nodes.Add(actionNode);
+
+          //
+          // Make node visible and select it
+          //
+          actionNode.EnsureVisible();
+          keyTreeView.SelectedNode = actionNode;
+        }
+      }
+    }
+
+    private void deleteButton_Click(object sender, System.EventArgs e)
+    {
+      if (currentlySelectedNode != null)
+      {
+        //
+        // Fetch parent node
+        //
+        TreeNode parentNode = currentlySelectedNode.Parent;
+
+        if (parentNode == globalNode)
+        {
+          globalActions.Remove(currentlySelectedNode.Tag);
+        }
+        else if (parentNode == windowsNode)
+        {
+          windowActions.Remove(currentlySelectedNode.Tag);
+        }
+        else if (parentNode.Tag is ActionWindow)
+        {
+          ActionWindow window = parentNode.Tag as ActionWindow;
+
+          window.Actions.Remove(currentlySelectedNode.Tag);
+        }
+
+        parentNode.Nodes.Remove(currentlySelectedNode);
+
+      }
+    }
+
+    private void idTextBox_TextChanged(object sender, System.EventArgs e)
+    {
+      if (currentlySelectedNode != null)
+      {
+        //
+        // Update the actual node
+        //
+        if (currentlySelectedNode.Tag is ActionWindow)
+        {
+          ActionWindow window = currentlySelectedNode.Tag as ActionWindow;
+
+          if (idTextBox.Text.Length > 0)
+          {
+            window.Id = Convert.ToInt32(idTextBox.Text);
+          }
+          else
+          {
+            window.Id = -1;
+          }
+
+          currentlySelectedNode.Text = window.Description + " (" + window.Id + ")";
+        }
+      }
+    }
+
+    private void idTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    {
+      if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+      {
+        e.Handled = true;
+      }
+    }
+
+    private void soundTextBox_TextChanged(object sender, System.EventArgs e)
+    {
+      if (currentlySelectedNode != null)
+      {
+        if (currentlySelectedNode.Tag is KeyAction)
+        {
+          KeyAction action = currentlySelectedNode.Tag as KeyAction;
+
+          action.Sound = soundTextBox.Text;
+
+          currentlySelectedNode.Nodes[2].Text = String.Format("Sound = " + action.Sound);
+        }
+      }
+    }
+
+    private void idComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      if (currentlySelectedNode != null)
+      {
+        //
+        // Update the actual node
+        //
+        if (currentlySelectedNode.Tag is ActionWindow)
+        {
+          ActionWindow window = currentlySelectedNode.Tag as ActionWindow;
+          //          window.Id = Convert.ToInt32(idTextBox.Text);
+          //
+          //          currentlySelectedNode.Text = window.Description + " (" + window.Id + ")";
+        }
+        else if (currentlySelectedNode.Tag is KeyAction)
+        {
+          if (idComboBox.Text != null)
+          {
+            KeyAction action = currentlySelectedNode.Tag as KeyAction;
+
+            try
+            {
+              Action.ActionType actionType = (Action.ActionType)Enum.Parse(typeof(Action.ActionType), idComboBox.Text);
+
+              action.Id = (int)actionType;
+
+              currentlySelectedNode.Text = action.Description + " (" + action.Id + ")";
+              currentlySelectedNode.Nodes[0].Text = String.Format("Action = " + GetActionName(action.Id));
+            }
+            catch { }
+          }
+        }
+      }
+    }
+  }
+  public class KeyMappings : Hashtable
+  {
+    public class KeyMap
+    {
+      public int Code;
+      public System.Windows.Forms.Keys Key;
+      public string Name;
+      public string SettingName;
+      public bool Valid = true;
+
+      public KeyMap(int code, System.Windows.Forms.Keys key, string name, string settingName)
+      {
+        this.Code = code;
+        this.Key = key;
+        this.SettingName = settingName;
+        this.Name = name;
+      }
+
+      public KeyMap(int code, System.Windows.Forms.Keys key, string name, string settingName, bool valid)
+      {
+        this.Code = code;
+        this.Key = key;
+        this.SettingName = settingName;
+        this.Name = name;
+        this.Valid = valid;
+      }
+    }
+
+    public KeyMappings()
+    {
+      //
+      // Add valid keys, keys not added are automatically valid
+      //
+      Add(System.Windows.Forms.Keys.F1, "F1");
+      Add(System.Windows.Forms.Keys.F2, "F2");
+      Add(System.Windows.Forms.Keys.F3, "F3");
+      Add(System.Windows.Forms.Keys.F4, "F4");
+      Add(System.Windows.Forms.Keys.F5, "F5");
+      Add(System.Windows.Forms.Keys.F6, "F6");
+      Add(System.Windows.Forms.Keys.F7, "F7");
+      Add(System.Windows.Forms.Keys.F8, "F8");
+      Add(System.Windows.Forms.Keys.F9, "F9");
+      Add(System.Windows.Forms.Keys.F10, "F10");
+      Add(System.Windows.Forms.Keys.F11, "F11");
+      Add(System.Windows.Forms.Keys.F12, "F12");
+
+      Add(System.Windows.Forms.Keys.Back, "Backspace");
+      Add(System.Windows.Forms.Keys.Tab, "Tab");
+      Add(System.Windows.Forms.Keys.End, "End");
+      Add(System.Windows.Forms.Keys.Insert, "Insert");
+      Add(System.Windows.Forms.Keys.Home, "Home");
+      Add(System.Windows.Forms.Keys.PageUp, "PageUp");
+      Add(System.Windows.Forms.Keys.PageDown, "PageDown");
+      Add(System.Windows.Forms.Keys.Left, "Left");
+      Add(System.Windows.Forms.Keys.Right, "Right");
+      Add(System.Windows.Forms.Keys.Down, "Down");
+      Add(System.Windows.Forms.Keys.Up, "Up");
+      Add(System.Windows.Forms.Keys.Enter, "Enter");
+      Add(System.Windows.Forms.Keys.Delete, "Delete");
+      Add(System.Windows.Forms.Keys.Pause, "Pause");
+      Add(System.Windows.Forms.Keys.PrintScreen, "PrintScreen");
+      Add(System.Windows.Forms.Keys.Escape, "Escape");
+      Add(System.Windows.Forms.Keys.Space, "Space");
+
+      //
+      // Following keys are not valid
+      //
+      Add(System.Windows.Forms.Keys.ShiftKey, "Shift", false);
+      Add(System.Windows.Forms.Keys.CapsLock, "CapsLock", false);
+      Add(System.Windows.Forms.Keys.Alt, "Alt", false);
+      Add(System.Windows.Forms.Keys.NumLock, "NumLock", false);
+    }
+
+    public bool IsValid(int code)
+    {
+      bool result = true;
+
+      if (ContainsKey(code))
+      {
+        KeyMap key = this[code] as KeyMap;
+        result = key.Valid;
+      }
+
+      return result;
+    }
+
+    public void Add(int code, System.Windows.Forms.Keys key, string name, string settingName, bool valid)
+    {
+      Add(code, new KeyMap(code, key, name, settingName, valid));
+    }
+
+    public void Add(System.Windows.Forms.Keys key, string name, string settingName)
+    {
+      Add((int)key, key, name, settingName, true);
+    }
+
+    public void Add(System.Windows.Forms.Keys key, string name)
+    {
+      Add((int)key, key, name, name, true);
+    }
+
+    public void Add(System.Windows.Forms.Keys key, string name, bool valid)
+    {
+      Add((int)key, key, name, name, valid);
+    }
+
+    public string GetName(int code)
+    {
+      string result = String.Empty;
+
+      if (ContainsKey(code))
+      {
+        KeyMap key = this[code] as KeyMap;
+        result = key.Name;
+      }
+      else
+      {
+        //
+        // Item wasn't found in map, this must be a common key
+        //
+        result = String.Format("{0}", (char)code);
+      }
+
+      return result;
+    }
+
+    public string GetSettingName(int code)
+    {
+      string result = String.Empty;
+
+      if (ContainsKey(code))
+      {
+        KeyMap key = this[code] as KeyMap;
+        result = key.SettingName;
+      }
+      else
+      {
+        //
+        // Item wasn't found in map, this must be a common key
+        //
+        result = String.Format("{0}", (char)code);
+      }
+
+      return result;
+    }
+  }
+
+  public class KeyAction
+  {
+    public string Description;
+    public int Id;
+    public string Key;
+    public string Sound;
+
+    public bool HasSound
+    {
+      get { return Sound.Length > 0; }
+    }
+
+    public KeyAction(int id, string key, string description, string sound)
+    {
+      this.Id = id;
+      this.Key = key;
+      this.Description = description;
+      this.Sound = sound;
+    }
+  }
+
+  public class ActionWindow
+  {
+    public string Description;
+    public int Id;
+    public ArrayList Actions = new ArrayList();
+  }
 }
 

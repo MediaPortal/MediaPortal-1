@@ -91,7 +91,7 @@ namespace MyMail
       this.lbMailboxes = new System.Windows.Forms.ListBox();
       this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnClose = new MediaPortal.UserInterface.Controls.MPButton();
-      this.gbMailboxes = new System.Windows.Forms.GroupBox();
+      this.gbMailboxes = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.btnEdit = new MediaPortal.UserInterface.Controls.MPButton();
       this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
       this.label1 = new System.Windows.Forms.Label();
@@ -111,8 +111,8 @@ namespace MyMail
       // 
       // lbMailboxes
       // 
-      this.lbMailboxes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.lbMailboxes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.lbMailboxes.Location = new System.Drawing.Point(8, 16);
       this.lbMailboxes.Name = "lbMailboxes";
@@ -144,8 +144,8 @@ namespace MyMail
       // 
       // gbMailboxes
       // 
-      this.gbMailboxes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.gbMailboxes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.gbMailboxes.Controls.Add(this.btnEdit);
       this.gbMailboxes.Controls.Add(this.btnAdd);
@@ -260,7 +260,7 @@ namespace MyMail
       {
         string tmpLabel = mb.BoxLabel;
         for (int i = 0; i < m_mailBox.Count - 1; i++)
-          if (tmpLabel.ToLower() == ((MailBox) m_mailBox[i]).BoxLabel.ToLower() && i != count)
+          if (tmpLabel.ToLower() == ((MailBox)m_mailBox[i]).BoxLabel.ToLower() && i != count)
           {
             MessageBox.Show("There are indentical Mail-Box Labels. Please change!");
             return false;
@@ -279,7 +279,7 @@ namespace MyMail
         xmlwriter.SetValue("mymail", "mailBoxCount", boxCount);
         for (int i = 0; i < boxCount; i++)
         {
-          tmpBox = (MailBox) m_mailBox[i];
+          tmpBox = (MailBox)m_mailBox[i];
           // check the must set properties
           if (tmpBox.MailboxFolder == "") // this must set
             tmpBox.MailboxFolder = tmpBox.BoxLabel + "__Folder";
@@ -300,12 +300,12 @@ namespace MyMail
           //
           string mailBoxString = tmpBox.BoxLabel + ";" + tmpBox.Username + ";" + tmpBox.Password + ";" + tmpBox.ServerAddress + ";" + Convert.ToString(tmpBox.Port) + ";" + tmpBox.MailboxFolder + ";" + tmpBox.AttachmentFolder;
           if (tmpBox.Enabled)
-          { mailBoxString += ";T";}
+          { mailBoxString += ";T"; }
           else
-          { mailBoxString += ";F";}
+          { mailBoxString += ";F"; }
           xmlwriter.SetValue("mymail", "mailBox" + Convert.ToString(i), mailBoxString);
         }
-        xmlwriter.SetValue("mymail", "timer", numericUpDown1.Value*60000);
+        xmlwriter.SetValue("mymail", "timer", numericUpDown1.Value * 60000);
         return true;
       }
     }
@@ -331,7 +331,7 @@ namespace MyMail
         int boxCount = 0;
         MailBox tmpBox;
         m_mailBox.Clear();
-        numericUpDown1.Value = xmlreader.GetValueAsInt("mymail", "timer", 300000)/60000;
+        numericUpDown1.Value = xmlreader.GetValueAsInt("mymail", "timer", 300000) / 60000;
         boxCount = xmlreader.GetValueAsInt("mymail", "mailBoxCount", 0);
 
         if (boxCount > 0)
@@ -342,7 +342,7 @@ namespace MyMail
             string mailBoxString = xmlreader.GetValueAsString("mymail", "mailBox" + Convert.ToString(i), "");
             if (mailBoxString.Length > 0)
             {
-              boxData = mailBoxString.Split(new char[] {';'});
+              boxData = mailBoxString.Split(new char[] { ';' });
               if (boxData.Length >= 7)
               {
                 tmpBox = new MailBox(boxData[0], boxData[1], boxData[2], boxData[3], Convert.ToInt16(boxData[4]), boxData[5], boxData[6]);
@@ -373,7 +373,7 @@ namespace MyMail
       if (lbMailboxes.SelectedIndex != -1)
         if (lbMailboxes.SelectedIndex < m_mailBox.Count)
         {
-          MailBox mb = (MailBox) m_mailBox[lbMailboxes.SelectedIndex];
+          MailBox mb = (MailBox)m_mailBox[lbMailboxes.SelectedIndex];
           MailDetailSetup frmMailDetails = new MailDetailSetup();
           frmMailDetails.CurMailBox = mb;
           DialogResult dialogResult = frmMailDetails.ShowDialog(this);

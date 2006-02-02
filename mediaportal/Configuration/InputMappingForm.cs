@@ -39,19 +39,19 @@ namespace MediaPortal.Configuration
   /// </summary>
   public class InputMappingForm : System.Windows.Forms.Form
   {
-    Array    windowsList    = Enum.GetValues(typeof(GUIWindow.Window));
-    Array    actionList     = Enum.GetValues(typeof(Action.ActionType));
-    string[] layerList      = new string[] {"all", "1", "2"};
-    string[] fullScreenList = new string[] {"Fullscreen", "No Fullscreen"};
-    string[] playerList     = new string[] {"TV", "DVD", "MEDIA"};
-    string[] powerList      = new string[] {"EXIT", "REBOOT", "SHUTDOWN", "STANDBY", "HIBERNATE"};
-    string[] soundList      = new string[] {"none", "back.wav", "click.wav", "cursor.wav"};
-    string[] keyList        = new string[] {"{BACKSPACE}", "{BREAK}", "{CAPSLOCK}", "{DELETE}", "{DOWN}", "{END}", "{ENTER}", "{ESC}",
+    Array windowsList = Enum.GetValues(typeof(GUIWindow.Window));
+    Array actionList = Enum.GetValues(typeof(Action.ActionType));
+    string[] layerList = new string[] { "all", "1", "2" };
+    string[] fullScreenList = new string[] { "Fullscreen", "No Fullscreen" };
+    string[] playerList = new string[] { "TV", "DVD", "MEDIA" };
+    string[] powerList = new string[] { "EXIT", "REBOOT", "SHUTDOWN", "STANDBY", "HIBERNATE" };
+    string[] soundList = new string[] { "none", "back.wav", "click.wav", "cursor.wav" };
+    string[] keyList = new string[] {"{BACKSPACE}", "{BREAK}", "{CAPSLOCK}", "{DELETE}", "{DOWN}", "{END}", "{ENTER}", "{ESC}",
                                               "{HELP}", "{HOME}", "{INSERT}", "{LEFT}", "{NUMLOCK}", "{PGDN}", "{PGUP}", "{PRTSC}",
                                               "{RIGHT}", "{SCROLLLOCK}", "{TAB}", "{UP}", "{F1}", "{F2}", "{F3}", "{F4}", "{F5}", "{F6}",
                                               "{F7}", "{F8}", "{F9}", "{F10}", "{F11}", "{F12}", "{F13}", "{F14}", "{F15}", "{F16}",
                                               "{ADD}", "{SUBTRACT}", "{MULTIPLY}", "{DIVIDE}"};
-    string[] processList    = new string[] {"CLOSE", "KILL"};
+    string[] processList = new string[] { "CLOSE", "KILL" };
 
     string inputClassName;
 
@@ -63,7 +63,7 @@ namespace MediaPortal.Configuration
       object value;
       object parameter;
 
-      public Data (object newType, object newParameter, object newValue)
+      public Data(object newType, object newParameter, object newValue)
       {
         if (newValue == null)
           newValue = string.Empty;
@@ -88,14 +88,14 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.RadioButton radioButtonNoCondition;
     private System.Windows.Forms.ComboBox comboBoxCondProperty;
     private System.Windows.Forms.ComboBox comboBoxCmdProperty;
-    private System.Windows.Forms.GroupBox groupBoxCondition;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxCondition;
     private System.Windows.Forms.RadioButton radioButtonAction;
     private System.Windows.Forms.RadioButton radioButtonActWindow;
     private System.Windows.Forms.RadioButton radioButtonToggle;
     private System.Windows.Forms.RadioButton radioButtonPower;
     private System.Windows.Forms.ComboBox comboBoxSound;
     private System.Windows.Forms.Label labelSound;
-    private System.Windows.Forms.GroupBox groupBoxAction;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAction;
     private MediaPortal.UserInterface.Controls.MPGradientLabel headerLabel;
     private MediaPortal.UserInterface.Controls.MPButton applyButton;
     private MediaPortal.UserInterface.Controls.MPButton okButton;
@@ -108,7 +108,7 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPButton buttonNew;
     private MediaPortal.UserInterface.Controls.MPButton buttonRemove;
     private MediaPortal.UserInterface.Controls.MPButton buttonDefault;
-    private System.Windows.Forms.GroupBox groupBoxLayer;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxLayer;
     private System.Windows.Forms.RadioButton radioButtonProcess;
     private Label label1;
     private TextBox textBoxKeyChar;
@@ -138,16 +138,16 @@ namespace MediaPortal.Configuration
     /// <summary>
     /// Clean up any resources being used.
     /// </summary>
-    protected override void Dispose( bool disposing )
+    protected override void Dispose(bool disposing)
     {
-      if( disposing )
+      if (disposing)
       {
-        if(components != null)
+        if (components != null)
         {
           components.Dispose();
         }
       }
-      base.Dispose( disposing );
+      base.Dispose(disposing);
     }
 
     #region Windows Form Designer generated code
@@ -165,12 +165,12 @@ namespace MediaPortal.Configuration
       this.radioButtonNoCondition = new System.Windows.Forms.RadioButton();
       this.comboBoxCondProperty = new System.Windows.Forms.ComboBox();
       this.comboBoxCmdProperty = new System.Windows.Forms.ComboBox();
-      this.groupBoxCondition = new System.Windows.Forms.GroupBox();
+      this.groupBoxCondition = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.radioButtonAction = new System.Windows.Forms.RadioButton();
       this.radioButtonActWindow = new System.Windows.Forms.RadioButton();
       this.radioButtonToggle = new System.Windows.Forms.RadioButton();
       this.radioButtonPower = new System.Windows.Forms.RadioButton();
-      this.groupBoxAction = new System.Windows.Forms.GroupBox();
+      this.groupBoxAction = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.textBoxKeyCode = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
       this.textBoxKeyChar = new System.Windows.Forms.TextBox();
@@ -180,7 +180,7 @@ namespace MediaPortal.Configuration
       this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.groupBoxLayer = new System.Windows.Forms.GroupBox();
+      this.groupBoxLayer = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.comboBoxLayer = new System.Windows.Forms.ComboBox();
       this.labelLayer = new System.Windows.Forms.Label();
       this.buttonUp = new MediaPortal.UserInterface.Controls.MPButton();
@@ -1034,130 +1034,130 @@ namespace MediaPortal.Configuration
         case "SOUND":
         case "KEY":
         case "CONDITION":
-        {
-          groupBoxCondition.Enabled = true;
-          groupBoxAction.Enabled = true;
-          groupBoxLayer.Enabled = true;
-          if ((data.Type == "COMMAND") || (data.Type == "SOUND"))
           {
-            comboBoxLayer.SelectedIndex = Convert.ToInt32(((Data)node.Parent.Parent.Tag).Value);
-            node = node.Parent;
-            data = (Data)node.Tag;
-          }
-          else
-            comboBoxLayer.SelectedIndex = Convert.ToInt32(((Data)node.Parent.Tag).Value);
-
-          switch ((string)data.Parameter)
-          {
-            case "WINDOW":
-              radioButtonWindow.Checked = true;
-              comboBoxCondProperty.Enabled = true;
-              UpdateCombo(ref comboBoxCondProperty, windowsList, Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(data.Value)));
-              break;
-            case "FULLSCREEN":
-              radioButtonFullscreen.Checked = true;
-              comboBoxCondProperty.Enabled = true;
-              if (Convert.ToBoolean(data.Value))
-                UpdateCombo(ref comboBoxCondProperty, fullScreenList, "Fullscreen");
-              else
-                UpdateCombo(ref comboBoxCondProperty, fullScreenList, "No Fullscreen");
-              break;
-            case "PLAYER":
-              radioButtonPlaying.Checked = true;
-              comboBoxCondProperty.Enabled = true;
-              UpdateCombo(ref comboBoxCondProperty, playerList, (string)data.Value);
-              break;
-            case "*":
-              comboBoxCondProperty.Text = "none";
-              radioButtonNoCondition.Checked = true;
-              comboBoxCondProperty.Enabled = false;
-              comboBoxCondProperty.Items.Clear();
-              break;
-          }
-          foreach (TreeNode typeNode in node.Nodes)
-          {
-            data = (Data)typeNode.Tag;
-            switch (data.Type)
+            groupBoxCondition.Enabled = true;
+            groupBoxAction.Enabled = true;
+            groupBoxLayer.Enabled = true;
+            if ((data.Type == "COMMAND") || (data.Type == "SOUND"))
             {
-              case "SOUND":
-                if ((string)data.Value != string.Empty)
-                  comboBoxSound.SelectedItem = data.Value;
-                else
-                  comboBoxSound.SelectedItem = "none";
+              comboBoxLayer.SelectedIndex = Convert.ToInt32(((Data)node.Parent.Parent.Tag).Value);
+              node = node.Parent;
+              data = (Data)node.Tag;
+            }
+            else
+              comboBoxLayer.SelectedIndex = Convert.ToInt32(((Data)node.Parent.Tag).Value);
+
+            switch ((string)data.Parameter)
+            {
+              case "WINDOW":
+                radioButtonWindow.Checked = true;
+                comboBoxCondProperty.Enabled = true;
+                UpdateCombo(ref comboBoxCondProperty, windowsList, Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(data.Value)));
                 break;
-              case "COMMAND":
-                switch ((string)data.Parameter)
-              {
-                case "ACTION":
-                  comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-                  radioButtonAction.Checked = true;
-                  comboBoxSound.Enabled = true;
-                  comboBoxCmdProperty.Enabled = true;
-                  textBoxKeyChar.Enabled = false;
-                  textBoxKeyCode.Enabled = false;
-                  textBoxKeyChar.Text = "";
-                  textBoxKeyCode.Text = "";
-                  UpdateCombo(ref comboBoxCmdProperty, actionList, Enum.GetName(typeof(Action.ActionType), Convert.ToInt32(data.Value)));
-                  break;
-                case "KEY":
-                  comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-                  radioButtonAction.Checked = true;
-                  textBoxKeyChar.Enabled = true;
-                  textBoxKeyCode.Enabled = true;
-                  textBoxKeyChar.Text = ((Key)data.Value).KeyChar.ToString();
-                  textBoxKeyCode.Text = ((Key)data.Value).KeyCode.ToString();
-                  comboBoxCmdProperty.Enabled = true;
-                  UpdateCombo(ref comboBoxCmdProperty, actionList, "ACTION_KEY_PRESSED");
-                  break;
-                case "WINDOW":
-                  comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-                  radioButtonActWindow.Checked = true;
-                  comboBoxSound.Enabled = true;
-                  comboBoxCmdProperty.Enabled = true;
-                  textBoxKeyChar.Enabled = false;
-                  textBoxKeyCode.Enabled = false;
-                  textBoxKeyChar.Text = "";
-                  textBoxKeyCode.Text = "";
-                  UpdateCombo(ref comboBoxCmdProperty, windowsList, Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(data.Value)));
-                  break;
-                case "TOGGLE":
-                  radioButtonToggle.Checked = true;
-                  comboBoxSound.Enabled = true;
-                  comboBoxCmdProperty.Enabled = false;
-                  textBoxKeyChar.Enabled = false;
-                  textBoxKeyCode.Enabled = false;
-                  textBoxKeyChar.Text = "";
-                  textBoxKeyCode.Text = "";
-                  comboBoxCmdProperty.Items.Clear();
-                  comboBoxCmdProperty.Text = string.Empty;
-                  break;
-                case "POWER":
-                  comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-                  radioButtonPower.Checked = true;
-                  comboBoxSound.Enabled = true;
-                  comboBoxCmdProperty.Enabled = true;
-                  textBoxKeyChar.Enabled = false;
-                  textBoxKeyCode.Enabled = false;
-                  textBoxKeyChar.Text = "";
-                  textBoxKeyCode.Text = "";
-                  UpdateCombo(ref comboBoxCmdProperty, powerList, (string)data.Value);
-                  break;
-                case "PROCESS":
-                  comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-                  radioButtonProcess.Checked = true;
-                  comboBoxSound.Enabled = true;
-                  comboBoxCmdProperty.Enabled = true;
-                  textBoxKeyChar.Enabled = false;
-                  textBoxKeyCode.Enabled = false;
-                  textBoxKeyChar.Text = "";
-                  textBoxKeyCode.Text = "";
-                  UpdateCombo(ref comboBoxCmdProperty, processList, (string)data.Value);
-                  break;
-              }
+              case "FULLSCREEN":
+                radioButtonFullscreen.Checked = true;
+                comboBoxCondProperty.Enabled = true;
+                if (Convert.ToBoolean(data.Value))
+                  UpdateCombo(ref comboBoxCondProperty, fullScreenList, "Fullscreen");
+                else
+                  UpdateCombo(ref comboBoxCondProperty, fullScreenList, "No Fullscreen");
+                break;
+              case "PLAYER":
+                radioButtonPlaying.Checked = true;
+                comboBoxCondProperty.Enabled = true;
+                UpdateCombo(ref comboBoxCondProperty, playerList, (string)data.Value);
+                break;
+              case "*":
+                comboBoxCondProperty.Text = "none";
+                radioButtonNoCondition.Checked = true;
+                comboBoxCondProperty.Enabled = false;
+                comboBoxCondProperty.Items.Clear();
                 break;
             }
+            foreach (TreeNode typeNode in node.Nodes)
+            {
+              data = (Data)typeNode.Tag;
+              switch (data.Type)
+              {
+                case "SOUND":
+                  if ((string)data.Value != string.Empty)
+                    comboBoxSound.SelectedItem = data.Value;
+                  else
+                    comboBoxSound.SelectedItem = "none";
+                  break;
+                case "COMMAND":
+                  switch ((string)data.Parameter)
+                  {
+                    case "ACTION":
+                      comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+                      radioButtonAction.Checked = true;
+                      comboBoxSound.Enabled = true;
+                      comboBoxCmdProperty.Enabled = true;
+                      textBoxKeyChar.Enabled = false;
+                      textBoxKeyCode.Enabled = false;
+                      textBoxKeyChar.Text = "";
+                      textBoxKeyCode.Text = "";
+                      UpdateCombo(ref comboBoxCmdProperty, actionList, Enum.GetName(typeof(Action.ActionType), Convert.ToInt32(data.Value)));
+                      break;
+                    case "KEY":
+                      comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+                      radioButtonAction.Checked = true;
+                      textBoxKeyChar.Enabled = true;
+                      textBoxKeyCode.Enabled = true;
+                      textBoxKeyChar.Text = ((Key)data.Value).KeyChar.ToString();
+                      textBoxKeyCode.Text = ((Key)data.Value).KeyCode.ToString();
+                      comboBoxCmdProperty.Enabled = true;
+                      UpdateCombo(ref comboBoxCmdProperty, actionList, "ACTION_KEY_PRESSED");
+                      break;
+                    case "WINDOW":
+                      comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+                      radioButtonActWindow.Checked = true;
+                      comboBoxSound.Enabled = true;
+                      comboBoxCmdProperty.Enabled = true;
+                      textBoxKeyChar.Enabled = false;
+                      textBoxKeyCode.Enabled = false;
+                      textBoxKeyChar.Text = "";
+                      textBoxKeyCode.Text = "";
+                      UpdateCombo(ref comboBoxCmdProperty, windowsList, Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(data.Value)));
+                      break;
+                    case "TOGGLE":
+                      radioButtonToggle.Checked = true;
+                      comboBoxSound.Enabled = true;
+                      comboBoxCmdProperty.Enabled = false;
+                      textBoxKeyChar.Enabled = false;
+                      textBoxKeyCode.Enabled = false;
+                      textBoxKeyChar.Text = "";
+                      textBoxKeyCode.Text = "";
+                      comboBoxCmdProperty.Items.Clear();
+                      comboBoxCmdProperty.Text = string.Empty;
+                      break;
+                    case "POWER":
+                      comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+                      radioButtonPower.Checked = true;
+                      comboBoxSound.Enabled = true;
+                      comboBoxCmdProperty.Enabled = true;
+                      textBoxKeyChar.Enabled = false;
+                      textBoxKeyCode.Enabled = false;
+                      textBoxKeyChar.Text = "";
+                      textBoxKeyCode.Text = "";
+                      UpdateCombo(ref comboBoxCmdProperty, powerList, (string)data.Value);
+                      break;
+                    case "PROCESS":
+                      comboBoxCmdProperty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+                      radioButtonProcess.Checked = true;
+                      comboBoxSound.Enabled = true;
+                      comboBoxCmdProperty.Enabled = true;
+                      textBoxKeyChar.Enabled = false;
+                      textBoxKeyCode.Enabled = false;
+                      textBoxKeyChar.Text = "";
+                      textBoxKeyCode.Text = "";
+                      UpdateCombo(ref comboBoxCmdProperty, processList, (string)data.Value);
+                      break;
+                  }
+                  break;
+              }
+            }
           }
-        }
           break;
       }
     }
@@ -1355,7 +1355,7 @@ namespace MediaPortal.Configuration
       }
       if ((((Data)node.Tag).Type != "BUTTON") && (((Data)node.Tag).Type != "CONDITION"))
         return;
-      if (node.Index < node.Parent.Nodes.Count -1)
+      if (node.Index < node.Parent.Nodes.Count - 1)
       {
         int index = node.Index + 1;
         TreeNode tmpNode = (TreeNode)node.Clone();
@@ -1630,26 +1630,26 @@ namespace MediaPortal.Configuration
     }
 
 
-//    private TreeNode tn;
-//
-//    private void treeMapping_ItemDrag(object sender, System.Windows.Forms.ItemDragEventArgs e)
-//    {
-//      tn=e.Item as TreeNode;
-//      DoDragDrop(e.Item.ToString(), DragDropEffects.Move);
-//    }
-//
-//    private void treeMapping_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
-//    {
-//      Point pt = new Point(e.X,e.Y); 
-//      pt = treeMapping.PointToClient(pt); 
-//      TreeNode ParentNode = treeMapping.GetNodeAt(pt); 
-//      ParentNode.Nodes.Add(tn.Text); // this copies the node 
-//      tn.Remove(); // need to remove the original version of the node 
-//    }
-//
-//    private void treeMapping_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
-//    {
-//      e.Effect=DragDropEffects.Move;
-//    }
+    //    private TreeNode tn;
+    //
+    //    private void treeMapping_ItemDrag(object sender, System.Windows.Forms.ItemDragEventArgs e)
+    //    {
+    //      tn=e.Item as TreeNode;
+    //      DoDragDrop(e.Item.ToString(), DragDropEffects.Move);
+    //    }
+    //
+    //    private void treeMapping_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
+    //    {
+    //      Point pt = new Point(e.X,e.Y); 
+    //      pt = treeMapping.PointToClient(pt); 
+    //      TreeNode ParentNode = treeMapping.GetNodeAt(pt); 
+    //      ParentNode.Nodes.Add(tn.Text); // this copies the node 
+    //      tn.Remove(); // need to remove the original version of the node 
+    //    }
+    //
+    //    private void treeMapping_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
+    //    {
+    //      e.Effect=DragDropEffects.Move;
+    //    }
   }
 }

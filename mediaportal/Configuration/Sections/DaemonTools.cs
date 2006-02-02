@@ -34,9 +34,9 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class DeamonTools : MediaPortal.Configuration.SectionSettings
-	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+  public class DeamonTools : MediaPortal.Configuration.SectionSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDaemonTools;
     private System.Windows.Forms.TextBox textBoxDaemonTools;
     private MediaPortal.UserInterface.Controls.MPButton buttonSelectFolder;
@@ -46,50 +46,52 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.ComboBox comboDriveNo;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAskBeforePlaying;
-		private System.ComponentModel.IContainer components = null;
+    private System.ComponentModel.IContainer components = null;
 
-		public DeamonTools() : this("Daemon Tools")
-		{
-		}
+    public DeamonTools()
+      : this("Daemon Tools")
+    {
+    }
 
-		public DeamonTools(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public DeamonTools(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-		}
+    }
 
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		public override void LoadSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-        checkBoxDaemonTools.Checked= xmlreader.GetValueAsBool("daemon", "enabled", false);
-        textBoxDaemonTools.Text= xmlreader.GetValueAsString("daemon", "path", "");
-        comboBoxDrive.SelectedItem=xmlreader.GetValueAsString("daemon", "drive", "E:");
-        comboDriveNo.SelectedItem=xmlreader.GetValueAsInt("daemon", "driveNo", 0).ToString();
-        checkBoxAskBeforePlaying.Checked=xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
       }
-      checkBoxDaemonTools_CheckedChanged(null,null);
+      base.Dispose(disposing);
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        checkBoxDaemonTools.Checked = xmlreader.GetValueAsBool("daemon", "enabled", false);
+        textBoxDaemonTools.Text = xmlreader.GetValueAsString("daemon", "path", "");
+        comboBoxDrive.SelectedItem = xmlreader.GetValueAsString("daemon", "drive", "E:");
+        comboDriveNo.SelectedItem = xmlreader.GetValueAsInt("daemon", "driveNo", 0).ToString();
+        checkBoxAskBeforePlaying.Checked = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
+      }
+      checkBoxDaemonTools_CheckedChanged(null, null);
 
-      if (textBoxDaemonTools.Text.Length==0)
+      if (textBoxDaemonTools.Text.Length == 0)
       {
         try
         {
@@ -97,33 +99,33 @@ namespace MediaPortal.Configuration.Sections
           RegistryKey subkey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Components\5DF1C3B1C87EFD376582F3A8B81F52D4");
           if (subkey != null)
           {
-            textBoxDaemonTools.Text=(string)subkey.GetValue("27A3DED38A1678B4895AFEB08C30A80A");
+            textBoxDaemonTools.Text = (string)subkey.GetValue("27A3DED38A1678B4895AFEB08C30A80A");
           }
         }
-        catch(Exception){}
+        catch (Exception) { }
       }
-		}
+    }
 
-		public override void SaveSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-		    
+    public override void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+
         xmlwriter.SetValueAsBool("daemon", "enabled", checkBoxDaemonTools.Checked);
         xmlwriter.SetValue("daemon", "path", textBoxDaemonTools.Text);
         xmlwriter.SetValue("daemon", "drive", (string)comboBoxDrive.SelectedItem);
         xmlwriter.SetValue("daemon", "driveNo", Int32.Parse((string)comboDriveNo.SelectedItem));
         xmlwriter.SetValueAsBool("daemon", "askbeforeplaying", checkBoxAskBeforePlaying.Checked);
       }
-		}
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonSelectFolder = new MediaPortal.UserInterface.Controls.MPButton();
       this.comboDriveNo = new System.Windows.Forms.ComboBox();
@@ -284,22 +286,22 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     private void buttonSelectFolder_Click(object sender, System.EventArgs e)
     {
-      using(OpenFileDialog openFileDialog = new OpenFileDialog())
+      using (OpenFileDialog openFileDialog = new OpenFileDialog())
       {
         openFileDialog.FileName = textBoxDaemonTools.Text;
         openFileDialog.CheckFileExists = true;
-        openFileDialog.RestoreDirectory=true;
-        openFileDialog.Filter= "exe files (*.exe)|*.exe";
+        openFileDialog.RestoreDirectory = true;
+        openFileDialog.Filter = "exe files (*.exe)|*.exe";
         openFileDialog.FilterIndex = 0;
         openFileDialog.Title = "Select Daemon Tools";
 
         DialogResult dialogResult = openFileDialog.ShowDialog();
 
-        if(dialogResult == DialogResult.OK)
+        if (dialogResult == DialogResult.OK)
         {
           textBoxDaemonTools.Text = openFileDialog.FileName;
         }
@@ -310,22 +312,22 @@ namespace MediaPortal.Configuration.Sections
     {
       if (checkBoxDaemonTools.Checked)
       {
-        textBoxDaemonTools.Enabled=true;
-        comboBoxDrive.Enabled=true;
-        buttonSelectFolder.Enabled=true;
-        comboDriveNo.Enabled=true;
-        checkBoxAskBeforePlaying.Enabled=true;
+        textBoxDaemonTools.Enabled = true;
+        comboBoxDrive.Enabled = true;
+        buttonSelectFolder.Enabled = true;
+        comboDriveNo.Enabled = true;
+        checkBoxAskBeforePlaying.Enabled = true;
       }
       else
       {
-        textBoxDaemonTools.Enabled=false;
-        comboBoxDrive.Enabled=false;
-        buttonSelectFolder.Enabled=false;
-        comboDriveNo.Enabled=false;
-        checkBoxAskBeforePlaying.Enabled=false;
+        textBoxDaemonTools.Enabled = false;
+        comboBoxDrive.Enabled = false;
+        buttonSelectFolder.Enabled = false;
+        comboDriveNo.Enabled = false;
+        checkBoxAskBeforePlaying.Enabled = false;
       }
 
     }
-	}
+  }
 }
 

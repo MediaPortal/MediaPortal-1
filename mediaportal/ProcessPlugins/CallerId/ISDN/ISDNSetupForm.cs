@@ -31,13 +31,13 @@ using System.Windows.Forms;
 
 namespace ProcessPlugins.CallerId
 {
-	/// <summary>
-	/// Summary description for ISDNSetupForm.
-	/// </summary>
-	public class ISDNSetupForm : System.Windows.Forms.Form
-	{
+  /// <summary>
+  /// Summary description for ISDNSetupForm.
+  /// </summary>
+  public class ISDNSetupForm : System.Windows.Forms.Form
+  {
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxStopMedia;
-    private System.Windows.Forms.GroupBox groupBoxIncomingCall;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIncomingCall;
     private MediaPortal.UserInterface.Controls.MPButton okButton;
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private System.Windows.Forms.RadioButton radioButtonManualResume;
@@ -45,60 +45,60 @@ namespace ProcessPlugins.CallerId
     private System.Windows.Forms.NumericUpDown numericUpDownTimeOut;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxTimeOut;
     private CheckBox checkBoxOutlook;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public ISDNSetupForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public ISDNSetupForm()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        checkBoxOutlook.Checked         = xmlreader.GetValueAsBool("isdn", "useoutlook", false);
-        checkBoxTimeOut.Checked         = (xmlreader.GetValueAsInt("isdn", "timeout", 0) > 0);
-        checkBoxStopMedia.Checked       = xmlreader.GetValueAsBool("isdn", "stopmedia", true);
+        checkBoxOutlook.Checked = xmlreader.GetValueAsBool("isdn", "useoutlook", false);
+        checkBoxTimeOut.Checked = (xmlreader.GetValueAsInt("isdn", "timeout", 0) > 0);
+        checkBoxStopMedia.Checked = xmlreader.GetValueAsBool("isdn", "stopmedia", true);
         radioButtonManualResume.Checked = (xmlreader.GetValueAsBool("isdn", "autoresume", false) == false);
-        radioButtonAutoResume.Checked   = !radioButtonManualResume.Checked;
-        numericUpDownTimeOut.Value      = xmlreader.GetValueAsInt("isdn", "timeout", 0);
+        radioButtonAutoResume.Checked = !radioButtonManualResume.Checked;
+        numericUpDownTimeOut.Value = xmlreader.GetValueAsInt("isdn", "timeout", 0);
       }
       radioButtonManualResume.Enabled = checkBoxStopMedia.Checked;
-      radioButtonAutoResume.Enabled   = (checkBoxStopMedia.Checked && checkBoxTimeOut.Checked);
-      numericUpDownTimeOut.Enabled    = checkBoxTimeOut.Checked;
-		}
+      radioButtonAutoResume.Enabled = (checkBoxStopMedia.Checked && checkBoxTimeOut.Checked);
+      numericUpDownTimeOut.Enabled = checkBoxTimeOut.Checked;
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ISDNSetupForm));
       this.checkBoxStopMedia = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxIncomingCall = new System.Windows.Forms.GroupBox();
+      this.groupBoxIncomingCall = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.numericUpDownTimeOut = new System.Windows.Forms.NumericUpDown();
       this.checkBoxTimeOut = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.radioButtonAutoResume = new System.Windows.Forms.RadioButton();
@@ -229,7 +229,7 @@ namespace ProcessPlugins.CallerId
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     private void okButton_Click(object sender, System.EventArgs e)
     {
@@ -269,5 +269,5 @@ namespace ProcessPlugins.CallerId
       if (!radioButtonAutoResume.Enabled)
         radioButtonManualResume.Checked = true;
     }
-	}
+  }
 }

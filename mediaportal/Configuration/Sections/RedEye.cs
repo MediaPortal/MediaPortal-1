@@ -34,88 +34,90 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class RedEye : MediaPortal.Configuration.SectionSettings
-	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
-		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.Label statusLabel;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.ComboBox CommPortCombo;
-		private System.ComponentModel.IContainer components = null;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.ComboBox CommandDelayCombo;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.TextBox testRedeyeChannelsTextBox;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox infoTextBox;
-		private MediaPortal.UserInterface.Controls.MPButton buttonIRDA;
-		private MediaPortal.UserInterface.Controls.MPButton buttonRC5;
-		private MediaPortal.UserInterface.Controls.MPButton buttonSKY;
-    private System.Windows.Forms.GroupBox groupBox3;
-		private MediaPortal.UserInterface.Controls.MPButton cmdTest;
+  public class RedEye : MediaPortal.Configuration.SectionSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+    private System.Windows.Forms.Label statusLabel;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.ComboBox CommPortCombo;
+    private System.ComponentModel.IContainer components = null;
+    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.ComboBox CommandDelayCombo;
+    private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.TextBox testRedeyeChannelsTextBox;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.TextBox infoTextBox;
+    private MediaPortal.UserInterface.Controls.MPButton buttonIRDA;
+    private MediaPortal.UserInterface.Controls.MPButton buttonRC5;
+    private MediaPortal.UserInterface.Controls.MPButton buttonSKY;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
+    private MediaPortal.UserInterface.Controls.MPButton cmdTest;
 
-		
-		public RedEye() : this("RedEye")
-		{
-		}
 
-		public RedEye(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public RedEye()
+      : this("RedEye")
+    {
+    }
 
-			// 
-			// Initialize the RedEye component
-			//
-			MediaPortal.RedEyeIR.RedEye.Create(new MediaPortal.RedEyeIR.RedEye.OnRemoteCommand(OnRemoteCommand));
-		}
+    public RedEye(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			MediaPortal.RedEyeIR.RedEye.Instance.Close();
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+      // 
+      // Initialize the RedEye component
+      //
+      MediaPortal.RedEyeIR.RedEye.Create(new MediaPortal.RedEyeIR.RedEye.OnRemoteCommand(OnRemoteCommand));
+    }
 
-		public override void LoadSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				inputCheckBox.Checked        = xmlreader.GetValueAsString("RedEye", "internal", "false") == "true";
-				CommandDelayCombo.Text       = xmlreader.GetValueAsString("RedEye", "delay", "300");
-				CommPortCombo.Text           = xmlreader.GetValueAsString("RedEye", "commport", "COM1:");
-				this.LoadInfo();
-			}
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      MediaPortal.RedEyeIR.RedEye.Instance.Close();
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		public override void SaveSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				xmlwriter.SetValue("RedEye", "internal", inputCheckBox.Checked ? "true" : "false");
-				xmlwriter.SetValue("RedEye", "commport", CommPortCombo.Text);
-				xmlwriter.SetValue("RedEye", "delay", CommandDelayCombo.Text);
-			}
-		}
+    public override void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        inputCheckBox.Checked = xmlreader.GetValueAsString("RedEye", "internal", "false") == "true";
+        CommandDelayCombo.Text = xmlreader.GetValueAsString("RedEye", "delay", "300");
+        CommPortCombo.Text = xmlreader.GetValueAsString("RedEye", "commport", "COM1:");
+        this.LoadInfo();
+      }
+    }
 
-		public void Close()
-		{
-			MediaPortal.RedEyeIR.RedEye.Instance.Close();
-		}
+    public override void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValue("RedEye", "internal", inputCheckBox.Checked ? "true" : "false");
+        xmlwriter.SetValue("RedEye", "commport", CommPortCombo.Text);
+        xmlwriter.SetValue("RedEye", "delay", CommandDelayCombo.Text);
+      }
+    }
 
-		private void LoadInfo()
-		{
-			string[] lines = {
+    public void Close()
+    {
+      MediaPortal.RedEyeIR.RedEye.Instance.Close();
+    }
+
+    private void LoadInfo()
+    {
+      string[] lines = {
 								 "REDEYE SERIAL REMOTE for CABLE and SKY STB's",
 								 "http://www.redremote.com/serial",
 								 "",
@@ -139,15 +141,15 @@ namespace MediaPortal.Configuration.Sections
 								 "N.B. If the external Channel number has not changed the Plugin will not attempt",
 								 "to send an instruction to RedEye, this makes a smoother interface, please remember",
 								 "this when you are testing the unit."};
-			infoTextBox.Lines = lines;
-		}
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+      infoTextBox.Lines = lines;
+    }
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cmdTest = new MediaPortal.UserInterface.Controls.MPButton();
       this.label2 = new System.Windows.Forms.Label();
@@ -162,9 +164,9 @@ namespace MediaPortal.Configuration.Sections
       this.CommPortCombo = new System.Windows.Forms.ComboBox();
       this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.infoTextBox = new System.Windows.Forms.TextBox();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.statusLabel = new System.Windows.Forms.Label();
-      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -172,7 +174,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.cmdTest);
       this.groupBox1.Controls.Add(this.label2);
@@ -216,7 +218,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // testRedeyeChannelsTextBox
       // 
-      this.testRedeyeChannelsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.testRedeyeChannelsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.testRedeyeChannelsTextBox.Location = new System.Drawing.Point(168, 124);
       this.testRedeyeChannelsTextBox.MaxLength = 3;
@@ -275,7 +277,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // CommandDelayCombo
       // 
-      this.CommandDelayCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.CommandDelayCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.CommandDelayCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.CommandDelayCombo.Items.AddRange(new object[] {
@@ -318,7 +320,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // CommPortCombo
       // 
-      this.CommPortCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.CommPortCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.CommPortCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.CommPortCombo.Items.AddRange(new object[] {
@@ -348,8 +350,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // infoTextBox
       // 
-      this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.infoTextBox.BackColor = System.Drawing.SystemColors.Control;
       this.infoTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -365,8 +367,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.statusLabel);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -379,8 +381,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // statusLabel
       // 
-      this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.statusLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.statusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -393,8 +395,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.infoTextBox);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -418,76 +420,76 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		private void OnRemoteCommand(object command)
-		{
-			System.Diagnostics.Debug.WriteLine("Remote Command = " + command.ToString());
-		}
+    private void OnRemoteCommand(object command)
+    {
+      System.Diagnostics.Debug.WriteLine("Remote Command = " + command.ToString());
+    }
 
 
-		private void SetReOpenStatus(bool available)
-		{
-			if(available)
-			{
-				statusLabel.Text = "Port " + CommPortCombo.Text + " available";
-				buttonIRDA.Enabled = true;
-				buttonRC5.Enabled = true;
-				buttonSKY.Enabled = true;
-				cmdTest.Enabled = true;
-			}
-			else
-			{
-				statusLabel.Text = "Error : Port " + CommPortCombo.Text + " unavailable !";
-				buttonIRDA.Enabled = false;
-				buttonRC5.Enabled = false;
-				buttonSKY.Enabled = false;
-				cmdTest.Enabled = false;
-			}
-		}
+    private void SetReOpenStatus(bool available)
+    {
+      if (available)
+      {
+        statusLabel.Text = "Port " + CommPortCombo.Text + " available";
+        buttonIRDA.Enabled = true;
+        buttonRC5.Enabled = true;
+        buttonSKY.Enabled = true;
+        cmdTest.Enabled = true;
+      }
+      else
+      {
+        statusLabel.Text = "Error : Port " + CommPortCombo.Text + " unavailable !";
+        buttonIRDA.Enabled = false;
+        buttonRC5.Enabled = false;
+        buttonSKY.Enabled = false;
+        cmdTest.Enabled = false;
+      }
+    }
 
-		private void CommPortCombo_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			SetReOpenStatus(MediaPortal.RedEyeIR.RedEye.Instance.SetPort(CommPortCombo.Text));
-		}
+    private void CommPortCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      SetReOpenStatus(MediaPortal.RedEyeIR.RedEye.Instance.SetPort(CommPortCombo.Text));
+    }
 
-		private void inputCheckBox_CheckedChanged(object sender, System.EventArgs e)
-		{
-			MediaPortal.RedEyeIR.RedEye.Instance.InternalCommandsActive = inputCheckBox.Checked;
-		}
+    private void inputCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    {
+      MediaPortal.RedEyeIR.RedEye.Instance.InternalCommandsActive = inputCheckBox.Checked;
+    }
 
-		private void buttonIRDA_Click(object sender, System.EventArgs e)
-		{
-			MediaPortal.RedEyeIR.RedEye.Instance.SetIRDA();
-		}
+    private void buttonIRDA_Click(object sender, System.EventArgs e)
+    {
+      MediaPortal.RedEyeIR.RedEye.Instance.SetIRDA();
+    }
 
-		private void buttonRC5_Click(object sender, System.EventArgs e)
-		{
-			MediaPortal.RedEyeIR.RedEye.Instance.SetRC5();
-		}
+    private void buttonRC5_Click(object sender, System.EventArgs e)
+    {
+      MediaPortal.RedEyeIR.RedEye.Instance.SetRC5();
+    }
 
-		private void buttonSKY_Click(object sender, System.EventArgs e)
-		{
-			MediaPortal.RedEyeIR.RedEye.Instance.SetSKY();
-		}
+    private void buttonSKY_Click(object sender, System.EventArgs e)
+    {
+      MediaPortal.RedEyeIR.RedEye.Instance.SetSKY();
+    }
 
-		private void cmdTest_Click(object sender, System.EventArgs e)
-		{
-			if (testRedeyeChannelsTextBox.Text.Length > 0)
-			{
-				MediaPortal.RedEyeIR.RedEye.Instance.ChangeTunerChannel(testRedeyeChannelsTextBox.Text);
-				testRedeyeChannelsTextBox.Text = "";
-			}
-		}
+    private void cmdTest_Click(object sender, System.EventArgs e)
+    {
+      if (testRedeyeChannelsTextBox.Text.Length > 0)
+      {
+        MediaPortal.RedEyeIR.RedEye.Instance.ChangeTunerChannel(testRedeyeChannelsTextBox.Text);
+        testRedeyeChannelsTextBox.Text = "";
+      }
+    }
 
-		private void CommandDelayCombo_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			MediaPortal.RedEyeIR.RedEye.Instance.CommandDelay = int.Parse(CommandDelayCombo.Text);
-		}
+    private void CommandDelayCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      MediaPortal.RedEyeIR.RedEye.Instance.CommandDelay = int.Parse(CommandDelayCombo.Text);
+    }
 
     private void statusLabel_Click(object sender, System.EventArgs e)
     {
-    
+
     }
-	}
+  }
 }

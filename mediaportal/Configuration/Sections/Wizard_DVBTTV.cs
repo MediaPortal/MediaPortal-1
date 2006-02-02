@@ -35,72 +35,74 @@ using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 namespace MediaPortal.Configuration.Sections
 {
-	public class Wizard_DVBTTV : MediaPortal.Configuration.SectionSettings
-	{
-		private System.ComponentModel.IContainer components = null;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private MediaPortal.UserInterface.Controls.MPButton button1;
-		private System.Windows.Forms.ProgressBar progressBar1;
-		private System.Windows.Forms.Label labelStatus;
-		private System.Windows.Forms.ComboBox cbCountry;
-		
+  public class Wizard_DVBTTV : MediaPortal.Configuration.SectionSettings
+  {
+    private System.ComponentModel.IContainer components = null;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPButton button1;
+    private System.Windows.Forms.ProgressBar progressBar1;
+    private System.Windows.Forms.Label labelStatus;
+    private System.Windows.Forms.ComboBox cbCountry;
 
-		enum State
-		{
-			ScanFrequencies,
-			ScanChannels,
-			ScanOffset
-		}
-		TVCaptureDevice											captureCard;
-		
-		ArrayList                           frequencies=new ArrayList();
-		int                                 currentFrequencyIndex=0;
-		int																	scanOffset = 0;
-		
-		
-		int																	newChannels, updatedChannels;
-		int																	newRadioChannels, updatedRadioChannels;
-		private System.Windows.Forms.Label label3;
-		
-		private System.Windows.Forms.Panel panel1;
 
-		public Wizard_DVBTTV() : this("DVBT TV")
-		{
-		}
+    enum State
+    {
+      ScanFrequencies,
+      ScanChannels,
+      ScanOffset
+    }
+    TVCaptureDevice captureCard;
 
-		public Wizard_DVBTTV(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    ArrayList frequencies = new ArrayList();
+    int currentFrequencyIndex = 0;
+    int scanOffset = 0;
 
-			// TODO: Add any initialization after the InitializeComponent call
-		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    int newChannels, updatedChannels;
+    int newRadioChannels, updatedRadioChannels;
+    private System.Windows.Forms.Label label3;
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
+    private System.Windows.Forms.Panel panel1;
+
+    public Wizard_DVBTTV()
+      : this("DVBT TV")
+    {
+    }
+
+    public Wizard_DVBTTV(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
+
+      // TODO: Add any initialization after the InitializeComponent call
+    }
+
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
+
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label3 = new System.Windows.Forms.Label();
       this.panel1 = new System.Windows.Forms.Panel();
       this.labelStatus = new System.Windows.Forms.Label();
@@ -114,8 +116,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.panel1);
@@ -135,7 +137,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label3
       // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.Location = new System.Drawing.Point(16, 264);
       this.label3.Name = "label3";
@@ -152,7 +154,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelStatus
       // 
-      this.labelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.labelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.labelStatus.Location = new System.Drawing.Point(16, 169);
@@ -162,7 +164,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // progressBar1
       // 
-      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.progressBar1.Location = new System.Drawing.Point(16, 128);
       this.progressBar1.Name = "progressBar1";
@@ -190,7 +192,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbCountry
       // 
-      this.cbCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.cbCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.cbCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbCountry.Location = new System.Drawing.Point(144, 68);
@@ -200,7 +202,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
@@ -218,214 +220,214 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
 
 
 
-		public override void OnSectionActivated()
-		{
-			base.OnSectionActivated ();
-			labelStatus.Text="";
-			XmlDocument doc= new XmlDocument();
-			doc.Load("Tuningparameters/dvbt.xml");
+    public override void OnSectionActivated()
+    {
+      base.OnSectionActivated();
+      labelStatus.Text = "";
+      XmlDocument doc = new XmlDocument();
+      doc.Load("Tuningparameters/dvbt.xml");
 
-			XmlNodeList countryList=doc.DocumentElement.SelectNodes("/dvbt/country");
-			foreach (XmlNode nodeCountry in countryList)
-			{
-				string name= nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
-				cbCountry.Items.Add(name);
-			}
-			if (cbCountry.Items.Count>0)
-				cbCountry.SelectedIndex=0;
+      XmlNodeList countryList = doc.DocumentElement.SelectNodes("/dvbt/country");
+      foreach (XmlNode nodeCountry in countryList)
+      {
+        string name = nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
+        cbCountry.Items.Add(name);
+      }
+      if (cbCountry.Items.Count > 0)
+        cbCountry.SelectedIndex = 0;
 
-		}
+    }
 
-		void LoadFrequencies()
-		{
-			
-			string countryName=(string)cbCountry.SelectedItem;
-			if (countryName==String.Empty) return;
-			frequencies.Clear();
+    void LoadFrequencies()
+    {
 
-			XmlDocument doc= new XmlDocument();
-			doc.Load("Tuningparameters/dvbt.xml");
-			XmlNodeList countryList=doc.DocumentElement.SelectNodes("/dvbt/country");
-			foreach (XmlNode nodeCountry in countryList)
-			{
-				string name= nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
-				if (name!=countryName) continue;
-				try
-				{
-					scanOffset =  XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
-				}
-				catch(Exception){}
+      string countryName = (string)cbCountry.SelectedItem;
+      if (countryName == String.Empty) return;
+      frequencies.Clear();
 
-				XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
-				int[] carrier;
-				foreach (XmlNode node in frequencyList)
-				{
-					carrier = new int[2];
-					carrier[0] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"frequency").InnerText);
-					try
-					{
-						carrier[1] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"bandwidth").InnerText);
-					}
-					catch(Exception){}
+      XmlDocument doc = new XmlDocument();
+      doc.Load("Tuningparameters/dvbt.xml");
+      XmlNodeList countryList = doc.DocumentElement.SelectNodes("/dvbt/country");
+      foreach (XmlNode nodeCountry in countryList)
+      {
+        string name = nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
+        if (name != countryName) continue;
+        try
+        {
+          scanOffset = XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
+        }
+        catch (Exception) { }
 
-					if (carrier[1]==0) carrier[1]=8;
-					frequencies.Add(carrier);
-				}
-			}
-		}
-	
+        XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
+        int[] carrier;
+        foreach (XmlNode node in frequencyList)
+        {
+          carrier = new int[2];
+          carrier[0] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"frequency").InnerText);
+          try
+          {
+            carrier[1] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"bandwidth").InnerText);
+          }
+          catch (Exception) { }
 
-		private void button1_Click(object sender, System.EventArgs e)
-		{
-			LoadFrequencies();
-			if (frequencies.Count==0) return;
-			progressBar1.Visible=true;
-			newChannels=0; updatedChannels=0;
-			newRadioChannels=0; updatedRadioChannels=0;
-			DoScan();
-			labelStatus.Text=String.Format("Imported {0} tv channels, {1} radio channels",newChannels, newRadioChannels);
-		}
+          if (carrier[1] == 0) carrier[1] = 8;
+          frequencies.Add(carrier);
+        }
+      }
+    }
 
-		private void DoScan()
-		{
-			GUIGraphicsContext.form=this.FindForm();
-			GUIGraphicsContext.VideoWindow=new Rectangle(panel1.Location,panel1.Size);
 
-			TVCaptureCards cards = new TVCaptureCards();
-			cards.LoadCaptureCards();
-			foreach (TVCaptureDevice dev in cards.captureCards)
-			{
-				if (dev.Network==NetworkType.DVBT || dev.VideoDevice=="B2C2 MPEG-2 Source")
-				{
-					captureCard = dev;
-					captureCard.CreateGraph();
-					break;
-				}
-			}
+    private void button1_Click(object sender, System.EventArgs e)
+    {
+      LoadFrequencies();
+      if (frequencies.Count == 0) return;
+      progressBar1.Visible = true;
+      newChannels = 0; updatedChannels = 0;
+      newRadioChannels = 0; updatedRadioChannels = 0;
+      DoScan();
+      labelStatus.Text = String.Format("Imported {0} tv channels, {1} radio channels", newChannels, newRadioChannels);
+    }
 
-			currentFrequencyIndex=0;
-			while (currentFrequencyIndex <frequencies.Count)
-			{
-				int currentFreq=currentFrequencyIndex;
-				if (currentFrequencyIndex<0) currentFreq=0;
-				float percent = ((float)currentFreq) / ((float)frequencies.Count);
-				percent *= 100.0f;
-				progressBar1.Value=((int)percent);
-				int[] tmp = frequencies[currentFreq] as int[];
-				
-				float frequency = tmp[0];
-				frequency /=1000f;
-				string description=String.Format("frequency:{0} MHz. Bandwidth:{1} MHz", frequency.ToString("f2"), tmp[1]);
-				labelStatus.Text=description;
-				System.Windows.Forms.Application.DoEvents();
+    private void DoScan()
+    {
+      GUIGraphicsContext.form = this.FindForm();
+      GUIGraphicsContext.VideoWindow = new Rectangle(panel1.Location, panel1.Size);
 
-				ScanNextFrequency(0);
-				if (captureCard.SignalPresent())
-				{
-					description=String.Format("Found signal at frequency:{0} MHz. Scanning channels", frequency.ToString("f2"));
-					labelStatus.Text=description;
-					ScanChannels();
-				}
-				else if (scanOffset!=0)
-				{
-					ScanNextFrequency(-scanOffset);
-					if (captureCard.SignalPresent())
-					{
-						description=String.Format("Found signal at frequency:{0} MHz. Scanning channels", (frequency-scanOffset).ToString("f2"));
-						labelStatus.Text=description;
-						ScanChannels();
-					}
-					else
-					{
-						ScanNextFrequency(scanOffset);
-						if (captureCard.SignalPresent())
-						{
-							description=String.Format("Found signal at frequency:{0:} MHz. Scanning channels", (frequency+scanOffset).ToString("f2"));
-							labelStatus.Text=description;
-							ScanChannels();
-						}
-					}
-				}
-				currentFrequencyIndex++;
-			}
-			captureCard.DeleteGraph();
-			MapTvToOtherCards(captureCard.ID);
-			MapRadioToOtherCards(captureCard.ID);
-			progressBar1.Value=100;
-			captureCard=null;
-		}
+      TVCaptureCards cards = new TVCaptureCards();
+      cards.LoadCaptureCards();
+      foreach (TVCaptureDevice dev in cards.captureCards)
+      {
+        if (dev.Network == NetworkType.DVBT || dev.VideoDevice == "B2C2 MPEG-2 Source")
+        {
+          captureCard = dev;
+          captureCard.CreateGraph();
+          break;
+        }
+      }
 
-		void MapTvToOtherCards(int id)
-		{
-			ArrayList tvchannels = new ArrayList();
-			TVDatabase.GetChannelsForCard(ref tvchannels,id);
-			TVCaptureCards cards = new TVCaptureCards();
-			cards.LoadCaptureCards();
-			foreach (TVCaptureDevice dev in cards.captureCards)
-			{
-				if (dev.Network==NetworkType.DVBT && dev.ID != id)
-				{
-					foreach (TVChannel chan in tvchannels)
-					{
-						TVDatabase.MapChannelToCard(chan.ID,dev.ID);
-					}
-				}
-			}
-		}
-		void MapRadioToOtherCards(int id)
-		{
-			ArrayList radioChans = new ArrayList();
-			MediaPortal.Radio.Database.RadioDatabase.GetStationsForCard(ref radioChans,id);
-			TVCaptureCards cards = new TVCaptureCards();
-			cards.LoadCaptureCards();
-			foreach (TVCaptureDevice dev in cards.captureCards)
-			{
-				if (dev.Network==NetworkType.DVBT && dev.ID != id)
-				{
-					foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
-					{
-						MediaPortal.Radio.Database.RadioDatabase.MapChannelToCard(chan.ID,dev.ID);
-					}
-				}
-			}
-		}
+      currentFrequencyIndex = 0;
+      while (currentFrequencyIndex < frequencies.Count)
+      {
+        int currentFreq = currentFrequencyIndex;
+        if (currentFrequencyIndex < 0) currentFreq = 0;
+        float percent = ((float)currentFreq) / ((float)frequencies.Count);
+        percent *= 100.0f;
+        progressBar1.Value = ((int)percent);
+        int[] tmp = frequencies[currentFreq] as int[];
 
-		void ScanChannels()
-		{
-			if (currentFrequencyIndex < 0 || currentFrequencyIndex >=frequencies.Count) return;
-			int[] tmp;
-			tmp = (int[])frequencies[currentFrequencyIndex];
-			string description=String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", tmp[0]/1000);
-			labelStatus.Text=description;
-			System.Threading.Thread.Sleep(400);
-			if (captureCard.SignalQuality <40)
-				System.Threading.Thread.Sleep(400);
-			System.Windows.Forms.Application.DoEvents();
+        float frequency = tmp[0];
+        frequency /= 1000f;
+        string description = String.Format("frequency:{0} MHz. Bandwidth:{1} MHz", frequency.ToString("f2"), tmp[1]);
+        labelStatus.Text = description;
+        System.Windows.Forms.Application.DoEvents();
 
-			captureCard.StoreTunedChannels(false,true,ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
-		}
+        ScanNextFrequency(0);
+        if (captureCard.SignalPresent())
+        {
+          description = String.Format("Found signal at frequency:{0} MHz. Scanning channels", frequency.ToString("f2"));
+          labelStatus.Text = description;
+          ScanChannels();
+        }
+        else if (scanOffset != 0)
+        {
+          ScanNextFrequency(-scanOffset);
+          if (captureCard.SignalPresent())
+          {
+            description = String.Format("Found signal at frequency:{0} MHz. Scanning channels", (frequency - scanOffset).ToString("f2"));
+            labelStatus.Text = description;
+            ScanChannels();
+          }
+          else
+          {
+            ScanNextFrequency(scanOffset);
+            if (captureCard.SignalPresent())
+            {
+              description = String.Format("Found signal at frequency:{0:} MHz. Scanning channels", (frequency + scanOffset).ToString("f2"));
+              labelStatus.Text = description;
+              ScanChannels();
+            }
+          }
+        }
+        currentFrequencyIndex++;
+      }
+      captureCard.DeleteGraph();
+      MapTvToOtherCards(captureCard.ID);
+      MapRadioToOtherCards(captureCard.ID);
+      progressBar1.Value = 100;
+      captureCard = null;
+    }
 
-		void ScanNextFrequency(int offset)
-		{
-			if (currentFrequencyIndex <0) currentFrequencyIndex =0;
-			if (currentFrequencyIndex >=frequencies.Count) return;
+    void MapTvToOtherCards(int id)
+    {
+      ArrayList tvchannels = new ArrayList();
+      TVDatabase.GetChannelsForCard(ref tvchannels, id);
+      TVCaptureCards cards = new TVCaptureCards();
+      cards.LoadCaptureCards();
+      foreach (TVCaptureDevice dev in cards.captureCards)
+      {
+        if (dev.Network == NetworkType.DVBT && dev.ID != id)
+        {
+          foreach (TVChannel chan in tvchannels)
+          {
+            TVDatabase.MapChannelToCard(chan.ID, dev.ID);
+          }
+        }
+      }
+    }
+    void MapRadioToOtherCards(int id)
+    {
+      ArrayList radioChans = new ArrayList();
+      MediaPortal.Radio.Database.RadioDatabase.GetStationsForCard(ref radioChans, id);
+      TVCaptureCards cards = new TVCaptureCards();
+      cards.LoadCaptureCards();
+      foreach (TVCaptureDevice dev in cards.captureCards)
+      {
+        if (dev.Network == NetworkType.DVBT && dev.ID != id)
+        {
+          foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
+          {
+            MediaPortal.Radio.Database.RadioDatabase.MapChannelToCard(chan.ID, dev.ID);
+          }
+        }
+      }
+    }
 
-			DVBChannel chan = new DVBChannel();
-			int[] tmp;
-			tmp = (int[])frequencies[currentFrequencyIndex];
-			chan.Frequency=tmp[0];
-			chan.Bandwidth=tmp[1];
-			chan.Frequency+=offset;
+    void ScanChannels()
+    {
+      if (currentFrequencyIndex < 0 || currentFrequencyIndex >= frequencies.Count) return;
+      int[] tmp;
+      tmp = (int[])frequencies[currentFrequencyIndex];
+      string description = String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", tmp[0] / 1000);
+      labelStatus.Text = description;
+      System.Threading.Thread.Sleep(400);
+      if (captureCard.SignalQuality < 40)
+        System.Threading.Thread.Sleep(400);
+      System.Windows.Forms.Application.DoEvents();
 
-			captureCard.Tune(chan,0);
-			System.Threading.Thread.Sleep(400);
+      captureCard.StoreTunedChannels(false, true, ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
+    }
 
-		}
-	}
+    void ScanNextFrequency(int offset)
+    {
+      if (currentFrequencyIndex < 0) currentFrequencyIndex = 0;
+      if (currentFrequencyIndex >= frequencies.Count) return;
+
+      DVBChannel chan = new DVBChannel();
+      int[] tmp;
+      tmp = (int[])frequencies[currentFrequencyIndex];
+      chan.Frequency = tmp[0];
+      chan.Bandwidth = tmp[1];
+      chan.Frequency += offset;
+
+      captureCard.Tune(chan, 0);
+      System.Threading.Thread.Sleep(400);
+
+    }
+  }
 }
 

@@ -30,28 +30,28 @@ using MediaPortal.InputDevices;
 
 namespace MediaPortal.Configuration.Sections
 {
-	/// <summary>
-	/// Summary description for DirectInputRemote.
-	/// </summary>
+  /// <summary>
+  /// Summary description for DirectInputRemote.
+  /// </summary>
   public class DirectInputRemote : SectionSettings
-	{
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private Container components = null;
+  {
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private Container components = null;
 
     private DirectInputHandler diHandler = null;
     private MediaPortal.UserInterface.Controls.MPButton buttonDefault;
     private MediaPortal.UserInterface.Controls.MPButton btnRunControlPanel;
     private System.Windows.Forms.Label lblDInputDevice;
     private System.Windows.Forms.ComboBox cbDevices;
-    private System.Windows.Forms.GroupBox gbI;
-    private System.Windows.Forms.GroupBox gbSettings;
+    private MediaPortal.UserInterface.Controls.MPGroupBox gbI;
+    private MediaPortal.UserInterface.Controls.MPGroupBox gbSettings;
     private MediaPortal.UserInterface.Controls.MPButton btnMapping;
     private System.Windows.Forms.Label lblDelayMS;
     private System.Windows.Forms.NumericUpDown numDelay;
-    private System.Windows.Forms.GroupBox groupBox1;
-    private System.Windows.Forms.GroupBox gbButtonCombos;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox gbButtonCombos;
     private MediaPortal.UserInterface.Controls.MPButton btnLearn;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label lblComboKill;
@@ -64,51 +64,53 @@ namespace MediaPortal.Configuration.Sections
 
     private System.Windows.Forms.TextBox lastEdit;
 
-    public DirectInputRemote() : this("Direct Input")
+    public DirectInputRemote()
+      : this("Direct Input")
     {
     }
 
 
-    public DirectInputRemote(string name) : base(name)
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public DirectInputRemote(string name)
+      : base(name)
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
+      // TODO: Add any initialization after the InitializeComponent call
       diHandler = new DirectInputHandler();
       diHandler.DoSendActions = false; // only debug/display actions
       diHandler.OnStateChangeText += new DirectInputHandler.diStateChangeText(StateChangeAsText);
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
       diHandler.OnStateChangeText -= new DirectInputHandler.diStateChangeText(StateChangeAsText);
       diHandler.Stop();
       diHandler = null;
-      if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.cbEnable = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.gbI = new System.Windows.Forms.GroupBox();
+      this.gbI = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.txtMonitor = new System.Windows.Forms.Label();
-      this.gbSettings = new System.Windows.Forms.GroupBox();
+      this.gbSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.btnRunControlPanel = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonDefault = new MediaPortal.UserInterface.Controls.MPButton();
       this.numDelay = new System.Windows.Forms.NumericUpDown();
@@ -116,8 +118,8 @@ namespace MediaPortal.Configuration.Sections
       this.lblDelayMS = new System.Windows.Forms.Label();
       this.lblDInputDevice = new System.Windows.Forms.Label();
       this.btnMapping = new MediaPortal.UserInterface.Controls.MPButton();
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.gbButtonCombos = new System.Windows.Forms.GroupBox();
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.gbButtonCombos = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.btnLearn = new MediaPortal.UserInterface.Controls.MPButton();
       this.label2 = new System.Windows.Forms.Label();
       this.lblComboKill = new System.Windows.Forms.Label();
@@ -385,7 +387,7 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     private void cbDevices_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -428,14 +430,14 @@ namespace MediaPortal.Configuration.Sections
 
     private void btnRunControlPanel_Click(object sender, System.EventArgs e)
     {
-      diHandler.RunControlPanel(); 
+      diHandler.RunControlPanel();
     }
 
     private void DirectInputRemote_Load(object sender, System.EventArgs e)
     {
       cbEnable.Checked = diHandler.Active;
       cbDevices.SelectedIndex = diHandler.SelectedDeviceIndex;
-      numDelay.Value = diHandler.Delay; 
+      numDelay.Value = diHandler.Delay;
       txtComboKill.Text = diHandler.ButtonComboKill;
       txtComboClose.Text = diHandler.ButtonComboClose;
     }
@@ -456,7 +458,7 @@ namespace MediaPortal.Configuration.Sections
     private void btnMapping_Click(object sender, System.EventArgs e)
     {
       InputMappingForm dlg = new InputMappingForm("DirectInput");
-      dlg.ShowDialog(this);    
+      dlg.ShowDialog(this);
     }
 
     private void buttonDefault_Click(object sender, System.EventArgs e)
@@ -466,7 +468,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void numDelay_ValueChanged(object sender, System.EventArgs e)
     {
-      diHandler.Delay = (int)numDelay.Value; 
+      diHandler.Delay = (int)numDelay.Value;
     }
 
     private void btnLearn_Click(object sender, System.EventArgs e)
@@ -478,7 +480,7 @@ namespace MediaPortal.Configuration.Sections
       else if (lastEdit == txtComboClose)
       {
         txtComboClose.Text = diHandler.GetCurrentButtonCombo();
-        
+
       }
     }
 
@@ -491,5 +493,5 @@ namespace MediaPortal.Configuration.Sections
     {
       lastEdit = txtComboClose;
     }
-	}
+  }
 }

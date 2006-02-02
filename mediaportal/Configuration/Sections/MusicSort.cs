@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Globalization;
@@ -169,8 +173,8 @@ namespace MediaPortal.Configuration.Sections
       this.comboBox1 = new System.Windows.Forms.ComboBox();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.groupBox3 = new System.Windows.Forms.GroupBox();
-      this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label15 = new System.Windows.Forms.Label();
       this.label18 = new System.Windows.Forms.Label();
       this.label16 = new System.Windows.Forms.Label();

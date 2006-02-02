@@ -31,74 +31,74 @@ using System.Windows.Forms;
 
 namespace MediaPortal.Configuration
 {
-	/// <summary>
-	/// Summary description for SearchCityForm.
-	/// </summary>
-	public class SearchCityForm : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.GroupBox groupBox1;
-		private MediaPortal.UserInterface.Controls.MPButton closeButton;
-		private System.Windows.Forms.ListBox resultListBox;
-		private System.Windows.Forms.TextBox searchTextBox;
-		private MediaPortal.UserInterface.Controls.MPButton searchButton;
-		private MediaPortal.UserInterface.Controls.MPButton addButton;
-		private System.Windows.Forms.TextBox precipitationTextBox;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.TextBox humidityTextBox;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.TextBox windsTextBox;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.TextBox uvIndexTextBox;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.TextBox temperatureTextBox;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.TextBox locationTextBox;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.Label label9;
-		private System.Windows.Forms.GroupBox groupBox2;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+  /// <summary>
+  /// Summary description for SearchCityForm.
+  /// </summary>
+  public class SearchCityForm : System.Windows.Forms.Form
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPButton closeButton;
+    private System.Windows.Forms.ListBox resultListBox;
+    private System.Windows.Forms.TextBox searchTextBox;
+    private MediaPortal.UserInterface.Controls.MPButton searchButton;
+    private MediaPortal.UserInterface.Controls.MPButton addButton;
+    private System.Windows.Forms.TextBox precipitationTextBox;
+    private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.TextBox humidityTextBox;
+    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.TextBox windsTextBox;
+    private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.TextBox uvIndexTextBox;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.TextBox temperatureTextBox;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.TextBox locationTextBox;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label label8;
+    private System.Windows.Forms.Label label9;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public SearchCityForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public SearchCityForm()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.locationTextBox = new System.Windows.Forms.TextBox();
       this.label7 = new System.Windows.Forms.Label();
       this.uvIndexTextBox = new System.Windows.Forms.TextBox();
@@ -125,8 +125,8 @@ namespace MediaPortal.Configuration
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.groupBox2);
       this.groupBox1.Controls.Add(this.label8);
@@ -168,7 +168,7 @@ namespace MediaPortal.Configuration
       // 
       // locationTextBox
       // 
-      this.locationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.locationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.locationTextBox.Location = new System.Drawing.Point(24, 128);
       this.locationTextBox.Name = "locationTextBox";
@@ -242,8 +242,8 @@ namespace MediaPortal.Configuration
       // 
       // resultListBox
       // 
-      this.resultListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.resultListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.resultListBox.Location = new System.Drawing.Point(80, 16);
       this.resultListBox.Name = "resultListBox";
@@ -278,7 +278,7 @@ namespace MediaPortal.Configuration
       // 
       // label3
       // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.Location = new System.Drawing.Point(16, 80);
       this.label3.Name = "label3";
@@ -337,7 +337,7 @@ namespace MediaPortal.Configuration
       // 
       // searchTextBox
       // 
-      this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.searchTextBox.Location = new System.Drawing.Point(72, 24);
       this.searchTextBox.Name = "searchTextBox";
@@ -362,19 +362,19 @@ namespace MediaPortal.Configuration
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void searchButton_Click(object sender, System.EventArgs e)
-		{
-			//
-			// Disable add button
-			//
-			addButton.Enabled = false;
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void searchButton_Click(object sender, System.EventArgs e)
+    {
+      //
+      // Disable add button
+      //
+      addButton.Enabled = false;
 
       try
       {
@@ -389,129 +389,129 @@ namespace MediaPortal.Configuration
         //
         resultListBox.Items.Clear();
 
-        foreach(WeatherChannel.City city in cities)
+        foreach (WeatherChannel.City city in cities)
         {
           resultListBox.Items.Add(city);
 
-          if(resultListBox.Items.Count == 1)
+          if (resultListBox.Items.Count == 1)
             resultListBox.SelectedItem = resultListBox.Items[0];
         }
-				if (resultListBox.Items.Count>0)
-				{
-					groupBox2.Visible=true;
-					this.Height=488+40;
-				}
-				else
-					MessageBox.Show("No cities found", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        if (resultListBox.Items.Count > 0)
+        {
+          groupBox2.Visible = true;
+          this.Height = 488 + 40;
+        }
+        else
+          MessageBox.Show("No cities found", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         MessageBox.Show(ex.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
-		}
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public ArrayList SelectedCities
-		{
-			get 
-			{
-				return selectedCities;
-			}
-		}
-		ArrayList selectedCities = new ArrayList();
+    /// <summary>
+    /// 
+    /// </summary>
+    public ArrayList SelectedCities
+    {
+      get
+      {
+        return selectedCities;
+      }
+    }
+    ArrayList selectedCities = new ArrayList();
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void searchTextBox_TextChanged(object sender, System.EventArgs e)
-		{
-			searchButton.Enabled = searchTextBox.Text.Length > 0;
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void searchTextBox_TextChanged(object sender, System.EventArgs e)
+    {
+      searchButton.Enabled = searchTextBox.Text.Length > 0;
+    }
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void addButton_Click(object sender, System.EventArgs e)
-		{
-			foreach(WeatherChannel.City city in resultListBox.SelectedItems)
-			{
-				selectedCities.Add(city);
-			}
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void addButton_Click(object sender, System.EventArgs e)
+    {
+      foreach (WeatherChannel.City city in resultListBox.SelectedItems)
+      {
+        selectedCities.Add(city);
+      }
 
-			this.DialogResult = DialogResult.OK;
-			this.Hide();
-		}
+      this.DialogResult = DialogResult.OK;
+      this.Hide();
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void closeButton_Click(object sender, System.EventArgs e)
-		{
-			this.DialogResult = DialogResult.Cancel;
-			this.Hide();
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void closeButton_Click(object sender, System.EventArgs e)
+    {
+      this.DialogResult = DialogResult.Cancel;
+      this.Hide();
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void resultListBox_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			addButton.Enabled = resultListBox.SelectedItems.Count > 0;
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void resultListBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      addButton.Enabled = resultListBox.SelectedItems.Count > 0;
+    }
 
-		private void SearchCityForm_Load(object sender, System.EventArgs e)
-		{
-			this.Height=56+50;
-			groupBox2.Visible=false;
-		}
+    private void SearchCityForm_Load(object sender, System.EventArgs e)
+    {
+      this.Height = 56 + 50;
+      groupBox2.Visible = false;
+    }
 
-		public string SatteliteImage
-		{
-			get { return locationTextBox.Text; }
-			set { locationTextBox.Text = value; }
-		}
+    public string SatteliteImage
+    {
+      get { return locationTextBox.Text; }
+      set { locationTextBox.Text = value; }
+    }
 
-		public string TemperatureImage
-		{
-			get { return temperatureTextBox.Text; }
-			set { temperatureTextBox.Text = value; }
-		}
+    public string TemperatureImage
+    {
+      get { return temperatureTextBox.Text; }
+      set { temperatureTextBox.Text = value; }
+    }
 
-		public string UVIndexImage
-		{
-			get { return uvIndexTextBox.Text; }
-			set { uvIndexTextBox.Text = value; }
-		}
+    public string UVIndexImage
+    {
+      get { return uvIndexTextBox.Text; }
+      set { uvIndexTextBox.Text = value; }
+    }
 
-		public string WindsImage
-		{
-			get { return windsTextBox.Text; }
-			set { windsTextBox.Text = value; }
-		}
+    public string WindsImage
+    {
+      get { return windsTextBox.Text; }
+      set { windsTextBox.Text = value; }
+    }
 
-		public string HumidityImage
-		{
-			get { return humidityTextBox.Text; }
-			set { humidityTextBox.Text = value; }
-		}
+    public string HumidityImage
+    {
+      get { return humidityTextBox.Text; }
+      set { humidityTextBox.Text = value; }
+    }
 
-		public string PrecipitationImage
-		{
-			get { return precipitationTextBox.Text; }
-			set { precipitationTextBox.Text = value; }
-		}
+    public string PrecipitationImage
+    {
+      get { return precipitationTextBox.Text; }
+      set { precipitationTextBox.Text = value; }
+    }
 
-	}
+  }
 }

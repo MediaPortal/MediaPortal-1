@@ -42,60 +42,60 @@ using MediaPortal.TV.Scanning;
 
 namespace MediaPortal
 {
-	/// <summary>
-	/// Summary description for DigitalTVTuningForm.
-	/// </summary>
-	public class DigitalTVTuningForm : System.Windows.Forms.Form, AutoTuneCallback
-	{
+  /// <summary>
+  /// Summary description for DigitalTVTuningForm.
+  /// </summary>
+  public class DigitalTVTuningForm : System.Windows.Forms.Form, AutoTuneCallback
+  {
     private System.Windows.Forms.Label labelStatus;
     private MediaPortal.UserInterface.Controls.MPButton btnOk;
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.Label label1;
-    ArrayList     m_tvcards    = new ArrayList();
+    ArrayList m_tvcards = new ArrayList();
     private System.Windows.Forms.ListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader2;
-		ITuning				tuningInterface;
-		private System.Windows.Forms.ProgressBar progressBar1;
-		private System.Windows.Forms.Label labelStatus2;
-		private MediaPortal.UserInterface.Controls.MPButton button1;
-		private System.Windows.Forms.ImageList imageList1;
-		private System.ComponentModel.IContainer components;
-		private System.Windows.Forms.Label labelChannels;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.ProgressBar signalStrength;
-		private System.Windows.Forms.ProgressBar signalQuality;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.Timer timer1;
-		private MediaPortal.UserInterface.Controls.MPButton btnPrevChan;
-		private MediaPortal.UserInterface.Controls.MPButton btnNext;
-		TVCaptureDevice captureCard;
-		private System.Windows.Forms.GroupBox groupBox1;
-		bool	isAutoTuning=false;
+    ITuning tuningInterface;
+    private System.Windows.Forms.ProgressBar progressBar1;
+    private System.Windows.Forms.Label labelStatus2;
+    private MediaPortal.UserInterface.Controls.MPButton button1;
+    private System.Windows.Forms.ImageList imageList1;
+    private System.ComponentModel.IContainer components;
+    private System.Windows.Forms.Label labelChannels;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.ProgressBar signalStrength;
+    private System.Windows.Forms.ProgressBar signalQuality;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.Timer timer1;
+    private MediaPortal.UserInterface.Controls.MPButton btnPrevChan;
+    private MediaPortal.UserInterface.Controls.MPButton btnNext;
+    TVCaptureDevice captureCard;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    bool isAutoTuning = false;
 
-		public DigitalTVTuningForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public DigitalTVTuningForm()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			Update();
-      
-		}
+      Update();
+
+    }
 
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.components = new System.ComponentModel.Container();
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(DigitalTVTuningForm));
       this.labelStatus = new System.Windows.Forms.Label();
@@ -121,7 +121,7 @@ namespace MediaPortal
       this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.btnPrevChan = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnNext = new MediaPortal.UserInterface.Controls.MPButton();
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -348,37 +348,37 @@ namespace MediaPortal
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     private void btnOk_Click(object sender, System.EventArgs e)
     {
-     
-			//using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-			//{
-			//	xmlreader.SetValue("mytv", "vmr9",videoRenderer.ToString());
-			//}
-			TVChannels.UpdateList();
-			RadioStations.UpdateList();
+
+      //using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      //{
+      //	xmlreader.SetValue("mytv", "vmr9",videoRenderer.ToString());
+      //}
+      TVChannels.UpdateList();
+      RadioStations.UpdateList();
       this.Close();
     }
 
 
     private void DigitalTVTuningForm_Load(object sender, System.EventArgs e)
-    {	
-			btnOk.Enabled=false;
-			UpdateList();
-			GUIGraphicsContext.form=this;
-//			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
-//			{
-//				videoRenderer = xmlreader.GetValueAsInt("mytv", "vmr9", 0);
-//				xmlreader.SetValue("mytv", "vmr9","0");
-			//}
-      GUIGraphicsContext.VideoWindow=new Rectangle(panel1.Location,panel1.Size);
-      
-			tuningInterface.AutoTuneTV(captureCard,this);
-			tuningInterface.Next();
-			timer1.Enabled=true;
-			timer1.Interval=100;
+    {
+      btnOk.Enabled = false;
+      UpdateList();
+      GUIGraphicsContext.form = this;
+      //			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
+      //			{
+      //				videoRenderer = xmlreader.GetValueAsInt("mytv", "vmr9", 0);
+      //				xmlreader.SetValue("mytv", "vmr9","0");
+      //}
+      GUIGraphicsContext.VideoWindow = new Rectangle(panel1.Location, panel1.Size);
+
+      tuningInterface.AutoTuneTV(captureCard, this);
+      tuningInterface.Next();
+      timer1.Enabled = true;
+      timer1.Interval = 100;
     }
 
 
@@ -388,249 +388,249 @@ namespace MediaPortal
 
       tuningInterface.Continue();
     }
-		public ITuning Tuning
-		{
-			set 
-			{
-				tuningInterface=value;
-			}
-		}
-		public TVCaptureDevice Card
-		{
-			set 
-			{
-				captureCard=value;
-			}
-		}
-		#region AutoTuneCallback Members
+    public ITuning Tuning
+    {
+      set
+      {
+        tuningInterface = value;
+      }
+    }
+    public TVCaptureDevice Card
+    {
+      set
+      {
+        captureCard = value;
+      }
+    }
+    #region AutoTuneCallback Members
 
-		public void OnEnded()
-		{
-			btnOk.Enabled=true;
-			button1.Enabled=false;
-			btnPrevChan.Enabled=false;
-			btnNext.Enabled=false;
-			signalQuality.Value=0;
-			signalStrength.Value=0;
-		}
-		public void OnNewChannel()
-		{
-		}
+    public void OnEnded()
+    {
+      btnOk.Enabled = true;
+      button1.Enabled = false;
+      btnPrevChan.Enabled = false;
+      btnNext.Enabled = false;
+      signalQuality.Value = 0;
+      signalStrength.Value = 0;
+    }
+    public void OnNewChannel()
+    {
+    }
 
-		public void OnProgress(int percentDone)
-		{
-			progressBar1.Value=percentDone;
-		}
+    public void OnProgress(int percentDone)
+    {
+      progressBar1.Value = percentDone;
+    }
 
-		public void OnStatus(string description)
-		{
-			labelStatus.Text=description;
-		}
+    public void OnStatus(string description)
+    {
+      labelStatus.Text = description;
+    }
 
-		public void OnStatus2(string description)
-		{
-			labelStatus2.Text=description;
-		}
+    public void OnStatus2(string description)
+    {
+      labelStatus2.Text = description;
+    }
 
-		public void UpdateList()
-		{
-			UpdateSignal();
-			listView1.Items.Clear();
-      
-			ArrayList channels=new ArrayList();
-			TVDatabase.GetChannels(ref channels);
-			foreach (TVChannel channel in channels)
-			{
-				if (channel.Number<(int)ExternalInputs.svhs)
-				{
-					ListViewItem item = new ListViewItem();
-					item.ImageIndex=0;
-					if (channel.Scrambled)
-						item.ImageIndex=1;
-					item.Text=channel.Name;
-					item.SubItems.Add(channel.Number.ToString());
-					listView1.Items.Add(item);
-				}
-			}
-			labelChannels.Text=listView1.Items.Count.ToString();
-		}
-		#endregion
+    public void UpdateList()
+    {
+      UpdateSignal();
+      listView1.Items.Clear();
 
-		private void buttonAdd_Click(object sender, System.EventArgs e)
-		{
-			editName formName = new editName();
-			formName.ShowDialog(this);
-			if (formName.ChannelName==String.Empty)
-			{
-				return;
-			}
+      ArrayList channels = new ArrayList();
+      TVDatabase.GetChannels(ref channels);
+      foreach (TVChannel channel in channels)
+      {
+        if (channel.Number < (int)ExternalInputs.svhs)
+        {
+          ListViewItem item = new ListViewItem();
+          item.ImageIndex = 0;
+          if (channel.Scrambled)
+            item.ImageIndex = 1;
+          item.Text = channel.Name;
+          item.SubItems.Add(channel.Number.ToString());
+          listView1.Items.Add(item);
+        }
+      }
+      labelChannels.Text = listView1.Items.Count.ToString();
+    }
+    #endregion
+
+    private void buttonAdd_Click(object sender, System.EventArgs e)
+    {
+      editName formName = new editName();
+      formName.ShowDialog(this);
+      if (formName.ChannelName == String.Empty)
+      {
+        return;
+      }
 
 
-			TVChannel chan = new TVChannel();
-			chan.Name = formName.ChannelName;
-			chan.Number=GetUniqueNumber();
-			chan.VisibleInGuide=true;
-			TVDatabase.AddChannel(chan);
-			tuningInterface.MapToChannel(chan.Name);
+      TVChannel chan = new TVChannel();
+      chan.Name = formName.ChannelName;
+      chan.Number = GetUniqueNumber();
+      chan.VisibleInGuide = true;
+      TVDatabase.AddChannel(chan);
+      tuningInterface.MapToChannel(chan.Name);
 
-			UpdateList();
-			NextChannel();
-		}
-		int GetUniqueNumber()
-		{
-			ArrayList channels=new ArrayList();
-			TVDatabase.GetChannels(ref channels);
-			int number=1;
-			while (true)
-			{
-				bool unique=true;
-				foreach (TVChannel chan in channels)
-				{
-					if (chan.Number==number)
-					{
-						unique=false;
-						break;
-					}
-				}
-				if (!unique)
-				{
-					number++;
-				}
-				else
-				{
-					return number;
-				}
-			}
-		}
+      UpdateList();
+      NextChannel();
+    }
+    int GetUniqueNumber()
+    {
+      ArrayList channels = new ArrayList();
+      TVDatabase.GetChannels(ref channels);
+      int number = 1;
+      while (true)
+      {
+        bool unique = true;
+        foreach (TVChannel chan in channels)
+        {
+          if (chan.Number == number)
+          {
+            unique = false;
+            break;
+          }
+        }
+        if (!unique)
+        {
+          number++;
+        }
+        else
+        {
+          return number;
+        }
+      }
+    }
 
-		private void DigitalTVTuningForm_Closed(object sender, System.EventArgs e)
-		{
-			
-			
-			try
-			{
-				if (tuningInterface==null) return;
-				tuningInterface.Stop();		
-			}
-			catch (Exception){}
-		}
+    private void DigitalTVTuningForm_Closed(object sender, System.EventArgs e)
+    {
 
-		private void DigitalTVTuningForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-		{
-			
-			
-			try
-			{
-				if (tuningInterface==null) return;
-				tuningInterface.Stop();		
-			}
-			catch (Exception){}
-		
-		}
 
-		private void button1_Click(object sender, System.EventArgs e)
-		{
-			if (isAutoTuning)
-			{
-				if (tuningInterface==null) return;
-				isAutoTuning=false;
-				tuningInterface.Stop();		
+      try
+      {
+        if (tuningInterface == null) return;
+        tuningInterface.Stop();
+      }
+      catch (Exception) { }
+    }
 
-				button1.Enabled=true;
-				btnNext.Enabled=true;
-				btnPrevChan.Enabled=true;
-				btnOk.Enabled=true;
-				btnOk.Focus();
-				button1.Text="Auto Scan";
-				timer1.Enabled=true;
-			}
-			else
-			{
-				if (tuningInterface==null) return;
-				isAutoTuning=true;
-				tuningInterface.Start();		
-				button1.Enabled=true;
-				btnNext.Enabled=false;
-				btnPrevChan.Enabled=false;
-				btnOk.Enabled=false;
-				button1.Focus();
-				button1.Text="Stop";
-				timer1.Enabled=false;
-			}
-		}
-		public void OnSignal(int quality, int strength)
-		{
-			if (quality< 0) quality=0;
-			if (quality>100) quality=100;
-			if (strength< 0) strength=0;
-			if (strength>100) strength=100;
-			signalQuality.Value=quality;
-			signalStrength.Value=strength;
-			System.Windows.Forms.Application.DoEvents();
-		}
+    private void DigitalTVTuningForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
 
-		static bool reentrant=false;
-		void UpdateSignal()
-		{
-			if (captureCard==null) return;
-			if (reentrant) return;
-			try
-			{
-				reentrant=true;
-				OnSignal(captureCard.SignalQuality,captureCard.SignalStrength);
-			}
-			finally
-			{
-				reentrant=false;
-			}
-		}
 
-		private void listView1_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-		}
+      try
+      {
+        if (tuningInterface == null) return;
+        tuningInterface.Stop();
+      }
+      catch (Exception) { }
 
-		private void btnPrevChan_Click(object sender, System.EventArgs e)
-		{
-			if (tuningInterface==null) return;
-			timer1.Enabled=false;
-			button1.Enabled=false;
-			btnNext.Enabled=false;
-			btnPrevChan.Enabled=false;
-			btnOk.Enabled=false;
+    }
 
-			tuningInterface.Previous();
-			button1.Enabled=true;
-			btnNext.Enabled=true;
-			btnPrevChan.Enabled=true;
-			btnOk.Enabled=true;
+    private void button1_Click(object sender, System.EventArgs e)
+    {
+      if (isAutoTuning)
+      {
+        if (tuningInterface == null) return;
+        isAutoTuning = false;
+        tuningInterface.Stop();
 
-			timer1.Enabled=true;
-		}
+        button1.Enabled = true;
+        btnNext.Enabled = true;
+        btnPrevChan.Enabled = true;
+        btnOk.Enabled = true;
+        btnOk.Focus();
+        button1.Text = "Auto Scan";
+        timer1.Enabled = true;
+      }
+      else
+      {
+        if (tuningInterface == null) return;
+        isAutoTuning = true;
+        tuningInterface.Start();
+        button1.Enabled = true;
+        btnNext.Enabled = false;
+        btnPrevChan.Enabled = false;
+        btnOk.Enabled = false;
+        button1.Focus();
+        button1.Text = "Stop";
+        timer1.Enabled = false;
+      }
+    }
+    public void OnSignal(int quality, int strength)
+    {
+      if (quality < 0) quality = 0;
+      if (quality > 100) quality = 100;
+      if (strength < 0) strength = 0;
+      if (strength > 100) strength = 100;
+      signalQuality.Value = quality;
+      signalStrength.Value = strength;
+      System.Windows.Forms.Application.DoEvents();
+    }
 
-		private void btnNext_Click(object sender, System.EventArgs e)
-		{
-			if (tuningInterface==null) return;
-			timer1.Enabled=false;
-			button1.Enabled=false;
-			btnNext.Enabled=false;
-			btnPrevChan.Enabled=false;
-			btnOk.Enabled=false;
+    static bool reentrant = false;
+    void UpdateSignal()
+    {
+      if (captureCard == null) return;
+      if (reentrant) return;
+      try
+      {
+        reentrant = true;
+        OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
+      }
+      finally
+      {
+        reentrant = false;
+      }
+    }
 
-			tuningInterface.Next();
-			button1.Enabled=true;
-			btnNext.Enabled=true;
-			btnPrevChan.Enabled=true;
-			btnOk.Enabled=true;
+    private void listView1_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+    }
 
-			timer1.Enabled=true;
-		}
+    private void btnPrevChan_Click(object sender, System.EventArgs e)
+    {
+      if (tuningInterface == null) return;
+      timer1.Enabled = false;
+      button1.Enabled = false;
+      btnNext.Enabled = false;
+      btnPrevChan.Enabled = false;
+      btnOk.Enabled = false;
 
-		private void timer1_Tick(object sender, System.EventArgs e)
-		{
-			if (!isAutoTuning)
-			{
-				UpdateSignal();
-			}
-		}
-	}
+      tuningInterface.Previous();
+      button1.Enabled = true;
+      btnNext.Enabled = true;
+      btnPrevChan.Enabled = true;
+      btnOk.Enabled = true;
+
+      timer1.Enabled = true;
+    }
+
+    private void btnNext_Click(object sender, System.EventArgs e)
+    {
+      if (tuningInterface == null) return;
+      timer1.Enabled = false;
+      button1.Enabled = false;
+      btnNext.Enabled = false;
+      btnPrevChan.Enabled = false;
+      btnOk.Enabled = false;
+
+      tuningInterface.Next();
+      button1.Enabled = true;
+      btnNext.Enabled = true;
+      btnPrevChan.Enabled = true;
+      btnOk.Enabled = true;
+
+      timer1.Enabled = true;
+    }
+
+    private void timer1_Tick(object sender, System.EventArgs e)
+    {
+      if (!isAutoTuning)
+      {
+        UpdateSignal();
+      }
+    }
+  }
 }

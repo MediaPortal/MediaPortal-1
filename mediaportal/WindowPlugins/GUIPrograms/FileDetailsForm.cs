@@ -37,7 +37,7 @@ namespace WindowPlugins.GUIPrograms
   /// <summary>
   /// Summary description for FileDetailsForm.
   /// </summary>
-  public class FileDetailsForm: Form
+  public class FileDetailsForm : Form
   {
     private AppItem m_CurApp;
     private FileItem m_CurFile;
@@ -147,7 +147,7 @@ namespace WindowPlugins.GUIPrograms
       this.buttonViewImg = new MediaPortal.UserInterface.Controls.MPButton();
       this.tcFileItemData = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.gbFileDetails = new System.Windows.Forms.GroupBox();
+      this.gbFileDetails = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.txtFilepath = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
       this.cbRating = new System.Windows.Forms.ComboBox();
@@ -173,7 +173,7 @@ namespace WindowPlugins.GUIPrograms
       this.lblFilename = new System.Windows.Forms.Label();
       this.btnFilename = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabPage2 = new System.Windows.Forms.TabPage();
-      this.gbExtended = new System.Windows.Forms.GroupBox();
+      this.gbExtended = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.txtCategoryData = new System.Windows.Forms.TextBox();
       this.lblCategoryData = new System.Windows.Forms.Label();
       this.txtTagData = new System.Windows.Forms.TextBox();
@@ -217,8 +217,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // tcFileItemData
       // 
-      this.tcFileItemData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.tcFileItemData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tcFileItemData.Controls.Add(this.tabPage1);
       this.tcFileItemData.Controls.Add(this.tabPage2);
@@ -239,8 +239,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // gbFileDetails
       // 
-      this.gbFileDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.gbFileDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.gbFileDetails.Controls.Add(this.buttonViewImg);
       this.gbFileDetails.Controls.Add(this.txtFilepath);
@@ -275,7 +275,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtFilepath
       // 
-      this.txtFilepath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.txtFilepath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.txtFilepath.Location = new System.Drawing.Point(88, 72);
       this.txtFilepath.Name = "txtFilepath";
@@ -314,8 +314,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtOverview
       // 
-      this.txtOverview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.txtOverview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.txtOverview.Location = new System.Drawing.Point(8, 288);
       this.txtOverview.Multiline = true;
@@ -335,7 +335,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtSystem
       // 
-      this.txtSystem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.txtSystem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.txtSystem.Location = new System.Drawing.Point(88, 242);
       this.txtSystem.Name = "txtSystem";
@@ -353,7 +353,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtCountry
       // 
-      this.txtCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.txtCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.txtCountry.Location = new System.Drawing.Point(88, 218);
       this.txtCountry.Name = "txtCountry";
@@ -396,7 +396,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtManufacturer
       // 
-      this.txtManufacturer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.txtManufacturer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.txtManufacturer.Location = new System.Drawing.Point(88, 170);
       this.txtManufacturer.Name = "txtManufacturer";
@@ -414,7 +414,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtGenre
       // 
-      this.txtGenre.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.txtGenre.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.txtGenre.Location = new System.Drawing.Point(88, 120);
       this.txtGenre.Multiline = true;
@@ -452,7 +452,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtFilename
       // 
-      this.txtFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.txtFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.txtFilename.Location = new System.Drawing.Point(88, 48);
       this.txtFilename.Name = "txtFilename";
@@ -462,7 +462,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtImageFile
       // 
-      this.txtImageFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.txtImageFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.txtImageFile.Location = new System.Drawing.Point(88, 96);
       this.txtImageFile.Name = "txtImageFile";
@@ -472,7 +472,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtTitle
       // 
-      this.txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.txtTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.txtTitle.Location = new System.Drawing.Point(88, 24);
       this.txtTitle.Name = "txtTitle";
@@ -517,8 +517,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // gbExtended
       // 
-      this.gbExtended.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.gbExtended.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.gbExtended.Controls.Add(this.txtCategoryData);
       this.gbExtended.Controls.Add(this.lblCategoryData);
@@ -532,8 +532,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtCategoryData
       // 
-      this.txtCategoryData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.txtCategoryData.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.txtCategoryData.Location = new System.Drawing.Point(8, 224);
       this.txtCategoryData.Multiline = true;
@@ -553,7 +553,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // txtTagData
       // 
-      this.txtTagData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.txtTagData.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.txtTagData.Location = new System.Drawing.Point(8, 32);
       this.txtTagData.Multiline = true;
@@ -592,7 +592,7 @@ namespace WindowPlugins.GUIPrograms
       this.ResumeLayout(false);
 
     }
-    #endregion 
+    #endregion
 
     private void updateDisplay()
     {
@@ -673,11 +673,11 @@ namespace WindowPlugins.GUIPrograms
       CurFile.Genre3 = "";
       CurFile.Genre4 = "";
       CurFile.Genre5 = "";
-      if (txtGenre.Lines.Length > 0){ CurFile.Genre = txtGenre.Lines[0]; }
-      if (txtGenre.Lines.Length > 1){ CurFile.Genre2 = txtGenre.Lines[1]; }
-      if (txtGenre.Lines.Length > 2){ CurFile.Genre3 = txtGenre.Lines[2]; }
-      if (txtGenre.Lines.Length > 3){ CurFile.Genre4 = txtGenre.Lines[3]; }
-      if (txtGenre.Lines.Length > 4){ CurFile.Genre5 = txtGenre.Lines[4]; }
+      if (txtGenre.Lines.Length > 0) { CurFile.Genre = txtGenre.Lines[0]; }
+      if (txtGenre.Lines.Length > 1) { CurFile.Genre2 = txtGenre.Lines[1]; }
+      if (txtGenre.Lines.Length > 2) { CurFile.Genre3 = txtGenre.Lines[2]; }
+      if (txtGenre.Lines.Length > 3) { CurFile.Genre4 = txtGenre.Lines[3]; }
+      if (txtGenre.Lines.Length > 4) { CurFile.Genre5 = txtGenre.Lines[4]; }
     }
 
     void FileItemToGenre()
@@ -719,7 +719,7 @@ namespace WindowPlugins.GUIPrograms
       CurFile.Imagefile = txtImageFile.Text;
       GenreToFileItem();
       CurFile.Manufacturer = txtManufacturer.Text;
-      CurFile.Year = ProgramUtils.StrToIntDef(txtYear.Text,  - 1);
+      CurFile.Year = ProgramUtils.StrToIntDef(txtYear.Text, -1);
       CurFile.Rating = cbRating.SelectedIndex;
       CurFile.Country = txtCountry.Text;
       CurFile.System_ = txtSystem.Text;
@@ -744,7 +744,7 @@ namespace WindowPlugins.GUIPrograms
           Process.Start(sInfo);
         }
       }
-      catch 
+      catch
       {
         // do nothing! 
       }

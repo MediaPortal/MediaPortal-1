@@ -63,11 +63,11 @@ using WaveLib;
 
 namespace Yeti.MMedia.Mp3
 {
-	/// <summary>
-	/// Summary description for EditMp3Writer.
-	/// </summary>
-	public class EditMp3Writer : System.Windows.Forms.UserControl, IEditAudioWriterConfig
-	{
+  /// <summary>
+  /// Summary description for EditMp3Writer.
+  /// </summary>
+  public class EditMp3Writer : System.Windows.Forms.UserControl, IEditAudioWriterConfig
+  {
     private System.Windows.Forms.TabControl tabControl1;
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.TabPage tabPage2;
@@ -92,46 +92,46 @@ namespace Yeti.MMedia.Mp3
     private System.Windows.Forms.TrackBar trackBarVBRQuality;
     private System.Windows.Forms.Label label7;
     private System.Windows.Forms.Label label8;
-    private System.Windows.Forms.GroupBox groupBoxVBR;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxVBR;
     private System.ComponentModel.IContainer components;
-    
+
     private Lame.BE_CONFIG m_Config = null;
     private const string Mpeg1BitRates = "32,40,48,56,64,80,96,112,128,160,192,224,256,320";
     private const string Mpeg2BitRates = "8,16,24,32,40,48,56,64,80,96,112,128,144,160";
 
-		public EditMp3Writer()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public EditMp3Writer()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
 
-			m_Config = new Yeti.Lame.BE_CONFIG(editFormat1.Format);
+      m_Config = new Yeti.Lame.BE_CONFIG(editFormat1.Format);
       DoSetInitialValues();
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
     private bool m_FireConfigChangeEvent = true;
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.components = new System.ComponentModel.Container();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -142,7 +142,7 @@ namespace Yeti.MMedia.Mp3
       this.checkBoxCRC = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxCopyRight = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBoxVBR = new System.Windows.Forms.GroupBox();
+      this.groupBoxVBR = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label8 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
       this.comboBoxVBRMethod = new System.Windows.Forms.ComboBox();
@@ -422,7 +422,7 @@ namespace Yeti.MMedia.Mp3
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     #region IEditAudioWriterConfig Members
 
@@ -431,16 +431,16 @@ namespace Yeti.MMedia.Mp3
       get
       {
         Lame.BE_CONFIG cfg = new Yeti.Lame.BE_CONFIG(editFormat1.Format, uint.Parse(comboBoxBitRate.SelectedItem.ToString()));
-        cfg.format.lhv1.bCopyright = checkBoxCopyRight.Checked? 1 : 0;
-        cfg.format.lhv1.bCRC = checkBoxCRC.Checked? 1 : 0;
-        cfg.format.lhv1.bOriginal = checkBoxOriginal.Checked? 1 : 0;
-        cfg.format.lhv1.bPrivate = checkBoxPrivate.Checked? 1 : 0;
-        if ( checkBoxVBR.Checked )
+        cfg.format.lhv1.bCopyright = checkBoxCopyRight.Checked ? 1 : 0;
+        cfg.format.lhv1.bCRC = checkBoxCRC.Checked ? 1 : 0;
+        cfg.format.lhv1.bOriginal = checkBoxOriginal.Checked ? 1 : 0;
+        cfg.format.lhv1.bPrivate = checkBoxPrivate.Checked ? 1 : 0;
+        if (checkBoxVBR.Checked)
         {
           cfg.format.lhv1.bEnableVBR = 1;
-          if ( comboBoxVBRMethod.SelectedIndex > 0 )
+          if (comboBoxVBRMethod.SelectedIndex > 0)
           {
-            cfg.format.lhv1.nVbrMethod = (Lame.VBRMETHOD)(comboBoxVBRMethod.SelectedIndex+1);
+            cfg.format.lhv1.nVbrMethod = (Lame.VBRMETHOD)(comboBoxVBRMethod.SelectedIndex + 1);
           }
           else
           {
@@ -533,7 +533,7 @@ namespace Yeti.MMedia.Mp3
         checkBoxOriginal.Checked = hv.bOriginal != 0;
         checkBoxPrivate.Checked = hv.bPrivate != 0;
         comboBoxVBRMethod.SelectedIndex = (int)hv.nVbrMethod + 1;
-        if ( (hv.nVBRQuality >=0) && (hv.nVBRQuality <= 9) )
+        if ((hv.nVBRQuality >= 0) && (hv.nVBRQuality <= 9))
         {
           trackBarVBRQuality.Value = hv.nVBRQuality;
         }
@@ -553,7 +553,7 @@ namespace Yeti.MMedia.Mp3
 
     protected virtual void DoConfigChange(System.EventArgs e)
     {
-      if ( m_FireConfigChangeEvent && (ConfigChange != null) )
+      if (m_FireConfigChangeEvent && (ConfigChange != null))
       {
         ConfigChange(this, e);
       }
@@ -583,7 +583,7 @@ namespace Yeti.MMedia.Mp3
 
     private void BitRateChange(object sender, System.EventArgs e)
     {
-      if (comboBoxMaxBitRate.SelectedIndex < comboBoxBitRate.SelectedIndex )
+      if (comboBoxMaxBitRate.SelectedIndex < comboBoxBitRate.SelectedIndex)
       {
         comboBoxMaxBitRate.SelectedIndex = comboBoxBitRate.SelectedIndex;
       }

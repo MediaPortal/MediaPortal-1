@@ -34,89 +34,91 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class WINLIRC : MediaPortal.Configuration.SectionSettings
-	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
-		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.Label PathToWinlircLabel;
-		private System.Windows.Forms.TextBox pathToWinlircTextBox;
-		private MediaPortal.UserInterface.Controls.MPButton browsePathToWinlircButton;
-		private System.Windows.Forms.TextBox infoTextBox;
-		private System.Windows.Forms.OpenFileDialog openFileDialog1;
-		private System.Windows.Forms.TextBox IRDelayTextBox;
-		private System.Windows.Forms.Label IRDelayLabel;
-		private System.ComponentModel.IContainer components = null;
+  public class WINLIRC : MediaPortal.Configuration.SectionSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+    private System.Windows.Forms.Label PathToWinlircLabel;
+    private System.Windows.Forms.TextBox pathToWinlircTextBox;
+    private MediaPortal.UserInterface.Controls.MPButton browsePathToWinlircButton;
+    private System.Windows.Forms.TextBox infoTextBox;
+    private System.Windows.Forms.OpenFileDialog openFileDialog1;
+    private System.Windows.Forms.TextBox IRDelayTextBox;
+    private System.Windows.Forms.Label IRDelayLabel;
+    private System.ComponentModel.IContainer components = null;
 
-		public WINLIRC() : this("WINLIRC")
-		{
-		}
+    public WINLIRC()
+      : this("WINLIRC")
+    {
+    }
 
-		public WINLIRC(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public WINLIRC(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			// 
-			// Initialize the WINLIRC component
-			//
-		}
+      // 
+      // Initialize the WINLIRC component
+      //
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		public override void LoadSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				inputCheckBox.Checked = xmlreader.GetValueAsString("WINLIRC", "enabled", "true") == "true";
-				pathToWinlircTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "winlircpath", "");
-				IRDelayTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "delay", "300") ;
-				//useMultipleCheckBox.Checked = xmlreader.GetValueAsString("WINLIRC", "use_multiple_remotes", "true") == "true";
-				//remoteNameTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "remote", "") ;
-				//repeatValTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "repeat", "0");
-				//enterCheckBox.Checked = xmlreader.GetValueAsString("WINLIRC", "needs_enter", "false") == "true";
-			}
-			UpdateForm();
-			LoadInfo();
-		}
+    public override void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        inputCheckBox.Checked = xmlreader.GetValueAsString("WINLIRC", "enabled", "true") == "true";
+        pathToWinlircTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "winlircpath", "");
+        IRDelayTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "delay", "300");
+        //useMultipleCheckBox.Checked = xmlreader.GetValueAsString("WINLIRC", "use_multiple_remotes", "true") == "true";
+        //remoteNameTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "remote", "") ;
+        //repeatValTextBox.Text = xmlreader.GetValueAsString("WINLIRC", "repeat", "0");
+        //enterCheckBox.Checked = xmlreader.GetValueAsString("WINLIRC", "needs_enter", "false") == "true";
+      }
+      UpdateForm();
+      LoadInfo();
+    }
 
-		public override void SaveSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				xmlwriter.SetValue("WINLIRC", "enabled", inputCheckBox.Checked ? "true" : "false");
-				xmlwriter.SetValue("WINLIRC", "winlircpath", pathToWinlircTextBox.Text);
-				if(IsInteger(IRDelayTextBox.Text) == false)
-					IRDelayTextBox.Text = "300";
-				xmlwriter.SetValue("WINLIRC", "delay", IRDelayTextBox.Text);			
-				//xmlwriter.SetValue("WINLIRC", "use_multiple_remotes", useMultipleCheckBox.Checked ? "true" : "false");
-				//xmlwriter.SetValue("WINLIRC", "remote", remoteNameTextBox.Text);
-				//xmlwriter.SetValue("WINLIRC", "repeat", repeatValTextBox.Text);			
-				//xmlwriter.SetValue("WINLIRC", "needs_enter", enterCheckBox.Checked ? "true" : "false");			
-			}			
-		}
+    public override void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValue("WINLIRC", "enabled", inputCheckBox.Checked ? "true" : "false");
+        xmlwriter.SetValue("WINLIRC", "winlircpath", pathToWinlircTextBox.Text);
+        if (IsInteger(IRDelayTextBox.Text) == false)
+          IRDelayTextBox.Text = "300";
+        xmlwriter.SetValue("WINLIRC", "delay", IRDelayTextBox.Text);
+        //xmlwriter.SetValue("WINLIRC", "use_multiple_remotes", useMultipleCheckBox.Checked ? "true" : "false");
+        //xmlwriter.SetValue("WINLIRC", "remote", remoteNameTextBox.Text);
+        //xmlwriter.SetValue("WINLIRC", "repeat", repeatValTextBox.Text);			
+        //xmlwriter.SetValue("WINLIRC", "needs_enter", enterCheckBox.Checked ? "true" : "false");			
+      }
+    }
 
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.IRDelayTextBox = new System.Windows.Forms.TextBox();
       this.IRDelayLabel = new System.Windows.Forms.Label();
@@ -124,7 +126,7 @@ namespace MediaPortal.Configuration.Sections
       this.pathToWinlircTextBox = new System.Windows.Forms.TextBox();
       this.PathToWinlircLabel = new System.Windows.Forms.Label();
       this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.infoTextBox = new System.Windows.Forms.TextBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.groupBox1.SuspendLayout();
@@ -133,7 +135,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.IRDelayTextBox);
       this.groupBox1.Controls.Add(this.IRDelayLabel);
@@ -151,7 +153,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // IRDelayTextBox
       // 
-      this.IRDelayTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.IRDelayTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.IRDelayTextBox.Location = new System.Drawing.Point(168, 76);
       this.IRDelayTextBox.Name = "IRDelayTextBox";
@@ -180,7 +182,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // pathToWinlircTextBox
       // 
-      this.pathToWinlircTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.pathToWinlircTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.pathToWinlircTextBox.Location = new System.Drawing.Point(168, 52);
       this.pathToWinlircTextBox.Name = "pathToWinlircTextBox";
@@ -208,8 +210,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.infoTextBox);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -222,8 +224,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // infoTextBox
       // 
-      this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.infoTextBox.BackColor = System.Drawing.SystemColors.Control;
       this.infoTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -248,51 +250,51 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		private void inputCheckBox_CheckedChanged(object sender, System.EventArgs e)
-		{
-			UpdateForm();
-		}
+    private void inputCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    {
+      UpdateForm();
+    }
 
-		private void UpdateForm()
-		{
-			PathToWinlircLabel.Enabled = inputCheckBox.Checked;
-			pathToWinlircTextBox.Enabled  = inputCheckBox.Checked ;
-			browsePathToWinlircButton.Enabled  = inputCheckBox.Checked;
-			IRDelayTextBox.Enabled  = inputCheckBox.Checked;
-			IRDelayLabel.Enabled  = inputCheckBox.Checked;
-			//remoteNameLabel.Enabled  = inputCheckBox.Checked;
-			//remoteNameTextBox.Enabled  = inputCheckBox.Checked;
-		}
+    private void UpdateForm()
+    {
+      PathToWinlircLabel.Enabled = inputCheckBox.Checked;
+      pathToWinlircTextBox.Enabled = inputCheckBox.Checked;
+      browsePathToWinlircButton.Enabled = inputCheckBox.Checked;
+      IRDelayTextBox.Enabled = inputCheckBox.Checked;
+      IRDelayLabel.Enabled = inputCheckBox.Checked;
+      //remoteNameLabel.Enabled  = inputCheckBox.Checked;
+      //remoteNameTextBox.Enabled  = inputCheckBox.Checked;
+    }
 
-		private void WINLIRC_Load(object sender, System.EventArgs e)
-		{
-		
-		}
+    private void WINLIRC_Load(object sender, System.EventArgs e)
+    {
 
-		private void browsePathToWinlircButton_Click(object sender, System.EventArgs e)
-		{
-			using(openFileDialog1 = new OpenFileDialog())
-			{
-				openFileDialog1.FileName = pathToWinlircTextBox.Text;
-				openFileDialog1.CheckFileExists = true;
-				openFileDialog1.RestoreDirectory=true;
-				openFileDialog1.Filter= "exe files (*.exe)|*.exe";
-				openFileDialog1.FilterIndex = 0;
-				openFileDialog1.Title = "Select WinLirc Executable";
+    }
 
-				DialogResult dialogResult = openFileDialog1.ShowDialog();
+    private void browsePathToWinlircButton_Click(object sender, System.EventArgs e)
+    {
+      using (openFileDialog1 = new OpenFileDialog())
+      {
+        openFileDialog1.FileName = pathToWinlircTextBox.Text;
+        openFileDialog1.CheckFileExists = true;
+        openFileDialog1.RestoreDirectory = true;
+        openFileDialog1.Filter = "exe files (*.exe)|*.exe";
+        openFileDialog1.FilterIndex = 0;
+        openFileDialog1.Title = "Select WinLirc Executable";
 
-				if(dialogResult == DialogResult.OK)
-				{
-					pathToWinlircTextBox.Text = openFileDialog1.FileName;
-				}
-			}
-		}
-		private void LoadInfo()
-		{
-			string[] lines = {
+        DialogResult dialogResult = openFileDialog1.ShowDialog();
+
+        if (dialogResult == DialogResult.OK)
+        {
+          pathToWinlircTextBox.Text = openFileDialog1.FileName;
+        }
+      }
+    }
+    private void LoadInfo()
+    {
+      string[] lines = {
 												 "::Winlirc::\n",
 												 "> Winlirc must be installed on your PC",
 												 "> You should set-up Winlirc with the remote(s) you require.",
@@ -310,15 +312,15 @@ namespace MediaPortal.Configuration.Sections
 												 "",
 												 "::ADDITIONAL::",
 												 "> Check out the remote configs @ http://lirc.sourceforge.net/remotes/"};
-			infoTextBox.Lines = lines;
-		}
-		private bool IsInteger(object Expression)
-		{
-			bool isNum;
-			double retNum;	
-			isNum = Double.TryParse(Convert.ToString(Expression), System.Globalization.NumberStyles.Integer,System.Globalization.NumberFormatInfo.InvariantInfo, out retNum );
-			return isNum;
-		}
-	}
+      infoTextBox.Lines = lines;
+    }
+    private bool IsInteger(object Expression)
+    {
+      bool isNum;
+      double retNum;
+      isNum = Double.TryParse(Convert.ToString(Expression), System.Globalization.NumberStyles.Integer, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
+      return isNum;
+    }
+  }
 }
 

@@ -41,12 +41,12 @@ namespace MediaPortal
     private D3DEnumeration enumeration;
     public D3DSettings settings; // Potential new D3D settings
 
-    private System.Windows.Forms.GroupBox adapterDeviceGroupBox;
+    private MediaPortal.UserInterface.Controls.MPGroupBox adapterDeviceGroupBox;
     private System.Windows.Forms.Label displayAdapterLabel;
     private System.Windows.Forms.ComboBox adapterComboBox;
     private System.Windows.Forms.Label deviceLabel;
     private System.Windows.Forms.ComboBox deviceComboBox;
-    private System.Windows.Forms.GroupBox modeSettingsGroupBox;
+    private MediaPortal.UserInterface.Controls.MPGroupBox modeSettingsGroupBox;
     private System.Windows.Forms.RadioButton windowedRadioButton;
     private System.Windows.Forms.RadioButton fullscreenRadioButton;
     private System.Windows.Forms.Label adapterFormatLabel;
@@ -55,7 +55,7 @@ namespace MediaPortal
     private System.Windows.Forms.ComboBox resolutionComboBox;
     private System.Windows.Forms.Label refreshRateLabel;
     private System.Windows.Forms.ComboBox refreshRateComboBox;
-    private System.Windows.Forms.GroupBox otherSettingsGroupBox;
+    private MediaPortal.UserInterface.Controls.MPGroupBox otherSettingsGroupBox;
     private System.Windows.Forms.Label backBufferFormatLabel;
     private System.Windows.Forms.ComboBox backBufferFormatComboBox;
     private System.Windows.Forms.Label depthStencilBufferLabel;
@@ -80,8 +80,8 @@ namespace MediaPortal
     private System.ComponentModel.Container components = null;
 
 
-    
-    
+
+
     /// <summary>
     /// Constructor.  Pass in an enumeration and the current D3D settings.
     /// </summary>
@@ -114,13 +114,13 @@ namespace MediaPortal
     protected override void Dispose(bool Disposing)
     {
       base.Dispose(Disposing);
-      if (components != null)	
+      if (components != null)
         components.Dispose();
     }
 
 
-    
-    
+
+
     #region Windows Form Designer generated code
     /// <summary>
     /// Required method for Designer support - do not modify
@@ -128,14 +128,14 @@ namespace MediaPortal
     /// </summary>
     private void InitializeComponent()
     {
-      this.adapterDeviceGroupBox = new System.Windows.Forms.GroupBox();
+      this.adapterDeviceGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.deviceComboBox = new System.Windows.Forms.ComboBox();
       this.deviceLabel = new System.Windows.Forms.Label();
       this.adapterComboBox = new System.Windows.Forms.ComboBox();
       this.displayAdapterLabel = new System.Windows.Forms.Label();
       this.fullscreenRadioButton = new System.Windows.Forms.RadioButton();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.otherSettingsGroupBox = new System.Windows.Forms.GroupBox();
+      this.otherSettingsGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.multisampleQualityComboBox = new System.Windows.Forms.ComboBox();
       this.multisampleQualityLabel = new System.Windows.Forms.Label();
       this.multisampleComboBox = new System.Windows.Forms.ComboBox();
@@ -155,7 +155,7 @@ namespace MediaPortal
       this.adapterFormatLabel = new System.Windows.Forms.Label();
       this.refreshRateLabel = new System.Windows.Forms.Label();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.modeSettingsGroupBox = new System.Windows.Forms.GroupBox();
+      this.modeSettingsGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.adapterFormatComboBox = new System.Windows.Forms.ComboBox();
       this.adapterDeviceGroupBox.SuspendLayout();
       this.otherSettingsGroupBox.SuspendLayout();
@@ -475,8 +475,8 @@ namespace MediaPortal
     #endregion
 
 
-    
-    
+
+
     /// <summary>
     /// Respond to a change of selected adapter by rebuilding the device 
     /// list.  Updating the selected device will trigger updates of the 
@@ -565,7 +565,7 @@ namespace MediaPortal
 
         // Update resolution combo box
         resolutionComboBox.Items.Clear();
-        resolutionComboBox.Items.Add(FormatResolution(settings.WindowedDisplayMode.Width, 
+        resolutionComboBox.Items.Add(FormatResolution(settings.WindowedDisplayMode.Width,
           settings.WindowedDisplayMode.Height));
         resolutionComboBox.SelectedIndex = 0;
         resolutionComboBox.Enabled = false;
@@ -591,7 +591,7 @@ namespace MediaPortal
           if (!adapterFormatComboBox.Items.Contains(deviceCombo.AdapterFormat))
           {
             adapterFormatComboBox.Items.Add(deviceCombo.AdapterFormat);
-            if (deviceCombo.AdapterFormat == (settings.IsWindowed ? 
+            if (deviceCombo.AdapterFormat == (settings.IsWindowed ?
               settings.WindowedDisplayMode.Format : settings.FullscreenDisplayMode.Format))
             {
               adapterFormatComboBox.SelectedItem = deviceCombo.AdapterFormat;
@@ -601,10 +601,10 @@ namespace MediaPortal
         if (adapterFormatComboBox.SelectedItem == null && adapterFormatComboBox.Items.Count > 0)
           adapterFormatComboBox.SelectedIndex = 0;
         adapterFormatComboBox.Enabled = true;
-			
+
         // Update resolution combo box
         resolutionComboBox.Enabled = true;
-			
+
         // Update refresh rate combo box
         refreshRateComboBox.Enabled = true;
       }
@@ -730,7 +730,7 @@ namespace MediaPortal
       foreach (DisplayMode displayMode in adapterInfo.DisplayModeList)
       {
         if (displayMode.Format == adapterFormat &&
-          displayMode.Width  == width &&
+          displayMode.Width == width &&
           displayMode.Height == height)
         {
           string refreshRateString = FormatRefreshRate(displayMode.RefreshRate);
@@ -893,7 +893,7 @@ namespace MediaPortal
           break;
         }
       }
-		
+
       // Update multisample quality list based on new type
       multisampleQualityComboBox.Items.Clear();
       for (int iLevel = 0; iLevel < maxQuality; iLevel++)
@@ -944,7 +944,7 @@ namespace MediaPortal
   /// <summary>
   /// Current D3D settings: adapter, device, mode, formats, etc.
   /// </summary>
-  public class D3DSettings 
+  public class D3DSettings
   {
     public bool IsWindowed;
 
@@ -971,8 +971,8 @@ namespace MediaPortal
     public PresentInterval FullscreenPresentInterval;
 
 
-    
-    
+
+
     /// <summary>
     /// The adapter information
     /// </summary>
@@ -983,8 +983,8 @@ namespace MediaPortal
     }
 
 
-    
-    
+
+
     /// <summary>
     /// The device information
     /// </summary>
@@ -995,8 +995,8 @@ namespace MediaPortal
     }
 
 
-    
-    
+
+
     /// <summary>
     /// The device combo
     /// </summary>
@@ -1007,8 +1007,8 @@ namespace MediaPortal
     }
 
 
-    
-    
+
+
     /// <summary>
     /// The adapters ordinal
     /// </summary>
@@ -1018,8 +1018,8 @@ namespace MediaPortal
     }
 
 
-    
-    
+
+
     /// <summary>
     /// The type of device this is
     /// </summary>
@@ -1029,8 +1029,8 @@ namespace MediaPortal
     }
 
 
-    
-    
+
+
     /// <summary>
     /// The back buffers format
     /// </summary>
@@ -1040,7 +1040,7 @@ namespace MediaPortal
     }
 
 
-    
+
 
     /// <summary>
     /// The display mode
@@ -1053,7 +1053,7 @@ namespace MediaPortal
 
 
 
-    
+
     /// <summary>
     /// The Depth stencils format
     /// </summary>
@@ -1117,7 +1117,7 @@ namespace MediaPortal
     /// <summary>
     /// Clone the d3d settings class
     /// </summary>
-    public D3DSettings Clone() 
+    public D3DSettings Clone()
     {
       return (D3DSettings)MemberwiseClone();
     }

@@ -31,76 +31,76 @@ using System.Windows.Forms;
 
 namespace MediaPortal.HCWBlaster
 {
-	/// <summary>
-	/// Summary description for HCWBlasterSetupForm.
-	/// </summary>
-	public class HCWBlasterSetupForm : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.Label label1;
-		private MediaPortal.UserInterface.Controls.MPButton btnOK;
-		private MediaPortal.UserInterface.Controls.MPCheckBox chkExtendedLog;
-    private System.Windows.Forms.GroupBox groupBox1;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+  /// <summary>
+  /// Summary description for HCWBlasterSetupForm.
+  /// </summary>
+  public class HCWBlasterSetupForm : System.Windows.Forms.Form
+  {
+    private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPButton btnOK;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chkExtendedLog;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public HCWBlasterSetupForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
-			LoadSettings();
+    public HCWBlasterSetupForm()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
+      LoadSettings();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
-		private void LoadSettings()
-		{
-			using(MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				this.chkExtendedLog.Checked = xmlreader.GetValueAsBool("HCWBlaster", "ExtendedLogging", false);
-			}
-		}
+    private void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        this.chkExtendedLog.Checked = xmlreader.GetValueAsBool("HCWBlaster", "ExtendedLogging", false);
+      }
+    }
 
-		private bool SaveSettings()
-		{
-			using(MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				xmlwriter.SetValueAsBool("HCWBlaster", "ExtendedLogging", this.chkExtendedLog.Checked);
-			}
-			return true;
-		}
+    private bool SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValueAsBool("HCWBlaster", "ExtendedLogging", this.chkExtendedLog.Checked);
+      }
+      return true;
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.label1 = new System.Windows.Forms.Label();
       this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
       this.chkExtendedLog = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -157,12 +157,12 @@ namespace MediaPortal.HCWBlaster
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		private void btnOK_Click(object sender, System.EventArgs e)
-		{
-			SaveSettings();
-			this.Close();
-		}
-	}
+    private void btnOK_Click(object sender, System.EventArgs e)
+    {
+      SaveSettings();
+      this.Close();
+    }
+  }
 }

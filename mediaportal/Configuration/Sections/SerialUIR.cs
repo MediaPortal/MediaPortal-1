@@ -34,132 +34,134 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class SerialUIR : MediaPortal.Configuration.SectionSettings
-	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
-		private MediaPortal.UserInterface.Controls.MPButton internalCommandsButton;
-		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.Label statusLabel;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.ComboBox CommPortCombo;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxInitUIRIrman;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.ComboBox IRLengthCombo;
-		private System.Windows.Forms.ComboBox HandShakeCombo;
-		private System.Windows.Forms.ComboBox BaudRateCombo;
-		private System.ComponentModel.IContainer components = null;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.ComboBox LearningTimeoutCombo;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.ComboBox CommandDelayCombo;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.CheckedListBox ActionsCheckList;
-		private MediaPortal.UserInterface.Controls.MPButton buttonAllCodes;
-		private MediaPortal.UserInterface.Controls.MPButton buttonDefaultCodes;
-		private MediaPortal.UserInterface.Controls.MPButton buttonNoneCodes;
-		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.ComboBox ParityCombo;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDTR;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxRTS;
+  public class SerialUIR : MediaPortal.Configuration.SectionSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
+    private MediaPortal.UserInterface.Controls.MPButton internalCommandsButton;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+    private System.Windows.Forms.Label statusLabel;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.ComboBox CommPortCombo;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxInitUIRIrman;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.ComboBox IRLengthCombo;
+    private System.Windows.Forms.ComboBox HandShakeCombo;
+    private System.Windows.Forms.ComboBox BaudRateCombo;
+    private System.ComponentModel.IContainer components = null;
+    private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.ComboBox LearningTimeoutCombo;
+    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.ComboBox CommandDelayCombo;
+    private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.CheckedListBox ActionsCheckList;
+    private MediaPortal.UserInterface.Controls.MPButton buttonAllCodes;
+    private MediaPortal.UserInterface.Controls.MPButton buttonDefaultCodes;
+    private MediaPortal.UserInterface.Controls.MPButton buttonNoneCodes;
+    private System.Windows.Forms.Label label8;
+    private System.Windows.Forms.ComboBox ParityCombo;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDTR;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxRTS;
 
-		private bool initialize = false;
+    private bool initialize = false;
 
-		public SerialUIR() : this("SerialUIR")
-		{
-		}
+    public SerialUIR()
+      : this("SerialUIR")
+    {
+    }
 
-		public SerialUIR(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public SerialUIR(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			this.ActionsCheckList.Items.AddRange(buttonNames);
+      this.ActionsCheckList.Items.AddRange(buttonNames);
 
-			// 
-			// Initialize the SerialUIR component
-			//
-			MediaPortal.SerialIR.SerialUIR.Create(new MediaPortal.SerialIR.SerialUIR.OnRemoteCommand(OnRemoteCommand));
-			MediaPortal.SerialIR.SerialUIR.Instance.StartListening += new StartListeningEventHandler(Instance_CodeReceived);
-		}
+      // 
+      // Initialize the SerialUIR component
+      //
+      MediaPortal.SerialIR.SerialUIR.Create(new MediaPortal.SerialIR.SerialUIR.OnRemoteCommand(OnRemoteCommand));
+      MediaPortal.SerialIR.SerialUIR.Instance.StartListening += new StartListeningEventHandler(Instance_CodeReceived);
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			MediaPortal.SerialIR.SerialUIR.Instance.Close();
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      MediaPortal.SerialIR.SerialUIR.Instance.Close();
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		public override void LoadSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				initialize = false;
-				inputCheckBox.Checked        = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
-				BaudRateCombo.Text           = xmlreader.GetValueAsString("SerialUIR", "baudrate", "9600");
-				HandShakeCombo.Text          = xmlreader.GetValueAsString("SerialUIR", "handshake", "None");
-				ParityCombo.Text             = xmlreader.GetValueAsString("SerialUIR", "parity", "None");
-				IRLengthCombo.Text           = xmlreader.GetValueAsString("SerialUIR", "irbytes", "6");
-				checkBoxInitUIRIrman.Checked = xmlreader.GetValueAsString("SerialUIR", "uirirmaninit", "true") == "true";
-				checkBoxRTS.Checked          = xmlreader.GetValueAsString("SerialUIR", "rts", "true") == "true";
-				checkBoxDTR.Checked          = xmlreader.GetValueAsString("SerialUIR", "dtr", "true") == "true";
-				CommandDelayCombo.Text       = xmlreader.GetValueAsString("SerialUIR", "delay", "300");
-				LearningTimeoutCombo.Text    = xmlreader.GetValueAsString("SerialUIR", "timeout", "5");
+    public override void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        initialize = false;
+        inputCheckBox.Checked = xmlreader.GetValueAsString("SerialUIR", "internal", "false") == "true";
+        BaudRateCombo.Text = xmlreader.GetValueAsString("SerialUIR", "baudrate", "9600");
+        HandShakeCombo.Text = xmlreader.GetValueAsString("SerialUIR", "handshake", "None");
+        ParityCombo.Text = xmlreader.GetValueAsString("SerialUIR", "parity", "None");
+        IRLengthCombo.Text = xmlreader.GetValueAsString("SerialUIR", "irbytes", "6");
+        checkBoxInitUIRIrman.Checked = xmlreader.GetValueAsString("SerialUIR", "uirirmaninit", "true") == "true";
+        checkBoxRTS.Checked = xmlreader.GetValueAsString("SerialUIR", "rts", "true") == "true";
+        checkBoxDTR.Checked = xmlreader.GetValueAsString("SerialUIR", "dtr", "true") == "true";
+        CommandDelayCombo.Text = xmlreader.GetValueAsString("SerialUIR", "delay", "300");
+        LearningTimeoutCombo.Text = xmlreader.GetValueAsString("SerialUIR", "timeout", "5");
 
-				for(int i=0; i<16; i++)
-					ActionsCheckList.SetItemChecked(i, xmlreader.GetValueAsString("SerialUIR", "learn" + i.ToString(), "true") == "true");
-				for(int i=16; i<ActionsCheckList.Items.Count; i++)
-					ActionsCheckList.SetItemChecked(i, xmlreader.GetValueAsString("SerialUIR", "learn" + i.ToString(), "false") == "true");
+        for (int i = 0; i < 16; i++)
+          ActionsCheckList.SetItemChecked(i, xmlreader.GetValueAsString("SerialUIR", "learn" + i.ToString(), "true") == "true");
+        for (int i = 16; i < ActionsCheckList.Items.Count; i++)
+          ActionsCheckList.SetItemChecked(i, xmlreader.GetValueAsString("SerialUIR", "learn" + i.ToString(), "false") == "true");
 
-				initialize = true;
-				CommPortCombo.Text           = xmlreader.GetValueAsString("SerialUIR", "commport", "COM1:");
-			}
-		}
+        initialize = true;
+        CommPortCombo.Text = xmlreader.GetValueAsString("SerialUIR", "commport", "COM1:");
+      }
+    }
 
-		public override void SaveSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				xmlwriter.SetValue("SerialUIR", "internal", inputCheckBox.Checked ? "true" : "false");
-				xmlwriter.SetValue("SerialUIR", "baudrate", BaudRateCombo.Text);
-				xmlwriter.SetValue("SerialUIR", "handshake", HandShakeCombo.Text);
-				xmlwriter.SetValue("SerialUIR", "parity", ParityCombo.Text);
-				xmlwriter.SetValue("SerialUIR", "irbytes", IRLengthCombo.Text);
-				xmlwriter.SetValue("SerialUIR", "uirirmaninit", checkBoxInitUIRIrman.Checked ? "true" : "false");
-				xmlwriter.SetValue("SerialUIR", "rts", checkBoxRTS.Checked ? "true" : "false");
-				xmlwriter.SetValue("SerialUIR", "dtr", checkBoxDTR.Checked ? "true" : "false");
-				xmlwriter.SetValue("SerialUIR", "commport", CommPortCombo.Text);
-				xmlwriter.SetValue("SerialUIR", "delay", CommandDelayCombo.Text);
-				xmlwriter.SetValue("SerialUIR", "timeout", LearningTimeoutCombo.Text);
-				for(int i=0; i<ActionsCheckList.Items.Count; i++)
-					xmlwriter.SetValue("SerialUIR", "learn" + i.ToString(), ActionsCheckList.GetItemChecked(i) ? "true" : "false");
-			}
-		}
+    public override void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValue("SerialUIR", "internal", inputCheckBox.Checked ? "true" : "false");
+        xmlwriter.SetValue("SerialUIR", "baudrate", BaudRateCombo.Text);
+        xmlwriter.SetValue("SerialUIR", "handshake", HandShakeCombo.Text);
+        xmlwriter.SetValue("SerialUIR", "parity", ParityCombo.Text);
+        xmlwriter.SetValue("SerialUIR", "irbytes", IRLengthCombo.Text);
+        xmlwriter.SetValue("SerialUIR", "uirirmaninit", checkBoxInitUIRIrman.Checked ? "true" : "false");
+        xmlwriter.SetValue("SerialUIR", "rts", checkBoxRTS.Checked ? "true" : "false");
+        xmlwriter.SetValue("SerialUIR", "dtr", checkBoxDTR.Checked ? "true" : "false");
+        xmlwriter.SetValue("SerialUIR", "commport", CommPortCombo.Text);
+        xmlwriter.SetValue("SerialUIR", "delay", CommandDelayCombo.Text);
+        xmlwriter.SetValue("SerialUIR", "timeout", LearningTimeoutCombo.Text);
+        for (int i = 0; i < ActionsCheckList.Items.Count; i++)
+          xmlwriter.SetValue("SerialUIR", "learn" + i.ToString(), ActionsCheckList.GetItemChecked(i) ? "true" : "false");
+      }
+    }
 
-		public void Close()
-		{
-			MediaPortal.SerialIR.SerialUIR.Instance.Close();
-		}
+    public void Close()
+    {
+      MediaPortal.SerialIR.SerialUIR.Instance.Close();
+    }
 
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxRTS = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxDTR = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -185,7 +187,7 @@ namespace MediaPortal.Configuration.Sections
       this.CommPortCombo = new System.Windows.Forms.ComboBox();
       this.internalCommandsButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.statusLabel = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
@@ -193,8 +195,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.checkBoxRTS);
       this.groupBox1.Controls.Add(this.checkBoxDTR);
@@ -319,8 +321,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // ActionsCheckList
       // 
-      this.ActionsCheckList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.ActionsCheckList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.ActionsCheckList.Location = new System.Drawing.Point(224, 40);
       this.ActionsCheckList.Name = "ActionsCheckList";
@@ -551,7 +553,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.statusLabel);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
@@ -564,7 +566,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // statusLabel
       // 
-      this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+      this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.statusLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.statusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
@@ -584,9 +586,9 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		private string[] buttonNames = {
+    private string[] buttonNames = {
 										   "MOVE_LEFT"
 										   ,"MOVE_RIGHT"
 										   ,"MOVE_UP"
@@ -695,10 +697,10 @@ namespace MediaPortal.Configuration.Sections
 									   };
 
 
-		private void internalCommandsButton_Click(object sender, System.EventArgs e)
-		{
-			internalCommandsButton.Enabled = false;
-			object[] commands = {
+    private void internalCommandsButton_Click(object sender, System.EventArgs e)
+    {
+      internalCommandsButton.Enabled = false;
+      object[] commands = {
 									Action.ActionType.ACTION_MOVE_LEFT
 									, Action.ActionType.ACTION_MOVE_RIGHT             
 									, Action.ActionType.ACTION_MOVE_UP                
@@ -806,146 +808,146 @@ namespace MediaPortal.Configuration.Sections
 									, Action.ActionType.ACTION_REBOOT
 								};
 
-			int count = 0;
-			for(int i=0; i<ActionsCheckList.Items.Count; i++)
-				if(ActionsCheckList.GetItemChecked(i))
-					count++;
+      int count = 0;
+      for (int i = 0; i < ActionsCheckList.Items.Count; i++)
+        if (ActionsCheckList.GetItemChecked(i))
+          count++;
 
-			object[] learncommands = new object[count];
-			string[] learnbuttons = new string[count];
+      object[] learncommands = new object[count];
+      string[] learnbuttons = new string[count];
 
-			count = 0;
-			for(int i=0; i<ActionsCheckList.Items.Count; i++)
-				if(ActionsCheckList.GetItemChecked(i))
-				{
-					learncommands[count] = commands[i];
-					learnbuttons[count] = buttonNames[i];
-					count++;
-				}
+      count = 0;
+      for (int i = 0; i < ActionsCheckList.Items.Count; i++)
+        if (ActionsCheckList.GetItemChecked(i))
+        {
+          learncommands[count] = commands[i];
+          learnbuttons[count] = buttonNames[i];
+          count++;
+        }
 
-			MediaPortal.SerialIR.SerialUIR.Instance.StartListening -= new StartListeningEventHandler(Instance_CodeReceived);
-			MediaPortal.SerialIR.SerialUIR.Instance.StartLearning += new StartLearningEventHandler(Instance_StartLearning);
+      MediaPortal.SerialIR.SerialUIR.Instance.StartListening -= new StartListeningEventHandler(Instance_CodeReceived);
+      MediaPortal.SerialIR.SerialUIR.Instance.StartLearning += new StartLearningEventHandler(Instance_StartLearning);
 
-			MediaPortal.SerialIR.SerialUIR.Instance.BulkLearn(learncommands, learnbuttons);
-			MediaPortal.SerialIR.SerialUIR.Instance.SaveInternalValues();
+      MediaPortal.SerialIR.SerialUIR.Instance.BulkLearn(learncommands, learnbuttons);
+      MediaPortal.SerialIR.SerialUIR.Instance.SaveInternalValues();
 
-			MediaPortal.SerialIR.SerialUIR.Instance.StartLearning -= new StartLearningEventHandler(Instance_StartLearning);
-			MediaPortal.SerialIR.SerialUIR.Instance.StartListening += new StartListeningEventHandler(Instance_CodeReceived);
-			statusLabel.Text = "Learning finished !";
-			internalCommandsButton.Enabled = true;
-			System.Windows.Forms.Application.DoEvents();
-		}
+      MediaPortal.SerialIR.SerialUIR.Instance.StartLearning -= new StartLearningEventHandler(Instance_StartLearning);
+      MediaPortal.SerialIR.SerialUIR.Instance.StartListening += new StartListeningEventHandler(Instance_CodeReceived);
+      statusLabel.Text = "Learning finished !";
+      internalCommandsButton.Enabled = true;
+      System.Windows.Forms.Application.DoEvents();
+    }
 
-		private void Instance_CodeReceived(object sender, ListeningEventArgs e)
-		{
-			statusLabel.Text = e.Code;
-			System.Windows.Forms.Application.DoEvents();
-		}
+    private void Instance_CodeReceived(object sender, ListeningEventArgs e)
+    {
+      statusLabel.Text = e.Code;
+      System.Windows.Forms.Application.DoEvents();
+    }
 
-		private void Instance_StartLearning(object sender, LearningEventArgs e)
-		{
-			statusLabel.Text = "Press and hold the '" + e.Button + "' button on your remote";
-			System.Windows.Forms.Application.DoEvents();
-		}
+    private void Instance_StartLearning(object sender, LearningEventArgs e)
+    {
+      statusLabel.Text = "Press and hold the '" + e.Button + "' button on your remote";
+      System.Windows.Forms.Application.DoEvents();
+    }
 
-		private void OnRemoteCommand(object command)
-		{
-			System.Diagnostics.Debug.WriteLine("Remote Command = " + command.ToString());
-		}
+    private void OnRemoteCommand(object command)
+    {
+      System.Diagnostics.Debug.WriteLine("Remote Command = " + command.ToString());
+    }
 
-		private void SetReOpenStatus(bool available)
-		{
-			if(available)
-			{
-				statusLabel.Text = "Port " + CommPortCombo.Text + " available";
-				internalCommandsButton.Enabled = true;
-			}
-			else
-			{
-				statusLabel.Text = "Error : Port " + CommPortCombo.Text + " unavailable !";
-				internalCommandsButton.Enabled = false;
-			}
-		}
+    private void SetReOpenStatus(bool available)
+    {
+      if (available)
+      {
+        statusLabel.Text = "Port " + CommPortCombo.Text + " available";
+        internalCommandsButton.Enabled = true;
+      }
+      else
+      {
+        statusLabel.Text = "Error : Port " + CommPortCombo.Text + " unavailable !";
+        internalCommandsButton.Enabled = false;
+      }
+    }
 
-		private void CommPortCombo_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetPort(CommPortCombo.Text));
-		}
+    private void CommPortCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetPort(CommPortCombo.Text));
+    }
 
-		private void BaudRateCombo_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			if(initialize)
-				SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetBaudRate(int.Parse(BaudRateCombo.Text)));
-		}
+    private void BaudRateCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      if (initialize)
+        SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetBaudRate(int.Parse(BaudRateCombo.Text)));
+    }
 
-		private void HandShakeCombo_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			if(initialize)
-				SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetHandShake(HandShakeCombo.Text));
-		}
+    private void HandShakeCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      if (initialize)
+        SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetHandShake(HandShakeCombo.Text));
+    }
 
-		private void IRLengthCombo_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			if(initialize)
-				SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetIRBytes(int.Parse(IRLengthCombo.Text)));
-		}
+    private void IRLengthCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      if (initialize)
+        SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetIRBytes(int.Parse(IRLengthCombo.Text)));
+    }
 
-		private void checkBoxInitUIRIrman_CheckedChanged(object sender, System.EventArgs e)
-		{
-			if(initialize)
-				SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetUIRIRmanInit(checkBoxInitUIRIrman.Checked));
-		}
+    private void checkBoxInitUIRIrman_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if (initialize)
+        SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetUIRIRmanInit(checkBoxInitUIRIrman.Checked));
+    }
 
-		private void CommandDelayCombo_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			MediaPortal.SerialIR.SerialUIR.Instance.CommandDelay = int.Parse(CommandDelayCombo.Text);
-		}
+    private void CommandDelayCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      MediaPortal.SerialIR.SerialUIR.Instance.CommandDelay = int.Parse(CommandDelayCombo.Text);
+    }
 
-		private void LearningTimeoutCombo_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			MediaPortal.SerialIR.SerialUIR.Instance.LearningTimeOut = 1000 * int.Parse(LearningTimeoutCombo.Text);
-		}
+    private void LearningTimeoutCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      MediaPortal.SerialIR.SerialUIR.Instance.LearningTimeOut = 1000 * int.Parse(LearningTimeoutCombo.Text);
+    }
 
-		private void buttonAllCodes_Click(object sender, System.EventArgs e)
-		{
-			for(int i=0; i<ActionsCheckList.Items.Count; i++)
-				ActionsCheckList.SetItemChecked(i,true);
-		}
+    private void buttonAllCodes_Click(object sender, System.EventArgs e)
+    {
+      for (int i = 0; i < ActionsCheckList.Items.Count; i++)
+        ActionsCheckList.SetItemChecked(i, true);
+    }
 
-		private void buttonDefaultCodes_Click(object sender, System.EventArgs e)
-		{
-			for(int i=0; i<ActionsCheckList.Items.Count; i++)
-				ActionsCheckList.SetItemChecked(i, (i<31)?true:false);
-		}
+    private void buttonDefaultCodes_Click(object sender, System.EventArgs e)
+    {
+      for (int i = 0; i < ActionsCheckList.Items.Count; i++)
+        ActionsCheckList.SetItemChecked(i, (i < 31) ? true : false);
+    }
 
-		private void buttonNoneCodes_Click(object sender, System.EventArgs e)
-		{
-			for(int i=0; i<ActionsCheckList.Items.Count; i++)
-				ActionsCheckList.SetItemChecked(i, (i<16)?true:false);
-		}
+    private void buttonNoneCodes_Click(object sender, System.EventArgs e)
+    {
+      for (int i = 0; i < ActionsCheckList.Items.Count; i++)
+        ActionsCheckList.SetItemChecked(i, (i < 16) ? true : false);
+    }
 
-		private void ParityCombo_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			if(initialize)
-				SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetParity(ParityCombo.Text));
-		}
+    private void ParityCombo_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      if (initialize)
+        SetReOpenStatus(MediaPortal.SerialIR.SerialUIR.Instance.SetParity(ParityCombo.Text));
+    }
 
-		private void checkBoxDTR_CheckedChanged(object sender, System.EventArgs e)
-		{
-			if(initialize)
-				MediaPortal.SerialIR.SerialUIR.Instance.DTR = checkBoxRTS.Checked;
-		}
+    private void checkBoxDTR_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if (initialize)
+        MediaPortal.SerialIR.SerialUIR.Instance.DTR = checkBoxRTS.Checked;
+    }
 
-		private void checkBoxRTS_CheckedChanged(object sender, System.EventArgs e)
-		{
-			if(initialize)
-				MediaPortal.SerialIR.SerialUIR.Instance.RTS = checkBoxRTS.Checked;
-		}
+    private void checkBoxRTS_CheckedChanged(object sender, System.EventArgs e)
+    {
+      if (initialize)
+        MediaPortal.SerialIR.SerialUIR.Instance.RTS = checkBoxRTS.Checked;
+    }
 
-		private void inputCheckBox_CheckedChanged(object sender, System.EventArgs e)
-		{
-			MediaPortal.SerialIR.SerialUIR.Instance.InternalCommandsActive = inputCheckBox.Checked;
-		}
+    private void inputCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    {
+      MediaPortal.SerialIR.SerialUIR.Instance.InternalCommandsActive = inputCheckBox.Checked;
+    }
 
-	}
+  }
 }
