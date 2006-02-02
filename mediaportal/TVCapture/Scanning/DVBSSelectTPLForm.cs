@@ -47,14 +47,14 @@ namespace MediaPortal.TV.Scanning
       }
     }
 
-    private System.Windows.Forms.ComboBox cbTransponder4;
-    private System.Windows.Forms.ComboBox cbTransponder3;
-    private System.Windows.Forms.ComboBox cbTransponder2;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.ComboBox cbTransponder;
-    private System.Windows.Forms.Label label7;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder4;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder3;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder2;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder;
+    private MediaPortal.UserInterface.Controls.MPLabel label7;
     private MediaPortal.UserInterface.Controls.MPButton button1;
     private int numberOfLNBs = 1;
     private string[] TPLFiles = new string[5];
@@ -97,14 +97,14 @@ namespace MediaPortal.TV.Scanning
     /// </summary>
     private void InitializeComponent()
     {
-      this.cbTransponder4 = new System.Windows.Forms.ComboBox();
-      this.cbTransponder3 = new System.Windows.Forms.ComboBox();
-      this.cbTransponder2 = new System.Windows.Forms.ComboBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.cbTransponder = new System.Windows.Forms.ComboBox();
-      this.label7 = new System.Windows.Forms.Label();
+      this.cbTransponder4 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.cbTransponder3 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.cbTransponder2 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbTransponder = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 

@@ -44,15 +44,15 @@ namespace MediaPortal
   public class CodecsForm : System.Windows.Forms.Form
   {
     private System.Windows.Forms.LinkLabel LinkLabel1;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label3;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
     private System.Windows.Forms.LinkLabel LinkLabel2;
-    private System.Windows.Forms.Label labelMPEG2;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label4;
+    private MediaPortal.UserInterface.Controls.MPLabel labelMPEG2;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
     private System.Windows.Forms.LinkLabel LinkLabel3;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.Label label6;
+    private MediaPortal.UserInterface.Controls.MPLabel label5;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
     private System.Windows.Forms.LinkLabel LinkLabel4;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBox1;
     private MediaPortal.UserInterface.Controls.MPButton button1;
@@ -96,16 +96,16 @@ namespace MediaPortal
     /// </summary>
     private void InitializeComponent()
     {
-		this.labelMPEG2 = new System.Windows.Forms.Label();
+		this.labelMPEG2 = new MediaPortal.UserInterface.Controls.MPLabel();
 		this.LinkLabel1 = new System.Windows.Forms.LinkLabel();
-		this.label2 = new System.Windows.Forms.Label();
-		this.label3 = new System.Windows.Forms.Label();
+		this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+		this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
 		this.LinkLabel2 = new System.Windows.Forms.LinkLabel();
-		this.label1 = new System.Windows.Forms.Label();
-		this.label4 = new System.Windows.Forms.Label();
+		this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+		this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
 		this.LinkLabel3 = new System.Windows.Forms.LinkLabel();
-		this.label5 = new System.Windows.Forms.Label();
-		this.label6 = new System.Windows.Forms.Label();
+		this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
+		this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
 		this.LinkLabel4 = new System.Windows.Forms.LinkLabel();
 		this.checkBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 		this.button1 = new MediaPortal.UserInterface.Controls.MPButton();

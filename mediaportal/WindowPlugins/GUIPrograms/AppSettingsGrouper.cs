@@ -31,7 +31,7 @@ using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
-  public class AppSettingsGrouper: AppSettings
+  public class AppSettingsGrouper : AppSettings
   {
     private Label lblImageFile;
     private Button buttonImagefile;
@@ -75,16 +75,16 @@ namespace WindowPlugins.GUIPrograms
     private void InitializeComponent()
     {
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AppSettingsGrouper));
-      this.LabelTitle = new System.Windows.Forms.Label();
-      this.LabelHint = new System.Windows.Forms.Label();
-      this.lblImageFile = new System.Windows.Forms.Label();
+      this.LabelTitle = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.LabelHint = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblImageFile = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonImagefile = new MediaPortal.UserInterface.Controls.MPButton();
-      this.txtImageFile = new System.Windows.Forms.TextBox();
+      this.txtImageFile = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.chkbEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.txtTitle = new System.Windows.Forms.TextBox();
-      this.lblTitle = new System.Windows.Forms.Label();
-      this.LblPinCode = new System.Windows.Forms.Label();
-      this.txtPinCode = new System.Windows.Forms.TextBox();
+      this.txtTitle = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.lblTitle = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.LblPinCode = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtPinCode = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.SuspendLayout();
       // 
       // LabelTitle
@@ -194,7 +194,7 @@ namespace WindowPlugins.GUIPrograms
       this.ResumeLayout(false);
 
     }
-    #endregion 
+    #endregion
 
     public override bool AppObj2Form(AppItem curApp)
     {
@@ -220,7 +220,7 @@ namespace WindowPlugins.GUIPrograms
       curApp.Title = this.txtTitle.Text;
       curApp.SourceType = myProgSourceType.GROUPER;
       curApp.Imagefile = this.txtImageFile.Text;
-      curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text,  - 1);
+      curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text, -1);
     }
 
     public override bool EntriesOK(AppItem curApp)
@@ -234,8 +234,8 @@ namespace WindowPlugins.GUIPrograms
         MessageBox.Show(strHeader + m_Checker.Problems + strFooter, "Invalid Entries");
       }
       else
-      {}
-        return m_Checker.IsOk;
+      { }
+      return m_Checker.IsOk;
     }
 
 

@@ -31,7 +31,7 @@ using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
-  public class AppSettingsRoot: AppSettings
+  public class AppSettingsRoot : AppSettings
   {
     private Label label3;
     private Label rootItemLabel;
@@ -71,9 +71,9 @@ namespace WindowPlugins.GUIPrograms
     /// </summary>
     private void InitializeComponent()
     {
-      this.label3 = new System.Windows.Forms.Label();
-      this.rootItemLabel = new System.Windows.Forms.Label();
-      this.PluginTitle = new System.Windows.Forms.TextBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.rootItemLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.PluginTitle = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.ResetButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
@@ -125,7 +125,7 @@ namespace WindowPlugins.GUIPrograms
       this.ResumeLayout(false);
 
     }
-    #endregion 
+    #endregion
 
 
 

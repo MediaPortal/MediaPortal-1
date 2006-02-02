@@ -168,22 +168,22 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.tbSortRight = new System.Windows.Forms.TextBox();
-      this.tbSortLeft = new System.Windows.Forms.TextBox();
-      this.comboBox1 = new System.Windows.Forms.ComboBox();
+      this.tbSortRight = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tbSortLeft = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.comboBox1 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label15 = new System.Windows.Forms.Label();
-      this.label18 = new System.Windows.Forms.Label();
-      this.label16 = new System.Windows.Forms.Label();
-      this.label17 = new System.Windows.Forms.Label();
-      this.textBoxSample = new System.Windows.Forms.TextBox();
-      this.label19 = new System.Windows.Forms.Label();
-      this.label20 = new System.Windows.Forms.Label();
-      this.label21 = new System.Windows.Forms.Label();
-      this.label38 = new System.Windows.Forms.Label();
+      this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label18 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label16 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label17 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxSample = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label19 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label20 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label21 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label38 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBox3.SuspendLayout();

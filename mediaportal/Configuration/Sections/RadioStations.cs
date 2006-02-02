@@ -81,8 +81,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton btnUnmapChannelFromCard;
     private System.Windows.Forms.ColumnHeader columnHeader10;
     private System.Windows.Forms.ColumnHeader columnHeader11;
-    private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.ComboBox comboBoxCard;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxCard;
     private System.Windows.Forms.ListView listviewCardChannels;
     private System.Windows.Forms.ListView listViewRadioChannels;
     ListViewItem currentlyCheckedItem = null;
@@ -151,8 +151,8 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
       this.listViewRadioChannels = new System.Windows.Forms.ListView();
       this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
-      this.label6 = new System.Windows.Forms.Label();
-      this.comboBoxCard = new System.Windows.Forms.ComboBox();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage2.SuspendLayout();

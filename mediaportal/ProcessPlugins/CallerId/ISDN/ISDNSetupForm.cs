@@ -40,8 +40,8 @@ namespace ProcessPlugins.CallerId
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIncomingCall;
     private MediaPortal.UserInterface.Controls.MPButton okButton;
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-    private System.Windows.Forms.RadioButton radioButtonManualResume;
-    private System.Windows.Forms.RadioButton radioButtonAutoResume;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonManualResume;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonAutoResume;
     private System.Windows.Forms.NumericUpDown numericUpDownTimeOut;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxTimeOut;
     private CheckBox checkBoxOutlook;
@@ -101,8 +101,8 @@ namespace ProcessPlugins.CallerId
       this.groupBoxIncomingCall = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.numericUpDownTimeOut = new System.Windows.Forms.NumericUpDown();
       this.checkBoxTimeOut = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.radioButtonAutoResume = new System.Windows.Forms.RadioButton();
-      this.radioButtonManualResume = new System.Windows.Forms.RadioButton();
+      this.radioButtonAutoResume = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonManualResume = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxOutlook = new MediaPortal.UserInterface.Controls.MPCheckBox();

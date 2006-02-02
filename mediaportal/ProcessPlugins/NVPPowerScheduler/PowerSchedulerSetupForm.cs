@@ -37,17 +37,17 @@ namespace MediaPortal.PowerScheduler
   public class PowerSchedulerSetupForm : System.Windows.Forms.Form
   {
     private MediaPortal.UserInterface.Controls.MPButton cb_ok;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.ComboBox cobx_shutdown;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPComboBox cobx_shutdown;
     private System.Windows.Forms.NumericUpDown nud_wakeup;
     private System.Windows.Forms.NumericUpDown nud_shutdown;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbxExtensive;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbxForced;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbxTVoff;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.Label label4;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -117,17 +117,17 @@ namespace MediaPortal.PowerScheduler
     private void InitializeComponent()
     {
       this.cb_ok = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.cobx_shutdown = new System.Windows.Forms.ComboBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cobx_shutdown = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.nud_wakeup = new System.Windows.Forms.NumericUpDown();
       this.nud_shutdown = new System.Windows.Forms.NumericUpDown();
       this.cbxExtensive = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbxForced = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbxTVoff = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label4 = new System.Windows.Forms.Label();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       ((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).BeginInit();
       this.groupBox1.SuspendLayout();

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Runtime.InteropServices;
 using System.Collections;
@@ -468,7 +473,7 @@ namespace MediaPortal.TV.Recording
     //
     DVBSections m_dvbSections;
     ArrayList m_eitList;
-    System.Windows.Forms.TextBox m_textBox = null;
+    MediaPortal.UserInterface.Controls.MPTextBox m_textBox = null;
     DirectShowLib.IBaseFilter m_mpeg2Data = null;
     DVBSections.TPList[] m_transponder;
     IGraphBuilder m_sourceGraph = null;
@@ -629,7 +634,7 @@ namespace MediaPortal.TV.Recording
       if (m_demuxInterface == null)
         return false;
 
-      hr = m_demuxInterface.CreateOutputPin( mt, "SectionsData", out demuxOut);
+      hr = m_demuxInterface.CreateOutputPin(mt, "SectionsData", out demuxOut);
       if (hr != 0)
         return false;
 
@@ -734,7 +739,7 @@ namespace MediaPortal.TV.Recording
     }
     /*
     //
-    public void OpenTPLFile (ref DVBSections.Transponder[] list,int diseqc,int lnbkhz,int lnb0,int lnb1,int lnbsw,System.Windows.Forms.ProgressBar progBar,System.Windows.Forms.TextBox feedbackText,System.Windows.Forms.TreeView transponderTreeView)
+    public void OpenTPLFile (ref DVBSections.Transponder[] list,int diseqc,int lnbkhz,int lnb0,int lnb1,int lnbsw,System.Windows.Forms.ProgressBar progBar,MediaPortal.UserInterface.Controls.MPTextBox feedbackText,System.Windows.Forms.TreeView transponderTreeView)
     {
       if(m_graphState!=State.Running) return;
 

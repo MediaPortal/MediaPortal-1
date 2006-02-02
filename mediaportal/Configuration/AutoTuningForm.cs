@@ -44,8 +44,8 @@ namespace MediaPortal.Configuration
     protected MediaPortal.UserInterface.Controls.MPButton startButton;
     protected MediaPortal.UserInterface.Controls.MPButton stopButton;
     protected System.Timers.Timer tunerTimer;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.ComboBox sensitivityComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPComboBox sensitivityComboBox;
 
     protected int Sensitivity = 5;	// Medium
 
@@ -92,12 +92,12 @@ namespace MediaPortal.Configuration
     {
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.sensitivityComboBox = new System.Windows.Forms.ComboBox();
+      this.sensitivityComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.stopButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.startButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.progressBar = new System.Windows.Forms.ProgressBar();
       this.itemsListBox = new System.Windows.Forms.ListBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.tunerTimer = new System.Timers.Timer();
       this.groupBox1.SuspendLayout();

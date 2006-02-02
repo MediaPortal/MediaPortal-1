@@ -34,15 +34,15 @@ namespace MediaPortal.Configuration.Sections
   public class Pictures : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.TextBox durationTextBox;
-    private System.Windows.Forms.TextBox transitionTextBox;
-    private System.Windows.Forms.RadioButton radioButtonRandom;
-    private System.Windows.Forms.RadioButton radioButtonXFade;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.RadioButton radioButtonKenBurns;
-    private System.Windows.Forms.TextBox kenburnsTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPTextBox durationTextBox;
+    private MediaPortal.UserInterface.Controls.MPTextBox transitionTextBox;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonRandom;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonXFade;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonKenBurns;
+    private MediaPortal.UserInterface.Controls.MPTextBox kenburnsTextBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox autoShuffleCheckBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox repeatSlideshowCheckBox;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
@@ -113,18 +113,18 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.kenburnsTextBox = new System.Windows.Forms.TextBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.transitionTextBox = new System.Windows.Forms.TextBox();
-      this.durationTextBox = new System.Windows.Forms.TextBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
+      this.kenburnsTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.transitionTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.durationTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.repeatSlideshowCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.autoShuffleCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.radioButtonKenBurns = new System.Windows.Forms.RadioButton();
-      this.radioButtonRandom = new System.Windows.Forms.RadioButton();
-      this.radioButtonXFade = new System.Windows.Forms.RadioButton();
+      this.radioButtonKenBurns = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonRandom = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonXFade = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();

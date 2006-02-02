@@ -30,8 +30,8 @@ namespace MediaPortal.Configuration.Sections
 {
 	public class Wizard_Finished : MediaPortal.Configuration.SectionSettings
 	{
-    private System.Windows.Forms.Label headerLabel;
-    private System.Windows.Forms.Label bodyLabel;
+    private MediaPortal.UserInterface.Controls.MPLabel headerLabel;
+    private MediaPortal.UserInterface.Controls.MPLabel bodyLabel;
     private System.Windows.Forms.PictureBox pictureBox;
     private System.Windows.Forms.PictureBox itemPictureBox;
 		private System.ComponentModel.IContainer components = null;
@@ -115,8 +115,8 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(Wizard_Finished));
-      this.headerLabel = new System.Windows.Forms.Label();
-      this.bodyLabel = new System.Windows.Forms.Label();
+      this.headerLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.bodyLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.pictureBox = new System.Windows.Forms.PictureBox();
       this.itemPictureBox = new System.Windows.Forms.PictureBox();
       this.SuspendLayout();

@@ -36,7 +36,7 @@ namespace MediaPortal.HCWBlaster
   /// </summary>
   public class HCWBlasterSetupForm : System.Windows.Forms.Form
   {
-    private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPButton btnOK;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkExtendedLog;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
@@ -97,7 +97,7 @@ namespace MediaPortal.HCWBlaster
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new System.Windows.Forms.Label();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
       this.chkExtendedLog = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();

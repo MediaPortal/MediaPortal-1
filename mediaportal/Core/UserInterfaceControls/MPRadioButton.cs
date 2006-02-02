@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,38 +21,21 @@
  *
  */
 
+#endregion
+
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
 
-namespace MediaPortal.Configuration.Sections
+namespace MediaPortal.UserInterface.Controls
 {
-	public class FiltersSection : MediaPortal.Configuration.SectionSettings
-	{
-		//private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-		//private MediaPortal.UserInterface.Controls.MPLabel label4;
-		//private System.ComponentModel.IContainer components = null;
-
-		public FiltersSection() : this("Filters")
-		{
-		}
-
-    private void InitializeComponent()
+  /// <summary>
+  /// Summary description for MPRadioButton.
+  /// </summary>
+  public class MPRadioButton : System.Windows.Forms.RadioButton
+  {
+    public MPRadioButton()
     {
-      // 
-      // FiltersSection
-      // 
-      this.Name = "FiltersSection";
-      this.Size = new System.Drawing.Size(472, 408);
-
+      this.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.AutoSize = true;
     }
-
-		public FiltersSection(string name) : base(name)
-		{
-
-		}
-	}
+  }
 }
-

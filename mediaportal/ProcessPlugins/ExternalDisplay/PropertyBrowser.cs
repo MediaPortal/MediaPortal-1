@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.ComponentModel;
 using System.Data;
@@ -37,15 +41,15 @@ namespace ProcessPlugins.ExternalDisplay
   /// <author>JoeDalton</author>
   public class PropertyBrowser : Form
   {
-      private delegate void SetStatusDelegate(Status status);
-      private delegate void SetActiveWindowDelegate(GUIWindow.Window _window);
+    private delegate void SetStatusDelegate(Status status);
+    private delegate void SetActiveWindowDelegate(GUIWindow.Window _window);
     private DataGrid dataGrid1;
     private IContainer components = null;
     private System.Windows.Forms.Panel panel1;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox txtActiveWindow;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.TextBox txtStatus;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtActiveWindow;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtStatus;
     private DataTable properties = null;
 
     public PropertyBrowser()
@@ -59,16 +63,16 @@ namespace ProcessPlugins.ExternalDisplay
     /// <summary>
     /// Clean up any resources being used.
     /// </summary>
-    protected override void Dispose( bool disposing )
+    protected override void Dispose(bool disposing)
     {
-      if( disposing )
+      if (disposing)
       {
-        if(components != null)
+        if (components != null)
         {
           components.Dispose();
         }
       }
-      base.Dispose( disposing );
+      base.Dispose(disposing);
     }
 
     #region Windows Form Designer generated code
@@ -81,10 +85,10 @@ namespace ProcessPlugins.ExternalDisplay
       this.components = new System.ComponentModel.Container();
       this.dataGrid1 = new System.Windows.Forms.DataGrid();
       this.panel1 = new System.Windows.Forms.Panel();
-      this.txtActiveWindow = new System.Windows.Forms.TextBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.txtStatus = new System.Windows.Forms.TextBox();
+      this.txtActiveWindow = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtStatus = new MediaPortal.UserInterface.Controls.MPTextBox();
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
       this.panel1.SuspendLayout();
       this.SuspendLayout();
@@ -164,30 +168,30 @@ namespace ProcessPlugins.ExternalDisplay
     }
     #endregion
 
-      public void SetStatus(Status _status)
-      {
-          if (InvokeRequired)
-              this.Invoke(new SetStatusDelegate(SetStatus), _status);
-          txtStatus.Text = _status.ToString();
-      }
+    public void SetStatus(Status _status)
+    {
+      if (InvokeRequired)
+        this.Invoke(new SetStatusDelegate(SetStatus), _status);
+      txtStatus.Text = _status.ToString();
+    }
 
-      public void SetActiveWindow(GUIWindow.Window _window)
-      {
-          if (InvokeRequired)
-              this.Invoke(new SetActiveWindowDelegate(SetActiveWindow), _window);
-          txtActiveWindow.Text = _window.ToString();
-      }
+    public void SetActiveWindow(GUIWindow.Window _window)
+    {
+      if (InvokeRequired)
+        this.Invoke(new SetActiveWindowDelegate(SetActiveWindow), _window);
+      txtActiveWindow.Text = _window.ToString();
+    }
 
     private void PropertyBrowser_Load(object sender, EventArgs e)
     {
       properties = new DataTable("Properties");
-      DataColumn key = properties.Columns.Add("Key",typeof(string));
-      properties.Columns.Add("Value",typeof(string));
-      properties.PrimaryKey = new DataColumn[] {key};
+      DataColumn key = properties.Columns.Add("Key", typeof(string));
+      properties.Columns.Add("Value", typeof(string));
+      properties.PrimaryKey = new DataColumn[] { key };
       dataGrid1.DataSource = properties;
-      GUIPropertyManager.OnPropertyChanged+=new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+      GUIPropertyManager.OnPropertyChanged += new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
       //Initialize some properties (because they are set before we attached our eventhandler)
-      GUIPropertyManager_OnPropertyChanged("#currentmodule",GUIPropertyManager.GetProperty("#currentmodule"));
+      GUIPropertyManager_OnPropertyChanged("#currentmodule", GUIPropertyManager.GetProperty("#currentmodule"));
     }
 
     /// <summary>
@@ -198,13 +202,13 @@ namespace ProcessPlugins.ExternalDisplay
     /// <param name="value">The new value of the property</param>
     private void GUIPropertyManager_OnPropertyChanged(string tag, string value)
     {
-      if (properties==null)
+      if (properties == null)
         return;
       DataRow r = properties.Rows.Find(tag);
-      if (r==null)
-        properties.Rows.Add(new object[] {tag,value});
+      if (r == null)
+        properties.Rows.Add(new object[] { tag, value });
       else
-        r["Value"]=value;
+        r["Value"] = value;
     }
 
   }

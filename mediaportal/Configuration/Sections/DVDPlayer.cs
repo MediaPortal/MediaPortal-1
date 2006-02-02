@@ -34,19 +34,19 @@ namespace MediaPortal.Configuration.Sections
   public class DVDPlayer : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox fileNameTextBox;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.TextBox textBox1;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPTextBox fileNameTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBox1;
     private MediaPortal.UserInterface.Controls.MPButton button2;
     private MediaPortal.UserInterface.Controls.MPButton fileNameButton;
     private MediaPortal.UserInterface.Controls.MPButton parametersButton;
-    private System.Windows.Forms.TextBox parametersTextBox;
+    private MediaPortal.UserInterface.Controls.MPTextBox parametersTextBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox internalPlayerCheckBox;
     private System.Windows.Forms.OpenFileDialog openFileDialog;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
-    private System.Windows.Forms.ComboBox defaultZoomModeComboBox;
-    private System.Windows.Forms.Label label6;
+    private MediaPortal.UserInterface.Controls.MPComboBox defaultZoomModeComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
     private System.ComponentModel.IContainer components = null;
 
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
@@ -150,15 +150,15 @@ namespace MediaPortal.Configuration.Sections
       this.internalPlayerCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.parametersButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.parametersTextBox = new System.Windows.Forms.TextBox();
-      this.label2 = new System.Windows.Forms.Label();
+      this.parametersTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.fileNameTextBox = new System.Windows.Forms.TextBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.defaultZoomModeComboBox = new System.Windows.Forms.ComboBox();
-      this.label6 = new System.Windows.Forms.Label();
+      this.fileNameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.defaultZoomModeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.textBox1 = new System.Windows.Forms.TextBox();
+      this.textBox1 = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpGroupBox1.SuspendLayout();

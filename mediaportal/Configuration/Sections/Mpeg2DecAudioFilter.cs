@@ -40,32 +40,32 @@ namespace MediaPortal.Configuration.Sections
 
   public class MPEG2DecAudioFilter : MediaPortal.Configuration.SectionSettings
   {
-    //private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.RadioButton radioPCM16Bit;
-    private System.Windows.Forms.RadioButton radioButtonPCM24Bit;
-    private System.Windows.Forms.RadioButton radioButtonPCM32Bit;
-    private System.Windows.Forms.RadioButton radioButtonIEEE;
+    //private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioPCM16Bit;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonPCM24Bit;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonPCM32Bit;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonIEEE;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxNormalize;
     private System.Windows.Forms.TrackBar trackBarBoost;
-    private System.Windows.Forms.Label label2;
-    //private System.Windows.Forms.Label label3;
-    //private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.RadioButton radioButtonAC3Speakers;
-    private System.Windows.Forms.RadioButton radioButtonAC3SPDIF;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    //private MediaPortal.UserInterface.Controls.MPLabel label3;
+    //private MediaPortal.UserInterface.Controls.MPLabel label5;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonAC3Speakers;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonAC3SPDIF;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAC3DynamicRange;
-    private System.Windows.Forms.ComboBox comboBoxAC3SpeakerConfig;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxAC3SpeakerConfig;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAC3LFE;
-    private System.Windows.Forms.ComboBox comboBoxDTSSpeakerConfig;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDTSSpeakerConfig;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDTSDynamicRange;
-    private System.Windows.Forms.RadioButton radioButtonDTSSPDIF;
-    private System.Windows.Forms.RadioButton radioButtonDTSSpeakers;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonDTSSPDIF;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonDTSSpeakers;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDTSLFE;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAACDownmix;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox4;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox5;
-    private System.Windows.Forms.Label label4;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
     private System.ComponentModel.IContainer components = null;
 
     /// <summary>
@@ -109,28 +109,28 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.radioButtonAC3SPDIF = new System.Windows.Forms.RadioButton();
-      this.radioButtonAC3Speakers = new System.Windows.Forms.RadioButton();
+      this.radioButtonAC3SPDIF = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonAC3Speakers = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.checkBoxAC3LFE = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.comboBoxAC3SpeakerConfig = new System.Windows.Forms.ComboBox();
+      this.comboBoxAC3SpeakerConfig = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.checkBoxAC3DynamicRange = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label4 = new System.Windows.Forms.Label();
-      this.radioPCM16Bit = new System.Windows.Forms.RadioButton();
-      this.radioButtonPCM24Bit = new System.Windows.Forms.RadioButton();
-      this.radioButtonPCM32Bit = new System.Windows.Forms.RadioButton();
-      this.radioButtonIEEE = new System.Windows.Forms.RadioButton();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.radioPCM16Bit = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonPCM24Bit = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonPCM32Bit = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonIEEE = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.checkBoxNormalize = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.trackBarBoost = new System.Windows.Forms.TrackBar();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.radioButtonDTSSPDIF = new System.Windows.Forms.RadioButton();
-      this.radioButtonDTSSpeakers = new System.Windows.Forms.RadioButton();
+      this.radioButtonDTSSPDIF = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonDTSSpeakers = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.checkBoxDTSLFE = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.comboBoxDTSSpeakerConfig = new System.Windows.Forms.ComboBox();
+      this.comboBoxDTSSpeakerConfig = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.checkBoxDTSDynamicRange = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxAACDownmix = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label2 = new System.Windows.Forms.Label();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox4.SuspendLayout();
       this.groupBox3.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarBoost)).BeginInit();

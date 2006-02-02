@@ -41,12 +41,12 @@ namespace MediaPortal.Configuration.Sections
   public class DScalerAudioFilter : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.Label label5;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPLabel label5;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSPDIF;
-    private System.Windows.Forms.ComboBox comboBoxSpeakerConfig;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxSpeakerConfig;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDynamicRange;
-    private System.Windows.Forms.TextBox textBoxAudioOffset;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAudioOffset;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMPEGOverSPDIF;
     private System.ComponentModel.IContainer components = null;
 
@@ -92,13 +92,13 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.textBoxAudioOffset = new System.Windows.Forms.TextBox();
-      this.comboBoxSpeakerConfig = new System.Windows.Forms.ComboBox();
+      this.textBoxAudioOffset = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.comboBoxSpeakerConfig = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.checkBoxMPEGOverSPDIF = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label5 = new System.Windows.Forms.Label();
+      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxSPDIF = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxDynamicRange = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label3 = new System.Windows.Forms.Label();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 

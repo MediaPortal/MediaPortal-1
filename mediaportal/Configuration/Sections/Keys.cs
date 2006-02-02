@@ -38,14 +38,14 @@ namespace MediaPortal.Configuration.Sections
   public class Keys : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPButton deleteButton;
     private MediaPortal.UserInterface.Controls.MPButton addButton;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.TextBox keyTextBox;
-    private System.Windows.Forms.TextBox soundTextBox;
-    private System.Windows.Forms.Label label4;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPTextBox keyTextBox;
+    private MediaPortal.UserInterface.Controls.MPTextBox soundTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
     protected MediaPortal.UserInterface.Controls.MPButton fileNameButton;
     private System.ComponentModel.IContainer components = null;
 
@@ -54,7 +54,7 @@ namespace MediaPortal.Configuration.Sections
     //
     ArrayList globalActions = new ArrayList();
     private System.Windows.Forms.TreeView keyTreeView;
-    private System.Windows.Forms.TextBox descriptionTextBox;
+    private MediaPortal.UserInterface.Controls.MPTextBox descriptionTextBox;
     private System.Windows.Forms.OpenFileDialog openFileDialog;
     ArrayList windowActions = new ArrayList();
 
@@ -62,8 +62,8 @@ namespace MediaPortal.Configuration.Sections
     TreeNode globalNode, windowsNode;
 
     KeyMappings keyMappings = new KeyMappings();
-    private System.Windows.Forms.ComboBox idComboBox;
-    private System.Windows.Forms.TextBox idTextBox;
+    private MediaPortal.UserInterface.Controls.MPComboBox idComboBox;
+    private MediaPortal.UserInterface.Controls.MPTextBox idTextBox;
 
     public Keys()
       : this("Keys and Sounds")
@@ -393,18 +393,18 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.idTextBox = new System.Windows.Forms.TextBox();
-      this.idComboBox = new System.Windows.Forms.ComboBox();
+      this.idTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.idComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.addButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.deleteButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.soundTextBox = new System.Windows.Forms.TextBox();
-      this.label4 = new System.Windows.Forms.Label();
-      this.keyTextBox = new System.Windows.Forms.TextBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.descriptionTextBox = new System.Windows.Forms.TextBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this.soundTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.keyTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.descriptionTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.keyTreeView = new System.Windows.Forms.TreeView();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.groupBox1.SuspendLayout();

@@ -32,124 +32,124 @@ using MediaPortal.TV.Recording;
 
 namespace MediaPortal.TV.Scanning
 {
-	/// <summary>
-	/// Summary description for FormCountry.
-	/// </summary>
-	public class FormCountry : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.ComboBox comboBox1;
-		private MediaPortal.UserInterface.Controls.MPButton button1;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+  /// <summary>
+  /// Summary description for FormCountry.
+  /// </summary>
+  public class FormCountry : System.Windows.Forms.Form
+  {
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBox1;
+    private MediaPortal.UserInterface.Controls.MPButton button1;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public FormCountry()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public FormCountry()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-			this.label1 = new System.Windows.Forms.Label();
-			this.comboBox1 = new System.Windows.Forms.ComboBox();
-			this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
-			this.SuspendLayout();
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(24, 16);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(144, 16);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Select Country/Region:";
-			// 
-			// comboBox1
-			// 
-			this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.comboBox1.Location = new System.Drawing.Point(32, 40);
-			this.comboBox1.Name = "comboBox1";
-			this.comboBox1.Size = new System.Drawing.Size(208, 21);
-			this.comboBox1.TabIndex = 0;
-			// 
-			// button1
-			// 
-			this.button1.Location = new System.Drawing.Point(200, 72);
-			this.button1.Name = "button1";
-			this.button1.Size = new System.Drawing.Size(40, 23);
-			this.button1.TabIndex = 1;
-			this.button1.Text = "Ok";
-			this.button1.Click += new System.EventHandler(this.button1_Click);
-			// 
-			// FormCountry
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(264, 118);
-			this.Controls.Add(this.button1);
-			this.Controls.Add(this.comboBox1);
-			this.Controls.Add(this.label1);
-			this.Name = "FormCountry";
-			this.Text = "Country / Region selection";
-			this.Load += new System.EventHandler(this.FormCountry_Load);
-			this.ResumeLayout(false);
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBox1 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.SuspendLayout();
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(24, 16);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(144, 16);
+      this.label1.TabIndex = 0;
+      this.label1.Text = "Select Country/Region:";
+      // 
+      // comboBox1
+      // 
+      this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBox1.Location = new System.Drawing.Point(32, 40);
+      this.comboBox1.Name = "comboBox1";
+      this.comboBox1.Size = new System.Drawing.Size(208, 21);
+      this.comboBox1.TabIndex = 0;
+      // 
+      // button1
+      // 
+      this.button1.Location = new System.Drawing.Point(200, 72);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(40, 23);
+      this.button1.TabIndex = 1;
+      this.button1.Text = "Ok";
+      this.button1.Click += new System.EventHandler(this.button1_Click);
+      // 
+      // FormCountry
+      // 
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.ClientSize = new System.Drawing.Size(264, 118);
+      this.Controls.Add(this.button1);
+      this.Controls.Add(this.comboBox1);
+      this.Controls.Add(this.label1);
+      this.Name = "FormCountry";
+      this.Text = "Country / Region selection";
+      this.Load += new System.EventHandler(this.FormCountry_Load);
+      this.ResumeLayout(false);
 
-		}
-		#endregion
+    }
+    #endregion
 
-		private void FormCountry_Load(object sender, System.EventArgs e)
-		{
-			if (comboBox1.Items.Count>0)
-				comboBox1.SelectedIndex=0;
-		}
+    private void FormCountry_Load(object sender, System.EventArgs e)
+    {
+      if (comboBox1.Items.Count > 0)
+        comboBox1.SelectedIndex = 0;
+    }
 
-		private void button1_Click(object sender, System.EventArgs e)
-		{
-			if (comboBox1.SelectedIndex<0) return;
-			this.Close();
-		}
-		public string countryName
-		{
-			get
-			{
-				if (comboBox1.SelectedIndex<0) return "";
-				return (string)comboBox1.SelectedItem;
-			}
-		}
-		public void AddCountry(string country)
-		{
-			comboBox1.Items.Add(country);
-		}
-		public void Reset()
-		{
-			comboBox1.Items.Clear();
-		}
-	}
+    private void button1_Click(object sender, System.EventArgs e)
+    {
+      if (comboBox1.SelectedIndex < 0) return;
+      this.Close();
+    }
+    public string countryName
+    {
+      get
+      {
+        if (comboBox1.SelectedIndex < 0) return "";
+        return (string)comboBox1.SelectedItem;
+      }
+    }
+    public void AddCountry(string country)
+    {
+      comboBox1.Items.Add(country);
+    }
+    public void Reset()
+    {
+      comboBox1.Items.Clear();
+    }
+  }
 }

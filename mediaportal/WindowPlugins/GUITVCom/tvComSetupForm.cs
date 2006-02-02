@@ -40,17 +40,17 @@ namespace MediaPortal.GUI.Video
     private MediaPortal.UserInterface.Controls.MPCheckBox lookupIfNoSEinFilename;
     private MediaPortal.UserInterface.Controls.MPCheckBox rename;
     private MediaPortal.UserInterface.Controls.MPCheckBox renameOnlyIf;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
     private MediaPortal.UserInterface.Controls.MPButton button1;
     private MediaPortal.UserInterface.Controls.MPButton button2;
-    private System.Windows.Forms.TextBox renameFormat;
-    private System.Windows.Forms.TextBox replaceSpaces;
-    private System.Windows.Forms.Label help;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.TextBox titleFormat;
-    private System.Windows.Forms.TextBox txtGenre;
-    private System.Windows.Forms.Label label4;
+    private MediaPortal.UserInterface.Controls.MPTextBox renameFormat;
+    private MediaPortal.UserInterface.Controls.MPTextBox replaceSpaces;
+    private MediaPortal.UserInterface.Controls.MPLabel help;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPTextBox titleFormat;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtGenre;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkActors;
     /// <summary>
     /// Erforderliche Designervariable.
@@ -92,20 +92,20 @@ namespace MediaPortal.GUI.Video
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.replaceSpaces = new System.Windows.Forms.TextBox();
-      this.renameFormat = new System.Windows.Forms.TextBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.replaceSpaces = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.renameFormat = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.renameOnlyIf = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.rename = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.lookupIfNoSEinFilename = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.help = new System.Windows.Forms.Label();
-      this.titleFormat = new System.Windows.Forms.TextBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.txtGenre = new System.Windows.Forms.TextBox();
-      this.label4 = new System.Windows.Forms.Label();
+      this.help = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.titleFormat = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtGenre = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.chkActors = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();

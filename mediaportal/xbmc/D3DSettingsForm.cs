@@ -30,9 +30,6 @@ using Microsoft.DirectX.Direct3D;
 
 namespace MediaPortal
 {
-
-
-
   /// <summary>
   /// A form to allow the user to change the current D3D settings.
   /// </summary>
@@ -42,44 +39,40 @@ namespace MediaPortal
     public D3DSettings settings; // Potential new D3D settings
 
     private MediaPortal.UserInterface.Controls.MPGroupBox adapterDeviceGroupBox;
-    private System.Windows.Forms.Label displayAdapterLabel;
-    private System.Windows.Forms.ComboBox adapterComboBox;
-    private System.Windows.Forms.Label deviceLabel;
-    private System.Windows.Forms.ComboBox deviceComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel displayAdapterLabel;
+    private MediaPortal.UserInterface.Controls.MPComboBox adapterComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel deviceLabel;
+    private MediaPortal.UserInterface.Controls.MPComboBox deviceComboBox;
     private MediaPortal.UserInterface.Controls.MPGroupBox modeSettingsGroupBox;
-    private System.Windows.Forms.RadioButton windowedRadioButton;
-    private System.Windows.Forms.RadioButton fullscreenRadioButton;
-    private System.Windows.Forms.Label adapterFormatLabel;
-    private System.Windows.Forms.ComboBox adapterFormatComboBox;
-    private System.Windows.Forms.Label resolutionLabel;
-    private System.Windows.Forms.ComboBox resolutionComboBox;
-    private System.Windows.Forms.Label refreshRateLabel;
-    private System.Windows.Forms.ComboBox refreshRateComboBox;
+    private MediaPortal.UserInterface.Controls.MPRadioButton windowedRadioButton;
+    private MediaPortal.UserInterface.Controls.MPRadioButton fullscreenRadioButton;
+    private MediaPortal.UserInterface.Controls.MPLabel adapterFormatLabel;
+    private MediaPortal.UserInterface.Controls.MPComboBox adapterFormatComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel resolutionLabel;
+    private MediaPortal.UserInterface.Controls.MPComboBox resolutionComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel refreshRateLabel;
+    private MediaPortal.UserInterface.Controls.MPComboBox refreshRateComboBox;
     private MediaPortal.UserInterface.Controls.MPGroupBox otherSettingsGroupBox;
-    private System.Windows.Forms.Label backBufferFormatLabel;
-    private System.Windows.Forms.ComboBox backBufferFormatComboBox;
-    private System.Windows.Forms.Label depthStencilBufferLabel;
-    private System.Windows.Forms.ComboBox depthStencilBufferComboBox;
-    private System.Windows.Forms.Label multisampleLabel;
-    private System.Windows.Forms.ComboBox multisampleComboBox;
-    private System.Windows.Forms.Label vertexProcLabel;
-    private System.Windows.Forms.ComboBox vertexProcComboBox;
-    private System.Windows.Forms.Label presentIntervalLabel;
-    private System.Windows.Forms.ComboBox presentIntervalComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel backBufferFormatLabel;
+    private MediaPortal.UserInterface.Controls.MPComboBox backBufferFormatComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel depthStencilBufferLabel;
+    private MediaPortal.UserInterface.Controls.MPComboBox depthStencilBufferComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel multisampleLabel;
+    private MediaPortal.UserInterface.Controls.MPComboBox multisampleComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel vertexProcLabel;
+    private MediaPortal.UserInterface.Controls.MPComboBox vertexProcComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel presentIntervalLabel;
+    private MediaPortal.UserInterface.Controls.MPComboBox presentIntervalComboBox;
     private MediaPortal.UserInterface.Controls.MPButton okButton;
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-    private System.Windows.Forms.ComboBox multisampleQualityComboBox;
-    private System.Windows.Forms.Label multisampleQualityLabel;
-
-
+    private MediaPortal.UserInterface.Controls.MPComboBox multisampleQualityComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel multisampleQualityLabel;
 
 
     /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
-
-
 
 
     /// <summary>
@@ -106,8 +99,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// Clean up any resources being used.
     /// </summary>
@@ -119,8 +110,6 @@ namespace MediaPortal
     }
 
 
-
-
     #region Windows Form Designer generated code
     /// <summary>
     /// Required method for Designer support - do not modify
@@ -129,34 +118,34 @@ namespace MediaPortal
     private void InitializeComponent()
     {
       this.adapterDeviceGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.deviceComboBox = new System.Windows.Forms.ComboBox();
-      this.deviceLabel = new System.Windows.Forms.Label();
-      this.adapterComboBox = new System.Windows.Forms.ComboBox();
-      this.displayAdapterLabel = new System.Windows.Forms.Label();
-      this.fullscreenRadioButton = new System.Windows.Forms.RadioButton();
+      this.deviceComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.deviceLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.adapterComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.displayAdapterLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.fullscreenRadioButton = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.otherSettingsGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.multisampleQualityComboBox = new System.Windows.Forms.ComboBox();
-      this.multisampleQualityLabel = new System.Windows.Forms.Label();
-      this.multisampleComboBox = new System.Windows.Forms.ComboBox();
-      this.backBufferFormatComboBox = new System.Windows.Forms.ComboBox();
-      this.multisampleLabel = new System.Windows.Forms.Label();
-      this.depthStencilBufferLabel = new System.Windows.Forms.Label();
-      this.backBufferFormatLabel = new System.Windows.Forms.Label();
-      this.depthStencilBufferComboBox = new System.Windows.Forms.ComboBox();
-      this.vertexProcComboBox = new System.Windows.Forms.ComboBox();
-      this.vertexProcLabel = new System.Windows.Forms.Label();
-      this.presentIntervalComboBox = new System.Windows.Forms.ComboBox();
-      this.presentIntervalLabel = new System.Windows.Forms.Label();
-      this.resolutionComboBox = new System.Windows.Forms.ComboBox();
-      this.windowedRadioButton = new System.Windows.Forms.RadioButton();
-      this.resolutionLabel = new System.Windows.Forms.Label();
-      this.refreshRateComboBox = new System.Windows.Forms.ComboBox();
-      this.adapterFormatLabel = new System.Windows.Forms.Label();
-      this.refreshRateLabel = new System.Windows.Forms.Label();
+      this.multisampleQualityComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.multisampleQualityLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.multisampleComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.backBufferFormatComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.multisampleLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.depthStencilBufferLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.backBufferFormatLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.depthStencilBufferComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.vertexProcComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.vertexProcLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.presentIntervalComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.presentIntervalLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.resolutionComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.windowedRadioButton = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.resolutionLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.refreshRateComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.adapterFormatLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.refreshRateLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.modeSettingsGroupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.adapterFormatComboBox = new System.Windows.Forms.ComboBox();
+      this.adapterFormatComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.adapterDeviceGroupBox.SuspendLayout();
       this.otherSettingsGroupBox.SuspendLayout();
       this.modeSettingsGroupBox.SuspendLayout();
@@ -475,8 +464,6 @@ namespace MediaPortal
     #endregion
 
 
-
-
     /// <summary>
     /// Respond to a change of selected adapter by rebuilding the device 
     /// list.  Updating the selected device will trigger updates of the 
@@ -498,8 +485,6 @@ namespace MediaPortal
       if (deviceComboBox.SelectedItem == null && deviceComboBox.Items.Count > 0)
         deviceComboBox.SelectedIndex = 0;
     }
-
-
 
 
     /// <summary>
@@ -536,8 +521,6 @@ namespace MediaPortal
       }
       WindowedFullscreenChanged(null, null);
     }
-
-
 
 
     /// <summary>
@@ -611,8 +594,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// Converts the given width and height into a formatted string
     /// </summary>
@@ -622,8 +603,6 @@ namespace MediaPortal
       sb.AppendFormat("{0} by {1}", width, height);
       return sb.ToString();
     }
-
-
 
 
     /// <summary>
@@ -642,8 +621,6 @@ namespace MediaPortal
         return sb.ToString();
       }
     }
-
-
 
 
     /// <summary>
@@ -703,8 +680,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// Respond to a change of selected resolution by rebuilding the
     /// refresh rate list.
@@ -747,8 +722,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// Respond to a change of selected refresh rate.
     /// </summary>
@@ -767,8 +740,6 @@ namespace MediaPortal
       }
       settings.FullscreenDisplayMode.RefreshRate = refreshRate;
     }
-
-
 
 
     /// <summary>
@@ -836,8 +807,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// Respond to a change of selected depth/stencil buffer format.
     /// </summary>
@@ -873,8 +842,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// Respond to a change of selected multisample type.
     /// </summary>
@@ -907,8 +874,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// Respond to a change of selected multisample quality.
     /// </summary>
@@ -918,8 +883,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// Respond to a change of selected vertex processing type.
     /// </summary>
@@ -927,8 +890,6 @@ namespace MediaPortal
     {
       settings.VertexProcessingType = (VertexProcessingType)vertexProcComboBox.SelectedItem;
     }
-
-
 
 
     /// <summary>
@@ -971,8 +932,6 @@ namespace MediaPortal
     public PresentInterval FullscreenPresentInterval;
 
 
-
-
     /// <summary>
     /// The adapter information
     /// </summary>
@@ -981,8 +940,6 @@ namespace MediaPortal
       get { return IsWindowed ? WindowedAdapterInfo : FullscreenAdapterInfo; }
       set { if (IsWindowed) WindowedAdapterInfo = value; else FullscreenAdapterInfo = value; }
     }
-
-
 
 
     /// <summary>
@@ -995,8 +952,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// The device combo
     /// </summary>
@@ -1005,8 +960,6 @@ namespace MediaPortal
       get { return IsWindowed ? WindowedDeviceCombo : FullscreenDeviceCombo; }
       set { if (IsWindowed) WindowedDeviceCombo = value; else FullscreenDeviceCombo = value; }
     }
-
-
 
 
     /// <summary>
@@ -1018,8 +971,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// The type of device this is
     /// </summary>
@@ -1029,8 +980,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// The back buffers format
     /// </summary>
@@ -1038,8 +987,6 @@ namespace MediaPortal
     {
       get { return DeviceCombo.BackBufferFormat; }
     }
-
-
 
 
     /// <summary>
@@ -1052,8 +999,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// The Depth stencils format
     /// </summary>
@@ -1062,8 +1007,6 @@ namespace MediaPortal
       get { return IsWindowed ? WindowedDepthStencilBufferFormat : FullscreenDepthStencilBufferFormat; }
       set { if (IsWindowed) WindowedDepthStencilBufferFormat = value; else FullscreenDepthStencilBufferFormat = value; }
     }
-
-
 
 
     /// <summary>
@@ -1076,8 +1019,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// The multisample quality
     /// </summary>
@@ -1086,8 +1027,6 @@ namespace MediaPortal
       get { return IsWindowed ? WindowedMultisampleQuality : FullscreenMultisampleQuality; }
       set { if (IsWindowed) WindowedMultisampleQuality = value; else FullscreenMultisampleQuality = value; }
     }
-
-
 
 
     /// <summary>
@@ -1100,8 +1039,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// The presentation interval
     /// </summary>
@@ -1112,8 +1049,6 @@ namespace MediaPortal
     }
 
 
-
-
     /// <summary>
     /// Clone the d3d settings class
     /// </summary>
@@ -1122,6 +1057,4 @@ namespace MediaPortal
       return (D3DSettings)MemberwiseClone();
     }
   }
-
-
-};
+}

@@ -209,19 +209,19 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this._customTextbox = new System.Windows.Forms.TextBox();
-      this._useCustomHandler = new System.Windows.Forms.RadioButton();
-      this._useLogarithmicHandler = new System.Windows.Forms.RadioButton();
-      this._useWindowsHandler = new System.Windows.Forms.RadioButton();
-      this._useClassicHandler = new System.Windows.Forms.RadioButton();
+      this._customTextbox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this._useCustomHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this._useLogarithmicHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this._useWindowsHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this._useClassicHandler = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this._levelTextbox = new System.Windows.Forms.TextBox();
-      this._useCustomLevel = new System.Windows.Forms.RadioButton();
-      this._useSystemCurrent = new System.Windows.Forms.RadioButton();
-      this._useLastKnownLevel = new System.Windows.Forms.RadioButton();
+      this._levelTextbox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this._useCustomLevel = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this._useSystemCurrent = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this._useLastKnownLevel = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this._useMasterVolume = new System.Windows.Forms.RadioButton();
-      this._useWave = new System.Windows.Forms.RadioButton();
+      this._useMasterVolume = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this._useWave = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox3.SuspendLayout();
@@ -402,8 +402,8 @@ namespace MediaPortal.Configuration.Sections
     RadioButton _useLastKnownLevel;
     RadioButton _useLogarithmicHandler;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
-    private System.Windows.Forms.RadioButton _useMasterVolume;
-    private System.Windows.Forms.RadioButton _useWave;
+    private MediaPortal.UserInterface.Controls.MPRadioButton _useMasterVolume;
+    private MediaPortal.UserInterface.Controls.MPRadioButton _useWave;
     RadioButton _useSystemCurrent;
 
     #endregion Fields

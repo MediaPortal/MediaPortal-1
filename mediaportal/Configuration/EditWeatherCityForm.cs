@@ -38,21 +38,21 @@ namespace MediaPortal.Configuration
   {
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
     private MediaPortal.UserInterface.Controls.MPButton okButton;
-    private System.Windows.Forms.TextBox locationTextBox;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.TextBox temperatureTextBox;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.TextBox windsTextBox;
-    private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.TextBox humidityTextBox;
-    private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.TextBox uvIndexTextBox;
-    private System.Windows.Forms.TextBox precipitationTextBox;
+    private MediaPortal.UserInterface.Controls.MPTextBox locationTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPTextBox temperatureTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
+    private MediaPortal.UserInterface.Controls.MPLabel label5;
+    private MediaPortal.UserInterface.Controls.MPTextBox windsTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
+    private MediaPortal.UserInterface.Controls.MPTextBox humidityTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label7;
+    private MediaPortal.UserInterface.Controls.MPTextBox uvIndexTextBox;
+    private MediaPortal.UserInterface.Controls.MPTextBox precipitationTextBox;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -94,19 +94,19 @@ namespace MediaPortal.Configuration
     {
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.precipitationTextBox = new System.Windows.Forms.TextBox();
-      this.label7 = new System.Windows.Forms.Label();
-      this.humidityTextBox = new System.Windows.Forms.TextBox();
-      this.label6 = new System.Windows.Forms.Label();
-      this.windsTextBox = new System.Windows.Forms.TextBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.uvIndexTextBox = new System.Windows.Forms.TextBox();
-      this.label4 = new System.Windows.Forms.Label();
-      this.temperatureTextBox = new System.Windows.Forms.TextBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
-      this.locationTextBox = new System.Windows.Forms.TextBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this.precipitationTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.humidityTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.windsTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.uvIndexTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.temperatureTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.locationTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1.SuspendLayout();

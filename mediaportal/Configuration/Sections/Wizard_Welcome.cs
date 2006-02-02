@@ -34,8 +34,8 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.Panel panel2;
     private System.Windows.Forms.PictureBox itemPictureBox;
-    private System.Windows.Forms.Label headerLabel;
-    private System.Windows.Forms.Label bodyLabel;
+    private MediaPortal.UserInterface.Controls.MPLabel headerLabel;
+    private MediaPortal.UserInterface.Controls.MPLabel bodyLabel;
 		private System.ComponentModel.IContainer components = null;
 
 		public Wizard_Welcome() : this("Wizard Welcome")
@@ -117,12 +117,12 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(Wizard_Welcome));
-      this.headerLabel = new System.Windows.Forms.Label();
+      this.headerLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.pictureBox = new System.Windows.Forms.PictureBox();
       this.panel1 = new System.Windows.Forms.Panel();
       this.panel2 = new System.Windows.Forms.Panel();
       this.itemPictureBox = new System.Windows.Forms.PictureBox();
-      this.bodyLabel = new System.Windows.Forms.Label();
+      this.bodyLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.SuspendLayout();
       // 
       // headerLabel

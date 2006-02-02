@@ -34,7 +34,7 @@ namespace MediaPortal.UserInterface.Controls
   {
     public MPGroupBox()
     {
-      this.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
+      this.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
     }
   }
 }

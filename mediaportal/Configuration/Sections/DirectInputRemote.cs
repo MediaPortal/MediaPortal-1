@@ -43,26 +43,26 @@ namespace MediaPortal.Configuration.Sections
     private DirectInputHandler diHandler = null;
     private MediaPortal.UserInterface.Controls.MPButton buttonDefault;
     private MediaPortal.UserInterface.Controls.MPButton btnRunControlPanel;
-    private System.Windows.Forms.Label lblDInputDevice;
-    private System.Windows.Forms.ComboBox cbDevices;
+    private MediaPortal.UserInterface.Controls.MPLabel lblDInputDevice;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbDevices;
     private MediaPortal.UserInterface.Controls.MPGroupBox gbI;
     private MediaPortal.UserInterface.Controls.MPGroupBox gbSettings;
     private MediaPortal.UserInterface.Controls.MPButton btnMapping;
-    private System.Windows.Forms.Label lblDelayMS;
+    private MediaPortal.UserInterface.Controls.MPLabel lblDelayMS;
     private System.Windows.Forms.NumericUpDown numDelay;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPGroupBox gbButtonCombos;
     private MediaPortal.UserInterface.Controls.MPButton btnLearn;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label lblComboKill;
-    private System.Windows.Forms.TextBox txtComboClose;
-    private System.Windows.Forms.TextBox txtComboKill;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPLabel lblComboKill;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtComboClose;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtComboKill;
     private CheckBox cbEnable;
     private TabControl tabControl1;
     private TabPage tabPageDirectInputDevices;
     private Label txtMonitor;
 
-    private System.Windows.Forms.TextBox lastEdit;
+    private MediaPortal.UserInterface.Controls.MPTextBox lastEdit;
 
     public DirectInputRemote()
       : this("Direct Input")
@@ -109,22 +109,22 @@ namespace MediaPortal.Configuration.Sections
     {
       this.cbEnable = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.gbI = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.txtMonitor = new System.Windows.Forms.Label();
+      this.txtMonitor = new MediaPortal.UserInterface.Controls.MPLabel();
       this.gbSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.btnRunControlPanel = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonDefault = new MediaPortal.UserInterface.Controls.MPButton();
       this.numDelay = new System.Windows.Forms.NumericUpDown();
-      this.cbDevices = new System.Windows.Forms.ComboBox();
-      this.lblDelayMS = new System.Windows.Forms.Label();
-      this.lblDInputDevice = new System.Windows.Forms.Label();
+      this.cbDevices = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.lblDelayMS = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblDInputDevice = new MediaPortal.UserInterface.Controls.MPLabel();
       this.btnMapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.gbButtonCombos = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.btnLearn = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label2 = new System.Windows.Forms.Label();
-      this.lblComboKill = new System.Windows.Forms.Label();
-      this.txtComboClose = new System.Windows.Forms.TextBox();
-      this.txtComboKill = new System.Windows.Forms.TextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblComboKill = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtComboClose = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.txtComboKill = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.tabPageDirectInputDevices = new System.Windows.Forms.TabPage();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.gbI.SuspendLayout();

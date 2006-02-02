@@ -35,7 +35,7 @@ namespace MediaPortal.Configuration.Sections
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
     private MediaPortal.UserInterface.Controls.MPCheckBox ffdshowCheckBox;
-    private System.Windows.Forms.Label label3;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
     private System.ComponentModel.IContainer components = null;
 
     public DVDPostProcessing()
@@ -92,7 +92,7 @@ namespace MediaPortal.Configuration.Sections
     {
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.ffdshowCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label3 = new System.Windows.Forms.Label();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox3.SuspendLayout();
       this.SuspendLayout();
       // 

@@ -34,19 +34,19 @@ namespace MediaPortal.Configuration.Sections
   public class Project : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.Label label4;
+    private MediaPortal.UserInterface.Controls.MPLabel label5;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
     private System.Windows.Forms.LinkLabel linkLabel2;
-    private System.Windows.Forms.Label label3;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
     private System.Windows.Forms.LinkLabel linkLabel1;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label6;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
     private System.Windows.Forms.LinkLabel linkLabel3;
-    private System.Windows.Forms.Label label7;
+    private MediaPortal.UserInterface.Controls.MPLabel label7;
     private System.Windows.Forms.LinkLabel linkLabel4;
-    private System.Windows.Forms.Label label8;
+    private MediaPortal.UserInterface.Controls.MPLabel label8;
     private System.ComponentModel.IContainer components = null;
 
     public Project()
@@ -86,19 +86,19 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label8 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
+      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.linkLabel4 = new System.Windows.Forms.LinkLabel();
-      this.label7 = new System.Windows.Forms.Label();
+      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkLabel3 = new System.Windows.Forms.LinkLabel();
-      this.label6 = new System.Windows.Forms.Label();
-      this.label5 = new System.Windows.Forms.Label();
-      this.label4 = new System.Windows.Forms.Label();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkLabel2 = new System.Windows.Forms.LinkLabel();
-      this.label3 = new System.Windows.Forms.Label();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-      this.label2 = new System.Windows.Forms.Label();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();

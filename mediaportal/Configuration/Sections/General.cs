@@ -39,14 +39,14 @@ namespace MediaPortal.Configuration.Sections
   {
     const string LanguageDirectory = @"language\";
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private System.Windows.Forms.ComboBox languageComboBox;
-    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPComboBox languageComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
     private System.Windows.Forms.NumericUpDown numericUpDown1;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label3;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
     private System.ComponentModel.IContainer components = null;
 
     public General()
@@ -244,14 +244,14 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.languageComboBox = new System.Windows.Forms.ComboBox();
-      this.label2 = new System.Windows.Forms.Label();
+      this.languageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-      this.label3 = new System.Windows.Forms.Label();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();

@@ -78,35 +78,35 @@ namespace MediaPortal.InputDevices
     }
 
     private System.Windows.Forms.TreeView treeMapping;
-    private System.Windows.Forms.RadioButton radioButtonWindow;
-    private System.Windows.Forms.RadioButton radioButtonFullscreen;
-    private System.Windows.Forms.RadioButton radioButtonPlaying;
-    private System.Windows.Forms.RadioButton radioButtonNoCondition;
-    private System.Windows.Forms.ComboBox comboBoxCondProperty;
-    private System.Windows.Forms.ComboBox comboBoxCmdProperty;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonWindow;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonFullscreen;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonPlaying;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonNoCondition;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxCondProperty;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxCmdProperty;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxCondition;
-    private System.Windows.Forms.RadioButton radioButtonAction;
-    private System.Windows.Forms.RadioButton radioButtonKey;
-    private System.Windows.Forms.RadioButton radioButtonActWindow;
-    private System.Windows.Forms.RadioButton radioButtonToggle;
-    private System.Windows.Forms.RadioButton radioButtonPower;
-    private System.Windows.Forms.ComboBox comboBoxSound;
-    private System.Windows.Forms.Label labelSound;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonAction;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonKey;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonActWindow;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonToggle;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonPower;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxSound;
+    private MediaPortal.UserInterface.Controls.MPLabel labelSound;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAction;
     //    private MediaPortal.UserInterface.Controls.MPGradientLabel headerLabel;
     private MediaPortal.UserInterface.Controls.MPButton applyButton;
     private MediaPortal.UserInterface.Controls.MPButton okButton;
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     //    private MediaPortal.UserInterface.Controls.MPBeveledLine beveledLine1;
-    private System.Windows.Forms.Label labelLayer;
-    private System.Windows.Forms.ComboBox comboBoxLayer;
+    private MediaPortal.UserInterface.Controls.MPLabel labelLayer;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxLayer;
     private MediaPortal.UserInterface.Controls.MPButton buttonUp;
     private MediaPortal.UserInterface.Controls.MPButton buttonDown;
     private MediaPortal.UserInterface.Controls.MPButton buttonNew;
     private MediaPortal.UserInterface.Controls.MPButton buttonRemove;
     private MediaPortal.UserInterface.Controls.MPButton buttonDefault;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxLayer;
-    private System.Windows.Forms.RadioButton radioButtonProcess;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonProcess;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -149,28 +149,28 @@ namespace MediaPortal.InputDevices
     {
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(MappingForm));
       this.treeMapping = new System.Windows.Forms.TreeView();
-      this.radioButtonWindow = new System.Windows.Forms.RadioButton();
-      this.radioButtonFullscreen = new System.Windows.Forms.RadioButton();
-      this.radioButtonPlaying = new System.Windows.Forms.RadioButton();
-      this.radioButtonNoCondition = new System.Windows.Forms.RadioButton();
-      this.comboBoxCondProperty = new System.Windows.Forms.ComboBox();
-      this.comboBoxCmdProperty = new System.Windows.Forms.ComboBox();
+      this.radioButtonWindow = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonFullscreen = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonPlaying = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonNoCondition = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.comboBoxCondProperty = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.comboBoxCmdProperty = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBoxCondition = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.radioButtonAction = new System.Windows.Forms.RadioButton();
-      this.radioButtonKey = new System.Windows.Forms.RadioButton();
-      this.radioButtonActWindow = new System.Windows.Forms.RadioButton();
-      this.radioButtonToggle = new System.Windows.Forms.RadioButton();
-      this.radioButtonPower = new System.Windows.Forms.RadioButton();
+      this.radioButtonAction = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonKey = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonActWindow = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonToggle = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButtonPower = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupBoxAction = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.radioButtonProcess = new System.Windows.Forms.RadioButton();
-      this.labelSound = new System.Windows.Forms.Label();
-      this.comboBoxSound = new System.Windows.Forms.ComboBox();
+      this.radioButtonProcess = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.labelSound = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxSound = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxLayer = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.comboBoxLayer = new System.Windows.Forms.ComboBox();
-      this.labelLayer = new System.Windows.Forms.Label();
+      this.comboBoxLayer = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.labelLayer = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonUp = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonDown = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonNew = new MediaPortal.UserInterface.Controls.MPButton();
@@ -969,7 +969,7 @@ namespace MediaPortal.InputDevices
       }
     }
 
-    void UpdateCombo(ref ComboBox comboBox, Array list, string hilight)
+    void UpdateCombo(ref MediaPortal.UserInterface.Controls.MPComboBox comboBox, Array list, string hilight)
     {
       comboBox.Items.Clear();
       foreach (object item in list)

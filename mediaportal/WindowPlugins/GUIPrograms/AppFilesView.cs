@@ -107,7 +107,7 @@ namespace WindowPlugins.GUIPrograms
       this.startScraperButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.topPanel = new System.Windows.Forms.Panel();
       this.backButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.filePathLabel = new System.Windows.Forms.Label();
+      this.filePathLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.bottomPanel = new System.Windows.Forms.Panel();
       this.fileList = new System.Windows.Forms.ListView();
       this.fileTitle = new System.Windows.Forms.ColumnHeader();

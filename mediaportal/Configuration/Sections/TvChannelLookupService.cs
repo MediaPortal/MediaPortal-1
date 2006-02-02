@@ -39,11 +39,11 @@ namespace MediaPortal.Configuration.Sections
   /// </summary>
   public class TvChannelLookupService : System.Windows.Forms.Form
   {
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
     private MediaPortal.UserInterface.Controls.MPButton button1;
-    private System.Windows.Forms.ComboBox cbCountries;
-    private System.Windows.Forms.ComboBox cbCities;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbCountries;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbCities;
     XmlDocument docSetup;
     /// <summary>
     /// Required designer variable.
@@ -84,10 +84,10 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new System.Windows.Forms.Label();
-      this.cbCountries = new System.Windows.Forms.ComboBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.cbCities = new System.Windows.Forms.ComboBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbCountries = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbCities = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 

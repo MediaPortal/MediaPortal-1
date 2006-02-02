@@ -50,7 +50,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox buildThumbsCheckBox;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
     private System.Windows.Forms.ProgressBar progressBar;
-    private System.Windows.Forms.Label fileLabel;
+    private MediaPortal.UserInterface.Controls.MPLabel fileLabel;
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private System.ComponentModel.IContainer components = null;
 
@@ -179,7 +179,7 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListBox = new System.Windows.Forms.CheckedListBox();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.fileLabel = new System.Windows.Forms.Label();
+      this.fileLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.progressBar = new System.Windows.Forms.ProgressBar();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();

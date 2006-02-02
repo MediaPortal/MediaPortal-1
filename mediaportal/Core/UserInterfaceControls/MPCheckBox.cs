@@ -34,7 +34,7 @@ namespace MediaPortal.UserInterface.Controls
   {
     public MPCheckBox()
     {
-      this.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
+      this.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.AutoSize = true;
     }
   }

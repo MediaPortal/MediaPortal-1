@@ -82,8 +82,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton btnUnmapChannelFromCard;
     private System.Windows.Forms.ListView listViewTVChannelsForCard;
     private System.Windows.Forms.ListView listViewTVChannelsCard;
-    private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.ComboBox comboBoxCard;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxCard;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private System.Windows.Forms.ColumnHeader columnHeader5;
@@ -162,8 +162,8 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
       this.listViewTVChannelsCard = new System.Windows.Forms.ListView();
       this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
-      this.label6 = new System.Windows.Forms.Label();
-      this.comboBoxCard = new System.Windows.Forms.ComboBox();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.buttonCombine = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();

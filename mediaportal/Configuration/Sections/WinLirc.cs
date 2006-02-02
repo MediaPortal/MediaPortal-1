@@ -39,13 +39,13 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private System.Windows.Forms.Label PathToWinlircLabel;
-    private System.Windows.Forms.TextBox pathToWinlircTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel PathToWinlircLabel;
+    private MediaPortal.UserInterface.Controls.MPTextBox pathToWinlircTextBox;
     private MediaPortal.UserInterface.Controls.MPButton browsePathToWinlircButton;
-    private System.Windows.Forms.TextBox infoTextBox;
+    private MediaPortal.UserInterface.Controls.MPTextBox infoTextBox;
     private System.Windows.Forms.OpenFileDialog openFileDialog1;
-    private System.Windows.Forms.TextBox IRDelayTextBox;
-    private System.Windows.Forms.Label IRDelayLabel;
+    private MediaPortal.UserInterface.Controls.MPTextBox IRDelayTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel IRDelayLabel;
     private System.ComponentModel.IContainer components = null;
 
     public WINLIRC()
@@ -120,14 +120,14 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.IRDelayTextBox = new System.Windows.Forms.TextBox();
-      this.IRDelayLabel = new System.Windows.Forms.Label();
+      this.IRDelayTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.IRDelayLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.browsePathToWinlircButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.pathToWinlircTextBox = new System.Windows.Forms.TextBox();
-      this.PathToWinlircLabel = new System.Windows.Forms.Label();
+      this.pathToWinlircTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.PathToWinlircLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.infoTextBox = new System.Windows.Forms.TextBox();
+      this.infoTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();

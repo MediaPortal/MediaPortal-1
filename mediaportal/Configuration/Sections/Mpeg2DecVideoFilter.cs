@@ -41,17 +41,17 @@ namespace MediaPortal.Configuration.Sections
   public class MPEG2DecVideoFilter : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    //private System.Windows.Forms.Label label1;
-    //private System.Windows.Forms.Label label3;
-    //private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.ComboBox cbDeinterlace;
+    //private MediaPortal.UserInterface.Controls.MPLabel label1;
+    //private MediaPortal.UserInterface.Controls.MPLabel label3;
+    //private MediaPortal.UserInterface.Controls.MPLabel label5;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbDeinterlace;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbForcedSubtitles;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbPlanar;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.Label label8;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
+    private MediaPortal.UserInterface.Controls.MPLabel label7;
+    private MediaPortal.UserInterface.Controls.MPLabel label8;
     private System.Windows.Forms.TrackBar tbBrightness;
     private System.Windows.Forms.TrackBar tbContrast;
     private System.Windows.Forms.TrackBar tbHue;
@@ -99,12 +99,12 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label8 = new System.Windows.Forms.Label();
-      this.label7 = new System.Windows.Forms.Label();
-      this.label6 = new System.Windows.Forms.Label();
-      this.label4 = new System.Windows.Forms.Label();
-      this.cbDeinterlace = new System.Windows.Forms.ComboBox();
-      this.label2 = new System.Windows.Forms.Label();
+      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbDeinterlace = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbForcedSubtitles = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbPlanar = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tbSaturation = new System.Windows.Forms.TrackBar();

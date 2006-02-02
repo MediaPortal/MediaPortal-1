@@ -35,17 +35,17 @@ namespace MediaPortal.Configuration.Sections
   public class DVD : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.ComboBox defaultSubtitleLanguageComboBox;
-    private System.Windows.Forms.ComboBox defaultAudioLanguageComboBox;
+    private MediaPortal.UserInterface.Controls.MPComboBox defaultSubtitleLanguageComboBox;
+    private MediaPortal.UserInterface.Controls.MPComboBox defaultAudioLanguageComboBox;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
     private MediaPortal.UserInterface.Controls.MPCheckBox pixelRatioCheckBox;
-    private System.Windows.Forms.ComboBox displayModeComboBox;
-    private System.Windows.Forms.ComboBox aspectRatioComboBox;
-    private System.Windows.Forms.Label aspectRatioLabel;
+    private MediaPortal.UserInterface.Controls.MPComboBox displayModeComboBox;
+    private MediaPortal.UserInterface.Controls.MPComboBox aspectRatioComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel aspectRatioLabel;
     private MediaPortal.UserInterface.Controls.MPCheckBox showSubtitlesCheckBox;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label defaultAudioLanguagelabel;
-    private System.Windows.Forms.Label displayModeLabel;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel defaultAudioLanguagelabel;
+    private MediaPortal.UserInterface.Controls.MPLabel displayModeLabel;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
     private System.ComponentModel.IContainer components = null;
     private ComboBox autoPlayComboBox;
@@ -199,20 +199,20 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.defaultAudioLanguagelabel = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.defaultAudioLanguageComboBox = new System.Windows.Forms.ComboBox();
-      this.defaultSubtitleLanguageComboBox = new System.Windows.Forms.ComboBox();
+      this.defaultAudioLanguagelabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.defaultAudioLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.defaultSubtitleLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.showSubtitlesCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.displayModeLabel = new System.Windows.Forms.Label();
-      this.displayModeComboBox = new System.Windows.Forms.ComboBox();
-      this.aspectRatioComboBox = new System.Windows.Forms.ComboBox();
-      this.aspectRatioLabel = new System.Windows.Forms.Label();
+      this.displayModeLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.displayModeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.aspectRatioComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.aspectRatioLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.pixelRatioCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.labelAutoPlay = new System.Windows.Forms.Label();
-      this.autoPlayComboBox = new System.Windows.Forms.ComboBox();
+      this.labelAutoPlay = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.autoPlayComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox1.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();

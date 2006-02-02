@@ -435,12 +435,12 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.tbViewName = new System.Windows.Forms.TextBox();
-      this.label2 = new System.Windows.Forms.Label();
+      this.tbViewName = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
-      this.cbViews = new System.Windows.Forms.ComboBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this.cbViews = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.dataGrid1 = new System.Windows.Forms.DataGrid();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();

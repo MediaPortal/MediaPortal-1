@@ -27,142 +27,143 @@ using System;
 using System.Windows.Forms;
 
 namespace GUIRSSFeed
-{	
-	/// <summary>
-	/// Details form for entering a site for My News Plugin
-	/// </summary>
-	public class DetailsForm : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.Label label3;
-		public System.Windows.Forms.TextBox textName;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label;
-		private MediaPortal.UserInterface.Controls.MPButton buttonBrowse;
-		private System.Windows.Forms.TextBox textImage;
-		private System.Windows.Forms.Label label2;
-		private MediaPortal.UserInterface.Controls.MPButton buttonClear;
-		private System.Windows.Forms.TextBox textDescription;
-		private MediaPortal.UserInterface.Controls.MPButton buttonSave;
-		private System.Windows.Forms.TextBox textURL;
-		private System.Windows.Forms.OpenFileDialog openFileDialog1;
-		public int ID;
-		//private SetupForm form;
-		public bool isNew;
-		public DetailsForm(SetupForm parent, int ID)
-		{
-			this.ID = ID;
-			//this.form = form;
-			isNew = false;
-			//
-			// The InitializeComponent() call is required for Windows Forms designer support.
-			//
-			InitializeComponent();
-			buttonClear.Click+=new EventHandler(textClear);
-			buttonSave.Click+=new EventHandler(saveInfo);
-			buttonBrowse.Click+=new EventHandler(browseFile);
-			
-			if (ID > -1)
-			{
-				LoadSettings();	
-				isNew = false;
-			}
-			else //find the next ID that is blank
-			{
-				string tempText;
-				for (int i=0; i<20; i++)
-				{
-					using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      				{
-						tempText = xmlreader.GetValueAsString("rss","siteName"+i,"");
-      					if (tempText == "")
-      					{
-      						this.ID = i;
-      						i=20;
-      						isNew = true;
-      					}
-       				}	
-				}
-				if (this.ID == -1)
-					Console.WriteLine("No more open slots!");
-				//TODO: Need message box popup here if no more slots left
-			}
+{
+  /// <summary>
+  /// Details form for entering a site for My News Plugin
+  /// </summary>
+  public class DetailsForm : System.Windows.Forms.Form
+  {
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    public MediaPortal.UserInterface.Controls.MPTextBox textName;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label;
+    private MediaPortal.UserInterface.Controls.MPButton buttonBrowse;
+    private MediaPortal.UserInterface.Controls.MPTextBox textImage;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPButton buttonClear;
+    private MediaPortal.UserInterface.Controls.MPTextBox textDescription;
+    private MediaPortal.UserInterface.Controls.MPButton buttonSave;
+    private MediaPortal.UserInterface.Controls.MPTextBox textURL;
+    private System.Windows.Forms.OpenFileDialog openFileDialog1;
+    public int ID;
+    //private SetupForm form;
+    public bool isNew;
+    public DetailsForm(SetupForm parent, int ID)
+    {
+      this.ID = ID;
+      //this.form = form;
+      isNew = false;
+      //
+      // The InitializeComponent() call is required for Windows Forms designer support.
+      //
+      InitializeComponent();
+      buttonClear.Click += new EventHandler(textClear);
+      buttonSave.Click += new EventHandler(saveInfo);
+      buttonBrowse.Click += new EventHandler(browseFile);
 
-			
-			//
-			// TODO: Add constructor code after the InitializeComponent() call.
-			//
-		}
-		
-		void saveInfo(object obj,EventArgs ea) 
-		{
-			SaveSettings();			
-		}
-		
-		private void browseFile(object obj, System.EventArgs e)
-		{
-			OpenFileDialog dlg=new OpenFileDialog();
-	      	dlg.CheckFileExists=true;
-	      	dlg.CheckPathExists=true;
-	      	dlg.RestoreDirectory=true;
-	      	dlg.Filter= "image files (*.png)|*.png";
-	      	dlg.FilterIndex=0;
-	      	dlg.Title="Select Site Icon";
-	      	dlg.ShowDialog();
-	      	if (dlg.FileName!="")
-	      	{
-	      	  	textImage.Text=dlg.FileName;
-	      	}			
-		}
-		
-		void textClear(object obj,EventArgs ea) 
-		{
-			textName.Text = "";
-			textURL.Text = "";
-			textDescription.Text = "";
-		}
-		
-		void LoadSettings()
-		{
-			using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      		{
-      		
-				textName.Text = xmlreader.GetValueAsString("rss","siteName"+ID,"");
-        		textURL.Text = xmlreader.GetValueAsString("rss","siteURL"+ID,"");
-    	   		textDescription.Text = xmlreader.GetValueAsString("rss","siteDescription"+ID, "");
-      			textImage.Text = xmlreader.GetValueAsString("rss","siteImage"+ID, "");
-       		}
-		}
-		
-		void SaveSettings()
-		{			
-      		using(MediaPortal.Profile.Settings   xmlwriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      		{
-        		xmlwriter.SetValue("rss","siteName"+this.ID,textName.Text);
-        		xmlwriter.SetValue("rss","siteURL"+this.ID,textURL.Text);      
-        		xmlwriter.SetValue("rss","siteDescription"+this.ID,textDescription.Text);
-      			xmlwriter.SetValue("rss","siteImage"+this.ID,textImage.Text);
-      		}
-      		this.Close();
-		}
-		#region Windows Forms Designer generated code
-		/// <summary>
-		/// This method is required for Windows Forms designer support.
-		/// Do not change the method contents inside the source code editor. The Forms designer might
-		/// not be able to load this method if it was changed manually.
-		/// </summary>
-		private void InitializeComponent() {
+      if (ID > -1)
+      {
+        LoadSettings();
+        isNew = false;
+      }
+      else //find the next ID that is blank
+      {
+        string tempText;
+        for (int i = 0; i < 20; i++)
+        {
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          {
+            tempText = xmlreader.GetValueAsString("rss", "siteName" + i, "");
+            if (tempText == "")
+            {
+              this.ID = i;
+              i = 20;
+              isNew = true;
+            }
+          }
+        }
+        if (this.ID == -1)
+          Console.WriteLine("No more open slots!");
+        //TODO: Need message box popup here if no more slots left
+      }
+
+
+      //
+      // TODO: Add constructor code after the InitializeComponent() call.
+      //
+    }
+
+    void saveInfo(object obj, EventArgs ea)
+    {
+      SaveSettings();
+    }
+
+    private void browseFile(object obj, System.EventArgs e)
+    {
+      OpenFileDialog dlg = new OpenFileDialog();
+      dlg.CheckFileExists = true;
+      dlg.CheckPathExists = true;
+      dlg.RestoreDirectory = true;
+      dlg.Filter = "image files (*.png)|*.png";
+      dlg.FilterIndex = 0;
+      dlg.Title = "Select Site Icon";
+      dlg.ShowDialog();
+      if (dlg.FileName != "")
+      {
+        textImage.Text = dlg.FileName;
+      }
+    }
+
+    void textClear(object obj, EventArgs ea)
+    {
+      textName.Text = "";
+      textURL.Text = "";
+      textDescription.Text = "";
+    }
+
+    void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+
+        textName.Text = xmlreader.GetValueAsString("rss", "siteName" + ID, "");
+        textURL.Text = xmlreader.GetValueAsString("rss", "siteURL" + ID, "");
+        textDescription.Text = xmlreader.GetValueAsString("rss", "siteDescription" + ID, "");
+        textImage.Text = xmlreader.GetValueAsString("rss", "siteImage" + ID, "");
+      }
+    }
+
+    void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValue("rss", "siteName" + this.ID, textName.Text);
+        xmlwriter.SetValue("rss", "siteURL" + this.ID, textURL.Text);
+        xmlwriter.SetValue("rss", "siteDescription" + this.ID, textDescription.Text);
+        xmlwriter.SetValue("rss", "siteImage" + this.ID, textImage.Text);
+      }
+      this.Close();
+    }
+    #region Windows Forms Designer generated code
+    /// <summary>
+    /// This method is required for Windows Forms designer support.
+    /// Do not change the method contents inside the source code editor. The Forms designer might
+    /// not be able to load this method if it was changed manually.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.textURL = new System.Windows.Forms.TextBox();
+      this.textURL = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonSave = new MediaPortal.UserInterface.Controls.MPButton();
-      this.textDescription = new System.Windows.Forms.TextBox();
+      this.textDescription = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonClear = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label2 = new System.Windows.Forms.Label();
-      this.textImage = new System.Windows.Forms.TextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textImage = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonBrowse = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.textName = new System.Windows.Forms.TextBox();
-      this.label3 = new System.Windows.Forms.Label();
+      this.label = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textName = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.SuspendLayout();
       // 
       // textURL
@@ -271,11 +272,11 @@ namespace GUIRSSFeed
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     private void buttonSave_Click(object sender, System.EventArgs e)
     {
-    
+
     }
-	}
+  }
 }

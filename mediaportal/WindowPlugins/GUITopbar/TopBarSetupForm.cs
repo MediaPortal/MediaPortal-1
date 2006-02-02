@@ -31,61 +31,61 @@ using System.Windows.Forms;
 
 namespace MediaPortal.Topbar
 {
-	/// <summary>
-	/// Summary description for TopBarSetupForm.
-	/// </summary>
-	public class TopBarSetupForm : System.Windows.Forms.Form
-	{
+  /// <summary>
+  /// Summary description for TopBarSetupForm.
+  /// </summary>
+  public class TopBarSetupForm : System.Windows.Forms.Form
+  {
     private MediaPortal.UserInterface.Controls.MPCheckBox chkAutoHide;
     private MediaPortal.UserInterface.Controls.MPButton buttonOk;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox textTimeOut;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPTextBox textTimeOut;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkOverrideSkinAutoHide;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public TopBarSetupForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public TopBarSetupForm()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.chkAutoHide = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.textTimeOut = new System.Windows.Forms.TextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textTimeOut = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.chkOverrideSkinAutoHide = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.SuspendLayout();
       // 
@@ -154,13 +154,13 @@ namespace MediaPortal.Topbar
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     private void TopBarSetup_Load(object sender, System.EventArgs e)
-    {      
-      using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        textTimeOut.Text = xmlreader.GetValueAsString("TopBar","autohidetimeout","15");
+        textTimeOut.Text = xmlreader.GetValueAsString("TopBar", "autohidetimeout", "15");
 
         chkAutoHide.Checked = false;
         if (xmlreader.GetValueAsInt("TopBar", "autohide", 0) == 1) chkAutoHide.Checked = true;
@@ -172,17 +172,17 @@ namespace MediaPortal.Topbar
 
     private void buttonOk_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings   xmlWriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        xmlWriter.SetValue("TopBar","autohidetimeout",textTimeOut.Text);
+        xmlWriter.SetValue("TopBar", "autohidetimeout", textTimeOut.Text);
 
-        int iAutoHide=0;
-        if (chkAutoHide.Checked) iAutoHide=1;
-        xmlWriter.SetValue("TopBar","autohide",iAutoHide.ToString());
-        
-        int iBoolean=0;
-        if (chkOverrideSkinAutoHide.Checked) iBoolean=1;
-        xmlWriter.SetValue("TopBar","overrideskinautohide",iBoolean.ToString());
+        int iAutoHide = 0;
+        if (chkAutoHide.Checked) iAutoHide = 1;
+        xmlWriter.SetValue("TopBar", "autohide", iAutoHide.ToString());
+
+        int iBoolean = 0;
+        if (chkOverrideSkinAutoHide.Checked) iBoolean = 1;
+        xmlWriter.SetValue("TopBar", "overrideskinautohide", iBoolean.ToString());
       }
       this.Close();
     }
@@ -191,5 +191,5 @@ namespace MediaPortal.Topbar
     {
       chkAutoHide.Enabled = chkOverrideSkinAutoHide.Checked;
     }
-	}
+  }
 }

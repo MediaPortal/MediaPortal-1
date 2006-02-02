@@ -71,17 +71,17 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
     private System.Windows.Forms.ProgressBar progressBar3;
     private MediaPortal.UserInterface.Controls.MPButton button3;
-    private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.Label label8;
+    private MediaPortal.UserInterface.Controls.MPLabel label7;
+    private MediaPortal.UserInterface.Controls.MPLabel label8;
     private System.Windows.Forms.Panel panel1;
-    private System.Windows.Forms.ComboBox cbTransponder;
-    private System.Windows.Forms.Label lblStatus;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.ComboBox cbTransponder2;
-    private System.Windows.Forms.ComboBox cbTransponder3;
-    private System.Windows.Forms.ComboBox cbTransponder4;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder;
+    private MediaPortal.UserInterface.Controls.MPLabel lblStatus;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder2;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder3;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder4;
     int m_currentDiseqc = 1;
 
     public Wizard_DVBSTV()
@@ -121,19 +121,19 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.cbTransponder4 = new System.Windows.Forms.ComboBox();
-      this.cbTransponder3 = new System.Windows.Forms.ComboBox();
-      this.cbTransponder2 = new System.Windows.Forms.ComboBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.cbTransponder = new System.Windows.Forms.ComboBox();
+      this.cbTransponder4 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.cbTransponder3 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.cbTransponder2 = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbTransponder = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.panel1 = new System.Windows.Forms.Panel();
-      this.lblStatus = new System.Windows.Forms.Label();
+      this.lblStatus = new MediaPortal.UserInterface.Controls.MPLabel();
       this.progressBar3 = new System.Windows.Forms.ProgressBar();
       this.button3 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label7 = new System.Windows.Forms.Label();
-      this.label8 = new System.Windows.Forms.Label();
+      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox3.SuspendLayout();
       this.SuspendLayout();
       // 

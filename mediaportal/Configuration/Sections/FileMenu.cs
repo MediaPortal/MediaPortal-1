@@ -39,10 +39,10 @@ namespace MediaPortal.Configuration.Sections
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPCheckBox chbEnabled;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox textPinCodeBox;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.TextBox textTrashcanFolder;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPTextBox textPinCodeBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPTextBox textTrashcanFolder;
     private System.ComponentModel.IContainer components = null;
 
     public FileMenu()
@@ -105,11 +105,11 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.textPinCodeBox = new System.Windows.Forms.TextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textPinCodeBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.chbEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.textTrashcanFolder = new System.Windows.Forms.TextBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textTrashcanFolder = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 

@@ -38,13 +38,13 @@ namespace MediaPortal.Configuration.Sections
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDaemonTools;
-    private System.Windows.Forms.TextBox textBoxDaemonTools;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDaemonTools;
     private MediaPortal.UserInterface.Controls.MPButton buttonSelectFolder;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.ComboBox comboBoxDrive;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.ComboBox comboDriveNo;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDrive;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboDriveNo;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAskBeforePlaying;
     private System.ComponentModel.IContainer components = null;
 
@@ -128,12 +128,12 @@ namespace MediaPortal.Configuration.Sections
     {
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonSelectFolder = new MediaPortal.UserInterface.Controls.MPButton();
-      this.comboDriveNo = new System.Windows.Forms.ComboBox();
-      this.comboBoxDrive = new System.Windows.Forms.ComboBox();
-      this.textBoxDaemonTools = new System.Windows.Forms.TextBox();
-      this.label4 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
+      this.comboDriveNo = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.comboBoxDrive = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.textBoxDaemonTools = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxDaemonTools = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAskBeforePlaying = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox2.SuspendLayout();

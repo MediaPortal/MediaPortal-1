@@ -264,6 +264,18 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="UserInterfaceControls\MPLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPRadioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UserInterfaceControls\MPButton.cs">
       <SubType>Component</SubType>
     </Compile>

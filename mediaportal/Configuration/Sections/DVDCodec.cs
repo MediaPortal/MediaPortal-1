@@ -37,174 +37,176 @@ using DirectShowLib;
 namespace MediaPortal.Configuration.Sections
 {
 
-	public class DVDCodec : MediaPortal.Configuration.SectionSettings
-	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.Label audioRendererLabel;
-		private System.Windows.Forms.Label audioCodecLabel;
-		private System.Windows.Forms.Label videoCodecLabel;
-		private System.Windows.Forms.Label dvdNavigatorLabel;
-		private System.Windows.Forms.ComboBox audioRendererComboBox;
-		private System.Windows.Forms.ComboBox audioCodecComboBox;
-		private System.Windows.Forms.ComboBox videoCodecComboBox;
-		private System.Windows.Forms.ComboBox dvdNavigatorComboBox;
+  public class DVDCodec : MediaPortal.Configuration.SectionSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPLabel audioRendererLabel;
+    private MediaPortal.UserInterface.Controls.MPLabel audioCodecLabel;
+    private MediaPortal.UserInterface.Controls.MPLabel videoCodecLabel;
+    private MediaPortal.UserInterface.Controls.MPLabel dvdNavigatorLabel;
+    private MediaPortal.UserInterface.Controls.MPComboBox audioRendererComboBox;
+    private MediaPortal.UserInterface.Controls.MPComboBox audioCodecComboBox;
+    private MediaPortal.UserInterface.Controls.MPComboBox videoCodecComboBox;
+    private MediaPortal.UserInterface.Controls.MPComboBox dvdNavigatorComboBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAC3;
-		private System.ComponentModel.IContainer components = null;
+    private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public DVDCodec() : this("DVD Codec")
-		{
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    public DVDCodec()
+      : this("DVD Codec")
+    {
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public DVDCodec(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    /// <summary>
+    /// 
+    /// </summary>
+    public DVDCodec(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			//
-			// Fetch available DirectShow filters
-			//
+      //
+      // Fetch available DirectShow filters
+      //
       ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-			ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+      ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
 
-			//
-			// Fetch available DVD navigators
-			//
-			ArrayList availableDVDNavigators = FilterHelper.GetDVDNavigators();
+      //
+      // Fetch available DVD navigators
+      //
+      ArrayList availableDVDNavigators = FilterHelper.GetDVDNavigators();
 
-			//
-			// Fetch available Audio Renderers
-			//
-			ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
+      //
+      // Fetch available Audio Renderers
+      //
+      ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
 
-			//
-			// Populate combo boxes
-			//
-			audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
-			videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
-			dvdNavigatorComboBox.Items.AddRange(availableDVDNavigators.ToArray());
-			audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
-		}
+      //
+      // Populate combo boxes
+      //
+      audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
+      videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
+      dvdNavigatorComboBox.Items.AddRange(availableDVDNavigators.ToArray());
+      audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public override void LoadSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				string audioRenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "Default DirectSound Device");
-				string videoCodec = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
-				string audioCodec = xmlreader.GetValueAsString("dvdplayer", "audiocodec", "");
-				string dvdNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
-        checkBoxAC3.Checked= xmlreader.GetValueAsBool("dvdplayer", "ac3", false);
-				
-				audioRendererComboBox.SelectedItem = audioRenderer;
-				dvdNavigatorComboBox.SelectedItem = dvdNavigator;
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        string audioRenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "Default DirectSound Device");
+        string videoCodec = xmlreader.GetValueAsString("dvdplayer", "videocodec", "");
+        string audioCodec = xmlreader.GetValueAsString("dvdplayer", "audiocodec", "");
+        string dvdNavigator = xmlreader.GetValueAsString("dvdplayer", "navigator", "DVD Navigator");
+        checkBoxAC3.Checked = xmlreader.GetValueAsBool("dvdplayer", "ac3", false);
 
-        if (audioCodec==String.Empty)
+        audioRendererComboBox.SelectedItem = audioRenderer;
+        dvdNavigatorComboBox.SelectedItem = dvdNavigator;
+
+        if (audioCodec == String.Empty)
         {
           ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
-					if (availableAudioFilters.Count>0)
-					{
-						bool Mpeg2DecFilterFound=true;
-						bool DScalerFilterFound=true;
-						audioCodec=(string)availableAudioFilters[0];
-						foreach (string filter in availableAudioFilters)
-						{
-							if (filter.Equals("MPEG/AC3/DTS/LPCM Audio Decoder"))
-							{
-								Mpeg2DecFilterFound=true;
-							}
-							if (filter.Equals("DScaler Audio Decoder"))
-							{
-								DScalerFilterFound=true;
-							}
-						}
-						if (Mpeg2DecFilterFound) audioCodec="MPEG/AC3/DTS/LPCM Audio Decoder";
-						else if (DScalerFilterFound) audioCodec="DScaler Audio Decoder";
-					}
+          if (availableAudioFilters.Count > 0)
+          {
+            bool Mpeg2DecFilterFound = true;
+            bool DScalerFilterFound = true;
+            audioCodec = (string)availableAudioFilters[0];
+            foreach (string filter in availableAudioFilters)
+            {
+              if (filter.Equals("MPEG/AC3/DTS/LPCM Audio Decoder"))
+              {
+                Mpeg2DecFilterFound = true;
+              }
+              if (filter.Equals("DScaler Audio Decoder"))
+              {
+                DScalerFilterFound = true;
+              }
+            }
+            if (Mpeg2DecFilterFound) audioCodec = "MPEG/AC3/DTS/LPCM Audio Decoder";
+            else if (DScalerFilterFound) audioCodec = "DScaler Audio Decoder";
+          }
         }
-				
-				if (videoCodec==String.Empty)
-				{
-					ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-					bool Mpeg2DecFilterFound=true;
-					bool DScalerFilterFound=true;
-					if (availableVideoFilters.Count>0)
-					{
-						videoCodec=(string)availableVideoFilters[0];
-						foreach (string filter in availableVideoFilters)
-						{
-							if (filter.Equals("Mpeg2Dec Filter"))
-							{
-								Mpeg2DecFilterFound=true;
-							}
-							if (filter.Equals("DScaler Mpeg2 Video Decoder"))
-							{
-								DScalerFilterFound=true;
-							}
-						}
-						if (Mpeg2DecFilterFound) videoCodec="Mpeg2Dec Filter";
-						else if (DScalerFilterFound) videoCodec="DScaler Mpeg2 Video Decoder";
-					}
-				}
+
+        if (videoCodec == String.Empty)
+        {
+          ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+          bool Mpeg2DecFilterFound = true;
+          bool DScalerFilterFound = true;
+          if (availableVideoFilters.Count > 0)
+          {
+            videoCodec = (string)availableVideoFilters[0];
+            foreach (string filter in availableVideoFilters)
+            {
+              if (filter.Equals("Mpeg2Dec Filter"))
+              {
+                Mpeg2DecFilterFound = true;
+              }
+              if (filter.Equals("DScaler Mpeg2 Video Decoder"))
+              {
+                DScalerFilterFound = true;
+              }
+            }
+            if (Mpeg2DecFilterFound) videoCodec = "Mpeg2Dec Filter";
+            else if (DScalerFilterFound) videoCodec = "DScaler Mpeg2 Video Decoder";
+          }
+        }
 
         audioCodecComboBox.SelectedItem = audioCodec;
         videoCodecComboBox.SelectedItem = videoCodec;
 
-			}
-		}
+      }
+    }
 
-		public override void SaveSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				xmlwriter.SetValue("dvdplayer", "audiorenderer", audioRendererComboBox.Text);
-				xmlwriter.SetValue("dvdplayer", "videocodec", videoCodecComboBox.Text);
-				xmlwriter.SetValue("dvdplayer", "audiocodec", audioCodecComboBox.Text);
-				xmlwriter.SetValue("dvdplayer", "navigator", dvdNavigatorComboBox.Text);
+    public override void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValue("dvdplayer", "audiorenderer", audioRendererComboBox.Text);
+        xmlwriter.SetValue("dvdplayer", "videocodec", videoCodecComboBox.Text);
+        xmlwriter.SetValue("dvdplayer", "audiocodec", audioCodecComboBox.Text);
+        xmlwriter.SetValue("dvdplayer", "navigator", dvdNavigatorComboBox.Text);
         xmlwriter.SetValueAsBool("dvdplayer", "ac3", checkBoxAC3.Checked);
-			}			
-		}
+      }
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxAC3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.dvdNavigatorComboBox = new System.Windows.Forms.ComboBox();
-      this.videoCodecComboBox = new System.Windows.Forms.ComboBox();
-      this.audioCodecComboBox = new System.Windows.Forms.ComboBox();
-      this.audioRendererComboBox = new System.Windows.Forms.ComboBox();
-      this.dvdNavigatorLabel = new System.Windows.Forms.Label();
-      this.videoCodecLabel = new System.Windows.Forms.Label();
-      this.audioCodecLabel = new System.Windows.Forms.Label();
-      this.audioRendererLabel = new System.Windows.Forms.Label();
+      this.dvdNavigatorComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.videoCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.audioCodecComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.audioRendererComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.dvdNavigatorLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.videoCodecLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.audioCodecLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.audioRendererLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -319,7 +321,7 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
-	}
+    #endregion
+  }
 }
 

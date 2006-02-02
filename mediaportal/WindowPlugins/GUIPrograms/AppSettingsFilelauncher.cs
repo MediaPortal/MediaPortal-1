@@ -32,7 +32,7 @@ using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
-  public class AppSettingsFilelauncher: AppSettings
+  public class AppSettingsFilelauncher : AppSettings
   {
     private Label label3;
     private CheckBox chkbUseShellExecute;
@@ -56,8 +56,8 @@ namespace WindowPlugins.GUIPrograms
     private TextBox txtPinCode;
     private CheckBox chkbWaitForExit;
     private ComboBox cbFilename;
-    private System.Windows.Forms.Label lblImgDirectories;
-    private System.Windows.Forms.TextBox txtImageDirs;
+    private MediaPortal.UserInterface.Controls.MPLabel lblImgDirectories;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtImageDirs;
     private MediaPortal.UserInterface.Controls.MPButton btnImageDirs;
     private MediaPortal.UserInterface.Controls.MPButton btnPrePost;
     private IContainer components = null;
@@ -93,30 +93,30 @@ namespace WindowPlugins.GUIPrograms
     private void InitializeComponent()
     {
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AppSettingsFilelauncher));
-      this.label3 = new System.Windows.Forms.Label();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.chkbUseShellExecute = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.chkbUseQuotes = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.btnStartup = new MediaPortal.UserInterface.Controls.MPButton();
-      this.txtStartupDir = new System.Windows.Forms.TextBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.cbWindowStyle = new System.Windows.Forms.ComboBox();
-      this.label6 = new System.Windows.Forms.Label();
-      this.txtArguments = new System.Windows.Forms.TextBox();
-      this.lblArg = new System.Windows.Forms.Label();
-      this.lblImageFile = new System.Windows.Forms.Label();
+      this.txtStartupDir = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbWindowStyle = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtArguments = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.lblArg = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblImageFile = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonImagefile = new MediaPortal.UserInterface.Controls.MPButton();
-      this.txtImageFile = new System.Windows.Forms.TextBox();
+      this.txtImageFile = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.chkbEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.txtTitle = new System.Windows.Forms.TextBox();
-      this.lblTitle = new System.Windows.Forms.Label();
-      this.lblFilename = new System.Windows.Forms.Label();
+      this.txtTitle = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.lblTitle = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblFilename = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonLaunchingApp = new MediaPortal.UserInterface.Controls.MPButton();
-      this.LblPinCode = new System.Windows.Forms.Label();
-      this.txtPinCode = new System.Windows.Forms.TextBox();
+      this.LblPinCode = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtPinCode = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.chkbWaitForExit = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbFilename = new System.Windows.Forms.ComboBox();
-      this.lblImgDirectories = new System.Windows.Forms.Label();
-      this.txtImageDirs = new System.Windows.Forms.TextBox();
+      this.cbFilename = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.lblImgDirectories = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtImageDirs = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.btnImageDirs = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnPrePost = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
@@ -388,7 +388,7 @@ namespace WindowPlugins.GUIPrograms
       this.ResumeLayout(false);
 
     }
-    #endregion 
+    #endregion
 
     private void SetWindowStyle(ProcessWindowStyle val)
     {
@@ -434,13 +434,13 @@ namespace WindowPlugins.GUIPrograms
     {
       // set tooltip-stuff..... 
       toolTip.SetToolTip(txtTitle, "This text will appear in the listitem of MediaPortal\r\n(mandatory)");
-      toolTip.SetToolTip(chkbUseShellExecute, "Enable this if you want to run a program that is associated with a specific file-" + 
+      toolTip.SetToolTip(chkbUseShellExecute, "Enable this if you want to run a program that is associated with a specific file-" +
         "extension.\r\nYou can omit the \"Launching Application\" in this case.");
       toolTip.SetToolTip(chkbUseQuotes, "Quotes are usually needed to handle filenames with spaces correctly. \r\nAvoid double" + " quotes though!");
-      toolTip.SetToolTip(txtStartupDir, "Optional path that is passed as the launch-directory \r\n\r\n(advanced hint: Use %FILEDIR" + 
+      toolTip.SetToolTip(txtStartupDir, "Optional path that is passed as the launch-directory \r\n\r\n(advanced hint: Use %FILEDIR" +
         "% if you want to use the directory where the launched file is stored)");
       toolTip.SetToolTip(cbWindowStyle, "Appearance of the launched program. \r\nTry HIDDEN or MINIMIZED for a seamless integr" + "ation in MediaPortal");
-      toolTip.SetToolTip(txtArguments, "Optional arguments that are needed to launch the program \r\n\r\n(advanced hint: Use %FIL" + 
+      toolTip.SetToolTip(txtArguments, "Optional arguments that are needed to launch the program \r\n\r\n(advanced hint: Use %FIL" +
         "E% if the filename needs to be placed in some specific place between several arg" + "uments)");
       toolTip.SetToolTip(txtImageFile, "Optional filename for an image to display in MediaPortal");
       toolTip.SetToolTip(chkbEnabled, "Only enabled items will appear in MediaPortal");
@@ -488,7 +488,7 @@ namespace WindowPlugins.GUIPrograms
       curApp.WaitForExit = (this.chkbWaitForExit.Checked);
       curApp.SourceType = myProgSourceType.FILELAUNCHER;
       curApp.Imagefile = this.txtImageFile.Text;
-      curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text,  - 1);
+      curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text, -1);
       curApp.ImageDirectory = this.txtImageDirs.Text;
     }
 
@@ -508,8 +508,8 @@ namespace WindowPlugins.GUIPrograms
         MessageBox.Show(strHeader + m_Checker.Problems + strFooter, "Invalid Entries");
       }
       else
-      {}
-        return m_Checker.IsOk;
+      { }
+      return m_Checker.IsOk;
     }
 
     private void buttonLaunchingApp_Click(object sender, EventArgs e)
@@ -553,7 +553,8 @@ namespace WindowPlugins.GUIPrograms
 
     }
 
-    private void txtPinCode_TextChanged(object sender, EventArgs e){
+    private void txtPinCode_TextChanged(object sender, EventArgs e)
+    {
 
     }
 

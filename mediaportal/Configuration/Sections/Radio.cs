@@ -37,12 +37,12 @@ namespace MediaPortal.Configuration.Sections
   public class Radio : MediaPortal.Configuration.SectionSettings
   {
     protected MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    protected System.Windows.Forms.TextBox folderNameTextBox;
-    protected System.Windows.Forms.Label folderNameLabel;
+    protected MediaPortal.UserInterface.Controls.MPTextBox folderNameTextBox;
+    protected MediaPortal.UserInterface.Controls.MPLabel folderNameLabel;
     protected MediaPortal.UserInterface.Controls.MPButton browseFolderButton;
     protected System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
     protected System.Windows.Forms.OpenFileDialog openFileDialog;
-    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
     protected System.ComponentModel.IContainer components = null;
 
     public Radio()
@@ -82,9 +82,9 @@ namespace MediaPortal.Configuration.Sections
     {
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.browseFolderButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.folderNameTextBox = new System.Windows.Forms.TextBox();
-      this.folderNameLabel = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
+      this.folderNameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.folderNameLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.groupBox2.SuspendLayout();

@@ -163,8 +163,8 @@ namespace PostSetup
 			this.panel2 = new System.Windows.Forms.Panel();
 			this.pictureBox2 = new System.Windows.Forms.PictureBox();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
-			this.labDescription = new System.Windows.Forms.Label();
-			this.labInfo = new System.Windows.Forms.Label();
+			this.labDescription = new MediaPortal.UserInterface.Controls.MPLabel();
+			this.labInfo = new MediaPortal.UserInterface.Controls.MPLabel();
 			this.panel2.SuspendLayout();
 			this.SuspendLayout();
 			// 

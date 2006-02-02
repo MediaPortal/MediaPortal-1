@@ -61,16 +61,16 @@ namespace MediaPortal.GUI.X10Plugin
     private MediaPortal.UserInterface.Controls.MPButton buttonNew;
     private MediaPortal.UserInterface.Controls.MPButton buttonEdit;
     private MediaPortal.UserInterface.Controls.MPButton buttonDelete;
-    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
 
-    private System.Windows.Forms.TextBox txtCM1xHost;
-    private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtCM1xHost;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private System.Windows.Forms.RadioButton radioButton1;
-    private System.Windows.Forms.RadioButton radioButton2;
-    private System.Windows.Forms.TextBox txtComPort;
-    private System.Windows.Forms.Label label3;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButton1;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButton2;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtComPort;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
 
     private ApplianceConfiguration appConfig;
 
@@ -105,14 +105,14 @@ namespace MediaPortal.GUI.X10Plugin
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.label2 = new System.Windows.Forms.Label();
-      this.txtCM1xHost = new System.Windows.Forms.TextBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtCM1xHost = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.radioButton1 = new System.Windows.Forms.RadioButton();
-      this.radioButton2 = new System.Windows.Forms.RadioButton();
-      this.txtComPort = new System.Windows.Forms.TextBox();
-      this.label3 = new System.Windows.Forms.Label();
+      this.radioButton1 = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.radioButton2 = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.txtComPort = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();

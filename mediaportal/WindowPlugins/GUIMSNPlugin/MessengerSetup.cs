@@ -36,14 +36,14 @@ namespace MediaPortal.GUI.MSN
   /// </summary>
   public class MessengerSetup : System.Windows.Forms.Form
   {
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox textBoxEMail;
-    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxEMail;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
     private MediaPortal.UserInterface.Controls.MPButton buttonOK;
-    private System.Windows.Forms.TextBox textBoxPassword;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxPassword;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkSignIn;
-    private System.Windows.Forms.ComboBox InitialStatusBox;
-    private System.Windows.Forms.Label label3;
+    private MediaPortal.UserInterface.Controls.MPComboBox InitialStatusBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkPopupWindow;
     private GroupBox groupBox1;
     private GroupBox groupBox2;
@@ -97,28 +97,28 @@ namespace MediaPortal.GUI.MSN
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new System.Windows.Forms.Label();
-      this.textBoxEMail = new System.Windows.Forms.TextBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.textBoxPassword = new System.Windows.Forms.TextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxEMail = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxPassword = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonOK = new MediaPortal.UserInterface.Controls.MPButton();
       this.chkSignIn = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.InitialStatusBox = new System.Windows.Forms.ComboBox();
-      this.label3 = new System.Windows.Forms.Label();
+      this.InitialStatusBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.chkPopupWindow = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label7 = new System.Windows.Forms.Label();
-      this.label6 = new System.Windows.Forms.Label();
-      this.label5 = new System.Windows.Forms.Label();
-      this.label8 = new System.Windows.Forms.Label();
-      this.label4 = new System.Windows.Forms.Label();
-      this.cbProxyType = new System.Windows.Forms.ComboBox();
+      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbProxyType = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.cbUseProxyServer = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tbProxyPassword = new System.Windows.Forms.TextBox();
-      this.tbProxyUserName = new System.Windows.Forms.TextBox();
-      this.tbProxyPort = new System.Windows.Forms.TextBox();
-      this.tbProxyHost = new System.Windows.Forms.TextBox();
+      this.tbProxyPassword = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tbProxyUserName = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tbProxyPort = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tbProxyHost = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();

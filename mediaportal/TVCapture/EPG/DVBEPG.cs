@@ -118,8 +118,8 @@ namespace MediaPortal.TV.Recording
     bool m_summaryParsing = false;
     bool m_channelsParsing = false;
     int m_channelGrabLen = 0;
-    System.Windows.Forms.Label m_mhwChannels;
-    System.Windows.Forms.Label m_mhwTitles;
+    MediaPortal.UserInterface.Controls.MPLabel m_mhwChannels;
+    MediaPortal.UserInterface.Controls.MPLabel m_mhwTitles;
     bool m_isLocked = false;
 
     // mhw
@@ -185,11 +185,11 @@ namespace MediaPortal.TV.Recording
     {
       get { return m_isLocked; }
     }
-    public System.Windows.Forms.Label LabelChannels
+    public MediaPortal.UserInterface.Controls.MPLabel LabelChannels
     {
       set { m_mhwChannels = value; }
     }
-    public System.Windows.Forms.Label LabelTitles
+    public MediaPortal.UserInterface.Controls.MPLabel LabelTitles
     {
       set { m_mhwTitles = value; }
     }

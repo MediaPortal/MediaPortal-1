@@ -41,18 +41,18 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPButton closeButton;
     private MediaPortal.UserInterface.Controls.MPButton okButton;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox nameTextBox;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.TextBox genreTextBox;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.TextBox bitrateTextBox;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.TextBox urlTextBox;
-    private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.ComboBox typeComboBox;
-    private System.Windows.Forms.TextBox frequencyTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPTextBox nameTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPTextBox genreTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
+    private MediaPortal.UserInterface.Controls.MPTextBox bitrateTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label5;
+    private MediaPortal.UserInterface.Controls.MPTextBox urlTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
+    private MediaPortal.UserInterface.Controls.MPComboBox typeComboBox;
+    private MediaPortal.UserInterface.Controls.MPTextBox frequencyTextBox;
     private MediaPortal.UserInterface.Controls.MPButton searchButton;
     /// <summary>
     /// Required designer variable.
@@ -96,18 +96,18 @@ namespace MediaPortal.Configuration
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.typeComboBox = new System.Windows.Forms.ComboBox();
-      this.urlTextBox = new System.Windows.Forms.TextBox();
-      this.label6 = new System.Windows.Forms.Label();
-      this.bitrateTextBox = new System.Windows.Forms.TextBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.genreTextBox = new System.Windows.Forms.TextBox();
-      this.label4 = new System.Windows.Forms.Label();
-      this.frequencyTextBox = new System.Windows.Forms.TextBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.nameTextBox = new System.Windows.Forms.TextBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
+      this.typeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.urlTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.bitrateTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.genreTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.frequencyTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.nameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.closeButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.searchButton = new MediaPortal.UserInterface.Controls.MPButton();

@@ -37,10 +37,10 @@ namespace MediaPortal.Configuration
   /// </summary>
   public class EditGroupForm : System.Windows.Forms.Form
   {
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox textBoxName;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.TextBox textBoxPincode;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxName;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxPincode;
     private MediaPortal.UserInterface.Controls.MPButton buttonOk;
     private MediaPortal.UserInterface.Controls.MPButton btnCancel;
     TVGroup group = new TVGroup();
@@ -83,10 +83,10 @@ namespace MediaPortal.Configuration
     /// </summary>
     private void InitializeComponent()
     {
-      this.label1 = new System.Windows.Forms.Label();
-      this.textBoxName = new System.Windows.Forms.TextBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.textBoxPincode = new System.Windows.Forms.TextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxName = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxPincode = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();

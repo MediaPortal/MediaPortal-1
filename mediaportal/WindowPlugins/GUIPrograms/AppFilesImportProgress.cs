@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,13 +21,15 @@
  *
  */
 
+#endregion
+
 using System.ComponentModel;
 using System.Windows.Forms;
 using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
-  public class AppFilesImportProgress: AppSettings
+  public class AppFilesImportProgress : AppSettings
   {
     private Label titleLabel;
     private TextBox progressText;
@@ -67,8 +71,8 @@ namespace WindowPlugins.GUIPrograms
     /// </summary>
     private void InitializeComponent()
     {
-      this.titleLabel = new System.Windows.Forms.Label();
-      this.progressText = new System.Windows.Forms.TextBox();
+      this.titleLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.progressText = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.SuspendLayout();
       // 
       // label3
@@ -104,7 +108,7 @@ namespace WindowPlugins.GUIPrograms
 
     }
 
-    #endregion 
+    #endregion
 
     public void RunImport()
     {

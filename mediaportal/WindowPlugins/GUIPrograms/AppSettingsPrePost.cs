@@ -39,12 +39,12 @@ namespace WindowPlugins.GUIPrograms
     private MediaPortal.UserInterface.Controls.MPButton btnOk;
     private MediaPortal.UserInterface.Controls.MPButton btnCancel;
     private MediaPortal.UserInterface.Controls.MPGroupBox gbData;
-    private System.Windows.Forms.Label lblTitle;
-    private System.Windows.Forms.TextBox tbPre;
-    private System.Windows.Forms.TextBox tbPost;
-    private System.Windows.Forms.Label lblPre;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label lblTitleData;
+    private MediaPortal.UserInterface.Controls.MPLabel lblTitle;
+    private MediaPortal.UserInterface.Controls.MPTextBox tbPre;
+    private MediaPortal.UserInterface.Controls.MPTextBox tbPost;
+    private MediaPortal.UserInterface.Controls.MPLabel lblPre;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel lblTitleData;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -106,12 +106,12 @@ namespace WindowPlugins.GUIPrograms
       this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.gbData = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.lblTitle = new System.Windows.Forms.Label();
-      this.tbPre = new System.Windows.Forms.TextBox();
-      this.tbPost = new System.Windows.Forms.TextBox();
-      this.lblPre = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
-      this.lblTitleData = new System.Windows.Forms.Label();
+      this.lblTitle = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbPre = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tbPost = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.lblPre = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblTitleData = new MediaPortal.UserInterface.Controls.MPLabel();
       this.gbData.SuspendLayout();
       this.SuspendLayout();
       // 

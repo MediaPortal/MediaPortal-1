@@ -38,17 +38,17 @@ namespace MediaPortal.Configuration.Sections
   public class Wizard_SelectPlugins : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label labelHD;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.Label labelFolder;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.Label labelMusicCount;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.Label labelPhotoCount;
-    private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.Label labelMovieCount;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPLabel labelHD;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPLabel labelFolder;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
+    private MediaPortal.UserInterface.Controls.MPLabel labelMusicCount;
+    private MediaPortal.UserInterface.Controls.MPLabel label5;
+    private MediaPortal.UserInterface.Controls.MPLabel labelPhotoCount;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
+    private MediaPortal.UserInterface.Controls.MPLabel labelMovieCount;
     private MediaPortal.UserInterface.Controls.MPButton buttonStopStart;
     private System.ComponentModel.IContainer components = null;
 
@@ -62,7 +62,7 @@ namespace MediaPortal.Configuration.Sections
     bool stopScanning = false;
     private System.Windows.Forms.ProgressBar progressBar1;
     private System.Windows.Forms.Timer timer1;
-    private System.Windows.Forms.Label fileLabel;
+    private MediaPortal.UserInterface.Controls.MPLabel fileLabel;
     bool isScanning = false;
     public Wizard_SelectPlugins()
       : this("Media Search")
@@ -102,20 +102,20 @@ namespace MediaPortal.Configuration.Sections
     {
       this.components = new System.ComponentModel.Container();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.fileLabel = new System.Windows.Forms.Label();
+      this.fileLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.buttonStopStart = new MediaPortal.UserInterface.Controls.MPButton();
-      this.labelMovieCount = new System.Windows.Forms.Label();
-      this.label6 = new System.Windows.Forms.Label();
-      this.labelPhotoCount = new System.Windows.Forms.Label();
-      this.label5 = new System.Windows.Forms.Label();
-      this.labelMusicCount = new System.Windows.Forms.Label();
-      this.label4 = new System.Windows.Forms.Label();
-      this.labelFolder = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
-      this.labelHD = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label1 = new System.Windows.Forms.Label();
+      this.labelMovieCount = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelPhotoCount = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelMusicCount = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelFolder = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelHD = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();

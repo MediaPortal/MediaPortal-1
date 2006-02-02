@@ -33,57 +33,57 @@ using System.IO;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 
-namespace MediaPortal.WinampPlayer 
+namespace MediaPortal.WinampPlayer
 {
-	/// <summary>
-	/// Summary description for Configuration.
-	/// </summary>
-	public class ConfigurationForm : System.Windows.Forms.Form
-	{
+  /// <summary>
+  /// Summary description for Configuration.
+  /// </summary>
+  public class ConfigurationForm : System.Windows.Forms.Form
+  {
     public const string WINAMPINI = "winamp.ini";
 
     private string m_enabledExt = "";
     private MediaPortal.UserInterface.Controls.MPButton buttonEnable;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox extensionBox;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPTextBox extensionBox;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public ConfigurationForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
-		}
+    public ConfigurationForm()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.buttonEnable = new MediaPortal.UserInterface.Controls.MPButton();
-      this.extensionBox = new System.Windows.Forms.TextBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this.extensionBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.SuspendLayout();
       // 
       // buttonEnable
@@ -124,22 +124,22 @@ namespace MediaPortal.WinampPlayer
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
     private void ConfigurationForm_Load(object sender, System.EventArgs e)
     {
-      using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        m_enabledExt = xmlreader.GetValueAsString("winampplugin", "enabledextensions","");
+        m_enabledExt = xmlreader.GetValueAsString("winampplugin", "enabledextensions", "");
         m_enabledExt.Replace(":", ","); // in case it was using the old plugin code where the separator was ":"
       }
-      if(m_enabledExt != null && m_enabledExt.Length > 0)
+      if (m_enabledExt != null && m_enabledExt.Length > 0)
         extensionBox.Text = m_enabledExt;
     }
 
     private void ConfigurationForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      using (MediaPortal.Profile.Settings   xmlWriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlWriter.SetValue("winampplugin", "enabledextensions", extensionBox.Text);
       }
@@ -147,11 +147,11 @@ namespace MediaPortal.WinampPlayer
 
     private void buttonEnable_Click(object sender, System.EventArgs e)
     {
-      using (MediaPortal.Profile.Settings   xmlWriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlWriter.SetValue("winampplugin", "enabledextensions", extensionBox.Text);
       }
     }
-    
-	}
+
+  }
 }

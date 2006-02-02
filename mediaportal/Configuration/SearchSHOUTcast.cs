@@ -42,7 +42,7 @@ namespace MediaPortal.Configuration
   public class SearchSHOUTcast : System.Windows.Forms.Form
   {
     private MediaPortal.UserInterface.Controls.MPButton SearchButton;
-    private System.Windows.Forms.TextBox SearchText;
+    private MediaPortal.UserInterface.Controls.MPTextBox SearchText;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private MediaPortal.UserInterface.Controls.MPListView ResultsBox;
@@ -51,7 +51,7 @@ namespace MediaPortal.Configuration
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
-    private System.Windows.Forms.Label WaitLabel;
+    private MediaPortal.UserInterface.Controls.MPLabel WaitLabel;
     private System.Windows.Forms.ColumnHeader columnHeader3;
 
     private RadioStation Selected_Radiostation = null;     //Our return station info
@@ -90,13 +90,13 @@ namespace MediaPortal.Configuration
     private void InitializeComponent()
     {
       this.SearchButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.SearchText = new System.Windows.Forms.TextBox();
+      this.SearchText = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.ResultsBox = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.AddButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.WaitLabel = new System.Windows.Forms.Label();
+      this.WaitLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.SuspendLayout();
       // 
       // SearchButton

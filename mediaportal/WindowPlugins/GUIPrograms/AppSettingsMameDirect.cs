@@ -37,101 +37,101 @@ using ProgramsDatabase;
 
 namespace WindowPlugins.GUIPrograms
 {
-	/// <summary>
-	/// Summary description for AppSettingsMameDirect.
-	/// </summary>
-	public class AppSettingsMameDirect : AppSettings
-	{
-    private System.Windows.Forms.Label LblPinCode;
-    private System.Windows.Forms.TextBox txtPinCode;
+  /// <summary>
+  /// Summary description for AppSettingsMameDirect.
+  /// </summary>
+  public class AppSettingsMameDirect : AppSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPLabel LblPinCode;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtPinCode;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkbValidImagesOnly;
-    private System.Windows.Forms.Label lblImgDirectories;
-    private System.Windows.Forms.TextBox txtImageDirs;
+    private MediaPortal.UserInterface.Controls.MPLabel lblImgDirectories;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtImageDirs;
     private MediaPortal.UserInterface.Controls.MPButton btnImageDirs;
-    private System.Windows.Forms.ComboBox cbWindowStyle;
-    private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.TextBox txtArguments;
-    private System.Windows.Forms.Label lblArg;
-    private System.Windows.Forms.Label lblImageFile;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbWindowStyle;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtArguments;
+    private MediaPortal.UserInterface.Controls.MPLabel lblArg;
+    private MediaPortal.UserInterface.Controls.MPLabel lblImageFile;
     private MediaPortal.UserInterface.Controls.MPButton buttonImageFile;
-    private System.Windows.Forms.TextBox txtImageFile;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtImageFile;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkbEnabled;
-    private System.Windows.Forms.TextBox txtTitle;
-    private System.Windows.Forms.Label lblTitle;
-    private System.Windows.Forms.Label lblFilename;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtTitle;
+    private MediaPortal.UserInterface.Controls.MPLabel lblTitle;
+    private MediaPortal.UserInterface.Controls.MPLabel lblFilename;
     private MediaPortal.UserInterface.Controls.MPButton buttonLaunchingApp;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.TextBox edFilename;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPTextBox edFilename;
     private MediaPortal.UserInterface.Controls.MPButton buttonFileDirectory;
-    private System.Windows.Forms.TextBox txtFiles;
-    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPTextBox txtFiles;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
     private System.Windows.Forms.Panel panelAdditionals;
     private System.Windows.Forms.LinkLabel historyDatLink;
     private System.Windows.Forms.LinkLabel catverLink;
-    private System.Windows.Forms.Label labelBestResults;
+    private MediaPortal.UserInterface.Controls.MPLabel labelBestResults;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkbOriginalsOnly;
-		/// <summary> 
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    /// <summary> 
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public AppSettingsMameDirect()
-		{
-			// This call is required by the Windows.Forms Form Designer.
-			InitializeComponent();
+    public AppSettingsMameDirect()
+    {
+      // This call is required by the Windows.Forms Form Designer.
+      InitializeComponent();
       this.txtPinCode.PasswordChar = (char)0x25CF;
-		}
+    }
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary> 
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Component Designer generated code
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Component Designer generated code
+    /// <summary> 
+    /// Required method for Designer support - do not modify 
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AppSettingsMameDirect));
-      this.LblPinCode = new System.Windows.Forms.Label();
-      this.txtPinCode = new System.Windows.Forms.TextBox();
+      this.LblPinCode = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtPinCode = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.chkbValidImagesOnly = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.lblImgDirectories = new System.Windows.Forms.Label();
-      this.txtImageDirs = new System.Windows.Forms.TextBox();
+      this.lblImgDirectories = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtImageDirs = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.btnImageDirs = new MediaPortal.UserInterface.Controls.MPButton();
-      this.cbWindowStyle = new System.Windows.Forms.ComboBox();
-      this.label6 = new System.Windows.Forms.Label();
-      this.txtArguments = new System.Windows.Forms.TextBox();
-      this.lblArg = new System.Windows.Forms.Label();
-      this.lblImageFile = new System.Windows.Forms.Label();
+      this.cbWindowStyle = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtArguments = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.lblArg = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblImageFile = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonImageFile = new MediaPortal.UserInterface.Controls.MPButton();
-      this.txtImageFile = new System.Windows.Forms.TextBox();
+      this.txtImageFile = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.chkbEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.txtTitle = new System.Windows.Forms.TextBox();
-      this.lblTitle = new System.Windows.Forms.Label();
-      this.lblFilename = new System.Windows.Forms.Label();
+      this.txtTitle = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.lblTitle = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblFilename = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonLaunchingApp = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label3 = new System.Windows.Forms.Label();
-      this.edFilename = new System.Windows.Forms.TextBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.edFilename = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonFileDirectory = new MediaPortal.UserInterface.Controls.MPButton();
-      this.txtFiles = new System.Windows.Forms.TextBox();
-      this.label2 = new System.Windows.Forms.Label();
+      this.txtFiles = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.panelAdditionals = new System.Windows.Forms.Panel();
       this.historyDatLink = new System.Windows.Forms.LinkLabel();
       this.catverLink = new System.Windows.Forms.LinkLabel();
-      this.labelBestResults = new System.Windows.Forms.Label();
+      this.labelBestResults = new MediaPortal.UserInterface.Controls.MPLabel();
       this.chkbOriginalsOnly = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.panelAdditionals.SuspendLayout();
       this.SuspendLayout();
@@ -373,7 +373,7 @@ namespace WindowPlugins.GUIPrograms
       // 
       // labelBestResults
       // 
-      this.labelBestResults.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.labelBestResults.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.labelBestResults.BackColor = System.Drawing.SystemColors.Highlight;
       this.labelBestResults.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
@@ -429,7 +429,7 @@ namespace WindowPlugins.GUIPrograms
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
 
     private void SetWindowStyle(ProcessWindowStyle val)
@@ -474,7 +474,7 @@ namespace WindowPlugins.GUIPrograms
     private void AppSettingsMameDirect_Load(object sender, System.EventArgs e)
     {
       cbWindowStyle.SelectedIndex = 1; // minimized
-    
+
     }
 
     public override bool AppObj2Form(AppItem curApp)
@@ -516,7 +516,7 @@ namespace WindowPlugins.GUIPrograms
       curApp.ImageDirectory = this.txtImageDirs.Text;
       curApp.ImportValidImagesOnly = this.chkbValidImagesOnly.Checked;
       ((appItemMameDirect)curApp).ImportOriginalsOnly = chkbOriginalsOnly.Checked;
-      curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text,  - 1);
+      curApp.Pincode = ProgramUtils.StrToIntDef(this.txtPinCode.Text, -1);
     }
 
     public override bool EntriesOK(AppItem curApp)
@@ -532,7 +532,7 @@ namespace WindowPlugins.GUIPrograms
         MessageBox.Show(strHeader + m_Checker.Problems + strFooter, "Invalid Entries");
       }
       else
-      {}
+      { }
       return m_Checker.IsOk;
     }
 
@@ -614,7 +614,7 @@ namespace WindowPlugins.GUIPrograms
     void LaunchLink(string link)
     {
       if (link == null)
-        return ;
+        return;
       if (link.Length > 0)
       {
         ProcessStartInfo sInfo = new ProcessStartInfo(link);
@@ -675,5 +675,5 @@ namespace WindowPlugins.GUIPrograms
     }
 
 
-	}
+  }
 }

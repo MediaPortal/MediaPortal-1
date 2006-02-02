@@ -39,12 +39,12 @@ namespace MediaPortal.Configuration.Sections
   {
     private System.ComponentModel.IContainer components = null;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
     private MediaPortal.UserInterface.Controls.MPButton button1;
     private System.Windows.Forms.ProgressBar progressBar1;
-    private System.Windows.Forms.Label labelStatus;
-    private System.Windows.Forms.ComboBox cbCountry;
+    private MediaPortal.UserInterface.Controls.MPLabel labelStatus;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbCountry;
 
 
     enum State
@@ -62,7 +62,7 @@ namespace MediaPortal.Configuration.Sections
 
     int newChannels, updatedChannels;
     int newRadioChannels, updatedRadioChannels;
-    private System.Windows.Forms.Label label3;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
 
     private System.Windows.Forms.Panel panel1;
 
@@ -103,14 +103,14 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label3 = new System.Windows.Forms.Label();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.panel1 = new System.Windows.Forms.Panel();
-      this.labelStatus = new System.Windows.Forms.Label();
+      this.labelStatus = new MediaPortal.UserInterface.Controls.MPLabel();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label2 = new System.Windows.Forms.Label();
-      this.cbCountry = new System.Windows.Forms.ComboBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbCountry = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 

@@ -80,8 +80,8 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.Panel panel2;
     private System.Windows.Forms.Panel holderPanel;
-    private System.Windows.Forms.Label topicLabel;
-    private System.Windows.Forms.Label infoLabel;
+    private MediaPortal.UserInterface.Controls.MPLabel topicLabel;
+    private MediaPortal.UserInterface.Controls.MPLabel infoLabel;
     private System.Windows.Forms.PictureBox pictureBox1;
     int visiblePageIndex = -1;
 
@@ -331,8 +331,8 @@ namespace MediaPortal.Configuration
       this.backButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.topPanel = new System.Windows.Forms.Panel();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.infoLabel = new System.Windows.Forms.Label();
-      this.topicLabel = new System.Windows.Forms.Label();
+      this.infoLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.topicLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.panel1 = new System.Windows.Forms.Panel();
       this.panel2 = new System.Windows.Forms.Panel();
       this.holderPanel = new System.Windows.Forms.Panel();

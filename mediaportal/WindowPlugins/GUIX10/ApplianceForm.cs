@@ -38,15 +38,15 @@ namespace MediaPortal.GUI.X10Plugin
   {
     private MediaPortal.UserInterface.Controls.MPButton buttonSave;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.Label labelName;
+    private MediaPortal.UserInterface.Controls.MPLabel labelName;
     private MediaPortal.UserInterface.Controls.MPButton buttonCancel;
-    private System.Windows.Forms.Label labelURL;
-    private System.Windows.Forms.Label label1;
-    public System.Windows.Forms.TextBox txtDescription;
-    public System.Windows.Forms.TextBox txtCode;
-    private System.Windows.Forms.Label label2;
-    public System.Windows.Forms.TextBox txtLocation;
-    private System.Windows.Forms.Label label3;
+    private MediaPortal.UserInterface.Controls.MPLabel labelURL;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    public MediaPortal.UserInterface.Controls.MPTextBox txtDescription;
+    public MediaPortal.UserInterface.Controls.MPTextBox txtCode;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    public MediaPortal.UserInterface.Controls.MPTextBox txtLocation;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -88,15 +88,15 @@ namespace MediaPortal.GUI.X10Plugin
     {
       this.buttonSave = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label1 = new System.Windows.Forms.Label();
-      this.txtDescription = new System.Windows.Forms.TextBox();
-      this.labelURL = new System.Windows.Forms.Label();
-      this.txtCode = new System.Windows.Forms.TextBox();
-      this.labelName = new System.Windows.Forms.Label();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtDescription = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelURL = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtCode = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelName = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label2 = new System.Windows.Forms.Label();
-      this.txtLocation = new System.Windows.Forms.TextBox();
-      this.label3 = new System.Windows.Forms.Label();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtLocation = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 

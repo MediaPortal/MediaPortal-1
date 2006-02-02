@@ -84,10 +84,10 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.comboBoxSpeakerConfig = new System.Windows.Forms.ComboBox();
+      this.comboBoxSpeakerConfig = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.comboBoxOutPutMode = new System.Windows.Forms.ComboBox();
+      this.comboBoxOutPutMode = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();

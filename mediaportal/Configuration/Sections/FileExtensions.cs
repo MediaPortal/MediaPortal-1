@@ -36,8 +36,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPButton removeButton;
     private MediaPortal.UserInterface.Controls.MPButton addButton;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.TextBox extensionTextBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPTextBox extensionTextBox;
     private System.Windows.Forms.ListBox extensionsListBox;
     private System.ComponentModel.IContainer components = null;
 
@@ -105,11 +105,11 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.addButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.removeButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.extensionsListBox = new System.Windows.Forms.ListBox();
-      this.extensionTextBox = new System.Windows.Forms.TextBox();
+      this.extensionTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 

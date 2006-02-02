@@ -36,7 +36,7 @@ namespace WindowPlugins.GUIPrograms
   /// <summary>
   /// Summary description for Form1.
   /// </summary>
-  public class FileInfoScraperForm: Form
+  public class FileInfoScraperForm : Form
   {
     private AppItem m_CurApp;
     private Panel leftPanel;
@@ -81,7 +81,7 @@ namespace WindowPlugins.GUIPrograms
     private MenuItem menuDataAndImages;
     private MenuItem menuData;
     private MenuItem menuImages;
-    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
     bool stopSearching = false;
 
     public AppItem CurApp
@@ -142,16 +142,16 @@ namespace WindowPlugins.GUIPrograms
       this.components = new System.ComponentModel.Container();
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FileInfoScraperForm));
       this.bottomPanel = new System.Windows.Forms.Panel();
-      this.label2 = new System.Windows.Forms.Label();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.progressPanel = new System.Windows.Forms.Panel();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.progressStatusLabel = new System.Windows.Forms.Label();
+      this.progressStatusLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.progressBar = new System.Windows.Forms.ProgressBar();
-      this.label1 = new System.Windows.Forms.Label();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.MinRelevanceNum = new System.Windows.Forms.NumericUpDown();
       this.ResetFilterButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.filterComboBox = new System.Windows.Forms.ComboBox();
-      this.filterLabel = new System.Windows.Forms.Label();
+      this.filterComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.filterLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonSelectBestMatch = new MediaPortal.UserInterface.Controls.MPButton();
       this.allGameLink = new System.Windows.Forms.LinkLabel();
       this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
@@ -160,7 +160,7 @@ namespace WindowPlugins.GUIPrograms
       this.leftPanel = new System.Windows.Forms.Panel();
       this.uncheckAllButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkAllButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.lblFiles = new System.Windows.Forms.Label();
+      this.lblFiles = new MediaPortal.UserInterface.Controls.MPLabel();
       this.FileList = new System.Windows.Forms.ListView();
       this.FileTitle = new System.Windows.Forms.ColumnHeader();
       this.status = new System.Windows.Forms.ColumnHeader();
@@ -170,7 +170,7 @@ namespace WindowPlugins.GUIPrograms
       this.splitterVert = new System.Windows.Forms.Splitter();
       this.rightPanel = new System.Windows.Forms.Panel();
       this.LaunchURLButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.lblMatches = new System.Windows.Forms.Label();
+      this.lblMatches = new MediaPortal.UserInterface.Controls.MPLabel();
       this.MatchList = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
@@ -433,8 +433,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // FileList
       // 
-      this.FileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.FileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.FileList.CheckBoxes = true;
       this.FileList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -524,8 +524,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // MatchList
       // 
-      this.MatchList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.MatchList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.MatchList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                 this.columnHeader1,
@@ -602,7 +602,7 @@ namespace WindowPlugins.GUIPrograms
       this.ResumeLayout(false);
 
     }
-    #endregion 
+    #endregion
 
 
     public void Setup()
@@ -614,7 +614,7 @@ namespace WindowPlugins.GUIPrograms
     private void SyncListView()
     {
       if (m_CurApp == null)
-        return ;
+        return;
 
       FileList.BeginUpdate();
       try
@@ -713,11 +713,11 @@ namespace WindowPlugins.GUIPrograms
             nextItem = curItem;
           }
           nextItem.EnsureVisible();
-//          if (!bSuccess)
-//          {
-//            curItem.SubItems[1].Text = String.Format("waiting for reconnection...");
-//            System.Threading.Thread.Sleep(5126);
-//          }
+          //          if (!bSuccess)
+          //          {
+          //            curItem.SubItems[1].Text = String.Format("waiting for reconnection...");
+          //            System.Threading.Thread.Sleep(5126);
+          //          }
           numberOfSearches = numberOfSearches + 1;
           if (numberOfSearches > 20)
           {
@@ -842,7 +842,7 @@ namespace WindowPlugins.GUIPrograms
     private void allGameLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       if (allGameLink.Text == null)
-        return ;
+        return;
       if (allGameLink.Text.Length > 0)
       {
         ProcessStartInfo sInfo = new ProcessStartInfo(allGameLink.Text);
@@ -854,7 +854,7 @@ namespace WindowPlugins.GUIPrograms
     {
       FileInfo info = GetSelectedMatchItem();
       if (info == null)
-        return ;
+        return;
       info.LaunchURL();
     }
 
@@ -890,7 +890,7 @@ namespace WindowPlugins.GUIPrograms
     {
       FileItem file = GetSelectedFileItem();
       if (file == null)
-        return ;
+        return;
 
       if (MatchList.SelectedIndices.Count > 0)
       {
@@ -936,7 +936,7 @@ namespace WindowPlugins.GUIPrograms
           StepProgressBar();
           if (file.FileInfoFavourite != null)
           {
-            numberOfSearches ++;
+            numberOfSearches++;
             numberOfSearches = numberOfSearches + 1;
             if (numberOfSearches > 20)
             {
@@ -1034,7 +1034,7 @@ namespace WindowPlugins.GUIPrograms
     {
       SyncButtons();
     }
-     
+
     void SyncButtons()
     {
       btnStartSearch.Enabled = (FileList.CheckedItems.Count > 0);
@@ -1093,7 +1093,7 @@ namespace WindowPlugins.GUIPrograms
     {
       FileItem curItem = GetSelectedFileItem();
       if (curItem == null)
-        return ;
+        return;
       curItem.TitleOptimized = e.Label;
     }
 

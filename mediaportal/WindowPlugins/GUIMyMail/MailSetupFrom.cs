@@ -94,7 +94,7 @@ namespace MyMail
       this.gbMailboxes = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.btnEdit = new MediaPortal.UserInterface.Controls.MPButton();
       this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-      this.label1 = new System.Windows.Forms.Label();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.gbMailboxes.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
       this.SuspendLayout();

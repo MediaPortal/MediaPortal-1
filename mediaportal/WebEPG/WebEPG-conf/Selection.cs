@@ -43,11 +43,11 @@ namespace WebEPG_conf
     private EventHandler handler;
     private System.Windows.Forms.TreeView treeView1;
     private MediaPortal.UserInterface.Controls.MPGroupBox gbSelection;
-    private System.Windows.Forms.RadioButton rbWebsites;
-    private System.Windows.Forms.RadioButton rbChannels;
-    private System.Windows.Forms.TextBox tbAInfo;
-    private System.Windows.Forms.Label lList;
-    private System.Windows.Forms.Label label5;
+    private MediaPortal.UserInterface.Controls.MPRadioButton rbWebsites;
+    private MediaPortal.UserInterface.Controls.MPRadioButton rbChannels;
+    private MediaPortal.UserInterface.Controls.MPTextBox tbAInfo;
+    private MediaPortal.UserInterface.Controls.MPLabel lList;
+    private MediaPortal.UserInterface.Controls.MPLabel label5;
     private MediaPortal.UserInterface.Controls.MPButton bSelect;
     private MediaPortal.UserInterface.Controls.MPButton bClose;
     /// <summary>
@@ -117,11 +117,11 @@ namespace WebEPG_conf
       this.gbSelection = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.bClose = new MediaPortal.UserInterface.Controls.MPButton();
       this.bSelect = new MediaPortal.UserInterface.Controls.MPButton();
-      this.rbWebsites = new System.Windows.Forms.RadioButton();
-      this.rbChannels = new System.Windows.Forms.RadioButton();
-      this.tbAInfo = new System.Windows.Forms.TextBox();
-      this.label5 = new System.Windows.Forms.Label();
-      this.lList = new System.Windows.Forms.Label();
+      this.rbWebsites = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.rbChannels = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.tbAInfo = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lList = new MediaPortal.UserInterface.Controls.MPLabel();
       this.gbSelection.SuspendLayout();
       this.SuspendLayout();
       // 

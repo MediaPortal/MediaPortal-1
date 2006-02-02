@@ -41,20 +41,20 @@ namespace MediaPortal.Configuration.Sections
   public class DScalerVideoFilter : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.TextBox tbVideoOffset;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
+    private MediaPortal.UserInterface.Controls.MPLabel label5;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
+    private MediaPortal.UserInterface.Controls.MPTextBox tbVideoOffset;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAspectRatio;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbForcedSubtitles;
-    private System.Windows.Forms.ComboBox cbDeinterlace;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbDeinterlace;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbSmoothing;
-    private System.Windows.Forms.ComboBox cbDVBAR;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbDVBAR;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbHardcodePal;
-    private System.Windows.Forms.ComboBox cbIDCT;
-    private System.Windows.Forms.ComboBox cbColorSpace;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbIDCT;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbColorSpace;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAnalogBlanking;
     private System.ComponentModel.IContainer components = null;
 
@@ -101,20 +101,20 @@ namespace MediaPortal.Configuration.Sections
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbAnalogBlanking = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbColorSpace = new System.Windows.Forms.ComboBox();
-      this.label6 = new System.Windows.Forms.Label();
-      this.cbIDCT = new System.Windows.Forms.ComboBox();
-      this.label4 = new System.Windows.Forms.Label();
+      this.cbColorSpace = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cbIDCT = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbHardcodePal = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbDVBAR = new System.Windows.Forms.ComboBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.tbVideoOffset = new System.Windows.Forms.TextBox();
+      this.cbDVBAR = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbVideoOffset = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.cbAspectRatio = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label5 = new System.Windows.Forms.Label();
+      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbForcedSubtitles = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbDeinterlace = new System.Windows.Forms.ComboBox();
+      this.cbDeinterlace = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.cbSmoothing = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label3 = new System.Windows.Forms.Label();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 

@@ -48,11 +48,11 @@ namespace MediaPortal
   /// </summary>
   public class AnalogTVTuningForm : System.Windows.Forms.Form, AutoTuneCallback
   {
-    private System.Windows.Forms.Label labelStatus;
+    private MediaPortal.UserInterface.Controls.MPLabel labelStatus;
     private MediaPortal.UserInterface.Controls.MPButton btnOk;
     private System.Windows.Forms.Panel panel1;
     private MediaPortal.UserInterface.Controls.MPButton buttonMap;
-    private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
     ArrayList m_tvcards = new ArrayList();
     private MediaPortal.UserInterface.Controls.MPButton buttonSkip;
     private System.Windows.Forms.ListView listView1;
@@ -62,19 +62,19 @@ namespace MediaPortal
     private System.Windows.Forms.ProgressBar progressBar1;
     //int videoRenderer;
     private MediaPortal.UserInterface.Controls.MPButton buttonAdd;
-    private System.Windows.Forms.Label labelStatus2;
+    private MediaPortal.UserInterface.Controls.MPLabel labelStatus2;
     private MediaPortal.UserInterface.Controls.MPButton button1;
     private System.Windows.Forms.ImageList imageList1;
     private System.ComponentModel.IContainer components;
-    private System.Windows.Forms.Label labelChannels;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label3;
+    private MediaPortal.UserInterface.Controls.MPLabel labelChannels;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
     private System.Windows.Forms.ProgressBar signalStrength;
     private System.Windows.Forms.ProgressBar signalQuality;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.Label label7;
+    private MediaPortal.UserInterface.Controls.MPLabel label4;
+    private MediaPortal.UserInterface.Controls.MPLabel label5;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
+    private MediaPortal.UserInterface.Controls.MPLabel label7;
     private System.Windows.Forms.Timer timer1;
     TVCaptureDevice captureCard;
 
@@ -99,11 +99,11 @@ namespace MediaPortal
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AnalogTVTuningForm));
-      this.labelStatus = new System.Windows.Forms.Label();
+      this.labelStatus = new MediaPortal.UserInterface.Controls.MPLabel();
       this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.panel1 = new System.Windows.Forms.Panel();
       this.buttonMap = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label1 = new System.Windows.Forms.Label();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonSkip = new MediaPortal.UserInterface.Controls.MPButton();
       this.listView1 = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -111,17 +111,17 @@ namespace MediaPortal
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.buttonAdd = new MediaPortal.UserInterface.Controls.MPButton();
-      this.labelStatus2 = new System.Windows.Forms.Label();
+      this.labelStatus2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.labelChannels = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.label3 = new System.Windows.Forms.Label();
+      this.labelChannels = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.signalStrength = new System.Windows.Forms.ProgressBar();
       this.signalQuality = new System.Windows.Forms.ProgressBar();
-      this.label4 = new System.Windows.Forms.Label();
-      this.label5 = new System.Windows.Forms.Label();
-      this.label6 = new System.Windows.Forms.Label();
-      this.label7 = new System.Windows.Forms.Label();
+      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
       this.SuspendLayout();
       // 

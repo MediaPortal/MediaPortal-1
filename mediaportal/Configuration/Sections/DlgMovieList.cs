@@ -41,10 +41,10 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private MediaPortal.UserInterface.Controls.MPButton button1;
     private MediaPortal.UserInterface.Controls.MPButton button2;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label labelFileName;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.TextBox textBoxTitle;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPLabel labelFileName;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxTitle;
     private MediaPortal.UserInterface.Controls.MPButton buttonFind;
     IMDB _imdb;
     /// <summary>
@@ -109,10 +109,10 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label1 = new System.Windows.Forms.Label();
-      this.labelFileName = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
-      this.textBoxTitle = new System.Windows.Forms.TextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelFileName = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxTitle = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.buttonFind = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 

@@ -38,7 +38,7 @@ namespace MediaPortal
 	/// </summary>
 	public class OldSkinForm : System.Windows.Forms.Form
 	{
-		private System.Windows.Forms.Label label1;
+		private MediaPortal.UserInterface.Controls.MPLabel label1;
 		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox1;
 		private MediaPortal.UserInterface.Controls.MPButton button1;
 		/// <summary>
@@ -80,7 +80,7 @@ namespace MediaPortal
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.label1 = new System.Windows.Forms.Label();
+			this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
 			this.checkBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
 			this.SuspendLayout();

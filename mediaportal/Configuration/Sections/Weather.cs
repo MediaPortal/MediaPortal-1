@@ -37,17 +37,17 @@ namespace MediaPortal.Configuration.Sections
 
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-    private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.ComboBox temperatureComboBox;
-    private System.Windows.Forms.ComboBox windSpeedComboBox;
-    private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Label label3;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPComboBox temperatureComboBox;
+    private MediaPortal.UserInterface.Controls.MPComboBox windSpeedComboBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPLabel label3;
     private MediaPortal.UserInterface.Controls.MPButton removeButton;
     private MediaPortal.UserInterface.Controls.MPButton searchButton;
     private MediaPortal.UserInterface.Controls.MPListView citiesListView;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader2;
-    private System.Windows.Forms.TextBox intervalTextBox;
+    private MediaPortal.UserInterface.Controls.MPTextBox intervalTextBox;
     private MediaPortal.UserInterface.Controls.MPButton editButton;
     private System.Windows.Forms.ColumnHeader columnHeader3;
     private System.Windows.Forms.ColumnHeader columnHeader4;
@@ -220,12 +220,12 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.intervalTextBox = new System.Windows.Forms.TextBox();
-      this.label3 = new System.Windows.Forms.Label();
-      this.windSpeedComboBox = new System.Windows.Forms.ComboBox();
-      this.label2 = new System.Windows.Forms.Label();
-      this.temperatureComboBox = new System.Windows.Forms.ComboBox();
-      this.label1 = new System.Windows.Forms.Label();
+      this.intervalTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.windSpeedComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.temperatureComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.editButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.searchButton = new MediaPortal.UserInterface.Controls.MPButton();
