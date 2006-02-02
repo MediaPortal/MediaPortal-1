@@ -514,67 +514,62 @@ namespace MediaPortal.InputDevices
 
     string GetStateAsText(JoystickState state)
     {
-      string joyState = "Using JoystickState: \r\n";
-      string strText = null;
+      string strText = string.Empty;
 
-      joyState += string.Format("axis: {0}x{1}x{2}\r\n", state.X, state.Y, state.Z);
-      joyState += string.Format("rotation: {0}x{1}x{2}\r\n", state.Rx, state.Ry, state.Rz);
-
-      joyState += "\r\n";
+      string joyState = string.Format("Axis    : {0:+0000;-0000} / {1:+0000;-0000} / {2:+0000;-0000}\n", state.X, state.Y, state.Z);
+      joyState += string.Format      ("Rotation: {0:+0000;-0000} / {1:+0000;-0000} / {2:+0000;-0000}\n\n", state.Rx, state.Ry, state.Rz);
 
       int[] slider = state.GetSlider();
-      joyState += string.Format("slider: 0: {0} 1: {1}\r\n", slider[0], slider[1]);
+      joyState += string.Format      ("Slider  : 0: {0:+0000;-0000} 1: {1:+0000;-0000}\n\n", slider[0], slider[1]);
 
       int[] pov = state.GetPointOfView();
       switch (pov[0])
       {
         case 0:
           {
-            joyState += string.Format("pov: North\r\n");
+            joyState += string.Format("POV     : North\n");
             break;
           }
         case 4500:
           {
-            joyState += string.Format("pov: NorthEast\r\n");
+            joyState += string.Format("POV     : NorthEast\n");
             break;
           }
         case 9000:
           {
-            joyState += string.Format("pov: East\r\n");
+            joyState += string.Format("POV     : East\n");
             break;
           }
         case 13500:
           {
-            joyState += string.Format("pov: SouthEast\r\n");
+            joyState += string.Format("POV     : SouthEast\n");
             break;
           }
         case 18000:
           {
-            joyState += string.Format("pov: South\r\n");
+            joyState += string.Format("POV     : South\n");
             break;
           }
         case 22500:
           {
-            joyState += string.Format("pov: SouthWest\r\n");
+            joyState += string.Format("POV     : SouthWest\n");
             break;
           }
         case 27000:
           {
-            joyState += string.Format("pov: West\r\n");
+            joyState += string.Format("POV     : West\n");
             break;
           }
         case 31500:
           {
-            joyState += string.Format("pov: NorthWest\r\n");
+            joyState += string.Format("POV     : NorthWest\n");
             break;
           }
         default:
           {
-            joyState += string.Format("pov: \r\n");
             break;
           }
       }
-      joyState += "\r\n";
 
       // Fill up text with which buttons are pressed
       byte[] buttons = state.GetButtons();
@@ -586,7 +581,8 @@ namespace MediaPortal.InputDevices
           strText += button.ToString("00 ");
         button++;
       }
-      joyState += "Buttons: " + strText;
+      if (strText != string.Empty)
+        joyState += "Buttons : " + strText;
       return joyState;
     }
 
