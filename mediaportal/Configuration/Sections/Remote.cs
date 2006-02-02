@@ -458,7 +458,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageHCW
       // 
-      this.tabPageHCW.BackColor = System.Drawing.Color.Transparent;
       this.tabPageHCW.Controls.Add(this.groupBoxHcwRepeatDelay);
       this.tabPageHCW.Controls.Add(this.groupBoxHcwGeneral);
       this.tabPageHCW.Controls.Add(this.groupBoxHcwStatus);
@@ -847,7 +846,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageFireDTV
       // 
-      this.tabPageFireDTV.BackColor = System.Drawing.Color.Transparent;
       this.tabPageFireDTV.Controls.Add(this.fireDTVRemote);
       this.tabPageFireDTV.Location = new System.Drawing.Point(4, 22);
       this.tabPageFireDTV.Name = "tabPageFireDTV";
