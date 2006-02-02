@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -39,8 +43,8 @@ namespace MediaPortal.Configuration.Sections
 		private MediaPortal.UserInterface.Controls.MPCheckBox outputCheckBox;
 		private MediaPortal.UserInterface.Controls.MPCheckBox digitCheckBox;
 		private MediaPortal.UserInterface.Controls.MPCheckBox enterCheckBox;
-		private System.Windows.Forms.Button internalCommandsButton;
-		private System.Windows.Forms.Button tunerCommandsButton;
+		private MediaPortal.UserInterface.Controls.MPButton internalCommandsButton;
+		private MediaPortal.UserInterface.Controls.MPButton tunerCommandsButton;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label lblUSBUIRTVersion;
 		private System.Windows.Forms.GroupBox groupBox2;
@@ -54,7 +58,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.NumericUpDown interCommandDelayNumUpDn;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TextBox testSendIrTxtBox;
-		private System.Windows.Forms.Button testSendIrBtn;
+		private MediaPortal.UserInterface.Controls.MPButton testSendIrBtn;
         private GroupBox groupBox3;
         private Label lblUSBUIRTConfigVersion;
         private Label label7;
@@ -163,14 +167,14 @@ namespace MediaPortal.Configuration.Sections
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(USBUIRT));
             this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
             this.SettingsPnl = new System.Windows.Forms.Panel();
-            this.testSendIrBtn = new System.Windows.Forms.Button();
+            this.testSendIrBtn = new MediaPortal.UserInterface.Controls.MPButton();
             this.testSendIrTxtBox = new System.Windows.Forms.TextBox();
             this.interCommandDelayNumUpDn = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.commandRepeatNumUpDn = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
-            this.tunerCommandsButton = new System.Windows.Forms.Button();
-            this.internalCommandsButton = new System.Windows.Forms.Button();
+            this.tunerCommandsButton = new MediaPortal.UserInterface.Controls.MPButton();
+            this.internalCommandsButton = new MediaPortal.UserInterface.Controls.MPButton();
             this.enterCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
             this.digitCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
             this.outputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Xml;
@@ -49,16 +53,16 @@ namespace WebEPG_conf
 		private EventHandler selectHandler;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.Label l_cID;
-		private System.Windows.Forms.Button bAdd;
+		private MediaPortal.UserInterface.Controls.MPButton bAdd;
 		private System.Windows.Forms.ListBox lbChannels;
 		private System.Windows.Forms.GroupBox gbChannelDetails;
 		private System.Windows.Forms.GroupBox gbGrabber;
-		private System.Windows.Forms.Button bSave;
+		private MediaPortal.UserInterface.Controls.MPButton bSave;
 		private System.Windows.Forms.TextBox tbCount;
 		private System.Windows.Forms.Label lCount;
-		private System.Windows.Forms.Button bRemove;
+		private MediaPortal.UserInterface.Controls.MPButton bRemove;
 		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Button bUpdate;
+		private MediaPortal.UserInterface.Controls.MPButton bUpdate;
 		private System.Windows.Forms.TextBox tbChannelName;
 		private System.Windows.Forms.OpenFileDialog importFile;
 		private System.Windows.Forms.TextBox tbChannelID;
@@ -66,9 +70,9 @@ namespace WebEPG_conf
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox tbValid;
 		private System.Windows.Forms.ListBox lbGrabbers;
-		private System.Windows.Forms.Button bLoad;
-		private System.Windows.Forms.Button bImport;
-		private System.Windows.Forms.CheckBox cbFilter;
+		private MediaPortal.UserInterface.Controls.MPButton bLoad;
+		private MediaPortal.UserInterface.Controls.MPButton bImport;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbFilter;
 		private System.Windows.Forms.TextBox tbFilterRegex;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.RadioButton rbRegex;
@@ -125,15 +129,15 @@ namespace WebEPG_conf
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.bAdd = new System.Windows.Forms.Button();
+			this.bAdd = new MediaPortal.UserInterface.Controls.MPButton();
 			this.lbChannels = new System.Windows.Forms.ListBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.cbFilter = new System.Windows.Forms.CheckBox();
-			this.bImport = new System.Windows.Forms.Button();
-			this.bLoad = new System.Windows.Forms.Button();
+			this.cbFilter = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.bImport = new MediaPortal.UserInterface.Controls.MPButton();
+			this.bLoad = new MediaPortal.UserInterface.Controls.MPButton();
 			this.lCount = new System.Windows.Forms.Label();
 			this.tbCount = new System.Windows.Forms.TextBox();
-			this.bSave = new System.Windows.Forms.Button();
+			this.bSave = new MediaPortal.UserInterface.Controls.MPButton();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.tbFilterGrabber = new System.Windows.Forms.TextBox();
 			this.rbGrabber = new System.Windows.Forms.RadioButton();
@@ -143,12 +147,12 @@ namespace WebEPG_conf
 			this.tbValid = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.tbURL = new System.Windows.Forms.TextBox();
-			this.bUpdate = new System.Windows.Forms.Button();
+			this.bUpdate = new MediaPortal.UserInterface.Controls.MPButton();
 			this.tbChannelID = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.l_cID = new System.Windows.Forms.Label();
 			this.tbChannelName = new System.Windows.Forms.TextBox();
-			this.bRemove = new System.Windows.Forms.Button();
+			this.bRemove = new MediaPortal.UserInterface.Controls.MPButton();
 			this.gbGrabber = new System.Windows.Forms.GroupBox();
 			this.lbGrabbers = new System.Windows.Forms.ListBox();
 			this.importFile = new System.Windows.Forms.OpenFileDialog();

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -321,12 +325,12 @@ namespace MediaPortal.Configuration
     {
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(SettingsForm));
       this.sectionTree = new System.Windows.Forms.TreeView();
-      this.cancelButton = new System.Windows.Forms.Button();
-      this.okButton = new System.Windows.Forms.Button();
+      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
       this.holderPanel = new System.Windows.Forms.Panel();
       this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
-      this.applyButton = new System.Windows.Forms.Button();
+      this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // sectionTree

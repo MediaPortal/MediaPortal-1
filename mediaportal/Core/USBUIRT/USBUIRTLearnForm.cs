@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -153,25 +178,25 @@ namespace MediaPortal.IR
 
         #region Controls
 
-        private System.Windows.Forms.Button LearnEnabledMPCmdsBtn;
+        private MediaPortal.UserInterface.Controls.MPButton LearnEnabledMPCmdsBtn;
 		private System.Windows.Forms.CheckedListBox ActionsCheckList;
-		private System.Windows.Forms.Button LearnSingleMPCmdBtn;
+		private MediaPortal.UserInterface.Controls.MPButton LearnSingleMPCmdBtn;
 		private System.Windows.Forms.Panel MPCommandsPnl;
-		private System.Windows.Forms.Button CancelLearnBtn;
+		private MediaPortal.UserInterface.Controls.MPButton CancelLearnBtn;
 		private System.Windows.Forms.ProgressBar LearnPrgBar;
 		private System.Windows.Forms.Label LearnStatusLbl;
 		private System.Windows.Forms.Panel panel2;
 		private System.Windows.Forms.Label receivedIrLbl;
 		private System.Windows.Forms.Label statusLabel;
-		private System.Windows.Forms.Button SkipCodeBtn;
+		private MediaPortal.UserInterface.Controls.MPButton SkipCodeBtn;
 		private System.Windows.Forms.Panel LearnStatusPnl;
-		private System.Windows.Forms.Button CloseMPCmdsLearnFormBtn;
+		private MediaPortal.UserInterface.Controls.MPButton CloseMPCmdsLearnFormBtn;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.Label MPCode1ValueLbl;
 		private System.Windows.Forms.Label MPCode2ValueLbl;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button ClearSingleLearnedMPCmdBtn;
-		private System.Windows.Forms.Button ClearAllLearnedMPCmdsBtn;
+		private MediaPortal.UserInterface.Controls.MPButton ClearSingleLearnedMPCmdBtn;
+		private MediaPortal.UserInterface.Controls.MPButton ClearAllLearnedMPCmdsBtn;
 		private System.Windows.Forms.StatusBar statusBar1;
         private Panel STBComandsPnl;
         private Label label2;
@@ -236,24 +261,24 @@ namespace MediaPortal.IR
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.LearnEnabledMPCmdsBtn = new System.Windows.Forms.Button();
+            this.LearnEnabledMPCmdsBtn = new MediaPortal.UserInterface.Controls.MPButton();
             this.ActionsCheckList = new System.Windows.Forms.CheckedListBox();
-            this.LearnSingleMPCmdBtn = new System.Windows.Forms.Button();
-            this.CloseMPCmdsLearnFormBtn = new System.Windows.Forms.Button();
+            this.LearnSingleMPCmdBtn = new MediaPortal.UserInterface.Controls.MPButton();
+            this.CloseMPCmdsLearnFormBtn = new MediaPortal.UserInterface.Controls.MPButton();
             this.MPCommandsPnl = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.MPCode1ValueLbl = new System.Windows.Forms.Label();
             this.MPCode2ValueLbl = new System.Windows.Forms.Label();
-            this.ClearSingleLearnedMPCmdBtn = new System.Windows.Forms.Button();
-            this.ClearAllLearnedMPCmdsBtn = new System.Windows.Forms.Button();
-            this.CancelLearnBtn = new System.Windows.Forms.Button();
+            this.ClearSingleLearnedMPCmdBtn = new MediaPortal.UserInterface.Controls.MPButton();
+            this.ClearAllLearnedMPCmdsBtn = new MediaPortal.UserInterface.Controls.MPButton();
+            this.CancelLearnBtn = new MediaPortal.UserInterface.Controls.MPButton();
             this.LearnPrgBar = new System.Windows.Forms.ProgressBar();
             this.LearnStatusLbl = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.receivedIrLbl = new System.Windows.Forms.Label();
             this.statusLabel = new System.Windows.Forms.Label();
-            this.SkipCodeBtn = new System.Windows.Forms.Button();
+            this.SkipCodeBtn = new MediaPortal.UserInterface.Controls.MPButton();
             this.LearnStatusPnl = new System.Windows.Forms.Panel();
             this.statusBar1 = new System.Windows.Forms.StatusBar();
             this.STBComandsPnl = new System.Windows.Forms.Panel();
@@ -261,12 +286,12 @@ namespace MediaPortal.IR
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.STBCode1ValueLbl = new System.Windows.Forms.Label();
             this.STBCode2ValueLbl = new System.Windows.Forms.Label();
-            this.LearnEnabledSTBCmdsBtn = new System.Windows.Forms.Button();
+            this.LearnEnabledSTBCmdsBtn = new MediaPortal.UserInterface.Controls.MPButton();
             this.StbCommandsChkLst = new System.Windows.Forms.CheckedListBox();
-            this.LearnSingleSTBCmdBtn = new System.Windows.Forms.Button();
-            this.CloseSTBCmdsLearnFormBtn = new System.Windows.Forms.Button();
-            this.ClearSingleLearnedSTBCmdBtn = new System.Windows.Forms.Button();
-            this.ClearAllLearnedSTBCmdsBtn = new System.Windows.Forms.Button();
+            this.LearnSingleSTBCmdBtn = new MediaPortal.UserInterface.Controls.MPButton();
+            this.CloseSTBCmdsLearnFormBtn = new MediaPortal.UserInterface.Controls.MPButton();
+            this.ClearSingleLearnedSTBCmdBtn = new MediaPortal.UserInterface.Controls.MPButton();
+            this.ClearAllLearnedSTBCmdsBtn = new MediaPortal.UserInterface.Controls.MPButton();
             this.MPCommandsPnl.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.panel2.SuspendLayout();

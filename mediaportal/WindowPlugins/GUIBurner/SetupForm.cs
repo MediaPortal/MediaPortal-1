@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 #region Usings
 using System;
@@ -42,46 +46,46 @@ namespace GUIBurner
 	private int selIndx=0; 
 	private System.Windows.Forms.ComboBox comboBox1;
 	private System.Windows.Forms.Label label1;
-	private System.Windows.Forms.Button button1;
+	private MediaPortal.UserInterface.Controls.MPButton button1;
 	private System.Windows.Forms.TextBox textBox1;
 	private System.Windows.Forms.Label label2;
-	private System.Windows.Forms.Button button2;
+	private MediaPortal.UserInterface.Controls.MPButton button2;
   private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-	private System.Windows.Forms.CheckBox checkBox1;
+	private MediaPortal.UserInterface.Controls.MPCheckBox checkBox1;
 	private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.CheckBox checkBox2;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox2;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.CheckBox checkBox3;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox3;
 		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.CheckBox checkBox4;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox4;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Label label9;
-		private System.Windows.Forms.CheckBox checkBox5;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox5;
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.Label label11;
-		private System.Windows.Forms.CheckBox checkBox6;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox6;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabPage1;
 		private System.Windows.Forms.TabPage tabPage2;
 		private System.Windows.Forms.TabPage tabPage3;
-		private System.Windows.Forms.Button button3;
-		private System.Windows.Forms.Button button5;
+		private MediaPortal.UserInterface.Controls.MPButton button3;
+		private MediaPortal.UserInterface.Controls.MPButton button5;
 		private System.Windows.Forms.ListBox listBox1;
 		private System.Windows.Forms.Label label12;
-		private System.Windows.Forms.Button button6;
+		private MediaPortal.UserInterface.Controls.MPButton button6;
 		private System.Windows.Forms.TabPage tabPage4;
 		private System.Windows.Forms.TextBox textBox2;
-		private System.Windows.Forms.Button button7;
+		private MediaPortal.UserInterface.Controls.MPButton button7;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
-		private System.Windows.Forms.CheckBox DateTimeFolder;
-		private System.Windows.Forms.Button button8;
+		private MediaPortal.UserInterface.Controls.MPCheckBox DateTimeFolder;
+		private MediaPortal.UserInterface.Controls.MPButton button8;
 		private System.Windows.Forms.TextBox textBox3;
-		private System.Windows.Forms.Button button9;
-		private System.Windows.Forms.CheckBox checkBox7;
+		private MediaPortal.UserInterface.Controls.MPButton button9;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox7;
 		private System.Windows.Forms.Label label13;
-		private System.Windows.Forms.CheckBox checkBox8;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox8;
 		private System.Windows.Forms.Label label14;
 	/// <summary>
 	/// Required designer variable.
@@ -129,46 +133,46 @@ namespace GUIBurner
 	{
 		this.comboBox1 = new System.Windows.Forms.ComboBox();
 		this.label1 = new System.Windows.Forms.Label();
-		this.button1 = new System.Windows.Forms.Button();
+		this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
 		this.textBox1 = new System.Windows.Forms.TextBox();
 		this.label2 = new System.Windows.Forms.Label();
-		this.button2 = new System.Windows.Forms.Button();
+		this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
 		this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-		this.checkBox1 = new System.Windows.Forms.CheckBox();
+		this.checkBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 		this.label3 = new System.Windows.Forms.Label();
-		this.checkBox2 = new System.Windows.Forms.CheckBox();
+		this.checkBox2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 		this.label4 = new System.Windows.Forms.Label();
 		this.label5 = new System.Windows.Forms.Label();
-		this.checkBox3 = new System.Windows.Forms.CheckBox();
+		this.checkBox3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 		this.label7 = new System.Windows.Forms.Label();
-		this.checkBox4 = new System.Windows.Forms.CheckBox();
+		this.checkBox4 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 		this.label8 = new System.Windows.Forms.Label();
 		this.label9 = new System.Windows.Forms.Label();
-		this.checkBox5 = new System.Windows.Forms.CheckBox();
+		this.checkBox5 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 		this.label10 = new System.Windows.Forms.Label();
 		this.label11 = new System.Windows.Forms.Label();
-		this.checkBox6 = new System.Windows.Forms.CheckBox();
+		this.checkBox6 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 		this.label6 = new System.Windows.Forms.Label();
 		this.tabControl1 = new System.Windows.Forms.TabControl();
 		this.tabPage1 = new System.Windows.Forms.TabPage();
-		this.button3 = new System.Windows.Forms.Button();
+		this.button3 = new MediaPortal.UserInterface.Controls.MPButton();
 		this.tabPage2 = new System.Windows.Forms.TabPage();
-		this.checkBox8 = new System.Windows.Forms.CheckBox();
+		this.checkBox8 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 		this.label14 = new System.Windows.Forms.Label();
-		this.checkBox7 = new System.Windows.Forms.CheckBox();
+		this.checkBox7 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 		this.label13 = new System.Windows.Forms.Label();
-		this.button9 = new System.Windows.Forms.Button();
+		this.button9 = new MediaPortal.UserInterface.Controls.MPButton();
 		this.textBox3 = new System.Windows.Forms.TextBox();
 		this.tabPage4 = new System.Windows.Forms.TabPage();
 		this.tabPage3 = new System.Windows.Forms.TabPage();
-		this.button8 = new System.Windows.Forms.Button();
-		this.DateTimeFolder = new System.Windows.Forms.CheckBox();
-		this.button7 = new System.Windows.Forms.Button();
+		this.button8 = new MediaPortal.UserInterface.Controls.MPButton();
+		this.DateTimeFolder = new MediaPortal.UserInterface.Controls.MPCheckBox();
+		this.button7 = new MediaPortal.UserInterface.Controls.MPButton();
 		this.textBox2 = new System.Windows.Forms.TextBox();
-		this.button6 = new System.Windows.Forms.Button();
+		this.button6 = new MediaPortal.UserInterface.Controls.MPButton();
 		this.label12 = new System.Windows.Forms.Label();
 		this.listBox1 = new System.Windows.Forms.ListBox();
-		this.button5 = new System.Windows.Forms.Button();
+		this.button5 = new MediaPortal.UserInterface.Controls.MPButton();
 		this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 		this.tabControl1.SuspendLayout();
 		this.tabPage1.SuspendLayout();

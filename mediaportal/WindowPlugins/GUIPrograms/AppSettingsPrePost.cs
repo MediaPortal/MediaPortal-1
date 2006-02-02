@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -11,8 +36,8 @@ namespace WindowPlugins.GUIPrograms
 	/// </summary>
 	public class AppSettingsPrePost : System.Windows.Forms.Form
 	{
-    private System.Windows.Forms.Button btnOk;
-    private System.Windows.Forms.Button btnCancel;
+    private MediaPortal.UserInterface.Controls.MPButton btnOk;
+    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
     private System.Windows.Forms.GroupBox gbData;
     private System.Windows.Forms.Label lblTitle;
     private System.Windows.Forms.TextBox tbPre;
@@ -78,8 +103,8 @@ namespace WindowPlugins.GUIPrograms
 		private void InitializeComponent()
 		{
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AppSettingsPrePost));
-      this.btnOk = new System.Windows.Forms.Button();
-      this.btnCancel = new System.Windows.Forms.Button();
+      this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.gbData = new System.Windows.Forms.GroupBox();
       this.lblTitle = new System.Windows.Forms.Label();
       this.tbPre = new System.Windows.Forms.TextBox();

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -40,32 +44,32 @@ namespace WindowPlugins.GUIPrograms
 	{
     private System.Windows.Forms.Label LblPinCode;
     private System.Windows.Forms.TextBox txtPinCode;
-    private System.Windows.Forms.CheckBox chkbValidImagesOnly;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chkbValidImagesOnly;
     private System.Windows.Forms.Label lblImgDirectories;
     private System.Windows.Forms.TextBox txtImageDirs;
-    private System.Windows.Forms.Button btnImageDirs;
+    private MediaPortal.UserInterface.Controls.MPButton btnImageDirs;
     private System.Windows.Forms.ComboBox cbWindowStyle;
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.TextBox txtArguments;
     private System.Windows.Forms.Label lblArg;
     private System.Windows.Forms.Label lblImageFile;
-    private System.Windows.Forms.Button buttonImageFile;
+    private MediaPortal.UserInterface.Controls.MPButton buttonImageFile;
     private System.Windows.Forms.TextBox txtImageFile;
-    private System.Windows.Forms.CheckBox chkbEnabled;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chkbEnabled;
     private System.Windows.Forms.TextBox txtTitle;
     private System.Windows.Forms.Label lblTitle;
     private System.Windows.Forms.Label lblFilename;
-    private System.Windows.Forms.Button buttonLaunchingApp;
+    private MediaPortal.UserInterface.Controls.MPButton buttonLaunchingApp;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.TextBox edFilename;
-    private System.Windows.Forms.Button buttonFileDirectory;
+    private MediaPortal.UserInterface.Controls.MPButton buttonFileDirectory;
     private System.Windows.Forms.TextBox txtFiles;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Panel panelAdditionals;
     private System.Windows.Forms.LinkLabel historyDatLink;
     private System.Windows.Forms.LinkLabel catverLink;
     private System.Windows.Forms.Label labelBestResults;
-    private System.Windows.Forms.CheckBox chkbOriginalsOnly;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chkbOriginalsOnly;
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -103,32 +107,32 @@ namespace WindowPlugins.GUIPrograms
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AppSettingsMameDirect));
       this.LblPinCode = new System.Windows.Forms.Label();
       this.txtPinCode = new System.Windows.Forms.TextBox();
-      this.chkbValidImagesOnly = new System.Windows.Forms.CheckBox();
+      this.chkbValidImagesOnly = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.lblImgDirectories = new System.Windows.Forms.Label();
       this.txtImageDirs = new System.Windows.Forms.TextBox();
-      this.btnImageDirs = new System.Windows.Forms.Button();
+      this.btnImageDirs = new MediaPortal.UserInterface.Controls.MPButton();
       this.cbWindowStyle = new System.Windows.Forms.ComboBox();
       this.label6 = new System.Windows.Forms.Label();
       this.txtArguments = new System.Windows.Forms.TextBox();
       this.lblArg = new System.Windows.Forms.Label();
       this.lblImageFile = new System.Windows.Forms.Label();
-      this.buttonImageFile = new System.Windows.Forms.Button();
+      this.buttonImageFile = new MediaPortal.UserInterface.Controls.MPButton();
       this.txtImageFile = new System.Windows.Forms.TextBox();
-      this.chkbEnabled = new System.Windows.Forms.CheckBox();
+      this.chkbEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.txtTitle = new System.Windows.Forms.TextBox();
       this.lblTitle = new System.Windows.Forms.Label();
       this.lblFilename = new System.Windows.Forms.Label();
-      this.buttonLaunchingApp = new System.Windows.Forms.Button();
+      this.buttonLaunchingApp = new MediaPortal.UserInterface.Controls.MPButton();
       this.label3 = new System.Windows.Forms.Label();
       this.edFilename = new System.Windows.Forms.TextBox();
-      this.buttonFileDirectory = new System.Windows.Forms.Button();
+      this.buttonFileDirectory = new MediaPortal.UserInterface.Controls.MPButton();
       this.txtFiles = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
       this.panelAdditionals = new System.Windows.Forms.Panel();
       this.historyDatLink = new System.Windows.Forms.LinkLabel();
       this.catverLink = new System.Windows.Forms.LinkLabel();
       this.labelBestResults = new System.Windows.Forms.Label();
-      this.chkbOriginalsOnly = new System.Windows.Forms.CheckBox();
+      this.chkbOriginalsOnly = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.panelAdditionals.SuspendLayout();
       this.SuspendLayout();
       // 

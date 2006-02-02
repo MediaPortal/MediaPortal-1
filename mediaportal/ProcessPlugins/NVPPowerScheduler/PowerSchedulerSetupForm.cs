@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -32,16 +36,16 @@ namespace MediaPortal.PowerScheduler
 	/// </summary>
 	public class PowerSchedulerSetupForm : System.Windows.Forms.Form
 	{
-		private System.Windows.Forms.Button cb_ok;
+		private MediaPortal.UserInterface.Controls.MPButton cb_ok;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ComboBox cobx_shutdown;
 		private System.Windows.Forms.NumericUpDown nud_wakeup;
 		private System.Windows.Forms.NumericUpDown nud_shutdown;
-		private System.Windows.Forms.CheckBox cbxExtensive;
-		private System.Windows.Forms.CheckBox cbxForced;
-		private System.Windows.Forms.CheckBox cbxTVoff;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbxExtensive;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbxForced;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbxTVoff;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label4;
 		/// <summary>
@@ -112,16 +116,16 @@ namespace MediaPortal.PowerScheduler
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.cb_ok = new System.Windows.Forms.Button();
+			this.cb_ok = new MediaPortal.UserInterface.Controls.MPButton();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.cobx_shutdown = new System.Windows.Forms.ComboBox();
 			this.nud_wakeup = new System.Windows.Forms.NumericUpDown();
 			this.nud_shutdown = new System.Windows.Forms.NumericUpDown();
-			this.cbxExtensive = new System.Windows.Forms.CheckBox();
-			this.cbxForced = new System.Windows.Forms.CheckBox();
-			this.cbxTVoff = new System.Windows.Forms.CheckBox();
+			this.cbxExtensive = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.cbxForced = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.cbxTVoff = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.label4 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).BeginInit();

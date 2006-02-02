@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -33,9 +37,9 @@ namespace MediaPortal.GUI.Alarm
 	/// </summary>
 	public class AlarmSetupForm : System.Windows.Forms.Form, ISetupForm
 	{
-		private System.Windows.Forms.Button btnCancel;
+		private MediaPortal.UserInterface.Controls.MPButton btnCancel;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-		private System.Windows.Forms.Button btnOk;
+		private MediaPortal.UserInterface.Controls.MPButton btnOk;
 		private System.Windows.Forms.GroupBox groupBox3;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label9;
@@ -51,7 +55,7 @@ namespace MediaPortal.GUI.Alarm
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.NumericUpDown RepeatSeconds;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Button btnAlarmSoundsFolder;
+		private MediaPortal.UserInterface.Controls.MPButton btnAlarmSoundsFolder;
 		private System.Windows.Forms.TextBox txtAlarmSoundsFolder;
 		private System.Windows.Forms.Label label1;
 		/// <summary>
@@ -90,8 +94,8 @@ namespace MediaPortal.GUI.Alarm
 		private void InitializeComponent()
 		{
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AlarmSetupForm));
-			this.btnOk = new System.Windows.Forms.Button();
-			this.btnCancel = new System.Windows.Forms.Button();
+			this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
+			this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
 			this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
 			this.SnoozeLength = new System.Windows.Forms.NumericUpDown();
@@ -108,7 +112,7 @@ namespace MediaPortal.GUI.Alarm
 			this.label4 = new System.Windows.Forms.Label();
 			this.RepeatSeconds = new System.Windows.Forms.NumericUpDown();
 			this.label2 = new System.Windows.Forms.Label();
-			this.btnAlarmSoundsFolder = new System.Windows.Forms.Button();
+			this.btnAlarmSoundsFolder = new MediaPortal.UserInterface.Controls.MPButton();
 			this.txtAlarmSoundsFolder = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.groupBox3.SuspendLayout();

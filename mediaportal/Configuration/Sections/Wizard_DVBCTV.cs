@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.IO;
 using System.Xml;
@@ -37,7 +41,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Button button1;
+		private MediaPortal.UserInterface.Controls.MPButton button1;
 		private System.Windows.Forms.ProgressBar progressBar1;
 		private System.Windows.Forms.Label labelStatus;
 		private System.Windows.Forms.ComboBox cbCountry;
@@ -104,7 +108,7 @@ namespace MediaPortal.Configuration.Sections
       this.panel1 = new System.Windows.Forms.Panel();
       this.labelStatus = new System.Windows.Forms.Label();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
-      this.button1 = new System.Windows.Forms.Button();
+      this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.label2 = new System.Windows.Forms.Label();
       this.cbCountry = new System.Windows.Forms.ComboBox();
       this.label1 = new System.Windows.Forms.Label();

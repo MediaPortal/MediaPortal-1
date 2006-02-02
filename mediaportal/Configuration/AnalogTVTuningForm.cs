@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.IO;
@@ -45,21 +49,21 @@ namespace MediaPortal
     public class AnalogTVTuningForm : System.Windows.Forms.Form, AutoTuneCallback
 	{
     private System.Windows.Forms.Label labelStatus;
-    private System.Windows.Forms.Button btnOk;
+    private MediaPortal.UserInterface.Controls.MPButton btnOk;
     private System.Windows.Forms.Panel panel1;
-    private System.Windows.Forms.Button buttonMap;
+    private MediaPortal.UserInterface.Controls.MPButton buttonMap;
     private System.Windows.Forms.Label label1;
     ArrayList     m_tvcards    = new ArrayList();
-    private System.Windows.Forms.Button buttonSkip;
+    private MediaPortal.UserInterface.Controls.MPButton buttonSkip;
     private System.Windows.Forms.ListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.ColumnHeader columnHeader2;
 		ITuning				tuningInterface;
 		private System.Windows.Forms.ProgressBar progressBar1;
 		//int videoRenderer;
-		private System.Windows.Forms.Button buttonAdd;
+		private MediaPortal.UserInterface.Controls.MPButton buttonAdd;
 		private System.Windows.Forms.Label labelStatus2;
-		private System.Windows.Forms.Button button1;
+		private MediaPortal.UserInterface.Controls.MPButton button1;
 		private System.Windows.Forms.ImageList imageList1;
 		private System.ComponentModel.IContainer components;
 		private System.Windows.Forms.Label labelChannels;
@@ -96,19 +100,19 @@ namespace MediaPortal
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AnalogTVTuningForm));
             this.labelStatus = new System.Windows.Forms.Label();
-            this.btnOk = new System.Windows.Forms.Button();
+            this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.buttonMap = new System.Windows.Forms.Button();
+            this.buttonMap = new MediaPortal.UserInterface.Controls.MPButton();
             this.label1 = new System.Windows.Forms.Label();
-            this.buttonSkip = new System.Windows.Forms.Button();
+            this.buttonSkip = new MediaPortal.UserInterface.Controls.MPButton();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.buttonAdd = new System.Windows.Forms.Button();
+            this.buttonAdd = new MediaPortal.UserInterface.Controls.MPButton();
             this.labelStatus2 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
             this.labelChannels = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();

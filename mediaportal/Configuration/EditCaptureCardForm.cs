@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.IO;
@@ -48,10 +52,10 @@ namespace MediaPortal.Configuration
     static CaptureCardDefinitions mCaptureCardDefinitions = CaptureCardDefinitions.Instance;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.ComboBox cardComboBox;
-    private System.Windows.Forms.CheckBox useRecordingCheckBox;
-    private System.Windows.Forms.CheckBox useWatchingCheckBox;
-    private System.Windows.Forms.Button cancelButton;
-    private System.Windows.Forms.Button okButton;
+    private MediaPortal.UserInterface.Controls.MPCheckBox useRecordingCheckBox;
+    private MediaPortal.UserInterface.Controls.MPCheckBox useWatchingCheckBox;
+    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
+    private MediaPortal.UserInterface.Controls.MPButton okButton;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -97,8 +101,8 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.TextBox lnb0MHZ;
     private System.Windows.Forms.Label label22;
     private System.Windows.Forms.Label label23;
-    private System.Windows.Forms.Button button1;
-    private System.Windows.Forms.CheckBox checkBoxHiQuality;
+    private MediaPortal.UserInterface.Controls.MPButton button1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHiQuality;
     private System.Windows.Forms.NumericUpDown updownPrio;
     private System.Windows.Forms.Label label24;
     private System.Windows.Forms.Label label25;
@@ -117,14 +121,14 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.ComboBox diseqcc;
     private System.Windows.Forms.ComboBox diseqcb;
     private System.Windows.Forms.ComboBox diseqca;
-    private System.Windows.Forms.CheckBox useLNB1;
-    private System.Windows.Forms.CheckBox useLNB2;
-    private System.Windows.Forms.CheckBox useLNB3;
-    private System.Windows.Forms.CheckBox useLNB4;
+    private MediaPortal.UserInterface.Controls.MPCheckBox useLNB1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox useLNB2;
+    private MediaPortal.UserInterface.Controls.MPCheckBox useLNB3;
+    private MediaPortal.UserInterface.Controls.MPCheckBox useLNB4;
     private System.Windows.Forms.TabPage tabPage7;
-    private System.Windows.Forms.Button buttonBrowse;
+    private MediaPortal.UserInterface.Controls.MPButton buttonBrowse;
     private System.Windows.Forms.TextBox tbRecordingFolder;
-    private System.Windows.Forms.Button btnRadio;
+    private MediaPortal.UserInterface.Controls.MPButton btnRadio;
     private System.Windows.Forms.Label label35;
     private System.Windows.Forms.ComboBox cbRgbVideo;
     private System.Windows.Forms.ComboBox cbRgbAudio;
@@ -147,10 +151,10 @@ namespace MediaPortal.Configuration
     private System.Windows.Forms.TextBox tbHighMax;
     private System.Windows.Forms.TextBox tbHighMin;
     private System.Windows.Forms.Label label37;
-    private System.Windows.Forms.CheckBox cbLowVBR;
-    private System.Windows.Forms.CheckBox cbMedVBR;
-    private System.Windows.Forms.CheckBox cbHighVBR;
-    private System.Windows.Forms.CheckBox cbPortVBR;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbLowVBR;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbMedVBR;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbHighVBR;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbPortVBR;
     int CardId;
 
     /// <summary>
@@ -434,22 +438,22 @@ namespace MediaPortal.Configuration
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditCaptureCardForm));
-      this.checkBoxHiQuality = new System.Windows.Forms.CheckBox();
-      this.useRecordingCheckBox = new System.Windows.Forms.CheckBox();
-      this.useWatchingCheckBox = new System.Windows.Forms.CheckBox();
+      this.checkBoxHiQuality = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.useRecordingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.useWatchingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cardComboBox = new System.Windows.Forms.ComboBox();
       this.label1 = new System.Windows.Forms.Label();
       this.textBoxName = new System.Windows.Forms.TextBox();
       this.label12 = new System.Windows.Forms.Label();
-      this.cancelButton = new System.Windows.Forms.Button();
-      this.okButton = new System.Windows.Forms.Button();
+      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.label24 = new System.Windows.Forms.Label();
       this.updownPrio = new System.Windows.Forms.NumericUpDown();
       this.tabPage7 = new System.Windows.Forms.TabPage();
       this.groupBox5 = new System.Windows.Forms.GroupBox();
-      this.buttonBrowse = new System.Windows.Forms.Button();
+      this.buttonBrowse = new MediaPortal.UserInterface.Controls.MPButton();
       this.tbRecordingFolder = new System.Windows.Forms.TextBox();
       this.label26 = new System.Windows.Forms.Label();
       this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -468,22 +472,22 @@ namespace MediaPortal.Configuration
       this.label17 = new System.Windows.Forms.Label();
       this.tabPage5 = new System.Windows.Forms.TabPage();
       this.groupBox7 = new System.Windows.Forms.GroupBox();
-      this.cbHighVBR = new System.Windows.Forms.CheckBox();
+      this.cbHighVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tbHighMax = new System.Windows.Forms.TextBox();
       this.tbHighMin = new System.Windows.Forms.TextBox();
       this.label37 = new System.Windows.Forms.Label();
-      this.cbMedVBR = new System.Windows.Forms.CheckBox();
+      this.cbMedVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tbMedMax = new System.Windows.Forms.TextBox();
       this.tbMedMin = new System.Windows.Forms.TextBox();
       this.label36 = new System.Windows.Forms.Label();
-      this.cbLowVBR = new System.Windows.Forms.CheckBox();
+      this.cbLowVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tbLowMax = new System.Windows.Forms.TextBox();
       this.tbLowMin = new System.Windows.Forms.TextBox();
       this.label34 = new System.Windows.Forms.Label();
       this.label29 = new System.Windows.Forms.Label();
       this.label28 = new System.Windows.Forms.Label();
       this.label27 = new System.Windows.Forms.Label();
-      this.cbPortVBR = new System.Windows.Forms.CheckBox();
+      this.cbPortVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tbPortMax = new System.Windows.Forms.TextBox();
       this.tbPortMin = new System.Windows.Forms.TextBox();
       this.label19 = new System.Windows.Forms.Label();
@@ -492,10 +496,10 @@ namespace MediaPortal.Configuration
       this.comboBoxQuality = new System.Windows.Forms.ComboBox();
       this.tabPage4 = new System.Windows.Forms.TabPage();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.useLNB4 = new System.Windows.Forms.CheckBox();
-      this.useLNB3 = new System.Windows.Forms.CheckBox();
-      this.useLNB2 = new System.Windows.Forms.CheckBox();
-      this.useLNB1 = new System.Windows.Forms.CheckBox();
+      this.useLNB4 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.useLNB3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.useLNB2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.useLNB1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.lnbkind4 = new System.Windows.Forms.ComboBox();
       this.lnbkind3 = new System.Windows.Forms.ComboBox();
       this.lnbkind2 = new System.Windows.Forms.ComboBox();
@@ -524,8 +528,8 @@ namespace MediaPortal.Configuration
       this.switchMHZ = new System.Windows.Forms.Label();
       this.lnb0MHZ = new System.Windows.Forms.TextBox();
       this.label22 = new System.Windows.Forms.Label();
-      this.button1 = new System.Windows.Forms.Button();
-      this.btnRadio = new System.Windows.Forms.Button();
+      this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnRadio = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();

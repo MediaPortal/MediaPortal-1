@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -32,10 +36,10 @@ namespace MediaPortal.GUI.X10Plugin
 	/// </summary>
 	public class ApplianceForm : System.Windows.Forms.Form
 	{
-		private System.Windows.Forms.Button buttonSave;
+		private MediaPortal.UserInterface.Controls.MPButton buttonSave;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label labelName;
-		private System.Windows.Forms.Button buttonCancel;
+		private MediaPortal.UserInterface.Controls.MPButton buttonCancel;
 		private System.Windows.Forms.Label labelURL;
 		private System.Windows.Forms.Label label1;
 		public System.Windows.Forms.TextBox txtDescription;
@@ -82,14 +86,14 @@ namespace MediaPortal.GUI.X10Plugin
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.buttonSave = new System.Windows.Forms.Button();
+			this.buttonSave = new MediaPortal.UserInterface.Controls.MPButton();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.txtDescription = new System.Windows.Forms.TextBox();
 			this.labelURL = new System.Windows.Forms.Label();
 			this.txtCode = new System.Windows.Forms.TextBox();
 			this.labelName = new System.Windows.Forms.Label();
-			this.buttonCancel = new System.Windows.Forms.Button();
+			this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
 			this.label2 = new System.Windows.Forms.Label();
 			this.txtLocation = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();

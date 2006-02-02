@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 namespace MediaPortal.GUI.WebBrowser
 {
     partial class WebBrowserSetup
@@ -29,10 +54,10 @@ namespace MediaPortal.GUI.WebBrowser
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WebBrowserSetup));
-            this.Ok = new System.Windows.Forms.Button();
-            this.Cancel = new System.Windows.Forms.Button();
+            this.Ok = new MediaPortal.UserInterface.Controls.MPButton();
+            this.Cancel = new MediaPortal.UserInterface.Controls.MPButton();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-            this.PickFavoritesFolder = new System.Windows.Forms.Button();
+            this.PickFavoritesFolder = new MediaPortal.UserInterface.Controls.MPButton();
             this.FavoritesFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.HomePage = new System.Windows.Forms.TextBox();
@@ -129,10 +154,10 @@ namespace MediaPortal.GUI.WebBrowser
 
         #endregion
 
-        private System.Windows.Forms.Button Ok;
-        private System.Windows.Forms.Button Cancel;
+        private MediaPortal.UserInterface.Controls.MPButton Ok;
+        private MediaPortal.UserInterface.Controls.MPButton Cancel;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-        private System.Windows.Forms.Button PickFavoritesFolder;
+        private MediaPortal.UserInterface.Controls.MPButton PickFavoritesFolder;
         private System.Windows.Forms.TextBox FavoritesFolder;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox HomePage;

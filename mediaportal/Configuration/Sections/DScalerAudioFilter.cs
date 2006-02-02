@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -39,11 +43,11 @@ namespace MediaPortal.Configuration.Sections
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.CheckBox checkBoxSPDIF;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSPDIF;
 		private System.Windows.Forms.ComboBox comboBoxSpeakerConfig;
-		private System.Windows.Forms.CheckBox checkBoxDynamicRange;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDynamicRange;
 		private System.Windows.Forms.TextBox textBoxAudioOffset;
-		private System.Windows.Forms.CheckBox checkBoxMPEGOverSPDIF;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMPEGOverSPDIF;
 		private System.ComponentModel.IContainer components = null;
 
 		/// <summary>
@@ -88,10 +92,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.textBoxAudioOffset = new System.Windows.Forms.TextBox();
       this.comboBoxSpeakerConfig = new System.Windows.Forms.ComboBox();
-      this.checkBoxMPEGOverSPDIF = new System.Windows.Forms.CheckBox();
+      this.checkBoxMPEGOverSPDIF = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label5 = new System.Windows.Forms.Label();
-      this.checkBoxSPDIF = new System.Windows.Forms.CheckBox();
-      this.checkBoxDynamicRange = new System.Windows.Forms.CheckBox();
+      this.checkBoxSPDIF = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxDynamicRange = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label3 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();

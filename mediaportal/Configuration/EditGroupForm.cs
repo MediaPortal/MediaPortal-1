@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -37,8 +41,8 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.TextBox textBoxName;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textBoxPincode;
-		private System.Windows.Forms.Button buttonOk;
-		private System.Windows.Forms.Button btnCancel;
+		private MediaPortal.UserInterface.Controls.MPButton buttonOk;
+		private MediaPortal.UserInterface.Controls.MPButton btnCancel;
 		TVGroup group = new TVGroup();
 		/// <summary>
 		/// Required designer variable.
@@ -83,8 +87,8 @@ namespace MediaPortal.Configuration
       this.textBoxName = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
       this.textBoxPincode = new System.Windows.Forms.TextBox();
-      this.buttonOk = new System.Windows.Forms.Button();
-      this.btnCancel = new System.Windows.Forms.Button();
+      this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // label1

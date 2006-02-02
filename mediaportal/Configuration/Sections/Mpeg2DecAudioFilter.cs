@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -41,22 +45,22 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.RadioButton radioButtonPCM24Bit;
 		private System.Windows.Forms.RadioButton radioButtonPCM32Bit;
 		private System.Windows.Forms.RadioButton radioButtonIEEE;
-		private System.Windows.Forms.CheckBox checkBoxNormalize;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxNormalize;
 		private System.Windows.Forms.TrackBar trackBarBoost;
 		private System.Windows.Forms.Label label2;
 		//private System.Windows.Forms.Label label3;
 		//private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.RadioButton radioButtonAC3Speakers;
 		private System.Windows.Forms.RadioButton radioButtonAC3SPDIF;
-		private System.Windows.Forms.CheckBox checkBoxAC3DynamicRange;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAC3DynamicRange;
 		private System.Windows.Forms.ComboBox comboBoxAC3SpeakerConfig;
-		private System.Windows.Forms.CheckBox checkBoxAC3LFE;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAC3LFE;
 		private System.Windows.Forms.ComboBox comboBoxDTSSpeakerConfig;
-		private System.Windows.Forms.CheckBox checkBoxDTSDynamicRange;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDTSDynamicRange;
 		private System.Windows.Forms.RadioButton radioButtonDTSSPDIF;
 		private System.Windows.Forms.RadioButton radioButtonDTSSpeakers;
-		private System.Windows.Forms.CheckBox checkBoxDTSLFE;
-		private System.Windows.Forms.CheckBox checkBoxAACDownmix;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDTSLFE;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAACDownmix;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.GroupBox groupBox3;
 		private System.Windows.Forms.GroupBox groupBox4;
@@ -105,25 +109,25 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4 = new System.Windows.Forms.GroupBox();
       this.radioButtonAC3SPDIF = new System.Windows.Forms.RadioButton();
       this.radioButtonAC3Speakers = new System.Windows.Forms.RadioButton();
-      this.checkBoxAC3LFE = new System.Windows.Forms.CheckBox();
+      this.checkBoxAC3LFE = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.comboBoxAC3SpeakerConfig = new System.Windows.Forms.ComboBox();
-      this.checkBoxAC3DynamicRange = new System.Windows.Forms.CheckBox();
+      this.checkBoxAC3DynamicRange = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
       this.label4 = new System.Windows.Forms.Label();
       this.radioPCM16Bit = new System.Windows.Forms.RadioButton();
       this.radioButtonPCM24Bit = new System.Windows.Forms.RadioButton();
       this.radioButtonPCM32Bit = new System.Windows.Forms.RadioButton();
       this.radioButtonIEEE = new System.Windows.Forms.RadioButton();
-      this.checkBoxNormalize = new System.Windows.Forms.CheckBox();
+      this.checkBoxNormalize = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.trackBarBoost = new System.Windows.Forms.TrackBar();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.radioButtonDTSSPDIF = new System.Windows.Forms.RadioButton();
       this.radioButtonDTSSpeakers = new System.Windows.Forms.RadioButton();
-      this.checkBoxDTSLFE = new System.Windows.Forms.CheckBox();
+      this.checkBoxDTSLFE = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.comboBoxDTSSpeakerConfig = new System.Windows.Forms.ComboBox();
-      this.checkBoxDTSDynamicRange = new System.Windows.Forms.CheckBox();
+      this.checkBoxDTSDynamicRange = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox5 = new System.Windows.Forms.GroupBox();
-      this.checkBoxAACDownmix = new System.Windows.Forms.CheckBox();
+      this.checkBoxAACDownmix = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label2 = new System.Windows.Forms.Label();
       this.groupBox4.SuspendLayout();
       this.groupBox3.SuspendLayout();

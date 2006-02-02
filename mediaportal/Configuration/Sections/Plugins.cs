@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -368,7 +372,7 @@ namespace MediaPortal.Configuration.Sections
     {
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.dataGrid1 = new System.Windows.Forms.DataGrid();
-      this.setupButton = new System.Windows.Forms.Button();
+      this.setupButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
       this.SuspendLayout();

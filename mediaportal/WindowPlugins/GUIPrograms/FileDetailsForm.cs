@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.ComponentModel;
@@ -136,11 +140,11 @@ namespace WindowPlugins.GUIPrograms
     {
       this.components = new System.ComponentModel.Container();
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FileDetailsForm));
-      this.btnOk = new System.Windows.Forms.Button();
-      this.btnCancel = new System.Windows.Forms.Button();
+      this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-      this.buttonViewImg = new System.Windows.Forms.Button();
+      this.buttonViewImg = new MediaPortal.UserInterface.Controls.MPButton();
       this.tcFileItemData = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.gbFileDetails = new System.Windows.Forms.GroupBox();
@@ -161,13 +165,13 @@ namespace WindowPlugins.GUIPrograms
       this.txtGenre = new System.Windows.Forms.TextBox();
       this.lblGenre = new System.Windows.Forms.Label();
       this.lblImageFile = new System.Windows.Forms.Label();
-      this.btnImageFile = new System.Windows.Forms.Button();
+      this.btnImageFile = new MediaPortal.UserInterface.Controls.MPButton();
       this.txtFilename = new System.Windows.Forms.TextBox();
       this.txtImageFile = new System.Windows.Forms.TextBox();
       this.txtTitle = new System.Windows.Forms.TextBox();
       this.lblTitle = new System.Windows.Forms.Label();
       this.lblFilename = new System.Windows.Forms.Label();
-      this.btnFilename = new System.Windows.Forms.Button();
+      this.btnFilename = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabPage2 = new System.Windows.Forms.TabPage();
       this.gbExtended = new System.Windows.Forms.GroupBox();
       this.txtCategoryData = new System.Windows.Forms.TextBox();

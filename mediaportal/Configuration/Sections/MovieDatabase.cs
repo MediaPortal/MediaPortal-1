@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -55,13 +59,13 @@ namespace MediaPortal.Configuration.Sections
 
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.CheckedListBox sharesListBox;
-		private System.Windows.Forms.Button startButton;
+		private MediaPortal.UserInterface.Controls.MPButton startButton;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.ProgressBar progressBar;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label countLabel;
 		private System.Windows.Forms.Label fileLabel;
-		private System.Windows.Forms.Button cancelButton;
+		private MediaPortal.UserInterface.Controls.MPButton cancelButton;
 		private System.ComponentModel.IContainer components = null;
 
 
@@ -111,19 +115,19 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TabPage tabPage6;
 		private System.Windows.Forms.TabPage tabPage7;
 		private System.Windows.Forms.GroupBox groupBox3;
-		private System.Windows.Forms.Button buttonImport;
-		private System.Windows.Forms.Button btnDelete;
+		private MediaPortal.UserInterface.Controls.MPButton buttonImport;
+		private MediaPortal.UserInterface.Controls.MPButton btnDelete;
 		private System.Windows.Forms.TextBox tbWritingCredits;
 		private System.Windows.Forms.Label label18;
 		private System.Windows.Forms.TextBox tbPlotOutline;
 		private System.Windows.Forms.Label label17;
 		private System.Windows.Forms.TextBox tbVotes;
 		private System.Windows.Forms.Label label16;
-		private System.Windows.Forms.Button buttonLookupMovie;
-		private System.Windows.Forms.Button btnSave;
+		private MediaPortal.UserInterface.Controls.MPButton buttonLookupMovie;
+		private MediaPortal.UserInterface.Controls.MPButton btnSave;
 		private System.Windows.Forms.TextBox tbTagline;
 		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.CheckBox cbWatched;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbWatched;
 		private System.Windows.Forms.TextBox tbDescription;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label13;
@@ -142,38 +146,38 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TextBox tbTitle;
 		private System.Windows.Forms.GroupBox groupBox4;
 		private System.Windows.Forms.TextBox textBoxNewGenre;
-		private System.Windows.Forms.Button btnDeleteGenre;
-		private System.Windows.Forms.Button buttonNewGenre;
-		private System.Windows.Forms.Button buttonUnmapGenre;
-		private System.Windows.Forms.Button buttonMapGenre;
+		private MediaPortal.UserInterface.Controls.MPButton btnDeleteGenre;
+		private MediaPortal.UserInterface.Controls.MPButton buttonNewGenre;
+		private MediaPortal.UserInterface.Controls.MPButton buttonUnmapGenre;
+		private MediaPortal.UserInterface.Controls.MPButton buttonMapGenre;
 		private System.Windows.Forms.ListView listViewGenres;
 		private System.Windows.Forms.ColumnHeader columnHeader1;
 		private System.Windows.Forms.ListView listViewAllGenres;
 		private System.Windows.Forms.ColumnHeader columnHeader2;
 		private System.Windows.Forms.GroupBox groupBox5;
 		private System.Windows.Forms.TextBox textBoxNewActor;
-		private System.Windows.Forms.Button buttonDeleteActor;
-		private System.Windows.Forms.Button buttonNewActor;
-		private System.Windows.Forms.Button buttonUnmapActors;
-		private System.Windows.Forms.Button buttonMapActors;
+		private MediaPortal.UserInterface.Controls.MPButton buttonDeleteActor;
+		private MediaPortal.UserInterface.Controls.MPButton buttonNewActor;
+		private MediaPortal.UserInterface.Controls.MPButton buttonUnmapActors;
+		private MediaPortal.UserInterface.Controls.MPButton buttonMapActors;
 		private System.Windows.Forms.ListView listViewMovieActors;
 		private System.Windows.Forms.ColumnHeader columnHeader3;
 		private System.Windows.Forms.ColumnHeader columnHeader5;
 		private System.Windows.Forms.ListView listViewAllActors;
 		private System.Windows.Forms.ColumnHeader chName;
 		private System.Windows.Forms.GroupBox groupBox6;
-		private System.Windows.Forms.Button buttonRemoveFile;
-		private System.Windows.Forms.Button buttonAddFile;
+		private MediaPortal.UserInterface.Controls.MPButton buttonRemoveFile;
+		private MediaPortal.UserInterface.Controls.MPButton buttonAddFile;
 		private System.Windows.Forms.ListView listViewFiles;
 		private System.Windows.Forms.ColumnHeader columnHeader4;
 		private System.Windows.Forms.GroupBox groupBox7;
 		private System.Windows.Forms.Label label19;
 		private System.Windows.Forms.ComboBox comboBoxPictures;
-		private System.Windows.Forms.Button btnLookupImage;
+		private MediaPortal.UserInterface.Controls.MPButton btnLookupImage;
 		private System.Windows.Forms.Label label15;
 		private System.Windows.Forms.TextBox textBoxPictureURL;
 		private System.Windows.Forms.PictureBox pictureBox1;
-		private System.Windows.Forms.CheckBox _fuzzyMatchingCheckBox;
+		private MediaPortal.UserInterface.Controls.MPCheckBox _fuzzyMatchingCheckBox;
 		ArrayList availableFiles;
 
 		public MovieDatabase() :  this("Movie Database")
@@ -264,9 +268,9 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.startButton = new System.Windows.Forms.Button();
+			this.startButton = new MediaPortal.UserInterface.Controls.MPButton();
 			this.sharesListBox = new System.Windows.Forms.CheckedListBox();
-			this.cancelButton = new System.Windows.Forms.Button();
+			this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.labelLine2 = new System.Windows.Forms.Label();
 			this.labelLine1 = new System.Windows.Forms.Label();
@@ -279,19 +283,19 @@ namespace MediaPortal.Configuration.Sections
 			this.tabControl2 = new System.Windows.Forms.TabControl();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
-			this.buttonImport = new System.Windows.Forms.Button();
-			this.btnDelete = new System.Windows.Forms.Button();
+			this.buttonImport = new MediaPortal.UserInterface.Controls.MPButton();
+			this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
 			this.tbWritingCredits = new System.Windows.Forms.TextBox();
 			this.label18 = new System.Windows.Forms.Label();
 			this.tbPlotOutline = new System.Windows.Forms.TextBox();
 			this.label17 = new System.Windows.Forms.Label();
 			this.tbVotes = new System.Windows.Forms.TextBox();
 			this.label16 = new System.Windows.Forms.Label();
-			this.buttonLookupMovie = new System.Windows.Forms.Button();
-			this.btnSave = new System.Windows.Forms.Button();
+			this.buttonLookupMovie = new MediaPortal.UserInterface.Controls.MPButton();
+			this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
 			this.tbTagline = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.cbWatched = new System.Windows.Forms.CheckBox();
+			this.cbWatched = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.tbDescription = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label13 = new System.Windows.Forms.Label();
@@ -310,17 +314,17 @@ namespace MediaPortal.Configuration.Sections
 			this.tbTitle = new System.Windows.Forms.TextBox();
 			this.tabPage6 = new System.Windows.Forms.TabPage();
 			this.groupBox6 = new System.Windows.Forms.GroupBox();
-			this.buttonRemoveFile = new System.Windows.Forms.Button();
-			this.buttonAddFile = new System.Windows.Forms.Button();
+			this.buttonRemoveFile = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonAddFile = new MediaPortal.UserInterface.Controls.MPButton();
 			this.listViewFiles = new System.Windows.Forms.ListView();
 			this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
 			this.tabPage5 = new System.Windows.Forms.TabPage();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
 			this.textBoxNewActor = new System.Windows.Forms.TextBox();
-			this.buttonDeleteActor = new System.Windows.Forms.Button();
-			this.buttonNewActor = new System.Windows.Forms.Button();
-			this.buttonUnmapActors = new System.Windows.Forms.Button();
-			this.buttonMapActors = new System.Windows.Forms.Button();
+			this.buttonDeleteActor = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonNewActor = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonUnmapActors = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonMapActors = new MediaPortal.UserInterface.Controls.MPButton();
 			this.listViewMovieActors = new System.Windows.Forms.ListView();
 			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
@@ -329,10 +333,10 @@ namespace MediaPortal.Configuration.Sections
 			this.tabPage4 = new System.Windows.Forms.TabPage();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.textBoxNewGenre = new System.Windows.Forms.TextBox();
-			this.btnDeleteGenre = new System.Windows.Forms.Button();
-			this.buttonNewGenre = new System.Windows.Forms.Button();
-			this.buttonUnmapGenre = new System.Windows.Forms.Button();
-			this.buttonMapGenre = new System.Windows.Forms.Button();
+			this.btnDeleteGenre = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonNewGenre = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonUnmapGenre = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonMapGenre = new MediaPortal.UserInterface.Controls.MPButton();
 			this.listViewGenres = new System.Windows.Forms.ListView();
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.listViewAllGenres = new System.Windows.Forms.ListView();
@@ -341,12 +345,12 @@ namespace MediaPortal.Configuration.Sections
 			this.groupBox7 = new System.Windows.Forms.GroupBox();
 			this.label19 = new System.Windows.Forms.Label();
 			this.comboBoxPictures = new System.Windows.Forms.ComboBox();
-			this.btnLookupImage = new System.Windows.Forms.Button();
+			this.btnLookupImage = new MediaPortal.UserInterface.Controls.MPButton();
 			this.label15 = new System.Windows.Forms.Label();
 			this.textBoxPictureURL = new System.Windows.Forms.TextBox();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this._fuzzyMatchingCheckBox = new System.Windows.Forms.CheckBox();
+			this._fuzzyMatchingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.tabControl1.SuspendLayout();

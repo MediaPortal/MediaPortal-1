@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -37,8 +41,8 @@ namespace MediaPortal.Configuration
 	/// </summary>
 	public class EditTVChannelForm : System.Windows.Forms.Form
 	{
-		private System.Windows.Forms.Button cancelButton;
-		private System.Windows.Forms.Button okButton;
+		private MediaPortal.UserInterface.Controls.MPButton cancelButton;
+		private MediaPortal.UserInterface.Controls.MPButton okButton;
 		private System.Windows.Forms.TextBox nameTextBox;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox frequencyTextBox;
@@ -137,7 +141,7 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.TextBox tbDVBTPmtPid;
 		private System.Windows.Forms.Label label48;
 		private System.Windows.Forms.TextBox tbDVBSPmtPid;
-		private System.Windows.Forms.CheckBox checkBoxScrambled;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxScrambled;
 		private System.Windows.Forms.TextBox tbBandWidth;
 		private System.Windows.Forms.Label label49;
 		private System.Windows.Forms.Label label50;
@@ -339,8 +343,8 @@ namespace MediaPortal.Configuration
       this.label1 = new System.Windows.Forms.Label();
       this.nameTextBox = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
-      this.cancelButton = new System.Windows.Forms.Button();
-      this.okButton = new System.Windows.Forms.Button();
+      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.inputComboBox = new System.Windows.Forms.ComboBox();
       this.label6 = new System.Windows.Forms.Label();
       this.typeComboBox = new System.Windows.Forms.ComboBox();
@@ -355,7 +359,7 @@ namespace MediaPortal.Configuration
       this.label95 = new System.Windows.Forms.Label();
       this.labelSpecial = new System.Windows.Forms.Label();
       this.comboBoxChannels = new System.Windows.Forms.ComboBox();
-      this.checkBoxScrambled = new System.Windows.Forms.CheckBox();
+      this.checkBoxScrambled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label45 = new System.Windows.Forms.Label();
       this.label44 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();

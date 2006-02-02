@@ -36,7 +36,7 @@ namespace MediaPortal.Configuration.Sections
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button playlistButton;
+		private MediaPortal.UserInterface.Controls.MPButton playlistButton;
 		private System.Windows.Forms.TextBox playlistFolderTextBox;
 		private MediaPortal.UserInterface.Controls.MPCheckBox autoShuffleCheckBox;
 		private MediaPortal.UserInterface.Controls.MPCheckBox repeatPlaylistCheckBox;
@@ -164,7 +164,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.autoShuffleCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.repeatPlaylistCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.playlistButton = new System.Windows.Forms.Button();
+      this.playlistButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.playlistFolderTextBox = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();

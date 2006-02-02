@@ -48,7 +48,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ComboBox audioCodecComboBox;
 		private System.Windows.Forms.ComboBox videoCodecComboBox;
 		private System.Windows.Forms.ComboBox dvdNavigatorComboBox;
-    private System.Windows.Forms.CheckBox checkBoxAC3;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAC3;
 		private System.ComponentModel.IContainer components = null;
 
 		/// <summary>
@@ -196,7 +196,7 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxAC3 = new System.Windows.Forms.CheckBox();
+      this.checkBoxAC3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.dvdNavigatorComboBox = new System.Windows.Forms.ComboBox();
       this.videoCodecComboBox = new System.Windows.Forms.ComboBox();
       this.audioCodecComboBox = new System.Windows.Forms.ComboBox();

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.IO;
 using System.Xml;
@@ -37,12 +41,12 @@ namespace MediaPortal.Configuration.Sections
 		
 
 		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.CheckBox checkBox1;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox1;
 		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.CheckBox useLNB4;
-		private System.Windows.Forms.CheckBox useLNB3;
-		private System.Windows.Forms.CheckBox useLNB2;
-		private System.Windows.Forms.CheckBox useLNB1;
+		private MediaPortal.UserInterface.Controls.MPCheckBox useLNB4;
+		private MediaPortal.UserInterface.Controls.MPCheckBox useLNB3;
+		private MediaPortal.UserInterface.Controls.MPCheckBox useLNB2;
+		private MediaPortal.UserInterface.Controls.MPCheckBox useLNB1;
 		private System.Windows.Forms.ComboBox lnbkind4;
 		private System.Windows.Forms.ComboBox lnbkind3;
 		private System.Windows.Forms.ComboBox lnbkind2;
@@ -107,12 +111,12 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
+			this.checkBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this.useLNB4 = new System.Windows.Forms.CheckBox();
-			this.useLNB3 = new System.Windows.Forms.CheckBox();
-			this.useLNB2 = new System.Windows.Forms.CheckBox();
-			this.useLNB1 = new System.Windows.Forms.CheckBox();
+			this.useLNB4 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.useLNB3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.useLNB2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.useLNB1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.lnbkind4 = new System.Windows.Forms.ComboBox();
 			this.lnbkind3 = new System.Windows.Forms.ComboBox();
 			this.lnbkind2 = new System.Windows.Forms.ComboBox();

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -42,8 +46,8 @@ namespace MediaPortal.Configuration.Sections
 		//private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.ComboBox cbDeinterlace;
-		private System.Windows.Forms.CheckBox cbForcedSubtitles;
-		private System.Windows.Forms.CheckBox cbPlanar;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbForcedSubtitles;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbPlanar;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label7;
@@ -99,8 +103,8 @@ namespace MediaPortal.Configuration.Sections
       this.label4 = new System.Windows.Forms.Label();
       this.cbDeinterlace = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
-      this.cbForcedSubtitles = new System.Windows.Forms.CheckBox();
-      this.cbPlanar = new System.Windows.Forms.CheckBox();
+      this.cbForcedSubtitles = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbPlanar = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tbSaturation = new System.Windows.Forms.TrackBar();
       this.tbHue = new System.Windows.Forms.TrackBar();
       this.tbContrast = new System.Windows.Forms.TrackBar();

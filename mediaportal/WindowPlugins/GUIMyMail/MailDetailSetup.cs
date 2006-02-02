@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -13,8 +38,8 @@ namespace MyMail
 	/// </summary>
 	public class MailDetailSetup : System.Windows.Forms.Form
 	{
-    private System.Windows.Forms.Button btnOk;
-    private System.Windows.Forms.Button btnCancel;
+    private MediaPortal.UserInterface.Controls.MPButton btnOk;
+    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
     private System.Windows.Forms.GroupBox gbConnection;
     private System.Windows.Forms.Label lblServerAddress;
     private System.Windows.Forms.Label lblUsername;
@@ -32,17 +57,17 @@ namespace MyMail
     private System.Windows.Forms.GroupBox gbGeneral;
     private System.Windows.Forms.TextBox tbBoxLabel;
     private System.Windows.Forms.Label lblBoxLabel;
-    private System.Windows.Forms.CheckBox cbEnabled;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbEnabled;
     private System.Windows.Forms.FolderBrowserDialog dialogFolder;
-    private System.Windows.Forms.Button btnMailboxFolder;
-    private System.Windows.Forms.Button btnAttachmentFolder;
+    private MediaPortal.UserInterface.Controls.MPButton btnMailboxFolder;
+    private MediaPortal.UserInterface.Controls.MPButton btnAttachmentFolder;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
     MailBox m_CurMailBox = null;
-    private System.Windows.Forms.Button btnTest;
+    private MediaPortal.UserInterface.Controls.MPButton btnTest;
     ConditionChecker checker = new ConditionChecker();
 
 		public MailDetailSetup()
@@ -80,8 +105,8 @@ namespace MyMail
 		private void InitializeComponent()
 		{
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(MailDetailSetup));
-      this.btnOk = new System.Windows.Forms.Button();
-      this.btnCancel = new System.Windows.Forms.Button();
+      this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.gbConnection = new System.Windows.Forms.GroupBox();
       this.tbPassword = new System.Windows.Forms.TextBox();
       this.tbUsername = new System.Windows.Forms.TextBox();
@@ -92,8 +117,8 @@ namespace MyMail
       this.lblUsername = new System.Windows.Forms.Label();
       this.lblServerAddress = new System.Windows.Forms.Label();
       this.gbStorage = new System.Windows.Forms.GroupBox();
-      this.btnAttachmentFolder = new System.Windows.Forms.Button();
-      this.btnMailboxFolder = new System.Windows.Forms.Button();
+      this.btnAttachmentFolder = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnMailboxFolder = new MediaPortal.UserInterface.Controls.MPButton();
       this.tbAttachmentFolder = new System.Windows.Forms.TextBox();
       this.tbMailboxFolder = new System.Windows.Forms.TextBox();
       this.lblAttachmentFolder = new System.Windows.Forms.Label();
@@ -101,9 +126,9 @@ namespace MyMail
       this.gbGeneral = new System.Windows.Forms.GroupBox();
       this.tbBoxLabel = new System.Windows.Forms.TextBox();
       this.lblBoxLabel = new System.Windows.Forms.Label();
-      this.cbEnabled = new System.Windows.Forms.CheckBox();
+      this.cbEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.dialogFolder = new System.Windows.Forms.FolderBrowserDialog();
-      this.btnTest = new System.Windows.Forms.Button();
+      this.btnTest = new MediaPortal.UserInterface.Controls.MPButton();
       this.gbConnection.SuspendLayout();
       this.gbStorage.SuspendLayout();
       this.gbGeneral.SuspendLayout();

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.ComponentModel;
@@ -102,8 +106,8 @@ namespace PostSetup
 			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.labProgressBytes = new System.Windows.Forms.Label();
 			this.labInstallFrom = new System.Windows.Forms.Label();
-			this.btnMoreInfo = new System.Windows.Forms.Button();
-			this.chkInstallThis = new System.Windows.Forms.CheckBox();
+			this.btnMoreInfo = new MediaPortal.UserInterface.Controls.MPButton();
+			this.chkInstallThis = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.cbDownloadUrls = new System.Windows.Forms.ComboBox();
 			this.panPackage = new System.Windows.Forms.Panel();
 			this.txtDescription = new System.Windows.Forms.TextBox();

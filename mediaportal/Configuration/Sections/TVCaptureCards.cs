@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.IO;
@@ -42,9 +46,9 @@ namespace MediaPortal.Configuration.Sections
 	{
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private MediaPortal.UserInterface.Controls.MPListView cardsListView;
-		private System.Windows.Forms.Button addButton;
-		private System.Windows.Forms.Button editButton;
-		private System.Windows.Forms.Button deleteButton;
+		private MediaPortal.UserInterface.Controls.MPButton addButton;
+		private MediaPortal.UserInterface.Controls.MPButton editButton;
+		private MediaPortal.UserInterface.Controls.MPButton deleteButton;
 		private System.Windows.Forms.ColumnHeader columnHeader1;
 		private System.Windows.Forms.ColumnHeader columnHeader2;
 		private System.Windows.Forms.ColumnHeader columnHeader3;
@@ -122,9 +126,9 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.deleteButton = new System.Windows.Forms.Button();
-      this.editButton = new System.Windows.Forms.Button();
-      this.addButton = new System.Windows.Forms.Button();
+      this.deleteButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.editButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.addButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.cardsListView = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();

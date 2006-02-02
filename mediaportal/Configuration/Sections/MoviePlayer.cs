@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -34,10 +38,10 @@ namespace MediaPortal.Configuration.Sections
 	public class MoviePlayer : MediaPortal.Configuration.SectionSettings
 	{
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.Button parametersButton;
+		private MediaPortal.UserInterface.Controls.MPButton parametersButton;
 		private System.Windows.Forms.TextBox parametersTextBox;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Button fileNameButton;
+		private MediaPortal.UserInterface.Controls.MPButton fileNameButton;
 		private System.Windows.Forms.TextBox fileNameTextBox;
 		private System.Windows.Forms.Label label1;
 		private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
@@ -146,10 +150,10 @@ namespace MediaPortal.Configuration.Sections
 		{
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.externalPlayerCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.parametersButton = new System.Windows.Forms.Button();
+      this.parametersButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.parametersTextBox = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
-      this.fileNameButton = new System.Windows.Forms.Button();
+      this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.fileNameTextBox = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox(); 

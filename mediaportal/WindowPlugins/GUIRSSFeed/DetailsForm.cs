@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,14 +21,7 @@
  *
  */
 
-/*
- * Created by SharpDevelop.
- * User: Josh
- * Date: 6/19/2004
- * Time: 11:05 PM
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
+#endregion
 
 using System;
 using System.Windows.Forms;
@@ -42,12 +37,12 @@ namespace GUIRSSFeed
 		public System.Windows.Forms.TextBox textName;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label;
-		private System.Windows.Forms.Button buttonBrowse;
+		private MediaPortal.UserInterface.Controls.MPButton buttonBrowse;
 		private System.Windows.Forms.TextBox textImage;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Button buttonClear;
+		private MediaPortal.UserInterface.Controls.MPButton buttonClear;
 		private System.Windows.Forms.TextBox textDescription;
-		private System.Windows.Forms.Button buttonSave;
+		private MediaPortal.UserInterface.Controls.MPButton buttonSave;
 		private System.Windows.Forms.TextBox textURL;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		public int ID;
@@ -158,12 +153,12 @@ namespace GUIRSSFeed
 		private void InitializeComponent() {
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.textURL = new System.Windows.Forms.TextBox();
-      this.buttonSave = new System.Windows.Forms.Button();
+      this.buttonSave = new MediaPortal.UserInterface.Controls.MPButton();
       this.textDescription = new System.Windows.Forms.TextBox();
-      this.buttonClear = new System.Windows.Forms.Button();
+      this.buttonClear = new MediaPortal.UserInterface.Controls.MPButton();
       this.label2 = new System.Windows.Forms.Label();
       this.textImage = new System.Windows.Forms.TextBox();
-      this.buttonBrowse = new System.Windows.Forms.Button();
+      this.buttonBrowse = new MediaPortal.UserInterface.Controls.MPButton();
       this.label = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.textName = new System.Windows.Forms.TextBox();

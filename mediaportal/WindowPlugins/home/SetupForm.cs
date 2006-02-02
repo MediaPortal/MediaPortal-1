@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Text;
@@ -56,7 +60,7 @@ namespace home
 		private System.Windows.Forms.TextBox textBox1;
 		private System.Windows.Forms.ListBox listBox;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.CheckBox chkBoxScrolling;
+		private MediaPortal.UserInterface.Controls.MPCheckBox chkBoxScrolling;
 		private System.Windows.Forms.RadioButton radioButton2;
 		private System.Windows.Forms.RadioButton radioButton1;
 		private System.Windows.Forms.TreeView treeView;
@@ -86,22 +90,22 @@ namespace home
 		};
 
 		private ArrayList availablePlugins = new ArrayList();
-		private System.Windows.Forms.CheckBox chkBoxFixed;
+		private MediaPortal.UserInterface.Controls.MPCheckBox chkBoxFixed;
 		private ArrayList loadedPlugins = new ArrayList();
 		bool	addPicture=false;
 		bool	addScript=false;
 		string	skinName;
 
-		private System.Windows.Forms.Button MakeMenu;
-		private System.Windows.Forms.Button SaveAll;
-		private System.Windows.Forms.Button CopyItem;
-		private System.Windows.Forms.Button DeleteItem;
-		private System.Windows.Forms.Button AddMenu;
-		private System.Windows.Forms.CheckBox NoScrollSubs;
-		private System.Windows.Forms.Button AddPicture;
-		private System.Windows.Forms.Button SearchPicture;
+		private MediaPortal.UserInterface.Controls.MPButton MakeMenu;
+		private MediaPortal.UserInterface.Controls.MPButton SaveAll;
+		private MediaPortal.UserInterface.Controls.MPButton CopyItem;
+		private MediaPortal.UserInterface.Controls.MPButton DeleteItem;
+		private MediaPortal.UserInterface.Controls.MPButton AddMenu;
+		private MediaPortal.UserInterface.Controls.MPCheckBox NoScrollSubs;
+		private MediaPortal.UserInterface.Controls.MPButton AddPicture;
+		private MediaPortal.UserInterface.Controls.MPButton SearchPicture;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
-		private System.Windows.Forms.Button deletePicture;
+		private MediaPortal.UserInterface.Controls.MPButton deletePicture;
 		private System.Windows.Forms.PictureBox pictureBox1;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.PictureBox pictureBox2;
@@ -113,7 +117,7 @@ namespace home
 		private System.Windows.Forms.RadioButton useMyPlugins;
 		private System.Windows.Forms.RadioButton useMenus;
 		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.Button button1;
+		private MediaPortal.UserInterface.Controls.MPButton button1;
 		private System.Windows.Forms.GroupBox groupBox4;
 		private System.Windows.Forms.RadioButton radioButton3;
 		private System.Windows.Forms.Label label12;
@@ -128,12 +132,12 @@ namespace home
 		private System.Windows.Forms.TextBox OwnDate;
 		private System.Windows.Forms.GroupBox groupBox5;
 		private System.Windows.Forms.TextBox DateTest;
-		private System.Windows.Forms.Button TestDate;
+		private MediaPortal.UserInterface.Controls.MPButton TestDate;
 		private System.Windows.Forms.Label label21;
-		private System.Windows.Forms.Button AddSpecial;
+		private MediaPortal.UserInterface.Controls.MPButton AddSpecial;
 		private System.Windows.Forms.TabPage tabPage3;
 		private System.Windows.Forms.ListBox SpecialFunctions;
-		private System.Windows.Forms.CheckBox BackButtons;
+		private MediaPortal.UserInterface.Controls.MPCheckBox BackButtons;
 		private System.Windows.Forms.TabPage tabPage4;
 		private System.Windows.Forms.ListView listView;
 		private System.Windows.Forms.ColumnHeader Plugin;
@@ -143,23 +147,23 @@ namespace home
 		private System.Windows.Forms.Label label22;
 		private System.Windows.Forms.Label label23;
 		private System.Windows.Forms.TabPage TopBar;
-		private System.Windows.Forms.Button button2;
-		private System.Windows.Forms.Button button3;
-		private System.Windows.Forms.CheckBox useTopBarSub;
-		private System.Windows.Forms.CheckBox useMenuShortcuts;
-		private System.Windows.Forms.CheckBox NoTopBar;
+		private MediaPortal.UserInterface.Controls.MPButton button2;
+		private MediaPortal.UserInterface.Controls.MPButton button3;
+		private MediaPortal.UserInterface.Controls.MPCheckBox useTopBarSub;
+		private MediaPortal.UserInterface.Controls.MPCheckBox useMenuShortcuts;
+		private MediaPortal.UserInterface.Controls.MPCheckBox NoTopBar;
 		private System.Windows.Forms.Label label24;
-		private System.Windows.Forms.CheckBox ActivateSpecial;
+		private MediaPortal.UserInterface.Controls.MPCheckBox ActivateSpecial;
 		private System.Windows.Forms.Label label25;
 		private System.Windows.Forms.PictureBox pictureBox4;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.ComboBox comboBox1;
 		private System.Windows.Forms.GroupBox groupBox6;
-		private System.Windows.Forms.CheckBox StartScript;
-		private System.Windows.Forms.CheckBox EndScript;
+		private MediaPortal.UserInterface.Controls.MPCheckBox StartScript;
+		private MediaPortal.UserInterface.Controls.MPCheckBox EndScript;
 		private System.Windows.Forms.ComboBox comboBox2;
 		private System.Windows.Forms.ComboBox comboBox3;
-		private System.Windows.Forms.Button addConfig;
+		private MediaPortal.UserInterface.Controls.MPButton addConfig;
 
 		#region plugin vars	
 		public bool	CanEnable()		// Indicates whether plugin can be enabled/disabled
@@ -247,8 +251,8 @@ namespace home
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.comboBox1 = new System.Windows.Forms.ComboBox();
-			this.SearchPicture = new System.Windows.Forms.Button();
-			this.MakeMenu = new System.Windows.Forms.Button();
+			this.SearchPicture = new MediaPortal.UserInterface.Controls.MPButton();
+			this.MakeMenu = new MediaPortal.UserInterface.Controls.MPButton();
 			this.label7 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
 			this.textBox5 = new System.Windows.Forms.TextBox();
@@ -261,43 +265,43 @@ namespace home
 			this.textBox4 = new System.Windows.Forms.TextBox();
 			this.textBox2 = new System.Windows.Forms.TextBox();
 			this.textBox1 = new System.Windows.Forms.TextBox();
-			this.SaveAll = new System.Windows.Forms.Button();
-			this.DeleteItem = new System.Windows.Forms.Button();
-			this.AddMenu = new System.Windows.Forms.Button();
-			this.CopyItem = new System.Windows.Forms.Button();
+			this.SaveAll = new MediaPortal.UserInterface.Controls.MPButton();
+			this.DeleteItem = new MediaPortal.UserInterface.Controls.MPButton();
+			this.AddMenu = new MediaPortal.UserInterface.Controls.MPButton();
+			this.CopyItem = new MediaPortal.UserInterface.Controls.MPButton();
 			this.listBox = new System.Windows.Forms.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.NoScrollSubs = new System.Windows.Forms.CheckBox();
-			this.chkBoxFixed = new System.Windows.Forms.CheckBox();
-			this.chkBoxScrolling = new System.Windows.Forms.CheckBox();
+			this.NoScrollSubs = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.chkBoxFixed = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.chkBoxScrolling = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.radioButton2 = new System.Windows.Forms.RadioButton();
 			this.radioButton1 = new System.Windows.Forms.RadioButton();
 			this.treeView = new System.Windows.Forms.TreeView();
-			this.AddPicture = new System.Windows.Forms.Button();
+			this.AddPicture = new MediaPortal.UserInterface.Controls.MPButton();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-			this.deletePicture = new System.Windows.Forms.Button();
+			this.deletePicture = new MediaPortal.UserInterface.Controls.MPButton();
 			this.label9 = new System.Windows.Forms.Label();
 			this.pictureBox2 = new System.Windows.Forms.PictureBox();
 			this.label10 = new System.Windows.Forms.Label();
 			this.label11 = new System.Windows.Forms.Label();
 			this.pictureBox3 = new System.Windows.Forms.PictureBox();
-			this.addConfig = new System.Windows.Forms.Button();
+			this.addConfig = new MediaPortal.UserInterface.Controls.MPButton();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.TopBar = new System.Windows.Forms.TabPage();
 			this.groupBox6 = new System.Windows.Forms.GroupBox();
 			this.comboBox3 = new System.Windows.Forms.ComboBox();
 			this.comboBox2 = new System.Windows.Forms.ComboBox();
-			this.EndScript = new System.Windows.Forms.CheckBox();
-			this.StartScript = new System.Windows.Forms.CheckBox();
+			this.EndScript = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.StartScript = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.label24 = new System.Windows.Forms.Label();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
-			this.NoTopBar = new System.Windows.Forms.CheckBox();
-			this.useMenuShortcuts = new System.Windows.Forms.CheckBox();
-			this.useTopBarSub = new System.Windows.Forms.CheckBox();
-			this.BackButtons = new System.Windows.Forms.CheckBox();
+			this.NoTopBar = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.useMenuShortcuts = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.useTopBarSub = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.BackButtons = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.label21 = new System.Windows.Forms.Label();
-			this.TestDate = new System.Windows.Forms.Button();
+			this.TestDate = new MediaPortal.UserInterface.Controls.MPButton();
 			this.DateTest = new System.Windows.Forms.TextBox();
 			this.label20 = new System.Windows.Forms.Label();
 			this.label17 = new System.Windows.Forms.Label();
@@ -310,9 +314,9 @@ namespace home
 			this.label12 = new System.Windows.Forms.Label();
 			this.OwnDate = new System.Windows.Forms.TextBox();
 			this.radioButton3 = new System.Windows.Forms.RadioButton();
-			this.button1 = new System.Windows.Forms.Button();
+			this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.AddSpecial = new System.Windows.Forms.Button();
+			this.AddSpecial = new MediaPortal.UserInterface.Controls.MPButton();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.label25 = new System.Windows.Forms.Label();
 			this.pictureBox4 = new System.Windows.Forms.PictureBox();
@@ -322,11 +326,11 @@ namespace home
 			this.useMenus = new System.Windows.Forms.RadioButton();
 			this.label2 = new System.Windows.Forms.Label();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
-			this.ActivateSpecial = new System.Windows.Forms.CheckBox();
-			this.button2 = new System.Windows.Forms.Button();
+			this.ActivateSpecial = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
 			this.SpecialFunctions = new System.Windows.Forms.ListBox();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
-			this.button3 = new System.Windows.Forms.Button();
+			this.button3 = new MediaPortal.UserInterface.Controls.MPButton();
 			this.listView = new System.Windows.Forms.ListView();
 			this.Type = new System.Windows.Forms.ColumnHeader();
 			this.Plugin = new System.Windows.Forms.ColumnHeader();

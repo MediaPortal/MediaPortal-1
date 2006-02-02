@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Drawing;
@@ -69,9 +73,9 @@ namespace MediaPortal.Configuration
     
     string wizardCaption = String.Empty;
     
-    private System.Windows.Forms.Button cancelButton;
-		private System.Windows.Forms.Button nextButton;
-		private System.Windows.Forms.Button backButton;
+    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
+		private MediaPortal.UserInterface.Controls.MPButton nextButton;
+		private MediaPortal.UserInterface.Controls.MPButton backButton;
 		private System.Windows.Forms.Panel topPanel;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.Panel panel2;
@@ -322,9 +326,9 @@ namespace MediaPortal.Configuration
 		private void InitializeComponent()
 		{
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(WizardForm));
-      this.cancelButton = new System.Windows.Forms.Button();
-      this.nextButton = new System.Windows.Forms.Button();
-      this.backButton = new System.Windows.Forms.Button();
+      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.nextButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.backButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.topPanel = new System.Windows.Forms.Panel();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.infoLabel = new System.Windows.Forms.Label();

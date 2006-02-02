@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Xml;
 using System.Drawing;
@@ -37,7 +41,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.ComponentModel.IContainer components = null;
 
-		private System.Windows.Forms.Button button1;
+		private MediaPortal.UserInterface.Controls.MPButton button1;
 		private System.Windows.Forms.ComboBox cbCities;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.ComboBox cbCountries;
@@ -45,8 +49,8 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label labelStatus;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Button btnManualTV;
-		private System.Windows.Forms.Button btnManualRadio;
+		private MediaPortal.UserInterface.Controls.MPButton btnManualTV;
+		private MediaPortal.UserInterface.Controls.MPButton btnManualRadio;
         private ComboBox countryComboBox;
         private Label label5;
         private ComboBox inputComboBox;
@@ -88,12 +92,12 @@ namespace MediaPortal.Configuration.Sections
 		{
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Wizard_AnalogTV));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnManualRadio = new System.Windows.Forms.Button();
-            this.btnManualTV = new System.Windows.Forms.Button();
+            this.btnManualRadio = new MediaPortal.UserInterface.Controls.MPButton();
+            this.btnManualTV = new MediaPortal.UserInterface.Controls.MPButton();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.labelStatus = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
             this.cbCities = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cbCountries = new System.Windows.Forms.ComboBox();

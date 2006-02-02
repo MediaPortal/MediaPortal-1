@@ -243,42 +243,6 @@
     <Compile Include="AutoTuningForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\DataGridBooleanNoNull.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\EventArgs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\ListViewItemComparer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\MPBeveledLine.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\MPCheckBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\MPGradientLabel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\MPGroupBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\MPListView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\MWCommon.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\MWEnums.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\MWTreeNodeWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\MWTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="DigitalTVTuningForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -558,18 +522,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AutoTuningForm.resx">
       <DependentUpon>AutoTuningForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DataGridBooleanNoNull.resx">
-      <DependentUpon>DataGridBooleanNoNull.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MPBeveledLine.resx">
-      <DependentUpon>MPBeveledLine.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MPGradientLabel.resx">
-      <DependentUpon>MPGradientLabel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\MWTreeView.resx">
-      <DependentUpon>MWTreeView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DigitalTVTuningForm.resx">
       <DependentUpon>DigitalTVTuningForm.cs</DependentUpon>

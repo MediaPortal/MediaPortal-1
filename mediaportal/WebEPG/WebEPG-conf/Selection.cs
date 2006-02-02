@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Drawing;
@@ -44,8 +48,8 @@ namespace WebEPG_conf
 		private System.Windows.Forms.TextBox tbAInfo;
 		private System.Windows.Forms.Label lList;
 		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Button bSelect;
-		private System.Windows.Forms.Button bClose;
+		private MediaPortal.UserInterface.Controls.MPButton bSelect;
+		private MediaPortal.UserInterface.Controls.MPButton bClose;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -111,8 +115,8 @@ namespace WebEPG_conf
 		{
 			this.treeView1 = new System.Windows.Forms.TreeView();
 			this.gbSelection = new System.Windows.Forms.GroupBox();
-			this.bClose = new System.Windows.Forms.Button();
-			this.bSelect = new System.Windows.Forms.Button();
+			this.bClose = new MediaPortal.UserInterface.Controls.MPButton();
+			this.bSelect = new MediaPortal.UserInterface.Controls.MPButton();
 			this.rbWebsites = new System.Windows.Forms.RadioButton();
 			this.rbChannels = new System.Windows.Forms.RadioButton();
 			this.tbAInfo = new System.Windows.Forms.TextBox();

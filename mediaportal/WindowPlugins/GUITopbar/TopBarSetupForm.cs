@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -32,12 +36,12 @@ namespace MediaPortal.Topbar
 	/// </summary>
 	public class TopBarSetupForm : System.Windows.Forms.Form
 	{
-    private System.Windows.Forms.CheckBox chkAutoHide;
-    private System.Windows.Forms.Button buttonOk;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chkAutoHide;
+    private MediaPortal.UserInterface.Controls.MPButton buttonOk;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.TextBox textTimeOut;
-    private System.Windows.Forms.CheckBox chkOverrideSkinAutoHide;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chkOverrideSkinAutoHide;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -77,12 +81,12 @@ namespace MediaPortal.Topbar
 		/// </summary>
 		private void InitializeComponent()
 		{
-      this.chkAutoHide = new System.Windows.Forms.CheckBox();
-      this.buttonOk = new System.Windows.Forms.Button();
+      this.chkAutoHide = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.textTimeOut = new System.Windows.Forms.TextBox();
-      this.chkOverrideSkinAutoHide = new System.Windows.Forms.CheckBox();
+      this.chkOverrideSkinAutoHide = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.SuspendLayout();
       // 
       // chkAutoHide

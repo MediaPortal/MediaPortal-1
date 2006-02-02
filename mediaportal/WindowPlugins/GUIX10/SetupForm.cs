@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Drawing;
@@ -49,14 +53,14 @@ namespace MediaPortal.GUI.X10Plugin
 			//
 		}
 
-		private System.Windows.Forms.Button buttonSave;
+		private MediaPortal.UserInterface.Controls.MPButton buttonSave;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.ListView listLocations;
 		public System.Windows.Forms.ColumnHeader columnHeader2;
 		private System.Windows.Forms.ColumnHeader columnHeader3;
-		private System.Windows.Forms.Button buttonNew;
-		private System.Windows.Forms.Button buttonEdit;
-		private System.Windows.Forms.Button buttonDelete;
+		private MediaPortal.UserInterface.Controls.MPButton buttonNew;
+		private MediaPortal.UserInterface.Controls.MPButton buttonEdit;
+		private MediaPortal.UserInterface.Controls.MPButton buttonDelete;
 		private System.Windows.Forms.Label label2;
 
 		private System.Windows.Forms.TextBox txtCM1xHost;
@@ -92,11 +96,11 @@ namespace MediaPortal.GUI.X10Plugin
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.buttonSave = new System.Windows.Forms.Button();
+			this.buttonSave = new MediaPortal.UserInterface.Controls.MPButton();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.buttonDelete = new System.Windows.Forms.Button();
-			this.buttonEdit = new System.Windows.Forms.Button();
-			this.buttonNew = new System.Windows.Forms.Button();
+			this.buttonDelete = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonEdit = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonNew = new MediaPortal.UserInterface.Controls.MPButton();
 			this.listLocations = new System.Windows.Forms.ListView();
 			this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader3 = new System.Windows.Forms.ColumnHeader();

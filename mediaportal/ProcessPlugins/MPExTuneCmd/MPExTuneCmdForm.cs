@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -36,9 +40,9 @@ namespace MediaPortal.MPExTuneCmd
 	{
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox MpExTuneCmdLoc;
-		private System.Windows.Forms.Button browseButton;
-		private System.Windows.Forms.Button ok_button;
-		private System.Windows.Forms.Button cancel_button;
+		private MediaPortal.UserInterface.Controls.MPButton browseButton;
+		private MediaPortal.UserInterface.Controls.MPButton ok_button;
+		private MediaPortal.UserInterface.Controls.MPButton cancel_button;
 		private System.Windows.Forms.TextBox MPExTuneCmdDelim;
 		private System.Windows.Forms.Label label2;
 		/// <summary>
@@ -102,9 +106,9 @@ namespace MediaPortal.MPExTuneCmd
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(MPExTuneCmdForm));
 			this.MpExTuneCmdLoc = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.browseButton = new System.Windows.Forms.Button();
-			this.ok_button = new System.Windows.Forms.Button();
-			this.cancel_button = new System.Windows.Forms.Button();
+			this.browseButton = new MediaPortal.UserInterface.Controls.MPButton();
+			this.ok_button = new MediaPortal.UserInterface.Controls.MPButton();
+			this.cancel_button = new MediaPortal.UserInterface.Controls.MPButton();
 			this.MPExTuneCmdDelim = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.SuspendLayout();

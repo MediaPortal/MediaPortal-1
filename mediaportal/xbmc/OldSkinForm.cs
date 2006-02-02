@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.IO;
 using System.Xml;
@@ -34,8 +39,8 @@ namespace MediaPortal
 	public class OldSkinForm : System.Windows.Forms.Form
 	{
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.CheckBox checkBox1;
-		private System.Windows.Forms.Button button1;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox1;
+		private MediaPortal.UserInterface.Controls.MPButton button1;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -76,8 +81,8 @@ namespace MediaPortal
 		private void InitializeComponent()
 		{
 			this.label1 = new System.Windows.Forms.Label();
-			this.checkBox1 = new System.Windows.Forms.CheckBox();
-			this.button1 = new System.Windows.Forms.Button();
+			this.checkBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
 			this.SuspendLayout();
 			// 
 			// label1

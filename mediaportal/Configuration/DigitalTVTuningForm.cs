@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.IO;
@@ -44,7 +48,7 @@ namespace MediaPortal
 	public class DigitalTVTuningForm : System.Windows.Forms.Form, AutoTuneCallback
 	{
     private System.Windows.Forms.Label labelStatus;
-    private System.Windows.Forms.Button btnOk;
+    private MediaPortal.UserInterface.Controls.MPButton btnOk;
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.Label label1;
     ArrayList     m_tvcards    = new ArrayList();
@@ -54,7 +58,7 @@ namespace MediaPortal
 		ITuning				tuningInterface;
 		private System.Windows.Forms.ProgressBar progressBar1;
 		private System.Windows.Forms.Label labelStatus2;
-		private System.Windows.Forms.Button button1;
+		private MediaPortal.UserInterface.Controls.MPButton button1;
 		private System.Windows.Forms.ImageList imageList1;
 		private System.ComponentModel.IContainer components;
 		private System.Windows.Forms.Label labelChannels;
@@ -67,8 +71,8 @@ namespace MediaPortal
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Timer timer1;
-		private System.Windows.Forms.Button btnPrevChan;
-		private System.Windows.Forms.Button btnNext;
+		private MediaPortal.UserInterface.Controls.MPButton btnPrevChan;
+		private MediaPortal.UserInterface.Controls.MPButton btnNext;
 		TVCaptureDevice captureCard;
 		private System.Windows.Forms.GroupBox groupBox1;
 		bool	isAutoTuning=false;
@@ -95,7 +99,7 @@ namespace MediaPortal
       this.components = new System.ComponentModel.Container();
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(DigitalTVTuningForm));
       this.labelStatus = new System.Windows.Forms.Label();
-      this.btnOk = new System.Windows.Forms.Button();
+      this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.panel1 = new System.Windows.Forms.Panel();
       this.label1 = new System.Windows.Forms.Label();
       this.listView1 = new System.Windows.Forms.ListView();
@@ -104,7 +108,7 @@ namespace MediaPortal
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.labelStatus2 = new System.Windows.Forms.Label();
-      this.button1 = new System.Windows.Forms.Button();
+      this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.labelChannels = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
@@ -115,8 +119,8 @@ namespace MediaPortal
       this.label6 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.btnPrevChan = new System.Windows.Forms.Button();
-      this.btnNext = new System.Windows.Forms.Button();
+      this.btnPrevChan = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnNext = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();

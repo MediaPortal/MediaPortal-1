@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -31,7 +35,7 @@ namespace MediaPortal.Configuration.Sections
 	public class Movies : MediaPortal.Configuration.SectionSettings
 	{
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.Button fileNameButton;
+		private MediaPortal.UserInterface.Controls.MPButton fileNameButton;
 		private System.Windows.Forms.TextBox folderNameTextBox;
 		private System.Windows.Forms.Label folderNameLabel;
 		private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
@@ -39,7 +43,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label6;
 		private MediaPortal.UserInterface.Controls.MPCheckBox repeatPlaylistCheckBox;
 		private MediaPortal.UserInterface.Controls.MPCheckBox showSubtitlesCheckBox;
-		private System.Windows.Forms.Button subtitlesButton;
+		private MediaPortal.UserInterface.Controls.MPButton subtitlesButton;
 		private System.Windows.Forms.TextBox subtitlesFontTextBox;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
 		private System.Windows.Forms.FontDialog fontDialog;
@@ -60,8 +64,8 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ColumnHeader chDatabaseDB;
 		private System.Windows.Forms.ColumnHeader chDatabaseLanguage;
 		private System.Windows.Forms.ColumnHeader chDatabaseLimit;
-		private System.Windows.Forms.Button bDatabaseUp;
-		private System.Windows.Forms.Button bDatabaseDown;
+		private MediaPortal.UserInterface.Controls.MPButton bDatabaseUp;
+		private MediaPortal.UserInterface.Controls.MPButton bDatabaseDown;
 		private System.Windows.Forms.ComboBox cbDatabaseLimit;
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabPage1;
@@ -274,7 +278,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.defaultZoomModeComboBox = new System.Windows.Forms.ComboBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.fileNameButton = new System.Windows.Forms.Button();
+      this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.folderNameTextBox = new System.Windows.Forms.TextBox();
       this.repeatPlaylistCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.folderNameLabel = new System.Windows.Forms.Label();
@@ -284,7 +288,7 @@ namespace MediaPortal.Configuration.Sections
       this.dropShadowTextBox = new System.Windows.Forms.TextBox();
       this.label4 = new System.Windows.Forms.Label();
       this.showSubtitlesCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.subtitlesButton = new System.Windows.Forms.Button();
+      this.subtitlesButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.subtitlesFontTextBox = new System.Windows.Forms.TextBox();
       this.label6 = new System.Windows.Forms.Label();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
@@ -295,8 +299,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.label8 = new System.Windows.Forms.Label();
       this.cbDatabaseLimit = new System.Windows.Forms.ComboBox();
-      this.bDatabaseDown = new System.Windows.Forms.Button();
-      this.bDatabaseUp = new System.Windows.Forms.Button();
+      this.bDatabaseDown = new MediaPortal.UserInterface.Controls.MPButton();
+      this.bDatabaseUp = new MediaPortal.UserInterface.Controls.MPButton();
       this.lvDatabase = new System.Windows.Forms.ListView();
       this.chDatabaseDB = new System.Windows.Forms.ColumnHeader();
       this.chDatabaseLanguage = new System.Windows.Forms.ColumnHeader();

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -32,13 +36,13 @@ namespace MediaPortal.Configuration
 	/// </summary>
 	public class AutoTuningForm : System.Windows.Forms.Form
 	{
-		protected System.Windows.Forms.Button cancelButton;
+		protected MediaPortal.UserInterface.Controls.MPButton cancelButton;
 		protected System.Windows.Forms.GroupBox groupBox1;
-		protected System.Windows.Forms.Button okButton;
+		protected MediaPortal.UserInterface.Controls.MPButton okButton;
 		protected System.Windows.Forms.ListBox itemsListBox;
 		protected System.Windows.Forms.ProgressBar progressBar;
-		protected System.Windows.Forms.Button startButton;
-		protected System.Windows.Forms.Button stopButton;
+		protected MediaPortal.UserInterface.Controls.MPButton startButton;
+		protected MediaPortal.UserInterface.Controls.MPButton stopButton;
 		protected System.Timers.Timer tunerTimer;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ComboBox sensitivityComboBox;
@@ -86,15 +90,15 @@ namespace MediaPortal.Configuration
 		/// </summary>
 		protected void InitializeComponent()
 		{
-			this.cancelButton = new System.Windows.Forms.Button();
+			this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.sensitivityComboBox = new System.Windows.Forms.ComboBox();
-			this.stopButton = new System.Windows.Forms.Button();
-			this.startButton = new System.Windows.Forms.Button();
+			this.stopButton = new MediaPortal.UserInterface.Controls.MPButton();
+			this.startButton = new MediaPortal.UserInterface.Controls.MPButton();
 			this.progressBar = new System.Windows.Forms.ProgressBar();
 			this.itemsListBox = new System.Windows.Forms.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.okButton = new System.Windows.Forms.Button();
+			this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
 			this.tunerTimer = new System.Timers.Timer();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.tunerTimer)).BeginInit();

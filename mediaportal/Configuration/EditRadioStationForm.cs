@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -34,8 +38,8 @@ namespace MediaPortal.Configuration
 	public class EditRadioStationForm : System.Windows.Forms.Form
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.Button closeButton;
-		private System.Windows.Forms.Button okButton;
+		private MediaPortal.UserInterface.Controls.MPButton closeButton;
+		private MediaPortal.UserInterface.Controls.MPButton okButton;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox nameTextBox;
 		private System.Windows.Forms.Label label2;
@@ -48,7 +52,7 @@ namespace MediaPortal.Configuration
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.ComboBox typeComboBox;
     private System.Windows.Forms.TextBox frequencyTextBox;
-		private System.Windows.Forms.Button searchButton;
+		private MediaPortal.UserInterface.Controls.MPButton searchButton;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -103,9 +107,9 @@ namespace MediaPortal.Configuration
 			this.nameTextBox = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this.closeButton = new System.Windows.Forms.Button();
-			this.okButton = new System.Windows.Forms.Button();
-			this.searchButton = new System.Windows.Forms.Button();
+			this.closeButton = new MediaPortal.UserInterface.Controls.MPButton();
+			this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
+			this.searchButton = new MediaPortal.UserInterface.Controls.MPButton();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 

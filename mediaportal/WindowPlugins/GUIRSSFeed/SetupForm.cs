@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,14 +21,7 @@
  *
  */
 
-/*
- * Created by SharpDevelop.
- * User: Josh
- * Date: 6/18/2004
- * Time: 11:59 PM
- *
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
+#endregion
 
 using System;
 using System.Windows.Forms;
@@ -41,12 +36,12 @@ namespace GUIRSSFeed
 	public class SetupForm : System.Windows.Forms.Form, ISetupForm
 	{
 		private System.Windows.Forms.Label label;
-		private System.Windows.Forms.Button buttonAdd;
+		private MediaPortal.UserInterface.Controls.MPButton buttonAdd;
 		private System.Windows.Forms.ListBox listBox;
-		private System.Windows.Forms.Button buttonEdit;
-		private System.Windows.Forms.Button buttonDelete;
-		private System.Windows.Forms.Button button3;
-		private System.Windows.Forms.CheckBox checkAutoRefresh;
+		private MediaPortal.UserInterface.Controls.MPButton buttonEdit;
+		private MediaPortal.UserInterface.Controls.MPButton buttonDelete;
+		private MediaPortal.UserInterface.Controls.MPButton button3;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkAutoRefresh;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textRefreshInterval;
 		private System.Windows.Forms.Label label2;
@@ -284,13 +279,13 @@ namespace GUIRSSFeed
 		/// not be able to load this method if it was changed manually.
 		/// </summary>
 		private void InitializeComponent() {
-			this.buttonDelete = new System.Windows.Forms.Button();
-			this.buttonEdit = new System.Windows.Forms.Button();
+			this.buttonDelete = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonEdit = new MediaPortal.UserInterface.Controls.MPButton();
 			this.listBox = new System.Windows.Forms.ListBox();
-			this.buttonAdd = new System.Windows.Forms.Button();
+			this.buttonAdd = new MediaPortal.UserInterface.Controls.MPButton();
 			this.label = new System.Windows.Forms.Label();
-			this.button3 = new System.Windows.Forms.Button();
-			this.checkAutoRefresh = new System.Windows.Forms.CheckBox();
+			this.button3 = new MediaPortal.UserInterface.Controls.MPButton();
+			this.checkAutoRefresh = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.textRefreshInterval = new System.Windows.Forms.TextBox();
 			this.label2 = new System.Windows.Forms.Label();

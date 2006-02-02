@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.ComponentModel;
@@ -140,22 +144,22 @@ namespace WindowPlugins.GUIPrograms
       this.bottomPanel = new System.Windows.Forms.Panel();
       this.label2 = new System.Windows.Forms.Label();
       this.progressPanel = new System.Windows.Forms.Panel();
-      this.cancelButton = new System.Windows.Forms.Button();
+      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.progressStatusLabel = new System.Windows.Forms.Label();
       this.progressBar = new System.Windows.Forms.ProgressBar();
       this.label1 = new System.Windows.Forms.Label();
       this.MinRelevanceNum = new System.Windows.Forms.NumericUpDown();
-      this.ResetFilterButton = new System.Windows.Forms.Button();
+      this.ResetFilterButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.filterComboBox = new System.Windows.Forms.ComboBox();
       this.filterLabel = new System.Windows.Forms.Label();
-      this.buttonSelectBestMatch = new System.Windows.Forms.Button();
+      this.buttonSelectBestMatch = new MediaPortal.UserInterface.Controls.MPButton();
       this.allGameLink = new System.Windows.Forms.LinkLabel();
-      this.btnCancel = new System.Windows.Forms.Button();
-      this.btnSaveSearch = new System.Windows.Forms.Button();
-      this.btnStartSearch = new System.Windows.Forms.Button();
+      this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnSaveSearch = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnStartSearch = new MediaPortal.UserInterface.Controls.MPButton();
       this.leftPanel = new System.Windows.Forms.Panel();
-      this.uncheckAllButton = new System.Windows.Forms.Button();
-      this.checkAllButton = new System.Windows.Forms.Button();
+      this.uncheckAllButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkAllButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.lblFiles = new System.Windows.Forms.Label();
       this.FileList = new System.Windows.Forms.ListView();
       this.FileTitle = new System.Windows.Forms.ColumnHeader();
@@ -165,7 +169,7 @@ namespace WindowPlugins.GUIPrograms
       this.mnuCheckWithoutOverview = new System.Windows.Forms.MenuItem();
       this.splitterVert = new System.Windows.Forms.Splitter();
       this.rightPanel = new System.Windows.Forms.Panel();
-      this.LaunchURLButton = new System.Windows.Forms.Button();
+      this.LaunchURLButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.lblMatches = new System.Windows.Forms.Label();
       this.MatchList = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();

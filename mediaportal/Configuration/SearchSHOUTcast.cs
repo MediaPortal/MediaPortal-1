@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -37,12 +41,12 @@ namespace MediaPortal.Configuration
 	/// </summary>
 	public class SearchSHOUTcast : System.Windows.Forms.Form
 	{
-		private System.Windows.Forms.Button SearchButton;
+		private MediaPortal.UserInterface.Controls.MPButton SearchButton;
 		private System.Windows.Forms.TextBox SearchText;
 		private System.Windows.Forms.ColumnHeader columnHeader1;
 		private System.Windows.Forms.ColumnHeader columnHeader2;
 		private MediaPortal.UserInterface.Controls.MPListView ResultsBox;
-		private System.Windows.Forms.Button AddButton;
+		private MediaPortal.UserInterface.Controls.MPButton AddButton;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -85,13 +89,13 @@ namespace MediaPortal.Configuration
 		/// </summary>
 		private void InitializeComponent()
 		{
-      this.SearchButton = new System.Windows.Forms.Button();
+      this.SearchButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.SearchText = new System.Windows.Forms.TextBox();
       this.ResultsBox = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.AddButton = new System.Windows.Forms.Button();
+      this.AddButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.WaitLabel = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 

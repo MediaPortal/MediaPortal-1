@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -35,17 +39,17 @@ namespace GUIExplorer
   {
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.CheckBox checkBox2;
-		private System.Windows.Forms.CheckBox checkBox3;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox2;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox3;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.CheckBox checkBox4;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox4;
 		private System.Windows.Forms.TextBox textBox1;
 		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Button button1;
+		private MediaPortal.UserInterface.Controls.MPButton button1;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-		private System.Windows.Forms.Button button2;
-		private System.Windows.Forms.CheckBox checkBox1;
+		private MediaPortal.UserInterface.Controls.MPButton button2;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox1;
  
 	public SetupForm()
 	{
@@ -78,18 +82,18 @@ namespace GUIExplorer
 	private void InitializeComponent()
 	{
 		this.label1 = new System.Windows.Forms.Label();
-		this.checkBox1 = new System.Windows.Forms.CheckBox();
+		this.checkBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 		this.label2 = new System.Windows.Forms.Label();
-		this.checkBox2 = new System.Windows.Forms.CheckBox();
-		this.checkBox3 = new System.Windows.Forms.CheckBox();
+		this.checkBox2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+		this.checkBox3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 		this.label3 = new System.Windows.Forms.Label();
 		this.label4 = new System.Windows.Forms.Label();
-		this.checkBox4 = new System.Windows.Forms.CheckBox();
+		this.checkBox4 = new MediaPortal.UserInterface.Controls.MPCheckBox();
 		this.textBox1 = new System.Windows.Forms.TextBox();
 		this.label5 = new System.Windows.Forms.Label();
-		this.button1 = new System.Windows.Forms.Button();
+		this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
 		this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-		this.button2 = new System.Windows.Forms.Button();
+		this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
 		this.SuspendLayout();
 		// 
 		// label1

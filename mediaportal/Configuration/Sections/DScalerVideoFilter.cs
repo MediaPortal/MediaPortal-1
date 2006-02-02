@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -43,15 +47,15 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.TextBox tbVideoOffset;
-		private System.Windows.Forms.CheckBox cbAspectRatio;
-		private System.Windows.Forms.CheckBox cbForcedSubtitles;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbAspectRatio;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbForcedSubtitles;
 		private System.Windows.Forms.ComboBox cbDeinterlace;
-		private System.Windows.Forms.CheckBox cbSmoothing;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbSmoothing;
 		private System.Windows.Forms.ComboBox cbDVBAR;
-		private System.Windows.Forms.CheckBox cbHardcodePal;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbHardcodePal;
 		private System.Windows.Forms.ComboBox cbIDCT;
 		private System.Windows.Forms.ComboBox cbColorSpace;
-		private System.Windows.Forms.CheckBox cbAnalogBlanking;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbAnalogBlanking;
 		private System.ComponentModel.IContainer components = null;
 
 		/// <summary>
@@ -94,20 +98,20 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.cbAnalogBlanking = new System.Windows.Forms.CheckBox();
+      this.cbAnalogBlanking = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbColorSpace = new System.Windows.Forms.ComboBox();
       this.label6 = new System.Windows.Forms.Label();
       this.cbIDCT = new System.Windows.Forms.ComboBox();
       this.label4 = new System.Windows.Forms.Label();
-      this.cbHardcodePal = new System.Windows.Forms.CheckBox();
+      this.cbHardcodePal = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbDVBAR = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
       this.tbVideoOffset = new System.Windows.Forms.TextBox();
-      this.cbAspectRatio = new System.Windows.Forms.CheckBox();
+      this.cbAspectRatio = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label5 = new System.Windows.Forms.Label();
-      this.cbForcedSubtitles = new System.Windows.Forms.CheckBox();
+      this.cbForcedSubtitles = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbDeinterlace = new System.Windows.Forms.ComboBox();
-      this.cbSmoothing = new System.Windows.Forms.CheckBox();
+      this.cbSmoothing = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label3 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();

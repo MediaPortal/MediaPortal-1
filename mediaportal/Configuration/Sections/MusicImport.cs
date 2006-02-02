@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Windows.Forms;
@@ -222,29 +226,29 @@ namespace MediaPortal.Configuration.Sections
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MusicImport));
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-      this.buttonDefault = new System.Windows.Forms.Button();
+      this.buttonDefault = new MediaPortal.UserInterface.Controls.MPButton();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.tabPageEncoderSettings = new System.Windows.Forms.TabPage();
       this.groupBoxQuality = new System.Windows.Forms.GroupBox();
-      this.checkBoxFastMode = new System.Windows.Forms.CheckBox();
+      this.checkBoxFastMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.labelTarget = new System.Windows.Forms.Label();
       this.hScrollBarQuality = new System.Windows.Forms.HScrollBar();
       this.groupBoxBitrate = new System.Windows.Forms.GroupBox();
       this.labelBitrate = new System.Windows.Forms.Label();
-      this.checkBoxCBR = new System.Windows.Forms.CheckBox();
+      this.checkBoxCBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.hScrollBarBitrate = new System.Windows.Forms.HScrollBar();
       this.groupBoxTarget = new System.Windows.Forms.GroupBox();
-      this.checkBoxMono = new System.Windows.Forms.CheckBox();
+      this.checkBoxMono = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.radioButtonQuality = new System.Windows.Forms.RadioButton();
       this.radioButtonBitrate = new System.Windows.Forms.RadioButton();
       this.tabPageImportSettings = new System.Windows.Forms.TabPage();
       this.groupBoxGeneralSettings = new System.Windows.Forms.GroupBox();
-      this.checkBoxUnknown = new System.Windows.Forms.CheckBox();
-      this.checkBoxBackground = new System.Windows.Forms.CheckBox();
-      this.checkBoxDatabase = new System.Windows.Forms.CheckBox();
-      this.checkBoxReplace = new System.Windows.Forms.CheckBox();
+      this.checkBoxUnknown = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxBackground = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxDatabase = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxReplace = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.labelLibraryFolder = new System.Windows.Forms.Label();
-      this.buttonBrowse = new System.Windows.Forms.Button();
+      this.buttonBrowse = new MediaPortal.UserInterface.Controls.MPButton();
       this.textBoxImportDir = new System.Windows.Forms.TextBox();
       this.groupBoxPerformance = new System.Windows.Forms.GroupBox();
       this.hScrollBarPriority = new System.Windows.Forms.HScrollBar();
@@ -266,7 +270,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlMissing = new System.Windows.Forms.TabControl();
       this.tabPageMissing = new System.Windows.Forms.TabPage();
       this.groupBoxMissing = new System.Windows.Forms.GroupBox();
-      this.buttonLocateLAME = new System.Windows.Forms.Button();
+      this.buttonLocateLAME = new MediaPortal.UserInterface.Controls.MPButton();
       this.linkLabelLAME = new System.Windows.Forms.LinkLabel();
       this.labelDisabled = new System.Windows.Forms.Label();
       this.tabPageEncoderSettings.SuspendLayout();

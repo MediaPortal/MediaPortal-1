@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -33,17 +37,17 @@ namespace MediaPortal.Configuration
 	public class EditShareForm : System.Windows.Forms.Form
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.Button folderButton;
+		private MediaPortal.UserInterface.Controls.MPButton folderButton;
 		private System.Windows.Forms.TextBox folderTextBox;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox nameTextBox;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button cancelButton;
-		private System.Windows.Forms.Button okButton;
+		private MediaPortal.UserInterface.Controls.MPButton cancelButton;
+		private MediaPortal.UserInterface.Controls.MPButton okButton;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.TextBox pinCodeTextBox;
-    private System.Windows.Forms.CheckBox checkBoxRemote;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxRemote;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.TextBox textBoxServer;
     private System.Windows.Forms.Label label6;
@@ -109,16 +113,16 @@ namespace MediaPortal.Configuration
       this.label6 = new System.Windows.Forms.Label();
       this.textBoxServer = new System.Windows.Forms.TextBox();
       this.label5 = new System.Windows.Forms.Label();
-      this.checkBoxRemote = new System.Windows.Forms.CheckBox();
+      this.checkBoxRemote = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.pinCodeTextBox = new System.Windows.Forms.TextBox();
       this.label4 = new System.Windows.Forms.Label();
-      this.folderButton = new System.Windows.Forms.Button();
+      this.folderButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.folderTextBox = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
       this.nameTextBox = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.cancelButton = new System.Windows.Forms.Button();
-      this.okButton = new System.Windows.Forms.Button();
+      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();

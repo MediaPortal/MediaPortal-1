@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -42,12 +46,12 @@ namespace MediaPortal.Configuration.Sections
 	{
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.CheckedListBox sharesListBox;
-    private System.Windows.Forms.Button startButton;
-    private System.Windows.Forms.CheckBox buildThumbsCheckBox;
+    private MediaPortal.UserInterface.Controls.MPButton startButton;
+    private MediaPortal.UserInterface.Controls.MPCheckBox buildThumbsCheckBox;
     private System.Windows.Forms.GroupBox groupBox2;
     private System.Windows.Forms.ProgressBar progressBar;
     private System.Windows.Forms.Label fileLabel;
-    private System.Windows.Forms.Button cancelButton;
+    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
 	private System.ComponentModel.IContainer components = null;
 
     public class MusicData
@@ -168,10 +172,10 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.buildThumbsCheckBox = new System.Windows.Forms.CheckBox();
-      this.startButton = new System.Windows.Forms.Button();
+      this.buildThumbsCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.startButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.sharesListBox = new System.Windows.Forms.CheckedListBox();
-      this.cancelButton = new System.Windows.Forms.Button();
+      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.fileLabel = new System.Windows.Forms.Label();
       this.progressBar = new System.Windows.Forms.ProgressBar();

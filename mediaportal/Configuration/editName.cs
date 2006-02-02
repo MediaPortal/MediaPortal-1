@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -34,7 +38,7 @@ namespace MediaPortal
 	{
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textBoxName;
-		private System.Windows.Forms.Button btnOk;
+		private MediaPortal.UserInterface.Controls.MPButton btnOk;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -76,7 +80,7 @@ namespace MediaPortal
 		{
       this.label1 = new System.Windows.Forms.Label();
       this.textBoxName = new System.Windows.Forms.TextBox();
-      this.btnOk = new System.Windows.Forms.Button();
+      this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // label1

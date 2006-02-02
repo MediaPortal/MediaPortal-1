@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -49,8 +54,8 @@ namespace MediaPortal
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.LinkLabel LinkLabel4;
-    private System.Windows.Forms.CheckBox checkBox1;
-    private System.Windows.Forms.Button button1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBox1;
+    private MediaPortal.UserInterface.Controls.MPButton button1;
 
     /// <summary>
     /// Required designer variable.
@@ -102,8 +107,8 @@ namespace MediaPortal
 		this.label5 = new System.Windows.Forms.Label();
 		this.label6 = new System.Windows.Forms.Label();
 		this.LinkLabel4 = new System.Windows.Forms.LinkLabel();
-		this.checkBox1 = new System.Windows.Forms.CheckBox();
-		this.button1 = new System.Windows.Forms.Button();
+		this.checkBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+		this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
 		this.SuspendLayout();
 		// 
 		// labelMPEG2

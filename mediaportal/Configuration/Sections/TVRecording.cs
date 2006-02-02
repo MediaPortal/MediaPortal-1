@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Windows.Forms;
 using System.Globalization;
@@ -35,8 +39,8 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.TextBox startTextBox;
     private System.Windows.Forms.TextBox endTextBox;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-    private System.Windows.Forms.CheckBox cbDeleteWatchedShows;
-    private System.Windows.Forms.CheckBox cbAddRecordingsToMovie;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbDeleteWatchedShows;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbAddRecordingsToMovie;
     private GroupBox groupBox2;
     private TextBox textBoxFormat;
     private Label label38;
@@ -107,14 +111,14 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.cbAddRecordingsToMovie = new System.Windows.Forms.CheckBox();
+      this.cbAddRecordingsToMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.endTextBox = new System.Windows.Forms.TextBox();
       this.startTextBox = new System.Windows.Forms.TextBox();
       this.label4 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
-      this.cbDeleteWatchedShows = new System.Windows.Forms.CheckBox();
+      this.cbDeleteWatchedShows = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();

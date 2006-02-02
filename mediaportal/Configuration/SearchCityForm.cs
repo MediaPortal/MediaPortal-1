@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -33,11 +37,11 @@ namespace MediaPortal.Configuration
 	public class SearchCityForm : System.Windows.Forms.Form
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.Button closeButton;
+		private MediaPortal.UserInterface.Controls.MPButton closeButton;
 		private System.Windows.Forms.ListBox resultListBox;
 		private System.Windows.Forms.TextBox searchTextBox;
-		private System.Windows.Forms.Button searchButton;
-		private System.Windows.Forms.Button addButton;
+		private MediaPortal.UserInterface.Controls.MPButton searchButton;
+		private MediaPortal.UserInterface.Controls.MPButton addButton;
 		private System.Windows.Forms.TextBox precipitationTextBox;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.TextBox humidityTextBox;
@@ -110,10 +114,10 @@ namespace MediaPortal.Configuration
       this.windsTextBox = new System.Windows.Forms.TextBox();
       this.label3 = new System.Windows.Forms.Label();
       this.precipitationTextBox = new System.Windows.Forms.TextBox();
-      this.addButton = new System.Windows.Forms.Button();
-      this.closeButton = new System.Windows.Forms.Button();
+      this.addButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.closeButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.label8 = new System.Windows.Forms.Label();
-      this.searchButton = new System.Windows.Forms.Button();
+      this.searchButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.searchTextBox = new System.Windows.Forms.TextBox();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.IO;
@@ -45,7 +49,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label labelPhotoCount;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.Label labelMovieCount;
-		private System.Windows.Forms.Button buttonStopStart;
+		private MediaPortal.UserInterface.Controls.MPButton buttonStopStart;
 		private System.ComponentModel.IContainer components = null;
 
 		const int MaximumShares=20;
@@ -98,7 +102,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.fileLabel = new System.Windows.Forms.Label();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
-      this.buttonStopStart = new System.Windows.Forms.Button();
+      this.buttonStopStart = new MediaPortal.UserInterface.Controls.MPButton();
       this.labelMovieCount = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
       this.labelPhotoCount = new System.Windows.Forms.Label();

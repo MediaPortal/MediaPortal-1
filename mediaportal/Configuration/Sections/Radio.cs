@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -35,7 +39,7 @@ namespace MediaPortal.Configuration.Sections
 		protected System.Windows.Forms.GroupBox groupBox2;
 		protected System.Windows.Forms.TextBox folderNameTextBox;
 		protected System.Windows.Forms.Label folderNameLabel;
-		protected System.Windows.Forms.Button browseFolderButton;
+		protected MediaPortal.UserInterface.Controls.MPButton browseFolderButton;
 		protected System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
 		protected System.Windows.Forms.OpenFileDialog openFileDialog;
     private System.Windows.Forms.Label label2;
@@ -75,7 +79,7 @@ namespace MediaPortal.Configuration.Sections
 		protected void InitializeComponent()
 		{
       this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.browseFolderButton = new System.Windows.Forms.Button();
+      this.browseFolderButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.folderNameTextBox = new System.Windows.Forms.TextBox();
       this.folderNameLabel = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();

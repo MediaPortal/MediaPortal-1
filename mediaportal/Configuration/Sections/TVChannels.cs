@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.IO;
@@ -61,21 +65,21 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ImageList imageList1;
     private System.Windows.Forms.TabControl tabControl1;
     private System.Windows.Forms.TabPage tabPage1;
-    private System.Windows.Forms.Button buttonLookup;
-    private System.Windows.Forms.Button xmlImport;
-    private System.Windows.Forms.Button xmlExport;
-    private System.Windows.Forms.Button buttonCVS;
+    private MediaPortal.UserInterface.Controls.MPButton buttonLookup;
+    private MediaPortal.UserInterface.Controls.MPButton xmlImport;
+    private MediaPortal.UserInterface.Controls.MPButton xmlExport;
+    private MediaPortal.UserInterface.Controls.MPButton buttonCVS;
     private MediaPortal.UserInterface.Controls.MPListView channelsListView;
-    private System.Windows.Forms.Button btnImport;
-    private System.Windows.Forms.Button btnClear;
-    private System.Windows.Forms.Button addButton;
-    private System.Windows.Forms.Button deleteButton;
-    private System.Windows.Forms.Button editButton;
-    private System.Windows.Forms.Button upButton;
-    private System.Windows.Forms.Button downButton;
+    private MediaPortal.UserInterface.Controls.MPButton btnImport;
+    private MediaPortal.UserInterface.Controls.MPButton btnClear;
+    private MediaPortal.UserInterface.Controls.MPButton addButton;
+    private MediaPortal.UserInterface.Controls.MPButton deleteButton;
+    private MediaPortal.UserInterface.Controls.MPButton editButton;
+    private MediaPortal.UserInterface.Controls.MPButton upButton;
+    private MediaPortal.UserInterface.Controls.MPButton downButton;
     private System.Windows.Forms.TabPage tabPage4;
-    private System.Windows.Forms.Button btnMapChannelToCard;
-    private System.Windows.Forms.Button btnUnmapChannelFromCard;
+    private MediaPortal.UserInterface.Controls.MPButton btnMapChannelToCard;
+    private MediaPortal.UserInterface.Controls.MPButton btnUnmapChannelFromCard;
     private System.Windows.Forms.ListView listViewTVChannelsForCard;
     private System.Windows.Forms.ListView listViewTVChannelsCard;
     private System.Windows.Forms.Label label6;
@@ -135,32 +139,32 @@ namespace MediaPortal.Configuration.Sections
       this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.buttonLookup = new System.Windows.Forms.Button();
-      this.xmlImport = new System.Windows.Forms.Button();
-      this.xmlExport = new System.Windows.Forms.Button();
-      this.buttonCVS = new System.Windows.Forms.Button();
-      this.btnImport = new System.Windows.Forms.Button();
-      this.btnClear = new System.Windows.Forms.Button();
-      this.addButton = new System.Windows.Forms.Button();
-      this.deleteButton = new System.Windows.Forms.Button();
-      this.editButton = new System.Windows.Forms.Button();
-      this.upButton = new System.Windows.Forms.Button();
-      this.downButton = new System.Windows.Forms.Button();
+      this.buttonLookup = new MediaPortal.UserInterface.Controls.MPButton();
+      this.xmlImport = new MediaPortal.UserInterface.Controls.MPButton();
+      this.xmlExport = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonCVS = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnImport = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnClear = new MediaPortal.UserInterface.Controls.MPButton();
+      this.addButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.deleteButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.editButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.upButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.downButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.channelsListView = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.tabPage4 = new System.Windows.Forms.TabPage();
-      this.btnMapChannelToCard = new System.Windows.Forms.Button();
-      this.btnUnmapChannelFromCard = new System.Windows.Forms.Button();
+      this.btnMapChannelToCard = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnUnmapChannelFromCard = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewTVChannelsForCard = new System.Windows.Forms.ListView();
       this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
       this.listViewTVChannelsCard = new System.Windows.Forms.ListView();
       this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
       this.label6 = new System.Windows.Forms.Label();
       this.comboBoxCard = new System.Windows.Forms.ComboBox();
-      this.buttonCombine = new System.Windows.Forms.Button();
+      this.buttonCombine = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage4.SuspendLayout();

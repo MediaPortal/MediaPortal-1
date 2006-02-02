@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -35,13 +39,13 @@ namespace MediaPortal.Configuration.Sections
 	{
 		private System.Windows.Forms.ListView listView1;
 		private System.Windows.Forms.ColumnHeader columnHeader1;
-		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.Button button2;
+		private MediaPortal.UserInterface.Controls.MPButton button1;
+		private MediaPortal.UserInterface.Controls.MPButton button2;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label labelFileName;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textBoxTitle;
-		private System.Windows.Forms.Button buttonFind;
+		private MediaPortal.UserInterface.Controls.MPButton buttonFind;
 		IMDB _imdb;
 		/// <summary>
 		/// Required designer variable.
@@ -103,13 +107,13 @@ namespace MediaPortal.Configuration.Sections
 		{
       this.listView1 = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.button1 = new System.Windows.Forms.Button();
-      this.button2 = new System.Windows.Forms.Button();
+      this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
       this.label1 = new System.Windows.Forms.Label();
       this.labelFileName = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.textBoxTitle = new System.Windows.Forms.TextBox();
-      this.buttonFind = new System.Windows.Forms.Button();
+      this.buttonFind = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // listView1

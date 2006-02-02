@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 
 //
 //  THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
@@ -71,18 +76,18 @@ namespace Yeti.MMedia.Mp3
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.TextBox textBoxMpegVersion;
     private System.Windows.Forms.ComboBox comboBoxBitRate;
-    private System.Windows.Forms.CheckBox checkBoxVBR;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxVBR;
     private System.Windows.Forms.ComboBox comboBoxMaxBitRate;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.ComboBox comboBoxVBRMethod;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.ComboBox comboBoxAvgBitrate;
     private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.CheckBox checkBoxCopyRight;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCopyRight;
     private System.Windows.Forms.ToolTip toolTip1;
-    private System.Windows.Forms.CheckBox checkBoxCRC;
-    private System.Windows.Forms.CheckBox checkBoxOriginal;
-    private System.Windows.Forms.CheckBox checkBoxPrivate;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxCRC;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxOriginal;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxPrivate;
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.TrackBar trackBarVBRQuality;
     private System.Windows.Forms.Label label7;
@@ -132,11 +137,11 @@ namespace Yeti.MMedia.Mp3
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.editFormat1 = new Yeti.MMedia.EditFormat();
       this.tabPage2 = new System.Windows.Forms.TabPage();
-      this.checkBoxPrivate = new System.Windows.Forms.CheckBox();
-      this.checkBoxOriginal = new System.Windows.Forms.CheckBox();
-      this.checkBoxCRC = new System.Windows.Forms.CheckBox();
-      this.checkBoxCopyRight = new System.Windows.Forms.CheckBox();
-      this.checkBoxVBR = new System.Windows.Forms.CheckBox();
+      this.checkBoxPrivate = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxOriginal = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxCRC = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxCopyRight = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxVBR = new System.Windows.Forms.GroupBox();
       this.label8 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();

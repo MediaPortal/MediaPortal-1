@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.IO;
@@ -66,7 +70,7 @@ namespace MediaPortal.Configuration.Sections
 		int m_diseqcLoops=1;
 		private System.Windows.Forms.GroupBox groupBox3;
 		private System.Windows.Forms.ProgressBar progressBar3;
-		private System.Windows.Forms.Button button3;
+		private MediaPortal.UserInterface.Controls.MPButton button3;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.Panel panel1;
@@ -125,7 +129,7 @@ namespace MediaPortal.Configuration.Sections
       this.panel1 = new System.Windows.Forms.Panel();
       this.lblStatus = new System.Windows.Forms.Label();
       this.progressBar3 = new System.Windows.Forms.ProgressBar();
-      this.button3 = new System.Windows.Forms.Button();
+      this.button3 = new MediaPortal.UserInterface.Controls.MPButton();
       this.label7 = new System.Windows.Forms.Label();
       this.label8 = new System.Windows.Forms.Label();
       this.groupBox3.SuspendLayout();

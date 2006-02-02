@@ -38,9 +38,9 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TextBox fileNameTextBox;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.Button button2;
-		private System.Windows.Forms.Button fileNameButton;
-		private System.Windows.Forms.Button parametersButton;
+		private MediaPortal.UserInterface.Controls.MPButton button2;
+		private MediaPortal.UserInterface.Controls.MPButton fileNameButton;
+		private MediaPortal.UserInterface.Controls.MPButton parametersButton;
 		private System.Windows.Forms.TextBox parametersTextBox;
 		private MediaPortal.UserInterface.Controls.MPCheckBox internalPlayerCheckBox;
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
@@ -147,15 +147,15 @@ namespace MediaPortal.Configuration.Sections
 		{
       this.internalPlayerCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.parametersButton = new System.Windows.Forms.Button();
+      this.parametersButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.parametersTextBox = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
-      this.fileNameButton = new System.Windows.Forms.Button();
+      this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.fileNameTextBox = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
       this.defaultZoomModeComboBox = new System.Windows.Forms.ComboBox();
       this.label6 = new System.Windows.Forms.Label();
-      this.button2 = new System.Windows.Forms.Button();
+      this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -165,6 +165,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // internalPlayerCheckBox
       // 
+      this.internalPlayerCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.internalPlayerCheckBox.Location = new System.Drawing.Point(168, 20);
       this.internalPlayerCheckBox.Name = "internalPlayerCheckBox";
       this.internalPlayerCheckBox.Size = new System.Drawing.Size(232, 16);
@@ -183,6 +184,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.fileNameButton);
       this.mpGroupBox1.Controls.Add(this.fileNameTextBox);
       this.mpGroupBox1.Controls.Add(this.label1);
+      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 68);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 104);
@@ -193,7 +195,7 @@ namespace MediaPortal.Configuration.Sections
       // parametersButton
       // 
       this.parametersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.parametersButton.Location = new System.Drawing.Point(384, 68);
+      this.parametersButton.Location = new System.Drawing.Point(384, 67);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
       this.parametersButton.TabIndex = 6;
@@ -220,7 +222,7 @@ namespace MediaPortal.Configuration.Sections
       // fileNameButton
       // 
       this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileNameButton.Location = new System.Drawing.Point(384, 44);
+      this.fileNameButton.Location = new System.Drawing.Point(384, 43);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
       this.fileNameButton.TabIndex = 3;

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.ComponentModel;
@@ -94,15 +98,15 @@ namespace WindowPlugins.GUIPrograms
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(AppFilesView));
       this.smallListImages = new System.Windows.Forms.ImageList(this.components);
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-      this.btnLaunch = new System.Windows.Forms.Button();
-      this.updateDatabaseButton = new System.Windows.Forms.Button();
-      this.btnEdit = new System.Windows.Forms.Button();
-      this.btnDelete = new System.Windows.Forms.Button();
-      this.btnNew = new System.Windows.Forms.Button();
-      this.btnAddToFavourites = new System.Windows.Forms.Button();
-      this.startScraperButton = new System.Windows.Forms.Button();
+      this.btnLaunch = new MediaPortal.UserInterface.Controls.MPButton();
+      this.updateDatabaseButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnEdit = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnNew = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnAddToFavourites = new MediaPortal.UserInterface.Controls.MPButton();
+      this.startScraperButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.topPanel = new System.Windows.Forms.Panel();
-      this.backButton = new System.Windows.Forms.Button();
+      this.backButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.filePathLabel = new System.Windows.Forms.Label();
       this.bottomPanel = new System.Windows.Forms.Panel();
       this.fileList = new System.Windows.Forms.ListView();

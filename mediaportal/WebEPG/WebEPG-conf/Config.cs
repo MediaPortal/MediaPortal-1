@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Xml;
@@ -48,23 +52,23 @@ namespace WebEPG_conf
 		private System.Windows.Forms.Label Grabber;
 		private System.Windows.Forms.Label Lang;
 		private System.Windows.Forms.Label l_cID;
-		private System.Windows.Forms.Button bAdd;
-		private System.Windows.Forms.Button bImport;
+		private MediaPortal.UserInterface.Controls.MPButton bAdd;
+		private MediaPortal.UserInterface.Controls.MPButton bImport;
 		private System.Windows.Forms.ListBox lbChannels;
 		private System.Windows.Forms.GroupBox gbChannelDetails;
 		private System.Windows.Forms.TextBox tbGrabSite;
 		private System.Windows.Forms.TextBox tbLanguage;
 		private System.Windows.Forms.GroupBox gbGrabber;
 		private System.Windows.Forms.Label lGrabDay;
-		private System.Windows.Forms.Button bSave;
+		private MediaPortal.UserInterface.Controls.MPButton bSave;
 		private System.Windows.Forms.TextBox tbCount;
 		private System.Windows.Forms.Label lCount;
-		private System.Windows.Forms.Button bRemove;
+		private MediaPortal.UserInterface.Controls.MPButton bRemove;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox tbDisplayName;
-		private System.Windows.Forms.Button bUpdate;
-		private System.Windows.Forms.Button bChannelID;
-		private System.Windows.Forms.Button bGrabber;
+		private MediaPortal.UserInterface.Controls.MPButton bUpdate;
+		private MediaPortal.UserInterface.Controls.MPButton bChannelID;
+		private MediaPortal.UserInterface.Controls.MPButton bGrabber;
 		private System.Windows.Forms.TextBox tbChannelName;
 		private System.Windows.Forms.NumericUpDown nMaxGrab;
 		private System.Windows.Forms.OpenFileDialog importFile;
@@ -75,7 +79,7 @@ namespace WebEPG_conf
 		private System.Windows.Forms.Label lShour;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.NumericUpDown nStart;
-		private System.Windows.Forms.CheckBox cbLinked;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbLinked;
 		private System.Windows.Forms.GroupBox gbLinked;
 		private System.Windows.Forms.NumericUpDown nEnd;
 		//private System.ComponentModel.IContainer components;
@@ -132,30 +136,30 @@ namespace WebEPG_conf
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.bAdd = new System.Windows.Forms.Button();
-			this.bImport = new System.Windows.Forms.Button();
+			this.bAdd = new MediaPortal.UserInterface.Controls.MPButton();
+			this.bImport = new MediaPortal.UserInterface.Controls.MPButton();
 			this.lbChannels = new System.Windows.Forms.ListBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.lCount = new System.Windows.Forms.Label();
 			this.tbCount = new System.Windows.Forms.TextBox();
-			this.bSave = new System.Windows.Forms.Button();
+			this.bSave = new MediaPortal.UserInterface.Controls.MPButton();
 			this.lGrabDay = new System.Windows.Forms.Label();
 			this.nMaxGrab = new System.Windows.Forms.NumericUpDown();
 			this.gbChannelDetails = new System.Windows.Forms.GroupBox();
-			this.bUpdate = new System.Windows.Forms.Button();
+			this.bUpdate = new MediaPortal.UserInterface.Controls.MPButton();
 			this.tbDisplayName = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.bChannelID = new System.Windows.Forms.Button();
+			this.bChannelID = new MediaPortal.UserInterface.Controls.MPButton();
 			this.l_cID = new System.Windows.Forms.Label();
 			this.tbChannelName = new System.Windows.Forms.TextBox();
 			this.Lang = new System.Windows.Forms.Label();
 			this.tbLanguage = new System.Windows.Forms.TextBox();
-			this.bRemove = new System.Windows.Forms.Button();
+			this.bRemove = new MediaPortal.UserInterface.Controls.MPButton();
 			this.gbGrabber = new System.Windows.Forms.GroupBox();
 			this.lSiteDesc = new System.Windows.Forms.Label();
 			this.lGuideDays = new System.Windows.Forms.Label();
 			this.tbGrabDays = new System.Windows.Forms.TextBox();
-			this.bGrabber = new System.Windows.Forms.Button();
+			this.bGrabber = new MediaPortal.UserInterface.Controls.MPButton();
 			this.Grabber = new System.Windows.Forms.Label();
 			this.tbGrabSite = new System.Windows.Forms.TextBox();
 			this.importFile = new System.Windows.Forms.OpenFileDialog();
@@ -164,7 +168,7 @@ namespace WebEPG_conf
 			this.label2 = new System.Windows.Forms.Label();
 			this.nStart = new System.Windows.Forms.NumericUpDown();
 			this.nEnd = new System.Windows.Forms.NumericUpDown();
-			this.cbLinked = new System.Windows.Forms.CheckBox();
+			this.cbLinked = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.gbLinked = new System.Windows.Forms.GroupBox();
 			this.groupBox2.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.nMaxGrab)).BeginInit();

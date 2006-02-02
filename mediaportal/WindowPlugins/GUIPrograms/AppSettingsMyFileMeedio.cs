@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.ComponentModel;
@@ -60,7 +64,7 @@ namespace WindowPlugins.GUIPrograms
     private Label LblPinCode;
     private TextBox txtPinCode;
     private CheckBox chkbWaitForExit;
-    private System.Windows.Forms.Button btnPrePost;
+    private MediaPortal.UserInterface.Controls.MPButton btnPrePost;
     private IContainer components = null;
 
 
@@ -97,10 +101,10 @@ namespace WindowPlugins.GUIPrograms
       this.label3 = new System.Windows.Forms.Label();
       this.lblImgDirectories = new System.Windows.Forms.Label();
       this.txtImageDirs = new System.Windows.Forms.TextBox();
-      this.btnImageDirs = new System.Windows.Forms.Button();
-      this.chkbUseShellExecute = new System.Windows.Forms.CheckBox();
-      this.chkbUseQuotes = new System.Windows.Forms.CheckBox();
-      this.btnStartup = new System.Windows.Forms.Button();
+      this.btnImageDirs = new MediaPortal.UserInterface.Controls.MPButton();
+      this.chkbUseShellExecute = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.chkbUseQuotes = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.btnStartup = new MediaPortal.UserInterface.Controls.MPButton();
       this.txtStartupDir = new System.Windows.Forms.TextBox();
       this.label5 = new System.Windows.Forms.Label();
       this.cbWindowStyle = new System.Windows.Forms.ComboBox();
@@ -108,23 +112,23 @@ namespace WindowPlugins.GUIPrograms
       this.txtArguments = new System.Windows.Forms.TextBox();
       this.lblArg = new System.Windows.Forms.Label();
       this.lblImageFile = new System.Windows.Forms.Label();
-      this.buttonImageFile = new System.Windows.Forms.Button();
+      this.buttonImageFile = new MediaPortal.UserInterface.Controls.MPButton();
       this.txtImageFile = new System.Windows.Forms.TextBox();
-      this.chkbEnabled = new System.Windows.Forms.CheckBox();
+      this.chkbEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.txtFilename = new System.Windows.Forms.TextBox();
       this.txtTitle = new System.Windows.Forms.TextBox();
       this.lblTitle = new System.Windows.Forms.Label();
       this.lblFilename = new System.Windows.Forms.Label();
-      this.buttonLaunchingApp = new System.Windows.Forms.Button();
-      this.chkbValidImagesOnly = new System.Windows.Forms.CheckBox();
-      this.buttonSourceFile = new System.Windows.Forms.Button();
+      this.buttonLaunchingApp = new MediaPortal.UserInterface.Controls.MPButton();
+      this.chkbValidImagesOnly = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.buttonSourceFile = new MediaPortal.UserInterface.Controls.MPButton();
       this.txtSource = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.chkbEnableGUIRefresh = new System.Windows.Forms.CheckBox();
+      this.chkbEnableGUIRefresh = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.LblPinCode = new System.Windows.Forms.Label();
       this.txtPinCode = new System.Windows.Forms.TextBox();
-      this.chkbWaitForExit = new System.Windows.Forms.CheckBox();
-      this.btnPrePost = new System.Windows.Forms.Button();
+      this.chkbWaitForExit = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.btnPrePost = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // label3

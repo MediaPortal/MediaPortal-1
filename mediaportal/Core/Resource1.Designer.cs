@@ -59,5 +59,12 @@ namespace MediaPortal {
                 resourceCulture = value;
             }
         }
+        
+        internal static object axWindowsMediaPlayer1_OcxState {
+            get {
+                object obj = ResourceManager.GetObject("axWindowsMediaPlayer1.OcxState", resourceCulture);
+                return ((object)(obj));
+            }
+        }
     }
 }

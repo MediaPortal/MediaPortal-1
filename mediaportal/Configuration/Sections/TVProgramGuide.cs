@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -38,12 +42,12 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ComboBox GrabbercomboBox;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.TextBox AdvancedDaystextBox;
-    private System.Windows.Forms.Button parametersButton;
+    private MediaPortal.UserInterface.Controls.MPButton parametersButton;
     private System.Windows.Forms.TextBox parametersTextBox;
     private System.Windows.Forms.Label label7;
     private System.Windows.Forms.TextBox daysToKeepTextBox;
     private System.Windows.Forms.Label label6;
-    private System.Windows.Forms.Button browseButton;
+    private MediaPortal.UserInterface.Controls.MPButton browseButton;
     private System.Windows.Forms.TextBox folderNameTextBox;
     private System.Windows.Forms.Label folderNameLabel;
     private System.Windows.Forms.TextBox compensateTextBox;
@@ -57,17 +61,17 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.TextBox hoursTextBox;
     private System.Windows.Forms.TextBox dayIntervalTextBox;
     private System.Windows.Forms.TextBox minutesTextBox;
-    private System.Windows.Forms.Button RunGrabberButton;
+    private MediaPortal.UserInterface.Controls.MPButton RunGrabberButton;
     private System.Windows.Forms.TextBox UserTextBox;
     private System.Windows.Forms.TextBox PasswordTextBox;
     private System.Windows.Forms.Label label11;
     private System.Windows.Forms.Label label12;
-    private System.Windows.Forms.Button DeleteTaskButton;
+    private MediaPortal.UserInterface.Controls.MPButton DeleteTaskButton;
     private System.Windows.Forms.Label label13;
-    private System.Windows.Forms.Button btnUpdateTvGuide;
+    private MediaPortal.UserInterface.Controls.MPButton btnUpdateTvGuide;
 		private System.ComponentModel.IContainer components = null;
     bool  OldTimeZoneCompensation=false;
-    private System.Windows.Forms.Button btnClearTVDatabase;
+    private MediaPortal.UserInterface.Controls.MPButton btnClearTVDatabase;
     private System.Windows.Forms.TextBox textBoxMinutes;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label15;
@@ -79,15 +83,15 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label16;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.GroupBox groupBox2;
-		private System.Windows.Forms.Button button3;
-		private System.Windows.Forms.Button button2;
+		private MediaPortal.UserInterface.Controls.MPButton button3;
+		private MediaPortal.UserInterface.Controls.MPButton button2;
 		private System.Windows.Forms.TreeView treeView1;
     private System.Windows.Forms.ListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private System.Windows.Forms.GroupBox groupBox4;
     private System.Windows.Forms.GroupBox groupBox5;
 		private MediaPortal.UserInterface.Controls.MPCheckBox runGrabberLowPriorityCheckBox;
-		private System.Windows.Forms.CheckBox cbGrabDVBEPG;
+		private MediaPortal.UserInterface.Controls.MPCheckBox cbGrabDVBEPG;
     int   OldTimeZoneOffsetMins=0;
 
 		public TVProgramGuide() : this("Program Guide")
@@ -131,19 +135,19 @@ namespace MediaPortal.Configuration.Sections
             this.label15 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxMinutes = new System.Windows.Forms.TextBox();
-            this.btnClearTVDatabase = new System.Windows.Forms.Button();
-            this.btnUpdateTvGuide = new System.Windows.Forms.Button();
-            this.RunGrabberButton = new System.Windows.Forms.Button();
+            this.btnClearTVDatabase = new MediaPortal.UserInterface.Controls.MPButton();
+            this.btnUpdateTvGuide = new MediaPortal.UserInterface.Controls.MPButton();
+            this.RunGrabberButton = new MediaPortal.UserInterface.Controls.MPButton();
             this.advancedRadioButton = new System.Windows.Forms.RadioButton();
             this.compensateTextBox = new System.Windows.Forms.TextBox();
             this.useTimeZoneCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.browseButton = new System.Windows.Forms.Button();
+            this.browseButton = new MediaPortal.UserInterface.Controls.MPButton();
             this.folderNameTextBox = new System.Windows.Forms.TextBox();
             this.folderNameLabel = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.daysToKeepTextBox = new System.Windows.Forms.TextBox();
-            this.parametersButton = new System.Windows.Forms.Button();
+            this.parametersButton = new MediaPortal.UserInterface.Controls.MPButton();
             this.parametersTextBox = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.AdvancedDaystextBox = new System.Windows.Forms.TextBox();
@@ -163,17 +167,17 @@ namespace MediaPortal.Configuration.Sections
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-            this.DeleteTaskButton = new System.Windows.Forms.Button();
+            this.DeleteTaskButton = new MediaPortal.UserInterface.Controls.MPButton();
             this.label13 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.cbGrabDVBEPG = new System.Windows.Forms.CheckBox();
+            this.cbGrabDVBEPG = new MediaPortal.UserInterface.Controls.MPCheckBox();
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new MediaPortal.UserInterface.Controls.MPButton();
+            this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label16 = new System.Windows.Forms.Label();

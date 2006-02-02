@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,132 +20,72 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
-
 using System.Drawing;
-
 using System.Collections;
-
 using System.ComponentModel;
-
 using System.Windows.Forms;
-
 using System.Text;
-
 using System.IO;
 
-
-
 namespace MediaPortal.FoobarPlugin
-
 {
-
 	/// <summary>
-
 	/// Summary description for FoobarConfigForm.
-
 	/// </summary>
-
 	public class FoobarConfigForm : System.Windows.Forms.Form
-
 	{
-
     private System.Windows.Forms.Label label1;
-
     private System.Windows.Forms.Label label2;
-
     private System.Windows.Forms.Label label3;
-
     private System.Windows.Forms.Label label5;
-
-    private System.Windows.Forms.Button browseButton;
-
+    private MediaPortal.UserInterface.Controls.MPButton browseButton;
     private System.Windows.Forms.TextBox extensionsTextBox;
-
     private System.Windows.Forms.TextBox portTextBox;
-
     private System.Windows.Forms.TextBox hotnameTextBox;
-
     private System.Windows.Forms.TextBox foobarLocationTextBox;
-
     private System.Windows.Forms.LinkLabel linkLabel1;
-
 		/// <summary>
-
 		/// Required designer variable.
-
 		/// </summary>
-
 		private System.ComponentModel.Container components = null;
 
-
-
 		public FoobarConfigForm()
-
 		{
-
 			//
-
 			// Required for Windows Form Designer support
-
 			//
-
 			InitializeComponent();
 
-
-
 			//
-
 			// TODO: Add any constructor code after InitializeComponent call
-
 			//
-
 		}
-
-
 
 		/// <summary>
-
 		/// Clean up any resources being used.
-
 		/// </summary>
-
 		protected override void Dispose( bool disposing )
-
 		{
-
 			if( disposing )
-
 			{
-
 				if(components != null)
-
 				{
-
 					components.Dispose();
-
 				}
-
 			}
-
 			base.Dispose( disposing );
-
 		}
-
-
 
 		#region Windows Form Designer generated code
-
 		/// <summary>
-
 		/// Required method for Designer support - do not modify
-
 		/// the contents of this method with the code editor.
-
 		/// </summary>
-
 		private void InitializeComponent()
-
 		{
 			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FoobarConfigForm));
 			this.label1 = new System.Windows.Forms.Label();
@@ -151,7 +93,7 @@ namespace MediaPortal.FoobarPlugin
 			this.label3 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.foobarLocationTextBox = new System.Windows.Forms.TextBox();
-			this.browseButton = new System.Windows.Forms.Button();
+			this.browseButton = new MediaPortal.UserInterface.Controls.MPButton();
 			this.hotnameTextBox = new System.Windows.Forms.TextBox();
 			this.portTextBox = new System.Windows.Forms.TextBox();
 			this.extensionsTextBox = new System.Windows.Forms.TextBox();
@@ -261,107 +203,57 @@ namespace MediaPortal.FoobarPlugin
 			this.Closing += new System.ComponentModel.CancelEventHandler(this.FoobarConfigForm_Closing);
 			this.Load += new System.EventHandler(this.FoobarConfigForm_Load);
 			this.ResumeLayout(false);
-
 		}
 
 		#endregion
 
 
-
     /// <summary>
-
     /// This method is called whenever the browse button is click
-
     /// </summary>
-
     /// <param name="sender">the sender instance</param>
-
     /// <param name="e">the event.  In this case click!</param>
-
     private void browseButton_Click(object sender, System.EventArgs e)
-
     {
-
       string curDir = Directory.GetCurrentDirectory();
-
       // The filter for the dialog window is foobar2000.exe
-
       OpenFileDialog dlg = new OpenFileDialog();
-
       dlg.AddExtension = true;
-
       dlg.Filter = "Foobar2000 (Foobar2000.exe)|Foobar2000.exe|All files (*.*)|*.*" ;
-
       // start in media folder
-
       //dlg.InitialDirectory = @"C:\";    
-
       // open dialog
-
       if(dlg.ShowDialog(this) == DialogResult.OK)
-
       {
-
         foobarLocationTextBox.Text = dlg.FileName;
-
       }
-
       Directory.SetCurrentDirectory(curDir);
-
     }
 
-
-
     /// <summary>
-
     /// When this form loads, read the configuration file for the variables that this
-
     /// form sets up
-
     /// </summary>
-
     /// <param name="sender">the sender instance</param>
-
     /// <param name="e">the event.  Form load!</param>
-
     private void FoobarConfigForm_Load(object sender, System.EventArgs e)
-
     {
-
       using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
-
       {
-
         extensionsTextBox.Text = xmlreader.GetValueAsString("foobarplugin", "enabledextensions",".cda,.mp3,.mid");
-
         portTextBox.Text = xmlreader.GetValueAsString("foobarplugin", "port","8989");
-
         hotnameTextBox.Text = xmlreader.GetValueAsString("foobarplugin", "host","localhost");
-
         foobarLocationTextBox.Text = xmlreader.GetValueAsString("foobarplugin", "path","");
-
       }
-
-
-
     }
 
-
-
     /// <summary>
-
     /// When this form closes, write the variables from the form to the configuration file
-
     /// </summary>
-
     /// <param name="sender">the sender instance</param>
-
     /// <param name="e">the event.  Closing!</param>
-
     private void FoobarConfigForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-
     {
-
       using (MediaPortal.Profile.Settings   xmlWriter=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlWriter.SetValue("foobarplugin", "port", portTextBox.Text);
@@ -383,48 +275,27 @@ namespace MediaPortal.FoobarPlugin
         xmlWriter.SetValue("foobarplugin", "enabledextensions", buff.ToString());
         //xmlWriter.Save();
       }
-
     }
-
 
 
     /// <summary>
-
     /// The link will open the link on a browser to get the foobar plugin from the source
-
     /// </summary>
-
     /// <param name="sender"></param>
-
     /// <param name="e"></param>
-
     private void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
-
     {
-
       // Determine which link was clicked within the LinkLabel.
-
       this.linkLabel1.Links[linkLabel1.Links.IndexOf(e.Link)].Visited = true;
-
       try
-
       {
-
         Help.ShowHelp(this, "http://sourceforge.net/projects/foohttpserver");
-
       }
-
       catch
-
       {
-
       }
-
-
 
     }
-
 	}
-
 }
 

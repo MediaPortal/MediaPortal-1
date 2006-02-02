@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -34,12 +38,12 @@ namespace MediaPortal.Configuration.Sections
 	{
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 		private MediaPortal.UserInterface.Controls.MPCheckBox inputCheckBox;
-		private System.Windows.Forms.Button internalCommandsButton;
+		private MediaPortal.UserInterface.Controls.MPButton internalCommandsButton;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.Label statusLabel;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ComboBox CommPortCombo;
-		private System.Windows.Forms.CheckBox checkBoxInitUIRIrman;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxInitUIRIrman;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Label label4;
@@ -53,13 +57,13 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ComboBox CommandDelayCombo;
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.CheckedListBox ActionsCheckList;
-		private System.Windows.Forms.Button buttonAllCodes;
-		private System.Windows.Forms.Button buttonDefaultCodes;
-		private System.Windows.Forms.Button buttonNoneCodes;
+		private MediaPortal.UserInterface.Controls.MPButton buttonAllCodes;
+		private MediaPortal.UserInterface.Controls.MPButton buttonDefaultCodes;
+		private MediaPortal.UserInterface.Controls.MPButton buttonNoneCodes;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.ComboBox ParityCombo;
-		private System.Windows.Forms.CheckBox checkBoxDTR;
-		private System.Windows.Forms.CheckBox checkBoxRTS;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDTR;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxRTS;
 
 		private bool initialize = false;
 
@@ -157,13 +161,13 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.checkBoxRTS = new System.Windows.Forms.CheckBox();
-      this.checkBoxDTR = new System.Windows.Forms.CheckBox();
+      this.checkBoxRTS = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxDTR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label8 = new System.Windows.Forms.Label();
       this.ParityCombo = new System.Windows.Forms.ComboBox();
-      this.buttonNoneCodes = new System.Windows.Forms.Button();
-      this.buttonDefaultCodes = new System.Windows.Forms.Button();
-      this.buttonAllCodes = new System.Windows.Forms.Button();
+      this.buttonNoneCodes = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonDefaultCodes = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonAllCodes = new MediaPortal.UserInterface.Controls.MPButton();
       this.label7 = new System.Windows.Forms.Label();
       this.ActionsCheckList = new System.Windows.Forms.CheckedListBox();
       this.label6 = new System.Windows.Forms.Label();
@@ -176,10 +180,10 @@ namespace MediaPortal.Configuration.Sections
       this.HandShakeCombo = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
       this.BaudRateCombo = new System.Windows.Forms.ComboBox();
-      this.checkBoxInitUIRIrman = new System.Windows.Forms.CheckBox();
+      this.checkBoxInitUIRIrman = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label1 = new System.Windows.Forms.Label();
       this.CommPortCombo = new System.Windows.Forms.ComboBox();
-      this.internalCommandsButton = new System.Windows.Forms.Button();
+      this.internalCommandsButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.statusLabel = new System.Windows.Forms.Label();

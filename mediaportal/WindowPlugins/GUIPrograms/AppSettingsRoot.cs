@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.ComponentModel;
@@ -70,7 +74,7 @@ namespace WindowPlugins.GUIPrograms
       this.label3 = new System.Windows.Forms.Label();
       this.rootItemLabel = new System.Windows.Forms.Label();
       this.PluginTitle = new System.Windows.Forms.TextBox();
-      this.ResetButton = new System.Windows.Forms.Button();
+      this.ResetButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.SuspendLayout();
       // 
       // label3

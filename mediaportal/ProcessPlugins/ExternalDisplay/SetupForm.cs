@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.ComponentModel;
@@ -112,7 +116,7 @@ namespace ProcessPlugins.ExternalDisplay
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      this.btnAdvanced = new System.Windows.Forms.Button();
+      this.btnAdvanced = new MediaPortal.UserInterface.Controls.MPButton();
       this.cmbPort = new System.Windows.Forms.ComboBox();
       this.label1 = new System.Windows.Forms.Label();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -134,11 +138,11 @@ namespace ProcessPlugins.ExternalDisplay
       this.label3 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
       this.cmbType = new System.Windows.Forms.ComboBox();
-      this.cbLight = new System.Windows.Forms.CheckBox();
-      this.cbPropertyBrowser = new System.Windows.Forms.CheckBox();
-      this.btnOK = new System.Windows.Forms.Button();
+      this.cbLight = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbPropertyBrowser = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.btnOK = new MediaPortal.UserInterface.Controls.MPButton();
       this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-      this.cbExtensiveLogging = new System.Windows.Forms.CheckBox();
+      this.cbExtensiveLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
       this.gbGraphMode.SuspendLayout();

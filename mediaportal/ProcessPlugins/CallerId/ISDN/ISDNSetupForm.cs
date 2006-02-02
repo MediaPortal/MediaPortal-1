@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -11,14 +36,14 @@ namespace ProcessPlugins.CallerId
 	/// </summary>
 	public class ISDNSetupForm : System.Windows.Forms.Form
 	{
-    private System.Windows.Forms.CheckBox checkBoxStopMedia;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxStopMedia;
     private System.Windows.Forms.GroupBox groupBoxIncomingCall;
-    private System.Windows.Forms.Button okButton;
-    private System.Windows.Forms.Button cancelButton;
+    private MediaPortal.UserInterface.Controls.MPButton okButton;
+    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private System.Windows.Forms.RadioButton radioButtonManualResume;
     private System.Windows.Forms.RadioButton radioButtonAutoResume;
     private System.Windows.Forms.NumericUpDown numericUpDownTimeOut;
-    private System.Windows.Forms.CheckBox checkBoxTimeOut;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxTimeOut;
     private CheckBox checkBoxOutlook;
 		/// <summary>
 		/// Required designer variable.
@@ -72,15 +97,15 @@ namespace ProcessPlugins.CallerId
 		private void InitializeComponent()
 		{
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ISDNSetupForm));
-      this.checkBoxStopMedia = new System.Windows.Forms.CheckBox();
+      this.checkBoxStopMedia = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxIncomingCall = new System.Windows.Forms.GroupBox();
       this.numericUpDownTimeOut = new System.Windows.Forms.NumericUpDown();
-      this.checkBoxTimeOut = new System.Windows.Forms.CheckBox();
+      this.checkBoxTimeOut = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.radioButtonAutoResume = new System.Windows.Forms.RadioButton();
       this.radioButtonManualResume = new System.Windows.Forms.RadioButton();
-      this.okButton = new System.Windows.Forms.Button();
-      this.cancelButton = new System.Windows.Forms.Button();
-      this.checkBoxOutlook = new System.Windows.Forms.CheckBox();
+      this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxOutlook = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxIncomingCall.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTimeOut)).BeginInit();
       this.SuspendLayout();

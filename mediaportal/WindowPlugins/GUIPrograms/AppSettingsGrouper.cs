@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.ComponentModel;
@@ -74,9 +78,9 @@ namespace WindowPlugins.GUIPrograms
       this.LabelTitle = new System.Windows.Forms.Label();
       this.LabelHint = new System.Windows.Forms.Label();
       this.lblImageFile = new System.Windows.Forms.Label();
-      this.buttonImagefile = new System.Windows.Forms.Button();
+      this.buttonImagefile = new MediaPortal.UserInterface.Controls.MPButton();
       this.txtImageFile = new System.Windows.Forms.TextBox();
-      this.chkbEnabled = new System.Windows.Forms.CheckBox();
+      this.chkbEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.txtTitle = new System.Windows.Forms.TextBox();
       this.lblTitle = new System.Windows.Forms.Label();
       this.LblPinCode = new System.Windows.Forms.Label();

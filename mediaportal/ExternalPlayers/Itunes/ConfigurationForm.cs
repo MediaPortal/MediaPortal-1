@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -37,7 +42,7 @@ namespace MediaPortal.ITunesPlayer
 	{
 
     private string m_enabledExt = "";
-    private System.Windows.Forms.Button buttonEnable;
+    private MediaPortal.UserInterface.Controls.MPButton buttonEnable;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.TextBox extensionBox;
 		/// <summary>
@@ -75,7 +80,7 @@ namespace MediaPortal.ITunesPlayer
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.buttonEnable = new System.Windows.Forms.Button();
+			this.buttonEnable = new MediaPortal.UserInterface.Controls.MPButton();
 			this.extensionBox = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();

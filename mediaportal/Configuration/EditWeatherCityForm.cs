@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -32,12 +36,12 @@ namespace MediaPortal.Configuration
 	/// </summary>
 	public class EditWeatherCityForm : System.Windows.Forms.Form
 	{
-    private System.Windows.Forms.Button cancelButton;
+    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private System.Windows.Forms.GroupBox groupBox1;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-    private System.Windows.Forms.Button okButton;
+    private MediaPortal.UserInterface.Controls.MPButton okButton;
     private System.Windows.Forms.TextBox locationTextBox;
 	private System.Windows.Forms.Label label2;
 	private System.Windows.Forms.TextBox temperatureTextBox;
@@ -88,7 +92,7 @@ namespace MediaPortal.Configuration
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.cancelButton = new System.Windows.Forms.Button();
+			this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.precipitationTextBox = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
@@ -104,7 +108,7 @@ namespace MediaPortal.Configuration
 			this.locationTextBox = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
-			this.okButton = new System.Windows.Forms.Button();
+			this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 

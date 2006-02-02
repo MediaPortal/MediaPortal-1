@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -30,8 +34,8 @@ namespace MediaPortal.Configuration.Sections
   public abstract class FileExtensions : MediaPortal.Configuration.SectionSettings
 	{
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.Button removeButton;
-		private System.Windows.Forms.Button addButton;
+		private MediaPortal.UserInterface.Controls.MPButton removeButton;
+		private MediaPortal.UserInterface.Controls.MPButton addButton;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox extensionTextBox;
 		private System.Windows.Forms.ListBox extensionsListBox;
@@ -99,8 +103,8 @@ namespace MediaPortal.Configuration.Sections
 		{
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.addButton = new System.Windows.Forms.Button();
-      this.removeButton = new System.Windows.Forms.Button();
+      this.addButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.removeButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.extensionsListBox = new System.Windows.Forms.ListBox();
       this.extensionTextBox = new System.Windows.Forms.TextBox();
       this.groupBox1.SuspendLayout();

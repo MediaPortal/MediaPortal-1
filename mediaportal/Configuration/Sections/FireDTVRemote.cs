@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.IO;
@@ -80,19 +84,19 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox textBoxCode;
 		private System.Windows.Forms.TextBox textBoxDescription;
-		private System.Windows.Forms.CheckBox checkBoxEnabled;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnabled;
 		private System.Windows.Forms.ContextMenu contextMenu1;
 		private System.Windows.Forms.MenuItem menuAdd;
 		private System.Windows.Forms.MenuItem menuDelete;
-		private System.Windows.Forms.Button buttonLearn;
+		private MediaPortal.UserInterface.Controls.MPButton buttonLearn;
 		private System.Windows.Forms.ComboBox comboBoxFireDTVDevice;
 		private System.Windows.Forms.TextBox textBoxFireDTVKeyFile;
-		private System.Windows.Forms.CheckBox checkBoxFireDTVEnabled;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxFireDTVEnabled;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
-		private System.Windows.Forms.CheckBox checkBoxAdvanceMode;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAdvanceMode;
 		private System.Windows.Forms.PictureBox pictureBox1;
 		#region RemoteControlKeys
 		public enum FireDTVRemoteControlKeys
@@ -291,23 +295,23 @@ namespace MediaPortal.Configuration.Sections
       this.dataGridKeyCode = new System.Windows.Forms.DataGridTextBoxColumn();
       this.dataGridKeyDescription = new System.Windows.Forms.DataGridTextBoxColumn();
       this.panel2 = new System.Windows.Forms.Panel();
-      this.checkBoxAdvanceMode = new System.Windows.Forms.CheckBox();
+      this.checkBoxAdvanceMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.comboBoxFireDTVDevice = new System.Windows.Forms.ComboBox();
       this.comboBoxRemoteControl = new System.Windows.Forms.ComboBox();
       this.textBoxFireDTVKeyFile = new System.Windows.Forms.TextBox();
-      this.checkBoxFireDTVEnabled = new System.Windows.Forms.CheckBox();
+      this.checkBoxFireDTVEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.splitter1 = new System.Windows.Forms.Splitter();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.panel3 = new System.Windows.Forms.Panel();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.checkBoxEnabled = new System.Windows.Forms.CheckBox();
+      this.checkBoxEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.textBoxDescription = new System.Windows.Forms.TextBox();
       this.textBoxCode = new System.Windows.Forms.TextBox();
       this.label3 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.labelcSharp = new System.Windows.Forms.Label();
       this.textBoxcSharp = new System.Windows.Forms.TextBox();
-      this.buttonLearn = new System.Windows.Forms.Button();
+      this.buttonLearn = new MediaPortal.UserInterface.Controls.MPButton();
       this.comboBoxGotoWindow = new System.Windows.Forms.ComboBox();
       this.label1 = new System.Windows.Forms.Label();
       this.comboBoxKeyCode = new System.Windows.Forms.ComboBox();

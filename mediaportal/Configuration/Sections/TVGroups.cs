@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.IO;
@@ -60,18 +64,18 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.ImageList imageList1;
 		private System.Windows.Forms.TabControl tabControl1;
 		private System.Windows.Forms.TabPage tabPage2;
-		private System.Windows.Forms.Button btnGroupDown;
-		private System.Windows.Forms.Button buttonGroupUp;
-		private System.Windows.Forms.Button buttonEditGroup;
-		private System.Windows.Forms.Button buttonDeleteGroup;
-		private System.Windows.Forms.Button buttonAddGroup;
+		private MediaPortal.UserInterface.Controls.MPButton btnGroupDown;
+		private MediaPortal.UserInterface.Controls.MPButton buttonGroupUp;
+		private MediaPortal.UserInterface.Controls.MPButton buttonEditGroup;
+		private MediaPortal.UserInterface.Controls.MPButton buttonDeleteGroup;
+		private MediaPortal.UserInterface.Controls.MPButton buttonAddGroup;
 		private System.Windows.Forms.ListView listViewGroups;
 		private System.Windows.Forms.TabPage tabPage3;
 		private MWControls.MWTreeView treeViewChannels;
-		private System.Windows.Forms.Button btnGrpChnDown;
-		private System.Windows.Forms.Button btnGrpChnUp;
-		private System.Windows.Forms.Button buttonMap;
-		private System.Windows.Forms.Button btnUnmap;
+		private MediaPortal.UserInterface.Controls.MPButton btnGrpChnDown;
+		private MediaPortal.UserInterface.Controls.MPButton btnGrpChnUp;
+		private MediaPortal.UserInterface.Controls.MPButton buttonMap;
+		private MediaPortal.UserInterface.Controls.MPButton btnUnmap;
 		private System.Windows.Forms.ListView listViewTVGroupChannels;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ComboBox comboBox1;
@@ -127,11 +131,11 @@ namespace MediaPortal.Configuration.Sections
 			this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.btnGroupDown = new System.Windows.Forms.Button();
-			this.buttonGroupUp = new System.Windows.Forms.Button();
-			this.buttonEditGroup = new System.Windows.Forms.Button();
-			this.buttonDeleteGroup = new System.Windows.Forms.Button();
-			this.buttonAddGroup = new System.Windows.Forms.Button();
+			this.btnGroupDown = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonGroupUp = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonEditGroup = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonDeleteGroup = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonAddGroup = new MediaPortal.UserInterface.Controls.MPButton();
 			this.listViewGroups = new System.Windows.Forms.ListView();
 			this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
 			this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
@@ -139,10 +143,10 @@ namespace MediaPortal.Configuration.Sections
 			this.listView1 = new System.Windows.Forms.ListView();
 			this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
 			this.treeViewChannels = new MWControls.MWTreeView();
-			this.btnGrpChnDown = new System.Windows.Forms.Button();
-			this.btnGrpChnUp = new System.Windows.Forms.Button();
-			this.buttonMap = new System.Windows.Forms.Button();
-			this.btnUnmap = new System.Windows.Forms.Button();
+			this.btnGrpChnDown = new MediaPortal.UserInterface.Controls.MPButton();
+			this.btnGrpChnUp = new MediaPortal.UserInterface.Controls.MPButton();
+			this.buttonMap = new MediaPortal.UserInterface.Controls.MPButton();
+			this.btnUnmap = new MediaPortal.UserInterface.Controls.MPButton();
 			this.listViewTVGroupChannels = new System.Windows.Forms.ListView();
 			this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
 			this.label1 = new System.Windows.Forms.Label();

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Globalization;
 using System.IO;
@@ -34,7 +38,7 @@ namespace MediaPortal.Configuration.Sections
 	public class FileMenu : MediaPortal.Configuration.SectionSettings
 	{
 		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.CheckBox chbEnabled;
+		private MediaPortal.UserInterface.Controls.MPCheckBox chbEnabled;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox textPinCodeBox;
 		private System.Windows.Forms.Label label3;
@@ -101,7 +105,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label1 = new System.Windows.Forms.Label();
       this.textPinCodeBox = new System.Windows.Forms.TextBox();
-      this.chbEnabled = new System.Windows.Forms.CheckBox();
+      this.chbEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label3 = new System.Windows.Forms.Label();
       this.textTrashcanFolder = new System.Windows.Forms.TextBox();
       this.groupBox1.SuspendLayout();
@@ -109,44 +113,44 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.textPinCodeBox);
       this.groupBox1.Controls.Add(this.chbEnabled);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 88);
+      this.groupBox1.Size = new System.Drawing.Size(472, 80);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
       // label1
       // 
-      this.label1.Location = new System.Drawing.Point(16, 56);
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(16, 48);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(48, 16);
+      this.label1.Size = new System.Drawing.Size(49, 13);
       this.label1.TabIndex = 1;
       this.label1.Text = "Pincode:";
       // 
       // textPinCodeBox
       // 
-      this.textPinCodeBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.textPinCodeBox.Location = new System.Drawing.Point(168, 52);
+      this.textPinCodeBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textPinCodeBox.Location = new System.Drawing.Point(168, 44);
       this.textPinCodeBox.Name = "textPinCodeBox";
       this.textPinCodeBox.Size = new System.Drawing.Size(288, 20);
       this.textPinCodeBox.TabIndex = 2;
-      this.textPinCodeBox.Text = "";
       // 
       // chbEnabled
       // 
-      this.chbEnabled.FlatStyle = System.Windows.Forms.FlatStyle.System;
-      this.chbEnabled.Location = new System.Drawing.Point(16, 24);
+      this.chbEnabled.AutoSize = true;
+      this.chbEnabled.Location = new System.Drawing.Point(168, 20);
       this.chbEnabled.Name = "chbEnabled";
       this.chbEnabled.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.chbEnabled.Size = new System.Drawing.Size(104, 16);
+      this.chbEnabled.Size = new System.Drawing.Size(104, 17);
       this.chbEnabled.TabIndex = 0;
       this.chbEnabled.Text = "Enable file menu";
       this.chbEnabled.CheckedChanged += new System.EventHandler(this.chbEnabled_CheckedChanged);
@@ -162,13 +166,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textTrashcanFolder
       // 
-      this.textTrashcanFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right)));
+      this.textTrashcanFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textTrashcanFolder.Location = new System.Drawing.Point(168, 100);
       this.textTrashcanFolder.Name = "textTrashcanFolder";
       this.textTrashcanFolder.Size = new System.Drawing.Size(288, 20);
       this.textTrashcanFolder.TabIndex = 2;
-      this.textTrashcanFolder.Text = "";
       this.textTrashcanFolder.Visible = false;
       // 
       // FileMenu
@@ -180,7 +183,9 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "FileMenu";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 		#endregion

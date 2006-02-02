@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Windows.Forms;
@@ -61,8 +66,8 @@ namespace MediaPortal
     private System.Windows.Forms.ComboBox vertexProcComboBox;
     private System.Windows.Forms.Label presentIntervalLabel;
     private System.Windows.Forms.ComboBox presentIntervalComboBox;
-    private System.Windows.Forms.Button okButton;
-    private System.Windows.Forms.Button cancelButton;
+    private MediaPortal.UserInterface.Controls.MPButton okButton;
+    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private System.Windows.Forms.ComboBox multisampleQualityComboBox;
     private System.Windows.Forms.Label multisampleQualityLabel;
 
@@ -129,7 +134,7 @@ namespace MediaPortal
       this.adapterComboBox = new System.Windows.Forms.ComboBox();
       this.displayAdapterLabel = new System.Windows.Forms.Label();
       this.fullscreenRadioButton = new System.Windows.Forms.RadioButton();
-      this.cancelButton = new System.Windows.Forms.Button();
+      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.otherSettingsGroupBox = new System.Windows.Forms.GroupBox();
       this.multisampleQualityComboBox = new System.Windows.Forms.ComboBox();
       this.multisampleQualityLabel = new System.Windows.Forms.Label();
@@ -149,7 +154,7 @@ namespace MediaPortal
       this.refreshRateComboBox = new System.Windows.Forms.ComboBox();
       this.adapterFormatLabel = new System.Windows.Forms.Label();
       this.refreshRateLabel = new System.Windows.Forms.Label();
-      this.okButton = new System.Windows.Forms.Button();
+      this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.modeSettingsGroupBox = new System.Windows.Forms.GroupBox();
       this.adapterFormatComboBox = new System.Windows.Forms.ComboBox();
       this.adapterDeviceGroupBox.SuspendLayout();

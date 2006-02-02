@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -33,13 +37,13 @@ namespace MediaPortal.GUI.Video
 	public class tvComSetupForm : System.Windows.Forms.Form
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.CheckBox lookupIfNoSEinFilename;
-		private System.Windows.Forms.CheckBox rename;
-		private System.Windows.Forms.CheckBox renameOnlyIf;
+		private MediaPortal.UserInterface.Controls.MPCheckBox lookupIfNoSEinFilename;
+		private MediaPortal.UserInterface.Controls.MPCheckBox rename;
+		private MediaPortal.UserInterface.Controls.MPCheckBox renameOnlyIf;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.Button button2;
+		private MediaPortal.UserInterface.Controls.MPButton button1;
+		private MediaPortal.UserInterface.Controls.MPButton button2;
 		private System.Windows.Forms.TextBox renameFormat;
 		private System.Windows.Forms.TextBox replaceSpaces;
 		private System.Windows.Forms.Label help;
@@ -47,7 +51,7 @@ namespace MediaPortal.GUI.Video
 		private System.Windows.Forms.TextBox titleFormat;
 		private System.Windows.Forms.TextBox txtGenre;
 		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.CheckBox chkActors;
+		private MediaPortal.UserInterface.Controls.MPCheckBox chkActors;
 		/// <summary>
 		/// Erforderliche Designervariable.
 		/// </summary>
@@ -92,17 +96,17 @@ namespace MediaPortal.GUI.Video
 			this.replaceSpaces = new System.Windows.Forms.TextBox();
 			this.renameFormat = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this.renameOnlyIf = new System.Windows.Forms.CheckBox();
-			this.rename = new System.Windows.Forms.CheckBox();
-			this.lookupIfNoSEinFilename = new System.Windows.Forms.CheckBox();
-			this.button1 = new System.Windows.Forms.Button();
-			this.button2 = new System.Windows.Forms.Button();
+			this.renameOnlyIf = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.rename = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.lookupIfNoSEinFilename = new MediaPortal.UserInterface.Controls.MPCheckBox();
+			this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
+			this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
 			this.help = new System.Windows.Forms.Label();
 			this.titleFormat = new System.Windows.Forms.TextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.txtGenre = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.chkActors = new System.Windows.Forms.CheckBox();
+			this.chkActors = new MediaPortal.UserInterface.Controls.MPCheckBox();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 

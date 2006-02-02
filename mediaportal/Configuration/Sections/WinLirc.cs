@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -37,7 +41,7 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.Label PathToWinlircLabel;
 		private System.Windows.Forms.TextBox pathToWinlircTextBox;
-		private System.Windows.Forms.Button browsePathToWinlircButton;
+		private MediaPortal.UserInterface.Controls.MPButton browsePathToWinlircButton;
 		private System.Windows.Forms.TextBox infoTextBox;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		private System.Windows.Forms.TextBox IRDelayTextBox;
@@ -116,7 +120,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.IRDelayTextBox = new System.Windows.Forms.TextBox();
       this.IRDelayLabel = new System.Windows.Forms.Label();
-      this.browsePathToWinlircButton = new System.Windows.Forms.Button();
+      this.browsePathToWinlircButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.pathToWinlircTextBox = new System.Windows.Forms.TextBox();
       this.PathToWinlircLabel = new System.Windows.Forms.Label();
       this.inputCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();

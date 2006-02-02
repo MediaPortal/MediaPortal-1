@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -83,12 +87,12 @@ namespace MyMail
     /// </summary>
     private void InitializeComponent()
     {
-      this.btnAdd = new System.Windows.Forms.Button();
+      this.btnAdd = new MediaPortal.UserInterface.Controls.MPButton();
       this.lbMailboxes = new System.Windows.Forms.ListBox();
-      this.btnDelete = new System.Windows.Forms.Button();
-      this.btnClose = new System.Windows.Forms.Button();
+      this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnClose = new MediaPortal.UserInterface.Controls.MPButton();
       this.gbMailboxes = new System.Windows.Forms.GroupBox();
-      this.btnEdit = new System.Windows.Forms.Button();
+      this.btnEdit = new MediaPortal.UserInterface.Controls.MPButton();
       this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
       this.label1 = new System.Windows.Forms.Label();
       this.gbMailboxes.SuspendLayout();

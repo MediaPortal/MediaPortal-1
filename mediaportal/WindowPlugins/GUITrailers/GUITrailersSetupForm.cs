@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -11,9 +36,9 @@ namespace MediaPortal.GUI.Video
 	/// </summary>
 	public class GUITrailersSetupForm : System.Windows.Forms.Form
 	{
-		private System.Windows.Forms.CheckBox checkBox300;
-		private System.Windows.Forms.Button button1;
-		private System.Windows.Forms.CheckBox GermanTrailerCheckBox;
+		private MediaPortal.UserInterface.Controls.MPCheckBox checkBox300;
+		private MediaPortal.UserInterface.Controls.MPButton button1;
+		private MediaPortal.UserInterface.Controls.MPCheckBox GermanTrailerCheckBox;
         private CheckedListBox YahooServerListBox;
         private Label label1;
         private CheckBox TsrVodCheckBox;
@@ -65,12 +90,12 @@ namespace MediaPortal.GUI.Video
 		/// </summary>
 		private void InitializeComponent()
 		{
-            this.checkBox300 = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.GermanTrailerCheckBox = new System.Windows.Forms.CheckBox();
+            this.checkBox300 = new MediaPortal.UserInterface.Controls.MPCheckBox();
+            this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
+            this.GermanTrailerCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
             this.YahooServerListBox = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.TsrVodCheckBox = new System.Windows.Forms.CheckBox();
+            this.TsrVodCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
             this.TsrVodBitrateStreamGrpBox = new System.Windows.Forms.GroupBox();
             this.bitrate1500 = new System.Windows.Forms.RadioButton();
             this.bitrate450 = new System.Windows.Forms.RadioButton();

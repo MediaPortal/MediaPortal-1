@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -35,12 +39,12 @@ namespace MediaPortal.GUI.MSN
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.TextBox textBoxEMail;
     private System.Windows.Forms.Label label2;
-    private System.Windows.Forms.Button buttonOK;
+    private MediaPortal.UserInterface.Controls.MPButton buttonOK;
     private System.Windows.Forms.TextBox textBoxPassword;
-    private System.Windows.Forms.CheckBox chkSignIn;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chkSignIn;
     private System.Windows.Forms.ComboBox InitialStatusBox;
     private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.CheckBox chkPopupWindow;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chkPopupWindow;
     private GroupBox groupBox1;
     private GroupBox groupBox2;
     private CheckBox cbUseProxyServer;
@@ -97,11 +101,11 @@ namespace MediaPortal.GUI.MSN
       this.textBoxEMail = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
       this.textBoxPassword = new System.Windows.Forms.TextBox();
-      this.buttonOK = new System.Windows.Forms.Button();
-      this.chkSignIn = new System.Windows.Forms.CheckBox();
+      this.buttonOK = new MediaPortal.UserInterface.Controls.MPButton();
+      this.chkSignIn = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.InitialStatusBox = new System.Windows.Forms.ComboBox();
       this.label3 = new System.Windows.Forms.Label();
-      this.chkPopupWindow = new System.Windows.Forms.CheckBox();
+      this.chkPopupWindow = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.label7 = new System.Windows.Forms.Label();
@@ -110,7 +114,7 @@ namespace MediaPortal.GUI.MSN
       this.label8 = new System.Windows.Forms.Label();
       this.label4 = new System.Windows.Forms.Label();
       this.cbProxyType = new System.Windows.Forms.ComboBox();
-      this.cbUseProxyServer = new System.Windows.Forms.CheckBox();
+      this.cbUseProxyServer = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tbProxyPassword = new System.Windows.Forms.TextBox();
       this.tbProxyUserName = new System.Windows.Forms.TextBox();
       this.tbProxyPort = new System.Windows.Forms.TextBox();

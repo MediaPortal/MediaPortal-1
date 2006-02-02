@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.IO;
 using System.Collections;
@@ -35,14 +39,14 @@ namespace MediaPortal.Configuration.Sections
 	{
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button deleteButton;
-		private System.Windows.Forms.Button addButton;
+		private MediaPortal.UserInterface.Controls.MPButton deleteButton;
+		private MediaPortal.UserInterface.Controls.MPButton addButton;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.TextBox keyTextBox;
 		private System.Windows.Forms.TextBox soundTextBox;
 		private System.Windows.Forms.Label label4;
-		protected System.Windows.Forms.Button fileNameButton;
+		protected MediaPortal.UserInterface.Controls.MPButton fileNameButton;
 		private System.ComponentModel.IContainer components = null;
 
 		//
@@ -389,9 +393,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.idTextBox = new System.Windows.Forms.TextBox();
       this.idComboBox = new System.Windows.Forms.ComboBox();
-      this.addButton = new System.Windows.Forms.Button();
-      this.deleteButton = new System.Windows.Forms.Button();
-      this.fileNameButton = new System.Windows.Forms.Button();
+      this.addButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.deleteButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.soundTextBox = new System.Windows.Forms.TextBox();
       this.label4 = new System.Windows.Forms.Label();
       this.keyTextBox = new System.Windows.Forms.TextBox();

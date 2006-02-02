@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -45,11 +49,11 @@ namespace MediaPortal.Configuration.Sections
 		private System.Windows.Forms.TextBox testRedeyeChannelsTextBox;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox infoTextBox;
-		private System.Windows.Forms.Button buttonIRDA;
-		private System.Windows.Forms.Button buttonRC5;
-		private System.Windows.Forms.Button buttonSKY;
+		private MediaPortal.UserInterface.Controls.MPButton buttonIRDA;
+		private MediaPortal.UserInterface.Controls.MPButton buttonRC5;
+		private MediaPortal.UserInterface.Controls.MPButton buttonSKY;
     private System.Windows.Forms.GroupBox groupBox3;
-		private System.Windows.Forms.Button cmdTest;
+		private MediaPortal.UserInterface.Controls.MPButton cmdTest;
 
 		
 		public RedEye() : this("RedEye")
@@ -145,12 +149,12 @@ namespace MediaPortal.Configuration.Sections
 		private void InitializeComponent()
 		{
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.cmdTest = new System.Windows.Forms.Button();
+      this.cmdTest = new MediaPortal.UserInterface.Controls.MPButton();
       this.label2 = new System.Windows.Forms.Label();
       this.testRedeyeChannelsTextBox = new System.Windows.Forms.TextBox();
-      this.buttonIRDA = new System.Windows.Forms.Button();
-      this.buttonRC5 = new System.Windows.Forms.Button();
-      this.buttonSKY = new System.Windows.Forms.Button();
+      this.buttonIRDA = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonRC5 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonSKY = new MediaPortal.UserInterface.Controls.MPButton();
       this.label7 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
       this.CommandDelayCombo = new System.Windows.Forms.ComboBox();
