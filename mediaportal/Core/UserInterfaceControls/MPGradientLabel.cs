@@ -44,7 +44,7 @@ namespace MediaPortal.UserInterface.Controls
 
 		int paddingTop, paddingLeft;
 
-		private MediaPortal.UserInterface.Controls.MPLabel workingLabel;
+    private System.Windows.Forms.Label workingLabel;
 
 		/// <summary> 
 		/// Required designer variable.
@@ -187,7 +187,7 @@ namespace MediaPortal.UserInterface.Controls
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.workingLabel = new MediaPortal.UserInterface.Controls.MPLabel();
+			this.workingLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// workingLabel

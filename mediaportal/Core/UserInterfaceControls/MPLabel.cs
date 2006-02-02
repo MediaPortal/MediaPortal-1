@@ -34,7 +34,7 @@ namespace MediaPortal.UserInterface.Controls
   {
     public MPLabel()
     {
-      this.AutoSize = true;
+      //this.AutoSize = true;
     }
   }
 }
