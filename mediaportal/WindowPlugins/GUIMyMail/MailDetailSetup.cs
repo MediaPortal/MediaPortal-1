@@ -137,7 +137,6 @@ namespace MyMail
       // btnOk
       // 
       this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnOk.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnOk.Location = new System.Drawing.Point(296, 344);
       this.btnOk.Name = "btnOk";
       this.btnOk.TabIndex = 3;
@@ -148,7 +147,6 @@ namespace MyMail
       // 
       this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnCancel.Location = new System.Drawing.Point(376, 344);
       this.btnCancel.Name = "btnCancel";
       this.btnCancel.TabIndex = 4;
@@ -364,7 +362,6 @@ namespace MyMail
       // 
       this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnTest.Enabled = false;
-      this.btnTest.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnTest.Location = new System.Drawing.Point(353, 128);
       this.btnTest.Name = "btnTest";
       this.btnTest.TabIndex = 9;

@@ -236,7 +236,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this._useLogarithmicHandler);
       this.groupBox1.Controls.Add(this._useWindowsHandler);
       this.groupBox1.Controls.Add(this._useClassicHandler);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 120);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 128);
@@ -258,7 +257,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // _useCustomHandler
       // 
-      this._useCustomHandler.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this._useCustomHandler.Location = new System.Drawing.Point(16, 96);
       this._useCustomHandler.Name = "_useCustomHandler";
       this._useCustomHandler.Size = new System.Drawing.Size(80, 16);
@@ -268,7 +266,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // _useLogarithmicHandler
       // 
-      this._useLogarithmicHandler.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this._useLogarithmicHandler.Location = new System.Drawing.Point(16, 72);
       this._useLogarithmicHandler.Name = "_useLogarithmicHandler";
       this._useLogarithmicHandler.Size = new System.Drawing.Size(104, 16);
@@ -278,7 +275,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // _useWindowsHandler
       // 
-      this._useWindowsHandler.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this._useWindowsHandler.Location = new System.Drawing.Point(16, 24);
       this._useWindowsHandler.Name = "_useWindowsHandler";
       this._useWindowsHandler.Size = new System.Drawing.Size(120, 16);
@@ -288,7 +284,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // _useClassicHandler
       // 
-      this._useClassicHandler.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this._useClassicHandler.Location = new System.Drawing.Point(16, 48);
       this._useClassicHandler.Name = "_useClassicHandler";
       this._useClassicHandler.Size = new System.Drawing.Size(72, 16);
@@ -302,7 +297,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this._useCustomLevel);
       this.groupBox2.Controls.Add(this._useSystemCurrent);
       this.groupBox2.Controls.Add(this._useLastKnownLevel);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(0, 0);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 112);
@@ -323,7 +317,6 @@ namespace MediaPortal.Configuration.Sections
       // _useCustomLevel
       // 
       this._useCustomLevel.Enabled = false;
-      this._useCustomLevel.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this._useCustomLevel.Location = new System.Drawing.Point(16, 72);
       this._useCustomLevel.Name = "_useCustomLevel";
       this._useCustomLevel.TabIndex = 2;
@@ -333,7 +326,6 @@ namespace MediaPortal.Configuration.Sections
       // _useSystemCurrent
       // 
       this._useSystemCurrent.Enabled = false;
-      this._useSystemCurrent.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this._useSystemCurrent.Location = new System.Drawing.Point(16, 48);
       this._useSystemCurrent.Name = "_useSystemCurrent";
       this._useSystemCurrent.Size = new System.Drawing.Size(216, 24);
@@ -344,7 +336,6 @@ namespace MediaPortal.Configuration.Sections
       // _useLastKnownLevel
       // 
       this._useLastKnownLevel.Enabled = false;
-      this._useLastKnownLevel.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this._useLastKnownLevel.Location = new System.Drawing.Point(16, 24);
       this._useLastKnownLevel.Name = "_useLastKnownLevel";
       this._useLastKnownLevel.Size = new System.Drawing.Size(152, 24);
@@ -356,7 +347,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox3.Controls.Add(this._useWave);
       this.groupBox3.Controls.Add(this._useMasterVolume);
-      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox3.Location = new System.Drawing.Point(0, 256);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(472, 88);
@@ -366,7 +356,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // _useMasterVolume
       // 
-      this._useMasterVolume.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this._useMasterVolume.Location = new System.Drawing.Point(16, 24);
       this._useMasterVolume.Name = "_useMasterVolume";
       this._useMasterVolume.Size = new System.Drawing.Size(120, 24);
@@ -376,7 +365,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // _useWave
       // 
-      this._useWave.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this._useWave.Location = new System.Drawing.Point(16, 56);
       this._useWave.Name = "_useWave";
       this._useWave.Size = new System.Drawing.Size(88, 24);

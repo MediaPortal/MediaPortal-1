@@ -428,7 +428,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.descriptionTextBox);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.keyTreeView);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 408);
@@ -465,7 +464,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.addButton.Enabled = false;
-      this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.addButton.Location = new System.Drawing.Point(304, 272);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(72, 22);
@@ -477,7 +475,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.deleteButton.Enabled = false;
-      this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.deleteButton.Location = new System.Drawing.Point(384, 272);
       this.deleteButton.Name = "deleteButton";
       this.deleteButton.Size = new System.Drawing.Size(72, 22);
@@ -489,7 +486,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameButton.Enabled = false;
-      this.fileNameButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.fileNameButton.Location = new System.Drawing.Point(384, 371);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);

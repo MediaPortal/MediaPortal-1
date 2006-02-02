@@ -143,7 +143,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.pathToWinlircTextBox);
       this.groupBox1.Controls.Add(this.PathToWinlircLabel);
       this.groupBox1.Controls.Add(this.inputCheckBox);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 112);
@@ -172,7 +171,6 @@ namespace MediaPortal.Configuration.Sections
       // browsePathToWinlircButton
       // 
       this.browsePathToWinlircButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.browsePathToWinlircButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.browsePathToWinlircButton.Location = new System.Drawing.Point(384, 51);
       this.browsePathToWinlircButton.Name = "browsePathToWinlircButton";
       this.browsePathToWinlircButton.Size = new System.Drawing.Size(72, 22);
@@ -200,7 +198,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // inputCheckBox
       // 
-      this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
       this.inputCheckBox.Name = "inputCheckBox";
       this.inputCheckBox.Size = new System.Drawing.Size(248, 16);
@@ -214,7 +211,6 @@ namespace MediaPortal.Configuration.Sections
         | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.infoTextBox);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(0, 120);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 288);

@@ -36,59 +36,59 @@ using Microsoft.Win32;
 
 namespace MediaPortal.Configuration
 {
-	/// <summary>
-	/// Summary description for SearchSHOUTcast.
-	/// </summary>
-	public class SearchSHOUTcast : System.Windows.Forms.Form
-	{
-		private MediaPortal.UserInterface.Controls.MPButton SearchButton;
-		private System.Windows.Forms.TextBox SearchText;
-		private System.Windows.Forms.ColumnHeader columnHeader1;
-		private System.Windows.Forms.ColumnHeader columnHeader2;
-		private MediaPortal.UserInterface.Controls.MPListView ResultsBox;
-		private MediaPortal.UserInterface.Controls.MPButton AddButton;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
-		private System.Windows.Forms.Label WaitLabel;
-		private System.Windows.Forms.ColumnHeader columnHeader3;
-	
-		private RadioStation Selected_Radiostation = null;     //Our return station info
-		
-		public SearchSHOUTcast()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+  /// <summary>
+  /// Summary description for SearchSHOUTcast.
+  /// </summary>
+  public class SearchSHOUTcast : System.Windows.Forms.Form
+  {
+    private MediaPortal.UserInterface.Controls.MPButton SearchButton;
+    private System.Windows.Forms.TextBox SearchText;
+    private System.Windows.Forms.ColumnHeader columnHeader1;
+    private System.Windows.Forms.ColumnHeader columnHeader2;
+    private MediaPortal.UserInterface.Controls.MPListView ResultsBox;
+    private MediaPortal.UserInterface.Controls.MPButton AddButton;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
+    private System.Windows.Forms.Label WaitLabel;
+    private System.Windows.Forms.ColumnHeader columnHeader3;
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    private RadioStation Selected_Radiostation = null;     //Our return station info
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    public SearchSHOUTcast()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
+
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
+
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.SearchButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.SearchText = new System.Windows.Forms.TextBox();
       this.ResultsBox = new MediaPortal.UserInterface.Controls.MPListView();
@@ -101,7 +101,6 @@ namespace MediaPortal.Configuration
       // 
       // SearchButton
       // 
-      this.SearchButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.SearchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
       this.SearchButton.ForeColor = System.Drawing.Color.Black;
       this.SearchButton.Location = new System.Drawing.Point(8, 240);
@@ -121,8 +120,8 @@ namespace MediaPortal.Configuration
       // 
       // ResultsBox
       // 
-      this.ResultsBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.ResultsBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.ResultsBox.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                  this.columnHeader1,
@@ -156,7 +155,6 @@ namespace MediaPortal.Configuration
       // 
       // AddButton
       // 
-      this.AddButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.AddButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
       this.AddButton.ForeColor = System.Drawing.Color.Black;
       this.AddButton.Location = new System.Drawing.Point(392, 240);
@@ -202,267 +200,267 @@ namespace MediaPortal.Configuration
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		public RadioStation Station
-		{
-			//Fill in station settings with search
-			get
-			{
-				//returns selected radiostation if nothing then null
-				if(Selected_Radiostation ==null)return null;
-				else return Selected_Radiostation;
-			}
-		}
+    public RadioStation Station
+    {
+      //Fill in station settings with search
+      get
+      {
+        //returns selected radiostation if nothing then null
+        if (Selected_Radiostation == null) return null;
+        else return Selected_Radiostation;
+      }
+    }
 
-		private ArrayList Search(string search)
-		{
-			//Create needed variables
-			int count= 100,
-				total=0,
-				counter=1;										   // Used to keep track of file numbering
-			int [] found=new int[count],
-				end=new int[count];
-			
-			string [] SCstaindex=new string[count];                      //Index info
-			string [] SCstanum=new string[count];					       // Second part holds file number on Shoutcast
-			string [] SCstaname=new string[count];                       // Extracted station name
-			string [] SCstabr=new string[count];						   //Bitrate info
-			WebClient myWebClient = new WebClient();         			   // Create a new WebClient instance.	
-			string HTMLdownload;										   // Hold HTML for parsing or misc
-			byte [] HTMLbuffer;                      					   // HTML buffer
-			MatchCollection mc;											   // Holds matched data
-			// Create Regex objects and define the search criteria.
-			Regex nterm = new Regex("Unfortunately, there weren't any SHOUTcast streams found containing the term");
-			Regex ngenre = new Regex("Unfortunately, there weren't any SHOUTcast streams found under the genre");
-			Regex snum = new Regex("rn=[0-9]*");
-			Regex sname = new Regex("target=\"_scurl\" href=.*</a>");
-			Regex namerepstr = new Regex("target.*\">");
-			Regex sbr = new Regex("<font face=\"Arial, Helvetica\" size=\"2\" color=\"#FFFFFF\">[0-9]*</font>");
-			Regex brrepstr = new Regex("<font face=\"Arial, Helvetica\" size=\"2\" color=\"#FFFFFF\">");	
-			
-			//Connect to remote server and download HTML
-			string address = "http://www.shoutcast.com/directory/?s="+search+"&numresult=100&orderby=bitrate";
-			HTMLbuffer = myWebClient.DownloadData (address);
-			HTMLdownload = Encoding.ASCII.GetString(HTMLbuffer);
+    private ArrayList Search(string search)
+    {
+      //Create needed variables
+      int count = 100,
+        total = 0,
+        counter = 1;										   // Used to keep track of file numbering
+      int[] found = new int[count],
+        end = new int[count];
 
-			//Check requested if genre or search exists
-			if(search=="")
-			{
-				return null;
-			}
+      string[] SCstaindex = new string[count];                      //Index info
+      string[] SCstanum = new string[count];					       // Second part holds file number on Shoutcast
+      string[] SCstaname = new string[count];                       // Extracted station name
+      string[] SCstabr = new string[count];						   //Bitrate info
+      WebClient myWebClient = new WebClient();         			   // Create a new WebClient instance.	
+      string HTMLdownload;										   // Hold HTML for parsing or misc
+      byte[] HTMLbuffer;                      					   // HTML buffer
+      MatchCollection mc;											   // Holds matched data
+      // Create Regex objects and define the search criteria.
+      Regex nterm = new Regex("Unfortunately, there weren't any SHOUTcast streams found containing the term");
+      Regex ngenre = new Regex("Unfortunately, there weren't any SHOUTcast streams found under the genre");
+      Regex snum = new Regex("rn=[0-9]*");
+      Regex sname = new Regex("target=\"_scurl\" href=.*</a>");
+      Regex namerepstr = new Regex("target.*\">");
+      Regex sbr = new Regex("<font face=\"Arial, Helvetica\" size=\"2\" color=\"#FFFFFF\">[0-9]*</font>");
+      Regex brrepstr = new Regex("<font face=\"Arial, Helvetica\" size=\"2\" color=\"#FFFFFF\">");
 
-			mc = nterm.Matches(HTMLdownload);
-			if(mc.Count>0)
-			{
-				return null;
-			}
-			mc = ngenre.Matches(HTMLdownload);
-			if(mc.Count>0)
-			{
-				return null;
-			}
-			
-			try
-			{
+      //Connect to remote server and download HTML
+      string address = "http://www.shoutcast.com/directory/?s=" + search + "&numresult=100&orderby=bitrate";
+      HTMLbuffer = myWebClient.DownloadData(address);
+      HTMLdownload = Encoding.ASCII.GetString(HTMLbuffer);
 
-				//Build index numbers for stations
-				int ind=0;
-				for(int i=counter;i<counter+count;i++)
-				{
-					if(i<10)
-					{
-					
-						SCstaindex[ind]="0"+i.ToString();
-					}
-					else SCstaindex[ind]=i.ToString();
-					ind++;
-				}
+      //Check requested if genre or search exists
+      if (search == "")
+      {
+        return null;
+      }
 
-				//Extract Station Number and store in SCstanum[]
-				mc = snum.Matches(HTMLdownload);
-				// Loop through the match collection to retrieve all 
-				// matches and positions.
-				total=mc.Count;
-				for (int i = 0; i < mc.Count; i++) 
-				{
-					// Add the match string to the string array.   
-					SCstanum[i] = mc[i].Value.Replace("rn=","");
-					// Record the character position where the match was found.
-					found[i] = mc[i].Index;   
-				}
+      mc = nterm.Matches(HTMLdownload);
+      if (mc.Count > 0)
+      {
+        return null;
+      }
+      mc = ngenre.Matches(HTMLdownload);
+      if (mc.Count > 0)
+      {
+        return null;
+      }
 
+      try
+      {
 
-				//Extract Station Name and store in SCstaname
-				mc = sname.Matches(HTMLdownload);
-				for (int i = 0; i < mc.Count; i++) 
-				{
-					// Add the match string to the string array.   
-					SCstaname[i] = mc[i].Value;
-					SCstaname[i]= namerepstr.Replace(SCstaname[i],"");
-					SCstaname[i] = SCstaname[i].Replace("</a>","");
-					// Record the character position where the match was found.
-					found[i] = mc[i].Index;   
-				}
+        //Build index numbers for stations
+        int ind = 0;
+        for (int i = counter; i < counter + count; i++)
+        {
+          if (i < 10)
+          {
+
+            SCstaindex[ind] = "0" + i.ToString();
+          }
+          else SCstaindex[ind] = i.ToString();
+          ind++;
+        }
+
+        //Extract Station Number and store in SCstanum[]
+        mc = snum.Matches(HTMLdownload);
+        // Loop through the match collection to retrieve all 
+        // matches and positions.
+        total = mc.Count;
+        for (int i = 0; i < mc.Count; i++)
+        {
+          // Add the match string to the string array.   
+          SCstanum[i] = mc[i].Value.Replace("rn=", "");
+          // Record the character position where the match was found.
+          found[i] = mc[i].Index;
+        }
 
 
-				//Extract bitrate and store in SCstabr
-				mc = sbr.Matches(HTMLdownload);
-				for (int i = 0; i < mc.Count; i++) 
-				{
-					// Add the match string to the string array.   
-					SCstabr[i] = mc[i].Value;
-					SCstabr[i]= brrepstr.Replace(SCstabr[i],"");
-					SCstabr[i] = SCstabr[i].Replace("</font>","");
-					// Record the character position where the match was found.
-					found[i] = mc[i].Index;   
-				}
+        //Extract Station Name and store in SCstaname
+        mc = sname.Matches(HTMLdownload);
+        for (int i = 0; i < mc.Count; i++)
+        {
+          // Add the match string to the string array.   
+          SCstaname[i] = mc[i].Value;
+          SCstaname[i] = namerepstr.Replace(SCstaname[i], "");
+          SCstaname[i] = SCstaname[i].Replace("</a>", "");
+          // Record the character position where the match was found.
+          found[i] = mc[i].Index;
+        }
 
-			}
-			catch (IndexOutOfRangeException)     
-			{
-				return null;
-			}
-			catch(WebException)
-			{
-				return null;
-			}
-			catch(Exception)
-			{
-				return null;
-			}
 
-			//Write stuff to array list
-			ArrayList stations = new ArrayList();
-			for(int i=0;i<total;i++)
-			{
-				RadioStation station = new RadioStation();
-				station.URL=SCstanum[i];
-				station.Name=SCstaname[i];
-				station.Bitrate=Convert.ToInt32(SCstabr[i]);
-				stations.Add(station);
-			}
-			return stations;
-		}
+        //Extract bitrate and store in SCstabr
+        mc = sbr.Matches(HTMLdownload);
+        for (int i = 0; i < mc.Count; i++)
+        {
+          // Add the match string to the string array.   
+          SCstabr[i] = mc[i].Value;
+          SCstabr[i] = brrepstr.Replace(SCstabr[i], "");
+          SCstabr[i] = SCstabr[i].Replace("</font>", "");
+          // Record the character position where the match was found.
+          found[i] = mc[i].Index;
+        }
 
-		private void SearchButton_Click(object sender, System.EventArgs e)
-		{
-			//Check if the user has entered any text
-			if(SearchText.Text==null||SearchText.Text=="")return;
-			ArrayList Station_List = new ArrayList();
-			//Show wait window
-			WaitLabel.Focus();
-			WaitLabel.Visible=true;
-			WaitLabel.Enabled=true;
-			Station_List = Search(SearchText.Text);
-			WaitLabel.Enabled=false;
-			WaitLabel.Visible=false;
-			if(Station_List==null)
-			{
-				MessageBox.Show(this,"No stations found please search again.");
-				return;
-			}
-			if(ResultsBox.Items!=null)ResultsBox.Items.Clear();
-			foreach(RadioStation station in Station_List)
-			{
-				RadioStation radiostation = new RadioStation();
-				radiostation.Bitrate=station.Bitrate;
-				radiostation.Name=station.Name;
-				radiostation.URL=station.URL;
-				ListViewItem listItem = new ListViewItem(new string[] {   radiostation.Bitrate.ToString(),
+      }
+      catch (IndexOutOfRangeException)
+      {
+        return null;
+      }
+      catch (WebException)
+      {
+        return null;
+      }
+      catch (Exception)
+      {
+        return null;
+      }
+
+      //Write stuff to array list
+      ArrayList stations = new ArrayList();
+      for (int i = 0; i < total; i++)
+      {
+        RadioStation station = new RadioStation();
+        station.URL = SCstanum[i];
+        station.Name = SCstaname[i];
+        station.Bitrate = Convert.ToInt32(SCstabr[i]);
+        stations.Add(station);
+      }
+      return stations;
+    }
+
+    private void SearchButton_Click(object sender, System.EventArgs e)
+    {
+      //Check if the user has entered any text
+      if (SearchText.Text == null || SearchText.Text == "") return;
+      ArrayList Station_List = new ArrayList();
+      //Show wait window
+      WaitLabel.Focus();
+      WaitLabel.Visible = true;
+      WaitLabel.Enabled = true;
+      Station_List = Search(SearchText.Text);
+      WaitLabel.Enabled = false;
+      WaitLabel.Visible = false;
+      if (Station_List == null)
+      {
+        MessageBox.Show(this, "No stations found please search again.");
+        return;
+      }
+      if (ResultsBox.Items != null) ResultsBox.Items.Clear();
+      foreach (RadioStation station in Station_List)
+      {
+        RadioStation radiostation = new RadioStation();
+        radiostation.Bitrate = station.Bitrate;
+        radiostation.Name = station.Name;
+        radiostation.URL = station.URL;
+        ListViewItem listItem = new ListViewItem(new string[] {   radiostation.Bitrate.ToString(),
 																		  radiostation.Name,
 																		  radiostation.URL
-																	  } );
-				listItem.Tag = radiostation;
-				ResultsBox.Items.Add(listItem);
-			}
-			ResultsBox.Focus();
-		}
+																	  });
+        listItem.Tag = radiostation;
+        ResultsBox.Items.Add(listItem);
+      }
+      ResultsBox.Focus();
+    }
 
-		private void AddButton_Click(object sender, System.EventArgs e)
-		{
-			foreach(ListViewItem listItem in ResultsBox.SelectedItems)
-			{
-				WaitLabel.Focus();
-				WaitLabel.Visible=true;
-				WaitLabel.Enabled=true;
-				WebClient myWebClient = new WebClient();         			   // Create a new WebClient instance.	
-				string file_loc = "http://www.shoutcast.com/sbin/shoutcast-playlist.pls?rn=";
-				//Get station file number to get the file
-				RadioStation radiostation = listItem.Tag as RadioStation;
-				file_loc=file_loc+radiostation.URL+"&file=filename.pls";
-				//Download the file to extract url information
-				myWebClient.DownloadFile(file_loc,"SCtemp.tmp");
-				//Open file and check if we have met our daily limit if so quit
-				StreamReader tr = File.OpenText("SCtemp.tmp");
-				string parse_me=tr.ReadToEnd();
-				tr.Close();
-				File.Delete("SCtemp.tmp");
-				if(parse_me.StartsWith("Too many requests.  Try again tomorrow."))
-				{
-					MessageBox.Show(this,"Too many requests, try again in a few minutes.");
-					WaitLabel.Enabled=false;
-					WaitLabel.Visible=false;
-					Selected_Radiostation=null;
-					return;
-				}
-				else 
-				{
-					//Get our station info
-					Regex url_loc = new Regex("http://[^\r\n>]*");
-					MatchCollection mc;
-					mc = url_loc.Matches(parse_me);
-					if(mc.Count<1)
-					{
-						MessageBox.Show(this,"Something weird happened try again.");
-						WaitLabel.Enabled=false;
-						WaitLabel.Visible=false;
-						Selected_Radiostation=null;
-						return;
-					}
-					//Get the first link of the collected streams
-					radiostation.URL=mc[0].Value.Replace("Title","");
-					Selected_Radiostation = radiostation;
-					WaitLabel.Enabled=false;
-					WaitLabel.Visible=false;
-					this.Close();
-					return;
-				}
-				
-			}
-					
-		}
+    private void AddButton_Click(object sender, System.EventArgs e)
+    {
+      foreach (ListViewItem listItem in ResultsBox.SelectedItems)
+      {
+        WaitLabel.Focus();
+        WaitLabel.Visible = true;
+        WaitLabel.Enabled = true;
+        WebClient myWebClient = new WebClient();         			   // Create a new WebClient instance.	
+        string file_loc = "http://www.shoutcast.com/sbin/shoutcast-playlist.pls?rn=";
+        //Get station file number to get the file
+        RadioStation radiostation = listItem.Tag as RadioStation;
+        file_loc = file_loc + radiostation.URL + "&file=filename.pls";
+        //Download the file to extract url information
+        myWebClient.DownloadFile(file_loc, "SCtemp.tmp");
+        //Open file and check if we have met our daily limit if so quit
+        StreamReader tr = File.OpenText("SCtemp.tmp");
+        string parse_me = tr.ReadToEnd();
+        tr.Close();
+        File.Delete("SCtemp.tmp");
+        if (parse_me.StartsWith("Too many requests.  Try again tomorrow."))
+        {
+          MessageBox.Show(this, "Too many requests, try again in a few minutes.");
+          WaitLabel.Enabled = false;
+          WaitLabel.Visible = false;
+          Selected_Radiostation = null;
+          return;
+        }
+        else
+        {
+          //Get our station info
+          Regex url_loc = new Regex("http://[^\r\n>]*");
+          MatchCollection mc;
+          mc = url_loc.Matches(parse_me);
+          if (mc.Count < 1)
+          {
+            MessageBox.Show(this, "Something weird happened try again.");
+            WaitLabel.Enabled = false;
+            WaitLabel.Visible = false;
+            Selected_Radiostation = null;
+            return;
+          }
+          //Get the first link of the collected streams
+          radiostation.URL = mc[0].Value.Replace("Title", "");
+          Selected_Radiostation = radiostation;
+          WaitLabel.Enabled = false;
+          WaitLabel.Visible = false;
+          this.Close();
+          return;
+        }
 
-		private void SearchSHOUTcast_Load(object sender, System.EventArgs e)
-		{
-			//Check if we are connected to a network
-			if(!SystemInformation.Network)
-			{
-				MessageBox.Show(this,"You need to be connected to a network to search for stations");
-				this.Close();
-				return;
-			}
-			//Create necessary registry temp keys to begin search
-			RegistryKey rk = Registry.ClassesRoot;
-			RegistryKey rs = rk.OpenSubKey("CLSID\\");
-			string [] names = rs.GetSubKeyNames();
-			bool reged=false;
-			foreach(string s in names)
-			{
-				//Check for shoutcastsource.ax key is registered
-				if(s.StartsWith("{68F540E9-766F-44D2-AB07-E26CC6D27A79}"))
-				{
-					reged=true;
-					break;
-				}
-			}
-			if(!reged)
-			{
-				//Inform the user that they need to register the source to play streams
-				MessageBox.Show(this,"The SHOUTcast source needs to be registered in your system \nto play shoutcast streams with Media Player.\nCheck this link for additional info:\nhttp://www.maisenbachers.de/dokuw/howto:myradio:createshortcuts");
-				this.Close();
-				return;
-			}
-		}
-	}
+      }
+
+    }
+
+    private void SearchSHOUTcast_Load(object sender, System.EventArgs e)
+    {
+      //Check if we are connected to a network
+      if (!SystemInformation.Network)
+      {
+        MessageBox.Show(this, "You need to be connected to a network to search for stations");
+        this.Close();
+        return;
+      }
+      //Create necessary registry temp keys to begin search
+      RegistryKey rk = Registry.ClassesRoot;
+      RegistryKey rs = rk.OpenSubKey("CLSID\\");
+      string[] names = rs.GetSubKeyNames();
+      bool reged = false;
+      foreach (string s in names)
+      {
+        //Check for shoutcastsource.ax key is registered
+        if (s.StartsWith("{68F540E9-766F-44D2-AB07-E26CC6D27A79}"))
+        {
+          reged = true;
+          break;
+        }
+      }
+      if (!reged)
+      {
+        //Inform the user that they need to register the source to play streams
+        MessageBox.Show(this, "The SHOUTcast source needs to be registered in your system \nto play shoutcast streams with Media Player.\nCheck this link for additional info:\nhttp://www.maisenbachers.de/dokuw/howto:myradio:createshortcuts");
+        this.Close();
+        return;
+      }
+    }
+  }
 }

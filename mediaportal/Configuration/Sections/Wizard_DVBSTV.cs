@@ -155,7 +155,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.button3);
       this.groupBox3.Controls.Add(this.label7);
       this.groupBox3.Controls.Add(this.label8);
-      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox3.Location = new System.Drawing.Point(0, 0);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(472, 408);
@@ -258,7 +257,6 @@ namespace MediaPortal.Configuration.Sections
       // button3
       // 
       this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.button3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.button3.Location = new System.Drawing.Point(384, 336);
       this.button3.Name = "button3";
       this.button3.Size = new System.Drawing.Size(72, 22);

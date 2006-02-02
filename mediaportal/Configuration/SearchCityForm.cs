@@ -132,7 +132,6 @@ namespace MediaPortal.Configuration
       this.groupBox1.Controls.Add(this.label8);
       this.groupBox1.Controls.Add(this.searchButton);
       this.groupBox1.Controls.Add(this.searchTextBox);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(480, 464);
@@ -159,7 +158,6 @@ namespace MediaPortal.Configuration
       this.groupBox2.Controls.Add(this.precipitationTextBox);
       this.groupBox2.Controls.Add(this.addButton);
       this.groupBox2.Controls.Add(this.closeButton);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(16, 56);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(456, 400);
@@ -299,7 +297,6 @@ namespace MediaPortal.Configuration
       // 
       this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.addButton.Enabled = false;
-      this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.addButton.Location = new System.Drawing.Point(288, 368);
       this.addButton.Name = "addButton";
       this.addButton.TabIndex = 0;
@@ -309,7 +306,6 @@ namespace MediaPortal.Configuration
       // closeButton
       // 
       this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.closeButton.Location = new System.Drawing.Point(376, 368);
       this.closeButton.Name = "closeButton";
       this.closeButton.TabIndex = 1;
@@ -328,7 +324,6 @@ namespace MediaPortal.Configuration
       // 
       this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.searchButton.Enabled = false;
-      this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.searchButton.Location = new System.Drawing.Point(360, 24);
       this.searchButton.Name = "searchButton";
       this.searchButton.TabIndex = 1;

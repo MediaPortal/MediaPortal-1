@@ -39,236 +39,238 @@ using Microsoft.CSharp;
 
 namespace MediaPortal.Configuration.Sections
 {
-	/// <summary>
-	/// Summary description for FireDTVRemote.
-	/// </summary>
-	public class FireDTVRemote : MediaPortal.Configuration.SectionSettings
-	{
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.Splitter splitter1;
-		private System.Data.DataSet dataSet1;
-		private System.Windows.Forms.Panel panel2;
-		private System.Windows.Forms.OpenFileDialog openFileDialog1;
-		private System.Windows.Forms.Panel panel3;
-		private System.Windows.Forms.Label labelAction;
-		private System.Windows.Forms.Label labelKey;
-		private System.Windows.Forms.Label labelKeyCode;
-		private System.Windows.Forms.ComboBox comboBoxAction;
-		private System.Windows.Forms.TextBox textBoxKey;
-		private System.Windows.Forms.ComboBox comboBoxKeyCode;
-		private System.Windows.Forms.ComboBox comboBoxGotoWindow;
-		private System.Windows.Forms.Label label1;
-		private System.Data.DataTable RemoteControl;
-		private System.Data.DataColumn dataColumn1;
-		private System.Data.DataColumn dataColumn2;
-		private System.Data.DataColumn dataColumn3;
-		private System.Data.DataTable RemoteControlKeys;
-		private System.Data.DataColumn RemoteID;
-		private System.Data.DataColumn KeyCode;
-		private System.Data.DataColumn ActionType;
-		private System.Data.DataColumn ActionName;
-		private System.Data.DataColumn Key_Value;
-		private System.Data.DataColumn Key_Code;
-		private System.Data.DataColumn DestinationWindow;
-		private System.Data.DataColumn cSharpCode;
-		private System.Data.DataColumn keyDescription;
-		private System.Windows.Forms.ComboBox comboBoxRemoteControl;
-		private System.Windows.Forms.DataGrid dataGrid1;
-		private System.Windows.Forms.DataGridTableStyle RemoteKeys;
-		private System.Data.DataColumn dataColumn4;
-		private System.Windows.Forms.DataGridTextBoxColumn dataGridKeyCode;
-		private System.Windows.Forms.DataGridTextBoxColumn dataGridKeyDescription;
-		private System.Windows.Forms.TextBox textBoxcSharp;
-		private System.Windows.Forms.Label labelcSharp;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.TextBox textBoxCode;
-		private System.Windows.Forms.TextBox textBoxDescription;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnabled;
-		private System.Windows.Forms.ContextMenu contextMenu1;
-		private System.Windows.Forms.MenuItem menuAdd;
-		private System.Windows.Forms.MenuItem menuDelete;
-		private MediaPortal.UserInterface.Controls.MPButton buttonLearn;
-		private System.Windows.Forms.ComboBox comboBoxFireDTVDevice;
-		private System.Windows.Forms.TextBox textBoxFireDTVKeyFile;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxFireDTVEnabled;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAdvanceMode;
-		private System.Windows.Forms.PictureBox pictureBox1;
-		#region RemoteControlKeys
-		public enum FireDTVRemoteControlKeys
-		{
-			RemoteKey_Power				= 768,
-			RemoteKey_Sleep				= 769,
-			RemoteKey_Mute				= 789,
-			RemoteKey_Record			= 791,
-			RemoteKey_PreviousChapter	= 795,
-			RemoteKey_StopEject			= 770,
-			RemoteKey_NextChapter		= 798,
-			RemoteKey_SubTitle			= 790,
-			RemoteKey_Rewind			= 796,
-			RemoteKey_PausePlay			= 797,
-			RemoteKey_FastFoward		= 847,
-			RemoteKey_List				= 848,
-			RemoteKey_Favourites		= 849,
-			RemoteKey_UpArrow			= 780,
-			RemoteKey_Menu				= 850,
-			RemoteKey_LeftArrow			= 776,
-			RemoteKey_Select			= 771,
-			RemoteKey_RightArrow		= 772,
-			RemoteKey_EPG				= 851,
-			RemoteKey_DownArrow			= 784,
-			RemoteKey_Exit				= 852,
-			RemoteKey_VolumeUp			= 799,
-			RemoteKey_VolumeDown		= 843,
-			RemoteKey_ChannelUp			= 832,
-			RemoteKey_ChannelDown		= 844,
-			RemoteKey_ChannelList		= 841,
-			RemoteKey_Last				= 845,
-			RemoteKey_Full				= 788,
-			RemoteKey_Info				= 846,
-			RemoteKey_1					= 773,
-			RemoteKey_2					= 774,
-			RemoteKey_3					= 775,
-			RemoteKey_4					= 777,
-			RemoteKey_5					= 778,
-			RemoteKey_6					= 779,
-			RemoteKey_7					= 781,
-			RemoteKey_8					= 782,
-			RemoteKey_9					= 783,
-			RemoteKey_0					= 786,
-			RemoteKey_Text				= 792,
-			RemoteKey_Audio				= 793,
-			RemoteKey_CI				= 842,
-			RemoteKey_Display4_3		= 833,
-			RemoteKey_Display16_9		= 787,
-			RemoteKey_OnScreenDisplay	= 785,
-			RemoteKey_TV				= 834,
-			RemoteKey_DVD				= 835,
-			RemoteKey_VCR				= 836,
-			RemoteKey_AUX				= 837,
-			RemoteKey_Red				= 794,
-			RemoteKey_Green				= 838,
-			RemoteKey_Yellow			= 839,
-			RemoteKey_Blue				= 840
-		}
-		public enum FireDTVConditions
-		{
-			IsFullScreenVideo,
-			IsPlaying,
-			IsPlayingVideo,
-			IsDVD,
-			IsTV,
-			IsTVRecording,
-			IsTimeShifting
-		}
-		#endregion
+  /// <summary>
+  /// Summary description for FireDTVRemote.
+  /// </summary>
+  public class FireDTVRemote : MediaPortal.Configuration.SectionSettings
+  {
+    private System.Windows.Forms.Panel panel1;
+    private System.Windows.Forms.Splitter splitter1;
+    private System.Data.DataSet dataSet1;
+    private System.Windows.Forms.Panel panel2;
+    private System.Windows.Forms.OpenFileDialog openFileDialog1;
+    private System.Windows.Forms.Panel panel3;
+    private System.Windows.Forms.Label labelAction;
+    private System.Windows.Forms.Label labelKey;
+    private System.Windows.Forms.Label labelKeyCode;
+    private System.Windows.Forms.ComboBox comboBoxAction;
+    private System.Windows.Forms.TextBox textBoxKey;
+    private System.Windows.Forms.ComboBox comboBoxKeyCode;
+    private System.Windows.Forms.ComboBox comboBoxGotoWindow;
+    private System.Windows.Forms.Label label1;
+    private System.Data.DataTable RemoteControl;
+    private System.Data.DataColumn dataColumn1;
+    private System.Data.DataColumn dataColumn2;
+    private System.Data.DataColumn dataColumn3;
+    private System.Data.DataTable RemoteControlKeys;
+    private System.Data.DataColumn RemoteID;
+    private System.Data.DataColumn KeyCode;
+    private System.Data.DataColumn ActionType;
+    private System.Data.DataColumn ActionName;
+    private System.Data.DataColumn Key_Value;
+    private System.Data.DataColumn Key_Code;
+    private System.Data.DataColumn DestinationWindow;
+    private System.Data.DataColumn cSharpCode;
+    private System.Data.DataColumn keyDescription;
+    private System.Windows.Forms.ComboBox comboBoxRemoteControl;
+    private System.Windows.Forms.DataGrid dataGrid1;
+    private System.Windows.Forms.DataGridTableStyle RemoteKeys;
+    private System.Data.DataColumn dataColumn4;
+    private System.Windows.Forms.DataGridTextBoxColumn dataGridKeyCode;
+    private System.Windows.Forms.DataGridTextBoxColumn dataGridKeyDescription;
+    private System.Windows.Forms.TextBox textBoxcSharp;
+    private System.Windows.Forms.Label labelcSharp;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.TextBox textBoxCode;
+    private System.Windows.Forms.TextBox textBoxDescription;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxEnabled;
+    private System.Windows.Forms.ContextMenu contextMenu1;
+    private System.Windows.Forms.MenuItem menuAdd;
+    private System.Windows.Forms.MenuItem menuDelete;
+    private MediaPortal.UserInterface.Controls.MPButton buttonLearn;
+    private System.Windows.Forms.ComboBox comboBoxFireDTVDevice;
+    private System.Windows.Forms.TextBox textBoxFireDTVKeyFile;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxFireDTVEnabled;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxAdvanceMode;
+    private System.Windows.Forms.PictureBox pictureBox1;
+    #region RemoteControlKeys
+    public enum FireDTVRemoteControlKeys
+    {
+      RemoteKey_Power = 768,
+      RemoteKey_Sleep = 769,
+      RemoteKey_Mute = 789,
+      RemoteKey_Record = 791,
+      RemoteKey_PreviousChapter = 795,
+      RemoteKey_StopEject = 770,
+      RemoteKey_NextChapter = 798,
+      RemoteKey_SubTitle = 790,
+      RemoteKey_Rewind = 796,
+      RemoteKey_PausePlay = 797,
+      RemoteKey_FastFoward = 847,
+      RemoteKey_List = 848,
+      RemoteKey_Favourites = 849,
+      RemoteKey_UpArrow = 780,
+      RemoteKey_Menu = 850,
+      RemoteKey_LeftArrow = 776,
+      RemoteKey_Select = 771,
+      RemoteKey_RightArrow = 772,
+      RemoteKey_EPG = 851,
+      RemoteKey_DownArrow = 784,
+      RemoteKey_Exit = 852,
+      RemoteKey_VolumeUp = 799,
+      RemoteKey_VolumeDown = 843,
+      RemoteKey_ChannelUp = 832,
+      RemoteKey_ChannelDown = 844,
+      RemoteKey_ChannelList = 841,
+      RemoteKey_Last = 845,
+      RemoteKey_Full = 788,
+      RemoteKey_Info = 846,
+      RemoteKey_1 = 773,
+      RemoteKey_2 = 774,
+      RemoteKey_3 = 775,
+      RemoteKey_4 = 777,
+      RemoteKey_5 = 778,
+      RemoteKey_6 = 779,
+      RemoteKey_7 = 781,
+      RemoteKey_8 = 782,
+      RemoteKey_9 = 783,
+      RemoteKey_0 = 786,
+      RemoteKey_Text = 792,
+      RemoteKey_Audio = 793,
+      RemoteKey_CI = 842,
+      RemoteKey_Display4_3 = 833,
+      RemoteKey_Display16_9 = 787,
+      RemoteKey_OnScreenDisplay = 785,
+      RemoteKey_TV = 834,
+      RemoteKey_DVD = 835,
+      RemoteKey_VCR = 836,
+      RemoteKey_AUX = 837,
+      RemoteKey_Red = 794,
+      RemoteKey_Green = 838,
+      RemoteKey_Yellow = 839,
+      RemoteKey_Blue = 840
+    }
+    public enum FireDTVConditions
+    {
+      IsFullScreenVideo,
+      IsPlaying,
+      IsPlayingVideo,
+      IsDVD,
+      IsTV,
+      IsTVRecording,
+      IsTimeShifting
+    }
+    #endregion
 
-		#region Private Variables and Methods
-		private MadMouse.FireDTV.FireDTVControl FireDTV = new MadMouse.FireDTV.FireDTVControl(0);
-		private void LoadDrivers()
-		{
-			try
-			{
-				FireDTV.OpenDrivers();
-				comboBoxFireDTVDevice.DataSource	= FireDTV.SourceFilterCollection;
-				comboBoxFireDTVDevice.DisplayMember = "DeviceFriendlyName";
-				comboBoxFireDTVDevice.ValueMember	= "DisplayString";
-			}
-			catch(Exception)
-			{
-			}
-		}
-		#endregion
-		#region LoadSettings
-		public override void LoadSettings()
-		{
-			LoadDrivers();
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				comboBoxAction.DataSource = Enum.GetValues(typeof(Action.ActionType));;
-				comboBoxAction.DisplayMember = "Name";
+    #region Private Variables and Methods
+    private MadMouse.FireDTV.FireDTVControl FireDTV = new MadMouse.FireDTV.FireDTVControl(0);
+    private void LoadDrivers()
+    {
+      try
+      {
+        FireDTV.OpenDrivers();
+        comboBoxFireDTVDevice.DataSource = FireDTV.SourceFilterCollection;
+        comboBoxFireDTVDevice.DisplayMember = "DeviceFriendlyName";
+        comboBoxFireDTVDevice.ValueMember = "DisplayString";
+      }
+      catch (Exception)
+      {
+      }
+    }
+    #endregion
+    #region LoadSettings
+    public override void LoadSettings()
+    {
+      LoadDrivers();
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        comboBoxAction.DataSource = Enum.GetValues(typeof(Action.ActionType)); ;
+        comboBoxAction.DisplayMember = "Name";
 
-				comboBoxKeyCode.DataSource		= Enum.GetValues(typeof(System.Windows.Forms.Keys));
-				comboBoxKeyCode.DisplayMember	= "Name";
-				
-				comboBoxGotoWindow.DataSource = Enum.GetValues(typeof(GUIWindow.Window));
-				comboBoxGotoWindow.DisplayMember = "Name";
+        comboBoxKeyCode.DataSource = Enum.GetValues(typeof(System.Windows.Forms.Keys));
+        comboBoxKeyCode.DisplayMember = "Name";
 
-				checkBoxFireDTVEnabled.Checked	= xmlreader.GetValueAsBool("remote", "FireDTV", false);
-				textBoxFireDTVKeyFile.Text		= xmlreader.GetValueAsString("remote", "FireDTVKeyFile", "FireDTVKeyMap.XML");
-				comboBoxRemoteControl.Text		= xmlreader.GetValueAsString("remote", "FireDTVRemoteName", "FireDTV Remote Control"); 
+        comboBoxGotoWindow.DataSource = Enum.GetValues(typeof(GUIWindow.Window));
+        comboBoxGotoWindow.DisplayMember = "Name";
 
-				checkBoxAdvanceMode.Checked		= xmlreader.GetValueAsBool("remote", "FireDTVAdvanceMode", false);
-				HandleAdvMode(this);
+        checkBoxFireDTVEnabled.Checked = xmlreader.GetValueAsBool("remote", "FireDTV", false);
+        textBoxFireDTVKeyFile.Text = xmlreader.GetValueAsString("remote", "FireDTVKeyFile", "FireDTVKeyMap.XML");
+        comboBoxRemoteControl.Text = xmlreader.GetValueAsString("remote", "FireDTVRemoteName", "FireDTV Remote Control");
 
-				string DeviceName = xmlreader.GetValueAsString("remote", "FireDTVDeviceName", string.Empty);
-				if (DeviceName != string.Empty)
-					comboBoxFireDTVDevice.SelectedValue = DeviceName; 
-				
-			}
-			try
-			{
-				dataSet1.ReadXml(textBoxFireDTVKeyFile.Text);
-			}
-			catch (FileNotFoundException eNofile)
-			{
-				MessageBox.Show(textBoxFireDTVKeyFile.Text + " : " + eNofile.Message);
-			}
+        checkBoxAdvanceMode.Checked = xmlreader.GetValueAsBool("remote", "FireDTVAdvanceMode", false);
+        HandleAdvMode(this);
 
-		}
-		#endregion
-		#region SaveSettings
-		public override void SaveSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				xmlwriter.SetValueAsBool("remote", "FireDTV", checkBoxFireDTVEnabled.Checked);
-				xmlwriter.SetValue("remote", "FireDTVKeyFile", textBoxFireDTVKeyFile.Text);
-				xmlwriter.SetValue("remote", "FireDTVRemoteName", comboBoxRemoteControl.Text);
-				xmlwriter.SetValue("remote", "FireDTVDeviceName", comboBoxFireDTVDevice.SelectedValue);
-				xmlwriter.SetValueAsBool("remote", "FireDTVAdvanceMode", checkBoxAdvanceMode.Checked);
-			}
-			dataSet1.WriteXml(textBoxFireDTVKeyFile.Text);
-			dataSet1.WriteXmlSchema(textBoxFireDTVKeyFile.Text + ".Schema");
-		}
-		#endregion
-		#region Constructor and Destructor
-		public FireDTVRemote() : this("FireDTV Remote")
-		{
-		}
+        string DeviceName = xmlreader.GetValueAsString("remote", "FireDTVDeviceName", string.Empty);
+        if (DeviceName != string.Empty)
+          comboBoxFireDTVDevice.SelectedValue = DeviceName;
 
-		public FireDTVRemote(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+      }
+      try
+      {
+        dataSet1.ReadXml(textBoxFireDTVKeyFile.Text);
+      }
+      catch (FileNotFoundException eNofile)
+      {
+        MessageBox.Show(textBoxFireDTVKeyFile.Text + " : " + eNofile.Message);
+      }
 
-		}
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
-		#endregion
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    }
+    #endregion
+    #region SaveSettings
+    public override void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValueAsBool("remote", "FireDTV", checkBoxFireDTVEnabled.Checked);
+        xmlwriter.SetValue("remote", "FireDTVKeyFile", textBoxFireDTVKeyFile.Text);
+        xmlwriter.SetValue("remote", "FireDTVRemoteName", comboBoxRemoteControl.Text);
+        xmlwriter.SetValue("remote", "FireDTVDeviceName", comboBoxFireDTVDevice.SelectedValue);
+        xmlwriter.SetValueAsBool("remote", "FireDTVAdvanceMode", checkBoxAdvanceMode.Checked);
+      }
+      dataSet1.WriteXml(textBoxFireDTVKeyFile.Text);
+      dataSet1.WriteXmlSchema(textBoxFireDTVKeyFile.Text + ".Schema");
+    }
+    #endregion
+    #region Constructor and Destructor
+    public FireDTVRemote()
+      : this("FireDTV Remote")
+    {
+    }
+
+    public FireDTVRemote(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
+
+    }
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
+    #endregion
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FireDTVRemote));
       this.panel1 = new System.Windows.Forms.Panel();
       this.dataGrid1 = new System.Windows.Forms.DataGrid();
@@ -545,7 +547,6 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxAdvanceMode
       // 
       this.checkBoxAdvanceMode.Dock = System.Windows.Forms.DockStyle.Top;
-      this.checkBoxAdvanceMode.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxAdvanceMode.Location = new System.Drawing.Point(0, 86);
       this.checkBoxAdvanceMode.Name = "checkBoxAdvanceMode";
       this.checkBoxAdvanceMode.Size = new System.Drawing.Size(216, 19);
@@ -587,7 +588,6 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxFireDTVEnabled
       // 
       this.checkBoxFireDTVEnabled.Dock = System.Windows.Forms.DockStyle.Top;
-      this.checkBoxFireDTVEnabled.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxFireDTVEnabled.Location = new System.Drawing.Point(0, 0);
       this.checkBoxFireDTVEnabled.Name = "checkBoxFireDTVEnabled";
       this.checkBoxFireDTVEnabled.Size = new System.Drawing.Size(216, 24);
@@ -647,7 +647,6 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxEnabled
       // 
       this.checkBoxEnabled.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.dataSet1, "RemoteControlKeys.Enabled"));
-      this.checkBoxEnabled.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxEnabled.Location = new System.Drawing.Point(86, 4);
       this.checkBoxEnabled.Name = "checkBoxEnabled";
       this.checkBoxEnabled.Size = new System.Drawing.Size(104, 20);
@@ -657,7 +656,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxDescription
       // 
-      this.textBoxDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.textBoxDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.keyDescription"));
       this.textBoxDescription.Location = new System.Drawing.Point(62, 46);
@@ -670,7 +669,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxCode
       // 
-      this.textBoxCode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.textBoxCode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.KeyCode"));
       this.textBoxCode.Location = new System.Drawing.Point(62, 26);
@@ -725,7 +724,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonLearn
       // 
-      this.buttonLearn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonLearn.Location = new System.Drawing.Point(4, 2);
       this.buttonLearn.Name = "buttonLearn";
       this.buttonLearn.TabIndex = 10;
@@ -736,7 +734,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxGotoWindow
       // 
-      this.comboBoxGotoWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.comboBoxGotoWindow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxGotoWindow.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.DestinationWindow"));
       this.comboBoxGotoWindow.Location = new System.Drawing.Point(62, 131);
@@ -758,7 +756,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxKeyCode
       // 
-      this.comboBoxKeyCode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.comboBoxKeyCode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxKeyCode.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.Key_Code"));
       this.comboBoxKeyCode.Location = new System.Drawing.Point(62, 108);
@@ -770,7 +768,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxKey
       // 
-      this.textBoxKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.textBoxKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxKey.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.Key_Value"));
       this.textBoxKey.Location = new System.Drawing.Point(62, 88);
@@ -814,7 +812,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxAction
       // 
-      this.comboBoxAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.comboBoxAction.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxAction.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.dataSet1, "RemoteControlKeys.ActionName"));
       this.comboBoxAction.Location = new System.Drawing.Point(62, 66);
@@ -841,67 +839,67 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		private void openDialogButton_Click(object sender, System.EventArgs e)
-		{
-			openFileDialog1.InitialDirectory = System.Windows.Forms.Application.StartupPath;
-			openFileDialog1.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*" ;
-			openFileDialog1.FilterIndex = 1 ;
-			openFileDialog1.RestoreDirectory = true ;
+    private void openDialogButton_Click(object sender, System.EventArgs e)
+    {
+      openFileDialog1.InitialDirectory = System.Windows.Forms.Application.StartupPath;
+      openFileDialog1.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
+      openFileDialog1.FilterIndex = 1;
+      openFileDialog1.RestoreDirectory = true;
 
-			if (openFileDialog1.ShowDialog() == DialogResult.OK)
-				textBoxFireDTVKeyFile.Text = openFileDialog1.FileName;
-		}
+      if (openFileDialog1.ShowDialog() == DialogResult.OK)
+        textBoxFireDTVKeyFile.Text = openFileDialog1.FileName;
+    }
 
-		private void comboBox1_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			MessageBox.Show(comboBoxAction.SelectedValue.ToString());
-		}
+    private void comboBox1_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      MessageBox.Show(comboBoxAction.SelectedValue.ToString());
+    }
 
-		private void labelKeyCode_Click(object sender, System.EventArgs e)
-		{
-		
-		}
+    private void labelKeyCode_Click(object sender, System.EventArgs e)
+    {
 
-		private void button1_Click(object sender, System.EventArgs e)
-		{
-			
-		}
+    }
 
-		private void buttonLoad_Click(object sender, System.EventArgs e)
-		{
-			
-		}
+    private void button1_Click(object sender, System.EventArgs e)
+    {
 
-		private void dataGrid1_CurrentCellChanged(object sender, System.EventArgs e)
-		{
-		
-		}
+    }
 
-		private void menuDelete_Click(object sender, System.EventArgs e)
-		{
-			
-		}
+    private void buttonLoad_Click(object sender, System.EventArgs e)
+    {
 
-		private void HandleAdvMode(System.Windows.Forms.Control baseControl)
-		{
-			foreach(System.Windows.Forms.Control ctrl in baseControl.Controls)
-			{
-				if (ctrl != null)
-				{
-					if (ctrl.HasChildren)
-						HandleAdvMode(ctrl);
+    }
 
-					if ((ctrl.Tag != null) && (ctrl.Tag.ToString() == "1"))
-						ctrl.Visible = checkBoxAdvanceMode.Checked;
-				}
-			}
-		}
-		private void checkBoxAdvanceMode_CheckedChanged(object sender, System.EventArgs e)
-		{
-			HandleAdvMode(this);		
+    private void dataGrid1_CurrentCellChanged(object sender, System.EventArgs e)
+    {
 
-		}
-	}
+    }
+
+    private void menuDelete_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void HandleAdvMode(System.Windows.Forms.Control baseControl)
+    {
+      foreach (System.Windows.Forms.Control ctrl in baseControl.Controls)
+      {
+        if (ctrl != null)
+        {
+          if (ctrl.HasChildren)
+            HandleAdvMode(ctrl);
+
+          if ((ctrl.Tag != null) && (ctrl.Tag.ToString() == "1"))
+            ctrl.Visible = checkBoxAdvanceMode.Checked;
+        }
+      }
+    }
+    private void checkBoxAdvanceMode_CheckedChanged(object sender, System.EventArgs e)
+    {
+      HandleAdvMode(this);
+
+    }
+  }
 }

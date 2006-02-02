@@ -150,7 +150,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.label5);
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.audioCodecComboBox);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 152);
@@ -257,7 +256,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.label4);
       this.groupBox2.Controls.Add(this.inputComboBox);
       this.groupBox2.Controls.Add(this.label1);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(0, 160);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 82);
@@ -313,7 +311,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Controls.Add(this.textBoxTimeShiftBuffer);
       this.groupBox4.Controls.Add(this.label7);
       this.groupBox4.Controls.Add(this.cbTurnOnTv);
-      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox4.Location = new System.Drawing.Point(0, 248);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(472, 88);
@@ -341,7 +338,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbTurnOnTv
       // 
-      this.cbTurnOnTv.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cbTurnOnTv.Location = new System.Drawing.Point(16, 24);
       this.cbTurnOnTv.Name = "cbTurnOnTv";
       this.cbTurnOnTv.Size = new System.Drawing.Size(200, 16);
@@ -353,7 +349,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.byIndexCheckBox);
-      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox3.Location = new System.Drawing.Point(0, 342);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(472, 53);
@@ -364,7 +359,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // byIndexCheckBox
       // 
-      this.byIndexCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.byIndexCheckBox.Location = new System.Drawing.Point(16, 19);
       this.byIndexCheckBox.Name = "byIndexCheckBox";
       this.byIndexCheckBox.Size = new System.Drawing.Size(200, 37);

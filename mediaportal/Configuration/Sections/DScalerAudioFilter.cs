@@ -38,57 +38,59 @@ using DirectShowLib;
 namespace MediaPortal.Configuration.Sections
 {
 
-	public class DScalerAudioFilter : MediaPortal.Configuration.SectionSettings
-	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label5;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSPDIF;
-		private System.Windows.Forms.ComboBox comboBoxSpeakerConfig;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDynamicRange;
-		private System.Windows.Forms.TextBox textBoxAudioOffset;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMPEGOverSPDIF;
-		private System.ComponentModel.IContainer components = null;
+  public class DScalerAudioFilter : MediaPortal.Configuration.SectionSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Label label5;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSPDIF;
+    private System.Windows.Forms.ComboBox comboBoxSpeakerConfig;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDynamicRange;
+    private System.Windows.Forms.TextBox textBoxAudioOffset;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMPEGOverSPDIF;
+    private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public DScalerAudioFilter() : this("DScaler Audio Decoder")
-		{
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    public DScalerAudioFilter()
+      : this("DScaler Audio Decoder")
+    {
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public DScalerAudioFilter(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    /// <summary>
+    /// 
+    /// </summary>
+    public DScalerAudioFilter(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-		}
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.textBoxAudioOffset = new System.Windows.Forms.TextBox();
       this.comboBoxSpeakerConfig = new System.Windows.Forms.ComboBox();
@@ -102,7 +104,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.textBoxAudioOffset);
       this.groupBox1.Controls.Add(this.comboBoxSpeakerConfig);
@@ -111,7 +113,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.checkBoxSPDIF);
       this.groupBox1.Controls.Add(this.checkBoxDynamicRange);
       this.groupBox1.Controls.Add(this.label3);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 168);
@@ -121,7 +122,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxAudioOffset
       // 
-      this.textBoxAudioOffset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.textBoxAudioOffset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxAudioOffset.Location = new System.Drawing.Point(168, 132);
       this.textBoxAudioOffset.Name = "textBoxAudioOffset";
@@ -131,7 +132,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxSpeakerConfig
       // 
-      this.comboBoxSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.comboBoxSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxSpeakerConfig.Items.AddRange(new object[] {
@@ -149,7 +150,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxMPEGOverSPDIF
       // 
-      this.checkBoxMPEGOverSPDIF.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxMPEGOverSPDIF.Location = new System.Drawing.Point(16, 104);
       this.checkBoxMPEGOverSPDIF.Name = "checkBoxMPEGOverSPDIF";
       this.checkBoxMPEGOverSPDIF.Size = new System.Drawing.Size(152, 16);
@@ -166,7 +166,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxSPDIF
       // 
-      this.checkBoxSPDIF.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxSPDIF.Location = new System.Drawing.Point(16, 56);
       this.checkBoxSPDIF.Name = "checkBoxSPDIF";
       this.checkBoxSPDIF.Size = new System.Drawing.Size(144, 16);
@@ -175,7 +174,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxDynamicRange
       // 
-      this.checkBoxDynamicRange.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxDynamicRange.Location = new System.Drawing.Point(16, 80);
       this.checkBoxDynamicRange.Name = "checkBoxDynamicRange";
       this.checkBoxDynamicRange.Size = new System.Drawing.Size(136, 16);
@@ -199,79 +197,79 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		public override void LoadSettings()
-		{
-			RegistryKey hkcu = Registry.CurrentUser;
-			RegistryKey subkey = hkcu.CreateSubKey(@"Software\DScaler5\Mpeg Audio Filter");
-			if (subkey!=null)
-			{
-				try
-				{
-					Int32 regValue=(Int32)subkey.GetValue("Dynamic Range Control");
-					if (regValue==1) checkBoxDynamicRange.Checked=true;
-					else checkBoxDynamicRange.Checked=false;
+    public override void LoadSettings()
+    {
+      RegistryKey hkcu = Registry.CurrentUser;
+      RegistryKey subkey = hkcu.CreateSubKey(@"Software\DScaler5\Mpeg Audio Filter");
+      if (subkey != null)
+      {
+        try
+        {
+          Int32 regValue = (Int32)subkey.GetValue("Dynamic Range Control");
+          if (regValue == 1) checkBoxDynamicRange.Checked = true;
+          else checkBoxDynamicRange.Checked = false;
 
-					regValue=(Int32)subkey.GetValue("MPEG Audio over SPDIF");
-					if (regValue==1) checkBoxMPEGOverSPDIF.Checked=true;
-					else checkBoxMPEGOverSPDIF.Checked=false;
+          regValue = (Int32)subkey.GetValue("MPEG Audio over SPDIF");
+          if (regValue == 1) checkBoxMPEGOverSPDIF.Checked = true;
+          else checkBoxMPEGOverSPDIF.Checked = false;
 
-					regValue=(Int32)subkey.GetValue("Use SPDIF for AC3 & DTS");
-					if (regValue==1) checkBoxSPDIF.Checked=true;
-					else checkBoxSPDIF.Checked=false;
-					
-					regValue=(Int32)subkey.GetValue("SPDIF Audio Time Offset");
-					textBoxAudioOffset.Text=regValue.ToString();
+          regValue = (Int32)subkey.GetValue("Use SPDIF for AC3 & DTS");
+          if (regValue == 1) checkBoxSPDIF.Checked = true;
+          else checkBoxSPDIF.Checked = false;
 
-					regValue=(Int32)subkey.GetValue("Speaker Config");
-					comboBoxSpeakerConfig.SelectedIndex=regValue;
+          regValue = (Int32)subkey.GetValue("SPDIF Audio Time Offset");
+          textBoxAudioOffset.Text = regValue.ToString();
 
-				}
-				catch(Exception )
-				{
-				}
-				finally
-				{
-					subkey.Close();
-				}
-			}
-		}
+          regValue = (Int32)subkey.GetValue("Speaker Config");
+          comboBoxSpeakerConfig.SelectedIndex = regValue;
 
-		public override void SaveSettings()
-		{
-			RegistryKey hkcu = Registry.CurrentUser;
-			RegistryKey subkey = hkcu.CreateSubKey(@"Software\DScaler5\Mpeg Audio Filter");
-			if (subkey!=null)
-			{
-				Int32 regValue;
-				if (checkBoxDynamicRange.Checked) regValue=1;
-				else regValue=0;
-				subkey.SetValue("Dynamic Range Control",regValue);
+        }
+        catch (Exception)
+        {
+        }
+        finally
+        {
+          subkey.Close();
+        }
+      }
+    }
 
-				
-				if (checkBoxMPEGOverSPDIF.Checked) regValue=1;
-				else regValue=0;
-				subkey.SetValue("MPEG Audio over SPDIF",regValue);
+    public override void SaveSettings()
+    {
+      RegistryKey hkcu = Registry.CurrentUser;
+      RegistryKey subkey = hkcu.CreateSubKey(@"Software\DScaler5\Mpeg Audio Filter");
+      if (subkey != null)
+      {
+        Int32 regValue;
+        if (checkBoxDynamicRange.Checked) regValue = 1;
+        else regValue = 0;
+        subkey.SetValue("Dynamic Range Control", regValue);
 
-				if (checkBoxSPDIF.Checked) regValue=1;
-				else regValue=0;
-				subkey.SetValue("Use SPDIF for AC3 & DTS",regValue);
 
-				regValue=Int32.Parse(textBoxAudioOffset.Text);
-				subkey.SetValue("SPDIF Audio Time Offset",regValue);
+        if (checkBoxMPEGOverSPDIF.Checked) regValue = 1;
+        else regValue = 0;
+        subkey.SetValue("MPEG Audio over SPDIF", regValue);
 
-				regValue=comboBoxSpeakerConfig.SelectedIndex;
-				subkey.SetValue("Speaker Config",regValue);
+        if (checkBoxSPDIF.Checked) regValue = 1;
+        else regValue = 0;
+        subkey.SetValue("Use SPDIF for AC3 & DTS", regValue);
 
-				subkey.Close();
-			}
-		}
+        regValue = Int32.Parse(textBoxAudioOffset.Text);
+        subkey.SetValue("SPDIF Audio Time Offset", regValue);
+
+        regValue = comboBoxSpeakerConfig.SelectedIndex;
+        subkey.SetValue("Speaker Config", regValue);
+
+        subkey.Close();
+      }
+    }
 
     private void comboBoxSpeakerConfig_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-    
+
     }
-	}
+  }
 }
 

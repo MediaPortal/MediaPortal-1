@@ -97,7 +97,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.browseFolderButton);
       this.groupBox2.Controls.Add(this.folderNameTextBox);
       this.groupBox2.Controls.Add(this.folderNameLabel);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(0, 0);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 56);
@@ -108,7 +107,6 @@ namespace MediaPortal.Configuration.Sections
       // browseFolderButton
       // 
       this.browseFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.browseFolderButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.browseFolderButton.Location = new System.Drawing.Point(384, 19);
       this.browseFolderButton.Name = "browseFolderButton";
       this.browseFolderButton.Size = new System.Drawing.Size(72, 22);

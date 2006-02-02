@@ -200,7 +200,6 @@ namespace MediaPortal.Configuration.Sections
       // useColorCheckBox
       // 
       this.useColorCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.useColorCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useColorCheckBox.Location = new System.Drawing.Point(16, 24);
       this.useColorCheckBox.Name = "useColorCheckBox";
       this.useColorCheckBox.Size = new System.Drawing.Size(216, 16);
@@ -235,7 +234,6 @@ namespace MediaPortal.Configuration.Sections
       // btnClearTVDatabase
       // 
       this.btnClearTVDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnClearTVDatabase.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnClearTVDatabase.Location = new System.Drawing.Point(272, 16);
       this.btnClearTVDatabase.Name = "btnClearTVDatabase";
       this.btnClearTVDatabase.Size = new System.Drawing.Size(144, 32);
@@ -246,7 +244,6 @@ namespace MediaPortal.Configuration.Sections
       // btnUpdateTvGuide
       // 
       this.btnUpdateTvGuide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnUpdateTvGuide.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnUpdateTvGuide.Location = new System.Drawing.Point(272, 76);
       this.btnUpdateTvGuide.Name = "btnUpdateTvGuide";
       this.btnUpdateTvGuide.Size = new System.Drawing.Size(144, 32);
@@ -257,7 +254,6 @@ namespace MediaPortal.Configuration.Sections
       // RunGrabberButton
       // 
       this.RunGrabberButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.RunGrabberButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.RunGrabberButton.Location = new System.Drawing.Point(344, 192);
       this.RunGrabberButton.Name = "RunGrabberButton";
       this.RunGrabberButton.Size = new System.Drawing.Size(72, 22);
@@ -268,7 +264,6 @@ namespace MediaPortal.Configuration.Sections
       // advancedRadioButton
       // 
       this.advancedRadioButton.Enabled = false;
-      this.advancedRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.advancedRadioButton.Location = new System.Drawing.Point(16, 100);
       this.advancedRadioButton.Name = "advancedRadioButton";
       this.advancedRadioButton.Size = new System.Drawing.Size(160, 16);
@@ -287,7 +282,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // useTimeZoneCheckBox
       // 
-      this.useTimeZoneCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useTimeZoneCheckBox.Location = new System.Drawing.Point(16, 56);
       this.useTimeZoneCheckBox.Name = "useTimeZoneCheckBox";
       this.useTimeZoneCheckBox.Size = new System.Drawing.Size(224, 16);
@@ -306,7 +300,6 @@ namespace MediaPortal.Configuration.Sections
       // browseButton
       // 
       this.browseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.browseButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.browseButton.Location = new System.Drawing.Point(344, 19);
       this.browseButton.Name = "browseButton";
       this.browseButton.Size = new System.Drawing.Size(72, 22);
@@ -355,7 +348,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.parametersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersButton.Enabled = false;
-      this.parametersButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.parametersButton.Location = new System.Drawing.Point(344, 43);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
@@ -423,7 +415,6 @@ namespace MediaPortal.Configuration.Sections
       // basicRadioButton
       // 
       this.basicRadioButton.Enabled = false;
-      this.basicRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.basicRadioButton.Location = new System.Drawing.Point(16, 76);
       this.basicRadioButton.Name = "basicRadioButton";
       this.basicRadioButton.Size = new System.Drawing.Size(120, 16);
@@ -473,7 +464,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // createScheduleCheckBox
       // 
-      this.createScheduleCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.createScheduleCheckBox.Location = new System.Drawing.Point(16, 23);
       this.createScheduleCheckBox.Name = "createScheduleCheckBox";
       this.createScheduleCheckBox.Size = new System.Drawing.Size(96, 16);
@@ -528,7 +518,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.DeleteTaskButton);
       this.groupBox3.Controls.Add(this.label13);
       this.groupBox3.Controls.Add(this.label2);
-      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox3.Location = new System.Drawing.Point(16, 248);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(432, 120);
@@ -539,7 +528,6 @@ namespace MediaPortal.Configuration.Sections
       // DeleteTaskButton
       // 
       this.DeleteTaskButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.DeleteTaskButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.DeleteTaskButton.Location = new System.Drawing.Point(344, 88);
       this.DeleteTaskButton.Name = "DeleteTaskButton";
       this.DeleteTaskButton.Size = new System.Drawing.Size(72, 22);
@@ -586,7 +574,6 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox4.Controls.Add(this.useColorCheckBox);
       this.groupBox4.Controls.Add(this.btnClearTVDatabase);
-      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox4.Location = new System.Drawing.Point(16, 312);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(432, 56);
@@ -604,7 +591,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.button3);
       this.groupBox2.Controls.Add(this.button2);
       this.groupBox2.Controls.Add(this.treeView1);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(16, 144);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(432, 160);
@@ -648,7 +634,6 @@ namespace MediaPortal.Configuration.Sections
       // button3
       // 
       this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.button3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.button3.Location = new System.Drawing.Point(344, 120);
       this.button3.Name = "button3";
       this.button3.Size = new System.Drawing.Size(72, 22);
@@ -659,7 +644,6 @@ namespace MediaPortal.Configuration.Sections
       // button2
       // 
       this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.button2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.button2.Location = new System.Drawing.Point(264, 120);
       this.button2.Name = "button2";
       this.button2.Size = new System.Drawing.Size(72, 22);
@@ -692,7 +676,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.label16);
       this.groupBox1.Controls.Add(this.folderNameLabel);
       this.groupBox1.Controls.Add(this.btnUpdateTvGuide);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(16, 16);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(432, 120);
@@ -736,7 +719,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox5.Controls.Add(this.AdvancedDaystextBox);
       this.groupBox5.Controls.Add(this.advancedRadioButton);
       this.groupBox5.Controls.Add(this.label4);
-      this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox5.Location = new System.Drawing.Point(16, 16);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(432, 224);
@@ -746,7 +728,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // runGrabberLowPriorityCheckBox
       // 
-      this.runGrabberLowPriorityCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.runGrabberLowPriorityCheckBox.Location = new System.Drawing.Point(16, 192);
       this.runGrabberLowPriorityCheckBox.Name = "runGrabberLowPriorityCheckBox";
       this.runGrabberLowPriorityCheckBox.Size = new System.Drawing.Size(168, 16);

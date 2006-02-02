@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+
 namespace MediaPortal.Configuration
 {
   /// <summary>
@@ -130,7 +131,6 @@ namespace MediaPortal.Configuration
       this.groupBox1.Controls.Add(this.nameTextBox);
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(360, 196);
@@ -248,7 +248,6 @@ namespace MediaPortal.Configuration
       // 
       this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.closeButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.closeButton.Location = new System.Drawing.Point(292, 213);
       this.closeButton.Name = "closeButton";
       this.closeButton.TabIndex = 2;
@@ -258,7 +257,6 @@ namespace MediaPortal.Configuration
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.okButton.Location = new System.Drawing.Point(211, 213);
       this.okButton.Name = "okButton";
       this.okButton.TabIndex = 1;
@@ -269,7 +267,6 @@ namespace MediaPortal.Configuration
       // 
       this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.searchButton.Enabled = false;
-      this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.searchButton.Location = new System.Drawing.Point(16, 214);
       this.searchButton.Name = "searchButton";
       this.searchButton.Size = new System.Drawing.Size(104, 22);

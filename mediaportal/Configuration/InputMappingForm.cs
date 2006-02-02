@@ -211,7 +211,6 @@ namespace MediaPortal.Configuration
       // 
       // radioButtonWindow
       // 
-      this.radioButtonWindow.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonWindow.Location = new System.Drawing.Point(24, 20);
       this.radioButtonWindow.Name = "radioButtonWindow";
       this.radioButtonWindow.Size = new System.Drawing.Size(88, 16);
@@ -221,7 +220,6 @@ namespace MediaPortal.Configuration
       // 
       // radioButtonFullscreen
       // 
-      this.radioButtonFullscreen.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonFullscreen.Location = new System.Drawing.Point(112, 20);
       this.radioButtonFullscreen.Name = "radioButtonFullscreen";
       this.radioButtonFullscreen.Size = new System.Drawing.Size(88, 16);
@@ -231,7 +229,6 @@ namespace MediaPortal.Configuration
       // 
       // radioButtonPlaying
       // 
-      this.radioButtonPlaying.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonPlaying.Location = new System.Drawing.Point(24, 44);
       this.radioButtonPlaying.Name = "radioButtonPlaying";
       this.radioButtonPlaying.Size = new System.Drawing.Size(88, 16);
@@ -241,7 +238,6 @@ namespace MediaPortal.Configuration
       // 
       // radioButtonNoCondition
       // 
-      this.radioButtonNoCondition.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonNoCondition.Location = new System.Drawing.Point(112, 44);
       this.radioButtonNoCondition.Name = "radioButtonNoCondition";
       this.radioButtonNoCondition.Size = new System.Drawing.Size(88, 16);
@@ -280,7 +276,6 @@ namespace MediaPortal.Configuration
       this.groupBoxCondition.Controls.Add(this.radioButtonNoCondition);
       this.groupBoxCondition.Controls.Add(this.comboBoxCondProperty);
       this.groupBoxCondition.Enabled = false;
-      this.groupBoxCondition.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBoxCondition.Location = new System.Drawing.Point(352, 108);
       this.groupBoxCondition.Name = "groupBoxCondition";
       this.groupBoxCondition.Size = new System.Drawing.Size(224, 100);
@@ -290,7 +285,6 @@ namespace MediaPortal.Configuration
       // 
       // radioButtonAction
       // 
-      this.radioButtonAction.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonAction.Location = new System.Drawing.Point(24, 20);
       this.radioButtonAction.Name = "radioButtonAction";
       this.radioButtonAction.Size = new System.Drawing.Size(88, 16);
@@ -300,7 +294,6 @@ namespace MediaPortal.Configuration
       // 
       // radioButtonActWindow
       // 
-      this.radioButtonActWindow.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonActWindow.Location = new System.Drawing.Point(112, 20);
       this.radioButtonActWindow.Name = "radioButtonActWindow";
       this.radioButtonActWindow.Size = new System.Drawing.Size(88, 16);
@@ -310,7 +303,6 @@ namespace MediaPortal.Configuration
       // 
       // radioButtonToggle
       // 
-      this.radioButtonToggle.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonToggle.Location = new System.Drawing.Point(112, 44);
       this.radioButtonToggle.Name = "radioButtonToggle";
       this.radioButtonToggle.Size = new System.Drawing.Size(88, 16);
@@ -320,7 +312,6 @@ namespace MediaPortal.Configuration
       // 
       // radioButtonPower
       // 
-      this.radioButtonPower.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonPower.Location = new System.Drawing.Point(24, 44);
       this.radioButtonPower.Name = "radioButtonPower";
       this.radioButtonPower.Size = new System.Drawing.Size(80, 16);
@@ -343,7 +334,6 @@ namespace MediaPortal.Configuration
       this.groupBoxAction.Controls.Add(this.radioButtonPower);
       this.groupBoxAction.Controls.Add(this.comboBoxCmdProperty);
       this.groupBoxAction.Enabled = false;
-      this.groupBoxAction.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBoxAction.Location = new System.Drawing.Point(352, 216);
       this.groupBoxAction.Name = "groupBoxAction";
       this.groupBoxAction.Size = new System.Drawing.Size(224, 192);
@@ -384,7 +374,6 @@ namespace MediaPortal.Configuration
       // 
       // radioButtonProcess
       // 
-      this.radioButtonProcess.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonProcess.Location = new System.Drawing.Point(24, 68);
       this.radioButtonProcess.Name = "radioButtonProcess";
       this.radioButtonProcess.Size = new System.Drawing.Size(80, 16);
@@ -414,7 +403,6 @@ namespace MediaPortal.Configuration
       // applyButton
       // 
       this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.applyButton.Location = new System.Drawing.Point(348, 437);
       this.applyButton.Name = "applyButton";
       this.applyButton.Size = new System.Drawing.Size(75, 23);
@@ -425,7 +413,6 @@ namespace MediaPortal.Configuration
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.okButton.Location = new System.Drawing.Point(428, 437);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
@@ -437,7 +424,6 @@ namespace MediaPortal.Configuration
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cancelButton.Location = new System.Drawing.Point(507, 437);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -450,7 +436,6 @@ namespace MediaPortal.Configuration
       this.groupBoxLayer.Controls.Add(this.comboBoxLayer);
       this.groupBoxLayer.Controls.Add(this.labelLayer);
       this.groupBoxLayer.Enabled = false;
-      this.groupBoxLayer.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBoxLayer.Location = new System.Drawing.Point(352, 48);
       this.groupBoxLayer.Name = "groupBoxLayer";
       this.groupBoxLayer.Size = new System.Drawing.Size(224, 52);
@@ -480,7 +465,6 @@ namespace MediaPortal.Configuration
       // buttonUp
       // 
       this.buttonUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonUp.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonUp.Location = new System.Drawing.Point(16, 392);
       this.buttonUp.Name = "buttonUp";
       this.buttonUp.Size = new System.Drawing.Size(56, 16);
@@ -491,7 +475,6 @@ namespace MediaPortal.Configuration
       // buttonDown
       // 
       this.buttonDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDown.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonDown.Location = new System.Drawing.Point(80, 392);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(56, 16);
@@ -502,7 +485,6 @@ namespace MediaPortal.Configuration
       // buttonNew
       // 
       this.buttonNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonNew.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonNew.Location = new System.Drawing.Point(144, 392);
       this.buttonNew.Name = "buttonNew";
       this.buttonNew.Size = new System.Drawing.Size(56, 16);
@@ -513,7 +495,6 @@ namespace MediaPortal.Configuration
       // buttonRemove
       // 
       this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonRemove.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonRemove.Location = new System.Drawing.Point(208, 392);
       this.buttonRemove.Name = "buttonRemove";
       this.buttonRemove.Size = new System.Drawing.Size(56, 16);
@@ -524,7 +505,6 @@ namespace MediaPortal.Configuration
       // buttonDefault
       // 
       this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDefault.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonDefault.Location = new System.Drawing.Point(272, 392);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(56, 16);

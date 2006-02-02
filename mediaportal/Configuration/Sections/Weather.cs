@@ -31,192 +31,194 @@ using System.Windows.Forms;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class Weather : MediaPortal.Configuration.SectionSettings
-	{
-		const int MaximumCities = 20;
+  public class Weather : MediaPortal.Configuration.SectionSettings
+  {
+    const int MaximumCities = 20;
 
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.ComboBox temperatureComboBox;
-		private System.Windows.Forms.ComboBox windSpeedComboBox;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
-		private MediaPortal.UserInterface.Controls.MPButton removeButton;
-		private MediaPortal.UserInterface.Controls.MPButton searchButton;
-		private MediaPortal.UserInterface.Controls.MPListView citiesListView;
-		private System.Windows.Forms.ColumnHeader columnHeader1;
-		private System.Windows.Forms.ColumnHeader columnHeader2;
-		private System.Windows.Forms.TextBox intervalTextBox;
-		private MediaPortal.UserInterface.Controls.MPButton editButton;
-		private System.Windows.Forms.ColumnHeader columnHeader3;
-		private System.Windows.Forms.ColumnHeader columnHeader4;
-		private System.Windows.Forms.ColumnHeader columnHeader5;
-		private System.Windows.Forms.ColumnHeader columnHeader6;
-		private System.Windows.Forms.ColumnHeader columnHeader7;
-		private System.Windows.Forms.ColumnHeader columnHeader8;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.ComboBox temperatureComboBox;
+    private System.Windows.Forms.ComboBox windSpeedComboBox;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label label3;
+    private MediaPortal.UserInterface.Controls.MPButton removeButton;
+    private MediaPortal.UserInterface.Controls.MPButton searchButton;
+    private MediaPortal.UserInterface.Controls.MPListView citiesListView;
+    private System.Windows.Forms.ColumnHeader columnHeader1;
+    private System.Windows.Forms.ColumnHeader columnHeader2;
+    private System.Windows.Forms.TextBox intervalTextBox;
+    private MediaPortal.UserInterface.Controls.MPButton editButton;
+    private System.Windows.Forms.ColumnHeader columnHeader3;
+    private System.Windows.Forms.ColumnHeader columnHeader4;
+    private System.Windows.Forms.ColumnHeader columnHeader5;
+    private System.Windows.Forms.ColumnHeader columnHeader6;
+    private System.Windows.Forms.ColumnHeader columnHeader7;
+    private System.Windows.Forms.ColumnHeader columnHeader8;
 
-		private System.ComponentModel.IContainer components = null;
+    private System.ComponentModel.IContainer components = null;
 
-		public Weather() : this("Weather")
-		{
-		}
+    public Weather()
+      : this("Weather")
+    {
+    }
 
-		public Weather(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public Weather(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			//
-			// Populate combo boxes with default values
-			//
-			temperatureComboBox.Items.AddRange(new string[] { "Celsius", "Fahrenheit" });
-			windSpeedComboBox.Items.AddRange(new string[] { "m/s", "km/hour", "mph" });
-		}
+      //
+      // Populate combo boxes with default values
+      //
+      temperatureComboBox.Items.AddRange(new string[] { "Celsius", "Fahrenheit" });
+      windSpeedComboBox.Items.AddRange(new string[] { "m/s", "km/hour", "mph" });
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public override void LoadSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				string windSpeed = xmlreader.GetValueAsString("weather","speed","K");
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        string windSpeed = xmlreader.GetValueAsString("weather", "speed", "K");
 
-				if(windSpeed.Equals("K"))
-					windSpeedComboBox.Text = "km/hour";
-				else if(windSpeed.Equals("M"))
-					windSpeedComboBox.Text = "mph";
-				else if(windSpeed.Equals("S"))
-					windSpeedComboBox.Text = "m/s";
+        if (windSpeed.Equals("K"))
+          windSpeedComboBox.Text = "km/hour";
+        else if (windSpeed.Equals("M"))
+          windSpeedComboBox.Text = "mph";
+        else if (windSpeed.Equals("S"))
+          windSpeedComboBox.Text = "m/s";
 
-				string temperature = xmlreader.GetValueAsString("weather", "temperature", "C");
+        string temperature = xmlreader.GetValueAsString("weather", "temperature", "C");
 
-				if(temperature.Equals("C"))
-					temperatureComboBox.Text = "Celsius";
-				else if(temperature.Equals("F"))
-					temperatureComboBox.Text = "Fahrenheit";
+        if (temperature.Equals("C"))
+          temperatureComboBox.Text = "Celsius";
+        else if (temperature.Equals("F"))
+          temperatureComboBox.Text = "Fahrenheit";
 
-				intervalTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("weather", "refresh", 30));
+        intervalTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("weather", "refresh", 30));
 
-				for(int index = 0; index < MaximumCities; index++)
-				{
-					string cityName = String.Format("city{0}", index);
-					string cityCode = String.Format("code{0}", index);
-					string citySat = String.Format("sat{0}", index);
-					string cityTemp = String.Format("temp{0}", index);
-					string cityUV = String.Format("uv{0}", index);
-					string cityWinds = String.Format("winds{0}", index);
-					string cityHumid = String.Format("humid{0}", index);
-					string cityPrecip = String.Format("precip{0}", index);
+        for (int index = 0; index < MaximumCities; index++)
+        {
+          string cityName = String.Format("city{0}", index);
+          string cityCode = String.Format("code{0}", index);
+          string citySat = String.Format("sat{0}", index);
+          string cityTemp = String.Format("temp{0}", index);
+          string cityUV = String.Format("uv{0}", index);
+          string cityWinds = String.Format("winds{0}", index);
+          string cityHumid = String.Format("humid{0}", index);
+          string cityPrecip = String.Format("precip{0}", index);
 
-					string cityNameData = xmlreader.GetValueAsString("weather", cityName, "");
-					string cityCodeData = xmlreader.GetValueAsString("weather", cityCode, "");
-					string citySatData  = xmlreader.GetValueAsString("weather", citySat, "");
-					string cityTempData  = xmlreader.GetValueAsString("weather", cityTemp, "");
-					string cityUVData  = xmlreader.GetValueAsString("weather", cityUV, "");
-					string cityWindsData  = xmlreader.GetValueAsString("weather", cityWinds, "");
-					string cityHumidData  = xmlreader.GetValueAsString("weather", cityHumid, "");
-					string cityPrecipData  = xmlreader.GetValueAsString("weather", cityPrecip, "");
+          string cityNameData = xmlreader.GetValueAsString("weather", cityName, "");
+          string cityCodeData = xmlreader.GetValueAsString("weather", cityCode, "");
+          string citySatData = xmlreader.GetValueAsString("weather", citySat, "");
+          string cityTempData = xmlreader.GetValueAsString("weather", cityTemp, "");
+          string cityUVData = xmlreader.GetValueAsString("weather", cityUV, "");
+          string cityWindsData = xmlreader.GetValueAsString("weather", cityWinds, "");
+          string cityHumidData = xmlreader.GetValueAsString("weather", cityHumid, "");
+          string cityPrecipData = xmlreader.GetValueAsString("weather", cityPrecip, "");
 
-					if(cityNameData.Length > 0 && cityCodeData.Length > 0)
-						citiesListView.Items.Add(new ListViewItem(new string[] { cityNameData, cityCodeData, citySatData, cityTempData, cityUVData, cityWindsData, cityHumidData, cityPrecipData }));
-				}
-			}			
-		}
+          if (cityNameData.Length > 0 && cityCodeData.Length > 0)
+            citiesListView.Items.Add(new ListViewItem(new string[] { cityNameData, cityCodeData, citySatData, cityTempData, cityUVData, cityWindsData, cityHumidData, cityPrecipData }));
+        }
+      }
+    }
 
-		public override void SaveSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				string windSpeed = String.Empty;
+    public override void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        string windSpeed = String.Empty;
 
-				if(windSpeedComboBox.Text.Equals("km/hour"))
-					windSpeed = "K";
-				else if(windSpeedComboBox.Text.Equals("mph"))
-					 windSpeed = "M";
-				else if(windSpeedComboBox.Text.Equals("m/s"))
-					 windSpeed = "S";
+        if (windSpeedComboBox.Text.Equals("km/hour"))
+          windSpeed = "K";
+        else if (windSpeedComboBox.Text.Equals("mph"))
+          windSpeed = "M";
+        else if (windSpeedComboBox.Text.Equals("m/s"))
+          windSpeed = "S";
 
-				xmlwriter.SetValue("weather", "speed", windSpeed);
+        xmlwriter.SetValue("weather", "speed", windSpeed);
 
-				string temperature = String.Empty;
+        string temperature = String.Empty;
 
-				if(temperatureComboBox.Text.Equals("Celsius"))
-					 temperature = "C";
-				else if(temperatureComboBox.Text.Equals("Fahrenheit"))
-					temperature = "F";
+        if (temperatureComboBox.Text.Equals("Celsius"))
+          temperature = "C";
+        else if (temperatureComboBox.Text.Equals("Fahrenheit"))
+          temperature = "F";
 
-				xmlwriter.SetValue("weather", "temperature", temperature);
+        xmlwriter.SetValue("weather", "temperature", temperature);
 
-				xmlwriter.SetValue("weather", "refresh", intervalTextBox.Text);
+        xmlwriter.SetValue("weather", "refresh", intervalTextBox.Text);
 
-				for(int index = 0; index < MaximumCities; index++)
-				{
-					string cityName = String.Format("city{0}", index);
-					string cityCode = String.Format("code{0}", index);
-					string citySat  = String.Format("sat{0}", index);
-					string cityTemp = String.Format("temp{0}", index);
-					string cityUV = String.Format("uv{0}", index);
-					string cityWinds = String.Format("winds{0}", index);
-					string cityHumid = String.Format("humid{0}", index);
-					string cityPrecip = String.Format("precip{0}", index);
+        for (int index = 0; index < MaximumCities; index++)
+        {
+          string cityName = String.Format("city{0}", index);
+          string cityCode = String.Format("code{0}", index);
+          string citySat = String.Format("sat{0}", index);
+          string cityTemp = String.Format("temp{0}", index);
+          string cityUV = String.Format("uv{0}", index);
+          string cityWinds = String.Format("winds{0}", index);
+          string cityHumid = String.Format("humid{0}", index);
+          string cityPrecip = String.Format("precip{0}", index);
 
-					string cityNameData = String.Empty;
-					string cityCodeData = String.Empty;
-					string citySatData = String.Empty;
-					string cityTempData = String.Empty;
-					string cityUVData = String.Empty;
-					string cityWindsData = String.Empty;
-					string cityHumidData = String.Empty;
-					string cityPrecipData = String.Empty;
+          string cityNameData = String.Empty;
+          string cityCodeData = String.Empty;
+          string citySatData = String.Empty;
+          string cityTempData = String.Empty;
+          string cityUVData = String.Empty;
+          string cityWindsData = String.Empty;
+          string cityHumidData = String.Empty;
+          string cityPrecipData = String.Empty;
 
-					if(citiesListView.Items != null && citiesListView.Items.Count > index)
-					{
-						cityNameData = citiesListView.Items[index].SubItems[0].Text;
-						cityCodeData = citiesListView.Items[index].SubItems[1].Text;
-						citySatData  = citiesListView.Items[index].SubItems[2].Text;
-						cityTempData  = citiesListView.Items[index].SubItems[3].Text;
-						cityUVData  = citiesListView.Items[index].SubItems[4].Text;
-						cityWindsData  = citiesListView.Items[index].SubItems[5].Text;
-						cityHumidData  = citiesListView.Items[index].SubItems[6].Text;
-						cityPrecipData  = citiesListView.Items[index].SubItems[7].Text;
-					}
+          if (citiesListView.Items != null && citiesListView.Items.Count > index)
+          {
+            cityNameData = citiesListView.Items[index].SubItems[0].Text;
+            cityCodeData = citiesListView.Items[index].SubItems[1].Text;
+            citySatData = citiesListView.Items[index].SubItems[2].Text;
+            cityTempData = citiesListView.Items[index].SubItems[3].Text;
+            cityUVData = citiesListView.Items[index].SubItems[4].Text;
+            cityWindsData = citiesListView.Items[index].SubItems[5].Text;
+            cityHumidData = citiesListView.Items[index].SubItems[6].Text;
+            cityPrecipData = citiesListView.Items[index].SubItems[7].Text;
+          }
 
-					xmlwriter.SetValue("weather", cityName, cityNameData);
-					xmlwriter.SetValue("weather", cityCode, cityCodeData);
-		            xmlwriter.SetValue("weather", citySat, citySatData);
-					xmlwriter.SetValue("weather", cityTemp, cityTempData);
-					xmlwriter.SetValue("weather", cityUV, cityUVData);
-					xmlwriter.SetValue("weather", cityWinds, cityWindsData);
-					xmlwriter.SetValue("weather", cityHumid, cityHumidData);
-					xmlwriter.SetValue("weather", cityPrecip, cityPrecipData);
-				}
-			}
-		}
+          xmlwriter.SetValue("weather", cityName, cityNameData);
+          xmlwriter.SetValue("weather", cityCode, cityCodeData);
+          xmlwriter.SetValue("weather", citySat, citySatData);
+          xmlwriter.SetValue("weather", cityTemp, cityTempData);
+          xmlwriter.SetValue("weather", cityUV, cityUVData);
+          xmlwriter.SetValue("weather", cityWinds, cityWindsData);
+          xmlwriter.SetValue("weather", cityHumid, cityHumidData);
+          xmlwriter.SetValue("weather", cityPrecip, cityPrecipData);
+        }
+      }
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.intervalTextBox = new System.Windows.Forms.TextBox();
       this.label3 = new System.Windows.Forms.Label();
@@ -243,7 +245,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.intervalTextBox);
       this.groupBox1.Controls.Add(this.label3);
@@ -251,7 +253,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.temperatureComboBox);
       this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 104);
@@ -261,7 +262,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // intervalTextBox
       // 
-      this.intervalTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.intervalTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.intervalTextBox.Location = new System.Drawing.Point(168, 68);
       this.intervalTextBox.Name = "intervalTextBox";
@@ -279,7 +280,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // windSpeedComboBox
       // 
-      this.windSpeedComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.windSpeedComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.windSpeedComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.windSpeedComboBox.Location = new System.Drawing.Point(168, 44);
@@ -297,7 +298,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // temperatureComboBox
       // 
-      this.temperatureComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.temperatureComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.temperatureComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.temperatureComboBox.Location = new System.Drawing.Point(168, 20);
@@ -315,14 +316,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.editButton);
       this.mpGroupBox1.Controls.Add(this.searchButton);
       this.mpGroupBox1.Controls.Add(this.removeButton);
       this.mpGroupBox1.Controls.Add(this.citiesListView);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 112);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 240);
@@ -334,7 +334,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.editButton.Enabled = false;
-      this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.editButton.Location = new System.Drawing.Point(384, 208);
       this.editButton.Name = "editButton";
       this.editButton.Size = new System.Drawing.Size(72, 22);
@@ -345,7 +344,6 @@ namespace MediaPortal.Configuration.Sections
       // searchButton
       // 
       this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.searchButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.searchButton.Location = new System.Drawing.Point(224, 208);
       this.searchButton.Name = "searchButton";
       this.searchButton.Size = new System.Drawing.Size(72, 22);
@@ -357,7 +355,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.removeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.removeButton.Enabled = false;
-      this.removeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.removeButton.Location = new System.Drawing.Point(304, 208);
       this.removeButton.Name = "removeButton";
       this.removeButton.Size = new System.Drawing.Size(72, 22);
@@ -367,8 +364,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // citiesListView
       // 
-      this.citiesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.citiesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.citiesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                      this.columnHeader1,
@@ -438,30 +435,30 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void searchButton_Click(object sender, System.EventArgs e)
-		{
-			SearchCityForm searchForm = new SearchCityForm();
-			
-			//
-			// Show dialog
-			//
-			if(searchForm.ShowDialog(this) == DialogResult.OK)
-			{
-				//
-				// Fetch selected cities
-				//
-				ArrayList cities = searchForm.SelectedCities;
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void searchButton_Click(object sender, System.EventArgs e)
+    {
+      SearchCityForm searchForm = new SearchCityForm();
 
-				foreach(WeatherChannel.City city in cities)
-				{
-					citiesListView.Items.Add(new ListViewItem(new string[] {	city.Name, 
+      //
+      // Show dialog
+      //
+      if (searchForm.ShowDialog(this) == DialogResult.OK)
+      {
+        //
+        // Fetch selected cities
+        //
+        ArrayList cities = searchForm.SelectedCities;
+
+        foreach (WeatherChannel.City city in cities)
+        {
+          citiesListView.Items.Add(new ListViewItem(new string[] {	city.Name, 
 																																		city.Id,
 																																	 searchForm.SatteliteImage, 
 																																	 searchForm.TemperatureImage, 
@@ -470,28 +467,28 @@ namespace MediaPortal.Configuration.Sections
 																																	 searchForm.HumidityImage, 
 																																	 searchForm.PrecipitationImage }));
 
-				}
-			}
-		}
+        }
+      }
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void removeButton_Click(object sender, System.EventArgs e)
-		{
-			int numberItems = citiesListView.SelectedItems.Count;
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void removeButton_Click(object sender, System.EventArgs e)
+    {
+      int numberItems = citiesListView.SelectedItems.Count;
 
-			for(int index = 0; index < numberItems; index++)
-			{
-				citiesListView.Items.RemoveAt(citiesListView.SelectedIndices[0]);
-			}
-		}
+      for (int index = 0; index < numberItems; index++)
+      {
+        citiesListView.Items.RemoveAt(citiesListView.SelectedIndices[0]);
+      }
+    }
 
     private void editButton_Click(object sender, System.EventArgs e)
     {
-      foreach(ListViewItem listItem in citiesListView.SelectedItems)
+      foreach (ListViewItem listItem in citiesListView.SelectedItems)
       {
         EditWeatherCityForm cityForm = new EditWeatherCityForm();
 
@@ -499,25 +496,25 @@ namespace MediaPortal.Configuration.Sections
         // Set current image location
         //
         cityForm.SatteliteImage = listItem.SubItems[2].Text;
-				cityForm.TemperatureImage = listItem.SubItems[3].Text;
-				cityForm.UVIndexImage = listItem.SubItems[4].Text;
-				cityForm.WindsImage = listItem.SubItems[5].Text;
-				cityForm.HumidityImage = listItem.SubItems[6].Text;
-				cityForm.PrecipitationImage = listItem.SubItems[7].Text;
+        cityForm.TemperatureImage = listItem.SubItems[3].Text;
+        cityForm.UVIndexImage = listItem.SubItems[4].Text;
+        cityForm.WindsImage = listItem.SubItems[5].Text;
+        cityForm.HumidityImage = listItem.SubItems[6].Text;
+        cityForm.PrecipitationImage = listItem.SubItems[7].Text;
 
         DialogResult dialogResult = cityForm.ShowDialog(this);
 
-        if(dialogResult == DialogResult.OK)
+        if (dialogResult == DialogResult.OK)
         {
           //
           // Fetch selected image location
           //
           listItem.SubItems[2].Text = cityForm.SatteliteImage;
-					listItem.SubItems[3].Text = cityForm.TemperatureImage;
-					listItem.SubItems[4].Text = cityForm.UVIndexImage;
-					listItem.SubItems[5].Text = cityForm.WindsImage;
-					listItem.SubItems[6].Text = cityForm.HumidityImage;
-					listItem.SubItems[7].Text = cityForm.PrecipitationImage;
+          listItem.SubItems[3].Text = cityForm.TemperatureImage;
+          listItem.SubItems[4].Text = cityForm.UVIndexImage;
+          listItem.SubItems[5].Text = cityForm.WindsImage;
+          listItem.SubItems[6].Text = cityForm.HumidityImage;
+          listItem.SubItems[7].Text = cityForm.PrecipitationImage;
         }
       }
     }
@@ -526,6 +523,6 @@ namespace MediaPortal.Configuration.Sections
     {
       editButton.Enabled = removeButton.Enabled = (citiesListView.SelectedItems.Count > 0);
     }
-	}
+  }
 }
 

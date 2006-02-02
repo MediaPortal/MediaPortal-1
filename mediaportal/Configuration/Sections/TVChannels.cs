@@ -233,7 +233,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonLookup
       // 
       this.buttonLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonLookup.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonLookup.Location = new System.Drawing.Point(242, 353);
       this.buttonLookup.Name = "buttonLookup";
       this.buttonLookup.Size = new System.Drawing.Size(64, 16);
@@ -244,7 +243,6 @@ namespace MediaPortal.Configuration.Sections
       // xmlImport
       // 
       this.xmlImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.xmlImport.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.xmlImport.Location = new System.Drawing.Point(312, 353);
       this.xmlImport.Name = "xmlImport";
       this.xmlImport.Size = new System.Drawing.Size(64, 16);
@@ -255,7 +253,6 @@ namespace MediaPortal.Configuration.Sections
       // xmlExport
       // 
       this.xmlExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.xmlExport.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.xmlExport.Location = new System.Drawing.Point(384, 353);
       this.xmlExport.Name = "xmlExport";
       this.xmlExport.Size = new System.Drawing.Size(64, 16);
@@ -266,7 +263,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonCVS
       // 
       this.buttonCVS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonCVS.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonCVS.Location = new System.Drawing.Point(344, 334);
       this.buttonCVS.Name = "buttonCVS";
       this.buttonCVS.Size = new System.Drawing.Size(104, 16);
@@ -277,7 +273,6 @@ namespace MediaPortal.Configuration.Sections
       // btnImport
       // 
       this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnImport.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnImport.Location = new System.Drawing.Point(234, 334);
       this.btnImport.Name = "btnImport";
       this.btnImport.Size = new System.Drawing.Size(104, 16);
@@ -288,7 +283,6 @@ namespace MediaPortal.Configuration.Sections
       // btnClear
       // 
       this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnClear.Location = new System.Drawing.Point(16, 353);
       this.btnClear.Name = "btnClear";
       this.btnClear.Size = new System.Drawing.Size(64, 16);
@@ -299,7 +293,6 @@ namespace MediaPortal.Configuration.Sections
       // addButton
       // 
       this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.addButton.Location = new System.Drawing.Point(16, 334);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(64, 16);
@@ -311,7 +304,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.deleteButton.Enabled = false;
-      this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.deleteButton.Location = new System.Drawing.Point(156, 334);
       this.deleteButton.Name = "deleteButton";
       this.deleteButton.Size = new System.Drawing.Size(72, 16);
@@ -323,7 +315,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.editButton.Enabled = false;
-      this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.editButton.Location = new System.Drawing.Point(86, 334);
       this.editButton.Name = "editButton";
       this.editButton.Size = new System.Drawing.Size(64, 16);
@@ -335,7 +326,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.upButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.upButton.Enabled = false;
-      this.upButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.upButton.Location = new System.Drawing.Point(86, 353);
       this.upButton.Name = "upButton";
       this.upButton.Size = new System.Drawing.Size(64, 16);
@@ -347,7 +337,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.downButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.downButton.Enabled = false;
-      this.downButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.downButton.Location = new System.Drawing.Point(156, 353);
       this.downButton.Name = "downButton";
       this.downButton.Size = new System.Drawing.Size(64, 16);
@@ -419,7 +408,6 @@ namespace MediaPortal.Configuration.Sections
       // btnMapChannelToCard
       // 
       this.btnMapChannelToCard.Anchor = System.Windows.Forms.AnchorStyles.None;
-      this.btnMapChannelToCard.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnMapChannelToCard.Location = new System.Drawing.Point(212, 168);
       this.btnMapChannelToCard.Name = "btnMapChannelToCard";
       this.btnMapChannelToCard.Size = new System.Drawing.Size(40, 22);
@@ -430,7 +418,6 @@ namespace MediaPortal.Configuration.Sections
       // btnUnmapChannelFromCard
       // 
       this.btnUnmapChannelFromCard.Anchor = System.Windows.Forms.AnchorStyles.None;
-      this.btnUnmapChannelFromCard.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnUnmapChannelFromCard.Location = new System.Drawing.Point(212, 200);
       this.btnUnmapChannelFromCard.Name = "btnUnmapChannelFromCard";
       this.btnUnmapChannelFromCard.Size = new System.Drawing.Size(40, 22);
@@ -496,7 +483,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonCombine
       // 
       this.buttonCombine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonCombine.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonCombine.Location = new System.Drawing.Point(16, 312);
       this.buttonCombine.Name = "buttonCombine";
       this.buttonCombine.Size = new System.Drawing.Size(64, 16);
@@ -2216,7 +2202,7 @@ namespace MediaPortal.Configuration.Sections
     private void buttonCombine_Click(object sender, EventArgs e)
     {
       if (channelsListView.SelectedItems.Count != 2) return;
-      
+
       TelevisionChannel ch1 = channelsListView.SelectedItems[0].Tag as TelevisionChannel;
       TelevisionChannel ch2 = channelsListView.SelectedItems[1].Tag as TelevisionChannel;
 

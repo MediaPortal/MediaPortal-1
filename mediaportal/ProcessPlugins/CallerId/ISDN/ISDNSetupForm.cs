@@ -112,7 +112,6 @@ namespace ProcessPlugins.CallerId
       // 
       // checkBoxStopMedia
       // 
-      this.checkBoxStopMedia.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxStopMedia.Location = new System.Drawing.Point(16, 73);
       this.checkBoxStopMedia.Name = "checkBoxStopMedia";
       this.checkBoxStopMedia.Size = new System.Drawing.Size(184, 16);
@@ -128,7 +127,6 @@ namespace ProcessPlugins.CallerId
       this.groupBoxIncomingCall.Controls.Add(this.radioButtonAutoResume);
       this.groupBoxIncomingCall.Controls.Add(this.radioButtonManualResume);
       this.groupBoxIncomingCall.Controls.Add(this.checkBoxStopMedia);
-      this.groupBoxIncomingCall.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBoxIncomingCall.Location = new System.Drawing.Point(16, 16);
       this.groupBoxIncomingCall.Name = "groupBoxIncomingCall";
       this.groupBoxIncomingCall.Size = new System.Drawing.Size(320, 152);
@@ -151,7 +149,6 @@ namespace ProcessPlugins.CallerId
       // 
       // checkBoxTimeOut
       // 
-      this.checkBoxTimeOut.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxTimeOut.Location = new System.Drawing.Point(16, 49);
       this.checkBoxTimeOut.Name = "checkBoxTimeOut";
       this.checkBoxTimeOut.Size = new System.Drawing.Size(208, 16);
@@ -161,7 +158,6 @@ namespace ProcessPlugins.CallerId
       // 
       // radioButtonAutoResume
       // 
-      this.radioButtonAutoResume.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonAutoResume.Location = new System.Drawing.Point(32, 121);
       this.radioButtonAutoResume.Name = "radioButtonAutoResume";
       this.radioButtonAutoResume.Size = new System.Drawing.Size(272, 16);
@@ -171,7 +167,6 @@ namespace ProcessPlugins.CallerId
       // 
       // radioButtonManualResume
       // 
-      this.radioButtonManualResume.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonManualResume.Location = new System.Drawing.Point(32, 97);
       this.radioButtonManualResume.Name = "radioButtonManualResume";
       this.radioButtonManualResume.Size = new System.Drawing.Size(224, 16);
@@ -181,7 +176,6 @@ namespace ProcessPlugins.CallerId
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.okButton.Location = new System.Drawing.Point(189, 182);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
@@ -193,7 +187,6 @@ namespace ProcessPlugins.CallerId
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cancelButton.Location = new System.Drawing.Point(269, 182);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -202,7 +195,6 @@ namespace ProcessPlugins.CallerId
       // 
       // checkBoxOutlook
       // 
-      this.checkBoxOutlook.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxOutlook.Location = new System.Drawing.Point(16, 24);
       this.checkBoxOutlook.Name = "checkBoxOutlook";
       this.checkBoxOutlook.Size = new System.Drawing.Size(208, 16);

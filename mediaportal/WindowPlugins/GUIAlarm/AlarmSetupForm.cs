@@ -126,7 +126,6 @@ namespace MediaPortal.GUI.Alarm
       // 
       // btnOk
       // 
-      this.btnOk.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnOk.Location = new System.Drawing.Point(240, 280);
       this.btnOk.Name = "btnOk";
       this.btnOk.TabIndex = 3;
@@ -136,7 +135,6 @@ namespace MediaPortal.GUI.Alarm
       // btnCancel
       // 
       this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnCancel.Location = new System.Drawing.Point(320, 280);
       this.btnCancel.Name = "btnCancel";
       this.btnCancel.TabIndex = 4;
@@ -148,7 +146,6 @@ namespace MediaPortal.GUI.Alarm
       this.groupBox3.Controls.Add(this.SnoozeLength);
       this.groupBox3.Controls.Add(this.label5);
       this.groupBox3.Controls.Add(this.label9);
-      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox3.Location = new System.Drawing.Point(8, 152);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(392, 56);
@@ -181,7 +178,6 @@ namespace MediaPortal.GUI.Alarm
       // 
       // label5
       // 
-      this.label5.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.label5.Location = new System.Drawing.Point(144, 24);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(56, 16);
@@ -191,7 +187,6 @@ namespace MediaPortal.GUI.Alarm
       // 
       // label9
       // 
-      this.label9.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.label9.Location = new System.Drawing.Point(8, 24);
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(64, 24);
@@ -204,7 +199,6 @@ namespace MediaPortal.GUI.Alarm
       this.groupBox2.Controls.Add(this.MessageDisplayLength);
       this.groupBox2.Controls.Add(this.label8);
       this.groupBox2.Controls.Add(this.label7);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(8, 216);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(392, 56);
@@ -222,7 +216,6 @@ namespace MediaPortal.GUI.Alarm
       // 
       // label8
       // 
-      this.label8.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.label8.Location = new System.Drawing.Point(144, 24);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(56, 16);
@@ -249,7 +242,6 @@ namespace MediaPortal.GUI.Alarm
       this.groupBox1.Controls.Add(this.btnAlarmSoundsFolder);
       this.groupBox1.Controls.Add(this.txtAlarmSoundsFolder);
       this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 16);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(392, 128);
@@ -341,7 +333,6 @@ namespace MediaPortal.GUI.Alarm
       // 
       // btnAlarmSoundsFolder
       // 
-      this.btnAlarmSoundsFolder.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnAlarmSoundsFolder.Location = new System.Drawing.Point(312, 32);
       this.btnAlarmSoundsFolder.Name = "btnAlarmSoundsFolder";
       this.btnAlarmSoundsFolder.Size = new System.Drawing.Size(64, 23);
@@ -359,7 +350,6 @@ namespace MediaPortal.GUI.Alarm
       // 
       // label1
       // 
-      this.label1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.label1.Location = new System.Drawing.Point(8, 32);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(80, 24);

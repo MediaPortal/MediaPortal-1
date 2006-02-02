@@ -264,7 +264,6 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.languageComboBox);
       this.mpGroupBox1.Controls.Add(this.label2);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 56);
@@ -296,7 +295,6 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.settingsCheckedListBox);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 64);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 288);
@@ -338,7 +336,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.label1);
       this.groupBox2.Controls.Add(this.numericUpDown1);
       this.groupBox2.Controls.Add(this.label3);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(0, 368);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 56);

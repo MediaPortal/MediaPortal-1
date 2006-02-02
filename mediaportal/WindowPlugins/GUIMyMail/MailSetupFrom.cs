@@ -101,7 +101,6 @@ namespace MyMail
       // 
       // btnAdd
       // 
-      this.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnAdd.Location = new System.Drawing.Point(296, 16);
       this.btnAdd.Name = "btnAdd";
       this.btnAdd.Size = new System.Drawing.Size(80, 24);
@@ -123,7 +122,6 @@ namespace MyMail
       // 
       // btnDelete
       // 
-      this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnDelete.Location = new System.Drawing.Point(296, 72);
       this.btnDelete.Name = "btnDelete";
       this.btnDelete.Size = new System.Drawing.Size(80, 24);
@@ -134,7 +132,6 @@ namespace MyMail
       // btnClose
       // 
       this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnClose.Location = new System.Drawing.Point(320, 320);
       this.btnClose.Name = "btnClose";
       this.btnClose.Size = new System.Drawing.Size(80, 24);
@@ -160,7 +157,6 @@ namespace MyMail
       // 
       // btnEdit
       // 
-      this.btnEdit.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnEdit.Location = new System.Drawing.Point(296, 40);
       this.btnEdit.Name = "btnEdit";
       this.btnEdit.Size = new System.Drawing.Size(80, 23);

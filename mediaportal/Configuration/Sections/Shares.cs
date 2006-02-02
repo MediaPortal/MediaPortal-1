@@ -31,32 +31,32 @@ using System.Windows.Forms;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public abstract class Shares : MediaPortal.Configuration.SectionSettings
-	{
+  public abstract class Shares : MediaPortal.Configuration.SectionSettings
+  {
     public class ShareData
     {
-			public enum Views
-			{
-				List,
-				Icons,
-				BigIcons,
-				Filmstrip
-			}
+      public enum Views
+      {
+        List,
+        Icons,
+        BigIcons,
+        Filmstrip
+      }
       public string Name;
       public string Folder;
       public string PinCode;
 
-      public bool   IsRemote=false;
-      public string Server=String.Empty;
-      public string LoginName=String.Empty;
-      public string PassWord=String.Empty;
-      public string RemoteFolder=String.Empty;
-      public int    Port=21;
-			public Views  DefaultView=Views.List;
+      public bool IsRemote = false;
+      public string Server = String.Empty;
+      public string LoginName = String.Empty;
+      public string PassWord = String.Empty;
+      public string RemoteFolder = String.Empty;
+      public int Port = 21;
+      public Views DefaultView = Views.List;
 
-      public bool   HasPinCode
+      public bool HasPinCode
       {
-        get { return(PinCode.Length > 0); }
+        get { return (PinCode.Length > 0); }
       }
 
       public ShareData(string name, string folder, string pinCode)
@@ -69,54 +69,56 @@ namespace MediaPortal.Configuration.Sections
 
     protected const int MaximumShares = 20;
 
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.ColumnHeader columnHeader1;
-		private System.Windows.Forms.ColumnHeader columnHeader2;
-		private MediaPortal.UserInterface.Controls.MPButton deleteButton;
-		private MediaPortal.UserInterface.Controls.MPButton editButton;
-		private MediaPortal.UserInterface.Controls.MPButton addButton;
-		private MediaPortal.UserInterface.Controls.MPListView sharesListView;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private System.Windows.Forms.ColumnHeader columnHeader1;
+    private System.Windows.Forms.ColumnHeader columnHeader2;
+    private MediaPortal.UserInterface.Controls.MPButton deleteButton;
+    private MediaPortal.UserInterface.Controls.MPButton editButton;
+    private MediaPortal.UserInterface.Controls.MPButton addButton;
+    private MediaPortal.UserInterface.Controls.MPListView sharesListView;
     private System.Windows.Forms.ColumnHeader columnHeader3;
-		private System.ComponentModel.IContainer components = null;
+    private System.ComponentModel.IContainer components = null;
 
-		public Shares() : base("<Unknown>")
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public Shares()
+      : base("<Unknown>")
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
-		}
+      // TODO: Add any initialization after the InitializeComponent call
+    }
 
-		public Shares(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public Shares(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
-		}
+      // TODO: Add any initialization after the InitializeComponent call
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.deleteButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.editButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -130,14 +132,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.deleteButton);
       this.groupBox1.Controls.Add(this.editButton);
       this.groupBox1.Controls.Add(this.addButton);
       this.groupBox1.Controls.Add(this.sharesListView);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 408);
@@ -148,7 +149,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.deleteButton.Enabled = false;
-      this.deleteButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.deleteButton.Location = new System.Drawing.Point(384, 376);
       this.deleteButton.Name = "deleteButton";
       this.deleteButton.Size = new System.Drawing.Size(72, 22);
@@ -160,7 +160,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.editButton.Enabled = false;
-      this.editButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.editButton.Location = new System.Drawing.Point(304, 376);
       this.editButton.Name = "editButton";
       this.editButton.Size = new System.Drawing.Size(72, 22);
@@ -171,7 +170,6 @@ namespace MediaPortal.Configuration.Sections
       // addButton
       // 
       this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.addButton.Location = new System.Drawing.Point(224, 376);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(72, 22);
@@ -181,8 +179,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // sharesListView
       // 
-      this.sharesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.sharesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.sharesListView.CheckBoxes = true;
       this.sharesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -222,153 +220,153 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		ListViewItem currentlyCheckedItem = null;
+    ListViewItem currentlyCheckedItem = null;
 
-		private void addButton_Click(object sender, System.EventArgs e)
-		{
-			EditShareForm editShare = new EditShareForm();
+    private void addButton_Click(object sender, System.EventArgs e)
+    {
+      EditShareForm editShare = new EditShareForm();
 
-			DialogResult dialogResult = editShare.ShowDialog(this);
+      DialogResult dialogResult = editShare.ShowDialog(this);
 
-			if(dialogResult == DialogResult.OK)
-			{
-        ShareData shareData=new ShareData(editShare.ShareName, editShare.Folder, editShare.PinCode);
-        shareData.IsRemote=editShare.IsRemote;
-        shareData.Server=editShare.Server;
-        shareData.LoginName=editShare.LoginName;
-        shareData.PassWord=editShare.PassWord;
-        shareData.Port=editShare.Port;
-        shareData.RemoteFolder=editShare.RemoteFolder;
-				shareData.DefaultView=(ShareData.Views)editShare.View;
-            
+      if (dialogResult == DialogResult.OK)
+      {
+        ShareData shareData = new ShareData(editShare.ShareName, editShare.Folder, editShare.PinCode);
+        shareData.IsRemote = editShare.IsRemote;
+        shareData.Server = editShare.Server;
+        shareData.LoginName = editShare.LoginName;
+        shareData.PassWord = editShare.PassWord;
+        shareData.Port = editShare.Port;
+        shareData.RemoteFolder = editShare.RemoteFolder;
+        shareData.DefaultView = (ShareData.Views)editShare.View;
 
-				AddShare(shareData, currentlyCheckedItem == null);
-			}
-		}
 
-		protected void AddShare(ShareData shareData, bool check)
-		{
-			ListViewItem listItem = new ListViewItem(new string[] { shareData.Name, shareData.HasPinCode ? "Yes" : "No", shareData.Folder });
+        AddShare(shareData, currentlyCheckedItem == null);
+      }
+    }
+
+    protected void AddShare(ShareData shareData, bool check)
+    {
+      ListViewItem listItem = new ListViewItem(new string[] { shareData.Name, shareData.HasPinCode ? "Yes" : "No", shareData.Folder });
 
       if (shareData.IsRemote)
       {
-        listItem.SubItems[2].Text=String.Format("ftp://{0}:{1}{2}",shareData.Server,shareData.Port,shareData.RemoteFolder);
+        listItem.SubItems[2].Text = String.Format("ftp://{0}:{1}{2}", shareData.Server, shareData.Port, shareData.RemoteFolder);
       }
       listItem.Tag = shareData;
-			listItem.Checked = check;
-			if(check) currentlyCheckedItem = listItem;
+      listItem.Checked = check;
+      if (check) currentlyCheckedItem = listItem;
 
-			sharesListView.Items.Add(listItem);
-		}
+      sharesListView.Items.Add(listItem);
+    }
 
-		private void editButton_Click(object sender, System.EventArgs e)
-		{
-			foreach(ListViewItem selectedItem in sharesListView.SelectedItems)
-			{
+    private void editButton_Click(object sender, System.EventArgs e)
+    {
+      foreach (ListViewItem selectedItem in sharesListView.SelectedItems)
+      {
         ShareData shareData = selectedItem.Tag as ShareData;
 
-        if(shareData != null)
+        if (shareData != null)
         {
           EditShareForm editShare = new EditShareForm();
-	
+
           editShare.ShareName = shareData.Name;
           editShare.PinCode = shareData.PinCode;
           editShare.Folder = shareData.Folder;
-          
-          editShare.IsRemote=shareData.IsRemote;
-          editShare.Server=shareData.Server;
-          editShare.Port=shareData.Port;
-          editShare.LoginName=shareData.LoginName;
-          editShare.PassWord=shareData.PassWord;
-					editShare.RemoteFolder=shareData.RemoteFolder;
-					editShare.View=(int)shareData.DefaultView;
+
+          editShare.IsRemote = shareData.IsRemote;
+          editShare.Server = shareData.Server;
+          editShare.Port = shareData.Port;
+          editShare.LoginName = shareData.LoginName;
+          editShare.PassWord = shareData.PassWord;
+          editShare.RemoteFolder = shareData.RemoteFolder;
+          editShare.View = (int)shareData.DefaultView;
 
           DialogResult dialogResult = editShare.ShowDialog(this);
 
-          if(dialogResult == DialogResult.OK)
+          if (dialogResult == DialogResult.OK)
           {
             shareData.Name = editShare.ShareName;
             shareData.Folder = editShare.Folder;
             shareData.PinCode = editShare.PinCode;
 
-            shareData.IsRemote=editShare.IsRemote;
-            shareData.Server=editShare.Server;
-            shareData.LoginName=editShare.LoginName;
-            shareData.PassWord=editShare.PassWord;
-            shareData.Port=editShare.Port;
-						shareData.RemoteFolder=editShare.RemoteFolder;
-						shareData.DefaultView=(ShareData.Views)editShare.View;
-            
+            shareData.IsRemote = editShare.IsRemote;
+            shareData.Server = editShare.Server;
+            shareData.LoginName = editShare.LoginName;
+            shareData.PassWord = editShare.PassWord;
+            shareData.Port = editShare.Port;
+            shareData.RemoteFolder = editShare.RemoteFolder;
+            shareData.DefaultView = (ShareData.Views)editShare.View;
+
 
             selectedItem.Tag = shareData;
 
             selectedItem.SubItems[0].Text = shareData.Name;
             selectedItem.SubItems[1].Text = shareData.HasPinCode ? "Yes" : "No";
             selectedItem.SubItems[2].Text = shareData.Folder;
-						if (shareData.IsRemote) selectedItem.SubItems[2].Text = String.Format("ftp://{0}:{1}{2}",shareData.Server,shareData.Port,shareData.RemoteFolder);
+            if (shareData.IsRemote) selectedItem.SubItems[2].Text = String.Format("ftp://{0}:{1}{2}", shareData.Server, shareData.Port, shareData.RemoteFolder);
 
           }
         }
-			}
-		}
+      }
+    }
 
-		private void deleteButton_Click(object sender, System.EventArgs e)
-		{
-			int selectedItems = sharesListView.SelectedIndices.Count;
+    private void deleteButton_Click(object sender, System.EventArgs e)
+    {
+      int selectedItems = sharesListView.SelectedIndices.Count;
 
-			for(int index = 0; index < selectedItems; index++)
-			{
-				sharesListView.Items.RemoveAt(sharesListView.SelectedIndices[0]);
-			}
-		}
+      for (int index = 0; index < selectedItems; index++)
+      {
+        sharesListView.Items.RemoveAt(sharesListView.SelectedIndices[0]);
+      }
+    }
 
-		private void sharesListView_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
-		{
-			if(e.NewValue == CheckState.Checked)
-			{
-				//
-				// Check if the new selected item is the same as the current one
-				//
-				if(sharesListView.Items[e.Index] != currentlyCheckedItem)
-				{
-					//
-					// We have a new selection
-					//
-					if(currentlyCheckedItem != null)
-						currentlyCheckedItem.Checked = false;
-					currentlyCheckedItem = sharesListView.Items[e.Index];
-				}
-			}
+    private void sharesListView_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
+    {
+      if (e.NewValue == CheckState.Checked)
+      {
+        //
+        // Check if the new selected item is the same as the current one
+        //
+        if (sharesListView.Items[e.Index] != currentlyCheckedItem)
+        {
+          //
+          // We have a new selection
+          //
+          if (currentlyCheckedItem != null)
+            currentlyCheckedItem.Checked = false;
+          currentlyCheckedItem = sharesListView.Items[e.Index];
+        }
+      }
 
-			if(e.NewValue == CheckState.Unchecked)
-			{
-				//
-				// Check if the new selected item is the same as the current one
-				//
-				if(sharesListView.Items[e.Index] == currentlyCheckedItem)
-				{
-					currentlyCheckedItem = null;
-				}
-			}
-		}
+      if (e.NewValue == CheckState.Unchecked)
+      {
+        //
+        // Check if the new selected item is the same as the current one
+        //
+        if (sharesListView.Items[e.Index] == currentlyCheckedItem)
+        {
+          currentlyCheckedItem = null;
+        }
+      }
+    }
 
-		public ListView.ListViewItemCollection CurrentShares
-		{
-			get 
-			{
-				return sharesListView.Items;
-			}
-		}
+    public ListView.ListViewItemCollection CurrentShares
+    {
+      get
+      {
+        return sharesListView.Items;
+      }
+    }
 
-		public ListViewItem DefaultShare
-		{
-			get
-			{
-				return currentlyCheckedItem;
-			}
-		}
+    public ListViewItem DefaultShare
+    {
+      get
+      {
+        return currentlyCheckedItem;
+      }
+    }
 
     public enum DriveType
     {
@@ -384,56 +382,56 @@ namespace MediaPortal.Configuration.Sections
     {
       string[] drives = Environment.GetLogicalDrives();
 
-      foreach(string drive in drives)
+      foreach (string drive in drives)
       {
-        if(Util.Utils.getDriveType(drive) == (int)driveType)
+        if (Util.Utils.getDriveType(drive) == (int)driveType)
         {
           bool driveFound = false;
           string driveName = Util.Utils.GetDriveName(drive);
 
-          if(driveName.Length == 0)
+          if (driveName.Length == 0)
           {
             string driveLetter = drive.Substring(0, 1).ToUpper();
-            driveName = String.Format("{0} {1}:", defaultName, driveLetter);            
+            driveName = String.Format("{0} {1}:", defaultName, driveLetter);
           }
 
           //
           // Check if the share already exists
           //
-          foreach(ListViewItem listItem in CurrentShares)
+          foreach (ListViewItem listItem in CurrentShares)
           {
-            if(listItem.SubItems[2].Text == drive)
+            if (listItem.SubItems[2].Text == drive)
             {
               driveFound = true;
               break;
             }
           }
 
-          if(driveFound == false)
+          if (driveFound == false)
           {
             //
             // Add share
             //
-						string name="";
-						switch (driveType)
-						{
-							case DriveType.Removable:
-								name=String.Format("({0}:) Removable",drive.Substring(0, 1).ToUpper());								
-								break;
-							case DriveType.Fixed:
-								name=String.Format("({0}:) Fixed",drive.Substring(0, 1).ToUpper());
-								break;
-							case DriveType.RemoteDisk:
-								name=String.Format("({0}:) Remote",drive.Substring(0, 1).ToUpper());
-								break;
-							case DriveType.DVD: // or cd
-								name=String.Format("({0}:) CD/DVD",drive.Substring(0, 1).ToUpper());
-								break;
-							case DriveType.RamDisk:
-								name=String.Format("({0}:) Ram",drive.Substring(0, 1).ToUpper());
-								break;
-						}
-	          AddShare(new ShareData(name, drive, String.Empty), false);
+            string name = "";
+            switch (driveType)
+            {
+              case DriveType.Removable:
+                name = String.Format("({0}:) Removable", drive.Substring(0, 1).ToUpper());
+                break;
+              case DriveType.Fixed:
+                name = String.Format("({0}:) Fixed", drive.Substring(0, 1).ToUpper());
+                break;
+              case DriveType.RemoteDisk:
+                name = String.Format("({0}:) Remote", drive.Substring(0, 1).ToUpper());
+                break;
+              case DriveType.DVD: // or cd
+                name = String.Format("({0}:) CD/DVD", drive.Substring(0, 1).ToUpper());
+                break;
+              case DriveType.RamDisk:
+                name = String.Format("({0}:) Ram", drive.Substring(0, 1).ToUpper());
+                break;
+            }
+            AddShare(new ShareData(name, drive, String.Empty), false);
           }
         }
       }
@@ -441,8 +439,8 @@ namespace MediaPortal.Configuration.Sections
 
     private void sharesListView_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-      editButton.Enabled  = deleteButton.Enabled = (sharesListView.SelectedItems.Count > 0);
+      editButton.Enabled = deleteButton.Enabled = (sharesListView.SelectedItems.Count > 0);
     }
-	}
+  }
 }
 

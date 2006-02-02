@@ -32,79 +32,79 @@ using MediaPortal.Video.Database;
 
 namespace MediaPortal.Configuration.Sections
 {
-	/// <summary>
-	/// Summary description for DlgMovieList.
-	/// </summary>
-	public class DlgMovieList : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.ListView listView1;
-		private System.Windows.Forms.ColumnHeader columnHeader1;
-		private MediaPortal.UserInterface.Controls.MPButton button1;
-		private MediaPortal.UserInterface.Controls.MPButton button2;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label labelFileName;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox textBoxTitle;
-		private MediaPortal.UserInterface.Controls.MPButton buttonFind;
-		IMDB _imdb;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+  /// <summary>
+  /// Summary description for DlgMovieList.
+  /// </summary>
+  public class DlgMovieList : System.Windows.Forms.Form
+  {
+    private System.Windows.Forms.ListView listView1;
+    private System.Windows.Forms.ColumnHeader columnHeader1;
+    private MediaPortal.UserInterface.Controls.MPButton button1;
+    private MediaPortal.UserInterface.Controls.MPButton button2;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label labelFileName;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.TextBox textBoxTitle;
+    private MediaPortal.UserInterface.Controls.MPButton buttonFind;
+    IMDB _imdb;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public DlgMovieList()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public DlgMovieList()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		public int SelectedItem
-		{
-			get
-			{
-				if (listView1.SelectedIndices.Count<=0) return 0;
-				return listView1.SelectedIndices[0];
-			}
-		}
-		public string Filename
-		{
-			set
-			{
-				labelFileName.Text=value;
-			}
-		}
-		public void AddMovie(string movie)
-		{
-			listView1.Items.Add(movie);
-		}
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    public int SelectedItem
+    {
+      get
+      {
+        if (listView1.SelectedIndices.Count <= 0) return 0;
+        return listView1.SelectedIndices[0];
+      }
+    }
+    public string Filename
+    {
+      set
+      {
+        labelFileName.Text = value;
+      }
+    }
+    public void AddMovie(string movie)
+    {
+      listView1.Items.Add(movie);
+    }
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.listView1 = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
@@ -134,7 +134,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // button1
       // 
-      this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.button1.Location = new System.Drawing.Point(264, 320);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(40, 23);
@@ -144,7 +143,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // button2
       // 
-      this.button2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.button2.Location = new System.Drawing.Point(312, 320);
       this.button2.Name = "button2";
       this.button2.Size = new System.Drawing.Size(56, 23);
@@ -185,7 +183,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonFind
       // 
-      this.buttonFind.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonFind.Location = new System.Drawing.Point(280, 264);
       this.buttonFind.Name = "buttonFind";
       this.buttonFind.Size = new System.Drawing.Size(40, 23);
@@ -210,49 +207,49 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		private void button1_Click(object sender, System.EventArgs e)
-		{
-			this.DialogResult=DialogResult.OK;
-			this.Close();
-		}
+    private void button1_Click(object sender, System.EventArgs e)
+    {
+      this.DialogResult = DialogResult.OK;
+      this.Close();
+    }
 
-		private void button2_Click(object sender, System.EventArgs e)
-		{
-			this.DialogResult=DialogResult.Cancel;
-			this.Close();
-		}
+    private void button2_Click(object sender, System.EventArgs e)
+    {
+      this.DialogResult = DialogResult.Cancel;
+      this.Close();
+    }
 
-		private void listView1_DoubleClick(object sender, System.EventArgs e)
-		{
-			base.OnDoubleClick(e);
-			this.DialogResult=DialogResult.OK;
-			this.Close();
+    private void listView1_DoubleClick(object sender, System.EventArgs e)
+    {
+      base.OnDoubleClick(e);
+      this.DialogResult = DialogResult.OK;
+      this.Close();
 
-		}
+    }
 
-		private void buttonFind_Click(object sender, System.EventArgs e)
-		{
-			buttonFind.Enabled=false;
-			button1.Enabled=false;
-			button2.Enabled=false;
-			textBoxTitle.Enabled=false;
-			imdb.Find( textBoxTitle.Text);
-			listView1.Items.Clear();
-			for (int i=0; i < imdb.Count;++i)
-				AddMovie(imdb[i].Title);
+    private void buttonFind_Click(object sender, System.EventArgs e)
+    {
+      buttonFind.Enabled = false;
+      button1.Enabled = false;
+      button2.Enabled = false;
+      textBoxTitle.Enabled = false;
+      imdb.Find(textBoxTitle.Text);
+      listView1.Items.Clear();
+      for (int i = 0; i < imdb.Count; ++i)
+        AddMovie(imdb[i].Title);
 
-			buttonFind.Enabled=true;
-			button1.Enabled=true;
-			button2.Enabled=true;
-			textBoxTitle.Enabled=true;
+      buttonFind.Enabled = true;
+      button1.Enabled = true;
+      button2.Enabled = true;
+      textBoxTitle.Enabled = true;
 
-		}
-		public IMDB imdb
-		{
-			get { return _imdb;}
-			set { _imdb=value;}
-		}
-	}
+    }
+    public IMDB imdb
+    {
+      get { return _imdb; }
+      set { _imdb = value; }
+    }
+  }
 }

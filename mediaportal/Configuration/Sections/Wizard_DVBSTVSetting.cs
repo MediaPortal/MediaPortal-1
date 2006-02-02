@@ -155,7 +155,6 @@ namespace MediaPortal.Configuration.Sections
       // groupBox1
       // 
       this.groupBox1.Controls.Add(this.checkBox1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(32, 288);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(144, 56);
@@ -165,7 +164,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBox1
       // 
-      this.checkBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBox1.Location = new System.Drawing.Point(32, 24);
       this.checkBox1.Name = "checkBox1";
       this.checkBox1.Size = new System.Drawing.Size(88, 16);
@@ -193,7 +191,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.diseqca);
       this.groupBox2.Controls.Add(this.lnbkind1);
       this.groupBox2.Controls.Add(this.lnbconfig1);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(32, 136);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(408, 144);
@@ -203,7 +200,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // useLNB4
       // 
-      this.useLNB4.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useLNB4.Location = new System.Drawing.Point(312, 112);
       this.useLNB4.Name = "useLNB4";
       this.useLNB4.Size = new System.Drawing.Size(80, 16);
@@ -212,7 +208,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // useLNB3
       // 
-      this.useLNB3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useLNB3.Location = new System.Drawing.Point(312, 88);
       this.useLNB3.Name = "useLNB3";
       this.useLNB3.Size = new System.Drawing.Size(80, 16);
@@ -221,7 +216,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // useLNB2
       // 
-      this.useLNB2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useLNB2.Location = new System.Drawing.Point(312, 64);
       this.useLNB2.Name = "useLNB2";
       this.useLNB2.Size = new System.Drawing.Size(80, 16);
@@ -233,7 +227,6 @@ namespace MediaPortal.Configuration.Sections
       this.useLNB1.Checked = true;
       this.useLNB1.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useLNB1.Enabled = false;
-      this.useLNB1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useLNB1.Location = new System.Drawing.Point(312, 40);
       this.useLNB1.Name = "useLNB1";
       this.useLNB1.Size = new System.Drawing.Size(80, 16);
@@ -426,7 +419,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Controls.Add(this.label20);
       this.groupBox4.Controls.Add(this.cbandMHZ);
       this.groupBox4.Controls.Add(this.label21);
-      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox4.Location = new System.Drawing.Point(264, 16);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(176, 96);
@@ -474,7 +466,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.switchMHZ);
       this.groupBox3.Controls.Add(this.lnb0MHZ);
       this.groupBox3.Controls.Add(this.label22);
-      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox3.Location = new System.Drawing.Point(32, 16);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(176, 96);

@@ -27,15 +27,15 @@ using System;
 
 namespace MediaPortal.UserInterface.Controls
 {
-	/// <summary>
-	/// Summary description for MPCheckBox.
-	/// </summary>
-	public class MPCheckBox : System.Windows.Forms.CheckBox
-	{
-		public MPCheckBox()
-		{
-			this.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
+  /// <summary>
+  /// Summary description for MPCheckBox.
+  /// </summary>
+  public class MPCheckBox : System.Windows.Forms.CheckBox
+  {
+    public MPCheckBox()
+    {
+      this.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
       this.AutoSize = true;
-		}
-	}
+    }
+  }
 }

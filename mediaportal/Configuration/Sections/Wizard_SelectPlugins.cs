@@ -139,7 +139,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.labelHD);
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 408);
@@ -170,7 +169,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonStopStart
       // 
       this.buttonStopStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonStopStart.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonStopStart.Location = new System.Drawing.Point(384, 228);
       this.buttonStopStart.Name = "buttonStopStart";
       this.buttonStopStart.Size = new System.Drawing.Size(72, 22);

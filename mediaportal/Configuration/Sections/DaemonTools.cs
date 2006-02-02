@@ -152,7 +152,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.label1);
       this.groupBox2.Controls.Add(this.checkBoxDaemonTools);
       this.groupBox2.Controls.Add(this.checkBoxAskBeforePlaying);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(0, 0);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 148);

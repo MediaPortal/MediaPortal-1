@@ -32,75 +32,78 @@ using System.Windows.Forms;
 namespace MediaPortal.Configuration.Sections
 {
   public abstract class FileExtensions : MediaPortal.Configuration.SectionSettings
-	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private MediaPortal.UserInterface.Controls.MPButton removeButton;
-		private MediaPortal.UserInterface.Controls.MPButton addButton;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.TextBox extensionTextBox;
-		private System.Windows.Forms.ListBox extensionsListBox;
-		private System.ComponentModel.IContainer components = null;
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPButton removeButton;
+    private MediaPortal.UserInterface.Controls.MPButton addButton;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.TextBox extensionTextBox;
+    private System.Windows.Forms.ListBox extensionsListBox;
+    private System.ComponentModel.IContainer components = null;
 
-		public string Extensions
-		{
-			get { 
-				string extensions = String.Empty;
+    public string Extensions
+    {
+      get
+      {
+        string extensions = String.Empty;
 
-				foreach(string extension in extensionsListBox.Items)
-				{
-					if(extensions.Length > 0)
-						extensions += ",";
+        foreach (string extension in extensionsListBox.Items)
+        {
+          if (extensions.Length > 0)
+            extensions += ",";
 
-					extensions += extension;
-				}
+          extensions += extension;
+        }
 
-				return extensions; 
-			}
-			set 
-			{ 
-				string[] extensions = ((string)value).Split(',');
-				extensionsListBox.Items.AddRange(extensions);
-			}
-		}
+        return extensions;
+      }
+      set
+      {
+        string[] extensions = ((string)value).Split(',');
+        extensionsListBox.Items.AddRange(extensions);
+      }
+    }
 
-		public FileExtensions() : base("<Unknown>")
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public FileExtensions()
+      : base("<Unknown>")
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
-		}
+      // TODO: Add any initialization after the InitializeComponent call
+    }
 
-		public FileExtensions(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public FileExtensions(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
-		}
+      // TODO: Add any initialization after the InitializeComponent call
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label1 = new System.Windows.Forms.Label();
       this.addButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -112,15 +115,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.addButton);
       this.groupBox1.Controls.Add(this.removeButton);
       this.groupBox1.Controls.Add(this.extensionsListBox);
       this.groupBox1.Controls.Add(this.extensionTextBox);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 408);
@@ -129,7 +131,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
@@ -140,7 +142,6 @@ namespace MediaPortal.Configuration.Sections
       // addButton
       // 
       this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.addButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.addButton.Location = new System.Drawing.Point(384, 64);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(72, 22);
@@ -152,7 +153,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.removeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.removeButton.Enabled = false;
-      this.removeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.removeButton.Location = new System.Drawing.Point(384, 88);
       this.removeButton.Name = "removeButton";
       this.removeButton.Size = new System.Drawing.Size(72, 22);
@@ -162,8 +162,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // extensionsListBox
       // 
-      this.extensionsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.extensionsListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.extensionsListBox.Location = new System.Drawing.Point(16, 88);
       this.extensionsListBox.Name = "extensionsListBox";
@@ -174,7 +174,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // extensionTextBox
       // 
-      this.extensionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.extensionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.extensionTextBox.Location = new System.Drawing.Point(16, 64);
       this.extensionTextBox.Name = "extensionTextBox";
@@ -191,78 +191,78 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void addButton_Click(object sender, System.EventArgs e)
-		{
-			string extension = extensionTextBox.Text;
-			
-			if(extension != null && extension.Length != 0)
-			{
-				//
-				// Only grab what we got after the first .
-				//
-				int dotPosition = extension.IndexOf(".");
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void addButton_Click(object sender, System.EventArgs e)
+    {
+      string extension = extensionTextBox.Text;
 
-				if(dotPosition < 0)
-				{
-					//
-					// We got no dot in the extension, append it
-					//
-					extension = String.Format(".{0}", extension);
-				}
-				else
-				{
-					//
-					// Remove everything before the dot
-					//
-					extension = extension.Substring(dotPosition);
-				}
+      if (extension != null && extension.Length != 0)
+      {
+        //
+        // Only grab what we got after the first .
+        //
+        int dotPosition = extension.IndexOf(".");
 
-				//
-				// Remove unwanted characters
-				//
-				extension = extension.Replace("*", "");
+        if (dotPosition < 0)
+        {
+          //
+          // We got no dot in the extension, append it
+          //
+          extension = String.Format(".{0}", extension);
+        }
+        else
+        {
+          //
+          // Remove everything before the dot
+          //
+          extension = extension.Substring(dotPosition);
+        }
 
-				//
-				// Add extension to the list
-				//
-				extensionsListBox.Items.Add(extension);
+        //
+        // Remove unwanted characters
+        //
+        extension = extension.Replace("*", "");
 
-				//
-				// Clear text
-				//
-				extensionTextBox.Text = String.Empty;
-			}
-		}
+        //
+        // Add extension to the list
+        //
+        extensionsListBox.Items.Add(extension);
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void removeButton_Click(object sender, System.EventArgs e)
-		{
-			int itemsSelected = extensionsListBox.SelectedIndices.Count;
+        //
+        // Clear text
+        //
+        extensionTextBox.Text = String.Empty;
+      }
+    }
 
-			//
-			// Make sure we have a valid item selected
-			//
-			for(int index = 0; index < itemsSelected; index++)
-			{
-				extensionsListBox.Items.RemoveAt(extensionsListBox.SelectedIndices[0]);
-			}
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void removeButton_Click(object sender, System.EventArgs e)
+    {
+      int itemsSelected = extensionsListBox.SelectedIndices.Count;
+
+      //
+      // Make sure we have a valid item selected
+      //
+      for (int index = 0; index < itemsSelected; index++)
+      {
+        extensionsListBox.Items.RemoveAt(extensionsListBox.SelectedIndices[0]);
+      }
+    }
 
     private void extensionsListBox_SelectedIndexChanged(object sender, System.EventArgs e)
     {
       removeButton.Enabled = (extensionsListBox.SelectedItems.Count > 0);
     }
-	}
+  }
 }
 

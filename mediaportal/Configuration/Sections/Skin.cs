@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.IO;
 using System.Collections;
@@ -30,137 +34,139 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class Skin : MediaPortal.Configuration.SectionSettings
-	{
-		const string SkinDirectory = @"skin\";
+  public class Skin : MediaPortal.Configuration.SectionSettings
+  {
+    const string SkinDirectory = @"skin\";
 
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.ListView listViewAvailableSkins;
-		private System.Windows.Forms.ColumnHeader colName;
-		private System.Windows.Forms.ColumnHeader colVersion;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private System.Windows.Forms.ListView listViewAvailableSkins;
+    private System.Windows.Forms.ColumnHeader colName;
+    private System.Windows.Forms.ColumnHeader colVersion;
     private System.Windows.Forms.PictureBox previewPictureBox;
-		private System.ComponentModel.IContainer components = null;
+    private System.ComponentModel.IContainer components = null;
 
-		public Skin() : this("Skin")
-		{
-		}
+    public Skin()
+      : this("Skin")
+    {
+    }
 
-		public Skin(string name) : base(name)
-		{
+    public Skin(string name)
+      : base(name)
+    {
 
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			//
-			// Load available skins
-			//
-			listViewAvailableSkins.Items.Clear();
+      //
+      // Load available skins
+      //
+      listViewAvailableSkins.Items.Clear();
 
-			if(Directory.Exists(SkinDirectory))
-			{
-				string[] skinFolders = Directory.GetDirectories(SkinDirectory, "*.*");
-				
-				foreach(string skinFolder in skinFolders)
-				{
-					bool		isInvalidDirectory = false;
-					string[]	invalidDirectoryNames = new string[] { "cvs" };
-					
-					string directoryName = skinFolder.Substring(SkinDirectory.Length);
+      if (Directory.Exists(SkinDirectory))
+      {
+        string[] skinFolders = Directory.GetDirectories(SkinDirectory, "*.*");
 
-					if(directoryName != null && directoryName.Length > 0)
-					{
-						foreach(string invalidDirectory in invalidDirectoryNames)
-						{
-							if(invalidDirectory.Equals(directoryName.ToLower()))
-							{
-								isInvalidDirectory = true;
-								break;
-							}
-						}
+        foreach (string skinFolder in skinFolders)
+        {
+          bool isInvalidDirectory = false;
+          string[] invalidDirectoryNames = new string[] { "cvs" };
 
-						if(isInvalidDirectory == false)
-						{
+          string directoryName = skinFolder.Substring(SkinDirectory.Length);
+
+          if (directoryName != null && directoryName.Length > 0)
+          {
+            foreach (string invalidDirectory in invalidDirectoryNames)
+            {
+              if (invalidDirectory.Equals(directoryName.ToLower()))
+              {
+                isInvalidDirectory = true;
+                break;
+              }
+            }
+
+            if (isInvalidDirectory == false)
+            {
               //
               // Check if we have a home.xml located in the directory, if so we consider it as a
               // valid skin directory
               //
-							string filename=Path.Combine(SkinDirectory, Path.Combine(directoryName, "references.xml"));
-              if(File.Exists(filename))
-              {	
-								XmlDocument doc=new XmlDocument();
-								doc.Load(filename);
-								XmlNode node=doc.SelectSingleNode("/controls/skin/version");
-                ListViewItem item=listViewAvailableSkins.Items.Add(directoryName);
-								if (node!=null && node.InnerText!=null)
-									item.SubItems.Add(node.InnerText);
-								else
-									item.SubItems.Add("?");
+              string filename = Path.Combine(SkinDirectory, Path.Combine(directoryName, "references.xml"));
+              if (File.Exists(filename))
+              {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(filename);
+                XmlNode node = doc.SelectSingleNode("/controls/skin/version");
+                ListViewItem item = listViewAvailableSkins.Items.Add(directoryName);
+                if (node != null && node.InnerText != null)
+                  item.SubItems.Add(node.InnerText);
+                else
+                  item.SubItems.Add("?");
               }
-						}
-					}
-				}
-			}
-		}
+            }
+          }
+        }
+      }
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public override void LoadSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				string currentSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        string currentSkin = xmlreader.GetValueAsString("skin", "name", "BlueTwo");
 
-				//
-				// Make sure the skin actually exists before setting it as the current skin
-				//
-				foreach(ListViewItem item in listViewAvailableSkins.Items)
-				{
-					if(item .SubItems[0].Text.Equals(currentSkin))
-					{
-						item.Selected=true;
-						break;
-					}
-				}
-			}
-		}
+        //
+        // Make sure the skin actually exists before setting it as the current skin
+        //
+        foreach (ListViewItem item in listViewAvailableSkins.Items)
+        {
+          if (item.SubItems[0].Text.Equals(currentSkin))
+          {
+            item.Selected = true;
+            break;
+          }
+        }
+      }
+    }
 
-		public override void SaveSettings()
-		{
-			if (listViewAvailableSkins.SelectedItems.Count==0) return;
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				string prevSkin = xmlwriter.GetValueAsString("skin", "name", "BlueTwo");
-				if (prevSkin!=listViewAvailableSkins.SelectedItems[0].Text)
-				{
-					Utils.DeleteFiles(@"skin\"+listViewAvailableSkins.Text+@"\fonts","*");
-				}
-				xmlwriter.SetValue("skin", "name", listViewAvailableSkins.SelectedItems[0].Text);
-			}
-		}
+    public override void SaveSettings()
+    {
+      if (listViewAvailableSkins.SelectedItems.Count == 0) return;
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        string prevSkin = xmlwriter.GetValueAsString("skin", "name", "BlueTwo");
+        if (prevSkin != listViewAvailableSkins.SelectedItems[0].Text)
+        {
+          Utils.DeleteFiles(@"skin\" + listViewAvailableSkins.Text + @"\fonts", "*");
+        }
+        xmlwriter.SetValue("skin", "name", listViewAvailableSkins.SelectedItems[0].Text);
+      }
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.listViewAvailableSkins = new System.Windows.Forms.ListView();
       this.colName = new System.Windows.Forms.ColumnHeader();
@@ -177,7 +183,6 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.listViewAvailableSkins);
       this.groupBox1.Controls.Add(this.previewPictureBox);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 408);
@@ -232,49 +237,49 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
 
-		private void listViewAvailableSkins_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			if (listViewAvailableSkins.SelectedItems.Count==0) 
-			{
-				previewPictureBox.Image=null;
+    private void listViewAvailableSkins_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      if (listViewAvailableSkins.SelectedItems.Count == 0)
+      {
+        previewPictureBox.Image = null;
         previewPictureBox.Visible = false;
-				return;
-			}
-			string currentSkin = (string)listViewAvailableSkins.SelectedItems[0].Text;
-			string previewFile = String.Format(@"{0}{1}\media\preview.png", SkinDirectory, currentSkin);
+        return;
+      }
+      string currentSkin = (string)listViewAvailableSkins.SelectedItems[0].Text;
+      string previewFile = String.Format(@"{0}{1}\media\preview.png", SkinDirectory, currentSkin);
 
-			//
-			// Clear image
-			//
-			previewPictureBox.Image = null;
+      //
+      // Clear image
+      //
+      previewPictureBox.Image = null;
       System.Drawing.Image img = null;
 
-			if(File.Exists(previewFile))
-			{
+      if (File.Exists(previewFile))
+      {
         img = Image.FromFile(previewFile);
         previewPictureBox.Width = img.Width;
         previewPictureBox.Height = img.Height;
         previewPictureBox.Image = img;
         previewPictureBox.Visible = true;
-			}
-			else
-			{
-				string logoFile = "mplogo.gif";
+      }
+      else
+      {
+        string logoFile = "mplogo.gif";
 
-				if(File.Exists(logoFile))
-				{
+        if (File.Exists(logoFile))
+        {
           img = Image.FromFile(logoFile);
           previewPictureBox.Width = img.Width;
           previewPictureBox.Height = img.Height;
           previewPictureBox.Image = img;
           previewPictureBox.Visible = true;
-				}
-			}
+        }
+      }
 
-		}
-	}
+    }
+  }
 }
 

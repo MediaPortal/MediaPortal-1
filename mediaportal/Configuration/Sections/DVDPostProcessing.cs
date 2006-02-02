@@ -31,31 +31,33 @@ using System.Windows.Forms;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class DVDPostProcessing : MediaPortal.Configuration.SectionSettings
-	{
+  public class DVDPostProcessing : MediaPortal.Configuration.SectionSettings
+  {
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
     private MediaPortal.UserInterface.Controls.MPCheckBox ffdshowCheckBox;
     private System.Windows.Forms.Label label3;
-		private System.ComponentModel.IContainer components = null;
+    private System.ComponentModel.IContainer components = null;
 
-    public DVDPostProcessing() : this("DVD Post Processing")
+    public DVDPostProcessing()
+      : this("DVD Post Processing")
     {
     }
 
-    public DVDPostProcessing(string name) : base(name)
+    public DVDPostProcessing(string name)
+      : base(name)
     {
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
-		}
+      // TODO: Add any initialization after the InitializeComponent call
+    }
 
     public override void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         ffdshowCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "ffdshow", false);
-      }      
+      }
     }
 
     public override void SaveSettings()
@@ -63,31 +65,31 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("dvdplayer", "ffdshow", ffdshowCheckBox.Checked);
-      } 
+      }
     }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.ffdshowCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label3 = new System.Windows.Forms.Label();
@@ -100,7 +102,6 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox3.Controls.Add(this.ffdshowCheckBox);
       this.mpGroupBox3.Controls.Add(this.label3);
-      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox3.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
       this.mpGroupBox3.Size = new System.Drawing.Size(472, 96);
@@ -110,7 +111,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // ffdshowCheckBox
       // 
-      this.ffdshowCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.ffdshowCheckBox.Location = new System.Drawing.Point(16, 64);
       this.ffdshowCheckBox.Name = "ffdshowCheckBox";
       this.ffdshowCheckBox.Size = new System.Drawing.Size(184, 16);
@@ -137,7 +137,7 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
-	}
+    #endregion
+  }
 }
 

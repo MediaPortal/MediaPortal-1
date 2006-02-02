@@ -31,55 +31,55 @@ using System.Windows.Forms;
 
 namespace MediaPortal.Configuration
 {
-	/// <summary>
-	/// Summary description for ParameterForm.
-	/// </summary>
-	public class ParameterForm : System.Windows.Forms.Form
-	{
-		private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-		private MediaPortal.UserInterface.Controls.MPButton okButton;
-		private MediaPortal.UserInterface.Controls.MPListView parametersListView;
-		private System.Windows.Forms.ColumnHeader columnHeader1;
-		private System.Windows.Forms.ColumnHeader columnHeader2;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+  /// <summary>
+  /// Summary description for ParameterForm.
+  /// </summary>
+  public class ParameterForm : System.Windows.Forms.Form
+  {
+    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
+    private MediaPortal.UserInterface.Controls.MPButton okButton;
+    private MediaPortal.UserInterface.Controls.MPListView parametersListView;
+    private System.Windows.Forms.ColumnHeader columnHeader1;
+    private System.Windows.Forms.ColumnHeader columnHeader2;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public ParameterForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public ParameterForm()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.parametersListView = new MediaPortal.UserInterface.Controls.MPListView();
@@ -91,7 +91,6 @@ namespace MediaPortal.Configuration
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cancelButton.Location = new System.Drawing.Point(286, 144);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.TabIndex = 2;
@@ -102,7 +101,6 @@ namespace MediaPortal.Configuration
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.Enabled = false;
-      this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.okButton.Location = new System.Drawing.Point(206, 144);
       this.okButton.Name = "okButton";
       this.okButton.TabIndex = 1;
@@ -111,8 +109,8 @@ namespace MediaPortal.Configuration
       // 
       // parametersListView
       // 
-      this.parametersListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.parametersListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
                                                                                          this.columnHeader1,
@@ -154,71 +152,71 @@ namespace MediaPortal.Configuration
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		private void parametersListView_DoubleClick(object sender, System.EventArgs e)
-		{
-			if(parametersListView.SelectedItems.Count > 0)
-			{
-				this.DialogResult = DialogResult.OK;
-				this.Hide();
-			}
-		}
+    private void parametersListView_DoubleClick(object sender, System.EventArgs e)
+    {
+      if (parametersListView.SelectedItems.Count > 0)
+      {
+        this.DialogResult = DialogResult.OK;
+        this.Hide();
+      }
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void parametersListView_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			okButton.Enabled = parametersListView.SelectedItems.Count > 0;
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void parametersListView_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      okButton.Enabled = parametersListView.SelectedItems.Count > 0;
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void okButton_Click(object sender, System.EventArgs e)
-		{
-			this.DialogResult = DialogResult.OK;
-			this.Hide();
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void okButton_Click(object sender, System.EventArgs e)
+    {
+      this.DialogResult = DialogResult.OK;
+      this.Hide();
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void cancelButton_Click(object sender, System.EventArgs e)
-		{
-			this.DialogResult = DialogResult.Cancel;
-			this.Hide();
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void cancelButton_Click(object sender, System.EventArgs e)
+    {
+      this.DialogResult = DialogResult.Cancel;
+      this.Hide();
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public string SelectedParameter
-		{
-			get 
-			{
-				if(parametersListView.SelectedItems.Count == 0)
-					return string.Empty;
-				else
-					return parametersListView.SelectedItems[0].Text;
-			}
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    public string SelectedParameter
+    {
+      get
+      {
+        if (parametersListView.SelectedItems.Count == 0)
+          return string.Empty;
+        else
+          return parametersListView.SelectedItems[0].Text;
+      }
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="parameter"></param>
-		/// <param name="description"></param>
-		public void AddParameter(string parameter, string description)
-		{
-			parametersListView.Items.Add(new ListViewItem(new string[] { parameter, description }));
-		}
-	}
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="parameter"></param>
+    /// <param name="description"></param>
+    public void AddParameter(string parameter, string description)
+    {
+      parametersListView.Items.Add(new ListViewItem(new string[] { parameter, description }));
+    }
+  }
 }

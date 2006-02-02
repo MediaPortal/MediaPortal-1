@@ -35,73 +35,75 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class FileMenu : MediaPortal.Configuration.SectionSettings
-	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private MediaPortal.UserInterface.Controls.MPCheckBox chbEnabled;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.TextBox textPinCodeBox;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.TextBox textTrashcanFolder;
-		private System.ComponentModel.IContainer components = null;
+  public class FileMenu : MediaPortal.Configuration.SectionSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chbEnabled;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.TextBox textPinCodeBox;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.TextBox textTrashcanFolder;
+    private System.ComponentModel.IContainer components = null;
 
-		public FileMenu() : this("File Menu")
-		{
-		}
+    public FileMenu()
+      : this("File Menu")
+    {
+    }
 
-		public FileMenu(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public FileMenu(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-		}
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		
-		/// <summary>
-		/// 
-		/// </summary>
-		public override void LoadSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				chbEnabled.Checked = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-				textPinCodeBox.Text = xmlreader.GetValueAsString("filemenu", "pincode", "");
-				textTrashcanFolder.Text = xmlreader.GetValueAsString("filemenu", "trashcan", "");
-			}
-		}
 
-		public override void SaveSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				xmlwriter.SetValueAsBool("filemenu", "enabled", chbEnabled.Checked);
-				xmlwriter.SetValue("filemenu", "pincode", textPinCodeBox.Text);
-				xmlwriter.SetValue("filemenu", "trashcane", textTrashcanFolder.Text);				
-			}
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        chbEnabled.Checked = xmlreader.GetValueAsBool("filemenu", "enabled", true);
+        textPinCodeBox.Text = xmlreader.GetValueAsString("filemenu", "pincode", "");
+        textTrashcanFolder.Text = xmlreader.GetValueAsString("filemenu", "trashcan", "");
+      }
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    public override void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValueAsBool("filemenu", "enabled", chbEnabled.Checked);
+        xmlwriter.SetValue("filemenu", "pincode", textPinCodeBox.Text);
+        xmlwriter.SetValue("filemenu", "trashcane", textTrashcanFolder.Text);
+      }
+    }
+
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label1 = new System.Windows.Forms.Label();
       this.textPinCodeBox = new System.Windows.Forms.TextBox();
@@ -118,7 +120,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.textPinCodeBox);
       this.groupBox1.Controls.Add(this.chbEnabled);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 80);
@@ -188,15 +189,15 @@ namespace MediaPortal.Configuration.Sections
       this.PerformLayout();
 
     }
-		#endregion
+    #endregion
 
-		private void chbEnabled_CheckedChanged(object sender, System.EventArgs e)
-		{
-			textPinCodeBox.Enabled = chbEnabled.Checked;
-			textTrashcanFolder.Enabled = chbEnabled.Checked;
-		}
+    private void chbEnabled_CheckedChanged(object sender, System.EventArgs e)
+    {
+      textPinCodeBox.Enabled = chbEnabled.Checked;
+      textTrashcanFolder.Enabled = chbEnabled.Checked;
+    }
 
-    
-	}
+
+  }
 }
 

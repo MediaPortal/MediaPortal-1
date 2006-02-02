@@ -147,7 +147,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Controls.Add(this.checkBoxAC3LFE);
       this.groupBox4.Controls.Add(this.comboBoxAC3SpeakerConfig);
       this.groupBox4.Controls.Add(this.checkBoxAC3DynamicRange);
-      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
       this.groupBox4.Location = new System.Drawing.Point(0, 0);
       this.groupBox4.Name = "groupBox4";
@@ -158,7 +157,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // radioButtonAC3SPDIF
       // 
-      this.radioButtonAC3SPDIF.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonAC3SPDIF.Location = new System.Drawing.Point(16, 48);
       this.radioButtonAC3SPDIF.Name = "radioButtonAC3SPDIF";
       this.radioButtonAC3SPDIF.Size = new System.Drawing.Size(56, 16);
@@ -169,7 +167,6 @@ namespace MediaPortal.Configuration.Sections
       // radioButtonAC3Speakers
       // 
       this.radioButtonAC3Speakers.Checked = true;
-      this.radioButtonAC3Speakers.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonAC3Speakers.Location = new System.Drawing.Point(16, 24);
       this.radioButtonAC3Speakers.Name = "radioButtonAC3Speakers";
       this.radioButtonAC3Speakers.Size = new System.Drawing.Size(120, 16);
@@ -181,7 +178,6 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxAC3LFE
       // 
       this.checkBoxAC3LFE.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.checkBoxAC3LFE.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxAC3LFE.Location = new System.Drawing.Point(416, 24);
       this.checkBoxAC3LFE.Name = "checkBoxAC3LFE";
       this.checkBoxAC3LFE.Size = new System.Drawing.Size(40, 16);
@@ -213,7 +209,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxAC3DynamicRange
       // 
-      this.checkBoxAC3DynamicRange.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxAC3DynamicRange.Location = new System.Drawing.Point(16, 72);
       this.checkBoxAC3DynamicRange.Name = "checkBoxAC3DynamicRange";
       this.checkBoxAC3DynamicRange.Size = new System.Drawing.Size(144, 16);
@@ -231,7 +226,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.radioButtonIEEE);
       this.groupBox3.Controls.Add(this.checkBoxNormalize);
       this.groupBox3.Controls.Add(this.trackBarBoost);
-      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox3.Location = new System.Drawing.Point(0, 224);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(472, 112);
@@ -250,7 +244,6 @@ namespace MediaPortal.Configuration.Sections
       // radioPCM16Bit
       // 
       this.radioPCM16Bit.Checked = true;
-      this.radioPCM16Bit.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioPCM16Bit.Location = new System.Drawing.Point(16, 24);
       this.radioPCM16Bit.Name = "radioPCM16Bit";
       this.radioPCM16Bit.Size = new System.Drawing.Size(80, 16);
@@ -260,7 +253,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // radioButtonPCM24Bit
       // 
-      this.radioButtonPCM24Bit.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonPCM24Bit.Location = new System.Drawing.Point(104, 24);
       this.radioButtonPCM24Bit.Name = "radioButtonPCM24Bit";
       this.radioButtonPCM24Bit.Size = new System.Drawing.Size(80, 16);
@@ -269,7 +261,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // radioButtonPCM32Bit
       // 
-      this.radioButtonPCM32Bit.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonPCM32Bit.Location = new System.Drawing.Point(192, 24);
       this.radioButtonPCM32Bit.Name = "radioButtonPCM32Bit";
       this.radioButtonPCM32Bit.Size = new System.Drawing.Size(80, 16);
@@ -278,7 +269,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // radioButtonIEEE
       // 
-      this.radioButtonIEEE.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonIEEE.Location = new System.Drawing.Point(288, 24);
       this.radioButtonIEEE.Name = "radioButtonIEEE";
       this.radioButtonIEEE.Size = new System.Drawing.Size(80, 16);
@@ -287,7 +277,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxNormalize
       // 
-      this.checkBoxNormalize.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxNormalize.Location = new System.Drawing.Point(16, 86);
       this.checkBoxNormalize.Name = "checkBoxNormalize";
       this.checkBoxNormalize.Size = new System.Drawing.Size(80, 16);
@@ -314,7 +303,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.checkBoxDTSLFE);
       this.groupBox2.Controls.Add(this.comboBoxDTSSpeakerConfig);
       this.groupBox2.Controls.Add(this.checkBoxDTSDynamicRange);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(0, 112);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 104);
@@ -324,7 +312,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // radioButtonDTSSPDIF
       // 
-      this.radioButtonDTSSPDIF.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonDTSSPDIF.Location = new System.Drawing.Point(16, 48);
       this.radioButtonDTSSPDIF.Name = "radioButtonDTSSPDIF";
       this.radioButtonDTSSPDIF.Size = new System.Drawing.Size(56, 16);
@@ -335,7 +322,6 @@ namespace MediaPortal.Configuration.Sections
       // radioButtonDTSSpeakers
       // 
       this.radioButtonDTSSpeakers.Checked = true;
-      this.radioButtonDTSSpeakers.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.radioButtonDTSSpeakers.Location = new System.Drawing.Point(16, 24);
       this.radioButtonDTSSpeakers.Name = "radioButtonDTSSpeakers";
       this.radioButtonDTSSpeakers.Size = new System.Drawing.Size(120, 16);
@@ -347,7 +333,6 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxDTSLFE
       // 
       this.checkBoxDTSLFE.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.checkBoxDTSLFE.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxDTSLFE.Location = new System.Drawing.Point(416, 24);
       this.checkBoxDTSLFE.Name = "checkBoxDTSLFE";
       this.checkBoxDTSLFE.Size = new System.Drawing.Size(40, 16);
@@ -375,7 +360,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxDTSDynamicRange
       // 
-      this.checkBoxDTSDynamicRange.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxDTSDynamicRange.Location = new System.Drawing.Point(16, 72);
       this.checkBoxDTSDynamicRange.Name = "checkBoxDTSDynamicRange";
       this.checkBoxDTSDynamicRange.Size = new System.Drawing.Size(136, 16);
@@ -387,7 +371,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox5.Controls.Add(this.checkBoxAACDownmix);
-      this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox5.Location = new System.Drawing.Point(0, 344);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(472, 56);
@@ -399,7 +382,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.checkBoxAACDownmix.Checked = true;
       this.checkBoxAACDownmix.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxAACDownmix.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxAACDownmix.Location = new System.Drawing.Point(16, 24);
       this.checkBoxAACDownmix.Name = "checkBoxAACDownmix";
       this.checkBoxAACDownmix.Size = new System.Drawing.Size(128, 16);

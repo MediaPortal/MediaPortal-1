@@ -339,7 +339,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.folderNameTextBox);
       this.groupBox1.Controls.Add(this.repeatPlaylistCheckBox);
       this.groupBox1.Controls.Add(this.folderNameLabel);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(16, 16);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(432, 116);
@@ -375,7 +374,6 @@ namespace MediaPortal.Configuration.Sections
       // fileNameButton
       // 
       this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileNameButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.fileNameButton.Location = new System.Drawing.Point(344, 51);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
@@ -395,7 +393,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // repeatPlaylistCheckBox
       // 
-      this.repeatPlaylistCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(16, 24);
       this.repeatPlaylistCheckBox.Name = "repeatPlaylistCheckBox";
       this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(152, 16);
@@ -422,7 +419,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.subtitlesButton);
       this.mpGroupBox1.Controls.Add(this.subtitlesFontTextBox);
       this.mpGroupBox1.Controls.Add(this.label6);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox1.Location = new System.Drawing.Point(16, 16);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(432, 136);
@@ -469,7 +465,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // showSubtitlesCheckBox
       // 
-      this.showSubtitlesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.showSubtitlesCheckBox.Location = new System.Drawing.Point(16, 24);
       this.showSubtitlesCheckBox.Name = "showSubtitlesCheckBox";
       this.showSubtitlesCheckBox.Size = new System.Drawing.Size(112, 16);
@@ -479,7 +474,6 @@ namespace MediaPortal.Configuration.Sections
       // subtitlesButton
       // 
       this.subtitlesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.subtitlesButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.subtitlesButton.Location = new System.Drawing.Point(344, 51);
       this.subtitlesButton.Name = "subtitlesButton";
       this.subtitlesButton.Size = new System.Drawing.Size(72, 22);
@@ -512,7 +506,6 @@ namespace MediaPortal.Configuration.Sections
         | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.displayTimoutTextBox);
       this.mpGroupBox2.Controls.Add(this.label5);
-      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox2.Location = new System.Drawing.Point(16, 16);
       this.mpGroupBox2.Name = "mpGroupBox2";
       this.mpGroupBox2.Size = new System.Drawing.Size(432, 56);
@@ -548,7 +541,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.bDatabaseDown);
       this.groupBox2.Controls.Add(this.bDatabaseUp);
       this.groupBox2.Controls.Add(this.lvDatabase);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(16, 16);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(432, 192);
@@ -585,7 +577,6 @@ namespace MediaPortal.Configuration.Sections
       // bDatabaseDown
       // 
       this.bDatabaseDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.bDatabaseDown.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.bDatabaseDown.Location = new System.Drawing.Point(336, 152);
       this.bDatabaseDown.Name = "bDatabaseDown";
       this.bDatabaseDown.Size = new System.Drawing.Size(72, 22);
@@ -596,7 +587,6 @@ namespace MediaPortal.Configuration.Sections
       // bDatabaseUp
       // 
       this.bDatabaseUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.bDatabaseUp.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.bDatabaseUp.Location = new System.Drawing.Point(256, 152);
       this.bDatabaseUp.Name = "bDatabaseUp";
       this.bDatabaseUp.Size = new System.Drawing.Size(72, 22);
@@ -700,7 +690,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.Controls.Add(this.label3);
       this.mpGroupBox3.Controls.Add(this.zapDelayTextBox);
       this.mpGroupBox3.Controls.Add(this.label2);
-      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox3.Location = new System.Drawing.Point(16, 80);
       this.mpGroupBox3.Name = "mpGroupBox3";
       this.mpGroupBox3.Size = new System.Drawing.Size(432, 80);

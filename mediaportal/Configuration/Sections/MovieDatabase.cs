@@ -379,7 +379,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this._fuzzyMatchingCheckBox);
       this.groupBox1.Controls.Add(this.startButton);
       this.groupBox1.Controls.Add(this.sharesListBox);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(448, 192);
@@ -390,7 +389,6 @@ namespace MediaPortal.Configuration.Sections
       // startButton
       // 
       this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.startButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.startButton.Location = new System.Drawing.Point(216, 160);
       this.startButton.Name = "startButton";
       this.startButton.Size = new System.Drawing.Size(216, 22);
@@ -414,7 +412,6 @@ namespace MediaPortal.Configuration.Sections
       // cancelButton
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cancelButton.Location = new System.Drawing.Point(360, 120);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(72, 22);
@@ -433,7 +430,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.label2);
       this.groupBox2.Controls.Add(this.progressBar);
       this.groupBox2.Controls.Add(this.cancelButton);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(8, 208);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(448, 152);
@@ -579,7 +575,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.label8);
       this.groupBox3.Controls.Add(this.tbRating);
       this.groupBox3.Controls.Add(this.tbTitle);
-      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox3.Location = new System.Drawing.Point(0, 0);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(440, 336);
@@ -589,7 +584,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonImport
       // 
       this.buttonImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonImport.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonImport.Location = new System.Drawing.Point(200, 312);
       this.buttonImport.Name = "buttonImport";
       this.buttonImport.Size = new System.Drawing.Size(72, 17);
@@ -600,7 +594,6 @@ namespace MediaPortal.Configuration.Sections
       // btnDelete
       // 
       this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnDelete.Location = new System.Drawing.Point(360, 312);
       this.btnDelete.Name = "btnDelete";
       this.btnDelete.Size = new System.Drawing.Size(72, 17);
@@ -665,7 +658,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonLookupMovie
       // 
       this.buttonLookupMovie.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonLookupMovie.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonLookupMovie.Location = new System.Drawing.Point(352, 43);
       this.buttonLookupMovie.Name = "buttonLookupMovie";
       this.buttonLookupMovie.Size = new System.Drawing.Size(72, 22);
@@ -676,7 +668,6 @@ namespace MediaPortal.Configuration.Sections
       // btnSave
       // 
       this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnSave.Location = new System.Drawing.Point(280, 312);
       this.btnSave.Name = "btnSave";
       this.btnSave.Size = new System.Drawing.Size(72, 17);
@@ -706,7 +697,6 @@ namespace MediaPortal.Configuration.Sections
       // cbWatched
       // 
       this.cbWatched.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.cbWatched.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cbWatched.Location = new System.Drawing.Point(245, 280);
       this.cbWatched.Name = "cbWatched";
       this.cbWatched.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -878,7 +868,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox6.Controls.Add(this.buttonRemoveFile);
       this.groupBox6.Controls.Add(this.buttonAddFile);
       this.groupBox6.Controls.Add(this.listViewFiles);
-      this.groupBox6.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox6.Location = new System.Drawing.Point(0, 0);
       this.groupBox6.Name = "groupBox6";
       this.groupBox6.Size = new System.Drawing.Size(440, 336);
@@ -888,7 +877,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonRemoveFile
       // 
       this.buttonRemoveFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonRemoveFile.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonRemoveFile.Location = new System.Drawing.Point(352, 304);
       this.buttonRemoveFile.Name = "buttonRemoveFile";
       this.buttonRemoveFile.Size = new System.Drawing.Size(72, 22);
@@ -899,7 +887,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonAddFile
       // 
       this.buttonAddFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonAddFile.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonAddFile.Location = new System.Drawing.Point(272, 304);
       this.buttonAddFile.Name = "buttonAddFile";
       this.buttonAddFile.Size = new System.Drawing.Size(72, 22);
@@ -946,7 +933,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox5.Controls.Add(this.buttonMapActors);
       this.groupBox5.Controls.Add(this.listViewMovieActors);
       this.groupBox5.Controls.Add(this.listViewAllActors);
-      this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox5.Location = new System.Drawing.Point(0, 0);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(440, 336);
@@ -965,7 +951,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonDeleteActor
       // 
       this.buttonDeleteActor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonDeleteActor.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonDeleteActor.Location = new System.Drawing.Point(96, 296);
       this.buttonDeleteActor.Name = "buttonDeleteActor";
       this.buttonDeleteActor.Size = new System.Drawing.Size(72, 22);
@@ -976,7 +961,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonNewActor
       // 
       this.buttonNewActor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonNewActor.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonNewActor.Location = new System.Drawing.Point(16, 296);
       this.buttonNewActor.Name = "buttonNewActor";
       this.buttonNewActor.Size = new System.Drawing.Size(72, 22);
@@ -987,7 +971,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonUnmapActors
       // 
       this.buttonUnmapActors.Anchor = System.Windows.Forms.AnchorStyles.None;
-      this.buttonUnmapActors.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonUnmapActors.Location = new System.Drawing.Point(184, 152);
       this.buttonUnmapActors.Name = "buttonUnmapActors";
       this.buttonUnmapActors.Size = new System.Drawing.Size(40, 22);
@@ -998,7 +981,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonMapActors
       // 
       this.buttonMapActors.Anchor = System.Windows.Forms.AnchorStyles.None;
-      this.buttonMapActors.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonMapActors.Location = new System.Drawing.Point(184, 120);
       this.buttonMapActors.Name = "buttonMapActors";
       this.buttonMapActors.Size = new System.Drawing.Size(40, 22);
@@ -1069,7 +1051,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Controls.Add(this.buttonMapGenre);
       this.groupBox4.Controls.Add(this.listViewGenres);
       this.groupBox4.Controls.Add(this.listViewAllGenres);
-      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox4.Location = new System.Drawing.Point(0, 0);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(440, 336);
@@ -1088,7 +1069,6 @@ namespace MediaPortal.Configuration.Sections
       // btnDeleteGenre
       // 
       this.btnDeleteGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.btnDeleteGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnDeleteGenre.Location = new System.Drawing.Point(96, 296);
       this.btnDeleteGenre.Name = "btnDeleteGenre";
       this.btnDeleteGenre.Size = new System.Drawing.Size(72, 22);
@@ -1099,7 +1079,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonNewGenre
       // 
       this.buttonNewGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.buttonNewGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonNewGenre.Location = new System.Drawing.Point(16, 296);
       this.buttonNewGenre.Name = "buttonNewGenre";
       this.buttonNewGenre.Size = new System.Drawing.Size(72, 22);
@@ -1110,7 +1089,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonUnmapGenre
       // 
       this.buttonUnmapGenre.Anchor = System.Windows.Forms.AnchorStyles.None;
-      this.buttonUnmapGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonUnmapGenre.Location = new System.Drawing.Point(184, 152);
       this.buttonUnmapGenre.Name = "buttonUnmapGenre";
       this.buttonUnmapGenre.Size = new System.Drawing.Size(40, 22);
@@ -1121,7 +1099,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonMapGenre
       // 
       this.buttonMapGenre.Anchor = System.Windows.Forms.AnchorStyles.None;
-      this.buttonMapGenre.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonMapGenre.Location = new System.Drawing.Point(184, 120);
       this.buttonMapGenre.Name = "buttonMapGenre";
       this.buttonMapGenre.Size = new System.Drawing.Size(40, 22);
@@ -1185,7 +1162,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox7.Controls.Add(this.label15);
       this.groupBox7.Controls.Add(this.textBoxPictureURL);
       this.groupBox7.Controls.Add(this.pictureBox1);
-      this.groupBox7.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox7.Location = new System.Drawing.Point(0, 0);
       this.groupBox7.Name = "groupBox7";
       this.groupBox7.Size = new System.Drawing.Size(440, 336);
@@ -1214,7 +1190,6 @@ namespace MediaPortal.Configuration.Sections
       // btnLookupImage
       // 
       this.btnLookupImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnLookupImage.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnLookupImage.Location = new System.Drawing.Point(352, 19);
       this.btnLookupImage.Name = "btnLookupImage";
       this.btnLookupImage.Size = new System.Drawing.Size(72, 22);
@@ -1268,7 +1243,6 @@ namespace MediaPortal.Configuration.Sections
       this._fuzzyMatchingCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this._fuzzyMatchingCheckBox.Checked = true;
       this._fuzzyMatchingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-      this._fuzzyMatchingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this._fuzzyMatchingCheckBox.Location = new System.Drawing.Point(16, 144);
       this._fuzzyMatchingCheckBox.Name = "_fuzzyMatchingCheckBox";
       this._fuzzyMatchingCheckBox.Size = new System.Drawing.Size(264, 16);

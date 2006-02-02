@@ -108,7 +108,6 @@ namespace MediaPortal.Configuration
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cancelButton.Location = new System.Drawing.Point(357, 192);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.TabIndex = 1;
@@ -126,7 +125,6 @@ namespace MediaPortal.Configuration
       this.groupBox1.Controls.Add(this.progressBar);
       this.groupBox1.Controls.Add(this.itemsListBox);
       this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(424, 176);
@@ -151,7 +149,6 @@ namespace MediaPortal.Configuration
       // stopButton
       // 
       this.stopButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.stopButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.stopButton.Location = new System.Drawing.Point(336, 76);
       this.stopButton.Name = "stopButton";
       this.stopButton.TabIndex = 1;
@@ -161,7 +158,6 @@ namespace MediaPortal.Configuration
       // startButton
       // 
       this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.startButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.startButton.Location = new System.Drawing.Point(336, 48);
       this.startButton.Name = "startButton";
       this.startButton.TabIndex = 0;
@@ -199,7 +195,6 @@ namespace MediaPortal.Configuration
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.okButton.Location = new System.Drawing.Point(277, 192);
       this.okButton.Name = "okButton";
       this.okButton.TabIndex = 0;

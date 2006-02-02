@@ -458,7 +458,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.cbViews);
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.dataGrid1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(471, 352);
@@ -486,7 +485,6 @@ namespace MediaPortal.Configuration.Sections
       // btnDelete
       // 
       this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnDelete.Location = new System.Drawing.Point(384, 320);
       this.btnDelete.Name = "btnDelete";
       this.btnDelete.Size = new System.Drawing.Size(72, 22);
@@ -497,7 +495,6 @@ namespace MediaPortal.Configuration.Sections
       // btnSave
       // 
       this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnSave.Location = new System.Drawing.Point(304, 320);
       this.btnSave.Name = "btnSave";
       this.btnSave.Size = new System.Drawing.Size(72, 22);

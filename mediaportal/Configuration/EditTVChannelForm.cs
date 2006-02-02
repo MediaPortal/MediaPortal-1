@@ -36,306 +36,306 @@ using System.Globalization;
 
 namespace MediaPortal.Configuration
 {
-	/// <summary>
-	/// Summary description for EditTVChannelForm.
-	/// </summary>
-	public class EditTVChannelForm : System.Windows.Forms.Form
-	{
-		private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-		private MediaPortal.UserInterface.Controls.MPButton okButton;
-		private System.Windows.Forms.TextBox nameTextBox;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox frequencyTextBox;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.TextBox externalChannelTextBox;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.ComboBox typeComboBox;
-		private System.Windows.Forms.ComboBox inputComboBox;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.ComboBox comboTvStandard;
-		private System.Windows.Forms.TabControl tabControl1;
-		private System.Windows.Forms.TabPage tabPage1;
-		private System.Windows.Forms.TabPage tabPage2;
-		private System.Windows.Forms.TabPage tabPage3;
-		private System.Windows.Forms.TabPage tabPage4;
-		private System.Windows.Forms.TabPage tabPage5;
-		private System.Windows.Forms.TabPage tabPage6;
-		private System.Windows.Forms.ComboBox countryComboBox;
-		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.Label label9;
-		private System.Windows.Forms.Label label10;
-		private System.Windows.Forms.Label label11;
-		private System.Windows.Forms.Label label12;
-		private System.Windows.Forms.TextBox tbDVBTONID;
-		private System.Windows.Forms.TextBox tbDVBTSID;
-		private System.Windows.Forms.TextBox tbDVBTTSID;
-		private System.Windows.Forms.TextBox tbDVBTFreq;
-		private System.Windows.Forms.TextBox tbDVBCFreq;
-		private System.Windows.Forms.Label label13;
-		private System.Windows.Forms.TextBox tbDVBCTSID;
-		private System.Windows.Forms.Label label14;
-		private System.Windows.Forms.TextBox tbDVBCSID;
-		private System.Windows.Forms.Label label15;
-		private System.Windows.Forms.TextBox tbDVBCONID;
-		private System.Windows.Forms.Label label16;
-		private System.Windows.Forms.Label label17;
-		private System.Windows.Forms.TextBox tbDVBCSR;
-		private System.Windows.Forms.Label label18;
-		private System.Windows.Forms.Label label19;
-		private System.Windows.Forms.ComboBox cbDVBCInnerFeq;
-		private System.Windows.Forms.ComboBox cbDVBCModulation;
-		private System.Windows.Forms.Label label20;
-		private System.Windows.Forms.Label label21;
-		private System.Windows.Forms.Label label22;
-		private System.Windows.Forms.Label label23;
-		private System.Windows.Forms.Label label24;
-		private System.Windows.Forms.Label label25;
-		private System.Windows.Forms.Label label26;
-		private System.Windows.Forms.ComboBox cbDVBSPolarisation;
-		private System.Windows.Forms.ComboBox cbDvbSInnerFec;
-		private System.Windows.Forms.TextBox tbDVBSSymbolrate;
-		private System.Windows.Forms.TextBox tbDVBSFreq;
-		private System.Windows.Forms.TextBox tbDVBSTSID;
-		private System.Windows.Forms.TextBox tbDVBSSID;
-		private System.Windows.Forms.TextBox tbDVBSONID;
-		private int sortPlace=0;
-		private int channelId=-1;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label27;
-		private System.Windows.Forms.TextBox tbDVBTProvider;
-		private System.Windows.Forms.TextBox tbDVBCProvider;
-		private System.Windows.Forms.Label label28;
-		private System.Windows.Forms.TextBox tbDVBSProvider;
-		private System.Windows.Forms.Label label29;
-		private System.Windows.Forms.Label label30;
-		private System.Windows.Forms.Label label31;
-		private System.Windows.Forms.Label label32;
-		private System.Windows.Forms.TextBox tbDVBTAudioPid;
-		private System.Windows.Forms.TextBox tbDVBTVideoPid;
-		private System.Windows.Forms.TextBox tbDVBTTeletextPid;
-		private System.Windows.Forms.TextBox tbDVBCTeletextPid;
-		private System.Windows.Forms.TextBox tbDVBCVideoPid;
-		private System.Windows.Forms.TextBox tbDVBCAudioPid;
-		private System.Windows.Forms.Label label33;
-		private System.Windows.Forms.Label label34;
-		private System.Windows.Forms.Label label35;
-		private System.Windows.Forms.TextBox tbDVBSTeletextPid;
-		private System.Windows.Forms.TextBox tbDVBSVideoPid;
-		private System.Windows.Forms.TextBox tbDVBSAudioPid;
-		private System.Windows.Forms.Label label36;
-		private System.Windows.Forms.Label label37;
-		private System.Windows.Forms.Label label38;
-		private System.Windows.Forms.Label label39;
-		private System.Windows.Forms.TextBox tbDVBSECMpid;
-		private System.Windows.Forms.Label label40;
-		private System.Windows.Forms.Label label41;
-		private System.Windows.Forms.Label label42;
-		private System.Windows.Forms.Label label43;
-		private System.Windows.Forms.Label label44;
-		private System.Windows.Forms.Label label45;
-		private System.Windows.Forms.Label label46;
-		private System.Windows.Forms.TextBox tbDVBCPmtPid;
-		private System.Windows.Forms.Label label47;
-		private System.Windows.Forms.TextBox tbDVBTPmtPid;
-		private System.Windows.Forms.Label label48;
-		private System.Windows.Forms.TextBox tbDVBSPmtPid;
-		private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxScrambled;
-		private System.Windows.Forms.TextBox tbBandWidth;
-		private System.Windows.Forms.Label label49;
-		private System.Windows.Forms.Label label50;
-		private System.Windows.Forms.Label label51;
-		private System.Windows.Forms.Label label52;
-		private System.Windows.Forms.Label label53;
-		private System.Windows.Forms.Label label54;
-		private System.Windows.Forms.Label label55;
-		private System.Windows.Forms.Label label56;
-		private System.Windows.Forms.Label label57;
-		private System.Windows.Forms.TextBox tbDVBCAudio1;
-		private System.Windows.Forms.TextBox tbDVBCAudioLanguage3;
-		private System.Windows.Forms.TextBox tbDVBCAudioLanguage2;
-		private System.Windows.Forms.TextBox tbDVBCAudioLanguage1;
-		private System.Windows.Forms.TextBox tbDVBCAudioLanguage;
-		private System.Windows.Forms.TextBox tbDVBCAC3;
-		private System.Windows.Forms.TextBox tbDVBCAudio3;
-		private System.Windows.Forms.TextBox tbDVBCAudio2;
-		private System.Windows.Forms.Label label58;
-		private System.Windows.Forms.TextBox tbDVBTAudioLanguage3;
-		private System.Windows.Forms.TextBox tbDVBTAudioLanguage2;
-		private System.Windows.Forms.TextBox tbDVBTAudioLanguage1;
-		private System.Windows.Forms.TextBox tbDVBTAudioLanguage;
-		private System.Windows.Forms.Label label59;
-		private System.Windows.Forms.Label label60;
-		private System.Windows.Forms.Label label61;
-		private System.Windows.Forms.TextBox tbDVBTAC3;
-		private System.Windows.Forms.TextBox tbDVBTAudio3;
-		private System.Windows.Forms.TextBox tbDVBTAudio2;
-		private System.Windows.Forms.TextBox tbDVBTAudio1;
-		private System.Windows.Forms.Label label62;
-		private System.Windows.Forms.Label label63;
-		private System.Windows.Forms.Label label64;
-		private System.Windows.Forms.Label label65;
-		private System.Windows.Forms.Label label66;
-		private System.Windows.Forms.TextBox tbDVBSAudioLanguage3;
-		private System.Windows.Forms.TextBox tbDVBSAudioLanguage2;
-		private System.Windows.Forms.TextBox tbDVBSAudioLanguage1;
-		private System.Windows.Forms.TextBox tbDVBSAudioLanguage;
-		private System.Windows.Forms.Label label67;
-		private System.Windows.Forms.Label label68;
-		private System.Windows.Forms.Label label69;
-		private System.Windows.Forms.TextBox tbDVBSAC3;
-		private System.Windows.Forms.TextBox tbDVBSAudio3;
-		private System.Windows.Forms.TextBox tbDVBSAudio2;
-		private System.Windows.Forms.TextBox tbDVBSAudio1;
-		private System.Windows.Forms.Label label70;
-		private System.Windows.Forms.Label label71;
-		private System.Windows.Forms.Label label72;
-		private System.Windows.Forms.Label label73;
-		private System.Windows.Forms.ComboBox comboBoxChannels;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
-		private System.Windows.Forms.Label labelSpecial;
-		private System.Windows.Forms.TabPage tabPage7;
-		private System.Windows.Forms.Label label74;
-		private System.Windows.Forms.Label label75;
-		private System.Windows.Forms.Label label76;
-		private System.Windows.Forms.Label label77;
-		private System.Windows.Forms.Label label78;
-		private System.Windows.Forms.Label label79;
-		private System.Windows.Forms.Label label80;
-		private System.Windows.Forms.Label label81;
-		private System.Windows.Forms.Label label82;
-		private System.Windows.Forms.Label label84;
-		private System.Windows.Forms.Label label85;
-		private System.Windows.Forms.Label label86;
-		private System.Windows.Forms.Label label87;
-		private System.Windows.Forms.Label label88;
-		private System.Windows.Forms.Label label89;
-		private System.Windows.Forms.Label label90;
-		private System.Windows.Forms.Label label91;
-		private System.Windows.Forms.Label label92;
-		private System.Windows.Forms.Label label93;
-		private System.Windows.Forms.Label label94;
-		private System.Windows.Forms.Label label83;
-		private System.Windows.Forms.TextBox tbATSCPhysicalChannel;
-		private System.Windows.Forms.ComboBox cbATSCInnerFec;
-		private System.Windows.Forms.TextBox tbATSCSymbolRate;
-		private System.Windows.Forms.TextBox tbATSCFrequency;
-		private System.Windows.Forms.TextBox tbATSCTSID;
-		private System.Windows.Forms.TextBox tbATSCMajor;
-		private System.Windows.Forms.TextBox tbATSCMinor;
-		private System.Windows.Forms.TextBox tbATSCAudioLanguage3;
-		private System.Windows.Forms.TextBox tbATSCAudioLanguage2;
-		private System.Windows.Forms.TextBox tbATSCAudioLanguage1;
-		private System.Windows.Forms.TextBox tbATSCAudioLanguage;
-		private System.Windows.Forms.TextBox tbATSCAC3Pid;
-		private System.Windows.Forms.TextBox tbATSCAudio3Pid;
-		private System.Windows.Forms.TextBox tbATSCAudio2Pid;
-		private System.Windows.Forms.TextBox tbATSCAudio1Pid;
-		private System.Windows.Forms.TextBox tbATSCPMTPid;
-		private System.Windows.Forms.TextBox tbATSCTeletextPid;
-		private System.Windows.Forms.TextBox tbATSCVideoPid;
-		private System.Windows.Forms.TextBox tbATSCAudioPid;
-		private System.Windows.Forms.TextBox tbATSCProvider;
-		private System.Windows.Forms.ComboBox cbATSCModulation;
-		private System.Windows.Forms.Label label95;
-		private System.Windows.Forms.Label label96;
-		private System.Windows.Forms.Label label97;
-		private System.Windows.Forms.Label label98;
-		private System.Windows.Forms.Label label99;
-		private System.Windows.Forms.Label label100;
-		private System.Windows.Forms.Label label101;
-		private System.Windows.Forms.Label label102;
-		private System.Windows.Forms.Label label103;
-		int orgChannelNumber=-1;
-		bool DVBTHasEITPresentFollow,DVBTHasEITSchedule;
-		bool DVBCHasEITPresentFollow,DVBCHasEITSchedule;
-		bool DVBSHasEITPresentFollow,DVBSHasEITSchedule;
-		bool ATSCHasEITPresentFollow,ATSCHasEITSchedule;
-		private System.Windows.Forms.TextBox tbDVBCPCR;
-		private System.Windows.Forms.Label label104;
-		private System.Windows.Forms.TextBox tbDVBTPCR;
-		private System.Windows.Forms.Label label105;
-		private System.Windows.Forms.Label label106;
-		private System.Windows.Forms.TextBox tbDVBSPCR;
-		private System.Windows.Forms.TextBox tbATSCPCR;
-		private System.Windows.Forms.Label label108;
-		private System.Windows.Forms.Label label109;
-		private System.Windows.Forms.Label label110;
-		private System.Windows.Forms.Label label111;
-		private System.Windows.Forms.Label label112;
-		private System.Windows.Forms.Label label107;
+  /// <summary>
+  /// Summary description for EditTVChannelForm.
+  /// </summary>
+  public class EditTVChannelForm : System.Windows.Forms.Form
+  {
+    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
+    private MediaPortal.UserInterface.Controls.MPButton okButton;
+    private System.Windows.Forms.TextBox nameTextBox;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.TextBox frequencyTextBox;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.TextBox externalChannelTextBox;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.ComboBox typeComboBox;
+    private System.Windows.Forms.ComboBox inputComboBox;
+    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.ComboBox comboTvStandard;
+    private System.Windows.Forms.TabControl tabControl1;
+    private System.Windows.Forms.TabPage tabPage1;
+    private System.Windows.Forms.TabPage tabPage2;
+    private System.Windows.Forms.TabPage tabPage3;
+    private System.Windows.Forms.TabPage tabPage4;
+    private System.Windows.Forms.TabPage tabPage5;
+    private System.Windows.Forms.TabPage tabPage6;
+    private System.Windows.Forms.ComboBox countryComboBox;
+    private System.Windows.Forms.Label label8;
+    private System.Windows.Forms.Label label9;
+    private System.Windows.Forms.Label label10;
+    private System.Windows.Forms.Label label11;
+    private System.Windows.Forms.Label label12;
+    private System.Windows.Forms.TextBox tbDVBTONID;
+    private System.Windows.Forms.TextBox tbDVBTSID;
+    private System.Windows.Forms.TextBox tbDVBTTSID;
+    private System.Windows.Forms.TextBox tbDVBTFreq;
+    private System.Windows.Forms.TextBox tbDVBCFreq;
+    private System.Windows.Forms.Label label13;
+    private System.Windows.Forms.TextBox tbDVBCTSID;
+    private System.Windows.Forms.Label label14;
+    private System.Windows.Forms.TextBox tbDVBCSID;
+    private System.Windows.Forms.Label label15;
+    private System.Windows.Forms.TextBox tbDVBCONID;
+    private System.Windows.Forms.Label label16;
+    private System.Windows.Forms.Label label17;
+    private System.Windows.Forms.TextBox tbDVBCSR;
+    private System.Windows.Forms.Label label18;
+    private System.Windows.Forms.Label label19;
+    private System.Windows.Forms.ComboBox cbDVBCInnerFeq;
+    private System.Windows.Forms.ComboBox cbDVBCModulation;
+    private System.Windows.Forms.Label label20;
+    private System.Windows.Forms.Label label21;
+    private System.Windows.Forms.Label label22;
+    private System.Windows.Forms.Label label23;
+    private System.Windows.Forms.Label label24;
+    private System.Windows.Forms.Label label25;
+    private System.Windows.Forms.Label label26;
+    private System.Windows.Forms.ComboBox cbDVBSPolarisation;
+    private System.Windows.Forms.ComboBox cbDvbSInnerFec;
+    private System.Windows.Forms.TextBox tbDVBSSymbolrate;
+    private System.Windows.Forms.TextBox tbDVBSFreq;
+    private System.Windows.Forms.TextBox tbDVBSTSID;
+    private System.Windows.Forms.TextBox tbDVBSSID;
+    private System.Windows.Forms.TextBox tbDVBSONID;
+    private int sortPlace = 0;
+    private int channelId = -1;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Label label27;
+    private System.Windows.Forms.TextBox tbDVBTProvider;
+    private System.Windows.Forms.TextBox tbDVBCProvider;
+    private System.Windows.Forms.Label label28;
+    private System.Windows.Forms.TextBox tbDVBSProvider;
+    private System.Windows.Forms.Label label29;
+    private System.Windows.Forms.Label label30;
+    private System.Windows.Forms.Label label31;
+    private System.Windows.Forms.Label label32;
+    private System.Windows.Forms.TextBox tbDVBTAudioPid;
+    private System.Windows.Forms.TextBox tbDVBTVideoPid;
+    private System.Windows.Forms.TextBox tbDVBTTeletextPid;
+    private System.Windows.Forms.TextBox tbDVBCTeletextPid;
+    private System.Windows.Forms.TextBox tbDVBCVideoPid;
+    private System.Windows.Forms.TextBox tbDVBCAudioPid;
+    private System.Windows.Forms.Label label33;
+    private System.Windows.Forms.Label label34;
+    private System.Windows.Forms.Label label35;
+    private System.Windows.Forms.TextBox tbDVBSTeletextPid;
+    private System.Windows.Forms.TextBox tbDVBSVideoPid;
+    private System.Windows.Forms.TextBox tbDVBSAudioPid;
+    private System.Windows.Forms.Label label36;
+    private System.Windows.Forms.Label label37;
+    private System.Windows.Forms.Label label38;
+    private System.Windows.Forms.Label label39;
+    private System.Windows.Forms.TextBox tbDVBSECMpid;
+    private System.Windows.Forms.Label label40;
+    private System.Windows.Forms.Label label41;
+    private System.Windows.Forms.Label label42;
+    private System.Windows.Forms.Label label43;
+    private System.Windows.Forms.Label label44;
+    private System.Windows.Forms.Label label45;
+    private System.Windows.Forms.Label label46;
+    private System.Windows.Forms.TextBox tbDVBCPmtPid;
+    private System.Windows.Forms.Label label47;
+    private System.Windows.Forms.TextBox tbDVBTPmtPid;
+    private System.Windows.Forms.Label label48;
+    private System.Windows.Forms.TextBox tbDVBSPmtPid;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxScrambled;
+    private System.Windows.Forms.TextBox tbBandWidth;
+    private System.Windows.Forms.Label label49;
+    private System.Windows.Forms.Label label50;
+    private System.Windows.Forms.Label label51;
+    private System.Windows.Forms.Label label52;
+    private System.Windows.Forms.Label label53;
+    private System.Windows.Forms.Label label54;
+    private System.Windows.Forms.Label label55;
+    private System.Windows.Forms.Label label56;
+    private System.Windows.Forms.Label label57;
+    private System.Windows.Forms.TextBox tbDVBCAudio1;
+    private System.Windows.Forms.TextBox tbDVBCAudioLanguage3;
+    private System.Windows.Forms.TextBox tbDVBCAudioLanguage2;
+    private System.Windows.Forms.TextBox tbDVBCAudioLanguage1;
+    private System.Windows.Forms.TextBox tbDVBCAudioLanguage;
+    private System.Windows.Forms.TextBox tbDVBCAC3;
+    private System.Windows.Forms.TextBox tbDVBCAudio3;
+    private System.Windows.Forms.TextBox tbDVBCAudio2;
+    private System.Windows.Forms.Label label58;
+    private System.Windows.Forms.TextBox tbDVBTAudioLanguage3;
+    private System.Windows.Forms.TextBox tbDVBTAudioLanguage2;
+    private System.Windows.Forms.TextBox tbDVBTAudioLanguage1;
+    private System.Windows.Forms.TextBox tbDVBTAudioLanguage;
+    private System.Windows.Forms.Label label59;
+    private System.Windows.Forms.Label label60;
+    private System.Windows.Forms.Label label61;
+    private System.Windows.Forms.TextBox tbDVBTAC3;
+    private System.Windows.Forms.TextBox tbDVBTAudio3;
+    private System.Windows.Forms.TextBox tbDVBTAudio2;
+    private System.Windows.Forms.TextBox tbDVBTAudio1;
+    private System.Windows.Forms.Label label62;
+    private System.Windows.Forms.Label label63;
+    private System.Windows.Forms.Label label64;
+    private System.Windows.Forms.Label label65;
+    private System.Windows.Forms.Label label66;
+    private System.Windows.Forms.TextBox tbDVBSAudioLanguage3;
+    private System.Windows.Forms.TextBox tbDVBSAudioLanguage2;
+    private System.Windows.Forms.TextBox tbDVBSAudioLanguage1;
+    private System.Windows.Forms.TextBox tbDVBSAudioLanguage;
+    private System.Windows.Forms.Label label67;
+    private System.Windows.Forms.Label label68;
+    private System.Windows.Forms.Label label69;
+    private System.Windows.Forms.TextBox tbDVBSAC3;
+    private System.Windows.Forms.TextBox tbDVBSAudio3;
+    private System.Windows.Forms.TextBox tbDVBSAudio2;
+    private System.Windows.Forms.TextBox tbDVBSAudio1;
+    private System.Windows.Forms.Label label70;
+    private System.Windows.Forms.Label label71;
+    private System.Windows.Forms.Label label72;
+    private System.Windows.Forms.Label label73;
+    private System.Windows.Forms.ComboBox comboBoxChannels;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
+    private System.Windows.Forms.Label labelSpecial;
+    private System.Windows.Forms.TabPage tabPage7;
+    private System.Windows.Forms.Label label74;
+    private System.Windows.Forms.Label label75;
+    private System.Windows.Forms.Label label76;
+    private System.Windows.Forms.Label label77;
+    private System.Windows.Forms.Label label78;
+    private System.Windows.Forms.Label label79;
+    private System.Windows.Forms.Label label80;
+    private System.Windows.Forms.Label label81;
+    private System.Windows.Forms.Label label82;
+    private System.Windows.Forms.Label label84;
+    private System.Windows.Forms.Label label85;
+    private System.Windows.Forms.Label label86;
+    private System.Windows.Forms.Label label87;
+    private System.Windows.Forms.Label label88;
+    private System.Windows.Forms.Label label89;
+    private System.Windows.Forms.Label label90;
+    private System.Windows.Forms.Label label91;
+    private System.Windows.Forms.Label label92;
+    private System.Windows.Forms.Label label93;
+    private System.Windows.Forms.Label label94;
+    private System.Windows.Forms.Label label83;
+    private System.Windows.Forms.TextBox tbATSCPhysicalChannel;
+    private System.Windows.Forms.ComboBox cbATSCInnerFec;
+    private System.Windows.Forms.TextBox tbATSCSymbolRate;
+    private System.Windows.Forms.TextBox tbATSCFrequency;
+    private System.Windows.Forms.TextBox tbATSCTSID;
+    private System.Windows.Forms.TextBox tbATSCMajor;
+    private System.Windows.Forms.TextBox tbATSCMinor;
+    private System.Windows.Forms.TextBox tbATSCAudioLanguage3;
+    private System.Windows.Forms.TextBox tbATSCAudioLanguage2;
+    private System.Windows.Forms.TextBox tbATSCAudioLanguage1;
+    private System.Windows.Forms.TextBox tbATSCAudioLanguage;
+    private System.Windows.Forms.TextBox tbATSCAC3Pid;
+    private System.Windows.Forms.TextBox tbATSCAudio3Pid;
+    private System.Windows.Forms.TextBox tbATSCAudio2Pid;
+    private System.Windows.Forms.TextBox tbATSCAudio1Pid;
+    private System.Windows.Forms.TextBox tbATSCPMTPid;
+    private System.Windows.Forms.TextBox tbATSCTeletextPid;
+    private System.Windows.Forms.TextBox tbATSCVideoPid;
+    private System.Windows.Forms.TextBox tbATSCAudioPid;
+    private System.Windows.Forms.TextBox tbATSCProvider;
+    private System.Windows.Forms.ComboBox cbATSCModulation;
+    private System.Windows.Forms.Label label95;
+    private System.Windows.Forms.Label label96;
+    private System.Windows.Forms.Label label97;
+    private System.Windows.Forms.Label label98;
+    private System.Windows.Forms.Label label99;
+    private System.Windows.Forms.Label label100;
+    private System.Windows.Forms.Label label101;
+    private System.Windows.Forms.Label label102;
+    private System.Windows.Forms.Label label103;
+    int orgChannelNumber = -1;
+    bool DVBTHasEITPresentFollow, DVBTHasEITSchedule;
+    bool DVBCHasEITPresentFollow, DVBCHasEITSchedule;
+    bool DVBSHasEITPresentFollow, DVBSHasEITSchedule;
+    bool ATSCHasEITPresentFollow, ATSCHasEITSchedule;
+    private System.Windows.Forms.TextBox tbDVBCPCR;
+    private System.Windows.Forms.Label label104;
+    private System.Windows.Forms.TextBox tbDVBTPCR;
+    private System.Windows.Forms.Label label105;
+    private System.Windows.Forms.Label label106;
+    private System.Windows.Forms.TextBox tbDVBSPCR;
+    private System.Windows.Forms.TextBox tbATSCPCR;
+    private System.Windows.Forms.Label label108;
+    private System.Windows.Forms.Label label109;
+    private System.Windows.Forms.Label label110;
+    private System.Windows.Forms.Label label111;
+    private System.Windows.Forms.Label label112;
+    private System.Windows.Forms.Label label107;
 
-		public EditTVChannelForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public EditTVChannelForm()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// Set size of window
-			//
-			typeComboBox.SelectedIndex=0;
-			comboTvStandard.Text = "Default";
-			TunerCountry country = new TunerCountry(-1,"Default", "");
-			countryComboBox.Items.Add(country);
-			countryComboBox.Items.AddRange(TunerCountries.Countries);
-			comboBoxChannels.Items.Clear();
-			for (int i=1; i < 255; ++i)
-				comboBoxChannels.Items.Add( i.ToString());
-			for (int i=0; i < TVChannel.SpecialChannels.Length; ++i)
-				comboBoxChannels.Items.Add( TVChannel.SpecialChannels[i].Name);
+      //
+      // Set size of window
+      //
+      typeComboBox.SelectedIndex = 0;
+      comboTvStandard.Text = "Default";
+      TunerCountry country = new TunerCountry(-1, "Default", "");
+      countryComboBox.Items.Add(country);
+      countryComboBox.Items.AddRange(TunerCountries.Countries);
+      comboBoxChannels.Items.Clear();
+      for (int i = 1; i < 255; ++i)
+        comboBoxChannels.Items.Add(i.ToString());
+      for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
+        comboBoxChannels.Items.Add(TVChannel.SpecialChannels[i].Name);
 
-			comboBoxChannels.Items.Add("SVHS");
-			comboBoxChannels.Items.Add("RGB");
-			comboBoxChannels.Items.Add("CVBS#1");
-			comboBoxChannels.Items.Add("CVBS#2");
-			
-		}
+      comboBoxChannels.Items.Add("SVHS");
+      comboBoxChannels.Items.Add("RGB");
+      comboBoxChannels.Items.Add("CVBS#1");
+      comboBoxChannels.Items.Add("CVBS#2");
 
-		public int SortingPlace
-		{
-			get { return sortPlace;}
-			set { sortPlace=value;}
-		}
-		int ParseInt(string label)
-		{
-			try
-			{
-				int number=Int32.Parse(label);
-				return number;
-			}
-			catch(Exception)
-			{
-			}
-			return -1;
-		}
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    public int SortingPlace
+    {
+      get { return sortPlace; }
+      set { sortPlace = value; }
+    }
+    int ParseInt(string label)
+    {
+      try
+      {
+        int number = Int32.Parse(label);
+        return number;
+      }
+      catch (Exception)
+      {
+      }
+      return -1;
+    }
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
+
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditTVChannelForm));
       this.comboTvStandard = new System.Windows.Forms.ComboBox();
       this.label7 = new System.Windows.Forms.Label();
@@ -649,7 +649,6 @@ namespace MediaPortal.Configuration
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cancelButton.Location = new System.Drawing.Point(421, 431);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -660,7 +659,6 @@ namespace MediaPortal.Configuration
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.okButton.Location = new System.Drawing.Point(341, 431);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
@@ -821,7 +819,6 @@ namespace MediaPortal.Configuration
       // 
       // checkBoxScrambled
       // 
-      this.checkBoxScrambled.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxScrambled.Location = new System.Drawing.Point(24, 80);
       this.checkBoxScrambled.Name = "checkBoxScrambled";
       this.checkBoxScrambled.Size = new System.Drawing.Size(264, 24);
@@ -2687,39 +2684,39 @@ namespace MediaPortal.Configuration
       this.tabPage6.PerformLayout();
       this.ResumeLayout(false);
 
-		}
-		#endregion
+    }
+    #endregion
 
-		private void channelTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
-		{
-			if(char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
-			{
-				e.Handled = true;
-			}
-		}
+    private void channelTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    {
+      if (char.IsNumber(e.KeyChar) == false && e.KeyChar != 8)
+      {
+        e.Handled = true;
+      }
+    }
 
-		private void frequencyTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
-		{
-			//
-			// Make sure we only type one comma or dot
-			//
-			if(e.KeyChar == '.' || e.KeyChar == ',')
-			{
-				if(frequencyTextBox.Text.IndexOfAny(new char[] {',','.'}) >= 0)
-				{
-					e.Handled = true;
-					return;
-				}
-			}
-			
-			if(char.IsNumber(e.KeyChar) == false && (e.KeyChar != 8 && e.KeyChar != '.' && e.KeyChar != ','))
-			{
-				e.Handled = true;
-			}		
-		}
+    private void frequencyTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+    {
+      //
+      // Make sure we only type one comma or dot
+      //
+      if (e.KeyChar == '.' || e.KeyChar == ',')
+      {
+        if (frequencyTextBox.Text.IndexOfAny(new char[] { ',', '.' }) >= 0)
+        {
+          e.Handled = true;
+          return;
+        }
+      }
 
-		private void okButton_Click(object sender, System.EventArgs e)
-		{
+      if (char.IsNumber(e.KeyChar) == false && (e.KeyChar != 8 && e.KeyChar != '.' && e.KeyChar != ','))
+      {
+        e.Handled = true;
+      }
+    }
+
+    private void okButton_Click(object sender, System.EventArgs e)
+    {
       /*
 			ArrayList channels = new ArrayList();
 			TVDatabase.GetChannels(ref channels);
@@ -2743,1119 +2740,1119 @@ namespace MediaPortal.Configuration
 				}
 			}
       */
-			SaveChannel();
-			this.DialogResult = DialogResult.OK;
-			this.Hide();
-		}
-
-		private void cancelButton_Click(object sender, System.EventArgs e)
-		{
-			this.DialogResult = DialogResult.Cancel;
-			this.Hide();
-		}
-
-
-		private void typeComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			externalChannelTextBox.Enabled = inputComboBox.Enabled = (typeComboBox.SelectedIndex>0);
-			comboBoxChannels.Enabled = frequencyTextBox.Enabled = !externalChannelTextBox.Enabled;
-			
-		}
-
-
-		private void comboTvStandard_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-		}
-
-		private void EditTVChannelForm_Load(object sender, System.EventArgs e)
-		{
-    
-		}
-
-
-		private void label3_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		public TelevisionChannel Channel
-		{
-			get 
-			{
-				TelevisionChannel channel = new TelevisionChannel();
-
-				channel.ID=channelId;
-				channel.Name = nameTextBox.Text;
-				channel.External = (typeComboBox.SelectedIndex>0);
-				if (!channel.External)
-				{
-//					if (orgChannelNumber>255)
-//						channel.Channel=orgChannelNumber;
-//					else
-					{
-						if (comboBoxChannels.Text.Length==0 &&comboBoxChannels.SelectedIndex<0 && orgChannelNumber==-1)
-						{
-							channel.Channel=TVDatabase.FindFreeTvChannelNumber(1);
-						}
-						else
-						{
-							string chanNr=(string)comboBoxChannels.SelectedItem;
-							if (chanNr==null)
-								chanNr=comboBoxChannels.Text.ToUpper().Trim();
-							channel.Channel = -1;
-							for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
-							{
-								if (chanNr.Equals(TVChannel.SpecialChannels[i].Name))
-								{
-									//get free nr
-									if (orgChannelNumber==-1)
-									{
-										channel.Channel=TVDatabase.FindFreeTvChannelNumber(TVChannel.SpecialChannels[i].Number);
-									}
-									else
-									{
-										int nr=TVDatabase.FindFreeTvChannelNumber(TVChannel.SpecialChannels[i].Number);
-										if (nr==TVChannel.SpecialChannels[i].Number)
-											orgChannelNumber=nr;
-										channel.Channel=orgChannelNumber;
-									}
-
-									Frequency freq = new Frequency(TVChannel.SpecialChannels[i].Frequency);
-									frequencyTextBox.Text=freq.ToString();
-
-									break;
-								}
-							}
-							if (chanNr.Equals("SVHS")) channel.Channel=(int)ExternalInputs.svhs;
-							if (chanNr.Equals("CVBS#1")) channel.Channel=(int)ExternalInputs.cvbs1;
-							if (chanNr.Equals("CVBS#2")) channel.Channel=(int)ExternalInputs.cvbs2;
-							if (chanNr.Equals("RGB")) channel.Channel=(int)ExternalInputs.rgb;
-							if (channel.Channel ==-1)
-							{
-								channel.Channel = Convert.ToInt32(chanNr);
-							}
-						}
-					}
-				}
-				
-				channel.Scrambled=checkBoxScrambled.Checked;
-				try
-				{
-
-					if(frequencyTextBox.Text.IndexOfAny(new char[] { ',','.' }) >= 0)
-					{
-						char[] separators = new char[] {'.', ','};
-
-						for(int index = 0; index < separators.Length; index++)
-						{
-							try
-							{
-								frequencyTextBox.Text = frequencyTextBox.Text.Replace(',', separators[index]);
-								frequencyTextBox.Text = frequencyTextBox.Text.Replace('.', separators[index]);
-
-								//
-								// MegaHerz
-								//
-								channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
-
-								break;
-							}
-							catch
-							{
-								//
-								// Failed to convert, try next separator
-								//
-							}
-						}
-					}
-					else
-					{
-						//
-						// Herz
-						//
-						if(frequencyTextBox.Text.Length > 3)
-						{
-							channel.Frequency = Convert.ToInt32(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
-						}
-						else
-						{
-							channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
-						}					
-					}
-				}
-				catch
-				{
-					channel.Frequency = 0;
-				}
-
-				//
-				// Fetch advanced settings
-				//
-				channel.ExternalTunerChannel = externalChannelTextBox.Text;
-
-				if(channel.External)
-				{
-					channel.Frequency = 0;
-					if (inputComboBox.SelectedIndex>=0)
-					{
-						string externalName  = (string)inputComboBox.SelectedItem;
-						if (externalName.Equals("SVHS")) channel.Channel=(int)ExternalInputs.svhs;
-						if (externalName.Equals("CVBS#1")) channel.Channel=(int)ExternalInputs.cvbs1;
-						if (externalName.Equals("CVBS#2")) channel.Channel=(int)ExternalInputs.cvbs2;
-						if (externalName.Equals("RGB")) channel.Channel=(int)ExternalInputs.rgb;
-					}
-				}
-
-				string standard=comboTvStandard.Text;
-				if (standard=="Default") channel.standard = AnalogVideoStandard.None;
-				if (standard=="NTSC M") channel.standard = AnalogVideoStandard.NTSC_M;
-				if (standard=="NTSC M J") channel.standard = AnalogVideoStandard.NTSC_M_J;
-				if (standard=="NTSC 433") channel.standard = AnalogVideoStandard.NTSC_433;
-				if (standard=="PAL B") channel.standard = AnalogVideoStandard.PAL_B;
-				if (standard=="PAL D") channel.standard = AnalogVideoStandard.PAL_D;
-				if (standard=="PAL G") channel.standard = AnalogVideoStandard.PAL_G;
-				if (standard=="PAL H") channel.standard = AnalogVideoStandard.PAL_H;
-				if (standard=="PAL I") channel.standard = AnalogVideoStandard.PAL_I;
-				if (standard=="PAL M") channel.standard = AnalogVideoStandard.PAL_M;
-				if (standard=="PAL N") channel.standard = AnalogVideoStandard.PAL_N;
-				if (standard=="PAL 60") channel.standard = AnalogVideoStandard.PAL_60;
-				if (standard=="SECAM B") channel.standard = AnalogVideoStandard.SECAM_B;
-				if (standard=="SECAM D") channel.standard = AnalogVideoStandard.SECAM_D;
-				if (standard=="SECAM G") channel.standard = AnalogVideoStandard.SECAM_G;
-				if (standard=="SECAM H") channel.standard = AnalogVideoStandard.SECAM_H;
-				if (standard=="SECAM K") channel.standard = AnalogVideoStandard.SECAM_K;
-				if (standard=="SECAM K1") channel.standard = AnalogVideoStandard.SECAM_K1;
-				if (standard=="SECAM L") channel.standard = AnalogVideoStandard.SECAM_L;
-				if (standard=="SECAM L1") channel.standard = AnalogVideoStandard.SECAM_L1;
-				if (standard=="PAL N COMBO") channel.standard = AnalogVideoStandard.PAL_N_COMBO;
-
-				TunerCountry tunerCountry = countryComboBox.SelectedItem as TunerCountry;
-				if (tunerCountry!=null)
-					channel.Country=tunerCountry.Id;
-				else
-					channel.Country=-1;
-				return channel;
-			}
-
-			set
-			{
-				TelevisionChannel channel = value as TelevisionChannel;
-
-				if(channel != null)
-				{
-					orgChannelNumber=channel.Channel;
-					channelId=channel.ID;
-					for (int i=0; i < countryComboBox.Items.Count;++i)
-					{
-						TunerCountry tunerCountry = countryComboBox.Items[i] as TunerCountry;
-						if (tunerCountry.Id==channel.Country)
-						{
-							countryComboBox.SelectedIndex=i;
-							break;
-						}
-					}
-					checkBoxScrambled.Checked=channel.Scrambled;
-					nameTextBox.Text = channel.Name;
-					comboBoxChannels.SelectedItem= channel.Channel.ToString();
-					comboBoxChannels.Text= channel.Channel.ToString();
-					labelSpecial.Text=String.Empty;
-					string chanNr=(string)comboBoxChannels.SelectedItem;
-					if (chanNr==null)
-						chanNr=comboBoxChannels.Text.ToUpper().Trim();
-					for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
-					{
-						if (channel.Frequency.Herz==TVChannel.SpecialChannels[i].Frequency)
-						{
-							labelSpecial.Text=TVChannel.SpecialChannels[i].Name;
-						}
-					}
-					frequencyTextBox.Text = channel.Frequency.ToString();
-
-					typeComboBox.SelectedIndex = channel.External ? 1 : 0;
-					externalChannelTextBox.Text = channel.ExternalTunerChannel;
-
-					if(channel.External == true)
-					{
-						switch(channel.Channel)
-						{
-							case (int)ExternalInputs.svhs:
-								inputComboBox.Text = "SVHS";
-								break;
-
-							case (int)ExternalInputs.cvbs1:
-								inputComboBox.Text = "CVBS#1";
-								break;
-
-							case (int)ExternalInputs.cvbs2:
-								inputComboBox.Text = "CVBS#2";
-								break;
-						}
-					}
-
-					//
-					// Disable boxes for static channels
-					//
-					if(channel.Name.Equals("CVBS#1") || channel.Name.Equals("CVBS#2") || channel.Name.Equals("SVHS") || channel.Name.Equals("RGB"))
-					{
-						comboBoxChannels.SelectedItem=channel.Name;
-						comboTvStandard.Enabled = true;
-						nameTextBox.Enabled = comboBoxChannels.Enabled = frequencyTextBox.Enabled =false;
-					}
-					comboTvStandard.SelectedIndex=0;
-					if ( channel.standard == AnalogVideoStandard.None) comboTvStandard.SelectedIndex=0;
-					if ( channel.standard == AnalogVideoStandard.NTSC_M) comboTvStandard.SelectedIndex=1;
-					if ( channel.standard == AnalogVideoStandard.NTSC_M_J) comboTvStandard.SelectedIndex=2;
-					if ( channel.standard == AnalogVideoStandard.NTSC_433) comboTvStandard.SelectedIndex=3;
-					if ( channel.standard == AnalogVideoStandard.PAL_B) comboTvStandard.SelectedIndex=4;
-					if ( channel.standard == AnalogVideoStandard.PAL_D) comboTvStandard.SelectedIndex=5;
-					if ( channel.standard == AnalogVideoStandard.PAL_G) comboTvStandard.SelectedIndex=6;
-					if ( channel.standard == AnalogVideoStandard.PAL_H) comboTvStandard.SelectedIndex=7;
-					if ( channel.standard == AnalogVideoStandard.PAL_I) comboTvStandard.SelectedIndex=8;
-					if ( channel.standard == AnalogVideoStandard.PAL_M) comboTvStandard.SelectedIndex=9;
-					if ( channel.standard == AnalogVideoStandard.PAL_N) comboTvStandard.SelectedIndex=10;
-					if ( channel.standard == AnalogVideoStandard.PAL_60) comboTvStandard.SelectedIndex=11;
-					if ( channel.standard == AnalogVideoStandard.SECAM_B) comboTvStandard.SelectedIndex=12;
-					if ( channel.standard == AnalogVideoStandard.SECAM_D) comboTvStandard.SelectedIndex=13;
-					if ( channel.standard == AnalogVideoStandard.SECAM_G) comboTvStandard.SelectedIndex=14;
-					if ( channel.standard == AnalogVideoStandard.SECAM_H) comboTvStandard.SelectedIndex=15;
-					if ( channel.standard == AnalogVideoStandard.SECAM_K) comboTvStandard.SelectedIndex=16;
-					if ( channel.standard == AnalogVideoStandard.SECAM_K1) comboTvStandard.SelectedIndex=17;
-					if ( channel.standard == AnalogVideoStandard.SECAM_L) comboTvStandard.SelectedIndex=18;
-					if ( channel.standard == AnalogVideoStandard.SECAM_L1) comboTvStandard.SelectedIndex=19;
-					if ( channel.standard == AnalogVideoStandard.PAL_N_COMBO) comboTvStandard.SelectedIndex=20;
-
-					if (channel.Channel>=0)
-					{
-						int freq,ONID,TSID,SID,symbolrate,innerFec,modulation, audioPid,videoPid,teletextPid,pmtPid,bandwidth;
-						string provider;
-						MediaPortal.TV.Recording.DVBSections dvbSections=new MediaPortal.TV.Recording.DVBSections();
-						int audio1, audio2, audio3, ac3Pid,pcrPid;
-						string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
-						
-						//DVB-T
-						TVDatabase.GetDVBTTuneRequest(channelId,out provider,out freq,out ONID, out TSID,out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out bandwidth, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out DVBTHasEITPresentFollow, out DVBTHasEITSchedule, out pcrPid);
-						label42.Text=dvbSections.GetNetworkProvider(ONID);
-						tbDVBTFreq.Text=freq.ToString();;
-						tbDVBTONID.Text=ONID.ToString();;
-						tbDVBTTSID.Text=TSID.ToString();;
-						tbDVBTSID.Text=SID.ToString();
-						tbDVBTProvider.Text=provider;
-						tbDVBTAudioPid.Text=audioPid.ToString();
-						tbDVBTVideoPid.Text=videoPid.ToString();
-						tbDVBTTeletextPid.Text=teletextPid.ToString();
-						tbDVBTPmtPid.Text=pmtPid.ToString();
-						tbBandWidth.Text=bandwidth.ToString();
-						tbDVBTAudio1.Text=audio1.ToString();
-						tbDVBTAudio2.Text=audio2.ToString();
-						tbDVBTAudio3.Text=audio3.ToString();
-						tbDVBTAC3.Text=ac3Pid.ToString();
-						tbDVBTAudioLanguage.Text=audioLanguage;
-						tbDVBTAudioLanguage1.Text=audioLanguage1;
-						tbDVBTAudioLanguage2.Text=audioLanguage2;
-						tbDVBTAudioLanguage3.Text=audioLanguage3;
-						tbDVBTPCR.Text=pcrPid.ToString();
-
-						//DVB-C
-						TVDatabase.GetDVBCTuneRequest(channelId,out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out DVBCHasEITPresentFollow, out DVBCHasEITSchedule,out pcrPid);
-						label41.Text=dvbSections.GetNetworkProvider(ONID);
-						tbDVBCFreq.Text=freq.ToString();;
-						tbDVBCONID.Text=ONID.ToString();;
-						tbDVBCTSID.Text=TSID.ToString();;
-						tbDVBCSID.Text=SID.ToString();
-						tbDVBCSR.Text=symbolrate.ToString();
-						cbDVBCInnerFeq.SelectedIndex=FecToIndex(innerFec);
-						cbDVBCModulation.SelectedIndex=ModulationToIndex(modulation);
-						tbDVBCProvider.Text=provider;
-						tbDVBCAudioPid.Text=audioPid.ToString();
-						tbDVBCVideoPid.Text=videoPid.ToString();
-						tbDVBCTeletextPid.Text=teletextPid.ToString();
-						tbDVBCPmtPid.Text=pmtPid.ToString();
-						tbDVBCAudio1.Text=audio1.ToString();
-						tbDVBCAudio2.Text=audio2.ToString();
-						tbDVBCAudio3.Text=audio3.ToString();
-						tbDVBCAC3.Text=ac3Pid.ToString();
-						tbDVBCAudioLanguage.Text=audioLanguage;
-						tbDVBCAudioLanguage1.Text=audioLanguage1;
-						tbDVBCAudioLanguage2.Text=audioLanguage2;
-						tbDVBCAudioLanguage3.Text=audioLanguage3;
-						tbDVBCPCR.Text=pcrPid.ToString();
-
-						//DVB-S
-						DVBChannel ch = new DVBChannel();
-						TVDatabase.GetSatChannel(channelId,1,ref ch);
-						label40.Text=dvbSections.GetNetworkProvider(ch.NetworkID);
-						tbDVBSFreq.Text=ch.Frequency.ToString();;
-						tbDVBSONID.Text=ch.NetworkID.ToString();;
-					    
-						tbDVBSTSID.Text=ch.TransportStreamID.ToString();;
-						tbDVBSSID.Text=ch.ProgramNumber.ToString();
-						tbDVBSSymbolrate.Text=ch.Symbolrate.ToString();
-						cbDvbSInnerFec.SelectedIndex=FecToIndex(ch.FEC);
-						cbDVBSPolarisation.SelectedIndex=PolarisationToIndex(ch.Polarity);
-						tbDVBSProvider.Text=ch.ServiceProvider;
-						tbDVBSAudioPid.Text=ch.AudioPid.ToString();
-						tbDVBSVideoPid.Text=ch.VideoPid.ToString();
-						tbDVBSTeletextPid.Text=ch.TeletextPid.ToString();
-						tbDVBSECMpid.Text = ch.ECMPid.ToString();
-						tbDVBSPmtPid.Text=ch.PMTPid.ToString();
-						tbDVBSAudio1.Text=ch.Audio1.ToString();
-						tbDVBSAudio2.Text=ch.Audio2.ToString();
-						tbDVBSAudio3.Text=ch.Audio3.ToString();
-						tbDVBSAC3.Text=ch.AC3Pid.ToString();
-						tbDVBSAudioLanguage.Text=ch.AudioLanguage;
-						tbDVBSAudioLanguage1.Text=ch.AudioLanguage1;
-						tbDVBSAudioLanguage2.Text=ch.AudioLanguage2;
-						tbDVBSAudioLanguage3.Text=ch.AudioLanguage3;
-
-						DVBSHasEITPresentFollow=ch.HasEITPresentFollow;
-						DVBSHasEITSchedule=ch.HasEITSchedule;
-						tbDVBSPCR.Text=ch.PCRPid.ToString();
-
-						//ATSC
-						int physical,minor,major;
-						TVDatabase.GetATSCTuneRequest(channelId,out  physical, out provider,out freq, out symbolrate,out innerFec,out modulation,out ONID, out TSID, out SID, out audioPid,out videoPid,out teletextPid, out pmtPid, out audio1,out audio2,out audio3,out ac3Pid, out audioLanguage, out audioLanguage1,out audioLanguage2,out audioLanguage3, out minor, out major, out ATSCHasEITPresentFollow, out ATSCHasEITSchedule, out pcrPid);
-						tbATSCPhysicalChannel.Text=physical.ToString();
-						tbATSCMinor.Text=minor.ToString();
-						tbATSCMajor.Text=major.ToString();
-						tbATSCFrequency.Text=freq.ToString();;
-						tbATSCTSID.Text=TSID.ToString();;
-						tbATSCSymbolRate.Text=symbolrate.ToString();
-						cbATSCInnerFec.SelectedIndex=FecToIndex(innerFec);
-						cbATSCModulation.SelectedIndex=ModulationToIndex(modulation);
-						tbATSCProvider.Text=provider;
-						tbATSCAudioPid.Text=audioPid.ToString();
-						tbATSCVideoPid.Text=videoPid.ToString();
-						tbATSCTeletextPid.Text=teletextPid.ToString();
-						tbATSCPMTPid.Text=pmtPid.ToString();
-						tbATSCAudio1Pid.Text=audio1.ToString();
-						tbATSCAudio2Pid.Text=audio2.ToString();
-						tbATSCAudio3Pid.Text=audio3.ToString();
-						tbATSCAC3Pid.Text=ac3Pid.ToString();
-						tbATSCAudioLanguage.Text=audioLanguage;
-						tbATSCAudioLanguage1.Text=audioLanguage1;
-						tbATSCAudioLanguage2.Text=audioLanguage2;
-						tbATSCAudioLanguage3.Text=audioLanguage3;
-						tbATSCPCR.Text=pcrPid.ToString();
-
-					}
-				}//if(channel != null)
-			}//set
-		}//public TelevisionChannel Channel
-		
-		int FecToIndex(int fec)
-		{
-			switch ( (TunerLib.FECMethod)fec)
-			{
-				case TunerLib.FECMethod.BDA_FEC_MAX: return 0; 
-				case TunerLib.FECMethod.BDA_FEC_METHOD_NOT_DEFINED: return 1; 
-				case TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET: return 2; 
-				case TunerLib.FECMethod.BDA_FEC_RS_204_188: return 3; 
-				case TunerLib.FECMethod.BDA_FEC_VITERBI: return 4; 
-			}
-			return 2;
-		}
-		int IndexToFec(int index)
-		{
-			switch ( index )
-			{
-				case 0: return (int)TunerLib.FECMethod.BDA_FEC_MAX;
-				case 1: return (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_DEFINED;
-				case 2: return (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
-				case 3: return (int)TunerLib.FECMethod.BDA_FEC_RS_204_188;
-				case 4: return (int)TunerLib.FECMethod.BDA_FEC_VITERBI;
-			}
-			return 2;
-		}
-		int ModulationToIndex(int modulation)
-		{
-			switch ( (TunerLib.ModulationType)modulation )
-			{
-				case TunerLib.ModulationType.BDA_MOD_NOT_SET : return 0; 
-				case TunerLib.ModulationType.BDA_MOD_1024QAM: return 1; 
-				case TunerLib.ModulationType.BDA_MOD_112QAM: return 2; 
-				case TunerLib.ModulationType.BDA_MOD_128QAM: return 3; 
-				case TunerLib.ModulationType.BDA_MOD_160QAM: return 4; 
-				case TunerLib.ModulationType.BDA_MOD_16QAM: return 5; 
-				case TunerLib.ModulationType.BDA_MOD_16VSB: return 6; 
-				case TunerLib.ModulationType.BDA_MOD_192QAM: return 7; 
-				case TunerLib.ModulationType.BDA_MOD_224QAM: return 8; 
-				case TunerLib.ModulationType.BDA_MOD_256QAM: return 9; 
-				case TunerLib.ModulationType.BDA_MOD_320QAM: return 10; 
-				case TunerLib.ModulationType.BDA_MOD_384QAM: return 11; 
-				case TunerLib.ModulationType.BDA_MOD_448QAM: return 12; 
-				case TunerLib.ModulationType.BDA_MOD_512QAM: return 13; 
-				case TunerLib.ModulationType.BDA_MOD_640QAM: return 14; 
-				case TunerLib.ModulationType.BDA_MOD_64QAM: return 15; 
-				case TunerLib.ModulationType.BDA_MOD_768QAM: return 16; 
-				case TunerLib.ModulationType.BDA_MOD_80QAM: return 17; 
-				case TunerLib.ModulationType.BDA_MOD_896QAM: return 18; 
-				case TunerLib.ModulationType.BDA_MOD_8VSB: return 19; 
-				case TunerLib.ModulationType.BDA_MOD_96QAM: return 20; 
-				case TunerLib.ModulationType.BDA_MOD_ANALOG_AMPLITUDE: return 21; 
-				case TunerLib.ModulationType.BDA_MOD_ANALOG_FREQUENCY: return 22; 
-				case TunerLib.ModulationType.BDA_MOD_BPSK: return 23; 
-				case TunerLib.ModulationType.BDA_MOD_OQPSK: return 24; 
-				case TunerLib.ModulationType.BDA_MOD_QPSK: return 25; 
-			}
-			return 0;
-		}
-
-		int IndexToModulation(int index)
-		{
-			switch ( index )
-			{
-				case 0: return (int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
-				case 1: return (int)TunerLib.ModulationType.BDA_MOD_1024QAM; 
-				case 2: return (int)TunerLib.ModulationType.BDA_MOD_112QAM;
-				case 3: return (int)TunerLib.ModulationType.BDA_MOD_128QAM;
-				case 4: return (int)TunerLib.ModulationType.BDA_MOD_160QAM;
-				case 5: return (int)TunerLib.ModulationType.BDA_MOD_16QAM; 
-				case 6: return (int)TunerLib.ModulationType.BDA_MOD_16VSB; 
-				case 7: return (int)TunerLib.ModulationType.BDA_MOD_192QAM;
-				case 8: return (int)TunerLib.ModulationType.BDA_MOD_224QAM;
-				case 9: return (int)TunerLib.ModulationType.BDA_MOD_256QAM;
-				case 10: return (int)TunerLib.ModulationType.BDA_MOD_320QAM;
-				case 11: return (int)TunerLib.ModulationType.BDA_MOD_384QAM;
-				case 12: return (int)TunerLib.ModulationType.BDA_MOD_448QAM;
-				case 13: return (int)TunerLib.ModulationType.BDA_MOD_512QAM;
-				case 14: return (int)TunerLib.ModulationType.BDA_MOD_640QAM;
-				case 15: return (int)TunerLib.ModulationType.BDA_MOD_64QAM; 
-				case 16: return (int)TunerLib.ModulationType.BDA_MOD_768QAM;
-				case 17: return (int)TunerLib.ModulationType.BDA_MOD_80QAM; 
-				case 18: return (int)TunerLib.ModulationType.BDA_MOD_896QAM;
-				case 19: return (int)TunerLib.ModulationType.BDA_MOD_8VSB; 
-				case 20: return (int)TunerLib.ModulationType.BDA_MOD_96QAM;
-				case 21: return (int)TunerLib.ModulationType.BDA_MOD_ANALOG_AMPLITUDE; 
-				case 22: return (int)TunerLib.ModulationType.BDA_MOD_ANALOG_FREQUENCY; 
-				case 23: return (int)TunerLib.ModulationType.BDA_MOD_BPSK; 
-				case 24: return (int)TunerLib.ModulationType.BDA_MOD_OQPSK;
-				case 25: return (int)TunerLib.ModulationType.BDA_MOD_QPSK; 
-			}
-			return (int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
-		}
-		int PolarisationToIndex(int polarisation)
-		{
-			if (polarisation< 0 || polarisation> 1) return 0;
-			return polarisation;
-		}
-		int IndexToPolarisation(int index)
-		{
-			if (index< 0 || index> 1) return 0;
-			return index;
-		}
-		
-		void SaveChannel()
-		{
-			TelevisionChannel chan = Channel;
-			TVChannel tvchannel = new TVChannel();
-			tvchannel.ID=chan.ID;
-			tvchannel.Name=chan.Name;
-			tvchannel.Number=chan.Channel;
-			tvchannel.Country=chan.Country;
-			tvchannel.External=chan.External;
-			tvchannel.ExternalTunerChannel=chan.ExternalTunerChannel;
-			tvchannel.TVStandard=chan.standard;
-			tvchannel.VisibleInGuide=chan.VisibleInGuide;
-
-			if (tvchannel.Number==0)
-			{
-				//get a unique number
-				ArrayList chans=new ArrayList();
-				TVDatabase.GetChannels(ref chans);
-				tvchannel.Number=chans.Count;
-				while (true)
-				{
-					bool ok=true;
-					foreach (TVChannel ch in chans)
-					{
-						if (ch.Number==tvchannel.Number)
-						{
-							ok=false;
-							tvchannel.Number++;
-							break;
-						}
-					}
-					if (ok) break;
-				}
-				comboBoxChannels.SelectedItem=tvchannel.Number.ToString();
-			}
-
-			tvchannel.Frequency=chan.Frequency.Herz;
-			if(chan.Frequency.Herz < 1000)
-				tvchannel.Frequency = chan.Frequency.Herz* 1000000L;
-
-			if (tvchannel.ID<0)
-			{
-				tvchannel.ID=TVDatabase.AddChannel(tvchannel);
-			}
-			else
-			{
-				TVDatabase.UpdateChannel(tvchannel,SortingPlace);
-			}
-			orgChannelNumber=tvchannel.Number;
-
-			int freq,ONID,TSID,SID,symbolrate,innerFec,modulation,polarisation;
-			int bandWidth,pmtPid,audioPid,videoPid,teletextPid;
-			string provider;
-			//dvb-T
-			int audio1, audio2, audio3, ac3Pid,pcrPid;
-			string audioLanguage,  audioLanguage1, audioLanguage2, audioLanguage3;
-						
-			try
-			{
-				freq=ParseInt(tbDVBTFreq.Text);
-				ONID=ParseInt(tbDVBTONID.Text);
-				TSID=ParseInt(tbDVBTTSID.Text);
-				SID=ParseInt(tbDVBTSID.Text);
-				audioPid=ParseInt(tbDVBTAudioPid.Text);
-				videoPid=ParseInt(tbDVBTVideoPid.Text);
-				teletextPid=ParseInt(tbDVBTTeletextPid.Text);
-				pmtPid=ParseInt(tbDVBTPmtPid.Text);
-				provider=tbDVBTProvider.Text;
-				bandWidth=ParseInt(tbBandWidth.Text);
-				audio1=ParseInt(tbDVBTAudio1.Text);
-				audio2=ParseInt(tbDVBTAudio2.Text);
-				audio3=ParseInt(tbDVBTAudio3.Text);
-				ac3Pid=ParseInt(tbDVBTAC3.Text);
-				audioLanguage=tbDVBTAudioLanguage.Text;
-				audioLanguage1=tbDVBTAudioLanguage1.Text;
-				audioLanguage2=tbDVBTAudioLanguage2.Text;
-				audioLanguage3=tbDVBTAudioLanguage3.Text;
-				pcrPid=ParseInt(tbDVBTPCR.Text);
-				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
-				{
-					TVDatabase.MapDVBTChannel(tvchannel.Name,provider,tvchannel.ID,freq,ONID,TSID,SID, audioPid,videoPid,teletextPid, pmtPid,bandWidth,audio1,audio2,audio3,ac3Pid,pcrPid,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3, DVBTHasEITPresentFollow, DVBTHasEITSchedule);
-				}
-			}
-			catch(Exception){}
-
-
-			//dvb-C
-			try
-			{
-				freq=ParseInt(tbDVBCFreq.Text);
-				ONID=ParseInt(tbDVBCONID.Text);
-				TSID=ParseInt(tbDVBCTSID.Text);
-				SID=ParseInt(tbDVBCSID.Text);
-				symbolrate=ParseInt(tbDVBCSR.Text);
-				innerFec=IndexToFec(cbDVBCInnerFeq.SelectedIndex);
-				modulation=IndexToModulation(cbDVBCModulation.SelectedIndex);
-				provider=tbDVBCProvider.Text;
-				audioPid=ParseInt(tbDVBCAudioPid.Text);
-				videoPid=ParseInt(tbDVBCVideoPid.Text);
-				teletextPid=ParseInt(tbDVBCTeletextPid.Text);
-				pmtPid=ParseInt(tbDVBCPmtPid.Text);
-				audio1=ParseInt(tbDVBCAudio1.Text);
-				audio2=ParseInt(tbDVBCAudio2.Text);
-				audio3=ParseInt(tbDVBCAudio3.Text);
-				ac3Pid=ParseInt(tbDVBCAC3.Text);
-				audioLanguage=tbDVBCAudioLanguage.Text;
-				audioLanguage1=tbDVBCAudioLanguage1.Text;
-				audioLanguage2=tbDVBCAudioLanguage2.Text;
-				audioLanguage3=tbDVBCAudioLanguage3.Text;
-				pcrPid=ParseInt(tbDVBCPCR.Text);
-				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
-				{
-					TVDatabase.MapDVBCChannel(tvchannel.Name,provider,tvchannel.ID,freq,symbolrate,innerFec,modulation,ONID,TSID,SID, audioPid,videoPid,teletextPid,pmtPid,audio1,audio2,audio3,ac3Pid,pcrPid,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3, DVBCHasEITPresentFollow, DVBCHasEITSchedule);
-				}
-			}
-			catch(Exception){}
-
-			//ATSC
-			try
-			{
-				int physical,minor,major;
-				physical=ParseInt(tbATSCPhysicalChannel.Text);
-				minor=ParseInt(tbATSCMinor.Text);
-				major=ParseInt(tbATSCMajor.Text);
-				freq=ParseInt(tbATSCFrequency.Text);
-				TSID=ParseInt(tbATSCTSID.Text);
-				symbolrate=ParseInt(tbATSCSymbolRate.Text);
-				innerFec=IndexToFec(cbATSCInnerFec.SelectedIndex);
-				modulation=IndexToModulation(cbATSCModulation.SelectedIndex);
-				provider=tbATSCProvider.Text;
-				audioPid=ParseInt(tbATSCAudioPid.Text);
-				videoPid=ParseInt(tbATSCVideoPid.Text);
-				teletextPid=ParseInt(tbATSCTeletextPid.Text);
-				pmtPid=ParseInt(tbATSCPMTPid.Text);
-				audio1=ParseInt(tbATSCAudio1Pid.Text);
-				audio2=ParseInt(tbATSCAudio2Pid.Text);
-				audio3=ParseInt(tbATSCAudio3Pid.Text);
-				ac3Pid=ParseInt(tbATSCAC3Pid.Text);
-				audioLanguage=tbATSCAudioLanguage.Text;
-				audioLanguage1=tbATSCAudioLanguage1.Text;
-				audioLanguage2=tbATSCAudioLanguage2.Text;
-				audioLanguage3=tbATSCAudioLanguage3.Text;
-				pcrPid=ParseInt(tbATSCPCR.Text);
-				if (major>0 && TSID>0 && minor>0 && physical>0 )
-				{
-					TVDatabase.MapATSCChannel(tvchannel.Name,physical,minor,major,provider,tvchannel.ID,freq,symbolrate,innerFec,modulation,-1,TSID,-1, audioPid,videoPid,teletextPid,pmtPid,audio1,audio2,audio3,ac3Pid,pcrPid,audioLanguage,audioLanguage1,audioLanguage2,audioLanguage3, ATSCHasEITPresentFollow, ATSCHasEITSchedule);
-				}
-			}
-			catch(Exception){}
-
-			//dvb-S
-			try
-			{
-				DVBChannel ch = new DVBChannel();
-				TVDatabase.GetSatChannel(tvchannel.ID,1,ref ch);
-
-				freq=ParseInt(tbDVBSFreq.Text);
-				ONID=ParseInt(tbDVBSONID.Text);
-				TSID=ParseInt(tbDVBSTSID.Text);
-				SID=ParseInt(tbDVBSSID.Text);
-				symbolrate=ParseInt(tbDVBSSymbolrate.Text);
-				innerFec=IndexToFec(cbDvbSInnerFec.SelectedIndex);
-				polarisation=IndexToPolarisation(cbDVBSPolarisation.SelectedIndex);
-				provider=tbDVBSProvider.Text;
-				audioPid=ParseInt(tbDVBSAudioPid.Text);
-				videoPid=ParseInt(tbDVBSVideoPid.Text);
-				teletextPid=ParseInt(tbDVBSTeletextPid.Text);
-				pmtPid=ParseInt(tbDVBSPmtPid.Text);
-				audio1=ParseInt(tbDVBSAudio1.Text);
-				audio2=ParseInt(tbDVBSAudio2.Text);
-				audio3=ParseInt(tbDVBSAudio3.Text);
-				ac3Pid=ParseInt(tbDVBSAC3.Text);
-				audioLanguage=tbDVBSAudioLanguage.Text;
-				audioLanguage1=tbDVBSAudioLanguage1.Text;
-				audioLanguage2=tbDVBSAudioLanguage2.Text;
-				audioLanguage3=tbDVBSAudioLanguage3.Text;
-				pcrPid=ParseInt(tbDVBSPCR.Text);
-				if (ONID>0 && TSID>0 && SID > 0 && freq>0)
-				{
-					ch.ServiceType=1;
-					ch.Frequency=freq;
-					ch.NetworkID=ONID;
-					ch.TransportStreamID=TSID;
-					ch.ProgramNumber=SID;
-					ch.Symbolrate=symbolrate;
-					ch.FEC=innerFec;
-					ch.Polarity=polarisation;
-					ch.ServiceProvider=provider;
-					ch.ServiceName=tvchannel.Name;
-					ch.ID=tvchannel.ID;
-					ch.AudioPid=audioPid;
-					ch.VideoPid=videoPid;
-					ch.TeletextPid=teletextPid;
-					ch.ECMPid = ParseInt(tbDVBSECMpid.Text);
-					ch.PMTPid=pmtPid;
-					ch.PCRPid=pcrPid;
-					ch.Audio1=audio1;
-					ch.Audio2=audio2;
-					ch.Audio3=audio3;
-					ch.AC3Pid=ac3Pid;
-					ch.AudioLanguage=audioLanguage;
-					ch.AudioLanguage1=audioLanguage1;
-					ch.AudioLanguage2=audioLanguage2;
-					ch.AudioLanguage3=audioLanguage3;
-					ch.HasEITPresentFollow= DVBSHasEITPresentFollow;
-					ch.HasEITSchedule= DVBSHasEITSchedule;
-					TVDatabase.UpdateSatChannel(ch);
-				}
-			}
-			catch(Exception){}
-
-		}
-
-		private void label23_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBSONID_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label22_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBSFreq_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label24_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void channelTextBox_TextChanged_1(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBSSID_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label26_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBSTSID_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label7_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void frequencyTextBox_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label1_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void nameTextBox_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label2_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label6_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label5_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void externalChannelTextBox_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label4_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tabPage1_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tabPage2_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void countryComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label8_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tabPage3_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBTFreq_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tabPage6_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label12_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBTTSID_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label25_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label11_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBTSID_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBSSymbolrate_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label10_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBTONID_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label9_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tabPage4_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void cbDVBCModulation_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void cbDVBCInnerFeq_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label19_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label18_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBCSR_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label3_Click_1(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label17_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBCFreq_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label13_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBCTSID_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label14_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBCSID_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label15_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tbDVBCONID_TextChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label16_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void tabPage5_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void cbDVBSPolarisation_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void cbDvbSInnerFec_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label20_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void label21_Click(object sender, System.EventArgs e)
-		{
-		
-		}
-
-		private void comboBoxChannels_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			labelSpecial.Text=String.Empty;
-			string chanNr=(string)comboBoxChannels.SelectedItem;
-			if (chanNr==null)
-				chanNr=comboBoxChannels.Text.ToUpper().Trim();
-			for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
-			{
-				if (chanNr.Equals(TVChannel.SpecialChannels[i].Name))
-				{
-					Frequency freq = new Frequency(TVChannel.SpecialChannels[i].Frequency);
-					frequencyTextBox.Text=freq.ToString();
-					labelSpecial.Text=TVChannel.SpecialChannels[i].Name;
-					break;
-				}
-			}
-		}
-	}
-
-	public class TelevisionChannel
-	{
-		public int ID;
-		public string Name = String.Empty;
-		public int Channel = 0;
-		public Frequency Frequency = new Frequency(0);
-		public bool External = false;
-		public string ExternalTunerChannel = String.Empty;
-		public bool VisibleInGuide = true;
-		public AnalogVideoStandard standard=AnalogVideoStandard.None;
-		public int Country;
-		public bool Scrambled=false;
-	}
-
-	public class Frequency
-	{
-		public enum Format
-		{
-			Herz,
-			MegaHerz
-		}
-
-		public Frequency(long herz)
-		{
-			this.herz = herz;
-		}
-
-		public Frequency(double megaherz)
-		{
-			this.herz = (long) (megaherz * (1000000d));
-		}
-
-		private long herz = 0;
-
-		public long Herz
-		{
-			get { return herz; }
-			set 
-			{
-				herz = value; 
-				if(herz <= 1000)
-					herz *= (int)1000000d;
-			}
-		}
-
-		public double MegaHerz
-		{
-			get { return (double)herz / 1000000d; }
-			set 
-			{
-				herz = (long) (value * 1000000d);
-			}
-		}
-
-		public static implicit operator Frequency(int herz)
-		{
-			return new Frequency(herz);
-		}
-
-		public static implicit operator Frequency(long herz)
-		{
-			return new Frequency(herz);
-		}
-
-		public static implicit operator Frequency(double megaHerz)
-		{
-			return new Frequency((long)(megaHerz * (1000000d)));
-		}
-
-		public string ToString(Format format)
-		{
-			string result = String.Empty;
-
-			try
-			{
-				switch(format)
-				{
-					case Format.Herz:
-						result = String.Format("{0}", Herz);
-						break;
-
-					case Format.MegaHerz:
-						result = String.Format("{0:#,###0.000}", MegaHerz);
-						break;
-				}
-			}
-			catch
-			{
-				//
-				// Failed to convert
-				//
-			}
-
-			return result;
-		}
-
-		public override string ToString()
-		{
-			return ToString(Format.MegaHerz);
-		}
-	}
+      SaveChannel();
+      this.DialogResult = DialogResult.OK;
+      this.Hide();
+    }
+
+    private void cancelButton_Click(object sender, System.EventArgs e)
+    {
+      this.DialogResult = DialogResult.Cancel;
+      this.Hide();
+    }
+
+
+    private void typeComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      externalChannelTextBox.Enabled = inputComboBox.Enabled = (typeComboBox.SelectedIndex > 0);
+      comboBoxChannels.Enabled = frequencyTextBox.Enabled = !externalChannelTextBox.Enabled;
+
+    }
+
+
+    private void comboTvStandard_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+    }
+
+    private void EditTVChannelForm_Load(object sender, System.EventArgs e)
+    {
+
+    }
+
+
+    private void label3_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    public TelevisionChannel Channel
+    {
+      get
+      {
+        TelevisionChannel channel = new TelevisionChannel();
+
+        channel.ID = channelId;
+        channel.Name = nameTextBox.Text;
+        channel.External = (typeComboBox.SelectedIndex > 0);
+        if (!channel.External)
+        {
+          //					if (orgChannelNumber>255)
+          //						channel.Channel=orgChannelNumber;
+          //					else
+          {
+            if (comboBoxChannels.Text.Length == 0 && comboBoxChannels.SelectedIndex < 0 && orgChannelNumber == -1)
+            {
+              channel.Channel = TVDatabase.FindFreeTvChannelNumber(1);
+            }
+            else
+            {
+              string chanNr = (string)comboBoxChannels.SelectedItem;
+              if (chanNr == null)
+                chanNr = comboBoxChannels.Text.ToUpper().Trim();
+              channel.Channel = -1;
+              for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
+              {
+                if (chanNr.Equals(TVChannel.SpecialChannels[i].Name))
+                {
+                  //get free nr
+                  if (orgChannelNumber == -1)
+                  {
+                    channel.Channel = TVDatabase.FindFreeTvChannelNumber(TVChannel.SpecialChannels[i].Number);
+                  }
+                  else
+                  {
+                    int nr = TVDatabase.FindFreeTvChannelNumber(TVChannel.SpecialChannels[i].Number);
+                    if (nr == TVChannel.SpecialChannels[i].Number)
+                      orgChannelNumber = nr;
+                    channel.Channel = orgChannelNumber;
+                  }
+
+                  Frequency freq = new Frequency(TVChannel.SpecialChannels[i].Frequency);
+                  frequencyTextBox.Text = freq.ToString();
+
+                  break;
+                }
+              }
+              if (chanNr.Equals("SVHS")) channel.Channel = (int)ExternalInputs.svhs;
+              if (chanNr.Equals("CVBS#1")) channel.Channel = (int)ExternalInputs.cvbs1;
+              if (chanNr.Equals("CVBS#2")) channel.Channel = (int)ExternalInputs.cvbs2;
+              if (chanNr.Equals("RGB")) channel.Channel = (int)ExternalInputs.rgb;
+              if (channel.Channel == -1)
+              {
+                channel.Channel = Convert.ToInt32(chanNr);
+              }
+            }
+          }
+        }
+
+        channel.Scrambled = checkBoxScrambled.Checked;
+        try
+        {
+
+          if (frequencyTextBox.Text.IndexOfAny(new char[] { ',', '.' }) >= 0)
+          {
+            char[] separators = new char[] { '.', ',' };
+
+            for (int index = 0; index < separators.Length; index++)
+            {
+              try
+              {
+                frequencyTextBox.Text = frequencyTextBox.Text.Replace(',', separators[index]);
+                frequencyTextBox.Text = frequencyTextBox.Text.Replace('.', separators[index]);
+
+                //
+                // MegaHerz
+                //
+                channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
+
+                break;
+              }
+              catch
+              {
+                //
+                // Failed to convert, try next separator
+                //
+              }
+            }
+          }
+          else
+          {
+            //
+            // Herz
+            //
+            if (frequencyTextBox.Text.Length > 3)
+            {
+              channel.Frequency = Convert.ToInt32(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
+            }
+            else
+            {
+              channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
+            }
+          }
+        }
+        catch
+        {
+          channel.Frequency = 0;
+        }
+
+        //
+        // Fetch advanced settings
+        //
+        channel.ExternalTunerChannel = externalChannelTextBox.Text;
+
+        if (channel.External)
+        {
+          channel.Frequency = 0;
+          if (inputComboBox.SelectedIndex >= 0)
+          {
+            string externalName = (string)inputComboBox.SelectedItem;
+            if (externalName.Equals("SVHS")) channel.Channel = (int)ExternalInputs.svhs;
+            if (externalName.Equals("CVBS#1")) channel.Channel = (int)ExternalInputs.cvbs1;
+            if (externalName.Equals("CVBS#2")) channel.Channel = (int)ExternalInputs.cvbs2;
+            if (externalName.Equals("RGB")) channel.Channel = (int)ExternalInputs.rgb;
+          }
+        }
+
+        string standard = comboTvStandard.Text;
+        if (standard == "Default") channel.standard = AnalogVideoStandard.None;
+        if (standard == "NTSC M") channel.standard = AnalogVideoStandard.NTSC_M;
+        if (standard == "NTSC M J") channel.standard = AnalogVideoStandard.NTSC_M_J;
+        if (standard == "NTSC 433") channel.standard = AnalogVideoStandard.NTSC_433;
+        if (standard == "PAL B") channel.standard = AnalogVideoStandard.PAL_B;
+        if (standard == "PAL D") channel.standard = AnalogVideoStandard.PAL_D;
+        if (standard == "PAL G") channel.standard = AnalogVideoStandard.PAL_G;
+        if (standard == "PAL H") channel.standard = AnalogVideoStandard.PAL_H;
+        if (standard == "PAL I") channel.standard = AnalogVideoStandard.PAL_I;
+        if (standard == "PAL M") channel.standard = AnalogVideoStandard.PAL_M;
+        if (standard == "PAL N") channel.standard = AnalogVideoStandard.PAL_N;
+        if (standard == "PAL 60") channel.standard = AnalogVideoStandard.PAL_60;
+        if (standard == "SECAM B") channel.standard = AnalogVideoStandard.SECAM_B;
+        if (standard == "SECAM D") channel.standard = AnalogVideoStandard.SECAM_D;
+        if (standard == "SECAM G") channel.standard = AnalogVideoStandard.SECAM_G;
+        if (standard == "SECAM H") channel.standard = AnalogVideoStandard.SECAM_H;
+        if (standard == "SECAM K") channel.standard = AnalogVideoStandard.SECAM_K;
+        if (standard == "SECAM K1") channel.standard = AnalogVideoStandard.SECAM_K1;
+        if (standard == "SECAM L") channel.standard = AnalogVideoStandard.SECAM_L;
+        if (standard == "SECAM L1") channel.standard = AnalogVideoStandard.SECAM_L1;
+        if (standard == "PAL N COMBO") channel.standard = AnalogVideoStandard.PAL_N_COMBO;
+
+        TunerCountry tunerCountry = countryComboBox.SelectedItem as TunerCountry;
+        if (tunerCountry != null)
+          channel.Country = tunerCountry.Id;
+        else
+          channel.Country = -1;
+        return channel;
+      }
+
+      set
+      {
+        TelevisionChannel channel = value as TelevisionChannel;
+
+        if (channel != null)
+        {
+          orgChannelNumber = channel.Channel;
+          channelId = channel.ID;
+          for (int i = 0; i < countryComboBox.Items.Count; ++i)
+          {
+            TunerCountry tunerCountry = countryComboBox.Items[i] as TunerCountry;
+            if (tunerCountry.Id == channel.Country)
+            {
+              countryComboBox.SelectedIndex = i;
+              break;
+            }
+          }
+          checkBoxScrambled.Checked = channel.Scrambled;
+          nameTextBox.Text = channel.Name;
+          comboBoxChannels.SelectedItem = channel.Channel.ToString();
+          comboBoxChannels.Text = channel.Channel.ToString();
+          labelSpecial.Text = String.Empty;
+          string chanNr = (string)comboBoxChannels.SelectedItem;
+          if (chanNr == null)
+            chanNr = comboBoxChannels.Text.ToUpper().Trim();
+          for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
+          {
+            if (channel.Frequency.Herz == TVChannel.SpecialChannels[i].Frequency)
+            {
+              labelSpecial.Text = TVChannel.SpecialChannels[i].Name;
+            }
+          }
+          frequencyTextBox.Text = channel.Frequency.ToString();
+
+          typeComboBox.SelectedIndex = channel.External ? 1 : 0;
+          externalChannelTextBox.Text = channel.ExternalTunerChannel;
+
+          if (channel.External == true)
+          {
+            switch (channel.Channel)
+            {
+              case (int)ExternalInputs.svhs:
+                inputComboBox.Text = "SVHS";
+                break;
+
+              case (int)ExternalInputs.cvbs1:
+                inputComboBox.Text = "CVBS#1";
+                break;
+
+              case (int)ExternalInputs.cvbs2:
+                inputComboBox.Text = "CVBS#2";
+                break;
+            }
+          }
+
+          //
+          // Disable boxes for static channels
+          //
+          if (channel.Name.Equals("CVBS#1") || channel.Name.Equals("CVBS#2") || channel.Name.Equals("SVHS") || channel.Name.Equals("RGB"))
+          {
+            comboBoxChannels.SelectedItem = channel.Name;
+            comboTvStandard.Enabled = true;
+            nameTextBox.Enabled = comboBoxChannels.Enabled = frequencyTextBox.Enabled = false;
+          }
+          comboTvStandard.SelectedIndex = 0;
+          if (channel.standard == AnalogVideoStandard.None) comboTvStandard.SelectedIndex = 0;
+          if (channel.standard == AnalogVideoStandard.NTSC_M) comboTvStandard.SelectedIndex = 1;
+          if (channel.standard == AnalogVideoStandard.NTSC_M_J) comboTvStandard.SelectedIndex = 2;
+          if (channel.standard == AnalogVideoStandard.NTSC_433) comboTvStandard.SelectedIndex = 3;
+          if (channel.standard == AnalogVideoStandard.PAL_B) comboTvStandard.SelectedIndex = 4;
+          if (channel.standard == AnalogVideoStandard.PAL_D) comboTvStandard.SelectedIndex = 5;
+          if (channel.standard == AnalogVideoStandard.PAL_G) comboTvStandard.SelectedIndex = 6;
+          if (channel.standard == AnalogVideoStandard.PAL_H) comboTvStandard.SelectedIndex = 7;
+          if (channel.standard == AnalogVideoStandard.PAL_I) comboTvStandard.SelectedIndex = 8;
+          if (channel.standard == AnalogVideoStandard.PAL_M) comboTvStandard.SelectedIndex = 9;
+          if (channel.standard == AnalogVideoStandard.PAL_N) comboTvStandard.SelectedIndex = 10;
+          if (channel.standard == AnalogVideoStandard.PAL_60) comboTvStandard.SelectedIndex = 11;
+          if (channel.standard == AnalogVideoStandard.SECAM_B) comboTvStandard.SelectedIndex = 12;
+          if (channel.standard == AnalogVideoStandard.SECAM_D) comboTvStandard.SelectedIndex = 13;
+          if (channel.standard == AnalogVideoStandard.SECAM_G) comboTvStandard.SelectedIndex = 14;
+          if (channel.standard == AnalogVideoStandard.SECAM_H) comboTvStandard.SelectedIndex = 15;
+          if (channel.standard == AnalogVideoStandard.SECAM_K) comboTvStandard.SelectedIndex = 16;
+          if (channel.standard == AnalogVideoStandard.SECAM_K1) comboTvStandard.SelectedIndex = 17;
+          if (channel.standard == AnalogVideoStandard.SECAM_L) comboTvStandard.SelectedIndex = 18;
+          if (channel.standard == AnalogVideoStandard.SECAM_L1) comboTvStandard.SelectedIndex = 19;
+          if (channel.standard == AnalogVideoStandard.PAL_N_COMBO) comboTvStandard.SelectedIndex = 20;
+
+          if (channel.Channel >= 0)
+          {
+            int freq, ONID, TSID, SID, symbolrate, innerFec, modulation, audioPid, videoPid, teletextPid, pmtPid, bandwidth;
+            string provider;
+            MediaPortal.TV.Recording.DVBSections dvbSections = new MediaPortal.TV.Recording.DVBSections();
+            int audio1, audio2, audio3, ac3Pid, pcrPid;
+            string audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3;
+
+            //DVB-T
+            TVDatabase.GetDVBTTuneRequest(channelId, out provider, out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandwidth, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out DVBTHasEITPresentFollow, out DVBTHasEITSchedule, out pcrPid);
+            label42.Text = dvbSections.GetNetworkProvider(ONID);
+            tbDVBTFreq.Text = freq.ToString(); ;
+            tbDVBTONID.Text = ONID.ToString(); ;
+            tbDVBTTSID.Text = TSID.ToString(); ;
+            tbDVBTSID.Text = SID.ToString();
+            tbDVBTProvider.Text = provider;
+            tbDVBTAudioPid.Text = audioPid.ToString();
+            tbDVBTVideoPid.Text = videoPid.ToString();
+            tbDVBTTeletextPid.Text = teletextPid.ToString();
+            tbDVBTPmtPid.Text = pmtPid.ToString();
+            tbBandWidth.Text = bandwidth.ToString();
+            tbDVBTAudio1.Text = audio1.ToString();
+            tbDVBTAudio2.Text = audio2.ToString();
+            tbDVBTAudio3.Text = audio3.ToString();
+            tbDVBTAC3.Text = ac3Pid.ToString();
+            tbDVBTAudioLanguage.Text = audioLanguage;
+            tbDVBTAudioLanguage1.Text = audioLanguage1;
+            tbDVBTAudioLanguage2.Text = audioLanguage2;
+            tbDVBTAudioLanguage3.Text = audioLanguage3;
+            tbDVBTPCR.Text = pcrPid.ToString();
+
+            //DVB-C
+            TVDatabase.GetDVBCTuneRequest(channelId, out provider, out freq, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out DVBCHasEITPresentFollow, out DVBCHasEITSchedule, out pcrPid);
+            label41.Text = dvbSections.GetNetworkProvider(ONID);
+            tbDVBCFreq.Text = freq.ToString(); ;
+            tbDVBCONID.Text = ONID.ToString(); ;
+            tbDVBCTSID.Text = TSID.ToString(); ;
+            tbDVBCSID.Text = SID.ToString();
+            tbDVBCSR.Text = symbolrate.ToString();
+            cbDVBCInnerFeq.SelectedIndex = FecToIndex(innerFec);
+            cbDVBCModulation.SelectedIndex = ModulationToIndex(modulation);
+            tbDVBCProvider.Text = provider;
+            tbDVBCAudioPid.Text = audioPid.ToString();
+            tbDVBCVideoPid.Text = videoPid.ToString();
+            tbDVBCTeletextPid.Text = teletextPid.ToString();
+            tbDVBCPmtPid.Text = pmtPid.ToString();
+            tbDVBCAudio1.Text = audio1.ToString();
+            tbDVBCAudio2.Text = audio2.ToString();
+            tbDVBCAudio3.Text = audio3.ToString();
+            tbDVBCAC3.Text = ac3Pid.ToString();
+            tbDVBCAudioLanguage.Text = audioLanguage;
+            tbDVBCAudioLanguage1.Text = audioLanguage1;
+            tbDVBCAudioLanguage2.Text = audioLanguage2;
+            tbDVBCAudioLanguage3.Text = audioLanguage3;
+            tbDVBCPCR.Text = pcrPid.ToString();
+
+            //DVB-S
+            DVBChannel ch = new DVBChannel();
+            TVDatabase.GetSatChannel(channelId, 1, ref ch);
+            label40.Text = dvbSections.GetNetworkProvider(ch.NetworkID);
+            tbDVBSFreq.Text = ch.Frequency.ToString(); ;
+            tbDVBSONID.Text = ch.NetworkID.ToString(); ;
+
+            tbDVBSTSID.Text = ch.TransportStreamID.ToString(); ;
+            tbDVBSSID.Text = ch.ProgramNumber.ToString();
+            tbDVBSSymbolrate.Text = ch.Symbolrate.ToString();
+            cbDvbSInnerFec.SelectedIndex = FecToIndex(ch.FEC);
+            cbDVBSPolarisation.SelectedIndex = PolarisationToIndex(ch.Polarity);
+            tbDVBSProvider.Text = ch.ServiceProvider;
+            tbDVBSAudioPid.Text = ch.AudioPid.ToString();
+            tbDVBSVideoPid.Text = ch.VideoPid.ToString();
+            tbDVBSTeletextPid.Text = ch.TeletextPid.ToString();
+            tbDVBSECMpid.Text = ch.ECMPid.ToString();
+            tbDVBSPmtPid.Text = ch.PMTPid.ToString();
+            tbDVBSAudio1.Text = ch.Audio1.ToString();
+            tbDVBSAudio2.Text = ch.Audio2.ToString();
+            tbDVBSAudio3.Text = ch.Audio3.ToString();
+            tbDVBSAC3.Text = ch.AC3Pid.ToString();
+            tbDVBSAudioLanguage.Text = ch.AudioLanguage;
+            tbDVBSAudioLanguage1.Text = ch.AudioLanguage1;
+            tbDVBSAudioLanguage2.Text = ch.AudioLanguage2;
+            tbDVBSAudioLanguage3.Text = ch.AudioLanguage3;
+
+            DVBSHasEITPresentFollow = ch.HasEITPresentFollow;
+            DVBSHasEITSchedule = ch.HasEITSchedule;
+            tbDVBSPCR.Text = ch.PCRPid.ToString();
+
+            //ATSC
+            int physical, minor, major;
+            TVDatabase.GetATSCTuneRequest(channelId, out  physical, out provider, out freq, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out minor, out major, out ATSCHasEITPresentFollow, out ATSCHasEITSchedule, out pcrPid);
+            tbATSCPhysicalChannel.Text = physical.ToString();
+            tbATSCMinor.Text = minor.ToString();
+            tbATSCMajor.Text = major.ToString();
+            tbATSCFrequency.Text = freq.ToString(); ;
+            tbATSCTSID.Text = TSID.ToString(); ;
+            tbATSCSymbolRate.Text = symbolrate.ToString();
+            cbATSCInnerFec.SelectedIndex = FecToIndex(innerFec);
+            cbATSCModulation.SelectedIndex = ModulationToIndex(modulation);
+            tbATSCProvider.Text = provider;
+            tbATSCAudioPid.Text = audioPid.ToString();
+            tbATSCVideoPid.Text = videoPid.ToString();
+            tbATSCTeletextPid.Text = teletextPid.ToString();
+            tbATSCPMTPid.Text = pmtPid.ToString();
+            tbATSCAudio1Pid.Text = audio1.ToString();
+            tbATSCAudio2Pid.Text = audio2.ToString();
+            tbATSCAudio3Pid.Text = audio3.ToString();
+            tbATSCAC3Pid.Text = ac3Pid.ToString();
+            tbATSCAudioLanguage.Text = audioLanguage;
+            tbATSCAudioLanguage1.Text = audioLanguage1;
+            tbATSCAudioLanguage2.Text = audioLanguage2;
+            tbATSCAudioLanguage3.Text = audioLanguage3;
+            tbATSCPCR.Text = pcrPid.ToString();
+
+          }
+        }//if(channel != null)
+      }//set
+    }//public TelevisionChannel Channel
+
+    int FecToIndex(int fec)
+    {
+      switch ((TunerLib.FECMethod)fec)
+      {
+        case TunerLib.FECMethod.BDA_FEC_MAX: return 0;
+        case TunerLib.FECMethod.BDA_FEC_METHOD_NOT_DEFINED: return 1;
+        case TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET: return 2;
+        case TunerLib.FECMethod.BDA_FEC_RS_204_188: return 3;
+        case TunerLib.FECMethod.BDA_FEC_VITERBI: return 4;
+      }
+      return 2;
+    }
+    int IndexToFec(int index)
+    {
+      switch (index)
+      {
+        case 0: return (int)TunerLib.FECMethod.BDA_FEC_MAX;
+        case 1: return (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_DEFINED;
+        case 2: return (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
+        case 3: return (int)TunerLib.FECMethod.BDA_FEC_RS_204_188;
+        case 4: return (int)TunerLib.FECMethod.BDA_FEC_VITERBI;
+      }
+      return 2;
+    }
+    int ModulationToIndex(int modulation)
+    {
+      switch ((TunerLib.ModulationType)modulation)
+      {
+        case TunerLib.ModulationType.BDA_MOD_NOT_SET: return 0;
+        case TunerLib.ModulationType.BDA_MOD_1024QAM: return 1;
+        case TunerLib.ModulationType.BDA_MOD_112QAM: return 2;
+        case TunerLib.ModulationType.BDA_MOD_128QAM: return 3;
+        case TunerLib.ModulationType.BDA_MOD_160QAM: return 4;
+        case TunerLib.ModulationType.BDA_MOD_16QAM: return 5;
+        case TunerLib.ModulationType.BDA_MOD_16VSB: return 6;
+        case TunerLib.ModulationType.BDA_MOD_192QAM: return 7;
+        case TunerLib.ModulationType.BDA_MOD_224QAM: return 8;
+        case TunerLib.ModulationType.BDA_MOD_256QAM: return 9;
+        case TunerLib.ModulationType.BDA_MOD_320QAM: return 10;
+        case TunerLib.ModulationType.BDA_MOD_384QAM: return 11;
+        case TunerLib.ModulationType.BDA_MOD_448QAM: return 12;
+        case TunerLib.ModulationType.BDA_MOD_512QAM: return 13;
+        case TunerLib.ModulationType.BDA_MOD_640QAM: return 14;
+        case TunerLib.ModulationType.BDA_MOD_64QAM: return 15;
+        case TunerLib.ModulationType.BDA_MOD_768QAM: return 16;
+        case TunerLib.ModulationType.BDA_MOD_80QAM: return 17;
+        case TunerLib.ModulationType.BDA_MOD_896QAM: return 18;
+        case TunerLib.ModulationType.BDA_MOD_8VSB: return 19;
+        case TunerLib.ModulationType.BDA_MOD_96QAM: return 20;
+        case TunerLib.ModulationType.BDA_MOD_ANALOG_AMPLITUDE: return 21;
+        case TunerLib.ModulationType.BDA_MOD_ANALOG_FREQUENCY: return 22;
+        case TunerLib.ModulationType.BDA_MOD_BPSK: return 23;
+        case TunerLib.ModulationType.BDA_MOD_OQPSK: return 24;
+        case TunerLib.ModulationType.BDA_MOD_QPSK: return 25;
+      }
+      return 0;
+    }
+
+    int IndexToModulation(int index)
+    {
+      switch (index)
+      {
+        case 0: return (int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
+        case 1: return (int)TunerLib.ModulationType.BDA_MOD_1024QAM;
+        case 2: return (int)TunerLib.ModulationType.BDA_MOD_112QAM;
+        case 3: return (int)TunerLib.ModulationType.BDA_MOD_128QAM;
+        case 4: return (int)TunerLib.ModulationType.BDA_MOD_160QAM;
+        case 5: return (int)TunerLib.ModulationType.BDA_MOD_16QAM;
+        case 6: return (int)TunerLib.ModulationType.BDA_MOD_16VSB;
+        case 7: return (int)TunerLib.ModulationType.BDA_MOD_192QAM;
+        case 8: return (int)TunerLib.ModulationType.BDA_MOD_224QAM;
+        case 9: return (int)TunerLib.ModulationType.BDA_MOD_256QAM;
+        case 10: return (int)TunerLib.ModulationType.BDA_MOD_320QAM;
+        case 11: return (int)TunerLib.ModulationType.BDA_MOD_384QAM;
+        case 12: return (int)TunerLib.ModulationType.BDA_MOD_448QAM;
+        case 13: return (int)TunerLib.ModulationType.BDA_MOD_512QAM;
+        case 14: return (int)TunerLib.ModulationType.BDA_MOD_640QAM;
+        case 15: return (int)TunerLib.ModulationType.BDA_MOD_64QAM;
+        case 16: return (int)TunerLib.ModulationType.BDA_MOD_768QAM;
+        case 17: return (int)TunerLib.ModulationType.BDA_MOD_80QAM;
+        case 18: return (int)TunerLib.ModulationType.BDA_MOD_896QAM;
+        case 19: return (int)TunerLib.ModulationType.BDA_MOD_8VSB;
+        case 20: return (int)TunerLib.ModulationType.BDA_MOD_96QAM;
+        case 21: return (int)TunerLib.ModulationType.BDA_MOD_ANALOG_AMPLITUDE;
+        case 22: return (int)TunerLib.ModulationType.BDA_MOD_ANALOG_FREQUENCY;
+        case 23: return (int)TunerLib.ModulationType.BDA_MOD_BPSK;
+        case 24: return (int)TunerLib.ModulationType.BDA_MOD_OQPSK;
+        case 25: return (int)TunerLib.ModulationType.BDA_MOD_QPSK;
+      }
+      return (int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
+    }
+    int PolarisationToIndex(int polarisation)
+    {
+      if (polarisation < 0 || polarisation > 1) return 0;
+      return polarisation;
+    }
+    int IndexToPolarisation(int index)
+    {
+      if (index < 0 || index > 1) return 0;
+      return index;
+    }
+
+    void SaveChannel()
+    {
+      TelevisionChannel chan = Channel;
+      TVChannel tvchannel = new TVChannel();
+      tvchannel.ID = chan.ID;
+      tvchannel.Name = chan.Name;
+      tvchannel.Number = chan.Channel;
+      tvchannel.Country = chan.Country;
+      tvchannel.External = chan.External;
+      tvchannel.ExternalTunerChannel = chan.ExternalTunerChannel;
+      tvchannel.TVStandard = chan.standard;
+      tvchannel.VisibleInGuide = chan.VisibleInGuide;
+
+      if (tvchannel.Number == 0)
+      {
+        //get a unique number
+        ArrayList chans = new ArrayList();
+        TVDatabase.GetChannels(ref chans);
+        tvchannel.Number = chans.Count;
+        while (true)
+        {
+          bool ok = true;
+          foreach (TVChannel ch in chans)
+          {
+            if (ch.Number == tvchannel.Number)
+            {
+              ok = false;
+              tvchannel.Number++;
+              break;
+            }
+          }
+          if (ok) break;
+        }
+        comboBoxChannels.SelectedItem = tvchannel.Number.ToString();
+      }
+
+      tvchannel.Frequency = chan.Frequency.Herz;
+      if (chan.Frequency.Herz < 1000)
+        tvchannel.Frequency = chan.Frequency.Herz * 1000000L;
+
+      if (tvchannel.ID < 0)
+      {
+        tvchannel.ID = TVDatabase.AddChannel(tvchannel);
+      }
+      else
+      {
+        TVDatabase.UpdateChannel(tvchannel, SortingPlace);
+      }
+      orgChannelNumber = tvchannel.Number;
+
+      int freq, ONID, TSID, SID, symbolrate, innerFec, modulation, polarisation;
+      int bandWidth, pmtPid, audioPid, videoPid, teletextPid;
+      string provider;
+      //dvb-T
+      int audio1, audio2, audio3, ac3Pid, pcrPid;
+      string audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3;
+
+      try
+      {
+        freq = ParseInt(tbDVBTFreq.Text);
+        ONID = ParseInt(tbDVBTONID.Text);
+        TSID = ParseInt(tbDVBTTSID.Text);
+        SID = ParseInt(tbDVBTSID.Text);
+        audioPid = ParseInt(tbDVBTAudioPid.Text);
+        videoPid = ParseInt(tbDVBTVideoPid.Text);
+        teletextPid = ParseInt(tbDVBTTeletextPid.Text);
+        pmtPid = ParseInt(tbDVBTPmtPid.Text);
+        provider = tbDVBTProvider.Text;
+        bandWidth = ParseInt(tbBandWidth.Text);
+        audio1 = ParseInt(tbDVBTAudio1.Text);
+        audio2 = ParseInt(tbDVBTAudio2.Text);
+        audio3 = ParseInt(tbDVBTAudio3.Text);
+        ac3Pid = ParseInt(tbDVBTAC3.Text);
+        audioLanguage = tbDVBTAudioLanguage.Text;
+        audioLanguage1 = tbDVBTAudioLanguage1.Text;
+        audioLanguage2 = tbDVBTAudioLanguage2.Text;
+        audioLanguage3 = tbDVBTAudioLanguage3.Text;
+        pcrPid = ParseInt(tbDVBTPCR.Text);
+        if (ONID > 0 && TSID > 0 && SID > 0 && freq > 0)
+        {
+          TVDatabase.MapDVBTChannel(tvchannel.Name, provider, tvchannel.ID, freq, ONID, TSID, SID, audioPid, videoPid, teletextPid, pmtPid, bandWidth, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3, DVBTHasEITPresentFollow, DVBTHasEITSchedule);
+        }
+      }
+      catch (Exception) { }
+
+
+      //dvb-C
+      try
+      {
+        freq = ParseInt(tbDVBCFreq.Text);
+        ONID = ParseInt(tbDVBCONID.Text);
+        TSID = ParseInt(tbDVBCTSID.Text);
+        SID = ParseInt(tbDVBCSID.Text);
+        symbolrate = ParseInt(tbDVBCSR.Text);
+        innerFec = IndexToFec(cbDVBCInnerFeq.SelectedIndex);
+        modulation = IndexToModulation(cbDVBCModulation.SelectedIndex);
+        provider = tbDVBCProvider.Text;
+        audioPid = ParseInt(tbDVBCAudioPid.Text);
+        videoPid = ParseInt(tbDVBCVideoPid.Text);
+        teletextPid = ParseInt(tbDVBCTeletextPid.Text);
+        pmtPid = ParseInt(tbDVBCPmtPid.Text);
+        audio1 = ParseInt(tbDVBCAudio1.Text);
+        audio2 = ParseInt(tbDVBCAudio2.Text);
+        audio3 = ParseInt(tbDVBCAudio3.Text);
+        ac3Pid = ParseInt(tbDVBCAC3.Text);
+        audioLanguage = tbDVBCAudioLanguage.Text;
+        audioLanguage1 = tbDVBCAudioLanguage1.Text;
+        audioLanguage2 = tbDVBCAudioLanguage2.Text;
+        audioLanguage3 = tbDVBCAudioLanguage3.Text;
+        pcrPid = ParseInt(tbDVBCPCR.Text);
+        if (ONID > 0 && TSID > 0 && SID > 0 && freq > 0)
+        {
+          TVDatabase.MapDVBCChannel(tvchannel.Name, provider, tvchannel.ID, freq, symbolrate, innerFec, modulation, ONID, TSID, SID, audioPid, videoPid, teletextPid, pmtPid, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3, DVBCHasEITPresentFollow, DVBCHasEITSchedule);
+        }
+      }
+      catch (Exception) { }
+
+      //ATSC
+      try
+      {
+        int physical, minor, major;
+        physical = ParseInt(tbATSCPhysicalChannel.Text);
+        minor = ParseInt(tbATSCMinor.Text);
+        major = ParseInt(tbATSCMajor.Text);
+        freq = ParseInt(tbATSCFrequency.Text);
+        TSID = ParseInt(tbATSCTSID.Text);
+        symbolrate = ParseInt(tbATSCSymbolRate.Text);
+        innerFec = IndexToFec(cbATSCInnerFec.SelectedIndex);
+        modulation = IndexToModulation(cbATSCModulation.SelectedIndex);
+        provider = tbATSCProvider.Text;
+        audioPid = ParseInt(tbATSCAudioPid.Text);
+        videoPid = ParseInt(tbATSCVideoPid.Text);
+        teletextPid = ParseInt(tbATSCTeletextPid.Text);
+        pmtPid = ParseInt(tbATSCPMTPid.Text);
+        audio1 = ParseInt(tbATSCAudio1Pid.Text);
+        audio2 = ParseInt(tbATSCAudio2Pid.Text);
+        audio3 = ParseInt(tbATSCAudio3Pid.Text);
+        ac3Pid = ParseInt(tbATSCAC3Pid.Text);
+        audioLanguage = tbATSCAudioLanguage.Text;
+        audioLanguage1 = tbATSCAudioLanguage1.Text;
+        audioLanguage2 = tbATSCAudioLanguage2.Text;
+        audioLanguage3 = tbATSCAudioLanguage3.Text;
+        pcrPid = ParseInt(tbATSCPCR.Text);
+        if (major > 0 && TSID > 0 && minor > 0 && physical > 0)
+        {
+          TVDatabase.MapATSCChannel(tvchannel.Name, physical, minor, major, provider, tvchannel.ID, freq, symbolrate, innerFec, modulation, -1, TSID, -1, audioPid, videoPid, teletextPid, pmtPid, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3, ATSCHasEITPresentFollow, ATSCHasEITSchedule);
+        }
+      }
+      catch (Exception) { }
+
+      //dvb-S
+      try
+      {
+        DVBChannel ch = new DVBChannel();
+        TVDatabase.GetSatChannel(tvchannel.ID, 1, ref ch);
+
+        freq = ParseInt(tbDVBSFreq.Text);
+        ONID = ParseInt(tbDVBSONID.Text);
+        TSID = ParseInt(tbDVBSTSID.Text);
+        SID = ParseInt(tbDVBSSID.Text);
+        symbolrate = ParseInt(tbDVBSSymbolrate.Text);
+        innerFec = IndexToFec(cbDvbSInnerFec.SelectedIndex);
+        polarisation = IndexToPolarisation(cbDVBSPolarisation.SelectedIndex);
+        provider = tbDVBSProvider.Text;
+        audioPid = ParseInt(tbDVBSAudioPid.Text);
+        videoPid = ParseInt(tbDVBSVideoPid.Text);
+        teletextPid = ParseInt(tbDVBSTeletextPid.Text);
+        pmtPid = ParseInt(tbDVBSPmtPid.Text);
+        audio1 = ParseInt(tbDVBSAudio1.Text);
+        audio2 = ParseInt(tbDVBSAudio2.Text);
+        audio3 = ParseInt(tbDVBSAudio3.Text);
+        ac3Pid = ParseInt(tbDVBSAC3.Text);
+        audioLanguage = tbDVBSAudioLanguage.Text;
+        audioLanguage1 = tbDVBSAudioLanguage1.Text;
+        audioLanguage2 = tbDVBSAudioLanguage2.Text;
+        audioLanguage3 = tbDVBSAudioLanguage3.Text;
+        pcrPid = ParseInt(tbDVBSPCR.Text);
+        if (ONID > 0 && TSID > 0 && SID > 0 && freq > 0)
+        {
+          ch.ServiceType = 1;
+          ch.Frequency = freq;
+          ch.NetworkID = ONID;
+          ch.TransportStreamID = TSID;
+          ch.ProgramNumber = SID;
+          ch.Symbolrate = symbolrate;
+          ch.FEC = innerFec;
+          ch.Polarity = polarisation;
+          ch.ServiceProvider = provider;
+          ch.ServiceName = tvchannel.Name;
+          ch.ID = tvchannel.ID;
+          ch.AudioPid = audioPid;
+          ch.VideoPid = videoPid;
+          ch.TeletextPid = teletextPid;
+          ch.ECMPid = ParseInt(tbDVBSECMpid.Text);
+          ch.PMTPid = pmtPid;
+          ch.PCRPid = pcrPid;
+          ch.Audio1 = audio1;
+          ch.Audio2 = audio2;
+          ch.Audio3 = audio3;
+          ch.AC3Pid = ac3Pid;
+          ch.AudioLanguage = audioLanguage;
+          ch.AudioLanguage1 = audioLanguage1;
+          ch.AudioLanguage2 = audioLanguage2;
+          ch.AudioLanguage3 = audioLanguage3;
+          ch.HasEITPresentFollow = DVBSHasEITPresentFollow;
+          ch.HasEITSchedule = DVBSHasEITSchedule;
+          TVDatabase.UpdateSatChannel(ch);
+        }
+      }
+      catch (Exception) { }
+
+    }
+
+    private void label23_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBSONID_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label22_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBSFreq_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label24_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void channelTextBox_TextChanged_1(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBSSID_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label26_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBSTSID_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label7_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void frequencyTextBox_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label1_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void nameTextBox_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label2_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label6_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label5_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void externalChannelTextBox_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label4_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tabPage1_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tabPage2_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void countryComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label8_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tabPage3_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBTFreq_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tabPage6_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label12_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBTTSID_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label25_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label11_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBTSID_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBSSymbolrate_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label10_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBTONID_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label9_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tabPage4_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void cbDVBCModulation_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void cbDVBCInnerFeq_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label19_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label18_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBCSR_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label3_Click_1(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label17_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBCFreq_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label13_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBCTSID_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label14_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBCSID_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label15_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tbDVBCONID_TextChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label16_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void tabPage5_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void cbDVBSPolarisation_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void cbDvbSInnerFec_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label20_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void label21_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void comboBoxChannels_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      labelSpecial.Text = String.Empty;
+      string chanNr = (string)comboBoxChannels.SelectedItem;
+      if (chanNr == null)
+        chanNr = comboBoxChannels.Text.ToUpper().Trim();
+      for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
+      {
+        if (chanNr.Equals(TVChannel.SpecialChannels[i].Name))
+        {
+          Frequency freq = new Frequency(TVChannel.SpecialChannels[i].Frequency);
+          frequencyTextBox.Text = freq.ToString();
+          labelSpecial.Text = TVChannel.SpecialChannels[i].Name;
+          break;
+        }
+      }
+    }
+  }
+
+  public class TelevisionChannel
+  {
+    public int ID;
+    public string Name = String.Empty;
+    public int Channel = 0;
+    public Frequency Frequency = new Frequency(0);
+    public bool External = false;
+    public string ExternalTunerChannel = String.Empty;
+    public bool VisibleInGuide = true;
+    public AnalogVideoStandard standard = AnalogVideoStandard.None;
+    public int Country;
+    public bool Scrambled = false;
+  }
+
+  public class Frequency
+  {
+    public enum Format
+    {
+      Herz,
+      MegaHerz
+    }
+
+    public Frequency(long herz)
+    {
+      this.herz = herz;
+    }
+
+    public Frequency(double megaherz)
+    {
+      this.herz = (long)(megaherz * (1000000d));
+    }
+
+    private long herz = 0;
+
+    public long Herz
+    {
+      get { return herz; }
+      set
+      {
+        herz = value;
+        if (herz <= 1000)
+          herz *= (int)1000000d;
+      }
+    }
+
+    public double MegaHerz
+    {
+      get { return (double)herz / 1000000d; }
+      set
+      {
+        herz = (long)(value * 1000000d);
+      }
+    }
+
+    public static implicit operator Frequency(int herz)
+    {
+      return new Frequency(herz);
+    }
+
+    public static implicit operator Frequency(long herz)
+    {
+      return new Frequency(herz);
+    }
+
+    public static implicit operator Frequency(double megaHerz)
+    {
+      return new Frequency((long)(megaHerz * (1000000d)));
+    }
+
+    public string ToString(Format format)
+    {
+      string result = String.Empty;
+
+      try
+      {
+        switch (format)
+        {
+          case Format.Herz:
+            result = String.Format("{0}", Herz);
+            break;
+
+          case Format.MegaHerz:
+            result = String.Format("{0:#,###0.000}", MegaHerz);
+            break;
+        }
+      }
+      catch
+      {
+        //
+        // Failed to convert
+        //
+      }
+
+      return result;
+    }
+
+    public override string ToString()
+    {
+      return ToString(Format.MegaHerz);
+    }
+  }
 
 }

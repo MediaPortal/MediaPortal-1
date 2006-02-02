@@ -204,7 +204,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.SettingsPnl);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 209);
@@ -232,7 +231,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // testSendIrBtn
       // 
-      this.testSendIrBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.testSendIrBtn.Location = new System.Drawing.Point(288, 133);
       this.testSendIrBtn.Name = "testSendIrBtn";
       this.testSendIrBtn.Size = new System.Drawing.Size(160, 23);
@@ -316,7 +314,6 @@ namespace MediaPortal.Configuration.Sections
       // tunerCommandsButton
       // 
       this.tunerCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.tunerCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.tunerCommandsButton.Location = new System.Drawing.Point(288, 53);
       this.tunerCommandsButton.Name = "tunerCommandsButton";
       this.tunerCommandsButton.Size = new System.Drawing.Size(160, 23);
@@ -327,7 +324,6 @@ namespace MediaPortal.Configuration.Sections
       // internalCommandsButton
       // 
       this.internalCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.internalCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.internalCommandsButton.Location = new System.Drawing.Point(288, 16);
       this.internalCommandsButton.Name = "internalCommandsButton";
       this.internalCommandsButton.Size = new System.Drawing.Size(160, 23);
@@ -338,7 +334,6 @@ namespace MediaPortal.Configuration.Sections
       // enterCheckBox
       // 
       this.enterCheckBox.Enabled = false;
-      this.enterCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.enterCheckBox.Location = new System.Drawing.Point(24, 156);
       this.enterCheckBox.Name = "enterCheckBox";
       this.enterCheckBox.Size = new System.Drawing.Size(192, 16);
@@ -349,7 +344,6 @@ namespace MediaPortal.Configuration.Sections
       // digitCheckBox
       // 
       this.digitCheckBox.Enabled = false;
-      this.digitCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.digitCheckBox.Location = new System.Drawing.Point(24, 140);
       this.digitCheckBox.Name = "digitCheckBox";
       this.digitCheckBox.Size = new System.Drawing.Size(176, 16);
@@ -359,7 +353,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // outputCheckBox
       // 
-      this.outputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.outputCheckBox.Location = new System.Drawing.Point(8, 56);
       this.outputCheckBox.Name = "outputCheckBox";
       this.outputCheckBox.Size = new System.Drawing.Size(208, 16);
@@ -369,7 +362,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // inputCheckBox
       // 
-      this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.inputCheckBox.Location = new System.Drawing.Point(8, 16);
       this.inputCheckBox.Name = "inputCheckBox";
       this.inputCheckBox.Size = new System.Drawing.Size(208, 16);
@@ -409,7 +401,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.label3);
       this.groupBox2.Controls.Add(this.linkLabel1);
       this.groupBox2.Controls.Add(this.label2);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(0, 300);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 104);
@@ -453,7 +444,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.label7);
       this.groupBox3.Controls.Add(this.lblUSBUIRTVersion);
       this.groupBox3.Controls.Add(this.label1);
-      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox3.Location = new System.Drawing.Point(0, 213);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(472, 83);

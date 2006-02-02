@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -27,31 +31,33 @@ using System.Windows.Forms;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class MoviePostProcessing : MediaPortal.Configuration.SectionSettings
-	{
+  public class MoviePostProcessing : MediaPortal.Configuration.SectionSettings
+  {
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox3;
     private MediaPortal.UserInterface.Controls.MPCheckBox ffdshowCheckBox;
     private System.Windows.Forms.Label label3;
-		private System.ComponentModel.IContainer components = null;
+    private System.ComponentModel.IContainer components = null;
 
-    public MoviePostProcessing() : this("Movie Post Processing")
+    public MoviePostProcessing()
+      : this("Movie Post Processing")
     {
     }
 
-		public MoviePostProcessing(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public MoviePostProcessing(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			// TODO: Add any initialization after the InitializeComponent call
-		}
+      // TODO: Add any initialization after the InitializeComponent call
+    }
 
     public override void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         ffdshowCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "ffdshow", false);
-      }      
+      }
     }
 
     public override void SaveSettings()
@@ -59,31 +65,31 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("movieplayer", "ffdshow", ffdshowCheckBox.Checked);
-      } 
+      }
     }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label3 = new System.Windows.Forms.Label();
       this.ffdshowCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -92,11 +98,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
-      this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox3.Controls.Add(this.label3);
       this.mpGroupBox3.Controls.Add(this.ffdshowCheckBox);
-      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox3.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
       this.mpGroupBox3.Size = new System.Drawing.Size(472, 96);
@@ -106,7 +111,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label3
       // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.Location = new System.Drawing.Point(16, 24);
       this.label3.Name = "label3";
@@ -117,7 +122,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // ffdshowCheckBox
       // 
-      this.ffdshowCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.ffdshowCheckBox.Location = new System.Drawing.Point(16, 64);
       this.ffdshowCheckBox.Name = "ffdshowCheckBox";
       this.ffdshowCheckBox.Size = new System.Drawing.Size(184, 16);
@@ -133,7 +137,7 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
-	}
+    #endregion
+  }
 }
 

@@ -386,7 +386,6 @@ namespace MediaPortal.Configuration.Sections
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.dataGrid1);
       this.groupBox1.Controls.Add(this.setupButton);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 408);
@@ -408,7 +407,6 @@ namespace MediaPortal.Configuration.Sections
       // setupButton
       // 
       this.setupButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.setupButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.setupButton.Location = new System.Drawing.Point(384, 376);
       this.setupButton.Name = "setupButton";
       this.setupButton.Size = new System.Drawing.Size(72, 22);

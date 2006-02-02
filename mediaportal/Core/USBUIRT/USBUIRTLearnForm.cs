@@ -303,7 +303,6 @@ namespace MediaPortal.IR
       // LearnEnabledMPCmdsBtn
       // 
       this.LearnEnabledMPCmdsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.LearnEnabledMPCmdsBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.LearnEnabledMPCmdsBtn.Location = new System.Drawing.Point(302, 24);
       this.LearnEnabledMPCmdsBtn.Name = "LearnEnabledMPCmdsBtn";
       this.LearnEnabledMPCmdsBtn.Size = new System.Drawing.Size(140, 23);
@@ -325,7 +324,6 @@ namespace MediaPortal.IR
       // 
       this.LearnSingleMPCmdBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.LearnSingleMPCmdBtn.Enabled = false;
-      this.LearnSingleMPCmdBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.LearnSingleMPCmdBtn.Location = new System.Drawing.Point(302, 51);
       this.LearnSingleMPCmdBtn.Name = "LearnSingleMPCmdBtn";
       this.LearnSingleMPCmdBtn.Size = new System.Drawing.Size(140, 23);
@@ -336,7 +334,6 @@ namespace MediaPortal.IR
       // CloseMPCmdsLearnFormBtn
       // 
       this.CloseMPCmdsLearnFormBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.CloseMPCmdsLearnFormBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.CloseMPCmdsLearnFormBtn.Location = new System.Drawing.Point(302, 170);
       this.CloseMPCmdsLearnFormBtn.Name = "CloseMPCmdsLearnFormBtn";
       this.CloseMPCmdsLearnFormBtn.Size = new System.Drawing.Size(140, 23);
@@ -379,7 +376,6 @@ namespace MediaPortal.IR
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.MPCode1ValueLbl);
       this.groupBox2.Controls.Add(this.MPCode2ValueLbl);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(14, 196);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(428, 79);
@@ -410,7 +406,6 @@ namespace MediaPortal.IR
       // 
       this.ClearSingleLearnedMPCmdBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.ClearSingleLearnedMPCmdBtn.Enabled = false;
-      this.ClearSingleLearnedMPCmdBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.ClearSingleLearnedMPCmdBtn.Location = new System.Drawing.Point(302, 124);
       this.ClearSingleLearnedMPCmdBtn.Name = "ClearSingleLearnedMPCmdBtn";
       this.ClearSingleLearnedMPCmdBtn.Size = new System.Drawing.Size(140, 23);
@@ -421,7 +416,6 @@ namespace MediaPortal.IR
       // ClearAllLearnedMPCmdsBtn
       // 
       this.ClearAllLearnedMPCmdsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.ClearAllLearnedMPCmdsBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.ClearAllLearnedMPCmdsBtn.Location = new System.Drawing.Point(302, 96);
       this.ClearAllLearnedMPCmdsBtn.Name = "ClearAllLearnedMPCmdsBtn";
       this.ClearAllLearnedMPCmdsBtn.Size = new System.Drawing.Size(140, 23);
@@ -432,7 +426,6 @@ namespace MediaPortal.IR
       // CancelLearnBtn
       // 
       this.CancelLearnBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.CancelLearnBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.CancelLearnBtn.Location = new System.Drawing.Point(344, 244);
       this.CancelLearnBtn.Name = "CancelLearnBtn";
       this.CancelLearnBtn.Size = new System.Drawing.Size(88, 23);
@@ -497,7 +490,6 @@ namespace MediaPortal.IR
       // SkipCodeBtn
       // 
       this.SkipCodeBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.SkipCodeBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.SkipCodeBtn.Location = new System.Drawing.Point(24, 244);
       this.SkipCodeBtn.Name = "SkipCodeBtn";
       this.SkipCodeBtn.Size = new System.Drawing.Size(88, 23);
@@ -562,7 +554,6 @@ namespace MediaPortal.IR
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.STBCode1ValueLbl);
       this.groupBox1.Controls.Add(this.STBCode2ValueLbl);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(14, 196);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(428, 79);
@@ -593,7 +584,6 @@ namespace MediaPortal.IR
       // LearnEnabledSTBCmdsBtn
       // 
       this.LearnEnabledSTBCmdsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.LearnEnabledSTBCmdsBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.LearnEnabledSTBCmdsBtn.Location = new System.Drawing.Point(302, 24);
       this.LearnEnabledSTBCmdsBtn.Name = "LearnEnabledSTBCmdsBtn";
       this.LearnEnabledSTBCmdsBtn.Size = new System.Drawing.Size(140, 23);
@@ -626,7 +616,6 @@ namespace MediaPortal.IR
       // LearnSingleSTBCmdBtn
       // 
       this.LearnSingleSTBCmdBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.LearnSingleSTBCmdBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.LearnSingleSTBCmdBtn.Location = new System.Drawing.Point(302, 51);
       this.LearnSingleSTBCmdBtn.Name = "LearnSingleSTBCmdBtn";
       this.LearnSingleSTBCmdBtn.Size = new System.Drawing.Size(140, 23);
@@ -637,7 +626,6 @@ namespace MediaPortal.IR
       // CloseSTBCmdsLearnFormBtn
       // 
       this.CloseSTBCmdsLearnFormBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.CloseSTBCmdsLearnFormBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.CloseSTBCmdsLearnFormBtn.Location = new System.Drawing.Point(302, 170);
       this.CloseSTBCmdsLearnFormBtn.Name = "CloseSTBCmdsLearnFormBtn";
       this.CloseSTBCmdsLearnFormBtn.Size = new System.Drawing.Size(140, 23);
@@ -648,7 +636,6 @@ namespace MediaPortal.IR
       // ClearSingleLearnedSTBCmdBtn
       // 
       this.ClearSingleLearnedSTBCmdBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.ClearSingleLearnedSTBCmdBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.ClearSingleLearnedSTBCmdBtn.Location = new System.Drawing.Point(302, 124);
       this.ClearSingleLearnedSTBCmdBtn.Name = "ClearSingleLearnedSTBCmdBtn";
       this.ClearSingleLearnedSTBCmdBtn.Size = new System.Drawing.Size(140, 23);
@@ -659,7 +646,6 @@ namespace MediaPortal.IR
       // ClearAllLearnedSTBCmdsBtn
       // 
       this.ClearAllLearnedSTBCmdsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.ClearAllLearnedSTBCmdsBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.ClearAllLearnedSTBCmdsBtn.Location = new System.Drawing.Point(302, 96);
       this.ClearAllLearnedSTBCmdsBtn.Name = "ClearAllLearnedSTBCmdsBtn";
       this.ClearAllLearnedSTBCmdsBtn.Size = new System.Drawing.Size(140, 23);

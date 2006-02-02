@@ -222,7 +222,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.CommPortCombo);
       this.groupBox1.Controls.Add(this.internalCommandsButton);
       this.groupBox1.Controls.Add(this.inputCheckBox);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 336);
@@ -233,7 +232,6 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxRTS
       // 
       this.checkBoxRTS.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-      this.checkBoxRTS.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxRTS.Location = new System.Drawing.Point(16, 200);
       this.checkBoxRTS.Name = "checkBoxRTS";
       this.checkBoxRTS.Size = new System.Drawing.Size(48, 16);
@@ -244,7 +242,6 @@ namespace MediaPortal.Configuration.Sections
       // checkBoxDTR
       // 
       this.checkBoxDTR.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-      this.checkBoxDTR.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxDTR.Location = new System.Drawing.Point(16, 176);
       this.checkBoxDTR.Name = "checkBoxDTR";
       this.checkBoxDTR.Size = new System.Drawing.Size(48, 16);
@@ -254,7 +251,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label8
       // 
-      this.label8.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.label8.Location = new System.Drawing.Point(120, 120);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(64, 16);
@@ -279,7 +275,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonNoneCodes
       // 
       this.buttonNoneCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonNoneCodes.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonNoneCodes.Location = new System.Drawing.Point(280, 22);
       this.buttonNoneCodes.Name = "buttonNoneCodes";
       this.buttonNoneCodes.Size = new System.Drawing.Size(56, 16);
@@ -290,7 +285,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonDefaultCodes
       // 
       this.buttonDefaultCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonDefaultCodes.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonDefaultCodes.Location = new System.Drawing.Point(344, 22);
       this.buttonDefaultCodes.Name = "buttonDefaultCodes";
       this.buttonDefaultCodes.Size = new System.Drawing.Size(56, 16);
@@ -301,7 +295,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonAllCodes
       // 
       this.buttonAllCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonAllCodes.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonAllCodes.Location = new System.Drawing.Point(408, 22);
       this.buttonAllCodes.Name = "buttonAllCodes";
       this.buttonAllCodes.Size = new System.Drawing.Size(56, 16);
@@ -312,7 +305,6 @@ namespace MediaPortal.Configuration.Sections
       // label7
       // 
       this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label7.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.label7.Location = new System.Drawing.Point(224, 24);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(32, 16);
@@ -331,7 +323,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label6
       // 
-      this.label6.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.label6.Location = new System.Drawing.Point(16, 222);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(88, 32);
@@ -358,7 +349,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label5
       // 
-      this.label5.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.label5.Location = new System.Drawing.Point(16, 262);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(80, 32);
@@ -387,7 +377,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label4
       // 
-      this.label4.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.label4.Location = new System.Drawing.Point(120, 168);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(88, 16);
@@ -438,7 +427,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label3
       // 
-      this.label3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.label3.Location = new System.Drawing.Point(16, 120);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(64, 16);
@@ -461,7 +449,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label2
       // 
-      this.label2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.label2.Location = new System.Drawing.Point(120, 72);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(56, 16);
@@ -496,7 +483,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxInitUIRIrman.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.checkBoxInitUIRIrman.Checked = true;
       this.checkBoxInitUIRIrman.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxInitUIRIrman.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxInitUIRIrman.Location = new System.Drawing.Point(16, 48);
       this.checkBoxInitUIRIrman.Name = "checkBoxInitUIRIrman";
       this.checkBoxInitUIRIrman.Size = new System.Drawing.Size(192, 16);
@@ -506,7 +492,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label1
       // 
-      this.label1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.label1.Location = new System.Drawing.Point(16, 72);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(64, 16);
@@ -533,7 +518,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // internalCommandsButton
       // 
-      this.internalCommandsButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.internalCommandsButton.Location = new System.Drawing.Point(16, 296);
       this.internalCommandsButton.Name = "internalCommandsButton";
       this.internalCommandsButton.Size = new System.Drawing.Size(192, 23);
@@ -543,7 +527,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // inputCheckBox
       // 
-      this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
       this.inputCheckBox.Name = "inputCheckBox";
       this.inputCheckBox.Size = new System.Drawing.Size(200, 16);
@@ -556,7 +539,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.statusLabel);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(0, 344);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 64);
@@ -568,7 +550,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.statusLabel.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.statusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
       this.statusLabel.Location = new System.Drawing.Point(16, 24);
       this.statusLabel.Name = "statusLabel";

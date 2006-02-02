@@ -227,7 +227,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.defaultAudioLanguageComboBox);
       this.groupBox1.Controls.Add(this.defaultSubtitleLanguageComboBox);
       this.groupBox1.Controls.Add(this.showSubtitlesCheckBox);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 104);
@@ -278,10 +277,10 @@ namespace MediaPortal.Configuration.Sections
       // showSubtitlesCheckBox
       // 
       this.showSubtitlesCheckBox.AutoSize = true;
-      this.showSubtitlesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+      this.showSubtitlesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.showSubtitlesCheckBox.Location = new System.Drawing.Point(168, 20);
       this.showSubtitlesCheckBox.Name = "showSubtitlesCheckBox";
-      this.showSubtitlesCheckBox.Size = new System.Drawing.Size(100, 18);
+      this.showSubtitlesCheckBox.Size = new System.Drawing.Size(92, 17);
       this.showSubtitlesCheckBox.TabIndex = 0;
       this.showSubtitlesCheckBox.Text = "Show subtitles";
       // 
@@ -294,7 +293,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.aspectRatioComboBox);
       this.mpGroupBox1.Controls.Add(this.aspectRatioLabel);
       this.mpGroupBox1.Controls.Add(this.pixelRatioCheckBox);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 108);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 104);
@@ -353,7 +351,6 @@ namespace MediaPortal.Configuration.Sections
       // pixelRatioCheckBox
       // 
       this.pixelRatioCheckBox.AutoSize = true;
-      this.pixelRatioCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.pixelRatioCheckBox.Location = new System.Drawing.Point(168, 20);
       this.pixelRatioCheckBox.Name = "pixelRatioCheckBox";
       this.pixelRatioCheckBox.Size = new System.Drawing.Size(148, 18);
@@ -366,7 +363,6 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
       this.mpGroupBox2.Controls.Add(this.autoPlayComboBox);
-      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox2.Location = new System.Drawing.Point(0, 216);
       this.mpGroupBox2.Name = "mpGroupBox2";
       this.mpGroupBox2.Size = new System.Drawing.Size(472, 60);

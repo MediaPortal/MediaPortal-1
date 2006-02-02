@@ -36,295 +36,295 @@ using MediaPortal.Util;
 
 namespace MediaPortal.Configuration
 {
-	/// <summary>
-	/// Summary description for WizardForm.
-	/// </summary>
-	public class WizardForm : System.Windows.Forms.Form
-	{
-		internal class SectionHolder
-		{
-			public SectionSettings Section;
-			public string Topic;
-			public string Information;
-			public string Expression;
+  /// <summary>
+  /// Summary description for WizardForm.
+  /// </summary>
+  public class WizardForm : System.Windows.Forms.Form
+  {
+    internal class SectionHolder
+    {
+      public SectionSettings Section;
+      public string Topic;
+      public string Information;
+      public string Expression;
 
-			public SectionHolder(SectionSettings section, string topic, string information, string expression)
-			{
-				this.Section = section;
-				this.Topic = topic;
-				this.Information = information;
-				this.Expression = expression;
-			}
-		}
-	
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+      public SectionHolder(SectionSettings section, string topic, string information, string expression)
+      {
+        this.Section = section;
+        this.Topic = topic;
+        this.Information = information;
+        this.Expression = expression;
+      }
+    }
 
-		//
-		// Private members
-		//
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
+
+    //
+    // Private members
+    //
     public static ArrayList WizardPages
     {
       get { return wizardPages; }
     }
-		static ArrayList wizardPages = new ArrayList();
-    
+    static ArrayList wizardPages = new ArrayList();
+
     string wizardCaption = String.Empty;
-    
+
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
-		private MediaPortal.UserInterface.Controls.MPButton nextButton;
-		private MediaPortal.UserInterface.Controls.MPButton backButton;
-		private System.Windows.Forms.Panel topPanel;
-		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.Panel panel2;
-		private System.Windows.Forms.Panel holderPanel;
-		private System.Windows.Forms.Label topicLabel;
-		private System.Windows.Forms.Label infoLabel;
-		private System.Windows.Forms.PictureBox pictureBox1;
-		int visiblePageIndex = -1;
+    private MediaPortal.UserInterface.Controls.MPButton nextButton;
+    private MediaPortal.UserInterface.Controls.MPButton backButton;
+    private System.Windows.Forms.Panel topPanel;
+    private System.Windows.Forms.Panel panel1;
+    private System.Windows.Forms.Panel panel2;
+    private System.Windows.Forms.Panel holderPanel;
+    private System.Windows.Forms.Label topicLabel;
+    private System.Windows.Forms.Label infoLabel;
+    private System.Windows.Forms.PictureBox pictureBox1;
+    int visiblePageIndex = -1;
 
-		public void AddSection(SectionSettings settings, string topic, string information)
-		{
-			AddSection(settings, topic, information, String.Empty);
-		}
+    public void AddSection(SectionSettings settings, string topic, string information)
+    {
+      AddSection(settings, topic, information, String.Empty);
+    }
 
-		public void AddSection(SectionSettings settings, string topic, string information, string expression)
-		{
-			wizardPages.Add(new SectionHolder(settings, topic, information, expression));
-		}
+    public void AddSection(SectionSettings settings, string topic, string information, string expression)
+    {
+      wizardPages.Add(new SectionHolder(settings, topic, information, expression));
+    }
 
-		public WizardForm(string sectionConfiguration)
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public WizardForm(string sectionConfiguration)
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
       // Stop MCE services
       Utils.StopMCEServices();
 
-			//
-			// Set caption
-			//
-			wizardCaption = "MediaPortal Settings Wizard - " + System.Windows.Forms.Application.ProductVersion;
+      //
+      // Set caption
+      //
+      wizardCaption = "MediaPortal Settings Wizard - " + System.Windows.Forms.Application.ProductVersion;
 
-			//
-			// Check if we got a sections file to read from, or if we should specify
-			// the default sections
-			//
-			if(sectionConfiguration != String.Empty && System.IO.File.Exists(sectionConfiguration))
-			{
-				LoadSections(sectionConfiguration);
-			}
-			else
-			{
-				Sections.TVCaptureCards sect = new Sections.TVCaptureCards();
-				sect.AddAllCards();
-				sect.LoadCaptureCards();
-				bool analogCard=false;
-				bool DVBTCard=false;
-				bool DVBCCard=false;
-				bool DVBSCard=false;
-				Log.Write("found {0} tv cards",sect.captureCards.Count);
-				foreach (TVCaptureDevice dev in sect.captureCards)
-				{
-					if (dev.VideoDevice=="B2C2 MPEG-2 Source")
-					{
-						dev.CreateGraph();
-					}
-					if (dev.Network==NetworkType.Analog) 
-					{
-						Log.Write("Analog TV Card:{0}",dev.CommercialName);
-						analogCard=true;
-					}
-					if (dev.Network==NetworkType.DVBT) 
-					{
-						Log.Write("Digital DVB-T Card:{0}",dev.CommercialName);
-						DVBTCard=true;
-					}
-					if (dev.Network==NetworkType.DVBC)  
-					{
-						Log.Write("Digital DVB-C Card:{0}",dev.CommercialName);
-						DVBCCard=true;
-					}
-					if (dev.Network==NetworkType.DVBS)  
-					{
-						Log.Write("Digital DVB-S Card:{0}",dev.CommercialName);
-						DVBSCard=true;
-					}
-					if (dev.VideoDevice=="B2C2 MPEG-2 Source")
-					{
-						dev.DeleteGraph();
-					}
-				}
+      //
+      // Check if we got a sections file to read from, or if we should specify
+      // the default sections
+      //
+      if (sectionConfiguration != String.Empty && System.IO.File.Exists(sectionConfiguration))
+      {
+        LoadSections(sectionConfiguration);
+      }
+      else
+      {
+        Sections.TVCaptureCards sect = new Sections.TVCaptureCards();
+        sect.AddAllCards();
+        sect.LoadCaptureCards();
+        bool analogCard = false;
+        bool DVBTCard = false;
+        bool DVBCCard = false;
+        bool DVBSCard = false;
+        Log.Write("found {0} tv cards", sect.captureCards.Count);
+        foreach (TVCaptureDevice dev in sect.captureCards)
+        {
+          if (dev.VideoDevice == "B2C2 MPEG-2 Source")
+          {
+            dev.CreateGraph();
+          }
+          if (dev.Network == NetworkType.Analog)
+          {
+            Log.Write("Analog TV Card:{0}", dev.CommercialName);
+            analogCard = true;
+          }
+          if (dev.Network == NetworkType.DVBT)
+          {
+            Log.Write("Digital DVB-T Card:{0}", dev.CommercialName);
+            DVBTCard = true;
+          }
+          if (dev.Network == NetworkType.DVBC)
+          {
+            Log.Write("Digital DVB-C Card:{0}", dev.CommercialName);
+            DVBCCard = true;
+          }
+          if (dev.Network == NetworkType.DVBS)
+          {
+            Log.Write("Digital DVB-S Card:{0}", dev.CommercialName);
+            DVBSCard = true;
+          }
+          if (dev.VideoDevice == "B2C2 MPEG-2 Source")
+          {
+            dev.DeleteGraph();
+          }
+        }
 
-				AddSection(new Sections.Wizard_Welcome(), "Welcome to MediaPortal", "");
-				AddSection(new Sections.General(), "General", "General information...");
-				AddSection(new Sections.Skin(), "Skin", "Skin settings...");
-				AddSection(new Sections.Wizard_SelectPlugins(), "Media", "Let MediaPortal find your media (music, movies, pictures) on your harddisk");
-				if (analogCard)
-				{
-					AddSection(new Sections.Wizard_AnalogTV() , "TV - analog", "Analog TV/Radio configuration", "");
-				}
-				if (DVBTCard)
-				{
-					AddSection(new Sections.Wizard_DVBTTV() , "TV - DVB-T", "Digital TV Terrestrial configuration", "");
-				}
-				if (DVBCCard)
-				{
-					AddSection(new Sections.Wizard_DVBCTV() , "TV - DVB-C", "Digital TV Cable configuration", "");
-				}
-				if (DVBSCard)
-				{
-					AddSection(new Sections.Wizard_DVBSTVSetup() , "TV - DVB-S LNB", "Digital TV Satellite LNB Setup", "");
-					AddSection(new Sections.Wizard_DVBSTV() , "TV - DVB-S", "Digital TV Satellite configuration", "");
-				}
-				AddSection(new Sections.TVProgramGuide() , "Television Program Guide", "Configure the Electronic Program Guide using XMLTV listings", "");
-				if (Sections.Remote.IsMceRemoteInstalled(this.Handle) )
-				{
-					AddSection(new Sections.Remote()			   , "Remote Control", "Configure MCE Remote control", "");
-				}
-				AddSection(new Sections.Weather()			   , "Weather", "My weather setup", "");
-				AddSection(new Sections.Wizard_Finished(), "Congratulations", "You have now finished the setup wizard.");
-			}
+        AddSection(new Sections.Wizard_Welcome(), "Welcome to MediaPortal", "");
+        AddSection(new Sections.General(), "General", "General information...");
+        AddSection(new Sections.Skin(), "Skin", "Skin settings...");
+        AddSection(new Sections.Wizard_SelectPlugins(), "Media", "Let MediaPortal find your media (music, movies, pictures) on your harddisk");
+        if (analogCard)
+        {
+          AddSection(new Sections.Wizard_AnalogTV(), "TV - analog", "Analog TV/Radio configuration", "");
+        }
+        if (DVBTCard)
+        {
+          AddSection(new Sections.Wizard_DVBTTV(), "TV - DVB-T", "Digital TV Terrestrial configuration", "");
+        }
+        if (DVBCCard)
+        {
+          AddSection(new Sections.Wizard_DVBCTV(), "TV - DVB-C", "Digital TV Cable configuration", "");
+        }
+        if (DVBSCard)
+        {
+          AddSection(new Sections.Wizard_DVBSTVSetup(), "TV - DVB-S LNB", "Digital TV Satellite LNB Setup", "");
+          AddSection(new Sections.Wizard_DVBSTV(), "TV - DVB-S", "Digital TV Satellite configuration", "");
+        }
+        AddSection(new Sections.TVProgramGuide(), "Television Program Guide", "Configure the Electronic Program Guide using XMLTV listings", "");
+        if (Sections.Remote.IsMceRemoteInstalled(this.Handle))
+        {
+          AddSection(new Sections.Remote(), "Remote Control", "Configure MCE Remote control", "");
+        }
+        AddSection(new Sections.Weather(), "Weather", "My weather setup", "");
+        AddSection(new Sections.Wizard_Finished(), "Congratulations", "You have now finished the setup wizard.");
+      }
 
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				xmlwriter.SetValue("capture", "tuner", "Cable");
-			}			
-		}
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValue("capture", "tuner", "Cable");
+      }
+    }
 
-		/// <summary>
-		/// Loads, parses and creates the defined sections in the section xml.
-		/// </summary>
-		/// <param name="xmlFile"></param>
-		private void LoadSections(string xmlFile)
-		{
-			XmlDocument document = new XmlDocument();
-	
-			try
-			{
-				//
-				// Load the xml document
-				//
-				document.Load(xmlFile);
+    /// <summary>
+    /// Loads, parses and creates the defined sections in the section xml.
+    /// </summary>
+    /// <param name="xmlFile"></param>
+    private void LoadSections(string xmlFile)
+    {
+      XmlDocument document = new XmlDocument();
 
-				XmlElement rootElement = document.DocumentElement;
+      try
+      {
+        //
+        // Load the xml document
+        //
+        document.Load(xmlFile);
 
-				//
-				// Make sure we're loading a wizard file
-				//
-				if(rootElement != null && rootElement.Name.Equals("wizard"))
-				{
-					//
-					// Fetch wizard settings
-					//
-					XmlNode	wizardTopicNode = rootElement.SelectSingleNode("/wizard/caption");
-					if(wizardTopicNode != null)
-					{
-						wizardCaption = wizardTopicNode.InnerText;
-					}
+        XmlElement rootElement = document.DocumentElement;
 
-					//
-					// Fetch sections
-					//
-					XmlNodeList nodeList = rootElement.SelectNodes("/wizard/sections/section");
+        //
+        // Make sure we're loading a wizard file
+        //
+        if (rootElement != null && rootElement.Name.Equals("wizard"))
+        {
+          //
+          // Fetch wizard settings
+          //
+          XmlNode wizardTopicNode = rootElement.SelectSingleNode("/wizard/caption");
+          if (wizardTopicNode != null)
+          {
+            wizardCaption = wizardTopicNode.InnerText;
+          }
 
-					foreach(XmlNode node in nodeList)
-					{
-						//
-						// Fetch section information
-						//
-						XmlNode nameNode = node.SelectSingleNode("name");
-						XmlNode topicNode = node.SelectSingleNode("topic");
-						XmlNode infoNode = node.SelectSingleNode("information");
-						XmlNode dependencyNode = node.SelectSingleNode("dependency");
+          //
+          // Fetch sections
+          //
+          XmlNodeList nodeList = rootElement.SelectNodes("/wizard/sections/section");
 
-						if(nameNode != null && nameNode.InnerText.Length > 0)
-						{
-							//
-							// Allocate new wizard page
-							//
-							SectionSettings section = CreateSection(nameNode.InnerText);
+          foreach (XmlNode node in nodeList)
+          {
+            //
+            // Fetch section information
+            //
+            XmlNode nameNode = node.SelectSingleNode("name");
+            XmlNode topicNode = node.SelectSingleNode("topic");
+            XmlNode infoNode = node.SelectSingleNode("information");
+            XmlNode dependencyNode = node.SelectSingleNode("dependency");
 
-							if(section != null)
-							{
+            if (nameNode != null && nameNode.InnerText.Length > 0)
+            {
+              //
+              // Allocate new wizard page
+              //
+              SectionSettings section = CreateSection(nameNode.InnerText);
+
+              if (section != null)
+              {
                 //
                 // Load wizard specific settings
                 //
                 section.LoadWizardSettings(node);
-              
+
                 //
                 // Add the section to the sections list
                 //
-								if(dependencyNode == null)
-								{
-									AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty, infoNode != null ? infoNode.InnerText : String.Empty);
-								}
-								else
-								{
-									AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty, infoNode != null ? infoNode.InnerText : String.Empty, dependencyNode.InnerText);
-								}
-							}
-						}
-					}
-				}
-			}
-			catch(Exception e)
-			{
-				System.Diagnostics.Debug.WriteLine(e.Message);
-			}
-		}
+                if (dependencyNode == null)
+                {
+                  AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty, infoNode != null ? infoNode.InnerText : String.Empty);
+                }
+                else
+                {
+                  AddSection(section, topicNode != null ? topicNode.InnerText : String.Empty, infoNode != null ? infoNode.InnerText : String.Empty, dependencyNode.InnerText);
+                }
+              }
+            }
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        System.Diagnostics.Debug.WriteLine(e.Message);
+      }
+    }
 
-		/// <summary>
-		/// Creates a section class from the specified name
-		/// </summary>
-		/// <param name="sectionName"></param>
-		/// <returns></returns>
-		private SectionSettings CreateSection(string sectionName)
-		{
-			Type sectionType = Type.GetType("MediaPortal.Configuration.Sections." + sectionName);
+    /// <summary>
+    /// Creates a section class from the specified name
+    /// </summary>
+    /// <param name="sectionName"></param>
+    /// <returns></returns>
+    private SectionSettings CreateSection(string sectionName)
+    {
+      Type sectionType = Type.GetType("MediaPortal.Configuration.Sections." + sectionName);
 
-			if(sectionType != null)
-			{
-				//
-				// Create the instance of the section settings class, pass the section name as argument
-				// to the constructor. We do this to be able to use the same name on <name> as in the <dependency> tag.
-				//
-				SectionSettings section = (SectionSettings)Activator.CreateInstance(sectionType, new object[] { sectionName } );
-				return section;
-			}
+      if (sectionType != null)
+      {
+        //
+        // Create the instance of the section settings class, pass the section name as argument
+        // to the constructor. We do this to be able to use the same name on <name> as in the <dependency> tag.
+        //
+        SectionSettings section = (SectionSettings)Activator.CreateInstance(sectionType, new object[] { sectionName });
+        return section;
+      }
 
-			//
-			// Section was not found
-			//
-			return null;
-		}
+      //
+      // Section was not found
+      //
+      return null;
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(WizardForm));
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.nextButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -343,7 +343,6 @@ namespace MediaPortal.Configuration
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cancelButton.Location = new System.Drawing.Point(536, 520);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(72, 22);
@@ -354,7 +353,6 @@ namespace MediaPortal.Configuration
       // nextButton
       // 
       this.nextButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.nextButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.nextButton.Location = new System.Drawing.Point(456, 520);
       this.nextButton.Name = "nextButton";
       this.nextButton.Size = new System.Drawing.Size(72, 22);
@@ -365,7 +363,6 @@ namespace MediaPortal.Configuration
       // backButton
       // 
       this.backButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.backButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.backButton.Location = new System.Drawing.Point(376, 520);
       this.backButton.Name = "backButton";
       this.backButton.Size = new System.Drawing.Size(72, 22);
@@ -457,297 +454,297 @@ namespace MediaPortal.Configuration
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void WizardForm_Load(object sender, System.EventArgs e)
-		{
-			//
-			// Load settings
-			//
-			LoadSectionSettings();
-					
-			//
-			// Load first page
-			//
-			ShowNextPage();
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void WizardForm_Load(object sender, System.EventArgs e)
+    {
+      //
+      // Load settings
+      //
+      LoadSectionSettings();
 
-		/// <summary>
-		/// 
-		/// </summary>
-		private void ShowNextPage()
-		{
-			//
-			// Make sure we have something to show
-			//
-			while(true)
-			{
-				if(visiblePageIndex + 1 < wizardPages.Count)
-				{
-					//
-					// Move to next index, the index  that will be shown
-					//
-					visiblePageIndex++;
+      //
+      // Load first page
+      //
+      ShowNextPage();
+    }
 
-					//
-					// Activate section
-					//
-					SectionHolder holder = wizardPages[visiblePageIndex] as SectionHolder;
+    /// <summary>
+    /// 
+    /// </summary>
+    private void ShowNextPage()
+    {
+      //
+      // Make sure we have something to show
+      //
+      while (true)
+      {
+        if (visiblePageIndex + 1 < wizardPages.Count)
+        {
+          //
+          // Move to next index, the index  that will be shown
+          //
+          visiblePageIndex++;
 
-					if(holder != null)
-					{					
-						//
-						// Evaluate if this section should be shown at all
-						//
-						if(EvaluateExpression(holder.Expression) == true)
-						{
-							ActivateSection(holder.Section);
+          //
+          // Activate section
+          //
+          SectionHolder holder = wizardPages[visiblePageIndex] as SectionHolder;
 
-							//
-							// Set topic and information
-							//
-							SetTopic(holder.Topic);
-							SetInformation(holder.Information);
+          if (holder != null)
+          {
+            //
+            // Evaluate if this section should be shown at all
+            //
+            if (EvaluateExpression(holder.Expression) == true)
+            {
+              ActivateSection(holder.Section);
 
-							break;
-						}
-						else
-						{
-							//
-							// Fetch next section
-							//
-						}
-					}
-				}
-				else
-				{
-					//
-					// No more sections to show
-					//
-					break;
-				}
-			}
+              //
+              // Set topic and information
+              //
+              SetTopic(holder.Topic);
+              SetInformation(holder.Information);
 
-			//
-			// Update control status
-			//
-			UpdateControlStatus();
-		}
+              break;
+            }
+            else
+            {
+              //
+              // Fetch next section
+              //
+            }
+          }
+        }
+        else
+        {
+          //
+          // No more sections to show
+          //
+          break;
+        }
+      }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="expression"></param>
-		/// <returns></returns>
-		private bool EvaluateExpression(string expression)
-		{
-			if(expression.Length > 0)
-			{
-				int dividerPosition = expression.IndexOf(".");
+      //
+      // Update control status
+      //
+      UpdateControlStatus();
+    }
 
-				string section = expression.Substring(0, dividerPosition);
-				string property = expression.Substring(dividerPosition + 1);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="expression"></param>
+    /// <returns></returns>
+    private bool EvaluateExpression(string expression)
+    {
+      if (expression.Length > 0)
+      {
+        int dividerPosition = expression.IndexOf(".");
 
-				//
-				// Fetch section
-				//
-				foreach(SectionHolder holder in wizardPages)
-				{
-					string sectionName = holder.Section.Text.ToLower();
+        string section = expression.Substring(0, dividerPosition);
+        string property = expression.Substring(dividerPosition + 1);
 
-					if(sectionName.Equals(section.ToLower()))
-					{
-						//
-						// Return property
-						//
-						return (bool)holder.Section.GetSetting(property);
-					}
-				}
+        //
+        // Fetch section
+        //
+        foreach (SectionHolder holder in wizardPages)
+        {
+          string sectionName = holder.Section.Text.ToLower();
 
-				return false;
-			}
+          if (sectionName.Equals(section.ToLower()))
+          {
+            //
+            // Return property
+            //
+            return (bool)holder.Section.GetSetting(property);
+          }
+        }
 
-			return true;
-		}
+        return false;
+      }
 
-		private void SetTopic(string topic)
-		{
-			topicLabel.Text = topic;
-		}
+      return true;
+    }
 
-		private void SetInformation(string information)
-		{
-			infoLabel.Text = information;
-		}
+    private void SetTopic(string topic)
+    {
+      topicLabel.Text = topic;
+    }
 
-		private void ShowPreviousPage()
-		{
-			//
-			// Make sure we have something to show
-			//
-			while(true)
-			{
-				if(visiblePageIndex - 1 >= 0)
-				{
-					//
-					// Move to previous index
-					//
-					visiblePageIndex--;
+    private void SetInformation(string information)
+    {
+      infoLabel.Text = information;
+    }
 
-					//
-					// Activate section
-					//
-					SectionHolder holder = wizardPages[visiblePageIndex] as SectionHolder;
+    private void ShowPreviousPage()
+    {
+      //
+      // Make sure we have something to show
+      //
+      while (true)
+      {
+        if (visiblePageIndex - 1 >= 0)
+        {
+          //
+          // Move to previous index
+          //
+          visiblePageIndex--;
 
-					if(holder != null)
-					{
-						//
-						// Evaluate if this section should be shown at all
-						//
-						if(EvaluateExpression(holder.Expression) == true)
-						{
-							ActivateSection(holder.Section);
+          //
+          // Activate section
+          //
+          SectionHolder holder = wizardPages[visiblePageIndex] as SectionHolder;
 
-							//
-							// Set topic and information
-							//
-							SetTopic(holder.Topic);
-							SetInformation(holder.Information);
+          if (holder != null)
+          {
+            //
+            // Evaluate if this section should be shown at all
+            //
+            if (EvaluateExpression(holder.Expression) == true)
+            {
+              ActivateSection(holder.Section);
 
-							break;
-						}
-						else
-						{
-							//
-							// Fetch next section
-							//
-						}
-					}
-				}
-				else
-				{
-					//
-					// No more pages to show
-					//
-					break;
-				}
-			}
+              //
+              // Set topic and information
+              //
+              SetTopic(holder.Topic);
+              SetInformation(holder.Information);
 
-			//
-			// Update control status
-			//
-			UpdateControlStatus();			
-		}
+              break;
+            }
+            else
+            {
+              //
+              // Fetch next section
+              //
+            }
+          }
+        }
+        else
+        {
+          //
+          // No more pages to show
+          //
+          break;
+        }
+      }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="section"></param>
-		private void ActivateSection(SectionSettings section)
-		{
-			section.Dock = DockStyle.Fill;
+      //
+      // Update control status
+      //
+      UpdateControlStatus();
+    }
 
-			section.OnSectionActivated();
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="section"></param>
+    private void ActivateSection(SectionSettings section)
+    {
+      section.Dock = DockStyle.Fill;
 
-			holderPanel.Controls.Clear();
-			holderPanel.Controls.Add(section);
-		}
+      section.OnSectionActivated();
 
-		private void nextButton_Click(object sender, System.EventArgs e)
-		{
-			SectionHolder holder = wizardPages[visiblePageIndex] as SectionHolder;
-			holder.Section.SaveSettings();
-			if(visiblePageIndex == wizardPages.Count - 1)
-			{
-				//
-				// This was the last page, finish off the wizard
-				//
-				SaveSectionSettings();
+      holderPanel.Controls.Clear();
+      holderPanel.Controls.Add(section);
+    }
+
+    private void nextButton_Click(object sender, System.EventArgs e)
+    {
+      SectionHolder holder = wizardPages[visiblePageIndex] as SectionHolder;
+      holder.Section.SaveSettings();
+      if (visiblePageIndex == wizardPages.Count - 1)
+      {
+        //
+        // This was the last page, finish off the wizard
+        //
+        SaveSectionSettings();
 
         // Restart MCE services
         Utils.RestartMCEServices();
 
-				this.Close();
-			}
-			else
-			{
-				//
-				// Show the next page of the wizard
-				//
-				ShowNextPage();		
-			}
-		}
+        this.Close();
+      }
+      else
+      {
+        //
+        // Show the next page of the wizard
+        //
+        ShowNextPage();
+      }
+    }
 
-		private void cancelButton_Click(object sender, System.EventArgs e)
-		{
+    private void cancelButton_Click(object sender, System.EventArgs e)
+    {
       // Restart MCE services
       Utils.RestartMCEServices();
 
-			this.Close();
-		}
+      this.Close();
+    }
 
-		private void backButton_Click(object sender, System.EventArgs e)
-		{
-			ShowPreviousPage();
-		}
+    private void backButton_Click(object sender, System.EventArgs e)
+    {
+      ShowPreviousPage();
+    }
 
-		private void UpdateControlStatus()
-		{
-			backButton.Enabled = visiblePageIndex > 0;
-			nextButton.Enabled = true;
+    private void UpdateControlStatus()
+    {
+      backButton.Enabled = visiblePageIndex > 0;
+      nextButton.Enabled = true;
 
-			if(visiblePageIndex == wizardPages.Count - 1)
-			{
-				nextButton.Text = "&Finish";
-			}
-			else
-			{
-				nextButton.Text = "&Next >";
-			}
+      if (visiblePageIndex == wizardPages.Count - 1)
+      {
+        nextButton.Text = "&Finish";
+      }
+      else
+      {
+        nextButton.Text = "&Next >";
+      }
 
       //
       // Set caption
       //
       this.Text = String.Format("{0} [{1}/{2}]", wizardCaption, visiblePageIndex + 1, wizardPages.Count);
-		}
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="currentNode"></param>
-		private void LoadSectionSettings()
-		{
-			foreach(SectionHolder holder in wizardPages)
-			{
-				holder.Section.LoadSettings();
-			}
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="currentNode"></param>
+    private void LoadSectionSettings()
+    {
+      foreach (SectionHolder holder in wizardPages)
+      {
+        holder.Section.LoadSettings();
+      }
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		private void SaveSectionSettings()
-		{
-			foreach(SectionHolder holder in wizardPages)
-			{
-				holder.Section.SaveSettings();
-			}
+    /// <summary>
+    /// 
+    /// </summary>
+    private void SaveSectionSettings()
+    {
+      foreach (SectionHolder holder in wizardPages)
+      {
+        holder.Section.SaveSettings();
+      }
 
-			//
-			// Init general (not visual) settings
-			//
-			MediaPortal.Configuration.SectionSettings DVDClass;
-			DVDClass = new Sections.DVD("DVD");
-			DVDClass.LoadSettings();
-			DVDClass.SaveSettings();
-			DVDClass.Dispose();
+      //
+      // Init general (not visual) settings
+      //
+      MediaPortal.Configuration.SectionSettings DVDClass;
+      DVDClass = new Sections.DVD("DVD");
+      DVDClass.LoadSettings();
+      DVDClass.SaveSettings();
+      DVDClass.Dispose();
 
-			MediaPortal.Profile.Settings.SaveCache();
-		}
-	}
+      MediaPortal.Profile.Settings.SaveCache();
+    }
+  }
 }

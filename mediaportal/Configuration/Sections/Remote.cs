@@ -643,7 +643,6 @@ namespace MediaPortal.Configuration.Sections
       // btnHcwMapping
       // 
       this.btnHcwMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnHcwMapping.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnHcwMapping.Location = new System.Drawing.Point(352, 20);
       this.btnHcwMapping.Name = "btnHcwMapping";
       this.btnHcwMapping.Size = new System.Drawing.Size(72, 22);
@@ -677,7 +676,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonDefault
       // 
       this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonDefault.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonDefault.Location = new System.Drawing.Point(352, 48);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(72, 22);
@@ -779,7 +777,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonX10Defaults
       // 
       this.buttonX10Defaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonX10Defaults.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonX10Defaults.Location = new System.Drawing.Point(352, 48);
       this.buttonX10Defaults.Name = "buttonX10Defaults";
       this.buttonX10Defaults.Size = new System.Drawing.Size(72, 22);
@@ -814,7 +811,6 @@ namespace MediaPortal.Configuration.Sections
       // buttonX10Mapping
       // 
       this.buttonX10Mapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonX10Mapping.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonX10Mapping.Location = new System.Drawing.Point(352, 20);
       this.buttonX10Mapping.Name = "buttonX10Mapping";
       this.buttonX10Mapping.Size = new System.Drawing.Size(72, 22);

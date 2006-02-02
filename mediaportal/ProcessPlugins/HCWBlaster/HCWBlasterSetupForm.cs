@@ -115,7 +115,6 @@ namespace MediaPortal.HCWBlaster
       // 
       // btnOK
       // 
-      this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnOK.Location = new System.Drawing.Point(184, 120);
       this.btnOK.Name = "btnOK";
       this.btnOK.Size = new System.Drawing.Size(72, 22);
@@ -135,7 +134,6 @@ namespace MediaPortal.HCWBlaster
       // 
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.chkExtendedLog);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(248, 96);

@@ -31,74 +31,76 @@ using System.Windows.Forms;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class Music : MediaPortal.Configuration.SectionSettings
-	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
-		private System.Windows.Forms.Label label1;
-		private MediaPortal.UserInterface.Controls.MPButton playlistButton;
-		private System.Windows.Forms.TextBox playlistFolderTextBox;
-		private MediaPortal.UserInterface.Controls.MPCheckBox autoShuffleCheckBox;
-		private MediaPortal.UserInterface.Controls.MPCheckBox repeatPlaylistCheckBox;
-		private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-		private MediaPortal.UserInterface.Controls.MPCheckBox showID3CheckBox;
-		private System.Windows.Forms.ComboBox audioPlayerComboBox;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label2;
+  public class Music : MediaPortal.Configuration.SectionSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+    private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPButton playlistButton;
+    private System.Windows.Forms.TextBox playlistFolderTextBox;
+    private MediaPortal.UserInterface.Controls.MPCheckBox autoShuffleCheckBox;
+    private MediaPortal.UserInterface.Controls.MPCheckBox repeatPlaylistCheckBox;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox showID3CheckBox;
+    private System.Windows.Forms.ComboBox audioPlayerComboBox;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.Label label2;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
     private System.Windows.Forms.ComboBox autoPlayComboBox;
     private Label labelAutoPlay;
-		private System.ComponentModel.IContainer components = null;
+    private System.ComponentModel.IContainer components = null;
 
     string[] autoPlayOptions = new string[] { "Autoplay, never ask", "Don't autoplay, never ask", "Ask every time a CD is inserted" };
 
-		public Music() : this("Music")
-		{
-		}
+    public Music()
+      : this("Music")
+    {
+    }
 
-		public Music(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public Music(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			//
-			// Set available media players
-			//
-			audioPlayerComboBox.Items.AddRange(new string[] { "Windows Media Player 9",
+      //
+      // Set available media players
+      //
+      audioPlayerComboBox.Items.AddRange(new string[] { "Windows Media Player 9",
 																"DirectShow" });
 
       autoPlayComboBox.Items.Clear();
       autoPlayComboBox.Items.AddRange(autoPlayOptions);
-		}
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public override void LoadSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "repeat", true);
-				showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", false);
-				autoShuffleCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", true);
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "repeat", true);
+        showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", false);
+        autoShuffleCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", true);
 
-				string playListFolder=Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-				playListFolder+=@"\My Playlists";
-				playlistFolderTextBox.Text = xmlreader.GetValueAsString("music", "playlists", playListFolder);
+        string playListFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+        playListFolder += @"\My Playlists";
+        playlistFolderTextBox.Text = xmlreader.GetValueAsString("music", "playlists", playListFolder);
 
-				if(string.Compare(playlistFolderTextBox.Text, playListFolder) == 0)
-				{
-					if(System.IO.Directory.Exists(playListFolder) == false)
-					{
-						try
-						{
-							System.IO.Directory.CreateDirectory(playListFolder);
-						}
-						catch(Exception){}
-					}
-				}
+        if (string.Compare(playlistFolderTextBox.Text, playListFolder) == 0)
+        {
+          if (System.IO.Directory.Exists(playListFolder) == false)
+          {
+            try
+            {
+              System.IO.Directory.CreateDirectory(playListFolder);
+            }
+            catch (Exception) { }
+          }
+        }
 
-				audioPlayerComboBox.Text = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
+        audioPlayerComboBox.Text = xmlreader.GetValueAsString("audioplayer", "player", "Windows Media Player 9");
 
         string autoPlayText = xmlreader.GetValueAsString("audioplayer", "autoplay", "Yes");
 
@@ -112,19 +114,19 @@ namespace MediaPortal.Configuration.Sections
             break;
         }
       }
-		}
+    }
 
-		public override void SaveSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				xmlwriter.SetValueAsBool("musicfiles", "repeat", repeatPlaylistCheckBox.Checked);
-				xmlwriter.SetValueAsBool("musicfiles", "showid3", showID3CheckBox.Checked);
-				xmlwriter.SetValueAsBool("musicfiles", "autoshuffle", autoShuffleCheckBox.Checked);
+    public override void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValueAsBool("musicfiles", "repeat", repeatPlaylistCheckBox.Checked);
+        xmlwriter.SetValueAsBool("musicfiles", "showid3", showID3CheckBox.Checked);
+        xmlwriter.SetValueAsBool("musicfiles", "autoshuffle", autoShuffleCheckBox.Checked);
 
-				xmlwriter.SetValue("music", "playlists", playlistFolderTextBox.Text);
+        xmlwriter.SetValue("music", "playlists", playlistFolderTextBox.Text);
 
-				xmlwriter.SetValue("audioplayer", "player", audioPlayerComboBox.Text);
+        xmlwriter.SetValue("audioplayer", "player", audioPlayerComboBox.Text);
 
         string autoPlayText;
 
@@ -136,31 +138,31 @@ namespace MediaPortal.Configuration.Sections
           autoPlayText = "Yes";
 
         xmlwriter.SetValue("audioplayer", "autoplay", autoPlayText);
-			}
-		}
+      }
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.autoShuffleCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.repeatPlaylistCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -190,7 +192,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.playlistButton);
       this.groupBox1.Controls.Add(this.playlistFolderTextBox);
       this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 84);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 104);
@@ -219,7 +220,6 @@ namespace MediaPortal.Configuration.Sections
       // playlistButton
       // 
       this.playlistButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.playlistButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.playlistButton.Location = new System.Drawing.Point(384, 68);
       this.playlistButton.Name = "playlistButton";
       this.playlistButton.Size = new System.Drawing.Size(72, 22);
@@ -252,7 +252,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.label2);
       this.mpGroupBox1.Controls.Add(this.showID3CheckBox);
       this.mpGroupBox1.Controls.Add(this.audioPlayerComboBox);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 80);
@@ -302,7 +301,6 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
       this.mpGroupBox2.Controls.Add(this.autoPlayComboBox);
-      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox2.Location = new System.Drawing.Point(0, 192);
       this.mpGroupBox2.Name = "mpGroupBox2";
       this.mpGroupBox2.Size = new System.Drawing.Size(472, 64);
@@ -343,43 +341,43 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void playlistButton_Click(object sender, System.EventArgs e)
-		{
-			using(folderBrowserDialog = new FolderBrowserDialog())
-			{
-				folderBrowserDialog.Description = "Select the folder where music playlists will be stored";
-				folderBrowserDialog.ShowNewFolderButton = true;
-				folderBrowserDialog.SelectedPath = playlistFolderTextBox.Text;
-				DialogResult dialogResult = folderBrowserDialog.ShowDialog(this);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void playlistButton_Click(object sender, System.EventArgs e)
+    {
+      using (folderBrowserDialog = new FolderBrowserDialog())
+      {
+        folderBrowserDialog.Description = "Select the folder where music playlists will be stored";
+        folderBrowserDialog.ShowNewFolderButton = true;
+        folderBrowserDialog.SelectedPath = playlistFolderTextBox.Text;
+        DialogResult dialogResult = folderBrowserDialog.ShowDialog(this);
 
-				if(dialogResult == DialogResult.OK)
-				{
-					playlistFolderTextBox.Text = folderBrowserDialog.SelectedPath;
-				}
-			}		
-		}
+        if (dialogResult == DialogResult.OK)
+        {
+          playlistFolderTextBox.Text = folderBrowserDialog.SelectedPath;
+        }
+      }
+    }
 
     private void showID3CheckBox_CheckedChanged(object sender, System.EventArgs e)
     {
-    
+
     }
-		private void Yestext_Click(object sender, System.EventArgs e)
-		{
-		
-		}
+    private void Yestext_Click(object sender, System.EventArgs e)
+    {
 
-		private void label3_Click(object sender, System.EventArgs e)
-		{
-		
-		}
+    }
 
-	}
+    private void label3_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+  }
 }
 

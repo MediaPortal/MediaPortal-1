@@ -109,7 +109,6 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label8);
       this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 104);
@@ -152,7 +151,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.label3);
       this.groupBox2.Controls.Add(this.linkLabel1);
       this.groupBox2.Controls.Add(this.label2);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(0, 112);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 232);

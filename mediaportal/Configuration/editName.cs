@@ -31,53 +31,53 @@ using System.Windows.Forms;
 
 namespace MediaPortal
 {
-	/// <summary>
-	/// Summary description for editName.
-	/// </summary>
-	public class editName : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.TextBox textBoxName;
-		private MediaPortal.UserInterface.Controls.MPButton btnOk;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+  /// <summary>
+  /// Summary description for editName.
+  /// </summary>
+  public class editName : System.Windows.Forms.Form
+  {
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.TextBox textBoxName;
+    private MediaPortal.UserInterface.Controls.MPButton btnOk;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public editName()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public editName()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.label1 = new System.Windows.Forms.Label();
       this.textBoxName = new System.Windows.Forms.TextBox();
       this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
@@ -102,7 +102,6 @@ namespace MediaPortal
       // 
       // btnOk
       // 
-      this.btnOk.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnOk.Location = new System.Drawing.Point(232, 72);
       this.btnOk.Name = "btnOk";
       this.btnOk.Size = new System.Drawing.Size(40, 23);
@@ -122,24 +121,24 @@ namespace MediaPortal
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		private void editName_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
-		{
-			if (e.KeyCode== Keys.Enter && textBoxName.Text != String.Empty)
-			{
-				this.Close();
-			}
-		}
+    private void editName_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Enter && textBoxName.Text != String.Empty)
+      {
+        this.Close();
+      }
+    }
 
-		private void btnOk_Click(object sender, System.EventArgs e)
-		{
-			this.Close();
-		}
-		
-		public string ChannelName
-		{
-			get { return textBoxName.Text;}
-		}
-	}
+    private void btnOk_Click(object sender, System.EventArgs e)
+    {
+      this.Close();
+    }
+
+    public string ChannelName
+    {
+      get { return textBoxName.Text; }
+    }
+  }
 }

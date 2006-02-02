@@ -134,7 +134,6 @@ namespace MediaPortal
       // 
       // btnOk
       // 
-      this.btnOk.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnOk.Location = new System.Drawing.Point(536, 320);
       this.btnOk.Name = "btnOk";
       this.btnOk.Size = new System.Drawing.Size(56, 23);
@@ -204,7 +203,6 @@ namespace MediaPortal
       // 
       // button1
       // 
-      this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.button1.Location = new System.Drawing.Point(528, 280);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(64, 23);
@@ -289,7 +287,6 @@ namespace MediaPortal
       // 
       // btnPrevChan
       // 
-      this.btnPrevChan.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnPrevChan.Location = new System.Drawing.Point(16, 32);
       this.btnPrevChan.Name = "btnPrevChan";
       this.btnPrevChan.TabIndex = 21;
@@ -298,7 +295,6 @@ namespace MediaPortal
       // 
       // btnNext
       // 
-      this.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnNext.Location = new System.Drawing.Point(104, 32);
       this.btnNext.Name = "btnNext";
       this.btnNext.TabIndex = 22;
@@ -309,7 +305,6 @@ namespace MediaPortal
       // 
       this.groupBox1.Controls.Add(this.btnPrevChan);
       this.groupBox1.Controls.Add(this.btnNext);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(312, 264);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(200, 72);

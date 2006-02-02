@@ -32,71 +32,71 @@ using System.Windows.Forms;
 using MediaPortal.TV.Recording;
 namespace MediaPortal.TV.Scanning
 {
-	/// <summary>
-	/// Summary description for DVBSSelectTPLForm.
-	/// </summary>
-	public class DVBSSelectTPLForm : System.Windows.Forms.Form
-	{
-		class Transponder
-		{
-			public string SatName;
-			public string FileName;
-			public override string ToString()
-			{
-				return SatName;
-			}
-		}
+  /// <summary>
+  /// Summary description for DVBSSelectTPLForm.
+  /// </summary>
+  public class DVBSSelectTPLForm : System.Windows.Forms.Form
+  {
+    class Transponder
+    {
+      public string SatName;
+      public string FileName;
+      public override string ToString()
+      {
+        return SatName;
+      }
+    }
 
-		private System.Windows.Forms.ComboBox cbTransponder4;
-		private System.Windows.Forms.ComboBox cbTransponder3;
-		private System.Windows.Forms.ComboBox cbTransponder2;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.ComboBox cbTransponder;
-		private System.Windows.Forms.Label label7;
-		private MediaPortal.UserInterface.Controls.MPButton button1;
-		private int numberOfLNBs=1;
-		private string[] TPLFiles = new string[5];
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+    private System.Windows.Forms.ComboBox cbTransponder4;
+    private System.Windows.Forms.ComboBox cbTransponder3;
+    private System.Windows.Forms.ComboBox cbTransponder2;
+    private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.ComboBox cbTransponder;
+    private System.Windows.Forms.Label label7;
+    private MediaPortal.UserInterface.Controls.MPButton button1;
+    private int numberOfLNBs = 1;
+    private string[] TPLFiles = new string[5];
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public DVBSSelectTPLForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public DVBSSelectTPLForm()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.cbTransponder4 = new System.Windows.Forms.ComboBox();
       this.cbTransponder3 = new System.Windows.Forms.ComboBox();
       this.cbTransponder2 = new System.Windows.Forms.ComboBox();
@@ -110,7 +110,7 @@ namespace MediaPortal.TV.Scanning
       // 
       // cbTransponder4
       // 
-      this.cbTransponder4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.cbTransponder4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbTransponder4.Location = new System.Drawing.Point(160, 108);
@@ -120,7 +120,7 @@ namespace MediaPortal.TV.Scanning
       // 
       // cbTransponder3
       // 
-      this.cbTransponder3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.cbTransponder3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbTransponder3.Location = new System.Drawing.Point(160, 84);
@@ -130,7 +130,7 @@ namespace MediaPortal.TV.Scanning
       // 
       // cbTransponder2
       // 
-      this.cbTransponder2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.cbTransponder2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbTransponder2.Location = new System.Drawing.Point(160, 60);
@@ -164,7 +164,7 @@ namespace MediaPortal.TV.Scanning
       // 
       // cbTransponder
       // 
-      this.cbTransponder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.cbTransponder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.cbTransponder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbTransponder.Location = new System.Drawing.Point(160, 36);
@@ -183,7 +183,6 @@ namespace MediaPortal.TV.Scanning
       // button1
       // 
       this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.button1.Location = new System.Drawing.Point(400, 156);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(72, 22);
@@ -210,117 +209,117 @@ namespace MediaPortal.TV.Scanning
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		private void button1_Click(object sender, System.EventArgs e)
-		{
-			Transponder ts = cbTransponder.SelectedItem as Transponder;
-			if (ts!=null)
-				TPLFiles[0]=ts.FileName;
+    private void button1_Click(object sender, System.EventArgs e)
+    {
+      Transponder ts = cbTransponder.SelectedItem as Transponder;
+      if (ts != null)
+        TPLFiles[0] = ts.FileName;
 
-			ts = cbTransponder2.SelectedItem as Transponder;
-			if (ts!=null)
-				TPLFiles[1]=ts.FileName;
+      ts = cbTransponder2.SelectedItem as Transponder;
+      if (ts != null)
+        TPLFiles[1] = ts.FileName;
 
-			ts = cbTransponder3.SelectedItem as Transponder;
-			if (ts!=null)
-				TPLFiles[2]=ts.FileName;
+      ts = cbTransponder3.SelectedItem as Transponder;
+      if (ts != null)
+        TPLFiles[2] = ts.FileName;
 
-			ts = cbTransponder4.SelectedItem as Transponder;
-			if (ts!=null)
-				TPLFiles[3]=ts.FileName;
-			this.Close();
-		}
+      ts = cbTransponder4.SelectedItem as Transponder;
+      if (ts != null)
+        TPLFiles[3] = ts.FileName;
+      this.Close();
+    }
 
-		private void DVBSSelectTPLForm_Load(object sender, System.EventArgs e)
-		{
-			TPLFiles[0]=String.Empty;
-			TPLFiles[1]=String.Empty;
-			TPLFiles[2]=String.Empty;
-			TPLFiles[3]=String.Empty;
-			cbTransponder.Items.Clear();
-			cbTransponder2.Items.Clear();
-			cbTransponder3.Items.Clear();
-			cbTransponder4.Items.Clear();
-			string [] files = System.IO.Directory.GetFiles( System.IO.Directory.GetCurrentDirectory()+@"\Tuningparameters");
-			foreach (string file in files)
-			{
-				if (file.ToLower().IndexOf(".tpl") >=0)
-				{
-					Transponder ts = LoadTransponder(file);
-					if (ts!=null)
-					{
-						cbTransponder.Items.Add(ts);
-						cbTransponder2.Items.Add(ts);
-						cbTransponder3.Items.Add(ts);
-						cbTransponder4.Items.Add(ts);
-					}
-				}
-			}
-			if (cbTransponder.Items.Count>0)
-				cbTransponder.SelectedIndex=0;
-			if (cbTransponder2.Items.Count>0)
-				cbTransponder2.SelectedIndex=0;
-			if (cbTransponder3.Items.Count>0)
-				cbTransponder3.SelectedIndex=0;
-			if (cbTransponder4.Items.Count>0)
-				cbTransponder4.SelectedIndex=0;
+    private void DVBSSelectTPLForm_Load(object sender, System.EventArgs e)
+    {
+      TPLFiles[0] = String.Empty;
+      TPLFiles[1] = String.Empty;
+      TPLFiles[2] = String.Empty;
+      TPLFiles[3] = String.Empty;
+      cbTransponder.Items.Clear();
+      cbTransponder2.Items.Clear();
+      cbTransponder3.Items.Clear();
+      cbTransponder4.Items.Clear();
+      string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters");
+      foreach (string file in files)
+      {
+        if (file.ToLower().IndexOf(".tpl") >= 0)
+        {
+          Transponder ts = LoadTransponder(file);
+          if (ts != null)
+          {
+            cbTransponder.Items.Add(ts);
+            cbTransponder2.Items.Add(ts);
+            cbTransponder3.Items.Add(ts);
+            cbTransponder4.Items.Add(ts);
+          }
+        }
+      }
+      if (cbTransponder.Items.Count > 0)
+        cbTransponder.SelectedIndex = 0;
+      if (cbTransponder2.Items.Count > 0)
+        cbTransponder2.SelectedIndex = 0;
+      if (cbTransponder3.Items.Count > 0)
+        cbTransponder3.SelectedIndex = 0;
+      if (cbTransponder4.Items.Count > 0)
+        cbTransponder4.SelectedIndex = 0;
 
-			cbTransponder2.Enabled=false;
-			cbTransponder3.Enabled=false;
-			cbTransponder4.Enabled=false;
+      cbTransponder2.Enabled = false;
+      cbTransponder3.Enabled = false;
+      cbTransponder4.Enabled = false;
 
-			if (NumberOfLNBs>=2)
-				cbTransponder2.Enabled=true;
-			if (NumberOfLNBs>=3)
-				cbTransponder3.Enabled=true;
-			if (NumberOfLNBs>=4)			
-				cbTransponder4.Enabled=true;
-		}
-	
-		public int NumberOfLNBs
-		{
-			get { return numberOfLNBs;}
-			set { numberOfLNBs=value;}
-		}
+      if (NumberOfLNBs >= 2)
+        cbTransponder2.Enabled = true;
+      if (NumberOfLNBs >= 3)
+        cbTransponder3.Enabled = true;
+      if (NumberOfLNBs >= 4)
+        cbTransponder4.Enabled = true;
+    }
 
-		Transponder LoadTransponder(string file)
-		{
-			System.IO.TextReader tin = System.IO.File.OpenText(file);
-			Transponder ts = new Transponder();
-			ts.FileName=file;
-			string line=null;
-			do
-			{
-				line = null;
-				line = tin.ReadLine();
-				if(line!=null)
-				{
-					if (line.Length > 0)
-					{
-						if(line.StartsWith(";"))
-							continue;
-						int pos=line.IndexOf("satname=");
-						if (pos>=0)
-						{
-							ts.SatName=line.Substring(pos+"satname=".Length);
-							tin.Close();
-							return ts;
-						}
-					}
-				}
-			} while (!(line == null));
-			tin.Close();
-			return null;
-		}
+    public int NumberOfLNBs
+    {
+      get { return numberOfLNBs; }
+      set { numberOfLNBs = value; }
+    }
+
+    Transponder LoadTransponder(string file)
+    {
+      System.IO.TextReader tin = System.IO.File.OpenText(file);
+      Transponder ts = new Transponder();
+      ts.FileName = file;
+      string line = null;
+      do
+      {
+        line = null;
+        line = tin.ReadLine();
+        if (line != null)
+        {
+          if (line.Length > 0)
+          {
+            if (line.StartsWith(";"))
+              continue;
+            int pos = line.IndexOf("satname=");
+            if (pos >= 0)
+            {
+              ts.SatName = line.Substring(pos + "satname=".Length);
+              tin.Close();
+              return ts;
+            }
+          }
+        }
+      } while (!(line == null));
+      tin.Close();
+      return null;
+    }
 
 
-		public string[] TransponderFiles
-		{
-			get 
-			{
-				return TPLFiles;
-			}
-		}
-	}
+    public string[] TransponderFiles
+    {
+      get
+      {
+        return TPLFiles;
+      }
+    }
+  }
 }

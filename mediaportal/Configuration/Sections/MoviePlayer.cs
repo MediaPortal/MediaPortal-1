@@ -35,39 +35,41 @@ using DirectShowLib;
 
 namespace MediaPortal.Configuration.Sections
 {
-	public class MoviePlayer : MediaPortal.Configuration.SectionSettings
-	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		private MediaPortal.UserInterface.Controls.MPButton parametersButton;
-		private System.Windows.Forms.TextBox parametersTextBox;
-		private System.Windows.Forms.Label label2;
-		private MediaPortal.UserInterface.Controls.MPButton fileNameButton;
-		private System.Windows.Forms.TextBox fileNameTextBox;
-		private System.Windows.Forms.Label label1;
-		private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-		private System.Windows.Forms.ComboBox audioRendererComboBox;
-		private System.Windows.Forms.Label label3;
-		private MediaPortal.UserInterface.Controls.MPCheckBox externalPlayerCheckBox;
-		private System.Windows.Forms.OpenFileDialog openFileDialog;
+  public class MoviePlayer : MediaPortal.Configuration.SectionSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPButton parametersButton;
+    private System.Windows.Forms.TextBox parametersTextBox;
+    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPButton fileNameButton;
+    private System.Windows.Forms.TextBox fileNameTextBox;
+    private System.Windows.Forms.Label label1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+    private System.Windows.Forms.ComboBox audioRendererComboBox;
+    private System.Windows.Forms.Label label3;
+    private MediaPortal.UserInterface.Controls.MPCheckBox externalPlayerCheckBox;
+    private System.Windows.Forms.OpenFileDialog openFileDialog;
     private System.Windows.Forms.ComboBox audioCodecComboBox;
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.ComboBox videoCodecComboBox;
     private System.Windows.Forms.Label label6;
-		private System.ComponentModel.IContainer components = null;
+    private System.ComponentModel.IContainer components = null;
 
-		public MoviePlayer() : this("Movie Player")
-		{
-		}
+    public MoviePlayer()
+      : this("Movie Player")
+    {
+    }
 
-		public MoviePlayer(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
+    public MoviePlayer(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
 
-			// 
-			// Fetch available audio and video renderers
-			//
-			ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers(); 
+      // 
+      // Fetch available audio and video renderers
+      //
+      ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
       //
       // Populate video and audio codecs
       //
@@ -79,75 +81,75 @@ namespace MediaPortal.Configuration.Sections
       audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
     }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public override void LoadSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				fileNameTextBox.Text = xmlreader.GetValueAsString("movieplayer", "path", "");
-				parametersTextBox.Text = xmlreader.GetValueAsString("movieplayer", "arguments", "");
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void LoadSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        fileNameTextBox.Text = xmlreader.GetValueAsString("movieplayer", "path", "");
+        parametersTextBox.Text = xmlreader.GetValueAsString("movieplayer", "arguments", "");
 
-				externalPlayerCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "internal", true);
-				externalPlayerCheckBox.Checked = !externalPlayerCheckBox.Checked;
+        externalPlayerCheckBox.Checked = xmlreader.GetValueAsBool("movieplayer", "internal", true);
+        externalPlayerCheckBox.Checked = !externalPlayerCheckBox.Checked;
 
-				audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
-				 
+        audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
+
 
         //
         // Set codecs
 
         audioCodecComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
         videoCodecComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
-			}
-		}
+      }
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public override void SaveSettings()
-		{
-			using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-			{
-				xmlwriter.SetValue("movieplayer", "path", fileNameTextBox.Text);
-				xmlwriter.SetValue("movieplayer", "arguments", parametersTextBox.Text);
+    /// <summary>
+    /// 
+    /// </summary>
+    public override void SaveSettings()
+    {
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValue("movieplayer", "path", fileNameTextBox.Text);
+        xmlwriter.SetValue("movieplayer", "arguments", parametersTextBox.Text);
 
-				xmlwriter.SetValueAsBool("movieplayer", "internal", !externalPlayerCheckBox.Checked);
-				
-				xmlwriter.SetValue("movieplayer", "audiorenderer", audioRendererComboBox.Text);
+        xmlwriter.SetValueAsBool("movieplayer", "internal", !externalPlayerCheckBox.Checked);
 
-	 
+        xmlwriter.SetValue("movieplayer", "audiorenderer", audioRendererComboBox.Text);
+
+
         //
         // Set codecs
         //
         xmlwriter.SetValue("movieplayer", "mpeg2audiocodec", audioCodecComboBox.Text);
         xmlwriter.SetValue("movieplayer", "mpeg2videocodec", videoCodecComboBox.Text);
-			}
-		}
+      }
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.externalPlayerCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.parametersButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -156,7 +158,7 @@ namespace MediaPortal.Configuration.Sections
       this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.fileNameTextBox = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox(); 
+      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.audioRendererComboBox = new System.Windows.Forms.ComboBox();
       this.label3 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
@@ -170,7 +172,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.externalPlayerCheckBox);
       this.groupBox1.Controls.Add(this.parametersButton);
@@ -179,7 +181,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.fileNameButton);
       this.groupBox1.Controls.Add(this.fileNameTextBox);
       this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 136);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 112);
@@ -189,7 +190,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // externalPlayerCheckBox
       // 
-      this.externalPlayerCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.externalPlayerCheckBox.Location = new System.Drawing.Point(16, 24);
       this.externalPlayerCheckBox.Name = "externalPlayerCheckBox";
       this.externalPlayerCheckBox.Size = new System.Drawing.Size(232, 16);
@@ -200,7 +200,6 @@ namespace MediaPortal.Configuration.Sections
       // parametersButton
       // 
       this.parametersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.parametersButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.parametersButton.Location = new System.Drawing.Point(384, 76);
       this.parametersButton.Name = "parametersButton";
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
@@ -210,7 +209,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // parametersTextBox
       // 
-      this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.parametersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.parametersTextBox.Location = new System.Drawing.Point(168, 76);
       this.parametersTextBox.Name = "parametersTextBox";
@@ -229,7 +228,6 @@ namespace MediaPortal.Configuration.Sections
       // fileNameButton
       // 
       this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.fileNameButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.fileNameButton.Location = new System.Drawing.Point(384, 52);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
@@ -239,7 +237,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameTextBox
       // 
-      this.fileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.fileNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameTextBox.Location = new System.Drawing.Point(168, 52);
       this.fileNameTextBox.Name = "fileNameTextBox";
@@ -257,25 +255,24 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-        | System.Windows.Forms.AnchorStyles.Right))); 
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+        | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.audioRendererComboBox);
       this.mpGroupBox1.Controls.Add(this.label3);
       this.mpGroupBox1.Controls.Add(this.label6);
       this.mpGroupBox1.Controls.Add(this.audioCodecComboBox);
       this.mpGroupBox1.Controls.Add(this.videoCodecComboBox);
       this.mpGroupBox1.Controls.Add(this.label5);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 128);
       this.mpGroupBox1.TabIndex = 0;
       this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "Settings";  
+      this.mpGroupBox1.Text = "Settings";
       // 
       // audioRendererComboBox
       // 
-      this.audioRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.audioRendererComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.audioRendererComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioRendererComboBox.Location = new System.Drawing.Point(168, 92);
@@ -301,7 +298,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioCodecComboBox
       // 
-      this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 44);
@@ -311,7 +308,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // videoCodecComboBox
       // 
-      this.videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.videoCodecComboBox.Location = new System.Drawing.Point(168, 20);
@@ -338,59 +335,59 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void externalPlayerCheckBox_CheckedChanged(object sender, System.EventArgs e)
-		{
-			fileNameTextBox.Enabled = fileNameButton.Enabled = parametersTextBox.Enabled = parametersButton.Enabled = externalPlayerCheckBox.Checked;
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void externalPlayerCheckBox_CheckedChanged(object sender, System.EventArgs e)
+    {
+      fileNameTextBox.Enabled = fileNameButton.Enabled = parametersTextBox.Enabled = parametersButton.Enabled = externalPlayerCheckBox.Checked;
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void fileNameButton_Click(object sender, System.EventArgs e)
-		{
-			using(openFileDialog = new OpenFileDialog())
-			{
-				openFileDialog.FileName = fileNameTextBox.Text;
-				openFileDialog.CheckFileExists = true;
-				openFileDialog.RestoreDirectory=true;
-				openFileDialog.Filter= "exe files (*.exe)|*.exe";
-				openFileDialog.FilterIndex = 0;
-				openFileDialog.Title = "Select movie player";
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void fileNameButton_Click(object sender, System.EventArgs e)
+    {
+      using (openFileDialog = new OpenFileDialog())
+      {
+        openFileDialog.FileName = fileNameTextBox.Text;
+        openFileDialog.CheckFileExists = true;
+        openFileDialog.RestoreDirectory = true;
+        openFileDialog.Filter = "exe files (*.exe)|*.exe";
+        openFileDialog.FilterIndex = 0;
+        openFileDialog.Title = "Select movie player";
 
-				DialogResult dialogResult = openFileDialog.ShowDialog();
+        DialogResult dialogResult = openFileDialog.ShowDialog();
 
-				if(dialogResult == DialogResult.OK)
-				{
-					fileNameTextBox.Text = openFileDialog.FileName;
-				}
-			}
-		}
+        if (dialogResult == DialogResult.OK)
+        {
+          fileNameTextBox.Text = openFileDialog.FileName;
+        }
+      }
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void parametersButton_Click(object sender, System.EventArgs e)
-		{
-			ParameterForm parameters = new ParameterForm();
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void parametersButton_Click(object sender, System.EventArgs e)
+    {
+      ParameterForm parameters = new ParameterForm();
 
-			parameters.AddParameter("%filename%", "Will be replaced by currently selected media file");
+      parameters.AddParameter("%filename%", "Will be replaced by currently selected media file");
 
-			if(parameters.ShowDialog(parametersButton) == DialogResult.OK)
-			{
-				parametersTextBox.Text += parameters.SelectedParameter;
-			}
-		}
-	}
+      if (parameters.ShowDialog(parametersButton) == DialogResult.OK)
+      {
+        parametersTextBox.Text += parameters.SelectedParameter;
+      }
+    }
+  }
 }
 

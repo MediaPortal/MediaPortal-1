@@ -34,56 +34,56 @@ using MediaPortal.Radio.Database;
 
 namespace MediaPortal.Configuration.Sections
 {
-	/// <summary>
-	/// Summary description for TvChannelLookupService.
-	/// </summary>
-	public class TvChannelLookupService : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private MediaPortal.UserInterface.Controls.MPButton button1;
-		private System.Windows.Forms.ComboBox cbCountries;
-		private System.Windows.Forms.ComboBox cbCities;
-		XmlDocument docSetup;
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+  /// <summary>
+  /// Summary description for TvChannelLookupService.
+  /// </summary>
+  public class TvChannelLookupService : System.Windows.Forms.Form
+  {
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.Label label2;
+    private MediaPortal.UserInterface.Controls.MPButton button1;
+    private System.Windows.Forms.ComboBox cbCountries;
+    private System.Windows.Forms.ComboBox cbCities;
+    XmlDocument docSetup;
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public TvChannelLookupService()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public TvChannelLookupService()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.label1 = new System.Windows.Forms.Label();
       this.cbCountries = new System.Windows.Forms.ComboBox();
       this.label2 = new System.Windows.Forms.Label();
@@ -126,7 +126,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // button1
       // 
-      this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.button1.Location = new System.Drawing.Point(288, 88);
       this.button1.Name = "button1";
       this.button1.TabIndex = 4;
@@ -148,151 +147,152 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		private void TvChannelLookupService_Load(object sender, System.EventArgs e)
-		{
-			cbCountries.Items.Clear();
-			cbCities.Items.Clear();
-			docSetup = new XmlDocument();
-			docSetup.Load("http://www.team-mediaportal.com/tvsetup/setup.xml");
-			XmlNodeList listCountries = docSetup.DocumentElement.SelectNodes("/mediaportal/country");
-			foreach (XmlNode nodeCountry in listCountries)
-			{
-				XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
-				cbCountries.Items.Add(nodeCountryName.Value);
-			}
-			
-			if (cbCountries.Items.Count> 0 && cbCountries.SelectedIndex<0)
-				cbCountries.SelectedIndex=0;
-			FillInCities();
-		}
+    private void TvChannelLookupService_Load(object sender, System.EventArgs e)
+    {
+      cbCountries.Items.Clear();
+      cbCities.Items.Clear();
+      docSetup = new XmlDocument();
+      docSetup.Load("http://www.team-mediaportal.com/tvsetup/setup.xml");
+      XmlNodeList listCountries = docSetup.DocumentElement.SelectNodes("/mediaportal/country");
+      foreach (XmlNode nodeCountry in listCountries)
+      {
+        XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
+        cbCountries.Items.Add(nodeCountryName.Value);
+      }
 
-		void FillInCities()
-		{
-			string country=(string)cbCountries.SelectedItem;
-			cbCities.Items.Clear();
-			XmlNodeList listCountries = docSetup.DocumentElement.SelectNodes("/mediaportal/country");
-			foreach (XmlNode nodeCountry in listCountries)
-			{
-				XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
-				if (nodeCountryName.Value==country)
-				{
-					XmlNodeList listCities = nodeCountry.SelectNodes("city");
-					foreach (XmlNode nodeCity in listCities)
-					{
-						XmlNode listCitiesName = nodeCity.Attributes.GetNamedItem("name");
-						cbCities.Items.Add(listCitiesName.Value);
-					}
-					break;
-				}
-			}
-			if (cbCities.Items.Count> 0 && cbCities.SelectedIndex<0)
-				cbCities.SelectedIndex=0;
-		}
+      if (cbCountries.Items.Count > 0 && cbCountries.SelectedIndex < 0)
+        cbCountries.SelectedIndex = 0;
+      FillInCities();
+    }
 
-		private void button1_Click(object sender, System.EventArgs e)
-		{
-			string country=(string)cbCountries.SelectedItem;
-			string city=(string)cbCities.SelectedItem;
-			XmlDocument doc = new XmlDocument();
-			doc.Load("http://www.team-mediaportal.com/tvsetup/setup.xml");
-			XmlNodeList listCountries = doc.DocumentElement.SelectNodes("/mediaportal/country");
-			foreach (XmlNode nodeCountry in listCountries)
-			{
-				XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
-				if (nodeCountryName.Value==country)
-				{
-					XmlNodeList listCities = nodeCountry.SelectNodes("city");
-					foreach (XmlNode nodeCity in listCities)
-					{
-						XmlNode listCitiesName = nodeCity.Attributes.GetNamedItem("name");
-						if (listCitiesName.Value==city)
-						{
-							XmlNode nodeAnalog = nodeCity.SelectSingleNode("analog");
-							ImportAnalogChannels(nodeAnalog.InnerText);
-							this.Close();
-							return;
-						}
-					}
-				}
-			}
-		}
-		void ImportAnalogChannels(string xmlFile)
-		{
-			XmlDocument doc = new XmlDocument();
-			UriBuilder builder = new UriBuilder("http","mediaportal.sourceforge.net",80,"tvsetup/analog/"+xmlFile);
-			doc.Load(builder.Uri.AbsoluteUri);
-			XmlNodeList listTvChannels = doc.DocumentElement.SelectNodes("/mediaportal/tv/channel");
-			foreach (XmlNode nodeChannel in listTvChannels)
-			{
-				XmlNode name					 = nodeChannel.Attributes.GetNamedItem("name");
-				XmlNode number				 = nodeChannel.Attributes.GetNamedItem("number");
-				XmlNode frequency			 = nodeChannel.Attributes.GetNamedItem("frequency");
-				TVChannel chan =new TVChannel();
-				chan.Name=name.Value;
-				chan.Frequency=0;
-				try
-				{
-					chan.Number=Int32.Parse(number.Value);
-				}
-				catch(Exception){}
-				try{
+    void FillInCities()
+    {
+      string country = (string)cbCountries.SelectedItem;
+      cbCities.Items.Clear();
+      XmlNodeList listCountries = docSetup.DocumentElement.SelectNodes("/mediaportal/country");
+      foreach (XmlNode nodeCountry in listCountries)
+      {
+        XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
+        if (nodeCountryName.Value == country)
+        {
+          XmlNodeList listCities = nodeCountry.SelectNodes("city");
+          foreach (XmlNode nodeCity in listCities)
+          {
+            XmlNode listCitiesName = nodeCity.Attributes.GetNamedItem("name");
+            cbCities.Items.Add(listCitiesName.Value);
+          }
+          break;
+        }
+      }
+      if (cbCities.Items.Count > 0 && cbCities.SelectedIndex < 0)
+        cbCities.SelectedIndex = 0;
+    }
 
-					chan.Frequency=ConvertToTvFrequency(frequency.Value, ref chan);
-				}
-				catch(Exception){}
-				TVDatabase.AddChannel(chan);
-			}
-			XmlNodeList listRadioChannels = doc.DocumentElement.SelectNodes("/mediaportal/radio/channel");
-			foreach (XmlNode nodeChannel in listRadioChannels)
-			{
-				XmlNode name					 = nodeChannel.Attributes.GetNamedItem("name");
-				XmlNode frequency			 = nodeChannel.Attributes.GetNamedItem("frequency");
-				MediaPortal.Radio.Database.RadioStation chan =new MediaPortal.Radio.Database.RadioStation();
-				chan.Name=name.Value;
-				chan.Frequency=ConvertToFrequency(frequency.Value);
-				RadioDatabase.AddStation(ref chan);
-			}
-		}
-		long ConvertToFrequency(string frequency)
-		{
-			if (frequency.Trim()==String.Empty) return 0;
-			float testValue=189.24f;
-			string usage=testValue.ToString("f2");
-			if (usage.IndexOf(".")>=0) frequency=frequency.Replace(",",".");
-			if (usage.IndexOf(",")>=0) frequency=frequency.Replace(".",",");
-			double freqValue=Convert.ToDouble(frequency);
-			freqValue*=1000000;
-			return (long)(freqValue);
-		}
-		
+    private void button1_Click(object sender, System.EventArgs e)
+    {
+      string country = (string)cbCountries.SelectedItem;
+      string city = (string)cbCities.SelectedItem;
+      XmlDocument doc = new XmlDocument();
+      doc.Load("http://www.team-mediaportal.com/tvsetup/setup.xml");
+      XmlNodeList listCountries = doc.DocumentElement.SelectNodes("/mediaportal/country");
+      foreach (XmlNode nodeCountry in listCountries)
+      {
+        XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
+        if (nodeCountryName.Value == country)
+        {
+          XmlNodeList listCities = nodeCountry.SelectNodes("city");
+          foreach (XmlNode nodeCity in listCities)
+          {
+            XmlNode listCitiesName = nodeCity.Attributes.GetNamedItem("name");
+            if (listCitiesName.Value == city)
+            {
+              XmlNode nodeAnalog = nodeCity.SelectSingleNode("analog");
+              ImportAnalogChannels(nodeAnalog.InnerText);
+              this.Close();
+              return;
+            }
+          }
+        }
+      }
+    }
+    void ImportAnalogChannels(string xmlFile)
+    {
+      XmlDocument doc = new XmlDocument();
+      UriBuilder builder = new UriBuilder("http", "mediaportal.sourceforge.net", 80, "tvsetup/analog/" + xmlFile);
+      doc.Load(builder.Uri.AbsoluteUri);
+      XmlNodeList listTvChannels = doc.DocumentElement.SelectNodes("/mediaportal/tv/channel");
+      foreach (XmlNode nodeChannel in listTvChannels)
+      {
+        XmlNode name = nodeChannel.Attributes.GetNamedItem("name");
+        XmlNode number = nodeChannel.Attributes.GetNamedItem("number");
+        XmlNode frequency = nodeChannel.Attributes.GetNamedItem("frequency");
+        TVChannel chan = new TVChannel();
+        chan.Name = name.Value;
+        chan.Frequency = 0;
+        try
+        {
+          chan.Number = Int32.Parse(number.Value);
+        }
+        catch (Exception) { }
+        try
+        {
 
-		long ConvertToTvFrequency(string frequency, ref TVChannel chan)
-		{
-			if (frequency.Trim()==String.Empty) return 0;
-			chan.Number=TVDatabase.FindFreeTvChannelNumber(chan.Number);
-			frequency=frequency.ToUpper();
-			for (int i=0; i < TVChannel.SpecialChannels.Length;++i)
-			{
-				if (frequency.Equals(TVChannel.SpecialChannels[i].Name))
-				{
-					return TVChannel.SpecialChannels[i].Frequency;
-				}
-			}
+          chan.Frequency = ConvertToTvFrequency(frequency.Value, ref chan);
+        }
+        catch (Exception) { }
+        TVDatabase.AddChannel(chan);
+      }
+      XmlNodeList listRadioChannels = doc.DocumentElement.SelectNodes("/mediaportal/radio/channel");
+      foreach (XmlNode nodeChannel in listRadioChannels)
+      {
+        XmlNode name = nodeChannel.Attributes.GetNamedItem("name");
+        XmlNode frequency = nodeChannel.Attributes.GetNamedItem("frequency");
+        MediaPortal.Radio.Database.RadioStation chan = new MediaPortal.Radio.Database.RadioStation();
+        chan.Name = name.Value;
+        chan.Frequency = ConvertToFrequency(frequency.Value);
+        RadioDatabase.AddStation(ref chan);
+      }
+    }
+    long ConvertToFrequency(string frequency)
+    {
+      if (frequency.Trim() == String.Empty) return 0;
+      float testValue = 189.24f;
+      string usage = testValue.ToString("f2");
+      if (usage.IndexOf(".") >= 0) frequency = frequency.Replace(",", ".");
+      if (usage.IndexOf(",") >= 0) frequency = frequency.Replace(".", ",");
+      double freqValue = Convert.ToDouble(frequency);
+      freqValue *= 1000000;
+      return (long)(freqValue);
+    }
 
-			float testValue=189.24f;
-			string usage=testValue.ToString("f2");
-			if (usage.IndexOf(".")>=0) frequency=frequency.Replace(",",".");
-			if (usage.IndexOf(",")>=0) frequency=frequency.Replace(".",",");
-			double freqValue=Convert.ToDouble(frequency);
-			freqValue*=1000000;
-			return (long)(freqValue);
-		}
 
-		private void cbCountries_SelectedIndexChanged(object sender, System.EventArgs e)
-		{
-			FillInCities();
-		}
-	}
+    long ConvertToTvFrequency(string frequency, ref TVChannel chan)
+    {
+      if (frequency.Trim() == String.Empty) return 0;
+      chan.Number = TVDatabase.FindFreeTvChannelNumber(chan.Number);
+      frequency = frequency.ToUpper();
+      for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
+      {
+        if (frequency.Equals(TVChannel.SpecialChannels[i].Name))
+        {
+          return TVChannel.SpecialChannels[i].Frequency;
+        }
+      }
+
+      float testValue = 189.24f;
+      string usage = testValue.ToString("f2");
+      if (usage.IndexOf(".") >= 0) frequency = frequency.Replace(",", ".");
+      if (usage.IndexOf(",") >= 0) frequency = frequency.Replace(".", ",");
+      double freqValue = Convert.ToDouble(frequency);
+      freqValue *= 1000000;
+      return (long)(freqValue);
+    }
+
+    private void cbCountries_SelectedIndexChanged(object sender, System.EventArgs e)
+    {
+      FillInCities();
+    }
+  }
 }

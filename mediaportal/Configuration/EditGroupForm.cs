@@ -32,57 +32,57 @@ using MediaPortal.TV.Database;
 
 namespace MediaPortal.Configuration
 {
-	/// <summary>
-	/// Summary description for EditGroupForm.
-	/// </summary>
-	public class EditGroupForm : System.Windows.Forms.Form
-	{
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.TextBox textBoxName;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox textBoxPincode;
-		private MediaPortal.UserInterface.Controls.MPButton buttonOk;
-		private MediaPortal.UserInterface.Controls.MPButton btnCancel;
-		TVGroup group = new TVGroup();
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+  /// <summary>
+  /// Summary description for EditGroupForm.
+  /// </summary>
+  public class EditGroupForm : System.Windows.Forms.Form
+  {
+    private System.Windows.Forms.Label label1;
+    private System.Windows.Forms.TextBox textBoxName;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.TextBox textBoxPincode;
+    private MediaPortal.UserInterface.Controls.MPButton buttonOk;
+    private MediaPortal.UserInterface.Controls.MPButton btnCancel;
+    TVGroup group = new TVGroup();
+    /// <summary>
+    /// Required designer variable.
+    /// </summary>
+    private System.ComponentModel.Container components = null;
 
-		public EditGroupForm()
-		{
-			//
-			// Required for Windows Form Designer support
-			//
-			InitializeComponent();
+    public EditGroupForm()
+    {
+      //
+      // Required for Windows Form Designer support
+      //
+      InitializeComponent();
 
-			//
-			// TODO: Add any constructor code after InitializeComponent call
-			//
-		}
+      //
+      // TODO: Add any constructor code after InitializeComponent call
+      //
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Windows Form Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.label1 = new System.Windows.Forms.Label();
       this.textBoxName = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
@@ -126,7 +126,6 @@ namespace MediaPortal.Configuration
       // 
       // buttonOk
       // 
-      this.buttonOk.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonOk.Location = new System.Drawing.Point(136, 152);
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(32, 23);
@@ -136,7 +135,6 @@ namespace MediaPortal.Configuration
       // 
       // btnCancel
       // 
-      this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnCancel.Location = new System.Drawing.Point(184, 152);
       this.btnCancel.Name = "btnCancel";
       this.btnCancel.Size = new System.Drawing.Size(56, 23);
@@ -159,45 +157,45 @@ namespace MediaPortal.Configuration
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		private void buttonOk_Click(object sender, System.EventArgs e)
-		{
-			this.DialogResult = DialogResult.OK;
-			group.GroupName=textBoxName.Text;
-			try
-			{
-				group.Pincode  = Int32.Parse(textBoxPincode.Text);
-			}
-			catch(Exception)
-			{
-				group.Pincode =0;
-			}
-			this.Close();
-		}
+    private void buttonOk_Click(object sender, System.EventArgs e)
+    {
+      this.DialogResult = DialogResult.OK;
+      group.GroupName = textBoxName.Text;
+      try
+      {
+        group.Pincode = Int32.Parse(textBoxPincode.Text);
+      }
+      catch (Exception)
+      {
+        group.Pincode = 0;
+      }
+      this.Close();
+    }
 
-		private void btnCancel_Click(object sender, System.EventArgs e)
-		{
-			this.DialogResult = DialogResult.Cancel;
-			this.Close();
-		}
+    private void btnCancel_Click(object sender, System.EventArgs e)
+    {
+      this.DialogResult = DialogResult.Cancel;
+      this.Close();
+    }
 
-		public TVGroup Group
-		{
-			get 
-			{
-				return group;
-			}
-			set
-			{
-				group=value;
-				textBoxName.Text=group.GroupName;
-				textBoxPincode.Text="";
-				if (group.Pincode>=1000)
-				{
-					textBoxPincode.Text=group.Pincode.ToString();
-				}
-			}
-		}
-	}
+    public TVGroup Group
+    {
+      get
+      {
+        return group;
+      }
+      set
+      {
+        group = value;
+        textBoxName.Text = group.GroupName;
+        textBoxPincode.Text = "";
+        if (group.Pincode >= 1000)
+        {
+          textBoxPincode.Text = group.Pincode.ToString();
+        }
+      }
+    }
+  }
 }

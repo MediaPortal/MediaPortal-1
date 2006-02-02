@@ -130,7 +130,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.cbCountries);
       this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 408);
@@ -141,7 +140,6 @@ namespace MediaPortal.Configuration.Sections
       // btnManualRadio
       // 
       this.btnManualRadio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnManualRadio.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnManualRadio.Location = new System.Drawing.Point(302, 312);
       this.btnManualRadio.Name = "btnManualRadio";
       this.btnManualRadio.Size = new System.Drawing.Size(152, 22);
@@ -152,7 +150,6 @@ namespace MediaPortal.Configuration.Sections
       // btnManualTV
       // 
       this.btnManualTV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnManualTV.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnManualTV.Location = new System.Drawing.Point(144, 312);
       this.btnManualTV.Name = "btnManualTV";
       this.btnManualTV.Size = new System.Drawing.Size(152, 22);
@@ -195,7 +192,6 @@ namespace MediaPortal.Configuration.Sections
       // button1
       // 
       this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.button1.Location = new System.Drawing.Point(384, 128);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(72, 22);

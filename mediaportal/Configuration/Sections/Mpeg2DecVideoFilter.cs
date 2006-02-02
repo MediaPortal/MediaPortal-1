@@ -38,64 +38,66 @@ using DirectShowLib;
 namespace MediaPortal.Configuration.Sections
 {
 
-	public class MPEG2DecVideoFilter : MediaPortal.Configuration.SectionSettings
-	{
-		private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-		//private System.Windows.Forms.Label label1;
-		//private System.Windows.Forms.Label label3;
-		//private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.ComboBox cbDeinterlace;
-		private MediaPortal.UserInterface.Controls.MPCheckBox cbForcedSubtitles;
-		private MediaPortal.UserInterface.Controls.MPCheckBox cbPlanar;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.Label label8;
-		private System.Windows.Forms.TrackBar tbBrightness;
-		private System.Windows.Forms.TrackBar tbContrast;
-		private System.Windows.Forms.TrackBar tbHue;
-		private System.Windows.Forms.TrackBar tbSaturation;
-		private System.ComponentModel.IContainer components = null;
+  public class MPEG2DecVideoFilter : MediaPortal.Configuration.SectionSettings
+  {
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+    //private System.Windows.Forms.Label label1;
+    //private System.Windows.Forms.Label label3;
+    //private System.Windows.Forms.Label label5;
+    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.ComboBox cbDeinterlace;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbForcedSubtitles;
+    private MediaPortal.UserInterface.Controls.MPCheckBox cbPlanar;
+    private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.Label label8;
+    private System.Windows.Forms.TrackBar tbBrightness;
+    private System.Windows.Forms.TrackBar tbContrast;
+    private System.Windows.Forms.TrackBar tbHue;
+    private System.Windows.Forms.TrackBar tbSaturation;
+    private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public MPEG2DecVideoFilter() : this("MPEG2Dec Video Decoder")
-		{
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    public MPEG2DecVideoFilter()
+      : this("MPEG2Dec Video Decoder")
+    {
+    }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public MPEG2DecVideoFilter(string name) : base(name)
-		{
-			// This call is required by the Windows Form Designer.
-			InitializeComponent();
-		}
+    /// <summary>
+    /// 
+    /// </summary>
+    public MPEG2DecVideoFilter(string name)
+      : base(name)
+    {
+      // This call is required by the Windows Form Designer.
+      InitializeComponent();
+    }
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
 
-		#region Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+    #region Designer generated code
+    /// <summary>
+    /// Required method for Designer support - do not modify
+    /// the contents of this method with the code editor.
+    /// </summary>
+    private void InitializeComponent()
+    {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label8 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
@@ -118,7 +120,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label8);
       this.groupBox1.Controls.Add(this.label7);
@@ -132,7 +134,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.tbHue);
       this.groupBox1.Controls.Add(this.tbContrast);
       this.groupBox1.Controls.Add(this.tbBrightness);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 272);
@@ -174,7 +175,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbDeinterlace
       // 
-      this.cbDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.cbDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbDeinterlace.Items.AddRange(new object[] {
@@ -199,7 +200,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbForcedSubtitles.Checked = true;
       this.cbForcedSubtitles.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.cbForcedSubtitles.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cbForcedSubtitles.Location = new System.Drawing.Point(16, 48);
       this.cbForcedSubtitles.Name = "cbForcedSubtitles";
       this.cbForcedSubtitles.Size = new System.Drawing.Size(168, 16);
@@ -210,7 +210,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbPlanar.Checked = true;
       this.cbPlanar.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.cbPlanar.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cbPlanar.Location = new System.Drawing.Point(16, 24);
       this.cbPlanar.Name = "cbPlanar";
       this.cbPlanar.Size = new System.Drawing.Size(264, 16);
@@ -219,7 +218,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tbSaturation
       // 
-      this.tbSaturation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.tbSaturation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tbSaturation.Location = new System.Drawing.Point(160, 196);
       this.tbSaturation.Maximum = 200;
@@ -231,7 +230,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tbHue
       // 
-      this.tbHue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.tbHue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tbHue.Location = new System.Drawing.Point(160, 156);
       this.tbHue.Maximum = 360;
@@ -243,7 +242,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tbContrast
       // 
-      this.tbContrast.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.tbContrast.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tbContrast.Location = new System.Drawing.Point(160, 116);
       this.tbContrast.Maximum = 200;
@@ -255,7 +254,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tbBrightness
       // 
-      this.tbBrightness.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+      this.tbBrightness.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.tbBrightness.Location = new System.Drawing.Point(160, 76);
       this.tbBrightness.Maximum = 255;
@@ -278,77 +277,77 @@ namespace MediaPortal.Configuration.Sections
       this.ResumeLayout(false);
 
     }
-		#endregion
+    #endregion
 
-		public override void LoadSettings()
-		{
-			RegistryKey hkcu = Registry.CurrentUser;
-			RegistryKey subkey = hkcu.CreateSubKey(@"Software\Mediaportal\Mpeg Video Filter");
-			if (subkey!=null)
-			{
-				try
-				{
-					Int32 regValue=(Int32)subkey.GetValue("Enable Planar YUV Modes");
-					if (regValue==1) cbPlanar.Checked=true;
-					else cbPlanar.Checked=false;
+    public override void LoadSettings()
+    {
+      RegistryKey hkcu = Registry.CurrentUser;
+      RegistryKey subkey = hkcu.CreateSubKey(@"Software\Mediaportal\Mpeg Video Filter");
+      if (subkey != null)
+      {
+        try
+        {
+          Int32 regValue = (Int32)subkey.GetValue("Enable Planar YUV Modes");
+          if (regValue == 1) cbPlanar.Checked = true;
+          else cbPlanar.Checked = false;
 
-					regValue=(Int32)subkey.GetValue("Forced Subtitles");
-					if (regValue==1) cbForcedSubtitles.Checked=true;
-					else cbForcedSubtitles.Checked=false;
-					
-					
-					regValue=(Int32)subkey.GetValue("Deinterlace");
-					cbDeinterlace.SelectedIndex=regValue;
-
-					regValue=(Int32)subkey.GetValue("Brightness");
-					tbBrightness.Value=regValue;
-					
-					regValue=(Int32)subkey.GetValue("Contrast");
-					tbContrast.Value=regValue;
-
-					regValue=(Int32)subkey.GetValue("Hue");
-					tbHue.Value=regValue;
-
-					regValue=(Int32)subkey.GetValue("Saturation");
-					tbSaturation.Value=regValue;
-				}
-				catch (Exception)
-				{
-				}
-				finally
-				{
-					subkey.Close();
-				}
-			}
-		}
-		public override void SaveSettings()
-		{
-			RegistryKey hkcu = Registry.CurrentUser;
-			RegistryKey subkey = hkcu.CreateSubKey(@"Software\Mediaportal\Mpeg Video Filter");
-			if (subkey!=null)
-			{
-				Int32 regValue;
-				if (cbPlanar.Checked) regValue=1;
-				else regValue=0;
-				subkey.SetValue("Enable Planar YUV Modes",regValue);
-
-				if (cbForcedSubtitles.Checked) regValue=1;
-				else regValue=0;
-				subkey.SetValue("Forced Subtitles",regValue);
-
-				subkey.SetValue("Deinterlace",(Int32)cbDeinterlace.SelectedIndex);
-
-				subkey.SetValue("Brightness",(Int32)tbBrightness.Value);
-				subkey.SetValue("Contrast",(Int32)tbContrast.Value);
-				subkey.SetValue("Hue",(Int32)tbHue.Value);
-				subkey.SetValue("Saturation",(Int32)tbSaturation.Value);
-
-				subkey.Close();
-			}
-		}
+          regValue = (Int32)subkey.GetValue("Forced Subtitles");
+          if (regValue == 1) cbForcedSubtitles.Checked = true;
+          else cbForcedSubtitles.Checked = false;
 
 
+          regValue = (Int32)subkey.GetValue("Deinterlace");
+          cbDeinterlace.SelectedIndex = regValue;
 
-	}
+          regValue = (Int32)subkey.GetValue("Brightness");
+          tbBrightness.Value = regValue;
+
+          regValue = (Int32)subkey.GetValue("Contrast");
+          tbContrast.Value = regValue;
+
+          regValue = (Int32)subkey.GetValue("Hue");
+          tbHue.Value = regValue;
+
+          regValue = (Int32)subkey.GetValue("Saturation");
+          tbSaturation.Value = regValue;
+        }
+        catch (Exception)
+        {
+        }
+        finally
+        {
+          subkey.Close();
+        }
+      }
+    }
+    public override void SaveSettings()
+    {
+      RegistryKey hkcu = Registry.CurrentUser;
+      RegistryKey subkey = hkcu.CreateSubKey(@"Software\Mediaportal\Mpeg Video Filter");
+      if (subkey != null)
+      {
+        Int32 regValue;
+        if (cbPlanar.Checked) regValue = 1;
+        else regValue = 0;
+        subkey.SetValue("Enable Planar YUV Modes", regValue);
+
+        if (cbForcedSubtitles.Checked) regValue = 1;
+        else regValue = 0;
+        subkey.SetValue("Forced Subtitles", regValue);
+
+        subkey.SetValue("Deinterlace", (Int32)cbDeinterlace.SelectedIndex);
+
+        subkey.SetValue("Brightness", (Int32)tbBrightness.Value);
+        subkey.SetValue("Contrast", (Int32)tbContrast.Value);
+        subkey.SetValue("Hue", (Int32)tbHue.Value);
+        subkey.SetValue("Saturation", (Int32)tbSaturation.Value);
+
+        subkey.Close();
+      }
+    }
+
+
+
+  }
 }
 

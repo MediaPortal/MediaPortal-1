@@ -546,7 +546,6 @@ namespace MediaPortal.Configuration
       // 
       // checkBoxHiQuality
       // 
-      this.checkBoxHiQuality.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.checkBoxHiQuality.Location = new System.Drawing.Point(24, 24);
       this.checkBoxHiQuality.Name = "checkBoxHiQuality";
       this.checkBoxHiQuality.Size = new System.Drawing.Size(368, 16);
@@ -558,7 +557,6 @@ namespace MediaPortal.Configuration
       this.useRecordingCheckBox.Checked = true;
       this.useRecordingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useRecordingCheckBox.Enabled = false;
-      this.useRecordingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useRecordingCheckBox.Location = new System.Drawing.Point(11, 71);
       this.useRecordingCheckBox.Name = "useRecordingCheckBox";
       this.useRecordingCheckBox.Size = new System.Drawing.Size(168, 16);
@@ -570,7 +568,6 @@ namespace MediaPortal.Configuration
       this.useWatchingCheckBox.Checked = true;
       this.useWatchingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useWatchingCheckBox.Enabled = false;
-      this.useWatchingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useWatchingCheckBox.Location = new System.Drawing.Point(11, 47);
       this.useWatchingCheckBox.Name = "useWatchingCheckBox";
       this.useWatchingCheckBox.Size = new System.Drawing.Size(168, 24);
@@ -613,7 +610,6 @@ namespace MediaPortal.Configuration
       // cancelButton
       // 
       this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cancelButton.Location = new System.Drawing.Point(461, 450);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -624,7 +620,6 @@ namespace MediaPortal.Configuration
       // okButton
       // 
       this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.okButton.Location = new System.Drawing.Point(381, 450);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
@@ -704,7 +699,6 @@ namespace MediaPortal.Configuration
       this.groupBox5.Controls.Add(this.buttonBrowse);
       this.groupBox5.Controls.Add(this.tbRecordingFolder);
       this.groupBox5.Controls.Add(this.label26);
-      this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox5.Location = new System.Drawing.Point(8, 8);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(424, 100);
@@ -714,7 +708,6 @@ namespace MediaPortal.Configuration
       // 
       // buttonBrowse
       // 
-      this.buttonBrowse.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.buttonBrowse.Location = new System.Drawing.Point(280, 56);
       this.buttonBrowse.Name = "buttonBrowse";
       this.buttonBrowse.Size = new System.Drawing.Size(56, 23);
@@ -889,7 +882,6 @@ namespace MediaPortal.Configuration
       this.groupBox7.Controls.Add(this.tbPortMax);
       this.groupBox7.Controls.Add(this.tbPortMin);
       this.groupBox7.Controls.Add(this.label19);
-      this.groupBox7.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox7.Location = new System.Drawing.Point(24, 144);
       this.groupBox7.Name = "groupBox7";
       this.groupBox7.Size = new System.Drawing.Size(456, 224);
@@ -899,7 +891,6 @@ namespace MediaPortal.Configuration
       // 
       // cbHighVBR
       // 
-      this.cbHighVBR.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cbHighVBR.Location = new System.Drawing.Point(248, 152);
       this.cbHighVBR.Name = "cbHighVBR";
       this.cbHighVBR.Size = new System.Drawing.Size(32, 24);
@@ -931,7 +922,6 @@ namespace MediaPortal.Configuration
       // 
       // cbMedVBR
       // 
-      this.cbMedVBR.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cbMedVBR.Location = new System.Drawing.Point(248, 120);
       this.cbMedVBR.Name = "cbMedVBR";
       this.cbMedVBR.Size = new System.Drawing.Size(32, 24);
@@ -963,7 +953,6 @@ namespace MediaPortal.Configuration
       // 
       // cbLowVBR
       // 
-      this.cbLowVBR.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cbLowVBR.Location = new System.Drawing.Point(248, 88);
       this.cbLowVBR.Name = "cbLowVBR";
       this.cbLowVBR.Size = new System.Drawing.Size(32, 24);
@@ -1019,7 +1008,6 @@ namespace MediaPortal.Configuration
       // 
       // cbPortVBR
       // 
-      this.cbPortVBR.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cbPortVBR.Location = new System.Drawing.Point(248, 56);
       this.cbPortVBR.Name = "cbPortVBR";
       this.cbPortVBR.Size = new System.Drawing.Size(32, 24);
@@ -1111,7 +1099,6 @@ namespace MediaPortal.Configuration
       this.groupBox2.Controls.Add(this.diseqca);
       this.groupBox2.Controls.Add(this.lnbkind1);
       this.groupBox2.Controls.Add(this.lnbconfig1);
-      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox2.Location = new System.Drawing.Point(24, 192);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(408, 144);
@@ -1122,7 +1109,6 @@ namespace MediaPortal.Configuration
       // 
       // useLNB4
       // 
-      this.useLNB4.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useLNB4.Location = new System.Drawing.Point(312, 112);
       this.useLNB4.Name = "useLNB4";
       this.useLNB4.Size = new System.Drawing.Size(80, 16);
@@ -1131,7 +1117,6 @@ namespace MediaPortal.Configuration
       // 
       // useLNB3
       // 
-      this.useLNB3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useLNB3.Location = new System.Drawing.Point(312, 88);
       this.useLNB3.Name = "useLNB3";
       this.useLNB3.Size = new System.Drawing.Size(80, 16);
@@ -1140,7 +1125,6 @@ namespace MediaPortal.Configuration
       // 
       // useLNB2
       // 
-      this.useLNB2.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useLNB2.Location = new System.Drawing.Point(312, 64);
       this.useLNB2.Name = "useLNB2";
       this.useLNB2.Size = new System.Drawing.Size(80, 16);
@@ -1152,7 +1136,6 @@ namespace MediaPortal.Configuration
       this.useLNB1.Checked = true;
       this.useLNB1.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useLNB1.Enabled = false;
-      this.useLNB1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.useLNB1.Location = new System.Drawing.Point(312, 40);
       this.useLNB1.Name = "useLNB1";
       this.useLNB1.Size = new System.Drawing.Size(80, 16);
@@ -1358,7 +1341,6 @@ namespace MediaPortal.Configuration
       this.groupBox4.Controls.Add(this.label20);
       this.groupBox4.Controls.Add(this.cbandMHZ);
       this.groupBox4.Controls.Add(this.label21);
-      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox4.Location = new System.Drawing.Point(256, 72);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(176, 96);
@@ -1406,7 +1388,6 @@ namespace MediaPortal.Configuration
       this.groupBox3.Controls.Add(this.switchMHZ);
       this.groupBox3.Controls.Add(this.lnb0MHZ);
       this.groupBox3.Controls.Add(this.label22);
-      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.groupBox3.Location = new System.Drawing.Point(24, 72);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(176, 96);
@@ -1464,7 +1445,6 @@ namespace MediaPortal.Configuration
       // 
       // button1
       // 
-      this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.button1.Location = new System.Drawing.Point(192, 450);
       this.button1.Name = "button1";
       this.button1.Size = new System.Drawing.Size(75, 23);
@@ -1474,7 +1454,6 @@ namespace MediaPortal.Configuration
       // 
       // btnRadio
       // 
-      this.btnRadio.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.btnRadio.Location = new System.Drawing.Point(80, 450);
       this.btnRadio.Name = "btnRadio";
       this.btnRadio.Size = new System.Drawing.Size(96, 23);

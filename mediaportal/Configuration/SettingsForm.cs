@@ -34,7 +34,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
-using Keys=MediaPortal.Configuration.Sections.Keys;
+using Keys = MediaPortal.Configuration.Sections.Keys;
 
 namespace MediaPortal.Configuration
 {
@@ -291,7 +291,7 @@ namespace MediaPortal.Configuration
         //
         // Add to the parent node
         //
-        SectionTreeNode parentTreeNode = (SectionTreeNode) settingSections[parentSection.Text];
+        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
         parentTreeNode.Nodes.Add(treeNode);
       }
 
@@ -359,7 +359,6 @@ namespace MediaPortal.Configuration
       this.cancelButton.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.cancelButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.cancelButton.Location = new System.Drawing.Point(621, 479);
       this.cancelButton.Name = "cancelButton";
       this.cancelButton.TabIndex = 1;
@@ -371,7 +370,6 @@ namespace MediaPortal.Configuration
       this.okButton.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.okButton.Location = new System.Drawing.Point(542, 479);
       this.okButton.Name = "okButton";
       this.okButton.TabIndex = 0;
@@ -388,7 +386,7 @@ namespace MediaPortal.Configuration
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
       this.headerLabel.Font =
         new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                                ((System.Byte) (0)));
+                                ((System.Byte)(0)));
       this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.Location = new System.Drawing.Point(216, 16);
       this.headerLabel.Name = "headerLabel";
@@ -399,7 +397,7 @@ namespace MediaPortal.Configuration
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.TextFont =
         new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
-                                ((System.Byte) (0)));
+                                ((System.Byte)(0)));
       // 
       // holderPanel
       // 
@@ -432,7 +430,6 @@ namespace MediaPortal.Configuration
       this.applyButton.Anchor =
         ((System.Windows.Forms.AnchorStyles)
          ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.applyButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
       this.applyButton.Location = new System.Drawing.Point(462, 479);
       this.applyButton.Name = "applyButton";
       this.applyButton.TabIndex = 6;
@@ -455,7 +452,7 @@ namespace MediaPortal.Configuration
       this.Controls.Add(this.sectionTree);
       this.CancelButton = cancelButton;
       this.AcceptButton = okButton;
-      this.Icon = ((System.Drawing.Icon) (resources.GetObject("$this.Icon")));
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "SettingsForm";
       this.Text = "Settings";
       this.Load += new System.EventHandler(this.SettingsForm_Load);
@@ -773,15 +770,15 @@ namespace MediaPortal.Configuration
         }
       }
       catch (Exception)
-      {}
+      { }
       SaveAllSettings();
     }
 
     private bool EnumWindowCallBack(int hwnd, int lParam)
     {
-      IntPtr windowHandle = (IntPtr) hwnd;
+      IntPtr windowHandle = (IntPtr)hwnd;
       StringBuilder sb = new StringBuilder(1024);
-      GetWindowText((int) windowHandle, sb, sb.Capacity);
+      GetWindowText((int)windowHandle, sb, sb.Capacity);
       string window = sb.ToString().ToLower();
       if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
       {
