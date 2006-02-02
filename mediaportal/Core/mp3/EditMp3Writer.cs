@@ -68,9 +68,9 @@ namespace Yeti.MMedia.Mp3
   /// </summary>
   public class EditMp3Writer : System.Windows.Forms.UserControl, IEditAudioWriterConfig
   {
-    private System.Windows.Forms.TabControl tabControl1;
-    private System.Windows.Forms.TabPage tabPage1;
-    private System.Windows.Forms.TabPage tabPage2;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage2;
     private Yeti.MMedia.EditFormat editFormat1;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPLabel label2;
@@ -133,10 +133,10 @@ namespace Yeti.MMedia.Mp3
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.editFormat1 = new Yeti.MMedia.EditFormat();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.tabPage2 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.checkBoxPrivate = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxOriginal = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxCRC = new MediaPortal.UserInterface.Controls.MPCheckBox();

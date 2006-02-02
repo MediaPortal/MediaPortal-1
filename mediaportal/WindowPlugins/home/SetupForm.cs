@@ -112,8 +112,8 @@ namespace home
     private MediaPortal.UserInterface.Controls.MPLabel label10;
     private MediaPortal.UserInterface.Controls.MPLabel label11;
     private System.Windows.Forms.PictureBox pictureBox3;
-    private System.Windows.Forms.TabControl tabControl1;
-    private System.Windows.Forms.TabPage tabPage2;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage2;
     private MediaPortal.UserInterface.Controls.MPRadioButton useMyPlugins;
     private MediaPortal.UserInterface.Controls.MPRadioButton useMenus;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
@@ -135,10 +135,10 @@ namespace home
     private MediaPortal.UserInterface.Controls.MPButton TestDate;
     private MediaPortal.UserInterface.Controls.MPLabel label21;
     private MediaPortal.UserInterface.Controls.MPButton AddSpecial;
-    private System.Windows.Forms.TabPage tabPage3;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage3;
     private System.Windows.Forms.ListBox SpecialFunctions;
     private MediaPortal.UserInterface.Controls.MPCheckBox BackButtons;
-    private System.Windows.Forms.TabPage tabPage4;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage4;
     private System.Windows.Forms.ListView listView;
     private System.Windows.Forms.ColumnHeader Plugin;
     private System.Windows.Forms.ColumnHeader Key;
@@ -146,7 +146,7 @@ namespace home
     private System.Windows.Forms.ColumnHeader Type;
     private MediaPortal.UserInterface.Controls.MPLabel label22;
     private MediaPortal.UserInterface.Controls.MPLabel label23;
-    private System.Windows.Forms.TabPage TopBar;
+    private MediaPortal.UserInterface.Controls.MPTabPage TopBar;
     private MediaPortal.UserInterface.Controls.MPButton button2;
     private MediaPortal.UserInterface.Controls.MPButton button3;
     private MediaPortal.UserInterface.Controls.MPCheckBox useTopBarSub;
@@ -286,8 +286,8 @@ namespace home
       this.label11 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.pictureBox3 = new System.Windows.Forms.PictureBox();
       this.addConfig = new MediaPortal.UserInterface.Controls.MPButton();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.TopBar = new System.Windows.Forms.TabPage();
+      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.TopBar = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox6 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.comboBox3 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.comboBox2 = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -315,7 +315,7 @@ namespace home
       this.OwnDate = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.radioButton3 = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.tabPage2 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.AddSpecial = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label25 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -325,11 +325,11 @@ namespace home
       this.useMyPlugins = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.useMenus = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.ActivateSpecial = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.button2 = new MediaPortal.UserInterface.Controls.MPButton();
       this.SpecialFunctions = new System.Windows.Forms.ListBox();
-      this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.tabPage4 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.button3 = new MediaPortal.UserInterface.Controls.MPButton();
       this.listView = new System.Windows.Forms.ListView();
       this.Type = new System.Windows.Forms.ColumnHeader();

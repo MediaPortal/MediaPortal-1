@@ -171,8 +171,8 @@ namespace MediaPortal.Configuration.Sections
       this.tbSortRight = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.tbSortLeft = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.comboBox1 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -236,7 +236,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.Size = new System.Drawing.Size(464, 374);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Music Sort";
-      this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // groupBox3
       // 

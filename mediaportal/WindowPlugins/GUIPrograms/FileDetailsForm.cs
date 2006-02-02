@@ -145,8 +145,8 @@ namespace WindowPlugins.GUIPrograms
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.buttonViewImg = new MediaPortal.UserInterface.Controls.MPButton();
-      this.tcFileItemData = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tcFileItemData = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.gbFileDetails = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.txtFilepath = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -172,7 +172,7 @@ namespace WindowPlugins.GUIPrograms
       this.lblTitle = new MediaPortal.UserInterface.Controls.MPLabel();
       this.lblFilename = new MediaPortal.UserInterface.Controls.MPLabel();
       this.btnFilename = new MediaPortal.UserInterface.Controls.MPButton();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.tabPage2 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.gbExtended = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.txtCategoryData = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.lblCategoryData = new MediaPortal.UserInterface.Controls.MPLabel();

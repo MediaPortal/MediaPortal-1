@@ -228,7 +228,7 @@ namespace MediaPortal.Configuration.Sections
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.buttonDefault = new MediaPortal.UserInterface.Controls.MPButton();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-      this.tabPageEncoderSettings = new System.Windows.Forms.TabPage();
+      this.tabPageEncoderSettings = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBoxQuality = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxFastMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.labelTarget = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -241,7 +241,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxMono = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.radioButtonQuality = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonBitrate = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.tabPageImportSettings = new System.Windows.Forms.TabPage();
+      this.tabPageImportSettings = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBoxGeneralSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxUnknown = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxBackground = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -254,8 +254,8 @@ namespace MediaPortal.Configuration.Sections
       this.hScrollBarPriority = new System.Windows.Forms.HScrollBar();
       this.labelFasterImport = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelBetterResponse = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabControlMusicImport = new System.Windows.Forms.TabControl();
-      this.tabPageFilenames = new System.Windows.Forms.TabPage();
+      this.tabControlMusicImport = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPageFilenames = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label12 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -267,8 +267,8 @@ namespace MediaPortal.Configuration.Sections
       this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxFormat = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label38 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabControlMissing = new System.Windows.Forms.TabControl();
-      this.tabPageMissing = new System.Windows.Forms.TabPage();
+      this.tabControlMissing = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPageMissing = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBoxMissing = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonLocateLAME = new MediaPortal.UserInterface.Controls.MPButton();
       this.linkLabelLAME = new System.Windows.Forms.LinkLabel();
@@ -297,7 +297,6 @@ namespace MediaPortal.Configuration.Sections
       this.buttonDefault.Size = new System.Drawing.Size(104, 23);
       this.buttonDefault.TabIndex = 14;
       this.buttonDefault.Text = "Reset to default";
-      this.buttonDefault.UseVisualStyleBackColor = true;
       this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
       // 
       // openFileDialog
@@ -316,7 +315,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageEncoderSettings.Size = new System.Drawing.Size(464, 374);
       this.tabPageEncoderSettings.TabIndex = 2;
       this.tabPageEncoderSettings.Text = "Encoder Settings";
-      this.tabPageEncoderSettings.UseVisualStyleBackColor = true;
       // 
       // groupBoxQuality
       // 
@@ -339,7 +337,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxFastMode.Size = new System.Drawing.Size(135, 17);
       this.checkBoxFastMode.TabIndex = 3;
       this.checkBoxFastMode.Text = "Fast mode (less quality)";
-      this.checkBoxFastMode.UseVisualStyleBackColor = true;
       // 
       // labelTarget
       // 
@@ -393,7 +390,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxCBR.Size = new System.Drawing.Size(244, 17);
       this.checkBoxCBR.TabIndex = 1;
       this.checkBoxCBR.Text = "Restrict to constant bitrate (not recommended)";
-      this.checkBoxCBR.UseVisualStyleBackColor = true;
       // 
       // hScrollBarBitrate
       // 
@@ -427,7 +423,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxMono.Size = new System.Drawing.Size(100, 17);
       this.checkBoxMono.TabIndex = 2;
       this.checkBoxMono.Text = "Mono encoding";
-      this.checkBoxMono.UseVisualStyleBackColor = true;
       // 
       // radioButtonQuality
       // 
@@ -438,7 +433,6 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonQuality.TabIndex = 1;
       this.radioButtonQuality.TabStop = true;
       this.radioButtonQuality.Text = "Quality";
-      this.radioButtonQuality.UseVisualStyleBackColor = true;
       this.radioButtonQuality.CheckedChanged += new System.EventHandler(this.radioButtonQuality_CheckedChanged);
       // 
       // radioButtonBitrate
@@ -450,7 +444,6 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonBitrate.TabIndex = 0;
       this.radioButtonBitrate.TabStop = true;
       this.radioButtonBitrate.Text = "Bitrate";
-      this.radioButtonBitrate.UseVisualStyleBackColor = true;
       this.radioButtonBitrate.CheckedChanged += new System.EventHandler(this.radioButtonBitrate_CheckedChanged);
       // 
       // tabPageImportSettings
@@ -463,7 +456,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageImportSettings.Size = new System.Drawing.Size(464, 374);
       this.tabPageImportSettings.TabIndex = 0;
       this.tabPageImportSettings.Text = "Import Settings";
-      this.tabPageImportSettings.UseVisualStyleBackColor = true;
       // 
       // groupBoxGeneralSettings
       // 
@@ -490,7 +482,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxUnknown.Size = new System.Drawing.Size(220, 17);
       this.checkBoxUnknown.TabIndex = 13;
       this.checkBoxUnknown.Text = "Don\'t import unknown tracks to database";
-      this.checkBoxUnknown.UseVisualStyleBackColor = true;
       // 
       // checkBoxBackground
       // 
@@ -500,7 +491,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxBackground.Size = new System.Drawing.Size(148, 17);
       this.checkBoxBackground.TabIndex = 12;
       this.checkBoxBackground.Text = "Background import (silent)";
-      this.checkBoxBackground.UseVisualStyleBackColor = true;
       // 
       // checkBoxDatabase
       // 
@@ -510,7 +500,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxDatabase.Size = new System.Drawing.Size(122, 17);
       this.checkBoxDatabase.TabIndex = 11;
       this.checkBoxDatabase.Text = "Import into database";
-      this.checkBoxDatabase.UseVisualStyleBackColor = true;
       this.checkBoxDatabase.CheckedChanged += new System.EventHandler(this.checkBoxDatabase_CheckedChanged);
       // 
       // checkBoxReplace
@@ -521,7 +510,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxReplace.Size = new System.Drawing.Size(125, 17);
       this.checkBoxReplace.TabIndex = 9;
       this.checkBoxReplace.Text = "Replace existing files";
-      this.checkBoxReplace.UseVisualStyleBackColor = true;
       // 
       // labelLibraryFolder
       // 
@@ -611,7 +599,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageFilenames.Size = new System.Drawing.Size(464, 374);
       this.tabPageFilenames.TabIndex = 3;
       this.tabPageFilenames.Text = "Custom Paths and Filenames";
-      this.tabPageFilenames.UseVisualStyleBackColor = true;
       // 
       // groupBox2
       // 
@@ -748,7 +735,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageMissing.Size = new System.Drawing.Size(464, 374);
       this.tabPageMissing.TabIndex = 0;
       this.tabPageMissing.Text = "Missing File";
-      this.tabPageMissing.UseVisualStyleBackColor = true;
       // 
       // groupBoxMissing
       // 
@@ -768,7 +754,6 @@ namespace MediaPortal.Configuration.Sections
       this.buttonLocateLAME.Size = new System.Drawing.Size(104, 23);
       this.buttonLocateLAME.TabIndex = 2;
       this.buttonLocateLAME.Text = "Locate LAME";
-      this.buttonLocateLAME.UseVisualStyleBackColor = true;
       this.buttonLocateLAME.Click += new System.EventHandler(this.buttonLocateLAME_Click);
       // 
       // linkLabelLAME

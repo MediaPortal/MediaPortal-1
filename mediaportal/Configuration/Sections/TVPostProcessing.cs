@@ -99,9 +99,10 @@ namespace MediaPortal.Configuration.Sections
       // mpGroupBox3
       // 
       this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox3.Controls.Add(this.ffdshowCheckBox);
       this.mpGroupBox3.Controls.Add(this.label3);
+      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox3.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
       this.mpGroupBox3.Size = new System.Drawing.Size(472, 96);
@@ -111,22 +112,24 @@ namespace MediaPortal.Configuration.Sections
       // 
       // ffdshowCheckBox
       // 
+      this.ffdshowCheckBox.AutoSize = true;
+      this.ffdshowCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.ffdshowCheckBox.Location = new System.Drawing.Point(16, 64);
       this.ffdshowCheckBox.Name = "ffdshowCheckBox";
-      this.ffdshowCheckBox.Size = new System.Drawing.Size(184, 16);
+      this.ffdshowCheckBox.Size = new System.Drawing.Size(182, 17);
       this.ffdshowCheckBox.TabIndex = 1;
       this.ffdshowCheckBox.Text = "Enable FFDshow post processing";
       // 
       // label3
       // 
       this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.Location = new System.Drawing.Point(16, 24);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(440, 32);
       this.label3.TabIndex = 0;
       this.label3.Text = "Note that you need to install ffdshow separately to make any this option work. Pl" +
-        "ease read the MediaPortal manual for more information.";
+          "ease read the MediaPortal manual for more information.";
       // 
       // TVPostProcessing
       // 
@@ -134,6 +137,7 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "TVPostProcessing";
       this.Size = new System.Drawing.Size(472, 408);
       this.mpGroupBox3.ResumeLayout(false);
+      this.mpGroupBox3.PerformLayout();
       this.ResumeLayout(false);
 
     }

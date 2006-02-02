@@ -36,6 +36,7 @@ namespace MediaPortal.UserInterface.Controls
     {
       this.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.AutoSize = true;
+      this.UseVisualStyleBackColor = true;
     }
   }
 }

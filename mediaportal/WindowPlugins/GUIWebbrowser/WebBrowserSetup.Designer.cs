@@ -71,7 +71,6 @@ namespace MediaPortal.GUI.WebBrowser
       this.Ok.Size = new System.Drawing.Size(75, 23);
       this.Ok.TabIndex = 0;
       this.Ok.Text = "&Ok";
-      this.Ok.UseVisualStyleBackColor = true;
       this.Ok.Click += new System.EventHandler(this.Ok_Click);
       // 
       // Cancel
@@ -82,7 +81,6 @@ namespace MediaPortal.GUI.WebBrowser
       this.Cancel.Size = new System.Drawing.Size(75, 23);
       this.Cancel.TabIndex = 1;
       this.Cancel.Text = "&Cancel";
-      this.Cancel.UseVisualStyleBackColor = true;
       this.Cancel.Click += new System.EventHandler(this.Cancel_Click);
       // 
       // folderBrowserDialog
@@ -96,7 +94,6 @@ namespace MediaPortal.GUI.WebBrowser
       this.PickFavoritesFolder.Size = new System.Drawing.Size(75, 23);
       this.PickFavoritesFolder.TabIndex = 2;
       this.PickFavoritesFolder.Text = "Browse...";
-      this.PickFavoritesFolder.UseVisualStyleBackColor = true;
       this.PickFavoritesFolder.Click += new System.EventHandler(this.PickFavoritesFolder_Click);
       // 
       // FavoritesFolder

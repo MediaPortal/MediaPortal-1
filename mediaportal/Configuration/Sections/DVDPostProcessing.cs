@@ -102,6 +102,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox3.Controls.Add(this.ffdshowCheckBox);
       this.mpGroupBox3.Controls.Add(this.label3);
+      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox3.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox3.Name = "mpGroupBox3";
       this.mpGroupBox3.Size = new System.Drawing.Size(472, 96);
@@ -111,9 +112,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // ffdshowCheckBox
       // 
+      this.ffdshowCheckBox.AutoSize = true;
+      this.ffdshowCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.ffdshowCheckBox.Location = new System.Drawing.Point(16, 64);
       this.ffdshowCheckBox.Name = "ffdshowCheckBox";
-      this.ffdshowCheckBox.Size = new System.Drawing.Size(184, 16);
+      this.ffdshowCheckBox.Size = new System.Drawing.Size(182, 17);
       this.ffdshowCheckBox.TabIndex = 1;
       this.ffdshowCheckBox.Text = "Enable FFDshow post processing";
       // 
@@ -134,6 +137,7 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "DVDPostProcessing";
       this.Size = new System.Drawing.Size(472, 408);
       this.mpGroupBox3.ResumeLayout(false);
+      this.mpGroupBox3.PerformLayout();
       this.ResumeLayout(false);
 
     }

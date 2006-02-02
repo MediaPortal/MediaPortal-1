@@ -125,8 +125,8 @@ namespace MediaPortal.Configuration.Sections
       this.lblComboKill = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtComboClose = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.txtComboKill = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tabPageDirectInputDevices = new System.Windows.Forms.TabPage();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
+      this.tabPageDirectInputDevices = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.gbI.SuspendLayout();
       this.gbSettings.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numDelay)).BeginInit();
@@ -356,7 +356,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageDirectInputDevices.Size = new System.Drawing.Size(464, 374);
       this.tabPageDirectInputDevices.TabIndex = 0;
       this.tabPageDirectInputDevices.Text = "Direct Input Devices";
-      this.tabPageDirectInputDevices.UseVisualStyleBackColor = true;
       // 
       // tabControl1
       // 

@@ -93,7 +93,7 @@ namespace WindowPlugins.GUIPrograms
     private System.Windows.Forms.MenuItem menuItem1;
     private System.Windows.Forms.MenuItem menuMlfFile;
     private System.Windows.Forms.MenuItem menuMAMEDirect;
-    private System.Windows.Forms.TabPage viewsPage;
+    private MediaPortal.UserInterface.Controls.MPTabPage viewsPage;
     private System.Windows.Forms.Panel holderPanelViews;
     private System.Windows.Forms.MenuItem menuGamebaseImporter;
     private System.Windows.Forms.MenuItem SourceTypeToGamebase;
@@ -213,12 +213,12 @@ namespace WindowPlugins.GUIPrograms
       this.menuItemReadFromProfile = new System.Windows.Forms.MenuItem();
       this.menuItem2 = new System.Windows.Forms.MenuItem();
       this.sep5 = new System.Windows.Forms.ToolBarButton();
-      this.detailsTabControl = new System.Windows.Forms.TabControl();
-      this.detailsPage = new System.Windows.Forms.TabPage();
+      this.detailsTabControl = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.detailsPage = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.holderPanel = new System.Windows.Forms.Panel();
-      this.filesPage = new System.Windows.Forms.TabPage();
+      this.filesPage = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.holderPanelFiles = new System.Windows.Forms.Panel();
-      this.viewsPage = new System.Windows.Forms.TabPage();
+      this.viewsPage = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.holderPanelViews = new System.Windows.Forms.Panel();
       this.menuGamebaseImporter = new System.Windows.Forms.MenuItem();
       this.SourceTypeToGamebase = new System.Windows.Forms.MenuItem();

@@ -302,7 +302,6 @@ namespace MediaPortal.GUI.MSN
       this.cbUseProxyServer.Size = new System.Drawing.Size(105, 17);
       this.cbUseProxyServer.TabIndex = 0;
       this.cbUseProxyServer.Text = "Use proxy server";
-      this.cbUseProxyServer.UseVisualStyleBackColor = true;
       // 
       // tbProxyPassword
       // 

@@ -63,8 +63,8 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.OpenFileDialog XMLOpenDialog;
     private System.Windows.Forms.SaveFileDialog XMLSaveDialog;
     private System.Windows.Forms.ImageList imageList1;
-    private System.Windows.Forms.TabControl tabControl1;
-    private System.Windows.Forms.TabPage tabPage1;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
     private MediaPortal.UserInterface.Controls.MPButton buttonLookup;
     private MediaPortal.UserInterface.Controls.MPButton xmlImport;
     private MediaPortal.UserInterface.Controls.MPButton xmlExport;
@@ -77,7 +77,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton editButton;
     private MediaPortal.UserInterface.Controls.MPButton upButton;
     private MediaPortal.UserInterface.Controls.MPButton downButton;
-    private System.Windows.Forms.TabPage tabPage4;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage4;
     private MediaPortal.UserInterface.Controls.MPButton btnMapChannelToCard;
     private MediaPortal.UserInterface.Controls.MPButton btnUnmapChannelFromCard;
     private System.Windows.Forms.ListView listViewTVChannelsForCard;
@@ -137,8 +137,8 @@ namespace MediaPortal.Configuration.Sections
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.XMLOpenDialog = new System.Windows.Forms.OpenFileDialog();
       this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.buttonLookup = new MediaPortal.UserInterface.Controls.MPButton();
       this.xmlImport = new MediaPortal.UserInterface.Controls.MPButton();
       this.xmlExport = new MediaPortal.UserInterface.Controls.MPButton();
@@ -155,7 +155,7 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-      this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.tabPage4 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.btnMapChannelToCard = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnUnmapChannelFromCard = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewTVChannelsForCard = new System.Windows.Forms.ListView();

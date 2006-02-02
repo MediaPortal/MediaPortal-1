@@ -166,7 +166,6 @@ namespace MediaPortal.GUI.Video
       this.TsrVodCheckBox.Size = new System.Drawing.Size(198, 17);
       this.TsrVodCheckBox.TabIndex = 6;
       this.TsrVodCheckBox.Text = "Show TSR Video on Demand (VOD)";
-      this.TsrVodCheckBox.UseVisualStyleBackColor = true;
       this.TsrVodCheckBox.CheckedChanged += new System.EventHandler(this.TsrVodCheckBox_CheckedChanged);
       // 
       // TsrVodBitrateStreamGrpBox
@@ -192,7 +191,6 @@ namespace MediaPortal.GUI.Video
       this.bitrate1500.TabIndex = 3;
       this.bitrate1500.TabStop = true;
       this.bitrate1500.Text = "1500kb/s";
-      this.bitrate1500.UseVisualStyleBackColor = true;
       this.bitrate1500.Visible = false;
       // 
       // bitrate450
@@ -205,7 +203,6 @@ namespace MediaPortal.GUI.Video
       this.bitrate450.TabIndex = 2;
       this.bitrate450.TabStop = true;
       this.bitrate450.Text = "450kb/s";
-      this.bitrate450.UseVisualStyleBackColor = true;
       // 
       // bitrate160
       // 
@@ -216,7 +213,6 @@ namespace MediaPortal.GUI.Video
       this.bitrate160.TabIndex = 1;
       this.bitrate160.TabStop = true;
       this.bitrate160.Text = "160kb/s";
-      this.bitrate160.UseVisualStyleBackColor = true;
       // 
       // bitrate80
       // 
@@ -227,7 +223,6 @@ namespace MediaPortal.GUI.Video
       this.bitrate80.TabIndex = 0;
       this.bitrate80.TabStop = true;
       this.bitrate80.Text = "80kb/s";
-      this.bitrate80.UseVisualStyleBackColor = true;
       this.bitrate80.Visible = false;
       // 
       // upDowNmbOfResults
@@ -260,7 +255,6 @@ namespace MediaPortal.GUI.Video
       this.rbnmbOfResultsDef.TabIndex = 9;
       this.rbnmbOfResultsDef.TabStop = true;
       this.rbnmbOfResultsDef.Text = "default";
-      this.rbnmbOfResultsDef.UseVisualStyleBackColor = true;
       // 
       // radioButton2
       // 
@@ -269,7 +263,6 @@ namespace MediaPortal.GUI.Video
       this.radioButton2.Name = "radioButton2";
       this.radioButton2.Size = new System.Drawing.Size(14, 13);
       this.radioButton2.TabIndex = 10;
-      this.radioButton2.UseVisualStyleBackColor = true;
       this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
       // 
       // GUITrailersSetupForm

@@ -71,11 +71,11 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxName;
 
     bool acceptuserinput = false;
-    private System.Windows.Forms.TabControl tabControl1;
-    private System.Windows.Forms.TabPage tabPage1;
-    private System.Windows.Forms.TabPage tabPage3;
-    private System.Windows.Forms.TabPage tabPage4;
-    private System.Windows.Forms.TabPage tabPage5;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage3;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage4;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage5;
     private MediaPortal.UserInterface.Controls.MPLabel label14;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBox3Audio;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBox3Video;
@@ -125,7 +125,7 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPCheckBox useLNB2;
     private MediaPortal.UserInterface.Controls.MPCheckBox useLNB3;
     private MediaPortal.UserInterface.Controls.MPCheckBox useLNB4;
-    private System.Windows.Forms.TabPage tabPage7;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage7;
     private MediaPortal.UserInterface.Controls.MPButton buttonBrowse;
     private MediaPortal.UserInterface.Controls.MPTextBox tbRecordingFolder;
     private MediaPortal.UserInterface.Controls.MPButton btnRadio;
@@ -447,16 +447,16 @@ namespace MediaPortal.Configuration
       this.label12 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.label24 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.updownPrio = new System.Windows.Forms.NumericUpDown();
-      this.tabPage7 = new System.Windows.Forms.TabPage();
+      this.tabPage7 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonBrowse = new MediaPortal.UserInterface.Controls.MPButton();
       this.tbRecordingFolder = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label26 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.cbRgbAudio = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.cbRgbVideo = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label35 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -470,7 +470,7 @@ namespace MediaPortal.Configuration
       this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label16 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label17 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage5 = new System.Windows.Forms.TabPage();
+      this.tabPage5 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbHighVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tbHighMax = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -494,7 +494,7 @@ namespace MediaPortal.Configuration
       this.label18 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label25 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboBoxQuality = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.tabPage4 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.useLNB4 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.useLNB3 = new MediaPortal.UserInterface.Controls.MPCheckBox();

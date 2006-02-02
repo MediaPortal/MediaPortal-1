@@ -28,14 +28,13 @@ using System;
 namespace MediaPortal.UserInterface.Controls
 {
   /// <summary>
-  /// Summary description for MPButton.
+  /// Summary description for MPTabControl.
   /// </summary>
-  public class MPButton : System.Windows.Forms.Button
+  public class MPTabControl : System.Windows.Forms.TabControl
   {
-    public MPButton()
+    public MPTabControl()
     {
-      this.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
-      this.UseVisualStyleBackColor = true;
+      
     }
   }
 }

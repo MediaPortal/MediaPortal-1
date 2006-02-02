@@ -41,37 +41,37 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbDeleteWatchedShows;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbAddRecordingsToMovie;
-    private GroupBox groupBox2;
-    private TextBox textBoxFormat;
-    private Label label38;
-    private Label label6;
-    private Label label7;
-    private Label label10;
-    private Label label12;
-    private Label label11;
-    private Label label9;
-    private TabControl tabControl1;
-    private TabPage tabPageSettings;
-    private TabPage tabPage2;
-    private GroupBox groupBox3;
-    private Label label14;
-    private ComboBox comboBoxRecording;
-    private TextBox textBoxSample;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxFormat;
+    private MediaPortal.UserInterface.Controls.MPLabel label38;
+    private MediaPortal.UserInterface.Controls.MPLabel label6;
+    private MediaPortal.UserInterface.Controls.MPLabel label7;
+    private MediaPortal.UserInterface.Controls.MPLabel label10;
+    private MediaPortal.UserInterface.Controls.MPLabel label12;
+    private MediaPortal.UserInterface.Controls.MPLabel label11;
+    private MediaPortal.UserInterface.Controls.MPLabel label9;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageSettings;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage2;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
+    private MediaPortal.UserInterface.Controls.MPLabel label14;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxRecording;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxSample;
     private System.ComponentModel.IContainer components = null;
-    private GroupBox groupBox1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
 
     private string[] formatKind = { "Movies", "Series" };
-    private TabPage tabPage1;
-    private GroupBox groupBox4;
-    private Label label5;
-    private ComboBox comboDrives;
-    private Label lblTotalSpace;
-    private Label label8;
-    private Label label13;
-    private Label lblFreeDiskSpace;
-    private Label labelQuota;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox4;
+    private MediaPortal.UserInterface.Controls.MPLabel label5;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboDrives;
+    private MediaPortal.UserInterface.Controls.MPLabel lblTotalSpace;
+    private MediaPortal.UserInterface.Controls.MPLabel label8;
+    private MediaPortal.UserInterface.Controls.MPLabel label13;
+    private MediaPortal.UserInterface.Controls.MPLabel lblFreeDiskSpace;
+    private MediaPortal.UserInterface.Controls.MPLabel labelQuota;
     private TrackBar trackBar1;
-    private Label label15;
+    private MediaPortal.UserInterface.Controls.MPLabel label15;
     private string[] formatString = { string.Empty, string.Empty };
 
     public TVRecording()
@@ -133,21 +133,21 @@ namespace MediaPortal.Configuration.Sections
       this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxFormat = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label38 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPageSettings = new System.Windows.Forms.TabPage();
+      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPageSettings = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabPage2 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.comboDrives = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.lblTotalSpace = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label13 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.lblFreeDiskSpace = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.trackBar1 = new System.Windows.Forms.TrackBar();
       this.labelQuota = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.trackBar1 = new System.Windows.Forms.TrackBar();
+      this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblFreeDiskSpace = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label13 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblTotalSpace = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboDrives = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox2.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
@@ -162,9 +162,10 @@ namespace MediaPortal.Configuration.Sections
       // cbAddRecordingsToMovie
       // 
       this.cbAddRecordingsToMovie.AutoSize = true;
+      this.cbAddRecordingsToMovie.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbAddRecordingsToMovie.Location = new System.Drawing.Point(16, 104);
       this.cbAddRecordingsToMovie.Name = "cbAddRecordingsToMovie";
-      this.cbAddRecordingsToMovie.Size = new System.Drawing.Size(187, 17);
+      this.cbAddRecordingsToMovie.Size = new System.Drawing.Size(185, 17);
       this.cbAddRecordingsToMovie.TabIndex = 7;
       this.cbAddRecordingsToMovie.Text = "Add recordings to movie database";
       // 
@@ -233,9 +234,10 @@ namespace MediaPortal.Configuration.Sections
       // cbDeleteWatchedShows
       // 
       this.cbDeleteWatchedShows.AutoSize = true;
+      this.cbDeleteWatchedShows.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbDeleteWatchedShows.Location = new System.Drawing.Point(16, 80);
       this.cbDeleteWatchedShows.Name = "cbDeleteWatchedShows";
-      this.cbDeleteWatchedShows.Size = new System.Drawing.Size(234, 17);
+      this.cbDeleteWatchedShows.Size = new System.Drawing.Size(232, 17);
       this.cbDeleteWatchedShows.TabIndex = 6;
       this.cbDeleteWatchedShows.Text = "Automaticly delete recordings after watching";
       // 
@@ -251,6 +253,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.label6);
       this.groupBox2.Controls.Add(this.textBoxFormat);
       this.groupBox2.Controls.Add(this.label38);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(16, 16);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(432, 336);
@@ -263,6 +266,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.label10);
       this.groupBox1.Controls.Add(this.label9);
       this.groupBox1.Controls.Add(this.label11);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(80, 152);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(336, 168);
@@ -404,7 +408,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageSettings.Size = new System.Drawing.Size(464, 374);
       this.tabPageSettings.TabIndex = 0;
       this.tabPageSettings.Text = "Settings";
-      this.tabPageSettings.UseVisualStyleBackColor = true;
       // 
       // groupBox3
       // 
@@ -416,6 +419,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.label2);
       this.groupBox3.Controls.Add(this.label4);
       this.groupBox3.Controls.Add(this.label3);
+      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(16, 16);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(432, 136);
@@ -431,7 +435,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage2.Size = new System.Drawing.Size(464, 374);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Custom Paths and Filenames";
-      this.tabPage2.UseVisualStyleBackColor = true;
       // 
       // tabPage1
       // 
@@ -441,7 +444,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.Size = new System.Drawing.Size(464, 374);
       this.tabPage1.TabIndex = 2;
       this.tabPage1.Text = "Disk quota";
-      this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // groupBox4
       // 
@@ -454,83 +456,12 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.Controls.Add(this.label8);
       this.groupBox4.Controls.Add(this.label5);
       this.groupBox4.Controls.Add(this.comboDrives);
+      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox4.Location = new System.Drawing.Point(3, 14);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(446, 334);
       this.groupBox4.TabIndex = 0;
       this.groupBox4.TabStop = false;
-      // 
-      // comboDrives
-      // 
-      this.comboDrives.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboDrives.FormattingEnabled = true;
-      this.comboDrives.Location = new System.Drawing.Point(78, 20);
-      this.comboDrives.Name = "comboDrives";
-      this.comboDrives.Size = new System.Drawing.Size(121, 21);
-      this.comboDrives.TabIndex = 0;
-      // 
-      // label5
-      // 
-      this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(27, 23);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(35, 13);
-      this.label5.TabIndex = 1;
-      this.label5.Text = "Drive:";
-      // 
-      // label8
-      // 
-      this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(27, 68);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(85, 13);
-      this.label8.TabIndex = 2;
-      this.label8.Text = "Total diskspace:";
-      // 
-      // lblTotalSpace
-      // 
-      this.lblTotalSpace.AutoSize = true;
-      this.lblTotalSpace.Location = new System.Drawing.Point(118, 68);
-      this.lblTotalSpace.Name = "lblTotalSpace";
-      this.lblTotalSpace.Size = new System.Drawing.Size(49, 13);
-      this.lblTotalSpace.TabIndex = 3;
-      this.lblTotalSpace.Text = "total disk";
-      // 
-      // label13
-      // 
-      this.label13.AutoSize = true;
-      this.label13.Location = new System.Drawing.Point(27, 95);
-      this.label13.Name = "label13";
-      this.label13.Size = new System.Drawing.Size(85, 13);
-      this.label13.TabIndex = 4;
-      this.label13.Text = "Free diskspace::";
-      // 
-      // lblFreeDiskSpace
-      // 
-      this.lblFreeDiskSpace.AutoSize = true;
-      this.lblFreeDiskSpace.Location = new System.Drawing.Point(118, 95);
-      this.lblFreeDiskSpace.Name = "lblFreeDiskSpace";
-      this.lblFreeDiskSpace.Size = new System.Drawing.Size(41, 13);
-      this.lblFreeDiskSpace.TabIndex = 5;
-      this.lblFreeDiskSpace.Text = "label15";
-      // 
-      // label15
-      // 
-      this.label15.AutoSize = true;
-      this.label15.Location = new System.Drawing.Point(27, 134);
-      this.label15.Name = "label15";
-      this.label15.Size = new System.Drawing.Size(201, 13);
-      this.label15.TabIndex = 6;
-      this.label15.Text = "Delete recordings when there is less then";
-      // 
-      // trackBar1
-      // 
-      this.trackBar1.Location = new System.Drawing.Point(30, 162);
-      this.trackBar1.Maximum = 100;
-      this.trackBar1.Name = "trackBar1";
-      this.trackBar1.Size = new System.Drawing.Size(340, 45);
-      this.trackBar1.TabIndex = 7;
-      this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
       // 
       // labelQuota
       // 
@@ -541,6 +472,78 @@ namespace MediaPortal.Configuration.Sections
       this.labelQuota.Size = new System.Drawing.Size(48, 13);
       this.labelQuota.TabIndex = 8;
       this.labelQuota.Text = "label16";
+      // 
+      // trackBar1
+      // 
+      this.trackBar1.Location = new System.Drawing.Point(30, 162);
+      this.trackBar1.Maximum = 100;
+      this.trackBar1.Name = "trackBar1";
+      this.trackBar1.Size = new System.Drawing.Size(340, 45);
+      this.trackBar1.TabIndex = 7;
+      this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
+      // 
+      // label15
+      // 
+      this.label15.AutoSize = true;
+      this.label15.Location = new System.Drawing.Point(27, 134);
+      this.label15.Name = "label15";
+      this.label15.Size = new System.Drawing.Size(201, 13);
+      this.label15.TabIndex = 6;
+      this.label15.Text = "Delete recordings when there is less then";
+      // 
+      // lblFreeDiskSpace
+      // 
+      this.lblFreeDiskSpace.AutoSize = true;
+      this.lblFreeDiskSpace.Location = new System.Drawing.Point(118, 95);
+      this.lblFreeDiskSpace.Name = "lblFreeDiskSpace";
+      this.lblFreeDiskSpace.Size = new System.Drawing.Size(41, 13);
+      this.lblFreeDiskSpace.TabIndex = 5;
+      this.lblFreeDiskSpace.Text = "label15";
+      // 
+      // label13
+      // 
+      this.label13.AutoSize = true;
+      this.label13.Location = new System.Drawing.Point(27, 95);
+      this.label13.Name = "label13";
+      this.label13.Size = new System.Drawing.Size(85, 13);
+      this.label13.TabIndex = 4;
+      this.label13.Text = "Free diskspace::";
+      // 
+      // lblTotalSpace
+      // 
+      this.lblTotalSpace.AutoSize = true;
+      this.lblTotalSpace.Location = new System.Drawing.Point(118, 68);
+      this.lblTotalSpace.Name = "lblTotalSpace";
+      this.lblTotalSpace.Size = new System.Drawing.Size(49, 13);
+      this.lblTotalSpace.TabIndex = 3;
+      this.lblTotalSpace.Text = "total disk";
+      // 
+      // label8
+      // 
+      this.label8.AutoSize = true;
+      this.label8.Location = new System.Drawing.Point(27, 68);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(85, 13);
+      this.label8.TabIndex = 2;
+      this.label8.Text = "Total diskspace:";
+      // 
+      // label5
+      // 
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(27, 23);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(35, 13);
+      this.label5.TabIndex = 1;
+      this.label5.Text = "Drive:";
+      // 
+      // comboDrives
+      // 
+      this.comboDrives.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboDrives.FormattingEnabled = true;
+      this.comboDrives.Location = new System.Drawing.Point(78, 20);
+      this.comboDrives.Name = "comboDrives";
+      this.comboDrives.Size = new System.Drawing.Size(121, 21);
+      this.comboDrives.TabIndex = 0;
       // 
       // TVRecording
       // 

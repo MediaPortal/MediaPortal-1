@@ -74,9 +74,9 @@ namespace MediaPortal.Configuration.Sections
     // Private members
     //
     //bool isDirty = false;
-    private System.Windows.Forms.TabControl tabControl1;
-    private System.Windows.Forms.TabPage tabPage1;
-    private System.Windows.Forms.TabPage tabPage2;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage2;
     private MediaPortal.UserInterface.Controls.MPButton btnMapChannelToCard;
     private MediaPortal.UserInterface.Controls.MPButton btnUnmapChannelFromCard;
     private System.Windows.Forms.ColumnHeader columnHeader10;
@@ -142,9 +142,9 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.tabPage2 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.btnMapChannelToCard = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnUnmapChannelFromCard = new MediaPortal.UserInterface.Controls.MPButton();
       this.listviewCardChannels = new System.Windows.Forms.ListView();

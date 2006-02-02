@@ -55,13 +55,13 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPLabel label6;
     private MediaPortal.UserInterface.Controls.MPLabel label7;
     private MediaPortal.UserInterface.Controls.MPComboBox comboTvStandard;
-    private System.Windows.Forms.TabControl tabControl1;
-    private System.Windows.Forms.TabPage tabPage1;
-    private System.Windows.Forms.TabPage tabPage2;
-    private System.Windows.Forms.TabPage tabPage3;
-    private System.Windows.Forms.TabPage tabPage4;
-    private System.Windows.Forms.TabPage tabPage5;
-    private System.Windows.Forms.TabPage tabPage6;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage2;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage3;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage4;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage5;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage6;
     private MediaPortal.UserInterface.Controls.MPComboBox countryComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel label8;
     private MediaPortal.UserInterface.Controls.MPLabel label9;
@@ -198,7 +198,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     private System.ComponentModel.Container components = null;
     private MediaPortal.UserInterface.Controls.MPLabel labelSpecial;
-    private System.Windows.Forms.TabPage tabPage7;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage7;
     private MediaPortal.UserInterface.Controls.MPLabel label74;
     private MediaPortal.UserInterface.Controls.MPLabel label75;
     private MediaPortal.UserInterface.Controls.MPLabel label76;
@@ -351,8 +351,8 @@ namespace MediaPortal.Configuration
       this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.externalChannelTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.label112 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label97 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label96 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -363,7 +363,7 @@ namespace MediaPortal.Configuration
       this.label45 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label44 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage4 = new System.Windows.Forms.TabPage();
+      this.tabPage4 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.label108 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbDVBCPCR = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label104 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -409,12 +409,12 @@ namespace MediaPortal.Configuration
       this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbDVBCONID = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label16 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.tabPage2 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.label98 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label43 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.countryComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.label109 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbDVBTPCR = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label105 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -456,7 +456,7 @@ namespace MediaPortal.Configuration
       this.tbDVBTONID = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label9 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label42 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage5 = new System.Windows.Forms.TabPage();
+      this.tabPage5 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.label110 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbDVBSPCR = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label106 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -504,7 +504,7 @@ namespace MediaPortal.Configuration
       this.label25 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbDVBSONID = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label26 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage7 = new System.Windows.Forms.TabPage();
+      this.tabPage7 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.label111 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbATSCPCR = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label107 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -551,7 +551,7 @@ namespace MediaPortal.Configuration
       this.label93 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbATSCPhysicalChannel = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label94 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage6 = new System.Windows.Forms.TabPage();
+      this.tabPage6 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.label103 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
@@ -766,7 +766,6 @@ namespace MediaPortal.Configuration
       this.tabPage1.Size = new System.Drawing.Size(480, 382);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "General";
-      this.tabPage1.UseVisualStyleBackColor = true;
       this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
       // 
       // label112
@@ -904,7 +903,6 @@ namespace MediaPortal.Configuration
       this.tabPage4.Size = new System.Drawing.Size(480, 382);
       this.tabPage4.TabIndex = 3;
       this.tabPage4.Text = "DVB-C";
-      this.tabPage4.UseVisualStyleBackColor = true;
       this.tabPage4.Click += new System.EventHandler(this.tabPage4_Click);
       // 
       // label108
@@ -1317,7 +1315,6 @@ namespace MediaPortal.Configuration
       this.tabPage2.Size = new System.Drawing.Size(480, 382);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Analog";
-      this.tabPage2.UseVisualStyleBackColor = true;
       this.tabPage2.Click += new System.EventHandler(this.tabPage2_Click);
       // 
       // label98
@@ -1407,7 +1404,6 @@ namespace MediaPortal.Configuration
       this.tabPage3.Size = new System.Drawing.Size(480, 382);
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "DVB-T";
-      this.tabPage3.UseVisualStyleBackColor = true;
       this.tabPage3.Click += new System.EventHandler(this.tabPage3_Click);
       // 
       // label109
@@ -1791,7 +1787,6 @@ namespace MediaPortal.Configuration
       this.tabPage5.Size = new System.Drawing.Size(480, 382);
       this.tabPage5.TabIndex = 4;
       this.tabPage5.Text = "DVB-S";
-      this.tabPage5.UseVisualStyleBackColor = true;
       this.tabPage5.Click += new System.EventHandler(this.tabPage5_Click);
       // 
       // label110
@@ -2235,7 +2230,6 @@ namespace MediaPortal.Configuration
       this.tabPage7.Size = new System.Drawing.Size(480, 382);
       this.tabPage7.TabIndex = 6;
       this.tabPage7.Text = "ATSC";
-      this.tabPage7.UseVisualStyleBackColor = true;
       // 
       // label111
       // 
@@ -2639,7 +2633,6 @@ namespace MediaPortal.Configuration
       this.tabPage6.Size = new System.Drawing.Size(480, 382);
       this.tabPage6.TabIndex = 5;
       this.tabPage6.Text = "External";
-      this.tabPage6.UseVisualStyleBackColor = true;
       this.tabPage6.Click += new System.EventHandler(this.tabPage6_Click);
       // 
       // label103

@@ -62,15 +62,15 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.OpenFileDialog XMLOpenDialog;
     private System.Windows.Forms.SaveFileDialog XMLSaveDialog;
     private System.Windows.Forms.ImageList imageList1;
-    private System.Windows.Forms.TabControl tabControl1;
-    private System.Windows.Forms.TabPage tabPage2;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage2;
     private MediaPortal.UserInterface.Controls.MPButton btnGroupDown;
     private MediaPortal.UserInterface.Controls.MPButton buttonGroupUp;
     private MediaPortal.UserInterface.Controls.MPButton buttonEditGroup;
     private MediaPortal.UserInterface.Controls.MPButton buttonDeleteGroup;
     private MediaPortal.UserInterface.Controls.MPButton buttonAddGroup;
     private System.Windows.Forms.ListView listViewGroups;
-    private System.Windows.Forms.TabPage tabPage3;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage3;
     private MWControls.MWTreeView treeViewChannels;
     private MediaPortal.UserInterface.Controls.MPButton btnGrpChnDown;
     private MediaPortal.UserInterface.Controls.MPButton btnGrpChnUp;
@@ -131,8 +131,8 @@ namespace MediaPortal.Configuration.Sections
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.XMLOpenDialog = new System.Windows.Forms.OpenFileDialog();
       this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPage2 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.btnGroupDown = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonGroupUp = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonEditGroup = new MediaPortal.UserInterface.Controls.MPButton();
@@ -141,7 +141,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewGroups = new System.Windows.Forms.ListView();
       this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
-      this.tabPage3 = new System.Windows.Forms.TabPage();
+      this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.listView1 = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.treeViewChannels = new MWControls.MWTreeView();

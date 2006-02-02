@@ -76,9 +76,9 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel label2;
     private MediaPortal.UserInterface.Controls.MPLabel label15;
     int OldTimeZoneOffsetHours = 0;
-    private System.Windows.Forms.TabControl tabControl1;
-    private System.Windows.Forms.TabPage tabPage1;
-    private System.Windows.Forms.TabPage tabPage2;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPage2;
     private MediaPortal.UserInterface.Controls.MPLabel label14;
     private MediaPortal.UserInterface.Controls.MPLabel label16;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
@@ -171,8 +171,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.DeleteTaskButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.label13 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
-      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbGrabDVBEPG = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -183,7 +183,7 @@ namespace MediaPortal.Configuration.Sections
       this.treeView1 = new System.Windows.Forms.TreeView();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label16 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.tabPage2 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.runGrabberLowPriorityCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label14 = new MediaPortal.UserInterface.Controls.MPLabel();

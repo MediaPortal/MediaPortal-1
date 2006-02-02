@@ -423,7 +423,6 @@ namespace ProcessPlugins.ExternalDisplay
       this.cbExtensiveLogging.Size = new System.Drawing.Size(109, 17);
       this.cbExtensiveLogging.TabIndex = 6;
       this.cbExtensiveLogging.Text = "Extensive logging";
-      this.cbExtensiveLogging.UseVisualStyleBackColor = true;
       // 
       // SetupForm
       // 

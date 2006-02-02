@@ -54,14 +54,14 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHcwEnabled;
     private MediaPortal.UserInterface.Controls.MPLabel labelHcwDriverStatus;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHcwStatus;
-    private System.Windows.Forms.TabPage tabPageMCE;
-    private System.Windows.Forms.TabPage tabPageHCW;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageMCE;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageHCW;
     private MediaPortal.UserInterface.Controls.MPLabel label2sec;
     private MediaPortal.UserInterface.Controls.MPLabel label0sec;
     private MediaPortal.UserInterface.Controls.MPButton btnHcwMapping;
     private MediaPortal.Configuration.Sections.FireDTVRemote fireDTVRemote;
-    private System.Windows.Forms.TabControl tabControlRemotes;
-    private System.Windows.Forms.TabPage tabPageFireDTV;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControlRemotes;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageFireDTV;
     private System.Windows.Forms.PictureBox pictureBoxEU;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHcwGeneral;
@@ -304,13 +304,13 @@ namespace MediaPortal.Configuration.Sections
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.pictureBoxUSA = new System.Windows.Forms.PictureBox();
       this.checkBoxMCE = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tabControlRemotes = new System.Windows.Forms.TabControl();
-      this.tabPageMCE = new System.Windows.Forms.TabPage();
+      this.tabControlRemotes = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPageMCE = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.radioButtonEurope = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonUSA = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.pictureBoxEU = new System.Windows.Forms.PictureBox();
-      this.tabPageHCW = new System.Windows.Forms.TabPage();
+      this.tabPageHCW = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBoxHcwRepeatDelay = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.hScrollBarHcwRepeatSpeed = new System.Windows.Forms.HScrollBar();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -335,7 +335,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxHcwAllowExternal = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxHcwKeepControl = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxHcwExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tabPageX10 = new System.Windows.Forms.TabPage();
+      this.tabPageX10 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBoxX10Status = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonX10Defaults = new MediaPortal.UserInterface.Controls.MPButton();
       this.labelX10DriverStatus = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -344,7 +344,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxX10Enabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxX10Settings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxX10ExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tabPageFireDTV = new System.Windows.Forms.TabPage();
+      this.tabPageFireDTV = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.fireDTVRemote = new MediaPortal.Configuration.Sections.FireDTVRemote();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxUSA)).BeginInit();
@@ -408,7 +408,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageMCE.Size = new System.Drawing.Size(464, 374);
       this.tabPageMCE.TabIndex = 0;
       this.tabPageMCE.Text = "Microsoft MCE Remote";
-      this.tabPageMCE.UseVisualStyleBackColor = true;
       // 
       // groupBox1
       // 
@@ -469,7 +468,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageHCW.Size = new System.Drawing.Size(464, 374);
       this.tabPageHCW.TabIndex = 1;
       this.tabPageHCW.Text = "Hauppauge Remote";
-      this.tabPageHCW.UseVisualStyleBackColor = true;
       // 
       // groupBoxHcwRepeatDelay
       // 
@@ -759,7 +757,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageX10.Size = new System.Drawing.Size(464, 374);
       this.tabPageX10.TabIndex = 3;
       this.tabPageX10.Text = "x10 Remote";
-      this.tabPageX10.UseVisualStyleBackColor = true;
       // 
       // groupBoxX10Status
       // 
@@ -857,7 +854,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageFireDTV.Size = new System.Drawing.Size(464, 374);
       this.tabPageFireDTV.TabIndex = 2;
       this.tabPageFireDTV.Text = "FireDTV Remote";
-      this.tabPageFireDTV.UseVisualStyleBackColor = true;
       // 
       // fireDTVRemote
       // 
