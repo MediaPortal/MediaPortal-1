@@ -1,0 +1,4 @@
+1. add parameters for /crash
+2. show the user a "sorry dude, we crashed"
+3. rip all code out from PTA to it's own classes
+4. add code for sending the report to our website
