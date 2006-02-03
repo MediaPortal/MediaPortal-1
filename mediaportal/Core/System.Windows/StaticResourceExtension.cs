@@ -34,7 +34,7 @@ namespace System.Windows
 
 		public override object ProvideValue(object target, object value)
 		{
-			return MediaPortal.Application.Current.FindResource(value);
+			return MediaPortal.App.Current.FindResource(value);
 		}
 
 		#endregion Methods

@@ -75,8 +75,9 @@ namespace MediaPortal.GUI.Library
         if (File.Exists(name))
           File.Move(name,bakFile);
       }
-      catch(Exception)
+      catch(Exception ex)
       {
+        Log.Write(ex);
       }
     }
 

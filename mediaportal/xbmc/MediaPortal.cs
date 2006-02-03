@@ -160,6 +160,8 @@ public class MediaPortalApp : D3DApp, IRender
   [STAThread]
   public static void Main()
   {
+    AddExceptionHandler();
+
     Log.BackupLogFiles();
     Log.Write("MediaPortal is starting up");
 
@@ -339,6 +341,12 @@ public class MediaPortalApp : D3DApp, IRender
     }
   }
 
+  private static void AddExceptionHandler()
+  {
+    UnhandledExceptionLogger logger = new UnhandledExceptionLogger();
+    AppDomain current = AppDomain.CurrentDomain;
+    current.UnhandledException += new UnhandledExceptionEventHandler(logger.LogCrash);
+  }
   #endregion
 
   #region remote callbacks

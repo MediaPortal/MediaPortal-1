@@ -269,16 +269,16 @@ namespace System.Windows.Serialization
 					{
 						// there is no object in the stack that handles name registration so
 						// we register the name with the Application's resource dictionary
-						MediaPortal.Application.Current.Resources.RegisterName(value, target);
+						MediaPortal.App.Current.Resources.RegisterName(value, target);
 					}
 				}
 
 				if(string.Compare(name, "Key") == 0 || name.EndsWith(":Key"))
 				{
 					if(value.StartsWith("{"))
-						MediaPortal.Application.Current.Resources.Add(ReadExtension(value), _target);
+						MediaPortal.App.Current.Resources.Add(ReadExtension(value), _target);
 					else
-						MediaPortal.Application.Current.Resources.Add(value, _target);
+						MediaPortal.App.Current.Resources.Add(value, _target);
 
 					continue;
 				}

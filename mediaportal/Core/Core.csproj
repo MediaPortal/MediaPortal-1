@@ -258,12 +258,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="App.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Util\UnhandledExceptionLogger.cs" />
     <Compile Include="UserInterfaceControls\MPTabPage.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -2029,6 +2028,10 @@
     <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MediaPortal.Support\MediaPortal.Support.csproj">
+      <Project>{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}</Project>
+      <Name>MediaPortal.Support</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

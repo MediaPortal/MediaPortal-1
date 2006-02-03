@@ -30,11 +30,11 @@ using System.Windows.Threading;
 
 namespace MediaPortal
 {
-	public class Application : DispatcherObject, IResourceHost
+	public class App : DispatcherObject, IResourceHost
 	{
 		#region Constructors
 
-		protected Application()
+		protected App()
 		{
 		}
 
@@ -59,9 +59,9 @@ namespace MediaPortal
 
 		#region Properties
 
-		public static Application Current
+		public static App Current
 		{
-			get { if(_current == null) _current = new Application(); return _current; }
+			get { if(_current == null) _current = new App(); return _current; }
 		}
 
 		public ResourceDictionary Resources
@@ -84,7 +84,7 @@ namespace MediaPortal
 
 		#region Fields
 
-		static Application 			_current;
+		static App 			_current;
 		Hashtable					_properties = new Hashtable(100);
 		ResourceDictionary			_resources;
 
