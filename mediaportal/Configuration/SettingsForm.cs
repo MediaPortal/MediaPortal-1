@@ -237,7 +237,14 @@ namespace MediaPortal.Configuration
       Log.Write("add weather section");
       AddSection(new Weather());
       Log.Write("add plugins section");
-      AddSection(new Plugins());
+      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      {
+        bool pluginsV2 = xmlreader.GetValueAsBool("debug", "pluginsv2", true);
+        if (pluginsV2)
+          AddSection(new PluginsNew());
+        else
+          AddSection(new Plugins());
+      }
 
       //
       // Select first item in the section tree
