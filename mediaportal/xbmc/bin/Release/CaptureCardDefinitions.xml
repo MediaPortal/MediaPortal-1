@@ -7519,4 +7519,36 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Dvico FusionHDTV II ATSC" capturename="FusionHDTV, Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_d21018ac&amp;rev_11">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"/>
+        <filter cat="tunerdevice"     name="FusionHDTV, BDA Tuner"					checkdevice="true"/>
+        <filter cat="capture"         name="FusionHDTV, Transport Stream Capture"   checkdevice="true"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="MSI Mega Sky 580" capturename="ULi M9207 Digital Capture" devid="vid_0db0&amp;pid_5580">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="MicrosoftDVBT Network Provider" checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Digital TVUSB Mini Receiver"    checkdevice="true"/>
+        <filter cat="capture"         name="ULi M9207Digital Capture"       checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
