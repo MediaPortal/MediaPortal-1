@@ -84,6 +84,7 @@
     <Compile Include="TVCapture\Teletext\TestFastText.cs" />
     <Compile Include="TVCapture\DiskManagement\TestFreeDiskSpace.cs" />
     <Compile Include="TVCapture\Teletext\TestTopText.cs" />
+    <Compile Include="TVCapture\TestRecorder.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">

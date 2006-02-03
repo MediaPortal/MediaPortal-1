@@ -117,12 +117,17 @@ namespace MediaPortal.TV.Recording
     static public void Start()
     {
       if (_state != State.None) return;//if we are initialized already then no need todo anything
+      CommandProcessor processor = new CommandProcessor();
+      processor.Start();
+      Start(processor);
+    }
 
+    static public void Start(CommandProcessor processor)
+    {
+      if (_state != State.None) return;//if we are initialized already then no need todo anything
       _state = State.Initializing;
+      _commandProcessor = processor;
       RecorderProperties.Init();
-      _commandProcessor = new CommandProcessor();
-      _commandProcessor.Start();
-       
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _commandProcessor.TVChannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
@@ -492,9 +497,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_state != State.Initialized) return String.Empty;
       if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return String.Empty;
-
-      TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
-      return dev.TVChannel;
+      return _commandProcessor.TVChannelName;
     }//static public string GetTVChannelName()
 
     /// <summary>
@@ -836,11 +839,7 @@ namespace MediaPortal.TV.Recording
         _commandProcessor.AddCommand(cmd);
 
         //wait till thread finished this command
-        while (_commandProcessor.IsBusy)
-        {
-          GUIWindowManager.Process();
-          System.Threading.Thread.Sleep(10);
-        }
+        _commandProcessor.WaitTillFinished();
       }
       finally
       {
@@ -898,11 +897,7 @@ namespace MediaPortal.TV.Recording
           _commandProcessor.AddCommand(cmd);
         }
         //wait till thread finished this command
-        while (_commandProcessor.IsBusy)
-        {
-          GUIWindowManager.Process();
-          System.Threading.Thread.Sleep(10);
-        }
+        _commandProcessor.WaitTillFinished();
       }
       finally
       {
@@ -1047,11 +1042,7 @@ namespace MediaPortal.TV.Recording
             if (_commandProcessor == null) return;
             StopTimeShiftingCommand cmd = new StopTimeShiftingCommand();
             _commandProcessor.AddCommand(cmd);
-            while (_commandProcessor.IsBusy)
-            {
-              GUIWindowManager.Process();
-              System.Threading.Thread.Sleep(10);
-            }
+            _commandProcessor.WaitTillFinished();
           }
 
           break;

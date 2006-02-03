@@ -152,6 +152,14 @@ namespace MediaPortal.TV.Recording
         return (_listCommands.Count > 0);
       }
     }
+    public virtual void WaitTillFinished()
+    {
+       while (IsBusy)
+      {
+        GUIWindowManager.Process();
+        System.Threading.Thread.Sleep(10);
+      }
+    }
 
     public bool Paused
     {
