@@ -80,6 +80,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    static public void Write(Exception ex)
+    {
+      Write("Exception:\t\n {0} {1} {2} ", ex.Message, ex.Source, ex.StackTrace);
+    }
+
     /// <summary>
     /// Write a string to the logfile.
     /// </summary>
