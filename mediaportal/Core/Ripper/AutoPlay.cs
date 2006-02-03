@@ -255,39 +255,39 @@ namespace MediaPortal.Ripper
       GUIMessage msg;
       switch (DetectMediaType(strDrive))
       {
-        case MediaType.DVD:
-          Log.Write("ExamineCD: DVD inserted into drive {0}", strDrive);
+        //case MediaType.DVD:
+        //  Log.Write("ExamineCD: DVD inserted into drive {0}", strDrive);
 
-          bool PlayDVD = false;
-          if (m_dvd == "Yes")
-          {
-            // Automaticaly play the CD
-            PlayDVD = true;
-            Log.Write("DVD Autoplay = auto");
-          }
-          else if (m_dvd == "Ask")
-          {
-            if (ShouldWeAutoPlay(MediaType.DVD))
-            {
-              PlayDVD = true;
-              Log.Write("DVD Autoplay = ask,answer = yes");
-            }
-            else
-            {
-              Log.Write("DVD Autoplay = ask, answer = no");
-            }
-          }
-          if (PlayDVD)
-          {
-            // dont interrupt if we're already playing
-            if (g_Player.Playing && g_Player.IsDVD) return;
+        //  bool PlayDVD = false;
+        //  if (m_dvd == "Yes")
+        //  {
+        //    // Automaticaly play the CD
+        //    PlayDVD = true;
+        //    Log.Write("DVD Autoplay = auto");
+        //  }
+        //  else if (m_dvd == "Ask")
+        //  {
+        //    if (ShouldWeAutoPlay(MediaType.DVD))
+        //    {
+        //      PlayDVD = true;
+        //      Log.Write("DVD Autoplay = ask,answer = yes");
+        //    }
+        //    else
+        //    {
+        //      Log.Write("DVD Autoplay = ask, answer = no");
+        //    }
+        //  }
+        //  if (PlayDVD)
+        //  {
+        //    // dont interrupt if we're already playing
+        //    if (g_Player.Playing && g_Player.IsDVD) return;
 
-            // We are going to autoplay if..
-            //Log.Write ("We seem to want to play the DVD");
-            Log.Write("Autoplay:start DVD in {0}", strDrive);
-            g_Player.PlayDVD(strDrive + @"\VIDEO_TS\VIDEO_TS.IFO");
-          }
-          break;
+        //    // We are going to autoplay if..
+        //    //Log.Write ("We seem to want to play the DVD");
+        //    Log.Write("Autoplay:start DVD in {0}", strDrive);
+        //    g_Player.PlayDVD(strDrive + @"\VIDEO_TS\VIDEO_TS.IFO");
+        //  }
+        //  break;
 
         case MediaType.AUDIO_CD:
           Log.Write("ExamineCD: Audio CD inserted into drive {0}", strDrive);
