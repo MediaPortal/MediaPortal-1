@@ -21,6 +21,7 @@ namespace MediaPortal.Tests.Support
       }
     }
 
+    [Explicit]
     [Test]
     public void CreateLog()
     {
