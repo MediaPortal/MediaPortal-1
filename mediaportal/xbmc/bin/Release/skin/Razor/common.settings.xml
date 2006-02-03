@@ -11,12 +11,38 @@
 			<texture>background.png</texture>
 		</control>
 		<control>
+			<description>menu background image</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>48</posX>
-			<posY>390</posY>
-			<texture>#header.hover</texture>
+			<posX>-30</posX>
+			<posY>-15</posY>
+			<width>191</width>
+			<height>774</height>
+			<texture>background_glass_hoover_area.png</texture>
+			<visible>yes</visible>
 		</control>
+	<control>
+		<description>Date</description>
+		<type>label</type>
+		<id>200</id>
+		<posX>1265</posX>
+		<posY>5</posY>
+		<label>#date</label>
+		<align>right</align>
+		<font>font13</font>
+		<textcolor>ff74aaba</textcolor>
+	</control>
+	<control>
+		<description>Time</description>
+		<type>label</type>
+		<id>201</id>
+		<posX>1265</posX>
+		<posY>28</posY>
+		<label>#time</label>
+		<align>right</align>
+		<font>font18</font>
+		<textcolor>ffb9d5dd</textcolor>
+	</control>
 		<control>
 			<type>image</type>
 			<description>MP	Logo</description>
@@ -26,13 +52,15 @@
 			<texture>mplogo.png</texture>
 		</control>
 		<control>
-			<type>label</type>
-			<description>e.g. Setup TV</description>
+			<type>image</type>
 			<id>1</id>
-			<posX>32</posX>
-			<posY>96</posY>
-			<label>#header.label</label>
-			<font>font18</font>
+			<posX>50</posX>
+			<posY>490</posY>
+			<width>180</width>
+			<height>180</height>
+			<keepaspectratio>yes</keepaspectratio> 
+			<centered>yes</centered>
+			<texture>#header.hover</texture>
 		</control>
 	</controls>
 </window>

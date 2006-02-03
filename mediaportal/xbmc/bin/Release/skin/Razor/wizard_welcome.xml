@@ -2,15 +2,10 @@
    <id>615</id>
    <defaultcontrol>5</defaultcontrol>
    <allowoverlay>yes</allowoverlay>
+   <define>#header.hover:hover_settings.png</define>
+   <define>#header.label:</define>
    <controls>
-      <control>
-         <type>image</type>
-         <description>BG</description>
-         <id>1</id>
-         <posX>0</posX>
-         <posY>0</posY>
-         <texture>background.png</texture>
-      </control>
+	<import>common.window.xml</import>
       <control>
          <type>label</type>
          <description>MediaPortal turns your PC in a very advanced Multi-Media Center / HTPC.</description>
@@ -55,13 +50,6 @@
          <posY>242</posY>
          <label>200014</label>
          <font>font12</font>
-      </control>
-      <control>
-         <type>image</type>
-         <id>1</id>
-         <posX>48</posX>
-         <posY>390</posY>
-         <texture>hover_settings.png</texture>
       </control>
       <control>
          <type>image</type>

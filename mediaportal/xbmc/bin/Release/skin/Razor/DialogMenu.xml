@@ -1,18 +1,18 @@
 <window>
   <id>2012</id> 
   <defaultcontrol>3</defaultcontrol> 
-  <allowoverlay>yes</allowoverlay>
+  <allowoverlay>no</allowoverlay>
     <controls>
     <control>
-		<description>background image</description>
-		<type>image</type>
-		<id>1</id>
-		<posX>0</posX>
-		<posY>0</posY>
-		<width>1280</width>
-		<height>720</height>
-		<texture>translucent_background.png</texture>
-	</control>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1280</width>
+      <height>720</height>
+      <texture>translucent_background.png</texture>
+    </control>
+    
  	<control>
   	<type>image</type> 
 	<id>0</id> 

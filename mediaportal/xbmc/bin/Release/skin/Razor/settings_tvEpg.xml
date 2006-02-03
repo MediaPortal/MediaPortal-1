@@ -37,6 +37,14 @@
          <label>TV Setup</label>
          <font>font18</font>
       </control>
+     <control>
+       <type>label</type>
+       <description>Grab EPG from DVB transmission for the following channels</description>
+       <id>1</id>
+       <posX>260</posX>
+       <posY>96</posY>
+       <label>Update TVGuide from the following DVB channels:</label>
+     </control>
       <control>
          <type>group</type>
          <layout>StackLayout</layout>
@@ -68,6 +76,7 @@
        <type>checklistcontrol</type>
        <id>10</id>
        <width>425</width>
+       <posY>140</posY>
        <height>370</height>
        <textXOff>50</textXOff>
        <textYOff>2</textYOff>

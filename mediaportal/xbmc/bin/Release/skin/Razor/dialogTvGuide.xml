@@ -1,12 +1,40 @@
 <window>
-	<id>600</id>
+	<id>761</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
-	<define>#header.label:4</define>
-	<define>#header.image:tv_logo.png</define>
-	<define>#header.hover:hover_my tv.png</define>
-	<controls>
-		<import>common.window.xml</import>	
+<controls>
+    <control>
+		<description>background image</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>1280</width>
+		<height>720</height>
+		<texture>translucent_background.png</texture>
+	</control>	
+	<control>
+		<description>Time</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>690</posX>
+		<posY>50</posY>
+		<label>#time</label>
+		<align>right</align>
+		<font>font13</font>
+		<textcolor>ffa9d0f7</textcolor>
+	</control>
+	<control>
+		<description>Guide Text Label</description>
+		<type>label</type>
+		<id>1</id>
+		<posX>400</posX>
+		<posY>40</posY>
+		<label>4</label>
+		<font>font16</font>
+		<align>right</align>
+		<textcolor>FFFFFFFF</textcolor>
+	</control>
 	<control>
 		<description>TVGUIDE Panel</description>
 		<type>image</type>
@@ -78,10 +106,10 @@
 		<description>Channel template</description>
 		<type>image</type>
 		<id>20</id>
-		<posX>20</posX>
-		<posY>135</posY>
-		<width>170</width>
-		<height>30</height>
+		<posX>62</posX>
+		<posY>125</posY>
+		<width>124</width>
+		<height>34</height>
 	</control>
 	<control>
 		<description>Channel image template</description>
@@ -101,7 +129,7 @@
 		<type>label</type>
 		<id>18</id>
 		<posX>35</posX>
-		<posY>0</posY>
+		<posY>5</posY>
 		<width>65</width>
 		<height>15</height>
 		<font>font13</font>
@@ -111,25 +139,47 @@
 		<description>Current program title</description>
 		<type>fadelabel</type>
 		<id>13</id>
-		<posX>20</posX>
-		<posY>560</posY>
-		<width>600</width>
+		<posX>250</posX>
+		<posY>420</posY>
+		<width>350</width>
 		<align>left</align>
-		<label>#TV.Guide.Title (#TV.Guide.Time)  |  #TV.Guide.Genre</label>
-		<font>font13</font>
+		<label>#TV.Guide.Title</label>
+		<font>font16</font>
 		<textcolor>FFFFFFFF</textcolor>
+	</control>
+	<control>
+		<description>Current program time</description>
+		<type>label</type>
+		<id>14</id>
+		<posX>250</posX>
+		<posY>530</posY>
+		<label>#TV.Guide.Time</label>
+		<align>left</align>
+		<font>font16</font>
+		<textcolor>FFB2D4F5</textcolor>
+	</control>
+	<control>
+		<description>Current program genre</description>
+		<type>label</type>
+		<id>27</id>
+		<posX>470</posX>
+		<posY>530</posY>
+		<label>#TV.Guide.Genre</label>
+		<align>left</align>
+		<font>font16</font>
+		<textcolor>FFB2D4F5</textcolor>
 	</control>
 	<control>
 		<description>Description1</description>
 		<type>textboxscrollup</type>
 		<id>15</id>
-		<posX>20</posX>
-		<posY>590</posY>
-		<width>600</width> 
-		<height>100</height>
+		<posX>250</posX>
+		<posY>450</posY>
+		<width>400</width> 
+		<height>65</height>
 <seperator>----------------------------------------------------------------------------------------------</seperator>
 		<label>#TV.Guide.Description</label>
-		<font>font11</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>	
 <!--	<control>
@@ -150,6 +200,16 @@
 		<textcolor>FF101010</textcolor>
 	</control>
 	<control>
+		<description>vertical timeline</description>
+		<type>image</type>
+		<id>25</id>
+		<posX>30</posX>
+		<posY>127</posY>
+		<height>406</height>
+		<colordiffuse>c0ffffff</colordiffuse>
+		<texture>tvguide_slider.png</texture>
+	</control>
+	<control>
 		<description>template for program title darkarea </description>
 		<type>label</type>
 		<visible>no</visible>
@@ -159,34 +219,14 @@
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 <!--	<control>
-		<description>template for genre dark area</description>
+		<description>template for genre  dark area</description>
 		<type>label</type>
 		<visible>no</visible>
 		<id>30</id>
 		<label>-</label>
-		<font>font12</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control> -->
-	<control>
-		<description>Horizontal scrollbar</description>
-		<type>hscrollbar</type>
-		<id>28</id>
-		<posX>20</posX>
-		<posY>520</posY>
-		<width>1225</width>
-		<height>20</height>
-		<visible>no</visible>
-	</control>	
-	<control>
-		<description>Vertical scrollbar</description>
-		<type>vscrollbar</type>
-		<id>29</id>
-		<posX>1250</posX>
-		<posY>135</posY>
-		<width>20</width>
-		<height>294</height>
-		<visible>no</visible>
-	</control>	
 	<control>
 		<description>record pin</description>
 		<type>image</type>
@@ -196,15 +236,5 @@
 		<texture>tvguide_record_button.png</texture>
 		<visible>no</visible>
 	</control>
-		<control>
-		<description>vertical timeline</description>
-		<type>image</type>
-		<id>25</id>
-		<posX>30</posX>
-		<posY>127</posY>
-		<height>406</height>
-		<colordiffuse>c0ffffff</colordiffuse>
-		<texture>tvguide_slider.png</texture>
-	</control>	
 </controls>
 </window>

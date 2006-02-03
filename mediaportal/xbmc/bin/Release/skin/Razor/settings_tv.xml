@@ -28,11 +28,6 @@
 			</control>
 			<control>
 				<type>button</type>
-				<id>26</id>
-				<label>Video Renderer</label>
-			</control>
-			<control>
-				<type>button</type>
 				<id>27</id>
 				<label>Deinterlacing</label>
 			</control>
@@ -66,8 +61,14 @@
       <control>
         <type>button</type>
         <id>34</id>
-        <label>EPG</label>
+        <label>DVB EPG</label>
         <hyperlink>706</hyperlink>
+      </control>
+      <control>
+        <type>button</type>
+        <id>35</id>
+        <label>XMLTV EPG grabber</label>
+        <hyperlink>707</hyperlink>
       </control>
 		</control>
 	</controls>

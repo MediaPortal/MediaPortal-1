@@ -16,7 +16,7 @@
 			<description>group element</description>
 			<animation>FlyInFromTop</animation>
 			<layout>StackLayout</layout>
-			<posX>280</posX>
+			<posX>370</posX>
 			<posY>165</posY>
 
 			<!-- topmost item needs an onup with a value of 17 for topbar to work -->
@@ -24,7 +24,7 @@
 				<description>Wizard</description>
 				<type>button</type>
 				<id>3</id>
-				<width>197</width>
+				<width>500</width>
 				<label>Setup Wizard</label>
 				<hyperlink>615</hyperlink>
 				<onup>17</onup>
@@ -33,7 +33,7 @@
 				<description>General</description>
 				<type>button</type>
 				<id>4</id>
-				<width>197</width>
+				<width>500</width>
 				<label>128</label>
 				<hyperlink>705</hyperlink>
 			</control>
@@ -41,7 +41,7 @@
 				<description>Screen</description>
 				<type>button</type>
 				<id>5</id>
-				<width>197</width>
+				<width>500</width>
 				<label>214</label>
 				<hyperlink>9</hyperlink>
 			</control>
@@ -49,7 +49,7 @@
 				<description>My Music</description>
 				<type>button</type>
 				<id>6</id>
-				<width>197</width>
+				<width>500</width>
 				<label>2</label>
 				<hyperlink>14</hyperlink>
 			</control>
@@ -57,7 +57,7 @@
 				<description>My Pictures</description>
 				<type>button</type>
 				<id>7</id>
-				<width>197</width>
+				<width>500</width>
 				<label>1</label>
 				<hyperlink>12</hyperlink>
 			</control>
@@ -65,7 +65,7 @@
 				<description>Movies</description>
 				<type>button</type>
 				<id>8</id>
-				<width>197</width>
+				<width>500</width>
 				<label>3</label>
 				<hyperlink>703</hyperlink>
 			</control>
@@ -73,7 +73,7 @@
 				<description>My DVD</description>
 				<type>button</type>
 				<id>9</id>
-				<width>197</width>
+				<width>500</width>
 				<label>1027</label>
 				<hyperlink>704</hyperlink>
 			</control>
@@ -83,7 +83,7 @@
 				<description>TV</description>
 				<type>button</type>
 				<id>10</id>
-				<width>197</width>
+				<width>500</width>
 				<label>605</label>
 				<hyperlink>700</hyperlink>
 				<ondown>3</ondown>

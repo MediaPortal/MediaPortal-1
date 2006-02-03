@@ -1,7 +1,7 @@
  <window>
   <id>3000</id> 
   <defaultcontrol>2</defaultcontrol> 
- <controls>
+  <controls>
 	<control>
 		<description>now playing label</description>
 		<type>label</type>
