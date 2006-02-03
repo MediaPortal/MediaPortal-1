@@ -266,6 +266,7 @@
     </Compile>
     <Compile Include="SplashScreen.cs">
     </Compile>
+    <Compile Include="User32.cs" />
     <EmbeddedResource Include="CodecsForm.resx">
       <DependentUpon>CodecsForm.cs</DependentUpon>
     </EmbeddedResource>
