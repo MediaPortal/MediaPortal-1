@@ -31,16 +31,15 @@ namespace MediaPortal.Configuration.Sections
       this.components = new System.ComponentModel.Container();
       this.listViewPlugins = new MediaPortal.UserInterface.Controls.MPListView();
       this.imageListPlugins = new System.Windows.Forms.ImageList(this.components);
+      this.mpTextBoxPluginInfo = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.SuspendLayout();
       // 
       // listViewPlugins
       // 
-      this.listViewPlugins.Dock = System.Windows.Forms.DockStyle.Fill;
       this.listViewPlugins.Location = new System.Drawing.Point(0, 0);
       this.listViewPlugins.Name = "listViewPlugins";
-      this.listViewPlugins.Size = new System.Drawing.Size(472, 408);
+      this.listViewPlugins.Size = new System.Drawing.Size(472, 324);
       this.listViewPlugins.TabIndex = 0;
-      this.listViewPlugins.TileSize = new System.Drawing.Size(168, 64);
       this.listViewPlugins.UseCompatibleStateImageBehavior = false;
       // 
       // imageListPlugins
@@ -49,14 +48,24 @@ namespace MediaPortal.Configuration.Sections
       this.imageListPlugins.ImageSize = new System.Drawing.Size(32, 32);
       this.imageListPlugins.TransparentColor = System.Drawing.Color.Transparent;
       // 
+      // mpTextBoxPluginInfo
+      // 
+      this.mpTextBoxPluginInfo.Location = new System.Drawing.Point(0, 356);
+      this.mpTextBoxPluginInfo.Multiline = true;
+      this.mpTextBoxPluginInfo.Name = "mpTextBoxPluginInfo";
+      this.mpTextBoxPluginInfo.Size = new System.Drawing.Size(472, 52);
+      this.mpTextBoxPluginInfo.TabIndex = 1;
+      // 
       // PluginsNew
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpTextBoxPluginInfo);
       this.Controls.Add(this.listViewPlugins);
       this.Name = "PluginsNew";
       this.Size = new System.Drawing.Size(472, 408);
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
@@ -64,6 +73,7 @@ namespace MediaPortal.Configuration.Sections
 
     private MediaPortal.UserInterface.Controls.MPListView listViewPlugins;
     private System.Windows.Forms.ImageList imageListPlugins;
+    private MediaPortal.UserInterface.Controls.MPTextBox mpTextBoxPluginInfo;
 
 
   }

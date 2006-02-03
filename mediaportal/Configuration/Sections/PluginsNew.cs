@@ -24,18 +24,35 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using MediaPortal.Configuration.Controls;
+using System.IO;
+using System.Reflection;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 
 namespace MediaPortal.Configuration.Sections
 {
   public partial class PluginsNew : MediaPortal.Configuration.SectionSettings
   {
+    private ArrayList loadedPlugins = new ArrayList();
+    private ArrayList availablePlugins = new ArrayList();
+    bool isLoaded = false;
+
+    private class ItemTag
+    {
+      public string DLLName;
+      public ISetupForm SetupForm;
+      public string strType = string.Empty;
+      public int windowId = -1;
+    }
+
     public PluginsNew()
       : this("PluginsNew")
     {
@@ -47,13 +64,17 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
-      //ListViewItem item = new ListViewItem();
-      //ImageList imageList = new ImageList();
-      //imageList.Images.Add(Image.FromFile("mplogo.gif"));
-      ////item.ImageList.Images = imageList;
-      //item.Text = "Test";
-      //item.Tag = null;
+      listViewPlugins.View = View.LargeIcon;
+      listViewPlugins.AutoArrange = true;
+      ImageList imageList = new ImageList();
+      imageList.Images.Add(Bitmap.FromFile("plugin_raw.png"));
+      imageList.ImageSize = new Size(64, 64);
+      listViewPlugins.LargeImageList = imageList;
+
+      //ListViewItem item = new ListViewItem("item1", 0);
       //listViewPlugins.Items.Add(item);
+
+
       try
       {
         
@@ -69,79 +90,255 @@ namespace MediaPortal.Configuration.Sections
         Log.Write("Exception: ex.TargetSite     - {0}", ex.TargetSite);
         Log.Write("Exception: ex                - {0}", ex.ToString());
       }
-
-      CreateMyListView();
-      
     }
 
-    private void CreateMyListView()
+    public override void OnSectionActivated()
     {
-      // Create a new ListView control.
-      //ListView listViewPlugins = new ListView();
-      //listViewPlugins.Bounds = new Rectangle(new Point(10, 10), new Size(300, 200));
-
-      // Set the view to show details.
-      listViewPlugins.View = View.LargeIcon;
-      // Allow the user to edit item text.
-      //listViewPlugins.LabelEdit = true;
-      // Allow the user to rearrange columns.
-      //listViewPlugins.AllowColumnReorder = true;
-      // Display check boxes.
-      listViewPlugins.CheckBoxes = false;
-      // Select the item and subitems when selection is made.
-      //listViewPlugins.FullRowSelect = true;
-      // Display grid lines.
-      //listViewPlugins.GridLines = true;
-      // Sort the items in the list in ascending order.
-      //listViewPlugins.Sorting = SortOrder.Ascending;
-
-      // Create three items and three sets of subitems for each item.
-      ListViewItem item1 = new ListViewItem("item1", 0);
-      // Place a check mark next to the item.
-      //item1.Checked = true;
-      //item1.SubItems.Add("1");
-      //item1.SubItems.Add("2");
-      //item1.SubItems.Add("3");
-      ListViewItem item2 = new ListViewItem("item2", 1);
-      //item2.SubItems.Add("4");
-      //item2.SubItems.Add("5");
-      //item2.SubItems.Add("6");
-      ListViewItem item3 = new ListViewItem("item3", 0);
-      // Place a check mark next to the item.
-      //item3.Checked = true;
-      //item3.SubItems.Add("7");
-      //item3.SubItems.Add("8");
-      //item3.SubItems.Add("9");
-
-      // Create columns for the items and subitems.
-      //listViewPlugins.Columns.Add("Item Column", -2, HorizontalAlignment.Left);
-      //listViewPlugins.Columns.Add("Column 2", -2, HorizontalAlignment.Left);
-      //listViewPlugins.Columns.Add("Column 3", -2, HorizontalAlignment.Left);
-      //listViewPlugins.Columns.Add("Column 4", -2, HorizontalAlignment.Center);
-
-      //Add the items to the ListView.
-      listViewPlugins.Items.AddRange(new ListViewItem[] { item1, item2, item3 });
-
-      // Create two ImageList objects.
-      //ImageList imageListSmall = new ImageList();
-      ImageList imageListLarge = new ImageList();
-
-      // Initialize the ImageList objects with bitmaps.
-      //imageListSmall.Images.Add(Bitmap.FromFile("plugin_raw.png"));
-      //imageListSmall.Images.Add(Bitmap.FromFile("plugin_raw.png"));
-      imageListLarge.Images.Add(Bitmap.FromFile("plugin_raw.png"));
-      imageListLarge.Images.Add(Bitmap.FromFile("plugin_raw.png"));
-
-      imageListLarge.ImageSize = new Size(64, 64);
-
-      //Assign the ImageList objects to the ListView.
-      listViewPlugins.LargeImageList = imageListLarge;
-
-      //listViewPlugins.SmallImageList = imageListSmall;
-      listViewPlugins.StateImageList = imageListLarge;
-
-      // Add the ListView to the control collection.
-      this.Controls.Add(listViewPlugins);
+      base.OnSectionActivated();
+      LoadAll();
     }
+
+    private void LoadAll()
+    {
+      if (!isLoaded)
+      {
+        isLoaded = true;
+        //
+        // Enumerate available plugins
+        //
+        EnumeratePlugins();
+
+        //
+        // Load plugins
+        //
+        LoadPlugins();
+
+        //
+        // Populate our list
+        //
+        PopulateListView();
+        LoadSettings();
+      }
+    }
+
+    private void EnumeratePlugins()
+    {
+      EnumeratePluginDirectory(@"plugins\windows");
+      EnumeratePluginDirectory(@"plugins\subtitle");
+      EnumeratePluginDirectory(@"plugins\tagreaders");
+      EnumeratePluginDirectory(@"plugins\externalplayers");
+      EnumeratePluginDirectory(@"plugins\process");
+    }
+
+    private void EnumeratePluginDirectory(string directory)
+    {
+      if (Directory.Exists(directory))
+      {
+        //
+        // Enumerate files
+        //
+        string[] files = Directory.GetFiles(directory, "*.dll");
+
+        //
+        // Add to list
+        //
+        foreach (string file in files)
+        {
+          availablePlugins.Add(file);
+        }
+      }
+    }
+
+    private void PopulateListView()
+    {
+      foreach (ItemTag tag in loadedPlugins)
+      {
+        ListViewItem item = new ListViewItem(tag.SetupForm.PluginName(), 0);
+        listViewPlugins.Items.Add(item);
+
+        //ds.Tables[0].Rows.Add(new object[] { true, true, false, tag.SetupForm.PluginName(), tag.SetupForm.Author(), tag.SetupForm.Description(), tag });
+      }
+    }
+
+    private void LoadPlugins()
+    {
+      foreach (string pluginFile in availablePlugins)
+      {
+        try
+        {
+          Assembly pluginAssembly = Assembly.LoadFrom(pluginFile);
+
+          if (pluginAssembly != null)
+          {
+            Type[] exportedTypes = pluginAssembly.GetExportedTypes();
+
+            foreach (Type type in exportedTypes)
+            {
+              // an abstract class cannot be instanciated
+              if (type.IsAbstract)
+              {
+                continue;
+              }
+              //
+              // Try to locate the interface we're interested in
+              //
+              if (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
+              {
+                try
+                {
+                  //
+                  // Create instance of the current type
+                  //
+                  object pluginObject = Activator.CreateInstance(type);
+                  ISetupForm pluginForm = pluginObject as ISetupForm;
+
+                  if (pluginForm != null)
+                  {
+                    ItemTag tag = new ItemTag();
+                    tag.SetupForm = pluginForm;
+                    tag.DLLName = pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1);
+                    tag.windowId = pluginForm.GetWindowId();
+                    loadedPlugins.Add(tag);
+                  }
+                }
+                catch (Exception setupFormException)
+                {
+                  Log.Write("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
+                  Log.Write("Current class is :{0}", type.FullName);
+#if DEBUG
+                  Log.Write(setupFormException.StackTrace);
+#endif
+                }
+              }
+            }
+            foreach (Type t in exportedTypes)
+            {
+              try
+              {
+                if (t.IsClass)
+                {
+                  if (t.IsSubclassOf(typeof(GUIWindow)))
+                  {
+                    object newObj = Activator.CreateInstance(t);
+                    GUIWindow win = (GUIWindow)newObj;
+
+                    foreach (ItemTag tag in loadedPlugins)
+                    {
+                      if (tag.windowId == win.GetID)
+                      {
+                        tag.strType = win.GetType().ToString();
+                        break;
+                      }
+                    }
+                  }
+                }
+              }
+              catch (Exception guiWindowException)
+              {
+                Log.Write("Exception in plugin GUIWindows loading :{0}", guiWindowException.Message);
+                Log.Write("Current class is :{0}", t.FullName);
+#if DEBUG
+                Log.Write(guiWindowException.StackTrace);
+#endif
+              }
+            }
+          }
+        }
+        catch (Exception unknownException)
+        {
+          Log.Write("Exception in plugin loading :{0}", unknownException.Message);
+#if DEBUG
+          Log.Write(unknownException.StackTrace);
+#endif
+        }
+      }
+    }
+
+
+    public override void LoadSettings()
+    {
+      //try
+      //{
+      //  using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      //  {
+      //    foreach (DataRow row in ds.Tables[0].Rows)
+      //    {
+      //      ItemTag itemTag = row["tag"] as ItemTag;
+
+      //      if (itemTag.SetupForm != null)
+      //      {
+      //        if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
+      //        {
+      //          row["bool1"] = xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
+      //        }
+      //        else
+      //        {
+      //          row["bool1"] = itemTag.SetupForm.DefaultEnabled();
+      //        }
+
+      //        bool bHome = false;
+      //        bool bPlugins = false;
+      //        row["bool2"] = bHome;
+      //        row["bool2"] = bPlugins;
+      //        string buttontxt, buttonimage, buttonimagefocus, picture;
+      //        if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
+      //        {
+      //          if (itemTag.SetupForm.GetHome(out buttontxt, out buttonimage, out buttonimagefocus, out picture))
+      //          {
+      //            bHome = true;
+      //            row["bool2"] = xmlreader.GetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
+      //            row["bool3"] = xmlreader.GetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
+      //          }
+      //        }
+      //      }
+      //    }
+      //  }
+      //}
+      //catch (Exception) { }
+    }
+
+
+    public override void SaveSettings()
+    {
+      //LoadAll();
+      //try
+      //{
+      //  using (Settings xmlwriter = new Settings("MediaPortal.xml"))
+      //  {
+      //    foreach (DataRow row in ds.Tables[0].Rows)
+      //    {
+      //      ItemTag itemTag = row["tag"] as ItemTag;
+
+      //      bool bEnabled = (bool)row["bool1"];
+      //      bool bHome = (bool)row["bool2"];
+      //      bool bPlugins = (bool)row["bool3"];
+      //      if (itemTag.SetupForm != null)
+      //      {
+      //        if (itemTag.SetupForm.DefaultEnabled() && !itemTag.SetupForm.CanEnable())
+      //        {
+      //          bEnabled = true;
+      //        }
+      //      }
+      //      else
+      //      {
+      //        bEnabled = true;
+      //      }
+      //      xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), bEnabled);
+      //      xmlwriter.SetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
+      //      xmlwriter.SetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
+      //      xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DLLName, bEnabled);
+      //      if (itemTag.strType != String.Empty)
+      //      {
+      //        xmlwriter.SetValueAsBool("pluginswindows", itemTag.strType, bEnabled);
+      //      }
+      //    }
+      //  }
+      //}
+      //catch (Exception) { }
+    }
+
+
+
+
   }
 }
