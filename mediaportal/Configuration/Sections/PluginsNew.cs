@@ -64,20 +64,8 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
-      listViewPlugins.View = View.LargeIcon;
-      listViewPlugins.AutoArrange = true;
-      ImageList imageList = new ImageList();
-      imageList.Images.Add(Bitmap.FromFile("plugin_raw.png"));
-      imageList.ImageSize = new Size(64, 64);
-      listViewPlugins.LargeImageList = imageList;
-
-      //ListViewItem item = new ListViewItem("item1", 0);
-      //listViewPlugins.Items.Add(item);
-
-
       try
       {
-        
       }
       catch (Exception ex)
       {
@@ -153,11 +141,27 @@ namespace MediaPortal.Configuration.Sections
     {
       foreach (ItemTag tag in loadedPlugins)
       {
-        ListViewItem item = new ListViewItem(tag.SetupForm.PluginName(), 0);
+        int category = 0;
+        if (tag.strType != "Process")
+          category = 1;
+        ListViewItem item;
+        if (category == 0)
+        {
+          item = new ListViewItem(tag.SetupForm.PluginName(), 0, listViewPlugins.Groups["listViewGroupProcess"]);
+          item.Tag = tag;
+        }
+        else
+        {
+          item = new ListViewItem(tag.SetupForm.PluginName(), 1, listViewPlugins.Groups["listViewGroupWindow"]);
+          item.Tag = tag;
+        }
         listViewPlugins.Items.Add(item);
+        
 
         //ds.Tables[0].Rows.Add(new object[] { true, true, false, tag.SetupForm.PluginName(), tag.SetupForm.Author(), tag.SetupForm.Description(), tag });
       }
+      //listViewPlugins.Items.Add(groupProcess);
+      //listViewPlugins.Items.Add(groupWindow);
     }
 
     private void LoadPlugins()
@@ -194,10 +198,13 @@ namespace MediaPortal.Configuration.Sections
 
                   if (pluginForm != null)
                   {
+	
+
                     ItemTag tag = new ItemTag();
                     tag.SetupForm = pluginForm;
                     tag.DLLName = pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1);
                     tag.windowId = pluginForm.GetWindowId();
+                    tag.strType = "Process";
                     loadedPlugins.Add(tag);
                   }
                 }
@@ -335,6 +342,69 @@ namespace MediaPortal.Configuration.Sections
       //  }
       //}
       //catch (Exception) { }
+    }
+
+    private void listViewPlugins_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      ListView.SelectedListViewItemCollection selectedItems = listViewPlugins.SelectedItems;
+
+      foreach (ListViewItem item in selectedItems)
+      {
+        ItemTag tag = new ItemTag();
+        tag = (ItemTag)item.Tag;
+        mpLabelPluginName.Text = String.Format("{0}", tag.SetupForm.PluginName());
+        mpLabelAuthor.Text = String.Format("written by {0}", tag.SetupForm.Author());
+        mpLabelDescription.Text = String.Format("{0}", tag.SetupForm.Description());
+        mpGroupBoxPluginInfo.Visible = true;
+
+        //ds.Tables[0].Rows.Add(new object[] { true, true, false, tag.SetupForm.PluginName(), tag.SetupForm.Author(), tag.SetupForm.Description(), tag });
+      }
+
+    }
+
+    private void mpButtonLargeIcon_Click(object sender, EventArgs e)
+    {
+      listViewPlugins.View = View.LargeIcon;
+    }
+
+    private void mpButtonList_Click(object sender, EventArgs e)
+    {
+      listViewPlugins.View = View.List;
+    }
+
+    private void mpButtonSmallIcon_Click(object sender, EventArgs e)
+    {
+      listViewPlugins.View = View.SmallIcon;
+    }
+
+    private void mpButtonDetails_Click(object sender, EventArgs e)
+    {
+      listViewPlugins.View = View.Details;
+    }
+
+    private void mpButtonTile_Click(object sender, EventArgs e)
+    {
+      listViewPlugins.View = View.Tile;
+    }
+
+    private void listViewPlugins_DoubleClick(object sender, EventArgs e)
+    {
+      ListView.SelectedListViewItemCollection selectedItems = listViewPlugins.SelectedItems;
+
+      foreach (ListViewItem item in selectedItems)
+      {
+        ItemTag tag = new ItemTag();
+        tag = (ItemTag)item.Tag;
+
+        if (tag.SetupForm != null)
+        {
+          if (tag.SetupForm.HasSetup())
+          {
+            tag.SetupForm.ShowPlugin();
+            return;
+          }
+        }
+      }
     }
 
 
