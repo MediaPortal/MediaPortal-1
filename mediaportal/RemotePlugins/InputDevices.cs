@@ -30,16 +30,8 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.InputDevices
 {
-  public sealed class InputDevices
+  public static class InputDevices
   {
-    #region Constructors
-
-    private InputDevices()
-    {
-    }
-
-    #endregion Constructors
-
     #region Methods
 
     public static void Init(/* SplashScreen splashScreen */)
@@ -108,7 +100,7 @@ namespace MediaPortal.InputDevices
     static X10Remote X10Remote = new X10Remote();
     static IrTransListener IrTrans = new IrTransListener();
     static DirectInputHandler diRemote = new DirectInputHandler();
-    static MediaPortal.RemoteControls.FireDTVRemote FireDTVRemote = new MediaPortal.RemoteControls.FireDTVRemote();
+    static RemoteControls.FireDTVRemote FireDTVRemote = new RemoteControls.FireDTVRemote();
     static AppCommands _lastHidRequest;
     static int _lastHidRequestTick;
 
