@@ -72,6 +72,13 @@
     <Compile Include="Core\Playlists\PlayListWPLTest.cs" />
     <Compile Include="Core\UdpHelper\UdpHelperTest.cs" />
     <Compile Include="Core\InputDevices\InputHandlerTest.cs" />
+    <Compile Include="Support\DxDiagLogTests.cs" />
+    <Compile Include="Support\EventLogLoggerTests.cs" />
+    <Compile Include="Support\EventLogsTests.cs" />
+    <Compile Include="Support\ExceptionLoggerTests.cs" />
+    <Compile Include="Support\FileHelper.cs" />
+    <Compile Include="Support\HotFixInformationLoggerTests.cs" />
+    <Compile Include="Support\MediaPortalLogsTests.cs" />
     <Compile Include="TVCapture\Commands\TestCommandProcessor.cs" />
     <Compile Include="Plugins\ProcessPlugins\CallerId\ISDN\OutlookHelperTest.cs" />
     <Compile Include="TVCapture\Commands\TestMultiTunerStrategy.cs" />
@@ -98,6 +105,10 @@
     <ProjectReference Include="..\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MediaPortal.Support\MediaPortal.Support.csproj">
+      <Project>{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}</Project>
+      <Name>MediaPortal.Support</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProcessPlugins\ProcessPlugins.csproj">
       <Project>{3333B71D-6304-452C-BEA5-D037E7B3AA6B}</Project>
@@ -145,6 +156,9 @@
     <None Include="Core\Playlists\TestData\testSave.b4s">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Support\TestData\MediaPortal.log">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Core\guilib\TestData\MediaPortal.xml">
@@ -174,9 +188,13 @@
     <Content Include="InputDeviceMappings\defaults\TestVersion2.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="psloglist.exe" />
     <Content Include="sqlite.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Support\TestData\TestOutput\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
