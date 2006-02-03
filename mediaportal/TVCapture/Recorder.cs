@@ -1039,6 +1039,7 @@ namespace MediaPortal.TV.Recording
 */
         case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT:
           {
+            if (!IsTimeShifting()) return;
             if (_commandProcessor == null) return;
             StopTimeShiftingCommand cmd = new StopTimeShiftingCommand();
             _commandProcessor.AddCommand(cmd);
