@@ -14,8 +14,8 @@ namespace MediaPortal.Tests.Support
     public void LogEvents()
     {
       EventLogLogger logger = new EventLogLogger("Application");
-      logger.CreateLogs("TestData\\TestOutput");
-      Assert.IsTrue(File.Exists("TestData\\TestOutput\\Application_events.xml"));
+      logger.CreateLogs("Support\\TestData\\TestOutput");
+      Assert.IsTrue(File.Exists("Support\\TestData\\TestOutput\\Application_events.xml"));
     }
   }
 }

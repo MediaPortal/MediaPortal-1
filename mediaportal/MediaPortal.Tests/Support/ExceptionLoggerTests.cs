@@ -20,8 +20,8 @@ namespace MediaPortal.Tests.Support
       catch (Exception exc)
       {
         ILogCreator logger = new ExceptionLogger(exc);
-        logger.CreateLogs("TestData\\TestOutput");
-        Assert.IsTrue(File.Exists("TestData\\TestOutput\\exception.log"));
+        logger.CreateLogs("Support\\TestData\\TestOutput");
+        Assert.IsTrue(File.Exists("Support\\TestData\\TestOutput\\exception.log"));
       }
     }
   }

@@ -11,7 +11,7 @@ namespace MediaPortal.Tests.Support
   [TestFixture]
   public class EventLogsTests
   {
-    string outputDir = "TestData\\TestOutput\\";
+    string outputDir = "Support\\TestData\\TestOutput\\";
     string[] logNames = { "Application", "System" };
 
     private class MyProcRunner : ProcessRunner

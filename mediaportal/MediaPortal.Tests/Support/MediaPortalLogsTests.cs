@@ -11,7 +11,7 @@ namespace MediaPortal.Tests.Support
   public class MediaPortalLogsTests
   {
     string outputDir = "Support\\TestData\\TestOutput";
-    string logFile = "TestData\\TestOutput\\MediaPortal.log";
+    string logFile = "Support\\TestData\\TestOutput\\MediaPortal.log";
     [SetUp]
     public void Init()
     {

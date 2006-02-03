@@ -30,7 +30,7 @@ namespace MediaPortal.Tests.Support
       string tempFile = Environment.GetEnvironmentVariable("SystemDrive") + "\\_dxdiag.txt";
       FileHelper.Touch(tempFile);
 
-      dxlog.CreateLogs("TestData\\TestOutput");
+      dxlog.CreateLogs("Support\\TestData\\TestOutput");
 
       Assert.IsTrue(runner.Executable.EndsWith("dxdiag.exe"), "Wrong thing has been run!");
       Assert.IsTrue(runner.hasRun);

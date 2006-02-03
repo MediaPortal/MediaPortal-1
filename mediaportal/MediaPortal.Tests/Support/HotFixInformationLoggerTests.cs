@@ -14,8 +14,8 @@ namespace MediaPortal.Tests.Support
     public void HotFixLogger()
     {
       ILogCreator logger = new HotFixInformationLogger();
-      logger.CreateLogs("TestData\\TestOutput");
-      Assert.IsTrue(File.Exists("TestData\\TestOutput\\hotfixes.log"));
+      logger.CreateLogs("Support\\TestData\\TestOutput");
+      Assert.IsTrue(File.Exists("Support\\TestData\\TestOutput\\hotfixes.log"));
     }
   }
 }
