@@ -28,23 +28,32 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.listView1 = new System.Windows.Forms.ListView();
+      this.components = new System.ComponentModel.Container();
+      this.listViewPlugins = new MediaPortal.UserInterface.Controls.MPListView();
+      this.imageListPlugins = new System.Windows.Forms.ImageList(this.components);
       this.SuspendLayout();
       // 
-      // listView1
+      // listViewPlugins
       // 
-      this.listView1.Location = new System.Drawing.Point(40, 48);
-      this.listView1.Name = "listView1";
-      this.listView1.Size = new System.Drawing.Size(352, 256);
-      this.listView1.TabIndex = 0;
-      this.listView1.UseCompatibleStateImageBehavior = false;
-      this.listView1.View = System.Windows.Forms.View.SmallIcon;
+      this.listViewPlugins.Dock = System.Windows.Forms.DockStyle.Fill;
+      this.listViewPlugins.Location = new System.Drawing.Point(0, 0);
+      this.listViewPlugins.Name = "listViewPlugins";
+      this.listViewPlugins.Size = new System.Drawing.Size(472, 408);
+      this.listViewPlugins.TabIndex = 0;
+      this.listViewPlugins.TileSize = new System.Drawing.Size(168, 64);
+      this.listViewPlugins.UseCompatibleStateImageBehavior = false;
+      // 
+      // imageListPlugins
+      // 
+      this.imageListPlugins.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+      this.imageListPlugins.ImageSize = new System.Drawing.Size(32, 32);
+      this.imageListPlugins.TransparentColor = System.Drawing.Color.Transparent;
       // 
       // PluginsNew
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.listView1);
+      this.Controls.Add(this.listViewPlugins);
       this.Name = "PluginsNew";
       this.Size = new System.Drawing.Size(472, 408);
       this.ResumeLayout(false);
@@ -53,7 +62,9 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
-    private System.Windows.Forms.ListView listView1;
+    private MediaPortal.UserInterface.Controls.MPListView listViewPlugins;
+    private System.Windows.Forms.ImageList imageListPlugins;
+
 
   }
 }
