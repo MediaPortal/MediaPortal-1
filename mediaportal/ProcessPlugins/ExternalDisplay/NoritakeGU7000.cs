@@ -130,8 +130,8 @@ namespace ProcessPlugins.ExternalDisplay
       lines = _lines;
       try
       {
-        commPort = new SerialPort(_port, 19200, Parity.None, 8, StopBits.One);
-        commPort.Handshake = Handshake.None;
+        commPort = new SerialPort(_port, 38400, Parity.None, 8, StopBits.One);
+        commPort.Handshake = Handshake.RequestToSend;
         //enable RTS and DTR lines to power the display
         commPort.DtrEnable = true;
         commPort.RtsEnable = true;
