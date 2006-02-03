@@ -61,6 +61,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Tests", "MediaP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowLib", "DirectShowLib\DirectShowLib.csproj", "{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Support", "MediaPortal.Support\MediaPortal.Support.csproj", "{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPTestTool", "MPTestTool\MPTestTool.csproj", "{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -420,6 +424,7 @@ Global
 		{DF3AC5D1-762E-4807-8642-1AE773B65E07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DF3AC5D1-762E-4807-8642-1AE773B65E07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF3AC5D1-762E-4807-8642-1AE773B65E07}.Debug|x86.ActiveCfg = Debug|x86
+		{DF3AC5D1-762E-4807-8642-1AE773B65E07}.Debug|x86.Build.0 = Debug|x86
 		{DF3AC5D1-762E-4807-8642-1AE773B65E07}.Release (Standalone)|Any CPU.ActiveCfg = Release|Any CPU
 		{DF3AC5D1-762E-4807-8642-1AE773B65E07}.Release (Standalone)|Any CPU.Build.0 = Release|Any CPU
 		{DF3AC5D1-762E-4807-8642-1AE773B65E07}.Release (Standalone)|x86.ActiveCfg = Release|Any CPU
@@ -448,6 +453,40 @@ Global
 		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.UseCaptureDefintionsRelease|Any CPU.Build.0 = Release|Any CPU
 		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|Any CPU
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Debug|x86.ActiveCfg = Debug|x86
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Debug|x86.Build.0 = Debug|x86
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Release (Standalone)|Any CPU.ActiveCfg = Release|Any CPU
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Release (Standalone)|Any CPU.Build.0 = Release|Any CPU
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Release (Standalone)|x86.ActiveCfg = Release|Any CPU
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Release|x86.ActiveCfg = Release|x86
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.Release|x86.Build.0 = Release|x86
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|Any CPU
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.UseCaptureCardDefinitions|Any CPU.Build.0 = Release|Any CPU
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|Any CPU
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.UseCaptureDefintionsRelease|Any CPU.Build.0 = Release|Any CPU
+		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|Any CPU
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.Debug|x86.ActiveCfg = Debug|x86
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.Debug|x86.Build.0 = Debug|x86
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.Release (Standalone)|Any CPU.ActiveCfg = Release|Any CPU
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.Release (Standalone)|Any CPU.Build.0 = Release|Any CPU
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.Release (Standalone)|x86.ActiveCfg = Release|Any CPU
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.Release|x86.ActiveCfg = Release|x86
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.Release|x86.Build.0 = Release|x86
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.UseCaptureCardDefinitions|Any CPU.ActiveCfg = Release|Any CPU
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.UseCaptureCardDefinitions|Any CPU.Build.0 = Release|Any CPU
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|Any CPU
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.UseCaptureDefintionsRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.UseCaptureDefintionsRelease|Any CPU.Build.0 = Release|Any CPU
+		{D8CE9E74-73E0-4A54-9093-F5CE7FD630A1}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
