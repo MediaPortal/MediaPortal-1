@@ -7374,13 +7374,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
-        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner" checkdevice="true"></filter>
-        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"	checkdevice="true"></filter>
-        <filter cat="crossbar"		name="713x BDA Analog Xbar"		checkdevice="true"></filter>
-        <filter cat="capture"		name="713x BDA Analog Capture"	checkdevice="true"></filter>
-        <filter cat="videncoder"	name="%videoencoder%"			checkdevice="false"></filter>
-        <filter cat="audencoder"	name="%audioencoder%"			checkdevice="false"></filter>
-        <filter cat="mux"			name="%mpegmux%"				checkdevice="false"></filter>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"></filter>
+        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"></filter>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"></filter>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
@@ -7543,7 +7543,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="WinFast LeadTek VC100" capturename="WinFast VC100 WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_6607107d&amp;rev_11">
+  <capturecard commercialname="LeadTek WinFast VC100" capturename="WinFast VC100 WDM Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_6607107d&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
@@ -7900,5 +7900,275 @@
 		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
 	  </connections>
 	</tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView FlyDVB-T DUO Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_03065168&amp;rev_f0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"></filter>
+        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"></filter>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView FlyDVB-T DUO Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7130&amp;subsys_03065168&amp;rev_f0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"></filter>
+        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"></filter>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView FlyDVB-T DUO CardBus Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_05025168&amp;rev_f0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"></filter>
+        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"></filter>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView FlyDVB-T DUO Mini Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_03075168&amp;rev_f0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"></filter>
+        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"></filter>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView FlyDVB-T DUO Mini Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_03075168&amp;rev_f0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"></filter>
+        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"></filter>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView FlyDVB-T DUO Mini Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7130&amp;subsys_03075168&amp;rev_f0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"></filter>
+        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"></filter>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView FlyDVB-T DUO CardBus Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7130&amp;subsys_05025168&amp;rev_f0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"></filter>
+        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"></filter>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView FlyDVB-T DUO CardBus Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_05025168&amp;rev_f0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"></filter>
+        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"></filter>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView FlyDVB-T DUO Mini Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_03075168&amp;rev_d0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"></filter>
+        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"></filter>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView FlyDVB-T DUO Analogue" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_03065168&amp;rev_d1">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="713x BDA Analog Tv Tuner"		checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="713x BDA Analog TV Audio"		checkdevice="true"></filter>
+        <filter cat="crossbar"		name="713x BDA Analog Xbar"			checkdevice="true"></filter>
+        <filter cat="capture"		name="713x BDA Analog Capture"		checkdevice="true"></filter>
+        <filter cat="videncoder"	name="CyberLink MPEG Video Encoder"	checkdevice="false"></filter>
+        <filter cat="audencoder"	name="Cyberlink Audio Encoder"		checkdevice="false"></filter>
+        <filter cat="mux"			name="CyberLink MPEG Muxer"			checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv>
   </capturecard>
 </capturecards>
