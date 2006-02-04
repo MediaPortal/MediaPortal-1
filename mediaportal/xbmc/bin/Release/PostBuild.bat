@@ -18,6 +18,7 @@ del /F /Q plugins\process\*.*
 del *.dll
 del *.ax
 
+copy ..\..\..\MediaPortal.Support\bin\Release\MediaPortal.Support.dll .
 copy ..\..\..\RemotePlugins\HCWHelper\HCWHelper\bin\Release\HCWHelper.exe .
 copy ..\..\..\RemotePlugins\X10Remote\AxInterop.X10.dll .
 copy ..\..\..\RemotePlugins\X10Remote\Interop.X10.dll .

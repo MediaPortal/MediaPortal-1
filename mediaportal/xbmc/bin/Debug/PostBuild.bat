@@ -26,6 +26,8 @@ regsvr32 /s MPSA.ax
 regsvr32 /s TSFileSource.ax
 regsvr32 /s MPTSWriter.ax
 
+copy ..\..\..\MediaPortal.Support\bin\debug\MediaPortal.Support.dll .
+copy ..\..\..\MediaPortal.Support\bin\debug\MediaPortal.Support.pdb .
 copy ..\..\..\RemotePlugins\HCWHelper\HCWHelper\bin\debug\HCWHelper.exe .
 copy ..\..\..\RemotePlugins\HCWHelper\HCWHelper\bin\debug\HCWHelper.pdb .
 copy ..\..\..\RemotePlugins\X10Remote\AxInterop.X10.dll .
