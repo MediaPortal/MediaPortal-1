@@ -133,13 +133,7 @@ namespace MediaPortal.TV.Database
           m_db = new SQLiteClient(strPath + @"\database\TVDatabaseV21.db3");
           if (m_db != null)
           {
-            m_db.Execute("PRAGMA cache_size=2000;\n");
-            m_db.Execute("PRAGMA synchronous='OFF';\n");
-            m_db.Execute("PRAGMA count_changes=1;\n");
-            m_db.Execute("PRAGMA full_column_names=0;\n");
-            m_db.Execute("PRAGMA short_column_names=0;\n");
-            m_db.Execute("PRAGMA auto_vacuum=1;\n");
-            m_db.Execute("vacuum");
+            DatabaseUtility.SetPragmas(m_db);
           }
           UpdateFromPreviousVersion();
 
@@ -157,7 +151,7 @@ namespace MediaPortal.TV.Database
       int currentVersion = 8;
       int versionNr = 0;
 
-      AddTable("tblversion", "CREATE TABLE tblversion( idVersion integer)");
+      DatabaseUtility.AddTable(m_db,"tblversion", "CREATE TABLE tblversion( idVersion integer)");
 
       SQLiteResultSet results;
       results = m_db.Execute("SELECT * FROM tblversion");
@@ -239,58 +233,6 @@ namespace MediaPortal.TV.Database
       m_db.Execute(String.Format("update tblversion set idVersion={0}", currentVersion));
     }
 
-    static public bool AddTable(string strTable, string strSQL)
-    {
-      //	lock (typeof(DatabaseUtility))
-
-      Log.Write("AddTable: {0}", strTable);
-      if (m_db == null)
-      {
-        Log.Write("AddTable: database not opened");
-        return false;
-      }
-      if (strSQL == null)
-      {
-        Log.Write("AddTable: no sql?");
-        return false;
-      }
-      if (strTable == null)
-      {
-        Log.Write("AddTable: No table?");
-        return false;
-      }
-      if (strTable.Length == 0)
-      {
-        Log.Write("AddTable: empty table?");
-        return false;
-      }
-      if (strSQL.Length == 0)
-      {
-        Log.Write("AddTable: empty sql?");
-        return false;
-      }
-
-      //Log.Write("check for  table:{0}", strTable);
-      SQLiteResultSet results;
-      results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='" + strTable + "' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
-      if (results != null)
-      {
-        if (results.Rows.Count > 0) return false;
-      }
-
-      try
-      {
-        //Log.Write("create table:{0}", strSQL);
-        m_db.Execute(strSQL);
-        //Log.Write("table created");
-      }
-      catch (SQLiteException ex)
-      {
-        Log.WriteFile(Log.LogType.Log, true, "DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message, ex.StackTrace, strSQL);
-      }
-      return true;
-    }
-
 
     /// <summary>
     /// clears the tv channel & genre cache
@@ -327,51 +269,51 @@ namespace MediaPortal.TV.Database
       lock (typeof(TVDatabase))
       {
         if (m_db == null) return false;
-        if (AddTable("channel", "CREATE TABLE channel ( idChannel integer primary key, strChannel text, iChannelNr integer, frequency text, iSort integer, bExternal integer, ExternalChannel text, standard integer, Visible integer, Country integer, scrambled integer);\n"))
+        if (DatabaseUtility.AddTable(m_db,"channel", "CREATE TABLE channel ( idChannel integer primary key, strChannel text, iChannelNr integer, frequency text, iSort integer, bExternal integer, ExternalChannel text, standard integer, Visible integer, Country integer, scrambled integer)"))
         {
           try
           {
-            m_db.Execute("CREATE INDEX idxChannel ON channel(iChannelNr);\n");
+            m_db.Execute("CREATE INDEX idxChannel ON channel(iChannelNr)");
           }
           catch (Exception) { }
         }
 
-        if (AddTable("tblPrograms", "CREATE TABLE tblPrograms ( idProgram integer primary key, idChannel integer, idGenre integer, strTitle text, iStartTime integer, iEndTime text, strDescription text,strEpisodeName text,strRepeat text,strSeriesNum text,strEpisodeNum text,strEpisodePart text,strDate text,strStarRating text,strClassification text);\n"))
+        if (DatabaseUtility.AddTable(m_db,"tblPrograms", "CREATE TABLE tblPrograms ( idProgram integer primary key, idChannel integer, idGenre integer, strTitle text, iStartTime integer, iEndTime text, strDescription text,strEpisodeName text,strRepeat text,strSeriesNum text,strEpisodeNum text,strEpisodePart text,strDate text,strStarRating text,strClassification text)"))
         {
           try
           {
-            m_db.Execute("CREATE INDEX idxProgram ON tblPrograms(idChannel,iStartTime,iEndTime);\n");
+            m_db.Execute("CREATE INDEX idxProgram ON tblPrograms(idChannel,iStartTime,iEndTime)");
           }
           catch (Exception) { }
         }
 
-        if (AddTable("genre", "CREATE TABLE genre ( idGenre integer primary key, strGenre text);\n"))
+        if (DatabaseUtility.AddTable(m_db,"genre", "CREATE TABLE genre ( idGenre integer primary key, strGenre text)"))
         {
           try
           {
-            m_db.Execute("CREATE INDEX idxGenre ON genre(strGenre);\n");
+            m_db.Execute("CREATE INDEX idxGenre ON genre(strGenre)");
           }
           catch (Exception) { }
         }
 
-        AddTable("recording", "CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime integer, iEndTime integer, iCancelTime integer, bContentRecording integer, priority integer, quality integer, episodesToKeep integer);\n");
-        AddTable("canceledseries", "CREATE TABLE canceledseries ( idRecording integer, idChannel integer, iCancelTime text);\n");
+        DatabaseUtility.AddTable(m_db,"recording", "CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime integer, iEndTime integer, iCancelTime integer, bContentRecording integer, priority integer, quality integer, episodesToKeep integer)");
+        DatabaseUtility.AddTable(m_db,"canceledseries", "CREATE TABLE canceledseries ( idRecording integer, idChannel integer, iCancelTime text)");
 
-        AddTable("recorded", "CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime integer, iEndTime integer, strDescription text, strFileName text, iPlayed integer);\n");
+        DatabaseUtility.AddTable(m_db,"recorded", "CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime integer, iEndTime integer, strDescription text, strFileName text, iPlayed integer)");
 
-        AddTable("tblDVBSMapping", "CREATE TABLE tblDVBSMapping ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer);\n");
-        AddTable("tblDVBCMapping", "CREATE TABLE tblDVBCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, HasEITPresentFollow integer, HasEITSchedule integer);\n");
-        AddTable("tblATSCMapping", "CREATE TABLE tblATSCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, channelNumber integer,minorChannel integer, majorChannel integer, HasEITPresentFollow integer, HasEITSchedule integer);\n");
-        AddTable("tblDVBTMapping", "CREATE TABLE tblDVBTMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, HasEITPresentFollow integer, HasEITSchedule integer);\n");
-        AddTable("tblGroups", "CREATE TABLE tblGroups ( idGroup integer primary key, strName text, iSort integer, Pincode integer);\n");
-        AddTable("tblGroupMapping", "CREATE TABLE tblGroupMapping( idGroupMapping integer primary key, idGroup integer, idChannel integer);\n");
+        DatabaseUtility.AddTable(m_db,"tblDVBSMapping", "CREATE TABLE tblDVBSMapping ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer)");
+        DatabaseUtility.AddTable(m_db,"tblDVBCMapping", "CREATE TABLE tblDVBCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, HasEITPresentFollow integer, HasEITSchedule integer)");
+        DatabaseUtility.AddTable(m_db,"tblATSCMapping", "CREATE TABLE tblATSCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, channelNumber integer,minorChannel integer, majorChannel integer, HasEITPresentFollow integer, HasEITSchedule integer)");
+        DatabaseUtility.AddTable(m_db,"tblDVBTMapping", "CREATE TABLE tblDVBTMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, HasEITPresentFollow integer, HasEITSchedule integer)");
+        DatabaseUtility.AddTable(m_db,"tblGroups", "CREATE TABLE tblGroups ( idGroup integer primary key, strName text, iSort integer, Pincode integer)");
+        DatabaseUtility.AddTable(m_db,"tblGroupMapping", "CREATE TABLE tblGroupMapping( idGroupMapping integer primary key, idGroup integer, idChannel integer)");
 
         //following table specifies which channels can be received by which card
-        AddTable("tblChannelCard", "CREATE TABLE tblChannelCard( idChannelCard integer primary key, idChannel integer, card integer);\n");
-        AddTable("tblNotifies", "CREATE TABLE tblNotifies( idNotify integer primary key, idProgram integer)");
+        DatabaseUtility.AddTable(m_db,"tblChannelCard", "CREATE TABLE tblChannelCard( idChannelCard integer primary key, idChannel integer, card integer)");
+        DatabaseUtility.AddTable(m_db,"tblNotifies", "CREATE TABLE tblNotifies( idNotify integer primary key, idProgram integer)");
 
         //xmltv->tv channel mapping
-        AddTable("tblEPGMapping", "CREATE TABLE tblEPGMapping ( idChannel integer primary key, strChannel text, xmltvid text);\n");
+        DatabaseUtility.AddTable(m_db,"tblEPGMapping", "CREATE TABLE tblEPGMapping ( idChannel integer primary key, strChannel text, xmltvid text)");
 
         return true;
       }

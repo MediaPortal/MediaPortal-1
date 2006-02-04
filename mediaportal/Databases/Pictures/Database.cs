@@ -59,13 +59,8 @@ namespace MediaPortal.Picture.Database
 					}
 					catch(Exception){}
 					m_db = new SQLiteClient(strPath+@"\database\PictureDatabase.db3");
-					m_db.Execute("PRAGMA cache_size=2000;\n");
-					m_db.Execute("PRAGMA synchronous='OFF';\n");
-					m_db.Execute("PRAGMA count_changes=1;\n");
-					m_db.Execute("PRAGMA full_column_names=0;\n");
-          m_db.Execute("PRAGMA short_column_names=0;\n");
-          m_db.Execute("PRAGMA auto_vacuum=1;\n");
-          m_db.Execute("vacuum");
+
+          DatabaseUtility.SetPragmas(m_db);
 					CreateTables();
 
 				} 
@@ -83,83 +78,11 @@ namespace MediaPortal.Picture.Database
 			{
 				if (m_db==null) return false;
 				//Changed mbuzina
-				AddTable("picture","CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer, strDateTaken text);\n");
+				DatabaseUtility.AddTable(m_db,"picture","CREATE TABLE picture ( idPicture integer primary key, strFile text, iRotation integer, strDateTaken text)");
 				//End Changed
 				return true;
 			}
 		}
-		public bool AddTable( string strTable, string strSQL)
-		{
-			//	lock (typeof(DatabaseUtility))
-		
-			Log.Write("AddTable: {0}",strTable);
-			if (m_db==null) 
-			{
-				Log.Write("AddTable: database not opened");
-				return false;
-			}
-			if (strSQL==null) 
-			{
-				Log.Write("AddTable: no sql?");
-				return false;
-			}
-			if (strTable==null) 
-			{
-				Log.Write("AddTable: No table?");
-				return false;
-			}
-			if (strTable.Length==0) 
-			{
-				Log.Write("AddTable: empty table?");
-				return false;
-			}
-			if (strSQL.Length==0) 
-			{
-				Log.Write("AddTable: empty sql?");
-				return false;
-			}
-
-			//Log.Write("check for  table:{0}", strTable);
-			SQLiteResultSet results;
-			results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
-			if (results!=null)
-			{
-				if (results.Rows.Count>0) 
-					// Changed mbuzina
-				{
-					if(DatabaseUtility.TableColumnExists(m_db,strTable,"strDateTaken"))
-					{
-						return false;
-					} 
-					else 
-					{
-						try 
-						{
-							m_db.Execute("alter table "+strTable+" add strDateTaken text");
-						}
-						catch(SQLite.NET.SQLiteException ex) 
-						{
-							Log.WriteFile(Log.LogType.Log,true,"DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message,ex.StackTrace,strSQL);
-						} 
-						return true;
-					}
-				}
-				//End Change
-			}
-
-			try 
-			{
-				//Log.Write("create table:{0}", strSQL);
-				m_db.Execute(strSQL);
-				//Log.Write("table created");
-			}
-			catch (SQLite.NET.SQLiteException ex) 
-			{
-				Log.WriteFile(Log.LogType.Log,true,"DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message,ex.StackTrace,strSQL);
-			}
-			return true;
-		}
-
 		public int AddPicture(string strPicture, int iRotation)
 		{
 			lock (typeof(PictureDatabase))

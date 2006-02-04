@@ -53,11 +53,7 @@ namespace ProgramsDatabase
         catch (Exception){}
         sqlDB = new SQLiteClient(@"database\ProgramDatabaseV3.db3");
 
-				sqlDB.Execute("PRAGMA cache_size=2000\n");
-				sqlDB.Execute("PRAGMA synchronous='OFF'\n");
-				sqlDB.Execute("PRAGMA count_changes=1\n");
-				sqlDB.Execute("PRAGMA full_column_names=0\n");
-				sqlDB.Execute("PRAGMA short_column_names=0\n");
+        MediaPortal.Database.DatabaseUtility.SetPragmas(sqlDB);
 
         ProgramSettings.sqlDB = sqlDB;
         // make sure the DB-structure is complete
@@ -141,15 +137,15 @@ namespace ProgramsDatabase
       bool skipPrePostPatch = false;
       if (sqlDB == null)
         return false;
-      skipPrePostPatch = AddObject("application", "table", "CREATE TABLE application (appid integer primary key, fatherID integer, title text, shorttitle text, filename text, arguments text, windowstyle text, startupdir text, useshellexecute text, usequotes text, source_type text, source text, imagefile text, filedirectory text, imagedirectory text, validextensions text, enabled text, importvalidimagesonly text, position integer, enableGUIRefresh text, GUIRefreshPossible text, contentID integer, systemdefault text, waitforexit text, pincode integer, preLaunch text, postLaunch text);\n");
+      skipPrePostPatch = AddObject("application", "table", "CREATE TABLE application (appid integer primary key, fatherID integer, title text, shorttitle text, filename text, arguments text, windowstyle text, startupdir text, useshellexecute text, usequotes text, source_type text, source text, imagefile text, filedirectory text, imagedirectory text, validextensions text, enabled text, importvalidimagesonly text, position integer, enableGUIRefresh text, GUIRefreshPossible text, contentID integer, systemdefault text, waitforexit text, pincode integer, preLaunch text, postLaunch text)");
       AddObject("file", "table", 
-        "CREATE TABLE file (fileid integer primary key, appid integer, title text, filename text, filepath text, imagefile text, genre text, genre2 text, genre3 text, genre4 text, genre5 text, country text, manufacturer text, year integer, rating integer, overview text, system text, import_flag integer, manualfilename text, lastTimeLaunched text, launchcount integer, isfolder text, external_id integer, uppertitle text, tagdata text, categorydata text);\n");
-      AddObject("filterItem", "table", "CREATE TABLE filterItem (appid integer, grouperAppID integer, fileID integer, filename text, tag integer);\n");
-      AddObject("setting", "table", "CREATE TABLE setting (settingid integer primary key, key text, value text);\n");
-      AddObject("idxFile1", "index", "CREATE INDEX idxFile1 ON file(appid);\n");
-      AddObject("idxFile2", "index", "CREATE INDEX idxFile2 ON file(filepath, uppertitle);\n");
-      AddObject("idxApp1", "index", "CREATE INDEX idxApp1 ON application(fatherID);\n");
-      AddObject("idxFilterItem1", "index", "CREATE UNIQUE INDEX idxFilterItem1 ON filterItem(appID, fileID, grouperAppID);\n");
+        "CREATE TABLE file (fileid integer primary key, appid integer, title text, filename text, filepath text, imagefile text, genre text, genre2 text, genre3 text, genre4 text, genre5 text, country text, manufacturer text, year integer, rating integer, overview text, system text, import_flag integer, manualfilename text, lastTimeLaunched text, launchcount integer, isfolder text, external_id integer, uppertitle text, tagdata text, categorydata text)");
+      AddObject("filterItem", "table", "CREATE TABLE filterItem (appid integer, grouperAppID integer, fileID integer, filename text, tag integer)");
+      AddObject("setting", "table", "CREATE TABLE setting (settingid integer primary key, key text, value text)");
+      AddObject("idxFile1", "index", "CREATE INDEX idxFile1 ON file(appid)");
+      AddObject("idxFile2", "index", "CREATE INDEX idxFile2 ON file(filepath, uppertitle)");
+      AddObject("idxApp1", "index", "CREATE INDEX idxApp1 ON application(fatherID)");
+      AddObject("idxFilterItem1", "index", "CREATE UNIQUE INDEX idxFilterItem1 ON filterItem(appID, fileID, grouperAppID)");
       if (skipPrePostPatch)
       {
         // don't need to add prelaunch / postlaunch anymore if table was created above
@@ -197,7 +193,7 @@ namespace ProgramsDatabase
       {
         try
         {
-          sqlDB.Execute("drop trigger td_application;\n");
+          sqlDB.Execute("drop trigger td_application");
         }
         catch (SQLiteException ex)
         {

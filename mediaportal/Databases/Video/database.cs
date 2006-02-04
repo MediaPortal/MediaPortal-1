@@ -60,13 +60,7 @@ namespace MediaPortal.Video.Database
 				}
 				catch(Exception){}
 				m_db = new SQLiteClient(strPath+@"\database\VideoDatabaseV5.db3");
-				m_db.Execute("PRAGMA cache_size=2000;\n");
-				m_db.Execute("PRAGMA synchronous='OFF';\n");
-				m_db.Execute("PRAGMA count_changes=1;\n");
-				m_db.Execute("PRAGMA full_column_names=0;\n");
-        m_db.Execute("PRAGMA short_column_names=0;\n");
-        m_db.Execute("PRAGMA auto_vacuum=1;\n");
-        m_db.Execute("vacuum");
+        DatabaseUtility.SetPragmas(m_db);
 				CreateTables();
 
 
@@ -78,75 +72,24 @@ namespace MediaPortal.Video.Database
       
 			Log.WriteFile(Log.LogType.Log,false,"video database opened");
 		}
-		static public bool AddTable( string strTable, string strSQL)
-		{
-			//	lock (typeof(DatabaseUtility))
-		
-			Log.Write("AddTable: {0}",strTable);
-			if (m_db==null) 
-			{
-				Log.Write("AddTable: database not opened");
-				return false;
-			}
-			if (strSQL==null) 
-			{
-				Log.Write("AddTable: no sql?");
-				return false;
-			}
-			if (strTable==null) 
-			{
-				Log.Write("AddTable: No table?");
-				return false;
-			}
-			if (strTable.Length==0) 
-			{
-				Log.Write("AddTable: empty table?");
-				return false;
-			}
-			if (strSQL.Length==0) 
-			{
-				Log.Write("AddTable: empty sql?");
-				return false;
-			}
-
-			//Log.Write("check for  table:{0}", strTable);
-			SQLiteResultSet results;
-			results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
-			if (results!=null)
-			{
-				if (results.Rows.Count>0) return false;
-			}
-
-			try 
-			{
-				//Log.Write("create table:{0}", strSQL);
-				m_db.Execute(strSQL);
-				//Log.Write("table created");
-			}
-			catch (SQLiteException ex) 
-			{
-				Log.WriteFile(Log.LogType.Log,true,"DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message,ex.StackTrace,strSQL);
-			}
-			return true;
-		}
 
 		static bool CreateTables()
 		{
 			if (m_db==null) return false;
-			AddTable("bookmark","CREATE TABLE bookmark ( idBookmark integer primary key, idFile integer, fPercentage text);\n");
-			AddTable("genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text);\n");
-			AddTable("genrelinkmovie","CREATE TABLE genrelinkmovie ( idGenre integer, idMovie integer);\n");
-			AddTable("movie","CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text);\n");
-			AddTable("movieinfo","CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer);\n");
-			AddTable("actorlinkmovie","CREATE TABLE actorlinkmovie ( idActor integer, idMovie integer );\n");
-			AddTable("actors","CREATE TABLE actors ( idActor integer primary key, strActor text );\n");
-			AddTable("path","CREATE TABLE path ( idPath integer primary key, strPath text, cdlabel text);\n");
-			AddTable("files","CREATE TABLE files ( idFile integer primary key, idPath integer, idMovie integer,strFilename text);\n");
-			AddTable("resume","CREATE TABLE resume ( idResume integer primary key, idFile integer, stoptime integer, resumeData blob);\n");
-			AddTable("duration","CREATE TABLE duration ( idDuration integer primary key, idFile integer, duration integer);\n");
+			DatabaseUtility.AddTable(m_db,"bookmark","CREATE TABLE bookmark ( idBookmark integer primary key, idFile integer, fPercentage text)");
+			DatabaseUtility.AddTable(m_db,"genre","CREATE TABLE genre ( idGenre integer primary key, strGenre text)");
+			DatabaseUtility.AddTable(m_db,"genrelinkmovie","CREATE TABLE genrelinkmovie ( idGenre integer, idMovie integer)");
+			DatabaseUtility.AddTable(m_db,"movie","CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text)");
+			DatabaseUtility.AddTable(m_db,"movieinfo","CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer)");
+			DatabaseUtility.AddTable(m_db,"actorlinkmovie","CREATE TABLE actorlinkmovie ( idActor integer, idMovie integer )");
+			DatabaseUtility.AddTable(m_db,"actors","CREATE TABLE actors ( idActor integer primary key, strActor text )");
+			DatabaseUtility.AddTable(m_db,"path","CREATE TABLE path ( idPath integer primary key, strPath text, cdlabel text)");
+			DatabaseUtility.AddTable(m_db,"files","CREATE TABLE files ( idFile integer primary key, idPath integer, idMovie integer,strFilename text)");
+			DatabaseUtility.AddTable(m_db,"resume","CREATE TABLE resume ( idResume integer primary key, idFile integer, stoptime integer, resumeData blob)");
+			DatabaseUtility.AddTable(m_db,"duration","CREATE TABLE duration ( idDuration integer primary key, idFile integer, duration integer)");
 
-			AddTable("actorinfo","CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text);\n");
-			AddTable("actorinfomovies","CREATE TABLE actorinfomovies ( idActor integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, role text);\n");
+			DatabaseUtility.AddTable(m_db,"actorinfo","CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text)");
+			DatabaseUtility.AddTable(m_db,"actorinfomovies","CREATE TABLE actorinfomovies ( idActor integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, role text)");
 			return true;
 		}
 
