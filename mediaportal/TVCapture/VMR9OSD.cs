@@ -702,7 +702,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.Write("exception in render-osd:{0}, {1}, {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
         SaveBitmap(null, false, true, m_renderOSDAlpha);
       }
     }
@@ -909,7 +909,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.Write("exception in render-osd:{0}, {1}, {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
         SaveBitmap(null, false, true, m_renderOSDAlpha);
       }
     }
@@ -1044,9 +1044,9 @@ namespace MediaPortal.TV.Recording
           _volumeMuteBitmap = new Bitmap(m_mediaPath + "volume.states.mute.png");
         }
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        Log.Write("VMR9OSD.ReadSkinFile: {0}", e.Message);
+        Log.Write(ex);
       }
     }
 

@@ -1836,9 +1836,9 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
-      catch (Exception e)
+      catch (Exception ex)
       {
-        Log.Write("{0} {1}", e.Message, e.StackTrace);
+        Log.Write(ex);
       }
     }
     //

@@ -254,7 +254,7 @@ namespace MediaPortal.TV.Epg
       }
       catch (Exception ex)
       {
-        Log.Write("epg-grab: exception :{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
       }
     }
 
@@ -589,7 +589,7 @@ namespace MediaPortal.TV.Epg
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.EPG, "epg-grab: exception:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
       }
       TVDatabase.SupressEvents = false;
       OnDone();
@@ -669,7 +669,7 @@ namespace MediaPortal.TV.Epg
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.EPG, true, "mhw-grab: exception:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
       }
       finally
       {
@@ -719,7 +719,7 @@ namespace MediaPortal.TV.Epg
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.EPG, "epg-grab: exception:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
       }
       UpdateChannels();
       TVDatabase.SupressEvents = false;

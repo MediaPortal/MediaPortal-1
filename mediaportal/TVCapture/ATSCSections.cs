@@ -243,8 +243,8 @@ namespace MediaPortal.TV.Recording
 						shortName=encoding.GetString(bufRev,0,7*2).Trim();
 					}
 					catch(Exception ex)
-					{
-						Log.Write("{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+          {
+            Log.Write(ex);
 					}
 
 					Log.Write("atsc: chan:{0} name:{1}", i,shortName);
@@ -319,8 +319,8 @@ namespace MediaPortal.TV.Recording
 				//todo decode additional descriptors
 			}
 			catch(Exception ex)
-			{
-				Log.Write("{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+      {
+        Log.Write(ex);
 			}
 		}
 
@@ -373,8 +373,8 @@ namespace MediaPortal.TV.Recording
 						shortName=encoding.GetString(bufRev,0,7*2).Trim();
 					}
 					catch(Exception ex)
-					{
-						Log.Write("{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+          {
+            Log.Write(ex);
 					}
 
 					Log.Write("atsc: chan:{0} name:{1}", i,shortName);
@@ -448,8 +448,8 @@ namespace MediaPortal.TV.Recording
 				//todo decode additional descriptors
 			}
 			catch(Exception ex)
-			{
-				Log.Write("{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+      {
+        Log.Write(ex);
 			}
 		}
 

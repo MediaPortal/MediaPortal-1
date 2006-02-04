@@ -369,7 +369,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: Unable to create graph:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
         return false;
       }
     }

@@ -276,11 +276,9 @@ namespace TVCapture
       {
         doc.Load("CaptureCardDefinitions.xml");
       }
-      catch (XmlException e)
+      catch (Exception ex)
       {
-        Log.Write(" Error: Unable to load CaptureCardDefinitions.xml, probably contains xml errors!");
-        Log.Write(" Error: {0} in {1} at line {2}", e.Message, e.Source, e.LineNumber);
-        Log.Write("CaptureCardDefinitions:ctor OUT");
+        Log.Write(ex);
         return;
       }
 
@@ -459,11 +457,9 @@ namespace TVCapture
           }
         }
       }
-      catch (System.Exception e)
+      catch (System.Exception ex)
       {
-        Log.Write(" Error: Error while getting values from CaptureCardDefinitions.xml");
-        Log.Write(" Error: {0} in {1} at {2}", e.Message, e.Source, e.StackTrace);
-        Log.Write("CaptureCardDefinitions:ctor OUT");
+        Log.Write(ex);
       }
     }
 

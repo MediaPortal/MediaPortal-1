@@ -249,7 +249,7 @@ namespace MediaPortal.TV.Scanning
       }
       catch (Exception ex)
       {
-        Log.Write("Exception:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
       }
       timer1.Enabled = true;
     }

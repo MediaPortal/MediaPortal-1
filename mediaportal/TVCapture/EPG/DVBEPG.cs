@@ -395,7 +395,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.EPG, "epg-grab: FAILED to add to database. message:{0} stack:{1} source:{2}", ex.Message, ex.StackTrace, ex.Source);
+        Log.Write(ex);
         dateProgramEnd = DateTime.MinValue;
         return 0;
       }

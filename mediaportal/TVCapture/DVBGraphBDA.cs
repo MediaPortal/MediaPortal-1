@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-//#define HW_PID_FILTERING
+#define HW_PID_FILTERING
 //#define DUMP
 //#define USEMTSWRITER
 #define COMPARE_PMT
@@ -1080,7 +1080,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: Unable to create graph {0} {1}", ex.Message, ex.StackTrace);
+        Log.Write(ex);
         return false;
       }
     }//public bool CreateGraph()
@@ -1345,8 +1345,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA: deletegraph() {0} {1} {2}",
-          ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
       }
     }//public void DeleteGraph()
 
@@ -1501,8 +1500,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:Failed to start recording :{0} {1} {2}",
-          ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
       }
       finally
       {
@@ -3355,7 +3353,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "ERROR: exception while sending pmt {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
       }
       Log.Write("DVBGraphBDA:SendPMT() signal strength:{0} signal quality:{1}", SignalStrength(), SignalQuality());
       return false;
@@ -4020,7 +4018,7 @@ namespace MediaPortal.TV.Recording
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Error, true, "DVBGraphBDA:TuneChannel cannot set Interlace Mode {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+          Log.Write(ex);
         }
         Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:TuneChannel() done freq:{0} ONID:{1} TSID:{2} prog:{3} audio:{4:X} video:{5:X} pmt:{6:X} ac3:{7:X} txt:{8:X}",
                                             _currentTuningObject.Frequency,
@@ -4338,7 +4336,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.Write("DVBGraphBDA: SubmitTuneRequest:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
       }
       SetPids();
     }
@@ -5283,8 +5281,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "ERROR: exception while creating pmt {0} {1} {2}",
-          ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
       }
     }
 

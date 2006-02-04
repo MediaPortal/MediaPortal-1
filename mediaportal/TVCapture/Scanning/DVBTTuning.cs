@@ -230,7 +230,7 @@ namespace MediaPortal.TV.Scanning
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log,true,"Exception:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
       }
       finally
       {

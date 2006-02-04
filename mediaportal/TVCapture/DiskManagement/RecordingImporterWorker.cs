@@ -80,7 +80,7 @@ namespace MediaPortal.TV.DiskSpace
           }
           catch (Exception ex)
           {
-            Log.WriteFile(Log.LogType.Log, true, "Recorder:Exception while importing recordings reason:{0} {1}", ex.Message, ex.Source);
+            Log.Write(ex);
           }
         }//for (int i=0; i < Recorder.Count;++i)
 

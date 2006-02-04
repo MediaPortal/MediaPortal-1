@@ -422,7 +422,7 @@ namespace MediaPortal.TV.Recording
 
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:creategraph() exception:{0}", ex.ToString());
+        Log.Write(ex);
         return false;
         //System.Windows.Forms.MessageBox.Show(ex.Message);
       }
@@ -651,7 +651,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:creategraph() exception:{0}", ex.ToString());
+        Log.Write(ex);
         return false;
       }
 
@@ -1723,8 +1723,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSS2:Failed to start recording :{0} {1} {2}",
-          ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
       }
       _graphState = State.Recording;
       return true;

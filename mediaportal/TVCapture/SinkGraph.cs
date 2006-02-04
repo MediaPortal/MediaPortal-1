@@ -1043,7 +1043,7 @@ namespace MediaPortal.TV.Recording
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Capture, true, "PropertyPages: FAILED to get property pages." + ex.ToString());
+          Log.Write(ex);
         }
 
         return (propertyPages);

@@ -325,7 +325,7 @@ namespace MediaPortal.TV.Recording
             {
               if (transcording.status == Status.Busy)
                 transcording.status = Status.Error;
-              Log.WriteFile(Log.LogType.Log, true, "Transcoder:Exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+              Log.Write(ex);
             }
           }
           else System.Threading.Thread.Sleep(1000);
