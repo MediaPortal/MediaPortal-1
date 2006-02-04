@@ -107,9 +107,9 @@ namespace MediaPortal.Util
 
     [DllImport("user32", SetLastError = true)]
     public static extern bool PostThreadMessage(int idThread, uint Msg, uint wParam, uint lParam);
-	  
-    //[DllImport("wininet.dll")]
-    //private extern static bool InternetGetConnectedState( out int Description, int ReservedValue ) ;
+
+    [DllImport("wininet.dll")]
+    private extern static bool InternetGetConnectedState(out int Description, int ReservedValue);
 
     #endregion
 
