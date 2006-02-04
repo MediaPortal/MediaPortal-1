@@ -45,11 +45,7 @@ namespace MediaPortal.Util
   {
 
     [DllImport("kernel32.dll")]
-    extern static bool GetDiskFreeSpaceEx(
-            string lpDirectoryName,
-            out UInt64 lpFreeBytesAvailable,
-            out UInt64 lpTotalNumberOfBytes,
-            out UInt64 lpTotalNumberOfFreeBytes);
+    extern static bool GetDiskFreeSpaceEx(string lpDirectoryName,out UInt64 lpFreeBytesAvailable,out UInt64 lpTotalNumberOfBytes,out UInt64 lpTotalNumberOfFreeBytes);
 
     [DllImport("Kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     extern static bool GetVolumeInformation(

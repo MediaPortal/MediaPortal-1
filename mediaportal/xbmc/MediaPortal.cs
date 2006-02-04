@@ -26,6 +26,9 @@
 #region usings
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -50,10 +53,9 @@ using MediaPortal.Util;
 using MediaPortal.WINLIRC;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
-using Application=System.Windows.Forms.Application;
 using Geometry=MediaPortal.GUI.Library.Geometry;
 using Timer=System.Timers.Timer;
-using Process = System.Diagnostics.Process;
+using Utils=MediaPortal.Util.Utils;
 
 #endregion
 
@@ -66,7 +68,6 @@ public class MediaPortalApp : D3DApp, IRender
     private Thread _updaterThread = null;
     private const int UPDATERTHREAD_JOIN_TIMEOUT = 3 * 1000;
 #endif
-  private Mutex m_Mutex;
   private int m_iLastMousePositionX = 0;
   private int m_iLastMousePositionY = 0;
   private bool m_bPlayingState = false;
@@ -164,29 +165,36 @@ public class MediaPortalApp : D3DApp, IRender
 
     Log.BackupLogFiles();
     Log.Write("MediaPortal is starting up");
-
-    Application.EnableVisualStyles();
-    Application.SetCompatibleTextRenderingDefault(false);
-
-    //Set current directory
-    string applicationPath = Application.ExecutablePath;
-    applicationPath = Path.GetFullPath(applicationPath);
-    applicationPath = Path.GetDirectoryName(applicationPath);
-    Directory.SetCurrentDirectory(applicationPath);
-    Log.Write("  Set current directory to :{0}", applicationPath);
-    //check if mediaportal has been configured
-    if (!File.Exists("mediaportal.xml"))
+    using (ProcessLock processLock = new ProcessLock(mpMutex))
     {
-      //no, then start configuration.exe in wizard form
-      System.Diagnostics.Process.Start("configuration.exe", @"/wizard");
-      return;
-    }
-    //CodecsForm form = new CodecsForm();
-    //if (!form.AreCodecsInstalled())
-    //{
-    //	form.ShowDialog();
-    //}
-    //form=null;
+      if (processLock.AlreadyExists)
+      {
+        Log.Write("Mediaportal is already running...");
+        ActivatePreviousInstance();
+      }
+
+      Application.EnableVisualStyles();
+      Application.SetCompatibleTextRenderingDefault(false);
+
+      //Set current directory
+      string applicationPath = Application.ExecutablePath;
+      applicationPath = Path.GetFullPath(applicationPath);
+      applicationPath = Path.GetDirectoryName(applicationPath);
+      Directory.SetCurrentDirectory(applicationPath);
+      Log.Write("  Set current directory to :{0}", applicationPath);
+      //check if mediaportal has been configured
+      if (!File.Exists("mediaportal.xml"))
+      {
+        //no, then start configuration.exe in wizard form
+        System.Diagnostics.Process.Start("configuration.exe", @"/wizard");
+        return;
+      }
+      //CodecsForm form = new CodecsForm();
+      //if (!form.AreCodecsInstalled())
+      //{
+      //	form.ShowDialog();
+      //}
+      //form=null;
 
 #if !DEBUG
   string version = System.Configuration.ConfigurationManager.AppSettings["version"];
@@ -194,120 +202,130 @@ public class MediaPortalApp : D3DApp, IRender
     splashScreen = new SplashScreen();
     splashScreen.Version = version;
     splashScreen.Run();
-    //clientInfo=null;
+      //clientInfo=null;
 #endif
 
 
-    Log.Write("  verify that directx 9 is installed");
-    try
-    {
-      // CHECK if DirectX 9.0c if installed
-      RegistryKey hklm = Registry.LocalMachine;
-      RegistryKey subkey = hklm.OpenSubKey(@"Software\Microsoft\DirectX");
-      if (subkey != null)
+      Log.Write("  verify that directx 9 is installed");
+      try
       {
-        string strVersion = (string) subkey.GetValue("Version");
-        if (strVersion != null)
+        // CHECK if DirectX 9.0c if installed
+        RegistryKey hklm = Registry.LocalMachine;
+        RegistryKey subkey = hklm.OpenSubKey(@"Software\Microsoft\DirectX");
+        if (subkey != null)
         {
-          if (strVersion.Length > 0)
+          string strVersion = (string)subkey.GetValue("Version");
+          if (strVersion != null)
           {
-            string strTmp = "";
-            for (int i = 0; i < strVersion.Length; ++i)
+            if (strVersion.Length > 0)
             {
-              if (Char.IsDigit(strVersion[i]))
+              string strTmp = "";
+              for (int i = 0; i < strVersion.Length; ++i)
               {
-                strTmp += strVersion[i];
+                if (Char.IsDigit(strVersion[i]))
+                {
+                  strTmp += strVersion[i];
+                }
+              }
+              long lVersion = Convert.ToInt64(strTmp);
+              if (lVersion < 409000904)
+              {
+                string strLine = "Please install DirectX 9.0c!\r\n";
+                strLine = strLine + "Current version installed:" + strVersion + "\r\n\r\n";
+                strLine = strLine + "Mediaportal cannot run without DirectX 9.0c\r\n";
+                strLine = strLine + "http://www.microsoft.com/directx";
+                MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
               }
             }
-            long lVersion = Convert.ToInt64(strTmp);
-            if (lVersion < 409000904)
-            {
-              string strLine = "Please install DirectX 9.0c!\r\n";
-              strLine = strLine + "Current version installed:" + strVersion + "\r\n\r\n";
-              strLine = strLine + "Mediaportal cannot run without DirectX 9.0c\r\n";
-              strLine = strLine + "http://www.microsoft.com/directx";
-              MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-              return;
-            }
           }
-        }
 
-        string strVersionMng = (string) subkey.GetValue("ManagedDirectXVersion");
-        if (strVersionMng != null)
-        {
-          if (strVersionMng.Length > 0)
+          string strVersionMng = (string)subkey.GetValue("ManagedDirectXVersion");
+          if (strVersionMng != null)
           {
-            string strTmp = "";
-            for (int i = 0; i < strVersionMng.Length; ++i)
+            if (strVersionMng.Length > 0)
             {
-              if (Char.IsDigit(strVersionMng[i]))
+              string strTmp = "";
+              for (int i = 0; i < strVersionMng.Length; ++i)
               {
-                strTmp += strVersionMng[i];
+                if (Char.IsDigit(strVersionMng[i]))
+                {
+                  strTmp += strVersionMng[i];
+                }
               }
+              //              long lVersion = Convert.ToInt64(strTmp);
+              //							if (lVersion < 409001126)
+              //							{
+              //                string strLine="Please install Managed DirectX 9.0c!\r\n";
+              //                strLine=strLine+ "Current version installed:"+strVersionMng+"\r\n\r\n";
+              //                strLine=strLine+ "Mediaportal cannot run without DirectX 9.0c\r\n";
+              //                strLine=strLine+ "http://www.microsoft.com/directx";
+              //                System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+              //                return;
+              //							}
             }
-            //              long lVersion = Convert.ToInt64(strTmp);
-            //							if (lVersion < 409001126)
-            //							{
-            //                string strLine="Please install Managed DirectX 9.0c!\r\n";
-            //                strLine=strLine+ "Current version installed:"+strVersionMng+"\r\n\r\n";
-            //                strLine=strLine+ "Mediaportal cannot run without DirectX 9.0c\r\n";
-            //                strLine=strLine+ "http://www.microsoft.com/directx";
-            //                System.Windows.Forms.MessageBox.Show(strLine, "MediaPortal", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-            //                return;
-            //							}
           }
+          subkey.Close();
         }
-        subkey.Close();
-      }
 
-      // CHECK if Windows MediaPlayer 9 is installed
-      Log.Write("  verify that windows mediaplayer 9 or 10 is installed");
-      subkey =
-        hklm.OpenSubKey(@"Software\Microsoft\Active Setup\Installed Components\{22d6f312-b0f6-11d0-94ab-0080c74c7e95}");
-      if (subkey != null)
-      {
-        if (((int) subkey.GetValue("IsInstalled")) == 1)
+        // CHECK if Windows MediaPlayer 9 is installed
+        Log.Write("  verify that windows mediaplayer 9 or 10 is installed");
+        subkey =
+          hklm.OpenSubKey(@"Software\Microsoft\Active Setup\Installed Components\{22d6f312-b0f6-11d0-94ab-0080c74c7e95}");
+        if (subkey != null)
         {
-          string wmpversion = (string) subkey.GetValue("Version");
-          Log.Write("Windows media player version:{0} installed", wmpversion);
+          if (((int)subkey.GetValue("IsInstalled")) == 1)
+          {
+            string wmpversion = (string)subkey.GetValue("Version");
+            Log.Write("Windows media player version:{0} installed", wmpversion);
+          }
+          subkey.Close();
         }
-        subkey.Close();
+        else
+        {
+          string strLine = "Please install Windows Mediaplayer 9/10\r\n";
+          strLine = strLine + "Mediaportal cannot run without Windows Mediaplayer 9/10";
+          MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          return;
+        }
+        hklm.Close();
       }
-      else
-      {
-        string strLine = "Please install Windows Mediaplayer 9/10\r\n";
-        strLine = strLine + "Mediaportal cannot run without Windows Mediaplayer 9/10";
-        MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        return;
-      }
-      hklm.Close();
-    }
-    catch (Exception)
-    {}
+      catch (Exception)
+      { }
 
-    //following crashes on some pc's, dunno why
-    //Log.Write("  Stop any known recording processes");
-    //Utils.KillExternalTVProcesses();
+      //following crashes on some pc's, dunno why
+      //Log.Write("  Stop any known recording processes");
+      //Utils.KillExternalTVProcesses();
 #if !DEBUG
   try
     {
 #endif
-    if (splashScreen != null)
-    {
-      splashScreen.SetInformation("Initializing DirectX...");
-    }
-    MediaPortalApp app = new MediaPortalApp();
-    Log.Write("  initializing DirectX");
-    if (app.CreateGraphicsSample())
-    {
-      //app.PreRun();
-      Log.Write("running...");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Initializing DirectX...");
+      }
+      MediaPortalApp app = new MediaPortalApp();
+      Log.Write("  initializing DirectX");
+      if (app.CreateGraphicsSample())
+      {
+        IMessageFilter filter = new ThreadMessageFilter(app);
+        try
+        {
+          Application.AddMessageFilter(filter);
+
+          //app.PreRun();
+          Log.Write("running...");
 #if !DEBUG
   try
         {
 #endif
-      GUIGraphicsContext.BlankScreen = false;
-      Application.Run(app);
+          GUIGraphicsContext.BlankScreen = false;
+          Application.Run(app);
+        }
+        finally
+        {
+          Application.RemoveMessageFilter(filter);
+        }
 #if !DEBUG
   }
         catch (Exception ex)
@@ -315,8 +333,8 @@ public class MediaPortalApp : D3DApp, IRender
           Log.WriteFile(Log.LogType.Log, true, "MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
         }
 #endif
-      app.OnExit();
-    }
+        app.OnExit();
+      }
 #if !DEBUG
   }
     catch (Exception ex)
@@ -331,22 +349,74 @@ public class MediaPortalApp : D3DApp, IRender
       splashScreen = null;
     }
 #endif
-    Settings.SaveCache();
-    Log.Write("MediaPortal done");
-    Win32API.EnableStartBar(true);
-    Win32API.ShowStartBar(true);
-    if (useRestartOptions)
-    {
-      WindowsController.ExitWindows(restartOptions, true);
+      Settings.SaveCache();
+      Log.Write("MediaPortal done");
+      Win32API.EnableStartBar(true);
+      Win32API.ShowStartBar(true);
+      if (useRestartOptions)
+      {
+        WindowsController.ExitWindows(restartOptions, true);
+      }
     }
   }
 
+  private static void ActivatePreviousInstance()
+  {
+    try
+    {
+      //Find the previous instance's process
+      List<Process> processes = new List<Process>();
+      string processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+      if (processName.EndsWith(".vshost"))
+        processName = processName.Substring(0, processName.Length - 7);
+      processName = "mediaportal";
+      processes.AddRange(System.Diagnostics.Process.GetProcessesByName(processName));
+      processes.AddRange(System.Diagnostics.Process.GetProcessesByName(processName + ".vshost"));
+          
+      //System.Diagnostics.Process.GetCurrentProcess().ProcessName);
+      foreach (Process process in processes)
+      {
+        if (process.Id == System.Diagnostics.Process.GetCurrentProcess().Id)
+        {
+          continue;
+        }
+        //Instructs the process to go to the foreground 
+        SetForeGround(process);
+      }
+      Environment.Exit(0);
+    }
+    catch (Exception)
+    {
+      //Ignore
+    }
+    //We could not find the running process, so stop with an exception
+    throw new Exception("Mediaportal is already running!");
+  }
+
+  /// <summary>
+  /// Brings the previous MP instance to the front.
+  /// </summary>
+  /// <param name="_process">The <see cref="Process"/> that represents the previous MP instance</param>
+  /// <remarks>
+  /// We bring the application to the front by sending a WM_SHOWWINDOW message to all of it's threads.
+  /// The main thread will detect this message using the <see cref="ThreadMessageFilter"/> and
+  /// will instruct it's main window to show and activate itself.
+  /// </remarks>
+  private static void SetForeGround(Process _process)
+  {
+    foreach (ProcessThread thread in _process.Threads)
+      Win32API.PostThreadMessage(thread.Id, Win32API.WM_SHOWWINDOW, 0, 0);
+  }
+
+
+  
   private static void AddExceptionHandler()
   {
     UnhandledExceptionLogger logger = new UnhandledExceptionLogger();
     AppDomain current = AppDomain.CurrentDomain;
     current.UnhandledException += new UnhandledExceptionEventHandler(logger.LogCrash);
   }
+
   #endregion
 
   #region remote callbacks
@@ -362,8 +432,6 @@ public class MediaPortalApp : D3DApp, IRender
 
   public MediaPortalApp()
   {
-    bool firstInstance;
-
     // check to load plugins
     using (Settings xmlreader = new Settings("MediaPortal.xml"))
     {
@@ -373,36 +441,6 @@ public class MediaPortalApp : D3DApp, IRender
     // check if MediaPortal is already running...
 
     Log.Write("  Check if mediaportal is already started");
-    //We must make sure we keep a reference to the Mutex, otherwise it could be Disposed when memory is tight.
-    m_Mutex = new Mutex(true, mpMutex, out firstInstance);
-    if (!firstInstance)
-    {
-      Log.Write("Mediaportal is already running...");
-      try
-      {
-        Process[] processes = System.Diagnostics.Process.GetProcessesByName("mediaportal");
-          //System.Diagnostics.Process.GetCurrentProcess().ProcessName);
-        foreach (Process proc in processes)
-        {
-          if (proc.Id != System.Diagnostics.Process.GetCurrentProcess().Id)
-          {
-            User32.ActivateWindowByHandle((uint) proc.MainWindowHandle);
-          }
-        }
-        Environment.Exit(0);
-      }
-      catch (Exception)
-      {
-        //Ignore
-      }
-
-      string strMsg = "Mediaportal is already running!";
-      IECallBack ewp = new IECallBack(EnumWindowCallBack);
-      EnumWindows(ewp, 0);
-
-      // Exit this process
-      throw new Exception(strMsg);
-    }
 
     Log.Write(@"  delete old log\capture.log file...");
     Utils.FileDelete(@"log\capture.log");
@@ -759,7 +797,6 @@ public class MediaPortalApp : D3DApp, IRender
 
     // Restart MCE Services
     Utils.RestartMCEServices();
-    m_Mutex.Close();
   }
 
   /// <summary>
@@ -2310,23 +2347,6 @@ public class MediaPortalApp : D3DApp, IRender
     form.ShowDialog(this);
   }
 
-  #region window callback
-
-  private bool EnumWindowCallBack(int hwnd, int lParam)
-  {
-    IntPtr windowHandle = (IntPtr) hwnd;
-    StringBuilder sb = new StringBuilder(1024);
-    GetWindowText((int) windowHandle, sb, sb.Capacity);
-    string window = sb.ToString().ToLower();
-    if (window.IndexOf("mediaportal") >= 0 || window.IndexOf("media portal") >= 0)
-    {
-      ShowWindow(windowHandle, SW_SHOWNORMAL);
-    }
-    return true;
-  }
-
-  #endregion
-
   #region registry helper function
 
   public static void SetDWORDRegKey(RegistryKey hklm, string Key, string Value, Int32 iValue)
@@ -2412,7 +2432,7 @@ public class MediaPortalApp : D3DApp, IRender
     GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
     GUIWindowManager.Callbacks += new GUIWindowManager.OnCallBackHandler(Process);
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STARTING;
-    Utils.OnStartExternal += new Utils.UtilEventHandler(OnStartExternal);
+    Utils.OnStartExternal += new MediaPortal.Util.Utils.UtilEventHandler(OnStartExternal);
     Utils.OnStopExternal += new Utils.UtilEventHandler(OnStopExternal);
 
     // load keymapping from keymap.xml
