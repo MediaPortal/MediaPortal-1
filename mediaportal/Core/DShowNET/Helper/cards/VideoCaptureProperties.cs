@@ -120,11 +120,11 @@ namespace DShowNET.Helper
 			return false;
 		}
 		public bool SetPIDS(bool isDvbc, bool isDvbT, bool isDvbS, bool isAtsc, ArrayList pids)
-		{
+    {
 			if (digitalEverywhere.IsDigitalEverywhere)
 			{
 				return digitalEverywhere.SetPIDS(isDvbc, isDvbT, isDvbS, isAtsc, pids);
-			}
+      }
 			return false;
 		}
 		public bool IsCISupported()

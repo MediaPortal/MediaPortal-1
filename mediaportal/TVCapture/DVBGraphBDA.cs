@@ -3885,10 +3885,7 @@ namespace MediaPortal.TV.Recording
               _currentTuningObject.PCRPid = pcrPid;
               _currentTuningObject.HasEITPresentFollow = HasEITPresentFollow;
               _currentTuningObject.HasEITSchedule = HasEITSchedule;
-              if (needSwitch)
-                SubmitTuneRequest(_currentTuningObject);
-              else
-                SetPids();
+               SubmitTuneRequest(_currentTuningObject);
 
             } break;
 
@@ -3949,10 +3946,7 @@ namespace MediaPortal.TV.Recording
               _currentTuningObject.LNBKHz = ch.LNBKHz;
               _currentTuningObject.HasEITPresentFollow = ch.HasEITPresentFollow;
               _currentTuningObject.HasEITSchedule = ch.HasEITSchedule;
-              if (needSwitch)
                 SubmitTuneRequest(_currentTuningObject);
-              else
-                SetPids();
 
             } break;
 
@@ -4003,10 +3997,7 @@ namespace MediaPortal.TV.Recording
               _currentTuningObject.Audio3 = audio3;
               _currentTuningObject.HasEITPresentFollow = HasEITPresentFollow;
               _currentTuningObject.HasEITSchedule = HasEITSchedule;
-              if (needSwitch)
                 SubmitTuneRequest(_currentTuningObject);
-              else
-                SetPids();
 
             } break;
         }	//switch (_networkType)
@@ -4343,13 +4334,13 @@ namespace MediaPortal.TV.Recording
               //Marshal.ReleaseComObject(myTuneRequest);
             } break;
         }
-        SetPids();
         //	Log.Write("DVBGraphBDA: signal strength:{0} signal quality:{1}",SignalStrength(), SignalQuality() );
       }
       catch (Exception ex)
       {
         Log.Write("DVBGraphBDA: SubmitTuneRequest:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
+      SetPids();
     }
 
     #endregion
@@ -5299,6 +5290,7 @@ namespace MediaPortal.TV.Recording
 
     #endregion
 
+    
     void SetPids()
     {
 #if HW_PID_FILTERING
@@ -5310,11 +5302,11 @@ namespace MediaPortal.TV.Recording
 			pids.Add((ushort)18);
 			pids.Add((ushort)0xd3);
 			pids.Add((ushort)0xd2);
-			//if (_currentTuningObject.VideoPid>0) pids.Add((ushort)_currentTuningObject.VideoPid);
+			if (_currentTuningObject.VideoPid>0) pids.Add((ushort)_currentTuningObject.VideoPid);
 			if (_currentTuningObject.AudioPid>0) pids.Add((ushort)_currentTuningObject.AudioPid);
 			if (_currentTuningObject.AC3Pid>0) pids.Add((ushort)_currentTuningObject.AC3Pid);
 			if (_currentTuningObject.PMTPid>0) pids.Add((ushort)_currentTuningObject.PMTPid);
-			//if (_currentTuningObject.TeletextPid>0) pids.Add((ushort)_currentTuningObject.TeletextPid);
+			if (_currentTuningObject.TeletextPid>0) pids.Add((ushort)_currentTuningObject.TeletextPid);
 			if (_currentTuningObject.PCRPid>0) pids.Add((ushort)_currentTuningObject.PCRPid);
 			if (_currentTuningObject.ECMPid>0) pids.Add((ushort)_currentTuningObject.ECMPid);
 			for (int i=0; i < pids.Count;++i)
@@ -5327,7 +5319,6 @@ namespace MediaPortal.TV.Recording
 										Network()==NetworkType.DVBS,
 										Network()==NetworkType.ATSC,
 										pids);
-
 
 #endif
     }
