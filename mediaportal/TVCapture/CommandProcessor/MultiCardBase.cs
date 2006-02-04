@@ -125,6 +125,8 @@ namespace MediaPortal.TV.Recording
     {
       if (OnTvViewingStarted != null)
         OnTvViewingStarted(card, device);
+      if (OnTvChannelChanged != null)
+        OnTvChannelChanged(_currentTvChannel);
     }
   }
 }
