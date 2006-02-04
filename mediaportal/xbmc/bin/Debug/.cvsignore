@@ -26,7 +26,6 @@ ExternalDisplay.xml
 *.log
 config.ini
 InputDeviceMappings
-WebEPG
 mencoder
 osdskin-media
 scripts
