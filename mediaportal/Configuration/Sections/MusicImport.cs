@@ -459,7 +459,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxGeneralSettings
       // 
-      this.groupBoxGeneralSettings.BackColor = System.Drawing.Color.Transparent;
       this.groupBoxGeneralSettings.Controls.Add(this.checkBoxUnknown);
       this.groupBoxGeneralSettings.Controls.Add(this.checkBoxBackground);
       this.groupBoxGeneralSettings.Controls.Add(this.checkBoxDatabase);
@@ -514,7 +513,6 @@ namespace MediaPortal.Configuration.Sections
       // labelLibraryFolder
       // 
       this.labelLibraryFolder.AutoSize = true;
-      this.labelLibraryFolder.BackColor = System.Drawing.Color.Transparent;
       this.labelLibraryFolder.Location = new System.Drawing.Point(16, 128);
       this.labelLibraryFolder.Name = "labelLibraryFolder";
       this.labelLibraryFolder.Size = new System.Drawing.Size(73, 13);

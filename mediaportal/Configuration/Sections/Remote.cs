@@ -366,7 +366,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // pictureBoxUSA
       // 
-      this.pictureBoxUSA.BackColor = System.Drawing.Color.Transparent;
       this.pictureBoxUSA.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxUSA.Image")));
       this.pictureBoxUSA.Location = new System.Drawing.Point(248, 24);
       this.pictureBoxUSA.Name = "pictureBoxUSA";
@@ -413,7 +412,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.BackColor = System.Drawing.Color.Transparent;
       this.groupBox1.Controls.Add(this.checkBoxMCE);
       this.groupBox1.Controls.Add(this.radioButtonEurope);
       this.groupBox1.Controls.Add(this.radioButtonUSA);
@@ -447,7 +445,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // pictureBoxEU
       // 
-      this.pictureBoxEU.BackColor = System.Drawing.Color.Transparent;
       this.pictureBoxEU.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxEU.Image")));
       this.pictureBoxEU.Location = new System.Drawing.Point(248, 24);
       this.pictureBoxEU.Name = "pictureBoxEU";
@@ -509,7 +506,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label4.AutoSize = true;
-      this.label4.BackColor = System.Drawing.Color.Transparent;
       this.label4.Location = new System.Drawing.Point(368, 82);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(24, 13);
@@ -528,7 +524,6 @@ namespace MediaPortal.Configuration.Sections
       // label6
       // 
       this.label6.AutoSize = true;
-      this.label6.BackColor = System.Drawing.Color.Transparent;
       this.label6.Location = new System.Drawing.Point(123, 82);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(28, 13);
@@ -554,7 +549,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.AutoSize = true;
-      this.label1.BackColor = System.Drawing.Color.Transparent;
       this.label1.Location = new System.Drawing.Point(368, 54);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(29, 13);
@@ -573,7 +567,6 @@ namespace MediaPortal.Configuration.Sections
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.BackColor = System.Drawing.Color.Transparent;
       this.label3.Location = new System.Drawing.Point(128, 54);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(26, 13);
@@ -598,7 +591,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label2sec.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.label2sec.AutoSize = true;
-      this.label2sec.BackColor = System.Drawing.Color.Transparent;
       this.label2sec.Location = new System.Drawing.Point(368, 27);
       this.label2sec.Name = "label2sec";
       this.label2sec.Size = new System.Drawing.Size(62, 13);
@@ -617,7 +609,6 @@ namespace MediaPortal.Configuration.Sections
       // label0sec
       // 
       this.label0sec.AutoSize = true;
-      this.label0sec.BackColor = System.Drawing.Color.Transparent;
       this.label0sec.Location = new System.Drawing.Point(103, 27);
       this.label0sec.Name = "label0sec";
       this.label0sec.Size = new System.Drawing.Size(50, 13);
@@ -856,7 +847,6 @@ namespace MediaPortal.Configuration.Sections
       // fireDTVRemote
       // 
       this.fireDTVRemote.AutoScroll = true;
-      this.fireDTVRemote.BackColor = System.Drawing.Color.Transparent;
       this.fireDTVRemote.Location = new System.Drawing.Point(0, 0);
       this.fireDTVRemote.Name = "fireDTVRemote";
       this.fireDTVRemote.Size = new System.Drawing.Size(520, 368);

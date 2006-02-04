@@ -635,7 +635,6 @@ namespace MediaPortal.Configuration.Sections
       // pictureBox1
       // 
       this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
       this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
       this.pictureBox1.Location = new System.Drawing.Point(166, 160);
       this.pictureBox1.Name = "pictureBox1";
