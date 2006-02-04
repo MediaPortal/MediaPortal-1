@@ -264,6 +264,12 @@
     </Compile>
     <Compile Include="Util\ProcessLock.cs" />
     <Compile Include="Util\UnhandledExceptionLogger.cs" />
+    <Compile Include="UserInterfaceControls\MPContextMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterfaceControls\MPToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UserInterfaceControls\MPTabPage.cs">
       <SubType>Component</SubType>
     </Compile>

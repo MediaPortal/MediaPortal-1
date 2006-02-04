@@ -47,10 +47,15 @@ namespace MediaPortal.Configuration.Sections
 
     private class ItemTag
     {
-      public string DLLName;
+      public string DllName;
       public ISetupForm SetupForm;
-      public string strType = string.Empty;
-      public int windowId = -1;
+      public string Type = string.Empty;
+      public int WindowId = -1;
+      public bool IsProcess = false;
+      public bool IsWindow = false;
+      public bool IsHome = false;
+      public bool IsEnabled = false;
+      public bool IsPlugins = false;
     }
 
     public PluginsNew()
@@ -137,32 +142,46 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+
     private void PopulateListView()
     {
       foreach (ItemTag tag in loadedPlugins)
       {
-        int category = 0;
-        if (tag.strType != "Process")
-          category = 1;
-        ListViewItem item;
-        if (category == 0)
-        {
-          item = new ListViewItem(tag.SetupForm.PluginName(), 0, listViewPlugins.Groups["listViewGroupProcess"]);
-          item.Tag = tag;
-        }
-        else
-        {
-          item = new ListViewItem(tag.SetupForm.PluginName(), 1, listViewPlugins.Groups["listViewGroupWindow"]);
-          item.Tag = tag;
-        }
-        listViewPlugins.Items.Add(item);
-        
+        ListViewItem item = null;
 
+        if (tag.IsProcess)
+          if (tag.IsEnabled)
+            item = new ListViewItem(tag.SetupForm.PluginName(), 0, listViewPlugins.Groups["listViewGroupProcess"]);
+          else
+            item = new ListViewItem(tag.SetupForm.PluginName(), 2, listViewPlugins.Groups["listViewGroupProcess"]);
+        else if (tag.IsWindow)
+          if (tag.IsEnabled)
+            item = new ListViewItem(tag.SetupForm.PluginName(), 1, listViewPlugins.Groups["listViewGroupWindow"]);
+          else
+            item = new ListViewItem(tag.SetupForm.PluginName(), 3, listViewPlugins.Groups["listViewGroupWindow"]);
+
+        item.Tag = tag;
+        item.ToolTipText = string.Format("{0}", tag.SetupForm.Description());
+        listViewPlugins.Items.Add(item);
+
+        //int category = 0;
+        //if (tag.Type != "Process")
+        //  category = 1;
+        //ListViewItem item;
+        //if (category == 0)
+        //{
+        //  item = new ListViewItem(tag.SetupForm.PluginName(), 0, listViewPlugins.Groups["listViewGroupProcess"]);
+        //  item.Tag = tag;
+        //}
+        //else
+        //{
+        //  item = new ListViewItem(tag.SetupForm.PluginName(), 1, listViewPlugins.Groups["listViewGroupWindow"]);
+        //  item.Tag = tag;
+        //}
         //ds.Tables[0].Rows.Add(new object[] { true, true, false, tag.SetupForm.PluginName(), tag.SetupForm.Author(), tag.SetupForm.Description(), tag });
       }
-      //listViewPlugins.Items.Add(groupProcess);
-      //listViewPlugins.Items.Add(groupWindow);
     }
+
 
     private void LoadPlugins()
     {
@@ -198,13 +217,11 @@ namespace MediaPortal.Configuration.Sections
 
                   if (pluginForm != null)
                   {
-	
-
                     ItemTag tag = new ItemTag();
                     tag.SetupForm = pluginForm;
-                    tag.DLLName = pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1);
-                    tag.windowId = pluginForm.GetWindowId();
-                    tag.strType = "Process";
+                    tag.DllName = pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1);
+                    tag.WindowId = pluginForm.GetWindowId();
+                    tag.IsProcess = true;
                     loadedPlugins.Add(tag);
                   }
                 }
@@ -212,9 +229,7 @@ namespace MediaPortal.Configuration.Sections
                 {
                   Log.Write("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
                   Log.Write("Current class is :{0}", type.FullName);
-#if DEBUG
                   Log.Write(setupFormException.StackTrace);
-#endif
                 }
               }
             }
@@ -231,9 +246,11 @@ namespace MediaPortal.Configuration.Sections
 
                     foreach (ItemTag tag in loadedPlugins)
                     {
-                      if (tag.windowId == win.GetID)
+                      if (tag.WindowId == win.GetID)
                       {
-                        tag.strType = win.GetType().ToString();
+                        tag.Type = win.GetType().ToString();
+                        tag.IsProcess = false;
+                        tag.IsWindow = true;
                         break;
                       }
                     }
@@ -244,9 +261,7 @@ namespace MediaPortal.Configuration.Sections
               {
                 Log.Write("Exception in plugin GUIWindows loading :{0}", guiWindowException.Message);
                 Log.Write("Current class is :{0}", t.FullName);
-#if DEBUG
                 Log.Write(guiWindowException.StackTrace);
-#endif
               }
             }
           }
@@ -254,9 +269,7 @@ namespace MediaPortal.Configuration.Sections
         catch (Exception unknownException)
         {
           Log.Write("Exception in plugin loading :{0}", unknownException.Message);
-#if DEBUG
           Log.Write(unknownException.StackTrace);
-#endif
         }
       }
     }
@@ -264,44 +277,55 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      //try
-      //{
-      //  using (Settings xmlreader = new Settings("MediaPortal.xml"))
-      //  {
-      //    foreach (DataRow row in ds.Tables[0].Rows)
-      //    {
-      //      ItemTag itemTag = row["tag"] as ItemTag;
+      try
+      {
+        using (Settings xmlreader = new Settings("MediaPortal.xml"))
+        {
+          foreach (ListViewItem item in listViewPlugins.Items)
+          {
+            ItemTag itemTag = (ItemTag)item.Tag;
 
-      //      if (itemTag.SetupForm != null)
-      //      {
-      //        if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
-      //        {
-      //          row["bool1"] = xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
-      //        }
-      //        else
-      //        {
-      //          row["bool1"] = itemTag.SetupForm.DefaultEnabled();
-      //        }
+            if (itemTag.SetupForm != null)
+            {
+              if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
+              {
+                itemTag.IsEnabled = xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
+              }
+              else
+              {
+                itemTag.IsEnabled = itemTag.SetupForm.DefaultEnabled();
+              }
 
-      //        bool bHome = false;
-      //        bool bPlugins = false;
-      //        row["bool2"] = bHome;
-      //        row["bool2"] = bPlugins;
-      //        string buttontxt, buttonimage, buttonimagefocus, picture;
-      //        if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
-      //        {
-      //          if (itemTag.SetupForm.GetHome(out buttontxt, out buttonimage, out buttonimagefocus, out picture))
-      //          {
-      //            bHome = true;
-      //            row["bool2"] = xmlreader.GetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
-      //            row["bool3"] = xmlreader.GetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
-      //          }
-      //        }
-      //      }
-      //    }
-      //  }
-      //}
-      //catch (Exception) { }
+              bool bHome = false;
+              bool bPlugins = false;
+              itemTag.IsHome = bHome;
+              itemTag.IsPlugins = bPlugins;
+              string buttontxt, buttonimage, buttonimagefocus, picture;
+              if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
+              {
+                if (itemTag.SetupForm.GetHome(out buttontxt, out buttonimage, out buttonimagefocus, out picture))
+                {
+                  bHome = true;
+                  itemTag.IsHome = xmlreader.GetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
+                  itemTag.IsPlugins = xmlreader.GetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
+                }
+              }
+            }
+            if (itemTag.IsProcess)
+              if (itemTag.IsEnabled)
+                item.ImageIndex = 0;
+              else
+                item.ImageIndex = 2;
+            else if (itemTag.IsWindow)
+              if (itemTag.IsEnabled)
+                item.ImageIndex = 1;
+              else
+                item.ImageIndex = 3;
+          }
+        }
+      }
+      catch (Exception) { }
+      Log.Write(" ");
     }
 
 
@@ -346,65 +370,48 @@ namespace MediaPortal.Configuration.Sections
 
     private void listViewPlugins_SelectedIndexChanged(object sender, EventArgs e)
     {
-      ListView.SelectedListViewItemCollection selectedItems = listViewPlugins.SelectedItems;
-
-      foreach (ListViewItem item in selectedItems)
-      {
-        ItemTag tag = new ItemTag();
-        tag = (ItemTag)item.Tag;
-        mpLabelPluginName.Text = String.Format("{0}", tag.SetupForm.PluginName());
-        mpLabelAuthor.Text = String.Format("written by {0}", tag.SetupForm.Author());
-        mpLabelDescription.Text = String.Format("{0}", tag.SetupForm.Description());
-        mpGroupBoxPluginInfo.Visible = true;
-
-        //ds.Tables[0].Rows.Add(new object[] { true, true, false, tag.SetupForm.PluginName(), tag.SetupForm.Author(), tag.SetupForm.Description(), tag });
-      }
 
     }
 
-    private void mpButtonLargeIcon_Click(object sender, EventArgs e)
-    {
-      listViewPlugins.View = View.LargeIcon;
-    }
-
-    private void mpButtonList_Click(object sender, EventArgs e)
-    {
-      listViewPlugins.View = View.List;
-    }
-
-    private void mpButtonSmallIcon_Click(object sender, EventArgs e)
-    {
-      listViewPlugins.View = View.SmallIcon;
-    }
-
-    private void mpButtonDetails_Click(object sender, EventArgs e)
-    {
-      listViewPlugins.View = View.Details;
-    }
-
-    private void mpButtonTile_Click(object sender, EventArgs e)
-    {
-      listViewPlugins.View = View.Tile;
-    }
 
     private void listViewPlugins_DoubleClick(object sender, EventArgs e)
     {
-      ListView.SelectedListViewItemCollection selectedItems = listViewPlugins.SelectedItems;
+      if ((((ItemTag)listViewPlugins.FocusedItem.Tag).SetupForm != null) &&
+        (((ItemTag)listViewPlugins.FocusedItem.Tag).SetupForm.HasSetup()))
+        ((ItemTag)listViewPlugins.FocusedItem.Tag).SetupForm.ShowPlugin();
+    }
 
-      foreach (ListViewItem item in selectedItems)
-      {
-        ItemTag tag = new ItemTag();
-        tag = (ItemTag)item.Tag;
 
-        if (tag.SetupForm != null)
-        {
-          if (tag.SetupForm.HasSetup())
-          {
-            tag.SetupForm.ShowPlugin();
-            return;
-          }
-        }
-      }
+    private void listViewPlugins_Click(object sender, EventArgs e)
+    {
+      
+      ItemTag tag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      ToolStripLabel toolStripLabel = new ToolStripLabel(tag.SetupForm.PluginName());
+      toolStripLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      contextMenuStrip.Items.Clear();
+      contextMenuStrip.Items.Add(toolStripLabel);
+      contextMenuStrip.Items.Add(string.Format("Author: {0}", tag.SetupForm.Author()));
+      contextMenuStrip.Items.Add(new ToolStripSeparator());
+
+      if (!tag.IsEnabled)
+        contextMenuStrip.Items.Add("Disabled");
+      else
+        contextMenuStrip.Items.Add("Enabled", imageListContextMenu.Images[0]);
+
+      if (!tag.IsHome)
+        contextMenuStrip.Items.Add("Not listed in Home");
+      else
+        contextMenuStrip.Items.Add("Listed in Home", imageListContextMenu.Images[1]);
+
+      if (!tag.IsPlugins)
+        contextMenuStrip.Items.Add("Not listed in Plugins");
+      else
+        contextMenuStrip.Items.Add("Listed in Plugins", imageListContextMenu.Images[2]);
+
+      labelPluginName.Text = String.Format("{0}", tag.SetupForm.PluginName());
+      labelAuthor.Text = String.Format("written by {0}", tag.SetupForm.Author());
+      labelDescription.Text = String.Format("{0}", tag.SetupForm.Description());
+      //groupBoxPluginInfo.Visible = true;
     }
 
 
