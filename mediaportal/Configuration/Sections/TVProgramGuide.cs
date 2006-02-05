@@ -92,6 +92,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox5;
     private MediaPortal.UserInterface.Controls.MPCheckBox runGrabberLowPriorityCheckBox;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbGrabDVBEPG;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     int OldTimeZoneOffsetMins = 0;
 
     public TVProgramGuide()
@@ -175,6 +176,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbGrabDVBEPG = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.listView1 = new System.Windows.Forms.ListView();
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -200,11 +202,14 @@ namespace MediaPortal.Configuration.Sections
       // useColorCheckBox
       // 
       this.useColorCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.useColorCheckBox.Location = new System.Drawing.Point(16, 24);
+      this.useColorCheckBox.AutoSize = true;
+      this.useColorCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.useColorCheckBox.Location = new System.Drawing.Point(16, 23);
       this.useColorCheckBox.Name = "useColorCheckBox";
-      this.useColorCheckBox.Size = new System.Drawing.Size(216, 16);
+      this.useColorCheckBox.Size = new System.Drawing.Size(199, 17);
       this.useColorCheckBox.TabIndex = 0;
-      this.useColorCheckBox.Text = "Use colors for genres in the tvguide";
+      this.useColorCheckBox.Text = "Use colors for genres in the TV guide";
+      this.useColorCheckBox.UseVisualStyleBackColor = true;
       // 
       // label15
       // 
@@ -234,11 +239,12 @@ namespace MediaPortal.Configuration.Sections
       // btnClearTVDatabase
       // 
       this.btnClearTVDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnClearTVDatabase.Location = new System.Drawing.Point(272, 16);
+      this.btnClearTVDatabase.Location = new System.Drawing.Point(272, 12);
       this.btnClearTVDatabase.Name = "btnClearTVDatabase";
-      this.btnClearTVDatabase.Size = new System.Drawing.Size(144, 32);
+      this.btnClearTVDatabase.Size = new System.Drawing.Size(144, 40);
       this.btnClearTVDatabase.TabIndex = 1;
       this.btnClearTVDatabase.Text = "Remove all programs from TV database";
+      this.btnClearTVDatabase.UseVisualStyleBackColor = true;
       this.btnClearTVDatabase.Click += new System.EventHandler(this.btnClearTVDatabase_Click);
       // 
       // btnUpdateTvGuide
@@ -246,9 +252,10 @@ namespace MediaPortal.Configuration.Sections
       this.btnUpdateTvGuide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnUpdateTvGuide.Location = new System.Drawing.Point(272, 76);
       this.btnUpdateTvGuide.Name = "btnUpdateTvGuide";
-      this.btnUpdateTvGuide.Size = new System.Drawing.Size(144, 32);
+      this.btnUpdateTvGuide.Size = new System.Drawing.Size(144, 36);
       this.btnUpdateTvGuide.TabIndex = 9;
       this.btnUpdateTvGuide.Text = "Update TV database with time zone compensation";
+      this.btnUpdateTvGuide.UseVisualStyleBackColor = true;
       this.btnUpdateTvGuide.Click += new System.EventHandler(this.btnUpdateTvGuide_Click);
       // 
       // RunGrabberButton
@@ -259,16 +266,20 @@ namespace MediaPortal.Configuration.Sections
       this.RunGrabberButton.Size = new System.Drawing.Size(72, 22);
       this.RunGrabberButton.TabIndex = 11;
       this.RunGrabberButton.Text = "Run Grabber";
+      this.RunGrabberButton.UseVisualStyleBackColor = true;
       this.RunGrabberButton.Click += new System.EventHandler(this.RunGrabberButton_Click);
       // 
       // advancedRadioButton
       // 
+      this.advancedRadioButton.AutoSize = true;
       this.advancedRadioButton.Enabled = false;
+      this.advancedRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.advancedRadioButton.Location = new System.Drawing.Point(16, 100);
       this.advancedRadioButton.Name = "advancedRadioButton";
-      this.advancedRadioButton.Size = new System.Drawing.Size(160, 16);
+      this.advancedRadioButton.Size = new System.Drawing.Size(158, 17);
       this.advancedRadioButton.TabIndex = 6;
       this.advancedRadioButton.Text = "Advanced Single Day Grabs";
+      this.advancedRadioButton.UseVisualStyleBackColor = true;
       this.advancedRadioButton.CheckedChanged += new System.EventHandler(this.advancedRadioButton_CheckedChanged);
       // 
       // compensateTextBox
@@ -282,11 +293,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // useTimeZoneCheckBox
       // 
+      this.useTimeZoneCheckBox.AutoSize = true;
+      this.useTimeZoneCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.useTimeZoneCheckBox.Location = new System.Drawing.Point(16, 56);
       this.useTimeZoneCheckBox.Name = "useTimeZoneCheckBox";
-      this.useTimeZoneCheckBox.Size = new System.Drawing.Size(224, 16);
+      this.useTimeZoneCheckBox.Size = new System.Drawing.Size(223, 17);
       this.useTimeZoneCheckBox.TabIndex = 3;
       this.useTimeZoneCheckBox.Text = "Use time zone information from XMLTV file";
+      this.useTimeZoneCheckBox.UseVisualStyleBackColor = true;
       this.useTimeZoneCheckBox.CheckedChanged += new System.EventHandler(this.useTimeZoneCheckBox_CheckedChanged);
       // 
       // label1
@@ -305,6 +319,7 @@ namespace MediaPortal.Configuration.Sections
       this.browseButton.Size = new System.Drawing.Size(72, 22);
       this.browseButton.TabIndex = 2;
       this.browseButton.Text = "Browse";
+      this.browseButton.UseVisualStyleBackColor = true;
       this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
       // 
       // folderNameTextBox
@@ -353,6 +368,7 @@ namespace MediaPortal.Configuration.Sections
       this.parametersButton.Size = new System.Drawing.Size(72, 22);
       this.parametersButton.TabIndex = 4;
       this.parametersButton.Text = "List";
+      this.parametersButton.UseVisualStyleBackColor = true;
       this.parametersButton.Click += new System.EventHandler(this.parametersButton_Click);
       // 
       // parametersTextBox
@@ -414,12 +430,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       // basicRadioButton
       // 
+      this.basicRadioButton.AutoSize = true;
       this.basicRadioButton.Enabled = false;
+      this.basicRadioButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.basicRadioButton.Location = new System.Drawing.Point(16, 76);
       this.basicRadioButton.Name = "basicRadioButton";
-      this.basicRadioButton.Size = new System.Drawing.Size(120, 16);
+      this.basicRadioButton.Size = new System.Drawing.Size(118, 17);
       this.basicRadioButton.TabIndex = 5;
       this.basicRadioButton.Text = "Basic Multiday Grab";
+      this.basicRadioButton.UseVisualStyleBackColor = true;
       this.basicRadioButton.CheckedChanged += new System.EventHandler(this.basicRadioButton_CheckedChanged);
       // 
       // label10
@@ -464,11 +483,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // createScheduleCheckBox
       // 
+      this.createScheduleCheckBox.AutoSize = true;
+      this.createScheduleCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.createScheduleCheckBox.Location = new System.Drawing.Point(16, 23);
       this.createScheduleCheckBox.Name = "createScheduleCheckBox";
-      this.createScheduleCheckBox.Size = new System.Drawing.Size(96, 16);
+      this.createScheduleCheckBox.Size = new System.Drawing.Size(97, 17);
       this.createScheduleCheckBox.TabIndex = 0;
       this.createScheduleCheckBox.Text = "Create Task at:";
+      this.createScheduleCheckBox.UseVisualStyleBackColor = true;
       this.createScheduleCheckBox.CheckedChanged += new System.EventHandler(this.createScheduleCheckBox_CheckedChanged);
       // 
       // UserTextBox
@@ -518,6 +540,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.DeleteTaskButton);
       this.groupBox3.Controls.Add(this.label13);
       this.groupBox3.Controls.Add(this.label2);
+      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(16, 248);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(432, 120);
@@ -533,6 +556,7 @@ namespace MediaPortal.Configuration.Sections
       this.DeleteTaskButton.Size = new System.Drawing.Size(72, 22);
       this.DeleteTaskButton.TabIndex = 12;
       this.DeleteTaskButton.Text = "Delete Task";
+      this.DeleteTaskButton.UseVisualStyleBackColor = true;
       this.DeleteTaskButton.Click += new System.EventHandler(this.DeleteTaskButton_Click);
       // 
       // label13
@@ -567,6 +591,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.Size = new System.Drawing.Size(464, 382);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "General";
+      this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // groupBox4
       // 
@@ -574,6 +599,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox4.Controls.Add(this.useColorCheckBox);
       this.groupBox4.Controls.Add(this.btnClearTVDatabase);
+      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox4.Location = new System.Drawing.Point(16, 312);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(432, 56);
@@ -586,11 +612,13 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.mpLabel1);
       this.groupBox2.Controls.Add(this.cbGrabDVBEPG);
       this.groupBox2.Controls.Add(this.listView1);
       this.groupBox2.Controls.Add(this.button3);
       this.groupBox2.Controls.Add(this.button2);
       this.groupBox2.Controls.Add(this.treeView1);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(16, 144);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(432, 160);
@@ -598,16 +626,26 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = " DVB-EPG Grabber";
       // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(305, 24);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(116, 84);
+      this.mpLabel1.TabIndex = 5;
+      this.mpLabel1.Text = "Grab EPG from DVB - This option should not be selected when using the analogue fu" +
+          "nction on hybrid cards";
+      // 
       // cbGrabDVBEPG
       // 
-      this.cbGrabDVBEPG.Location = new System.Drawing.Point(288, 22);
+      this.cbGrabDVBEPG.AutoSize = true;
+      this.cbGrabDVBEPG.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbGrabDVBEPG.Location = new System.Drawing.Point(288, 24);
       this.cbGrabDVBEPG.Name = "cbGrabDVBEPG";
-      this.cbGrabDVBEPG.Size = new System.Drawing.Size(128, 85);
+      this.cbGrabDVBEPG.Size = new System.Drawing.Size(13, 12);
       this.cbGrabDVBEPG.TabIndex = 4;
-      this.cbGrabDVBEPG.Text = "Grab EPG from DVB. This option should not be selected when using the analogue fun" +
-          "ction on Hybrid cards.";
       this.cbGrabDVBEPG.TextAlign = System.Drawing.ContentAlignment.TopLeft;
       this.cbGrabDVBEPG.ThreeState = true;
+      this.cbGrabDVBEPG.UseVisualStyleBackColor = true;
       this.cbGrabDVBEPG.CheckedChanged += new System.EventHandler(this.cbGrabDVBEPG_CheckedChanged);
       // 
       // listView1
@@ -639,6 +677,7 @@ namespace MediaPortal.Configuration.Sections
       this.button3.Size = new System.Drawing.Size(72, 22);
       this.button3.TabIndex = 3;
       this.button3.Text = "None";
+      this.button3.UseVisualStyleBackColor = true;
       this.button3.Click += new System.EventHandler(this.button3_Click);
       // 
       // button2
@@ -649,6 +688,7 @@ namespace MediaPortal.Configuration.Sections
       this.button2.Size = new System.Drawing.Size(72, 22);
       this.button2.TabIndex = 2;
       this.button2.Text = "All";
+      this.button2.UseVisualStyleBackColor = true;
       this.button2.Click += new System.EventHandler(this.button2_Click);
       // 
       // treeView1
@@ -676,6 +716,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.label16);
       this.groupBox1.Controls.Add(this.folderNameLabel);
       this.groupBox1.Controls.Add(this.btnUpdateTvGuide);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(16, 16);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(432, 120);
@@ -701,6 +742,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage2.Size = new System.Drawing.Size(464, 382);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Scheduler";
+      this.tabPage2.UseVisualStyleBackColor = true;
       // 
       // groupBox5
       // 
@@ -719,6 +761,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox5.Controls.Add(this.AdvancedDaystextBox);
       this.groupBox5.Controls.Add(this.advancedRadioButton);
       this.groupBox5.Controls.Add(this.label4);
+      this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox5.Location = new System.Drawing.Point(16, 16);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(432, 224);
@@ -728,11 +771,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // runGrabberLowPriorityCheckBox
       // 
+      this.runGrabberLowPriorityCheckBox.AutoSize = true;
+      this.runGrabberLowPriorityCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.runGrabberLowPriorityCheckBox.Location = new System.Drawing.Point(16, 192);
       this.runGrabberLowPriorityCheckBox.Name = "runGrabberLowPriorityCheckBox";
-      this.runGrabberLowPriorityCheckBox.Size = new System.Drawing.Size(168, 16);
+      this.runGrabberLowPriorityCheckBox.Size = new System.Drawing.Size(166, 17);
       this.runGrabberLowPriorityCheckBox.TabIndex = 12;
       this.runGrabberLowPriorityCheckBox.Text = "Run grabber with lower priority";
+      this.runGrabberLowPriorityCheckBox.UseVisualStyleBackColor = true;
       this.runGrabberLowPriorityCheckBox.CheckedChanged += new System.EventHandler(this.mpCheckBox1_CheckedChanged);
       // 
       // label14
@@ -753,7 +799,9 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.groupBox4.ResumeLayout(false);
+      this.groupBox4.PerformLayout();
       this.groupBox2.ResumeLayout(false);
+      this.groupBox2.PerformLayout();
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.tabPage2.ResumeLayout(false);
