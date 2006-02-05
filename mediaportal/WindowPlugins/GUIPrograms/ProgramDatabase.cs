@@ -141,8 +141,8 @@ namespace ProgramsDatabase
       DatabaseUtility.AddTable(sqlDB, "tblfile",  "CREATE TABLE tblfile (fileid integer primary key, appid integer, title text, filename text, filepath text, imagefile text, genre text, genre2 text, genre3 text, genre4 text, genre5 text, country text, manufacturer text, year integer, rating integer, overview text, system text, import_flag integer, manualfilename text, lastTimeLaunched text, launchcount integer, isfolder text, external_id integer, uppertitle text, tagdata text, categorydata text)");
       DatabaseUtility.AddTable(sqlDB, "filterItem",  "CREATE TABLE filterItem (appid integer, grouperAppID integer, fileID integer, filename text, tag integer)");
       DatabaseUtility.AddTable(sqlDB, "setting",  "CREATE TABLE setting (settingid integer primary key, key text, value text)");
-      DatabaseUtility.AddIndex(sqlDB, "idxFile1", "CREATE INDEX idxFile1 ON file(appid)");
-      DatabaseUtility.AddIndex(sqlDB, "idxFile2", "CREATE INDEX idxFile2 ON file(filepath, uppertitle)");
+      DatabaseUtility.AddIndex(sqlDB, "idxFile1", "CREATE INDEX idxFile1 ON tblfile(appid)");
+      DatabaseUtility.AddIndex(sqlDB, "idxFile2", "CREATE INDEX idxFile2 ON tblfile(filepath, uppertitle)");
       DatabaseUtility.AddIndex(sqlDB, "idxApp1", "CREATE INDEX idxApp1 ON application(fatherID)");
       DatabaseUtility.AddIndex(sqlDB, "idxFilterItem1", "CREATE UNIQUE INDEX idxFilterItem1 ON filterItem(appID, fileID, grouperAppID)");
       if (skipPrePostPatch)
