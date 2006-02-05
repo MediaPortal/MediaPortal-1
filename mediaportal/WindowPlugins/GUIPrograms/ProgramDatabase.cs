@@ -26,7 +26,7 @@ using MediaPortal.GUI.Library;
 using Programs.Utils;
 using SQLite.NET;
 using WindowPlugins.GUIPrograms;
-
+using MediaPortal.Database;
 namespace ProgramsDatabase
 {
   /// <summary>
@@ -137,15 +137,14 @@ namespace ProgramsDatabase
       bool skipPrePostPatch = false;
       if (sqlDB == null)
         return false;
-      skipPrePostPatch = AddObject("application", "table", "CREATE TABLE application (appid integer primary key, fatherID integer, title text, shorttitle text, filename text, arguments text, windowstyle text, startupdir text, useshellexecute text, usequotes text, source_type text, source text, imagefile text, filedirectory text, imagedirectory text, validextensions text, enabled text, importvalidimagesonly text, position integer, enableGUIRefresh text, GUIRefreshPossible text, contentID integer, systemdefault text, waitforexit text, pincode integer, preLaunch text, postLaunch text)");
-      AddObject("file", "table", 
-        "CREATE TABLE file (fileid integer primary key, appid integer, title text, filename text, filepath text, imagefile text, genre text, genre2 text, genre3 text, genre4 text, genre5 text, country text, manufacturer text, year integer, rating integer, overview text, system text, import_flag integer, manualfilename text, lastTimeLaunched text, launchcount integer, isfolder text, external_id integer, uppertitle text, tagdata text, categorydata text)");
-      AddObject("filterItem", "table", "CREATE TABLE filterItem (appid integer, grouperAppID integer, fileID integer, filename text, tag integer)");
-      AddObject("setting", "table", "CREATE TABLE setting (settingid integer primary key, key text, value text)");
-      AddObject("idxFile1", "index", "CREATE INDEX idxFile1 ON file(appid)");
-      AddObject("idxFile2", "index", "CREATE INDEX idxFile2 ON file(filepath, uppertitle)");
-      AddObject("idxApp1", "index", "CREATE INDEX idxApp1 ON application(fatherID)");
-      AddObject("idxFilterItem1", "index", "CREATE UNIQUE INDEX idxFilterItem1 ON filterItem(appID, fileID, grouperAppID)");
+      skipPrePostPatch = DatabaseUtility.AddTable(sqlDB,"application", "CREATE TABLE application (appid integer primary key, fatherID integer, title text, shorttitle text, filename text, arguments text, windowstyle text, startupdir text, useshellexecute text, usequotes text, source_type text, source text, imagefile text, filedirectory text, imagedirectory text, validextensions text, enabled text, importvalidimagesonly text, iposition integer, enableGUIRefresh text, GUIRefreshPossible text, contentID integer, systemdefault text, waitforexit text, pincode integer, preLaunch text, postLaunch text)");
+      DatabaseUtility.AddTable(sqlDB, "tblfile",  "CREATE TABLE tblfile (fileid integer primary key, appid integer, title text, filename text, filepath text, imagefile text, genre text, genre2 text, genre3 text, genre4 text, genre5 text, country text, manufacturer text, year integer, rating integer, overview text, system text, import_flag integer, manualfilename text, lastTimeLaunched text, launchcount integer, isfolder text, external_id integer, uppertitle text, tagdata text, categorydata text)");
+      DatabaseUtility.AddTable(sqlDB, "filterItem",  "CREATE TABLE filterItem (appid integer, grouperAppID integer, fileID integer, filename text, tag integer)");
+      DatabaseUtility.AddTable(sqlDB, "setting",  "CREATE TABLE setting (settingid integer primary key, key text, value text)");
+      DatabaseUtility.AddIndex(sqlDB, "idxFile1", "CREATE INDEX idxFile1 ON file(appid)");
+      DatabaseUtility.AddIndex(sqlDB, "idxFile2", "CREATE INDEX idxFile2 ON file(filepath, uppertitle)");
+      DatabaseUtility.AddIndex(sqlDB, "idxApp1", "CREATE INDEX idxApp1 ON application(fatherID)");
+      DatabaseUtility.AddIndex(sqlDB, "idxFilterItem1", "CREATE UNIQUE INDEX idxFilterItem1 ON filterItem(appID, fileID, grouperAppID)");
       if (skipPrePostPatch)
       {
         // don't need to add prelaunch / postlaunch anymore if table was created above

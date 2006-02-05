@@ -67,7 +67,7 @@ namespace ProgramsDatabase
       newApp.ImageDirectory = ProgramUtils.Get(results, recordIndex, "imagedirectory");
       newApp.ValidExtensions = ProgramUtils.Get(results, recordIndex, "validextensions");
       newApp.ImportValidImagesOnly = ProgramUtils.GetBool(results, recordIndex, "importvalidimagesonly");
-      newApp.Position = ProgramUtils.GetIntDef(results, recordIndex, "position", 0);
+      newApp.Position = ProgramUtils.GetIntDef(results, recordIndex, "iposition", 0);
       newApp.EnableGUIRefresh = ProgramUtils.GetBool(results, recordIndex, "enableGUIRefresh");
       newApp.ContentID = ProgramUtils.GetIntDef(results, recordIndex, "contentID", 100);
       newApp.SystemDefault = ProgramUtils.Get(results, recordIndex, "systemdefault");
@@ -156,7 +156,7 @@ namespace ProgramsDatabase
         if (null == sqlDB)
           return ;
         SQLiteResultSet results;
-        results = sqlDB.Execute("select * from application order by position");
+        results = sqlDB.Execute("select * from application order by iposition");
         if (results.Rows.Count == 0)
           return ;
         for (int row = 0; row < results.Rows.Count; row++)

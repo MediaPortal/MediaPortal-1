@@ -256,7 +256,7 @@ namespace WindowPlugins.GUIPrograms
       SQLSelectBuilder sqlSelect = new SQLSelectBuilder();
       // build the SQL query respecting all the filters and let 
       // the query be executed from outside (this is different from MusicViewHandler)
-      sqlSelect.AddTable("file");
+      sqlSelect.AddTable("tblfile");
       sqlSelect.AddWhereCond(String.Format("appid = {0}", appID));
       if (currentView == null)
       {
@@ -265,7 +265,7 @@ namespace WindowPlugins.GUIPrograms
         // a: "select file.*, '' as title2, '' as fieldtype2 from file where appid = {0} order by isfolder desc, uppertitle"
         // b: "select file.*, '' as title2, '' as fieldtype2 from file where appid = {0} and filepath = '{1}' order by isfolder desc, uppertitle"
 
-        sqlSelect.AddField("file.*");
+        sqlSelect.AddField("tblfile.*");
         sqlSelect.AddField("'' as title2");
         sqlSelect.AddField("'' as fieldtype2");
         if (pathSubfolders != "")
@@ -435,18 +435,18 @@ namespace WindowPlugins.GUIPrograms
       string res = "";
       if (where == "launchcount")
       {
-        res = "file.*";
+        res = "tblfile.*";
       }
       else if (where == "lastTimeLaunched")
       {
-        res = "file.*";
+        res = "tblfile.*";
       }
       else
       {
         res = GetFieldName(where);
         if (res == "")
         {
-          res = "file.*";
+          res = "tblfile.*";
         }
         else
         {

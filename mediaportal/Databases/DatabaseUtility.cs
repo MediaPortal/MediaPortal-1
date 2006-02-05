@@ -100,6 +100,37 @@ namespace MediaPortal.Database
 			}
 			return false;
 		}
+    
+    static public void AddIndex(SQLiteClient dbHandle, string indexName, string strSQL)
+    {
+      SQLiteResultSet results;
+      bool res = false;
+      results = dbHandle.Execute("SELECT name FROM sqlite_master WHERE name='" + indexName + "' and type='index' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='index' ORDER BY name");
+      if (results != null && results.Rows.Count > 0)
+      {
+        if (results.Rows.Count == 1)
+        {
+          SQLiteResultSet.Row arr = results.Rows[0];
+          if (arr.fields.Count == 1)
+          {
+            if (arr.fields[0] == indexName)
+            {
+              res = true;
+            }
+          }
+        }
+      }
+      if (res == true) return;
+      try
+      {
+        dbHandle.Execute(strSQL);
+      }
+      catch (SQLiteException ex)
+      {
+        Log.WriteFile(Log.LogType.Log, true, "DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message, ex.StackTrace, strSQL);
+      }
+      return ;
+    }
 		/// <summary>
 		/// Helper function to create a new table in the database
 		/// </summary>
@@ -108,71 +139,18 @@ namespace MediaPortal.Database
 		/// <returns>true if table is created</returns>
 		static public bool AddTable( SQLiteClient dbHandle,  string strTable, string strSQL)
 		{
-		//	lock (typeof(DatabaseUtility))
+      if (TableExists(dbHandle, strTable)) return false;
+			try 
 			{
-				Log.Write("AddTable: {0}",strTable);
-				if (dbHandle==null) 
-				{
-					Log.Write("AddTable: database not opened");
-					return false;
-				}
-				if (strSQL==null) 
-				{
-					Log.Write("AddTable: no sql?");
-					return false;
-				}
-				if (strTable==null) 
-				{
-					Log.Write("AddTable: No table?");
-					return false;
-				}
-				if (strTable.Length==0) 
-				{
-					Log.Write("AddTable: empty table?");
-					return false;
-				}
-				if (strSQL.Length==0) 
-				{
-					Log.Write("AddTable: empty sql?");
-					return false;
-				}
-
-				//Log.Write("check for  table:{0}", strTable);
-				SQLiteResultSet results;
-				results = dbHandle.Execute("SELECT name FROM sqlite_master WHERE name='"+strTable+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
-				if (results!=null)
-				{
-					Log.Write("  results:{0}", results.Rows.Count);
-					if (results.Rows.Count==1) 
-					{
-						Log.Write(" check result:0");
-            SQLiteResultSet.Row arr = results.Rows[0];
-						if (arr.fields.Count==1)
-						{
-							string tableName=(arr.fields[0]).Trim();
-							if ( String.Compare(tableName,strTable,true)==0) 
-							{
-								//Log.Write(" table exists");
-								return false;
-							}
-							Log.Write(" table has different name:[{0}[ [{1}]", tableName,strTable);
-						}
-						else Log.Write(" array contains:{0} items?", arr.fields.Count);
-					}
-				}
-
-				try 
-				{
-					//Log.Write("create table:{0} {1}", strSQL,dbHandle);
-					dbHandle.Execute(strSQL);
-					//Log.Write("table created");
-				}
-				catch (SQLiteException ex) 
-				{
-					Log.WriteFile(Log.LogType.Log,true,"DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message,ex.StackTrace,strSQL);
-				}
-				return true;
+				//Log.Write("create table:{0} {1}", strSQL,dbHandle);
+				dbHandle.Execute(strSQL);
+				//Log.Write("table created");
 			}
+			catch (SQLiteException ex) 
+			{
+				Log.WriteFile(Log.LogType.Log,true,"DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message,ex.StackTrace,strSQL);
+			}
+			return true;
 		}
 
 		static public int GetAsInt(SQLiteResultSet results, int iRecord, string strColum)

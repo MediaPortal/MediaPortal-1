@@ -45,11 +45,11 @@ namespace MediaPortal.Util
       {
         // Open database
         Log.Write("open folderdatabase");
-        m_db = new SQLiteClient(@"database\FolderDatabase2.db3");
+        m_db = new SQLiteClient(@"database\FolderDatabase3.db3");
 
         Database.DatabaseUtility.SetPragmas(m_db);
-				Database.DatabaseUtility.AddTable(m_db,"path","CREATE TABLE path ( idPath integer primary key, strPath text)");
-        Database.DatabaseUtility.AddTable(m_db, "setting", "CREATE TABLE setting ( idSetting integer primary key, idPath integer , key text, value text)");
+        Database.DatabaseUtility.AddTable(m_db, "tblPath", "CREATE TABLE tblPath ( idPath integer primary key, strPath text)");
+        Database.DatabaseUtility.AddTable(m_db, "tblSetting", "CREATE TABLE tblSetting ( idSetting integer primary key, idPath integer , tagName text, tagValue text)");
 
       } 
       catch (Exception ex) 
@@ -104,12 +104,12 @@ namespace MediaPortal.Util
       try
       {
         SQLiteResultSet results;
-        string strSQL = String.Format("select * from path where strPath like '{0}'", FilteredPath);
+        string strSQL = String.Format("select * from tblPath where strPath like '{0}'", FilteredPath);
         results = m_db.Execute(strSQL);
         if (results.Rows.Count == 0) 
         {
           // doesnt exists, add it
-          strSQL = String.Format("insert into path (idPath, strPath) values ( NULL, '{0}' )", FilteredPath);
+          strSQL = String.Format("insert into tblPath (idPath, strPath) values ( NULL, '{0}' )", FilteredPath);
           m_db.Execute(strSQL);
           return m_db.LastInsertID();
         }
@@ -141,7 +141,7 @@ namespace MediaPortal.Util
 
         int PathId=AddPath(strPathFiltered);
         if (PathId<0) return ;
-        string strSQL = String.Format("delete from setting where idPath={0} and key ='{1}'", PathId, KeyFiltered);
+        string strSQL = String.Format("delete from tblSetting where idPath={0} and tagName ='{1}'", PathId, KeyFiltered);
         m_db.Execute(strSQL);
       }
       catch (Exception ex)
@@ -187,7 +187,7 @@ namespace MediaPortal.Util
               string ValueTextFiltered = ValueText;
               RemoveInvalidChars(ref ValueTextFiltered);
 
-              string strSQL = String.Format("insert into setting (idSetting,idPath, key,value) values(NULL, {0}, '{1}', '{2}') ", PathId, KeyFiltered,ValueTextFiltered);
+              string strSQL = String.Format("insert into tblSetting (idSetting,idPath, tagName,tagValue) values(NULL, {0}, '{1}', '{2}') ", PathId, KeyFiltered, ValueTextFiltered);
               m_db.Execute(strSQL);
             }
           }
@@ -220,13 +220,13 @@ namespace MediaPortal.Util
         if (PathId<0) return ;
 
         SQLiteResultSet results;
-        string strSQL = String.Format("select * from setting where idPath={0} and key like '{1}'", PathId, KeyFiltered);
+        string strSQL = String.Format("select * from tblSetting where idPath={0} and tagName like '{1}'", PathId, KeyFiltered);
         results=m_db.Execute(strSQL);
         if (results.Rows.Count == 0) 
         {
           return;
         }
-        string strValue=Get(results,0,"value");
+        string strValue = Get(results, 0, "tagValue");
 
         //deserialize...
 

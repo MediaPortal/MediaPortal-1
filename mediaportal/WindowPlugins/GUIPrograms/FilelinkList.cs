@@ -85,7 +85,7 @@ namespace ProgramsDatabase
         // app.
         // SPECIAL: the current application IS NOT the application with the launchinfo!
         strSQL = String.Format(
-          "SELECT fi.appid AS targetappid, fi.grouperappid AS grouperappid, f.fileid AS fileid, title, uppertitle, f.filename as filename, filepath, imagefile, genre, genre2, genre3, genre4, genre5, country, manufacturer, YEAR, rating, overview, SYSTEM, import_flag, manualfilename, lasttimelaunched, launchcount, isfolder, external_id FROM FILE f, filteritem fi WHERE f.fileid = fi.fileid AND grouperappid = {0} ORDER BY filepath, uppertitle", nAppID);
+          "SELECT fi.appid AS targetappid, fi.grouperappid AS grouperappid, f.fileid AS fileid, title, uppertitle, f.filename as filename, filepath, imagefile, genre, genre2, genre3, genre4, genre5, country, manufacturer, YEAR, rating, overview, SYSTEM, import_flag, manualfilename, lasttimelaunched, launchcount, isfolder, external_id FROM tblFILE f, filteritem fi WHERE f.fileid = fi.fileid AND grouperappid = {0} ORDER BY filepath, uppertitle", nAppID);
         results = sqlDB.Execute(strSQL);
         if (results.Rows.Count == 0)
           return ;

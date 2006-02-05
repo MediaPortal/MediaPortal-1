@@ -888,7 +888,7 @@ namespace ProgramsDatabase
             ContentID = 100;
           }
           AppID = GetNewAppID(); // important to avoid subsequent inserts!
-          string sql = String.Format("insert into application (appid, fatherID, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, position, enabled, enableGUIRefresh, GUIRefreshPossible, pincode, contentID, systemDefault, WaitForExit, preLaunch, postLaunch) values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}', '{22}', '{23}', '{24}', '{25}', '{26}')",
+          string sql = String.Format("insert into application (appid, fatherID, title, shorttitle, filename, arguments, windowstyle, startupdir, useshellexecute, usequotes, source_type, source, imagefile, filedirectory, imagedirectory, validextensions, importvalidimagesonly, iposition, enabled, enableGUIRefresh, GUIRefreshPossible, pincode, contentID, systemDefault, WaitForExit, preLaunch, postLaunch) values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}', '{14}', '{15}', '{16}', '{17}', '{18}', '{19}', '{20}', '{21}', '{22}', '{23}', '{24}', '{25}', '{26}')",
                                         AppID, FatherID, ProgramUtils.Encode(Title), ProgramUtils.Encode(ShortTitle), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Arguments),
                                         ProgramUtils.WindowStyleToStr(WindowStyle), ProgramUtils.Encode(Startupdir), ProgramUtils.BooleanToStr(UseShellExecute),
                                         ProgramUtils.BooleanToStr(UseQuotes), ProgramUtils.SourceTypeToStr(SourceType), ProgramUtils.Encode(Source), ProgramUtils.Encode(Imagefile),
@@ -916,7 +916,7 @@ namespace ProgramsDatabase
         }
         try
         {
-          sql = String.Format("update application set title = '{0}', shorttitle = '{1}', filename = '{2}', arguments = '{3}', windowstyle = '{4}', startupdir = '{5}', useshellexecute = '{6}', usequotes = '{7}', source_type = '{8}', source = '{9}', imagefile = '{10}',filedirectory = '{11}',imagedirectory = '{12}',validextensions = '{13}',importvalidimagesonly = '{14}',position = {15}, enabled = '{16}', fatherID = '{17}', enableGUIRefresh = '{18}', GUIRefreshPossible = '{19}', pincode = '{20}', contentID = '{21}', systemDefault = '{22}', WaitForExit = '{23}', preLaunch = '{24}', postLaunch = '{25}' where appID = {26}",
+          sql = String.Format("update application set title = '{0}', shorttitle = '{1}', filename = '{2}', arguments = '{3}', windowstyle = '{4}', startupdir = '{5}', useshellexecute = '{6}', usequotes = '{7}', source_type = '{8}', source = '{9}', imagefile = '{10}',filedirectory = '{11}',imagedirectory = '{12}',validextensions = '{13}',importvalidimagesonly = '{14}',iposition = {15}, enabled = '{16}', fatherID = '{17}', enableGUIRefresh = '{18}', GUIRefreshPossible = '{19}', pincode = '{20}', contentID = '{21}', systemDefault = '{22}', WaitForExit = '{23}', preLaunch = '{24}', postLaunch = '{25}' where appID = {26}",
                                  ProgramUtils.Encode(Title), ProgramUtils.Encode(ShortTitle), ProgramUtils.Encode(Filename), ProgramUtils.Encode(Arguments),
                                  ProgramUtils.WindowStyleToStr(WindowStyle), ProgramUtils.Encode(Startupdir), ProgramUtils.BooleanToStr(UseShellExecute),
                                  ProgramUtils.BooleanToStr(UseQuotes), ProgramUtils.SourceTypeToStr(SourceType), ProgramUtils.Encode(Source), ProgramUtils.Encode(Imagefile),
@@ -979,7 +979,7 @@ namespace ProgramsDatabase
       {
         try
         {
-          sqlDB.Execute(String.Format("delete from file where appid = {0}", AppID));
+          sqlDB.Execute(String.Format("delete from tblfile where appid = {0}", AppID));
         }
         catch (SQLiteException ex)
         {
@@ -1048,7 +1048,7 @@ namespace ProgramsDatabase
       // are out of sync... fix this here!
 
       // query with data to fix
-      string sqlSelectDataToFix = String.Format("select fi.appid, fi.fileid as oldfileid, f.fileid as newfileid, fi.filename as filename from filteritem fi, file f where fi.appID = f.appid and fi.filename = f.filename and fi.appID = {0}", AppID);
+      string sqlSelectDataToFix = String.Format("select fi.appid, fi.fileid as oldfileid, f.fileid as newfileid, fi.filename as filename from filteritem fi, tblfile f where fi.appID = f.appid and fi.filename = f.filename and fi.appID = {0}", AppID);
 
       // update command to fix one single link
       string sqlFixOneLink = "update filteritem set fileID = {0}, tag = 0 where appID = {1} and filename = '{2}'";
