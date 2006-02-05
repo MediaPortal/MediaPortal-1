@@ -30,10 +30,12 @@ namespace MediaPortal.Configuration.Sections
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginsNew));
-      System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Process Plugins", System.Windows.Forms.HorizontalAlignment.Left);
-      System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Window Plugins", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Window Plugins", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("External Players", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Process Plugins", System.Windows.Forms.HorizontalAlignment.Left);
       this.imageListLargePlugins = new System.Windows.Forms.ImageList(this.components);
       this.imageListSmallPlugins = new System.Windows.Forms.ImageList(this.components);
+      this.imageListContextMenu = new System.Windows.Forms.ImageList(this.components);
       this.mpTabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.groupBoxPluginInfo = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -45,7 +47,6 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeaderName = new System.Windows.Forms.ColumnHeader();
       this.contextMenuStrip = new MediaPortal.UserInterface.Controls.MPContextMenuStrip();
       this.toolTip = new MediaPortal.UserInterface.Controls.MPToolTip();
-      this.imageListContextMenu = new System.Windows.Forms.ImageList(this.components);
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.groupBoxPluginInfo.SuspendLayout();
@@ -69,8 +70,19 @@ namespace MediaPortal.Configuration.Sections
       this.imageListSmallPlugins.Images.SetKeyName(2, "plugin_process_off.png");
       this.imageListSmallPlugins.Images.SetKeyName(3, "plugin_window_off.png");
       // 
+      // imageListContextMenu
+      // 
+      this.imageListContextMenu.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListContextMenu.ImageStream")));
+      this.imageListContextMenu.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageListContextMenu.Images.SetKeyName(0, "Icon 178.ico");
+      this.imageListContextMenu.Images.SetKeyName(1, "Icon 365.ico");
+      this.imageListContextMenu.Images.SetKeyName(2, "Icon 134.ico");
+      // 
       // mpTabControl1
       // 
+      this.mpTabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpTabControl1.Controls.Add(this.tabPage1);
       this.mpTabControl1.Location = new System.Drawing.Point(0, 8);
       this.mpTabControl1.Name = "mpTabControl1";
@@ -142,31 +154,36 @@ namespace MediaPortal.Configuration.Sections
       // listViewPlugins
       // 
       this.listViewPlugins.Activation = System.Windows.Forms.ItemActivation.OneClick;
+      this.listViewPlugins.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderName});
       this.listViewPlugins.ContextMenuStrip = this.contextMenuStrip;
-      listViewGroup1.Header = "Process Plugins";
-      listViewGroup1.Name = "listViewGroupProcess";
-      listViewGroup2.Header = "Window Plugins";
-      listViewGroup2.Name = "listViewGroupWindow";
+      listViewGroup1.Header = "Window Plugins";
+      listViewGroup1.Name = "listViewGroupWindow";
+      listViewGroup2.Header = "External Players";
+      listViewGroup2.Name = "listViewGroupExternalPlayers";
+      listViewGroup3.Header = "Process Plugins";
+      listViewGroup3.Name = "listViewGroupProcess";
       this.listViewPlugins.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1,
-            listViewGroup2});
+            listViewGroup2,
+            listViewGroup3});
       this.listViewPlugins.HideSelection = false;
       this.listViewPlugins.LabelWrap = false;
       this.listViewPlugins.LargeImageList = this.imageListLargePlugins;
-      this.listViewPlugins.Location = new System.Drawing.Point(16, 20);
+      this.listViewPlugins.Location = new System.Drawing.Point(20, 20);
       this.listViewPlugins.MultiSelect = false;
       this.listViewPlugins.Name = "listViewPlugins";
       this.listViewPlugins.ShowItemToolTips = true;
-      this.listViewPlugins.Size = new System.Drawing.Size(432, 332);
+      this.listViewPlugins.Size = new System.Drawing.Size(424, 288);
       this.listViewPlugins.SmallImageList = this.imageListSmallPlugins;
       this.listViewPlugins.Sorting = System.Windows.Forms.SortOrder.Ascending;
       this.listViewPlugins.StateImageList = this.imageListLargePlugins;
       this.listViewPlugins.TabIndex = 0;
       this.listViewPlugins.UseCompatibleStateImageBehavior = false;
       this.listViewPlugins.DoubleClick += new System.EventHandler(this.listViewPlugins_DoubleClick);
-      this.listViewPlugins.SelectedIndexChanged += new System.EventHandler(this.listViewPlugins_SelectedIndexChanged);
       this.listViewPlugins.Click += new System.EventHandler(this.listViewPlugins_Click);
       // 
       // columnHeaderName
@@ -176,16 +193,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // contextMenuStrip
       // 
+      this.contextMenuStrip.BackColor = System.Drawing.SystemColors.Window;
+      this.contextMenuStrip.MinimumSize = new System.Drawing.Size(10, 0);
       this.contextMenuStrip.Name = "contextMenuStrip";
       this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
-      // 
-      // imageListContextMenu
-      // 
-      this.imageListContextMenu.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListContextMenu.ImageStream")));
-      this.imageListContextMenu.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageListContextMenu.Images.SetKeyName(0, "Icon 178.ico");
-      this.imageListContextMenu.Images.SetKeyName(1, "Icon 365.ico");
-      this.imageListContextMenu.Images.SetKeyName(2, "Icon 134.ico");
+      this.contextMenuStrip.TabStop = true;
       // 
       // PluginsNew
       // 
