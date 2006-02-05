@@ -33,6 +33,7 @@ namespace MediaPortal.Configuration.Sections
       System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Window Plugins", System.Windows.Forms.HorizontalAlignment.Left);
       System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("External Players", System.Windows.Forms.HorizontalAlignment.Left);
       System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Process Plugins", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Other Plugins", System.Windows.Forms.HorizontalAlignment.Left);
       this.imageListLargePlugins = new System.Windows.Forms.ImageList(this.components);
       this.imageListSmallPlugins = new System.Windows.Forms.ImageList(this.components);
       this.imageListContextMenu = new System.Windows.Forms.ImageList(this.components);
@@ -56,27 +57,35 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.imageListLargePlugins.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListLargePlugins.ImageStream")));
       this.imageListLargePlugins.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageListLargePlugins.Images.SetKeyName(0, "plugin_process.png");
-      this.imageListLargePlugins.Images.SetKeyName(1, "plugin_window.png");
-      this.imageListLargePlugins.Images.SetKeyName(2, "plugin_process_off.png");
+      this.imageListLargePlugins.Images.SetKeyName(0, "plugin_other.png");
+      this.imageListLargePlugins.Images.SetKeyName(1, "plugin_other_off.png");
+      this.imageListLargePlugins.Images.SetKeyName(2, "plugin_window.png");
       this.imageListLargePlugins.Images.SetKeyName(3, "plugin_window_off.png");
+      this.imageListLargePlugins.Images.SetKeyName(4, "plugin_process.png");
+      this.imageListLargePlugins.Images.SetKeyName(5, "plugin_process_off.png");
+      this.imageListLargePlugins.Images.SetKeyName(6, "plugin_externalplayers.png");
+      this.imageListLargePlugins.Images.SetKeyName(7, "plugin_externalplayers_off.png");
       // 
       // imageListSmallPlugins
       // 
       this.imageListSmallPlugins.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListSmallPlugins.ImageStream")));
       this.imageListSmallPlugins.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageListSmallPlugins.Images.SetKeyName(0, "plugin_process.png");
-      this.imageListSmallPlugins.Images.SetKeyName(1, "plugin_window.png");
-      this.imageListSmallPlugins.Images.SetKeyName(2, "plugin_process_off.png");
+      this.imageListSmallPlugins.Images.SetKeyName(0, "plugin_other.png");
+      this.imageListSmallPlugins.Images.SetKeyName(1, "plugin_other_off.png");
+      this.imageListSmallPlugins.Images.SetKeyName(2, "plugin_window.png");
       this.imageListSmallPlugins.Images.SetKeyName(3, "plugin_window_off.png");
+      this.imageListSmallPlugins.Images.SetKeyName(4, "plugin_process.png");
+      this.imageListSmallPlugins.Images.SetKeyName(5, "plugin_process_off.png");
+      this.imageListSmallPlugins.Images.SetKeyName(6, "plugin_externalplayers.png");
+      this.imageListSmallPlugins.Images.SetKeyName(7, "plugin_externalplayers_off.png");
       // 
       // imageListContextMenu
       // 
       this.imageListContextMenu.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListContextMenu.ImageStream")));
       this.imageListContextMenu.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageListContextMenu.Images.SetKeyName(0, "Icon 178.ico");
-      this.imageListContextMenu.Images.SetKeyName(1, "Icon 365.ico");
-      this.imageListContextMenu.Images.SetKeyName(2, "Icon 134.ico");
+      this.imageListContextMenu.Images.SetKeyName(0, "Enabled.png");
+      this.imageListContextMenu.Images.SetKeyName(1, "MyHome.png");
+      this.imageListContextMenu.Images.SetKeyName(2, "MyPlugins.png");
       // 
       // mpTabControl1
       // 
@@ -166,10 +175,13 @@ namespace MediaPortal.Configuration.Sections
       listViewGroup2.Name = "listViewGroupExternalPlayers";
       listViewGroup3.Header = "Process Plugins";
       listViewGroup3.Name = "listViewGroupProcess";
+      listViewGroup4.Header = "Other Plugins";
+      listViewGroup4.Name = "listViewGroupOther";
       this.listViewPlugins.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1,
             listViewGroup2,
-            listViewGroup3});
+            listViewGroup3,
+            listViewGroup4});
       this.listViewPlugins.HideSelection = false;
       this.listViewPlugins.LabelWrap = false;
       this.listViewPlugins.LargeImageList = this.imageListLargePlugins;

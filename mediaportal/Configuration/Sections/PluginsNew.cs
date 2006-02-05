@@ -156,6 +156,8 @@ namespace MediaPortal.Configuration.Sections
           item = new ListViewItem(tag.SetupForm.PluginName(), listViewPlugins.Groups["listViewGroupWindow"]);
         else if (tag.IsExternalPlayer)
           item = new ListViewItem(tag.SetupForm.PluginName(), listViewPlugins.Groups["listViewGroupExternalPlayers"]);
+        else
+          item = new ListViewItem(tag.SetupForm.PluginName(), listViewPlugins.Groups["listViewGroupOther"]);
         item.Tag = tag;
         item.ToolTipText = string.Format("{0}", tag.SetupForm.Description());
         listViewPlugins.Items.Add(item);
@@ -217,32 +219,25 @@ namespace MediaPortal.Configuration.Sections
                   Log.Write(setupFormException.StackTrace);
                 }
               }
-              
-                
             }
             foreach (Type t in exportedTypes)
-            {
               try
               {
-                if (t.IsClass)
+                if ((t.IsClass) && (t.IsSubclassOf(typeof(GUIWindow))))
                 {
-                  if (t.IsSubclassOf(typeof(GUIWindow)))
-                  {
-                    object newObj = Activator.CreateInstance(t);
-                    GUIWindow win = (GUIWindow)newObj;
+                  object newObj = Activator.CreateInstance(t);
+                  GUIWindow win = (GUIWindow)newObj;
 
-                    foreach (ItemTag tag in loadedPlugins)
+                  foreach (ItemTag tag in loadedPlugins)
+                    if (tag.WindowId == win.GetID)
                     {
-                      if (tag.WindowId == win.GetID)
-                      {
-                        tag.Type = win.GetType().ToString();
-                        tag.IsProcess = false;
-                        tag.IsWindow = true;
-                        break;
-                      }
+                      tag.Type = win.GetType().ToString();
+                      tag.IsProcess = false;
+                      tag.IsWindow = true;
+                      break;
                     }
-                  }
                 }
+
               }
               catch (Exception guiWindowException)
               {
@@ -250,7 +245,6 @@ namespace MediaPortal.Configuration.Sections
                 Log.Write("Current class is :{0}", t.FullName);
                 Log.Write(guiWindowException.StackTrace);
               }
-            }
           }
         }
         catch (Exception unknownException)
@@ -298,16 +292,7 @@ namespace MediaPortal.Configuration.Sections
                 }
               }
             }
-            if (itemTag.IsProcess)
-              if (itemTag.IsEnabled)
-                item.ImageIndex = 0;
-              else
-                item.ImageIndex = 2;
-            else if (itemTag.IsWindow)
-              if (itemTag.IsEnabled)
-                item.ImageIndex = 1;
-              else
-                item.ImageIndex = 3;
+            updateListViewItem(item);
           }
         }
       }
@@ -353,56 +338,30 @@ namespace MediaPortal.Configuration.Sections
     }
 
 
-    private void addContextMenuItem(string name, string menuEntry, Image image, bool clickable)
-    {
-      ToolStripItem item = null;
-      if (clickable)
-        item = contextMenuStrip.Items.Add(string.Empty);
-      else
-      {
-        item = new ToolStripLabel(string.Empty);
-        contextMenuStrip.Items.Add(item);
-      }
-      item.Text = menuEntry;
-      item.Image = image;
-      item.Name = name;
-
-      switch (item.Name)
-      {
-        case "Configure":
-          item.Click += new EventHandler(itemConfigure_Click);
-          break;
-        case "Enabled":
-          item.Click += new EventHandler(itemEnabled_Click);
-          break;
-        case "My Home":
-          item.Click += new EventHandler(itemMyHome_Click);
-          break;
-        case "My Plugins":
-          item.Click += new EventHandler(itemMyPlugins_Click);
-          break;
-        case "Name":
-          item.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-          break;
-        case "Author":
-          item.Font = new System.Drawing.Font("Tahoma", 7.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-          break;
-      }
-    }
+    
 
 
     void updateListViewItem(ListViewItem item)
     {
-      //if (((ItemTag)item.Tag).IsProcess)
-        if (((ItemTag)item.Tag).IsEnabled)
-          item.ImageIndex = 0;
-        else
-          item.ImageIndex = 2;
       if (((ItemTag)item.Tag).IsWindow)
         if (((ItemTag)item.Tag).IsEnabled)
-          item.ImageIndex = 1;
+          item.ImageIndex = 2;
         else
           item.ImageIndex = 3;
+      else if (((ItemTag)item.Tag).IsProcess)
+        if (((ItemTag)item.Tag).IsEnabled)
+          item.ImageIndex = 4;
+        else
+          item.ImageIndex = 5;
+      else if (((ItemTag)item.Tag).IsExternalPlayer)
+        if (((ItemTag)item.Tag).IsEnabled)
+          item.ImageIndex = 6;
+        else
+          item.ImageIndex = 7;
+      else if (((ItemTag)item.Tag).IsEnabled)
+        item.ImageIndex = 0;
+      else
+        item.ImageIndex = 1;
     }
 
 
@@ -444,10 +403,41 @@ namespace MediaPortal.Configuration.Sections
     }
 
 
-
-    private void addContextMenuItem(string name, string menuEntry, bool clickable)
+    private void addContextMenuItem(string name, string menuEntry, Image image, bool clickable)
     {
-      addContextMenuItem(name, menuEntry, null, clickable);
+      ToolStripItem item = null;
+      if (clickable)
+        item = contextMenuStrip.Items.Add(string.Empty);
+      else
+      {
+        item = new ToolStripLabel(string.Empty);
+        contextMenuStrip.Items.Add(item);
+      }
+      item.Text = menuEntry;
+      item.Image = image;
+      item.Name = name;
+
+      switch (item.Name)
+      {
+        case "Configure":
+          item.Click += new EventHandler(itemConfigure_Click);
+          break;
+        case "Enabled":
+          item.Click += new EventHandler(itemEnabled_Click);
+          break;
+        case "My Home":
+          item.Click += new EventHandler(itemMyHome_Click);
+          break;
+        case "My Plugins":
+          item.Click += new EventHandler(itemMyPlugins_Click);
+          break;
+        case "Name":
+          item.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+          break;
+        case "Author":
+          item.Font = new System.Drawing.Font("Tahoma", 7.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+          break;
+      }
     }
 
 
@@ -460,31 +450,39 @@ namespace MediaPortal.Configuration.Sections
 
     private void listViewPlugins_Click(object sender, EventArgs e)
     {
-
-      ItemTag tag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
 
       contextMenuStrip.Items.Clear();
-      addContextMenuItem("Name", tag.SetupForm.PluginName(), false);
-      addContextMenuItem("Author", string.Format("Author: {0}", tag.SetupForm.Author()), false);
+      addContextMenuItem("Name", itemTag.SetupForm.PluginName(), null, false);
+      addContextMenuItem("Author", string.Format("Author: {0}", itemTag.SetupForm.Author()), null, false);
       addContextMenuSeparator();
 
-      if (!tag.IsEnabled) addContextMenuItem("Enabled", "Plugin is disabled", true);
+      if (!itemTag.IsEnabled)
+      {
+        if (itemTag.SetupForm.CanEnable())
+          addContextMenuItem("Enabled", "Plugin is disabled", null, true);
+        else
+          addContextMenuItem("Enabled", "Plugin is always disabled", null, true);
+      }
       else
       {
-        addContextMenuItem("", "Plugin is...", false);
+        addContextMenuItem("", "Plugin is...", null, false);
 
-        addContextMenuItem("Enabled", "  ...enabled", imageListContextMenu.Images[0], true);
+        if (itemTag.SetupForm.CanEnable())
+          addContextMenuItem("Enabled", "  ...enabled", imageListContextMenu.Images[0], true);
+        else
+          addContextMenuItem("Enabled", "  ...always enabled", imageListContextMenu.Images[0], true);
 
-        if (!tag.IsHome) addContextMenuItem("My Home", "  ...not listed in Home", true);
+        if (!itemTag.IsHome) addContextMenuItem("My Home", "  ...not listed in Home", null, true);
         else addContextMenuItem("My Home", "  ...listed in My Home", imageListContextMenu.Images[1], true);
 
-        if (!tag.IsPlugins) addContextMenuItem("My Plugins", "  ...not listed in My Plugins", true);
+        if (!itemTag.IsPlugins) addContextMenuItem("My Plugins", "  ...not listed in My Plugins", null, true);
         else addContextMenuItem("My Plugins", "  ...listed in My Plugins", imageListContextMenu.Images[2], true);
 
-        if (tag.SetupForm.HasSetup())
+        if (itemTag.SetupForm.HasSetup())
         {
           addContextMenuSeparator();
-          addContextMenuItem("Config", "Configuration", true);
+          addContextMenuItem("Config", "Configuration", null, true);
         }
       }
 
