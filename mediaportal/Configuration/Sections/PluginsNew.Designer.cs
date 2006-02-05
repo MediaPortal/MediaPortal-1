@@ -172,7 +172,6 @@ namespace MediaPortal.Configuration.Sections
       this.listViewPlugins.HideSelection = false;
       this.listViewPlugins.HotTracking = true;
       this.listViewPlugins.HoverSelection = true;
-      this.listViewPlugins.LabelWrap = false;
       this.listViewPlugins.LargeImageList = this.imageListLargePlugins;
       this.listViewPlugins.Location = new System.Drawing.Point(20, 20);
       this.listViewPlugins.MultiSelect = false;
@@ -196,6 +195,7 @@ namespace MediaPortal.Configuration.Sections
       this.contextMenuStrip.Name = "contextMenuStrip";
       this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
       this.contextMenuStrip.TabStop = true;
+      this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
       // 
       // PluginsNew
       // 

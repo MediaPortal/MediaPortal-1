@@ -455,51 +455,64 @@ namespace MediaPortal.Configuration.Sections
 
     private void listViewPlugins_Click(object sender, EventArgs e)
     {
-      ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
-
       contextMenuStrip.Items.Clear();
-      addContextMenuItem("Name", itemTag.SetupForm.PluginName(), null, false);
-      addContextMenuItem("Author", string.Format("Author: {0}", itemTag.SetupForm.Author()), null, false);
-      addContextMenuSeparator();
 
-      if (!itemTag.IsEnabled)
-      {
-        if (itemTag.SetupForm.CanEnable())
-          addContextMenuItem("Enabled", "Plugin is disabled", null, true);
-        else
-          addContextMenuItem("Enabled", "Plugin is always disabled", null, true);
-      }
-      else
-      {
-        addContextMenuItem("", "Plugin is...", null, false);
+      
 
-        if (itemTag.SetupForm.CanEnable())
+      if (listViewPlugins.FocusedItem != null)
+      {
+        ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
+        
+        addContextMenuItem("Name", itemTag.SetupForm.PluginName(), null, false);
+        addContextMenuItem("Author", string.Format("Author: {0}", itemTag.SetupForm.Author()), null, false);
+        addContextMenuSeparator();
+
+        if (!itemTag.IsEnabled)
         {
-          addContextMenuItem("Enabled", "  ...enabled", imageListContextMenu.Images[0], true);
-          if (itemTag.IsWindow)
-          {
-            if (!itemTag.IsHome) addContextMenuItem("My Home", "  ...not listed in Home", null, true);
-            else addContextMenuItem("My Home", "  ...listed in My Home", imageListContextMenu.Images[1], true);
+          if (itemTag.SetupForm.CanEnable())
+            addContextMenuItem("Enabled", "Plugin is disabled", null, true);
+          else
+            addContextMenuItem("Enabled", "Plugin is always disabled", null, true);
+        }
+        else
+        {
+          addContextMenuItem("", "Plugin is...", null, false);
 
-            if (!itemTag.IsPlugins) addContextMenuItem("My Plugins", "  ...not listed in My Plugins", null, true);
-            else addContextMenuItem("My Plugins", "  ...listed in My Plugins", imageListContextMenu.Images[2], true);
+          if (itemTag.SetupForm.CanEnable())
+          {
+            addContextMenuItem("Enabled", "  ...enabled", imageListContextMenu.Images[0], true);
+            if (itemTag.IsWindow)
+            {
+              if (!itemTag.IsHome) addContextMenuItem("My Home", "  ...not listed in Home", null, true);
+              else addContextMenuItem("My Home", "  ...listed in My Home", imageListContextMenu.Images[1], true);
+
+              if (!itemTag.IsPlugins) addContextMenuItem("My Plugins", "  ...not listed in My Plugins", null, true);
+              else addContextMenuItem("My Plugins", "  ...listed in My Plugins", imageListContextMenu.Images[2], true);
+            }
+          }
+          else
+            addContextMenuItem("Enabled", "  ...always enabled", imageListContextMenu.Images[0], true);
+
+          if (itemTag.SetupForm.HasSetup())
+          {
+            addContextMenuSeparator();
+            addContextMenuItem("Config", "Configuration", null, true);
           }
         }
-        else
-          addContextMenuItem("Enabled", "  ...always enabled", imageListContextMenu.Images[0], true);
 
-        if (itemTag.SetupForm.HasSetup())
-        {
-          addContextMenuSeparator();
-          addContextMenuItem("Config", "Configuration", null, true);
-        }
+        //labelPluginName.Text = String.Format("{0}", tag.SetupForm.PluginName());
+        //labelAuthor.Text = String.Format("written by {0}", tag.SetupForm.Author());
+        //labelDescription.Text = String.Format("{0}", tag.SetupForm.Description());
+        //groupBoxPluginInfo.Visible = true;
       }
-
-      //labelPluginName.Text = String.Format("{0}", tag.SetupForm.PluginName());
-      //labelAuthor.Text = String.Format("written by {0}", tag.SetupForm.Author());
-      //labelDescription.Text = String.Format("{0}", tag.SetupForm.Description());
-      //groupBoxPluginInfo.Visible = true;
     }
+
+    private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
+    {
+      if (listViewPlugins.FocusedItem == null)
+        contextMenuStrip.Items.Clear();
+    }
+
 
   }
 }
