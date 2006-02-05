@@ -61,7 +61,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     public PluginsNew()
-      : this("PluginsNew")
+      : this("Plugins")
     {
     }
 
@@ -277,18 +277,21 @@ namespace MediaPortal.Configuration.Sections
                 itemTag.IsEnabled = itemTag.SetupForm.DefaultEnabled();
               }
 
-              bool bHome = false;
-              bool bPlugins = false;
-              itemTag.IsHome = bHome;
-              itemTag.IsPlugins = bPlugins;
-              string buttontxt, buttonimage, buttonimagefocus, picture;
-              if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
+              if (itemTag.IsWindow)
               {
-                if (itemTag.SetupForm.GetHome(out buttontxt, out buttonimage, out buttonimagefocus, out picture))
+                bool bHome = false;
+                bool bPlugins = false;
+                itemTag.IsHome = bHome;
+                itemTag.IsPlugins = bPlugins;
+                string buttontxt, buttonimage, buttonimagefocus, picture;
+                if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
                 {
-                  bHome = true;
-                  itemTag.IsHome = xmlreader.GetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
-                  itemTag.IsPlugins = xmlreader.GetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
+                  if (itemTag.SetupForm.GetHome(out buttontxt, out buttonimage, out buttonimagefocus, out picture))
+                  {
+                    bHome = true;
+                    itemTag.IsHome = xmlreader.GetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
+                    itemTag.IsPlugins = xmlreader.GetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
+                  }
                 }
               }
             }
@@ -315,6 +318,8 @@ namespace MediaPortal.Configuration.Sections
             bool bHome = itemTag.IsHome;
             bool bPlugins = itemTag.IsPlugins;
             xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), bEnabled);
+            if ((bEnabled) && (!bHome && bPlugins))
+              bHome = true;
             xmlwriter.SetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
             xmlwriter.SetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
             xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DllName, bEnabled);
@@ -419,7 +424,7 @@ namespace MediaPortal.Configuration.Sections
 
       switch (item.Name)
       {
-        case "Configure":
+        case "Config":
           item.Click += new EventHandler(itemConfigure_Click);
           break;
         case "Enabled":
@@ -469,15 +474,19 @@ namespace MediaPortal.Configuration.Sections
         addContextMenuItem("", "Plugin is...", null, false);
 
         if (itemTag.SetupForm.CanEnable())
+        {
           addContextMenuItem("Enabled", "  ...enabled", imageListContextMenu.Images[0], true);
+          if (itemTag.IsWindow)
+          {
+            if (!itemTag.IsHome) addContextMenuItem("My Home", "  ...not listed in Home", null, true);
+            else addContextMenuItem("My Home", "  ...listed in My Home", imageListContextMenu.Images[1], true);
+
+            if (!itemTag.IsPlugins) addContextMenuItem("My Plugins", "  ...not listed in My Plugins", null, true);
+            else addContextMenuItem("My Plugins", "  ...listed in My Plugins", imageListContextMenu.Images[2], true);
+          }
+        }
         else
           addContextMenuItem("Enabled", "  ...always enabled", imageListContextMenu.Images[0], true);
-
-        if (!itemTag.IsHome) addContextMenuItem("My Home", "  ...not listed in Home", null, true);
-        else addContextMenuItem("My Home", "  ...listed in My Home", imageListContextMenu.Images[1], true);
-
-        if (!itemTag.IsPlugins) addContextMenuItem("My Plugins", "  ...not listed in My Plugins", null, true);
-        else addContextMenuItem("My Plugins", "  ...listed in My Plugins", imageListContextMenu.Images[2], true);
 
         if (itemTag.SetupForm.HasSetup())
         {

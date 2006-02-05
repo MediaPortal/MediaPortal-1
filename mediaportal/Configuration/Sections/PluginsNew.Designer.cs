@@ -35,7 +35,6 @@ namespace MediaPortal.Configuration.Sections
       System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Process Plugins", System.Windows.Forms.HorizontalAlignment.Left);
       System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Other Plugins", System.Windows.Forms.HorizontalAlignment.Left);
       this.imageListLargePlugins = new System.Windows.Forms.ImageList(this.components);
-      this.imageListSmallPlugins = new System.Windows.Forms.ImageList(this.components);
       this.imageListContextMenu = new System.Windows.Forms.ImageList(this.components);
       this.mpTabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -66,19 +65,6 @@ namespace MediaPortal.Configuration.Sections
       this.imageListLargePlugins.Images.SetKeyName(6, "plugin_externalplayers.png");
       this.imageListLargePlugins.Images.SetKeyName(7, "plugin_externalplayers_off.png");
       // 
-      // imageListSmallPlugins
-      // 
-      this.imageListSmallPlugins.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListSmallPlugins.ImageStream")));
-      this.imageListSmallPlugins.TransparentColor = System.Drawing.Color.Transparent;
-      this.imageListSmallPlugins.Images.SetKeyName(0, "plugin_other.png");
-      this.imageListSmallPlugins.Images.SetKeyName(1, "plugin_other_off.png");
-      this.imageListSmallPlugins.Images.SetKeyName(2, "plugin_window.png");
-      this.imageListSmallPlugins.Images.SetKeyName(3, "plugin_window_off.png");
-      this.imageListSmallPlugins.Images.SetKeyName(4, "plugin_process.png");
-      this.imageListSmallPlugins.Images.SetKeyName(5, "plugin_process_off.png");
-      this.imageListSmallPlugins.Images.SetKeyName(6, "plugin_externalplayers.png");
-      this.imageListSmallPlugins.Images.SetKeyName(7, "plugin_externalplayers_off.png");
-      // 
       // imageListContextMenu
       // 
       this.imageListContextMenu.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListContextMenu.ImageStream")));
@@ -98,6 +84,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpTabControl1.SelectedIndex = 0;
       this.mpTabControl1.Size = new System.Drawing.Size(472, 400);
       this.mpTabControl1.TabIndex = 0;
+      this.mpTabControl1.TabStop = false;
       // 
       // tabPage1
       // 
@@ -190,9 +177,6 @@ namespace MediaPortal.Configuration.Sections
       this.listViewPlugins.Name = "listViewPlugins";
       this.listViewPlugins.ShowItemToolTips = true;
       this.listViewPlugins.Size = new System.Drawing.Size(424, 288);
-      this.listViewPlugins.SmallImageList = this.imageListSmallPlugins;
-      this.listViewPlugins.Sorting = System.Windows.Forms.SortOrder.Ascending;
-      this.listViewPlugins.StateImageList = this.imageListLargePlugins;
       this.listViewPlugins.TabIndex = 0;
       this.listViewPlugins.UseCompatibleStateImageBehavior = false;
       this.listViewPlugins.DoubleClick += new System.EventHandler(this.listViewPlugins_DoubleClick);
@@ -201,7 +185,7 @@ namespace MediaPortal.Configuration.Sections
       // columnHeaderName
       // 
       this.columnHeaderName.Text = "Name";
-      this.columnHeaderName.Width = 424;
+      this.columnHeaderName.Width = 420;
       // 
       // contextMenuStrip
       // 
@@ -238,7 +222,6 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPTabControl mpTabControl1;
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.ColumnHeader columnHeaderName;
-    private System.Windows.Forms.ImageList imageListSmallPlugins;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxPluginInfo;
     private MediaPortal.UserInterface.Controls.MPToolTip toolTip;
     private MediaPortal.UserInterface.Controls.MPContextMenuStrip contextMenuStrip;
