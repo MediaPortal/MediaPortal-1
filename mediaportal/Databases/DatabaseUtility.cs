@@ -34,6 +34,10 @@ namespace MediaPortal.Database
 	public class DatabaseUtility
 	{
 
+    static public void CompactDatabase(SQLiteClient m_db)
+    {
+      //m_db.Execute("vacuum");
+    }
     static public void SetPragmas(SQLiteClient m_db)
     {
       m_db.Execute("PRAGMA cache_size=2000");
@@ -42,7 +46,7 @@ namespace MediaPortal.Database
       m_db.Execute("PRAGMA full_column_names=0");
       m_db.Execute("PRAGMA short_column_names=0");
       m_db.Execute("PRAGMA auto_vacuum=1");
-      m_db.Execute("vacuum");
+      DatabaseUtility.CompactDatabase(m_db);
     }
 		/// <summary>
 		/// Check if a table column exists
@@ -83,7 +87,7 @@ namespace MediaPortal.Database
 			if (m_db==null) return false;
 			if (table==null) return false;
 			if (table.Length==0) return false;
-			results = m_db.Execute("SELECT name FROM sqlite_master WHERE name='"+table+"' and type='table' UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
+      results = m_db.Execute("SELECT name FROM sqlite_master WHERE name like '" + table + "' and type like 'table'");// UNION ALL SELECT name FROM sqlite_temp_master WHERE type='table' ORDER BY name");
 			if (results!=null)
 			{
 				if (results.Rows.Count==1) 

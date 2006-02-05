@@ -51,7 +51,7 @@ namespace ProgramsDatabase
           Directory.CreateDirectory("database");
         }
         catch (Exception){}
-        sqlDB = new SQLiteClient(@"database\ProgramDatabaseV3.db3");
+        sqlDB = new SQLiteClient(@"database\ProgramDatabaseV4.db3");
 
         MediaPortal.Database.DatabaseUtility.SetPragmas(sqlDB);
 

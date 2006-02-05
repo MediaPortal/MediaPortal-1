@@ -2465,7 +2465,7 @@ namespace MediaPortal.Music.Database
       //	compress database
       try
       {
-        MusicDatabase.DBHandle.Execute("vacuum");
+        DatabaseUtility.CompactDatabase(MusicDatabase.DBHandle);
       }
       catch (Exception)
       {
