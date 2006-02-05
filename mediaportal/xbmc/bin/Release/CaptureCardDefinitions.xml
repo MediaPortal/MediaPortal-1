@@ -8159,4 +8159,31 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="AVerTV GO 007 Plus/FM Plus" capturename="AVerMedia, AVerTV WDM Video Capture (Silicon)" devid="ven_1131&amp;dev_7133&amp;subsys_f31f1461&amp;rev_d0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="PhTVTune"											checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="Cap7134 TV Audio"									checkdevice="true"></filter>
+        <filter cat="crossbar"		name="Cap7134 Crossbar"									checkdevice="true"></filter>
+        <filter cat="capture"		name="AVerMedia, AVerTV WDM Video Capture (Silicon)"	checkdevice="true"></filter>
+        <filter cat="videncoder"	name="AVerMedia MPEG Video Encoder"						checkdevice="false"></filter>
+        <filter cat="audencoder"	name="AVerMedia MPEG Audio Encoder"						checkdevice="false"></filter>
+        <filter cat="mux"			name="AVerMedia MPEG-2 Multiplexer"						checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"></connection>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
