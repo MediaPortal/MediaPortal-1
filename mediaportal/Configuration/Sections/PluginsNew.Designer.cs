@@ -170,6 +170,8 @@ namespace MediaPortal.Configuration.Sections
             listViewGroup3,
             listViewGroup4});
       this.listViewPlugins.HideSelection = false;
+      this.listViewPlugins.HotTracking = true;
+      this.listViewPlugins.HoverSelection = true;
       this.listViewPlugins.LabelWrap = false;
       this.listViewPlugins.LargeImageList = this.imageListLargePlugins;
       this.listViewPlugins.Location = new System.Drawing.Point(20, 20);
