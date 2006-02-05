@@ -81,7 +81,7 @@ namespace ProgramsDatabase
       }
       else
       {
-        sqlDB.Execute("insert into setting (key, value) values ('" + Key + "', '" + Value + "');");
+        sqlDB.Execute("insert into setting (key, value) values ('" + Key + "', '" + Value + "')");
       }
     }
 

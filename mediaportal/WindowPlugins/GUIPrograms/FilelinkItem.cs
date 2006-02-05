@@ -88,7 +88,7 @@ namespace ProgramsDatabase
     {
       SQLiteResultSet results;
       int res = 0;
-      results = sqlDB.Execute(String.Format("SELECT COUNT(*) FROM filterItem WHERE appid = {0} AND grouperAppID = {1} AND fileID = {2};", this.TargetAppID,
+      results = sqlDB.Execute(String.Format("SELECT COUNT(*) FROM filterItem WHERE appid = {0} AND grouperAppID = {1} AND fileID = {2}", this.TargetAppID,
         this.AppID, this.FileID));
       if (results != null && results.Rows.Count > 0)
       {
@@ -103,7 +103,7 @@ namespace ProgramsDatabase
       try
       {
         //sqlDB.Execute("begin");
-        string strSQL2 = String.Format(String.Format("INSERT INTO filterItem (appid, grouperAppID, fileID, filename) VALUES ({0}, {1}, {2}, '{3}');",
+        string strSQL2 = String.Format(String.Format("INSERT INTO filterItem (appid, grouperAppID, fileID, filename) VALUES ({0}, {1}, {2}, '{3}')",
           this.TargetAppID, this.AppID, this.FileID, ProgramUtils.Encode(Filename)));
         // Log.Write("hi from filelinkiteminsert: {0}", strSQL2);
         sqlDB.Execute(strSQL2);

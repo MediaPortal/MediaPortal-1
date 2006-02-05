@@ -2359,7 +2359,7 @@ namespace MediaPortal.Music.Database
       /// First delete all the albuminfo before we delete albums (foreign keys)
 
       /// TODO: delete artistinfo first
-      string strSql = "delete from artist where artist.idArtist not in (select idArtist from song);";
+      string strSql = "delete from artist where artist.idArtist not in (select idArtist from song)";
       try
       {
         m_db.Execute(strSql);
@@ -2379,7 +2379,7 @@ namespace MediaPortal.Music.Database
     {
       /// This will delete all genres from the database that don't have a corresponding song anymore
       SQLiteResultSet result;
-      string strSql = "delete from genre where idGenre not in (select idGenre from song);";
+      string strSql = "delete from genre where idGenre not in (select idGenre from song)";
       try
       {
         m_db.Execute(strSql);
@@ -2391,7 +2391,7 @@ namespace MediaPortal.Music.Database
         return (int)Errors.ERROR_REORG_GENRE;
       }
 
-      strSql = "select count (*) aantal from genre where idGenre not in (select idGenre from song);";
+      strSql = "select count (*) aantal from genre where idGenre not in (select idGenre from song)";
       try
       {
         result = MusicDatabase.DBHandle.Execute(strSql);

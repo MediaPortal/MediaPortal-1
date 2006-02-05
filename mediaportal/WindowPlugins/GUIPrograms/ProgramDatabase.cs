@@ -161,8 +161,8 @@ namespace ProgramsDatabase
       if (!ProgramSettings.KeyExists(ProgramUtils.cCONTENT_PATCH))
       {
         Log.Write("myPrograms: applying contentID-patch");
-        sqlDB.Execute("update application set contentID = 100 where contentID IS NULL;");
-        sqlDB.Execute("update application set contentID = 100 where contentID <= 0;");
+        sqlDB.Execute("update application set contentID = 100 where contentID IS NULL");
+        sqlDB.Execute("update application set contentID = 100 where contentID <= 0");
         ProgramSettings.WriteSetting(ProgramUtils.cCONTENT_PATCH, "DONE") ;
       }
     }
@@ -174,11 +174,11 @@ namespace ProgramsDatabase
       if (!ProgramSettings.KeyExists(ProgramUtils.cGENRE_PATCH))
       {
         Log.Write("myPrograms: applying genre-patch");
-        sqlDB.Execute("update file set genre = '' where genre IS NULL;");
-        sqlDB.Execute("update file set genre2 = '' where genre2 IS NULL;");
-        sqlDB.Execute("update file set genre3 = '' where genre3 IS NULL;");
-        sqlDB.Execute("update file set genre4 = '' where genre4 IS NULL;");
-        sqlDB.Execute("update file set genre5 = '' where genre5 IS NULL;");
+        sqlDB.Execute("update tblfile set genre = '' where genre IS NULL");
+        sqlDB.Execute("update tblfile set genre2 = '' where genre2 IS NULL");
+        sqlDB.Execute("update tblfile set genre3 = '' where genre3 IS NULL");
+        sqlDB.Execute("update tblfile set genre4 = '' where genre4 IS NULL");
+        sqlDB.Execute("update tblfile set genre5 = '' where genre5 IS NULL");
         ProgramSettings.WriteSetting(ProgramUtils.cGENRE_PATCH, "DONE") ;
       }
     }
@@ -210,8 +210,8 @@ namespace ProgramsDatabase
         try
         {
         Log.Write("myPrograms: adding preLaunch / postLaunch fields");
-        sqlDB.Execute("alter table application add column preLaunch text;");
-        sqlDB.Execute("alter table application add column postLaunch text;");
+        sqlDB.Execute("alter table application add column preLaunch text");
+        sqlDB.Execute("alter table application add column postLaunch text");
         ProgramSettings.WriteSetting(ProgramUtils.cPREPOST_PATCH, "DONE") ;
         }
         catch (SQLiteException ex)
