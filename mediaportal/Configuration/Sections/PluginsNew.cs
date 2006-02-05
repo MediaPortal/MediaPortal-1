@@ -343,10 +343,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
 
-    
-
-
-    void updateListViewItem(ListViewItem item)
+    private void updateListViewItem(ListViewItem item)
     {
       if (((ItemTag)item.Tag).IsWindow)
         if (((ItemTag)item.Tag).IsEnabled)
@@ -408,6 +405,13 @@ namespace MediaPortal.Configuration.Sections
     }
 
 
+    private void listViewPlugins_MouseClick(object sender, MouseEventArgs e)
+    {
+      if (e.Button == MouseButtons.Right)
+        contextMenuStrip.Show(MousePosition);
+    }
+
+
     private void addContextMenuItem(string name, string menuEntry, Image image, bool clickable)
     {
       ToolStripItem item = null;
@@ -457,8 +461,6 @@ namespace MediaPortal.Configuration.Sections
     {
       contextMenuStrip.Items.Clear();
 
-      
-
       if (listViewPlugins.FocusedItem != null)
       {
         ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
@@ -506,13 +508,6 @@ namespace MediaPortal.Configuration.Sections
         //groupBoxPluginInfo.Visible = true;
       }
     }
-
-    private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
-    {
-      if (listViewPlugins.FocusedItem == null)
-        contextMenuStrip.Items.Clear();
-    }
-
-
+    
   }
 }

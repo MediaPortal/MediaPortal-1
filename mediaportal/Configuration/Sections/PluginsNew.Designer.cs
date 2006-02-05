@@ -155,7 +155,6 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewPlugins.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderName});
-      this.listViewPlugins.ContextMenuStrip = this.contextMenuStrip;
       listViewGroup1.Header = "Window Plugins";
       listViewGroup1.Name = "listViewGroupWindow";
       listViewGroup2.Header = "External Players";
@@ -180,6 +179,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewPlugins.Size = new System.Drawing.Size(424, 288);
       this.listViewPlugins.TabIndex = 0;
       this.listViewPlugins.UseCompatibleStateImageBehavior = false;
+      this.listViewPlugins.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listViewPlugins_MouseClick);
       this.listViewPlugins.DoubleClick += new System.EventHandler(this.listViewPlugins_DoubleClick);
       this.listViewPlugins.Click += new System.EventHandler(this.listViewPlugins_Click);
       // 
@@ -195,7 +195,6 @@ namespace MediaPortal.Configuration.Sections
       this.contextMenuStrip.Name = "contextMenuStrip";
       this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
       this.contextMenuStrip.TabStop = true;
-      this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
       // 
       // PluginsNew
       // 
