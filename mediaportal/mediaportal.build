@@ -17,7 +17,7 @@
 	<delete dir="mediaportal" failonerror="false" />
   </target>
   <target name="checkout">
-	<exec program="cvs" commandline="-d :ssh;username=systay;password=ergi8idag;hostname=cvs.sourceforge.net:/cvsroot/mediaportal checkout -P -- mediaportal">
+	<exec program="cvs" commandline="-d :ssh;username=systay;password=password;hostname=cvs.sourceforge.net:/cvsroot/mediaportal checkout -P -- mediaportal">
 	</exec>
   </target>
 </project> 
