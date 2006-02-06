@@ -28,66 +28,131 @@ namespace DShowNET
 {
   public class DigitalEverywhere : IksPropertyUtils
   {
-    //"01,00,00,00,00,00,00,00,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,0a,cc,01,00,02,00,cc,cc,04,00,05,00,05,00,cc,cc,cc,cc,"	char [2048]
-    [StructLayout(LayoutKind.Explicit, Size = 52), ComVisible(true)]
+    [StructLayout(LayoutKind.Explicit, Size = 56), ComVisible(true)]
     struct FIRESAT_SELECT_PIDS_DVBS //also for DVBC
     {
-      [FieldOffset(0)]  public bool bCurrentTransponder;//0..3
-      [FieldOffset(4)]  public bool bFullTransponder;//4..7
-      [FieldOffset(8)]  public byte uLnb;//8
-      [FieldOffset(9)]  public uint uFrequency;//9..12
-      [FieldOffset(13)] public uint uSymbolRate;//13..16
-      [FieldOffset(17)] public byte uFecInner;//17
-      [FieldOffset(18)] public byte uPolarization;//18
-      [FieldOffset(19)] public byte uNumberOfValidPids; // 19
-      [FieldOffset(20)] public ushort uPid1;//20..21
-      [FieldOffset(22)] public ushort uPid2;
-      [FieldOffset(24)] public ushort uPid3;
-      [FieldOffset(26)] public ushort uPid4;
-      [FieldOffset(28)] public ushort uPid5;
-      [FieldOffset(30)] public ushort uPid6;
-      [FieldOffset(32)] public ushort uPid7;
-      [FieldOffset(34)] public ushort uPid8;
-      [FieldOffset(36)] public ushort uPid9;
-      [FieldOffset(38)] public ushort uPid10;
-      [FieldOffset(40)] public ushort uPid11;
-      [FieldOffset(42)] public ushort uPid12;
-      [FieldOffset(44)] public ushort uPid13;
-      [FieldOffset(46)] public ushort uPid14;
-      [FieldOffset(48)] public ushort uPid15;
-      [FieldOffset(50)] public ushort uPid16;
+      [FieldOffset(0)]
+      public bool bCurrentTransponder;
+      [FieldOffset(4)]
+      public bool bFullTransponder;
+      [FieldOffset(8)]
+      public bool uLnb;
+      [FieldOffset(12)]
+      public uint uFrequency;
+      [FieldOffset(16)]
+      public uint uSymbolRate;
+      [FieldOffset(20)]
+      public byte uFecInner;
+      [FieldOffset(21)]
+      public byte uPolarization;
+      [FieldOffset(22)]
+      public byte dummy1; // 1-16
+      [FieldOffset(23)]
+      public byte dummy2; // 
+      [FieldOffset(24)]
+      public byte uNumberOfValidPids; // 1-16
+      [FieldOffset(25)]
+      public byte dummy3; // 
+      [FieldOffset(26)]
+      public ushort uPid1;
+      [FieldOffset(28)]
+      public ushort uPid2;
+      [FieldOffset(30)]
+      public ushort uPid3;
+      [FieldOffset(32)]
+      public ushort uPid4;
+      [FieldOffset(34)]
+      public ushort uPid5;
+      [FieldOffset(36)]
+      public ushort uPid6;
+      [FieldOffset(38)]
+      public ushort uPid7;
+      [FieldOffset(40)]
+      public ushort uPid8;
+      [FieldOffset(42)]
+      public ushort uPid9;
+      [FieldOffset(44)]
+      public ushort uPid10;
+      [FieldOffset(46)]
+      public ushort uPid11;
+      [FieldOffset(48)]
+      public ushort uPid12;
+      [FieldOffset(50)]
+      public ushort uPid13;
+      [FieldOffset(52)]
+      public ushort uPid14;
+      [FieldOffset(54)]
+      public ushort uPid15;
+      [FieldOffset(56)]
+      public ushort uPid16;
+      [FieldOffset(58)]
+      public ushort dummy4;
     }
-    [StructLayout(LayoutKind.Explicit, Size = 52), ComVisible(true)]
+    [StructLayout(LayoutKind.Explicit, Size = 56), ComVisible(true)]
     struct FIRESAT_SELECT_PIDS_DVBT
     {
-      [FieldOffset(0)]  public bool bCurrentTransponder;//Set TRUE
-      [FieldOffset(4)]  public bool bFullTransponder;   //Set FALSE when selecting PIDs
-      [FieldOffset(8)]  public uint uFrequency;    // kHz 47.000-860.000
-      [FieldOffset(12)] public byte uBandwidth;    // BANDWIDTH_8_MHZ, BANDWIDTH_7_MHZ, BANDWIDTH_6_MHZ
-      [FieldOffset(13)] public byte uConstellation;// CONSTELLATION_DVB_T_QPSK,CONSTELLATION_QAM_16,CONSTELLATION_QAM_64,OFDM_AUTO
-      [FieldOffset(14)] public byte uCodeRateHP;   // CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
-      [FieldOffset(15)] public byte uCodeRateLP;   // CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
-      [FieldOffset(16)] public byte uGuardInterval;// GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
-      [FieldOffset(17)] public byte uTransmissionMode;// TRANSMISSION_MODE_2K, TRANSMISSION_MODE_8K, OFDM_AUTO
-      [FieldOffset(18)] public byte uHierarchyInfo;// HIERARCHY_NONE,HIERARCHY_1,HIERARCHY_2,HIERARCHY_4,OFDM_AUTO
-      [FieldOffset(19)] public byte uNumberOfValidPids; // 1-16
-      [FieldOffset(20)] public ushort uPid1;
-      [FieldOffset(22)] public ushort uPid2;
-      [FieldOffset(24)] public ushort uPid3;
-      [FieldOffset(26)] public ushort uPid4;
-      [FieldOffset(28)] public ushort uPid5;
-      [FieldOffset(30)] public ushort uPid6;
-      [FieldOffset(32)] public ushort uPid7;
-      [FieldOffset(34)] public ushort uPid8;
-      [FieldOffset(36)] public ushort uPid9;
-      [FieldOffset(38)] public ushort uPid10;
-      [FieldOffset(40)] public ushort uPid11;
-      [FieldOffset(42)] public ushort uPid12;
-      [FieldOffset(44)] public ushort uPid13;
-      [FieldOffset(46)] public ushort uPid14;
-      [FieldOffset(48)] public ushort uPid15;
-      [FieldOffset(50)] public ushort uPid16;
-    }
+      [FieldOffset(0)]
+      public bool bCurrentTransponder;//Set TRUE
+      [FieldOffset(4)]
+      public bool bFullTransponder;   //Set FALSE when selecting PIDs
+      [FieldOffset(8)]
+      public uint uFrequency;    // kHz 47.000-860.000
+      [FieldOffset(12)]
+      public byte uBandwidth;    // BANDWIDTH_8_MHZ, BANDWIDTH_7_MHZ, BANDWIDTH_6_MHZ
+      [FieldOffset(13)]
+      public byte uConstellation;// CONSTELLATION_DVB_T_QPSK,CONSTELLATION_QAM_16,CONSTELLATION_QAM_64,OFDM_AUTO
+      [FieldOffset(14)]
+      public byte uCodeRateHP;   // CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
+      [FieldOffset(15)]
+      public byte uCodeRateLP;   // CR_12,CR_23,CR_34,CR_56,CR_78,OFDM_AUTO
+      [FieldOffset(16)]
+      public byte uGuardInterval;// GUARD_INTERVAL_1_32,GUARD_INTERVAL_1_16,GUARD_INTERVAL_1_8,GUARD_INTERVAL_1_4,OFDM_AUTO
+      [FieldOffset(17)]
+      public byte uTransmissionMode;// TRANSMISSION_MODE_2K, TRANSMISSION_MODE_8K, OFDM_AUTO
+      [FieldOffset(18)]
+      public byte uHierarchyInfo;// HIERARCHY_NONE,HIERARCHY_1,HIERARCHY_2,HIERARCHY_4,OFDM_AUTO
+      [FieldOffset(19)]
+      public byte dummy; // 
+      [FieldOffset(20)]
+      public byte uNumberOfValidPids; // 1-16
+      [FieldOffset(21)]
+      public byte dummy2; // 
+      [FieldOffset(22)]
+      public ushort uPid1;
+      [FieldOffset(24)]
+      public ushort uPid2;
+      [FieldOffset(26)]
+      public ushort uPid3;
+      [FieldOffset(28)]
+      public ushort uPid4;
+      [FieldOffset(30)]
+      public ushort uPid5;
+      [FieldOffset(32)]
+      public ushort uPid6;
+      [FieldOffset(34)]
+      public ushort uPid7;
+      [FieldOffset(36)]
+      public ushort uPid8;
+      [FieldOffset(38)]
+      public ushort uPid9;
+      [FieldOffset(40)]
+      public ushort uPid10;
+      [FieldOffset(42)]
+      public ushort uPid11;
+      [FieldOffset(44)]
+      public ushort uPid12;
+      [FieldOffset(46)]
+      public ushort uPid13;
+      [FieldOffset(48)]
+      public ushort uPid14;
+      [FieldOffset(50)]
+      public ushort uPid15;
+      [FieldOffset(52)]
+      public ushort uPid16;
+      [FieldOffset(54)]
+      public ushort dummy3;
+    }    
+
     static public readonly Guid KSPROPSETID_Firesat = new Guid(0xab132414, 0xd060, 0x11d0, 0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba, 0xf3);
     const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_C = 8;
     const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_T = 6;
@@ -224,12 +289,12 @@ namespace DShowNET
       Guid propertyGuid = KSPROPSETID_Firesat;
       KSPropertySupport isTypeSupported = 0;
       uint propertySelect = (uint)KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_T;
-      if (isDvbc)
-      {
-        propertySelect = (uint)KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_C;
-        logStart = "dvbc:";
-      }
-      if (isDvbS)
+      //if (isDvbc)
+      //{
+      //  propertySelect = (uint)KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_C;
+      //  logStart = "dvbc:";
+      //}
+      if (isDvbc||isDvbS)
       {
         propertySelect = (uint)KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_S;
         logStart = "dvbs:";
@@ -244,9 +309,9 @@ namespace DShowNET
       FIRESAT_SELECT_PIDS_DVBT dvbtStruct = new FIRESAT_SELECT_PIDS_DVBT();
       FIRESAT_SELECT_PIDS_DVBS dvbsStruct = new FIRESAT_SELECT_PIDS_DVBS();
       dvbtStruct.bCurrentTransponder = true;
-      dvbtStruct.bFullTransponder = true;
+      dvbtStruct.bFullTransponder = false;
       dvbsStruct.bCurrentTransponder = true;
-      dvbsStruct.bFullTransponder = true;
+      dvbsStruct.bFullTransponder = false;
       if (pids.Count > 0)
       {
         dvbtStruct.bFullTransponder = false;

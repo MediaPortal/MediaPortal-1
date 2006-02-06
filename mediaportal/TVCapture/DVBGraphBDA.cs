@@ -5297,24 +5297,27 @@ namespace MediaPortal.TV.Recording
 #if HW_PID_FILTERING
       string pidsText = String.Empty;
       ArrayList pids = new ArrayList();
-      pids.Add((ushort)0);
-      pids.Add((ushort)1);
-      pids.Add((ushort)17);
-      pids.Add((ushort)18);
-      pids.Add((ushort)0xd3);
-      pids.Add((ushort)0xd2);
-      if (_currentTuningObject.VideoPid > 0) pids.Add((ushort)_currentTuningObject.VideoPid);
-      if (_currentTuningObject.AudioPid > 0) pids.Add((ushort)_currentTuningObject.AudioPid);
-      if (_currentTuningObject.AC3Pid > 0) pids.Add((ushort)_currentTuningObject.AC3Pid);
-      if (_currentTuningObject.PMTPid > 0) pids.Add((ushort)_currentTuningObject.PMTPid);
-      if (_currentTuningObject.TeletextPid > 0) pids.Add((ushort)_currentTuningObject.TeletextPid);
-      if (_currentTuningObject.PCRPid > 0) pids.Add((ushort)_currentTuningObject.PCRPid);
-      if (_currentTuningObject.ECMPid > 0) pids.Add((ushort)_currentTuningObject.ECMPid);
-      for (int i = 0; i < pids.Count; ++i)
-        pidsText += String.Format("{0:X},", (ushort)pids[i]);
-
-      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:SetPIDS to:{0}", pidsText);
       VideoCaptureProperties props = new VideoCaptureProperties(_filterTunerDevice);
+      if (_isTuning == false)
+      {
+        pids.Add((ushort)0);
+        pids.Add((ushort)1);
+        pids.Add((ushort)17);
+        pids.Add((ushort)18);
+        pids.Add((ushort)0xd3);
+        pids.Add((ushort)0xd2);
+        if (_currentTuningObject.VideoPid > 0) pids.Add((ushort)_currentTuningObject.VideoPid);
+        if (_currentTuningObject.AudioPid > 0) pids.Add((ushort)_currentTuningObject.AudioPid);
+        if (_currentTuningObject.AC3Pid > 0) pids.Add((ushort)_currentTuningObject.AC3Pid);
+        if (_currentTuningObject.PMTPid > 0) pids.Add((ushort)_currentTuningObject.PMTPid);
+        if (_currentTuningObject.TeletextPid > 0) pids.Add((ushort)_currentTuningObject.TeletextPid);
+        if (_currentTuningObject.PCRPid > 0) pids.Add((ushort)_currentTuningObject.PCRPid);
+        if (_currentTuningObject.ECMPid > 0) pids.Add((ushort)_currentTuningObject.ECMPid);
+        for (int i = 0; i < pids.Count; ++i)
+          pidsText += String.Format("{0:X},", (ushort)pids[i]);
+
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:SetPIDS to:{0}", pidsText);
+      }
       props.SetPIDS(Network() == NetworkType.DVBC,
                     Network() == NetworkType.DVBT,
                     Network() == NetworkType.DVBS,
