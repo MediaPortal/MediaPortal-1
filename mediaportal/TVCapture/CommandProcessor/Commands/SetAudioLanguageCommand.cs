@@ -58,7 +58,7 @@ namespace MediaPortal.TV.Recording
     }
     public override void Execute(CommandProcessor handler)
     {
-      if (handler.CurrentCardIndex <= 0) return;
+      if (handler.CurrentCardIndex < 0) return;
       Log.WriteFile(Log.LogType.Recorder, "Command:Select audio stream with pid: 0x{0:X}",AudioPid);
       TVCaptureDevice device = handler.TVCards[handler.CurrentCardIndex];
       device.SetAudioLanguage(AudioPid);

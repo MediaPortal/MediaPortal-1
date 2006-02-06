@@ -300,6 +300,65 @@ namespace MediaPortal.Tests.Commands
     }
     #endregion
 
+    #region test audio switching
+    [Test]
+    [Category("Audio stream selection")]
+    public void TestGetAudioLanguageList()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+      TimeShiftTv(proc, "RTL 4");
+      ArrayList list = card1.GetAudioLanguageList();
+      Assert.AreEqual(list.Count, 3);
+      Assert.AreEqual((int)list[0], 123);
+      Assert.AreEqual((int)list[1], 456);
+      Assert.AreEqual((int)list[2], 789);
+    }
+    [Test]
+    [Category("Audio stream selection")]
+    public void TestSwitchAudioStreamWithTimeShiftEnabled()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+      TimeShiftTv(proc, "RTL 4");
+      proc.AddCommand(new SetAudioLanguageCommand(123));
+      proc.ProcessCommands();
+      Assert.AreEqual(card1.GetAudioLanguage(), 123);
+
+      proc.AddCommand(new SetAudioLanguageCommand(456));
+      proc.ProcessCommands();
+      Assert.AreEqual(card1.GetAudioLanguage(), 456);
+
+
+
+      proc.AddCommand(new SetAudioLanguageCommand(789));
+      proc.ProcessCommands();
+      Assert.AreEqual(card1.GetAudioLanguage(), 789);
+    }
+
+    [Test]
+    [Category("Audio stream selection")]
+    public void TestSwitchAudioStreamWithTimeShiftDisabled()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+      WatchTv(proc, "RTL 4");
+      proc.AddCommand(new SetAudioLanguageCommand(123));
+      proc.ProcessCommands();
+      Assert.AreEqual(card1.GetAudioLanguage(), 123);
+
+      proc.AddCommand(new SetAudioLanguageCommand(456));
+      proc.ProcessCommands();
+      Assert.AreEqual(card1.GetAudioLanguage(), 456);
+
+
+
+      proc.AddCommand(new SetAudioLanguageCommand(789));
+      proc.ProcessCommands();
+      Assert.AreEqual(card1.GetAudioLanguage(), 789);
+    }
+    #endregion
+
     #region helper functions
     void DoSchedule(CommandProcessor proc)
     {

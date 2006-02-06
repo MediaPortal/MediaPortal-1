@@ -43,6 +43,7 @@ namespace MediaPortal.TV.Recording
     }
     State _state;
     TVCaptureDevice _card;
+    int _audioPid = 123;
     public DummyGraph(TVCaptureDevice card)
     {
       _card = card;
@@ -178,14 +179,24 @@ namespace MediaPortal.TV.Recording
     }
     public int GetAudioLanguage()
     {
-      return 0;
+      return _audioPid;
     }
     public void SetAudioLanguage(int audioPid)
     {
+      if (audioPid != 123 && audioPid != 456 && audioPid != 789) 
+        throw new ArgumentException("invalid pid");
+
+      if (_state != State.TimeShifting &&
+          _state != State.Viewing) throw new ArgumentException("invalid state");
+      _audioPid = audioPid;
     }
     public ArrayList GetAudioLanguageList()
     {
-      return null;
+      ArrayList list = new ArrayList();
+      list.Add(123);
+      list.Add(456);
+      list.Add(789);
+      return list;
     }
     public string TvTimeshiftFileName()
     {
