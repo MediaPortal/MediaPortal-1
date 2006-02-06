@@ -77,12 +77,11 @@ namespace MediaPortal.TV.Recording
         if (_currentTvChannel != value)
         {
           _currentTvChannel = value;
-          if (OnTvChannelChanged!=null)
-            OnTvChannelChanged(_currentTvChannel);
-        }
-        else
-        {
-          _currentTvChannel = value;
+          if (_currentTvChannel != string.Empty)
+          {
+              if (OnTvChannelChanged != null)
+                  OnTvChannelChanged(_currentTvChannel);
+          }
         }
       }
     }

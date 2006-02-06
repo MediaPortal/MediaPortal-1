@@ -501,7 +501,7 @@ namespace MediaPortal.TV.Recording
             }
             dFreq = iFreq / 1000000d;
             Log.WriteFile(Log.LogType.Capture, "SinkGraph:TuneChannel() tuned to channel:{0} county:{1} freq:{2} MHz. tvformat:{3} signal:{4}",
-              iCurrentChannel, currentCountry, dFreq, standard.ToString(), signalStrength.ToString());
+              iChannel, currentCountry, dFreq, standard.ToString(), signalStrength.ToString());
 
 
           }

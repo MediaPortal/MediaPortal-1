@@ -251,9 +251,9 @@ namespace MediaPortal.TV.Recording
         while (_listCommands.Count > 0)
         {
           CardCommand cmd = _listCommands[0];
-          _listCommands.RemoveAt(0);
           cmd.Execute(this);
           LogTvStatistics();
+          _listCommands.RemoveAt(0);
         }
       }
     }
