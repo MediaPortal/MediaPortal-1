@@ -2497,19 +2497,22 @@ namespace MediaPortal.TV.Recording
     public void Process()
     {
       if (_graphState == State.None) return;
-
-      ProcessVmr9();
       UpdateSignalQuality();
+      if (_graphState == State.Created) return;
+      
+      if (_dvbDemuxer != null) 
+        _dvbDemuxer.Process();
 
       if (ProcessEpg()) return;
 
-      //_epgGrabber.GrabEPG(_currentChannel.HasEITSchedule==true);
-      if (_dvbDemuxer != null) _dvbDemuxer.Process();
+      if (_isTuning) return;
+      if (_graphState == State.Epg) return;
+      UpdateVideoState();
+
+      ProcessVmr9();
+      
       CheckVideoResolutionChanges();
 
-      if (_isTuning) return;
-      
-      UpdateVideoState();
       ProcessPmt();
     }
 
