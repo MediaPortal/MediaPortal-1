@@ -288,6 +288,7 @@ namespace MediaPortal.Configuration.Sections
                 {
                   if (itemTag.SetupForm.GetHome(out buttontxt, out buttonimage, out buttonimagefocus, out picture))
                   {
+                    bHome = true;
                     itemTag.IsHome = xmlreader.GetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
                     itemTag.IsPlugins = xmlreader.GetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
                   }
@@ -317,13 +318,15 @@ namespace MediaPortal.Configuration.Sections
             bool bHome = itemTag.IsHome;
             bool bPlugins = itemTag.IsPlugins;
             xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), bEnabled);
-            if ((bEnabled) && (!bHome && bPlugins))
-              bHome = true;
-            xmlwriter.SetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
-            xmlwriter.SetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
             xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DllName, bEnabled);
-            if (itemTag.Type != String.Empty)
+            if ((bEnabled) && (!bHome && !bPlugins))
+              bHome = true;
+            if (itemTag.IsWindow)
+            {
+              xmlwriter.SetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
+              xmlwriter.SetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
               xmlwriter.SetValueAsBool("pluginswindows", itemTag.Type, bEnabled);
+            }
           }
         }
       }
@@ -485,7 +488,7 @@ namespace MediaPortal.Configuration.Sections
             if (itemTag.IsWindow)
             {
               if (!itemTag.IsHome) addContextMenuItem("My Home", "  ...not listed in Home", null, true);
-              else addContextMenuItem("My Home", "  ...listed in My Home", imageListContextMenu.Images[1], true);
+              else addContextMenuItem("My Home", "  ...listed in Home", imageListContextMenu.Images[1], true);
 
               if (!itemTag.IsPlugins) addContextMenuItem("My Plugins", "  ...not listed in My Plugins", null, true);
               else addContextMenuItem("My Plugins", "  ...listed in My Plugins", imageListContextMenu.Images[2], true);

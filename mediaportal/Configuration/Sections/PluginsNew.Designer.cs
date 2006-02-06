@@ -177,6 +177,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewPlugins.Name = "listViewPlugins";
       this.listViewPlugins.ShowItemToolTips = true;
       this.listViewPlugins.Size = new System.Drawing.Size(424, 288);
+      this.listViewPlugins.Sorting = System.Windows.Forms.SortOrder.Ascending;
       this.listViewPlugins.TabIndex = 0;
       this.listViewPlugins.UseCompatibleStateImageBehavior = false;
       this.listViewPlugins.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listViewPlugins_MouseClick);
