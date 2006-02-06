@@ -480,7 +480,7 @@ namespace MediaPortal.TV.Recording
         n = _interfaceB2C2TunerCtrl.Initialize();
         if (n != 0)
         {
-          Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: Tuner initialize failed");
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: Tuner initialize failed:0x{0:X}", n);
           return false;
         }
         // Get tuner type (DVBS, DVBC, DVBT, ATSC)
@@ -493,7 +493,7 @@ namespace MediaPortal.TV.Recording
         n = _interfaceB2C2TunerCtrl.GetTunerCapabilities(ptCaps, ref lTunerCapSize);
         if (n != 0)
         {
-          Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: Tuner Type failed");
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2: Tuner Type failed:0x{0:X}",n);
           return false;
         }
 
@@ -987,9 +987,9 @@ namespace MediaPortal.TV.Recording
       _interfaceStreamBufferSink = null;
       _filterMpeg2DemuxerInterface = null;
       m_sampleInterface = null;
-      _interfaceB2C2TunerCtrl = null;
-      _interfaceB2C2AvcCtrl = null;
-      _interfaceB2C2DataCtrl = null;
+      //_interfaceB2C2TunerCtrl = null;
+      //_interfaceB2C2AvcCtrl = null;
+      //_interfaceB2C2DataCtrl = null;
       _interfaceStreamBufferConfig = null;
       _interfaceStreamAnalyser = null;
       _interfaceEpg = null;
@@ -1024,12 +1024,14 @@ namespace MediaPortal.TV.Recording
 #endif
       if (_interfaceVideoWindow != null)
       {
+        Log.Write("free IVideoWindow");
         m_bOverlayVisible = false;
         _interfaceVideoWindow.put_Visible(OABool.False);
         _interfaceVideoWindow = null;
       }
       if (_streamBufferConfig != null)
       {
+        Log.Write("free streambufferConfig");
         while ((hr = Marshal.ReleaseComObject(_streamBufferConfig)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_streamBufferConfig):{0}", hr);
         _streamBufferConfig = null;
@@ -1037,12 +1039,14 @@ namespace MediaPortal.TV.Recording
 
       if (_filterSampleGrabber != null)
       {
+        Log.Write("free sample grabber");
         while ((hr = Marshal.ReleaseComObject(_filterSampleGrabber)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_filterSampleGrabber):{0}", hr);
         _filterSampleGrabber = null;
       }
       if (_filterMpeg2Demuxer != null)
       {
+        Log.Write("free mpeg2 demultiplexer");
         while ((hr = Marshal.ReleaseComObject(_filterMpeg2Demuxer)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_filterMpeg2Demuxer):{0}", hr);
         _filterMpeg2Demuxer = null;
@@ -1050,6 +1054,7 @@ namespace MediaPortal.TV.Recording
 
       if (_filterMpeg2Analyzer != null)
       {
+        Log.Write("free mpeg2 analyzer");
         while ((hr = Marshal.ReleaseComObject(_filterMpeg2Analyzer)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_filterMpeg2Analyzer):{0}", hr);
         _filterMpeg2Analyzer = null;
@@ -1057,19 +1062,45 @@ namespace MediaPortal.TV.Recording
 
       if (_filterStreamBuffer != null)
       {
+        Log.Write("free streambuffer filter");
         while ((hr = Marshal.ReleaseComObject(_filterStreamBuffer)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_filterStreamBuffer):{0}", hr);
         _filterStreamBuffer = null;
       }
 
+      //test
+      if (_interfaceB2C2TunerCtrl != null)
+      {
+        Log.Write("free B2C2TunerCtrl ");
+        while ((hr = Marshal.ReleaseComObject(_interfaceB2C2TunerCtrl)) > 0) ;
+        if (hr != 0) Log.Write("ReleaseComObject(_interfaceB2C2TunerCtrl):{0}", hr);
+        _interfaceB2C2TunerCtrl = null;
+      }
+      if (_interfaceB2C2AvcCtrl != null)
+      {
+        Log.Write("free B2C2AvcCtrl ");
+        while ((hr = Marshal.ReleaseComObject(_interfaceB2C2AvcCtrl)) > 0) ;
+        if (hr != 0) Log.Write("ReleaseComObject(_interfaceB2C2AvcCtrl):{0}", hr);
+        _interfaceB2C2AvcCtrl = null;
+      }
+      if (_interfaceB2C2DataCtrl != null)
+      {
+        Log.Write("free B2C2DataCtrl ");
+        while ((hr = Marshal.ReleaseComObject(_interfaceB2C2DataCtrl)) > 0) ;
+        if (hr != 0) Log.Write("ReleaseComObject(_interfaceB2C2DataCtrl):{0}", hr);
+        _interfaceB2C2DataCtrl = null;
+      }
+      //endtest
+      
+
       if (_filterB2C2Adapter != null)
       {
+        Log.Write("free B2C2Adapter ");
         while ((hr = Marshal.ReleaseComObject(_filterB2C2Adapter)) > 0) ;
         if (hr != 0) Log.Write("ReleaseComObject(_filterB2C2Adapter):{0}", hr);
         _filterB2C2Adapter = null;
       }
       DirectShowUtil.RemoveFilters(_graphBuilder);
-
 
       if (_rotEntry != null)
       {
