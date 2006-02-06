@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#define HW_PID_FILTERING
+//#define HW_PID_FILTERING
 //#define DUMP
 //#define USEMTSWRITER
 #define COMPARE_PMT
