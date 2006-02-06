@@ -49,7 +49,8 @@ namespace MediaPortal.Configuration.Sections
     struct DVBCList
     {
       public int frequency;		 // frequency
-      public int modulation;	 // modulation
+      public int modulation;	 // modulation value
+      public string modstr;      // modulation string for display purpose
       public int symbolrate;	 // symbol rate
     }
 
@@ -275,33 +276,88 @@ namespace MediaPortal.Configuration.Sections
               {
                 dvbcChannels[count].frequency = Int32.Parse(tpdata[0]);
                 string mod = tpdata[1].ToUpper();
-                dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
-                if (mod == "1024QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_1024QAM;
-                if (mod == "112QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_112QAM;
-                if (mod == "128QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_128QAM;
-                if (mod == "160QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_160QAM;
-                if (mod == "16QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_16QAM;
-                if (mod == "16VSB") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_16VSB;
-                if (mod == "192QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_192QAM;
-                if (mod == "224QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_224QAM;
-                if (mod == "256QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_256QAM;
-                if (mod == "320QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_320QAM;
-                if (mod == "384QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_384QAM;
-                if (mod == "448QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_448QAM;
-                if (mod == "512QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_512QAM;
-                if (mod == "640QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_640QAM;
-                if (mod == "64QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_64QAM;
-                if (mod == "768QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_768QAM;
-                if (mod == "80QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_80QAM;
-                if (mod == "896QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_896QAM;
-                if (mod == "8VSB") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_8VSB;
-                if (mod == "96QAM") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_96QAM;
-                if (mod == "AMPLITUDE") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_ANALOG_AMPLITUDE;
-                if (mod == "FREQUENCY") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_ANALOG_FREQUENCY;
-                if (mod == "BPSK") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_BPSK;
-                if (mod == "OQPSK") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_OQPSK;
-                if (mod == "QPSK") dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_QPSK;
-
+                dvbcChannels[count].modstr = mod;
+                switch (mod)
+                {
+                    case "1024QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_1024QAM;
+                        break;
+                    case "112QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_112QAM;
+                        break;
+                    case "128QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_128QAM;
+                        break;
+                    case "160QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_160QAM;
+                        break;
+                    case "16QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_16QAM;
+                        break;
+                    case "16VSB":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_16VSB;
+                        break;
+                    case "192QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_192QAM;
+                        break;
+                    case "224QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_224QAM;
+                        break;
+                    case "256QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_256QAM;
+                        break;
+                    case "320QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_320QAM;
+                        break;
+                    case "384QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_384QAM;
+                        break;
+                    case "448QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_448QAM;
+                        break;
+                    case "512QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_512QAM;
+                        break;
+                    case "640QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_640QAM;
+                        break;
+                    case "64QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_64QAM;
+                        break;
+                    case "768QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_768QAM;
+                        break;
+                    case "80QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_80QAM;
+                        break;
+                    case "896QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_896QAM;
+                        break;
+                    case "8VSB":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_8VSB;
+                        break;
+                    case "96QAM":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_96QAM;
+                        break;
+                    case "AMPLITUDE":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_ANALOG_AMPLITUDE;
+                        break;
+                    case "FREQUENCY":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_ANALOG_FREQUENCY;
+                        break;
+                    case "BPSK":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_BPSK;
+                        break;
+                    case "OQPSK":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_OQPSK;
+                        break;
+                    case "QPSK":
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_QPSK;
+                        break;
+                    default:
+                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
+                        break;
+                }
                 dvbcChannels[count].symbolrate = Int32.Parse(tpdata[2]);
                 count += 1;
               }
@@ -346,7 +402,7 @@ namespace MediaPortal.Configuration.Sections
       }
       progressBar1.Visible = true;
 
-      currentIndex = 0;
+      currentIndex = -1;
       while (currentIndex < count)
       {
 
@@ -407,7 +463,7 @@ namespace MediaPortal.Configuration.Sections
     {
 
       DVBCList dvbcChan = dvbcChannels[currentIndex];
-      string chanDesc = String.Format("freq:{0} Khz, Mod:{1} SR:{2}", dvbcChan.frequency, dvbcChan.modulation.ToString(), dvbcChan.symbolrate);
+      string chanDesc = String.Format("freq:{0} Khz, Mod:{1} SR:{2}", dvbcChan.frequency, dvbcChan.modstr, dvbcChan.symbolrate);
       string description = String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex, chanDesc);
       labelStatus.Text = description;
       System.Threading.Thread.Sleep(400);
@@ -435,7 +491,7 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
       string chanDesc = String.Format("freq:{0} Khz, Mod:{1} SR:{2}",
-        dvbcChannels[currentIndex].frequency, dvbcChannels[currentIndex].modulation.ToString(), dvbcChannels[currentIndex].symbolrate);
+        dvbcChannels[currentIndex].frequency, dvbcChannels[currentIndex].modstr, dvbcChannels[currentIndex].symbolrate);
       string description = String.Format("Channel:{0}/{1} {2}", currentIndex, count, chanDesc);
       labelStatus.Text = description;
 
