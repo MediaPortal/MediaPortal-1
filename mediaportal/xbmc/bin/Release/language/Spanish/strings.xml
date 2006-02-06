@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <strings>
 	<characters>255</characters>
-	<string>
+	<string Prefix="Mis ">
 		<id>0</id>
-		<value>Mis Programas</value>
+		<value>Programas</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>1</id>
-		<value>Mis Fotos</value>
+		<value>Fotos</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>2</id>
-		<value>Mi Música</value>
+		<value>Música</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>3</id>
-		<value>Mis Videos</value>
+		<value>Videos</value>
 	</string>
 	<string>
 		<id>4</id>
@@ -29,21 +29,21 @@
 		<id>6</id>
 		<value>XBOX Media Center CVS build</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>7</id>
-		<value>Mis Archivos</value>
+		<value>Archivos</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>8</id>
-		<value>Mi Tiempo</value>
+		<value>Tiempo</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>9</id>
-		<value>Mis Noticias</value>
+		<value>Noticias</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>10</id>
-		<value>Mis Recetas</value>
+		<value>Recetas</value>
 	</string>
 	<string>
 		<id>11</id>
@@ -121,7 +121,7 @@
 		<id>32</id>
 		<value>Diciembre</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>50</id>
 		<value>DVDs</value>
 	</string>
@@ -415,7 +415,7 @@
 	</string>
 	<string>
 		<id>172</id>
-		<value>Fecha del Lanzamiento:</value>
+		<value>Lanzamiento:</value>
 	</string>
 	<string>
 		<id>173</id>
@@ -919,7 +919,7 @@
 	</string>
 	<string>
 		<id>299</id>
-		<value>Tiempo de ejecución</value>
+		<value>Duración:</value>
 	</string>
 	<string>
 		<id>300</id>
@@ -1059,7 +1059,7 @@
 	</string>
 	<string>
 		<id>334</id>
-		<value>Reorganizar la base de dato de Mi Música</value>
+		<value>Reorg. base de datos de música</value>
 	</string>
 	<string>
 		<id>335</id>
@@ -1385,19 +1385,19 @@
 		<id>417</id>
 		<value>Ver: Iconos grandes</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>418</id>
-		<value>Mis Vídeos/Géneros</value>
+		<value>Vídeos/Géneros</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>419</id>
 		<value>Vídeos/Actores</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>420</id>
 		<value>Vídeos/Años</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>421</id>
 		<value>Vídeos/Titulo</value>
 	</string>
@@ -1801,9 +1801,9 @@
 		<id>604</id>
 		<value>Grabaciones de TV</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>605</id>
-		<value>Mi TV</value>
+		<value>TV</value>
 	</string>
 	<string>
 		<id>606</id>
@@ -2041,9 +2041,9 @@
 		<id>664</id>
 		<value>¿Borrar la foto?</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>665</id>
-		<value>Mi Radio</value>
+		<value>Radio</value>
 	</string>
 	<string>
 		<id>666</id>
@@ -2397,9 +2397,9 @@
 		<id>810</id>
 		<value>Tarjeta</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>850</id>
-		<value>Mi Alarma</value>
+		<value>Alarma</value>
 	</string>
 	<string>
 		<id>851</id>
@@ -2649,7 +2649,7 @@
 		<id>912</id>
 		<value>Imposible descargar últimas noticias</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>913</id>
 		<value>Plugins</value>
 	</string>
@@ -2897,7 +2897,7 @@
 		<id>982</id>
 		<value>Borrar esta grabación completa</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>983</id>
 		<value>Listas de reproducción</value>
 	</string>
@@ -3065,7 +3065,7 @@
 		<id>1026</id>
 		<value>Mira el archivo log para más detalles.</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>1027</id>
 		<value>DVD</value>
 	</string>
@@ -3099,15 +3099,15 @@
 	</string>
 	<string>
 		<id>1035</id>
-		<value>¡El canal de TV está scrambled!</value>
+		<value>¡El canal de TV está codificado!</value>
 	</string>
 	<string>
 		<id>1036</id>
 		<value>Video no encontrado</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>1037</id>
-		<value>Información del programa de TV</value>
+		<value>TV - Información del programa</value>
 	</string>
 	<string>
 		<id>1038</id>
@@ -3147,7 +3147,7 @@
 	</string>
 	<string>
 		<id>1047</id>
-		<value>Empezar a pantalla completa</value>
+		<value>Pantalla completa</value>
 	</string>
 	<string>
 		<id>1048</id>
@@ -3193,7 +3193,7 @@
 		<id>1105</id>
 		<value>Importando Pistas</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>1440</id>
 		<value>TeleTexto</value>
 	</string>
@@ -3237,7 +3237,7 @@
 		<id>1450</id>
 		<value>¿Esta seguro que desea detener la grabación?</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>1950</id>
 		<value>Estado</value>
 	</string>
@@ -3553,7 +3553,7 @@
 		<id>2054</id>
 		<value>¡No hay entradas!</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>2100</id>
 		<value>Grabadora</value>
 	</string>
@@ -3729,7 +3729,7 @@
 		<id>2143</id>
 		<value>Inicio</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>2200</id>
 		<value>Explorador</value>
 	</string>
@@ -3925,7 +3925,7 @@
 		<id>3022</id>
 		<value>de</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>5900</id>
 		<value>Trailers</value>
 	</string>
@@ -3997,7 +3997,42 @@
 		<id>5917</id>
 		<value>Trailers alemanes</value>
 	</string>
-	<string>
+	  <string>
+   <id>5918</id>
+   <value>Télévision Suisse Romande VOD</value>
+ </string>
+ <string>
+   <id>5919</id>
+   <value>Ranking de taquilla</value>
+ </string>
+ <string>
+   <id>5920</id>
+   <value>Estrenos de esta semana</value>
+ </string>
+ <string>
+   <id>5921</id>
+   <value>Próximos estrenos</value>
+ </string>
+ <string>
+   <id>5922</id>
+   <value>DVDs más vendidos</value>
+ </string>
+ <string>
+   <id>5923</id>
+   <value>Nuevo en DVD esta semana</value>
+ </string>
+ <string>
+   <id>5924</id>
+   <value>Nuevo en DVD la próxima semana</value>
+ </string>
+ <string>
+   <id>5925</id>
+   <value>Pedidos anticipados de DVDs</value>
+ </string>
+ 
+
+
+	<string Prefix="Mi ">
 		<id>8000</id>
 		<value>Correo</value>
 	</string>
@@ -4253,7 +4288,7 @@
 		<id>25001</id>
 		<value>Esperando por la página {0:X}...!</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>19001</id>
 		<value>Tetris</value>
 	</string>
@@ -4307,17 +4342,17 @@
 	</string>
 	<string>
 		<id>100000</id>
-		<value>Casa</value>
+		<value>Inicio</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100001</id>
 		<value>TV</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>100002</id>
 		<value>Fotos</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>100003</id>
 		<value>Archivos</value>
 	</string>
@@ -4325,11 +4360,11 @@
 		<id>100004</id>
 		<value>Configuración</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100005</id>
 		<value>Música</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>100006</id>
 		<value>Vídeos</value>
 	</string>
@@ -4381,15 +4416,15 @@
 		<id>100020</id>
 		<value>Configuración-&gt;Scripts</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>100021</id>
 		<value>Vídeos/género</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>100022</id>
 		<value>Vídeos/actor</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>100023</id>
 		<value>Vídeos/Año</value>
 	</string>
@@ -4397,7 +4432,7 @@
 		<id>100024</id>
 		<value>Configuración-&gt;Programas</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>100025</id>
 		<value>Vídeos/título</value>
 	</string>
@@ -4409,7 +4444,7 @@
 		<id>100027</id>
 		<value>Configuración-&gt;General-&gt;Autoarranque</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>100028</id>
 		<value>Vídeos/lista de reproducción</value>
 	</string>
@@ -4417,7 +4452,7 @@
 		<id>100029</id>
 		<value>Configuración-&gt;General-&gt;LCD</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100030</id>
 		<value>Radio</value>
 	</string>
@@ -4433,7 +4468,7 @@
 		<id>100033</id>
 		<value>Chat del MSN Messenger</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>100034</id>
 		<value>Plugins</value>
 	</string>
@@ -4445,243 +4480,243 @@
 		<id>100101</id>
 		<value>Diálogo de progreso</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100500</id>
 		<value>Música/lista de reproducción</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100501</id>
 		<value>Música/archivos</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100502</id>
 		<value>Música/álbumes</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100503</id>
 		<value>Música/artistas</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100504</id>
 		<value>Música/géneros</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100505</id>
 		<value>Música/top100</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100506</id>
 		<value>Música/favoritos</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100600</id>
 		<value>TV/guía</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100601</id>
 		<value>TV/programación</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100602</id>
 		<value>TV/pantalla completa</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100603</id>
 		<value>TV/grabaciones de TV</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100604</id>
 		<value>TV/buscar</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100605</id>
 		<value>TV/grabaciones de TV/género</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100606</id>
 		<value>TV/grabaciones de TV/canales</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100607</id>
 		<value>TV/Programador/Prioridades</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100608</id>
 		<value>TV/Programador/Conflictos</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100609</id>
 		<value>TV/Comprimir/Principal</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100610</id>
 		<value>TV/Comprimir/Configuración</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100611</id>
 		<value>TV/Comprimir/Auto</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100612</id>
 		<value>TV/Comprimir/Comprimir</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100613</id>
 		<value>TV/Comprimir/Estado</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100614</id>
-		<value>Información del Artista de Vídeo</value>
+		<value>Video - Información del Artista</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100615</id>
 		<value>Asistente/Bienvenido</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100616</id>
 		<value>Asistente/Tarjetas detectadas</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100617</id>
 		<value>Asistente/País</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100618</id>
 		<value>Asistente/Buscar</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100619</id>
 		<value>Asistente/DVBC/País</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100620</id>
 		<value>Asistente/DVBC/Buscar</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100621</id>
 		<value>Asistente/DVBS/LNB</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100622</id>
 		<value>Asistente/DVBS/Detalles LNB</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100623</id>
 		<value>Asistente/DVBS/Transponder</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100624</id>
 		<value>Asistente/DVBS/Buscar</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100625</id>
 		<value>Asistente/ATSC/Buscar</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100626</id>
 		<value>Asistente/Analógico/País</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100627</id>
 		<value>Asistente/Analógico/Ciudad</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100628</id>
 		<value>Asistente/Analógico/Importado</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100629</id>
 		<value>Asistente/Analógico/Manual</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100630</id>
 		<value>Asistente/Analógico/Buscar</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100631</id>
 		<value>Asistente/Analógico/Renombrar</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100632</id>
 		<value>Asistente/Analógico/Radio</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100633</id>
 		<value>Asistente/Analógico/Renombrar radio</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100634</id>
 		<value>Asistente/Mando a distancia</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100635</id>
 		<value>Asistente/EPG</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100699</id>
 		<value>Asistente/Finalizado</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100700</id>
 		<value>Configuración TV</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100701</id>
 		<value>Configuración de Grabaciones de TV</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100702</id>
 		<value>Orden de canales TV</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100703</id>
 		<value>Configuración de Películas TV</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100704</id>
 		<value>Configuración DVD</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100705</id>
 		<value>Configuración Pieles</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100748</id>
-		<value>Información del programa</value>
+		<value>Información de programa</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100749</id>
 		<value>TV/Sin señal</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>100750</id>
 		<value>Recetas</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100755</id>
-		<value>Estatus</value>
+		<value>Estado</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>100756</id>
-		<value>Detalles del estatus</value>
+		<value>Detalles de estado</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>100757</id>
-		<value>Preferencias del estatus</value>
+		<value>Preferencias de estado</value>
 	</string>
 	<string>
 		<id>100758</id>
 		<value>Diálogo de archivo</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100759</id>
-		<value>Información de la grabación de TV</value>
+		<value>Información de grabación de TV</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100760</id>
 		<value>Grabadora</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>100770</id>
 		<value>Explorador</value>
 	</string>
@@ -4693,7 +4728,7 @@
 		<id>102000</id>
 		<value>Seleccionar diálogo</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>102001</id>
 		<value>Música/información</value>
 	</string>
@@ -4701,13 +4736,13 @@
 		<id>102002</id>
 		<value>Diálogo OK</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>102003</id>
-		<value>Videos/información</value>
+		<value>Videos/Información</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>102004</id>
-		<value>Scripts/información</value>
+		<value>Scripts/Información</value>
 	</string>
 	<string>
 		<id>102005</id>
@@ -4717,9 +4752,9 @@
 		<id>102006</id>
 		<value>Visualización de audio</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>102007</id>
-		<value>Fotos/presentación</value>
+		<value>Fotos/Presentación</value>
 	</string>
 	<string>
 		<id>102008</id>
@@ -4757,11 +4792,11 @@
 		<id>102016</id>
 		<value>Notificación</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>102600</id>
 		<value>Tiempo</value>
 	</string>
-	<string>
+	<string Prefix="Mis ">
 		<id>102700</id>
 		<value>Noticias</value>
 	</string>
@@ -4773,23 +4808,23 @@
 		<id>102901</id>
 		<value>OSD a pantalla completa</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>103003</id>
 		<value>TV/OSD</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>103006</id>
 		<value>TV/OSD de MSN</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>103007</id>
-		<value>TV/zapear OSD</value>
+		<value>TV/OSD para zapear</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>107700</id>
 		<value>TV/Teletexto</value>
 	</string>
-	<string>
+	<string Prefix="Mi ">
 		<id>107701</id>
 		<value>TV/Teletexto</value>
 	</string>
@@ -4957,4 +4992,134 @@
 		<id>4003</id>
 		<value>Especifique una carpeta de favoritos en el setup.</value>
 	</string>
+  <!-- Begin Cover Art Grabber Strings -->
+  <string>
+    <id>4500</id>
+    <value>Saltar album si ya existe cubierta</value>
+  </string>
+  <string>
+    <id>4501</id>
+    <value>Guardar cubierta en el directorio del album</value>
+  </string>
+  <string>
+    <id>4502</id>
+    <value>Guardar cubierta en el directorio de miniaturas</value>
+  </string>
+  <string>
+    <id>4503</id>
+    <value>Obteniendo número de álbumes. Por favor espere...</value>
+  </string>
+  <string>
+    <id>4504</id>
+    <value>{0}% - {1} de {2}</value>
+  </string>
+  <string>
+    <id>4505</id>
+    <value>Buscando {0}...</value>
+  </string>
+  <string>
+    <id>4506</id>
+    <value>[Vacio]</value>
+  </string>
+  <string>
+    <id>4507</id>
+    <value>Obtenedor de cubiertas abortado por el usuario</value>
+  </string>
+  <string>
+    <id>4508</id>
+    <value>Obtención de cubierta completado con éxito</value>
+  </string>
+  <string>
+    <id>4509</id>
+    <value>Obtención de cubierta completado con errores</value>
+  </string>
+  <string>
+    <id>4510</id>
+    <value>{0} imagen(es) de cubierta actualida(s)</value>
+  </string>
+  <string>
+    <id>4511</id>
+    <value>Obtenedor de cubiertas ha finalizado</value>
+  </string>
+  <string>
+    <id>4512</id>
+    <value>Todas las cubiertas están actualizadas</value>
+  </string>
+  <string>
+    <id>4513</id>
+    <value>Varios</value>
+  </string>
+  <string>
+    <id>4514</id>
+    <value>Obtenerdor de cubiertas</value>
+  </string>
+  <string>
+    <id>4515</id>
+    <value>Resultados de la búsqueda del obtenedor de cubiertas</value>
+  </string>
+  <string>
+    <id>4516</id>
+    <value>No se ha encontrado ninguna cubierta</value>
+  </string>
+  <string>
+    <id>4517</id>
+    <value>Cerrar</value>
+  </string>
+  <string>
+    <id>4518</id>
+    <value>Título del album no encontrado\r\nIntentando: {0}</value>
+  </string>
+  <string>
+    <id>4519</id>
+    <value>Cubierta actual</value>
+  </string>
+  <string>
+    <id>4520</id>
+    <value>Saltar</value>
+  </string>
+  <string>
+    <id>4521</id>
+    <value>Mostrar información del album</value>
+  </string>
+  <string>
+    <id>4522</id>
+    <value>Obteniendo: {0}...</value>
+  </string>
+  <!-- End Cover Art Grabber Strings -->
+  <!-- Begin Playing Now Strings -->
+  <string>
+    <id>4540</id>
+    <value>Ahora reproduciendo</value>
+  </string>  <string>
+    <id>4541</id>
+    <value>Reproduciendo a continuación</value>
+  </string>
+  <string>
+    <id>4542</id>
+    <value>No hay listas de reproducción cargadas</value>
+  </string>
+  <string>
+    <id>4543</id>
+    <value>Información de pista no disponible</value>
+  </string>  
+  <!-- End Playing Now Strings -->
+	  <!-- Begin Minesweeper Strings -->
+  <string>
+    <id>10100</id>
+    <value>Minas escondidas</value>
+  </string>
+  <string>
+    <id>10101</id>
+    <value>Tiempo de juego</value>
+  </string>
+  <string>
+    <id>10102</id>
+    <value>Mejor tiempo</value>
+  </string>
+  <string Prefix="Mi ">
+    <id>10103</id>
+    <value>Buscaminas</value>
+  </string>    
+  <!-- End Minesweeper Strings -->
+
 </strings>
