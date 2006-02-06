@@ -360,7 +360,7 @@ namespace MediaPortal
 
     private void DigitalTVTuningForm_Load(object sender, System.EventArgs e)
     {
-      btnOk.Enabled = false;
+      btnOk.Enabled = true;
       UpdateList();
       GUIGraphicsContext.form = this;
       //			using (MediaPortal.Profile.Xml xmlreader = new MediaPortal.Profile.Xml("MediaPortal.xml"))
@@ -369,11 +369,16 @@ namespace MediaPortal
       //				xmlreader.SetValue("mytv", "vmr9","0");
       //}
       GUIGraphicsContext.VideoWindow = new Rectangle(panel1.Location, panel1.Size);
-
-      tuningInterface.AutoTuneTV(captureCard, this);
-      tuningInterface.Next();
-      timer1.Enabled = true;
-      timer1.Interval = 100;
+      this.Visible = true;
+      if (tuningInterface.AutoTuneTV(captureCard, this))
+      {
+          this.Update();
+      }
+      else
+      {
+          this.Close();
+          this.Dispose();
+      }
     }
 
 

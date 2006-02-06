@@ -1,5 +1,6 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +19,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
+
+
 using System;
 using System.IO;
 using System.Collections;
@@ -61,7 +65,7 @@ namespace MediaPortal.TV.Scanning
     }
     #region ITuning Members
 
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
+    public bool AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
     {
       newRadioChannels = 0;
       updatedRadioChannels = 0;
@@ -90,7 +94,7 @@ namespace MediaPortal.TV.Scanning
       tplFiles = dlgSelectTPL.TransponderFiles;
 
       m_currentDiseqc = 1;
-
+      return true;
     }
 
     void LoadFrequencies()
@@ -207,9 +211,10 @@ namespace MediaPortal.TV.Scanning
       }
       captureCard.DeleteGraph();
     }
-    public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback)
+    public bool AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback)
     {
       // TODO:  Add DVBSTuning.AutoTuneRadio implementation
+        return false;
     }
 
     public void Continue()

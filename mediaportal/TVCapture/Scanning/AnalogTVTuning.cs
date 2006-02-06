@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using DirectShowLib;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
+
 namespace MediaPortal.TV.Scanning
 {
 	/// <summary>
@@ -65,13 +66,15 @@ namespace MediaPortal.TV.Scanning
             callback.OnProgress(100);
             callback.OnEnded();
         }
-		public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback statusCallback)
+		public bool AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
 			callback.OnEnded();
+            return false;
 		}
 
-		public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
+		public bool AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
+
 			lastFrequency=-1f;
 			captureCard=card;
             card.TVChannelMinMax(out minChannel, out maxChannel);
@@ -92,6 +95,7 @@ namespace MediaPortal.TV.Scanning
 			timer1.Enabled=true;
             callback.OnSignal(0, 0);
             callback.OnProgress(0);
+            return true;
 		}
 		public void Continue()
 		{

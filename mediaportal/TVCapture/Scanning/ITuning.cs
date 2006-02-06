@@ -81,7 +81,7 @@ namespace MediaPortal.TV.Scanning
     /// </summary>
     /// <param name="card">specifies the tvcapture card for which tuning should occur</param>
     /// <param name="callback">specifies a callback interface to indicate status updates</param>
-    void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback callback);
+    bool AutoTuneTV(TVCaptureDevice card, AutoTuneCallback callback);
 
 
     /// <summary>
@@ -90,7 +90,7 @@ namespace MediaPortal.TV.Scanning
     /// </summary>
     /// <param name="card">specifies the tvcapture card for which tuning should occur</param>
     /// <param name="callback">specifies a callback interface to indicate status updates</param>
-    void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback);
+    bool AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback);
 
 
     /// <summary>

@@ -108,6 +108,8 @@ namespace MediaPortal.TV.Scanning
       this.button1.TabIndex = 1;
       this.button1.Text = "Ok";
       this.button1.Click += new System.EventHandler(this.button1_Click);
+      this.button1.DialogResult = DialogResult.OK;
+
       // 
       // FormCountry
       // 
@@ -119,6 +121,7 @@ namespace MediaPortal.TV.Scanning
       this.Name = "FormCountry";
       this.Text = "Country / Region selection";
       this.Load += new System.EventHandler(this.FormCountry_Load);
+      this.AcceptButton = button1;
       this.ResumeLayout(false);
 
     }

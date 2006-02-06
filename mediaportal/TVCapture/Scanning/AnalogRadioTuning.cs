@@ -66,7 +66,7 @@ namespace MediaPortal.TV.Scanning
             callback.OnProgress(100);
             callback.OnEnded();
 		}
-		public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback statusCallback)
+		public bool AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
             captureCard = card;
             card.RadioChannelMinMax(out minStationFreq, out maxStationFreq);
@@ -91,12 +91,13 @@ namespace MediaPortal.TV.Scanning
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             timer1.Interval = 100;
             timer1.Enabled = true;
-            
+            return true;
         }
 
-		public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
+		public bool AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
 		{
             callback.OnEnded();
+            return false;
 		}
 		public void Continue()
 		{

@@ -1,5 +1,6 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +19,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+#endregion
+
 using System;
 using System.Threading;
 using System.Collections;
@@ -27,6 +30,8 @@ using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.GUI.Library;
 using System.Xml;
+using System.Xml.XPath;
+
 
 namespace MediaPortal.TV.Scanning
 {
@@ -55,7 +60,7 @@ namespace MediaPortal.TV.Scanning
       timer1.Enabled = false;
       captureCard.DeleteGraph();
     }
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
+    public bool AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
     {
       newRadioChannels = 0;
       updatedRadioChannels = 0;
@@ -74,56 +79,74 @@ namespace MediaPortal.TV.Scanning
       doc.Load("Tuningparameters/dvbt.xml");
 
       FormCountry formCountry = new FormCountry();
-      XmlNodeList countryList = doc.DocumentElement.SelectNodes("/dvbt/country");
-      foreach (XmlNode nodeCountry in countryList)
+      XPathNavigator nav = doc.CreateNavigator();
+
+      // Ensure we are at the root node
+      nav.MoveToRoot();
+      XPathExpression expr = nav.Compile("/dvbt/country");
+      // Add an XSLT based sort
+      expr.AddSort("@name", XmlSortOrder.Ascending, XmlCaseOrder.None, "", XmlDataType.Text);
+      IEnumerator enumerator = nav.Select(expr).GetEnumerator();
+      while (enumerator.MoveNext())
       {
-        string name = nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
-        formCountry.AddCountry(name);
+          XPathNavigator nodeCountry = (XPathNavigator)enumerator.Current;
+          XPathNavigator nameNode = nodeCountry.SelectSingleNode("@name");
+          string name = nameNode.Value;
+          formCountry.AddCountry(name);
       }
+
       formCountry.ShowDialog();
+      if (formCountry.DialogResult != DialogResult.OK)
+      {
+          formCountry.Dispose();
+          return false;
+      }
       string countryName = formCountry.countryName;
-      if (countryName == String.Empty) return;
+      formCountry.Dispose();
+      if (countryName == String.Empty) return false;
       Log.WriteFile(Log.LogType.Capture, "dvbt-scan:auto tune for {0}", countryName);
       frequencies.Clear();
-
-      countryList = doc.DocumentElement.SelectNodes("/dvbt/country");
-      foreach (XmlNode nodeCountry in countryList)
+      //Search the selected country
+      nav.MoveToRoot();
+      expr = nav.Compile("/dvbt/country[@name='"+countryName+"']");
+      XPathNavigator countryNav = nav.SelectSingleNode(expr);
+      if (countryNav != null)
       {
-        string name = nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
-        if (name != countryName) continue;
-        Log.WriteFile(Log.LogType.Capture, "dvbt-scan:found country {0} in dvbt.xml", countryName);
-        try
-        {
-          scanOffset = XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
-          Log.WriteFile(Log.LogType.Capture, "dvbt-scan:scanoffset: {0} ", scanOffset);
-        }
-        catch (Exception) { }
-
-        XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
-        Log.WriteFile(Log.LogType.Capture, "dvbt-scan:number of carriers:{0}", frequencyList.Count);
-        int[] carrier;
-        foreach (XmlNode node in frequencyList)
-        {
-          carrier = new int[2];
-          carrier[0] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"frequency").InnerText);
+          Log.WriteFile(Log.LogType.Capture, "dvbt-scan:found country {0} in dvbt.xml", countryName);
+          XmlNode nodeCountry = ((IHasXmlNode)countryNav).GetNode();
           try
           {
-            carrier[1] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"bandwidth").InnerText);
+              scanOffset = XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
+              Log.WriteFile(Log.LogType.Capture, "dvbt-scan:scanoffset: {0} ", scanOffset);
           }
           catch (Exception) { }
 
-          if (carrier[1] == 0) carrier[1] = 8;
-          frequencies.Add(carrier);
-          Log.WriteFile(Log.LogType.Capture, "dvbt-scan:added:{0}", carrier[0]);
-        }
+          XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
+          Log.WriteFile(Log.LogType.Capture, "dvbt-scan:number of carriers:{0}", frequencyList.Count);
+          int[] carrier;
+          foreach (XmlNode node in frequencyList)
+          {
+              carrier = new int[2];
+              carrier[0] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"frequency").InnerText);
+              try
+              {
+                  carrier[1] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"bandwidth").InnerText);
+              }
+              catch (Exception) { }
+
+              if (carrier[1] == 0) carrier[1] = 8;
+              frequencies.Add(carrier);
+              Log.WriteFile(Log.LogType.Capture, "dvbt-scan:added:{0}", carrier[0]);
+          }
       }
-      if (frequencies.Count == 0) return;
+      if (frequencies.Count == 0) return false;
 
       Log.WriteFile(Log.LogType.Capture, "dvbt-scan:loaded:{0} frequencies", frequencies.Count);
       Log.WriteFile(Log.LogType.Capture, "dvbt-scan:{0} has a scan offset of {1}KHz", countryCode, scanOffset);
       this.timer1 = new System.Windows.Forms.Timer();
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-      return;
+      this.timer1.Enabled = false;
+      return true;
     }
 
     public void Start()
@@ -160,9 +183,10 @@ namespace MediaPortal.TV.Scanning
         }
       }
     }
-    public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback)
+    public bool AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback)
     {
       // TODO:  Add DVBTTuning.AutoTuneRadio implementation
+      return false;
     }
 
     public void Continue()

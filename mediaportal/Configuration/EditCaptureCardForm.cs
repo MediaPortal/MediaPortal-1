@@ -2045,12 +2045,13 @@ namespace MediaPortal.Configuration
 
     private void button1_Click(object sender, System.EventArgs e)
     {
-      // save settings for card
-      if (CaptureCard != null)
+        TVCaptureDevice capture = CaptureCard;
+        // save settings for card
+        if (capture != null)
       {
-        if (CaptureCard.CardType == TVCapture.CardTypes.Digital_SS2)
+          if (capture.CardType == TVCapture.CardTypes.Digital_SS2)
         {
-          string filename = String.Format(@"database\card_{0}.xml", CaptureCard.FriendlyName);
+            string filename = String.Format(@"database\card_{0}.xml", capture.FriendlyName);
           // save settings for get the filename in mp.xml
           using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
           {
@@ -2062,19 +2063,20 @@ namespace MediaPortal.Configuration
       SectionSettings televisionSettings = SectionSettings.GetSection("Television");
       int countryCode = (int)televisionSettings.GetSetting("television.country");
       bool isCable = (bool)televisionSettings.GetSetting("television.isCable");
-      CaptureCard.DefaultCountryCode = countryCode;
-      CaptureCard.IsCableInput = isCable;
+      capture.DefaultCountryCode = countryCode;
+      capture.IsCableInput = isCable;
       Log.WriteFile(Log.LogType.Log, "EditCaptureCardForm:AutoTuneTV() countryCode:{0} input:{1}",
           countryCode, isCable ? "Cable" : "Antenna");
 
-      if (CaptureCard.Network == NetworkType.Analog)
+      if (capture.Network == NetworkType.Analog)
       {
         AnalogTVTuningForm dialog = new AnalogTVTuningForm();
         ITuning tuning = GraphFactory.CreateTuning(CaptureCard);
+
         if (tuning != null)
         {
           dialog.Tuning = tuning;
-          dialog.Card = CaptureCard;
+          dialog.Card = capture;
           dialog.ShowDialog(this);
         }
         else
@@ -2085,11 +2087,11 @@ namespace MediaPortal.Configuration
       else
       {
         DigitalTVTuningForm dialog = new DigitalTVTuningForm();
-        ITuning tuning = GraphFactory.CreateTuning(CaptureCard);
+        ITuning tuning = GraphFactory.CreateTuning(capture);
         if (tuning != null)
         {
           dialog.Tuning = tuning;
-          dialog.Card = CaptureCard;
+          dialog.Card = capture;
           dialog.ShowDialog(this);
         }
         else

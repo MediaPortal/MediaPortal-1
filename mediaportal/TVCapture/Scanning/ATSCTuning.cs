@@ -98,7 +98,7 @@ namespace MediaPortal.TV.Scanning
       }
     }
 
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
+    public bool AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
     {
       newRadioChannels = 0;
       updatedRadioChannels = 0;
@@ -110,12 +110,13 @@ namespace MediaPortal.TV.Scanning
       currentIndex = -1;
       this.timer1 = new System.Windows.Forms.Timer();
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-      return;
+      return true;
     }
 
-    public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback)
+    public bool AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback)
     {
       // TODO:  Add ATSCTuning.AutoTuneRadio implementation
+        return false;
     }
 
     public void Continue()

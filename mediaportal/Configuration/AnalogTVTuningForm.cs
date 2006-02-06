@@ -387,7 +387,18 @@ namespace MediaPortal
       UpdateList();
       GUIGraphicsContext.ActiveForm = this.Handle;
       GUIGraphicsContext.VideoWindow = new Rectangle(panel1.Location, panel1.Size);
-      tuningInterface.AutoTuneTV(captureCard, this);
+      this.Visible = true;
+      Log.WriteFile(Log.LogType.Capture, "FORM LOAD graph:{0}-{1}", captureCard.Graph.CommercialName, captureCard.Graph.TvFilterDefinitions.Count);
+
+      if (tuningInterface.AutoTuneTV(captureCard, this))
+      {
+          this.Update();
+      }
+      else
+      {
+          this.Close();
+          this.Dispose();
+      }
     }
 
 
