@@ -33,6 +33,7 @@ namespace MediaPortal.GUI.Library
       VideoOverlay,
       TvOverlay,
       Video,
+      WeatherOverlay,
       TopOverlay,
       Osd,
       Topbar1,
