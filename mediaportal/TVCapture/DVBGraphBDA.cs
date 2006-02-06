@@ -3581,18 +3581,8 @@ namespace MediaPortal.TV.Recording
       _signalLostTimer = DateTime.Now;
     }
 
-    public void Process()
+    bool ProcessEpg()
     {
-      if (_graphState == State.None) return;
-
-
-
-      UpdateSignalPresent();
-      if (_graphState == State.Created) return;
-
-      if (_streamDemuxer != null)
-        _streamDemuxer.Process();
-
       _epgGrabber.Process();
       if (_epgGrabber.Done)
       {
@@ -3603,9 +3593,23 @@ namespace MediaPortal.TV.Recording
           _mediaControl.Stop();
           _isGraphRunning = false;
           //_graphState = State.Created;
-          return;
+          return true;
         }
       }
+      return false;
+    }
+
+    public void Process()
+    {
+      if (_graphState == State.None) return;
+
+      UpdateSignalPresent();
+      if (_graphState == State.Created) return;
+
+      if (_streamDemuxer != null)
+        _streamDemuxer.Process();
+
+      if (ProcessEpg()) return;
 
       if (_graphState != State.Epg)
       {
@@ -3883,7 +3887,7 @@ namespace MediaPortal.TV.Recording
               _currentTuningObject.PCRPid = pcrPid;
               _currentTuningObject.HasEITPresentFollow = HasEITPresentFollow;
               _currentTuningObject.HasEITSchedule = HasEITSchedule;
-               SubmitTuneRequest(_currentTuningObject);
+              SubmitTuneRequest(_currentTuningObject);
 
             } break;
 
@@ -3944,7 +3948,7 @@ namespace MediaPortal.TV.Recording
               _currentTuningObject.LNBKHz = ch.LNBKHz;
               _currentTuningObject.HasEITPresentFollow = ch.HasEITPresentFollow;
               _currentTuningObject.HasEITSchedule = ch.HasEITSchedule;
-                SubmitTuneRequest(_currentTuningObject);
+              SubmitTuneRequest(_currentTuningObject);
 
             } break;
 
@@ -3995,7 +3999,7 @@ namespace MediaPortal.TV.Recording
               _currentTuningObject.Audio3 = audio3;
               _currentTuningObject.HasEITPresentFollow = HasEITPresentFollow;
               _currentTuningObject.HasEITSchedule = HasEITSchedule;
-                SubmitTuneRequest(_currentTuningObject);
+              SubmitTuneRequest(_currentTuningObject);
 
             } break;
         }	//switch (_networkType)
@@ -5287,35 +5291,35 @@ namespace MediaPortal.TV.Recording
 
     #endregion
 
-    
+
     void SetPids()
     {
 #if HW_PID_FILTERING
-			string pidsText=String.Empty;
-			ArrayList pids = new ArrayList();
-			pids.Add((ushort)0);
-			pids.Add((ushort)1);
-			pids.Add((ushort)17);
-			pids.Add((ushort)18);
-			pids.Add((ushort)0xd3);
-			pids.Add((ushort)0xd2);
-			if (_currentTuningObject.VideoPid>0) pids.Add((ushort)_currentTuningObject.VideoPid);
-			if (_currentTuningObject.AudioPid>0) pids.Add((ushort)_currentTuningObject.AudioPid);
-			if (_currentTuningObject.AC3Pid>0) pids.Add((ushort)_currentTuningObject.AC3Pid);
-			if (_currentTuningObject.PMTPid>0) pids.Add((ushort)_currentTuningObject.PMTPid);
-			if (_currentTuningObject.TeletextPid>0) pids.Add((ushort)_currentTuningObject.TeletextPid);
-			if (_currentTuningObject.PCRPid>0) pids.Add((ushort)_currentTuningObject.PCRPid);
-			if (_currentTuningObject.ECMPid>0) pids.Add((ushort)_currentTuningObject.ECMPid);
-			for (int i=0; i < pids.Count;++i)
-				pidsText+=String.Format("{0:X},", (ushort)pids[i]);
+      string pidsText = String.Empty;
+      ArrayList pids = new ArrayList();
+      pids.Add((ushort)0);
+      pids.Add((ushort)1);
+      pids.Add((ushort)17);
+      pids.Add((ushort)18);
+      pids.Add((ushort)0xd3);
+      pids.Add((ushort)0xd2);
+      if (_currentTuningObject.VideoPid > 0) pids.Add((ushort)_currentTuningObject.VideoPid);
+      if (_currentTuningObject.AudioPid > 0) pids.Add((ushort)_currentTuningObject.AudioPid);
+      if (_currentTuningObject.AC3Pid > 0) pids.Add((ushort)_currentTuningObject.AC3Pid);
+      if (_currentTuningObject.PMTPid > 0) pids.Add((ushort)_currentTuningObject.PMTPid);
+      if (_currentTuningObject.TeletextPid > 0) pids.Add((ushort)_currentTuningObject.TeletextPid);
+      if (_currentTuningObject.PCRPid > 0) pids.Add((ushort)_currentTuningObject.PCRPid);
+      if (_currentTuningObject.ECMPid > 0) pids.Add((ushort)_currentTuningObject.ECMPid);
+      for (int i = 0; i < pids.Count; ++i)
+        pidsText += String.Format("{0:X},", (ushort)pids[i]);
 
-			Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA:SetPIDS to:{0}", pidsText);
-			VideoCaptureProperties props = new VideoCaptureProperties(_filterTunerDevice);
-			props.SetPIDS(Network()==NetworkType.DVBC,
-										Network()==NetworkType.DVBT,
-										Network()==NetworkType.DVBS,
-										Network()==NetworkType.ATSC,
-										pids);
+      Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:SetPIDS to:{0}", pidsText);
+      VideoCaptureProperties props = new VideoCaptureProperties(_filterTunerDevice);
+      props.SetPIDS(Network() == NetworkType.DVBC,
+                    Network() == NetworkType.DVBT,
+                    Network() == NetworkType.DVBS,
+                    Network() == NetworkType.ATSC,
+                    pids);
 
 #endif
     }
