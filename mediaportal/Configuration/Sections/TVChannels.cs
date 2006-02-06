@@ -91,7 +91,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ColumnHeader columnHeader10;
     private System.Windows.Forms.ColumnHeader columnHeader11;
     ListViewColumnSorter _columnSorter;
-    private Button buttonCombine;
+    private MediaPortal.UserInterface.Controls.MPButton buttonCombine;
 
     //
     // Private members
@@ -139,6 +139,7 @@ namespace MediaPortal.Configuration.Sections
       this.XMLSaveDialog = new System.Windows.Forms.SaveFileDialog();
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.buttonCombine = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonLookup = new MediaPortal.UserInterface.Controls.MPButton();
       this.xmlImport = new MediaPortal.UserInterface.Controls.MPButton();
       this.xmlExport = new MediaPortal.UserInterface.Controls.MPButton();
@@ -164,7 +165,6 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
       this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.buttonCombine = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.tabPage4.SuspendLayout();
@@ -229,25 +229,39 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.Size = new System.Drawing.Size(464, 382);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "TV Channels";
+      this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // buttonCombine
+      // 
+      this.buttonCombine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCombine.Location = new System.Drawing.Point(16, 312);
+      this.buttonCombine.Name = "buttonCombine";
+      this.buttonCombine.Size = new System.Drawing.Size(64, 20);
+      this.buttonCombine.TabIndex = 12;
+      this.buttonCombine.Text = "Combine";
+      this.buttonCombine.UseVisualStyleBackColor = true;
+      this.buttonCombine.Click += new System.EventHandler(this.buttonCombine_Click);
       // 
       // buttonLookup
       // 
       this.buttonLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonLookup.Location = new System.Drawing.Point(242, 353);
+      this.buttonLookup.Location = new System.Drawing.Point(232, 353);
       this.buttonLookup.Name = "buttonLookup";
-      this.buttonLookup.Size = new System.Drawing.Size(64, 16);
+      this.buttonLookup.Size = new System.Drawing.Size(64, 20);
       this.buttonLookup.TabIndex = 7;
       this.buttonLookup.Text = "Lookup";
+      this.buttonLookup.UseVisualStyleBackColor = true;
       this.buttonLookup.Click += new System.EventHandler(this.buttonLookup_Click);
       // 
       // xmlImport
       // 
       this.xmlImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.xmlImport.Location = new System.Drawing.Point(312, 353);
+      this.xmlImport.Location = new System.Drawing.Point(308, 353);
       this.xmlImport.Name = "xmlImport";
-      this.xmlImport.Size = new System.Drawing.Size(64, 16);
+      this.xmlImport.Size = new System.Drawing.Size(64, 20);
       this.xmlImport.TabIndex = 10;
       this.xmlImport.Text = "Restore";
+      this.xmlImport.UseVisualStyleBackColor = true;
       this.xmlImport.Click += new System.EventHandler(this.xmlImport_Click);
       // 
       // xmlExport
@@ -255,29 +269,32 @@ namespace MediaPortal.Configuration.Sections
       this.xmlExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.xmlExport.Location = new System.Drawing.Point(384, 353);
       this.xmlExport.Name = "xmlExport";
-      this.xmlExport.Size = new System.Drawing.Size(64, 16);
+      this.xmlExport.Size = new System.Drawing.Size(64, 20);
       this.xmlExport.TabIndex = 11;
       this.xmlExport.Text = "Backup";
+      this.xmlExport.UseVisualStyleBackColor = true;
       this.xmlExport.Click += new System.EventHandler(this.xmlExport_Click);
       // 
       // buttonCVS
       // 
       this.buttonCVS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonCVS.Location = new System.Drawing.Point(344, 334);
+      this.buttonCVS.Location = new System.Drawing.Point(344, 332);
       this.buttonCVS.Name = "buttonCVS";
-      this.buttonCVS.Size = new System.Drawing.Size(104, 16);
+      this.buttonCVS.Size = new System.Drawing.Size(104, 20);
       this.buttonCVS.TabIndex = 8;
       this.buttonCVS.Text = "Add CVBS/SVHS";
+      this.buttonCVS.UseVisualStyleBackColor = true;
       this.buttonCVS.Click += new System.EventHandler(this.buttonCVS_Click);
       // 
       // btnImport
       // 
       this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnImport.Location = new System.Drawing.Point(234, 334);
+      this.btnImport.Location = new System.Drawing.Point(232, 332);
       this.btnImport.Name = "btnImport";
-      this.btnImport.Size = new System.Drawing.Size(104, 16);
+      this.btnImport.Size = new System.Drawing.Size(110, 20);
       this.btnImport.TabIndex = 9;
       this.btnImport.Text = "Import from tvguide";
+      this.btnImport.UseVisualStyleBackColor = true;
       this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
       // 
       // btnClear
@@ -285,41 +302,45 @@ namespace MediaPortal.Configuration.Sections
       this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnClear.Location = new System.Drawing.Point(16, 353);
       this.btnClear.Name = "btnClear";
-      this.btnClear.Size = new System.Drawing.Size(64, 16);
+      this.btnClear.Size = new System.Drawing.Size(64, 20);
       this.btnClear.TabIndex = 4;
       this.btnClear.Text = "Clear";
+      this.btnClear.UseVisualStyleBackColor = true;
       this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
       // 
       // addButton
       // 
       this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.addButton.Location = new System.Drawing.Point(16, 334);
+      this.addButton.Location = new System.Drawing.Point(16, 332);
       this.addButton.Name = "addButton";
-      this.addButton.Size = new System.Drawing.Size(64, 16);
+      this.addButton.Size = new System.Drawing.Size(64, 20);
       this.addButton.TabIndex = 1;
       this.addButton.Text = "Add";
+      this.addButton.UseVisualStyleBackColor = true;
       this.addButton.Click += new System.EventHandler(this.addButton_Click);
       // 
       // deleteButton
       // 
       this.deleteButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.deleteButton.Enabled = false;
-      this.deleteButton.Location = new System.Drawing.Point(156, 334);
+      this.deleteButton.Location = new System.Drawing.Point(156, 332);
       this.deleteButton.Name = "deleteButton";
-      this.deleteButton.Size = new System.Drawing.Size(72, 16);
+      this.deleteButton.Size = new System.Drawing.Size(64, 20);
       this.deleteButton.TabIndex = 3;
       this.deleteButton.Text = "Delete";
+      this.deleteButton.UseVisualStyleBackColor = true;
       this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
       // 
       // editButton
       // 
       this.editButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.editButton.Enabled = false;
-      this.editButton.Location = new System.Drawing.Point(86, 334);
+      this.editButton.Location = new System.Drawing.Point(86, 332);
       this.editButton.Name = "editButton";
-      this.editButton.Size = new System.Drawing.Size(64, 16);
+      this.editButton.Size = new System.Drawing.Size(64, 20);
       this.editButton.TabIndex = 2;
       this.editButton.Text = "Edit";
+      this.editButton.UseVisualStyleBackColor = true;
       this.editButton.Click += new System.EventHandler(this.editButton_Click);
       // 
       // upButton
@@ -328,9 +349,10 @@ namespace MediaPortal.Configuration.Sections
       this.upButton.Enabled = false;
       this.upButton.Location = new System.Drawing.Point(86, 353);
       this.upButton.Name = "upButton";
-      this.upButton.Size = new System.Drawing.Size(64, 16);
+      this.upButton.Size = new System.Drawing.Size(64, 20);
       this.upButton.TabIndex = 5;
       this.upButton.Text = "Up";
+      this.upButton.UseVisualStyleBackColor = true;
       this.upButton.Click += new System.EventHandler(this.upButton_Click);
       // 
       // downButton
@@ -339,9 +361,10 @@ namespace MediaPortal.Configuration.Sections
       this.downButton.Enabled = false;
       this.downButton.Location = new System.Drawing.Point(156, 353);
       this.downButton.Name = "downButton";
-      this.downButton.Size = new System.Drawing.Size(64, 16);
+      this.downButton.Size = new System.Drawing.Size(64, 20);
       this.downButton.TabIndex = 6;
       this.downButton.Text = "Down";
+      this.downButton.UseVisualStyleBackColor = true;
       this.downButton.Click += new System.EventHandler(this.downButton_Click);
       // 
       // channelsListView
@@ -403,6 +426,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage4.Size = new System.Drawing.Size(464, 382);
       this.tabPage4.TabIndex = 3;
       this.tabPage4.Text = "TV Cards";
+      this.tabPage4.UseVisualStyleBackColor = true;
       this.tabPage4.Visible = false;
       // 
       // btnMapChannelToCard
@@ -413,6 +437,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnMapChannelToCard.Size = new System.Drawing.Size(40, 22);
       this.btnMapChannelToCard.TabIndex = 3;
       this.btnMapChannelToCard.Text = ">>";
+      this.btnMapChannelToCard.UseVisualStyleBackColor = true;
       this.btnMapChannelToCard.Click += new System.EventHandler(this.btnMapChannelToCard_Click);
       // 
       // btnUnmapChannelFromCard
@@ -423,6 +448,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnUnmapChannelFromCard.Size = new System.Drawing.Size(40, 22);
       this.btnUnmapChannelFromCard.TabIndex = 4;
       this.btnUnmapChannelFromCard.Text = "<<";
+      this.btnUnmapChannelFromCard.UseVisualStyleBackColor = true;
       this.btnUnmapChannelFromCard.Click += new System.EventHandler(this.btnUnmapChannelFromCard_Click);
       // 
       // listViewTVChannelsForCard
@@ -479,16 +505,6 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxCard.Size = new System.Drawing.Size(288, 21);
       this.comboBoxCard.TabIndex = 1;
       this.comboBoxCard.SelectedIndexChanged += new System.EventHandler(this.comboBoxCard_SelectedIndexChanged);
-      // 
-      // buttonCombine
-      // 
-      this.buttonCombine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonCombine.Location = new System.Drawing.Point(16, 312);
-      this.buttonCombine.Name = "buttonCombine";
-      this.buttonCombine.Size = new System.Drawing.Size(64, 16);
-      this.buttonCombine.TabIndex = 12;
-      this.buttonCombine.Text = "Combine";
-      this.buttonCombine.Click += new System.EventHandler(this.buttonCombine_Click);
       // 
       // TVChannels
       // 
