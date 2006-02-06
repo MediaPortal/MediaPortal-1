@@ -288,7 +288,6 @@ namespace MediaPortal.Configuration.Sections
                 {
                   if (itemTag.SetupForm.GetHome(out buttontxt, out buttonimage, out buttonimagefocus, out picture))
                   {
-                    bHome = true;
                     itemTag.IsHome = xmlreader.GetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
                     itemTag.IsPlugins = xmlreader.GetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
                   }
