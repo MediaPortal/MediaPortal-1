@@ -460,7 +460,7 @@ namespace DShowNET
         Marshal.StructureToPtr(dvbsStruct, pDataReturned, true);
       }
 
-      Log.WriteFile(Log.LogType.Log, true, "FireDTV: Set H/W pid filtering count:{0} len:{1}", pids.Count, len);
+      Log.Write( "FireDTV: Set H/W pid filtering count:{0} len:{1}", pids.Count, len);
 
       string txt = "";
       for (int i = 0; i < len; ++i)
