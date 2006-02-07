@@ -387,18 +387,7 @@ namespace MediaPortal
       UpdateList();
       GUIGraphicsContext.ActiveForm = this.Handle;
       GUIGraphicsContext.VideoWindow = new Rectangle(panel1.Location, panel1.Size);
-      this.Visible = true;
-      Log.WriteFile(Log.LogType.Capture, "FORM LOAD graph:{0}-{1}", captureCard.Graph.CommercialName, captureCard.Graph.TvFilterDefinitions.Count);
-
-      if (tuningInterface.AutoTuneTV(captureCard, this))
-      {
-          this.Update();
-      }
-      else
-      {
-          this.Close();
-          this.Dispose();
-      }
+      tuningInterface.AutoTuneTV(captureCard, this);
     }
 
 
@@ -413,7 +402,7 @@ namespace MediaPortal
       buttonSkip.Enabled = false;
       buttonAdd.Enabled = false;
 
-      tuningInterface.Continue();
+      tuningInterface.Next();
     }
     public ITuning Tuning
     {
@@ -537,7 +526,7 @@ namespace MediaPortal
       try
       {
         if (tuningInterface == null) return;
-        tuningInterface.Stop();
+        captureCard.DeleteGraph();
       }
       catch (Exception) { }
     }
@@ -549,7 +538,7 @@ namespace MediaPortal
       try
       {
         if (tuningInterface == null) return;
-        tuningInterface.Stop();
+        captureCard.DeleteGraph();
       }
       catch (Exception) { }
 
@@ -559,7 +548,6 @@ namespace MediaPortal
     {
 
       if (tuningInterface == null) return;
-      tuningInterface.Stop();
 
       buttonMap.Enabled = false;
       buttonSkip.Enabled = false;

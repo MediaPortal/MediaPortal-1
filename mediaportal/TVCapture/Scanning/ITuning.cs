@@ -74,14 +74,16 @@ namespace MediaPortal.TV.Scanning
   {
     void Start();
     void Next();
-    void Previous();
+    bool IsFinished();
     /// <summary>
     /// This method should do all auto-tuning for TV
     /// It should locate & find all tv channels for the card specified and store them in the database
     /// </summary>
     /// <param name="card">specifies the tvcapture card for which tuning should occur</param>
     /// <param name="callback">specifies a callback interface to indicate status updates</param>
-    bool AutoTuneTV(TVCaptureDevice card, AutoTuneCallback callback);
+    void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback callback);
+    void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback callback, string tuningFile);
+    void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback callback, string[] tuningFiles);
 
 
     /// <summary>
@@ -90,13 +92,7 @@ namespace MediaPortal.TV.Scanning
     /// </summary>
     /// <param name="card">specifies the tvcapture card for which tuning should occur</param>
     /// <param name="callback">specifies a callback interface to indicate status updates</param>
-    bool AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback);
-
-
-    /// <summary>
-    /// This method continues the scanning progress
-    /// </summary>
-    void Continue();
+    void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback);
 
 
     /// <summary>
@@ -105,6 +101,5 @@ namespace MediaPortal.TV.Scanning
     /// </summary>
     int MapToChannel(string channel);
 
-    void Stop();
   }
 }

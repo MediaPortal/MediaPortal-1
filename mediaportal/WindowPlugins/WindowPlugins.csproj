@@ -772,6 +772,7 @@
     <Compile Include="GUISettings\Wizard\GUIWizardFinished.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUISettings\Wizard\GUIWizardScanBase.cs" />
     <Compile Include="GUISettings\Wizard\GUIWizardWelcome.cs">
       <SubType>Code</SubType>
     </Compile>

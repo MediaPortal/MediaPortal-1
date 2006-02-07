@@ -30,12 +30,16 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.TV.Scanning;
+
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class Wizard_DVBCTV : MediaPortal.Configuration.SectionSettings
+  public class Wizard_DVBCTV : MediaPortal.Configuration.SectionSettings, AutoTuneCallback
   {
     private System.ComponentModel.IContainer components = null;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
@@ -46,29 +50,9 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelStatus;
     private MediaPortal.UserInterface.Controls.MPComboBox cbCountry;
 
-    struct DVBCList
-    {
-      public int frequency;		 // frequency
-      public int modulation;	 // modulation value
-      public string modstr;      // modulation string for display purpose
-      public int symbolrate;	 // symbol rate
-    }
-
-    enum State
-    {
-      ScanStart,
-      ScanFrequencies,
-      ScanChannels
-    }
-    TVCaptureDevice captureCard;
-    int currentIndex = -1;
-    DVBCList[] dvbcChannels = new DVBCList[1000];
-    int count = 0;
-    int newChannels, updatedChannels;
-    int newRadioChannels, updatedRadioChannels;
     private MediaPortal.UserInterface.Controls.MPLabel label3;
     private System.Windows.Forms.Panel panel1;
-
+    string _description;
 
     public Wizard_DVBCTV()
       : this("DVBC TV")
@@ -244,275 +228,91 @@ namespace MediaPortal.Configuration.Sections
         cbCountry.SelectedIndex = 0;
     }
 
-    void LoadFrequencies()
-    {
-      string countryName = (string)cbCountry.SelectedItem;
-      if (countryName == String.Empty) return;
-      count = 0;
-      string line;
-      string[] tpdata;
-      Log.WriteFile(Log.LogType.Capture, "Opening {0}", countryName);
-      // load dvbcChannelsList list and start scan
-      System.IO.TextReader tin = System.IO.File.OpenText(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters\" + countryName);
-
-      int LineNr = 0;
-      do
-      {
-        line = null;
-        line = tin.ReadLine();
-        if (line != null)
-        {
-          LineNr++;
-          if (line.Length > 0)
-          {
-            if (line.StartsWith(";"))
-              continue;
-            tpdata = line.Split(new char[] { ',' });
-            if (tpdata.Length != 3)
-              tpdata = line.Split(new char[] { ';' });
-            if (tpdata.Length == 3)
-            {
-              try
-              {
-                dvbcChannels[count].frequency = Int32.Parse(tpdata[0]);
-                string mod = tpdata[1].ToUpper();
-                dvbcChannels[count].modstr = mod;
-                switch (mod)
-                {
-                    case "1024QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_1024QAM;
-                        break;
-                    case "112QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_112QAM;
-                        break;
-                    case "128QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_128QAM;
-                        break;
-                    case "160QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_160QAM;
-                        break;
-                    case "16QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_16QAM;
-                        break;
-                    case "16VSB":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_16VSB;
-                        break;
-                    case "192QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_192QAM;
-                        break;
-                    case "224QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_224QAM;
-                        break;
-                    case "256QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_256QAM;
-                        break;
-                    case "320QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_320QAM;
-                        break;
-                    case "384QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_384QAM;
-                        break;
-                    case "448QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_448QAM;
-                        break;
-                    case "512QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_512QAM;
-                        break;
-                    case "640QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_640QAM;
-                        break;
-                    case "64QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_64QAM;
-                        break;
-                    case "768QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_768QAM;
-                        break;
-                    case "80QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_80QAM;
-                        break;
-                    case "896QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_896QAM;
-                        break;
-                    case "8VSB":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_8VSB;
-                        break;
-                    case "96QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_96QAM;
-                        break;
-                    case "AMPLITUDE":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_ANALOG_AMPLITUDE;
-                        break;
-                    case "FREQUENCY":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_ANALOG_FREQUENCY;
-                        break;
-                    case "BPSK":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_BPSK;
-                        break;
-                    case "OQPSK":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_OQPSK;
-                        break;
-                    case "QPSK":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_QPSK;
-                        break;
-                    default:
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
-                        break;
-                }
-                dvbcChannels[count].symbolrate = Int32.Parse(tpdata[2]);
-                count += 1;
-              }
-              catch
-              {
-                Log.WriteFile(Log.LogType.Capture, "Error in line:{0}", LineNr);
-              }
-            }
-          }
-        }
-      } while (!(line == null));
-      tin.Close();
-    }
-
 
     private void button1_Click(object sender, System.EventArgs e)
     {
-      LoadFrequencies();
-      if (count <= 0) return;
       progressBar1.Visible = true;
-      newChannels = 0; updatedChannels = 0;
-      newRadioChannels = 0; updatedRadioChannels = 0;
-      DoScan();
-      labelStatus.Text = String.Format("Imported {0} tv channels, {1} radio channels", newChannels, newRadioChannels);
+      Thread thread = new Thread(new ThreadStart(DoScan));
+      thread.Start();
     }
 
     private void DoScan()
     {
+      cbCountry.Enabled = false;
+      button1.Enabled = false;
+      string countryName = (string)cbCountry.SelectedItem;
       GUIGraphicsContext.form = this.FindForm();
       GUIGraphicsContext.VideoWindow = new Rectangle(panel1.Location, panel1.Size);
 
+      TVCaptureDevice captureCard = null;
       TVCaptureCards cards = new TVCaptureCards();
       cards.LoadCaptureCards();
       foreach (TVCaptureDevice dev in cards.captureCards)
       {
-        if (dev.Network == NetworkType.DVBC || dev.VideoDevice == "B2C2 MPEG-2 Source")
+        if (dev.Network == NetworkType.DVBC)
         {
           captureCard = dev;
           captureCard.CreateGraph();
           break;
         }
       }
-      progressBar1.Visible = true;
-
-      currentIndex = -1;
-      while (currentIndex < count)
+      if (captureCard == null)
       {
-
-        int index = currentIndex;
-        if (index < 0) index = 0;
-        float percent = ((float)index) / ((float)count);
-        percent *= 100.0f;
-        progressBar1.Value = (int)percent;
-
-        ScanNextDVBCChannel();
-        if (captureCard.SignalPresent())
-        {
-          ScanChannels();
-        }
+        button1.Enabled = true;
+        cbCountry.Enabled = true;
+        progressBar1.Value = 100;
+        return;
+      }
+      captureCard.CreateGraph();
+      ITuning tuning = new DVBCTuning();
+      tuning.AutoTuneTV(captureCard, this, @"Tuningparameters\"+countryName);
+      tuning.Start();
+      while (!tuning.IsFinished())
+      {
+        tuning.Next();
       }
       captureCard.DeleteGraph();
 
-      MapTvToOtherCards(captureCard.ID);
-      MapRadioToOtherCards(captureCard.ID);
-      captureCard = null;
+      labelStatus.Text = _description;
       progressBar1.Value = 100;
+      captureCard = null;
+      button1.Enabled = true;
+      cbCountry.Enabled = true;
     }
-    void MapTvToOtherCards(int id)
-    {
-      ArrayList tvchannels = new ArrayList();
-      TVDatabase.GetChannelsForCard(ref tvchannels, id);
-      TVCaptureCards cards = new TVCaptureCards();
-      cards.LoadCaptureCards();
-      foreach (TVCaptureDevice dev in cards.captureCards)
-      {
-        if (dev.Network == NetworkType.DVBC && dev.ID != id)
-        {
-          foreach (TVChannel chan in tvchannels)
-          {
-            TVDatabase.MapChannelToCard(chan.ID, dev.ID);
-          }
-        }
-      }
-    }
-    void MapRadioToOtherCards(int id)
-    {
-      ArrayList radioChans = new ArrayList();
-      MediaPortal.Radio.Database.RadioDatabase.GetStationsForCard(ref radioChans, id);
-      TVCaptureCards cards = new TVCaptureCards();
-      cards.LoadCaptureCards();
-      foreach (TVCaptureDevice dev in cards.captureCards)
-      {
-        if (dev.Network == NetworkType.DVBC && dev.ID != id)
-        {
-          foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
-          {
-            MediaPortal.Radio.Database.RadioDatabase.MapChannelToCard(chan.ID, dev.ID);
-          }
-        }
-      }
-    }
-    void ScanChannels()
-    {
 
-      DVBCList dvbcChan = dvbcChannels[currentIndex];
-      string chanDesc = String.Format("freq:{0} Khz, Mod:{1} SR:{2}", dvbcChan.frequency, dvbcChan.modstr, dvbcChan.symbolrate);
-      string description = String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex, chanDesc);
+    #region AutoTuneCallback
+    public void OnNewChannel()
+    {
+    }
+
+    public void OnSignal(int quality, int strength)
+    {
+    }
+
+    public void OnStatus(string description)
+    {
       labelStatus.Text = description;
-      System.Threading.Thread.Sleep(400);
-      System.Windows.Forms.Application.DoEvents();
-
-      captureCard.StoreTunedChannels(false, true, ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
-
-
-
-      return;
     }
-
-    void ScanNextDVBCChannel()
+    public void OnStatus2(string description)
     {
-      currentIndex++;
-      ScanDVBCChannel();
+      _description = description;
     }
 
-    void ScanDVBCChannel()
+    public void OnProgress(int percentDone)
     {
-      if (currentIndex < 0 || currentIndex >= count)
-      {
-        progressBar1.Value = 100;
-        captureCard.DeleteGraph();
-        return;
-      }
-      string chanDesc = String.Format("freq:{0} Khz, Mod:{1} SR:{2}",
-        dvbcChannels[currentIndex].frequency, dvbcChannels[currentIndex].modstr, dvbcChannels[currentIndex].symbolrate);
-      string description = String.Format("Channel:{0}/{1} {2}", currentIndex, count, chanDesc);
-      labelStatus.Text = description;
-
-      Log.WriteFile(Log.LogType.Capture, "tune dvbcChannel:{0}/{1} {2}", currentIndex, count, chanDesc);
-
-      DVBChannel newchan = new DVBChannel();
-      newchan.NetworkID = -1;
-      newchan.TransportStreamID = -1;
-      newchan.ProgramNumber = -1;
-
-      newchan.Modulation = dvbcChannels[currentIndex].modulation;
-      newchan.Symbolrate = (dvbcChannels[currentIndex].symbolrate) / 1000;
-      newchan.FEC = (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
-      newchan.Frequency = dvbcChannels[currentIndex].frequency;
-      captureCard.Tune(newchan, 0);
-      System.Threading.Thread.Sleep(400);
-      if (captureCard.SignalQuality < 40)
-        System.Threading.Thread.Sleep(400);
-
-      System.Windows.Forms.Application.DoEvents();
+      progressBar1.Value = percentDone;
     }
+
+    public void OnEnded()
+    {
+    }
+    public void UpdateList()
+    {
+    }
+
+
+    #endregion
   }
 }
+
 

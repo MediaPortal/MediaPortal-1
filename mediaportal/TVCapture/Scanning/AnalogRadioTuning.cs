@@ -28,147 +28,126 @@ using MediaPortal.TV.Recording;
 
 namespace MediaPortal.TV.Scanning
 {
-	/// <summary>
-	/// Class which can search & find all tv channels for an analog capture card
-	/// </summary>
-	public class AnalogRadioTuning : ITuning
-	{
-		AutoTuneCallback callback = null;
-		private System.Windows.Forms.Timer  timer1;
-		TVCaptureDevice	captureCard;
-		int currentStationFreq=0;
-        int maxStationFreq;
-        int minStationFreq;
-        bool stopped = true;
-        public AnalogRadioTuning()
-		{
-		}
-		#region ITuning Members
+  /// <summary>
+  /// Class which can search & find all tv channels for an analog capture card
+  /// </summary>
+  public class AnalogRadioTuning : ITuning
+  {
+    AutoTuneCallback _callback = null;
+    TVCaptureDevice _captureCard;
+    int _currentStationFreq = 0;
+    int _maxStationFreq;
+    int _minStationFreq;
+    bool stopped = true;
 
-		public void Start()
-		{
-		}
-		public void Next()
-		{
-		}
-		public void Previous()
-		{
-		}
-		public void Stop()
-		{
-            stopped = true;
-            timer1.Enabled = false;
-			if (captureCard!=null)
-			{
-				captureCard.DeleteGraph();
-			}
-            callback.OnSignal(0, 0);
-            callback.OnProgress(100);
-            callback.OnEnded();
-		}
-		public bool AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback statusCallback)
-		{
-            captureCard = card;
-            card.RadioChannelMinMax(out minStationFreq, out maxStationFreq);
-            if (minStationFreq == -1)
-            {
-                minStationFreq = 87500000;
-            }
-            else
-            {
-                minStationFreq = (int)(Math.Floor(((double)minStationFreq / 100000d))) * 100000;
-            }
-            if (maxStationFreq == -1)
-            {
-                maxStationFreq = 108000000;
-            }
-            currentStationFreq = minStationFreq;
-            callback = statusCallback;
-            callback.OnSignal(0, 0);
-            callback.OnProgress(0);
-            stopped = false;
-            this.timer1 = new System.Windows.Forms.Timer();
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            timer1.Interval = 100;
-            timer1.Enabled = true;
-            return true;
-        }
+    public AnalogRadioTuning()
+    {
+    }
+    #region ITuning Members
 
-		public bool AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
-		{
-            callback.OnEnded();
-            return false;
-		}
-		public void Continue()
-		{
-            currentStationFreq+=100000;
-            if (!stopped)
-            {
-                timer1.Enabled = true;
-            }
-        }
+    public void Start()
+    {
+      _currentStationFreq = _minStationFreq;
+      _callback.OnSignal(0, 0);
+      _callback.OnProgress(0);
+    }
+    public void Next()
+    {
+      if (IsFinished()) return;
+      Tune();
+      _currentStationFreq += 100000;
+    }
+
+    public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback statusCallback)
+    {
+      _captureCard = card;
+      card.RadioChannelMinMax(out _minStationFreq, out _maxStationFreq);
+      if (_minStationFreq == -1)
+      {
+        _minStationFreq = 87500000;
+      }
+      else
+      {
+        _minStationFreq = (int)(Math.Floor(((double)_minStationFreq / 100000d))) * 100000;
+      }
+      if (_maxStationFreq == -1)
+      {
+        _maxStationFreq = 108000000;
+      }
+      _currentStationFreq = _minStationFreq;
+      _callback = statusCallback;
+      _callback.OnSignal(0, 0);
+      _callback.OnProgress(0);
+    }
+
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string countryName)
+    {
+    }
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] countryName)
+    {
+    }
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
+    {
+      _callback.OnEnded();
+    }
+
+    
 
 
-		private void timer1_Tick(object sender, System.EventArgs e)
-		{
-			timer1.Enabled=false;
-            if (currentStationFreq <= maxStationFreq)
-            {
-                float percent = ((float)currentStationFreq - (float)minStationFreq) / ((float)maxStationFreq -(float)minStationFreq);
-                percent *= 100.0f;
-                callback.OnProgress((int)percent);
-                float frequency = ((float)currentStationFreq) / 1000000f;
-                string description = String.Format("Radio Station: frequency:{0:###.##} MHz.", frequency);
-                callback.OnStatus(description);
-                TuneStation();
-                int strength = SignalStrength(captureCard.RadioSensitivity);
-                callback.OnSignal(strength, strength);
-                if (strength == 100)
-                {
-                    callback.OnNewChannel();
-                    return;
-                }
-                Continue();
-            }
-            else
-            {
-                callback.OnSignal(0, 0);
-                callback.OnProgress(100);
-                callback.OnEnded();
-                captureCard.DeleteGraph();
-                stopped = true;
-                return;
-            }
-		}
-        int SignalStrength(int sensitivity)
+    public bool IsFinished()
+    {
+      if (_currentStationFreq > _maxStationFreq)
+        return true;
+      return false;
+    }
+
+    void Tune()
+    {
+      float percent = ((float)_currentStationFreq - (float)_minStationFreq) / ((float)_maxStationFreq - (float)_minStationFreq);
+      percent *= 100.0f;
+      _callback.OnProgress((int)percent);
+      float frequency = ((float)_currentStationFreq) / 1000000f;
+      string description = String.Format("Radio Station: frequency:{0:###.##} MHz.", frequency);
+      _callback.OnStatus(description);
+      TuneStation();
+      int strength = SignalStrength(_captureCard.RadioSensitivity);
+      _callback.OnSignal(strength, strength);
+      if (strength == 100)
+      {
+        _callback.OnNewChannel();
+        return;
+      }
+    }
+
+    int SignalStrength(int sensitivity)
+    {
+      int i = 0;
+      for (i = 0; i < sensitivity * 2; i++)
+      {
+        if (!_captureCard.SignalPresent())
         {
-            int i = 0;
-            for (i = 0; i < sensitivity * 2; i++)
-            {
-                if (!captureCard.SignalPresent())
-                {
-                    break;
-                }
-                System.Threading.Thread.Sleep(50);
-            }
-            return ((i * 50) / sensitivity);
+          break;
         }
-        void TuneStation()
-		{
-            captureCard.TuneRadioFrequency(currentStationFreq);
-        }
-		
-		public int MapToChannel(string channelName)
-		{
-			RadioStation station;
-            RadioDatabase.GetStation(channelName, out station);
-            station.Frequency=currentStationFreq;
-            station.Scrambled = false;
-            RadioDatabase.UpdateStation(station);
-			RadioDatabase.MapChannelToCard(station.ID,captureCard.ID);
-			return station.Channel;
-		}
+        System.Threading.Thread.Sleep(50);
+      }
+      return ((i * 50) / sensitivity);
+    }
+    void TuneStation()
+    {
+      _captureCard.TuneRadioFrequency(_currentStationFreq);
+    }
 
-		#endregion
-	}
+    public int MapToChannel(string channelName)
+    {
+      RadioStation station;
+      RadioDatabase.GetStation(channelName, out station);
+      station.Frequency = _currentStationFreq;
+      station.Scrambled = false;
+      RadioDatabase.UpdateStation(station);
+      RadioDatabase.MapChannelToCard(station.ID, _captureCard.ID);
+      return station.Channel;
+    }
+
+    #endregion
+  }
 }

@@ -175,9 +175,9 @@ namespace MediaPortal.TV.Recording
     int _pidVideo = 0;
     int _pidMp2Audio = 0;
     int _pidPmt = 0;
-		int _pidAc3;
-		bool	 _ac3Present=false;
-		DateTime _ac3Timer;
+    int _pidAc3;
+    bool _ac3Present = false;
+    DateTime _ac3Timer;
     string _channelName = "";
     int _restBufferLen = 0;
     byte[] _restBuffer = new byte[200];
@@ -282,7 +282,7 @@ int m_bufferPositionPMT=0;
       return header;
     }
 
-    public void SetChannelData(int audio, int video, int ac3,int teletext, int subtitle, string channelName, int pmtPid, int programnumber)
+    public void SetChannelData(int audio, int video, int ac3, int teletext, int subtitle, string channelName, int pmtPid, int programnumber)
     {
       _isReceivingPackets = false;
       _numberOfPacketsReceived = 0;
@@ -313,14 +313,14 @@ int m_bufferPositionPMT=0;
       if (pmtPid > 0x1FFF)
         _pidPmt = -1;
       else
-				_pidPmt = pmtPid;
-			// AC3
-			if (ac3 > 0x1FFF)
-				_pidAc3 = -1;
-			else
-				_pidAc3 = ac3;
-			_ac3Present=false;
-			_ac3Timer=DateTime.Now;
+        _pidPmt = pmtPid;
+      // AC3
+      if (ac3 > 0x1FFF)
+        _pidAc3 = -1;
+      else
+        _pidAc3 = ac3;
+      _ac3Present = false;
+      _ac3Timer = DateTime.Now;
 
       // name
       _channelName = "";
@@ -347,41 +347,41 @@ int m_bufferPositionPMT=0;
       get { return _isScrambled; }
     }
 
-		public bool Ac3AudioPresent
-		{
-			get
-			{
-				return _ac3Present;
-			}
-		}
+    public bool Ac3AudioPresent
+    {
+      get
+      {
+        return _ac3Present;
+      }
+    }
     public void OnTuneNewChannel()
     {
       _isScrambled = false;
       _isReceivingPackets = false;
       _numberOfPacketsReceived = 0;
-			_ac3Present=false;
-			_ac3Timer=DateTime.Now;
+      _ac3Present = false;
+      _ac3Timer = DateTime.Now;
     }
     public void Process()
     {
-        if (_isReceivingPackets)
+      if (_isReceivingPackets)
+      {
+        TimeSpan ts = DateTime.Now - _packetTimer;
+        if (ts.TotalMilliseconds >= 1000)
         {
-            TimeSpan ts = DateTime.Now - _packetTimer;
-            if (ts.TotalMilliseconds >= 1000)
-            {
-                _isReceivingPackets = false;
-                _numberOfPacketsReceived = 0;
-                Log.Write("DVBDemuxer:stopped receiving DVB packets");
-            }
+          _isReceivingPackets = false;
+          _numberOfPacketsReceived = 0;
+          Log.Write("DVBDemuxer:stopped receiving DVB packets");
         }
-        if (_ac3Present)
+      }
+      if (_ac3Present)
+      {
+        TimeSpan ts = DateTime.Now - _ac3Timer;
+        if (ts.TotalSeconds >= 2)
         {
-	        TimeSpan ts = DateTime.Now - _ac3Timer;
-	        if (ts.TotalSeconds >= 2)
-	        {
-		        _ac3Present=false;
-	        }
-	    }
+          _ac3Present = false;
+        }
+      }
     }
 
     #endregion
@@ -667,24 +667,24 @@ int m_bufferPositionPMT=0;
       {
         return;
       }
-			if (_packetHeader.Pid == _pidAc3)
-			{
-				_ac3Present=true;
-				_ac3Timer=DateTime.Now;
-			}
+      if (_packetHeader.Pid == _pidAc3)
+      {
+        _ac3Present = true;
+        _ac3Timer = DateTime.Now;
+      }
 
       if (_packetHeader.Pid == _pidVideo)
       {
         if (_packetHeader.TransportScrambling != 0)
         {
-         // if (!_isScrambled)
-         //   Log.Write("demuxer:video pid:{0:X} is scrambled",_pidVideo);
+          // if (!_isScrambled)
+          //   Log.Write("demuxer:video pid:{0:X} is scrambled",_pidVideo);
           _isScrambled = true;
         }
         else
         {
-         // if (_isScrambled)
-         //   Log.Write("demuxer:video pid:{0:X} is unscrambled", _pidVideo);
+          // if (_isScrambled)
+          //   Log.Write("demuxer:video pid:{0:X} is unscrambled", _pidVideo);
           _isScrambled = false;
         }
       }
@@ -715,7 +715,7 @@ int m_bufferPositionPMT=0;
       DVBSections.ChannelInfo info = new DVBSections.ChannelInfo();
       if (!sections.GetChannelInfoFromPMT(pmt, ref info))
       {
-        Log.Write("PMT:invalid"); 
+        Log.Write("PMT:invalid");
         return;
       }
       Log.Write("PMT: program number:{0}", info.program_number);
@@ -738,7 +738,7 @@ int m_bufferPositionPMT=0;
             Log.Write(" unknown pid:0x{0:X}", data.elementary_PID);
         }
         Log.Write(" pcr pid:0x{0:X}", info.pcr_pid);
-        
+
       }
     }
     //

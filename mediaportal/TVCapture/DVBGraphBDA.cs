@@ -279,6 +279,7 @@ namespace MediaPortal.TV.Recording
     bool _tunerLocked;
     bool _isTuning = false;
     DateTime _pmtTimer;
+    DateTime _processTimer = DateTime.MinValue;
     //bool										_graphIsPaused;
 
 #if DUMP
@@ -3580,7 +3581,7 @@ namespace MediaPortal.TV.Recording
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       _signalLostTimer = DateTime.Now;
     }
-
+    
     bool ProcessEpg()
     {
       _epgGrabber.Process();
@@ -3599,9 +3600,15 @@ namespace MediaPortal.TV.Recording
       return false;
     }
 
+    
     public void Process()
     {
       if (_graphState == State.None) return;
+      if (_isTuning)
+        _processTimer = DateTime.MinValue;
+      TimeSpan tsProc = DateTime.Now - _processTimer;
+      if (tsProc.TotalSeconds < 1) return;
+      _processTimer = DateTime.Now;
 
       UpdateSignalPresent();
       if (_graphState == State.Created) return;
@@ -4343,6 +4350,7 @@ namespace MediaPortal.TV.Recording
         Log.Write(ex);
       }
       SetPids();
+      _processTimer = DateTime.MinValue;
     }
 
     #endregion
@@ -4409,7 +4417,7 @@ namespace MediaPortal.TV.Recording
       transp.channels = null;
       _analyzerInterface.ResetParser();
 
-      System.Threading.Thread.Sleep(2500);
+      System.Threading.Thread.Sleep(5000);
       using (DVBSections sections = new DVBSections())
       {
         ushort count = 0;

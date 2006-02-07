@@ -30,12 +30,15 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.TV.Scanning;
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class Wizard_DVBSTV : MediaPortal.Configuration.SectionSettings
+  public class Wizard_DVBSTV : MediaPortal.Configuration.SectionSettings, AutoTuneCallback
   {
     private System.ComponentModel.IContainer components = null;
     class Transponder
@@ -48,25 +51,8 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    struct TPList
-    {
-      public int TPfreq; // frequency
-      public int TPpol;  // polarisation 0=hori, 1=vert
-      public int TPsymb; // symbol rate
-    }
-    enum State
-    {
-      ScanStart,
-      ScanTransponders,
-      ScanChannels
-    }
+    string _description = "";
     TVCaptureDevice captureCard;
-    int currentIndex = -1;
-    TPList[] transp = new TPList[800];
-    int count = 0;
-
-    int newChannels, updatedChannels;
-    int newRadioChannels, updatedRadioChannels;
     int m_diseqcLoops = 1;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
     private System.Windows.Forms.ProgressBar progressBar3;
@@ -225,7 +211,6 @@ namespace MediaPortal.Configuration.Sections
       this.cbTransponder.Name = "cbTransponder";
       this.cbTransponder.Size = new System.Drawing.Size(304, 21);
       this.cbTransponder.TabIndex = 2;
-      this.cbTransponder.SelectedIndexChanged += new System.EventHandler(this.cbTransponder_SelectedIndexChanged);
       // 
       // panel1
       // 
@@ -262,7 +247,7 @@ namespace MediaPortal.Configuration.Sections
       this.button3.Size = new System.Drawing.Size(72, 22);
       this.button3.TabIndex = 11;
       this.button3.Text = "Scan";
-      this.button3.Click += new System.EventHandler(this.button3_Click);
+      this.button3.Click += new System.EventHandler(this.button1_Click);
       // 
       // label7
       // 
@@ -294,10 +279,35 @@ namespace MediaPortal.Configuration.Sections
     }
     #endregion
 
+    Transponder LoadTransponderName(string fileName)
+    {
+      Transponder ts = new Transponder();
+      ts.FileName = fileName;
+      ts.SatName = fileName;
 
+      string line;
+      System.IO.TextReader tin = System.IO.File.OpenText(fileName);
+      while (true)
+      {
+        line = tin.ReadLine();
+        if (line == null) break;
+        string search = line.ToLower();
+        int pos = search.IndexOf("satname");
+        if (pos >= 0)
+        {
+          pos = search.IndexOf("=");
+          if (pos > 0)
+          {
+            ts.SatName = line.Substring(pos + 1);
+            ts.SatName = ts.SatName.Trim();
+            break;
+          }
+        }
+      }
+      tin.Close();
 
-
-
+      return ts;
+    }
 
     public override void OnSectionActivated()
     {
@@ -311,7 +321,7 @@ namespace MediaPortal.Configuration.Sections
       {
         if (file.ToLower().IndexOf(".tpl") >= 0)
         {
-          Transponder ts = LoadTransponder(file);
+          Transponder ts = LoadTransponderName(file);
           if (ts != null)
           {
             cbTransponder.Items.Add(ts);
@@ -368,258 +378,106 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    Transponder LoadTransponder(string file)
+    private void button1_Click(object sender, System.EventArgs e)
     {
-      System.IO.TextReader tin = System.IO.File.OpenText(file);
-      Transponder ts = new Transponder();
-      ts.FileName = file;
-      string line = null;
-      do
-      {
-        line = null;
-        line = tin.ReadLine();
-        if (line != null)
-        {
-          if (line.Length > 0)
-          {
-            if (line.StartsWith(";"))
-              continue;
-            int pos = line.IndexOf("satname=");
-            if (pos >= 0)
-            {
-              ts.SatName = line.Substring(pos + "satname=".Length);
-              tin.Close();
-              return ts;
-            }
-          }
-        }
-      } while (!(line == null));
-      tin.Close();
-      return null;
+      progressBar3.Visible = true;
+      Thread thread = new Thread(new ThreadStart(DoScan));
+      thread.Start();
     }
-
-    void LoadFrequencies()
-    {
-
-      currentIndex = -1;
-
-      string countryName = String.Empty;
-      Transponder ts = null;
-      if (m_currentDiseqc == 1) ts = (Transponder)cbTransponder.SelectedItem;
-      if (m_currentDiseqc == 2) ts = (Transponder)cbTransponder2.SelectedItem;
-      if (m_currentDiseqc == 3) ts = (Transponder)cbTransponder3.SelectedItem;
-      if (m_currentDiseqc == 4) ts = (Transponder)cbTransponder4.SelectedItem;
-
-      if (ts == null) return;
-      countryName = ts.FileName;
-      if (countryName == String.Empty) return;
-      count = 0;
-      string line;
-      string[] tpdata;
-      Log.WriteFile(Log.LogType.Capture, "Opening {0}", countryName);
-      // load transponder list and start scan
-      System.IO.TextReader tin = System.IO.File.OpenText(countryName);
-
-      do
-      {
-        line = null;
-        line = tin.ReadLine();
-        if (line != null)
-          if (line.Length > 0)
-          {
-            if (line.StartsWith(";"))
-              continue;
-            tpdata = line.Split(new char[] { ',' });
-            if (tpdata.Length != 3)
-              tpdata = line.Split(new char[] { ';' });
-            if (tpdata.Length == 3)
-            {
-              try
-              {
-
-                transp[count].TPfreq = Int32.Parse(tpdata[0]) * 1000;
-                switch (tpdata[1].ToLower())
-                {
-                  case "v":
-
-                    transp[count].TPpol = 1;
-                    break;
-                  case "h":
-
-                    transp[count].TPpol = 0;
-                    break;
-                  default:
-
-                    transp[count].TPpol = 0;
-                    break;
-                }
-                transp[count].TPsymb = Int32.Parse(tpdata[2]);
-                count += 1;
-              }
-              catch
-              { }
-            }
-          }
-      } while (!(line == null));
-      tin.Close();
-    }
-
-
 
     private void DoScan()
     {
+      button3.Enabled = false;
       GUIGraphicsContext.form = this.FindForm();
       GUIGraphicsContext.VideoWindow = new Rectangle(panel1.Location, panel1.Size);
 
-      m_currentDiseqc = 1;
-      LoadFrequencies();
-
-      currentIndex = -1;
-      while (m_currentDiseqc <= m_diseqcLoops)
+      if (captureCard == null)
       {
-        while (currentIndex < count)
-        {
-          int index = currentIndex;
-          if (index < 0) index = 0;
+        button3.Enabled = true;
+        progressBar3.Value = 100;
+        return;
+      }
+      string[] tplFiles = new string[ m_currentDiseqc];
+      Transponder ts = (Transponder)cbTransponder.SelectedItem;
+      tplFiles[0] = @"Tuningparameters\" + ts.FileName;
 
-          float percent = ((float)index) / ((float)count);
-          percent *= 100.0f;
-          progressBar3.Value = ((int)percent);
-          TPList transponder = transp[index];
-          string chanDesc = String.Format("freq:{0} Khz, Pol:{1} SR:{2}", transponder.TPfreq, transponder.TPpol, transponder.TPsymb);
-          string description = String.Format("Transponder:{0}/{1} {2}", index, count, chanDesc);
-          lblStatus.Text = (description);
-          System.Windows.Forms.Application.DoEvents();
+      if (m_currentDiseqc == 1)
+      {
+        ts = (Transponder)cbTransponder.SelectedItem;
+        tplFiles[0] = @"Tuningparameters\" + ts.FileName;
+      }
+      if (m_currentDiseqc == 2)
+      {
+        ts = (Transponder)cbTransponder2.SelectedItem;
+        tplFiles[1] = @"Tuningparameters\" + ts.FileName;
+      }
+      if (m_currentDiseqc == 3)
+      {
+        ts = (Transponder)cbTransponder3.SelectedItem;
+        tplFiles[2] = @"Tuningparameters\" + ts.FileName;
+      }
+      if (m_currentDiseqc == 4)
+      {
+        ts = (Transponder)cbTransponder4.SelectedItem;
+        tplFiles[3] = @"Tuningparameters\" + ts.FileName;
+      }
 
-          ScanNextTransponder();
-          if (captureCard.SignalPresent())
-          {
-            description = String.Format("Found signal for transponder:{0} {1}, Scanning channels", currentIndex, chanDesc);
-            lblStatus.Text = (description);
-            System.Windows.Forms.Application.DoEvents();
-            ScanChannels();
-          }
-        }
+      cbTransponder.Enabled = false;
+      cbTransponder2.Enabled = false;
+      cbTransponder3.Enabled = false;
+      cbTransponder4.Enabled = false;
+      captureCard.CreateGraph();
+      ITuning tuning = new DVBSTuning();
+      tuning.AutoTuneTV(captureCard, this, tplFiles);
+      tuning.Start();
+      while (!tuning.IsFinished())
+      {
+        tuning.Next();
       }
       captureCard.DeleteGraph();
 
-      MapTvToOtherCards(captureCard.ID);
-      MapRadioToOtherCards(captureCard.ID);
-      captureCard = null;
-    }
-    void MapTvToOtherCards(int id)
-    {
-      ArrayList tvchannels = new ArrayList();
-      TVDatabase.GetChannelsForCard(ref tvchannels, id);
-      TVCaptureCards cards = new TVCaptureCards();
-      cards.LoadCaptureCards();
-      foreach (TVCaptureDevice dev in cards.captureCards)
-      {
-        if (dev.Network == NetworkType.DVBS && dev.ID != id)
-        {
-          foreach (TVChannel chan in tvchannels)
-          {
-            TVDatabase.MapChannelToCard(chan.ID, dev.ID);
-          }
-        }
-      }
-    }
-    void MapRadioToOtherCards(int id)
-    {
-      ArrayList radioChans = new ArrayList();
-      MediaPortal.Radio.Database.RadioDatabase.GetStationsForCard(ref radioChans, id);
-      TVCaptureCards cards = new TVCaptureCards();
-      cards.LoadCaptureCards();
-      foreach (TVCaptureDevice dev in cards.captureCards)
-      {
-        if (dev.Network == NetworkType.DVBS && dev.ID != id)
-        {
-          foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
-          {
-            MediaPortal.Radio.Database.RadioDatabase.MapChannelToCard(chan.ID, dev.ID);
-          }
-        }
-      }
-    }
-    void ScanChannels()
-    {
-      System.Threading.Thread.Sleep(400);
-      System.Windows.Forms.Application.DoEvents();
-
-      captureCard.StoreTunedChannels(false, true, ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
-
-    }
-
-    void ScanNextTransponder()
-    {
-      currentIndex++;
-      if (currentIndex >= count)
-      {
-        if (m_currentDiseqc >= m_diseqcLoops)
-        {
-          m_currentDiseqc++;
-          progressBar3.Value = (100);
-          System.Windows.Forms.Application.DoEvents();
-        }
-        else
-        {
-          m_currentDiseqc++;
-          LoadFrequencies();
-          currentIndex = 0;
-        }
-      }
-      if (currentIndex < 0 || currentIndex >= count) return;
-      DVBChannel newchan = new DVBChannel();
-      newchan.NetworkID = -1;
-      newchan.TransportStreamID = -1;
-      newchan.ProgramNumber = -1;
-
-      newchan.Polarity = transp[currentIndex].TPpol;
-      newchan.Symbolrate = transp[currentIndex].TPsymb;
-      newchan.FEC = (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_SET;
-      newchan.Frequency = transp[currentIndex].TPfreq;
-
-
-      Log.WriteFile(Log.LogType.Capture, "tune transponder:{0} freq:{1} KHz symbolrate:{2} polarisation:{3}", currentIndex,
-        newchan.Frequency, newchan.Symbolrate, newchan.Polarity);
-      captureCard.Tune(newchan, m_currentDiseqc);
-      System.Threading.Thread.Sleep(400);
-      if (captureCard.SignalQuality < 40)
-        System.Threading.Thread.Sleep(400);
-      System.Windows.Forms.Application.DoEvents();
-
-    }
-
-    private void button3_Click(object sender, System.EventArgs e)
-    {
-      TVCaptureCards cards = new TVCaptureCards();
-      cards.LoadCaptureCards();
-      foreach (TVCaptureDevice dev in cards.captureCards)
-      {
-        if (dev.Network == NetworkType.DVBS)
-        {
-          captureCard = dev;
-          captureCard.CreateGraph();
-          break;
-        }
-      }
-      LoadFrequencies();
-      progressBar3.Visible = true;
-      progressBar3.Value = 0;
-      System.Windows.Forms.Application.DoEvents();
-      newChannels = 0; updatedChannels = 0;
-      newRadioChannels = 0; updatedRadioChannels = 0;
-      DoScan();
-      lblStatus.Text = String.Format("Imported {0} tv channels, {1} radio channels", newChannels, newRadioChannels);
-
+      lblStatus.Text = _description;
       progressBar3.Value = 100;
-      System.Windows.Forms.Application.DoEvents();
+      captureCard = null;
+      button3.Enabled = true;
+      cbTransponder.Enabled = true;
+      cbTransponder2.Enabled = true;
+      cbTransponder3.Enabled = true;
+      cbTransponder4.Enabled = true;
     }
 
-    private void cbTransponder_SelectedIndexChanged(object sender, System.EventArgs e)
+    #region AutoTuneCallback
+    public void OnNewChannel()
     {
-
     }
 
+    public void OnSignal(int quality, int strength)
+    {
+    }
+
+    public void OnStatus(string description)
+    {
+      lblStatus.Text = description;
+    }
+    public void OnStatus2(string description)
+    {
+      _description = description;
+    }
+
+    public void OnProgress(int percentDone)
+    {
+      progressBar3.Value = percentDone;
+    }
+
+    public void OnEnded()
+    {
+    }
+    public void UpdateList()
+    {
+    }
+
+
+    #endregion
   }
 }
+

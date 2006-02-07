@@ -40,89 +40,58 @@ namespace MediaPortal.TV.Scanning
   public class ATSCTuning : ITuning
   {
     const int MaxATSCChannel = 255;
-    enum State
-    {
-      ScanStart,
-      ScanFrequencies,
-      ScanChannels
-    }
-    TVCaptureDevice captureCard;
-    AutoTuneCallback callback = null;
-    int currentIndex = -1;
-    private System.Windows.Forms.Timer timer1;
+    
+    TVCaptureDevice _captureCard;
+    AutoTuneCallback _callback = null;
+    int _currentIndex = -1;
 
-    int newChannels, updatedChannels;
-    int newRadioChannels, updatedRadioChannels;
+    int _newChannels, _updatedChannels;
+    int _newRadioChannels, _updatedRadioChannels;
     public ATSCTuning()
     {
     }
     #region ITuning Members
-    public void Stop()
-    {
-      timer1.Enabled = false;
-      captureCard.DeleteGraph();
-    }
     public void Start()
     {
-      currentIndex = -1;
-      timer1.Interval = 100;
-      timer1.Enabled = true;
-      callback.OnProgress(0);
+      _currentIndex = 0;
+      _callback.OnProgress(0);
     }
     public void Next()
     {
-      if (currentIndex + 1 >= MaxATSCChannel) return;
-      currentIndex++;
-
+      if (_currentIndex  > MaxATSCChannel) return;
       UpdateStatus();
-      ScanChannel();
-      captureCard.Process();
-      if (captureCard.SignalPresent())
-      {
-        ScanChannels();
-      }
+      Tune();
+      Scan();
+      _currentIndex++;
     }
-    public void Previous()
+
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
     {
-      if (currentIndex > 1)
-      {
-        currentIndex--;
-
-        UpdateStatus();
-        ScanChannel();
-      captureCard.Process();
-        if (captureCard.SignalPresent())
-        {
-          ScanChannels();
-        }
-      }
+      AutoTuneTV(card, statusCallback, "");
     }
 
-    public bool AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] tuningFile)
     {
-      newRadioChannels = 0;
-      updatedRadioChannels = 0;
-      newChannels = 0;
-      updatedChannels = 0;
-      captureCard = card;
-      callback = statusCallback;
+      AutoTuneTV(card, statusCallback, "");
+    }
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string tuningFile)
+    {
+      _newRadioChannels = 0;
+      _updatedRadioChannels = 0;
+      _newChannels = 0;
+      _updatedChannels = 0;
+      _captureCard = card;
+      _callback = statusCallback;
 
-      currentIndex = -1;
-      this.timer1 = new System.Windows.Forms.Timer();
-      this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-      return true;
+      _currentIndex = -1;
+      return;
     }
 
-    public bool AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback)
+    public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback _callback)
     {
       // TODO:  Add ATSCTuning.AutoTuneRadio implementation
-        return false;
     }
 
-    public void Continue()
-    {
-      // TODO:  Add ATSCTuning.Continue implementation
-    }
 
     public int MapToChannel(string channel)
     {
@@ -132,81 +101,62 @@ namespace MediaPortal.TV.Scanning
 
     void UpdateStatus()
     {
-      int index = currentIndex;
+      int index = _currentIndex;
       if (index < 0) index = 0;
       float percent = ((float)index) / ((float)MaxATSCChannel);
       percent *= 100.0f;
-      callback.OnProgress((int)percent);
+      _callback.OnProgress((int)percent);
     }
-    private void timer1_Tick(object sender, System.EventArgs e)
+    public bool IsFinished()
     {
-      timer1.Enabled = false;
-      try
-      {
-        if (currentIndex >= MaxATSCChannel)
-        {
-          callback.OnProgress(100);
-          callback.OnStatus("Finished");
-          callback.OnEnded();
-          return;
-        }
-
-        UpdateStatus();
-        ScanNextChannel();
-      captureCard.Process();
-        if (captureCard.SignalPresent())
-        {
-          ScanChannels();
-        }
-
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
-      timer1.Enabled = true;
+      if (_currentIndex >= MaxATSCChannel)
+        return true;
+      return false;
     }
 
-    void ScanChannels()
+    void DetectAvailableStreams()
     {
-      Log.Write("atsc-scan:Found signal,scanning for channels. Quality:{0} level:{1}", captureCard.SignalQuality, captureCard.SignalStrength);
-      string chanDesc = String.Format("Channel:{0}", currentIndex);
-      string description = String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex, chanDesc);
-      callback.OnStatus(description);
+      Log.Write("atsc-scan:Found signal,scanning for channels. Quality:{0} level:{1}", _captureCard.SignalQuality, _captureCard.SignalStrength);
+      string chanDesc = String.Format("Channel:{0}", _currentIndex);
+      string description = String.Format("Found signal for channel:{0} {1}, Scanning channels", _currentIndex, chanDesc);
+      _callback.OnStatus(description);
 
-      System.Threading.Thread.Sleep(400);
-      captureCard.Process();
-      callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
-      callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", newChannels, newRadioChannels));
-      captureCard.StoreTunedChannels(false, true, ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
-      callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", newChannels, newRadioChannels));
+      _captureCard.Process();
+      _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
+      _callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", _newChannels, _newRadioChannels));
+      _captureCard.StoreTunedChannels(false, true, ref _newChannels, ref _updatedChannels, ref _newRadioChannels, ref _updatedRadioChannels);
+      _callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", _newChannels, _newRadioChannels));
 
-      callback.UpdateList();
+      _callback.UpdateList();
       return;
     }
 
-    void ScanNextChannel()
+    void Scan()
     {
-      currentIndex++;
-      ScanChannel();
+      _captureCard.Process();
+      if (_captureCard.SignalPresent())
+      {
+        DetectAvailableStreams();
+      }
     }
 
-    void ScanChannel()
+
+    void Tune()
     {
-      if (currentIndex < 0 || currentIndex >= MaxATSCChannel)
+      if (_currentIndex < 0 || _currentIndex >= MaxATSCChannel)
       {
-        callback.OnProgress(100);
-        callback.OnStatus("Finished");
-        callback.OnEnded();
-        captureCard.DeleteGraph();
+        _callback.OnProgress(100);
+        _callback.OnStatus("Finished");
+        _callback.OnEnded();
+        _captureCard.DeleteGraph();
         return;
       }
 
-      string chanDesc = String.Format("Channel:{0}", currentIndex);
-      string description = String.Format("Channel:{0}/{1} {2}", currentIndex, MaxATSCChannel, chanDesc);
-      callback.OnStatus(description);
+      string chanDesc = String.Format("Channel:{0}", _currentIndex);
+      string description = String.Format("Channel:{0}/{1} {2}", _currentIndex, MaxATSCChannel, chanDesc);
+      _callback.OnStatus(description);
 
-      Log.WriteFile(Log.LogType.Capture, "tune channel:{0}/{1} {2}", currentIndex, MaxATSCChannel, chanDesc);
+      Log.WriteFile(Log.LogType.Capture, "tune channel:{0}/{1} {2}", _currentIndex, MaxATSCChannel, chanDesc);
 
       DVBChannel newchan = new DVBChannel();
       newchan.NetworkID = -1;
@@ -215,19 +165,22 @@ namespace MediaPortal.TV.Scanning
       newchan.MinorChannel = -1;
       newchan.MajorChannel = -1;
       newchan.Frequency = -1;
-      newchan.PhysicalChannel = currentIndex;
+      newchan.PhysicalChannel = _currentIndex;
       newchan.Frequency = -1;
       newchan.Symbolrate = -1;
       newchan.Modulation = (int)ModulationType.ModNotSet;
       newchan.FEC = (int)FECMethod.MethodNotSet;
-      captureCard.Tune(newchan, 0);
-      System.Threading.Thread.Sleep(400);
+      _captureCard.Tune(newchan, 0);
 
-      captureCard.Process();
-      if (captureCard.SignalQuality < 40)
+      //tune locking : 2 seconds
+      for (int i = 0; i < 5; ++i)
+      {
+        _captureCard.Process();
+        if (_captureCard.SignalPresent()) break;
         System.Threading.Thread.Sleep(400);
-      captureCard.Process();
-      callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
+      }
+      _captureCard.Process();
+      _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
     }
     #endregion
   }

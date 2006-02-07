@@ -30,12 +30,15 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.TV.Scanning;
+
 namespace MediaPortal.Configuration.Sections
 {
-  public class Wizard_DVBTTV : MediaPortal.Configuration.SectionSettings
+  public class Wizard_DVBTTV : MediaPortal.Configuration.SectionSettings, AutoTuneCallback
   {
     private System.ComponentModel.IContainer components = null;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
@@ -46,25 +49,10 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelStatus;
     private MediaPortal.UserInterface.Controls.MPComboBox cbCountry;
 
-
-    enum State
-    {
-      ScanFrequencies,
-      ScanChannels,
-      ScanOffset
-    }
-    TVCaptureDevice captureCard;
-
-    ArrayList frequencies = new ArrayList();
-    int currentFrequencyIndex = 0;
-    int scanOffset = 0;
-
-
-    int newChannels, updatedChannels;
-    int newRadioChannels, updatedRadioChannels;
     private MediaPortal.UserInterface.Controls.MPLabel label3;
 
     private System.Windows.Forms.Panel panel1;
+    string _description = "";
 
     public Wizard_DVBTTV()
       : this("DVBT TV")
@@ -241,191 +229,88 @@ namespace MediaPortal.Configuration.Sections
 
     }
 
-    void LoadFrequencies()
-    {
-
-      string countryName = (string)cbCountry.SelectedItem;
-      if (countryName == String.Empty) return;
-      frequencies.Clear();
-
-      XmlDocument doc = new XmlDocument();
-      doc.Load("Tuningparameters/dvbt.xml");
-      XmlNodeList countryList = doc.DocumentElement.SelectNodes("/dvbt/country");
-      foreach (XmlNode nodeCountry in countryList)
-      {
-        string name = nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
-        if (name != countryName) continue;
-        try
-        {
-          scanOffset = XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
-        }
-        catch (Exception) { }
-
-        XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
-        int[] carrier;
-        foreach (XmlNode node in frequencyList)
-        {
-          carrier = new int[2];
-          carrier[0] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"frequency").InnerText);
-          try
-          {
-            carrier[1] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"bandwidth").InnerText);
-          }
-          catch (Exception) { }
-
-          if (carrier[1] == 0) carrier[1] = 8;
-          frequencies.Add(carrier);
-        }
-      }
-    }
-
-
     private void button1_Click(object sender, System.EventArgs e)
     {
-      LoadFrequencies();
-      if (frequencies.Count == 0) return;
       progressBar1.Visible = true;
-      newChannels = 0; updatedChannels = 0;
-      newRadioChannels = 0; updatedRadioChannels = 0;
-      DoScan();
-      labelStatus.Text = String.Format("Imported {0} tv channels, {1} radio channels", newChannels, newRadioChannels);
+      Thread thread = new Thread(new ThreadStart(DoScan));
+      thread.Start();
     }
 
     private void DoScan()
     {
+      button1.Enabled = false;
+      string countryName = (string)cbCountry.SelectedItem;
       GUIGraphicsContext.form = this.FindForm();
       GUIGraphicsContext.VideoWindow = new Rectangle(panel1.Location, panel1.Size);
 
+      TVCaptureDevice captureCard=null;
       TVCaptureCards cards = new TVCaptureCards();
       cards.LoadCaptureCards();
       foreach (TVCaptureDevice dev in cards.captureCards)
       {
-        if (dev.Network == NetworkType.DVBT || dev.VideoDevice == "B2C2 MPEG-2 Source")
+        if (dev.Network == NetworkType.DVBT)
         {
           captureCard = dev;
           captureCard.CreateGraph();
           break;
         }
       }
-
-      currentFrequencyIndex = 0;
-      while (currentFrequencyIndex < frequencies.Count)
+      if (captureCard == null)
       {
-        int currentFreq = currentFrequencyIndex;
-        if (currentFrequencyIndex < 0) currentFreq = 0;
-        float percent = ((float)currentFreq) / ((float)frequencies.Count);
-        percent *= 100.0f;
-        progressBar1.Value = ((int)percent);
-        int[] tmp = frequencies[currentFreq] as int[];
-
-        float frequency = tmp[0];
-        frequency /= 1000f;
-        string description = String.Format("frequency:{0} MHz. Bandwidth:{1} MHz", frequency.ToString("f2"), tmp[1]);
-        labelStatus.Text = description;
-        System.Windows.Forms.Application.DoEvents();
-
-        ScanNextFrequency(0);
-        if (captureCard.SignalPresent())
-        {
-          description = String.Format("Found signal at frequency:{0} MHz. Scanning channels", frequency.ToString("f2"));
-          labelStatus.Text = description;
-          ScanChannels();
-        }
-        else if (scanOffset != 0)
-        {
-          ScanNextFrequency(-scanOffset);
-          if (captureCard.SignalPresent())
-          {
-            description = String.Format("Found signal at frequency:{0} MHz. Scanning channels", (frequency - scanOffset).ToString("f2"));
-            labelStatus.Text = description;
-            ScanChannels();
-          }
-          else
-          {
-            ScanNextFrequency(scanOffset);
-            if (captureCard.SignalPresent())
-            {
-              description = String.Format("Found signal at frequency:{0:} MHz. Scanning channels", (frequency + scanOffset).ToString("f2"));
-              labelStatus.Text = description;
-              ScanChannels();
-            }
-          }
-        }
-        currentFrequencyIndex++;
+        button1.Enabled = true;
+        progressBar1.Value = 100;
+        return;
+      }
+      cbCountry.Enabled = false;
+      captureCard.CreateGraph();
+      ITuning tuning = new DVBTTuning();
+      tuning.AutoTuneTV(captureCard, this, countryName);
+      tuning.Start();
+      while (!tuning.IsFinished())
+      {
+        tuning.Next();
       }
       captureCard.DeleteGraph();
-      MapTvToOtherCards(captureCard.ID);
-      MapRadioToOtherCards(captureCard.ID);
+
+      labelStatus.Text = _description;
       progressBar1.Value = 100;
       captureCard = null;
+      cbCountry.Enabled = true;
+      button1.Enabled = true;
     }
 
-    void MapTvToOtherCards(int id)
+    #region AutoTuneCallback
+    public void OnNewChannel()
     {
-      ArrayList tvchannels = new ArrayList();
-      TVDatabase.GetChannelsForCard(ref tvchannels, id);
-      TVCaptureCards cards = new TVCaptureCards();
-      cards.LoadCaptureCards();
-      foreach (TVCaptureDevice dev in cards.captureCards)
-      {
-        if (dev.Network == NetworkType.DVBT && dev.ID != id)
-        {
-          foreach (TVChannel chan in tvchannels)
-          {
-            TVDatabase.MapChannelToCard(chan.ID, dev.ID);
-          }
-        }
-      }
-    }
-    void MapRadioToOtherCards(int id)
-    {
-      ArrayList radioChans = new ArrayList();
-      MediaPortal.Radio.Database.RadioDatabase.GetStationsForCard(ref radioChans, id);
-      TVCaptureCards cards = new TVCaptureCards();
-      cards.LoadCaptureCards();
-      foreach (TVCaptureDevice dev in cards.captureCards)
-      {
-        if (dev.Network == NetworkType.DVBT && dev.ID != id)
-        {
-          foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
-          {
-            MediaPortal.Radio.Database.RadioDatabase.MapChannelToCard(chan.ID, dev.ID);
-          }
-        }
-      }
     }
 
-    void ScanChannels()
+    public void OnSignal(int quality, int strength)
     {
-      if (currentFrequencyIndex < 0 || currentFrequencyIndex >= frequencies.Count) return;
-      int[] tmp;
-      tmp = (int[])frequencies[currentFrequencyIndex];
-      string description = String.Format("Found signal at frequency:{0:###.##} MHz. Scanning channels", tmp[0] / 1000);
+    }
+
+    public void OnStatus(string description)
+    {
       labelStatus.Text = description;
-      System.Threading.Thread.Sleep(400);
-      if (captureCard.SignalQuality < 40)
-        System.Threading.Thread.Sleep(400);
-      System.Windows.Forms.Application.DoEvents();
-
-      captureCard.StoreTunedChannels(false, true, ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
     }
-
-    void ScanNextFrequency(int offset)
+    public void OnStatus2(string description)
     {
-      if (currentFrequencyIndex < 0) currentFrequencyIndex = 0;
-      if (currentFrequencyIndex >= frequencies.Count) return;
-
-      DVBChannel chan = new DVBChannel();
-      int[] tmp;
-      tmp = (int[])frequencies[currentFrequencyIndex];
-      chan.Frequency = tmp[0];
-      chan.Bandwidth = tmp[1];
-      chan.Frequency += offset;
-
-      captureCard.Tune(chan, 0);
-      System.Threading.Thread.Sleep(400);
-
+      _description = description;
     }
+
+    public void OnProgress(int percentDone)
+    {
+      progressBar1.Value = percentDone;
+    }
+
+    public void OnEnded()
+    {
+    }
+    public void UpdateList()
+    {
+    }
+
+
+    #endregion
   }
 }
 

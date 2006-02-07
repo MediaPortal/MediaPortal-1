@@ -47,63 +47,58 @@ namespace MediaPortal.TV.Scanning
       public int symbolrate;	 // symbol rate
     }
 
-    enum State
-    {
-      ScanStart,
-      ScanFrequencies,
-      ScanChannels
-    }
-    TVCaptureDevice captureCard;
-    AutoTuneCallback callback = null;
-    int currentIndex = -1;
-    private System.Windows.Forms.Timer timer1;
-    DVBCList[] dvbcChannels = new DVBCList[1000];
-    int count = 0;
+    TVCaptureDevice _captureCard;
+    AutoTuneCallback _callback = null;
+    int _currentIndex = -1;
+    DVBCList[] _dvbcChannels = new DVBCList[1000];
+    int _channelCount = 0;
 
     int newChannels, updatedChannels;
     int newRadioChannels, updatedRadioChannels;
     public DVBCTuning()
     {
     }
+
     #region ITuning Members
-    public void Stop()
-    {
-      timer1.Enabled = false;
-      captureCard.DeleteGraph();
-    }
+   
     public void Start()
     {
-      currentIndex = -1;
-      timer1.Interval = 100;
-      timer1.Enabled = true;
-      callback.OnProgress(0);
+      _currentIndex = 0;
+      _callback.OnProgress(0);
     }
 
-    public bool AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
     {
-      newRadioChannels = 0;
-      updatedRadioChannels = 0;
-      newChannels = 0;
-      updatedChannels = 0;
-      captureCard = card;
-      callback = statusCallback;
-
-      currentIndex = -1;
-
       OpenFileDialog ofd = new OpenFileDialog();
       ofd.RestoreDirectory = true;
       ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory() + @"\TuningParameters";
       ofd.Filter = "DVBC-Listings (*.dvbc)|*.dvbc";
       ofd.Title = "Choose DVB-C Listing Files";
       DialogResult res = ofd.ShowDialog();
-      if (res != DialogResult.OK) return false;
+      if (res != DialogResult.OK) return;
 
-      count = 0;
+      AutoTuneTV(card, statusCallback, ofd.FileName);
+    }
+
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] countryName)
+    {
+    }
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string fileName)
+    {
+      newRadioChannels = 0;
+      updatedRadioChannels = 0;
+      newChannels = 0;
+      updatedChannels = 0;
+      _captureCard = card;
+      _callback = statusCallback;
+      _currentIndex = -1;
+
+      _channelCount = 0;
       string line;
       string[] tpdata;
-      Log.WriteFile(Log.LogType.Capture, "dvbc-scan:Opening {0}", ofd.FileName);
-      // load dvbcChannelsList list and start scan
-      System.IO.TextReader tin = System.IO.File.OpenText(ofd.FileName);
+      Log.WriteFile(Log.LogType.Capture, "dvbc-scan:Opening {0}", fileName);
+      // load _dvbcChannelsList list and start scan
+      System.IO.TextReader tin = System.IO.File.OpenText(fileName);
 
       int LineNr = 0;
       do
@@ -124,92 +119,92 @@ namespace MediaPortal.TV.Scanning
             {
               try
               {
-                dvbcChannels[count].frequency = Int32.Parse(tpdata[0]);
+                _dvbcChannels[_channelCount].frequency = Int32.Parse(tpdata[0]);
                 string mod = tpdata[1].ToUpper();
-                dvbcChannels[count].modstr = mod;
+                _dvbcChannels[_channelCount].modstr = mod;
                 switch (mod)
                 {
-                    case "1024QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_1024QAM;
-                        break;
-                    case "112QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_112QAM;
-                        break;
-                    case "128QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_128QAM;
-                        break;
-                    case "160QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_160QAM;
-                        break;
-                    case "16QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_16QAM;
-                        break;
-                    case "16VSB":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_16VSB;
-                        break;
-                    case "192QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_192QAM;
-                        break;
-                    case "224QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_224QAM;
-                        break;
-                    case "256QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_256QAM;
-                        break;
-                    case "320QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_320QAM;
-                        break;
-                    case "384QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_384QAM;
-                        break;
-                    case "448QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_448QAM;
-                        break;
-                    case "512QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_512QAM;
-                        break;
-                    case "640QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_640QAM;
-                        break;
-                    case "64QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_64QAM;
-                        break;
-                    case "768QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_768QAM;
-                        break;
-                    case "80QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_80QAM;
-                        break;
-                    case "896QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_896QAM;
-                        break;
-                    case "8VSB":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_8VSB;
-                        break;
-                    case "96QAM":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_96QAM;
-                        break;
-                    case "AMPLITUDE":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_ANALOG_AMPLITUDE;
-                        break;
-                    case "FREQUENCY":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_ANALOG_FREQUENCY;
-                        break;
-                    case "BPSK":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_BPSK;
-                        break;
-                    case "OQPSK":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_OQPSK;
-                        break;
-                    case "QPSK":
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_QPSK;
-                        break;
-                    default:
-                        dvbcChannels[count].modulation = (int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
-                        break;
+                  case "1024QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_1024QAM;
+                    break;
+                  case "112QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_112QAM;
+                    break;
+                  case "128QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_128QAM;
+                    break;
+                  case "160QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_160QAM;
+                    break;
+                  case "16QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_16QAM;
+                    break;
+                  case "16VSB":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_16VSB;
+                    break;
+                  case "192QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_192QAM;
+                    break;
+                  case "224QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_224QAM;
+                    break;
+                  case "256QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_256QAM;
+                    break;
+                  case "320QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_320QAM;
+                    break;
+                  case "384QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_384QAM;
+                    break;
+                  case "448QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_448QAM;
+                    break;
+                  case "512QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_512QAM;
+                    break;
+                  case "640QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_640QAM;
+                    break;
+                  case "64QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_64QAM;
+                    break;
+                  case "768QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_768QAM;
+                    break;
+                  case "80QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_80QAM;
+                    break;
+                  case "896QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_896QAM;
+                    break;
+                  case "8VSB":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_8VSB;
+                    break;
+                  case "96QAM":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_96QAM;
+                    break;
+                  case "AMPLITUDE":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_ANALOG_AMPLITUDE;
+                    break;
+                  case "FREQUENCY":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_ANALOG_FREQUENCY;
+                    break;
+                  case "BPSK":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_BPSK;
+                    break;
+                  case "OQPSK":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_OQPSK;
+                    break;
+                  case "QPSK":
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_QPSK;
+                    break;
+                  default:
+                    _dvbcChannels[_channelCount].modulation = (int)TunerLib.ModulationType.BDA_MOD_NOT_SET;
+                    break;
                 }
-                dvbcChannels[count].symbolrate = Int32.Parse(tpdata[2]);
-                count += 1;
+                _dvbcChannels[_channelCount].symbolrate = Int32.Parse(tpdata[2]);
+                _channelCount += 1;
               }
               catch
               {
@@ -222,52 +217,27 @@ namespace MediaPortal.TV.Scanning
       tin.Close();
 
 
-      Log.WriteFile(Log.LogType.Capture, "dvbc-scan:loaded:{0} dvbcChannels", count);
-      this.timer1 = new System.Windows.Forms.Timer();
-      this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-      return true;
+      Log.WriteFile(Log.LogType.Capture, "dvbc-scan:loaded:{0} dvbc transponders", _channelCount);
+      _currentIndex = 0;
+      return;
     }
 
     public void Next()
     {
-      if (currentIndex + 1 >= count) return;
-      currentIndex++;
+      if (_currentIndex  >= _channelCount) return;
 
       UpdateStatus();
-      ScanDVBCChannel();
-
-      captureCard.Process();
-      if (captureCard.SignalPresent())
-      {
-        ScanChannels();
-      }
-    }
-    public void Previous()
-    {
-      if (currentIndex >= 1)
-      {
-        currentIndex--;
-        UpdateStatus();
-        ScanDVBCChannel();
-
-        captureCard.Process();
-        if (captureCard.SignalPresent())
-        {
-          ScanChannels();
-        }
-      }
+      Tune();
+      Scan();
+      _currentIndex++;
     }
 
-    public bool AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback)
+
+    public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback _callback)
     {
       // TODO:  Add DVBCTuning.AutoTuneRadio implementation
-      return false;
     }
 
-    public void Continue()
-    {
-      // TODO:  Add DVBCTuning.Continue implementation
-    }
 
     public int MapToChannel(string channel)
     {
@@ -276,100 +246,88 @@ namespace MediaPortal.TV.Scanning
     }
     void UpdateStatus()
     {
-      int index = currentIndex;
+      int index = _currentIndex;
       if (index < 0) index = 0;
-      float percent = ((float)index) / ((float)count);
+      float percent = ((float)index) / ((float)_channelCount);
       percent *= 100.0f;
-      callback.OnProgress((int)percent);
+      _callback.OnProgress((int)percent);
     }
 
-    private void timer1_Tick(object sender, System.EventArgs e)
+    public bool IsFinished()
     {
-      timer1.Enabled = false;
-      try
+      if (_currentIndex >= _channelCount)
       {
-        if (currentIndex >= count)
-        {
-          callback.OnProgress(100);
-          callback.OnStatus("Finished");
-          callback.OnEnded();
-          return;
-        }
-
-        UpdateStatus();
-        ScanNextDVBCChannel();
-        captureCard.Process();
-        if (captureCard.SignalPresent())
-        {
-          ScanChannels();
-        }
+        return true;
       }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
-      timer1.Enabled = true;
+      return false;
     }
 
-    void ScanChannels()
+    void DetectAvailableStreams()
     {
-      DVBCList dvbcChan = dvbcChannels[currentIndex];
-      string chanDesc = String.Format("freq:{0} Khz, Mod:{1} SR:{2}", dvbcChan.frequency, dvbcChan.modstr, dvbcChan.symbolrate);
-      string description = String.Format("Found signal for channel:{0} {1}, Scanning channels", currentIndex, chanDesc);
-      callback.OnStatus(description);
-      System.Threading.Thread.Sleep(400);
-      captureCard.Process();
-      callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
+      DVBCList dvbcChan = _dvbcChannels[_currentIndex];
+      string chanDesc = String.Format(" {0} MHz, Modulation:{1} SymbolRate:{2}",
+            ((float)_dvbcChannels[_currentIndex].frequency) / 1000.0,
+            _dvbcChannels[_currentIndex].modstr,
+            _dvbcChannels[_currentIndex].symbolrate / 1000);
+      string description = String.Format("Transponder:{0} Getting info...", chanDesc);
+      _callback.OnStatus(description);
+      _captureCard.Process();
+      _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
 
-      callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", newChannels, newRadioChannels));
-      captureCard.StoreTunedChannels(false, true, ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
-      callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", newChannels, newRadioChannels));
-      callback.UpdateList();
+      _captureCard.StoreTunedChannels(false, true, ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
+      _callback.OnStatus2(String.Format("new tv:{0} new radio:{1} updated tv:{2} updated radio:{3}", newChannels, newRadioChannels, updatedChannels, updatedRadioChannels));
+      _callback.UpdateList();
       return;
     }
 
-    void ScanNextDVBCChannel()
+    void Scan()
     {
-      currentIndex++;
-      ScanDVBCChannel();
-      System.Windows.Forms.Application.DoEvents();
+      _captureCard.Process();
+      if (_captureCard.SignalPresent())
+      {
+        DetectAvailableStreams();
+      }
     }
 
-    void ScanDVBCChannel()
+    void Tune()
     {
-      if (currentIndex < 0 || currentIndex >= count)
+      if (_currentIndex < 0 || _currentIndex >= _channelCount)
       {
-        callback.OnProgress(100);
-        callback.OnStatus("Finished");
-        callback.OnEnded();
-        captureCard.DeleteGraph();
+        _callback.OnProgress(100);
+        _callback.OnStatus("Finished");
+        _callback.OnEnded();
+        _captureCard.DeleteGraph();
         return;
       }
-      string chanDesc = String.Format("freq:{0} Khz, Mod:{1} SR:{2}",
-                        dvbcChannels[currentIndex].frequency, dvbcChannels[currentIndex].modstr, dvbcChannels[currentIndex].symbolrate);
-      string description = String.Format("Channel:{0}/{1} {2}", currentIndex, count, chanDesc);
-      callback.OnStatus(description);
-
-      Log.WriteFile(Log.LogType.Capture, "dvbc-scan:tune dvbcChannel:{0}/{1} {2}", currentIndex, count, chanDesc);
+      string chanDesc = String.Format(" {0} MHz, Modulation:{1} SymbolRate:{2}",
+            ((float)_dvbcChannels[_currentIndex].frequency)/1000.0, 
+            _dvbcChannels[_currentIndex].modstr, 
+            _dvbcChannels[_currentIndex].symbolrate/1000);
+      string description = String.Format("Transponder:{0} locking...", chanDesc);
+      Log.WriteFile(Log.LogType.Capture, "dvbc-scan:tune dvbcChannel:{0}/{1} {2}", _currentIndex, _channelCount, chanDesc);
+      _callback.OnStatus(description);
 
       DVBChannel newchan = new DVBChannel();
       newchan.NetworkID = -1;
       newchan.TransportStreamID = -1;
       newchan.ProgramNumber = -1;
 
-      newchan.Modulation = dvbcChannels[currentIndex].modulation;
-      newchan.Symbolrate = (dvbcChannels[currentIndex].symbolrate) / 1000;
+      newchan.Modulation = _dvbcChannels[_currentIndex].modulation;
+      newchan.Symbolrate = (_dvbcChannels[_currentIndex].symbolrate) / 1000;
       newchan.FEC = (int)FECMethod.MethodNotSet;
-      newchan.Frequency = dvbcChannels[currentIndex].frequency;
-      captureCard.Tune(newchan, 0);
-      captureCard.Process();
-      System.Threading.Thread.Sleep(400);
+      newchan.Frequency = _dvbcChannels[_currentIndex].frequency;
+      _captureCard.Tune(newchan, 0);
 
-      captureCard.Process();
-      if (captureCard.SignalQuality < 40)
+      //tune locking : 2 seconds
+      for (int i = 0; i < 5; ++i)
+      {
+        _captureCard.Process();
+        _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
+        if (_captureCard.SignalPresent()) break;
         System.Threading.Thread.Sleep(400);
-      captureCard.Process();
-      callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
+      }
+      _captureCard.Process();
+      _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
     }
     #endregion
   }

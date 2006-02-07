@@ -418,7 +418,7 @@ namespace MediaPortal
       buttonSkip.Enabled = false;
       buttonAdd.Enabled = false;
 
-      tuningInterface.Continue();
+      tuningInterface.Next();
     }
     public ITuning Tuning
     {
@@ -546,7 +546,7 @@ namespace MediaPortal
       try
       {
         if (tuningInterface == null) return;
-        tuningInterface.Stop();
+        captureCard.DeleteGraph();
       }
       catch (Exception) { }
     }
@@ -558,7 +558,7 @@ namespace MediaPortal
       try
       {
         if (tuningInterface == null) return;
-        tuningInterface.Stop();
+        captureCard.DeleteGraph();
       }
       catch (Exception) { }
 
@@ -568,7 +568,7 @@ namespace MediaPortal
     {
 
       if (tuningInterface == null) return;
-      tuningInterface.Stop();
+      
 
       buttonMap.Enabled = false;
       buttonSkip.Enabled = false;

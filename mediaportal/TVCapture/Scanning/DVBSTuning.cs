@@ -1,6 +1,5 @@
-#region Copyright (C) 2005-2006 Team MediaPortal
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal
+ *	Copyright (C) 2005 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,9 +18,6 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#endregion
-
-
 using System;
 using System.IO;
 using System.Collections;
@@ -47,67 +43,86 @@ namespace MediaPortal.TV.Scanning
       public int TPpol;  // polarisation 0=hori, 1=vert
       public int TPsymb; // symbol rate
     }
-    TVCaptureDevice captureCard;
-    AutoTuneCallback callback = null;
-    int currentIndex = -1;
-    private System.Windows.Forms.Timer timer1;
-    TPList[] transp = new TPList[800];
-    int count = 0;
-    string[] tplFiles;
-    int newChannels, updatedChannels;
-    int newRadioChannels, updatedRadioChannels;
-    int m_diseqcLoops = 1;
-    int m_currentDiseqc = 1;
-    bool reentrant = false;
+    TVCaptureDevice _captureCard;
+    AutoTuneCallback _callback = null;
+    int _currentIndex = 0;
+    TPList[] _transponderList = new TPList[800];
+    int _count = 0;
+    string[] _tplFiles;
+    int _newChannels, _updatedChannels;
+    int _newRadioChannels, _updatedRadioChannels;
+    int _diseqcLoops = 1;
+    int _currentDiseqc = 1;
+    bool _reentrant = false;
 
     public DVBSTuning()
     {
     }
     #region ITuning Members
-
-    public bool AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
     {
-      newRadioChannels = 0;
-      updatedRadioChannels = 0;
-      newChannels = 0;
-      updatedChannels = 0;
+      GetNumberOfDiseqcs( card );
+      DVBSSelectTPLForm dlgSelectTPL = new DVBSSelectTPLForm();
+      dlgSelectTPL.NumberOfLNBs = _diseqcLoops;
+      dlgSelectTPL.ShowDialog();
+      string[] tplFileNames = dlgSelectTPL.TransponderFiles;
+      AutoTuneTV(card, statusCallback, tplFileNames);
+    }
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string countryName)
+    {
+    }
 
-      captureCard = card;
-      callback = statusCallback;
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] tplFileNames)
+    {
+      _tplFiles = (string[])tplFileNames.Clone();
+      for (int i = 0; i < _tplFiles.Length; ++i)
+      {
+        Log.Write("dvbs-scan: diseqc:{0} file:{1}", i + 1, _tplFiles[i]);
+      }
+      GetNumberOfDiseqcs(card);
+      Log.Write("dvbs-scan: diseqc loops:{0}", _diseqcLoops);
+      _newRadioChannels = 0;
+      _updatedRadioChannels = 0;
+      _newChannels = 0;
+      _updatedChannels = 0;
+
+      _captureCard = card;
+      _callback = statusCallback;
+
+      _currentDiseqc = 1;
+      _currentIndex = 0;
+
+    }
+    void GetNumberOfDiseqcs(TVCaptureDevice card)
+    {
       string filename = String.Format(@"database\card_{0}.xml", card.FriendlyName);
       //
       // load card settings to check diseqc
-      m_diseqcLoops = 1;
+      _diseqcLoops = 1;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
       {
         if (xmlreader.GetValueAsBool("dvbs", "useLNB2", false) == true)
-          m_diseqcLoops++;
+          _diseqcLoops++;
         if (xmlreader.GetValueAsBool("dvbs", "useLNB3", false) == true)
-          m_diseqcLoops++;
+          _diseqcLoops++;
         if (xmlreader.GetValueAsBool("dvbs", "useLNB4", false) == true)
-          m_diseqcLoops++;
+          _diseqcLoops++;
       }
-
-      DVBSSelectTPLForm dlgSelectTPL = new DVBSSelectTPLForm();
-      dlgSelectTPL.NumberOfLNBs = m_diseqcLoops;
-      dlgSelectTPL.ShowDialog();
-      tplFiles = dlgSelectTPL.TransponderFiles;
-
-      m_currentDiseqc = 1;
-      return true;
     }
 
     void LoadFrequencies()
     {
-      currentIndex = -1;
+      Log.Write("dvbs-scan: load transponders for diseqc:{0}", _currentDiseqc);
+      _currentIndex = 0;
 
-      string fileName = tplFiles[m_currentDiseqc - 1];
+      string fileName = _tplFiles[_currentDiseqc - 1];
       if (fileName == String.Empty)
       {
-        currentIndex = count + 1;
+        Log.Write("dvbs-scan: no transponders found");
+        _currentIndex = _count + 1;
         return;
       }
-      count = 0;
+      _count = 0;
       string line;
       string[] tpdata;
       Log.WriteFile(Log.LogType.Capture, "dvbs-scan:Opening {0}", fileName);
@@ -131,24 +146,24 @@ namespace MediaPortal.TV.Scanning
               try
               {
 
-                transp[count].TPfreq = Int32.Parse(tpdata[0]) * 1000;
+                _transponderList[_count].TPfreq = Int32.Parse(tpdata[0]) * 1000;
                 switch (tpdata[1].ToLower())
                 {
                   case "v":
 
-                    transp[count].TPpol = 1;
+                    _transponderList[_count].TPpol = 1;
                     break;
                   case "h":
 
-                    transp[count].TPpol = 0;
+                    _transponderList[_count].TPpol = 0;
                     break;
                   default:
 
-                    transp[count].TPpol = 0;
+                    _transponderList[_count].TPpol = 0;
                     break;
                 }
-                transp[count].TPsymb = Int32.Parse(tpdata[2]);
-                count += 1;
+                _transponderList[_count].TPsymb = Int32.Parse(tpdata[2]);
+                _count += 1;
               }
               catch
               { }
@@ -158,69 +173,32 @@ namespace MediaPortal.TV.Scanning
       tin.Close();
 
 
-      Log.WriteFile(Log.LogType.Capture, "dvbs-scan:loaded:{0} transponders", count);
+      Log.WriteFile(Log.LogType.Capture, "dvbs-scan:loaded:{0} transponders", _count);
       return;
     }
+
     public void Start()
     {
-      m_currentDiseqc = 1;
-      currentIndex = -1;
+      Log.Write("dvbs-scan: Start()");
+      _currentDiseqc = 1;
+      _currentIndex = 0;
       LoadFrequencies();
-      this.timer1 = new System.Windows.Forms.Timer();
-      this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-      timer1.Interval = 100;
-      timer1.Enabled = true;
-      callback.OnProgress(0);
+      _callback.OnProgress(0);
     }
 
     public void Next()
     {
-      if (currentIndex + 1 >= count) return;
-      currentIndex++;
       UpdateStatus();
-      ScanTransponder();
-      captureCard.Process();
-      if (captureCard.SignalPresent())
-      {
-        ScanChannels();
-      }
+      Tune();
+      Scan();
+      GotoNextTransponder();
     }
-    public void Previous()
-    {
-      if (currentIndex > 1)
-      {
-        currentIndex -= 2;
-        UpdateStatus();
-
-        ScanTransponder();
-        captureCard.Process();
-        if (captureCard.SignalPresent())
-        {
-          ScanChannels();
-        }
-      }
-    }
-    public void Stop()
-    {
-      if (timer1 != null)
-      {
-        count = 0;
-        currentIndex = 1;
-        m_currentDiseqc = 10;
-        timer1.Enabled = false;
-      }
-      captureCard.DeleteGraph();
-    }
-    public bool AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback callback)
+    
+    public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback _callback)
     {
       // TODO:  Add DVBSTuning.AutoTuneRadio implementation
-        return false;
     }
 
-    public void Continue()
-    {
-      // TODO:  Add DVBSTuning.Continue implementation
-    }
 
     public int MapToChannel(string channel)
     {
@@ -230,124 +208,111 @@ namespace MediaPortal.TV.Scanning
 
     void UpdateStatus()
     {
-      int index = currentIndex;
-      if (index < 0) index = 0;
-
-      float percent = ((float)index) / ((float)count);
+      if (IsFinished()) return;
+      float percent = ((float)_currentIndex) / ((float)_count);
       percent *= 100.0f;
-      callback.OnProgress((int)percent);
-      TPList transponder = transp[index];
-      string chanDesc = String.Format("freq:{0} Khz, Pol:{1} SR:{2}",
-        transponder.TPfreq, transponder.TPpol, transponder.TPsymb);
-      string description = String.Format("Transponder:{0}/{1} {2}", index, count, chanDesc);
-      callback.OnStatus(description);
+      _callback.OnProgress((int)percent);
+      TPList transponder = _transponderList[_currentIndex];
+      string chanDesc = String.Format("Transponder:{0} MHz, Polarisation:{1} SymbolRate:{2}",
+        ((float)transponder.TPfreq)/1000.0, GetPolarisation(transponder.TPpol), transponder.TPsymb);
+      string description = String.Format("Transponder:{0}/{1} {2}", _currentIndex, _count, chanDesc);
+      _callback.OnStatus(description);
     }
-    private void timer1_Tick(object sender, System.EventArgs e)
+    string GetPolarisation(int pol)
     {
-      try
-      {
-        if (reentrant) return;
-        reentrant = true;
-
-        timer1.Enabled = false;
-        if (currentIndex >= count)
-        {
-          if (m_currentDiseqc >= m_diseqcLoops)
-          {
-            Log.WriteFile(Log.LogType.Capture, "dvbs-scan:finished");
-            callback.OnProgress(100);
-            callback.OnStatus("Finished");
-            callback.OnEnded();
-            captureCard.DeleteGraph();
-            return;
-          }
-        }
-        UpdateStatus();
-        ScanNextTransponder();
-        captureCard.Process();
-        if (captureCard.SignalPresent())
-        {
-          Log.WriteFile(Log.LogType.Capture, "dvbs-scan:Found signal for transponder:{0}", currentIndex);
-          ScanChannels();
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
-      finally
-      {
-        reentrant = false;
-        timer1.Enabled = true;
-      }
+      if (pol == 0) return "Horizontal";
+      return "Vertical";
     }
 
-    void ScanChannels()
+    public bool IsFinished()
     {
-      string description = String.Format("Found signal for transponder:{0}, Scanning channels", currentIndex);
-      callback.OnStatus(description);
-      System.Threading.Thread.Sleep(400);
-      captureCard.Process();
-      callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
+      if (_currentIndex >= _count)
+      {
+        if (_currentDiseqc >= _diseqcLoops)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
 
-      callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", newChannels, newRadioChannels));
-      captureCard.StoreTunedChannels(false, true, ref newChannels, ref updatedChannels, ref newRadioChannels, ref updatedRadioChannels);
-      callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", newChannels, newRadioChannels));
 
-      captureCard.Process();
-      callback.UpdateList();
+    void DetectAvailableStreams()
+    {
+      if (IsFinished()) return;
+      TPList transponder = _transponderList[_currentIndex];
+      string chanDesc = String.Format("Transponder:{0} MHz, Polarisation:{1} SymbolRate:{2}",
+        ((float)transponder.TPfreq) / 1000.0, GetPolarisation(transponder.TPpol), transponder.TPsymb);
+      string description = String.Format("Transponder:{0}, getting info...", transponder);
+
+      _callback.OnStatus(description);
+      _captureCard.Process();
+      _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
+      _callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", _newChannels, _newRadioChannels));
+      _captureCard.StoreTunedChannels(false, true, ref _newChannels, ref _updatedChannels, ref _newRadioChannels, ref _updatedRadioChannels);
+      _callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", _newChannels, _newRadioChannels));
+
+      _captureCard.Process();
+      _callback.UpdateList();
       Log.WriteFile(Log.LogType.Capture, "dvbs-scan:onto next transponder");
     }
 
-    void ScanNextTransponder()
+    void GotoNextTransponder()
     {
-      currentIndex++;
-      if (currentIndex >= count)
+      if (IsFinished()) return;
+
+      _currentIndex++;
+      if (_currentIndex >= _count)
       {
-        if (m_currentDiseqc >= m_diseqcLoops)
+        if (_currentDiseqc >= _diseqcLoops)
         {
-          Log.WriteFile(Log.LogType.Capture, "dvbs-scan:finished");
-          callback.OnProgress(100);
-          callback.OnStatus("Finished");
-          callback.OnEnded();
-          captureCard.DeleteGraph();
           return;
         }
         else
         {
-          m_currentDiseqc++;
+          _currentDiseqc++;
           LoadFrequencies();
-          currentIndex = 0;
+          _currentIndex = 0;
         }
       }
-      ScanTransponder();
+      Tune();
     }
 
-    void ScanTransponder()
+    void Scan()
     {
-      if (currentIndex < 0 || currentIndex >= count) return;
+      _captureCard.Process();
+      if (_captureCard.SignalPresent())
+      {
+        DetectAvailableStreams();
+      }
+    }
+
+    void Tune()
+    {
+      if (IsFinished()) return;
       DVBChannel newchan = new DVBChannel();
       newchan.NetworkID = -1;
       newchan.TransportStreamID = -1;
       newchan.ProgramNumber = -1;
 
-      newchan.Polarity = transp[currentIndex].TPpol;
-      newchan.Symbolrate = transp[currentIndex].TPsymb;
+      newchan.Polarity = _transponderList[_currentIndex].TPpol;
+      newchan.Symbolrate = _transponderList[_currentIndex].TPsymb;
       newchan.FEC = (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_DEFINED;
-      newchan.Frequency = transp[currentIndex].TPfreq;
+      newchan.Frequency = _transponderList[_currentIndex].TPfreq;
 
-
-
-
-      Log.WriteFile(Log.LogType.Capture, "dvbs-scan:tune transponder:{0} freq:{1} KHz symbolrate:{2} polarisation:{3}", currentIndex,
+      Log.WriteFile(Log.LogType.Capture, "dvbs-scan:tune transponder:{0} freq:{1} KHz symbolrate:{2} polarisation:{3}", _currentIndex,
                   newchan.Frequency, newchan.Symbolrate, newchan.Polarity);
-      captureCard.Tune(newchan, m_currentDiseqc);
-      System.Threading.Thread.Sleep(400);
-      captureCard.Process();
-      if (captureCard.SignalQuality < 40)
+      _captureCard.Tune(newchan, _currentDiseqc);
+
+      //tune locking : 2 seconds
+      for (int i = 0; i < 5; ++i)
+      {
+        _captureCard.Process();
+        if (_captureCard.SignalPresent()) break;
         System.Threading.Thread.Sleep(400);
-      captureCard.Process();
-      callback.OnSignal(captureCard.SignalQuality, captureCard.SignalStrength);
+      }
+      _captureCard.Process();
+      _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
     }
 
     #endregion
