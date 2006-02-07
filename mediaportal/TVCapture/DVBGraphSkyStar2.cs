@@ -178,10 +178,12 @@ namespace MediaPortal.TV.Recording
         //=========================================================================================================
         // add the Sample grabber (not in configuration.exe) 
         //=========================================================================================================
+        
         _filterSampleGrabber = null;
         _sampleInterface = null;
         if (GUIGraphicsContext.DX9Device != null)
         {
+          Log.Write("DVBGraphSkyStar2: Add Sample Grabber");
           _filterSampleGrabber = (IBaseFilter)new SampleGrabber();
           _sampleInterface = (ISampleGrabber)_filterSampleGrabber;
           _graphBuilder.AddFilter(_filterSampleGrabber, "Sample Grabber");
@@ -191,7 +193,7 @@ namespace MediaPortal.TV.Recording
         // add the MPEG-2 Demultiplexer 
         //=========================================================================================================
         // Use CLSID_filterMpeg2Demultiplexer to create the filter
-        //Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:CreateGraph() create MPEG2-Demultiplexer");
+        Log.Write("DVBGraphSkyStar2: Add Sample MPEG2-Demultiplexer");
         _filterMpeg2Demultiplexer = (IBaseFilter)new MPEG2Demultiplexer();
         if (_filterMpeg2Demultiplexer == null)
         {
@@ -200,13 +202,14 @@ namespace MediaPortal.TV.Recording
         }
 
         // Add the Demux to the graph
-        //Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:CreateGraph() add mpeg2 demuxer to graph");
         _graphBuilder.AddFilter(_filterMpeg2Demultiplexer, "MPEG-2 Demultiplexer");
         IMpeg2Demultiplexer demuxer = _filterMpeg2Demultiplexer as IMpeg2Demultiplexer;
+
         //=========================================================================================================
         // create PSI output pin on demuxer
         //=========================================================================================================
 
+        Log.Write("DVBGraphSkyStar2: Create PSI output pin on MPEG2-Demultiplexer");
         AMMediaType mtSections = new AMMediaType();
         mtSections.majorType = MEDIATYPE_MPEG2_SECTIONS;
         mtSections.subType = MediaSubType.None;
@@ -219,10 +222,52 @@ namespace MediaPortal.TV.Recording
           return false;
         }
 
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2: create audio/video output pin");
+        AMMediaType mpegVideoOut = new AMMediaType();
+        mpegVideoOut.majorType = MediaType.Video;
+        mpegVideoOut.subType = MediaSubType.Mpeg2Video;
+
+        Size FrameSize = new Size(100, 100);
+        mpegVideoOut.unkPtr = IntPtr.Zero;
+        mpegVideoOut.sampleSize = 0;
+        mpegVideoOut.temporalCompression = false;
+        mpegVideoOut.fixedSizeSamples = true;
+
+        //Mpeg2ProgramVideo=new byte[Mpeg2ProgramVideo.GetLength(0)];
+        mpegVideoOut.formatType = FormatType.Mpeg2Video;
+        mpegVideoOut.formatSize = Mpeg2ProgramVideo.GetLength(0);
+        mpegVideoOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegVideoOut.formatSize);
+        System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mpegVideoOut.formatPtr, mpegVideoOut.formatSize);
+        AMMediaType mpegAudioOut = new AMMediaType();
+        mpegAudioOut.majorType = MediaType.Audio;
+        mpegAudioOut.subType = MediaSubType.Mpeg2Audio;
+        mpegAudioOut.sampleSize = 0;
+        mpegAudioOut.temporalCompression = false;
+        mpegAudioOut.fixedSizeSamples = true;
+        mpegAudioOut.unkPtr = IntPtr.Zero;
+        mpegAudioOut.formatType = FormatType.WaveEx;
+        mpegAudioOut.formatSize = MPEG1AudioFormat.GetLength(0);
+        mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
+        System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
+
+        IPin filterMpeg2DemuxerVideoPin, filterMpeg2DemuxerAudioPin;
+        hr = demuxer.CreateOutputPin(mpegVideoOut/*vidOut*/, "video", out filterMpeg2DemuxerVideoPin);
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:FAILED to create video output pin on demuxer");
+          return false;
+        }
+        hr = demuxer.CreateOutputPin(mpegAudioOut, "audio", out filterMpeg2DemuxerAudioPin);
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2: FAILED to create audio output pin on demuxer");
+          return false;
+        }
+
         //=========================================================================================================
         // add the stream analyzer
         //=========================================================================================================
-        //Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:CreateGraph() add stream analyzer");
+        Log.Write("DVBGraphSkyStar2: Add Stream Analyzer");
         _filterDvbAnalyzer = (IBaseFilter)Activator.CreateInstance(Type.GetTypeFromCLSID(ClassId.MPStreamAnalyzer, true));
         _analyzerInterface = (IStreamAnalyzer)_filterDvbAnalyzer;
         _epgGrabberInterface = _filterDvbAnalyzer as IEPGGrabber;
@@ -301,18 +346,23 @@ namespace MediaPortal.TV.Recording
         switch (tc.eModulation)
         {
           case TunerType.ttSat:
+            Log.Write("DVBGraphSkyStar2: Network type=DVBS");
             _networkType = NetworkType.DVBS;
             break;
           case TunerType.ttCable:
+            Log.Write("DVBGraphSkyStar2: Network type=DVBC");
             _networkType = NetworkType.DVBC;
             break;
           case TunerType.ttTerrestrial:
+            Log.Write("DVBGraphSkyStar2: Network type=DVBT");
             _networkType = NetworkType.DVBT;
             break;
           case TunerType.ttATSC:
+            Log.Write("DVBGraphSkyStar2: Network type=ATSC");
             _networkType = NetworkType.ATSC;
             break;
           case TunerType.ttUnknown:
+            Log.Write("DVBGraphSkyStar2: Network type=unknown?");
             _networkType = NetworkType.Unknown;
             break;
         }
@@ -327,6 +377,7 @@ namespace MediaPortal.TV.Recording
         
         if (GUIGraphicsContext.DX9Device != null && _sampleInterface != null)
         {
+          Log.Write("DVBGraphSkyStar2: connect B2C2->sample grabber");
           IPin pinData0 = DsFindPin.ByDirection(_filterB2C2Adapter, PinDirection.Output, 2);
           if (pinData0 == null)
           {
@@ -351,7 +402,7 @@ namespace MediaPortal.TV.Recording
 
         if (GUIGraphicsContext.DX9Device != null && _sampleInterface != null)
         {
-          //Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:CreateGraph() connect grabber->demuxer");
+          Log.Write("DVBGraphSkyStar2: connect sample grabber->MPEG2 demultiplexer");
           if (!ConnectFilters(ref _filterSampleGrabber, ref _filterMpeg2Demultiplexer))
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
@@ -360,6 +411,7 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
+          Log.Write("DVBGraphSkyStar2: connect B2C2->MPEG2 demultiplexer");
           IPin pinData0 = DsFindPin.ByDirection(_filterB2C2Adapter, PinDirection.Output, 2);
           if (pinData0 == null)
           {
@@ -385,7 +437,7 @@ namespace MediaPortal.TV.Recording
         // 1. connect demuxer->analyzer
         // 2. find audio/video output pins on demuxer
         //=========================================================================================================
-        //        Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:CreateGraph() find audio/video pins");
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:CreateGraph() find audio/video pins");
         bool connected = false;
         IPin pinAnalyzerIn = DsFindPin.ByDirection(_filterDvbAnalyzer, PinDirection.Input, 0);
         IEnumPins pinEnum;
@@ -408,13 +460,13 @@ namespace MediaPortal.TV.Recording
               {
                 if (pinMediaType[0].majorType == MediaType.Audio)
                 {
-                  //Log.Write("DVBGraphSkyStar2: found audio pin");
+                  Log.Write("DVBGraphSkyStar2: found audio pin");
                   _pinDemuxerAudio = pin[0];
                   break;
                 }
                 if (pinMediaType[0].majorType == MediaType.Video)
                 {
-                  //Log.Write("DVBGraphSkyStar2: found video pin");
+                  Log.Write("DVBGraphSkyStar2: found video pin");
                   _pinDemuxerVideo = pin[0];
                   break;
                 }
@@ -424,12 +476,12 @@ namespace MediaPortal.TV.Recording
                   pin[0].ConnectedTo(out pinConnectedTo);
                   if (pinConnectedTo == null)
                   {
-                    //Log.Write("DVBGraphSkyStar2:connect mpeg2 demux->stream analyzer");
+                    Log.Write("DVBGraphSkyStar2:connect mpeg2 demux->stream analyzer");
                     hr = _graphBuilder.Connect(pin[0], pinAnalyzerIn);
                     if (hr == 0)
                     {
                       connected = true;
-                      //Log.Write("DVBGraphSkyStar2:connected mpeg2 demux->stream analyzer");
+                      Log.Write("DVBGraphSkyStar2:connected mpeg2 demux->stream analyzer");
                     }
                     else
                     {
@@ -454,62 +506,22 @@ namespace MediaPortal.TV.Recording
         if (_pinDemuxerVideo == null)
         {
           //video pin not found
-          Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2:Failed to get pin '{0}' (video out) from MPEG-2 Demultiplexer", _pinDemuxerVideo);
+          Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2:Failed to get pin (video out) from MPEG-2 Demultiplexer", _pinDemuxerVideo);
           return false;
         }
         if (_pinDemuxerAudio == null)
         {
           //audio pin not found
-          Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2:Failed to get pin '{0}' (audio out)  from MPEG-2 Demultiplexer", _pinDemuxerAudio);
+          Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2:Failed to get pin (audio out)  from MPEG-2 Demultiplexer", _pinDemuxerAudio);
           return false;
         }
 
         //=========================================================================================================
         // add the AC3 pin, mpeg1 audio pin to the MPEG2 demultiplexer
         //=========================================================================================================
-        //Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:CreateGraph() create ac3/mpg1 pins");
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:CreateGraph() create ac3/mpg1 pins");
         if (demuxer != null)
         {
-          AMMediaType mpegVideoOut = new AMMediaType();
-          mpegVideoOut.majorType = MediaType.Video;
-          mpegVideoOut.subType = MediaSubType.Mpeg2Video;
-
-          Size FrameSize = new Size(100, 100);
-          mpegVideoOut.unkPtr = IntPtr.Zero;
-          mpegVideoOut.sampleSize = 0;
-          mpegVideoOut.temporalCompression = false;
-          mpegVideoOut.fixedSizeSamples = true;
-
-          //Mpeg2ProgramVideo=new byte[Mpeg2ProgramVideo.GetLength(0)];
-          mpegVideoOut.formatType = FormatType.Mpeg2Video;
-          mpegVideoOut.formatSize = Mpeg2ProgramVideo.GetLength(0);
-          mpegVideoOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegVideoOut.formatSize);
-          System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mpegVideoOut.formatPtr, mpegVideoOut.formatSize);
-
-          AMMediaType mpegAudioOut = new AMMediaType();
-          mpegAudioOut.majorType = MediaType.Audio;
-          mpegAudioOut.subType = MediaSubType.Mpeg2Audio;
-          mpegAudioOut.sampleSize = 0;
-          mpegAudioOut.temporalCompression = false;
-          mpegAudioOut.fixedSizeSamples = true;
-          mpegAudioOut.unkPtr = IntPtr.Zero;
-          mpegAudioOut.formatType = FormatType.WaveEx;
-          mpegAudioOut.formatSize = MPEG1AudioFormat.GetLength(0);
-          mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
-          System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
-          hr = demuxer.CreateOutputPin(mpegAudioOut, "audio", out _pinDemuxerAudio);
-          if (hr != 0)
-          {
-            Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2: FAILED to create audio output pin on demuxer");
-            return false;
-          }
-
-          hr = demuxer.CreateOutputPin(mpegVideoOut/*vidOut*/, "video", out _pinDemuxerVideo);
-          if (hr != 0)
-          {
-            Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2: FAILED to create video output pin on demuxer");
-            return false;
-          }
 
           //Log.WriteFile(Log.LogType.Capture, false, "mpeg2: create ac3 pin");
           AMMediaType mediaAC3 = new AMMediaType();
@@ -639,14 +651,7 @@ namespace MediaPortal.TV.Recording
         m_IStreamBufferSink = (IStreamBufferSink3)m_StreamBufferSink;
         _graphState = State.Created;
 
-        GetTunerSignalStatistics();
-        if (_tunerStatistics.Count == 0)
-        {
-          Log.Write("DVBGraphSkyStar2:Failed to get tuner statistics");
-        }
-        Log.Write("DVBGraphSkyStar2:got {0} tuner statistics", _tunerStatistics.Count);
-
-
+        
         //_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
         //_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
         _streamDemuxer.SetCardType((int)DVBEPG.EPGCard.BDACards, Network());
