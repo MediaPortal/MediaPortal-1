@@ -846,7 +846,7 @@ namespace MediaPortal.TV.Teletext
       int width = _pageRenderWidth / 40;
       int height = (_pageRenderHeight - 2) / 25;
       int fntSizeX = (width - 2 < 10) ? 10 : width - 2;
-      int fntSizeY = (height - 6 < 10) ? 10 : height - 6;
+      int fntSizeY = (height - 8 < 10) ? 10 : height - 8;
       _fontTeletext = new System.Drawing.Font("Courier New", Math.Min(fntSizeX, fntSizeY), System.Drawing.FontStyle.Bold);
       System.Drawing.SolidBrush brush=null;
       try
