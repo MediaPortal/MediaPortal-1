@@ -151,15 +151,30 @@ namespace DShowNET
       public ushort uPid16;
       [FieldOffset(54)]
       public ushort dummy3;
-    }    
+    }
 
     static public readonly Guid KSPROPSETID_Firesat = new Guid(0xab132414, 0xd060, 0x11d0, 0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba, 0xf3);
+    #region property ids
     const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_C = 8;
     const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_T = 6;
     const int KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_S = 2;
     const int KSPROPERTY_FIRESAT_HOST2CA = 22;
     const int KSPROPERTY_FIRESAT_DRIVER_VERSION = 4;
     const int KSPROPERTY_FIRESAT_GET_FIRMWARE_VERSION = 11;
+    const int KSPROPERTY_FIRESAT_GET_CI_STATUS = 28;
+    #endregion
+
+    #region CI STATUS bits
+    const int CI_MMI_REQUEST = 0x0100;
+    const int CI_PMT_REPLY = 0x0080;
+    const int CI_DATE_TIME_REQEST = 0x0040;
+    const int CI_APP_INFO_AVAILABLE = 0x0020;
+    const int CI_MODULE_PRESENT = 0x0010;
+    const int CI_MODULE_IS_DVB = 0x0008;
+    const int CI_MODULE_ERROR = 0x0004;
+    const int CI_MODULE_INIT_READY = 0x0002;
+    const int CI_ERR_MSG_AVAILABLE = 0x0001;
+    #endregion
 
     public DigitalEverywhere(IBaseFilter filter)
       : base(filter)
@@ -198,6 +213,9 @@ namespace DShowNET
     /// </preconditions>
     public bool SendPMTToFireDTV(byte[] PMT, int pmtLength)
     {
+      if (IsCamPresent() == false) return true;
+      if (IsCamReady() == false) return false;
+
       //typedef struct _FIRESAT_CA_DATA{ 
       //  UCHAR uSlot;                      //0
       //  UCHAR uTag;                       //1   (2..3 = padding)
@@ -214,18 +232,18 @@ namespace DShowNET
       //Log.Write("SendPMTToFireDTV pmt:{0}", pmtLength);
       Guid propertyGuid = KSPROPSETID_Firesat;
       int propId = KSPROPERTY_FIRESAT_HOST2CA;
-      IKsPropertySet propertySet = captureFilter as IKsPropertySet;
-      uint isTypeSupported = 0;
+      DirectShowLib.IKsPropertySet propertySet = captureFilter as DirectShowLib.IKsPropertySet;
+      KSPropertySupport isTypeSupported = 0;
       if (propertySet == null)
       {
-        Log.Write("SendPMTToFireDTV() properySet=null");
+        Log.Write("FireDTV:SendPmt() properySet=null");
         return true;
       }
 
-      int hr = propertySet.QuerySupported(ref propertyGuid, (uint)propId, out isTypeSupported);
-      if (hr != 0 || (isTypeSupported & (uint)KsPropertySupport.Set) == 0)
+      int hr = propertySet.QuerySupported( propertyGuid, propId, out isTypeSupported);
+      if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
       {
-        Log.Write("SendPMTToFireDTV() SendPMT is not supported");
+        Log.Write("FireDTV:SendPmt() not supported");
         return true;
       }
 
@@ -262,7 +280,8 @@ namespace DShowNET
         byData[offs] = PMT[i];
         offs++;
       }
-      string log = String.Format("pmt len:{0} data:", pmtLength);
+
+      string log = String.Format("FireDTV: pmt len:{0} data:", pmtLength);
       for (int i = 0; i < offs; ++i)
       {
         Marshal.WriteByte(pDataInstance, i, byData[i]);
@@ -271,18 +290,98 @@ namespace DShowNET
       }
 
       Log.Write(log);
-      hr = propertySet.RemoteSet(ref propertyGuid, (uint)propId, pDataInstance, (uint)1036, pDataReturned, (uint)1036);
+      hr = propertySet.Set( propertyGuid, propId, pDataInstance, 1036, pDataReturned, 1036);
       Marshal.FreeCoTaskMem(pDataReturned);
       Marshal.FreeCoTaskMem(pDataInstance);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Log, true, "FireDTV:SetPMT() failed 0x{0:X} offs:{1}", hr, offs);
+        Log.WriteFile(Log.LogType.Log, true, "FireDTV:  failed 0x{0:X} offs:{1}", hr, offs);
+        ResetCAM();
         return false;
       }
       return true;
     }//public bool SendPMTToFireDTV(byte[] PMT)
 
-    public bool SetPIDS(bool isDvbc, bool isDvbT, bool isDvbS, bool isAtsc, ArrayList pids)
+    public void ResetCAM()
+    {      //typedef struct _FIRESAT_CA_DATA{ 
+      //  UCHAR uSlot;                      //0
+      //  UCHAR uTag;                       //1   (2..3 = padding)
+      //  BOOL bMore;                       //4   (5..7 = padding)
+      //  USHORT uLength;                   //8..9
+      //  UCHAR uData[MAX_PMT_SIZE];        //10....
+      //}FIRESAT_CA_DATA, *PFIRESAT_CA_DATA;
+
+      Log.Write("FireDTV:ResetCAM()");
+      Guid propertyGuid = KSPROPSETID_Firesat;
+      int propId = KSPROPERTY_FIRESAT_HOST2CA;
+      IKsPropertySet propertySet = captureFilter as IKsPropertySet;
+      uint isTypeSupported = 0;
+      if (propertySet == null)
+      {
+        Log.Write("FireDTV:ResetCAM() properySet=null");
+        return;
+      }
+
+      int hr = propertySet.QuerySupported(ref propertyGuid, (uint)propId, out isTypeSupported);
+      if (hr != 0 || (isTypeSupported & (uint)KsPropertySupport.Set) == 0)
+      {
+        Log.Write("FireDTV:ResetCAM() Reset CI is not supported");
+        return;
+      }
+      int dataLength = 1;
+      int iSize = 12 + dataLength;
+      IntPtr pDataInstance = Marshal.AllocCoTaskMem(1036);
+      IntPtr pDataReturned = Marshal.AllocCoTaskMem(1036);
+      try
+      {
+        int offs = 0;
+
+        //example data:0x0 0x2 0x0 0x0 0x0 0x0 0x0 0x0 0x14 0x0 0x3 0x1 | 0x2 0xB0 0x12 0x1 0x3D 0xC1 0x0 0x0 0xFF 0xFF 0xF0 0x0 0x3 0xEC 0x8C 0xF0 0x0 0xD3 
+        byte[] byData = new byte[1036];
+        uint uLength = (uint)dataLength;
+        byData[offs] = 0; offs++;//slot
+        byData[offs] = 0; offs++;//utag (CA RESET)
+
+        byData[offs] = 0; offs++;//padding
+        byData[offs] = 0; offs++;//padding
+
+        byData[offs] = 0; offs++;//bmore (FALSE)
+
+        byData[offs] = 0; offs++;//padding
+        byData[offs] = 0; offs++;//padding
+        byData[offs] = 0; offs++;//padding
+
+        byData[offs] = (byte)(uLength % 256); offs++;		//ulength lo
+        byData[offs] = (byte)(uLength / 256); offs++;		//ulength hi
+
+        byData[offs] = 0; offs++;// HW Reset of CI part
+        string log = "hw resetdata:";
+        for (int i = 0; i < offs; ++i)
+        {
+          Marshal.WriteByte(pDataInstance, i, byData[i]);
+          Marshal.WriteByte(pDataReturned, i, byData[i]);
+          log += String.Format("0x{0:X} ", byData[i]);
+        }
+
+        Log.Write(log);
+        hr = propertySet.RemoteSet(ref propertyGuid, (uint)propId, pDataInstance, (uint)1036, pDataReturned, (uint)1036);
+
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "FireDTV:ResetCAM() failed 0x{0:X} offs:{1}", hr, offs);
+          return;
+        }
+        Log.Write("FireDTV:ResetCAM() cam has been reset");
+      }
+      finally
+      {
+        Marshal.FreeCoTaskMem(pDataReturned);
+        Marshal.FreeCoTaskMem(pDataInstance);
+      }
+      return;
+    }
+
+    public bool SetHardwarePidFiltering(bool isDvbc, bool isDvbT, bool isDvbS, bool isAtsc, ArrayList pids)
     {
       string logStart = "dvbt:";
       DirectShowLib.IKsPropertySet propertySet = captureFilter as DirectShowLib.IKsPropertySet;
@@ -294,7 +393,7 @@ namespace DShowNET
       //  propertySelect = (uint)KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_C;
       //  logStart = "dvbc:";
       //}
-      if (isDvbc||isDvbS)
+      if (isDvbc || isDvbS)
       {
         propertySelect = (uint)KSPROPERTY_FIRESAT_SELECT_PIDS_DVB_S;
         logStart = "dvbs:";
@@ -302,22 +401,19 @@ namespace DShowNET
       int hr = propertySet.QuerySupported(propertyGuid, (int)propertySelect, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
       {
-        Log.Write("SendPMTToFireDTV() SetPIDS is not supported");
+        Log.Write("FireDTV: Set H/W pid filtering is not supported");
         return true;
       }
 
       FIRESAT_SELECT_PIDS_DVBT dvbtStruct = new FIRESAT_SELECT_PIDS_DVBT();
       FIRESAT_SELECT_PIDS_DVBS dvbsStruct = new FIRESAT_SELECT_PIDS_DVBS();
-      dvbtStruct.bCurrentTransponder = true;
-      dvbtStruct.bFullTransponder = false;
-      dvbsStruct.bCurrentTransponder = true;
-      dvbsStruct.bFullTransponder = false;
+      dvbtStruct.bCurrentTransponder = true; dvbtStruct.bFullTransponder = false;
+      dvbsStruct.bCurrentTransponder = true; dvbsStruct.bFullTransponder = false;
       if (pids.Count > 0)
       {
-        dvbtStruct.bFullTransponder = false;
-        dvbtStruct.uNumberOfValidPids = (byte)pids.Count;
-        dvbsStruct.bFullTransponder = false;
-        dvbsStruct.uNumberOfValidPids = (byte)pids.Count;
+        //get only specific pids
+        dvbtStruct.bFullTransponder = false; dvbtStruct.uNumberOfValidPids = (byte)pids.Count;
+        dvbsStruct.bFullTransponder = false; dvbsStruct.uNumberOfValidPids = (byte)pids.Count;
         if (pids.Count >= 1) { dvbtStruct.uPid1 = (ushort)pids[0]; dvbsStruct.uPid1 = (ushort)pids[0]; }
         if (pids.Count >= 2) { dvbtStruct.uPid2 = (ushort)pids[1]; dvbsStruct.uPid2 = (ushort)pids[1]; }
         if (pids.Count >= 3) { dvbtStruct.uPid3 = (ushort)pids[2]; dvbsStruct.uPid3 = (ushort)pids[2]; }
@@ -334,6 +430,14 @@ namespace DShowNET
         if (pids.Count >= 14) { dvbtStruct.uPid14 = (ushort)pids[13]; dvbsStruct.uPid14 = (ushort)pids[13]; }
         if (pids.Count >= 15) { dvbtStruct.uPid15 = (ushort)pids[14]; dvbsStruct.uPid15 = (ushort)pids[14]; }
         if (pids.Count >= 16) { dvbtStruct.uPid16 = (ushort)pids[15]; dvbsStruct.uPid16 = (ushort)pids[15]; }
+      }
+      else
+      {
+        //get entire stream
+        dvbtStruct.bFullTransponder = true;
+        dvbsStruct.bFullTransponder = true;
+        dvbtStruct.uNumberOfValidPids = 0;
+        dvbsStruct.uNumberOfValidPids = 0;
       }
 
       IntPtr pDataInstance;
@@ -356,13 +460,13 @@ namespace DShowNET
         Marshal.StructureToPtr(dvbsStruct, pDataReturned, true);
       }
 
-      Log.WriteFile(Log.LogType.Log, true, "FireDTV:SetPIDS() count:{0} len:{1}", pids.Count, len);
+      Log.WriteFile(Log.LogType.Log, true, "FireDTV: Set H/W pid filtering count:{0} len:{1}", pids.Count, len);
 
       string txt = "";
       for (int i = 0; i < len; ++i)
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(pDataInstance, i));
 
-      Log.Write("pid {0} data:{1}", logStart, txt);
+      Log.Write("FireDTV: Set H/W pid filtering pid {0} data:{1}", logStart, txt);
       hr = propertySet.Set(propertyGuid,
                           (int)propertySelect,
                           pDataInstance, (int)len,
@@ -371,7 +475,7 @@ namespace DShowNET
       Marshal.FreeCoTaskMem(pDataInstance);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Log, true, "FireDTV:SetPIDS() failed 0x{0:X}", hr);
+        Log.WriteFile(Log.LogType.Log, true, "FireDTV: Set H/W pid filtering failed 0x{0:X}", hr);
         return false;
       }
 
@@ -467,6 +571,85 @@ namespace DShowNET
         version += ch;
       }
       return version;
+    }
+
+    int GetCAMStatus()
+    {
+      Guid propertyGuid = KSPROPSETID_Firesat;
+      int propId = KSPROPERTY_FIRESAT_GET_CI_STATUS;
+      DirectShowLib.IKsPropertySet propertySet = captureFilter as DirectShowLib.IKsPropertySet;
+      KSPropertySupport isTypeSupported;
+      if (propertySet == null)
+      {
+        Log.Write("FireDTV:GetCAMStatus() properySet=null");
+        return 0;
+      }
+
+      int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
+      if (hr != 0 || (isTypeSupported & KSPropertySupport.Get) == 0)
+      {
+        Log.Write("FireDTV:GetCAMStatus() get is not supported");
+        return 0;
+      }
+      int bytesReturned;
+      IntPtr pDataInstance = Marshal.AllocCoTaskMem(1036);
+      IntPtr pDataReturned = Marshal.AllocCoTaskMem(1036);
+      try
+      {
+        hr = propertySet.Get(propertyGuid, propId, pDataInstance, 1036, pDataReturned, 1036, out bytesReturned);
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "FireDTV:GetCAMStatus() failed 0x{0:X}", hr);
+          return 0;
+        }
+        ushort camStatus = (ushort)Marshal.ReadInt16(pDataReturned, 0);
+        return camStatus;
+      }
+      finally
+      {
+        Marshal.FreeCoTaskMem(pDataReturned);
+        Marshal.FreeCoTaskMem(pDataInstance);
+      }
+      return 0;
+    }
+
+    public bool IsCamPresent()
+    {
+      int camStatus = GetCAMStatus();
+      if ((camStatus & CI_MODULE_PRESENT) != 0)
+      {
+        //CAM is inserted
+        if ((camStatus & CI_MODULE_IS_DVB) != 0)
+        {
+          //CAM is DVB
+          return true;
+        }
+      }
+      return false;
+    }
+
+    public bool IsCamReady()
+    {
+      int camStatus = GetCAMStatus();
+      if ((camStatus & CI_MODULE_PRESENT) != 0) 
+      {
+        //CAM is inserted
+        if ((camStatus & CI_MODULE_IS_DVB) != 0)
+        {
+          //CAM is DVB CAM 
+          if ((camStatus & CI_MODULE_ERROR) != 0)
+          {
+            //CAM has an error
+            return false;
+          }
+          if ((camStatus & CI_MODULE_INIT_READY) != 0)
+          {
+            //CAM is initialized
+            return true;
+          }
+        }
+      }
+      return false;
     }
   }
 }

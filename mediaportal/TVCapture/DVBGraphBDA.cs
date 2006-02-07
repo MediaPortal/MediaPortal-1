@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-//#define HW_PID_FILTERING
+#define HW_PID_FILTERING
 //#define DUMP
 //#define USEMTSWRITER
 #define COMPARE_PMT
@@ -233,6 +233,7 @@ namespace MediaPortal.TV.Recording
     IATSCGrabber _atscGrabberInterface = null;
     IBaseFilter _filterDvbAnalyzer = null;
     bool _graphPaused = false;
+    int _pmtSendCounter = 0;
 
 #if USEMTSWRITER
 		IBaseFilter						  _filterTsWriter=null;
@@ -277,7 +278,7 @@ namespace MediaPortal.TV.Recording
     int _signalLevel;
     bool _signalPresent;
     bool _tunerLocked;
-    bool _isTuning = false;
+    bool _inScanningMode = false;
     DateTime _pmtTimer;
     DateTime _processTimer = DateTime.MinValue;
     //bool										_graphIsPaused;
@@ -334,6 +335,7 @@ namespace MediaPortal.TV.Recording
     {
       try
       {
+        _inScanningMode = false;
         //check if we didnt already create a graph
         if (_graphState != State.None)
           return false;
@@ -3144,7 +3146,6 @@ namespace MediaPortal.TV.Recording
     // send PMT to firedtv device
     bool SendPMT()
     {
-
       try
       {
 
@@ -3334,21 +3335,27 @@ namespace MediaPortal.TV.Recording
 
         _refreshPmtTable = false;
         VideoCaptureProperties props = new VideoCaptureProperties(_filterTunerDevice);
-        if (!props.IsCISupported()) return true;
         int pmtVersion = ((pmt[5] >> 1) & 0x1F);
 
         // send the PMT table to the device
         _pmtTimer = DateTime.Now;
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:Process() send PMT version {0} to device", pmtVersion);
-        _streamDemuxer.DumpPMT(pmt);
-        if (props.SendPMT(_currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
+        _pmtSendCounter++;
+        if (props.IsCISupported())
         {
-          Log.Write("DVBGraphBDA:SendPMT() signal strength:{0} signal quality:{1}", SignalStrength(), SignalQuality());
-          return true;
+          Log.Write("DVBGraphBDA:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality());
+          _streamDemuxer.DumpPMT(pmt);
+          if (props.SendPMT(_currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
+          {
+            return true;
+          }
+          else
+          {
+            //_refreshPmtTable=true;
+            return true;
+          }
         }
         else
         {
-          //_refreshPmtTable=true;
           return true;
         }
       }
@@ -3356,7 +3363,6 @@ namespace MediaPortal.TV.Recording
       {
         Log.Write(ex);
       }
-      Log.Write("DVBGraphBDA:SendPMT() signal strength:{0} signal quality:{1}", SignalStrength(), SignalQuality());
       return false;
     }//SendPMT()
 
@@ -3581,7 +3587,7 @@ namespace MediaPortal.TV.Recording
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       _signalLostTimer = DateTime.Now;
     }
-    
+
     bool ProcessEpg()
     {
       _epgGrabber.Process();
@@ -3600,11 +3606,11 @@ namespace MediaPortal.TV.Recording
       return false;
     }
 
-    
+
     public void Process()
     {
       if (_graphState == State.None) return;
-      if (_isTuning)
+      if (_inScanningMode)
         _processTimer = DateTime.MinValue;
       TimeSpan tsProc = DateTime.Now - _processTimer;
       if (tsProc.TotalSeconds < 1) return;
@@ -3613,6 +3619,7 @@ namespace MediaPortal.TV.Recording
       UpdateSignalPresent();
       if (_graphState == State.Created) return;
 
+
       if (_streamDemuxer != null)
         _streamDemuxer.Process();
 
@@ -3620,7 +3627,7 @@ namespace MediaPortal.TV.Recording
 
       if (_graphState != State.Epg)
       {
-        if (!_isTuning)
+        if (!_inScanningMode)
         {
           UpdateVideoState();
         }
@@ -3644,7 +3651,7 @@ namespace MediaPortal.TV.Recording
         }
       }
 
-      //if (_streamDemuxer.IsScrambled)
+      if (SignalPresent())
       {
         if (_refreshPmtTable && Network() != NetworkType.ATSC)
         {
@@ -3710,9 +3717,30 @@ namespace MediaPortal.TV.Recording
           }
         }
 
-        if (_streamDemuxer.IsScrambled)
+        if (SignalPresent())
         {
-          if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+          if (_streamDemuxer.IsScrambled)
+          {
+            if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+            {
+              if (_lastPMTVersion >= 0 && _pmtRetyCount < 3)
+              {
+                TimeSpan ts = DateTime.Now - _pmtTimer;
+                if (ts.TotalSeconds >= 3)
+                {
+                  _pmtRetyCount++;
+                  SendPMT();
+                }
+              }
+            }
+          }
+        }
+      }
+      else
+      {
+        if (SignalPresent())
+        {
+          if (_streamDemuxer.IsScrambled)
           {
             if (_lastPMTVersion >= 0 && _pmtRetyCount < 3)
             {
@@ -3722,21 +3750,6 @@ namespace MediaPortal.TV.Recording
                 _pmtRetyCount++;
                 SendPMT();
               }
-            }
-          }
-        }
-      }
-      else
-      {
-        if (_streamDemuxer.IsScrambled)
-        {
-          if (_lastPMTVersion >= 0 && _pmtRetyCount < 3)
-          {
-            TimeSpan ts = DateTime.Now - _pmtTimer;
-            if (ts.TotalSeconds >= 3)
-            {
-              _pmtRetyCount++;
-              SendPMT();
             }
           }
         }
@@ -3759,10 +3772,10 @@ namespace MediaPortal.TV.Recording
       //bool restartGraph=false;
       _lastPMTVersion = -1;
       _pmtRetyCount = 0;
+      _inScanningMode = false;
       //bool restartGraph=false;
       try
       {
-        _isTuning = true;
         VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
 #if USEMTSWRITER
 				/*if (_graphState==State.TimeShifting)
@@ -4038,7 +4051,7 @@ namespace MediaPortal.TV.Recording
                                             _currentTuningObject.VideoPid, _currentTuningObject.PMTPid,
                                             _currentTuningObject.AC3Pid, _currentTuningObject.TeletextPid);
 
-        SendPMT();
+        //SendPMT();
         _refreshPmtTable = true;
         _lastPMTVersion = -1;
         _pmtRetyCount = 0;
@@ -4075,7 +4088,6 @@ namespace MediaPortal.TV.Recording
           long refTime = 0;
           m_IStreamBufferSink.SetAvailableFilter(ref refTime);
         }
-        _isTuning = false;
       }
     }//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -4349,8 +4361,9 @@ namespace MediaPortal.TV.Recording
       {
         Log.Write(ex);
       }
-      SetPids();
+      SetHardwarePidFiltering();
       _processTimer = DateTime.MinValue;
+      _pmtSendCounter = 0;
     }
 
     #endregion
@@ -4370,7 +4383,7 @@ namespace MediaPortal.TV.Recording
       if (_filterNetworkProvider == null) return;
       if (tuningObject == null) return;
 
-      _isTuning = true;
+      _inScanningMode = true;
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       //start viewing if we're not yet viewing
       if (!_isGraphRunning)
@@ -4394,8 +4407,7 @@ namespace MediaPortal.TV.Recording
       SubmitTuneRequest(_currentTuningObject);
       _signalLostTimer = DateTime.Now;
       UpdateVideoState();
-      Log.Write("Video State after changing channel:{0}", VideoRendererStatistics.VideoState);
-      _isTuning = false;
+
     }//public void Tune(object tuningObject)
 
     /// <summary>
@@ -4948,7 +4960,6 @@ namespace MediaPortal.TV.Recording
 
       try
       {
-        _isTuning = true;
 
         _currentChannelNumber = channel.Channel;
         _startTimer = DateTime.Now;
@@ -5098,7 +5109,7 @@ namespace MediaPortal.TV.Recording
           _streamDemuxer.OnTuneNewChannel();
           _streamDemuxer.SetChannelData(_currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.AC3Pid, _currentTuningObject.TeletextPid, _currentTuningObject.Audio3, _currentTuningObject.ServiceName, _currentTuningObject.PMTPid, _currentTuningObject.ProgramNumber);
         }
-        SendPMT();
+        //SendPMT();
 
         _refreshPmtTable = true;
 
@@ -5106,7 +5117,7 @@ namespace MediaPortal.TV.Recording
       finally
       {
         _signalLostTimer = DateTime.Now;
-        _isTuning = false;
+
       }
     }//public void TuneRadioChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -5274,7 +5285,7 @@ namespace MediaPortal.TV.Recording
         }
 
 #endif
-        if (!isSame)
+        if (!isSame || _pmtSendCounter == 0)
         {
           Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA: OnPMTIsChanged:{0}", pmtName);
           using (System.IO.FileStream stream = new System.IO.FileStream(pmtName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None))
@@ -5300,13 +5311,23 @@ namespace MediaPortal.TV.Recording
     #endregion
 
 
-    void SetPids()
+    void AddHardwarePid(int pid, ArrayList pids)
+    {
+      if (pid <= 0) return;
+      foreach (ushort existingPid in pids)
+      {
+        if (existingPid == (ushort)pid) return;
+      }
+      pids.Add( (ushort)pid);
+    }
+
+    void SetHardwarePidFiltering()
     {
 #if HW_PID_FILTERING
       string pidsText = String.Empty;
       ArrayList pids = new ArrayList();
       VideoCaptureProperties props = new VideoCaptureProperties(_filterTunerDevice);
-      if (_isTuning == false)
+      if (_inScanningMode == false)
       {
         pids.Add((ushort)0);
         pids.Add((ushort)1);
@@ -5314,19 +5335,22 @@ namespace MediaPortal.TV.Recording
         pids.Add((ushort)18);
         pids.Add((ushort)0xd3);
         pids.Add((ushort)0xd2);
-        if (_currentTuningObject.VideoPid > 0) pids.Add((ushort)_currentTuningObject.VideoPid);
-        if (_currentTuningObject.AudioPid > 0) pids.Add((ushort)_currentTuningObject.AudioPid);
-        if (_currentTuningObject.AC3Pid > 0) pids.Add((ushort)_currentTuningObject.AC3Pid);
-        if (_currentTuningObject.PMTPid > 0) pids.Add((ushort)_currentTuningObject.PMTPid);
-        if (_currentTuningObject.TeletextPid > 0) pids.Add((ushort)_currentTuningObject.TeletextPid);
-        if (_currentTuningObject.PCRPid > 0) pids.Add((ushort)_currentTuningObject.PCRPid);
-        if (_currentTuningObject.ECMPid > 0) pids.Add((ushort)_currentTuningObject.ECMPid);
+        AddHardwarePid(_currentTuningObject.VideoPid, pids);
+        AddHardwarePid(_currentTuningObject.AudioPid, pids);
+        AddHardwarePid(_currentTuningObject.Audio1, pids);
+        AddHardwarePid(_currentTuningObject.Audio2, pids);
+        AddHardwarePid(_currentTuningObject.Audio3, pids);
+        AddHardwarePid(_currentTuningObject.AC3Pid, pids);
+        AddHardwarePid(_currentTuningObject.PMTPid, pids);
+        AddHardwarePid(_currentTuningObject.TeletextPid, pids);
+        AddHardwarePid(_currentTuningObject.PCRPid, pids);
+        AddHardwarePid(_currentTuningObject.ECMPid, pids);
         for (int i = 0; i < pids.Count; ++i)
           pidsText += String.Format("{0:X},", (ushort)pids[i]);
 
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:SetPIDS to:{0}", pidsText);
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:SetHardwarePidFiltering to:{0}", pidsText);
       }
-      props.SetPIDS(Network() == NetworkType.DVBC,
+      props.SetHardwarePidFiltering(Network() == NetworkType.DVBC,
                     Network() == NetworkType.DVBT,
                     Network() == NetworkType.DVBS,
                     Network() == NetworkType.ATSC,
