@@ -927,6 +927,7 @@ namespace MediaPortal.TV.Recording
       {
         _lastTuneFailed = false;
       }
+      UpdateSignalPresent();
       SetHardwarePidFiltering();
       _processTimer = DateTime.MinValue;
       _pmtSendCounter = 0;
@@ -1072,5 +1073,92 @@ namespace MediaPortal.TV.Recording
         }
       }
     }
+
+    
+    DVBChannel LoadDiseqcSettings(DVBChannel ch, int disNo)
+    {
+      if (_cardFilename == "")
+        return ch;
+
+      int lnbKhz = 0;
+      int lnbKhzVal = 0;
+      int diseqc = 0;
+      int lnbKind = 0;
+      // lnb config
+      int lnb0MHZ = 0;
+      int lnb1MHZ = 0;
+      int lnbswMHZ = 0;
+      int cbandMHZ = 0;
+      int circularMHZ = 0;
+
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_cardFilename))
+      {
+        lnb0MHZ = xmlreader.GetValueAsInt("dvbs", "LNB0", 9750);
+        lnb1MHZ = xmlreader.GetValueAsInt("dvbs", "LNB1", 10600);
+        lnbswMHZ = xmlreader.GetValueAsInt("dvbs", "Switch", 11700);
+        cbandMHZ = xmlreader.GetValueAsInt("dvbs", "CBand", 5150);
+        circularMHZ = xmlreader.GetValueAsInt("dvbs", "Circular", 10750);
+        //				bool useLNB1=xmlreader.GetValueAsBool("dvbs","useLNB1",false);
+        //				bool useLNB2=xmlreader.GetValueAsBool("dvbs","useLNB2",false);
+        //				bool useLNB3=xmlreader.GetValueAsBool("dvbs","useLNB3",false);
+        //				bool useLNB4=xmlreader.GetValueAsBool("dvbs","useLNB4",false);
+        switch (disNo)
+        {
+          case 1:
+            // config a
+            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb", 44);
+            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 0);
+            lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind", 0);
+            break;
+          case 2:
+            // config b
+            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb2", 44);
+            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 0);
+            lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind2", 0);
+            break;
+          case 3:
+            // config c
+            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb3", 44);
+            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 0);
+            lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind3", 0);
+            break;
+          //
+          case 4:
+            // config d
+            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb4", 44);
+            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 0);
+            lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind4", 0);
+            //
+            break;
+        }// switch(disNo)
+        switch (lnbKhz)
+        {
+          case 0: lnbKhzVal = 0; break;
+          case 22: lnbKhzVal = 1; break;
+          case 33: lnbKhzVal = 2; break;
+          case 44: lnbKhzVal = 3; break;
+        }
+
+
+      }//using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(_cardFilename))
+
+      // set values to dvbchannel-object
+      ch.DiSEqC = diseqc;
+      // set the lnb parameter 
+      if (ch.Frequency >= lnbswMHZ * 1000)
+      {
+        ch.LNBFrequency = lnb1MHZ;
+        ch.LNBKHz = lnbKhzVal;
+      }
+      else
+      {
+        ch.LNBFrequency = lnb0MHZ;
+        ch.LNBKHz = 0;
+      }
+      Log.WriteFile(Log.LogType.Capture, "auto-tune ss2: freq={0} lnbKhz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LNBKHz, ch.LNBFrequency, ch.DiSEqC);
+      return ch;
+
+    }// LoadDiseqcSettings()
+
   }
 }

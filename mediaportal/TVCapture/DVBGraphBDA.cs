@@ -3777,7 +3777,6 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public void TuneChannel(TVChannel channel)
     {
-      if (_filterNetworkProvider == null) return;
       //bool restartGraph=false;
       _lastPMTVersion = -1;
       _pmtRetyCount = 0;
