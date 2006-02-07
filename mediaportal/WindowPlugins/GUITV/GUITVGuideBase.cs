@@ -722,8 +722,9 @@ namespace MediaPortal.GUI.TV
             float fpos = ((float)iCurTime) / ((float)(iTimeWidth));
             fpos *= (float)iWidth;
             fpos += (float)iStartX;
+            int width = vertLine.Width / 2;
             vertLine.IsVisible = true;
-            vertLine.XPosition = (int)fpos;
+            vertLine.XPosition = (int)fpos - width;
             vertLine.Select(0);
             ts = DateTime.Now - _updateTimer;
             if (ts.TotalMinutes >= 1)
