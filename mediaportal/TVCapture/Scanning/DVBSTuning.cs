@@ -215,7 +215,7 @@ namespace MediaPortal.TV.Scanning
       TPList transponder = _transponderList[_currentIndex];
       string chanDesc = String.Format("Transponder:{0} MHz, Polarisation:{1} SymbolRate:{2}",
         ((float)transponder.TPfreq)/1000.0, GetPolarisation(transponder.TPpol), transponder.TPsymb);
-      string description = String.Format("Transponder:{0}/{1} {2}", _currentIndex, _count, chanDesc);
+      string description = String.Format("Transponder:{0}/{1} {2} locking...", _currentIndex, _count, chanDesc);
       _callback.OnStatus(description);
     }
     string GetPolarisation(int pol)
@@ -248,9 +248,8 @@ namespace MediaPortal.TV.Scanning
       _callback.OnStatus(description);
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
-      _callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", _newChannels, _newRadioChannels));
       _captureCard.StoreTunedChannels(false, true, ref _newChannels, ref _updatedChannels, ref _newRadioChannels, ref _updatedRadioChannels);
-      _callback.OnStatus2(String.Format("new tv:{0} new radio:{1}", _newChannels, _newRadioChannels));
+      _callback.OnStatus2(String.Format("new tv:{0} new radio:{1} updated tv:{2} updated radio:{3}", _newChannels, _newRadioChannels, _updatedChannels, _updatedRadioChannels));
 
       _captureCard.Process();
       _callback.UpdateList();
@@ -313,6 +312,8 @@ namespace MediaPortal.TV.Scanning
       }
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
+      Log.Write("dvbs-scan:signal quality:{0} signal strength:{1} signal present:{2}",
+                  _captureCard.SignalQuality, _captureCard.SignalStrength, _captureCard.SignalPresent() );
     }
 
     #endregion

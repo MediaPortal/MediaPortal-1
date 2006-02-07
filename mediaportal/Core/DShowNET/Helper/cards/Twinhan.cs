@@ -37,7 +37,7 @@ namespace DShowNET
     //#define THBDA_IO_INDEX													0xAA00
     //#define THBDA_IOCTL_CI_SEND_PMT                 CTL_CODE(THBDA_IO_INDEX, 206, METHOD_BUFFERED, FILE_ANY_ACCESS)
     //#define THBDA_IOCTL_CHECK_INTERFACE             CTL_CODE(THBDA_IO_INDEX, 121, METHOD_BUFFERED, FILE_ANY_ACCESS)
-
+    //#define THBDA_IOCTL_CI_PARSER_PMT               CTL_CODE(THBDA_IO_INDEX, 207, METHOD_BUFFERED, FILE_ANY_ACCESS)
     //typedef struct 
     //				{
     //					GUID    CmdGUID;            // Private Command GUID
@@ -119,77 +119,172 @@ namespace DShowNET
     //readonly uint THBDA_IOCTL_CI_SEND_PMT = 0xaa000338;
     readonly uint THBDA_IOCTL_CHECK_INTERFACE = 0xaa0001e4;
     readonly uint THBDA_IOCTL_CI_PARSER_PMT = 0xaa00033c;
+    readonly uint THBDA_IOCTL_CI_GET_STATE = 0xaa000320;//CTL_CODE(THBDA_IO_INDEX, 200, METHOD_BUFFERED, FILE_ANY_ACCESS)
 
     public Twinhan(IBaseFilter filter)
       : base(filter)
     {
-      //isTwinHan=GetCIInfo();
+      //isTwinHan=IsTwinhanCard();
     }
     public bool IsTwinhan
     {
       get
       {
-        return GetCIInfo();
+        bool result=IsTwinhanCard();
+        if (result)
+        {
+          if (IsCamPresent())
+          {
+            Log.Write("twinhan: CAM inserted");
+          }
+        }
+        return result;
       }
     }
 
-
-
-    public bool GetCIInfo()
+    public void GetCAMStatus(out uint CIState, out uint MMIState)
     {
-      Log.Write("Twinhan: check for twinhan driver");
-      bool success = false;
-      IntPtr ptrDwBytesReturned = Marshal.AllocCoTaskMem(4);
-
-      int thbdaLen = 0x28;
-      IntPtr thbdaBuf = Marshal.AllocCoTaskMem(thbdaLen);
-      Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
-      Marshal.WriteInt16(thbdaBuf, 4, 0x2017);
-      Marshal.WriteInt16(thbdaBuf, 6, 0x4b03);
-      Marshal.WriteByte(thbdaBuf, 8, 0x90);
-      Marshal.WriteByte(thbdaBuf, 9, 0xf8);
-      Marshal.WriteByte(thbdaBuf, 10, 0x85);
-      Marshal.WriteByte(thbdaBuf, 11, 0x6a);
-      Marshal.WriteByte(thbdaBuf, 12, 0x62);
-      Marshal.WriteByte(thbdaBuf, 13, 0xcb);
-      Marshal.WriteByte(thbdaBuf, 14, 0x3d);
-      Marshal.WriteByte(thbdaBuf, 15, 0x67);
-      Marshal.WriteInt32(thbdaBuf, 16, (int)THBDA_IOCTL_CHECK_INTERFACE);//control code
-      Marshal.WriteInt32(thbdaBuf, 20, (int)IntPtr.Zero);
-      Marshal.WriteInt32(thbdaBuf, 24, 0);
-      Marshal.WriteInt32(thbdaBuf, 28, (int)IntPtr.Zero);
-      Marshal.WriteInt32(thbdaBuf, 32, 0);
-      Marshal.WriteInt32(thbdaBuf, 36, (int)ptrDwBytesReturned);
-
+      CIState = 0;
+      MMIState = 0;
+      /*
+       typedef struct {
+        ULONG ulCIState;
+        ULONG ulMMIState;
+      } THCIState, *PTHCIState;
+      */
       IPin pin = DsFindPin.ByDirection(captureFilter, PinDirection.Input, 0);
       if (pin != null)
       {
-        IKsPropertySet propertySet = pin as IKsPropertySet;
+        DirectShowLib.IKsPropertySet propertySet = pin as DirectShowLib.IKsPropertySet;
         if (propertySet != null)
         {
           Guid propertyGuid = THBDA_TUNER;
-
-          int hr = propertySet.RemoteSet(ref propertyGuid, 0, thbdaBuf, (uint)thbdaLen, thbdaBuf, (uint)thbdaLen);
-          if (hr == 0)
+          IntPtr thbdaBuf = Marshal.AllocCoTaskMem(1024);
+          IntPtr ptrDwBytesReturned = Marshal.AllocCoTaskMem(4);
+          IntPtr ptrOutBuffer = Marshal.AllocCoTaskMem(4096);
+          try
           {
-            Log.WriteFile(Log.LogType.Log, "twinhan card detected");
-            success = true;
+            int thbdaLen = 0x28;
+            Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+            Marshal.WriteInt16(thbdaBuf, 4, 0x2017);
+            Marshal.WriteInt16(thbdaBuf, 6, 0x4b03);
+            Marshal.WriteByte(thbdaBuf, 8, 0x90);
+            Marshal.WriteByte(thbdaBuf, 9, 0xf8);
+            Marshal.WriteByte(thbdaBuf, 10, 0x85);
+            Marshal.WriteByte(thbdaBuf, 11, 0x6a);
+            Marshal.WriteByte(thbdaBuf, 12, 0x62);
+            Marshal.WriteByte(thbdaBuf, 13, 0xcb);
+            Marshal.WriteByte(thbdaBuf, 14, 0x3d);
+            Marshal.WriteByte(thbdaBuf, 15, 0x67);
+            Marshal.WriteInt32(thbdaBuf, 16, (int)THBDA_IOCTL_CI_GET_STATE);//control code
+            Marshal.WriteInt32(thbdaBuf, 20, (int)IntPtr.Zero); //LPVOID inbuffer
+            Marshal.WriteInt32(thbdaBuf, 24, 0);                //DWORD inbuffersize
+            Marshal.WriteInt32(thbdaBuf, 28, ptrOutBuffer.ToInt32()); //LPVOID outbuffer
+            Marshal.WriteInt32(thbdaBuf, 32, 4096);                //DWORD outbuffersize
+            Marshal.WriteInt32(thbdaBuf, 36, (int)ptrDwBytesReturned);//LPVOID bytesreturned
+
+            int hr = propertySet.Set(propertyGuid, 0, thbdaBuf, thbdaLen, thbdaBuf, thbdaLen);
+            if (hr == 0)
+            {
+              int bytesReturned = Marshal.ReadInt32(ptrDwBytesReturned);
+              CIState = (uint)Marshal.ReadInt32(ptrOutBuffer, 0);
+              MMIState = (uint)Marshal.ReadInt32(ptrOutBuffer, 4);
+              Log.Write("twinhan:CI State:{0:X} MMI State:{1:X}", CIState, MMIState);
+            }
+            else
+            {
+              Log.Write("twinhan: unable to get CI State hr:{0:X}", hr);
+            }
           }
-          Marshal.ReleaseComObject(propertySet);
+          finally
+          {
+            Marshal.FreeCoTaskMem(thbdaBuf);
+            Marshal.FreeCoTaskMem(ptrDwBytesReturned);
+            Marshal.FreeCoTaskMem(ptrOutBuffer);
+          }
         }
-        Marshal.ReleaseComObject(pin);
+        //Marshal.ReleaseComObject(pin);
       }
+    }
+    public bool IsCamPresent()
+    {
+      uint CIState;
+      uint MMIState;
+      GetCAMStatus(out CIState, out MMIState);
+      if (CIState != 0 && MMIState != 0) return true;
+      return false;
+    }
+    public bool IsCamReady()
+    {
+      return IsCamPresent();
+    }
+    public bool IsTwinhanCard()
+    {
+      Log.Write("Twinhan: check for twinhan driver");
+      
+      bool success = false;
+      IntPtr ptrDwBytesReturned = Marshal.AllocCoTaskMem(4);
+      try
+      {
+        int thbdaLen = 0x28;
+        IntPtr thbdaBuf = Marshal.AllocCoTaskMem(thbdaLen);
+        try
+        {
+          Marshal.WriteInt32(thbdaBuf, 0, 0x255e0082);//GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
+          Marshal.WriteInt16(thbdaBuf, 4, 0x2017);
+          Marshal.WriteInt16(thbdaBuf, 6, 0x4b03);
+          Marshal.WriteByte(thbdaBuf, 8, 0x90);
+          Marshal.WriteByte(thbdaBuf, 9, 0xf8);
+          Marshal.WriteByte(thbdaBuf, 10, 0x85);
+          Marshal.WriteByte(thbdaBuf, 11, 0x6a);
+          Marshal.WriteByte(thbdaBuf, 12, 0x62);
+          Marshal.WriteByte(thbdaBuf, 13, 0xcb);
+          Marshal.WriteByte(thbdaBuf, 14, 0x3d);
+          Marshal.WriteByte(thbdaBuf, 15, 0x67);
+          Marshal.WriteInt32(thbdaBuf, 16, (int)THBDA_IOCTL_CHECK_INTERFACE);//control code
+          Marshal.WriteInt32(thbdaBuf, 20, (int)IntPtr.Zero);
+          Marshal.WriteInt32(thbdaBuf, 24, 0);
+          Marshal.WriteInt32(thbdaBuf, 28, (int)IntPtr.Zero);
+          Marshal.WriteInt32(thbdaBuf, 32, 0);
+          Marshal.WriteInt32(thbdaBuf, 36, (int)ptrDwBytesReturned);
 
+          IPin pin = DsFindPin.ByDirection(captureFilter, PinDirection.Input, 0);
+          if (pin != null)
+          {
+            DirectShowLib.IKsPropertySet propertySet = pin as DirectShowLib.IKsPropertySet;
+            if (propertySet != null)
+            {
+              Guid propertyGuid = THBDA_TUNER;
 
-      Marshal.FreeCoTaskMem(ptrDwBytesReturned);
-
+              int hr = propertySet.Set(propertyGuid, 0, thbdaBuf, thbdaLen, thbdaBuf, thbdaLen);
+              if (hr == 0)
+              {
+                Log.WriteFile(Log.LogType.Log, "twinhan card detected");
+                success = true;
+              }
+              //Marshal.ReleaseComObject(propertySet);
+            }
+            //Marshal.ReleaseComObject(pin);
+          }
+        }
+        finally
+        {
+          Marshal.FreeCoTaskMem(thbdaBuf);
+        }
+      }
+      finally
+      {
+        Marshal.FreeCoTaskMem(ptrDwBytesReturned);
+      }
       return success;
     }
 
 
     public void SendPMT(uint videoPid, uint audioPid, byte[] PMT, int pmtLen)
     {
-      Log.Write("Twinhan send PMT len:{0} video:0x{1:X} audio:0x{2:X}", pmtLen, videoPid, audioPid);
+      if (IsCamPresent() == false) return;
+
+      Log.Write("Twinhan: send PMT len:{0} video:0x{1:X} audio:0x{2:X}", pmtLen, videoPid, audioPid);
       IntPtr ptrPMT = Marshal.AllocCoTaskMem(pmtLen + 1);
 
       if (ptrPMT == IntPtr.Zero)

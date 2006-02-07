@@ -1079,6 +1079,8 @@ namespace MediaPortal.TV.Recording
         _epgGrabber.AnalyzerInterface = _analyzerInterface;
         _epgGrabber.Network = Network();
 
+        VideoCaptureProperties props = new VideoCaptureProperties(_filterTunerDevice);
+        props.IsCISupported();
         return true;
       }
       catch (Exception ex)

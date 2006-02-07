@@ -129,8 +129,21 @@ namespace DShowNET.Helper
     }
     public bool IsCISupported()
     {
-      if (digitalEverywhere.IsDigitalEverywhere) return true;
-      if (twinhan.IsTwinhan) return true;
+      if (digitalEverywhere.IsDigitalEverywhere)
+      {
+        if (digitalEverywhere.IsCamPresent() && digitalEverywhere.IsCamReady() )
+        {
+          return true;
+        }
+        return false;
+      }
+      if (twinhan.IsTwinhan)
+      {
+        if (twinhan.IsCamReady())
+        {
+          return true;
+        }
+      }
       return false;
     }
 
