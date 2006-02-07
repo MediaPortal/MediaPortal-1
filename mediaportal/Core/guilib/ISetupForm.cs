@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 
 namespace MediaPortal.GUI.Library
@@ -34,12 +39,12 @@ namespace MediaPortal.GUI.Library
     string PluginName();  // Returns the name of the plugin which is shown in the plugin menu
     string Description(); // Returns the description of the plugin is shown in the plugin menu
     string Author();      // Returns the author of the plugin which is shown in the plugin menu
-    void   ShowPlugin();  // show the setup dialog
-    bool   CanEnable();   // Indicates whether plugin can be enabled/disabled
-    int    GetWindowId(); // get ID of windowplugin belonging to this setup
-		bool   DefaultEnabled(); // Indicates if plugin is enabled by default;
-    bool   HasSetup();    // indicates if a plugin has its own setup screen
-    
+    void ShowPlugin();  // show the setup dialog
+    bool CanEnable();   // Indicates whether plugin can be enabled/disabled
+    int GetWindowId(); // get ID of windowplugin belonging to this setup
+    bool DefaultEnabled(); // Indicates if plugin is enabled by default;
+    bool HasSetup();    // indicates if a plugin has its own setup screen
+
     /// <summary>
     /// If the plugin should have its own button on the home menu of Mediaportal then it
     /// should return true to this method, otherwise if it should not be on home
@@ -51,6 +56,25 @@ namespace MediaPortal.GUI.Library
     /// <param name="strPictureImage">subpicture for the button or empty for none</param>
     /// <returns>true  : plugin needs its own button on home
     ///          false : plugin does not need its own button on home</returns>
-    bool   GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage); 
+    bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage);
+  }
+
+  /// <summary>
+  /// Extended Interface for plugin setup configuration screens.
+  /// This Interface implements the same members as ISetupForm, PLUS new features,
+  /// like: ShowHome()
+  /// Redundant, so we don't break external 3rd party plugins, if we want to add new features to the interface.
+  /// 
+  /// Plugins may have a configuration screen. By implementing this interface in your plugin,
+  /// MediaPortal will add it to the plugin section menu (Configuration.exe) where users can configure your plugin
+  /// </summary>
+  public interface ISetupFormEx : ISetupForm
+  {
+    /// <summary>
+    /// Indicates, if a plugin is shown by default in Home screen, or in My Plugins
+    /// </summary>
+    /// <returns>true : plugin defaults to be shown in Home</returns>
+    /// <returns>false: plugin defaults to be shown in My Plugins</returns>
+    bool ShowDefaultHome();
   }
 }
