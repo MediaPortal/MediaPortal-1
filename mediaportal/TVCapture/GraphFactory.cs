@@ -59,7 +59,8 @@ namespace MediaPortal.TV.Recording
 
       if (card.CardType == TVCapture.CardTypes.Digital_SS2)
 			{
-				return new DVBGraphSS2(card.ID);
+        return new DVBGraphSkyStar2(card);
+				//return new DVBGraphSS2(card.ID);
 			}
 
       if (card.CardType == TVCapture.CardTypes.Analog)
