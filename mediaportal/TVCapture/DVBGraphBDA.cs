@@ -5343,7 +5343,6 @@ namespace MediaPortal.TV.Recording
 #if HW_PID_FILTERING
       string pidsText = String.Empty;
       ArrayList pids = new ArrayList();
-      VideoCaptureProperties props = new VideoCaptureProperties(_filterTunerDevice);
       if (_inScanningMode == false)
       {
         pids.Add((ushort)0);
@@ -5367,14 +5366,20 @@ namespace MediaPortal.TV.Recording
 
         Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:SetHardwarePidFiltering to:{0}", pidsText);
       }
+      SendHWPids(pids);
+    }
+    protected virtual void SendHWPids(ArrayList pids)
+    {
+      VideoCaptureProperties props = new VideoCaptureProperties(_filterTunerDevice);
       props.SetHardwarePidFiltering(Network() == NetworkType.DVBC,
                     Network() == NetworkType.DVBT,
                     Network() == NetworkType.DVBS,
                     Network() == NetworkType.ATSC,
                     pids);
 
-#endif
     }
+#endif
+
     public string TvTimeshiftFileName()
     {
 #if USEMTSWRITER
