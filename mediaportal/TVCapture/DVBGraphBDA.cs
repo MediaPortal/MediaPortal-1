@@ -4394,7 +4394,7 @@ namespace MediaPortal.TV.Recording
     public void Tune(object tuningObject, int disecqNo)
     {
       //if no network provider then return;
-      if (_filterNetworkProvider == null) return;
+      
       if (tuningObject == null) return;
 
       _inScanningMode = true;
@@ -4972,7 +4972,7 @@ namespace MediaPortal.TV.Recording
     #region Radio
     public void TuneRadioChannel(RadioStation channel)
     {
-      if (_filterNetworkProvider == null) return;
+      
 
       try
       {
