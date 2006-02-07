@@ -280,7 +280,7 @@ namespace MediaPortal.TV.Recording
     protected bool _pluginsEnabled = false;
     int[] _ecmPids = new int[3] { 0, 0, 0 };
     int[] _ecmIds = new int[3] { 0, 0, 0 };
-    DVBDemuxer _dvbDemuxer = new DVBDemuxer();
+    DVBDemuxer _streamDemuxer = new DVBDemuxer();
     string _cardType = "";
     string _cardFilename = "";
     DVBChannel _currentTuningObject;
@@ -318,11 +318,11 @@ namespace MediaPortal.TV.Recording
       }
 
 
-      //            _dvbDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
+      //            _streamDemuxer.OnAudioFormatChanged += new DVBDemuxer.OnAudioChanged(OnAudioFormatChanged);
 
-      _dvbDemuxer.SetCardType((int)DVBEPG.EPGCard.TechnisatStarCards, NetworkType.DVBS);
-      //			_dvbDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(_dvbDemuxer_OnPMTIsChanged);
-      //			_dvbDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(_dvbDemuxer_OnGotTable);
+      _streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TechnisatStarCards, NetworkType.DVBS);
+      //			_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(_streamDemuxer_OnPMTIsChanged);
+      //			_streamDemuxer.OnGotTable+=new MediaPortal.TV.Recording.DVBDemuxer.OnTableReceived(_streamDemuxer_OnGotTable);
       // reg. settings
       try
       {
@@ -374,8 +374,8 @@ namespace MediaPortal.TV.Recording
       if (_graphState != State.None) return false;
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:creategraph()");
 
-      if (_dvbDemuxer != null)
-        _dvbDemuxer.GrabTeletext(false);
+      if (_streamDemuxer != null)
+        _streamDemuxer.GrabTeletext(false);
       // create graphs
       _vmr9 = new VMR9Util();
       Log.WriteFile(Log.LogType.Capture, "DVBGraphSS2:creategraph() create graph");
@@ -635,7 +635,7 @@ namespace MediaPortal.TV.Recording
           mt.majorType = MediaType.Stream;
           mt.subType = MediaSubTypeEx.MPEG2Transport;
           //m_sampleInterface.SetOneShot(true);
-          m_sampleInterface.SetCallback(_dvbDemuxer, 1);
+          m_sampleInterface.SetCallback(_streamDemuxer, 1);
           m_sampleInterface.SetMediaType(mt);
           m_sampleInterface.SetBufferSamples(false);
         }
@@ -951,10 +951,10 @@ namespace MediaPortal.TV.Recording
         _graphState = State.Created;
       }
 
-      if (_dvbDemuxer != null)
+      if (_streamDemuxer != null)
       {
-        _dvbDemuxer.GrabTeletext(false);
-        _dvbDemuxer.SetChannelData(0, 0, 0, 0, 0, "", 0, 0);
+        _streamDemuxer.GrabTeletext(false);
+        _streamDemuxer.SetChannelData(0, 0, 0, 0, 0, "", 0, 0);
       }
 
       if (_vmr9 != null)
@@ -1876,10 +1876,10 @@ namespace MediaPortal.TV.Recording
           }
 
           _lastTuneFailed = false;
-          if (_dvbDemuxer != null)
+          if (_streamDemuxer != null)
           {
-            _dvbDemuxer.OnTuneNewChannel();
-            _dvbDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.AC3Pid, ch.TeletextPid, ch.Audio3, ch.ServiceName, ch.PMTPid, ch.ProgramNumber);
+            _streamDemuxer.OnTuneNewChannel();
+            _streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.AC3Pid, ch.TeletextPid, ch.Audio3, ch.ServiceName, ch.PMTPid, ch.ProgramNumber);
           }
           if (_interfaceMediaControl != null && _filterMpeg2DemuxerVideoPin != null && _filterMpeg2DemuxerAudioPin != null && _filterMpeg2Demuxer != null && _filterMpeg2DemuxerInterface != null)
           {
@@ -2394,7 +2394,7 @@ namespace MediaPortal.TV.Recording
       if (!isViewing) return;
 
       // do we receive any packets?
-      if (!_dvbDemuxer.ReceivingPackets)
+      if (!_streamDemuxer.ReceivingPackets)
       {
         TimeSpan ts = DateTime.Now - _signalLostTimer;
         if (ts.TotalSeconds < 5)
@@ -2406,7 +2406,7 @@ namespace MediaPortal.TV.Recording
         VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
         return;
       }
-      else if (_dvbDemuxer.IsScrambled)
+      else if (_streamDemuxer.IsScrambled)
       {
         VideoRendererStatistics.VideoState = VideoRendererStatistics.State.Scrambled;
         _signalLostTimer = DateTime.Now;
@@ -2531,8 +2531,8 @@ namespace MediaPortal.TV.Recording
       UpdateSignalQuality();
       if (_graphState == State.Created) return;
       
-      if (_dvbDemuxer != null) 
-        _dvbDemuxer.Process();
+      if (_streamDemuxer != null) 
+        _streamDemuxer.Process();
 
       if (ProcessEpg()) return;
 
@@ -2628,7 +2628,7 @@ namespace MediaPortal.TV.Recording
       using (DVBSections sections = new DVBSections())
       {
         ushort count = 0;
-        sections.DemuxerObject = _dvbDemuxer;
+        sections.DemuxerObject = _streamDemuxer;
         sections.Timeout = 2500;
 
         for (int i = 0; i < 100; ++i)
@@ -3219,10 +3219,10 @@ namespace MediaPortal.TV.Recording
 
         _currentChannel = ch;
 
-        if (_dvbDemuxer != null)
+        if (_streamDemuxer != null)
         {
-          _dvbDemuxer.OnTuneNewChannel();
-          _dvbDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.AC3Pid, ch.TeletextPid, ch.Audio3, ch.ServiceName, ch.PMTPid, ch.ProgramNumber);
+          _streamDemuxer.OnTuneNewChannel();
+          _streamDemuxer.SetChannelData(ch.AudioPid, ch.VideoPid, ch.AC3Pid, ch.TeletextPid, ch.Audio3, ch.ServiceName, ch.PMTPid, ch.ProgramNumber);
         }
 
         if (_filterMpeg2DemuxerVideoPin != null && _filterMpeg2DemuxerAudioPin != null)
@@ -3372,8 +3372,8 @@ namespace MediaPortal.TV.Recording
         else
         {
           _selectedAudioPid = audioPid;
-          if (_dvbDemuxer != null)
-            _dvbDemuxer.SetChannelData(audioPid, _currentChannel.VideoPid, _currentChannel.AC3Pid, _currentChannel.TeletextPid, _currentChannel.Audio3, _currentChannel.ServiceName, _currentChannel.PMTPid, _currentChannel.ProgramNumber);
+          if (_streamDemuxer != null)
+            _streamDemuxer.SetChannelData(audioPid, _currentChannel.VideoPid, _currentChannel.AC3Pid, _currentChannel.TeletextPid, _currentChannel.Audio3, _currentChannel.ServiceName, _currentChannel.PMTPid, _currentChannel.ProgramNumber);
 
         }
       }
@@ -3417,15 +3417,15 @@ namespace MediaPortal.TV.Recording
     }
     #endregion
 
-    private void _dvbDemuxer_OnPMTIsChanged(byte[] pmtTable)
+    private void _streamDemuxer_OnPMTIsChanged(byte[] pmtTable)
     {
     }
 
-    private void _dvbDemuxer_OnGotSection(int pid, int tableID, byte[] sectionData)
+    private void _streamDemuxer_OnGotSection(int pid, int tableID, byte[] sectionData)
     {
     }
 
-    private void _dvbDemuxer_OnGotTable(int pid, int tableID, ArrayList tableList)
+    private void _streamDemuxer_OnGotTable(int pid, int tableID, ArrayList tableList)
     {
       if (tableList == null)
         return;
@@ -3453,8 +3453,8 @@ namespace MediaPortal.TV.Recording
     public void GrabTeletext(bool yesNo)
     {
       if (_graphState == State.None || _graphState == State.Created) return;
-      if (_dvbDemuxer == null) return;
-      _dvbDemuxer.GrabTeletext(yesNo);
+      if (_streamDemuxer == null) return;
+      _streamDemuxer.GrabTeletext(yesNo);
     }
     public IBaseFilter AudiodeviceFilter()
     {

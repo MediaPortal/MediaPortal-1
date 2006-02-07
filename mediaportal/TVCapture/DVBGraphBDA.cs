@@ -74,7 +74,7 @@ namespace MediaPortal.TV.Recording
     #endregion
 
     #region demuxer pin media types
-    static byte[] Mpeg2ProgramVideo = 
+    protected static byte[] Mpeg2ProgramVideo = 
 				{
 					0x00, 0x00, 0x00, 0x00,                         //00  .hdr.rcSource.left              = 0x00000000
 					0x00, 0x00, 0x00, 0x00,                         //04  .hdr.rcSource.top               = 0x00000000
@@ -121,7 +121,7 @@ namespace MediaPortal.TV.Recording
 					0x00, 0x00, 0x00, 0x00,
 		};
 
-    static byte[] MPEG1AudioFormat = 
+    protected static byte[] MPEG1AudioFormat = 
 			{
 				0x50, 0x00,             // format type      = 0x0050=WAVE_FORMAT_MPEG
 				0x02, 0x00,             // channels
@@ -143,13 +143,13 @@ namespace MediaPortal.TV.Recording
 
     #region imports
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern bool DvrMsCreate(out int id, IBaseFilter streamBufferSink, [In, MarshalAs(UnmanagedType.LPWStr)]string strPath, uint dwRecordingType);
+    unsafe protected static extern bool DvrMsCreate(out int id, IBaseFilter streamBufferSink, [In, MarshalAs(UnmanagedType.LPWStr)]string strPath, uint dwRecordingType);
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void DvrMsStart(int id, uint startTime);
+    unsafe protected static extern void DvrMsStart(int id, uint startTime);
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void DvrMsStop(int id);
+    unsafe protected static extern void DvrMsStop(int id);
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern bool AddTeeSinkToGraph(IGraphBuilder graph);
+    unsafe protected static extern bool AddTeeSinkToGraph(IGraphBuilder graph);
 
     [ComImport, Guid("6CFAD761-735D-4aa5-8AFC-AF91A7D61EBA")]
     protected class VideoAnalyzer { };
