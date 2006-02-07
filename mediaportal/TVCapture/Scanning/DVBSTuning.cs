@@ -243,7 +243,7 @@ namespace MediaPortal.TV.Scanning
       TPList transponder = _transponderList[_currentIndex];
       string chanDesc = String.Format("Transponder:{0} MHz, Polarisation:{1} SymbolRate:{2}",
         ((float)transponder.TPfreq) / 1000.0, GetPolarisation(transponder.TPpol), transponder.TPsymb);
-      string description = String.Format("Transponder:{0}, getting info...", transponder);
+      string description = String.Format("Transponder:{0}, getting info...", chanDesc);
 
       _callback.OnStatus(description);
       _captureCard.Process();
