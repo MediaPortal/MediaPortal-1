@@ -26,14 +26,11 @@
 #region usings
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
@@ -124,30 +121,6 @@ public class MediaPortalApp : D3DApp, IRender
   private int m_iDateLayout;
   private static SplashScreen splashScreen;
   //private GUILayerRenderer _layerRenderer;
-
-  #endregion
-
-  #region imports
-
-  public delegate bool IECallBack(int hwnd, int lParam);
-
-
-  private const int SW_SHOWNORMAL = 1;
-
-  [DllImport("user32.dll")]
-  public static extern int SendMessage(IntPtr window, int message, int wparam, int lparam);
-
-  [DllImport("user32.dll")]
-  private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-  [DllImport("user32.Dll")]
-  public static extern int EnumWindows(IECallBack x, int y);
-
-  [DllImport("User32.Dll")]
-  public static extern void GetWindowText(int h, StringBuilder s, int nMaxCount);
-
-  [DllImport("User32.Dll")]
-  public static extern void GetClassName(int h, StringBuilder s, int nMaxCount);
 
   #endregion
 
@@ -309,30 +282,25 @@ public class MediaPortalApp : D3DApp, IRender
       if (app.CreateGraphicsSample())
       {
         IMessageFilter filter = new ThreadMessageFilter(app);
+        Application.AddMessageFilter(filter);
         try
         {
-          Application.AddMessageFilter(filter);
-
           //app.PreRun();
           Log.Write("running...");
-#if !DEBUG
-  try
-        {
-#endif
           GUIGraphicsContext.BlankScreen = false;
           Application.Run(app);
+          Debug.WriteLine("after Application.Run");
         }
-        finally
-        {
-          Application.RemoveMessageFilter(filter);
-        }
-#if !DEBUG
-  }
+//#if !DEBUG
         catch (Exception ex)
         {
           Log.WriteFile(Log.LogType.Log, true, "MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
         }
-#endif
+//#endif
+        finally
+        {
+          Application.RemoveMessageFilter(filter);
+        }
         app.OnExit();
       }
 #if !DEBUG
@@ -362,35 +330,30 @@ public class MediaPortalApp : D3DApp, IRender
 
   private static void ActivatePreviousInstance()
   {
-    try
+    //Find the previous instance's process
+    List<Process> processes = new List<Process>();
+    string processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
+    if (processName.EndsWith(".vshost"))
+      processName = processName.Substring(0, processName.Length - 7);
+    processName = "mediaportal";
+    processes.AddRange(System.Diagnostics.Process.GetProcessesByName(processName));
+    processes.AddRange(System.Diagnostics.Process.GetProcessesByName(processName + ".vshost"));
+
+    //System.Diagnostics.Process.GetCurrentProcess().ProcessName);
+    foreach (Process process in processes)
     {
-      //Find the previous instance's process
-      List<Process> processes = new List<Process>();
-      string processName = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
-      if (processName.EndsWith(".vshost"))
-        processName = processName.Substring(0, processName.Length - 7);
-      processName = "mediaportal";
-      processes.AddRange(System.Diagnostics.Process.GetProcessesByName(processName));
-      processes.AddRange(System.Diagnostics.Process.GetProcessesByName(processName + ".vshost"));
-          
-      //System.Diagnostics.Process.GetCurrentProcess().ProcessName);
-      foreach (Process process in processes)
+      if (process.Id == System.Diagnostics.Process.GetCurrentProcess().Id)
       {
-        if (process.Id == System.Diagnostics.Process.GetCurrentProcess().Id)
-        {
-          continue;
-        }
-        //Instructs the process to go to the foreground 
-        SetForeGround(process);
+        continue;
       }
+      //Instructs the process to go to the foreground 
+      SetForeGround(process);
       Environment.Exit(0);
     }
-    catch (Exception)
-    {
-      //Ignore
-    }
-    //We could not find the running process, so stop with an exception
-    throw new Exception("Mediaportal is already running!");
+    Log.Write("Could not activate running instance.");
+    MessageBox.Show("Could not activate running instance.", "MediaPortal is already running", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+    Environment.Exit(0);
   }
 
   /// <summary>
@@ -2432,7 +2395,7 @@ public class MediaPortalApp : D3DApp, IRender
     GUIWindowManager.Receivers += new SendMessageHandler(OnMessage);
     GUIWindowManager.Callbacks += new GUIWindowManager.OnCallBackHandler(Process);
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STARTING;
-    Utils.OnStartExternal += new MediaPortal.Util.Utils.UtilEventHandler(OnStartExternal);
+    Utils.OnStartExternal += new Utils.UtilEventHandler(OnStartExternal);
     Utils.OnStopExternal += new Utils.UtilEventHandler(OnStopExternal);
 
     // load keymapping from keymap.xml
