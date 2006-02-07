@@ -304,11 +304,15 @@ namespace MediaPortal.TV.Scanning
       _captureCard.Tune(newchan, _currentDiseqc);
 
       //tune locking : 2 seconds
-      for (int i = 0; i < 5; ++i)
+      DateTime dt = DateTime.Now;
+      while (true)
       {
         _captureCard.Process();
         if (_captureCard.SignalPresent()) break;
-        System.Threading.Thread.Sleep(400);
+
+        TimeSpan ts = DateTime.Now - dt;
+        if (ts.TotalMilliseconds >= 2000) break;
+        System.Threading.Thread.Sleep(100);
       }
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);

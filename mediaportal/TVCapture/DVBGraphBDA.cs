@@ -3612,15 +3612,17 @@ namespace MediaPortal.TV.Recording
     public void Process()
     {
       if (_graphState == State.None) return;
-      if (_inScanningMode)
-        _processTimer = DateTime.MinValue;
-      TimeSpan tsProc = DateTime.Now - _processTimer;
-      if (tsProc.TotalSeconds < 1) return;
-      _processTimer = DateTime.Now;
-
+      if (_inScanningMode == false)
+      {
+        TimeSpan tsProc = DateTime.Now - _processTimer;
+        if (tsProc.TotalSeconds < 1) return;
+        _processTimer = DateTime.Now;
+      }
       UpdateSignalPresent();
+
       if (_graphState == State.Created) return;
 
+      if (_inScanningMode == false) return;
 
       if (_streamDemuxer != null)
         _streamDemuxer.Process();
@@ -4245,6 +4247,7 @@ namespace MediaPortal.TV.Recording
               if (ch.DiSEqC > 4) ch.DiSEqC = 4;
 
               GetDisEqcSettings(ref ch, out lowOsc, out hiOsc, out diseqcUsed);
+
               TunerLib.IDVBSTuningSpace dvbSpace = myTuner.TuningSpace as TunerLib.IDVBSTuningSpace;
               if (dvbSpace == null)
               {
@@ -4295,8 +4298,12 @@ namespace MediaPortal.TV.Recording
               myTuneRequest.SID = ch.ProgramNumber;		//service id
               myTuneRequest.Locator = (TunerLib.Locator)myLocator;
               //and submit the tune request
+
               myTuner.TuneRequest = newTuneRequest;
               //Marshal.ReleaseComObject(myTuneRequest);
+              //Marshal.ReleaseComObject(newTuneRequest);
+              //Marshal.ReleaseComObject(myLocator);
+              //Marshal.ReleaseComObject(dvbSpace);
             }
             break;
 
@@ -4404,12 +4411,14 @@ namespace MediaPortal.TV.Recording
       }
 
       _analyzerInterface.ResetParser();
+
       _currentTuningObject = (DVBChannel)tuningObject;
       _currentTuningObject.DiSEqC = disecqNo;
-      SubmitTuneRequest(_currentTuningObject);
-      _signalLostTimer = DateTime.Now;
-      UpdateVideoState();
 
+      SubmitTuneRequest(_currentTuningObject);
+
+      _signalLostTimer = DateTime.Now;
+      //UpdateVideoState();
     }//public void Tune(object tuningObject)
 
     /// <summary>
