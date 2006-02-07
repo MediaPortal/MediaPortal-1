@@ -1060,16 +1060,26 @@ namespace MediaPortal.TV.Recording
 
     protected override void SendHWPids(ArrayList pids)
     {
-      DeleteAllPIDs(_interfaceB2C2DataCtrl, 0);
+      if (!DeleteAllPIDs(_interfaceB2C2DataCtrl, 0))
+      {
+        Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:SendHWPids() DeleteAllPIDs failed");
+      }
       if (pids.Count == 0)
       {
-        SetPidToPin(_interfaceB2C2DataCtrl, 0, 0x2000);
+        int count=SetPidToPin(_interfaceB2C2DataCtrl, 0, 0x2000);
+        if (count != 1)
+        {
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:SendHWPids() SetPidToPin failed:{0}!=1",count);
+        }
       }
       else
       {
+        int counter = 0;
         foreach (ushort pid in pids)
         {
-          SetPidToPin(_interfaceB2C2DataCtrl, 0, pid);
+          counter++;
+          int count = SetPidToPin(_interfaceB2C2DataCtrl, 0, pid);
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:SendHWPids() SetPidToPin failed:{0}!={1}", count,counter);
         }
       }
     }
