@@ -241,17 +241,6 @@ namespace MediaPortal.TV.Scanning
       Log.WriteFile(Log.LogType.Capture, "dvbt-scan:tune to freq:{0} bandwidth:{1} offset:{2}", chan.Frequency, chan.Bandwidth, offset);
       _captureCard.Tune(chan, 0);
 
-      //tune locking : 2 seconds
-      DateTime dt = DateTime.Now;
-      while (true)
-      {
-        _captureCard.Process();
-        if (_captureCard.SignalPresent()) break;
-
-        TimeSpan ts = DateTime.Now - dt;
-        if (ts.TotalMilliseconds >= 2000) break;
-        System.Threading.Thread.Sleep(100);
-      }
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
       Log.Write("dvbt-scan:signal quality:{0} signal strength:{1} signal present:{2}",

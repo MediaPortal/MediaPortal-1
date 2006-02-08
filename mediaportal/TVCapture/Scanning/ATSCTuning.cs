@@ -145,10 +145,6 @@ namespace MediaPortal.TV.Scanning
     {
       if (_currentIndex < 0 || _currentIndex >= MaxATSCChannel)
       {
-        _callback.OnProgress(100);
-        _callback.OnStatus("Finished");
-        _callback.OnEnded();
-        _captureCard.DeleteGraph();
         return;
       }
 
@@ -173,16 +169,6 @@ namespace MediaPortal.TV.Scanning
       _captureCard.Tune(newchan, 0);
 
       //tune locking : 2 seconds
-      DateTime dt = DateTime.Now;
-      while (true)
-      {
-        _captureCard.Process();
-        if (_captureCard.SignalPresent()) break;
-
-        TimeSpan ts = DateTime.Now - dt;
-        if (ts.TotalMilliseconds >= 2000) break;
-        System.Threading.Thread.Sleep(100);
-      }
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
       Log.Write("atsc-scan:signal quality:{0} signal strength:{1} signal present:{2}",

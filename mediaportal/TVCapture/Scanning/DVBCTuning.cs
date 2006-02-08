@@ -293,10 +293,6 @@ namespace MediaPortal.TV.Scanning
     {
       if (_currentIndex < 0 || _currentIndex >= _channelCount)
       {
-        _callback.OnProgress(100);
-        _callback.OnStatus("Finished");
-        _callback.OnEnded();
-        _captureCard.DeleteGraph();
         return;
       }
       string chanDesc = String.Format(" {0} MHz, Modulation:{1} SymbolRate:{2}",
@@ -318,17 +314,6 @@ namespace MediaPortal.TV.Scanning
       newchan.Frequency = _dvbcChannels[_currentIndex].frequency;
       _captureCard.Tune(newchan, 0);
 
-      //tune locking : 2 seconds
-      DateTime dt = DateTime.Now;
-      while (true)
-      {
-        _captureCard.Process();
-        if (_captureCard.SignalPresent()) break;
-
-        TimeSpan ts = DateTime.Now - dt;
-        if (ts.TotalMilliseconds >= 2000) break;
-        System.Threading.Thread.Sleep(100);
-      }
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
       Log.Write("dvbc-scan:signal quality:{0} signal strength:{1} signal present:{2}",

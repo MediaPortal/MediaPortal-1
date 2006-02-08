@@ -64,7 +64,7 @@ namespace MediaPortal.TV.Recording
   /// -tv timeshifting
   /// -radio
   /// </summary>
-  public class DVBGraphBase : MediaPortal.TV.Recording.IGraph
+  public class DVBGraphBase : MediaPortal.TV.Recording.IGraph, IHardwarePidFiltering
   {
     #region guids
     public static Guid MEDIATYPE_MPEG2_SECTIONS = new Guid(0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
@@ -239,6 +239,8 @@ namespace MediaPortal.TV.Recording
     protected IBaseFilter _filterDvbAnalyzer = null;
     protected bool _graphPaused = false;
     protected int _pmtSendCounter = 0;
+    ArrayList _scanPidList = new ArrayList();
+    bool _scanPidListReady = false;
     #endregion
 
 #if USEMTSWRITER
@@ -338,7 +340,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     /// <returns>bool indicating if graph is created or not</returns>
     public virtual bool CreateGraph(int Quality)
-    {   
+    {
       return false;
     }//public bool CreateGraph()
 
@@ -2550,7 +2552,7 @@ namespace MediaPortal.TV.Recording
         //map teletext pid to ttx output pin of mpeg2 demultiplexer
         if (_pinTeletext != null)
         {
-          SetupDemuxerPin(_pinTeletext, _currentTuningObject.TeletextPid,(int) MediaSampleContent.TransportPacket,true);
+          SetupDemuxerPin(_pinTeletext, _currentTuningObject.TeletextPid, (int)MediaSampleContent.TransportPacket, true);
         }
       }
       finally
@@ -2624,16 +2626,56 @@ namespace MediaPortal.TV.Recording
         _isGraphRunning = true;
       }
 
-      _analyzerInterface.ResetParser();
 
       _currentTuningObject = (DVBChannel)tuningObject;
 
       SetupDiseqc(disecqNo);
 
+
       SubmitTuneRequest(_currentTuningObject);
 
+      ArrayList pids = new ArrayList();
+      if (Network() == NetworkType.ATSC)
+      {
+        //pids.Add((ushort)0x1ffb);
+        SendHWPids(pids);
+        SetupDemuxerPin(_pinDemuxerSections, 0x1ffb, (int)MediaSampleContent.Mpeg2PSI, true);
+      }
+      else
+      {
+        if (Network() == NetworkType.DVBC && _currentTuningObject.Modulation == (int)TunerLib.ModulationType.BDA_MOD_256QAM)
+        {
+          pids.Add((ushort)0);    
+          pids.Add((ushort)0x10);
+          pids.Add((ushort)0x11);
+        }
+        SendHWPids(pids);
+        SetupDemuxerPin(_pinDemuxerSections, 0, (int)MediaSampleContent.Mpeg2PSI, true);
+        SetupDemuxerPin(_pinDemuxerSections, 0x10, (int)MediaSampleContent.Mpeg2PSI, false);
+        SetupDemuxerPin(_pinDemuxerSections, 0x11, (int)MediaSampleContent.Mpeg2PSI, false);
+      }
+
+
+      //wait until tuner has locked
+      DateTime dt = DateTime.Now;
+      while (!SignalPresent())
+      {
+        TimeSpan ts = DateTime.Now - dt;
+        if (ts.TotalMilliseconds >= 2000) break;
+        System.Threading.Thread.Sleep(100);
+        UpdateSignalPresent();
+      }
+
+      _scanPidListReady = false;
+      _scanPidList.Clear(); 
+      try
+      {
+        _analyzerInterface.SetPidFilterCallback(this);
+      }
+      catch (Exception) { }
+
+      _analyzerInterface.ResetParser();
       _signalLostTimer = DateTime.Now;
-      //UpdateVideoState();
     }//public void Tune(object tuningObject)
 
     protected virtual void SetupDiseqc(int disecqNo)
@@ -2654,36 +2696,78 @@ namespace MediaPortal.TV.Recording
       //get list of current tv channels present in the database
       List<TVChannel> tvChannels = new List<TVChannel>();
       TVDatabase.GetChannels(ref tvChannels);
-
+      
       DVBSections.Transponder transp;
       transp.channels = null;
-      _analyzerInterface.ResetParser();
+      DateTime dt = DateTime.Now;
 
-      System.Threading.Thread.Sleep(5000);
+      //wait until PAT has been received (max 5 secs)
+      while (true)
+      {
+        if (_scanPidListReady) break;
+        TimeSpan ts = DateTime.Now - dt;
+        if (ts.TotalMilliseconds > 5000) break;
+        System.Threading.Thread.Sleep(100);
+      }
+      Log.Write("check...{0}", _scanPidListReady);
+
+      //setup MPEG2 demuxer so it sends the PMT's to the analyzer filter
+      foreach (ushort pid in _scanPidList)
+      {
+        SetupDemuxerPin(_pinDemuxerSections, pid, (int)MediaSampleContent.Mpeg2PSI, false);
+      }
+      
+      
+      if ( _scanPidListReady == false )
+      {
+        _scanPidList.Clear();
+      }
+      if (Network() == NetworkType.DVBC && _currentTuningObject.Modulation == (int)TunerLib.ModulationType.BDA_MOD_256QAM)
+      {
+        SendHWPids(_scanPidList);
+      }
+
       using (DVBSections sections = new DVBSections())
       {
         ushort count = 0;
         sections.DemuxerObject = _streamDemuxer;
         sections.Timeout = 2500;
-        for (int i = 0; i < 100; ++i)
+
+        //wait until all PMT's are received (max 10secs)
+        bool[] channelReady = new bool[100];
+        dt = DateTime.Now;
+        while (true)
         {
-          bool allFound = true;
-          _analyzerInterface.GetChannelCount(ref count);
+          bool allFound = false;
+          if (count == 0)
+          {
+            _analyzerInterface.GetChannelCount(ref count);
+          }
           if (count > 0)
           {
+            allFound = true;
             for (int t = 0; t < count; t++)
             {
+              if (channelReady[t]) continue;
               if (_analyzerInterface.IsChannelReady(t) != 0)
               {
                 allFound = false;
                 break;
               }
+              else
+              {
+                channelReady[t] = true;
+              }
             }
           }
-          else allFound = false;
-          if (!allFound) System.Threading.Thread.Sleep(50);
+          if (!allFound) 
+            System.Threading.Thread.Sleep(100);
+          TimeSpan ts = DateTime.Now - dt;
+          if (ts.TotalMilliseconds >= 10000) break;
+          if (allFound) break;
         }
 
+        
         _analyzerInterface.GetChannelCount(ref count);
         if (count > 0)
         {
@@ -2718,6 +2802,7 @@ namespace MediaPortal.TV.Recording
           }
         }
       }
+
       if (transp.channels == null)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraph: found no channels", transp.channels);
@@ -3553,17 +3638,24 @@ namespace MediaPortal.TV.Recording
 
     protected void SetHardwarePidFiltering()
     {
-#if HW_PID_FILTERING
       string pidsText = String.Empty;
       ArrayList pids = new ArrayList();
       if (_inScanningMode == false)
       {
-        pids.Add((ushort)0);
-        pids.Add((ushort)1);
-        pids.Add((ushort)17);
-        pids.Add((ushort)18);
-        pids.Add((ushort)0xd3);
-        pids.Add((ushort)0xd2);
+        if (Network() == NetworkType.ATSC)
+        {
+          pids.Add((ushort)0x1ffb);
+        }
+        else
+        {
+          pids.Add((ushort)0);
+          pids.Add((ushort)1);
+          pids.Add((ushort)0x10);
+          pids.Add((ushort)0x11);
+          pids.Add((ushort)0x12);
+          pids.Add((ushort)0xd3);
+          pids.Add((ushort)0xd2);
+        }
         AddHardwarePid(_currentTuningObject.VideoPid, pids);
         AddHardwarePid(_currentTuningObject.AudioPid, pids);
         AddHardwarePid(_currentTuningObject.Audio1, pids);
@@ -3575,8 +3667,11 @@ namespace MediaPortal.TV.Recording
         AddHardwarePid(_currentTuningObject.PCRPid, pids);
         AddHardwarePid(_currentTuningObject.ECMPid, pids);
         for (int i = 0; i < pids.Count; ++i)
-          pidsText += String.Format("{0:X},", (ushort)pids[i]);
-
+        {
+          ushort pid = (ushort)pids[i];
+          pidsText += String.Format("{0:X},", pid);
+          SetupDemuxerPin(_pinDemuxerSections, (int)pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
+        }
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:SetHardwarePidFiltering to:{0}", pidsText);
       }
       SendHWPids(pids);
@@ -3584,7 +3679,6 @@ namespace MediaPortal.TV.Recording
     protected virtual void SendHWPids(ArrayList pids)
     {
     }
-#endif
 
     public string TvTimeshiftFileName()
     {
@@ -3661,6 +3755,23 @@ namespace MediaPortal.TV.Recording
     {
       chanmin = -1;
       chanmax = -1;
+    }
+    public int FilterPids(short count, IntPtr pids)
+    {
+      Log.Write("FilterPids:{0}", count);
+      if (_inScanningMode == false) return 0;
+      string pidsText = String.Empty;
+      _scanPidList = new ArrayList();
+      for (int i = 0; i < count; ++i)
+      {
+        ushort pid = (ushort)Marshal.ReadInt32(pids, i * 4);
+        _scanPidList.Add(pid);
+        pidsText += String.Format("{0:X},", pid);
+      }
+
+      Log.WriteFile(Log.LogType.Capture, "DVBGraph:SetHardwarePidFiltering to:{0}", pidsText);
+      _scanPidListReady = true;
+      return 0;
     }
   }//public class DVBGraphBDA 
 

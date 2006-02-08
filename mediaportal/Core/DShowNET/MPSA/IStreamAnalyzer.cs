@@ -11,7 +11,7 @@ namespace DShowNET.MPSA
   public interface IHardwarePidFiltering
   {
     [PreserveSig]
-	  int FilterPids(int count, int[] pids);
+    int FilterPids(short count, IntPtr pids);
   };
 
   //IMPDST

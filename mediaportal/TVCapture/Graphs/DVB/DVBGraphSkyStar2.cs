@@ -528,6 +528,7 @@ namespace MediaPortal.TV.Recording
                   pin[0].ConnectedTo(out pinConnectedTo);
                   if (pinConnectedTo == null)
                   {
+                    _pinDemuxerSections = pin[0];
                     Log.Write("DVBGraphSkyStar2:connect mpeg2 demux->stream analyzer");
                     hr = _graphBuilder.Connect(pin[0], pinAnalyzerIn);
                     if (hr == 0)
@@ -539,6 +540,7 @@ namespace MediaPortal.TV.Recording
                     {
                       Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2:FAILED to connect mpeg2 demux->stream analyzer");
                     }
+                    pin[0] = null;
                   }
                   if (pinConnectedTo != null)
                   {
@@ -548,8 +550,12 @@ namespace MediaPortal.TV.Recording
                 }
               }
             }
-            Marshal.ReleaseComObject(enumMedia); enumMedia = null;
-            Marshal.ReleaseComObject(pin[0]); pin[0] = null;
+            if (enumMedia!=null)
+              Marshal.ReleaseComObject(enumMedia); 
+            enumMedia = null;
+            if (pin[0]!=null)
+              Marshal.ReleaseComObject(pin[0]); 
+            pin[0] = null;
           }
         }
         Marshal.ReleaseComObject(pinEnum); pinEnum = null;
@@ -1009,9 +1015,11 @@ namespace MediaPortal.TV.Recording
 
     protected override void SubmitTuneRequest(DVBChannel ch)
     {
+      //Tune() freq:11919000 SR:27500 FEC:6 POL:1 LNBKhz:3 Diseq:1 LNBFreq:10600 ecmPid:0 pmtPid:0 pcrPid0
       _interfaceB2C2TunerCtrl.CheckLock();
-      Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  Transponder Frequency:{0} Khz", ch.Frequency);
-      int hr = _interfaceB2C2TunerCtrl.SetFrequencyKHz(ch.Frequency);
+      int frequency = ch.Frequency / 1000;
+      Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  Transponder Frequency:{0} MHz", frequency);
+      int hr = _interfaceB2C2TunerCtrl.SetFrequency(frequency);
       if (hr != 0)
       {
         Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetFrequencyKHz() failed:0x{0:X}", hr);
@@ -1144,9 +1152,33 @@ namespace MediaPortal.TV.Recording
 
       _interfaceB2C2TunerCtrl.SetTunerStatusEx(40);//20*50ms= max 2 sec to lock tuner
       hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
+      _interfaceB2C2TunerCtrl.CheckLock();
       if (((uint)hr) == (uint)0x90010115)
       {
         Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:could not lock tuner");
+        //dump all values:
+        int dummy;
+        _interfaceB2C2TunerCtrl.GetFrequency(out dummy);
+        Log.Write("DVBGraphSkyStar2 tuner dump:");
+        Log.Write("DVBGraphSkyStar2    freq:{0} MHZ", dummy);
+
+        _interfaceB2C2TunerCtrl.GetLnbFrequency(out dummy);
+        Log.Write("DVBGraphSkyStar2    LNB freq:{0} MHZ", dummy);
+
+        _interfaceB2C2TunerCtrl.GetLnbKHz(out dummy);
+        Log.Write("DVBGraphSkyStar2    LNB KHz:{0}", dummy);
+
+        _interfaceB2C2TunerCtrl.GetDiseqc(out dummy);
+        Log.Write("DVBGraphSkyStar2    diseqc:{0}", ((DisEqcType)dummy));
+
+        _interfaceB2C2TunerCtrl.GetFec(out dummy);
+        Log.Write("DVBGraphSkyStar2    fec:{0}", ((FecType)dummy));
+
+        _interfaceB2C2TunerCtrl.GetPolarity(out dummy);
+        Log.Write("DVBGraphSkyStar2    polarity:{0}", ((PolarityType)dummy));
+
+        _interfaceB2C2TunerCtrl.GetSymbolRate(out dummy);
+        Log.Write("DVBGraphSkyStar2    symbol rate:{0} KS/S", dummy);
       }
       else
       {
@@ -1159,10 +1191,10 @@ namespace MediaPortal.TV.Recording
       }
       _interfaceB2C2TunerCtrl.CheckLock();
       UpdateSignalPresent();
-      SetHardwarePidFiltering();
+      if (!_inScanningMode)
+        SetHardwarePidFiltering();
       _processTimer = DateTime.MinValue;
       _pmtSendCounter = 0;
-      UpdateSignalPresent();
       Log.Write("DVBGraphSkyStar2: signal strength:{0} signal quality:{1} signal present:{2}", SignalStrength(), SignalQuality(), SignalPresent());
 
     }

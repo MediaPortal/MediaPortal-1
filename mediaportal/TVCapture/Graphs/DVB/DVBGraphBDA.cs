@@ -597,6 +597,7 @@ namespace MediaPortal.TV.Recording
                   pin[0].ConnectedTo(out pinConnectedTo);
                   if (pinConnectedTo == null)
                   {
+                    _pinDemuxerSections = pin[0];
                     //Log.Write("DVBGraphBDA:connect mpeg2 demux->stream analyzer");
                     hr = _graphBuilder.Connect(pin[0], pinAnalyzerIn);
                     if (hr == 0)
@@ -608,6 +609,7 @@ namespace MediaPortal.TV.Recording
                     {
                       Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED to connect mpeg2 demux->stream analyzer");
                     }
+                    pin[0] = null;
                   }
                   if (pinConnectedTo != null)
                   {
@@ -617,8 +619,12 @@ namespace MediaPortal.TV.Recording
                 }
               }
             }
-            Marshal.ReleaseComObject(enumMedia); enumMedia = null;
-            Marshal.ReleaseComObject(pin[0]); pin[0] = null;
+            if (enumMedia!=null)
+              Marshal.ReleaseComObject(enumMedia); 
+            enumMedia = null;
+            if (pin[0]!=null)
+              Marshal.ReleaseComObject(pin[0]); 
+            pin[0] = null;
           }
         }
         Marshal.ReleaseComObject(pinEnum); pinEnum = null;
@@ -1933,7 +1939,8 @@ namespace MediaPortal.TV.Recording
       {
         Log.Write(ex);
       }
-      SetHardwarePidFiltering();
+      if (!_inScanningMode)
+        SetHardwarePidFiltering();
       _processTimer = DateTime.MinValue;
       _pmtSendCounter = 0;
     }

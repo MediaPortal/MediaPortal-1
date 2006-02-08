@@ -26,7 +26,7 @@ class CEPGInputPin;
 
 DECLARE_INTERFACE_(IHardwarePidFiltering, IUnknown)
 {
-	STDMETHOD(FilterPids)  (int count, int pids[16])PURE;
+	STDMETHOD(FilterPids)  (int count, int* pids)PURE;
 };
 
 // {B4F1F9BF-9ECA-41b8-883B-9C7FC0DD7047}

@@ -354,7 +354,7 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
 	m_currentPMTLen(0)
 {
 	::DeleteFile("mpsa.log");
-	Log("----mpsa::Initialize MPSA v1.08 ----");
+	Log("----mpsa::Initialize MPSA v1.09 ----");
 
 	m_pCallback=NULL;
 	m_bDecodeATSC=false;
@@ -688,6 +688,7 @@ STDMETHODIMP CStreamAnalyzer::GetLCN(WORD channel, WORD* networkId, WORD* transp
 }
 STDMETHODIMP CStreamAnalyzer::SetPidFilterCallback(IHardwarePidFiltering* callback)
 {
+	Log("mpsa:set callback");
 	m_pCallback=callback;
 	return S_OK;
 }
@@ -938,32 +939,46 @@ HRESULT CStreamAnalyzer::NotifyFinished(int EVENT)
 
 HRESULT CStreamAnalyzer::MapSectionPids()
 {
+	Log("mpsa:set MapSectionPids()");
+	/*
 	int pids[16];
 	pids[0]=0;//PAT
 	pids[1]=0x10;//NIT
 	pids[2]=0x11;//SDT
 	if (m_pCallback !=NULL)
 	{
+		Log("mpsa callback");
 		m_pCallback->FilterPids(3,pids);
-	}
+		Log("mpsa callback done");
+	}*/
 	HRESULT hr=m_pDemuxer->SetSectionMapping(m_pPin);
 	return hr;
 }
 HRESULT CStreamAnalyzer::MapPMTPids(int count, int* pids)
 {
+	Log("mpsa:MapPMTPids(%d)",count);
 	int hwPids[110];
-	hwPids[0]=0;//PAT
-	hwPids[1]=0x10;//NIT
-	hwPids[2]=0x11;//SDT
-	for (int i=0; i < count; ++i)
+	int offset=0;
+	if (m_bDecodeATSC)
 	{
-		m_pDemuxer->MapAdditionalPID(m_pPin,pids[i]);
-		hwPids[i+3]=pids[i];
+		hwPids[0]=0x1ffb;
+		offset=1;
+	}
+	else
+	{
+		hwPids[0]=0;//PAT
+		hwPids[1]=0x10;//NIT
+		hwPids[2]=0x11;//SDT
+		offset=3;
+	}
+	for (int i=0; i < count; ++i)
+	{	
+		hwPids[i+offset]=pids[i];
 	}
 
 	if (m_pCallback !=NULL)
 	{
-		m_pCallback->FilterPids(3+count,hwPids);
+		m_pCallback->FilterPids(offset+count,hwPids);
 	}
 	return S_OK;
 }

@@ -302,17 +302,6 @@ namespace MediaPortal.TV.Scanning
                   newchan.Frequency, newchan.Symbolrate, newchan.Polarity);
       _captureCard.Tune(newchan, _currentDiseqc);
 
-      //tune locking : 2 seconds
-      DateTime dt = DateTime.Now;
-      while (true)
-      {
-        _captureCard.Process();
-        if (_captureCard.SignalPresent()) break;
-
-        TimeSpan ts = DateTime.Now - dt;
-        if (ts.TotalMilliseconds >= 2000) break;
-        System.Threading.Thread.Sleep(100);
-      }
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
       Log.Write("dvbs-scan:signal quality:{0} signal strength:{1} signal present:{2}",
