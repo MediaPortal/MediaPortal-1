@@ -73,7 +73,47 @@ namespace MediaPortal.TV.Recording
       QAM_128,
       QAM_256,
       MODE_UNKNOWN = -1
+    };
+    protected enum GuardIntervalType
+    {
+      Interval_1_32 = 0,
+      Interval_1_16,
+      Interval_1_8,
+      Interval_1_4,
+      Interval_Auto
+    };
+    protected enum BandWidthType
+    {
+      MHz_6 = 6,
+      MHz_7 = 7,
+      MHz_8 = 8,
+    };
+    protected enum DisEqcType
+    {
+      None = 0,
+      Simple_A,
+      Simple_B,
+      Level_1_A_A,
+      Level_1_B_A,
+      Level_1_A_B,
+      Level_1_B_B
+    };
+    protected enum FecType
+    {
+      Fec_1_2 = 1,
+      Fec_2_3,
+      Fec_3_4,
+      Fec_5_6,
+      Fec_7_8,
+      Fec_Auto
     }
+
+    protected enum PolarityType
+    {
+      Horizontal = 0,
+      Vertical,
+    };
+
     #endregion
 
     #region Structs
@@ -110,11 +150,12 @@ namespace MediaPortal.TV.Recording
     [DllImport("dvblib.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern int GetSNR(DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 tunerCtrl, [Out] out int a, [Out] out int b);
     #endregion
+
     #region variables
     protected IBaseFilter _filterB2C2Adapter = null;
     protected DVBSkyStar2Helper.IB2C2MPEG2DataCtrl3 _interfaceB2C2DataCtrl = null;
-    protected DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 _interfaceB2C2TunerCtrl = null;
-    protected DVBSkyStar2Helper.IB2C2MPEG2AVCtrl2 _interfaceB2C2AvcCtrl = null;
+    protected DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl3 _interfaceB2C2TunerCtrl = null;
+    //protected DVBSkyStar2Helper.IB2C2MPEG2AVCtrl2 _interfaceB2C2AvcCtrl = null;
     string _cardType = "";
     string _cardFilename = "";
     bool _lastTuneFailed;
@@ -178,7 +219,7 @@ namespace MediaPortal.TV.Recording
         //=========================================================================================================
         // add the Sample grabber (not in configuration.exe) 
         //=========================================================================================================
-        
+
         _filterSampleGrabber = null;
         _sampleInterface = null;
         if (GUIGraphicsContext.DX9Device != null)
@@ -304,18 +345,18 @@ namespace MediaPortal.TV.Recording
           Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2: cannot get IB2C2MPEG2DataCtrl3");
           return false;
         }
-        _interfaceB2C2TunerCtrl = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2;
+        _interfaceB2C2TunerCtrl = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl3;
         if (_interfaceB2C2TunerCtrl == null)
         {
-          Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2: cannot get IB2C2MPEG2TunerCtrl2");
+          Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2: cannot get IB2C2MPEG2TunerCtrl3");
           return false;
         }
-        _interfaceB2C2AvcCtrl = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2AVCtrl2;
-        if (_interfaceB2C2AvcCtrl == null)
-        {
-          Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2: cannot get IB2C2MPEG2AVCtrl2");
-          return false;
-        }
+        /*        _interfaceB2C2AvcCtrl = _filterB2C2Adapter as DVBSkyStar2Helper.IB2C2MPEG2AVCtrl2;
+                if (_interfaceB2C2AvcCtrl == null)
+                {
+                  Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2: cannot get IB2C2MPEG2AVCtrl2");
+                  return false;
+                }*/
 
         //=========================================================================================================
         // initialize skystar 2 tuner
@@ -374,7 +415,7 @@ namespace MediaPortal.TV.Recording
         //=========================================================================================================
         // connect B2BC-Source "Data 0" -> samplegrabber
         //=========================================================================================================
-        
+
         if (GUIGraphicsContext.DX9Device != null && _sampleInterface != null)
         {
           Log.Write("DVBGraphSkyStar2: connect B2C2->sample grabber");
@@ -392,8 +433,8 @@ namespace MediaPortal.TV.Recording
             return false;
           }
 
-          hr=_graphBuilder.Connect(pinData0, pinIn);
-          if (hr!=0)
+          hr = _graphBuilder.Connect(pinData0, pinIn);
+          if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2:Failed to connect B2BC->sample grabber");
             return false;
@@ -651,7 +692,7 @@ namespace MediaPortal.TV.Recording
         m_IStreamBufferSink = (IStreamBufferSink3)m_StreamBufferSink;
         _graphState = State.Created;
 
-        
+
         //_streamDemuxer.OnAudioFormatChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnAudioChanged(m_streamDemuxer_OnAudioFormatChanged);
         //_streamDemuxer.OnPMTIsChanged+=new MediaPortal.TV.Recording.DVBDemuxer.OnPMTChanged(m_streamDemuxer_OnPMTIsChanged);
         _streamDemuxer.SetCardType((int)DVBEPG.EPGCard.BDACards, Network());
@@ -918,15 +959,146 @@ namespace MediaPortal.TV.Recording
 
     protected override void SubmitTuneRequest(DVBChannel ch)
     {
-      if (Tune(ch.Frequency, ch.Symbolrate, 6, ch.Polarity, ch.LNBKHz, ch.DiSEqC, ch.AudioPid, ch.VideoPid, ch.LNBFrequency, ch.ECMPid, ch.TeletextPid, ch.PMTPid, ch.PCRPid, ch.AudioLanguage3, ch.Audio3, ch.ProgramNumber, ch) == false)
+      _interfaceB2C2TunerCtrl.CheckLock();
+      Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  Transponder Frequency:{0} Khz", ch.Frequency);
+      int hr = _interfaceB2C2TunerCtrl.SetFrequencyKHz(ch.Frequency);
+      if (hr != 0)
       {
-        _lastTuneFailed = true;
+        Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetFrequencyKHz() failed:0x{0:X}", hr);
         return;
       }
-      else
+
+      switch (Network())
       {
-        _lastTuneFailed = false;
+        case NetworkType.ATSC:
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  Channel:{0} Khz", ch.PhysicalChannel);
+          hr = _interfaceB2C2TunerCtrl.SetChannel(ch.PhysicalChannel);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetChannel() failed:0x{0:X}", hr);
+            return;
+          }
+          break;
+
+        case NetworkType.DVBC:
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  SymbolRate:{0} KS/s", ch.Symbolrate);
+            hr = _interfaceB2C2TunerCtrl.SetSymbolRate(ch.Symbolrate);
+            if (hr != 0)
+            {
+              Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetSymbolRate() failed:0x{0:X}", hr);
+              return;
+            }
+
+            int modulation = (int)eModulationTAG.QAM_64;
+            switch (ch.Modulation)
+            {
+              case (int)TunerLib.ModulationType.BDA_MOD_16QAM:
+                modulation = (int)eModulationTAG.QAM_16;
+                break;
+              case (int)TunerLib.ModulationType.BDA_MOD_32QAM:
+                modulation = (int)eModulationTAG.QAM_32;
+                break;
+              case (int)TunerLib.ModulationType.BDA_MOD_64QAM:
+                modulation = (int)eModulationTAG.QAM_64;
+                break;
+              case (int)TunerLib.ModulationType.BDA_MOD_128QAM:
+                modulation = (int)eModulationTAG.QAM_128;
+                break;
+              case (int)TunerLib.ModulationType.BDA_MOD_256QAM:
+                modulation = (int)eModulationTAG.QAM_256;
+                break;
+            }
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  Modulation:{0}", ((eModulationTAG)modulation));
+            hr = _interfaceB2C2TunerCtrl.SetModulation(modulation);
+            if (hr != 0)
+            {
+              Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetModulation() failed:0x{0:X}", hr);
+              return;
+            }
+          }
+          break;
+
+        case NetworkType.DVBT:
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  GuardInterval:auto");
+          hr = _interfaceB2C2TunerCtrl.SetGuardInterval((int)GuardIntervalType.Interval_Auto);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetGuardInterval() failed:0x{0:X}", hr);
+            return;
+          }
+
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  Bandwidth:{0} MHz", ch.Bandwidth);
+          hr = _interfaceB2C2TunerCtrl.SetBandwidth((int)ch.Bandwidth);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetBandwidth() failed:0x{0:X}", hr);
+            return;
+          }
+          break;
+
+        case NetworkType.DVBS:
+
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  LNBFrequency:{0} MHz", ch.Bandwidth);
+          hr = _interfaceB2C2TunerCtrl.SetLnbFrequency((int)ch.LNBFrequency);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetLnbFrequency() failed:0x{0:X}", hr);
+            return;
+          }
+
+
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  LnbKHz:{0} Khz", ch.LNBKHz);
+          hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int)ch.LNBKHz);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetLnbKHz() failed:0x{0:X}", hr);
+            return;
+          }
+
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  Diseqc:{0}", ((DisEqcType)ch.DiSEqC));
+          hr = _interfaceB2C2TunerCtrl.SetDiseqc((int)ch.DiSEqC);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetDiseqc() failed:0x{0:X}", hr);
+            return;
+          }
+
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  Fec:{0}", ((DisEqcType)ch.FEC));
+          hr = _interfaceB2C2TunerCtrl.SetFec((int)ch.FEC);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetFec() failed:0x{0:X}", hr);
+            return;
+          }
+
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  Polarity:{0}", ((PolarityType)ch.Polarity));
+          hr = _interfaceB2C2TunerCtrl.SetPolarity((int)ch.Polarity);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetPolarity() failed:0x{0:X}", hr);
+            return;
+          }
+
+
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  SymbolRate:{0} KS/s", ch.Symbolrate);
+          hr = _interfaceB2C2TunerCtrl.SetSymbolRate(ch.Symbolrate);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetSymbolRate() failed:0x{0:X}", hr);
+            return;
+          }
+          break;
       }
+
+      hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
+      if (hr != 0)
+      {
+        Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetTunerStatus failed:0x{0:X}", hr);
+        return;
+        //
+      }
+      _interfaceB2C2TunerCtrl.CheckLock();
       UpdateSignalPresent();
       SetHardwarePidFiltering();
       _processTimer = DateTime.MinValue;
@@ -936,145 +1108,38 @@ namespace MediaPortal.TV.Recording
 
     }
 
-    private bool Tune(int Frequency, int SymbolRate, int FEC, int POL, int LNBKhz, int Diseq, int AudioPID, int VideoPID, int LNBFreq, int ecmPID, int ttxtPID, int pmtPID, int pcrPID, string pidText, int dvbsubPID, int programNumber, DVBChannel ch)
-    {
-
-      Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2: Tune() freq:{0} SR:{1} FEC:{2} POL:{3} LNBKhz:{4} Diseq:{5} audiopid:{6:X} videopid:{7:X} LNBFreq:{8} ecmPid:{9:X} pmtPid:{10:X} pcrPid{11:X}",
-                    Frequency, SymbolRate, FEC, POL, LNBKhz, Diseq, AudioPID, VideoPID, LNBFreq, ecmPID, pmtPID, pcrPID);
-      int hr = 0;				// the result
-      int modulation = 5;		//QAM_64
-      int guardinterval = 4;	//GUARD_INTERVAL_AUTO
-      VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-
-      _lastTuneFailed = false;
-      // clear epg
-      if (Frequency > 13000)
-        Frequency /= 1000;
-
-      if (_interfaceB2C2TunerCtrl == null || _interfaceB2C2DataCtrl == null || _filterB2C2Adapter == null || _interfaceB2C2AvcCtrl == null)
-        return false;
-
-      // skystar
-      hr = _interfaceB2C2TunerCtrl.SetFrequency(Frequency);
-      if (hr != 0)
-      {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:Tune for SkyStar2 FAILED: on SetFrequency:0x{0:X}", hr);
-        return false;	// *** FUNCTION EXIT POINT
-      }
-      hr = _interfaceB2C2TunerCtrl.SetSymbolRate(SymbolRate);
-      if (hr != 0)
-      {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:Tune for SkyStar2 FAILED: on SetSymbolRate:0x{0:X}", hr);
-        return false;	// *** FUNCTION EXIT POINT
-      }
-
-      hr = _interfaceB2C2TunerCtrl.SetLnbFrequency(LNBFreq);
-      if (hr != 0)
-      {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:Tune for SkyStar2 FAILED: on SetLnbFrequency:0x{0:X}", hr);
-        return false;	// *** FUNCTION EXIT POINT
-      }
-      hr = _interfaceB2C2TunerCtrl.SetFec(FEC);
-      if (hr != 0)
-      {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:Tune for SkyStar2 FAILED: on SetFec:0x{0:X}", hr);
-        return false;	// *** FUNCTION EXIT POINT
-      }
-      hr = _interfaceB2C2TunerCtrl.SetPolarity(POL);
-      if (hr != 0)
-      {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:Tune for SkyStar2 FAILED: on SetPolarity:0x{0:X}", hr);
-        return false;	// *** FUNCTION EXIT POINT
-      }
-      hr = _interfaceB2C2TunerCtrl.SetLnbKHz(LNBKhz);
-      if (hr != 0)
-      {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:Tune for SkyStar2 FAILED: on SetLnbKHz:0x{0:X}", hr);
-        return false;	// *** FUNCTION EXIT POINT
-      }
-      hr = _interfaceB2C2TunerCtrl.SetDiseqc(Diseq);
-      if (hr != 0)
-      {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:Tune for SkyStar2 FAILED: on SetDiseqc:0x{0:X}", hr);
-        return false;	// *** FUNCTION EXIT POINT
-      }
-      // cablestar
-      if (_networkType == NetworkType.DVBC)
-      {
-        switch (ch.Modulation)
-        {
-          case (int)TunerLib.ModulationType.BDA_MOD_16QAM:
-            modulation = (int)eModulationTAG.QAM_16;
-            break;
-          case (int)TunerLib.ModulationType.BDA_MOD_32QAM:
-            modulation = (int)eModulationTAG.QAM_32;
-            break;
-          case (int)TunerLib.ModulationType.BDA_MOD_64QAM:
-            modulation = (int)eModulationTAG.QAM_64;
-            break;
-          case (int)TunerLib.ModulationType.BDA_MOD_128QAM:
-            modulation = (int)eModulationTAG.QAM_128;
-            break;
-          case (int)TunerLib.ModulationType.BDA_MOD_256QAM:
-            modulation = (int)eModulationTAG.QAM_256;
-            break;
-        }
-        hr = _interfaceB2C2TunerCtrl.SetModulation(modulation);
-        if (hr != 0)
-        {
-          Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:Tune for SkyStar2 FAILED: on SetModulation:0x{0:X}", hr);
-          return false;	// *** FUNCTION EXIT POINT
-        }
-      }
-
-      // airstar
-      if (_networkType == NetworkType.DVBT)
-      {
-        hr = _interfaceB2C2TunerCtrl.SetGuardInterval(guardinterval);
-        if (hr != 0)
-        {
-          Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:Tune for SkyStar2 FAILED: on SetGuardInterval:0x{0:X}", hr);
-          return false;	// *** FUNCTION EXIT POINT
-        }
-        // Set Channel Bandwidth (NOTE: Temporarily use polarity function to avoid having to 
-        // change SDK interface for SetBandwidth)
-        // from Technisat SDK 02/2005
-        hr = _interfaceB2C2TunerCtrl.SetPolarity(ch.Bandwidth);
-        if (hr != 0)
-        {
-          Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:Tune for SkyStar2 FAILED: on SetBandwidth:0x{0:X}", hr);
-          return false;	// *** FUNCTION EXIT POINT
-        }
-      }
-
-      // final
-      hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
-      if (hr != 0)
-      {
-        Log.WriteFile(Log.LogType.Capture, "DVBGraphSkyStar2:Tune for SkyStar2 FAILED: on SetTunerStatus:0x{0:X}", hr);
-        return false;	// *** FUNCTION EXIT POINT
-        //
-      }
-      return true;
-    }
 
     protected override void SendHWPids(ArrayList pids)
     {
-      DeleteAllPIDs(_interfaceB2C2DataCtrl, 0);
+      const int PID_CAPTURE_ALL_INCLUDING_NULLS = 0x2000;//Enables reception of all PIDs in the transport stream including the NULL PID
+      // const int PID_CAPTURE_ALL_EXCLUDING_NULLS = 0x2001;//Enables reception of all PIDs in the transport stream excluding the NULL PID. 
+
+      if (!DeleteAllPIDs(_interfaceB2C2DataCtrl, 0))
+      {
+        Log.WriteFile(Log.LogType.Error, "DVBGraphSkyStar2:DeleteAllPIDs() failed pid:0x2000");
+      }
       if (pids.Count == 0)
       {
-        SetPidToPin(_interfaceB2C2DataCtrl, 0, 0x2000);
+        int added = SetPidToPin(_interfaceB2C2DataCtrl, 0, PID_CAPTURE_ALL_INCLUDING_NULLS);
+        if (added != 1)
+        {
+          Log.WriteFile(Log.LogType.Error, "DVBGraphSkyStar2:SetPidToPin() failed pid:0x2000");
+        }
       }
       else
       {
         foreach (ushort pid in pids)
         {
-          SetPidToPin(_interfaceB2C2DataCtrl, 0, pid);
+          int added = SetPidToPin(_interfaceB2C2DataCtrl, 0, pid);
+          if (added != 1)
+          {
+            Log.WriteFile(Log.LogType.Error, "DVBGraphSkyStar2:SetPidToPin() failed pid:0x{0:X}", pid);
+          }
         }
       }
     }
 
-    
+
     DVBChannel LoadDiseqcSettings(DVBChannel ch, int disNo)
     {
       if (_cardFilename == "")

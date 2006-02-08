@@ -83,7 +83,7 @@ namespace MediaPortal.TV.Scanning
       _captureCard = card;
       _callback = statusCallback;
 
-      _currentIndex = -1;
+      _currentIndex =0;
       return;
     }
 

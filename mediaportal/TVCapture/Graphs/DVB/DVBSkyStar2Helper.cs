@@ -413,54 +413,77 @@ namespace MediaPortal.TV.Recording
       InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IB2C2MPEG2TunerCtrl2 : IB2C2MPEG2TunerCtrl
     {
+      [PreserveSig]
       int SetTunerStatusEx(
         int count
         );
 
+      [PreserveSig]
       int SetFrequencyKHz(
         long freqKHZ
         );
 
       // Terrestrial DVB only
 
+      [PreserveSig]
       int SetGuardInterval(
         int interval
         );
 
+      [PreserveSig]
       int GetGuardInterval(
         [Out] out int interval
         );
 
+      [PreserveSig]
       int GetFec(
         [Out] out int plFec
         );
 
+      [PreserveSig]
       int GetPolarity(
 
         [Out] out int plPolarity
         );
 
+      [PreserveSig]
       int GetDiseqc(
 
         [Out] out int plDiseqc
         );
 
+      [PreserveSig]
       int GetLnbKHz(
         [Out] out int plLnbKHz
         );
 
+      [PreserveSig]
       int GetLnbFrequency(
         [Out] out int plFrequencyMHz
         );
 
+      [PreserveSig]
       int GetCorrectedBlocks(
         [Out] out int plCorrectedBlocks
         );
-
+      [PreserveSig]
       int GetSignalQuality(
         [Out] out int pdwSignalQuality
         );
     };
+    #endregion
+    #region TunerControl3
+    [ComVisible(true), ComImport,
+      Guid("4B39EB78-D3CD-4223-B682-46AE66968118"),
+      InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IB2C2MPEG2TunerCtrl3 : IB2C2MPEG2TunerCtrl2
+    {
+      [PreserveSig]
+	    int SetBandwidth(int bandwidth) ;
+
+      [PreserveSig]
+	    int GetBandwidth(out int bandwidth);
+    }
     #endregion
     // globals
     public enum State
