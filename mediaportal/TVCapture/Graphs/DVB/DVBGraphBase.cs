@@ -3698,19 +3698,21 @@ namespace MediaPortal.TV.Recording
         {
           ushort pid = (ushort)pids[i];
           pidsText += String.Format("{0:X},", pid);
-          switch (pid)
+          switch ( (int)pid)
           {
             case 0x12:
-              if (_pinDemuxerEPG != null)
-                SetupDemuxerPin(_pinDemuxerEPG, (int)pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
+              //Log.Write("setup epg pin???");
+              //if (_pinDemuxerEPG != null)
+                //  SetupDemuxerPin(_pinDemuxerEPG, 0x12, (int)MediaSampleContent.Mpeg2PSI, true);
+              //else Log.Write("ermmm???");
               break;
             case 0xd2:
-              if (_pinDemuxerMHWd2 != null)
-                SetupDemuxerPin(_pinDemuxerMHWd2, (int)pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
+              //if (_pinDemuxerMHWd2 != null)
+                // SetupDemuxerPin(_pinDemuxerMHWd2,0xd2, (int)MediaSampleContent.Mpeg2PSI, true);
               break;
             case 0xd3:
-              if (_pinDemuxerMHWd3!=null)
-                SetupDemuxerPin(_pinDemuxerMHWd3, (int)pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
+              //if (_pinDemuxerMHWd3!=null)
+              //  SetupDemuxerPin(_pinDemuxerMHWd3, 0xd3, (int)MediaSampleContent.Mpeg2PSI, true);
               break;
             default:
               if (_pinDemuxerSections != null)
