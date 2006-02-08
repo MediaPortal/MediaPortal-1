@@ -211,7 +211,7 @@ namespace DShowNET
       uint CIState;
       uint MMIState;
       GetCAMStatus(out CIState, out MMIState);
-      if (CIState != 0 && MMIState != 0) return true;
+      if (CIState != 0) return true;
       return false;
     }
     public bool IsCamReady()

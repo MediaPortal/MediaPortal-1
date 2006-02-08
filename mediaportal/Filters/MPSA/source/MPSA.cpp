@@ -356,6 +356,7 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
 	::DeleteFile("mpsa.log");
 	Log("----mpsa::Initialize MPSA v1.08 ----");
 
+	m_pCallback=NULL;
 	m_bDecodeATSC=false;
 	m_bReset=true;
     ASSERT(phr);
@@ -471,12 +472,12 @@ STDMETHODIMP CStreamAnalyzer::ResetParser()
 {
 	
 	Log("mpsa::ResetParser");
-	HRESULT hr=m_pDemuxer->SetSectionMapping(m_pPin);
+	MapSectionPids();
 	m_pPin->ResetPids();
 	m_pMHWPin1->ResetPids();
 	m_pMHWPin2->ResetPids();
 	m_pEPGPin->ResetPids();
-	return hr;
+	return S_OK;
 }
 //
 // NonDelegatingQueryInterface
@@ -631,7 +632,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				if (m_patChannelsCount>0) 
 				{
 					Log("mpsa::Found new PAT");
-					m_pDemuxer->SetSectionMapping(m_pPin);//unmap any section pids and map default pids for pat (0x0,0x10,0x11)
+					MapSectionPids();//unmap any section pids and map default pids for pat (0x0,0x10,0x11)
 					m_pmtGrabProgNum=0;
 					m_patChannelsCount=0;
 					m_pSections->ResetPAT();//reset PAT...
@@ -643,10 +644,12 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				//Log("mpsa::decode pat");
 				m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
 				Log("mpsa::PAT decoded and found %d channels, map pids", m_patChannelsCount);
+				int pids[100];
 				for(int n=0;n<m_patChannelsCount;n++)
 				{
-					m_pDemuxer->MapAdditionalPID(m_pPin,m_patTable[n].ProgrammPMTPID);
+					pids[n]=m_patTable[n].ProgrammPMTPID;
 				}
+				MapPMTPids(m_patChannelsCount, pids);
 				bool grabMHW=m_pMHWPin1->isGrabbing() || m_pMHWPin2->isGrabbing();
 				bool grabEPG=m_pEPGPin->isGrabbing();						
 				Log("mpsa::PAT decoded and pids mapped (epg:%d mhw:%d)", grabEPG,grabMHW);
@@ -681,6 +684,11 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 STDMETHODIMP CStreamAnalyzer::GetLCN(WORD channel, WORD* networkId, WORD* transportId, WORD* serviceID, WORD* LCN)
 {
 	m_pSections->GetLCN(channel,networkId, transportId, serviceID, LCN);
+	return S_OK;
+}
+STDMETHODIMP CStreamAnalyzer::SetPidFilterCallback(IHardwarePidFiltering* callback)
+{
+	m_pCallback=callback;
 	return S_OK;
 }
 
@@ -928,6 +936,35 @@ HRESULT CStreamAnalyzer::NotifyFinished(int EVENT)
 	return S_OK;
 }
 
+HRESULT CStreamAnalyzer::MapSectionPids()
+{
+	int pids[16];
+	pids[0]=0;//PAT
+	pids[1]=0x10;//NIT
+	pids[2]=0x11;//SDT
+	if (m_pCallback !=NULL)
+	{
+		m_pCallback->FilterPids(3,pids);
+	}
+	HRESULT hr=m_pDemuxer->SetSectionMapping(m_pPin);
+}
+HRESULT CStreamAnalyzer::MapPMTPids(int count, int* pids)
+{
+	int hwPids[110];
+	hwPids[0]=0;//PAT
+	hwPids[1]=0x10;//NIT
+	hwPids[2]=0x11;//SDT
+	for (int i=0; i < count; ++i)
+	{
+		m_pDemuxer->MapAdditionalPID(m_pPin,pids[i]);
+		hwPids[i+3]=pids[i];
+	}
+
+	if (m_pCallback !=NULL)
+	{
+		m_pCallback->FilterPids(3+count,hwPids);
+	}
+}
 ////////////////////////////////////////////////////////////////////////
 //
 // Exported entry points for registration and unregistration 

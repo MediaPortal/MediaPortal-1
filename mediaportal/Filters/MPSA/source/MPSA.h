@@ -23,6 +23,12 @@ class CEPGInputPin;
 #define EC_PROGRAM_CHANGED EC_USER + 100
 #define EC_GUIDE_CHANGED EC_USER + 101
 
+
+DECLARE_INTERFACE_(IHardwarePidFiltering, IUnknown)
+{
+	STDMETHOD(FilterPids)  (int count, int pids[16])PURE;
+};
+
 // {B4F1F9BF-9ECA-41b8-883B-9C7FC0DD7047}
 DEFINE_GUID(CLSID_StreamAnalyzerPropPage, 0xb4f1f9bf, 0x9eca, 0x41b8, 0x88, 0x3b, 0x9c, 0x7f, 0xc0, 0xdd, 0x70, 0x47);
 
@@ -76,6 +82,7 @@ DECLARE_INTERFACE_(IStreamAnalyzer, IUnknown)
 	STDMETHOD(IsATSCUsed) (THIS_ BOOL* yesNo)PURE;
 
 	STDMETHOD(GetLCN) (THIS_ WORD channel, WORD* networkId, WORD* transportId, WORD* serviceID, WORD* LCN)PURE;
+	STDMETHOD(SetPidFilterCallback) (THIS_ IHardwarePidFiltering* callback);
 };
 
 // {6301D1B8-6C92-4c6e-8CC2-CD1B05C6B545}
@@ -216,7 +223,7 @@ public:
 	STDMETHODIMP GetPages(CAUUID *pPages);
 	STDMETHODIMP IsChannelReady(ULONG channel);
 	STDMETHODIMP GetLCN(WORD channel,WORD* networkId, WORD* transportId, WORD* serviceID, WORD* LCN);
-
+	STDMETHODIMP SetPidFilterCallback(THIS_ IHardwarePidFiltering* callback);
 	//ATSC
 	STDMETHODIMP UseATSC(BOOL yesNo);
 	STDMETHODIMP IsATSCUsed(BOOL* yesNo);
@@ -256,9 +263,12 @@ public:
 	long					m_currentPMTLen;
 	BOOL					m_bDecodeATSC;
 	ATSCParser*				m_pAtscParser;
+	IHardwarePidFiltering*  m_pCallback;
 private:
     // Overriden to say what interfaces we support where
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void ** ppv);
+	HRESULT		   MapSectionPids();
+	HRESULT		   MapPMTPids(int count, int* pids);
 	bool		   m_bReset;
 
     // Open and write to the file
