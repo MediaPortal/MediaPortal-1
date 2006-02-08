@@ -58,6 +58,8 @@ namespace MediaPortal.Configuration.Sections
       this.imageListLargePlugins.Images.SetKeyName(5, "plugin_process_off.png");
       this.imageListLargePlugins.Images.SetKeyName(6, "plugin_externalplayers.png");
       this.imageListLargePlugins.Images.SetKeyName(7, "plugin_externalplayers_off.png");
+      this.imageListLargePlugins.Images.SetKeyName(8, "plugin_window_home.png");
+      this.imageListLargePlugins.Images.SetKeyName(9, "plugin_window_plugins.png");
       // 
       // imageListContextMenu
       // 

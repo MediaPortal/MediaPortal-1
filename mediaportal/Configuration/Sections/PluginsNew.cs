@@ -285,7 +285,12 @@ namespace MediaPortal.Configuration.Sections
     {
       if (((ItemTag)item.Tag).IsWindow)
         if (((ItemTag)item.Tag).IsEnabled)
-          item.ImageIndex = 2;
+          if (((ItemTag)item.Tag).IsHome)
+            item.ImageIndex = 8;
+          else if (((ItemTag)item.Tag).IsPlugins)
+            item.ImageIndex = 9;
+          else
+            item.ImageIndex = 2;
         else
           item.ImageIndex = 3;
       else if (((ItemTag)item.Tag).IsProcess)
