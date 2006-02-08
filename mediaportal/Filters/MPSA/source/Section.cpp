@@ -33,7 +33,7 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-#ifndef DEBUG
+#ifdef DEBUG
 char *logbuffer=NULL; 
 void Log(const char *fmt, ...) 
 {

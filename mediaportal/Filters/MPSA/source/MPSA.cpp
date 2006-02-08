@@ -590,14 +590,15 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		if(pbData[0]==0x02)// pmt
 		{
 			ULONG prgNumber=(pbData[3]<<8)+pbData[4];
+			//Log("pmt prog:%x", prgNumber);
 			for(int n=0;n<m_patChannelsCount;n++)
 			{
 				if(m_patTable[n].ProgrammNumber==prgNumber )
 				{
 					if (m_patTable[n].PMTReady==0)
 					{
-						//Log("mpsa::decode PMT");
 						m_pSections->decodePMT(pbData,&m_patTable[n],len);
+						Log("mpsa::decode PMT program number:0x%x 0x%x",prgNumber,m_patTable[n].ProgrammNumber);
 						//Log("mpsa::PMT decoded");
 						//if(m_patTable[n].Pids.AudioPid1>0)
 						//	m_pDemuxer->MapAdditionalPayloadPID(m_patTable[n].Pids.AudioPid1);
@@ -951,8 +952,8 @@ HRESULT CStreamAnalyzer::MapSectionPids()
 		m_pCallback->FilterPids(3,pids);
 		Log("mpsa callback done");
 	}*/
-	HRESULT hr=m_pDemuxer->SetSectionMapping(m_pPin);
-	return hr;
+	//HRESULT hr=m_pDemuxer->SetSectionMapping(m_pPin);
+	return S_OK;
 }
 HRESULT CStreamAnalyzer::MapPMTPids(int count, int* pids)
 {

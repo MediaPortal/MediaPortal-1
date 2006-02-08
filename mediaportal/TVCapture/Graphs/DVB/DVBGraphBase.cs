@@ -2578,6 +2578,14 @@ namespace MediaPortal.TV.Recording
           m_IStreamBufferSink.SetAvailableFilter(ref refTime);
         }
       }
+      _scanPidListReady = false;
+      _scanPidList.Clear();
+      try
+      {
+        //_analyzerInterface.SetPidFilterCallback(this);
+      }
+      catch (Exception) { }
+
     }//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 
@@ -3443,6 +3451,14 @@ namespace MediaPortal.TV.Recording
         _signalLostTimer = DateTime.Now;
 
       }
+      _scanPidListReady = false;
+      _scanPidList.Clear();
+      try
+      {
+        //_analyzerInterface.SetPidFilterCallback(this);
+      }
+      catch (Exception) { }
+
     }//public void TuneRadioChannel(AnalogVideoStandard standard,int iChannel,int country)
 
     public void StartRadio(RadioStation station)
@@ -3679,7 +3695,8 @@ namespace MediaPortal.TV.Recording
         {
           ushort pid = (ushort)pids[i];
           pidsText += String.Format("{0:X},", pid);
-          SetupDemuxerPin(_pinDemuxerSections, (int)pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
+          int hr=SetupDemuxerPin(_pinDemuxerSections, (int)pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
+          //Log.Write("nr:{0} pid:0x{1:X}, hr:{2:X}", i, (int)pid, hr);
         }
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:SetHardwarePidFiltering to:{0}", pidsText);
       }
@@ -3767,8 +3784,8 @@ namespace MediaPortal.TV.Recording
     }
     public int FilterPids(short count, IntPtr pids)
     {
-      Log.Write("FilterPids:{0}", count);
       if (_inScanningMode == false) return 0;
+      Log.Write("FilterPids:{0}", count);
       string pidsText = String.Empty;
       _scanPidList = new ArrayList();
       for (int i = 0; i < count; ++i)
@@ -3778,7 +3795,7 @@ namespace MediaPortal.TV.Recording
         pidsText += String.Format("{0:X},", pid);
       }
 
-      Log.WriteFile(Log.LogType.Capture, "DVBGraph:SetHardwarePidFiltering to:{0}", pidsText);
+      Log.WriteFile(Log.LogType.Capture, "DVBGraph:analyzer pids to:{0}", pidsText);
       _scanPidListReady = true;
       return 0;
     }
