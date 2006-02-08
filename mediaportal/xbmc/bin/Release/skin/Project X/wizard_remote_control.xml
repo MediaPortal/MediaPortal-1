@@ -67,7 +67,7 @@
 			<id>7</id>
 			<posX>122</posX>
 			<posY>264</posY>
-			<onleft>7</onleft>
+			<onleft>6</onleft>
 			<onright>26</onright>
 			<onup>6</onup>
 			<ondown>8</ondown>
@@ -76,7 +76,7 @@
 			<MarkWidth>16</MarkWidth>
 			<textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
 			<MarkHeight>16</MarkHeight>
-			<label>FireDTV</label>
+			<label>x10 Series (e.g. ATI/Medion)</label>
 			<align>right</align>
 		</control>
 		<control>
@@ -87,6 +87,23 @@
 			<onleft>7</onleft>
 			<onright>26</onright>
 			<onup>7</onup>
+			<ondown>9</ondown>
+			<shadow>no</shadow>
+			<textureCheckmark>check-box.png</textureCheckmark>
+			<MarkWidth>16</MarkWidth>
+			<textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
+			<MarkHeight>16</MarkHeight>
+			<label>FireDTV</label>
+			<align>right</align>
+		</control>
+		<control>
+			<type>checkmark</type>
+			<id>9</id>
+			<posX>122</posX>
+			<posY>312</posY>
+			<onleft>7</onleft>
+			<onright>26</onright>
+			<onup>8</onup>
 			<ondown>26</ondown>
 			<shadow>no</shadow>
 			<textureCheckmark>check-box.png</textureCheckmark>
@@ -114,7 +131,6 @@
 			<onright>26</onright>
 			<onup>4</onup>
 			<ondown>4</ondown>
-			<hyperlink>636</hyperlink>
 			<label>200007</label>
 			<width>96</width>
 			<height>32</height>
@@ -155,7 +171,7 @@
 		</control>
 		<control>
 			<type>label</type>
-			<description>Setup - Remote control</description>
+			<description>Setup - Remote Control</description>
 			<id>1</id>
 			<posX>32</posX>
 			<posY>120</posY>
