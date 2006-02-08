@@ -902,7 +902,7 @@
     <Compile Include="GUITV\GUITVZapOSD.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUIVideoFiles\episode_info.cs">
+    <Compile Include="GUITVCom\episode_info.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIVideoFiles\GUIVideoArtistInfo.cs">
@@ -936,7 +936,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIVideoFiles\GUIVideoTopOverlay.cs" />
-    <Compile Include="GUIVideoFiles\tvDotComParser.cs">
+    <Compile Include="GUITVCom\tvDotComParser.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GUIVideoFiles\VideoSort.cs">
