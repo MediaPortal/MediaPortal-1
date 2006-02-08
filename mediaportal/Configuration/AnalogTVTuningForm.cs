@@ -77,6 +77,8 @@ namespace MediaPortal
     private MediaPortal.UserInterface.Controls.MPLabel label7;
     private System.Windows.Forms.Timer timer1;
     TVCaptureDevice captureCard;
+    bool _reentrant;
+    bool _scanning;
 
     public AnalogTVTuningForm()
     {
@@ -388,6 +390,31 @@ namespace MediaPortal
       GUIGraphicsContext.ActiveForm = this.Handle;
       GUIGraphicsContext.VideoWindow = new Rectangle(panel1.Location, panel1.Size);
       tuningInterface.AutoTuneTV(captureCard, this);
+      tuningInterface.Start();
+      timer1.Tick += new EventHandler(timer1_Tick);
+      timer1.Interval = 100;
+      timer1.Enabled = true;
+      _scanning = true;
+    }
+
+    void timer1_Tick(object sender, EventArgs e)
+    {
+      if (_reentrant) return;
+      try
+      {
+        _reentrant = true;
+        if (_scanning)
+        {
+          if (!tuningInterface.IsFinished())
+          {
+            tuningInterface.Next();
+          }
+        }
+      }
+      finally
+      {
+        _reentrant = false;
+      }
     }
 
 
@@ -401,8 +428,7 @@ namespace MediaPortal
       buttonMap.Enabled = false;
       buttonSkip.Enabled = false;
       buttonAdd.Enabled = false;
-
-      tuningInterface.Next();
+      _scanning = true;
     }
     public ITuning Tuning
     {
@@ -426,9 +452,11 @@ namespace MediaPortal
       button1.Enabled = false;
       signalQuality.Value = 0;
       signalStrength.Value = 0;
+      _scanning = false;
     }
     public void OnNewChannel()
     {
+      _scanning = false;
       buttonMap.Enabled = true;
       buttonSkip.Enabled = true;
       buttonAdd.Enabled = true;

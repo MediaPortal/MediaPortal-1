@@ -75,6 +75,8 @@ namespace MediaPortal
     private Label labelStatus2;
     private Label labelChannels;
     TVCaptureDevice captureCard;
+    bool _reentrant;
+    bool _scanning;
 
     public AnalogRadioTuningForm()
     {
@@ -402,10 +404,36 @@ namespace MediaPortal
           break;
       }
 
+      
       captureCard.RadioSensitivity = Sensitivity;
       tuningInterface.AutoTuneRadio(captureCard, this);
+      tuningInterface.Start();
+      timer1.Interval = 100;
+      timer1.Tick += new EventHandler(timer1_Tick);
+      timer1.Enabled = true;
+      _scanning = true;
     }
 
+
+    void timer1_Tick(object sender, EventArgs e)
+    {
+      if (_reentrant) return;
+      try
+      {
+        _reentrant = true;
+        if (_scanning)
+        {
+          if (!tuningInterface.IsFinished())
+          {
+            tuningInterface.Next();
+          }
+        }
+      }
+      finally
+      {
+        _reentrant = false;
+      }
+    }
 
     private void buttonSkip_Click(object sender, System.EventArgs e)
     {
@@ -418,7 +446,8 @@ namespace MediaPortal
       buttonSkip.Enabled = false;
       buttonAdd.Enabled = false;
 
-      tuningInterface.Next();
+
+      _scanning = true;
     }
     public ITuning Tuning
     {
@@ -438,6 +467,7 @@ namespace MediaPortal
 
     public void OnEnded()
     {
+      _scanning = false;
       btnOk.Enabled = true;
       buttonStart.Enabled = true;
       buttonStop.Enabled = false;
@@ -449,6 +479,7 @@ namespace MediaPortal
     }
     public void OnNewChannel()
     {
+      _scanning = false;
       buttonMap.Enabled = true;
       buttonSkip.Enabled = true;
       buttonAdd.Enabled = true;
@@ -554,6 +585,7 @@ namespace MediaPortal
     private void AnalogRadioTuningForm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
     {
 
+      _scanning = false;
 
       try
       {
@@ -568,8 +600,8 @@ namespace MediaPortal
     {
 
       if (tuningInterface == null) return;
-      
 
+      _scanning = false;
       buttonMap.Enabled = false;
       buttonSkip.Enabled = false;
       buttonAdd.Enabled = false;
