@@ -600,7 +600,19 @@ namespace DShowNET
         if (hr != 0)
         {
           Log.WriteFile(Log.LogType.Log, true, "FireDTV:GetCAMStatus() failed 0x{0:X}", hr);
-          return 0;
+          if ( ((uint)hr) == ((uint)0x8007001F))
+          {
+            ResetCAM();
+            hr = propertySet.Get(propertyGuid, propId, pDataInstance, 1036, pDataReturned, 1036, out bytesReturned);
+            if (hr != 0)
+            {
+              return 0;
+            }
+          }
+          else
+          {
+            return 0;
+          }
         }
         ushort camStatus = (ushort)Marshal.ReadInt16(pDataReturned, 0);
         return camStatus;
@@ -610,7 +622,6 @@ namespace DShowNET
         Marshal.FreeCoTaskMem(pDataReturned);
         Marshal.FreeCoTaskMem(pDataInstance);
       }
-      return 0;
     }
 
     public bool IsCamPresent()
