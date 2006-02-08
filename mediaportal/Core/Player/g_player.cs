@@ -285,10 +285,7 @@ namespace MediaPortal.Player
         iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
       }
 
-      if (iUseVMR9 != 0)
-        _player = new DVDPlayer9();
-      else
-        _player = new DVDPlayer();
+      _player = new DVDPlayer9();
 
       bool bResult = _player.Play(strPath);
       if (!bResult)
@@ -456,10 +453,7 @@ namespace MediaPortal.Player
             iUseVMR9 = xmlreader.GetValueAsInt("dvdplayer", "vmr9", 0);
           }
 
-          if (iUseVMR9 != 0)
-            _player = new DVDPlayer9();
-          else
-            _player = new DVDPlayer();
+          _player = new DVDPlayer9();
 
           bool bResult = _player.Play(strFile);
           if (!bResult)
