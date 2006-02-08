@@ -947,6 +947,7 @@ HRESULT CStreamAnalyzer::MapSectionPids()
 		m_pCallback->FilterPids(3,pids);
 	}
 	HRESULT hr=m_pDemuxer->SetSectionMapping(m_pPin);
+	return hr;
 }
 HRESULT CStreamAnalyzer::MapPMTPids(int count, int* pids)
 {
@@ -964,6 +965,7 @@ HRESULT CStreamAnalyzer::MapPMTPids(int count, int* pids)
 	{
 		m_pCallback->FilterPids(3+count,hwPids);
 	}
+	return S_OK;
 }
 ////////////////////////////////////////////////////////////////////////
 //
