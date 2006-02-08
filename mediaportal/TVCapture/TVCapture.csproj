@@ -242,15 +242,16 @@
     <Compile Include="CommandProcessor\TvCardCollection.cs" />
     <Compile Include="CommandProcessor\Commands\ViewTvCommand.cs" />
     <Compile Include="DiskManagement\RecordingImporterWorker.cs" />
-    <Compile Include="DummyGraph.cs" />
-    <Compile Include="DVBGraphSkyStar2.cs" />
+    <Compile Include="Graphs\Dummy\DummyGraph.cs" />
+    <Compile Include="Graphs\DVB\DVBGraphBase.cs" />
+    <Compile Include="Graphs\DVB\DVBGraphSkyStar2.cs" />
     <Compile Include="EPG\AtscEvent.cs" />
     <Compile Include="EPG\EpgChannel.cs" />
     <Compile Include="EPG\EpgChannelUpdate.cs" />
     <Compile Include="EPG\EpgEvent.cs" />
     <Compile Include="EPG\EpgLanguage.cs" />
     <Compile Include="EPG\MhwEvent.cs" />
-    <Compile Include="GraphHelper.cs" />
+    <Compile Include="Graphs\GraphHelper.cs" />
     <Compile Include="CommandProcessor\CommandProcessor.cs" />
     <Compile Include="Scanning\AnalogRadioTuning.cs" />
     <Compile Include="Scanning\AnalogTVTuning.cs">
@@ -265,7 +266,7 @@
     <Compile Include="Scanning\ATSCTuning.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CaptureCardDefinitions.cs">
+    <Compile Include="Graphs\CaptureCardDefinitions.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scheduler\Conflictmanager.cs">
@@ -280,16 +281,13 @@
     <Compile Include="EPG\DVBEPG.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DVBGraphBDA.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DVBGraphSS2.cs">
+    <Compile Include="Graphs\DVB\DVBGraphBDA.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DVBSections.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DVBSkyStar2Helper.cs">
+    <Compile Include="Graphs\DVB\DVBSkyStar2Helper.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scanning\DVBSSelectTPLForm.cs">
@@ -311,12 +309,12 @@
     <Compile Include="Scanning\FormCountry.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GraphFactory.cs">
+    <Compile Include="Graphs\GraphFactory.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="teletext\FastTextDecoder.cs" />
     <Compile Include="teletext\Hamming.cs" />
-    <Compile Include="IGraph.cs">
+    <Compile Include="Graphs\IGraph.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Scanning\ITuning.cs">
@@ -328,10 +326,10 @@
     <Compile Include="RecorderProperties.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SinkGraph.cs">
+    <Compile Include="Graphs\Analog\SinkGraph.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="SinkGraphEx.cs">
+    <Compile Include="Graphs\Analog\SinkGraphEx.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="teletext\TeletextDecoder.cs" />

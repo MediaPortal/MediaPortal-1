@@ -31,7 +31,7 @@ using System.Security.Permissions;
 [assembly : AssemblyDescription(".NET Interfaces for calling DirectShow.  See http://directshownet.sourceforge.net/")]
 [assembly : AssemblyConfiguration("")]
 [assembly : AssemblyCompany("")]
-[assembly : AssemblyVersion("1.2.0.*")]
+[assembly : AssemblyVersion("1.2.0.0")]
 #if DEBUG
 [assembly : AssemblyProduct("Debug Version")]
 #else

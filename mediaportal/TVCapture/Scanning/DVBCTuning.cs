@@ -319,15 +319,20 @@ namespace MediaPortal.TV.Scanning
       _captureCard.Tune(newchan, 0);
 
       //tune locking : 2 seconds
-      for (int i = 0; i < 5; ++i)
+      DateTime dt = DateTime.Now;
+      while (true)
       {
         _captureCard.Process();
-        _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
         if (_captureCard.SignalPresent()) break;
-        System.Threading.Thread.Sleep(400);
+
+        TimeSpan ts = DateTime.Now - dt;
+        if (ts.TotalMilliseconds >= 2000) break;
+        System.Threading.Thread.Sleep(100);
       }
       _captureCard.Process();
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
+      Log.Write("dvbc-scan:signal quality:{0} signal strength:{1} signal present:{2}",
+                  _captureCard.SignalQuality, _captureCard.SignalStrength, _captureCard.SignalPresent());
     }
     #endregion
   }

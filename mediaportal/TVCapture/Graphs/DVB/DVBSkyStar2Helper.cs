@@ -673,8 +673,6 @@ namespace MediaPortal.TV.Recording
     //
     public bool TuneChannel(int fre, int symrate, int fec, int pol, int lnbkhz, int Diseqc, int LNBfreq)
     {
-      //private bool Tune(int Frequency,int SymbolRate,int FEC,int POL,int LNBKhz,int Diseq,int AudioPID,int VideoPID,int LNBFreq,int ecmPID,int ttxtPID,int pmtPID,int pcrPID,string pidText)
-      //{
       if (m_graphState != State.Running) return false;
 
       int hr = 0; // the result
@@ -905,5 +903,7 @@ namespace MediaPortal.TV.Recording
 
       return true;
     }
+
+
   }// class
 }//namespace
