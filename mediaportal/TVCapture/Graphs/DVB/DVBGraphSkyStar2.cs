@@ -1142,12 +1142,20 @@ namespace MediaPortal.TV.Recording
           break;
       }
 
+      _interfaceB2C2TunerCtrl.SetTunerStatusEx(40);//20*50ms= max 2 sec to lock tuner
       hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
-      if (hr != 0)
+      if (((uint)hr) == (uint)0x90010115)
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetTunerStatus failed:0x{0:X}", hr);
-        return;
-        //
+        Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:could not lock tuner");
+      }
+      else
+      {
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetTunerStatus failed:0x{0:X}", hr);
+          return;
+          //
+        }
       }
       _interfaceB2C2TunerCtrl.CheckLock();
       UpdateSignalPresent();

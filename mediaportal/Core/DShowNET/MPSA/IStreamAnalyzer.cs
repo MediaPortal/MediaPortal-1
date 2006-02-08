@@ -5,7 +5,14 @@ using System.Runtime.InteropServices;
 
 namespace DShowNET.MPSA
 {
-
+  [ComVisible(true), ComImport,
+  Guid("1F4566CD-61A1-4bf9-9544-9D4C4D120DB6"),
+  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+  public interface IHardwarePidFiltering
+  {
+    [PreserveSig]
+	  int FilterPids(int count, int[] pids);
+  };
 
   //IMPDST
   [ComVisible(true), ComImport,
@@ -57,6 +64,9 @@ namespace DShowNET.MPSA
 
     [PreserveSig]
     int GetLCN(Int16 channel, out Int16 networkId, out Int16 transportId, out Int16 serviceID, out Int16 LCN);
+    
+    [PreserveSig]
+    int SetPidFilterCallback(IHardwarePidFiltering callback);
   }
 
 }
