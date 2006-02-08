@@ -896,10 +896,11 @@ namespace MediaPortal.TV.Database
 
           if (null == m_db) return -1;
 
-          foreach (CachedChannel cache in m_channelCache)
-          {
-            if (cache.strChannel == strChannel) return cache.idChannel;
-          }
+          
+          //foreach (CachedChannel cache in m_channelCache)
+          //{
+          //  if (cache.strChannel == strChannel) return cache.idChannel;
+          //}
           SQLiteResultSet results;
           strSQL = String.Format("select * from channel ");
           results = m_db.Execute(strSQL);

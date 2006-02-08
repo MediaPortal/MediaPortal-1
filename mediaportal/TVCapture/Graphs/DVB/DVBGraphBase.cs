@@ -2692,7 +2692,7 @@ namespace MediaPortal.TV.Recording
       //it may take a while before signal quality/level is correct
       if (_filterDvbAnalyzer == null) return;
       Log.WriteFile(Log.LogType.Capture, "DVBGraph: StoreChannels() signal level:{0} signal quality:{1}", SignalStrength(), SignalQuality());
-
+      TVDatabase.ClearCache();
       //get list of current tv channels present in the database
       List<TVChannel> tvChannels = new List<TVChannel>();
       TVDatabase.GetChannels(ref tvChannels);
@@ -2993,7 +2993,7 @@ namespace MediaPortal.TV.Recording
 
         if (info.serviceType == 1)//tv
         {
-          //Log.WriteFile(Log.LogType.Capture,"DVBGraph: channel {0} is a tv channel",newchannel.ServiceName);
+          Log.WriteFile(Log.LogType.Capture,"DVBGraph: channel {0} is a tv channel",newchannel.ServiceName);
           //check if this channel already exists in the tv database
           bool isNewChannel = true;
           TVChannel tvChan = new TVChannel();
@@ -3019,10 +3019,15 @@ namespace MediaPortal.TV.Recording
           if (isNewChannel)
           {
             //then add a new channel to the database
+            tvChan.ID = -1;
             tvChan.Number = TVDatabase.FindFreeTvChannelNumber(newchannel.ProgramNumber);
             tvChan.Sort = newchannel.ProgramNumber;
-            //Log.WriteFile(Log.LogType.Capture,"DVBGraph: create new tv channel for {0}:{1}",newchannel.ServiceName,tvChan.Number);
+            Log.WriteFile(Log.LogType.Capture, "DVBGraph: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number,tvChan.Sort);
             int id = TVDatabase.AddChannel(tvChan);
+            if (id < 0)
+            {
+              Log.WriteFile(Log.LogType.Capture,true, "DVBGraph: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
+            }
             channelId = id;
             newChannels++;
           }
@@ -3030,12 +3035,12 @@ namespace MediaPortal.TV.Recording
           {
             TVDatabase.UpdateChannel(tvChan, tvChan.Sort);
             updatedChannels++;
-            //Log.WriteFile(Log.LogType.Capture,"DVBGraph: channel {0}:{1} already exists",newchannel.ServiceName,tvChan.Number);
+            Log.WriteFile(Log.LogType.Capture, "DVBGraph: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort,tvChan.ID);
           }
 
           if (Network() == NetworkType.DVBT)
           {
-            //Log.WriteFile(Log.LogType.Capture,"DVBGraph: map channel {0} id:{1} to DVBT card:{2}",newchannel.ServiceName,channelId,ID);
+            Log.WriteFile(Log.LogType.Capture,"DVBGraph: map channel {0} id:{1} to DVBT card:{2}",newchannel.ServiceName,channelId,ID);
             TVDatabase.MapDVBTChannel(newchannel.ServiceName,
               newchannel.ServiceProvider,
               channelId,
@@ -3054,7 +3059,7 @@ namespace MediaPortal.TV.Recording
           }
           if (Network() == NetworkType.DVBC)
           {
-            //Log.WriteFile(Log.LogType.Capture,"DVBGraph: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
+            Log.WriteFile(Log.LogType.Capture,"DVBGraph: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
             TVDatabase.MapDVBCChannel(newchannel.ServiceName,
               newchannel.ServiceProvider,
               channelId,
@@ -3076,7 +3081,7 @@ namespace MediaPortal.TV.Recording
           }
           if (Network() == NetworkType.ATSC)
           {
-            //Log.WriteFile(Log.LogType.Capture,"DVBGraph: map channel {0} id:{1} to ATSC card:{2}",newchannel.ServiceName,channelId,ID);
+            Log.WriteFile(Log.LogType.Capture,"DVBGraph: map channel {0} id:{1} to ATSC card:{2}",newchannel.ServiceName,channelId,ID);
             TVDatabase.MapATSCChannel(newchannel.ServiceName,
               newchannel.PhysicalChannel,
               newchannel.MinorChannel,
@@ -3102,7 +3107,7 @@ namespace MediaPortal.TV.Recording
 
           if (Network() == NetworkType.DVBS)
           {
-            //Log.WriteFile(Log.LogType.Capture,"DVBGraph: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
+            Log.WriteFile(Log.LogType.Capture,"DVBGraph: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
             newchannel.ID = channelId;
             TVDatabase.AddSatChannel(newchannel);
           }
@@ -3163,42 +3168,46 @@ namespace MediaPortal.TV.Recording
           if (isNewChannel)
           {
             //then add a new channel to the database
-            //Log.WriteFile(Log.LogType.Capture,"DVBGraph: create new radio channel for {0}",newchannel.ServiceName);
             RadioStation station = new RadioStation();
             station.Name = newchannel.ServiceName;
             station.Channel = newchannel.ProgramNumber;
             station.Frequency = newchannel.Frequency;
             station.Scrambled = info.scrambled;
+            Log.WriteFile(Log.LogType.Capture, "DVBGraph: add new radio channel for {0} {1}", station.Name,station.Frequency);
             int id = RadioDatabase.AddStation(ref station);
+            if (id < 0)
+            {
+              Log.WriteFile(Log.LogType.Capture, true,"DVBGraph: failed to add new radio channel for {0} {1} to database", station.Name, station.Frequency);
+            }
             channelId = id;
             newRadioChannels++;
           }
           else
           {
             updatedRadioChannels++;
-            //Log.WriteFile(Log.LogType.Capture,"DVBGraph: channel {0} already exists in tv database",newchannel.ServiceName);
+            Log.WriteFile(Log.LogType.Capture,"DVBGraph: channel {0} already exists in tv database",newchannel.ServiceName);
           }
 
           if (Network() == NetworkType.DVBT)
           {
-            //Log.WriteFile(Log.LogType.Capture,"DVBGraph: map channel {0} id:{1} to DVBT card:{2}",newchannel.ServiceName,channelId,ID);
+            Log.WriteFile(Log.LogType.Capture,"DVBGraph: map radio channel {0} id:{1} to DVBT card:{2}",newchannel.ServiceName,channelId,ID);
             RadioDatabase.MapDVBTChannel(newchannel.ServiceName, newchannel.ServiceProvider, channelId, newchannel.Frequency, newchannel.NetworkID, newchannel.TransportStreamID, newchannel.ProgramNumber, _currentTuningObject.AudioPid, newchannel.PMTPid, newchannel.Bandwidth, newchannel.PCRPid);
           }
           if (Network() == NetworkType.DVBC)
           {
-            //Log.WriteFile(Log.LogType.Capture,"DVBGraph: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
+            Log.WriteFile(Log.LogType.Capture, "DVBGraph: map radio channel {0} id:{1} to DVBC card:{2}", newchannel.ServiceName, channelId, ID);
             RadioDatabase.MapDVBCChannel(newchannel.ServiceName, newchannel.ServiceProvider, channelId, newchannel.Frequency, newchannel.Symbolrate, newchannel.FEC, newchannel.Modulation, newchannel.NetworkID, newchannel.TransportStreamID, newchannel.ProgramNumber, _currentTuningObject.AudioPid, newchannel.PMTPid, newchannel.PCRPid);
           }
           if (Network() == NetworkType.ATSC)
           {
-            //Log.WriteFile(Log.LogType.Capture,"DVBGraph: map channel {0} id:{1} to DVBC card:{2}",newchannel.ServiceName,channelId,ID);
+            Log.WriteFile(Log.LogType.Capture, "DVBGraph: map radio channel {0} id:{1} to DVBC card:{2}", newchannel.ServiceName, channelId, ID);
             RadioDatabase.MapATSCChannel(newchannel.ServiceName, newchannel.PhysicalChannel,
               newchannel.MinorChannel,
               newchannel.MajorChannel, newchannel.ServiceProvider, channelId, newchannel.Frequency, newchannel.Symbolrate, newchannel.FEC, newchannel.Modulation, newchannel.NetworkID, newchannel.TransportStreamID, newchannel.ProgramNumber, _currentTuningObject.AudioPid, newchannel.PMTPid, newchannel.PCRPid);
           }
           if (Network() == NetworkType.DVBS)
           {
-            //Log.WriteFile(Log.LogType.Capture,"DVBGraph: map channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
+            Log.WriteFile(Log.LogType.Capture,"DVBGraph: map radio channel {0} id:{1} to DVBS card:{2}",newchannel.ServiceName,channelId,ID);
             newchannel.ID = channelId;
 
             int scrambled = 0;
