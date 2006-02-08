@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,18 +21,20 @@
  *
  */
 
+#endregion
+
 using System;
 using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Topbar
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class TopBarSetup : ISetupForm
-	{
-		public TopBarSetup()
-		{
+  /// <summary>
+  /// 
+  /// </summary>
+  public class TopBarSetup : ISetupForm, IShowPlugin
+  {
+    public TopBarSetup()
+    {
     }
     #region ISetupForm Members
     public bool HasSetup()
@@ -43,10 +47,10 @@ namespace MediaPortal.Topbar
       return true;
     }
 
-		public bool DefaultEnabled()
-		{
-			return true;
-		}
+    public bool DefaultEnabled()
+    {
+      return true;
+    }
     public string Description()
     {
       return "Render and manages the navigation bar";
@@ -80,6 +84,21 @@ namespace MediaPortal.Topbar
     {
       System.Windows.Forms.Form setup = new TopBarSetupForm();
       setup.ShowDialog();
+    }
+
+    #endregion
+
+
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return true;  // not relevant, see CanShowInMenu()
+    }
+
+    public bool CanShowInMenu()
+    {
+      return false;
     }
 
     #endregion

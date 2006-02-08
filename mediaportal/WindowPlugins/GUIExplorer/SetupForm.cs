@@ -35,7 +35,7 @@ namespace GUIExplorer
   /// <summary>
   /// Summary description for SetupForm.
   /// </summary>
-  public class SetupForm : System.Windows.Forms.Form, ISetupForm
+  public class SetupForm : System.Windows.Forms.Form, ISetupForm, IShowPlugin
   {
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPLabel label2;
@@ -274,6 +274,16 @@ namespace GUIExplorer
       strPictureImage = "";
       return true;
     }
+
+    #endregion
+
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return false;
+    }
+
     #endregion
 
     private void button1_Click(object sender, System.EventArgs e)

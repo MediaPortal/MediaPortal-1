@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.IO;
@@ -40,7 +44,7 @@ namespace MediaPortal.GUI.Pictures
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUIPictures : GUIWindow, IComparer<GUIListItem>, ISetupForm
+  public class GUIPictures : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region MapSettings class
     [Serializable]
@@ -1324,7 +1328,7 @@ namespace MediaPortal.GUI.Pictures
               {
                 int iRotate = dbs.GetRotation(item.Path);
                 Util.Picture.CreateThumbnail(item.Path, thumbnailImage, 512, 512, iRotate);
-              //  System.Threading.Thread.Sleep(100);
+                //  System.Threading.Thread.Sleep(100);
               }
             }
           }
@@ -1426,6 +1430,15 @@ namespace MediaPortal.GUI.Pictures
 
     #endregion
 
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return true;
+    }
+
+    #endregion
+
     private void SortChanged(object sender, SortEventArgs e)
     {
       mapSettings.SortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
@@ -1434,5 +1447,6 @@ namespace MediaPortal.GUI.Pictures
 
       GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
     }
+
   }
 }

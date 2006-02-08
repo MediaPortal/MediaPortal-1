@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
+#region Copyright (C) 2005-2006 Team MediaPortal - Author: mPod/Frodo
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
+ *	Copyright (C) 2005-2006 Team MediaPortal - Author: mPod/Frodo
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -58,6 +58,7 @@ namespace MediaPortal.Configuration.Sections
       public bool IsHome = false;
       public bool IsEnabled = false;
       public bool IsPlugins = false;
+      public bool ShowDefaultHome = false;
     }
 
     public PluginsNew()
@@ -70,21 +71,6 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
-
-      try
-      {
-      }
-      catch (Exception ex)
-      {
-        Log.Write("Exception: ex.Data           - {0}", ex.Data);
-        Log.Write("Exception: ex.HelpLink       - {0}", ex.HelpLink);
-        Log.Write("Exception: ex.InnerException - {0}", ex.InnerException);
-        Log.Write("Exception: ex.Message        - {0}", ex.Message);
-        Log.Write("Exception: ex.Source         - {0}", ex.Source);
-        Log.Write("Exception: ex.StackTrace     - {0}", ex.StackTrace);
-        Log.Write("Exception: ex.TargetSite     - {0}", ex.TargetSite);
-        Log.Write("Exception: ex                - {0}", ex.ToString());
-      }
     }
 
     public override void OnSectionActivated()
@@ -116,7 +102,6 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-
     private void EnumeratePlugins()
     {
       EnumeratePluginDirectory(@"plugins\windows");
@@ -125,7 +110,6 @@ namespace MediaPortal.Configuration.Sections
       EnumeratePluginDirectory(@"plugins\externalplayers");
       EnumeratePluginDirectory(@"plugins\process");
     }
-
 
     private void EnumeratePluginDirectory(string directory)
     {
@@ -143,7 +127,6 @@ namespace MediaPortal.Configuration.Sections
           availablePlugins.Add(file);
       }
     }
-
 
     private void populateListView()
     {
@@ -165,174 +148,128 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-
     private void loadPlugins()
     {
       foreach (string pluginFile in availablePlugins)
       {
-        try
+        Assembly pluginAssembly = Assembly.LoadFrom(pluginFile);
+
+        if (pluginAssembly != null)
         {
-          Assembly pluginAssembly = Assembly.LoadFrom(pluginFile);
+          Type[] exportedTypes = pluginAssembly.GetExportedTypes();
 
-          if (pluginAssembly != null)
+          foreach (Type type in exportedTypes)
           {
-            Type[] exportedTypes = pluginAssembly.GetExportedTypes();
-
-            foreach (Type type in exportedTypes)
+            // an abstract class cannot be instanciated
+            if (type.IsAbstract)
+              continue;
+            //
+            // Try to locate the interface we're interested in
+            //
+            if (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
             {
-              // an abstract class cannot be instanciated
-              if (type.IsAbstract)
-              {
-                continue;
-              }
               //
-              // Try to locate the interface we're interested in
+              // Create instance of the current type
               //
-              if (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
-              {
-                try
-                {
-                  //
-                  // Create instance of the current type
-                  //
-                  object pluginObject = Activator.CreateInstance(type);
-                  ISetupForm pluginForm = pluginObject as ISetupForm;
-                  IExternalPlayer extPlayer = pluginObject as IExternalPlayer;
+              object pluginObject = Activator.CreateInstance(type);
+              ISetupForm pluginForm = pluginObject as ISetupForm;
+              IExternalPlayer extPlayer = pluginObject as IExternalPlayer;
+              IShowPlugin showPlugin = pluginObject as IShowPlugin;
 
-                  if (pluginForm != null)
-                  {
-                    ItemTag tag = new ItemTag();
-                    tag.SetupForm = pluginForm;
-                    tag.DllName = pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1);
-                    tag.WindowId = pluginForm.GetWindowId();
-                    if (extPlayer != null)
-                      tag.IsExternalPlayer = true;
-                    else
-                      tag.IsProcess = true;
-                    loadedPlugins.Add(tag);
-                  }
-                }
-                catch (Exception setupFormException)
-                {
-                  Log.Write("Exception in plugin SetupForm loading :{0}", setupFormException.Message);
-                  Log.Write("Current class is :{0}", type.FullName);
-                  Log.Write(setupFormException.StackTrace);
-                }
+              if (pluginForm != null)
+              {
+                ItemTag tag = new ItemTag();
+                tag.SetupForm = pluginForm;
+                tag.DllName = pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1);
+                tag.WindowId = pluginForm.GetWindowId();
+                if (extPlayer != null)
+                  tag.IsExternalPlayer = true;
+                else
+                  tag.IsProcess = true;
+                if (showPlugin != null)
+                  tag.ShowDefaultHome = showPlugin.ShowDefaultHome();
+                loadedPlugins.Add(tag);
               }
             }
-            foreach (Type t in exportedTypes)
-              try
-              {
-                if ((t.IsClass) && (t.IsSubclassOf(typeof(GUIWindow))))
-                {
-                  object newObj = Activator.CreateInstance(t);
-                  GUIWindow win = (GUIWindow)newObj;
-
-                  foreach (ItemTag tag in loadedPlugins)
-                    if (tag.WindowId == win.GetID)
-                    {
-                      tag.Type = win.GetType().ToString();
-                      tag.IsProcess = false;
-                      tag.IsWindow = true;
-                      break;
-                    }
-                }
-
-              }
-              catch (Exception guiWindowException)
-              {
-                Log.Write("Exception in plugin GUIWindows loading :{0}", guiWindowException.Message);
-                Log.Write("Current class is :{0}", t.FullName);
-                Log.Write(guiWindowException.StackTrace);
-              }
           }
-        }
-        catch (Exception unknownException)
-        {
-          Log.Write("Exception in plugin loading :{0}", unknownException.Message);
-          Log.Write(unknownException.StackTrace);
+          foreach (Type t in exportedTypes)
+            if ((t.IsClass) && (t.IsSubclassOf(typeof(GUIWindow))))
+            {
+              object newObj = Activator.CreateInstance(t);
+              GUIWindow win = (GUIWindow)newObj;
+
+              foreach (ItemTag tag in loadedPlugins)
+                if (tag.WindowId == win.GetID)
+                {
+                  tag.Type = win.GetType().ToString();
+                  tag.IsProcess = false;
+                  tag.IsWindow = true;
+                  break;
+                }
+            }
         }
       }
     }
-
 
     public override void LoadSettings()
     {
-      try
-      {
-        using (Settings xmlreader = new Settings("MediaPortal.xml"))
+      using (Settings xmlreader = new Settings("MediaPortal.xml"))
+        foreach (ListViewItem item in listViewPlugins.Items)
         {
-          foreach (ListViewItem item in listViewPlugins.Items)
+          ItemTag itemTag = (ItemTag)item.Tag;
+
+          if (itemTag.SetupForm != null)
           {
-            ItemTag itemTag = (ItemTag)item.Tag;
+            if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
+              itemTag.IsEnabled = xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
+            else
+              itemTag.IsEnabled = itemTag.SetupForm.DefaultEnabled();
 
-            if (itemTag.SetupForm != null)
+            if (itemTag.IsWindow)
             {
-              if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
-              {
-                itemTag.IsEnabled = xmlreader.GetValueAsBool("plugins", itemTag.SetupForm.PluginName(), itemTag.SetupForm.DefaultEnabled());
-              }
-              else
-              {
-                itemTag.IsEnabled = itemTag.SetupForm.DefaultEnabled();
-              }
+              bool isHome = false;
+              bool isPlugins = false;
+              string dummy = string.Empty;
 
-              if (itemTag.IsWindow)
+              if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled() && itemTag.SetupForm.GetHome(out dummy, out dummy, out dummy, out dummy))
               {
-                bool bHome = false;
-                bool bPlugins = false;
-                itemTag.IsHome = bHome;
-                itemTag.IsPlugins = bPlugins;
-                string buttontxt, buttonimage, buttonimagefocus, picture;
-                if (itemTag.SetupForm.CanEnable() || itemTag.SetupForm.DefaultEnabled())
-                {
-                  if (itemTag.SetupForm.GetHome(out buttontxt, out buttonimage, out buttonimagefocus, out picture))
-                  {
-                    bHome = true;
-                    itemTag.IsHome = xmlreader.GetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
-                    itemTag.IsPlugins = xmlreader.GetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
-                  }
-                }
+                isHome = itemTag.ShowDefaultHome;
+                isPlugins = !isHome;
+                itemTag.IsHome = xmlreader.GetValueAsBool("home", itemTag.SetupForm.PluginName(), isHome);
+                itemTag.IsPlugins = xmlreader.GetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), isPlugins);
               }
             }
-            updateListViewItem(item);
           }
+          updateListViewItem(item);
         }
-      }
-      catch (Exception) { }
     }
-
 
     public override void SaveSettings()
     {
       LoadAll();
-      try
-      {
-        using (Settings xmlwriter = new Settings("MediaPortal.xml"))
+      using (Settings xmlwriter = new Settings("MediaPortal.xml"))
+        foreach (ListViewItem item in listViewPlugins.Items)
         {
-          foreach (ListViewItem item in listViewPlugins.Items)
-          {
-            ItemTag itemTag = (ItemTag)item.Tag;
+          ItemTag itemTag = (ItemTag)item.Tag;
 
-            bool bEnabled = itemTag.IsEnabled;
-            bool bHome = itemTag.IsHome;
-            bool bPlugins = itemTag.IsPlugins;
-            xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), bEnabled);
-            xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DllName, bEnabled);
-            if ((bEnabled) && (!bHome && !bPlugins))
-              bHome = true;
-            if (itemTag.IsWindow)
-            {
-              xmlwriter.SetValueAsBool("home", itemTag.SetupForm.PluginName(), bHome);
-              xmlwriter.SetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), bPlugins);
-              xmlwriter.SetValueAsBool("pluginswindows", itemTag.Type, bEnabled);
-            }
+          bool isEnabled = itemTag.IsEnabled;
+          bool isHome = itemTag.IsHome;
+          bool isPlugins = itemTag.IsPlugins;
+
+          xmlwriter.SetValueAsBool("plugins", itemTag.SetupForm.PluginName(), isEnabled);
+          xmlwriter.SetValueAsBool("pluginsdlls", itemTag.DllName, isEnabled);
+
+          if ((isEnabled) && (!isHome && !isPlugins))
+            isHome = true;
+
+          if (itemTag.IsWindow)
+          {
+            xmlwriter.SetValueAsBool("home", itemTag.SetupForm.PluginName(), isHome);
+            xmlwriter.SetValueAsBool("myplugins", itemTag.SetupForm.PluginName(), isPlugins);
+            xmlwriter.SetValueAsBool("pluginswindows", itemTag.Type, isEnabled);
           }
         }
-      }
-      catch (Exception) { }
     }
-
 
     private void listViewPlugins_DoubleClick(object sender, EventArgs e)
     {
@@ -343,7 +280,6 @@ namespace MediaPortal.Configuration.Sections
 
       updateListViewItem(listViewPlugins.FocusedItem);
     }
-
 
     private void updateListViewItem(ListViewItem item)
     {
@@ -368,24 +304,27 @@ namespace MediaPortal.Configuration.Sections
         item.ImageIndex = 1;
     }
 
-
     void itemMyPlugins_Click(object sender, EventArgs e)
     {
       ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
       itemTag.IsPlugins = !itemTag.IsPlugins;
-
+      if (itemTag.IsPlugins)
+        itemTag.IsHome = false;
+      if (!itemTag.IsPlugins && !itemTag.IsHome)
+        itemTag.IsPlugins = true;
       updateListViewItem(listViewPlugins.FocusedItem);
     }
-
 
     void itemMyHome_Click(object sender, EventArgs e)
     {
       ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
       itemTag.IsHome = !itemTag.IsHome;
-
+      if (itemTag.IsHome)
+        itemTag.IsPlugins = false;
+      if (!itemTag.IsPlugins && !itemTag.IsHome)
+        itemTag.IsHome = true;
       updateListViewItem(listViewPlugins.FocusedItem);
     }
-
 
     void itemEnabled_Click(object sender, EventArgs e)
     {
@@ -397,7 +336,6 @@ namespace MediaPortal.Configuration.Sections
       updateListViewItem(listViewPlugins.FocusedItem);
     }
 
-
     void itemConfigure_Click(object sender, EventArgs e)
     {
       ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
@@ -406,13 +344,11 @@ namespace MediaPortal.Configuration.Sections
         itemTag.SetupForm.ShowPlugin();
     }
 
-
     private void listViewPlugins_MouseClick(object sender, MouseEventArgs e)
     {
       if (e.Button == MouseButtons.Right)
         contextMenuStrip.Show(MousePosition);
     }
-
 
     private void addContextMenuItem(string name, string menuEntry, Image image, bool clickable)
     {
@@ -451,13 +387,11 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-
     private void addContextMenuSeparator()
     {
       int item = contextMenuStrip.Items.Add(new ToolStripSeparator());
       contextMenuStrip.Items[item].Name = "Separator";
     }
-
 
     private void listViewPlugins_Click(object sender, EventArgs e)
     {
@@ -466,36 +400,27 @@ namespace MediaPortal.Configuration.Sections
       if (listViewPlugins.FocusedItem != null)
       {
         ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
-        
+
         addContextMenuItem("Name", itemTag.SetupForm.PluginName(), null, false);
         addContextMenuItem("Author", string.Format("Author: {0}", itemTag.SetupForm.Author()), null, false);
         addContextMenuSeparator();
 
         if (!itemTag.IsEnabled)
         {
-          if (itemTag.SetupForm.CanEnable())
-            addContextMenuItem("Enabled", "Plugin is disabled", null, true);
-          else
-            addContextMenuItem("Enabled", "Plugin is always disabled", null, true);
+          addContextMenuItem("Enabled", "Disabled", imageListContextMenu.Images[1], true);
         }
         else
         {
-          addContextMenuItem("", "Plugin is...", null, false);
-
-          if (itemTag.SetupForm.CanEnable())
+          addContextMenuItem("Enabled", "Enabled", imageListContextMenu.Images[0], true);
+          string dummy = string.Empty;
+          if (itemTag.SetupForm.CanEnable() && itemTag.IsWindow && itemTag.SetupForm.GetHome(out dummy, out dummy, out dummy, out dummy))
           {
-            addContextMenuItem("Enabled", "  ...enabled", imageListContextMenu.Images[0], true);
-            if (itemTag.IsWindow)
-            {
-              if (!itemTag.IsHome) addContextMenuItem("My Home", "  ...not listed in Home", null, true);
-              else addContextMenuItem("My Home", "  ...listed in Home", imageListContextMenu.Images[1], true);
+            if (!itemTag.IsHome) addContextMenuItem("My Home", "Listed in Home", imageListContextMenu.Images[1], true);
+            else addContextMenuItem("My Home", "Listed in Home", imageListContextMenu.Images[0], true);
 
-              if (!itemTag.IsPlugins) addContextMenuItem("My Plugins", "  ...not listed in My Plugins", null, true);
-              else addContextMenuItem("My Plugins", "  ...listed in My Plugins", imageListContextMenu.Images[2], true);
-            }
+            if (!itemTag.IsPlugins) addContextMenuItem("My Plugins", "Listed in My Plugins", imageListContextMenu.Images[1], true);
+            else addContextMenuItem("My Plugins", "Listed in My Plugins", imageListContextMenu.Images[0], true);
           }
-          else
-            addContextMenuItem("Enabled", "  ...always enabled", imageListContextMenu.Images[0], true);
 
           if (itemTag.SetupForm.HasSetup())
           {
@@ -503,13 +428,8 @@ namespace MediaPortal.Configuration.Sections
             addContextMenuItem("Config", "Configuration", null, true);
           }
         }
-
-        //labelPluginName.Text = String.Format("{0}", tag.SetupForm.PluginName());
-        //labelAuthor.Text = String.Format("written by {0}", tag.SetupForm.Author());
-        //labelDescription.Text = String.Format("{0}", tag.SetupForm.Description());
-        //groupBoxPluginInfo.Visible = true;
       }
     }
-    
+
   }
 }

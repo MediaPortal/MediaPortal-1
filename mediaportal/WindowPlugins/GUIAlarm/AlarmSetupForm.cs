@@ -35,7 +35,7 @@ namespace MediaPortal.GUI.Alarm
   /// <summary>
   /// Summary description for SetupForm.
   /// </summary>
-  public class AlarmSetupForm : System.Windows.Forms.Form, ISetupForm
+  public class AlarmSetupForm : System.Windows.Forms.Form, ISetupForm, IShowPlugin
   {
     private MediaPortal.UserInterface.Controls.MPButton btnCancel;
     private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
@@ -386,7 +386,7 @@ namespace MediaPortal.GUI.Alarm
     }
     #endregion
 
-    #region ISetupForm Members
+    #region ISetupFormEx Members
 
     public bool CanEnable()
     {
@@ -434,6 +434,15 @@ namespace MediaPortal.GUI.Alarm
     public bool HasSetup()
     {
       return true;
+    }
+
+    #endregion
+
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return false;
     }
 
     #endregion

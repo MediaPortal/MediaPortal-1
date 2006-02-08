@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.IO;
@@ -42,7 +46,7 @@ namespace MediaPortal.GUI.TV
   /// <summary>v
   /// Summary description for Class1.
   /// </summary>
-  public class GUITVHome : GUIWindow, ISetupForm
+  public class GUITVHome : GUIWindow, ISetupForm, IShowPlugin
   {
     #region variables
     enum Controls
@@ -129,7 +133,7 @@ namespace MediaPortal.GUI.TV
     /// <returns></returns>
     public override void DeInit()
     {
-        OnPageDestroy(-1);
+      OnPageDestroy(-1);
     }
 
     public override bool Init()
@@ -340,14 +344,14 @@ namespace MediaPortal.GUI.TV
       for (int i = 0; i < Navigator.Groups.Count; ++i)
       {
         dlg.Add(Navigator.Groups[i].GroupName);
-        if (Navigator.Groups[i].GroupName==Navigator.CurrentGroup.GroupName)
+        if (Navigator.Groups[i].GroupName == Navigator.CurrentGroup.GroupName)
         {
-          selected=i;
+          selected = i;
         }
       }
-      dlg.SelectedLabel=selected;
+      dlg.SelectedLabel = selected;
       dlg.DoModal(this.GetID);
-      if (dlg.SelectedLabel<0) return;
+      if (dlg.SelectedLabel < 0) return;
       Navigator.SetCurrentGroup(dlg.SelectedLabelText);
       if (Navigator.CurrentGroup != null)
       {
@@ -370,10 +374,10 @@ namespace MediaPortal.GUI.TV
         dlg.Add(Navigator.CurrentGroup.TvChannels[i].Name);
         if (Navigator.CurrentTVChannel != null)
         {
-            if (Navigator.CurrentGroup.TvChannels[i].Name == Navigator.CurrentTVChannel.Name)
-            {
-                selected = i;
-            }
+          if (Navigator.CurrentGroup.TvChannels[i].Name == Navigator.CurrentTVChannel.Name)
+          {
+            selected = i;
+          }
         }
       }
       dlg.SelectedLabel = selected;
@@ -757,15 +761,15 @@ namespace MediaPortal.GUI.TV
         GUIFullScreenTV TVWindow = (GUIFullScreenTV)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
         if (TVWindow != null)
         {
-            Action myaction = new Action();
-            if (Navigator.ZapChannel != channel)
-            {
-                //Keep showing zapping window indefinetely 
-                myaction.fAmount1 = -1;
-            }
-            myaction.wID = Action.ActionType.ACTION_SHOW_INFO;
-            TVWindow.OnAction(myaction);
-            myaction = null;
+          Action myaction = new Action();
+          if (Navigator.ZapChannel != channel)
+          {
+            //Keep showing zapping window indefinetely 
+            myaction.fAmount1 = -1;
+          }
+          myaction.wID = Action.ActionType.ACTION_SHOW_INFO;
+          TVWindow.OnAction(myaction);
+          myaction = null;
         }
       }
     }
@@ -890,9 +894,20 @@ namespace MediaPortal.GUI.TV
     {
       return false;
     }
+
     public void ShowPlugin()
     {
     }
+
+    #endregion
+
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return true;
+    }
+
     #endregion
 
   }
@@ -1378,14 +1393,14 @@ namespace MediaPortal.GUI.TV
       if (m_currentgroup < 0 || m_currentgroup >= m_groups.Count)		// Group no longer exists?
         m_currentgroup = 0;
 
+      m_currentTvChannel = GetTVChannel(m_currentchannel);
+      if (m_currentTvChannel == null)
+      {
+        TVGroup group = (TVGroup)m_groups[m_currentgroup];
+        if (group.TvChannels.Count > 0)
+          m_currentchannel = ((TVChannel)group.TvChannels[0]).Name;
         m_currentTvChannel = GetTVChannel(m_currentchannel);
-        if (m_currentTvChannel == null) 
-        {
-            TVGroup group = (TVGroup)m_groups[m_currentgroup];
-            if (group.TvChannels.Count > 0)
-                m_currentchannel = ((TVChannel)group.TvChannels[0]).Name;
-            m_currentTvChannel = GetTVChannel(m_currentchannel);
-        }
+      }
     }
 
     public void SaveSettings(MediaPortal.Profile.Settings xmlwriter)

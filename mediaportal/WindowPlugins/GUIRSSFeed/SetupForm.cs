@@ -33,7 +33,7 @@ namespace GUIRSSFeed
   /// <summary>
   /// A setup form for the My News Plugin
   /// </summary>
-  public class SetupForm : System.Windows.Forms.Form, ISetupForm
+  public class SetupForm : System.Windows.Forms.Form, ISetupForm, IShowPlugin
   {
     private MediaPortal.UserInterface.Controls.MPLabel label;
     private MediaPortal.UserInterface.Controls.MPButton buttonAdd;
@@ -270,6 +270,16 @@ namespace GUIRSSFeed
     {
       ShowDialog();
     }
+
+    #endregion
+
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return true;
+    }
+
     #endregion
 
     #region Windows Forms Designer generated code

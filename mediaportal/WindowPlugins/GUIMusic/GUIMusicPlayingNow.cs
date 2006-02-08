@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,416 +39,416 @@ using MediaPortal.GUI.View;
 
 namespace MediaPortal.GUI.Music
 {
-    public class GUIMusicPlayingNow : GUIWindow //GUIMusicBaseWindow
+  public class GUIMusicPlayingNow : GUIWindow //GUIMusicBaseWindow
+  {
+    private enum ControlIDs
     {
-        private enum ControlIDs
-        {
-            LBL_CAPTION = 1,
-            IMG_COVERART = 2,
-            LBL_TRACK_NAME = 3,
-            LBL_ALBUM_NAME = 4,
-            LBL_ALBUM_YEAR = 5,
-            LBL_ARTIST_NAME = 6,
-            IMG_TRACK_PROGRESS_BG = 7,
-            PROG_TRACK = 8,
-            LBL_TRACK_PROGRESS = 9,
-            LBL_TRACK_DURATION = 10,
-            LBL_UP_NEXT = 20,
-            LBL_NEXT_TRACK_NAME = 21,
-            LBL_NEXT_ALBUM_NAME = 22,
-            LBL_NEXT_ARTIST_NAME = 23,
-
-            // Transport Buttons
-            BTN_BACK = 30,
-            BTN_PREVIOUS = 31,
-            BTN_PLAY = 32,
-            BTN_PAUSE = 33,
-            BTN_STOP = 34,
-            BTN_NEXT = 35,
-        }
-
-        [SkinControlAttribute((int)ControlIDs.LBL_CAPTION)]
-        protected GUILabelControl LblCaption = null;
-
-        [SkinControlAttribute((int)ControlIDs.IMG_COVERART)]
-        protected GUIImage ImgCoverArt = null;
-
-        [SkinControlAttribute((int)ControlIDs.LBL_TRACK_NAME)]
-        protected GUIFadeLabel LblTrackName = null;
-
-        [SkinControlAttribute((int)ControlIDs.LBL_ALBUM_NAME)]
-        protected GUIFadeLabel LblAlbumName = null;
-
-        [SkinControlAttribute((int)ControlIDs.LBL_ALBUM_YEAR)]
-        protected GUILabelControl LblAlbumYear = null;
-
-        [SkinControlAttribute((int)ControlIDs.LBL_ARTIST_NAME)]
-        protected GUIFadeLabel LblArtistName = null;
-
-        [SkinControlAttribute((int)ControlIDs.PROG_TRACK)]
-        protected GUIProgressControl ProgTrack = null;
-
-        [SkinControlAttribute((int)ControlIDs.IMG_TRACK_PROGRESS_BG)]
-        protected GUIImage ImgTrackProgressBkGrnd = null;
-
-        [SkinControlAttribute((int)ControlIDs.LBL_TRACK_PROGRESS)]
-        protected GUILabelControl LblTrackProgress = null;
-
-        [SkinControlAttribute((int)ControlIDs.LBL_TRACK_DURATION)]
-        protected GUILabelControl LblTrackDuration = null;
-
-        [SkinControlAttribute((int)ControlIDs.LBL_UP_NEXT)]
-        protected GUILabelControl LblUpNext = null;
-
-        [SkinControlAttribute((int)ControlIDs.LBL_NEXT_TRACK_NAME)]
-        protected GUIFadeLabel LblNextTrackName = null;
-
-        [SkinControlAttribute((int)ControlIDs.LBL_NEXT_ALBUM_NAME)]
-        protected GUIFadeLabel LblNextAlbumName = null;
-
-        [SkinControlAttribute((int)ControlIDs.LBL_NEXT_ARTIST_NAME)]
-        protected GUIFadeLabel LblNextArtistName = null;
-        
-        [SkinControlAttribute((int)ControlIDs.BTN_BACK)]
-        protected GUIButtonControl BtnBack = null;
-
-        [SkinControlAttribute((int)ControlIDs.BTN_PREVIOUS)]
-        protected GUIButtonControl BtnPrevious = null;
-
-        [SkinControlAttribute((int)ControlIDs.BTN_PLAY)]
-        protected GUIButtonControl BtnPlay = null;
-
-        [SkinControlAttribute((int)ControlIDs.BTN_PAUSE)]
-        protected GUIButtonControl BtnPause = null;
-
-        [SkinControlAttribute((int)ControlIDs.BTN_STOP)]
-        protected GUIButtonControl BtnStop = null;
-
-        [SkinControlAttribute((int)ControlIDs.BTN_NEXT)]
-        protected GUIButtonControl BtnNext = null;
-
-        public enum TrackProgressType { Elapsed, CountDown };
-        private TrackProgressType ProgressType = TrackProgressType.Elapsed;
-        //private TrackProgressType ProgressType = TrackProgressType.CountDown;
-        private bool ControlsInitialized = false;
-        private PlayListPlayer PlaylistPlayer = null;
-        private string CurrentThumbFileName = string.Empty;
-        private string CurrentTrackFileName = string.Empty;
-        private string NextTrackFileName = string.Empty;
-        private MusicTag CurrentTrackTag = null;
-        private MusicTag NextTrackTag = null;
-        private DateTime LastUpdateTime = DateTime.Now;
-        private TimeSpan UpdateInterval = new TimeSpan(0, 0, 1);
-        public GUIMusicBaseWindow MusicWindow = null;
-
-
-        
-        public GUIMusicPlayingNow()
-        {
-            GetID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
-            PlaylistPlayer = PlayListPlayer.SingletonPlayer;
-
-            g_Player.PlayBackStarted += new g_Player.StartedHandler(g_Player_PlayBackStarted);
-            g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
-            g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
-        }
-
-        void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
-        {
-            if (!ControlsInitialized)
-                return;
-        }
-
-        void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
-        {
-            if (!ControlsInitialized)
-                return;
-
-            if (GUIWindowManager.ActiveWindow == GetID)
-            {
-                Action action = new Action();
-                action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
-                GUIGraphicsContext.OnAction(action);
-            }
-        }
-
-        void g_Player_PlayBackStarted(g_Player.MediaType type, string filename)
-        {
-            if (!ControlsInitialized)
-                return;
-
-            CurrentTrackFileName = filename;
-            NextTrackFileName = PlaylistPlayer.GetNext();
-
-            string curTrackTimePos = GetFormattedTimeString(g_Player.CurrentPosition);
-            string curTrackDuration = GetFormattedTimeString(g_Player.Duration);
-
-            LblTrackProgress.Label = curTrackTimePos;
-            LblTrackDuration.Label = curTrackDuration;
-
-            GetTrackTags();
-
-            CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, filename, CurrentTrackTag);
-
-            if(CurrentThumbFileName.Length == 0)
-                CurrentThumbFileName = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
-            
-            ImgCoverArt.SetFileName(CurrentThumbFileName);
-            UpdateTrackInfo();
-            UpdateTrackPosition();
-        }
-
-        public override bool Init()
-        {
-            return Load(GUIGraphicsContext.Skin + @"\MyMusicPlayingNow.xml");
-        }
-
-        public override void OnAction(Action action)
-        {
-            base.OnAction(action);
-
-            if (action.wID == Action.ActionType.ACTION_STOP)
-            {
-                if (GUIWindowManager.ActiveWindow == GetID)
-                {
-                    Action act = new Action();
-                    act.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
-                    GUIGraphicsContext.OnAction(act);
-                }
-            }
-        }
-
-        protected override void OnPageLoad()
-        {
-            base.OnPageLoad();
-
-            GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), GUILocalizeStrings.Get(4540)));
-            LblUpNext.Label = GUILocalizeStrings.Get(4541);
-
-            if (LblUpNext.Label.Length == 0)
-                LblUpNext.Label = "Playing next";
-
-            ControlsInitialized = true;
-            g_Player_PlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
-        }
-
-        protected override void OnPageDestroy(int new_windowId)
-        {
-            base.OnPageDestroy(new_windowId);
-            ControlsInitialized = false;
-        }
-
-        public override void Render(float timePassed)
-        {
-            base.Render(timePassed);
-         
-            if (!g_Player.Playing || !g_Player.IsMusic)
-                return;
-
-            TimeSpan ts = DateTime.Now - LastUpdateTime;
-
-            if (ts >= UpdateInterval)
-            {
-                LastUpdateTime = DateTime.Now;
-                UpdateTrackInfo();
-                //GUIWindowManager.Process();
-            }
-        }
-
-        protected override void OnShowContextMenu()
-        {
-            //return;
-
-            //base.OnShowContextMenu();
-
-            GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-
-            if (dlg == null)
-                return;
-
-            dlg.Reset();
-            dlg.SetHeading(924);            // Menu
-            dlg.AddLocalizedString(928);    // Find Coverart
-            dlg.AddLocalizedString(4521);   // Show Album Info
-
-            dlg.DoModal(GetID);
-          
-            if (dlg.SelectedId == -1) 
-                return;
-
-            switch (dlg.SelectedId)
-            {
-                case 928:       // Find Coverart
-                    {
-                        string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
-                        MusicWindow.FindCoverArt(false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
-                        CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
-
-                        if (CurrentThumbFileName.Length == 0)
-                            CurrentThumbFileName = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
-
-                        ImgCoverArt.SetFileName(CurrentThumbFileName);
-                        break;
-                    }
-
-                case 4521:      // Show Album Info
-                    {
-                        string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
-                        MusicWindow.ShowAlbumInfo(GetID, false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
-                        break;
-                    }
-            }
-        }
-
-        private void UpdateTrackInfo()
-        {
-            UpdateTrackPosition();
-
-            if (CurrentTrackTag != null)
-            {
-                LblTrackName.Label = CurrentTrackTag.Title;
-                LblAlbumName.Label = CurrentTrackTag.Album;
-                LblArtistName.Label = CurrentTrackTag.Artist;
-
-                if (CurrentTrackTag.Year > 0)
-                    LblAlbumYear.Label = CurrentTrackTag.Year.ToString();
-
-                else
-                    LblAlbumYear.Label = "";
-            }
-
-            else
-            {
-                string noTrackInfo = GUILocalizeStrings.Get(4543);
-                if (noTrackInfo.Length == 0)
-                    noTrackInfo = "Track information not available";
-
-                if (PlaylistPlayer == null || PlaylistPlayer.GetCurrentItem() == null)
-                {
-                    string noPlayList = GUILocalizeStrings.Get(4542);
-                    if (noPlayList.Length == 0)
-                        noPlayList = "No playlists loaded";
-
-                    LblTrackName.Label = noPlayList;
-                    LblAlbumName.Label = noTrackInfo;
-                }
-
-                else
-                {
-                    LblTrackName.Label = noTrackInfo;
-                    LblAlbumName.Label = "";
-                }
-                
-                LblArtistName.Label = "";
-                LblAlbumYear.Label = "";
-            }
-
-            if (NextTrackTag != null)
-            {
-                LblNextTrackName.Label = NextTrackTag.Title;
-                LblNextAlbumName.Label = NextTrackTag.Album;
-                LblNextArtistName.Label = NextTrackTag.Artist;
-            }
-
-            else
-            {
-                string noTrackInfo = GUILocalizeStrings.Get(4543);
-                if (noTrackInfo.Length == 0)
-                    noTrackInfo = "Track information not available";
-
-                //LblNextTrackName.Label = "Track info not available";
-                LblNextTrackName.Label = noTrackInfo;
-                LblNextAlbumName.Label = "";
-                LblNextArtistName.Label = "";
-            }
-        }
-
-        private string GetFormattedTimeString(double timeVal)
-        {
-            int hh = (int)(timeVal / 3600) % 100;
-            int mm = (int)((timeVal / 60) % 60);
-            int ss = (int)((timeVal / 1) % 60);
-
-            string h = hh > 0 ? string.Format("{0}}:", hh) : "";
-            string m = mm > 0 ? string.Format("{0:d2}:", mm) : "00:";
-            string s = ss > 0 ? string.Format("{0:d2}", ss) : "00";
-
-            string timeStr = string.Format("{0}{1}{2}", h, m, s);
-            return timeStr;
-        }
-
-        private void ResetTrackInfo()
-        {
-            ImgCoverArt.SetFileName("");
-            LblTrackName.Label = "";
-            LblAlbumName.Label = "";
-            LblArtistName.Label = "";
-            LblTrackProgress.Label = "";
-            LblUpNext.Label = "";
-            LblNextTrackName.Label = "";
-            LblNextAlbumName.Label = "";
-            LblNextArtistName.Label = "";
-        }
-
-        private void UpdateTrackPosition()
-        {
-            double trackDuration = g_Player.Duration;
-            double curTrackPostion = g_Player.CurrentPosition;
-
-            int progPrecent = (int)(curTrackPostion / trackDuration * 100d);
-            
-            this.ProgTrack.Percentage = progPrecent;
-            //ProgTrack.Percentage = 100;
-
-            string curTrackTimePos = GetFormattedTimeString(curTrackPostion);
-            LblTrackProgress.Label = curTrackTimePos;
-
-            ProgTrack.Visible = ProgTrack.Percentage > 0;
-
-            if (ProgressType == TrackProgressType.CountDown)
-                LblTrackDuration.Label = string.Format("-{0}", GetFormattedTimeString(trackDuration - curTrackPostion));
-        }
-
-        private void GetTrackTags()
-        {
-            bool useID3 = false;
-
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-            {
-                useID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
-            }
-
-            MusicDatabase dbs = new MusicDatabase();
-
-            CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName, useID3);
-            NextTrackTag = GetTrackTag(dbs, NextTrackFileName, useID3);
-        }
-
-        private MusicTag GetTrackTag(MusicDatabase dbs, string strFile, bool useID3)
-        {
-            MusicTag tag = null;
-            Song song = new Song();
-            bool bFound = dbs.GetSongByFileName(strFile, ref song);
-
-            if (!bFound)
-            {
-                if (useID3)
-                    tag = TagReader.TagReader.ReadTag(strFile);
-            }
-
-            else
-            {
-                tag = new MusicTag();
-                tag.Album = song.Album;
-                tag.Artist = song.Artist;
-                tag.Duration = song.Duration;
-                tag.Genre = song.Genre;
-                tag.Title = song.Title;
-                tag.Track = song.Track;
-                tag.Year = song.Year;
-            }
-
-            return tag;
-        }
+      LBL_CAPTION = 1,
+      IMG_COVERART = 2,
+      LBL_TRACK_NAME = 3,
+      LBL_ALBUM_NAME = 4,
+      LBL_ALBUM_YEAR = 5,
+      LBL_ARTIST_NAME = 6,
+      IMG_TRACK_PROGRESS_BG = 7,
+      PROG_TRACK = 8,
+      LBL_TRACK_PROGRESS = 9,
+      LBL_TRACK_DURATION = 10,
+      LBL_UP_NEXT = 20,
+      LBL_NEXT_TRACK_NAME = 21,
+      LBL_NEXT_ALBUM_NAME = 22,
+      LBL_NEXT_ARTIST_NAME = 23,
+
+      // Transport Buttons
+      BTN_BACK = 30,
+      BTN_PREVIOUS = 31,
+      BTN_PLAY = 32,
+      BTN_PAUSE = 33,
+      BTN_STOP = 34,
+      BTN_NEXT = 35,
     }
+
+    [SkinControlAttribute((int)ControlIDs.LBL_CAPTION)]
+    protected GUILabelControl LblCaption = null;
+
+    [SkinControlAttribute((int)ControlIDs.IMG_COVERART)]
+    protected GUIImage ImgCoverArt = null;
+
+    [SkinControlAttribute((int)ControlIDs.LBL_TRACK_NAME)]
+    protected GUIFadeLabel LblTrackName = null;
+
+    [SkinControlAttribute((int)ControlIDs.LBL_ALBUM_NAME)]
+    protected GUIFadeLabel LblAlbumName = null;
+
+    [SkinControlAttribute((int)ControlIDs.LBL_ALBUM_YEAR)]
+    protected GUILabelControl LblAlbumYear = null;
+
+    [SkinControlAttribute((int)ControlIDs.LBL_ARTIST_NAME)]
+    protected GUIFadeLabel LblArtistName = null;
+
+    [SkinControlAttribute((int)ControlIDs.PROG_TRACK)]
+    protected GUIProgressControl ProgTrack = null;
+
+    [SkinControlAttribute((int)ControlIDs.IMG_TRACK_PROGRESS_BG)]
+    protected GUIImage ImgTrackProgressBkGrnd = null;
+
+    [SkinControlAttribute((int)ControlIDs.LBL_TRACK_PROGRESS)]
+    protected GUILabelControl LblTrackProgress = null;
+
+    [SkinControlAttribute((int)ControlIDs.LBL_TRACK_DURATION)]
+    protected GUILabelControl LblTrackDuration = null;
+
+    [SkinControlAttribute((int)ControlIDs.LBL_UP_NEXT)]
+    protected GUILabelControl LblUpNext = null;
+
+    [SkinControlAttribute((int)ControlIDs.LBL_NEXT_TRACK_NAME)]
+    protected GUIFadeLabel LblNextTrackName = null;
+
+    [SkinControlAttribute((int)ControlIDs.LBL_NEXT_ALBUM_NAME)]
+    protected GUIFadeLabel LblNextAlbumName = null;
+
+    [SkinControlAttribute((int)ControlIDs.LBL_NEXT_ARTIST_NAME)]
+    protected GUIFadeLabel LblNextArtistName = null;
+
+    [SkinControlAttribute((int)ControlIDs.BTN_BACK)]
+    protected GUIButtonControl BtnBack = null;
+
+    [SkinControlAttribute((int)ControlIDs.BTN_PREVIOUS)]
+    protected GUIButtonControl BtnPrevious = null;
+
+    [SkinControlAttribute((int)ControlIDs.BTN_PLAY)]
+    protected GUIButtonControl BtnPlay = null;
+
+    [SkinControlAttribute((int)ControlIDs.BTN_PAUSE)]
+    protected GUIButtonControl BtnPause = null;
+
+    [SkinControlAttribute((int)ControlIDs.BTN_STOP)]
+    protected GUIButtonControl BtnStop = null;
+
+    [SkinControlAttribute((int)ControlIDs.BTN_NEXT)]
+    protected GUIButtonControl BtnNext = null;
+
+    public enum TrackProgressType { Elapsed, CountDown };
+    private TrackProgressType ProgressType = TrackProgressType.Elapsed;
+    //private TrackProgressType ProgressType = TrackProgressType.CountDown;
+    private bool ControlsInitialized = false;
+    private PlayListPlayer PlaylistPlayer = null;
+    private string CurrentThumbFileName = string.Empty;
+    private string CurrentTrackFileName = string.Empty;
+    private string NextTrackFileName = string.Empty;
+    private MusicTag CurrentTrackTag = null;
+    private MusicTag NextTrackTag = null;
+    private DateTime LastUpdateTime = DateTime.Now;
+    private TimeSpan UpdateInterval = new TimeSpan(0, 0, 1);
+    public GUIMusicBaseWindow MusicWindow = null;
+
+
+
+    public GUIMusicPlayingNow()
+    {
+      GetID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
+      PlaylistPlayer = PlayListPlayer.SingletonPlayer;
+
+      g_Player.PlayBackStarted += new g_Player.StartedHandler(g_Player_PlayBackStarted);
+      g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
+      g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
+    }
+
+    void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
+    {
+      if (!ControlsInitialized)
+        return;
+    }
+
+    void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
+    {
+      if (!ControlsInitialized)
+        return;
+
+      if (GUIWindowManager.ActiveWindow == GetID)
+      {
+        Action action = new Action();
+        action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
+        GUIGraphicsContext.OnAction(action);
+      }
+    }
+
+    void g_Player_PlayBackStarted(g_Player.MediaType type, string filename)
+    {
+      if (!ControlsInitialized)
+        return;
+
+      CurrentTrackFileName = filename;
+      NextTrackFileName = PlaylistPlayer.GetNext();
+
+      string curTrackTimePos = GetFormattedTimeString(g_Player.CurrentPosition);
+      string curTrackDuration = GetFormattedTimeString(g_Player.Duration);
+
+      LblTrackProgress.Label = curTrackTimePos;
+      LblTrackDuration.Label = curTrackDuration;
+
+      GetTrackTags();
+
+      CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, filename, CurrentTrackTag);
+
+      if (CurrentThumbFileName.Length == 0)
+        CurrentThumbFileName = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
+
+      ImgCoverArt.SetFileName(CurrentThumbFileName);
+      UpdateTrackInfo();
+      UpdateTrackPosition();
+    }
+
+    public override bool Init()
+    {
+      return Load(GUIGraphicsContext.Skin + @"\MyMusicPlayingNow.xml");
+    }
+
+    public override void OnAction(Action action)
+    {
+      base.OnAction(action);
+
+      if (action.wID == Action.ActionType.ACTION_STOP)
+      {
+        if (GUIWindowManager.ActiveWindow == GetID)
+        {
+          Action act = new Action();
+          act.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
+          GUIGraphicsContext.OnAction(act);
+        }
+      }
+    }
+
+    protected override void OnPageLoad()
+    {
+      base.OnPageLoad();
+
+      GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), GUILocalizeStrings.Get(4540)));
+      LblUpNext.Label = GUILocalizeStrings.Get(4541);
+
+      if (LblUpNext.Label.Length == 0)
+        LblUpNext.Label = "Playing next";
+
+      ControlsInitialized = true;
+      g_Player_PlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
+    }
+
+    protected override void OnPageDestroy(int new_windowId)
+    {
+      base.OnPageDestroy(new_windowId);
+      ControlsInitialized = false;
+    }
+
+    public override void Render(float timePassed)
+    {
+      base.Render(timePassed);
+
+      if (!g_Player.Playing || !g_Player.IsMusic)
+        return;
+
+      TimeSpan ts = DateTime.Now - LastUpdateTime;
+
+      if (ts >= UpdateInterval)
+      {
+        LastUpdateTime = DateTime.Now;
+        UpdateTrackInfo();
+        //GUIWindowManager.Process();
+      }
+    }
+
+    protected override void OnShowContextMenu()
+    {
+      //return;
+
+      //base.OnShowContextMenu();
+
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+
+      if (dlg == null)
+        return;
+
+      dlg.Reset();
+      dlg.SetHeading(924);            // Menu
+      dlg.AddLocalizedString(928);    // Find Coverart
+      dlg.AddLocalizedString(4521);   // Show Album Info
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedId == -1)
+        return;
+
+      switch (dlg.SelectedId)
+      {
+        case 928:       // Find Coverart
+          {
+            string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
+            MusicWindow.FindCoverArt(false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
+            CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+
+            if (CurrentThumbFileName.Length == 0)
+              CurrentThumbFileName = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
+
+            ImgCoverArt.SetFileName(CurrentThumbFileName);
+            break;
+          }
+
+        case 4521:      // Show Album Info
+          {
+            string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
+            MusicWindow.ShowAlbumInfo(GetID, false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
+            break;
+          }
+      }
+    }
+
+    private void UpdateTrackInfo()
+    {
+      UpdateTrackPosition();
+
+      if (CurrentTrackTag != null)
+      {
+        LblTrackName.Label = CurrentTrackTag.Title;
+        LblAlbumName.Label = CurrentTrackTag.Album;
+        LblArtistName.Label = CurrentTrackTag.Artist;
+
+        if (CurrentTrackTag.Year > 0)
+          LblAlbumYear.Label = CurrentTrackTag.Year.ToString();
+
+        else
+          LblAlbumYear.Label = "";
+      }
+
+      else
+      {
+        string noTrackInfo = GUILocalizeStrings.Get(4543);
+        if (noTrackInfo.Length == 0)
+          noTrackInfo = "Track information not available";
+
+        if (PlaylistPlayer == null || PlaylistPlayer.GetCurrentItem() == null)
+        {
+          string noPlayList = GUILocalizeStrings.Get(4542);
+          if (noPlayList.Length == 0)
+            noPlayList = "No playlists loaded";
+
+          LblTrackName.Label = noPlayList;
+          LblAlbumName.Label = noTrackInfo;
+        }
+
+        else
+        {
+          LblTrackName.Label = noTrackInfo;
+          LblAlbumName.Label = "";
+        }
+
+        LblArtistName.Label = "";
+        LblAlbumYear.Label = "";
+      }
+
+      if (NextTrackTag != null)
+      {
+        LblNextTrackName.Label = NextTrackTag.Title;
+        LblNextAlbumName.Label = NextTrackTag.Album;
+        LblNextArtistName.Label = NextTrackTag.Artist;
+      }
+
+      else
+      {
+        string noTrackInfo = GUILocalizeStrings.Get(4543);
+        if (noTrackInfo.Length == 0)
+          noTrackInfo = "Track information not available";
+
+        //LblNextTrackName.Label = "Track info not available";
+        LblNextTrackName.Label = noTrackInfo;
+        LblNextAlbumName.Label = "";
+        LblNextArtistName.Label = "";
+      }
+    }
+
+    private string GetFormattedTimeString(double timeVal)
+    {
+      int hh = (int)(timeVal / 3600) % 100;
+      int mm = (int)((timeVal / 60) % 60);
+      int ss = (int)((timeVal / 1) % 60);
+
+      string h = hh > 0 ? string.Format("{0}}:", hh) : "";
+      string m = mm > 0 ? string.Format("{0:d2}:", mm) : "00:";
+      string s = ss > 0 ? string.Format("{0:d2}", ss) : "00";
+
+      string timeStr = string.Format("{0}{1}{2}", h, m, s);
+      return timeStr;
+    }
+
+    private void ResetTrackInfo()
+    {
+      ImgCoverArt.SetFileName("");
+      LblTrackName.Label = "";
+      LblAlbumName.Label = "";
+      LblArtistName.Label = "";
+      LblTrackProgress.Label = "";
+      LblUpNext.Label = "";
+      LblNextTrackName.Label = "";
+      LblNextAlbumName.Label = "";
+      LblNextArtistName.Label = "";
+    }
+
+    private void UpdateTrackPosition()
+    {
+      double trackDuration = g_Player.Duration;
+      double curTrackPostion = g_Player.CurrentPosition;
+
+      int progPrecent = (int)(curTrackPostion / trackDuration * 100d);
+
+      this.ProgTrack.Percentage = progPrecent;
+      //ProgTrack.Percentage = 100;
+
+      string curTrackTimePos = GetFormattedTimeString(curTrackPostion);
+      LblTrackProgress.Label = curTrackTimePos;
+
+      ProgTrack.Visible = ProgTrack.Percentage > 0;
+
+      if (ProgressType == TrackProgressType.CountDown)
+        LblTrackDuration.Label = string.Format("-{0}", GetFormattedTimeString(trackDuration - curTrackPostion));
+    }
+
+    private void GetTrackTags()
+    {
+      bool useID3 = false;
+
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        useID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
+      }
+
+      MusicDatabase dbs = new MusicDatabase();
+
+      CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName, useID3);
+      NextTrackTag = GetTrackTag(dbs, NextTrackFileName, useID3);
+    }
+
+    private MusicTag GetTrackTag(MusicDatabase dbs, string strFile, bool useID3)
+    {
+      MusicTag tag = null;
+      Song song = new Song();
+      bool bFound = dbs.GetSongByFileName(strFile, ref song);
+
+      if (!bFound)
+      {
+        if (useID3)
+          tag = TagReader.TagReader.ReadTag(strFile);
+      }
+
+      else
+      {
+        tag = new MusicTag();
+        tag.Album = song.Album;
+        tag.Artist = song.Artist;
+        tag.Duration = song.Duration;
+        tag.Genre = song.Genre;
+        tag.Title = song.Title;
+        tag.Track = song.Track;
+        tag.Year = song.Year;
+      }
+
+      return tag;
+    }
+  }
 }

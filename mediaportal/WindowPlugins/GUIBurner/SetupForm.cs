@@ -39,7 +39,7 @@ namespace GUIBurner
   /// <summary>
   /// Summary description for SetupForm.
   /// </summary>
-  public class SetupForm : System.Windows.Forms.Form, ISetupForm
+  public class SetupForm : System.Windows.Forms.Form, ISetupForm, IShowPlugin
   {
     #region Private Variables
     private XPBurn.XPBurnCD burnClass;
@@ -647,6 +647,16 @@ namespace GUIBurner
       strPictureImage = "";
       return true;
     }
+
+    #endregion
+
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return false;
+    }
+
     #endregion
 
     #region Private Methods
@@ -857,5 +867,6 @@ namespace GUIBurner
       }
     }
     #endregion
+
   }
 }

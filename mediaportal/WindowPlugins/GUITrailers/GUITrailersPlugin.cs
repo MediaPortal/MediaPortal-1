@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Drawing;
@@ -38,76 +42,86 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Video
 {
-	public class GUITrailersPlugin : ISetupForm
-	{
-		// Returns the name of the plugin which is shown in the plugin menu
-		public string PluginName()
-		{
-			return "My Trailers";
-		}
+  public class GUITrailersPlugin : ISetupForm, IShowPlugin
+  {
+    // Returns the name of the plugin which is shown in the plugin menu
+    public string PluginName()
+    {
+      return "My Trailers";
+    }
 
-		// Returns the description of the plugin is shown in the plugin menu
-		public string Description()
-		{
-			return "Browse Trailers & clips on Yahoo Movies";
-		}
+    // Returns the description of the plugin is shown in the plugin menu
+    public string Description()
+    {
+      return "Browse Trailers & clips on Yahoo Movies";
+    }
 
-		// Returns the author of the plugin which is shown in the plugin menu
-		public string Author()      
-		{
-			return "Zipperzip/sur_uix";
-		}	
-		
-		// show the setup dialog
-		public void   ShowPlugin()  
-		{
-			GUITrailersSetupForm setup = new GUITrailersSetupForm();
-			setup.ShowDialog();
-		}	
+    // Returns the author of the plugin which is shown in the plugin menu
+    public string Author()
+    {
+      return "Zipperzip/sur_uix";
+    }
 
-		// Indicates whether plugin can be enabled/disabled
-		public bool   CanEnable()   
-		{
-			return true;
-		}	
+    // show the setup dialog
+    public void ShowPlugin()
+    {
+      GUITrailersSetupForm setup = new GUITrailersSetupForm();
+      setup.ShowDialog();
+    }
 
-		// get ID of windowplugin belonging to this setup
-		public int    GetWindowId() 
-		{
-			return 5900;
-		}	
-		
-		// Indicates if plugin is enabled by default;
-		public bool   DefaultEnabled()
-		{
-			return true;
-		}	
-		// indicates if a plugin has its own setup screen
-		public bool   HasSetup()    
-		{
-			return true;
-		}    
-	
-		/// <summary>
-		/// If the plugin should have its own button on the main menu of Mediaportal then it
-		/// should return true to this method, otherwise if it should not be on home
-		/// it should return false
-		/// </summary>
-		/// <param name="strButtonText">text the button should have</param>
-		/// <param name="strButtonImage">image for the button, or empty for default</param>
-		/// <param name="strButtonImageFocus">image for the button, or empty for default</param>
-		/// <param name="strPictureImage">subpicture for the button or empty for none</param>
-		/// <returns>true  : plugin needs its own button on home
-		///          false : plugin does not need its own button on home</returns>
-		public bool   GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage) 
-		{
-			strButtonText= GUILocalizeStrings.Get(5900);
-			strButtonImage=String.Empty;
-			strButtonImageFocus=String.Empty;
-			strPictureImage= "hover_my trailers.png";
-			return true;
-		}
-	}
+    // Indicates whether plugin can be enabled/disabled
+    public bool CanEnable()
+    {
+      return true;
+    }
+
+    // get ID of windowplugin belonging to this setup
+    public int GetWindowId()
+    {
+      return 5900;
+    }
+
+    // Indicates if plugin is enabled by default;
+    public bool DefaultEnabled()
+    {
+      return true;
+    }
+    // indicates if a plugin has its own setup screen
+    public bool HasSetup()
+    {
+      return true;
+    }
+
+    /// <summary>
+    /// If the plugin should have its own button on the main menu of Mediaportal then it
+    /// should return true to this method, otherwise if it should not be on home
+    /// it should return false
+    /// </summary>
+    /// <param name="strButtonText">text the button should have</param>
+    /// <param name="strButtonImage">image for the button, or empty for default</param>
+    /// <param name="strButtonImageFocus">image for the button, or empty for default</param>
+    /// <param name="strPictureImage">subpicture for the button or empty for none</param>
+    /// <returns>true  : plugin needs its own button on home
+    ///          false : plugin does not need its own button on home</returns>
+    public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
+    {
+      strButtonText = GUILocalizeStrings.Get(5900);
+      strButtonImage = String.Empty;
+      strButtonImageFocus = String.Empty;
+      strPictureImage = "hover_my trailers.png";
+      return true;
+    }
+
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return false;
+    }
+
+    #endregion
+
+  }
 }
 
 

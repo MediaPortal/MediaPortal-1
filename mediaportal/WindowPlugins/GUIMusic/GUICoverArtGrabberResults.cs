@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Drawing;
@@ -175,16 +179,16 @@ namespace MediaPortal.GUI.Music
       GetID = (int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS;
     }
 
-      public override bool Init()
-      {
-          //return Load(GUIGraphicsContext.Skin + @"\MyMusicCoverArtGrabberResults.xml");
+    public override bool Init()
+    {
+      //return Load(GUIGraphicsContext.Skin + @"\MyMusicCoverArtGrabberResults.xml");
 
-          bool result = Load(GUIGraphicsContext.Skin + @"\MyMusicCoverArtGrabberResults.xml");
-          //GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4515));
-          GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), GUILocalizeStrings.Get(4515)));
+      bool result = Load(GUIGraphicsContext.Skin + @"\MyMusicCoverArtGrabberResults.xml");
+      //GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4515));
+      GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), GUILocalizeStrings.Get(4515)));
 
-          return result;
-      }
+      return result;
+    }
 
     public override void OnAction(Action action)
     {
@@ -347,141 +351,141 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-      public void GetAlbumCovers(string artist, string album, string strPath, int parentWindowID, bool checkForCompilationAlbum)
+    public void GetAlbumCovers(string artist, string album, string strPath, int parentWindowID, bool checkForCompilationAlbum)
+    {
+      _SelectedAlbum = null;
+      IsCompilationAlbum = false;
+
+      //if (System.IO.Path.HasExtension(strPath))
+      //    strPath = System.IO.Path.GetDirectoryName(strPath);
+
+      if (checkForCompilationAlbum)
+        IsCompilationAlbum = GetIsCompilationAlbum(strPath, -1);
+
+      _Artist = artist;
+      _Album = album;
+      _AlbumPath = strPath;
+      string origAlbumName = _Album;
+      string filteredAlbumFormatString = GUILocalizeStrings.Get(4518);
+
+      if (filteredAlbumFormatString.Length == 0)
+        filteredAlbumFormatString = "Album title not found\r\nTrying: {0}";
+
+      _ThumbPath = GetCoverArtThumbPath(artist, album, strPath);
+      amazonWS = new AmazonWebservice();
+      amazonWS.MaxSearchResultItems = MAX_SEARCH_ITEMS;
+
+      amazonWS.FindCoverArtProgress += new AmazonWebservice.FindCoverArtProgressHandler(amazonWS_GetAlbumInfoProgress);
+      amazonWS.FindCoverArtDone += new AmazonWebservice.FindCoverArtDoneHandler(amazonWS_FindCoverArtDone);
+
+      Log.Write("Cover art grabber:getting cover art for [{0}-{1}]...", _Artist, _Album);
+
+      if (IsCompilationAlbum)
       {
-          _SelectedAlbum = null;
-          IsCompilationAlbum = false;
+        Log.Write("Cover art grabber:compilation album found", _Artist, _Album);
 
-          //if (System.IO.Path.HasExtension(strPath))
-          //    strPath = System.IO.Path.GetDirectoryName(strPath);
+        amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
+        _Artist = "";
+        string filterString = string.Format("{0} = \"{1}\"", GUILocalizeStrings.Get(484), " ");
+        string filter = string.Format(filteredAlbumFormatString, filterString);
 
-          if (checkForCompilationAlbum)
-              IsCompilationAlbum = GetIsCompilationAlbum(strPath, -1);
-
-          _Artist = artist;
-          _Album = album;
-          _AlbumPath = strPath;
-          string origAlbumName = _Album;
-          string filteredAlbumFormatString = GUILocalizeStrings.Get(4518);
-
-          if (filteredAlbumFormatString.Length == 0)
-              filteredAlbumFormatString = "Album title not found\r\nTrying: {0}";
-
-          _ThumbPath = GetCoverArtThumbPath(artist, album, strPath);
-          amazonWS = new AmazonWebservice();
-          amazonWS.MaxSearchResultItems = MAX_SEARCH_ITEMS;
-
-          amazonWS.FindCoverArtProgress += new AmazonWebservice.FindCoverArtProgressHandler(amazonWS_GetAlbumInfoProgress);
-          amazonWS.FindCoverArtDone += new AmazonWebservice.FindCoverArtDoneHandler(amazonWS_FindCoverArtDone);
-
-          Log.Write("Cover art grabber:getting cover art for [{0}-{1}]...", _Artist, _Album);
-
-          if (IsCompilationAlbum)
-          {
-              Log.Write("Cover art grabber:compilation album found", _Artist, _Album);
-
-              amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
-              _Artist = "";
-              string filterString = string.Format("{0} = \"{1}\"", GUILocalizeStrings.Get(484), " ");
-              string filter = string.Format(filteredAlbumFormatString, filterString);
-
-              Log.Write("Cover art grabber:trying again with blank artist name...");
-              InternalGetAlbumCovers(_Artist, _Album, filter);
-          }
-
-          else
-              InternalGetAlbumCovers(_Artist, _Album, string.Empty);
-
-          // Did we fail to find any albums?
-          if (!amazonWS.HasAlbums && !amazonWS.AbortGrab)
-          {
-              // Check if the album title includes a disk number description that might 
-              // be altering the proper album title such as: White album (Disk 2)
-
-              string cleanAlbumName = string.Empty;
-
-              if (StripDiskNumberFromAlbumName(_Album, ref cleanAlbumName))
-              {
-                  amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
-
-                  if (AlbumNotFoundRetryingFiltered != null)
-                      AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, cleanAlbumName);
-
-                  Log.Write("Cover art grabber:[{0}-{1}] not found. Trying [{0}-{2}]...", _Artist, _Album, cleanAlbumName);
-
-                  string filter = string.Format(filteredAlbumFormatString, cleanAlbumName);
-                  origAlbumName = _Album;
-                  InternalGetAlbumCovers(_Artist, cleanAlbumName, filter);
-              }
-
-              else if (GetProperAlbumName(_Album, ref cleanAlbumName))
-              {
-                  amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
-
-                  if (AlbumNotFoundRetryingFiltered != null)
-                      AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, cleanAlbumName);
-
-                  Log.Write("Cover art grabber:[{0}-{1}] not found. Trying album name without sub-title [{0}-{2}]...", _Artist, _Album, cleanAlbumName);
-
-                  string filter = string.Format(filteredAlbumFormatString, cleanAlbumName);
-                  origAlbumName = _Album;
-                  InternalGetAlbumCovers(_Artist, cleanAlbumName, filter);
-              }
-
-              ////else if (checkForCompilationAlbum)
-              ////{
-              ////    Log.Write("Cover art grabber:[{0}-{1}] not found. Checking if it's a compilation album...", _Artist, _Album);
-
-              ////    IsCompilationAlbum = GetIsCompilationAlbum(strPath, -1);
-
-              ////    if (IsCompilationAlbum)
-              ////    {
-              ////        Log.Write("Cover art grabber:compilation album found", _Artist, _Album);
-
-              ////        amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
-              ////        _Artist = "";
-              ////        string filterString = string.Format("{0} = \"{1}\"", GUILocalizeStrings.Get(484), " ");
-              ////        string filter = string.Format(filteredAlbumFormatString, filterString);
-
-              ////        Log.Write("Cover art grabber:trying again with blank artist name...");
-              ////        InternalGetAlbumCovers(_Artist, _Album, filter);
-              ////    }
-              ////}
-
-          }
-
-          // Still no albums?
-          if (!IsCompilationAlbum && !amazonWS.HasAlbums && !amazonWS.AbortGrab)
-          {
-              amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
-
-              if (AlbumNotFoundRetryingFiltered != null)
-                  AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, GUILocalizeStrings.Get(4506));
-
-              string filterString = string.Format("{0} = \"{1}\"", GUILocalizeStrings.Get(483), " ");
-              string filter = string.Format(filteredAlbumFormatString, filterString);
-
-              // Try searching by artist only to get all albums for this artist...
-              Log.Write("Cover art grabber:[{0}-{1}] not found. Trying again with blank album name...", _Artist, _Album);
-              InternalGetAlbumCovers(_Artist, "", filter);
-          }
-
-          // if we're searching for a single album the progress dialog will 
-          // be displayed so we need to close it...
-          if (SearchMode == SearchDepthMode.Album)
-          {
-              GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-              if (dlgProgress != null)
-              {
-                  dlgProgress.SetPercentage(100);
-                  dlgProgress.Progress();
-                  dlgProgress.Close();
-              }
-          }
-
-          amazonWS.FindCoverArtProgress -= new AmazonWebservice.FindCoverArtProgressHandler(amazonWS_GetAlbumInfoProgress);
-          amazonWS.FindCoverArtDone -= new AmazonWebservice.FindCoverArtDoneHandler(amazonWS_FindCoverArtDone);
+        Log.Write("Cover art grabber:trying again with blank artist name...");
+        InternalGetAlbumCovers(_Artist, _Album, filter);
       }
+
+      else
+        InternalGetAlbumCovers(_Artist, _Album, string.Empty);
+
+      // Did we fail to find any albums?
+      if (!amazonWS.HasAlbums && !amazonWS.AbortGrab)
+      {
+        // Check if the album title includes a disk number description that might 
+        // be altering the proper album title such as: White album (Disk 2)
+
+        string cleanAlbumName = string.Empty;
+
+        if (StripDiskNumberFromAlbumName(_Album, ref cleanAlbumName))
+        {
+          amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
+
+          if (AlbumNotFoundRetryingFiltered != null)
+            AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, cleanAlbumName);
+
+          Log.Write("Cover art grabber:[{0}-{1}] not found. Trying [{0}-{2}]...", _Artist, _Album, cleanAlbumName);
+
+          string filter = string.Format(filteredAlbumFormatString, cleanAlbumName);
+          origAlbumName = _Album;
+          InternalGetAlbumCovers(_Artist, cleanAlbumName, filter);
+        }
+
+        else if (GetProperAlbumName(_Album, ref cleanAlbumName))
+        {
+          amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
+
+          if (AlbumNotFoundRetryingFiltered != null)
+            AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, cleanAlbumName);
+
+          Log.Write("Cover art grabber:[{0}-{1}] not found. Trying album name without sub-title [{0}-{2}]...", _Artist, _Album, cleanAlbumName);
+
+          string filter = string.Format(filteredAlbumFormatString, cleanAlbumName);
+          origAlbumName = _Album;
+          InternalGetAlbumCovers(_Artist, cleanAlbumName, filter);
+        }
+
+        ////else if (checkForCompilationAlbum)
+        ////{
+        ////    Log.Write("Cover art grabber:[{0}-{1}] not found. Checking if it's a compilation album...", _Artist, _Album);
+
+        ////    IsCompilationAlbum = GetIsCompilationAlbum(strPath, -1);
+
+        ////    if (IsCompilationAlbum)
+        ////    {
+        ////        Log.Write("Cover art grabber:compilation album found", _Artist, _Album);
+
+        ////        amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
+        ////        _Artist = "";
+        ////        string filterString = string.Format("{0} = \"{1}\"", GUILocalizeStrings.Get(484), " ");
+        ////        string filter = string.Format(filteredAlbumFormatString, filterString);
+
+        ////        Log.Write("Cover art grabber:trying again with blank artist name...");
+        ////        InternalGetAlbumCovers(_Artist, _Album, filter);
+        ////    }
+        ////}
+
+      }
+
+      // Still no albums?
+      if (!IsCompilationAlbum && !amazonWS.HasAlbums && !amazonWS.AbortGrab)
+      {
+        amazonWS.MaxSearchResultItems = MAX_UNFILTERED_SEARCH_ITEMS;
+
+        if (AlbumNotFoundRetryingFiltered != null)
+          AlbumNotFoundRetryingFiltered(amazonWS, origAlbumName, GUILocalizeStrings.Get(4506));
+
+        string filterString = string.Format("{0} = \"{1}\"", GUILocalizeStrings.Get(483), " ");
+        string filter = string.Format(filteredAlbumFormatString, filterString);
+
+        // Try searching by artist only to get all albums for this artist...
+        Log.Write("Cover art grabber:[{0}-{1}] not found. Trying again with blank album name...", _Artist, _Album);
+        InternalGetAlbumCovers(_Artist, "", filter);
+      }
+
+      // if we're searching for a single album the progress dialog will 
+      // be displayed so we need to close it...
+      if (SearchMode == SearchDepthMode.Album)
+      {
+        GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+        if (dlgProgress != null)
+        {
+          dlgProgress.SetPercentage(100);
+          dlgProgress.Progress();
+          dlgProgress.Close();
+        }
+      }
+
+      amazonWS.FindCoverArtProgress -= new AmazonWebservice.FindCoverArtProgressHandler(amazonWS_GetAlbumInfoProgress);
+      amazonWS.FindCoverArtDone -= new AmazonWebservice.FindCoverArtDoneHandler(amazonWS_FindCoverArtDone);
+    }
 
     private string GetCoverArtThumbPath(string artist, string album, string albumPath)
     {

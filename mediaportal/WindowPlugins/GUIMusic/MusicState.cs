@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,44 +21,46 @@
  *
  */
 
+#endregion
+
 using System;
 using MediaPortal.GUI.Library;
 namespace MediaPortal.GUI.Music
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	public class MusicState
-	{
-    static int      m_iTempPlaylistWindow=0;
-    static string   m_strTempPlaylistDirectory="";
-    static int      m_iStartWindow=(int)GUIWindow.Window.WINDOW_MUSIC_FILES;
-		static string   view="";
-		public MusicState()
-		{
-			// 
-			// TODO: Add constructor logic here
-			//
-    }
-    static public string TempPlaylistDirectory 
+  /// <summary>
+  /// 
+  /// </summary>
+  public class MusicState
+  {
+    static int m_iTempPlaylistWindow = 0;
+    static string m_strTempPlaylistDirectory = "";
+    static int m_iStartWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
+    static string view = "";
+    public MusicState()
     {
-      get { return m_strTempPlaylistDirectory;}
-      set {m_strTempPlaylistDirectory=value;}
+      // 
+      // TODO: Add constructor logic here
+      //
+    }
+    static public string TempPlaylistDirectory
+    {
+      get { return m_strTempPlaylistDirectory; }
+      set { m_strTempPlaylistDirectory = value; }
     }
     static public int TempPlaylistWindow
     {
-      get { return m_iTempPlaylistWindow;}
-      set {m_iTempPlaylistWindow=value;}
+      get { return m_iTempPlaylistWindow; }
+      set { m_iTempPlaylistWindow = value; }
     }
     static public int StartWindow
     {
-      get { return m_iStartWindow;}
-      set {m_iStartWindow=value;}
-		}
-		static public string View
-		{
-			get { return view;}
-			set {view=value;}
-		}
-	}
+      get { return m_iStartWindow; }
+      set { m_iStartWindow = value; }
+    }
+    static public string View
+    {
+      get { return view; }
+      set { view = value; }
+    }
+  }
 }

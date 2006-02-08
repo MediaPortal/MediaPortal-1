@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -15,9 +17,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html 
+ *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -38,7 +42,7 @@ namespace MediaPortal.GUI.MSN
   /// <summary>
   /// Summary description for Class1.
   /// </summary>
-  public class GUIMSNPlugin : GUIWindow, IComparer<GUIListItem>, ISetupForm
+  public class GUIMSNPlugin : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region enums
     enum Controls
@@ -56,7 +60,7 @@ namespace MediaPortal.GUI.MSN
       CONTROL_EJECT = 13
     }
 
-    
+
     #endregion
 
     #region  variables
@@ -170,7 +174,7 @@ namespace MediaPortal.GUI.MSN
       {
         case GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION:
           // Close conversation
-           CloseConversation();
+          CloseConversation();
           break;
 
         case GUIMessage.MessageType.GUI_MSG_NEW_LINE_ENTERED:
@@ -343,7 +347,7 @@ namespace MediaPortal.GUI.MSN
 
     void UpdateStatusButton()
     {
-      if (_messenger==null)
+      if (_messenger == null)
       {
         GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_BTNSTATUS, GUILocalizeStrings.Get(961));//MSN Status
         return;
@@ -566,7 +570,7 @@ namespace MediaPortal.GUI.MSN
         }
 
         _isDialogVisible = true;
-        _currentconversation=_messenger.CreateConversation();
+        _currentconversation = _messenger.CreateConversation();
         _currentconversation.Invite(contact);
       }
     }
@@ -680,7 +684,7 @@ namespace MediaPortal.GUI.MSN
       string strObjects = String.Format("{0} {1}", iContacts, GUILocalizeStrings.Get(632));
       GUIPropertyManager.SetProperty("#itemcount", strObjects);
       GUIControl.SetControlLabel(GetID, (int)Controls.CONTROL_LABELFILES, strObjects);
-      
+
 
       OnSort();
       UpdateStatusButton();
@@ -762,12 +766,12 @@ namespace MediaPortal.GUI.MSN
               _messenger.Nameserver.ConnectivitySettings.ProxyPort = xmlreader.GetValueAsInt("MSNmessenger", "proxyport", 8080);
               _messenger.Nameserver.ConnectivitySettings.ProxyUsername = xmlreader.GetValueAsString("MSNmessenger", "proxyusername", "");
               _messenger.Nameserver.ConnectivitySettings.ProxyPassword = xmlreader.GetValueAsString("MSNmessenger", "proxypassword", "");
-              
-              int proxyType= xmlreader.GetValueAsInt("MSNmessenger", "proxytype", 1);
+
+              int proxyType = xmlreader.GetValueAsInt("MSNmessenger", "proxytype", 1);
               if (proxyType == 1) _messenger.Nameserver.ConnectivitySettings.ProxyType = ProxyType.Socks5;
               else _messenger.Nameserver.ConnectivitySettings.ProxyType = ProxyType.Socks4;
               // _messenger.Nameserver.ConnectivitySettings.ProxyType = settings;
-              Log.Write("MSN: proxy:{0}:{1} {2}/****", 
+              Log.Write("MSN: proxy:{0}:{1} {2}/****",
                   _messenger.Nameserver.ConnectivitySettings.ProxyHost,
                   _messenger.Nameserver.ConnectivitySettings.ProxyPort,
                   _messenger.Nameserver.ConnectivitySettings.ProxyUsername);
@@ -781,13 +785,13 @@ namespace MediaPortal.GUI.MSN
           _messenger.Nameserver.AuthenticationError += new HandlerExceptionEventHandler(Nameserver_AuthenticationError);
           _messenger.Nameserver.ServerErrorReceived += new ErrorReceivedEventHandler(Nameserver_ServerErrorReceived);
           _messenger.ConversationCreated += new ConversationCreatedEventHandler(ConversationCreated);
-//          _messenger.TransferInvitationReceived += new MSNSLPInvitationReceivedEventHandler(messenger_TransferInvitationReceived);
+          //          _messenger.TransferInvitationReceived += new MSNSLPInvitationReceivedEventHandler(messenger_TransferInvitationReceived);
 
           // setup the callbacks
           // we log when someone goes online
           _messenger.Nameserver.AutoSynchronize = true;
-          _messenger.Nameserver.ContactOnline +=new ContactChangedEventHandler(Nameserver_ContactOnline);
-          _messenger.Nameserver.ContactOffline+=new ContactChangedEventHandler(Nameserver_ContactOffline);
+          _messenger.Nameserver.ContactOnline += new ContactChangedEventHandler(Nameserver_ContactOnline);
+          _messenger.Nameserver.ContactOffline += new ContactChangedEventHandler(Nameserver_ContactOffline);
           _messenger.Nameserver.ContactStatusChanged += new ContactStatusChangedEventHandler(Nameserver_ContactStatusChanged);
 
           // notify us when synchronization is completed
@@ -821,7 +825,7 @@ namespace MediaPortal.GUI.MSN
 
     void Nameserver_ContactStatusChanged(object sender, ContactStatusChangeEventArgs e)
     {
-      Log.Write("MSN:contact status changed:{0} {1}", e.Contact.Name,e.Contact.Status.ToString());
+      Log.Write("MSN:contact status changed:{0} {1}", e.Contact.Name, e.Contact.Status.ToString());
       _refreshContactList = true;
     }
 
@@ -833,7 +837,7 @@ namespace MediaPortal.GUI.MSN
 
     void Nameserver_ContactOnline(object sender, ContactEventArgs e)
     {
-      Log.Write("MSN:contact online:{0}.",e.Contact.Name);
+      Log.Write("MSN:contact online:{0}.", e.Contact.Name);
       _refreshContactList = true;
     }
 
@@ -854,7 +858,7 @@ namespace MediaPortal.GUI.MSN
       Log.Write("MSN:signed in.");
       _refreshContactList = true;
     }
-    
+
     /// <summary>
     /// Signed off from MSN server
     /// </summary>
@@ -872,7 +876,7 @@ namespace MediaPortal.GUI.MSN
       if (e.Exception is UnauthorizedException)
         return;
 
-      Log.Write("MSN:unable to connect:{0}",e.Exception.Message);
+      Log.Write("MSN:unable to connect:{0}", e.Exception.Message);
       if (_isDialogVisible)
       {
         _isDialogVisible = false;
@@ -988,7 +992,7 @@ namespace MediaPortal.GUI.MSN
         // new conversation
         contactname = e.Contact.Name;
       }
-      
+
       if ((!GUIGraphicsContext.IsFullScreenVideo) && (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MSN_CHAT))
       {
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN_CHAT);
@@ -1005,7 +1009,7 @@ namespace MediaPortal.GUI.MSN
     }
 
 
-    #region ISetupForm Members
+    #region ISetupFormEx Members
 
     public bool CanEnable()
     {
@@ -1060,6 +1064,15 @@ namespace MediaPortal.GUI.MSN
 
     #endregion
 
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return false;
+    }
+
+    #endregion
+
     private void ContactOffline(Messenger sender, ContactEventArgs e)
     {
       _refreshContactList = true;
@@ -1104,7 +1117,6 @@ namespace MediaPortal.GUI.MSN
         GUIGraphicsContext.SendMessage(msg2);
       }
     }
-
 
   }
 }

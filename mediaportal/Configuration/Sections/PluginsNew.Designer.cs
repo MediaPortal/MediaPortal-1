@@ -38,18 +38,12 @@ namespace MediaPortal.Configuration.Sections
       this.imageListContextMenu = new System.Windows.Forms.ImageList(this.components);
       this.mpTabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.groupBoxPluginInfo = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.labelPluginName = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelAuthor = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelDescription = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpBeveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.listViewPlugins = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeaderName = new System.Windows.Forms.ColumnHeader();
       this.contextMenuStrip = new MediaPortal.UserInterface.Controls.MPContextMenuStrip();
       this.toolTip = new MediaPortal.UserInterface.Controls.MPToolTip();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
-      this.groupBoxPluginInfo.SuspendLayout();
       this.SuspendLayout();
       // 
       // imageListLargePlugins
@@ -70,8 +64,7 @@ namespace MediaPortal.Configuration.Sections
       this.imageListContextMenu.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListContextMenu.ImageStream")));
       this.imageListContextMenu.TransparentColor = System.Drawing.Color.Transparent;
       this.imageListContextMenu.Images.SetKeyName(0, "Enabled.png");
-      this.imageListContextMenu.Images.SetKeyName(1, "MyHome.png");
-      this.imageListContextMenu.Images.SetKeyName(2, "MyPlugins.png");
+      this.imageListContextMenu.Images.SetKeyName(1, "Enabled_off.png");
       // 
       // mpTabControl1
       // 
@@ -88,7 +81,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPage1
       // 
-      this.tabPage1.Controls.Add(this.groupBoxPluginInfo);
       this.tabPage1.Controls.Add(this.listViewPlugins);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
@@ -97,55 +89,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Plugins";
       this.tabPage1.UseVisualStyleBackColor = true;
-      // 
-      // groupBoxPluginInfo
-      // 
-      this.groupBoxPluginInfo.Controls.Add(this.labelPluginName);
-      this.groupBoxPluginInfo.Controls.Add(this.labelAuthor);
-      this.groupBoxPluginInfo.Controls.Add(this.labelDescription);
-      this.groupBoxPluginInfo.Controls.Add(this.mpBeveledLine1);
-      this.groupBoxPluginInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxPluginInfo.Location = new System.Drawing.Point(12, 272);
-      this.groupBoxPluginInfo.Name = "groupBoxPluginInfo";
-      this.groupBoxPluginInfo.Size = new System.Drawing.Size(440, 92);
-      this.groupBoxPluginInfo.TabIndex = 1;
-      this.groupBoxPluginInfo.TabStop = false;
-      this.groupBoxPluginInfo.Visible = false;
-      // 
-      // labelPluginName
-      // 
-      this.labelPluginName.AutoSize = true;
-      this.labelPluginName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelPluginName.Location = new System.Drawing.Point(16, 20);
-      this.labelPluginName.Name = "labelPluginName";
-      this.labelPluginName.Size = new System.Drawing.Size(96, 16);
-      this.labelPluginName.TabIndex = 0;
-      this.labelPluginName.Text = "Plugin Name";
-      // 
-      // labelAuthor
-      // 
-      this.labelAuthor.AutoSize = true;
-      this.labelAuthor.Location = new System.Drawing.Point(16, 40);
-      this.labelAuthor.Name = "labelAuthor";
-      this.labelAuthor.Size = new System.Drawing.Size(38, 13);
-      this.labelAuthor.TabIndex = 1;
-      this.labelAuthor.Text = "Author";
-      // 
-      // labelDescription
-      // 
-      this.labelDescription.AutoSize = true;
-      this.labelDescription.Location = new System.Drawing.Point(16, 64);
-      this.labelDescription.Name = "labelDescription";
-      this.labelDescription.Size = new System.Drawing.Size(60, 13);
-      this.labelDescription.TabIndex = 3;
-      this.labelDescription.Text = "Description";
-      // 
-      // mpBeveledLine1
-      // 
-      this.mpBeveledLine1.Location = new System.Drawing.Point(14, 58);
-      this.mpBeveledLine1.Name = "mpBeveledLine1";
-      this.mpBeveledLine1.Size = new System.Drawing.Size(412, 2);
-      this.mpBeveledLine1.TabIndex = 2;
       // 
       // listViewPlugins
       // 
@@ -207,8 +150,6 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.mpTabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
-      this.groupBoxPluginInfo.ResumeLayout(false);
-      this.groupBoxPluginInfo.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -217,14 +158,9 @@ namespace MediaPortal.Configuration.Sections
 
     private MediaPortal.UserInterface.Controls.MPListView listViewPlugins;
     private System.Windows.Forms.ImageList imageListLargePlugins;
-    private MediaPortal.UserInterface.Controls.MPLabel labelPluginName;
-    private MediaPortal.UserInterface.Controls.MPLabel labelDescription;
-    private MediaPortal.UserInterface.Controls.MPLabel labelAuthor;
-    private MediaPortal.UserInterface.Controls.MPBeveledLine mpBeveledLine1;
     private MediaPortal.UserInterface.Controls.MPTabControl mpTabControl1;
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.ColumnHeader columnHeaderName;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxPluginInfo;
     private MediaPortal.UserInterface.Controls.MPToolTip toolTip;
     private MediaPortal.UserInterface.Controls.MPContextMenuStrip contextMenuStrip;
     private System.Windows.Forms.ImageList imageListContextMenu;

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -43,7 +47,7 @@ namespace MediaPortal.GUI.Radio
   /// -class welke de list/thumbnail view combinatie doet
   /// 
   /// </summary>
-  public class GUIRadio : GUIWindow, IComparer<GUIListItem>, ISetupForm
+  public class GUIRadio : GUIWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     [SkinControlAttribute(2)]
     protected GUIButtonControl btnViewAs = null;
@@ -58,7 +62,7 @@ namespace MediaPortal.GUI.Radio
     [SkinControlAttribute(51)]
     protected GUIThumbnailPanel thumbnailView = null;
 
-    
+
     enum SortMethod
     {
       Name = 0,
@@ -926,6 +930,15 @@ namespace MediaPortal.GUI.Radio
 
     #endregion
 
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return true;
+    }
+
+    #endregion
+
     void SortChanged(object sender, SortEventArgs e)
     {
       sortAscending = e.Order != System.Windows.Forms.SortOrder.Descending;
@@ -935,5 +948,6 @@ namespace MediaPortal.GUI.Radio
 
       GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
     }
+
   }
 }

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Collections;
 using System.Globalization;
@@ -36,7 +40,7 @@ using System.Threading;
 
 namespace MediaPortal.GUI.Weather
 {
-  public class GUIWindowWeather : GUIWindow, ISetupForm
+  public class GUIWindowWeather : GUIWindow, ISetupForm, IShowPlugin
   {
     #region structs
     class LocationInfo
@@ -1437,6 +1441,15 @@ namespace MediaPortal.GUI.Weather
 
     #endregion
 
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return true;
+    }
+
+    #endregion
+
     ///////////////////////////////////////////
 
     void BackgroundUpdate(bool isAuto)
@@ -1462,6 +1475,7 @@ namespace MediaPortal.GUI.Weather
     }
 
     bool _workerCompleted = false;
+
   }
 }
 

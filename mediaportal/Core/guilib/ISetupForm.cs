@@ -60,18 +60,13 @@ namespace MediaPortal.GUI.Library
   }
 
   /// <summary>
-  /// Extended Interface for plugin setup configuration screens.
-  /// This Interface implements the same members as ISetupForm, PLUS new features,
-  /// like: ShowHome()
-  /// Redundant, so we don't break external 3rd party plugins, if we want to add new features to the interface.
-  /// 
-  /// Plugins may have a configuration screen. By implementing this interface in your plugin,
-  /// MediaPortal will add it to the plugin section menu (Configuration.exe) where users can configure your plugin
+  /// Extends the Interface for plugin setup configuration screens.
+  /// This Interface adds new features like: ShowDefaultHome()
   /// </summary>
-  public interface ISetupFormEx : ISetupForm
+  public interface IShowPlugin
   {
     /// <summary>
-    /// Indicates, if a plugin is shown by default in Home screen, or in My Plugins
+    /// Indicates, if a windowplugin is shown by default in Home screen, or in My Plugins
     /// </summary>
     /// <returns>true : plugin defaults to be shown in Home</returns>
     /// <returns>false: plugin defaults to be shown in My Plugins</returns>

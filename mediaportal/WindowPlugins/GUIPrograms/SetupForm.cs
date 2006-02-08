@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -35,7 +39,7 @@ namespace WindowPlugins.GUIPrograms
   /// <summary>
   /// Summary description for SetupForm.
   /// </summary>
-  public class SetupForm: Form, ISetupForm
+  public class SetupForm : Form, ISetupForm, IShowPlugin
   {
     /// <summary>
     /// Required designer variable.
@@ -175,6 +179,15 @@ namespace WindowPlugins.GUIPrograms
       return false;
     }
 
+    #region IShowPlugin Members
+
+    public bool ShowDefaultHome()
+    {
+      return false;
+    }
+
+    #endregion
+
     #region Windows Form Designer generated code
     /// <summary>
     /// Required method for Designer support - do not modify
@@ -231,7 +244,7 @@ namespace WindowPlugins.GUIPrograms
       // appTree
       // 
       this.appTree.AllowDrop = true;
-      this.appTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+      this.appTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
         | System.Windows.Forms.AnchorStyles.Left)));
       this.appTree.HideSelection = false;
       this.appTree.HotTracking = true;
@@ -451,8 +464,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // detailsTabControl
       // 
-      this.detailsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.detailsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.detailsTabControl.Controls.Add(this.detailsPage);
       this.detailsTabControl.Controls.Add(this.filesPage);
@@ -475,8 +488,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // holderPanel
       // 
-      this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanel.Location = new System.Drawing.Point(3, 3);
       this.holderPanel.Name = "holderPanel";
@@ -494,8 +507,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // holderPanelFiles
       // 
-      this.holderPanelFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.holderPanelFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanelFiles.Location = new System.Drawing.Point(6, 3);
       this.holderPanelFiles.Name = "holderPanelFiles";
@@ -513,8 +526,8 @@ namespace WindowPlugins.GUIPrograms
       // 
       // holderPanelViews
       // 
-      this.holderPanelViews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-        | System.Windows.Forms.AnchorStyles.Left) 
+      this.holderPanelViews.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+        | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanelViews.Location = new System.Drawing.Point(6, 3);
       this.holderPanelViews.Name = "holderPanelViews";
@@ -552,7 +565,7 @@ namespace WindowPlugins.GUIPrograms
       this.ResumeLayout(false);
 
     }
-    #endregion 
+    #endregion
 
     private void DoAddChild(myProgSourceType newSourceType)
     {
@@ -569,10 +582,10 @@ namespace WindowPlugins.GUIPrograms
         updateTree();
         // the selected node has a new child => change selection to last child added
         if (appTree.SelectedNode != null)
-        if (appTree.SelectedNode.Nodes.Count > 0)
-        {
-          appTree.SelectedNode = appTree.SelectedNode.Nodes[appTree.SelectedNode.Nodes.Count - 1];
-        }
+          if (appTree.SelectedNode.Nodes.Count > 0)
+          {
+            appTree.SelectedNode = appTree.SelectedNode.Nodes[appTree.SelectedNode.Nodes.Count - 1];
+          }
       }
     }
 
@@ -581,7 +594,7 @@ namespace WindowPlugins.GUIPrograms
       AppItem curApp = GetSelectedAppItem();
       if (curApp == null)
       {
-        return ;
+        return;
       }
 
       // brute force.... change, save and go into edit mode.....
@@ -624,7 +637,7 @@ namespace WindowPlugins.GUIPrograms
     private TreeNode GetNodeOfIndexPath(string IndexPath)
     {
       TreeNode res = null;
-      int nIndex =  - 1;
+      int nIndex = -1;
       ArrayList Indexes = new ArrayList(IndexPath.Split(';'));
       foreach (string strIndex in Indexes)
       {
@@ -635,7 +648,7 @@ namespace WindowPlugins.GUIPrograms
         }
         else
         {
-          nIndex = ProgramUtils.StrToIntDef(strIndex,  - 1);
+          nIndex = ProgramUtils.StrToIntDef(strIndex, -1);
           if ((nIndex >= 0) && (nIndex <= res.Nodes.Count - 1))
           {
             res = res.Nodes[nIndex];
@@ -672,7 +685,7 @@ namespace WindowPlugins.GUIPrograms
 
       // add root
       appTree.Nodes.Add(new TreeNode("my Programs"));
-      AttachChildren(appTree.Nodes[0],  - 1);
+      AttachChildren(appTree.Nodes[0], -1);
 
       appTree.ExpandAll();
       appTree.EndUpdate();
@@ -756,7 +769,7 @@ namespace WindowPlugins.GUIPrograms
 
     private int GetSelectedAppID()
     {
-      int res =  - 1;
+      int res = -1;
       AppItem curApp = GetSelectedAppItem();
       if (curApp != null)
       {
@@ -803,7 +816,7 @@ namespace WindowPlugins.GUIPrograms
     {
       AppItem curApp = GetSelectedAppItem();
       AppItem prevApp = GetPrevAppItem();
-      int n =  - 1;
+      int n = -1;
       if ((curApp != null) && (prevApp != null))
       {
         n = curApp.Position;
@@ -825,7 +838,7 @@ namespace WindowPlugins.GUIPrograms
     {
       AppItem curApp = GetSelectedAppItem();
       AppItem nextApp = GetNextAppItem();
-      int n =  - 1;
+      int n = -1;
       if ((curApp != null) && (nextApp != null))
       {
         n = curApp.Position;
@@ -1122,28 +1135,28 @@ namespace WindowPlugins.GUIPrograms
         buttonDown.Enabled = false;
       }
       else
-      if (NodeAcceptsChildren(appTree.SelectedNode))
-      {
-        buttonAddChild.Enabled = true;
-        buttonDelete.Enabled = false;
-        if (appTree.SelectedNode != appTree.Nodes[0])
+        if (NodeAcceptsChildren(appTree.SelectedNode))
         {
-          AppItem curApp = GetSelectedAppItem();
-          if (curApp != null)
+          buttonAddChild.Enabled = true;
+          buttonDelete.Enabled = false;
+          if (appTree.SelectedNode != appTree.Nodes[0])
           {
-            buttonDelete.Enabled = (apps.appsOfFatherID(curApp.AppID).Count == 0); // groupitems are only deletable if no children exist
+            AppItem curApp = GetSelectedAppItem();
+            if (curApp != null)
+            {
+              buttonDelete.Enabled = (apps.appsOfFatherID(curApp.AppID).Count == 0); // groupitems are only deletable if no children exist
+            }
           }
+          buttonUp.Enabled = (appTree.SelectedNode != appTree.Nodes[0]) && (GetPrevAppItem() != null);
+          buttonDown.Enabled = (appTree.SelectedNode != appTree.Nodes[0]) && (GetNextAppItem() != null);
         }
-        buttonUp.Enabled = (appTree.SelectedNode != appTree.Nodes[0]) && (GetPrevAppItem() != null);
-        buttonDown.Enabled = (appTree.SelectedNode != appTree.Nodes[0]) && (GetNextAppItem() != null);
-      }
-      else
-      {
-        buttonAddChild.Enabled = false;
-        buttonUp.Enabled = (GetPrevAppItem() != null);
-        buttonDown.Enabled = (GetNextAppItem() != null);
-        buttonDelete.Enabled = true;
-      }
+        else
+        {
+          buttonAddChild.Enabled = false;
+          buttonUp.Enabled = (GetPrevAppItem() != null);
+          buttonDown.Enabled = (GetNextAppItem() != null);
+          buttonDelete.Enabled = true;
+        }
 
     }
 
@@ -1194,7 +1207,7 @@ namespace WindowPlugins.GUIPrograms
           targetNode.Nodes.Add(draggedNode);
           if (targetApp == null)
           {
-            draggedApp.FatherID =  - 1;
+            draggedApp.FatherID = -1;
           }
           else
           {
@@ -1212,7 +1225,7 @@ namespace WindowPlugins.GUIPrograms
           newApp = apps.CloneAppItem(newApp);
           if (targetApp == null)
           {
-            newApp.FatherID =  - 1;
+            newApp.FatherID = -1;
           }
           else
           {
@@ -1428,7 +1441,7 @@ namespace WindowPlugins.GUIPrograms
       AppItem curApp = this.GetSelectedAppItem();
       if (curApp == null)
       {
-        return ;
+        return;
       }
 
       this.SourceTypeToDirBrowse.Enabled = true;
@@ -1522,7 +1535,6 @@ namespace WindowPlugins.GUIPrograms
         pageCurrentSettings.LoadFromAppItem(tempApp);
       }
     }
-
 
   }
 }
