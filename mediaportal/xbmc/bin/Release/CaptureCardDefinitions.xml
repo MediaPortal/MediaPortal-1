@@ -8203,7 +8203,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="WinFast TV2000 XP Expert" capturename="WinFast TV2000 XP WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_6611107d&amp;rev_05">
+  <capturecard commercialname="WinFast TV2000 XP Expert" capturename="WinFast TV2000 XP Expert WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_6611107d&amp;rev_05">
 	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
 	<tv>
 	  <interface cat="mux" video="" audio="" mpeg2="0"/>
