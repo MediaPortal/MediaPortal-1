@@ -505,7 +505,7 @@ namespace MediaPortal.Configuration.Sections
         if (tuning != null)
         {
           dialog.Tuning = tuning;
-          dialog.Card = CaptureCard;
+          dialog.Card = dev;
           dialog.ShowDialog(this);
           MapTvToOtherCards(dev.ID);
         }
@@ -522,7 +522,7 @@ namespace MediaPortal.Configuration.Sections
       if (tuning != null)
       {
         dialog.Tuning = tuning;
-        dialog.Card = CaptureCard;
+        dialog.Card = dev;
         dialog.ShowDialog(this);
       }
       else
