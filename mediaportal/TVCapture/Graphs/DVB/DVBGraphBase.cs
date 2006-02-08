@@ -225,6 +225,9 @@ namespace MediaPortal.TV.Recording
     protected IPin _pinDemuxerVideo = null;
     protected IPin _pinDemuxerAudio = null;
     protected IPin _pinDemuxerSections = null;
+    protected IPin _pinDemuxerEPG = null;
+    protected IPin _pinDemuxerMHWd2 = null;
+    protected IPin _pinDemuxerMHWd3 = null;
     protected IStreamBufferSink3 m_IStreamBufferSink = null;
     protected IStreamBufferConfigure m_IStreamBufferConfig = null;
     protected IBaseFilter _filterTIF = null;			// Transport Information Filter
@@ -3695,7 +3698,26 @@ namespace MediaPortal.TV.Recording
         {
           ushort pid = (ushort)pids[i];
           pidsText += String.Format("{0:X},", pid);
-          int hr=SetupDemuxerPin(_pinDemuxerSections, (int)pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
+          switch (pid)
+          {
+            case 0x12:
+              if (_pinDemuxerEPG != null)
+                SetupDemuxerPin(_pinDemuxerEPG, (int)pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
+              break;
+            case 0xd2:
+              if (_pinDemuxerMHWd2 != null)
+                SetupDemuxerPin(_pinDemuxerMHWd2, (int)pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
+              break;
+            case 0xd3:
+              if (_pinDemuxerMHWd3!=null)
+                SetupDemuxerPin(_pinDemuxerMHWd3, (int)pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
+              break;
+            default:
+              if (_pinDemuxerSections != null)
+                SetupDemuxerPin(_pinDemuxerSections, (int)pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
+              break;
+          }
+
           //Log.Write("nr:{0} pid:0x{1:X}, hr:{2:X}", i, (int)pid, hr);
         }
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:SetHardwarePidFiltering to:{0}", pidsText);

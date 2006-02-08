@@ -630,20 +630,20 @@ namespace MediaPortal.TV.Recording
           mtEPG.formatType = FormatType.None;
 
           IPin pinEPGout, pinMHW1Out, pinMHW2Out;
-          hr = demuxer.CreateOutputPin(mtEPG, "EPG", out pinEPGout);
-          if (hr != 0 || pinEPGout == null)
+          hr = demuxer.CreateOutputPin(mtEPG, "EPG", out _pinDemuxerEPG);
+          if (hr != 0 || _pinDemuxerEPG == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2:FAILED to create EPG pin:0x{0:X}", hr);
             return false;
           }
-          hr = demuxer.CreateOutputPin(mtEPG, "MHW1", out pinMHW1Out);
-          if (hr != 0 || pinMHW1Out == null)
+          hr = demuxer.CreateOutputPin(mtEPG, "MHW1", out _pinDemuxerMHWd2);
+          if (hr != 0 || _pinDemuxerMHWd2 == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2:FAILED to create MHW1 pin:0x{0:X}", hr);
             return false;
           }
-          hr = demuxer.CreateOutputPin(mtEPG, "MHW2", out pinMHW2Out);
-          if (hr != 0 || pinMHW2Out == null)
+          hr = demuxer.CreateOutputPin(mtEPG, "MHW2", out _pinDemuxerMHWd3);
+          if (hr != 0 || _pinDemuxerMHWd3 == null)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2:FAILED to create MHW2 pin:0x{0:X}", hr);
             return false;
@@ -670,19 +670,19 @@ namespace MediaPortal.TV.Recording
           }
 
           //Log.Write("DVBGraphSkyStar2:Connect epg pins");
-          hr = _graphBuilder.Connect(pinEPGout, pinEPGIn);
+          hr = _graphBuilder.Connect(_pinDemuxerEPG, pinEPGIn);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2:FAILED to connect EPG pin:0x{0:X}", hr);
             return false;
           }
-          hr = _graphBuilder.Connect(pinMHW1Out, pinMHW1In);
+          hr = _graphBuilder.Connect(_pinDemuxerMHWd2, pinMHW1In);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2:FAILED to connect MHW1 pin:0x{0:X}", hr);
             return false;
           }
-          hr = _graphBuilder.Connect(pinMHW2Out, pinMHW2In);
+          hr = _graphBuilder.Connect(_pinDemuxerMHWd3, pinMHW2In);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2:FAILED to connect MHW2 pin:0x{0:X}", hr);
@@ -690,9 +690,6 @@ namespace MediaPortal.TV.Recording
           }
           //Log.Write("DVBGraphSkyStar2:Demuxer is setup");
 
-          if (pinEPGout != null) Marshal.ReleaseComObject(pinEPGout); pinEPGout = null;
-          if (pinMHW1Out != null) Marshal.ReleaseComObject(pinMHW1Out); pinMHW1Out = null;
-          if (pinMHW2Out != null) Marshal.ReleaseComObject(pinMHW2Out); pinMHW2Out = null;
           if (pinMHW1In != null) Marshal.ReleaseComObject(pinMHW1In); pinMHW1In = null;
           if (pinMHW2In != null) Marshal.ReleaseComObject(pinMHW2In); pinMHW2In = null;
           if (pinEPGIn != null) Marshal.ReleaseComObject(pinEPGIn); pinEPGIn = null;
