@@ -222,14 +222,17 @@ namespace MediaPortal.TV.Recording
 
         _filterSampleGrabber = null;
         _sampleInterface = null;
-        if (GUIGraphicsContext.DX9Device != null)
-        {
-          Log.Write("DVBGraphSkyStar2: Add Sample Grabber");
-          _filterSampleGrabber = (IBaseFilter)new SampleGrabber();
-          _sampleInterface = (ISampleGrabber)_filterSampleGrabber;
-          _graphBuilder.AddFilter(_filterSampleGrabber, "Sample Grabber");
-        }
+        //TESTTEST: DONT USE GRABBER AT ALL
+        /*
 
+                if (GUIGraphicsContext.DX9Device != null)
+                {
+                  Log.Write("DVBGraphSkyStar2: Add Sample Grabber");
+                  _filterSampleGrabber = (IBaseFilter)new SampleGrabber();
+                  _sampleInterface = (ISampleGrabber)_filterSampleGrabber;
+                  _graphBuilder.AddFilter(_filterSampleGrabber, "Sample Grabber");
+                }
+        */
         //=========================================================================================================
         // add the MPEG-2 Demultiplexer 
         //=========================================================================================================
@@ -679,6 +682,37 @@ namespace MediaPortal.TV.Recording
           if (pinMHW1In != null) Marshal.ReleaseComObject(pinMHW1In); pinMHW1In = null;
           if (pinMHW2In != null) Marshal.ReleaseComObject(pinMHW2In); pinMHW2In = null;
           if (pinEPGIn != null) Marshal.ReleaseComObject(pinEPGIn); pinEPGIn = null;
+
+          //setup teletext grabbing....
+          if (GUIGraphicsContext.DX9Device != null)
+          {
+            AMMediaType txtMediaType = new AMMediaType();
+            txtMediaType.majorType = MediaType.Stream;
+            txtMediaType.subType = MediaSubTypeEx.MPEG2Transport;
+            hr = demuxer.CreateOutputPin(txtMediaType, "ttx", out _pinTeletext);
+            if (hr != 0 || _pinTeletext == null)
+            {
+              Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED to create ttx pin:0x{0:X}", hr);
+              return false;
+            }
+
+            _filterSampleGrabber = (IBaseFilter)new SampleGrabber();
+            _sampleInterface = (ISampleGrabber)_filterSampleGrabber;
+            _graphBuilder.AddFilter(_filterSampleGrabber, "Sample Grabber");
+
+            IPin pinIn = DsFindPin.ByDirection(_filterSampleGrabber, PinDirection.Input, 0);
+            if (pinIn == null)
+            {
+              Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:unable to find sample grabber input:0x{0:X}", hr);
+              return false;
+            }
+            hr = _graphBuilder.Connect(_pinTeletext, pinIn);
+            if (hr != 0)
+            {
+              Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED to connect demux->sample grabber:0x{0:X}", hr);
+              return false;
+            }
+          }
         }
         else
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphSkyStar2:mapped IMPEG2Demultiplexer not found");

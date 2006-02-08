@@ -287,6 +287,7 @@ namespace MediaPortal.TV.Recording
     protected bool _inScanningMode = false;
     protected DateTime _pmtTimer;
     protected DateTime _processTimer = DateTime.MinValue;
+    protected IPin _pinTeletext;
 
 #if DUMP
 		System.IO.FileStream fileout;
@@ -2031,7 +2032,7 @@ namespace MediaPortal.TV.Recording
       //      _streamDemuxer.ReceivingPackets, _lastPMTVersion, GUIGraphicsContext.Vmr9Active, GUIGraphicsContext.Vmr9FPS, TunerLocked(), SignalQuality(), SignalStrength());
 
       // do we receive any packets?
-      if (!_streamDemuxer.ReceivingPackets)
+      if (!SignalPresent())
       {
         TimeSpan ts = DateTime.Now - _signalLostTimer;
         if (ts.TotalSeconds < 5)
@@ -2042,13 +2043,13 @@ namespace MediaPortal.TV.Recording
         //no, then state = no signal
         VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
         return;
-      }
+      }/*
       else if (_streamDemuxer.IsScrambled)
       {
         VideoRendererStatistics.VideoState = VideoRendererStatistics.State.Scrambled;
         _signalLostTimer = DateTime.Now;
         return;
-      }
+      }*/
       else if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
       {
         if ((g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing))
@@ -2186,7 +2187,7 @@ namespace MediaPortal.TV.Recording
 
       if (_graphState != State.Epg)
       {
-        if (_graphPaused && !_streamDemuxer.IsScrambled)
+        if (_graphPaused /*&& !_streamDemuxer.IsScrambled*/)
         {
           _graphPaused = false;
           if (m_IStreamBufferSink != null)
@@ -2200,7 +2201,7 @@ namespace MediaPortal.TV.Recording
 
         if (SignalPresent())
         {
-          if (_streamDemuxer.IsScrambled)
+          //if (_streamDemuxer.IsScrambled)
           {
             if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
             {
@@ -2221,7 +2222,7 @@ namespace MediaPortal.TV.Recording
       {
         if (SignalPresent())
         {
-          if (_streamDemuxer.IsScrambled)
+          //if (_streamDemuxer.IsScrambled)
           {
             if (_lastPMTVersion >= 0 && _pmtRetyCount < 3)
             {
@@ -2544,6 +2545,12 @@ namespace MediaPortal.TV.Recording
         {
           _streamDemuxer.SetChannelData(_currentTuningObject.AudioPid, _currentTuningObject.VideoPid, _currentTuningObject.AC3Pid, _currentTuningObject.TeletextPid, _currentTuningObject.Audio3, _currentTuningObject.ServiceName, _currentTuningObject.PMTPid, _currentTuningObject.ProgramNumber);
           _streamDemuxer.OnTuneNewChannel();
+        }
+
+        //map teletext pid to ttx output pin of mpeg2 demultiplexer
+        if (_pinTeletext != null)
+        {
+          SetupDemuxerPin(_pinTeletext, _currentTuningObject.TeletextPid,(int) MediaSampleContent.TransportPacket,true);
         }
       }
       finally
