@@ -2102,7 +2102,7 @@ namespace MediaPortal.TV.Recording
         _processTimer = DateTime.Now;
       }
       UpdateSignalPresent();
-
+      
       if (_graphState == State.Created) return;
 
       if (_inScanningMode == true) return;
