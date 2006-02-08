@@ -993,6 +993,10 @@ namespace MediaPortal.TV.Recording
       int level, quality;
       _signalPresent = (_interfaceB2C2TunerCtrl.CheckLock() ==0);
       GetSNR(_interfaceB2C2TunerCtrl, out level, out quality);
+      if (level < 0) level = 0;
+      if (level > 100) level = 100;
+      if (quality < 0) quality = 0;
+      if (quality > 100) quality = 100;
       _signalQuality = quality;
       _signalLevel = level;
     }
@@ -1110,8 +1114,9 @@ namespace MediaPortal.TV.Recording
             return;
           }
 
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  Fec:{0}", ((DisEqcType)ch.FEC));
-          hr = _interfaceB2C2TunerCtrl.SetFec((int)ch.FEC);
+          int fec = (int)FecType.Fec_Auto;
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  Fec:{0}", ((FecType)fec));
+          hr = _interfaceB2C2TunerCtrl.SetFec((int)fec);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetFec() failed:0x{0:X}", hr);

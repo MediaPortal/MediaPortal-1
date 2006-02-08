@@ -53,7 +53,7 @@ namespace MediaPortal.TV.Scanning
     int _newRadioChannels, _updatedRadioChannels;
     int _diseqcLoops = 1;
     int _currentDiseqc = 1;
-    bool _reentrant = false;
+    //bool _reentrant = false;
 
     public DVBSTuning()
     {
@@ -274,7 +274,6 @@ namespace MediaPortal.TV.Scanning
           _currentIndex = 0;
         }
       }
-      Tune();
     }
 
     void Scan()
