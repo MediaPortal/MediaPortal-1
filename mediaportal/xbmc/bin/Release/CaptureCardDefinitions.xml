@@ -8416,4 +8416,31 @@
 	  </connections>
 	</tv>
   </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV 300i Analogue" capturename="Pinnacle PCTV 300i PAL Stereo BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_002d11bd&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Tuner"	checkdevice="true"/>
+        <filter cat="tvaudio"		name="Pinnacle PCTV 300i PAL Stereo BDA Analog TV Audio"	checkdevice="true"/>
+        <filter cat="crossbar"		name="Pinnacle PCTV 300i PAL Stereo BDA Analog Xbar"		checkdevice="true"/>
+        <filter cat="capture"		name="Pinnacle PCTV 300i PAL Stereo BDA Analog Capture"		checkdevice="true"/>
+		<filter cat="videncoder"	name="Pinnacle MPEG 2 Encoder"								checkdevice="false"/>
+		<filter cat="audencoder"	name="Pinnacle MPEG Layer-2 Audio Encoder"					checkdevice="false"/>
+		<filter cat="mux"			name="Pinnacle MPEG 2 Encoder Multiplexer"					checkdevice="false"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
