@@ -8,7 +8,7 @@
 		<id>288</id>
 		<posX>1025</posX>
 		<posY>580</posY>
-		<label>Nu spelas</label>
+		<label>Now playing</label>
 		<align>right</align>
 		<font>font10</font>
 		<textcolor>88000000</textcolor>

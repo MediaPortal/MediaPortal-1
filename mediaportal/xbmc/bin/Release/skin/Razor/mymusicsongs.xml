@@ -11,6 +11,7 @@
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
+			<posY>97</posY>
 			<layout>StackLayout</layout>
 				<control>
 			    <description>View-As button</description>
