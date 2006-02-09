@@ -1386,9 +1386,16 @@ public class MediaPortalApp : D3DApp, IRender
                   return;
                 }
               }
-              restartOptions = option;
-              useRestartOptions = true;
-              GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+              if ((option == RestartOptions.Suspend) || (option == RestartOptions.Hibernate))
+              {
+                WindowsController.ExitWindows(option, true);
+              }
+              else 
+              {
+                restartOptions = option;
+                useRestartOptions = true;
+                GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+              }
             }
             break;
           }
