@@ -13,7 +13,7 @@
 	<control>
 		<description>FF logo</description> 
 		<type>image</type> 
-		<id>7</id> 
+		<id>5</id> 
 		<posX>963</posX> 
 		<posY>600</posY>
 		<texture>logo_fastforward.png</texture> 
@@ -21,7 +21,7 @@
 	<control>
 		<description>RW logo</description> 
 		<type>image</type> 
-		<id>8</id> 
+		<id>6</id> 
 		<posX>963</posX> 
 		<posY>600</posY>  
 		<texture>logo_rewind.png</texture> 
