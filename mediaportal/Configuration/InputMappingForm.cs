@@ -1197,6 +1197,7 @@ namespace MediaPortal.Configuration
       Data data = new Data("CONDITION", "WINDOW", "-1");
       node.Tag = data;
       UpdateCombo(ref comboBoxCondProperty, windowsList, Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(data.Value)));
+      node.Text = (string)comboBoxCondProperty.SelectedItem;
       changedSettings = true;
     }
 
@@ -1207,6 +1208,7 @@ namespace MediaPortal.Configuration
       Data data = new Data("CONDITION", "FULLSCREEN", "true");
       node.Tag = data;
       UpdateCombo(ref comboBoxCondProperty, fullScreenList, "Fullscreen");
+      node.Text = (string)comboBoxCondProperty.SelectedItem;
       changedSettings = true;
     }
 
@@ -1217,6 +1219,7 @@ namespace MediaPortal.Configuration
       Data data = new Data("CONDITION", "PLAYER", "TV");
       node.Tag = data;
       UpdateCombo(ref comboBoxCondProperty, playerList, "TV");
+      node.Text = (string)comboBoxCondProperty.SelectedItem;
       changedSettings = true;
     }
 
@@ -1241,6 +1244,7 @@ namespace MediaPortal.Configuration
       Data data = new Data("COMMAND", "ACTION", "0");
       node.Tag = data;
       UpdateCombo(ref comboBoxCmdProperty, actionList, Enum.GetName(typeof(Action.ActionType), Convert.ToInt32(data.Value)));
+      node.Text = (string)comboBoxCmdProperty.SelectedItem;
       changedSettings = true;
     }
 
@@ -1253,6 +1257,7 @@ namespace MediaPortal.Configuration
       Data data = new Data("COMMAND", "WINDOW", "-1");
       node.Tag = data;
       UpdateCombo(ref comboBoxCmdProperty, windowsList, Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(data.Value)));
+      node.Text = (string)comboBoxCmdProperty.SelectedItem;
       changedSettings = true;
     }
 
