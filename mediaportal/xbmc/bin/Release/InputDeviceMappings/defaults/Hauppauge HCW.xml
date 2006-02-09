@@ -103,6 +103,7 @@
 			<action layer="0" condition="*" conproperty="-1" command="POWER" cmdproperty="EXIT" sound="back.wav" />
 		</button>
 		<button name="Back/Exit" code="2031">
+			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="18" sound="back.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
 		</button>
 		<button name="OK" code="2037">
@@ -308,6 +309,7 @@
 			<action layer="0" condition="*" conproperty="-1" command="POWER" cmdproperty="EXIT" sound="back.wav" />
 		</button>
 		<button name="Back/Exit" code="1031">
+			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="18" sound="back.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
 		</button>
 		<button name="OK" code="1037">
