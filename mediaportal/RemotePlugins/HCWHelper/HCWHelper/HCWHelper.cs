@@ -50,6 +50,7 @@ namespace MediaPortal.InputDevices.HcwHelper
     private UdpHelper.Connection connection;
     private int port = 2110;
     private bool registered = false;
+    bool restartIRApp = false;                // Restart Haupp. IR-app. after MP quit
 
 
     /// <summary>
@@ -65,65 +66,45 @@ namespace MediaPortal.InputDevices.HcwHelper
         port = xmlreader.GetValueAsInt("remote", "HCWHelperPort", 2110);
         hcwEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
       }
-      connection = new UdpHelper.Connection(logVerbose);
-      if (hcwEnabled)
-      {
-        string dllPath = GetDllPath();
-        if (dllPath == string.Empty)
-        {
-          Exit();
-        }
 
-        if (connection.Start(port))
-        {
-          Thread checkThread = new Thread(new ThreadStart(CheckThread));
-          checkThread.IsBackground = true;
-          checkThread.Priority = ThreadPriority.Highest;
-          checkThread.Start();
-          connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
-        }
-        else
-        {
-          Exit();
-        }
-        if (irremote.IRSetDllDirectory(dllPath))
-          StartIR();
-        else
-        {
-          Exit();
-        }
+      connection = new UdpHelper.Connection(logVerbose);
+      if (hcwEnabled && (GetDllPath() != string.Empty) && connection.Start(port) && irremote.IRSetDllDirectory(GetDllPath()))
+      {
+        Thread checkThread = new Thread(new ThreadStart(CheckThread));
+        checkThread.IsBackground = true;
+        checkThread.Priority = ThreadPriority.Highest;
+        checkThread.Start();
+        connection.ReceiveEvent += new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
+        StartIR();
       }
       else
-      {
         Exit();
-      }
     }
 
 
+    /// <summary>
+    /// Let's get out of here
+    /// </summary>
     private void Exit()
-    {
-      connection.Send(port + 1, "HCWAPP", "STOP", DateTime.Now);
-      this.Close();
-    }
-
-
-    protected override void OnClosing(CancelEventArgs e)
     {
       if (logVerbose) Log.Write("HCWHelper: OnClosing");
       connection.ReceiveEvent -= new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
-      //connection.DisconnectEvent -= new NetHelper.Connection.DisconnectHandler(OnDisconnect);
+      connection = null;
       StopIR();
-      base.OnClosing(e);
+      Application.Exit();
     }
 
 
+    /// <summary>
+    /// Checks if there's a running MP instance
+    /// </summary>
     private void CheckThread()
     {
       while (!cancelWait && ((Process.GetProcessesByName("MediaPortal").Length > 0) || (Process.GetProcessesByName("MediaPortal.vshost").Length > 0)))
         Thread.Sleep(1000);
 
       if (logVerbose) Log.Write("HCWHelper: MediaPortal is not running");
-      this.Close();
+      Exit();
     }
 
 
@@ -136,6 +117,7 @@ namespace MediaPortal.InputDevices.HcwHelper
         StopIR();
       if (Process.GetProcessesByName("Ir").Length != 0)
       {
+        restartIRApp = true;
         int i = 0;
         while ((Process.GetProcessesByName("Ir").Length != 0) && (i < 15))
         {
@@ -144,26 +126,30 @@ namespace MediaPortal.InputDevices.HcwHelper
           if (Process.GetProcessesByName("Ir").Length != 0)
           {
             Process.Start(GetHCWPath() + "Ir.exe", "/QUIT");
-            Thread.Sleep(200);
+            Thread.Sleep(500);
           }
         }
         if (Process.GetProcessesByName("Ir").Length != 0)
+          foreach (Process proc in Process.GetProcessesByName("Ir"))
+            proc.Kill();
+      }
+      Thread.Sleep(200);
+      if (Process.GetProcessesByName("Ir").Length != 0)
+      {
+        Log.Write("HCWHelper: external control could not be terminated!");
+        Exit();
+      }
+      else
+        try
         {
-          Log.Write("HCWHelper: external control could not be terminated!");
-          this.Close();
+          irremote.IROpen(this.Handle, 0, false, 0);
+          registered = true;
         }
-      }
-      try
-      {
-        irremote.IROpen(this.Handle, 0, false, 0);
-        registered = true;
-      }
-      catch (irremote.IRFailedException ex)
-      {
-        Log.Write("HCWHelper: {0}", ex.Message);
-        this.Close();
-      }
-      
+        catch (irremote.IRFailedException ex)
+        {
+          Log.Write("HCWHelper: (open) {0}", ex.Message);
+          Exit();
+        }
     }
 
 
@@ -178,10 +164,20 @@ namespace MediaPortal.InputDevices.HcwHelper
         registered = false;
         if (logVerbose) Log.Write("HCWHelper: closing driver successful");
       }
-      catch
+      catch (irremote.IRFailedException ex)
       {
-        Log.Write("HCWHelper: closing driver failed");
+        Log.Write("HCWHelper: (close) {0}", ex.Message);
       }
+      if (restartIRApp)
+        try
+        {
+          if (Process.GetProcessesByName("Ir").Length == 0)
+            Process.Start(GetHCWPath() + "Ir.exe", "/QUIET");
+        }
+        catch (Exception ex)
+        {
+          Log.Write("HCWHelper: Exception while restarting IR.exe: {0}", ex.Message);
+        }
     }
 
 
@@ -207,7 +203,7 @@ namespace MediaPortal.InputDevices.HcwHelper
                 break;
 
               case "SHUTDOWN":
-                this.Close();
+                Exit();
                 break;
             }
             break;
@@ -220,9 +216,7 @@ namespace MediaPortal.InputDevices.HcwHelper
                 {
                   StopIR();
                   if (Process.GetProcessesByName("Ir").Length == 0)
-                  {
                     Process.Start(GetHCWPath() + "Ir.exe", "/QUIET");
-                  }
                 }
                 catch (Exception ex)
                 {

@@ -55,6 +55,7 @@ namespace MediaPortal.InputDevices
 
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam, [In()] ref COPYDATASTRUCT lParam);
+
     public IrTransListener()
     {
     }

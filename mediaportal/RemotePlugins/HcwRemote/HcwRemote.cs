@@ -40,24 +40,23 @@ namespace MediaPortal.InputDevices
   /// </summary>
   public class HcwRemote
   {
-    bool controlEnabled;                      // HCW remote enabled
-    bool allowExternal;                       // External processes are controlled by the Hauppauge app
-    bool keepControl;                         // Keep control, if MP loses focus
-    static bool logVerbose;                   // Verbose logging
-    bool restartIRApp = false;                // Restart Haupp. IR-app. after MP quit
+    bool controlEnabled = false;       // HCW remote enabled
+    bool allowExternal = false;        // External processes are controlled by the Hauppauge app
+    bool keepControl = false;          // Keep control, if MP loses focus
+    bool logVerbose = false;           // Verbose logging
     DateTime lastTime = DateTime.Now;  // Timestamp of last recieved keycode from remote
     int sameCommandCount = 0;          // Counts how many times a button has been pressed (used to get progressive repetition delay, first time, long delay, then short delay)
     int lastExecutedCommandCount = 0;
-    int lastCommand;                   // Last executed command
+    int lastCommand = 0;               // Last executed command
     InputHandler hcwHandler;
-    UdpHelper.Connection connection;
+    UdpHelper.Connection connection = null;
     bool exit = false;
     int port = 2110;
 
     TimeSpan buttonRelease;
-    int repeatFilter;
-    int repeatSpeed;
-    bool filterDoubleKlicks;
+    int repeatFilter = 0;
+    int repeatSpeed = 0;
+    bool filterDoubleKlicks = false;
 
     const int WM_ACTIVATE = 0x0006;
     const int WM_POWERBROADCAST = 0x0218;
@@ -77,19 +76,34 @@ namespace MediaPortal.InputDevices
 
 
     /// <summary>
-    /// Constructor: Initializes remote control settings
+    /// Constructor
     /// </summary>
     public HcwRemote()
     {
+    }
+
+
+    public void Init(IntPtr hwnd)
+    {
+      Init();
+    }
+
+
+    /// <summary>
+    /// Stop IR.exe and initiate HCW start
+    /// </summary>
+    public void Init()
+    {
+      exit = false;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
         allowExternal = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
         keepControl = xmlreader.GetValueAsBool("remote", "HCWKeepControl", false);
         logVerbose = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
-        buttonRelease = TimeSpan.FromMilliseconds(xmlreader.GetValueAsInt("remote", "HCWButtonRelease", 500));
+        buttonRelease = TimeSpan.FromMilliseconds(xmlreader.GetValueAsInt("remote", "HCWButtonRelease", 200));
         repeatFilter = xmlreader.GetValueAsInt("remote", "HCWRepeatFilter", 2);
-        repeatSpeed = xmlreader.GetValueAsInt("remote", "HCWRepeatSpeed", 1);
+        repeatSpeed = xmlreader.GetValueAsInt("remote", "HCWRepeatSpeed", 0);
         filterDoubleKlicks = xmlreader.GetValueAsBool("remote", "HCWFilterDoubleKlicks", false);
         port = xmlreader.GetValueAsInt("remote", "HCWHelperPort", 2110);
       }
@@ -133,39 +147,17 @@ namespace MediaPortal.InputDevices
           Utils.OnStartExternal += new Utils.UtilEventHandler(OnStartExternal);
           Utils.OnStopExternal += new Utils.UtilEventHandler(OnStopExternal);
         }
+        Thread checkThread = new Thread(new ThreadStart(CheckThread));
+        checkThread.IsBackground = true;
+        checkThread.Priority = ThreadPriority.Highest;
+        checkThread.Start();
       }
-      try
-      {
-        if (Process.GetProcessesByName("Ir").Length != 0)
-          restartIRApp = true;
-      }
-      catch (System.InvalidOperationException)
-      {
-      }
-    }
-
-
-    public void Init(IntPtr hwnd)
-    {
-      Init();
     }
 
 
     /// <summary>
-    /// Stop IR.exe and initiate HCW start
+    /// Makes sure that HCWHelper is always running when we need it
     /// </summary>
-    public void Init()
-    {
-      if (!controlEnabled)
-        return;
-
-      Thread checkThread = new Thread(new ThreadStart(CheckThread));
-      checkThread.IsBackground = true;
-      checkThread.Priority = ThreadPriority.Highest;
-      checkThread.Start();
-    }
-
-
     private void CheckThread()
     {
       do
@@ -173,15 +165,12 @@ namespace MediaPortal.InputDevices
         Thread.Sleep(1000);
 
         while (!exit && (Process.GetProcessesByName("HcwHelper").Length > 0))
-        {
           Thread.Sleep(1000);
-        }
+
         if (!exit)
         {
           using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-          {
             controlEnabled = xmlreader.GetValueAsBool("remote", "HCW", false);
-          }
           if (controlEnabled)
             Process.Start(System.Windows.Forms.Application.StartupPath + @"\HcwHelper.exe");
           else
@@ -193,7 +182,7 @@ namespace MediaPortal.InputDevices
 
 
     /// <summary>
-    /// Remove all events
+    /// DeInit all
     /// </summary>
     public void DeInit()
     {
@@ -207,6 +196,7 @@ namespace MediaPortal.InputDevices
         }
         connection.ReceiveEvent -= new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
         connection.Send(port, "APP", "SHUTDOWN", DateTime.Now);
+        connection.Stop();
         connection = null;
       }
     }
@@ -226,10 +216,7 @@ namespace MediaPortal.InputDevices
     /// </summary>
     public void StopHcw()
     {
-      if (restartIRApp)
-      {
-        connection.Send(port, "HCWAPP", "START", DateTime.Now);
-      }
+      connection.Send(port, "APP", "IR_STOP", DateTime.Now);
     }
 
 
@@ -326,14 +313,12 @@ namespace MediaPortal.InputDevices
           }
           break;
         case "HCWAPP":
+          if (msg.Split('|')[1] == "STOP")
           {
-            if (msg.Split('|')[1] == "STOP")
-            {
-              Log.Write("HCW: received HCWSTOP from HcwHelper");
-              controlEnabled = false;
-              exit = true;
-              StopHcw();
-            }
+            Log.Write("HCW: received HCWSTOP from HcwHelper");
+            controlEnabled = false;
+            exit = true;
+            StopHcw();
           }
           break;
       }
@@ -378,21 +363,21 @@ namespace MediaPortal.InputDevices
 
           case WM_ACTIVATE:
             if (allowExternal && !keepControl)
-            {
               switch ((int)msg.WParam)
               {
                 case WA_INACTIVE:
-                  Log.Write("HCW: WA_INACTIVE");
+                  if (logVerbose) Log.Write("HCW: lost focus");
                   StopHcw();
                   break;
                 case WA_ACTIVE:
                 case WA_CLICKACTIVE:
+                  if (logVerbose) Log.Write("HCW: got focus");
                   StartHcw();
                   break;
               }
-            }
             break;
         }
     }
+
   }
 }

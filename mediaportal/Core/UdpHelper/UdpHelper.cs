@@ -64,18 +64,21 @@ namespace UdpHelper
     public Connection(bool log)
     {
       logVerbose = log;
-      socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
     }
 
 
     public void Stop()
     {
       udpClient.Close();
+      udpClient = null;
+      socket = null;
     }
 
 
     public bool Send(int udpPort, string strType, string strSend, DateTime timeStamp)
     {
+      if (socket == null)
+        socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
       try
       {
         byte[] sendbuf = Encoding.UTF8.GetBytes(string.Format("{0}|{1}|{2}~", strType, strSend, timeStamp.ToBinary()));
@@ -93,6 +96,8 @@ namespace UdpHelper
 
     public bool Start(int udpPort)
     {
+      if (socket == null)
+        socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
       try
       {
         if (logVerbose) Log.Write("UDPHelper: Starting listener on port {0}", udpPort);
@@ -126,12 +131,19 @@ namespace UdpHelper
 
     public void ReceiveCallback(IAsyncResult ar)
     {
-      UdpClient udpClient = (UdpClient)((UdpState)(ar.AsyncState)).UdpClient;
+      UdpClient udpClientLoc = (UdpClient)((UdpState)(ar.AsyncState)).UdpClient;
       IPEndPoint endPoint = (IPEndPoint)((UdpState)(ar.AsyncState)).EndPoint;
-      Byte[] bytesReceived = udpClient.EndReceive(ar, ref endPoint);
-      string strReceived = Encoding.ASCII.GetString(bytesReceived);
-      OnReceive(strReceived);
-      udpClient.BeginReceive(new AsyncCallback(ReceiveCallback), (UdpState)(ar.AsyncState));
+
+      try
+      {
+        Byte[] bytesReceived = udpClientLoc.EndReceive(ar, ref endPoint);
+        string strReceived = Encoding.UTF8.GetString(bytesReceived);
+        OnReceive(strReceived);
+        udpClientLoc.BeginReceive(new AsyncCallback(ReceiveCallback), (UdpState)(ar.AsyncState));
+      }
+      catch (System.ObjectDisposedException)
+      {
+      }
     }
 
   }

@@ -166,9 +166,9 @@ namespace MediaPortal.Configuration.Sections
         checkBoxHcwAllowExternal.Checked = xmlreader.GetValueAsBool("remote", "HCWAllowExternal", false);
         checkBoxHcwKeepControl.Checked = xmlreader.GetValueAsBool("remote", "HCWKeepControl", false);
         checkBoxHcwExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "HCWVerboseLog", false);
-        hScrollBarHcwButtonRelease.Value = xmlreader.GetValueAsInt("remote", "HCWButtonRelease", 500);
+        hScrollBarHcwButtonRelease.Value = xmlreader.GetValueAsInt("remote", "HCWButtonRelease", 200);
         hScrollBarHcwRepeatFilter.Value = xmlreader.GetValueAsInt("remote", "HCWRepeatFilter", 2);
-        hScrollBarHcwRepeatSpeed.Value = xmlreader.GetValueAsInt("remote", "HCWRepeatSpeed", 1);
+        hScrollBarHcwRepeatSpeed.Value = xmlreader.GetValueAsInt("remote", "HCWRepeatSpeed", 0);
         checkBoxHcwFilterDoubleKlicks.Checked = xmlreader.GetValueAsBool("remote", "HCWFilterDoubleKlicks", false);
 
         checkBoxX10Enabled.Checked = xmlreader.GetValueAsBool("remote", "x10", false);
@@ -942,9 +942,9 @@ namespace MediaPortal.Configuration.Sections
       checkBoxHcwAllowExternal.Checked = false;
       checkBoxHcwKeepControl.Checked = false;
       checkBoxHcwExtendedLogging.Checked = false;
-      hScrollBarHcwButtonRelease.Value = 500;
+      hScrollBarHcwButtonRelease.Value = 200;
       hScrollBarHcwRepeatFilter.Value = 2;
-      hScrollBarHcwRepeatSpeed.Value = 1;
+      hScrollBarHcwRepeatSpeed.Value = 0;
       checkBoxHcwFilterDoubleKlicks.Checked = false;
     }
     #endregion

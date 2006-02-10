@@ -268,19 +268,20 @@ namespace MediaPortal.InputDevices
         throw new ApplicationException("No button mapping loaded");
       Mapping map = null;
       map = GetMapping(btnCode);
+#if DEBUG
+      Log.Write("{0} / {1} / {2} / {3}", map.Condition, map.ConProperty, map.Command, map.CmdProperty);
+#endif
       Action action;
       if (map.Sound != string.Empty)
         Utils.PlaySound(map.Sound, false, true);
       switch (map.Command)
       {
         case "ACTION":  // execute Action x
-          if (Convert.ToInt32(map.CmdProperty) == Convert.ToInt32(Action.ActionType.ACTION_KEY_PRESSED))
-          {
-            Key key = new Key(map.CmdKeyChar, map.CmdKeyCode);
-            action = new Action(key, (Action.ActionType)Convert.ToInt32(map.CmdProperty), 0, 0);
-          }
-          else
-            action = new Action((Action.ActionType)Convert.ToInt32(map.CmdProperty), 0, 0);
+          Key key = new Key(map.CmdKeyChar, map.CmdKeyCode);
+#if DEBUG
+          Log.Write("Executing: key {0} / {1} / Action: {2} / {3}", map.CmdKeyChar, map.CmdKeyCode, map.CmdProperty, ((Action.ActionType)Convert.ToInt32(map.CmdProperty)).ToString());
+#endif
+          action = new Action(key, (Action.ActionType)Convert.ToInt32(map.CmdProperty), 0, 0);
           GUIGraphicsContext.OnAction(action);
           break;
         case "KEY": // send Key x

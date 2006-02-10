@@ -30,6 +30,9 @@ using System.Runtime.InteropServices;
 
 namespace MediaPortal.InputDevices
 {
+  /// <summary>
+  /// Wrapper class for irremote.dll
+  /// </summary>
   public static class irremote
   {
     #region DLL-Imports
@@ -88,7 +91,7 @@ namespace MediaPortal.InputDevices
 
     public class IRFailedException : Exception
     {
-      const string message = "Can't open IR device - IR in use?";
+      const string message = "Can't open/close IR device - IR in use?";
       public IRFailedException()
         : base(message)
       { }
@@ -105,6 +108,8 @@ namespace MediaPortal.InputDevices
     public static void IRClose(IntPtr WindowHandle, uint Msg)
     {
       bool result = IR_Close(WindowHandle, Msg);
+      if (!result)
+        throw new IRFailedException();
     }
 
     public static void IRGetSystemKeyCode(ref IntPtr RepeatCount, ref IntPtr RemoteCode, ref IntPtr KeyCode)
@@ -125,5 +130,6 @@ namespace MediaPortal.InputDevices
     {
       return SetDllDirectory(PathName);
     }
+
   }
 }

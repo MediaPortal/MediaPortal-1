@@ -40,7 +40,6 @@ namespace MediaPortal.InputDevices.HcwHelper
     [STAThread]
     static void Main()
     {
-      try
       {
         Log.Write("HCWHelper: Starting up");
         Thread.CurrentThread.Priority = ThreadPriority.Highest;
@@ -59,10 +58,6 @@ namespace MediaPortal.InputDevices.HcwHelper
             Log.Write("HCWHelper: HCWHelper already running - exiting");
           else
             Log.Write("HCWHelper: MediaPortal not running - exiting");
-      }
-      catch (Exception ex)
-      {
-        Log.Write("HCWHelper: Main: {0}", ex.Message);
       }
     }
   }

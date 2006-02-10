@@ -55,7 +55,7 @@ namespace MediaPortal.InputDevices.HcwHelper
     {
       this.SuspendLayout();
       // 
-      // HCWHelper
+      // HcwHelper
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -70,6 +70,7 @@ namespace MediaPortal.InputDevices.HcwHelper
     }
 
     #endregion
+
 
   }
 }

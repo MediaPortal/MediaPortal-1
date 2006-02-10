@@ -46,8 +46,8 @@ namespace MediaPortal.InputDevices
     public static void Stop()
     {
       MCE2005Remote.DeInit();
-      HCWRemote.DeInit();
       FireDTVRemote.DeInit();
+      HCWRemote.DeInit();
       X10Remote.DeInit();
       IrTrans.DeInit();
       diRemote.Stop();

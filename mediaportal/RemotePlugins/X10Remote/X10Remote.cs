@@ -21,6 +21,7 @@
  */
 
 #endregion
+
 using System;
 using System.IO;
 using MediaPortal.GUI.Library;
@@ -43,6 +44,10 @@ namespace MediaPortal.InputDevices
 
     public X10Remote()
     {
+    }
+
+    public void Init(IntPtr hwnd)
+    {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         controlEnabled = xmlreader.GetValueAsBool("remote", "x10", false);
@@ -50,11 +55,7 @@ namespace MediaPortal.InputDevices
       }
       if (controlEnabled)
         x10Handler = new InputHandler("x10");
-    }
-
-    public void Init(IntPtr hwnd)
-    {
-      if (!controlEnabled)
+      else
         return;
 
       if (logVerbose)
@@ -78,6 +79,9 @@ namespace MediaPortal.InputDevices
       x10Form.Close();
       x10Form.Dispose();
       x10Form = null;
+
+      x10Handler = null;
+
       if (logVerbose)
         Log.Write("x10Remote: Stop");
     }
