@@ -16,3 +16,4 @@ GetSNR					@9
 SetWmvProfile			@10
 DeliverMediaSample		@11
 SetupDemuxerPin			@12
+DumpMpeg2DemuxerMappings @13

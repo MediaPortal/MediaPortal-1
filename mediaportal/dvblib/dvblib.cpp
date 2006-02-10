@@ -24,7 +24,7 @@
 #include "stdafx.h"
 #include <initguid.h>
 #include <streams.h>
-//#include <dshowasf.h>
+#include <dshowasf.h>
 #include <comdef.h>
 //#include <Dshow.h>
 #include <bdaiface.h>
@@ -504,7 +504,50 @@ HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, int elementary_stream, bool u
 	return S_OK;
 
 }
+HRESULT DumpMpeg2DemuxerMappings(IBaseFilter* mpeg2Demuxer)
+{
+  IEnumPins* enumPins;
+  if ( FAILED(mpeg2Demuxer->EnumPins(&enumPins)))
+  {
+    return S_OK;
+  }
+  enumPins->Reset();
+  IPin* pins[2];
+  ULONG fetched;
+  while (enumPins->Next(1,pins,&fetched)==S_OK)
+  {
+    if (fetched<1) break;
+    if (pins[0]==NULL) break;
+    PIN_DIRECTION direction;
+    pins[0]->QueryDirection(&direction);
+    if (direction==PINDIR_INPUT) continue;
+    PIN_INFO pinInfo;
+    pins[0]->QueryPinInfo(&pinInfo);
 
+    
+	  IMPEG2PIDMap	*pMap=NULL;
+	  IEnumPIDMap		*pPidEnum=NULL;
+    pins[0]->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+    if (pMap!=NULL)
+    {
+      Log("pin:%s", (char*)  _bstr_t(pinInfo.achName));
+      if (SUCCEEDED( pMap->EnumPIDMap(&pPidEnum) ))
+      {
+	      PID_MAP			pm;
+        ULONG count;
+        while(pPidEnum->Next(1,&pm,&count)== S_OK)
+		    {
+          if (count<1) break;
+          Log("  pid:0x%x type:%d", pm.ulPID,pm.MediaSampleContent);
+        }
+		    pPidEnum->Release();
+      }
+		  pMap->Release();
+    }
+  }
+  enumPins->Release();
+  return S_OK;
+}
 //
 
 IPin *GetPin(IBaseFilter *pFilter, PIN_DIRECTION PinDir)

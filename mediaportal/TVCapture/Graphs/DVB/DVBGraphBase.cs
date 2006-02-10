@@ -179,6 +179,8 @@ namespace MediaPortal.TV.Recording
     protected static extern int SetupDemuxer(IPin pin, int pid, IPin pin1, int pid1, IPin pin2, int pid2);
     [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
     protected static extern int SetupDemuxerPin(IPin pin, int pid, int elementaryStream, bool unmapOtherPins);
+    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+    protected static extern int DumpMpeg2DemuxerMappings(IBaseFilter filter);
 
     #endregion
 
@@ -2142,9 +2144,12 @@ namespace MediaPortal.TV.Recording
       {
         if (_refreshPmtTable && Network() != NetworkType.ATSC)
         {
+          //FilterState state;
+          //_mediaControl.GetState(50, out state);
+          //Log.Write("graph:{0}", state);
           bool gotPMT = false;
           _refreshPmtTable = false;
-          //Log.Write("DVBGraph:Get PMT");
+          //Log.Write("DVBGraph:Get PMT {0}", _graphState);
           IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
           if (pmtMem != IntPtr.Zero)
           {
@@ -3725,6 +3730,7 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:SetHardwarePidFiltering to:{0}", pidsText);
       }
       SendHWPids(pids);
+      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }
     protected virtual void SendHWPids(ArrayList pids)
     {
@@ -3791,6 +3797,9 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
       }
+      FilterState state;
+      _mediaControl.GetState(50, out state);
+      Log.Write("graph:{0}", state);
       _isGraphRunning = true;
       _graphState = State.Epg;
     }

@@ -1,21 +1,19 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dvblib", "dvblib.vcproj", "{0DD8968F-A6F6-4365-9CC1-9CF87A76178B}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Release = Release
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{0DD8968F-A6F6-4365-9CC1-9CF87A76178B}.Debug.ActiveCfg = Debug|Win32
-		{0DD8968F-A6F6-4365-9CC1-9CF87A76178B}.Debug.Build.0 = Debug|Win32
-		{0DD8968F-A6F6-4365-9CC1-9CF87A76178B}.Release.ActiveCfg = Release|Win32
-		{0DD8968F-A6F6-4365-9CC1-9CF87A76178B}.Release.Build.0 = Release|Win32
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0DD8968F-A6F6-4365-9CC1-9CF87A76178B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0DD8968F-A6F6-4365-9CC1-9CF87A76178B}.Debug|Win32.Build.0 = Debug|Win32
+		{0DD8968F-A6F6-4365-9CC1-9CF87A76178B}.Release|Win32.ActiveCfg = Release|Win32
+		{0DD8968F-A6F6-4365-9CC1-9CF87A76178B}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
