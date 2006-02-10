@@ -3784,10 +3784,15 @@ namespace MediaPortal.TV.Recording
     {
       // tune to the correct channel
       Log.WriteFile(Log.LogType.Capture, "DVBGraph:Grab epg for :{0}", channel.Name);
+      if (_filterSampleGrabber != null)
+      {
+        _graphBuilder.RemoveFilter(_filterSampleGrabber);
+        _filterSampleGrabber = null;
+        _sampleInterface = null;
+      }
       TuneChannel(channel);
       //now start the graph
       Log.WriteFile(Log.LogType.Capture, "DVBGraph: start graph");
-
       if (_mediaControl == null)
       {
         _mediaControl = (IMediaControl)_graphBuilder;
@@ -3797,9 +3802,6 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
       }
-      FilterState state;
-      _mediaControl.GetState(50, out state);
-      Log.Write("graph:{0}", state);
       _isGraphRunning = true;
       _graphState = State.Epg;
     }
