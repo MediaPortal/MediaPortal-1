@@ -3779,18 +3779,12 @@ namespace MediaPortal.TV.Recording
     {
       return (_graphState == State.Epg);
     }
-
     public void GrabEpg(TVChannel channel)
     {
       // tune to the correct channel
       Log.WriteFile(Log.LogType.Capture, "DVBGraph:Grab epg for :{0}", channel.Name);
-      if (_filterSampleGrabber != null)
-      {
-        _graphBuilder.RemoveFilter(_filterSampleGrabber);
-        _filterSampleGrabber = null;
-        _sampleInterface = null;
-      }
-      TuneChannel(channel);
+
+
       //now start the graph
       Log.WriteFile(Log.LogType.Capture, "DVBGraph: start graph");
       if (_mediaControl == null)
@@ -3802,6 +3796,7 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
       }
+      TuneChannel(channel);
       _isGraphRunning = true;
       _graphState = State.Epg;
     }
