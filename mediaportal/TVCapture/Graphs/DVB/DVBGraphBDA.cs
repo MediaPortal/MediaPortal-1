@@ -1821,13 +1821,21 @@ namespace MediaPortal.TV.Recording
               }
 
               Log.WriteFile(Log.LogType.Capture, false, "DVBGraphBDA: set LNBSwitch to {0} Khz lowOsc={1} MHz hiOsc={2} Mhz disecq:{3}", ch.LNBKHz, lowOsc, hiOsc, diseqcUsed);
-              dvbSpace.LNBSwitch = ch.LNBKHz;
-              dvbSpace.SpectralInversion = TunerLib.SpectralInversion.BDA_SPECTRAL_INVERSION_AUTOMATIC;
-              dvbSpace.LowOscillator = lowOsc * 1000;
-              dvbSpace.HighOscillator = hiOsc * 1000;
+              
+              VideoCaptureProperties props = new VideoCaptureProperties(_filterTunerDevice);
+              if (props.SupportsDiseqCommand())
+              {
+                props.SendDiseqCommand(_currentTuningObject.DiSEqC, _currentTuningObject.Frequency, _currentTuningObject.LNBFrequency, _currentTuningObject.Polarity);
+              }
+              else
+              {
+                dvbSpace.LNBSwitch = ch.LNBKHz;
+                dvbSpace.SpectralInversion = TunerLib.SpectralInversion.BDA_SPECTRAL_INVERSION_AUTOMATIC;
+                dvbSpace.LowOscillator = lowOsc * 1000;
+                dvbSpace.HighOscillator = hiOsc * 1000;
 
-              SetDVBSInputRangeParameter(diseqcUsed, dvbSpace);
-
+                SetDVBSInputRangeParameter(diseqcUsed, dvbSpace);
+              }
               newTuneRequest = dvbSpace.CreateTuneRequest();
               if (newTuneRequest == null)
               {

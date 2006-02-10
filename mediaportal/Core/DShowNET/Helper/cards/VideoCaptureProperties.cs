@@ -127,6 +127,20 @@ namespace DShowNET.Helper
       }
       return false;
     }
+    public bool SupportsDiseqCommand()
+    {
+      if (digitalEverywhere.IsDigitalEverywhere)
+        return true;
+      return false;
+    }
+    public void SendDiseqCommand(int antennaNr, int frequency, int switchingFrequency, int polarisation)
+    {
+      if (digitalEverywhere.IsDigitalEverywhere)
+      {
+         digitalEverywhere.SendDiseqCommand(antennaNr, frequency, switchingFrequency, polarisation);
+      }
+      return ;
+    }
     public bool IsCISupported()
     {
       if (digitalEverywhere.IsDigitalEverywhere)

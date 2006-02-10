@@ -162,6 +162,7 @@ namespace DShowNET
     const int KSPROPERTY_FIRESAT_DRIVER_VERSION = 4;
     const int KSPROPERTY_FIRESAT_GET_FIRMWARE_VERSION = 11;
     const int KSPROPERTY_FIRESAT_GET_CI_STATUS = 28;
+    const int KSPROPERTY_FIRESAT_LNB_CONTROL = 12;
     #endregion
 
     #region CI STATUS bits
@@ -661,6 +662,76 @@ namespace DShowNET
         }
       }
       return false;
+    }
+    public void SendDiseqCommand(int antennaNr, int frequency, int switchingFrequency, int polarisation)
+    {
+      //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
+      IntPtr ptrCmd = Marshal.AllocCoTaskMem(25);
+      try
+      {
+        Marshal.WriteByte(ptrCmd,0xFF);//Voltage;
+        Marshal.WriteByte(ptrCmd, 0xFF);//ContTone;
+        Marshal.WriteByte(ptrCmd, 0xFF);//Burst;
+        Marshal.WriteByte(ptrCmd, 0x01);//NrDiseqcCmds;
+
+        Marshal.WriteByte(ptrCmd, 0x04);//diseqc command 1. length=4
+        Marshal.WriteByte(ptrCmd, 0xE0);//diseqc command 1. uFraming=0xe0
+        Marshal.WriteByte(ptrCmd, 0x10);//diseqc command 1. uAddress=0x10
+        Marshal.WriteByte(ptrCmd, 0x38);//diseqc command 1. uCommand=0x38
+
+        // Antenna nr = 1-4 in this example, but this is based on application
+        // Diseqc standard is 0 based, so for Diseqc 1.0 antenna index is from 0 -3
+        // if your application numbers antennas from 0-3 then dont sub (-1)  
+
+        // for the write to port group 0 command:
+        // data 0 : high nibble specifices which bits are valid , 0XF means all bits are valid and should be set)
+        // data 0 : low nibble specifies the values of each bit
+        //				0    :  0= low band,   1 = high band
+        //              1    :  0= horizontal, 1 = vertical
+        //              2..3 :  antenna number (0-3)
+        byte uContTone;
+        if (frequency < switchingFrequency)
+        {
+          // We are in Low Band
+          uContTone = 0;
+        }
+        else
+        {
+          // We are in High Band
+          uContTone = 1;
+        }
+        byte cmd = 0xf0;
+        cmd |= (byte)( ( (antennaNr - 1) * 4) & 0x0F);
+        cmd |= (byte)( uContTone == 1 ? 1 : 0);
+        cmd |= (byte)(polarisation == 0 ? 2 : 0);//uPolarization = 0 = HOR,1 = VER
+        Marshal.WriteByte(ptrCmd, cmd);                   
+
+        DirectShowLib.IKsPropertySet propertySet = captureFilter as DirectShowLib.IKsPropertySet;
+        Guid propertyGuid = KSPROPSETID_Firesat;
+        KSPropertySupport isTypeSupported = 0;
+        int hr = propertySet.QuerySupported(propertyGuid, (int)KSPROPERTY_FIRESAT_LNB_CONTROL, out isTypeSupported);
+        if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "FireDTV:SendDiseqCommand() not supported");
+          return ;
+        }
+
+        string txt = "";
+        for (int i = 0; i < 25; ++i)
+          txt += String.Format("0x{0:X} ", Marshal.ReadByte(ptrCmd, i));
+        Log.WriteFile(Log.LogType.Log, false, "FireDTV:SendDiseq: {0}", txt);
+
+        hr = propertySet.Set(propertyGuid, KSPROPERTY_FIRESAT_LNB_CONTROL, ptrCmd, 25, ptrCmd, 25);
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "FireDTV:SendDiseqCommand() not supported");
+        }
+      }
+      finally
+      {
+        Marshal.FreeCoTaskMem(ptrCmd);
+      }
+
     }
   }
 }
