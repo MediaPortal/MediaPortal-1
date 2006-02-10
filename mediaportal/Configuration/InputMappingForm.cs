@@ -1415,8 +1415,6 @@ namespace MediaPortal.Configuration
       TreeNode node = treeMapping.SelectedNode;
       Data data = (Data)node.Tag;
 
-
-
       TreeNode newLayer = new TreeNode("All Layers");
       newLayer.Tag = new Data("LAYER", null, "0");
       newLayer.ForeColor = Color.DimGray;
@@ -1468,6 +1466,8 @@ namespace MediaPortal.Configuration
           break;
       }
       changedSettings = true;
+
+      treeMapping_AfterSelect(this, new TreeViewEventArgs(treeMapping.SelectedNode, TreeViewAction.ByKeyboard));
     }
 
     private void buttonReset_Click(object sender, System.EventArgs e)
