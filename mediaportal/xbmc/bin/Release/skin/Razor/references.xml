@@ -403,9 +403,9 @@
 		<textureUpFocus>page_up_focus.png</textureUpFocus>
 		<textureDownFocus>page_down_focus.png</textureDownFocus>
 		<align>left</align>
-		<width>16</width>
-		<height>16</height>
-		<font>font13</font>
+		<width>30</width>
+		<height>30</height>
+		<font>font12</font>
 		<reverse>yes</reverse>
 		<textcolor>ffffffff</textcolor>
 		<disabledcolor>60ffffff</disabledcolor>

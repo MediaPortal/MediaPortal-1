@@ -143,10 +143,10 @@
 		<id>1</id>
 		<posX>360</posX>
 		<posY>100</posY>
-		<width>160</width>
-		<height>32</height>
-		<textureWidth>16</textureWidth>
-		<textureHeight>16</textureHeight>
+		<width>200</width>
+		<height>20</height>
+		<textureWidth>20</textureWidth>
+		<textureHeight>20</textureHeight>
 		<subitems>
 			<subitem>greystar.png</subitem>
 			<subitem>star.png</subitem>
