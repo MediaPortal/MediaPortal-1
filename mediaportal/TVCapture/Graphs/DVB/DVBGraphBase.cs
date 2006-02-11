@@ -3336,7 +3336,6 @@ namespace MediaPortal.TV.Recording
 
       try
       {
-
         _currentChannelNumber = channel.Channel;
         _startTimer = DateTime.Now;
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:TuneRadioChannel() tune to radio station:{0}", channel.Name);
@@ -3497,6 +3496,11 @@ namespace MediaPortal.TV.Recording
       }
       _scanPidListReady = false;
       _scanPidList.Clear();
+      _inScanningMode = false;
+      _refreshPmtTable = true;
+      _lastPMTVersion = -1;
+      _pmtRetyCount = 0;
+      _analyzerInterface.ResetParser();
       try
       {
         //_analyzerInterface.SetPidFilterCallback(this);
@@ -3518,7 +3522,6 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:StartRadio()");
 
 
-        TuneRadioChannel(station);
 #if USEMTSWRITER
 				string fileName=Recorder.GetTimeShiftFileNameByCardId(_cardId);
 				StartTimeShifting(null,fileName);
@@ -3529,6 +3532,7 @@ namespace MediaPortal.TV.Recording
         // add the preferred video/audio codecs
         AddPreferredCodecs(true, false);
 
+        TuneRadioChannel(station);
         if (_currentTuningObject.PCRPid <= 0 || _currentTuningObject.PCRPid >= 0x1fff)
         {
           SetupDemuxer(_pinDemuxerVideo, 0, _pinDemuxerAudio, 0, _pinAC3Out, 0);
@@ -3579,6 +3583,7 @@ namespace MediaPortal.TV.Recording
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: FAILED cannot get IMediaControl");
         }
 
+        TuneRadioChannel(station);
         _isGraphRunning = true;
         _graphState = State.Radio;
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:Listening to radio..");
