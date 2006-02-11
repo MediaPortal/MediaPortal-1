@@ -630,6 +630,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 			// finished tuning to the new channel
 			if (m_pSections->IsNewPat(pbData,len))
 			{
+				/*
 				if (m_patChannelsCount>0) 
 				{
 					Log("mpsa::Found new PAT");
@@ -641,7 +642,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 					{
 						m_pAtscParser->Reset();
 					}
-				}
+				}*/
 				//Log("mpsa::decode pat");
 				m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
 				Log("mpsa::PAT decoded and found %d channels, map pids", m_patChannelsCount);
@@ -959,6 +960,7 @@ HRESULT CStreamAnalyzer::MapPMTPids(int count, int* pids)
 {
 	Log("mpsa:MapPMTPids(%d)",count);
 	int hwPids[110];
+	memset(hwPids,0,sizeof(hwPids));
 	int offset=0;
 	if (m_bDecodeATSC)
 	{

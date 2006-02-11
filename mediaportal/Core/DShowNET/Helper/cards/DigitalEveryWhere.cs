@@ -412,9 +412,11 @@ namespace DShowNET
       dvbsStruct.bCurrentTransponder = true; dvbsStruct.bFullTransponder = false;
       if (pids.Count > 0)
       {
+        int pidCount = pids.Count;
+        if (pidCount > 16) pidCount = 16;
         //get only specific pids
-        dvbtStruct.bFullTransponder = false; dvbtStruct.uNumberOfValidPids = (byte)pids.Count;
-        dvbsStruct.bFullTransponder = false; dvbsStruct.uNumberOfValidPids = (byte)pids.Count;
+        dvbtStruct.bFullTransponder = false; dvbtStruct.uNumberOfValidPids = (byte)pidCount;
+        dvbsStruct.bFullTransponder = false; dvbsStruct.uNumberOfValidPids = (byte)pidCount;
         if (pids.Count >= 1) { dvbtStruct.uPid1 = (ushort)pids[0]; dvbsStruct.uPid1 = (ushort)pids[0]; }
         if (pids.Count >= 2) { dvbtStruct.uPid2 = (ushort)pids[1]; dvbsStruct.uPid2 = (ushort)pids[1]; }
         if (pids.Count >= 3) { dvbtStruct.uPid3 = (ushort)pids[2]; dvbsStruct.uPid3 = (ushort)pids[2]; }

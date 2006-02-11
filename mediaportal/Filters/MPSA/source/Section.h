@@ -234,9 +234,10 @@ public:
 	void GetPES(BYTE *data,ULONG len,BYTE *pes);
 
 private:
-	int     m_patTableVersion;
-	int     m_patTSID;
-	int     m_patSectionLen;
+	int		m_patsFound;
+	int     m_patTableVersion[10];
+	int     m_patTSID[10];
+	int     m_patSectionLen[10];
 	
 	DVBNetworkInfo m_nit;
 

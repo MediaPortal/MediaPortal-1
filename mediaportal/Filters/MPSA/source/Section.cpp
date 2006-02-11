@@ -83,9 +83,13 @@ ULONG Sections::GetCRC32(BYTE *pData,WORD len)
 }
 Sections::Sections()
 {
-	m_patTSID=-1;
-	m_patSectionLen=-1;
-	m_patTableVersion=-1;
+	for (int i=0; i < 10;++i)
+	{
+		m_patTSID[i]=-1;
+		m_patSectionLen[i]=-1;
+		m_patTableVersion[i]=-1;
+	}
+	m_patsFound=0;
 }
 
 Sections::~Sections()
@@ -454,10 +458,12 @@ bool Sections::IsNewPat(BYTE *pData, int len)
 	int last_section_number = pData[7];
 
 	if(table_id!=0 || section_number!=0||last_section_number!=0) return false;//invalid table id
-	if (version_number==m_patTableVersion && 
-		transport_stream_id==m_patTSID && 
-		section_length==m_patSectionLen) return false; // same version number as before
-
+	for (int i=0; i < m_patsFound; ++i)
+	{
+		if (version_number==m_patTableVersion[i] && 
+			transport_stream_id==m_patTSID[i] && 
+			section_length==m_patSectionLen[i]) return false; // same version number as before
+	}
 	int loop =(section_length - 9) / 4;
 	if ( ( (section_length-9) %4 ) !=0) 
 	{
@@ -481,10 +487,8 @@ bool Sections::IsNewPat(BYTE *pData, int len)
 			return false;
 		}
 	}
-	Log("Found new PAT: version:0x%x==0x%x tsid:0x%x==0x%x len:0x%x==0x%x channels:%d ssi:%x cni:%x",
-		version_number,m_patTableVersion, 
-		transport_stream_id,m_patTSID,
-		section_length,m_patSectionLen,loop,section_syntax_indicator,current_next_indicator);
+	Log("Found new PAT: version:0x%x tsid:0x%x len:0x%x channels:%d ssi:%x cni:%x",
+		version_number,transport_stream_id,section_length,loop,section_syntax_indicator,current_next_indicator);
 	return true;
 }
 void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int len)
@@ -505,10 +509,10 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 	{
 		return;
 	}
-	m_patTableVersion=version_number;
-	m_patTSID=transport_stream_id;
-	m_patSectionLen=section_length;
-	*channelCount=loop;
+	m_patTableVersion[m_patsFound]=version_number;
+	m_patTSID[m_patsFound]=transport_stream_id;
+	m_patSectionLen[m_patsFound]=section_length;
+	int channelOffset=*channelCount;
 
 	Log("Decode pat:0x%x len:0x%x tsid:0x%x version:0x%x (%d/%d) channels:%d",
 		table_id,section_length,transport_stream_id,version_number,section_number,last_section_number,(*channelCount));
@@ -528,13 +532,14 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 		Log("  ch:%d prog:%d tsid:0x%x pmtpid:0x%x", i,ch.ProgrammNumber,ch.TransportStreamID,ch.ProgrammPMTPID);
 		if(ch.ProgrammPMTPID>0x12)
 		{
-			chInfo[pmtcount]=ch;
+			chInfo[channelOffset+pmtcount]=ch;
 			pmtcount++;
 		}
 		if(i>254)
 			break;
 	}
-	*channelCount=pmtcount;
+	*channelCount=(*channelCount)+pmtcount;
+	m_patsFound++;
 }
 
 void Sections::getString468A(BYTE *b, int l1,char *text)
@@ -714,9 +719,13 @@ HRESULT Sections::ParseAudioHeader(BYTE *data,AudioHeader *head)
 void Sections::ResetPAT()
 {
 	Log("sections::Reset");
-	m_patTSID=-1;
-	m_patSectionLen=-1;
-	m_patTableVersion=-1;
+	for (int i=0; i < 10;++i)
+	{
+		m_patTSID[i]=-1;
+		m_patSectionLen[i]=-1;
+		m_patTableVersion[i]=-1;
+	}
+	m_patsFound=0;
 	
 }
 
