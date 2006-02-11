@@ -40,25 +40,30 @@ namespace MediaPortal.InputDevices.HcwHelper
     [STAThread]
     static void Main()
     {
-      {
-        Log.Write("HCWHelper: Starting up");
-        Thread.CurrentThread.Priority = ThreadPriority.Highest;
+      Log.Write("HCWHelper: Starting up");
+      Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
-        if ((Process.GetProcessesByName("HcwHelper").Length == 1) &&
-          ((Process.GetProcessesByName("MediaPortal").Length > 0) ||
-          (Process.GetProcessesByName("MediaPortal.vshost").Length > 0)))
+      if ((Process.GetProcessesByName("HcwHelper").Length == 1) &&
+        ((Process.GetProcessesByName("MediaPortal").Length > 0) ||
+        (Process.GetProcessesByName("MediaPortal.vshost").Length > 0)))
+      {
+        System.Windows.Forms.Application.EnableVisualStyles();
+        System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+        Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
+        System.Windows.Forms.Form hcwHelper = new HcwHelper();
+        try
         {
-          System.Windows.Forms.Application.EnableVisualStyles();
-          System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-          Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.RealTime;
-          System.Windows.Forms.Application.Run(new HcwHelper());
+          hcwHelper.Show();
         }
-        else
-          if (Process.GetProcessesByName("HcwHelper").Length != 1)
-            Log.Write("HCWHelper: HCWHelper already running - exiting");
-          else
-            Log.Write("HCWHelper: MediaPortal not running - exiting");
+        catch (ObjectDisposedException)
+        { }
       }
+      else
+        if (Process.GetProcessesByName("HcwHelper").Length != 1)
+          Log.Write("HCWHelper: HCWHelper already running - exiting");
+        else
+          Log.Write("HCWHelper: MediaPortal not running - exiting");
+      Log.Write("HCWHelper: Shutting down");
     }
   }
 }

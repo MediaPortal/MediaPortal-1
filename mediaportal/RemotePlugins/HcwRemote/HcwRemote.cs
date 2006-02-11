@@ -312,10 +312,10 @@ namespace MediaPortal.InputDevices
             lastTime = sentTime;
           }
           break;
-        case "HCWAPP":
+        case "APP":
           if (msg.Split('|')[1] == "STOP")
           {
-            Log.Write("HCW: received HCWSTOP from HcwHelper");
+            if (logVerbose) Log.Write("HCW: received STOP from HcwHelper");
             controlEnabled = false;
             exit = true;
             StopHcw();

@@ -78,7 +78,11 @@ namespace MediaPortal.InputDevices.HcwHelper
         StartIR();
       }
       else
-        Exit();
+      {
+        connection.Send(port + 1, "APP", "STOP", DateTime.Now);
+        connection = null;
+        Application.Exit();
+      }
     }
 
 
@@ -89,6 +93,7 @@ namespace MediaPortal.InputDevices.HcwHelper
     {
       if (logVerbose) Log.Write("HCWHelper: OnClosing");
       connection.ReceiveEvent -= new UdpHelper.Connection.ReceiveEventHandler(OnReceive);
+      connection.Send(port + 1, "APP", "STOP", DateTime.Now);
       connection = null;
       StopIR();
       Application.Exit();
