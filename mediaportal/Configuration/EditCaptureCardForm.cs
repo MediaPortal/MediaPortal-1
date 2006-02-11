@@ -2099,6 +2099,9 @@ namespace MediaPortal.Configuration
           MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
       }
+      TVDatabase.ClearCache();
+      MediaPortal.Configuration.Sections.TVChannels.UpdateList();
+      MediaPortal.Configuration.Sections.RadioStations.UpdateList();
     }
 
 
