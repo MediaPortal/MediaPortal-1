@@ -1224,13 +1224,12 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        foreach (ushort pid in pids)
+        int maxPids;
+        _interfaceB2C2DataCtrl.GetMaxPIDCount(out maxPids);
+        for (int i=0; i <pids.Count && i < maxPids; ++i)
         {
-          int added = SetPidToPin(_interfaceB2C2DataCtrl, 0, pid);
-          if (added != 1)
-          {
-            Log.WriteFile(Log.LogType.Error, "DVBGraphSkyStar2:SetPidToPin() failed pid:0x{0:X}", pid);
-          }
+          ushort pid = (ushort)pids[i];
+          SetPidToPin(_interfaceB2C2DataCtrl, 0, pid);
         }
       }
     }
