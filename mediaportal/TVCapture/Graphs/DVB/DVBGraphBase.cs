@@ -761,10 +761,10 @@ namespace MediaPortal.TV.Recording
       }
       Log.WriteFile(Log.LogType.Capture, "DVBGraph:StartTimeShifting() {0}", channel.Name);
 
+      GetTvChannelFromDatabase(channel);
       _isUsingAC3 = false;
       if (channel != null)
       {
-        TuneChannel(channel);
         _isUsingAC3 = TVDatabase.DoesChannelHaveAC3(channel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC);
         if (_isUsingAC3)
           Log.WriteFile(Log.LogType.Capture, "DVBGraph: channel {0} uses AC3", channel.Name);
@@ -785,6 +785,7 @@ namespace MediaPortal.TV.Recording
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
         }
+        TuneChannel(channel);
         _isGraphRunning = true;
         _graphState = State.TimeShifting;
       }
@@ -2250,50 +2251,8 @@ namespace MediaPortal.TV.Recording
 
     #endregion
 
-    #region Tuning
-    /// <summary>
-    /// Switches / tunes to another TV channel
-    /// </summary>
-    /// <param name="iChannel">New channel</param>
-    /// <remarks>
-    /// Graph should be viewing or timeshifting. 
-    /// </remarks>
-    public void TuneChannel(TVChannel channel)
+    protected void GetTvChannelFromDatabase(TVChannel channel)
     {
-      //bool restartGraph=false;
-      _lastPMTVersion = -1;
-      _pmtRetyCount = 0;
-      _inScanningMode = false;
-      //bool restartGraph=false;
-      try
-      {
-        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-#if USEMTSWRITER
-				/*if (_graphState==State.TimeShifting)
-				{
-					string fname=Recorder.GetTimeShiftFileNameByCardId(_cardId);
-					if (g_Player.Playing && g_Player.CurrentFile == fname)
-					{
-						restartGraph=true;
-						g_Player.PauseGraph();
-						_mediaControl.Stop();
-					}
-				}*/
-#else
-        string fname = Recorder.GetTimeShiftFileNameByCardId(_cardId);
-        if (g_Player.Playing && g_Player.CurrentFile == fname)
-        {
-          _graphPaused = true;
-        }
-#endif
-        if (_vmr9 != null) _vmr9.Enable(false);
-
-        _currentChannelNumber = channel.Number;
-        _startTimer = DateTime.Now;
-
-        Log.WriteFile(Log.LogType.Capture, "DVBGraph:TuneChannel() tune to channel:{0}", channel.ID);
-
-
         int bandWidth = -1;
         int frequency = -1, ONID = -1, TSID = -1, SID = -1;
         int audioPid = -1, videoPid = -1, teletextPid = -1, pmtPid = -1, pcrPid = -1;
@@ -2344,7 +2303,6 @@ namespace MediaPortal.TV.Recording
               _currentTuningObject.HasEITSchedule = HasEITSchedule;
               _currentTuningObject.HasEITPresentFollow = HasEITPresentFollow;
               //Log.WriteFile(Log.LogType.Capture,"DVBGraph:TuneChannel() submit tuning request");
-              SubmitTuneRequest(_currentTuningObject);
             } break;
 
           case NetworkType.DVBC:
@@ -2398,7 +2356,6 @@ namespace MediaPortal.TV.Recording
               _currentTuningObject.PCRPid = pcrPid;
               _currentTuningObject.HasEITPresentFollow = HasEITPresentFollow;
               _currentTuningObject.HasEITSchedule = HasEITSchedule;
-              SubmitTuneRequest(_currentTuningObject);
 
             } break;
 
@@ -2459,8 +2416,6 @@ namespace MediaPortal.TV.Recording
               _currentTuningObject.LNBKHz = ch.LNBKHz;
               _currentTuningObject.HasEITPresentFollow = ch.HasEITPresentFollow;
               _currentTuningObject.HasEITSchedule = ch.HasEITSchedule;
-              SubmitTuneRequest(_currentTuningObject);
-
             } break;
 
           case NetworkType.DVBT:
@@ -2510,11 +2465,54 @@ namespace MediaPortal.TV.Recording
               _currentTuningObject.Audio3 = audio3;
               _currentTuningObject.HasEITPresentFollow = HasEITPresentFollow;
               _currentTuningObject.HasEITSchedule = HasEITSchedule;
-              SubmitTuneRequest(_currentTuningObject);
-
             } break;
         }	//switch (_networkType)
-        //submit tune request to the tuner
+    }
+    #region Tuning
+    /// <summary>
+    /// Switches / tunes to another TV channel
+    /// </summary>
+    /// <param name="iChannel">New channel</param>
+    /// <remarks>
+    /// Graph should be viewing or timeshifting. 
+    /// </remarks>
+    public void TuneChannel(TVChannel channel)
+    {
+      //bool restartGraph=false;
+      _lastPMTVersion = -1;
+      _pmtRetyCount = 0;
+      _inScanningMode = false;
+      //bool restartGraph=false;
+      try
+      {
+        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+#if USEMTSWRITER
+				/*if (_graphState==State.TimeShifting)
+				{
+					string fname=Recorder.GetTimeShiftFileNameByCardId(_cardId);
+					if (g_Player.Playing && g_Player.CurrentFile == fname)
+					{
+						restartGraph=true;
+						g_Player.PauseGraph();
+						_mediaControl.Stop();
+					}
+				}*/
+#else
+        string fname = Recorder.GetTimeShiftFileNameByCardId(_cardId);
+        if (g_Player.Playing && g_Player.CurrentFile == fname)
+        {
+          _graphPaused = true;
+        }
+#endif
+        if (_vmr9 != null) _vmr9.Enable(false);
+
+        _currentChannelNumber = channel.Number;
+        _startTimer = DateTime.Now;
+
+        Log.WriteFile(Log.LogType.Capture, "DVBGraph:TuneChannel() tune to channel:{0}", channel.ID);
+
+        GetTvChannelFromDatabase(channel);
+        SubmitTuneRequest(_currentTuningObject);
 
         if (_currentTuningObject.AC3Pid <= 0) _currentTuningObject.AC3Pid = -1;
         if (_currentTuningObject.AudioPid <= 0) _currentTuningObject.AudioPid = -1;
@@ -3330,6 +3328,141 @@ namespace MediaPortal.TV.Recording
     #endregion
 
     #region Radio
+    protected void GetRadioChannelFromDatabase(RadioStation channel)
+    {
+
+      int frequency = -1, ONID = -1, TSID = -1, SID = -1, pmtPid = -1, pcrPid = -1;
+      int audioPid = -1, bandwidth = 8;
+      string providerName;
+      switch (_networkType)
+      {
+        case NetworkType.ATSC:
+          {
+            //get the ATSC tuning details from the tv database
+            //Log.WriteFile(Log.LogType.Capture,"DVBGraph:TuneChannel() get ATSC tuning details");
+            int symbolrate = 0, innerFec = 0, modulation = 0, physicalChannel = 0;
+            int minorChannel = 0, majorChannel = 0;
+            RadioDatabase.GetATSCTuneRequest(channel.ID, out physicalChannel, out minorChannel, out majorChannel, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out pmtPid, out pcrPid);
+
+            Log.WriteFile(Log.LogType.Capture, "DVBGraph:  tuning details: frequency:{0} KHz physicalChannel:{1} symbolrate:{2} innerFec:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8}",
+              frequency, physicalChannel, symbolrate, innerFec, modulation, ONID, TSID, SID, providerName);
+            _currentTuningObject = new DVBChannel();
+            _currentTuningObject.PhysicalChannel = physicalChannel;
+            _currentTuningObject.MinorChannel = minorChannel;
+            _currentTuningObject.MajorChannel = majorChannel;
+            _currentTuningObject.Frequency = frequency;
+            _currentTuningObject.Symbolrate = symbolrate;
+            _currentTuningObject.FEC = innerFec;
+            _currentTuningObject.Modulation = modulation;
+            _currentTuningObject.NetworkID = ONID;
+            _currentTuningObject.TransportStreamID = TSID;
+            _currentTuningObject.ProgramNumber = SID;
+            _currentTuningObject.AudioPid = audioPid;
+            _currentTuningObject.VideoPid = 0;
+            _currentTuningObject.PMTPid = pmtPid;
+            _currentTuningObject.PCRPid = pcrPid;
+            _currentTuningObject.ServiceName = channel.Name;
+          } break;
+
+        case NetworkType.DVBC:
+          {
+            //get the DVB-C tuning details from the tv database
+            //Log.WriteFile(Log.LogType.Capture,"DVBGraph:TuneRadioChannel() get DVBC tuning details");
+            int symbolrate = 0, innerFec = 0, modulation = 0;
+            RadioDatabase.GetDVBCTuneRequest(channel.ID, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out pmtPid, out pcrPid);
+            if (frequency <= 0)
+            {
+              Log.WriteFile(Log.LogType.Capture, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.Channel);
+              return;
+            }
+            Log.WriteFile(Log.LogType.Capture, "DVBGraph:  tuning details: frequency:{0} KHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
+              frequency, symbolrate, innerFec, modulation, ONID, TSID, SID, providerName);
+
+            _currentTuningObject = new DVBChannel();
+            _currentTuningObject.Frequency = frequency;
+            _currentTuningObject.Symbolrate = symbolrate;
+            _currentTuningObject.FEC = innerFec;
+            _currentTuningObject.Modulation = modulation;
+            _currentTuningObject.NetworkID = ONID;
+            _currentTuningObject.TransportStreamID = TSID;
+            _currentTuningObject.ProgramNumber = SID;
+            _currentTuningObject.AudioPid = audioPid;
+            _currentTuningObject.VideoPid = 0;
+            _currentTuningObject.TeletextPid = 0;
+            _currentTuningObject.SubtitlePid = 0;
+            _currentTuningObject.PMTPid = pmtPid;
+
+            _currentTuningObject.PCRPid = pcrPid;
+            _currentTuningObject.ServiceName = channel.Name;
+
+          } break;
+
+        case NetworkType.DVBS:
+          {
+            //get the DVB-S tuning details from the tv database
+            //for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
+            //Log.WriteFile(Log.LogType.Capture,"DVBGraph:TuneRadioChannel() get DVBS tuning details");
+            DVBChannel ch = new DVBChannel();
+            if (RadioDatabase.GetDVBSTuneRequest(channel.ID, 0, ref ch) == false)//only radio
+            {
+              Log.WriteFile(Log.LogType.Capture, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.Channel);
+              return;
+            }
+            Log.WriteFile(Log.LogType.Capture, "DVBGraph:  tuning details: frequency:{0} KHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
+              ch.Frequency, ch.Polarity, ch.FEC, ch.Symbolrate, ch.NetworkID, ch.TransportStreamID, ch.ProgramNumber, ch.ServiceProvider);
+
+
+            _currentTuningObject = new DVBChannel();
+            _currentTuningObject.Frequency = ch.Frequency;
+            _currentTuningObject.Symbolrate = ch.Symbolrate;
+            _currentTuningObject.FEC = ch.FEC;
+            _currentTuningObject.Polarity = ch.Polarity;
+            _currentTuningObject.NetworkID = ch.NetworkID;
+            _currentTuningObject.TransportStreamID = ch.TransportStreamID;
+            _currentTuningObject.ProgramNumber = ch.ProgramNumber;
+            _currentTuningObject.AudioPid = ch.AudioPid;
+            _currentTuningObject.VideoPid = 0;
+            _currentTuningObject.TeletextPid = 0;
+            _currentTuningObject.SubtitlePid = 0;
+            _currentTuningObject.PMTPid = ch.PMTPid;
+            _currentTuningObject.ServiceName = channel.Name;
+            _currentTuningObject.DiSEqC = ch.DiSEqC;
+            _currentTuningObject.LNBFrequency = ch.LNBFrequency;
+            _currentTuningObject.LNBKHz = ch.LNBKHz;
+
+          } break;
+
+        case NetworkType.DVBT:
+          {
+            //get the DVB-T tuning details from the tv database
+            //for DVB-T this is the frequency, ONID , TSID and SID
+            //Log.WriteFile(Log.LogType.Capture,"DVBGraph:TuneRadioChannel() get DVBT tuning details");
+            RadioDatabase.GetDVBTTuneRequest(channel.ID, out providerName, out frequency, out ONID, out TSID, out SID, out audioPid, out pmtPid, out bandwidth, out pcrPid);
+            if (frequency <= 0)
+            {
+              Log.WriteFile(Log.LogType.Capture, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.Channel);
+              return;
+            }
+            Log.WriteFile(Log.LogType.Capture, "DVBGraph:  tuning details: frequency:{0} KHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID, providerName);
+
+
+            _currentTuningObject = new DVBChannel();
+            _currentTuningObject.Frequency = frequency;
+            _currentTuningObject.NetworkID = ONID;
+            _currentTuningObject.TransportStreamID = TSID;
+            _currentTuningObject.ProgramNumber = SID;
+            _currentTuningObject.AudioPid = audioPid;
+            _currentTuningObject.VideoPid = 0;
+            _currentTuningObject.TeletextPid = 0;
+            _currentTuningObject.SubtitlePid = 0;
+            _currentTuningObject.PMTPid = pmtPid;
+            _currentTuningObject.PCRPid = pcrPid;
+            _currentTuningObject.Bandwidth = bandwidth;
+            _currentTuningObject.ServiceName = channel.Name;
+          } break;
+      }	//switch (_networkType)
+      //submit tune request to the tuner
+    }
     public void TuneRadioChannel(RadioStation channel)
     {
 
@@ -3339,143 +3472,8 @@ namespace MediaPortal.TV.Recording
         _currentChannelNumber = channel.Channel;
         _startTimer = DateTime.Now;
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:TuneRadioChannel() tune to radio station:{0}", channel.Name);
-
-
-        int frequency = -1, ONID = -1, TSID = -1, SID = -1, pmtPid = -1, pcrPid = -1;
-        int audioPid = -1, bandwidth = 8;
-        string providerName;
-        switch (_networkType)
-        {
-          case NetworkType.ATSC:
-            {
-              //get the ATSC tuning details from the tv database
-              //Log.WriteFile(Log.LogType.Capture,"DVBGraph:TuneChannel() get ATSC tuning details");
-              int symbolrate = 0, innerFec = 0, modulation = 0, physicalChannel = 0;
-              int minorChannel = 0, majorChannel = 0;
-              RadioDatabase.GetATSCTuneRequest(channel.ID, out physicalChannel, out minorChannel, out majorChannel, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out pmtPid, out pcrPid);
-
-              Log.WriteFile(Log.LogType.Capture, "DVBGraph:  tuning details: frequency:{0} KHz physicalChannel:{1} symbolrate:{2} innerFec:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8}",
-                frequency, physicalChannel, symbolrate, innerFec, modulation, ONID, TSID, SID, providerName);
-              _currentTuningObject = new DVBChannel();
-              _currentTuningObject.PhysicalChannel = physicalChannel;
-              _currentTuningObject.MinorChannel = minorChannel;
-              _currentTuningObject.MajorChannel = majorChannel;
-              _currentTuningObject.Frequency = frequency;
-              _currentTuningObject.Symbolrate = symbolrate;
-              _currentTuningObject.FEC = innerFec;
-              _currentTuningObject.Modulation = modulation;
-              _currentTuningObject.NetworkID = ONID;
-              _currentTuningObject.TransportStreamID = TSID;
-              _currentTuningObject.ProgramNumber = SID;
-              _currentTuningObject.AudioPid = audioPid;
-              _currentTuningObject.VideoPid = 0;
-              _currentTuningObject.PMTPid = pmtPid;
-              _currentTuningObject.PCRPid = pcrPid;
-              _currentTuningObject.ServiceName = channel.Name;
-              SubmitTuneRequest(_currentTuningObject);
-            } break;
-
-          case NetworkType.DVBC:
-            {
-              //get the DVB-C tuning details from the tv database
-              //Log.WriteFile(Log.LogType.Capture,"DVBGraph:TuneRadioChannel() get DVBC tuning details");
-              int symbolrate = 0, innerFec = 0, modulation = 0;
-              RadioDatabase.GetDVBCTuneRequest(channel.ID, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out pmtPid, out pcrPid);
-              if (frequency <= 0)
-              {
-                Log.WriteFile(Log.LogType.Capture, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.Channel);
-                return;
-              }
-              Log.WriteFile(Log.LogType.Capture, "DVBGraph:  tuning details: frequency:{0} KHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
-                frequency, symbolrate, innerFec, modulation, ONID, TSID, SID, providerName);
-
-              _currentTuningObject = new DVBChannel();
-              _currentTuningObject.Frequency = frequency;
-              _currentTuningObject.Symbolrate = symbolrate;
-              _currentTuningObject.FEC = innerFec;
-              _currentTuningObject.Modulation = modulation;
-              _currentTuningObject.NetworkID = ONID;
-              _currentTuningObject.TransportStreamID = TSID;
-              _currentTuningObject.ProgramNumber = SID;
-              _currentTuningObject.AudioPid = audioPid;
-              _currentTuningObject.VideoPid = 0;
-              _currentTuningObject.TeletextPid = 0;
-              _currentTuningObject.SubtitlePid = 0;
-              _currentTuningObject.PMTPid = pmtPid;
-
-              _currentTuningObject.PCRPid = pcrPid;
-              _currentTuningObject.ServiceName = channel.Name;
-              SubmitTuneRequest(_currentTuningObject);
-
-            } break;
-
-          case NetworkType.DVBS:
-            {
-              //get the DVB-S tuning details from the tv database
-              //for DVB-S this is the frequency, polarisation, symbolrate,lnb-config, diseqc-config
-              //Log.WriteFile(Log.LogType.Capture,"DVBGraph:TuneRadioChannel() get DVBS tuning details");
-              DVBChannel ch = new DVBChannel();
-              if (RadioDatabase.GetDVBSTuneRequest(channel.ID, 0, ref ch) == false)//only radio
-              {
-                Log.WriteFile(Log.LogType.Capture, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.Channel);
-                return;
-              }
-              Log.WriteFile(Log.LogType.Capture, "DVBGraph:  tuning details: frequency:{0} KHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
-                ch.Frequency, ch.Polarity, ch.FEC, ch.Symbolrate, ch.NetworkID, ch.TransportStreamID, ch.ProgramNumber, ch.ServiceProvider);
-
-
-              _currentTuningObject = new DVBChannel();
-              _currentTuningObject.Frequency = ch.Frequency;
-              _currentTuningObject.Symbolrate = ch.Symbolrate;
-              _currentTuningObject.FEC = ch.FEC;
-              _currentTuningObject.Polarity = ch.Polarity;
-              _currentTuningObject.NetworkID = ch.NetworkID;
-              _currentTuningObject.TransportStreamID = ch.TransportStreamID;
-              _currentTuningObject.ProgramNumber = ch.ProgramNumber;
-              _currentTuningObject.AudioPid = ch.AudioPid;
-              _currentTuningObject.VideoPid = 0;
-              _currentTuningObject.TeletextPid = 0;
-              _currentTuningObject.SubtitlePid = 0;
-              _currentTuningObject.PMTPid = ch.PMTPid;
-              _currentTuningObject.ServiceName = channel.Name;
-              _currentTuningObject.DiSEqC = ch.DiSEqC;
-              _currentTuningObject.LNBFrequency = ch.LNBFrequency;
-              _currentTuningObject.LNBKHz = ch.LNBKHz;
-              SubmitTuneRequest(_currentTuningObject);
-
-            } break;
-
-          case NetworkType.DVBT:
-            {
-              //get the DVB-T tuning details from the tv database
-              //for DVB-T this is the frequency, ONID , TSID and SID
-              //Log.WriteFile(Log.LogType.Capture,"DVBGraph:TuneRadioChannel() get DVBT tuning details");
-              RadioDatabase.GetDVBTTuneRequest(channel.ID, out providerName, out frequency, out ONID, out TSID, out SID, out audioPid, out pmtPid, out bandwidth, out pcrPid);
-              if (frequency <= 0)
-              {
-                Log.WriteFile(Log.LogType.Capture, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.Channel);
-                return;
-              }
-              Log.WriteFile(Log.LogType.Capture, "DVBGraph:  tuning details: frequency:{0} KHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID, providerName);
-
-
-              _currentTuningObject = new DVBChannel();
-              _currentTuningObject.Frequency = frequency;
-              _currentTuningObject.NetworkID = ONID;
-              _currentTuningObject.TransportStreamID = TSID;
-              _currentTuningObject.ProgramNumber = SID;
-              _currentTuningObject.AudioPid = audioPid;
-              _currentTuningObject.VideoPid = 0;
-              _currentTuningObject.TeletextPid = 0;
-              _currentTuningObject.SubtitlePid = 0;
-              _currentTuningObject.PMTPid = pmtPid;
-              _currentTuningObject.PCRPid = pcrPid;
-              _currentTuningObject.Bandwidth = bandwidth;
-              _currentTuningObject.ServiceName = channel.Name;
-              SubmitTuneRequest(_currentTuningObject);
-            } break;
-        }	//switch (_networkType)
-        //submit tune request to the tuner
+        GetRadioChannelFromDatabase(channel);
+        SubmitTuneRequest(_currentTuningObject);
 
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:TuneRadioChannel() done");
 
@@ -3532,7 +3530,7 @@ namespace MediaPortal.TV.Recording
         // add the preferred video/audio codecs
         AddPreferredCodecs(true, false);
 
-        TuneRadioChannel(station);
+        GetRadioChannelFromDatabase(station);
         if (_currentTuningObject.PCRPid <= 0 || _currentTuningObject.PCRPid >= 0x1fff)
         {
           SetupDemuxer(_pinDemuxerVideo, 0, _pinDemuxerAudio, 0, _pinAC3Out, 0);
@@ -3583,6 +3581,7 @@ namespace MediaPortal.TV.Recording
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: FAILED cannot get IMediaControl");
         }
 
+        
         TuneRadioChannel(station);
         _isGraphRunning = true;
         _graphState = State.Radio;
