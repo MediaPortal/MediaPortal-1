@@ -1097,11 +1097,15 @@ namespace MediaPortal.TV.Recording
 
     public int SignalQuality()
     {
+      if (_signalQuality < 0) return 0;
+      if (_signalQuality >100) return 100;
       return _signalQuality;
     }
 
     public int SignalStrength()
     {
+      if (_signalLevel < 0) return 0;
+      if (_signalLevel > 100) return 100;
       return _signalLevel;
     }
 
