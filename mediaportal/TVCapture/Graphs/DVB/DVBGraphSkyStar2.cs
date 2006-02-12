@@ -1264,27 +1264,27 @@ namespace MediaPortal.TV.Recording
         {
           case 1:
             // config a
-            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb", 44);
-            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 0);
+            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb", 22);
+            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 1);
             lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind", 0);
             break;
           case 2:
             // config b
-            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb2", 44);
-            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 0);
+            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb2", 22);
+            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 1);
             lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind2", 0);
             break;
           case 3:
             // config c
-            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb3", 44);
-            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 0);
+            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb3", 22);
+            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 1);
             lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind3", 0);
             break;
           //
           case 4:
             // config d
-            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb4", 44);
-            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 0);
+            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb4", 22);
+            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 1);
             lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind4", 0);
             //
             break;
@@ -1349,27 +1349,27 @@ namespace MediaPortal.TV.Recording
         {
           case 1:
             // config a
-            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb", 44);
-            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 0);
+            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb", 22);
+            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 1);
             lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind", 0);
             break;
           case 2:
             // config b
-            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb2", 44);
-            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 0);
+            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb2", 22);
+            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 1);
             lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind2", 0);
             break;
           case 3:
             // config c
-            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb3", 44);
-            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 0);
+            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb3", 22);
+            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 1);
             lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind3", 0);
             break;
           //
           case 4:
             // config d
-            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb4", 44);
-            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 0);
+            lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb4", 22);
+            diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 1);
             lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind4", 0);
             //
             break;

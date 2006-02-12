@@ -1892,30 +1892,30 @@ namespace MediaPortal.TV.Recording
           {
             case 1:
               // config a
-              lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb", 44);
-              diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 0);
+              lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb", 22);
+              diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 1);
               lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind", 0);
               Log.Write("DVBGraph: using profile diseqc 1 LNB:{0} KHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               break;
             case 2:
               // config b
-              lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb2", 44);
-              diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 0);
+              lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb2", 22);
+              diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 1);
               lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind2", 0);
               Log.Write("DVBGraph: using profile diseqc 2 LNB:{0} KHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               break;
             case 3:
               // config c
-              lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb3", 44);
-              diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 0);
+              lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb3", 22);
+              diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 1);
               lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind3", 0);
               Log.Write("DVBGraph: using profile diseqc 3 LNB:{0} KHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               break;
             //
             case 4:
               // config d
-              lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb4", 44);
-              diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 0);
+              lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb4", 22);
+              diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 1);
               lnbKind = xmlreader.GetValueAsInt("dvbs", "lnbKind4", 0);
               Log.Write("DVBGraph: using profile diseqc 4 LNB:{0} KHz diseqc:{1} lnbKind:{2}", lnbKhz, diseqc, lnbKind);
               //
