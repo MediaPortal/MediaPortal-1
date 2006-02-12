@@ -189,10 +189,16 @@ namespace MediaPortal.GUI.Library
                     plugin=(IPlugin)newObj;
                   }
                 }
-                catch( Exception iPluginException )
+                catch (System.Reflection.TargetInvocationException)
+                {
+                  Log.Write("PluginManager: {0} is incompatible with the current MediaPortal version and won't be loaded!", t.FullName);
+                  continue;
+                }
+                catch (Exception iPluginException )
                 {
                   Log.WriteFile(Log.LogType.Log,true,"Exception while loading IPlugin instances: {0}", t.FullName);
 
+                  Log.WriteFile(Log.LogType.Log,true,iPluginException.ToString());
                   Log.WriteFile(Log.LogType.Log,true,iPluginException.Message);
                   Log.WriteFile(Log.LogType.Log,true,iPluginException.StackTrace);
                 }

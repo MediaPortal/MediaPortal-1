@@ -178,8 +178,8 @@ namespace MediaPortal.Configuration.Sections
               }
               catch (System.Reflection.TargetInvocationException)
               {
-                MessageBox.Show(string.Format("An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.", pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1)), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Log.Write("Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version!", pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
+                MessageBox.Show(string.Format("An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.", type.FullName, "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error));
+                Log.Write("Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version! (File: {1})", type.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
                 continue;
               }
               ISetupForm pluginForm = pluginObject as ISetupForm;
@@ -212,8 +212,8 @@ namespace MediaPortal.Configuration.Sections
               }
               catch (System.Reflection.TargetInvocationException)
               {
-                MessageBox.Show(string.Format("An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.", pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1)), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Log.Write("Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version!", pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
+                MessageBox.Show(string.Format("An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.", t.FullName, "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error));
+                Log.Write("PluginManager: {0} is incompatible with the current MediaPortal version! (File: {1})", t.FullName, pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
                 continue;
               }
               GUIWindow win = (GUIWindow)newObj;
