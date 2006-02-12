@@ -31,7 +31,14 @@
 				  <onup>2</onup>
 				  <ondown>2</ondown>
 			  </control>
-	    </control>	
+
+        <control>
+          <description>playlist listcontrol</description>
+          <type>playlistcontrol</type>
+          <id>50</id>
+        </control>
+
+      </control>	
 		</control>	
 	</controls>
 </window>

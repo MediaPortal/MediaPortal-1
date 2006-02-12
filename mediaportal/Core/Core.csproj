@@ -262,6 +262,8 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="guilib\GUIPlayListItemListControl.cs" />
+    <Compile Include="guilib\GUIPlayListtButtonControl.cs" />
     <Compile Include="UserInterfaceControls\MPContextMenuStrip.cs">
       <SubType>Component</SubType>
     </Compile>

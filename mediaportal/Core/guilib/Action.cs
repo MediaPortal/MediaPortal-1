@@ -155,6 +155,9 @@ namespace MediaPortal.GUI.Library
       , ACTION_IMPORT_DISC         = 113
       , ACTION_CANCEL_IMPORT       = 114
       , ACTION_SWITCH_HOME         = 115  // allow switching between regular / basic home
+      , ACTION_MOVE_SELECTED_ITEM_UP         = 116   // move selected playlist item up
+      , ACTION_MOVE_SELECTED_ITEM_DOWN       = 117   // move selected playlist item down
+      , ACTION_DELETE_SELECTED_ITEM          = 118   // delete selected playlist item
       , ACTION_MOUSE_MOVE=2000
       , ACTION_MOUSE_CLICK=2001
       , ACTION_MOUSE_DOUBLECLICK=2002
@@ -167,7 +170,6 @@ namespace MediaPortal.GUI.Library
 			,ACTION_SHOW_VOLUME
 			,ACTION_VOLUME_MUTE
 			,ACTION_SHOW_CURRENT_TV_INFO
-
 		};
     #endregion
 

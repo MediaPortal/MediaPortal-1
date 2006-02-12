@@ -327,7 +327,14 @@ namespace MediaPortal.GUI.Library
 					foreach (XmlNode subControlNode in nodeList)
 					{
 						GUIControl subControl = Create(dwParentId, subControlNode, defines);
-						if (subControl is GUIListControl)
+
+                        if (subControl is GUIPlayListItemListControl)
+                        {
+                            GUIPlayListItemListControl list = subControl as GUIPlayListItemListControl;
+                            facade.PlayListView = list;
+                        }
+
+                        else if (subControl is GUIListControl)
 						{
 							GUIListControl list = subControl as GUIListControl;
 							if ( list.SubType=="album")
@@ -511,6 +518,10 @@ namespace MediaPortal.GUI.Library
 					return typeof (GUIVolumeBar);
 				case ("animation"):
 					return typeof (GUIAnimation);
+                case("playlistbutton"):
+                    return typeof(GUIPlayListButtonControl);
+                case("playlistcontrol"):
+                    return typeof(GUIPlayListItemListControl);
 				default:
 					Type t = (Type)m_hashCustomControls[xmlTypeName];
 

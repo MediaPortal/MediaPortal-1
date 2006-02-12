@@ -26,106 +26,189 @@ using System.Collections;
 
 namespace MediaPortal.Playlists
 {
-	public class PlayList : IEnumerable<PlayListItem>
-	{
-    protected string _playListName="";
-    protected List<PlayListItem> _listPlayListItems = new List<PlayListItem>();
-   
-    public bool AllPlayed()
+    public class PlayList : IEnumerable<PlayListItem>
     {
-      foreach (PlayListItem item in _listPlayListItems)
-      {
-        if (!item.Played) return false;
-      }
-      return true;
-    }
+        protected string _playListName = "";
+        protected List<PlayListItem> _listPlayListItems = new List<PlayListItem>();
 
-    public void ResetStatus()
-    {
-      foreach (PlayListItem item in _listPlayListItems)
-      {
-        item.Played=false;
-      }
-    }
-
-    public void Add( PlayListItem item)
-    {
-      if (item==null) return;
-      _listPlayListItems.Add(item);
-    }
-
-    public string Name
-    {
-      get { return _playListName;}
-      set { 
-        if (value==null) return ;
-        _playListName=value;
-      }
-    }
-
-    public int Remove( string fileName)
-    {
-      if (fileName==null) return -1;
-      
-      for (int i=0; i < _listPlayListItems.Count;++i)
-      {
-        PlayListItem item=_listPlayListItems[i];
-        if (item.FileName == fileName)
+        public bool AllPlayed()
         {
-          _listPlayListItems.RemoveAt(i);
-          return i;
+            foreach (PlayListItem item in _listPlayListItems)
+            {
+                if (!item.Played) return false;
+            }
+            return true;
         }
-      }
-      return -1;
-    }
 
-    public void Clear()
-    {
-      _listPlayListItems.Clear();
-    }
+        public void ResetStatus()
+        {
+            foreach (PlayListItem item in _listPlayListItems)
+            {
+                item.Played = false;
+            }
+        }
 
-    public int Count
-    {
-      get { return _listPlayListItems.Count;}
-    }
+        public void Add(PlayListItem item)
+        {
+            if (item == null) return;
+            _listPlayListItems.Add(item);
+        }
 
-    public PlayListItem this [int iItem]
-    {
-      get { return _listPlayListItems[iItem];}
-    }
+        public string Name
+        {
+            get { return _playListName; }
+            set
+            {
+                if (value == null) return;
+                _playListName = value;
+            }
+        }
 
-    
-    public int	RemoveDVDItems()
-    {
-      //TODO
-      return 0;
-    }
-     
-    public virtual void Shuffle()
-    {
-      Random r = new System.Random(DateTime.Now.Millisecond);
-      
-      // iterate through each catalogue item performing arbitrary swaps
-      for (int item = 0; item < Count; item++)
-      {
-        int nArbitrary = r.Next(Count);
+        public int Remove(string fileName)
+        {
+            if (fileName == null) return -1;
 
-        PlayListItem anItem = _listPlayListItems[nArbitrary];
-        _listPlayListItems[nArbitrary] = _listPlayListItems[item];
-        _listPlayListItems[item] = anItem;
-      }
-    }
+            for (int i = 0; i < _listPlayListItems.Count; ++i)
+            {
+                PlayListItem item = _listPlayListItems[i];
+                if (item.FileName == fileName)
+                {
+                    _listPlayListItems.RemoveAt(i);
+                    return i;
+                }
+            }
+            return -1;
+        }
 
-    public IEnumerator<PlayListItem> GetEnumerator()
-    {
-      return _listPlayListItems.GetEnumerator();
+        public void Clear()
+        {
+            _listPlayListItems.Clear();
+        }
 
-    }
+        public int Count
+        {
+            get { return _listPlayListItems.Count; }
+        }
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      IEnumerable enumerable = (IEnumerable)_listPlayListItems;
-      return enumerable.GetEnumerator();
+        public PlayListItem this[int iItem]
+        {
+            get { return _listPlayListItems[iItem]; }
+        }
+
+
+        public int RemoveDVDItems()
+        {
+            //TODO
+            return 0;
+        }
+
+        public virtual void Shuffle()
+        {
+            Random r = new System.Random(DateTime.Now.Millisecond);
+
+            // iterate through each catalogue item performing arbitrary swaps
+            for (int item = 0; item < Count; item++)
+            {
+                int nArbitrary = r.Next(Count);
+
+                PlayListItem anItem = _listPlayListItems[nArbitrary];
+                _listPlayListItems[nArbitrary] = _listPlayListItems[item];
+                _listPlayListItems[item] = anItem;
+            }
+        }
+
+        public IEnumerator<PlayListItem> GetEnumerator()
+        {
+            return _listPlayListItems.GetEnumerator();
+
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            IEnumerable enumerable = (IEnumerable)_listPlayListItems;
+            return enumerable.GetEnumerator();
+        }
+
+        public int MovePlayListItemUp(int iItem)
+        {
+            int selectedItemIndex = -1;
+
+            if (iItem < 0 || iItem >= _listPlayListItems.Count)
+                return -1;
+
+            int iPreviousItem = iItem - 1;
+
+            if (iPreviousItem < 0)
+                iPreviousItem = _listPlayListItems.Count - 1;
+
+            PlayListItem playListItem1 = _listPlayListItems[iItem];
+            PlayListItem playListItem2 = _listPlayListItems[iPreviousItem];
+
+            if (playListItem1 == null || playListItem2 == null)
+                return -1;
+
+            try
+            {
+                Log.Write("Moving playlist item {0} up. Old index:{1}, new index{2}", playListItem1.Description, iItem, iPreviousItem);
+                System.Threading.Monitor.Enter(this);
+                _listPlayListItems[iItem] = playListItem2;
+                _listPlayListItems[iPreviousItem] = playListItem1;
+                selectedItemIndex = iPreviousItem;
+            }
+
+            catch (Exception ex)
+            {
+                Log.Write("PlayList.MovePlayListItemUp caused an exception: {0}", ex.Message);
+                selectedItemIndex = -1;
+            }
+
+            finally
+            {
+                System.Threading.Monitor.Exit(this);
+            }
+
+            return selectedItemIndex;
+        }
+
+        public int MovePlayListItemDown(int iItem)
+        {
+            int selectedItemIndex = -1;
+
+            if (iItem < 0 || iItem >= _listPlayListItems.Count)
+                return -1;
+
+            int iNextItem = iItem + 1;
+
+            if (iNextItem >= _listPlayListItems.Count)
+                iNextItem = 0;
+
+            PlayListItem playListItem1 = _listPlayListItems[iItem];
+            PlayListItem playListItem2 = _listPlayListItems[iNextItem];
+
+            if (playListItem1 == null || playListItem2 == null)
+                return -1;
+
+            try
+            {
+                Log.Write("Moving playlist item {0} down. Old index:{1}, new index{2}", playListItem1.Description, iItem, iNextItem);
+                System.Threading.Monitor.Enter(this);
+                _listPlayListItems[iItem] = playListItem2;
+                _listPlayListItems[iNextItem] = playListItem1;
+                selectedItemIndex = iNextItem;
+            }
+
+            catch (Exception ex)
+            {
+                Log.Write("PlayList.MovePlayListItemDown caused an exception: {0}", ex.Message);
+                selectedItemIndex = -1;
+            }
+
+            finally
+            {
+                System.Threading.Monitor.Exit(this);
+            }
+
+            return selectedItemIndex;
+        }
     }
-  }
 }

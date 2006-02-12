@@ -62,7 +62,42 @@
 		<colordiffuse>ffffffff</colordiffuse>
 		<disabledcolor>60ffffff</disabledcolor>
 	</control>
- 	<control>
+  <control>
+    <description>playlist item button</description>
+    <type>playlistbutton</type>
+    <id>5</id>
+    <posX>100</posX>
+    <posY>100</posY>
+    <width>425</width>
+    <height>38</height>
+    <textXOff>10</textXOff>
+    <textYOff>5</textYOff>
+    <upBtnWidth>25</upBtnWidth>
+    <downBtnWidth>25</downBtnWidth>
+    <deleteBtnWidth>28</deleteBtnWidth>
+    <upBtnHeight>32</upBtnHeight>
+    <downBtnHeight>32</downBtnHeight>
+    <deleteBtnHeight>32</deleteBtnHeight>
+    <upBtnXOffset>345</upBtnXOffset>
+    <downBtnXOffset>371</downBtnXOffset>
+    <deleteBtnXOffset>397</deleteBtnXOffset>
+    <upBtnYOffset>0</upBtnYOffset>
+    <downBtnYOffset>0</downBtnYOffset>
+    <deleteBtnYOffset>0</deleteBtnYOffset>
+    <textureFocus>playlist_sub_focus.png</textureFocus>
+    <textureNoFocus>playlist_sub_nofocus.png</textureNoFocus>
+    <textureMoveUp>playlist_item_up_nofocus.png</textureMoveUp>
+    <textureMoveUpFocused>playlist_item_up_focus.png</textureMoveUpFocused>
+    <textureMoveDown>playlist_item_down_nofocus.png</textureMoveDown>
+    <textureMoveDownFocused>playlist_item_down_focus.png</textureMoveDownFocused>
+    <textureDelete>playlist_item_delete_nofocus.png</textureDelete>
+    <textureDeleteFocused>playlist_item_delete_focus.png</textureDeleteFocused>
+    <font>font13</font>
+    <textcolor>ffffffff</textcolor>
+    <colordiffuse>ffffffff</colordiffuse>
+    <disabledcolor>60ffffff</disabledcolor>
+  </control>
+  <control>
 		<description>default togglebutton</description>
 		<type>togglebutton</type>
 		<id>4</id>
@@ -226,7 +261,67 @@
 		<IconYOff>8</IconYOff>
 		<suffix>|</suffix>
 	</control>
-	
+
+  <control>
+    <description>default playlist item listcontrol</description>
+    <type>playlistcontrol</type>
+    <id>10</id>
+    <posX>260</posX>
+    <posY>97</posY>
+    <width>425</width>
+    <height>459</height>
+    <spinWidth>26</spinWidth>
+    <spinHeight>27</spinHeight>
+    <spinPosX>590</spinPosX>
+    <spinPosY>530</spinPosY>
+    <spinColor>ffffffff</spinColor>
+    <textureUp>page_up_nofocus.png</textureUp>
+    <textureDown>page_down_nofocus.png</textureDown>
+    <textureUpFocus>page_up_focus.png</textureUpFocus>
+    <textureDownFocus>page_down_focus.png</textureDownFocus>
+    <textureFocus>list_sub_focus.png</textureFocus>
+    <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
+    <textureHeight>32</textureHeight>
+    <image>folder_focus.png</image>
+    <font>font13</font>
+    <shadedColor>20ffffff</shadedColor>
+    <selectedColor>FFF8BC70</selectedColor>
+    <textcolor>ffffffff</textcolor>
+    <textcolor2>ffffffff</textcolor2>
+    <textcolor3>ffffffff</textcolor3>
+    <colordiffuse>ffffffff</colordiffuse>
+    <remoteColor>ffFFA075</remoteColor>
+    <downloadColor>ff80ff80</downloadColor>
+    <textXOff>5</textXOff>
+    <textYOff>4</textYOff>
+    <textXOff2>0</textXOff2>
+    <textYOff2>4</textYOff2>
+    <IconXOff>8</IconXOff>
+    <IconYOff>8</IconYOff>
+    <suffix>|</suffix>
+
+    <upBtnWidth>25</upBtnWidth>
+    <downBtnWidth>25</downBtnWidth>
+    <deleteBtnWidth>28</deleteBtnWidth>
+    <upBtnHeight>32</upBtnHeight>
+    <downBtnHeight>32</downBtnHeight>
+    <deleteBtnHeight>32</deleteBtnHeight>
+    <upBtnXOffset>345</upBtnXOffset>
+    <downBtnXOffset>371</downBtnXOffset>
+    <deleteBtnXOffset>397</deleteBtnXOffset>
+    <upBtnYOffset>0</upBtnYOffset>
+    <downBtnYOffset>0</downBtnYOffset>
+    <deleteBtnYOffset>0</deleteBtnYOffset>
+    <textureFocus>playlist_sub_focus.png</textureFocus>
+    <textureNoFocus>playlist_sub_nofocus.png</textureNoFocus>
+    <textureMoveUp>playlist_item_up_nofocus.png</textureMoveUp>
+    <textureMoveUpFocused>playlist_item_up_focus.png</textureMoveUpFocused>
+    <textureMoveDown>playlist_item_down_nofocus.png</textureMoveDown>
+    <textureMoveDownFocused>playlist_item_down_focus.png</textureMoveDownFocused>
+    <textureDelete>playlist_item_delete_nofocus.png</textureDelete>
+    <textureDeleteFocused>playlist_item_delete_focus.png</textureDeleteFocused>
+  </control>
+  
 	<control>
 		<description>default thumbnail panel</description>
 		<type>thumbnailpanel</type>
@@ -391,7 +486,7 @@
 		<id>20</id>
 		<posX>100</posX>
 		<posY>25</posY>
-		<scrollbarbg>bar_vert.png</scrollbarbg>
+    <scrollbarbg>bar_vert.png</scrollbarbg>
 		<scrollbartop>mouse_left_vertical.png</scrollbartop>
 		<scrollbarbottom>mouse_right_vertical.png</scrollbarbottom>
 		<visible>no</visible>

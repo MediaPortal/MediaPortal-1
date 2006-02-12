@@ -2148,5 +2148,87 @@ namespace MediaPortal.GUI.Library
       OnSelectionChanged();
 
     }
+
+    public virtual int MoveItemDown(int iItem)
+    {
+        int selectedItemIndex = -1;
+
+        if (iItem < 0 || iItem >= _listItems.Count)
+            return -1;
+
+        int iNextItem = iItem + 1;
+
+        if (iNextItem >= _listItems.Count)
+            iNextItem = 0;
+
+        GUIListItem item1 = _listItems[iItem];
+        GUIListItem item2 = _listItems[iNextItem];
+
+        if (item1 == null || item2 == null)
+            return -1;
+
+        try
+        {
+            //Log.Write("Moving List Item {0} down. Old index:{1}, new index{2}", item1.Path, iItem, iNextItem);
+            System.Threading.Monitor.Enter(this);
+            _listItems[iItem] = item2;
+            _listItems[iNextItem] = item1;
+            selectedItemIndex = iNextItem;
+        }
+
+        catch (Exception ex)
+        {
+            Log.Write("GUIListControl.MoveItemDown caused an exception: {0}", ex.Message);
+            selectedItemIndex = -1;
+        }
+
+        finally
+        {
+            System.Threading.Monitor.Exit(this);
+        }
+
+        return selectedItemIndex;
+    }
+
+    public virtual int MoveItemUp(int iItem)
+    {
+        int selectedItemIndex = -1;
+
+        if (iItem < 0 || iItem >= _listItems.Count)
+            return -1;
+
+        int iPreviousItem = iItem - 1;
+
+        if (iPreviousItem < 0)
+            iPreviousItem = _listItems.Count - 1;
+
+        GUIListItem item1 = _listItems[iItem];
+        GUIListItem item2 = _listItems[iPreviousItem];
+
+        if (item1 == null || item2 == null)
+            return -1;
+
+        try
+        {
+            //Log.Write("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
+            System.Threading.Monitor.Enter(this);
+            _listItems[iItem] = item2;
+            _listItems[iPreviousItem] = item1;
+            selectedItemIndex = iPreviousItem;
+        }
+
+        catch (Exception ex)
+        {
+            Log.Write("GUIListControl.MoveItemUp caused an exception: {0}", ex.Message);
+            selectedItemIndex = -1;
+        }
+
+        finally
+        {
+            System.Threading.Monitor.Exit(this);
+        }
+
+        return selectedItemIndex;
+    }
   }
 }
