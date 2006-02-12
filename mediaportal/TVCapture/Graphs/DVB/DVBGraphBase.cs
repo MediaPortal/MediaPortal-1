@@ -3290,19 +3290,19 @@ namespace MediaPortal.TV.Recording
         string provider;
         Int16 networkId, transportId, serviceID, LCN;
         _analyzerInterface.GetLCN(count, out  networkId, out transportId, out serviceID, out LCN);
-        if (networkId > 0 && transportId > 0 && serviceID >= 0 && LCN > 0)
+        if (networkId > 0 && transportId > 0 && serviceID > 0 )
         {
           
           TVChannel channel = TVDatabase.GetTVChannelByStream(Network() == NetworkType.ATSC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBC, Network() == NetworkType.DVBS, networkId, transportId, serviceID, out provider);
           if (channel != null)
           {
-            channel.Sort = LCN-1;
-//           Log.Write("lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X} {4}",LCN - 1, networkId, transportId, serviceID, channel.Name);
+            channel.Sort = LCN;
+//           Log.Write("lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X} {4}",LCN , networkId, transportId, serviceID, channel.Name);
            TVDatabase.UpdateChannel(channel, channel.Sort);
           }
           else
           {
-//            Log.Write("unknown channel lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}",LCN-1, networkId, transportId, serviceID);
+//            Log.Write("unknown channel lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}",LCN, networkId, transportId, serviceID);
           }
         }
         else

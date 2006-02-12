@@ -943,13 +943,16 @@ void Sections::DVB_GetLogicalChannelNumber(int original_network_id,int transport
 		}
 		if (!alreadyAdded)
 		{
-			NITLCN lcn;
-			lcn.LCN=LCN;
-			lcn.network_id=original_network_id;
-			lcn.transport_id=transport_stream_id;
-			lcn.service_id=ServiceID;
-			Log("  LCN:%03.3d network:0x%x tsid:0x%x sid:%i", LCN,original_network_id,transport_stream_id,ServiceID);
-			m_nit.lcnNIT.push_back(lcn);
+			if (original_network_id>0 && transport_stream_id>0 &&ServiceID>0 && LCN>0)
+			{
+				NITLCN lcn;
+				lcn.LCN=LCN;
+				lcn.network_id=original_network_id;
+				lcn.transport_id=transport_stream_id;
+				lcn.service_id=ServiceID;
+				m_nit.lcnNIT.push_back(lcn);
+				Dump("LCN:%03.3d network id:0x%x transport id:0x%x service id:0x%x (%d)", LCN,original_network_id,transport_stream_id,ServiceID,m_nit.lcnNIT.size());
+			}
 		}
 	}
 }
@@ -1244,18 +1247,35 @@ void Sections::DVB_GetCableDelivSys(byte* b, int maxLen)
 	}
 }
 
-HRESULT Sections::GetLCN(WORD channel,WORD* networkId, WORD* transportId, WORD* serviceID, WORD* LCN)
+HRESULT Sections::GetLCN(WORD channelIndex,WORD* networkId, WORD* transportId, WORD* serviceID, WORD* LCN)
 {
+	
 	*LCN=0;
 	*networkId=0;
 	*transportId=0;
 	*serviceID=0;
-	if (channel >=m_nit.lcnNIT.size()) return S_OK;
+	if (channelIndex >=m_nit.lcnNIT.size())
+	{
+		return S_OK;
+	}
 	
-	NITLCN& lcn = m_nit.lcnNIT[channel];
-	*networkId=lcn.network_id;
-	*transportId=lcn.transport_id;
-	*serviceID=lcn.service_id;
-	*LCN=lcn.LCN;
+	int counter=0;
+	vector<NITLCN>::iterator it;
+	it=m_nit.lcnNIT.begin();
+	while (it != m_nit.lcnNIT.end())
+	{
+		if (counter==channelIndex)
+		{
+			NITLCN& lcn = *it;
+			*networkId=lcn.network_id;
+			*transportId=lcn.transport_id;
+			*serviceID=lcn.service_id;
+			*LCN=lcn.LCN;
+			
+			return S_OK;
+		}
+		++it;
+		counter++;
+	}
 	return S_OK;
 }
