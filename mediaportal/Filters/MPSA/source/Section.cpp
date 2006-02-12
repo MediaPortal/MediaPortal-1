@@ -33,8 +33,8 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-#ifdef DEBUG
 char *logbuffer=NULL; 
+#ifdef DEBUG
 void Log(const char *fmt, ...) 
 {
 	if (logbuffer==NULL)
@@ -66,6 +66,32 @@ void Log(const char *fmt, ...)
 {
 }
 #endif
+void Dump(const char *fmt, ...) 
+{
+	if (logbuffer==NULL)
+	{
+		logbuffer=new char[100000];
+	}
+	va_list ap;
+	va_start(ap,fmt);
+
+	int tmp;
+	va_start(ap,fmt);
+	tmp=vsprintf(logbuffer, fmt, ap);
+	va_end(ap); 
+
+	FILE* fp = fopen("MPSA.log","a+");
+	if (fp!=NULL)
+	{
+		SYSTEMTIME systemTime;
+		GetLocalTime(&systemTime);
+		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
+			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
+			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
+			logbuffer);
+		fclose(fp);
+	}
+};
 
 ULONG Sections::GetSectionCRCValue(byte* data,int ptr)
 {
@@ -972,16 +998,7 @@ void Sections::DVB_GetSatDelivSys(byte* b,int maxLen)
 		satteliteNIT.Symbolrate+= (         ((b[12]>>4)&0xf));
 		satteliteNIT.FECInner = (b[12] & 0xF);
 		
-		// change hex to int for freq & symbolrate
-		int newValue;
-		char buffer[20];
-		sprintf(buffer,"%x",satteliteNIT.Frequency);
-		sscanf(buffer,"%d",&newValue);
-		satteliteNIT.Frequency=newValue;
 
-		sprintf(buffer,"%x",satteliteNIT.Symbolrate);
-		sscanf(buffer,"%d",&newValue);
-		satteliteNIT.Symbolrate=newValue;
 		
 		bool alreadyAdded=false;
 		for (int i=0; i < m_nit.satteliteNIT.size();++i)
@@ -989,6 +1006,8 @@ void Sections::DVB_GetSatDelivSys(byte* b,int maxLen)
 			NITSatDescriptor& nit=m_nit.satteliteNIT[i];
 			if (nit.Frequency==satteliteNIT.Frequency)
 			{
+				Dump("Sat nit: frequency:%d Symbolrate:%d Polarisation:%d", 
+					satteliteNIT.Frequency,satteliteNIT.Symbolrate,satteliteNIT.Polarisation);
 				alreadyAdded=true;
 				break;
 			}
@@ -1114,7 +1133,7 @@ void Sections::DVB_GetTerrestrialDelivSys(byte*b , int maxLen)
 		}
 		if (!alreadyAdded)
 		{
-			Log("NIT: terrestial frequency=%d bandwidth=%d other freqs:%d", terrestialNIT.CentreFrequency,terrestialNIT.Bandwidth,terrestialNIT.OtherFrequencyFlag);
+			Dump("NIT: terrestial frequency=%d bandwidth=%d other freqs:%d", terrestialNIT.CentreFrequency,terrestialNIT.Bandwidth,terrestialNIT.OtherFrequencyFlag);
 			m_nit.terrestialNIT.push_back(terrestialNIT);
 		}
 	}
@@ -1220,9 +1239,7 @@ void Sections::DVB_GetCableDelivSys(byte* b, int maxLen)
 		{
 			m_nit.cableNIT.push_back(cableNIT);
 			//Log("NIT: network:%s", cableNIT.NetworkName);
-			Log("NIT: cable frequency:%d", cableNIT.Frequency);
-			Log("NIT: cable modulation:%d", cableNIT.Modulation);
-			Log("NIT: cable symbolrate:%d", cableNIT.Symbolrate);
+			Dump("cable NIT: frequency:%d modulation:%d symbolrate:%d", cableNIT.Frequency, cableNIT.Modulation, cableNIT.Symbolrate);
 		}
 	}
 }
