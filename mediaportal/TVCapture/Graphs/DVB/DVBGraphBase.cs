@@ -3282,6 +3282,7 @@ namespace MediaPortal.TV.Recording
 
     protected void SetLCN()
     {
+      //Log.Write("SetLCN");
       Int16 count = 0;
       while (true)
       {
@@ -3290,11 +3291,14 @@ namespace MediaPortal.TV.Recording
         _analyzerInterface.GetLCN(count, out  networkId, out transportId, out serviceID, out LCN);
         if (networkId > 0 && transportId > 0 && serviceID >= 0 && LCN > 0)
         {
+          
           TVChannel channel = TVDatabase.GetTVChannelByStream(Network() == NetworkType.ATSC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBC, Network() == NetworkType.DVBS, networkId, transportId, serviceID, out provider);
           if (channel != null)
           {
             channel.Sort = LCN;
-            TVDatabase.SetChannelSort(channel.Name, LCN);
+//            Log.Write("lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X} {4}",
+//LCN - 1, networkId, transportId, serviceID, channel.Name);
+            TVDatabase.SetChannelSort(channel.Name, LCN - 1);
             TVGroup group = new TVGroup();
             if (channel.Scrambled)
             {
@@ -3313,11 +3317,16 @@ namespace MediaPortal.TV.Recording
             groupid = TVDatabase.AddGroup(group);
             group.ID = groupid;
             TVDatabase.MapChannelToGroup(group, channel);
-
+          }
+          else
+          {
+//            Log.Write("unknown channel lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}",
+//            LCN-1, networkId, transportId, serviceID);
           }
         }
         else
         {
+//          Log.Write("LCN total:{0}", count);
           return;
         }
         count++;

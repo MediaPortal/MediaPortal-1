@@ -754,7 +754,9 @@ void  Sections::decodeNITTable(byte* buf,ChannelInfo *channels, int channelCount
 	//76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|
 	//++++++++ -+--++++ ++++++++ -------- -------- ++-----+ -------- ++++++++ ----++++ ++++++++
 	table_id = buf[0];
-	if (table_id!=0x40) return;
+	//0x40=actual (current) network
+	//0x41=other networks
+	if (table_id!=0x40 && table_id!=0x41) return;
 	
 	
 	section_syntax_indicator = buf[1] &0x80;
@@ -775,25 +777,32 @@ void  Sections::decodeNITTable(byte* buf,ChannelInfo *channels, int channelCount
 	{
 		int indicator=buf[pointer];
 		x = buf[pointer + 1] + 2;
+		Log("decode nit desc1:%x len:%d", indicator,x);
+		/*
 		if(indicator==0x40)
 		{
 			CAutoString networkName (x+10);
 			strncpy(networkName.GetBuffer() ,(char*)&buf[pointer+2],x-2);
 			networkName.GetBuffer()[x-2]=0;
 			m_nit.NetworkName=networkName.GetBuffer();
-		}
+		}*/
 		l1 -= x;
 		pointer += x;
 	}
 	pointer=10+network_descriptor_length;
 
-	//Log("NIT: decode() network:'%s'", m_nit.NetworkName);
+//	Log("NIT: decode() network:'%s'", m_nit.NetworkName);
 	
 	transport_stream_loop_length = ((buf[pointer] &0xF)<<8)+buf[pointer+1];
 	l1 = transport_stream_loop_length;
 	pointer += 2;
 	while (l1 > 0)
 	{
+		if (pointer+2 > section_length)
+		{
+			Log("check1");
+			return;
+		}
 		transport_stream_id = (buf[pointer]<<8)+buf[pointer+1];
 		original_network_id = (buf[pointer+2]<<8)+buf[pointer+3];
 		transport_descriptor_length = ((buf[pointer+4] & 0xF)<<8)+buf[pointer+5];
@@ -802,25 +811,58 @@ void  Sections::decodeNITTable(byte* buf,ChannelInfo *channels, int channelCount
 		l2 = transport_descriptor_length;
 		while (l2 > 0)
 		{
+			if (pointer+2 > section_length)
+			{
+				Log("check2");
+				return;
+			}
 			int indicator=buf[pointer];
 			x = buf[pointer + 1]+2 ;
-			
+			Log("decode nit desc:%x len:%d", indicator,x);
 			if(indicator==0x43) // sat
 			{
-				DVB_GetSatDelivSys(&buf[pointer],x);
+				try
+				{
+					DVB_GetSatDelivSys(&buf[pointer],x);
+				}
+				catch(...)
+				{
+					Log("exception in DVB_GetSatDelivSys");
+				}
 			}
 			if(indicator==0x44) // cable
 			{
-				DVB_GetCableDelivSys(&buf[pointer],x);
+				try
+				{
+					DVB_GetCableDelivSys(&buf[pointer],x);
+				}
+				catch(...)
+				{
+					Log("exception in DVB_GetCableDelivSys");
+				}
 			}
 			if(indicator==0x5A) // terrestrial
 			{
-				DVB_GetTerrestrialDelivSys(&buf[pointer],x);
+				try
+				{
+					DVB_GetTerrestrialDelivSys(&buf[pointer],x);
+				}
+				catch(...)
+				{
+					Log("exception in DVB_GetTerrestrialDelivSys");
+				}
 			}
 			
 			if(indicator==0x83) // lcn
 			{
-				DVB_GetLogicalChannelNumber(original_network_id,transport_stream_id,&buf[pointer], channels,channelCount);
+				try
+				{
+					DVB_GetLogicalChannelNumber(original_network_id,transport_stream_id,&buf[pointer], channels,channelCount);
+				}
+				catch(...)
+				{
+					Log("exception in DVB_GetLogicalChannelNumber");
+				}
 			}
 			//
 			pointer += x;
@@ -829,8 +871,8 @@ void  Sections::decodeNITTable(byte* buf,ChannelInfo *channels, int channelCount
 		}
 	}
 	
-	//Log("NIT: terrestial:%d satellite:%d cable:%d (%d)",
-	//	m_nit.terrestialNIT.size(),m_nit.satteliteNIT.size(),m_nit.cableNIT.size());
+	Log("NIT: terrestial:%d satellite:%d cable:%d (%d)",
+		m_nit.terrestialNIT.size(),m_nit.satteliteNIT.size(),m_nit.cableNIT.size());
 }
 
 void Sections::DVB_GetLogicalChannelNumber(int original_network_id,int transport_stream_id,byte* buf,ChannelInfo *channels, int channelCount)
@@ -849,7 +891,6 @@ void Sections::DVB_GetLogicalChannelNumber(int original_network_id,int transport
 		LCN = 0;
 		ServiceID = (buf[pointer+0]<<8)|(buf[pointer+1]&0xff);
 		LCN		  = (buf[pointer+2]&0x03<<8)|(buf[pointer+3]&0xff);
-		//Log("  LCN:%d network:0x%x tsid:0x%x sid:%i", LCN,original_network_id,transport_stream_id,ServiceID);
 		pointer+=4;
 		bool alreadyAdded=false;
 		for (int j=0; j < m_nit.lcnNIT.size();++j)
@@ -868,6 +909,7 @@ void Sections::DVB_GetLogicalChannelNumber(int original_network_id,int transport
 			lcn.network_id=original_network_id;
 			lcn.transport_id=transport_stream_id;
 			lcn.service_id=ServiceID;
+			Log("  LCN:%d network:0x%x tsid:0x%x sid:%i", LCN,original_network_id,transport_stream_id,ServiceID);
 			m_nit.lcnNIT.push_back(lcn);
 		}
 	}
@@ -881,8 +923,20 @@ void Sections::DVB_GetSatDelivSys(byte* b,int maxLen)
 		int descriptor_length = b[1];
 		
 		NITSatDescriptor satteliteNIT;
-		satteliteNIT.Frequency= (b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5];
-		satteliteNIT.OrbitalPosition = (b[6]<<8)+b[7];
+		satteliteNIT.Frequency = (10000000* ((b[2]>>4)&0xf));
+		satteliteNIT.Frequency+= (1000000*  ((b[2]&0xf)));
+		satteliteNIT.Frequency+= (100000*   ((b[3]>>4)&0xf));
+		satteliteNIT.Frequency+= (10000*    ((b[3]&0xf)));
+		satteliteNIT.Frequency+= (1000*     ((b[4]>>4)&0xf));
+		satteliteNIT.Frequency+= (100*      ((b[4]&0xf)));
+		satteliteNIT.Frequency+= ( 10*      ((b[5]>>4)&0xf));
+		satteliteNIT.Frequency+= (b[5]&0xf);
+
+		satteliteNIT.OrbitalPosition+= (1000*     ((b[6]>>4)&0xf));
+		satteliteNIT.OrbitalPosition+= (100*      ((b[6]&0xf)));
+		satteliteNIT.OrbitalPosition+= ( 10*      ((b[7]>>4)&0xf));
+		satteliteNIT.OrbitalPosition+= (b[7]&0xf);
+
 		satteliteNIT.WestEastFlag = (b[8] & 0x80)>>7;
 		satteliteNIT.Polarisation = (b[8]& 0x60)>>5;
 		if(satteliteNIT.Polarisation>1)
@@ -891,7 +945,13 @@ void Sections::DVB_GetSatDelivSys(byte* b,int maxLen)
 		// 0 - horizontal/left (linear/circluar)
 		// 1 - vertical/right (linear/circluar)
 		satteliteNIT.Modulation = (b[8] & 0x1F);
-		satteliteNIT.Symbolrate = (b[9]<<24)+(b[10]<<16)+(b[11]<<8)+(b[12]>>4);
+		satteliteNIT.Symbolrate = (1000000* ((b[9]>>4)&0xf));
+		satteliteNIT.Symbolrate+= (100000*  ((b[9]&0xf)));
+		satteliteNIT.Symbolrate+= (10000*   ((b[10]>>4)&0xf));
+		satteliteNIT.Symbolrate+= (1000*    ((b[10]&0xf)));
+		satteliteNIT.Symbolrate+= (100*     ((b[11]>>4)&0xf));
+		satteliteNIT.Symbolrate+= (10*      ((b[11]&0xf)));
+		satteliteNIT.Symbolrate+= (         ((b[12]>>4)&0xf));
 		satteliteNIT.FECInner = (b[12] & 0xF);
 		
 		// change hex to int for freq & symbolrate
@@ -1044,7 +1104,14 @@ void Sections::DVB_GetCableDelivSys(byte* b, int maxLen)
 		int descriptor_tag = b[0];
 		int descriptor_length = b[1];
 		NITCableDescriptor cableNIT;
-		cableNIT.Frequency= (b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5];
+		cableNIT.Frequency = (10000000* ((b[2]>>4)&0xf));
+		cableNIT.Frequency+= (1000000*  ((b[2]&0xf)));
+		cableNIT.Frequency+= (100000*   ((b[3]>>4)&0xf));
+		cableNIT.Frequency+= (10000*    ((b[3]&0xf)));
+		cableNIT.Frequency+= (1000*     ((b[4]>>4)&0xf));
+		cableNIT.Frequency+= (100*      ((b[4]&0xf)));
+		cableNIT.Frequency+= ( 10*      ((b[5]>>4)&0xf));
+		cableNIT.Frequency+= (b[5]&0xf);
 		//
 		cableNIT.FECOuter = (b[7] & 0xF);
 		// fec-outer
@@ -1077,8 +1144,17 @@ void Sections::DVB_GetCableDelivSys(byte* b, int maxLen)
 			case 5: cableNIT.Modulation=BDA_MOD_256QAM; break;
 			default: cableNIT.Modulation=BDA_MOD_NOT_SET; break;
 		}
-		cableNIT.Symbolrate = (b[9]<<24)+(b[10]<<16)+(b[11]<<8)+(b[12]>>4);
-		//
+		
+		cableNIT.Symbolrate = (1000000* ((b[9]>>4)&0xf));
+		cableNIT.Symbolrate+= (100000*  ((b[9]&0xf)));
+		cableNIT.Symbolrate+= (10000*   ((b[10]>>4)&0xf));
+		cableNIT.Symbolrate+= (1000*    ((b[10]&0xf)));
+		cableNIT.Symbolrate+= (100*     ((b[11]>>4)&0xf));
+		cableNIT.Symbolrate+= (10*      ((b[11]&0xf)));
+		cableNIT.Symbolrate+= (         ((b[12]>>4)&0xf));
+		
+		
+
 		cableNIT.FECInner = (b[12] & 0xF);
 		// fec inner
 		// 0- not defined
@@ -1114,6 +1190,10 @@ void Sections::DVB_GetCableDelivSys(byte* b, int maxLen)
 		if (!alreadyAdded)
 		{
 			m_nit.cableNIT.push_back(cableNIT);
+			//Log("NIT: network:%s", cableNIT.NetworkName);
+			Log("NIT: cable frequency:%d", cableNIT.Frequency);
+			Log("NIT: cable modulation:%d", cableNIT.Modulation);
+			Log("NIT: cable symbolrate:%d", cableNIT.Symbolrate);
 		}
 	}
 }
