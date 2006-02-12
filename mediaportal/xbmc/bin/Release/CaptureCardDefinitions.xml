@@ -2742,7 +2742,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="YUAN PVR PG600 Falcon 2" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;sybsys_0600ffab&amp;rev_01">
+  <capturecard commercialname="YUAN PVR PG600 / ZAP-TV1100" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;sybsys_0600ffab&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -7577,7 +7577,7 @@
         <filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
         <filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
       </filters>
       <connections>
@@ -7604,7 +7604,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -7631,7 +7631,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -7658,7 +7658,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -7685,7 +7685,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -7712,7 +7712,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -7739,7 +7739,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -7766,7 +7766,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -7793,7 +7793,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -7820,7 +7820,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -7847,7 +7847,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -7874,7 +7874,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP WDM Video Capture"	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
 	  </filters>
 	  <connections>
