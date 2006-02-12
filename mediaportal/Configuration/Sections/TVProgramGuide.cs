@@ -628,6 +628,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpLabel1
       // 
+      this.mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpLabel1.Location = new System.Drawing.Point(305, 24);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(116, 84);
@@ -637,6 +638,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbGrabDVBEPG
       // 
+      this.cbGrabDVBEPG.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.cbGrabDVBEPG.AutoSize = true;
       this.cbGrabDVBEPG.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbGrabDVBEPG.Location = new System.Drawing.Point(288, 24);
