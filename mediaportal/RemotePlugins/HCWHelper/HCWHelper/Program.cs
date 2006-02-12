@@ -53,7 +53,7 @@ namespace MediaPortal.InputDevices.HcwHelper
         System.Windows.Forms.Form hcwHelper = new HcwHelper();
         try
         {
-          hcwHelper.Show();
+          hcwHelper.ShowDialog();
         }
         catch (ObjectDisposedException)
         { }
