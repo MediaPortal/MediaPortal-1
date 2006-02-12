@@ -92,6 +92,7 @@
     <Compile Include="TVCapture\DiskManagement\TestFreeDiskSpace.cs" />
     <Compile Include="TVCapture\Teletext\TestTopText.cs" />
     <Compile Include="TVCapture\TestRecorder.cs" />
+    <Compile Include="Utils\WorldTimeZoneTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
@@ -121,6 +122,10 @@
     <ProjectReference Include="..\TVCapture\TVCapture.csproj">
       <Project>{B5886774-5D2B-4F6C-A6B6-3998F4F5E60C}</Project>
       <Name>TVCapture</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
+      <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
