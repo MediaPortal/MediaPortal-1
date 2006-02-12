@@ -36,6 +36,7 @@ namespace MediaPortal.Radio.Database
     string m_strGenre=""; 
     int    m_iBitRate=0;
 		bool   m_bScrambled=false;
+    int _sort=40000;
 		public RadioStation()
 		{
 		}
@@ -44,6 +45,11 @@ namespace MediaPortal.Radio.Database
     {
       get { return m_ID;}
       set { m_ID=value;}
+    }
+    public int Sort
+    {
+      get { return _sort; }
+      set { _sort = value; }
     }
     public string Name
     {

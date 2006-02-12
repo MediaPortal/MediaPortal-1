@@ -93,7 +93,7 @@ namespace MediaPortal.Radio.Database
     }
 		static public void UpdateFromPreviousVersion()
 		{
-			int currentVersion=1;
+			int currentVersion=2;
 			int versionNr=0;
 			SQLiteResultSet results;
 			results = m_db.Execute("SELECT * FROM tblversion");
@@ -101,10 +101,6 @@ namespace MediaPortal.Radio.Database
 			{
 				SQLiteResultSet.Row row=results.Rows[0];
 				versionNr=Int32.Parse( row.fields[0] );
-			}
-			else 
-			{
-				m_db.Execute(String.Format("insert into tblversion (idVersion) values({0})",currentVersion));
 			}
 			if (versionNr==0)
 			{
@@ -115,7 +111,13 @@ namespace MediaPortal.Radio.Database
 				m_db.Execute("ALTER TABLE tblDVBTMapping ADD COLUMN pcrPid Integer");
 				m_db.Execute(String.Format("update tblversion set idVersion={0}",currentVersion));
 			}
-		}
+      if (versionNr < 2)
+      {
+        m_db.Execute("ALTER TABLE station ADD COLUMN isort Integer");
+        m_db.Execute(String.Format("update station set isort=0"));
+      }
+      m_db.Execute(String.Format("insert into tblversion (idVersion) values({0})", currentVersion));
+    }
 		
 
     static public void GetStations(ref ArrayList stations)
@@ -128,7 +130,7 @@ namespace MediaPortal.Radio.Database
         {
           if (null==m_db) return ;
           string strSQL;
-          strSQL=String.Format("select * from station order by iChannelNr");
+          strSQL=String.Format("select * from station order by isort");
           SQLiteResultSet results;
           results=m_db.Execute(strSQL);
           if (results.Rows.Count== 0) return ;
@@ -162,7 +164,8 @@ namespace MediaPortal.Radio.Database
             {
             chan.BitRate=Int32.Parse( DatabaseUtility.Get(results,i,"bitrate") );
             }
-            catch(Exception){}
+            catch (Exception) { }
+            chan.Sort = Int32.Parse(DatabaseUtility.Get(results, i, "isort"));
 
             chan.Genre=DatabaseUtility.Get(results,i,"genre") ;
             stations.Add(chan);
@@ -228,6 +231,7 @@ namespace MediaPortal.Radio.Database
 					}
 					catch(Exception){}
 
+          station.Channel = Int32.Parse(DatabaseUtility.Get(results, 0, "isort"));
 					station.Genre=DatabaseUtility.Get(results,0,"genre") ;
 
 				}
@@ -256,8 +260,8 @@ namespace MediaPortal.Radio.Database
 					DatabaseUtility.RemoveInvalidChars(ref strGenre);
 					int scrambled=0;
 					if (channel.Scrambled) scrambled=1;
-					strSQL=String.Format("update station set strName='{0}',iChannelNr={1} ,frequency='{2}',URL='{3}',bitrate={4},genre='{5}',scrambled={6} where idChannel={7}", 
-																strChannel,channel.Channel,channel.Frequency.ToString(),strURL, channel.BitRate,strGenre, scrambled, channel.ID);
+					strSQL=String.Format("update station set strName='{0}',iChannelNr={1} ,frequency='{2}',URL='{3}',bitrate={4},genre='{5}',scrambled={6},isort={7} where idChannel={8}", 
+																strChannel,channel.Channel,channel.Frequency.ToString(),strURL, channel.BitRate,strGenre, scrambled, channel.Sort,channel.ID);
 					//Log.WriteFile(Log.LogType.Log,true,strSQL);
 					m_db.Execute(strSQL);
 				} 
@@ -292,8 +296,8 @@ namespace MediaPortal.Radio.Database
               // doesnt exists, add it
 							int scrambled=0;
 							if (channel.Scrambled) scrambled=1;
-              strSQL=String.Format("insert into station (idChannel, strName,iChannelNr ,frequency,URL,bitrate,genre,scrambled) values ( NULL, '{0}', {1}, {2}, '{3}',{4},'{5}',{6} )", 
-                                    strChannel,channel.Channel,channel.Frequency.ToString(),strURL, channel.BitRate,strGenre, scrambled);
+              strSQL=String.Format("insert into station (idChannel, strName,iChannelNr ,frequency,URL,bitrate,genre,scrambled,isort) values ( NULL, '{0}', {1}, {2}, '{3}',{4},'{5}',{6},{7} )", 
+                                    strChannel,channel.Channel,channel.Frequency.ToString(),strURL, channel.BitRate,strGenre, scrambled,channel.Sort);
               m_db.Execute(strSQL);
               int iNewID=m_db.LastInsertID();
               channel.ID=iNewID;
@@ -1017,6 +1021,7 @@ namespace MediaPortal.Radio.Database
 						}
 						catch(Exception){}
 
+            chan.Sort = Int32.Parse(DatabaseUtility.Get(results, i, "station.isort"));
 						chan.Genre=DatabaseUtility.Get(results,i,"station.genre") ;
 						stations.Add(chan);
 					}
@@ -1031,7 +1036,38 @@ namespace MediaPortal.Radio.Database
 				return ;
 			}
 		}
+    static public RadioStation GetStationByStream(bool atsc, bool dvbt, bool dvbc, bool dvbs, int networkid, int transportid, int serviceid, out string provider)
+    {
+      int freq, symbolrate, innerFec, modulation, ONID, TSID, SID;
+      int audioPid, pmtPid, bandWidth;
+      int pcrPid;
+      provider = "";
 
+      DVBChannel ch = new DVBChannel();
+      ArrayList channels = new ArrayList();
+      RadioDatabase.GetStations(ref channels);
+      foreach (RadioStation chan in channels)
+      {
+        if (dvbc)
+        {
+          RadioDatabase.GetDVBCTuneRequest(chan.ID, out provider, out freq, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out pmtPid, out pcrPid);
+          if (serviceid == SID && transportid == TSID) return chan;
+        }
+        if (dvbs)
+        {
+          RadioDatabase.GetDVBSTuneRequest(chan.ID, 2, ref ch);
+          if (ch.TransportStreamID == transportid && ch.ProgramNumber == serviceid) return chan;
+        }
+
+        if (dvbt)
+        {
+          RadioDatabase.GetDVBTTuneRequest(chan.ID, out provider, out freq, out ONID, out TSID, out SID, out audioPid, out pmtPid, out bandWidth, out pcrPid);
+          if (serviceid == SID && transportid == TSID) return chan;
+        }
+      }
+      provider = "";
+      return null;
+    }
 
   }
 }

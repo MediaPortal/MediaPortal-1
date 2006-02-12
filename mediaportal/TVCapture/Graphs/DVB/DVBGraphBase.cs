@@ -3306,6 +3306,12 @@ namespace MediaPortal.TV.Recording
           }
           else
           {
+            RadioStation station = RadioDatabase.GetTVChannelByStream(Network() == NetworkType.ATSC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBC, Network() == NetworkType.DVBS, networkId, transportId, serviceID, out provider);
+            if (station != null)
+            {
+              station.Sort = LCN;
+              RadioDatabase.UpdateStation(station);
+            }
 //            Log.Write("unknown channel lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}",LCN, networkId, transportId, serviceID);
           }
         }
