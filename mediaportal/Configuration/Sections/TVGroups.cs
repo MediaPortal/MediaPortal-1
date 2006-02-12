@@ -684,15 +684,13 @@ namespace MediaPortal.Configuration.Sections
       {
         TVChannel chan = node.Node.Tag as TVChannel;
         if (chan == null) return;
-        TVGroup group = comboBox1.SelectedItem as TVGroup;
         ListViewItem listItem = new ListViewItem(new string[] { chan.Name });
         listItem.Tag = chan;
         listViewTVGroupChannels.Items.Add(listItem);
-        if (group != null && chan != null)
-          TVDatabase.MapChannelToGroup(group, chan);
         treeViewChannels.Nodes.Remove(node.Node);
       }
 
+      SaveTVGroupChannelsAndMapping();
     }
 
     private void btnUnmap_Click(object sender, System.EventArgs e)
@@ -837,17 +835,8 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
-      TVGroup group = (TVGroup)comboBox1.SelectedItem;
-      TVDatabase.DeleteChannelsFromGroup(group);
-      for (int index = 0; index < listViewTVGroupChannels.Items.Count; index++)
-      {
-        group.TvChannels.Clear();
-        ListViewItem listItem = listViewTVGroupChannels.Items[index];
-        group.TvChannels.Add((TVChannel)listItem.Tag);
-        TVChannel ch = ((TVChannel)listItem.Tag).Clone();
-        ch.Sort = index;
-        TVDatabase.MapChannelToGroup(group, ch);
-      }
+      
+      SaveTVGroupChannelsAndMapping();
     }
 
     private void btnGrpChnDown_Click(object sender, System.EventArgs e)
@@ -878,16 +867,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      TVGroup group = (TVGroup)comboBox1.SelectedItem;
-      TVDatabase.DeleteChannelsFromGroup(group);
-      for (int index = 0; index < listViewTVGroupChannels.Items.Count; index++)
-      {
-        group.TvChannels.Clear();
-        ListViewItem listItem = listViewTVGroupChannels.Items[index];
-        group.TvChannels.Add((TVChannel)listItem.Tag);
-        TVDatabase.MapChannelToGroup(group, (TVChannel)listItem.Tag);
-      }
-
+      SaveTVGroupChannelsAndMapping();
     }
 
 
@@ -927,6 +907,24 @@ namespace MediaPortal.Configuration.Sections
       // Perform the sort with these new sort options.
       listViewGroups.Sort();
     }
+
+    public void SaveTVGroupChannelsAndMapping()
+    {
+      TVGroup group = (TVGroup)comboBox1.SelectedItem;
+      TVDatabase.DeleteChannelsFromGroup(group);
+      for (int index = 0; index < listViewTVGroupChannels.Items.Count; index++)
+      {
+        group.TvChannels.Clear();
+        ListViewItem listItem = listViewTVGroupChannels.Items[index];
+        group.TvChannels.Add((TVChannel)listItem.Tag);
+        TVChannel ch = ((TVChannel)listItem.Tag).Clone();
+        ch.Sort = index;
+        TVDatabase.MapChannelToGroup(group, ch);
+      }
+    }
+
   }
+
+
 }
 
