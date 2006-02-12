@@ -226,17 +226,6 @@ namespace MediaPortal.GUI.Radio
     {
       base.OnPageLoad();
       LoadSettings();
-
-      currentPlayList = null;
-      virtualDirectory = new VirtualDirectory();
-      Share share = new Share("default", currentRadioFolder);
-      share.Default = true;
-      virtualDirectory.Add(share);
-      virtualDirectory.AddExtension(".pls");
-      virtualDirectory.AddExtension(".asx");
-
-      ShowThumbPanel();
-      LoadDirectory(currentFolder);
       switch (currentSortMethod)
       {
         case SortMethod.Name:
@@ -256,6 +245,17 @@ namespace MediaPortal.GUI.Radio
           break;
       }
       
+
+      currentPlayList = null;
+      virtualDirectory = new VirtualDirectory();
+      Share share = new Share("default", currentRadioFolder);
+      share.Default = true;
+      virtualDirectory.Add(share);
+      virtualDirectory.AddExtension(".pls");
+      virtualDirectory.AddExtension(".asx");
+
+      ShowThumbPanel();
+      LoadDirectory(currentFolder);
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
     }
 
