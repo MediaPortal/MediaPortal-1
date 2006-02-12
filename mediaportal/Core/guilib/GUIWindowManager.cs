@@ -240,7 +240,7 @@ namespace MediaPortal.GUI.Library
 						{	
 							GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, pCurrentWindow.GetID, 0, pCurrentWindow.PreviousFocusedId, 0, 0, null);
 							pCurrentWindow.OnMessage(msg);
-							return;
+							//return;
 						}
 					}
 				}
