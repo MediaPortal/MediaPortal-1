@@ -3071,7 +3071,7 @@ namespace MediaPortal.TV.Recording
             //then add a new channel to the database
             tvChan.ID = -1;
             tvChan.Number = TVDatabase.FindFreeTvChannelNumber(newchannel.ProgramNumber);
-            tvChan.Sort = newchannel.ProgramNumber;
+            tvChan.Sort = 40000;
             Log.WriteFile(Log.LogType.Capture, "DVBGraph: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number,tvChan.Sort);
             int id = TVDatabase.AddChannel(tvChan);
             if (id < 0)
