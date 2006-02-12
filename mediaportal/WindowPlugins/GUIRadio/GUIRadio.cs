@@ -237,7 +237,25 @@ namespace MediaPortal.GUI.Radio
 
       ShowThumbPanel();
       LoadDirectory(currentFolder);
-
+      switch (currentSortMethod)
+      {
+        case SortMethod.Name:
+          btnSortBy.SelectedItem = 0;
+          break;
+        case SortMethod.Type:
+          btnSortBy.SelectedItem = 1;
+          break;
+        case SortMethod.Genre:
+          btnSortBy.SelectedItem = 2;
+          break;
+        case SortMethod.Bitrate:
+          btnSortBy.SelectedItem = 3;
+          break;
+        case SortMethod.Number:
+          btnSortBy.SelectedItem = 4;
+          break;
+      }
+      
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
     }
 
