@@ -396,8 +396,8 @@ namespace MediaPortal.Tests.Commands
       TVRecording rec = new TVRecording();
       rec.Channel = channelName;
       rec.Title = "unknown";
-      rec.Start = Utils.datetolong(startTime);
-      rec.End = Utils.datetolong(endTime);
+      rec.Start = MediaPortal.Util.Utils.datetolong(startTime);
+      rec.End = MediaPortal.Util.Utils.datetolong(endTime);
       rec.RecType = TVRecording.RecordingType.Once;
       TVDatabase.AddRecording(ref rec);
       return rec;
