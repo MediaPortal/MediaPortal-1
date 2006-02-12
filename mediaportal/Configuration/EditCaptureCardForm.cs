@@ -546,33 +546,42 @@ namespace MediaPortal.Configuration
       // 
       // checkBoxHiQuality
       // 
+      this.checkBoxHiQuality.AutoSize = true;
+      this.checkBoxHiQuality.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxHiQuality.Location = new System.Drawing.Point(24, 24);
       this.checkBoxHiQuality.Name = "checkBoxHiQuality";
-      this.checkBoxHiQuality.Size = new System.Drawing.Size(368, 16);
+      this.checkBoxHiQuality.Size = new System.Drawing.Size(113, 17);
       this.checkBoxHiQuality.TabIndex = 7;
       this.checkBoxHiQuality.Text = "Use Quality control";
+      this.checkBoxHiQuality.UseVisualStyleBackColor = true;
       // 
       // useRecordingCheckBox
       // 
+      this.useRecordingCheckBox.AutoSize = true;
       this.useRecordingCheckBox.Checked = true;
       this.useRecordingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useRecordingCheckBox.Enabled = false;
+      this.useRecordingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.useRecordingCheckBox.Location = new System.Drawing.Point(11, 71);
       this.useRecordingCheckBox.Name = "useRecordingCheckBox";
-      this.useRecordingCheckBox.Size = new System.Drawing.Size(168, 16);
+      this.useRecordingCheckBox.Size = new System.Drawing.Size(165, 17);
       this.useRecordingCheckBox.TabIndex = 9;
       this.useRecordingCheckBox.Text = "Use this card for recording TV";
+      this.useRecordingCheckBox.UseVisualStyleBackColor = true;
       // 
       // useWatchingCheckBox
       // 
+      this.useWatchingCheckBox.AutoSize = true;
       this.useWatchingCheckBox.Checked = true;
       this.useWatchingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useWatchingCheckBox.Enabled = false;
+      this.useWatchingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.useWatchingCheckBox.Location = new System.Drawing.Point(11, 47);
       this.useWatchingCheckBox.Name = "useWatchingCheckBox";
-      this.useWatchingCheckBox.Size = new System.Drawing.Size(168, 24);
+      this.useWatchingCheckBox.Size = new System.Drawing.Size(157, 17);
       this.useWatchingCheckBox.TabIndex = 8;
       this.useWatchingCheckBox.Text = "Use this card for viewing TV";
+      this.useWatchingCheckBox.UseVisualStyleBackColor = true;
       // 
       // cardComboBox
       // 
@@ -615,6 +624,7 @@ namespace MediaPortal.Configuration
       this.cancelButton.Size = new System.Drawing.Size(75, 23);
       this.cancelButton.TabIndex = 4;
       this.cancelButton.Text = "Cancel";
+      this.cancelButton.UseVisualStyleBackColor = true;
       this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
       // 
       // okButton
@@ -625,6 +635,7 @@ namespace MediaPortal.Configuration
       this.okButton.Size = new System.Drawing.Size(75, 23);
       this.okButton.TabIndex = 3;
       this.okButton.Text = "OK";
+      this.okButton.UseVisualStyleBackColor = true;
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
       // 
       // tabControl1
@@ -654,6 +665,7 @@ namespace MediaPortal.Configuration
       this.tabPage1.Size = new System.Drawing.Size(528, 406);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Capture card";
+      this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // label24
       // 
@@ -693,12 +705,14 @@ namespace MediaPortal.Configuration
       this.tabPage7.Size = new System.Drawing.Size(528, 406);
       this.tabPage7.TabIndex = 6;
       this.tabPage7.Text = "Recordings";
+      this.tabPage7.UseVisualStyleBackColor = true;
       // 
       // groupBox5
       // 
       this.groupBox5.Controls.Add(this.buttonBrowse);
       this.groupBox5.Controls.Add(this.tbRecordingFolder);
       this.groupBox5.Controls.Add(this.label26);
+      this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox5.Location = new System.Drawing.Point(8, 8);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(424, 100);
@@ -713,6 +727,7 @@ namespace MediaPortal.Configuration
       this.buttonBrowse.Size = new System.Drawing.Size(56, 23);
       this.buttonBrowse.TabIndex = 58;
       this.buttonBrowse.Text = "Browse";
+      this.buttonBrowse.UseVisualStyleBackColor = true;
       this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click_1);
       // 
       // tbRecordingFolder
@@ -750,6 +765,7 @@ namespace MediaPortal.Configuration
       this.tabPage3.Size = new System.Drawing.Size(528, 406);
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "Audio mapping";
+      this.tabPage3.UseVisualStyleBackColor = true;
       // 
       // cbRgbAudio
       // 
@@ -859,6 +875,7 @@ namespace MediaPortal.Configuration
       this.tabPage5.Size = new System.Drawing.Size(528, 406);
       this.tabPage5.TabIndex = 4;
       this.tabPage5.Text = "Quality";
+      this.tabPage5.UseVisualStyleBackColor = true;
       this.tabPage5.Click += new System.EventHandler(this.tabPage5_Click);
       // 
       // groupBox7
@@ -882,6 +899,7 @@ namespace MediaPortal.Configuration
       this.groupBox7.Controls.Add(this.tbPortMax);
       this.groupBox7.Controls.Add(this.tbPortMin);
       this.groupBox7.Controls.Add(this.label19);
+      this.groupBox7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox7.Location = new System.Drawing.Point(24, 144);
       this.groupBox7.Name = "groupBox7";
       this.groupBox7.Size = new System.Drawing.Size(456, 224);
@@ -891,10 +909,13 @@ namespace MediaPortal.Configuration
       // 
       // cbHighVBR
       // 
+      this.cbHighVBR.AutoSize = true;
+      this.cbHighVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbHighVBR.Location = new System.Drawing.Point(248, 152);
       this.cbHighVBR.Name = "cbHighVBR";
-      this.cbHighVBR.Size = new System.Drawing.Size(32, 24);
+      this.cbHighVBR.Size = new System.Drawing.Size(13, 12);
       this.cbHighVBR.TabIndex = 18;
+      this.cbHighVBR.UseVisualStyleBackColor = true;
       // 
       // tbHighMax
       // 
@@ -922,10 +943,13 @@ namespace MediaPortal.Configuration
       // 
       // cbMedVBR
       // 
+      this.cbMedVBR.AutoSize = true;
+      this.cbMedVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbMedVBR.Location = new System.Drawing.Point(248, 120);
       this.cbMedVBR.Name = "cbMedVBR";
-      this.cbMedVBR.Size = new System.Drawing.Size(32, 24);
+      this.cbMedVBR.Size = new System.Drawing.Size(13, 12);
       this.cbMedVBR.TabIndex = 14;
+      this.cbMedVBR.UseVisualStyleBackColor = true;
       // 
       // tbMedMax
       // 
@@ -953,10 +977,13 @@ namespace MediaPortal.Configuration
       // 
       // cbLowVBR
       // 
+      this.cbLowVBR.AutoSize = true;
+      this.cbLowVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbLowVBR.Location = new System.Drawing.Point(248, 88);
       this.cbLowVBR.Name = "cbLowVBR";
-      this.cbLowVBR.Size = new System.Drawing.Size(32, 24);
+      this.cbLowVBR.Size = new System.Drawing.Size(13, 12);
       this.cbLowVBR.TabIndex = 10;
+      this.cbLowVBR.UseVisualStyleBackColor = true;
       // 
       // tbLowMax
       // 
@@ -1008,10 +1035,13 @@ namespace MediaPortal.Configuration
       // 
       // cbPortVBR
       // 
+      this.cbPortVBR.AutoSize = true;
+      this.cbPortVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbPortVBR.Location = new System.Drawing.Point(248, 56);
       this.cbPortVBR.Name = "cbPortVBR";
-      this.cbPortVBR.Size = new System.Drawing.Size(32, 24);
+      this.cbPortVBR.Size = new System.Drawing.Size(13, 12);
       this.cbPortVBR.TabIndex = 3;
+      this.cbPortVBR.UseVisualStyleBackColor = true;
       // 
       // tbPortMax
       // 
@@ -1075,7 +1105,8 @@ namespace MediaPortal.Configuration
       this.tabPage4.Name = "tabPage4";
       this.tabPage4.Size = new System.Drawing.Size(528, 406);
       this.tabPage4.TabIndex = 3;
-      this.tabPage4.Text = "DVB-S LNB";
+      this.tabPage4.Text = "LNB Setup";
+      this.tabPage4.UseVisualStyleBackColor = true;
       this.tabPage4.Click += new System.EventHandler(this.tabPage4_Click);
       // 
       // groupBox2
@@ -1099,6 +1130,7 @@ namespace MediaPortal.Configuration
       this.groupBox2.Controls.Add(this.diseqca);
       this.groupBox2.Controls.Add(this.lnbkind1);
       this.groupBox2.Controls.Add(this.lnbconfig1);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(24, 192);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(408, 144);
@@ -1109,38 +1141,54 @@ namespace MediaPortal.Configuration
       // 
       // useLNB4
       // 
+      this.useLNB4.AutoSize = true;
+      this.useLNB4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.useLNB4.Location = new System.Drawing.Point(312, 112);
       this.useLNB4.Name = "useLNB4";
-      this.useLNB4.Size = new System.Drawing.Size(80, 16);
+      this.useLNB4.Size = new System.Drawing.Size(55, 17);
       this.useLNB4.TabIndex = 31;
       this.useLNB4.Text = "In Use";
+      this.useLNB4.UseVisualStyleBackColor = true;
+      this.useLNB4.CheckedChanged += new System.EventHandler(this.useLNB4_CheckedChanged);
       // 
       // useLNB3
       // 
+      this.useLNB3.AutoSize = true;
+      this.useLNB3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.useLNB3.Location = new System.Drawing.Point(312, 88);
       this.useLNB3.Name = "useLNB3";
-      this.useLNB3.Size = new System.Drawing.Size(80, 16);
+      this.useLNB3.Size = new System.Drawing.Size(55, 17);
       this.useLNB3.TabIndex = 30;
       this.useLNB3.Text = "In Use";
+      this.useLNB3.UseVisualStyleBackColor = true;
+      this.useLNB3.CheckedChanged += new System.EventHandler(this.useLNB3_CheckedChanged);
       // 
       // useLNB2
       // 
+      this.useLNB2.AutoSize = true;
+      this.useLNB2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.useLNB2.Location = new System.Drawing.Point(312, 64);
       this.useLNB2.Name = "useLNB2";
-      this.useLNB2.Size = new System.Drawing.Size(80, 16);
+      this.useLNB2.Size = new System.Drawing.Size(55, 17);
       this.useLNB2.TabIndex = 29;
       this.useLNB2.Text = "In Use";
+      this.useLNB2.UseVisualStyleBackColor = true;
+      this.useLNB2.CheckedChanged += new System.EventHandler(this.useLNB2_CheckedChanged);
       // 
       // useLNB1
       // 
+      this.useLNB1.AutoSize = true;
       this.useLNB1.Checked = true;
       this.useLNB1.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useLNB1.Enabled = false;
+      this.useLNB1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.useLNB1.Location = new System.Drawing.Point(312, 40);
       this.useLNB1.Name = "useLNB1";
-      this.useLNB1.Size = new System.Drawing.Size(80, 16);
+      this.useLNB1.Size = new System.Drawing.Size(55, 17);
       this.useLNB1.TabIndex = 28;
       this.useLNB1.Text = "In Use";
+      this.useLNB1.UseVisualStyleBackColor = true;
+      this.useLNB1.CheckedChanged += new System.EventHandler(this.useLNB1_CheckedChanged);
       // 
       // lnbkind4
       // 
@@ -1341,6 +1389,7 @@ namespace MediaPortal.Configuration
       this.groupBox4.Controls.Add(this.label20);
       this.groupBox4.Controls.Add(this.cbandMHZ);
       this.groupBox4.Controls.Add(this.label21);
+      this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox4.Location = new System.Drawing.Point(256, 72);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(176, 96);
@@ -1388,6 +1437,7 @@ namespace MediaPortal.Configuration
       this.groupBox3.Controls.Add(this.switchMHZ);
       this.groupBox3.Controls.Add(this.lnb0MHZ);
       this.groupBox3.Controls.Add(this.label22);
+      this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(24, 72);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(176, 96);
@@ -1450,6 +1500,7 @@ namespace MediaPortal.Configuration
       this.button1.Size = new System.Drawing.Size(75, 23);
       this.button1.TabIndex = 6;
       this.button1.Text = "Autotune";
+      this.button1.UseVisualStyleBackColor = true;
       this.button1.Click += new System.EventHandler(this.button1_Click);
       // 
       // btnRadio
@@ -1459,6 +1510,7 @@ namespace MediaPortal.Configuration
       this.btnRadio.Size = new System.Drawing.Size(96, 23);
       this.btnRadio.TabIndex = 7;
       this.btnRadio.Text = "Autotune Radio";
+      this.btnRadio.UseVisualStyleBackColor = true;
       this.btnRadio.Click += new System.EventHandler(this.btnRadio_Click);
       // 
       // EditCaptureCardForm
@@ -1480,16 +1532,19 @@ namespace MediaPortal.Configuration
       this.Load += new System.EventHandler(this.EditCaptureCardForm_Load);
       this.tabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
+      this.tabPage1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.updownPrio)).EndInit();
       this.tabPage7.ResumeLayout(false);
       this.groupBox5.ResumeLayout(false);
       this.groupBox5.PerformLayout();
       this.tabPage3.ResumeLayout(false);
       this.tabPage5.ResumeLayout(false);
+      this.tabPage5.PerformLayout();
       this.groupBox7.ResumeLayout(false);
       this.groupBox7.PerformLayout();
       this.tabPage4.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
+      this.groupBox2.PerformLayout();
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
       this.groupBox3.ResumeLayout(false);
@@ -1827,6 +1882,7 @@ namespace MediaPortal.Configuration
         useLNB3.Checked = xmlreader.GetValueAsBool("dvbs", "useLNB3", false);
         useLNB4.Checked = xmlreader.GetValueAsBool("dvbs", "useLNB4", false);
 
+
         int lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb", 22);
         switch (lnbKhz)
         {
@@ -1939,6 +1995,10 @@ namespace MediaPortal.Configuration
 
 
       }
+      useLNB1_CheckedChanged(null, null);
+      useLNB2_CheckedChanged(null, null);
+      useLNB3_CheckedChanged(null, null);
+      useLNB4_CheckedChanged(null, null);
     }
 
     void SaveDVBSSettings()
@@ -2218,6 +2278,35 @@ namespace MediaPortal.Configuration
 
     private void tabPage5_Click(object sender, System.EventArgs e)
     {
+
+    }
+
+    private void useLNB1_CheckedChanged(object sender, EventArgs e)
+    {
+      diseqca.Enabled = useLNB1.Checked;
+      lnbconfig1.Enabled = useLNB1.Checked;
+      lnbkind1.Enabled = useLNB1.Checked;
+    }
+
+    private void useLNB2_CheckedChanged(object sender, EventArgs e)
+    {
+      diseqcb.Enabled = useLNB2.Checked;
+      lnbconfig2.Enabled = useLNB2.Checked;
+      lnbkind2.Enabled = useLNB2.Checked;
+    }
+
+    private void useLNB3_CheckedChanged(object sender, EventArgs e)
+    {
+      diseqcc.Enabled = useLNB3.Checked;
+      lnbconfig3.Enabled = useLNB3.Checked;
+      lnbkind3.Enabled = useLNB3.Checked;
+    }
+
+    private void useLNB4_CheckedChanged(object sender, EventArgs e)
+    {
+      diseqcd.Enabled = useLNB4.Checked;
+      lnbconfig4.Enabled = useLNB4.Checked;
+      lnbkind4.Enabled = useLNB4.Checked;
 
     }
 

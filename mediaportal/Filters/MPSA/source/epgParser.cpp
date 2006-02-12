@@ -34,7 +34,7 @@ HRESULT CEPGParser::DecodeEPG(byte* buf,int len)
 	time_t timespan=currentTime-m_epgTimeout;
 	if (timespan>10)
 	{
-		Log("EPG:timeout ch:%d",m_mapEPG.size());
+		//Log("EPG:timeout ch:%d",m_mapEPG.size());
 		m_bParseEPG=false;
 		m_bEpgDone=true;
 		return S_FINISHED;
@@ -70,7 +70,7 @@ HRESULT CEPGParser::DecodeEPG(byte* buf,int len)
 		newChannel.allSectionsReceived=false;
 		m_mapEPG[key]=newChannel;
 		it=m_mapEPG.find(key);
-				Log("epg:add new channel table:0x%x onid:0x%x tsid:0x%x sid:0x%x",tableid,network_id,transport_id,service_id);
+		//Log("epg:add new channel table:0x%x onid:0x%x tsid:0x%x sid:0x%x",tableid,network_id,transport_id,service_id);
 	}
 	if (it==m_mapEPG.end()) return E_FAIL;
 	EPGChannel& channel=it->second; 
@@ -259,7 +259,7 @@ void CEPGParser::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 		text = buffer.GetBuffer();
 	}
 
-		Log("  2: %d [%s]",pointer,text.c_str());
+	//Log("  2: %d [%s]",pointer,text.c_str());
 
 	//BUG HERE?
 	//find language...
