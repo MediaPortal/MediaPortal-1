@@ -646,7 +646,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 				//Log("mpsa::decode pat");
 				m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
 				Log("mpsa::PAT decoded and found %d channels, map pids", m_patChannelsCount);
-				int pids[100];
+				int pids[512];
 				for(int n=0;n<m_patChannelsCount;n++)
 				{
 					pids[n]=m_patTable[n].ProgrammPMTPID;
@@ -959,7 +959,7 @@ HRESULT CStreamAnalyzer::MapSectionPids()
 HRESULT CStreamAnalyzer::MapPMTPids(int count, int* pids)
 {
 	Log("mpsa:MapPMTPids(%d)",count);
-	int hwPids[110];
+	int hwPids[520];
 	memset(hwPids,0,sizeof(hwPids));
 	int offset=0;
 	if (m_bDecodeATSC)
