@@ -243,9 +243,9 @@ namespace MediaPortal.EPG
                 DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 8:00:00 AM");
                 TimeSpan ts = dtCurTime.Subtract(dtEpochStartTime);
 
-                long epochtime;
-                epochtime = (ts.Days);
-                return epochtime;
+                long epochdate;
+                epochdate = (ts.Days);
+                return epochdate;
             }
 
 			private int getMonth(string month)

@@ -30,7 +30,7 @@ using System.Threading;
 using NUnit.Framework;
 using MediaPortal.Utils;
 
-namespace MediaPortal.Tests.Time
+namespace MediaPortal.Tests.Utils.Time
 {
   [TestFixture]
   [Category("WorldTimeZone")]

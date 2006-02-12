@@ -109,6 +109,8 @@ namespace WebEPG_conf
 
       startDirectory = Environment.CurrentDirectory;
 
+      startDirectory += "\\WebEPG";
+
       LoadConfig();
 
       UpdateList("", -1);
@@ -893,14 +895,23 @@ namespace WebEPG_conf
       System.IO.DirectoryInfo[] dirList = dir.GetDirectories();
       if (dirList.Length > 0)
       {
-        for (int i = 0; i < dirList.Length; i++)
-        {
-          //LOAD FOLDERS
-          System.IO.DirectoryInfo g = dirList[i];
-          TreeNode MainNext = new TreeNode(g.Name); //
-          GetTreeGrabbers(ref MainNext, g.FullName);
-          Main.Nodes.Add(MainNext);
-          //MainNext.Tag = (g.FullName); 
+          if( dirList.Length == 1)
+          {
+              System.IO.DirectoryInfo g = dirList[0];
+          if (g.Name == "CVS")
+              GetGrabbers(ref Main, Location);
+          }
+          else
+          {
+            for (int i = 0; i < dirList.Length; i++)
+            {
+              //LOAD FOLDERS
+              System.IO.DirectoryInfo g = dirList[i];
+                  TreeNode MainNext = new TreeNode(g.Name);
+                  GetTreeGrabbers(ref MainNext, g.FullName);
+                  Main.Nodes.Add(MainNext);
+                  //MainNext.Tag = (g.FullName);
+            }
         }
       }
       else
@@ -1004,65 +1015,65 @@ namespace WebEPG_conf
       }
     }
 
-    private void GetTreeChannels(string Location) //ref TreeNode Main, string Location)
-    {
-      System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Location);
-      if (dir.Exists)
-      {
-        System.IO.DirectoryInfo[] dirList = dir.GetDirectories();
-        if (dirList.Length > 0)
-        {
-          for (int i = 0; i < dirList.Length; i++)
-          {
-            //LOAD FOLDERS
-            System.IO.DirectoryInfo g = dirList[i];
-            //TreeNode MainNext = new TreeNode(g.Name); //
-            GetTreeChannels(g.FullName); //ref MainNext, g.FullName);
-            //Main.Nodes.Add(MainNext);
-            //MainNext.Tag = (g.FullName); 
-          }
-        }
-        else
-        {
-          GetChannels(Location); //ref Main, Location);
-        }
-      }
-    }
+    //private void GetTreeChannels(string Location) //ref TreeNode Main, string Location)
+    //{
+    //  System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Location);
+    //  if (dir.Exists)
+    //  {
+    //    System.IO.DirectoryInfo[] dirList = dir.GetDirectories();
+    //    if (dirList.Length > 0)
+    //    {
+    //      for (int i = 0; i < dirList.Length; i++)
+    //      {
+    //        //LOAD FOLDERS
+    //        System.IO.DirectoryInfo g = dirList[i];
+    //        //TreeNode MainNext = new TreeNode(g.Name); //
+    //        GetTreeChannels(g.FullName); //ref MainNext, g.FullName);
+    //        //Main.Nodes.Add(MainNext);
+    //        //MainNext.Tag = (g.FullName); 
+    //      }
+    //    }
+    //    else
+    //    {
+    //      GetChannels(Location); //ref Main, Location);
+    //    }
+    //  }
+    //}
 
 
-    private void GetChannels(string Location) //ref TreeNode Main, string Location)
-    {
-      System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Location);
-      Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Directory: {0}", Location);
-      foreach (System.IO.FileInfo file in dir.GetFiles("*.xml"))
-      {
-        Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: File: {0}", file.Name);
-        ChannelInfo info = GetChannelInfo(file.FullName);
-        if (info != null)
-        {
-          //TreeNode cNode = new TreeNode(info.FullName);
-          //Main.Nodes.Add(cNode);
+    //private void GetChannels(string Location) //ref TreeNode Main, string Location)
+    //{
+    //  System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Location);
+    //  Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Directory: {0}", Location);
+    //  foreach (System.IO.FileInfo file in dir.GetFiles("*.xml"))
+    //  {
+    //    Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: File: {0}", file.Name);
+    //    ChannelInfo info = GetChannelInfo(file.FullName);
+    //    if (info != null)
+    //    {
+    //      //TreeNode cNode = new TreeNode(info.FullName);
+    //      //Main.Nodes.Add(cNode);
 
-          if (info.GrabberList.Count != 0)
-          {
+    //      if (info.GrabberList.Count != 0)
+    //      {
 
-            IDictionaryEnumerator Enumerator = info.GrabberList.GetEnumerator();
+    //        IDictionaryEnumerator Enumerator = info.GrabberList.GetEnumerator();
 
-            while (Enumerator.MoveNext())
-            {
-              //TreeNode tNode = new TreeNode((string) Enumerator.Key);
-              //string [] tag = new string[2];
-              //tag[0] = info.ChannelID;
-              //tag[1] = (string) Enumerator.Key;
-              //tNode.Tag = tag;
-              //cNode.Nodes.Add(tNode);
-              if (hChannelInfo[info.ChannelID] == null)
-                hChannelInfo.Add(info.ChannelID, info);
-            }
-          }
-        }
-      }
-    }
+    //        while (Enumerator.MoveNext())
+    //        {
+    //          //TreeNode tNode = new TreeNode((string) Enumerator.Key);
+    //          //string [] tag = new string[2];
+    //          //tag[0] = info.ChannelID;
+    //          //tag[1] = (string) Enumerator.Key;
+    //          //tNode.Tag = tag;
+    //          //cNode.Nodes.Add(tNode);
+    //          if (hChannelInfo[info.ChannelID] == null)
+    //            hChannelInfo.Add(info.ChannelID, info);
+    //        }
+    //      }
+    //    }
+    //  }
+    //}
 
     private ChannelInfo GetChannelInfo(string filename)
     {

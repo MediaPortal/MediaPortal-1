@@ -100,6 +100,8 @@ namespace WebEPG_conf
 
       startDirectory = Environment.CurrentDirectory;
 
+      startDirectory += "\\WebEPG";
+
       //Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Channels");
       //hChannelInfo = new Hashtable();$
 

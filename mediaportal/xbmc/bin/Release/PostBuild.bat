@@ -101,10 +101,8 @@ copy ..\..\..\FireDTVKeyMap.XML.Schema .
 copy ..\..\..\WebEPG\WebEPG\bin\Release\WebEPG.dll .
 copy ..\..\..\Utils\bin\Release\Utils.dll .
 
-copy ..\..\..\Utils\bin\Release\Utils.dll WebEPG\
-copy ..\..\..\WebEPG\WebEPG\bin\Release\WebEPG.dll WebEPG\
 copy ..\..\..\WebEPG\WebEPG-xmltv\bin\Release\WebEPG-xmltv.exe WebEPG.exe
-copy ..\..\..\WebEPG\WebEPG-conf\bin\Release\WebEPG-conf.exe WebEPG\
-copy ..\..\..\WebEPG\WebEPG-channels\bin\Release\WebEPG-channels.exe WebEPG\
+copy ..\..\..\WebEPG\WebEPG-conf\bin\Release\WebEPG-conf.exe .
+copy ..\..\..\WebEPG\WebEPG-channels\bin\Release\WebEPG-channels.exe .
 
 @if exist postbuild2.bat call postbuild2.bat

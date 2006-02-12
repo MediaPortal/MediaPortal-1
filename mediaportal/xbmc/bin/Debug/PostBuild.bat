@@ -120,8 +120,6 @@ copy ..\..\..\FireDTVKeyMap.XML.Schema .
 copy ..\..\..\WebEPG\WebEPG\bin\debug\WebEPG.dll .
 copy ..\..\..\Utils\bin\debug\Utils.dll .
 
-copy ..\..\..\Utils\bin\debug\Utils.dll WebEPG\
-copy ..\..\..\WebEPG\WebEPG\bin\debug\WebEPG.dll WebEPG\
 copy ..\..\..\WebEPG\WebEPG-xmltv\bin\debug\WebEPG-xmltv.exe WebEPG.exe
-copy ..\..\..\WebEPG\WebEPG-conf\bin\debug\WebEPG-conf.exe WebEPG\
-copy ..\..\..\WebEPG\WebEPG-channels\bin\debug\WebEPG-channels.exe WebEPG\
+copy ..\..\..\WebEPG\WebEPG-conf\bin\debug\WebEPG-conf.exe .
+copy ..\..\..\WebEPG\WebEPG-channels\bin\debug\WebEPG-channels.exe .
