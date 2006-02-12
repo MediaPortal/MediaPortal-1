@@ -43,6 +43,7 @@ namespace MediaPortal.Utils
           "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Time Zones" };
         
         private static Hashtable m_TimeZoneList = null;
+        private static Hashtable m_TimeZoneNames = null;
 
         private TimeZoneInfo m_TimeZone;
 
@@ -75,12 +76,20 @@ namespace MediaPortal.Utils
         {
         }
 
-        public WorldTimeZone(string TimeZoneName)
+        public WorldTimeZone(string TimeZone)
         {
+            string TimeZoneName = string.Empty;
+
             if( m_TimeZoneList == null )
                LoadRegistryTimeZones();
 
-            if( !m_TimeZoneList.Contains(TimeZoneName) )
+           if (m_TimeZoneNames.Contains(TimeZone))
+               TimeZoneName = (String) m_TimeZoneNames[TimeZone];
+
+           if (m_TimeZoneList.Contains(TimeZone))
+               TimeZoneName = TimeZone;
+
+            if ( TimeZoneName == string.Empty )
                throw new ArgumentException("TimeZone Not valid"); 
 
             m_TimeZone = (TimeZoneInfo) m_TimeZoneList[ TimeZoneName ];        
@@ -236,6 +245,7 @@ namespace MediaPortal.Utils
             if(RegKeyRoot != null)
             {
                 m_TimeZoneList = new Hashtable();
+                m_TimeZoneNames = new Hashtable();
                 string[] timeZoneKeys = RegKeyRoot.GetSubKeyNames();
 
                 for(int i=0; i < timeZoneKeys.Length; i++)
@@ -262,6 +272,7 @@ namespace MediaPortal.Utils
                         index += LENGTH_SYSTEMTIME;
                         TZInfo.DltDate = GetDate(timeZoneData, index);
 
+                        m_TimeZoneNames.Add(TZInfo.StdName, timeZoneKeys[i]);
                         m_TimeZoneList.Add(timeZoneKeys[i], TZInfo);
 
                     }
