@@ -165,7 +165,7 @@ namespace MediaPortal.TV.Recording
     protected DVBSkyStar2Helper.IB2C2MPEG2TunerCtrl2 _interfaceB2C2TunerCtrl = null;
     //protected DVBSkyStar2Helper.IB2C2MPEG2AVCtrl2 _interfaceB2C2AvcCtrl = null;
     string _cardType = "";
-    string _cardFilename = "";
+    
 
     #endregion
 
@@ -175,7 +175,6 @@ namespace MediaPortal.TV.Recording
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _cardType = xmlreader.GetValueAsString("DVBSS2", "cardtype", "");
-        _cardFilename = xmlreader.GetValueAsString("dvb_ts_cards", "filename", "");
       }
       _streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TechnisatStarCards, NetworkType.DVBS);
     }
@@ -1237,8 +1236,6 @@ namespace MediaPortal.TV.Recording
 
     DVBChannel LoadDiseqcSettings(DVBChannel ch, int disNo)
     {
-      if (_cardFilename == "")
-        return ch;
 
       int lnbKhz = 0;
       int lnbKhzVal = 0;
@@ -1251,7 +1248,8 @@ namespace MediaPortal.TV.Recording
       int cbandMHZ = 0;
       int circularMHZ = 0;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_cardFilename))
+      string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
       {
         lnb0MHZ = xmlreader.GetValueAsInt("dvbs", "LNB0", 9750);
         lnb1MHZ = xmlreader.GetValueAsInt("dvbs", "LNB1", 10600);
@@ -1336,7 +1334,7 @@ namespace MediaPortal.TV.Recording
       int cbandMHZ = 0;
       int circularMHZ = 0;
 
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(_cardFilename))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
       {
         lnb0MHZ = xmlreader.GetValueAsInt("dvbs", "LNB0", 9750);
         lnb1MHZ = xmlreader.GetValueAsInt("dvbs", "LNB1", 10600);

@@ -1827,7 +1827,7 @@ namespace MediaPortal.Configuration
         useLNB3.Checked = xmlreader.GetValueAsBool("dvbs", "useLNB3", false);
         useLNB4.Checked = xmlreader.GetValueAsBool("dvbs", "useLNB4", false);
 
-        int lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb", 44);
+        int lnbKhz = xmlreader.GetValueAsInt("dvbs", "lnb", 22);
         switch (lnbKhz)
         {
           case 0: lnbconfig1.SelectedItem = "0 KHz"; break;
@@ -1888,10 +1888,10 @@ namespace MediaPortal.Configuration
           case 1: lnbkind4.SelectedItem = "C-Band"; break;
           case 2: lnbkind4.SelectedItem = "Circular"; break;
         }
-        int diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 0);
+        int diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 1);
         switch (diseqc)
         {
-          case 0: diseqca.SelectedItem = "None"; break;
+          case 0: diseqca.SelectedItem = "Simple A"; break;
           case 1: diseqca.SelectedItem = "Simple A"; break;
           case 2: diseqca.SelectedItem = "Simple B"; break;
           case 3: diseqca.SelectedItem = "Level 1 A/A"; break;
@@ -1900,10 +1900,10 @@ namespace MediaPortal.Configuration
           case 6: diseqca.SelectedItem = "Level 1 B/B"; break;
 
         }
-        diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 0);
+        diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 1);
         switch (diseqc)
         {
-          case 0: diseqcb.SelectedItem = "None"; break;
+          case 0: diseqcb.SelectedItem = "Simple A"; break;
           case 1: diseqcb.SelectedItem = "Simple A"; break;
           case 2: diseqcb.SelectedItem = "Simple B"; break;
           case 3: diseqcb.SelectedItem = "Level 1 A/A"; break;
@@ -1912,10 +1912,10 @@ namespace MediaPortal.Configuration
           case 6: diseqcb.SelectedItem = "Level 1 B/B"; break;
 
         }
-        diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 0);
+        diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 1);
         switch (diseqc)
         {
-          case 0: diseqcc.SelectedItem = "None"; break;
+          case 0: diseqcc.SelectedItem = "Simple A"; break;
           case 1: diseqcc.SelectedItem = "Simple A"; break;
           case 2: diseqcc.SelectedItem = "Simple B"; break;
           case 3: diseqcc.SelectedItem = "Level 1 A/A"; break;
@@ -1924,10 +1924,10 @@ namespace MediaPortal.Configuration
           case 6: diseqcc.SelectedItem = "Level 1 B/B"; break;
 
         }
-        diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 0);
+        diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 1);
         switch (diseqc)
         {
-          case 0: diseqcd.SelectedItem = "None"; break;
+          case 0: diseqcd.SelectedItem = "Simple A"; break;
           case 1: diseqcd.SelectedItem = "Simple A"; break;
           case 2: diseqcd.SelectedItem = "Simple B"; break;
           case 3: diseqcd.SelectedItem = "Level 1 A/A"; break;
