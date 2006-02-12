@@ -262,7 +262,7 @@ namespace MediaPortal.Utils
                         index += LENGTH_SYSTEMTIME;
                         TZInfo.DltDate = GetDate(timeZoneData, index);
 
-                        m_TimeZoneList.Add( TZInfo.StdName, TZInfo );
+                        m_TimeZoneList.Add(timeZoneKeys[i], TZInfo);
 
                     }
                 }
