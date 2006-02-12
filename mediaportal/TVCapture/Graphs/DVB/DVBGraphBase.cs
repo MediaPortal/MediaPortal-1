@@ -2720,7 +2720,7 @@ namespace MediaPortal.TV.Recording
       {
         TimeSpan ts = DateTime.Now - dt;
         if (ts.TotalMilliseconds > 5000) break;
-        System.Threading.Thread.Sleep(500);
+        System.Threading.Thread.Sleep(1000);
         if (_scanPidListReady) break;
       }
       Log.Write("check...{0} pids:{1}", _scanPidListReady, _scanPidList.Count);
@@ -3282,6 +3282,7 @@ namespace MediaPortal.TV.Recording
 
     protected void SetLCN()
     {
+
       //Log.Write("SetLCN");
       Int16 count = 0;
       while (true)
@@ -3295,33 +3296,13 @@ namespace MediaPortal.TV.Recording
           TVChannel channel = TVDatabase.GetTVChannelByStream(Network() == NetworkType.ATSC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBC, Network() == NetworkType.DVBS, networkId, transportId, serviceID, out provider);
           if (channel != null)
           {
-            channel.Sort = LCN;
-//            Log.Write("lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X} {4}",
-//LCN - 1, networkId, transportId, serviceID, channel.Name);
-            TVDatabase.SetChannelSort(channel.Name, LCN - 1);
-            TVGroup group = new TVGroup();
-            if (channel.Scrambled)
-            {
-              group.GroupName = "Scrambled";
-            }
-            else
-            {
-              group.GroupName = "Unscrambled";
-            }
-            int groupid = TVDatabase.AddGroup(group);
-            group.ID = groupid;
-            TVDatabase.MapChannelToGroup(group, channel);
-
-            group = new TVGroup();
-            group.GroupName = provider;
-            groupid = TVDatabase.AddGroup(group);
-            group.ID = groupid;
-            TVDatabase.MapChannelToGroup(group, channel);
+            channel.Sort = LCN-1;
+//           Log.Write("lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X} {4}",LCN - 1, networkId, transportId, serviceID, channel.Name);
+           TVDatabase.UpdateChannel(channel, channel.Sort);
           }
           else
           {
-//            Log.Write("unknown channel lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}",
-//            LCN-1, networkId, transportId, serviceID);
+//            Log.Write("unknown channel lcn:{0} network:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}",LCN-1, networkId, transportId, serviceID);
           }
         }
         else

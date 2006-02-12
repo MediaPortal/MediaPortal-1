@@ -473,6 +473,7 @@ namespace MediaPortal
       while (_isAutoTuning)
       {
         tuningInterface.Next();
+        UpdateList();
         if (tuningInterface.IsFinished())
         {
           OnStatus("Finished");
