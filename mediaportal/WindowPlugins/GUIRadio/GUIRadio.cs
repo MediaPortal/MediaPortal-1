@@ -689,12 +689,12 @@ namespace MediaPortal.GUI.Radio
           {
             if (bAscending)
             {
-              if (station1.Channel > station2.Channel) return 1;
+              if (station1.Sort > station2.Sort) return 1;
               else return -1;
             }
             else
             {
-              if (station2.Channel > station1.Channel) return 1;
+              if (station2.Sort > station1.Sort) return 1;
               else return -1;
             }
           }

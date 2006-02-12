@@ -3306,7 +3306,7 @@ namespace MediaPortal.TV.Recording
           }
           else
           {
-            RadioStation station = RadioDatabase.GetTVChannelByStream(Network() == NetworkType.ATSC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBC, Network() == NetworkType.DVBS, networkId, transportId, serviceID, out provider);
+            RadioStation station = RadioDatabase.GetStationByStream(Network() == NetworkType.ATSC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBC, Network() == NetworkType.DVBS, networkId, transportId, serviceID, out provider);
             if (station != null)
             {
               station.Sort = LCN;
