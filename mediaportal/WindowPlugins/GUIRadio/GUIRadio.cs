@@ -81,7 +81,7 @@ namespace MediaPortal.GUI.Radio
 
     #region Base variabeles
     View currentView = View.List;
-    SortMethod currentSortMethod = SortMethod.Name;
+    SortMethod currentSortMethod = SortMethod.Number;
     bool sortAscending = true;
     VirtualDirectory virtualDirectory = new VirtualDirectory();
     DirectoryHistory directoryHistory = new DirectoryHistory();
