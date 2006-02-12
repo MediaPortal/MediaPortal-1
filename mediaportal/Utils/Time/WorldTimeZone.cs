@@ -179,7 +179,10 @@ namespace MediaPortal.Utils
 
         public override DateTime ToLocalTime(DateTime time)
         {
-            return time.Add(TimeZone.CurrentTimeZone.GetUtcOffset(time) - GetUtcOffset(time));
+            if (time.Kind != DateTimeKind.Unspecified)
+                time = new DateTime(time.Ticks, DateTimeKind.Unspecified);
+
+            return time.Add(System.TimeZone.CurrentTimeZone.GetUtcOffset(time) - GetUtcOffset(time));
         }
 
         public override TimeSpan GetUtcOffset(DateTime time)
