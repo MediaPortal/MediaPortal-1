@@ -171,7 +171,17 @@ namespace MediaPortal.Configuration.Sections
               //
               // Create instance of the current type
               //
-              object pluginObject = Activator.CreateInstance(type);
+              object pluginObject = null;
+              try
+              {
+                pluginObject = Activator.CreateInstance(type);
+              }
+              catch (System.Reflection.TargetInvocationException)
+              {
+                MessageBox.Show(string.Format("An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.", pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1)), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Log.Write("Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version!", pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
+                continue;
+              }
               ISetupForm pluginForm = pluginObject as ISetupForm;
               IExternalPlayer extPlayer = pluginObject as IExternalPlayer;
               IShowPlugin showPlugin = pluginObject as IShowPlugin;
@@ -195,7 +205,17 @@ namespace MediaPortal.Configuration.Sections
           foreach (Type t in exportedTypes)
             if ((t.IsClass) && (t.IsSubclassOf(typeof(GUIWindow))))
             {
-              object newObj = Activator.CreateInstance(t);
+              object newObj = null;
+              try
+              {
+                newObj = Activator.CreateInstance(t);
+              }
+              catch (System.Reflection.TargetInvocationException)
+              {
+                MessageBox.Show(string.Format("An error occured while loading the plugin {0}.\n\nIt's incompatible with the current MediaPortal version and won't be loaded.", pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1)), "Plugin Manager", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Log.Write("Plugin Manager: Plugin {0} is incompatible with the current MediaPortal version!", pluginFile.Substring(pluginFile.LastIndexOf(@"\") + 1));
+                continue;
+              }
               GUIWindow win = (GUIWindow)newObj;
 
               foreach (ItemTag tag in loadedPlugins)
