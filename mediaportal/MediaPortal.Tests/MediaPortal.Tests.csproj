@@ -188,7 +188,6 @@
     <Content Include="InputDeviceMappings\defaults\TestVersion2.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="psloglist.exe" />
     <Content Include="sqlite.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
