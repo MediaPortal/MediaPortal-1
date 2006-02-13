@@ -1938,7 +1938,7 @@ namespace MediaPortal.TV.Recording
             } break;
         }
         UpdateSignalPresent();
-        Log.Write("DVBGraphBDA: signal strength:{0} signal quality:{1} signal present:{2}", SignalStrength(), SignalQuality(), SignalPresent());
+        Log.Write("DVBGraphBDA: signal strength:{0} signal quality:{1} signal present:{2} locked:{3}", SignalStrength(), SignalQuality(), SignalPresent(), TunerLocked() );
       }
       catch (Exception ex)
       {
