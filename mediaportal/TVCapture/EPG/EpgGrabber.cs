@@ -523,7 +523,7 @@ namespace MediaPortal.TV.Epg
         foreach (EPGChannel channel in events)
         {
           _timeoutTimer = DateTime.Now;
-          if (channel.TvChannel == null && channel.RadioStation==null) continue;
+          if (channel.TvChannel == null && channel.RadioStation == null) continue;
           if (channel.TvChannel != null)
           {
             if (channel.TvChannel.LastDateTimeEpgGrabbed >= DateTime.Now.AddHours(-2))
@@ -544,9 +544,9 @@ namespace MediaPortal.TV.Epg
           {
             if (channel.RadioStation.LastDateTimeEpgGrabbed >= DateTime.Now.AddHours(-2))
             {
-             continue;
-           }
-           Log.WriteFile(Log.LogType.EPG, "epg-grab: process:'{0}' ", channel.RadioStation.Name);
+              continue;
+            }
+            Log.WriteFile(Log.LogType.EPG, "epg-grab: process:'{0}' ", channel.RadioStation.Name);
           }
 
           channel.Sort();
@@ -597,7 +597,7 @@ namespace MediaPortal.TV.Epg
                 //              if (desc.Length>0) 
                 //                Log.WriteFile(Log.LogType.EPG, "epg-grab:     {0}", desc);
                 TVDatabase.UpdateProgram(tv);
-                OnChannelEvent(true,tv.Channel, tv.StartTime, tv.EndTime);
+                OnChannelEvent(true, tv.Channel, tv.StartTime, tv.EndTime);
               }
               else if (channel.RadioStation != null)
               {
@@ -609,7 +609,7 @@ namespace MediaPortal.TV.Epg
                 tv.Title = epgLang.Title;
                 tv.Description = epgLang.Description;
                 RadioDatabase.UpdateProgram(tv);
-                OnChannelEvent(false,tv.Channel, tv.StartTime, tv.EndTime);
+                OnChannelEvent(false, tv.Channel, tv.StartTime, tv.EndTime);
               }
             }
           }
@@ -646,6 +646,7 @@ namespace MediaPortal.TV.Epg
         foreach (MHWEvent mhwEvent in events)
         {
           TVChannel tvChannel = null;
+          RadioStation radioStation = null;
           bool found = false;
           foreach (MHWEvent chan in channelCache)
           {
@@ -654,6 +655,7 @@ namespace MediaPortal.TV.Epg
                 chan.ServiceId == mhwEvent.ServiceId)
             {
               tvChannel = chan.TvChannel;
+              radioStation = chan.RadioStation;
               found = true;
               break;
             }
@@ -661,17 +663,33 @@ namespace MediaPortal.TV.Epg
           if (!found)
           {
             tvChannel = mhwEvent.TvChannel;
+            radioStation = mhwEvent.RadioStation;
             channelCache.Add(mhwEvent);
           }
-          if (tvChannel == null) continue;
-          if (tvChannel.LastDateTimeEpgGrabbed >= DateTime.Now.AddHours(-2))
+          if (tvChannel == null && radioStation == null) continue;
+          if (tvChannel != null)
           {
-            if (String.Compare(tvChannel.Name, _epgTvChannelName, true) != 0)
+            if (tvChannel.LastDateTimeEpgGrabbed >= DateTime.Now.AddHours(-2))
             {
+              if (String.Compare(tvChannel.Name, _epgTvChannelName, true) != 0)
+              {
+                Log.WriteFile(Log.LogType.EPG, "epg-grab: skip channel:{0} last update was:{1} {2} ",
+                      tvChannel.Name,
+                      tvChannel.LastDateTimeEpgGrabbed.ToShortDateString(),
+                      tvChannel.LastDateTimeEpgGrabbed.ToShortTimeString());
+                continue;
+              }
+            }
+          }
+          if (radioStation != null)
+          {
+            if (radioStation.LastDateTimeEpgGrabbed >= DateTime.Now.AddHours(-2))
+            {
+
               Log.WriteFile(Log.LogType.EPG, "epg-grab: skip channel:{0} last update was:{1} {2} ",
-                    tvChannel.Name,
-                    tvChannel.LastDateTimeEpgGrabbed.ToShortDateString(),
-                    tvChannel.LastDateTimeEpgGrabbed.ToShortTimeString());
+                    radioStation.Name,
+                    radioStation.LastDateTimeEpgGrabbed.ToShortDateString(),
+                    radioStation.LastDateTimeEpgGrabbed.ToShortTimeString());
               continue;
             }
           }
@@ -681,18 +699,24 @@ namespace MediaPortal.TV.Epg
           TVProgram tv = new TVProgram();
           tv.Start = Util.Utils.datetolong(mhwEvent.StartTime);
           tv.End = Util.Utils.datetolong(mhwEvent.EndTime);
-          tv.Channel = tvChannel.Name;
+          if (tvChannel != null)
+            tv.Channel = tvChannel.Name;
+          else
+            tv.Channel = radioStation.Name;
           if (mhwEvent.Languages.Count > 0)
           {
             tv.Genre = mhwEvent.Genre;
             tv.Title = mhwEvent.Languages[0].Title;
             tv.Description = mhwEvent.Languages[0].Description;
 
-            Log.WriteFile(Log.LogType.EPG, "mhw-grab: add: {0} {1} {2}-{3} {4}",
-                      tvChannel.Name, mhwEvent.StartTime.ToLongDateString(), mhwEvent.StartTime.ToLongTimeString(), mhwEvent.EndTime.ToLongTimeString(), mhwEvent.Languages[0].Title);
+            //Log.WriteFile(Log.LogType.EPG, "mhw-grab: add: {0} {1} {2}-{3} {4}",
+            //          tv.Channel, mhwEvent.StartTime.ToLongDateString(), mhwEvent.StartTime.ToLongTimeString(), mhwEvent.EndTime.ToLongTimeString(), mhwEvent.Languages[0].Title);
 
-            OnChannelEvent(true,tv.Channel, tv.StartTime, tv.EndTime);
-            TVDatabase.UpdateProgram(tv);
+            OnChannelEvent( (tvChannel != null), tv.Channel, tv.StartTime, tv.EndTime);
+            if (tvChannel!=null)
+              TVDatabase.UpdateProgram(tv);
+            else
+              RadioDatabase.UpdateProgram(tv);
           }
         }
         UpdateChannels();
@@ -742,7 +766,7 @@ namespace MediaPortal.TV.Epg
             Log.WriteFile(Log.LogType.EPG, "atsc-grab: add: {0} {1} {2}-{3} {4}",
                       atscEvent.TvChannel.Name, atscEvent.StartTime.ToLongDateString(), atscEvent.StartTime.ToLongTimeString(), atscEvent.EndTime.ToLongTimeString(), atscEvent.Languages[0].Title);
             TVDatabase.UpdateProgram(tv);
-            OnChannelEvent(true,tv.Channel, tv.StartTime, tv.EndTime);
+            OnChannelEvent(true, tv.Channel, tv.StartTime, tv.EndTime);
           }
 
         }
@@ -759,7 +783,7 @@ namespace MediaPortal.TV.Epg
     }
     #endregion
 
-    void OnChannelEvent(bool isTv,string channelName, DateTime timeStart, DateTime timeEnd)
+    void OnChannelEvent(bool isTv, string channelName, DateTime timeStart, DateTime timeEnd)
     {
       foreach (EpgChannelUpdate ch in _epgChannels)
       {
@@ -785,7 +809,7 @@ namespace MediaPortal.TV.Epg
     {
       if (_epgChannels == null) return;
       if (_epgChannels.Count == 0) return;
-      Log.WriteFile(Log.LogType.EPG, "epg-grab: update {0} channels",_epgChannels.Count);
+      Log.WriteFile(Log.LogType.EPG, "epg-grab: update {0} channels", _epgChannels.Count);
 
       List<TVChannel> listChannels = new List<TVChannel>();
       ArrayList stations = new ArrayList();
@@ -804,12 +828,12 @@ namespace MediaPortal.TV.Epg
       List<TVChannel> channels = new List<TVChannel>();
       TVDatabase.GetChannels(ref channels);
       foreach (TVChannel ch in channels)
-      { 
+      {
         if (String.Compare(ch.Name, _epgTvChannelName, true) == 0)
         {
           Log.WriteFile(Log.LogType.EPG, "epg-grab: set last update for {0}", _epgTvChannelName);
           ch.LastDateTimeEpgGrabbed = DateTime.Now;
-          TVDatabase.UpdateChannel(ch, ch.Sort); 
+          TVDatabase.UpdateChannel(ch, ch.Sort);
           return;
         }
       }
