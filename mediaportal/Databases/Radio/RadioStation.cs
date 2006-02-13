@@ -37,10 +37,24 @@ namespace MediaPortal.Radio.Database
     int    m_iBitRate=0;
 		bool   m_bScrambled=false;
     int _sort=40000;
+    DateTime _lastTimeEpgGrabbed=DateTime.MinValue;
+    int _epgHours = 2;
+
 		public RadioStation()
 		{
 		}
 
+
+    public DateTime LastDateTimeEpgGrabbed
+    {
+      get { return _lastTimeEpgGrabbed;}
+      set { _lastTimeEpgGrabbed = value; }
+    }
+    public int EpgHours
+    {
+      get { return _epgHours; }
+      set { _epgHours = value; }
+    }
     public int ID
     {
       get { return m_ID;}

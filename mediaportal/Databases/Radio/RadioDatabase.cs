@@ -66,7 +66,7 @@ namespace MediaPortal.Radio.Database
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Write(ex);
       }
       Log.WriteFile(Log.LogType.Log, false, "Radio database opened");
     }
@@ -94,7 +94,7 @@ namespace MediaPortal.Radio.Database
     }
     static public void UpdateFromPreviousVersion()
     {
-      int currentVersion = 2;
+      int currentVersion = 3;
       int versionNr = 0;
       SQLiteResultSet results;
       results = m_db.Execute("SELECT * FROM tblversion");
@@ -120,6 +120,36 @@ namespace MediaPortal.Radio.Database
         m_db.Execute("ALTER TABLE station ADD COLUMN isort Integer");
         m_db.Execute(String.Format("update station set isort=0"));
       }
+
+
+      if (versionNr < 3)
+      {
+        m_db.Execute("ALTER TABLE station ADD COLUMN epgHours Integer");
+        m_db.Execute("update station set epgHours=1");
+
+        DateTime dtStart = new DateTime(1971, 11, 6);
+        m_db.Execute("ALTER TABLE station ADD COLUMN epgLastUpdate text");
+        m_db.Execute(String.Format("update station set epglastupdate='{0}'", Utils.datetolong(dtStart)));
+
+        if (DatabaseUtility.AddTable(m_db, "tblPrograms", "CREATE TABLE tblPrograms ( idProgram integer primary key, idChannel integer, idGenre integer, strTitle text, iStartTime integer, iEndTime text, strDescription text,strEpisodeName text,strRepeat text,strSeriesNum text,strEpisodeNum text,strEpisodePart text,strDate text,strStarRating text,strClassification text)"))
+        {
+          try
+          {
+            m_db.Execute("CREATE INDEX idxProgram ON tblPrograms(idChannel,iStartTime,iEndTime)");
+          }
+          catch (Exception) { }
+        }
+
+        if (DatabaseUtility.AddTable(m_db, "genre", "CREATE TABLE genre ( idGenre integer primary key, strGenre text)"))
+        {
+          try
+          {
+            m_db.Execute("CREATE INDEX idxGenre ON genre(strGenre)");
+          }
+          catch (Exception) { }
+        }
+      }
+
       m_db.Execute(String.Format("update tblversion set idVersion={0}", currentVersion));
     }
 
@@ -175,6 +205,8 @@ namespace MediaPortal.Radio.Database
             chan.Sort = Int32.Parse(DatabaseUtility.Get(results, i, "isort"));
 
             chan.Genre = DatabaseUtility.Get(results, i, "genre");
+            chan.EpgHours = DatabaseUtility.GetAsInt(results, i, "epgHours");
+            chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, "epgLastUpdate"));
             stations.Add(chan);
           }
 
@@ -182,7 +214,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
         return;
@@ -240,11 +272,13 @@ namespace MediaPortal.Radio.Database
 
           station.Channel = Int32.Parse(DatabaseUtility.Get(results, 0, "isort"));
           station.Genre = DatabaseUtility.Get(results, 0, "genre");
+          station.EpgHours = DatabaseUtility.GetAsInt(results, 0, "epgHours");
+          station.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, 0, "epgLastUpdate"));
 
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
           return false;
         }
@@ -267,14 +301,14 @@ namespace MediaPortal.Radio.Database
           DatabaseUtility.RemoveInvalidChars(ref strGenre);
           int scrambled = 0;
           if (channel.Scrambled) scrambled = 1;
-          strSQL = String.Format("update station set strName='{0}',iChannelNr={1} ,frequency='{2}',URL='{3}',bitrate={4},genre='{5}',scrambled={6},isort={7} where idChannel={8}",
-                                strChannel, channel.Channel, channel.Frequency.ToString(), strURL, channel.BitRate, strGenre, scrambled, channel.Sort, channel.ID);
+          strSQL = String.Format("update station set strName='{0}',iChannelNr={1} ,frequency='{2}',URL='{3}',bitrate={4},genre='{5}',scrambled={6},isort={7},epgLastUpdate='{8}',epgHours={9} where idChannel={10}",
+                                strChannel, channel.Channel, channel.Frequency.ToString(), strURL, channel.BitRate, strGenre, scrambled, channel.Sort, Utils.datetolong(channel.LastDateTimeEpgGrabbed), channel.EpgHours, channel.ID);
           //Log.WriteFile(Log.LogType.Log,true,strSQL);
           m_db.Execute(strSQL);
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
       }
@@ -303,8 +337,8 @@ namespace MediaPortal.Radio.Database
             // doesnt exists, add it
             int scrambled = 0;
             if (channel.Scrambled) scrambled = 1;
-            strSQL = String.Format("insert into station (idChannel, strName,iChannelNr ,frequency,URL,bitrate,genre,scrambled,isort) values ( NULL, '{0}', {1}, {2}, '{3}',{4},'{5}',{6},{7} )",
-                                  strChannel, channel.Channel, channel.Frequency.ToString(), strURL, channel.BitRate, strGenre, scrambled, channel.Sort);
+            strSQL = String.Format("insert into station (idChannel, strName,iChannelNr ,frequency,URL,bitrate,genre,scrambled,isort,epgLastUpdate,epgHours) values ( NULL, '{0}', {1}, {2}, '{3}',{4},'{5}',{6},{7},'{8}',{9} )",
+                                  strChannel, channel.Channel, channel.Frequency.ToString(), strURL, channel.BitRate, strGenre, scrambled, channel.Sort, Utils.datetolong(channel.LastDateTimeEpgGrabbed), channel.EpgHours);
             m_db.Execute(strSQL);
             int iNewID = m_db.LastInsertID();
             channel.ID = iNewID;
@@ -319,7 +353,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
 
@@ -346,7 +380,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
 
@@ -382,7 +416,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
       }
@@ -409,11 +443,15 @@ namespace MediaPortal.Radio.Database
           m_db.Execute(strSQL);
           strSQL = String.Format("delete from tblChannelCard");
           m_db.Execute(strSQL);
+          strSQL = String.Format("delete from genre");
+          m_db.Execute(strSQL);
+          strSQL = String.Format("delete from tblprograms");
+          m_db.Execute(strSQL);
 
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
       }
@@ -443,15 +481,15 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
       }
     }
-    static public int MapDVBSChannel(int idChannel, int freq,int symrate,int fec,int lnbkhz,int diseqc,
-			int prognum,int servicetype,string provider,string channel,int eitsched,
-			int eitprefol,int audpid,int vidpid,int ac3pid,int apid1,int apid2,int apid3,
-			int teltxtpid,int scrambled,int pol,int lnbfreq,int networkid,int tsid,int pcrpid,string aLangCode,string aLangCode1,string aLangCode2,string aLangCode3,int ecmPid,int pmtPid)
+    static public int MapDVBSChannel(int idChannel, int freq, int symrate, int fec, int lnbkhz, int diseqc,
+      int prognum, int servicetype, string provider, string channel, int eitsched,
+      int eitprefol, int audpid, int vidpid, int ac3pid, int apid1, int apid2, int apid3,
+      int teltxtpid, int scrambled, int pol, int lnbfreq, int networkid, int tsid, int pcrpid, string aLangCode, string aLangCode1, string aLangCode2, string aLangCode3, int ecmPid, int pmtPid)
     {
       lock (typeof(RadioDatabase))
       {
@@ -489,7 +527,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
 
@@ -497,7 +535,7 @@ namespace MediaPortal.Radio.Database
       }
     }
 
-    static public int MapDVBTChannel(string channelName, string providerName,int idChannel, int frequency, int ONID, int TSID, int SID, int audioPid, int pmtPid, int bandWidth, int pcrPid)
+    static public int MapDVBTChannel(string channelName, string providerName, int idChannel, int frequency, int ONID, int TSID, int SID, int audioPid, int pmtPid, int bandWidth, int pcrPid)
     {
       lock (typeof(RadioDatabase))
       {
@@ -535,7 +573,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
 
@@ -543,7 +581,7 @@ namespace MediaPortal.Radio.Database
       }
     }
 
-    static public int MapDVBCChannel(string channelName, string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int pmtPid, int pcrPid)
+    static public int MapDVBCChannel(string channelName, string providerName, int idChannel, int frequency, int symbolrate, int innerFec, int modulation, int ONID, int TSID, int SID, int audioPid, int pmtPid, int pcrPid)
     {
       lock (typeof(RadioDatabase))
       {
@@ -581,7 +619,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
 
@@ -590,7 +628,7 @@ namespace MediaPortal.Radio.Database
     }
 
 
-    static public int MapATSCChannel(string channelName, int physicalChannel,int minorChannel,int majorChannel,string providerName, int idChannel, int frequency, int symbolrate,int innerFec, int modulation,int ONID, int TSID, int SID, int audioPid, int pmtPid, int pcrPid)
+    static public int MapATSCChannel(string channelName, int physicalChannel, int minorChannel, int majorChannel, string providerName, int idChannel, int frequency, int symbolrate, int innerFec, int modulation, int ONID, int TSID, int SID, int audioPid, int pmtPid, int pcrPid)
     {
       lock (typeof(RadioDatabase))
       {
@@ -628,7 +666,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
 
@@ -637,7 +675,7 @@ namespace MediaPortal.Radio.Database
     }
 
 
-    static public void GetDVBTTuneRequest(int idChannel, out string strProvider,out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid, out int bandWidth,out int pcrPid)
+    static public void GetDVBTTuneRequest(int idChannel, out string strProvider, out int frequency, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid, out int bandWidth, out int pcrPid)
     {
       pmtPid = -1;
       audioPid = -1;
@@ -673,12 +711,12 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
       }
     }
-    static public void GetDVBCTuneRequest(int idChannel, out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid, out int pcrPid)
+    static public void GetDVBCTuneRequest(int idChannel, out string strProvider, out int frequency, out int symbolrate, out int innerFec, out int modulation, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid, out int pcrPid)
     {
       audioPid = 0;
       strProvider = "";
@@ -718,12 +756,12 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
       }
     }
-    static public void GetATSCTuneRequest(int idChannel, out int physicalChannel,out int minorChannel,out int majorChannel,out string strProvider,out int frequency,out int symbolrate,out int innerFec,out int modulation, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid, out int pcrPid)
+    static public void GetATSCTuneRequest(int idChannel, out int physicalChannel, out int minorChannel, out int majorChannel, out string strProvider, out int frequency, out int symbolrate, out int innerFec, out int modulation, out int ONID, out int TSID, out int SID, out int audioPid, out int pmtPid, out int pcrPid)
     {
       minorChannel = -1;
       majorChannel = -1;
@@ -770,13 +808,13 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
       }
     }
 
-    static public bool GetDVBSTuneRequest(int idChannel, int serviceType,ref DVBChannel retChannel)
+    static public bool GetDVBSTuneRequest(int idChannel, int serviceType, ref DVBChannel retChannel)
     {
 
       int freq = 0; int symrate = 0; int fec = 0; int lnbkhz = 0; int diseqc = 0;
@@ -847,7 +885,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
         return false;
@@ -876,7 +914,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
       }
@@ -911,7 +949,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
       }
@@ -932,7 +970,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
       }
@@ -972,7 +1010,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
       }
@@ -1030,6 +1068,8 @@ namespace MediaPortal.Radio.Database
 
             chan.Sort = Int32.Parse(DatabaseUtility.Get(results, i, "station.isort"));
             chan.Genre = DatabaseUtility.Get(results, i, "station.genre");
+            chan.EpgHours = DatabaseUtility.GetAsInt(results, i, "epgHours");
+            chan.LastDateTimeEpgGrabbed = Utils.longtodate(DatabaseUtility.GetAsInt64(results, i, "epgLastUpdate"));
             stations.Add(chan);
           }
 
@@ -1037,7 +1077,7 @@ namespace MediaPortal.Radio.Database
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "RadioDatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+          Log.Write(ex);
           Open();
         }
         return;
@@ -1076,5 +1116,210 @@ namespace MediaPortal.Radio.Database
       return null;
     }
 
+    #region EPG
+
+    static public int AddProgram(TVProgram prog)
+    {
+      int lRetId = -1;
+      lock (m_db)
+      {
+        string strSQL;
+        try
+        {
+          string strGenre = prog.Genre;
+          string strTitle = prog.Title;
+          string strDescription = prog.Description;
+          string strEpisode = prog.Episode;
+          string strRepeat = prog.Repeat;
+          string strDate = prog.Date;
+          string strSeriesNum = prog.SeriesNum;
+          string strEpisodeNum = prog.EpisodeNum;
+          string strEpisodePart = prog.EpisodePart;
+          string strStarRating = prog.StarRating;
+          string strClassification = prog.Classification;
+          DatabaseUtility.RemoveInvalidChars(ref strGenre);
+          DatabaseUtility.RemoveInvalidChars(ref strTitle);
+          DatabaseUtility.RemoveInvalidChars(ref strDescription);
+          DatabaseUtility.RemoveInvalidChars(ref strEpisode);
+          DatabaseUtility.RemoveInvalidChars(ref strRepeat);
+          DatabaseUtility.RemoveInvalidChars(ref strDate);
+          DatabaseUtility.RemoveInvalidChars(ref strSeriesNum);
+          DatabaseUtility.RemoveInvalidChars(ref strEpisodeNum);
+          DatabaseUtility.RemoveInvalidChars(ref strEpisodePart);
+          DatabaseUtility.RemoveInvalidChars(ref strStarRating);
+          DatabaseUtility.RemoveInvalidChars(ref strClassification);
+
+
+          if (null == m_db) return -1;
+          int iGenreId = AddGenre(strGenre);
+          int iChannelId = GetStationId(prog.Channel);
+          if (iChannelId < 0) return -1;
+
+          strSQL = String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')",
+            iChannelId, iGenreId, strTitle, prog.Start.ToString(),
+            prog.End.ToString(), strDescription, strEpisode, strRepeat);
+          m_db.Execute(strSQL);
+          lRetId = m_db.LastInsertID();
+        }
+        catch (Exception ex)
+        {
+          Log.Write(ex);
+          Open();
+        }
+
+      }
+      return lRetId;
+    }
+    static public int AddGenre(string strGenre1)
+    {
+      lock (m_db)
+      {
+        string strSQL;
+        try
+        {
+          string strGenre = strGenre1;
+          DatabaseUtility.RemoveInvalidChars(ref strGenre);
+          if (null == m_db) return -1;
+
+          SQLiteResultSet results;
+          strSQL = String.Format("select * from genre where strGenre like '{0}'", strGenre);
+          results = m_db.Execute(strSQL);
+          if (results.Rows.Count == 0)
+          {
+            // doesnt exists, add it
+            strSQL = String.Format("insert into genre (idGenre, strGenre) values ( NULL, '{0}' )",
+              strGenre);
+            m_db.Execute(strSQL);
+            int iNewId = m_db.LastInsertID();
+
+            return iNewId;
+
+          }
+          else
+          {
+            int iID = DatabaseUtility.GetAsInt(results, 0, "idGenre");
+            return iID;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Write(ex);
+          Open();
+        }
+
+        return -1;
+      }
+    }
+    static public int UpdateProgram(TVProgram prog)
+    {
+      int lRetId = -1;
+      lock (m_db)
+      {
+        string strSQL;
+        try
+        {
+          string strGenre = prog.Genre;
+          string strTitle = prog.Title;
+          string strDescription = prog.Description;
+          string strEpisode = prog.Episode;
+          string strRepeat = prog.Repeat;
+          string strSeriesNum = prog.SeriesNum;
+          string strEpisodeNum = prog.EpisodeNum;
+          string strEpisodePart = prog.EpisodePart;
+          string strDate = prog.Date;
+          string strStarRating = prog.StarRating;
+          string strClassification = prog.Classification;
+          DatabaseUtility.RemoveInvalidChars(ref strGenre);
+          DatabaseUtility.RemoveInvalidChars(ref strTitle);
+          DatabaseUtility.RemoveInvalidChars(ref strDescription);
+          DatabaseUtility.RemoveInvalidChars(ref strEpisode);
+          DatabaseUtility.RemoveInvalidChars(ref strRepeat);
+          DatabaseUtility.RemoveInvalidChars(ref strSeriesNum);
+          DatabaseUtility.RemoveInvalidChars(ref strEpisodeNum);
+          DatabaseUtility.RemoveInvalidChars(ref strEpisodePart);
+          DatabaseUtility.RemoveInvalidChars(ref strDate);
+          DatabaseUtility.RemoveInvalidChars(ref strStarRating);
+          DatabaseUtility.RemoveInvalidChars(ref strClassification);
+
+          if (null == m_db) return -1;
+          int iGenreId = AddGenre(strGenre);
+          int iChannelId = GetStationId(prog.Channel);
+          if (iChannelId < 0) return -1;
+
+          //check if program is already in database
+          //check if other programs exist between the start - finish time of this program
+          long endTime = Utils.datetolong(prog.EndTime.AddMinutes(-1));
+
+          strSQL = String.Format("SELECT * FROM tblPrograms WHERE idChannel={0} AND ", iChannelId);
+          strSQL += String.Format("  ( ('{0}' <= iStartTime and '{1}' >= iStartTime) or  ",
+                                prog.Start.ToString(), endTime.ToString());
+          strSQL += String.Format("    ('{0}' >= iStartTime and '{1}' >= iStartTime and '{2}' < iEndTime) )",
+                      prog.Start.ToString(), endTime.ToString(), prog.Start.ToString());
+          //  Log.WriteFile(Log.LogType.EPG, "sql:{0} {1}-{2} {3}", prog.Channel, prog.Start.ToString(), endTime.ToString(), strSQL);
+          SQLiteResultSet results2;
+          results2 = m_db.Execute(strSQL);
+          if (results2.Rows.Count > 0)
+          {
+            long idProgram = DatabaseUtility.GetAsInt64(results2, 0, "idProgram");
+            return (int)idProgram;//program already exists
+            /*
+            //and delete them
+            for (int i = 0; i < results2.Rows.Count; ++i)
+            {
+               idProgram = DatabaseUtility.GetAsInt64(results2, i, "idProgram");
+              //Log.WriteFile(Log.LogType.EPG, "sql: del {0} id:{1} {2}-{3}", i, idProgram,DatabaseUtility.Get(results2, i, "iStartTime"), DatabaseUtility.Get(results2, i, "iEndTime"));
+              strSQL = String.Format("DELETE FROM tblPrograms WHERE idProgram={0}", idProgram);
+              m_db.Execute(strSQL);
+            }*/
+          }
+          // then add the new shows
+          strSQL = String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')",
+            iChannelId, iGenreId, strTitle, prog.Start.ToString(),
+            prog.End.ToString(), strDescription, strEpisode, strRepeat, strSeriesNum, strEpisodeNum, strEpisodePart, strDate, strStarRating, strClassification);
+          //          Log.WriteFile(Log.LogType.EPG,strSQL);
+          m_db.Execute(strSQL);
+          lRetId = m_db.LastInsertID();
+        }
+        catch (Exception ex)
+        {
+          Log.Write(ex);
+          Open();
+        }
+
+      }
+      return lRetId;
+    }
+    /// <summary>
+    /// RemoveOldPrograms()
+    /// Deletes all tv programs from the database which ended more then 1 day ago
+    /// suppose its now 10 november 2004 11:07 am
+    /// then this function will remove all programs which endtime is before 9 november 2004 11:07
+    /// </summary>
+    static public void RemoveOldPrograms()
+    {
+      Log.WriteFile(Log.LogType.EPG, false, "RemoveOldPrograms()");
+      if (m_db == null) return;
+      lock (m_db)
+      {
+        //delete programs from database that are more than 1 day old
+        string strSQL = String.Empty;
+        try
+        {
+          System.DateTime yesterday = System.DateTime.Today.AddDays(-1);
+          long longYesterday = Utils.datetolong(yesterday);
+          strSQL = String.Format("DELETE FROM tblPrograms WHERE iEndTime < '{0}'", longYesterday);
+          m_db.Execute(strSQL);
+          DatabaseUtility.CompactDatabase(m_db);
+          Log.WriteFile(Log.LogType.EPG, false, "vacuum done");
+        }
+        catch (Exception ex)
+        {
+          Log.Write(ex);
+          Open();
+        }
+        return;
+      }
+    }
+    #endregion
   }
 }

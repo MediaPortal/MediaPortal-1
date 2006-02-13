@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MediaPortal.TV.Database;
+using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
 
 namespace MediaPortal.TV.Epg
@@ -31,6 +32,7 @@ namespace MediaPortal.TV.Epg
   class MHWEvent : EPGEvent
   {
     private TVChannel _tvChannel = null;
+    private RadioStation _station = null;
     private int _networkId;
     private int _serviceId;
     private int _transportId;
@@ -71,6 +73,18 @@ namespace MediaPortal.TV.Epg
           _tvChannel = TVDatabase.GetTVChannelByStream(Network == NetworkType.ATSC, Network == NetworkType.DVBT, Network == NetworkType.DVBC, Network == NetworkType.DVBS, _networkId, _transportId, _serviceId, out provider);
         }
         return _tvChannel;
+      }
+    }
+    public RadioStation RadioStation
+    {
+      get
+      {
+        if (_station == null)
+        {
+          string provider;
+          _station = RadioDatabase.GetStationByStream(Network == NetworkType.ATSC, Network == NetworkType.DVBT, Network == NetworkType.DVBC, Network == NetworkType.DVBS, _networkId, _transportId, _serviceId, out provider);
+        }
+        return _station;
       }
     }
   }

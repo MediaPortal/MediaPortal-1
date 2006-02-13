@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MediaPortal.GUI.Library;
+using MediaPortal.Radio.Database;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 
@@ -31,6 +32,7 @@ namespace MediaPortal.TV.Epg
   class EPGChannel : IComparer<EPGEvent>
   {
     private TVChannel _tvChannel = null;
+    private RadioStation _station = null;
     private int _networkId;
     private int _serviceId;
     private int _transportId;
@@ -68,12 +70,24 @@ namespace MediaPortal.TV.Epg
         {
           string provider;
           _tvChannel = TVDatabase.GetTVChannelByStream(Network == NetworkType.ATSC, Network == NetworkType.DVBT, Network == NetworkType.DVBC, Network == NetworkType.DVBS, _networkId, _transportId, _serviceId, out provider);
-          if (_tvChannel == null)
-            Log.WriteFile(Log.LogType.EPG, "epg-grab: unknown channel: type:{0} network id:{1} service id:{2} transport id:{3}", Network.ToString(), NetworkId, ServiceId, TransportId);
-          else
-            Log.WriteFile(Log.LogType.EPG, "epg-grab: channel:{0} events:{1}", _tvChannel.Name, _listEvents.Count);
+          if (_tvChannel!=null)
+             Log.WriteFile(Log.LogType.EPG, "epg-grab: channel:{0} events:{1}", _tvChannel.Name, _listEvents.Count);
         }
         return _tvChannel;
+      }
+    }
+    public RadioStation RadioStation
+    {
+      get
+      {
+        if (_station == null)
+        {
+          string provider;
+          _station = RadioDatabase.GetStationByStream(Network == NetworkType.ATSC, Network == NetworkType.DVBT, Network == NetworkType.DVBC, Network == NetworkType.DVBS, _networkId, _transportId, _serviceId, out provider);
+          if (_station != null)
+            Log.WriteFile(Log.LogType.EPG, "epg-grab: station:{0} events:{1}", _station.Name, _listEvents.Count);
+        }
+        return _station;
       }
     }
     public void Sort()
