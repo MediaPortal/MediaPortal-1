@@ -546,6 +546,8 @@
     <Compile Include="GUIRadio\GUIRadio.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUIRadio\GUIRadioGuide.cs" />
+    <Compile Include="GUIRadio\GUIRadioGuideBase.cs" />
     <Compile Include="GUIRecipes\CatReader.cs" />
     <Compile Include="GUIRecipes\GUIRecipes.cs" />
     <Compile Include="GUIRecipes\Recipe.cs" />

@@ -267,6 +267,8 @@ namespace MediaPortal.GUI.Library
      ,
       WINDOW_DIALOG_TVGUIDE = 761
 
+      ,
+      WINDOW_RADIO_GUIDE = 762
     ,
       WINDOW_VIRTUAL_KEYBOARD = 10002
      ,

@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using SQLite.NET;
@@ -1320,6 +1321,107 @@ namespace MediaPortal.Radio.Database
         return;
       }
     }
+
+
+    static public bool GetGenres(ref List<string> genres)
+    {
+      lock (m_db)
+      {
+        try
+        {
+          if (null == m_db) return false;
+          string strSQL;
+          strSQL = String.Format("select * from genre");
+          SQLiteResultSet results;
+          results = m_db.Execute(strSQL);
+          if (results.Rows.Count == 0) return false;
+          for (int i = 0; i < results.Rows.Count; ++i)
+          {
+            int id = DatabaseUtility.GetAsInt(results, i, "idGenre");
+            string genre = DatabaseUtility.Get(results, i, "strGenre");
+          }
+
+          return true;
+        }
+        catch (Exception ex)
+        {
+          Log.Write(ex);
+          Open();
+        }
+        return false;
+      }
+    }
+    static public bool GetProgramsPerChannel(string strChannel1, long iStartTime, long iEndTime, ref List<TVProgram> progs)
+    {
+      lock (m_db)
+      {
+
+        string strSQL = String.Empty;
+        progs.Clear();
+        try
+        {
+          if (null == m_db) return false;
+          if (strChannel1 == null) return false;
+          string strChannel = strChannel1;
+          DatabaseUtility.RemoveInvalidChars(ref strChannel);
+
+          string strOrder = " order by iStartTime";
+          strSQL = String.Format("select * from station,tblPrograms,genre where genre.idGenre=tblPrograms.idGenre and tblPrograms.idChannel=station.idChannel and station.strName like '{0}' ",
+            strChannel);
+          string where = String.Format(" and ( (tblPrograms.iEndTime>='{0}' and tblPrograms.iEndTime <='{1}') ", iStartTime, iEndTime);
+          where += String.Format(" or (tblPrograms.iStartTime>='{0}' and tblPrograms.iStartTime <= '{1}' ) ", iStartTime, iEndTime);
+          where += String.Format(" or (tblPrograms.iStartTime<='{0}' and tblPrograms.iEndTime >= '{1}') )", iStartTime, iEndTime);
+          strSQL += where;
+          strSQL += strOrder;
+
+
+          SQLiteResultSet results;
+          results = m_db.Execute(strSQL);
+          if (results == null) return false;
+          if (results.Rows.Count == 0) return false;
+          for (int i = 0; i < results.Rows.Count; ++i)
+          {
+            long iStart = DatabaseUtility.GetAsInt64(results, i, "tblPrograms.iStartTime");
+            long iEnd = DatabaseUtility.GetAsInt64(results, i, "tblPrograms.iEndTime");
+            bool bAdd = false;
+            if (iEnd >= iStartTime && iEnd <= iEndTime) bAdd = true;
+            if (iStart >= iStartTime && iStart <= iEndTime) bAdd = true;
+            if (iStart <= iStartTime && iEnd >= iEndTime) bAdd = true;
+            if (bAdd)
+            {
+
+              TVProgram prog = new TVProgram();
+              prog.Channel = DatabaseUtility.Get(results, i, "station.strName");
+              prog.Start = iStart;
+              prog.End = iEnd;
+              prog.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
+              prog.Title = DatabaseUtility.Get(results, i, "tblPrograms.strTitle");
+              prog.Description = DatabaseUtility.Get(results, i, "tblPrograms.strDescription");
+              prog.Episode = DatabaseUtility.Get(results, i, "tblPrograms.strEpisodeName");
+              prog.Repeat = DatabaseUtility.Get(results, i, "tblPrograms.strRepeat");
+              prog.ID = DatabaseUtility.GetAsInt(results, i, "tblPrograms.idProgram");
+              prog.SeriesNum = DatabaseUtility.Get(results, i, "tblPrograms.strSeriesNum");
+              prog.EpisodeNum = DatabaseUtility.Get(results, i, "tblPrograms.strEpisodeNum");
+              prog.EpisodePart = DatabaseUtility.Get(results, i, "tblPrograms.strEpisodePart");
+              prog.Date = DatabaseUtility.Get(results, i, "tblPrograms.strDate");
+              prog.StarRating = DatabaseUtility.Get(results, i, "tblPrograms.strStarRating");
+              prog.Classification = DatabaseUtility.Get(results, i, "tblPrograms.strClassification");
+              progs.Add(prog);
+            }
+          }
+
+          return true;
+
+        }
+        catch (Exception ex)
+        {
+          Log.Write(ex);
+          Open();
+        }
+        return false;
+      }
+    }
+
     #endregion
   }
 }
