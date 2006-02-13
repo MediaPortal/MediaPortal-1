@@ -111,7 +111,7 @@ namespace MyMail
     }
     public string Description() // Return the description which should b shown in the plugin menu
     {
-      return "A Mail Plugin for MP";
+      return "Receive and read your mails in MediaPortal";
     }
     public string Author() // Return the author which should b shown in the plugin menu
     {

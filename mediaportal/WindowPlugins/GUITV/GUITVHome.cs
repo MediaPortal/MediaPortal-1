@@ -887,7 +887,7 @@ namespace MediaPortal.GUI.TV
 
     public string Description()
     {
-      return "My TV plugin for watching & recording tv";
+      return "Watch, record and timeshift analog and digital TV with MediaPortal";
     }
 
     public bool HasSetup()

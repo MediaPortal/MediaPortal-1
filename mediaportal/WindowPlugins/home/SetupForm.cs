@@ -197,7 +197,7 @@ namespace home
 
     public string Description()
     {
-      return "Mediaportals home screen";
+      return "Configures the appearance of the MediaPortal home screen";
     }
 
     public string Author()

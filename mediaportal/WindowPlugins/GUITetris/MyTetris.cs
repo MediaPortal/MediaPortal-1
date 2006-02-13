@@ -323,7 +323,7 @@ namespace MediaPortal.Games.Tetris
 
     public string Description()
     {
-      return "Play Tetris in MediaPortal";
+      return "Play the famous Tetris game in MediaPortal";
     }
 
     public void ShowPlugin()

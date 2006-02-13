@@ -94,7 +94,7 @@ namespace MediaPortal.GUI.WebBrowser
     /// <returns></returns>
     public string Description()
     {
-      return "A web browser plugin based on the Mozilla ActiveX control";
+      return "Browse the internet on your TV";
     }
 
     /// <summary>

@@ -938,7 +938,7 @@ namespace MediaPortal.GUI.Radio
 
     public string Description()
     {
-      return "Plugin to listen to local & internet radio";
+      return "Listen to analog, DVB and internet radio";
     }
 
     public void ShowPlugin()

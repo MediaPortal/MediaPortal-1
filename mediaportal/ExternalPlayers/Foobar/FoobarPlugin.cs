@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.IO;
 using System.Net;
@@ -359,7 +364,7 @@ namespace MediaPortal.FoobarPlugin
     {
       if(m_supportedExtensions.Length == 0)
       {
-        return "Foobar external player.  Press configure...";
+        return "Advanced audio player - http://www.foobar2000.org";
       }
       return base.Description();
     }

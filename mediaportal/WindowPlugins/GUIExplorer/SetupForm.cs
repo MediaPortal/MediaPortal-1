@@ -222,7 +222,7 @@ namespace GUIExplorer
 
     public string Description()
     {
-      return "A File Explorer plugin for MediaPortal";
+      return "Browse your files with MediaPortal";
     }
 
     public string Author()

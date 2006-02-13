@@ -665,9 +665,9 @@
     <Compile Include="GUIScript\ScriptHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUIScript\SetupForm.cs">
+    <None Include="GUIScript\SetupForm.cs">
       <SubType>Form</SubType>
-    </Compile>
+    </None>
     <Compile Include="GUISettings\DVD\GUISettingsDVD.cs">
       <SubType>Code</SubType>
     </Compile>

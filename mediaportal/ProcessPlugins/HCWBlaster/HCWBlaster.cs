@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +21,8 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
@@ -32,9 +36,9 @@ namespace MediaPortal.HCWBlaster
 	public class HCWBlaster: IPlugin, ISetupForm
 	{
 		private static int    _MPWindowID  = 9090;
-		private static string _Description = "Hauppauge IR Blaster Plugin";
+		private static string _Description = "Controls your external settop box via infrared remote commands";
 		private static string _Author      = "unknown";
-		private static string _PluginName  = "HCW IR Blaster";
+    private static string _PluginName = "Hauppauge IR Blaster";
 		private static bool   _CanEnable   = true;
 		private static bool   _DefEnabled  = false;
 		private static bool   _HasSetup    = true;

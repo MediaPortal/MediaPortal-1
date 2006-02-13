@@ -120,7 +120,7 @@ namespace MediaPortal.GUI.Settings
 
     public string Description()
     {
-      return "Settings";
+      return "Configure MediaPortal with wizards and a graphical user interface";
     }
 
     public void ShowPlugin()

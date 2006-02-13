@@ -1420,7 +1420,7 @@ namespace MediaPortal.GUI.Pictures
 
     public string Description()
     {
-      return "Plugin to watch your photo's";
+      return "Watch your photos and slideshows with MediaPortal";
     }
 
     public void ShowPlugin()

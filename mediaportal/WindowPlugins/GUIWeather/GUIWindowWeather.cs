@@ -1431,7 +1431,7 @@ namespace MediaPortal.GUI.Weather
 
     public string Description()
     {
-      return "Plugin to show the current weather";
+      return "Shows the current weather (incl. forecast) in your region or anywhere in the world";
     }
 
     public void ShowPlugin()

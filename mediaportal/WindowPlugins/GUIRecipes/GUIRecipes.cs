@@ -106,7 +106,7 @@ namespace GUIRecipes
 
     public string Description()
     {
-      return "A recipe plugin for MediaPortal";
+      return "Browse your cooking recipes with MediaPortal";
     }
 
     public string Author()

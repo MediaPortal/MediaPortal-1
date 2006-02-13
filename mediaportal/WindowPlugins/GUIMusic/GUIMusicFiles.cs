@@ -1231,7 +1231,7 @@ namespace MediaPortal.GUI.Music
 
     public string Description()
     {
-      return "Plugin to play & organize your music";
+      return "Plays and organizes your music files";
     }
 
     public void ShowPlugin()

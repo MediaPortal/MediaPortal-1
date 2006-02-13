@@ -1018,7 +1018,7 @@ namespace MediaPortal.GUI.MSN
 
     public string Description()
     {
-      return "MSN _messenger plugin";
+      return "Use the MSN messenger in MediaPortal";
     }
 
     public bool DefaultEnabled()

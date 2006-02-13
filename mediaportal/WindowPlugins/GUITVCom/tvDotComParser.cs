@@ -1193,7 +1193,7 @@ namespace MediaPortal.GUI.Video
     // Returns the description of the plugin is shown in the plugin menu
     public string Description()
     {
-      return "Downloads Episode Information and displays it inside MediaPortal.";
+      return "Downloads and displays episode information for recorded TV in MediaPortal";
     }
 
     // Returns the author of the plugin which is shown in the plugin menu

@@ -595,7 +595,7 @@ namespace GUIBurner
 
     public string Description()
     {
-      return "A CD/DVD burner plugin for MediaPortal";
+      return "Burn CDs in MediaPortal";
     }
 
     public string Author()

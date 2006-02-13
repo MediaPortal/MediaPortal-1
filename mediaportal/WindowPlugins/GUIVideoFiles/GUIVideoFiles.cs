@@ -1723,7 +1723,7 @@ namespace MediaPortal.GUI.Video
 
     public string Description()
     {
-      return "Plugin to watch and organize your videos";
+      return "Watch and organize your video files";
     }
 
     public void ShowPlugin()

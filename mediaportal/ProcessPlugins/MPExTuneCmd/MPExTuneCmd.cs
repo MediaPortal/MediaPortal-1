@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Diagnostics;
@@ -132,7 +136,7 @@ namespace MediaPortal.MPExTuneCmd
 
 		public string PluginName()
 		{
-			return "MPExTuneCmd Plugin";
+			return "MPExTuneCmd";
 		}
 
 		public bool HasSetup()
@@ -165,7 +169,7 @@ namespace MediaPortal.MPExTuneCmd
 
 		public string Description()
 		{
-			return "External Tuner command interface";
+			return "Controls your external tuner";
 		}
 
 		/// <summary>

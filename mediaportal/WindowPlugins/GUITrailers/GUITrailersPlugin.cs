@@ -53,7 +53,7 @@ namespace MediaPortal.GUI.Video
     // Returns the description of the plugin is shown in the plugin menu
     public string Description()
     {
-      return "Browse Trailers & clips on Yahoo Movies";
+      return "Browse trailers and movie clips on Yahoo Movies and TSOD";
     }
 
     // Returns the author of the plugin which is shown in the plugin menu

@@ -53,7 +53,7 @@ namespace MediaPortal.Topbar
     }
     public string Description()
     {
-      return "Render and manages the navigation bar";
+      return "Navigation bar for music, video, etc. for all MediaPortal screens";
     }
 
     public int GetWindowId()

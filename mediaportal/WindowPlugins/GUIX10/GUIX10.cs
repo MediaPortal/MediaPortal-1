@@ -53,8 +53,8 @@ namespace MediaPortal.GUI.X10Plugin
     }
 
     public static int WINDOW_X10PLUGIN = 9562;
-    const string PLUGIN_NAME = "X10 Automation";
-    const string PLUGIN_NAME_SHORT = "X10 Plugin";
+    const string PLUGIN_NAME = "X10 Home Automation";
+    const string PLUGIN_NAME_SHORT = "X10 Home Automation";
 
     private SendX10 x10module;
     private ApplianceConfiguration appConfig;
@@ -355,7 +355,7 @@ namespace MediaPortal.GUI.X10Plugin
 
     public string Description()
     {
-      return PLUGIN_NAME;
+      return "Automate your home with X10 devices";
     }
 
     public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)

@@ -921,7 +921,7 @@ namespace GUIStatus
 
     public string Description()
     {
-      return "A status plugin for MediaPortal";
+      return "Displays the system status of your HTPC";
     }
 
     public string Author()

@@ -164,7 +164,7 @@ namespace WindowPlugins.GUIPrograms
     }
     public string Description()
     {
-      return "A Program Launching Plugin";
+      return "Launches external documents and applications";
     }
     public string Author()
     {

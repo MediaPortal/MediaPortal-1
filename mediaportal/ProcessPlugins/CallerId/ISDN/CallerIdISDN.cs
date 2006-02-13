@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal - Author: mPod
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Collections;
@@ -209,7 +213,7 @@ namespace ProcessPlugins.CallerId
 
     public string Description()
     {
-      return "ISDN Caller-ID Plugin";
+      return "Displays ISDN caller-ID information";
     }
 
     public bool DefaultEnabled()

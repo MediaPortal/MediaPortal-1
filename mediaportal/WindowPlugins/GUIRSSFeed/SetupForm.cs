@@ -252,7 +252,7 @@ namespace GUIRSSFeed
     /// </summary>
     public string Description()
     {
-      return "Plugin to read RSS feeds";
+      return "Read RSS news feeds in MediaPortal";
     }
 
     /// <summary>
