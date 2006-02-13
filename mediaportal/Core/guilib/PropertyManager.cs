@@ -116,6 +116,25 @@ namespace MediaPortal.GUI.Library
       _properties["#TV.Guide.Date"] = String.Empty;
       _properties["#TV.Guide.StarRating"] = String.Empty;
       _properties["#TV.Guide.Classification"] = String.Empty;
+
+
+      _properties["#Radio.Guide.Day"] = String.Empty;
+      _properties["#Radio.Guide.thumb"] = String.Empty;
+      _properties["#Radio.Guide.Title"] = String.Empty;
+      _properties["#Radio.Guide.Time"] = String.Empty;
+      _properties["#Radio.Guide.Duration"] = String.Empty;
+      _properties["#Radio.Guide.TimeFromNow"] = String.Empty;
+      _properties["#Radio.Guide.Description"] = String.Empty;
+      _properties["#Radio.Guide.Genre"] = String.Empty;
+      _properties["#Radio.Guide.EpisodeName"] = String.Empty;
+      _properties["#Radio.Guide.SeriesNumber"] = String.Empty;
+      _properties["#Radio.Guide.EpisodeNumber"] = String.Empty;
+      _properties["#Radio.Guide.EpisodePart"] = String.Empty;
+      _properties["#Radio.Guide.EpisodeDetail"] = String.Empty;
+      _properties["#Radio.Guide.Date"] = String.Empty;
+      _properties["#Radio.Guide.StarRating"] = String.Empty;
+      _properties["#Radio.Guide.Classification"] = String.Empty;
+
       _properties["#TV.RecordedTV.Title"] = String.Empty;
       _properties["#TV.RecordedTV.Time"] = String.Empty;
       _properties["#TV.RecordedTV.Description"] = String.Empty;

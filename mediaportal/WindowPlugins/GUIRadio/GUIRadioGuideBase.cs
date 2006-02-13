@@ -35,6 +35,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.Player;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Database;
+using MediaPortal.TV.Recording;
 #endregion
 
 
@@ -94,7 +95,6 @@ namespace MediaPortal.GUI.Radio
     long _currentEndTime = 0;
     TVProgram _currentProgram = null;
     static string _tvGuideFileName;
-    static System.IO.FileSystemWatcher _tvGuideFileWatcher = null;
     bool _needUpdate = false;
     DateTime m_dtStartTime = DateTime.Now;
     bool _useColorsForGenres = false;
@@ -1969,6 +1969,16 @@ namespace MediaPortal.GUI.Radio
 
     void OnRecord(bool isItemSelected)
     {
+      if (_singleChannelView)
+      {
+        RadioStation station = (RadioStation)_channelList[_singleChannelNumber];
+        Recorder.StartRadio(station.Name);
+      }
+      else
+      {
+        RadioStation station = (RadioStation)_channelList[_channelOffset + _cursorX];
+        Recorder.StartRadio(station.Name);
+      }
     }
     void CheckRecordingConflicts()
     {
