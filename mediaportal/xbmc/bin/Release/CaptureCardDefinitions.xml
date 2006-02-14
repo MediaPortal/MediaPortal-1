@@ -8500,7 +8500,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Pinnacle PCTV 310i Analogue" capturename="Pinnacle PCTV 310i BDA Analog Capture" devid="ven_1131&amp;dev_7133&subsys_002f11bd&amp;rev_01">
+  <capturecard commercialname="Pinnacle PCTV 310i Analogue" capturename="Pinnacle PCTV 310i BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_002f11bd&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
