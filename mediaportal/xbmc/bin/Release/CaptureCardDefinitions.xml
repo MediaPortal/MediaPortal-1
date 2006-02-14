@@ -8588,4 +8588,32 @@
 	  </connections>
 	</tv>
   </capturecard>
+
+  <capturecard commercialname="ATI HDTV Wonder (Analogue)" capturename="ATI DTV Wonder Analog AV Capture" devid="ven_14F1&amp;dev_8800&amp;subsys_a1011002&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		name="ATI DTV Wonder Analog TV Tuner"		checkdevice="true"/>
+        <filter cat="tvaudio"		name="ATI DTV Wonder Analog TV Audio"		checkdevice="true"/>
+        <filter cat="crossbar"		name="ATI DTV Wonder Analog AV Crossbar"	checkdevice="true"/>
+        <filter cat="capture"  		name="ATI DTV Wonder Analog AV Capture"  	checkdevice="true"/>
+		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
+        <filter cat="encodervideo"  name="ATI Media Center Video Encoder"		checkdevice="false"/>
+        <filter cat="encoderaudio"  name="ATI Media Center Audio Encoder"		checkdevice="false"/>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"			checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvaudio%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"      sourcepin="0" sinkfilter="encodervideo"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="encoderaudio"	sinkpin="0"/>
+        <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+        <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
