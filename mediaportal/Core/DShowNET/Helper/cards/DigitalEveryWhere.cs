@@ -193,6 +193,9 @@ namespace DShowNET
       if (_isDigitalEverywhere)
       {
         _hasCAM = IsCamPresent();
+
+        //Log.Write("FireDTV Driver version:{0} ", GetDriverVersionNumber());
+        //Log.Write("FireDTV FW version:{0} ", GetFirmwareVersionNumber());
       }
       _isInitialized = true;
     }
@@ -245,8 +248,6 @@ namespace DShowNET
       //  UCHAR uData[MAX_PMT_SIZE];        //10....
       //}FIRESAT_CA_DATA, *PFIRESAT_CA_DATA;
 
-      //Log.Write("FireDTV Driver version:{0} ", GetDriverVersionNumber());
-      //Log.Write("FireDTV FW version:{0} ", GetFirmwareVersionNumber());
       if (PMT == null) return false;
       if (pmtLength == 0) return false;
 
@@ -404,6 +405,7 @@ namespace DShowNET
 
     public bool SetHardwarePidFiltering(bool isDvbc, bool isDvbT, bool isDvbS, bool isAtsc, ArrayList pids)
     {
+      return true ;
       string logStart = "dvbt:";
       DirectShowLib.IKsPropertySet propertySet = captureFilter as DirectShowLib.IKsPropertySet;
       Guid propertyGuid = KSPROPSETID_Firesat;

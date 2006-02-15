@@ -2223,7 +2223,7 @@ namespace MediaPortal.TV.Recording
             GUIGraphicsContext.SendMessage(msg);
           }
         }
-        
+        /*
         if (SignalPresent())
         {
           //if (_streamDemuxer.IsScrambled)
@@ -2241,7 +2241,7 @@ namespace MediaPortal.TV.Recording
               }
             }
           }
-        }
+        }*/
       }
     }//public void Process()
 
