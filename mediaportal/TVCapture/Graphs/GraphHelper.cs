@@ -329,6 +329,43 @@ namespace MediaPortal.TV.Recording
       return String.Empty;
     }
 
+    /// <summary>
+    /// Retrieves the hardware location information associated with a moniker.
+    /// Can be used to help decided which filters go together.
+    /// </summary>
+    /// <returns>
+    /// A string of format "PCI bus x, device y" where x and y are numbers
+    /// </returns>
+      public string GetHardwareLocation(string monikerName)
+      {
+          //Log.WriteFile(Log.LogType.Capture, "    GetHardwareLocation: filter:{1}", monikerName);
+
+          int pos1 = monikerName.IndexOf("#");
+          int pos2 = monikerName.LastIndexOf("#");
+          string left = monikerName.Substring(0, pos1);
+          string mid = monikerName.Substring(pos1 + 1, (pos2 - pos1) - 1);
+          mid = mid.Replace("#", "\\");
+          string right = monikerName.Substring(pos2 + 1);
+          string registryKeyName = mid;
+
+          registryKeyName = @"SYSTEM\CurrentControlSet\Enum\PCI\" + mid;
+          Log.Write("        key:{0}", registryKeyName);
+
+          RegistryKey hklm = Registry.LocalMachine;
+          RegistryKey subkey = hklm.OpenSubKey(registryKeyName, false);
+          if (subkey != null)
+          {
+              string locInfo = (string)subkey.GetValue("LocationInformation");
+              if (locInfo == null) locInfo = string.Empty;
+              //Log.Write("        LocationInformation:{0}", locInfo);
+              int fPos = locInfo.LastIndexOf(",");
+              locInfo = locInfo.Substring(0, fPos);
+              return locInfo;
+          }
+          hklm.Close();
+          return String.Empty;
+      }
+
 
     /// <summary>
     /// #MW#
@@ -341,7 +378,7 @@ namespace MediaPortal.TV.Recording
       _captureCardDefinition = null;
       try
       {
-
+         Log.WriteFile(Log.LogType.Capture, "LoadDefs for device at {0}",GetHardwareLocation(videoDeviceMoniker));
         //Log.WriteFile(Log.LogType.Capture, "LoadDefinitions() card:{0} {1}", ID, this.FriendlyName);
         CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
         if (CaptureCardDefinitions.CaptureCards.Count == 0)
@@ -396,9 +433,15 @@ namespace MediaPortal.TV.Recording
         _captureCardDefinition.Tv.FilterDefinitions = new ArrayList();
         foreach (FilterDefinition fd in ccd.Tv.FilterDefinitions)
         {
-          fd.DSFilter = null;
-          fd.MonikerDisplayName = String.Empty;
-          _captureCardDefinition.Tv.FilterDefinitions.Add(fd);
+            fd.DSFilter = null;
+            fd.MonikerDisplayName = String.Empty;
+            FilterDefinition fd_copy = new FilterDefinition();
+            fd_copy.Category = fd.Category;
+            fd_copy.CheckDevice = fd.CheckDevice;
+            fd_copy.DSFilter = fd.DSFilter;
+            fd_copy.FriendlyName = fd.FriendlyName;
+            fd_copy.MonikerDisplayName = fd.MonikerDisplayName;
+            _captureCardDefinition.Tv.FilterDefinitions.Add(fd_copy);
         }
         _captureCardDefinition.Tv.ConnectionDefinitions = ccd.Tv.ConnectionDefinitions;
         _captureCardDefinition.Tv.InterfaceDefinition = ccd.Tv.InterfaceDefinition;
@@ -512,11 +555,28 @@ namespace MediaPortal.TV.Recording
                   }
                 }
 
+                // Match the filter based on the hardware location, that is find the filter
+                // associated with the same piece of hardware.
+                if (!filterFound)
+                {
+                    foreach (Filter f in al) {
+                        string locf = GetHardwareLocation(f.MonikerString);
+                        string locv = GetHardwareLocation(videoDeviceMoniker);
+                        if (locf.Equals(locv) && !locf.Equals(string.Empty) && !locv.Equals(string.Empty) ) {
+                            filter = f;
+                            filterFound = true;
+                            Log.WriteFile(Log.LogType.Capture, "Filter matched on hardware location: {1} -> {0}", f.MonikerString, GetHardwareLocation(f.MonikerString));
+                            break;
+                        }
+                    }
+                    if (!filterFound) Log.WriteFile(Log.LogType.Capture, "No filters matched on hardware location");
+                }
+
                 if (!filterFound)
                 {
                   if (al.Count > 0)
                   {
-                    Log.Write("use global filter moniker");
+                    Log.Write("use global filter moniker (if you have two identical tuner cards and see this, you might experience problems using both)");
                     filter = al[0] as Filter;
                     filterFound = true;
                   }
