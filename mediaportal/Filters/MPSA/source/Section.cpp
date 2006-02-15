@@ -34,7 +34,7 @@
 //////////////////////////////////////////////////////////////////////
 
 char *logbuffer=NULL; 
-#ifdef DEBUG
+#ifndef DEBUG
 void Log(const char *fmt, ...) 
 {
 	if (logbuffer==NULL)

@@ -1303,7 +1303,7 @@ namespace MediaPortal.TV.Recording
       //on others  signalpresent is true when tuned to a transponder
       //so we just look if any variables returns true
 
-      if (isTunerLocked /*|| isSignalPresent || (_signalQuality > 0)*/)
+      if (isTunerLocked )
       {
         _signalPresent = true;
       }
