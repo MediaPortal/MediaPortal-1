@@ -2711,7 +2711,7 @@ namespace MediaPortal.TV.Recording
     {
       //it may take a while before signal quality/level is correct
       if (_filterDvbAnalyzer == null) return;
-      Log.WriteFile(Log.LogType.Capture, "DVBGraph: StoreChannels() signal level:{0} signal quality:{1}", SignalStrength(), SignalQuality());
+      Log.WriteFile(Log.LogType.Capture, "DVBGraph: StoreChannels() signal level:{0} signal quality:{1} locked:{2}", SignalStrength(), SignalQuality(),_tunerLocked);
       TVDatabase.ClearCache();
       //get list of current tv channels present in the database
       List<TVChannel> tvChannels = new List<TVChannel>();
@@ -2725,7 +2725,7 @@ namespace MediaPortal.TV.Recording
       while (true)
       {
         TimeSpan ts = DateTime.Now - dt;
-        if (ts.TotalMilliseconds > 5000) break;
+        if (ts.TotalMilliseconds > 8000) break;
         System.Threading.Thread.Sleep(1000);
         if (_scanPidListReady) break;
       }

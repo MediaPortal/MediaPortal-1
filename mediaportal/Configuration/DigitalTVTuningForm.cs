@@ -323,7 +323,6 @@ namespace MediaPortal
       GUIGraphicsContext.VideoWindow = new Rectangle(panel1.Location, panel1.Size);
 
       tuningInterface.AutoTuneTV(captureCard, this);
-      tuningInterface.Next();
       OnStatus("");
       OnStatus2("");
       OnProgress(0);
