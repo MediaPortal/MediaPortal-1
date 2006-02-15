@@ -1293,7 +1293,7 @@ namespace MediaPortal.TV.Recording
         _signalQuality = (int)signalQuality / _tunerStatistics.Count;
         _signalLevel = (int)signalStrength / _tunerStatistics.Count;
       }
-      if (isTunerLocked)
+      if (isTunerLocked && _signalQuality>0)
         _tunerLocked = true;
       else
         _tunerLocked = false;

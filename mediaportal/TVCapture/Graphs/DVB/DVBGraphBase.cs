@@ -2692,6 +2692,7 @@ namespace MediaPortal.TV.Recording
       }
       _signalLostTimer = DateTime.Now;
       UpdateSignalPresent();
+      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }//public void Tune(object tuningObject)
 
     protected virtual void SetupDiseqc(int disecqNo)
