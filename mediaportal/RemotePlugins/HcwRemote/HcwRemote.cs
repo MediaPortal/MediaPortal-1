@@ -30,6 +30,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using System.Threading;
 using System.Collections;
+using System.IO;
 
 
 namespace MediaPortal.InputDevices
@@ -108,6 +109,34 @@ namespace MediaPortal.InputDevices
         port = xmlreader.GetValueAsInt("remote", "HCWHelperPort", 2110);
       }
       if (controlEnabled)
+      {
+        string exePath = irremote.GetHCWPath();
+        string dllPath = irremote.GetDllPath();
+
+        bool hcwDriverUpToDate = true;
+
+        if (File.Exists(exePath + "Ir.exe"))
+        {
+          FileVersionInfo exeVersionInfo = FileVersionInfo.GetVersionInfo(exePath + "Ir.exe");
+          if (exeVersionInfo.FileVersion.CompareTo(irremote.CurrentVersion) < 0)
+            hcwDriverUpToDate = false;
+        }
+
+        if (File.Exists(dllPath + "irremote.DLL"))
+        {
+          FileVersionInfo dllVersionInfo = FileVersionInfo.GetVersionInfo(dllPath + "irremote.DLL");
+          if (dllVersionInfo.FileVersion.CompareTo(irremote.CurrentVersion) < 0)
+            hcwDriverUpToDate = false;
+        }
+
+        if (!hcwDriverUpToDate)
+        {
+          Log.Write("HCW: ==============================================================================================");
+          Log.Write("HCW: Your remote control driver components are not up to date! To avoid problems, you should");
+          Log.Write("HCW: get the latest Hauppauge drivers here: http://www.hauppauge.co.uk/board/showthread.php?p=25253");
+          Log.Write("HCW: ==============================================================================================");
+        }
+
         try
         {
           hcwHandler = new InputHandler("Hauppauge HCW");
@@ -127,6 +156,7 @@ namespace MediaPortal.InputDevices
           controlEnabled = false;
           Log.Write("HCW: version mismatch in default mapping file - reinstall MediaPortal");
         }
+      }
 
       if (controlEnabled)
       {

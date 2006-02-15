@@ -27,6 +27,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
+using MediaPortal.GUI.Library;
+using System.IO;
 
 namespace MediaPortal.InputDevices
 {
@@ -88,6 +91,7 @@ namespace MediaPortal.InputDevices
 
     #endregion
 
+    public static string CurrentVersion = "2.49.23332";
 
     public class IRFailedException : Exception
     {
@@ -131,5 +135,41 @@ namespace MediaPortal.InputDevices
       return SetDllDirectory(PathName);
     }
 
+    /// <summary>
+    /// Get the Hauppauge IR components installation path from the windows registry.
+    /// </summary>
+    /// <returns>Installation path of the Hauppauge IR components</returns>
+    public static string GetHCWPath()
+    {
+      string dllPath = null;
+      try
+      {
+        RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Hauppauge WinTV Infrared Remote");
+        dllPath = rkey.GetValue("UninstallString").ToString();
+        if (dllPath.IndexOf("UNir32") > 0)
+          dllPath = dllPath.Substring(0, dllPath.IndexOf("UNir32"));
+        else if (dllPath.IndexOf("UNIR32") > 0)
+          dllPath = dllPath.Substring(0, dllPath.IndexOf("UNIR32"));
+      }
+      catch (System.NullReferenceException)
+      {
+        Log.Write("HCW: Could not find registry entries for driver components! (Not installed?)");
+      }
+      return dllPath;
+    }
+
+    /// <summary>
+    /// Returns the path of the DLL component
+    /// </summary>
+    /// <returns>DLL path</returns>
+    public static string GetDllPath()
+    {
+      string dllPath = GetHCWPath();
+      if (!File.Exists(dllPath + "irremote.DLL"))
+      {
+        dllPath = null;
+      }
+      return dllPath;
+    }
   }
 }
