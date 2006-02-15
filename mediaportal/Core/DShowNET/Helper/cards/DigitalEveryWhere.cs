@@ -28,6 +28,7 @@ namespace DShowNET
 {
   public class DigitalEverywhere : IksPropertyUtils
   {
+    #region structs
     [StructLayout(LayoutKind.Explicit, Size = 56), ComVisible(true)]
     struct FIRESAT_SELECT_PIDS_DVBS //also for DVBC
     {
@@ -152,6 +153,7 @@ namespace DShowNET
       [FieldOffset(54)]
       public ushort dummy3;
     }
+    #endregion
 
     static public readonly Guid KSPROPSETID_Firesat = new Guid(0xab132414, 0xd060, 0x11d0, 0x85, 0x83, 0x00, 0xc0, 0x4f, 0xd9, 0xba, 0xf3);
     #region property ids
@@ -177,15 +179,30 @@ namespace DShowNET
     const int CI_ERR_MSG_AVAILABLE = 0x0001;
     #endregion
 
+    #region variables
+    bool _isDigitalEverywhere;
+    bool _hasCAM;
+    bool _isInitialized;
+    #endregion
     public DigitalEverywhere(IBaseFilter filter)
       : base(filter)
     {
+      _hasCAM = false;
+      _isInitialized = false;
+      _isDigitalEverywhere = IsDigitalEverywhere;
+      if (_isDigitalEverywhere)
+      {
+        _hasCAM = IsCamPresent();
+      }
+      _isInitialized = true;
     }
 
     public bool IsDigitalEverywhere
     {
       get
       {
+        if (_isInitialized) return _isDigitalEverywhere;
+
         IKsPropertySet propertySet = captureFilter as IKsPropertySet;
         if (propertySet == null) return false;
         Guid propertyGuid = KSPROPSETID_Firesat;
@@ -214,8 +231,11 @@ namespace DShowNET
     /// </preconditions>
     public bool SendPMTToFireDTV(byte[] PMT, int pmtLength)
     {
-      if (IsCamPresent() == false) return true;
-      if (IsCamReady() == false) return false;
+      if (_hasCAM==false) return true;
+      if (IsCamReady() == false)
+      {
+        ResetCAM();
+      }
 
       //typedef struct _FIRESAT_CA_DATA{ 
       //  UCHAR uSlot;                      //0
@@ -629,6 +649,7 @@ namespace DShowNET
 
     public bool IsCamPresent()
     {
+      if (_isInitialized) return _hasCAM;
       int camStatus = GetCAMStatus();
       if ((camStatus & CI_MODULE_PRESENT) != 0)
       {

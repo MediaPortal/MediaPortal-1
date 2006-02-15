@@ -121,15 +121,28 @@ namespace DShowNET
     readonly uint THBDA_IOCTL_CI_PARSER_PMT = 0xaa00033c;
     readonly uint THBDA_IOCTL_CI_GET_STATE = 0xaa000320;//CTL_CODE(THBDA_IO_INDEX, 200, METHOD_BUFFERED, FILE_ANY_ACCESS)
 
+    bool _initialized;
+    bool _isTwinHanCard;
+    bool _camPresent;
     public Twinhan(IBaseFilter filter)
       : base(filter)
     {
-      //isTwinHan=IsTwinhanCard();
+      _initialized = false;
+      _camPresent = false;
+      _isTwinHanCard = IsTwinhan;
+      if (_isTwinHanCard)
+      {
+        _camPresent = IsCamPresent();
+      }
+      _initialized = true;
+
     }
     public bool IsTwinhan
     {
       get
       {
+        if (_initialized) return _isTwinHanCard;
+
         bool result=IsTwinhanCard();
         if (result)
         {
@@ -208,6 +221,7 @@ namespace DShowNET
     }
     public bool IsCamPresent()
     {
+      if (_initialized) return _camPresent;
       uint CIState;
       uint MMIState;
       GetCAMStatus(out CIState, out MMIState);
@@ -220,6 +234,7 @@ namespace DShowNET
     }
     public bool IsTwinhanCard()
     {
+      if (_initialized) return _isTwinHanCard;
       Log.Write("Twinhan: check for twinhan driver");
       
       bool success = false;

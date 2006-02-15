@@ -145,7 +145,7 @@ namespace DShowNET.Helper
     {
       if (digitalEverywhere.IsDigitalEverywhere)
       {
-        if (digitalEverywhere.IsCamPresent() && digitalEverywhere.IsCamReady() )
+        if (digitalEverywhere.IsCamPresent()  )
         {
           return true;
         }
@@ -153,7 +153,7 @@ namespace DShowNET.Helper
       }
       if (twinhan.IsTwinhan)
       {
-        if (twinhan.IsCamReady())
+        if ( twinhan.IsCamPresent() )
         {
           return true;
         }

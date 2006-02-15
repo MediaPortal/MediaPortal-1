@@ -581,7 +581,11 @@ namespace MediaPortal.TV.Recording
           _vmr9 = null;
         }
       }
-
+      GetTvChannelFromDatabase(channel);
+      if (_currentTuningObject == null)
+      {
+        return false;
+      }
       // add the preferred video/audio codecs
       AddPreferredCodecs(true, true);
 
@@ -762,6 +766,10 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Capture, "DVBGraph:StartTimeShifting() {0}", channel.Name);
 
       GetTvChannelFromDatabase(channel);
+      if (_currentTuningObject == null)
+      {
+        return false;
+      }
       _isUsingAC3 = false;
       if (channel != null)
       {
@@ -2264,6 +2272,7 @@ namespace MediaPortal.TV.Recording
         int audio1, audio2, audio3, ac3Pid;
         string audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3;
         bool HasEITPresentFollow, HasEITSchedule;
+        _currentTuningObject = null;
         switch (_networkType)
         {
           case NetworkType.ATSC:
@@ -2273,6 +2282,11 @@ namespace MediaPortal.TV.Recording
               int symbolrate = 0, innerFec = 0, modulation = 0, physicalChannel = 0;
               int minorChannel = 0, majorChannel = 0;
               TVDatabase.GetATSCTuneRequest(channel.ID, out physicalChannel, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out minorChannel, out majorChannel, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
+              if (physicalChannel == -1)
+              {
+                Log.WriteFile(Log.LogType.Capture, true, "DVBGraph:database invalid tuning details for channel:{0}", channel.ID);
+                return;
+              }
               frequency = 0;
               symbolrate = 0;
               Log.WriteFile(Log.LogType.Capture, "DVBGraph:  tuning details: frequency:{0} KHz physicalChannel:{1} major channel:{2} minor channel:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8} video:0x{9:X} audio:0x{10:X} pcr:0x{11:X}",
@@ -2322,7 +2336,7 @@ namespace MediaPortal.TV.Recording
               }
               Log.WriteFile(Log.LogType.Capture, "DVBGraph:  tuning details: frequency:{0} KHz symbolrate:{1} innerFec:{2} modulation:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
                 frequency, symbolrate, innerFec, modulation, ONID, TSID, SID, providerName);
-              bool needSwitch = true;
+              //bool needSwitch = true;
               /*if (_currentTuningObject!=null)
               {
                 if (_currentTuningObject.Frequency==frequency &&
@@ -2516,6 +2530,10 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:TuneChannel() tune to channel:{0}", channel.ID);
 
         GetTvChannelFromDatabase(channel);
+        if (_currentTuningObject == null)
+        {
+          return;
+        }
         SubmitTuneRequest(_currentTuningObject);
 
         if (_currentTuningObject.AC3Pid <= 0) _currentTuningObject.AC3Pid = -1;
@@ -3334,6 +3352,7 @@ namespace MediaPortal.TV.Recording
       int frequency = -1, ONID = -1, TSID = -1, SID = -1, pmtPid = -1, pcrPid = -1;
       int audioPid = -1, bandwidth = 8;
       string providerName;
+      _currentTuningObject = null;
       switch (_networkType)
       {
         case NetworkType.ATSC:
@@ -3343,7 +3362,11 @@ namespace MediaPortal.TV.Recording
             int symbolrate = 0, innerFec = 0, modulation = 0, physicalChannel = 0;
             int minorChannel = 0, majorChannel = 0;
             RadioDatabase.GetATSCTuneRequest(channel.ID, out physicalChannel, out minorChannel, out majorChannel, out providerName, out frequency, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out pmtPid, out pcrPid);
-
+            if (physicalChannel <0)
+            {
+              Log.WriteFile(Log.LogType.Capture, true, "DVBGraph:database invalid tuning details for station:{0}", channel.ID);
+              return;
+            }
             Log.WriteFile(Log.LogType.Capture, "DVBGraph:  tuning details: frequency:{0} KHz physicalChannel:{1} symbolrate:{2} innerFec:{3} modulation:{4} ONID:{5} TSID:{6} SID:{7} provider:{8}",
               frequency, physicalChannel, symbolrate, innerFec, modulation, ONID, TSID, SID, providerName);
             _currentTuningObject = new DVBChannel();
@@ -3473,6 +3496,10 @@ namespace MediaPortal.TV.Recording
         _startTimer = DateTime.Now;
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:TuneRadioChannel() tune to radio station:{0}", channel.Name);
         GetRadioChannelFromDatabase(channel);
+        if (_currentTuningObject == null)
+        {
+          return;
+        }
         SubmitTuneRequest(_currentTuningObject);
 
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:TuneRadioChannel() done");
@@ -3531,6 +3558,10 @@ namespace MediaPortal.TV.Recording
         AddPreferredCodecs(true, false);
 
         GetRadioChannelFromDatabase(station);
+        if (_currentTuningObject == null)
+        {
+          return;
+        }
         if (_currentTuningObject.PCRPid <= 0 || _currentTuningObject.PCRPid >= 0x1fff)
         {
           SetupDemuxer(_pinDemuxerVideo, 0, _pinDemuxerAudio, 0, _pinAC3Out, 0);
@@ -3746,18 +3777,10 @@ namespace MediaPortal.TV.Recording
           switch ( (int)pid)
           {
             case 0x12:
-              //Log.Write("setup epg pin???");
-              //if (_pinDemuxerEPG != null)
-                //  SetupDemuxerPin(_pinDemuxerEPG, 0x12, (int)MediaSampleContent.Mpeg2PSI, true);
-              //else Log.Write("ermmm???");
               break;
             case 0xd2:
-              //if (_pinDemuxerMHWd2 != null)
-                // SetupDemuxerPin(_pinDemuxerMHWd2,0xd2, (int)MediaSampleContent.Mpeg2PSI, true);
               break;
             case 0xd3:
-              //if (_pinDemuxerMHWd3!=null)
-              //  SetupDemuxerPin(_pinDemuxerMHWd3, 0xd3, (int)MediaSampleContent.Mpeg2PSI, true);
               break;
             default:
               if (_pinDemuxerSections != null)
@@ -3837,8 +3860,17 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
       }
       TuneChannel(channel);
-      _isGraphRunning = true;
-      _graphState = State.Epg;
+      if (_currentTuningObject == null)
+      {
+        _mediaControl.Stop();
+        _isGraphRunning = false;
+        _graphState = State.Created;
+      }
+      else
+      {
+        _isGraphRunning = true;
+        _graphState = State.Epg;
+      }
     }
 
     public void RadioChannelMinMax(out int chanmin, out int chanmax)
