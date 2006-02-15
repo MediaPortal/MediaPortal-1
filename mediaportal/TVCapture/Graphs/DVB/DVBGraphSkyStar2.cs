@@ -1017,7 +1017,7 @@ namespace MediaPortal.TV.Recording
       
       int frequency = ch.Frequency;
       if (frequency > 13000)
-        frequency /= 1000;
+          frequency /= 1000;
       Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Transponder Frequency:{0} MHz", frequency);
       int hr = _interfaceB2C2TunerCtrl.SetFrequency(frequency);
       if (hr != 0)
@@ -1096,7 +1096,7 @@ namespace MediaPortal.TV.Recording
           break;
 
         case NetworkType.DVBS:
-          if (ch.LNBFrequency >= ch.Frequency)
+            if (ch.LNBFrequency >= frequency)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  Error: LNB Frequency must be less than Transponder frequency");
           }
@@ -1135,7 +1135,7 @@ namespace MediaPortal.TV.Recording
           }
 
           Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Lnb:{0} Khz {1}", ((LNBSelectionType)ch.LNBKHz), ch.LNBKHz);
-          hr = _interfaceB2C2TunerCtrl.SetLnbKHz(ch.LNBKHz);
+            hr = _interfaceB2C2TunerCtrl.SetLnbKHz(ch.LNBKHz);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetLnbKHz() failed:0x{0:X}", hr);
@@ -1154,14 +1154,15 @@ namespace MediaPortal.TV.Recording
           break;
       }
 
-      _interfaceB2C2TunerCtrl.SetTunerStatusEx(40);//20*50ms= max 2 sec to lock tuner
+      //hr=_interfaceB2C2TunerCtrl.SetTunerStatusEx(5);//20*50ms= max 2 sec to lock tuner
       hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
       _interfaceB2C2TunerCtrl.CheckLock();
       if (((uint)hr) == (uint)0x90010115)
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:could not lock tuner");
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:could not lock tuner");
         //dump all values:
         int dummy;
+
         _interfaceB2C2TunerCtrl.GetFrequency(out dummy);
         Log.Write("DVBGraphSkyStar2 tuner dump:");
         Log.Write("DVBGraphSkyStar2    freq:{0} MHZ", dummy);
@@ -1188,8 +1189,14 @@ namespace MediaPortal.TV.Recording
       {
         if (hr != 0)
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetTunerStatus failed:0x{0:X}", hr);
-          return;
+            hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
+            if(hr!=0)
+                _interfaceB2C2TunerCtrl.SetTunerStatus();
+            if (hr != 0)
+            {
+                Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetTunerStatus failed:0x{0:X}", hr);
+                return;
+            }
           //
         }
       }
