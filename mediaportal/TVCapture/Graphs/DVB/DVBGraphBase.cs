@@ -245,7 +245,8 @@ namespace MediaPortal.TV.Recording
     protected bool _graphPaused = false;
     protected int _pmtSendCounter = 0;
     ArrayList _scanPidList = new ArrayList();
-    bool _scanPidListReady = false;
+    protected bool _scanPidListReady = false;
+    protected VideoCaptureProperties _cardProperties = null;
     #endregion
 
 #if USEMTSWRITER
@@ -267,7 +268,6 @@ namespace MediaPortal.TV.Recording
     protected StreamBufferSink m_StreamBufferSink = null;
     protected StreamBufferConfig m_StreamBufferConfig = null;
     protected VMR9Util _vmr9 = null;
-    protected ArrayList _tunerStatistics = new ArrayList();
     protected NetworkType _networkType = NetworkType.Unknown;
     protected TVCaptureDevice _card;
     protected bool _isGraphRunning = false;
@@ -1834,29 +1834,31 @@ namespace MediaPortal.TV.Recording
         }//if (info.pid_list!=null)
 
         _refreshPmtTable = false;
-        VideoCaptureProperties props = new VideoCaptureProperties(_filterTunerDevice);
-        int pmtVersion = ((pmt[5] >> 1) & 0x1F);
-
-        // send the PMT table to the device
-        _pmtTimer = DateTime.Now;
-        _pmtSendCounter++;
-        if (props.IsCISupported())
+        if (_cardProperties != null)
         {
-          Log.Write("DVBGraph:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality());
-          _streamDemuxer.DumpPMT(pmt);
-          if (props.SendPMT(_currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
+          int pmtVersion = ((pmt[5] >> 1) & 0x1F);
+
+          // send the PMT table to the device
+          _pmtTimer = DateTime.Now;
+          _pmtSendCounter++;
+          if (_cardProperties.IsCISupported())
           {
-            return true;
+            Log.Write("DVBGraph:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3} locked:{4}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality(), _tunerLocked);
+            _streamDemuxer.DumpPMT(pmt);
+            if (_cardProperties.SendPMT(_currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
+            {
+              return true;
+            }
+            else
+            {
+              //_refreshPmtTable=true;
+              return true;
+            }
           }
           else
           {
-            //_refreshPmtTable=true;
             return true;
           }
-        }
-        else
-        {
-          return true;
         }
       }
       catch (Exception ex)
@@ -2221,7 +2223,7 @@ namespace MediaPortal.TV.Recording
             GUIGraphicsContext.SendMessage(msg);
           }
         }
-
+        
         if (SignalPresent())
         {
           //if (_streamDemuxer.IsScrambled)
@@ -2236,24 +2238,6 @@ namespace MediaPortal.TV.Recording
                   _pmtRetyCount++;
                   SendPMT();
                 }
-              }
-            }
-          }
-        }
-      }
-      else
-      {
-        if (SignalPresent())
-        {
-          //if (_streamDemuxer.IsScrambled)
-          {
-            if (_lastPMTVersion >= 0 && _pmtRetyCount < 3)
-            {
-              TimeSpan ts = DateTime.Now - _pmtTimer;
-              if (ts.TotalSeconds >= 3)
-              {
-                _pmtRetyCount++;
-                SendPMT();
               }
             }
           }

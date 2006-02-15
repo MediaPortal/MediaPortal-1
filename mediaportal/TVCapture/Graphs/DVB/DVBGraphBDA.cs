@@ -69,7 +69,6 @@ namespace MediaPortal.TV.Recording
 
     #region variables
     protected ArrayList _tunerStatistics = new ArrayList();
-    VideoCaptureProperties _cardProperties;
     #endregion
 
     #region constructor
