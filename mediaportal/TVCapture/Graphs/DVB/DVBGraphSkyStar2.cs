@@ -1191,7 +1191,7 @@ namespace MediaPortal.TV.Recording
         {
             hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
             if(hr!=0)
-                _interfaceB2C2TunerCtrl.SetTunerStatus();
+                hr=_interfaceB2C2TunerCtrl.SetTunerStatus();
             if (hr != 0)
             {
                 Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetTunerStatus failed:0x{0:X}", hr);
