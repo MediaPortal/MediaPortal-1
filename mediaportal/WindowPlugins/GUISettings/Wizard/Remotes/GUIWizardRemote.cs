@@ -157,7 +157,7 @@ namespace MediaPortal.GUI.Settings.Wizard
       cmX10.Selected = false;
       cmFireDTV.Selected = false;
       cmOther.Selected = true;
-      imgRemote.SetFileName("");
+      imgRemote.SetFileName(@"Wizards\remote_other.png");
       GUIControl.FocusControl(GetID, cmOther.GetID);
     }
 
