@@ -1248,14 +1248,7 @@ namespace MediaPortal.TV.Recording
       //on others  signalpresent is true when tuned to a transponder
       //so we just look if any variables returns true
 
-      if (Network() == NetworkType.ATSC)
-      {
-        if (isSignalPresent)
-          _signalPresent = true;
-        else
-          _signalPresent = false;
-      }
-      else if (isTunerLocked || isSignalPresent || (_signalQuality > 0))
+      if (isTunerLocked /*|| isSignalPresent || (_signalQuality > 0)*/)
       {
         _signalPresent = true;
       }
