@@ -76,7 +76,7 @@
          <MarkWidth>16</MarkWidth>
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkHeight>16</MarkHeight>
-         <label>x10 Series (e.g. ATI/Medion)</label>
+         <label>X10 Series (e.g. ATI/Medion)</label>
          <align>right</align>
       </control>
       <control>
