@@ -1048,7 +1048,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabelHcwDownload_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      System.Diagnostics.Process.Start("http://www.hauppauge.co.uk/board/showthread.php?p=25253");
+      System.Diagnostics.Process.Start("http://www.team-mediaportal.com/component/option,com_remository/Itemid,35/func,select/id,28/");
     }
 
   }
