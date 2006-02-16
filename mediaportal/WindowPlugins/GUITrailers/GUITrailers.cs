@@ -109,7 +109,7 @@ namespace MediaPortal.GUI.Video
     public static string pcast;
     public static double prating;
 
-    string[] MainListMenu = new String[10];  //Decause the number of menu item is dynamic.
+    string[] MainListMenu = new String[15];  //Decause the number of menu item is dynamic.
 
     // Get from mediaportal.xml
     public static string bitrate = string.Empty;
