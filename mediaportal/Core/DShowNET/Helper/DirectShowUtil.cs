@@ -771,5 +771,41 @@ namespace DShowNET.Helper
       }
       return null;
     }
+    static public void RemoveDownStreamFilters(IGraphBuilder graphBuilder, IBaseFilter fromFilter, bool remove)
+    {
+      IEnumPins enumPins;
+      fromFilter.EnumPins(out enumPins);
+      if (enumPins == null) return;
+      IPin[] pins = new IPin[2];
+      int fetched;
+      while (enumPins.Next(1, pins, out fetched)==0)
+      {
+        if (fetched != 1) break;
+        PinDirection dir;
+        pins[0].QueryDirection(out dir);
+        if (dir != PinDirection.Output)
+        {
+          Marshal.ReleaseComObject(pins[0]);
+          continue;
+        }
+        IPin pinConnected;
+        pins[0].ConnectedTo(out pinConnected);
+        if (pinConnected==null)
+        {
+          Marshal.ReleaseComObject(pins[0]);
+          continue;
+        }
+        PinInfo info;
+        pinConnected.QueryPinInfo(out info);
+        if (info.filter != null)
+        {
+          RemoveDownStreamFilters(graphBuilder, info.filter, true);
+        }
+        Marshal.ReleaseComObject(pins[0]);
+      }
+      if (remove)
+        graphBuilder.RemoveFilter(fromFilter);
+      Marshal.ReleaseComObject(enumPins);
+    }
 	}
 }
