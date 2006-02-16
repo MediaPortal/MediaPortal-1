@@ -14,11 +14,11 @@
 			<description>menu background image</description>
 			<type>image</type>
 			<id>1</id>
-			<posX>-30</posX>
-			<posY>-15</posY>
-			<width>191</width>
-			<height>774</height>
-			<texture>background_glass_hoover_area.png</texture>
+			<posX>0</posX>
+			<posY>-25</posY>
+			<width>250</width>
+			<height>773</height>
+			<texture>menu_background.png</texture>
 			<visible>yes</visible>
 		</control>
 	<control>

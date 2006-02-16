@@ -45,14 +45,6 @@
 	</control>
 		<control>
 			<type>image</type>
-			<description>MP	Logo</description>
-			<id>1</id>
-			<posX>32</posX>
-			<posY>24</posY>
-			<texture>mplogo.png</texture>
-		</control>
-		<control>
-			<type>image</type>
 			<id>1</id>
 			<posX>50</posX>
 			<posY>490</posY>

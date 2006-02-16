@@ -3,7 +3,7 @@
 	<defaultcontrol>3</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:#burner_title</define>
-	<define>#header.image:burn_logo.png</define>
+	<define>#header.image:</define>
 	<define>#header.hover:hover_my burner.png</define>
 	<controls>
 		<import>common.window.xml</import>
@@ -11,8 +11,8 @@
 			<description>My burner File Size label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>60</posX>
-			<posY>510</posY>
+			<posX>220</posX>
+			<posY>630</posY>
 			<label>#burner_size</label>
 			<font>font16</font>
 			<align>left</align>
@@ -41,21 +41,30 @@
 			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
-			<description>Status Bar</description> 
-			<type>statusbar</type> 
-			<id>1</id> 
-			<posX>60</posX> 
-			<posY>530</posY> 
-			<width>420</width>
-			<height>22</height>
-			<posYTop>500</posYTop>
-			<texturebg>statusbar_back.png</texturebg> 
-			<lefttexture>statusbar_left.png</lefttexture> 
-			<midtexture>statusbar_mid.png</midtexture> 
-			<righttexture>statusbar_right.png</righttexture> 
-			<visible>yes</visible> 
-			<label>#burner_perc</label>
-		</control>
+			<type>image</type>
+			<id>1</id>
+			<posX>600</posX>
+			<posY>30</posY>
+			<height>40</height>
+			<width>400</width>
+		<texture>background_bar.png</texture>
+	</control>
+
+    		<control>
+        		<description>Status Bar</description>
+        		<type>statusbar</type>
+        		<id>1</id>
+        		<posX>585</posX>
+        		<posY>37</posY>
+        		<width>430</width>
+        		<height>20</height>
+        		<texturebg></texturebg>
+        		<lefttexture>osd_progress_left.png</lefttexture>
+        		<midtexture>osd_progress_mid.png</midtexture>
+       	 		<righttexture>osd_progress_right.png</righttexture>
+        		<visible>yes</visible>
+        		<label>#burner_perc</label>
+    		</control>
 		<control>
 			<description>CD Detail Panel</description>
 			<type>textbox</type>
@@ -63,7 +72,7 @@
 			<label>-</label>
 			<posY>97</posY>
 			<posX>260</posX>
-			<height>400</height>
+			<height>380</height>
 			<width>410</width>
 			<onleft>2</onleft> 
 			<onright>3</onright> 
@@ -76,7 +85,7 @@
 			<type>group</type>
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
-			<posX>60</posX>
+			<posX>0</posX>
 			<posY>97</posY>
 			<layout>StackLayout</layout>
 			<control>
@@ -116,11 +125,8 @@
 			<description>file listcontrol</description> 
 			<type>listcontrol</type> 
 			<id>20</id> 
-			<posX>270</posX>
-			<posY>97</posY>
-			<spinPosX>585</spinPosX>
-			<spinPosY>310</spinPosY>
-			<height>250</height>
+			<height>200</height>
+			<spinPosY>280</spinPosY>
 			<onright>3</onright> 
 			<onleft>3</onleft> 
 			<onup>3</onup> 
@@ -130,9 +136,9 @@
 			<description>copy listcontrol</description> 
 			<type>listcontrol</type> 
 			<id>30</id> 
-			<posX>270</posX>
-			<posY>345</posY>
+			<posY>325</posY>
 			<height>200</height>
+			<spinPosY>500</spinPosY>
 			<onright>3</onright> 
 			<onleft>3</onleft> 
 			<onup>3</onup> 

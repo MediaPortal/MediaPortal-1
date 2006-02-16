@@ -94,8 +94,8 @@
 		<description>image title:</description> 
 		<type>label</type> 
 		<id>30</id> 
-		<posX>110</posX>
-		<posY>320</posY>
+		<posX>685</posX>
+		<posY>478</posY>
 		<label>734</label> 
 		<font>font10</font>
 		<align>right</align> 
@@ -105,8 +105,8 @@
 		<description>spin control</description>
 		<type>spincontrol</type>
 		<id>10</id>
-		<posX>180</posX>
-		<posY>326</posY>
+		<posX>750</posX>
+		<posY>476</posY>
 		<onup>6</onup>
 		<ondown>11</ondown>
 		<align>right</align>
@@ -115,8 +115,8 @@
 		<description>disc:</description> 
 		<type>label</type> 
 		<id>100</id> 
-		<posX>110</posX> 
-		<posY>360</posY> 
+		<posX>685</posX> 
+		<posY>518</posY> 
 		<label>427</label> 
 		<font>font10</font> 
 		<align>right</align>
@@ -126,8 +126,8 @@
 		<description>disc select</description> 
 		<type>spincontrol</type> 
 		<id>11</id> 
-		<posX>180</posX> 
-		<posY>366</posY> 
+		<posX>750</posX> 
+		<posY>516</posY> 
 		<reverse>yes</reverse> 
 		<onup>10</onup> 
 		<ondown>2</ondown> 

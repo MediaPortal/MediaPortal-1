@@ -7,8 +7,8 @@
 		<type>label</type>
 		<id>288</id>
 		<posX>960</posX>
-		<posY>580</posY>
-		<label>Nu spelas</label>
+		<posY>590</posY>
+		<label>Now playing</label>
 		<align>right</align>
 		<font>font10</font>
 		<textcolor>88000000</textcolor>
@@ -17,8 +17,8 @@
 		<description>play time label</description> 
 		<type>label</type> 
 		<id>2</id> 
-		<posX>930</posX> 
-		<posY>655</posY> 
+		<posX>960</posX> 
+		<posY>665</posY> 
 		<label>#currentplaytime / #duration</label> 
 		<align>right</align> 
 		<font>font10</font> 
@@ -29,7 +29,7 @@
 		<type>image</type> 
 		<id>3</id> 
 		<posX>975</posX> 
-		<posY>600</posY> 
+		<posY>610</posY> 
 		<texture>logo_play.png</texture> 
 	</control>
 	<control>
@@ -37,7 +37,7 @@
 		<type>image</type> 
 		<id>4</id> 
 		<posX>970</posX> 
-		<posY>600</posY> 
+		<posY>610</posY> 
 		<texture>logo_pause.png</texture> 
 	</control>
 	<control>
@@ -45,7 +45,7 @@
 		<type>image</type> 
 		<id>7</id> 
 		<posX>963</posX> 
-		<posY>600</posY>
+		<posY>610</posY>
 		<texture>logo_fastforward.png</texture> 
 	</control>
 	<control>
@@ -53,7 +53,7 @@
 		<type>image</type> 
 		<id>8</id> 
 		<posX>963</posX> 
-		<posY>600</posY>  
+		<posY>610</posY>  
 		<texture>logo_rewind.png</texture> 
 	</control>
 	<control>
@@ -62,7 +62,7 @@
 		<width>500</width> 
 		<height>30</height>
 		<posX>960</posX> 
-		<posY>610</posY>
+		<posY>620</posY>
 		<align>right</align>  
 		<font>font16</font> 
 		<textcolor>88000000</textcolor>
@@ -74,9 +74,9 @@
 		<type>image</type>
 		<id>25</id>
 		<posX>220</posX>
-		<posY>558</posY>
+		<posY>563</posY>
 		<width>1060</width>
-		<height>152</height>
+		<height>157</height>
 		<texture>videooverlay_bottom.png</texture>
 	</control>
 	<control>
@@ -84,7 +84,7 @@
 		<type>image</type> 
 		<id>0</id> 
 		<posX>1025</posX> 
-		<posY>553</posY> 
+		<posY>563</posY> 
 		<width>260</width> 
 		<height>160</height> 
 		<texture>playback_background.png</texture> 
@@ -96,7 +96,7 @@
 		<type>videowindow</type> 
 		<id>1</id> 
 		<posX>1052</posX> 
-		<posY>575</posY> 
+		<posY>585</posY> 
 		<width>208</width> 
 		<height>117</height> 
 		<action>18</action>

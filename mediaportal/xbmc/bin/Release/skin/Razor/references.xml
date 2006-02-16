@@ -33,7 +33,7 @@
 		<type>button</type>
 		<id>1</id>
 		<posY>200</posY>
-		<width>320</width>
+		<width>260</width>
 		<height>40</height>
 		<textXOff>30</textXOff>
 		<textYOff>7</textYOff>
@@ -50,7 +50,7 @@
 		<id>1</id>
 		<posX>0</posX>
 		<posY>200</posY>
-		<width>320</width>
+		<width>260</width>
 		<height>32</height>
 		<textXOff>30</textXOff>
 		<textYOff>7</textYOff>
@@ -66,7 +66,7 @@
 		<type>togglebutton</type>
 		<id>4</id>
 		<posY>200</posY>
-		<width>320</width>
+		<width>260</width>
 		<height>40</height>
 		<textXOff>30</textXOff>
 		<textYOff>7</textYOff>
@@ -85,7 +85,7 @@
 		<type>sortbutton</type>
 		<id>3</id>
 		<posX>0</posX>
-		<width>320</width>
+		<width>260</width>
 		<height>40</height>
 		<textXOff>30</textXOff>
 		<textYOff>7</textYOff>
@@ -95,8 +95,8 @@
 		<textureAscendingFocused>arrow_round_up_focus.png</textureAscendingFocused>
 		<textureDescending>arrow_round_down_nofocus.png</textureDescending>
 		<textureDescendingFocused>arrow_round_down_focus.png</textureDescendingFocused>
-		<offsetSortButtonX>225</offsetSortButtonX>
-		<offsetSortButtonY>11</offsetSortButtonY>
+		<offsetSortButtonX>8</offsetSortButtonX>
+		<offsetSortButtonY>12</offsetSortButtonY>
 		<font>font11</font>
 		<textcolor>ffb9d5dd</textcolor>
 		<colordiffuse>White</colordiffuse>
@@ -121,7 +121,7 @@
 		<textureHeight>40</textureHeight>
 		<image>folder_focus.png</image>
 		<font>font12</font>
-		<font2>font11</font2>
+		<font2>font10</font2>
 		<shadedColor>20ffffff</shadedColor>
 		<selectedColor>FFF8BC70</selectedColor>
 		<textcolor>ffffffff</textcolor>
@@ -398,10 +398,10 @@
 		<id>2</id>
 		<posX>330</posX>
 		<posY>126</posY>
-		<textureUp>page_up_nofocus.png</textureUp>
-		<textureDown>page_down_nofocus.png</textureDown>
-		<textureUpFocus>page_up_focus.png</textureUpFocus>
-		<textureDownFocus>page_down_focus.png</textureDownFocus>
+		<textureUp>arrow_round_up_nofocus.png</textureUp>
+		<textureDown>arrow_round_down_nofocus.png</textureDown>
+		<textureUpFocus>arrow_round_up_focus.png</textureUpFocus>
+		<textureDownFocus>arrow_round_down_focus.png</textureDownFocus>
 		<align>left</align>
 		<width>30</width>
 		<height>30</height>
@@ -434,7 +434,7 @@
 		<type>selectbutton</type>
 		<id>6</id>
 		<posY>200</posY>
-		<width>320</width>
+		<width>213</width>
 		<height>40</height>
 		<textXOff>30</textXOff>
 		<textYOff>7</textYOff>

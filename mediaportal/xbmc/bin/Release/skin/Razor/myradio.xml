@@ -3,7 +3,6 @@
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:666</define>
-	<define>#header.image:radio_logo.png</define>
 	<define>#header.hover:hover_my radio.png</define>
 	<controls>
 		<import>common.window.xml</import>
@@ -62,9 +61,20 @@
 				<onleft>7</onleft>
 				<onright>50</onright>
 				<onup>6</onup>
-				<ondown>99</ondown>
+				<ondown>8</ondown>
 				<action>14</action>
 			</control>
+      			<control>
+        			<description>Radio Guide</description>
+        			<type>button</type>
+        			<id>8</id>
+        			<label>533</label>
+        			<onleft>8</onleft>
+        			<onright>50</onright>
+        			<onup>7</onup>
+        			<ondown>99</ondown>
+        			<hyperlink>762</hyperlink>
+      			</control>
 		</control>
 		<control>
 			<type>group</type>
