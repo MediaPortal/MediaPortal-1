@@ -175,16 +175,6 @@
 		<type>facadeview</type>
 		<id>50</id>
 		<control>
-			<description>listcontrol</description>
-			<type>listcontrol</type>
-			<id>50</id>
-   		<posY>110</posY>
-			<onleft>2</onleft>
-			<onright>51</onright>
-   		<onup>2</onup>
-			<ondown>2</ondown>
-		</control>
-		<control>
 			<description>Thumbnail Panel</description>
 			<type>thumbnailpanel</type>
 			<id>51</id>
@@ -219,7 +209,17 @@
 			<onup>2</onup>
 			<ondown>2</ondown>
 		</control>
-	</control>
+    <control>
+      <description>playlist control</description>
+      <type>playlistcontrol</type>
+      <id>53</id>
+      <onleft>2</onleft>
+      <onright>53</onright>
+      <onup>2</onup>
+      <ondown>2</ondown>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+  </control>
 
 	<control>
 		<description>Number of Files</description>
