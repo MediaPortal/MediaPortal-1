@@ -189,7 +189,7 @@
 	</control>
 	<control>
 		<description>Flash value</description>
-		<type>label</type>
+		<type>fadelabel</type>
 		<id>23</id>
 		<posX>250</posX>
 		<posY>225</posY>
@@ -198,7 +198,7 @@
 	</control>
 	<control>
 		<description>Metering Mode value</description>
-		<type>label</type>
+		<type>fadelabel</type>
 		<id>24</id>
 		<posX>250</posX>
 		<posY>245</posY>
@@ -254,7 +254,7 @@
 	</control>
 	<control>
 		<description>Camera Model value</description>
-		<type>label</type>
+		<type>fadelabel</type>
 		<id>30</id>
 		<posX>250</posX>
 		<posY>365</posY>
@@ -263,7 +263,7 @@
 	</control>
 	<control>
 		<description>Equipment Make value</description>
-		<type>label</type>
+		<type>fadelabel</type>
 		<id>31</id>
 		<posX>250</posX>
 		<posY>385</posY>
