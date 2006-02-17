@@ -27,6 +27,7 @@ using DShowNET.Helper;
 using DirectShowLib;
 using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
+using System.Diagnostics;
 
 namespace MediaPortal.TV.Recording
 {
@@ -39,7 +40,8 @@ namespace MediaPortal.TV.Recording
       Viewing,
       TimeShifting,
       Recording,
-      Radio
+      Radio,
+      Epg
     }
     State _state;
     TVCaptureDevice _card;
@@ -54,16 +56,20 @@ namespace MediaPortal.TV.Recording
       if (_state != State.Idle)
         throw new ApplicationException("wrong state");
       _state = State.Created;
+      //Trace.WriteLine(String.Format("card:{0} CreateGraph", _card.FriendlyName));
       return true;
     }
     public void DeleteGraph()
     {
+      //Trace.WriteLine(String.Format("card:{0} DeleteGraph", _card.FriendlyName));
       _state = State.Idle;
     }
     public bool StartTimeShifting(TVChannel channel, string strFileName)
     {
       if (_state != State.Created) 
         throw new ApplicationException("wrong state");
+
+      //Trace.WriteLine(String.Format("card:{0} StartTimeShifting:{1}", _card.FriendlyName, channel.Name));
       _state = State.TimeShifting;
       return true;
     }
@@ -71,13 +77,15 @@ namespace MediaPortal.TV.Recording
     {
       if (_state != State.TimeShifting)
         throw new ApplicationException("wrong state");
-      _state = State.TimeShifting;
+      //Trace.WriteLine(String.Format("card:{0} StopTimeShifting", _card.FriendlyName));
+      _state = State.Created;
       return true;
     }
     public bool StartRecording(Hashtable attribtutes, TVRecording recording, TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart)
     {
       if (_state != State.TimeShifting)
         throw new ApplicationException("wrong state");
+      //Trace.WriteLine(String.Format("card:{0} StartRecording", _card.FriendlyName));
       _state = State.Recording;
       return true;
     }
@@ -85,12 +93,16 @@ namespace MediaPortal.TV.Recording
     {
       if (_state != State.Recording)
         throw new ApplicationException("wrong state");
+      //Trace.WriteLine(String.Format("card:{0} StopRecording", _card.FriendlyName));
       _state = State.TimeShifting;
       return ;
     }
 
     public void TuneChannel(TVChannel channel)
     {
+      if (_state != State.TimeShifting && _state !=State.Viewing)
+        throw new ApplicationException("wrong state");
+      //Trace.WriteLine(String.Format("card:{0} TuneChannel:{1}", _card.FriendlyName, channel.Name));
     }
     public int GetChannelNumber()
     {
@@ -104,6 +116,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_state != State.Created)
         throw new ApplicationException("wrong state");
+      //Trace.WriteLine(String.Format("card:{0} StartViewing:{1}", _card.FriendlyName, channel.Name));
       _state = State.Viewing;
       return true;
     }
@@ -112,6 +125,7 @@ namespace MediaPortal.TV.Recording
       if (_state != State.Viewing)
         throw new ApplicationException("wrong state");
       _state = State.Created;
+      //Trace.WriteLine(String.Format("card:{0} StopViewing", _card.FriendlyName));
       return true;
     }
     public bool ShouldRebuildGraph(TVChannel newChannel)
@@ -160,6 +174,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_state != State.Created)
         throw new ApplicationException("wrong state");
+      //Trace.WriteLine(String.Format("card:{0} StartRadio:{1}", _card.FriendlyName,station.Name));
       _state = State.Radio;
       return;
     }
@@ -167,11 +182,13 @@ namespace MediaPortal.TV.Recording
     {
       if (_state != State.Radio)
         throw new ApplicationException("wrong state");
+      //Trace.WriteLine(String.Format("card:{0} TuneRadioChannel:{1}", _card.FriendlyName, station.Name));
     }
     public void TuneRadioFrequency(int frequency)
     {
       if (_state != State.Radio)
         throw new ApplicationException("wrong state");
+      //Trace.WriteLine(String.Format("card:{0} TuneRadioFrequency:{1}", _card.FriendlyName, frequency));
     }
     public bool HasTeletext()
     {
@@ -189,6 +206,7 @@ namespace MediaPortal.TV.Recording
       if (_state != State.TimeShifting &&
           _state != State.Viewing) throw new ArgumentException("invalid state");
       _audioPid = audioPid;
+      //Trace.WriteLine(String.Format("card:{0} SetAudioLanguage:{1}", _card.FriendlyName, audioPid));
     }
     public ArrayList GetAudioLanguageList()
     {
@@ -196,6 +214,7 @@ namespace MediaPortal.TV.Recording
       list.Add(123);
       list.Add(456);
       list.Add(789);
+      //Trace.WriteLine(String.Format("card:{0} GetAudioLanguageList", _card.FriendlyName));
       return list;
     }
     public string TvTimeshiftFileName()
@@ -227,7 +246,7 @@ namespace MediaPortal.TV.Recording
     }
     public bool IsEpgGrabbing()
     {
-      return false;
+      return (_state == State.Epg);
     }
     public bool IsEpgDone()
     {
@@ -235,12 +254,24 @@ namespace MediaPortal.TV.Recording
     }
     public void GrabEpg(TVChannel chan)
     {
+      if (_state != State.Created)
+        throw new ApplicationException("wrong state");
+      _state = State.Epg;
+      //Trace.WriteLine(String.Format("card:{0} GrabEpg", _card.FriendlyName));
     }
     public void StopRadio()
     {
+      if (_state != State.Radio)
+        throw new ApplicationException("wrong state");
+      _state = State.Created;
+      //Trace.WriteLine(String.Format("card:{0} StopRadio", _card.FriendlyName));
     }
     public void StopEpgGrabbing()
     {
+      if (_state != State.Epg)
+        throw new ApplicationException("wrong state");
+      _state = State.Created;
+      //Trace.WriteLine(String.Format("card:{0} StopEpgGrabbing", _card.FriendlyName));
     }
   }
 }

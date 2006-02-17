@@ -154,7 +154,7 @@ namespace MediaPortal.TV.Recording
           if (dev.TVChannel != _channelName)
           {
             handler.TuneExternalChannel(_channelName, true);
-            dev.TVChannel = _channelName;
+            //dev.TVChannel = _channelName;
           }
           dev.StartViewing(_channelName);
           handler.OnTvStart(handler.CurrentCardIndex, dev);

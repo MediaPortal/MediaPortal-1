@@ -617,7 +617,7 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Capture, "TVCapture.Stop Viewing() Card:{0} {1}", ID, _currentTvChannelName);
         _currentGraph.StopViewing();
-        //DeleteGraph();TESTTEST
+        _currentTvChannelName = "";
       }
       _currentGraphState = State.Initialized;
 
@@ -631,6 +631,11 @@ namespace MediaPortal.TV.Recording
     }
     public bool StartViewing(string channelName)
     {
+      if (channelName == null || channelName.Length == 0)
+      {
+        Log.WriteFile(Log.LogType.Capture, true,"TVCapture.Start Viewing channel name is empty");
+        return false;
+      }
       StopEpgGrabbing();
 
       if (_currentGraphState == State.Viewing)
@@ -645,6 +650,11 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Capture, "TVCapture.Start Viewing() Card:{0} :{1}", ID, channelName);
         TVChannel chan = GetChannel(channelName);
+        if (chan == null)
+        {
+          Log.WriteFile(Log.LogType.Capture, true, "TVCapture.Start Viewing() Card:{0} :{1} unknown channel", ID, channelName);
+          return false;
+        }
         if (_currentGraph.StartViewing(chan))
         {
           SetTvSettings();
@@ -880,15 +890,13 @@ namespace MediaPortal.TV.Recording
 
       if (!g_Player.Playing)
       {
-        //DeleteGraph();TESTTEST
-        _currentGraph.StopTimeShifting();//TESTTEST
+        StopTimeShifting();
         return;
       }
       string timeshiftFilename = String.Format(@"{0}\card{1}\{2}", RecordingPath, ID, TimeShiftFileName);
       if (!g_Player.CurrentFile.Equals(timeshiftFilename))
       {
-        //DeleteGraph();TESTTEST
-        _currentGraph.StopTimeShifting();//TESTTEST
+        StopTimeShifting();
         return;
       }
     }//StopRecording()
@@ -1131,6 +1139,8 @@ namespace MediaPortal.TV.Recording
       _currentGraph.StopTimeShifting();
       string fileName = _processor.GetTimeShiftFileName(ID - 1);
       Utils.FileDelete(fileName);
+      _currentTvChannelName = "";
+      _timeTimeshiftingStarted = DateTime.MinValue;
       _currentGraphState = State.Initialized;
       return true;
     }
