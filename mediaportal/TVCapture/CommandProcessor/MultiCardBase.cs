@@ -127,5 +127,21 @@ namespace MediaPortal.TV.Recording
       if (OnTvChannelChanged != null)
         OnTvChannelChanged(_currentTvChannel);
     }
+    public void StopPlayer()
+    {
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
+      GUIGraphicsContext.SendMessage(msg);
+      int counter = 0;
+      while (VMR9Util.g_vmr9 != null)
+      {
+        System.Threading.Thread.Sleep(10);
+        counter++;
+        if (counter > 500) break;
+      }
+      if (VMR9Util.g_vmr9 != null)
+      {
+        Log.WriteFile(Log.LogType.Log,true,"Handler.StopPlayer() vmr9 still active");
+      }
+    }
   }
 }

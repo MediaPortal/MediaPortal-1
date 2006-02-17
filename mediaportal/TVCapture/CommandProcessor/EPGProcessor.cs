@@ -77,7 +77,7 @@ namespace MediaPortal.TV.Recording
           card.Process();
           if (card.IsEpgFinished)
           {
-            card.DeleteGraph();
+            card.StopEpgGrabbing();
             //reload tv channels...
             _tvChannelsList.Clear();
             TVDatabase.GetChannels(ref _tvChannelsList);

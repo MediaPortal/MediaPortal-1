@@ -71,7 +71,6 @@ namespace DShowNET.Helper
     bool _isGraphRunning = false;
 
     VideoAnalyzer m_VideoAnalyzer = null;
-    StreamBufferSink m_StreamBufferSink = null;
     StreamBufferConfig m_StreamBufferConfig = null;
 
     IVideoWindow _videoWindowInterface = null;
@@ -242,7 +241,7 @@ namespace DShowNET.Helper
     /// If we're currently in viewing mode 
     /// then we just close the overlay window and stop the graph
     /// </summary>
-    public void StopViewing()
+    public void StopViewing(VMR9Util vmr9)
     {
       if (false == _isRendered) return;
       Log.WriteFile(Log.LogType.Capture, "mpeg2:StopViewing()");
@@ -253,8 +252,16 @@ namespace DShowNET.Helper
         _videoWindowInterface.put_Visible(OABool.False);
         _videoWindowInterface.put_MessageDrain(IntPtr.Zero);
       }
-
       StopGraph();
+      if (vmr9 != null)
+      {
+        vmr9.Dispose();
+      }
+      DirectShowUtil.RemoveDownStreamFilters(_graphBuilderInterface, _filterMpeg2Demultiplexer, false);
+      _videoWindowInterface = null;
+      _basicVideoInterface = null;
+     
+      _isRendered = false;
     }
 
     /// <summary>
@@ -488,6 +495,15 @@ namespace DShowNET.Helper
 
       StartGraph();
     }
+    public void StopListening()
+    {
+      if (_isRendered == false) return;
+      
+      StopGraph();
+
+      DirectShowUtil.RemoveDownStreamFilters(_graphBuilderInterface, _filterMpeg2Demultiplexer,false);
+      _isRendered = false;
+    }
     #endregion
 
     #region timeshifting
@@ -510,6 +526,11 @@ namespace DShowNET.Helper
             }
           }
           StopGraph();
+
+          DirectShowUtil.RemoveDownStreamFilters(_graphBuilderInterface, _filterMpeg2Demultiplexer,false);
+          DeleteSBESink();
+          _isRendered = false;
+
           return;
         }
       }
@@ -522,10 +543,8 @@ namespace DShowNET.Helper
     public bool StartTimeshifting(string fileName)
     {
       int hr;
-      if (m_StreamBufferSink == null)
-      {
-        if (!CreateSBESink()) return false;
-      }
+      if (!CreateSBESink()) return false;
+      
       fileName = System.IO.Path.ChangeExtension(fileName, ".tv");
       Log.WriteFile(Log.LogType.Capture, "mpeg2:StartTimeshifting({0})", fileName);
       int pos = fileName.LastIndexOf(@"\");
@@ -831,9 +850,64 @@ namespace DShowNET.Helper
         Log.WriteFile(Log.LogType.Capture, "mpeg2:mapped MPEG2 demuxer stream 0xc0->audio output");
       return true;
     }
+    void DeleteSBESink()
+    {
+      int hr;
+      _streamBufferConfigureInterface = null;
+      _streamBufferSink3Interface = null;
+      _filterVideoAnalyzer = null;
+      if (_pinVideoAnalyzerInput != null)
+      {
+        hr = Marshal.ReleaseComObject(_pinVideoAnalyzerInput);
+        _pinVideoAnalyzerInput = null;
+      }
+      if (_pinVideoAnalyzerOutput != null)
+      {
+        hr = Marshal.ReleaseComObject(_pinVideoAnalyzerOutput);
+        _pinVideoAnalyzerOutput = null;
+      }
+      if (_pinStreamBufferIn0 != null)
+      {
+        hr = Marshal.ReleaseComObject(_pinStreamBufferIn0);
+        _pinStreamBufferIn0 = null;
+      }
+      if (_pinStreamBufferIn1 != null)
+      {
+        hr = Marshal.ReleaseComObject(_pinStreamBufferIn1);
+        _pinStreamBufferIn1 = null;
+      }
 
+      if (_filterStreamBuffer != null)
+      {
+        _filterStreamBuffer.Stop();
+        while ((hr = Marshal.ReleaseComObject(_filterStreamBuffer)) > 0) ;
+        _filterStreamBuffer = null;
+        if (hr != 0)
+          Log.Write("Sinkgraph:ReleaseComobject(_filterStreamBuffer):{0}", hr);
+      }
+
+
+      if (m_VideoAnalyzer != null)
+      {
+        while ((hr = Marshal.ReleaseComObject(m_VideoAnalyzer)) > 0) ;
+        if (hr != 0)
+          Log.Write("Sinkgraph:ReleaseComobject(m_VideoAnalyzer):{0}", hr);
+        m_VideoAnalyzer = null;
+      }
+
+
+      if (m_StreamBufferConfig != null)
+      {
+        while ((hr = Marshal.ReleaseComObject(m_StreamBufferConfig)) > 0) ;
+        if (hr != 0)
+          Log.Write("Sinkgraph:ReleaseComobject(m_StreamBufferConfig):{0}", hr);
+        m_StreamBufferConfig = null;
+      }
+    }
     bool CreateSBESink()
     {
+      if (m_VideoAnalyzer != null) return true;
+
       Log.WriteFile(Log.LogType.Capture, "mpeg2:add Videoanalyzer");
       try
       {

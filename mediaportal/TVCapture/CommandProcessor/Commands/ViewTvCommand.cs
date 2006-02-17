@@ -109,10 +109,10 @@ namespace MediaPortal.TV.Recording
         {
           //yes
           timeShiftFileName = handler.GetTimeShiftFileName(handler.CurrentCardIndex);
-          if (g_Player.CurrentFile != timeShiftFileName)
+          if (g_Player.Playing && g_Player.CurrentFile != timeShiftFileName)
           {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
-            GUIGraphicsContext.SendMessage(msg);
+            handler.StopPlayer();
+            
           }
           if (dev.TVChannel != _channelName)
           {
@@ -142,10 +142,9 @@ namespace MediaPortal.TV.Recording
         {
           //we dont want timeshifting so turn timeshifting off
           timeShiftFileName = handler.GetTimeShiftFileName(handler.CurrentCardIndex);
-          if (g_Player.CurrentFile == timeShiftFileName)
+          if (g_Player.Playing && g_Player.CurrentFile == timeShiftFileName)
           {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
-            GUIGraphicsContext.SendMessage(msg);
+            handler.StopPlayer();
           }
           if (dev.IsTimeShifting)
           {

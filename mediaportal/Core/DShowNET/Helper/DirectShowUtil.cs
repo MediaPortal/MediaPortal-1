@@ -807,5 +807,20 @@ namespace DShowNET.Helper
         graphBuilder.RemoveFilter(fromFilter);
       Marshal.ReleaseComObject(enumPins);
     }
+    static public void RemoveDownStreamFilters(IGraphBuilder graphBuilder, IPin pin)
+    {
+      IPin pinConnected;
+      pin.ConnectedTo(out pinConnected);
+      if (pinConnected == null)
+      {
+        return;
+      }
+      PinInfo info;
+      pinConnected.QueryPinInfo(out info);
+      if (info.filter != null)
+      {
+        RemoveDownStreamFilters(graphBuilder, info.filter, true);
+      }
+    }
 	}
 }

@@ -49,8 +49,7 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Recorder, "Command:Stop radio");
       if (g_Player.Playing && g_Player.IsRadio)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
-        GUIGraphicsContext.SendMessage(msg);
+        handler.StopPlayer();
       }
       for (int i=0; i < handler.TVCards.Count;++i)
       {
@@ -58,7 +57,7 @@ namespace MediaPortal.TV.Recording
         if (dev.IsRadio)
         {
           Log.WriteFile(Log.LogType.Recorder, "Recorder:StopRadio() stop radio on card:{0}", dev.ID);
-          dev.Stop();
+          dev.StopRadio();
         }
       }
     }

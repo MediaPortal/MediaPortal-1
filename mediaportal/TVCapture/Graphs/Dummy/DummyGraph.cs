@@ -236,5 +236,11 @@ namespace MediaPortal.TV.Recording
     public void GrabEpg(TVChannel chan)
     {
     }
+    public void StopRadio()
+    {
+    }
+    public void StopEpgGrabbing()
+    {
+    }
   }
 }

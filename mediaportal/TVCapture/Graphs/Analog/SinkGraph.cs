@@ -600,14 +600,16 @@ namespace MediaPortal.TV.Recording
       }
 
       // add VMR9 renderer to graph
-      if (_vmr9 != null)
+      if (_vmr9 == null)
       {
-        if (false == _vmr9.AddVMR9(_graphBuilderInterface))
-        {
-          _vmr9.Dispose();
-          _vmr9 = null;
-        }
+        _vmr9 = new VMR9Util();
       }
+      if (false == _vmr9.AddVMR9(_graphBuilderInterface))
+      {
+        _vmr9.Dispose();
+        _vmr9 = null;
+      }
+      
 
       AddPreferredCodecs(true, true);
 
@@ -668,10 +670,10 @@ namespace MediaPortal.TV.Recording
         _vmr9.Enable(false);
       }
       if (_mpeg2DemuxHelper != null)
-        _mpeg2DemuxHelper.StopViewing();
-
+        _mpeg2DemuxHelper.StopViewing(_vmr9);
+      _vmr9 = null;
       _graphState = State.Created;
-      DeleteGraph();
+      
 
 
       return true;
@@ -1129,6 +1131,13 @@ namespace MediaPortal.TV.Recording
       TuneRadioChannel(station);
     }
 
+    public void StopRadio()
+    {
+      if (_graphState != State.Radio) return; ;
+      _mpeg2DemuxHelper.StopListening();
+      _graphState = State.Created;
+    }
+
     public void TuneRadioFrequency(int frequency)
     {
       Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:tune to {0} hz", frequency);
@@ -1313,6 +1322,9 @@ namespace MediaPortal.TV.Recording
       _tvTunerInterface.ChannelMinMax(out chanmin, out chanmax);
       Log.WriteFile(Log.LogType.Capture, "SinkGraph:  TV Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
 
+    }
+    public void StopEpgGrabbing()
+    {
     }
   }
 }

@@ -42,7 +42,7 @@ using MediaPortal.TV.DiskSpace;
 
 namespace MediaPortal.TV.Recording
 {
-  public class TimeShiftTvCommand: CardCommand
+  public class TimeShiftTvCommand : CardCommand
   {
     string _channelName;
 
@@ -100,18 +100,16 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Recorder, "Recorder:  Found card:{0}", dev.ID);
 
         //stop viewing on any other card
-        TurnTvOff(handler,cardNo);
-        handler.CurrentCardIndex=cardNo;
-        handler.TVChannelName= _channelName;
+        TurnTvOff(handler, cardNo);
+        handler.CurrentCardIndex = cardNo;
+        handler.TVChannelName = _channelName;
 
         // do we want timeshifting?
         //yes
         timeShiftFileName = handler.GetTimeShiftFileName(handler.CurrentCardIndex);
-        if (g_Player.CurrentFile != timeShiftFileName)
+        if (g_Player.Playing && g_Player.CurrentFile != timeShiftFileName)
         {
-
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
-          GUIGraphicsContext.SendMessage(msg);
+          handler.StopPlayer();
         }
         if (dev.TVChannel != _channelName)
         {
@@ -134,7 +132,7 @@ namespace MediaPortal.TV.Recording
           msg.Label = timeShiftFileName;
           GUIGraphicsContext.SendMessage(msg);
         }
-        
+
         handler.OnTvStart(handler.CurrentCardIndex, dev);
         handler.ResetTimeshiftTimer();
         return;
@@ -180,11 +178,9 @@ namespace MediaPortal.TV.Recording
       //do we want to use timeshifting ?
       // yep, then turn timeshifting on
       timeShiftFileName = handler.GetTimeShiftFileName(handler.CurrentCardIndex);
-      if (g_Player.CurrentFile != timeShiftFileName)
+      if (g_Player.Playing && g_Player.CurrentFile != timeShiftFileName)
       {
-
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
-        GUIGraphicsContext.SendMessage(msg);
+        handler.StopPlayer();
       }
       // yes, does card support it?
       if (dev.SupportsTimeShifting)
@@ -204,7 +200,7 @@ namespace MediaPortal.TV.Recording
           msg.Label = timeShiftFileName;
           GUIGraphicsContext.SendMessage(msg);
         }
-        
+
         handler.OnTvStart(handler.CurrentCardIndex, dev);
         handler.ResetTimeshiftTimer();
         return;

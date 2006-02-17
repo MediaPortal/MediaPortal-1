@@ -70,12 +70,11 @@ namespace MediaPortal.TV.Recording
         string timeShiftFileName = handler.GetTimeShiftFileName(i);
         if (dev.SupportsTimeShifting)
         {
-          if (g_Player.CurrentFile == timeShiftFileName)
+          if (g_Player.Playing && g_Player.CurrentFile == timeShiftFileName)
           {
             Log.WriteFile(Log.LogType.Recorder, "Recorder:  stop playing timeshifting file for card:{0}", dev.ID);
 
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
-            GUIGraphicsContext.SendMessage(msg);
+            handler.StopPlayer();
             stopped = true;
           }
         }
@@ -87,7 +86,10 @@ namespace MediaPortal.TV.Recording
           {
             stopped = (dev.View);
             Log.WriteFile(Log.LogType.Recorder, "Recorder:  stop card:{0}", dev.ID);
-            dev.Stop();
+            
+            dev.StopTimeShifting();
+            dev.StopViewing();
+            dev.StopRadio();
           }
         }
         if (stopped )

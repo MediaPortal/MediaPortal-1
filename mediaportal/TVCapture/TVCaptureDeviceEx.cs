@@ -612,23 +612,26 @@ namespace MediaPortal.TV.Recording
     }
     public void StopViewing()
     {
-      if (IsEpgGrabbing)
-      {
-        DeleteGraph();
-      }
+      StopEpgGrabbing();
       if (_currentGraphState == State.Viewing)
       {
         Log.WriteFile(Log.LogType.Capture, "TVCapture.Stop Viewing() Card:{0} {1}", ID, _currentTvChannelName);
         _currentGraph.StopViewing();
-        DeleteGraph();
+        //DeleteGraph();TESTTEST
       }
+      _currentGraphState = State.Initialized;
+
+    }
+    public void StopEpgGrabbing()
+    {
+      if (!IsEpgGrabbing) return;
+      if (_currentGraph == null) return;
+      _currentGraph.StopEpgGrabbing();
+      _currentGraphState = State.Initialized;
     }
     public bool StartViewing(string channelName)
     {
-      if (IsEpgGrabbing)
-      {
-        DeleteGraph();
-      }
+      StopEpgGrabbing();
 
       if (_currentGraphState == State.Viewing)
       {
@@ -636,7 +639,7 @@ namespace MediaPortal.TV.Recording
         return true;
       }
       if (IsRecording) return false;
-      DeleteGraph();
+      //DeleteGraph();TESTTEST
 
       if (CreateGraph())
       {
@@ -877,13 +880,15 @@ namespace MediaPortal.TV.Recording
 
       if (!g_Player.Playing)
       {
-        DeleteGraph();
+        //DeleteGraph();TESTTEST
+        _currentGraph.StopTimeShifting();//TESTTEST
         return;
       }
       string timeshiftFilename = String.Format(@"{0}\card{1}\{2}", RecordingPath, ID, TimeShiftFileName);
       if (!g_Player.CurrentFile.Equals(timeshiftFilename))
       {
-        DeleteGraph();
+        //DeleteGraph();TESTTEST
+        _currentGraph.StopTimeShifting();//TESTTEST
         return;
       }
     }//StopRecording()
@@ -907,12 +912,10 @@ namespace MediaPortal.TV.Recording
     {
       if (_currentGraphState != State.Initialized && _currentGraphState != State.Timeshifting)
       {
-        DeleteGraph();
+        //DeleteGraph();TESTTEST
       }
-      if (IsEpgGrabbing)
-      {
-        DeleteGraph();
-      }
+
+      StopEpgGrabbing();
       if (!UseForRecording) return;
 
       if (currentProgram != null)
@@ -1007,6 +1010,8 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Capture, "TVCapture.Stop() Card:{0}", ID);
       StopRecording();
       StopTimeShifting();
+      StopViewing();
+      StopEpgGrabbing();
       DeleteGraph();
     }
 
@@ -1057,10 +1062,8 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool StartTimeShifting(string channelName)
     {
-      if (IsEpgGrabbing)
-      {
-        DeleteGraph();
-      }
+
+      StopEpgGrabbing();
       if (IsRecording) return false;
 
       Log.WriteFile(Log.LogType.Capture, "TVCapture.StartTimeShifting() Card:{0} :{1}", ID, channelName);
@@ -1082,9 +1085,14 @@ namespace MediaPortal.TV.Recording
         else return true;
       }
 
-      if (_currentGraphState != State.Initialized)
+      
+      if (_currentGraphState ==State.Viewing)
       {
-        DeleteGraph();
+        StopViewing();
+      } 
+      else if (_currentGraphState != State.Initialized)
+      {
+        //DeleteGraph();TESTTEST
       }
       if (!CreateGraph()) return false;
 
@@ -1151,10 +1159,8 @@ namespace MediaPortal.TV.Recording
 
     public bool ViewChannel(TVChannel channel)
     {
-      if (IsEpgGrabbing)
-      {
-        DeleteGraph();
-      }
+
+      StopEpgGrabbing();
       if (_currentGraph == null)
       {
         if (!CreateGraph()) return false;
@@ -1182,12 +1188,22 @@ namespace MediaPortal.TV.Recording
       if (_currentGraph == null) return;
       _currentGraph.StoreChannels(ID, radio, tv, ref newTvChannels, ref updatedTvChannels, ref newRadioChannels, ref updatedRadioChannels);
     }
+    public void StopRadio()
+    {
+      if (!IsRadio) return;
+      if (_currentGraph==null) return;
+        
+      _currentGraph.StopRadio();
+      _currentGraphState = State.Initialized;
+    }
 
     public void StartRadio(RadioStation station)
     {
-      if (_currentGraphState != State.Radio)
+      if (!IsRadio) 
       {
-        DeleteGraph();
+        //DeleteGraph();TESTTEST
+        StopTimeShifting();
+        StopViewing();
         if (!CreateGraph()) return;
         _currentGraphState = State.Radio;
         _currentGraph.StartRadio(station);
@@ -1204,12 +1220,9 @@ namespace MediaPortal.TV.Recording
     }
     public void TuneRadioChannel(RadioStation station)
     {
-      if (_currentGraphState != State.Radio)
+      if (!IsRadio) 
       {
-        DeleteGraph();
-        if (!CreateGraph()) return;
-        _currentGraph.StartRadio(station);
-        _currentGraphState = State.Radio;
+        StartRadio(station);
       }
       else
       {
@@ -1219,13 +1232,10 @@ namespace MediaPortal.TV.Recording
     }
     public void TuneRadioFrequency(int frequency)
     {
-      if (_currentGraphState != State.Radio)
+      if (!IsRadio)
       {
-        DeleteGraph();
-        if (!CreateGraph()) return;
-        RadioStation station = new RadioStation();
-        _currentGraph.StartRadio(station);
-        _currentGraphState = State.Radio;
+        StartRadio(new RadioStation());
+        _currentGraph.TuneRadioFrequency(frequency);
       }
       else
       {
@@ -1296,7 +1306,7 @@ namespace MediaPortal.TV.Recording
 
         //wait till max 500msec until player has stopped...
         int counter = 0;
-        while (g_Player.Playing && counter < 20)
+        while ( (g_Player.Playing || VMR9Util.g_vmr9!=null )&& counter < 20)
         {
           System.Threading.Thread.Sleep(100);
           counter++;

@@ -288,7 +288,7 @@ namespace MediaPortal.TV.Recording
               {
                 //then stop the card
                 Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", CurrentCardIndex);
-                dev.Stop();
+                dev.StopTimeShifting();
                 CurrentCardIndex = -1;
                 OnTvStopped(i, dev);
               }
@@ -301,7 +301,7 @@ namespace MediaPortal.TV.Recording
           else
           {
             Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", CurrentCardIndex);
-            dev.Stop();
+            dev.StopTimeShifting();
           }
         }
       }

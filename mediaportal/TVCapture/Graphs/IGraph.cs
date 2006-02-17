@@ -263,7 +263,8 @@ namespace MediaPortal.TV.Recording
 
 		
 		// tune Start listening to radio
-		void StartRadio(RadioStation station);
+    void StartRadio(RadioStation station);
+    void StopRadio();
 
 		
 		// tune to the specified radio station
@@ -304,5 +305,6 @@ namespace MediaPortal.TV.Recording
     bool IsEpgGrabbing();
     bool IsEpgDone();
     void GrabEpg(TVChannel chan);
+    void StopEpgGrabbing();
   }
 }

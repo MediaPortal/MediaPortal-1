@@ -60,8 +60,10 @@ namespace MediaPortal.TV.Recording
     public override void Execute(CommandProcessor handler)
     {
       Log.WriteFile(Log.LogType.Recorder, "Command:Start radio:{0}", RadioStation);
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
-      GUIGraphicsContext.SendMessage(msg);
+      if (g_Player.Playing)
+      {
+        handler.StopPlayer();
+      }
       TurnTvOff(handler,-1);
       RadioStation radiostation;
       if (!RadioDatabase.GetStation(RadioStation, out radiostation))
@@ -84,7 +86,7 @@ namespace MediaPortal.TV.Recording
               {
                 if (dev.IsRadio)
                 {
-                  dev.Stop();
+                  dev.StopRadio();
                 }
               }
             }
