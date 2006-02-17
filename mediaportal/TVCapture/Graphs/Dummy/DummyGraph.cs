@@ -172,7 +172,7 @@ namespace MediaPortal.TV.Recording
     }
     public void StartRadio(RadioStation station)
     {
-      if (_state != State.Created)
+      if (_state != State.Created && _state != State.Radio)
         throw new ApplicationException("wrong state");
       //Trace.WriteLine(String.Format("card:{0} StartRadio:{1}", _card.FriendlyName,station.Name));
       _state = State.Radio;
