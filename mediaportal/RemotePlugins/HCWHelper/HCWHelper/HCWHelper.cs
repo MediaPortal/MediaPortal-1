@@ -80,7 +80,6 @@ namespace MediaPortal.InputDevices.HcwHelper
       else
       {
         connection.Send(port + 1, "APP", "STOP", DateTime.Now);
-        connection = null;
         Application.Exit();
       }
     }
