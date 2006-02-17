@@ -153,7 +153,17 @@ namespace MediaPortal.Radio.Database
 
       m_db.Execute(String.Format("update tblversion set idVersion={0}", currentVersion));
     }
+    static public void ClearAll()
+    {
+      m_db.Execute("delete from station");
+      m_db.Execute("delete from tblDVBSMapping");
+      m_db.Execute("delete from tblDVBCMapping");
+      m_db.Execute("delete from tblATSCMapping");
+      m_db.Execute("delete from tblDVBTMapping");
+      m_db.Execute("delete from tblChannelCard");
 
+
+    }
 
     static public void GetStations(ref ArrayList stations)
     {

@@ -30,12 +30,12 @@ namespace MediaPortal.Player
   /// <summary>
   /// 
   /// </summary>
-  public class PlayerFactory
+  public class PlayerFactory : IPlayerFactory
   {
     static ArrayList _externalPlayerList = new ArrayList();
     static bool _externalPlayersLoaded = false;
 
-    static private void LoadExternalPlayers()
+    private void LoadExternalPlayers()
     {
       Log.Write("Loading external players plugins");
       string[] fileList = System.IO.Directory.GetFiles(@"plugins\ExternalPlayers", "*.dll");
@@ -80,7 +80,7 @@ namespace MediaPortal.Player
       _externalPlayersLoaded = true;
     }
 
-    static public IExternalPlayer GetExternalPlayer(string fileName)
+    public IExternalPlayer GetExternalPlayer(string fileName)
     {
       if (!_externalPlayersLoaded)
       {
@@ -103,7 +103,7 @@ namespace MediaPortal.Player
       return null;
     }
 
-    static public IPlayer Create(string fileName)
+    public IPlayer Create(string fileName)
     {
       IPlayer newPlayer = null;
       string extension = System.IO.Path.GetExtension(fileName).ToLower();

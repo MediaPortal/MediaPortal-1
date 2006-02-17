@@ -266,6 +266,9 @@
     </Compile>
     <Compile Include="guilib\GUIPlayListItemListControl.cs" />
     <Compile Include="guilib\GUIPlayListtButtonControl.cs" />
+    <Compile Include="Player\DummyPlayer.cs" />
+    <Compile Include="Player\DummyPlayerFactory.cs" />
+    <Compile Include="Player\IPlayerFactory.cs" />
     <Compile Include="UserInterfaceControls\MPContextMenuStrip.cs">
       <SubType>Component</SubType>
     </Compile>

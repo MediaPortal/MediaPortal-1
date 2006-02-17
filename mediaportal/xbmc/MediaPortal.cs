@@ -2410,6 +2410,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     //register the playlistplayer for thread messages (like playback stopped,ended)
     Log.Write("  Init playlist player");
+    g_Player.Factory = new PlayerFactory();
     playlistPlayer.Init();
 
     //

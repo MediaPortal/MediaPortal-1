@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using ProcessPlugins.DiskSpace;
+using MediaPortal.Player;
 using MediaPortal.Util;
+using MediaPortal.Radio.Database;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 
@@ -34,11 +36,23 @@ namespace MediaPortal.Tests.Commands
     {
       TVChannel ch;
       TVDatabase.ClearAll();
+      RadioDatabase.ClearAll();
 
       // add 3 channels
       ch = new TVChannel("RTL 4"); TVDatabase.AddChannel(ch);
       ch = new TVChannel("RTL 5"); TVDatabase.AddChannel(ch);
       ch = new TVChannel("SBS 6"); TVDatabase.AddChannel(ch);
+
+      RadioStation station = new RadioStation();
+      station.Name = "BBC Radio";
+      RadioDatabase.AddStation(ref station);
+
+      station = new RadioStation();
+      station.Name = "RTL FM";
+      RadioDatabase.AddStation(ref station);
+      g_Player.Factory = new DummyPlayerFactory();
+      Playlists.PlayListPlayer.SingletonPlayer.InitTest();
+      g_Player.Stop();
     }
 
     [Test]
@@ -67,7 +81,7 @@ namespace MediaPortal.Tests.Commands
       Assert.IsFalse(proc.scheduler.TimeToProcessRecordings);
 
       proc.AddCommand(new CheckRecordingsCommand());
-      proc.ProcessCommands();
+      ProcessCommands(proc);
 
       Assert.IsTrue(proc.scheduler.TimeToProcessRecordings);
     }
@@ -89,9 +103,11 @@ namespace MediaPortal.Tests.Commands
     [Category("view tv")]
     public void TestViewStartCommand()
     {
+      
       CommandProcessor proc = new CommandProcessor();
       TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
       WatchTv(proc, "RTL 4");
+      Assert.IsFalse(g_Player.Playing);
     }
 
     [Test]
@@ -101,7 +117,9 @@ namespace MediaPortal.Tests.Commands
       CommandProcessor proc = new CommandProcessor();
       TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
       WatchTv(proc, "RTL 4");
+      Assert.IsFalse(g_Player.Playing);
       WatchTv(proc, "RTL 5");
+      Assert.IsFalse(g_Player.Playing);
     }
 
     [Test]
@@ -111,6 +129,7 @@ namespace MediaPortal.Tests.Commands
       CommandProcessor proc = new CommandProcessor();
       TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
       WatchTv(proc, "RTL 4");
+      Assert.IsFalse(g_Player.Playing);
       StopTv(proc);
     }
     #endregion
@@ -123,6 +142,7 @@ namespace MediaPortal.Tests.Commands
       CommandProcessor proc = new CommandProcessor();
       TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
       TimeShiftTv(proc, "RTL 4");
+      Assert.IsTrue(g_Player.Playing);
     }
 
     [Test]
@@ -134,11 +154,53 @@ namespace MediaPortal.Tests.Commands
 
       //lets watch TV
       TimeShiftTv(proc, "RTL 4");
+      Assert.IsTrue(g_Player.Playing);
 
       //switch channels
       TimeShiftTv(proc, "RTL 5");
+      Assert.IsTrue(g_Player.Playing);
+    }
+    #endregion
+
+    #region test radio
+    [Test]
+    [Category("Radio")]
+    public void TestRadio()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+      StartRadio(proc, "BBC Radio");
+      StopRadio(proc);
+    }
+    [Test]
+    [Category("Radio Zapping")]
+    public void TestRadioZapping()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+      StartRadio(proc, "BBC Radio");
+      StartRadio(proc, "RTL FM");
+      StartRadio(proc, "BBC Radio");
     }
 
+    [Test]
+    [Category("Radio tv zap")]
+    public void TestSwapBetweenTvAndRadio()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+
+      //lets watch TV
+      TimeShiftTv(proc, "RTL 4");
+      Assert.IsTrue(g_Player.Playing);
+
+      StartRadio(proc, "BBC Radio");
+
+      WatchTv(proc, "RTL 5");
+      Assert.IsFalse(g_Player.Playing);
+
+      StartRadio(proc, "BBC Radio");
+    }
     [Test]
     [Category("timeshift tv")]
     public void TestTimeShiftStopCommand()
@@ -148,6 +210,7 @@ namespace MediaPortal.Tests.Commands
 
       //lets watch TV
       TimeShiftTv(proc, "RTL 4");
+      Assert.IsTrue(g_Player.Playing);
       //lets stop TV
       StopTv(proc);
 
@@ -164,8 +227,11 @@ namespace MediaPortal.Tests.Commands
 
       //watch TV
       WatchTv(proc, "RTL 4");
+      Assert.IsFalse(g_Player.Playing);
       TimeShiftTv(proc, "RTL 4");
+      Assert.IsTrue(g_Player.Playing);
       WatchTv(proc, "RTL 4");
+      Assert.IsFalse(g_Player.Playing);
       StopTv(proc);
 
     }
@@ -181,6 +247,7 @@ namespace MediaPortal.Tests.Commands
 
       //record TV
       StartRecord(proc, "RTL 4");
+      Assert.IsFalse(g_Player.Playing);
     }
     [Test]
     [Category("Recording")]
@@ -191,7 +258,9 @@ namespace MediaPortal.Tests.Commands
 
       //record TV
       StartRecord(proc, "RTL 4");
+      Assert.IsFalse(g_Player.Playing);
       TimeShiftTv(proc, "RTL 4");
+      Assert.IsTrue(g_Player.Playing);
       StopRecord(proc);
     }
     [Test]
@@ -203,8 +272,11 @@ namespace MediaPortal.Tests.Commands
 
       //record TV
       TimeShiftTv(proc, "RTL 5");
+      Assert.IsTrue(g_Player.Playing);
       StartRecord(proc, "RTL 4");
+      Assert.IsTrue(g_Player.Playing);
       StopRecord(proc);
+      Assert.IsTrue(g_Player.Playing);
     }
     [Test]
     [Category("Recording")]
@@ -215,8 +287,11 @@ namespace MediaPortal.Tests.Commands
 
       //record TV
       WatchTv(proc, "RTL 5");
+      Assert.IsFalse(g_Player.Playing);
       StartRecord(proc, "RTL 4");
+      Assert.IsTrue(g_Player.Playing);
       StopRecord(proc);
+      Assert.IsTrue(g_Player.Playing);
     }
     [Test]
     [Category("Recording")]
@@ -258,12 +333,14 @@ namespace MediaPortal.Tests.Commands
 
       //record TV
       StartRecord(proc, "RTL 4");
+      Assert.IsFalse(g_Player.Playing);
 
       TimeShiftTv(proc, "RTL 4");
+      Assert.IsTrue(g_Player.Playing);
 
       //zap to rtl 5 (should fail)
       proc.AddCommand(new TimeShiftTvCommand("RTL 5"));
-      proc.ProcessCommands();
+      ProcessCommands(proc);
       Assert.AreEqual(proc.CurrentCardIndex, 0);
       Assert.AreEqual(proc.TVChannelName, "RTL 4");
       Assert.AreEqual(proc.TVCards[0].TVChannel, "RTL 4");
@@ -272,7 +349,9 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(proc.TVCards[0].TimeShiftFileName, @"live.tv");
       Assert.AreEqual(proc.GetTimeShiftFileName(proc.CurrentCardIndex), @"C:\card1\live.tv");
 
+      Assert.IsTrue(g_Player.Playing);
       StopRecord(proc);
+      Assert.IsTrue(g_Player.Playing);
     }
     [Test]
     [Category("Recording")]
@@ -283,11 +362,13 @@ namespace MediaPortal.Tests.Commands
 
       //record TV
       TimeShiftTv(proc, "RTL 4");
+      Assert.IsTrue(g_Player.Playing);
       StartRecord(proc, "RTL 4");
+      Assert.IsTrue(g_Player.Playing);
 
       //zap to rtl 5 (should fail)
       proc.AddCommand(new ViewTvCommand("RTL 5"));
-      proc.ProcessCommands();
+      ProcessCommands(proc);
       Assert.AreEqual(proc.CurrentCardIndex, 0);
       Assert.AreEqual(proc.TVChannelName, "RTL 4");
       Assert.AreEqual(proc.TVCards[0].TVChannel, "RTL 4");
@@ -296,7 +377,9 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(proc.TVCards[0].TimeShiftFileName, @"live.tv");
       Assert.AreEqual(proc.GetTimeShiftFileName(proc.CurrentCardIndex), @"C:\card1\live.tv");
 
+      Assert.IsTrue(g_Player.Playing);
       StopRecord(proc);
+      Assert.IsTrue(g_Player.Playing);
     }
     #endregion
 
@@ -322,17 +405,17 @@ namespace MediaPortal.Tests.Commands
       TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
       TimeShiftTv(proc, "RTL 4");
       proc.AddCommand(new SetAudioLanguageCommand(123));
-      proc.ProcessCommands();
+      ProcessCommands(proc);
       Assert.AreEqual(card1.GetAudioLanguage(), 123);
 
       proc.AddCommand(new SetAudioLanguageCommand(456));
-      proc.ProcessCommands();
+      ProcessCommands(proc);
       Assert.AreEqual(card1.GetAudioLanguage(), 456);
 
 
 
       proc.AddCommand(new SetAudioLanguageCommand(789));
-      proc.ProcessCommands();
+      ProcessCommands(proc);
       Assert.AreEqual(card1.GetAudioLanguage(), 789);
     }
 
@@ -344,34 +427,44 @@ namespace MediaPortal.Tests.Commands
       TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
       WatchTv(proc, "RTL 4");
       proc.AddCommand(new SetAudioLanguageCommand(123));
-      proc.ProcessCommands();
+      ProcessCommands(proc);
       Assert.AreEqual(card1.GetAudioLanguage(), 123);
 
       proc.AddCommand(new SetAudioLanguageCommand(456));
-      proc.ProcessCommands();
+      ProcessCommands(proc);
       Assert.AreEqual(card1.GetAudioLanguage(), 456);
 
 
 
       proc.AddCommand(new SetAudioLanguageCommand(789));
-      proc.ProcessCommands();
+      ProcessCommands(proc);
       Assert.AreEqual(card1.GetAudioLanguage(), 789);
     }
     #endregion
 
     #region helper functions
+    void ProcessCommands(CommandProcessor proc)
+    {
+      do
+      {
+        proc.ProcessCommands();
+      } while (proc.IsBusy);
+    }
     void DoSchedule(CommandProcessor proc)
     {
       proc.AddCommand(new CheckRecordingsCommand());
-      proc.ProcessCommands();
-      proc.ProcessScheduler();
+      do
+      {
+        proc.ProcessCommands();
+        proc.ProcessScheduler();
+      } while (proc.IsBusy);
     }
     void StopRecord(CommandProcessor proc)
     {
       DateTime dtNow = DateTime.Now;
       TVRecording rec = proc.TVCards[0].CurrentTVRecording;
       proc.AddCommand(new StopRecordingCommand());
-      proc.ProcessCommands();
+      ProcessCommands(proc);
       proc.ProcessScheduler();
       Assert.IsFalse(proc.TVCards[0].IsRecording);
       Assert.IsFalse(proc.TVCards[0].IsPostRecording);
@@ -441,13 +534,14 @@ namespace MediaPortal.Tests.Commands
     void StopTv(CommandProcessor proc)
     {
       proc.AddCommand(new StopTvCommand());
-      proc.ProcessCommands();
+      ProcessCommands(proc);
       Assert.AreEqual(proc.CurrentCardIndex, -1);
       Assert.AreEqual(proc.TVChannelName, "");
       Assert.AreEqual(proc.TVCards[0].TVChannel, "");
       Assert.IsFalse(proc.TVCards[0].View);
       Assert.IsFalse(proc.TVCards[0].IsTimeShifting);
       CompareDates(proc.TVCards[0].TimeShiftingStarted, DateTime.MinValue);
+      Assert.IsFalse(g_Player.Playing);
     }
     void TimeShiftTv(CommandProcessor proc, string channelName)
     {
@@ -455,7 +549,7 @@ namespace MediaPortal.Tests.Commands
       //timeshift TV
       DateTime dtNow = DateTime.Now;
       proc.AddCommand(new TimeShiftTvCommand(channelName));
-      proc.ProcessCommands();
+      ProcessCommands(proc);
       Assert.AreEqual(proc.CurrentCardIndex, 0);
       Assert.AreEqual(proc.TVChannelName, channelName);
       Assert.AreEqual(proc.TVCards[0].TVChannel, channelName);
@@ -467,19 +561,51 @@ namespace MediaPortal.Tests.Commands
       {
         CompareDates(proc.TVCards[0].TimeShiftingStarted, dtNow);
       }
+      Assert.IsTrue(g_Player.Playing);
+      Assert.AreEqual(g_Player.CurrentFile, proc.GetTimeShiftFileName(proc.CurrentCardIndex));
     }
 
     void WatchTv(CommandProcessor proc, string channelName)
     {
       //watch TV
       proc.AddCommand(new ViewTvCommand(channelName));
-      proc.ProcessCommands();
+      ProcessCommands(proc);
       Assert.AreEqual(proc.CurrentCardIndex, 0);
       Assert.AreEqual(proc.TVChannelName, channelName);
       Assert.AreEqual(proc.TVCards[0].TVChannel, channelName);
       Assert.IsTrue(proc.TVCards[0].View);
       Assert.IsFalse(proc.TVCards[0].IsTimeShifting);
+      if (proc.TVCards[0].IsTimeShifting)
+      {
+        Assert.IsTrue(g_Player.Playing);
+        Assert.AreEqual(g_Player.CurrentFile, proc.GetTimeShiftFileName(proc.CurrentCardIndex));
+      }
+      else
+      {
+        Assert.IsFalse(g_Player.Playing);
+      }
       CompareDates(proc.TVCards[0].TimeShiftingStarted, DateTime.MinValue);
+    }
+    void StartRadio(CommandProcessor proc, string stationName)
+    {
+      proc.AddCommand(new StartRadioCommand(stationName));
+      ProcessCommands(proc);
+      Assert.AreEqual(proc.CurrentCardIndex, 0);
+      Assert.IsTrue(proc.TVCards[0].IsRadio);
+      Assert.IsFalse(proc.TVCards[0].IsTimeShifting);
+      Assert.IsFalse(g_Player.Playing);
+    }
+    void StopRadio(CommandProcessor proc)
+    {
+      proc.AddCommand(new StopRadioCommand());
+      ProcessCommands(proc);
+      Assert.AreEqual(proc.CurrentCardIndex, -1);
+      Assert.AreEqual(proc.TVChannelName, "");
+      Assert.AreEqual(proc.TVCards[0].TVChannel, "");
+      Assert.IsFalse(proc.TVCards[0].View);
+      Assert.IsFalse(proc.TVCards[0].IsTimeShifting);
+      Assert.IsFalse(proc.TVCards[0].IsRadio);
+      Assert.IsFalse(g_Player.Playing);
     }
     void CompareDates(DateTime dt1, DateTime dt2)
     {

@@ -58,6 +58,10 @@ namespace MediaPortal.TV.Recording
         {
           Log.WriteFile(Log.LogType.Recorder, "Recorder:StopRadio() stop radio on card:{0}", dev.ID);
           dev.StopRadio();
+          if (i == handler.CurrentCardIndex)
+          {
+            handler.CurrentCardIndex = -1;
+          }
         }
       }
     }

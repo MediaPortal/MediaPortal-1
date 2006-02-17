@@ -637,6 +637,7 @@ namespace MediaPortal.TV.Recording
         return false;
       }
       StopEpgGrabbing();
+      StopRadio();
 
       if (_currentGraphState == State.Viewing)
       {
@@ -923,6 +924,8 @@ namespace MediaPortal.TV.Recording
         //DeleteGraph();TESTTEST
       }
 
+
+      StopRadio();
       StopEpgGrabbing();
       if (!UseForRecording) return;
 
@@ -1020,6 +1023,7 @@ namespace MediaPortal.TV.Recording
       StopTimeShifting();
       StopViewing();
       StopEpgGrabbing();
+      StopRadio();
       DeleteGraph();
     }
 
@@ -1072,6 +1076,7 @@ namespace MediaPortal.TV.Recording
     {
 
       StopEpgGrabbing();
+      StopRadio();
       if (IsRecording) return false;
 
       Log.WriteFile(Log.LogType.Capture, "TVCapture.StartTimeShifting() Card:{0} :{1}", ID, channelName);

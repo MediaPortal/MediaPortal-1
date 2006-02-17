@@ -115,6 +115,10 @@ namespace MediaPortal.Playlists
       }
     }
 
+    public void InitTest()
+    {
+      GUIGraphicsContext.Receivers += new SendMessageHandler(this.OnMessage);
+    }
     public void Init()
     {
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnMessage);

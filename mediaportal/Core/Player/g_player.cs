@@ -65,6 +65,7 @@ namespace MediaPortal.Player
     static bool _isInitalized = false;
     static string _currentFilePlaying = "";
     static MediaType _currentMedia;
+    static Player.IPlayerFactory _factory;
     #endregion
     #region events
     public delegate void StoppedHandler(MediaType type, int stoptime, string filename);
@@ -80,10 +81,16 @@ namespace MediaPortal.Player
     // singleton. Dont allow any instance of this class
     private g_Player()
     {
+      _factory = new PlayerFactory();
     }
     public static Player.IPlayer Player
     {
       get { return _player; }
+    }
+    public static Player.IPlayerFactory Factory
+    {
+      get { return _factory; }
+      set { _factory=value; }
     }
     #endregion
 
@@ -169,7 +176,10 @@ namespace MediaPortal.Player
         OnStopped();
         GUIGraphicsContext.ShowBackground = true;
         _player.Stop();
-        GUIGraphicsContext.form.Invalidate(true);
+        if (GUIGraphicsContext.form!=null)
+        {
+          GUIGraphicsContext.form.Invalidate(true);
+        }
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STOPPED, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendThreadMessage(msg);
 
@@ -477,7 +487,7 @@ namespace MediaPortal.Player
           return bResult;
         }
       }
-      _player = PlayerFactory.Create(strFile);
+      _player = _factory.Create(strFile);
       if (_player != null)
       {
         if (Utils.IsVideo(strFile))

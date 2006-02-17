@@ -5,9 +5,10 @@ using System.Text;
 using NUnit.Framework;
 using ProcessPlugins.DiskSpace;
 using MediaPortal.Util;
+using MediaPortal.Player;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-
+using System.Diagnostics;
 namespace MediaPortal.Tests.TVCapture.Commands
 {
   [TestFixture]
@@ -26,6 +27,9 @@ namespace MediaPortal.Tests.TVCapture.Commands
     {
       TVChannel ch;
       TVDatabase.ClearAll();
+      g_Player.Factory = new DummyPlayerFactory();
+      Playlists.PlayListPlayer.SingletonPlayer.InitTest();
+      g_Player.Stop();
 
       // add 3 channels
       ch = new TVChannel("RTL 4"); TVDatabase.AddChannel(ch);
@@ -70,6 +74,7 @@ namespace MediaPortal.Tests.TVCapture.Commands
       TVRecording rec2 = AddSchedule("RTL 5", DateTime.Now.AddMinutes(-22), DateTime.Now.AddMinutes(33));
       DoSchedule();
       VerifyRecord(MEDIUM, rec2);
+      Assert.IsFalse(g_Player.Playing);
     }
 
     [Test]
@@ -86,6 +91,8 @@ namespace MediaPortal.Tests.TVCapture.Commands
       TVRecording rec3 = AddSchedule("SBS 6", DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1));
       DoSchedule();
       VerifyRecord(LOWEST, rec3);
+      DoSchedule();
+      Assert.IsFalse(g_Player.Playing);
     }
 
     [Test]
@@ -93,10 +100,15 @@ namespace MediaPortal.Tests.TVCapture.Commands
     {
       RecordOn3Tuners();
       Zap("RTL 4");
+      Assert.IsTrue(g_Player.Playing);
       VerifyTimeShift(HIGHEST);
+
       Zap("RTL 5");
+      Assert.IsTrue(g_Player.Playing);
       VerifyTimeShift(MEDIUM);
+
       Zap("SBS 6");
+      Assert.IsTrue(g_Player.Playing);
       VerifyTimeShift(LOWEST);
     }
 
@@ -105,8 +117,10 @@ namespace MediaPortal.Tests.TVCapture.Commands
     {
       RecordOn3Tuners();
       Zap("SBS 6");
+      Assert.IsTrue(g_Player.Playing);
 
       Zap("CNN");
+      Assert.IsTrue(g_Player.Playing);
       VerifyTimeShift(LOWEST);
     }
 
@@ -115,14 +129,23 @@ namespace MediaPortal.Tests.TVCapture.Commands
     {
       RecordOn2Tuners();
       Zap("SBS 6");
+      Assert.IsTrue(g_Player.Playing);
       VerifyTimeShift(LOWEST);
+
       Zap("MTV");
+      Assert.IsTrue(g_Player.Playing);
       VerifyTimeShift(LOWEST);
+
       Zap("CNN");
+      Assert.IsTrue(g_Player.Playing);
       VerifyTimeShift(LOWEST);
+
       Zap("RTL 4");
+      Assert.IsTrue(g_Player.Playing);
       VerifyTimeShift(HIGHEST);
+
       Zap("RTL 5");
+      Assert.IsTrue(g_Player.Playing);
       VerifyTimeShift(MEDIUM);
     }
 
@@ -131,11 +154,13 @@ namespace MediaPortal.Tests.TVCapture.Commands
     {
       RecordOn3Tuners();
       Zap("SBS 6");
+      Assert.IsTrue(g_Player.Playing);
       
       StopRecord();
       VerifyNotRecording(LOWEST);
 
       Zap("CNN");
+      Assert.IsTrue(g_Player.Playing);
       VerifyTimeShift(LOWEST);
     }
 
@@ -165,18 +190,27 @@ namespace MediaPortal.Tests.TVCapture.Commands
     void Zap(string channelName)
     {
       _processor.AddCommand(new TimeShiftTvCommand(channelName));
-      _processor.ProcessCommands();
+      do
+      {
+        _processor.ProcessCommands();
+      } while (_processor.IsBusy);
     }
     void DoSchedule()
     {
       _processor.AddCommand(new CheckRecordingsCommand());
-      _processor.ProcessCommands();
-      _processor.ProcessScheduler();
+      do
+      {
+        _processor.ProcessScheduler();
+        _processor.ProcessCommands();
+      } while (_processor.IsBusy);
     }
     void StopRecord()
     {
       _processor.AddCommand(new StopRecordingCommand());
-      _processor.ProcessCommands();
+      do
+      {
+        _processor.ProcessCommands();
+      } while (_processor.IsBusy);
     }
 
     TVRecording AddSchedule(string channelName, DateTime dtStart, DateTime dtEnd)
