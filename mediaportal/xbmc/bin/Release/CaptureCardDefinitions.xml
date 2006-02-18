@@ -7532,9 +7532,9 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
-        <filter cat="networkprovider" name="MicrosoftDVBT Network Provider" checkdevice="false"/>
-        <filter cat="tunerdevice"     name="Digital TVUSB Mini Receiver"    checkdevice="true"/>
-        <filter cat="capture"         name="ULi M9207Digital Capture"       checkdevice="true"/>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider" checkdevice="false"/>
+        <filter cat="tunerdevice"     name="Digital TV USB Mini Receiver"    checkdevice="true"/>
+        <filter cat="capture"         name="ULi M9207 Digital Capture"       checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
@@ -8613,6 +8613,60 @@
         <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="encoderaudio"	sinkpin="0"/>
         <connection sourcefilter="encodervideo"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
         <connection sourcefilter="encoderaudio"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV 100e" capturename="PCTV USB2 2821 Capture" devid="vid_2304&amp;pid_0208&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		name="PCTV USB2 2821 TVTuner"	checkdevice="true"/>
+        <filter cat="tvaudio"		name="PCTV USB2 2821 TVAudio"	checkdevice="true"/>
+        <filter cat="crossbar"		name="PCTV USB2 2821 Crossbar"		checkdevice="true"/>
+        <filter cat="capture"		name="PCTV USB2 2821 Capture"	checkdevice="true"/>
+		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
+		<filter cat="videncoder"	name="Pinnacle MPEG 2 Encoder"					checkdevice="false"/>
+		<filter cat="audencoder"	name="Pinnacle MPEG Layer-2 Audio Encoder"		checkdevice="false"/>
+		<filter cat="mux"			name="Pinnacle MPEG 2 Multiplexer"		checkdevice="false"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"		sourcepin="0" sinkfilter="audencoder"		sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AVerTV USB 2.0 Plus" capturename="AVerTV USB 2.0 Plus Video Capture" devid="vid_07ca&amp;pid_0036&amp;mi_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"></interface>
+      <filters>
+        <filter cat="tvtuner"		name="AVerTV USB 2.0 Plus TvTuner"						checkdevice="true"></filter>
+        <filter cat="tvaudio"		name="AVerTV USB 2.0 Plus TvAudio"						checkdevice="true"></filter>
+        <filter cat="crossbar"		name="AVerTV USB 2.0 Plus CrossBar"						checkdevice="true"></filter>
+        <filter cat="capture"		name="AVerTV USB 2.0 Plus Video Capture"	checkdevice="true"></filter>
+		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
+        <filter cat="videncoder"	name="AVerMedia MPEG Video Encoder"						checkdevice="false"></filter>
+        <filter cat="audencoder"	name="AVerMedia MPEG Audio Encoder"						checkdevice="false"></filter>
+        <filter cat="mux"			name="AVerMedia MPEG-2 Multiplexer"						checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"></connection>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"></connection>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"></connection>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"></connection>
+        <connection sourcefilter="audcapture"		sourcepin="0" sinkfilter="audencoder"		sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"></connection>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"></connection>
       </connections>
     </tv>
   </capturecard>
