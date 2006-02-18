@@ -2,7 +2,9 @@
 	<id>14</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
-<controls>
+	<define>#header.label:Movie Setup</define>
+	<controls>
+		<import>common.settings.xml</import>
 	<control>
 		<description>background image</description>
 		<type>image</type>
@@ -15,6 +17,15 @@
 		<colorkey>0</colorkey>
 		<colordiffuse>ffffffff</colordiffuse>
 	</control>
+		<control>
+			<type>image</type>
+			<id>1</id>
+			<posX>420</posX>
+			<posY>10</posY>
+			<texture>hover_my music.png</texture>
+			<colorkey>0</colorkey>
+		<colordiffuse>50ffffff</colordiffuse>
+		</control>
 	<control>
 		<type>image</type>
 		<id>1</id>
@@ -77,14 +88,14 @@
 		<posX>520</posX>
 		<posY>286</posY>
 		<textXOff>20</textXOff>
-		<textYOff>2</textYOff>		
+		<textYOff>2</textYOff>
 		<width>76</width>
 		<height>25</height>
 		<textureFocus>button_small_settings_focus.png</textureFocus>
-		<textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>		
+		<textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
 		<onleft>8</onleft>
 		<onright>8</onright>
-		<onup>6</onup>
+		<onup>17</onup>
 		<ondown>13</ondown>
 	</control>
 	<control>

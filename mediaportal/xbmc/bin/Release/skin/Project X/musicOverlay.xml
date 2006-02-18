@@ -6,8 +6,8 @@
 			<description>play time label</description>
 			<type>label</type>
 			<id>2</id>
-			<posX>72</posX>
-			<posY>305</posY>
+			<posX>71</posX>
+			<posY>373</posY>
 			<label>#currentplaytime</label>
 			<align>left</align>
 			<font>font72</font>

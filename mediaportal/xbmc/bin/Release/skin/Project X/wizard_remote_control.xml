@@ -165,7 +165,7 @@
 			<id>10</id>
 			<posX>400</posX>
 			<posY>120</posY>
-			<width>100</width>
+			<width>200</width>
 			<height>300</height>
 			<texture>-</texture>
 		</control>

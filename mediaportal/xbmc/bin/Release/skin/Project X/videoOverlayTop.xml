@@ -6,25 +6,28 @@
       <description>Pause logo</description>
       <type>image</type>
       <id>4</id>
-      <posX>123</posX>
-      <posY>428</posY>
-      <texture>logo_pause.png</texture>
+     <height>56</height>
+			<posX>0</posX>
+			<posY>513</posY>
+			<texture>Pause.gif</texture>
     </control>
     <control>
       <description>FF logo</description>
       <type>image</type>
       <id>5</id>
-      <posX>123</posX>
-      <posY>428</posY>
-      <texture>logo_fastforward.png</texture>
+     <height>56</height>
+			<posX>0</posX>
+			<posY>513</posY>
+			<texture>Fw.png</texture>
     </control>
     <control>
       <description>RW logo</description>
       <type>image</type>
       <id>6</id>
-      <posX>123</posX>
-      <posY>428</posY>
-      <texture>logo_rewind.png</texture>
+     <height>56</height>
+			<posX>0</posX>
+			<posY>513</posY>
+			<texture>Rew.png</texture>
     </control>
   </controls>
 </window>

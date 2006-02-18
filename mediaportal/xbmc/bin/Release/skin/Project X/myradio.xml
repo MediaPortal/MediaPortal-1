@@ -127,9 +127,22 @@
 				<onleft>7</onleft>
 				<onright>50</onright>
 				<onup>6</onup>
-				<ondown>2</ondown>
+				<ondown>8</ondown>
 				<action>14</action>
 			</control>
+			 <control>
+        <description>Radio Guide</description>
+        <type>button</type>
+        <id>8</id>
+        <posX>60</posX>
+		<posY>233</posY>
+        <label>533</label>
+        <onleft>8</onleft>
+        <onright>50</onright>
+        <onup>7</onup>
+        <ondown>99</ondown>
+        <hyperlink>762</hyperlink>
+      </control>
 		</control>
 		<control>
 			<type>group</type>
