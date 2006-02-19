@@ -25,50 +25,34 @@ using System.Text;
 
 namespace MediaPortal.Utils.Services
 {
-    public class ServiceProvider
+  public class ServiceProvider
+  {
+    private Dictionary<Type, object> services;
+
+    public ServiceProvider()
     {
-        private Hashtable m_Services = null;
-        
-        public ServiceProvider()
-        {
-            m_Services = new Hashtable();
-        }
-
-        public bool IsRegistered(string ServiceId)
-        {
-            return m_Services.ContainsKey(ServiceId);
-        }
-
-        public void Add(Service ServiceClass)
-        {
-            if (ServiceClass.GetServiceId() != string.Empty)
-            {
-                m_Services.Add(ServiceClass.GetServiceId(), ServiceClass);
-            }
-        }
-
-        public object Get(string ServiceId)
-        {
-            if (m_Services.ContainsKey(ServiceId))
-            {
-                return m_Services[ServiceId];
-            }
-
-            return null;
-        }
-
-        public void Remove(string ServiceId)
-        {
-            if (m_Services.ContainsKey(ServiceId))
-            {
-                m_Services.Remove(ServiceId);
-            }
-        }
-
-        public void Replace(Service ServiceClass)
-        {
-            Remove(ServiceClass.GetServiceId());
-            Add(ServiceClass);
-        }
+      services = new Dictionary<Type, object>();
     }
+
+    public bool IsRegistered<T>()
+    {
+      return services.ContainsKey(typeof(T));
+    }
+
+    public void Add(object service, Type type)
+    {
+      // Make sure service implements type
+      services.Add(type, service);
+    }
+
+    public T Get<T>()
+    {
+      Type t = typeof(T);
+      if (services.ContainsKey(t))
+      {
+        return (T)services[t];
+      }
+      return default(T);
+    }
+  }
 }

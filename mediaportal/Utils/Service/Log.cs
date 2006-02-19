@@ -33,7 +33,7 @@ namespace MediaPortal.Utils.Services
         {
             Error = 0,
             Warning = 1,
-            Infomation = 2,
+            Information = 2,
             Debug = 3
         }
 
@@ -47,7 +47,7 @@ namespace MediaPortal.Utils.Services
                 case Level.Warning:
                     return "Warn.";
 
-                case Level.Infomation:
+                case Level.Information:
                     return "Info.";
 
                 case Level.Debug:
@@ -77,7 +77,7 @@ namespace MediaPortal.Utils.Services
 
         public void Info(string strFormat, params object[] arg)
         {
-            Write(Level.Infomation, strFormat, arg);
+            Write(Level.Information, strFormat, arg);
         }
 
         public void Warn(string strFormat, params object[] arg)
@@ -95,7 +95,7 @@ namespace MediaPortal.Utils.Services
             Write(Level.Debug, strFormat, arg);
         }
 
-        public void Write(Level logLevel, string strFormat, params object[] arg)
+        private void Write(Level logLevel, string strFormat, params object[] arg)
 		{
             if (logLevel <= m_minLevel)
             {
