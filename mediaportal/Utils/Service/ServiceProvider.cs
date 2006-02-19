@@ -23,47 +23,52 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MediaPortal.Utils.Service
+namespace MediaPortal.Utils
 {
-    class ServiceProvider
+    public class ServiceProvider
     {
-        private static Hashtable m_Services = null;
-
+        private Hashtable m_Services = null;
+        
         public ServiceProvider()
         {
             m_Services = new Hashtable();
         }
 
-        public void Add(object ServiceClass)
+        public bool IsRegistered(string ServiceId)
         {
-            Type ServiceType = ServiceClass.GetType();
+            return m_Services.ContainsKey(ServiceId);
+        }
 
-            if( !m_Services.ContainsKey(ServiceType.FullName) )
+        public void Add(Service ServiceClass)
+        {
+            if (ServiceClass.GetServiceId() != string.Empty)
             {
-                m_Services.Add(ServiceType.FullName, ServiceClass);
+                m_Services.Add(ServiceClass.GetServiceId(), ServiceClass);
             }
         }
 
-        public object Get(object ServiceClass)
+        public object Get(string ServiceId)
         {
-            Type ServiceType = ServiceClass.GetType();
-
-            if (m_Services.ContainsKey(ServiceType.FullName))
+            if (m_Services.ContainsKey(ServiceId))
             {
-                return m_Services[ServiceType.FullName];
+                return m_Services[ServiceId];
             }
 
             return null;
         }
 
-        public void Remove(object ServiceClass)
+        public void Remove(string ServiceId)
         {
-            Type ServiceType = ServiceClass.GetType();
-
-            if (m_Services.ContainsKey(ServiceType.FullName))
+            if (m_Services.ContainsKey(ServiceId))
             {
-                m_Services.Remove(ServiceType.FullName);
+                m_Services.Remove(ServiceId);
             }
+        }
+
+        public void Replace(Service ServiceClass)
+        {
+            Remove(ServiceClass.GetServiceId());
+            Add(ServiceClass);
         }
     }
 }

@@ -108,6 +108,8 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Service\Log.cs" />
+    <Compile Include="Service\Service.cs" />
     <Compile Include="Service\ServiceProvider.cs" />
     <Compile Include="Time\WorldTimeZone.cs" />
     <Compile Include="Web\http\HTTPAuth.cs" />
