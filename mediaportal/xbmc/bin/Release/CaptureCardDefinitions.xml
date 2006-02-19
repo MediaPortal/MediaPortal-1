@@ -7463,7 +7463,7 @@
         <filter cat="capture"		name="Pinnacle PCTV 110i BDA Analog Capture"	checkdevice="true"/>
 		<filter cat="videncoder"	name="Pinnacle MPEG 2 Encoder"					checkdevice="false"/>
 		<filter cat="audencoder"	name="Pinnacle MPEG Layer-2 Audio Encoder"		checkdevice="false"/>
-		<filter cat="mux"			name="Pinnacle MPEG 2 Encoder Multiplexer"		checkdevice="false"/>
+		<filter cat="mux"			name="Pinnacle MPEG 2 Multiplexer"		checkdevice="false"/>
       </filters>
       <connections>
 		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -8428,7 +8428,7 @@
         <filter cat="capture"		name="Pinnacle PCTV 300i PAL Stereo BDA Analog Capture"		checkdevice="true"/>
 		<filter cat="videncoder"	name="Pinnacle MPEG 2 Encoder"								checkdevice="false"/>
 		<filter cat="audencoder"	name="Pinnacle MPEG Layer-2 Audio Encoder"					checkdevice="false"/>
-		<filter cat="mux"			name="Pinnacle MPEG 2 Encoder Multiplexer"					checkdevice="false"/>
+		<filter cat="mux"			name="Pinnacle MPEG 2 Multiplexer"					checkdevice="false"/>
       </filters>
       <connections>
 		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -8511,7 +8511,7 @@
         <filter cat="capture"		name="Pinnacle PCTV 310i BDA Analog Capture"	checkdevice="true"/>
 		<filter cat="videncoder"	name="Pinnacle MPEG 2 Encoder"					checkdevice="false"/>
 		<filter cat="audencoder"	name="Pinnacle MPEG Layer-2 Audio Encoder"		checkdevice="false"/>
-		<filter cat="mux"			name="Pinnacle MPEG 2 Encoder Multiplexer"		checkdevice="false"/>
+		<filter cat="mux"			name="Pinnacle MPEG 2 Multiplexer"		checkdevice="false"/>
       </filters>
       <connections>
 		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
