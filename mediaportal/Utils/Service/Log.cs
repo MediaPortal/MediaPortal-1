@@ -24,7 +24,7 @@ using System.IO;
 
 namespace MediaPortal.Utils.Services
 {
-    public class Log : Service
+    public class Log
     {
         private string m_LogName;
         private Level m_minLevel;
