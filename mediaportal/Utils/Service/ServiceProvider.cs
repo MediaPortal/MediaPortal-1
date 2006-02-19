@@ -23,7 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MediaPortal.Utils
+namespace MediaPortal.Utils.Services
 {
     public class ServiceProvider
     {

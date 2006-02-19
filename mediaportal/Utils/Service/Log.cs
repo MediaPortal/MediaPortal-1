@@ -22,7 +22,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace MediaPortal.Utils
+namespace MediaPortal.Utils.Services
 {
     public class Log : Service
     {
