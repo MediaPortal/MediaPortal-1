@@ -694,15 +694,15 @@ namespace DShowNET
       IntPtr ptrCmd = Marshal.AllocCoTaskMem(25);
       try
       {
-        Marshal.WriteByte(ptrCmd,0xFF);//Voltage;
-        Marshal.WriteByte(ptrCmd, 0xFF);//ContTone;
-        Marshal.WriteByte(ptrCmd, 0xFF);//Burst;
-        Marshal.WriteByte(ptrCmd, 0x01);//NrDiseqcCmds;
+        Marshal.WriteByte(ptrCmd,0,0xFF);//Voltage;
+        Marshal.WriteByte(ptrCmd,1, 0xFF);//ContTone;
+        Marshal.WriteByte(ptrCmd,2, 0xFF);//Burst;
+        Marshal.WriteByte(ptrCmd,3, 0x01);//NrDiseqcCmds;
 
-        Marshal.WriteByte(ptrCmd, 0x04);//diseqc command 1. length=4
-        Marshal.WriteByte(ptrCmd, 0xE0);//diseqc command 1. uFraming=0xe0
-        Marshal.WriteByte(ptrCmd, 0x10);//diseqc command 1. uAddress=0x10
-        Marshal.WriteByte(ptrCmd, 0x38);//diseqc command 1. uCommand=0x38
+        Marshal.WriteByte(ptrCmd,4, 0x04);//diseqc command 1. length=4
+        Marshal.WriteByte(ptrCmd,5, 0xE0);//diseqc command 1. uFraming=0xe0
+        Marshal.WriteByte(ptrCmd,6, 0x10);//diseqc command 1. uAddress=0x10
+        Marshal.WriteByte(ptrCmd,7, 0x38);//diseqc command 1. uCommand=0x38
 
         // Antenna nr = 1-4 in this example, but this is based on application
         // Diseqc standard is 0 based, so for Diseqc 1.0 antenna index is from 0 -3
@@ -729,7 +729,7 @@ namespace DShowNET
         cmd |= (byte)( ( (antennaNr - 1) * 4) & 0x0F);
         cmd |= (byte)( uContTone == 1 ? 1 : 0);
         cmd |= (byte)(polarisation == 0 ? 2 : 0);//uPolarization = 0 = HOR,1 = VER
-        Marshal.WriteByte(ptrCmd, cmd);                   
+        Marshal.WriteByte(ptrCmd,8, cmd);                   
 
         DirectShowLib.IKsPropertySet propertySet = captureFilter as DirectShowLib.IKsPropertySet;
         Guid propertyGuid = KSPROPSETID_Firesat;
