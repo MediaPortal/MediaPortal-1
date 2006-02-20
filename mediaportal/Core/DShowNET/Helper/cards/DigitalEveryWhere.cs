@@ -234,7 +234,7 @@ namespace DShowNET
     /// </preconditions>
     public bool SendPMTToFireDTV(byte[] PMT, int pmtLength)
     {
-      if (_hasCAM==false) return true;
+      if (_hasCAM == false) return true;
       if (IsCamReady() == false)
       {
         ResetCAM();
@@ -262,7 +262,7 @@ namespace DShowNET
         return true;
       }
 
-      int hr = propertySet.QuerySupported( propertyGuid, propId, out isTypeSupported);
+      int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
       {
         Log.Write("FireDTV:SendPmt() not supported");
@@ -312,7 +312,7 @@ namespace DShowNET
       }
 
       Log.Write(log);
-      hr = propertySet.Set( propertyGuid, propId, pDataInstance, 1036, pDataReturned, 1036);
+      hr = propertySet.Set(propertyGuid, propId, pDataInstance, 1036, pDataReturned, 1036);
       Marshal.FreeCoTaskMem(pDataReturned);
       Marshal.FreeCoTaskMem(pDataInstance);
       if (hr != 0)
@@ -485,7 +485,7 @@ namespace DShowNET
         Marshal.StructureToPtr(dvbsStruct, pDataReturned, true);
       }
 
-      Log.Write( "FireDTV: Set H/W pid filtering count:{0} len:{1}", pids.Count, len);
+      Log.Write("FireDTV: Set H/W pid filtering count:{0} len:{1}", pids.Count, len);
 
       string txt = "";
       for (int i = 0; i < len; ++i)
@@ -625,7 +625,7 @@ namespace DShowNET
         if (hr != 0)
         {
           Log.WriteFile(Log.LogType.Log, true, "FireDTV:GetCAMStatus() failed 0x{0:X}", hr);
-          if ( ((uint)hr) == ((uint)0x8007001F))
+          if (((uint)hr) == ((uint)0x8007001F))
           {
             ResetCAM();
             hr = propertySet.Get(propertyGuid, propId, pDataInstance, 1036, pDataReturned, 1036, out bytesReturned);
@@ -668,7 +668,7 @@ namespace DShowNET
     public bool IsCamReady()
     {
       int camStatus = GetCAMStatus();
-      if ((camStatus & CI_MODULE_PRESENT) != 0) 
+      if ((camStatus & CI_MODULE_PRESENT) != 0)
       {
         //CAM is inserted
         if ((camStatus & CI_MODULE_IS_DVB) != 0)
@@ -695,15 +695,15 @@ namespace DShowNET
       IntPtr ptrCmd = Marshal.AllocCoTaskMem(25);
       try
       {
-        Marshal.WriteByte(ptrCmd,0,0xFF);//Voltage;
-        Marshal.WriteByte(ptrCmd,1, 0xFF);//ContTone;
-        Marshal.WriteByte(ptrCmd,2, 0xFF);//Burst;
-        Marshal.WriteByte(ptrCmd,3, 0x01);//NrDiseqcCmds;
+        Marshal.WriteByte(ptrCmd, 0, 0xFF);//Voltage;
+        Marshal.WriteByte(ptrCmd, 1, 0xFF);//ContTone;
+        Marshal.WriteByte(ptrCmd, 2, 0xFF);//Burst;
+        Marshal.WriteByte(ptrCmd, 3, 0x01);//NrDiseqcCmds;
 
-        Marshal.WriteByte(ptrCmd,4, 0x04);//diseqc command 1. length=4
-        Marshal.WriteByte(ptrCmd,5, 0xE0);//diseqc command 1. uFraming=0xe0
-        Marshal.WriteByte(ptrCmd,6, 0x10);//diseqc command 1. uAddress=0x10
-        Marshal.WriteByte(ptrCmd,7, 0x38);//diseqc command 1. uCommand=0x38
+        Marshal.WriteByte(ptrCmd, 4, 0x04);//diseqc command 1. length=4
+        Marshal.WriteByte(ptrCmd, 5, 0xE0);//diseqc command 1. uFraming=0xe0
+        Marshal.WriteByte(ptrCmd, 6, 0x10);//diseqc command 1. uAddress=0x10
+        Marshal.WriteByte(ptrCmd, 7, 0x38);//diseqc command 1. uCommand=0x38
 
         // Antenna nr = 1-4 in this example, but this is based on application
         // Diseqc standard is 0 based, so for Diseqc 1.0 antenna index is from 0 -3
@@ -727,10 +727,10 @@ namespace DShowNET
           uContTone = 1;
         }
         byte cmd = 0xf0;
-        cmd |= (byte)( ( (antennaNr - 1) * 4) & 0x0F);
-        cmd |= (byte)( uContTone == 1 ? 1 : 0);
+        cmd |= (byte)(((antennaNr - 1) * 4) & 0x0F);
+        cmd |= (byte)(uContTone == 1 ? 1 : 0);
         cmd |= (byte)(polarisation == 0 ? 2 : 0);//uPolarization = 0 = HOR,1 = VER
-        Marshal.WriteByte(ptrCmd,8, cmd);                   
+        Marshal.WriteByte(ptrCmd, 8, cmd);
 
         DirectShowLib.IKsPropertySet propertySet = captureFilter as DirectShowLib.IKsPropertySet;
         Guid propertyGuid = KSPROPSETID_Firesat;
@@ -739,7 +739,7 @@ namespace DShowNET
         if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
         {
           Log.WriteFile(Log.LogType.Log, true, "FireDTV:SendDiseqCommand() not supported");
-          return ;
+          return;
         }
 
         string txt = "";
