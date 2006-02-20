@@ -53,7 +53,6 @@ namespace MediaPortal.PowerScheduler
 		static bool		m_bRecordingsChanged = false;	// flag - recordings has changed, reset wake up time	
 		static bool		m_bResetWakeuptime = true;		// flag - reset wake up time
 		static bool		m_bForceShutdown = false;		// Force shutdown
-		static bool		m_bDisableTV = false;			// Whether to disable/enable TVcards when shutdown/wake up
 		static bool		m_bDisabled = false;			// if plugin is enabled or disabled
 		static bool		m_settingsread = false;			// keep track if settings are read
 		static DateTime m_dtLastTimercheck = DateTime.Now;	// store last time active to be able to calculate if a power up has ocurrued 
@@ -362,13 +361,6 @@ namespace MediaPortal.PowerScheduler
 
 				g_Player.Stop();
 				AutoPlay.StopListening();
-				if (m_bDisableTV)
-				{
-					Log.Write("PowerScheduler: Prepare for shutdown, disable any TVcard ");
-					Log.Write(" PowerScheduler: Turn off timeshifting ");
-					Recorder.StopViewing();
-					Recorder.Stop();
-				}
 				GUIWindowManager.Dispose();
 				GUITextureManager.Dispose();
 				GUIFontManager.Dispose();
@@ -444,7 +436,6 @@ namespace MediaPortal.PowerScheduler
 				m_shutdownMode = xmlreader.GetValueAsString("powerscheduler","shutdownmode","Suspend");
 				m_bExtensiveLog = xmlreader.GetValueAsBool("powerscheduler","extensivelogging",false);
 				m_bForceShutdown = xmlreader.GetValueAsBool("powerscheduler","forcedshutdown",false);
-				m_bDisableTV = xmlreader.GetValueAsBool("powerscheduler","disabletv",true);
 				
 				m_bDisabled = xmlreader.GetValueAsString("plugins","Power Scheduler","no") == "no";
 				

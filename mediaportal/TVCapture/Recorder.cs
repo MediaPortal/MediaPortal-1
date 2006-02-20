@@ -831,6 +831,10 @@ namespace MediaPortal.TV.Recording
       if (reEntrantStopViewing) return;
       try
       {
+        // Return if there is no _commandProcess; this should only happen if
+        // Stop() has been called
+        if (_commandProcessor == null) return;
+
         if (_commandProcessor.Paused) return;
         reEntrantStopViewing = true;
 
