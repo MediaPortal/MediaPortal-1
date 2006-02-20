@@ -196,7 +196,7 @@ namespace DShowNET
       }
     }
 
-    public void SendDiseqCommand(int antennaNr, int frequency, int switchingFrequency, int polarisation)
+    public void SendDiseqCommand(int antennaNr, int frequency, int switchingFrequency, int polarisation, int diseqcType)
     {
       // send DISEQC:
       //Data             : 4 bytes in form of 
@@ -222,6 +222,35 @@ namespace DShowNET
       byte length = 4;
       byte position = 0;
       byte option = 0;
+      switch (diseqcType)
+      {
+        case 0:
+          goto case 1;
+        case 1://simple A
+          position = 0;
+          option = 0;
+          break;
+        case 2://simple B
+          position = 0;
+          option = 0;
+          break;
+        case 3://Level 1 A/A
+          position = 0;
+          option = 0;
+          break;
+        case 4://Level 1 B/A
+          position = 1;
+          option = 0;
+          break;
+        case 5://Level 1 A/B
+          position = 0;
+          option = 1;
+          break;
+        case 6://Level 1 B/B
+          position = 1;
+          option = 1;
+          break;
+      }
       IntPtr ptrData = Marshal.AllocCoTaskMem(4);
       try
       {
