@@ -1962,15 +1962,16 @@ namespace MediaPortal.TV.Recording
 
         // set values to dvbchannel-object
         // set the lnb parameter 
+        ch.LNBKHz = lnbswMHZ * 1000;
         if (ch.Frequency >= lnbswMHZ * 1000)
         {
           ch.LNBFrequency = lnb1MHZ;
-          ch.LNBKHz = lnbKhz;
+          //ch.LNBKHz = lnbKhz;
         }
         else
         {
           ch.LNBFrequency = lnb0MHZ;
-          ch.LNBKHz = -1;
+          //ch.LNBKHz = lnbKhz;
         }
         lowOsc = lnb0MHZ;
         hiOsc = lnb1MHZ;
