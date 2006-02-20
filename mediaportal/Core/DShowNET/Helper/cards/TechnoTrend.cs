@@ -115,7 +115,24 @@ namespace DShowNET
     CallbackFunctionsSlim _technoTrendStructure = new CallbackFunctionsSlim();
     uint _handle = 0xffffffff;
     bool _hasCam = false;
-    static bool _isCamInitialized = false;
+    static Hashtable _isCamInitializedTable = new Hashtable();
+    #endregion
+
+    #region constants
+    public const string BUDGET2_CAPTURE = "TechnoTrend BDA/DVB Capture";
+    public const string BUDGET2_C_TUNER = "TechnoTrend BDA/DVB-C Tuner";
+    public const string BUDGET2_S_TUNER = "TechnoTrend BDA/DVB-S Tuner";
+    public const string BUDGET2_T_TUNER = "TechnoTrend BDA/DVB-T Tuner";
+    public const string BUDGET3_CAPTURE = "TTHybridTV BDA Digital Capture";
+    public const string BUDGET3_TUNER = "TTHybridTV BDA DVBT Tuner";
+    public const string BUDGET3_ANLG_TUNER = "TTHybridTV BDA Analog TV Tuner";
+    public const string BUDGET3_ANLG_CAPTURE = "TTHybridTV BDA Analog Capture";
+    public const string USB2_CAPTURE = "USB 2.0 BDA DVB Capture";
+    public const string USB2_C_TUNER = "USB 2.0 BDA DVB-C Tuner";
+    public const string USB2_S_TUNER = "USB 2.0 BDA DVB-S Tuner";
+    public const string USB2_T_TUNER = "USB 2.0 BDA DVB-T Tuner";
+    public const string USB2_PINNACLE_CAPTURE = "Pinnacle PCTV 400e Capture";
+    public const string USB2_PINNACLE_TUNER = "Pinnacle PCTV 400e Tuner";
     #endregion
 
     public TechnoTrend(IBaseFilter filter)
@@ -123,10 +140,36 @@ namespace DShowNET
     {
       FilterInfo info;
       filter.QueryFilterInfo(out info);
-      if (info.achName == "USB 2.0 BDA DVB Capture") _deviceType = TechnoTrendDeviceType.eDevTypeUsb2;
-      if (info.achName == "TechnoTrend BDA/DVB Capture") _deviceType = TechnoTrendDeviceType.eDevTypeB2;
-      if (info.achName == "TTHybridTV BDA Digital Capture") _deviceType = TechnoTrendDeviceType.eDevTypeB3;
-      if (info.achName == "Pinnacle PCTV 400e Capture") _deviceType = TechnoTrendDeviceType.eDevTypeUsb2Pinnacle;
+      if ((info.achName == TechnoTrend.USB2_C_TUNER) ||
+          (info.achName == TechnoTrend.USB2_T_TUNER) ||
+          (info.achName == TechnoTrend.USB2_S_TUNER))
+      {
+          Log.WriteFile(Log.LogType.Capture, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2);
+          _deviceType = TechnoTrendDeviceType.eDevTypeUsb2;
+      }
+      else if (info.achName == TechnoTrend.BUDGET3_TUNER)
+      {
+          Log.WriteFile(Log.LogType.Capture, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB3);
+          _deviceType = TechnoTrendDeviceType.eDevTypeB3;
+      }
+      else if ((info.achName == TechnoTrend.BUDGET2_C_TUNER) ||
+                (info.achName == TechnoTrend.BUDGET2_S_TUNER) ||
+                (info.achName == TechnoTrend.BUDGET2_T_TUNER))
+      {
+          Log.WriteFile(Log.LogType.Capture, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB2);
+          _deviceType = TechnoTrendDeviceType.eDevTypeB2;
+      }
+      else if (info.achName == TechnoTrend.USB2_PINNACLE_TUNER)
+      {
+          Log.WriteFile(Log.LogType.Capture, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2Pinnacle);
+          _deviceType = TechnoTrendDeviceType.eDevTypeUsb2Pinnacle;
+      }
+      else
+      {
+          Log.WriteFile(Log.LogType.Capture, "Technotrend Unknown card type");
+          _deviceType = TechnoTrendDeviceType.eTypeUnknown;
+      }
+
       if (!IsTechnoTrend) return;
       try
       {
@@ -135,15 +178,17 @@ namespace DShowNET
         if (_handle != 0xffffffff)
         {
           Log.WriteFile(Log.LogType.Log, false, "Technotrend: card detected");
+          _isCamInitializedTable.Add(_handle, false);
           unsafe
           {
             _technoTrendStructure.onCAStatus = new PCBFCN_CI_OnCAStatus(OnCAStatus);
+            _technoTrendStructure.onCAStatusContext = _handle;
             _technoTrendStructure.onSlotStatus = new PCBFCN_CI_OnSlotStatus(OnSlotStatus);
+            _technoTrendStructure.onSlotStatusContext = _handle;
             int hr = bdaapiOpenCISlim(_handle, _technoTrendStructure);
             if (hr == 0)
             {
               Log.WriteFile(Log.LogType.Log, false, "Technotrend: CI opened");
-              _isCamInitialized = false;
               _hasCam = true;
             }
             return;
@@ -158,10 +203,10 @@ namespace DShowNET
       _deviceType = TechnoTrendDeviceType.eTypeUnknown;
     }
 
-    int GetDeviceID(IBaseFilter capturefilter)
+    int GetDeviceID(IBaseFilter tunerfilter)
     {
       Log.WriteFile(Log.LogType.Capture, "TechnoTrend: Looking Device ID");
-      IPin outputPin = DirectShowLib.DsFindPin.ByDirection(capturefilter, PinDirection.Output, 0);
+      IPin outputPin = DirectShowLib.DsFindPin.ByDirection(tunerfilter, PinDirection.Output, 0);
       if (outputPin == null)
         return -1;
       Log.WriteFile(Log.LogType.Capture, "TechnoTrend: Got Pin");
@@ -202,6 +247,7 @@ namespace DShowNET
     {
       if (_handle != 0xffffffff)
       {
+        _isCamInitializedTable.Remove(_handle);
         Log.WriteFile(Log.LogType.Log, false, "Technotrend: close");
         if (_hasCam)
         {
@@ -210,7 +256,6 @@ namespace DShowNET
         bdaapiClose(_handle);
       }
       _handle = 0xffffffff;
-      _isCamInitialized = false;
       _hasCam = false;
     }
 
@@ -224,6 +269,11 @@ namespace DShowNET
 
     public bool SendPMT(int serviceId)
     {
+        if ((bool)_isCamInitializedTable[_handle] == false)
+        {
+            Log.WriteFile(Log.LogType.Log, false, "Technotrend: service cannot be decoded because the CAM is not ready yet");
+            return false;
+        }
       int hr = bdaapiCIReadPSIFastDrvDemux(_handle, serviceId);
       if (hr == 0)
       {
@@ -338,20 +388,20 @@ namespace DShowNET
 
     public bool IsCamPresent()
     {
-      return (_isCamInitialized && _hasCam);
+      return (_hasCam);
     }
 
     unsafe public static void OnSlotStatus(UInt32 Context, Byte nSlot, Byte nStatus, SlotInfo* csInfo)
     {
       if ((nStatus == 2) || (nStatus == 3) || (nStatus == 4))
       {
-        Log.WriteFile(Log.LogType.Log, false, "Technotrend: CAM initialized");
-        _isCamInitialized = true;
+        Log.WriteFile(Log.LogType.Log, false, "Technotrend: CAM initialized {0}", Context);
+        _isCamInitializedTable[Context] = true;
       }
       else
       {
-        Log.WriteFile(Log.LogType.Log, false, "Technotrend: CAM not initialized, status:{0}", nStatus);
-        _isCamInitialized = false;
+        Log.WriteFile(Log.LogType.Log, false, "Technotrend: CAM not initialized, Card;{0} status:{1}", Context, nStatus);
+        _isCamInitializedTable[Context] = false;
       }
 
     }

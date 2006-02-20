@@ -40,13 +40,13 @@ namespace DShowNET.Helper
     Hauppauge _hauppauge;
     DigitalEverywhere _digitalEverywhere;
     TechnoTrend _technoTrend;
-    public VideoCaptureProperties(IBaseFilter tunerfilter, IBaseFilter capturefilter)
+    public VideoCaptureProperties(IBaseFilter tunerfilter)
     {
       _twinhan = new Twinhan(tunerfilter);
       _ivac = new IVac(tunerfilter);
       _hauppauge = new Hauppauge(tunerfilter);
       _digitalEverywhere = new DigitalEverywhere(tunerfilter);
-      _technoTrend = new TechnoTrend(capturefilter);
+      _technoTrend = new TechnoTrend(tunerfilter);
       /*
       if (_hauppauge.IsHauppage) Log.Write("Hauppauge card properties supported");
       if (_ivac.IsIVAC) Log.Write("IVAC card properties supported");
@@ -143,8 +143,6 @@ namespace DShowNET.Helper
     public bool SupportsDiseqCommand()
     {
       if (_digitalEverywhere.IsDigitalEverywhere)
-        return true;
-      if (_technoTrend.IsTechnoTrend)
         return true;
       return false;
     }
