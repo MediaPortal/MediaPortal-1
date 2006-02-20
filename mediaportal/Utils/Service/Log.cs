@@ -61,8 +61,6 @@ namespace MediaPortal.Utils.Services
         {
             m_minLevel = minLevel;
 
-            string m_ServiceId = this.GetType().FullName;
-
             System.IO.Directory.CreateDirectory("log");
             m_LogName = "log\\" + name + ".log";
             try
