@@ -44,7 +44,21 @@ namespace DShowNET
 			AMPROPERTY_PIN_CATEGORY,
 			AMPROPERTY_PIN_MEDIUM
 		} ;
-		
+
+        [StructLayout(LayoutKind.Sequential), ComVisible(false)]
+        protected struct KSMULTIPLE_ITEM
+        {
+            public int Size;
+            public int Count;
+        };
+
+        [StructLayout(LayoutKind.Sequential), ComVisible(false)]
+        protected struct REGPINMEDIUM
+        {
+            Guid clsMedium;
+            public uint dw1;
+            public uint dw2;
+        };
 
 		[StructLayout(LayoutKind.Sequential),  ComVisible(false)]
 		protected 	struct KSPROPERTY

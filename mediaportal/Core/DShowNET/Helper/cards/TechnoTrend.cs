@@ -130,7 +130,8 @@ namespace DShowNET
       if (!IsTechnoTrend) return;
       try
       {
-        _handle = bdaapiOpenHWIdx((UInt32)_deviceType, 0);
+        uint deviceId = (uint)GetDeviceID(filter);
+        _handle = bdaapiOpenHWIdx((UInt32)_deviceType, deviceId);
         if (_handle != 0xffffffff)
         {
           Log.WriteFile(Log.LogType.Log, false, "Technotrend: card detected");
@@ -156,6 +157,46 @@ namespace DShowNET
       }
       _deviceType = TechnoTrendDeviceType.eTypeUnknown;
     }
+
+    int GetDeviceID(IBaseFilter capturefilter)
+    {
+      Log.WriteFile(Log.LogType.Capture, "TechnoTrend: Looking Device ID");
+      IPin outputPin = DirectShowLib.DsFindPin.ByDirection(capturefilter, PinDirection.Output, 0);
+      if (outputPin == null)
+        return -1;
+      Log.WriteFile(Log.LogType.Capture, "TechnoTrend: Got Pin");
+      IKsPin iKsPin = outputPin as IKsPin;
+      KSMULTIPLE_ITEM pmi;
+      IntPtr pDataReturned;
+      int hr = iKsPin.KsQueryMediums(out pDataReturned);
+      Marshal.ReleaseComObject(outputPin);
+      if (hr != 0)
+      {
+        Log.WriteFile(Log.LogType.Capture, "TechnoTrend: Pin does not support Mediums");
+        return -1;  // Pin does not support mediums.
+      }
+      pmi = (KSMULTIPLE_ITEM)Marshal.PtrToStructure(pDataReturned, typeof(KSMULTIPLE_ITEM));
+      Log.WriteFile(Log.LogType.Capture, "TechnoTrend: Got Mediums:{0}", pmi.Count);
+      if (pmi.Count != 0)
+      {
+        // Use pointer arithmetic to reference the first medium structure.
+        int sizeProperty = Marshal.SizeOf(pmi);
+        int address = pDataReturned.ToInt32() + sizeProperty;
+        IntPtr ptrData = new IntPtr(address);
+
+        REGPINMEDIUM medium = (REGPINMEDIUM)Marshal.PtrToStructure(ptrData, typeof(REGPINMEDIUM));
+        int id = (int)medium.dw1;
+        Marshal.FreeCoTaskMem(pDataReturned);
+        Log.WriteFile(Log.LogType.Capture, "TechnoTrend: Device ID:{0}", id);
+        return id;
+      }
+      else
+      {
+        Marshal.FreeCoTaskMem(pDataReturned);
+        return -1;
+      }
+    }
+
 
     public void Dispose()
     {
