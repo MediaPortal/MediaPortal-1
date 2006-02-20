@@ -5182,6 +5182,24 @@
     <value>Track information not available</value>
   </string>  
   <!-- End Playing Now Strings -->
+  <!-- Begin Play Menu Strings -->
+  <string>
+    <id>4550</id>
+    <value>Enqueue</value>
+  </string>  
+  <string>
+    <id>4551</id>
+    <value>Play next</value>
+  </string>  
+  <string>
+    <id>4552</id>
+    <value>Play now</value>
+  </string>  
+  <string>
+    <id>4553</id>
+    <value>Show playlist</value>
+  </string>  
+  <!-- End Play Menu Strings -->
   <!-- Begin Minesweeper Strings -->
   <string>
     <id>10100</id>

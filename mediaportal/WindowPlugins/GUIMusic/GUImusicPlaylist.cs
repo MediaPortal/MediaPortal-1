@@ -110,22 +110,14 @@ namespace MediaPortal.GUI.Music
             }
 
             else if (action.wID == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP)
-            {
-                //Console.WriteLine("GUIMusicPlaylist: ACTION_MOVE_SELECTED_ITEM_UP");
                 MovePlayListItemUp();
-            }
 
             else if (action.wID == Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN)
-            {
-                //Console.WriteLine("GUIMusicPlaylist: ACTION_MOVE_SELECTED_ITEM_DOWN");
                 MovePlayListItemDown();
-            }
 
             else if (action.wID == Action.ActionType.ACTION_DELETE_SELECTED_ITEM)
-            {
-                //Console.WriteLine("GUIMusicPlaylist: ACTION_DELETE_SELECTED_ITEM");
                 DeletePlayListItem();
-            }
+
             base.OnAction(action);
         }
 
@@ -148,7 +140,6 @@ namespace MediaPortal.GUI.Music
                 GUIControl.FocusControl(GetID, btnViewAs.GetID);
             }
             SelectCurrentPlayingSong();
-
         }
 
         protected override void OnPageDestroy(int newWindowId)
@@ -209,6 +200,9 @@ namespace MediaPortal.GUI.Music
                 //get state of button
                 if (btnPartyShuffle.Selected)
                 {
+                    // Clear the existing playlist before entering Party Shuffle mode
+                    ClearPlayList();
+
                     PShuffleOn = true;
                     UpdatePartyShuffle();
                     LoadDirectory(String.Empty);
@@ -220,10 +214,17 @@ namespace MediaPortal.GUI.Music
                 }
                 else PShuffleOn = false;
 
+                if (facadeView.PlayListView != null)
+                {
+                    // Prevent the currently playing track from being scrolled off the top 
+                    // or bottom of the screen when other items are re-ordered
+                    facadeView.PlayListView.AllowLastVisibleListItemDown = !PShuffleOn;
+                    facadeView.PlayListView.AllowMoveFirstVisibleListItemUp = !PShuffleOn;
+                }
+
                 UpdateButtonStates();
             }
         }
-
 
         public override bool OnMessage(GUIMessage message)
         {
@@ -270,7 +271,6 @@ namespace MediaPortal.GUI.Music
             return base.OnMessage(message);
         }
 
-
         protected override void UpdateButtonStates()
         {
             base.UpdateButtonStates();
@@ -283,11 +283,13 @@ namespace MediaPortal.GUI.Music
                 {
                     btnNext.Disabled = false;
                     btnPrevious.Disabled = false;
+                    btnSave.Disabled = false;
                 }
                 else
                 {
                     btnNext.Disabled = true;
                     btnPrevious.Disabled = true;
+                    btnSave.Disabled = true;
                 }
             }
             else
@@ -303,15 +305,15 @@ namespace MediaPortal.GUI.Music
             {
                 btnShuffle.Disabled = true;
                 btnPlay.Disabled = true;
-                //btnNext.Disabled=true;
-                //btnSave.Disabled=true;
+                btnClear.Disabled = true;
+                btnSave.Disabled = true;
+                btnPrevious.Disabled = true;
             }
             else
             {
                 btnShuffle.Disabled = false;
             }
         }
-
 
         protected override void OnClick(int iItem)
         {
@@ -363,6 +365,7 @@ namespace MediaPortal.GUI.Music
         {
             RemovePlayListItem(iItem);
         }
+
         public override void Process()
         {
             if (!m_strCurrentFile.Equals(g_Player.CurrentFile))
@@ -410,7 +413,6 @@ namespace MediaPortal.GUI.Music
                     break;
             }
         }
-
 
         void OnRetrieveMusicInfo(ref List<GUIListItem> items)
         {
@@ -681,8 +683,6 @@ namespace MediaPortal.GUI.Music
                     strPlayListPath = Utils.RemoveTrailingSlash(strPlayListPath);
                 }
 
-
-
                 strPath += ".m3u";
                 if (strPlayListPath.Length != 0)
                 {
@@ -761,7 +761,6 @@ namespace MediaPortal.GUI.Music
             playlistItem.MusicTag = tag;
 
             playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
-
         }
 
         //added by Sam
@@ -812,15 +811,35 @@ namespace MediaPortal.GUI.Music
             }
 
             int iItem = facadeView.SelectedListItemIndex;
+
+            // Prevent moving backwards past the top song in the list
+            if (PShuffleOn && iItem == 0)
+                return;
+
             PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
             playList.MovePlayListItemUp(iItem);
             int selectedIndex = facadeView.MoveItemUp(iItem, true);
-            playlistPlayer.CurrentSong = selectedIndex;
 
             if (iItem == playlistPlayer.CurrentSong)
                 playlistPlayer.CurrentSong = selectedIndex;
 
+            facadeView.SelectedListItemIndex = selectedIndex;
             UpdateButtonStates();
+
+            if (PShuffleOn == true)
+            {
+                // If the item we moved is now the first item in the list view should remove it from the 
+                // playlist so the CurrentSong is the first item displayed...
+                if (selectedIndex == 0)
+                {
+                    playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[0].Path);
+                    playlistPlayer.CurrentSong = 0;
+                    UpdatePartyShuffle();
+                    LoadDirectory(String.Empty);
+                    SelectCurrentPlayingSong();
+                    facadeView.SelectedListItemIndex = 1;
+                }
+            }
         }
 
         private void MovePlayListItemDown()
@@ -834,14 +853,42 @@ namespace MediaPortal.GUI.Music
 
             int iItem = facadeView.SelectedListItemIndex;
             PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+
+            // Prevent moving fowards past the last song in the list
+            // as this would cause the currently playing song to scroll
+            // off of the list view...
+            if (PShuffleOn && iItem == playList.Count - 1)
+                return;
+
             playList.MovePlayListItemDown(iItem);
             int selectedIndex = facadeView.MoveItemDown(iItem, true);
 
             if (iItem == playlistPlayer.CurrentSong)
                 playlistPlayer.CurrentSong = selectedIndex;
 
-            facadeView.SelectedListItemIndex = selectedIndex;
+            if (PShuffleOn && selectedIndex == MaxNumPShuffleSongPredict - 1)
+                facadeView.SelectedListItemIndex = MaxNumPShuffleSongPredict - 2;
+
+            else
+                facadeView.SelectedListItemIndex = selectedIndex;
+
             UpdateButtonStates();
+
+            if (PShuffleOn == true)
+            {
+                if (selectedIndex == playlistPlayer.CurrentSong)
+                {
+                    for (int i = 0; i < selectedIndex; i++)
+                    {
+                        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Remove(facadeView[i].Path);
+                    }
+
+                    playlistPlayer.CurrentSong = 0;
+                    UpdatePartyShuffle();
+                    LoadDirectory(String.Empty);
+                    SelectCurrentPlayingSong();
+                }
+            }
         }
 
         private void DeletePlayListItem()
@@ -873,8 +920,6 @@ namespace MediaPortal.GUI.Music
 
                     else
                         playlistPlayer.PlayNext();
-
-                    //SelectCurrentPlayingSong();
                 }
             }
 
@@ -885,6 +930,9 @@ namespace MediaPortal.GUI.Music
                 facadeView.PlayListView.SelectedListItemIndex = iItem;
 
             UpdateButtonStates();
+
+            if (PShuffleOn == true)
+                UpdatePartyShuffle();
         }
     }
 }

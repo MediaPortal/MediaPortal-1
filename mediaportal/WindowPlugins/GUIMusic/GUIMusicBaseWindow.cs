@@ -452,6 +452,7 @@ namespace MediaPortal.GUI.Music
         protected virtual void OnClick(int item)
         {
         }
+
         protected virtual void OnQueueItem(int item)
         {
         }
@@ -803,9 +804,10 @@ namespace MediaPortal.GUI.Music
                 GUIMusicPlayingNow guiPlayingNow = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(nPlayingNowWindow);
 
                 if (guiPlayingNow != null)
+                {
                     guiPlayingNow.MusicWindow = this;
-
-                GUIWindowManager.ActivateWindow(nPlayingNowWindow);
+                    GUIWindowManager.ActivateWindow(nPlayingNowWindow);
+                }
             }
 
             else
@@ -1127,12 +1129,15 @@ namespace MediaPortal.GUI.Music
                 pDlgOK.SetLine(1, 703);
                 pDlgOK.SetLine(2, String.Empty);
                 pDlgOK.DoModal(GetID);
-                throw new Exception("no internet");
+
+                //throw new Exception("no internet");
+                return;
             }
 
             else if (!Util.Win32API.IsConnectedToInternet())
             {
-                throw new Exception("no internet");
+                //throw new Exception("no internet");
+                return;
             }
 
             bool bDisplayErr = false;
@@ -1424,6 +1429,7 @@ namespace MediaPortal.GUI.Music
         protected bool SaveCoverArtImage(AlbumInfo albumInfo, string albumFolderPath, bool bSaveToAlbumFolder, bool bSaveToThumbsFolder)
         {
             bool result = false;
+            bool isCdOrDVD = Utils.IsDVD(albumFolderPath);
 
             try
             {
@@ -1433,7 +1439,8 @@ namespace MediaPortal.GUI.Music
                 if (thumbPath.Length == 0 || coverImg == null)
                     return false;
 
-                if (bSaveToThumbsFolder)
+                //if (bSaveToThumbsFolder)
+                if (bSaveToAlbumFolder && !isCdOrDVD)
                 {
                     string folderjpg = String.Format(@"{0}\folder.jpg", Utils.RemoveTrailingSlash(albumFolderPath));
 
@@ -1444,7 +1451,7 @@ namespace MediaPortal.GUI.Music
                     result = true;
                 }
 
-                if (bSaveToThumbsFolder)
+                if (bSaveToThumbsFolder || isCdOrDVD)
                 {
                     if (System.IO.File.Exists(thumbPath))
                         System.IO.File.Delete(thumbPath);
@@ -1464,21 +1471,6 @@ namespace MediaPortal.GUI.Music
 
         public static bool CoverArtExists(string ArtistName, string AlbumName, string albumPath, bool checkAlbumFolder)
         {
-            //if (ArtistName.Length == 0 || AlbumName.Length == 0)
-            //  return false;
-
-            //if (System.IO.File.Exists(GUIMusicBaseWindow.GetAlbumThumbName(ArtistName, AlbumName)))
-            //  return true;
-
-            //else if (useAlbumAndThumbsFolders)
-            //{
-            //  string path = System.IO.Path.GetDirectoryName(albumPath);
-            //  return System.IO.File.Exists(System.IO.Path.Combine(path, "folder.jpg"));
-            //}
-
-            //else
-            //  return false;
-
             if (ArtistName.Length == 0 || AlbumName.Length == 0)
                 return false;
 

@@ -332,7 +332,6 @@ namespace MediaPortal.GUI.Music
                     base.OnMessage(message);
                     GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4515));
                     return true;
-                    //break;
 
                 default:
                     return base.OnMessage(message);
@@ -365,9 +364,6 @@ namespace MediaPortal.GUI.Music
         {
             _SelectedAlbum = null;
             IsCompilationAlbum = false;
-
-            //if (System.IO.Path.HasExtension(strPath))
-            //    strPath = System.IO.Path.GetDirectoryName(strPath);
 
             if (checkForCompilationAlbum)
                 IsCompilationAlbum = GetIsCompilationAlbum(strPath, -1);

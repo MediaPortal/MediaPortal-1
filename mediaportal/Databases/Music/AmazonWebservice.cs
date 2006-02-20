@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Media Portal
+ *	Copyright (C) 2005-2006 Media Portal
  *	http://mediaportal.sourceforge.net
  *
  *  This Program is free software; you can redistribute it and/or modify

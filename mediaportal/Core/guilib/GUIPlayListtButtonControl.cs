@@ -92,14 +92,24 @@ namespace MediaPortal.GUI.Library
         private static ActiveButton _LastActiveButton = ActiveButton.None;
         private static bool _SuppressActiveButtonReset = false;
 
-        private GUIImage ImgUpButtonNormal;
-        private GUIImage ImgUpButtonFocused;
+        private GUIImage ImgUpButtonNormal = null;
+        private GUIImage ImgUpButtonFocused = null;
+        private GUIImage ImgUpButtonDisabled = null;
 
-        private GUIImage ImgDownButtonNormal;
-        private GUIImage ImgDownButtonFocused;
+        private GUIImage ImgDownButtonNormal = null;
+        private GUIImage ImgDownButtonFocused = null;
+        private GUIImage ImgDownButtonDisabled = null;
 
-        private GUIImage ImgDeleteButtonNormal;
-        private GUIImage ImgDeleteButtonFocused;
+        private GUIImage ImgDeleteButtonNormal = null;
+        private GUIImage ImgDeleteButtonFocused = null;
+        private GUIImage ImgDeleteButtonDisabled = null;
+
+        private bool _UpButtonEnabled = true;
+        private bool _DownButtonEnabled = true;
+        private bool _DeleteButtonEnabled = true;
+        private bool OrigUpButtonEnabled = true;
+        private bool OrigDownButtonEnabled = true;
+        private bool OrigDeleteButtonEnabled = true;
 
         private int _NavigateLeft;
         private int _NavigateRight;
@@ -107,6 +117,61 @@ namespace MediaPortal.GUI.Library
         #endregion Fields
         
         #region Properties
+        public override bool Disabled
+        {
+            get
+            {
+                return base.Disabled;
+            }
+            set
+            {
+                base.Disabled = value;
+
+                if (value)
+                {
+                    _UpButtonEnabled = OrigUpButtonEnabled;
+                    _DownButtonEnabled = OrigDownButtonEnabled;
+                    _DeleteButtonEnabled = OrigDeleteButtonEnabled;
+                }
+
+                else
+                {
+                    _UpButtonEnabled = value;
+                    _DownButtonEnabled = value;
+                    _DeleteButtonEnabled = value;
+                }
+            }
+        }
+
+        public bool UpButtonEnabled
+        {
+            get{return _UpButtonEnabled;}
+            set
+            {
+                _UpButtonEnabled = value;
+                OrigUpButtonEnabled = value;
+            }
+        }
+
+        public bool DownButtonEnabled
+        {
+            get { return _DownButtonEnabled; }
+            set
+            {
+                _DownButtonEnabled = value;
+                OrigDownButtonEnabled = value;
+            }
+        }
+
+        public bool DeleteButtonEnabled
+        {
+            get { return _DeleteButtonEnabled; }
+            set
+            {
+                _DeleteButtonEnabled = value;
+                OrigDeleteButtonEnabled = value;
+            }
+        }
 
         public static ActiveButton LastActiveButton
         {
@@ -131,8 +196,6 @@ namespace MediaPortal.GUI.Library
                 else
                     _CurrentActiveButton = value; 
             }
-
-            //set { _CurrentActiveButton = value; }
         }
 
         #endregion Properties
@@ -145,27 +208,18 @@ namespace MediaPortal.GUI.Library
 		}
 
 
-        ////        ///// <summary>
-        ////        ///// The constructor of the GUIPlayListButtonControl class.
-        ////        ///// </summary>
-        ////        ///// <param name="dwParentID">The parent of this control.</param>
-        ////        ///// <param name="dwControlId">The ID of this control.</param>
-        ////        ///// <param name="dwPosX">The X position of this control.</param>
-        ////        ///// <param name="dwPosY">The Y position of this control.</param>
-        ////        ///// <param name="dwWidth">The width of this control.</param>
-        ////        ///// <param name="dwHeight">The height of this control.</param>
-        ////        ///// <param name="strTextureFocus">The filename containing the texture of the butten, when the button has the focus.</param>
-        ////        ///// <param name="strTextureNoFocus">The filename containing the texture of the butten, when the button does not have the focus.</param>
-        ////        //public GUIPlayListButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTextureFocus, string strTextureNoFocus)
-        ////        //    : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
-        ////        //{
-        ////        //    _focusedTextureName = strTextureFocus;
-        ////        //    _nonFocusedTextureName = strTextureNoFocus;
-        ////        //    FinalizeConstruction();
-        ////        //}
-
-
-        public GUIPlayListButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTextureFocus, string strTextureNoFocus,
+        /// <summary>
+        /// The constructor of the GUIPlayListButtonControl class.
+        /// </summary>
+        /// <param name="dwParentID">The parent of this control.</param>
+        /// <param name="dwControlId">The ID of this control.</param>
+        /// <param name="dwPosX">The X position of this control.</param>
+        /// <param name="dwPosY">The Y position of this control.</param>
+        /// <param name="dwWidth">The width of this control.</param>
+        /// <param name="dwHeight">The height of this control.</param>
+        /// <param name="strTextureFocus">The filename containing the texture of the butten, when the button has the focus.</param>
+        /// <param name="strTextureNoFocus">The filename containing the texture of the butten, when the button does not have the focus.</param>
+         public GUIPlayListButtonControl(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight, string strTextureFocus, string strTextureNoFocus,
             int upBtnWidth,
             int downBtnWidth,
             int deleteBtnWidth,
@@ -231,6 +285,15 @@ namespace MediaPortal.GUI.Library
 
             ImgDeleteButtonNormal.AllocResources();
             ImgDeleteButtonFocused.AllocResources();
+
+            if(ImgUpButtonDisabled != null)
+                ImgUpButtonDisabled.AllocResources();
+
+            if(ImgDownButtonDisabled != null)
+                ImgDownButtonDisabled.AllocResources();
+
+            if (ImgDeleteButtonDisabled != null)
+                ImgDeleteButtonDisabled.AllocResources();
 		}
 
         public override void FinalizeConstruction()
@@ -243,15 +306,15 @@ namespace MediaPortal.GUI.Library
             ImgUpButtonNormal.BringIntoView();
             ImgUpButtonFocused.BringIntoView();
 
-            ImgDownButtonNormal = new GUIImage(WindowId, WindowId + 10002, DownBtnXOffset, DownBtnYOffset, DownBtnWidth, DownBtnHeight, TextureMoveDownFileName, 0);
-            ImgDownButtonFocused = new GUIImage(WindowId, WindowId + 10003, 0, 0, DownBtnWidth, DownBtnHeight, TextureMoveDownFocusedFileName, 0);
+            ImgDownButtonNormal = new GUIImage(WindowId, WindowId + 10003, DownBtnXOffset, DownBtnYOffset, DownBtnWidth, DownBtnHeight, TextureMoveDownFileName, 0);
+            ImgDownButtonFocused = new GUIImage(WindowId, WindowId + 10004, 0, 0, DownBtnWidth, DownBtnHeight, TextureMoveDownFocusedFileName, 0);
             ImgDownButtonNormal.ParentControl = this;
             ImgDownButtonFocused.ParentControl = this;
             ImgDownButtonNormal.BringIntoView();
             ImgDownButtonFocused.BringIntoView();
 
-            ImgDeleteButtonNormal = new GUIImage(WindowId, WindowId + 10004, DeleteBtnXOffset, DeleteBtnYOffset, DeleteBtnWidth, DeleteBtnHeight, TextureDeleteFileName, 0);
-            ImgDeleteButtonFocused = new GUIImage(WindowId, WindowId + 10005, 0, 0, DeleteBtnWidth, DeleteBtnHeight, TextureDeleteFocusedFileName, 0);
+            ImgDeleteButtonNormal = new GUIImage(WindowId, WindowId + 10006, DeleteBtnXOffset, DeleteBtnYOffset, DeleteBtnWidth, DeleteBtnHeight, TextureDeleteFileName, 0);
+            ImgDeleteButtonFocused = new GUIImage(WindowId, WindowId + 10007, 0, 0, DeleteBtnWidth, DeleteBtnHeight, TextureDeleteFocusedFileName, 0);
             ImgDeleteButtonNormal.ParentControl = this;
             ImgDeleteButtonFocused.ParentControl = this;
             ImgDeleteButtonNormal.BringIntoView();
@@ -261,9 +324,32 @@ namespace MediaPortal.GUI.Library
             _NavigateLeft = NavigateLeft;
             _NavigateRight = NavigateRight;
 
-            this.Label = "Test Text";
-        }
+            string skinFolderPath = string.Format(@"{0}\{1}\media\", System.Windows.Forms.Application.StartupPath, GUIGraphicsContext.Skin);
+            ImgUpButtonDisabled = CreateDisableButtonImage(skinFolderPath, TextureMoveUpFileName, WindowId, WindowId + 10002, UpBtnXOffset, UpBtnYOffset, UpBtnWidth, UpBtnHeight);
 
+            if (ImgUpButtonDisabled != null)
+            {
+                ImgDeleteButtonNormal.ParentControl = this;
+                ImgUpButtonDisabled.BringIntoView();
+            }
+
+            ImgDownButtonDisabled = CreateDisableButtonImage(skinFolderPath, TextureMoveDownFileName, WindowId, WindowId + 10005, DownBtnXOffset, DownBtnYOffset, DownBtnWidth, DownBtnHeight);
+
+            if (ImgDownButtonDisabled != null)
+            {
+                ImgDownButtonDisabled.ParentControl = this;
+                ImgDownButtonDisabled.BringIntoView();
+            }
+
+            ImgDeleteButtonDisabled = CreateDisableButtonImage(skinFolderPath, TextureDeleteFileName, WindowId, WindowId + 10008, DeleteBtnXOffset, DeleteBtnYOffset, DeleteBtnWidth, DeleteBtnHeight);
+
+            if (ImgDeleteButtonDisabled != null)
+            {
+                ImgDeleteButtonDisabled.ParentControl = this;
+                ImgDeleteButtonDisabled.BringIntoView();
+            }
+        }
+        
 		public override void ScaleToScreenResolution()
 		{
 			base.ScaleToScreenResolution();
@@ -281,6 +367,15 @@ namespace MediaPortal.GUI.Library
 
             ImgDeleteButtonNormal.FreeResources();
             ImgDeleteButtonFocused.FreeResources();
+
+            if(ImgUpButtonDisabled != null)
+                ImgUpButtonDisabled.FreeResources();
+
+            if(ImgDownButtonDisabled != null)
+                ImgDownButtonDisabled.FreeResources();
+
+            if (ImgDeleteButtonDisabled != null)
+                ImgDeleteButtonDisabled.FreeResources();
 		}
 
 		public override void PreAllocResources()
@@ -295,7 +390,16 @@ namespace MediaPortal.GUI.Library
 
             ImgDeleteButtonNormal.PreAllocResources();
             ImgDeleteButtonFocused.PreAllocResources();
-		}
+
+            if (ImgUpButtonDisabled != null)
+                ImgUpButtonDisabled.PreAllocResources();
+
+            if (ImgDownButtonDisabled != null)
+                ImgDownButtonDisabled.PreAllocResources();
+
+            if (ImgDeleteButtonDisabled != null)
+                ImgDeleteButtonDisabled.PreAllocResources();
+        }
 
         public override void Render(float timePassed)
         {
@@ -310,7 +414,6 @@ namespace MediaPortal.GUI.Library
             int xPos = 0;
             int yPos = 0;
 
-            //if (Focus && _CurrentActiveButton == ActiveButton.Main)
             if (!_SuppressActiveButtonReset && Focus && _CurrentActiveButton == ActiveButton.Main)
                 _imageFocused.Render(timePassed);
 
@@ -321,34 +424,61 @@ namespace MediaPortal.GUI.Library
             yPos = _imageNonFocused.YPosition + UpBtnYOffset;
             ImgUpButtonFocused.SetPosition(xPos, yPos);
             ImgUpButtonNormal.SetPosition(xPos, yPos);
+            
+            if(ImgUpButtonDisabled != null)
+                ImgUpButtonDisabled.SetPosition(xPos, yPos);
 
-            if (isFocused && _CurrentActiveButton == ActiveButton.Up)
+            if (isFocused && _CurrentActiveButton == ActiveButton.Up && _UpButtonEnabled)
                 ImgUpButtonFocused.Render(timePassed);
 
             else
-                ImgUpButtonNormal.Render(timePassed);
+            {
+                if (!_UpButtonEnabled && ImgUpButtonDisabled != null)
+                    ImgUpButtonDisabled.Render(timePassed);
+
+                else
+                    ImgUpButtonNormal.Render(timePassed);
+            }
 
             xPos = _imageNonFocused.XPosition + DownBtnXOffset;
             yPos = _imageNonFocused.YPosition + DownBtnYOffset;
             ImgDownButtonFocused.SetPosition(xPos, yPos);
             ImgDownButtonNormal.SetPosition(xPos, yPos);
 
-            if (isFocused && _CurrentActiveButton == ActiveButton.Down)
+            if(ImgDownButtonDisabled != null)
+                ImgDownButtonDisabled.SetPosition(xPos, yPos);
+
+            if (isFocused && _CurrentActiveButton == ActiveButton.Down && _DownButtonEnabled)
                 ImgDownButtonFocused.Render(timePassed);
 
             else
-                ImgDownButtonNormal.Render(timePassed);
+            {
+                if(!_DownButtonEnabled && ImgDownButtonDisabled != null)
+                    ImgDownButtonDisabled.Render(timePassed);
+
+                else
+                    ImgDownButtonNormal.Render(timePassed);
+            }
 
             xPos = _imageNonFocused.XPosition + DeleteBtnXOffset;
             yPos = _imageNonFocused.YPosition + DeleteBtnYOffset;
             ImgDeleteButtonFocused.SetPosition(xPos, yPos);
             ImgDeleteButtonNormal.SetPosition(xPos, yPos);
+            
+            if(ImgDeleteButtonDisabled != null)
+                ImgDeleteButtonDisabled.SetPosition(xPos, yPos);
 
-            if (isFocused && _CurrentActiveButton == ActiveButton.Delete)
+            if (isFocused && _CurrentActiveButton == ActiveButton.Delete && _DeleteButtonEnabled)
                 ImgDeleteButtonFocused.Render(timePassed);
 
             else
-                ImgDeleteButtonNormal.Render(timePassed);
+            {
+                if (!_DeleteButtonEnabled && ImgDeleteButtonDisabled != null)
+                    ImgDeleteButtonDisabled.Render(timePassed);
+
+                else
+                    ImgDeleteButtonNormal.Render(timePassed);
+            }
         }
 
         protected override void Update()
@@ -358,130 +488,147 @@ namespace MediaPortal.GUI.Library
 
         public override void OnAction(Action action)
         {
-            Console.WriteLine("Action:{0} ActiveButton:{1}", (Action.ActionType)action.wID, _CurrentActiveButton);
+            if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
+            {
+                //Console.WriteLine("ACTION_MOUSE_CLICK ActiveButton:{0}", _CurrentActiveButton);
 
-            //if (this.Focus)
-            //{
-                if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
+                switch (_CurrentActiveButton)
                 {
-                    Console.WriteLine("ACTION_MOUSE_CLICK ActiveButton:{0}", _CurrentActiveButton);
+                    case ActiveButton.Main:
+                        {
+                            //Console.WriteLine("Clicked ActiveButton.Main");
+                            break;
+                        }
 
-                    switch (_CurrentActiveButton)
-                    {
-                        case ActiveButton.Main:
-                            {
-                                Console.WriteLine("Clicked ActiveButton.Main");
-                                break;
-                            }
+                    case ActiveButton.Up:
+                        {
+                            //Console.WriteLine("Clicked ActiveButton.Up");
+                            break;
+                        }
 
-                        case ActiveButton.Up:
-                            {
-                                Console.WriteLine("Clicked ActiveButton.Up");
-                                break;
-                            }
+                    case ActiveButton.Down:
+                        {
+                            //Console.WriteLine("Clicked ActiveButton.Down");
+                            break;
+                        }
 
-                        case ActiveButton.Down:
-                            {
-                                Console.WriteLine("Clicked ActiveButton.Down");
-                                break;
-                            }
+                    case ActiveButton.Delete:
+                        {
+                            //Console.WriteLine("Clicked ActiveButton.Delete");
+                            break;
+                        }
 
-                        case ActiveButton.Delete:
-                            {
-                                Console.WriteLine("Clicked ActiveButton.Delete");
-                                break;
-                            }
+                    case ActiveButton.None:
+                        {
+                            // We should never get here!
+                            //Console.WriteLine("Clicked ActiveButton.None");
+                            break;
+                        }
+                }
+            }
 
-                        case ActiveButton.None:
-                            {
-                                // We should never get here!
-                                Console.WriteLine("Clicked ActiveButton.None");
-                                break;
-                            }
-                    }
+            else if (action.wID == Action.ActionType.ACTION_MOVE_LEFT)
+            {
+                if (_CurrentActiveButton != ActiveButton.Main)
+                {
+                    FocusPreviousButton();
+                    return;
                 }
 
-                else if (action.wID == Action.ActionType.ACTION_MOVE_LEFT)
+                else
                 {
-                    if (_CurrentActiveButton != ActiveButton.Main)
-                    {
-                        FocusPreviousButton();
-                        return;
-                    }
+                    if (NavigateLeft != _windowId)
+                        _CurrentActiveButton = ActiveButton.None;
 
                     else
-                    {
-                        if (NavigateLeft != _windowId)
-                            _CurrentActiveButton = ActiveButton.None;
+                        return;
+                }
+            }
 
-                        else
-                            return;
-                    }
+            else if (action.wID == Action.ActionType.ACTION_MOVE_RIGHT)
+            {
+                if (_CurrentActiveButton != ActiveButton.Delete)
+                {
+                    FocusNextButton();
+                    return;
                 }
 
-                else if (action.wID == Action.ActionType.ACTION_MOVE_RIGHT)
-                {
-                    if (_CurrentActiveButton != ActiveButton.Delete)
-                    {
-                        FocusNextButton();
-                        return;
-                    }
 
+                else
+                {
+                    if (NavigateRight != _windowId)
+                        _CurrentActiveButton = ActiveButton.None;
 
                     else
-                    {
-                        if (NavigateRight != _windowId)
-                            _CurrentActiveButton = ActiveButton.None;
-
-                        else
-                            return;
-                    }
+                        return;
                 }
-            //}
-
-            //Console.WriteLine("Action:{0} ActiveButton:{1}", (Action.ActionType)action.wID, _ActiveButton);
+            }
             base.OnAction(action);
         }
 
         private void FocusNextButton()
         {
             if (_CurrentActiveButton == ActiveButton.Main)
-                _CurrentActiveButton = ActiveButton.Up;
+            {
+                if (_UpButtonEnabled)
+                    _CurrentActiveButton = ActiveButton.Up;
+
+                else if(_DownButtonEnabled)
+                    _CurrentActiveButton = ActiveButton.Down;
+
+                else if(_DeleteButtonEnabled)
+                    _CurrentActiveButton = ActiveButton.Delete;
+            }
 
             else if (_CurrentActiveButton == ActiveButton.Up)
-                _CurrentActiveButton = ActiveButton.Down;
+            {
+                if (_DownButtonEnabled)
+                    _CurrentActiveButton = ActiveButton.Down;
+
+                else if (_DeleteButtonEnabled)
+                    _CurrentActiveButton = ActiveButton.Delete;
+            }
 
             else if (_CurrentActiveButton == ActiveButton.Down)
-                _CurrentActiveButton = ActiveButton.Delete;
-
-            else if (_CurrentActiveButton == ActiveButton.Delete)
-                _CurrentActiveButton = ActiveButton.Delete;
+            {
+                if (_DeleteButtonEnabled)
+                    _CurrentActiveButton = ActiveButton.Delete;
+            }
         }
 
         private void FocusPreviousButton()
         {
             if (_CurrentActiveButton == ActiveButton.Delete)
-                _CurrentActiveButton = ActiveButton.Down;
+            {
+                if (_DownButtonEnabled)
+                    _CurrentActiveButton = ActiveButton.Down;
+
+                else if (_UpButtonEnabled)
+                    _CurrentActiveButton = ActiveButton.Up;
+
+                else
+                    _CurrentActiveButton = ActiveButton.Main;
+            }
 
             else if (_CurrentActiveButton == ActiveButton.Down)
-                _CurrentActiveButton = ActiveButton.Up;
+            {
+                if (_UpButtonEnabled)
+                    _CurrentActiveButton = ActiveButton.Up;
+
+                else
+                    _CurrentActiveButton = ActiveButton.Main;
+            }
 
             else if (_CurrentActiveButton == ActiveButton.Up)
+            {
                 _CurrentActiveButton = ActiveButton.Main;
-
-            else if (_CurrentActiveButton == ActiveButton.Main)
-                _CurrentActiveButton = ActiveButton.Main;
-        }
+            }
+       }
         
         public override bool OnMessage(GUIMessage message)
         {
             if(message.Message == GUIMessage.MessageType.GUI_MSG_SETFOCUS || message.Message == GUIMessage.MessageType.GUI_MSG_LOSTFOCUS)
                 IsEditImageHot = false;
-
-            else if (message.Message == GUIMessage.MessageType.GUI_MSG_CLICKED)
-            {
-                Console.WriteLine("A Control was clicked!");
-            }
 
             else if (message.Message == GUIMessage.MessageType.GUI_MSG_LOSTFOCUS)
             {
@@ -520,28 +667,134 @@ namespace MediaPortal.GUI.Library
                 _CurrentActiveButton = ActiveButton.Main;
             }
 
-            Console.WriteLine("X:{0} Y:{1} ActiveButton:{2}", x, y, _CurrentActiveButton);
             return base.HitTest(x, y, out controlID, out focused);
        }
 
-        ////public override void Render(float timePassed)
-        ////{
-        ////    base.Render(timePassed);
-        ////}
-
-        ////public override void OnAction(Action action)
-        ////{
-        ////    Console.WriteLine("ActionType: {0}", action.wID.ToString());
-        ////    base.OnAction(action);
-        ////}
-
-        //////public override bool OnMessage(GUIMessage message)
-        ////public override bool OnMessage(GUIMessage message)
-        ////{
-        ////    Console.WriteLine("Message: {0}", message.Message.ToString());
-        ////    return base.OnMessage(message);
-        ////}
-
 		#endregion Methods
+
+        public bool CanMoveRight()
+        {
+            if (_CurrentActiveButton == ActiveButton.Main)
+            {
+                if (_UpButtonEnabled)
+                    return true;
+
+                else if (_DownButtonEnabled)
+                    return true;
+
+                else if (_DeleteButtonEnabled)
+                    return true;
+            }
+
+            else if (_CurrentActiveButton == ActiveButton.Up)
+            {
+                if (_DownButtonEnabled)
+                    return true;
+
+                else if (_DeleteButtonEnabled)
+                    return true;
+            }
+
+            else if (_CurrentActiveButton == ActiveButton.Down)
+            {
+                if (_DeleteButtonEnabled)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public bool CanMoveLeft()
+        {
+            if (_CurrentActiveButton == ActiveButton.Delete)
+            {
+                if (_DownButtonEnabled)
+                    return true;
+
+                else if (_UpButtonEnabled)
+                    return true;
+
+                else
+                    return true;
+            }
+
+            else if (_CurrentActiveButton == ActiveButton.Down)
+            {
+                if (_UpButtonEnabled)
+                    return true;
+
+                else
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Creates a "disabled" button image from an normal (unfocused) button image by creating a
+        /// copy of the normal image and reducing the alpha component of each pixel by 50%. If the image
+        /// exists, the existing version is used
+        /// </summary>
+        /// <param name="skinFolderImagePath"></param>
+        /// <param name="origImageFileName"></param>
+        /// <param name="parentId"></param>
+        /// <param name="id"></param>
+        /// <param name="xOffset"></param>
+        /// <param name="yOffset"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns>GUIImage</returns>
+        private GUIImage CreateDisableButtonImage(string skinFolderImagePath, string origImageFileName, int parentId, int id, int xOffset, int yOffset, int width, int height)
+        {
+            string imagePath = System.IO.Path.Combine(skinFolderImagePath, origImageFileName);
+
+            // If the original image doesn't exist bail out.
+            if (!System.IO.File.Exists(imagePath))
+                return null;
+
+            string ext = System.IO.Path.GetExtension(origImageFileName);
+            string baseImgFileName = System.IO.Path.GetFileNameWithoutExtension(origImageFileName);
+            string dimmedImgFileName = baseImgFileName + "_dimmed" + ext;
+            string fullImagePath = System.IO.Path.Combine(skinFolderImagePath, dimmedImgFileName);
+            GUIImage guiImg = null;
+
+            // If the dimmed image already exists, use it to create the GUIImage
+            if (System.IO.File.Exists(fullImagePath))
+                guiImg = new GUIImage(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName, 0);
+
+            else
+            {
+                System.Drawing.Bitmap origImg = new System.Drawing.Bitmap(imagePath);
+                System.Drawing.Bitmap newImg = new System.Drawing.Bitmap(origImg);
+
+                if (origImg == null || newImg == null)
+                    return null;
+
+                for (int y = 0; y < origImg.Height; y++)
+                {
+                    for (int x = 0; x < origImg.Width; x++)
+                    {
+                        System.Drawing.Color c = origImg.GetPixel(x, y);
+
+                        byte alpha = c.A;
+
+                        if (alpha > 50)
+                            alpha = (byte)((float)alpha * .5f);
+
+                        newImg.SetPixel(x, y, System.Drawing.Color.FromArgb(alpha, c.R, c.G, c.B));
+                    }
+                }
+
+                newImg.Save(fullImagePath, System.Drawing.Imaging.ImageFormat.Png);
+                origImg.Dispose();
+
+                if (System.IO.File.Exists(fullImagePath))
+                    guiImg = new GUIImage(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName, 0);
+
+                newImg.Dispose();
+            }
+
+            return guiImg;
+        }
     }
 }

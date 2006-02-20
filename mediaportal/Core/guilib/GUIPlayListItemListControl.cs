@@ -35,11 +35,13 @@ namespace MediaPortal.GUI.Library
     {
         enum Selection
         {
-             ListItem,
+            ListItem,
             PageUpDown
         }
 
-        Selection currentSelection = Selection.ListItem;
+        private Selection currentSelection = Selection.ListItem;
+        private bool _MoveFirstListVisibleItemUpAllowed = true;
+        private bool _MoveLastVisibleListItemDownAllowed = true;
 
         [XMLSkinElement("upBtnWidth")]
         int _upBtnWidth = 35;
@@ -342,12 +344,12 @@ namespace MediaPortal.GUI.Library
 
                 case Selection.ListItem:
                     {
-                        if (_cursorX != -1)
+                        if (_cursorX >= 0)
                         {
                             GUIPlayListButtonControl btn = (GUIPlayListButtonControl)_listButtons[_cursorX];
                             GUIPlayListButtonControl.SuppressActiveButtonReset = false;
 
-                            if (btn.CurrentActiveButton != GUIPlayListButtonControl.ActiveButton.Main)
+                            if (btn.CurrentActiveButton != GUIPlayListButtonControl.ActiveButton.Main && btn.CanMoveLeft())
                             {
                                 Action action = new Action();
                                 action.wID = Action.ActionType.ACTION_MOVE_LEFT;
@@ -375,7 +377,7 @@ namespace MediaPortal.GUI.Library
                     GUIPlayListButtonControl btn = (GUIPlayListButtonControl)_listButtons[_cursorX];
                     GUIPlayListButtonControl.SuppressActiveButtonReset = false;
 
-                    if (btn.CurrentActiveButton != GUIPlayListButtonControl.ActiveButton.Delete)
+                    if (btn.CurrentActiveButton != GUIPlayListButtonControl.ActiveButton.Delete && btn.CanMoveRight())
                     {
                         action.wID = Action.ActionType.ACTION_MOVE_RIGHT;
                         btn.OnAction(action);
@@ -418,7 +420,7 @@ namespace MediaPortal.GUI.Library
                 }
             }
         }
- 
+
         protected virtual void OnUp()
         {
             Action action = new Action();
@@ -522,8 +524,6 @@ namespace MediaPortal.GUI.Library
 
         public override void OnAction(Action action)
         {
-            //Console.WriteLine("GUIPlayListItemListControl::OnAction:{0}", (Action.ActionType)action.wID);
-
             switch (action.wID)
             {
                 case Action.ActionType.ACTION_MOVE_DOWN:
@@ -544,23 +544,41 @@ namespace MediaPortal.GUI.Library
 
                             if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Up)
                             {
-                                newAction.wID = Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP;
-                                GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Up;
-                                GUIPlayListButtonControl.SuppressActiveButtonReset = true;
+                                if (btn.UpButtonEnabled)
+                                {
+                                    newAction.wID = Action.ActionType.ACTION_MOVE_SELECTED_ITEM_UP;
+                                    GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Up;
+                                    GUIPlayListButtonControl.SuppressActiveButtonReset = true;
+                                }
+
+                                else
+                                    return;
                             }
 
                             else if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Down)
                             {
-                                newAction.wID = Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN;
-                                GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Down;
-                                GUIPlayListButtonControl.SuppressActiveButtonReset = true;
+                                if (btn.DownButtonEnabled)
+                                {
+                                    newAction.wID = Action.ActionType.ACTION_MOVE_SELECTED_ITEM_DOWN;
+                                    GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Down;
+                                    GUIPlayListButtonControl.SuppressActiveButtonReset = true;
+                                }
+
+                                else
+                                    return;
                             }
 
                             else if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Delete)
                             {
-                                newAction.wID = Action.ActionType.ACTION_DELETE_SELECTED_ITEM;
-                                GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Delete;
-                                GUIPlayListButtonControl.SuppressActiveButtonReset = true;
+                                if (btn.DownButtonEnabled)
+                                {
+                                    newAction.wID = Action.ActionType.ACTION_DELETE_SELECTED_ITEM;
+                                    GUIPlayListButtonControl.LastActiveButton = GUIPlayListButtonControl.ActiveButton.Delete;
+                                    GUIPlayListButtonControl.SuppressActiveButtonReset = true;
+                                }
+
+                                else
+                                    return;
                             }
 
                             else if (btn.CurrentActiveButton == GUIPlayListButtonControl.ActiveButton.Main)
@@ -590,16 +608,9 @@ namespace MediaPortal.GUI.Library
 
             if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
             {
-                //Console.WriteLine("GUI_MSG_ITEM_SELECT");
-
                 if (currentSelection == Selection.PageUpDown)
                     Console.WriteLine("currentSelection == Selection.PageUpDown");
             }
-
-            //if (message.Message == GUIMessage.MessageType.GUI_MSG_CLICKED)
-            //{
-            //    //Console.WriteLine("GUI_MSG_CLICKED");
-            //}
 
             if (message.Message == GUIMessage.MessageType.GUI_MSG_SETFOCUS)
             {
@@ -619,16 +630,6 @@ namespace MediaPortal.GUI.Library
                 SetItemButtonState(GUIPlayListButtonControl.ActiveButton.Main);
             }
 
-            //if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
-            //{
-            //    Console.WriteLine("GUI_MSG_ITEM_SELECT");
-            //}
-
-            //if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS)
-            //{
-            //    Console.WriteLine("GUI_MSG_ITEM_FOCUS");
-            //}
-
             return result;
         }
 
@@ -639,9 +640,9 @@ namespace MediaPortal.GUI.Library
             _currentFrame = (int)(_timeElapsed / TimeSlice);
 
             // If there is no font do not render.
-            if (null == _font) 
+            if (null == _font)
                 return;
-            
+
             // If the control is not visible do not render.
             if (GUIGraphicsContext.EditMode == false)
             {
@@ -657,10 +658,10 @@ namespace MediaPortal.GUI.Library
                 {
                     // render item
                     bool gotFocus = false;
-                    
+
                     if (_drawFocus && i == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST)
                         gotFocus = true;
-                    
+
                     RenderButton(timePassed, i, _positionX, dwPosY, gotFocus);
                 }
 
@@ -672,18 +673,18 @@ namespace MediaPortal.GUI.Library
 
             // Render new item list
             dwPosY = _positionY;
-            
+
             for (int i = 0; i < _itemsPerPage; i++)
             {
                 int dwPosX = _positionX;
-            
+
                 if (i + _offset < _listItems.Count)
                 {
                     bool gotFocus = false;
-                
+
                     if (_drawFocus && i == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST)
                         gotFocus = true;
-                    
+
                     // render the icon
                     RenderIcon(timePassed, i, dwPosX + _iconOffsetX, dwPosY + _iconOffsetY, gotFocus);
 
@@ -772,10 +773,10 @@ namespace MediaPortal.GUI.Library
                     }
                     int xpos = dwPosX;
                     int ypos = dwPosY;
-                    
+
                     if (0 == _textOffsetX2)
                         xpos = _positionX + _upBtnXOffset - 8;
-                    
+
                     else
                         xpos = _positionX + _textOffsetX2;
 
@@ -819,7 +820,7 @@ namespace MediaPortal.GUI.Library
 
                 if (!gotFocus)
                     dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-                
+
                 RenderText(timePassed, buttonNr, (float)dwPosX, (float)dwPosY + 2 + _textOffsetY, (float)dMaxWidth, dwColor, _textLine, bSelected);
             }
 
@@ -873,7 +874,7 @@ namespace MediaPortal.GUI.Library
             if (pItem.Label3.Length > 0)
             {
                 dwColor = _textColor3;
-            
+
                 if (pItem.Selected)
                 {
                     dwColor = _selectedColor3;
@@ -884,21 +885,21 @@ namespace MediaPortal.GUI.Library
                     dwColor = _remoteColor;
                     if (pItem.IsDownloading) dwColor = _downloadColor;
                 }
-                
+
                 if (0 == _textOffsetX3)
                     dwPosX = _positionX + _textOffsetX;
-                
+
                 else
                     dwPosX = _positionX + _textOffsetX3;
 
                 int ypos = dwPosY;
-                
+
                 if (0 == _textOffsetY3)
                     ypos += _textOffsetY2;
-                
+
                 else
                     ypos += _textOffsetY3;
-                
+
                 if (_text3Visible)
                 {
                     if (_labelControls3 != null)
@@ -906,17 +907,17 @@ namespace MediaPortal.GUI.Library
                         if (buttonNr >= 0 && buttonNr < _labelControls3.Count)
                         {
                             GUILabelControl label3 = _labelControls3[buttonNr];
-                
+
                             if (label3 != null)
                             {
                                 label3.SetPosition(dwPosX, ypos);
-                            
+
                                 if (gotFocus)
                                     label3.TextColor = dwColor;
-                                
+
                                 else
                                     label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-                                
+
                                 label3.Label = pItem.Label3;
                                 label3.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
                                 label3.FontName = _fontName2Name;
@@ -935,94 +936,53 @@ namespace MediaPortal.GUI.Library
 
         private void SetItemButtonState(GUIPlayListButtonControl.ActiveButton activeButton)
         {
+            if (_cursorX < 0)
+                return;
+
             GUIPlayListButtonControl btn = (GUIPlayListButtonControl)_listButtons[_cursorX];
 
             if (btn != null)
                 btn.CurrentActiveButton = activeButton;
         }
 
+        /// <summary>
+        /// Prevent/allow first visible list item to be moved upward
+        /// </summary>
+        /// <param name="allow"></param>
+        public bool AllowMoveFirstVisibleListItemUp
+        {
+            get { return _MoveFirstListVisibleItemUpAllowed; }
+            set
+            {
+                _MoveFirstListVisibleItemUpAllowed = value;
+
+                if (_listButtons == null || _listButtons.Count == 0)
+                    return;
+
+                GUIPlayListButtonControl btn = (GUIPlayListButtonControl)_listButtons[0];
+                btn.UpButtonEnabled = value;
+            }
+        }
+
+        /// <summary>
+        /// Prevent/allow last visible list item to be moved downward
+        /// </summary>
+        /// <param name="allow"></param>
+        public bool AllowLastVisibleListItemDown
+        {
+            get { return _MoveLastVisibleListItemDownAllowed; }
+            set
+            {
+                _MoveLastVisibleListItemDownAllowed = value;
+
+                if (_listButtons == null || _listButtons.Count == 0)
+                    return;
+
+                GUIPlayListButtonControl btn = (GUIPlayListButtonControl)_listButtons[_listButtons.Count - 1];
+                btn.DownButtonEnabled = value;
+            }
+        }
+
         #endregion
-
-        //public int MoveItemDown(int iItem)
-        //{
-        //    int selectedItemIndex = -1;
-
-        //    if (iItem < 0 || iItem >= _listItems.Count)
-        //        return -1;
-
-        //    int iNextItem = iItem + 1;
-
-        //    if (iNextItem >= _listItems.Count)
-        //        iNextItem = 0;
-
-        //    GUIListItem item1 = _listItems[iItem];
-        //    GUIListItem item2 = _listItems[iNextItem];
-
-        //    if (item1 == null || item2 == null)
-        //        return -1;
-
-        //    try
-        //    {
-        //        //Log.Write("Moving List Item {0} down. Old index:{1}, new index{2}", item1.Path, iItem, iNextItem);
-        //        System.Threading.Monitor.Enter(this);
-        //        _listItems[iItem] = item2;
-        //        _listItems[iNextItem] = item1;
-        //        selectedItemIndex = iNextItem;
-        //    }
-
-        //    catch (Exception ex)
-        //    {
-        //        Log.Write("GUIPlayListItemListControl.MoveItemDown caused an exception: {0}", ex.Message);
-        //        selectedItemIndex = -1;
-        //    }
-
-        //    finally
-        //    {
-        //        System.Threading.Monitor.Exit(this);
-        //    }
-
-        //    return selectedItemIndex;
-        //}
-
-        //public int MoveItemUp(int iItem)
-        //{
-        //    int selectedItemIndex = -1;
-
-        //    if (iItem < 0 || iItem >= _listItems.Count)
-        //        return -1;
-
-        //    int iPreviousItem = iItem - 1;
-
-        //    if (iPreviousItem < 0)
-        //        iPreviousItem = _listItems.Count - 1;
-
-        //    GUIListItem item1 = _listItems[iItem];
-        //    GUIListItem item2 = _listItems[iPreviousItem];
-
-        //    if (item1 == null || item2 == null)
-        //        return -1;
-
-        //    try
-        //    {
-        //        //Log.Write("Moving List Item {0} up. Old index:{1}, new index{2}", item1.Path, iItem, iPreviousItem);
-        //        System.Threading.Monitor.Enter(this);
-        //        _listItems[iItem] = item2;
-        //        _listItems[iPreviousItem] = item1;
-        //        selectedItemIndex = iPreviousItem;
-        //    }
-
-        //    catch (Exception ex)
-        //    {
-        //        Log.Write("GUIPlayListItemListControl.MoveItemUp caused an exception: {0}", ex.Message);
-        //        selectedItemIndex = -1;
-        //    }
-
-        //    finally
-        //    {
-        //        System.Threading.Monitor.Exit(this);
-        //    }
-
-        //    return selectedItemIndex;
-        //}
     }
 }
