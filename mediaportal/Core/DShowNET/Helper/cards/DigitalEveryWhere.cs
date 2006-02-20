@@ -688,10 +688,36 @@ namespace DShowNET
       }
       return false;
     }
-    public void SendDiseqCommand(int antennaNr, int frequency, int switchingFrequency, int polarisation)
+    public void SendDiseqCommand(int disEqcType, int frequency, int switchingFrequency, int polarisation)
     {
+      int antennaNr = 1;
+      switch (disEqcType)
+      {
+        case 0: // none
+          antennaNr = 1;
+        break;
+        case 1: // Simple A
+          antennaNr = 1;
+        break;
+        case 2: // Simple B
+          antennaNr = 1;
+        break;
+        case 3: // Level 1 A/A
+          antennaNr = 1;
+        break;
+        case 4: // Level 1 B/A
+          antennaNr = 2;
+        break;
+        case 5: // Level 1 A/B
+          antennaNr = 3;
+        break;
+        case 6: // Level 1 B/B
+          antennaNr = 4;
+        break;
+      }
       //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
-      Log.Write("FireDTV SendDiseqcCommand() antenna:{0}, frequency:{1}, switching frequency:{2}, polarisation:{3}", antennaNr, frequency, switchingFrequency, polarisation);
+      Log.Write("FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, switching frequency:{3}, polarisation:{4}", 
+              disEqcType,antennaNr, frequency, switchingFrequency, polarisation);
       IntPtr ptrCmd = Marshal.AllocCoTaskMem(25);
       try
       {
