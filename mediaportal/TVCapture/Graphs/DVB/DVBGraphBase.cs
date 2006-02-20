@@ -1960,6 +1960,15 @@ namespace MediaPortal.TV.Recording
           }// switch(disNo)
         }//using(MediaPortal.Profile.Xml xmlreader=new MediaPortal.Profile.Xml(m_cardFilename))
 
+        switch (lnbKind)
+        {
+          case 0: // KU-Band
+            break;
+          case 1: // C-Band
+            break;
+          case 2: // Circular-Band
+            break;
+        }
         // set values to dvbchannel-object
         // set the lnb parameter 
         ch.LNBKHz = lnbswMHZ * 1000;

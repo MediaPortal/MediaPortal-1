@@ -119,6 +119,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBox1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.useLNB4 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.useLNB3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.useLNB2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -150,10 +154,6 @@ namespace MediaPortal.Configuration.Sections
       this.switchMHZ = new MediaPortal.UserInterface.Controls.MPLabel();
       this.lnb0MHZ = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label22 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.groupBox4.SuspendLayout();
@@ -189,25 +189,25 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.mpLabel3);
       this.groupBox2.Controls.Add(this.mpLabel2);
       this.groupBox2.Controls.Add(this.mpLabel1);
+      this.groupBox2.Controls.Add(this.label31);
       this.groupBox2.Controls.Add(this.useLNB4);
+      this.groupBox2.Controls.Add(this.lnbconfig1);
+      this.groupBox2.Controls.Add(this.lnbconfig2);
       this.groupBox2.Controls.Add(this.useLNB3);
+      this.groupBox2.Controls.Add(this.lnbconfig3);
       this.groupBox2.Controls.Add(this.useLNB2);
+      this.groupBox2.Controls.Add(this.lnbconfig4);
       this.groupBox2.Controls.Add(this.useLNB1);
       this.groupBox2.Controls.Add(this.lnbkind4);
       this.groupBox2.Controls.Add(this.lnbkind3);
       this.groupBox2.Controls.Add(this.lnbkind2);
       this.groupBox2.Controls.Add(this.label30);
-      this.groupBox2.Controls.Add(this.label31);
       this.groupBox2.Controls.Add(this.label32);
-      this.groupBox2.Controls.Add(this.lnbconfig4);
-      this.groupBox2.Controls.Add(this.lnbconfig3);
-      this.groupBox2.Controls.Add(this.lnbconfig2);
       this.groupBox2.Controls.Add(this.diseqcd);
       this.groupBox2.Controls.Add(this.diseqcc);
       this.groupBox2.Controls.Add(this.diseqcb);
       this.groupBox2.Controls.Add(this.diseqca);
       this.groupBox2.Controls.Add(this.lnbkind1);
-      this.groupBox2.Controls.Add(this.lnbconfig1);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(32, 136);
       this.groupBox2.Name = "groupBox2";
@@ -217,11 +217,44 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Text = "LNB setup";
       this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
       // 
+      // mpLabel4
+      // 
+      this.mpLabel4.Location = new System.Drawing.Point(6, 113);
+      this.mpLabel4.Name = "mpLabel4";
+      this.mpLabel4.Size = new System.Drawing.Size(53, 16);
+      this.mpLabel4.TabIndex = 34;
+      this.mpLabel4.Text = "LNB#4";
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.Location = new System.Drawing.Point(6, 90);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(53, 16);
+      this.mpLabel3.TabIndex = 33;
+      this.mpLabel3.Text = "LNB#3";
+      this.mpLabel3.Click += new System.EventHandler(this.mpLabel3_Click);
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.Location = new System.Drawing.Point(6, 66);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(53, 16);
+      this.mpLabel2.TabIndex = 32;
+      this.mpLabel2.Text = "LNB#2";
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(6, 41);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(53, 16);
+      this.mpLabel1.TabIndex = 8;
+      this.mpLabel1.Text = "LNB#1";
+      // 
       // useLNB4
       // 
       this.useLNB4.AutoSize = true;
       this.useLNB4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useLNB4.Location = new System.Drawing.Point(361, 112);
+      this.useLNB4.Location = new System.Drawing.Point(268, 112);
       this.useLNB4.Name = "useLNB4";
       this.useLNB4.Size = new System.Drawing.Size(63, 17);
       this.useLNB4.TabIndex = 31;
@@ -232,7 +265,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.useLNB3.AutoSize = true;
       this.useLNB3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useLNB3.Location = new System.Drawing.Point(361, 88);
+      this.useLNB3.Location = new System.Drawing.Point(268, 88);
       this.useLNB3.Name = "useLNB3";
       this.useLNB3.Size = new System.Drawing.Size(63, 17);
       this.useLNB3.TabIndex = 30;
@@ -244,7 +277,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.useLNB2.AutoSize = true;
       this.useLNB2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useLNB2.Location = new System.Drawing.Point(361, 64);
+      this.useLNB2.Location = new System.Drawing.Point(268, 64);
       this.useLNB2.Name = "useLNB2";
       this.useLNB2.Size = new System.Drawing.Size(63, 17);
       this.useLNB2.TabIndex = 29;
@@ -259,7 +292,7 @@ namespace MediaPortal.Configuration.Sections
       this.useLNB1.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useLNB1.Enabled = false;
       this.useLNB1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useLNB1.Location = new System.Drawing.Point(361, 40);
+      this.useLNB1.Location = new System.Drawing.Point(268, 40);
       this.useLNB1.Name = "useLNB1";
       this.useLNB1.Size = new System.Drawing.Size(63, 17);
       this.useLNB1.TabIndex = 28;
@@ -272,7 +305,7 @@ namespace MediaPortal.Configuration.Sections
             "Ku-Band",
             "C-Band",
             "Circular"});
-      this.lnbkind4.Location = new System.Drawing.Point(281, 109);
+      this.lnbkind4.Location = new System.Drawing.Point(188, 109);
       this.lnbkind4.Name = "lnbkind4";
       this.lnbkind4.Size = new System.Drawing.Size(72, 21);
       this.lnbkind4.TabIndex = 26;
@@ -283,7 +316,7 @@ namespace MediaPortal.Configuration.Sections
             "Ku-Band",
             "C-Band",
             "Circular"});
-      this.lnbkind3.Location = new System.Drawing.Point(281, 85);
+      this.lnbkind3.Location = new System.Drawing.Point(188, 85);
       this.lnbkind3.Name = "lnbkind3";
       this.lnbkind3.Size = new System.Drawing.Size(72, 21);
       this.lnbkind3.TabIndex = 25;
@@ -294,14 +327,14 @@ namespace MediaPortal.Configuration.Sections
             "Ku-Band",
             "C-Band",
             "Circular"});
-      this.lnbkind2.Location = new System.Drawing.Point(281, 61);
+      this.lnbkind2.Location = new System.Drawing.Point(188, 61);
       this.lnbkind2.Name = "lnbkind2";
       this.lnbkind2.Size = new System.Drawing.Size(72, 21);
       this.lnbkind2.TabIndex = 24;
       // 
       // label30
       // 
-      this.label30.Location = new System.Drawing.Point(281, 21);
+      this.label30.Location = new System.Drawing.Point(188, 21);
       this.label30.Name = "label30";
       this.label30.Size = new System.Drawing.Size(56, 16);
       this.label30.TabIndex = 22;
@@ -309,11 +342,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label31
       // 
-      this.label31.Location = new System.Drawing.Point(185, 21);
+      this.label31.Location = new System.Drawing.Point(345, 25);
       this.label31.Name = "label31";
       this.label31.Size = new System.Drawing.Size(64, 16);
       this.label31.TabIndex = 21;
       this.label31.Text = "LNBSelect:";
+      this.label31.Visible = false;
       // 
       // label32
       // 
@@ -330,10 +364,11 @@ namespace MediaPortal.Configuration.Sections
             "22 KHz",
             "33 Khz",
             "44 KHz"});
-      this.lnbconfig4.Location = new System.Drawing.Point(185, 109);
+      this.lnbconfig4.Location = new System.Drawing.Point(345, 113);
       this.lnbconfig4.Name = "lnbconfig4";
       this.lnbconfig4.Size = new System.Drawing.Size(80, 21);
       this.lnbconfig4.TabIndex = 19;
+      this.lnbconfig4.Visible = false;
       // 
       // lnbconfig3
       // 
@@ -342,10 +377,11 @@ namespace MediaPortal.Configuration.Sections
             "22 KHz",
             "33 Khz",
             "44 KHz"});
-      this.lnbconfig3.Location = new System.Drawing.Point(185, 85);
+      this.lnbconfig3.Location = new System.Drawing.Point(345, 89);
       this.lnbconfig3.Name = "lnbconfig3";
       this.lnbconfig3.Size = new System.Drawing.Size(80, 21);
       this.lnbconfig3.TabIndex = 18;
+      this.lnbconfig3.Visible = false;
       // 
       // lnbconfig2
       // 
@@ -354,10 +390,11 @@ namespace MediaPortal.Configuration.Sections
             "22 KHz",
             "33 Khz",
             "44 KHz"});
-      this.lnbconfig2.Location = new System.Drawing.Point(185, 61);
+      this.lnbconfig2.Location = new System.Drawing.Point(345, 65);
       this.lnbconfig2.Name = "lnbconfig2";
       this.lnbconfig2.Size = new System.Drawing.Size(80, 21);
       this.lnbconfig2.TabIndex = 17;
+      this.lnbconfig2.Visible = false;
       // 
       // diseqcd
       // 
@@ -429,7 +466,7 @@ namespace MediaPortal.Configuration.Sections
             "Ku-Band",
             "C-Band",
             "Circular"});
-      this.lnbkind1.Location = new System.Drawing.Point(281, 37);
+      this.lnbkind1.Location = new System.Drawing.Point(188, 37);
       this.lnbkind1.Name = "lnbkind1";
       this.lnbkind1.Size = new System.Drawing.Size(72, 21);
       this.lnbkind1.TabIndex = 27;
@@ -441,10 +478,11 @@ namespace MediaPortal.Configuration.Sections
             "22 KHz",
             "33 Khz",
             "44 KHz"});
-      this.lnbconfig1.Location = new System.Drawing.Point(185, 37);
+      this.lnbconfig1.Location = new System.Drawing.Point(345, 41);
       this.lnbconfig1.Name = "lnbconfig1";
       this.lnbconfig1.Size = new System.Drawing.Size(80, 21);
       this.lnbconfig1.TabIndex = 24;
+      this.lnbconfig1.Visible = false;
       // 
       // groupBox4
       // 
@@ -555,39 +593,6 @@ namespace MediaPortal.Configuration.Sections
       this.label22.Size = new System.Drawing.Size(72, 16);
       this.label22.TabIndex = 0;
       this.label22.Text = "LNB0 (Mhz)";
-      // 
-      // mpLabel1
-      // 
-      this.mpLabel1.Location = new System.Drawing.Point(6, 41);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(53, 16);
-      this.mpLabel1.TabIndex = 8;
-      this.mpLabel1.Text = "LNB#1";
-      // 
-      // mpLabel2
-      // 
-      this.mpLabel2.Location = new System.Drawing.Point(6, 66);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(53, 16);
-      this.mpLabel2.TabIndex = 32;
-      this.mpLabel2.Text = "LNB#2";
-      // 
-      // mpLabel3
-      // 
-      this.mpLabel3.Location = new System.Drawing.Point(6, 90);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(53, 16);
-      this.mpLabel3.TabIndex = 33;
-      this.mpLabel3.Text = "LNB#3";
-      this.mpLabel3.Click += new System.EventHandler(this.mpLabel3_Click);
-      // 
-      // mpLabel4
-      // 
-      this.mpLabel4.Location = new System.Drawing.Point(6, 113);
-      this.mpLabel4.Name = "mpLabel4";
-      this.mpLabel4.Size = new System.Drawing.Size(53, 16);
-      this.mpLabel4.TabIndex = 34;
-      this.mpLabel4.Text = "LNB#4";
       // 
       // Wizard_DVBSTVSetup
       // 
