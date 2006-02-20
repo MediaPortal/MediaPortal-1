@@ -149,7 +149,7 @@ namespace DShowNET.Helper
       return false;
     }
 
-    public void SendDiseqCommand(int antennaNr, int frequency, int switchingFrequency, int polarisation)
+    public void SendDiseqCommand(int antennaNr, int frequency, int switchingFrequency, int polarisation, int diseqcType)
     {
       if (_digitalEverywhere.IsDigitalEverywhere)
       {
@@ -158,7 +158,7 @@ namespace DShowNET.Helper
       }
       if (_technoTrend.IsTechnoTrend)
       {
-        _technoTrend.SendDiseqCommand(antennaNr, frequency, switchingFrequency, polarisation);
+        _technoTrend.SendDiseqCommand(antennaNr, frequency, switchingFrequency, polarisation, diseqcType);
         return;
       }
     }

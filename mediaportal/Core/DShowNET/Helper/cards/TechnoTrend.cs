@@ -32,16 +32,16 @@ namespace DShowNET
     #region enums
     enum TechnoTrendDeviceType
     {
-        /// not set
-        eTypeUnknown = 0,
-        /// Budget 2
-        eDevTypeB2,
-        /// Budget 3 aka TT-budget T-3000
-        eDevTypeB3,
-        /// USB 2.0
-        eDevTypeUsb2,
-        /// USB 2.0 Pinnacle
-        eDevTypeUsb2Pinnacle
+      /// not set
+      eTypeUnknown = 0,
+      /// Budget 2
+      eDevTypeB2,
+      /// Budget 3 aka TT-budget T-3000
+      eDevTypeB3,
+      /// USB 2.0
+      eDevTypeUsb2,
+      /// USB 2.0 Pinnacle
+      eDevTypeUsb2Pinnacle
     } ;
 
     #endregion
@@ -106,12 +106,12 @@ namespace DShowNET
     public static extern int bdaapiCIReadPSIFastDrvDemux(uint hOpen, int PNR);
 
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetDiSEqCMsg", CallingConvention = CallingConvention.StdCall)]
-    public static extern int bdaapiSetDiSEqCMsg(uint hOpen,IntPtr data,bytes length,byte repeat,byte toneburst,int polarity);
+    public static extern int bdaapiSetDiSEqCMsg(uint hOpen, IntPtr data, byte length, byte repeat, byte toneburst, int polarity);
 
     #endregion
 
     #region variables
-    TechnoTrendDeviceType _deviceType=TechnoTrendDeviceType.eTypeUnknown;
+    TechnoTrendDeviceType _deviceType = TechnoTrendDeviceType.eTypeUnknown;
     CallbackFunctionsSlim _technoTrendStructure = new CallbackFunctionsSlim();
     uint _handle = 0xffffffff;
     bool _hasCam = false;
@@ -119,18 +119,18 @@ namespace DShowNET
     #endregion
 
     public TechnoTrend(IBaseFilter filter)
-    : base(filter)
+      : base(filter)
     {
       FilterInfo info;
       filter.QueryFilterInfo(out info);
-      if (info.achName =="USB 2.0 BDA DVB Capture") _deviceType=TechnoTrendDeviceType.eDevTypeUsb2;
-      if (info.achName =="TechnoTrend BDA/DVB Capture") _deviceType=TechnoTrendDeviceType.eDevTypeB2;
-      if (info.achName =="TTHybridTV BDA Digital Capture") _deviceType=TechnoTrendDeviceType.eDevTypeB3;
-      if (info.achName =="Pinnacle PCTV 400e Capture") _deviceType=TechnoTrendDeviceType.eDevTypeUsb2Pinnacle;
+      if (info.achName == "USB 2.0 BDA DVB Capture") _deviceType = TechnoTrendDeviceType.eDevTypeUsb2;
+      if (info.achName == "TechnoTrend BDA/DVB Capture") _deviceType = TechnoTrendDeviceType.eDevTypeB2;
+      if (info.achName == "TTHybridTV BDA Digital Capture") _deviceType = TechnoTrendDeviceType.eDevTypeB3;
+      if (info.achName == "Pinnacle PCTV 400e Capture") _deviceType = TechnoTrendDeviceType.eDevTypeUsb2Pinnacle;
       if (!IsTechnoTrend) return;
       try
       {
-        _handle=bdaapiOpenHWIdx((UInt32) _deviceType, 0);
+        _handle = bdaapiOpenHWIdx((UInt32)_deviceType, 0);
         if (_handle != 0xffffffff)
         {
           Log.WriteFile(Log.LogType.Log, false, "Technotrend: card detected");
@@ -180,10 +180,10 @@ namespace DShowNET
         return (_deviceType != TechnoTrendDeviceType.eTypeUnknown);
       }
     }
-    
+
     public bool SendPMT(int serviceId)
     {
-      int hr=bdaapiCIReadPSIFastDrvDemux(_handle, serviceId);
+      int hr = bdaapiCIReadPSIFastDrvDemux(_handle, serviceId);
       if (hr == 0)
       {
         Log.WriteFile(Log.LogType.Log, false, "Technotrend: service decoded");
@@ -217,12 +217,12 @@ namespace DShowNET
       //             2   : Toneburst B (modulated)
       //Polarization 0   : vertical
       //             1   : horizontal
-      byte toneburst=0;
-      byte repeat=0;
-      byte length=4;
+      byte toneburst = 0;
+      byte repeat = 0;
+      byte length = 4;
       byte position = 0;
       byte option = 0;
-      IntPtr ptrData=Marshal.AllocCoTaskMem(4);
+      IntPtr ptrData = Marshal.AllocCoTaskMem(4);
       try
       {
         int pol;
@@ -233,32 +233,32 @@ namespace DShowNET
         else                        // low band
           diseqc &= 0xFFFFFFFE;
 
-        if (polarisation==1)             // vertikal
+        if (polarisation == 1)             // vertikal
           diseqc &= 0xFFFFFFFD;
         else                        // horizontal
           diseqc |= 0x00000002;
 
-        if (position)             // Sat B
+        if (position != 0)             // Sat B
           diseqc |= 0x00000004;
         else                        // Sat A
           diseqc &= 0xFFFFFFFB;
 
-        if (option)               // option B
+        if (option != 0)               // option B
           diseqc |= 0x00000008;
         else                        // option A
           diseqc &= 0xFFFFFFF7;
 
         if (polarisation == 0)//horizontal
-          pol = TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
+          pol = (int)TunerLib.Polarisation.BDA_POLARISATION_LINEAR_H;
         else
-          pol = TunerLib.Polarisation.BDA_POLARISATION_LINEAR_V;
+          pol = (int)TunerLib.Polarisation.BDA_POLARISATION_LINEAR_V;
 
-        Marshal.WriteByte(ptrData, 0, (diseqc >> 24) & 0xff);
-        Marshal.WriteByte(ptrData, 1, (diseqc >> 16) & 0xff);
-        Marshal.WriteByte(ptrData, 2, (diseqc >> 8) & 0xff);
-        Marshal.WriteByte(ptrData, 3, (diseqc )&0xff);
+        Marshal.WriteByte(ptrData, 0, (byte)((diseqc >> 24) & 0xff));
+        Marshal.WriteByte(ptrData, 1, (byte)((diseqc >> 16) & 0xff));
+        Marshal.WriteByte(ptrData, 2, (byte)((diseqc >> 8) & 0xff));
+        Marshal.WriteByte(ptrData, 3, (byte)((diseqc) & 0xff));
 
-        bdaapiSetDiSEqCMsg(hBdaApi, ptrData, length, repeat, toneburst, pol);
+        bdaapiSetDiSEqCMsg(_handle, ptrData, length, repeat, toneburst, pol);
       }
       finally
       {
