@@ -691,6 +691,7 @@ namespace DShowNET
     public void SendDiseqCommand(int antennaNr, int frequency, int switchingFrequency, int polarisation)
     {
       //"01,02,03,04,05,06,07,08,09,0a,0b,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,cc,"	
+      Log.Write("FireDTV SendDiseqcCommand() antenna:{0}, frequency:{1}, switching frequency:{2}, polarisation:{3}", antennaNr, frequency, switchingFrequency, polarisation);
       IntPtr ptrCmd = Marshal.AllocCoTaskMem(25);
       try
       {
