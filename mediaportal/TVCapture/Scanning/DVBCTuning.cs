@@ -63,6 +63,11 @@ namespace MediaPortal.TV.Scanning
    
     public void Start()
     {
+      newChannels = 0;
+      updatedChannels = 0;
+      newRadioChannels = 0;
+      updatedRadioChannels = 0;
+
       _currentIndex = 0;
       _callback.OnProgress(0);
     }

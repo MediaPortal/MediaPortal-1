@@ -179,6 +179,11 @@ namespace MediaPortal.TV.Scanning
 
     public void Start()
     {
+      _newRadioChannels = 0;
+      _updatedRadioChannels = 0;
+      _newChannels = 0;
+      _updatedChannels = 0;
+
       Log.Write("dvbs-scan: Start()");
       _currentDiseqc = 1;
       _currentIndex = 0;

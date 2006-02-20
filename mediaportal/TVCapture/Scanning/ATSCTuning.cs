@@ -53,6 +53,11 @@ namespace MediaPortal.TV.Scanning
     #region ITuning Members
     public void Start()
     {
+      _newRadioChannels = 0;
+      _updatedRadioChannels = 0;
+      _newChannels = 0;
+      _updatedChannels = 0;
+
       _currentIndex = 0;
       _callback.OnProgress(0);
     }
