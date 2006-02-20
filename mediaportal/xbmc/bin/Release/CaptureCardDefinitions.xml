@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <capturecards>
-  <capturecard commercialname="WinTv USB" capturename="Hauppauge WinTV USB Pro Capture" devid="vid_0573&amp;pid_4d21#5&amp;15184706&amp;0&amp;2">
+  <capturecard commercialname="WinTv USB" capturename="Hauppauge WinTV USB Pro Capture" devid="vid_0573&amp;pid_4d21">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
@@ -9,17 +9,18 @@
         <filter cat="tvaudio"		name="Hauppauge WinTV USB Pro Audio"		checkdevice="true"/>
         <filter cat="crossbar"		name="Hauppauge WinTV USB Pro Crossbar"		checkdevice="true"/>
         <filter cat="capture"		name="Hauppauge WinTV USB Pro Capture"		checkdevice="true"/>
-        <filter cat="audcapture"	name="%Soundcard%"							checkdevice="true"/>
+        <filter cat="audcapture"	name="%Soundcard%"						checkdevice="true"/>
         <filter cat="videncoder"	name="%videoencoder%"						checkdevice="false"/>
         <filter cat="audencoder"	name="%audioencoder%"						checkdevice="false"/>
         <filter cat="mux"			name="%mpegmux%"							checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio" sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
 		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-        <connection sourcefilter="audcapture"	sourcepin="4" sinkfilter="tvaudio"		sinkpin="0"/>
-        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"		sinkpin="0"/>
         <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
         <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
       </connections>
@@ -8696,5 +8697,5 @@
         <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
       </connections>
     </tv>
-  </capturecard>  
+  </capturecard>
 </capturecards>
