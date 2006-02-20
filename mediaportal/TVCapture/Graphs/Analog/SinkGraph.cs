@@ -913,7 +913,7 @@ namespace MediaPortal.TV.Recording
     /// <param name="standard">TVStandard</param>
     protected void SetVideoStandard(AnalogVideoStandard standard)
     {
-      VideoCaptureProperties props = new VideoCaptureProperties(_filterCapture, _filterCapture);
+      VideoCaptureProperties props = new VideoCaptureProperties(_filterCapture);
       props.SetTvFormat(standard);
       if (standard == AnalogVideoStandard.None) return;
 
@@ -1191,7 +1191,7 @@ namespace MediaPortal.TV.Recording
         }
 
 
-        VideoCaptureProperties props = new VideoCaptureProperties(_filterCapture,_filterCapture);
+        VideoCaptureProperties props = new VideoCaptureProperties(_filterCapture);
         if (Quality >= 0)
         {
           switch (Quality)

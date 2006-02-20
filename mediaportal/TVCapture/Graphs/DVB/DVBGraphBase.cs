@@ -1870,17 +1870,20 @@ namespace MediaPortal.TV.Recording
             _streamDemuxer.DumpPMT(pmt);
             if (_cardProperties.SendPMT(_currentTuningObject.ProgramNumber,  _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
             {
+              _lastPMTVersion = pmtVersion;
               return true;
             }
             else
             {
-              //_refreshPmtTable=true;
+              _refreshPmtTable=true;
+              _pmtSendCounter = 0;
               return true;
             }
           }
           else
           {
-            return true;
+              _lastPMTVersion = pmtVersion;
+              return true;
           }
         }
       }
@@ -2225,7 +2228,6 @@ namespace MediaPortal.TV.Recording
                 if (_lastPMTVersion != version)
                 {
                   Log.Write("DVBGraph:Got PMT version:{0}", version);
-                  _lastPMTVersion = version;
                   m_streamDemuxer_OnPMTIsChanged(pmt);
                 }
                 else
