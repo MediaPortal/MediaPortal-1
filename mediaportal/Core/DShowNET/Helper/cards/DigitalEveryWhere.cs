@@ -405,7 +405,7 @@ namespace DShowNET
 
     public bool SetHardwarePidFiltering(bool isDvbc, bool isDvbT, bool isDvbS, bool isAtsc, ArrayList pids)
     {
-      return true;
+      if (System.IO.File.Exists("usehwpids.txt") == false) return true;
       string logStart = "dvbt:";
       DirectShowLib.IKsPropertySet propertySet = captureFilter as DirectShowLib.IKsPropertySet;
       Guid propertyGuid = KSPROPSETID_Firesat;
