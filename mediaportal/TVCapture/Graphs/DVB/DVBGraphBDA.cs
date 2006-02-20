@@ -885,7 +885,7 @@ namespace MediaPortal.TV.Recording
         _epgGrabber.ATSCInterface = _atscGrabberInterface;
         _epgGrabber.AnalyzerInterface = _analyzerInterface;
         _epgGrabber.Network = Network();
-        _cardProperties = new VideoCaptureProperties(_filterTunerDevice);
+        _cardProperties = new VideoCaptureProperties(_filterTunerDevice, _filterCaptureDevice);
         return true;
       }
       catch (Exception ex)
@@ -918,6 +918,8 @@ namespace MediaPortal.TV.Recording
         StopTimeShifting();
         StopViewing();
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: free tuner interfaces");
+        _cardProperties.Dispose();
+        _cardProperties = null;
 
         // to clear buffers for epg and teletext
         if (_streamDemuxer != null)

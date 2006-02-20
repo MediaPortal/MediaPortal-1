@@ -1868,7 +1868,7 @@ namespace MediaPortal.TV.Recording
           {
             Log.Write("DVBGraph:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3} locked:{4}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality(), _tunerLocked);
             _streamDemuxer.DumpPMT(pmt);
-            if (_cardProperties.SendPMT(_currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
+            if (_cardProperties.SendPMT(_currentTuningObject.ProgramNumber,  _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
             {
               return true;
             }

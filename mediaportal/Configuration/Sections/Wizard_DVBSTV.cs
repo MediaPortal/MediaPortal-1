@@ -69,6 +69,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder3;
     private MediaPortal.UserInterface.Controls.MPComboBox cbTransponder4;
     int m_currentDiseqc = 1;
+    string[] _tplFiles;
 
     public Wizard_DVBSTV()
       : this("DVB-S TV")
@@ -286,7 +287,7 @@ namespace MediaPortal.Configuration.Sections
       ts.SatName = fileName;
 
       string line;
-      System.IO.TextReader tin = System.IO.File.OpenText(fileName);
+      System.IO.TextReader tin = System.IO.File.OpenText(@"Tuningparameters\"+fileName);
       while (true)
       {
         line = tin.ReadLine();
@@ -319,9 +320,10 @@ namespace MediaPortal.Configuration.Sections
       string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory() + @"\Tuningparameters");
       foreach (string file in files)
       {
-        if (file.ToLower().IndexOf(".tpl") >= 0)
+        string fileName = System.IO.Path.GetFileName(file);
+        if (fileName.ToLower().IndexOf(".tpl") >= 0)
         {
-          Transponder ts = LoadTransponderName(file);
+          Transponder ts = LoadTransponderName(fileName);
           if (ts != null)
           {
             cbTransponder.Items.Add(ts);
@@ -380,55 +382,52 @@ namespace MediaPortal.Configuration.Sections
 
     private void button1_Click(object sender, System.EventArgs e)
     {
-      progressBar3.Visible = true;
-      Thread thread = new Thread(new ThreadStart(DoScan));
-      thread.Start();
-    }
-
-    private void DoScan()
-    {
-      button3.Enabled = false;
-      GUIGraphicsContext.form = this.FindForm();
-      GUIGraphicsContext.VideoWindow = new Rectangle(panel1.Location, panel1.Size);
-
-      if (captureCard == null)
-      {
-        button3.Enabled = true;
-        progressBar3.Value = 100;
-        return;
-      }
-      string[] tplFiles = new string[ m_currentDiseqc];
+      _tplFiles = new string[m_currentDiseqc];
       Transponder ts = (Transponder)cbTransponder.SelectedItem;
-      tplFiles[0] = @"Tuningparameters\" + ts.FileName;
+      _tplFiles[0] = @"Tuningparameters\" + ts.FileName;
 
       if (m_currentDiseqc == 1)
       {
         ts = (Transponder)cbTransponder.SelectedItem;
-        tplFiles[0] = @"Tuningparameters\" + ts.FileName;
+        _tplFiles[0] = @"Tuningparameters\" + ts.FileName;
       }
       if (m_currentDiseqc == 2)
       {
         ts = (Transponder)cbTransponder2.SelectedItem;
-        tplFiles[1] = @"Tuningparameters\" + ts.FileName;
+        _tplFiles[1] = @"Tuningparameters\" + ts.FileName;
       }
       if (m_currentDiseqc == 3)
       {
         ts = (Transponder)cbTransponder3.SelectedItem;
-        tplFiles[2] = @"Tuningparameters\" + ts.FileName;
+        _tplFiles[2] = @"Tuningparameters\" + ts.FileName;
       }
       if (m_currentDiseqc == 4)
       {
         ts = (Transponder)cbTransponder4.SelectedItem;
-        tplFiles[3] = @"Tuningparameters\" + ts.FileName;
+        _tplFiles[3] = @"Tuningparameters\" + ts.FileName;
       }
 
       cbTransponder.Enabled = false;
       cbTransponder2.Enabled = false;
       cbTransponder3.Enabled = false;
       cbTransponder4.Enabled = false;
+      progressBar3.Visible = true;
+      button3.Enabled = false;
+      GUIGraphicsContext.form = this.FindForm();
+      GUIGraphicsContext.VideoWindow = new Rectangle(panel1.Location, panel1.Size);
+      if (captureCard != null)
+      {
+        Thread thread = new Thread(new ThreadStart(DoScan));
+        thread.IsBackground = true;
+        thread.Start();
+      }
+    }
+
+    private void DoScan()
+    {
       captureCard.CreateGraph();
       ITuning tuning = new DVBSTuning();
-      tuning.AutoTuneTV(captureCard, this, tplFiles);
+      tuning.AutoTuneTV(captureCard, this, _tplFiles);
       tuning.Start();
       while (!tuning.IsFinished())
       {
@@ -436,14 +435,7 @@ namespace MediaPortal.Configuration.Sections
       }
       captureCard.DeleteGraph();
 
-      lblStatus.Text = _description;
-      progressBar3.Value = 100;
       captureCard = null;
-      button3.Enabled = true;
-      cbTransponder.Enabled = true;
-      cbTransponder2.Enabled = true;
-      cbTransponder3.Enabled = true;
-      cbTransponder4.Enabled = true;
     }
 
     #region AutoTuneCallback
@@ -467,6 +459,11 @@ namespace MediaPortal.Configuration.Sections
     public void OnProgress(int percentDone)
     {
       progressBar3.Value = percentDone;
+      if (percentDone >= 100)
+      {
+        button3.Enabled = true;
+        lblStatus.Text = _description;
+      }
     }
 
     public void OnEnded()

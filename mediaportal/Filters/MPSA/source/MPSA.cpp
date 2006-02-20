@@ -532,7 +532,7 @@ STDMETHODIMP CStreamAnalyzer::ResetPids()
 }
 HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 {
-	
+	Log("mpsa:process");
 	try
 	{
 		if (m_bReset)
@@ -590,7 +590,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		if(pbData[0]==0x02)// pmt
 		{
 			ULONG prgNumber=(pbData[3]<<8)+pbData[4];
-			//Log("pmt prog:%x", prgNumber);
+			Log("pmt prog:%x", prgNumber);
 			for(int n=0;n<m_patChannelsCount;n++)
 			{
 				if(m_patTable[n].ProgrammNumber==prgNumber )
@@ -624,6 +624,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 
 		if(pbData[0]==0x00)// pat
 		{
+			Log("PAT");
 			// we need to check if we received a new PAT
 			// reason, after submitting a tune request (zap to another channel) we might still
 			// receive the old PAT for a couple of msec until the tuner has
@@ -660,7 +661,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		}
 		if(pbData[0]==0x42)// sdt
 		{
-			//Log("mpsa::decode SDT");
+			Log("mpsa::decode SDT");
 			if (m_patChannelsCount>0)
 			{
 				m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
@@ -669,6 +670,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		}
 		if (pbData[0]==0x40) //NIT
 		{
+			Log("mpsa::decode NIT");
 			if (m_patChannelsCount>0)
 			{
 				m_pSections->decodeNITTable(pbData,m_patTable,m_patChannelsCount);
