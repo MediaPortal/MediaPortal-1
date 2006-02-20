@@ -21,10 +21,6 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 		[SkinControlAttribute(46)]		protected GUICheckMarkControl cmDisEqcLevel1BB=null;
 
 
-		[SkinControlAttribute(50)]		protected GUICheckMarkControl cmLnb0Khz=null;
-		[SkinControlAttribute(51)]		protected GUICheckMarkControl cmLnb22Khz=null;
-		[SkinControlAttribute(52)]		protected GUICheckMarkControl cmLnb33Khz=null;
-		[SkinControlAttribute(53)]		protected GUICheckMarkControl cmLnb44Khz=null;
 		
 		[SkinControlAttribute(60)]		protected GUICheckMarkControl cmLnbBandKU=null;
 		[SkinControlAttribute(61)]		protected GUICheckMarkControl cmLnbBandC=null;
@@ -80,7 +76,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			}
 			if (control==btnBack) OnPreviousPage();
 			if (controlId >=cmDisEqcNone.GetID && controlId <=cmDisEqcLevel1BB.GetID) OnDisEqC(control);
-			if (controlId >=cmLnb0Khz.GetID && controlId <=cmLnb44Khz.GetID) OnLNBKhz(control);
+			
 			if (controlId >=cmLnbBandKU.GetID && controlId <=cmLnbBandCircular.GetID) Onband(control);
 			base.OnClicked (controlId, control, actionType);
 		}
@@ -93,18 +89,6 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			if (control==cmLnbBandKU) cmLnbBandKU.Selected=true;
 			if (control==cmLnbBandC) cmLnbBandC.Selected=true;
 			if (control==cmLnbBandCircular) cmLnbBandCircular.Selected=true;
-		}
-		void OnLNBKhz(GUIControl control)
-		{
-			cmLnb0Khz.Selected=false;
-			cmLnb22Khz.Selected=false;
-			cmLnb33Khz.Selected=false;
-			cmLnb44Khz.Selected=false;
-			if (control==cmLnb0Khz) cmLnb0Khz.Selected=true;
-			if (control==cmLnb22Khz) cmLnb22Khz.Selected=true;
-			if (control==cmLnb33Khz) cmLnb33Khz.Selected=true;
-			if (control==cmLnb44Khz) cmLnb44Khz.Selected=true;
-
 		}
 		void OnDisEqC(GUIControl control)
 		{
@@ -144,10 +128,6 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 		}
 		void LoadSettings()
 		{
-			cmLnb0Khz.Selected=false;
-			cmLnb22Khz.Selected=false;
-			cmLnb33Khz.Selected=false;
-			cmLnb44Khz.Selected=false;
 			cmDisEqcNone.Selected=false;
 			cmDisEqcSimpleA.Selected=false;
 			cmDisEqcSimpleB.Selected=false;
@@ -167,15 +147,8 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 			{
 				string lnbKey=String.Format("lnb{0}",LNBNumber);
 				if (LNBNumber==1) lnbKey="lnb";
-				int lnbKhz=xmlreader.GetValueAsInt("dvbs",lnbKey,44);
-				switch (lnbKhz)
-				{
-					case 0: cmLnb0Khz.Selected=true;break;
-					case 22: cmLnb22Khz.Selected=true;break;
-					case 33: cmLnb33Khz.Selected=true;break;
-					case 44: cmLnb44Khz.Selected=true;break;
-				}
-				
+        
+
 				lnbKey=String.Format("lnbKind{0}",LNBNumber);
 				if (LNBNumber==1) lnbKey="lnbKind";
 				int lnbKind=xmlreader.GetValueAsInt("dvbs",lnbKey,0);
@@ -226,11 +199,7 @@ namespace WindowPlugins.GUISettings.Wizard.DVBS
 
 				lnbKey=String.Format("lnb{0}",LNBNumber);
 				if (LNBNumber==1) lnbKey="lnb";
-				ivalue=0;
-				if (cmLnb0Khz.Selected==true) ivalue=0;
-				if (cmLnb22Khz.Selected==true) ivalue=22;
-				if (cmLnb33Khz.Selected==true) ivalue=33;
-				if (cmLnb44Khz.Selected==true) ivalue=44;
+				ivalue=22;
 				xmlwriter.SetValue("dvbs",lnbKey,ivalue); 
 
 				lnbKey=String.Format("lnbKind{0}",LNBNumber);
