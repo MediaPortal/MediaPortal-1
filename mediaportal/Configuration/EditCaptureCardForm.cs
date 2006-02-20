@@ -2158,13 +2158,14 @@ namespace MediaPortal.Configuration
 
     private void button1_Click(object sender, System.EventArgs e)
     {
-        TVCaptureDevice capture = CaptureCard;
-        // save settings for card
-        if (capture != null)
+      SaveDVBSSettings();
+      TVCaptureDevice capture = CaptureCard;
+      // save settings for card
+      if (capture != null)
       {
-          if (capture.CardType == TVCapture.CardTypes.Digital_SS2)
+        if (capture.CardType == TVCapture.CardTypes.Digital_SS2)
         {
-            string filename = String.Format(@"database\card_{0}.xml", capture.FriendlyName);
+          string filename = String.Format(@"database\card_{0}.xml", capture.FriendlyName);
           // save settings for get the filename in mp.xml
           using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
           {
