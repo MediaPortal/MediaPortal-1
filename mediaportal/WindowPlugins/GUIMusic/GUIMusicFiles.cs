@@ -685,10 +685,10 @@ namespace MediaPortal.GUI.Music
                     break;
 
                 case 4552: // Play now
-                    if (isCD)
-                        OnPlayCD(item.Path, false);
+                    //if (isCD)
+                    //    OnPlayCD(item.Path, false);
 
-                    else
+                    //else
                         OnPlayNow(item);
                     break;
 
@@ -1939,9 +1939,9 @@ namespace MediaPortal.GUI.Music
             if (pItem == null || !pItem.IsFolder || pItem.IsRemote || PlayListFactory.IsPlayList(pItem.Path))
                 return;
 
-            if (Utils.IsDVD(pItem.Path))
+            if (IsCD(pItem.Path))
             {
-                OnPlayCD(pItem.Path, false);
+                OnPlayCD(pItem.Path, true);
             }
 
             else
