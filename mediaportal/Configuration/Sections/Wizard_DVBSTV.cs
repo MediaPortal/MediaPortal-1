@@ -905,7 +905,12 @@ namespace MediaPortal.Configuration.Sections
 
     void LoadDVBSSettings()
     {
-      if (captureCard == null) return;
+      if (captureCard == null)
+      {
+        Log.Write("load DVBS:no card");
+        return;
+      }
+      Log.Write("load DVBS:{0}", captureCard.FriendlyName);
       string filename = String.Format(@"database\card_{0}.xml", captureCard.FriendlyName);
 
 
@@ -1007,62 +1012,51 @@ namespace MediaPortal.Configuration.Sections
           case 6: diseqcd.SelectedItem = "Level 1 B/B"; break;
 
         }
-        if (useLNB1.Checked)
+        string transponder = xmlreader.GetValueAsString("dvbs", "transponder1", "");
+        Log.Write("1:{0}", transponder);
+        if (transponder != "")
         {
-          string transponder=xmlreader.GetValueAsString("dvbs", "transponder", "");
-          if (transponder != "")
+          for (int i = 0; i < cbTransponder.Items.Count; ++i)
           {
-            for (int i = 0; i < cbTransponder.Items.Count; ++i)
-            {
-              Transponder tp = (Transponder)cbTransponder.Items[i];
-              if (tp.SatName == transponder)
-              {
-                cbTransponder.SelectedItem = tp;
-                break;
-              }
-            }
-          }
-        }
-        if (useLNB2.Checked)
-        {
-          string transponder = xmlreader.GetValueAsString("dvbs", "transponder2", "");
-
-          for (int i = 0; i < cbTransponder2.Items.Count; ++i)
-          {
-            Transponder tp = (Transponder)cbTransponder2.Items[i];
+            Transponder tp = (Transponder)cbTransponder.Items[i];
             if (tp.SatName == transponder)
             {
-              cbTransponder2.SelectedItem = tp;
+              cbTransponder.SelectedIndex = i;
               break;
             }
           }
         }
-        if (useLNB3.Checked)
-        {
-          string transponder = xmlreader.GetValueAsString("dvbs", "transponder3", "");
+        transponder = xmlreader.GetValueAsString("dvbs", "transponder2", "");
 
-          for (int i = 0; i < cbTransponder3.Items.Count; ++i)
+        for (int i = 0; i < cbTransponder2.Items.Count; ++i)
+        {
+          Transponder tp = (Transponder)cbTransponder2.Items[i];
+          if (tp.SatName == transponder)
           {
-            Transponder tp = (Transponder)cbTransponder3.Items[i];
-            if (tp.SatName == transponder)
-            {
-              cbTransponder3.SelectedItem = tp;
-              break;
-            }
+            cbTransponder2.SelectedIndex = i;
+            break;
           }
         }
-        if (useLNB4.Checked)
-        {
-          string transponder = xmlreader.GetValueAsString("dvbs", "transponder4", "");
+        transponder = xmlreader.GetValueAsString("dvbs", "transponder3", "");
 
-          for (int i = 0; i < cbTransponder4.Items.Count; ++i)
+        for (int i = 0; i < cbTransponder3.Items.Count; ++i)
+        {
+          Transponder tp = (Transponder)cbTransponder3.Items[i];
+          if (tp.SatName == transponder)
           {
-            Transponder tp = (Transponder)cbTransponder4.Items[i];
-            if (tp.SatName == transponder)
-            {
-              cbTransponder4.SelectedItem = tp;
-              break;
-            }
+            cbTransponder3.SelectedIndex = i;
+            break;
+          }
+        }
+        transponder = xmlreader.GetValueAsString("dvbs", "transponder4", "");
+
+        for (int i = 0; i < cbTransponder4.Items.Count; ++i)
+        {
+          Transponder tp = (Transponder)cbTransponder4.Items[i];
+          if (tp.SatName == transponder)
+          {
+            cbTransponder4.SelectedIndex = i;
+            break;
           }
         }
 
@@ -1072,7 +1066,7 @@ namespace MediaPortal.Configuration.Sections
 
     void SaveDVBSSettings()
     {
-
+      Log.Write("Save DVBS:{0}", captureCard.FriendlyName);
       string filename = String.Format(@"database\card_{0}.xml", captureCard.FriendlyName);
       // save settings
 
@@ -1125,6 +1119,7 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("dvbs", "transponder4", ((Transponder)cbTransponder4.SelectedItem).SatName);
         }
       }
+      MediaPortal.Profile.Settings.SaveCache();
     }
 
     private void useLNB1_CheckedChanged(object sender, EventArgs e)
