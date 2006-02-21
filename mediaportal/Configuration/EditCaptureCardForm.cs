@@ -1435,7 +1435,10 @@ namespace MediaPortal.Configuration
       Log.WriteFile(Log.LogType.Log, "EditCaptureCardForm:AutoTuneTV() countryCode:{0} input:{1}",
           countryCode, isCable ? "Cable" : "Antenna");
 
-      if (capture.Network == NetworkType.Analog)
+      capture.CreateGraph();
+      NetworkType networkType = capture.Network;
+      capture.DeleteGraph();
+      if (networkType == NetworkType.Analog)
       {
         AnalogTVTuningForm dialog = new AnalogTVTuningForm();
         ITuning tuning = GraphFactory.CreateTuning(CaptureCard);
@@ -1451,7 +1454,7 @@ namespace MediaPortal.Configuration
           MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
       }
-      else if (capture.Network == NetworkType.DVBC)
+      else if (networkType == NetworkType.DVBC)
       {
         okButton.Visible = false;
         cancelButton.Visible = false;
@@ -1470,7 +1473,7 @@ namespace MediaPortal.Configuration
         this.panel1.Controls.Add(dlg);
 
       }
-      else if (capture.Network == NetworkType.DVBT)
+      else if (networkType == NetworkType.DVBT)
       {
         okButton.Visible = false;
         cancelButton.Visible = false;
@@ -1489,7 +1492,7 @@ namespace MediaPortal.Configuration
         this.panel1.Controls.Add(dlg);
 
       }
-      else if (capture.Network == NetworkType.DVBS)
+      else if (networkType == NetworkType.DVBS)
       {
         okButton.Visible = false;
         cancelButton.Visible = false;
