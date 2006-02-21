@@ -144,6 +144,8 @@ namespace DShowNET.Helper
     {
       if (_digitalEverywhere.IsDigitalEverywhere)
         return true;
+      if (_technoTrend.IsTechnoTrend)
+        return true;
       return false;
     }
 

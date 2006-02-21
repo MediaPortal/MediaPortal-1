@@ -1877,7 +1877,7 @@ namespace MediaPortal.TV.Recording
               dvbSpace.LowOscillator = lowOsc * 1000;
               dvbSpace.HighOscillator = hiOsc * 1000;
               
-              if (_cardProperties.SupportsDiseqCommand())
+              if (_cardProperties.SupportsDiseqCommand() && (diseqcUsed != 0))
               {
                 _cardProperties.SendDiseqCommand(diseqcUsed, _currentTuningObject.Frequency, ch.LNBKHz, _currentTuningObject.Polarity, diseqcUsed);
               }

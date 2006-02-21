@@ -379,6 +379,7 @@ namespace DShowNET
         Marshal.WriteByte(ptrData, 3, (byte)((diseqc) & 0xff));
 
         bdaapiSetDiSEqCMsg(_handle, ptrData, length, repeat, toneburst, pol);
+        Log.WriteFile(Log.LogType.Log, false, "Technotrend: Diseqc Command Send");
       }
       finally
       {
