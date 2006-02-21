@@ -805,26 +805,28 @@ namespace MediaPortal.Configuration.Sections
 
     private void button1_Click(object sender, System.EventArgs e)
     {
-      _tplFiles = new string[m_currentDiseqc];
+      SaveDVBSSettings();
+      LoadDVBSSettings();
+      m_diseqcLoops = 1;
+      string filename = String.Format(@"database\card_{0}.xml", captureCard.FriendlyName);
+      if (useLNB2.Checked) m_diseqcLoops ++;
+      if (useLNB3.Checked) m_diseqcLoops ++;
+      if (useLNB4.Checked) m_diseqcLoops ++;
+      _tplFiles = new string[m_diseqcLoops];
       Transponder ts = (Transponder)cbTransponder.SelectedItem;
       _tplFiles[0] = @"Tuningparameters\" + ts.FileName;
 
-      if (m_currentDiseqc == 1)
-      {
-        ts = (Transponder)cbTransponder.SelectedItem;
-        _tplFiles[0] = @"Tuningparameters\" + ts.FileName;
-      }
-      if (m_currentDiseqc == 2)
+      if (useLNB2.Checked)
       {
         ts = (Transponder)cbTransponder2.SelectedItem;
         _tplFiles[1] = @"Tuningparameters\" + ts.FileName;
       }
-      if (m_currentDiseqc == 3)
+      if (useLNB3.Checked)
       {
         ts = (Transponder)cbTransponder3.SelectedItem;
         _tplFiles[2] = @"Tuningparameters\" + ts.FileName;
       }
-      if (m_currentDiseqc == 4)
+      if (useLNB4.Checked)
       {
         ts = (Transponder)cbTransponder4.SelectedItem;
         _tplFiles[3] = @"Tuningparameters\" + ts.FileName;
