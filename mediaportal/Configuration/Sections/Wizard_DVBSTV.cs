@@ -760,6 +760,7 @@ namespace MediaPortal.Configuration.Sections
       LoadDVBSSettings();
 
       m_diseqcLoops = 1;
+      cbTransponder.Enabled = true;
       cbTransponder2.Enabled = false;
       cbTransponder3.Enabled = false;
       cbTransponder4.Enabled = false;
@@ -1128,7 +1129,9 @@ namespace MediaPortal.Configuration.Sections
 
     private void useLNB1_CheckedChanged(object sender, EventArgs e)
     {
-
+      cbTransponder2.Enabled = true;
+      diseqca.Enabled = true;
+      lnbkind1.Enabled = true;
     }
 
     private void useLNB2_CheckedChanged(object sender, EventArgs e)
