@@ -213,11 +213,11 @@ namespace MediaPortal.GUI.Music
                 return;
             }
 
-            // trap this action...GUIWindowManager_OnNewAction will handle the ACTION_PLAY
-            if (action.wID == Action.ActionType.ACTION_PLAY)
-            {
-                return;
-            }
+            //// trap this action...GUIWindowManager_OnNewAction will handle the ACTION_PLAY
+            //if (action.wID == Action.ActionType.ACTION_PLAY)
+            //{
+            //    return;
+            //}
 
             base.OnAction(action);
         }
@@ -783,7 +783,8 @@ namespace MediaPortal.GUI.Music
                 List<Song> albumSongs = new List<Song>();
                 string temp = "select * from song,album,genre,artist,path where song.idPath=path.idPath ";
                 temp += "and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist  ";
-                temp += "and  song.idArtist='{0}' and  album.idAlbum='{1}'  order by strTitle asc";
+                //temp += "and  song.idArtist='{0}' and  album.idAlbum='{1}'  order by strTitle asc";
+                temp += "and  song.idArtist='{0}' and  album.idAlbum='{1}'  order by iTrack asc";
 
                 string sql = string.Format(temp, song.artistId, song.albumId);
                 m_database.GetSongsByFilter(sql, out albumSongs, true, true, true, true);
@@ -813,7 +814,7 @@ namespace MediaPortal.GUI.Music
                     List<Song> songs = new List<Song>();
                     List<AlbumInfo> albums = new List<AlbumInfo>();
                     Song s = (Song)pItem.AlbumInfoTag;
-                    bool isArtistItem = s.artistId != -1 && s.albumId == -1 && s.genreId == -1 && s.Year == -1;
+                    bool isArtistItem = s.artistId != -1 && s.albumId == -1 && s.genreId == -1 && s.Year <= 0;
                     bool isAlbumItem = s.albumId != -1;
                     bool isGenreItem = s.genreId != -1;
                     bool isYearItem = s.Year != -1 && s.artistId == -1 && s.albumId == -1 && s.genreId == -1;
@@ -898,30 +899,69 @@ namespace MediaPortal.GUI.Music
 
         protected void OnPlayNext(int iItem)
         {
+            ////PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+
+            ////if (playList == null)
+            ////    return;
+
+            ////PlayList tempPlayList = new PlayList();
+            ////int index = Math.Max(playlistPlayer.CurrentSong, 0);
+
+            ////for (int i = 0; i < playList.Count; i++)
+            ////{
+            ////    if (i == index + 1)
+            ////    {
+            ////        AddItemToPlayList(facadeView.SelectedListItem, tempPlayList);
+            ////    }
+
+            ////    tempPlayList.Add(playList[i]);
+            ////}
+
+            ////playList.Clear();
+
+            ////// add each item of the playlist to the playlistplayer
+            ////foreach (PlayListItem pli in tempPlayList)
+            ////{
+            ////    playList.Add(pli);
+            ////}
+
+            ////if (!g_Player.Playing)
+            ////    playlistPlayer.Play(index);
+
             PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
             if (playList == null)
                 return;
 
-            PlayList tempPlayList = new PlayList();
             int index = Math.Max(playlistPlayer.CurrentSong, 0);
 
-            for (int i = 0; i < playList.Count; i++)
+            if (playList.Count > 0)
             {
-                if (i == index + 1)
+                PlayList tempPlayList = new PlayList();
+
+                for (int i = 0; i < playList.Count; i++)
                 {
-                    AddItemToPlayList(facadeView.SelectedListItem, tempPlayList);
+                    if (i == index + 1)
+                    {
+                        AddItemToPlayList(facadeView.SelectedListItem, tempPlayList);
+                    }
+
+                    tempPlayList.Add(playList[i]);
                 }
 
-                tempPlayList.Add(playList[i]);
+                playList.Clear();
+
+                // add each item of the playlist to the playlistplayer
+                foreach (PlayListItem pli in tempPlayList)
+                {
+                    playList.Add(pli);
+                }
             }
 
-            playList.Clear();
-
-            // add each item of the playlist to the playlistplayer
-            foreach (PlayListItem pli in tempPlayList)
+            else
             {
-                playList.Add(pli);
+                playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+                AddItemToPlayList(facadeView.SelectedListItem);
             }
 
             if (!g_Player.Playing)

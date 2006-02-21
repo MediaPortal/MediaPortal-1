@@ -5199,6 +5199,10 @@
     <id>4553</id>
     <value>Show playlist</value>
   </string>  
+  <string>
+    <id>4554</id>
+    <value>Lookup CD info</value>
+  </string>  
   <!-- End Play Menu Strings -->
   <!-- Begin Minesweeper Strings -->
   <string>

@@ -304,7 +304,9 @@ namespace MediaPortal.TagReader.ID3
             if (m_tag.Duration == 0) m_tag.Duration = ReadDuration(s);
             try
             {
-              m_tag.Track = Int32.Parse(id3v1.Track);
+              //m_tag.Track = Int32.Parse(id3v1.Track);
+                // SourceForge patch #1435798
+                if (m_tag.Track == 0) m_tag.Track = Int32.Parse(id3v1.Track);
             }
             catch (Exception)
             {

@@ -49,6 +49,50 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     public class GUIMusicFiles : GUIMusicBaseWindow, ISetupForm, IShowPlugin
     {
+        class TrackComparer : IComparer<GUIListItem>
+        {
+            public int Compare(GUIListItem item1, GUIListItem item2)
+            {
+                if (item1.MusicTag == null || item2.MusicTag == null)
+                    return 0;
+
+                else
+                {
+                    MusicTag tag1 = (MusicTag)item1.MusicTag;
+                    MusicTag tag2 = (MusicTag)item2.MusicTag;
+
+                    if (tag1.Track < 1)
+                        return CompareAlbumNames(tag1.Album, tag2.Album);
+
+                    else
+                        return CompareTracks(tag1.Track, tag2.Track);
+
+                   //return tag1.Track.CompareTo(tag2.Track);
+                }
+            }
+
+            private int CompareTracks(int track1, int track2)
+            {
+                return track1.CompareTo(track2);
+            }
+
+            private int CompareAlbumNames(string albumTitle1, string albumTitle2)
+            {
+                if (albumTitle1 == null || albumTitle2 == null)
+                    return 0;
+
+                return albumTitle1.CompareTo(albumTitle2);
+            }
+        }
+
+        class AlbumComparer : IComparer<GUIListItem>
+        {
+            public int Compare(GUIListItem item1, GUIListItem item2)
+            {
+                return 0;
+            }
+        }
+
         [Serializable]
         public class MapSettings
         {
@@ -298,11 +342,11 @@ namespace MediaPortal.GUI.Music
                 return;
             }
 
-            // trap this action...GUIWindowManager_OnNewAction will handle the ACTION_PLAY
-            if (action.wID == Action.ActionType.ACTION_PLAY)
-            {
-                return;
-            }
+            //// trap this action...GUIWindowManager_OnNewAction will handle the ACTION_PLAY
+            //if (action.wID == Action.ActionType.ACTION_PLAY)
+            //{
+            //    return;
+            //}
             
             base.OnAction(action);
         }
@@ -640,6 +684,10 @@ namespace MediaPortal.GUI.Music
                     dlg.AddLocalizedString(4551);   // Play next
                     dlg.AddLocalizedString(4552);   // Play now
 
+                    if(isCD)
+                        dlg.AddLocalizedString(890);   // Play CD
+
+
                     if (!item.IsFolder && !item.IsRemote)
                     {
                         dlg.AddLocalizedString(930); //Add to favorites
@@ -685,11 +733,11 @@ namespace MediaPortal.GUI.Music
                     break;
 
                 case 4552: // Play now
-                    //if (isCD)
-                    //    OnPlayCD(item.Path, false);
-
-                    //else
                         OnPlayNow(item);
+                    break;
+
+                case 890:
+                    OnPlayCD(item.Path, false);
                     break;
 
                 case 136: // show playlist
@@ -1145,6 +1193,19 @@ namespace MediaPortal.GUI.Music
 
                 List<GUIListItem> itemlist = m_directory.GetDirectoryExt(m_strDirectory);
                 OnRetrieveMusicInfo(ref itemlist);
+                //// SV
+                //// Sort share folder tracks.  This has the unfortunate side effect of also changing
+                //// the order of the albums so we'll leave this disabled for the time being.
+                //try
+                //{
+                //    itemlist.Sort(new TrackComparer());
+                //}
+
+                //catch(Exception ex)
+                //{
+                //    Log.Write("GUIMusicFiles.AddItemToPlayList at itemlist.Sort: {0}", ex.Message);
+                //}
+                //// \SV
                 foreach (GUIListItem item in itemlist)
                 {
                     AddItemToPlayList(item, playList);
@@ -1910,24 +1971,34 @@ namespace MediaPortal.GUI.Music
                 return;
 
             int index = Math.Max(playlistPlayer.CurrentSong, 0);
-            PlayList tempPlayList = new PlayList();
 
-            for (int i = 0; i < playList.Count; i++)
+            if (playList.Count > 0)
             {
-                if (i == index + 1)
+                PlayList tempPlayList = new PlayList();
+
+                for (int i = 0; i < playList.Count; i++)
                 {
-                    AddItemToPlayList(pItem, tempPlayList);
+                    if (i == index + 1)
+                    {
+                        AddItemToPlayList(pItem, tempPlayList);
+                    }
+
+                    tempPlayList.Add(playList[i]);
                 }
 
-                tempPlayList.Add(playList[i]);
+                playList.Clear();
+
+                // add each item of the playlist to the playlistplayer
+                for (int i = 0; i < tempPlayList.Count; ++i)
+                {
+                    playList.Add(tempPlayList[i]);
+                }
             }
 
-            playList.Clear();
-
-            // add each item of the playlist to the playlistplayer
-            for (int i = 0; i < tempPlayList.Count; ++i)
+            else
             {
-                playList.Add(tempPlayList[i]);
+                playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+                AddItemToPlayList(pItem);
             }
 
             if (!g_Player.Playing)
@@ -1939,24 +2010,16 @@ namespace MediaPortal.GUI.Music
             if (pItem == null || !pItem.IsFolder || pItem.IsRemote || PlayListFactory.IsPlayList(pItem.Path))
                 return;
 
-            if (IsCD(pItem.Path))
-            {
-                OnPlayCD(pItem.Path, true);
-            }
+            PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
-            else
-            {
-                PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+            if (playList == null)
+                return;
 
-                if (playList == null)
-                    return;
-
-                playList.Clear();
-                playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
-                AddItemToPlayList(pItem);
-                playlistPlayer.Reset();
-                playlistPlayer.Play(0);
-            }
+            playList.Clear();
+            playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+            AddItemToPlayList(pItem);
+            playlistPlayer.Reset();
+            playlistPlayer.Play(0);
 
             int nPlayingNowWindow = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
             GUIMusicPlayingNow guiPlayingNow = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(nPlayingNowWindow);
@@ -1975,7 +2038,6 @@ namespace MediaPortal.GUI.Music
 
             Share share = m_directory.GetShare(pItem.Path);
             bool isCdOrDvd = Utils.IsDVD(pItem.Path);
-            //string rootDir = System.IO.Path.g
 
             if (!isCdOrDvd && share != null && share.Path == pItem.Path)
                 return true;
