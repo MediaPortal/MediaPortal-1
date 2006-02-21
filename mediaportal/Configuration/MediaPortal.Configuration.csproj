@@ -483,9 +483,6 @@
     <Compile Include="Sections\Wizard_DVBSTV.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\Wizard_DVBSTVSetting.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\Wizard_DVBTTV.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -762,9 +759,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Wizard_DVBSTV.resx">
       <DependentUpon>Wizard_DVBSTV.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Wizard_DVBSTVSetting.resx">
-      <DependentUpon>Wizard_DVBSTVSetting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Wizard_DVBTTV.resx">
       <DependentUpon>Wizard_DVBTTV.cs</DependentUpon>

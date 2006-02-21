@@ -53,10 +53,20 @@ namespace MediaPortal.Configuration.Sections
 
     private System.Windows.Forms.Panel panel1;
     string _description = "";
+    private ProgressBar progressBarQuality;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private ProgressBar progressBarStrength;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDescription;
+    TVCaptureDevice _card;
+    public delegate void ScanFinishedHandler(object sender, EventArgs args);
+    public event ScanFinishedHandler OnScanFinished;
 
     public Wizard_DVBTTV()
       : this("DVBT TV")
     {
+      _card = null;
     }
 
     public Wizard_DVBTTV(string name)
@@ -64,6 +74,7 @@ namespace MediaPortal.Configuration.Sections
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();
+      _card = null;
 
       // TODO: Add any initialization after the InitializeComponent call
     }
@@ -90,7 +101,14 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Wizard_DVBTTV));
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelDescription = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.progressBarQuality = new System.Windows.Forms.ProgressBar();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.progressBarStrength = new System.Windows.Forms.ProgressBar();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.panel1 = new System.Windows.Forms.Panel();
       this.labelStatus = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -105,8 +123,14 @@ namespace MediaPortal.Configuration.Sections
       // groupBox1
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.labelDescription);
+      this.groupBox1.Controls.Add(this.mpLabel3);
+      this.groupBox1.Controls.Add(this.progressBarQuality);
+      this.groupBox1.Controls.Add(this.mpLabel2);
+      this.groupBox1.Controls.Add(this.mpLabel1);
+      this.groupBox1.Controls.Add(this.progressBarStrength);
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.panel1);
       this.groupBox1.Controls.Add(this.labelStatus);
@@ -115,6 +139,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.cbCountry);
       this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 408);
@@ -122,15 +147,69 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Setup Digital TV (DVB-T Terrestrial)";
       // 
+      // labelDescription
+      // 
+      this.labelDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelDescription.Location = new System.Drawing.Point(16, 202);
+      this.labelDescription.Name = "labelDescription";
+      this.labelDescription.Size = new System.Drawing.Size(440, 22);
+      this.labelDescription.TabIndex = 18;
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.Location = new System.Drawing.Point(17, 95);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(100, 16);
+      this.mpLabel3.TabIndex = 17;
+      this.mpLabel3.Text = "Progress:";
+      // 
+      // progressBarQuality
+      // 
+      this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarQuality.Location = new System.Drawing.Point(144, 138);
+      this.progressBarQuality.Name = "progressBarQuality";
+      this.progressBarQuality.Size = new System.Drawing.Size(280, 16);
+      this.progressBarQuality.Step = 1;
+      this.progressBarQuality.TabIndex = 16;
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.Location = new System.Drawing.Point(17, 138);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(100, 16);
+      this.mpLabel2.TabIndex = 15;
+      this.mpLabel2.Text = "Signal quality:";
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(17, 117);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(100, 16);
+      this.mpLabel1.TabIndex = 14;
+      this.mpLabel1.Text = "Signal strength:";
+      // 
+      // progressBarStrength
+      // 
+      this.progressBarStrength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBarStrength.Location = new System.Drawing.Point(144, 117);
+      this.progressBarStrength.Name = "progressBarStrength";
+      this.progressBarStrength.Size = new System.Drawing.Size(280, 16);
+      this.progressBarStrength.Step = 1;
+      this.progressBarStrength.TabIndex = 13;
+      // 
       // label3
       // 
       this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label3.Location = new System.Drawing.Point(16, 264);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(440, 56);
       this.label3.TabIndex = 6;
-      this.label3.Text = @"NOTE: If your country is not present or if MediaPortal is unable to find any channels, MediaPortal probably doesn't know which frequencies to scan for your country. Edit the dvbt.xml in the ""TuningParameters"" subfolder and fill in all the frequencies needed for your country.";
+      this.label3.Text = resources.GetString("label3.Text");
       // 
       // panel1
       // 
@@ -142,20 +221,20 @@ namespace MediaPortal.Configuration.Sections
       // labelStatus
       // 
       this.labelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelStatus.Location = new System.Drawing.Point(16, 169);
       this.labelStatus.Name = "labelStatus";
-      this.labelStatus.Size = new System.Drawing.Size(440, 63);
+      this.labelStatus.Size = new System.Drawing.Size(440, 23);
       this.labelStatus.TabIndex = 5;
       // 
       // progressBar1
       // 
       this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar1.Location = new System.Drawing.Point(16, 128);
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.progressBar1.Location = new System.Drawing.Point(144, 95);
       this.progressBar1.Name = "progressBar1";
-      this.progressBar1.Size = new System.Drawing.Size(440, 16);
+      this.progressBar1.Size = new System.Drawing.Size(280, 16);
       this.progressBar1.TabIndex = 4;
       // 
       // button1
@@ -166,6 +245,7 @@ namespace MediaPortal.Configuration.Sections
       this.button1.Size = new System.Drawing.Size(72, 22);
       this.button1.TabIndex = 3;
       this.button1.Text = "Scan";
+      this.button1.UseVisualStyleBackColor = true;
       this.button1.Click += new System.EventHandler(this.button1_Click);
       // 
       // label2
@@ -179,7 +259,7 @@ namespace MediaPortal.Configuration.Sections
       // cbCountry
       // 
       this.cbCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cbCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbCountry.Location = new System.Drawing.Point(144, 68);
       this.cbCountry.Name = "cbCountry";
@@ -189,13 +269,12 @@ namespace MediaPortal.Configuration.Sections
       // label1
       // 
       this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(440, 32);
       this.label1.TabIndex = 0;
-      this.label1.Text = "Mediaportal has detected one or more digital TV cards. Select your country and pr" +
-        "ess \"Scan\" to get TV and radio channels.";
+      this.label1.Text = "Select your country and press \"Scan\" to scan for TV and radio channels.";
       // 
       // Wizard_DVBTTV
       // 
@@ -210,9 +289,18 @@ namespace MediaPortal.Configuration.Sections
 
 
 
+    public TVCaptureDevice Card
+    {
+      set
+      {
+        _card = value;
+      }
+    }
+
 
     public override void OnSectionActivated()
     {
+      _card = null;
       base.OnSectionActivated();
       labelStatus.Text = "";
       XmlDocument doc = new XmlDocument();
@@ -243,16 +331,19 @@ namespace MediaPortal.Configuration.Sections
       GUIGraphicsContext.form = this.FindForm();
       GUIGraphicsContext.VideoWindow = new Rectangle(panel1.Location, panel1.Size);
 
-      TVCaptureDevice captureCard=null;
-      TVCaptureCards cards = new TVCaptureCards();
-      cards.LoadCaptureCards();
-      foreach (TVCaptureDevice dev in cards.captureCards)
+      TVCaptureDevice captureCard=_card;
+      if (_card == null)
       {
-        if (dev.Network == NetworkType.DVBT)
+        TVCaptureCards cards = new TVCaptureCards();
+        cards.LoadCaptureCards();
+        foreach (TVCaptureDevice dev in cards.captureCards)
         {
-          captureCard = dev;
-          captureCard.CreateGraph();
-          break;
+          if (dev.Network == NetworkType.DVBT)
+          {
+            captureCard = dev;
+            captureCard.CreateGraph();
+            break;
+          }
         }
       }
       if (captureCard == null)
@@ -277,6 +368,8 @@ namespace MediaPortal.Configuration.Sections
       captureCard = null;
       cbCountry.Enabled = true;
       button1.Enabled = true;
+      if (OnScanFinished != null)
+        OnScanFinished(this, null);
     }
 
     #region AutoTuneCallback
@@ -286,6 +379,12 @@ namespace MediaPortal.Configuration.Sections
 
     public void OnSignal(int quality, int strength)
     {
+      if (quality < 0) quality = 0;
+      if (quality > 100) quality = 100;
+      if (strength < 0) strength = 0;
+      if (strength > 100) strength = 100;
+      progressBarQuality.Value = quality;
+      progressBarStrength.Value = strength;
     }
 
     public void OnStatus(string description)
@@ -295,6 +394,7 @@ namespace MediaPortal.Configuration.Sections
     public void OnStatus2(string description)
     {
       _description = description;
+      labelDescription.Text = description;
     }
 
     public void OnProgress(int percentDone)

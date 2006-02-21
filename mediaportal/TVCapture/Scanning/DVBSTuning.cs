@@ -218,15 +218,15 @@ namespace MediaPortal.TV.Scanning
       percent *= 100.0f;
       _callback.OnProgress((int)percent);
       TPList transponder = _transponderList[_currentIndex];
-      string chanDesc = String.Format("Transponder:{0} MHz, Polarisation:{1} SymbolRate:{2}",
+      string chanDesc = String.Format("Transp.:{0} MHz, Pol.:{1} SymbolRate:{2}",
         ((float)transponder.TPfreq)/1000.0, GetPolarisation(transponder.TPpol), transponder.TPsymb);
-      string description = String.Format("Transponder:{0}/{1} {2} locking...", _currentIndex, _count, chanDesc);
+      string description = String.Format("Transp.:{0}/{1} {2} locking...", _currentIndex, _count, chanDesc);
       _callback.OnStatus(description);
     }
     string GetPolarisation(int pol)
     {
-      if (pol == 0) return "Horizontal";
-      return "Vertical";
+      if (pol == 0) return "Horz.";
+      return "Vert.";
     }
 
     public bool IsFinished()
@@ -246,9 +246,9 @@ namespace MediaPortal.TV.Scanning
     {
       if (IsFinished()) return;
       TPList transponder = _transponderList[_currentIndex];
-      string chanDesc = String.Format("Transponder:{0} MHz, Polarisation:{1} SymbolRate:{2}",
+      string chanDesc = String.Format("Transp.:{0} MHz, Pol.:{1} SymbolRate:{2}",
         ((float)transponder.TPfreq) / 1000.0, GetPolarisation(transponder.TPpol), transponder.TPsymb);
-      string description = String.Format("Transponder:{0}, getting info...", chanDesc);
+      string description = String.Format("Transp.:{0}, getting info...", chanDesc);
 
       _callback.OnStatus(description);
       _captureCard.Process();

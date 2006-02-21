@@ -178,7 +178,6 @@ namespace MediaPortal.Configuration
         }
         if (DVBSCard)
         {
-          AddSection(new Sections.Wizard_DVBSTVSetup(), "TV - DVB-S LNB", "Digital TV Satellite LNB Setup", "");
           AddSection(new Sections.Wizard_DVBSTV(), "TV - DVB-S", "Digital TV Satellite configuration", "");
         }
         AddSection(new Sections.TVProgramGuide(), "Television Program Guide", "Configure the Electronic Program Guide using XMLTV listings", "");
