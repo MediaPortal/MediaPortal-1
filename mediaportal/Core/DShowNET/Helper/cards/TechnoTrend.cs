@@ -138,6 +138,7 @@ namespace DShowNET
     public TechnoTrend(IBaseFilter filter)
       : base(filter)
     {
+      if (captureFilter == null) return;
       FilterInfo info;
       filter.QueryFilterInfo(out info);
       if ((info.achName == TechnoTrend.USB2_C_TUNER) ||

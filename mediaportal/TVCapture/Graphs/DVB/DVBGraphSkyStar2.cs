@@ -177,6 +177,7 @@ namespace MediaPortal.TV.Recording
         _cardType = xmlreader.GetValueAsString("DVBSS2", "cardtype", "");
       }
       _streamDemuxer.SetCardType((int)DVBEPG.EPGCard.TechnisatStarCards, NetworkType.DVBS);
+      _cardProperties = new VideoCaptureProperties(null);
     }
     public override bool CreateGraph(int Quality)
     {

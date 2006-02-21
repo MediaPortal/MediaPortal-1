@@ -129,10 +129,14 @@ namespace DShowNET
     {
       _initialized = false;
       _camPresent = false;
-      _isTwinHanCard = IsTwinhan;
-      if (_isTwinHanCard)
+      _isTwinHanCard = false;
+      if (filter != null)
       {
-        _camPresent = IsCamPresent();
+        _isTwinHanCard = IsTwinhan;
+        if (_isTwinHanCard)
+        {
+          _camPresent = IsCamPresent();
+        }
       }
       _initialized = true;
 

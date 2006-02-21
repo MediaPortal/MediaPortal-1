@@ -133,8 +133,9 @@ namespace DShowNET
 		
 		public bool IsHauppage
 		{
-			get 
-			{
+			get
+      {
+        if (captureFilter == null) return false;
 				IKsPropertySet propertySet= captureFilter as IKsPropertySet;
 				if (propertySet==null) return false;
 				Guid propertyGuid=HauppaugeGuid;

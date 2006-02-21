@@ -189,13 +189,18 @@ namespace DShowNET
     {
       _hasCAM = false;
       _isInitialized = false;
-      _isDigitalEverywhere = IsDigitalEverywhere;
-      if (_isDigitalEverywhere)
-      {
-        _hasCAM = IsCamPresent();
+      _isDigitalEverywhere = false;
 
-        //Log.Write("FireDTV Driver version:{0} ", GetDriverVersionNumber());
-        //Log.Write("FireDTV FW version:{0} ", GetFirmwareVersionNumber());
+      if (captureFilter != null)
+      {
+        _isDigitalEverywhere = IsDigitalEverywhere;
+        if (_isDigitalEverywhere)
+        {
+          _hasCAM = IsCamPresent();
+
+          //Log.Write("FireDTV Driver version:{0} ", GetDriverVersionNumber());
+          //Log.Write("FireDTV FW version:{0} ", GetFirmwareVersionNumber());
+        }
       }
       _isInitialized = true;
     }
