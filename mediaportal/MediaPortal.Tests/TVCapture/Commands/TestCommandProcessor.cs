@@ -381,6 +381,22 @@ namespace MediaPortal.Tests.Commands
       StopRecord(proc);
       Assert.IsTrue(g_Player.Playing);
     }
+
+    [Test]
+    [Category("Recording")]
+    public void TestZapToRecordingChannel()
+    {
+      CommandProcessor proc = new CommandProcessor();
+      TVCaptureDevice card1 = proc.TVCards.AddDummyCard("dummy1");
+
+      //record TV
+      StartRecord(proc, "RTL 4");
+      Assert.IsFalse(g_Player.Playing);
+
+      //switch channels
+      WatchTv(proc, "RTL 4",true);
+      Assert.IsTrue(g_Player.Playing);
+    }
     #endregion
 
     #region test audio switching
@@ -585,6 +601,29 @@ namespace MediaPortal.Tests.Commands
         Assert.IsFalse(g_Player.Playing);
       }
       CompareDates(proc.TVCards[0].TimeShiftingStarted, DateTime.MinValue);
+    }
+    void WatchTv(CommandProcessor proc, string channelName,bool shouldBeTimeShifting)
+    {
+      //watch TV
+      proc.AddCommand(new ViewTvCommand(channelName));
+      ProcessCommands(proc);
+      Assert.AreEqual(proc.CurrentCardIndex, 0);
+      Assert.AreEqual(proc.TVChannelName, channelName);
+      Assert.AreEqual(proc.TVCards[0].TVChannel, channelName);
+      if (shouldBeTimeShifting)
+        Assert.IsTrue(proc.TVCards[0].IsTimeShifting);
+      else
+        Assert.IsFalse(proc.TVCards[0].IsTimeShifting);
+
+      if (proc.TVCards[0].IsTimeShifting)
+      {
+        Assert.IsTrue(g_Player.Playing);
+        Assert.AreEqual(g_Player.CurrentFile, proc.GetTimeShiftFileName(proc.CurrentCardIndex));
+      }
+      else
+      {
+        Assert.IsFalse(g_Player.Playing);
+      }
     }
     void StartRadio(CommandProcessor proc, string stationName)
     {
