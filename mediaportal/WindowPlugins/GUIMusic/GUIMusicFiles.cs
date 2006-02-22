@@ -49,13 +49,15 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     public class GUIMusicFiles : GUIMusicBaseWindow, ISetupForm, IShowPlugin
     {
-        class TrackComparer : IComparer<GUIListItem>
+         class TrackComparer : IComparer<GUIListItem>
         {
             public int Compare(GUIListItem item1, GUIListItem item2)
             {
+                // Is this a top level artist folder?  If so, sort by path.
                 if (item1.MusicTag == null || item2.MusicTag == null)
-                    return 0;
+                    return item1.Path.CompareTo(item2.Path);
 
+                // Is it album folder or a song file. If album folder, sort by album name. Otherwise, sort by track number
                 else
                 {
                     MusicTag tag1 = (MusicTag)item1.MusicTag;
@@ -66,8 +68,6 @@ namespace MediaPortal.GUI.Music
 
                     else
                         return CompareTracks(tag1.Track, tag2.Track);
-
-                   //return tag1.Track.CompareTo(tag2.Track);
                 }
             }
 
@@ -85,13 +85,6 @@ namespace MediaPortal.GUI.Music
             }
         }
 
-        class AlbumComparer : IComparer<GUIListItem>
-        {
-            public int Compare(GUIListItem item1, GUIListItem item2)
-            {
-                return 0;
-            }
-        }
 
         [Serializable]
         public class MapSettings
@@ -194,7 +187,9 @@ namespace MediaPortal.GUI.Music
         // the player is not playing)...
         void GUIWindowManager_OnNewAction(Action action)
         {
-            if (action.wID == Action.ActionType.ACTION_PLAY && GUIWindowManager.ActiveWindow == GetID)
+            if ((action.wID == Action.ActionType.ACTION_PLAY 
+                || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
+                && GUIWindowManager.ActiveWindow == GetID)
             {
                 GUIListItem item = facadeView.SelectedListItem;
 
@@ -341,12 +336,6 @@ namespace MediaPortal.GUI.Music
                 }
                 return;
             }
-
-            //// trap this action...GUIWindowManager_OnNewAction will handle the ACTION_PLAY
-            //if (action.wID == Action.ActionType.ACTION_PLAY)
-            //{
-            //    return;
-            //}
             
             base.OnAction(action);
         }
@@ -684,7 +673,7 @@ namespace MediaPortal.GUI.Music
                     dlg.AddLocalizedString(4551);   // Play next
                     dlg.AddLocalizedString(4552);   // Play now
 
-                    if(isCD)
+                    if (isCD)
                         dlg.AddLocalizedString(890);   // Play CD
 
 
@@ -724,8 +713,8 @@ namespace MediaPortal.GUI.Music
                     OnInfo(itemNo);
                     break;
 
-              case 926: // add to playlist
-                        OnQueueItem(itemNo);
+                case 926: // add to playlist
+                    OnQueueItem(itemNo);
                     break;
 
                 case 4551: // Play next
@@ -733,7 +722,7 @@ namespace MediaPortal.GUI.Music
                     break;
 
                 case 4552: // Play now
-                        OnPlayNow(item);
+                    OnPlayNow(item);
                     break;
 
                 case 890:
@@ -999,7 +988,6 @@ namespace MediaPortal.GUI.Music
 
             list = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
             list.Clear();
-
             GUIListItem pItem = new GUIListItem();
             pItem.Path = strDriveLetter;
             pItem.IsFolder = true;
@@ -1011,7 +999,10 @@ namespace MediaPortal.GUI.Music
                 // waeberd: mantis #470
                 if (g_Player.Playing)
                 {
-                    g_Player.Stop();
+                    // SV: this causes a problem! Once the player is stopped music file playback cannot be restarted
+                    // without exiting and re-entering My Music.  Suspect the issue has to do with _player.Release()
+                    // and _player = null;
+                    // g_Player.Stop();
                 }
                 playlistPlayer.Reset();
                 playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
@@ -1170,10 +1161,10 @@ namespace MediaPortal.GUI.Music
         void AddItemToPlayList(GUIListItem pItem)
         {
             PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-            AddItemToPlayList(pItem, playList);
+            AddItemToPlayList(pItem, ref playList);
         }
 
-        void AddItemToPlayList(GUIListItem pItem, PlayList playList)
+        void AddItemToPlayList(GUIListItem pItem, ref PlayList playList)
         {
             if (playList == null || pItem == null)
                 return;
@@ -1193,22 +1184,21 @@ namespace MediaPortal.GUI.Music
 
                 List<GUIListItem> itemlist = m_directory.GetDirectoryExt(m_strDirectory);
                 OnRetrieveMusicInfo(ref itemlist);
-                //// SV
-                //// Sort share folder tracks.  This has the unfortunate side effect of also changing
-                //// the order of the albums so we'll leave this disabled for the time being.
-                //try
-                //{
-                //    itemlist.Sort(new TrackComparer());
-                //}
+                // SV
+                // Sort share folder tracks.  
+                try
+                {
+                    itemlist.Sort(new TrackComparer());
+                }
 
-                //catch(Exception ex)
-                //{
-                //    Log.Write("GUIMusicFiles.AddItemToPlayList at itemlist.Sort: {0}", ex.Message);
-                //}
-                //// \SV
+                catch (Exception ex)
+                {
+                    Log.Write("GUIMusicFiles.AddItemToPlayList at itemlist.Sort: {0}", ex.Message);
+                }
+                // \SV
                 foreach (GUIListItem item in itemlist)
                 {
-                    AddItemToPlayList(item, playList);
+                    AddItemToPlayList(item, ref playList);
                 }
                 m_strDirectory = strDirectory;
             }
@@ -1394,6 +1384,7 @@ namespace MediaPortal.GUI.Music
             if (window == (int)GUIWindow.Window.WINDOW_MUSIC_GENRE) return true;
             if (window == (int)GUIWindow.Window.WINDOW_MUSIC_TOP100) return true;
             if (window == (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES) return true;
+            if (window == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW) return true;
             return false;
         }
 
@@ -1980,7 +1971,7 @@ namespace MediaPortal.GUI.Music
                 {
                     if (i == index + 1)
                     {
-                        AddItemToPlayList(pItem, tempPlayList);
+                        AddItemToPlayList(pItem, ref tempPlayList);
                     }
 
                     tempPlayList.Add(playList[i]);

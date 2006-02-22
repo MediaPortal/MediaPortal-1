@@ -218,6 +218,27 @@ namespace MediaPortal.GUI.Music
             }
         }
 
+        //public override bool OnMessage(GUIMessage message)
+        //{
+        //    Console.WriteLine("OnMessage: {0}", message.Message);
+
+        //    if (GUIWindowManager.ActiveWindow == GetID)
+        //    {
+        //        switch (message.Message)
+        //        {
+        //            case GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD:
+        //                this.GetTrackTags();
+        //                break;
+
+        //            case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
+        //                this.GetTrackTags();
+        //                break;
+        //        }
+        //    }
+
+        //    return base.OnMessage(message);
+        //}
+        
         protected override void OnPageLoad()
         {
             base.OnPageLoad();
@@ -251,7 +272,6 @@ namespace MediaPortal.GUI.Music
             {
                 LastUpdateTime = DateTime.Now;
                 UpdateTrackInfo();
-                //GUIWindowManager.Process();
             }
         }
 
@@ -297,10 +317,11 @@ namespace MediaPortal.GUI.Music
                         break;
                     }
 
-                case 4554:
+                case 4554:      // Lookup CD info
                     {
                         MusicTag tag = new MusicTag();
-                        this.GetCDInfoFromFreeDB(CurrentTrackFileName, tag);
+                        GetCDInfoFromFreeDB(CurrentTrackFileName, tag);
+                        GetTrackTags();
                         break;
                     }
             }
@@ -415,41 +436,6 @@ namespace MediaPortal.GUI.Music
 
         private void GetTrackTags()
         {
-            ////bool useID3 = false;
-            ////bool isCdTrack = IsCdTrack(CurrentTrackFileName);
-
-            ////if (!isCdTrack)
-            ////{
-            ////    using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-            ////    {
-            ////        useID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
-            ////    }
-
-            ////    MusicDatabase dbs = new MusicDatabase();
-            ////    CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName, useID3);
-            ////    NextTrackTag = GetTrackTag(dbs, NextTrackFileName, useID3);
-            ////}
-
-            ////else
-            ////{
-            ////    PlayList curPlaylist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-            ////    PlayListItem curPlaylistItem = PlaylistPlayer.GetCurrentItem();
-
-            ////    int playListItemCount = curPlaylist.Count;
-            ////    int nextItemIndex = 0;
-            ////    int iCurItemIndex = PlaylistPlayer.CurrentSong;
-
-            ////    if (iCurItemIndex < playListItemCount - 2)
-            ////        nextItemIndex = iCurItemIndex + 1;
-
-            ////    PlayListItem nextPlaylistItem = curPlaylist[nextItemIndex];
-
-            ////    CurrentTrackTag = (MusicTag)curPlaylistItem.MusicTag;
-
-            ////    if (nextPlaylistItem != null)
-            ////        NextTrackTag = (MusicTag)nextPlaylistItem.MusicTag;
-            ////}
-
             bool useID3 = false;
             bool isCurSongCdTrack = IsCdTrack(CurrentTrackFileName);
             bool isNextSongCdTrack = IsCdTrack(NextTrackFileName);
@@ -469,13 +455,21 @@ namespace MediaPortal.GUI.Music
             if(isCurSongCdTrack || isNextSongCdTrack)
             {
                 PlayList curPlaylist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-                PlayListItem curPlaylistItem = PlaylistPlayer.GetCurrentItem();
+
+                int iCurItemIndex = PlaylistPlayer.CurrentSong;
+                PlayListItem curPlaylistItem = curPlaylist[iCurItemIndex];
+
+                if (curPlaylistItem == null)
+                {
+                    CurrentTrackTag = null;
+                    NextTrackTag = null;
+                    return;
+                }
 
                 int playListItemCount = curPlaylist.Count;
                 int nextItemIndex = 0;
-                int iCurItemIndex = PlaylistPlayer.CurrentSong;
 
-                if (iCurItemIndex < playListItemCount - 2)
+                if (iCurItemIndex < playListItemCount - 1)
                     nextItemIndex = iCurItemIndex + 1;
 
                 PlayListItem nextPlaylistItem = curPlaylist[nextItemIndex];
@@ -485,7 +479,53 @@ namespace MediaPortal.GUI.Music
 
                 if (isNextSongCdTrack && nextPlaylistItem != null)
                     NextTrackTag = (MusicTag)nextPlaylistItem.MusicTag;
+
+                // There's no MusicTag info in the Playlist so check is we have a valid 
+                // GUIMusicFiles.MusicCD object
+                if ((CurrentTrackTag == null || NextTrackTag == null) && GUIMusicFiles.MusicCD != null)
+                {
+                    int curCDTrackNum = GetCDATrackNumber(CurrentTrackFileName);
+                    int nextCDTrackNum = GetCDATrackNumber(NextTrackFileName);
+
+                    if (curCDTrackNum < GUIMusicFiles.MusicCD.Tracks.Length)
+                    {
+                        MediaPortal.Freedb.CDTrackDetail curTrack = GUIMusicFiles.MusicCD.getTrack(curCDTrackNum);
+                        CurrentTrackTag = GetTrackTag(curTrack);
+                    }
+
+                    if (nextCDTrackNum < GUIMusicFiles.MusicCD.Tracks.Length)
+                    {
+                        MediaPortal.Freedb.CDTrackDetail nextTrack = GUIMusicFiles.MusicCD.getTrack(nextCDTrackNum);
+                        NextTrackTag = GetTrackTag(nextTrack);
+                    }
+
+                    if (CurrentTrackTag != null)
+                    {
+                        CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+
+                        if (CurrentThumbFileName.Length == 0)
+                            CurrentThumbFileName = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
+
+                        ImgCoverArt.SetFileName(CurrentThumbFileName);
+                    }
+                }
             }
+        }
+
+        private MusicTag GetTrackTag(MediaPortal.Freedb.CDTrackDetail cdTrack)
+        {
+            if (GUIMusicFiles.MusicCD == null)
+                return null;
+
+            MusicTag tag = new MusicTag();
+            tag.Artist = GUIMusicFiles.MusicCD.Artist;
+            tag.Album = GUIMusicFiles.MusicCD.Title;
+            tag.Genre = GUIMusicFiles.MusicCD.Genre;
+            tag.Year = GUIMusicFiles.MusicCD.Year;
+            tag.Duration = cdTrack.Duration;
+            tag.Title = cdTrack.Title;
+
+            return tag;
         }
 
         private MusicTag GetTrackTag(MusicDatabase dbs, string strFile, bool useID3)
@@ -529,102 +569,89 @@ namespace MediaPortal.GUI.Music
                 if (null != pDlgOK && !Util.Win32API.IsConnectedToInternet())
                 {
                     pDlgOK.SetHeading(703);
-                    //pDlgOK.SetLine(0, String.Empty);
                     pDlgOK.SetLine(1, 703);
                     pDlgOK.SetLine(2, String.Empty);
                     pDlgOK.DoModal(GetID);
 
-                    //throw new Exception("no internet");
                     return;
                 }
                 else if (!Util.Win32API.IsConnectedToInternet())
                 {
-                    //throw new Exception("no internet");
                     return;
                 }
 
-                MusicDatabase m_database = new MusicDatabase();
+                //MusicDatabase m_database = new MusicDatabase();
                 string m_strDiscId = string.Empty;
                 int m_iSelectedAlbum = 0;
                 bool bCDDAFailed = false;
 
                 Freedb.FreeDBHttpImpl freedb = new Freedb.FreeDBHttpImpl();
-                //char driveLetter = System.IO.Path.GetFullPath(pItem.Path).ToCharArray()[0];
                 char driveLetter = System.IO.Path.GetFullPath(path).ToCharArray()[0];
+
                 // try finding it in the database
                 string strPathName, strCDROMPath;
+                
                 //int_20h fake the path with the cdInfo
                 strPathName = driveLetter + ":/" + freedb.GetCDDBDiscIDInfo(driveLetter, '+');
                 strCDROMPath = strPathName + "+" + System.IO.Path.GetFileName(path);
 
                 Song song = new Song();
                 bool bFound = false;
-                if (m_database.GetSongByFileName(strCDROMPath, ref song))
-                {
-                    bFound = true;
-                }
 
-                // Disk changed (or other drive)
-                if (GUIMusicFiles.MusicCD != null)
+                try
                 {
-                    if (freedb.GetCDDBDiscID(driveLetter).ToLower() != GUIMusicFiles.MusicCD.DiscID)
+                    freedb.Connect(); // should be replaced with the Connect that receives a http freedb site...
+                    Freedb.CDInfo[] cds = freedb.GetDiscInfo(driveLetter);
+                    if (cds != null)
                     {
-                        GUIMusicFiles.MusicCD = null;
-                    }
-                }
-
-                if (!bFound && GUIMusicFiles.MusicCD == null)
-                {
-                    try
-                    {
-                        freedb.Connect(); // should be replaced with the Connect that receives a http freedb site...
-                        Freedb.CDInfo[] cds = freedb.GetDiscInfo(driveLetter);
-                        if (cds != null)
+                        // freedb returned one album
+                        if (cds.Length == 1)
                         {
-                            if (cds.Length == 1)
-                            {
-                                GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[0].Category, cds[0].DiscId);
-                                m_strDiscId = cds[0].DiscId;
-                            }
-                            else if (cds.Length > 1)
-                            {
-                                if (m_strDiscId == cds[0].DiscId)
-                                {
-                                    GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[m_iSelectedAlbum].Category, cds[m_iSelectedAlbum].DiscId);
-                                }
-                                else
-                                {
-                                    m_strDiscId = cds[0].DiscId;
-                                    //show dialog with all albums found
-                                    string szText = GUILocalizeStrings.Get(181);
-                                    GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
-                                    if (null != pDlg)
-                                    {
-                                        pDlg.Reset();
-                                        pDlg.SetHeading(szText);
-                                        for (int j = 0; j < cds.Length; j++)
-                                        {
-                                            Freedb.CDInfo info = cds[j];
-                                            pDlg.Add(info.Title);
-                                        }
-                                        pDlg.DoModal(GetID);
+                            GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[0].Category, cds[0].DiscId);
+                            m_strDiscId = cds[0].DiscId;
+                        }
 
-                                        // and wait till user selects one
-                                        m_iSelectedAlbum = pDlg.SelectedLabel;
-                                        if (m_iSelectedAlbum < 0) return;
-                                        GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[m_iSelectedAlbum].Category, cds[m_iSelectedAlbum].DiscId);
+                        // freedb returned more than one album
+                        else if (cds.Length > 1)
+                        {
+                            if (m_strDiscId == cds[0].DiscId)
+                            {
+                                GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[m_iSelectedAlbum].Category, cds[m_iSelectedAlbum].DiscId);
+                            }
+
+                            else
+                            {
+                                m_strDiscId = cds[0].DiscId;
+                                //show dialog with all albums found
+                                string szText = GUILocalizeStrings.Get(181);
+                                GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
+                                if (null != pDlg)
+                                {
+                                    pDlg.Reset();
+                                    pDlg.SetHeading(szText);
+                                    for (int j = 0; j < cds.Length; j++)
+                                    {
+                                        Freedb.CDInfo info = cds[j];
+                                        pDlg.Add(info.Title);
                                     }
+                                    pDlg.DoModal(GetID);
+
+                                    // and wait till user selects one
+                                    m_iSelectedAlbum = pDlg.SelectedLabel;
+                                    if (m_iSelectedAlbum < 0) return;
+                                    GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[m_iSelectedAlbum].Category, cds[m_iSelectedAlbum].DiscId);
                                 }
                             }
                         }
-                        freedb.Disconnect();
-                        if (GUIMusicFiles.MusicCD == null) bCDDAFailed = true;
                     }
-                    catch (Exception)
-                    {
-                        GUIMusicFiles.MusicCD = null;
-                        bCDDAFailed = true;
-                    }
+                    freedb.Disconnect();
+                    if (GUIMusicFiles.MusicCD == null) bCDDAFailed = true;
+                }
+                
+                catch (Exception)
+                {
+                    GUIMusicFiles.MusicCD = null;
+                    bCDDAFailed = true;
                 }
 
                 if (!bFound && GUIMusicFiles.MusicCD != null) // if musicCD was configured correctly...
@@ -642,7 +669,6 @@ namespace MediaPortal.GUI.Music
                         tag.Duration = -1;
                         tag.Title = String.Empty;
                         tag.Track = -1;
-                        //pItem.Label = pItem.Path;
                     }
                     else
                     {
@@ -650,11 +676,7 @@ namespace MediaPortal.GUI.Music
                         tag.Duration = track.Duration;
                         tag.Title = track.Title;
                         tag.Track = track.TrackNumber;
-                        //pItem.Label = track.Title;
                     }
-                    //bNewFile = true;
-                    //pItem.MusicTag = tag;
-                    //pItem.Path = strCDROMPath; // to be stored in the database
                 }
                 else if (bFound)
                 {
@@ -665,16 +687,13 @@ namespace MediaPortal.GUI.Music
                     tag.Duration = song.Duration;
                     tag.Title = song.Title;
                     tag.Track = song.Track;
-                    //pItem.MusicTag = tag;
-                    //pItem.Label = song.Title;
-                    //pItem.Path = strCDROMPath;
                 }
 
             }// end of try
             catch (Exception e)
             {
                 // log the problem...
-                Log.Write("GetCDInfoFromFreeDB: {0}", e.ToString());
+                Log.Write("GUIMusicPlayingNow.GetCDInfoFromFreeDB: {0}", e.ToString());
             }
         }
 

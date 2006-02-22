@@ -26,7 +26,8 @@ using System.Collections;
 
 namespace MediaPortal.Playlists
 {
-    public class PlayList : IEnumerable<PlayListItem>
+    //public class PlayList : IEnumerable<PlayListItem>
+    public class PlayList : IEnumerable<PlayListItem> //, IComparer
     {
         protected string _playListName = "";
         protected List<PlayListItem> _listPlayListItems = new List<PlayListItem>();
@@ -210,5 +211,49 @@ namespace MediaPortal.Playlists
 
             return selectedItemIndex;
         }
+
+        // SV
+        public void Sort()
+        {
+            _listPlayListItems.Sort(new PlayListItemComparer());
+        }
     }
+
+    class PlayListItemComparer : IComparer<PlayListItem>
+    {
+        public enum SortMethod { Alpha, ArtistByTrack, ArtistByAlbum };
+        private SortMethod _SortBy = SortMethod.ArtistByAlbum;
+
+        public SortMethod SortBy
+        {
+            set { _SortBy = value; }
+        }
+
+        public PlayListItemComparer()
+        {
+        }
+
+        public PlayListItemComparer(SortMethod sortBy)
+        {
+            _SortBy = sortBy;
+        }
+
+        public int Compare(PlayListItem item1, PlayListItem item2)
+        {
+            if (item1.MusicTag == null || item2.MusicTag == null)
+                return 0;
+
+            MusicTag tag1 = (MusicTag)item1.MusicTag;
+            MusicTag tag2 = (MusicTag)item2.MusicTag;
+
+            int stringCompareResults = tag1.Album.CompareTo(tag2.Album);
+
+            if (stringCompareResults == 0)
+                return tag1.Track.CompareTo(tag2.Track);
+
+            else
+                return stringCompareResults;
+        }
+    }
+    // \SV
 }
