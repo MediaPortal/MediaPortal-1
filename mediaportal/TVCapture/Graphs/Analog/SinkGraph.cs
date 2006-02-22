@@ -1326,5 +1326,10 @@ namespace MediaPortal.TV.Recording
     public void StopEpgGrabbing()
     {
     }
+
+    public bool SupportsHardwarePidFiltering()
+    {
+      return false;
+    }
   }
 }

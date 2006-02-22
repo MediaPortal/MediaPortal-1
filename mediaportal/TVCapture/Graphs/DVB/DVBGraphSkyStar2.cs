@@ -1408,5 +1408,10 @@ namespace MediaPortal.TV.Recording
       }
       Log.WriteFile(Log.LogType.Capture, "auto-tune ss2: freq={0} lnbKhz={1} lnbFreq={2} diseqc={3}", _currentTuningObject.Frequency, _currentTuningObject.LNBKHz, _currentTuningObject.LNBFrequency, _currentTuningObject.DiSEqC);
     }// LoadDiseqcSettings()
+
+    public override bool SupportsHardwarePidFiltering()
+    {
+      return false;
+    }
   }
 }

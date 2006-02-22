@@ -273,5 +273,10 @@ namespace MediaPortal.TV.Recording
       _state = State.Created;
       //Trace.WriteLine(String.Format("card:{0} StopEpgGrabbing", _card.FriendlyName));
     }
+
+    public bool SupportsHardwarePidFiltering()
+    {
+      return false;
+    }
   }
 }

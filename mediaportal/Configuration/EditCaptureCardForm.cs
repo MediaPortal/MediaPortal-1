@@ -122,6 +122,7 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPCheckBox cbHighVBR;
     private MediaPortal.UserInterface.Controls.MPCheckBox cbPortVBR;
     private Panel panel1;
+    private CheckBox checkBoxHWPidFiltering;
     int CardId;
 
     /// <summary>
@@ -467,6 +468,7 @@ namespace MediaPortal.Configuration
       this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnRadio = new MediaPortal.UserInterface.Controls.MPButton();
       this.panel1 = new System.Windows.Forms.Panel();
+      this.checkBoxHWPidFiltering = new System.Windows.Forms.CheckBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
@@ -586,6 +588,7 @@ namespace MediaPortal.Configuration
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.checkBoxHWPidFiltering);
       this.tabPage1.Controls.Add(this.label24);
       this.tabPage1.Controls.Add(this.updownPrio);
       this.tabPage1.Controls.Add(this.cardComboBox);
@@ -1055,6 +1058,17 @@ namespace MediaPortal.Configuration
       this.panel1.TabIndex = 8;
       this.panel1.Visible = false;
       // 
+      // checkBoxHWPidFiltering
+      // 
+      this.checkBoxHWPidFiltering.AutoSize = true;
+      this.checkBoxHWPidFiltering.Location = new System.Drawing.Point(11, 132);
+      this.checkBoxHWPidFiltering.Name = "checkBoxHWPidFiltering";
+      this.checkBoxHWPidFiltering.Size = new System.Drawing.Size(323, 17);
+      this.checkBoxHWPidFiltering.TabIndex = 53;
+      this.checkBoxHWPidFiltering.Text = "Enable Hardware Pid filtering (needed for high-bitrate channels)";
+      this.checkBoxHWPidFiltering.UseVisualStyleBackColor = true;
+      this.checkBoxHWPidFiltering.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+      // 
       // EditCaptureCardForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -1160,6 +1174,7 @@ namespace MediaPortal.Configuration
           xmlwriter.SetValue("quality", "HighLow", tbHighMin.Text);
           xmlwriter.SetValue("quality", "HighMax", tbHighMax.Text);
           xmlwriter.SetValueAsBool("quality", "HighVBR", cbHighVBR.Checked);
+          xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
 
 
         }
@@ -1213,6 +1228,7 @@ namespace MediaPortal.Configuration
       {
         btnRadio.Visible = false;
         button1.Visible = false;
+        checkBoxHWPidFiltering.Visible = false;
         //
         // Setup frame sizes
         //
@@ -1224,6 +1240,10 @@ namespace MediaPortal.Configuration
         {
           if (capture.CreateGraph())
           {
+            if (capture.SupportsHardwarePidFiltering)
+            {
+              checkBoxHWPidFiltering.Visible = true;
+            }
             if (capture.Network != NetworkType.DVBC &&
               capture.Network != NetworkType.DVBS &&
               capture.Network != NetworkType.DVBT &&
@@ -1302,6 +1322,9 @@ namespace MediaPortal.Configuration
               }
             }
             cbHighVBR.Checked = xmlreader.GetValueAsBool("quality", "HighVBR", true);
+
+
+            checkBoxHWPidFiltering.Checked = xmlreader.GetValueAsBool("general", "hwfiltering", false);
           }
         }
       }
@@ -1416,9 +1439,13 @@ namespace MediaPortal.Configuration
       // save settings for card
       if (capture != null)
       {
+        string filename = String.Format(@"database\card_{0}.xml", capture.FriendlyName);
+        using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
+        {
+          xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
+        }
         if (capture.CardType == TVCapture.CardTypes.Digital_SS2)
         {
-          string filename = String.Format(@"database\card_{0}.xml", capture.FriendlyName);
           // save settings for get the filename in mp.xml
           using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
           {
@@ -1614,6 +1641,11 @@ namespace MediaPortal.Configuration
     }
 
     private void tabPage5_Click(object sender, System.EventArgs e)
+    {
+
+    }
+
+    private void checkBox1_CheckedChanged(object sender, EventArgs e)
     {
 
     }

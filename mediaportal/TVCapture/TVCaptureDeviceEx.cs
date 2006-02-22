@@ -777,6 +777,15 @@ namespace MediaPortal.TV.Recording
         return _currentGraph.AudiodeviceFilter();
       }
     }
+
+    public bool SupportsHardwarePidFiltering
+    {
+      get
+      {
+        if (_currentGraph == null) return false;
+        return _currentGraph.SupportsHardwarePidFiltering();
+      }
+    }
     #endregion
 
     #region public members

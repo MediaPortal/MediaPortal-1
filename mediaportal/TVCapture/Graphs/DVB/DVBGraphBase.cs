@@ -3941,6 +3941,12 @@ namespace MediaPortal.TV.Recording
       _isGraphRunning = false;
       _graphState = State.Created;
     }
+
+    public virtual bool SupportsHardwarePidFiltering()
+    {
+      if (_cardProperties == null) return false;
+      return _cardProperties.SupportsHardwarePidFiltering;
+    }
   }//public class DVBGraphBDA 
 
 

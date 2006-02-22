@@ -106,7 +106,15 @@ namespace DShowNET.Helper
         return String.Empty;
       }
     }
-
+    public bool SupportsHardwarePidFiltering
+    {
+      get
+      {
+        if (_digitalEverywhere.IsDigitalEverywhere)
+          return true;
+        return false;
+      }
+    }
 
     public bool SendPMT(int serviceId,int videoPid, int audioPid, byte[] PMT, int pmtLength)
     {
