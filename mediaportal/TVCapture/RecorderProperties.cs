@@ -174,7 +174,7 @@ namespace MediaPortal.TV.Recording
       // get the point we're currently watching relative to the start of movie
       if (g_Player.Playing && g_Player.IsTV)
       {
-        float fRelativeViewPoint = (float)g_Player.CurrentPosition + fRelativeRecordingStart;
+        float fRelativeViewPoint = (float)g_Player.CurrentPosition - fRelativeRecordingStart;
         float fPercentViewPoint = (fRelativeViewPoint / fMovieDurationInSecs) * 100.00f;
         int iPercentViewPoint = (int)Math.Floor(fPercentViewPoint);
         GUIPropertyManager.SetProperty("#TV.Record.percent2", iPercentViewPoint.ToString());
