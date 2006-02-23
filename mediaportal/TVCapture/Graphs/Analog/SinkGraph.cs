@@ -1331,5 +1331,9 @@ namespace MediaPortal.TV.Recording
     {
       return false;
     }
+    public bool SupportsCamSelection()
+    {
+      return false;
+    }
   }
 }

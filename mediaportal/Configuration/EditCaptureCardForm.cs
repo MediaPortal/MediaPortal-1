@@ -123,6 +123,8 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPCheckBox cbPortVBR;
     private Panel panel1;
     private CheckBox checkBoxHWPidFiltering;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private ComboBox comboBoxCAM;
     int CardId;
 
     /// <summary>
@@ -420,6 +422,7 @@ namespace MediaPortal.Configuration
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.checkBoxHWPidFiltering = new System.Windows.Forms.CheckBox();
       this.label24 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.updownPrio = new System.Windows.Forms.NumericUpDown();
       this.tabPage7 = new MediaPortal.UserInterface.Controls.MPTabPage();
@@ -468,7 +471,8 @@ namespace MediaPortal.Configuration
       this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnRadio = new MediaPortal.UserInterface.Controls.MPButton();
       this.panel1 = new System.Windows.Forms.Panel();
-      this.checkBoxHWPidFiltering = new System.Windows.Forms.CheckBox();
+      this.comboBoxCAM = new System.Windows.Forms.ComboBox();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
@@ -588,6 +592,8 @@ namespace MediaPortal.Configuration
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.mpLabel1);
+      this.tabPage1.Controls.Add(this.comboBoxCAM);
       this.tabPage1.Controls.Add(this.checkBoxHWPidFiltering);
       this.tabPage1.Controls.Add(this.label24);
       this.tabPage1.Controls.Add(this.updownPrio);
@@ -601,6 +607,18 @@ namespace MediaPortal.Configuration
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Capture card";
       this.tabPage1.UseVisualStyleBackColor = true;
+      this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
+      // 
+      // checkBoxHWPidFiltering
+      // 
+      this.checkBoxHWPidFiltering.AutoSize = true;
+      this.checkBoxHWPidFiltering.Location = new System.Drawing.Point(11, 132);
+      this.checkBoxHWPidFiltering.Name = "checkBoxHWPidFiltering";
+      this.checkBoxHWPidFiltering.Size = new System.Drawing.Size(323, 17);
+      this.checkBoxHWPidFiltering.TabIndex = 53;
+      this.checkBoxHWPidFiltering.Text = "Enable Hardware Pid filtering (needed for high-bitrate channels)";
+      this.checkBoxHWPidFiltering.UseVisualStyleBackColor = true;
+      this.checkBoxHWPidFiltering.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
       // 
       // label24
       // 
@@ -1058,16 +1076,26 @@ namespace MediaPortal.Configuration
       this.panel1.TabIndex = 8;
       this.panel1.Visible = false;
       // 
-      // checkBoxHWPidFiltering
+      // comboBoxCAM
       // 
-      this.checkBoxHWPidFiltering.AutoSize = true;
-      this.checkBoxHWPidFiltering.Location = new System.Drawing.Point(11, 132);
-      this.checkBoxHWPidFiltering.Name = "checkBoxHWPidFiltering";
-      this.checkBoxHWPidFiltering.Size = new System.Drawing.Size(323, 17);
-      this.checkBoxHWPidFiltering.TabIndex = 53;
-      this.checkBoxHWPidFiltering.Text = "Enable Hardware Pid filtering (needed for high-bitrate channels)";
-      this.checkBoxHWPidFiltering.UseVisualStyleBackColor = true;
-      this.checkBoxHWPidFiltering.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+      this.comboBoxCAM.FormattingEnabled = true;
+      this.comboBoxCAM.Items.AddRange(new object[] {
+            "Viaccess",
+            "Aston",
+            "Conax",
+            "Cryptoworks"});
+      this.comboBoxCAM.Location = new System.Drawing.Point(77, 159);
+      this.comboBoxCAM.Name = "comboBoxCAM";
+      this.comboBoxCAM.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxCAM.TabIndex = 54;
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(11, 159);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(60, 16);
+      this.mpLabel1.TabIndex = 55;
+      this.mpLabel1.Text = "CAM type:";
       // 
       // EditCaptureCardForm
       // 
@@ -1175,6 +1203,7 @@ namespace MediaPortal.Configuration
           xmlwriter.SetValue("quality", "HighMax", tbHighMax.Text);
           xmlwriter.SetValueAsBool("quality", "HighVBR", cbHighVBR.Checked);
           xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
+          xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
 
 
         }
@@ -1229,6 +1258,8 @@ namespace MediaPortal.Configuration
         btnRadio.Visible = false;
         button1.Visible = false;
         checkBoxHWPidFiltering.Visible = false;
+        comboBoxCAM.Visible = false;
+        mpLabel1.Visible = false;
         //
         // Setup frame sizes
         //
@@ -1240,6 +1271,14 @@ namespace MediaPortal.Configuration
         {
           if (capture.CreateGraph())
           {
+            if (capture.Network != NetworkType.Analog)
+            {
+              if (capture.SupportsCamSelection)
+              {
+                comboBoxCAM.Visible = true;
+                mpLabel1.Visible = true;
+              }
+            }
             if (capture.SupportsHardwarePidFiltering)
             {
               checkBoxHWPidFiltering.Visible = true;
@@ -1325,6 +1364,7 @@ namespace MediaPortal.Configuration
 
 
             checkBoxHWPidFiltering.Checked = xmlreader.GetValueAsBool("general", "hwfiltering", false);
+            comboBoxCAM.SelectedItem=xmlreader.GetValueAsString("dvbs", "cam", "Viaccess");
           }
         }
       }
@@ -1443,6 +1483,7 @@ namespace MediaPortal.Configuration
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
         {
           xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
+          xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
         }
         if (capture.CardType == TVCapture.CardTypes.Digital_SS2)
         {
@@ -1646,6 +1687,11 @@ namespace MediaPortal.Configuration
     }
 
     private void checkBox1_CheckedChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void tabPage1_Click(object sender, EventArgs e)
     {
 
     }

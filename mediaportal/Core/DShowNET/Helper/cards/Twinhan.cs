@@ -299,12 +299,19 @@ namespace DShowNET
     }
 
 
-    public void SendPMT(uint videoPid, uint audioPid, byte[] PMT, int pmtLen)
+    public void SendPMT(string camType,uint videoPid, uint audioPid, byte[] PMT, int pmtLen)
     {
       if (IsCamPresent() == false) return;
+      int camNumber=1;
+      camType = camType.ToLower();
+      if (camType.ToLower() == "viaccess") camNumber = 1;
+      else if (camType.ToLower() == "aston") camNumber = 2;
+      else if (camType.ToLower() == "conax") camNumber = 3;
+      else if (camType.ToLower() == "cryptoworks") camNumber = 4;
 
-      Log.Write("Twinhan: send PMT len:{0} video:0x{1:X} audio:0x{2:X}", pmtLen, videoPid, audioPid);
       IntPtr ptrPMT = Marshal.AllocCoTaskMem(pmtLen + 1);
+
+      Log.Write("Twinhan: send PMT cam:{0} {1} len:{2} video:0x{3:X} audio:0x{4:X}", camType,camNumber, pmtLen, videoPid, audioPid);
 
       if (ptrPMT == IntPtr.Zero)
         return;
@@ -322,7 +329,7 @@ namespace DShowNET
       Marshal.WriteInt32(ptrPARSERPMTINFO, 4, pmtLen);
       Marshal.WriteInt32(ptrPARSERPMTINFO, 8, (int)videoPid);
       Marshal.WriteInt32(ptrPARSERPMTINFO, 12, (int)audioPid);
-      Marshal.WriteInt32(ptrPARSERPMTINFO, 16, 0);//default cam
+      Marshal.WriteInt32(ptrPARSERPMTINFO, 16, camNumber);//default cam
 
       IntPtr ptrDwBytesReturned = Marshal.AllocCoTaskMem(4);
       if (ptrDwBytesReturned == IntPtr.Zero)

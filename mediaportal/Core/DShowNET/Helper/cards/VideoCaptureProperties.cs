@@ -106,6 +106,15 @@ namespace DShowNET.Helper
         return String.Empty;
       }
     }
+    public bool SupportsCamSelection
+    {
+      get
+      {
+        if (_twinhan.IsTwinhan)
+          return true;
+        return false;
+      }
+    }
     public bool SupportsHardwarePidFiltering
     {
       get
@@ -116,7 +125,7 @@ namespace DShowNET.Helper
       }
     }
 
-    public bool SendPMT(int serviceId,int videoPid, int audioPid, byte[] PMT, int pmtLength)
+    public bool SendPMT(string camType,int serviceId,int videoPid, int audioPid, byte[] PMT, int pmtLength)
     {
       if (_digitalEverywhere.IsDigitalEverywhere)
       {
@@ -124,12 +133,7 @@ namespace DShowNET.Helper
       }
       if (_twinhan.IsTwinhan)
       {
-        _twinhan.SendPMT((uint)videoPid, (uint)audioPid, PMT, pmtLength);
-        return true;
-      }
-      if (_twinhan.IsTwinhan)
-      {
-        _twinhan.SendPMT((uint)videoPid, (uint)audioPid, PMT, pmtLength);
+        _twinhan.SendPMT(camType,(uint)videoPid, (uint)audioPid, PMT, pmtLength);
         return true;
       }
       if (_technoTrend.IsTechnoTrend)

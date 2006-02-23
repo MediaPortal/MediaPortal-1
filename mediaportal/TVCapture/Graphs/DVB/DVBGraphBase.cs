@@ -1866,9 +1866,15 @@ namespace MediaPortal.TV.Recording
           _pmtSendCounter++;
           if (_cardProperties.IsCISupported())
           {
-            Log.Write("DVBGraph:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3} locked:{4}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality(), _tunerLocked);
+            string camType = "";
+            string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+            {
+              camType = xmlreader.GetValueAsString("dvbs", "cam", "Viaccess");
+            }
+            Log.Write("DVBGraph:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3} locked:{4} cam:{5}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality(), _tunerLocked, camType);
             _streamDemuxer.DumpPMT(pmt);
-            if (_cardProperties.SendPMT(_currentTuningObject.ProgramNumber,  _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
+            if (_cardProperties.SendPMT(camType,_currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
             {
               _lastPMTVersion = pmtVersion;
               return true;
@@ -3946,6 +3952,11 @@ namespace MediaPortal.TV.Recording
     {
       if (_cardProperties == null) return false;
       return _cardProperties.SupportsHardwarePidFiltering;
+    }
+    public bool SupportsCamSelection()
+    {
+      if (_cardProperties == null) return false;
+      return _cardProperties.SupportsCamSelection;
     }
   }//public class DVBGraphBDA 
 

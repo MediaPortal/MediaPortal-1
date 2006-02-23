@@ -777,7 +777,14 @@ namespace MediaPortal.TV.Recording
         return _currentGraph.AudiodeviceFilter();
       }
     }
-
+    public bool SupportsCamSelection
+    {
+      get
+      {
+        if (_currentGraph == null) return false;
+        return _currentGraph.SupportsCamSelection();
+      }
+    }
     public bool SupportsHardwarePidFiltering
     {
       get

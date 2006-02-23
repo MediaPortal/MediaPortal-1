@@ -307,5 +307,6 @@ namespace MediaPortal.TV.Recording
     void GrabEpg(TVChannel chan);
     void StopEpgGrabbing();
     bool SupportsHardwarePidFiltering();
+    bool SupportsCamSelection();
   }
 }
