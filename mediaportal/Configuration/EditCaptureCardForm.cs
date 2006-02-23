@@ -422,6 +422,8 @@ namespace MediaPortal.Configuration
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxCAM = new System.Windows.Forms.ComboBox();
       this.checkBoxHWPidFiltering = new System.Windows.Forms.CheckBox();
       this.label24 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.updownPrio = new System.Windows.Forms.NumericUpDown();
@@ -471,8 +473,6 @@ namespace MediaPortal.Configuration
       this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnRadio = new MediaPortal.UserInterface.Controls.MPButton();
       this.panel1 = new System.Windows.Forms.Panel();
-      this.comboBoxCAM = new System.Windows.Forms.ComboBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
@@ -608,6 +608,28 @@ namespace MediaPortal.Configuration
       this.tabPage1.Text = "Capture card";
       this.tabPage1.UseVisualStyleBackColor = true;
       this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.Location = new System.Drawing.Point(11, 159);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(60, 16);
+      this.mpLabel1.TabIndex = 55;
+      this.mpLabel1.Text = "CAM type:";
+      // 
+      // comboBoxCAM
+      // 
+      this.comboBoxCAM.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxCAM.FormattingEnabled = true;
+      this.comboBoxCAM.Items.AddRange(new object[] {
+            "Viaccess",
+            "Aston",
+            "Conax",
+            "Cryptoworks"});
+      this.comboBoxCAM.Location = new System.Drawing.Point(77, 159);
+      this.comboBoxCAM.Name = "comboBoxCAM";
+      this.comboBoxCAM.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxCAM.TabIndex = 54;
       // 
       // checkBoxHWPidFiltering
       // 
@@ -1075,27 +1097,6 @@ namespace MediaPortal.Configuration
       this.panel1.Size = new System.Drawing.Size(200, 100);
       this.panel1.TabIndex = 8;
       this.panel1.Visible = false;
-      // 
-      // comboBoxCAM
-      // 
-      this.comboBoxCAM.FormattingEnabled = true;
-      this.comboBoxCAM.Items.AddRange(new object[] {
-            "Viaccess",
-            "Aston",
-            "Conax",
-            "Cryptoworks"});
-      this.comboBoxCAM.Location = new System.Drawing.Point(77, 159);
-      this.comboBoxCAM.Name = "comboBoxCAM";
-      this.comboBoxCAM.Size = new System.Drawing.Size(121, 21);
-      this.comboBoxCAM.TabIndex = 54;
-      // 
-      // mpLabel1
-      // 
-      this.mpLabel1.Location = new System.Drawing.Point(11, 159);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(60, 16);
-      this.mpLabel1.TabIndex = 55;
-      this.mpLabel1.Text = "CAM type:";
       // 
       // EditCaptureCardForm
       // 
