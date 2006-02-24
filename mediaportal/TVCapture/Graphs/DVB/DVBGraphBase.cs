@@ -3734,7 +3734,7 @@ namespace MediaPortal.TV.Recording
           _refreshPmtTable = true;
           SendPMT();
         }
-        if (Recorder.IsCardViewing(_cardId) || _graphState == State.Epg)
+        if (Recorder.IsCardViewing(_cardId) || _graphState == State.Epg || _graphState==State.Radio)
         {
           Log.WriteFile(Log.LogType.Capture, "DVBGraph: grab epg for {0}", _currentTuningObject.ServiceName);
           _epgGrabber.GrabEPG(_currentTuningObject.ServiceName, _currentTuningObject.HasEITSchedule == true);
