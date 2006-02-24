@@ -2777,7 +2777,7 @@ namespace MediaPortal.TV.Recording
       }
       string pidList = "";
       for (int i = 0; i < _scanPidList.Count; ++i)
-        pidList += String.Format("{0:X},", (ushort)_scanPidList[i]);
+        pidList += String.Format("0x{0:X},", (ushort)_scanPidList[i]);
 
       Log.Write("check...{0} pids:{1} {2}", _scanPidListReady, _scanPidList.Count, pidList);
       if (_scanPidListReady == false) return;
@@ -2859,7 +2859,7 @@ namespace MediaPortal.TV.Recording
               newChannelsFound = true;
               if (hwPids.Count > offset + index)
               {
-                Log.Write("channel:{0}/{1} pid:{2:X} ready", index, hwPids.Count-offset, hwPids[offset + index]);
+                Log.Write("channel:{0}/{1} pid:0x{2:X} ready", index, hwPids.Count-offset, hwPids[offset + index]);
                 hwPids[offset + index] = (ushort)0x2000;
               }
             }
@@ -2885,7 +2885,9 @@ namespace MediaPortal.TV.Recording
             {
               dt = DateTime.Now;
             }
+            System.Windows.Forms.Application.DoEvents();
             System.Threading.Thread.Sleep(500);
+            System.Windows.Forms.Application.DoEvents();
             TimeSpan ts = DateTime.Now - dt;
             if (ts.TotalMilliseconds >= 2000) break;
           }
