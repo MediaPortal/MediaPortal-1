@@ -20,6 +20,7 @@
  */
 using System;
 using System.Collections;
+using System.Globalization;
 using SQLite.NET;
 using MediaPortal.Util;
 using MediaPortal.GUI.Library;
@@ -85,6 +86,8 @@ namespace MediaPortal.Picture.Database
 		}
 		public int AddPicture(string strPicture, int iRotation)
 		{
+      if (strPicture == null) return -1;
+      if (strPicture.Length == 0) return -1;
 			lock (typeof(PictureDatabase))
 			{
 				if (m_db==null) return -1;
@@ -94,7 +97,7 @@ namespace MediaPortal.Picture.Database
 					int lPicId=-1;
 					SQLiteResultSet results;
 					string strPic=strPicture;
-					string	strDateTaken;
+					string	strDateTaken="";
 					DatabaseUtility.RemoveInvalidChars(ref strPic);
 
 					strSQL=String.Format("select * from picture where strFile like '{0}'",strPic);
@@ -108,8 +111,17 @@ namespace MediaPortal.Picture.Database
 					using (ExifMetadata extractor = new ExifMetadata())
 					{
 						ExifMetadata.Metadata metaData=extractor.GetExifMetadata(strPic);
-						strDateTaken      = System.DateTime.Parse(metaData.DatePictureTaken.DisplayValue).ToString("yyyy-MM-dd HH:mm:ss");
+            try
+            {
+              DateTimeFormatInfo dateTimeFormat = new DateTimeFormatInfo();
+              dateTimeFormat.ShortDatePattern = "yyyy:MM:dd HH:mm:ss";
 
+              DateTime dat = DateTime.ParseExact(metaData.DatePictureTaken.DisplayValue, "d", dateTimeFormat);
+              strDateTaken = dat.ToString("yyyy-MM-dd HH:mm:ss");
+            }
+            catch (Exception)
+            {
+            }
 						// Smirnoff: Query the orientation information
 //						if(iRotation == -1)
 							iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
