@@ -91,7 +91,7 @@ namespace MediaPortal.TV.Recording
       {
         _hasTeletext = false;
         _grabTeletext = false;
-        _vmr9 = new VMR9Util(); 
+        _vmr9 = new VMR9Util();
 
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:CreateGraph() IN");
         if (_graphState != State.None) return false;		// If doing something already, return...
@@ -329,13 +329,13 @@ namespace MediaPortal.TV.Recording
         _videoCaptureHelper.SetFrameRate(25.0d);
         if (!SetFrameSize(720, 576))
         {
-            if (!SetFrameSize(720, 480))
+          if (!SetFrameSize(720, 480))
           {
-              if (!SetFrameSize(768, 576))
+            if (!SetFrameSize(768, 576))
             {
-              if (!SetFrameSize(640,480))
+              if (!SetFrameSize(640, 480))
               {
-                if (!SetFrameSize(320,240))
+                if (!SetFrameSize(320, 240))
                 {
                   //???
                 }
@@ -344,7 +344,7 @@ namespace MediaPortal.TV.Recording
           }
         }
         _sizeFrame = _videoCaptureHelper.GetFrameSize();
-        
+
 
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Capturing:{0}x{1}", _sizeFrame.Width, _sizeFrame.Height);
         _mpeg2DemuxHelper = null;
@@ -397,7 +397,7 @@ namespace MediaPortal.TV.Recording
         return;
       }
 
-      int hr = _captureGraphBuilderInterface.RenderStream(new DsGuid( ClassId.PinCategoryVBI ), null, _filterCapture, teesink, wstCodec);
+      int hr = _captureGraphBuilderInterface.RenderStream(new DsGuid(ClassId.PinCategoryVBI), null, _filterCapture, teesink, wstCodec);
       if (hr != 0)
       {
         _graphBuilderInterface.RemoveFilter(teesink);
@@ -416,7 +416,7 @@ namespace MediaPortal.TV.Recording
       mt.majorType = MediaType.VBI;
       mt.subType = MediaSubTypeEx.Teletext;
       _sampleGrabberInterface.SetCallback(this, 1);
-      _sampleGrabberInterface.SetMediaType( mt);
+      _sampleGrabberInterface.SetMediaType(mt);
       _sampleGrabberInterface.SetBufferSamples(false);
       hr = _captureGraphBuilderInterface.RenderStream(null, null, wstCodec, null, _filterSampleGrabber);
       if (hr != 0)
@@ -568,7 +568,7 @@ namespace MediaPortal.TV.Recording
 
       GUIGraphicsContext.OnGammaContrastBrightnessChanged -= new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
       _vmr9 = null;
-       
+
       _analogVideoDecoderInterface = null;
       if (_videoProcAmpHelper != null)
       {
@@ -587,8 +587,8 @@ namespace MediaPortal.TV.Recording
         _videoCaptureHelper = null;
       }
 
-//      if (_tvTunerInterface != null)
-//        Marshal.ReleaseComObject(_tvTunerInterface); _tvTunerInterface = null;
+      //      if (_tvTunerInterface != null)
+      //        Marshal.ReleaseComObject(_tvTunerInterface); _tvTunerInterface = null;
 
       _sampleGrabberInterface = null;
       if (_filterSampleGrabber != null)
@@ -618,20 +618,20 @@ namespace MediaPortal.TV.Recording
       {
         if (dsFilter.DSFilter != null)
         {
-          while ((hr = Marshal.ReleaseComObject(dsFilter.DSFilter)) > 0);
+          while ((hr = Marshal.ReleaseComObject(dsFilter.DSFilter)) > 0) ;
         }
         dsFilter.DSFilter = null;
       }
 
       if (_captureGraphBuilderInterface != null)
       {
-        while ((hr = Marshal.ReleaseComObject(_captureGraphBuilderInterface)) > 0); 
+        while ((hr = Marshal.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
         _captureGraphBuilderInterface = null;
       }
 
       if (_graphBuilderInterface != null)
       {
-        while ((hr = Marshal.ReleaseComObject(_graphBuilderInterface)) > 0) ; 
+        while ((hr = Marshal.ReleaseComObject(_graphBuilderInterface)) > 0) ;
         _graphBuilderInterface = null;
       }
       _hasTeletext = false;
@@ -672,7 +672,7 @@ namespace MediaPortal.TV.Recording
       return sinkPin;
     }
 
-    IPin FindCrossBarPin(IBaseFilter filter,PhysicalConnectorType inputPinType)
+    IPin FindCrossBarPin(IBaseFilter filter, PhysicalConnectorType inputPinType)
     {
       IAMCrossbar crossbar = filter as IAMCrossbar;
       if (crossbar == null) return null;
@@ -685,7 +685,7 @@ namespace MediaPortal.TV.Recording
         crossbar.get_CrossbarPinInfo(true, i, out relatedPin, out physicalTypeIn);
         if (physicalTypeIn == inputPinType)
         {
-          IPin pin= DsFindPin.ByDirection(filter, PinDirection.Input, i);
+          IPin pin = DsFindPin.ByDirection(filter, PinDirection.Input, i);
           return pin;
         }
       }
@@ -699,15 +699,17 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  preferred filter %soundcard%");
         Filters filters = new Filters();
         FilterCollection audioInputs = filters.AudioInputDevices;
-
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", audioInputs[0].Name, audioInputs[0].MonikerString);
-        try
+        if (audioInputs.Count > 0)
         {
-          IBaseFilter audioInputFilter = Marshal.BindToMoniker(audioInputs[0].MonikerString) as IBaseFilter;
-          return audioInputFilter;
-        }
-        catch
-        {
+          Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}>", audioInputs[0].Name);
+          try
+          {
+            IBaseFilter audioInputFilter = Marshal.BindToMoniker(audioInputs[0].MonikerString) as IBaseFilter;
+            return audioInputFilter;
+          }
+          catch (Exception)
+          {
+          }
         }
       }
 
@@ -717,26 +719,61 @@ namespace MediaPortal.TV.Recording
         string[] audioEncoders = new string[] {"InterVideo Audio Encoder", "LeadTek Audio Encoder", "CyberLink Audio Encoder", "Cyberlink Audio Encoder", "ATI Media Center Audio Encoder" };
         Filters filters = new Filters();
         FilterCollection audioCodecs = filters.AudioCompressors;
+        FilterCollection legacyFilters = filters.LegacyFilters;
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  audio codecs installed:{0} preferred:{1}", audioCodecs.Count, audioEncoders.Length);
         for (int i = 0; i < audioEncoders.Length; ++i)
         {
           Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  try audio codec:'{0}'", audioEncoders[i]);
-          foreach (Filter audioCodec in audioCodecs)
+          //check audio compressors
+          try
           {
-            if (String.Compare(audioCodec.Name,audioEncoders[i],true)==0)
+            foreach (Filter audioCodec in audioCodecs)
             {
-              Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  audio codec:'{0}' is installed", audioEncoders[i]);
-              try
+              if (String.Compare(audioCodec.Name,audioEncoders[i],true)==0)
               {
-                Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", audioCodec.Name, audioCodec.MonikerString);
-                IBaseFilter audioCodecFilter = Marshal.BindToMoniker(audioCodec.MonikerString) as IBaseFilter;
-                return audioCodecFilter;
-              }
-              catch
-              {
-                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  failed to add audio codec:'{0}'", audioEncoders[i]);
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  audio codec:'{0}' is installed", audioEncoders[i]);
+                try
+                {
+                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}>", audioCodec.Name);
+                  IBaseFilter audioCodecFilter = Marshal.BindToMoniker(audioCodec.MonikerString) as IBaseFilter;
+                  return audioCodecFilter;
+                }
+                catch (Exception)
+                {
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  failed to add audio codec:'{0}'", audioEncoders[i]);
+                }
               }
             }
+          }
+          catch (Exception ex)
+          {
+            Log.Write(ex);
+          }
+
+          //check legacy filters
+          try
+          {
+            foreach (Filter audioCodec in legacyFilters)
+            {
+              if (String.Compare(audioCodec.Name, audioEncoders[i], true) == 0)
+              {
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  audio codec:'{0}' is installed", audioEncoders[i]);
+                try
+                {
+                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}>", audioCodec.Name);
+                  IBaseFilter audioCodecFilter = Marshal.BindToMoniker(audioCodec.MonikerString) as IBaseFilter;
+                  return audioCodecFilter;
+                }
+                catch (Exception)
+                {
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  failed to add audio codec:'{0}'", audioEncoders[i]);
+                }
+              }
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Write(ex);
           }
         }
       }
@@ -746,27 +783,64 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  preferred filter %videoencoder%");
         string[] videoEncoders = new string[] { "InterVideo Video Encoder", "LeadTek MPEG Video Encoder", "CyberLink MPEG Video Encoder", "ATI Media Center Video Encoder" };
         Filters filters = new Filters();
+        FilterCollection legacyFilters = filters.LegacyFilters;
         FilterCollection videoCodecs = filters.VideoCompressors;
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  video codecs installed:{0} preferred:{1}", videoCodecs.Count, videoEncoders.Length);
+
         for (int i = 0; i < videoEncoders.Length; ++i)
         {
           Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  try video codec:'{0}'", videoEncoders[i]);
-          foreach (Filter videoCodec in videoCodecs)
+          //
+          //check video compressors
+          try
           {
-            if (String.Compare(videoCodec.Name, videoEncoders[i], true) == 0)
+            foreach (Filter videoCodec in videoCodecs)
             {
-              Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  video codec:'{0}' is installed", videoEncoders[i]);
-              try
+              if (String.Compare(videoCodec.Name, videoEncoders[i], true) == 0)
               {
-                Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", videoCodec.Name, videoCodec.MonikerString);
-                IBaseFilter videoCodecFilter = Marshal.BindToMoniker(videoCodec.MonikerString) as IBaseFilter;
-                return videoCodecFilter;
-              }
-              catch
-              {
-                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  failed to add video codec:'{0}'", videoEncoders[i]);
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  video codec:'{0}' is installed", videoEncoders[i]);
+                try
+                {
+                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}>", videoCodec.Name);
+                  IBaseFilter videoCodecFilter = Marshal.BindToMoniker(videoCodec.MonikerString) as IBaseFilter;
+                  return videoCodecFilter;
+                }
+                catch (Exception)
+                {
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  failed to add video codec:'{0}'", videoEncoders[i]);
+                }
               }
             }
+          }
+          catch (Exception ex)
+          {
+            Log.Write(ex);
+          }
+
+          //check legacy filters
+          try
+          {
+            foreach (Filter videoCodec in legacyFilters)
+            {
+              if (String.Compare(videoCodec.Name, videoEncoders[i], true) == 0)
+              {
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  video codec:'{0}' is installed", videoEncoders[i]);
+                try
+                {
+                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}>", videoCodec.Name);
+                  IBaseFilter videoCodecFilter = Marshal.BindToMoniker(videoCodec.MonikerString) as IBaseFilter;
+                  return videoCodecFilter;
+                }
+                catch (Exception)
+                {
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  failed to add video codec:'{0}'", videoEncoders[i]);
+                }
+              }
+            }
+          }
+          catch (Exception ex)
+          {
+            Log.Write(ex);
           }
         }
       }
@@ -781,22 +855,29 @@ namespace MediaPortal.TV.Recording
         for (int i = 0; i < multiplexers.Length; ++i)
         {
           Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  try multiplexer:'{0}'", multiplexers[i]);
-          foreach (Filter filter in legacyFilters)
+          try
           {
-            if (String.Compare(filter.Name, multiplexers[i], true) == 0)
+            foreach (Filter filter in legacyFilters)
             {
-              Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  multiplexer:'{0}' is installed", multiplexers[i]);
-              try
+              if (String.Compare(filter.Name, multiplexers[i], true) == 0)
               {
-                Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", filter.Name, filter.MonikerString);
-                IBaseFilter multiplexerFilter = Marshal.BindToMoniker(filter.MonikerString) as IBaseFilter;
-                return multiplexerFilter;
-              }
-              catch
-              {
-                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  failed to add multiplexer:'{0}'", multiplexers[i]);
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  multiplexer:'{0}' is installed", multiplexers[i]);
+                try
+                {
+                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}>", filter.Name);
+                  IBaseFilter multiplexerFilter = Marshal.BindToMoniker(filter.MonikerString) as IBaseFilter;
+                  return multiplexerFilter;
+                }
+                catch (Exception)
+                {
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  failed to add multiplexer:'{0}'", multiplexers[i]);
+                }
               }
             }
+          }
+          catch (Exception ex)
+          {
+            Log.Write(ex);
           }
         }
       }
@@ -830,7 +911,7 @@ namespace MediaPortal.TV.Recording
       object o = null;
       cat = new DsGuid(FindDirection.UpstreamOnly);
       iid = typeof(IAMCrossbar).GUID;
-      hr = _captureGraphBuilderInterface.FindInterface(cat, null, _filterCapture,  iid, out o);
+      hr = _captureGraphBuilderInterface.FindInterface(cat, null, _filterCapture, iid, out o);
       if (hr != 0 || o == null)
       {
         Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:no crossbar found");
@@ -889,14 +970,14 @@ namespace MediaPortal.TV.Recording
       TeletextGrabber.SaveAnalogData(pBuffer, BufferLen);
       return 0;
     }
-    bool SetFrameSize( int width, int height)
+    bool SetFrameSize(int width, int height)
     {
       _videoCaptureHelper.SetFrameSize(new Size(width, height));
       Size size = _videoCaptureHelper.GetFrameSize();
       if (size.Width != width) return false;
       if (size.Height != height) return false;
       return true;
-        
+
     }
 
     #endregion
