@@ -640,11 +640,12 @@ namespace MediaPortal.Configuration.Sections
     {
       if (isDirty == true)
       {
-        SectionSettings section = SectionSettings.GetSection("Television");
+          int countryCode = 31;
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          {
+              countryCode = xmlreader.GetValueAsInt("capture", "country", 31);
+          }
 
-        if (section != null)
-        {
-          int countryCode = (int)section.GetSetting("television.country");
 
           RegistryKey registryKey = Registry.LocalMachine;
 
@@ -785,7 +786,7 @@ namespace MediaPortal.Configuration.Sections
 
             registryKey.Close();
           }
-        }
+        
       }
     }
 
@@ -983,18 +984,6 @@ namespace MediaPortal.Configuration.Sections
       SaveSettings();
     }
 
-    private void buttonAutoTune_Click(object sender, System.EventArgs e)
-    {
-      isDirty = true;
-      SaveTVChannels();
-      AnalogTVTuningForm form = new AnalogTVTuningForm();
-      form.ShowDialog(this);
-
-
-      isDirty = true;
-      LoadTVChannels();
-
-    }
     static public void UpdateList()
     {
       reloadList = true;

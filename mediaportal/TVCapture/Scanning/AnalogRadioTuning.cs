@@ -80,13 +80,7 @@ namespace MediaPortal.TV.Scanning
       _callback.OnProgress(0);
     }
 
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string countryName)
-    {
-    }
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] countryName)
-    {
-    }
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] parameters)
     {
       _callback.OnEnded();
     }

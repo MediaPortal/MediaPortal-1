@@ -27,6 +27,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.GUI.Library;
 using System.Xml;
+using System.Xml.XPath;
 
 namespace MediaPortal.TV.Scanning
 {
@@ -44,37 +45,24 @@ namespace MediaPortal.TV.Scanning
     int _newChannels, _updatedChannels;
     int _newRadioChannels, _updatedRadioChannels;
 
-    bool reentrant = false;
     public DVBTTuning()
     {
     }
 
     #region ITuning Members
 
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] parameters)
     {
-      Log.WriteFile(Log.LogType.Capture, "dvbt-scan:Opening dvbt.xml");
-      XmlDocument doc = new XmlDocument();
-      doc.Load("Tuningparameters/dvbt.xml");
+        String countryName = null;
+        if ((parameters == null) || (parameters.Length == 0))
+        {
+            return;
+        }
+        else
+        {
+            countryName = parameters[0];
+        }
 
-      FormCountry formCountry = new FormCountry();
-      XmlNodeList countryList = doc.DocumentElement.SelectNodes("/dvbt/country");
-      foreach (XmlNode nodeCountry in countryList)
-      {
-        string name = nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
-        formCountry.AddCountry(name);
-      }
-      formCountry.ShowDialog();
-      string countryName = formCountry.countryName;
-      AutoTuneTV(card, statusCallback, countryName);
-    }
-
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] countryName)
-    {
-    }
-
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string countryName)
-    {
       _newRadioChannels = 0;
       _updatedRadioChannels = 0;
       _newChannels = 0;
@@ -90,41 +78,42 @@ namespace MediaPortal.TV.Scanning
       Log.WriteFile(Log.LogType.Capture, "dvbt-scan:Opening dvbt.xml");
       XmlDocument doc = new XmlDocument();
       doc.Load("Tuningparameters/dvbt.xml");
+      XPathNavigator nav = doc.CreateNavigator();
+      // Ensure we are at the root node
+      nav.MoveToRoot();
 
-      if (countryName == String.Empty) return;
       Log.WriteFile(Log.LogType.Capture, "dvbt-scan:auto tune for {0}", countryName);
       _listFrequencies.Clear();
-
-      XmlNodeList countryList = doc.DocumentElement.SelectNodes("/dvbt/country");
-      foreach (XmlNode nodeCountry in countryList)
+      XPathExpression expr = nav.Compile("/dvbt/country[@name='" + countryName + "']");
+      XPathNavigator countryNav = nav.SelectSingleNode(expr);
+      if (countryNav != null)
       {
-        string name = nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
-        if (name != countryName) continue;
-        Log.WriteFile(Log.LogType.Capture, "dvbt-scan:found country {0} in dvbt.xml", countryName);
-        try
-        {
-          _scanOffset = XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
-          Log.WriteFile(Log.LogType.Capture, "dvbt-scan:scanoffset: {0} ", _scanOffset);
-        }
-        catch (Exception) { }
-
-        XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
-        Log.WriteFile(Log.LogType.Capture, "dvbt-scan:number of carriers:{0}", frequencyList.Count);
-        int[] carrier;
-        foreach (XmlNode node in frequencyList)
-        {
-          carrier = new int[2];
-          carrier[0] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"frequency").InnerText);
+          Log.WriteFile(Log.LogType.Capture, "dvbt-scan:found country {0} in dvbt.xml", countryName);
+          XmlNode nodeCountry = ((IHasXmlNode)countryNav).GetNode();
           try
           {
-            carrier[1] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"bandwidth").InnerText);
+              _scanOffset = XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
+              Log.WriteFile(Log.LogType.Capture, "dvbt-scan:scanoffset: {0} ", _scanOffset);
           }
           catch (Exception) { }
 
-          if (carrier[1] == 0) carrier[1] = 8;
-          _listFrequencies.Add(carrier);
-          Log.WriteFile(Log.LogType.Capture, "dvbt-scan:added:{0}", carrier[0]);
-        }
+          XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
+          Log.WriteFile(Log.LogType.Capture, "dvbt-scan:number of carriers:{0}", frequencyList.Count);
+          int[] carrier;
+          foreach (XmlNode node in frequencyList)
+          {
+              carrier = new int[2];
+              carrier[0] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"frequency").InnerText);
+              try
+              {
+                  carrier[1] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"bandwidth").InnerText);
+              }
+              catch (Exception) { }
+
+              if (carrier[1] == 0) carrier[1] = 8;
+              _listFrequencies.Add(carrier);
+              Log.WriteFile(Log.LogType.Capture, "dvbt-scan:added:{0}", carrier[0]);
+          }
       }
       if (_listFrequencies.Count == 0) return;
 

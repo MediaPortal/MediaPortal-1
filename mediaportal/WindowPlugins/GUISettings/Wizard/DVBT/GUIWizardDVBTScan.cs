@@ -31,7 +31,9 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
       string country = GUIPropertyManager.GetProperty("#WizardCountry");
 
       ITuning tuning = new DVBTTuning();
-      tuning.AutoTuneTV(captureCard, this, country);
+      String[] parameters = new String[1];
+      parameters[0] = country;
+      tuning.AutoTuneTV(captureCard, this, parameters);
       return tuning;
     }
     protected override void OnScanDone()

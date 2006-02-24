@@ -70,16 +70,7 @@ namespace MediaPortal.TV.Scanning
       _currentIndex++;
     }
 
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
-    {
-      AutoTuneTV(card, statusCallback, "");
-    }
-
     public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] tuningFile)
-    {
-      AutoTuneTV(card, statusCallback, "");
-    }
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string tuningFile)
     {
       _newRadioChannels = 0;
       _updatedRadioChannels = 0;

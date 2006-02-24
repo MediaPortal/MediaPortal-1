@@ -1,5 +1,7 @@
 using System;
 using System.Xml;
+using System.Xml.XPath;
+using System.Collections;
 using MediaPortal.GUI.Library;
 namespace WindowPlugins.GUISettings.Wizard.DVBT
 {
@@ -27,17 +29,26 @@ namespace WindowPlugins.GUISettings.Wizard.DVBT
 		void LoadCountries()
 		{
 			listCountries.Clear();
-			XmlDocument doc= new XmlDocument();
-			doc.Load("Tuningparameters/dvbt.xml");
-			XmlNodeList countryList=doc.DocumentElement.SelectNodes("/dvbt/country");
-			foreach (XmlNode nodeCountry in countryList)
-			{
-				string name= nodeCountry.Attributes.GetNamedItem(@"name").InnerText;
-				GUIListItem item = new GUIListItem();
-				item.IsFolder=false;
-				item.Label=name;
-				listCountries.Add(item);
-			}
+            XmlDocument doc = new XmlDocument();
+            doc.Load("Tuningparameters/dvbt.xml");
+            XPathNavigator nav = doc.CreateNavigator();
+
+            // Ensure we are at the root node
+            nav.MoveToRoot();
+            XPathExpression expr = nav.Compile("/dvbt/country");
+            // Add an XSLT based sort
+            expr.AddSort("@name", XmlSortOrder.Ascending, XmlCaseOrder.None, "", XmlDataType.Text);
+            IEnumerator enumerator = nav.Select(expr).GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                XPathNavigator nodeCountry = (XPathNavigator)enumerator.Current;
+                XPathNavigator nameNode = nodeCountry.SelectSingleNode("@name");
+                string name = nameNode.Value;
+                GUIListItem item = new GUIListItem();
+                item.IsFolder = false;
+                item.Label = name;
+                listCountries.Add(item);
+            }
 		}
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{

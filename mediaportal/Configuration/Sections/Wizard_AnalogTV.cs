@@ -25,36 +25,48 @@
 
 using System;
 using System.Xml;
+using System.Xml.XPath;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Scanning;
+using MediaPortal.GUI.Library;
+
 using DShowNET;
 namespace MediaPortal.Configuration.Sections
 {
-  public class Wizard_AnalogTV : MediaPortal.Configuration.SectionSettings
+  public class Wizard_AnalogTV : Wizard_ScanBase
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private System.ComponentModel.IContainer components = null;
+      private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+      private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+      private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
+      private MediaPortal.UserInterface.Controls.MPLabel label1;
+      private MediaPortal.UserInterface.Controls.MPLabel label2;
+      private MediaPortal.UserInterface.Controls.MPComboBox cbCountry;
 
-    private MediaPortal.UserInterface.Controls.MPButton button1;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbCities;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbCountries;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel labelStatus;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPButton btnManualTV;
-    private MediaPortal.UserInterface.Controls.MPButton btnManualRadio;
-    private ComboBox countryComboBox;
-    private Label label5;
-    private ComboBox inputComboBox;
-    private Label label6;
+      private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+      private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+      private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
+      private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
+      private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
+      private MediaPortal.UserInterface.Controls.MPComboBox cbInput;
+      private MediaPortal.UserInterface.Controls.MPComboBox cbCities;
+      private MediaPortal.UserInterface.Controls.MPButton buttonImport;
+      
+      private Panel panel1;
+      private ListView listView1;
+      private ColumnHeader columnHeader1;
+      private ColumnHeader columnHeader2;
+      private ImageList imageList1;
+
+
+     bool _groupBox2Enabled = true;
+      bool _loadingInfo = false;
     XmlDocument docSetup;
     public Wizard_AnalogTV()
       : this("Analog TV")
@@ -70,20 +82,6 @@ namespace MediaPortal.Configuration.Sections
       // TODO: Add any initialization after the InitializeComponent call
     }
 
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing)
-      {
-        if (components != null)
-        {
-          components.Dispose();
-        }
-      }
-      base.Dispose(disposing);
-    }
 
     #region Designer generated code
     /// <summary>
@@ -92,338 +90,588 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Wizard_AnalogTV));
-      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.btnManualRadio = new MediaPortal.UserInterface.Controls.MPButton();
-      this.btnManualTV = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.labelStatus = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.button1 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.cbCities = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbCountries = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.countryComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.inputComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupBox1.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // groupBox1
-      // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.countryComboBox);
-      this.groupBox1.Controls.Add(this.label5);
-      this.groupBox1.Controls.Add(this.inputComboBox);
-      this.groupBox1.Controls.Add(this.label6);
-      this.groupBox1.Controls.Add(this.btnManualRadio);
-      this.groupBox1.Controls.Add(this.btnManualTV);
-      this.groupBox1.Controls.Add(this.label4);
-      this.groupBox1.Controls.Add(this.label3);
-      this.groupBox1.Controls.Add(this.labelStatus);
-      this.groupBox1.Controls.Add(this.button1);
-      this.groupBox1.Controls.Add(this.cbCities);
-      this.groupBox1.Controls.Add(this.label2);
-      this.groupBox1.Controls.Add(this.cbCountries);
-      this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 408);
-      this.groupBox1.TabIndex = 0;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Setup Analog TV and Radio Channels";
-      // 
-      // btnManualRadio
-      // 
-      this.btnManualRadio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnManualRadio.Location = new System.Drawing.Point(302, 312);
-      this.btnManualRadio.Name = "btnManualRadio";
-      this.btnManualRadio.Size = new System.Drawing.Size(152, 22);
-      this.btnManualRadio.TabIndex = 9;
-      this.btnManualRadio.Text = "Manual scan radio channels";
-      this.btnManualRadio.Click += new System.EventHandler(this.btnManualRadio_Click);
-      // 
-      // btnManualTV
-      // 
-      this.btnManualTV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnManualTV.Location = new System.Drawing.Point(144, 312);
-      this.btnManualTV.Name = "btnManualTV";
-      this.btnManualTV.Size = new System.Drawing.Size(152, 22);
-      this.btnManualTV.TabIndex = 8;
-      this.btnManualTV.Text = "Manual scan TV channels";
-      this.btnManualTV.Click += new System.EventHandler(this.btnManualTV_Click);
-      // 
-      // label4
-      // 
-      this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.label4.Location = new System.Drawing.Point(16, 24);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(440, 32);
-      this.label4.TabIndex = 0;
-      this.label4.Text = "Mediaportal has detected one or more analog TV cards. Select your country/city  a" +
-          "nd press download to get all the TV and radio channels.";
-      // 
-      // label3
-      // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-      this.label3.Location = new System.Drawing.Point(16, 211);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(432, 40);
-      this.label3.TabIndex = 7;
-      this.label3.Text = resources.GetString("label3.Text");
-      // 
-      // labelStatus
-      // 
-      this.labelStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.labelStatus.Location = new System.Drawing.Point(16, 176);
-      this.labelStatus.Name = "labelStatus";
-      this.labelStatus.Size = new System.Drawing.Size(440, 23);
-      this.labelStatus.TabIndex = 6;
-      // 
-      // button1
-      // 
-      this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.button1.Location = new System.Drawing.Point(384, 128);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(72, 22);
-      this.button1.TabIndex = 5;
-      this.button1.Text = "Download";
-      this.button1.Click += new System.EventHandler(this.button1_Click_1);
-      // 
-      // cbCities
-      // 
-      this.cbCities.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.cbCities.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbCities.Location = new System.Drawing.Point(112, 92);
-      this.cbCities.Name = "cbCities";
-      this.cbCities.Size = new System.Drawing.Size(344, 21);
-      this.cbCities.Sorted = true;
-      this.cbCities.TabIndex = 4;
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(16, 96);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(32, 16);
-      this.label2.TabIndex = 3;
-      this.label2.Text = "City:";
-      // 
-      // cbCountries
-      // 
-      this.cbCountries.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.cbCountries.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbCountries.Location = new System.Drawing.Point(112, 68);
-      this.cbCountries.Name = "cbCountries";
-      this.cbCountries.Size = new System.Drawing.Size(344, 21);
-      this.cbCountries.Sorted = true;
-      this.cbCountries.TabIndex = 2;
-      this.cbCountries.SelectedIndexChanged += new System.EventHandler(this.cbCountries_SelectedIndexChanged_1);
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(16, 72);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(48, 16);
-      this.label1.TabIndex = 1;
-      this.label1.Text = "Country:";
-      // 
-      // countryComboBox
-      // 
-      this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.countryComboBox.Location = new System.Drawing.Point(168, 285);
-      this.countryComboBox.MaxDropDownItems = 16;
-      this.countryComboBox.Name = "countryComboBox";
-      this.countryComboBox.Size = new System.Drawing.Size(288, 21);
-      this.countryComboBox.Sorted = true;
-      this.countryComboBox.TabIndex = 13;
-      //
-      // Populate the country combobox
-      //
-      this.countryComboBox.Items.AddRange(TunerCountries.Countries);
-
-      // 
-      // label5
-      // 
-      this.label5.Location = new System.Drawing.Point(16, 289);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(48, 16);
-      this.label5.TabIndex = 12;
-      this.label5.Text = "Country:";
-      // 
-      // inputComboBox
-      // 
-      this.inputComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.inputComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.inputComboBox.Items.AddRange(new object[] {
+        this.components = new System.ComponentModel.Container();
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Wizard_AnalogTV));
+        this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+        this.panel1 = new System.Windows.Forms.Panel();
+        this.listView1 = new System.Windows.Forms.ListView();
+        this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+        this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+        this.lblStatus2 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.progressBarQuality = new System.Windows.Forms.ProgressBar();
+        this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.progressBarStrength = new System.Windows.Forms.ProgressBar();
+        this.lblStatus = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.progressBarProgress = new System.Windows.Forms.ProgressBar();
+        this.buttonScan = new MediaPortal.UserInterface.Controls.MPButton();
+        this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+        this.cbCities = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.buttonImport = new MediaPortal.UserInterface.Controls.MPButton();
+        this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+        this.cbCountry = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.cbInput = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+        this.groupBox1.SuspendLayout();
+        this.groupBox2.SuspendLayout();
+        this.groupBox3.SuspendLayout();
+        this.SuspendLayout();
+        // 
+        // groupBox1
+        // 
+        this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                    | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.groupBox1.Controls.Add(this.panel1);
+        this.groupBox1.Controls.Add(this.listView1);
+        this.groupBox1.Controls.Add(this.lblStatus2);
+        this.groupBox1.Controls.Add(this.mpLabel3);
+        this.groupBox1.Controls.Add(this.progressBarQuality);
+        this.groupBox1.Controls.Add(this.mpLabel2);
+        this.groupBox1.Controls.Add(this.mpLabel1);
+        this.groupBox1.Controls.Add(this.progressBarStrength);
+        this.groupBox1.Controls.Add(this.lblStatus);
+        this.groupBox1.Controls.Add(this.progressBarProgress);
+        this.groupBox1.Controls.Add(this.buttonScan);
+        this.groupBox1.Controls.Add(this.label1);
+        this.groupBox1.Controls.Add(this.groupBox2);
+        this.groupBox1.Controls.Add(this.groupBox3);
+        this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.groupBox1.Location = new System.Drawing.Point(5, 5);
+        this.groupBox1.Name = "groupBox1";
+        this.groupBox1.Size = new System.Drawing.Size(532, 391);
+        this.groupBox1.TabIndex = 0;
+        this.groupBox1.TabStop = false;
+        this.groupBox1.Text = "Setup Analog TV";
+        // 
+        // panel1
+        // 
+        this.panel1.BackColor = System.Drawing.SystemColors.WindowFrame;
+        this.panel1.Location = new System.Drawing.Point(16, 205);
+        this.panel1.Name = "panel1";
+        this.panel1.Size = new System.Drawing.Size(222, 183);
+        this.panel1.TabIndex = 20;
+        // 
+        // listView1
+        // 
+        this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+        this.listView1.Location = new System.Drawing.Point(245, 205);
+        this.listView1.MultiSelect = false;
+        this.listView1.Name = "listView1";
+        this.listView1.Size = new System.Drawing.Size(151, 183);
+        this.listView1.TabIndex = 21;
+        this.listView1.UseCompatibleStateImageBehavior = false;
+        this.listView1.View = System.Windows.Forms.View.Details;
+        this.listView1.SmallImageList = this.imageList1;
+        this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+        this.listView1.ItemActivate += new EventHandler(this.listView1_ItemActivate);
+        //this.listView1.KeyPress += new KeyPressEventHandler(this.listView1_KeyPress);
+        this.listView1.KeyUp += new KeyEventHandler(this.listView1_KeyUp);
+        // 
+        // columnHeader1
+        // 
+        this.columnHeader1.Text = "Name";
+        this.columnHeader1.Width = 100;
+        // 
+        // columnHeader2
+        // 
+        this.columnHeader2.Text = "Ch.";
+        this.columnHeader2.Width = 50;
+        // 
+        // imageList1
+        // 
+        this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+        this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+        this.imageList1.Images.SetKeyName(0, "");
+        this.imageList1.Images.SetKeyName(1, "");
+        // 
+        // lblStatus2
+        // 
+        this.lblStatus2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.lblStatus2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.lblStatus2.Location = new System.Drawing.Point(16, 185);
+        this.lblStatus2.Name = "lblStatus2";
+        this.lblStatus2.Size = new System.Drawing.Size(415, 17);
+        this.lblStatus2.TabIndex = 18;
+        // 
+        // mpLabel3
+        // 
+        this.mpLabel3.Location = new System.Drawing.Point(16, 100);
+        this.mpLabel3.Name = "mpLabel3";
+        this.mpLabel3.Size = new System.Drawing.Size(87, 16);
+        this.mpLabel3.TabIndex = 17;
+        this.mpLabel3.Text = "Progress:";
+        // 
+        // progressBarQuality
+        // 
+        this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.progressBarQuality.Location = new System.Drawing.Point(114, 140);
+        this.progressBarQuality.Name = "progressBarQuality";
+        this.progressBarQuality.Size = new System.Drawing.Size(325, 16);
+        this.progressBarQuality.Step = 1;
+        this.progressBarQuality.TabIndex = 16;
+        // 
+        // mpLabel2
+        // 
+        this.mpLabel2.Location = new System.Drawing.Point(16, 142);
+        this.mpLabel2.Name = "mpLabel2";
+        this.mpLabel2.Size = new System.Drawing.Size(87, 14);
+        this.mpLabel2.TabIndex = 15;
+        this.mpLabel2.Text = "Signal quality:";
+        // 
+        // mpLabel1
+        // 
+        this.mpLabel1.Location = new System.Drawing.Point(16, 121);
+        this.mpLabel1.Name = "mpLabel1";
+        this.mpLabel1.Size = new System.Drawing.Size(87, 16);
+        this.mpLabel1.TabIndex = 14;
+        this.mpLabel1.Text = "Signal strength:";
+        // 
+        // progressBarStrength
+        // 
+        this.progressBarStrength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.progressBarStrength.Location = new System.Drawing.Point(114, 121);
+        this.progressBarStrength.Name = "progressBarStrength";
+        this.progressBarStrength.Size = new System.Drawing.Size(325, 16);
+        this.progressBarStrength.Step = 1;
+        this.progressBarStrength.TabIndex = 13;
+        // 
+        // lblStatus
+        // 
+        this.lblStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+        this.lblStatus.Location = new System.Drawing.Point(16, 161);
+        this.lblStatus.Name = "lblStatus";
+        this.lblStatus.Size = new System.Drawing.Size(415, 17);
+        this.lblStatus.TabIndex = 5;
+        // 
+        // progressBarProgress
+        // 
+        this.progressBarProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.progressBarProgress.Location = new System.Drawing.Point(114, 100);
+        this.progressBarProgress.Name = "progressBarProgress";
+        this.progressBarProgress.Size = new System.Drawing.Size(325, 16);
+        this.progressBarProgress.TabIndex = 4;
+        // 
+        // buttonScan
+        // 
+        this.buttonScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+        this.buttonScan.Location = new System.Drawing.Point(454, 64);
+        this.buttonScan.Name = "buttonScan";
+        this.buttonScan.Size = new System.Drawing.Size(72, 22);
+        this.buttonScan.TabIndex = 3;
+        this.buttonScan.Text = "Scan";
+        this.buttonScan.UseVisualStyleBackColor = true;
+        this.buttonScan.Click += new System.EventHandler(this.buttonScan_Click);
+        // 
+        // label1
+        // 
+        this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.label1.Location = new System.Drawing.Point(16, 16);
+        this.label1.Name = "label1";
+        this.label1.Size = new System.Drawing.Size(510, 32);
+        this.label1.TabIndex = 0;
+        this.label1.Text = "Select your country and input source and press \"Scan\" to scan for TV channels. Or" +
+            " select your city and press \"Download\" to import TV channels from MediaPortal We" +
+            "b Site.";
+        // 
+        // groupBox2
+        // 
+        this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                    | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.groupBox2.Controls.Add(this.cbCities);
+        this.groupBox2.Controls.Add(this.mpLabel5);
+        this.groupBox2.Controls.Add(this.buttonImport);
+        this.groupBox2.Enabled = false;
+        this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.groupBox2.Location = new System.Drawing.Point(404, 205);
+        this.groupBox2.Name = "groupBox2";
+        this.groupBox2.Size = new System.Drawing.Size(122, 108);
+        this.groupBox2.TabIndex = 0;
+        this.groupBox2.TabStop = false;
+        this.groupBox2.Text = "Channel Download";
+        // 
+        // cbCities
+        // 
+        this.cbCities.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.cbCities.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+        this.cbCities.Items.AddRange(new object[] {
+            "Loading..."});
+        this.cbCities.Location = new System.Drawing.Point(5, 45);
+        this.cbCities.Name = "cbCities";
+        this.cbCities.Size = new System.Drawing.Size(111, 21);
+        this.cbCities.TabIndex = 2;
+        // 
+        // mpLabel5
+        // 
+        this.mpLabel5.Location = new System.Drawing.Point(6, 25);
+        this.mpLabel5.Name = "mpLabel5";
+        this.mpLabel5.Size = new System.Drawing.Size(88, 17);
+        this.mpLabel5.TabIndex = 19;
+        this.mpLabel5.Text = "City:";
+        // 
+        // buttonImport
+        // 
+        this.buttonImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+        this.buttonImport.Location = new System.Drawing.Point(5, 72);
+        this.buttonImport.Name = "buttonImport";
+        this.buttonImport.Size = new System.Drawing.Size(72, 22);
+        this.buttonImport.TabIndex = 3;
+        this.buttonImport.Text = "Download";
+        this.buttonImport.UseVisualStyleBackColor = true;
+        this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click_1);
+        // 
+        // groupBox3
+        // 
+        this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                    | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.groupBox3.Controls.Add(this.cbCountry);
+        this.groupBox3.Controls.Add(this.mpLabel4);
+        this.groupBox3.Controls.Add(this.label2);
+        this.groupBox3.Controls.Add(this.cbInput);
+        this.groupBox3.Enabled = true;
+        this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.groupBox3.Location = new System.Drawing.Point(16, 48);
+        this.groupBox3.Name = "groupBox3";
+        this.groupBox3.Size = new System.Drawing.Size(420, 46);
+        this.groupBox3.TabIndex = 0;
+        this.groupBox3.TabStop = false;
+        this.groupBox3.Text = "TV Tuner";
+        // 
+        // cbCountry
+        // 
+        this.cbCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom));
+        this.cbCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+        this.cbCountry.Location = new System.Drawing.Point(76, 16);
+        this.cbCountry.Name = "cbCountry";
+        this.cbCountry.Size = new System.Drawing.Size(113, 21);
+        this.cbCountry.TabIndex = 1;
+        this.cbCountry.SelectedIndexChanged += new System.EventHandler(this.cbCountries_SelectedIndexChanged_1);
+        // 
+        // mpLabel4
+        // 
+        this.mpLabel4.Location = new System.Drawing.Point(209, 20);
+        this.mpLabel4.Name = "mpLabel4";
+        this.mpLabel4.Size = new System.Drawing.Size(88, 17);
+        this.mpLabel4.TabIndex = 19;
+        this.mpLabel4.Text = "Input Source:";
+        // 
+        // label2
+        // 
+        this.label2.Location = new System.Drawing.Point(6, 20);
+        this.label2.Name = "label2";
+        this.label2.Size = new System.Drawing.Size(67, 17);
+        this.label2.TabIndex = 1;
+        this.label2.Text = "Country:";
+        // 
+        // cbInput
+        // 
+        this.cbInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.cbInput.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+        this.cbInput.Items.AddRange(new object[] {
             "Antenna",
             "Cable"});
-      this.inputComboBox.Location = new System.Drawing.Point(168, 261);
-      this.inputComboBox.Name = "inputComboBox";
-      this.inputComboBox.Size = new System.Drawing.Size(288, 21);
-      this.inputComboBox.TabIndex = 11;
-      this.inputComboBox.SelectedItem = "Antenna";
-
-      // 
-      // label6
-      // 
-      this.label6.Location = new System.Drawing.Point(16, 265);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(72, 16);
-      this.label6.TabIndex = 10;
-      this.label6.Text = "Input source:";
-      // 
-      // Wizard_AnalogTV
-      // 
-      this.Controls.Add(this.groupBox1);
-      this.Name = "Wizard_AnalogTV";
-      this.Size = new System.Drawing.Size(472, 408);
-      this.groupBox1.ResumeLayout(false);
-      this.ResumeLayout(false);
+        this.cbInput.Location = new System.Drawing.Point(301, 17);
+        this.cbInput.Name = "cbInput";
+        this.cbInput.Size = new System.Drawing.Size(113, 21);
+        this.cbInput.TabIndex = 2;
+        this.cbInput.SelectedIndexChanged += new System.EventHandler(this.cbInput_SelectedIndexChanged_1);
+        // 
+        // Wizard_AnalogTV
+        // 
+        this.Controls.Add(this.groupBox1);
+        this.Name = "Wizard_AnalogTV";
+        this.Size = new System.Drawing.Size(545, 408);
+        this.groupBox1.ResumeLayout(false);
+        this.groupBox2.ResumeLayout(false);
+        this.groupBox3.ResumeLayout(false);
+        this.ResumeLayout(false);
 
     }
     #endregion
 
 
-
-
     public override void OnSectionActivated()
     {
-      base.OnSectionActivated();
-      labelStatus.Text = "";
-      cbCountries.Items.Clear();
-      cbCities.Items.Clear();
-      docSetup = new XmlDocument();
-      docSetup.Load("http://www.team-mediaportal.com/tvsetup/setup.xml");
-      XmlNodeList listCountries = docSetup.DocumentElement.SelectNodes("/mediaportal/country");
-      foreach (XmlNode nodeCountry in listCountries)
-      {
-        XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
-        cbCountries.Items.Add(nodeCountryName.Value);
-      }
+        base.OnSectionActivated();
+        if (_card == null)
+        {
+            TVCaptureCards cards = new TVCaptureCards();
+            cards.LoadCaptureCards();
+            foreach (TVCaptureDevice dev in cards.captureCards)
+            {
+                if (dev.Network == NetworkType.Analog)
+                {
+                    _card = dev;
+                    break;
+                }
+            }
+        }
+        this.cbCountry.Items.AddRange(TunerCountries.Countries);
+        this.cbCities.Items.Add("Loading...");
+        this.cbCities.SelectedIndex = 0;
+        GUIGraphicsContext.ActiveForm = this.Handle;
+        Point videoWindowLocation = new Point(this.panel1.Location.X + this.groupBox1.Location.X, this.panel1.Location.Y + this.groupBox1.Location.Y);
+        GUIGraphicsContext.VideoWindow = new Rectangle(videoWindowLocation, panel1.Size);
 
-      if (cbCountries.Items.Count > 0 && cbCountries.SelectedIndex < 0)
-        cbCountries.SelectedIndex = 0;
-      FillInCities();
+        LoadSettings();
+        UpdateList();
+        DownloadCities();
+        this.OnScanFinished += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanFinishedHandler(this.dlg_OnScanFinished);
+        this.OnScanStarted += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanStartedHandler(this.dlg_OnScanStarted);
+    }
+    protected override String[] GetScanParameters()
+    {
+        return null;
+    }
+    void dlg_OnScanFinished(object sender, EventArgs args)
+    {
+        groupBox3.Enabled = true;
+        listView1.Enabled = true;
+        groupBox2.Enabled = _groupBox2Enabled;
+        WizardForm wizard = WizardForm.Form;
+        if (wizard != null)
+        {
+            wizard.DisableBack(false);
+            wizard.DisableNext(false);
+        }
+        MapTvToOtherCards(_card.ID);
     }
 
+    void dlg_OnScanStarted(object sender, EventArgs args)
+    {
+        groupBox3.Enabled = false;
+        _groupBox2Enabled = groupBox2.Enabled;
+        groupBox2.Enabled = false;
+        listView1.Enabled = false;
+        int countryId = 31;
+        if (cbCountry.SelectedItem != null)
+        {
+            TunerCountry tunerCountry = cbCountry.SelectedItem as TunerCountry;
+            countryId = tunerCountry.Id;
+        }
+        _card.DefaultCountryCode = countryId;
+        Boolean isCableInput = false;
+        if (!cbInput.Text.Equals("Antenna")) isCableInput = true;
+        _card.IsCableInput = isCableInput;
+        WizardForm wizard = WizardForm.Form;
+        if (wizard != null)
+        {
+            wizard.DisableBack(true);
+            wizard.DisableNext(true);
+        }
+    }
+
+    void DownloadCities()
+    {
+        Thread thread = new Thread(new ThreadStart(LoadXml));
+        thread.IsBackground = true;
+        thread.Start();
+    }
+    void LoadXml()
+    {
+        try
+        {
+            _loadingInfo = true;
+            this.cbCities.Items.Clear();
+            this.cbCities.Items.AddRange(new object[] {
+                "Loading..."});
+            cbCities.SelectedIndex = 0;
+            cbCities.Update();
+            docSetup = new XmlDocument();
+            docSetup.Load("http://www.team-mediaportal.com/tvsetup/setup.xml");
+            _loadingInfo = false;
+            FillInCities();
+        }
+        catch (Exception ex)
+        {
+            this.cbCities.Items.Clear();
+            this.cbCities.Items.AddRange(new object[] {
+                "No info available"});
+            cbCities.SelectedIndex = 0;
+            cbCities.Update();
+            docSetup = null;
+            MessageBox.Show("Cannot connect to MediaPortal Web Site", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            return;
+        }
+    }
     void FillInCities()
     {
-      string country = (string)cbCountries.SelectedItem;
-      foreach (TunerCountry analogCountry in TunerCountries.Countries)
+
+      if (docSetup == null)
       {
-        if (country.ToLower().IndexOf(analogCountry.Country.ToLower()) >= 0)
-        {
-          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          if (!_loadingInfo)
           {
-            xmlwriter.SetValue("capture", "countryname", analogCountry.Country);
-            xmlwriter.SetValue("capture", "country", analogCountry.Id);
-            break;
+              cbCities.Items.Clear();
+              cbCities.Items.Add("No info available");
+              cbCities.SelectedIndex = 0;
+              cbCities.Update();
+              groupBox2.Enabled = false;
           }
-        }
+          return;
       }
-      cbCities.Items.Clear();
-      XmlNodeList listCountries = docSetup.DocumentElement.SelectNodes("/mediaportal/country");
-      foreach (XmlNode nodeCountry in listCountries)
+      String countryName = "";
+      if (cbCountry.SelectedItem != null)
       {
-        XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
-        if (nodeCountryName.Value == country)
-        {
+          countryName = cbCountry.SelectedItem.ToString();
+      }
+      XPathNavigator nav = docSetup.CreateNavigator();
+      // Ensure we are at the root node
+      nav.MoveToRoot();
+      XPathExpression expr = nav.Compile("/mediaportal/country[@name='" + countryName + "']");
+      XPathNavigator countryNav = nav.SelectSingleNode(expr);
+      if (countryNav != null)
+      {
+          cbCities.Items.Clear();
+          XmlNode nodeCountry = ((IHasXmlNode)countryNav).GetNode();
           XmlNodeList listCities = nodeCountry.SelectNodes("city");
           foreach (XmlNode nodeCity in listCities)
           {
-            XmlNode listCitiesName = nodeCity.Attributes.GetNamedItem("name");
-            cbCities.Items.Add(listCitiesName.Value);
+              XmlNode listCitiesName = nodeCity.Attributes.GetNamedItem("name");
+              cbCities.Items.Add(listCitiesName.Value);
           }
-          break;
-        }
+          if (cbCities.Items.Count > 0 && cbCities.SelectedIndex < 0)
+              cbCities.SelectedIndex = 0;
+          groupBox2.Enabled = true;
       }
-      if (cbCities.Items.Count > 0 && cbCities.SelectedIndex < 0)
-        cbCities.SelectedIndex = 0;
-    }
+      else
+      {
+          cbCities.Items.Clear();
+          cbCities.Items.Add("No info available");
+          cbCities.SelectedIndex = 0;
+          groupBox2.Enabled = false;
+      }
+  }
 
-    private void button1_Click_1(object sender, System.EventArgs e)
+    private void buttonImport_Click_1(object sender, System.EventArgs e)
     {
-      string country = (string)cbCountries.SelectedItem;
+      string country = cbCountry.SelectedItem.ToString();
       string city = (string)cbCities.SelectedItem;
-      XmlDocument doc = new XmlDocument();
-      doc.Load("http://www.team-mediaportal.com/tvsetup/setup.xml");
-      XmlNodeList listCountries = doc.DocumentElement.SelectNodes("/mediaportal/country");
-      foreach (XmlNode nodeCountry in listCountries)
+      XPathNavigator nav = docSetup.CreateNavigator();
+      // Ensure we are at the root node
+      nav.MoveToRoot();
+      XPathExpression expr = nav.Compile("/mediaportal/country[@name='" + country + "']/city[@name=\""+city+"\"]");
+      XPathNavigator cityNav = nav.SelectSingleNode(expr);
+      if (cityNav != null)
       {
-        XmlNode nodeCountryName = nodeCountry.Attributes.GetNamedItem("name");
-        if (nodeCountryName.Value == country)
-        {
-          XmlNodeList listCities = nodeCountry.SelectNodes("city");
-          foreach (XmlNode nodeCity in listCities)
-          {
-            XmlNode listCitiesName = nodeCity.Attributes.GetNamedItem("name");
-            if (listCitiesName.Value == city)
-            {
-              XmlNode nodeAnalog = nodeCity.SelectSingleNode("analog");
-              int tvChannels;
-              int radioChannels;
-              ImportAnalogChannels(nodeAnalog.InnerText, out tvChannels, out radioChannels);
-
-              labelStatus.Text = String.Format("Imported {0} tv channels, {1} radio channels", tvChannels, radioChannels);
-              return;
-            }
-          }
-        }
+          XmlNode nodeCity = ((IHasXmlNode)cityNav).GetNode();
+          XmlNode nodeAnalog = nodeCity.SelectSingleNode("analog");
+          int newTvChannels;
+          int updatedTvChannels;
+          OnStatus2("");
+          Cursor.Current = Cursors.WaitCursor;
+          buttonImport.Enabled = false;
+          ImportAnalogChannels(nodeAnalog.InnerText, out newTvChannels, out updatedTvChannels);
+          OnStatus2(String.Format("Imported {0} new tv channels, {1} updated tv channels", newTvChannels, updatedTvChannels));
+          buttonImport.Enabled = true;
+          Cursor.Current = Cursors.Default;
+          UpdateList();
+      }
+      else
+      {
+          OnStatus2("");
       }
     }
 
-    void ImportAnalogChannels(string xmlFile, out int tvChannels, out int radioChannels)
+    void ImportAnalogChannels(string xmlFile, out int newTvChannels, out int updatedTvChannels)
     {
-      tvChannels = 0;
-      radioChannels = 0;
-      XmlDocument doc = new XmlDocument();
-      UriBuilder builder = new UriBuilder("http", "mediaportal.sourceforge.net", 80, "tvsetup/analog/" + xmlFile);
-      doc.Load(builder.Uri.AbsoluteUri);
-      XmlNodeList listTvChannels = doc.DocumentElement.SelectNodes("/mediaportal/tv/channel");
-      foreach (XmlNode nodeChannel in listTvChannels)
+      newTvChannels = 0;
+      updatedTvChannels = 0;
+      try
       {
-        XmlNode name = nodeChannel.Attributes.GetNamedItem("name");
-        XmlNode number = nodeChannel.Attributes.GetNamedItem("number");
-        XmlNode frequency = nodeChannel.Attributes.GetNamedItem("frequency");
-        TVChannel chan = new TVChannel();
-        chan.Name = name.Value;
-        try
-        {
-          chan.Number = Int32.Parse(number.Value);
-        }
-        catch (Exception) { }
-        try
-        {
-          chan.Frequency = ConvertToTvFrequency(frequency.Value, ref chan);
-        }
-        catch (Exception) { }
-        TVDatabase.AddChannel(chan);
-        tvChannels++;
+          XmlDocument doc = new XmlDocument();
+          UriBuilder builder = new UriBuilder("http", "mediaportal.sourceforge.net", 80, "tvsetup/analog/" + xmlFile);
+          doc.Load(builder.Uri.AbsoluteUri);
+          XmlNodeList listTvChannels = doc.DocumentElement.SelectNodes("/mediaportal/tv/channel");
+          foreach (XmlNode nodeChannel in listTvChannels)
+          {
+              XmlNode name = nodeChannel.Attributes.GetNamedItem("name");
+              XmlNode number = nodeChannel.Attributes.GetNamedItem("number");
+              XmlNode frequency = nodeChannel.Attributes.GetNamedItem("frequency");
+              string channelName = name.Value;
+              int channelNumber = -1;
+              long channelFrequency = 0;
+              try
+              {
+                  channelNumber = Int32.Parse(number.Value);
+              }
+              catch (Exception) { }
+              try
+              {
+                  channelFrequency = ConvertToTvFrequency(frequency.Value);
+              }
+              catch (Exception) { }
+              int channelId = TVDatabase.GetChannelId(channelName);
+              TVChannel tvChan = TVDatabase.GetChannelById(channelId);
+              if (tvChan == null)
+              {
+                  //doesn't exists
+                  tvChan = new TVChannel();
+                  tvChan.Scrambled = false;
+                  //then add a new channel to the database
+                  tvChan.Name = channelName;
+                  tvChan.ID = -1;
+                  tvChan.Number = channelNumber;
+                  tvChan.Frequency = channelFrequency;
+                  tvChan.Sort = 40000;
+                  Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogTV: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
+                  int id = TVDatabase.AddChannel(tvChan);
+                  if (id < 0)
+                  {
+                      Log.WriteFile(Log.LogType.Capture, true, "Wizard_AnalogTV: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
+                  }
+                  newTvChannels++;
+              }
+              else
+              {
+                  tvChan.Name = channelName;
+                  tvChan.Number = channelNumber;
+                  tvChan.Frequency = channelFrequency;
+                  TVDatabase.UpdateChannel(tvChan, tvChan.Sort);
+                  updatedTvChannels++;
+                  Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogTV: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
+              }
+              TVDatabase.MapChannelToCard(tvChan.ID, _card.ID);
+              TVGroup group = new TVGroup();
+              group.GroupName = "Analog";
+              int groupid = TVDatabase.AddGroup(group);
+              group.ID = groupid;
+              TVDatabase.MapChannelToGroup(group, tvChan);
+          }
+          /*
+          XmlNodeList listRadioChannels = doc.DocumentElement.SelectNodes("/mediaportal/radio/channel");
+          foreach (XmlNode nodeChannel in listRadioChannels)
+          {
+              XmlNode name = nodeChannel.Attributes.GetNamedItem("name");
+              XmlNode frequency = nodeChannel.Attributes.GetNamedItem("frequency");
+              MediaPortal.Radio.Database.RadioStation chan = new MediaPortal.Radio.Database.RadioStation();
+              chan.Name = name.Value;
+              chan.Frequency = ConvertToFrequency(frequency.Value);
+              RadioDatabase.AddStation(ref chan);
+              radioChannels++;
+          }
+           */
       }
-      XmlNodeList listRadioChannels = doc.DocumentElement.SelectNodes("/mediaportal/radio/channel");
-      foreach (XmlNode nodeChannel in listRadioChannels)
+      catch (Exception)
       {
-        XmlNode name = nodeChannel.Attributes.GetNamedItem("name");
-        XmlNode frequency = nodeChannel.Attributes.GetNamedItem("frequency");
-        MediaPortal.Radio.Database.RadioStation chan = new MediaPortal.Radio.Database.RadioStation();
-        chan.Name = name.Value;
-        chan.Frequency = ConvertToFrequency(frequency.Value);
-        RadioDatabase.AddStation(ref chan);
-        radioChannels++;
+          MessageBox.Show("Cannot connect to MediaPortal Web Site", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
     }
     long ConvertToFrequency(string frequency)
@@ -439,10 +687,9 @@ namespace MediaPortal.Configuration.Sections
     }
 
 
-    long ConvertToTvFrequency(string frequency, ref TVChannel chan)
+    long ConvertToTvFrequency(string frequency)
     {
       if (frequency.Trim() == String.Empty) return 0;
-      chan.Number = TVDatabase.FindFreeTvChannelNumber(chan.Number);
       frequency = frequency.ToUpper();
       for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
       {
@@ -462,74 +709,117 @@ namespace MediaPortal.Configuration.Sections
     }
     private void cbCountries_SelectedIndexChanged_1(object sender, System.EventArgs e)
     {
-      FillInCities();
-    }
-
-
-    TVCaptureDevice CaptureCard
-    {
-      get
-      {
-        TVCaptureCards cards = new TVCaptureCards();
-        cards.LoadCaptureCards();
-        foreach (TVCaptureDevice dev in cards.captureCards)
+        if ((cbCountry.SelectedItem != null)&& (_card != null))
         {
-          if (dev.Network == NetworkType.Analog)
+            TunerCountry tunerCountry = cbCountry.SelectedItem as TunerCountry;
+            _card.DefaultCountryCode = tunerCountry.Id;
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                _card.DeleteGraph();
+                string selectedChannel = listView1.SelectedItems[0].Text;
+                _card.StartViewing(selectedChannel);
+            }
+        }
+        FillInCities();
+    }
+      private void cbInput_SelectedIndexChanged_1(object sender, System.EventArgs e)
+      {
+          if ((cbInput.SelectedItem != null) && (_card != null))
           {
-            return dev;
+              Boolean isCableInput = false;
+              if (!cbInput.Text.Equals("Antenna")) isCableInput = true;
+              _card.IsCableInput = isCableInput;
+              if (listView1.SelectedIndices.Count > 0)
+              {
+                  _card.DeleteGraph();
+                  string selectedChannel = listView1.SelectedItems[0].Text;
+                  _card.StartViewing(selectedChannel);
+              }
           }
-        }
-        return null;
       }
-    }
-    private void btnManualTV_Click(object sender, System.EventArgs e)
-    {
-      TVCaptureDevice dev = CaptureCard;
-      if (dev == null) return;
-      int countryId = 31;
 
-      if (countryComboBox.SelectedItem != null)
+      private void listView1_SelectedIndexChanged(object sender, System.EventArgs e)
       {
-        TunerCountry tunerCountry = countryComboBox.SelectedItem as TunerCountry;
-        countryId = tunerCountry.Id;
+          if ((listView1.SelectedIndices.Count>0)&& (_card != null))
+          {
+              string selectedChannel = listView1.SelectedItems[0].Text;
+              listView1.Update();
+              _card.StartViewing(selectedChannel);
+          } 
       }
-      dev.DefaultCountryCode = countryId;
-      Boolean isCableInput = false;
-      if (!inputComboBox.Text.Equals("Antenna")) isCableInput = true;
-      dev.IsCableInput = isCableInput;
+      private void listView1_KeyUp(Object o, KeyEventArgs e)
+      {
+          if ((listView1.SelectedIndices.Count > 0)&& (_card != null))
+          {
+              if (e.KeyCode == System.Windows.Forms.Keys.Delete || e.KeyCode == System.Windows.Forms.Keys.Back)
+              {
+                  string selectedChannel = listView1.SelectedItems[0].Text;
+                  TVDatabase.RemoveChannel(selectedChannel);
+                  int index = listView1.SelectedItems[0].Index;
+                  listView1.Items.Remove(listView1.SelectedItems[0]);
+                  listView1.Update();
+                  if (listView1.Items.Count > 0)
+                  {
+                      if (index >= listView1.Items.Count)
+                      {
+                          index = listView1.Items.Count - 1;
+                      }
+                      listView1.SelectedIndices.Clear();
+                      listView1.SelectedIndices.Add(index);
+                  }else
+                  {
+                      _card.DeleteGraph();
+                  }
+              }
+          }
+      }
+      private void listView1_ItemActivate(object sender, System.EventArgs e)
+      {
+          if ((listView1.SelectedIndices.Count > 0) && (_card != null))
+          {
+              string selectedChannel = listView1.SelectedItems[0].Text;
+              TVChannel channel = TVDatabase.GetChannelById(TVDatabase.GetChannelId(selectedChannel));
 
-      AnalogTVTuningForm dialog = new AnalogTVTuningForm();
-      if (dev.CreateGraph())
-      {
-        ITuning tuning = GraphFactory.CreateTuning(dev);
-        if (tuning != null)
-        {
-          dialog.Tuning = tuning;
-          dialog.Card = dev;
-          dialog.ShowDialog(this);
-          MapTvToOtherCards(dev.ID);
-        }
-        dev.DeleteGraph();
-      }
-    }
+              TelevisionChannel tvChannel = new TelevisionChannel();
 
-    private void btnManualRadio_Click(object sender, System.EventArgs e)
-    {
-      TVCaptureDevice dev = CaptureCard;
-      if (dev == null) return;
-      AnalogRadioTuningForm dialog = new AnalogRadioTuningForm();
-      ITuning tuning = new AnalogRadioTuning();
-      if (tuning != null)
-      {
-        dialog.Tuning = tuning;
-        dialog.Card = dev;
-        dialog.ShowDialog(this);
+              tvChannel.ID = channel.ID;
+              tvChannel.Channel = channel.Number;
+              tvChannel.Name = channel.Name;
+              tvChannel.Frequency = channel.Frequency;
+              tvChannel.External = channel.External;
+              tvChannel.ExternalTunerChannel = channel.ExternalTunerChannel;
+              tvChannel.VisibleInGuide = channel.VisibleInGuide;
+              tvChannel.Country = channel.Country;
+              tvChannel.standard = channel.TVStandard;
+              tvChannel.Scrambled = channel.Scrambled;
+
+              EditTVChannelForm editChannel = new EditTVChannelForm();
+              editChannel.Channel = tvChannel;
+              editChannel.SortingPlace = channel.Sort;
+
+              DialogResult dialogResult = editChannel.ShowDialog(this);
+
+              if (dialogResult == DialogResult.OK)
+              {
+                  TelevisionChannel editedChannel = editChannel.Channel;
+                  ListViewItem item = listView1.SelectedItems[0];
+                  item.ImageIndex = 0;
+                  if (editedChannel.Scrambled)
+                  {
+                      item.ImageIndex = 1;
+                  }
+                  item.Text = editedChannel.Name;
+                  item.SubItems[1].Text = editedChannel.Channel.ToString();
+                  listView1.Update();
+                  if (channel.Number != editedChannel.Channel)
+                  {
+                      _card.StopViewing();
+                      _card.StartViewing(selectedChannel);
+                  }
+              }
+          }
       }
-      else
-      {
-        MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
-      }
-    }
+
     void MapTvToOtherCards(int id)
     {
       ArrayList tvchannels = new ArrayList();
@@ -547,32 +837,13 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
-    void MapRadioToOtherCards(int id)
-    {
-      ArrayList radioChans = new ArrayList();
-      RadioDatabase.GetStationsForCard(ref radioChans, id);
-      TVCaptureCards cards = new TVCaptureCards();
-      cards.LoadCaptureCards();
-      foreach (TVCaptureDevice dev in cards.captureCards)
-      {
-        if (dev.Network == NetworkType.Analog && dev.ID != id)
-        {
-          foreach (MediaPortal.Radio.Database.RadioStation chan in radioChans)
-          {
-            RadioDatabase.MapChannelToCard(chan.ID, dev.ID);
-          }
-        }
-      }
-    }
     public override void LoadSettings()
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        inputComboBox.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
-        //
-        // We can't set the SelectedItem here as the items in the combobox are of TunerCountry type.
-        //
-        countryComboBox.Text = xmlreader.GetValueAsString("capture", "countryname", "Netherlands");
+        cbInput.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
+        TunerCountry country = TunerCountries.GetTunerCountry(xmlreader.GetValueAsString("capture", "countryname", "The Netherlands"));
+        cbCountry.SelectedItem = country;
       }
     }
 
@@ -581,15 +852,36 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        xmlwriter.SetValue("capture", "tuner", inputComboBox.Text);
-        if (countryComboBox.Text.Length > 0)
+        xmlwriter.SetValue("capture", "tuner", cbInput.Text);
+        if (cbCountry.Text.Length > 0)
         {
-          TunerCountry tunerCountry = countryComboBox.SelectedItem as TunerCountry;
-          xmlwriter.SetValue("capture", "countryname", countryComboBox.Text);
+          TunerCountry tunerCountry = cbCountry.SelectedItem as TunerCountry;
+          xmlwriter.SetValue("capture", "countryname", tunerCountry.Country);
           xmlwriter.SetValue("capture", "country", tunerCountry.Id.ToString());
         }
       }
     }
+
+      public override void UpdateList()
+      {
+          listView1.Items.Clear();
+          if (_card == null) return;
+          ArrayList channels = new ArrayList();
+          TVDatabase.GetChannelsForCard(ref channels, _card.ID);
+          foreach (TVChannel channel in channels)
+          {
+              if (channel.Number < (int)ExternalInputs.svhs)
+              {
+                  ListViewItem item = new ListViewItem();
+                  item.ImageIndex = 0;
+                  if (channel.Scrambled)
+                      item.ImageIndex = 1;
+                  item.Text = channel.Name;
+                  item.SubItems.Add(channel.Number.ToString());
+                  listView1.Items.Add(item);
+              }
+          }
+      }
 
   }
 }

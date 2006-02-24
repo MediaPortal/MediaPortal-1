@@ -72,24 +72,18 @@ namespace MediaPortal.TV.Scanning
       _callback.OnProgress(0);
     }
 
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] parameters)
     {
-      OpenFileDialog ofd = new OpenFileDialog();
-      ofd.RestoreDirectory = true;
-      ofd.InitialDirectory = System.IO.Directory.GetCurrentDirectory() + @"\TuningParameters";
-      ofd.Filter = "DVBC-Listings (*.dvbc)|*.dvbc";
-      ofd.Title = "Choose DVB-C Listing Files";
-      DialogResult res = ofd.ShowDialog();
-      if (res != DialogResult.OK) return;
+        String fileName = null;
+        if ((parameters == null) || (parameters.Length == 0))
+        {
+            return;
+        }
+        else
+        {
+            fileName = parameters[0];
+        }
 
-      AutoTuneTV(card, statusCallback, ofd.FileName);
-    }
-
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] countryName)
-    {
-    }
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string fileName)
-    {
       newRadioChannels = 0;
       updatedRadioChannels = 0;
       newChannels = 0;

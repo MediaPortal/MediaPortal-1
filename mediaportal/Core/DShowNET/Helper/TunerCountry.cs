@@ -46,6 +46,17 @@ namespace DShowNET
 
 	public class TunerCountries
 	{
+        public static TunerCountry GetTunerCountry(string countryName)
+        {
+            foreach (TunerCountry country in Countries)
+            {
+                if (country.Country == countryName)
+                {
+                    return country;
+                }
+            }
+            return null;
+        }
 		public static TunerCountry[] Countries = new TunerCountry[] 
 		{
             new TunerCountry(93,	"Afghanistan",	        "AF"),
@@ -191,7 +202,7 @@ namespace DShowNET
             new TunerCountry(264,	"Namibia",	            "NA"),
             new TunerCountry(674,	"Nauru",	            "NR"),
             new TunerCountry(977,	"Nepal",	            "NP"),
-            new TunerCountry(31,	"Netherlands",	        "NL"),
+            new TunerCountry(31,	"The Netherlands",	        "NL"),
             new TunerCountry(599,	"Netherlands Antilles",	"AN"),
             new TunerCountry(687,	"New Caledonia",	    "NC"),
             new TunerCountry(64,	"New Zealand",	        "NZ"),

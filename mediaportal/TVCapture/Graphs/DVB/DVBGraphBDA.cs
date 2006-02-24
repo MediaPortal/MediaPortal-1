@@ -120,14 +120,14 @@ namespace MediaPortal.TV.Recording
         }
 
         //check if definition contains a tv filter graph
-        if (_card.Graph.TvFilterDefinitions == null)
+        if ((_card.Graph == null) ||(_card.Graph.TvFilterDefinitions == null))
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED card does not contain filters?");
           return false;
         }
 
         //check if definition contains <connections> for the tv filter graph
-        if (_card.Graph.TvConnectionDefinitions == null)
+        if ((_card.Graph == null) ||(_card.Graph.TvConnectionDefinitions == null))
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED card does not contain connections for tv?");
           return false;
@@ -1151,14 +1151,17 @@ namespace MediaPortal.TV.Recording
 
 
         //Log.WriteFile(Log.LogType.Capture,"DVBGraphBDA: clean filters");
-        foreach (FilterDefinition dsFilter in _card.Graph.TvFilterDefinitions)
+        if ((_card != null) && (_card.Graph != null) && (_card.Graph.TvFilterDefinitions != null))
         {
-          string strfileName = dsFilter.Category;
-          if (dsFilter.DSFilter != null)
-          {
-            while ((hr = Marshal.ReleaseComObject(dsFilter.DSFilter)) > 0) ;
-          }
-          dsFilter.DSFilter = null;
+            foreach (FilterDefinition dsFilter in _card.Graph.TvFilterDefinitions)
+            {
+                string strfileName = dsFilter.Category;
+                if (dsFilter.DSFilter != null)
+                {
+                    while ((hr = Marshal.ReleaseComObject(dsFilter.DSFilter)) > 0) ;
+                }
+                dsFilter.DSFilter = null;
+            }
         }
         if (_graphBuilder != null)
           DirectShowUtil.RemoveFilters(_graphBuilder);

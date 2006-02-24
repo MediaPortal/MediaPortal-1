@@ -25,6 +25,8 @@ using System.Windows.Forms;
 using DirectShowLib;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.GUI.Library;
+
 namespace MediaPortal.TV.Scanning
 {
   /// <summary>
@@ -37,7 +39,8 @@ namespace MediaPortal.TV.Scanning
     AutoTuneCallback _callback = null;
     TVCaptureDevice _captureCard;
     float _lastFrequency = -1f;
-    
+    int _newChannels, _updatedChannels;
+
     public AnalogTVTuning()
     {
     }
@@ -45,16 +48,22 @@ namespace MediaPortal.TV.Scanning
 
     public void Start()
     {
-      _currentChannel = _minChannel;
+        _newChannels = 0;
+        _updatedChannels = 0;
+      _currentChannel = _minChannel-1;
       _callback.OnSignal(0, 0);
       _callback.OnProgress(0);
-    }
+  }
     
     public void Next()
     {
-      if (IsFinished()) return;
-      Tune();
       _currentChannel++;
+      if (IsFinished())
+      {
+          _callback.OnEnded();
+          return;
+      }
+      Tune();
     }
     
     void Tune()
@@ -63,6 +72,8 @@ namespace MediaPortal.TV.Scanning
       percent *= 100.0f;
       _callback.OnProgress((int)percent);
       TuneChannel();
+      //Wait for tuner to lock signal
+      System.Threading.Thread.Sleep(500);
       float frequency = (float)_captureCard.VideoFrequency();
       if (frequency != _lastFrequency)
       {
@@ -73,8 +84,13 @@ namespace MediaPortal.TV.Scanning
         _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
         if (_captureCard.SignalPresent())
         {
-          _callback.OnNewChannel();
-          return;
+            int radioTemp = 0;
+            _callback.OnStatus2(String.Format("New tv:{0} updated tv:{1} ", _newChannels,  _updatedChannels ));
+            _captureCard.StoreTunedChannels(false, true, ref _newChannels, ref _updatedChannels, ref radioTemp, ref radioTemp);
+            _callback.OnStatus2(String.Format("New tv:{0} updated tv:{1} ", _newChannels, _updatedChannels));
+            _callback.OnNewChannel();
+            _callback.UpdateList();
+            return;
         }
       }
       else
@@ -88,16 +104,11 @@ namespace MediaPortal.TV.Scanning
     {
     }
 
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
-    {
-      AutoTuneTV(card, statusCallback, "");
-    }
 
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] countryName)
+    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] parameters)
     {
-    }
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string tuningFile)
-    {
+        _newChannels = 0;
+        _updatedChannels = 0;
       _lastFrequency = -1f;
       _captureCard = card;
       card.TVChannelMinMax(out _minChannel, out _maxChannel);
@@ -128,6 +139,7 @@ namespace MediaPortal.TV.Scanning
       chan.TVStandard = AnalogVideoStandard.None;
       if (!_captureCard.ViewChannel(chan))
       {
+        _callback.OnStatus("Search has finished.");
         _callback.OnSignal(0, 0);
         _callback.OnProgress(100);
         _callback.OnEnded();

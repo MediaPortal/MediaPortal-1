@@ -414,7 +414,12 @@ namespace MediaPortal.Configuration.Sections
             availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8170070&rev_01#5&267465cb&0&4828f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");
             availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8170070&rev_01#5&e6752e3&0&4820f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");
             availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\pci#ven_4444&dev_0016&subsys_e8070070&rev_01#5&e6752e3&0&4020f0#{65e8773d-8f56-11d0-a3b9-00a0c9223196}\{9b365890-165f-11d0-a195-0020afd156e4}");		
+              availableVideoDevices.Add("FireDTV BDA Receiver DVBC");
+              availableVideoDeviceMonikers.Add(@"@device:pnp:\\?\avc#digital_everywhere&firedtv_c#ci&typ_5&id_0#1e04003600871200#{fd0a5af4-b41d-11d2-9c95-00c04f7971e0}\{cb365890-165f-}");
+              availableVideoDevices.Add("FusionHDTV, Transport Stream Capture");
+              availableVideoDeviceMonikers.Add(@":@device:pnp:\\?\pci#ven_14f1&dev_8802&subsys_d50018ac&rev_05#4&13699180&0&3248#{fd0a5af4-b41d-11d2-9c95-00c04f7971e0}\global");
       */
+
       string recFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
       recFolder += @"\My Recordings";
       try

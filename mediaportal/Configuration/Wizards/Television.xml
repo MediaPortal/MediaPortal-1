@@ -15,7 +15,7 @@
          <description/>
          <name>Television</name>
          <topic>General Television Settings</topic>
-         <information>Choose the type of Video Renderer supported, codec preferences, and tuner settings for your installed TV Capture card.</information>
+         <information>Choose the type of Video Renderer supported, codec preferences, timeshifting options and channel selection settings for your installed TV Capture cards.</information>
       </section>
       <section>
          <description/>

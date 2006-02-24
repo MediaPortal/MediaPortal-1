@@ -1067,10 +1067,44 @@ namespace MediaPortal.TV.Recording
     }
     public void StoreChannels(int ID, bool radio, bool tv, ref int newChannels, ref int updatedChannels, ref int newRadioChannels, ref int updatedRadioChannels)
     {
-      newChannels = 0;
-      updatedChannels = 0;
-      newRadioChannels = 0;
-      updatedRadioChannels = 0;
+      if (!SignalPresent()) return;
+      TVChannel tvChan = null;
+      int channelId = TVDatabase.GetChannelId(_channelNumber);
+      tvChan = TVDatabase.GetChannelById(channelId); 
+      if (tvChan == null)
+      {
+          //doesn't exists
+          tvChan = new TVChannel();
+          tvChan.Scrambled = false;
+          //then add a new channel to the database
+          //TODO get name from teletext
+          tvChan.Name = _channelNumber.ToString();
+          tvChan.ID = -1;
+          tvChan.Number = _channelNumber;
+          tvChan.Sort = 40000;
+          Log.WriteFile(Log.LogType.Capture, "SinkGraph: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
+          int id = TVDatabase.AddChannel(tvChan);
+          if (id < 0)
+          {
+              Log.WriteFile(Log.LogType.Capture, true, "SinkGraph: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
+          }
+          channelId = id;
+          newChannels++;
+      }
+      else
+      {
+          TVDatabase.UpdateChannel(tvChan, tvChan.Sort);
+          updatedChannels++;
+          Log.WriteFile(Log.LogType.Capture, "SinkGraph: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
+      }
+      TVDatabase.MapChannelToCard(tvChan.ID, ID);
+
+      TVGroup group = new TVGroup();
+      group.GroupName = "Analog";
+      int groupid = TVDatabase.AddGroup(group);
+      group.ID = groupid;
+      TVDatabase.MapChannelToGroup(group, tvChan);
+
     }
 
 

@@ -29,7 +29,7 @@ namespace WindowPlugins.GUISettings.Wizard.ATSC
     protected override ITuning GetTuningInterface(TVCaptureDevice captureCard)
     {
       ITuning tuning = new ATSCTuning();
-      tuning.AutoTuneTV(captureCard, this);
+      tuning.AutoTuneTV(captureCard, this, null);
       return tuning;
     }
     protected override void OnScanDone()

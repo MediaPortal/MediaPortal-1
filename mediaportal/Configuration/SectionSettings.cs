@@ -58,7 +58,7 @@ namespace MediaPortal.Configuration
     /// <summary> 
 		/// Required designer variable.
 		/// </summary>
-		private System.ComponentModel.Container components = null;
+		protected System.ComponentModel.Container components = null;
 
 		public SectionSettings()
 		{

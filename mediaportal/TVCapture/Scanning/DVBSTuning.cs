@@ -59,28 +59,20 @@ namespace MediaPortal.TV.Scanning
     {
     }
     #region ITuning Members
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback)
-    {
-      GetNumberOfDiseqcs( card );
-      DVBSSelectTPLForm dlgSelectTPL = new DVBSSelectTPLForm();
-      dlgSelectTPL.NumberOfLNBs = _diseqcLoops;
-      dlgSelectTPL.ShowDialog();
-      string[] tplFileNames = dlgSelectTPL.TransponderFiles;
-      AutoTuneTV(card, statusCallback, tplFileNames);
-    }
-    public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string countryName)
-    {
-    }
 
     public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] tplFileNames)
     {
-      _tplFiles = (string[])tplFileNames.Clone();
+        if ((tplFileNames == null) || (tplFileNames.Length == 0))
+        {
+            return;
+        }
+        GetNumberOfDiseqcs(card);
+        Log.Write("dvbs-scan: diseqc loops:{0}", _diseqcLoops);
+        _tplFiles = (string[])tplFileNames.Clone();
       for (int i = 0; i < _tplFiles.Length; ++i)
       {
         Log.Write("dvbs-scan: diseqc:{0} file:{1}", i + 1, _tplFiles[i]);
       }
-      GetNumberOfDiseqcs(card);
-      Log.Write("dvbs-scan: diseqc loops:{0}", _diseqcLoops);
       _newRadioChannels = 0;
       _updatedRadioChannels = 0;
       _newChannels = 0;

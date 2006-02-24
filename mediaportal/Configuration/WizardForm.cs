@@ -70,6 +70,11 @@ namespace MediaPortal.Configuration
       get { return wizardPages; }
     }
     static ArrayList wizardPages = new ArrayList();
+    public static WizardForm Form
+    {
+        get { return wizardForm; }
+    }
+    static WizardForm wizardForm;
 
     string wizardCaption = String.Empty;
 
@@ -95,8 +100,19 @@ namespace MediaPortal.Configuration
       wizardPages.Add(new SectionHolder(settings, topic, information, expression));
     }
 
+      public void DisableBack(bool disabled)
+      {
+          backButton.Enabled = !disabled;
+      }
+
+      public void DisableNext(bool disabled)
+      {
+          nextButton.Enabled = !disabled;
+      }
+
     public WizardForm(string sectionConfiguration)
     {
+        wizardForm = this;
       //
       // Required for Windows Form Designer support
       //
@@ -127,6 +143,7 @@ namespace MediaPortal.Configuration
         bool DVBTCard = false;
         bool DVBCCard = false;
         bool DVBSCard = false;
+        bool ATSCCard = false;
         Log.Write("found {0} tv cards", sect.captureCards.Count);
         foreach (TVCaptureDevice dev in sect.captureCards)
         {
@@ -154,6 +171,11 @@ namespace MediaPortal.Configuration
             Log.Write("Digital DVB-S Card:{0}", dev.CommercialName);
             DVBSCard = true;
           }
+          if (dev.Network == NetworkType.ATSC)
+          {
+              Log.Write("Digital ATSC Card:{0}", dev.CommercialName);
+              ATSCCard = true;
+          }
           if (dev.VideoDevice == "B2C2 MPEG-2 Source")
           {
             dev.DeleteGraph();
@@ -179,6 +201,10 @@ namespace MediaPortal.Configuration
         if (DVBSCard)
         {
           AddSection(new Sections.Wizard_DVBSTV(), "TV - DVB-S", "Digital TV Satellite configuration", "");
+        }
+        if (ATSCCard)
+        {
+            AddSection(new Sections.Wizard_ATSCTV(), "TV - ATSC", "Digital TV ATSC configuration", "");
         }
         AddSection(new Sections.TVProgramGuide(), "Television Program Guide", "Configure the Electronic Program Guide using XMLTV listings", "");
         if (Sections.Remote.IsMceRemoteInstalled(this.Handle))
