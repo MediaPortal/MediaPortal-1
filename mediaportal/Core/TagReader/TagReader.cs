@@ -94,6 +94,7 @@ namespace MediaPortal.TagReader
     {
       ITagReader reader = null;
       int prio = -1;
+      if (strFile == null) return null;
       foreach (ITagReader tmpReader in m_readers)
       {
         if (tmpReader.SupportsFile(strFile) && tmpReader.Priority > prio)
@@ -135,6 +136,7 @@ namespace MediaPortal.TagReader
     {
       ITagReader reader = null;
       int prio = -1;
+      if (strFile == null) return null;
       foreach (ITagReader tmpReader in m_readers)
       {
         if (tmpReader.SupportsFile(strFile) && tmpReader.Priority > prio)
