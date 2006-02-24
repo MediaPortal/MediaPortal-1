@@ -8681,9 +8681,9 @@
         <filter cat="tvaudio"		name="MEDION Cap7134 TV Audio"			checkdevice="true"/>
         <filter cat="crossbar"		name="MEDION Cap7134 Crossbar"			checkdevice="true"/>
         <filter cat="capture"		name="MEDION (7134) WDM Video Capture"	checkdevice="true"/>
-		<filter cat="videncoder"	name="CyberLink MPEG Video Encoder"		checkdevice="false"/>
-		<filter cat="audencoder"	name="CyberLink MPEG Audio Encoder"		checkdevice="false"/>
-		<filter cat="mux"			name="CyberLink MPEG Muxer"				checkdevice="false"/>
+		<filter cat="videncoder"	name="%videoencoder%"		checkdevice="false"/>
+		<filter cat="audencoder"	name="%audioencoder%"		checkdevice="false"/>
+		<filter cat="mux"			name="%mpegmux%"				checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"></connection>
@@ -8733,6 +8733,33 @@
         <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
         <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"		sourcepin="4" sinkfilter="encoder"		sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV 310e / MagicBox Pro (Analogue)" capturename="DTV-DVB USB Hybrid Analog/Capture" devid="vid_13d3&amp;pid_3211&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		name="M9205 TvTuner"				checkdevice="true"/>
+        <filter cat="tvaudio"		name="M9205 TvAudio"				checkdevice="true"/>
+        <filter cat="crossbar"		name="M9205 Crossbar"				checkdevice="true"/>
+        <filter cat="capture"		name="DTV-DVB USB Hybrid Analog/Capture"				checkdevice="true"/>
+		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
+		<filter cat="videncoder"	name="%videoencoder%"					checkdevice="false"/>
+		<filter cat="audencoder"	name="%audioencoder%"		checkdevice="false"/>
+		<filter cat="mux"			name="%mpegmux%"		checkdevice="false"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
