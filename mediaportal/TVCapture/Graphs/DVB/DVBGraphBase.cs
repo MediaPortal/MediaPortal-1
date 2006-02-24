@@ -1874,22 +1874,22 @@ namespace MediaPortal.TV.Recording
             }
             Log.Write("DVBGraph:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3} locked:{4} cam:{5}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality(), _tunerLocked, camType);
             _streamDemuxer.DumpPMT(pmt);
-            if (_cardProperties.SendPMT(camType,_currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
+            if (_cardProperties.SendPMT(camType, _currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
             {
               _lastPMTVersion = pmtVersion;
               return true;
             }
             else
             {
-              _refreshPmtTable=true;
+              _refreshPmtTable = true;
               _pmtSendCounter = 0;
               return true;
             }
           }
           else
           {
-              _lastPMTVersion = pmtVersion;
-              return true;
+            _lastPMTVersion = pmtVersion;
+            return true;
           }
         }
       }
@@ -2790,6 +2790,8 @@ namespace MediaPortal.TV.Recording
         ushort pid = (ushort)hwPids[i];
         SetupDemuxerPin(_pinDemuxerSections, pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
       }
+
+      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
       SendHWPids(hwPids);
 
       int offset = 3;
@@ -2812,7 +2814,7 @@ namespace MediaPortal.TV.Recording
         {
           newChannelsFound = false;
           allFound = true;
-          for (int index = 0; index < hwPids.Count; ++index)
+          for (int index = 0; index < hwPids.Count - offset; index++)
           {
             if (channelReady[index]) continue;
             if (_analyzerInterface.IsChannelReady(index) != 0)
@@ -2830,7 +2832,7 @@ namespace MediaPortal.TV.Recording
               IntPtr mmch = Marshal.AllocCoTaskMem(len);
               try
               {
-                hr = _analyzerInterface.GetChannel((UInt16)index, mmch);
+                hr = _analyzerInterface.GetChannel((UInt16)(index), mmch);
                 //byte[] ch=new byte[len];
                 //Marshal.Copy(mmch,ch,0,len);
                 chi = sections.GetChannelInfo(mmch);
@@ -2854,14 +2856,11 @@ namespace MediaPortal.TV.Recording
 
               channelReady[index] = true;
               newChannelsFound = true;
-              if (hwPids.Count > offset + index)
-              {
-                Log.Write("channel:{0}/{1} pid:0x{2:X} ready", index, hwPids.Count-offset, hwPids[offset + index]);
-                hwPids[offset + index] = (ushort)0x2000;
-              }
+              Log.Write("channel:{0}/{1} pid:0x{2:X} ready", index, (hwPids.Count - offset), hwPids[offset + index]);
+              hwPids[offset + index] = (ushort)0x2000;
             }
-          }// for (int index = 0; index < hwPids.Count; ++index)
-          
+          }// for (int index = 0; index < hwPids.Count-offset; ++index)
+
           // update h/w pids
           if (!allFound && newChannelsFound)
           {
@@ -2882,9 +2881,7 @@ namespace MediaPortal.TV.Recording
             {
               dt = DateTime.Now;
             }
-            System.Windows.Forms.Application.DoEvents();
             System.Threading.Thread.Sleep(500);
-            System.Windows.Forms.Application.DoEvents();
             TimeSpan ts = DateTime.Now - dt;
             if (ts.TotalMilliseconds >= 2000) break;
           }
@@ -2897,7 +2894,7 @@ namespace MediaPortal.TV.Recording
         return;
       }
 
-      Log.WriteFile(Log.LogType.Capture, "DVBGraph: found {0}/{1} channels", transp.channels.Count,hwPids.Count-offset);
+      Log.WriteFile(Log.LogType.Capture, "DVBGraph: found {0}/{1} channels", transp.channels.Count, hwPids.Count - offset);
       for (int i = 0; i < transp.channels.Count; ++i)
       {
         DVBSections.ChannelInfo info = (DVBSections.ChannelInfo)transp.channels[i];
@@ -3732,7 +3729,7 @@ namespace MediaPortal.TV.Recording
           _refreshPmtTable = true;
           SendPMT();
         }
-        if (Recorder.IsCardViewing(_cardId) || _graphState == State.Epg || _graphState==State.Radio)
+        if (Recorder.IsCardViewing(_cardId) || _graphState == State.Epg || _graphState == State.Radio)
         {
           Log.WriteFile(Log.LogType.Capture, "DVBGraph: grab epg for {0}", _currentTuningObject.ServiceName);
           _epgGrabber.GrabEPG(_currentTuningObject.ServiceName, _currentTuningObject.HasEITSchedule == true);
@@ -3940,7 +3937,7 @@ namespace MediaPortal.TV.Recording
     public void StopEpgGrabbing()
     {
       if (_graphState != State.Epg) return;
-      if (_mediaControl!=null)
+      if (_mediaControl != null)
         _mediaControl.Stop();
       _isGraphRunning = false;
       _graphState = State.Created;
