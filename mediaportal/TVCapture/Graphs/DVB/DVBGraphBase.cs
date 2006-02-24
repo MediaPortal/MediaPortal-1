@@ -2775,37 +2775,34 @@ namespace MediaPortal.TV.Recording
         System.Threading.Thread.Sleep(2000);
         if (_scanPidListReady) break;
       }
-      string pidList = "";
-      for (int i = 0; i < _scanPidList.Count; ++i)
-        pidList += String.Format("0x{0:X},", (ushort)_scanPidList[i]);
+      ArrayList hwPids = (ArrayList)_scanPidList.Clone();
 
-      Log.Write("check...{0} pids:{1} {2}", _scanPidListReady, _scanPidList.Count, pidList);
+      string pidList = "";
+      for (int i = 0; i < hwPids.Count; ++i)
+        pidList += String.Format("0x{0:X},", (ushort)hwPids[i]);
+
+      Log.Write("check...{0} pids:{1} {2}", _scanPidListReady, hwPids.Count, pidList);
       if (_scanPidListReady == false) return;
 
-      lock (this)
+      //setup MPEG2 demuxer so it sends the PMT's to the analyzer filter
+      for (int i = 0; i < hwPids.Count; ++i)
       {
-        //setup MPEG2 demuxer so it sends the PMT's to the analyzer filter
-        for (int i = 0; i < _scanPidList.Count; ++i)
-        {
-          ushort pid = (ushort)_scanPidList[i];
-          SetupDemuxerPin(_pinDemuxerSections, pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
-        }
-        SendHWPids(_scanPidList);
+        ushort pid = (ushort)hwPids[i];
+        SetupDemuxerPin(_pinDemuxerSections, pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
       }
+      SendHWPids(hwPids);
 
       int offset = 3;
       if (Network() == NetworkType.ATSC)
       {
         offset = 1;
       }
-      ArrayList hwPids = (ArrayList)_scanPidList.Clone();
       using (DVBSections sections = new DVBSections())
       {
-        ushort count = 0;
         sections.DemuxerObject = _streamDemuxer;
         sections.Timeout = 2500;
 
-        //wait until all PMT's are received (max 10secs)
+        //wait until all PMT's are received 
         dt = DateTime.Now;
         transp.channels = new ArrayList();
         bool allFound = true;
