@@ -991,29 +991,68 @@ namespace MediaPortal.TV.Recording
 
     public void SetAudioLanguage(int audioPid)
     {
-      if (audioPid != _currentTuningObject.AudioPid)
+      if (audioPid == _currentTuningObject.AudioPid) return;
+      Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: change audio pid {0:X}-> pid:{1:X} {2}", _currentTuningObject.AudioPid, audioPid,_graphState);
+
+      SetupDemuxerPin(_pinAC3Out, audioPid, (int)MediaSampleContent.ElementaryStream, true);
+      SetupDemuxerPin(_pinDemuxerAudio, audioPid, (int)MediaSampleContent.ElementaryStream, true);
+
+      if (audioPid == _currentTuningObject.AC3Pid)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: change audio stream from pid {0:X}-> pid:{1:X}", _currentTuningObject.AudioPid, audioPid);
-        int hr;
-        if (audioPid == _currentTuningObject.AC3Pid)
+        Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: AC3 audio");
+        //check if ac3 pin is connected
+        IPin pin;
+        _pinAC3Out.ConnectedTo(out pin);
+        if (pin == null)
         {
-          hr = SetupDemuxer(_pinDemuxerVideo, _currentTuningObject.VideoPid, _pinDemuxerAudio, audioPid, _pinAC3Out, audioPid);
+          //no? then connect ac3 pin
+          if (_mediaControl != null)
+          {
+            Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: stop graph");
+            _mediaControl.Stop();
+            Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: disconnect MP2 pin");
+            _pinDemuxerAudio.Disconnect();
+            Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: connect AC3 pin");
+            _graphBuilder.Render(_pinAC3Out);
+            Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: start graph");
+            _mediaControl.Run();
+          }
         }
         else
         {
-          hr = SetupDemuxer(_pinDemuxerVideo, _currentTuningObject.VideoPid, _pinDemuxerAudio, audioPid, _pinAC3Out, _currentTuningObject.AC3Pid);
-        }
-        if (hr != 0)
-        {
-          Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: SetupDemuxer FAILED: errorcode {0}", hr.ToString());
-          return;
-        }
-        else
-        {
-          _currentTuningObject.AudioPid = audioPid;
-          SetupMTSDemuxerPin();
+          Marshal.ReleaseComObject(pin);
         }
       }
+      else
+      {
+        Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: MP2 audio");
+        //check if mpeg2 audio pin is connected
+        IPin pin;
+        _pinDemuxerAudio.ConnectedTo(out pin);
+        if (pin == null)
+        {
+          //no? then connect mpeg2 audio pin
+          if (_mediaControl != null)
+          {
+            Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: stop graph");
+            _mediaControl.Stop();
+            Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: disconnect AC3 pin");
+            _pinAC3Out.Disconnect();
+            Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: connect MP2 pin");
+            _graphBuilder.Render(_pinDemuxerAudio);
+            Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: start graph");
+            _mediaControl.Run();
+          }
+        }
+        else
+        {
+          Marshal.ReleaseComObject(pin);
+        }
+      }
+
+      _currentTuningObject.AudioPid = audioPid;
+      SetupMTSDemuxerPin();
+      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }
 
     public ArrayList GetAudioLanguageList()
