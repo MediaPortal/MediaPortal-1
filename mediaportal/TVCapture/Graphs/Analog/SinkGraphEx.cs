@@ -717,12 +717,15 @@ namespace MediaPortal.TV.Recording
         string[] audioEncoders = new string[] {"InterVideo Audio Encoder", "LeadTek Audio Encoder", "CyberLink Audio Encoder", "Cyberlink Audio Encoder", "ATI Media Center Audio Encoder" };
         Filters filters = new Filters();
         FilterCollection audioCodecs = filters.AudioCompressors;
+        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  audio codecs installed:{0} preferred:{1}", audioCodecs.Count, audioEncoders.Length);
         for (int i = 0; i < audioEncoders.Length; ++i)
         {
+          Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  try audio codec:'{0}'", audioEncoders[i]);
           foreach (Filter audioCodec in audioCodecs)
           {
             if (String.Compare(audioCodec.Name,audioEncoders[i],true)==0)
             {
+              Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  audio codec:'{0}' is installed", audioEncoders[i]);
               try
               {
                 Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", audioCodec.Name, audioCodec.MonikerString);
@@ -731,6 +734,7 @@ namespace MediaPortal.TV.Recording
               }
               catch
               {
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  failed to add audio codec:'{0}'", audioEncoders[i]);
               }
             }
           }
@@ -743,12 +747,15 @@ namespace MediaPortal.TV.Recording
         string[] videoEncoders = new string[] { "InterVideo Video Encoder", "LeadTek MPEG Video Encoder", "CyberLink MPEG Video Encoder", "ATI Media Center Video Encoder" };
         Filters filters = new Filters();
         FilterCollection videoCodecs = filters.VideoCompressors;
+        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  video codecs installed:{0} preferred:{1}", videoCodecs.Count, videoEncoders.Length);
         for (int i = 0; i < videoEncoders.Length; ++i)
         {
+          Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  try video codec:'{0}'", videoEncoders[i]);
           foreach (Filter videoCodec in videoCodecs)
           {
             if (String.Compare(videoCodec.Name, videoEncoders[i], true) == 0)
             {
+              Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  video codec:'{0}' is installed", videoEncoders[i]);
               try
               {
                 Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", videoCodec.Name, videoCodec.MonikerString);
@@ -757,6 +764,7 @@ namespace MediaPortal.TV.Recording
               }
               catch
               {
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  failed to add video codec:'{0}'", videoEncoders[i]);
               }
             }
           }
@@ -769,12 +777,15 @@ namespace MediaPortal.TV.Recording
         string[] multiplexers = new string[] { "InterVideo Multiplexer", "LeadTek MPEG Muxer", "CyberLink MPEG Muxer", "ATI Media Center Multiplexer" };
         Filters filters = new Filters();
         FilterCollection legacyFilters = filters.LegacyFilters;
+        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  legacy filters installed:{0} preferred:{1}", legacyFilters.Count, multiplexers.Length);
         for (int i = 0; i < multiplexers.Length; ++i)
         {
+          Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  try multiplexer:'{0}'", multiplexers[i]);
           foreach (Filter filter in legacyFilters)
           {
             if (String.Compare(filter.Name, multiplexers[i], true) == 0)
             {
+              Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  multiplexer:'{0}' is installed", multiplexers[i]);
               try
               {
                 Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", filter.Name, filter.MonikerString);
@@ -783,6 +794,7 @@ namespace MediaPortal.TV.Recording
               }
               catch
               {
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  failed to add multiplexer:'{0}'", multiplexers[i]);
               }
             }
           }
