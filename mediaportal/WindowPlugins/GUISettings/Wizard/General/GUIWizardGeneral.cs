@@ -10,10 +10,10 @@ namespace MediaPortal.GUI.Settings.Wizard
 	{
 		[SkinControlAttribute(4)]		protected GUICheckMarkControl cmInternetYes = null;
 		[SkinControlAttribute(5)]		protected GUICheckMarkControl cmInternetNo = null;
-		[SkinControlAttribute(6)]		protected GUICheckMarkControl cmFullScreenYes = null;
-        [SkinControlAttribute(7)]       protected GUICheckMarkControl cmFullScreenNo = null;
-        [SkinControlAttribute(8)]       protected GUICheckMarkControl cmAutoStartYes = null;
-        [SkinControlAttribute(9)]       protected GUICheckMarkControl cmAutoStartNo = null;
+		[SkinControlAttribute(6)]		protected GUICheckMarkControl cmDeadicatedPC = null;
+        [SkinControlAttribute(7)]       protected GUICheckMarkControl cmSharedPC = null;
+				//[SkinControlAttribute(8)]       protected GUICheckMarkControl cmAutoStartYes = null;
+				//[SkinControlAttribute(9)]       protected GUICheckMarkControl cmAutoStartNo = null;
         //[SkinControlAttribute(6)]       protected GUICheckMarkControl cmDeadicatedYes = null;
         //[SkinControlAttribute(7)]       protected GUICheckMarkControl cmDeadicatedNo = null;
 		[SkinControlAttribute(26)]		protected GUIButtonControl    btnNext = null;
@@ -41,44 +41,28 @@ namespace MediaPortal.GUI.Settings.Wizard
 		{
             if (cmInternetYes == control)   OnInternetAccess(true);
             if (cmInternetNo == control)    OnInternetAccess(false);
-            if (cmFullScreenYes == control) OnFullScreen(true);
-            if (cmFullScreenNo == control)  OnFullScreen(false);
-			if (btnNext == control) OnNextPage();
+						if (cmDeadicatedPC == control) OnUsageType(true);
+						if (cmSharedPC == control) OnUsageType(false);
+			      if (btnNext == control) OnNextPage();
             if (btnBack == control) GUIWindowManager.ShowPreviousWindow();
-			base.OnClicked (controlId, control, actionType);
+			      base.OnClicked (controlId, control, actionType);
 		}
 
-        void OnFullScreen(bool yes)
+        void OnUsageType(bool deadicated)
 		{
-            if (yes)
+			if (deadicated)
             {
-                cmFullScreenYes.Selected = true;
-                cmFullScreenNo.Selected = false;
-                GUIControl.FocusControl(GetID, cmFullScreenYes.GetID);
+							  cmDeadicatedPC.Selected = true;
+								cmSharedPC.Selected = false;
+								GUIControl.FocusControl(GetID, cmDeadicatedPC.GetID);
             }
             else
             {
-                cmFullScreenYes.Selected = false;
-                cmFullScreenNo.Selected = true;
-                GUIControl.FocusControl(GetID, cmFullScreenNo.GetID);
+							cmDeadicatedPC.Selected = false;
+							cmSharedPC.Selected = true;
+							GUIControl.FocusControl(GetID, cmSharedPC.GetID);
             }
 		}
-
-        void OnAutoStart(bool yes)
-        {
-            if (yes)
-            {
-                cmAutoStartYes.Selected = true;
-                cmAutoStartNo.Selected = false;
-                GUIControl.FocusControl(GetID, cmAutoStartYes.GetID);
-            }
-            else
-            {
-                cmAutoStartYes.Selected = false;
-                cmAutoStartNo.Selected = true;
-                GUIControl.FocusControl(GetID, cmAutoStartNo.GetID);
-            }
-        }
 
         void OnInternetAccess(bool yes)
         {
@@ -101,8 +85,9 @@ namespace MediaPortal.GUI.Settings.Wizard
 			using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
                 OnInternetAccess(xmlreader.GetValueAsBool("general", "internetaccess", true));
-                OnFullScreen(xmlreader.GetValueAsBool("general", "startfullscreen", true));
-                OnAutoStart(xmlreader.GetValueAsBool("general", "autostart", false));
+								OnUsageType(true);
+								//OnFullScreen(xmlreader.GetValueAsBool("general", "startfullscreen", true));
+								//OnAutoStart(xmlreader.GetValueAsBool("general", "autostart", false));
 			}
 		}
 
@@ -112,28 +97,30 @@ namespace MediaPortal.GUI.Settings.Wizard
 			{
 				xmlwriter.SetValueAsBool("general", "internetaccess", cmInternetYes.Selected);
 
-                // general defaults
-                bool startfullscreen = cmFullScreenYes.Selected;
-                bool mousesupport = true;
-                bool autohidemouse = false;
-                bool autostart = cmAutoStartYes.Selected;
-                bool baloontips = false;
-                bool hidetaskbar = false;
-                bool dblclickasrightclick = false;
-                bool alwaysontop = false;
-                bool exclusivemode = false;
-                bool useVMR9ZapOSD = false;
-                bool enableguisounds = false;
-                bool screensaver = false;
+				// general defaults
+        bool startfullscreen = false;
+        bool mousesupport = true;
+        bool autohidemouse = false;
+        bool autostart = false;
+        bool baloontips = false;
+        bool hidetaskbar = false;
+        bool dblclickasrightclick = false;
+        bool alwaysontop = false;
+        bool exclusivemode = false;
+        bool useVMR9ZapOSD = false;
+        bool enableguisounds = false;
+        bool screensaver = false;
 
-                if (startfullscreen)
-                {
-                    autohidemouse = true;
-                    baloontips = true;
-                    hidetaskbar = true;
-                    alwaysontop = true;
-                    enableguisounds = true;
-                }
+				if (cmDeadicatedPC.Selected)
+				{
+					startfullscreen = true;
+					autostart = true;
+					autohidemouse = true;
+          baloontips = true;
+          hidetaskbar = true;
+          alwaysontop = true;
+          enableguisounds = true;
+        }
 
                 xmlwriter.SetValueAsBool("general", "startfullscreen", startfullscreen);
                 xmlwriter.SetValueAsBool("general", "mousesupport", mousesupport);

@@ -5011,15 +5011,19 @@
   </string>
   <string>
     <id>200028</id>
-    <value>Does this PC have Internet access?</value>
+    <value>Does this PC have always on Internet access?</value>
   </string>
   <string>
     <id>200029</id>
-    <value>Start MediaPortal in full Screen mode?</value>
+    <value>How will you use MediaPortal?</value>
   </string>
   <string>
     <id>200030</id>
-    <value>Automatically start MediaPortal when this PC starts?</value>
+    <value>On a deadicated PC</value>
+  </string>
+  <string>
+    <id>200038</id>
+    <value>On a desktop PC shared with other applications</value>
   </string>
   <string>
     <id>200031</id>
