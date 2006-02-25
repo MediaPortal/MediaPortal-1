@@ -146,9 +146,16 @@ namespace MediaPortal.WebEPG
 
             if ((sepPos = strTime.IndexOfAny(timeSeperators)) != -1) // IndexOf(":")) != -1)
             {
-                iTime[0] = int.Parse(strTime.Substring(0, sepPos));
-                iTime[1] = int.Parse(strTime.Substring(sepPos + 1, 2));
-                //found = true;
+                try
+                {
+                    iTime[0] = int.Parse(strTime.Substring(0, sepPos));
+                    iTime[1] = int.Parse(strTime.Substring(sepPos + 1, 2));
+                } 
+                catch(Exception)
+                {
+                    // log exception - time parsing error (Warning) - template got some other text
+                    return null;
+                }
             }
             else
             {

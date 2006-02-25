@@ -6,7 +6,24 @@
 
   <section name="ChannelList">
 
-    <entry name="tv2@tv2.dk">td2</entry>	<!-- TV2 -->
+<entry name="dr1@dr.dk">dk1</entry>			<!-- DR1 -->
+<entry name="dr2@dr.dk">dk2</entry>			<!-- DR2 -->
+<entry name="tv2@tv2.dk">td2</entry>			<!-- TV2 -->
+<entry name="tv3@tv3">dk3</entry>			<!-- tv3 -->
+<entry name="tv3+@tv2.dk">d3%20</entry>			<!-- tv3+ -->
+<entry name="tv1000family@tv1000.dk">1fa</entry>	<!-- tv1000 family -->
+<entry name="tv1000action@tv1000.dk">1ac</entry>	<!-- tv1000 action-->
+<entry name="tv1000nordic@tv1000.dk">1fa</entry>	<!-- tv1000 Nordic-->
+<entry name="tv1000@tv1000.dk">t0d</entry>		<!-- tv1000 -->
+<entry name="tv1000classic@tv1000.dk">t1d</entry>	<!-- tv1000 Classic-->
+<entry name="history@viasat.dk">vhi</entry>		<!-- History -->
+<entry name="viasatsport1@viasat.dk">vdk</entry>	<!-- Viasat sport 1 -->
+<entry name="viasatsport2@viasat.dk">vs2</entry>	<!-- Viasat sport 2 -->
+<entry name="viasatsport3@viasat.dk">vs3</entry>	<!-- Viasat sport 3 -->
+<entry name="disney.dk">218</entry>			<!-- Disney -->
+<entry name="dk.hallmarkchannel.com">hlk</entry>	<!-- Hallmark -->
+<entry name="nickelodeon.dk">nis</entry>		<!-- nickelodeon -->
+<entry name="vh1e.com">vh1</entry>			<!-- vh1 -->
 
 
   </section>
