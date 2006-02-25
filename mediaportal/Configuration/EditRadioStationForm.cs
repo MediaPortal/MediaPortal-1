@@ -67,10 +67,6 @@ namespace MediaPortal.Configuration
       //
       InitializeComponent();
 
-      //
-      // Set default settings
-      //
-      UpdateControlStates();
     }
 
     /// <summary>
@@ -291,12 +287,16 @@ namespace MediaPortal.Configuration
       this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Enter properties for the radio station";
+      this.Load += new System.EventHandler(this.EditRadioStationForm_Load);
       this.groupBox1.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
     #endregion
-
+      private void EditRadioStationForm_Load(object sender, System.EventArgs e)
+      {
+          UpdateControlStates();
+      }
     private void okButton_Click(object sender, System.EventArgs e)
     {
       this.DialogResult = DialogResult.OK;
@@ -322,6 +322,10 @@ namespace MediaPortal.Configuration
       if (typeComboBox.SelectedItem == null)
         typeComboBox.SelectedItem = "Radio";
 
+      if ((station != null) && (station.ID != -1))
+      {
+          typeComboBox.Enabled = false;
+      }
       bitrateTextBox.Enabled = urlTextBox.Enabled = searchButton.Enabled = typeComboBox.SelectedItem.Equals("Stream");
       frequencyTextBox.Enabled = !urlTextBox.Enabled && !searchButton.Enabled;
     }
@@ -370,7 +374,6 @@ namespace MediaPortal.Configuration
 
         station.Type = (string)typeComboBox.SelectedItem;
         station.Name = nameTextBox.Text;
-
         try
         {
 

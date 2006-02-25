@@ -124,7 +124,7 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     private int _defaultCountryCode;				// #MW# Should be made serializable...??
     [NonSerialized]
-    private int _cardId;
+    private int _cardId = -1;
     [NonSerialized]
     private State _currentGraphState = State.None;
     [NonSerialized]
@@ -157,6 +157,8 @@ namespace MediaPortal.TV.Recording
     GraphHelper _graphHelper = new GraphHelper();
     [NonSerialized]
     CommandProcessor _processor;
+    [NonSerialized]
+    static Hashtable _devices = new Hashtable();
 
     /// <summary>
     /// #MW#
@@ -170,7 +172,15 @@ namespace MediaPortal.TV.Recording
     public event OnTvRecordingHandler OnTvRecordingStarted = null;
     #endregion
 
-    #region ctor
+      public static TVCaptureDevice GetTVCaptureDevice(int cardId)
+      {
+          return (TVCaptureDevice)_devices[cardId];
+      }
+      public static Hashtable GetTVCaptureDevices()
+      {
+          return _devices;           
+      }
+      #region ctor
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -413,12 +423,22 @@ namespace MediaPortal.TV.Recording
     public int ID
     {
       get { return _cardId; }
-      set
-      {
-        CtorInit();
-        _cardId = value;
-        _currentGraphState = State.Initialized;
-      }
+        set 
+        {
+            if (_cardId != -1)
+            {
+                _devices.Remove(_cardId);
+            }
+            _cardId = value;
+            if (_devices.ContainsKey(_cardId))
+            {
+                _devices[_cardId] = this;
+            }
+            else
+            {
+                _devices.Add(_cardId, this);
+            }
+        }
     }
 
     /// <summary>
@@ -533,7 +553,10 @@ namespace MediaPortal.TV.Recording
     }
     public bool IsRadio
     {
-      get { return (_currentGraphState == State.Radio || _currentGraphState == State.RadioTimeshifting); }
+      get 
+      {
+          return (_currentGraphState == State.Radio || _currentGraphState == State.RadioTimeshifting); 
+      }
     }
 
     /// <summary>

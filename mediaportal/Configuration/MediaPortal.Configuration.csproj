@@ -232,9 +232,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnalogRadioTuningForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -283,6 +280,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SectionSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Wizard_AnalogRadio.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Wizard_ATSCTV.cs">
@@ -510,10 +510,6 @@
     <Compile Include="WizardForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <EmbeddedResource Include="AnalogRadioTuningForm.resx">
-      <DependentUpon>AnalogRadioTuningForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="EditCaptureCardForm.resx">
       <DependentUpon>EditCaptureCardForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -554,6 +550,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SectionSettings.resx">
       <DependentUpon>SectionSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Wizard_AnalogRadio.resx">
+      <DependentUpon>Wizard_AnalogRadio.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Wizard_ATSCTV.resx">
@@ -768,6 +768,7 @@
     <EmbeddedResource Include="WizardForm.resx">
       <DependentUpon>WizardForm.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Resources\Image1.png" />
     <Content Include="Wizards\DVD.xml" />
     <Content Include="Wizards\FirstTimeSetup.xml" />
     <Content Include="Wizards\Movies.xml" />

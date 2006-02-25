@@ -190,7 +190,8 @@ namespace MediaPortal.Configuration
         AddSection(new Sections.Wizard_SelectPlugins(), "Media", "Let MediaPortal find your media (music, movies, pictures) on your harddisk");
         if (analogCard)
         {
-          AddSection(new Sections.Wizard_AnalogTV(), "TV - analog", "Analog TV/Radio configuration", "");
+          AddSection(new Sections.Wizard_AnalogTV(), "TV - Analog", "Analog TV configuration", "");
+          AddSection(new Sections.Wizard_AnalogRadio(), "Radio - Analog", "Analog Radio configuration", "");
         }
         if (DVBTCard)
         {
@@ -215,11 +216,6 @@ namespace MediaPortal.Configuration
         }
         AddSection(new Sections.Weather(), "Weather", "My weather setup", "");
         AddSection(new Sections.Wizard_Finished(), "Congratulations", "You have now finished the setup wizard.");
-      }
-
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      {
-        xmlwriter.SetValue("capture", "tuner", "Cable");
       }
     }
 

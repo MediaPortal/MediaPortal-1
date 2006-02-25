@@ -40,11 +40,12 @@ using MediaPortal.GUI.Library;
 using DShowNET;
 namespace MediaPortal.Configuration.Sections
 {
-  public class Wizard_AnalogTV : Wizard_ScanBase
+  public class Wizard_AnalogRadio : Wizard_ScanBase
   {
       private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
       private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
       private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
+      private MediaPortal.UserInterface.Controls.MPGroupBox groupBox4;
       private MediaPortal.UserInterface.Controls.MPLabel label1;
       private MediaPortal.UserInterface.Controls.MPLabel label2;
       private MediaPortal.UserInterface.Controls.MPComboBox cbCountry;
@@ -54,28 +55,31 @@ namespace MediaPortal.Configuration.Sections
       private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
       private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
       private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
+      private MediaPortal.UserInterface.Controls.MPLabel mpLabel6;
       private MediaPortal.UserInterface.Controls.MPComboBox cbInput;
       private MediaPortal.UserInterface.Controls.MPComboBox cbCities;
       private MediaPortal.UserInterface.Controls.MPButton buttonImport;
+      private MediaPortal.UserInterface.Controls.MPComboBox sensitivityComboBox;
       
-      private Panel panel1;
-      private ListView listView1;
+      private MediaPortal.UserInterface.Controls.MPListView listView1;
       private ColumnHeader columnHeader1;
       private ColumnHeader columnHeader2;
+      private ColumnHeader columnHeader3;
       private ImageList imageList1;
 
 
      bool _groupBox2Enabled = true;
       bool _loadingInfo = false;
     XmlDocument docSetup;
-    public Wizard_AnalogTV()
+    public Wizard_AnalogRadio()
       : this("Analog TV")
     {
     }
 
-    public Wizard_AnalogTV(string name)
+      public Wizard_AnalogRadio(string name)
       : base(name)
     {
+        Radio = true;
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
@@ -91,12 +95,12 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
         this.components = new System.ComponentModel.Container();
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Wizard_AnalogTV));
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Wizard_AnalogRadio));
         this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-        this.panel1 = new System.Windows.Forms.Panel();
-        this.listView1 = new System.Windows.Forms.ListView();
+        this.listView1 = new MediaPortal.UserInterface.Controls.MPListView();
         this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
         this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+        this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
         this.lblStatus2 = new MediaPortal.UserInterface.Controls.MPLabel();
         this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
         this.progressBarQuality = new System.Windows.Forms.ProgressBar();
@@ -116,10 +120,14 @@ namespace MediaPortal.Configuration.Sections
         this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
         this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
         this.cbInput = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+        this.sensitivityComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
         this.imageList1 = new System.Windows.Forms.ImageList(this.components);
         this.groupBox1.SuspendLayout();
         this.groupBox2.SuspendLayout();
         this.groupBox3.SuspendLayout();
+        this.groupBox4.SuspendLayout();
         this.SuspendLayout();
         // 
         // groupBox1
@@ -127,7 +135,6 @@ namespace MediaPortal.Configuration.Sections
         this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                     | System.Windows.Forms.AnchorStyles.Left)
                     | System.Windows.Forms.AnchorStyles.Right)));
-        this.groupBox1.Controls.Add(this.panel1);
         this.groupBox1.Controls.Add(this.listView1);
         this.groupBox1.Controls.Add(this.lblStatus2);
         this.groupBox1.Controls.Add(this.mpLabel3);
@@ -137,59 +144,58 @@ namespace MediaPortal.Configuration.Sections
         this.groupBox1.Controls.Add(this.progressBarStrength);
         this.groupBox1.Controls.Add(this.lblStatus);
         this.groupBox1.Controls.Add(this.progressBarProgress);
-        this.groupBox1.Controls.Add(this.buttonScan);
         this.groupBox1.Controls.Add(this.label1);
         this.groupBox1.Controls.Add(this.groupBox2);
         this.groupBox1.Controls.Add(this.groupBox3);
+        this.groupBox1.Controls.Add(this.groupBox4);
         this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
         this.groupBox1.Location = new System.Drawing.Point(5, 5);
         this.groupBox1.Name = "groupBox1";
         this.groupBox1.Size = new System.Drawing.Size(532, 391);
         this.groupBox1.TabIndex = 0;
         this.groupBox1.TabStop = false;
-        this.groupBox1.Text = "Setup Analog TV";
-        // 
-        // panel1
-        // 
-        this.panel1.BackColor = System.Drawing.SystemColors.WindowFrame;
-        this.panel1.Location = new System.Drawing.Point(16, 205);
-        this.panel1.Name = "panel1";
-        this.panel1.Size = new System.Drawing.Size(222, 183);
-        this.panel1.TabIndex = 20;
+        this.groupBox1.Text = "Setup Analog Radio";
         // 
         // listView1
         // 
         this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
-            this.columnHeader2});
-        this.listView1.Location = new System.Drawing.Point(245, 205);
+            this.columnHeader2,
+            this.columnHeader3});
+        this.listView1.Location = new System.Drawing.Point(16, 205);
         this.listView1.MultiSelect = false;
         this.listView1.Name = "listView1";
-        this.listView1.Size = new System.Drawing.Size(151, 183);
+        this.listView1.Size = new System.Drawing.Size(380, 183);
         this.listView1.TabIndex = 21;
         this.listView1.UseCompatibleStateImageBehavior = false;
-        this.listView1.View = System.Windows.Forms.View.Details;
-        this.listView1.SmallImageList = this.imageList1;
+        this.listView1.LargeImageList = this.imageList1;
+        this.listView1.ShowItemToolTips = true;
+        this.listView1.Sorting = System.Windows.Forms.SortOrder.Ascending;
         this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
         this.listView1.ItemActivate += new EventHandler(this.listView1_ItemActivate);
         this.listView1.KeyUp += new KeyEventHandler(this.listView1_KeyUp);
         // 
         // columnHeader1
         // 
-        this.columnHeader1.Text = "Name";
+        this.columnHeader1.Text = "Station";
         this.columnHeader1.Width = 100;
         // 
         // columnHeader2
         // 
-        this.columnHeader2.Text = "Ch.";
+        this.columnHeader2.Text = "Frequency";
         this.columnHeader2.Width = 50;
+        // 
+        // columnHeader2
+        // 
+        this.columnHeader3.Text = "Channel";
+        this.columnHeader3.Width = 50;
         // 
         // imageList1
         // 
+
         this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
         this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
         this.imageList1.Images.SetKeyName(0, "");
-        this.imageList1.Images.SetKeyName(1, "");
         // 
         // lblStatus2
         // 
@@ -211,8 +217,7 @@ namespace MediaPortal.Configuration.Sections
         // 
         // progressBarQuality
         // 
-        this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.progressBarQuality.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left))));
         this.progressBarQuality.Location = new System.Drawing.Point(114, 140);
         this.progressBarQuality.Name = "progressBarQuality";
         this.progressBarQuality.Size = new System.Drawing.Size(325, 16);
@@ -237,8 +242,7 @@ namespace MediaPortal.Configuration.Sections
         // 
         // progressBarStrength
         // 
-        this.progressBarStrength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.progressBarStrength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left))));
         this.progressBarStrength.Location = new System.Drawing.Point(114, 121);
         this.progressBarStrength.Name = "progressBarStrength";
         this.progressBarStrength.Size = new System.Drawing.Size(325, 16);
@@ -257,23 +261,11 @@ namespace MediaPortal.Configuration.Sections
         // 
         // progressBarProgress
         // 
-        this.progressBarProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.progressBarProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left))));
         this.progressBarProgress.Location = new System.Drawing.Point(114, 100);
         this.progressBarProgress.Name = "progressBarProgress";
         this.progressBarProgress.Size = new System.Drawing.Size(325, 16);
         this.progressBarProgress.TabIndex = 4;
-        // 
-        // buttonScan
-        // 
-        this.buttonScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-        this.buttonScan.Location = new System.Drawing.Point(454, 64);
-        this.buttonScan.Name = "buttonScan";
-        this.buttonScan.Size = new System.Drawing.Size(72, 22);
-        this.buttonScan.TabIndex = 3;
-        this.buttonScan.Text = "Scan";
-        this.buttonScan.UseVisualStyleBackColor = true;
-        this.buttonScan.Click += new System.EventHandler(this.buttonScan_Click);
         // 
         // label1
         // 
@@ -283,8 +275,8 @@ namespace MediaPortal.Configuration.Sections
         this.label1.Name = "label1";
         this.label1.Size = new System.Drawing.Size(510, 32);
         this.label1.TabIndex = 0;
-        this.label1.Text = "Select your country and input source and press \"Scan\" to scan for TV channels. Or" +
-            " select your city and press \"Download\" to import TV channels from MediaPortal We" +
+        this.label1.Text = "Select your country and input source and press \"Scan\" to scan for Radio Stations. Or" +
+            " select your city and press \"Download\" to import Radio Stations from MediaPortal We" +
             "b Site.";
         // 
         // groupBox2
@@ -302,7 +294,7 @@ namespace MediaPortal.Configuration.Sections
         this.groupBox2.Size = new System.Drawing.Size(122, 108);
         this.groupBox2.TabIndex = 0;
         this.groupBox2.TabStop = false;
-        this.groupBox2.Text = "Channel Download";
+        this.groupBox2.Text = "Radio Download";
         // 
         // cbCities
         // 
@@ -338,8 +330,7 @@ namespace MediaPortal.Configuration.Sections
         // groupBox3
         // 
         this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                    | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
+                    | System.Windows.Forms.AnchorStyles.Left))));
         this.groupBox3.Controls.Add(this.cbCountry);
         this.groupBox3.Controls.Add(this.mpLabel4);
         this.groupBox3.Controls.Add(this.label2);
@@ -351,7 +342,7 @@ namespace MediaPortal.Configuration.Sections
         this.groupBox3.Size = new System.Drawing.Size(420, 46);
         this.groupBox3.TabIndex = 0;
         this.groupBox3.TabStop = false;
-        this.groupBox3.Text = "TV Tuner";
+        this.groupBox3.Text = "Radio Tuner";
         // 
         // cbCountry
         // 
@@ -381,8 +372,7 @@ namespace MediaPortal.Configuration.Sections
         // 
         // cbInput
         // 
-        this.cbInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.cbInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left))));
         this.cbInput.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
         this.cbInput.Items.AddRange(new object[] {
             "Antenna",
@@ -393,14 +383,64 @@ namespace MediaPortal.Configuration.Sections
         this.cbInput.TabIndex = 2;
         this.cbInput.SelectedIndexChanged += new System.EventHandler(this.cbInput_SelectedIndexChanged_1);
         // 
+        // groupBox4
+        // 
+        this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom));
+        this.groupBox4.Controls.Add(this.buttonScan);
+        this.groupBox4.Controls.Add(this.mpLabel6);
+        this.groupBox4.Controls.Add(this.sensitivityComboBox);
+        this.groupBox4.Enabled = true;
+        this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.groupBox4.Location = new System.Drawing.Point(446, 48);
+        this.groupBox4.Name = "groupBox4";
+        this.groupBox4.Size = new System.Drawing.Size(82, 95);
+        this.groupBox4.TabIndex = 0;
+        this.groupBox4.TabStop = false;
+        this.groupBox4.Text = "Scan";
+        // 
+        // buttonScan
+        // 
+        this.buttonScan.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom));
+        this.buttonScan.Location = new System.Drawing.Point(5, 14);
+        this.buttonScan.Name = "buttonScan";
+        this.buttonScan.Size = new System.Drawing.Size(72, 22);
+        this.buttonScan.TabIndex = 3;
+        this.buttonScan.Text = "Scan";
+        this.buttonScan.UseVisualStyleBackColor = true;
+        this.buttonScan.Click += new System.EventHandler(this.buttonScan_Click);
+        // 
+        // mpLabel6
+        // 
+        this.mpLabel6.Location = new System.Drawing.Point(4, 46);
+        this.mpLabel6.Name = "mpLabel6";
+        this.mpLabel6.Size = new System.Drawing.Size(60, 17);
+        this.mpLabel6.TabIndex = 19;
+        this.mpLabel6.Text = "Sensitivity:";
+        // 
+        // sensitivityComboBox
+        // 
+        this.sensitivityComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom));
+        this.sensitivityComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+        this.sensitivityComboBox.Items.AddRange(new object[] {
+            "High",
+            "Medium",
+            "Low"});
+        this.sensitivityComboBox.SelectedIndex = 0;
+        this.sensitivityComboBox.Location = new System.Drawing.Point(5, 68);
+        this.sensitivityComboBox.Name = "sensitivityComboBox";
+        this.sensitivityComboBox.Size = new System.Drawing.Size(72, 21);
+        this.sensitivityComboBox.TabIndex = 3;
+        this.sensitivityComboBox.SelectedIndexChanged += new System.EventHandler(this.sensitivityComboBox_SelectedIndexChanged);
+        // 
         // Wizard_AnalogTV
         // 
         this.Controls.Add(this.groupBox1);
-        this.Name = "Wizard_AnalogTV";
+        this.Name = "Wizard_AnalogRadio";
         this.Size = new System.Drawing.Size(545, 408);
         this.groupBox1.ResumeLayout(false);
         this.groupBox2.ResumeLayout(false);
         this.groupBox3.ResumeLayout(false);
+        this.groupBox4.ResumeLayout(false);
         this.ResumeLayout(false);
 
     }
@@ -417,7 +457,7 @@ namespace MediaPortal.Configuration.Sections
             while (enumerator.MoveNext())
             {
                 TVCaptureDevice dev = (TVCaptureDevice)enumerator.Current;
-                if ((dev.Network == NetworkType.Analog) && (dev.SupportsTV))
+                if ((dev.Network == NetworkType.Analog)&&(dev.SupportsRadio))
                 {
                     _card = dev;
                     break;
@@ -429,7 +469,7 @@ namespace MediaPortal.Configuration.Sections
                 cards.LoadCaptureCards();
                 foreach (TVCaptureDevice dev in cards.captureCards)
                 {
-                    if ((dev.Network == NetworkType.Analog)&&(dev.SupportsTV))
+                    if ((dev.Network == NetworkType.Analog)&&(dev.SupportsRadio))
                     {
                         _card = dev;
                         break;
@@ -440,9 +480,6 @@ namespace MediaPortal.Configuration.Sections
         this.cbCountry.Items.AddRange(TunerCountries.Countries);
         this.cbCities.Items.Add("Loading...");
         this.cbCities.SelectedIndex = 0;
-        GUIGraphicsContext.ActiveForm = this.Handle;
-        Point videoWindowLocation = new Point(this.panel1.Location.X + this.groupBox1.Location.X, this.panel1.Location.Y + this.groupBox1.Location.Y);
-        GUIGraphicsContext.VideoWindow = new Rectangle(videoWindowLocation, panel1.Size);
 
         LoadSettings();
         UpdateList();
@@ -465,7 +502,7 @@ namespace MediaPortal.Configuration.Sections
             wizard.DisableBack(false);
             wizard.DisableNext(false);
         }
-        MapTvToOtherCards(_card.ID);
+        MapRadioToOtherCards(_card.ID);
     }
 
     void dlg_OnScanStarted(object sender, EventArgs args)
@@ -484,6 +521,23 @@ namespace MediaPortal.Configuration.Sections
         Boolean isCableInput = false;
         if (!cbInput.Text.Equals("Antenna")) isCableInput = true;
         _card.IsCableInput = isCableInput;
+        int Sensitivity = 1;
+        switch (sensitivityComboBox.Text)
+        {
+            case "High":
+                Sensitivity = 10;
+                break;
+
+            case "Medium":
+                Sensitivity = 2;
+                break;
+
+            case "Low":
+                Sensitivity = 1;
+                break;
+        }
+        _card.RadioSensitivity = Sensitivity;
+
         WizardForm wizard = WizardForm.Form;
         if (wizard != null)
         {
@@ -593,14 +647,14 @@ namespace MediaPortal.Configuration.Sections
       {
           XmlNode nodeCity = ((IHasXmlNode)cityNav).GetNode();
           XmlNode nodeAnalog = nodeCity.SelectSingleNode("analog");
-          int newTvChannels;
-          int updatedTvChannels;
+          int newRadioChannels;
+          int updatedRadioChannels;
           OnStatus2("");
           Cursor.Current = Cursors.WaitCursor;
           buttonImport.Enabled = false;
-          ImportAnalogChannels(nodeAnalog.InnerText, out newTvChannels, out updatedTvChannels);
-          MapTvToOtherCards(_card.ID);
-          OnStatus2(String.Format("Imported {0} new tv channels, {1} updated tv channels", newTvChannels, updatedTvChannels));
+          ImportAnalogChannels(nodeAnalog.InnerText, out newRadioChannels, out updatedRadioChannels);
+          OnStatus2(String.Format("Imported {0} new radio stations, {1} updated radio stations", newRadioChannels, updatedRadioChannels));
+          MapRadioToOtherCards(_card.ID);
           buttonImport.Enabled = true;
           Cursor.Current = Cursors.Default;
           UpdateList();
@@ -611,70 +665,55 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    void ImportAnalogChannels(string xmlFile, out int newTvChannels, out int updatedTvChannels)
+      void ImportAnalogChannels(string xmlFile, out int newRadioChannels, out int updatedRadioChannels)
     {
-      newTvChannels = 0;
-      updatedTvChannels = 0;
+        newRadioChannels = 0;
+        updatedRadioChannels = 0;
       try
       {
           XmlDocument doc = new XmlDocument();
           UriBuilder builder = new UriBuilder("http", "mediaportal.sourceforge.net", 80, "tvsetup/analog/" + xmlFile);
           doc.Load(builder.Uri.AbsoluteUri);
-          XmlNodeList listTvChannels = doc.DocumentElement.SelectNodes("/mediaportal/tv/channel");
-          foreach (XmlNode nodeChannel in listTvChannels)
+          XmlNodeList listRadioChannels = doc.DocumentElement.SelectNodes("/mediaportal/radio/channel");
+          foreach (XmlNode nodeChannel in listRadioChannels)
           {
               XmlNode name = nodeChannel.Attributes.GetNamedItem("name");
-              XmlNode number = nodeChannel.Attributes.GetNamedItem("number");
               XmlNode frequency = nodeChannel.Attributes.GetNamedItem("frequency");
-              string channelName = name.Value;
-              int channelNumber = -1;
-              long channelFrequency = 0;
+              string stationName = name.Value;
+              long stationFrequency = 0;
               try
               {
-                  channelNumber = Int32.Parse(number.Value);
+                  stationFrequency = ConvertToFrequency(frequency.Value);
               }
               catch (Exception) { }
-              try
-              {
-                  channelFrequency = ConvertToTvFrequency(frequency.Value);
-              }
-              catch (Exception) { }
-              int channelId = TVDatabase.GetChannelId(channelName);
-              TVChannel tvChan = TVDatabase.GetChannelById(channelId);
-              if (tvChan == null)
+
+              MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
+              if (!RadioDatabase.GetStation(stationName, out station))
               {
                   //doesn't exists
-                  tvChan = new TVChannel();
-                  tvChan.Scrambled = false;
-                  //then add a new channel to the database
-                  tvChan.Name = channelName;
-                  tvChan.ID = -1;
-                  tvChan.Number = channelNumber;
-                  tvChan.Frequency = channelFrequency;
-                  tvChan.Sort = 40000;
-                  Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogTV: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
-                  int id = TVDatabase.AddChannel(tvChan);
+                  //then add a new station to the database
+                  station.Scrambled = false;
+                  station.Name = stationName;
+                  station.Frequency = stationFrequency;
+                  station.Sort = 40000;
+                  station.Channel = GetUniqueNumber();
+                  Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogRadio: add new station for {0}:{1}", station.Name, station.Frequency);
+                  int id = RadioDatabase.AddStation(ref station);
                   if (id < 0)
                   {
-                      Log.WriteFile(Log.LogType.Capture, true, "Wizard_AnalogTV: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
+                      Log.WriteFile(Log.LogType.Capture, true, "Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name, station.Frequency);
                   }
-                  newTvChannels++;
+                  newRadioChannels++;
               }
               else
               {
-                  tvChan.Name = channelName;
-                  tvChan.Number = channelNumber;
-                  tvChan.Frequency = channelFrequency;
-                  TVDatabase.UpdateChannel(tvChan, tvChan.Sort);
-                  updatedTvChannels++;
-                  Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogTV: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
+                  station.Name = stationName;
+                  station.Frequency = stationFrequency;
+                  RadioDatabase.UpdateStation(station);
+                  updatedRadioChannels++;
+                  Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogRadio: update station {0}:{1} {2}", station.Name, station.Frequency, station.ID);
               }
-              TVDatabase.MapChannelToCard(tvChan.ID, _card.ID);
-              TVGroup group = new TVGroup();
-              group.GroupName = "Analog";
-              int groupid = TVDatabase.AddGroup(group);
-              group.ID = groupid;
-              TVDatabase.MapChannelToGroup(group, tvChan);
+              RadioDatabase.MapChannelToCard(station.ID, _card.ID);
           }
       }
       catch (Exception)
@@ -682,18 +721,36 @@ namespace MediaPortal.Configuration.Sections
           MessageBox.Show("Cannot connect to MediaPortal Web Site", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
     }
-    long ConvertToTvFrequency(string frequency)
-    {
-      if (frequency.Trim() == String.Empty) return 0;
-      frequency = frequency.ToUpper();
-      for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
+      int GetUniqueNumber()
       {
-        if (frequency.Equals(TVChannel.SpecialChannels[i].Name))
-        {
-          return TVChannel.SpecialChannels[i].Frequency;
-        }
+          ArrayList stations = new ArrayList();
+          RadioDatabase.GetStations(ref stations);
+          int number = 1;
+          while (true)
+          {
+              bool unique = true;
+              foreach (MediaPortal.Radio.Database.RadioStation station in stations)
+              {
+                  if (station.Channel == number)
+                  {
+                      unique = false;
+                      break;
+                  }
+              }
+              if (!unique)
+              {
+                  number++;
+              }
+              else
+              {
+                  return number;
+              }
+          }
       }
 
+    long ConvertToFrequency(string frequency)
+    {
+      if (frequency.Trim() == String.Empty) return 0;
       float testValue = 189.24f;
       string usage = testValue.ToString("f2");
       if (usage.IndexOf(".") >= 0) frequency = frequency.Replace(",", ".");
@@ -710,14 +767,18 @@ namespace MediaPortal.Configuration.Sections
             _card.DefaultCountryCode = tunerCountry.Id;
             using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
             {
-                xmlwriter.SetValue("capture", "countryname", tunerCountry.Country);
-                xmlwriter.SetValue("capture", "country", tunerCountry.Id.ToString());
+                    xmlwriter.SetValue("capture", "countryname", tunerCountry.Country);
+                    xmlwriter.SetValue("capture", "country", tunerCountry.Id.ToString());
             }
             if (listView1.SelectedIndices.Count > 0)
             {
                 _card.DeleteGraph();
                 string selectedChannel = listView1.SelectedItems[0].Text;
-                _card.StartViewing(selectedChannel);
+                MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
+                if (RadioDatabase.GetStation(selectedChannel, out station))
+                {
+                    _card.StartRadio(station);
+                }
             }
         }
         FillInCities();
@@ -737,8 +798,35 @@ namespace MediaPortal.Configuration.Sections
               {
                   _card.DeleteGraph();
                   string selectedChannel = listView1.SelectedItems[0].Text;
-                  _card.StartViewing(selectedChannel);
+                  MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
+                  if (RadioDatabase.GetStation(selectedChannel, out station))
+                  {
+                      _card.StartRadio(station);
+                  }
               }
+          }
+      }
+
+      private void sensitivityComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
+      {
+          if ((sensitivityComboBox.SelectedItem != null) && (_card != null))
+          {
+              int Sensitivity = 1;
+              switch (sensitivityComboBox.Text)
+              {
+                  case "High":
+                      Sensitivity = 10;
+                      break;
+
+                  case "Medium":
+                      Sensitivity = 2;
+                      break;
+
+                  case "Low":
+                      Sensitivity = 1;
+                      break;
+              }
+              _card.RadioSensitivity = Sensitivity;
           }
       }
 
@@ -748,11 +836,15 @@ namespace MediaPortal.Configuration.Sections
           {
               string selectedChannel = listView1.SelectedItems[0].Text;
               listView1.Update();
-              if (_card.IsRadio)
+              MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
+              if (RadioDatabase.GetStation(selectedChannel, out station))
               {
-                  _card.DeleteGraph();
+                  if (!_card.IsRadio)
+                  {
+                      _card.DeleteGraph();
+                  }
+                  _card.StartRadio(station);
               }
-              _card.StartViewing(selectedChannel);
           } 
       }
       private void listView1_KeyUp(Object o, KeyEventArgs e)
@@ -762,7 +854,7 @@ namespace MediaPortal.Configuration.Sections
               if (e.KeyCode == System.Windows.Forms.Keys.Delete || e.KeyCode == System.Windows.Forms.Keys.Back)
               {
                   string selectedChannel = listView1.SelectedItems[0].Text;
-                  TVDatabase.RemoveChannel(selectedChannel);
+                  RadioDatabase.RemoveStation(selectedChannel);
                   int index = listView1.SelectedItems[0].Index;
                   listView1.Items.Remove(listView1.SelectedItems[0]);
                   listView1.Update();
@@ -786,61 +878,69 @@ namespace MediaPortal.Configuration.Sections
           if ((listView1.SelectedIndices.Count > 0) && (_card != null))
           {
               string selectedChannel = listView1.SelectedItems[0].Text;
-              TVChannel channel = TVDatabase.GetChannelById(TVDatabase.GetChannelId(selectedChannel));
-
-              TelevisionChannel tvChannel = new TelevisionChannel();
-
-              tvChannel.ID = channel.ID;
-              tvChannel.Channel = channel.Number;
-              tvChannel.Name = channel.Name;
-              tvChannel.Frequency = channel.Frequency;
-              tvChannel.External = channel.External;
-              tvChannel.ExternalTunerChannel = channel.ExternalTunerChannel;
-              tvChannel.VisibleInGuide = channel.VisibleInGuide;
-              tvChannel.Country = channel.Country;
-              tvChannel.standard = channel.TVStandard;
-              tvChannel.Scrambled = channel.Scrambled;
-
-              EditTVChannelForm editChannel = new EditTVChannelForm();
-              editChannel.Channel = tvChannel;
-              editChannel.SortingPlace = channel.Sort;
-
-              DialogResult dialogResult = editChannel.ShowDialog(this);
-
-              if (dialogResult == DialogResult.OK)
+              ListViewItem listItem = listView1.SelectedItems[0];
+              MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
+              if (RadioDatabase.GetStation(selectedChannel, out station))
               {
-                  TelevisionChannel editedChannel = editChannel.Channel;
-                  ListViewItem item = listView1.SelectedItems[0];
-                  item.ImageIndex = 0;
-                  if (editedChannel.Scrambled)
+                  RadioStation stationToEdit = new RadioStation();
+                  stationToEdit.ID = station.ID;
+                  stationToEdit.Genre = station.Genre;
+                  stationToEdit.Frequency = station.Frequency;
+                  stationToEdit.Bitrate = station.BitRate;
+                  stationToEdit.Name = station.Name;
+                  stationToEdit.Scrambled = station.Scrambled;
+                  stationToEdit.Type = "Radio";
+                  stationToEdit.URL = station.URL;
+                  EditRadioStationForm editStation = new EditRadioStationForm();
+                  editStation.Station = stationToEdit;
+                  DialogResult dialogResult = editStation.ShowDialog(this);
+
+                  if (dialogResult == DialogResult.OK)
                   {
-                      item.ImageIndex = 1;
-                  }
-                  item.Text = editedChannel.Name;
-                  item.SubItems[1].Text = editedChannel.Channel.ToString();
-                  listView1.Update();
-                  if (channel.Number != editedChannel.Channel)
-                  {
-                      _card.DeleteGraph();
-                      _card.StartViewing(selectedChannel);
+                      //
+                      // Remove URL if we have a normal radio station
+                      //
+                      if (editStation.Station.Type.Equals("Radio"))
+                          editStation.Station.URL = String.Empty;
+
+                      listItem.SubItems[0].Text = editStation.Station.Name;
+                      listItem.SubItems[1].Text = editStation.Station.Frequency.ToString(Frequency.Format.MegaHerz);
+
+                      station.Scrambled = editStation.Station.Scrambled;
+                      station.ID = editStation.Station.ID;
+                      station.Name = editStation.Station.Name;
+                      station.Genre = editStation.Station.Genre;
+                      station.BitRate = editStation.Station.Bitrate;
+                      station.URL = editStation.Station.URL;
+                      long currentTunedFrequency = station.Frequency;
+                      station.Frequency = editStation.Station.Frequency.Herz;
+                      if (station.Frequency < 1000)
+                          station.Frequency *= 1000000L;
+                      RadioDatabase.UpdateStation(station);
+                      listView1.Update();
+                      if (station.Frequency != currentTunedFrequency)
+                      {
+                          _card.DeleteGraph();
+                          _card.StartRadio(station);
+                      }
                   }
               }
           }
       }
 
-    void MapTvToOtherCards(int id)
+    void MapRadioToOtherCards(int id)
     {
-      ArrayList tvchannels = new ArrayList();
-      TVDatabase.GetChannelsForCard(ref tvchannels, id);
+      ArrayList radiochannels = new ArrayList();
+      RadioDatabase.GetStationsForCard(ref radiochannels, id);
       TVCaptureCards cards = new TVCaptureCards();
       cards.LoadCaptureCards();
       foreach (TVCaptureDevice dev in cards.captureCards)
       {
-        if ((dev.Network == NetworkType.Analog) && (dev.ID != id) && (dev.SupportsTV))
+        if ((dev.Network == NetworkType.Analog) && (dev.ID != id) &&(dev.SupportsRadio))
         {
-          foreach (TVChannel chan in tvchannels)
+            foreach (MediaPortal.Radio.Database.RadioStation station in radiochannels)
           {
-            TVDatabase.MapChannelToCard(chan.ID, dev.ID);
+            RadioDatabase.MapChannelToCard(station.ID, dev.ID);
           }
         }
       }
@@ -881,20 +981,20 @@ namespace MediaPortal.Configuration.Sections
       {
           listView1.Items.Clear();
           if (_card == null) return;
-          ArrayList channels = new ArrayList();
-          TVDatabase.GetChannelsForCard(ref channels, _card.ID);
-          foreach (TVChannel channel in channels)
+          ArrayList stations = new ArrayList();
+          RadioDatabase.GetStationsForCard(ref stations, _card.ID);
+          foreach (MediaPortal.Radio.Database.RadioStation station in stations)
           {
-              if (channel.Number < (int)ExternalInputs.svhs)
-              {
                   ListViewItem item = new ListViewItem();
                   item.ImageIndex = 0;
-                  if (channel.Scrambled)
-                      item.ImageIndex = 1;
-                  item.Text = channel.Name;
-                  item.SubItems.Add(channel.Number.ToString());
+//                  if (station.Scrambled)
+  //                    item.ImageIndex = 1;
+                  item.Text = station.Name;
+                  float frequency = ((float)station.Frequency) / 1000000;
+                  string description = String.Format("{0:###.##} MHz.", frequency);
+                  item.SubItems.Add(description);
+                  item.SubItems.Add(station.Channel.ToString());
                   listView1.Items.Add(item);
-              }
           }
       }
 

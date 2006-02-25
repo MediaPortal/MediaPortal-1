@@ -75,6 +75,7 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPage3;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageAutotune;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageAutotuneRadio;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPage5;
     private MediaPortal.UserInterface.Controls.MPLabel label14;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBox3Audio;
@@ -93,7 +94,6 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxQuality;
     private MediaPortal.UserInterface.Controls.MPButton buttonBrowse;
     private MediaPortal.UserInterface.Controls.MPTextBox tbRecordingFolder;
-    private MediaPortal.UserInterface.Controls.MPButton btnRadio;
     private MediaPortal.UserInterface.Controls.MPLabel label35;
     private MediaPortal.UserInterface.Controls.MPComboBox cbRgbVideo;
     private MediaPortal.UserInterface.Controls.MPComboBox cbRgbAudio;
@@ -228,6 +228,7 @@ namespace MediaPortal.Configuration
 
       if (availableVideoDevices.Count == 0)
       {
+        this.Close();
         MessageBox.Show("No video device was found, you won't be able to configure a capture card", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
         useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = cardComboBox.Enabled = okButton.Enabled = false;
         acceptuserinput = false;
@@ -246,13 +247,6 @@ namespace MediaPortal.Configuration
       //	else continue
 
 
-      for (int i = 0; i < availableVideoDevices.Count; i++)
-      {
-        Log.Write("Found capture #{0} card:{1} moniker:{2}",
-          i,
-          ((string)(availableVideoDevices[i])),
-          ((string)(availableVideoDeviceMonikers[i])));
-      }
       bool ss2Added = false;
       bool ttPremiumAdded = false;
       //enum all cards known in capturedefinitions.xml
@@ -274,7 +268,10 @@ namespace MediaPortal.Configuration
               cd.CommercialName = "Skystar 2";
               cd.CardType = TVCapture.CardTypes.Digital_SS2;
               cd.DeviceId = (string)availableVideoDevices[i];
+              cd.SupportsTV = true;
+              cd.SupportsRadio = true;
               cd.FriendlyName = String.Format("card{0}", captureCards.Count + 1);
+              cd.ID = cardId;
               ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(cd);
               bool alreadyAdded = false;
               if (addNewCard)
@@ -305,6 +302,9 @@ namespace MediaPortal.Configuration
               cd.CardType = TVCapture.CardTypes.Digital_TTPremium;
               cd.DeviceId = (string)availableVideoDevices[i];
               cd.FriendlyName = String.Format("card{0}", captureCards.Count + 1);
+              cd.ID = cardId;
+              cd.SupportsTV = true;
+              cd.SupportsRadio = true;
               ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(cd);
               bool alreadyAdded = false;
               if (addNewCard)
@@ -333,7 +333,9 @@ namespace MediaPortal.Configuration
           if (add)
           {
             TVCaptureDevice cd = new TVCaptureDevice();
+            
             cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
+            cd.ID = cardId;
             if (ccd.CaptureName != String.Empty)
             {
               cd.VideoDevice = ccd.CaptureName;////Hauppauge WinTV PVR PCI II Capture
@@ -341,6 +343,8 @@ namespace MediaPortal.Configuration
               cd.LoadDefinitions();
               cd.CardType = ccd.Capabilities.CardType;
               cd.DeviceId = ccd.DeviceId;
+              cd.SupportsTV = ccd.Capabilities.HasTv;
+              cd.SupportsRadio = ccd.Capabilities.HasRadio;
             }
 
             Log.Write("Adding name:{0} capture:{1} id:{2} type:{3}",
@@ -463,6 +467,7 @@ namespace MediaPortal.Configuration
         this.tbRecordingFolder = new MediaPortal.UserInterface.Controls.MPTextBox();
         this.label26 = new MediaPortal.UserInterface.Controls.MPLabel();
         this.tabPageAutotune = new MediaPortal.UserInterface.Controls.MPTabPage();
+        this.tabPageAutotuneRadio = new MediaPortal.UserInterface.Controls.MPTabPage();
         this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
         this.cbRgbAudio = new MediaPortal.UserInterface.Controls.MPComboBox();
         this.cbRgbVideo = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -501,7 +506,6 @@ namespace MediaPortal.Configuration
         this.label18 = new MediaPortal.UserInterface.Controls.MPLabel();
         this.label25 = new MediaPortal.UserInterface.Controls.MPLabel();
         this.comboBoxQuality = new MediaPortal.UserInterface.Controls.MPComboBox();
-        this.btnRadio = new MediaPortal.UserInterface.Controls.MPButton();
         this.tabControl1.SuspendLayout();
         this.tabPage1.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
@@ -745,6 +749,16 @@ namespace MediaPortal.Configuration
         this.tabPageAutotune.Text = "Autotune";
         this.tabPageAutotune.UseVisualStyleBackColor = true;
         this.tabPageAutotune.Enter += new System.EventHandler(this.tabPageAutotune_Enter);
+        // 
+        // tabPageAutotuneRadio
+        // 
+        this.tabPageAutotuneRadio.Location = new System.Drawing.Point(4, 22);
+        this.tabPageAutotuneRadio.Name = "tabPageAutotuneRadio";
+        this.tabPageAutotuneRadio.Size = new System.Drawing.Size(542, 424);
+        this.tabPageAutotuneRadio.TabIndex = 1;
+        this.tabPageAutotuneRadio.Text = "Autotune Radio";
+        this.tabPageAutotuneRadio.UseVisualStyleBackColor = true;
+        this.tabPageAutotuneRadio.Enter += new System.EventHandler(this.tabPageAutotuneRadio_Enter);
         // 
         // tabPage3
         // 
@@ -1095,21 +1109,10 @@ namespace MediaPortal.Configuration
         this.comboBoxQuality.Size = new System.Drawing.Size(240, 21);
         this.comboBoxQuality.TabIndex = 8;
         // 
-        // btnRadio
-        // 
-        this.btnRadio.Location = new System.Drawing.Point(84, 464);
-        this.btnRadio.Name = "btnRadio";
-        this.btnRadio.Size = new System.Drawing.Size(96, 23);
-        this.btnRadio.TabIndex = 7;
-        this.btnRadio.Text = "Autotune Radio";
-        this.btnRadio.UseVisualStyleBackColor = true;
-        this.btnRadio.Click += new System.EventHandler(this.btnRadio_Click);
-        // 
         // EditCaptureCardForm
         // 
         this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
         this.ClientSize = new System.Drawing.Size(564, 496);
-        this.Controls.Add(this.btnRadio);
         this.Controls.Add(this.tabControl1);
         this.Controls.Add(this.okButton);
         this.Controls.Add(this.cancelButton);
@@ -1301,7 +1304,6 @@ namespace MediaPortal.Configuration
     /// </summary>
     bool FillInAll()
     {
-            btnRadio.Visible = false;
             checkBoxHWPidFiltering.Visible = false;
             comboBoxCAM.Visible = false;
             mpLabel1.Visible = false;
@@ -1328,13 +1330,6 @@ namespace MediaPortal.Configuration
                         {
                             checkBoxHWPidFiltering.Visible = true;
                         }
-                        if (capture.Network != NetworkType.DVBC &&
-                          capture.Network != NetworkType.DVBS &&
-                          capture.Network != NetworkType.DVBT &&
-                          capture.Network != NetworkType.ATSC)
-                        {
-                            btnRadio.Visible = true;
-                        }
                     }
                     else return false;
                 }
@@ -1357,19 +1352,28 @@ namespace MediaPortal.Configuration
 
     private void FillAutotuneTab()
     {
+        TVCaptureDevice capture = CaptureCard;
+        NetworkType networkType = capture.Network;
         tabControl1.Controls.Clear();
         this.tabControl1.Controls.Add(this.tabPage1);
         this.tabControl1.Controls.Add(this.tabPageAutotune);
+        if (capture.SupportsRadio)
+        {
+            this.tabControl1.Controls.Add(this.tabPageAutotuneRadio);
+        }
         this.tabControl1.Controls.Add(this.tabPage3);
         this.tabControl1.Controls.Add(this.tabPage5);
         Sections.Wizard_ScanBase currentDialog = null;
-        TVCaptureDevice capture = CaptureCard;
-        NetworkType networkType = capture.Network;
         this.tabPageAutotune.Controls.Clear();
         if (networkType == NetworkType.Analog)
         {
             currentDialog = new Sections.Wizard_AnalogTV();
             this.tabPageAutotune.Controls.Add(currentDialog);
+            Sections.Wizard_ScanBase radioDialog = new Sections.Wizard_AnalogRadio();
+            this.tabPageAutotuneRadio.Controls.Add(radioDialog);
+            radioDialog.OnScanFinished += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanFinishedHandler(this.dlg_OnScanFinished);
+            radioDialog.OnScanStarted += new MediaPortal.Configuration.Sections.Wizard_ScanBase.ScanStartedHandler(this.dlg_OnScanStarted);
+            radioDialog.Card = capture;
         }
         else if (networkType == NetworkType.DVBC)
         {
@@ -1485,7 +1489,6 @@ namespace MediaPortal.Configuration
         card.RecordingPath = tbRecordingFolder.Text;
         card.UseForRecording = useRecordingCheckBox.Checked;
         card.UseForTV = useWatchingCheckBox.Checked;
-        card.ID = CardId;
         card.Priority = (int)updownPrio.Value;
 
 
@@ -1590,14 +1593,43 @@ namespace MediaPortal.Configuration
       if (enumerator.MoveNext())
       {
           currentDialog = (Sections.Wizard_ScanBase)enumerator.Current;
+          currentDialog.OnSectionActivated();
       }
-      else
-      {
-          tabPageAutotune.Controls.Clear();
-          return;
-      }
-      currentDialog.OnSectionActivated();
     }
+    private void tabPageAutotuneRadio_Enter(object sender, System.EventArgs e)
+      {
+          TVCaptureDevice capture = CaptureCard;
+          // save settings for card
+          if (capture != null)
+          {
+              string filename = String.Format(@"database\card_{0}.xml", capture.FriendlyName);
+              using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
+              {
+                  xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
+                  xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
+              }
+              if (capture.CardType == TVCapture.CardTypes.Digital_SS2)
+              {
+                  // save settings for get the filename in mp.xml
+                  using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+                  {
+                      xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
+                  }
+              }
+          }
+          else
+          {
+              tabPageAutotuneRadio.Controls.Clear();
+              return;
+          }
+          Sections.Wizard_ScanBase currentDialog = null;
+          IEnumerator enumerator = this.tabPageAutotuneRadio.Controls.GetEnumerator();
+          if (enumerator.MoveNext())
+          {
+              currentDialog = (Sections.Wizard_ScanBase)enumerator.Current;
+              currentDialog.OnSectionActivated();
+          }
+      }
 
     void dlg_OnScanFinished(object sender, EventArgs args)
     {
@@ -1627,25 +1659,6 @@ namespace MediaPortal.Configuration
         if (dialogResult == DialogResult.OK)
         {
           tbRecordingFolder.Text = folderBrowserDialog.SelectedPath;
-        }
-      }
-    }
-
-    private void btnRadio_Click(object sender, System.EventArgs e)
-    {
-      if (CaptureCard.Network == NetworkType.Analog)
-      {
-        AnalogRadioTuningForm dialog = new AnalogRadioTuningForm();
-        ITuning tuning = new AnalogRadioTuning();
-        if (tuning != null)
-        {
-          dialog.Tuning = tuning;
-          dialog.Card = CaptureCard;
-          dialog.ShowDialog(this);
-        }
-        else
-        {
-          MessageBox.Show("This device does not support auto tuning", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
       }
     }

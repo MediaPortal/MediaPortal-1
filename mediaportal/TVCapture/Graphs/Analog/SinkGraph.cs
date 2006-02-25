@@ -1068,44 +1068,115 @@ namespace MediaPortal.TV.Recording
     public void StoreChannels(int ID, bool radio, bool tv, ref int newChannels, ref int updatedChannels, ref int newRadioChannels, ref int updatedRadioChannels)
     {
       if (!SignalPresent()) return;
-      TVChannel tvChan = null;
-      int channelId = TVDatabase.GetChannelId(_channelNumber);
-      tvChan = TVDatabase.GetChannelById(channelId); 
-      if (tvChan == null)
+      if (tv)
       {
-          //doesn't exists
-          tvChan = new TVChannel();
-          tvChan.Scrambled = false;
-          //then add a new channel to the database
-          //TODO get name from teletext
-          tvChan.Name = _channelNumber.ToString();
-          tvChan.ID = -1;
-          tvChan.Number = _channelNumber;
-          tvChan.Sort = 40000;
-          Log.WriteFile(Log.LogType.Capture, "SinkGraph: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
-          int id = TVDatabase.AddChannel(tvChan);
-          if (id < 0)
+          TVChannel tvChan = null;
+          int channelId = TVDatabase.GetChannelId(_channelNumber);
+          tvChan = TVDatabase.GetChannelById(channelId);
+          if (tvChan == null)
           {
-              Log.WriteFile(Log.LogType.Capture, true, "SinkGraph: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
+              //doesn't exists
+              tvChan = new TVChannel();
+              tvChan.Scrambled = false;
+              //then add a new channel to the database
+              //TODO get name from teletext
+              tvChan.Name = _channelNumber.ToString();
+              tvChan.ID = -1;
+              tvChan.Number = _channelNumber;
+              tvChan.Sort = 40000;
+              Log.WriteFile(Log.LogType.Capture, "SinkGraph: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
+              int id = TVDatabase.AddChannel(tvChan);
+              if (id < 0)
+              {
+                  Log.WriteFile(Log.LogType.Capture, true, "SinkGraph: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
+              }
+              channelId = id;
+              newChannels++;
           }
-          channelId = id;
-          newChannels++;
+          else
+          {
+              TVDatabase.UpdateChannel(tvChan, tvChan.Sort);
+              updatedChannels++;
+              Log.WriteFile(Log.LogType.Capture, "SinkGraph: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
+          }
+          TVDatabase.MapChannelToCard(tvChan.ID, ID);
+
+          TVGroup group = new TVGroup();
+          group.GroupName = "Analog";
+          int groupid = TVDatabase.AddGroup(group);
+          group.ID = groupid;
+          TVDatabase.MapChannelToGroup(group, tvChan);
       }
-      else
+      if (radio)
       {
-          TVDatabase.UpdateChannel(tvChan, tvChan.Sort);
-          updatedChannels++;
-          Log.WriteFile(Log.LogType.Capture, "SinkGraph: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
+          if (_graphState != State.Radio) return;
+          int frequency = 0;
+          int hr = _tvTunerInterface.get_AudioFrequency(out frequency);
+          if ((hr != 0)||(frequency==0))
+          {
+              return;
+          }
+          long stationFrequency = frequency;
+          float floatFrequency = ((float)stationFrequency) / 1000000f;
+          string stationName = String.Format("{0:###.##}", floatFrequency);
+          //TODO get name from RDS
+          MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
+          if (!RadioDatabase.GetStation(stationName, out station))
+          {
+              //doesn't exists
+              //then add a new station to the database
+              station.Scrambled = false;
+              station.ID = -1;
+              station.Name = stationName;
+              station.Frequency = stationFrequency;
+              station.Sort = 40000;
+              station.Channel = GetUniqueRadioChannel();
+              Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogRadio: add new station for {0}:{1}", station.Name, station.Frequency);
+              int id = RadioDatabase.AddStation(ref station);
+              if (id < 0)
+              {
+                  Log.WriteFile(Log.LogType.Capture, true, "Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name, station.Frequency);
+              }
+              newRadioChannels++;
+          }
+          else
+          {
+              station.Name = stationName;
+              station.Frequency = stationFrequency;
+              RadioDatabase.UpdateStation(station);
+              updatedRadioChannels++;
+              Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogRadio: update station {0}:{1} {2}", station.Name, station.Frequency, station.ID);
+          }
+          RadioDatabase.MapChannelToCard(station.ID, _card.ID);
+
       }
-      TVDatabase.MapChannelToCard(tvChan.ID, ID);
-
-      TVGroup group = new TVGroup();
-      group.GroupName = "Analog";
-      int groupid = TVDatabase.AddGroup(group);
-      group.ID = groupid;
-      TVDatabase.MapChannelToGroup(group, tvChan);
-
     }
+      int GetUniqueRadioChannel()
+      {
+          ArrayList stations = new ArrayList();
+          RadioDatabase.GetStations(ref stations);
+          int number = 1;
+          while (true)
+          {
+              bool unique = true;
+              foreach (MediaPortal.Radio.Database.RadioStation station in stations)
+              {
+                  if (station.Channel == number)
+                  {
+                      unique = false;
+                      break;
+                  }
+              }
+              if (!unique)
+              {
+                  number++;
+              }
+              else
+              {
+                  return number;
+              }
+          }
+      }
 
 
     public void TuneRadioChannel(RadioStation station)

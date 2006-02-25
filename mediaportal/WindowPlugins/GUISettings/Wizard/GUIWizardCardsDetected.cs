@@ -68,6 +68,8 @@ namespace MediaPortal.GUI.Settings.Wizard
 						cd.DeviceId						= (string)availableVideoDevices[i];
 						cd.FriendlyName			  = String.Format("card{0}",captureCards.Count+1);
 						cd.RecordingPath			= recFolder;
+                        cd.SupportsTV = true;
+                        cd.SupportsRadio = true;
 						cd.UseForRecording=true;
 						cd.UseForTV=true;
 						cd.Priority=10;
@@ -100,6 +102,8 @@ namespace MediaPortal.GUI.Settings.Wizard
             cd.RecordingPath = recFolder;
             cd.UseForRecording = true;
             cd.UseForTV = true;
+            cd.SupportsTV = true;
+            cd.SupportsRadio = true;
             cd.Priority = 10;
             captureCards.Add(cd);
             if (cardsDetected != String.Empty) cardsDetected += "\n";

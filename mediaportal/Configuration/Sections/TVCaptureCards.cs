@@ -262,8 +262,6 @@ namespace MediaPortal.Configuration.Sections
       if (dialogResult == DialogResult.OK)
       {
         AddCaptureCard(editCard.CaptureCard);
-
-        editCard.CaptureCard.ID = cardid;
         captureCards.Add(editCard.CaptureCard);
       }
       SaveSettings();
@@ -448,6 +446,8 @@ namespace MediaPortal.Configuration.Sections
             cd.RecordingPath = recFolder;
             cd.UseForRecording = true;
             cd.UseForTV = true;
+            cd.SupportsTV = true;
+            cd.SupportsRadio = true;
             cd.Priority = 10;
             captureCards.Add(cd);
 
@@ -475,6 +475,8 @@ namespace MediaPortal.Configuration.Sections
             cd.RecordingPath = recFolder;
             cd.UseForRecording = true;
             cd.UseForTV = true;
+            cd.SupportsTV = true;
+            cd.SupportsRadio = true;
             cd.Priority = 10;
             captureCards.Add(cd);
 
@@ -500,6 +502,8 @@ namespace MediaPortal.Configuration.Sections
             cd.LoadDefinitions();
             cd.CardType = ccd.Capabilities.CardType;
             cd.DeviceId = ccd.DeviceId;
+            cd.SupportsTV = ccd.Capabilities.HasTv;
+            cd.SupportsRadio = ccd.Capabilities.HasRadio;
             cd.FriendlyName = String.Format("card{0}", captureCards.Count + 1);
             //cd.DeviceType					= ccd.DeviceId;
             cd.RecordingPath = recFolder;

@@ -39,6 +39,8 @@ namespace MediaPortal.TV.Scanning
     int _maxStationFreq;
     int _minStationFreq;
     bool stopped = true;
+    int _updatedRadioStations = 0;
+    int _newRadioStations = 0;
 
     public AnalogRadioTuning()
     {
@@ -47,20 +49,24 @@ namespace MediaPortal.TV.Scanning
 
     public void Start()
     {
-      _currentStationFreq = _minStationFreq;
+        _newRadioStations = 0;
+        _updatedRadioStations = 0;
+
+        _currentStationFreq = _minStationFreq - 100000;
       _callback.OnSignal(0, 0);
       _callback.OnProgress(0);
     }
     public void Next()
     {
+      _currentStationFreq += 100000;
       if (IsFinished()) return;
       Tune();
-      _currentStationFreq += 100000;
     }
 
     public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback statusCallback)
     {
       _captureCard = card;
+      card.DeleteGraph();
       card.RadioChannelMinMax(out _minStationFreq, out _maxStationFreq);
       if (_minStationFreq == -1)
       {
@@ -68,7 +74,7 @@ namespace MediaPortal.TV.Scanning
       }
       else
       {
-        _minStationFreq = (int)(Math.Floor(((double)_minStationFreq / 100000d))) * 100000;
+        _minStationFreq = (int)(Math.Ceiling(((double)_minStationFreq / 100000d))) * 100000;
       }
       if (_maxStationFreq == -1)
       {
@@ -108,8 +114,13 @@ namespace MediaPortal.TV.Scanning
       _callback.OnSignal(strength, strength);
       if (strength == 100)
       {
-        _callback.OnNewChannel();
-        return;
+          int tvTemp = 0;
+          _callback.OnStatus2(String.Format("New Radio:{0} updated Radio:{1} ", _newRadioStations, _updatedRadioStations));
+          _captureCard.StoreTunedChannels(true, false, ref tvTemp, ref tvTemp, ref _newRadioStations, ref _updatedRadioStations);
+          _callback.OnStatus2(String.Format("New Radio:{0} updated Radio:{1} ", _newRadioStations, _updatedRadioStations));
+          _callback.OnNewChannel();
+          _callback.UpdateList();
+          return;
       }
     }
 

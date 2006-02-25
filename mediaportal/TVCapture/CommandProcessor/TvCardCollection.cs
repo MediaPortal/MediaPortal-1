@@ -115,6 +115,8 @@ namespace MediaPortal.TV.Recording
       dev.RecordingPath = @"C:";
       dev.UseForRecording = true;
       dev.SetCommandProcessor(_processor);
+      dev.SupportsTV = true;
+      dev.SupportsRadio = true;
       _tvcards.Add(dev);
       return dev;
     }

@@ -44,6 +44,7 @@ namespace MediaPortal.Configuration.Sections
     protected TVCaptureDevice _card = null;
     bool _stopScan = false;
     bool _scanning = false;
+    bool _radio = false;
     public delegate void ScanFinishedHandler(object sender, EventArgs args);
     public event ScanFinishedHandler OnScanFinished;
     public delegate void ScanStartedHandler(object sender, EventArgs args);
@@ -62,6 +63,17 @@ namespace MediaPortal.Configuration.Sections
           get
           {
               return _scanning;
+          }
+      }
+      public bool Radio
+      {
+          get
+          {
+              return _radio;
+          }
+          set
+          {
+              _radio = value;
           }
       }
 
@@ -126,8 +138,17 @@ namespace MediaPortal.Configuration.Sections
 
       String[] parameters = GetScanParameters();
       _card.CreateGraph();
-      ITuning  _tuning = GraphFactory.CreateTuning(_card);
-      _tuning.AutoTuneTV(_card, this, parameters);
+      ITuning  _tuning;
+      if (_radio)
+      {
+          _tuning = new AnalogRadioTuning();
+          _tuning.AutoTuneRadio(_card, this);
+      }
+      else 
+      {
+        _tuning = GraphFactory.CreateTuning(_card);
+        _tuning.AutoTuneTV(_card, this, parameters);
+      }
       _tuning.Start();
       while (!_tuning.IsFinished()&&(!_stopScan))
       {
