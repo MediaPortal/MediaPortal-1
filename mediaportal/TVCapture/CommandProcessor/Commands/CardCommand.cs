@@ -45,9 +45,28 @@ namespace MediaPortal.TV.Recording
 {
   public class CardCommand
   {
+    bool _isSucceeded=false;
+    string _errorMessage = "";
+
     public virtual void Execute(CommandProcessor handler)
     {
     }
 
+    public bool Succeeded
+    {
+      get
+      {
+        return _isSucceeded;
+      }
+      set
+      {
+        _isSucceeded=value;
+      }
+    }
+    public string ErrorMessage
+    {
+      get { return _errorMessage; }
+      set { _errorMessage = value; }
+    }
   }
 }

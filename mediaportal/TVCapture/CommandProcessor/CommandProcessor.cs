@@ -52,8 +52,8 @@ namespace MediaPortal.TV.Recording
 
     // list of all recorder commands which the processthread should process
     List<CardCommand> _listCommands = new List<CardCommand>();
-    EPGProcessor _epgProcessor ;
-    Scheduler _scheduler ;
+    EPGProcessor _epgProcessor;
+    Scheduler _scheduler;
     bool _isRunning;
     bool _isStopped;
     bool _isPaused;
@@ -149,15 +149,18 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        return (_listCommands.Count > 0);
+        lock (_listCommands)
+        {
+          return (_listCommands.Count > 0);
+        }
       }
     }
     public virtual void WaitTillFinished()
     {
-       while (IsBusy)
+      while (IsBusy)
       {
         GUIWindowManager.Process();
-        System.Threading.Thread.Sleep(10);
+        System.Threading.Thread.Sleep(100);
       }
     }
 
@@ -188,41 +191,59 @@ namespace MediaPortal.TV.Recording
     /// Shows in the log file which cards are in use and what they are doing
     /// Also logs which file is currently being played
     /// </summary>
-    public void LogTvStatistics()
+    public void LogTunerStatus()
     {
       TVCaptureDevice dev;
       for (int i = 0; i < TVCards.Count; ++i)
       {
         dev = TVCards[i];
-        if (!dev.IsRecording)
+        if (dev.IsRecording)
         {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} viewing:{1} recording:{2} timeshifting:{3} epggrabbing:{4} channel:{5}",
-            dev.ID, dev.View, dev.IsRecording, dev.IsTimeShifting, dev.IsEpgGrabbing,dev.TVChannel);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} recording tv channel:{1}", dev.CommercialName, dev.TVChannel);
+        }
+        else if (dev.IsEpgGrabbing)
+        {
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} grab epg tv channel:{1}", dev.CommercialName, dev.TVChannel);
+        }
+        else if (dev.View)
+        {
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} view tv channel:{1}", dev.CommercialName, dev.TVChannel);
+        }
+        else if (dev.IsTimeShifting)
+        {
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} timeshift tv channel:{1}", dev.CommercialName, dev.TVChannel);
+        }
+        else if (dev.IsRadio)
+        {
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} radio station:{1}", dev.CommercialName, dev.RadioStation);
         }
         else
         {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} viewing:{1} recording:{2} timeshifting:{3} epggrabbing:{4} channel:{5} :{6}",
-            dev.ID, dev.View, dev.IsRecording, dev.IsTimeShifting, dev.TVChannel, dev.IsEpgGrabbing, dev.CurrentTVRecording.Title);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} idle", dev.CommercialName);
         }
       }
+
       if (g_Player.Playing)
       {
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:  currently playing:{0} pos:{0}/{1}", g_Player.CurrentFile, g_Player.CurrentPosition,g_Player.Duration);
+        Log.WriteFile(Log.LogType.Recorder, "Recorder:  currently playing:{0} pos:{0}/{1}", g_Player.CurrentFile, g_Player.CurrentPosition, g_Player.Duration);
       }
     }
 
-#endregion
+    #endregion
 
     #region private members
     void ProcessThread(object sender, DoWorkEventArgs e)
     {
       try
       {
-        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+        //System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
         while (_isRunning)
         {
-          if (_listCommands.Count == 0)
+          if (_isPaused) continue;
+          if (!IsBusy)
+          {
             System.Threading.Thread.Sleep(500);
+          }
           if (_isPaused) continue;
 
           ProcessCommands();
@@ -246,22 +267,37 @@ namespace MediaPortal.TV.Recording
     }
     public void ProcessCommands()
     {
-      lock (_listCommands)
+      while (true)
       {
-        while (_listCommands.Count > 0)
+        if (!IsBusy) return;
+        CardCommand cmd;
+        lock (_listCommands)
         {
-          CardCommand cmd = _listCommands[0];
-          cmd.Execute(this);
-          LogTvStatistics();
+          cmd = _listCommands[0];
           _listCommands.RemoveAt(0);
         }
+
+        DateTime dtStart = DateTime.Now;
+        cmd.Execute(this);
+        TimeSpan ts=DateTime.Now-dtStart;
+        if (cmd.Succeeded == false)
+        {
+          Log.WriteFile(Log.LogType.Recorder, true, "Command:{0} failed reason:{1} time:{2} msec",cmd.ToString(), cmd.ErrorMessage, ts.TotalMilliseconds);
+        }
+        else
+        {
+          Log.WriteFile(Log.LogType.Recorder, true, "Command:{0} time:{2} msec",cmd.ToString(), ts.TotalMilliseconds);
+        }
+        LogTunerStatus();
       }
     }
 
     void StopAllCards()
     {
+      Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop all tuners");
       for (int i = 0; i < TVCards.Count; ++i)
       {
+        Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", TVCards[i].CommercialName);
         TVCards[i].Stop();
       }
     }
@@ -287,7 +323,7 @@ namespace MediaPortal.TV.Recording
               if (ts.TotalSeconds > 10)
               {
                 //then stop the card
-                Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", CurrentCardIndex);
+                Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", dev.CommercialName);
                 dev.StopTimeShifting();
                 CurrentCardIndex = -1;
                 OnTvStopped(i, dev);
@@ -300,7 +336,7 @@ namespace MediaPortal.TV.Recording
           }
           else
           {
-            Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", CurrentCardIndex);
+            Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", dev.CommercialName);
             dev.StopTimeShifting();
           }
         }

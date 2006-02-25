@@ -47,6 +47,7 @@ namespace MediaPortal.TV.Recording
   {
     public override void Execute(CommandProcessor handler)
     {
+      Succeeded = true;
     }
 
   }

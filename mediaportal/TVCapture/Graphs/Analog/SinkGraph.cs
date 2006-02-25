@@ -1397,8 +1397,9 @@ namespace MediaPortal.TV.Recording
     {
       return false;
     }
-    public void GrabEpg(TVChannel chan)
+    public bool GrabEpg(TVChannel chan)
     {
+      return false;
     }
 
     public void RadioChannelMinMax(out int chanmin, out int chanmax)
@@ -1428,8 +1429,9 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Capture, "SinkGraph:  TV Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
 
     }
-    public void StopEpgGrabbing()
+    public bool StopEpgGrabbing()
     {
+      return true;
     }
 
     public bool SupportsHardwarePidFiltering()

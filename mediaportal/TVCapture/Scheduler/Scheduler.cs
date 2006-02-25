@@ -522,7 +522,7 @@ namespace MediaPortal.TV.Recording
             Log.WriteFile(Log.LogType.Recorder, "Recorder: Canceled recording:{0} priority:{1} on card:{2}",
                            dev.CurrentTVRecording.ToString(),
                            dev.CurrentTVRecording.Priority,
-                           dev.ID);
+                           dev.CommercialName);
             StopRecording(handler,dev.CurrentTVRecording);
           }
           else
@@ -541,7 +541,7 @@ namespace MediaPortal.TV.Recording
                     Log.WriteFile(Log.LogType.Recorder, "Recorder: User canceled recording:{0} priority:{1} on card:{2}",
                       dev.CurrentTVRecording.ToString(),
                       dev.CurrentTVRecording.Priority,
-                      dev.ID);
+                      dev.CommercialName);
                     StopRecording(handler,dev.CurrentTVRecording);
                     break;
                   }
@@ -560,12 +560,12 @@ namespace MediaPortal.TV.Recording
 
       //now we have a free card
       TVCaptureDevice card = handler.TVCards[cardNo];
-      Log.WriteFile(Log.LogType.Recorder, "Recorder:  using card:{0} prio:{1}", card.ID, card.Priority);
+      Log.WriteFile(Log.LogType.Recorder, "Recorder:  using card:{0} prio:{1}", card.CommercialName, card.Priority);
       if (card.IsRecording)
       {
         //if its recording, we cancel it 
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:  card:{0} was recording. Now use it for recording new program", card.ID);
-        Log.WriteFile(Log.LogType.Recorder, "Recorder: Stop recording card:{0} channel:{1}", card.ID, card.TVChannel);
+        Log.WriteFile(Log.LogType.Recorder, "Recorder:  card:{0} was recording. Now use it for recording new program", card.CommercialName);
+        Log.WriteFile(Log.LogType.Recorder, "Recorder: Stop recording card:{0} channel:{1}", card.CommercialName, card.TVChannel);
         if (card.CurrentTVRecording.RecType == TVRecording.RecordingType.Once)
         {
           card.CurrentTVRecording.Canceled = Utils.datetolong(DateTime.Now);

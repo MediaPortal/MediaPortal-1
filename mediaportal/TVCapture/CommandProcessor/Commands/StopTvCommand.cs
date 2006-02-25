@@ -53,6 +53,7 @@ namespace MediaPortal.TV.Recording
     public StopTvCommand()
     {
     }
+
     public StopTvCommand(int cardNumber)
     {
       CardNo = cardNumber;
@@ -66,17 +67,16 @@ namespace MediaPortal.TV.Recording
         if (i == CardNo) continue;
 
         bool stopped = false;
+
+        //stop playback of timeshift buffer file
         TVCaptureDevice dev = handler.TVCards[i];
         string timeShiftFileName = handler.GetTimeShiftFileName(i);
-        if (dev.SupportsTimeShifting)
+        if (g_Player.Playing && g_Player.CurrentFile == timeShiftFileName)
         {
-          if (g_Player.Playing && g_Player.CurrentFile == timeShiftFileName)
-          {
-            Log.WriteFile(Log.LogType.Recorder, "Recorder:  stop playing timeshifting file for card:{0}", dev.ID);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  stop playing timeshifting file for card:{0}", dev.CommercialName);
 
-            handler.StopPlayer();
-            stopped = true;
-          }
+          handler.StopPlayer();
+          stopped = true;
         }
 
         //if card is not recording, then stop the card
@@ -85,7 +85,7 @@ namespace MediaPortal.TV.Recording
           if (dev.IsTimeShifting || dev.View || dev.IsRadio)
           {
             stopped = (dev.View);
-            Log.WriteFile(Log.LogType.Recorder, "Recorder:  stop card:{0}", dev.ID);
+            Log.WriteFile(Log.LogType.Recorder, "Recorder:  stop card:{0}", dev.CommercialName);
             
             dev.StopTimeShifting();
             dev.StopViewing();
@@ -101,6 +101,7 @@ namespace MediaPortal.TV.Recording
           handler.TVChannelName = String.Empty;
         }
       }
+      Succeeded = true;
     }
   }
 }

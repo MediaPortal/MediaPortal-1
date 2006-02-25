@@ -252,11 +252,12 @@ namespace MediaPortal.TV.Recording
     {
       return true;
     }
-    public void GrabEpg(TVChannel chan)
+    public bool GrabEpg(TVChannel chan)
     {
       if (_state != State.Created)
         throw new ApplicationException("wrong state");
       _state = State.Epg;
+      return true;
       //Trace.WriteLine(String.Format("card:{0} GrabEpg", _card.FriendlyName));
     }
     public void StopRadio()
@@ -266,11 +267,12 @@ namespace MediaPortal.TV.Recording
       _state = State.Created;
       //Trace.WriteLine(String.Format("card:{0} StopRadio", _card.FriendlyName));
     }
-    public void StopEpgGrabbing()
+    public bool StopEpgGrabbing()
     {
       if (_state != State.Epg)
         throw new ApplicationException("wrong state");
       _state = State.Created;
+      return true;
       //Trace.WriteLine(String.Format("card:{0} StopEpgGrabbing", _card.FriendlyName));
     }
 

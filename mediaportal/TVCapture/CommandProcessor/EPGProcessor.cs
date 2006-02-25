@@ -112,13 +112,15 @@ namespace MediaPortal.TV.Recording
             {
               //grab the epg
               Log.WriteFile(Log.LogType.EPG, "auto-epg: card:{0} grab epg for channel:{1} expected:{2} hours, last event in tv guide:{3} {4}, last grab :{5} {6}",
-                          card.ID,
+                          card.CommercialName,
                           chan.Name, chan.EpgHours, prog.EndTime.ToShortDateString(), prog.EndTime.ToLongTimeString(),
                            chan.LastDateTimeEpgGrabbed.Date.ToShortDateString(), chan.LastDateTimeEpgGrabbed.Date.ToLongTimeString());
-              card.GrabEpg(chan);
-              chan.LastDateTimeEpgGrabbed = DateTime.Now;
-              TVDatabase.UpdateChannel(chan, chan.Sort);
-              _epgTimer = DateTime.Now;
+              if (card.GrabEpg(chan))
+              {
+                chan.LastDateTimeEpgGrabbed = DateTime.Now;
+                TVDatabase.UpdateChannel(chan, chan.Sort);
+                _epgTimer = DateTime.Now;
+              }
               return;
             }
           }

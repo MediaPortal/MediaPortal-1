@@ -47,6 +47,7 @@ namespace MediaPortal.TV.Recording
   {
     public override void Execute(CommandProcessor handler)
     {
+      bool stopped = false;
       Log.WriteFile(Log.LogType.Recorder, "Command:Stop timeshifting");
       for (int i=0; i < handler.TVCards.Count;++i)
       {
@@ -55,12 +56,29 @@ namespace MediaPortal.TV.Recording
         {
           if (card.IsTimeShifting)
           {
+            string timeShiftFileName = handler.GetTimeShiftFileName(i);
+            if (g_Player.Playing && g_Player.CurrentFile == timeShiftFileName)
+            {
+              Log.WriteFile(Log.LogType.Recorder, "Recorder:  stop playing timeshifting file for card:{0}", card.CommercialName);
+
+              handler.StopPlayer();
+              stopped = true;
+            }
+
             Log.WriteFile(Log.LogType.Recorder, "Recorder: stop timeshifting on card:{0} channel:{1}",
-                              card.ID, card.TVChannel);
+                              card.CommercialName, card.TVChannel);
             card.Stop();
+            if (stopped)
+              handler.OnTvStopped(i, card);
+            if (i == handler.CurrentCardIndex)
+            {
+              handler.CurrentCardIndex = -1;
+              handler.TVChannelName = String.Empty;
+            }
           }
         }
       }
+      Succeeded = true;
     }
   }
 }

@@ -52,7 +52,13 @@ namespace MediaPortal.TV.Recording
 
     public override void Execute(CommandProcessor handler)
     {
-      if (_recordingToStop == null) return;
+      if (_recordingToStop == null)
+      {
+        Succeeded = false;
+        ErrorMessage = "No recording specified";
+        return;
+      }
+      bool stopped = false;
       Log.WriteFile(Log.LogType.Recorder, "Command:Cancel recording {0} {1}-{2}", 
                                               _recordingToStop.Title,
                                               _recordingToStop.StartTime.ToLongTimeString(),
@@ -68,15 +74,16 @@ namespace MediaPortal.TV.Recording
           //yes, is it recording the 'rec' ?
           if (dev.CurrentTVRecording.ID == _recordingToStop.ID)
           {
+            stopped = true;
             //yep then cancel the recording
             if (_recordingToStop.RecType == TVRecording.RecordingType.Once)
             {
-              Log.WriteFile(Log.LogType.Recorder, "Recorder: Stop recording card:{0} channel:{1}", dev.ID, dev.TVChannel);
+              Log.WriteFile(Log.LogType.Recorder, "Recorder: Stop recording card:{0} channel:{1}", dev.CommercialName, dev.TVChannel);
               _recordingToStop.Canceled = Utils.datetolong(DateTime.Now);
             }
             else
             {
-              Log.WriteFile(Log.LogType.Recorder, "Recorder: Stop serie of recording card:{0} channel:{1}", dev.ID, dev.TVChannel);
+              Log.WriteFile(Log.LogType.Recorder, "Recorder: Stop serie of recording card:{0} channel:{1}", dev.CommercialName, dev.TVChannel);
               long datetime = Utils.datetolong(DateTime.Now);
               TVProgram prog = dev.CurrentProgramRecording;
               if (prog != null) datetime = Utils.datetolong(prog.StartTime);
@@ -95,6 +102,15 @@ namespace MediaPortal.TV.Recording
             }
           }
         }
+      }
+      if (stopped)
+      {
+        Succeeded = true;
+      }
+      else
+      {
+        Succeeded = false;
+        ErrorMessage = "No tuner is recording the specified show";
       }
     }
   }

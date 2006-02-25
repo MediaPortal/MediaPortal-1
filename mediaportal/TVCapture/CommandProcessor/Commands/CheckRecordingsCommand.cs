@@ -48,6 +48,7 @@ namespace MediaPortal.TV.Recording
     {
       Log.WriteFile(Log.LogType.Recorder, "Command:CheckRecordingsCommand");
       handler.scheduler.ResetTimer();
+      Succeeded = true;
     }
   }
 }

@@ -68,6 +68,8 @@ namespace MediaPortal.TV.Recording
       RadioStation radiostation;
       if (!RadioDatabase.GetStation(RadioStation, out radiostation))
       {
+        Succeeded = false;
+        ErrorMessage = "No tuner can receive:" + RadioStation;
         Log.WriteFile(Log.LogType.Recorder, "Recorder:StartRadio()  unknown station:{0}", RadioStation);
         return;
       }
@@ -91,7 +93,7 @@ namespace MediaPortal.TV.Recording
               }
             }
             handler.CurrentCardIndex = i;
-            Log.WriteFile(Log.LogType.Recorder, "Recorder:StartRadio()  start on card:{0} station:{1}", tvcard.ID, RadioStation);
+            Log.WriteFile(Log.LogType.Recorder, "Recorder:StartRadio()  start on card:{0} station:{1}", tvcard.CommercialName, RadioStation);
             tvcard.StartRadio(radiostation);
             /*if (tvcard.IsTimeShifting)
             {
@@ -100,11 +102,14 @@ namespace MediaPortal.TV.Recording
               Log.WriteFile(Log.LogType.Recorder,"Recorder:  currentfile:{0} newfile:{1}", g_Player.CurrentFile,strTimeShiftFileName);
               g_Player.Play(strTimeShiftFileName);
             }*/
+            Succeeded = true;
             return;
           }
         }
       }
       Log.WriteFile(Log.LogType.Recorder, "Recorder:StartRadio()  no free card which can listen to radio channel:{0}", RadioStation);
+      Succeeded = false;
+      ErrorMessage = "All tuners are busy";
     }
 
     void TurnTvOff(CommandProcessor handler, int exceptCard)

@@ -46,6 +46,7 @@ namespace MediaPortal.TV.Recording
   {
     public override void Execute(CommandProcessor handler)
     {
+      bool stopped = false;
       Log.WriteFile(Log.LogType.Recorder, "Command:Stop radio");
       if (g_Player.Playing && g_Player.IsRadio)
       {
@@ -56,13 +57,23 @@ namespace MediaPortal.TV.Recording
         TVCaptureDevice dev = handler.TVCards[i];
         if (dev.IsRadio)
         {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:StopRadio() stop radio on card:{0}", dev.ID);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:StopRadio() stop radio on card:{0}", dev.CommercialName);
           dev.StopRadio();
           if (i == handler.CurrentCardIndex)
           {
             handler.CurrentCardIndex = -1;
+            stopped = true;
           }
         }
+      }
+      if (stopped)
+      {
+        Succeeded = true;
+      }
+      else
+      {
+        Succeeded = false;
+        ErrorMessage = "No tuner is used for radio";
       }
     }
   }

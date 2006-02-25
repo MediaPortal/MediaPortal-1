@@ -681,6 +681,7 @@ namespace MediaPortal.TV.Recording
       if (hr < 0)
       {
         Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
+        return false;
       }
 
       _isGraphRunning = true;
@@ -3895,7 +3896,7 @@ namespace MediaPortal.TV.Recording
     {
       return (_graphState == State.Epg);
     }
-    public void GrabEpg(TVChannel channel)
+    public bool GrabEpg(TVChannel channel)
     {
       // tune to the correct channel
       Log.WriteFile(Log.LogType.Capture, "DVBGraph:Grab epg for :{0}", channel.Name);
@@ -3911,6 +3912,7 @@ namespace MediaPortal.TV.Recording
       if (hr < 0)
       {
         Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
+        return false;
       }
       TuneChannel(channel);
       if (_currentTuningObject == null)
@@ -3918,12 +3920,14 @@ namespace MediaPortal.TV.Recording
         _mediaControl.Stop();
         _isGraphRunning = false;
         _graphState = State.Created;
+        return false;
       }
       else
       {
         _isGraphRunning = true;
-        _graphState = State.Epg;
+        _graphState = State.Epg; 
       }
+      return true;
     }
 
     public void RadioChannelMinMax(out int chanmin, out int chanmax)
@@ -3973,13 +3977,14 @@ namespace MediaPortal.TV.Recording
       _graphState = State.Created;
     }
 
-    public void StopEpgGrabbing()
+    public bool StopEpgGrabbing()
     {
-      if (_graphState != State.Epg) return;
+      if (_graphState != State.Epg) return true;
       if (_mediaControl != null)
         _mediaControl.Stop();
       _isGraphRunning = false;
       _graphState = State.Created;
+      return true;
     }
 
     public virtual bool SupportsHardwarePidFiltering()

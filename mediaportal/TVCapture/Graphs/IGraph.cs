@@ -30,64 +30,64 @@ using MediaPortal.Radio.Database;
 
 namespace MediaPortal.TV.Recording
 {
-	public enum NetworkType 
-	{
-		Unknown,
-		Analog,		// Analog TV
-		ATSC,			// ATSC
-		DVBC,			// DVB-cable
-		DVBS, 		// DVB-Sattelite
-		DVBT  		// DVB-Terrestial
-	}
-	/// <summary>
-	/// Interface definition for graphbuilder objects
-	/// A graphbuilder object supports one or more TVCapture cards and
-	/// contains all the code/logic necessary todo
-	/// -tv viewing
-	/// -tv recording
-	/// -tv timeshifting
-	/// 
-	/// Currently there are 2 implementations of IGraph
+  public enum NetworkType
+  {
+    Unknown,
+    Analog,		// Analog TV
+    ATSC,			// ATSC
+    DVBC,			// DVB-cable
+    DVBS, 		// DVB-Sattelite
+    DVBT  		// DVB-Terrestial
+  }
+  /// <summary>
+  /// Interface definition for graphbuilder objects
+  /// A graphbuilder object supports one or more TVCapture cards and
+  /// contains all the code/logic necessary todo
+  /// -tv viewing
+  /// -tv recording
+  /// -tv timeshifting
+  /// 
+  /// Currently there are 2 implementations of IGraph
   /// Sinkgraph.cs      : support for cards with an onboard MPEG2 encoder like the hauppauge PVR 250/350/USB2
   /// SWEncodingGraph.cs: support for cards without an onboard mpeg2 encoder like the pinnacle PCTV Pro, WinTV,...
   /// 
   /// NOTE!!! IGraph instances are created by the GraphFactory.cs  
   ///   
-	/// Basicly the flow is
-	/// 
-	/// for viewing:
-	///   CreateGraph()
-	///   if SupportsTimeshifting() then 
-	///     StartTimeshifting()
-  ///     ....
-  ///     StopTimeshifting()
-  ///     DeleteGraph()
-	///   else
-	///     StartViewing
-	///     ...
-	///     StopViewing()
-	///     DeleteGraph()
-	///     
-	/// for recording:    
+  /// Basicly the flow is
+  /// 
+  /// for viewing:
   ///   CreateGraph()
   ///   if SupportsTimeshifting() then 
   ///     StartTimeshifting()
-	///     StartRecording()
-	///     .....
-	///     StopRecording()
-	///     DeleteGraph()
-	///   else
+  ///     ....
+  ///     StopTimeshifting()
+  ///     DeleteGraph()
+  ///   else
+  ///     StartViewing
+  ///     ...
+  ///     StopViewing()
+  ///     DeleteGraph()
+  ///     
+  /// for recording:    
+  ///   CreateGraph()
+  ///   if SupportsTimeshifting() then 
+  ///     StartTimeshifting()
+  ///     StartRecording()
+  ///     .....
+  ///     StopRecording()
+  ///     DeleteGraph()
+  ///   else
   ///     StartRecording()
   ///     .....
   ///     StopRecording()
   ///     DeleteGraph()
   ///     
   ///     
-	/// </summary>
+  /// </summary>
   /// <seealso cref="MediaPortal.TV.Recording.GraphFactory"/>
 
-	public interface IGraph
-	{
+  public interface IGraph
+  {
     /// <summary>
     /// Creates a new DirectShow graph for the TV capturecard
     /// </summary>
@@ -113,7 +113,7 @@ namespace MediaPortal.TV.Recording
     /// Graph must be created first with CreateGraph()
     /// </remarks>
     bool StartTimeShifting(TVChannel channel, string strFileName);
-    
+
     /// <summary>
     /// Stops timeshifting and cleans up the timeshifting files
     /// </summary>
@@ -125,8 +125,8 @@ namespace MediaPortal.TV.Recording
 
 
     /// <summary>
-		/// Starts recording live TV to a file
-		/// <param name="channel">TV channel to which card should be tuned</param>
+    /// Starts recording live TV to a file
+    /// <param name="channel">TV channel to which card should be tuned</param>
     /// <param name="strFileName">filename for the new recording</param>
     /// <param name="bContentRecording">Specifies whether a content or reference recording should be made</param>
     /// <param name="timeProgStart">Contains the starttime of the current tv program</param>
@@ -143,9 +143,9 @@ namespace MediaPortal.TV.Recording
     /// It will examine the timeshifting files and try to record as much data as is available
     /// from the timeProgStart till the moment recording is stopped again
     /// </remarks>
-    bool StartRecording(Hashtable attribtutes,TVRecording recording,TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart);
-    
-    
+    bool StartRecording(Hashtable attribtutes, TVRecording recording, TVChannel channel, ref string strFileName, bool bContentRecording, DateTime timeProgStart);
+
+
     /// <summary>
     /// Stops recording 
     /// </summary>
@@ -158,8 +158,8 @@ namespace MediaPortal.TV.Recording
 
     /// <summary>
     /// Switches / tunes to another TV channel
-		/// </summary>
-		/// <param name="channel">TV channel to which card should be tuned</param>
+    /// </summary>
+    /// <param name="channel">TV channel to which card should be tuned</param>
     /// <remarks>
     /// Graph should be timeshifting. 
     /// </remarks>
@@ -180,8 +180,8 @@ namespace MediaPortal.TV.Recording
 
     /// <summary>
     /// Starts viewing the TV channel 
-		/// </summary>
-		/// <param name="channel">TV channel to which card should be tuned</param>
+    /// </summary>
+    /// <param name="channel">TV channel to which card should be tuned</param>
     /// <returns>boolean indicating if succeed</returns>
     /// <remarks>
     /// Graph must be created first with CreateGraph()
@@ -217,17 +217,17 @@ namespace MediaPortal.TV.Recording
     /// </returns>
     bool SignalPresent();
 
-		/// <summary>
-		/// returns the signal quality in 0%-100%
-		/// </summary>
-		/// <returns></returns>
-		int  SignalQuality();
+    /// <summary>
+    /// returns the signal quality in 0%-100%
+    /// </summary>
+    /// <returns></returns>
+    int SignalQuality();
 
-		/// <summary>
-		/// returns the signal strength in dB
-		/// </summary>
-		/// <returns></returns>
-		int  SignalStrength();
+    /// <summary>
+    /// returns the signal strength in dB
+    /// </summary>
+    /// <returns></returns>
+    int SignalStrength();
 
     /// <summary>
     /// This method returns the frequency to which the tv tuner is currently tuned
@@ -236,76 +236,76 @@ namespace MediaPortal.TV.Recording
     /// </returns>
     long VideoFrequency();
 
-		/// <summary>
-		/// MP will call this function on a regular basis
-		/// It allows the tv card todo any progressing like
-		/// getting/updating the EPG, channel information etc (for DVB cards)
-		/// </summary>
-		void Process();
+    /// <summary>
+    /// MP will call this function on a regular basis
+    /// It allows the tv card todo any progressing like
+    /// getting/updating the EPG, channel information etc (for DVB cards)
+    /// </summary>
+    void Process();
 
-		/// <summary>
-		/// returns a collection of property pages for tvcapture card
-		/// </summary>
-		/// <returns></returns>
-		PropertyPageCollection PropertyPages();
+    /// <summary>
+    /// returns a collection of property pages for tvcapture card
+    /// </summary>
+    /// <returns></returns>
+    PropertyPageCollection PropertyPages();
 
-		bool SupportsFrameSize(Size framesize);
+    bool SupportsFrameSize(Size framesize);
 
 
-		// returns card network type (analog, dvb-c, dvb-t, dvb-s, atsc)
-		NetworkType Network();
+    // returns card network type (analog, dvb-c, dvb-t, dvb-s, atsc)
+    NetworkType Network();
 
-		// tune to a specified frequency
-		void Tune(object tuningObject, int disecqNo);
+    // tune to a specified frequency
+    void Tune(object tuningObject, int disecqNo);
 
-		// scan radio/tv channels and store them in the database
-		void StoreChannels(int ID,bool radio, bool tv, ref int newChannels, ref int updatedChannels,ref int newRadioChannels, ref int updatedRadioChannels);
+    // scan radio/tv channels and store them in the database
+    void StoreChannels(int ID, bool radio, bool tv, ref int newChannels, ref int updatedChannels, ref int newRadioChannels, ref int updatedRadioChannels);
 
-		
-		// tune Start listening to radio
+
+    // tune Start listening to radio
     void StartRadio(RadioStation station);
     void StopRadio();
 
-		
-		// tune to the specified radio station
-		void TuneRadioChannel(RadioStation station);
 
-		// tune to the specified radio Frequency
-		void TuneRadioFrequency(int frequency);
+    // tune to the specified radio station
+    void TuneRadioChannel(RadioStation station);
 
-		//returns true if card can decode teletext and when current tv channel has teletext
-		bool HasTeletext();
+    // tune to the specified radio Frequency
+    void TuneRadioFrequency(int frequency);
 
-		// get the current audio language
-		int GetAudioLanguage();
+    //returns true if card can decode teletext and when current tv channel has teletext
+    bool HasTeletext();
 
-		//select an audio language
-		void SetAudioLanguage(int audioPid);
+    // get the current audio language
+    int GetAudioLanguage();
 
-		// get a list of the audio languages present in current tv show
-		ArrayList GetAudioLanguageList();		
+    //select an audio language
+    void SetAudioLanguage(int audioPid);
 
-		//return the timeshift filename for tv
-		string TvTimeshiftFileName();
+    // get a list of the audio languages present in current tv show
+    ArrayList GetAudioLanguageList();
 
-		//return the timeshift filename for radio
-		string RadioTimeshiftFileName();
+    //return the timeshift filename for tv
+    string TvTimeshiftFileName();
 
-		//tell capture card to grab & decode teletext and give it to the TeletextGrabber class
-		void GrabTeletext(bool yesNo);
+    //return the timeshift filename for radio
+    string RadioTimeshiftFileName();
 
-        //Get the Maximum and Minimun channel for radio stations
-        void RadioChannelMinMax(out int chanmin, out int chanmax);
+    //tell capture card to grab & decode teletext and give it to the TeletextGrabber class
+    void GrabTeletext(bool yesNo);
 
-        //Get the Maximum and Minimun channel for TV stations
-        void TVChannelMinMax(out int chanmin, out int chanmax);
+    //Get the Maximum and Minimun channel for radio stations
+    void RadioChannelMinMax(out int chanmin, out int chanmax);
 
-		IBaseFilter AudiodeviceFilter();
-		bool				IsTimeShifting();
+    //Get the Maximum and Minimun channel for TV stations
+    void TVChannelMinMax(out int chanmin, out int chanmax);
+
+    IBaseFilter AudiodeviceFilter();
+    bool IsTimeShifting();
     bool IsEpgGrabbing();
     bool IsEpgDone();
-    void GrabEpg(TVChannel chan);
-    void StopEpgGrabbing();
+    bool GrabEpg(TVChannel chan);
+    bool StopEpgGrabbing();
     bool SupportsHardwarePidFiltering();
     bool SupportsCamSelection();
   }

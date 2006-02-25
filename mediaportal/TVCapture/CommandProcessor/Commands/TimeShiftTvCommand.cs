@@ -83,12 +83,11 @@ namespace MediaPortal.TV.Recording
             // is it not recording ? or is it recording the channel we want to watch ?
             if (!dev.IsRecording || (dev.IsRecording && dev.TVChannel == _channelName))
             {
+              cardNo = i;
               if (dev.IsRecording)
               {
-                cardNo = i;
                 break;
               }
-              cardNo = i;
             }
           }
         }
@@ -97,7 +96,7 @@ namespace MediaPortal.TV.Recording
       if (cardNo >= 0)
       {
         dev = handler.TVCards[cardNo];
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:  Found card:{0}", dev.ID);
+        Log.WriteFile(Log.LogType.Recorder, "Recorder:  Found card:{0}", dev.CommercialName);
 
         //stop viewing on any other card
         TurnTvOff(handler, cardNo);
@@ -114,8 +113,13 @@ namespace MediaPortal.TV.Recording
 
         if (!dev.IsRecording && !dev.IsTimeShifting && dev.SupportsTimeShifting)
         {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting on card:{0}", dev.ID);
-          dev.StartTimeShifting(_channelName);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting on card:{0}", dev.CommercialName);
+          if (dev.StartTimeShifting(_channelName) == false)
+          {
+            ErrorMessage = "Failed to start timeshifting";
+            Succeeded = false;
+            return;
+          }
           handler.TuneExternalChannel(_channelName, true);
         }
         else if (dev.TVChannel != _channelName)
@@ -127,7 +131,7 @@ namespace MediaPortal.TV.Recording
         timeShiftFileName = handler.GetTimeShiftFileName(handler.CurrentCardIndex);
         if (g_Player.CurrentFile != timeShiftFileName)
         {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:  start viewing timeshift file of card {0}", dev.ID);
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  start viewing timeshift file of card {0}", dev.CommercialName);
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
           msg.Label = timeShiftFileName;
           GUIGraphicsContext.SendMessage(msg);
@@ -135,6 +139,7 @@ namespace MediaPortal.TV.Recording
 
         handler.OnTvStart(handler.CurrentCardIndex, dev);
         handler.ResetTimeshiftTimer();
+        Succeeded = true;
         return;
       }//if (cardNo>=0)
 
@@ -163,6 +168,8 @@ namespace MediaPortal.TV.Recording
 
       if (card < 0)
       {
+        Succeeded = false;
+        ErrorMessage = "All tuners are busy";
         Log.WriteFile(Log.LogType.Recorder, "Recorder:  No free card which can receive channel [{0}]", _channelName);
         return; // no card available
       }
@@ -183,31 +190,39 @@ namespace MediaPortal.TV.Recording
         handler.StopPlayer();
       }
       // yes, does card support it?
-      if (dev.SupportsTimeShifting)
+      if (!dev.SupportsTimeShifting)
       {
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting card {0} channel:{1}", dev.ID, _channelName);
-        handler.TuneExternalChannel(_channelName, true);
-        if (dev.IsTimeShifting)
-        {
-          dev.TVChannel = _channelName;
-        }
-        dev.StartTimeShifting(_channelName);
-        handler.TVChannelName = _channelName;
-
-        // and play the timeshift file (if its not already playing it)
-        timeShiftFileName = handler.GetTimeShiftFileName(handler.CurrentCardIndex);
-        if (g_Player.CurrentFile != timeShiftFileName)
-        {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:  currentfile:{0} newfile:{1}", g_Player.CurrentFile, timeShiftFileName);
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
-          msg.Label = timeShiftFileName;
-          GUIGraphicsContext.SendMessage(msg);
-        }
-
-        handler.OnTvStart(handler.CurrentCardIndex, dev);
-        handler.ResetTimeshiftTimer();
+        ErrorMessage="No tuner available for timeshifting";
+        Succeeded = false;
         return;
-      }//if (dev.SupportsTimeShifting)
+      }
+      Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting card {0} channel:{1}", dev.CommercialName, _channelName);
+      handler.TuneExternalChannel(_channelName, true);
+      if (dev.IsTimeShifting)
+      {
+        dev.TVChannel = _channelName;
+      }
+      if (dev.StartTimeShifting(_channelName) == false)
+      {
+        Succeeded = false;
+        ErrorMessage = "Failed to start timeshifting";
+        return;
+      }
+      handler.TVChannelName = _channelName;
+
+      // and play the timeshift file (if its not already playing it)
+      timeShiftFileName = handler.GetTimeShiftFileName(handler.CurrentCardIndex);
+      if (g_Player.CurrentFile != timeShiftFileName)
+      {
+        Log.WriteFile(Log.LogType.Recorder, "Recorder:  currentfile:{0} newfile:{1}", g_Player.CurrentFile, timeShiftFileName);
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
+        msg.Label = timeShiftFileName;
+        GUIGraphicsContext.SendMessage(msg);
+      }
+
+      handler.OnTvStart(handler.CurrentCardIndex, dev);
+      handler.ResetTimeshiftTimer();
+      Succeeded = true;
     }
 
     void TurnTvOff(CommandProcessor handler, int exceptCard)
