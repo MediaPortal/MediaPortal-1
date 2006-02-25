@@ -95,7 +95,9 @@ namespace MediaPortal.GUI.Settings.Wizard
 						cd.VideoDevice				= ccd.CaptureName;
 						cd.CommercialName			= ccd.CommercialName;
 						cd.LoadDefinitions();
-            cd.CardType = ccd.Capabilities.CardType;
+            cd.CardType						= ccd.Capabilities.CardType;
+						cd.SupportsTV					= ccd.Capabilities.HasTv;
+						cd.SupportsRadio			= ccd.Capabilities.HasRadio;
 						cd.DeviceId						= ccd.DeviceId;
 						cd.FriendlyName			  = String.Format("card{0}",captureCards.Count+1);
 						cd.RecordingPath			= recFolder;
@@ -198,6 +200,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 						{	
 							Log.Write("ScanNextCardType:goto analog");
 							GUIPropertyManager.SetProperty("#WizardCard",i.ToString());
+                            
 							GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_CITY);
 							return;
 						}

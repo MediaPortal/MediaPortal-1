@@ -1,4 +1,4 @@
-#region Copyright (C) 2006 Team MediaPortal - Author: mPod
+#region Copyright (C) 2006 Team MediaPortal
 
 /* 
  *	Copyright (C) 2006 Team MediaPortal - Author: mPod
@@ -32,33 +32,31 @@ using MediaPortal.Utils;
 
 namespace MediaPortal.Tests.Utils.Time
 {
-  [TestFixture]
-  [Category("WorldTimeZone")]
-  public class WorldTimeZoneTest
-  {
-
-    [Test]
-    public void ToLocalTime()
+    [TestFixture]
+    [Category("WorldTimeZone")]
+    public class WorldTimeZoneTest
     {
-        WorldTimeZone tz = new WorldTimeZone("Greenwich Standard Time");
 
-        DateTime nowDT = DateTime.Now;
-        DateTime utcDT = nowDT.ToUniversalTime();
-        DateTime localDT = tz.ToLocalTime(utcDT);
-        Assert.IsTrue(nowDT == localDT);
+        [Test]
+        public void ToLocalTime()
+        {
+            WorldTimeZone tz = new WorldTimeZone("Greenwich Standard Time");
+
+            DateTime nowDT = DateTime.Now;
+            DateTime utcDT = nowDT.ToUniversalTime();
+            DateTime localDT = tz.ToLocalTime(utcDT);
+            Assert.IsTrue(nowDT == localDT);
+        }
+
+        [Test]
+        public void ToUTCTime()
+        {
+            WorldTimeZone tz = new WorldTimeZone(TimeZone.CurrentTimeZone.StandardName);
+
+            DateTime nowDT = DateTime.Now;
+            DateTime utcDT = nowDT.ToUniversalTime();
+            DateTime tzUTCDT = tz.ToUniversalTime(nowDT);
+            Assert.IsTrue(utcDT == tzUTCDT);
+        }
     }
-
-      [Test]
-      public void ToUTCTime()
-      {
-          WorldTimeZone tz = new WorldTimeZone(TimeZone.CurrentTimeZone.StandardName);
-
-          DateTime nowDT = DateTime.Now;
-          DateTime utcDT = nowDT.ToUniversalTime();
-          DateTime tzUTCDT = tz.ToUniversalTime(nowDT);
-          Assert.IsTrue(utcDT == tzUTCDT);
-      }
-
-
-  }
 }

@@ -101,6 +101,8 @@ namespace MediaPortal.TV.Recording
     int _cardPriority = 1;
     string _recordingPath = String.Empty;
     CardTypes _cardType;
+    bool _supportsTv;
+    bool _supportsRadio;
 
     int _defaultRecordingQuality = -1;
     DateTime _lastChannelChange = DateTime.Now;
@@ -793,6 +795,18 @@ namespace MediaPortal.TV.Recording
         return _currentGraph.SupportsHardwarePidFiltering();
       }
     }
+
+    public bool SupportsTV
+    {
+      get { return _supportsTv; }
+      set { _supportsTv = value; }
+    }
+		public bool SupportsRadio
+		{
+			get { return _supportsRadio; }
+			set { _supportsRadio = value; }
+		}
+
     #endregion
 
     #region public members

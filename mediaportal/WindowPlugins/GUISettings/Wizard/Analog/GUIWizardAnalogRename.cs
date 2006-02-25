@@ -144,7 +144,16 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
       {
         MapTvToOtherCards(captureCard.ID);
       }
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_SCAN_RADIO);
+			if (captureCard.SupportsRadio)
+			{
+				GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_WIZARD_ANALOG_SCAN_RADIO);
+			}
+			else
+			{
+				GUIPropertyManager.SetProperty("#Wizard.Analog.Done", "yes");
+				GUIWizardCardsDetected.ScanNextCardType();
+			}
+
     }
 
     protected override void OnShowContextMenu()

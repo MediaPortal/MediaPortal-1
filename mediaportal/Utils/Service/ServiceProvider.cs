@@ -54,5 +54,14 @@ namespace MediaPortal.Utils.Services
       }
       return default(T);
     }
+
+      public void Remote<T>()
+      {
+          Type t = typeof(T);
+          if (services.ContainsKey(t))
+          {
+              services.Remove(t);
+          }
+      }
   }
 }
