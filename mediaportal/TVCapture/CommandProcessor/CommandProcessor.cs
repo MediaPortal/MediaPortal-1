@@ -286,7 +286,7 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
-          Log.WriteFile(Log.LogType.Recorder, true, "Command:{0} time:{2} msec",cmd.ToString(), ts.TotalMilliseconds);
+          Log.WriteFile(Log.LogType.Recorder, true, "Command:{0} time:{1} msec",cmd.ToString(), ts.TotalMilliseconds);
         }
         LogTunerStatus();
       }
