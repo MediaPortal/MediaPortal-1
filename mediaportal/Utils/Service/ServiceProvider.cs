@@ -55,7 +55,7 @@ namespace MediaPortal.Utils.Services
       return default(T);
     }
 
-      public void Remote<T>()
+      public void Remove<T>()
       {
           Type t = typeof(T);
           if (services.ContainsKey(t))
