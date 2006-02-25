@@ -8646,7 +8646,7 @@
   </capturecard>
 
   <capturecard commercialname="AVerTV USB 2.0 Plus" capturename="AVerTV USB 2.0 Plus Video Capture" devid="vid_07ca&amp;pid_0036&amp;mi_00">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"></capabilities>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"></interface>
       <filters>
