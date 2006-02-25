@@ -63,6 +63,11 @@ namespace MediaPortal.TV.Recording
 				//return new DVBGraphSS2(card.ID);
 			}
 
+      if (card.CardType == TVCapture.CardTypes.Digital_TTPremium)
+      {
+        return new DVBGraphTTPremium(card);
+      }
+
       if (card.CardType == TVCapture.CardTypes.Analog)
       {
         return new SinkGraphEx(card);

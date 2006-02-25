@@ -254,6 +254,7 @@ namespace MediaPortal.Configuration
           ((string)(availableVideoDeviceMonikers[i])));
       }
       bool ss2Added = false;
+      bool ttPremiumAdded = false;
       //enum all cards known in capturedefinitions.xml
       foreach (CaptureCardDefinition ccd in CaptureCardDefinitions.CaptureCards)
       {
@@ -289,6 +290,37 @@ namespace MediaPortal.Configuration
             }
             break;
           }
+
+          //treat the TTPremium DVB-S card as a general H/W card
+          if (((string)(availableVideoDevices[i])) == "TechnoTrend SAA7146 Capture (WDM)")
+          {
+            if (ttPremiumAdded) continue;
+            if (addNewCard || (!addNewCard && deviceToEdit.VideoDevice == "TechnoTrend SAA7146 Capture (WDM)"))
+            {
+              ttPremiumAdded = true;
+              TVCaptureDevice cd = new TVCaptureDevice();
+              cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
+              cd.VideoDevice = (string)availableVideoDevices[i];
+              cd.CommercialName = "Techno Trend Premium";
+              cd.CardType = TVCapture.CardTypes.Digital_TTPremium;
+              cd.DeviceId = (string)availableVideoDevices[i];
+              cd.FriendlyName = String.Format("card{0}", captureCards.Count + 1);
+              ComboBoxCaptureCard cbcc = new ComboBoxCaptureCard(cd);
+              bool alreadyAdded = false;
+              if (addNewCard)
+              {
+                foreach (TVCaptureDevice dev in captureCards)
+                {
+                  if (dev.CardType == cd.CardType)
+                    alreadyAdded = true;
+                }
+              }
+              if (!alreadyAdded)
+                cardComboBox.Items.Add(cbcc);
+            }
+            break;
+          }
+
 
           bool add = false;
           if (ccd.CaptureName != String.Empty)
@@ -1538,8 +1570,9 @@ namespace MediaPortal.Configuration
               xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
               xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
           }
-          if (capture.CardType == TVCapture.CardTypes.Digital_SS2)
-          {
+          if (capture.CardType == TVCapture.CardTypes.Digital_SS2 ||
+              capture.CardType == TVCapture.CardTypes.Digital_TTPremium)
+            {
               // save settings for get the filename in mp.xml
               using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
               {

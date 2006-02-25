@@ -161,6 +161,7 @@ namespace MediaPortal.TV.Recording
     {
       Invalid = 0,
       TechnisatStarCards,
+      TTPremiumCards,
       BDACards,
       Unknown,
       ChannelName

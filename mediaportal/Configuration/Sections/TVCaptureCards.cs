@@ -461,6 +461,34 @@ namespace MediaPortal.Configuration.Sections
             availableVideoDevices.RemoveAt(i);
             continue;
           }
+          //treat the TTPremium card as a general H/W card
+          if (((string)(availableVideoDevices[i])) == "TechnoTrend SAA7146 Capture (WDM)")
+          {
+            TVCaptureDevice cd = new TVCaptureDevice();
+            cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
+            cd.VideoDevice = (string)availableVideoDevices[i];
+            cd.CommercialName = "Techno Trend Premium";
+            cd.CardType = TVCapture.CardTypes.Digital_TTPremium;
+            cd.DeviceId = (string)availableVideoDevices[i];
+            cd.FriendlyName = String.Format("card{0}", captureCards.Count + 1);
+            //cd.DeviceType					= "hw";
+            cd.RecordingPath = recFolder;
+            cd.UseForRecording = true;
+            cd.UseForTV = true;
+            cd.Priority = 10;
+            captureCards.Add(cd);
+
+            string filename = String.Format(@"database\card_{0}.xml", cd.FriendlyName);
+            // save settings for get the filename in mp.xml
+            using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            {
+              xmlwriter.SetValue("dvb_ts_cards", "filename", filename);
+            }
+            availableVideoDeviceMonikers.RemoveAt(i);
+            availableVideoDevices.RemoveAt(i);
+            continue;
+          }
+
           if (ccd.CaptureName == String.Empty) continue;
           if (((string)(availableVideoDevices[i]) == ccd.CaptureName) &&
             ((availableVideoDeviceMonikers[i]).ToString().IndexOf(ccd.DeviceId) > -1))

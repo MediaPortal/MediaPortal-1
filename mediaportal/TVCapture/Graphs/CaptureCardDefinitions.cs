@@ -30,6 +30,7 @@ namespace TVCapture
   public enum CardTypes
   {
     Digital_SS2,
+    Digital_TTPremium,
     Digital_BDA,
     Analog,
     Analog_MCE,

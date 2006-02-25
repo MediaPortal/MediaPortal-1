@@ -32,6 +32,19 @@ copy ..\..\..\ttBdaDrvApi_Dll.dll .
 regsvr32 /s MPSA.ax
 regsvr32 /s TSFileSource.ax
 regsvr32 /s MPTSWriter.ax
+
+if not exist TTPremiumBoot\. mkdir TTPremiumBoot
+if not exist TTPremiumBoot\21\. mkdir TTPremiumBoot\21
+if not exist TTPremiumBoot\24\. mkdir TTPremiumBoot\24
+if not exist TTPremiumBoot\24Data\. mkdir TTPremiumBoot\24Data
+copy ..\..\..\TTPremiumBoot\*.* TTPremiumBoot\.
+copy ..\..\..\TTPremiumBoot\21\*.* TTPremiumBoot\21\.
+copy ..\..\..\TTPremiumBoot\24\*.* TTPremiumBoot\24\.
+copy ..\..\..\TTPremiumBoot\24Data\*.* TTPremiumBoot\24Data\.
+copy ..\..\..\TTPremiumSource.ax .
+copy ..\..\..\ttdvbacc.dll .
+regsvr32 /s TTPremiumSource.ax
+
 copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .
 copy ..\..\..\core\fontengine\fontengine\release\fontengine.dll .
 rem copy ..\..\..\Interop.DirectShowHelperLib.dll .

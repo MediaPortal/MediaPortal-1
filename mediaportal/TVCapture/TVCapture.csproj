@@ -42,7 +42,7 @@
     <NoStdLib>false</NoStdLib>
     <NoWarn>
     </NoWarn>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -128,7 +128,6 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
-    <Optimize>true</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -252,6 +251,7 @@
     <Compile Include="EPG\EpgEvent.cs" />
     <Compile Include="EPG\EpgLanguage.cs" />
     <Compile Include="EPG\MhwEvent.cs" />
+    <Compile Include="Graphs\DVB\DVBGraphTTPremium.cs" />
     <Compile Include="Graphs\GraphHelper.cs" />
     <Compile Include="CommandProcessor\CommandProcessor.cs" />
     <Compile Include="Scanning\AnalogRadioTuning.cs" />

@@ -98,7 +98,7 @@ namespace MediaPortal.Configuration.Sections
     public Wizard_DVBSTV()
       : this("DVB-S TV")
     {
-      _card = null;
+        _card = null;
     }
 
     public Wizard_DVBSTV(string name)
@@ -696,7 +696,10 @@ namespace MediaPortal.Configuration.Sections
           cards.LoadCaptureCards();
           foreach (TVCaptureDevice dev in cards.captureCards)
           {
-              if (dev.Network == NetworkType.DVBS)
+              if (dev.Network == NetworkType.DVBS ||
+                  // HACK: This is a nasty hack until I can figure out a way
+                  // around this - Drak
+                  dev.CardType == TVCapture.CardTypes.Digital_TTPremium)
               {
                   _card = dev;
                   break;
