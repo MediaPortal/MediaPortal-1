@@ -842,7 +842,14 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         cbInput.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
-        TunerCountry country = TunerCountries.GetTunerCountry(xmlreader.GetValueAsString("capture", "countryname", "The Netherlands"));
+        string countryName = xmlreader.GetValueAsString("capture", "countryname", "The Netherlands");
+        int countryId = xmlreader.GetValueAsInt("capture", "country", 31);
+
+        TunerCountry country = TunerCountries.GetTunerCountry(countryName);
+        if (country == null)
+        {
+            country = TunerCountries.GetTunerCountryFromID(countryId);
+        }
         cbCountry.SelectedItem = country;
       }
     }

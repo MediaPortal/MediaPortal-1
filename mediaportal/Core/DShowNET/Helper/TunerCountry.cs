@@ -57,7 +57,18 @@ namespace DShowNET
             }
             return null;
         }
-		public static TunerCountry[] Countries = new TunerCountry[] 
+        public static TunerCountry GetTunerCountryFromID(int countryId)
+        {
+            foreach (TunerCountry country in Countries)
+            {
+                if (country.Id == countryId)
+                {
+                    return country;
+                }
+            }
+            return null;
+        }
+        public static TunerCountry[] Countries = new TunerCountry[] 
 		{
             new TunerCountry(93,	"Afghanistan",	        "AF"),
             new TunerCountry(355,	"Albania",	            "AL"),
