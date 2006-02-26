@@ -4002,6 +4002,12 @@ namespace MediaPortal.TV.Recording
       if (_cardProperties == null) return false;
       return _cardProperties.SupportsCamSelection;
     }
+
+    public bool CanViewTimeShiftFile()
+    {
+      if (_graphState != State.TimeShifting && _graphState != State.Recording) return false;
+      return (_refreshPmtTable==false);
+    }
   }//public class DVBGraphBDA 
 
 

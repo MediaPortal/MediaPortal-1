@@ -437,6 +437,7 @@ namespace MediaPortal.GUI.TV
                       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
                       _zapWindow.OnMessage(msg);
                       Log.Write("ZAP OSD:ON");
+                      _zapTimeOutTimer = DateTime.Now;
                       _zapOsdVisible = true;
                   }
               }
@@ -1350,6 +1351,9 @@ namespace MediaPortal.GUI.TV
 
     public override void Process()
     {
+      //	_isTvOn=true;
+      
+
       CheckTimeOuts();
       if (ScreenStateChanged())
       {
@@ -1691,15 +1695,17 @@ namespace MediaPortal.GUI.TV
 
       // Let the navigator zap channel if needed
       GUITVHome.Navigator.CheckChannelChange();
+      //Log.Write("osd visible:{0} timeoutvalue:{1}", _zapOsdVisible ,_zapTimeOutValue);
       if (_zapOsdVisible && _zapTimeOutValue > 0)
       {
         TimeSpan ts = DateTime.Now - _zapTimeOutTimer;
+        //Log.Write("timeout :{0}", ts.TotalMilliseconds);
         if (ts.TotalMilliseconds > _zapTimeOutValue)
         {
           //yes, then remove osd offscreen
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
           _zapWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-          Log.Write("timeout->ZAP OSD:Off");
+          Log.Write("ZAP OSD:Off timeout");
           _zapOsdVisible = false;
           msg = null;
         }
@@ -1940,6 +1946,7 @@ namespace MediaPortal.GUI.TV
     {
       Log.Write("ZapPreviousChannel()");
       GUITVHome.Navigator.ZapToPreviousChannel(true);
+      _zapTimeOutTimer = DateTime.Now;
       UpdateOSD();
       if (_useVMR9Zap == true && _vmr9OSD != null)
       {
@@ -1951,6 +1958,7 @@ namespace MediaPortal.GUI.TV
     {
       Log.Write("ZapNextChannel()");
       GUITVHome.Navigator.ZapToNextChannel(true);
+      _zapTimeOutTimer = DateTime.Now;
       UpdateOSD();
       if (_useVMR9Zap == true && _vmr9OSD != null)
       {

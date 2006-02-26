@@ -494,7 +494,21 @@ namespace MediaPortal.GUI.TV
     public override void Process()
     {
       if (GUIGraphicsContext.InVmr9Render) return;
-
+      if (Recorder.IsBusyProcessingCommands)
+      {
+        btnChannel.Disabled = true;
+        btnGroup.Disabled = true;
+        btnRecord.Disabled = true;
+        btnTvOnOff.Disabled = true;
+        return;
+      }
+      else
+      {
+        btnChannel.Disabled = false;
+        btnGroup.Disabled = false;
+        btnRecord.Disabled = false;
+        btnTvOnOff.Disabled = false;
+      }
 
       // Let the navigator zap channel if needed
       Navigator.CheckChannelChange();
@@ -726,6 +740,7 @@ namespace MediaPortal.GUI.TV
       }
       ViewChannel(channel);
       if (_isTvOn == false) return;
+      return;
       if (Recorder.TVChannelName != channel && _isTvOn)
       {
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
@@ -752,26 +767,8 @@ namespace MediaPortal.GUI.TV
       else
         Log.Write("GUITVHome.ViewChannel(): turn tv off");
 
-      Recorder.StartViewing(channel, _isTvOn, _isTimeShifting);
-      Navigator.UpdateCurrentChannel();
-      //	_isTvOn=true;
-
-      if (GUIGraphicsContext.IsFullScreenVideo)
-      {
-        GUIFullScreenTV TVWindow = (GUIFullScreenTV)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-        if (TVWindow != null)
-        {
-          Action myaction = new Action();
-          if (Navigator.ZapChannel != channel)
-          {
-            //Keep showing zapping window indefinetely 
-            myaction.fAmount1 = -1;
-          }
-          myaction.wID = Action.ActionType.ACTION_SHOW_INFO;
-          TVWindow.OnAction(myaction);
-          myaction = null;
-        }
-      }
+        Recorder.StartViewing(channel, _isTvOn, _isTimeShifting, false);
+      
     }
 
     /// <summary>

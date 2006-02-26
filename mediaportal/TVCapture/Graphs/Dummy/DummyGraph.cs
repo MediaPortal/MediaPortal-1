@@ -284,5 +284,11 @@ namespace MediaPortal.TV.Recording
     {
       return false;
     }
+
+    public bool CanViewTimeShiftFile()
+    {
+      if (_state != State.TimeShifting && _state != State.Recording) return false;
+      return true;
+    }
   }
 }

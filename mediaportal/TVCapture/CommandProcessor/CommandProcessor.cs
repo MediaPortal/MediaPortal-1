@@ -57,6 +57,7 @@ namespace MediaPortal.TV.Recording
     bool _isRunning;
     bool _isStopped;
     bool _isPaused;
+    DateTime _startTimeShiftTimer=DateTime.MinValue;
     TvCardCollection _tvcards;
     #endregion
 
@@ -88,10 +89,10 @@ namespace MediaPortal.TV.Recording
     #region public members
     public void AddCommand(CardCommand command)
     {
-      //Log.WriteFile(Log.LogType.Recorder, "add cmd:{0}", command.ToString());
       lock (_listCommands)
       {
         _listCommands.Add(command);
+        Log.WriteFile(Log.LogType.Recorder, "add cmd:{0} #{1}", command.ToString(),_listCommands.Count);
       }
     }
 
@@ -303,7 +304,7 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    void ProcessCards()
+    public void ProcessCards()
     {
       //process all cards
       for (int i = 0; i < TVCards.Count; ++i)
@@ -311,11 +312,52 @@ namespace MediaPortal.TV.Recording
         TVCaptureDevice dev = TVCards[i];
         dev.Process();
 
+        if (CurrentCardIndex == i)
+        {
+          if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow) || GUIGraphicsContext.DX9Device==null)
+          {
+            if (dev.IsTimeShifting || dev.IsRecording)
+            {
+              if (!g_Player.Playing)
+              {
+                if (dev.CanViewTimeShiftFile())
+                {
+                  TimeSpan ts=DateTime.Now-_startTimeShiftTimer;
+                  if (ts.TotalSeconds>5)
+                  {
+                    //yes, check if we're already playing/watching it
+                    string timeShiftFileName = GetTimeShiftFileName(CurrentCardIndex);
+                    Log.WriteFile(Log.LogType.Recorder, "Recorder:  start viewing timeshift file of card {0}", dev.CommercialName);
+                    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
+                    msg.Label = timeShiftFileName;
+                    GUIGraphicsContext.SendMessage(msg);
+                    ResetTimeshiftTimer();
+                    _startTimeShiftTimer=DateTime.Now;
+                  }
+                }
+                else
+                {
+                  _startTimeShiftTimer=DateTime.MinValue;
+                }
+                return;
+              }
+              else
+              {
+                _startTimeShiftTimer=DateTime.MinValue;
+              }
+            }
+            else
+            {
+              _startTimeShiftTimer=DateTime.MinValue;
+            }
+          }
+        }
         //if card is timeshifting, but player has stopped, then stop the card also
         if (dev.IsTimeShifting && !dev.IsRecording && !dev.IsRadio)
         {
           if (CurrentCardIndex == i)
           {
+
             //player not playing?
             if (!g_Player.Playing)
             {
@@ -334,6 +376,7 @@ namespace MediaPortal.TV.Recording
             {
               _killTimeshiftingTimer = DateTime.Now;
             }
+
           }
           else
           {

@@ -875,7 +875,7 @@ namespace MediaPortal.TV.Recording
     /// if it finds a card matching these criteria it will start viewing on the card found
     /// </remarks>
     static bool reEntrantStartViewing = false;
-    static public void StartViewing(string channel, bool TVOnOff, bool timeshift)
+    static public void StartViewing(string channel, bool TVOnOff, bool timeshift, bool wait)
     {
       if (reEntrantStartViewing)
       {
@@ -885,6 +885,7 @@ namespace MediaPortal.TV.Recording
       try
       {
         if (_commandProcessor.Paused) return;
+        if (_commandProcessor.IsBusy) return;
         reEntrantStartViewing = true;
         if (TVOnOff)
         {
@@ -905,7 +906,10 @@ namespace MediaPortal.TV.Recording
           _commandProcessor.AddCommand(cmd);
         }
         //wait till thread finished this command
-        _commandProcessor.WaitTillFinished();
+        if (wait)
+        {
+          _commandProcessor.WaitTillFinished();
+        }
       }
       finally
       {

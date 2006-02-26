@@ -308,5 +308,6 @@ namespace MediaPortal.TV.Recording
     bool StopEpgGrabbing();
     bool SupportsHardwarePidFiltering();
     bool SupportsCamSelection();
+    bool CanViewTimeShiftFile();
   }
 }

@@ -574,9 +574,17 @@ namespace MediaPortal.TV.Recording
         else if (value != null && value.Length == 0)
           value = GetFirstChannel();
 
-        if (value.Equals(_currentTvChannelName)) return;
+        if (value.Equals(_currentTvChannelName)) return;//nothing todo
 
         Log.Write("TVCapture: change channel to :{0}", value);
+        if (IsTimeShifting || IsRecording)
+        {
+          if (g_Player.Playing && g_Player.CurrentFile == _processor.GetTimeShiftFileName(ID - 1))
+          {
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
+            GUIGraphicsContext.SendMessage(msg);
+          }
+        }
         if (!IsRecording)
         {
           bool isFullScreen = GUIGraphicsContext.IsFullScreenVideo;
@@ -611,7 +619,7 @@ namespace MediaPortal.TV.Recording
             {
               _timeTimeshiftingStarted = DateTime.Now;
             }
-
+            /*
 #if !USEMTSWRITER
             if (IsTimeShifting && !View)
             {
@@ -619,6 +627,7 @@ namespace MediaPortal.TV.Recording
               GUIGraphicsContext.SendMessage(msg);
             }
 #endif
+            */
           }//if (_currentGraph != null)
         }//if (!IsRecording)
       }
@@ -1366,6 +1375,12 @@ namespace MediaPortal.TV.Recording
       if (_currentGraph == null) return;
       _currentGraph.GrabTeletext(yesNo);
     }
+    public bool CanViewTimeShiftFile()
+    {
+      if (_currentGraph == null) return false;
+      if (!IsTimeShifting && !IsRecording) return false;
+      return _currentGraph.CanViewTimeShiftFile();
+    }
 
     #endregion
 
@@ -1375,54 +1390,21 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() Card:{0} chan:{1}", ID, _currentTvChannelName);
 
       //stop playback of this channel
-      if (g_Player.Playing && g_Player.CurrentFile == _processor.GetTimeShiftFileName(ID - 1))
-      {
-        //Log.WriteFile(Log.LogType.Capture, "TVCaptureDevice.Rebuildgraph() stop media");
-
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
-        GUIGraphicsContext.SendMessage(msg);
-
-        //wait till max 500msec until player has stopped...
-        int counter = 0;
-        while ((g_Player.Playing || VMR9Util.g_vmr9 != null) && counter < 20)
-        {
-          System.Threading.Thread.Sleep(100);
-          counter++;
-        }
-        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() player stopped:{0}",
-        //g_Player.Playing);
-      }
-
       if (_currentGraph != null)
       {
-
         //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() delete graph");
-        _currentGraph.DeleteGraph();
-        _currentGraph = null;
+        _currentGraph.StopEpgGrabbing();
+        _currentGraph.StopTimeShifting();
+        _currentGraph.StopViewing();
+        _currentGraph.StopRadio();
         //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() graph deleted");
       }
 
       TVChannel channel = GetChannel(_currentTvChannelName);
       if (_currentGraphState == State.Timeshifting)
       {
-        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() recreate timeshifting graph");
-        _currentGraph = GraphFactory.CreateGraph(this);
-        bool isCreated = _currentGraph.CreateGraph(Quality);
-        if (!isCreated)
-        {
-          _currentGraph = null;
-          return;
-        }
-        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() start timeshifting");
         _currentGraph.StartTimeShifting(channel, _processor.GetTimeShiftFileName(ID - 1));
         _lastChannelChange = DateTime.Now;
-
-        //play timeshift file again
-        //Log.WriteFile(Log.LogType.Capture, "TvCaptureDevice:RebuildGraph() start playing timeshift file");
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
-        msg.Label = _processor.GetTimeShiftFileName(ID - 1);
-        GUIGraphicsContext.SendMessage(msg);
-
       }
       else
       {
