@@ -2251,7 +2251,7 @@ namespace MediaPortal.TV.Recording
         {
           //FilterState state;
           //_mediaControl.GetState(50, out state);
-          //Log.Write("graph:{0}", state);
+          Log.Write("wait for pmt");
           bool gotPMT = false;
           _refreshPmtTable = false;
           //Log.Write("DVBGraph:Get PMT {0}", _graphState);

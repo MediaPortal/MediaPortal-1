@@ -2000,6 +2000,7 @@ namespace MediaPortal.TV.Recording
         SetHardwarePidFiltering();
       _processTimer = DateTime.MinValue;
       _pmtSendCounter = 0;
+      UpdateSignalPresent();
     }
 
     protected override void SetupDiseqc(int disecqNo)
