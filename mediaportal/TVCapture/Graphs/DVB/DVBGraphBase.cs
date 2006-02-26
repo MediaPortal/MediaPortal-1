@@ -804,6 +804,7 @@ namespace MediaPortal.TV.Recording
         if (hr < 0)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
+          return false;
         }
         TuneChannel(channel);
         _isGraphRunning = true;
@@ -834,6 +835,7 @@ namespace MediaPortal.TV.Recording
       if (_mediaControl != null)
       {
         _mediaControl.Stop();
+        _isGraphRunning = false;
       }
       if (_vmr9 != null)
       {
@@ -2729,6 +2731,7 @@ namespace MediaPortal.TV.Recording
         if (hr < 0)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
+          return ;
         }
 
         _isGraphRunning = true;
@@ -3659,6 +3662,7 @@ namespace MediaPortal.TV.Recording
           if (hr < 0)
           {
             Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
+            return;
           }
         }
         else
