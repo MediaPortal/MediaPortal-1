@@ -883,7 +883,7 @@ namespace MediaPortal.Configuration
                         }
                       }
                       condition = (string)((Data)conditionNode.Tag).Parameter;
-                      conProperty = (string)((Data)conditionNode.Tag).Value;
+                      conProperty = ((Data)conditionNode.Tag).Value.ToString();
                       layer = (string)((Data)layerNode.Tag).Value;
                       writer.WriteStartElement("action"); // <action>
                       writer.WriteAttributeString("layer", layer);
