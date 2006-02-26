@@ -3898,6 +3898,7 @@ namespace MediaPortal.TV.Recording
     }
     public bool GrabEpg(TVChannel channel)
     {
+      if (_graphState != State.Created) return false;
       // tune to the correct channel
       Log.WriteFile(Log.LogType.Capture, "DVBGraph:Grab epg for :{0}", channel.Name);
 

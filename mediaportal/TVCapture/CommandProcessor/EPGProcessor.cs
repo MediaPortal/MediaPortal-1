@@ -119,8 +119,8 @@ namespace MediaPortal.TV.Recording
               {
                 chan.LastDateTimeEpgGrabbed = DateTime.Now;
                 TVDatabase.UpdateChannel(chan, chan.Sort);
-                _epgTimer = DateTime.Now;
               }
+              _epgTimer = DateTime.Now;
               return;
             }
           }
