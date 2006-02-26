@@ -148,6 +148,7 @@ namespace MediaPortal.GUI.Music
 
         private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
         private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
+        private int PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
 
         [SkinControlAttribute(8)]
         protected GUIButtonControl btnPlaylist;
@@ -181,6 +182,26 @@ namespace MediaPortal.GUI.Music
             //			list = handler.Execute();
 
             GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
+
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            {
+                string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "nowplaying");
+
+                switch (playNowJumpTo)
+                {
+                    case "nowplaying":
+                        PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
+                        break;
+
+                    case "playlist":
+                        PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST; break;
+                        break;
+
+                    case "none":
+                        PlayNowJumpToWindowID = -1; 
+                        break;
+                }
+            }
         }
 
         // Make sure we get all of the ACTION_PLAY events (OnAction only receives the ACTION_PLAY event when 
@@ -1184,7 +1205,7 @@ namespace MediaPortal.GUI.Music
 
                 List<GUIListItem> itemlist = m_directory.GetDirectoryExt(m_strDirectory);
                 OnRetrieveMusicInfo(ref itemlist);
-                // SV
+
                 // Sort share folder tracks.  
                 try
                 {
@@ -1195,7 +1216,7 @@ namespace MediaPortal.GUI.Music
                 {
                     Log.Write("GUIMusicFiles.AddItemToPlayList at itemlist.Sort: {0}", ex.Message);
                 }
-                // \SV
+
                 foreach (GUIListItem item in itemlist)
                 {
                     AddItemToPlayList(item, ref playList);
@@ -2012,13 +2033,17 @@ namespace MediaPortal.GUI.Music
             playlistPlayer.Reset();
             playlistPlayer.Play(0);
 
-            int nPlayingNowWindow = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
-            GUIMusicPlayingNow guiPlayingNow = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(nPlayingNowWindow);
-
-            if (guiPlayingNow != null)
+            if (PlayNowJumpToWindowID != -1)
             {
-                guiPlayingNow.MusicWindow = this;
-                GUIWindowManager.ActivateWindow(nPlayingNowWindow);
+                if (PlayNowJumpToWindowID == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+                {
+                    GUIMusicPlayingNow nowPlayingWnd = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(PlayNowJumpToWindowID);
+
+                    if (nowPlayingWnd != null)
+                        nowPlayingWnd.MusicWindow = this;
+                }
+
+                GUIWindowManager.ActivateWindow(PlayNowJumpToWindowID);
             }
         }
 

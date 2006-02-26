@@ -212,7 +212,6 @@ namespace MediaPortal.Playlists
             return selectedItemIndex;
         }
 
-        // SV
         public void Sort()
         {
             _listPlayListItems.Sort(new PlayListItemComparer());
