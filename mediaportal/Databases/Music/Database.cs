@@ -521,13 +521,18 @@ namespace MediaPortal.Music.Database
         {
 					string name1=album.Album.ToLower().Trim();
 					name1 = Regex.Replace(name1,@"[^a-z0-9]*",string.Empty);
-					if (name1.Equals(name2))
-					{
-						return album.idAlbum;
-					}
+
+                    // SourceForge Patch 1438582 (hwahrmann) Part 1 of 2
+                    //if (name1.Equals(name2))
+                    if (name1.Equals(name2) && album.idArtist == lArtistId)
+                    {
+                        return album.idAlbum;
+                    }
         }
 
-        strSQL = String.Format("select * from album where strAlbum like '{0}'", strAlbum);
+        // SourceForge Patch 1438582 (hwahrmann) Part 2 of 2
+        strSQL = String.Format("select * from album where strAlbum like '{0}' and idArtist = {1}", strAlbum, lArtistId);
+        //strSQL = String.Format("select * from album where strAlbum like '{0}'", strAlbum);
         SQLiteResultSet results;
         results = m_db.Execute(strSQL);
 
