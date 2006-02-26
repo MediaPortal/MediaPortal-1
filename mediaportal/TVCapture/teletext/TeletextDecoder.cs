@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.TV.Teletext
 {
@@ -87,6 +88,35 @@ namespace MediaPortal.TV.Teletext
         magazine = (byte)(Hamming.Decode[rowData[off+0]] & 7);
         _magazineLastRow[magazine] = packetNumber;
 
+        if (packetNumber == 30)
+        {
+            byte type = (byte)(Hamming.Decode[rowData[off + 2]]);
+            if ((type != 0) && (type != 2))
+            {
+                continue;
+            }
+            string channelName = "";
+            for (int i = 0; i < 20; i++)
+            {
+                 char char1 = (char)(rowData[off + 22 + i] & 127);
+                 channelName += char1;
+            }
+            int pos = channelName.LastIndexOf("teletext",StringComparison.InvariantCultureIgnoreCase);
+            if (pos != -1)
+            {
+                channelName = channelName.Substring(0, pos);
+            }
+            //Some times channel name includes program name after :
+            pos = channelName.LastIndexOf(":");
+            if (pos != -1)
+            {
+                channelName = channelName.Substring(0, pos);
+            }
+            channelName = channelName.TrimEnd(new char[] { '\'', '\"','´','`'});
+            channelName = channelName.Trim();
+            _pageCache.ChannelName = channelName;
+            continue;
+        }
         //ignore invalid packets and packets 25,26,28,29,30,31
         if (packetNumber < 0 || packetNumber == 25 || packetNumber == 26 || packetNumber > 27) continue;
         

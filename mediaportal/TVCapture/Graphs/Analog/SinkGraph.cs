@@ -33,6 +33,7 @@ using Microsoft.Win32;
 using MediaPortal.TV.Database;
 using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
+using MediaPortal.TV.Teletext;
 
 namespace MediaPortal.TV.Recording
 {
@@ -1079,8 +1080,11 @@ namespace MediaPortal.TV.Recording
               tvChan = new TVChannel();
               tvChan.Scrambled = false;
               //then add a new channel to the database
-              //TODO get name from teletext
-              tvChan.Name = _channelNumber.ToString();
+              tvChan.Name = GetTeletextChannelName();
+              if (tvChan.Name == string.Empty)
+              {
+                  tvChan.Name = _channelNumber.ToString();
+              }
               tvChan.ID = -1;
               tvChan.Number = _channelNumber;
               tvChan.Sort = 40000;
@@ -1151,6 +1155,21 @@ namespace MediaPortal.TV.Recording
 
       }
     }
+      public string GetTeletextChannelName()
+      {
+          bool currentTeletextGrabbing = _grabTeletext;
+          _grabTeletext = true;
+          TeletextGrabber.TeletextCache.ClearTeletextChannelName();
+          string channelName = "";
+          for (int i = 0; i < 5; i++)
+          {
+              channelName = TeletextGrabber.TeletextCache.GetTeletextChannelName();
+              if (channelName != string.Empty) break;
+              System.Threading.Thread.Sleep(500);
+          }
+          _grabTeletext = currentTeletextGrabbing;
+          return channelName;
+      }
       int GetUniqueRadioChannel()
       {
           ArrayList stations = new ArrayList();

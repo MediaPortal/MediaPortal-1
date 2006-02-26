@@ -381,7 +381,7 @@ namespace MediaPortal.TV.Recording
       //	[	capture			 ]		 [		to			]----->[	codec		]---->[ grabber	]
       //	[						vbi]---->[	sink			]			 [					]			[					]
       //
-      if (GUIGraphicsContext.DX9Device == null) return;
+      //if (GUIGraphicsContext.DX9Device == null) return;MOSQUISS
 
 
       AddTeeSinkToGraph(_graphBuilderInterface); //Tee/Sink-to-Sink Converter
@@ -964,7 +964,6 @@ namespace MediaPortal.TV.Recording
 
     public int BufferCB(double SampleTime, System.IntPtr pBuffer, int BufferLen)
     {
-
       if (!_grabTeletext) return 0;
       if (pBuffer == IntPtr.Zero) return 0;
       if (BufferLen < 43) return 0;

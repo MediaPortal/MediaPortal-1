@@ -36,6 +36,19 @@ namespace MediaPortal.TV.Teletext
 
 
     IntPtr[,] _pageCache = new IntPtr[MAX_PAGE, MAX_SUB_PAGES];
+    string _channelName = "";
+
+      public string ChannelName
+      {
+          get
+          {
+              return _channelName;
+          }
+          set
+          {
+              _channelName = value;
+          }
+      }
 
     public void Clear()
     {
@@ -51,6 +64,7 @@ namespace MediaPortal.TV.Teletext
           }
         }
       }
+      _channelName = "";
     }
 
     public int NumberOfSubpages(int pageNumber)
@@ -166,5 +180,6 @@ namespace MediaPortal.TV.Teletext
 
       return _pageCache[pageNumber, subPageNumber]  ;
     }
+    
   }
 }

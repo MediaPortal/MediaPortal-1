@@ -106,6 +106,14 @@ namespace MediaPortal.TV.Teletext
       ClearBuffer();
     }
 
+    public string GetTeletextChannelName()
+    {
+        return _pageCache.ChannelName;
+    }
+    public void ClearTeletextChannelName()
+    {
+        _pageCache.ChannelName = "";
+    }
     public void SetPageSize(int renderWidth, int renderHeight)
     {
       _renderer.Width = renderWidth;
