@@ -34,7 +34,7 @@
 //////////////////////////////////////////////////////////////////////
 
 char *logbuffer=NULL; 
-#ifndef DEBUG
+#ifdef DEBUG
 void Log(const char *fmt, ...) 
 {
 	if (logbuffer==NULL)
@@ -213,359 +213,396 @@ HRESULT Sections::CurrentPTS(BYTE *pData,ULONGLONG *ptsValue,int *streamType)
 }
 int Sections::decodePMT(BYTE *buf,ChannelInfo *ch, int len)
 {
-	// pmt should now in the pmtData array
-	if (len <12) return -1;
-
-	
-	int table_id = buf[0];
-	int section_syntax_indicator = (buf[1]>>7) & 1;
-	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
-	int program_number = (buf[3]<<8)+buf[4];
-	int version_number = ((buf[5]>>1)&0x1F);
-	int current_next_indicator = buf[5] & 1;
-	int section_number = buf[6];
-	int last_section_number = buf[7];
-	int pcr_pid=((buf[8]& 0x1F)<<8)+buf[9];
-	int program_info_length = ((buf[10] & 0xF)<<8)+buf[11];
-	int len2 = program_info_length;
-	int pointer = 12;
-	int len1 = section_length - pointer;
-	int x;
-	
-	// loop 1
-	while (len2 > 0)
+	try
 	{
-		if (pointer+1>=len) return -1;
-		int indicator=buf[pointer];
-		x = 0;
-		x = buf[pointer + 1] + 2;
-		len2 -= x;
-		pointer += x;
-		len1 -= x;
-	}
-	// loop 2
-	int stream_type=0;
-	int elementary_PID=0;
-	int ES_info_length=0;
-	int audioToSet=0;
+		// pmt should now in the pmtData array
+		if (len <12) return -1;
 
-	while (len1 > 4)
-	{
-		if (pointer+4>=len) return -1;
-		stream_type = buf[pointer];
-		elementary_PID = ((buf[pointer+1]&0x1F)<<8)+buf[pointer+2];
-		ES_info_length = ((buf[pointer+3] & 0xF)<<8)+buf[pointer+4];
-		if(stream_type==1 || stream_type==2)
-		{
-			if(ch->Pids.VideoPid==0)
-				ch->Pids.VideoPid=elementary_PID;
-		}
-		if(stream_type==3 || stream_type==4)
-		{
-			audioToSet=0;
-			if(ch->Pids.AudioPid1==0)
-			{
-				audioToSet=1;
-				ch->Pids.AudioPid1=elementary_PID;
-			}
-			else
-			{
-				if(ch->Pids.AudioPid2==0)
-				{
-					audioToSet=2;
-					ch->Pids.AudioPid2=elementary_PID;
-				}
-				else
-				{
-					if(ch->Pids.AudioPid3==0)
-					{
-						audioToSet=3;
-						ch->Pids.AudioPid3=elementary_PID;
-					}
-				}
-			}
-		}
-		ch->PCRPid=pcr_pid;
-
-		if(stream_type==0x81)
-		{
-			if(ch->Pids.AC3==0)
-				ch->Pids.AC3=elementary_PID;
-		}
-		pointer += 5;
-		len1 -= 5;
-		len2 = ES_info_length;
+		
+		int table_id = buf[0];
+		int section_syntax_indicator = (buf[1]>>7) & 1;
+		int section_length = ((buf[1]& 0xF)<<8) + buf[2];
+		int program_number = (buf[3]<<8)+buf[4];
+		int version_number = ((buf[5]>>1)&0x1F);
+		int current_next_indicator = buf[5] & 1;
+		int section_number = buf[6];
+		int last_section_number = buf[7];
+		int pcr_pid=((buf[8]& 0x1F)<<8)+buf[9];
+		int program_info_length = ((buf[10] & 0xF)<<8)+buf[11];
+		int len2 = program_info_length;
+		int pointer = 12;
+		int len1 = section_length - pointer;
+		int x;
+		
+		// loop 1
 		while (len2 > 0)
 		{
 			if (pointer+1>=len) return -1;
-			x = 0;
 			int indicator=buf[pointer];
+			x = 0;
 			x = buf[pointer + 1] + 2;
-			if(indicator==0x6A)
-				ch->Pids.AC3=elementary_PID;
-			if(indicator==0x0A)
-			{
-				
-				if (pointer+4>=len) return -1;
-				BYTE d[3];
-				d[0]=buf[pointer+2];
-				d[1]=buf[pointer+3];
-				d[2]=buf[pointer+4];
-				if(audioToSet==1)
-				{
-					ch->Pids.Lang1_1=d[0];
-					ch->Pids.Lang1_2=d[1];
-					ch->Pids.Lang1_3=d[2];
-				}
-				if(audioToSet==2)
-				{
-					ch->Pids.Lang2_1=d[0];
-					ch->Pids.Lang2_2=d[1];
-					ch->Pids.Lang2_3=d[2];
-				}
-				if(audioToSet==3)
-				{
-					ch->Pids.Lang3_1=d[0];
-					ch->Pids.Lang3_2=d[1];
-					ch->Pids.Lang3_3=d[2];
-				}
-
-			}
-			if(indicator==0x56 && ch->Pids.Teletext==0)
-				ch->Pids.Teletext=elementary_PID;
-			
 			len2 -= x;
-			len1 -= x;
 			pointer += x;
-
+			len1 -= x;
 		}
-	}
-	Log("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x",
-		ch->ProgrammPMTPID, ch->PCRPid,ch->Pids.VideoPid,ch->Pids.AudioPid1,ch->Pids.AC3);
-	ch->PMTReady=1;
-	if(last_section_number>section_number)
-		return section_number+1;
-	else
-		return -1;
-}
-int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
-{
+		// loop 2
+		int stream_type=0;
+		int elementary_PID=0;
+		int ES_info_length=0;
+		int audioToSet=0;
 
-	if (len < 10) return 0;
-	if (channels<=0) return 0;
-	
-	int table_id = buf[0];
-	int section_syntax_indicator = (buf[1]>>7) & 1;
-	int section_length = ((buf[1]& 0xF)<<8) + buf[2];
-	int transport_stream_id = (buf[3]<<8)+buf[4];
-	int version_number = ((buf[5]>>1)&0x1F);
-	int current_next_indicator = buf[5] & 1;
-	int section_number = buf[6];
-	int last_section_number = buf[7];
-	int original_network_id = ((buf[8])<<8)+buf[9];
-	int len1 = section_length - 11 - 4;
-	int descriptors_loop_length;
-	int len2;
-	int service_id;
-	int EIT_schedule_flag;
-	int free_CA_mode;
-	int running_status;
-	int EIT_present_following_flag;
-	int pointer = 11;
-	int x = 0;
-	int channel;	 
-	if (table_id!=0x42) return 0;
-
-	
-//	Log("decodeSDTTable len=%d section no:%d last section no:%d channels:%d", section_length,section_number,last_section_number,channels);
-
-	while (len1 > 0)
-	{
-		if (pointer+4 >=len) return 0;
-		service_id = (buf[pointer]<<8)+buf[pointer+1];
-		EIT_schedule_flag = (buf[pointer+2]>>1) & 1;
-		EIT_present_following_flag = buf[pointer+2] & 1;
-		running_status = (buf[pointer+3]>>5) & 7;
-		free_CA_mode = (buf[pointer+3]>>4) &1;
-		descriptors_loop_length = ((buf[pointer+3] & 0xF)<<8)+buf[pointer+4];
-		//
-		pointer += 5;
-		len1 -= 5;
-		len2 = descriptors_loop_length;
-		channel=-1;
-		for(int n=0;n<channels;n++)
+		while (len1 > 4)
 		{
-			if(ch[n].ProgrammNumber==service_id)
+			if (pointer+4>=len) return -1;
+			stream_type = buf[pointer];
+			elementary_PID = ((buf[pointer+1]&0x1F)<<8)+buf[pointer+2];
+			ES_info_length = ((buf[pointer+3] & 0xF)<<8)+buf[pointer+4];
+			if(stream_type==1 || stream_type==2)
 			{
-				channel=n;
-				break;
+				if(ch->Pids.VideoPid==0)
+					ch->Pids.VideoPid=elementary_PID;
 			}
-		}
-		//
-		if(channel==-1)
-		{
-			Log("sdt: channel not found for program:%d", service_id);
-		}
-
-		while (len2 > 0)
-		{
-			if (pointer+1 >=len) return 0;
-			int indicator=buf[pointer];
-			x = 0;
-			x = buf[pointer + 1] + 2;
-			//Log.Write("indicator = {0:X}",indicator);
-			if (indicator == 0x48)
+			if(stream_type==3 || stream_type==4)
 			{
-				if (channel>=0)
+				audioToSet=0;
+				if(ch->Pids.AudioPid1==0)
 				{
-					if (ch[channel].SDTReady==0)
+					audioToSet=1;
+					ch->Pids.AudioPid1=elementary_PID;
+				}
+				else
+				{
+					if(ch->Pids.AudioPid2==0)
 					{
-						ServiceData serviceData;							
-						DVB_GetService(buf+pointer,&serviceData);
-						ch[channel].ServiceType=serviceData.ServiceType;
-						strcpy((char*)ch[channel].ProviderName,serviceData.Provider);
-						strcpy((char*)ch[channel].ServiceName,serviceData.Name);
-						ch[channel].Scrambled=free_CA_mode;
-						ch[channel].EITPreFollow=EIT_present_following_flag;
-						ch[channel].EITSchedule=EIT_schedule_flag;
-						ch[channel].SDTReady=1;
-						ch[channel].NetworkID=original_network_id;
-						Log("sdt: pmt:0x%x provider:'%s' channel:'%s' onid:0x%x tsid:0x%x", ch[channel].ProgrammPMTPID,ch[channel].ProviderName,ch[channel].ServiceName,ch[channel].NetworkID, transport_stream_id);
+						audioToSet=2;
+						ch->Pids.AudioPid2=elementary_PID;
+					}
+					else
+					{
+						if(ch->Pids.AudioPid3==0)
+						{
+							audioToSet=3;
+							ch->Pids.AudioPid3=elementary_PID;
+						}
 					}
 				}
 			}
-			else
+			ch->PCRPid=pcr_pid;
+
+			if(stream_type==0x81)
 			{
-				int st=indicator;
-				if(st!=0x53 && st!=0x64)
-					st=1;
+				if(ch->Pids.AC3==0)
+					ch->Pids.AC3=elementary_PID;
 			}
-			len2 -= x;
-			pointer += x;
-			len1 -= x;
-		}		
+			pointer += 5;
+			len1 -= 5;
+			len2 = ES_info_length;
+			while (len2 > 0)
+			{
+				if (pointer+1>=len) return -1;
+				x = 0;
+				int indicator=buf[pointer];
+				x = buf[pointer + 1] + 2;
+				if(indicator==0x6A)
+					ch->Pids.AC3=elementary_PID;
+				if(indicator==0x0A)
+				{
+					
+					if (pointer+4>=len) return -1;
+					BYTE d[3];
+					d[0]=buf[pointer+2];
+					d[1]=buf[pointer+3];
+					d[2]=buf[pointer+4];
+					if(audioToSet==1)
+					{
+						ch->Pids.Lang1_1=d[0];
+						ch->Pids.Lang1_2=d[1];
+						ch->Pids.Lang1_3=d[2];
+					}
+					if(audioToSet==2)
+					{
+						ch->Pids.Lang2_1=d[0];
+						ch->Pids.Lang2_2=d[1];
+						ch->Pids.Lang2_3=d[2];
+					}
+					if(audioToSet==3)
+					{
+						ch->Pids.Lang3_1=d[0];
+						ch->Pids.Lang3_2=d[1];
+						ch->Pids.Lang3_3=d[2];
+					}
+
+				}
+				if(indicator==0x56 && ch->Pids.Teletext==0)
+					ch->Pids.Teletext=elementary_PID;
+				
+				len2 -= x;
+				len1 -= x;
+				pointer += x;
+
+			}
+		}
+		Log("DecodePMT pid:0x%x pcrpid:0x%x videopid:0x%x audiopid:0x%x ac3pid:0x%x",
+			ch->ProgrammPMTPID, ch->PCRPid,ch->Pids.VideoPid,ch->Pids.AudioPid1,ch->Pids.AC3);
+		ch->PMTReady=1;
+		if(last_section_number>section_number)
+			return section_number+1;
+		else
+			return -1;
 	}
-	if(last_section_number>section_number)
-		return section_number+1;
-	else
-		return -1;
+	catch(...)
+	{
+		Dump("mpsaa: unhandled exception in Sections::DecodePMT()");
+	}	
+	return -1;
+}
+int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
+{
+	try
+	{
+		if (len < 10) return 0;
+		if (channels<=0) return 0;
+		
+		int table_id = buf[0];
+		int section_syntax_indicator = (buf[1]>>7) & 1;
+		int section_length = ((buf[1]& 0xF)<<8) + buf[2];
+		int transport_stream_id = (buf[3]<<8)+buf[4];
+		int version_number = ((buf[5]>>1)&0x1F);
+		int current_next_indicator = buf[5] & 1;
+		int section_number = buf[6];
+		int last_section_number = buf[7];
+		int original_network_id = ((buf[8])<<8)+buf[9];
+		int len1 = section_length - 11 - 4;
+		int descriptors_loop_length;
+		int len2;
+		int service_id;
+		int EIT_schedule_flag;
+		int free_CA_mode;
+		int running_status;
+		int EIT_present_following_flag;
+		int pointer = 11;
+		int x = 0;
+		int channel;	 
+		if (table_id!=0x42) return 0;
+
+		
+	//	Log("decodeSDTTable len=%d section no:%d last section no:%d channels:%d", section_length,section_number,last_section_number,channels);
+
+		while (len1 > 0)
+		{
+			if (pointer+4 >=len) return 0;
+			service_id = (buf[pointer]<<8)+buf[pointer+1];
+			EIT_schedule_flag = (buf[pointer+2]>>1) & 1;
+			EIT_present_following_flag = buf[pointer+2] & 1;
+			running_status = (buf[pointer+3]>>5) & 7;
+			free_CA_mode = (buf[pointer+3]>>4) &1;
+			descriptors_loop_length = ((buf[pointer+3] & 0xF)<<8)+buf[pointer+4];
+			//
+			pointer += 5;
+			len1 -= 5;
+			len2 = descriptors_loop_length;
+			channel=-1;
+			for(int n=0;n<channels;n++)
+			{
+				if(ch[n].ProgrammNumber==service_id)
+				{
+					channel=n;
+					break;
+				}
+			}
+			//
+			if(channel==-1)
+			{
+				Log("sdt: channel not found for program:%d", service_id);
+			}
+
+			while (len2 > 0)
+			{
+				if (pointer+1 >=len) return 0;
+				int indicator=buf[pointer];
+				x = 0;
+				x = buf[pointer + 1] + 2;
+				//Log.Write("indicator = {0:X}",indicator);
+				if (indicator == 0x48)
+				{
+					if (channel>=0)
+					{
+						if (ch[channel].SDTReady==0)
+						{
+							ServiceData serviceData;							
+							DVB_GetService(buf+pointer,&serviceData);
+							ch[channel].ServiceType=serviceData.ServiceType;
+							strcpy((char*)ch[channel].ProviderName,serviceData.Provider);
+							strcpy((char*)ch[channel].ServiceName,serviceData.Name);
+							ch[channel].Scrambled=free_CA_mode;
+							ch[channel].EITPreFollow=EIT_present_following_flag;
+							ch[channel].EITSchedule=EIT_schedule_flag;
+							ch[channel].SDTReady=1;
+							ch[channel].NetworkID=original_network_id;
+							Log("sdt: pmt:0x%x provider:'%s' channel:'%s' onid:0x%x tsid:0x%x", ch[channel].ProgrammPMTPID,ch[channel].ProviderName,ch[channel].ServiceName,ch[channel].NetworkID, transport_stream_id);
+						}
+					}
+				}
+				else
+				{
+					int st=indicator;
+					if(st!=0x53 && st!=0x64)
+						st=1;
+				}
+				len2 -= x;
+				pointer += x;
+				len1 -= x;
+			}		
+		}
+		if(last_section_number>section_number)
+			return section_number+1;
+		else
+			return -1;
+	}
+	catch(...)
+	{
+		Dump("mpsaa: unhandled exception in Sections::DecodeST()");
+	}	
+	return -1;
 }
 
 void Sections::DVB_GetService(BYTE *b,ServiceData *serviceData)
 {
-	int descriptor_tag;
-	int descriptor_length;
-	int service_provider_name_length;
-	int service_name_length;
-	int pointer = 0;
-	memset(serviceData,0,sizeof(struct stserviceData));
-	descriptor_tag = b[0];
-	descriptor_length = b[1];
-	serviceData->ServiceType = b[2];
-	service_provider_name_length = b[3];
-	pointer = 4;
-	getString468A(b+pointer,service_provider_name_length,serviceData->Provider);
-	pointer += service_provider_name_length;
-	service_name_length = b[pointer];
-	pointer += 1;
-	getString468A(b+pointer, service_name_length,serviceData->Name);
+	try
+	{
+		int descriptor_tag;
+		int descriptor_length;
+		int service_provider_name_length;
+		int service_name_length;
+		int pointer = 0;
+		memset(serviceData,0,sizeof(struct stserviceData));
+		descriptor_tag = b[0];
+		descriptor_length = b[1];
+		serviceData->ServiceType = b[2];
+		service_provider_name_length = b[3];
+		pointer = 4;
+		getString468A(b+pointer,service_provider_name_length,serviceData->Provider);
+		pointer += service_provider_name_length;
+		service_name_length = b[pointer];
+		pointer += 1;
+		getString468A(b+pointer, service_name_length,serviceData->Name);
+	}
+	catch(...)
+	{
+		Dump("mpsaa: unhandled exception in Sections::DVB_GetService()");
+	}	
 }
 bool Sections::IsNewPat(BYTE *pData, int len)
 {
-	int table_id = pData[0];
-	if (table_id!=0) return false;
-	if (len<9) return false;
-	int section_syntax_indicator = (pData[1]>>7) & 1;
-	int section_length = ((pData[1]& 0xF)<<8) + pData[2];
-	int transport_stream_id = (pData[3]<<8)+pData[4];
-	int version_number = ((pData[5]>>1)&0x1F);
-	int current_next_indicator = pData[5] & 1;
-	int section_number = pData[6];
-	int last_section_number = pData[7];
+	try
+	{
+		int table_id = pData[0];
+		if (table_id!=0) return false;
+		if (len<9) return false;
+		int section_syntax_indicator = (pData[1]>>7) & 1;
+		int section_length = ((pData[1]& 0xF)<<8) + pData[2];
+		int transport_stream_id = (pData[3]<<8)+pData[4];
+		int version_number = ((pData[5]>>1)&0x1F);
+		int current_next_indicator = pData[5] & 1;
+		int section_number = pData[6];
+		int last_section_number = pData[7];
 
-	if(table_id!=0 || section_number!=0||last_section_number!=0) return false;//invalid table id
-	for (int i=0; i < m_patsFound; ++i)
-	{
-		if (version_number==m_patTableVersion[i] && 
-			transport_stream_id==m_patTSID[i] && 
-			section_length==m_patSectionLen[i]) return false; // same version number as before
-	}
-	int loop =(section_length - 9) / 4;
-	if ( ( (section_length-9) %4 ) !=0) 
-	{
-		//Log("newpat: invalid section length:%d", section_length);
-		return false; // invalid length
-	}
-	if (loop < 1) 
-	{
-		Log("newpat: invalid loop<1 :%d", loop);
-		return false; // invalid number of channels
-	}
-
-	int pmtcount=0;
-	for(int i=0;i<loop;i++)
-	{
-		int offset=(8 +(i * 4));
-		int PMTPID=((pData[offset+2] & 0x1F)<<8)+pData[offset+3];
-		if (PMTPID < 0x10 || PMTPID >=0x1fff) 
+		if(table_id!=0 || section_number!=0||last_section_number!=0) return false;//invalid table id
+		for (int i=0; i < m_patsFound; ++i)
 		{
-			Log("newpat: invalid pid:%x", PMTPID);
-			return false;
+			if (version_number==m_patTableVersion[i] && 
+				transport_stream_id==m_patTSID[i] && 
+				section_length==m_patSectionLen[i]) return false; // same version number as before
 		}
+		int loop =(section_length - 9) / 4;
+		if ( ( (section_length-9) %4 ) !=0) 
+		{
+			//Log("newpat: invalid section length:%d", section_length);
+			return false; // invalid length
+		}
+		if (loop < 1) 
+		{
+			Log("newpat: invalid loop<1 :%d", loop);
+			return false; // invalid number of channels
+		}
+
+		int pmtcount=0;
+		for(int i=0;i<loop;i++)
+		{
+			int offset=(8 +(i * 4));
+			int PMTPID=((pData[offset+2] & 0x1F)<<8)+pData[offset+3];
+			if (PMTPID < 0x10 || PMTPID >=0x1fff) 
+			{
+				Log("newpat: invalid pid:%x", PMTPID);
+				return false;
+			}
+		}
+		Log("Found new PAT: version:0x%x tsid:0x%x len:0x%x channels:%d ssi:%x cni:%x",
+			version_number,transport_stream_id,section_length,loop,section_syntax_indicator,current_next_indicator);
+		return true;
 	}
-	Log("Found new PAT: version:0x%x tsid:0x%x len:0x%x channels:%d ssi:%x cni:%x",
-		version_number,transport_stream_id,section_length,loop,section_syntax_indicator,current_next_indicator);
-	return true;
+	catch(...)
+	{
+		Dump("mpsaa: unhandled exception in Sections::IsNewPAT()");
+	}	
+	return false;
 }
 void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int len)
 {
-	int table_id = pData[0];
-	if (table_id!=0) return;
-	if (len<9) return;
-	int section_syntax_indicator = (pData[1]>>7) & 1;
-	int section_length = ((pData[1]& 0xF)<<8) + pData[2];
-	int transport_stream_id = (pData[3]<<8)+pData[4];
-	int version_number = ((pData[5]>>1)&0x1F);
-	int current_next_indicator = pData[5] & 1;
-	int section_number = pData[6];
-	int last_section_number = pData[7];
-	int loop =(section_length - 9) / 4;
-	int offset=0;
-	if(table_id!=0 || section_number!=0||last_section_number!=0)
+	try
 	{
-		return;
-	}
-	m_patTableVersion[m_patsFound]=version_number;
-	m_patTSID[m_patsFound]=transport_stream_id;
-	m_patSectionLen[m_patsFound]=section_length;
-	int channelOffset=*channelCount;
-
-	Log("Decode pat:0x%x len:0x%x tsid:0x%x version:0x%x (%d/%d) channels:%d",
-		table_id,section_length,transport_stream_id,version_number,section_number,last_section_number,(*channelCount));
-	ChannelInfo ch;
-	
-	memset(&ch,0,sizeof(struct chInfo));
-
-	int pmtcount=0;
-	for(int i=0;i<loop;i++)
-	{
-		offset=(8 +(i * 4));
-		ch.ProgrammPMTPID=((pData[offset+2] & 0x1F)<<8)+pData[offset+3];
-		ch.ProgrammNumber=(pData[offset]<<8)+pData[offset+1];
-		ch.TransportStreamID=transport_stream_id;
-		ch.PMTReady=0;
-		ch.SDTReady=0;
-		Log("  ch:%d prog:%d tsid:0x%x pmtpid:0x%x", i,ch.ProgrammNumber,ch.TransportStreamID,ch.ProgrammPMTPID);
-		if(ch.ProgrammPMTPID>0x12)
+		int table_id = pData[0];
+		if (table_id!=0) return;
+		if (len<9) return;
+		int section_syntax_indicator = (pData[1]>>7) & 1;
+		int section_length = ((pData[1]& 0xF)<<8) + pData[2];
+		int transport_stream_id = (pData[3]<<8)+pData[4];
+		int version_number = ((pData[5]>>1)&0x1F);
+		int current_next_indicator = pData[5] & 1;
+		int section_number = pData[6];
+		int last_section_number = pData[7];
+		int loop =(section_length - 9) / 4;
+		int offset=0;
+		if(table_id!=0 || section_number!=0||last_section_number!=0)
 		{
-			chInfo[channelOffset+pmtcount]=ch;
-			pmtcount++;
+			return;
 		}
-		if(i>254)
-			break;
+		m_patTableVersion[m_patsFound]=version_number;
+		m_patTSID[m_patsFound]=transport_stream_id;
+		m_patSectionLen[m_patsFound]=section_length;
+		int channelOffset=*channelCount;
+
+		Log("Decode pat:0x%x len:0x%x tsid:0x%x version:0x%x (%d/%d) channels:%d",
+			table_id,section_length,transport_stream_id,version_number,section_number,last_section_number,(*channelCount));
+		ChannelInfo ch;
+		
+		memset(&ch,0,sizeof(struct chInfo));
+
+		int pmtcount=0;
+		for(int i=0;i<loop;i++)
+		{
+			offset=(8 +(i * 4));
+			ch.ProgrammPMTPID=((pData[offset+2] & 0x1F)<<8)+pData[offset+3];
+			ch.ProgrammNumber=(pData[offset]<<8)+pData[offset+1];
+			ch.TransportStreamID=transport_stream_id;
+			ch.PMTReady=0;
+			ch.SDTReady=0;
+			Log("  ch:%d prog:%d tsid:0x%x pmtpid:0x%x", i,ch.ProgrammNumber,ch.TransportStreamID,ch.ProgrammPMTPID);
+			if(ch.ProgrammPMTPID>0x12)
+			{
+				chInfo[channelOffset+pmtcount]=ch;
+				pmtcount++;
+			}
+			if(i>254)
+				break;
+		}
+		*channelCount=(*channelCount)+pmtcount;
+		m_patsFound++;
 	}
-	*channelCount=(*channelCount)+pmtcount;
-	m_patsFound++;
+	catch(...)
+	{
+		Dump("mpsaa: unhandled exception in Sections::DecodePAT()");
+	}	
 }
 
 void Sections::getString468A(BYTE *b, int l1,char *text)
@@ -757,525 +794,570 @@ void Sections::ResetPAT()
 
 void  Sections::decodeNITTable(byte* buf,ChannelInfo *channels, int channelCount)
 {
-	int table_id;
-	int section_syntax_indicator;
-	int section_length;
-	int network_id;
-	int version_number;
-	int current_next_indicator;
-	int section_number;
-	int last_section_number;
-	int network_descriptor_length;
-	int transport_stream_loop_length;
-	int transport_stream_id;
-	int original_network_id;
-
-	int transport_descriptor_length=0;
-	//
-	int pointer=0;
-	int l1=0;
-	int l2=0;
-
-	//  0        1         2        3        4         5       6      7         8         9       10
-	//76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|
-	//++++++++ -+--++++ ++++++++ -------- -------- ++-----+ -------- ++++++++ ----++++ ++++++++
-	table_id = buf[0];
-	//0x40=actual (current) network
-	//0x41=other networks
-	if (table_id!=0x40 && table_id!=0x41) return;
-	
-	
-	section_syntax_indicator = buf[1] &0x80;
-	section_length = ((buf[1] &0xF)<<8)+buf[2];
-	network_id = (buf[3]<<8)+buf[4];
-	version_number = (buf[5]>>1) &0x1F;
-	current_next_indicator = buf[5]&1;
-	section_number = buf[6];
-	last_section_number = buf[7];
-	network_descriptor_length = ((buf[8]&0xF)<<8)+buf[9];
-
-	//Log("NIT section len:%d network_descriptor_length :%d", section_length,network_descriptor_length);
-	l1 = network_descriptor_length;
-	pointer = 10;
-	int x = 0;
-
-	while (l1 > 0)
+	try
 	{
-		int indicator=buf[pointer];
-		x = buf[pointer + 1] + 2;
-		//Log("decode nit desc1:%x len:%d", indicator,x);
-		/*
-		if(indicator==0x40)
+		int table_id;
+		int section_syntax_indicator;
+		int section_length;
+		int network_id;
+		int version_number;
+		int current_next_indicator;
+		int section_number;
+		int last_section_number;
+		int network_descriptor_length;
+		int transport_stream_loop_length;
+		int transport_stream_id;
+		int original_network_id;
+
+		int transport_descriptor_length=0;
+		//
+		int pointer=0;
+		int l1=0;
+		int l2=0;
+
+		//  0        1         2        3        4         5       6      7         8         9       10
+		//76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|76543210|
+		//++++++++ -+--++++ ++++++++ -------- -------- ++-----+ -------- ++++++++ ----++++ ++++++++
+		table_id = buf[0];
+		//0x40=actual (current) network
+		//0x41=other networks
+		if (table_id!=0x40 && table_id!=0x41) return;
+		
+		
+		section_syntax_indicator = buf[1] &0x80;
+		section_length = ((buf[1] &0xF)<<8)+buf[2];
+		network_id = (buf[3]<<8)+buf[4];
+		version_number = (buf[5]>>1) &0x1F;
+		current_next_indicator = buf[5]&1;
+		section_number = buf[6];
+		last_section_number = buf[7];
+		network_descriptor_length = ((buf[8]&0xF)<<8)+buf[9];
+
+		//Log("NIT section len:%d network_descriptor_length :%d", section_length,network_descriptor_length);
+		l1 = network_descriptor_length;
+		pointer = 10;
+		int x = 0;
+
+		while (l1 > 0)
 		{
-			CAutoString networkName (x+10);
-			strncpy(networkName.GetBuffer() ,(char*)&buf[pointer+2],x-2);
-			networkName.GetBuffer()[x-2]=0;
-			m_nit.NetworkName=networkName.GetBuffer();
-		}*/
-		l1 -= x;
-		pointer += x;
-	}
-	pointer=10+network_descriptor_length;
+			int indicator=buf[pointer];
+			x = buf[pointer + 1] + 2;
+			//Log("decode nit desc1:%x len:%d", indicator,x);
+			/*
+			if(indicator==0x40)
+			{
+				CAutoString networkName (x+10);
+				strncpy(networkName.GetBuffer() ,(char*)&buf[pointer+2],x-2);
+				networkName.GetBuffer()[x-2]=0;
+				m_nit.NetworkName=networkName.GetBuffer();
+			}*/
+			l1 -= x;
+			pointer += x;
+		}
+		pointer=10+network_descriptor_length;
 
-	if (pointer > section_length)
-	{
-		return;
-	}
-//	Log("NIT: decode() network:'%s'", m_nit.NetworkName);
-	
-	transport_stream_loop_length = ((buf[pointer] &0xF)<<8)+buf[pointer+1];
-	l1 = transport_stream_loop_length;
-	pointer += 2;
-	
-	while (l1 > 0)
-	{
-		//Log("loop1: %d/%d l1:%d",pointer,section_length,l1);
-		if (pointer+2 > section_length)
+		if (pointer > section_length)
 		{
-			//Log("check1");
 			return;
 		}
-		transport_stream_id = (buf[pointer]<<8)+buf[pointer+1];
-		original_network_id = (buf[pointer+2]<<8)+buf[pointer+3];
-		transport_descriptor_length = ((buf[pointer+4] & 0xF)<<8)+buf[pointer+5];
-		pointer += 6;
-		l1 -= 6;
-		l2 = transport_descriptor_length;
+	//	Log("NIT: decode() network:'%s'", m_nit.NetworkName);
 		
-		//Log("    transport_descriptor_length :%d", transport_descriptor_length);
-		while (l2 > 0)
+		transport_stream_loop_length = ((buf[pointer] &0xF)<<8)+buf[pointer+1];
+		l1 = transport_stream_loop_length;
+		pointer += 2;
+		
+		while (l1 > 0)
 		{
-			//Log("    loop2: %d/%d l1:%d",pointer,transport_descriptor_length,l2);
+			//Log("loop1: %d/%d l1:%d",pointer,section_length,l1);
 			if (pointer+2 > section_length)
 			{
-			//	Log("check2");
+				//Log("check1");
 				return;
 			}
-			int indicator=buf[pointer];
-			x = buf[pointer + 1]+2 ;
-			//Log("     decode desc:%x len:%d", indicator,x);
-			if(indicator==0x43) // sat
-			{
-				try
-				{
-					DVB_GetSatDelivSys(&buf[pointer],x);
-				}
-				catch(...)
-				{
-					Log("exception in DVB_GetSatDelivSys");
-				}
-			}
-			if(indicator==0x44) // cable
-			{
-				try
-				{
-					DVB_GetCableDelivSys(&buf[pointer],x);
-				}
-				catch(...)
-				{
-					Log("exception in DVB_GetCableDelivSys");
-				}
-			}
-			if(indicator==0x5A) // terrestrial
-			{
-				try
-				{
-					DVB_GetTerrestrialDelivSys(&buf[pointer],x);
-				}
-				catch(...)
-				{
-					Log("exception in DVB_GetTerrestrialDelivSys");
-				}
-			}
+			transport_stream_id = (buf[pointer]<<8)+buf[pointer+1];
+			original_network_id = (buf[pointer+2]<<8)+buf[pointer+3];
+			transport_descriptor_length = ((buf[pointer+4] & 0xF)<<8)+buf[pointer+5];
+			pointer += 6;
+			l1 -= 6;
+			l2 = transport_descriptor_length;
 			
-			if(indicator==0x83) // lcn
+			//Log("    transport_descriptor_length :%d", transport_descriptor_length);
+			while (l2 > 0)
 			{
-				try
+				//Log("    loop2: %d/%d l1:%d",pointer,transport_descriptor_length,l2);
+				if (pointer+2 > section_length)
 				{
-					DVB_GetLogicalChannelNumber(original_network_id,transport_stream_id,&buf[pointer], channels,channelCount);
+				//	Log("check2");
+					return;
 				}
-				catch(...)
+				int indicator=buf[pointer];
+				x = buf[pointer + 1]+2 ;
+				//Log("     decode desc:%x len:%d", indicator,x);
+				if(indicator==0x43) // sat
 				{
-					Log("exception in DVB_GetLogicalChannelNumber");
+					try
+					{
+						DVB_GetSatDelivSys(&buf[pointer],x);
+					}
+					catch(...)
+					{
+						Log("exception in DVB_GetSatDelivSys");
+					}
 				}
+				if(indicator==0x44) // cable
+				{
+					try
+					{
+						DVB_GetCableDelivSys(&buf[pointer],x);
+					}
+					catch(...)
+					{
+						Log("exception in DVB_GetCableDelivSys");
+					}
+				}
+				if(indicator==0x5A) // terrestrial
+				{
+					try
+					{
+						DVB_GetTerrestrialDelivSys(&buf[pointer],x);
+					}
+					catch(...)
+					{
+						Log("exception in DVB_GetTerrestrialDelivSys");
+					}
+				}
+				
+				if(indicator==0x83) // lcn
+				{
+					try
+					{
+						DVB_GetLogicalChannelNumber(original_network_id,transport_stream_id,&buf[pointer], channels,channelCount);
+					}
+					catch(...)
+					{
+						Log("exception in DVB_GetLogicalChannelNumber");
+					}
+				}
+				//
+				pointer += x;
+				l2 -= x;
+				l1 -= x;
 			}
-			//
-			pointer += x;
-			l2 -= x;
-			l1 -= x;
 		}
+		
+		Log("NIT: terrestial:%d satellite:%d cable:%d LCN:%d",
+			m_nit.terrestialNIT.size(),m_nit.satteliteNIT.size(),m_nit.cableNIT.size(),m_nit.lcnNIT.size());
 	}
-	
-	Log("NIT: terrestial:%d satellite:%d cable:%d LCN:%d",
-		m_nit.terrestialNIT.size(),m_nit.satteliteNIT.size(),m_nit.cableNIT.size(),m_nit.lcnNIT.size());
+	catch(...)
+	{
+		Dump("mpsaa: unhandled exception in Sections::DecodeNIT()");
+	}	
 }
 
 void Sections::DVB_GetLogicalChannelNumber(int original_network_id,int transport_stream_id,byte* buf,ChannelInfo *channels, int channelCount)
 {
-	// 32 bits per record
-	int n = buf[1] / 4;
-	if (n < 1)
-		return;
-
-	// desc id, desc len, (service id, service number)
-	int pointer=2;
-	int ServiceID, LCN;
-	for (int i = 0; i < n; i++) 
+	try
 	{
-		//service id:16
-		//visible_service_flag:1
-		//reserved:5
-		//logical channel number:10
-		ServiceID = 0;
-		LCN = 0;
-		ServiceID = (buf[pointer+0]<<8)|(buf[pointer+1]&0xff);
-		LCN		  = (buf[pointer+2]&0x03<<8)|(buf[pointer+3]&0xff);
-		pointer+=4;
-		bool alreadyAdded=false;
-		for (int j=0; j < m_nit.lcnNIT.size();++j)
+		// 32 bits per record
+		int n = buf[1] / 4;
+		if (n < 1)
+			return;
+
+		// desc id, desc len, (service id, service number)
+		int pointer=2;
+		int ServiceID, LCN;
+		for (int i = 0; i < n; i++) 
 		{
-			NITLCN& lcn = m_nit.lcnNIT[j];
-			if (lcn.LCN==LCN && lcn.network_id==original_network_id && lcn.transport_id==transport_stream_id && lcn.service_id==ServiceID)
+			//service id:16
+			//visible_service_flag:1
+			//reserved:5
+			//logical channel number:10
+			ServiceID = 0;
+			LCN = 0;
+			ServiceID = (buf[pointer+0]<<8)|(buf[pointer+1]&0xff);
+			LCN		  = (buf[pointer+2]&0x03<<8)|(buf[pointer+3]&0xff);
+			pointer+=4;
+			bool alreadyAdded=false;
+			for (int j=0; j < m_nit.lcnNIT.size();++j)
 			{
-				alreadyAdded=true;
-				break;
+				NITLCN& lcn = m_nit.lcnNIT[j];
+				if (lcn.LCN==LCN && lcn.network_id==original_network_id && lcn.transport_id==transport_stream_id && lcn.service_id==ServiceID)
+				{
+					alreadyAdded=true;
+					break;
+				}
 			}
-		}
-		if (!alreadyAdded)
-		{
-			if (original_network_id>0 && transport_stream_id>0 &&ServiceID>0 && LCN>0)
+			if (!alreadyAdded)
 			{
-				NITLCN lcn;
-				lcn.LCN=LCN;
-				lcn.network_id=original_network_id;
-				lcn.transport_id=transport_stream_id;
-				lcn.service_id=ServiceID;
-				m_nit.lcnNIT.push_back(lcn);
-				Dump("LCN:%03.3d network id:0x%x transport id:0x%x service id:0x%x (%d)", LCN,original_network_id,transport_stream_id,ServiceID,m_nit.lcnNIT.size());
+				if (original_network_id>0 && transport_stream_id>0 &&ServiceID>0 && LCN>0)
+				{
+					NITLCN lcn;
+					lcn.LCN=LCN;
+					lcn.network_id=original_network_id;
+					lcn.transport_id=transport_stream_id;
+					lcn.service_id=ServiceID;
+					m_nit.lcnNIT.push_back(lcn);
+					Dump("LCN:%03.3d network id:0x%x transport id:0x%x service id:0x%x (%d)", LCN,original_network_id,transport_stream_id,ServiceID,m_nit.lcnNIT.size());
+				}
 			}
 		}
 	}
+	catch(...)
+	{
+		Dump("mpsaa: unhandled exception in Sections::DVB_GetLogicalChannelNumber()");
+	}	
 }
 
 void Sections::DVB_GetSatDelivSys(byte* b,int maxLen)
 {
-	if(b[0]==0x43 && maxLen>=13)
+	try
 	{
-		int descriptor_tag = b[0];
-		int descriptor_length = b[1];
-		
-		if (descriptor_length>13) 
+		if(b[0]==0x43 && maxLen>=13)
 		{
-			Log("DVB_GetSatDelivSys() desclen:%d", descriptor_length);
-			return;
-		}
-		NITSatDescriptor satteliteNIT;
-		satteliteNIT.Frequency = (10000000* ((b[2]>>4)&0xf));
-		satteliteNIT.Frequency+= (1000000*  ((b[2]&0xf)));
-		satteliteNIT.Frequency+= (100000*   ((b[3]>>4)&0xf));
-		satteliteNIT.Frequency+= (10000*    ((b[3]&0xf)));
-		satteliteNIT.Frequency+= (1000*     ((b[4]>>4)&0xf));
-		satteliteNIT.Frequency+= (100*      ((b[4]&0xf)));
-		satteliteNIT.Frequency+= ( 10*      ((b[5]>>4)&0xf));
-		satteliteNIT.Frequency+= (b[5]&0xf);
-
-		satteliteNIT.OrbitalPosition+= (1000*     ((b[6]>>4)&0xf));
-		satteliteNIT.OrbitalPosition+= (100*      ((b[6]&0xf)));
-		satteliteNIT.OrbitalPosition+= ( 10*      ((b[7]>>4)&0xf));
-		satteliteNIT.OrbitalPosition+= (b[7]&0xf);
-
-		satteliteNIT.WestEastFlag = (b[8] & 0x80)>>7;
-		satteliteNIT.Polarisation = (b[8]& 0x60)>>5;
-		if(satteliteNIT.Polarisation>1)
-			satteliteNIT.Polarisation-=2;
-		// polarisation
-		// 0 - horizontal/left (linear/circluar)
-		// 1 - vertical/right (linear/circluar)
-		satteliteNIT.Modulation = (b[8] & 0x1F);
-		satteliteNIT.Symbolrate = (1000000* ((b[9]>>4)&0xf));
-		satteliteNIT.Symbolrate+= (100000*  ((b[9]&0xf)));
-		satteliteNIT.Symbolrate+= (10000*   ((b[10]>>4)&0xf));
-		satteliteNIT.Symbolrate+= (1000*    ((b[10]&0xf)));
-		satteliteNIT.Symbolrate+= (100*     ((b[11]>>4)&0xf));
-		satteliteNIT.Symbolrate+= (10*      ((b[11]&0xf)));
-		satteliteNIT.Symbolrate+= (         ((b[12]>>4)&0xf));
-		satteliteNIT.FECInner = (b[12] & 0xF);
-		
-
-		
-		bool alreadyAdded=false;
-		for (int i=0; i < m_nit.satteliteNIT.size();++i)
-		{
-			NITSatDescriptor& nit=m_nit.satteliteNIT[i];
-			if (nit.Frequency==satteliteNIT.Frequency)
+			int descriptor_tag = b[0];
+			int descriptor_length = b[1];
+			
+			if (descriptor_length>13) 
 			{
-				Dump("Sat nit: frequency:%d Symbolrate:%d Polarisation:%d", 
-					satteliteNIT.Frequency,satteliteNIT.Symbolrate,satteliteNIT.Polarisation);
-				alreadyAdded=true;
-				break;
+				Log("DVB_GetSatDelivSys() desclen:%d", descriptor_length);
+				return;
 			}
-		}
-		if (!alreadyAdded)
-		{
-			m_nit.satteliteNIT.push_back(satteliteNIT);
-		}
+			NITSatDescriptor satteliteNIT;
+			satteliteNIT.Frequency = (10000000* ((b[2]>>4)&0xf));
+			satteliteNIT.Frequency+= (1000000*  ((b[2]&0xf)));
+			satteliteNIT.Frequency+= (100000*   ((b[3]>>4)&0xf));
+			satteliteNIT.Frequency+= (10000*    ((b[3]&0xf)));
+			satteliteNIT.Frequency+= (1000*     ((b[4]>>4)&0xf));
+			satteliteNIT.Frequency+= (100*      ((b[4]&0xf)));
+			satteliteNIT.Frequency+= ( 10*      ((b[5]>>4)&0xf));
+			satteliteNIT.Frequency+= (b[5]&0xf);
+
+			satteliteNIT.OrbitalPosition+= (1000*     ((b[6]>>4)&0xf));
+			satteliteNIT.OrbitalPosition+= (100*      ((b[6]&0xf)));
+			satteliteNIT.OrbitalPosition+= ( 10*      ((b[7]>>4)&0xf));
+			satteliteNIT.OrbitalPosition+= (b[7]&0xf);
+
+			satteliteNIT.WestEastFlag = (b[8] & 0x80)>>7;
+			satteliteNIT.Polarisation = (b[8]& 0x60)>>5;
+			if(satteliteNIT.Polarisation>1)
+				satteliteNIT.Polarisation-=2;
+			// polarisation
+			// 0 - horizontal/left (linear/circluar)
+			// 1 - vertical/right (linear/circluar)
+			satteliteNIT.Modulation = (b[8] & 0x1F);
+			satteliteNIT.Symbolrate = (1000000* ((b[9]>>4)&0xf));
+			satteliteNIT.Symbolrate+= (100000*  ((b[9]&0xf)));
+			satteliteNIT.Symbolrate+= (10000*   ((b[10]>>4)&0xf));
+			satteliteNIT.Symbolrate+= (1000*    ((b[10]&0xf)));
+			satteliteNIT.Symbolrate+= (100*     ((b[11]>>4)&0xf));
+			satteliteNIT.Symbolrate+= (10*      ((b[11]&0xf)));
+			satteliteNIT.Symbolrate+= (         ((b[12]>>4)&0xf));
+			satteliteNIT.FECInner = (b[12] & 0xF);
+			
+
+			
+			bool alreadyAdded=false;
+			for (int i=0; i < m_nit.satteliteNIT.size();++i)
+			{
+				NITSatDescriptor& nit=m_nit.satteliteNIT[i];
+				if (nit.Frequency==satteliteNIT.Frequency)
+				{
+					Dump("Sat nit: frequency:%d Symbolrate:%d Polarisation:%d", 
+						satteliteNIT.Frequency,satteliteNIT.Symbolrate,satteliteNIT.Polarisation);
+					alreadyAdded=true;
+					break;
+				}
+			}
+			if (!alreadyAdded)
+			{
+				m_nit.satteliteNIT.push_back(satteliteNIT);
+			}
+		}	
+
+	}
+	catch(...)
+	{
+		Dump("mpsaa: unhandled exception in Sections::DVB_GetSatDelivSys()");
 	}	
 }
 void Sections::DVB_GetTerrestrialDelivSys(byte*b , int maxLen)
 {
-	if(b[0]==0x5A)
+	try
 	{
-		int descriptor_tag = b[0];
-		int descriptor_length = b[1];
-		if (descriptor_length>11) 
-		{
-			Log("DVB_GetTerrestrialDelivSys() desclen:%d", descriptor_length);
-			return;
-		}
-		NITTerrestrialDescriptor terrestialNIT;
-		terrestialNIT.CentreFrequency= (b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5];
-		if (terrestialNIT.CentreFrequency < 40000000 ||
-			terrestialNIT.CentreFrequency >900000000) return; // invalid frequency
 
-		terrestialNIT.Bandwidth = (b[6]>>5);
-		// bandwith
-		// 0- 8 MHz
-		// 1- 7 MHz
-		// 2- 6 MHz
-		if (terrestialNIT.Bandwidth==0) terrestialNIT.Bandwidth=8;
-		else if (terrestialNIT.Bandwidth==1) terrestialNIT.Bandwidth=7;
-		else if (terrestialNIT.Bandwidth==2) terrestialNIT.Bandwidth=6;
-		else terrestialNIT.Bandwidth=8;
-
-		terrestialNIT.Constellation=(b[7]>>6);
-		// constellation
-		// 0- QPSK
-		// 1- 16-QAM
-		// 2- 64-QAM
-		if (terrestialNIT.Constellation==0) terrestialNIT.Constellation=BDA_MOD_QPSK ;
-		else if (terrestialNIT.Constellation==1) terrestialNIT.Constellation=BDA_MOD_16QAM ;
-		else if (terrestialNIT.Constellation==2) terrestialNIT.Constellation=BDA_MOD_64QAM ;
-		else  terrestialNIT.Constellation=BDA_MOD_NOT_SET;
-
-		terrestialNIT.HierarchyInformation=(b[7]>>3)& 7;
-		// 0- non-hierarchical
-		// 1- a == 1
-		// 2- a == 2
-		// 3- a == 4
-		switch (terrestialNIT.HierarchyInformation)
+		if(b[0]==0x5A)
 		{
-			case 0:	terrestialNIT.HierarchyInformation=BDA_HALPHA_NOT_DEFINED ;break;
-			case 1:	terrestialNIT.HierarchyInformation=BDA_HALPHA_1 ;break;
-			case 2:	terrestialNIT.HierarchyInformation=BDA_HALPHA_2 ;break;
-			case 3:	terrestialNIT.HierarchyInformation=BDA_HALPHA_4 ;break;
-			default:terrestialNIT.HierarchyInformation=BDA_GUARD_NOT_SET; break;
-		}
-		terrestialNIT.CoderateHPStream=(b[7] & 7);
-		terrestialNIT.CoderateLPStream=(b[8]>>5);
-		// coderate (fec)
-		// 0- 1/2
-		// 1- 2/3
-		// 2- 3/4
-		// 3- 5/6
-		// 4- 7/8
-		// Coderate: The code_rate is a 3-bit field specifying the inner FEC scheme used according to table 43. Non-hierarchical
-		// channel coding and modulation requires signalling of one code rate. In this case, 3 bits specifying code_rate according
-		// to table 44 are followed by another 3 bits of value '000". Two different code rates may be applied to two different levels
-		// of modulation with the aim of achieving hierarchy. Transmission then starts with the code rate for the HP level of the
-		// modulation and ends with the one for the LP level.
-		switch (terrestialNIT.CoderateHPStream)
-		{
-			case 0:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_1_2;break;
-			case 1:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_2_3;break;
-			case 2:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_3_4;break;
-			case 3:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_5_6;break;
-			case 4:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_7_8;break;
-			default:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_NOT_SET; break;
-		}
-		switch (terrestialNIT.CoderateLPStream)
-		{
-			case 0:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_1_2;break;
-			case 1:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_2_3;break;
-			case 2:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_3_4;break;
-			case 3:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_5_6;break;
-			case 4:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_7_8;break;
-			default:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_NOT_SET; break;
-		}
-		terrestialNIT.GuardInterval=(b[8]>>3) & 3;
-		// 0 - 1/32
-		// 1 - 1/16
-		// 2 - 1/8
-		// 3 - 1/4
-		//
-		switch (terrestialNIT.GuardInterval)
-		{
-			case 0: terrestialNIT.GuardInterval=BDA_GUARD_1_32;break;
-			case 1: terrestialNIT.GuardInterval=BDA_GUARD_1_16;break;
-			case 2: terrestialNIT.GuardInterval=BDA_GUARD_1_8;break;
-			case 3: terrestialNIT.GuardInterval=BDA_GUARD_1_4;break;
-			default:terrestialNIT.GuardInterval=BDA_GUARD_NOT_SET;break;
-		}
-		terrestialNIT.TransmissionMode=(b[8]>>1) & 3;
-		// 0 - 2k Mode
-		// 1 - 8k Mode
-		if (terrestialNIT.TransmissionMode==0) terrestialNIT.TransmissionMode=BDA_XMIT_MODE_2K;
-		else if (terrestialNIT.TransmissionMode==1) terrestialNIT.TransmissionMode=BDA_XMIT_MODE_8K;
-		else terrestialNIT.TransmissionMode=BDA_XMIT_MODE_NOT_SET;
-		
-		terrestialNIT.OtherFrequencyFlag=(b[8] & 3);
-		// 0 - no other frequency in use
-		bool alreadyAdded=false;
-		for (int i=0; i < m_nit.terrestialNIT.size();++i)
-		{
-			NITTerrestrialDescriptor& nit=m_nit.terrestialNIT[i];
-			if (nit.CentreFrequency==terrestialNIT.CentreFrequency)
+			int descriptor_tag = b[0];
+			int descriptor_length = b[1];
+			if (descriptor_length>11) 
 			{
-				alreadyAdded=true;
-				break;
+				Log("DVB_GetTerrestrialDelivSys() desclen:%d", descriptor_length);
+				return;
+			}
+			NITTerrestrialDescriptor terrestialNIT;
+			terrestialNIT.CentreFrequency= (b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5];
+			if (terrestialNIT.CentreFrequency < 40000000 ||
+				terrestialNIT.CentreFrequency >900000000) return; // invalid frequency
+
+			terrestialNIT.Bandwidth = (b[6]>>5);
+			// bandwith
+			// 0- 8 MHz
+			// 1- 7 MHz
+			// 2- 6 MHz
+			if (terrestialNIT.Bandwidth==0) terrestialNIT.Bandwidth=8;
+			else if (terrestialNIT.Bandwidth==1) terrestialNIT.Bandwidth=7;
+			else if (terrestialNIT.Bandwidth==2) terrestialNIT.Bandwidth=6;
+			else terrestialNIT.Bandwidth=8;
+
+			terrestialNIT.Constellation=(b[7]>>6);
+			// constellation
+			// 0- QPSK
+			// 1- 16-QAM
+			// 2- 64-QAM
+			if (terrestialNIT.Constellation==0) terrestialNIT.Constellation=BDA_MOD_QPSK ;
+			else if (terrestialNIT.Constellation==1) terrestialNIT.Constellation=BDA_MOD_16QAM ;
+			else if (terrestialNIT.Constellation==2) terrestialNIT.Constellation=BDA_MOD_64QAM ;
+			else  terrestialNIT.Constellation=BDA_MOD_NOT_SET;
+
+			terrestialNIT.HierarchyInformation=(b[7]>>3)& 7;
+			// 0- non-hierarchical
+			// 1- a == 1
+			// 2- a == 2
+			// 3- a == 4
+			switch (terrestialNIT.HierarchyInformation)
+			{
+				case 0:	terrestialNIT.HierarchyInformation=BDA_HALPHA_NOT_DEFINED ;break;
+				case 1:	terrestialNIT.HierarchyInformation=BDA_HALPHA_1 ;break;
+				case 2:	terrestialNIT.HierarchyInformation=BDA_HALPHA_2 ;break;
+				case 3:	terrestialNIT.HierarchyInformation=BDA_HALPHA_4 ;break;
+				default:terrestialNIT.HierarchyInformation=BDA_GUARD_NOT_SET; break;
+			}
+			terrestialNIT.CoderateHPStream=(b[7] & 7);
+			terrestialNIT.CoderateLPStream=(b[8]>>5);
+			// coderate (fec)
+			// 0- 1/2
+			// 1- 2/3
+			// 2- 3/4
+			// 3- 5/6
+			// 4- 7/8
+			// Coderate: The code_rate is a 3-bit field specifying the inner FEC scheme used according to table 43. Non-hierarchical
+			// channel coding and modulation requires signalling of one code rate. In this case, 3 bits specifying code_rate according
+			// to table 44 are followed by another 3 bits of value '000". Two different code rates may be applied to two different levels
+			// of modulation with the aim of achieving hierarchy. Transmission then starts with the code rate for the HP level of the
+			// modulation and ends with the one for the LP level.
+			switch (terrestialNIT.CoderateHPStream)
+			{
+				case 0:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_1_2;break;
+				case 1:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_2_3;break;
+				case 2:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_3_4;break;
+				case 3:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_5_6;break;
+				case 4:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_7_8;break;
+				default:terrestialNIT.CoderateHPStream=BDA_BCC_RATE_NOT_SET; break;
+			}
+			switch (terrestialNIT.CoderateLPStream)
+			{
+				case 0:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_1_2;break;
+				case 1:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_2_3;break;
+				case 2:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_3_4;break;
+				case 3:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_5_6;break;
+				case 4:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_7_8;break;
+				default:terrestialNIT.CoderateLPStream=BDA_BCC_RATE_NOT_SET; break;
+			}
+			terrestialNIT.GuardInterval=(b[8]>>3) & 3;
+			// 0 - 1/32
+			// 1 - 1/16
+			// 2 - 1/8
+			// 3 - 1/4
+			//
+			switch (terrestialNIT.GuardInterval)
+			{
+				case 0: terrestialNIT.GuardInterval=BDA_GUARD_1_32;break;
+				case 1: terrestialNIT.GuardInterval=BDA_GUARD_1_16;break;
+				case 2: terrestialNIT.GuardInterval=BDA_GUARD_1_8;break;
+				case 3: terrestialNIT.GuardInterval=BDA_GUARD_1_4;break;
+				default:terrestialNIT.GuardInterval=BDA_GUARD_NOT_SET;break;
+			}
+			terrestialNIT.TransmissionMode=(b[8]>>1) & 3;
+			// 0 - 2k Mode
+			// 1 - 8k Mode
+			if (terrestialNIT.TransmissionMode==0) terrestialNIT.TransmissionMode=BDA_XMIT_MODE_2K;
+			else if (terrestialNIT.TransmissionMode==1) terrestialNIT.TransmissionMode=BDA_XMIT_MODE_8K;
+			else terrestialNIT.TransmissionMode=BDA_XMIT_MODE_NOT_SET;
+			
+			terrestialNIT.OtherFrequencyFlag=(b[8] & 3);
+			// 0 - no other frequency in use
+			bool alreadyAdded=false;
+			for (int i=0; i < m_nit.terrestialNIT.size();++i)
+			{
+				NITTerrestrialDescriptor& nit=m_nit.terrestialNIT[i];
+				if (nit.CentreFrequency==terrestialNIT.CentreFrequency)
+				{
+					alreadyAdded=true;
+					break;
+				}
+			}
+			if (!alreadyAdded)
+			{
+				Dump("NIT: terrestial frequency=%d bandwidth=%d other freqs:%d", terrestialNIT.CentreFrequency,terrestialNIT.Bandwidth,terrestialNIT.OtherFrequencyFlag);
+				m_nit.terrestialNIT.push_back(terrestialNIT);
 			}
 		}
-		if (!alreadyAdded)
-		{
-			Dump("NIT: terrestial frequency=%d bandwidth=%d other freqs:%d", terrestialNIT.CentreFrequency,terrestialNIT.Bandwidth,terrestialNIT.OtherFrequencyFlag);
-			m_nit.terrestialNIT.push_back(terrestialNIT);
-		}
+
 	}
+	catch(...)
+	{
+		Dump("mpsaa: unhandled exception in Sections::DVB_GetTerrestrialDelivSys()");
+	}	
 }		
 
 
 void Sections::DVB_GetCableDelivSys(byte* b, int maxLen)
 {
-	if(b[0]==0x44 && maxLen>=13)
+	try
 	{
-		int descriptor_tag = b[0];
-		int descriptor_length = b[1];
-		if (descriptor_length>13) 
+		if(b[0]==0x44 && maxLen>=13)
 		{
-			Log("DVB_GetCableDelivSys() desclen:%d", descriptor_length);
-			return;
-		}
-		NITCableDescriptor cableNIT;
-		cableNIT.Frequency = (10000000* ((b[2]>>4)&0xf));
-		cableNIT.Frequency+= (1000000*  ((b[2]&0xf)));
-		cableNIT.Frequency+= (100000*   ((b[3]>>4)&0xf));
-		cableNIT.Frequency+= (10000*    ((b[3]&0xf)));
-		cableNIT.Frequency+= (1000*     ((b[4]>>4)&0xf));
-		cableNIT.Frequency+= (100*      ((b[4]&0xf)));
-		cableNIT.Frequency+= ( 10*      ((b[5]>>4)&0xf));
-		cableNIT.Frequency+= (b[5]&0xf);
-		//
-		cableNIT.FECOuter = (b[7] & 0xF);
-		// fec-outer
-		// 0- not defined
-		// 1- no outer FEC coding
-		// 2- RS(204/188)
-		// other reserved
-		switch (cableNIT.FECOuter)
-		{
-			case 0:cableNIT.FECOuter=BDA_FEC_METHOD_NOT_SET;break;
-			case 1:cableNIT.FECOuter=BDA_FEC_METHOD_NOT_DEFINED;break;
-			case 2:cableNIT.FECOuter=BDA_FEC_RS_204_188;break;
-			default:cableNIT.FECOuter=BDA_FEC_METHOD_NOT_SET;break;
-		}
-		cableNIT.Modulation = b[8];
-		// modulation
-		// 0x00 not defined
-		// 0x01 16-QAM
-		// 0x02 32-QAM
-		// 0x03 64-QAM
-		// 0x04 128-QAM
-		// 0x05 256-QAM
-		switch(cableNIT.Modulation)
-		{
-			case 0: cableNIT.Modulation=BDA_MOD_NOT_DEFINED; break;
-			case 1: cableNIT.Modulation=BDA_MOD_16QAM; break;
-			case 2: cableNIT.Modulation=BDA_MOD_32QAM; break;
-			case 3: cableNIT.Modulation=BDA_MOD_64QAM; break;
-			case 4: cableNIT.Modulation=BDA_MOD_128QAM; break;
-			case 5: cableNIT.Modulation=BDA_MOD_256QAM; break;
-			default: cableNIT.Modulation=BDA_MOD_NOT_SET; break;
-		}
-		
-		cableNIT.Symbolrate = (1000000* ((b[9]>>4)&0xf));
-		cableNIT.Symbolrate+= (100000*  ((b[9]&0xf)));
-		cableNIT.Symbolrate+= (10000*   ((b[10]>>4)&0xf));
-		cableNIT.Symbolrate+= (1000*    ((b[10]&0xf)));
-		cableNIT.Symbolrate+= (100*     ((b[11]>>4)&0xf));
-		cableNIT.Symbolrate+= (10*      ((b[11]&0xf)));
-		cableNIT.Symbolrate+= (         ((b[12]>>4)&0xf));
-		
-		
-
-		cableNIT.FECInner = (b[12] & 0xF);
-		// fec inner
-		// 0- not defined
-		// 1- 1/2 conv. code rate
-		// 2- 2/3 conv. code rate
-		// 3- 3/4 conv. code rate
-		// 4- 5/6 conv. code rate
-		// 5- 7/8 conv. code rate
-		// 6- 8/9 conv. code rate
-		// 15- No conv. coding
-		switch (cableNIT.FECInner)
-		{
-			case 0:cableNIT.FECInner=BDA_BCC_RATE_NOT_DEFINED;break;
-			case 1:cableNIT.FECInner=BDA_BCC_RATE_1_2;break;
-			case 2:cableNIT.FECInner=BDA_BCC_RATE_2_3;break;
-			case 3:cableNIT.FECInner=BDA_BCC_RATE_3_4;break;
-			case 4:cableNIT.FECInner=BDA_BCC_RATE_5_6;break;
-			case 5:cableNIT.FECInner=BDA_BCC_RATE_7_8;break;
-			case 6:cableNIT.FECInner=BDA_BCC_RATE_NOT_DEFINED;break;
-			case 15:cableNIT.FECInner=BDA_BCC_RATE_NOT_DEFINED;break;
-			default:cableNIT.FECInner=BDA_BCC_RATE_NOT_SET;break;
-		}
-		bool alreadyAdded=false;
-		for (int i=0; i < m_nit.cableNIT.size();++i)
-		{
-			NITCableDescriptor& nit=m_nit.cableNIT[i];
-			if (nit.Frequency==cableNIT.Frequency)
+			int descriptor_tag = b[0];
+			int descriptor_length = b[1];
+			if (descriptor_length>13) 
 			{
-				alreadyAdded=true;
-				break;
+				Log("DVB_GetCableDelivSys() desclen:%d", descriptor_length);
+				return;
+			}
+			NITCableDescriptor cableNIT;
+			cableNIT.Frequency = (10000000* ((b[2]>>4)&0xf));
+			cableNIT.Frequency+= (1000000*  ((b[2]&0xf)));
+			cableNIT.Frequency+= (100000*   ((b[3]>>4)&0xf));
+			cableNIT.Frequency+= (10000*    ((b[3]&0xf)));
+			cableNIT.Frequency+= (1000*     ((b[4]>>4)&0xf));
+			cableNIT.Frequency+= (100*      ((b[4]&0xf)));
+			cableNIT.Frequency+= ( 10*      ((b[5]>>4)&0xf));
+			cableNIT.Frequency+= (b[5]&0xf);
+			//
+			cableNIT.FECOuter = (b[7] & 0xF);
+			// fec-outer
+			// 0- not defined
+			// 1- no outer FEC coding
+			// 2- RS(204/188)
+			// other reserved
+			switch (cableNIT.FECOuter)
+			{
+				case 0:cableNIT.FECOuter=BDA_FEC_METHOD_NOT_SET;break;
+				case 1:cableNIT.FECOuter=BDA_FEC_METHOD_NOT_DEFINED;break;
+				case 2:cableNIT.FECOuter=BDA_FEC_RS_204_188;break;
+				default:cableNIT.FECOuter=BDA_FEC_METHOD_NOT_SET;break;
+			}
+			cableNIT.Modulation = b[8];
+			// modulation
+			// 0x00 not defined
+			// 0x01 16-QAM
+			// 0x02 32-QAM
+			// 0x03 64-QAM
+			// 0x04 128-QAM
+			// 0x05 256-QAM
+			switch(cableNIT.Modulation)
+			{
+				case 0: cableNIT.Modulation=BDA_MOD_NOT_DEFINED; break;
+				case 1: cableNIT.Modulation=BDA_MOD_16QAM; break;
+				case 2: cableNIT.Modulation=BDA_MOD_32QAM; break;
+				case 3: cableNIT.Modulation=BDA_MOD_64QAM; break;
+				case 4: cableNIT.Modulation=BDA_MOD_128QAM; break;
+				case 5: cableNIT.Modulation=BDA_MOD_256QAM; break;
+				default: cableNIT.Modulation=BDA_MOD_NOT_SET; break;
+			}
+			
+			cableNIT.Symbolrate = (1000000* ((b[9]>>4)&0xf));
+			cableNIT.Symbolrate+= (100000*  ((b[9]&0xf)));
+			cableNIT.Symbolrate+= (10000*   ((b[10]>>4)&0xf));
+			cableNIT.Symbolrate+= (1000*    ((b[10]&0xf)));
+			cableNIT.Symbolrate+= (100*     ((b[11]>>4)&0xf));
+			cableNIT.Symbolrate+= (10*      ((b[11]&0xf)));
+			cableNIT.Symbolrate+= (         ((b[12]>>4)&0xf));
+			
+			
+
+			cableNIT.FECInner = (b[12] & 0xF);
+			// fec inner
+			// 0- not defined
+			// 1- 1/2 conv. code rate
+			// 2- 2/3 conv. code rate
+			// 3- 3/4 conv. code rate
+			// 4- 5/6 conv. code rate
+			// 5- 7/8 conv. code rate
+			// 6- 8/9 conv. code rate
+			// 15- No conv. coding
+			switch (cableNIT.FECInner)
+			{
+				case 0:cableNIT.FECInner=BDA_BCC_RATE_NOT_DEFINED;break;
+				case 1:cableNIT.FECInner=BDA_BCC_RATE_1_2;break;
+				case 2:cableNIT.FECInner=BDA_BCC_RATE_2_3;break;
+				case 3:cableNIT.FECInner=BDA_BCC_RATE_3_4;break;
+				case 4:cableNIT.FECInner=BDA_BCC_RATE_5_6;break;
+				case 5:cableNIT.FECInner=BDA_BCC_RATE_7_8;break;
+				case 6:cableNIT.FECInner=BDA_BCC_RATE_NOT_DEFINED;break;
+				case 15:cableNIT.FECInner=BDA_BCC_RATE_NOT_DEFINED;break;
+				default:cableNIT.FECInner=BDA_BCC_RATE_NOT_SET;break;
+			}
+			bool alreadyAdded=false;
+			for (int i=0; i < m_nit.cableNIT.size();++i)
+			{
+				NITCableDescriptor& nit=m_nit.cableNIT[i];
+				if (nit.Frequency==cableNIT.Frequency)
+				{
+					alreadyAdded=true;
+					break;
+				}
+			}
+			if (!alreadyAdded)
+			{
+				m_nit.cableNIT.push_back(cableNIT);
+				//Log("NIT: network:%s", cableNIT.NetworkName);
+				Dump("cable NIT: frequency:%d modulation:%d symbolrate:%d", cableNIT.Frequency, cableNIT.Modulation, cableNIT.Symbolrate);
 			}
 		}
-		if (!alreadyAdded)
-		{
-			m_nit.cableNIT.push_back(cableNIT);
-			//Log("NIT: network:%s", cableNIT.NetworkName);
-			Dump("cable NIT: frequency:%d modulation:%d symbolrate:%d", cableNIT.Frequency, cableNIT.Modulation, cableNIT.Symbolrate);
-		}
+
 	}
+	catch(...)
+	{
+		Dump("mpsaa: unhandled exception in Sections::DVB_GetCableDelivSys()");
+	}	
 }
 
 HRESULT Sections::GetLCN(WORD channelIndex,WORD* networkId, WORD* transportId, WORD* serviceID, WORD* LCN)
 {
-	
-	*LCN=0;
-	*networkId=0;
-	*transportId=0;
-	*serviceID=0;
-	if (channelIndex >=m_nit.lcnNIT.size())
+	try
 	{
-		return S_OK;
-	}
-	
-	int counter=0;
-	vector<NITLCN>::iterator it;
-	it=m_nit.lcnNIT.begin();
-	while (it != m_nit.lcnNIT.end())
-	{
-		if (counter==channelIndex)
+		*LCN=0;
+		*networkId=0;
+		*transportId=0;
+		*serviceID=0;
+		if (channelIndex >=m_nit.lcnNIT.size())
 		{
-			NITLCN& lcn = *it;
-			*networkId=lcn.network_id;
-			*transportId=lcn.transport_id;
-			*serviceID=lcn.service_id;
-			*LCN=lcn.LCN;
-			
 			return S_OK;
 		}
-		++it;
-		counter++;
+		
+		int counter=0;
+		vector<NITLCN>::iterator it;
+		it=m_nit.lcnNIT.begin();
+		while (it != m_nit.lcnNIT.end())
+		{
+			if (counter==channelIndex)
+			{
+				NITLCN& lcn = *it;
+				*networkId=lcn.network_id;
+				*transportId=lcn.transport_id;
+				*serviceID=lcn.service_id;
+				*LCN=lcn.LCN;
+				
+				return S_OK;
+			}
+			++it;
+			counter++;
+		}
 	}
+	catch(...)
+	{
+		Dump("mpsaa: unhandled exception in Sections::GetLCN()");
+	}	
 	return S_OK;
 }

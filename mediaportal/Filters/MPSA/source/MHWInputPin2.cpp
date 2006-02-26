@@ -38,6 +38,7 @@
 
 
 extern void Log(const char *fmt, ...) ;
+extern void Dump(const char *fmt, ...) ;
 CMHWInputPin2::CMHWInputPin2(CStreamAnalyzer *pDump,
                              LPUNKNOWN pUnk,
                              CBaseFilter *pFilter,
@@ -205,7 +206,7 @@ STDMETHODIMP CMHWInputPin2::Receive(IMediaSample *pSample)
 	}
 	catch(...)
 	{
-		Log("mhw2pin:--- UNHANDLED EXCEPTION ---");
+		Dump("mhw2pin:--- UNHANDLED EXCEPTION ---");
 	}
     return S_OK;
 }

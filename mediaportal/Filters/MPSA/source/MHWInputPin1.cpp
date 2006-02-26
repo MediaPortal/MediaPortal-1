@@ -37,6 +37,7 @@
 #include "mhwinputpin1.h"
 
 extern void Log(const char *fmt, ...) ;
+extern void Dump(const char *fmt, ...) ;
 CMHWInputPin1::CMHWInputPin1(CStreamAnalyzer *pDump,
                              LPUNKNOWN pUnk,
                              CBaseFilter *pFilter,
@@ -194,7 +195,7 @@ STDMETHODIMP CMHWInputPin1::Receive(IMediaSample *pSample)
 	}
 	catch(...)
 	{
-		Log("mhw1pin:--- UNHANDLED EXCEPTION ---");
+		Dump("mhw1pin:--- UNHANDLED EXCEPTION ---");
 	}
     return S_OK;
 }

@@ -36,6 +36,7 @@
 #include "epginputpin.h"
 
 extern void Log(const char *fmt, ...) ;
+extern void Dump(const char *fmt, ...) ;
 #define S_FINISHED (S_OK+1)
 
 CEPGInputPin::CEPGInputPin(CStreamAnalyzer *pDump,
@@ -179,7 +180,7 @@ STDMETHODIMP CEPGInputPin::Receive(IMediaSample *pSample)
 	}
 	catch(...)
 	{
-		Log("epgpin:--- UNHANDLED EXCEPTION ---");
+		Dump("epgpin:--- UNHANDLED EXCEPTION ---");
 	}
     return S_OK;
 }
