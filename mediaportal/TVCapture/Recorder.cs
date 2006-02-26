@@ -877,7 +877,11 @@ namespace MediaPortal.TV.Recording
     static bool reEntrantStartViewing = false;
     static public void StartViewing(string channel, bool TVOnOff, bool timeshift)
     {
-      if (reEntrantStartViewing) return;
+      if (reEntrantStartViewing)
+      {
+        Log.WriteFile(Log.LogType.Recorder, true, "Recorder:StartViewing() reentrant");
+        return;
+      }
       try
       {
         if (_commandProcessor.Paused) return;

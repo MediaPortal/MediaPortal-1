@@ -83,7 +83,9 @@ namespace MediaPortal.GUI.Library
 
     static public void Write(Exception ex)
     {
-      Write("Exception:\t\n {0} {1} {2} ", ex.Message, ex.Source, ex.StackTrace);
+      Log.WriteFile(Log.LogType.Log, true, "Exception:{0}", ex.Message);
+      Log.WriteFile(Log.LogType.Log, true, "  source:{0}", ex.Source);
+      Log.WriteFile(Log.LogType.Log, true, "  stacktrace:{0}", ex.StackTrace);
     }
 
     /// <summary>

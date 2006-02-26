@@ -234,31 +234,32 @@ namespace MediaPortal.TV.Recording
     #region private members
     void ProcessThread(object sender, DoWorkEventArgs e)
     {
-      try
-      {
         //System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
         while (_isRunning)
         {
-          if (_isPaused) continue;
-          if (!IsBusy)
+          try
           {
-            System.Threading.Thread.Sleep(500);
+            if (_isPaused) continue;
+            if (!IsBusy)
+            {
+              System.Threading.Thread.Sleep(500);
+            }
+            if (_isPaused) continue;
+
+            ProcessCommands();
+            ProcessCards();
+            ProcessScheduler();
+
+            _epgProcessor.Process(this);
           }
-          if (_isPaused) continue;
-
-          ProcessCommands();
-          ProcessCards();
-          ProcessScheduler();
-
-          _epgProcessor.Process(this);
-        }
-        StopAllCards();
+          catch (Exception ex)
+          {
+            Log.Write(ex);
+          }
       }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
+      StopAllCards();
       _isStopped = true;
+      Log.WriteFile(Log.LogType.Recorder, "Commandprocessor stopped");
     }
 
     public void ProcessScheduler()

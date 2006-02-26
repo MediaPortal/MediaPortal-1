@@ -1053,7 +1053,7 @@ namespace MediaPortal.TV.Recording
 
       _currentTuningObject.AudioPid = audioPid;
       SetupMTSDemuxerPin();
-      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
+//      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }
 
     public ArrayList GetAudioLanguageList()
@@ -2781,7 +2781,7 @@ namespace MediaPortal.TV.Recording
       }
       _signalLostTimer = DateTime.Now;
       UpdateSignalPresent();
-      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
+//      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }//public void Tune(object tuningObject)
 
     protected virtual void SetupDiseqc(int disecqNo)
@@ -2831,7 +2831,7 @@ namespace MediaPortal.TV.Recording
         SetupDemuxerPin(_pinDemuxerSections, pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
       }
 
-      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
+//      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
       SendHWPids(hwPids);
 
       int offset = 3;
@@ -3847,7 +3847,7 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:SetHardwarePidFiltering to:{0}", pidsText);
       }
       SendHWPids(pids);
-      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
+//      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }
     protected virtual void SendHWPids(ArrayList pids)
     {
