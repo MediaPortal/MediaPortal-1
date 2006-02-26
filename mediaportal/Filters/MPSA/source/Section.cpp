@@ -997,7 +997,7 @@ void Sections::DVB_GetLogicalChannelNumber(int original_network_id,int transport
 					lcn.transport_id=transport_stream_id;
 					lcn.service_id=ServiceID;
 					m_nit.lcnNIT.push_back(lcn);
-					Dump("LCN:%03.3d network id:0x%x transport id:0x%x service id:0x%x (%d)", LCN,original_network_id,transport_stream_id,ServiceID,m_nit.lcnNIT.size());
+					Log("LCN:%03.3d network id:0x%x transport id:0x%x service id:0x%x (%d)", LCN,original_network_id,transport_stream_id,ServiceID,m_nit.lcnNIT.size());
 				}
 			}
 		}

@@ -167,7 +167,7 @@ namespace DShowNET
       }
       else
       {
-          Log.WriteFile(Log.LogType.Capture, "Technotrend Unknown card type");
+         // Log.WriteFile(Log.LogType.Capture, "Technotrend Unknown card type");
           _deviceType = TechnoTrendDeviceType.eTypeUnknown;
       }
 
