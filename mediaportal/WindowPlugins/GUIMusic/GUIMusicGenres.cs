@@ -889,6 +889,10 @@ namespace MediaPortal.GUI.Music
 
                    PlayListItem pli = new PlayListItem();
                    pli.MusicTag = tag;
+                   pli.FileName = pItem.Path;
+                   pli.Description = tag.Title;
+                   pli.Duration = tag.Duration;
+                   pli.Type = PlayListItem.PlayListItemType.Audio;
                    playList.Add(pli);
                }
             }

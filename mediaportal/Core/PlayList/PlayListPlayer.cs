@@ -337,10 +337,16 @@ namespace MediaPortal.Playlists
     public void Play(int iSong)
     {
       if (_currentPlayList == PlayListType.PLAYLIST_NONE)
+      {
+        Log.WriteFile(Log.LogType.Log, "PlaylistPlayer.Play() no playlist selected");
         return;
-
+      }
       PlayList playlist = GetPlaylist(_currentPlayList);
-      if (playlist.Count <= 0) return;
+      if (playlist.Count <= 0)
+      {
+        Log.WriteFile(Log.LogType.Log, "PlaylistPlayer.Play() playlist is empty");
+        return;
+      }
       if (iSong < 0) iSong = 0;
       if (iSong >= playlist.Count) iSong = playlist.Count - 1;
 
@@ -353,7 +359,7 @@ namespace MediaPortal.Playlists
         playlist.ResetStatus();
       }
 
-      Log.Write("PlaylistPlayer.Play({0})", item.FileName);
+      Log.Write("PlaylistPlayer.Play:{0}", item.FileName);
       if (item.Type == PlayListItem.PlayListItemType.Radio)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO, 0, 0, 0, 0, 0, null);
@@ -368,6 +374,7 @@ namespace MediaPortal.Playlists
         //	Count entries in current playlist
         //	that couldn't be played
         _entriesNotFound++;
+        Log.Write("PlaylistPlayer.Play unable to play:{0}", item.FileName);
       }
       else
       {

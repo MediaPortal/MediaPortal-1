@@ -52,6 +52,7 @@ namespace MediaPortal.Playlists
         public void Add(PlayListItem item)
         {
             if (item == null) return;
+            Log.WriteFile(Log.LogType.Log, "Playlist: add {0}", item.FileName);
             _listPlayListItems.Add(item);
         }
 
