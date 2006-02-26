@@ -1939,6 +1939,7 @@ namespace MediaPortal.GUI.TV
       }
 
       UpdateOSD();
+      _zapTimeOutTimer = DateTime.Now;
 
     }
 
