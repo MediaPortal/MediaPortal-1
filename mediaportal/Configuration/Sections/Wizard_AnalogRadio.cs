@@ -996,6 +996,7 @@ namespace MediaPortal.Configuration.Sections
                   item.SubItems.Add(station.Channel.ToString());
                   listView1.Items.Add(item);
           }
+          RadioStations.UpdateList();
       }
 
   }

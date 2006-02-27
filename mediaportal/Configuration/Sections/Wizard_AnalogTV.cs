@@ -896,6 +896,7 @@ namespace MediaPortal.Configuration.Sections
                   listView1.Items.Add(item);
               }
           }
+          TVChannels.UpdateList();
       }
 
   }
