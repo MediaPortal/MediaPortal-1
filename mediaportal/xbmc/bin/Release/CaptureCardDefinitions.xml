@@ -7486,7 +7486,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="TwinhanDTV Ter (D+A)" capturename="DTV-DVB 3054 Digital TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_00191822&amp;rev_05">
+  <capturecard commercialname="TwinhanDTV Ter (D+A) DVB-T" capturename="DTV-DVB 3054 Digital TS Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_00191822&amp;rev_05">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
@@ -8953,6 +8953,60 @@
 		<filter cat="videncoder"	name="%videoencoder%"			checkdevice="false"/>
 		<filter cat="audencoder"	name="%audioencoder%"			checkdevice="false"/>
 		<filter cat="mux"			name="%mpegmux%"				checkdevice="false"/>
+	  </filters>
+	  <connections>
+		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+		<connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+		<connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+	  </connections>
+	</tv>
+  </capturecard>
+
+  <capturecard commercialname="TwinhanDTV Ter (D+A) Analogue" capturename="DTV-DVB 3054 Analog Video Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_00191822&amp;rev_05">
+	<capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+	<tv>
+	  <interface cat="mux" video="" audio="" mpeg2="0"/>
+	  <filters>
+		<filter cat="tvtuner"		name="DTV-DVB 3054 Analog Tuner"				checkdevice="true"/>
+		<filter cat="tvaudio"		name="DTV-DVB 3054 Analog TvAudio"				checkdevice="true"/>
+		<filter cat="crossbar"		name="DTV-DVB 3054 Analog AVStream Crossbar"	checkdevice="true"/>
+		<filter cat="capture"		name="DTV-DVB 3054 Analog Video Capture"		checkdevice="true"/>
+		<filter cat="videncoder"	name="CyberLink MPEG Video Encoder(Twinhan)"	checkdevice="false"/>
+		<filter cat="audencoder"	name="CyberLink Audio Encoder(Twinhan)"			checkdevice="false"/>
+		<filter cat="mux"			name="CyberLink MPEG Muxer"						checkdevice="false"/>
+	  </filters>
+	  <connections>
+		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+		<connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+		<connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+	  </connections>
+	</tv>
+  </capturecard>
+	
+  <capturecard commercialname="TwinhanDTV Ter (D+A) Analogue" capturename="DTV-DVB 3054 Analog Video Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_00251822&amp;rev_05">
+	<capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+	<tv>
+	  <interface cat="mux" video="" audio="" mpeg2="0"/>
+	  <filters>
+		<filter cat="tvtuner"		name="DTV-DVB 3054 Analog Tuner"				checkdevice="true"/>
+		<filter cat="tvaudio"		name="DTV-DVB 3054 Analog TvAudio"				checkdevice="true"/>
+		<filter cat="crossbar"		name="DTV-DVB 3054 Analog AVStream Crossbar"	checkdevice="true"/>
+		<filter cat="capture"		name="DTV-DVB 3054 Analog Video Capture"		checkdevice="true"/>
+		<filter cat="videncoder"	name="CyberLink MPEG Video Encoder(Twinhan)"	checkdevice="false"/>
+		<filter cat="audencoder"	name="CyberLink Audio Encoder(Twinhan)"			checkdevice="false"/>
+		<filter cat="mux"			name="CyberLink MPEG Muxer"						checkdevice="false"/>
 	  </filters>
 	  <connections>
 		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
