@@ -3276,7 +3276,7 @@ namespace MediaPortal.Configuration
 
       if (tvchannel.ID < 0)
       {
-        tvchannel.ID = TVDatabase.AddChannel(tvchannel);
+        channelId= TVDatabase.AddChannel(tvchannel);
       }
       else
       {

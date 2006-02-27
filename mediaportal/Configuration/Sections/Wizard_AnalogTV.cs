@@ -57,15 +57,22 @@ namespace MediaPortal.Configuration.Sections
       private MediaPortal.UserInterface.Controls.MPComboBox cbInput;
       private MediaPortal.UserInterface.Controls.MPComboBox cbCities;
       private MediaPortal.UserInterface.Controls.MPButton buttonImport;
+      private MediaPortal.UserInterface.Controls.MPButton buttonAdd;
+      private MediaPortal.UserInterface.Controls.MPButton buttonClear;
+      private MediaPortal.UserInterface.Controls.MPContextMenuStrip contextMenuStrip;
+      private System.Windows.Forms.ImageList imageListContextMenu;
+
       
       private Panel panel1;
       private ListView listView1;
       private ColumnHeader columnHeader1;
       private ColumnHeader columnHeader2;
       private ImageList imageList1;
+      private const string REORDER = "Reorder";
 
 
      bool _groupBox2Enabled = true;
+      bool _clearButtonEnabled = true;
       bool _loadingInfo = false;
     XmlDocument docSetup;
     public Wizard_AnalogTV()
@@ -111,12 +118,17 @@ namespace MediaPortal.Configuration.Sections
         this.cbCities = new MediaPortal.UserInterface.Controls.MPComboBox();
         this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
         this.buttonImport = new MediaPortal.UserInterface.Controls.MPButton();
+        this.buttonAdd = new MediaPortal.UserInterface.Controls.MPButton();
+        this.buttonClear = new MediaPortal.UserInterface.Controls.MPButton();
         this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
         this.cbCountry = new MediaPortal.UserInterface.Controls.MPComboBox();
         this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
         this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
         this.cbInput = new MediaPortal.UserInterface.Controls.MPComboBox();
         this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+        this.contextMenuStrip = new MediaPortal.UserInterface.Controls.MPContextMenuStrip();
+        this.imageListContextMenu = new System.Windows.Forms.ImageList(this.components);
+
         this.groupBox1.SuspendLayout();
         this.groupBox2.SuspendLayout();
         this.groupBox3.SuspendLayout();
@@ -138,6 +150,8 @@ namespace MediaPortal.Configuration.Sections
         this.groupBox1.Controls.Add(this.lblStatus);
         this.groupBox1.Controls.Add(this.progressBarProgress);
         this.groupBox1.Controls.Add(this.buttonScan);
+        this.groupBox1.Controls.Add(this.buttonAdd);
+        this.groupBox1.Controls.Add(this.buttonClear);
         this.groupBox1.Controls.Add(this.label1);
         this.groupBox1.Controls.Add(this.groupBox2);
         this.groupBox1.Controls.Add(this.groupBox3);
@@ -164,6 +178,9 @@ namespace MediaPortal.Configuration.Sections
             this.columnHeader2});
         this.listView1.Location = new System.Drawing.Point(245, 205);
         this.listView1.MultiSelect = false;
+        this.listView1.FullRowSelect = true;
+        this.listView1.AllowDrop = true;
+        this.listView1.HideSelection = false;
         this.listView1.Name = "listView1";
         this.listView1.Size = new System.Drawing.Size(151, 183);
         this.listView1.TabIndex = 21;
@@ -173,6 +190,11 @@ namespace MediaPortal.Configuration.Sections
         this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
         this.listView1.ItemActivate += new EventHandler(this.listView1_ItemActivate);
         this.listView1.KeyUp += new KeyEventHandler(this.listView1_KeyUp);
+        this.listView1.ItemDrag += new ItemDragEventHandler(listView1_OnItemDrag);
+        this.listView1.DragDrop += new DragEventHandler(listView1_OnDragDrop);
+        this.listView1.DragEnter += new DragEventHandler(listView1_OnDragEnter);
+        this.listView1.DragOver += new DragEventHandler(listView1_OnDragOver);
+        this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseClick);
         // 
         // columnHeader1
         // 
@@ -191,6 +213,23 @@ namespace MediaPortal.Configuration.Sections
         this.imageList1.Images.SetKeyName(0, "");
         this.imageList1.Images.SetKeyName(1, "");
         // 
+        // contextMenuStrip
+        // 
+        this.contextMenuStrip.BackColor = System.Drawing.SystemColors.Window;
+        this.contextMenuStrip.MinimumSize = new System.Drawing.Size(10, 0);
+        this.contextMenuStrip.Name = "contextMenuStrip";
+        this.contextMenuStrip.Size = new System.Drawing.Size(61, 4);
+        this.contextMenuStrip.TabStop = true;
+        // 
+        // imageListContextMenu
+        // 
+        this.imageListContextMenu.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListContextMenu.ImageStream")));
+        this.imageListContextMenu.TransparentColor = System.Drawing.Color.Transparent;
+        this.imageListContextMenu.Images.SetKeyName(0, "edit.png");
+        this.imageListContextMenu.Images.SetKeyName(1, "tvoff.png");
+        this.imageListContextMenu.Images.SetKeyName(2, "delete.png");
+        this.imageListContextMenu.Images.SetKeyName(3, "deleteall.png");
+        this.imageListContextMenu.Images.SetKeyName(4, "new.png");
         // lblStatus2
         // 
         this.lblStatus2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -274,6 +313,28 @@ namespace MediaPortal.Configuration.Sections
         this.buttonScan.Text = "Scan";
         this.buttonScan.UseVisualStyleBackColor = true;
         this.buttonScan.Click += new System.EventHandler(this.buttonScan_Click);
+        // 
+        // buttonAdd
+        // 
+        this.buttonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+        this.buttonAdd.Location = new System.Drawing.Point(404, 336);
+        this.buttonAdd.Name = "buttonAdd";
+        this.buttonAdd.Size = new System.Drawing.Size(72, 22);
+        this.buttonAdd.TabIndex = 4;
+        this.buttonAdd.Text = "Add";
+        this.buttonAdd.UseVisualStyleBackColor = true;
+        this.buttonAdd.Click += new System.EventHandler(this.itemAdd_Click);
+        // 
+        // buttonClear
+        // 
+        this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+        this.buttonClear.Location = new System.Drawing.Point(404, 366);
+        this.buttonClear.Name = "buttonClear";
+        this.buttonClear.Size = new System.Drawing.Size(72, 22);
+        this.buttonClear.TabIndex = 5;
+        this.buttonClear.Text = "Delete All";
+        this.buttonClear.UseVisualStyleBackColor = true;
+        this.buttonClear.Click += new System.EventHandler(this.itemClear_Click);
         // 
         // label1
         // 
@@ -459,6 +520,8 @@ namespace MediaPortal.Configuration.Sections
         groupBox3.Enabled = true;
         listView1.Enabled = true;
         groupBox2.Enabled = _groupBox2Enabled;
+        buttonClear.Enabled = _clearButtonEnabled;
+        buttonAdd.Enabled = true;
         WizardForm wizard = WizardForm.Form;
         if (wizard != null)
         {
@@ -473,7 +536,11 @@ namespace MediaPortal.Configuration.Sections
         groupBox3.Enabled = false;
         _groupBox2Enabled = groupBox2.Enabled;
         groupBox2.Enabled = false;
+        _clearButtonEnabled = buttonClear.Enabled;
+        buttonClear.Enabled = false;
+        buttonAdd.Enabled = false;
         listView1.Enabled = false;
+
         int countryId = 31;
         if (cbCountry.SelectedItem != null)
         {
@@ -741,6 +808,114 @@ namespace MediaPortal.Configuration.Sections
               }
           }
       }
+      private void DeleteChannel()
+      {
+          if ((listView1.SelectedIndices.Count > 0) && (_card != null))
+          {
+              string selectedChannel = listView1.SelectedItems[0].Text;
+              TVDatabase.RemoveChannel(selectedChannel);
+              int index = listView1.SelectedItems[0].Index;
+              listView1.Items.Remove(listView1.SelectedItems[0]);
+              listView1.Update();
+              if (listView1.Items.Count > 0)
+              {
+                  if (index >= listView1.Items.Count)
+                  {
+                      index = listView1.Items.Count - 1;
+                  }
+                  listView1.SelectedIndices.Clear();
+                  listView1.SelectedIndices.Add(index);
+              }
+              else
+              {
+                  buttonClear.Enabled = false;
+                  _card.DeleteGraph();
+              }
+          }
+      }
+      private void itemStop_Click(object sender, EventArgs e)
+      {
+          if ((listView1.SelectedIndices.Count > 0) && (_card != null))
+          {
+               _card.DeleteGraph();
+               listView1.SelectedItems[0].Selected = false;
+               listView1.Select();
+          } 
+      }
+      private void itemDel_Click(object sender, EventArgs e)
+      {
+          DeleteChannel();
+      }
+      private void itemClear_Click(object sender, System.EventArgs e)
+      {
+          DialogResult result = MessageBox.Show(this, "Are you sure you want to delete all channels?", "Delete channels", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+          if (result != DialogResult.Yes) return;
+          _card.DeleteGraph();
+          foreach (ListViewItem item in listView1.Items)
+          {
+              TVDatabase.RemoveChannel(item.Text);
+          }
+          listView1.Items.Clear();
+          buttonClear.Enabled = false;
+      }
+      private void itemAdd_Click(object sender, EventArgs e)
+      {
+          EditTVChannelForm editChannel = new EditTVChannelForm();
+          TelevisionChannel editedChannel = editChannel.Channel;
+          editedChannel.ID = -1;
+          editChannel.SortingPlace = listView1.Items.Count+_card.ID*100000;
+          editChannel.Channel = editedChannel;
+          DialogResult dialogResult = editChannel.ShowDialog(this);
+
+          if (dialogResult == DialogResult.OK)
+          {
+              editedChannel = editChannel.Channel;
+              TVChannel tvChan = new TVChannel();
+              tvChan.ID = editedChannel.ID;
+              tvChan.Name = editChannel.Name;
+              tvChan.Sort = editChannel.SortingPlace;
+              TVDatabase.MapChannelToCard(tvChan.ID, _card.ID);
+              TVGroup group = new TVGroup();
+              group.GroupName = "Analog";
+              int groupid = TVDatabase.AddGroup(group);
+              group.ID = groupid;
+              TVDatabase.MapChannelToGroup(group, tvChan);
+              UpdateList();
+          }
+      }
+      private void listView1_MouseClick(object sender, MouseEventArgs e)
+      {
+          if (e.Button == MouseButtons.Right)
+          {
+              contextMenuStrip.Items.Clear();
+              ToolStripItem item = null;
+              if ((listView1.SelectedIndices.Count > 0) && (_card != null))
+              {
+                  
+                  item = contextMenuStrip.Items.Add("Stop Viewing");
+                  item.Click += new EventHandler(itemStop_Click);
+                  item.Image = imageListContextMenu.Images[1];
+                  if (_card.TVChannel == string.Empty)
+                  {
+                      item.Enabled = false;
+                  }
+                  item = contextMenuStrip.Items.Add("Edit Channel");
+                  item.Click += new EventHandler(listView1_ItemActivate);
+                  item.Image = imageListContextMenu.Images[0];
+                  item = contextMenuStrip.Items.Add("Delete Channel");
+                  item.Click += new EventHandler(itemDel_Click);
+                  item.Image = imageListContextMenu.Images[2];
+                  contextMenuStrip.Items.Add(new ToolStripSeparator());
+              }
+              item = contextMenuStrip.Items.Add("Add New Channel");
+              item.Click += new EventHandler(itemAdd_Click);
+              item.Image = imageListContextMenu.Images[4];
+              item = contextMenuStrip.Items.Add("Delete All Channels");
+              item.Click += new EventHandler(itemClear_Click);
+              item.Image = imageListContextMenu.Images[3];
+              contextMenuStrip.Show(MousePosition);
+          }
+      }
 
       private void listView1_SelectedIndexChanged(object sender, System.EventArgs e)
       {
@@ -757,28 +932,9 @@ namespace MediaPortal.Configuration.Sections
       }
       private void listView1_KeyUp(Object o, KeyEventArgs e)
       {
-          if ((listView1.SelectedIndices.Count > 0)&& (_card != null))
+          if (e.KeyCode == System.Windows.Forms.Keys.Delete || e.KeyCode == System.Windows.Forms.Keys.Back)
           {
-              if (e.KeyCode == System.Windows.Forms.Keys.Delete || e.KeyCode == System.Windows.Forms.Keys.Back)
-              {
-                  string selectedChannel = listView1.SelectedItems[0].Text;
-                  TVDatabase.RemoveChannel(selectedChannel);
-                  int index = listView1.SelectedItems[0].Index;
-                  listView1.Items.Remove(listView1.SelectedItems[0]);
-                  listView1.Update();
-                  if (listView1.Items.Count > 0)
-                  {
-                      if (index >= listView1.Items.Count)
-                      {
-                          index = listView1.Items.Count - 1;
-                      }
-                      listView1.SelectedIndices.Clear();
-                      listView1.SelectedIndices.Add(index);
-                  }else
-                  {
-                      _card.DeleteGraph();
-                  }
-              }
+              DeleteChannel();
           }
       }
       private void listView1_ItemActivate(object sender, System.EventArgs e)
@@ -826,6 +982,102 @@ namespace MediaPortal.Configuration.Sections
                   }
               }
           }
+      }
+      private void listView1_OnDragDrop(object sender, DragEventArgs e)
+      {
+          if (listView1.SelectedItems.Count == 0)
+          {
+              return;
+          }
+          Point cp = listView1.PointToClient(new Point(e.X, e.Y));
+          ListViewItem dragToItem = listView1.GetItemAt(cp.X, cp.Y);
+          if (dragToItem == null)
+          {
+              return;
+          }
+          int dropIndex = dragToItem.Index;
+          if (dropIndex > listView1.SelectedItems[0].Index)
+          {
+              dropIndex++;
+          }
+          ArrayList insertItems =
+              new ArrayList(listView1.SelectedItems.Count);
+          foreach (ListViewItem item in listView1.SelectedItems)
+          {
+              insertItems.Add(item.Clone());
+          }
+          for (int i = insertItems.Count - 1; i >= 0; i--)
+          {
+              ListViewItem insertItem =
+                  (ListViewItem)insertItems[i];
+              listView1.Items.Insert(dropIndex, insertItem);
+          }
+          foreach (ListViewItem removeItem in listView1.SelectedItems)
+          {
+              listView1.Items.Remove(removeItem);
+          }
+          listView1.Focus();
+          ((ListViewItem)insertItems[0]).Selected = true;
+          listView1.FocusedItem = (ListViewItem)insertItems[0];
+          listView1.Select();
+      }
+
+      private void listView1_OnDragOver(object sender, DragEventArgs e)
+      {
+          if (!e.Data.GetDataPresent(DataFormats.Text))
+          {
+              e.Effect = DragDropEffects.None;
+              return;
+          }
+          Point cp = listView1.PointToClient(new Point(e.X, e.Y));
+          ListViewItem hoverItem = listView1.GetItemAt(cp.X, cp.Y);
+          if (hoverItem == null)
+          {
+              e.Effect = DragDropEffects.None;
+              return;
+          }
+          foreach (ListViewItem moveItem in listView1.SelectedItems)
+          {
+              if (moveItem.Index == hoverItem.Index)
+              {
+                  e.Effect = DragDropEffects.None;
+                  hoverItem.EnsureVisible();
+                  return;
+              }
+          }
+          String text = (String)e.Data.GetData(REORDER.GetType());
+          if (text.CompareTo(REORDER) == 0)
+          {
+              e.Effect = DragDropEffects.Move;
+              hoverItem.EnsureVisible();
+          }
+          else
+          {
+              e.Effect = DragDropEffects.None;
+          }
+      }
+
+      private void listView1_OnDragEnter(object sender, DragEventArgs e)
+      {
+          if (!e.Data.GetDataPresent(DataFormats.Text))
+          {
+              e.Effect = DragDropEffects.None;
+              return;
+          }
+          String text = (String)e.Data.GetData(REORDER.GetType());
+          if (text.CompareTo(REORDER) == 0)
+          {
+              e.Effect = DragDropEffects.Move;
+          }
+          else
+          {
+              e.Effect = DragDropEffects.None;
+          }
+      }
+
+      private void listView1_OnItemDrag(object sender, ItemDragEventArgs e)
+      {
+          listView1.DoDragDrop(REORDER, DragDropEffects.Move);
       }
 
     void MapTvToOtherCards(int id)
@@ -875,6 +1127,11 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("capture", "country", tunerCountry.Id.ToString());
         }
       }
+      foreach (ListViewItem item in listView1.Items)
+      {
+          string selectedChannel = item.Text;
+          TVDatabase.SetChannelSort(selectedChannel, item.Index+ _card.ID*100000);
+      }
     }
 
       public override void UpdateList()
@@ -883,6 +1140,14 @@ namespace MediaPortal.Configuration.Sections
           if (_card == null) return;
           ArrayList channels = new ArrayList();
           TVDatabase.GetChannelsForCard(ref channels, _card.ID);
+          if (Scanning)
+          {
+              _clearButtonEnabled = (channels.Count != 0);
+          }
+          else
+          {
+              buttonClear.Enabled = (channels.Count != 0);
+          }
           foreach (TVChannel channel in channels)
           {
               if (channel.Number < (int)ExternalInputs.svhs)
@@ -896,6 +1161,7 @@ namespace MediaPortal.Configuration.Sections
                   listView1.Items.Add(item);
               }
           }
+          listView1.Update();
           TVChannels.UpdateList();
       }
 

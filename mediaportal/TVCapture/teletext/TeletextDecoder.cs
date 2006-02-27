@@ -95,10 +95,12 @@ namespace MediaPortal.TV.Teletext
             {
                 continue;
             }
+            //Log.Write("Packet Number:{0}, type:{1}", packetNumber, type);
             string channelName = "";
             for (int i = 0; i < 20; i++)
             {
                  char char1 = (char)(rowData[off + 22 + i] & 127);
+                 //Log.Write("{0}-{1:x}", char1, (byte)(rowData[off + 22 + i] & 127));
                  channelName += char1;
             }
             int pos = channelName.LastIndexOf("teletext",StringComparison.InvariantCultureIgnoreCase);
