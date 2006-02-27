@@ -193,6 +193,7 @@ namespace MediaPortal.Tests.TVCapture.Commands
       do
       {
         _processor.ProcessCommands();
+        _processor.ProcessCards();
       } while (_processor.IsBusy);
     }
     void DoSchedule()
@@ -202,6 +203,7 @@ namespace MediaPortal.Tests.TVCapture.Commands
       {
         _processor.ProcessScheduler();
         _processor.ProcessCommands();
+        _processor.ProcessCards();
       } while (_processor.IsBusy);
     }
     void StopRecord()
@@ -210,6 +212,7 @@ namespace MediaPortal.Tests.TVCapture.Commands
       do
       {
         _processor.ProcessCommands();
+        _processor.ProcessCards();
       } while (_processor.IsBusy);
     }
 

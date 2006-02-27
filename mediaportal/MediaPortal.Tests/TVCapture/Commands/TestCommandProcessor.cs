@@ -464,6 +464,7 @@ namespace MediaPortal.Tests.Commands
       do
       {
         proc.ProcessCommands();
+        proc.ProcessCards();
       } while (proc.IsBusy);
     }
     void DoSchedule(CommandProcessor proc)
@@ -472,7 +473,9 @@ namespace MediaPortal.Tests.Commands
       do
       {
         proc.ProcessCommands();
+        proc.ProcessCards();
         proc.ProcessScheduler();
+        proc.ProcessCards();
       } while (proc.IsBusy);
     }
     void StopRecord(CommandProcessor proc)
