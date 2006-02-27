@@ -9021,4 +9021,20 @@
 	  </connections>
 	</tv>
   </capturecard>
+
+  <capturecard commercialname="Conceptronic CTVSATi" capturename="DTV-DVBS 878 Digital Capture Filter" devid="ven_109e&amp;dev_0878&amp;subsys_00000000&amp;rev_11">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"  		checkdevice="false"/>
+        <filter cat="tunerdevice"     name="DTV-DVBS 878 Digital Tuner Filter"    	checkdevice="true"/>
+        <filter cat="capture"         name="DTV-DVBS 878 Digital Capture Filter"   	checkdevice="true"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+		<connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
