@@ -423,7 +423,8 @@ namespace MediaPortal.GUI.TV
           {
               if (action.fAmount1 != 0)
               {
-                  _zapTimeOutTimer = DateTime.MaxValue;
+                _zapTimeOutTimer = DateTime.MaxValue;
+                _zapTimeOutTimer = DateTime.Now;
               }
               else
               {
