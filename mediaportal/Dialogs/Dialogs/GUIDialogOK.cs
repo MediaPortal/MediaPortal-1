@@ -82,7 +82,6 @@ namespace MediaPortal.Dialogs
 				OnMessage(msg);
 
 				GUIWindowManager.UnRoute();
-				m_pParentWindow=null;
 				m_bRunning=false;
 			}
 			GUIWindowManager.IsSwitchingToNewWindow=false;
@@ -97,6 +96,9 @@ namespace MediaPortal.Dialogs
         m_dwParentWindowID=0;
         return;
       }
+      bool wasRouted = GUIWindowManager.IsRouted;
+      IRenderLayer prevLayer = GUILayerManager.GetLayer(GUILayerManager.LayerType.Dialog);
+
 			GUIWindowManager.IsSwitchingToNewWindow=true;
 
       GUIWindowManager.RouteToWindow( GetID );
@@ -104,7 +106,8 @@ namespace MediaPortal.Dialogs
       // active this window...
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT,GetID,0,0,0,0,null);
 			OnMessage(msg);
-			GUIWindowManager.IsSwitchingToNewWindow=false;
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
+      GUIWindowManager.IsSwitchingToNewWindow = false;
 
       m_bRunning=true;
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
@@ -112,6 +115,16 @@ namespace MediaPortal.Dialogs
         GUIWindowManager.Process();
         System.Threading.Thread.Sleep(100);
       }
+      GUIGraphicsContext.Overlay = m_bPrevOverlay;
+      FreeResources();
+      DeInitControls();
+      GUILayerManager.UnRegisterLayer(this);
+      if (wasRouted)
+      {
+        GUIWindowManager.RouteToWindow(dwParentId);
+        GUILayerManager.RegisterLayer(prevLayer, GUILayerManager.LayerType.Dialog);
+      }
+
     }
     #endregion
 	
@@ -121,12 +134,7 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
 				{
-					m_pParentWindow=null;
-					m_bRunning=false;
-          GUIGraphicsContext.Overlay=m_bPrevOverlay;		
-          FreeResources();
-          DeInitControls();
-          GUILayerManager.UnRegisterLayer(this);
+          m_bRunning = false;
 
           return true;
         }
@@ -137,7 +145,6 @@ namespace MediaPortal.Dialogs
           m_bConfirmed = false;
           base.OnMessage(message);
           GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
-          GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
         }
         return true;
 

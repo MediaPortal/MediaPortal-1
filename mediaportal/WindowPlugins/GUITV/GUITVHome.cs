@@ -754,7 +754,7 @@ namespace MediaPortal.GUI.TV
         pDlgOK.SetHeading(605);//my tv
         pDlgOK.SetLine(1, errorMessage);
         pDlgOK.SetLine(2, "");
-        pDlgOK.DoModal((int)GUIWindow.Window.WINDOW_TV);
+        pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
       }
     }
     static public void ViewChannel(string channel)

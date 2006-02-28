@@ -2209,28 +2209,11 @@ namespace MediaPortal.GUI.TV
             break;
 
           case 938: // view channel
-            if (g_Player.Playing && g_Player.IsTVRecording)
+            GUITVHome.IsTVOn = true;
+            GUITVHome.ViewChannelAndCheck(_currentTvChannel);
+            if (Recorder.IsViewing() && Recorder.TVChannelName == _currentProgram.Channel)
             {
-              g_Player.Stop();
-            }
-            int count = 0;
-            try
-            {
-              if (VMR9Util.g_vmr9 != null)
-                VMR9Util.g_vmr9.Enable(false);
-
-              while (GUIGraphicsContext.InVmr9Render && count++ < 10) System.Threading.Thread.Sleep(100);
-              GUITVHome.IsTVOn = true;
-              GUITVHome.ViewChannel(_currentTvChannel);
-              if (Recorder.IsViewing())
-              {
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-              }
-            }
-            finally
-            {
-              if (VMR9Util.g_vmr9 != null)
-                VMR9Util.g_vmr9.Enable(true);
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
             }
             return;
 
@@ -2288,14 +2271,9 @@ namespace MediaPortal.GUI.TV
           }
           try
           {
-            if (VMR9Util.g_vmr9 != null)
-              VMR9Util.g_vmr9.Enable(false);
-
-            int count = 0;
-            while (GUIGraphicsContext.InVmr9Render && count++ < 10) System.Threading.Thread.Sleep(100);
             GUITVHome.IsTVOn = true;
             GUITVHome.ViewChannelAndCheck(_currentProgram.Channel);
-            if (Recorder.IsViewing())
+            if (Recorder.IsViewing() && Recorder.TVChannelName == _currentProgram.Channel)
             {
               GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
             }

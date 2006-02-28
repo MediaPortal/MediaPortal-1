@@ -96,15 +96,15 @@ namespace MediaPortal.Dialogs
         }
         else
         {
-          key = ((char)('0'+ action.wID - Action.ActionType.REMOTE_0));
+          key = ((char)('0' + action.wID - Action.ActionType.REMOTE_0));
         }
         if (key == (char)0) return;
         keySelection += key;
         if (keySelection.Length == listItems.Count.ToString().Length)
         {
-            selectOpcion(keySelection);
-            keySelection = string.Empty;
-            return;
+          selectOpcion(keySelection);
+          keySelection = string.Empty;
+          return;
         }
         keyTimer = DateTime.Now;
         return;
@@ -112,39 +112,39 @@ namespace MediaPortal.Dialogs
 
       base.OnAction(action);
     }
-      public void selectOpcion(string keySelected)
+    public void selectOpcion(string keySelected)
+    {
+      int selected;
+      try
       {
-          int selected;
-          try
-          {
-              selected = int.Parse(keySelected)-1;
-          }
-          catch (Exception)
-          {
-              selected = -1;
-          }
-          if (selected >= 0 && selected < listItems.Count)
-          {
-              // Select dialog item
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, listView.GetID, 0, 0, null);
-              OnMessage(msg);
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, selected, 0, null);
-              OnMessage(msg);
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
-              OnMessage(msg);
-          }
+        selected = int.Parse(keySelected) - 1;
       }
-      public override void Process()
+      catch (Exception)
       {
-          if (keySelection == string.Empty) return;
-          TimeSpan ts = DateTime.Now - keyTimer;
-          if (ts.TotalMilliseconds>= 1000)
-          {
-              selectOpcion(keySelection);
-              keySelection = string.Empty;
-          }
+        selected = -1;
       }
- 
+      if (selected >= 0 && selected < listItems.Count)
+      {
+        // Select dialog item
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, listView.GetID, 0, 0, null);
+        OnMessage(msg);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, selected, 0, null);
+        OnMessage(msg);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
+        OnMessage(msg);
+      }
+    }
+    public override void Process()
+    {
+      if (keySelection == string.Empty) return;
+      TimeSpan ts = DateTime.Now - keyTimer;
+      if (ts.TotalMilliseconds >= 1000)
+      {
+        selectOpcion(keySelection);
+        keySelection = string.Empty;
+      }
+    }
+
     void Close()
     {
       GUIWindowManager.IsSwitchingToNewWindow = true;
@@ -153,7 +153,7 @@ namespace MediaPortal.Dialogs
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
         OnMessage(msg);
 
-        GUIWindowManager.UnRoute(); 
+        GUIWindowManager.UnRoute();
         m_bRunning = false;
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
@@ -224,7 +224,7 @@ namespace MediaPortal.Dialogs
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          { 
+          {
             m_bRunning = false;
             return true;
           }
@@ -354,7 +354,7 @@ namespace MediaPortal.Dialogs
     }
 
 
- 
+
     #region IRenderLayer
     public bool ShouldRenderLayer()
     {
