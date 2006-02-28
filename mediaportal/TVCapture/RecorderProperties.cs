@@ -101,15 +101,6 @@ namespace MediaPortal.TV.Recording
           dtStarted = Recorder.TimeTimeshiftingStarted;
           if (dtStarted < dtStart) dtStarted = dtStart;
           SetProgressBarProperties(dtStart, dtStarted, dtEnd);
-          Log.WriteFile(Log.LogType.Log, "program :{0}", _currentTvChannel.CurrentProgram.Title);
-          Log.WriteFile(Log.LogType.Log, "start   :{0}", dtStart.ToString());
-          Log.WriteFile(Log.LogType.Log, "end     :{0}", dtEnd.ToString());
-          Log.WriteFile(Log.LogType.Log, "ts start:{0}", dtStarted.ToString());
-          Log.WriteFile(Log.LogType.Log, "current :{0}", GUIPropertyManager.GetProperty("#TV.Record.current"));
-          Log.WriteFile(Log.LogType.Log, "duration:{0}", GUIPropertyManager.GetProperty("#TV.Record.duration"));
-          Log.WriteFile(Log.LogType.Log, "percent1:{0}", GUIPropertyManager.GetProperty("#TV.Record.percent1"));
-          Log.WriteFile(Log.LogType.Log, "percent2:{0}", GUIPropertyManager.GetProperty("#TV.Record.percent2"));
-          Log.WriteFile(Log.LogType.Log, "percent3:{0}", GUIPropertyManager.GetProperty("#TV.Record.percent3"));
         }
         else
         {
