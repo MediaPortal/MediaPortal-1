@@ -29,7 +29,7 @@ namespace MediaPortal.Tests.Commands
       }
     }
     #endregion
-
+    string _externalChannel;
     #region general tests
     [SetUp]
     public void Init()
@@ -53,6 +53,15 @@ namespace MediaPortal.Tests.Commands
       g_Player.Factory = new DummyPlayerFactory();
       Playlists.PlayListPlayer.SingletonPlayer.InitTest();
       g_Player.Stop();
+      GUI.Library.GUIWindowManager.OnThreadMessageHandler += new MediaPortal.GUI.Library.GUIWindowManager.ThreadMessageHandler(GUIWindowManager_OnThreadMessageHandler);
+    }
+
+    void GUIWindowManager_OnThreadMessageHandler(object sender, MediaPortal.GUI.Library.GUIMessage message)
+    {
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_TUNE_EXTERNAL_CHANNEL)
+      {
+        _externalChannel = message.Label;
+      }
     }
 
     [Test]
@@ -549,6 +558,7 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(proc.TVCards[0].CurrentTVRecording.End, rec.End);
       Assert.AreEqual(proc.TVCards[0].CurrentTVRecording.Channel, rec.Channel);
       Assert.IsTrue(proc.TVCards[0].RecordingFileName.Length > 0);
+      Assert.AreEqual(proc.TVCards[0].TVChannel, _externalChannel);
     }
     void StartRecord(CommandProcessor proc, string channelName)
     {
@@ -589,6 +599,8 @@ namespace MediaPortal.Tests.Commands
       }
       Assert.IsTrue(g_Player.Playing);
       Assert.AreEqual(g_Player.CurrentFile, proc.GetTimeShiftFileName(proc.CurrentCardIndex));
+
+      Assert.AreEqual(proc.TVCards[0].TVChannel, _externalChannel);
     }
 
     void WatchTv(CommandProcessor proc, string channelName)
@@ -612,6 +624,8 @@ namespace MediaPortal.Tests.Commands
         Assert.IsFalse(g_Player.Playing);
       }
       CompareDates(proc.TVCards[0].TimeShiftingStarted, DateTime.MinValue);
+
+      Assert.AreEqual(proc.TVCards[0].TVChannel, _externalChannel);
     }
     void WatchTv(CommandProcessor proc, string channelName,bool shouldBeTimeShifting)
     {
@@ -640,6 +654,7 @@ namespace MediaPortal.Tests.Commands
       {
         Assert.IsFalse(g_Player.Playing);
       }
+      Assert.AreEqual(proc.TVCards[0].TVChannel, _externalChannel);
     }
     void StartRadio(CommandProcessor proc, string stationName)
     {

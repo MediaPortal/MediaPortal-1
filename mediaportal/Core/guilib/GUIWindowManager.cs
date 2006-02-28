@@ -37,7 +37,8 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
   public class GUIWindowManager
   {
-		#region delegates and events
+    #region delegates and events
+    public delegate void ThreadMessageHandler(object sender, GUIMessage message);
 		public delegate void OnCallBackHandler();
 		public delegate void PostRendererHandler(int level, float timePassed);
 		public delegate bool PostRenderActionHandler(Action action, GUIMessage msg, bool focus);
@@ -49,6 +50,7 @@ namespace MediaPortal.GUI.Library
 		//static public event  PostRendererHandler  OnPostRender;
     static public event WindowActivationHandler OnActivateWindow;
     static public event WindowActivationHandler OnDeActivateWindow;
+    static public event ThreadMessageHandler OnThreadMessageHandler;
 
 		#endregion
 		#region variables
@@ -155,6 +157,10 @@ namespace MediaPortal.GUI.Library
 		/// <param name="message">new message to send</param>
 		static public void SendThreadMessage(GUIMessage message)
 		{
+      if (OnThreadMessageHandler != null)
+      {
+        OnThreadMessageHandler(this, message);
+      }
 			if (message!=null)
 				_listThreadMessages.Add(message);
 		}
