@@ -309,5 +309,7 @@ namespace MediaPortal.TV.Recording
     bool SupportsHardwarePidFiltering();
     bool SupportsCamSelection();
     bool CanViewTimeShiftFile();
+    bool IsRadio();
+    bool IsRecording();
   }
 }

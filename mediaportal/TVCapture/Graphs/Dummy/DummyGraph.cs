@@ -290,5 +290,14 @@ namespace MediaPortal.TV.Recording
       if (_state != State.TimeShifting && _state != State.Recording) return false;
       return true;
     }
+
+    public bool IsRadio()
+    {
+      return (_state == State.Radio);
+    }
+    public bool IsRecording()
+    {
+      return (_state == State.Recording);
+    }
   }
 }

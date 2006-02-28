@@ -88,7 +88,8 @@ namespace MediaPortal.Tests.TVCapture
 
     void StopTv()
     {
-      Recorder.StartViewing("", false, false,true);
+      string errorMessage;
+      Recorder.StartViewing("", false, false, true, out errorMessage);
 
       Assert.IsFalse(Recorder.IsViewing());
       Assert.IsFalse(Recorder.IsTimeShifting());
@@ -98,7 +99,8 @@ namespace MediaPortal.Tests.TVCapture
 
     void TimeShiftTv(string channelName)
     {
-      Recorder.StartViewing(channelName, true, true, true);
+      string errorMessage;
+      Recorder.StartViewing(channelName, true, true, true, out errorMessage);
 
       Assert.IsTrue(Recorder.IsTimeShifting());
       Assert.IsFalse(Recorder.IsRecording());
@@ -107,7 +109,8 @@ namespace MediaPortal.Tests.TVCapture
 
     void ViewTv(string channelName)
     {
-      Recorder.StartViewing(channelName, true, false, true);
+      string errorMessage;
+      Recorder.StartViewing(channelName, true, false, true, out errorMessage);
 
       Assert.IsTrue(Recorder.IsViewing());
       Assert.IsFalse(Recorder.IsTimeShifting());

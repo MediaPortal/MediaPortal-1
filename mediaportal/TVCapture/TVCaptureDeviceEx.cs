@@ -646,6 +646,7 @@ namespace MediaPortal.TV.Recording
     }
     public bool StopViewing()
     {
+      if (_currentGraphState != State.Viewing) return false;
       bool result = false;
       StopEpgGrabbing();
       if (_currentGraphState == State.Viewing)
@@ -1284,6 +1285,10 @@ namespace MediaPortal.TV.Recording
       _currentGraphState = State.Initialized;
     }
 
+    public IGraph InternalGraph
+    {
+      get { return _currentGraph; }
+    }
     public void StartRadio(RadioStation station)
     {
       if (!IsRadio)

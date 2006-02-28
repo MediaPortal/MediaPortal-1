@@ -322,6 +322,7 @@ namespace MediaPortal.Tests.Commands
       AddSchedule("RTL 4", DateTime.Now.AddMinutes(2), DateTime.Now.AddHours(+2));
       DoSchedule(proc);
       Assert.IsTrue(card1.IsRecording);
+      Assert.IsTrue(card1.InternalGraph.IsRecording());
     }
 
     [Test]
@@ -346,6 +347,7 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(proc.TVCards[0].TVChannel, "RTL 4");
       Assert.IsFalse(proc.TVCards[0].View);
       Assert.IsTrue(proc.TVCards[0].IsTimeShifting);
+      Assert.IsTrue(proc.TVCards[0].InternalGraph.IsTimeShifting() || proc.TVCards[0].InternalGraph.IsRecording());
       Assert.AreEqual(proc.TVCards[0].TimeShiftFileName, @"live.tv");
       Assert.AreEqual(proc.GetTimeShiftFileName(proc.CurrentCardIndex), @"C:\card1\live.tv");
 
@@ -374,6 +376,7 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(proc.TVCards[0].TVChannel, "RTL 4");
       Assert.IsFalse(proc.TVCards[0].View);
       Assert.IsTrue(proc.TVCards[0].IsTimeShifting);
+      Assert.IsTrue(proc.TVCards[0].InternalGraph.IsTimeShifting() || proc.TVCards[0].InternalGraph.IsRecording());
       Assert.AreEqual(proc.TVCards[0].TimeShiftFileName, @"live.tv");
       Assert.AreEqual(proc.GetTimeShiftFileName(proc.CurrentCardIndex), @"C:\card1\live.tv");
 
@@ -486,6 +489,7 @@ namespace MediaPortal.Tests.Commands
       ProcessCommands(proc);
       proc.ProcessScheduler();
       Assert.IsFalse(proc.TVCards[0].IsRecording);
+      Assert.IsFalse(proc.TVCards[0].InternalGraph.IsRecording());
       Assert.IsFalse(proc.TVCards[0].IsPostRecording);
       Assert.AreEqual(proc.TVCards[0].CurrentTVRecording, null);
       Assert.AreEqual(proc.TVCards[0].RecordingFileName.Length, 0);
@@ -535,6 +539,7 @@ namespace MediaPortal.Tests.Commands
       Assert.IsFalse(proc.TVCards[0].View);
       Assert.IsTrue(proc.TVCards[0].IsTimeShifting);
       Assert.IsTrue(proc.TVCards[0].IsRecording);
+      Assert.IsTrue(proc.TVCards[0].InternalGraph.IsRecording());
       Assert.IsFalse(proc.TVCards[0].IsPostRecording);
       Assert.AreEqual(proc.TVCards[0].TimeShiftFileName, @"live.tv");
       Assert.AreEqual(proc.GetTimeShiftFileName(0), @"C:\card1\live.tv");
@@ -559,6 +564,7 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(proc.TVCards[0].TVChannel, "");
       Assert.IsFalse(proc.TVCards[0].View);
       Assert.IsFalse(proc.TVCards[0].IsTimeShifting);
+      Assert.IsFalse(proc.TVCards[0].InternalGraph.IsTimeShifting());
       CompareDates(proc.TVCards[0].TimeShiftingStarted, DateTime.MinValue);
       Assert.IsFalse(g_Player.Playing);
     }
@@ -574,6 +580,7 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(proc.TVCards[0].TVChannel, channelName);
       Assert.IsFalse(proc.TVCards[0].View);
       Assert.IsTrue(proc.TVCards[0].IsTimeShifting);
+      Assert.IsTrue(proc.TVCards[0].InternalGraph.IsTimeShifting() || proc.TVCards[0].InternalGraph.IsRecording());
       Assert.AreEqual(proc.TVCards[0].TimeShiftFileName, @"live.tv");
       Assert.AreEqual(proc.GetTimeShiftFileName(proc.CurrentCardIndex), @"C:\card1\live.tv");
       if (!isTimeShifting)
@@ -594,6 +601,7 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(proc.TVCards[0].TVChannel, channelName);
       Assert.IsTrue(proc.TVCards[0].View);
       Assert.IsFalse(proc.TVCards[0].IsTimeShifting);
+      Assert.IsFalse(proc.TVCards[0].InternalGraph.IsTimeShifting());
       if (proc.TVCards[0].IsTimeShifting)
       {
         Assert.IsTrue(g_Player.Playing);
@@ -614,10 +622,15 @@ namespace MediaPortal.Tests.Commands
       Assert.AreEqual(proc.TVChannelName, channelName);
       Assert.AreEqual(proc.TVCards[0].TVChannel, channelName);
       if (shouldBeTimeShifting)
+      {
         Assert.IsTrue(proc.TVCards[0].IsTimeShifting);
+        Assert.IsTrue(proc.TVCards[0].InternalGraph.IsTimeShifting() || proc.TVCards[0].InternalGraph.IsRecording());
+      }
       else
+      {
         Assert.IsFalse(proc.TVCards[0].IsTimeShifting);
-
+        Assert.IsFalse(proc.TVCards[0].InternalGraph.IsTimeShifting());
+      }
       if (proc.TVCards[0].IsTimeShifting)
       {
         Assert.IsTrue(g_Player.Playing);
@@ -634,7 +647,9 @@ namespace MediaPortal.Tests.Commands
       ProcessCommands(proc);
       Assert.AreEqual(proc.CurrentCardIndex, 0);
       Assert.IsTrue(proc.TVCards[0].IsRadio);
+      Assert.IsTrue(proc.TVCards[0].InternalGraph.IsRadio());
       Assert.IsFalse(proc.TVCards[0].IsTimeShifting);
+      Assert.IsFalse(proc.TVCards[0].InternalGraph.IsTimeShifting());
       Assert.IsFalse(g_Player.Playing);
     }
     void StopRadio(CommandProcessor proc)
@@ -647,6 +662,11 @@ namespace MediaPortal.Tests.Commands
       Assert.IsFalse(proc.TVCards[0].View);
       Assert.IsFalse(proc.TVCards[0].IsTimeShifting);
       Assert.IsFalse(proc.TVCards[0].IsRadio);
+      if (proc.TVCards[0].InternalGraph != null)
+      {
+        Assert.IsFalse(proc.TVCards[0].InternalGraph.IsTimeShifting());
+        Assert.IsFalse(proc.TVCards[0].InternalGraph.IsRadio());
+      }
       Assert.IsFalse(g_Player.Playing);
     }
     void CompareDates(DateTime dt1, DateTime dt2)

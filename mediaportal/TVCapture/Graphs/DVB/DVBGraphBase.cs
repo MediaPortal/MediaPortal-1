@@ -4008,6 +4008,15 @@ namespace MediaPortal.TV.Recording
       if (_graphState != State.TimeShifting && _graphState != State.Recording) return false;
       return (_refreshPmtTable==false);
     }
+
+    public bool IsRadio()
+    {
+      return (_graphState == State.Radio);
+    }
+    public bool IsRecording()
+    {
+      return (_graphState == State.Recording);
+    }
   }//public class DVBGraphBDA 
 
 

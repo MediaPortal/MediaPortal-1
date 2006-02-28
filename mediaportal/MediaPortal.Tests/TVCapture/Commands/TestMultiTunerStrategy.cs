@@ -8,6 +8,7 @@ using MediaPortal.Util;
 using MediaPortal.Player;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
+using MediaPortal.Radio.Database;
 using System.Diagnostics;
 namespace MediaPortal.Tests.TVCapture.Commands
 {
@@ -63,6 +64,39 @@ namespace MediaPortal.Tests.TVCapture.Commands
       _cards[HIGHEST].RecordingPath = "e:";
       _cards[MEDIUM].RecordingPath = "d:";
       _cards[LOWEST].RecordingPath = "c:";
+
+
+      RadioStation station = new RadioStation();
+      station.Name = "BBC Radio";
+      RadioDatabase.AddStation(ref station);
+      RadioDatabase.MapChannelToCard(station.ID, 1);
+
+      station = new RadioStation();
+      station.Name = "RTL FM";
+      RadioDatabase.AddStation(ref station);
+      RadioDatabase.MapChannelToCard(station.ID, 2);
+    }
+    [Test]
+    public void TestRadioOn2Tuners()
+    {
+      StartRadio("RTL FM", 1); // should be on card 2
+      Assert.IsTrue(_processor.TVCards[1].IsRadio);
+      Assert.IsFalse(_processor.TVCards[0].IsRadio);
+      Assert.IsTrue(_processor.TVCards[1].InternalGraph.IsRadio());
+
+      StartRadio("BBC Radio",0); // should be on card 1
+      Assert.IsTrue(_processor.TVCards[0].IsRadio);
+      Assert.IsFalse(_processor.TVCards[1].IsRadio);
+      Assert.IsTrue(_processor.TVCards[0].InternalGraph.IsRadio());
+      Assert.IsFalse(_processor.TVCards[1].InternalGraph.IsRadio());
+
+
+      StartRadio("RTL FM", 1); // should be on card 2
+      Assert.IsTrue(_processor.TVCards[1].IsRadio);
+      Assert.IsFalse(_processor.TVCards[0].IsRadio);
+      Assert.IsTrue(_processor.TVCards[1].InternalGraph.IsRadio());
+      Assert.IsFalse(_processor.TVCards[0].InternalGraph.IsRadio());
+
     }
     [Test]
     public void RecordOn2Tuners()
@@ -168,6 +202,7 @@ namespace MediaPortal.Tests.TVCapture.Commands
     void VerifyTimeShift(int card)
     {
       Assert.IsTrue(_cards[card].IsTimeShifting);
+      Assert.IsTrue(_cards[card].InternalGraph.IsTimeShifting() || _cards[card].InternalGraph.IsRecording());
       Assert.AreEqual(_processor.CurrentCardIndex ,card);
       Assert.AreEqual(_processor.TVChannelName ,_cards[card].TVChannel);
     }
@@ -175,12 +210,14 @@ namespace MediaPortal.Tests.TVCapture.Commands
     void VerifyNotRecording(int card)
     {
       Assert.IsFalse(_cards[card].IsRecording);
+      Assert.IsFalse(_cards[card].InternalGraph.IsRecording());
       Assert.AreEqual(_cards[card].CurrentTVRecording, null);
     }
 
     void VerifyRecord(int card, TVRecording rec)
     {
       Assert.IsTrue(_cards[card].IsRecording);
+      Assert.IsTrue(_cards[card].InternalGraph.IsRecording());
       Assert.AreEqual(_cards[card].CurrentTVRecording.Channel, rec.Channel);
       Assert.AreEqual(_cards[card].CurrentTVRecording.Title, rec.Title);
       Assert.AreEqual(_cards[card].CurrentTVRecording.End, rec.End);
@@ -229,6 +266,19 @@ namespace MediaPortal.Tests.TVCapture.Commands
       TVDatabase.AddRecording(ref rec);
       return rec;
     }
+
+    void StartRadio(string stationName, int expectedCard)
+    {
+      _processor.AddCommand(new StartRadioCommand(stationName));
+      _processor.ProcessCommands();
+      Assert.AreEqual(_processor.CurrentCardIndex, expectedCard);
+      Assert.IsTrue(_processor.TVCards[expectedCard].IsRadio);
+      Assert.IsTrue(_processor.TVCards[expectedCard].InternalGraph.IsRadio());
+      Assert.IsFalse(_processor.TVCards[expectedCard].IsTimeShifting);
+      Assert.IsFalse(_processor.TVCards[expectedCard].InternalGraph.IsTimeShifting());
+      Assert.IsFalse(g_Player.Playing);
+    }
+
     #endregion
   }
 }

@@ -304,6 +304,7 @@ namespace DShowNET
       if (IsCamPresent() == false) return;
       int camNumber=1;
       camType = camType.ToLower();
+      if (camType.ToLower() == "default") camNumber = 0;
       if (camType.ToLower() == "viaccess") camNumber = 1;
       else if (camType.ToLower() == "aston") camNumber = 2;
       else if (camType.ToLower() == "conax") camNumber = 3;
