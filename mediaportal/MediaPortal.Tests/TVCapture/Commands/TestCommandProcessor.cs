@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using ProcessPlugins.DiskSpace;
+using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Radio.Database;
@@ -15,6 +16,7 @@ namespace MediaPortal.Tests.Commands
   [TestFixture]
   public class TestCommandProcessor
   {
+    
     #region dummy command
     public class DummyCommand : CardCommand
     {
@@ -39,9 +41,9 @@ namespace MediaPortal.Tests.Commands
       RadioDatabase.ClearAll();
 
       // add 3 channels
-      ch = new TVChannel("RTL 4"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("RTL 5"); TVDatabase.AddChannel(ch);
-      ch = new TVChannel("SBS 6"); TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL 4"); ch.External = true; ch.ExternalTunerChannel = "RTL 4";  TVDatabase.AddChannel(ch);
+      ch = new TVChannel("RTL 5"); ch.External = true; ch.ExternalTunerChannel = "RTL 5"; TVDatabase.AddChannel(ch);
+      ch = new TVChannel("SBS 6"); ch.External = true; ch.ExternalTunerChannel = "SBS 6"; TVDatabase.AddChannel(ch);
 
       RadioStation station = new RadioStation();
       station.Name = "BBC Radio";
@@ -53,7 +55,7 @@ namespace MediaPortal.Tests.Commands
       g_Player.Factory = new DummyPlayerFactory();
       Playlists.PlayListPlayer.SingletonPlayer.InitTest();
       g_Player.Stop();
-      GUI.Library.GUIWindowManager.OnThreadMessageHandler += new MediaPortal.GUI.Library.GUIWindowManager.ThreadMessageHandler(GUIWindowManager_OnThreadMessageHandler);
+      GUIWindowManager.OnThreadMessageHandler += new MediaPortal.GUI.Library.GUIWindowManager.ThreadMessageHandler(GUIWindowManager_OnThreadMessageHandler);
     }
 
     void GUIWindowManager_OnThreadMessageHandler(object sender, MediaPortal.GUI.Library.GUIMessage message)
