@@ -33,7 +33,7 @@
 		<height>100</height> 
 		<keepaspectratio>yes</keepaspectratio> 
 		<centered>yes</centered>
-		<texture>#thumb</texture> 
+		<texture>#Play.Current.Thumb</texture> 
 	</control>
 	<control>
 		<description>play logo</description> 
