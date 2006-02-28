@@ -3471,7 +3471,6 @@ namespace MediaPortal.TV.Recording
             _currentTuningObject.TeletextPid = 0;
             _currentTuningObject.SubtitlePid = 0;
             _currentTuningObject.PMTPid = pmtPid;
-
             _currentTuningObject.PCRPid = pcrPid;
             _currentTuningObject.ServiceName = channel.Name;
 

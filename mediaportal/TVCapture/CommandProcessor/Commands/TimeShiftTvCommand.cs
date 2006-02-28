@@ -127,6 +127,7 @@ namespace MediaPortal.TV.Recording
         else if (dev.TVChannel != _channelName)
         {
           dev.TVChannel = _channelName;
+          handler.TuneExternalChannel(_channelName, true);
         }
 
         handler.OnTvStart(handler.CurrentCardIndex, dev);
@@ -192,7 +193,7 @@ namespace MediaPortal.TV.Recording
         return;
       }
       Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting card {0} channel:{1}", dev.CommercialName, _channelName);
-      handler.TuneExternalChannel(_channelName, true);
+      
       if (dev.IsTimeShifting)
       {
         dev.TVChannel = _channelName;
@@ -203,6 +204,7 @@ namespace MediaPortal.TV.Recording
         ErrorMessage = GUILocalizeStrings.Get(759);// "Failed to start timeshifting";
         return;
       }
+      handler.TuneExternalChannel(_channelName, true);
       handler.TVChannelName = _channelName;
       handler.OnTvStart(handler.CurrentCardIndex, dev);
       handler.ResetTimeshiftTimer();
