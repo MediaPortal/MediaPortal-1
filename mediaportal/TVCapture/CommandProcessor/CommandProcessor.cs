@@ -276,7 +276,6 @@ namespace MediaPortal.TV.Recording
         lock (_listCommands)
         {
           cmd = _listCommands[0];
-          _listCommands.RemoveAt(0);
         }
 
         DateTime dtStart = DateTime.Now;
@@ -289,6 +288,10 @@ namespace MediaPortal.TV.Recording
         else
         {
           Log.WriteFile(Log.LogType.Recorder, false, "Command:{0} time:{1} msec",cmd.ToString(), ts.TotalMilliseconds);
+        }
+        lock (_listCommands)
+        {
+          _listCommands.RemoveAt(0);
         }
         LogTunerStatus();
       }

@@ -68,7 +68,7 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Recorder, "Command:  view tv channel:{0}", _channelName);
       if (handler.TVCards.Count == 0)
       {
-        ErrorMessage="No tuner cards installed";
+        ErrorMessage = GUILocalizeStrings.Get(753);//"No tuner cards installed";
         Succeeded = false;
         return;
       }
@@ -128,7 +128,7 @@ namespace MediaPortal.TV.Recording
             Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting on card:{0}", dev.CommercialName);
             if (dev.StartTimeShifting(_channelName) == false)
             {
-              ErrorMessage = "Failed to start timeshifting";
+              ErrorMessage = GUILocalizeStrings.Get(759);//"Failed to start timeshifting";
               Succeeded = false;
               return;
             }
@@ -162,7 +162,7 @@ namespace MediaPortal.TV.Recording
             Log.WriteFile(Log.LogType.Recorder, "Recorder:  stop timeshifting on card:{0}", dev.CommercialName);
             if (false == dev.StopTimeShifting())
             {
-              ErrorMessage = "Failed to stop timeshifting";
+              ErrorMessage = GUILocalizeStrings.Get(761);//"Failed to stop timeshifting";
               Succeeded = false;
               return;
             }
@@ -175,7 +175,7 @@ namespace MediaPortal.TV.Recording
           if (dev.StartViewing(_channelName) == false)
           {
             Succeeded = false;
-            ErrorMessage = "Failed to start tv";
+            ErrorMessage = GUILocalizeStrings.Get(762);// "Failed to start tv";
           }
           handler.OnTvStart(handler.CurrentCardIndex, dev);
           handler.ResetTimeshiftTimer();
@@ -209,7 +209,7 @@ namespace MediaPortal.TV.Recording
       if (card < 0)
       {
         Succeeded = false;
-        ErrorMessage = "All tuners are busy";
+        ErrorMessage = GUILocalizeStrings.Get(757);// "All tuners are busy";
         Log.WriteFile(Log.LogType.Recorder, "Recorder:  No free card which can receive channel [{0}]", _channelName);
         return; // no card available
       }
@@ -227,7 +227,7 @@ namespace MediaPortal.TV.Recording
       handler.TuneExternalChannel(_channelName, true);
       if (dev.StartViewing(_channelName) == false)
       {
-        ErrorMessage = "Failed to start tv";
+        ErrorMessage = GUILocalizeStrings.Get(762);// "Failed to start tv";
         Succeeded = false;
         return;
       }

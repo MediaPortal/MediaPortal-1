@@ -52,7 +52,7 @@ namespace MediaPortal.TV.Recording
       
       if (handler.TVCards.Count == 0)
       {
-        ErrorMessage="No tuner cards installed";
+        ErrorMessage = GUILocalizeStrings.Get(753);// "No tuner cards installed";
         Succeeded = false;
         return;
       }

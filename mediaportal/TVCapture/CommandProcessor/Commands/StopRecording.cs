@@ -50,7 +50,7 @@ namespace MediaPortal.TV.Recording
       
       if (handler.TVCards.Count == 0)
       {
-        ErrorMessage="No tuner cards installed";
+        ErrorMessage = GUILocalizeStrings.Get(753); //"No tuner cards installed";
         Succeeded = false;
         return;
       }
@@ -62,7 +62,7 @@ namespace MediaPortal.TV.Recording
       if (dev.IsRecording == false)
       {
         Succeeded = false;
-        ErrorMessage = "Tuner is not recording";
+        ErrorMessage = GUILocalizeStrings.Get(758); //"Tuner is not recording"
         return;
       }
       //yes. then cancel the recording

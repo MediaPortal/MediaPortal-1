@@ -68,7 +68,7 @@ namespace MediaPortal.TV.Recording
       
       if (handler.TVCards.Count == 0)
       {
-        ErrorMessage="No tuner cards installed";
+        ErrorMessage = GUILocalizeStrings.Get(753);// "No tuner cards installed";
         Succeeded = false;
         return;
       }
@@ -118,7 +118,7 @@ namespace MediaPortal.TV.Recording
           Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting on card:{0}", dev.CommercialName);
           if (dev.StartTimeShifting(_channelName) == false)
           {
-            ErrorMessage = "Failed to start timeshifting";
+            ErrorMessage = GUILocalizeStrings.Get(759);// "Failed to start timeshifting";
             Succeeded = false;
             return;
           }
@@ -161,7 +161,7 @@ namespace MediaPortal.TV.Recording
       if (card < 0)
       {
         Succeeded = false;
-        ErrorMessage = "All tuners are busy";
+        ErrorMessage = GUILocalizeStrings.Get(757);// "All tuners are busy";
         Log.WriteFile(Log.LogType.Recorder, "Recorder:  No free card which can receive channel [{0}]", _channelName);
         return; // no card available
       }
@@ -180,7 +180,7 @@ namespace MediaPortal.TV.Recording
       // yes, does card support it?
       if (!dev.SupportsTimeShifting)
       {
-        ErrorMessage="No tuner available for timeshifting";
+        ErrorMessage = GUILocalizeStrings.Get(760);// "No tuner available for timeshifting";
         Succeeded = false;
         return;
       }
@@ -193,7 +193,7 @@ namespace MediaPortal.TV.Recording
       if (dev.StartTimeShifting(_channelName) == false)
       {
         Succeeded = false;
-        ErrorMessage = "Failed to start timeshifting";
+        ErrorMessage = GUILocalizeStrings.Get(759);// "Failed to start timeshifting";
         return;
       }
       handler.TVChannelName = _channelName;

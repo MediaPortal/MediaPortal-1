@@ -738,19 +738,23 @@ namespace MediaPortal.GUI.TV
         if (g_Player.IsDVD) return;
         if ((g_Player.IsMusic && g_Player.HasVideo)) return;
       }
-      ViewChannel(channel);
-      if (_isTvOn == false) return;
-      return;
-      if (Recorder.TVChannelName != channel && _isTvOn)
+      if (_isTvOn)
+        Log.Write("GUITVHome.ViewChannel(): View channel={0} ts:{1}", channel, _isTimeShifting);
+      else
+        Log.Write("GUITVHome.ViewChannel(): turn tv off");
+
+      string errorMessage;
+      bool succeeded=Recorder.StartViewing(channel, _isTvOn, _isTimeShifting, true, out errorMessage);
+      
+      if (succeeded) return;
+
+      GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+      if (pDlgOK != null)
       {
-        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-        if (pDlgOK != null)
-        {
-          pDlgOK.SetHeading(605);//my tv
-          pDlgOK.SetLine(1, 977);//there is no free card available
-          pDlgOK.SetLine(2, 978);//which can watch this channel
-          pDlgOK.DoModal((int)GUIWindow.Window.WINDOW_TV);
-        }
+        pDlgOK.SetHeading(605);//my tv
+        pDlgOK.SetLine(1, errorMessage);
+        pDlgOK.SetLine(2, "");
+        pDlgOK.DoModal((int)GUIWindow.Window.WINDOW_TV);
       }
     }
     static public void ViewChannel(string channel)
@@ -767,7 +771,8 @@ namespace MediaPortal.GUI.TV
       else
         Log.Write("GUITVHome.ViewChannel(): turn tv off");
 
-        Recorder.StartViewing(channel, _isTvOn, _isTimeShifting, false);
+      string errorMessage;
+      Recorder.StartViewing(channel, _isTvOn, _isTimeShifting, false, out errorMessage);
       
     }
 

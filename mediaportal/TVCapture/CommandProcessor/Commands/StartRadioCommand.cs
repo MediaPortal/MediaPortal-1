@@ -63,7 +63,7 @@ namespace MediaPortal.TV.Recording
       
       if (handler.TVCards.Count == 0)
       {
-        ErrorMessage="No tuner cards installed";
+        ErrorMessage = GUILocalizeStrings.Get(753); //"No tuner cards installed";
         Succeeded = false;
         return;
       }
@@ -76,7 +76,7 @@ namespace MediaPortal.TV.Recording
       if (!RadioDatabase.GetStation(RadioStation, out radiostation))
       {
         Succeeded = false;
-        ErrorMessage = "No tuner can receive:" + RadioStation;
+        ErrorMessage = String.Format(GUILocalizeStrings.Get(753), RadioStation);//"No tuner can receive:"
         Log.WriteFile(Log.LogType.Recorder, "Recorder:StartRadio()  unknown station:{0}", RadioStation);
         return;
       }
@@ -116,7 +116,7 @@ namespace MediaPortal.TV.Recording
       }
       Log.WriteFile(Log.LogType.Recorder, "Recorder:StartRadio()  no free card which can listen to radio channel:{0}", RadioStation);
       Succeeded = false;
-      ErrorMessage = "All tuners are busy";
+      ErrorMessage = GUILocalizeStrings.Get(757);// "All tuners are busy";
     }
 
     void TurnTvOff(CommandProcessor handler, int exceptCard)

@@ -60,14 +60,14 @@ namespace MediaPortal.TV.Recording
     {
       if (handler.TVCards.Count == 0)
       {
-        ErrorMessage="No tuner cards installed";
+        ErrorMessage = GUILocalizeStrings.Get(753);// "No tuner cards installed";
         Succeeded = false;
         return;
       }
       if (handler.CurrentCardIndex < 0)
       {
         Succeeded = false;
-        ErrorMessage = "No tuner is viewing tv";
+        ErrorMessage = GUILocalizeStrings.Get(755);// "No tuner is viewing tv";
         return;
       }
       Log.WriteFile(Log.LogType.Recorder, "Command:Select audio stream with pid: 0x{0:X}",AudioPid);

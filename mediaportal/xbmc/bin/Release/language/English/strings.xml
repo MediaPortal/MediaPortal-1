@@ -2363,6 +2363,60 @@
     <value>Show all songs from this artist</value>
   </string>
   <string>
+    <id>752</id>
+    <value>No recording specified</value>
+  </string>
+  <string>
+    <id>753</id>
+    <value>No tuner cards installed</value>
+  </string>
+  <string>
+    <id>754</id>
+    <value>No tuner is recording the specified show</value>
+  </string>
+  <string>
+    <id>755</id>
+    <value>No tuner is viewing tv</value>
+  </string>
+  <string>
+    <id>756</id>
+    <value>No tuner can receive:{0}</value>
+  </string>
+  <string>
+    <id>757</id>
+    <value>All tuners are busy</value>
+  </string>
+  <string>
+    <id>758</id>
+    <value>Tuner is not recording</value>
+  </string>
+  <string>
+    <id>759</id>
+    <value>Failed to start timeshifting</value>
+  </string>
+  <string>
+    <id>760</id>
+    <value>No tuner available for timeshifting</value>
+  </string>
+  <string>
+    <id>761</id>
+    <value>Failed to stop timeshifting</value>
+  </string>
+  <string>
+    <id>762</id>
+    <value>Failed to start TV</value>
+  </string>
+  <string>
+    <id>763</id>
+    <value>Recorder is busy</value>
+  </string>
+  <string>
+    <id>764</id>
+    <value>Recorder is paused</value>
+  </string>
+
+
+  <string>
     <id>800</id>
     <value>Starts with</value>
   </string>

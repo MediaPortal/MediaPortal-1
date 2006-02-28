@@ -875,46 +875,61 @@ namespace MediaPortal.TV.Recording
     /// if it finds a card matching these criteria it will start viewing on the card found
     /// </remarks>
     static bool reEntrantStartViewing = false;
-    static public void StartViewing(string channel, bool TVOnOff, bool timeshift, bool wait)
+    static public bool StartViewing(string channel, bool TVOnOff, bool timeshift, bool wait, out string errorMessage)
     {
+      errorMessage = String.Empty;
       if (reEntrantStartViewing)
       {
+        errorMessage = GUILocalizeStrings.Get(763);// "Recorder is busy";
         Log.WriteFile(Log.LogType.Recorder, true, "Recorder:StartViewing() reentrant");
-        return;
+        return false;
       }
       try
       {
-        if (_commandProcessor.Paused) return;
-        if (_commandProcessor.IsBusy) return;
+        if (_commandProcessor.Paused)
+        {
+          errorMessage = GUILocalizeStrings.Get(764);//"Recorder is paused";
+          return false;
+        }
+        if (_commandProcessor.IsBusy)
+        {
+          errorMessage = GUILocalizeStrings.Get(763);//"Recorder is busy";
+          return false;
+        }
         reEntrantStartViewing = true;
+        CardCommand cmd;
         if (TVOnOff)
         {
           if (timeshift)
           {
-            TimeShiftTvCommand cmd = new TimeShiftTvCommand(channel);
+            cmd = new TimeShiftTvCommand(channel);
             _commandProcessor.AddCommand(cmd);
           }
           else
           {
-            ViewTvCommand cmd = new ViewTvCommand(channel);
+            cmd = new ViewTvCommand(channel);
             _commandProcessor.AddCommand(cmd);
           }
         }
         else
         {
-          StopTvCommand cmd = new StopTvCommand();
+          cmd = new StopTvCommand();
           _commandProcessor.AddCommand(cmd);
         }
         //wait till thread finished this command
         if (wait)
         {
           _commandProcessor.WaitTillFinished();
+          if (cmd.Succeeded) return true;
+          errorMessage = cmd.ErrorMessage;
+          return false;
         }
       }
       finally
       {
         reEntrantStartViewing = false;
       }
+      return true;
     }
 
     
