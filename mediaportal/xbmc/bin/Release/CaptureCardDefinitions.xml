@@ -7029,7 +7029,7 @@
     </tv>
   </capturecard> -->
 
-  <capturecard commercialname="Terratec Cinergy 2400i DT Tuner 1" capturename="Cinergy 2400i DT Capture 1" devid="ven_18c3&amp;dev_0720&amp;subsys_1167153b&amp;rev_00">
+  <capturecard commercialname="Terratec Cinergy 2400i DT Tuner 1" capturename="Cinergy 2400i DT Capture 1" devid="ven_18c3&amp;dev_0720&amp;subsys_1167153b&amp;rev_00&amp;capture">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
@@ -7045,7 +7045,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Terratec Cinergy 2400i DT Tuner 2" capturename="Cinergy 2400i DT Capture 2" devid="ven_18c3&amp;dev_0720&amp;subsys_1167153b&amp;rev_00">
+  <capturecard commercialname="Terratec Cinergy 2400i DT Tuner 2" capturename="Cinergy 2400i DT Capture 2" devid="ven_18c3&amp;dev_0720&amp;subsys_1167153b&amp;rev_00&amp;capture">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
