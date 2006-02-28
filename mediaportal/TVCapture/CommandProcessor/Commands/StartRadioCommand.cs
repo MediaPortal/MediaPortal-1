@@ -60,6 +60,13 @@ namespace MediaPortal.TV.Recording
     public override void Execute(CommandProcessor handler)
     {
       Log.WriteFile(Log.LogType.Recorder, "Command:Start radio:{0}", RadioStation);
+      
+      if (handler.TVCards.Count == 0)
+      {
+        ErrorMessage="No tuner cards installed";
+        Succeeded = false;
+        return;
+      }
       if (g_Player.Playing)
       {
         handler.StopPlayer();

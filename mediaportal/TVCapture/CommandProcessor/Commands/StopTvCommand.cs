@@ -62,6 +62,13 @@ namespace MediaPortal.TV.Recording
     public override void Execute(CommandProcessor handler)
     {
       Log.WriteFile(Log.LogType.Recorder, "Command:Stop tv card:{0}",CardNo);
+      
+      if (handler.TVCards.Count == 0)
+      {
+        ErrorMessage="No tuner cards installed";
+        Succeeded = false;
+        return;
+      }
       for (int i = 0; i < handler.TVCards.Count; ++i)
       {
         if (i == CardNo) continue;

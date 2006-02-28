@@ -303,7 +303,12 @@ namespace MediaPortal.TV.Recording
         TVCards[i].Stop();
       }
     }
-
+    
+    public override void ResetTimeshiftTimer()
+    {
+      _killTimeshiftingTimer = DateTime.Now;
+      _startTimeShiftTimer = DateTime.MinValue;
+    }
     public void ProcessCards()
     {
       //process all cards

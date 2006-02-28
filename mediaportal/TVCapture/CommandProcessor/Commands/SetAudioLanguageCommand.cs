@@ -58,6 +58,12 @@ namespace MediaPortal.TV.Recording
     }
     public override void Execute(CommandProcessor handler)
     {
+      if (handler.TVCards.Count == 0)
+      {
+        ErrorMessage="No tuner cards installed";
+        Succeeded = false;
+        return;
+      }
       if (handler.CurrentCardIndex < 0)
       {
         Succeeded = false;

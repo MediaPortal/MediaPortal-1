@@ -91,7 +91,7 @@ namespace MediaPortal.TV.Recording
       get { return _currentCardIndex; }
       set { _currentCardIndex=value; }
     }
-    public void ResetTimeshiftTimer()
+    public virtual void ResetTimeshiftTimer()
     {
       _killTimeshiftingTimer = DateTime.Now;
     }

@@ -58,6 +58,13 @@ namespace MediaPortal.TV.Recording
         ErrorMessage = "No recording specified";
         return;
       }
+      
+      if (handler.TVCards.Count == 0)
+      {
+        ErrorMessage="No tuner cards installed";
+        Succeeded = false;
+        return;
+      }
       bool stopped = false;
       Log.WriteFile(Log.LogType.Recorder, "Command:Cancel recording {0} {1}-{2}", 
                                               _recordingToStop.Title,

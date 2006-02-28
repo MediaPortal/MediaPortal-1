@@ -48,9 +48,17 @@ namespace MediaPortal.TV.Recording
     {
       bool stopped = false;
       Log.WriteFile(Log.LogType.Recorder, "Command:Stop radio");
+
       if (g_Player.Playing && g_Player.IsRadio)
       {
         handler.StopPlayer();
+      }
+      
+      if (handler.TVCards.Count == 0)
+      {
+        ErrorMessage="No tuner cards installed";
+        Succeeded = false;
+        return;
       }
       for (int i=0; i < handler.TVCards.Count;++i)
       {

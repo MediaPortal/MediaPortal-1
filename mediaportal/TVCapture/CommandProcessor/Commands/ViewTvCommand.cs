@@ -66,7 +66,12 @@ namespace MediaPortal.TV.Recording
       string timeShiftFileName;
       TVCaptureDevice dev;
       Log.WriteFile(Log.LogType.Recorder, "Command:  view tv channel:{0}", _channelName);
-      
+      if (handler.TVCards.Count == 0)
+      {
+        ErrorMessage="No tuner cards installed";
+        Succeeded = false;
+        return;
+      }
       int cardNo = -1;
       // tv should be turned on
       // check if any card is already tuned to this channel...
