@@ -186,16 +186,17 @@ namespace MediaPortal.TV.Recording
 
       Log.WriteFile(Log.LogType.Recorder, "Recorder:  find free card");
 
-
+      bool cardCanViewChannel = false;
       // Find a card which can view the channel
       int card = -1;
       int prio = -1;
       for (int i = 0; i < handler.TVCards.Count; ++i)
       {
         dev = handler.TVCards[i];
-        if (!dev.IsRecording)
+        if (TVDatabase.CanCardViewTVChannel(_channelName, dev.ID) || handler.TVCards.Count == 1)
         {
-          if (TVDatabase.CanCardViewTVChannel(_channelName, dev.ID) || handler.TVCards.Count == 1)
+          cardCanViewChannel = true;
+          if (!dev.IsRecording)
           {
             if (dev.Priority > prio)
             {
@@ -210,6 +211,10 @@ namespace MediaPortal.TV.Recording
       {
         Succeeded = false;
         ErrorMessage = GUILocalizeStrings.Get(757);// "All tuners are busy";
+        if (cardCanViewChannel == false)
+        {
+          ErrorMessage = String.Format(GUILocalizeStrings.Get(756), _channelName);//No tuner can receive:{0}
+        }
         Log.WriteFile(Log.LogType.Recorder, "Recorder:  No free card which can receive channel [{0}]", _channelName);
         return; // no card available
       }

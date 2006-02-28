@@ -305,7 +305,7 @@ namespace MediaPortal.GUI.TV
       if (channelName != String.Empty)
       {
         Log.Write("tv home init:{0}", channelName);
-        ViewChannel(channelName);
+        ViewChannelAndCheck(channelName);
       }
       UpdateChannelButton();
       UpdateStateOfButtons();

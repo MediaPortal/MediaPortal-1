@@ -2294,7 +2294,7 @@ namespace MediaPortal.GUI.TV
             int count = 0;
             while (GUIGraphicsContext.InVmr9Render && count++ < 10) System.Threading.Thread.Sleep(100);
             GUITVHome.IsTVOn = true;
-            GUITVHome.ViewChannel(_currentProgram.Channel);
+            GUITVHome.ViewChannelAndCheck(_currentProgram.Channel);
             if (Recorder.IsViewing())
             {
               GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
