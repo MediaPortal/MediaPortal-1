@@ -159,7 +159,7 @@ namespace MediaPortal.GUI.Library
 		{
       if (OnThreadMessageHandler != null)
       {
-        OnThreadMessageHandler(this, message);
+        OnThreadMessageHandler(null, message);
       }
 			if (message!=null)
 				_listThreadMessages.Add(message);
