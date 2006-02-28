@@ -995,7 +995,7 @@ namespace MediaPortal.TV.Recording
     public void SetAudioLanguage(int audioPid)
     {
       if (audioPid == _currentTuningObject.AudioPid) return;
-      Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: change audio pid {0:X}-> pid:{1:X} {2}", _currentTuningObject.AudioPid, audioPid,_graphState);
+      Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: change audio pid {0:X}-> pid:{1:X} {2}", _currentTuningObject.AudioPid, audioPid, _graphState);
 
       SetupDemuxerPin(_pinAC3Out, audioPid, (int)MediaSampleContent.ElementaryStream, true);
       SetupDemuxerPin(_pinDemuxerAudio, audioPid, (int)MediaSampleContent.ElementaryStream, true);
@@ -1055,7 +1055,7 @@ namespace MediaPortal.TV.Recording
 
       _currentTuningObject.AudioPid = audioPid;
       SetupMTSDemuxerPin();
-//      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
+      //      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }
 
     public ArrayList GetAudioLanguageList()
@@ -2731,7 +2731,7 @@ namespace MediaPortal.TV.Recording
         if (hr < 0)
         {
           Log.WriteFile(Log.LogType.Capture, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
-          return ;
+          return;
         }
 
         _isGraphRunning = true;
@@ -2784,7 +2784,7 @@ namespace MediaPortal.TV.Recording
       }
       _signalLostTimer = DateTime.Now;
       UpdateSignalPresent();
-//      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
+      //      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }//public void Tune(object tuningObject)
 
     protected virtual void SetupDiseqc(int disecqNo)
@@ -2834,7 +2834,7 @@ namespace MediaPortal.TV.Recording
         SetupDemuxerPin(_pinDemuxerSections, pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
       }
 
-//      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
+      //      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
       SendHWPids(hwPids);
 
       int offset = 3;
@@ -3490,8 +3490,6 @@ namespace MediaPortal.TV.Recording
             }
             Log.WriteFile(Log.LogType.Capture, "DVBGraph:  tuning details: frequency:{0} KHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
               ch.Frequency, ch.Polarity, ch.FEC, ch.Symbolrate, ch.NetworkID, ch.TransportStreamID, ch.ProgramNumber, ch.ServiceProvider);
-
-
             _currentTuningObject = new DVBChannel();
             _currentTuningObject.Frequency = ch.Frequency;
             _currentTuningObject.Symbolrate = ch.Symbolrate;
@@ -3501,14 +3499,25 @@ namespace MediaPortal.TV.Recording
             _currentTuningObject.TransportStreamID = ch.TransportStreamID;
             _currentTuningObject.ProgramNumber = ch.ProgramNumber;
             _currentTuningObject.AudioPid = ch.AudioPid;
-            _currentTuningObject.VideoPid = 0;
-            _currentTuningObject.TeletextPid = 0;
+            _currentTuningObject.VideoPid = ch.VideoPid;
+            _currentTuningObject.TeletextPid = ch.TeletextPid;
             _currentTuningObject.SubtitlePid = 0;
             _currentTuningObject.PMTPid = ch.PMTPid;
             _currentTuningObject.ServiceName = channel.Name;
+            _currentTuningObject.AudioLanguage = ch.AudioLanguage;
+            _currentTuningObject.AudioLanguage1 = ch.AudioLanguage1;
+            _currentTuningObject.AudioLanguage2 = ch.AudioLanguage2;
+            _currentTuningObject.AudioLanguage3 = ch.AudioLanguage3;
+            _currentTuningObject.AC3Pid = ch.AC3Pid;
+            _currentTuningObject.PCRPid = ch.PCRPid;
+            _currentTuningObject.Audio1 = ch.Audio1;
+            _currentTuningObject.Audio2 = ch.Audio2;
+            _currentTuningObject.Audio3 = ch.Audio3;
             _currentTuningObject.DiSEqC = ch.DiSEqC;
             _currentTuningObject.LNBFrequency = ch.LNBFrequency;
             _currentTuningObject.LNBKHz = ch.LNBKHz;
+            _currentTuningObject.HasEITPresentFollow = ch.HasEITPresentFollow;
+            _currentTuningObject.HasEITSchedule = ch.HasEITSchedule;
 
           } break;
 
@@ -3851,7 +3860,7 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Capture, "DVBGraph:SetHardwarePidFiltering to:{0}", pidsText);
       }
       SendHWPids(pids);
-//      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
+      //      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }
     protected virtual void SendHWPids(ArrayList pids)
     {
@@ -3930,7 +3939,7 @@ namespace MediaPortal.TV.Recording
       else
       {
         _isGraphRunning = true;
-        _graphState = State.Epg; 
+        _graphState = State.Epg;
       }
       return true;
     }
@@ -4006,7 +4015,7 @@ namespace MediaPortal.TV.Recording
     public bool CanViewTimeShiftFile()
     {
       if (_graphState != State.TimeShifting && _graphState != State.Recording) return false;
-      return (_refreshPmtTable==false);
+      return (_refreshPmtTable == false);
     }
 
     public bool IsRadio()
