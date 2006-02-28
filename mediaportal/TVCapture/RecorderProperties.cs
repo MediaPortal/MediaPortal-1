@@ -164,8 +164,9 @@ namespace MediaPortal.TV.Recording
 
       GUIPropertyManager.SetProperty("#TV.Record.duration", Utils.SecondsToShortHMSString((int)fMovieDurationInSecs));
 
+      float notInBufferAnymore = (float)g_Player.ContentStart;
       // get point where we started timeshifting/recording relative to the start of movie
-      TimeSpan tsRecordingStart = (RecordingStarted - MovieStartTime) +new TimeSpan(0, 0, 0, (int)g_Player.ContentStart, 0);
+      TimeSpan tsRecordingStart = (RecordingStarted - MovieStartTime) + new TimeSpan(0, 0, 0, (int)notInBufferAnymore, 0);
 
       float fRelativeRecordingStart = (float)tsRecordingStart.TotalSeconds;
       float percentRecStart = (fRelativeRecordingStart / fMovieDurationInSecs) * 100.00f;
@@ -175,7 +176,7 @@ namespace MediaPortal.TV.Recording
       // get the point we're currently watching relative to the start of movie
       if (g_Player.Playing && g_Player.IsTV)
       {
-        float fRelativeViewPoint = (float)g_Player.CurrentPosition + fRelativeRecordingStart;
+        float fRelativeViewPoint = (float)g_Player.CurrentPosition + fRelativeRecordingStart - notInBufferAnymore;
         float fPercentViewPoint = (fRelativeViewPoint / fMovieDurationInSecs) * 100.00f;
         int iPercentViewPoint = (int)Math.Floor(fPercentViewPoint);
         GUIPropertyManager.SetProperty("#TV.Record.percent2", iPercentViewPoint.ToString());
