@@ -4,7 +4,8 @@
 <!-- contains:									-->
 <!--   - Europe 								-->
 <!--   - Australia 								-->
-<!--   - Belgium 								-->
+<!--   - Belgium   								-->
+<!--   - Danmmark  								-->
 <!--   - Finland 								-->
 <!--   - France									-->
 <!--   - Sweden 								-->
@@ -74,6 +75,20 @@
 		<carrier frequency="746000" bandwidth="8"/>
 		<carrier frequency="754000" bandwidth="8"/>
 		<carrier frequency="778000" bandwidth="8"/>
+	</country>
+	<country name="Danmark - All regions">
+		<carrier frequency="506000" bandwidth="8"/>
+		<carrier frequency="538000" bandwidth="8"/>
+		<carrier frequency="554000" bandwidth="8"/>
+		<carrier frequency="602000" bandwidth="8"/>
+		<carrier frequency="658000" bandwidth="8"/>
+		<carrier frequency="682000" bandwidth="8"/>
+		<carrier frequency="690000" bandwidth="8"/>
+		<carrier frequency="714000" bandwidth="8"/>
+		<carrier frequency="738000" bandwidth="8"/>
+		<carrier frequency="778000" bandwidth="8"/>
+		<carrier frequency="826000" bandwidth="8"/>
+		<carrier frequency="834000" bandwidth="8"/>
 	</country>
 	<country name="Europe - All countries" offset="167">
 		<carrier frequency="84500" />
