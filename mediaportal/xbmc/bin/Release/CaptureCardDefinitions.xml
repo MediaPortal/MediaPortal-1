@@ -9155,4 +9155,58 @@
 	  </connections>
 	</tv>
   </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV Pro" capturename="Pinnacle WDM PCTV Video Cpature" devid="ven_109e&amp;dev_036e&amp;subsys_001211bd&amp;rev_11">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		name="Pinnacle WDM PCTV Analog Tuner"	checkdevice="true"/>
+        <filter cat="tvaudio"		name="Pinnacle WDM PCTV TvAudio"	checkdevice="true"/>
+        <filter cat="crossbar"		name="Pinnacle WDM PCTV Crossbar"		checkdevice="true"/>
+        <filter cat="capture"		name="Pinnacle WDM PCTV Video Cpature"	checkdevice="true"/>
+        <filter cat="audcapture"		name="%soundcard%"	checkdevice="true"/>
+		<filter cat="videncoder"	name="%videoencoder%"							checkdevice="false"/>
+		<filter cat="audencoder"	name="%audioencoder%"							checkdevice="false"/>
+		<filter cat="mux"			name="%mpegmux%"								checkdevice="false"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"		sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Tevion Xpert TV7134" capturename="Tevion TV7134 WDM Video Capture" devid="ven_1131&amp;dev_7134&amp;subsys_00001131&amp;rev_01">
+	<capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+	<tv>
+	  <interface cat="mux" video="" audio="" mpeg2="0"/>
+	  <filters>
+		<filter cat="tvtuner"		name="PhTVTune"	checkdevice="true"/>
+		<filter cat="tvaudio"		name="Cap7134 TVAudio"	checkdevice="true"/>
+		<filter cat="crossbar"		name="SAA713x TV Card - Crossbar"		checkdevice="true"/>
+		<filter cat="capture"		name="Tevion TV7134 WDM Video Capture"	checkdevice="true"/>
+		<filter cat="videncoder"	name="%videoencoder%"			checkdevice="false"/>
+		<filter cat="audencoder"	name="%audioencoder%"			checkdevice="false"/>
+		<filter cat="mux"			name="%mpegmux%"				checkdevice="false"/>
+	  </filters>
+	  <connections>
+		<connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+		<connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+		<connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+		<connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+		<connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+		<connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+		<connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+		<connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+		<connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
+	  </connections>
+	</tv>
+  </capturecard>
 </capturecards>
