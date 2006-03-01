@@ -67,6 +67,15 @@ namespace MediaPortal.GUI.Music
             BTN_NEXT = 35,
         }
 
+        #region Properties
+
+        public GUIMusicBaseWindow MusicWindow
+        {
+            set { _MusicWindow = value; }
+        }
+
+        #endregion
+
         [SkinControlAttribute((int)ControlIDs.LBL_CAPTION)]
         protected GUILabelControl LblCaption = null;
 
@@ -130,6 +139,7 @@ namespace MediaPortal.GUI.Music
         public enum TrackProgressType { Elapsed, CountDown };
         private TrackProgressType ProgressType = TrackProgressType.Elapsed;
         //private TrackProgressType ProgressType = TrackProgressType.CountDown;
+
         private bool ControlsInitialized = false;
         private PlayListPlayer PlaylistPlayer = null;
         private string CurrentThumbFileName = string.Empty;
@@ -139,7 +149,8 @@ namespace MediaPortal.GUI.Music
         private MusicTag NextTrackTag = null;
         private DateTime LastUpdateTime = DateTime.Now;
         private TimeSpan UpdateInterval = new TimeSpan(0, 0, 1);
-        public GUIMusicBaseWindow MusicWindow = null;
+        private GUIMusicBaseWindow _MusicWindow = null;
+        private bool UseID3 = false;
 
 
 
@@ -151,6 +162,11 @@ namespace MediaPortal.GUI.Music
             g_Player.PlayBackStarted += new g_Player.StartedHandler(g_Player_PlayBackStarted);
             g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
             g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
+
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            {
+                UseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
+            }
         }
 
         void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
@@ -218,27 +234,6 @@ namespace MediaPortal.GUI.Music
             }
         }
 
-        //public override bool OnMessage(GUIMessage message)
-        //{
-        //    Console.WriteLine("OnMessage: {0}", message.Message);
-
-        //    if (GUIWindowManager.ActiveWindow == GetID)
-        //    {
-        //        switch (message.Message)
-        //        {
-        //            case GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD:
-        //                this.GetTrackTags();
-        //                break;
-
-        //            case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
-        //                this.GetTrackTags();
-        //                break;
-        //        }
-        //    }
-
-        //    return base.OnMessage(message);
-        //}
-        
         protected override void OnPageLoad()
         {
             base.OnPageLoad();
@@ -287,7 +282,7 @@ namespace MediaPortal.GUI.Music
             dlg.AddLocalizedString(928);        // Find Coverart
             dlg.AddLocalizedString(4521);       // Show Album Info
 
-            if(IsCdTrack(CurrentTrackFileName))
+            if (IsCdTrack(CurrentTrackFileName))
                 dlg.AddLocalizedString(4554);   // Lookup CD info
 
             dlg.DoModal(GetID);
@@ -300,7 +295,7 @@ namespace MediaPortal.GUI.Music
                 case 928:       // Find Coverart
                     {
                         string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
-                        MusicWindow.FindCoverArt(false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
+                        _MusicWindow.FindCoverArt(false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
                         CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
 
                         if (CurrentThumbFileName.Length == 0)
@@ -313,7 +308,7 @@ namespace MediaPortal.GUI.Music
                 case 4521:      // Show Album Info
                     {
                         string albumFolderPath = System.IO.Path.GetDirectoryName(CurrentTrackFileName);
-                        MusicWindow.ShowAlbumInfo(GetID, false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
+                        _MusicWindow.ShowAlbumInfo(GetID, false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath, CurrentTrackTag, -1);
                         break;
                     }
 
@@ -427,32 +422,28 @@ namespace MediaPortal.GUI.Music
 
             string curTrackTimePos = GetFormattedTimeString(curTrackPostion);
             LblTrackProgress.Label = curTrackTimePos;
-
             ProgTrack.Visible = ProgTrack.Percentage > 0;
 
-            if (ProgressType == TrackProgressType.CountDown)
+            if (ProgressType == TrackProgressType.Elapsed)
+                LblTrackDuration.Label = GetFormattedTimeString(trackDuration);
+
+            else   // TrackProgressType.CountDown 
                 LblTrackDuration.Label = string.Format("-{0}", GetFormattedTimeString(trackDuration - curTrackPostion));
         }
 
         private void GetTrackTags()
         {
-            bool useID3 = false;
             bool isCurSongCdTrack = IsCdTrack(CurrentTrackFileName);
             bool isNextSongCdTrack = IsCdTrack(NextTrackFileName);
             MusicDatabase dbs = new MusicDatabase();
 
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-            {
-                useID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
-            }
-
             if (!isCurSongCdTrack)
-                CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName, useID3);
+                CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName, UseID3);
 
-            if(!isNextSongCdTrack)
-                NextTrackTag = GetTrackTag(dbs, NextTrackFileName, useID3);
+            if (!isNextSongCdTrack)
+                NextTrackTag = GetTrackTag(dbs, NextTrackFileName, UseID3);
 
-            if(isCurSongCdTrack || isNextSongCdTrack)
+            if (isCurSongCdTrack || isNextSongCdTrack)
             {
                 PlayList curPlaylist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
@@ -474,7 +465,7 @@ namespace MediaPortal.GUI.Music
 
                 PlayListItem nextPlaylistItem = curPlaylist[nextItemIndex];
 
-                if(isCurSongCdTrack)
+                if (isCurSongCdTrack)
                     CurrentTrackTag = (MusicTag)curPlaylistItem.MusicTag;
 
                 if (isNextSongCdTrack && nextPlaylistItem != null)
@@ -590,7 +581,7 @@ namespace MediaPortal.GUI.Music
 
                 // try finding it in the database
                 string strPathName, strCDROMPath;
-                
+
                 //int_20h fake the path with the cdInfo
                 strPathName = driveLetter + ":/" + freedb.GetCDDBDiscIDInfo(driveLetter, '+');
                 strCDROMPath = strPathName + "+" + System.IO.Path.GetFileName(path);
@@ -647,7 +638,7 @@ namespace MediaPortal.GUI.Music
                     freedb.Disconnect();
                     if (GUIMusicFiles.MusicCD == null) bCDDAFailed = true;
                 }
-                
+
                 catch (Exception)
                 {
                     GUIMusicFiles.MusicCD = null;
@@ -719,6 +710,7 @@ namespace MediaPortal.GUI.Music
             catch (Exception)
             {
             }
+ 
             return 1;
         }
     }

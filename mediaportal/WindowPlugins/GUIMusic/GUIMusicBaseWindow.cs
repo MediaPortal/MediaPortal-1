@@ -90,12 +90,34 @@ namespace MediaPortal.GUI.Music
         string[] _sortTags2 = new string[20];
         protected PlayListPlayer playlistPlayer;
 
-        //private bool UseLegacyAlbumInfoScraper = true;
+        protected int PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
+        protected bool PlayAllOnSingleItemPlayNow = true;
 
         public GUIMusicBaseWindow()
         {
             playlistPlayer = PlayListPlayer.SingletonPlayer;
+
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            {
+                string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "nowplaying");
+
+                switch (playNowJumpTo)
+                {
+                    case "nowplaying":
+                        PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
+                        break;
+
+                    case "playlist":
+                        PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST; break;
+                        break;
+
+                    case "none":
+                        PlayNowJumpToWindowID = -1;
+                        break;
+                }
+            }
         }
+
         protected bool UseID3
         {
             get { return m_bUseID3; }
@@ -174,9 +196,6 @@ namespace MediaPortal.GUI.Music
             }
         }
         #endregion
-
-
-
 
         protected bool ViewByIcon
         {
@@ -338,7 +357,6 @@ namespace MediaPortal.GUI.Music
                 OnShowViews();
             }
 
-
             if (control == facadeView)
             {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
@@ -456,7 +474,6 @@ namespace MediaPortal.GUI.Music
         protected virtual void OnQueueItem(int item)
         {
         }
-
 
         protected void OnSetRating(int itemNumber)
         {
@@ -596,7 +613,6 @@ namespace MediaPortal.GUI.Music
             }
         }
 
-
         protected virtual void OnSort()
         {
             SetLabels();
@@ -708,6 +724,7 @@ namespace MediaPortal.GUI.Music
               }*/
             }
         }
+
         protected void SwitchView()
         {
             switch (CurrentView)
@@ -834,6 +851,7 @@ namespace MediaPortal.GUI.Music
                 }
             }
         }
+        
         protected virtual void LoadDirectory(string path)
         {
         }

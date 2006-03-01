@@ -51,6 +51,7 @@ namespace MediaPortal.GUI.Music
                 return s1.Track - s2.Track;
             }
         }
+
         #region Base variables
 
         DirectoryHistory m_history = new DirectoryHistory();
@@ -90,7 +91,6 @@ namespace MediaPortal.GUI.Music
         // the player is not playing)...
         void GUIWindowManager_OnNewAction(Action action)
         {
-            //if (action.wID == Action.ActionType.ACTION_PLAY && GUIWindowManager.ActiveWindow == GetID)
             if ((action.wID == Action.ActionType.ACTION_PLAY
                 || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
                 && GUIWindowManager.ActiveWindow == GetID)
@@ -100,7 +100,7 @@ namespace MediaPortal.GUI.Music
                 if (AntiRepeatActive() || item == null || item.Label == "..")
                     return;
 
-                OnPlayNow(facadeView.SelectedListItemIndex);
+                OnPlayNow(item, facadeView.SelectedListItemIndex);
             }
         }
 
@@ -468,11 +468,13 @@ namespace MediaPortal.GUI.Music
                 //    break;
 
                 case 4552:  // Play now (clear playlist, play, and jump to Now playing)
-                    OnPlayNow(itemNo);
+                    //OnPlayNow(itemNo);
+                    OnPlayNow(item, itemNo);
                     break;
 
                 case 4551: // Play next (insert after current song)
-                    OnPlayNext(itemNo);
+                    //OnPlayNext(itemNo);
+                    OnPlayNext(item, itemNo);
                     break;
 
                 case 926: // add to playlist (add to end of playlist)
@@ -583,7 +585,6 @@ namespace MediaPortal.GUI.Music
             {
                 if (SelectedItem.IsFolder && SelectedItem.Label != "..")
                 {
-                    //m_history.Set(SelectedItem.Label, m_strDirectory);
                     m_history.Set(SelectedItem.Label, handler.CurrentLevel.ToString());
                 }
             }
@@ -724,7 +725,7 @@ namespace MediaPortal.GUI.Music
         void AddItemToPlayList(GUIListItem pItem)
         {
             PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-            AddItemToPlayList(pItem, playList);
+            AddItemToPlayList(pItem, ref playList);
         }
 
         void AddSongToPlayList(Song song)
@@ -735,12 +736,6 @@ namespace MediaPortal.GUI.Music
 
         void AddSongToPlayList(Song song, PlayList playList)
         {
-            PlayListItem playlistItem = new PlayListItem();
-            playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
-            playlistItem.FileName = song.FileName;
-            playlistItem.Description = song.Title;
-            playlistItem.Duration = song.Duration;
-
             MusicTag tag = new MusicTag();
             tag.Album = song.Album;
             tag.Artist = song.Artist;
@@ -751,6 +746,12 @@ namespace MediaPortal.GUI.Music
             tag.Title = song.Title;
             tag.Track = song.Track;
             tag.Year = song.Year;
+
+            PlayListItem playlistItem = new PlayListItem();
+            playlistItem.Type = Playlists.PlayListItem.PlayListItemType.Audio;
+            playlistItem.FileName = song.FileName;
+            playlistItem.Description = song.Title;
+            playlistItem.Duration = song.Duration;
             playlistItem.MusicTag = tag;
             playList.Add(playlistItem);
         }
@@ -773,18 +774,12 @@ namespace MediaPortal.GUI.Music
             AddAlbumsToPlayList(songs, playList);
         }
 
-        void AddAlbumsToPlayList(List<Song> songs, PlayList playList)
+        void AddAlbumsToPlayList(List<Song> albums, PlayList playList)
         {
-            foreach (Song song in songs)
+            foreach (Song album in albums)
             {
                 List<Song> albumSongs = new List<Song>();
-                string temp = "select * from song,album,genre,artist,path where song.idPath=path.idPath ";
-                temp += "and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist  ";
-                //temp += "and  song.idArtist='{0}' and  album.idAlbum='{1}'  order by strTitle asc";
-                temp += "and  song.idArtist='{0}' and  album.idAlbum='{1}'  order by iTrack asc";
-
-                string sql = string.Format(temp, song.artistId, song.albumId);
-                m_database.GetSongsByFilter(sql, out albumSongs, true, true, true, true);
+                m_database.GetSongsByArtistAlbum(album.artistId, album.albumId, ref albumSongs);
 
                 foreach (Song albumSong in albumSongs)
                 {
@@ -793,7 +788,7 @@ namespace MediaPortal.GUI.Music
             }
         }
 
-        void AddItemToPlayList(GUIListItem pItem, PlayList playList)
+        void AddItemToPlayList(GUIListItem pItem, ref PlayList playList)
         {
             if (playList == null || pItem == null)
                 return;
@@ -809,7 +804,6 @@ namespace MediaPortal.GUI.Music
                 if (pItem.AlbumInfoTag != null)
                 {
                     List<Song> songs = new List<Song>();
-                    List<AlbumInfo> albums = new List<AlbumInfo>();
                     Song s = (Song)pItem.AlbumInfoTag;
                     bool isArtistItem = s.artistId != -1 && s.albumId == -1 && s.genreId == -1 && s.Year <= 0;
                     bool isAlbumItem = s.albumId != -1;
@@ -818,117 +812,60 @@ namespace MediaPortal.GUI.Music
 
                     if (isArtistItem)
                     {
-                        string temp = "select distinct album.* from song,album,genre,artist,path where song.idPath=path.idPath";
-                        temp += " and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist";
-                        temp += " and  song.idArtist='{0}'  order by strAlbum asc";
-
-                        string sql = string.Format(temp, s.artistId);
-                        m_database.GetSongsByFilter(sql, out songs, false, true, false, false);
-
-                        m_database.GetAlbums(ref albums);
-                        foreach (Song song in songs)
-                        {
-                            foreach (AlbumInfo album in albums)
-                            {
-                                if (song.Album.Equals(album.Album))
-                                {
-                                    song.Artist = album.Artist;
-                                    break;
-                                }
-                            }
-                        }
-
+                        m_database.GetSongsByArtist(s.artistId, ref songs);
                         AddAlbumsToPlayList(songs, playList);
                     }
 
-                    else if(isAlbumItem)
+                    else if (isAlbumItem)
                     {
                         songs.Add(s);
                         AddAlbumsToPlayList(songs, playList);
                     }
 
-                    else if(isGenreItem)
+                    else if (isGenreItem)
                     {
-                        string temp = "select * from song,album,genre,artist,path where song.idPath=path.idPath ";
-                        temp += "and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre ";
-                        temp += "and song.idArtist=artist.idArtist  and  genre.idGenre='{0}'  order by strTitle asc";
-                        string sql = string.Format(temp, s.genreId);
-                        m_database.GetSongsByFilter(sql, out songs, true, true, true, true);
-
+                        m_database.GetSongsByGenre(s.genreId, ref songs);
                         AddSongsToPlayList(songs, playList);
                     }
 
                     else if (isYearItem)
                     {
-                        string temp = "select * from song,album,genre,artist,path where song.idPath=path.idPath ";
-                        temp += "and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and ";
-                        temp += "song.idArtist=artist.idArtist  and  song.iYear='{0}'  order by strTitle asc";
-
-                        string sql = string.Format(temp, s.Year);
-                        m_database.GetSongsByFilter(sql, out songs, true, true, true, true);
+                        m_database.GetSongsByYear(s.Year, ref songs);
                         AddSongsToPlayList(songs, playList);
                     }
                 }
             }
-            
+
             // item is not a folder
             else
             {
-               if (pItem.AlbumInfoTag != null)
+                if (pItem.AlbumInfoTag != null)
                 {
-                   Song song = (Song)pItem.AlbumInfoTag;
-                   MusicTag tag = new MusicTag();
-                   tag.Title = song.Title;
-                   tag.Album = song.Album;
-                   tag.Artist = song.Artist;
-                   tag.Duration = song.Duration;
-                   tag.Genre = song.Genre;
-                   tag.Track = song.Track;
-                   tag.Year = song.Year;
-                   tag.Rating = song.Rating;
+                    Song song = (Song)pItem.AlbumInfoTag;
+                    MusicTag tag = new MusicTag();
+                    tag.Title = song.Title;
+                    tag.Album = song.Album;
+                    tag.Artist = song.Artist;
+                    tag.Duration = song.Duration;
+                    tag.Genre = song.Genre;
+                    tag.Track = song.Track;
+                    tag.Year = song.Year;
+                    tag.Rating = song.Rating;
 
-                   PlayListItem pli = new PlayListItem();
-                   pli.MusicTag = tag;
-                   pli.FileName = pItem.Path;
-                   pli.Description = tag.Title;
-                   pli.Duration = tag.Duration;
-                   pli.Type = PlayListItem.PlayListItemType.Audio;
-                   playList.Add(pli);
-               }
+                    PlayListItem pli = new PlayListItem();
+                    pli.MusicTag = tag;
+                    pli.FileName = pItem.Path;
+                    pli.Description = tag.Title;
+                    pli.Duration = tag.Duration;
+                    pli.Type = PlayListItem.PlayListItemType.Audio;
+                    playList.Add(pli);
+                }
+
             }
         }
 
-        protected void OnPlayNext(int iItem)
+        protected void OnPlayNext(GUIListItem pItem, int iItem)
         {
-            ////PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-
-            ////if (playList == null)
-            ////    return;
-
-            ////PlayList tempPlayList = new PlayList();
-            ////int index = Math.Max(playlistPlayer.CurrentSong, 0);
-
-            ////for (int i = 0; i < playList.Count; i++)
-            ////{
-            ////    if (i == index + 1)
-            ////    {
-            ////        AddItemToPlayList(facadeView.SelectedListItem, tempPlayList);
-            ////    }
-
-            ////    tempPlayList.Add(playList[i]);
-            ////}
-
-            ////playList.Clear();
-
-            ////// add each item of the playlist to the playlistplayer
-            ////foreach (PlayListItem pli in tempPlayList)
-            ////{
-            ////    playList.Add(pli);
-            ////}
-
-            ////if (!g_Player.Playing)
-            ////    playlistPlayer.Play(index);
-
             PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
             if (playList == null)
@@ -944,7 +881,7 @@ namespace MediaPortal.GUI.Music
                 {
                     if (i == index + 1)
                     {
-                        AddItemToPlayList(facadeView.SelectedListItem, tempPlayList);
+                        AddItemToPlayList(pItem, ref tempPlayList);
                     }
 
                     tempPlayList.Add(playList[i]);
@@ -962,46 +899,74 @@ namespace MediaPortal.GUI.Music
             else
             {
                 playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
-                AddItemToPlayList(facadeView.SelectedListItem);
+                AddItemToPlayList(pItem);
             }
 
             if (!g_Player.Playing)
                 playlistPlayer.Play(index);
         }
 
-        protected void OnPlayNow(int iItem)
+        protected void OnPlayNow(GUIListItem pItem, int iItem)
         {
-            PlayList tempPlayList = new PlayList();
-            AddItemToPlayList(facadeView.SelectedListItem, tempPlayList);
-
+            int playStartIndex = 0;
             PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+
+            if (playList == null)
+                return;
+
             playList.Clear();
             playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
 
-            foreach (PlayListItem playlistItem in tempPlayList)
+            // If this is an individual track find all of the tracks in the list and add them to 
+            // the playlist.  Start playback at the currently selected track.
+            if (!pItem.IsFolder && PlayAllOnSingleItemPlayNow)
             {
-                playList.Add(playlistItem);
+                for (int i = 0; i < facadeView.Count; i++)
+                {
+                    GUIListItem item = facadeView[i];
+                    AddItemToPlayList(item, ref playList);
+                }
+
+                if (iItem < facadeView.Count)
+                {
+                    if (facadeView.Count > 0)
+                    {
+                        playStartIndex = iItem;
+
+                        if (facadeView[0].Label == "..")
+                            playStartIndex--;
+                    }
+                }
             }
+
+            else
+                AddItemToPlayList(pItem, ref playList);
 
             if (playList.Count > 0)
             {
                 playlistPlayer.Reset();
-                playlistPlayer.Play(0);
+                playlistPlayer.Play(playStartIndex);
 
-                int nPlayingNowWindow = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
-                GUIMusicPlayingNow guiPlayingNow = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(nPlayingNowWindow);
-
-                if (guiPlayingNow != null)
+                if (PlayNowJumpToWindowID != -1)
                 {
-                    guiPlayingNow.MusicWindow = this;
-                    GUIWindowManager.ActivateWindow(nPlayingNowWindow);
+                    if (PlayNowJumpToWindowID == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+                    {
+                        GUIMusicPlayingNow nowPlayingWnd = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(PlayNowJumpToWindowID);
+
+                        if (nowPlayingWnd != null)
+                            nowPlayingWnd.MusicWindow = this;
+                    }
+
+                    GUIWindowManager.ActivateWindow(PlayNowJumpToWindowID);
                 }
 
                 if (!g_Player.Playing)
-                    playlistPlayer.Play(0);
+                    playlistPlayer.Play(playStartIndex);
             }
         }
 
+        // Need to remove this and allow the rmote plugins to handle anti-repeat logic.
+        // We also need some way for MP to handle anti-repeat for keyboard events
         private bool AntiRepeatActive()
         {
             TimeSpan ts = DateTime.Now - Previous_ACTION_PLAY_Time;

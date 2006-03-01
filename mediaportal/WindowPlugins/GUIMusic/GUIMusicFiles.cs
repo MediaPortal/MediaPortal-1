@@ -148,7 +148,7 @@ namespace MediaPortal.GUI.Music
 
         private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
         private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
-        private int PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
+        // SV private int PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
 
         [SkinControlAttribute(8)]
         protected GUIButtonControl btnPlaylist;
@@ -182,26 +182,6 @@ namespace MediaPortal.GUI.Music
             //			list = handler.Execute();
 
             GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
-
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-            {
-                string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "nowplaying");
-
-                switch (playNowJumpTo)
-                {
-                    case "nowplaying":
-                        PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
-                        break;
-
-                    case "playlist":
-                        PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST; break;
-                        break;
-
-                    case "none":
-                        PlayNowJumpToWindowID = -1; 
-                        break;
-                }
-            }
         }
 
         // Make sure we get all of the ACTION_PLAY events (OnAction only receives the ACTION_PLAY event when 
@@ -837,6 +817,7 @@ namespace MediaPortal.GUI.Music
                             }
                         }
                     }
+         
                     break;
             }
         }
@@ -998,7 +979,6 @@ namespace MediaPortal.GUI.Music
 
         }
 
-
         #endregion
 
         void OnPlayCD(string strDriveLetter, bool AskForAlbum)
@@ -1068,6 +1048,7 @@ namespace MediaPortal.GUI.Music
             GUIPropertyManager.SetProperty("#itemcount", strObjects);
 
         }
+
         void LoadFolderSettings(string strDirectory)
         {
             if (strDirectory == String.Empty) strDirectory = "root";
@@ -1095,6 +1076,7 @@ namespace MediaPortal.GUI.Music
             SwitchView();
             UpdateButtonStates();
         }
+        
         void SaveFolderSettings(string strDirectory)
         {
             if (strDirectory == String.Empty) strDirectory = "root";
@@ -1245,8 +1227,7 @@ namespace MediaPortal.GUI.Music
                 }
             }
         }
-
-
+        
         void keyboard_TextChanged(int kindOfSearch, string data)
         {
             DisplayFilesList(kindOfSearch, data);
@@ -1389,12 +1370,14 @@ namespace MediaPortal.GUI.Music
             }
             return 1;
         }
+        
         private void item_OnItemSelected(GUIListItem item, GUIControl parent)
         {
             GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
             if (filmstrip == null) return;
             filmstrip.InfoImageFileName = item.ThumbnailImage;
         }
+        
         static public bool IsMusicWindow(int window)
         {
             if (window == (int)GUIWindow.Window.WINDOW_MUSIC) return true;
@@ -1408,7 +1391,6 @@ namespace MediaPortal.GUI.Music
             if (window == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW) return true;
             return false;
         }
-
 
         void OnRetrieveMusicInfo(ref List<GUIListItem> items)
         {
@@ -1971,7 +1953,6 @@ namespace MediaPortal.GUI.Music
             }
         }
 
-
         protected void OnPlayNext(GUIListItem pItem)
         {
             if (pItem == null || pItem.IsRemote || PlayListFactory.IsPlayList(pItem.Path))
@@ -2019,9 +2000,11 @@ namespace MediaPortal.GUI.Music
 
         protected void OnPlayNow(GUIListItem pItem)
         {
-            if (pItem == null || !pItem.IsFolder || pItem.IsRemote || PlayListFactory.IsPlayList(pItem.Path))
+            if (pItem == null || pItem.IsRemote || PlayListFactory.IsPlayList(pItem.Path))
                 return;
 
+            int iItem = facadeView.SelectedListItemIndex;
+            int playStartIndex = 0;
             PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
             if (playList == null)
@@ -2029,21 +2012,52 @@ namespace MediaPortal.GUI.Music
 
             playList.Clear();
             playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
-            AddItemToPlayList(pItem);
-            playlistPlayer.Reset();
-            playlistPlayer.Play(0);
 
-            if (PlayNowJumpToWindowID != -1)
+            // If this is an individual track find all of the tracks in the list and add them to 
+            // the playlist.  Start playback at the currently selected track.
+            if (!pItem.IsFolder && PlayAllOnSingleItemPlayNow)
             {
-                if (PlayNowJumpToWindowID == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+                for (int i = 0; i < facadeView.Count; i++)
                 {
-                    GUIMusicPlayingNow nowPlayingWnd = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(PlayNowJumpToWindowID);
-
-                    if (nowPlayingWnd != null)
-                        nowPlayingWnd.MusicWindow = this;
+                    GUIListItem item = facadeView[i];
+                    AddItemToPlayList(item, ref playList);
                 }
 
-                GUIWindowManager.ActivateWindow(PlayNowJumpToWindowID);
+                if (iItem < facadeView.Count)
+                {
+                    if (facadeView.Count > 0)
+                    {
+                        playStartIndex = iItem;
+
+                        if (facadeView[0].Label == "..")
+                            playStartIndex--;
+                    }
+                }
+            }
+
+            else
+                AddItemToPlayList(pItem, ref playList);
+
+            if (playList.Count > 0)
+            {
+                playlistPlayer.Reset();
+                playlistPlayer.Play(playStartIndex);
+
+                if (PlayNowJumpToWindowID != -1)
+                {
+                    if (PlayNowJumpToWindowID == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+                    {
+                        GUIMusicPlayingNow nowPlayingWnd = (GUIMusicPlayingNow)GUIWindowManager.GetWindow(PlayNowJumpToWindowID);
+
+                        if (nowPlayingWnd != null)
+                            nowPlayingWnd.MusicWindow = this;
+                    }
+
+                    GUIWindowManager.ActivateWindow(PlayNowJumpToWindowID);
+                }
+
+                if (!g_Player.Playing)
+                    playlistPlayer.Play(playStartIndex);
             }
         }
 
@@ -2062,6 +2076,8 @@ namespace MediaPortal.GUI.Music
                 return false;
         }
 
+        // Need to remove this and allow the rmote plugins to handle anti-repeat logic.
+        // We also need some way for MP to handle anti-repeat for keyboard events
         private bool AntiRepeatActive()
         {
             TimeSpan ts = DateTime.Now - Previous_ACTION_PLAY_Time;
