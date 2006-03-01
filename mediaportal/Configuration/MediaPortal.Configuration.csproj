@@ -522,6 +522,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="EditGroupForm.resx">
       <DependentUpon>EditGroupForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="editName.resx">
       <DependentUpon>editName.cs</DependentUpon>
@@ -777,6 +778,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="WizardForm.resx">
       <DependentUpon>WizardForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Resources\Image1.png" />
     <Content Include="Wizards\DVD.xml" />
