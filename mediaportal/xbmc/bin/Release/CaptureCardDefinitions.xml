@@ -9156,7 +9156,7 @@
 	</tv>
   </capturecard>
 
-  <capturecard commercialname="Pinnacle PCTV Pro" capturename="Pinnacle WDM PCTV Video Cpature" devid="ven_109e&amp;dev_036e&amp;subsys_001211bd&amp;rev_11">
+  <capturecard commercialname="Pinnacle PCTV Pro" capturename="Pinnacle WDM PCTV Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_001211bd&amp;rev_11">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
@@ -9164,7 +9164,7 @@
         <filter cat="tvtuner"		name="Pinnacle WDM PCTV Analog Tuner"	checkdevice="true"/>
         <filter cat="tvaudio"		name="Pinnacle WDM PCTV TvAudio"		checkdevice="true"/>
         <filter cat="crossbar"		name="Pinnacle WDM PCTV Crossbar"		checkdevice="true"/>
-        <filter cat="capture"		name="Pinnacle WDM PCTV Video Cpature"	checkdevice="true"/>
+        <filter cat="capture"		name="Pinnacle WDM PCTV Video Capture"	checkdevice="true"/>
         <filter cat="audcapture"	name="%soundcard%"						checkdevice="true"/>
 		<filter cat="videncoder"	name="%videoencoder%"					checkdevice="false"/>
 		<filter cat="audencoder"	name="%audioencoder%"					checkdevice="false"/>
