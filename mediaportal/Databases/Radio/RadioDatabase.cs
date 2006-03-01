@@ -1127,6 +1127,10 @@ namespace MediaPortal.Radio.Database
       return null;
     }
 
+    public static void UpdatePids(bool isATSC, bool isDVBC, bool isDVBS, bool isDVBT, DVBChannel channel)
+    {
+
+    }
     #region EPG
 
     static public int AddProgram(TVProgram prog)

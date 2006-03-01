@@ -3440,7 +3440,8 @@ namespace MediaPortal.Configuration
           ch.AudioLanguage3 = audioLanguage3;
           ch.HasEITPresentFollow = DVBSHasEITPresentFollow;
           ch.HasEITSchedule = DVBSHasEITSchedule;
-          TVDatabase.UpdateSatChannel(ch);
+          TVDatabase.RemoveSatChannel(ch);
+          TVDatabase.AddSatChannel(ch);
         }
       }
       catch (Exception) { }

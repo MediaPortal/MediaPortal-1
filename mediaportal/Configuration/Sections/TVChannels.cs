@@ -1774,7 +1774,9 @@ namespace MediaPortal.Configuration.Sections
                     ch.AudioLanguage3 = audioLanguage3;
                     ch.HasEITSchedule = HasEITSchedule;
                     ch.HasEITPresentFollow = HasEITPresentFollow;
-                    TVDatabase.UpdateSatChannel(ch);
+
+                    TVDatabase.RemoveSatChannel(ch);
+                    TVDatabase.AddSatChannel(ch);
                   }
                 }
                 catch (Exception)

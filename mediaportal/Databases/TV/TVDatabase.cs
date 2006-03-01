@@ -560,7 +560,7 @@ namespace MediaPortal.TV.Database
         return false;
       }
     }
-    static public void UpdateSatChannel(DVBChannel ch)
+    static public void UpdateSatChannel(int channelId,DVBChannel ch)
     {
 
       lock (typeof(TVDatabase))
@@ -573,15 +573,13 @@ namespace MediaPortal.TV.Database
           DatabaseUtility.RemoveInvalidChars(ref strProvider);
 
           if (null == m_db) return;
-
-          RemoveSatChannel(ch);
-          AddSatChannel(ch);
-          /*				  strSQL=String.Format( "update tblDVBSMapping set (sFreq={0},sSymbrate={1},sFEC={2},sLNBKhz={3},sDiseqc={4},sProgramNumber={5},sServiceType={6},sProviderName='{7}',sChannelName='{8}',sEitSched={9},sEitPreFol={10},sAudioPid={11},sVideoPid={12},sAC3Pid={13},sAudio1Pid={14},sAudio2Pid={15},sAudio3Pid={16},sTeletextPid={17},sScrambled={18},sPol={19},sLNBFreq={20},sNetworkID={21},sTSID={22},sPCRPid={23}) where idChannel = {24}", 
+                                        
+          string strSQL=String.Format( "update tblDVBSMapping set (sFreq={0},sSymbrate={1},sFEC={2},sLNBKhz={3},sDiseqc={4},sProgramNumber={5},sServiceType={6},sProviderName='{7}',sChannelName='{8}',sEitSched={9},sEitPreFol={10},sAudioPid={11},sVideoPid={12},sAC3Pid={13},sAudio1Pid={14},sAudio2Pid={15},sAudio3Pid={16},sTeletextPid={17},sScrambled={18},sPol={19},sLNBFreq={20},sNetworkID={21},sTSID={22},sPCRPid={23}) where idChannel = {24}", 
                       ch.Frequency,ch.Symbolrate, ch.FEC,ch.LNBKHz,ch.DiSEqC,
                       ch.ProgramNumber,ch.ServiceType,strProvider,strChannel, (int)(ch.HasEITSchedule==true?1:0),
                       (int)(ch.HasEITPresentFollow==true?1:0), ch.AudioPid,ch.VideoPid,ch.AC3Pid,ch.Audio1, ch.Audio2, ch.Audio3,
                       ch.TeletextPid,(int)(ch.IsScrambled==true?1:0), ch.Polarity,ch.LNBFrequency,ch.NetworkID,ch.TransportStreamID,ch.PCRPid,ch.ID);
-                  */
+          m_db.Execute(strSQL);
         }
         catch (Exception ex)
         {
@@ -5151,6 +5149,55 @@ namespace MediaPortal.TV.Database
     public static void DeleteAllRecordedTv()
     {
       m_db.Execute("delete from recorded");
+    }
+    public static void UpdatePids(bool isATSC, bool isDVBC, bool isDVBS, bool isDVBT, DVBChannel dvbChannel)
+    {
+      string provider;
+      TVChannel channel=TVDatabase.GetTVChannelByStream(isATSC,isDVBT,isDVBC,isDVBS,dvbChannel.NetworkID,dvbChannel.TransportStreamID,dvbChannel.ProgramNumber,out provider);
+      if (channel == null)
+      {
+        Log.Write("tvdatabase cannot get channel for :{0}", dvbChannel.ServiceName);
+        return;
+      }
+      if (isDVBC)
+      {
+        Log.Write("update dvbc channel:{0}", channel.Name);
+        MapDVBCChannel(channel.Name, dvbChannel.ServiceProvider, channel.ID, dvbChannel.Frequency,
+                       dvbChannel.Symbolrate, dvbChannel.FEC, dvbChannel.Modulation, dvbChannel.NetworkID,
+                       dvbChannel.TransportStreamID, dvbChannel.ProgramNumber,
+                       dvbChannel.AudioPid, dvbChannel.VideoPid, dvbChannel.TeletextPid,
+                       dvbChannel.PMTPid, dvbChannel.Audio1, dvbChannel.Audio2, dvbChannel.Audio3,
+                       dvbChannel.AC3Pid, dvbChannel.PCRPid, dvbChannel.AudioLanguage,
+                       dvbChannel.AudioLanguage1, dvbChannel.AudioLanguage2, dvbChannel.AudioLanguage3,
+                       dvbChannel.HasEITPresentFollow, dvbChannel.HasEITSchedule);
+      }
+      if (isDVBT)
+      {
+        Log.Write("update dvbt channel:{0}", channel.Name);
+        MapDVBTChannel(channel.Name, dvbChannel.ServiceProvider, channel.ID, dvbChannel.Frequency,
+                       dvbChannel.NetworkID, dvbChannel.TransportStreamID, dvbChannel.ProgramNumber,
+                       dvbChannel.AudioPid, dvbChannel.VideoPid, dvbChannel.TeletextPid,
+                       dvbChannel.PMTPid, dvbChannel.Bandwidth, dvbChannel.Audio1, dvbChannel.Audio2,
+                       dvbChannel.Audio3, dvbChannel.AC3Pid, dvbChannel.PCRPid, dvbChannel.AudioLanguage,
+                       dvbChannel.AudioLanguage1, dvbChannel.AudioLanguage2, dvbChannel.AudioLanguage3,
+                       dvbChannel.HasEITPresentFollow, dvbChannel.HasEITSchedule);
+      }
+      if (isDVBS)
+      {
+        Log.Write("update dvbs channel:{0}", channel.Name);
+        UpdateSatChannel(channel.ID,dvbChannel);
+      }
+      if (isATSC)
+      {
+        Log.Write("update atsc channel:{0}",channel.Name);
+        MapATSCChannel(channel.Name, dvbChannel.PhysicalChannel, dvbChannel.MinorChannel, dvbChannel.MajorChannel,
+          dvbChannel.ServiceProvider, channel.ID, dvbChannel.Frequency, dvbChannel.Symbolrate, dvbChannel.FEC,
+          dvbChannel.Modulation, dvbChannel.NetworkID, dvbChannel.TransportStreamID, dvbChannel.ProgramNumber,
+          dvbChannel.AudioPid, dvbChannel.VideoPid, dvbChannel.TeletextPid, dvbChannel.PMTPid,
+          dvbChannel.Audio1, dvbChannel.Audio2, dvbChannel.Audio3, dvbChannel.AC3Pid,
+          dvbChannel.PCRPid, dvbChannel.AudioLanguage, dvbChannel.AudioLanguage1, dvbChannel.AudioLanguage2,
+          dvbChannel.AudioLanguage3, dvbChannel.HasEITPresentFollow, dvbChannel.HasEITSchedule);
+      }
     }
   }//public class TVDatabase
 }//namespace MediaPortal.TV.Database
