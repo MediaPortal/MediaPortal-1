@@ -105,6 +105,7 @@ namespace MediaPortal.TV.Recording
               TVProgram program = _currentTvChannel.GetProgramAt(livePoint);
               if (program != null)
               {
+                timeshiftStart = Recorder.TimeTimeshiftingStarted;
                 showStart = program.StartTime;
                 showEnd = program.EndTime;
                 //Log.Write("  program at livepoint:{0} {1}-{2} start:{3}", livePoint.ToString(), showStart.ToString(), showEnd.ToString(), timeshiftStart.ToString());
@@ -212,13 +213,15 @@ namespace MediaPortal.TV.Recording
       notInBufferAnymore = (float)g_Player.ContentStart;
       currentPlayingPosition = (float)g_Player.CurrentPosition;
 #if LOGPROPERTIES
+      TimeSpan tsCP = new TimeSpan(0, 0, 0, (int)currentPlayingPosition);
+      TimeSpan tsNB = new TimeSpan(0, 0, 0, (int)notInBufferAnymore);
       Log.Write("movie :{0} {1}-{2}", GUIPropertyManager.GetProperty("#TV.View.title"), GUIPropertyManager.GetProperty("#TV.View.start"), GUIPropertyManager.GetProperty("#TV.View.stop"));
       Log.Write("movie     start   :{0}", MovieStartTime.ToString());
       Log.Write("movie     end     :{0}", MovieEndTime.ToString());
       Log.Write("movie     duration:{0}", tsMovieDuration.ToString());
       Log.Write("timeshift started :{0}", RecordingStarted.ToString());
-      Log.Write("current position  :{0}", currentPlayingPosition.ToString());
-      Log.Write("notInBufferAnymore:{0}", notInBufferAnymore.ToString());
+      Log.Write("current position  :{0} {1}", currentPlayingPosition.ToString(), tsCP.ToString());
+      Log.Write("notInBufferAnymore:{0} {1}", notInBufferAnymore.ToString(), tsNB.ToString());
 #endif
       if (g_Player.Playing && g_Player.IsTV)
       {
@@ -235,8 +238,9 @@ namespace MediaPortal.TV.Recording
         }
       }
 #if LOGPROPERTIES
-      Log.Write("  timeshift started :{0}", RecordingStarted.ToString());
-      Log.Write("  current position  :{0}", currentPlayingPosition.ToString());
+      tsCP = new TimeSpan(0, 0, 0, (int)currentPlayingPosition);
+      Log.Write("  timeshift started :{0} {1}", RecordingStarted.ToString());
+      Log.Write("  current position  :{0} {1}", currentPlayingPosition.ToString(), tsCP.ToString());
 #endif
       // get point where we started timeshifting/recording relative to the start of movie
       TimeSpan tsRecordingStart = (RecordingStarted - MovieStartTime);
