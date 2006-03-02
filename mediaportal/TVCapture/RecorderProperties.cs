@@ -1,3 +1,4 @@
+//#define LOGPROPERTIES 
 /* 
  *	Copyright (C) 2005 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -96,6 +97,7 @@ namespace MediaPortal.TV.Recording
             //we're playing the timeshift file of tv
             //check which program we are currently watching in the timeshift file
             //and use that to update the properties
+            timeshiftStart = timeshiftStart.AddSeconds( g_Player.ContentStart);
             DateTime livePoint = timeshiftStart.AddSeconds(g_Player.CurrentPosition);
             if (livePoint < showStart || livePoint > showEnd)
             {
@@ -295,6 +297,7 @@ namespace MediaPortal.TV.Recording
           break;
         }
       }
+      
 
       if (prog != null)
       {
