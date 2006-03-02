@@ -175,12 +175,20 @@ namespace MediaPortal.TV.Recording
       GUIPropertyManager.SetProperty("#TV.Record.current", String.Empty);
     }//static void CleanProperties()
 
+#if LOGPROPERTIES
+    static DateTime updatetimer=DateTime.Now;
+#endif
 
     /// <summary>
     /// this method will update all tags for the tv progress bar
     /// </summary>
     static void SetProgressBarProperties(DateTime MovieStartTime, DateTime RecordingStarted, DateTime MovieEndTime)
     {
+#if LOGPROPERTIES
+      TimeSpan ts1 = DateTime.Now - updatetimer;
+      if (ts1.TotalSeconds < 30) return;
+      updatetimer = DateTime.Now;
+#endif
       //                                1s       20s        200s
       //  0sec       100s         200s  201s    220s        400s
       // [MS------------------------ME][MS--------------------ME]
@@ -201,20 +209,21 @@ namespace MediaPortal.TV.Recording
       float currentPlayingPosition = 0;
       notInBufferAnymore = (float)g_Player.ContentStart;
       currentPlayingPosition = (float)g_Player.CurrentPosition;
-      //Log.Write("movie :{0} {1}-{2}", GUIPropertyManager.GetProperty("#TV.View.title"), GUIPropertyManager.GetProperty("#TV.View.start"), GUIPropertyManager.GetProperty("#TV.View.stop"));
-      //Log.Write("movie     start   :{0}", MovieStartTime.ToString());
-      //Log.Write("movie     end     :{0}", MovieEndTime.ToString());
-      //Log.Write("movie     duration:{0}", tsMovieDuration.ToString());
-      //Log.Write("timeshift started :{0}", RecordingStarted.ToString());
-      //Log.Write("current position  :{0}", currentPlayingPosition.ToString());
-      //Log.Write("notInBufferAnymore:{0}", notInBufferAnymore.ToString());
-
+#if LOGPROPERTIES
+      Log.Write("movie :{0} {1}-{2}", GUIPropertyManager.GetProperty("#TV.View.title"), GUIPropertyManager.GetProperty("#TV.View.start"), GUIPropertyManager.GetProperty("#TV.View.stop"));
+      Log.Write("movie     start   :{0}", MovieStartTime.ToString());
+      Log.Write("movie     end     :{0}", MovieEndTime.ToString());
+      Log.Write("movie     duration:{0}", tsMovieDuration.ToString());
+      Log.Write("timeshift started :{0}", RecordingStarted.ToString());
+      Log.Write("current position  :{0}", currentPlayingPosition.ToString());
+      Log.Write("notInBufferAnymore:{0}", notInBufferAnymore.ToString());
+#endif
       if (g_Player.Playing && g_Player.IsTV)
       {
         notInBufferAnymore = (float)g_Player.ContentStart;
         currentPlayingPosition = (float)g_Player.CurrentPosition;
         RecordingStarted = RecordingStarted.AddSeconds(notInBufferAnymore);
-        currentPlayingPosition -= notInBufferAnymore;
+        //currentPlayingPosition -= notInBufferAnymore;
 
         if (RecordingStarted < MovieStartTime)
         {
@@ -223,10 +232,10 @@ namespace MediaPortal.TV.Recording
           RecordingStarted = MovieStartTime;
         }
       }
-
-      //Log.Write("  timeshift started :{0}", RecordingStarted.ToString());
-      //Log.Write("  current position  :{0}", currentPlayingPosition.ToString());
-
+#if LOGPROPERTIES
+      Log.Write("  timeshift started :{0}", RecordingStarted.ToString());
+      Log.Write("  current position  :{0}", currentPlayingPosition.ToString());
+#endif
       // get point where we started timeshifting/recording relative to the start of movie
       TimeSpan tsRecordingStart = (RecordingStarted - MovieStartTime);
       float fRelativeRecordingStart = (float)tsRecordingStart.TotalSeconds;
@@ -258,11 +267,12 @@ namespace MediaPortal.TV.Recording
         iPercentLive = 100;
       GUIPropertyManager.SetProperty("#TV.Record.percent3", iPercentLive.ToString());
 
-
-      //Log.Write("  percent1 :{0} percent2:{1} percent3:{2}",
-      //      GUIPropertyManager.GetProperty("#TV.Record.percent1"),
-      //      GUIPropertyManager.GetProperty("#TV.Record.percent2"),
-      //      GUIPropertyManager.GetProperty("#TV.Record.percent3"));
+#if LOGPROPERTIES
+      Log.Write("  percent1 :{0} percent2:{1} percent3:{2}",
+            GUIPropertyManager.GetProperty("#TV.Record.percent1"),
+            GUIPropertyManager.GetProperty("#TV.Record.percent2"),
+            GUIPropertyManager.GetProperty("#TV.Record.percent3"));
+#endif
     }//static void SetProgressBarProperties(DateTime MovieStartTime,DateTime RecordingStarted, DateTime MovieEndTime)
 
 
