@@ -64,7 +64,9 @@ copy ..\..\..\Microsoft.DirectX.DirectDraw.dll .
 copy ..\..\..\Microsoft.DirectX.dll .
 copy ..\..\..\Microsoft.DirectX.DirectInput.dll .
 rem ExternalDisplay plugin LCD driver DLLs
-copy ..\..\..\FTD2XX.DLL .
+
+rem usbuirt driver should only reside in windows\system32
+rem copy ..\..\..\FTD2XX.DLL .
 copy ..\..\..\SG_VFD.dll .
 copy ..\..\..\inpout32.dll .
 if not exist LUI\. mkdir LUI
