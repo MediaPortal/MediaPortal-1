@@ -97,15 +97,14 @@ namespace MediaPortal.TV.Recording
             //we're playing the timeshift file of tv
             //check which program we are currently watching in the timeshift file
             //and use that to update the properties
-            timeshiftStart = timeshiftStart.AddSeconds( g_Player.ContentStart);
             DateTime livePoint = timeshiftStart.AddSeconds(g_Player.CurrentPosition);
+            livePoint = livePoint.AddSeconds(g_Player.ContentStart);
             if (livePoint < showStart || livePoint > showEnd)
             {
               //Log.Write("get program at livepoint:{0} timeshift start:{1}", livePoint.ToString(),timeshiftStart.ToString());
               TVProgram program = _currentTvChannel.GetProgramAt(livePoint);
               if (program != null)
               {
-                timeshiftStart = Recorder.TimeTimeshiftingStarted;
                 showStart = program.StartTime;
                 showEnd = program.EndTime;
                 //Log.Write("  program at livepoint:{0} {1}-{2} start:{3}", livePoint.ToString(), showStart.ToString(), showEnd.ToString(), timeshiftStart.ToString());
