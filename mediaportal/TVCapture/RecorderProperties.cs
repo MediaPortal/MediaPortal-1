@@ -239,7 +239,7 @@ namespace MediaPortal.TV.Recording
       }
 #if LOGPROPERTIES
       tsCP = new TimeSpan(0, 0, 0, (int)currentPlayingPosition);
-      Log.Write("  timeshift started :{0} {1}", RecordingStarted.ToString());
+      Log.Write("  timeshift started :{0}", RecordingStarted.ToString());
       Log.Write("  current position  :{0} {1}", currentPlayingPosition.ToString(), tsCP.ToString());
 #endif
       // get point where we started timeshifting/recording relative to the start of movie
