@@ -3,19 +3,19 @@
 	<characters>255</characters>
 	<string>
 		<id>0</id>
-		<value>Programmer</value>
+		<value>Mine Programmer</value>
 	</string>
 	<string>
 		<id>1</id>
-		<value>Billeder</value>
+		<value>Mine Billeder</value>
 	</string>
 	<string>
 		<id>2</id>
-		<value>Musik</value>
+		<value>Min Musik</value>
 	</string>
 	<string>
 		<id>3</id>
-		<value>Film</value>
+		<value>Mine Film</value>
 	</string>
 	<string>
 		<id>4</id>
@@ -23,7 +23,7 @@
 	</string>
 	<string>
 		<id>5</id>
-		<value>Indstillinger</value>
+		<value>Mine Indstillinger</value>
 	</string>
 	<string>
 		<id>6</id>
@@ -31,19 +31,19 @@
 	</string>
 	<string>
 		<id>7</id>
-		<value>Filer</value>
+		<value>Mine Filer</value>
 	</string>
 	<string>
 		<id>8</id>
-		<value>Vejret</value>
+		<value>Min Vejrudsigt</value>
 	</string>
 	<string>
 		<id>9</id>
-		<value>Nyheder</value>
+		<value>Mine Nyheder</value>
 	</string>
 	<string>
 		<id>10</id>
-		<value>Opskrifter</value>
+		<value>Mine Opskrifter</value>
 	</string>
 	<string>
 		<id>11</id>
@@ -123,7 +123,7 @@
 	</string>
 	<string>
 		<id>50</id>
-		<value>DVDer</value>
+		<value>Mine DVDer</value>
 	</string>
 	<string>
 		<id>100</id>
@@ -179,11 +179,11 @@
 	</string>
 	<string>
 		<id>113</id>
-		<value>Filer : Kilde</value>
+		<value>Mine Filer : Kilde</value>
 	</string>
 	<string>
 		<id>114</id>
-		<value>Filer : Destination</value>
+		<value>Mine Filer : Destination</value>
 	</string>
 	<string>
 		<id>115</id>
@@ -263,7 +263,7 @@
 	</string>
 	<string>
 		<id>134</id>
-		<value>Sange</value>
+		<value>Filer</value>
 	</string>
 	<string>
 		<id>135</id>
@@ -827,7 +827,7 @@
 	</string>
 	<string>
 		<id>276</id>
-		<value>-Advarsel!- Sæt til 0,0 for bedste kvalitet, ret værdien for at mindske billedet så det passer.</value>
+		<value>0,0 giver den bedste kvalitet, ret værdien for at mindske billedet så det passer.</value>
 	</string>
 	<string>
 		<id>277</id>
@@ -1387,19 +1387,19 @@
 	</string>
 	<string>
 		<id>418</id>
-		<value>Film/Genre</value>
+		<value>Mine Film/Genre</value>
 	</string>
 	<string>
 		<id>419</id>
-		<value>Film/Skuespillere</value>
+		<value>Mine Film/Skuespillere</value>
 	</string>
 	<string>
 		<id>420</id>
-		<value>Film/År</value>
+		<value>Mine Film/År</value>
 	</string>
 	<string>
 		<id>421</id>
-		<value>Film/Titel</value>
+		<value>Mine Film/Titel</value>
 	</string>
 	<string>
 		<id>422</id>
@@ -1778,8 +1778,12 @@
 		<value>Musik CD isat, vil du åbne den ?</value>
 	</string>
 	<string>
+		<id>533</id>
+		<value>Guide</value>
+	</string>
+	<string>
 		<id>550</id>
-		<value>Crop</value>
+		<value>Marker</value>
 	</string>
 	<string>
 		<id>600</id>
@@ -1799,11 +1803,11 @@
 	</string>
 	<string>
 		<id>604</id>
-		<value>TV optagelser</value>
+		<value>Optaget TV</value>
 	</string>
 	<string>
 		<id>605</id>
-		<value>TV</value>
+		<value>Mit TV</value>
 	</string>
 	<string>
 		<id>606</id>
@@ -2043,7 +2047,7 @@
 	</string>
 	<string>
 		<id>665</id>
-		<value>Radio</value>
+		<value>Min Radio</value>
 	</string>
 	<string>
 		<id>666</id>
@@ -2171,7 +2175,7 @@
 	</string>
 	<string>
 		<id>705</id>
-		<value>Henter RSS kilde fra</value>
+		<value>Henter RSS kilde fra:</value>
 	</string>
 	<string>
 		<id>706</id>
@@ -2179,7 +2183,7 @@
 	</string>
 	<string>
 		<id>707</id>
-		<value>TV Til</value>
+		<value>TV Til/Fra</value>
 	</string>
 	<string>
 		<id>708</id>
@@ -2399,7 +2403,7 @@
 	</string>
 	<string>
 		<id>850</id>
-		<value>Alarm</value>
+		<value>Min Alarm</value>
 	</string>
 	<string>
 		<id>851</id>
@@ -2651,7 +2655,7 @@
 	</string>
 	<string>
 		<id>913</id>
-		<value>Moduler</value>
+		<value>Mine Moduler</value>
 	</string>
 	<string>
 		<id>914</id>
@@ -2899,7 +2903,7 @@
 	</string>
 	<string>
 		<id>983</id>
-		<value>Playlister</value>
+		<value>Mine Playlister</value>
 	</string>
 	<string>
 		<id>984</id>
@@ -3067,7 +3071,7 @@
 	</string>
 	<string>
 		<id>1027</id>
-		<value>DVD</value>
+		<value>Mine DVDer</value>
 	</string>
 	<string>
 		<id>1028</id>
@@ -3107,7 +3111,7 @@
 	</string>
 	<string>
 		<id>1037</id>
-		<value>TV - Program information</value>
+		<value>Mit TV - Program information</value>
 	</string>
 	<string>
 		<id>1038</id>
@@ -3195,7 +3199,7 @@
 	</string>
 	<string>
 		<id>1440</id>
-		<value>Tekst-TV</value>
+		<value>Mit Tekst-TV</value>
 	</string>
 	<string>
 		<id>1441</id>
@@ -3239,7 +3243,7 @@
 	</string>
 	<string>
 		<id>1950</id>
-		<value>Status</value>
+		<value>Min Status</value>
 	</string>
 	<string>
 		<id>1951</id>
@@ -3555,7 +3559,7 @@
 	</string>
 	<string>
 		<id>2100</id>
-		<value>Brænd</value>
+		<value>Min Brænder</value>
 	</string>
 	<string>
 		<id>2101</id>
@@ -3731,7 +3735,7 @@
 	</string>
 	<string>
 		<id>2200</id>
-		<value>Explorer</value>
+		<value>Min Explorer</value>
 	</string>
 	<string>
 		<id>2201</id>
@@ -3927,7 +3931,7 @@
 	</string>
 	<string>
 		<id>5900</id>
-		<value>Trailere</value>
+		<value>Mine Trailere</value>
 	</string>
 	<string>
 		<id>5901</id>
@@ -4002,8 +4006,36 @@
 		<value>Schweiz TV Romande VOD</value>
 	</string>
 	<string>
+		<id>5919</id>
+		<value>Film i Weekenden</value>
+	</string>
+	<string>
+		<id>5920</id>
+		<value>Film premiere i denne uge</value>
+	</string>
+	<string>
+		<id>5921</id>
+		<value>Kommende film</value>
+	</string>
+	<string>
+		<id>5922</id>
+		<value>Mest solgte DVD´er</value>
+	</string>
+	<string>
+		<id>5923</id>
+		<value>Ude på DVD i denne uge</value>
+	</string>
+	<string>
+		<id>5924</id>
+		<value>Ude på DVD i næste uge</value>
+	</string>
+	<string>
+		<id>5925</id>
+		<value>DVD for-bestillinger</value>
+	</string>
+	<string>
 		<id>8000</id>
-		<value>Post</value>
+		<value>Min Post</value>
 	</string>
 	<string>
 		<id>8001</id>
@@ -4259,7 +4291,7 @@
 	</string>
 	<string>
 		<id>19001</id>
-		<value>Tetris</value>
+		<value>Mit Tetris</value>
 	</string>
 	<string>
 		<id>19002</id>
@@ -4315,27 +4347,27 @@
 	</string>
 	<string>
 		<id>100001</id>
-		<value>TV</value>
+		<value>Mit TV</value>
 	</string>
 	<string>
 		<id>100002</id>
-		<value>Billeder</value>
+		<value>Mine Billeder</value>
 	</string>
 	<string>
 		<id>100003</id>
-		<value>Filer</value>
+		<value>Mine Filer</value>
 	</string>
 	<string>
 		<id>100004</id>
-		<value>Indstillinger</value>
+		<value>Mine Indstillinger</value>
 	</string>
 	<string>
 		<id>100005</id>
-		<value>Musik</value>
+		<value>Min Musik</value>
 	</string>
 	<string>
 		<id>100006</id>
-		<value>Film</value>
+		<value>Mine Film</value>
 	</string>
 	<string>
 		<id>100007</id>
@@ -4387,15 +4419,15 @@
 	</string>
 	<string>
 		<id>100021</id>
-		<value>Film/Genre</value>
+		<value>Mine Film/Genre</value>
 	</string>
 	<string>
 		<id>100022</id>
-		<value>Film/Skuespiller</value>
+		<value>Mine Film/Skuespiller</value>
 	</string>
 	<string>
 		<id>100023</id>
-		<value>Film/År</value>
+		<value>Mine Film/År</value>
 	</string>
 	<string>
 		<id>100024</id>
@@ -4403,7 +4435,7 @@
 	</string>
 	<string>
 		<id>100025</id>
-		<value>Film/Titel</value>
+		<value>Mine Film/Titel</value>
 	</string>
 	<string>
 		<id>100026</id>
@@ -4415,7 +4447,7 @@
 	</string>
 	<string>
 		<id>100028</id>
-		<value>Film/Playliste</value>
+		<value>Mine Film/Playliste</value>
 	</string>
 	<string>
 		<id>100029</id>
@@ -4423,7 +4455,7 @@
 	</string>
 	<string>
 		<id>100030</id>
-		<value>Radio</value>
+		<value>Min Radio</value>
 	</string>
 	<string>
 		<id>100031</id>
@@ -4439,7 +4471,7 @@
 	</string>
 	<string>
 		<id>100034</id>
-		<value>Moduler</value>
+		<value>Mine Moduler</value>
 	</string>
 	<string>
 		<id>100100</id>
@@ -4451,243 +4483,243 @@
 	</string>
 	<string>
 		<id>100500</id>
-		<value>Musik/playliste</value>
+		<value>Min Musik/playliste</value>
 	</string>
 	<string>
 		<id>100501</id>
-		<value>Musik/Filer</value>
+		<value>Min Musik/Filer</value>
 	</string>
 	<string>
 		<id>100502</id>
-		<value>Musik/Albums</value>
+		<value>Min Musik/Albums</value>
 	</string>
 	<string>
 		<id>100503</id>
-		<value>Musik/Kunstnere</value>
+		<value>Min Musik/Kunstnere</value>
 	</string>
 	<string>
 		<id>100504</id>
-		<value>Musik/genrer</value>
+		<value>Min Musik/genrer</value>
 	</string>
 	<string>
 		<id>100505</id>
-		<value>Musik/top100</value>
+		<value>Min Musik/top100</value>
 	</string>
 	<string>
 		<id>100506</id>
-		<value>Musik/Favoritter</value>
+		<value>Min Musik/Favoritter</value>
 	</string>
 	<string>
 		<id>100600</id>
-		<value>TV/TV-Guide</value>
+		<value>Mit TV/TV-Guide</value>
 	</string>
 	<string>
 		<id>100601</id>
-		<value>TV/Planlægning</value>
+		<value>Mit TV/Planlægning</value>
 	</string>
 	<string>
 		<id>100602</id>
-		<value>TV/Fuldskærm</value>
+		<value>Mit TV/Fuldskærm</value>
 	</string>
 	<string>
 		<id>100603</id>
-		<value>TV/TV Optagelser</value>
+		<value>Mit TV/TV Optagelser</value>
 	</string>
 	<string>
 		<id>100604</id>
-		<value>TV/Søgning</value>
+		<value>Mit TV/Søgning</value>
 	</string>
 	<string>
 		<id>100605</id>
-		<value>TV/Optagelser/Genre</value>
+		<value>Mit TV/Optagelser/Genre</value>
 	</string>
 	<string>
 		<id>100606</id>
-		<value>TV/Optagelser/kanaler</value>
+		<value>Mit TV/Optagelser/kanaler</value>
 	</string>
 	<string>
 		<id>100607</id>
-		<value>TV/Planlægning/Prioriteter</value>
+		<value>Mit TV/Planlægning/Prioriteter</value>
 	</string>
 	<string>
 		<id>100608</id>
-		<value>TV/Planlægning/Konflikter</value>
+		<value>Mit TV/Planlægning/Konflikter</value>
 	</string>
 	<string>
 		<id>100609</id>
-		<value>TV/Komprimer/Hoved</value>
+		<value>Mit TV/Komprimer/Hoved</value>
 	</string>
 	<string>
 		<id>100610</id>
-		<value>TV/Komprimer/Indstillinger</value>
+		<value>Mit TV/Komprimer/Indstillinger</value>
 	</string>
 	<string>
 		<id>100611</id>
-		<value>TV/Komprimer/Auto</value>
+		<value>Mit TV/Komprimer/Auto</value>
 	</string>
 	<string>
 		<id>100612</id>
-		<value>TV/Komprimer/Komprimer</value>
+		<value>Mit TV/Komprimer/Komprimer</value>
 	</string>
 	<string>
 		<id>100613</id>
-		<value>TV/Komprimer/Status</value>
+		<value>Mit TV/Komprimer/Status</value>
 	</string>
 	<string>
 		<id>100614</id>
-		<value>Video Skuespiller info</value>
+		<value>Mine Film Skuespiller info</value>
 	</string>
 	<string>
 		<id>100615</id>
-		<value>Wizard/Velkommen</value>
+		<value>Min Opstilling/Velkommen</value>
 	</string>
 	<string>
 		<id>100616</id>
-		<value>Wizard/Detekterede kort</value>
+		<value>Min Opstilling/Detekterede kort</value>
 	</string>
 	<string>
 		<id>100617</id>
-		<value>Wizard/Land</value>
+		<value>Min Opstilling/Land</value>
 	</string>
 	<string>
 		<id>100618</id>
-		<value>Wizard/Søg</value>
+		<value>Min Opstilling/Søg</value>
 	</string>
 	<string>
 		<id>100619</id>
-		<value>Wizard/DVBC/Land</value>
+		<value>Min Opstilling/DVBC/Land</value>
 	</string>
 	<string>
 		<id>100620</id>
-		<value>Wizard/DVBC/Søg</value>
+		<value>Min Opstilling/DVBC/Søg</value>
 	</string>
 	<string>
 		<id>100621</id>
-		<value>Wizard/DVBS/LBN</value>
+		<value>Min Opstilling/DVBS/LBN</value>
 	</string>
 	<string>
 		<id>100622</id>
-		<value>Wizard/DVBS/LBN detaljer</value>
+		<value>Min Opstilling/DVBS/LBN detaljer</value>
 	</string>
 	<string>
 		<id>100623</id>
-		<value>Wizard/DVBS/Transponder</value>
+		<value>Min Opstilling/DVBS/Transponder</value>
 	</string>
 	<string>
 		<id>100624</id>
-		<value>Wizard/DVBS/Søg</value>
+		<value>Min Opstilling/DVBS/Søg</value>
 	</string>
 	<string>
 		<id>100625</id>
-		<value>Wizard/ATSC/Søg</value>
+		<value>Min Opstilling/ATSC/Søg</value>
 	</string>
 	<string>
 		<id>100626</id>
-		<value>Wizard/Analog/Land</value>
+		<value>Min Opstilling/Analog/Land</value>
 	</string>
 	<string>
 		<id>100627</id>
-		<value>Wizard/Analog/By</value>
+		<value>Min Opstilling/Analog/By</value>
 	</string>
 	<string>
 		<id>100628</id>
-		<value>Wizard/Analog/Importeret</value>
+		<value>Min Opstilling/Analog/Importeret</value>
 	</string>
 	<string>
 		<id>100629</id>
-		<value>Wizard/Analog/Manuel</value>
+		<value>Min Opstilling/Analog/Manuel</value>
 	</string>
 	<string>
 		<id>100630</id>
-		<value>Wizard/Analog/Søg</value>
+		<value>Min Opstilling/Analog/Søg</value>
 	</string>
 	<string>
 		<id>100631</id>
-		<value>Wizard/Analog/Omdøb</value>
+		<value>Min Opstilling/Analog/Omdøb</value>
 	</string>
 	<string>
 		<id>100632</id>
-		<value>Wizard/Analog/Radio</value>
+		<value>Min Opstilling/Analog/Radio</value>
 	</string>
 	<string>
 		<id>100633</id>
-		<value>Wizard/Analog/Omdøb Radio</value>
+		<value>Min Opstilling/Analog/Omdøb Radio</value>
 	</string>
 	<string>
 		<id>100634</id>
-		<value>Wizard/Fjernbetjening</value>
+		<value>Min Opstilling/Fjernbetjening</value>
 	</string>
 	<string>
 		<id>100635</id>
-		<value>Wizard/EPG</value>
+		<value>Min Opstilling/EPG</value>
 	</string>
 	<string>
 		<id>100699</id>
-		<value>Wizard/Slut</value>
+		<value>Min Opstilling/Slut</value>
 	</string>
 	<string>
 		<id>100700</id>
-		<value>TV Indstillinger</value>
+		<value>Mit TV/Indstillinger</value>
 	</string>
 	<string>
 		<id>100701</id>
-		<value>Indstillinger for TV optagelser</value>
+		<value>Mit TV/Indstillinger for optagelser</value>
 	</string>
 	<string>
 		<id>100702</id>
-		<value>Sorter TV kanaler</value>
+		<value>Mit TV/Sorter kanaler</value>
 	</string>
 	<string>
 		<id>100703</id>
-		<value>Indstilliner for TV Film</value>
+		<value>Mit TV/Indstillinger for Film</value>
 	</string>
 	<string>
 		<id>100704</id>
-		<value>DVD indstillinger</value>
+		<value>Mine DVDer/Indstillinger</value>
 	</string>
 	<string>
 		<id>100705</id>
-		<value>Skin indstillinger</value>
+		<value>Min MP Udseende/Indstillinger</value>
 	</string>
 	<string>
 		<id>100748</id>
-		<value>Program info</value>
+		<value>Min Program info</value>
 	</string>
 	<string>
 		<id>100749</id>
-		<value>TV/Intet signal</value>
+		<value>Mit TV/Intet signal</value>
 	</string>
 	<string>
 		<id>100750</id>
-		<value>Opskrifter</value>
+		<value>Mine Opskrifter</value>
 	</string>
 	<string>
 		<id>100755</id>
-		<value>Status</value>
+		<value>Min Status</value>
 	</string>
 	<string>
 		<id>100756</id>
-		<value>Statusdetaljer</value>
+		<value>Mine Statusdetaljer</value>
 	</string>
 	<string>
 		<id>100757</id>
-		<value>Statusindstillinger</value>
+		<value>Mine Statusindstillinger</value>
 	</string>
 	<string>
 		<id>100758</id>
-		<value>Fil dialog</value>
+		<value>Min Fil dialog</value>
 	</string>
 	<string>
 		<id>100759</id>
-		<value>Optaget TV info</value>
+		<value>Mine TV optagelser/Info</value>
 	</string>
 	<string>
 		<id>100760</id>
-		<value>Brænder</value>
+		<value>Min Brænder</value>
 	</string>
 	<string>
 		<id>100770</id>
-		<value>Explorer</value>
+		<value>Min Explorer</value>
 	</string>
 	<string>
 		<id>101000</id>
@@ -4699,7 +4731,7 @@
 	</string>
 	<string>
 		<id>102001</id>
-		<value>Musik/Info</value>
+		<value>Min Musik/Info</value>
 	</string>
 	<string>
 		<id>102002</id>
@@ -4707,11 +4739,11 @@
 	</string>
 	<string>
 		<id>102003</id>
-		<value>Film/Info</value>
+		<value>Mine Film/Info</value>
 	</string>
 	<string>
 		<id>102004</id>
-		<value>Scripts/Info</value>
+		<value>Mine Scripts/Info</value>
 	</string>
 	<string>
 		<id>102005</id>
@@ -4723,7 +4755,7 @@
 	</string>
 	<string>
 		<id>102007</id>
-		<value>Billeder/Billedserie</value>
+		<value>Mine Billeder/Billedserie</value>
 	</string>
 	<string>
 		<id>102008</id>
@@ -4763,11 +4795,11 @@
 	</string>
 	<string>
 		<id>102600</id>
-		<value>Vejret</value>
+		<value>Mit Vejr</value>
 	</string>
 	<string>
 		<id>102700</id>
-		<value>Nyheder</value>
+		<value>Mine Nyheder</value>
 	</string>
 	<string>
 		<id>102900</id>
@@ -4779,23 +4811,23 @@
 	</string>
 	<string>
 		<id>103003</id>
-		<value>TV/OSD</value>
+		<value>Mit TV/OSD</value>
 	</string>
 	<string>
 		<id>103006</id>
-		<value>Lille billede</value>
+		<value>Mit TV/MSN OSD</value>
 	</string>
 	<string>
 		<id>103007</id>
-		<value>Stort billede</value>
+		<value>Mit TV/Zap OSD</value>
 	</string>
 	<string>
 		<id>107700</id>
-		<value>TV/Tekst TV</value>
+		<value>Mit TV/Tekst TV</value>
 	</string>
 	<string>
 		<id>107701</id>
-		<value>TV/Tekst TV</value>
+		<value>Mit TV/Tekst TV</value>
 	</string>
 	<string>
 		<id>200000</id>
@@ -4947,11 +4979,11 @@
 	</string>
 	<string>
 		<id>4000</id>
-		<value>Web browser</value>
+		<value>Min Internet browser</value>
 	</string>
 	<string>
 		<id>4001</id>
-		<value>Favoritter</value>
+		<value>Foretrukne</value>
 	</string>
 	<string>
 		<id>4002</id>
@@ -5068,6 +5100,22 @@
 	<string>
 		<id>4543</id>
 		<value>Information ikke tilgængelig</value>
+	</string>
+	<string>
+		<id>4550</id>
+		<value>Bestil</value>
+	</string>
+	<string>
+		<id>4551</id>
+		<value>Spil næste</value>
+	</string>
+	<string>
+		<id>4552</id>
+		<value>Spil nu</value>
+	</string>
+	<string>
+		<id>4553</id>
+		<value>Vis playliste</value>
 	</string>
 	<string>
 		<id>10100</id>

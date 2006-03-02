@@ -483,7 +483,7 @@
 	</string>
 	<string>
 		<id>189</id>
-		<value>Söker mediainfo</value>
+		<value>Söker medieinfo</value>
 	</string>
 	<string>
 		<id>190</id>
@@ -611,7 +611,7 @@
 	</string>
 	<string>
 		<id>221</id>
-		<value>Nätverket är anslutet</value>
+		<value>Nätverket är inte anslutet</value>
 	</string>
 	<string>
 		<id>222</id>
@@ -779,7 +779,7 @@
 	</string>
 	<string>
 		<id>264</id>
-		<value>Spela in</value>
+		<value>Inspelning</value>
 	</string>
 	<string>
 		<id>265</id>
@@ -987,7 +987,7 @@
 	</string>
 	<string>
 		<id>316</id>
-		<value>Söker låtar...</value>
+		<value>Söker efter låtar...</value>
 	</string>
 	<string>
 		<id>317</id>
@@ -1003,7 +1003,7 @@
 	</string>
 	<string>
 		<id>320</id>
-		<value>Söker artister...</value>
+		<value>Söker efter artister...</value>
 	</string>
 	<string>
 		<id>321</id>
@@ -1011,7 +1011,7 @@
 	</string>
 	<string>
 		<id>322</id>
-		<value>Söker genrer...</value>
+		<value>Söker efter genrer...</value>
 	</string>
 	<string>
 		<id>323</id>
@@ -1019,7 +1019,7 @@
 	</string>
 	<string>
 		<id>324</id>
-		<value>Söker sökvägar...</value>
+		<value>Söker efter sökvägar...</value>
 	</string>
 	<string>
 		<id>325</id>
@@ -1027,7 +1027,7 @@
 	</string>
 	<string>
 		<id>326</id>
-		<value>Söker album...</value>
+		<value>Söker efter album...</value>
 	</string>
 	<string>
 		<id>327</id>
@@ -1263,7 +1263,7 @@
 	</string>
 	<string>
 		<id>385</id>
-		<value>lagom</value>
+		<value>vackert</value>
 	</string>
 	<string>
 		<id>386</id>
@@ -1778,6 +1778,10 @@
 		<value>Ljudskiva isatt, vill du öppna den?</value>
 	</string>
 	<string>
+		<id>533</id>
+		<value>Guide</value>
+	</string>
+	<string>
 		<id>550</id>
 		<value>Beskär</value>
 	</string>
@@ -1791,7 +1795,7 @@
 	</string>
 	<string>
 		<id>602</id>
-		<value>Kanal:</value>
+		<value>Kanal: </value>
 	</string>
 	<string>
 		<id>603</id>
@@ -3998,6 +4002,30 @@
 		<value>Tyska trailrar</value>
 	</string>
 	<string>
+		<id>5920</id>
+		<value>Filmpremiärer denna vecka</value>
+	</string>
+	<string>
+		<id>5921</id>
+		<value>Kommande filmer</value>
+	</string>
+	<string>
+		<id>5922</id>
+		<value>Bästsäljande DVD:er</value>
+	</string>
+	<string>
+		<id>5923</id>
+		<value>DVD-premiärer denna vecka</value>
+	</string>
+	<string>
+		<id>5924</id>
+		<value>DVD-premiärer nästa vecka</value>
+	</string>
+	<string>
+		<id>5925</id>
+		<value>Förbeställda DVD:er</value>
+	</string>
+	<string>
 		<id>8000</id>
 		<value>Min e-post</value>
 	</string>
@@ -4539,7 +4567,7 @@
 	</string>
 	<string>
 		<id>100616</id>
-		<value>Guide/Upptäckta kort</value>
+		<value>Guide/Hittade kort</value>
 	</string>
 	<string>
 		<id>100617</id>
@@ -5023,7 +5051,7 @@
 	</string>
 	<string>
 		<id>4516</id>
-		<value>Inga omslagsbilder funna</value>
+		<value>Inga omslagsbilder hittades</value>
 	</string>
 	<string>
 		<id>4517</id>
@@ -5048,6 +5076,42 @@
 	<string>
 		<id>4522</id>
 		<value>Fångar: {0}...</value>
+	</string>
+	<string>
+		<id>4540</id>
+		<value>Spelar</value>
+	</string>
+	<string>
+		<id>4541</id>
+		<value>Nästa låt</value>
+	</string>
+	<string>
+		<id>4542</id>
+		<value>Inga spellistor laddade</value>
+	</string>
+	<string>
+		<id>4543</id>
+		<value>Hittade ingen spårinformation</value>
+	</string>
+	<string>
+		<id>4550</id>
+		<value>Ställ i kö</value>
+	</string>
+	<string>
+		<id>4551</id>
+		<value>Ställ först i kön</value>
+	</string>
+	<string>
+		<id>4552</id>
+		<value>Spela nu</value>
+	</string>
+	<string>
+		<id>4553</id>
+		<value>Visa spellista</value>
+	</string>
+	<string>
+		<id>4554</id>
+		<value>Sök CD-info</value>
 	</string>
 	<string>
 		<id>10100</id>

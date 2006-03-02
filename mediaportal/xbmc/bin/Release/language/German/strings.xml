@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-15"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <strings>
 	<characters>255</characters>
 	<string>
@@ -135,7 +135,7 @@
 	</string>
 	<string>
 		<id>102</id>
-		<value>Medieninfos suchen</value>
+		<value>Neue Dateien suchen / hinzufügen</value>
 	</string>
 	<string>
 		<id>103</id>
@@ -483,7 +483,7 @@
 	</string>
 	<string>
 		<id>189</id>
-		<value>Suche Medieninfo</value>
+		<value>Suche nach neuen Dateien</value>
 	</string>
 	<string>
 		<id>190</id>
@@ -499,7 +499,7 @@
 	</string>
 	<string>
 		<id>193</id>
-		<value>Durchsuchen</value>
+		<value>Suche</value>
 	</string>
 	<string>
 		<id>194</id>
@@ -563,11 +563,11 @@
 	</string>
 	<string>
 		<id>209</id>
-		<value>Nächster</value>
+		<value>Nächster Titel</value>
 	</string>
 	<string>
 		<id>210</id>
-		<value>Vorheriger</value>
+		<value>Vorheriger Titel</value>
 	</string>
 	<string>
 		<id>211</id>
@@ -1778,6 +1778,10 @@
 		<value>Musik-CD eingelegt! Öffnen?</value>
 	</string>
 	<string>
+		<id>533</id>
+		<value>Radio-Programm</value>
+	</string>
+	<string>
 		<id>550</id>
 		<value>Schneiden</value>
 	</string>
@@ -2354,6 +2358,58 @@
 		<value>Zeige alle Lieder des Interpreten</value>
 	</string>
 	<string>
+		<id>752</id>
+		<value>Keine Aufnahme angegeben</value>
+	</string>
+	<string>
+		<id>753</id>
+		<value>Keine TV-Karte installiert</value>
+	</string>
+	<string>
+		<id>754</id>
+		<value>Keine TV-Karte zeichnet die gewünschte Sendung auf</value>
+	</string>
+	<string>
+		<id>755</id>
+		<value>Keine TV-Karte aktiv für Live-Fernsehen</value>
+	</string>
+	<string>
+		<id>756</id>
+		<value>Keine TV-Karte empfangsbereit für:{0}</value>
+	</string>
+	<string>
+		<id>757</id>
+		<value>Alle TV-Karten beschäftigt</value>
+	</string>
+	<string>
+		<id>758</id>
+		<value>TV-Karte zeichnet nicht auf</value>
+	</string>
+	<string>
+		<id>759</id>
+		<value>Timeshift konnte nicht aktiviert werden</value>
+	</string>
+	<string>
+		<id>760</id>
+		<value>Keine TV-Karte für Timeshift verfügbar</value>
+	</string>
+	<string>
+		<id>761</id>
+		<value>Timeshift konnte nicht gestoppt werden</value>
+	</string>
+	<string>
+		<id>762</id>
+		<value>Live-Fernsehen konnte nicht aktiviert werden</value>
+	</string>
+	<string>
+		<id>763</id>
+		<value>Rekorder ist ausgelastet</value>
+	</string>
+	<string>
+		<id>764</id>
+		<value>Rekorder pausiert</value>
+	</string>
+	<string>
 		<id>800</id>
 		<value>Fängt an mit</value>
 	</string>
@@ -2503,7 +2559,7 @@
 	</string>
 	<string>
 		<id>876</id>
-		<value>Bis manueller Stopp</value>
+		<value>Endlos (Stop drücken)</value>
 	</string>
 	<string>
 		<id>877</id>
@@ -2667,11 +2723,11 @@
 	</string>
 	<string>
 		<id>917</id>
-		<value>die Datei liegt in einem Remote-Verzeichnis</value>
+		<value>Die Datei liegt in einem Remote-Verzeichnis</value>
 	</string>
 	<string>
 		<id>918</id>
-		<value>Ins Standardverzeichnis herunterladen?</value>
+		<value>Ins Standard-Verzeichnis herunterladen?</value>
 	</string>
 	<string>
 		<id>919</id>
@@ -2883,7 +2939,7 @@
 	</string>
 	<string>
 		<id>979</id>
-		<value>Aufnahme vom Anfang an wiedergeben</value>
+		<value>Aufnahme von Anfang an wiedergeben</value>
 	</string>
 	<string>
 		<id>980</id>
@@ -2947,11 +3003,11 @@
 	</string>
 	<string>
 		<id>995</id>
-		<value>Fortfahren mit der Komprimierung der</value>
+		<value>Sollen die ausgewählten Aufnahmen</value>
 	</string>
 	<string>
 		<id>996</id>
-		<value>gewählten Aufnahmen?</value>
+		<value>jetzt komprimiert werden?</value>
 	</string>
 	<string>
 		<id>997</id>
@@ -2963,7 +3019,7 @@
 	</string>
 	<string>
 		<id>999</id>
-		<value>Das Plugin erlaubt das Umwandeln ihrer</value>
+		<value>Dieses Modul erlaubt das Umwandeln ihrer</value>
 	</string>
 	<string>
 		<id>1000</id>
@@ -2995,7 +3051,7 @@
 	</string>
 	<string>
 		<id>1007</id>
-		<value>Stoppe Aufnahme und starte TV</value>
+		<value>Stoppe Aufnahme und zeige TV</value>
 	</string>
 	<string>
 		<id>1008</id>
@@ -3107,7 +3163,7 @@
 	</string>
 	<string>
 		<id>1037</id>
-		<value>Fernsehen - Programm Information</value>
+		<value>Fernsehen - Programm-Info</value>
 	</string>
 	<string>
 		<id>1038</id>
@@ -3631,15 +3687,15 @@
 	</string>
 	<string>
 		<id>2119</id>
-		<value>Konvertieren starten</value>
+		<value>Umwandlung starten</value>
 	</string>
 	<string>
 		<id>2120</id>
-		<value>Konvertieren für das File</value>
+		<value>Die Datei(en)</value>
 	</string>
 	<string>
 		<id>2121</id>
-		<value>kann nicht gestartet werden!</value>
+		<value>konnte(n) nicht umgewandelt werden!</value>
 	</string>
 	<string>
 		<id>2122</id>
@@ -3996,6 +4052,38 @@
 	<string>
 		<id>5917</id>
 		<value>Deutsche Trailer</value>
+	</string>
+	<string>
+		<id>5918</id>
+		<value>TSR (Schweizer) Video On Demand</value>
+	</string>
+	<string>
+		<id>5919</id>
+		<value>Kino-Kassen-Schlager</value>
+	</string>
+	<string>
+		<id>5920</id>
+		<value>Diese Woche im Kino</value>
+	</string>
+	<string>
+		<id>5921</id>
+		<value>Bald im Kino</value>
+	</string>
+	<string>
+		<id>5922</id>
+		<value>Verkaufshits</value>
+	</string>
+	<string>
+		<id>5923</id>
+		<value>Diese Woche auf DVD</value>
+	</string>
+	<string>
+		<id>5924</id>
+		<value>Nächste Woche auf DVD</value>
+	</string>
+	<string>
+		<id>5925</id>
+		<value>DVD Vorbestellungen</value>
 	</string>
 	<string>
 		<id>8000</id>
@@ -4723,7 +4811,7 @@
 	</string>
 	<string>
 		<id>102008</id>
-		<value>Dateikomprimierung</value>
+		<value>Datei-Komprimierung</value>
 	</string>
 	<string>
 		<id>102009</id>
@@ -4735,7 +4823,7 @@
 	</string>
 	<string>
 		<id>102011</id>
-		<value>Interpret-Information</value>
+		<value>Interpreten-Information</value>
 	</string>
 	<string>
 		<id>102012</id>
@@ -4914,6 +5002,10 @@
 		<value>Media Portal mit Windows starten?</value>
 	</string>
 	<string>
+		<id>200038</id>
+		<value>Auf einem normalen PC mit weiteren Anwendungen</value>
+	</string>
+	<string>
 		<id>200031</id>
 		<value>Ja</value>
 	</string>
@@ -5055,7 +5147,7 @@
 	</string>
 	<string>
 		<id>4541</id>
-		<value>Nächster Titel</value>
+		<value>Es folgt:</value>
 	</string>
 	<string>
 		<id>4542</id>
@@ -5064,6 +5156,26 @@
 	<string>
 		<id>4543</id>
 		<value>Keine Titel-Informationen verfügbar</value>
+	</string>
+	<string>
+		<id>4550</id>
+		<value>An Liste anfügen</value>
+	</string>
+	<string>
+		<id>4551</id>
+		<value>Spiele als nächsten Titel</value>
+	</string>
+	<string>
+		<id>4552</id>
+		<value>Spiele diesen Titel jetzt</value>
+	</string>
+	<string>
+		<id>4553</id>
+		<value>Wiedergabeliste</value>
+	</string>
+	<string>
+		<id>4554</id>
+		<value>Zeige Album-Informationen</value>
 	</string>
 	<string>
 		<id>10100</id>

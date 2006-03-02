@@ -15,7 +15,7 @@
 	</string>
 	<string>
 		<id>3</id>
-		<value>Filmy</value>
+		<value>Wideo</value>
 	</string>
 	<string>
 		<id>4</id>
@@ -3099,7 +3099,7 @@
 	</string>
 	<string>
 		<id>1035</id>
-		<value>Kana³ TV jest z³ej jako¶ci</value>
+		<value>Kana³ TV jest zakodowany</value>
 	</string>
 	<string>
 		<id>1036</id>
@@ -3986,6 +3986,30 @@
 		<value>Niemieckie zwiastuny</value>
 	</string>
 	<string>
+		<id>5918</id>
+		<value>TSR (Szwajcaria) Wideo na ¿±danie</value>
+	</string>
+	<string>
+		<id>5920</id>
+		<value>Filmy z tego tygodnia</value>
+	</string>
+	<string>
+		<id>5921</id>
+		<value>Nadchodz±ce filmy</value>
+	</string>
+	<string>
+		<id>5922</id>
+		<value>Ranking sprzeda¿y DVD</value>
+	</string>
+	<string>
+		<id>5923</id>
+		<value>Nowo¶ci na DVD ten tydzieñ</value>
+	</string>
+	<string>
+		<id>5924</id>
+		<value>Nowo¶ci na DVD nastêpny tydzieñ</value>
+	</string>
+	<string>
 		<id>8000</id>
 		<value>Poczta</value>
 	</string>
@@ -4288,6 +4312,10 @@
 	<string>
 		<id>19012</id>
 		<value>Koniec gry</value>
+	</string>
+	<string>
+		<id>19100</id>
+		<value>ZegarGeo</value>
 	</string>
 	<string>
 		<id>100000</id>
@@ -4936,5 +4964,89 @@
 	<string>
 		<id>4002</id>
 		<value>Nie mo¿na pobraæ URL</value>
+	</string>
+	<string>
+		<id>4003</id>
+		<value>Proszê ustawiæ folder ulubione w ustawieniach</value>
+	</string>
+	<string>
+		<id>4504</id>
+		<value>{0}% - {1} z {2}</value>
+	</string>
+	<string>
+		<id>4505</id>
+		<value>Wyszukiwanie {0}...</value>
+	</string>
+	<string>
+		<id>4506</id>
+		<value>[pusty]</value>
+	</string>
+	<string>
+		<id>4512</id>
+		<value>Wszystki ok³adki aktualne</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>Ró¿ne</value>
+	</string>
+	<string>
+		<id>4517</id>
+		<value>Zamknij</value>
+	</string>
+	<string>
+		<id>4518</id>
+		<value>Tytu³ albumu nieodnaleziony\r\nPróbujê: {0}</value>
+	</string>
+	<string>
+		<id>4520</id>
+		<value>Pomiñ</value>
+	</string>
+	<string>
+		<id>4521</id>
+		<value>Poka¿ info o albumie</value>
+	</string>
+	<string>
+		<id>4540</id>
+		<value>Obecny utwór</value>
+	</string>
+	<string>
+		<id>4541</id>
+		<value>Nastêpny utwór</value>
+	</string>
+	<string>
+		<id>4543</id>
+		<value>Informacje o ¶cie¿ce niedostêpne</value>
+	</string>
+	<string>
+		<id>4550</id>
+		<value>Kolejkuj</value>
+	</string>
+	<string>
+		<id>4551</id>
+		<value>Odtwarzaj nastêpny</value>
+	</string>
+	<string>
+		<id>4552</id>
+		<value>Odtwarzaj teraz</value>
+	</string>
+	<string>
+		<id>4553</id>
+		<value>Poka¿ liste odtwarzania</value>
+	</string>
+	<string>
+		<id>10100</id>
+		<value>Ukryte miny</value>
+	</string>
+	<string>
+		<id>10101</id>
+		<value>Czas gry</value>
+	</string>
+	<string>
+		<id>10102</id>
+		<value>Najszybszy czas</value>
+	</string>
+	<string>
+		<id>10103</id>
+		<value>Saper</value>
 	</string>
 </strings>

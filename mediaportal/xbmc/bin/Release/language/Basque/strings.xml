@@ -2171,7 +2171,7 @@
 	</string>
 	<string>
 		<id>705</id>
-		<value>RSS datuen bila </value>
+		<value>RSS datuen bila</value>
 	</string>
 	<string>
 		<id>706</id>
@@ -2879,7 +2879,155 @@
 	</string>
 	<string>
 		<id>979</id>
-		<da</value>
+		<value>Ikusi grabaketa hasieratik</value>
+	</string>
+	<string>
+		<id>980</id>
+		<value>Ikusi grabaketa orain dagoen puntutik</value>
+	</string>
+	<string>
+		<id>981</id>
+		<value>Show  hau gelditu</value>
+	</string>
+	<string>
+		<id>982</id>
+		<value>Ezabatu grabaketa osoa</value>
+	</string>
+	<string>
+		<id>983</id>
+		<value>Playlist-ak</value>
+	</string>
+	<string>
+		<id>984</id>
+		<value>Deskargatu filma zerrenda</value>
+	</string>
+	<string>
+		<id>985</id>
+		<value>Deskargatu filmen datuak</value>
+	</string>
+	<string>
+		<id>986</id>
+		<value>Aktorea deskargatzen</value>
+	</string>
+	<string>
+		<id>987</id>
+		<value>Urteak</value>
+	</string>
+	<string>
+		<id>988</id>
+		<value>Kalitatea</value>
+	</string>
+	<string>
+		<id>989</id>
+		<value>FPS</value>
+	</string>
+	<string>
+		<id>990</id>
+		<value>Bitrate</value>
+	</string>
+	<string>
+		<id>991</id>
+		<value>Lehentasuna</value>
+	</string>
+	<string>
+		<id>992</id>
+		<value>Fitxaegi originala ezabatu</value>
+	</string>
+	<string>
+		<id>993</id>
+		<value>Custom</value>
+	</string>
+	<string>
+		<id>994</id>
+		<value>Konprimaketa automatikoa ezarri</value>
+	</string>
+	<string>
+		<id>995</id>
+		<value>Zihur zaude konprimatu nahi duzula</value>
+	</string>
+	<string>
+		<id>996</id>
+		<value>aukeratutako grabaketa?</value>
+	</string>
+	<string>
+		<id>997</id>
+		<value>Eginda</value>
+	</string>
+	<string>
+		<id>998</id>
+		<value>XviD</value>
+	</string>
+	<string>
+		<id>999</id>
+		<value>Plugin honek aldatzeko zure Telebista grabaketak</value>
+	</string>
+	<string>
+		<id>1000</id>
+		<value>dvd-ms-tik mpg, xvif edo wmv-ra aldatzeko aukera ematen du</value>
+	</string>
+	<string>
+		<id>1001</id>
+		<value>Hartu kontuan. Elecard MPEG-2</value>
+	</string>
+	<string>
+		<id>1002</id>
+		<value>bideo enkoderra instalatuta behar duzu</value>
+	</string>
+	<string>
+		<id>1003</id>
+		<value>xvid-era aldatzeko</value>
+	</string>
+	<string>
+		<id>1004</id>
+		<value>Grabaketa hastera doa</value>
+	</string>
+	<string>
+		<id>1005</id>
+		<value>honako kanalean</value>
+	</string>
+	<string>
+		<id>1006</id>
+		<value>Baimendu grabaketa hastea</value>
+	</string>
+	<string>
+		<id>1007</id>
+		<value>Ezeztatu grabaketa eta jarraitu telebista ikusten</value>
+	</string>
+	<string>
+		<id>1008</id>
+		<value>Itxarote zerrenda</value>
+	</string>
+	<string>
+		<id>1009</id>
+		<value>Azala deskargatzen</value>
+	</string>
+	<string>
+		<id>1010</id>
+		<value>Ikusita</value>
+	</string>
+	<string>
+		<id>1011</id>
+		<value>Biografia</value>
+	</string>
+	<string>
+		<id>1012</id>
+		<value>Prorama hau geldituko du honek:</value>
+	</string>
+	<string>
+		<id>1013</id>
+		<value>Bigarren zatia ere grabatzea nahi duzu?</value>
+	</string>
+	<string>
+		<id>1014</id>
+		<value>Abixatu programa hasten denean</value>
+	</string>
+	<string>
+		<id>1015</id>
+		<value>Ez Abixatu programa hasten denean</value>
+	</string>
+	<string>
+		<id>1016</id>
+		<value>Programa 5 minututan hasten da</value>
 	</string>
 	<string>
 		<id>1017</id>

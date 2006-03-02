@@ -1778,6 +1778,10 @@
 		<value>Disg sain wedi ei mewnosod, ei hagor?</value>
 	</string>
 	<string>
+		<id>533</id>
+		<value>Canllaw</value>
+	</string>
+	<string>
 		<id>550</id>
 		<value>Tocio</value>
 	</string>
@@ -3166,6 +3170,10 @@
 		<value>Recordio Sad-Sul</value>
 	</string>
 	<string>
+		<id>1052</id>
+		<value>Caneuon</value>
+	</string>
+	<string>
 		<id>1100</id>
 		<value>Mewnforio CD</value>
 	</string>
@@ -3994,6 +4002,38 @@
 		<value>Rhagflas Almaenig</value>
 	</string>
 	<string>
+		<id>5918</id>
+		<value>Télévision Suisse Romande VOD</value>
+	</string>
+	<string>
+		<id>5919</id>
+		<value>Gorau&apos;r penwythnos</value>
+	</string>
+	<string>
+		<id>5920</id>
+		<value>Ffilmau&apos;n agor wythnos yma</value>
+	</string>
+	<string>
+		<id>5921</id>
+		<value>Ffilmiau ar eu ffordd</value>
+	</string>
+	<string>
+		<id>5922</id>
+		<value>DVD mwyaf poblogaidd</value>
+	</string>
+	<string>
+		<id>5923</id>
+		<value>Newydd ar DVD wythnos yma</value>
+	</string>
+	<string>
+		<id>5924</id>
+		<value>Newydd ar DVD wythnos nesaf</value>
+	</string>
+	<string>
+		<id>5925</id>
+		<value>Archebion DVD</value>
+	</string>
+	<string>
 		<id>8000</id>
 		<value>E-bost</value>
 	</string>
@@ -4712,9 +4752,6 @@
 	<string>
 		<id>102006</id>
 		<value>Delweddu Sain</value>
-	</stringng>
-		<id>102006</id>
-		<value>Delweddu Sain</value>
 	</string>
 	<string>
 		<id>102007</id>
@@ -4985,19 +5022,119 @@
 		<value>[Gwag]</value>
 	</string>
 	<string>
+		<id>4507</id>
+		<value>Atal y cipiwr cloriau gan y defnyddiwr</value>
+	</string>
+	<string>
+		<id>4508</id>
+		<value>Cwblhawyd cipoi cloriau&apos;n llwyddiannus</value>
+	</string>
+	<string>
+		<id>4509</id>
+		<value>Cwblhawyd y cipio cloriau gyda gwallau</value>
+	</string>
+	<string>
+		<id>4510</id>
+		<value>Diweddarwyd {0} delwedd clawr</value>
+	</string>
+	<string>
+		<id>4511</id>
+		<value>Cipiwr Cloriau wedi gorffen</value>
+	</string>
+	<string>
+		<id>4512</id>
+		<value>Pob clawr wedi ei ddiweddaru</value>
+	</string>
+	<string>
 		<id>4513</id>
 		<value>Amrywiol</value>
+	</string>
+	<string>
+		<id>4514</id>
+		<value>Cipiwr Celf Cloriau</value>
+	</string>
+	<string>
+		<id>4515</id>
+		<value>Canlyniadau cipio cloriau</value>
+	</string>
+	<string>
+		<id>4516</id>
+		<value>Heb ganfod celf cloriau</value>
 	</string>
 	<string>
 		<id>4517</id>
 		<value>Cau</value>
 	</string>
 	<string>
+		<id>4518</id>
+		<value>Heb ganfod teitl album\r\nCeisio: {0}</value>
+	</string>
+	<string>
+		<id>4519</id>
+		<value>Celf clawr presennol</value>
+	</string>
+	<string>
 		<id>4520</id>
 		<value>Hepgor</value>
 	</string>
 	<string>
+		<id>4521</id>
+		<value>Dangos gwybodaeth album</value>
+	</string>
+	<string>
 		<id>4522</id>
 		<value>Cipio: {0}...</value>
+	</string>
+	<string>
+		<id>4540</id>
+		<value>Nawr yn chwarae</value>
+	</string>
+	<string>
+		<id>4541</id>
+		<value>Chwarae nesaf</value>
+	</string>
+	<string>
+		<id>4542</id>
+		<value>Heb lwythoo rhestrau chwarae</value>
+	</string>
+	<string>
+		<id>4543</id>
+		<value>Dim gwybodaeth trac ar gael</value>
+	</string>
+	<string>
+		<id>4550</id>
+		<value>Gosod mewn ciw</value>
+	</string>
+	<string>
+		<id>4551</id>
+		<value>Chwarae nesaf</value>
+	</string>
+	<string>
+		<id>4552</id>
+		<value>Chwarae nawr</value>
+	</string>
+	<string>
+		<id>4553</id>
+		<value>Dangos rhestr chwarae</value>
+	</string>
+	<string>
+		<id>4554</id>
+		<value>Chwilio am wyb. CD</value>
+	</string>
+	<string>
+		<id>10100</id>
+		<value>Ffrwydron cudd</value>
+	</string>
+	<string>
+		<id>10101</id>
+		<value>Amser chwarae</value>
+	</string>
+	<string>
+		<id>10102</id>
+		<value>Amser cyflymaf</value>
+	</string>
+	<string>
+		<id>10103</id>
+		<value>Chwilio am ffrwydryn...</value>
 	</string>
 </strings>

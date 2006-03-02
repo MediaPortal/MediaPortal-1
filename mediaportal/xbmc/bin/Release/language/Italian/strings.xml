@@ -3166,6 +3166,10 @@
 		<value>Registra Sab-Dom</value>
 	</string>
 	<string>
+		<id>1052</id>
+		<value>Brani</value>
+	</string>
+	<string>
 		<id>1100</id>
 		<value>Importazione CD</value>
 	</string>
@@ -3992,6 +3996,38 @@
 	<string>
 		<id>5917</id>
 		<value>Trailer tedeschi (!)</value>
+	</string>
+	<string>
+		<id>5918</id>
+		<value>VOD Television Suisse Romande</value>
+	</string>
+	<string>
+		<id>5919</id>
+		<value>Botteghino del weekend</value>
+	</string>
+	<string>
+		<id>5920</id>
+		<value>Film in uscita questa settimana</value>
+	</string>
+	<string>
+		<id>5921</id>
+		<value>Film in uscita</value>
+	</string>
+	<string>
+		<id>5922</id>
+		<value>DVD più venduti</value>
+	</string>
+	<string>
+		<id>5923</id>
+		<value>Nuovi DVD di questa settimana</value>
+	</string>
+	<string>
+		<id>5924</id>
+		<value>Nuovi DVD della prossima settimana</value>
+	</string>
+	<string>
+		<id>5925</id>
+		<value>Ordinativi DVD</value>
 	</string>
 	<string>
 		<id>8000</id>
@@ -4952,5 +4988,121 @@
 	<string>
 		<id>4003</id>
 		<value>Per favore specifica una cartella preferiti nelle impostazioni</value>
+	</string>
+	<string>
+		<id>4500</id>
+		<value>Salta album con copertina esistente</value>
+	</string>
+	<string>
+		<id>4501</id>
+		<value>Salva copertina nella cartella dell&apos;album</value>
+	</string>
+	<string>
+		<id>4502</id>
+		<value>Salva copertina nella cartella miniature</value>
+	</string>
+	<string>
+		<id>4503</id>
+		<value>Sto recuperando il numero di album. Attendere...</value>
+	</string>
+	<string>
+		<id>4504</id>
+		<value>{0}% - {1} di {2}</value>
+	</string>
+	<string>
+		<id>4505</id>
+		<value>Ricerca {0}...</value>
+	</string>
+	<string>
+		<id>4506</id>
+		<value>[Vuoto]</value>
+	</string>
+	<string>
+		<id>4507</id>
+		<value>Recupero copertine fermato dall&apos;utente</value>
+	</string>
+	<string>
+		<id>4508</id>
+		<value>Recupero copertine completato.</value>
+	</string>
+	<string>
+		<id>4509</id>
+		<value>Recupero copertine completato con errori.</value>
+	</string>
+	<string>
+		<id>4510</id>
+		<value>{0} copertine aggiornate</value>
+	</string>
+	<string>
+		<id>4511</id>
+		<value>Recupero copertine completato</value>
+	</string>
+	<string>
+		<id>4512</id>
+		<value>Tutte le copertine sono aggiornate</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>Vari</value>
+	</string>
+	<string>
+		<id>4514</id>
+		<value>Recupero copertine</value>
+	</string>
+	<string>
+		<id>4515</id>
+		<value>Risultati della ricerca copertine</value>
+	</string>
+	<string>
+		<id>4516</id>
+		<value>Nessuna copertina trovata</value>
+	</string>
+	<string>
+		<id>4517</id>
+		<value>Chiudi</value>
+	</string>
+	<string>
+		<id>4518</id>
+		<value>Titolo album non trovato\r\nProvo con: {0}</value>
+	</string>
+	<string>
+		<id>4519</id>
+		<value>Copertina corrente</value>
+	</string>
+	<string>
+		<id>4520</id>
+		<value>Salta</value>
+	</string>
+	<string>
+		<id>4521</id>
+		<value>Mostra informazioni album</value>
+	</string>
+	<string>
+		<id>4522</id>
+		<value>Recupero: {0}...</value>
+	</string>
+	<string>
+		<id>4540</id>
+		<value>Riproduzione di</value>
+	</string>
+	<string>
+		<id>4541</id>
+		<value>Riproduci il prossimo</value>
+	</string>
+	<string>
+		<id>4542</id>
+		<value>Nessuna playlist caricata</value>
+	</string>
+	<string>
+		<id>4543</id>
+		<value>Informazioni sulla traccia non disponibili</value>
+	</string>
+	<string>
+		<id>10100</id>
+		<value>Mine nascoste (?)</value>
+	</string>
+	<string>
+		<id>10101</id>
+		<value>Tempo brano</value>
 	</string>
 </strings>

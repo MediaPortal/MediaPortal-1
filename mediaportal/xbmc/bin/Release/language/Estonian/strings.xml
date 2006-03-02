@@ -231,7 +231,7 @@
 	</string>
 	<string>
 		<id>126</id>
-		<value>Staatus</value>
+		<value>Olek</value>
 	</string>
 	<string>
 		<id>127</id>
@@ -959,7 +959,7 @@
 	</string>
 	<string>
 		<id>310</id>
-		<value>Auto brightness/contrast</value>
+		<value>Automaatne heledus/kontrast</value>
 	</string>
 	<string>
 		<id>311</id>
@@ -987,7 +987,7 @@
 	</string>
 	<string>
 		<id>317</id>
-		<value>RKorrastamine õnnestus</value>
+		<value>Korrastamine õnnestus</value>
 	</string>
 	<string>
 		<id>318</id>
@@ -1274,6 +1274,14 @@
 		<value>ja</value>
 	</string>
 	<string>
+		<id>389</id>
+		<value>Udu</value>
+	</string>
+	<string>
+		<id>391</id>
+		<value>Tuuline</value>
+	</string>
+	<string>
 		<id>396</id>
 		<value>Mära asukoht</value>
 	</string>
@@ -1371,7 +1379,7 @@
 	</string>
 	<string>
 		<id>421</id>
-		<value>Videod/Tiitel</value>
+		<value>Videod/Pealkiri</value>
 	</string>
 	<string>
 		<id>422</id>
@@ -1654,6 +1662,10 @@
 		<value>Kasuta suuri ikoone</value>
 	</string>
 	<string>
+		<id>492</id>
+		<value>Heli keel</value>
+	</string>
+	<string>
 		<id>493</id>
 		<value>Näitleja:</value>
 	</string>
@@ -1662,8 +1674,16 @@
 		<value>Faili menüü</value>
 	</string>
 	<string>
+		<id>502</id>
+		<value>Võimatu lõpetada tegevust</value>
+	</string>
+	<string>
 		<id>503</id>
 		<value>Kustuta see kaust</value>
+	</string>
+	<string>
+		<id>504</id>
+		<value>Mine sihtkohta</value>
 	</string>
 	<string>
 		<id>505</id>
@@ -1678,6 +1698,10 @@
 		<value>kirjed</value>
 	</string>
 	<string>
+		<id>509</id>
+		<value>Sihtfail on olemas. Kirjutada fail üle?</value>
+	</string>
+	<string>
 		<id>510</id>
 		<value>Katkesta</value>
 	</string>
@@ -1690,8 +1714,36 @@
 		<value>Mitte kunagi</value>
 	</string>
 	<string>
+		<id>513</id>
+		<value>Kirje on kaitstud, tegevus lõpetamata</value>
+	</string>
+	<string>
+		<id>514</id>
+		<value>Viga kausta tekitamisel, tegevus lõpetamata</value>
+	</string>
+	<string>
+		<id>515</id>
+		<value>Viga kausta kustutamisel, tegevus lõpetamata</value>
+	</string>
+	<string>
 		<id>518</id>
 		<value>Kustutada see laul?</value>
+	</string>
+	<string>
+		<id>530</id>
+		<value>Fotodega ketas sisestatud, kas soovid seda avada?</value>
+	</string>
+	<string>
+		<id>531</id>
+		<value>Filmidega ketas sisestatud, kas soovid seda avada?</value>
+	</string>
+	<string>
+		<id>532</id>
+		<value>Audiofailidega ketas sisestatud, soovid seda avada?</value>
+	</string>
+	<string>
+		<id>550</id>
+		<value>Lõika</value>
 	</string>
 	<string>
 		<id>600</id>
@@ -1871,31 +1923,31 @@
 	</string>
 	<string>
 		<id>644</id>
-		<value>Sorting TV programs</value>
+		<value>TV programmide sorteerimine</value>
 	</string>
 	<string>
 		<id>645</id>
-		<value>Loading XML file</value>
+		<value>Laadin XML faili</value>
 	</string>
 	<string>
 		<id>646</id>
-		<value>Scheduled recordings</value>
+		<value>Ajastatud salvestused</value>
 	</string>
 	<string>
 		<id>647</id>
-		<value>Once</value>
+		<value>Üks kord</value>
 	</string>
 	<string>
 		<id>648</id>
-		<value>Daily</value>
+		<value>Päeviti</value>
 	</string>
 	<string>
 		<id>649</id>
-		<value>Every</value>
+		<value>Iga</value>
 	</string>
 	<string>
 		<id>650</id>
-		<value>Everytime on this channel</value>
+		<value>Igakord sellel kanalil</value>
 	</string>
 	<string>
 		<id>651</id>
@@ -1903,11 +1955,11 @@
 	</string>
 	<string>
 		<id>652</id>
-		<value>Recorded TV</value>
+		<value>Salvestatud TV</value>
 	</string>
 	<string>
 		<id>653</id>
-		<value>Delete this recording?</value>
+		<value>Kustutada see salvestis?</value>
 	</string>
 	<string>
 		<id>654</id>
@@ -1923,35 +1975,35 @@
 	</string>
 	<string>
 		<id>657</id>
-		<value>Mon</value>
+		<value>Esmasp</value>
 	</string>
 	<string>
 		<id>658</id>
-		<value>Tue</value>
+		<value>Teisip</value>
 	</string>
 	<string>
 		<id>659</id>
-		<value>Wed</value>
+		<value>Kolmap</value>
 	</string>
 	<string>
 		<id>660</id>
-		<value>Thu</value>
+		<value>Neljap</value>
 	</string>
 	<string>
 		<id>661</id>
-		<value>Fri</value>
+		<value>Reede</value>
 	</string>
 	<string>
 		<id>662</id>
-		<value>Sat</value>
+		<value>Laup</value>
 	</string>
 	<string>
 		<id>663</id>
-		<value>Sun</value>
+		<value>Pühap</value>
 	</string>
 	<string>
 		<id>664</id>
-		<value>Delete this picture?</value>
+		<value>Kustutada see pilt?</value>
 	</string>
 	<string>
 		<id>665</id>
@@ -2210,6 +2262,10 @@
 		<value>No TVGuide data available</value>
 	</string>
 	<string>
+		<id>737</id>
+		<value>Satelliit</value>
+	</string>
+	<string>
 		<id>738</id>
 		<value>Vaade: temperatuur</value>
 	</string>
@@ -2256,6 +2312,10 @@
 	<string>
 		<id>750</id>
 		<value>Pildid</value>
+	</string>
+	<string>
+		<id>751</id>
+		<value>Näita kõiki laule sellelt artistilt</value>
 	</string>
 	<string>
 		<id>800</id>
@@ -2382,8 +2442,32 @@
 		<value>NewAlarm</value>
 	</string>
 	<string>
+		<id>872</id>
+		<value>Algab koos</value>
+	</string>
+	<string>
+		<id>873</id>
+		<value>TV Show</value>
+	</string>
+	<string>
+		<id>874</id>
+		<value>Episood</value>
+	</string>
+	<string>
 		<id>875</id>
 		<value>Praegune saade</value>
+	</string>
+	<string>
+		<id>876</id>
+		<value>Käsitsi peatamiseni</value>
+	</string>
+	<string>
+		<id>877</id>
+		<value>Prioriteedid</value>
+	</string>
+	<string>
+		<id>879</id>
+		<value>Salvestamise konflikt</value>
 	</string>
 	<string>
 		<id>882</id>
@@ -2406,12 +2490,24 @@
 		<value>Vaikimisi</value>
 	</string>
 	<string>
+		<id>888</id>
+		<value>Episoodide haldur</value>
+	</string>
+	<string>
+		<id>889</id>
+		<value>Kõik episoodid</value>
+	</string>
+	<string>
 		<id>890</id>
 		<value>Taasesita CDd</value>
 	</string>
 	<string>
 		<id>891</id>
 		<value>Vali TV kanal</value>
+	</string>
+	<string>
+		<id>892</id>
+		<value>Konfliktid</value>
 	</string>
 	<string>
 		<id>897</id>
@@ -2463,7 +2559,7 @@
 	</string>
 	<string>
 		<id>909</id>
-		<value>Connecting...</value>
+		<value>Ühendan...</value>
 	</string>
 	<string>
 		<id>910</id>
@@ -2676,6 +2772,110 @@
 	<string>
 		<id>970</id>
 		<value>Previous window</value>
+	</string>
+	<string>
+		<id>971</id>
+		<value>Grupp</value>
+	</string>
+	<string>
+		<id>972</id>
+		<value>Kõik kanalid</value>
+	</string>
+	<string>
+		<id>974</id>
+		<value>Juurmenüü</value>
+	</string>
+	<string>
+		<id>979</id>
+		<value>Taasesita salvestist algusest</value>
+	</string>
+	<string>
+		<id>982</id>
+		<value>Kustuta terve see salvestis</value>
+	</string>
+	<string>
+		<id>983</id>
+		<value>Taasesituse nimekirjad</value>
+	</string>
+	<string>
+		<id>986</id>
+		<value>Laadin näitlejat</value>
+	</string>
+	<string>
+		<id>987</id>
+		<value>Aastad</value>
+	</string>
+	<string>
+		<id>988</id>
+		<value>Kvaliteet</value>
+	</string>
+	<string>
+		<id>991</id>
+		<value>Prioriteet</value>
+	</string>
+	<string>
+		<id>996</id>
+		<value>valitud salvestused?</value>
+	</string>
+	<string>
+		<id>997</id>
+		<value>Täidetud</value>
+	</string>
+	<string>
+		<id>998</id>
+		<value>XviD</value>
+	</string>
+	<string>
+		<id>1005</id>
+		<value>kanalil</value>
+	</string>
+	<string>
+		<id>1006</id>
+		<value>Luba salvestusel alata</value>
+	</string>
+	<string>
+		<id>1010</id>
+		<value>Vaadatud</value>
+	</string>
+	<string>
+		<id>1011</id>
+		<value>Biograafia</value>
+	</string>
+	<string>
+		<id>1017</id>
+		<value>Sorteerimine: kestus</value>
+	</string>
+	<string>
+		<id>1020</id>
+		<value>Info</value>
+	</string>
+	<string>
+		<id>1021</id>
+		<value>Vajuta Alt+Enter et</value>
+	</string>
+	<string>
+		<id>1023</id>
+		<value>Sissetulev kõne</value>
+	</string>
+	<string>
+		<id>1024</id>
+		<value>kellelt</value>
+	</string>
+	<string>
+		<id>1026</id>
+		<value>Detailide jjaoks vaata logifaili.</value>
+	</string>
+	<string>
+		<id>1027</id>
+		<value>DVD</value>
+	</string>
+	<string>
+		<id>1028</id>
+		<value>Linn</value>
+	</string>
+	<string>
+		<id>1029</id>
+		<value>Subtiitrite keel</value>
 	</string>
 	<string>
 		<id>1440</id>
@@ -3127,34 +3327,6 @@
 	</string>
 	<string>
 		<id>2216</id>
-		<value>Files moved!</value>
-	</string>
-	<string>
-		<id>8000</id>
-		<value>My Mail</value>
-	</string>
-	<string>
-		<id>8001</id>
-		<value>Check Mailbox</value>
-	</string>
-	<string>
-		<id>8002</id>
-		<value>Autocheck off</value>
-	</string>
-	<string>
-		<id>8003</id>
-		<value>Autocheck on</value>
-	</string>
-	<string>
-		<id>8004</id>
-		<value>You have new Mail!</value>
-	</string>
-	<string>
-		<id>8005</id>
-		<value>Refreshing Mailbox</value>
-	</string>
-	<string>
-		id>
 		<value>Files moved!</value>
 	</string>
 	<string>

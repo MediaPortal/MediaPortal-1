@@ -167,7 +167,7 @@
 	</string>
 	<string>
 		<id>110</id>
-		<value>Resim simgelerini oluþturma</value>
+		<value>Ýþaretçi Resim oluþturma</value>
 	</string>
 	<string>
 		<id>111</id>
@@ -639,11 +639,11 @@
 	</string>
 	<string>
 		<id>228</id>
-		<value>Yüklerken Oynatma Listesini Karýþtýr</value>
+		<value>Yüklemede Oynatma Listesini Karýþtýr</value>
 	</string>
 	<string>
 		<id>229</id>
-		<value>HD aský süresi (dakika)</value>
+		<value>HD aský süresi (dk)</value>
 	</string>
 	<string>
 		<id>230</id>
@@ -711,7 +711,7 @@
 	</string>
 	<string>
 		<id>247</id>
-		<value>Script&apos;ler</value>
+		<value>Scriptler</value>
 	</string>
 	<string>
 		<id>248</id>
@@ -747,7 +747,7 @@
 	</string>
 	<string>
 		<id>256</id>
-		<value>CDDB (compact disk verisi) sorgulama</value>
+		<value>CDDB  bilgisi sorgulanýyor</value>
 	</string>
 	<string>
 		<id>257</id>
@@ -839,15 +839,15 @@
 	</string>
 	<string>
 		<id>279</id>
-		<value>Öntanýmlý yükleme  ile</value>
+		<value>Ayarlar öntanýmlý</value>
 	</string>
 	<string>
 		<id>280</id>
-		<value>ayarlar yüklenemiyor</value>
+		<value>seçenekler ile yüklenemedi</value>
 	</string>
 	<string>
 		<id>281</id>
-		<value>Lütfen .xml dosyasýný kontrol ediniz</value>
+		<value>Lütfen .xml dosyalarýna bakýnýz</value>
 	</string>
 	<string>
 		<id>282</id>
@@ -883,7 +883,7 @@
 	</string>
 	<string>
 		<id>290</id>
-		<value>Ses þiddeti (dB)</value>
+		<value>Ses amplifikasyonu (dB)</value>
 	</string>
 	<string>
 		<id>291</id>
@@ -947,7 +947,7 @@
 	</string>
 	<string>
 		<id>306</id>
-		<value>Non-Interleaved</value>
+		<value>Aralýksýz</value>
 	</string>
 	<string>
 		<id>307</id>
@@ -959,7 +959,7 @@
 	</string>
 	<string>
 		<id>309</id>
-		<value>düþey deblocking filtresi</value>
+		<value>yatay deblocking filtresi</value>
 	</string>
 	<string>
 		<id>310</id>
@@ -1115,11 +1115,11 @@
 	</string>
 	<string>
 		<id>348</id>
-		<value>Dizin Hiyeralþini Düzleþtir</value>
+		<value>Dizin Hiyeralþisini Düzleþtir</value>
 	</string>
 	<string>
 		<id>349</id>
-		<value>Yalnýz geçerli .xbe&apos;yi göster</value>
+		<value>Sadece öntanýmlý .xbe  göster</value>
 	</string>
 	<string>
 		<id>350</id>
@@ -1143,7 +1143,7 @@
 	</string>
 	<string>
 		<id>355</id>
-		<value>Ekran Koruyucu için zaman aþýmý</value>
+		<value>Ekran Koruyucu zaman aþýmý</value>
 	</string>
 	<string>
 		<id>356</id>
@@ -1151,7 +1151,7 @@
 	</string>
 	<string>
 		<id>357</id>
-		<value>Kapatma için Zaman Aþýmý</value>
+		<value>Kapatma Zaman Aþýmý</value>
 	</string>
 	<string>
 		<id>358</id>
@@ -1195,7 +1195,7 @@
 	</string>
 	<string>
 		<id>368</id>
-		<value>IMDB (Internet Film Bilgisi)</value>
+		<value>IMDB</value>
 	</string>
 	<string>
 		<id>369</id>
@@ -1311,11 +1311,11 @@
 	</string>
 	<string>
 		<id>398</id>
-		<value>Sýcaklýk Ölçü Birimi</value>
+		<value>Sýcaklýk Birimi</value>
 	</string>
 	<string>
 		<id>399</id>
-		<value>Hýz Ölçü Birimi</value>
+		<value>Hýz Birimi</value>
 	</string>
 	<string>
 		<id>400</id>
@@ -1355,7 +1355,7 @@
 	</string>
 	<string>
 		<id>410</id>
-		<value>Weather.com&apos;a Giriliyor</value>
+		<value>Weather.com aranýyor</value>
 	</string>
 	<string>
 		<id>411</id>
@@ -1375,7 +1375,7 @@
 	</string>
 	<string>
 		<id>415</id>
-		<value>Simgesel imajlar indiriliyor...</value>
+		<value>Ýþaretçi resimler indiriliyor...</value>
 	</string>
 	<string>
 		<id>416</id>
@@ -1587,7 +1587,7 @@
 	</string>
 	<string>
 		<id>468</id>
-		<value>Osd pozisyonunu deðiþtirmek için barý taþýyýn</value>
+		<value>Osd pozisyonunu deðiþtirmek için çubuðu taþýyýn</value>
 	</string>
 	<string>
 		<id>469</id>
@@ -1743,7 +1743,7 @@
 	</string>
 	<string>
 		<id>513</id>
-		<value>Ýþlem tamamlanamýyor</value>
+		<value>Korunmalý nesne, eylem baþarýsýz oldu</value>
 	</string>
 	<string>
 		<id>514</id>
@@ -1879,11 +1879,11 @@
 	</string>
 	<string>
 		<id>624</id>
-		<value>Programalama Silme</value>
+		<value>Kaldýr</value>
 	</string>
 	<string>
 		<id>625</id>
-		<value>Silinen Programlama Sayýsý:</value>
+		<value>Kaldýrýlan Programlama:</value>
 	</string>
 	<string>
 		<id>626</id>
@@ -1903,11 +1903,11 @@
 	</string>
 	<string>
 		<id>630</id>
-		<value>Yeniden baþlatmak istiyor musunuz?</value>
+		<value>Yeniden baþlatmak istiyormusunuz?</value>
 	</string>
 	<string>
 		<id>631</id>
-		<value>Kapatmak istiyor misiniz?</value>
+		<value>Kapatmak istiyormusunuz?</value>
 	</string>
 	<string>
 		<id>632</id>
@@ -2051,7 +2051,7 @@
 	</string>
 	<string>
 		<id>667</id>
-		<value>Kanalý otomatik aç</value>
+		<value>Otomatik Ayar</value>
 	</string>
 	<string>
 		<id>668</id>
@@ -2119,7 +2119,7 @@
 	</string>
 	<string>
 		<id>684</id>
-		<value>Ýptal edildi</value>
+		<value>Vazgeçildi</value>
 	</string>
 	<string>
 		<id>685</id>
@@ -2223,7 +2223,7 @@
 	</string>
 	<string>
 		<id>718</id>
-		<value>Top 100&apos;ü temizle</value>
+		<value>Top 100 ü temizle</value>
 	</string>
 	<string>
 		<id>719</id>
@@ -2355,19 +2355,19 @@
 	</string>
 	<string>
 		<id>800</id>
-		<value>Starts with</value>
+		<value>Baþlama</value>
 	</string>
 	<string>
 		<id>801</id>
-		<value>Contains</value>
+		<value>Ýçerik</value>
 	</string>
 	<string>
 		<id>802</id>
-		<value>Ends with</value>
+		<value>Bitiþ</value>
 	</string>
 	<string>
 		<id>803</id>
-		<value>is</value>
+		<value>:</value>
 	</string>
 	<string>
 		<id>804</id>
@@ -2383,7 +2383,7 @@
 	</string>
 	<string>
 		<id>807</id>
-		<value>Yield</value>
+		<value>Verim</value>
 	</string>
 	<string>
 		<id>808</id>
@@ -2623,11 +2623,11 @@
 	</string>
 	<string>
 		<id>906</id>
-		<value>e-mail adresinizi plugin ayarlarýna kaydetmeniz gerekli.</value>
+		<value>e-mail adresinizi plugin ayarlarýna kaydediniz.</value>
 	</string>
 	<string>
 		<id>907</id>
-		<value>MSN&apos;ye baðlanýlamadý</value>
+		<value>MSN baðlantýsý baþarýsýz</value>
 	</string>
 	<string>
 		<id>908</id>
@@ -2647,11 +2647,11 @@
 	</string>
 	<string>
 		<id>912</id>
-		<value>Haber alýnamýyor</value>
+		<value>Haberler alýnamýyor</value>
 	</string>
 	<string>
 		<id>913</id>
-		<value>Plugin&apos;ler</value>
+		<value>Eklentiler</value>
 	</string>
 	<string>
 		<id>914</id>
@@ -2711,7 +2711,7 @@
 	</string>
 	<string>
 		<id>928</id>
-		<value>Grafiksel kapak bul</value>
+		<value>Kapak bul</value>
 	</string>
 	<string>
 		<id>929</id>
@@ -2735,7 +2735,7 @@
 	</string>
 	<string>
 		<id>934</id>
-		<value>Reytin belirle</value>
+		<value>Reyting ayarla</value>
 	</string>
 	<string>
 		<id>935</id>
@@ -2747,7 +2747,7 @@
 	</string>
 	<string>
 		<id>937</id>
-		<value>TV Rehberi alýmý</value>
+		<value>TV Rehberi Al</value>
 	</string>
 	<string>
 		<id>938</id>
@@ -2863,7 +2863,7 @@
 	</string>
 	<string>
 		<id>974</id>
-		<value>Ana Mönü</value>
+		<value>Kök Mönü</value>
 	</string>
 	<string>
 		<id>975</id>
@@ -2891,7 +2891,7 @@
 	</string>
 	<string>
 		<id>981</id>
-		<value>Ýptal et</value>
+		<value>Gösterimi Ýptal et</value>
 	</string>
 	<string>
 		<id>982</id>
@@ -2995,7 +2995,7 @@
 	</string>
 	<string>
 		<id>1007</id>
-		<value>Kaydý iptal et ve TV&apos;yi izlemeye devam et</value>
+		<value>Kaydý iptal et ve TV  izlemeye devam et</value>
 	</string>
 	<string>
 		<id>1008</id>
@@ -3003,7 +3003,7 @@
 	</string>
 	<string>
 		<id>1009</id>
-		<value>Grafiksel Kapak indiriliyor</value>
+		<value>Kapak indiriliyor</value>
 	</string>
 	<string>
 		<id>1010</id>
@@ -3043,7 +3043,7 @@
 	</string>
 	<string>
 		<id>1021</id>
-		<value>Alt+Enter&apos;a basarak</value>
+		<value>Alt+Enter  basarak</value>
 	</string>
 	<string>
 		<id>1022</id>
@@ -3095,7 +3095,7 @@
 	</string>
 	<string>
 		<id>1034</id>
-		<value>Sinyal yok</value>
+		<value>Sinyal yok!</value>
 	</string>
 	<string>
 		<id>1035</id>
@@ -3179,7 +3179,7 @@
 	</string>
 	<string>
 		<id>1102</id>
-		<value>CD&apos;den almayý iptal et.</value>
+		<value>CD aktarýmýndan vazgeç</value>
 	</string>
 	<string>
 		<id>1103</id>
@@ -3539,11 +3539,11 @@
 	</string>
 	<string>
 		<id>2051</id>
-		<value>Baþlýk ara</value>
+		<value>Baþlýklarda ara</value>
 	</string>
 	<string>
 		<id>2052</id>
-		<value>Tarif ara</value>
+		<value>Tariflerde ara</value>
 	</string>
 	<string>
 		<id>2053</id>
@@ -3563,7 +3563,7 @@
 	</string>
 	<string>
 		<id>2102</id>
-		<value>Ses CD&apos;i oluþtur</value>
+		<value>Ses CD si oluþtur</value>
 	</string>
 	<string>
 		<id>2103</id>
@@ -3591,7 +3591,7 @@
 	</string>
 	<string>
 		<id>2109</id>
-		<value>daha sonra Ok&apos;e basýn</value>
+		<value>daha sonra Ok e basýn</value>
 	</string>
 	<string>
 		<id>2110</id>
@@ -3711,7 +3711,7 @@
 	</string>
 	<string>
 		<id>2139</id>
-		<value>MP-3 CD&apos;i oluþtur</value>
+		<value>MP-3 CD si oluþtur</value>
 	</string>
 	<string>
 		<id>2140</id>
@@ -3998,6 +3998,38 @@
 		<value>Alman Fragmanlar</value>
 	</string>
 	<string>
+		<id>5918</id>
+		<value>Télévision Suisse Romande VOD</value>
+	</string>
+	<string>
+		<id>5919</id>
+		<value>Haftasonu Ofis Kutusu</value>
+	</string>
+	<string>
+		<id>5920</id>
+		<value>Bu haftasonu baþlayan filmler</value>
+	</string>
+	<string>
+		<id>5921</id>
+		<value>Gelecek gösterimler</value>
+	</string>
+	<string>
+		<id>5922</id>
+		<value>En çok satan DVDler</value>
+	</string>
+	<string>
+		<id>5923</id>
+		<value>Bu haftaki son DVD</value>
+	</string>
+	<string>
+		<id>5924</id>
+		<value>Glecek haftaki DVD</value>
+	</string>
+	<string>
+		<id>5925</id>
+		<value>DVD ön spariþ</value>
+	</string>
+	<string>
 		<id>8000</id>
 		<value>Posta</value>
 	</string>
@@ -4099,7 +4131,7 @@
 	</string>
 	<string>
 		<id>8030</id>
-		<value>server için baðlandý</value>
+		<value>sunucuya baðlandý</value>
 	</string>
 	<string>
 		<id>8031</id>
@@ -4719,7 +4751,15 @@
 	</string>
 	<string>
 		<id>102007</id>
-		<value>Resim / Slayt Göstlue>
+		<value>Resim / Slayt Gösterisi</value>
+	</string>
+	<string>
+		<id>102008</id>
+		<value>Yýðýn diyaloðu</value>
+	</string>
+	<string>
+		<id>102009</id>
+		<value>Seçme diyaloðu</value>
 	</string>
 	<string>
 		<id>102010</id>
@@ -4899,11 +4939,15 @@
 	</string>
 	<string>
 		<id>200029</id>
-		<value>MediaPortal tam ekran modunda baþlasýn mý?</value>
+		<value>MediaPotalý nasýl kullanacaksýnýz?</value>
 	</string>
 	<string>
 		<id>200030</id>
-		<value>MediaPortal PC açýlýþýnda otomatik çalýþsýn mý?</value>
+		<value>Kendi bilgisayrýmda</value>
+	</string>
+	<string>
+		<id>200038</id>
+		<value>Diðer uygulamalara baðlý ortak bilgisayarda</value>
 	</string>
 	<string>
 		<id>200031</id>
@@ -5032,6 +5076,50 @@
 	<string>
 		<id>4520</id>
 		<value>Atla</value>
+	</string>
+	<string>
+		<id>4521</id>
+		<value>Albüm bilgisini göster</value>
+	</string>
+	<string>
+		<id>4522</id>
+		<value>Yakalama: {0}...</value>
+	</string>
+	<string>
+		<id>4540</id>
+		<value>Þimdi Çalýnýyor</value>
+	</string>
+	<string>
+		<id>4541</id>
+		<value>Sonraki Çalýnýyor</value>
+	</string>
+	<string>
+		<id>4542</id>
+		<value>Oynatma Listesi yüklenmedi</value>
+	</string>
+	<string>
+		<id>4543</id>
+		<value>Parça bilgisine eriþelemiyor</value>
+	</string>
+	<string>
+		<id>4550</id>
+		<value>Kuyruða al</value>
+	</string>
+	<string>
+		<id>4551</id>
+		<value>Sonrakini çal</value>
+	</string>
+	<string>
+		<id>4552</id>
+		<value>Þimdi çal</value>
+	</string>
+	<string>
+		<id>4553</id>
+		<value>Oynatma listesini göster</value>
+	</string>
+	<string>
+		<id>4554</id>
+		<value>CD bilgisine gözat</value>
 	</string>
 	<string>
 		<id>10100</id>

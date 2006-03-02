@@ -271,7 +271,7 @@
 	</string>
 	<string>
 		<id>136</id>
-		<value>Soittolistat</value>
+		<value>Soittolista</value>
 	</string>
 	<string>
 		<id>137</id>
@@ -1778,6 +1778,10 @@
 		<value>Haluatko avata CD:n?</value>
 	</string>
 	<string>
+		<id>533</id>
+		<value>Open</value>
+	</string>
+	<string>
 		<id>550</id>
 		<value>Rajaa</value>
 	</string>
@@ -2259,7 +2263,7 @@
 	</string>
 	<string>
 		<id>727</id>
-		<value>Elävä TV taustalle</value>
+		<value>TV kuva taustalle</value>
 	</string>
 	<string>
 		<id>728</id>
@@ -2267,7 +2271,7 @@
 	</string>
 	<string>
 		<id>729</id>
-		<value>Tarkista käytätkö VMR9:ää sekä käynnistä soitto</value>
+		<value>Tarkista käytätkö VMR9:ää sekä käynnistä toisto</value>
 	</string>
 	<string>
 		<id>730</id>
@@ -2959,7 +2963,7 @@
 	</string>
 	<string>
 		<id>998</id>
-		<value>XVID</value>
+		<value>XviD</value>
 	</string>
 	<string>
 		<id>999</id>
@@ -3998,6 +4002,38 @@
 		<value>Saksalaiset trailerit</value>
 	</string>
 	<string>
+		<id>5918</id>
+		<value>Video On Demand (Sveitsin TV)</value>
+	</string>
+	<string>
+		<id>5919</id>
+		<value>Lippukassa</value>
+	</string>
+	<string>
+		<id>5920</id>
+		<value>Uutuudet tällä viikolla</value>
+	</string>
+	<string>
+		<id>5921</id>
+		<value>Tulossa olevat</value>
+	</string>
+	<string>
+		<id>5922</id>
+		<value>Myydyimmät DVD:t</value>
+	</string>
+	<string>
+		<id>5923</id>
+		<value>Tämän viikon DVD uutuudet</value>
+	</string>
+	<string>
+		<id>5924</id>
+		<value>Ensi viikon DVD uutuudet</value>
+	</string>
+	<string>
+		<id>5925</id>
+		<value>DVD esitilaus</value>
+	</string>
+	<string>
 		<id>8000</id>
 		<value>Sähköposti</value>
 	</string>
@@ -4931,7 +4967,7 @@
 	</string>
 	<string>
 		<id>200035</id>
-		<value>HUOM: Jos kaupunkiasi ei ole merkitty. tee viritys manuaalisesti.</value>
+		<value>HUOM: Jos kaupunkiasi ei ole merkitty. Tee viritys manuaalisesti.</value>
 	</string>
 	<string>
 		<id>200036</id>
@@ -4956,5 +4992,149 @@
 	<string>
 		<id>4003</id>
 		<value>Määritä suosikit kansion sijainti.</value>
+	</string>
+	<string>
+		<id>4500</id>
+		<value>Ohita albumit joilla on jo kansikuvat</value>
+	</string>
+	<string>
+		<id>4501</id>
+		<value>Tallenna kansikuva albumin kansioon</value>
+	</string>
+	<string>
+		<id>4502</id>
+		<value>Tallenna kansikuva minikuvat kansioon</value>
+	</string>
+	<string>
+		<id>4503</id>
+		<value>Lasketaan albumit. Hetkinen ...</value>
+	</string>
+	<string>
+		<id>4504</id>
+		<value>{0}% - {1} / {2}</value>
+	</string>
+	<string>
+		<id>4505</id>
+		<value>Haetaan {0} ...</value>
+	</string>
+	<string>
+		<id>4506</id>
+		<value>Tyhjä</value>
+	</string>
+	<string>
+		<id>4507</id>
+		<value>Kansikuvan haku keskeytetty</value>
+	</string>
+	<string>
+		<id>4508</id>
+		<value>Kansikuvan haku onnistui</value>
+	</string>
+	<string>
+		<id>4509</id>
+		<value>Kansikuvan haku keskeytyi virheeseen</value>
+	</string>
+	<string>
+		<id>4510</id>
+		<value>{0} kansikuvaa haettu</value>
+	</string>
+	<string>
+		<id>4511</id>
+		<value>Kansikuvien haku valmis</value>
+	</string>
+	<string>
+		<id>4512</id>
+		<value>Kaikki kansikuvat ajantasalla</value>
+	</string>
+	<string>
+		<id>4513</id>
+		<value>sekalaiset</value>
+	</string>
+	<string>
+		<id>4514</id>
+		<value>Kansikuvien haku</value>
+	</string>
+	<string>
+		<id>4515</id>
+		<value>Kansikuvien etsinnän tulokset</value>
+	</string>
+	<string>
+		<id>4516</id>
+		<value>Sopivaa kansikuvaa ei löytynyt</value>
+	</string>
+	<string>
+		<id>4517</id>
+		<value>Sulje</value>
+	</string>
+	<string>
+		<id>4518</id>
+		<value>Albumin nimeä ei löytynyt \r\n</value>
+	</string>
+	<string>
+		<id>4519</id>
+		<value>Tämänhetkinen kansikuva</value>
+	</string>
+	<string>
+		<id>4520</id>
+		<value>Ohita</value>
+	</string>
+	<string>
+		<id>4521</id>
+		<value>Näytä albumin tiedot</value>
+	</string>
+	<string>
+		<id>4522</id>
+		<value>Hakee: {0}</value>
+	</string>
+	<string>
+		<id>4540</id>
+		<value>Nyt soi</value>
+	</string>
+	<string>
+		<id>4541</id>
+		<value>Seuraavana</value>
+	</string>
+	<string>
+		<id>4542</id>
+		<value>Ei soittolistaa</value>
+	</string>
+	<string>
+		<id>4543</id>
+		<value>Raidan tietoja ei ole saatavilla</value>
+	</string>
+	<string>
+		<id>4550</id>
+		<value>Laita jonoon</value>
+	</string>
+	<string>
+		<id>4551</id>
+		<value>Soita seuraavaksi</value>
+	</string>
+	<string>
+		<id>4552</id>
+		<value>Soita nyt</value>
+	</string>
+	<string>
+		<id>4553</id>
+		<value>Näytä soittolista</value>
+	</string>
+	<string>
+		<id>4554</id>
+		<value>Hae CD:n tiedot</value>
+	</string>
+	<string>
+		<id>10100</id>
+		<value>Miinaa piilossa</value>
+	</string>
+	<string>
+		<id>10101</id>
+		<value>Peliaika</value>
+	</string>
+	<string>
+		<id>10102</id>
+		<value>Nopein aika</value>
+	</string>
+	<string>
+		<id>10103</id>
+		<value>Miinaharava</value>
 	</string>
 </strings>

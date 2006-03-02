@@ -814,16 +814,32 @@
 		<value>Търся песни...</value>
 	</string>
 	<string>
+		<id>317</id>
+		<value>Реорганизацията успешна</value>
+	</string>
+	<string>
 		<id>318</id>
 		<value>Отбелязване на изтритите песни</value>
+	</string>
+	<string>
+		<id>319</id>
+		<value>Грешка при реорганизация на песните</value>
 	</string>
 	<string>
 		<id>320</id>
 		<value>Търся артисти...</value>
 	</string>
 	<string>
+		<id>321</id>
+		<value>Грешка при реорганизация на артистите</value>
+	</string>
+	<string>
 		<id>322</id>
 		<value>Търся жанрове...</value>
+	</string>
+	<string>
+		<id>323</id>
+		<value>Грешка при реорганизация на жанровете</value>
 	</string>
 	<string>
 		<id>324</id>
@@ -832,6 +848,10 @@
 	<string>
 		<id>326</id>
 		<value>Търся албуми...</value>
+	</string>
+	<string>
+		<id>327</id>
+		<value>Грешка при реорганизация на албумите</value>
 	</string>
 	<string>
 		<id>328</id>
@@ -854,8 +874,24 @@
 		<value>Грешка при компресиране на базата данни...</value>
 	</string>
 	<string>
+		<id>333</id>
+		<value>Искаш ли да пренаредиш музикалната база данни?</value>
+	</string>
+	<string>
+		<id>334</id>
+		<value>Пренареди музикалната база данни</value>
+	</string>
+	<string>
 		<id>335</id>
 		<value>Начало</value>
+	</string>
+	<string>
+		<id>338</id>
+		<value>Аналогово</value>
+	</string>
+	<string>
+		<id>339</id>
+		<value>Дигитално</value>
 	</string>
 	<string>
 		<id>341</id>
@@ -996,7 +1032,20 @@
 	<string>
 		<id>408</id>
 		<value>на</value>
-	</stg>
+	</string>
+	<string>
+		<id>410</id>
+		<value>Свърване с Weather.com</value>
+	</string>
+	<string>
+		<id>411</id>
+		<value>Получавам прогнозата за:</value>
+	</string>
+	<string>
+		<id>412</id>
+		<value>Не мога да взема прогнозата</value>
+	</string>
+	<string>
 		<id>414</id>
 		<value>Няма рецензия за този албум</value>
 	</string>
