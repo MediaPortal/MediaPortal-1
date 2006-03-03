@@ -33,7 +33,7 @@ namespace MediaPortal.Configuration.Sections
 		//private MediaPortal.UserInterface.Controls.MPLabel label4;
 		//private System.ComponentModel.IContainer components = null;
 
-		public FiltersSection() : this("Filters")
+		public FiltersSection() : this("Decoder Filters")
 		{
 		}
 

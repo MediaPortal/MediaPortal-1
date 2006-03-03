@@ -236,6 +236,7 @@ namespace MediaPortal.Configuration
       AddChildSection(filterSection, new DScalerVideoFilter());
 
       AddChildSection(filterSection, new PowerDVD6AudioFilter());
+      AddChildSection(filterSection, new WinDVD7DecoderFilters());
 
       Log.Write("add weather section");
       AddSection(new Weather());

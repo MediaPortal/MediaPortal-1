@@ -288,6 +288,9 @@
     <Compile Include="Sections\MusicMisc.Designer.cs">
       <DependentUpon>MusicMisc.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\WinDVD7DecoderFilters.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\Wizard_AnalogRadio.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -561,6 +564,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicMisc.resx">
       <DependentUpon>MusicMisc.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\WinDVD7DecoderFilters.resx">
+      <DependentUpon>WinDVD7DecoderFilters.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Wizard_AnalogRadio.resx">

@@ -9236,4 +9236,32 @@
 	  </connections>
 	</tv>
   </capturecard>
+
+  <capturecard commercialname="TechnoTrend TT-connect S-2400" capturename="TTUSB2BDA - TechnoTrend DVB-S USB 2.0 BDA Device (S-2400)" devid="vid_0b48&amp;pid_3006">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"							checkdevice="false"/>
+        <filter cat="tunerdevice"     name="TTUSB2BDA - TechnoTrend DVB-S USB 2.0 BDA Device (S-2400)"	checkdevice="true"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="TechnoTrend DVB-S2" capturename="TTUSB2BDA - TechnoTrend DVB-S2 USB 2.0 BDA Device" devid="vid_0b48&amp;pid_3007">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"					checkdevice="false"/>
+        <filter cat="tunerdevice"     name="TTUSB2BDA - TechnoTrend DVB-S2 USB 2.0 BDA Device"	checkdevice="true"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
