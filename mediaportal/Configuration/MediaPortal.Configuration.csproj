@@ -288,6 +288,9 @@
     <Compile Include="Sections\MusicMisc.Designer.cs">
       <DependentUpon>MusicMisc.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\PowerDVD6DecoderFilters.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\WinDVD7DecoderFilters.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -413,9 +416,6 @@
     </Compile>
     <Compile Include="Sections\PluginsNew.Designer.cs">
       <DependentUpon>PluginsNew.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\PowerDVD6AudioFilter.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\Project.cs">
       <SubType>UserControl</SubType>
@@ -566,6 +566,10 @@
       <DependentUpon>MusicMisc.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\PowerDVD6DecoderFilters.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PowerDVD6DecoderFilters.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\WinDVD7DecoderFilters.resx">
       <DependentUpon>WinDVD7DecoderFilters.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -692,10 +696,6 @@
     <EmbeddedResource Include="Sections\PluginsNew.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PluginsNew.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\PowerDVD6AudioFilter.resx">
-      <DependentUpon>PowerDVD6AudioFilter.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\Project.resx">
       <DependentUpon>Project.cs</DependentUpon>
