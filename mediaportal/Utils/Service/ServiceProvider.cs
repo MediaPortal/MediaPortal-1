@@ -39,10 +39,11 @@ namespace MediaPortal.Utils.Services
       return services.ContainsKey(typeof(T));
     }
 
-    public void Add(object service, Type type)
+		public void Add<T>(object service)
     {
       // Make sure service implements type
-      services.Add(type, service);
+			Type t = typeof(T);
+      services.Add(t, service);
     }
 
     public T Get<T>()
@@ -55,13 +56,13 @@ namespace MediaPortal.Utils.Services
       return default(T);
     }
 
-      public void Remove<T>()
+    public void Remove<T>()
+    {
+      Type t = typeof(T);
+      if (services.ContainsKey(t))
       {
-          Type t = typeof(T);
-          if (services.ContainsKey(t))
-          {
-              services.Remove(t);
-          }
+          services.Remove(t);
       }
+    }
   }
 }

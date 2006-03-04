@@ -94,6 +94,7 @@
     <Compile Include="TVCapture\DiskManagement\TestFreeDiskSpace.cs" />
     <Compile Include="TVCapture\Teletext\TestTopText.cs" />
     <Compile Include="TVCapture\TestRecorder.cs" />
+    <Compile Include="Utils\LogTest.cs" />
     <Compile Include="Utils\WorldTimeZoneTest.cs" />
   </ItemGroup>
   <ItemGroup>
