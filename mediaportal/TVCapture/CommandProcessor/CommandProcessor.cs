@@ -90,6 +90,21 @@ namespace MediaPortal.TV.Recording
     #endregion
 
     #region public members
+    public void Execute(CardCommand command)
+    {
+      AutoResetEvent waitEvent = new AutoResetEvent(false);
+      try
+      {
+        command.Event = waitEvent;
+        AddCommand(command);
+        command.WaitOne();
+      }
+      finally
+      {
+        waitEvent.Close();
+      }
+    }
+
     public void AddCommand(CardCommand command)
     {
       lock (_listCommands)
@@ -245,10 +260,6 @@ namespace MediaPortal.TV.Recording
           try
           {
             _waitMutex.WaitOne(500,true);
-            if (!IsBusy)
-            {
-              continue;
-            }
             if (_isPaused) continue;
 
             ProcessCommands();
@@ -283,7 +294,15 @@ namespace MediaPortal.TV.Recording
         }
 
         DateTime dtStart = DateTime.Now;
-        cmd.Execute(this);
+        try
+        {
+          cmd.Execute(this);
+        }
+        catch (Exception ex)
+        {
+          Log.WriteFile(Log.LogType.Recorder, true, "Command:{0} failed",cmd.ToString());
+          Log.Write(ex);
+        }
         TimeSpan ts=DateTime.Now-dtStart;
         if (cmd.Succeeded == false)
         {
@@ -293,6 +312,7 @@ namespace MediaPortal.TV.Recording
         {
           Log.WriteFile(Log.LogType.Recorder, false, "Command:{0} time:{1} msec",cmd.ToString(), ts.TotalMilliseconds);
         }
+        cmd.Finished=true;
         lock (_listCommands)
         {
           _listCommands.RemoveAt(0);

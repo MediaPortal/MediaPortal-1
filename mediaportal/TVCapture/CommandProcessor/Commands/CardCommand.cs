@@ -29,6 +29,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Management;
+using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
@@ -43,13 +44,56 @@ using MediaPortal.TV.DiskSpace;
 
 namespace MediaPortal.TV.Recording
 {
-  public class CardCommand
+  public class CardCommand   
   {
+    bool _isFinished = false;
     bool _isSucceeded=false;
     string _errorMessage = "";
+    AutoResetEvent _event=null;
 
+    public AutoResetEvent Event
+    {
+      get
+      {
+        return _event;
+      }
+      set
+      {
+        _event = value;
+      }
+    }
     public virtual void Execute(CommandProcessor handler)
     {
+    }
+
+    public void WaitOne()
+    {
+      _event.WaitOne();
+    }
+
+    public void WaitOne(int millisecondsTimeout)
+    {
+      _event.WaitOne(millisecondsTimeout,true);
+    }
+
+    public bool Finished
+    {
+      get
+      {
+        return _isFinished;
+      }
+
+      set
+      {
+        _isFinished = value;
+        if (_isFinished)
+        {
+          if (_event != null)
+          {
+            _event.Set();
+          }
+        }
+      }
     }
 
     public bool Succeeded
@@ -63,10 +107,12 @@ namespace MediaPortal.TV.Recording
         _isSucceeded=value;
       }
     }
+    
     public string ErrorMessage
     {
       get { return _errorMessage; }
       set { _errorMessage = value; }
     }
+
   }
 }

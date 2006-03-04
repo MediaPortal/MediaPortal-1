@@ -29,6 +29,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Management;
+using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.TV.Database;
@@ -62,7 +63,7 @@ namespace MediaPortal.TV.Recording
 
     #region variables
     // recorder state
-    static State _state = State.None; 
+    static State _state = State.None;
     static DateTime _progressBarTimer = DateTime.Now;
     // vmr9 osd class 
     static VMR9OSD _vmr9Osd = new VMR9OSD();
@@ -149,7 +150,7 @@ namespace MediaPortal.TV.Recording
 
       if (GUIGraphicsContext.DX9Device == null)
       {
-        _commandProcessor.Paused= true;
+        _commandProcessor.Paused = true;
       }
 
 
@@ -242,7 +243,7 @@ namespace MediaPortal.TV.Recording
       if (GUIGraphicsContext.IsTvWindow(windowId))
       {
         // we enter my tv, enable exclusive mode
-        Log.WriteFile(Log.LogType.Recorder,"Recorder:enable dx9 exclusive mode");
+        Log.WriteFile(Log.LogType.Recorder, "Recorder:enable dx9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
@@ -255,7 +256,7 @@ namespace MediaPortal.TV.Recording
       }
     }//static public void GUIWindowManager_OnActivateWindow()
 
-    
+
 
     /// <summary>
     /// NeedChannelSwitchForRecording()
@@ -269,7 +270,7 @@ namespace MediaPortal.TV.Recording
     /// </returns>
     static public bool NeedChannelSwitchForRecording(TVRecording rec)
     {
-      if (_commandProcessor==null) return false;
+      if (_commandProcessor == null) return false;
       //are we viewing the channel requested, then there is no need to switch
       if (IsViewing() && _commandProcessor.TVChannelName == rec.Channel) return false;
 
@@ -318,7 +319,7 @@ namespace MediaPortal.TV.Recording
       for (int i = 0; i < tvChannelsList.Count; ++i)
       {
         TVChannel chan = tvChannelsList[i];
-        if (String.Compare(chan.Name,channelName,false)==0)
+        if (String.Compare(chan.Name, channelName, false) == 0)
         {
           program = chan.CurrentProgram;
           break;
@@ -412,7 +413,7 @@ namespace MediaPortal.TV.Recording
     /// Property which returns if any tvcard is recording
     /// </summary>
     static public bool IsAnyCardRecording()
-    { 
+    {
       if (_state != State.Initialized) return false;
 
       for (int i = 0; i < _commandProcessor.TVCards.Count; ++i)
@@ -430,7 +431,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_state != State.Initialized) return false;
 
-      for (int i=0; i < _commandProcessor.TVCards.Count;++i)
+      for (int i = 0; i < _commandProcessor.TVCards.Count; ++i)
       {
         TVCaptureDevice dev = _commandProcessor.TVCards[i];
         if (dev.IsRecording && dev.CurrentTVRecording.Channel == channel) return true;
@@ -572,7 +573,7 @@ namespace MediaPortal.TV.Recording
     /// <returns></returns>
     static public bool IsViewing()
     {
-      
+
       if (_state != State.Initialized) return false;
       if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return false;
       TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
@@ -764,7 +765,7 @@ namespace MediaPortal.TV.Recording
 
 
 
-    
+
     /// <summary>
     /// Property which returns true if we currently listening to a radio station
     /// </summary>
@@ -821,7 +822,7 @@ namespace MediaPortal.TV.Recording
       _commandProcessor.AddCommand(cmd);
     }
 
-    
+
     /// <summary>
     /// Stop viewing on all cards
     /// </summary>
@@ -840,10 +841,7 @@ namespace MediaPortal.TV.Recording
 
         //send Recorder command to process thread to stop viewing
         StopTvCommand cmd = new StopTvCommand();
-        _commandProcessor.AddCommand(cmd);
-
-        //wait till thread finished this command
-        _commandProcessor.WaitTillFinished();
+        _commandProcessor.Execute(cmd);
       }
       finally
       {
@@ -903,26 +901,27 @@ namespace MediaPortal.TV.Recording
           if (timeshift)
           {
             cmd = new TimeShiftTvCommand(channel);
-            _commandProcessor.AddCommand(cmd);
           }
           else
           {
             cmd = new ViewTvCommand(channel);
-            _commandProcessor.AddCommand(cmd);
           }
         }
         else
         {
           cmd = new StopTvCommand();
-          _commandProcessor.AddCommand(cmd);
         }
         //wait till thread finished this command
         if (wait)
         {
-          _commandProcessor.WaitTillFinished();
+          _commandProcessor.Execute(cmd);
           if (cmd.Succeeded) return true;
           errorMessage = cmd.ErrorMessage;
           return false;
+        }
+        else
+        {
+          _commandProcessor.AddCommand(cmd);
         }
       }
       finally
@@ -932,18 +931,18 @@ namespace MediaPortal.TV.Recording
       return true;
     }
 
-    
+
     static public bool IsBusyProcessingCommands
     {
       get
       {
         if (_commandProcessor == null) return false;
-        return (_commandProcessor.IsBusy );
+        return (_commandProcessor.IsBusy);
       }
     }
 
 
-    
+
     /// <summary>
     /// Scheduler main loop. This function needs to get called on a regular basis.
     /// It will handle all scheduler tasks
@@ -977,7 +976,7 @@ namespace MediaPortal.TV.Recording
 
 
 
-    
+
 
     /// <summary>
     /// Handles incoming messages from other modules
@@ -1021,58 +1020,57 @@ namespace MediaPortal.TV.Recording
         case GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO:
           StartRadio(message.Label);
           break;
-/*
-        case GUIMessage.MessageType.GUI_MSG_RECORDER_ALLOC_CARD:
-          {
-            // somebody wants to allocate a capture card
-            // if possible, lets release it
-            //TODO
-            int i = 0;
-            foreach (TVCaptureDevice card in _commandProcessor.TVCards)
-            {
-              if (card.VideoDevice.Equals(message.Label))
-              {
-                if (!card.IsRecording)
-                {
-                  bool stopped = false;
-                  if (IsCardViewing(card.ID))
-                    stopped = true;
-                  card.Stop();
-                  card.Allocated = true;
-                  if (stopped && OnTvViewingStopped != null)
-                    OnTvViewingStopped(i, card);
-                  return;
-                }
-              }
-              ++i;
-            }
-          }
-          break;
+        /*
+                case GUIMessage.MessageType.GUI_MSG_RECORDER_ALLOC_CARD:
+                  {
+                    // somebody wants to allocate a capture card
+                    // if possible, lets release it
+                    //TODO
+                    int i = 0;
+                    foreach (TVCaptureDevice card in _commandProcessor.TVCards)
+                    {
+                      if (card.VideoDevice.Equals(message.Label))
+                      {
+                        if (!card.IsRecording)
+                        {
+                          bool stopped = false;
+                          if (IsCardViewing(card.ID))
+                            stopped = true;
+                          card.Stop();
+                          card.Allocated = true;
+                          if (stopped && OnTvViewingStopped != null)
+                            OnTvViewingStopped(i, card);
+                          return;
+                        }
+                      }
+                      ++i;
+                    }
+                  }
+                  break;
 
 
-        case GUIMessage.MessageType.GUI_MSG_RECORDER_FREE_CARD:
-          // somebody wants to allocate a capture card
-          // if possible, lets release it
-          foreach (TVCaptureDevice card in _commandProcessor.TVCards)
-          {
-            if (card.VideoDevice.Equals(message.Label))
-            {
-              if (card.Allocated)
-              {
-                card.Allocated = false;
-                return;
-              }
-            }
-          }
-          break;
-*/
+                case GUIMessage.MessageType.GUI_MSG_RECORDER_FREE_CARD:
+                  // somebody wants to allocate a capture card
+                  // if possible, lets release it
+                  foreach (TVCaptureDevice card in _commandProcessor.TVCards)
+                  {
+                    if (card.VideoDevice.Equals(message.Label))
+                    {
+                      if (card.Allocated)
+                      {
+                        card.Allocated = false;
+                        return;
+                      }
+                    }
+                  }
+                  break;
+        */
         case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT:
           {
             if (!IsTimeShifting()) return;
             if (_commandProcessor == null) return;
             StopTimeShiftingCommand cmd = new StopTimeShiftingCommand();
-            _commandProcessor.AddCommand(cmd);
-            _commandProcessor.WaitTillFinished();
+            _commandProcessor.Execute(cmd);
           }
 
           break;
@@ -1080,7 +1078,7 @@ namespace MediaPortal.TV.Recording
     }//static public void OnMessage(GUIMessage message)
 
 
-    
+
     static public int GetAudioLanguage()
     {
       if (_state != State.Initialized) return -1;
@@ -1105,7 +1103,7 @@ namespace MediaPortal.TV.Recording
 
       return dev.GetAudioLanguageList();
     }
-    
+
     static public void DeleteRecording(TVRecorded rec)
     {
       Utils.DeleteRecording(rec.FileName);
@@ -1116,7 +1114,7 @@ namespace MediaPortal.TV.Recording
 
     static public bool IsRecordingSchedule(TVRecording rec, out int card)
     {
-      return _commandProcessor.IsRecordingSchedule(rec,out  card);
+      return _commandProcessor.IsRecordingSchedule(rec, out  card);
     }
     static public bool Paused
     {
