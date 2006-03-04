@@ -124,6 +124,7 @@ namespace MediaPortal.GUI.Library
 
       if (_hoverFilename != string.Empty)
       {
+         GUIGraphicsContext.ScaleRectToScreenResolution(ref _hoverX, ref _hoverY, ref _hoverWidth, ref _hoverHeight);
         _hoverImage = new GUIImage(_parentControlId, _controlId, _hoverX, _hoverY, _hoverWidth, _hoverHeight, _hoverFilename, 0);
         _hoverImage.Filtering = false;
         _hoverImage.ParentControl = this;
