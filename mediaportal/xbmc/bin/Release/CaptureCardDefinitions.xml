@@ -214,7 +214,7 @@
     </tv>
   </capturecard>
   <capturecard commercialname="Hauppauge PVR 250" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0016&amp;subsys_40090070&amp;rev_01">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"/>
       <filters>
@@ -234,7 +234,7 @@
   </capturecard>
 
   <capturecard commercialname="Hauppauge PVR 250" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0803&amp;subsys_40010070&amp;rev_01">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"/>
       <filters>
