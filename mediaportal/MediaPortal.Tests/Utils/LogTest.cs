@@ -107,7 +107,7 @@ namespace MediaPortal.Tests.Utils.Services
 			public void LogLevelDebug()
 			{
 				StringWriter logString = new StringWriter();
-				Log log = new Log(logString, Log.Level.Information);
+				Log log = new Log(logString, Log.Level.Debug);
 
 				log.Debug(TEST_DEBUG);
 				Assert.IsTrue(logString.ToString().IndexOf(TEST_DEBUG) != -1);
