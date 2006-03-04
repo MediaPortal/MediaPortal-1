@@ -1,4 +1,4 @@
-//#define LOGPROPERTIES 
+//#define LOGPROPERTIES  
 /* 
  *	Copyright (C) 2005 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -162,6 +162,12 @@ namespace MediaPortal.TV.Recording
       GUIPropertyManager.SetProperty("#TV.View.title", String.Empty);
       GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
 
+      GUIPropertyManager.SetProperty("#TV.Next.start", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.stop", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.genre", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.title", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.description", String.Empty);
+
       GUIPropertyManager.SetProperty("#TV.Record.channel", String.Empty);
       GUIPropertyManager.SetProperty("#TV.Record.start", String.Empty);
       GUIPropertyManager.SetProperty("#TV.Record.stop", String.Empty);
@@ -312,6 +318,16 @@ namespace MediaPortal.TV.Recording
         GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
         GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
         //Log.Write("current program(live) :{0} {1}-{2}", prog.Title, prog.StartTime.ToString(), prog.EndTime.ToString());
+        // up next in tv
+        TVProgram prognext = _currentTvChannel.GetProgramAt(prog.EndTime.AddMinutes(1));
+        if (prognext != null)
+        {
+            GUIPropertyManager.SetProperty("#TV.Next.start", prognext.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            GUIPropertyManager.SetProperty("#TV.Next.stop", prognext.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+            GUIPropertyManager.SetProperty("#TV.Next.genre", prognext.Genre);
+            GUIPropertyManager.SetProperty("#TV.Next.title", prognext.Title);
+            GUIPropertyManager.SetProperty("#TV.Next.description", prognext.Description);
+        }
       }
       else
       {
@@ -321,6 +337,11 @@ namespace MediaPortal.TV.Recording
         GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);
         GUIPropertyManager.SetProperty("#TV.View.title", tvChannelName);
         GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Next.start", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Next.stop", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Next.genre", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.Next.title", tvChannelName);
+        GUIPropertyManager.SetProperty("#TV.Next.description", String.Empty);
       }
 
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, tvChannelName);
@@ -352,6 +373,11 @@ namespace MediaPortal.TV.Recording
       GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);
       GUIPropertyManager.SetProperty("#TV.View.title", tvChannelName);
       GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.start", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.stop", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.genre", String.Empty);
+      GUIPropertyManager.SetProperty("#TV.Next.title", tvChannelName);
+      GUIPropertyManager.SetProperty("#TV.Next.description", String.Empty);
 
 
       if (_currentTvChannel != null)
@@ -367,6 +393,16 @@ namespace MediaPortal.TV.Recording
           GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
           GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
           //Log.Write("current program       :{0} {1}-{2}", prog.Title, prog.StartTime.ToString(), prog.EndTime.ToString());
+          // up next in tv
+          TVProgram prognext = _currentTvChannel.GetProgramAt(prog.EndTime.AddMinutes(1));
+          if (prognext != null)
+          {
+              GUIPropertyManager.SetProperty("#TV.Next.start", prognext.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+              GUIPropertyManager.SetProperty("#TV.Next.stop", prognext.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+              GUIPropertyManager.SetProperty("#TV.Next.genre", prognext.Genre);
+              GUIPropertyManager.SetProperty("#TV.Next.title", prognext.Title);
+              GUIPropertyManager.SetProperty("#TV.Next.description", prognext.Description);
+          }
         }
       }//if (_currentTvChannel!=null)
 
