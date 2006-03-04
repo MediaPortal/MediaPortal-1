@@ -41,7 +41,7 @@ namespace MediaPortal.GUI.Library
     private GUIPropertyManager()
     {
     }
-    static GUIPropertyManager()
+    static GUIPropertyManager() 
     {
       _properties["#highlightedbutton"] = String.Empty;
       _properties["#itemcount"] = String.Empty;
@@ -100,6 +100,13 @@ namespace MediaPortal.GUI.Library
       _properties["#TV.View.title"] = String.Empty;
       _properties["#TV.View.description"] = String.Empty;
       _properties["#TV.View.Percentage"] = String.Empty;
+
+      _properties["#TV.Next.start"] = String.Empty;
+      _properties["#TV.Next.stop"] = String.Empty;
+      _properties["#TV.Next.genre"] = String.Empty;
+      _properties["#TV.Next.title"] = String.Empty;
+      _properties["#TV.Next.description"] = String.Empty;
+
       _properties["#TV.Guide.Day"] = String.Empty;
       _properties["#TV.Guide.thumb"] = String.Empty;
       _properties["#TV.Guide.Title"] = String.Empty;
