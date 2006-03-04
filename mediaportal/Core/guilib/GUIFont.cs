@@ -221,7 +221,7 @@ namespace MediaPortal.GUI.Library
     public void DrawText(float xpos, float ypos, long color, string strLabel, GUIControl.Alignment alignment, int maxWidth)
     {
       if (strLabel == null) return;
-      if (strLabel == String.Empty) return;
+      if (strLabel.Length==0) return;
       if (xpos <= 0) return;
       if (ypos <= 0) return;
       int alpha = (int)((color >> 24) & 0xff);
@@ -308,7 +308,6 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      int intColor = color.ToArgb();
 
       if (!FontAdded)
       {
@@ -317,6 +316,7 @@ namespace MediaPortal.GUI.Library
       }
       else if (ID >= 0)
       {
+        int intColor = color.ToArgb();
         unsafe
         {
           IntPtr ptrStr = Marshal.StringToCoTaskMemUni(text); //SLOW

@@ -20,6 +20,7 @@
  */
 #region usings
 using System;
+using System.Threading;
 using System.IO;
 using System.ComponentModel;
 using System.Globalization;
@@ -59,6 +60,7 @@ namespace MediaPortal.TV.Recording
     bool _isPaused;
     DateTime _startTimeShiftTimer=DateTime.MinValue;
     TvCardCollection _tvcards;
+    AutoResetEvent _waitMutex;
     #endregion
 
     #region ctor
@@ -70,6 +72,7 @@ namespace MediaPortal.TV.Recording
 
       _epgProcessor = new EPGProcessor();
       _scheduler = new Scheduler();
+      _waitMutex = new AutoResetEvent(true);
 
     }
 
@@ -93,6 +96,7 @@ namespace MediaPortal.TV.Recording
       {
         _listCommands.Add(command);
         Log.WriteFile(Log.LogType.Recorder, "add cmd:{0} #{1}", command.ToString(),_listCommands.Count);
+        _waitMutex.Set();
       }
     }
 
@@ -240,10 +244,10 @@ namespace MediaPortal.TV.Recording
         {
           try
           {
-            if (_isPaused) continue;
+            _waitMutex.WaitOne(500,true);
             if (!IsBusy)
             {
-              System.Threading.Thread.Sleep(500);
+              continue;
             }
             if (_isPaused) continue;
 
