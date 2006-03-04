@@ -736,6 +736,7 @@ namespace MediaPortal.Configuration.Sections
               if (radioButtonQualityGood.Checked) regQuality = 75;
               if (radioButtonQualityMedium.Checked) regQuality = 50;
               if (radioButtonQualityLow.Checked) regQuality = 25;
+              else regQuality = 75;
               subkey2.SetValue("MPEGAudioQuality", regQuality);
 
               // Audio Channels - Stereo, Joint Stereo, Dual Channel or Mono
@@ -744,6 +745,7 @@ namespace MediaPortal.Configuration.Sections
               if (radioButtonModeJointStereo.Checked) regMode = 1;
               if (radioButtonModeDualChannel.Checked) regMode = 2;
               if (radioButtonModeMono.Checked) regMode = 3;
+              else regMode = 0;
               subkey2.SetValue("MPEGAudioSystemMode", regMode);
               
               // Force MPEG-1 Layer II for compatibility - encoder is capable of Layer III, LPCM or AC3
