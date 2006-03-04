@@ -1411,7 +1411,7 @@ namespace MediaPortal.TV.Recording
 
     public override bool SupportsHardwarePidFiltering()
     {
-      return false;
+      return true;
     }
   }
 }
