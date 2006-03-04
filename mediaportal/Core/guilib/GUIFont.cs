@@ -294,7 +294,7 @@ namespace MediaPortal.GUI.Library
     {
       if (!FontAdded) return;
       if (text == null) return;
-      if (text == String.Empty) return;
+      if (text.Length==0) return;
       if (xpos <= 0) return;
       if (ypos <= 0) return;
 
