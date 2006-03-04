@@ -235,7 +235,7 @@ namespace MediaPortal.TV.Recording
     #region private members
     void ProcessThread(object sender, DoWorkEventArgs e)
     {
-        //System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
         while (_isRunning)
         {
           try

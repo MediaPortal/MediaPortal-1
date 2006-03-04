@@ -969,6 +969,8 @@ namespace MediaPortal.TV.Recording
       {
         RecorderProperties.UpdateRecordingProperties();
         _progressBarTimer = DateTime.Now;
+        _duration = g_Player.Duration;
+        _lastPosition = g_Player.CurrentPosition;
       }
 
     }//static public void Process()
