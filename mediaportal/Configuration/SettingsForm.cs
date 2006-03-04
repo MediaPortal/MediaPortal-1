@@ -238,6 +238,10 @@ namespace MediaPortal.Configuration
       AddChildSection(filterSection, new PowerDVD6DecoderFilters());
       AddChildSection(filterSection, new WinDVD7DecoderFilters());
 
+      EncoderFiltersSection EncoderfilterSection = new EncoderFiltersSection();
+      AddSection(EncoderfilterSection);
+      AddChildSection(EncoderfilterSection, new InterVideoEncoderFilters());
+      
       Log.Write("add weather section");
       AddSection(new Weather());
       Log.Write("add plugins section");
