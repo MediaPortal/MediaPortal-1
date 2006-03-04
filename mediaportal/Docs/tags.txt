@@ -111,6 +111,13 @@ metadata of My TV/ tv viewing:
 		#TV.View.description        description of the current tvprogram you're watching
 		#TV.View.Percentage         contains how much percent (0%-100%) of the current tvprogram has past
 
+metadata of My TV/ tv programm up next
+		#TV.Next.start		    start time of next tvprogramm
+		#TV.Next.stop		    stop time of next tvprogramm
+		#TV.Next.genre		    genre of next tvprogramm
+		#TV.Next.title		    title of next tvprogramm
+		#TV.Next.description	    description of next tvprogramm
+
 metadata of My TV/TVGuide:
 		#TV.Guide.Day               contains the day you're browsing
 		#TV.Guide.thumb             thumbnail of current selected tv channel
