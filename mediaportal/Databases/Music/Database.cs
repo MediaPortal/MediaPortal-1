@@ -601,11 +601,14 @@ namespace MediaPortal.Music.Database
                 //        strTmp = song.Genre; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Genre = strTmp;
                 //        strTmp = song.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Artist = strTmp;
                 strTmp = song.Title; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Title = strTmp;
-                strTmp = song.FileName; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.FileName = strTmp;
+                // SourceForge Patch xxxxxxx (hwahrmann) Part 1 of 4
+                //strTmp = song.FileName; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.FileName = strTmp;
 
                 string strPath, strFileName;
 
                 DatabaseUtility.Split(song.FileName, out strPath, out strFileName);
+                // SourceForge Patch xxxxxxx (hwahrmann) Part 2 of 4
+                DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
                 if (null == m_db) return;
                 int lGenreId = AddGenre(song.Genre);
@@ -685,16 +688,22 @@ namespace MediaPortal.Music.Database
                 int lAlbumId = -1;
                 int lSongId = -1;
 
-                DatabaseUtility.RemoveInvalidChars(ref strFileName);
+                // SourceForge Patch xxxxxxx (hwahrmann) Part 3 of 4
+                //DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
-                string strPath, strFName;
-                DatabaseUtility.Split(strFileName, out strPath, out strFName);
+                //string strPath, strFName;
+                //DatabaseUtility.Split(strFileName, out strPath, out strFName);
 
                 if (null == m_db) return;
 
                 CRCTool crc = new CRCTool();
                 crc.Init(CRCTool.CRCCode.CRC32);
                 ulong dwCRC = crc.calc(strFileName);
+                // SourceForge Patch xxxxxxx (hwahrmann) Part 4 of 4
+                DatabaseUtility.RemoveInvalidChars(ref strFileName);
+
+                string strPath, strFName;
+                DatabaseUtility.Split(strFileName, out strPath, out strFName);
 
                 string strSQL;
                 strSQL = String.Format("select * from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and dwFileNameCRC like '{0}' and strPath like '{1}'",
