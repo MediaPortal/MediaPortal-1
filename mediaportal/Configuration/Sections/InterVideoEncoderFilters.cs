@@ -37,6 +37,8 @@ namespace MediaPortal.Configuration.Sections
 
   public class InterVideoEncoderFilters : MediaPortal.Configuration.SectionSettings
   {
+		private Int32 _regQuality;
+		private Int32 _regMode;
       private MediaPortal.UserInterface.Controls.MPComboBox comboBoxFrameRate;
       private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
       private MediaPortal.UserInterface.Controls.MPLabel FrameRate;
@@ -667,8 +669,8 @@ namespace MediaPortal.Configuration.Sections
               // Audio BitRate - 128 - 384 kbit/s
               int AudioBitrate;
               Int32 regValue;
-              Int32 regQuality;
-              Int32 regMode;
+              
+              
               AudioBitrate = comboBoxAudioBitrate.SelectedIndex;
               if (AudioBitrate == 0)
               {
@@ -729,24 +731,16 @@ namespace MediaPortal.Configuration.Sections
                   regValue = 3;
                   subkey2.SetValue("MPEGAudioSamplingFreq", regValue);
               }
+							
               
               // Audio Quality - Low, Medium, Good & High
-              //regQuality = 75;
-              if (radioButtonQualityHigh.Checked) regQuality = 100;
-              if (radioButtonQualityGood.Checked) regQuality = 75;
-              if (radioButtonQualityMedium.Checked) regQuality = 50;
-              if (radioButtonQualityLow.Checked) regQuality = 25;
-              else regQuality = 75;
-              subkey2.SetValue("MPEGAudioQuality", regQuality);
+              //regQuality = 75;				// default to Medium Quality
+            
+              subkey2.SetValue("MPEGAudioQuality", _regQuality);
 
               // Audio Channels - Stereo, Joint Stereo, Dual Channel or Mono
               //regMode = 0;
-              if (radioButtonModeStereo.Checked) regMode = 0;
-              if (radioButtonModeJointStereo.Checked) regMode = 1;
-              if (radioButtonModeDualChannel.Checked) regMode = 2;
-              if (radioButtonModeMono.Checked) regMode = 3;
-              else regMode = 0;
-              subkey2.SetValue("MPEGAudioSystemMode", regMode);
+              subkey2.SetValue("MPEGAudioSystemMode", _regMode);
               
               // Force MPEG-1 Layer II for compatibility - encoder is capable of Layer III, LPCM or AC3
               subkey2.SetValue("MPEGAudioSystemLayer", 2);
@@ -791,42 +785,42 @@ namespace MediaPortal.Configuration.Sections
 
       private void radioButtonQualityHigh_CheckedChanged(object sender, EventArgs e)
       {
-
+				if (radioButtonQualityHigh.Checked) _regQuality = 100;
       }
 
       private void radioButtonQualityGood_CheckedChanged(object sender, EventArgs e)
       {
-
+				if (radioButtonQualityGood.Checked) _regQuality = 75;	
       }
 
       private void radioButtonQualityMedium_CheckedChanged(object sender, EventArgs e)
       {
-
+				if (radioButtonQualityMedium.Checked) _regQuality = 50;
       }
 
       private void radioButtonQualityLow_CheckedChanged(object sender, EventArgs e)
       {
-
+				if (radioButtonQualityLow.Checked) _regQuality = 25;
       }
 
       private void radioButtonModeStereo_CheckedChanged(object sender, EventArgs e)
       {
-
+				if (radioButtonModeStereo.Checked) _regMode = 0;
       }
 
       private void radioButtonModeJointStereo_CheckedChanged(object sender, EventArgs e)
       {
-
+				if (radioButtonModeJointStereo.Checked) _regMode = 1;
       }
 
       private void radioButtonModeDualChannel_CheckedChanged(object sender, EventArgs e)
       {
-
+				if (radioButtonModeDualChannel.Checked) _regMode = 2;
       }
 
       private void radioButtonModeMono_CheckedChanged(object sender, EventArgs e)
       {
-
+				if (radioButtonModeMono.Checked) _regMode = 3;
       }
 
  
