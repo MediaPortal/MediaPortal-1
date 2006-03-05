@@ -64,5 +64,11 @@ namespace MediaPortal.Utils.Services
           services.Remove(t);
       }
     }
+
+		public void Replace<T>(object service)
+		{
+			services.Remove(typeof(T));
+			services.Add(typeof(T), service);
+		}
   }
 }
