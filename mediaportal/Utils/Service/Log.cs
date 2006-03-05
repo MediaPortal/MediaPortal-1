@@ -24,14 +24,6 @@ using System.IO;
 
 namespace MediaPortal.Utils.Services
 {
-	public interface ILog
-	{
-		void Debug(string strFormat, params object[] arg);
-		void Error(string strFormat, params object[] arg);
-		void Info(string strFormat, params object[] arg);
-		void Warn(string strFormat, params object[] arg);
-	}
-
   public class Log : ILog
   {
     private Level _minLevel;
