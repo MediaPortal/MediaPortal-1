@@ -221,6 +221,10 @@ namespace MediaPortal.TV.Recording
         {
           Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} recording tv channel:{1}", dev.CommercialName, dev.TVChannel);
         }
+        else if (dev.IsRadio)
+        {
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} radio station:{1}", dev.CommercialName, dev.RadioStation);
+        }
         else if (dev.IsEpgGrabbing)
         {
           Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} grab epg tv channel:{1}", dev.CommercialName, dev.TVChannel);
@@ -232,10 +236,6 @@ namespace MediaPortal.TV.Recording
         else if (dev.IsTimeShifting)
         {
           Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} timeshift tv channel:{1}", dev.CommercialName, dev.TVChannel);
-        }
-        else if (dev.IsRadio)
-        {
-          Log.WriteFile(Log.LogType.Recorder, "Recorder:  Card:{0} radio station:{1}", dev.CommercialName, dev.RadioStation);
         }
         else
         {

@@ -1723,6 +1723,7 @@ namespace MediaPortal.TV.Recording
         if (!System.IO.File.Exists(pmtName))
         {
           //PMT is not on disk...
+          Log.WriteFile(Log.LogType.Log, true, "pmt {0} not found", pmtName);
           _pmtRetyCount = 0;
           _lastPMTVersion = -1;
           _refreshPmtTable = true;
@@ -1745,6 +1746,7 @@ namespace MediaPortal.TV.Recording
         if (pmt == null)
         {
           //NO PMT read
+          Log.WriteFile(Log.LogType.Log, true, "pmt {0} empty", pmtName);
           _pmtRetyCount = 0;
           _lastPMTVersion = -1;
           _refreshPmtTable = true;
@@ -1753,6 +1755,7 @@ namespace MediaPortal.TV.Recording
         if (pmt.Length < 6)
         {
           //PMT length is invalid
+          Log.WriteFile(Log.LogType.Log, true, "pmt {0} invalid", pmtName);
           _pmtRetyCount = 0;
           _lastPMTVersion = -1;
           _refreshPmtTable = true;
@@ -1765,6 +1768,7 @@ namespace MediaPortal.TV.Recording
         if (!sections.GetChannelInfoFromPMT(pmt, ref info))
         {
           //decoding failed
+          Log.WriteFile(Log.LogType.Log, true, "pmt {0} failed to decode", pmtName);
           _pmtRetyCount = 0;
           _lastPMTVersion = -1;
           _refreshPmtTable = true;
@@ -1774,7 +1778,7 @@ namespace MediaPortal.TV.Recording
         DVBChannel newChannel = new DVBChannel();
         if (info.pid_list != null)
         {
-          
+
           bool hasAudio = false;
           int audioOptions = 0;
           for (int pids = 0; pids < info.pid_list.Count; pids++)
@@ -1855,14 +1859,14 @@ namespace MediaPortal.TV.Recording
           newChannel.PCRPid = info.pcr_pid;
 
           bool changed = false;
-          if (_currentTuningObject.AC3Pid !=newChannel.AC3Pid) changed=true;
-          if (_currentTuningObject.AudioPid !=newChannel.AudioPid) changed = true;
-          if (_currentTuningObject.Audio1 !=newChannel.Audio1) changed = true;
-          if (_currentTuningObject.Audio2 !=newChannel.Audio2) changed = true;
-          if (_currentTuningObject.Audio3 !=newChannel.Audio3) changed = true;
-          if (_currentTuningObject.SubtitlePid !=newChannel.SubtitlePid) changed = true;
-          if (_currentTuningObject.TeletextPid !=newChannel.TeletextPid) changed = true;
-          if (_currentTuningObject.VideoPid !=newChannel.VideoPid) changed = true;
+          if (_currentTuningObject.AC3Pid != newChannel.AC3Pid) changed = true;
+          if (_currentTuningObject.AudioPid != newChannel.AudioPid) changed = true;
+          if (_currentTuningObject.Audio1 != newChannel.Audio1) changed = true;
+          if (_currentTuningObject.Audio2 != newChannel.Audio2) changed = true;
+          if (_currentTuningObject.Audio3 != newChannel.Audio3) changed = true;
+          if (_currentTuningObject.SubtitlePid != newChannel.SubtitlePid) changed = true;
+          if (_currentTuningObject.TeletextPid != newChannel.TeletextPid) changed = true;
+          if (_currentTuningObject.VideoPid != newChannel.VideoPid) changed = true;
           if (_currentTuningObject.PCRPid != newChannel.PCRPid) changed = true;
           if (_currentTuningObject.AudioLanguage != newChannel.AudioLanguage) changed = true;
           if (_currentTuningObject.AudioLanguage1 != newChannel.AudioLanguage1) changed = true;
@@ -1944,10 +1948,10 @@ namespace MediaPortal.TV.Recording
         }//if (info.pid_list!=null)
 
         _refreshPmtTable = false;
+        int pmtVersion = ((pmt[5] >> 1) & 0x1F);
+        _lastPMTVersion = pmtVersion;
         if (_cardProperties != null)
         {
-          int pmtVersion = ((pmt[5] >> 1) & 0x1F);
-
           // send the PMT table to the device
           _pmtTimer = DateTime.Now;
           _pmtSendCounter++;
@@ -1963,20 +1967,16 @@ namespace MediaPortal.TV.Recording
             _streamDemuxer.DumpPMT(pmt);
             if (_cardProperties.SendPMT(camType, _currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
             {
-              _lastPMTVersion = pmtVersion;
               return true;
             }
             else
             {
+              Log.Write("DVBGraph:Send PMT#{0} version:{1} failed", _pmtSendCounter, pmtVersion);
               _refreshPmtTable = true;
+              _lastPMTVersion = -1;
               _pmtSendCounter = 0;
               return true;
             }
-          }
-          else
-          {
-            _lastPMTVersion = pmtVersion;
-            return true;
           }
         }
       }
@@ -2243,7 +2243,7 @@ namespace MediaPortal.TV.Recording
       if (_graphState == State.None) return;
       if (_inScanningMode == false)
       {
-        if (_cardProperties.IsCISupported() && _refreshPmtTable == true)
+        if (_cardProperties.IsCISupported() && _refreshPmtTable == true && _graphState != State.Epg)
         {
           //
           //we need to receive & transmit the PMT to the card as fast as possible
@@ -2298,9 +2298,8 @@ namespace MediaPortal.TV.Recording
         {
           //FilterState state;
           //_mediaControl.GetState(50, out state);
-          Log.Write("wait for pmt");
+          Log.Write("wait for pmt :{0}", _lastPMTVersion);
           bool gotPMT = false;
-          _refreshPmtTable = false;
           //Log.Write("DVBGraph:Get PMT {0}", _graphState);
           IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
           if (pmtMem != IntPtr.Zero)
@@ -2337,11 +2336,6 @@ namespace MediaPortal.TV.Recording
               pmt = null;
             }
             Marshal.FreeCoTaskMem(pmtMem);
-          }
-
-          if (!gotPMT)
-          {
-            _refreshPmtTable = true;
           }
         }
       }
@@ -3823,7 +3817,7 @@ namespace MediaPortal.TV.Recording
             stream.Write(pmtTable, 0, pmtTable.Length);
             stream.Close();
           }
-          _refreshPmtTable = true;
+
           SendPMT();
         }
         if (Recorder.IsCardViewing(_cardId) || _graphState == State.Epg || _graphState == State.Radio)
