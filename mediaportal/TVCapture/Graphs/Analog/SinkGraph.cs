@@ -85,7 +85,7 @@ namespace MediaPortal.TV.Recording
     int _selectedAudioLanguage = 11;
     protected bool _grabTeletext = false;
     protected bool _hasTeletext = false;
-      bool _isTuning = false;
+    bool _isTuning = false;
 
     /// <summary>
     /// Constructor
@@ -238,6 +238,7 @@ namespace MediaPortal.TV.Recording
 
       Log.WriteFile(Log.LogType.Capture, "SinkGraph:StartTimeShifting()");
       _graphState = State.TimeShifting;
+      SetFrameRateAndSize();
       TuneChannel(channel);
       _mpeg2DemuxHelper.StartTimeshifting(strFileName);
 
@@ -372,6 +373,7 @@ namespace MediaPortal.TV.Recording
         if (recording.Quality == TVRecording.QualityType.High)
           SetQuality(3);
       }
+      SetFrameRateAndSize();
       _mpeg2DemuxHelper.Record(attribtutes, strFileName, bContentRecording, timeProgStart, _startTime);
       _graphState = State.Recording;
       return true;
@@ -442,8 +444,8 @@ namespace MediaPortal.TV.Recording
       //bool restartGraph = false;
       try
       {
-          _isTuning = true;
-          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+        _isTuning = true;
+        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
 
         /*
         if (_graphState == State.TimeShifting)
@@ -498,7 +500,7 @@ namespace MediaPortal.TV.Recording
             _tvTunerInterface.get_TVFormat(out standard);
             if ((iChannel != iCurrentChannel) && (iFreq == currentFreq))
             {
-                return;
+              return;
             }
             dFreq = iFreq / 1000000d;
             Log.WriteFile(Log.LogType.Capture, "SinkGraph:TuneChannel() tuned to channel:{0} county:{1} freq:{2} MHz. tvformat:{3} signal:{4}",
@@ -540,16 +542,16 @@ namespace MediaPortal.TV.Recording
         if (_mpeg2DemuxHelper != null)
           _mpeg2DemuxHelper.SetStartingPoint();
 
-      _signalLostTimer = DateTime.Now;
-      UpdateVideoState();
-      _isTuning = false;
-      /*
-      if (restartGraph)
-      {
-        string fname = Recorder.GetTimeShiftFileNameByCardId(_cardId);
-        _mpeg2DemuxHelper.StartTimeshifting(fname);
-        g_Player.ContinueGraph();
-      }*/
+        _signalLostTimer = DateTime.Now;
+        UpdateVideoState();
+        _isTuning = false;
+        /*
+        if (restartGraph)
+        {
+          string fname = Recorder.GetTimeShiftFileNameByCardId(_cardId);
+          _mpeg2DemuxHelper.StartTimeshifting(fname);
+          g_Player.ContinueGraph();
+        }*/
       }
       _previousChannel = channel.Number;
       _startTime = DateTime.Now;
@@ -610,12 +612,14 @@ namespace MediaPortal.TV.Recording
         _vmr9.Dispose();
         _vmr9 = null;
       }
-      
+
 
       AddPreferredCodecs(true, true);
 
       _graphState = State.Viewing;
       TuneChannel(channel);
+
+      SetFrameRateAndSize();
       _mpeg2DemuxHelper.StartViewing(GUIGraphicsContext.ActiveForm, _vmr9);
 
       DirectShowUtil.EnableDeInterlace(_graphBuilderInterface);
@@ -674,7 +678,7 @@ namespace MediaPortal.TV.Recording
         _mpeg2DemuxHelper.StopViewing(_vmr9);
       _vmr9 = null;
       _graphState = State.Created;
-      
+
 
 
       return true;
@@ -976,34 +980,34 @@ namespace MediaPortal.TV.Recording
 
       if (!SignalPresent())
       {
-          TimeSpan ts = DateTime.Now - _signalLostTimer;
-          if (ts.TotalSeconds < 5)
-          {
-              VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-              return;
-          }
-          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
+        TimeSpan ts = DateTime.Now - _signalLostTimer;
+        if (ts.TotalSeconds < 5)
+        {
+          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+          return;
+        }
+        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
       }
       else
       {
-          if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+        if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+        {
+          if ((g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing))
           {
-              if ((g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing))
-              {
-                  TimeSpan ts = DateTime.Now - _signalLostTimer;
-                  if (ts.TotalSeconds < 5)
-                  {
-                      VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-                      return;
-                  }
-                  VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
-                  return;
-              }
+            TimeSpan ts = DateTime.Now - _signalLostTimer;
+            if (ts.TotalSeconds < 5)
+            {
+              VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+              return;
+            }
+            VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
+            return;
           }
-          _signalLostTimer = DateTime.Now;
-          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+        }
+        _signalLostTimer = DateTime.Now;
+        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       }
-  }
+    }
 
     public void Process()
     {
@@ -1021,7 +1025,7 @@ namespace MediaPortal.TV.Recording
       }
       if (!_isTuning)
       {
-          UpdateVideoState();
+        UpdateVideoState();
       }
     }
 
@@ -1071,131 +1075,131 @@ namespace MediaPortal.TV.Recording
       if (!SignalPresent()) return;
       if (tv)
       {
-          TVChannel tvChan = null;
-          int channelId = TVDatabase.GetChannelId(_channelNumber);
-          tvChan = TVDatabase.GetChannelById(channelId);
-          if (tvChan == null)
+        TVChannel tvChan = null;
+        int channelId = TVDatabase.GetChannelId(_channelNumber);
+        tvChan = TVDatabase.GetChannelById(channelId);
+        if (tvChan == null)
+        {
+          //doesn't exists
+          tvChan = new TVChannel();
+          tvChan.Scrambled = false;
+          //then add a new channel to the database
+          tvChan.Name = GetTeletextChannelName();
+          if (tvChan.Name == string.Empty)
           {
-              //doesn't exists
-              tvChan = new TVChannel();
-              tvChan.Scrambled = false;
-              //then add a new channel to the database
-              tvChan.Name = GetTeletextChannelName();
-              if (tvChan.Name == string.Empty)
-              {
-                  tvChan.Name = _channelNumber.ToString();
-              }
-              tvChan.ID = -1;
-              tvChan.Number = _channelNumber;
-              tvChan.Sort = 40000;
-              Log.WriteFile(Log.LogType.Capture, "SinkGraph: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
-              int id = TVDatabase.AddChannel(tvChan);
-              if (id < 0)
-              {
-                  Log.WriteFile(Log.LogType.Capture, true, "SinkGraph: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
-              }
-              channelId = id;
-              newChannels++;
+            tvChan.Name = _channelNumber.ToString();
           }
-          else
+          tvChan.ID = -1;
+          tvChan.Number = _channelNumber;
+          tvChan.Sort = 40000;
+          Log.WriteFile(Log.LogType.Capture, "SinkGraph: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
+          int id = TVDatabase.AddChannel(tvChan);
+          if (id < 0)
           {
-              TVDatabase.UpdateChannel(tvChan, tvChan.Sort);
-              updatedChannels++;
-              Log.WriteFile(Log.LogType.Capture, "SinkGraph: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
+            Log.WriteFile(Log.LogType.Capture, true, "SinkGraph: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
           }
-          TVDatabase.MapChannelToCard(tvChan.ID, ID);
+          channelId = id;
+          newChannels++;
+        }
+        else
+        {
+          TVDatabase.UpdateChannel(tvChan, tvChan.Sort);
+          updatedChannels++;
+          Log.WriteFile(Log.LogType.Capture, "SinkGraph: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
+        }
+        TVDatabase.MapChannelToCard(tvChan.ID, ID);
 
-          TVGroup group = new TVGroup();
-          group.GroupName = "Analog";
-          int groupid = TVDatabase.AddGroup(group);
-          group.ID = groupid;
-          TVDatabase.MapChannelToGroup(group, tvChan);
+        TVGroup group = new TVGroup();
+        group.GroupName = "Analog";
+        int groupid = TVDatabase.AddGroup(group);
+        group.ID = groupid;
+        TVDatabase.MapChannelToGroup(group, tvChan);
       }
       if (radio)
       {
-          if (_graphState != State.Radio) return;
-          int frequency = 0;
-          int hr = _tvTunerInterface.get_AudioFrequency(out frequency);
-          if ((hr != 0)||(frequency==0))
+        if (_graphState != State.Radio) return;
+        int frequency = 0;
+        int hr = _tvTunerInterface.get_AudioFrequency(out frequency);
+        if ((hr != 0) || (frequency == 0))
+        {
+          return;
+        }
+        long stationFrequency = frequency;
+        float floatFrequency = ((float)stationFrequency) / 1000000f;
+        string stationName = String.Format("{0:###.##}", floatFrequency);
+        //TODO get name from RDS
+        MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
+        if (!RadioDatabase.GetStation(stationName, out station))
+        {
+          //doesn't exists
+          //then add a new station to the database
+          station.Scrambled = false;
+          station.ID = -1;
+          station.Name = stationName;
+          station.Frequency = stationFrequency;
+          station.Sort = 40000;
+          station.Channel = GetUniqueRadioChannel();
+          Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogRadio: add new station for {0}:{1}", station.Name, station.Frequency);
+          int id = RadioDatabase.AddStation(ref station);
+          if (id < 0)
           {
-              return;
+            Log.WriteFile(Log.LogType.Capture, true, "Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name, station.Frequency);
           }
-          long stationFrequency = frequency;
-          float floatFrequency = ((float)stationFrequency) / 1000000f;
-          string stationName = String.Format("{0:###.##}", floatFrequency);
-          //TODO get name from RDS
-          MediaPortal.Radio.Database.RadioStation station = new MediaPortal.Radio.Database.RadioStation();
-          if (!RadioDatabase.GetStation(stationName, out station))
-          {
-              //doesn't exists
-              //then add a new station to the database
-              station.Scrambled = false;
-              station.ID = -1;
-              station.Name = stationName;
-              station.Frequency = stationFrequency;
-              station.Sort = 40000;
-              station.Channel = GetUniqueRadioChannel();
-              Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogRadio: add new station for {0}:{1}", station.Name, station.Frequency);
-              int id = RadioDatabase.AddStation(ref station);
-              if (id < 0)
-              {
-                  Log.WriteFile(Log.LogType.Capture, true, "Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name, station.Frequency);
-              }
-              newRadioChannels++;
-          }
-          else
-          {
-              station.Name = stationName;
-              station.Frequency = stationFrequency;
-              RadioDatabase.UpdateStation(station);
-              updatedRadioChannels++;
-              Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogRadio: update station {0}:{1} {2}", station.Name, station.Frequency, station.ID);
-          }
-          RadioDatabase.MapChannelToCard(station.ID, _card.ID);
+          newRadioChannels++;
+        }
+        else
+        {
+          station.Name = stationName;
+          station.Frequency = stationFrequency;
+          RadioDatabase.UpdateStation(station);
+          updatedRadioChannels++;
+          Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogRadio: update station {0}:{1} {2}", station.Name, station.Frequency, station.ID);
+        }
+        RadioDatabase.MapChannelToCard(station.ID, _card.ID);
 
       }
     }
-      public string GetTeletextChannelName()
+    public string GetTeletextChannelName()
+    {
+      bool currentTeletextGrabbing = _grabTeletext;
+      _grabTeletext = true;
+      TeletextGrabber.TeletextCache.ClearTeletextChannelName();
+      string channelName = "";
+      for (int i = 0; i < 5; i++)
       {
-          bool currentTeletextGrabbing = _grabTeletext;
-          _grabTeletext = true;
-          TeletextGrabber.TeletextCache.ClearTeletextChannelName();
-          string channelName = "";
-          for (int i = 0; i < 5; i++)
-          {
-              channelName = TeletextGrabber.TeletextCache.GetTeletextChannelName();
-              if (channelName != string.Empty) break;
-              System.Threading.Thread.Sleep(500);
-          }
-          _grabTeletext = currentTeletextGrabbing;
-          return channelName;
+        channelName = TeletextGrabber.TeletextCache.GetTeletextChannelName();
+        if (channelName != string.Empty) break;
+        System.Threading.Thread.Sleep(500);
       }
-      int GetUniqueRadioChannel()
+      _grabTeletext = currentTeletextGrabbing;
+      return channelName;
+    }
+    int GetUniqueRadioChannel()
+    {
+      ArrayList stations = new ArrayList();
+      RadioDatabase.GetStations(ref stations);
+      int number = 1;
+      while (true)
       {
-          ArrayList stations = new ArrayList();
-          RadioDatabase.GetStations(ref stations);
-          int number = 1;
-          while (true)
+        bool unique = true;
+        foreach (MediaPortal.Radio.Database.RadioStation station in stations)
+        {
+          if (station.Channel == number)
           {
-              bool unique = true;
-              foreach (MediaPortal.Radio.Database.RadioStation station in stations)
-              {
-                  if (station.Channel == number)
-                  {
-                      unique = false;
-                      break;
-                  }
-              }
-              if (!unique)
-              {
-                  number++;
-              }
-              else
-              {
-                  return number;
-              }
+            unique = false;
+            break;
           }
+        }
+        if (!unique)
+        {
+          number++;
+        }
+        else
+        {
+          return number;
+        }
       }
+    }
 
 
     public void TuneRadioChannel(RadioStation station)
@@ -1218,7 +1222,7 @@ namespace MediaPortal.TV.Recording
       _tvTunerInterface.get_AudioFrequency(out frequency);
       Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  tuned to {0} hz", frequency);
       _isTuning = false;
-  }
+    }
 
     public void StartRadio(RadioStation station)
     {
@@ -1281,8 +1285,37 @@ namespace MediaPortal.TV.Recording
       _tvTunerInterface.get_AudioFrequency(out frequency);
       Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  tuned to {0} hz", frequency);
       _isTuning = false;
-  }
+    }
 
+    protected void SetFrameRateAndSize()
+    {
+      if (_videoCaptureHelper == null) return;
+      string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+      {
+        string frameRate = xmlreader.GetValueAsString("analog", "framerate", "25");
+        string frameSize = xmlreader.GetValueAsString("analog", "framesize", "720x576");
+        if (frameRate == "29.76")
+          _videoCaptureHelper.SetFrameRate(29.76);
+        else if (frameRate == "25")
+          _videoCaptureHelper.SetFrameRate(25);
+        else if (frameRate == "15")
+          _videoCaptureHelper.SetFrameRate(15);
+
+        if (frameSize == "768x576")
+          _videoCaptureHelper.SetFrameSize(new Size(768, 576));
+        else if (frameSize == "720x576")
+          _videoCaptureHelper.SetFrameSize(new Size(720, 576));
+        else if (frameSize == "720x480")
+          _videoCaptureHelper.SetFrameSize(new Size(720, 480));
+        else if (frameSize == "640x480")
+          _videoCaptureHelper.SetFrameSize(new Size(640, 480));
+        else if (frameSize == "352x288")
+          _videoCaptureHelper.SetFrameSize(new Size(352, 288));
+        else if (frameSize == "352x240")
+          _videoCaptureHelper.SetFrameSize(new Size(352, 240));
+      }
+    }
     protected void SetQuality(int Quality)
     {
       string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);

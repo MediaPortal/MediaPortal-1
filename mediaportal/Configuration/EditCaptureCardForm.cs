@@ -124,6 +124,10 @@ namespace MediaPortal.Configuration
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private ComboBox comboBoxCAM;
     int CardId;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private ComboBox comboBoxFrameSize;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
+    private ComboBox comboBoxFrameRate;
     TVCaptureDevice prevDevice = null;
 
     /// <summary>
@@ -506,6 +510,10 @@ namespace MediaPortal.Configuration
       this.comboBoxQuality = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.tabPageAutotune = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.tabPageAutotuneRadio = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.comboBoxFrameSize = new System.Windows.Forms.ComboBox();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxFrameRate = new System.Windows.Forms.ComboBox();
       this.tabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
@@ -533,7 +541,7 @@ namespace MediaPortal.Configuration
       this.useRecordingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useRecordingCheckBox.Enabled = false;
       this.useRecordingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useRecordingCheckBox.Location = new System.Drawing.Point(11, 145);
+      this.useRecordingCheckBox.Location = new System.Drawing.Point(11, 183);
       this.useRecordingCheckBox.Name = "useRecordingCheckBox";
       this.useRecordingCheckBox.Size = new System.Drawing.Size(165, 17);
       this.useRecordingCheckBox.TabIndex = 9;
@@ -548,7 +556,7 @@ namespace MediaPortal.Configuration
       this.useWatchingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
       this.useWatchingCheckBox.Enabled = false;
       this.useWatchingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useWatchingCheckBox.Location = new System.Drawing.Point(11, 122);
+      this.useWatchingCheckBox.Location = new System.Drawing.Point(11, 160);
       this.useWatchingCheckBox.Name = "useWatchingCheckBox";
       this.useWatchingCheckBox.Size = new System.Drawing.Size(157, 17);
       this.useWatchingCheckBox.TabIndex = 8;
@@ -623,6 +631,10 @@ namespace MediaPortal.Configuration
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.mpLabel3);
+      this.tabPage1.Controls.Add(this.comboBoxFrameRate);
+      this.tabPage1.Controls.Add(this.mpLabel2);
+      this.tabPage1.Controls.Add(this.comboBoxFrameSize);
       this.tabPage1.Controls.Add(this.mpLabel1);
       this.tabPage1.Controls.Add(this.comboBoxCAM);
       this.tabPage1.Controls.Add(this.checkBoxHWPidFiltering);
@@ -709,7 +721,7 @@ namespace MediaPortal.Configuration
       this.groupBox5.Controls.Add(this.tbRecordingFolder);
       this.groupBox5.Controls.Add(this.label26);
       this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox5.Location = new System.Drawing.Point(11, 169);
+      this.groupBox5.Location = new System.Drawing.Point(11, 207);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(424, 100);
       this.groupBox5.TabIndex = 61;
@@ -1110,6 +1122,49 @@ namespace MediaPortal.Configuration
       this.tabPageAutotuneRadio.UseVisualStyleBackColor = true;
       this.tabPageAutotuneRadio.Enter += new System.EventHandler(this.tabPageAutotuneRadio_Enter);
       // 
+      // comboBoxFrameSize
+      // 
+      this.comboBoxFrameSize.FormattingEnabled = true;
+      this.comboBoxFrameSize.Items.AddRange(new object[] {
+            "768x576",
+            "720x576",
+            "720x480",
+            "640x480",
+            "352x288",
+            "352x240"});
+      this.comboBoxFrameSize.Location = new System.Drawing.Point(74, 125);
+      this.comboBoxFrameSize.Name = "comboBoxFrameSize";
+      this.comboBoxFrameSize.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxFrameSize.TabIndex = 62;
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.Location = new System.Drawing.Point(9, 125);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(60, 16);
+      this.mpLabel2.TabIndex = 63;
+      this.mpLabel2.Text = "Frame size:";
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.Location = new System.Drawing.Point(213, 125);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(60, 16);
+      this.mpLabel3.TabIndex = 65;
+      this.mpLabel3.Text = "Frame size:";
+      // 
+      // comboBoxFrameRate
+      // 
+      this.comboBoxFrameRate.FormattingEnabled = true;
+      this.comboBoxFrameRate.Items.AddRange(new object[] {
+            "29.976 fps",
+            "25 fps",
+            "15 fps"});
+      this.comboBoxFrameRate.Location = new System.Drawing.Point(279, 122);
+      this.comboBoxFrameRate.Name = "comboBoxFrameRate";
+      this.comboBoxFrameRate.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxFrameRate.TabIndex = 64;
+      // 
       // EditCaptureCardForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
@@ -1239,6 +1294,8 @@ namespace MediaPortal.Configuration
           xmlwriter.SetValueAsBool("quality", "HighVBR", cbHighVBR.Checked);
           xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
           xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
+          xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.SelectedItem.ToString());
+          xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.SelectedItem);
         }
         IEnumerator enumerator = this.tabPageAutotune.Controls.GetEnumerator();
         if (enumerator.MoveNext())
@@ -1308,9 +1365,8 @@ namespace MediaPortal.Configuration
       checkBoxHWPidFiltering.Visible = false;
       comboBoxCAM.Visible = false;
       mpLabel1.Visible = false;
-      //
-      // Setup frame sizes
-      //
+      comboBoxFrameRate.Visible = false;
+      comboBoxFrameSize.Visible = false;
       TVCaptureDevice capture = CaptureCard;
       useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = cardComboBox.Text.Length > 0;
       try
@@ -1326,6 +1382,11 @@ namespace MediaPortal.Configuration
                 comboBoxCAM.Visible = true;
                 mpLabel1.Visible = true;
               }
+            }
+            else
+            {
+              comboBoxFrameRate.Visible = true;
+              comboBoxFrameSize.Visible = true;
             }
             if (capture.SupportsHardwarePidFiltering)
             {
@@ -1460,6 +1521,8 @@ namespace MediaPortal.Configuration
 
               checkBoxHWPidFiltering.Checked = xmlreader.GetValueAsBool("general", "hwfiltering", false);
               comboBoxCAM.SelectedItem = xmlreader.GetValueAsString("dvbs", "cam", "Default");
+              comboBoxFrameRate.SelectedItem = xmlreader.GetValueAsString("analog", "framerate", "25");
+              comboBoxFrameSize.SelectedItem = xmlreader.GetValueAsString("analog", "framesize", "720x576");
             }
           }
         }
@@ -1573,6 +1636,9 @@ namespace MediaPortal.Configuration
         {
           xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
           xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
+          xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.SelectedItem.ToString());
+          xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.SelectedItem);
+
         }
         if (capture.CardType == TVCapture.CardTypes.Digital_SS2 ||
             capture.CardType == TVCapture.CardTypes.Digital_TTPremium)
@@ -1608,6 +1674,8 @@ namespace MediaPortal.Configuration
         {
           xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
           xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
+          xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.SelectedItem.ToString());
+          xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.SelectedItem);
         }
         if (capture.CardType == TVCapture.CardTypes.Digital_SS2)
         {
