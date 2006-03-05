@@ -2365,8 +2365,9 @@ namespace MediaPortal.Music.Database
                             {
                                 using (System.Drawing.Image image = System.Drawing.Image.FromStream(memoryStream))
                                 {
-                                    string strSmallThumb = Utils.GetCoverArtName(Thumbs.MusicAlbum, tag.Album);
-                                    string strLargeThumb = Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, tag.Album);
+                                    String tagAlbumName = String.Format("{0}-{1}", tag.Artist, tag.Album);
+                                    string strSmallThumb = Utils.GetCoverArtName(Thumbs.MusicAlbum, tagAlbumName);
+                                    string strLargeThumb = Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, tagAlbumName);
                                     MediaPortal.Util.Picture.CreateThumbnail(image, strSmallThumb, 128, 128, 0);
                                     MediaPortal.Util.Picture.CreateThumbnail(image, strLargeThumb, 512, 512, 0);
                                     string folderThumb = Utils.GetFolderThumb(strPathSong);
