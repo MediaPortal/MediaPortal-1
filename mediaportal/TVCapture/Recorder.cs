@@ -932,12 +932,11 @@ namespace MediaPortal.TV.Recording
     }
 
 
-    static public bool IsBusyProcessingCommands
+    static public CommandProcessor CommandProcessor
     {
       get
       {
-        if (_commandProcessor == null) return false;
-        return (_commandProcessor.IsBusy);
+        return (_commandProcessor);
       }
     }
 

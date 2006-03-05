@@ -494,7 +494,7 @@ namespace MediaPortal.GUI.TV
     public override void Process()
     {
       if (GUIGraphicsContext.InVmr9Render) return;
-      if (Recorder.IsBusyProcessingCommands)
+      if (Recorder.CommandProcessor.IsBusy)
       {
         btnChannel.Disabled = true;
         btnGroup.Disabled = true;
