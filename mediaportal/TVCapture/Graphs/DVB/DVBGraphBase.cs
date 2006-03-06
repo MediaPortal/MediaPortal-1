@@ -2849,134 +2849,217 @@ namespace MediaPortal.TV.Recording
       transp.channels = null;
       DateTime dt = DateTime.Now;
 
-      //wait until PAT/SDT has been received (max 5 secs)
-      while (true)
-      {
-        TimeSpan ts = DateTime.Now - dt;
-        if (ts.TotalMilliseconds > 8000) break;
-        System.Threading.Thread.Sleep(2000);
-        if (_scanPidListReady) break;
-      }
-      ArrayList hwPids = (ArrayList)_scanPidList.Clone();
-
-      string pidList = "";
-      for (int i = 0; i < hwPids.Count; ++i)
-        pidList += String.Format("0x{0:X},", (ushort)hwPids[i]);
-
-      Log.Write("check...{0} pids:{1} {2}", _scanPidListReady, hwPids.Count, pidList);
-      if (_scanPidListReady == false) return;
-
-      //setup MPEG2 demuxer so it sends the PMT's to the analyzer filter
-      for (int i = 0; i < hwPids.Count; ++i)
-      {
-        ushort pid = (ushort)hwPids[i];
-        SetupDemuxerPin(_pinDemuxerSections, pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
-      }
-
-      //      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
-      SendHWPids(hwPids);
-
-      int offset = 3;
       if (Network() == NetworkType.ATSC)
       {
-        offset = 1;
-      }
-      using (DVBSections sections = new DVBSections())
-      {
-        sections.DemuxerObject = _streamDemuxer;
-        sections.Timeout = 2500;
-
-        //wait until all PMT's are received 
-        dt = DateTime.Now;
-        transp.channels = new ArrayList();
-        bool allFound = true;
-        bool newChannelsFound = false;
-        bool[] channelReady = new bool[hwPids.Count];
-        do
+        ushort count=0;
+        while (true)
         {
-          newChannelsFound = false;
-          allFound = true;
-          for (int index = 0; index < hwPids.Count - offset; index++)
+          TimeSpan ts = DateTime.Now - dt;
+          if (ts.TotalMilliseconds > 8000) break;
+          _analyzerInterface.GetChannelCount(ref count);
+          if (count > 0) break;
+          System.Threading.Thread.Sleep(2000);
+        }
+        _analyzerInterface.GetChannelCount(ref count);
+        if (count == 0)
+        {
+          Log.WriteFile(Log.LogType.Capture, "DVBGraph: found 0 channels");
+          return;
+        }
+        using (DVBSections sections = new DVBSections())
+        {
+          sections.DemuxerObject = _streamDemuxer;
+          sections.Timeout = 2500;
+
+          //wait until all channels are received 
+          dt = DateTime.Now;
+          transp.channels = new ArrayList();
+          bool allFound = true;
+          bool newChannelsFound = false;
+          bool[] channelReady = new bool[count];
+          do
           {
-            if (channelReady[index]) continue;
-            if (_analyzerInterface.IsChannelReady(index) != 0)
+            newChannelsFound = false;
+            allFound = true;
+            for (int index = 0; index < count; index++)
             {
-              //channel not ready
-              allFound = false;
-            }
-            else
-            {
-              //channel is ready
-              DVBSections.ChannelInfo chi = new MediaPortal.TV.Recording.DVBSections.ChannelInfo();
-              UInt16 len = 0;
-              int hr = 0;
-              hr = _analyzerInterface.GetCISize(ref len);
-              IntPtr mmch = Marshal.AllocCoTaskMem(len);
-              try
+              if (channelReady[index]) continue;
+              if (_analyzerInterface.IsChannelReady(index) != 0)
               {
-                hr = _analyzerInterface.GetChannel((UInt16)(index), mmch);
-                //byte[] ch=new byte[len];
-                //Marshal.Copy(mmch,ch,0,len);
-                chi = sections.GetChannelInfo(mmch);
-                chi.fec = _currentTuningObject.FEC;
-                if (Network() != NetworkType.ATSC)
+                //channel not ready
+                allFound = false;
+              }
+              else
+              {
+                //channel is ready
+                DVBSections.ChannelInfo chi = new MediaPortal.TV.Recording.DVBSections.ChannelInfo();
+                UInt16 len = 0;
+                int hr = 0;
+                hr = _analyzerInterface.GetCISize(ref len);
+                IntPtr mmch = Marshal.AllocCoTaskMem(len);
+                try
                 {
-                  chi.freq = _currentTuningObject.Frequency;
-                }
-                else
-                {
+                  hr = _analyzerInterface.GetChannel((UInt16)(index), mmch);
+                  chi = sections.GetChannelInfo(mmch);
+                  chi.fec = _currentTuningObject.FEC;
+
                   _currentTuningObject.Frequency = 0;
                   _currentTuningObject.Modulation = chi.modulation;
                 }
+                finally
+                {
+                  Marshal.FreeCoTaskMem(mmch);
+                }
+
+                transp.channels.Add(chi);
+                channelReady[index] = true;
+                newChannelsFound = true;
               }
-              finally
+            }// for (int index = 0; index < hwPids.Count-offset; ++index)
+
+            if (!allFound)
+            {
+              if (newChannelsFound)
               {
-                Marshal.FreeCoTaskMem(mmch);
+                dt = DateTime.Now;
               }
-
-              transp.channels.Add(chi);
-
-              channelReady[index] = true;
-              newChannelsFound = true;
-              Log.Write("channel:{0}/{1} pid:0x{2:X} ready", index, (hwPids.Count - offset), hwPids[offset + index]);
-              hwPids[offset + index] = (ushort)0x2000;
+              System.Threading.Thread.Sleep(500);
+              TimeSpan ts = DateTime.Now - dt;
+              if (ts.TotalMilliseconds >= 2000) break;
             }
-          }// for (int index = 0; index < hwPids.Count-offset; ++index)
-
-          // update h/w pids
-          if (!allFound && newChannelsFound)
-          {
-            ArrayList pids = new ArrayList();
-            for (int i = 0; i < hwPids.Count; ++i)
-            {
-              ushort pid = (ushort)hwPids[i];
-              if (pid < 0x1fff)
-                pids.Add(pid);
-            }
-            SendHWPids(pids);
-          }
-
-
-          if (!allFound)
-          {
-            if (newChannelsFound)
-            {
-              dt = DateTime.Now;
-            }
-            System.Threading.Thread.Sleep(500);
-            TimeSpan ts = DateTime.Now - dt;
-            if (ts.TotalMilliseconds >= 2000) break;
-          }
-        } while (!allFound);
+          } while (!allFound);
+        }
       }
+      else
+      {
+        //wait until PAT/SDT has been received (max 5 secs)
+        while (true)
+        {
+          TimeSpan ts = DateTime.Now - dt;
+          if (ts.TotalMilliseconds > 8000) break;
+          System.Threading.Thread.Sleep(2000);
+          if (_scanPidListReady) break;
+        }
+        ArrayList hwPids = (ArrayList)_scanPidList.Clone();
 
+        string pidList = "";
+        for (int i = 0; i < hwPids.Count; ++i)
+          pidList += String.Format("0x{0:X},", (ushort)hwPids[i]);
+
+        Log.Write("check...{0} pids:{1} {2}", _scanPidListReady, hwPids.Count, pidList);
+        if (_scanPidListReady == false) return;
+
+        //setup MPEG2 demuxer so it sends the PMT's to the analyzer filter
+        for (int i = 0; i < hwPids.Count; ++i)
+        {
+          ushort pid = (ushort)hwPids[i];
+          SetupDemuxerPin(_pinDemuxerSections, pid, (int)MediaSampleContent.Mpeg2PSI, (i == 0));
+        }
+
+        //      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
+        SendHWPids(hwPids);
+
+        int offset = 3;
+        if (Network() == NetworkType.ATSC)
+        {
+          offset = 1;
+        }
+        using (DVBSections sections = new DVBSections())
+        {
+          sections.DemuxerObject = _streamDemuxer;
+          sections.Timeout = 2500;
+
+          //wait until all PMT's are received 
+          dt = DateTime.Now;
+          transp.channels = new ArrayList();
+          bool allFound = true;
+          bool newChannelsFound = false;
+          bool[] channelReady = new bool[hwPids.Count];
+          do
+          {
+            newChannelsFound = false;
+            allFound = true;
+            for (int index = 0; index < hwPids.Count - offset; index++)
+            {
+              if (channelReady[index]) continue;
+              if (_analyzerInterface.IsChannelReady(index) != 0)
+              {
+                //channel not ready
+                allFound = false;
+              }
+              else
+              {
+                //channel is ready
+                DVBSections.ChannelInfo chi = new MediaPortal.TV.Recording.DVBSections.ChannelInfo();
+                UInt16 len = 0;
+                int hr = 0;
+                hr = _analyzerInterface.GetCISize(ref len);
+                IntPtr mmch = Marshal.AllocCoTaskMem(len);
+                try
+                {
+                  hr = _analyzerInterface.GetChannel((UInt16)(index), mmch);
+                  //byte[] ch=new byte[len];
+                  //Marshal.Copy(mmch,ch,0,len);
+                  chi = sections.GetChannelInfo(mmch);
+                  chi.fec = _currentTuningObject.FEC;
+                  if (Network() != NetworkType.ATSC)
+                  {
+                    chi.freq = _currentTuningObject.Frequency;
+                  }
+                  else
+                  {
+                    _currentTuningObject.Frequency = 0;
+                    _currentTuningObject.Modulation = chi.modulation;
+                  }
+                }
+                finally
+                {
+                  Marshal.FreeCoTaskMem(mmch);
+                }
+
+                transp.channels.Add(chi);
+
+                channelReady[index] = true;
+                newChannelsFound = true;
+                Log.Write("channel:{0}/{1} pid:0x{2:X} ready", index, (hwPids.Count - offset), hwPids[offset + index]);
+                hwPids[offset + index] = (ushort)0x2000;
+              }
+            }// for (int index = 0; index < hwPids.Count-offset; ++index)
+
+            // update h/w pids
+            if (!allFound && newChannelsFound)
+            {
+              ArrayList pids = new ArrayList();
+              for (int i = 0; i < hwPids.Count; ++i)
+              {
+                ushort pid = (ushort)hwPids[i];
+                if (pid < 0x1fff)
+                  pids.Add(pid);
+              }
+              SendHWPids(pids);
+            }
+
+
+            if (!allFound)
+            {
+              if (newChannelsFound)
+              {
+                dt = DateTime.Now;
+              }
+              System.Threading.Thread.Sleep(500);
+              TimeSpan ts = DateTime.Now - dt;
+              if (ts.TotalMilliseconds >= 2000) break;
+            }
+          } while (!allFound);
+        }
+      }
       if (transp.channels == null)
       {
         Log.WriteFile(Log.LogType.Capture, "DVBGraph: found no channels", transp.channels);
         return;
       }
 
-      Log.WriteFile(Log.LogType.Capture, "DVBGraph: found {0}/{1} channels", transp.channels.Count, hwPids.Count - offset);
+      Log.WriteFile(Log.LogType.Capture, "DVBGraph: found {0}", transp.channels.Count);
       for (int i = 0; i < transp.channels.Count; ++i)
       {
         DVBSections.ChannelInfo info = (DVBSections.ChannelInfo)transp.channels[i];
