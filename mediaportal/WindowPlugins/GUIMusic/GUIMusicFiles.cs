@@ -148,7 +148,6 @@ namespace MediaPortal.GUI.Music
 
         private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
         private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
-        // SV private int PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
 
         [SkinControlAttribute(8)]
         protected GUIButtonControl btnPlaylist;

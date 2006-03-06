@@ -39,7 +39,7 @@ using MediaPortal.GUI.View;
 
 namespace MediaPortal.GUI.Music
 {
-    public class GUIMusicPlayingNow : GUIWindow //GUIMusicBaseWindow
+    public class GUIMusicPlayingNow : GUIWindow
     {
         private enum ControlIDs
         {
@@ -223,14 +223,34 @@ namespace MediaPortal.GUI.Music
         {
             base.OnAction(action);
 
-            if (action.wID == Action.ActionType.ACTION_STOP)
+            switch (action.wID)
             {
-                if (GUIWindowManager.ActiveWindow == GetID)
-                {
-                    Action act = new Action();
-                    act.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
-                    GUIGraphicsContext.OnAction(act);
-                }
+                case Action.ActionType.ACTION_STOP:
+                    {
+                        if (GUIWindowManager.ActiveWindow == GetID)
+                        {
+                            Action act = new Action();
+                            act.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
+                            GUIGraphicsContext.OnAction(act);
+                        }
+
+                        break;
+                    }
+
+                // Since a ACTION_STOP action clears the player and CurrentPlaylistType type
+                // we need a way to restart playback after an ACTION_STOP has been received
+                case Action.ActionType.ACTION_MUSIC_PLAY:
+                case Action.ActionType.ACTION_NEXT_ITEM:
+                case Action.ActionType.ACTION_PAUSE:
+                case Action.ActionType.ACTION_PREV_ITEM:
+                    {
+                        if (PlaylistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
+                        {
+                            LoadAndStartPlayList();
+                        }
+
+                        break;
+                    }
             }
         }
 
@@ -712,6 +732,23 @@ namespace MediaPortal.GUI.Music
             }
  
             return 1;
+        }
+
+        private void LoadAndStartPlayList()
+        {
+            PlaylistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+
+            if (g_Player.CurrentFile == "")
+            {
+                PlayList playList = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+
+                if (playList != null && playList.Count > 0)
+                {
+                    this.CurrentTrackFileName = playList[0].FileName;
+                    PlaylistPlayer.Play(0);
+                    g_Player_PlayBackStarted(g_Player.MediaType.Music, g_Player.CurrentFile);
+                }
+            }
         }
     }
 }

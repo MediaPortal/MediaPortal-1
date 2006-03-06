@@ -255,5 +255,4 @@ namespace MediaPortal.Playlists
                 return stringCompareResults;
         }
     }
-    // \SV
 }

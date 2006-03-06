@@ -524,16 +524,20 @@ namespace MediaPortal.Music.Database
                     name1 = Regex.Replace(name1, @"[^a-z0-9]*", string.Empty);
 
                     // SourceForge Patch 1438582 (hwahrmann) Part 1 of 2
-                    //if (name1.Equals(name2))
-                    if (name1.Equals(name2) && album.idArtist == lArtistId)
+                    //if (name1.Equals(name2) && album.idArtist == lArtistId)
+                    // Temporarily disabled (albums tracks with multiple artists are added as seperate albums. 
+                    // Need to do more work with how MP handles various artist albums.
+                    if (name1.Equals(name2))
                     {
                         return album.idAlbum;
                     }
                 }
 
                 // SourceForge Patch 1438582 (hwahrmann) Part 2 of 2
-                strSQL = String.Format("select * from album where strAlbum like '{0}' and idArtist = {1}", strAlbum, lArtistId);
-                //strSQL = String.Format("select * from album where strAlbum like '{0}'", strAlbum);
+                //strSQL = String.Format("select * from album where strAlbum like '{0}' and idArtist = {1}", strAlbum, lArtistId);
+                // Temporarily disabled (albums tracks with multiple artists are added as seperate albums. 
+                // Need to do more work with how MP handles various artist albums.
+                strSQL = String.Format("select * from album where strAlbum like '{0}'", strAlbum);
                 SQLiteResultSet results;
                 results = m_db.Execute(strSQL);
 
@@ -576,7 +580,7 @@ namespace MediaPortal.Music.Database
             m_pathCache.Clear();
             m_albumCache.Clear();
         }
-
+        
         public bool IsOpen
         {
             get { return m_db != null; }
@@ -601,14 +605,18 @@ namespace MediaPortal.Music.Database
                 //        strTmp = song.Genre; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Genre = strTmp;
                 //        strTmp = song.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Artist = strTmp;
                 strTmp = song.Title; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.Title = strTmp;
-                // SourceForge Patch xxxxxxx (hwahrmann) Part 1 of 4
+
+                // SourceForge Patch 1442438 (hwahrmann) Part 1 of 4
                 //strTmp = song.FileName; DatabaseUtility.RemoveInvalidChars(ref strTmp); song.FileName = strTmp;
+                // \1442438
 
                 string strPath, strFileName;
 
                 DatabaseUtility.Split(song.FileName, out strPath, out strFileName);
-                // SourceForge Patch xxxxxxx (hwahrmann) Part 2 of 4
+
+                // SourceForge Patch 1442438 (hwahrmann) Part 2 of 4
                 DatabaseUtility.RemoveInvalidChars(ref strFileName);
+                // \1442438
 
                 if (null == m_db) return;
                 int lGenreId = AddGenre(song.Genre);
@@ -688,22 +696,23 @@ namespace MediaPortal.Music.Database
                 int lAlbumId = -1;
                 int lSongId = -1;
 
-                // SourceForge Patch xxxxxxx (hwahrmann) Part 3 of 4
+                // SourceForge Patch 1442438 (hwahrmann) Part 3 of 4
                 //DatabaseUtility.RemoveInvalidChars(ref strFileName);
-
                 //string strPath, strFName;
                 //DatabaseUtility.Split(strFileName, out strPath, out strFName);
+                // \1442438
 
                 if (null == m_db) return;
 
                 CRCTool crc = new CRCTool();
                 crc.Init(CRCTool.CRCCode.CRC32);
                 ulong dwCRC = crc.calc(strFileName);
-                // SourceForge Patch xxxxxxx (hwahrmann) Part 4 of 4
-                DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
+                // SourceForge Patch 1442438 (hwahrmann) Part 4 of 4
+                DatabaseUtility.RemoveInvalidChars(ref strFileName);
                 string strPath, strFName;
                 DatabaseUtility.Split(strFileName, out strPath, out strFName);
+                // \1442438
 
                 string strSQL;
                 strSQL = String.Format("select * from song,album,genre,artist,path where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and dwFileNameCRC like '{0}' and strPath like '{1}'",
@@ -1572,6 +1581,34 @@ namespace MediaPortal.Music.Database
                 Open();
             }
             return false;
+        }
+
+        public string GetAlbumPath(int nArtistId, int nAlbumId)
+        {
+            try
+            {
+                if (null == m_db)
+                    return string.Empty;
+
+                string sql = string.Format("select * from song, path where song.idPath=path.idPath and song.idArtist='{0}' and  song.idAlbum='{1}'  limit 1", nArtistId, nAlbumId);
+                SQLiteResultSet results = m_db.Execute(sql);
+
+                if (results.Rows.Count > 0)
+                {
+                    string sPath = DatabaseUtility.Get(results, 0, "path.strPath");
+                    sPath += DatabaseUtility.Get(results, 0, "song.strFileName");
+
+                    return sPath;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                Log.WriteFile(Log.LogType.Log, true, "musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+                Open();
+            }
+
+            return string.Empty;
         }
 
         public void ResetTop100()

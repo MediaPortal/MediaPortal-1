@@ -118,6 +118,31 @@ namespace MediaPortal.GUI.Music
             else if (action.wID == Action.ActionType.ACTION_DELETE_SELECTED_ITEM)
                 DeletePlayListItem();
 
+            // Handle case where playlist has been stopped and we receive a player action.
+            // This allows us to restart the playback proccess...
+            else if (action.wID == Action.ActionType.ACTION_MUSIC_PLAY
+                  || action.wID == Action.ActionType.ACTION_NEXT_ITEM
+                  || action.wID == Action.ActionType.ACTION_PAUSE
+                  || action.wID == Action.ActionType.ACTION_PREV_ITEM
+                )
+            {
+                if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC)
+                {
+                    playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+
+                    if (g_Player.CurrentFile == "")
+                    {
+                        PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+
+                        if (playList != null && playList.Count > 0)
+                        {
+                            playlistPlayer.Play(0);
+                            UpdateButtonStates();
+                        }
+                    }
+                }
+            }
+
             base.OnAction(action);
         }
 
@@ -357,6 +382,7 @@ namespace MediaPortal.GUI.Music
                 playlistPlayer.Reset();
                 playlistPlayer.Play(iItem);
                 SelectCurrentPlayingSong();
+                UpdateButtonStates();
             }
             //ended changes
         }
@@ -803,6 +829,9 @@ namespace MediaPortal.GUI.Music
 
         private void MovePlayListItemUp()
         {
+            if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
+                playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+
             if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC
                 || facadeView.View != GUIFacadeControl.ViewMode.Playlist
                 || facadeView.PlayListView == null)
@@ -844,6 +873,9 @@ namespace MediaPortal.GUI.Music
 
         private void MovePlayListItemDown()
         {
+            if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
+                playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+
             if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC
                 || facadeView.View != GUIFacadeControl.ViewMode.Playlist
                 || facadeView.PlayListView == null)
@@ -893,6 +925,9 @@ namespace MediaPortal.GUI.Music
 
         private void DeletePlayListItem()
         {
+            if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_NONE)
+                playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+
             if (playlistPlayer.CurrentPlaylistType != PlayListType.PLAYLIST_MUSIC
                 || facadeView.View != GUIFacadeControl.ViewMode.Playlist
                 || facadeView.PlayListView == null)

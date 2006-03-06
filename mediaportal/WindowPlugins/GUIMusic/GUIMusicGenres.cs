@@ -333,6 +333,7 @@ namespace MediaPortal.GUI.Music
             {
                 MusicTag tag = item.MusicTag as MusicTag;
                 string strThumb = GUIMusicFiles.GetAlbumThumbName(tag.Artist, tag.Album);
+                string albumThumb = strThumb;
                 if (System.IO.File.Exists(strThumb))
                 {
                     item.IconImage = strThumb;
@@ -347,6 +348,26 @@ namespace MediaPortal.GUI.Music
                         item.IconImage = strThumb;
                         item.IconImageBig = strThumb;
                         item.ThumbnailImage = strThumb;
+                    }
+
+                    // Utils.GetFolderThumb returns an empty string when item.Path.Length == 0
+                    // so we'll pull to info from the db to reconstruct the full album path
+                    else if(strThumb.Length == 0)
+                    {
+                        string albumPath = m_database.GetAlbumPath(song.artistId, song.albumId);
+                        strThumb = Utils.GetFolderThumb(albumPath);
+                        if (System.IO.File.Exists(strThumb))
+                        {
+                            item.IconImage = strThumb;
+                            item.IconImageBig = strThumb;
+                            item.ThumbnailImage = strThumb;
+
+                            // Save a copy to the \thumbs folder so we don't need to do this again
+                            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(strThumb);
+
+                            if(bmp != null)
+                                bmp.Save(albumThumb);
+                        }
                     }
                 }
             }
