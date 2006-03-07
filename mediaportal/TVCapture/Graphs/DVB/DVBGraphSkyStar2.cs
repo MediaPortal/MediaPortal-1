@@ -1014,7 +1014,7 @@ namespace MediaPortal.TV.Recording
     protected override void SubmitTuneRequest(DVBChannel ch)
     {
       //b2settuner -a eth1 -i s -f 12426 -s 27500 -l 11250 -e auto -o h -k 22 -d b/a -pd 0x501 -pd 0x3e9
-      //Tune() freq:11919000 SR:27500 FEC:6 POL:1 LNBKhz:3 Diseq:1 LNBFreq:10600 ecmPid:0 pmtPid:0 pcrPid0
+      //Tune() freq:11919000 SR:27500 FEC:6 POL:1 LNBKHz:3 Diseq:1 LNBFreq:10600 ecmPid:0 pmtPid:0 pcrPid0
       
       int frequency = ch.Frequency;
       if (frequency > 13000)
@@ -1030,7 +1030,7 @@ namespace MediaPortal.TV.Recording
       switch (Network())
       {
         case NetworkType.ATSC:
-          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Channel:{0} Khz", ch.PhysicalChannel);
+          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Channel:{0} kHz", ch.PhysicalChannel);
           hr = _interfaceB2C2TunerCtrl.SetChannel(ch.PhysicalChannel);
           if (hr != 0)
           {
@@ -1135,8 +1135,8 @@ namespace MediaPortal.TV.Recording
             return;
           }
 
-          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Lnb:{0} Khz {1}", LNBSelectionType.Lnb22Khz);
-          hr = _interfaceB2C2TunerCtrl.SetLnbKHz( (int)LNBSelectionType.Lnb22Khz);
+          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Lnb:{0} kHz {1}", LNBSelectionType.Lnb22kHz);
+          hr = _interfaceB2C2TunerCtrl.SetLnbKHz( (int)LNBSelectionType.Lnb22kHz);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetLnbKHz() failed:0x{0:X}", hr);
@@ -1166,13 +1166,13 @@ namespace MediaPortal.TV.Recording
 
         _interfaceB2C2TunerCtrl.GetFrequency(out dummy);
         Log.Write("DVBGraphSkyStar2 tuner dump:");
-        Log.Write("DVBGraphSkyStar2    freq:{0} MHZ", dummy);
+        Log.Write("DVBGraphSkyStar2    freq:{0} MHz", dummy);
 
         _interfaceB2C2TunerCtrl.GetLnbFrequency(out dummy);
-        Log.Write("DVBGraphSkyStar2    LNB freq:{0} MHZ", dummy);
+        Log.Write("DVBGraphSkyStar2    LNB freq:{0} MHz", dummy);
 
         _interfaceB2C2TunerCtrl.GetLnbKHz(out dummy);
-        Log.Write("DVBGraphSkyStar2    LNB KHz:{0}", dummy);
+        Log.Write("DVBGraphSkyStar2    LNB kHz:{0}", dummy);
 
         _interfaceB2C2TunerCtrl.GetDiseqc(out dummy);
         Log.Write("DVBGraphSkyStar2    diseqc:{0}", ((DisEqcType)dummy));
@@ -1184,7 +1184,7 @@ namespace MediaPortal.TV.Recording
         Log.Write("DVBGraphSkyStar2    polarity:{0}", ((PolarityType)dummy));
 
         _interfaceB2C2TunerCtrl.GetSymbolRate(out dummy);
-        Log.Write("DVBGraphSkyStar2    symbol rate:{0} KS/S", dummy);
+        Log.Write("DVBGraphSkyStar2    symbol rate:{0} kHz", dummy);
       }
       else
       {
@@ -1215,7 +1215,7 @@ namespace MediaPortal.TV.Recording
     protected override void SendHWPids(ArrayList pids)
     {
       const int PID_CAPTURE_ALL_INCLUDING_NULLS = 0x2000;//Enables reception of all PIDs in the transport stream including the NULL PID
-      // const int PID_CAPTURE_ALL_EXCLUDING_NULLS = 0x2001;//Enables reception of all PIDs in the transport stream excluding the NULL PID. 
+      // const int PID_CAPTURE_ALL_EXCLUDING_NULLS = 0x2001;//Enables reception of all PIDs in the transport stream excluding the NULL PID.
 
       if (!DeleteAllPIDs(_interfaceB2C2DataCtrl, 0))
       {
@@ -1300,9 +1300,9 @@ namespace MediaPortal.TV.Recording
         switch (lnbKhz)
         {
           case 0: lnbKhzVal = (int)LNBSelectionType.Lnb0; break;
-          case 22: lnbKhzVal = (int)LNBSelectionType.Lnb22Khz; break;
-          case 33: lnbKhzVal = (int)LNBSelectionType.Lnb33Khz; break;
-          case 44: lnbKhzVal = (int)LNBSelectionType.Lnb44KHz; break;
+          case 22: lnbKhzVal = (int)LNBSelectionType.Lnb22kHz; break;
+          case 33: lnbKhzVal = (int)LNBSelectionType.Lnb33kHz; break;
+          case 44: lnbKhzVal = (int)LNBSelectionType.Lnb44kHz; break;
         }
 
 
@@ -1310,7 +1310,7 @@ namespace MediaPortal.TV.Recording
 
       // set values to dvbchannel-object
       ch.DiSEqC = diseqc;
-      // set the lnb parameter 
+      // set the lnb parameter
       if (ch.Frequency >= lnbswMHZ * 1000)
       {
         ch.LNBFrequency = lnb1MHZ;
@@ -1321,7 +1321,7 @@ namespace MediaPortal.TV.Recording
         ch.LNBFrequency = lnb0MHZ;
         ch.LNBKHz = 0;
       }
-      Log.WriteFile(Log.LogType.Capture, "auto-tune ss2: freq={0} lnbKhz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LNBKHz, ch.LNBFrequency, ch.DiSEqC);
+      Log.WriteFile(Log.LogType.Capture, "auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LNBKHz, ch.LNBFrequency, ch.DiSEqC);
       return ch;
 
     }// LoadDiseqcSettings()
@@ -1385,9 +1385,9 @@ namespace MediaPortal.TV.Recording
         switch (lnbKhz)
         {
           case 0: lnbKhzVal = (int)LNBSelectionType.Lnb0; break;
-          case 22: lnbKhzVal = (int)LNBSelectionType.Lnb22Khz; break;
-          case 33: lnbKhzVal = (int)LNBSelectionType.Lnb33Khz; break;
-          case 44: lnbKhzVal = (int)LNBSelectionType.Lnb44KHz; break;
+          case 22: lnbKhzVal = (int)LNBSelectionType.Lnb22kHz; break;
+          case 33: lnbKhzVal = (int)LNBSelectionType.Lnb33kHz; break;
+          case 44: lnbKhzVal = (int)LNBSelectionType.Lnb44kHz; break;
         }
 
 
@@ -1395,7 +1395,7 @@ namespace MediaPortal.TV.Recording
 
       // set values to dvbchannel-object
       _currentTuningObject.DiSEqC = diseqc;
-      // set the lnb parameter 
+      // set the lnb parameter
       if (_currentTuningObject.Frequency >= lnbswMHZ * 1000)
       {
         _currentTuningObject.LNBFrequency = lnb1MHZ;
@@ -1406,7 +1406,7 @@ namespace MediaPortal.TV.Recording
         _currentTuningObject.LNBFrequency = lnb0MHZ;
         _currentTuningObject.LNBKHz = 0;
       }
-      Log.WriteFile(Log.LogType.Capture, "auto-tune ss2: freq={0} lnbKhz={1} lnbFreq={2} diseqc={3}", _currentTuningObject.Frequency, _currentTuningObject.LNBKHz, _currentTuningObject.LNBFrequency, _currentTuningObject.DiSEqC);
+      Log.WriteFile(Log.LogType.Capture, "auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", _currentTuningObject.Frequency, _currentTuningObject.LNBKHz, _currentTuningObject.LNBFrequency, _currentTuningObject.DiSEqC);
     }// LoadDiseqcSettings()
 
     public override bool SupportsHardwarePidFiltering()

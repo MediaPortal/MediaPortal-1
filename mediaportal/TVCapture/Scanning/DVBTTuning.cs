@@ -118,7 +118,7 @@ namespace MediaPortal.TV.Scanning
       if (_listFrequencies.Count == 0) return;
 
       Log.WriteFile(Log.LogType.Capture, "dvbt-scan:loaded:{0} _listFrequencies", _listFrequencies.Count);
-      Log.WriteFile(Log.LogType.Capture, "dvbt-scan:{0} has a scan offset of {1}KHz", countryCode, _scanOffset);
+      Log.WriteFile(Log.LogType.Capture, "dvbt-scan:{0} has a scan offset of {1}kHz", countryCode, _scanOffset);
 
       return;
     }

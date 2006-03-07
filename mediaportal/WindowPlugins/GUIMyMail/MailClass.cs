@@ -440,7 +440,7 @@ namespace MyMail
 				m_currAction=action;
 				AsyncCallback recieveData = new AsyncCallback(OnRecievedData);
 				sock1.Blocking=false;
-				Log.Write(System.Text.Encoding.ASCII.GetString(toSend));
+				//Log.Write(System.Text.Encoding.ASCII.GetString(toSend));
 				//sock1.Poll(15000,System.Net.Sockets.SelectMode.SelectRead);
 				sock1.Send(toSend,0,toSend.Length,noFlags);
 				m_mailBuffer=System.Text.Encoding.ASCII.GetBytes(m_emptyBuffer);

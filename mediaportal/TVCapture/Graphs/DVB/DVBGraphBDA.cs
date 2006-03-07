@@ -1770,7 +1770,7 @@ namespace MediaPortal.TV.Recording
 
               if (myLocator == null)
               {
-                Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get IATSCLocator", ch.Frequency);
+                Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED tuning to frequency:{0} kHz. cannot get IATSCLocator", ch.Frequency);
                 return;
               }
               //set the properties on the new tuning request
@@ -1834,7 +1834,7 @@ namespace MediaPortal.TV.Recording
 
               if (myLocator == null)
               {
-                Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED tuning to frequency:{0} KHz. cannot get locator", ch.Frequency);
+                Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED tuning to frequency:{0} kHz. cannot get locator", ch.Frequency);
                 return;
               }
               //set the properties on the new tuning request
@@ -1873,13 +1873,13 @@ namespace MediaPortal.TV.Recording
                 return;
               }
 
-              Log.WriteFile(Log.LogType.Capture, false, "DVBGraphBDA: set LNBSwitch to {0} Khz lowOsc={1} MHz hiOsc={2} Mhz disecq:{3}", ch.LNBKHz, lowOsc, hiOsc, diseqcUsed);
+              Log.WriteFile(Log.LogType.Capture, false, "DVBGraphBDA: set LNBSwitch to {0} kHz lowOsc={1} MHz hiOsc={2} MHz disecq:{3}", ch.LNBKHz, lowOsc, hiOsc, diseqcUsed);
 
               dvbSpace.LNBSwitch = ch.LNBKHz;
               dvbSpace.SpectralInversion = TunerLib.SpectralInversion.BDA_SPECTRAL_INVERSION_AUTOMATIC;
               dvbSpace.LowOscillator = lowOsc * 1000;
               dvbSpace.HighOscillator = hiOsc * 1000;
-              
+
               if (_cardProperties.SupportsDiseqCommand() && (diseqcUsed != 0))
               {
                 _cardProperties.SendDiseqCommand(diseqcUsed, _currentTuningObject.Frequency, ch.LNBKHz, _currentTuningObject.Polarity, diseqcUsed);
@@ -1973,11 +1973,11 @@ namespace MediaPortal.TV.Recording
 
               if (myLocator == null)
               {
-                Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED tuning to frequency:{0} KHz ONID:{1} TSID:{2}, SID:{3}. cannot get locator", ch.Frequency, ch.NetworkID, ch.TransportStreamID, ch.ProgramNumber);
+                Log.WriteFile(Log.LogType.Capture, true, "DVBGraphBDA:FAILED tuning to frequency:{0} kHz ONID:{1} TSID:{2}, SID:{3}. cannot get locator", ch.Frequency, ch.NetworkID, ch.TransportStreamID, ch.ProgramNumber);
                 return;
               }
               //set the properties on the new tuning request
-              Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:SubmitTuneRequest() frequency:{0} KHz Bandwidth:{1} ONID:{2} TSID:{3}, SID:{4}",
+              Log.WriteFile(Log.LogType.Capture, "DVBGraphBDA:SubmitTuneRequest() frequency:{0} kHz Bandwidth:{1} ONID:{2} TSID:{3}, SID:{4}",
                 ch.Frequency, ch.Bandwidth, ch.NetworkID, ch.TransportStreamID, ch.ProgramNumber);
               myLocator.CarrierFrequency = ch.Frequency;
               myLocator.Bandwidth = ch.Bandwidth;
@@ -2024,7 +2024,7 @@ namespace MediaPortal.TV.Recording
                                               pids);
 
     }
-  }//public class DVBGraphBDA 
+  }//public class DVBGraphBDA
 }//namespace MediaPortal.TV.Recording
 //end of file
 #endif

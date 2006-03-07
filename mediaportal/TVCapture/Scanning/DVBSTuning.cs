@@ -295,7 +295,7 @@ namespace MediaPortal.TV.Scanning
       newchan.FEC = (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_DEFINED;
       newchan.Frequency = _transponderList[_currentIndex].TPfreq;
 
-      Log.WriteFile(Log.LogType.Capture, "dvbs-scan:tune transponder:{0} freq:{1} KHz symbolrate:{2} polarisation:{3}", _currentIndex,
+      Log.WriteFile(Log.LogType.Capture, "dvbs-scan:tune transponder:{0} freq:{1} kHz symbolrate:{2} polarisation:{3}", _currentIndex,
                   newchan.Frequency, newchan.Symbolrate, newchan.Polarity);
       _captureCard.Tune(newchan, _currentDiseqc);
 

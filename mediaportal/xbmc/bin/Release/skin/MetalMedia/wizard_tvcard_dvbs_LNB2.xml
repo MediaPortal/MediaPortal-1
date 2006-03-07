@@ -227,7 +227,7 @@
          <textureCheckmark>check-box.png</textureCheckmark>
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
-         <label>0 KHz</label>
+         <label>0 kHz</label>
          <align>right</align>
          <onleft>40</onleft>
          <onright>60</onright>
@@ -244,7 +244,7 @@
          <textureCheckmark>check-box.png</textureCheckmark>
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
-         <label>22 KHz</label>
+         <label>22 kHz</label>
          <align>right</align>
          <onleft>41</onleft>
          <onright>61</onright>
@@ -261,7 +261,7 @@
          <textureCheckmark>check-box.png</textureCheckmark>
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
-         <label>33 KHz</label>
+         <label>33 kHz</label>
          <align>right</align>
          <onleft>42</onleft>
          <onright>62</onright>
@@ -278,7 +278,7 @@
          <textureCheckmark>check-box.png</textureCheckmark>
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkWidth>16</MarkWidth>
-         <label>44 KHz</label>
+         <label>44 kHz</label>
          <align>right</align>
          <onleft>43</onleft>
          <onright>60</onright>

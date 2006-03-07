@@ -1243,7 +1243,7 @@ namespace MediaPortal.Configuration
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(128, 16);
       this.label13.TabIndex = 14;
-      this.label13.Text = "* Carrier Frequency (KHz)";
+      this.label13.Text = "* Carrier Frequency (kHz)";
       this.label13.Click += new System.EventHandler(this.label13_Click);
       // 
       // tbDVBCTSID
@@ -1669,7 +1669,7 @@ namespace MediaPortal.Configuration
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(136, 16);
       this.label12.TabIndex = 6;
-      this.label12.Text = "* Carrier Frequency (KHz)";
+      this.label12.Text = "* Carrier Frequency (kHz)";
       this.label12.Click += new System.EventHandler(this.label12_Click);
       // 
       // tbDVBTTSID
@@ -2120,7 +2120,7 @@ namespace MediaPortal.Configuration
       this.label23.Name = "label23";
       this.label23.Size = new System.Drawing.Size(136, 16);
       this.label23.TabIndex = 28;
-      this.label23.Text = "* Carrier Frequency (KHz)";
+      this.label23.Text = "* Carrier Frequency (kHz)";
       this.label23.Click += new System.EventHandler(this.label23_Click);
       // 
       // tbDVBSTSID
@@ -2569,7 +2569,7 @@ namespace MediaPortal.Configuration
       this.label91.Name = "label91";
       this.label91.Size = new System.Drawing.Size(128, 16);
       this.label91.TabIndex = 55;
-      this.label91.Text = "Carrier Frequency (KHz)";
+      this.label91.Text = "Carrier Frequency (kHz)";
       // 
       // tbATSCTSID
       // 
