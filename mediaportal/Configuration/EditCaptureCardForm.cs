@@ -1478,6 +1478,9 @@ namespace MediaPortal.Configuration
     }
     private void EditCaptureCardForm_Load(object sender, System.EventArgs e)
     {
+      comboBoxFrameRate.SelectedIndex = 0;
+      comboBoxFrameSize.SelectedIndex = 0;
+      comboBoxCAM.SelectedIndex = 0;
       if (FillInAll())
       {
         TVCaptureDevice capture = CaptureCard;
