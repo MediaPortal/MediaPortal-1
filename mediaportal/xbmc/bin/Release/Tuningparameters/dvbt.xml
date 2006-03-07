@@ -379,6 +379,18 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
+  <country name="Germany - Berlin" offset="125">
+		<carrier frequency="177500" bandwidth="7" />
+		<carrier frequency="191500" bandwidth="7" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />		
+	</country>
 	<country name="Netherlands - All Regions">
 		<carrier frequency="177500" />
 		<carrier frequency="184500" />
