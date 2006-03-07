@@ -111,9 +111,9 @@ namespace MediaPortal.TV.Recording
     protected enum LNBSelectionType
     {
       Lnb0 = 0,
-      Lnb22Khz,
-      Lnb33Khz,
-      Lnb44KHz,
+      Lnb22kHz,
+      Lnb33kHz,
+      Lnb44kHz,
     } ;
 
     protected enum PolarityType

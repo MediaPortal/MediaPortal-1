@@ -123,7 +123,10 @@ namespace MediaPortal.Profile
         float test=123.456f;
         string tmp=test.ToString();
         bool useCommas = (tmp.IndexOf(",") >= 0);
-        if (useCommas==false) strValue = strValue.Replace(',', '.');
+        if (useCommas==false) 
+          strValue = strValue.Replace(',', '.');
+        else
+          strValue = strValue.Replace('.', ',');
 
         float fRet = (float)System.Double.Parse(strValue, NumberFormatInfo.InvariantInfo);
         return fRet;
