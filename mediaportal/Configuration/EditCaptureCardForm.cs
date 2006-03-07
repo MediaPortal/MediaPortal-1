@@ -1666,11 +1666,7 @@ namespace MediaPortal.Configuration
           }
         }
       }
-      else
-      {
-        tabPageAutotune.Controls.Clear();
-        return;
-      }
+
       Sections.Wizard_ScanBase currentDialog = null;
       IEnumerator enumerator = this.tabPageAutotune.Controls.GetEnumerator();
       if (enumerator.MoveNext())
