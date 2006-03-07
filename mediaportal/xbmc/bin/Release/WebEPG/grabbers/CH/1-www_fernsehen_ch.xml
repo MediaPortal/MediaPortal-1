@@ -10,12 +10,13 @@
     <entry name="sf2@sfdrs.ch">CH4</entry>		<!-- SF 2 -->
     <entry name="tsr1@tsr.ch">TSR</entry>		<!-- TSR 1 -->
     <entry name="tsr2@tsr.ch">TR2</entry>		<!-- TSR 2 -->
-    <entry name="tsi1@rtsi.ch">TSR</entry>		<!-- TSI 1 -->
-    <entry name="tsi2@rtsi.ch">TSI</entry>		<!-- TSI 2 -->
+    <entry name="tsi1@rtsi.ch">TSI</entry>		<!-- TSI 1 -->
+    <entry name="tsi2@rtsi.ch">TI2</entry>		<!-- TSI 2 -->
 
 <!-- Schweiz - Regional -->
-    <entry name="startv.ch">TI2</entry>			<!-- *Star TV -->
+    <entry name="startv.ch">STV</entry>			<!-- *Star TV -->
     <entry name="telebaselonline.ch">TBA</entry>	<!-- Tele Basel -->
+    <entry name="www.telezueri.ch">T24</entry>		<!-- Tele Züri -->
     <entry name="tele-m1.ch">TM1</entry>		<!-- Tele M1 -->
     <entry name="teleostschweiz.ch">TOS</entry>		<!-- Tele ostschweiz -->
     <entry name="tele-suedostschweiz.ch">TSS</entry>	<!-- Tele Suedostschweiz -->
