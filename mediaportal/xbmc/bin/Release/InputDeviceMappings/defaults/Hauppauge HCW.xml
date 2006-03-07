@@ -109,6 +109,7 @@
 		<button name="OK" code="2037">
 			<action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav" />
 		</button>
 		<button name="Home" code="2059">
@@ -123,27 +124,33 @@
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="13" sound="click.wav" />
 		</button>
 		<button name="Pause" code="2048">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="12" sound="click.wav" />
 		</button>
 		<button name="Play" code="2053">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="68" sound="click.wav" />
 		</button>
 		<button name="Rewind" code="2050">
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="87" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="17" sound="cursor.wav" />
 		</button>
 		<button name="Fast Forward" code="2052">
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="86" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="16" sound="cursor.wav" />
 		</button>
 		<button name="Skip Forward" code="2030">
 			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="91" sound="cursor.wav" />
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="5" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" sound="cursor.wav" />
 		</button>
 		<button name="Skip Previous" code="2036">
 			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="92" sound="cursor.wav" />
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="6" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="15" sound="cursor.wav" />
 		</button>
 		<button name="Radio" code="2012">
@@ -172,15 +179,19 @@
 			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="600" sound="click.wav" />
 		</button>
 		<button name="Cursor Left" code="2022">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="1" sound="cursor.wav" />
 		</button>
 		<button name="Cursor Right" code="2023">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="28" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="2" sound="cursor.wav" />
 		</button>
 		<button name="Cursor Up" code="2020">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="31" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="3" sound="cursor.wav" />
 		</button>
 		<button name="Cursor Down" code="2021">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="30" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="4" sound="cursor.wav" />
 		</button>
 		<button name="*" code="2010">
@@ -280,14 +291,17 @@
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="9982" sound="click.wav" />
 		</button>
 		<button name="Volume +" code="1016">
+			<action layer="1" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="28" sound="click.wav" />
 			<action layer="1" condition="*" conproperty="-1" command="ACTION" cmdproperty="2" sound="cursor.wav" />
 			<action layer="2" condition="*" conproperty="-1" command="ACTION" cmdproperty="103" sound="cursor.wav" />
 		</button>
 		<button name="Volume -" code="1017">
+			<action layer="1" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
 			<action layer="1" condition="*" conproperty="-1" command="ACTION" cmdproperty="1" sound="cursor.wav" />
 			<action layer="2" condition="*" conproperty="-1" command="ACTION" cmdproperty="102" sound="cursor.wav" />
 		</button>
 		<button name="Channel +" code="1032">
+			<action layer="1" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="31" sound="click.wav" />
 			<action layer="1" condition="*" conproperty="-1" command="ACTION" cmdproperty="3" sound="cursor.wav" />
 			<action layer="2" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9979" sound="cursor.wav" />
 			<action layer="2" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9979" sound="cursor.wav" />
@@ -297,6 +311,7 @@
 			<action layer="2" condition="*" conproperty="-1" command="ACTION" cmdproperty="5" sound="cursor.wav" />
 		</button>
 		<button name="Channel -" code="1033">
+			<action layer="1" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="30" sound="click.wav" />
 			<action layer="1" condition="*" conproperty="-1" command="ACTION" cmdproperty="4" sound="cursor.wav" />
 			<action layer="2" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9980" sound="cursor.wav" />
 			<action layer="2" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9980" sound="cursor.wav" />
@@ -315,6 +330,7 @@
 		<button name="OK" code="1037">
 			<action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav" />
 		</button>
 		<button name="Home" code="1059">
@@ -329,27 +345,33 @@
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="13" sound="click.wav" />
 		</button>
 		<button name="Pause" code="1048">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="12" sound="click.wav" />
 		</button>
 		<button name="Play" code="1053">
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="68" sound="click.wav" />
 		</button>
 		<button name="Rewind" code="1050">
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="87" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="17" sound="cursor.wav" />
 		</button>
 		<button name="Fast Forward" code="1052">
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="86" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="16" sound="cursor.wav" />
 		</button>
 		<button name="Skip Forward" code="1030">
 			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="91" sound="cursor.wav" />
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="5" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" sound="cursor.wav" />
 		</button>
 		<button name="Skip Previous" code="1036">
 			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="92" sound="cursor.wav" />
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="6" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="15" sound="cursor.wav" />
 		</button>
 		<button name="Fullscreen" code="1060">
