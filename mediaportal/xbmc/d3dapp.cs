@@ -42,14 +42,14 @@ using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.DirectX.DirectDraw;
-using Caps=Microsoft.DirectX.Direct3D.Caps;
-using CreateFlags=Microsoft.DirectX.Direct3D.CreateFlags;
-using Device=Microsoft.DirectX.DirectDraw.Device;
-using ResourceManager=System.Resources.ResourceManager;
-using Surface=Microsoft.DirectX.DirectDraw.Surface;
-using SurfaceDescription=Microsoft.DirectX.DirectDraw.SurfaceDescription;
-using Timer=System.Windows.Forms.Timer;
-using Utils=MediaPortal.Util.Utils;
+using Caps = Microsoft.DirectX.Direct3D.Caps;
+using CreateFlags = Microsoft.DirectX.Direct3D.CreateFlags;
+using Device = Microsoft.DirectX.DirectDraw.Device;
+using ResourceManager = System.Resources.ResourceManager;
+using Surface = Microsoft.DirectX.DirectDraw.Surface;
+using SurfaceDescription = Microsoft.DirectX.DirectDraw.SurfaceDescription;
+using Timer = System.Windows.Forms.Timer;
+using Utils = MediaPortal.Util.Utils;
 
 namespace MediaPortal
 {
@@ -235,7 +235,7 @@ namespace MediaPortal
 
     protected virtual void OnProcess()
     {
-/* Do Nothing */
+      /* Do Nothing */
     }
 
     protected virtual void Render(float timePassed)
@@ -247,10 +247,10 @@ namespace MediaPortal
     //protected virtual void OnDeviceDisposing(System.Object sender, System.EventArgs e) { /* Do Nothing */ }
 
     protected virtual void OnStartup()
-    {}
+    { }
 
     protected virtual void OnExit()
-    {}
+    { }
 
 
     private bool m_bWasPlaying = false;
@@ -281,7 +281,7 @@ namespace MediaPortal
       //GUIGraphicsContext.DX9Device = null;
       try
       {
-        int hr = (int) timeBeginPeriod(MILLI_SECONDS_TIMER);
+        int hr = (int)timeBeginPeriod(MILLI_SECONDS_TIMER);
         if (hr != 0)
         {
           UseMillisecondTiming = false;
@@ -336,7 +336,7 @@ namespace MediaPortal
       Matrix matIdentity = Matrix.Identity;
 
       //Setup the orthogonal projection matrix and the default world/view matrix
-      matOrtho = Matrix.OrthoLH((float) GUIGraphicsContext.Width, (float) GUIGraphicsContext.Height, 0.0f, 1.0f);
+      matOrtho = Matrix.OrthoLH((float)GUIGraphicsContext.Width, (float)GUIGraphicsContext.Height, 0.0f, 1.0f);
 
 
       GUIGraphicsContext.DX9Device.SetTransform(TransformType.Projection, matOrtho);
@@ -384,7 +384,7 @@ namespace MediaPortal
 
         using (Settings xmlreader = new Settings("MediaPortal.xml"))
         {
-          string strStartFull = (string) xmlreader.GetValue("general", "startfullscreen");
+          string strStartFull = (string)xmlreader.GetValue("general", "startfullscreen");
           if (strStartFull != null && strStartFull == "yes")
           {
             if (autoHideTaskbar && !_minimizeOnStartup)
@@ -503,7 +503,7 @@ namespace MediaPortal
         }
       }
 
-      EndWindowedDeviceComboSearch:
+    EndWindowedDeviceComboSearch:
       if (bestDeviceCombo == null)
       {
         return false;
@@ -518,14 +518,14 @@ namespace MediaPortal
       graphicsSettings.WindowedHeight = ourRenderTarget.ClientRectangle.Bottom - ourRenderTarget.ClientRectangle.Top;
       if (enumerationSettings.AppUsesDepthBuffer)
       {
-        graphicsSettings.WindowedDepthStencilBufferFormat = (DepthFormat) bestDeviceCombo.DepthStencilFormatList[0];
+        graphicsSettings.WindowedDepthStencilBufferFormat = (DepthFormat)bestDeviceCombo.DepthStencilFormatList[0];
       }
       int iQuality = 0; //bestDeviceCombo.MultiSampleTypeList.Count-1;
-      graphicsSettings.WindowedMultisampleType = (MultiSampleType) bestDeviceCombo.MultiSampleTypeList[iQuality];
+      graphicsSettings.WindowedMultisampleType = (MultiSampleType)bestDeviceCombo.MultiSampleTypeList[iQuality];
       graphicsSettings.WindowedMultisampleQuality = 0; //(int)bestDeviceCombo.MultiSampleQualityList[iQuality];
 
-      graphicsSettings.WindowedVertexProcessingType = (VertexProcessingType) bestDeviceCombo.VertexProcessingTypeList[0];
-      graphicsSettings.WindowedPresentInterval = (PresentInterval) bestDeviceCombo.PresentIntervalList[0];
+      graphicsSettings.WindowedVertexProcessingType = (VertexProcessingType)bestDeviceCombo.VertexProcessingTypeList[0];
+      graphicsSettings.WindowedPresentInterval = (PresentInterval)bestDeviceCombo.PresentIntervalList[0];
 
       return true;
     }
@@ -602,7 +602,7 @@ namespace MediaPortal
         }
       }
 
-      EndFullscreenDeviceComboSearch:
+    EndFullscreenDeviceComboSearch:
       if (bestDeviceCombo == null)
       {
         return false;
@@ -655,12 +655,12 @@ namespace MediaPortal
       graphicsSettings.FullscreenDisplayMode = bestDisplayMode;
       if (enumerationSettings.AppUsesDepthBuffer)
       {
-        graphicsSettings.FullscreenDepthStencilBufferFormat = (DepthFormat) bestDeviceCombo.DepthStencilFormatList[0];
+        graphicsSettings.FullscreenDepthStencilBufferFormat = (DepthFormat)bestDeviceCombo.DepthStencilFormatList[0];
       }
-      graphicsSettings.FullscreenMultisampleType = (MultiSampleType) bestDeviceCombo.MultiSampleTypeList[0];
+      graphicsSettings.FullscreenMultisampleType = (MultiSampleType)bestDeviceCombo.MultiSampleTypeList[0];
       graphicsSettings.FullscreenMultisampleQuality = 0;
       graphicsSettings.FullscreenVertexProcessingType =
-        (VertexProcessingType) bestDeviceCombo.VertexProcessingTypeList[0];
+        (VertexProcessingType)bestDeviceCombo.VertexProcessingTypeList[0];
       graphicsSettings.FullscreenPresentInterval = PresentInterval.Default;
 
       return true;
@@ -786,7 +786,7 @@ namespace MediaPortal
           GUIGraphicsContext.DX9Device.Reset(presentParams);
         }
         catch (Exception)
-        {}
+        { }
 
         if (bRemoveHandler)
         {
@@ -1043,7 +1043,7 @@ namespace MediaPortal
         }
       }
       catch (Exception)
-      {}
+      { }
       UseMillisecondTiming = false;
       // Build a message to display to the user
       string strMsg = "";
@@ -1149,8 +1149,8 @@ namespace MediaPortal
           graphicsSettings.DevType == DevTypeOld)
       {
         BuildPresentParamsFromSettings();
-        // Resize the 3D device
-        RETRY:
+      // Resize the 3D device
+      RETRY:
         try
         {
           GUIGraphicsContext.DX9Device.Reset(presentParams);
@@ -1302,22 +1302,23 @@ namespace MediaPortal
       {
 #if DEBUG
 #else
-  try
+        try
         {
 #endif
-        if ((deviceLost) || (ActiveForm != this))
-        {
-          // Yield some CPU time to other processes
+          if ((deviceLost) || (ActiveForm != this))
+          {
+            // Yield some CPU time to other processes
 #if !PROFILING
-          Thread.Sleep(100); // 100 milliseconds
+            Thread.Sleep(100); // 100 milliseconds
 #endif
-        }
-        Render3DEnvironment();
+          }
+          Render3DEnvironment();
 #if DEBUG
 #else
-  }
+        }
         catch (Exception ee)
         {
+          Log.Write(ee);
           System.Windows.Forms.MessageBox.Show("An exception has occurred.  This sample must exit.\r\n\r\n" + ee.ToString(), "Exception",
             System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
           this.Close();
@@ -1421,9 +1422,9 @@ namespace MediaPortal
           Render(GUIGraphicsContext.TimePassed);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        //int x=1;
+        Log.Write(ex);
       }
 
       if (!deviceLost && !m_bNeedReset)
@@ -1532,7 +1533,7 @@ namespace MediaPortal
       // Update the scene stats once per second
       if (time - lastTime >= 1.0f)
       {
-        framePerSecond = frames/(time - lastTime);
+        framePerSecond = frames / (time - lastTime);
         GUIGraphicsContext.CurrentFPS = framePerSecond;
         lastTime = time;
         frames = 0;
@@ -1835,7 +1836,7 @@ namespace MediaPortal
         handle.Close();
       }
       catch
-      {}
+      { }
     }
 
 
@@ -2099,7 +2100,7 @@ namespace MediaPortal
       // notifyIcon1
       // 
       this.notifyIcon1.ContextMenu = this.contextMenu1;
-      this.notifyIcon1.Icon = ((Icon) (resources.GetObject("notifyIcon1.Icon")));
+      this.notifyIcon1.Icon = ((Icon)(resources.GetObject("notifyIcon1.Icon")));
       this.notifyIcon1.Text = "MediaPortal";
       this.notifyIcon1.DoubleClick += new EventHandler(this.Restore_OnClick);
       // 
@@ -2134,7 +2135,7 @@ namespace MediaPortal
       // 
       this.AutoScaleBaseSize = new Size(5, 13);
       this.ClientSize = new Size(720, 576);
-      this.Icon = ((Icon) (resources.GetObject("$this.Icon")));
+      this.Icon = ((Icon)(resources.GetObject("$this.Icon")));
       this.KeyPreview = true;
       this.MinimumSize = new Size(100, 100);
       this.Name = "D3DApp";
@@ -2185,7 +2186,7 @@ namespace MediaPortal
           g_Player.Stop();
         }
         catch
-        {}
+        { }
       }
 
       this.OnResize(e);
@@ -2220,7 +2221,7 @@ namespace MediaPortal
         }
       }
       catch (Exception)
-      {}
+      { }
       active = !(this.WindowState == FormWindowState.Minimized);
       base.OnResize(e);
     }
@@ -2282,10 +2283,10 @@ namespace MediaPortal
     #endregion
 
     protected virtual void keypressed(KeyPressEventArgs e)
-    {}
+    { }
 
     protected virtual void keydown(KeyEventArgs e)
-    {}
+    { }
 
     protected virtual void mousemove(MouseEventArgs e)
     {
@@ -2446,7 +2447,7 @@ namespace MediaPortal
       {
         Log.Write("exception:{0}", ex.ToString());
 #else
-  catch (Exception)
+      catch (Exception)
       {
 #endif
       }
@@ -2481,10 +2482,10 @@ namespace MediaPortal
       timeElapsed = endFrame - startFrame;
       if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
       {
-        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed)*1000)/DXUtil.TicksPerSecond);
+        milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000) / DXUtil.TicksPerSecond);
         if (milliSecondsLeft > 0)
         {
-          DoSleep((int) milliSecondsLeft);
+          DoSleep((int)milliSecondsLeft);
         }
       }
     }
@@ -2653,7 +2654,7 @@ namespace MediaPortal
       ToggleFullWindowed();
 
       GUIDialogNotify dialogNotify =
-        (GUIDialogNotify) GUIWindowManager.GetWindow((int) GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
       if (dialogNotify != null)
       {
         dialogNotify.SetHeading(1020);
@@ -3044,15 +3045,18 @@ namespace MediaPortal
     public struct WindowClass
     {
       public int Styles;
-      [MarshalAs(UnmanagedType.FunctionPtr)] public WndProcDelegate WindowsProc;
+      [MarshalAs(UnmanagedType.FunctionPtr)]
+      public WndProcDelegate WindowsProc;
       private int ExtraClassData;
       private int ExtraWindowData;
       public IntPtr InstanceHandle;
       public IntPtr IconHandle;
       public IntPtr CursorHandle;
       public IntPtr backgroundBrush;
-      [MarshalAs(UnmanagedType.LPTStr)] public string MenuName;
-      [MarshalAs(UnmanagedType.LPTStr)] public string ClassName;
+      [MarshalAs(UnmanagedType.LPTStr)]
+      public string MenuName;
+      [MarshalAs(UnmanagedType.LPTStr)]
+      public string ClassName;
     }
 
     #endregion
@@ -3095,7 +3099,7 @@ namespace MediaPortal
 #if(_WIN64)
   private static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int index, [MarshalAs(UnmanagedType.FunctionPtr)] WndProcDelegate windowCallback);
 #else
-      private static extern IntPtr SetWindowLong(IntPtr hWnd, int index,
+    private static extern IntPtr SetWindowLong(IntPtr hWnd, int index,
                                                  [MarshalAs(UnmanagedType.FunctionPtr)] WndProcDelegate windowCallback);
 #endif
 
@@ -3208,7 +3212,7 @@ namespace MediaPortal
     #region Class Methods
 
     private NativeMethods()
-    {} // No creation
+    { } // No creation
     /// <summary>Hooks window messages to go through this new callback</summary>
     public static void HookWindowsMessages(IntPtr window, WndProcDelegate callback)
     {
@@ -3234,25 +3238,25 @@ namespace MediaPortal
     /// <summary>Returns the low word</summary>
     public static short LoWord(uint l)
     {
-      return (short) (l & 0xffff);
+      return (short)(l & 0xffff);
     }
 
     /// <summary>Returns the high word</summary>
     public static short HiWord(uint l)
     {
-      return (short) (l >> 16);
+      return (short)(l >> 16);
     }
 
     /// <summary>Makes two shorts into a long</summary>
     public static uint MakeUInt32(short l, short r)
     {
-      return (uint) ((l & 0xffff) | ((r & 0xffff) << 16));
+      return (uint)((l & 0xffff) | ((r & 0xffff) << 16));
     }
 
     /// <summary>Is this key down right now</summary>
     public static bool IsKeyDown(Keys key)
     {
-      return (GetAsyncKeyState((int) Keys.ShiftKey) & 0x8000) != 0;
+      return (GetAsyncKeyState((int)Keys.ShiftKey) & 0x8000) != 0;
     }
 
     #endregion

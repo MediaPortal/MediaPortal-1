@@ -154,11 +154,11 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
       if (!captureCard.SignalPresent())
         System.Threading.Thread.Sleep(400);
 
-      Log.WriteFile(Log.LogType.Capture, "Analog-scan:tune:{0}", currentFrequencyIndex);
+      Log.WriteFile(Log.LogType.Log, "Analog-scan:tune:{0}", currentFrequencyIndex);
 
 
       captureCard.ViewChannel(chan);
-      Log.WriteFile(Log.LogType.Capture, "Analog-scan:tuned");
+      Log.WriteFile(Log.LogType.Log, "Analog-scan:tuned");
       return;
     }
 

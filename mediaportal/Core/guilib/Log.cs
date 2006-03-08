@@ -34,7 +34,6 @@ namespace MediaPortal.GUI.Library
     public enum LogType
     {
       Log,
-      Capture,
       Recorder,
       Error,
       EPG
@@ -57,7 +56,7 @@ namespace MediaPortal.GUI.Library
     }
     public static void BackupLogFiles()
     {
-      Initialize(LogType.Capture);
+      Initialize(LogType.Log);
       Initialize(LogType.Log);
       Initialize(LogType.Recorder);
       Initialize(LogType.Error);
@@ -83,8 +82,10 @@ namespace MediaPortal.GUI.Library
 
     static public void Write(Exception ex)
     {
-      Log.WriteFile(Log.LogType.Log, true, "Exception:{0}", ex.Message);
-      Log.WriteFile(Log.LogType.Log, true, "  source:{0}", ex.Source);
+      Log.WriteFile(Log.LogType.Log, true, "Exception   :{0}", ex.ToString());
+      Log.WriteFile(Log.LogType.Log, true, "Exception   :{0}", ex.Message);
+      Log.WriteFile(Log.LogType.Log, true, "  site      :{0}", ex.TargetSite);
+      Log.WriteFile(Log.LogType.Log, true, "  source    :{0}", ex.Source);
       Log.WriteFile(Log.LogType.Log, true, "  stacktrace:{0}", ex.StackTrace);
     }
 
@@ -110,9 +111,6 @@ namespace MediaPortal.GUI.Library
       string fname=@"log\MediaPortal.log";
       switch (type)
       {
-        case LogType.Capture:
-          fname=@"log\capture.log";
-          break;
         case LogType.Recorder:
           fname=@"log\recorder.log";
           break;

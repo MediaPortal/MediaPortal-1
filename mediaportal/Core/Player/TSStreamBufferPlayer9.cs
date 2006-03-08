@@ -95,7 +95,7 @@ namespace MediaPortal.Player
 
 				MPEG2Demultiplexer m_MPEG2Demuxer=null;
 				IBaseFilter m_mpeg2Multiplexer=null;
-				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:add new MPEG2 Demultiplexer to graph");
+				Log.WriteFile(Log.LogType.Log,"TStreamBufferPlayer9:add new MPEG2 Demultiplexer to graph");
 				try
 				{
 					m_MPEG2Demuxer=new MPEG2Demultiplexer();
@@ -105,27 +105,27 @@ namespace MediaPortal.Player
 				//m_mpeg2Multiplexer = DirectShowUtil.AddFilterToGraph(m_graphBuilder,"MPEG-2 Demultiplexer");
 				if (m_mpeg2Multiplexer==null) 
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"TStreamBufferPlayer9:FAILED to create mpeg2 demuxer");
+					Log.WriteFile(Log.LogType.Log,true,"TStreamBufferPlayer9:FAILED to create mpeg2 demuxer");
 					return false;
 				}
 				 hr=_graphBuilder.AddFilter(m_mpeg2Multiplexer,"MPEG-2 Demultiplexer");
 				if (hr!=0)
 				{
-					Log.WriteFile(Log.LogType.Capture,true,"TStreamBufferPlayer9:FAILED to add mpeg2 demuxer to graph:0x{0:X}",hr);
+					Log.WriteFile(Log.LogType.Log,true,"TStreamBufferPlayer9:FAILED to add mpeg2 demuxer to graph:0x{0:X}",hr);
 					return false;
 				}
 
-				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:add new TS reader to graph");
+				Log.WriteFile(Log.LogType.Log,"TStreamBufferPlayer9:add new TS reader to graph");
 
 				_bufferSource = new TsFileSource();
 				_filter = (IBaseFilter) _bufferSource;
 				_graphBuilder.AddFilter(_filter, "TsFileSource");
 		
-				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:open file");
+				Log.WriteFile(Log.LogType.Log,"TStreamBufferPlayer9:open file");
 				_fileSource = (IFileSourceFilter) _bufferSource;
 				 hr = _fileSource.Load(filename, null);
 
-				Log.WriteFile(Log.LogType.Capture,"TStreamBufferPlayer9:add codecs");
+				Log.WriteFile(Log.LogType.Log,"TStreamBufferPlayer9:add codecs");
 
 				// add preferred video & audio codecs
 				string strVideoCodec=String.Empty;

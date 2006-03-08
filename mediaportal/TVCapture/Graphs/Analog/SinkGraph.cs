@@ -236,7 +236,7 @@ namespace MediaPortal.TV.Recording
         _vmr9 = null;
       }
 
-      Log.WriteFile(Log.LogType.Capture, "SinkGraph:StartTimeShifting()");
+      Log.WriteFile(Log.LogType.Log, "SinkGraph:StartTimeShifting()");
       _graphState = State.TimeShifting;
       SetFrameRateAndSize();
       TuneChannel(channel);
@@ -250,15 +250,15 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     protected bool ConnectVideoCaptureToMPEG2Demuxer()
     {
-      //			Log.WriteFile(Log.LogType.Capture,"SinkGraph:Connect VideoCapture device to MPEG2Demuxer filter");
+      //			Log.WriteFile(Log.LogType.Log,"SinkGraph:Connect VideoCapture device to MPEG2Demuxer filter");
       if (_filterCapture == null || _graphBuilderInterface == null)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED capture filter=null");
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED capture filter=null");
         return false;
       }
       if (_videoCaptureHelper == null)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED videocapturedevice filter=null");
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraph:ConnectVideoCaptureToMPEG2Demuxer() FAILED videocapturedevice filter=null");
         return false;
       }
       if (_mpeg2DemuxHelper == null)
@@ -281,19 +281,19 @@ namespace MediaPortal.TV.Recording
       }
 
       //ok, that failed. seems we have to do it ourselves
-      //				Log.WriteFile(Log.LogType.Capture,"SinkGraph:find MPEG2 demuxer input pin");
+      //				Log.WriteFile(Log.LogType.Log,"SinkGraph:find MPEG2 demuxer input pin");
       IPin pinIn = DsFindPin.ByDirection(_mpeg2DemuxHelper.BaseFilter, PinDirection.Input, 0);
       if (pinIn == null)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "SinkGraph:FAILED could not find mpeg2 demux input pin");
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraph:FAILED could not find mpeg2 demux input pin");
         return false;
       }
 
-      //					Log.WriteFile(Log.LogType.Capture,"SinkGraph:found MPEG2 demuxer input pin");
+      //					Log.WriteFile(Log.LogType.Log,"SinkGraph:found MPEG2 demuxer input pin");
       hr = _graphBuilderInterface.Connect(_videoCaptureHelper.CapturePin, pinIn);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}", hr);
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraph:FAILED to connect Encoder->mpeg2 demuxer:{0:x}", hr);
         Marshal.ReleaseComObject(pinIn);
         return false;
       }
@@ -314,7 +314,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_graphState != State.TimeShifting) return false;
 
-      Log.WriteFile(Log.LogType.Capture, "SinkGraph:StopTimeShifting()");
+      Log.WriteFile(Log.LogType.Log, "SinkGraph:StopTimeShifting()");
       if (_mpeg2DemuxHelper != null)
         _mpeg2DemuxHelper.StopTimeShifting();
       _graphState = State.Created;
@@ -357,7 +357,7 @@ namespace MediaPortal.TV.Recording
       }
 
 
-      Log.WriteFile(Log.LogType.Capture, "SinkGraph:StartRecording({0} {1} {2})", strFileName, bContentRecording, recording.Quality);
+      Log.WriteFile(Log.LogType.Log, "SinkGraph:StartRecording({0} {1} {2})", strFileName, bContentRecording, recording.Quality);
       if (recording.Quality != TVRecording.QualityType.NotSet)
       {
 
@@ -390,7 +390,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_graphState != State.Recording) return;
 
-      Log.WriteFile(Log.LogType.Capture, "SinkGraph:StopRecording()");
+      Log.WriteFile(Log.LogType.Log, "SinkGraph:StopRecording()");
       if (_mpeg2DemuxHelper != null) _mpeg2DemuxHelper.StopRecording();
       _graphState = State.TimeShifting;
     }
@@ -463,7 +463,7 @@ namespace MediaPortal.TV.Recording
         _countryCode = channel.Country;
 
         AnalogVideoStandard standard = channel.TVStandard;
-        Log.WriteFile(Log.LogType.Capture, "SinkGraph:TuneChannel() tune to channel:{0} country:{1} standard:{2} name:{3}",
+        Log.WriteFile(Log.LogType.Log, "SinkGraph:TuneChannel() tune to channel:{0} country:{1} standard:{2} name:{3}",
           _channelNumber, _countryCode, standard, channel.Name);
 
         if (_channelNumber < (int)ExternalInputs.svhs)
@@ -475,7 +475,7 @@ namespace MediaPortal.TV.Recording
             SetVideoStandard(standard);
 
 
-            Log.WriteFile(Log.LogType.Capture, "SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
+            Log.WriteFile(Log.LogType.Log, "SinkGraph:TuneChannel() tuningspace:0 country:{0} tv standard:{1} cable:{2}",
               _countryCode, standard.ToString(),
               _isUsingCable);
             AMTunerSubChannel iVideoSubChannel, iAudioSubChannel;
@@ -503,7 +503,7 @@ namespace MediaPortal.TV.Recording
               return;
             }
             dFreq = iFreq / 1000000d;
-            Log.WriteFile(Log.LogType.Capture, "SinkGraph:TuneChannel() tuned to channel:{0} county:{1} freq:{2} MHz. tvformat:{3} signal:{4}",
+            Log.WriteFile(Log.LogType.Log, "SinkGraph:TuneChannel() tuned to channel:{0} county:{1} freq:{2} MHz. tvformat:{3} signal:{4}",
               iChannel, currentCountry, dFreq, standard.ToString(), signalStrength.ToString());
 
 
@@ -579,18 +579,18 @@ namespace MediaPortal.TV.Recording
     public bool StartViewing(TVChannel channel)
     {
 
-      Log.WriteFile(Log.LogType.Capture, "SinkGraph:StartViewing()");
+      Log.WriteFile(Log.LogType.Log, "SinkGraph:StartViewing()");
       if (_graphState != State.Created && _graphState != State.Viewing) return false;
 
       _countryCode = channel.Country;
       if (_mpeg2DemuxHelper == null)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "SinkGraph:StartViewing() FAILED: no mpeg2 demuxer present");
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraph:StartViewing() FAILED: no mpeg2 demuxer present");
         return false;
       }
       if (_videoCaptureHelper == null)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "SinkGraph:StartViewing() FAILED: no video capture device present");
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraph:StartViewing() FAILED: no video capture device present");
         return false;
       }
       if (_graphState == State.Viewing)
@@ -651,7 +651,7 @@ namespace MediaPortal.TV.Recording
         }
       }
 
-      Log.WriteFile(Log.LogType.Capture, "SinkGraph:StartViewing() started ");
+      Log.WriteFile(Log.LogType.Log, "SinkGraph:StartViewing() started ");
       return true;
     }
 
@@ -669,7 +669,7 @@ namespace MediaPortal.TV.Recording
       if (_graphState != State.Viewing) return false;
 
       GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(GUIGraphicsContext_OnVideoWindowChanged);
-      Log.WriteFile(Log.LogType.Capture, "SinkGraph:StopViewing()");
+      Log.WriteFile(Log.LogType.Log, "SinkGraph:StopViewing()");
       if (_vmr9 != null)
       {
         _vmr9.Enable(false);
@@ -927,11 +927,11 @@ namespace MediaPortal.TV.Recording
       int hr = _analogVideoDecoderInterface.get_TVFormat(out currentStandard);
       //if (currentStandard==standard) return;
 
-      Log.WriteFile(Log.LogType.Capture, "SinkGraph:Select tvformat:{0}", standard.ToString());
+      Log.WriteFile(Log.LogType.Log, "SinkGraph:Select tvformat:{0}", standard.ToString());
       if (standard == AnalogVideoStandard.None) standard = AnalogVideoStandard.PAL_B;
       hr = _analogVideoDecoderInterface.put_TVFormat(standard);
       if (hr != 0)
-        Log.WriteFile(Log.LogType.Capture, true, "SinkGraph:Unable to select tvformat:{0}", standard.ToString());
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraph:Unable to select tvformat:{0}", standard.ToString());
     }
 
     /// <summary>
@@ -1092,11 +1092,11 @@ namespace MediaPortal.TV.Recording
           tvChan.ID = -1;
           tvChan.Number = _channelNumber;
           tvChan.Sort = 40000;
-          Log.WriteFile(Log.LogType.Capture, "SinkGraph: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
+          Log.WriteFile(Log.LogType.Log, "SinkGraph: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
           int id = TVDatabase.AddChannel(tvChan);
           if (id < 0)
           {
-            Log.WriteFile(Log.LogType.Capture, true, "SinkGraph: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
+            Log.WriteFile(Log.LogType.Log, true, "SinkGraph: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
           }
           channelId = id;
           newChannels++;
@@ -1105,7 +1105,7 @@ namespace MediaPortal.TV.Recording
         {
           TVDatabase.UpdateChannel(tvChan, tvChan.Sort);
           updatedChannels++;
-          Log.WriteFile(Log.LogType.Capture, "SinkGraph: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
+          Log.WriteFile(Log.LogType.Log, "SinkGraph: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
         }
         TVDatabase.MapChannelToCard(tvChan.ID, ID);
 
@@ -1139,11 +1139,11 @@ namespace MediaPortal.TV.Recording
           station.Frequency = stationFrequency;
           station.Sort = 40000;
           station.Channel = GetUniqueRadioChannel();
-          Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogRadio: add new station for {0}:{1}", station.Name, station.Frequency);
+          Log.WriteFile(Log.LogType.Log, "Wizard_AnalogRadio: add new station for {0}:{1}", station.Name, station.Frequency);
           int id = RadioDatabase.AddStation(ref station);
           if (id < 0)
           {
-            Log.WriteFile(Log.LogType.Capture, true, "Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name, station.Frequency);
+            Log.WriteFile(Log.LogType.Log, true, "Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name, station.Frequency);
           }
           newRadioChannels++;
         }
@@ -1153,7 +1153,7 @@ namespace MediaPortal.TV.Recording
           station.Frequency = stationFrequency;
           RadioDatabase.UpdateStation(station);
           updatedRadioChannels++;
-          Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogRadio: update station {0}:{1} {2}", station.Name, station.Frequency, station.ID);
+          Log.WriteFile(Log.LogType.Log, "Wizard_AnalogRadio: update station {0}:{1} {2}", station.Name, station.Frequency, station.ID);
         }
         RadioDatabase.MapChannelToCard(station.ID, _card.ID);
 
@@ -1204,7 +1204,7 @@ namespace MediaPortal.TV.Recording
 
     public void TuneRadioChannel(RadioStation station)
     {
-      Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:tune to {0} {1} hz", station.Name, station.Frequency);
+      Log.WriteFile(Log.LogType.Log, "SinkGraphEx:tune to {0} {1} hz", station.Name, station.Frequency);
       _isTuning = true;
       _tvTunerInterface.put_TuningSpace(0);
       _tvTunerInterface.put_CountryCode(_countryCode);
@@ -1220,7 +1220,7 @@ namespace MediaPortal.TV.Recording
       _tvTunerInterface.put_Channel((int)station.Frequency, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
       int frequency;
       _tvTunerInterface.get_AudioFrequency(out frequency);
-      Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  tuned to {0} hz", frequency);
+      Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  tuned to {0} hz", frequency);
       _isTuning = false;
     }
 
@@ -1252,7 +1252,7 @@ namespace MediaPortal.TV.Recording
         _mpeg2DemuxHelper.StartListening();
 
 
-        Log.WriteFile(Log.LogType.Capture, "SinkGraph:StartRadio() started");
+        Log.WriteFile(Log.LogType.Log, "SinkGraph:StartRadio() started");
         _graphState = State.Radio;
         return;
       }
@@ -1268,7 +1268,7 @@ namespace MediaPortal.TV.Recording
 
     public void TuneRadioFrequency(int frequency)
     {
-      Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:tune to {0} hz", frequency);
+      Log.WriteFile(Log.LogType.Log, "SinkGraphEx:tune to {0} hz", frequency);
       _isTuning = true;
       _tvTunerInterface.put_TuningSpace(0);
       _tvTunerInterface.put_CountryCode(_countryCode);
@@ -1283,7 +1283,7 @@ namespace MediaPortal.TV.Recording
       }
       _tvTunerInterface.put_Channel(frequency, AMTunerSubChannel.Default, AMTunerSubChannel.Default);
       _tvTunerInterface.get_AudioFrequency(out frequency);
-      Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  tuned to {0} hz", frequency);
+      Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  tuned to {0} hz", frequency);
       _isTuning = false;
     }
 
@@ -1354,31 +1354,31 @@ namespace MediaPortal.TV.Recording
           switch (Quality)
           {
             case 0://Portable
-              Log.WriteFile(Log.LogType.Capture, "SinkGraph:Set quality:portable");
+              Log.WriteFile(Log.LogType.Log, "SinkGraph:Set quality:portable");
               props.SetVideoBitRate(portableMinKbps, portableMaxKbps, portableVBR);
               break;
             case 1://low
-              Log.WriteFile(Log.LogType.Capture, "SinkGraph:Set quality:low");
+              Log.WriteFile(Log.LogType.Log, "SinkGraph:Set quality:low");
               props.SetVideoBitRate(lowMinKbps, lowMaxKbps, lowVBR);
               break;
             case 2://medium
-              Log.WriteFile(Log.LogType.Capture, "SinkGraph:Set quality:medium");
+              Log.WriteFile(Log.LogType.Log, "SinkGraph:Set quality:medium");
               props.SetVideoBitRate(mediumMinKbps, mediumMaxKbps, mediumVBR);
               break;
             case 3://hi
-              Log.WriteFile(Log.LogType.Capture, "SinkGraph:Set quality:high");
+              Log.WriteFile(Log.LogType.Log, "SinkGraph:Set quality:high");
               props.SetVideoBitRate(highMinKbps, highMaxKbps, highVBR);
               break;
 
             default://
-              Log.WriteFile(Log.LogType.Capture, "SinkGraph:Set quality to default (medium)");
+              Log.WriteFile(Log.LogType.Log, "SinkGraph:Set quality to default (medium)");
               props.SetVideoBitRate(mediumMinKbps, mediumMaxKbps, mediumVBR);
               break;
           }
           int minKbps, maxKbps;
           bool isVBR;
           props.GetVideoBitRate(out minKbps, out maxKbps, out isVBR);
-          Log.WriteFile(Log.LogType.Capture, " driver version:{0} min:{1} peak:{2} vbr:{3}", props.VersionInfo, minKbps, maxKbps, isVBR);
+          Log.WriteFile(Log.LogType.Log, " driver version:{0} min:{1} peak:{2} vbr:{3}", props.VersionInfo, minKbps, maxKbps, isVBR);
         }
       }//if (Quality>=0)
     }//protected void SetQuality(int Quality)
@@ -1456,7 +1456,7 @@ namespace MediaPortal.TV.Recording
 
     public void RadioChannelMinMax(out int chanmin, out int chanmax)
     {
-      Log.WriteFile(Log.LogType.Capture, "SinkGraph:Getting Min and Max Radio channels");
+      Log.WriteFile(Log.LogType.Log, "SinkGraph:Getting Min and Max Radio channels");
       _tvTunerInterface.put_TuningSpace(0);
       _tvTunerInterface.put_CountryCode(_countryCode);
       _tvTunerInterface.put_Mode(AMTunerModeType.FMRadio);
@@ -1469,16 +1469,16 @@ namespace MediaPortal.TV.Recording
         _tvTunerInterface.put_InputType(0, TunerInputType.Antenna);
       }
       _tvTunerInterface.ChannelMinMax(out chanmin, out chanmax);
-      Log.WriteFile(Log.LogType.Capture, "SinkGraph:  Radio Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
+      Log.WriteFile(Log.LogType.Log, "SinkGraph:  Radio Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
 
     }
 
     public void TVChannelMinMax(out int chanmin, out int chanmax)
     {
-      Log.WriteFile(Log.LogType.Capture, "SinkGraph:Getting Min and Max TV channels");
+      Log.WriteFile(Log.LogType.Log, "SinkGraph:Getting Min and Max TV channels");
       InitializeTuner();
       _tvTunerInterface.ChannelMinMax(out chanmin, out chanmax);
-      Log.WriteFile(Log.LogType.Capture, "SinkGraph:  TV Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
+      Log.WriteFile(Log.LogType.Log, "SinkGraph:  TV Channel Min {0} hz - Radio Channel Max {1}", chanmin, chanmax);
 
     }
     public bool StopEpgGrabbing()

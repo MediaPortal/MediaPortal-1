@@ -117,7 +117,7 @@ namespace MediaPortal.TV.Scanning
       _count = 0;
       string line;
       string[] tpdata;
-      Log.WriteFile(Log.LogType.Capture, "dvbs-scan:Opening {0}", fileName);
+      Log.WriteFile(Log.LogType.Log, "dvbs-scan:Opening {0}", fileName);
       // load transponder list and start scan
       System.IO.TextReader tin = System.IO.File.OpenText(fileName);
 
@@ -165,7 +165,7 @@ namespace MediaPortal.TV.Scanning
       tin.Close();
 
 
-      Log.WriteFile(Log.LogType.Capture, "dvbs-scan:loaded:{0} transponders", _count);
+      Log.WriteFile(Log.LogType.Log, "dvbs-scan:loaded:{0} transponders", _count);
       return;
     }
 
@@ -250,7 +250,7 @@ namespace MediaPortal.TV.Scanning
 
       _captureCard.Process();
       _callback.UpdateList();
-      Log.WriteFile(Log.LogType.Capture, "dvbs-scan:onto next transponder");
+      Log.WriteFile(Log.LogType.Log, "dvbs-scan:onto next transponder");
     }
 
     void GotoNextTransponder()
@@ -295,7 +295,7 @@ namespace MediaPortal.TV.Scanning
       newchan.FEC = (int)TunerLib.FECMethod.BDA_FEC_METHOD_NOT_DEFINED;
       newchan.Frequency = _transponderList[_currentIndex].TPfreq;
 
-      Log.WriteFile(Log.LogType.Capture, "dvbs-scan:tune transponder:{0} freq:{1} kHz symbolrate:{2} polarisation:{3}", _currentIndex,
+      Log.WriteFile(Log.LogType.Log, "dvbs-scan:tune transponder:{0} freq:{1} kHz symbolrate:{2} polarisation:{3}", _currentIndex,
                   newchan.Frequency, newchan.Symbolrate, newchan.Polarity);
       _captureCard.Tune(newchan, _currentDiseqc);
 

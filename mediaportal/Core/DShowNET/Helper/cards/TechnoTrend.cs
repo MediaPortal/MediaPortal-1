@@ -145,29 +145,29 @@ namespace DShowNET
           (info.achName == TechnoTrend.USB2_T_TUNER) ||
           (info.achName == TechnoTrend.USB2_S_TUNER))
       {
-          Log.WriteFile(Log.LogType.Capture, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2);
+          Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2);
           _deviceType = TechnoTrendDeviceType.eDevTypeUsb2;
       }
       else if (info.achName == TechnoTrend.BUDGET3_TUNER)
       {
-          Log.WriteFile(Log.LogType.Capture, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB3);
+          Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB3);
           _deviceType = TechnoTrendDeviceType.eDevTypeB3;
       }
       else if ((info.achName == TechnoTrend.BUDGET2_C_TUNER) ||
                 (info.achName == TechnoTrend.BUDGET2_S_TUNER) ||
                 (info.achName == TechnoTrend.BUDGET2_T_TUNER))
       {
-          Log.WriteFile(Log.LogType.Capture, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB2);
+          Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB2);
           _deviceType = TechnoTrendDeviceType.eDevTypeB2;
       }
       else if (info.achName == TechnoTrend.USB2_PINNACLE_TUNER)
       {
-          Log.WriteFile(Log.LogType.Capture, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2Pinnacle);
+          Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2Pinnacle);
           _deviceType = TechnoTrendDeviceType.eDevTypeUsb2Pinnacle;
       }
       else
       {
-         // Log.WriteFile(Log.LogType.Capture, "Technotrend Unknown card type");
+         // Log.WriteFile(Log.LogType.Log, "Technotrend Unknown card type");
           _deviceType = TechnoTrendDeviceType.eTypeUnknown;
       }
 
@@ -206,11 +206,11 @@ namespace DShowNET
 
     int GetDeviceID(IBaseFilter tunerfilter)
     {
-      Log.WriteFile(Log.LogType.Capture, "TechnoTrend: Looking Device ID");
+      Log.WriteFile(Log.LogType.Log, "TechnoTrend: Looking Device ID");
       IPin outputPin = DirectShowLib.DsFindPin.ByDirection(tunerfilter, PinDirection.Output, 0);
       if (outputPin == null)
         return -1;
-      Log.WriteFile(Log.LogType.Capture, "TechnoTrend: Got Pin");
+      Log.WriteFile(Log.LogType.Log, "TechnoTrend: Got Pin");
       IKsPin iKsPin = outputPin as IKsPin;
       KSMULTIPLE_ITEM pmi;
       IntPtr pDataReturned;
@@ -218,11 +218,11 @@ namespace DShowNET
       Marshal.ReleaseComObject(outputPin);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "TechnoTrend: Pin does not support Mediums");
+        Log.WriteFile(Log.LogType.Log, "TechnoTrend: Pin does not support Mediums");
         return -1;  // Pin does not support mediums.
       }
       pmi = (KSMULTIPLE_ITEM)Marshal.PtrToStructure(pDataReturned, typeof(KSMULTIPLE_ITEM));
-      Log.WriteFile(Log.LogType.Capture, "TechnoTrend: Got Mediums:{0}", pmi.Count);
+      Log.WriteFile(Log.LogType.Log, "TechnoTrend: Got Mediums:{0}", pmi.Count);
       if (pmi.Count != 0)
       {
         // Use pointer arithmetic to reference the first medium structure.
@@ -233,7 +233,7 @@ namespace DShowNET
         REGPINMEDIUM medium = (REGPINMEDIUM)Marshal.PtrToStructure(ptrData, typeof(REGPINMEDIUM));
         int id = (int)medium.dw1;
         Marshal.FreeCoTaskMem(pDataReturned);
-        Log.WriteFile(Log.LogType.Capture, "TechnoTrend: Device ID:{0}", id);
+        Log.WriteFile(Log.LogType.Log, "TechnoTrend: Device ID:{0}", id);
         return id;
       }
       else

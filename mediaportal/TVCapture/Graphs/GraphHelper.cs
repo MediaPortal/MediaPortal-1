@@ -338,7 +338,7 @@ namespace MediaPortal.TV.Recording
     /// </returns>
       public string GetHardwareLocation(string monikerName)
       {
-          //Log.WriteFile(Log.LogType.Capture, "    GetHardwareLocation: filter:{1}", monikerName);
+          //Log.WriteFile(Log.LogType.Log, "    GetHardwareLocation: filter:{1}", monikerName);
 
           int pos1 = monikerName.IndexOf("#");
           int pos2 = monikerName.LastIndexOf("#");
@@ -378,19 +378,19 @@ namespace MediaPortal.TV.Recording
       _captureCardDefinition = null;
       try
       {
-         Log.WriteFile(Log.LogType.Capture, "LoadDefs for device at {0}",GetHardwareLocation(videoDeviceMoniker));
-        //Log.WriteFile(Log.LogType.Capture, "LoadDefinitions() card:{0} {1}", ID, this.FriendlyName);
+         Log.WriteFile(Log.LogType.Log, "LoadDefs for device at {0}",GetHardwareLocation(videoDeviceMoniker));
+        //Log.WriteFile(Log.LogType.Log, "LoadDefinitions() card:{0} {1}", ID, this.FriendlyName);
         CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
         if (CaptureCardDefinitions.CaptureCards.Count == 0)
         {
           // Load failed!!!
-          Log.WriteFile(Log.LogType.Capture, " No capturecards defined, or load failed");
+          Log.WriteFile(Log.LogType.Log, " No capturecards defined, or load failed");
           return (false);
         }
 
         if (videoDeviceMoniker == null)
         {
-          Log.WriteFile(Log.LogType.Capture, " No video device moniker specified");
+          Log.WriteFile(Log.LogType.Log, " No video device moniker specified");
           return true;
         }
 
@@ -419,7 +419,7 @@ namespace MediaPortal.TV.Recording
           _captureCardDefinition = new CaptureCardDefinition();
         if (ccd == null)
         {
-          Log.WriteFile(Log.LogType.Capture, true, " CaptureCard {0} NOT supported, no definitions found", videoDevice);
+          Log.WriteFile(Log.LogType.Log, true, " CaptureCard {0} NOT supported, no definitions found", videoDevice);
           return (false);
         }
         _captureCardDefinition.CaptureName = ccd.CaptureName;
@@ -456,13 +456,13 @@ namespace MediaPortal.TV.Recording
         string captureDeviceDeviceName = videoDeviceMoniker;
         int pos = captureDeviceDeviceName.LastIndexOf("#");
         if (pos >= 0) captureDeviceDeviceName = captureDeviceDeviceName.Substring(0, pos);
-        Log.WriteFile(Log.LogType.Capture, " video device moniker   :{0}", videoDeviceMoniker);
-        Log.WriteFile(Log.LogType.Capture, " captureDeviceDeviceName:{0}", captureDeviceDeviceName);
+        Log.WriteFile(Log.LogType.Log, " video device moniker   :{0}", videoDeviceMoniker);
+        Log.WriteFile(Log.LogType.Log, " captureDeviceDeviceName:{0}", captureDeviceDeviceName);
 
 
 
         Instance = FindInstanceForDevice(captureDeviceDeviceName);
-        Log.WriteFile(Log.LogType.Capture, " Using card#{0}", Instance);
+        Log.WriteFile(Log.LogType.Log, " Using card#{0}", Instance);
         //for each tv filter we need for building the graph
         foreach (FilterDefinition fd in _captureCardDefinition.Tv.FilterDefinitions)
         {
@@ -473,7 +473,7 @@ namespace MediaPortal.TV.Recording
 
           string friendlyName = fd.Category;
           bool filterFound = false;
-          Log.WriteFile(Log.LogType.Capture, "  filter {0}='{1}' check:{2}", friendlyName, fd.FriendlyName, fd.CheckDevice);
+          Log.WriteFile(Log.LogType.Log, "  filter {0}='{1}' check:{2}", friendlyName, fd.FriendlyName, fd.CheckDevice);
 
           //for each directshow filter
           foreach (string key in AvailableFilters.Filters.Keys)
@@ -537,7 +537,7 @@ namespace MediaPortal.TV.Recording
                 int posTmp = filterMoniker.LastIndexOf("#");
                 if (posTmp >= 0) filterMoniker = filterMoniker.Substring(0, posTmp);
 
-                Log.WriteFile(Log.LogType.Capture, "  CheckDevice:{0}", filterMoniker);
+                Log.WriteFile(Log.LogType.Log, "  CheckDevice:{0}", filterMoniker);
                 if (!filterFound)
                 {
                   string moniker = FindUniqueFilter(filterMoniker, Instance);
@@ -565,11 +565,11 @@ namespace MediaPortal.TV.Recording
                         if (locf.Equals(locv) && !locf.Equals(string.Empty) && !locv.Equals(string.Empty) ) {
                             filter = f;
                             filterFound = true;
-                            Log.WriteFile(Log.LogType.Capture, "Filter matched on hardware location: {1} -> {0}", f.MonikerString, GetHardwareLocation(f.MonikerString));
+                            Log.WriteFile(Log.LogType.Log, "Filter matched on hardware location: {1} -> {0}", f.MonikerString, GetHardwareLocation(f.MonikerString));
                             break;
                         }
                     }
-                    if (!filterFound) Log.WriteFile(Log.LogType.Capture, "No filters matched on hardware location");
+                    if (!filterFound) Log.WriteFile(Log.LogType.Log, "No filters matched on hardware location");
                 }
 
                 if (!filterFound)
@@ -583,11 +583,11 @@ namespace MediaPortal.TV.Recording
                 }
                 if (!filterFound)
                 {
-                  Log.WriteFile(Log.LogType.Capture, true, "  ERROR Cannot find unique filter for filter:{0}", filter.Name);
+                  Log.WriteFile(Log.LogType.Log, true, "  ERROR Cannot find unique filter for filter:{0}", filter.Name);
                 }
                 else
                 {
-                  Log.WriteFile(Log.LogType.Capture, "    Found {0}={1}", filter.Name, filter.MonikerString);
+                  Log.WriteFile(Log.LogType.Log, "    Found {0}={1}", filter.Name, filter.MonikerString);
                 }
               }
               else filterFound = true;
@@ -608,7 +608,7 @@ namespace MediaPortal.TV.Recording
           {
             if (fd.FriendlyName.StartsWith("%") == false || fd.FriendlyName.EndsWith("%") == false )
             {
-              Log.WriteFile(Log.LogType.Capture, true, "  Filter {0} not found in definitions file", friendlyName);
+              Log.WriteFile(Log.LogType.Log, true, "  Filter {0} not found in definitions file", friendlyName);
               return (false);
             }
           }

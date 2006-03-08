@@ -148,7 +148,7 @@ namespace MediaPortal.TV.Scanning
       string description = String.Format("Channel:{0}/{1} {2}", _currentIndex, MaxATSCChannel, chanDesc);
       _callback.OnStatus(description);
 
-      Log.WriteFile(Log.LogType.Capture, "tune channel:{0}/{1} {2}", _currentIndex, MaxATSCChannel, chanDesc);
+      Log.WriteFile(Log.LogType.Log, "tune channel:{0}/{1} {2}", _currentIndex, MaxATSCChannel, chanDesc);
 
       DVBChannel newchan = new DVBChannel();
       newchan.NetworkID = -1;

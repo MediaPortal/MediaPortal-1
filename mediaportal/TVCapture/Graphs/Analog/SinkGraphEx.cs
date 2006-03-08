@@ -93,27 +93,27 @@ namespace MediaPortal.TV.Recording
         _grabTeletext = false;
         _vmr9 = new VMR9Util(); 
 
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:CreateGraph() IN");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:CreateGraph() IN");
         if (_graphState != State.None) return false;		// If doing something already, return...
         if (_card == null)
         {
-          Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx:card is not defined");
+          Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx:card is not defined");
           return false;
         }
 
         if (!_card.LoadDefinitions())											// Load configuration for this card
         {
-          Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Loading card definitions for card {0} failed", _card.Graph.CommercialName);
+          Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Loading card definitions for card {0} failed", _card.Graph.CommercialName);
           return false;
         }
         if ((_card.Graph == null) ||(_card.Graph.TvFilterDefinitions == null))
         {
-          Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx:card does not contain filters?");
+          Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx:card does not contain filters?");
           return false;
         }
         if ((_card.Graph == null) || (_card.Graph.TvConnectionDefinitions == null))
         {
-          Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx:card does not contain connections for tv?");
+          Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx:card does not contain connections for tv?");
           return false;
         }
 
@@ -126,29 +126,29 @@ namespace MediaPortal.TV.Recording
         int hr = 0;
 
         // Make a new filter graph
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Create new filter graph (IGraphBuilder)");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Create new filter graph (IGraphBuilder)");
         _graphBuilderInterface = (IGraphBuilder)new FilterGraph();
 
         // Get the Capture Graph Builder...
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Get the Capture Graph Builder (ICaptureGraphBuilder2)");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Get the Capture Graph Builder (ICaptureGraphBuilder2)");
         _captureGraphBuilderInterface = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
 
         // ...and link the Capture Graph Builder to the Graph Builder
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Link the CaptureGraphBuilder to the filter graph (SetFiltergraph)");
         hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilderInterface);
         if (hr < 0)
         {
-          Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Error: link FAILED");
-          Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:CreateGraph() OUT");
+          Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Error: link FAILED");
+          Log.WriteFile(Log.LogType.Log, "SinkGraphEx:CreateGraph() OUT");
           return false;
         }
         // Add graph to Running Object Table (ROT), so we can connect to the graph using GraphEdit ;)
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Add graph to ROT table");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Add graph to ROT table");
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilderInterface);
 
         // Loop through configured filters for this card, bind them and add them to the graph
         // Note that while adding filters to a graph, some connections may already be created...
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Adding configured filters...");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Adding configured filters...");
         foreach (FilterDefinition dsFilter in _card.Graph.TvFilterDefinitions)
         {
           string catName = dsFilter.Category;
@@ -158,16 +158,16 @@ namespace MediaPortal.TV.Recording
             dsFilter.DSFilter = Marshal.BindToMoniker(dsFilter.MonikerDisplayName) as IBaseFilter;
           }
           //FilterDefinition dsFilter = _card.TvFilterDefinitions[catName] as FilterDefinition;
-          Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+          Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
           hr = _graphBuilderInterface.AddFilter(dsFilter.DSFilter, dsFilter.FriendlyName);
           if (hr == 0)
           {
-            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  Added filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+            Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  Added filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
           }
           else
           {
-            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  Error! Failed adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
-            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  Error! Result code = {0}", hr);
+            Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  Error! Failed adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
+            Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  Error! Result code = {0}", hr);
           }
 
           // Support the "legacy" member variables. This could be done different using properties
@@ -175,7 +175,7 @@ namespace MediaPortal.TV.Recording
           if (dsFilter.Category == "tvtuner") _tvTunerInterface = dsFilter.DSFilter as IAMTVTuner;
           if (dsFilter.Category == "capture") _filterCapture = dsFilter.DSFilter;
         }
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Adding configured filters...DONE");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Adding configured filters...DONE");
 
         _analogVideoDecoderInterface = _filterCapture as IAMAnalogVideoDecoder;
         InitializeTuner();
@@ -207,22 +207,22 @@ namespace MediaPortal.TV.Recording
         //
         // The code assumes method 1 is used. If that fails, method 2 is tried...
 
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Adding configured pin connections...");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Adding configured pin connections...");
         for (int i = 0; i < _card.Graph.TvConnectionDefinitions.Count; i++)
         {
           sourceFilter = _card.GetTvFilterDefinition(((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SourceCategory);
           sinkFilter = _card.GetTvFilterDefinition(((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SinkCategory);
           if (sourceFilter == null)
           {
-            Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: Cannot find source filter for connection:{0}", i);
+            Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx: Cannot find source filter for connection:{0}", i);
             continue;
           }
           if (sinkFilter == null)
           {
-            Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: Cannot find sink filter for connection:{0}", i);
+            Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx: Cannot find sink filter for connection:{0}", i);
             continue;
           }
-          Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  Connecting <{0}>:{1} with <{2}>:{3}",
+          Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  Connecting <{0}>:{1} with <{2}>:{3}",
             sourceFilter.FriendlyName, ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SourcePinName,
             sinkFilter.FriendlyName, ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SinkPinName);
 
@@ -236,13 +236,13 @@ namespace MediaPortal.TV.Recording
             {
               sourcePin = DsFindPin.ByDirection(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
               if (sourcePin == null)
-                Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Unable to find sourcePin: <{0}>", strPinName);
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Unable to find sourcePin: <{0}>", strPinName);
               else
-                Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
             }
           }
           else
-            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sourcePin: <{0}> ", ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SourcePinName);
+            Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Found sourcePin: <{0}> ", ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SourcePinName);
 
           sinkPin = GetPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[i]).SinkPinName);
           /*
@@ -255,13 +255,13 @@ namespace MediaPortal.TV.Recording
             {
               sinkPin = DsFindPin.ByDirection(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
               if (sinkPin == null)
-                Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Unable to find sinkPin: <{0}>", strPinName);
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Unable to find sinkPin: <{0}>", strPinName);
               else
-                Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
             }
           }
           else
-            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sinkPin: <{0}> ", ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName);
+            Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Found sinkPin: <{0}> ", ((ConnectionDefinition)_card.TvConnectionDefinitions[i]).SinkPinName);
           */
           if (sourcePin != null && sinkPin != null)
           {
@@ -270,12 +270,12 @@ namespace MediaPortal.TV.Recording
             if (hr != 0)
               hr = _graphBuilderInterface.Connect(sourcePin, sinkPin);
             if (hr == 0)
-              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Pins connected...");
+              Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Pins connected...");
 
             // Give warning and release pin...
             if (conPin != null)
             {
-              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   (Pin was already connected...)");
+              Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   (Pin was already connected...)");
               Marshal.ReleaseComObject(conPin as Object);
               conPin = null;
               hr = 0;
@@ -284,22 +284,22 @@ namespace MediaPortal.TV.Recording
 
           if (hr != 0)
           {
-            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  Error: Unable to connect Pins 0x{0:X}", hr);
+            Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  Error: Unable to connect Pins 0x{0:X}", hr);
             if (hr == -2147220969)
             {
-              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
+              Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   -- Cannot connect: {0} or {1}", sourcePin.ToString(), sinkPin.ToString());
             }
 
             if (sourcePin != null) Marshal.ReleaseComObject(sourcePin); sourcePin = null;
             if (sinkPin != null) Marshal.ReleaseComObject(sinkPin); sinkPin = null;
             if (sourceFilter.DSFilter != null)
             {
-              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: remove {0}", sourceFilter.FriendlyName);
+              Log.WriteFile(Log.LogType.Log, "SinkGraphEx: remove {0}", sourceFilter.FriendlyName);
               _graphBuilderInterface.RemoveFilter(sourceFilter.DSFilter);
               Marshal.ReleaseComObject(sourceFilter.DSFilter); sourceFilter.DSFilter = null;
             }
             RetryOtherInstances(i);
-            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: RetryOtherInstances done");
+            Log.WriteFile(Log.LogType.Log, "SinkGraphEx: RetryOtherInstances done");
           }//if (hr != 0)
         }//for (int i = 0; i < _card.TvConnectionDefinitions.Count; i++)
 
@@ -309,7 +309,7 @@ namespace MediaPortal.TV.Recording
         if (sourcePin != null)
           Marshal.ReleaseComObject(sourcePin);
         sourcePin = null;
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Adding configured pin connections...DONE");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Adding configured pin connections...DONE");
 
         // Find out which filter & pin is used as the interface to the rest of the graph.
         // The configuration defines the filter, including the Video, Audio and Mpeg2 pins where applicable
@@ -346,7 +346,7 @@ namespace MediaPortal.TV.Recording
         _sizeFrame = _videoCaptureHelper.GetFrameSize();
         
 
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx: Capturing:{0}x{1}", _sizeFrame.Width, _sizeFrame.Height);
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Capturing:{0}x{1}", _sizeFrame.Width, _sizeFrame.Height);
         _mpeg2DemuxHelper = null;
 
         // creates the last part of the graph. Depending on timeshifting etc.
@@ -360,7 +360,7 @@ namespace MediaPortal.TV.Recording
         _videoProcAmpHelper = new VideoProcAmp(_filterCapture as IAMVideoProcAmp);
 
         _graphState = State.Created;
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:CreateGraph() OUT");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:CreateGraph() OUT");
 
         SetQuality(3);
 
@@ -437,7 +437,7 @@ namespace MediaPortal.TV.Recording
     void RetryOtherInstances(int instance)
     {
 
-      Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: RetryOtherInstances:{0}", instance);
+      Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx: RetryOtherInstances:{0}", instance);
       FilterDefinition sourceFilter;
       FilterDefinition sinkFilter;
       IPin sourcePin = null;
@@ -447,16 +447,16 @@ namespace MediaPortal.TV.Recording
       sinkFilter = _card.GetTvFilterDefinition(((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SinkCategory);
       if (sourceFilter == null)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: Cannot find source filter for connection:{0}", instance);
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx: Cannot find source filter for connection:{0}", instance);
         return;
       }
       if (sinkFilter == null)
       {
-        Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: Cannot find sink filter for connection:{0}", instance);
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx: Cannot find sink filter for connection:{0}", instance);
         return;
       }
 
-      Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: find instances of :{0} instances", sourceFilter.FriendlyName);
+      Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx: find instances of :{0} instances", sourceFilter.FriendlyName);
       foreach (string key in AvailableFilters.Filters.Keys)
       {
         int hr;
@@ -465,11 +465,11 @@ namespace MediaPortal.TV.Recording
         filter = (Filter)al[0];
         if (filter.Name.Equals(sourceFilter.FriendlyName))
         {
-          Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: found :{0} instances", al.Count);
+          Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx: found :{0} instances", al.Count);
           for (int filterInstance = 0; filterInstance < al.Count; ++filterInstance)
           {
             filter = (Filter)al[filterInstance];
-            Log.WriteFile(Log.LogType.Capture, true, "SinkGraphEx: try instance :{0} {1}", filterInstance, filter.MonikerString);
+            Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx: try instance :{0} {1}", filterInstance, filter.MonikerString);
             sourceFilter.MonikerDisplayName = filter.MonikerString;
             sourceFilter.DSFilter = Marshal.BindToMoniker(sinkFilter.MonikerDisplayName) as IBaseFilter;
             hr = _graphBuilderInterface.AddFilter(sourceFilter.DSFilter, sourceFilter.FriendlyName);
@@ -481,13 +481,13 @@ namespace MediaPortal.TV.Recording
               {
                 sourcePin = DsFindPin.ByDirection(sourceFilter.DSFilter, PinDirection.Output, Convert.ToInt32(strPinName));
                 if (sourcePin == null)
-                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Unable to find sourcePin: <{0}>", strPinName);
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Unable to find sourcePin: <{0}>", strPinName);
                 else
-                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Found sourcePin: <{0}> <{1}>", strPinName, sourcePin.ToString());
               }
             }
             else
-              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sourcePin: <{0}> ", ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SourcePinName);
+              Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Found sourcePin: <{0}> ", ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SourcePinName);
 
             sinkPin = DirectShowUtil.FindPin(sinkFilter.DSFilter, PinDirection.Input, ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SinkPinName);
             if (sinkPin == null)
@@ -497,13 +497,13 @@ namespace MediaPortal.TV.Recording
               {
                 sinkPin = DsFindPin.ByDirection(sinkFilter.DSFilter, PinDirection.Input, Convert.ToInt32(strPinName));
                 if (sinkPin == null)
-                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Unable to find sinkPin: <{0}>", strPinName);
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Unable to find sinkPin: <{0}>", strPinName);
                 else
-                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Found sinkPin: <{0}> <{1}>", strPinName, sinkPin.ToString());
               }
             }
             else
-              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found sinkPin: <{0}> ", ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SinkPinName);
+              Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Found sinkPin: <{0}> ", ((ConnectionDefinition)_card.Graph.TvConnectionDefinitions[instance]).SinkPinName);
 
             if (sourcePin != null && sinkPin != null)
             {
@@ -512,12 +512,12 @@ namespace MediaPortal.TV.Recording
               if (hr != 0)
                 hr = _graphBuilderInterface.Connect(sourcePin, sinkPin);
               if (hr == 0)
-                Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Pins connected...");
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Pins connected...");
 
               // Give warning and release pin...
               if (conPin != null)
               {
-                Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   (Pin was already connected...)");
+                Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   (Pin was already connected...)");
                 Marshal.ReleaseComObject(conPin as Object);
                 conPin = null;
                 hr = 0;
@@ -526,7 +526,7 @@ namespace MediaPortal.TV.Recording
 
             if (hr != 0)
             {
-              Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  Error: Unable to connect Pins 0x{0:X}", hr);
+              Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  Error: Unable to connect Pins 0x{0:X}", hr);
 
               if (sourcePin != null) Marshal.ReleaseComObject(sourcePin); sourcePin = null;
               if (sinkPin != null) Marshal.ReleaseComObject(sinkPin); sinkPin = null;
@@ -561,7 +561,7 @@ namespace MediaPortal.TV.Recording
 
       _grabTeletext = false;
       _previousChannel = -1;
-      Log.WriteFile(Log.LogType.Capture, "SinkGraph:DeleteGraph()");
+      Log.WriteFile(Log.LogType.Log, "SinkGraph:DeleteGraph()");
       StopRecording();
       StopTimeShifting();
       StopViewing();
@@ -664,13 +664,13 @@ namespace MediaPortal.TV.Recording
         {
           sinkPin = DsFindPin.ByDirection(filter, PinDirection.Input, Convert.ToInt32(pinName));
           if (sinkPin == null)
-            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Unable to find pin: <{0}>", pinName);
+            Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Unable to find pin: <{0}>", pinName);
           else
-            Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found pin: <{0}> <{1}>", pinName, sinkPin.ToString());
+            Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Found pin: <{0}> <{1}>", pinName, sinkPin.ToString());
         }
       }
       else
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:   Found pin: <{0}> ", pinName);
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:   Found pin: <{0}> ", pinName);
       return sinkPin;
     }
 
@@ -698,12 +698,12 @@ namespace MediaPortal.TV.Recording
     {
       if (String.Compare(filterName, "%soundcard%", true) == 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  preferred filter %soundcard%");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  preferred filter %soundcard%");
         Filters filters = new Filters();
         FilterCollection audioInputs = filters.AudioInputDevices;
         if (audioInputs.Count > 0)
         {
-          Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}>", audioInputs[0].Name);
+          Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  adding filter <{0}>", audioInputs[0].Name);
           try
           {
             IBaseFilter audioInputFilter = Marshal.BindToMoniker(audioInputs[0].MonikerString) as IBaseFilter;
@@ -717,12 +717,12 @@ namespace MediaPortal.TV.Recording
 
       if (String.Compare(filterName, "%audioencoder%", true) == 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  preferred filter %audioencoder%");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  preferred filter %audioencoder%");
         string[] audioEncoders = new string[] {"InterVideo Audio Encoder", "CyberLink Audio Encoder" };
         Filters filters = new Filters();
         FilterCollection audioCodecs = filters.AudioCompressors;
         FilterCollection legacyFilters = filters.LegacyFilters;
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  audio codecs installed:{0} preferred:{1}", audioCodecs.Count, audioEncoders.Length);
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  audio codecs installed:{0} preferred:{1}", audioCodecs.Count, audioEncoders.Length);
         for (int i = 0; i < audioEncoders.Length; ++i)
         {
           Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  try audio codec:'{0}'", audioEncoders[i]);
@@ -736,7 +736,7 @@ namespace MediaPortal.TV.Recording
                 Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  audio codec:'{0}' is installed", audioEncoders[i]);
                 try
                 {
-                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}>", audioCodec.Name);
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  adding filter <{0}>", audioCodec.Name);
                   IBaseFilter audioCodecFilter = Marshal.BindToMoniker(audioCodec.MonikerString) as IBaseFilter;
                   return audioCodecFilter;
                 }
@@ -762,7 +762,7 @@ namespace MediaPortal.TV.Recording
                 Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  audio codec:'{0}' is installed", audioEncoders[i]);
                 try
                 {
-                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}>", audioCodec.Name);
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  adding filter <{0}>", audioCodec.Name);
                   IBaseFilter audioCodecFilter = Marshal.BindToMoniker(audioCodec.MonikerString) as IBaseFilter;
                   return audioCodecFilter;
                 }
@@ -782,12 +782,12 @@ namespace MediaPortal.TV.Recording
 
       if (String.Compare(filterName, "%videoencoder%", true) == 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  preferred filter %videoencoder%");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  preferred filter %videoencoder%");
         string[] videoEncoders = new string[] { "InterVideo Video Encoder", "CyberLink MPEG Video Encoder" };
         Filters filters = new Filters();
         FilterCollection legacyFilters = filters.LegacyFilters;
         FilterCollection videoCodecs = filters.VideoCompressors;
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  video codecs installed:{0} preferred:{1}", videoCodecs.Count, videoEncoders.Length);
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  video codecs installed:{0} preferred:{1}", videoCodecs.Count, videoEncoders.Length);
 
         for (int i = 0; i < videoEncoders.Length; ++i)
         {
@@ -803,7 +803,7 @@ namespace MediaPortal.TV.Recording
                 Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  video codec:'{0}' is installed", videoEncoders[i]);
                 try
                 {
-                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}>", videoCodec.Name);
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  adding filter <{0}>", videoCodec.Name);
                   IBaseFilter videoCodecFilter = Marshal.BindToMoniker(videoCodec.MonikerString) as IBaseFilter;
                   return videoCodecFilter;
                 }
@@ -829,7 +829,7 @@ namespace MediaPortal.TV.Recording
                 Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  video codec:'{0}' is installed", videoEncoders[i]);
                 try
                 {
-                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}>", videoCodec.Name);
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  adding filter <{0}>", videoCodec.Name);
                   IBaseFilter videoCodecFilter = Marshal.BindToMoniker(videoCodec.MonikerString) as IBaseFilter;
                   return videoCodecFilter;
                 }
@@ -849,11 +849,11 @@ namespace MediaPortal.TV.Recording
 
       if (String.Compare(filterName, "%mpegmux%", true) == 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  preferred filter %mpegmux%");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  preferred filter %mpegmux%");
         string[] multiplexers = new string[] { "InterVideo Multiplexer", "CyberLink MPEG Muxer" };
         Filters filters = new Filters();
         FilterCollection legacyFilters = filters.LegacyFilters;
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  legacy filters installed:{0} preferred:{1}", legacyFilters.Count, multiplexers.Length);
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  legacy filters installed:{0} preferred:{1}", legacyFilters.Count, multiplexers.Length);
         for (int i = 0; i < multiplexers.Length; ++i)
         {
           Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  try multiplexer:'{0}'", multiplexers[i]);
@@ -866,7 +866,7 @@ namespace MediaPortal.TV.Recording
                 Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  multiplexer:'{0}' is installed", multiplexers[i]);
                 try
                 {
-                  Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:  adding filter <{0}>", filter.Name);
+                  Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  adding filter <{0}>", filter.Name);
                   IBaseFilter multiplexerFilter = Marshal.BindToMoniker(filter.MonikerString) as IBaseFilter;
                   return multiplexerFilter;
                 }
@@ -904,7 +904,7 @@ namespace MediaPortal.TV.Recording
       // AverMedia MCE card has a bug. It will only connect the TV Tuner->crossbar if
       // the crossbar outputs are disconnected
       // same for the winfast pvr 2000
-      Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:ConnectTVTunerOutputs()");
+      Log.WriteFile(Log.LogType.Log, "SinkGraphEx:ConnectTVTunerOutputs()");
 
       //find crossbar
       int hr;
@@ -916,33 +916,33 @@ namespace MediaPortal.TV.Recording
       hr = _captureGraphBuilderInterface.FindInterface(cat, null, _filterCapture, iid, out o);
       if (hr != 0 || o == null)
       {
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:no crossbar found");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:no crossbar found");
         return; // no crossbar found?
       }
 
       IAMCrossbar crossbar = o as IAMCrossbar;
       if (crossbar == null)
       {
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:no crossbar found");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:no crossbar found");
         return;
       }
 
       //disconnect the output pins of the crossbar->video capture filter
-      //			Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:disconnect crossbar outputs");
+      //			Log.WriteFile(Log.LogType.Log,"SinkGraphEx:disconnect crossbar outputs");
       DirectShowUtil.DisconnectOutputPins(_graphBuilderInterface, (IBaseFilter)crossbar);
 
       //connect the output pins of the tvtuner
-      //			Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:connect tvtuner outputs");
+      //			Log.WriteFile(Log.LogType.Log,"SinkGraphEx:connect tvtuner outputs");
       bool bAllConnected = DirectShowUtil.RenderOutputPins(_graphBuilderInterface, (IBaseFilter)_tvTunerInterface);
       if (!bAllConnected)
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:FAILED, not all pins connected");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:FAILED, not all pins connected");
 
       //reconnect the output pins of the crossbar
-      //			Log.WriteFile(Log.LogType.Capture,"SinkGraphEx:reconnect crossbar output pins");
+      //			Log.WriteFile(Log.LogType.Log,"SinkGraphEx:reconnect crossbar output pins");
 
       bAllConnected = DirectShowUtil.RenderOutputPins(_graphBuilderInterface, (IBaseFilter)crossbar);
       if (!bAllConnected)
-        Log.WriteFile(Log.LogType.Capture, "SinkGraphEx:FAILED, not all pins connected");
+        Log.WriteFile(Log.LogType.Log, "SinkGraphEx:FAILED, not all pins connected");
 
       if (o != null)
       {

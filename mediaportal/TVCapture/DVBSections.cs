@@ -696,12 +696,12 @@ namespace MediaPortal.TV.Recording
       if (flag == false)
       {
 
-        Log.WriteFile(Log.LogType.Capture, "DVBSections:MsGetStreamData() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid, tid, tableSection, timeout);
+        Log.WriteFile(Log.LogType.Log, "DVBSections:MsGetStreamData() failed for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid, tid, tableSection, timeout);
         return false;
       }
       if (sectLast <= 0)
       {
-        Log.WriteFile(Log.LogType.Capture, "DVBSections:Sections:MsGetStreamData() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid, tid, tableSection, timeout);
+        Log.WriteFile(Log.LogType.Log, "DVBSections:Sections:MsGetStreamData() timeout for pid:{0:X} tid:{1:X} section:{2} timeout:{3}", pid, tid, tableSection, timeout);
       }
       //Log.Write("sections:{0}",sectLast);
       int totalSections = sectLast;
@@ -720,7 +720,7 @@ namespace MediaPortal.TV.Recording
             }
             catch
             {
-              Log.WriteFile(Log.LogType.Capture, true, "dvbsections: error on copy data. address={0}, length ={1}", sectionBuffer, dataLen);
+              Log.WriteFile(Log.LogType.Log, true, "dvbsections: error on copy data. address={0}, length ={1}", sectionBuffer, dataLen);
               m_sectionsList.Clear();
               break;
             }
@@ -745,7 +745,7 @@ namespace MediaPortal.TV.Recording
             }
             catch
             {
-              Log.WriteFile(Log.LogType.Capture, true, "dvbsections: error on copy data. address={0}, length ={1}", sectionBuffer, dataLen);
+              Log.WriteFile(Log.LogType.Log, true, "dvbsections: error on copy data. address={0}, length ={1}", sectionBuffer, dataLen);
               m_sectionsList.Clear();
               break;
             }
@@ -1028,7 +1028,7 @@ namespace MediaPortal.TV.Recording
 
       byte[] b = new byte[5];
       loop = (section_length - 9) / 4;
-      //Log.WriteFile(Log.LogType.Capture,"dvbsections:decodePatTable() loop={0}", loop);
+      //Log.WriteFile(Log.LogType.Log,"dvbsections:decodePatTable() loop={0}", loop);
       if (loop < 1)
       {
         Log.Write("decodePATTable() loop < 1 loop={0}", buf.Length);
@@ -1043,7 +1043,7 @@ namespace MediaPortal.TV.Recording
         ch.program_number = (b[0] << 8) + b[1];
         ch.reserved = ((b[2] >> 5) & 7);
         ch.network_pmt_PID = ((b[2] & 0x1F) << 8) + b[3];
-        //Log.WriteFile(Log.LogType.Capture,"dvbsections:decodePatTable() chan:{0} {1} {2}", ch.transportStreamID,ch.networkID,ch.network_pmt_PID);
+        //Log.WriteFile(Log.LogType.Log,"dvbsections:decodePatTable() chan:{0} {1} {2}", ch.transportStreamID,ch.networkID,ch.network_pmt_PID);
         if (ch.program_number != 0)
         {
           tp.PMTTable.Add(ch);
@@ -1718,7 +1718,7 @@ namespace MediaPortal.TV.Recording
             }
             catch (Exception)
             {
-              //Log.WriteFile(Log.LogType.Capture,true,"dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
+              //Log.WriteFile(Log.LogType.Log,true,"dvbsection: exception on EIT: {0} {1} {2}",ex.Message,ex.StackTrace,ex.Source);
             }
             System.Windows.Forms.Application.DoEvents();
 
@@ -2028,7 +2028,7 @@ namespace MediaPortal.TV.Recording
       eit.seLanguageCode = System.Text.Encoding.ASCII.GetString(buf, 2, 3);
       if (eit.seLanguageCode.Length > 0)
       {
-        //Log.WriteFile(Log.LogType.Capture,"epg-grab: language={0}", eit.seLanguageCode);
+        //Log.WriteFile(Log.LogType.Log,"epg-grab: language={0}", eit.seLanguageCode);
       }
       eit.event_name = "";
       eit.event_text = "";
@@ -2048,7 +2048,7 @@ namespace MediaPortal.TV.Recording
         }
         catch (Exception)
         {
-          //Log.WriteFile(Log.LogType.Capture,true,"dvbsections: short-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
+          //Log.WriteFile(Log.LogType.Log,true,"dvbsections: short-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
           eit.event_text = "";
           eit.event_name = "";
         }
@@ -2291,7 +2291,7 @@ namespace MediaPortal.TV.Recording
 
         if (eit.eeLanguageCode.Length > 0)
         {
-          //Log.WriteFile(Log.LogType.Capture,"epg-grab: language={0}", eit.eeLanguageCode);
+          //Log.WriteFile(Log.LogType.Log,"epg-grab: language={0}", eit.eeLanguageCode);
         }
         pointer += 7;
         lenB = descriptor_length - 5;
@@ -2306,7 +2306,7 @@ namespace MediaPortal.TV.Recording
           string testText = getString468A(b, item_description_length);
           if (testText == null)
             testText = "-not avail.-";
-          //Log.WriteFile(Log.LogType.Capture,"dvbsections: item-description={0}",testText);
+          //Log.WriteFile(Log.LogType.Log,"dvbsections: item-description={0}",testText);
           item_length = b[0];
           System.Array.Copy(buf, pointer + 1, b, 0, item_length);
           item = getString468A(b, item_length);
@@ -2325,7 +2325,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception)
       {
-        //Log.WriteFile(Log.LogType.Capture,true,"dvbsections: extended-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
+        //Log.WriteFile(Log.LogType.Log,true,"dvbsections: extended-event exception={0} stack={1} source={2}",ex.Message,ex.StackTrace,ex.Source);
       }
       if (eit.event_item == null)
         eit.event_item = "";

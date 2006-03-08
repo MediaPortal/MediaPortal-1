@@ -146,7 +146,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			if (!captureCard.SignalPresent())
 				System.Threading.Thread.Sleep(400);
 
-			Log.WriteFile(Log.LogType.Capture,"Analog-scan:tune:{0}",currentFrequencyIndex);
+			Log.WriteFile(Log.LogType.Log,"Analog-scan:tune:{0}",currentFrequencyIndex);
 
 			RadioStation station = new RadioStation();
 			float freq=(float)currentFrequencyIndex;
@@ -154,7 +154,7 @@ namespace WindowPlugins.GUISettings.Wizard.Analog
 			station.Name=String.Format("{0} FM",freq.ToString("f2"));
 			station.Frequency=currentFrequencyIndex;
 			captureCard.StartRadio(station);
-			Log.WriteFile(Log.LogType.Capture,"Analog-scan:tuned");
+			Log.WriteFile(Log.LogType.Log,"Analog-scan:tuned");
 			return;
 		}
 

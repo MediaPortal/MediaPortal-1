@@ -719,11 +719,11 @@ namespace MediaPortal.Configuration.Sections
                   tvChan.Number = channelNumber;
                   tvChan.Frequency = channelFrequency;
                   tvChan.Sort = 40000;
-                  Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogTV: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
+                  Log.WriteFile(Log.LogType.Log, "Wizard_AnalogTV: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
                   int id = TVDatabase.AddChannel(tvChan);
                   if (id < 0)
                   {
-                      Log.WriteFile(Log.LogType.Capture, true, "Wizard_AnalogTV: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
+                      Log.WriteFile(Log.LogType.Log, true, "Wizard_AnalogTV: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
                   }
                   newTvChannels++;
               }
@@ -734,7 +734,7 @@ namespace MediaPortal.Configuration.Sections
                   tvChan.Frequency = channelFrequency;
                   TVDatabase.UpdateChannel(tvChan, tvChan.Sort);
                   updatedTvChannels++;
-                  Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogTV: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
+                  Log.WriteFile(Log.LogType.Log, "Wizard_AnalogTV: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
               }
               TVDatabase.MapChannelToCard(tvChan.ID, _card.ID);
               TVGroup group = new TVGroup();

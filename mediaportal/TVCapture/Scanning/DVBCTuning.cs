@@ -95,7 +95,7 @@ namespace MediaPortal.TV.Scanning
       _channelCount = 0;
       string line;
       string[] tpdata;
-      Log.WriteFile(Log.LogType.Capture, "dvbc-scan:Opening {0}", fileName);
+      Log.WriteFile(Log.LogType.Log, "dvbc-scan:Opening {0}", fileName);
       // load _dvbcChannelsList list and start scan
       System.IO.TextReader tin = System.IO.File.OpenText(fileName);
 
@@ -207,7 +207,7 @@ namespace MediaPortal.TV.Scanning
               }
               catch
               {
-                Log.WriteFile(Log.LogType.Capture, "dvbc-scan:Error in line:{0}", LineNr);
+                Log.WriteFile(Log.LogType.Log, "dvbc-scan:Error in line:{0}", LineNr);
               }
             }
           }
@@ -216,7 +216,7 @@ namespace MediaPortal.TV.Scanning
       tin.Close();
 
 
-      Log.WriteFile(Log.LogType.Capture, "dvbc-scan:loaded:{0} dvbc transponders", _channelCount);
+      Log.WriteFile(Log.LogType.Log, "dvbc-scan:loaded:{0} dvbc transponders", _channelCount);
       _currentIndex = 0;
       return;
     }
@@ -299,7 +299,7 @@ namespace MediaPortal.TV.Scanning
             _dvbcChannels[_currentIndex].modstr, 
             _dvbcChannels[_currentIndex].symbolrate/1000);
       string description = String.Format("Transponder:{0} locking...", chanDesc);
-      Log.WriteFile(Log.LogType.Capture, "dvbc-scan:tune dvbcChannel:{0}/{1} {2}", _currentIndex, _channelCount, chanDesc);
+      Log.WriteFile(Log.LogType.Log, "dvbc-scan:tune dvbcChannel:{0}/{1} {2}", _currentIndex, _channelCount, chanDesc);
       _callback.OnStatus(description);
 
       DVBChannel newchan = new DVBChannel();

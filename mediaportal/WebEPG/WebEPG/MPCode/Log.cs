@@ -51,7 +51,7 @@ namespace MediaPortal.Webepg.GUI.Library
 		static Log()
 		{
 			System.IO.Directory.CreateDirectory("log");
-			Initialize(LogType.Capture);
+			Initialize(LogType.Log);
 			Initialize(LogType.Log);
 			Initialize(LogType.Recorder);
 			Initialize(LogType.Error);
@@ -85,7 +85,7 @@ namespace MediaPortal.Webepg.GUI.Library
 			string fname=@"log\WebEPG.log";
 			switch (type)
 			{
-				case LogType.Capture:
+				case LogType.Log:
 					fname=@"log\capture.log";
 					break;
 				case LogType.Recorder:

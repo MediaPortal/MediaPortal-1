@@ -697,11 +697,11 @@ namespace MediaPortal.Configuration.Sections
                   station.Frequency = stationFrequency;
                   station.Sort = 40000;
                   station.Channel = GetUniqueNumber();
-                  Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogRadio: add new station for {0}:{1}", station.Name, station.Frequency);
+                  Log.WriteFile(Log.LogType.Log, "Wizard_AnalogRadio: add new station for {0}:{1}", station.Name, station.Frequency);
                   int id = RadioDatabase.AddStation(ref station);
                   if (id < 0)
                   {
-                      Log.WriteFile(Log.LogType.Capture, true, "Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name, station.Frequency);
+                      Log.WriteFile(Log.LogType.Log, true, "Wizard_AnalogRadio: failed to add new station for {0}:{1} to database", station.Name, station.Frequency);
                   }
                   newRadioChannels++;
               }
@@ -711,7 +711,7 @@ namespace MediaPortal.Configuration.Sections
                   station.Frequency = stationFrequency;
                   RadioDatabase.UpdateStation(station);
                   updatedRadioChannels++;
-                  Log.WriteFile(Log.LogType.Capture, "Wizard_AnalogRadio: update station {0}:{1} {2}", station.Name, station.Frequency, station.ID);
+                  Log.WriteFile(Log.LogType.Log, "Wizard_AnalogRadio: update station {0}:{1} {2}", station.Name, station.Frequency, station.ID);
               }
               RadioDatabase.MapChannelToCard(station.ID, _card.ID);
           }
