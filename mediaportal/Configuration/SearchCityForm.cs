@@ -340,6 +340,7 @@ namespace MediaPortal.Configuration
       this.searchTextBox.TabIndex = 0;
       this.searchTextBox.Text = "";
       this.searchTextBox.TextChanged += new System.EventHandler(this.searchTextBox_TextChanged);
+      this.searchTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchTextBox_KeyDown);
       // 
       // SearchCityForm
       // 
@@ -426,6 +427,12 @@ namespace MediaPortal.Configuration
     private void searchTextBox_TextChanged(object sender, System.EventArgs e)
     {
       searchButton.Enabled = searchTextBox.Text.Length > 0;
+    }
+
+    private void searchTextBox_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+    {
+        if (e.KeyCode == Keys.Enter)
+            this.searchButton.PerformClick();
     }
 
 
