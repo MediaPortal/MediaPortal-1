@@ -27,33 +27,33 @@ namespace MediaPortal.WebEPG
     public class DataProfiler : Profiler
     {
 		Parser Template;
-		int[,] m_subProfile;
-		int[,] m_arrayTagPos;
-		char m_cTag;
-		char m_cDelim;
+		int[,] _subProfile;
+		int[,] _arrayTagPos;
+		char _cTag;
+		char _cDelim;
 
         public DataProfiler(string strSource, char Tag, char Delim)
         {
-            m_strSource = strSource;
-            m_strProfile = strSource;
-			m_cTag = Tag;
-			m_cDelim = Delim;
+            _strSource = strSource;
+            _strProfile = strSource;
+			_cTag = Tag;
+			_cDelim = Delim;
 			ProfilerStart();
         }
 
         public string GetSource(int index)
         {
-			int startTag = m_subProfile[index,0];
-			int endTag = startTag + m_subProfile[index,1];
-			int sourceStart = this.m_arrayTagPos[startTag,0];
-			int sourceLength = this.m_arrayTagPos[endTag,1] - sourceStart + 1;
-			return this.m_strSource.Substring(sourceStart, sourceLength);
+			int startTag = _subProfile[index,0];
+			int endTag = startTag + _subProfile[index,1];
+			int sourceStart = this._arrayTagPos[startTag,0];
+			int sourceLength = this._arrayTagPos[endTag,1] - sourceStart + 1;
+			return this._strSource.Substring(sourceStart, sourceLength);
         }
 
 		override public Profiler GetPageProfiler(string strURL)
 		{
 			HTMLPage webPage = new HTMLPage(strURL);
-			DataProfiler retProfiler = new DataProfiler(webPage.GetPage(), m_cTag, m_cDelim);
+			DataProfiler retProfiler = new DataProfiler(webPage.GetPage(), _cTag, _cDelim);
 			retProfiler.Template = GetProfileParser(0);
 			return retProfiler;
 		}
@@ -66,34 +66,34 @@ namespace MediaPortal.WebEPG
 
 		override public MediaPortal.Utils.Web.Parser GetProfileParser(int index)
 		{
-			MediaPortal.Utils.Web.Parser profileParser = new MediaPortal.Utils.Web.Parser(m_subProfile[index,1]*2);
+			MediaPortal.Utils.Web.Parser profileParser = new MediaPortal.Utils.Web.Parser(_subProfile[index,1]*2);
 
-			int startTag = m_subProfile[index,0];
+			int startTag = _subProfile[index,0];
 
 			int sourceStart = 0; 
-			int sourceLength = this.m_arrayTagPos[startTag,0];
+			int sourceLength = this._arrayTagPos[startTag,0];
 			if(index > 0)
 			{
-				sourceStart = this.m_arrayTagPos[startTag-1,1] + 1;
-				sourceLength = this.m_arrayTagPos[startTag,0] - sourceStart;
+				sourceStart = this._arrayTagPos[startTag-1,1] + 1;
+				sourceLength = this._arrayTagPos[startTag,0] - sourceStart;
 			}
 
-			profileParser.Add(this.m_strSource.Substring(sourceStart, sourceLength));
+			profileParser.Add(this._strSource.Substring(sourceStart, sourceLength));
 
-			sourceStart = this.m_arrayTagPos[startTag,0];
-			sourceLength = this.m_arrayTagPos[startTag,1] - sourceStart + 1;
-			profileParser.Add(this.m_strSource.Substring(sourceStart, sourceLength));
+			sourceStart = this._arrayTagPos[startTag,0];
+			sourceLength = this._arrayTagPos[startTag,1] - sourceStart + 1;
+			profileParser.Add(this._strSource.Substring(sourceStart, sourceLength));
 
 			int i;
-			for(i = 0; i < (m_subProfile[index,1] - 1); i++)
+			for(i = 0; i < (_subProfile[index,1] - 1); i++)
 			{
-				sourceStart = this.m_arrayTagPos[startTag+i, 1] + 1;
-				sourceLength = this.m_arrayTagPos[startTag+i+1, 0] - sourceStart;
-				profileParser.Add(this.m_strSource.Substring(sourceStart, sourceLength));
+				sourceStart = this._arrayTagPos[startTag+i, 1] + 1;
+				sourceLength = this._arrayTagPos[startTag+i+1, 0] - sourceStart;
+				profileParser.Add(this._strSource.Substring(sourceStart, sourceLength));
 
-				sourceStart = this.m_arrayTagPos[startTag+i+1,0];
-				sourceLength = this.m_arrayTagPos[startTag+i+1,1] - sourceStart + 1;
-				profileParser.Add(this.m_strSource.Substring(sourceStart, sourceLength));
+				sourceStart = this._arrayTagPos[startTag+i+1,0];
+				sourceLength = this._arrayTagPos[startTag+i+1,1] - sourceStart + 1;
+				profileParser.Add(this._strSource.Substring(sourceStart, sourceLength));
 			}
 
 			return profileParser;
@@ -101,7 +101,7 @@ namespace MediaPortal.WebEPG
 
 		private void ProfilerStart()
 		{
-			if (m_strSource.Length == 0)
+			if (_strSource.Length == 0)
 				return;
 
 			int index = 0;
@@ -110,12 +110,12 @@ namespace MediaPortal.WebEPG
 			int subProfileStart = 0;
 			int subProfileIndex = 0;
 
-			int [,] arrayProfilePos = new int[m_strSource.Length, 2];
-			int [,] subProfilePos = new int[m_strSource.Length, 2];
+			int [,] arrayProfilePos = new int[_strSource.Length, 2];
+			int [,] subProfilePos = new int[_strSource.Length, 2];
 
-			for(index = 0; index < m_strSource.Length; index++)
+			for(index = 0; index < _strSource.Length; index++)
 			{
-				if(m_strSource[index] == m_cTag)
+				if(_strSource[index] == _cTag)
 				{
 					arrayProfilePos[profileIndex,0] = index;
 					arrayProfilePos[profileIndex,1] = index;
@@ -123,7 +123,7 @@ namespace MediaPortal.WebEPG
 					tagCount++;
 				}
 
-				if(m_strSource[index] == m_cDelim)
+				if(_strSource[index] == _cDelim)
 				{
 					arrayProfilePos[profileIndex,0] = index;
 					arrayProfilePos[profileIndex,1] = index;
@@ -137,19 +137,19 @@ namespace MediaPortal.WebEPG
 				}
 			}
 
-			m_arrayTagPos = new int[profileIndex,2];
+			_arrayTagPos = new int[profileIndex,2];
 			for (index = 0; index < profileIndex; index++)
 			{
-				m_arrayTagPos[index,0] = arrayProfilePos[index, 0];
-				m_arrayTagPos[index,1] = arrayProfilePos[index, 1];
+				_arrayTagPos[index,0] = arrayProfilePos[index, 0];
+				_arrayTagPos[index,1] = arrayProfilePos[index, 1];
 			}
 
-			m_profileCount = subProfileIndex;
-			m_subProfile = new int[subProfileIndex,2];
+			_profileCount = subProfileIndex;
+			_subProfile = new int[subProfileIndex,2];
 			for (index = 0; index < subProfileIndex; index++)
 			{
-				m_subProfile[index,0] = subProfilePos[index, 0];
-				m_subProfile[index,1] = subProfilePos[index, 1];
+				_subProfile[index,0] = subProfilePos[index, 0];
+				_subProfile[index,1] = subProfilePos[index, 1];
 			}
 		}
     }

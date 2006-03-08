@@ -33,41 +33,41 @@ namespace MediaPortal.WebEPG
 	/// </summary>
 	public class XMLTVExport
 	{
-        XmlTextWriter m_writer;
-        string m_xmltvDir;
+        XmlTextWriter _writer;
+        string _xmltvDir;
 
         public XMLTVExport(string dir)
         {
-            m_xmltvDir = dir;
+            _xmltvDir = dir;
         }
 
         public void Open()
         {
-            m_writer = new XmlTextWriter(m_xmltvDir + "TVguide-writing.xml", System.Text.Encoding.UTF8);
-            m_writer.Formatting = Formatting.Indented;
+            _writer = new XmlTextWriter(_xmltvDir + "TVguide-writing.xml", System.Text.Encoding.UTF8);
+            _writer.Formatting = Formatting.Indented;
             //Write the <xml version="1.0"> element
-            m_writer.WriteStartDocument();
-            m_writer.WriteDocType("tv", null, "xmltv.dtd", null);
-            m_writer.WriteStartElement("tv");
-            m_writer.WriteAttributeString("generator-info-name", "WebEPG");
+            _writer.WriteStartDocument();
+            _writer.WriteDocType("tv", null, "xmltv.dtd", null);
+            _writer.WriteStartElement("tv");
+            _writer.WriteAttributeString("generator-info-name", "WebEPG");
         }
 
         public void Close()
         {
-            m_writer.WriteEndElement();
-            m_writer.Flush();
-            m_writer.Close();
-            System.IO.File.Delete(m_xmltvDir + "TVguide.xml");
-            System.IO.File.Move(m_xmltvDir + "TVguide-writing.xml", m_xmltvDir + "TVguide.xml");
+            _writer.WriteEndElement();
+            _writer.Flush();
+            _writer.Close();
+            System.IO.File.Delete(_xmltvDir + "TVguide.xml");
+            System.IO.File.Move(_xmltvDir + "TVguide-writing.xml", _xmltvDir + "TVguide.xml");
         }
 
         public void WriteChannel(string id, string name)
         {
-            m_writer.WriteStartElement("channel");
-            m_writer.WriteAttributeString("id", id);
-            m_writer.WriteElementString("display-name", name);
-            m_writer.WriteEndElement();
-            m_writer.Flush();
+            _writer.WriteStartElement("channel");
+            _writer.WriteAttributeString("id", id);
+            _writer.WriteElementString("display-name", name);
+            _writer.WriteEndElement();
+            _writer.Flush();
         }
 
         public void WriteProgram(TVProgram program, int copy)
@@ -81,16 +81,16 @@ namespace MediaPortal.WebEPG
                 program.Channel != String.Empty &&
                 program.Title != String.Empty)
             {
-                m_writer.WriteStartElement("programme");
-                m_writer.WriteAttributeString("start", program.Start.ToString());
+                _writer.WriteStartElement("programme");
+                _writer.WriteAttributeString("start", program.Start.ToString());
                 if(program.End != 0)
-                   m_writer.WriteAttributeString("stop", program.End.ToString());
-                m_writer.WriteAttributeString("channel", channelid);
+                   _writer.WriteAttributeString("stop", program.End.ToString());
+                _writer.WriteAttributeString("channel", channelid);
 
-                m_writer.WriteStartElement("title");
-                //m_writer.WriteAttributeString("lang", "de");
-                m_writer.WriteString(program.Title);
-                m_writer.WriteEndElement();
+                _writer.WriteStartElement("title");
+                //_writer.WriteAttributeString("lang", "de");
+                _writer.WriteString(program.Title);
+                _writer.WriteEndElement();
 
 				string desc = "";
                 if (program.Episode != String.Empty && program.Episode != "unknown")
@@ -100,34 +100,34 @@ namespace MediaPortal.WebEPG
 					desc += program.Description;
 
 				if(desc != "")
-                   m_writer.WriteElementString("desc", desc);
+                   _writer.WriteElementString("desc", desc);
 
 				if (program.Genre != String.Empty && program.Genre != "-")
-					m_writer.WriteElementString("category", program.Genre);
+					_writer.WriteElementString("category", program.Genre);
 
                 /*
-                m_writer.WriteStartElement("credits");
-                m_writer.WriteElementString("director", "xxx");
-                m_writer.WriteElementString("actor", "xxx");
-                m_writer.WriteElementString("actor", "xxx");
-                m_writer.WriteElementString("actor", "xxx");
-                m_writer.WriteEndElement();
+                _writer.WriteStartElement("credits");
+                _writer.WriteElementString("director", "xxx");
+                _writer.WriteElementString("actor", "xxx");
+                _writer.WriteElementString("actor", "xxx");
+                _writer.WriteElementString("actor", "xxx");
+                _writer.WriteEndElement();
 
-                m_writer.WriteElementString("date", "xxx");
-                m_writer.WriteElementString("country", "xxx");
-                m_writer.WriteElementString("episode-num", "xxx");
+                _writer.WriteElementString("date", "xxx");
+                _writer.WriteElementString("country", "xxx");
+                _writer.WriteElementString("episode-num", "xxx");
 
-                m_writer.WriteStartElement("video");
-                m_writer.WriteElementString("aspect", "xxx");
-                m_writer.WriteEndElement();
+                _writer.WriteStartElement("video");
+                _writer.WriteElementString("aspect", "xxx");
+                _writer.WriteEndElement();
 
-                m_writer.WriteStartElement("star-rating");
-                m_writer.WriteElementString("value", "3/3");
-                m_writer.WriteEndElement();
+                _writer.WriteStartElement("star-rating");
+                _writer.WriteElementString("value", "3/3");
+                _writer.WriteEndElement();
                 */
 
-                m_writer.WriteEndElement();
-                m_writer.Flush();
+                _writer.WriteEndElement();
+                _writer.Flush();
             }
         }
 	}

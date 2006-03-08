@@ -28,39 +28,39 @@ using System.Web;
 
 namespace MediaPortal.Utils.Web
 {
-    public class HTMLPage
-    {
+  public class HTMLPage
+  {
 		HTTPTransaction Page = new HTTPTransaction();
-		string m_strPageHead = string.Empty;
-        string m_strPageSource = string.Empty;
+		string _strPageHead = string.Empty;
+    string _strPageSource = string.Empty;
 		string defaultEncode = "iso-8859-1";
-		string m_Encoding = string.Empty;
-		string m_Error;
+		string _Encoding = string.Empty;
+		string _Error;
 
-        public HTMLPage()
-        {
-        }
+    public HTMLPage()
+    {
+    }
 
-        public HTMLPage(string strURL)
-        {
-            LoadPage(strURL);
-        }
+    public HTMLPage(string strURL)
+    {
+      LoadPage(strURL);
+    }
 
 		public HTMLPage(string strURL, string encoding)
 		{
-			m_Encoding = encoding;
+			_Encoding = encoding;
 			LoadPage(strURL);
 		}
 
 		public string Encoding
 		{
-			get { return m_Encoding;}
-			set { m_Encoding = value;}
+			get { return _Encoding;}
+			set { _Encoding = value;}
 		}
 
 		public string GetError()
 		{
-			return m_Error;
+			return _Error;
 		}
 
 		public bool LoadPage(string strURL)
@@ -69,7 +69,7 @@ namespace MediaPortal.Utils.Web
 			{
 				if(HTMLCache.LoadPage(strURL))
 				{
-					m_strPageSource = HTMLCache.GetPage();
+					_strPageSource = HTMLCache.GetPage();
 					return true;
 				}
 			}
@@ -82,24 +82,24 @@ namespace MediaPortal.Utils.Web
 				byte[] pageData = Page.GetData();
 				int i;
 
-				if(m_Encoding != "")
+				if(_Encoding != "")
 				{
-					strEncode = m_Encoding;
+					strEncode = _Encoding;
 				}
 				else
 				{
 					encode = System.Text.Encoding.GetEncoding(defaultEncode);
-					m_strPageSource = encode.GetString(pageData);
+					_strPageSource = encode.GetString(pageData);
                     int headEnd;
-                    if ((headEnd = m_strPageSource.ToLower().IndexOf("</head")) != -1)
+                    if ((headEnd = _strPageSource.ToLower().IndexOf("</head")) != -1)
                     {
-                        if ((i = m_strPageSource.ToLower().IndexOf("charset", 0, headEnd)) != -1)
+                        if ((i = _strPageSource.ToLower().IndexOf("charset", 0, headEnd)) != -1)
                         {
                             strEncode = "";
                             i += 8;
-                            for (; i < m_strPageSource.Length && m_strPageSource[i] != '\"'; i++)
-                                strEncode += m_strPageSource[i];
-                            m_Encoding = strEncode;
+                            for (; i < _strPageSource.Length && _strPageSource[i] != '\"'; i++)
+                                strEncode += _strPageSource[i];
+                            _Encoding = strEncode;
                         }
 
                         if (strEncode == "")
@@ -108,12 +108,12 @@ namespace MediaPortal.Utils.Web
 				}
 
 				// Encoding: depends on selected page
-				if(m_strPageSource == "" || strEncode != defaultEncode)
+				if(_strPageSource == "" || strEncode != defaultEncode)
 				{
                     try
                     { 
                         encode = System.Text.Encoding.GetEncoding(strEncode);
-                        m_strPageSource = encode.GetString(pageData);
+                        _strPageSource = encode.GetString(pageData);
                     }
                     catch(System.ArgumentException)
                     {
@@ -121,51 +121,51 @@ namespace MediaPortal.Utils.Web
 				}
 
 				if(HTMLCache.Caching)
-					HTMLCache.SavePage(strURL, m_strPageSource);
+					HTMLCache.SavePage(strURL, _strPageSource);
 
 				return true;
 			}
-			m_Error = Page.GetError();
+			_Error = Page.GetError();
 			return false;
         }
 
         public string GetPage()
         {
-            return m_strPageSource;
+            return _strPageSource;
         }
 
         public string GetBody()
         {
-            //return m_strPageSource.Substring(m_startIndex, m_endIndex - m_startIndex);
+            //return _strPageSource.Substring(_startIndex, _endIndex - _startIndex);
             //try
             //{
             //    XmlDocument xmlDoc = new XmlDocument();
-            //    xmlDoc.LoadXml(m_strPageSource);
+            //    xmlDoc.LoadXml(_strPageSource);
             //    XmlNode bodyNode = xmlDoc.DocumentElement.SelectSingleNode("//body");
             //    return bodyNode.InnerText;
             //}
             //catch (System.Xml.XmlException ex)
             //{
-            //    m_Error = "XML Error finding Body"; 
+            //    _Error = "XML Error finding Body"; 
             //}
-            int startIndex = m_strPageSource.ToLower().IndexOf("<body", 0);
+            int startIndex = _strPageSource.ToLower().IndexOf("<body", 0);
             if (startIndex == -1)
             {
                 // report Error
-                m_Error = "No body start found"; 
+                _Error = "No body start found"; 
                 return null;
             }
 
-            int endIndex = m_strPageSource.ToLower().IndexOf("</body", startIndex);
+            int endIndex = _strPageSource.ToLower().IndexOf("</body", startIndex);
 
             if (endIndex == -1)
             {
                 //report Error
-                m_Error = "No body end found";
-                endIndex = m_strPageSource.Length;
+                _Error = "No body end found";
+                endIndex = _strPageSource.Length;
             }
 
-            return m_strPageSource.Substring(startIndex, endIndex - startIndex);
+            return _strPageSource.Substring(startIndex, endIndex - startIndex);
             
         }
     }

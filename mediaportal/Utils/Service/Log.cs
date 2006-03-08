@@ -70,36 +70,42 @@ namespace MediaPortal.Utils.Services
 			_logStream = file.GetStream();
 		}
 
-    public void Info(string strFormat, params object[] arg)
+    public void Info(string format, params object[] arg)
     {
-        Write(Level.Information, strFormat, arg);
+			Write(Level.Information, format, arg);
     }
 
-    public void Warn(string strFormat, params object[] arg)
+		public void Warn(string format, params object[] arg)
     {
-        Write(Level.Warning, strFormat, arg);
+			Write(Level.Warning, format, arg);
     }
 
-    public void Error(string strFormat, params object[] arg)
+		public void Error(string format, params object[] arg)
     {
-        Write(Level.Error, strFormat, arg);
+			Write(Level.Error, format, arg);
     }
 
-    public void Debug(string strFormat, params object[] arg)
+		public void Debug(string format, params object[] arg)
     {
-        Write(Level.Debug, strFormat, arg);
+			Write(Level.Debug, format, arg);
     }
 
-    private void Write(Level logLevel, string strFormat, params object[] arg)
+		private void Write(Level logLevel, string format, params object[] arg)
 		{
       if (logLevel <= _minLevel)
       {
-				StringWriter str = new StringWriter();
-				str.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString());
-				str.Write(" [" + GetLevelName(logLevel) + "] ");
-				str.Write(strFormat, arg);
+				StringWriter message = new StringWriter();
 
-				_logStream.WriteLine(str.ToString());
+        // Build the log message
+        // Add time stamp
+				message.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString());
+        // Add LogLevel
+				message.Write(" [" + GetLevelName(logLevel) + "] ");
+        // Write Log Message
+				message.Write(format, arg);
+
+        // Write message to log stream
+				_logStream.WriteLine(message.ToString());
       }
 		}
   }

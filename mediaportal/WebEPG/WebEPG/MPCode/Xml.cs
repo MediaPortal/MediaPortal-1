@@ -31,17 +31,17 @@ namespace MediaPortal.Webepg.Profile
 	public class Xml :IDisposable
 	{
 		// Fields
-        //static private string		m_rootName = "profile";
-        //static private Encoding m_encoding = Encoding.UTF8;
-        //static XmlDocument			m_doc=null;
-        //static string						m_strFileName="";
-        //static bool							m_bChanged=false;
+        //static private string		_rootName = "profile";
+        //static private Encoding _encoding = Encoding.UTF8;
+        //static XmlDocument			_doc=null;
+        //static string						_strFileName="";
+        //static bool							_bChanged=false;
 
-        private string m_rootName = "profile";
-        private Encoding m_encoding = Encoding.UTF8;
-        XmlDocument m_doc = null;
-        string m_strFileName = "";
-        bool m_bChanged = false;
+        private string _rootName = "profile";
+        private Encoding _encoding = Encoding.UTF8;
+        XmlDocument _doc = null;
+        string _strFileName = "";
+        bool _bChanged = false;
 
 		/// <summary>
 		///   Initializes a new instance of the Xml class by setting the <see cref="Profile.Name" /> to <see cref="Profile.DefaultName" />. </summary>
@@ -55,18 +55,18 @@ namespace MediaPortal.Webepg.Profile
 		///   The name of the XML file to initialize the <see cref="Profile.Name" /> property with. </param>
 		public Xml(string fileName) 
 		{
-			if (m_strFileName!=fileName)
+			if (_strFileName!=fileName)
 			{
 				Save();
-				m_doc=null;
+				_doc=null;
 			}
-			m_strFileName=fileName;
+			_strFileName=fileName;
 		}
 
 		public void Clear()
 		{
-			m_doc=null;
-			m_bChanged=false;
+			_doc=null;
+			_bChanged=false;
 		}
 
 		/// <summary>
@@ -77,24 +77,24 @@ namespace MediaPortal.Webepg.Profile
 		private XmlDocument GetXmlDocument()
 		{
 
-			if (!File.Exists(m_strFileName))
+			if (!File.Exists(_strFileName))
 			{
-				if (File.Exists(m_strFileName+".bak"))
+				if (File.Exists(_strFileName+".bak"))
 				{
 					XmlDocument docBak = new XmlDocument();
-					docBak.Load(m_strFileName+".bak");
+					docBak.Load(_strFileName+".bak");
 					return docBak;
 				}
 				return null;
 			}
 
 			XmlDocument doc = new XmlDocument();
-			doc.Load(m_strFileName);
+			doc.Load(_strFileName);
 			if (doc!=null && doc.DocumentElement!=null && doc.DocumentElement.ChildNodes!=null) return doc;
-			if (File.Exists(m_strFileName+".bak"))
+			if (File.Exists(_strFileName+".bak"))
 			{
 				doc = new XmlDocument();
-				doc.Load(m_strFileName+".bak");
+				doc.Load(_strFileName+".bak");
 			}						
 			return doc;
 		}
@@ -141,34 +141,34 @@ namespace MediaPortal.Webepg.Profile
     {
 			lock (typeof(MediaPortal.Webepg.Profile.Xml))
 			{
-				if (m_doc==null) return;
-				if (m_doc.DocumentElement==null) return;
-				if (m_doc.ChildNodes.Count==0) return;
-				if (m_doc.DocumentElement.ChildNodes==null) return;
-				if (!m_bChanged) return;
+				if (_doc==null) return;
+				if (_doc.DocumentElement==null) return;
+				if (_doc.ChildNodes.Count==0) return;
+				if (_doc.DocumentElement.ChildNodes==null) return;
+				if (!_bChanged) return;
 				try
 				{
 					try
 					{
-						System.IO.File.Delete(m_strFileName+".bak");
-						System.IO.File.Move(m_strFileName, m_strFileName+".bak");
+						System.IO.File.Delete(_strFileName+".bak");
+						System.IO.File.Move(_strFileName, _strFileName+".bak");
 					}
 					catch (Exception) {}
 
-					using (StreamWriter stream = new StreamWriter(m_strFileName, false))
+					using (StreamWriter stream = new StreamWriter(_strFileName, false))
 					{
-						m_doc.Save(stream);		
-						m_doc=null;
+						_doc.Save(stream);		
+						_doc=null;
 						stream.Flush();
 						stream.Close();
 					}
-					m_bChanged=false;
+					_bChanged=false;
 				}
 				catch(Exception ex)
 				{
 					Log.Write("Unable to save {0} {1}",ex.Message);
 				}
-				m_doc=null;
+				_doc=null;
 			}
     }
 
@@ -186,14 +186,14 @@ namespace MediaPortal.Webepg.Profile
         string valueString = value.ToString();
 
         // If the file does not exist, use the writer to quickly create it
-        if (!File.Exists(m_strFileName))
+        if (!File.Exists(_strFileName))
         {	
-          XmlTextWriter writer = new XmlTextWriter(m_strFileName, m_encoding);			
+          XmlTextWriter writer = new XmlTextWriter(_strFileName, _encoding);			
           writer.Formatting = Formatting.Indented;
   	            
           writer.WriteStartDocument();
   				
-          writer.WriteStartElement(m_rootName);			
+          writer.WriteStartElement(_rootName);			
           writer.WriteStartElement("section");
           writer.WriteAttributeString("name", null, section);				
           writer.WriteStartElement("entry");
@@ -204,25 +204,25 @@ namespace MediaPortal.Webepg.Profile
           writer.WriteEndElement();
           writer.WriteEndElement();
           writer.Close();            				
-          m_doc=null;
+          _doc=null;
           return;
         }
   			
         
-        if (m_doc==null)
+        if (_doc==null)
         {
-          m_doc=GetXmlDocument();
+          _doc=GetXmlDocument();
         }
-        if (m_doc==null) return;
+        if (_doc==null) return;
 
-        XmlElement root = m_doc.DocumentElement;
+        XmlElement root = _doc.DocumentElement;
   			
         // Get the section element and add it if it's not there
         XmlNode sectionNode = root.SelectSingleNode(GetSectionsPath(section));
         if (sectionNode == null)
         {
-          XmlElement element = m_doc.CreateElement("section");
-          XmlAttribute attribute = m_doc.CreateAttribute("name");
+          XmlElement element = _doc.CreateElement("section");
+          XmlAttribute attribute = _doc.CreateAttribute("name");
           attribute.Value = section;
           element.Attributes.Append(attribute);			
           sectionNode = root.AppendChild(element);			
@@ -232,8 +232,8 @@ namespace MediaPortal.Webepg.Profile
         XmlNode entryNode = sectionNode.SelectSingleNode(GetEntryPath(entry));
         if (entryNode == null)
         {
-          XmlElement element = m_doc.CreateElement("entry");
-          XmlAttribute attribute = m_doc.CreateAttribute("name");
+          XmlElement element = _doc.CreateElement("entry");
+          XmlAttribute attribute = _doc.CreateAttribute("name");
           attribute.Value = entry;
           element.Attributes.Append(attribute);			
           entryNode = sectionNode.AppendChild(element);			
@@ -242,7 +242,7 @@ namespace MediaPortal.Webepg.Profile
         // Add the value and save the file
         //if (valueString != "")
         entryNode.InnerText = valueString;
-        m_bChanged=true;
+        _bChanged=true;
       }
 		}
 
@@ -318,11 +318,11 @@ namespace MediaPortal.Webepg.Profile
   			
         try
         { 	
-          if (m_doc==null)
-            m_doc = GetXmlDocument();
-          if (m_doc==null) return null;
+          if (_doc==null)
+            _doc = GetXmlDocument();
+          if (_doc==null) return null;
 
-          XmlElement root = m_doc.DocumentElement;
+          XmlElement root = _doc.DocumentElement;
   				
           XmlNode entryNode = root.SelectSingleNode(GetSectionsPath(section) + "/" + GetEntryPath(entry));
           if (entryNode==null) return null;
@@ -353,21 +353,21 @@ namespace MediaPortal.Webepg.Profile
 		{
 
 			// Verify the file exists
-      if (m_doc == null)
+      if (_doc == null)
       {
-        m_doc = GetXmlDocument();
-        if (m_doc==null) return;
+        _doc = GetXmlDocument();
+        if (_doc==null) return;
       }
 
 			// Get the entry's node, if it exists
-			XmlElement root = m_doc.DocumentElement;			
+			XmlElement root = _doc.DocumentElement;			
 			XmlNode entryNode = root.SelectSingleNode(GetSectionsPath(section) + "/" + GetEntryPath(entry));
 			if (entryNode == null)
 				return;
 
 			
 			entryNode.ParentNode.RemoveChild(entryNode);			
-      m_bChanged=true;
+      _bChanged=true;
 		}
 
 		/// <summary>
@@ -386,20 +386,20 @@ namespace MediaPortal.Webepg.Profile
 		{
 
 			// Verify the file exists
-      if (m_doc==null)
+      if (_doc==null)
       {
-        m_doc = GetXmlDocument();
-        if (m_doc == null)
+        _doc = GetXmlDocument();
+        if (_doc == null)
           return;
       }
 			// Get the section's node, if it exists
-			XmlElement root = m_doc.DocumentElement;			
+			XmlElement root = _doc.DocumentElement;			
 			XmlNode sectionNode = root.SelectSingleNode(GetSectionsPath(section));
 			if (sectionNode == null)
 				return;
 			
 			root.RemoveChild(sectionNode);
-      m_bChanged=true;
+      _bChanged=true;
     }
     #region IDisposable Members
 

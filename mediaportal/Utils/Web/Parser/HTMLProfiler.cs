@@ -28,60 +28,60 @@ namespace MediaPortal.Utils.Web
 	public class HTMLProfiler : Profiler
 	{
 		Parser Template;
-		int[,] m_subProfile;
-		int[,] m_arrayTagPos;
-		string m_strTags;
-		string m_strSubProfile;
-		string m_strPageStart;
-		string m_strPageEnd;
-		string m_strEncoding="";
+		int[,] _subProfile;
+		int[,] _arrayTagPos;
+		string _strTags;
+		string _strSubProfile;
+		string _strPageStart;
+		string _strPageEnd;
+		string _strEncoding="";
 
 		public HTMLProfiler(string strSource, string tags) //bool ahrefs)
 		{
-			m_strSource = strSource.Replace("\r", "");
-			m_strSource = m_strSource.Replace("\n", "");
-			m_strSource = m_strSource.Replace("\t", "");
-			m_strTags = tags;
+			_strSource = strSource.Replace("\r", "");
+			_strSource = _strSource.Replace("\n", "");
+			_strSource = _strSource.Replace("\t", "");
+			_strTags = tags;
 			TableProfiler();
 		}
 
 		public HTMLProfiler(string strSource, string tags, string PageStart, string PageEnd, string encoding):this(strSource, tags)
 		{
-			m_strPageStart = PageStart;
-			m_strPageEnd = PageEnd;
-			m_strEncoding = encoding;
+			_strPageStart = PageStart;
+			_strPageEnd = PageEnd;
+			_strEncoding = encoding;
 		}
 
 		public HTMLProfiler(string strSource, string tags, string strSubProfile):this(strSource, tags)
 		{
-			m_strSubProfile = strSubProfile;
+			_strSubProfile = strSubProfile;
 		}
 
 		public string GetSource(int index)
 		{
-			int startTag = m_subProfile[index,0];
-			int endTag = startTag + m_subProfile[index,1];
-			int sourceStart = this.m_arrayTagPos[startTag,0];
-			int sourceLength = this.m_arrayTagPos[endTag,1] - sourceStart + 1;
-			return this.m_strSource.Substring(sourceStart, sourceLength);
+			int startTag = _subProfile[index,0];
+			int endTag = startTag + _subProfile[index,1];
+			int sourceStart = this._arrayTagPos[startTag,0];
+			int sourceLength = this._arrayTagPos[endTag,1] - sourceStart + 1;
+			return this._strSource.Substring(sourceStart, sourceLength);
 		}
 
 		override public Profiler GetPageProfiler(string strURL)
 		{
-			HTMLPage webPage = new HTMLPage(strURL, m_strEncoding);
+			HTMLPage webPage = new HTMLPage(strURL, _strEncoding);
 			string source = webPage.GetBody();
             HTMLProfiler retProfiler = null;
 
             if (source != null)
             {
-                int startIndex = source.IndexOf(m_strPageStart, 0);
+                int startIndex = source.IndexOf(_strPageStart, 0);
                 if (startIndex == -1)
                 {
                     // report Error
                     startIndex = 0;
                 }
 
-                int endIndex = source.IndexOf(m_strPageEnd, startIndex);
+                int endIndex = source.IndexOf(_strPageEnd, startIndex);
 
                 if (endIndex == -1)
                 {
@@ -91,13 +91,13 @@ namespace MediaPortal.Utils.Web
 
                 source = source.Substring(startIndex, endIndex - startIndex);
 
-                //			webPage.SetStart(m_strPageStart);
-                //			webPage.SetEnd(m_strPageEnd);
-                ////			if(!webPage.SetStart(m_strPageStart))
+                //			webPage.SetStart(_strPageStart);
+                //			webPage.SetEnd(_strPageEnd);
+                ////			if(!webPage.SetStart(_strPageStart))
                 ////				//Log.WriteFile(Log.LogType.Log, true, "WebEPG: Start String not found");
-                ////			if(!webPage.SetEnd(m_strPageEnd))
+                ////			if(!webPage.SetEnd(_strPageEnd))
                 ////				//Log.WriteFile(Log.LogType.Log, true, "WebEPG: End String not found");
-                retProfiler = new HTMLProfiler(source, m_strTags, ProfileString());
+                retProfiler = new HTMLProfiler(source, _strTags, ProfileString());
                 retProfiler.Template = GetProfileParser(0);
             }
 			return retProfiler;
@@ -111,26 +111,26 @@ namespace MediaPortal.Utils.Web
 
         override public int subProfileCount()
         {
-			if(m_strProfile == null)
+			if(_strProfile == null)
 				return 0;
 
-            int[] arraySubProfiles = new int[m_strProfile.Length];
+            int[] arraySubProfiles = new int[_strProfile.Length];
             int count = 0;
             int index = 0;
             int nextSubProfile = 0;
 
-            while ((nextSubProfile = m_strProfile.IndexOf(m_strSubProfile, index)) != -1)
+            while ((nextSubProfile = _strProfile.IndexOf(_strSubProfile, index)) != -1)
             {
                 arraySubProfiles[count] = nextSubProfile;
                 count++;
-                index = nextSubProfile + m_strSubProfile.Length - 1;
+                index = nextSubProfile + _strSubProfile.Length - 1;
             }
 
-            m_subProfile = new int[count, 2];
+            _subProfile = new int[count, 2];
             for (index = 0; index < count; index++)
             {
-                m_subProfile[index, 0] = arraySubProfiles[index];
-                m_subProfile[index, 1] = m_strSubProfile.Length;
+                _subProfile[index, 0] = arraySubProfiles[index];
+                _subProfile[index, 1] = _strSubProfile.Length;
             }
 
 			return count;
@@ -192,7 +192,7 @@ namespace MediaPortal.Utils.Web
 					}
 					else
 					{
-						if(m_strTags.IndexOf(TagS) != -1 || TagS == '#')
+						if(_strTags.IndexOf(TagS) != -1 || TagS == '#')
 						{
 							tagLength = TagEnd(strSource, index);
 							if(endTag)
@@ -231,24 +231,24 @@ namespace MediaPortal.Utils.Web
 
 		override public Parser GetProfileParser(int index)
 		{
-			Parser profileParser = new Parser(m_subProfile[index,1]*2 - 1);
+			Parser profileParser = new Parser(_subProfile[index,1]*2 - 1);
 
-			int startTag = m_subProfile[index,0];
-			int sourceStart = this.m_arrayTagPos[startTag,0];
-			int sourceLength = this.m_arrayTagPos[startTag,1] - sourceStart + 1;
-			string element = PreProcess(this.m_strSource.Substring(sourceStart, sourceLength));
+			int startTag = _subProfile[index,0];
+			int sourceStart = this._arrayTagPos[startTag,0];
+			int sourceLength = this._arrayTagPos[startTag,1] - sourceStart + 1;
+			string element = PreProcess(this._strSource.Substring(sourceStart, sourceLength));
 			profileParser.Add(element);
 
-			for(int i=0; i < (m_subProfile[index,1] - 1); i++)
+			for(int i=0; i < (_subProfile[index,1] - 1); i++)
 			{
-				sourceStart = this.m_arrayTagPos[startTag+i, 1] + 1;
-				sourceLength = this.m_arrayTagPos[startTag+i+1, 0] - sourceStart;
-				element = PreProcess(this.m_strSource.Substring(sourceStart, sourceLength));
+				sourceStart = this._arrayTagPos[startTag+i, 1] + 1;
+				sourceLength = this._arrayTagPos[startTag+i+1, 0] - sourceStart;
+				element = PreProcess(this._strSource.Substring(sourceStart, sourceLength));
 				profileParser.Add(element);
 
-				sourceStart = this.m_arrayTagPos[startTag+i+1,0];
-				sourceLength = this.m_arrayTagPos[startTag+i+1,1] - sourceStart + 1;
-				element = PreProcess(this.m_strSource.Substring(sourceStart, sourceLength));
+				sourceStart = this._arrayTagPos[startTag+i+1,0];
+				sourceLength = this._arrayTagPos[startTag+i+1,1] - sourceStart + 1;
+				element = PreProcess(this._strSource.Substring(sourceStart, sourceLength));
 				profileParser.Add(element);
 			}
 
@@ -257,16 +257,16 @@ namespace MediaPortal.Utils.Web
 
 		public string SearchRegex(int index, string regex, bool remove)
 		{
-			int startTag = m_subProfile[index,0];
-			int endTag = m_subProfile[index,1];
-			int sourceStart = this.m_arrayTagPos[startTag,0];
-			int sourceLength = this.m_arrayTagPos[startTag+endTag,1] - sourceStart + 1;
+			int startTag = _subProfile[index,0];
+			int endTag = _subProfile[index,1];
+			int sourceStart = this._arrayTagPos[startTag,0];
+			int sourceLength = this._arrayTagPos[startTag+endTag,1] - sourceStart + 1;
 
 			Match result = null;
 			try
 			{
 				Regex searchRegex = new Regex(regex);
-				result = searchRegex.Match(m_strSource.ToLower(), sourceStart, sourceLength);
+				result = searchRegex.Match(_strSource.ToLower(), sourceStart, sourceLength);
 			}
 			catch(System.ArgumentException)// ex)
 			{
@@ -278,12 +278,12 @@ namespace MediaPortal.Utils.Web
 			{
 				if(remove)
 				{
-					char[] sourceArray = m_strSource.ToCharArray();
+					char[] sourceArray = _strSource.ToCharArray();
 					for(int i=result.Index; i < result.Index + result.Length; i++)
 						sourceArray[i] = '\x06';
-					m_strSource = new string(sourceArray);
+					_strSource = new string(sourceArray);
 				}
-				return m_strSource.Substring(result.Index, result.Length);
+				return _strSource.Substring(result.Index, result.Length);
 			}
 
 			return "";
@@ -389,7 +389,7 @@ namespace MediaPortal.Utils.Web
 
         private void TableProfiler()
         {
-            if (m_strSource.Length == 0)
+            if (_strSource.Length == 0)
                 return;
 
 			int index = 0;
@@ -400,36 +400,36 @@ namespace MediaPortal.Utils.Web
 			char tagS;
 			bool endTag;
 
-            int [,] arrayProfilePos = new int[m_strSource.Length, 2];
-			char [] arrayProfile = new char[m_strSource.Length];
+            int [,] arrayProfilePos = new int[_strSource.Length, 2];
+			char [] arrayProfile = new char[_strSource.Length];
 
 
-            while (index < m_strSource.Length && 
-				(nextTag = m_strSource.IndexOf('<', index)) != -1)
+            while (index < _strSource.Length && 
+				(nextTag = _strSource.IndexOf('<', index)) != -1)
             {
                 arrayProfilePos[profileIndex,0] = nextTag;
 
 				nextTag++;
 
 				endTag = false;
-				if (m_strSource[nextTag] == '/')
+				if (_strSource[nextTag] == '/')
 				{
 					nextTag++;
 					endTag = true;
 				}
 				
 
-				tag = char.ToUpper(m_strSource[nextTag]);
+				tag = char.ToUpper(_strSource[nextTag]);
 				tagS = tag;
 
 				if (tag == 'T')
 				{
 					nextTag++;
-					if(char.ToUpper(m_strSource[nextTag]) != 'A')
-						tag = char.ToUpper(m_strSource[nextTag]);
+					if(char.ToUpper(_strSource[nextTag]) != 'A')
+						tag = char.ToUpper(_strSource[nextTag]);
 				}
 
-				tagLength = TagEnd(m_strSource, nextTag);
+				tagLength = TagEnd(_strSource, nextTag);
 				nextTag += tagLength;
 
 				arrayProfilePos[profileIndex,1] = nextTag;
@@ -439,27 +439,27 @@ namespace MediaPortal.Utils.Web
 				else
 					arrayProfile[profileIndex] = char.ToLower(tag);
 
-				if(m_strTags.IndexOf(tagS) != -1)
+				if(_strTags.IndexOf(tagS) != -1)
 					profileIndex++;
 
                 index = nextTag + 1;
             }
 
 
-			m_strProfile = "";
-			m_arrayTagPos = new int[profileIndex,2];
+			_strProfile = "";
+			_arrayTagPos = new int[profileIndex,2];
 			for (index = 0; index < profileIndex; index++)
 			{
-				m_strProfile += arrayProfile[index];
-				m_arrayTagPos[index,0] = arrayProfilePos[index, 0];
-				m_arrayTagPos[index,1] = arrayProfilePos[index, 1];
+				_strProfile += arrayProfile[index];
+				_arrayTagPos[index,0] = arrayProfilePos[index, 0];
+				_arrayTagPos[index,1] = arrayProfilePos[index, 1];
 			}
 
-			if(m_subProfile == null)
+			if(_subProfile == null)
 			{
-				m_subProfile = new int[1,2];
-				m_subProfile[0,0]=0;
-				m_subProfile[0,1]=m_strProfile.Length;
+				_subProfile = new int[1,2];
+				_subProfile[0,0]=0;
+				_subProfile[0,1]=_strProfile.Length;
 			}
         }
     }

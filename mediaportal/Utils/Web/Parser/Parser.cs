@@ -30,18 +30,18 @@ namespace MediaPortal.Utils.Web
 	public class Parser
 	{
 		int index;
-		string [] m_aProfile;
+		string [] _aProfile;
 
 		public Parser(int size)
 		{
-			m_aProfile = new string[size];
+			_aProfile = new string[size];
 			index=0;
 		}
 
 		public void Add(string element)
 		{
-			if(index < m_aProfile.Length)
-				m_aProfile[index++] = ReplaceSpecial(element);
+			if(index < _aProfile.Length)
+				_aProfile[index++] = ReplaceSpecial(element);
 		}
 
 		public void GetData(Parser Listing, ref ParserData data)
@@ -54,18 +54,18 @@ namespace MediaPortal.Utils.Web
 			string searchEnd;
 			string tag;
 
-			if(this.m_aProfile.Length != Listing.m_aProfile.Length)
+			if(this._aProfile.Length != Listing._aProfile.Length)
 			{
 				data = null;
 				return; //null;
 			}
 
-			for(int i = 0; i < this.m_aProfile.Length; i++)
+			for(int i = 0; i < this._aProfile.Length; i++)
 			{
-				if(this.m_aProfile[i].Length > 0)
+				if(this._aProfile[i].Length > 0)
 				{
-					string tempElement = this.m_aProfile[i];
-					string listElement = Listing.m_aProfile[i];
+					string tempElement = this._aProfile[i];
+					string listElement = Listing._aProfile[i];
 
 					TagStart=0;
 					TagEnd=0;

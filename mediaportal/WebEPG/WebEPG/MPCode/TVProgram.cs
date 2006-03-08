@@ -31,24 +31,24 @@ namespace MediaPortal.Webepg.TV.Database
   /// </summary>
   public class TVProgram //: IComparable
 	{
-		string m_strChannel=String.Empty;
-    string m_strGenre=String.Empty;
-    string m_strTitle=String.Empty;
-    string m_strEpisode=String.Empty;
-    string m_strDescription=String.Empty;
-    string m_strRepeat=String.Empty;
-    string m_strDate=String.Empty;
-    string m_strSeriesNum=String.Empty;
-    string m_strEpisodeNum=String.Empty;
-    string m_strEpisodePart=String.Empty;
-    string m_strEpisodeFullDetails=String.Empty;
-    string m_strStarRating=String.Empty;
-    string m_strClassification=String.Empty;
-    long   m_iStartTime=0;
-    long   m_iEndTime=0;
-    int    m_iID=0;
-    string m_strDuration=String.Empty;
-    string m_strTimeFromNow=String.Empty;
+		string _strChannel=String.Empty;
+    string _strGenre=String.Empty;
+    string _strTitle=String.Empty;
+    string _strEpisode=String.Empty;
+    string _strDescription=String.Empty;
+    string _strRepeat=String.Empty;
+    string _strDate=String.Empty;
+    string _strSeriesNum=String.Empty;
+    string _strEpisodeNum=String.Empty;
+    string _strEpisodePart=String.Empty;
+    string _strEpisodeFullDetails=String.Empty;
+    string _strStarRating=String.Empty;
+    string _strClassification=String.Empty;
+    long   _iStartTime=0;
+    long   _iEndTime=0;
+    int    _iID=0;
+    string _strDuration=String.Empty;
+    string _strTimeFromNow=String.Empty;
     /// <summary>
     /// Constructor
     /// </summary>
@@ -63,24 +63,24 @@ namespace MediaPortal.Webepg.TV.Database
     public TVProgram Clone()
     {
       TVProgram prog = new TVProgram();
-      prog.ID=m_iID;
-			prog.m_strChannel=m_strChannel;
-      prog.m_strGenre=m_strGenre;
-      prog.m_strTitle=m_strTitle;
-	  prog.m_strEpisode=m_strEpisode;
-      prog.m_strDescription=m_strDescription;
-	  prog.m_strRepeat=m_strRepeat;
-      prog.m_iStartTime=m_iStartTime;
-      prog.m_iEndTime=m_iEndTime;
-      prog.m_strDate=m_strDate;
-      prog.m_strSeriesNum=m_strSeriesNum;
-      prog.m_strEpisodeNum=m_strEpisodeNum;
-      prog.m_strEpisodePart=m_strEpisodePart;
-      prog.m_strStarRating=m_strStarRating;
-      prog.m_strClassification=m_strClassification;
-      prog.m_strDuration=m_strDuration;
-      prog.m_strTimeFromNow=m_strTimeFromNow;
-      prog.m_strEpisodeFullDetails=m_strEpisodeFullDetails;
+      prog.ID=_iID;
+			prog._strChannel=_strChannel;
+      prog._strGenre=_strGenre;
+      prog._strTitle=_strTitle;
+	  prog._strEpisode=_strEpisode;
+      prog._strDescription=_strDescription;
+	  prog._strRepeat=_strRepeat;
+      prog._iStartTime=_iStartTime;
+      prog._iEndTime=_iEndTime;
+      prog._strDate=_strDate;
+      prog._strSeriesNum=_strSeriesNum;
+      prog._strEpisodeNum=_strEpisodeNum;
+      prog._strEpisodePart=_strEpisodePart;
+      prog._strStarRating=_strStarRating;
+      prog._strClassification=_strClassification;
+      prog._strDuration=_strDuration;
+      prog._strTimeFromNow=_strTimeFromNow;
+      prog._strEpisodeFullDetails=_strEpisodeFullDetails;
       return prog;
     }
 
@@ -121,8 +121,8 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public string Channel
     {
-      get { return m_strChannel;}
-      set { m_strChannel=value;}
+      get { return _strChannel;}
+      set { _strChannel=value;}
     }
 
     /// <summary>
@@ -130,8 +130,8 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public string Genre
     {
-      get { return m_strGenre;}
-      set { m_strGenre=value;}
+      get { return _strGenre;}
+      set { _strGenre=value;}
     }
 
 
@@ -140,8 +140,8 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public int ID
     {
-      get { return m_iID;}
-      set { m_iID=value;}
+      get { return _iID;}
+      set { _iID=value;}
     }
 
     /// <summary>
@@ -149,8 +149,8 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public string Title
     {
-      get { return m_strTitle;}
-      set { m_strTitle=value;}
+      get { return _strTitle;}
+      set { _strTitle=value;}
     }
 
     /// <summary>
@@ -158,72 +158,72 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public string Description
     {
-      get { return m_strDescription;}
-      set { m_strDescription=value;}
+      get { return _strDescription;}
+      set { _strDescription=value;}
     }
     /// <summary>
     /// Property to get/set the episode name of this tv program
     /// </summary>
 	public string Episode
 	{
-	  get { return m_strEpisode;}
-	  set { m_strEpisode=value;}
+	  get { return _strEpisode;}
+	  set { _strEpisode=value;}
     }
     /// <summary>
     /// Property to get/set whether this tv program is a repeat
     /// </summary>	
 	public string Repeat
 	{
-	  get { return m_strRepeat;}
-	  set { m_strRepeat=value;}
+	  get { return _strRepeat;}
+	  set { _strRepeat=value;}
 	}
     /// <summary>
     /// Property to get/set the series number of this tv program
     /// </summary>
   public string SeriesNum
   {
-    get { return m_strSeriesNum;}
-    set { m_strSeriesNum=value;}
+    get { return _strSeriesNum;}
+    set { _strSeriesNum=value;}
   }
     /// <summary>
     /// Property to get/set the episode number of this tv program
     /// </summary>
   public string EpisodeNum
   {
-    get { return m_strEpisodeNum;}
-    set { m_strEpisodeNum=value;}
+    get { return _strEpisodeNum;}
+    set { _strEpisodeNum=value;}
   }
     /// <summary>
     /// Property to get/set the episode part of this tv program eg: part 1 of 2
     /// </summary>
   public string EpisodePart
   {
-    get { return m_strEpisodePart;}
-    set { m_strEpisodePart=value;}
+    get { return _strEpisodePart;}
+    set { _strEpisodePart=value;}
   }  
     /// <summary>
     /// Property to get/set the original date of this tv program
     /// </summary>
   public string Date
   {
-    get { return m_strDate;}
-    set { m_strDate=value;}
+    get { return _strDate;}
+    set { _strDate=value;}
   }
   /// <summary>
   /// Property to get/set the star rating of this tv program(film)
   /// </summary>
   public string StarRating
   {
-    get { return m_strStarRating;}
-    set { m_strStarRating=value;}
+    get { return _strStarRating;}
+    set { _strStarRating=value;}
   }
   /// <summary>
   /// Property to get/set the classification of this tv program(film eg: PG,18 etc)
   /// </summary>
   public string Classification
   {
-    get { return m_strClassification;}
-    set { m_strClassification=value;}
+    get { return _strClassification;}
+    set { _strClassification=value;}
   }
   /// <summary>
   /// Property to get the duration of this tv program
@@ -233,7 +233,7 @@ namespace MediaPortal.Webepg.TV.Database
 //    get
 //    {
 //      GetDuration();
-//      return m_strDuration;
+//      return _strDuration;
 //    }
 //  }
   /// <summary>
@@ -246,7 +246,7 @@ namespace MediaPortal.Webepg.TV.Database
 //    get
 //    {
 //      GetStartTimeFromNow();
-//      return m_strTimeFromNow;
+//      return _strTimeFromNow;
 //    }
 //  }
     /// <summary>
@@ -259,15 +259,15 @@ namespace MediaPortal.Webepg.TV.Database
 //      get
 //      {
 //        GetEpisodeDetail();
-//        return m_strEpisodeFullDetails;
+//        return _strEpisodeFullDetails;
 //      }
 //    }
     /// Property to get/set the starttime in xmltv format (yyyymmddhhmmss) of this tv program
     /// </summary>
     public long Start
     {
-      get { return m_iStartTime;}
-      set { m_iStartTime=value;}
+      get { return _iStartTime;}
+      set { _iStartTime=value;}
     }
 
     /// <summary>
@@ -275,8 +275,8 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public long End
     {
-      get { return m_iEndTime;}
-      set { m_iEndTime=value;}
+      get { return _iEndTime;}
+      set { _iEndTime=value;}
     }
 
     /// <summary>
@@ -284,7 +284,7 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public DateTime StartTime
     {
-      get { return longtodate(m_iStartTime);}
+      get { return longtodate(_iStartTime);}
     }
 
     /// <summary>
@@ -292,7 +292,7 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
     public DateTime EndTime
     {
-      get { return longtodate(m_iEndTime);}
+      get { return longtodate(_iEndTime);}
     }
     /// <summary>
     /// Checks if the program is running between the specified start and end time/dates
@@ -328,25 +328,25 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
 //    private void GetDuration()
 //    {
-//      if (m_strTitle == "No TVGuide data available") return;
+//      if (_strTitle == "No TVGuide data available") return;
 //      string space = " ";
-//      DateTime progStart = longtodate(m_iStartTime);
-//      DateTime progEnd = longtodate(m_iEndTime);
+//      DateTime progStart = longtodate(_iStartTime);
+//      DateTime progEnd = longtodate(_iEndTime);
 //      TimeSpan progDuration = progEnd.Subtract(progStart);
 //      switch (progDuration.Hours)
 //      {
 //        case 0:
-//          m_strDuration = progDuration.Minutes+space+GUILocalizeStrings.Get(3004);
+//          _strDuration = progDuration.Minutes+space+GUILocalizeStrings.Get(3004);
 //          break;
 //        case 1:
-//          if (progDuration.Minutes==1) m_strDuration = progDuration.Hours+space+GUILocalizeStrings.Get(3001)+", "+progDuration.Minutes+space+GUILocalizeStrings.Get(3003);
-//          else if (progDuration.Minutes>1) m_strDuration = progDuration.Hours+space+GUILocalizeStrings.Get(3001)+", "+progDuration.Minutes+space+GUILocalizeStrings.Get(3004);
-//          else m_strDuration = progDuration.Hours+space+GUILocalizeStrings.Get(3001);
+//          if (progDuration.Minutes==1) _strDuration = progDuration.Hours+space+GUILocalizeStrings.Get(3001)+", "+progDuration.Minutes+space+GUILocalizeStrings.Get(3003);
+//          else if (progDuration.Minutes>1) _strDuration = progDuration.Hours+space+GUILocalizeStrings.Get(3001)+", "+progDuration.Minutes+space+GUILocalizeStrings.Get(3004);
+//          else _strDuration = progDuration.Hours+space+GUILocalizeStrings.Get(3001);
 //          break;
 //         default:
-//           if (progDuration.Minutes==1) m_strDuration = progDuration.Hours+" Hours"+", "+progDuration.Minutes+space+GUILocalizeStrings.Get(3003);
-//           else if (progDuration.Minutes>0) m_strDuration = progDuration.Hours+" Hours"+", "+progDuration.Minutes+space+GUILocalizeStrings.Get(3004);
-//           else m_strDuration = progDuration.Hours+space+GUILocalizeStrings.Get(3002);
+//           if (progDuration.Minutes==1) _strDuration = progDuration.Hours+" Hours"+", "+progDuration.Minutes+space+GUILocalizeStrings.Get(3003);
+//           else if (progDuration.Minutes>0) _strDuration = progDuration.Hours+" Hours"+", "+progDuration.Minutes+space+GUILocalizeStrings.Get(3004);
+//           else _strDuration = progDuration.Hours+space+GUILocalizeStrings.Get(3002);
 //          break;
 //      }
 //    }
@@ -355,10 +355,10 @@ namespace MediaPortal.Webepg.TV.Database
     /// </summary>
 //    private void GetStartTimeFromNow() 
 //    {
-//      if (m_strTitle == "No TVGuide data available") return;
+//      if (_strTitle == "No TVGuide data available") return;
 //      string space = " ";
 //      string strRemaining=String.Empty;
-//      DateTime progStart = longtodate(m_iStartTime);
+//      DateTime progStart = longtodate(_iStartTime);
 //      TimeSpan timeRelative = progStart.Subtract(DateTime.Now);
 //      if (timeRelative.Days==0)
 //      {
@@ -367,29 +367,29 @@ namespace MediaPortal.Webepg.TV.Database
 //          switch (timeRelative.Hours)
 //          {
 //            case 0:
-//              if (timeRelative.Minutes==1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3003);// starts in 1 minute
-//              else if (timeRelative.Minutes>1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3004);//starts in x minutes
-//              else m_strTimeFromNow=GUILocalizeStrings.Get(3013);
+//              if (timeRelative.Minutes==1) _strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3003);// starts in 1 minute
+//              else if (timeRelative.Minutes>1) _strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3004);//starts in x minutes
+//              else _strTimeFromNow=GUILocalizeStrings.Get(3013);
 //              break;
 //            case 1:
-//              if (timeRelative.Minutes==1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3001)+", "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3003);//starts in 1 hour, 1 minute
-//              else if (timeRelative.Minutes>1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3001)+", "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3004);//starts in 1 hour, x minutes
-//              else m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+GUILocalizeStrings.Get(3001);//starts in 1 hour
+//              if (timeRelative.Minutes==1) _strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3001)+", "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3003);//starts in 1 hour, 1 minute
+//              else if (timeRelative.Minutes>1) _strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3001)+", "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3004);//starts in 1 hour, x minutes
+//              else _strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+GUILocalizeStrings.Get(3001);//starts in 1 hour
 //              break;
 //            default:
-//              if (timeRelative.Minutes==1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3002)+", "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3003);//starts in x hours, 1 minute
-//              else if (timeRelative.Minutes>1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3002)+", "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3004);//starts in x hours, x minutes
-//              else m_strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3002);//starts in x hours
+//              if (timeRelative.Minutes==1) _strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3002)+", "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3003);//starts in x hours, 1 minute
+//              else if (timeRelative.Minutes>1) _strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3002)+", "+timeRelative.Minutes+space+GUILocalizeStrings.Get(3004);//starts in x hours, x minutes
+//              else _strTimeFromNow=GUILocalizeStrings.Get(3009)+" "+timeRelative.Hours+space+GUILocalizeStrings.Get(3002);//starts in x hours
 //              break;
 //          }
 //        }
 //        else //already started
 //        {
-//          DateTime progEnd = longtodate(m_iEndTime);
+//          DateTime progEnd = longtodate(_iEndTime);
 //          TimeSpan tsRemaining = DateTime.Now.Subtract(progEnd);
 //          if (tsRemaining.Minutes>0)
 //          {
-//            m_strTimeFromNow=GUILocalizeStrings.Get(3016);
+//            _strTimeFromNow=GUILocalizeStrings.Get(3016);
 //            return;
 //          }
 //          switch (tsRemaining.Hours)
@@ -412,27 +412,27 @@ namespace MediaPortal.Webepg.TV.Database
 //          switch (timeRelative.Hours)
 //          {
 //            case 0:
-//              if (timeRelative.Minutes==-1) m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3007)+space+strRemaining;//Started 1 Minute ago
-//              else if (timeRelative.Minutes<-1) m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3008)+space+strRemaining;//Started x Minutes ago
-//              else m_strTimeFromNow=GUILocalizeStrings.Get(3013);//Starting Now
+//              if (timeRelative.Minutes==-1) _strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3007)+space+strRemaining;//Started 1 Minute ago
+//              else if (timeRelative.Minutes<-1) _strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3008)+space+strRemaining;//Started x Minutes ago
+//              else _strTimeFromNow=GUILocalizeStrings.Get(3013);//Starting Now
 //              break;
 //            case -1:
-//              if (timeRelative.Minutes==-1) m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3001)+", "+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3007)+" "+strRemaining;//Started 1 Hour,1 Minute ago
-//              else if (timeRelative.Minutes<-1) m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3001)+", "+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3008)+" "+strRemaining;//Started 1 Hour,x Minutes ago
-//              else m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3005)+space+strRemaining;//Started 1 Hour ago
+//              if (timeRelative.Minutes==-1) _strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3001)+", "+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3007)+" "+strRemaining;//Started 1 Hour,1 Minute ago
+//              else if (timeRelative.Minutes<-1) _strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3001)+", "+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3008)+" "+strRemaining;//Started 1 Hour,x Minutes ago
+//              else _strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3005)+space+strRemaining;//Started 1 Hour ago
 //              break;
 //            default:
-//              if (timeRelative.Minutes==-1) m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3006)+", "+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3008)+" "+strRemaining;//Started x Hours,1 Minute ago
-//              else if (timeRelative.Minutes<-1) m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3006)+", "+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3008)+" "+strRemaining;//Started x Hours,x Minutes ago
-//              else m_strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3006)+space+strRemaining;//Started x Hours ago
+//              if (timeRelative.Minutes==-1) _strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3006)+", "+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3008)+" "+strRemaining;//Started x Hours,1 Minute ago
+//              else if (timeRelative.Minutes<-1) _strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3006)+", "+ -timeRelative.Minutes+space+GUILocalizeStrings.Get(3008)+" "+strRemaining;//Started x Hours,x Minutes ago
+//              else _strTimeFromNow=GUILocalizeStrings.Get(3017)+ -timeRelative.Hours+space+GUILocalizeStrings.Get(3006)+space+strRemaining;//Started x Hours ago
 //              break;
 //          }      
 //        }
 //      }
 //      else
 //      {
-//        if (timeRelative.Days==1) m_strTimeFromNow=GUILocalizeStrings.Get(3009)+space+timeRelative.Days+space+GUILocalizeStrings.Get(3014);//Starts in 1 Day
-//        else m_strTimeFromNow=GUILocalizeStrings.Get(3009)+space+timeRelative.Days+space+GUILocalizeStrings.Get(3015);//Starts in x Days
+//        if (timeRelative.Days==1) _strTimeFromNow=GUILocalizeStrings.Get(3009)+space+timeRelative.Days+space+GUILocalizeStrings.Get(3014);//Starts in 1 Day
+//        else _strTimeFromNow=GUILocalizeStrings.Get(3009)+space+timeRelative.Days+space+GUILocalizeStrings.Get(3015);//Starts in x Days
 //      }
 //
 //    }
@@ -441,15 +441,15 @@ namespace MediaPortal.Webepg.TV.Database
 //    {
 //      string space = " ";
 //      StringBuilder epDetail = new StringBuilder();
-//      if ((m_strEpisode != "-")&(m_strEpisode !=String.Empty)) epDetail.Append(m_strEpisode);
-//      if ((m_strSeriesNum !="-")&(m_strSeriesNum !=String.Empty))
+//      if ((_strEpisode != "-")&(_strEpisode !=String.Empty)) epDetail.Append(_strEpisode);
+//      if ((_strSeriesNum !="-")&(_strSeriesNum !=String.Empty))
 //      {
 //        epDetail.Append(space+"()");
-//        epDetail.Insert(epDetail.Length-1,GUILocalizeStrings.Get(3019)+space+m_strSeriesNum);
+//        epDetail.Insert(epDetail.Length-1,GUILocalizeStrings.Get(3019)+space+_strSeriesNum);
 //      }
-//      if ((m_strEpisodeNum !="-")&(m_strEpisodeNum !=String.Empty)) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3020)+space+m_strEpisodeNum);
-//      if ((m_strEpisodePart !="-")&(m_strEpisodePart !=String.Empty)) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3021)+space+m_strEpisodePart.Substring(0,1)+space+GUILocalizeStrings.Get(3022)+space+m_strEpisodePart.Substring(2,1));
-//      m_strEpisodeFullDetails = epDetail.ToString();
+//      if ((_strEpisodeNum !="-")&(_strEpisodeNum !=String.Empty)) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3020)+space+_strEpisodeNum);
+//      if ((_strEpisodePart !="-")&(_strEpisodePart !=String.Empty)) epDetail.Insert(epDetail.Length-1,space+GUILocalizeStrings.Get(3021)+space+_strEpisodePart.Substring(0,1)+space+GUILocalizeStrings.Get(3022)+space+_strEpisodePart.Substring(2,1));
+//      _strEpisodeFullDetails = epDetail.ToString();
 //		}
 //		#region IComparable Members
 //

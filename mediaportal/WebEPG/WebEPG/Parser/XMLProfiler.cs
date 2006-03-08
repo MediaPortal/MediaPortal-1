@@ -30,33 +30,33 @@ namespace MediaPortal.WebEPG
 {
 	public class XMLProfiler : Profiler
 	{
-		XMLProfilerData m_Data;
-		//XmlDocument m_xmlDoc;
-		XmlNodeList m_nodeList;
-		string m_strURL="";
+		XMLProfilerData _Data;
+		//XmlDocument _xmlDoc;
+		XmlNodeList _nodeList;
+		string _strURL="";
 
 		public XMLProfiler(string strSource, XMLProfilerData data)
 		{
-			m_strSource = strSource;
-			m_Data = data;
-			if(m_strSource != "")
+			_strSource = strSource;
+			_Data = data;
+			if(_strSource != "")
 				NodeProfiler();
 		}
 
 		public void SetChannelID(string id)
 		{
-			m_Data.ChannelID = id;
+			_Data.ChannelID = id;
 		}
 
 		override public Profiler GetPageProfiler(string strURL)
 		{
-			if(strURL != m_strURL)
+			if(strURL != _strURL)
 			{
 				HTMLPage webPage = new HTMLPage(strURL);
-				m_strSource = webPage.GetPage();
-				m_strURL = strURL;
+				_strSource = webPage.GetPage();
+				_strURL = strURL;
 			}
-			return new XMLProfiler(m_strSource, m_Data); 
+			return new XMLProfiler(_strSource, _Data); 
 		}
 
 		override public MediaPortal.Utils.Web.Parser GetProfileParser(int index)
@@ -68,37 +68,37 @@ namespace MediaPortal.WebEPG
 		{
 			ProgramData program = (ProgramData) data;
 
-			XmlNode progNode = m_nodeList.Item(index);
+			XmlNode progNode = _nodeList.Item(index);
 			if(progNode != null)
 			{
 				XmlNode node;
-				if(m_Data.TitleEntry != "" && (node = progNode.SelectSingleNode(m_Data.TitleEntry)) != null)
+				if(_Data.TitleEntry != "" && (node = progNode.SelectSingleNode(_Data.TitleEntry)) != null)
 					program.Title = node.InnerText;
 
-				if(m_Data.SubtitleEntry != "" && (node = progNode.SelectSingleNode(m_Data.SubtitleEntry)) != null)
+				if(_Data.SubtitleEntry != "" && (node = progNode.SelectSingleNode(_Data.SubtitleEntry)) != null)
 					program.SubTitle = node.InnerText;
 
-				if(m_Data.DescEntry != "" && (node = progNode.SelectSingleNode(m_Data.DescEntry)) != null)
+				if(_Data.DescEntry != "" && (node = progNode.SelectSingleNode(_Data.DescEntry)) != null)
 					program.Description = node.InnerText;
 
-				if(m_Data.GenreEntry != "" && (node = progNode.SelectSingleNode(m_Data.GenreEntry)) != null)
+				if(_Data.GenreEntry != "" && (node = progNode.SelectSingleNode(_Data.GenreEntry)) != null)
 					program.Genre = node.InnerText;
 
-				if(m_Data.StartEntry != "")
+				if(_Data.StartEntry != "")
 				{
-					if((node = progNode.Attributes.GetNamedItem(m_Data.StartEntry)) != null)
+					if((node = progNode.Attributes.GetNamedItem(_Data.StartEntry)) != null)
 						program.StartTime = GetDateTime(node.InnerText);
 
-					if((node = progNode.SelectSingleNode(m_Data.StartEntry)) != null)
+					if((node = progNode.SelectSingleNode(_Data.StartEntry)) != null)
 						program.StartTime = GetDateTime(node.InnerText);
 				}
 
-				if(m_Data.EndEntry != "")
+				if(_Data.EndEntry != "")
 				{
-					if((node = progNode.Attributes.GetNamedItem(m_Data.EndEntry)) != null)
+					if((node = progNode.Attributes.GetNamedItem(_Data.EndEntry)) != null)
 						program.EndTime = GetDateTime(node.InnerText);
 
-					if((node = progNode.SelectSingleNode(m_Data.EndEntry)) != null)
+					if((node = progNode.SelectSingleNode(_Data.EndEntry)) != null)
 						program.EndTime = GetDateTime(node.InnerText);
 				}
 			}
@@ -128,19 +128,19 @@ namespace MediaPortal.WebEPG
 		{
 			try
 			{
-				XmlDocument m_xmlDoc = new XmlDocument();
-				m_xmlDoc.LoadXml(m_strSource);
-				if(m_Data.ChannelEntry != "")
-					m_nodeList =  m_xmlDoc.DocumentElement.SelectNodes(m_Data.XPath + "[@" + m_Data.ChannelEntry + "=\"" + m_Data.ChannelID + "\"]");
+				XmlDocument _xmlDoc = new XmlDocument();
+				_xmlDoc.LoadXml(_strSource);
+				if(_Data.ChannelEntry != "")
+					_nodeList =  _xmlDoc.DocumentElement.SelectNodes(_Data.XPath + "[@" + _Data.ChannelEntry + "=\"" + _Data.ChannelID + "\"]");
 				else
-					m_nodeList =  m_xmlDoc.DocumentElement.SelectNodes(m_Data.XPath);
+					_nodeList =  _xmlDoc.DocumentElement.SelectNodes(_Data.XPath);
 			}
 			catch(System.Xml.XmlException) // ex)
 			{
 				Log.WriteFile(Log.LogType.Log, true, "WebEPG: XML failed");
 			}
 
-			m_profileCount = m_nodeList.Count;
+			_profileCount = _nodeList.Count;
 		}
     }
 

@@ -27,14 +27,14 @@ using System.Collections;
 
 namespace MediaPortal.Utils.Web
 {
-    public class HTTPTransaction
-    {
-		string m_Agent = "Mozilla/4.0 (compatible; MSIE 6.0;  WindowsNT 5.0; .NET CLR 1 .1.4322)";
-		CookieCollection m_Cookies;
-		HttpWebResponse m_Response;
-		string m_Error = string.Empty;
+  public class HTTPTransaction
+  {
+		string _Agent = "Mozilla/4.0 (compatible; MSIE 6.0;  WindowsNT 5.0; .NET CLR 1 .1.4322)";
+		CookieCollection _Cookies;
+		HttpWebResponse _Response;
+		string _Error = string.Empty;
 		int blockSize = 8196;
-		byte[] m_Data;
+		byte[] _Data;
 
 		public HTTPTransaction()
 		{
@@ -52,23 +52,23 @@ namespace MediaPortal.Utils.Web
 
 		public void SetAgent(string newAgent)
 		{
-			m_Agent = newAgent;
+			_Agent = newAgent;
 		}
 
 		public string GetError()
 		{
-			return m_Error;
+			return _Error;
 		}
 
 		public CookieCollection Cookies
 		{
-			get { return m_Cookies;}
-			set { m_Cookies=value;}
+			get { return _Cookies;}
+			set { _Cookies=value;}
 		}
 
 		public byte[] GetData() //string strURL, string strEncode)
 		{
-			return m_Data;
+			return _Data;
 		}
 
         private bool Transaction(string strURL)
@@ -84,17 +84,17 @@ namespace MediaPortal.Utils.Web
                 // Make the Webrequest
                 Uri Page = new Uri(strURL);
                 HttpWebRequest request = (HttpWebRequest) WebRequest.Create(Page);
-				request.UserAgent = m_Agent;
+				request.UserAgent = _Agent;
                 request.Credentials = HTTPAuth.Get(Page.Host);
 				request.CookieContainer = new CookieContainer();
-				if(m_Cookies != null)
-					request.CookieContainer.Add( m_Cookies );
+				if(_Cookies != null)
+					request.CookieContainer.Add( _Cookies );
 					
-                m_Response = (HttpWebResponse) request.GetResponse();
-				m_Response.Cookies = request.CookieContainer.GetCookies(request.RequestUri);
-				m_Cookies = m_Response.Cookies;
+                _Response = (HttpWebResponse) request.GetResponse();
+				_Response.Cookies = request.CookieContainer.GetCookies(request.RequestUri);
+				_Cookies = _Response.Cookies;
 
-                Stream ReceiveStream = m_Response.GetResponseStream();
+                Stream ReceiveStream = _Response.GetResponseStream();
 
 				Block = new byte[blockSize];
 				totalSize = 0;
@@ -108,22 +108,22 @@ namespace MediaPortal.Utils.Web
 				}
 
 				ReceiveStream.Close();
-				m_Response.Close();
+				_Response.Close();
 
 				int pos=0;
-				m_Data = new byte[ totalSize ];
+				_Data = new byte[ totalSize ];
 				
 				for(int i = 0; i< Blocks.Count; i++)
 				{
 					Block = (byte[]) Blocks[i];
-					Block.CopyTo(m_Data, pos);
+					Block.CopyTo(_Data, pos);
 					pos += Block.Length;
 				}
 
             }
             catch (WebException ex)
             {
-                m_Error = ex.Message;
+                _Error = ex.Message;
 			 	return false;
             }
 			return true;

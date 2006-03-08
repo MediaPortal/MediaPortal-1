@@ -21,13 +21,12 @@
 using System;
 using System.Collections;
 using System.Net;
-//using MediaPortal.Webepg.GUI.Library;
 
 namespace MediaPortal.Utils.Web
 {
 	public class HTTPAuth
 	{
-		static Hashtable m_AuthList;
+		static Hashtable _AuthList;
 
         static HTTPAuth()
         {
@@ -37,9 +36,9 @@ namespace MediaPortal.Utils.Web
         {
             NetworkCredential login = null;
 
-            if (m_AuthList != null)
+            if (_AuthList != null)
             {
-                login = (NetworkCredential)m_AuthList[site];
+                login = (NetworkCredential)_AuthList[site];
             }
 
             return login;
@@ -47,10 +46,10 @@ namespace MediaPortal.Utils.Web
 
         public static void Add(string site, NetworkCredential login)
         {
-            if (m_AuthList == null)
-                m_AuthList = new Hashtable();
+            if (_AuthList == null)
+                _AuthList = new Hashtable();
 
-            m_AuthList.Add(site, login);
+            _AuthList.Add(site, login);
         }
     }
 }

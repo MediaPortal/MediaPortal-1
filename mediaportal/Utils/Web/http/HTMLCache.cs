@@ -23,7 +23,6 @@ using System.Text;
 using System.IO;
 using System.Net;
 using System.Web;
-//using MediaPortal.Webepg.GUI.Library;
 
 namespace MediaPortal.Utils.Web
 {
@@ -31,7 +30,7 @@ namespace MediaPortal.Utils.Web
 	{
 		const string CACHE_DIR = "WebCache";
 		static public bool Caching = false;
-		static string m_strPageSource;
+		static string _strPageSource;
 
 		static HTMLCache()
 		{
@@ -61,7 +60,7 @@ namespace MediaPortal.Utils.Web
 					return true;
 			}
 			return false;
-        }
+    }
 
 		static public void SavePage(string strURL, string strSource)
 		{
@@ -69,17 +68,17 @@ namespace MediaPortal.Utils.Web
 				SaveCacheFile(GetCacheFileName(strURL), strSource);
 		}
 
-        static public string GetPage() //string strURL, string strEncode)
-        {
-            return m_strPageSource;
-        }
+    static public string GetPage() //string strURL, string strEncode)
+    {
+      return _strPageSource;
+    }
 
 		static private bool LoadCacheFile(string file)
 		{
 			if(System.IO.File.Exists(file))
 			{
 				TextReader CacheFile = new StreamReader(file);
-				m_strPageSource = CacheFile.ReadToEnd();
+				_strPageSource = CacheFile.ReadToEnd();
 				CacheFile.Close();
 
 				return true;
@@ -106,6 +105,5 @@ namespace MediaPortal.Utils.Web
 				
 			return CACHE_DIR + "/" + hash.ToString() + ".html";
 		}
-
-    }
+  }
 }

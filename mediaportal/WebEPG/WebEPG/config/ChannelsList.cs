@@ -32,26 +32,26 @@ namespace MediaPortal.EPG.config
 	/// </summary>
 	public class ChannelsList : IComparer
 	{
-		string m_strGrabberDir;
-		string m_strChannelsFile;
+		string _strGrabberDir;
+		string _strChannelsFile;
         const int MAX_COST = 2;
 
-		SortedList m_ChannelList = null;
-        string m_Country;
+		SortedList _ChannelList = null;
+        string _Country;
 
 		public ChannelsList(string BaseDir)
 		{
-			m_strGrabberDir = BaseDir + "\\grabbers\\";
-			m_strChannelsFile = BaseDir + "\\channels\\channels.xml";
+			_strGrabberDir = BaseDir + "\\grabbers\\";
+			_strChannelsFile = BaseDir + "\\channels\\channels.xml";
 		}
 
 		public string[] GetCountries()
 		{
 			string[] countryList = null;
 
-			if(System.IO.Directory.Exists(m_strGrabberDir))
+			if(System.IO.Directory.Exists(_strGrabberDir))
 			{
-				System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(m_strGrabberDir); 
+				System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(_strGrabberDir); 
 				System.IO.DirectoryInfo[] dirList = dir.GetDirectories();
 				if(dirList.Length > 0)
 				{
@@ -76,7 +76,7 @@ namespace MediaPortal.EPG.config
 			for(int c=0; c < CountryList.Length; c++)
 				LoadGrabbers(CountryList[c]);
 
-			return m_ChannelList;
+			return _ChannelList;
 		}
 
 
@@ -84,10 +84,10 @@ namespace MediaPortal.EPG.config
 		{
 			LoadChannels(country);
 
-			if(m_ChannelList != null)
+			if(_ChannelList != null)
 				LoadGrabbers(country);
 
-			return m_ChannelList;
+			return _ChannelList;
 		}
 
 		public ArrayList GetChannelArrayList(string country)
@@ -97,11 +97,11 @@ namespace MediaPortal.EPG.config
 
 			GetChannelList(country);
 			
-			if(m_ChannelList != null)
+			if(_ChannelList != null)
 			{
-				IDictionaryEnumerator Enumerator = m_ChannelList.GetEnumerator();
+				IDictionaryEnumerator Enumerator = _ChannelList.GetEnumerator();
 
-				//ChannelArray = new ChannelInfo[m_ChannelList.Count];
+				//ChannelArray = new ChannelInfo[_ChannelList.Count];
 				//int i=0;
 
 				ChannelArray = new ArrayList();
@@ -207,21 +207,21 @@ namespace MediaPortal.EPG.config
 
 		private void LoadChannels(string country)
 		{
-            if (country != m_Country)
-                m_ChannelList = new SortedList();
+            if (country != _Country)
+                _ChannelList = new SortedList();
             else
                 return;
 
-			if(System.IO.File.Exists(m_strChannelsFile))
+			if(System.IO.File.Exists(_strChannelsFile))
 			{
 				//Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
-				MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(m_strChannelsFile);
+				MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(_strChannelsFile);
 				int channelCount = xmlreader.GetValueAsInt(country, "TotalChannels", 0);	
 
 				if(channelCount > 0)
 				{
-					if(m_ChannelList == null)
-						m_ChannelList = new SortedList();
+					if(_ChannelList == null)
+						_ChannelList = new SortedList();
 
 					for (int ich = 0; ich < channelCount; ich++)
 					{
@@ -232,26 +232,26 @@ namespace MediaPortal.EPG.config
 						if(channel.FullName == "")
 							channel.FullName = channel.ChannelID;
 						if(channel.ChannelID != "")
-							m_ChannelList.Add(channel.ChannelID, channel);
+							_ChannelList.Add(channel.ChannelID, channel);
 					}
 
-                    m_Country = country;
+                    _Country = country;
 				}
 			}
 		}
 
 		private void LoadAllChannels()
 		{
-			if(System.IO.File.Exists(m_strChannelsFile))
+			if(System.IO.File.Exists(_strChannelsFile))
 			{
 				//Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
-				MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(m_strChannelsFile);
+				MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(_strChannelsFile);
 				int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);	
 
 				if(channelCount > 0)
 				{
-					if(m_ChannelList == null)
-						m_ChannelList = new SortedList();
+					if(_ChannelList == null)
+						_ChannelList = new SortedList();
 
 					for (int ich = 0; ich < channelCount; ich++)
 					{
@@ -260,8 +260,8 @@ namespace MediaPortal.EPG.config
 						channel.FullName = xmlreader.GetValueAsString(ich.ToString(), "FullName", "");
 						if(channel.FullName == "")
 							channel.FullName = channel.ChannelID;
-						if(channel.ChannelID != "" && m_ChannelList[channel.ChannelID] == null)
-							m_ChannelList.Add(channel.ChannelID, channel);
+						if(channel.ChannelID != "" && _ChannelList[channel.ChannelID] == null)
+							_ChannelList.Add(channel.ChannelID, channel);
 					}
 				}
 			}
@@ -270,9 +270,9 @@ namespace MediaPortal.EPG.config
 
 		private void LoadGrabbers(string country)
 		{
-			if(System.IO.Directory.Exists(m_strGrabberDir + country) && m_ChannelList != null)
+			if(System.IO.Directory.Exists(_strGrabberDir + country) && _ChannelList != null)
 			{
-			System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(m_strGrabberDir + country); 
+			System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(_strGrabberDir + country); 
 			//Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Directory: {0}", Location);
 			GrabberInfo gInfo;
 				foreach (System.IO.FileInfo file in dir.GetFiles("*.xml"))
@@ -324,7 +324,7 @@ namespace MediaPortal.EPG.config
 								id = nodeChannel.Attributes.Item(0);
 								//idList.Add(id.InnerXml);
 
-								ChannelInfo info = (ChannelInfo) m_ChannelList[id.InnerXml];
+								ChannelInfo info = (ChannelInfo) _ChannelList[id.InnerXml];
 								if(info != null) // && info.GrabberList[gInfo.GrabberID] != null)
 								{
 									if(info.GrabberList == null)
@@ -339,7 +339,7 @@ namespace MediaPortal.EPG.config
 									info.FullName = info.ChannelID;
 									info.GrabberList = new SortedList();
 									info.GrabberList.Add(gInfo.GrabberID, gInfo);
-									m_ChannelList.Add(info.ChannelID, info);
+									_ChannelList.Add(info.ChannelID, info);
 								}
 							}
 						}

@@ -25,9 +25,9 @@ namespace MediaPortal.Utils.Web
 {
     abstract public class Profiler
     {
-		protected int m_profileCount = 0;
-        protected string m_strSource = string.Empty;
-        protected string m_strProfile = string.Empty;
+		protected int _profileCount = 0;
+        protected string _strSource = string.Empty;
+        protected string _strProfile = string.Empty;
 
         public Profiler()
         {
@@ -35,17 +35,17 @@ namespace MediaPortal.Utils.Web
 
         virtual public string GetSource()
         {
-            return m_strSource;
+            return _strSource;
         }
 
 		public string ProfileString()
 		{
-			return m_strProfile;
+			return _strProfile;
 		}
 
 		virtual public int subProfileCount()
 		{
-			return m_profileCount;
+			return _profileCount;
 		}
 
 		abstract public void GetParserData(int index, ref ParserData data);
