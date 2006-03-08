@@ -1,3 +1,0 @@
-http://atvplus.at/main/programm/programm.php?a=0&t=20050606 
-a = #LIST_OFFSET 1,2,3,4
-t = #YEAR#MONTH#DAY
