@@ -67,6 +67,7 @@ namespace MediaPortal.WebEPG
             m_writer.WriteAttributeString("id", id);
             m_writer.WriteElementString("display-name", name);
             m_writer.WriteEndElement();
+            m_writer.Flush();
         }
 
         public void WriteProgram(TVProgram program, int copy)
@@ -126,6 +127,7 @@ namespace MediaPortal.WebEPG
                 */
 
                 m_writer.WriteEndElement();
+                m_writer.Flush();
             }
         }
 	}
