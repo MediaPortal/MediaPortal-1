@@ -5,6 +5,14 @@
 <!-- Channel section lists all the channels available from this website. -->
 
   <section name="ChannelList">
+<!-- NY -->
+
+
+        <entry name="ny1.com">id=166031707&amp;channels=us_NY1&amp;lineup=us_NY55894d</entry>
+        <entry name="WCBS@cbs.com">id=166031052&amp;channels=us_WCBS&amp;lineup=us_NY55894d</entry>
+	<entry name="NY@disney.com">id=166030356&amp;channels=us_DISN&amp;lineup=us_NY55894d</entry>
+	<entry name="NY@tlc.discovery.com">id=166030953&amp;channels=us_TLC&amp;lineup=us_NY55894d</entry>
+	<entry name="WPXN@paxtv.com">id=166031432&amp;channels=us_WPXN&amp;lineup=us_NY55894d</entry>
 
 <!-- Eastern -->
 
@@ -40,6 +48,7 @@
 	<entry name="Eastern@msnbc.msn.com">id=166032274&amp;channels=us_MSNBC&amp;lineup=us_Eastern</entry>
 	<entry name="Eastern@cnbc.com">id=166030346&amp;channels=us_CNBC&amp;lineup=us_Eastern</entry>
 	<entry name="Eastern@turnerclassicmovies.com">id=166031876&amp;channels=us_TCM&amp;lineup=us_Eastern</entry>
+
 
 <!-- Central -->
 
@@ -111,6 +120,7 @@
 	&#60;A &#62;&#60;/A&#62;
 	&#60;BR&#62;&#60;#GENRE&#62;,
 	&#60;p&#62;
+	&#60;p&#62;&#60;A &#62;&#60;/A&#62;
 	&#60;p&#62;&#60;#DESCRIPTION&#62;
 	&#60;p&#62;
 	&#60;p&#62;
