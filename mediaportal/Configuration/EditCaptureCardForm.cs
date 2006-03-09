@@ -1297,9 +1297,9 @@ namespace MediaPortal.Configuration
           if (comboBoxCAM.Visible)
             xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
           if (comboBoxFrameRate.Visible)
-            xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.SelectedItem.ToString());
+            xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.Text);
           if (comboBoxFrameSize.Visible)
-            xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.SelectedItem);
+            xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.Text);
         }
         IEnumerator enumerator = this.tabPageAutotune.Controls.GetEnumerator();
         if (enumerator.MoveNext())
@@ -1535,8 +1535,8 @@ namespace MediaPortal.Configuration
 
               checkBoxHWPidFiltering.Checked = xmlreader.GetValueAsBool("general", "hwfiltering", false);
               comboBoxCAM.SelectedItem = xmlreader.GetValueAsString("dvbs", "cam", "Default");
-              comboBoxFrameRate.SelectedItem = xmlreader.GetValueAsString("analog", "framerate", "25");
-              comboBoxFrameSize.SelectedItem = xmlreader.GetValueAsString("analog", "framesize", "720x576");
+              comboBoxFrameRate.Text = xmlreader.GetValueAsString("analog", "framerate", "25 fps");
+              comboBoxFrameSize.Text = xmlreader.GetValueAsString("analog", "framesize", "720x576");
             }
           }
         }
@@ -1654,9 +1654,9 @@ namespace MediaPortal.Configuration
           if (comboBoxCAM.Visible)
             xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
           if (comboBoxFrameRate.Visible)
-            xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.SelectedItem.ToString());
+            xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.Text);
           if (comboBoxFrameSize.Visible)
-            xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.SelectedItem);
+            xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.Text);
 
         }
         if (capture.CardType == TVCapture.CardTypes.Digital_SS2 ||
@@ -1692,9 +1692,9 @@ namespace MediaPortal.Configuration
           if (comboBoxCAM.Visible)
             xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
           if (comboBoxFrameRate.Visible)
-            xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.SelectedItem.ToString());
+            xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.Text);
           if (comboBoxFrameSize.Visible)
-            xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.SelectedItem);
+            xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.Text);
         }
         if (capture.CardType == TVCapture.CardTypes.Digital_SS2)
         {
