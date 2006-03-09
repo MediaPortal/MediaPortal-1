@@ -29,6 +29,7 @@ using System.Text;
 using System.Threading;
 using NUnit.Framework;
 using MediaPortal.Utils;
+using MediaPortal.Utils.Time;
 
 namespace MediaPortal.Tests.Utils.Time
 {
