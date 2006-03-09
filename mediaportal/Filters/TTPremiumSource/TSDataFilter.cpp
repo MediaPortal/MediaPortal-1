@@ -10,7 +10,6 @@
 //
 //
 TSDataFilter::TSDataFilter(int bufferSize) : CDVBTSFilter(bufferSize), m_isRunning(false), 
-															  m_refCount(0),
 															  m_bufferSize(bufferSize)
 {
 	m_lock = new Lock();
@@ -20,8 +19,6 @@ TSDataFilter::TSDataFilter(int bufferSize) : CDVBTSFilter(bufferSize), m_isRunni
 //
 TSDataFilter::~TSDataFilter()
 {
-	Stop();
-
 	delete m_lock;
 }
 
@@ -49,7 +46,6 @@ void TSDataFilter::Stop()
 void TSDataFilter::AddRef(CTTPremiumOutputPin *pPin)
 {
 	m_lock->lock();
-	m_refCount++;
   m_watchers.push_back(pPin);
 	m_lock->unlock();
 }
@@ -59,7 +55,6 @@ void TSDataFilter::AddRef(CTTPremiumOutputPin *pPin)
 void TSDataFilter::RemoveRef(CTTPremiumOutputPin *pPin)
 {
 	m_lock->lock();
-	m_refCount--;
 	for (std::vector<CTTPremiumOutputPin *>::iterator it = m_watchers.begin(); it != m_watchers.end(); it++)
   {
     if ((*it) == pPin)
@@ -68,9 +63,12 @@ void TSDataFilter::RemoveRef(CTTPremiumOutputPin *pPin)
       break;
     }
   }
+  bool done = (m_watchers.size() == 0);
 	m_lock->unlock();
-	if (m_refCount == 0)
+
+	if (done)
 	{
+    Stop();
 		delete this;
 	}
 }
@@ -82,16 +80,16 @@ void TSDataFilter::OnDataArrival(BYTE* Buff, int len)
 	if (m_isRunning)
 	{
 		m_lock->lock();
+
     for (std::vector<CTTPremiumOutputPin *>::iterator it = m_watchers.begin(); it != m_watchers.end(); it++)
     {
       HRESULT hr = SendData((*it), Buff, len);
       while (FAILED(hr))
       {
-        Sleep(1);
+        Sleep(10);
         hr = SendData((*it), Buff, len);
       }
     }
-
 		m_lock->unlock();
 	}
 }

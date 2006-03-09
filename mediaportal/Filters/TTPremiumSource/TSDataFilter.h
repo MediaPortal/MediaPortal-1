@@ -17,7 +17,7 @@ public:
 	void Start();
 	void Stop();
 	bool IsRunning() { return m_isRunning; }
-	int RefCount() { return m_refCount; }
+	int RefCount() { return m_watchers.size(); }
 	
 	int Copy(BYTE *buff, int maxLen);
 
@@ -30,7 +30,6 @@ protected:
 	virtual void OnDataArrival(BYTE* Buff, int len);
   HRESULT SendData(CTTPremiumOutputPin *outputPin, BYTE* buff, int len);
 
-	int						m_refCount;
 	bool					m_isRunning;
 	int						m_bufferSize;
 
