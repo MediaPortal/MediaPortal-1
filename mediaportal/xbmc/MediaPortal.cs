@@ -2374,30 +2374,30 @@ public class MediaPortalApp : D3DApp, IRender
     // Stop MCE services
     Utils.StopMCEServices();
 
-    Log.Write("  Set registry keys for intervideo/windvd/hauppauge codecs");
+    Log.Write("Set registry keys for Hauppauge codecs");
     // Set Intervideo registry keys 
     try
     {
       RegistryKey hklm = Registry.LocalMachine;
 
       // windvd6 mpeg2 codec settings
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\AudioDec", "DsContinuousRate", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DsContinuousRate", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "Dxva", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DxvaFetchSample", 0);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "ResendOnFamine", 0);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VgaQuery", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VMR", 2);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "BOBWEAVE", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\AudioDec\MediaPortal", "DsContinuousRate", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DsContinuousRate", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "Dxva", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DxvaFetchSample", 0);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "ResendOnFamine", 0);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VgaQuery", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VMR", 2);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "BOBWEAVE", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\AudioDec", "DsContinuousRate", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DsContinuousRate", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "Dxva", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DxvaFetchSample", 0);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "ResendOnFamine", 0);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VgaQuery", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VMR", 2);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "BOBWEAVE", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\AudioDec\MediaPortal", "DsContinuousRate", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DsContinuousRate", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "Dxva", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DxvaFetchSample", 0);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "ResendOnFamine", 0);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VgaQuery", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VMR", 2);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "BOBWEAVE", 1);
 
       // hauppauge mpeg2 codec settings
       SetDWORDRegKey(hklm, @"SOFTWARE\IviSDK4Hauppauge\Common\VideoDec", "Hwmc", 1);
@@ -2406,27 +2406,27 @@ public class MediaPortalApp : D3DApp, IRender
       hklm.Close();
 
       // windvd6 mpeg2 codec settings
-      hklm = Registry.CurrentUser;
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\AudioDec", "DsContinuousRate", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DsContinuousRate", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "Dxva", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DxvaFetchSample", 0);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "ResendOnFamine", 0);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VgaQuery", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VMR", 2);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "BOBWEAVE", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\AudioDec\MediaPortal", "DsContinuousRate", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DsContinuousRate", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "Dxva", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DxvaFetchSample", 0);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "ResendOnFamine", 0);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VgaQuery", 1);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VMR", 2);
-      SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "BOBWEAVE", 1);
+      //hklm = Registry.CurrentUser;
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\AudioDec", "DsContinuousRate", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DsContinuousRate", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "Dxva", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "DxvaFetchSample", 0);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "ResendOnFamine", 0);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VgaQuery", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "VMR", 2);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal\VideoDec", "BOBWEAVE", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\MediaPortal", "BOBWEAVE", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\AudioDec\MediaPortal", "DsContinuousRate", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DsContinuousRate", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "Dxva", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "DxvaFetchSample", 0);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "ResendOnFamine", 0);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VgaQuery", 1);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "VMR", 2);
+      //SetDWORDRegKey(hklm, @"SOFTWARE\InterVideo\Common\VideoDec\MediaPortal", "BOBWEAVE", 1);
 
-      hklm.Close();
+      //hklm.Close();
     }
     catch (Exception)
     { }
