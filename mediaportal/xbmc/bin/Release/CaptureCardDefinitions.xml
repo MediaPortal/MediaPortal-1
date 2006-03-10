@@ -9292,7 +9292,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="WinFast TV2000 XP Expert" capturename="WinFast TV2000 XP Expert WDM Video Capture." devid="ven_14f1&amp;dev_8800&amp;subsys_6f08107damp;&rev_05">
+  <capturecard commercialname="WinFast TV2000 XP Expert" capturename="WinFast TV2000 XP Expert WDM Video Capture." devid="ven_14f1&amp;dev_8800&amp;subsys_6f08107d&amp;rev_05">
 	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
 	<tv>
 	  <interface cat="mux" video="" audio="" mpeg2="0"/>
@@ -9360,5 +9360,21 @@
         <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
       </connections>
     </tv>
+  </capturecard>
+
+  <capturecard commercialname="Dvico FusionHDTV 5 USB" capturename="Bluebird, WDM TsCapture" devid="vid_0fe9&amp;pid_d500"> 
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"></capabilities> 
+    <tv> 
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface> 
+      <filters> 
+        <filter cat="networkprovider" name="Microsoft ATSC Network Provider"        checkdevice="false"></filter> 
+        <filter cat="tunerdevice"     name="Bluebird, BDA Tuner"          checkdevice="false"></filter> 
+        <filter cat="capture"         name="Bluebird, WDM TsCapture"          checkdevice="false"></filter> 
+      </filters> 
+      <connections> 
+      <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"></connection> 
+      <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"></connection> 
+      </connections> 
+    </tv> 
   </capturecard>
 </capturecards>
