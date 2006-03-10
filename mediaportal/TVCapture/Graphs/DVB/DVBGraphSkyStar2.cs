@@ -1009,7 +1009,7 @@ namespace MediaPortal.TV.Recording
     {
       if (Network() == NetworkType.Unknown && _graphState==State.None)
       {
-        CreateGraph();
+        CreateGraph(0);
         DeleteGraph();
       }
       return _networkType;
