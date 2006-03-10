@@ -255,9 +255,9 @@ namespace MediaPortal.Configuration.Sections
       {
         try
         {
-          regValue = (Int32)subkey.GetValue("AuDsInterface");
-          regAuDsDnmx = (Int32)subkey.GetValue("AuDsDnmx");
-          regAuDsChanExpand = (Int32)subkey.GetValue("AuDsChanExpand");
+          regValue = (Int32)subkey.GetValue("AuDsInterface", 8);
+          regAuDsDnmx = (Int32)subkey.GetValue("AuDsDnmx", 2);
+          regAuDsChanExpand = (Int32)subkey.GetValue("AuDsChanExpand", -1);
 
           switch (regValue)
           {
@@ -390,11 +390,11 @@ namespace MediaPortal.Configuration.Sections
       {
           try
           {
-              Int32 regUIUseHVA = (Int32)subkey2.GetValue("UIUseHVA");
+              Int32 regUIUseHVA = (Int32)subkey2.GetValue("UIUseHVA", 1);
               if (regUIUseHVA == 1) checkBoxUIUseHVA.Checked = true;
               else checkBoxUIUseHVA.Checked = false;
 
-              Int32 regUIVMode = (Int32)subkey2.GetValue("UIVMode");
+              Int32 regUIVMode = (Int32)subkey2.GetValue("UIVMode", 0);
               if (regUIVMode == 1) comboBoxDeInterlace.SelectedIndex = 0;
               if (regUIVMode == 2) comboBoxDeInterlace.SelectedIndex = 1;
               if (regUIVMode == 3) comboBoxDeInterlace.SelectedIndex = 2;
@@ -673,8 +673,10 @@ namespace MediaPortal.Configuration.Sections
           break;
         // SPDIF Out 
         case 1:
+          #region SPDIF
           comboBoxOutPutMode.Items.Clear();
           comboBoxOutPutMode.Enabled = false;
+          #endregion
           break;
         //2 Speaker
         case 2:
@@ -694,19 +696,22 @@ namespace MediaPortal.Configuration.Sections
         case 4:
         case 5:
         case 6:
-          comboBoxOutPutMode.Items.Clear();
-          comboBoxOutPutMode.Enabled = true;
-          comboBoxOutPutMode.Items.AddRange(new object[] {
+            #region 4,6,7 & 8
+            comboBoxOutPutMode.Items.Clear();
+            comboBoxOutPutMode.Enabled = true;
+            comboBoxOutPutMode.Items.AddRange(new object[] {
                                                     "No Effect",
                                                     "Dolby Pro Logic IIx",
                                                     "CLMEI-2"});
-          break;
+            #endregion
+            break;
       }
     }
 
       private void UIUseHVA_CheckedChanged(object sender, EventArgs e)
       {
-
+          if (checkBoxUIUseHVA.Checked == true) comboBoxDeInterlace.Enabled = false;
+          if (checkBoxUIUseHVA.Checked == false) comboBoxDeInterlace.Enabled = true;
       }
 
       private void comboBoxDeInterlace_SelectedIndexChanged(object sender, EventArgs e)

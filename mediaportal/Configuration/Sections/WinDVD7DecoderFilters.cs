@@ -271,7 +271,7 @@ namespace MediaPortal.Configuration.Sections
       {
         try
         {
-          regAUDIOCHAN = (Int32)subkey.GetValue("AUDIOCHAN");
+          regAUDIOCHAN = (Int32)subkey.GetValue("AUDIOCHAN", 1);
           switch (regAUDIOCHAN)
           {
             //2 Speaker (comboBoxSpeakerConfig index 0)
@@ -284,7 +284,7 @@ namespace MediaPortal.Configuration.Sections
                                                     "Mono",
                                                     "Stereo",
                                                     "Dolby Surround Capable"});
-              regAUDIO = (Int32)subkey.GetValue("AUDIO");
+              regAUDIO = (Int32)subkey.GetValue("AUDIO", 1);
               if (regAUDIO == 0) iIndex = 0;
               if (regAUDIO == 1) iIndex = 1;
               if (regAUDIO == 2) iIndex = 2;
@@ -348,15 +348,15 @@ namespace MediaPortal.Configuration.Sections
       {
         try
         {
-          Int32 regDxVA = (Int32)subkey2.GetValue("DXVA");
+          Int32 regDxVA = (Int32)subkey2.GetValue("DXVA", 1);
           if (regDxVA == 1) checkBoxDxVA.Checked = true;
           else checkBoxDxVA.Checked = false;
 
-          Int32 regHWMC = (Int32)subkey2.GetValue("HWMC");
+          Int32 regHWMC = (Int32)subkey2.GetValue("HWMC", 1);
           if (regHWMC == 1) checkBoxHWMC.Checked = true;
           else checkBoxHWMC.Checked = false;
 
-          Int32 regBOBWEAVE = (Int32)subkey2.GetValue("BOBWEAVE");
+          Int32 regBOBWEAVE = (Int32)subkey2.GetValue("BOBWEAVE", 0);
           if (regBOBWEAVE == 0) comboBoxDeInterlace.SelectedIndex = 0;
           if (regBOBWEAVE == 1) comboBoxDeInterlace.SelectedIndex = 1;
           if (regBOBWEAVE == 2) comboBoxDeInterlace.SelectedIndex = 2;
