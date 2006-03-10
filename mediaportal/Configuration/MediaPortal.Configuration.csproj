@@ -297,6 +297,9 @@
     <Compile Include="Sections\PowerDVD6DecoderFilters.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\PureVideoDecoderFilters.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\WinDVD7DecoderFilters.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -583,6 +586,10 @@
     <EmbeddedResource Include="Sections\PowerDVD6DecoderFilters.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PowerDVD6DecoderFilters.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\PureVideoDecoderFilters.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PureVideoDecoderFilters.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\WinDVD7DecoderFilters.resx">
       <DependentUpon>WinDVD7DecoderFilters.cs</DependentUpon>

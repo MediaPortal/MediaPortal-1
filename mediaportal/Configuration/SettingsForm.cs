@@ -237,6 +237,7 @@ namespace MediaPortal.Configuration
 
       AddChildSection(filterSection, new PowerDVD6DecoderFilters());
       AddChildSection(filterSection, new WinDVD7DecoderFilters());
+      AddChildSection(filterSection, new PureVideoDecoderFilters());
 
       EncoderFiltersSection EncoderfilterSection = new EncoderFiltersSection();
       AddSection(EncoderfilterSection);
