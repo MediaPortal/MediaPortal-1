@@ -1007,6 +1007,11 @@ namespace MediaPortal.TV.Recording
 
     public override NetworkType Network()
     {
+      if (Network() == NetworkType.Unknown && _graphState==State.None)
+      {
+        CreateGraph();
+        DeleteGraph();
+      }
       return _networkType;
     }
 
