@@ -30,827 +30,998 @@ using System.Text;
 namespace DirectShowLib
 {
 
-    #region Declarations
+	#region Declarations
 
 #if ALLOW_UNTESTED_INTERFACES
-    /// <summary>
-    /// From QualityMessageType
-    /// </summary>
-    public enum QualityMessageType
-    {
-        Famine,
-        Flood
-    }
+	/// <summary>
+	/// From QualityMessageType
+	/// </summary>
+	public enum QualityMessageType
+	{
+		Famine,
+		Flood
+	}
 
-    /// <summary>
-    /// From VideoCopyProtectionType
-    /// </summary>
-    public enum VideoCopyProtectionType
-    {
-        MacrovisionBasic,
-        MacrovisionCBI
-    }
+	/// <summary>
+	/// From VideoCopyProtectionType
+	/// </summary>
+	public enum VideoCopyProtectionType
+	{
+		MacrovisionBasic,
+		MacrovisionCBI
+	}
 
-    /// <summary>
-    /// CameraControlProperty
-    /// </summary>
-    public enum CameraControlProperty
-    {
-        Pan,
-        Tilt,
-        Roll,
-        Zoom,
-        Exposure,
-        Iris,
-        Focus
-    }
+	/// <summary>
+	/// CameraControlProperty
+	/// </summary>
+	public enum CameraControlProperty
+	{
+		Pan = 1,
+		Tilt,
+		Roll,
+		Zoom,
+		Exposure,
+		Iris,
+		Focus
+	}
 
-    /// <summary>
-    /// CameraControlFlags
-    /// </summary>
-    public enum CameraControlFlags
-    {
-        Auto = 0x0001,
-        Manual = 0x0002
-    }
+	/// <summary>
+	/// CameraControlFlags
+	/// </summary>
+	[Flags]
+	public enum CameraControlFlags
+	{
+		None = 0x0,
+		Auto = 0x0001,
+		Manual = 0x0002
+	}
 
-    /// <summary>
-    /// From _AM_PUSHSOURCE_FLAGS
-    /// </summary>
-    [Flags]
-    public enum AMPushSourceFlags
-    {
-        InternalRM = 0x00000001,
-        NotLive = 0x00000002,
-        PivateClock = 0x00000004,
-        UseStreamClock = 0x00010000,
-        UseClockChain = 0x00020000,
-    }
+	/// <summary>
+	/// From _AM_PUSHSOURCE_FLAGS
+	/// </summary>
+	[Flags]
+	public enum AMPushSourceFlags
+	{
+		InternalRM = 0x00000001,
+		NotLive = 0x00000002,
+		PivateClock = 0x00000004,
+		UseStreamClock = 0x00010000,
+		UseClockChain = 0x00020000,
+	}
 
-    /// <summary>
-    /// From _DVResolution
-    /// </summary>
-    public enum DVResolution
-    {
-        Full = 1000,
-        Half = 1001,
-        Quarter = 1002,
-        Dc = 1003
-    }
+	/// <summary>
+	/// From _DVResolution
+	/// </summary>
+	public enum DVResolution
+	{
+		Full = 1000,
+		Half = 1001,
+		Quarter = 1002,
+		Dc = 1003
+	}
 
-    /// <summary>
-    /// From _AM_AUDIO_RENDERER_STAT_PARAM
-    /// </summary>
-    public enum AMAudioRendererStatParam
-    {
-        BreakCount = 1,
-        SlaveMode,
-        SilenceDur,
-        LastBufferDur,
-        Discontinuities,
-        SlaveRate,
-        SlaveDropWriteDur,
-        SlaveHighLowError,
-        SlaveLastHighLowError,
-        SlaveAccumError,
-        BufferFullness,
-        Jitter
-    }
+	/// <summary>
+	/// From _AM_AUDIO_RENDERER_STAT_PARAM
+	/// </summary>
+	public enum AMAudioRendererStatParam
+	{
+		BreakCount = 1,
+		SlaveMode,
+		SilenceDur,
+		LastBufferDur,
+		Discontinuities,
+		SlaveRate,
+		SlaveDropWriteDur,
+		SlaveHighLowError,
+		SlaveLastHighLowError,
+		SlaveAccumError,
+		BufferFullness,
+		Jitter
+	}
 
-    /// <summary>
-    /// From VIDEOENCODER_BITRATE_MODE
-    /// </summary>
-    public enum VideoEncoderBitrateMode
-    {
-        ConstantBitRate = 0,
-        VariableBitRateAverage,
-        VariableBitRatePeak
-    }
+	/// <summary>
+	/// From VIDEOENCODER_BITRATE_MODE
+	/// </summary>
+	public enum VideoEncoderBitrateMode
+	{
+		ConstantBitRate = 0,
+		VariableBitRateAverage,
+		VariableBitRatePeak
+	}
 
-    /// <summary>
-    /// From unnamed enum (REG_PINFLAG_B_*)
-    /// </summary>
-    [Flags]
-    public enum RegPinFlag
-    {
-        Zero = 0x1,
-        Renderer = 0x2,
-        Many = 0x4,
-        Output = 0x8
-    }
+	/// <summary>
+	/// From unnamed enum (REG_PINFLAG_B_*)
+	/// </summary>
+	[Flags]
+	public enum RegPinFlag
+	{
+		Zero = 0x1,
+		Renderer = 0x2,
+		Many = 0x4,
+		Output = 0x8
+	}
 
-    /// <summary>
-    /// From unnamed enum (ADVISE_*)
-    /// </summary>
-    [Flags]
-    public enum Advise
-    {
-        None = 0x0,
-        Clipping = 0x1,
-        Palette = 0x2,
-        ColorKey = 0x4,
-        Position = 0x8,
-        DisplayChange = 0x10,
-        All = Advise.Clipping | Advise.Palette | Advise.ColorKey | Advise.Position,
-        All2 = Advise.All | Advise.DisplayChange
-    }
+	/// <summary>
+	/// From unnamed enum (ADVISE_*)
+	/// </summary>
+	[Flags]
+	public enum Advise
+	{
+		None = 0x0,
+		Clipping = 0x1,
+		Palette = 0x2,
+		ColorKey = 0x4,
+		Position = 0x8,
+		DisplayChange = 0x10,
+		All = Advise.Clipping | Advise.Palette | Advise.ColorKey | Advise.Position,
+		All2 = Advise.All | Advise.DisplayChange
+	}
 
-    /// <summary>
-    /// From MPEG2_PROGRAM_* defines
-    /// </summary>
-    public enum MPEG2Program
-    {
-        StreamMap = 0x00000000,
-        ElementaryStream = 0x00000001,
-        DirecoryPesPacket = 0x00000002,
-        PackHeader = 0x00000003,
-        PesSteam = 0x00000004,
-        SystemHeader = 0x00000005,
-    }
+	// ------------------------------------------------------------------------
 
-    // ------------------------------------------------------------------------
+	/// <summary>
+	/// From REGFILTER
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct RegFilter
+	{
+		public Guid Clsid;
+		[MarshalAs(UnmanagedType.LPWStr)] public string Name;
+	}
 
-    /// <summary>
-    /// From REGFILTER
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct RegFilter
-    {
-        public Guid Clsid;
-        [MarshalAs(UnmanagedType.LPWStr)] public string Name;
-    }
+	/// <summary>
+	/// From REGPINTYPES
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct RegPinTypes
+	{
+		public Guid clsMajorType;
+		public Guid clsMinorType;
+	}
 
-    /// <summary>
-    /// From REGPINTYPES
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct RegPinTypes
-    {
-        public Guid clsMajorType;
-        public Guid clsMinorType;
-    }
+	/// <summary>
+	/// From Quality
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct Quality
+	{
+		public QualityMessageType Type;
+		public int Proportion;
+		public long Late;
+		public long TimeStamp;
+	}
 
-    /// <summary>
-    /// From Quality
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct Quality
-    {
-        public QualityMessageType Type;
-        public int Proportion;
-        public long Late;
-        public long TimeStamp;
-    }
+	/// <summary>
+	/// From REGFILTERPINS
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct RegFilterPins
+	{
+		[MarshalAs(UnmanagedType.LPWStr)] public string strName;
+		[MarshalAs(UnmanagedType.Bool)] public bool bRendered;
+		[MarshalAs(UnmanagedType.Bool)] public bool bOutput;
+		[MarshalAs(UnmanagedType.Bool)] public bool bZero;
+		[MarshalAs(UnmanagedType.Bool)] public bool bMany;
+		public Guid clsConnectsToFilter;
+		[MarshalAs(UnmanagedType.LPWStr)] public string strConnectsToPin;
+		public int nMediaTypes;
+		[MarshalAs(UnmanagedType.LPStruct)] public RegPinTypes [] lpMediaType;
+	}
 
-    /// <summary>
-    /// From REGFILTERPINS
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct RegFilterPins
-    {
-        [MarshalAs(UnmanagedType.LPWStr)] public string strName;
-        [MarshalAs(UnmanagedType.Bool)] public bool bRendered;
-        [MarshalAs(UnmanagedType.Bool)] public bool bOutput;
-        [MarshalAs(UnmanagedType.Bool)] public bool bZero;
-        [MarshalAs(UnmanagedType.Bool)] public bool bMany;
-        public Guid clsConnectsToFilter;
-        [MarshalAs(UnmanagedType.LPWStr)] public string strConnectsToPin;
-        public int nMediaTypes;
-        [MarshalAs(UnmanagedType.LPStruct)] public RegPinTypes [] lpMediaType;
-    }
+	/// <summary>
+	/// From REGFILTERPINS2
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct RegFilterPins2
+	{
+		public RegPinFlag dwFlags;
+		public int cInstances;
+		public int nMediaTypes;
+		public RegPinTypes [] lpMediaType;
+		public int nMediums;
+		public RegPinMedium [] lpMedium;
+		public Guid clsPinCategory;
+	}
 
-    /// <summary>
-    /// From REGFILTERPINS2
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct RegFilterPins2
-    {
-        public RegPinFlag dwFlags;
-        public int cInstances;
-        public int nMediaTypes;
-        public RegPinTypes [] lpMediaType;
-        public int nMediums;
-        public RegPinMedium [] lpMedium;
-        public Guid clsPinCategory;
-    }
+	/// <summary>
+	/// From REGFILTER2
+	/// </summary>
+	[StructLayout(LayoutKind.Explicit)]
+	public struct RegFilter2
+	{
+		[FieldOffset(0)] public int dwVersion;
+		[FieldOffset(4)] public int dwMerit;
+		[FieldOffset(8)] public int cPins;
+		[FieldOffset(12)] public RegFilterPins [] rgPins;
+		[FieldOffset(8)] public int cPins2;
+		[FieldOffset(12)] public RegFilterPins2 [] rgPins2;
+	}
 
-    /// <summary>
-    /// From REGFILTER2
-    /// </summary>
-    [StructLayout(LayoutKind.Explicit)]
-    public struct RegFilter2
-    {
-        [FieldOffset(0)] public int dwVersion;
-        [FieldOffset(4)] public int dwMerit;
-        [FieldOffset(8)] public int cPins;
-        [FieldOffset(12)] public RegFilterPins [] rgPins;
-        [FieldOffset(8)] public int cPins2;
-        [FieldOffset(12)] public RegFilterPins2 [] rgPins2;
-    }
+	/// <summary>
+	/// From RGNDATAHEADER
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct RgnDataHeader
+	{
+		public int dwSize;
+		public int iType;
+		public int nCount;
+		public int nRgnSize;
+		public Rectangle rcBound;
+	}
 
-    /// <summary>
-    /// From RGNDATAHEADER
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct RgnDataHeader
-    {
-        public int dwSize;
-        public int iType;
-        public int nCount;
-        public int nRgnSize;
-        public Rectangle rcBound;
-    }
+	/// <summary>
+	/// From RGNDATA
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct RgnData
+	{
+		public RgnDataHeader rdh;
+		public IntPtr Buffer;
+	}
 
-    /// <summary>
-    /// From RGNDATA
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct RgnData
-    {
-        public RgnDataHeader rdh;
-        public IntPtr Buffer;
-    }
+	/// <summary>
+	/// From TIMECODE
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential, Pack=1)]
+	public struct TimeCode
+	{
+		public short wFrameRate;
+		public short wFrameFract;
+		public int dwFrames;
+	}
 
-    /// <summary>
-    /// From TIMECODE
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
-    public struct TimeCode
-    {
-        public short wFrameRate;
-        public short wFrameFract;
-        public int dwFrames;
-    }
+	/// <summary>
+	/// From TIMECODE_SAMPLE
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct TimeCodeSample
+	{
+		public long qwTick;
+		public TimeCode timecode;
+		public int dwUser;
+		public int dwFlags;
+	}
 
-    /// <summary>
-    /// From TIMECODE_SAMPLE
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct TimeCodeSample
-    {
-        public long qwTick;
-        public TimeCode timecode;
-        public int dwUser;
-        public int dwFlags;
-    }
+	/// <summary>
+	/// From STREAM_ID_MAP
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct StreamIdMap
+	{
+		public int stream_id;
+		public int dwMediaSampleContent;
+		public int ulSubstreamFilterValue;
+		public int iDataOffset;
+	}
 
-    /// <summary>
-    /// From STREAM_ID_MAP
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct StreamIdMap
-    {
-        public int stream_id;
-        public int dwMediaSampleContent;
-        public int ulSubstreamFilterValue;
-        public int iDataOffset;
-    }
+	/// <summary>
+	/// From CodecAPIEventData
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct CodecAPIEventData
+	{
+		public Guid guid;
+		public int dataLength;
+		public int reserved1;
+		public int reserved2;
+		public int reserved3;
+	}
 
-    /// <summary>
-    /// From CodecAPIEventData
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct CodecAPIEventData
-    {
-        public Guid guid;
-        public int dataLength;
-        public int reserved1;
-        public int reserved2;
-        public int reserved3;
-    }
+	/// <summary>
+	/// From AMCOPPSignature
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct AMCOPPSignature
+	{
+		[MarshalAs(UnmanagedType.ByValArray, ArraySubType=UnmanagedType.I1, SizeConst=256)] public byte[] Signature;
+	}
 
-    /// <summary>
-    /// From AMCOPPSignature
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct AMCOPPSignature
-    {
-        [MarshalAs(UnmanagedType.ByValArray, ArraySubType=UnmanagedType.I1, SizeConst=256)] public byte[] Signature;
-    }
+	/// <summary>
+	/// From AMCOPPCommand
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct AMCOPPCommand
+	{
+		public Guid macKDI;
+		public Guid guidCommandID;
+		public int dwSequence;
+		public int cbSizeData;
+		[MarshalAs(UnmanagedType.ByValArray, ArraySubType=UnmanagedType.I1, SizeConst=4056)] public byte[] CommandData;
+	}
 
-    /// <summary>
-    /// From AMCOPPCommand
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct AMCOPPCommand
-    {
-        public Guid macKDI;
-        public Guid guidCommandID;
-        public int dwSequence;
-        public int cbSizeData;
-        [MarshalAs(UnmanagedType.ByValArray, ArraySubType=UnmanagedType.I1, SizeConst=4056)] public byte[] CommandData;
-    }
+	/// <summary>
+	/// From AMCOPPStatusInput
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct AMCOPPStatusInput
+	{
+		public Guid rApp;
+		public Guid guidStatusRequestID;
+		public int dwSequence;
+		public int cbSizeData;
+		[MarshalAs(UnmanagedType.ByValArray, ArraySubType=UnmanagedType.I1, SizeConst=4056)] public byte[] StatusData;
+	}
 
-    /// <summary>
-    /// From AMCOPPStatusInput
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct AMCOPPStatusInput
-    {
-        public Guid rApp;
-        public Guid guidStatusRequestID;
-        public int dwSequence;
-        public int cbSizeData;
-        [MarshalAs(UnmanagedType.ByValArray, ArraySubType=UnmanagedType.I1, SizeConst=4056)] public byte[] StatusData;
-    }
-
-    /// <summary>
-    /// From AMCOPPStatusOutput
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct AMCOPPStatusOutput
-    {
-        public Guid macKDI;
-        public int cbSizeData;
-        [MarshalAs(UnmanagedType.ByValArray, ArraySubType=UnmanagedType.I1, SizeConst=4076)] public byte[] COPPStatus;
-    }
+	/// <summary>
+	/// From AMCOPPStatusOutput
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct AMCOPPStatusOutput
+	{
+		public Guid macKDI;
+		public int cbSizeData;
+		[MarshalAs(UnmanagedType.ByValArray, ArraySubType=UnmanagedType.I1, SizeConst=4076)] public byte[] COPPStatus;
+	}
 
 #endif
 
-    /// <summary>
-    /// From _AM_FILTER_MISC_FLAGS
-    /// </summary>
-    [Flags]
-    public enum AMFilterMiscFlags
-    {
-        IsRenderer = 0x00000001,
-        IsSource = 0x00000002
-    }
+	/// <summary>
+	/// From _AM_FILTER_MISC_FLAGS
+	/// </summary>
+	[Flags]
+	public enum AMFilterMiscFlags
+	{
+		IsRenderer = 0x00000001,
+		IsSource = 0x00000002
+	}
 
-    /// <summary>
-    /// From AM_STREAM_INFO_FLAGS
-    /// </summary>
-    [Flags]
-    public enum AMStreamInfoFlags
-    {
-        None = 0x00000000,
-        StartDefined = 0x00000001,
-        StopDefined = 0x00000002,
-        Discarding = 0x00000004,
-        StopSendExtra = 0x00000010
-    }
+	/// <summary>
+	/// From AM_STREAM_INFO_FLAGS
+	/// </summary>
+	[Flags]
+	public enum AMStreamInfoFlags
+	{
+		None = 0x00000000,
+		StartDefined = 0x00000001,
+		StopDefined = 0x00000002,
+		Discarding = 0x00000004,
+		StopSendExtra = 0x00000010
+	}
 
-    /// <summary>
-    /// From AM_STREAM_INFO
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct AMStreamInfo
-    {
-        public long tStart;
-        public long tStop;
-        public int dwStartCookie;
-        public int dwStopCookie;
-        public AMStreamInfoFlags dwFlags;
-    }
+	/// <summary>
+	/// From MPEG2_PROGRAM_* defines
+	/// </summary>
+	public enum MPEG2Program
+	{
+		StreamMap = 0x00000000,
+		ElementaryStream = 0x00000001,
+		DirecoryPesPacket = 0x00000002,
+		PackHeader = 0x00000003,
+		PesSteam = 0x00000004,
+		SystemHeader = 0x00000005,
+	}
 
-    /// <summary>
-    /// From _DVDECODERRESOLUTION
-    /// </summary>
-    public enum DVDecoderResolution
-    {
-        r720x480 = 1000,
-        r360x240 = 1001,
-        r180x120 = 1002,
-        r88x60 = 1003
-    }
+	/// <summary>
+	/// From AM_STREAM_INFO
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct AMStreamInfo
+	{
+		public long tStart;
+		public long tStop;
+		public int dwStartCookie;
+		public int dwStopCookie;
+		public AMStreamInfoFlags dwFlags;
+	}
 
-    /// <summary>
-    /// From _AM_INTF_SEARCH_FLAGS
-    /// </summary>
-    [Flags]
-    public enum AMIntfSearchFlags
-    {
-        None = 0x00000000,
-        InputPin = 0x00000001,
-        OutputPin = 0x00000002,
-        Filter = 0x00000004
-    }
+	/// <summary>
+	/// From _DVDECODERRESOLUTION
+	/// </summary>
+	public enum DVDecoderResolution
+	{
+		r720x480 = 1000,
+		r360x240 = 1001,
+		r180x120 = 1002,
+		r88x60 = 1003
+	}
 
-    /// <summary>
-    /// From AM_QUERY_DECODER_* defines
-    /// </summary>
-    public enum AMQueryDecoder
-    {
-        VMRSupport = 0x00000001,
-        DXVA_1Support = 0x00000002,
-        DVDSupport = 0x00000003,
-        ATSC_SDSupport = 0x00000004,
-        ATSC_HDSupport = 0x00000005,
-        VMR9Support = 0x00000006
-    }
+	/// <summary>
+	/// From _AM_INTF_SEARCH_FLAGS
+	/// </summary>
+	[Flags]
+	public enum AMIntfSearchFlags
+	{
+		None = 0x00000000,
+		InputPin = 0x00000001,
+		OutputPin = 0x00000002,
+		Filter = 0x00000004
+	}
 
-    /// <summary>
-    /// From DECODER_CAP_* defines
-    /// </summary>
-    public enum DecoderCap
-    {
-        NotSupported = 0x00000000,
-        Supported = 0x00000001
-    }
+	/// <summary>
+	/// From AM_QUERY_DECODER_* defines
+	/// </summary>
+	public enum AMQueryDecoder
+	{
+		VMRSupport = 0x00000001,
+		DXVA_1Support = 0x00000002,
+		DVDSupport = 0x00000003,
+		ATSC_SDSupport = 0x00000004,
+		ATSC_HDSupport = 0x00000005,
+		VMR9Support = 0x00000006
+	}
 
-    /// <summary>
-    /// From DECIMATION_USAGE
-    /// </summary>
-    public enum DecimationUsage
-    {
-        Legacy,
-        UseDecoderOnly,
-        UseVideoPortOnly,
-        UseOverlayOnly,
-        Default
-    }
+	/// <summary>
+	/// From DECODER_CAP_* defines
+	/// </summary>
+	public enum DecoderCap
+	{
+		NotSupported = 0x00000000,
+		Supported = 0x00000001
+	}
 
-    /// <summary>
-    /// From AMOVERLAYFX
-    /// </summary>
-    [Flags]
-    public enum AMOverlayFX
-    {
-        NoFX = 0x00000000,
-        MirrorLeftRight = 0x00000002,
-        MirrorUpDown = 0x00000004,
-        Deinterlace = 0x00000008
-    }
+	/// <summary>
+	/// From DECIMATION_USAGE
+	/// </summary>
+	public enum DecimationUsage
+	{
+		Legacy,
+		UseDecoderOnly,
+		UseVideoPortOnly,
+		UseOverlayOnly,
+		Default
+	}
 
-    /// <summary>
-    /// From _AMRESCTL_RESERVEFLAGS
-    /// </summary>
-    [Flags]
-    public enum AMResCtlReserveFlags
-    {
-        Reserve = 0x00,
-        UnReserve = 0x01
-    }
+	/// <summary>
+	/// From AMOVERLAYFX
+	/// </summary>
+	[Flags]
+	public enum AMOverlayFX
+	{
+		NoFX = 0x00000000,
+		MirrorLeftRight = 0x00000002,
+		MirrorUpDown = 0x00000004,
+		Deinterlace = 0x00000008
+	}
 
-    /// <summary>
-    /// From _AMSTREAMSELECTINFOFLAGS
-    /// </summary>
-    [Flags]
-    public enum AMStreamSelectInfoFlags
-    {
-        Disabled = 0x0,
-        Enabled = 0x01,
-        Exclusive = 0x02
-    }
+	/// <summary>
+	/// From _AMRESCTL_RESERVEFLAGS
+	/// </summary>
+	[Flags]
+	public enum AMResCtlReserveFlags
+	{
+		Reserve = 0x00,
+		UnReserve = 0x01
+	}
 
-    /// <summary>
-    /// From _AMSTREAMSELECTENABLEFLAGS
-    /// </summary>
-    [Flags]
-    public enum AMStreamSelectEnableFlags
-    {
-        DisableAll = 0x0,
-        Enable = 0x01,
-        EnableAll = 0x02
-    }
+	/// <summary>
+	/// From _AMSTREAMSELECTINFOFLAGS
+	/// </summary>
+	[Flags]
+	public enum AMStreamSelectInfoFlags
+	{
+		Disabled = 0x0,
+		Enabled = 0x01,
+		Exclusive = 0x02
+	}
 
-    /// <summary>
-    /// unnamed enum
-    /// </summary>
-    [Flags]
-    public enum Merit
-    {
-        Preferred    = 0x800000,
-        Normal       = 0x600000,
-        Unlikely     = 0x400000,
-        DoNotUse     = 0x200000,
-        SWCompressor = 0x100000,
-        HWCompressor = 0x100050
-    }
+	/// <summary>
+	/// From _AMSTREAMSELECTENABLEFLAGS
+	/// </summary>
+	[Flags]
+	public enum AMStreamSelectEnableFlags
+	{
+		DisableAll = 0x0,
+		Enable = 0x01,
+		EnableAll = 0x02
+	}
 
-    /// <summary>
-    /// From COLORKEY
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public class ColorKey
-    {
-        public int KeyType;
-        public int PaletteIndex;
-        public int LowColorValue;
-        public int HighColorValue;
-    }
+	/// <summary>
+	/// unnamed enum
+	/// </summary>
+	[Flags]
+	public enum Merit
+	{
+		Preferred    = 0x800000,
+		Normal       = 0x600000,
+		Unlikely     = 0x400000,
+		DoNotUse     = 0x200000,
+		SWCompressor = 0x100000,
+		HWCompressor = 0x100050
+	}
 
-    /// <summary>
-    /// From REGPINMEDIUM
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public class RegPinMedium
-    {
-        public Guid clsMedium;
-        public int dw1;
-        public int dw2;
-    }
+	/// <summary>
+	/// From COLORKEY
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public class ColorKey
+	{
+		public int KeyType;
+		public int PaletteIndex;
+		public int LowColorValue;
+		public int HighColorValue;
+	}
 
-    /// <summary>
-    /// From DVINFO
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct DVInfo
-    {
-        public int dwDVAAuxSrc;
-        public int dwDVAAuxCtl;
-        public int dwDVAAuxSrc1;
-        public int dwDVAAuxCtl1;
-        public int dwDVVAuxSrc;
-        public int dwDVVAuxCtl;
-        public int dwDVReserved1;
-        public int dwDVReserved2;
-    }
+	/// <summary>
+	/// From REGPINMEDIUM
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public class RegPinMedium
+	{
+		public Guid clsMedium;
+		public int dw1;
+		public int dw2;
+	}
 
-    /// <summary>
-    /// From _DVENCODERRESOLUTION
-    /// </summary>
-    public enum DVEncoderResolution
-    {
-        r720x480 = 2012,
-        r360x240 = 2013,
-        r180x120 = 2014,
-        r88x60 = 2015
-    }
+	/// <summary>
+	/// From DVINFO
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct DVInfo
+	{
+		public int dwDVAAuxSrc;
+		public int dwDVAAuxCtl;
+		public int dwDVAAuxSrc1;
+		public int dwDVAAuxCtl1;
+		public int dwDVVAuxSrc;
+		public int dwDVVAuxCtl;
+		public int dwDVReserved1;
+		public int dwDVReserved2;
+	}
 
-    /// <summary>
-    /// From _DVENCODERFORMAT
-    /// </summary>
-    public enum DVEncoderFormat
-    {
-        DVSD = 2007,
-        DVHD = 2008,
-        DVSL = 2009
-    }
+	/// <summary>
+	/// From _DVENCODERRESOLUTION
+	/// </summary>
+	public enum DVEncoderResolution
+	{
+		r720x480 = 2012,
+		r360x240 = 2013,
+		r180x120 = 2014,
+		r88x60 = 2015
+	}
 
-    /// <summary>
-    /// From _DVENCODERVIDEOFORMAT
-    /// </summary>
-    public enum DVEncoderVideoFormat
-    {
-        NTSC = 2000,
-        PAL = 2001
-    }
+	/// <summary>
+	/// From _DVENCODERFORMAT
+	/// </summary>
+	public enum DVEncoderFormat
+	{
+		DVSD = 2007,
+		DVHD = 2008,
+		DVSL = 2009
+	}
 
-    /// <summary>
-    /// From _AM_RENSDEREXFLAGS
-    /// </summary>
-    [Flags]
-    public enum AMRenderExFlags
-    {
-        None = 0,
-        RenderToExistingRenderers = 1
-    }
+	/// <summary>
+	/// From _DVENCODERVIDEOFORMAT
+	/// </summary>
+	public enum DVEncoderVideoFormat
+	{
+		NTSC = 2000,
+		PAL = 2001
+	}
 
-    /// <summary>
-    /// From InterleavingMode
-    /// </summary>
-    public enum InterleavingMode
-    {
-        None,
-        Capture,
-        Full,
-        NoneBuffered
-    }
+	/// <summary>
+	/// From _AM_RENSDEREXFLAGS
+	/// </summary>
+	[Flags]
+	public enum AMRenderExFlags
+	{
+		None = 0,
+		RenderToExistingRenderers = 1
+	}
 
-    /// <summary>
-    /// From AM_FILESINK_FLAGS
-    /// </summary>
-    [Flags]
-    public enum AMFileSinkFlags
-    {
-        None = 0,
-        OverWrite = 0x00000001
-    }
+	/// <summary>
+	/// From InterleavingMode
+	/// </summary>
+	public enum InterleavingMode
+	{
+		None,
+		Capture,
+		Full,
+		NoneBuffered
+	}
 
-    /// <summary>
-    /// From KSPROPERTY_SUPPORT_* defines
-    /// </summary>
-    [Flags]
-    public enum KSPropertySupport
-    {
-        Get = 1,
-        Set = 2
-    }
+	/// <summary>
+	/// From AM_FILESINK_FLAGS
+	/// </summary>
+	[Flags]
+	public enum AMFileSinkFlags
+	{
+		None = 0,
+		OverWrite = 0x00000001
+	}
 
-    /// <summary>
-    /// From AMPROPERTY_PIN
-    /// </summary>
-    public enum AMPropertyPin
-    {
-        Category,
-        Medium
-    }
+	/// <summary>
+	/// From KSPROPERTY_SUPPORT_* defines
+	/// </summary>
+	[Flags]
+	public enum KSPropertySupport
+	{
+		Get = 1,
+		Set = 2
+	}
 
-    /// <summary>
-    /// From AMTunerSubChannel
-    /// </summary>
-    public enum AMTunerSubChannel
-    {
-        NoTune = -2,
-        Default = -1
-    }
+	/// <summary>
+	/// From AMPROPERTY_PIN
+	/// </summary>
+	public enum AMPropertyPin
+	{
+		Category,
+		Medium
+	}
 
-    /// <summary>
-    /// From AMTunerSignalStrength
-    /// </summary>
-    public enum AMTunerSignalStrength
-    {
-        HasNoSignalStrength = -1,
-        NoSignal = 0,
-        SignalPresent = 1
-    }
+	/// <summary>
+	/// From AMTunerSubChannel
+	/// </summary>
+	public enum AMTunerSubChannel
+	{
+		NoTune = -2,
+		Default = -1
+	}
 
-    /// <summary>
-    /// From AMTunerModeType
-    /// </summary>
-    [Flags]
-    public enum AMTunerModeType
-    {
-        Default = 0x0000,
-        TV = 0x0001,
-        FMRadio = 0x0002,
-        AMRadio = 0x0004,
-        Dss = 0x0008,
-        DTV = 0x0010
-    }
+	/// <summary>
+	/// From AMTunerSignalStrength
+	/// </summary>
+	public enum AMTunerSignalStrength
+	{
+		HasNoSignalStrength = -1,
+		NoSignal = 0,
+		SignalPresent = 1
+	}
 
-    /// <summary>
-    /// From AMTunerEventType
-    /// </summary>
-    public enum AMTunerEventType
-    {
-        Changed = 0x0001
-    }
+	/// <summary>
+	/// From AMTunerModeType
+	/// </summary>
+	[Flags]
+	public enum AMTunerModeType
+	{
+		Default = 0x0000,
+		TV = 0x0001,
+		FMRadio = 0x0002,
+		AMRadio = 0x0004,
+		Dss = 0x0008,
+		DTV = 0x0010
+	}
 
-    /// <summary>
-    /// From AnalogVideoStandard
-    /// </summary>
-    [Flags]
-    public enum AnalogVideoStandard
-    {
-        None = 0x00000000,
-        NTSC_M = 0x00000001,
-        NTSC_M_J = 0x00000002,
-        NTSC_433 = 0x00000004,
-        PAL_B = 0x00000010,
-        PAL_D = 0x00000020,
-        PAL_G = 0x00000040,
-        PAL_H = 0x00000080,
-        PAL_I = 0x00000100,
-        PAL_M = 0x00000200,
-        PAL_N = 0x00000400,
-        PAL_60 = 0x00000800,
-        SECAM_B = 0x00001000,
-        SECAM_D = 0x00002000,
-        SECAM_G = 0x00004000,
-        SECAM_H = 0x00008000,
-        SECAM_K = 0x00010000,
-        SECAM_K1 = 0x00020000,
-        SECAM_L = 0x00040000,
-        SECAM_L1 = 0x00080000,
-        PAL_N_COMBO = 0x00100000,
+	/// <summary>
+	/// From AMTunerEventType
+	/// </summary>
+	public enum AMTunerEventType
+	{
+		Changed = 0x0001
+	}
 
-        NTSCMask = 0x00000007,
-        PALMask = 0x00100FF0,
-        SECAMMask = 0x000FF000
-    }
+	/// <summary>
+	/// From AnalogVideoStandard
+	/// </summary>
+	[Flags]
+	public enum AnalogVideoStandard
+	{
+		None = 0x00000000,
+		NTSC_M = 0x00000001,
+		NTSC_M_J = 0x00000002,
+		NTSC_433 = 0x00000004,
+		PAL_B = 0x00000010,
+		PAL_D = 0x00000020,
+		PAL_G = 0x00000040,
+		PAL_H = 0x00000080,
+		PAL_I = 0x00000100,
+		PAL_M = 0x00000200,
+		PAL_N = 0x00000400,
+		PAL_60 = 0x00000800,
+		SECAM_B = 0x00001000,
+		SECAM_D = 0x00002000,
+		SECAM_G = 0x00004000,
+		SECAM_H = 0x00008000,
+		SECAM_K = 0x00010000,
+		SECAM_K1 = 0x00020000,
+		SECAM_L = 0x00040000,
+		SECAM_L1 = 0x00080000,
+		PAL_N_COMBO = 0x00100000,
 
-    /// <summary>
-    /// From TunerInputType
-    /// </summary>
-    public enum TunerInputType
-    {
-        Cable,
-        Antenna
-    }
+		NTSCMask = 0x00000007,
+		PALMask = 0x00100FF0,
+		SECAMMask = 0x000FF000
+	}
 
-    /// <summary>
-    /// From VideoControlFlags
-    /// </summary>
-    [Flags]
-    public enum VideoControlFlags
-    {
-        None = 0x0,
-        FlipHorizontal = 0x0001,
-        FlipVertical = 0x0002,
-        ExternalTriggerEnable = 0x0004,
-        Trigger = 0x0008
-    }
+	/// <summary>
+	/// From TunerInputType
+	/// </summary>
+	public enum TunerInputType
+	{
+		Cable,
+		Antenna
+	}
 
-    /// <summary>
-    /// From TVAudioMode
-    /// </summary>
-    [Flags]
-    public enum TVAudioMode
-    {
-        Mono = 0x0001,
-        Stereo = 0x0002,
-        LangA = 0x0010,
-        LangB = 0x0020,
-        LangC = 0x0040,
-    }
+	/// <summary>
+	/// From VideoControlFlags
+	/// </summary>
+	[Flags]
+	public enum VideoControlFlags
+	{
+		None = 0x0,
+		FlipHorizontal = 0x0001,
+		FlipVertical = 0x0002,
+		ExternalTriggerEnable = 0x0004,
+		Trigger = 0x0008
+	}
 
-    /// <summary>
-    /// From VideoProcAmpProperty
-    /// </summary>
-    public enum VideoProcAmpProperty
-    {
-        Brightness,
-        Contrast,
-        Hue,
-        Saturation,
-        Sharpness,
-        Gamma,
-        ColorEnable,
-        WhiteBalance,
-        BacklightCompensation,
-        Gain
-    }
+	/// <summary>
+	/// From TVAudioMode
+	/// </summary>
+	[Flags]
+	public enum TVAudioMode
+	{
+		Mono = 0x0001,
+		Stereo = 0x0002,
+		LangA = 0x0010,
+		LangB = 0x0020,
+		LangC = 0x0040,
+	}
 
-    /// <summary>
-    /// From VideoProcAmpFlags
-    /// </summary>
-    [Flags]
-    public enum VideoProcAmpFlags
-    {
-        Auto = 0x0001,
-        Manual = 0x0002
-    }
+	/// <summary>
+	/// From VideoProcAmpProperty
+	/// </summary>
+	public enum VideoProcAmpProperty
+	{
+		Brightness,
+		Contrast,
+		Hue,
+		Saturation,
+		Sharpness,
+		Gamma,
+		ColorEnable,
+		WhiteBalance,
+		BacklightCompensation,
+		Gain
+	}
 
-    /// <summary>
-    /// From PhysicalConnectorType
-    /// </summary>
-    public enum PhysicalConnectorType
-    {
-        Video_Tuner = 1,
-        Video_Composite,
-        Video_SVideo,
-        Video_RGB,
-        Video_YRYBY,
-        Video_SerialDigital,
-        Video_ParallelDigital,
-        Video_SCSI,
-        Video_AUX,
-        Video_1394,
-        Video_USB,
-        Video_VideoDecoder,
-        Video_VideoEncoder,
-        Video_SCART,
-        Video_Black,
+	/// <summary>
+	/// From VideoProcAmpFlags
+	/// </summary>
+	[Flags]
+	public enum VideoProcAmpFlags
+	{
+		Auto = 0x0001,
+		Manual = 0x0002
+	}
 
-        Audio_Tuner = 0x1000,
-        Audio_Line,
-        Audio_Mic,
-        Audio_AESDigital,
-        Audio_SPDIFDigital,
-        Audio_SCSI,
-        Audio_AUX,
-        Audio_1394,
-        Audio_USB,
-        Audio_AudioDecoder,
-    }
+	/// <summary>
+	/// From PhysicalConnectorType
+	/// </summary>
+	public enum PhysicalConnectorType
+	{
+		Video_Tuner = 1,
+		Video_Composite,
+		Video_SVideo,
+		Video_RGB,
+		Video_YRYBY,
+		Video_SerialDigital,
+		Video_ParallelDigital,
+		Video_SCSI,
+		Video_AUX,
+		Video_1394,
+		Video_USB,
+		Video_VideoDecoder,
+		Video_VideoEncoder,
+		Video_SCART,
+		Video_Black,
 
-    /// <summary>
-    /// From AMTVAudioEventType
-    /// </summary>
-    [Flags]
-    public enum AMTVAudioEventType
-    {
-        Changed = 0x0001
-    }
+		Audio_Tuner = 0x1000,
+		Audio_Line,
+		Audio_Mic,
+		Audio_AESDigital,
+		Audio_SPDIFDigital,
+		Audio_SCSI,
+		Audio_AUX,
+		Audio_1394,
+		Audio_USB,
+		Audio_AudioDecoder,
+	}
 
-    /// <summary>
-    /// From CompressionCaps
-    /// </summary>
-    [Flags]
-    public enum CompressionCaps
-    {
-        None = 0x0,
-        CanQuality = 0x01,
-        CanCrunch = 0x02,
-        CanKeyFrame = 0x04,
-        CanBFrame = 0x08,
-        CanWindow = 0x10
-    }
+	/// <summary>
+	/// From AMTVAudioEventType
+	/// </summary>
+	[Flags]
+	public enum AMTVAudioEventType
+	{
+		Changed = 0x0001
+	}
 
-    /// <summary>
-    /// From VfwCompressDialogs
-    /// </summary>
-    [Flags]
-    public enum VfwCompressDialogs
-    {
-        Config = 0x01,
-        About = 0x02,
-        QueryConfig = 0x04,
-        QueryAbout = 0x08
-    }
+	/// <summary>
+	/// From CompressionCaps
+	/// </summary>
+	[Flags]
+	public enum CompressionCaps
+	{
+		None = 0x0,
+		CanQuality = 0x01,
+		CanCrunch = 0x02,
+		CanKeyFrame = 0x04,
+		CanBFrame = 0x08,
+		CanWindow = 0x10
+	}
 
-    /// <summary>
-    /// From VfwCaptureDialogs
-    /// </summary>
-    [Flags]
-    public enum VfwCaptureDialogs
-    {
-        Source = 0x01,
-        Format = 0x02,
-        Display = 0x04
-    }
+	/// <summary>
+	/// From VfwCompressDialogs
+	/// </summary>
+	[Flags]
+	public enum VfwCompressDialogs
+	{
+		Config = 0x01,
+		About = 0x02,
+		QueryConfig = 0x04,
+		QueryAbout = 0x08
+	}
+
+	/// <summary>
+	/// From VfwCaptureDialogs
+	/// </summary>
+	[Flags]
+	public enum VfwCaptureDialogs
+	{
+		None = 0x00,
+		Source = 0x01,
+		Format = 0x02,
+		Display = 0x04
+	}
+
+	/// <summary>
+	/// From DEV_PORT_*
+	/// </summary>
+	public enum ExtDevicePort
+	{
+		Sim = 1,
+		Com1 = 2,
+		Com2 = 3,
+		Com3 = 4,
+		Com4 = 5,
+		Diaq = 6,
+		Arti = 7,
+		FireWire1394 = 8,
+		Usb = 9,
+		Min = Sim,
+		Max = Usb
+	}
+
+	public enum ExtDeviceBase
+	{
+		Base = 0x1000
+	}
+
+	/// <summary>
+	/// From ED_DEVCAP*, ED_DEVTYPE* etc.
+	/// </summary>
+	public enum ExtDeviceCaps
+	{
+		None = 0, 
+		CanRecord = ExtDeviceBase.Base+1,
+		CanRecordStrobe =ExtDeviceBase.Base+2,
+		HasAudio =ExtDeviceBase.Base+3,
+		HasVideo = ExtDeviceBase.Base+4,
+		UsesFiles = ExtDeviceBase.Base+5,
+		CanSave = ExtDeviceBase.Base+6,
+		DeviceType = ExtDeviceBase.Base+7,
+		VCR = ExtDeviceBase.Base+8,
+		LaserDisk = ExtDeviceBase.Base+9,
+		ATR = ExtDeviceBase.Base+10,
+		DDR = ExtDeviceBase.Base+11,
+		Router = ExtDeviceBase.Base+12,
+		Keyer = ExtDeviceBase.Base+13,
+		MixerVideo = ExtDeviceBase.Base+14,
+		DVE = ExtDeviceBase.Base+15,
+		WipeGen = ExtDeviceBase.Base+16,
+		MixerAudio = ExtDeviceBase.Base+17,
+		CG = ExtDeviceBase.Base+18,
+		TBC = ExtDeviceBase.Base+19,
+		TCG = ExtDeviceBase.Base+20,
+		GPI = ExtDeviceBase.Base+21, 
+		Joystick = ExtDeviceBase.Base+22,
+		Keyboard = ExtDeviceBase.Base+3,
+		ExternalDeviceID = ExtDeviceBase.Base+24,
+		TimeCodeRead = ExtDeviceBase.Base+25,
+		TimeCodeWrite = ExtDeviceBase.Base+26,
+		CtlTrkRead = ExtDeviceBase.Base+27,
+		IndexRead = ExtDeviceBase.Base+28,
+		PreRoll = ExtDeviceBase.Base+29,
+		PostRoll = ExtDeviceBase.Base+30,
+		SyncAccuracy = ExtDeviceBase.Base+31,
+		Precise = ExtDeviceBase.Base+32,
+		Frame = ExtDeviceBase.Base+33,
+		Rough = ExtDeviceBase.Base+34,
+		NormalRate = ExtDeviceBase.Base+35,
+		Rate24 = ExtDeviceBase.Base+36,
+		Rate25 = ExtDeviceBase.Base+37,
+		Rate2997 = ExtDeviceBase.Base+38,
+		Rate30 = ExtDeviceBase.Base+39,
+		CanPreview = ExtDeviceBase.Base+40,
+		CanMonitorSources = ExtDeviceBase.Base+41,
+		CanTest = ExtDeviceBase.Base+42,
+		VideoInputs = ExtDeviceBase.Base+43,
+		AudioInputs = ExtDeviceBase.Base+44,
+		NeedsCalibrating = ExtDeviceBase.Base+45,
+		SeekType = ExtDeviceBase.Base+46,
+		Perfect = ExtDeviceBase.Base+47,
+		Fast = ExtDeviceBase.Base+48,
+		Slow = ExtDeviceBase.Base+49,
+		On = ExtDeviceBase.Base+50,
+		Off = ExtDeviceBase.Base+51,
+		Standby = ExtDeviceBase.Base+52,
+		Active = ExtDeviceBase.Base+53,
+		Inactive = ExtDeviceBase.Base+54,
+		All = ExtDeviceBase.Base+55,
+		Test = ExtDeviceBase.Base+56
+	}
+
+	/// <summary>
+	/// From ED_TRANSCAP*
+	/// </summary>
+	public enum ExtTransportCaps
+	{
+		None = 0,
+		CanEject = ExtDeviceBase.Base+100,
+		CanBumpPlay = ExtDeviceBase.Base+101,
+		CanPlayBackwards = ExtDeviceBase.Base+102,
+		CanSetEE = ExtDeviceBase.Base+103,
+		CanSetPB = ExtDeviceBase.Base+104,
+		CanDelayVideoIn = ExtDeviceBase.Base+105,
+		CanDelayVideoOut = ExtDeviceBase.Base+106,
+		CanDelayAudioIn = ExtDeviceBase.Base+107,
+		CanDelayAudioOut = ExtDeviceBase.Base+108,
+		FwdVariableMax = ExtDeviceBase.Base+109,
+		FwdVariableMin = ExtDeviceBase.Base+800,
+		RevVariableMax = ExtDeviceBase.Base+110,
+		RevVariableMin = ExtDeviceBase.Base+801,
+		FwdShuttleMax = ExtDeviceBase.Base+802,
+		FwdShuttleMin = ExtDeviceBase.Base+803,
+		RevShuttleMax = ExtDeviceBase.Base+804,
+		RevShuttleMin = ExtDeviceBase.Base+805,
+		NumAudioTracks = ExtDeviceBase.Base+111,
+		LTCTrack = ExtDeviceBase.Base+112,
+		NeedsTBC = ExtDeviceBase.Base+113,
+		NeedsCueing = ExtDeviceBase.Base+114,
+		CanInsert = ExtDeviceBase.Base+115,
+		CanAssemble = ExtDeviceBase.Base+116,
+		FieldStep = ExtDeviceBase.Base+117,
+		ClockIncRate = ExtDeviceBase.Base+118,
+		CanDetechLength = ExtDeviceBase.Base+119,
+		CanFreeze = ExtDeviceBase.Base+120,
+		HasTuner = ExtDeviceBase.Base+121,
+		HasTimer = ExtDeviceBase.Base+122,
+		HasClock = ExtDeviceBase.Base+123,
+		MultipleEdits = ExtDeviceBase.Base+806,
+		IsMaster = ExtDeviceBase.Base+807,
+		HasDT = ExtDeviceBase.Base+808
+	}
+
+	/// <summary>
+	/// From ED_MEDIA*
+	/// </summary>
+	public enum ExtTransportMediaStates
+	{
+		None = 0,
+		SpinUp = ExtDeviceBase.Base+130,
+		SpinDown = ExtDeviceBase.Base+131,
+		Unload = ExtDeviceBase.Base+132
+	}
+
+	/// <summary>
+	/// From ED_MODE*
+	/// </summary>
+	public enum ExtTransportModes
+	{
+		None = 0,
+		Play = ExtDeviceBase.Base+200,
+		Stop = ExtDeviceBase.Base+201,
+		Freeze = ExtDeviceBase.Base+202,
+		Thaw = ExtDeviceBase.Base+203,
+		FF = ExtDeviceBase.Base+204,
+		Rew = ExtDeviceBase.Base+205,
+		Record = ExtDeviceBase.Base+206,
+		RecordStrobe = ExtDeviceBase.Base+207,
+		RecordFreeze = ExtDeviceBase.Base+808,
+		Step = ExtDeviceBase.Base+208,
+		StepFwd = Step,
+		StepRew = ExtDeviceBase.Base+809,
+		Shuttle = ExtDeviceBase.Base+209,
+		EditCue = ExtDeviceBase.Base+210,
+		VarSpeed = ExtDeviceBase.Base+211,
+		Perform = ExtDeviceBase.Base+212,
+		LinkOn = ExtDeviceBase.Base+280,
+		LinkOff = ExtDeviceBase.Base+281,
+		NotifyEnable = ExtDeviceBase.Base+810,
+		NotifyDisable = ExtDeviceBase.Base+811,
+		ShotSearch = ExtDeviceBase.Base+812
+	}
 
     /// <summary>
     /// From VIDEO_STREAM_CONFIG_CAPS
@@ -1530,59 +1701,22 @@ namespace DirectShowLib
             );
     }
 
-    [Guid("B5730A90-1A2C-11cf-8C23-00AA006B6814"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IAMExtDevice
-    {
-        [PreserveSig]
-        int GetCapability(
-            [In] int Capability,
-            [Out] out int pValue,
-            [Out] out double pdblValue
-            );
-
-        [PreserveSig]
-        int get_ExternalDeviceID([Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszData);
-
-        [PreserveSig]
-        int get_ExternalDeviceVersion([Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszData);
-
-        [PreserveSig]
-        int put_DevicePower([In] int PowerMode);
-
-        [PreserveSig]
-        int get_DevicePower([Out] out int pPowerMode);
-
-        [PreserveSig]
-        int Calibrate(
-            [In] IntPtr hEvent, // HEVENT
-            [In] int Mode,
-            [Out] out int pStatus
-            );
-
-        [PreserveSig]
-        int put_DevicePort([In] int DevicePort);
-
-        [PreserveSig]
-        int get_DevicePort([Out] out int pDevicePort);
-    }
-
     [Guid("A03CD5F0-3045-11cf-8C44-00AA006B6814"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMExtTransport
     {
         [PreserveSig]
         int GetCapability(
-            [In] int Capability,
+            [In] ExtTransportCaps Capability,
             [Out] out int pValue,
             [Out] out double pdblValue
             );
 
         [PreserveSig]
-        int put_MediaState([In] int State);
+        int put_MediaState([In] ExtTransportMediaStates State);
 
         [PreserveSig]
-        int get_MediaState([Out] out int pState);
+        int get_MediaState([Out] out ExtTransportMediaStates pState);
 
         [PreserveSig]
         int put_LocalControl([In] int State);
@@ -1635,10 +1769,10 @@ namespace DirectShowLib
             );
 
         [PreserveSig]
-        int put_Mode([In] int Mode);
+        int put_Mode([In] ExtTransportModes Mode);
 
         [PreserveSig]
-        int get_Mode([Out] out int pMode);
+        int get_Mode([Out] out ExtTransportModes pMode);
 
         [PreserveSig]
         int put_Rate([In] double dblRate);
@@ -1957,28 +2091,6 @@ namespace DirectShowLib
 
         [PreserveSig]
         int Clone([Out] out IEnumStreamIdMap ppIEnumStreamIdMap);
-    }
-
-    [Guid("D0E04C47-25B8-4369-925A-362A01D95444"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IMPEG2StreamIdMap
-    {
-        [PreserveSig]
-        int MapStreamId(
-            [In] int ulStreamId,
-            [In] MPEG2Program MediaSampleContent,
-            [In] int ulSubstreamFilterValue,
-            [In] int iDataOffset
-            );
-
-        [PreserveSig]
-        int UnmapStreamId(
-            [In] int culStreamId,
-            [In, MarshalAs(UnmanagedType.LPArray)] int[] pulStreamId
-            );
-
-        [PreserveSig]
-        int EnumStreamIdMap([Out] out IEnumStreamIdMap ppIEnumStreamIdMap);
     }
 
     [Guid("7B3A2F01-0751-48DD-B556-004785171C54"),
@@ -3545,6 +3657,70 @@ namespace DirectShowLib
         int DeleteOutputPin([In, MarshalAs(UnmanagedType.LPWStr)] string pszPinName);
     }
 
-    #endregion
+	[Guid("B5730A90-1A2C-11cf-8C23-00AA006B6814"),
+	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	public interface IAMExtDevice
+	{
+		[PreserveSig]
+		int GetCapability(
+			[In] ExtDeviceCaps Capability,
+			[Out] out ExtDeviceCaps pValue,
+			[Out] out double pdblValue
+			);
+
+		[PreserveSig]
+		int get_ExternalDeviceID([Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszData);
+
+		[PreserveSig]
+		int get_ExternalDeviceVersion([Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszData);
+
+		[PreserveSig]
+		int put_DevicePower([In] ExtDeviceCaps PowerMode);
+
+		[PreserveSig]
+		int get_DevicePower([Out] out ExtDeviceCaps pPowerMode);
+
+		[PreserveSig]
+		int Calibrate(
+			[In] IntPtr hEvent, // HEVENT
+			[In] ExtDeviceCaps Mode, //Active / Inactive
+			[Out] out int pStatus
+			);
+
+		[PreserveSig]
+		int put_DevicePort([In] ExtDevicePort DevicePort);
+
+		[PreserveSig]
+		int get_DevicePort([Out] out ExtDevicePort pDevicePort);
+	}
+
+	[Guid("D0E04C47-25B8-4369-925A-362A01D95444"),
+	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	public interface IMPEG2StreamIdMap
+	{
+		[PreserveSig]
+		int MapStreamId(
+			[In] int ulStreamId,
+			[In] MPEG2Program MediaSampleContent,
+			[In] int ulSubstreamFilterValue,
+			[In] int iDataOffset
+			);
+
+		[PreserveSig]
+		int UnmapStreamId(
+			[In] int culStreamId,
+			[In, MarshalAs(UnmanagedType.LPArray)] int[] pulStreamId
+			);
+
+		[PreserveSig,
+		Obsolete("Because of bug in DS 9.0c, you can't get the StreamId map from .NET", false)]
+#if ALLOW_UNTESTED_INTERFACES
+		int EnumStreamIdMap([Out] out IEnumStreamIdMap ppIEnumStreamIdMap);
+#else
+		int EnumStreamIdMap([Out] out object ppIEnumStreamIdMap);
+#endif
+	}
+
+	#endregion
 
 }

@@ -60,7 +60,7 @@ namespace DirectShowLib
 		StreamControlStarted = 0x1B, // EC_STREAM_CONTROL_STARTED  
 		EndOfSegment = 0x1C, // EC_END_OF_SEGMENT          
 		SegmentStarted = 0x1D, // EC_SEGMENT_STARTED         
-		LenghtChanged = 0x1E, // EC_LENGTH_CHANGED          
+		LengthChanged = 0x1E, // EC_LENGTH_CHANGED          
 		DeviceLost = 0x1f, // EC_DEVICE_LOST             
 		StepComplete = 0x24, // EC_STEP_COMPLETE           
 		TimeCodeAvailable = 0x30, // EC_TIMECODE_AVAILABLE      

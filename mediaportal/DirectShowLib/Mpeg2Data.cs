@@ -31,8 +31,6 @@ namespace DirectShowLib
 
     #region Declarations
 
-#if ALLOW_UNTESTED_INTERFACES
-
     /// <summary>
     /// From MPEG_REQUEST_TYPE
     /// </summary>
@@ -75,21 +73,29 @@ namespace DirectShowLib
     [StructLayout(LayoutKind.Sequential, Pack=1)]
     public struct DSMCCFilterOptions
     {
-        public int fSpecifyProtocol;
-        public byte Protocol;
-        public int fSpecifyType;
-        public byte Type;
-        public int fSpecifyMessageId;
-        public short MessageId;
-        public int fSpecifyTransactionId;
-        public int fUseTrxIdMessageIdMask;
-        public int TransactionId;
-        public int fSpecifyModuleVersion;
-        public byte ModuleVersion;
-        public int fSpecifyBlockNumber;
-        public short BlockNumber;
-        public int fGetModuleCall;
-        public short NumberOfBlocksInModule;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fSpecifyProtocol;
+      public byte Protocol;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fSpecifyType;
+      public byte Type;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fSpecifyMessageId;
+      public short MessageId;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fSpecifyTransactionId;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fUseTrxIdMessageIdMask;
+      public int TransactionId;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fSpecifyModuleVersion;
+      public byte ModuleVersion;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fSpecifyBlockNumber;
+      public short BlockNumber;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fGetModuleCall;
+      public short NumberOfBlocksInModule;
     }
 
     /// <summary>
@@ -98,7 +104,8 @@ namespace DirectShowLib
     [StructLayout(LayoutKind.Sequential, Pack=1)]
     public struct ATSCFilterOptions
     {
-        public int fSpecifyEtmId;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fSpecifyEtmId;
         public int EtmId;
     }
 
@@ -108,25 +115,35 @@ namespace DirectShowLib
     [StructLayout(LayoutKind.Sequential, Pack=1)]
     public class MPEG2Filter
     {
-        public byte bVersionNumber;
-        public short wFilterSize;
-        public int fUseRawFilteringBits;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst=0x10)]
-        public byte[] Filter;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst=0x10)]
-        public byte[] Mask;
-        public int fSpecifyTableIdExtension;
-        public short TableIdExtension;
-        public int fSpecifyVersion;
-        public byte Version;
-        public int fSpecifySectionNumber;
-        public byte SectionNumber;
-        public int fSpecifyCurrentNext;
-        public int fNext;
-        public int fSpecifyDsmccOptions;
-        public DSMCCFilterOptions Dsmcc;
-        public int fSpecifyAtscOptions;
-        public ATSCFilterOptions Atsc;
+      public byte bVersionNumber;
+      public short wFilterSize;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fUseRawFilteringBits;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst=16)]
+      public byte[] Filter;
+      [MarshalAs(UnmanagedType.ByValArray, SizeConst=16)]
+      public byte[] Mask;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fSpecifyTableIdExtension;
+      public short TableIdExtension;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fSpecifyVersion;
+      public byte Version;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fSpecifySectionNumber;
+      public byte SectionNumber;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fSpecifyCurrentNext;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fNext;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fSpecifyDsmccOptions;
+      [MarshalAs(UnmanagedType.Struct)]
+      public DSMCCFilterOptions Dsmcc;
+      [MarshalAs(UnmanagedType.Bool)]
+      public bool fSpecifyAtscOptions;
+      [MarshalAs(UnmanagedType.Struct)]
+      public ATSCFilterOptions Atsc;
     }
 
 
@@ -174,22 +191,20 @@ namespace DirectShowLib
     /// <summary>
     /// From MPEG_STREAM_BUFFER
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack=1), ComConversionLoss]
-    public struct MPEGStreamBuffer
+    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    public class MPEGStreamBuffer
     {
-        [MarshalAs(UnmanagedType.Error)]
+        //[MarshalAs(UnmanagedType.Error)]
         public int hr;
         public int dwDataBufferSize;
         public int dwSizeOfDataRead;
         public IntPtr pDataBuffer;
     }
 
-#endif
     #endregion
 
     #region Interfaces
 
-#if ALLOW_UNTESTED_INTERFACES
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown), 
     Guid("9B396D40-F380-4E3C-A514-1A82BF6EBFE6")]
     public interface IMpeg2Data
@@ -240,7 +255,7 @@ namespace DirectShowLib
 
         [PreserveSig]
         int SupplyDataBuffer(
-            [In, MarshalAs(UnmanagedType.LPStruct)] MPEGStreamBuffer pStreamBuffer
+            [In] MPEGStreamBuffer pStreamBuffer
             );
     }
 
@@ -263,7 +278,7 @@ namespace DirectShowLib
 
         [PreserveSig]
         int InitializeWithRawSections(
-            [In, MarshalAs(UnmanagedType.LPStruct)] MPEGPacketList pmplSections
+            [In] ref MPEGPacketList pmplSections
             );
 
         [PreserveSig]
@@ -277,8 +292,8 @@ namespace DirectShowLib
         [PreserveSig]
         int GetSectionData(
             [In] short SectionNumber, 
-            out int pdwRawPacketLength, 
-            [Out] IntPtr ppSection // PSECTION*
+            [Out] out int pdwRawPacketLength, 
+            [Out] out IntPtr ppSection // PSECTION*
             );
 
         [PreserveSig]
@@ -292,6 +307,6 @@ namespace DirectShowLib
             );
     }
 
-#endif
-    #endregion
+
+	#endregion
 }

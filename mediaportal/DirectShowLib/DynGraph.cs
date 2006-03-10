@@ -30,7 +30,6 @@ namespace DirectShowLib
 
     #region Declarations
 
-#if ALLOW_UNTESTED_INTERFACES
 	/// <summary>
 	/// From _AM_PIN_FLOW_CONTROL_BLOCK_FLAGS
 	/// </summary>
@@ -40,8 +39,6 @@ namespace DirectShowLib
         None = 0x00000000,
 		Block = 0x00000001
 	}
-
-#endif
 
     /// <summary>
     /// From AM_GRAPH_CONFIG_RECONNECT_FLAGS
@@ -79,8 +76,6 @@ namespace DirectShowLib
 
     #region Interfaces
 
-#if ALLOW_UNTESTED_INTERFACES
-
 	//--------------------------------------------------------------------
 	//
 	//  IPinFlowControl - supported by output pins
@@ -98,7 +93,6 @@ namespace DirectShowLib
 			);
 	}
 
-#endif
 
     [Guid("DCFBDCF6-0DC2-45f5-9AB2-7C330EA09C29"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
