@@ -26,7 +26,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
-
+#pragma warning disable 618
 namespace DirectShowLib
 {
 

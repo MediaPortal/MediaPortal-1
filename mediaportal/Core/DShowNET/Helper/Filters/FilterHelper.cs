@@ -24,7 +24,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 
 using DirectShowLib;
-
+#pragma warning disable 618
 namespace DShowNET.Helper
 {
 	public class FilterHelper

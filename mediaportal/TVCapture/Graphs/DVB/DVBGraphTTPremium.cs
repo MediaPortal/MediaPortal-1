@@ -46,6 +46,7 @@ using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
 using MediaPortal.TV.BDA;
 #endregion
+#pragma warning disable 618
 
 namespace MediaPortal.TV.Recording
 {
@@ -455,7 +456,7 @@ namespace MediaPortal.TV.Recording
           mtEPG.subType = MediaSubType.None;
           mtEPG.formatType = FormatType.None;
 
-          IPin pinEPGout, pinMHW1Out, pinMHW2Out;
+          //IPin pinEPGout, pinMHW1Out, pinMHW2Out;
           hr = demuxer.CreateOutputPin(mtEPG, "EPG", out _pinDemuxerEPG);
           if (hr != 0 || _pinDemuxerEPG == null)
           {
@@ -475,7 +476,7 @@ namespace MediaPortal.TV.Recording
             return false;
           }
 
-          bool connected = false;
+          //bool connected = false;
           IPin pinAnalyzerIn = DsFindPin.ByDirection(_filterDvbAnalyzer, PinDirection.Input, 0);
           if (pinAnalyzerIn == null)
           {
@@ -507,7 +508,7 @@ namespace MediaPortal.TV.Recording
           hr = _graphBuilder.Connect(_pinDemuxerSections, pinAnalyzerIn);
           if (hr == 0)
           {
-              connected = true;
+            //connected = true;
           }
           else
           {

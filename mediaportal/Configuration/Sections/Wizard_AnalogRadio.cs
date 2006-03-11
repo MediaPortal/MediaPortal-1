@@ -567,7 +567,7 @@ namespace MediaPortal.Configuration.Sections
             _loadingInfo = false;
             FillInCities();
         }
-        catch (Exception ex)
+        catch (Exception )
         {
             this.cbCities.Items.Clear();
             this.cbCities.Items.AddRange(new object[] {

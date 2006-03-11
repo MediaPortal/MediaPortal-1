@@ -31,7 +31,7 @@ using System.Windows.Forms;
 
 using MediaPortal.SerialIR;
 using MediaPortal.GUI.Library;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class SerialUIR : MediaPortal.Configuration.SectionSettings

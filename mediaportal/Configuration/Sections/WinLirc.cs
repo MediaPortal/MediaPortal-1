@@ -31,7 +31,7 @@ using System.Windows.Forms;
 
 using MediaPortal.WINLIRC;
 using MediaPortal.GUI.Library;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class WINLIRC : MediaPortal.Configuration.SectionSettings

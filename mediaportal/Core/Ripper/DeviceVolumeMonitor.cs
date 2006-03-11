@@ -2,7 +2,8 @@ using System;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-
+#pragma warning disable 649
+#pragma warning disable 169
 namespace Win32.Utils.Cd
 {
 

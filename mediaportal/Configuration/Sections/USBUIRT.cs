@@ -31,7 +31,7 @@ using System.Windows.Forms;
 
 using MediaPortal.IR;
 using MediaPortal.GUI.Library;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class USBUIRT : MediaPortal.Configuration.SectionSettings

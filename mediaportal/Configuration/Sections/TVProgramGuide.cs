@@ -30,7 +30,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using MediaPortal.TV.Database;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class TVProgramGuide : MediaPortal.Configuration.SectionSettings

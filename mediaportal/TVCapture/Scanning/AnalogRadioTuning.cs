@@ -38,7 +38,7 @@ namespace MediaPortal.TV.Scanning
     int _currentStationFreq = 0;
     int _maxStationFreq;
     int _minStationFreq;
-    bool stopped = true;
+    //bool stopped = true;
     int _updatedRadioStations = 0;
     int _newRadioStations = 0;
 

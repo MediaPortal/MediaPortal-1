@@ -29,7 +29,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Globalization;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class Movies : MediaPortal.Configuration.SectionSettings

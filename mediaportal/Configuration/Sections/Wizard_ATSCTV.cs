@@ -34,7 +34,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Scanning;
-
+#pragma warning disable 108,649
 namespace MediaPortal.Configuration.Sections
 {
   public class Wizard_ATSCTV : Wizard_ScanBase

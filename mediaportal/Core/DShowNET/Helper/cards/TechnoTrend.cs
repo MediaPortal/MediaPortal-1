@@ -199,7 +199,7 @@ namespace DShowNET
       catch (Exception)
       {
         Log.WriteFile(Log.LogType.Log, true, "Technotrend: unable to initialize (does ttBdaDrvApi_Dll.dll exists?)");
-        int x = 1;
+        //int x = 1;
       }
       _deviceType = TechnoTrendDeviceType.eTypeUnknown;
     }

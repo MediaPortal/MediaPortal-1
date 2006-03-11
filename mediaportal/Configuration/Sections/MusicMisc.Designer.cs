@@ -1,3 +1,4 @@
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
     partial class MusicMisc

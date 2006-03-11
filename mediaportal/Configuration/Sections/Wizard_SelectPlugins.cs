@@ -32,7 +32,7 @@ using System.Windows.Forms;
 using MediaPortal.Util;
 using MediaPortal.TagReader;
 using MediaPortal.Music.Database;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class Wizard_SelectPlugins : MediaPortal.Configuration.SectionSettings

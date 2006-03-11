@@ -39,7 +39,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class TVCaptureCards : MediaPortal.Configuration.SectionSettings

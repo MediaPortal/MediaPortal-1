@@ -31,7 +31,7 @@ using System.Windows.Forms;
 
 using MediaPortal.RedEyeIR;
 using MediaPortal.GUI.Library;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class RedEye : MediaPortal.Configuration.SectionSettings

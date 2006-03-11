@@ -72,7 +72,7 @@ namespace MediaPortal.TV.Recording
         Succeeded = false;
         return;
       }
-      string timeShiftFileName;
+      //string timeShiftFileName;
 
       int cardNo = -1;
       // tv should be turned on

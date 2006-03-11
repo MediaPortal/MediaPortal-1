@@ -30,7 +30,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
+#pragma warning disable 108
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 using DShowNET;

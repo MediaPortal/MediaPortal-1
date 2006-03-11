@@ -41,7 +41,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.View;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
-
+#pragma warning disable 108
 namespace MediaPortal.GUI.Video
 {
   /// <summary>

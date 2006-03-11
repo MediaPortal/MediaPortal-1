@@ -35,7 +35,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class Remote : MediaPortal.Configuration.SectionSettings

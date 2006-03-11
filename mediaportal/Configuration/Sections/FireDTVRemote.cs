@@ -36,7 +36,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
 
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   /// <summary>

@@ -25,7 +25,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
 	public class Wizard_Welcome : MediaPortal.Configuration.SectionSettings

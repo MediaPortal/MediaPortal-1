@@ -27,7 +27,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.InputDevices;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   /// <summary>

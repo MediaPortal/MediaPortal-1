@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 using DShowNET;
 using DirectShowLib;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
 

@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Library
         [XMLSkinElement("textureDeleteFocused")]
         string TextureDeleteFocusedFileName = "playlist_item_delete_focus.png";
 
-        bool _isAscending = true;
+        //bool _isAscending = true;
         bool IsEditImageHot = false;
 
         [XMLSkinElement("upBtnWidth")]
@@ -267,7 +267,7 @@ namespace MediaPortal.GUI.Library
 
 		#region Events
 
-		public event SortEventHandler	SortChanged;
+		//public event SortEventHandler	SortChanged;
 
 		#endregion Events
 

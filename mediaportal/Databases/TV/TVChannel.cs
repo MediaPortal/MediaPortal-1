@@ -286,6 +286,15 @@ namespace MediaPortal.TV.Database
       if (chan.LastDateTimeEpgGrabbed.Minute != LastDateTimeEpgGrabbed.Minute) return false;
       return true;
     }
+    public override int GetHashCode() 
+    {
+      return base.GetHashCode() ^ID.GetHashCode() ^Frequency.GetHashCode() ^
+          Number.GetHashCode() ^ Name.GetHashCode() ^ XMLId.GetHashCode() ^
+          External.GetHashCode() ^ ExternalTunerChannel.GetHashCode() ^
+          VisibleInGuide.GetHashCode() ^ Country.GetHashCode() ^
+          ProviderName.GetHashCode() ^ Scrambled.GetHashCode() ^ Sort.GetHashCode() ^
+          EpgHours.GetHashCode() ^ AutoGrabEpg.GetHashCode() ^ LastDateTimeEpgGrabbed.GetHashCode();
+    }
     #region properties
     public DateTime LastDateTimeEpgGrabbed
     {

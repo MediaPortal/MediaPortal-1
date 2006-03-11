@@ -31,7 +31,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
 using DShowNET;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class Radio : MediaPortal.Configuration.SectionSettings

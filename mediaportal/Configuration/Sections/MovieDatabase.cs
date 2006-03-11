@@ -37,7 +37,7 @@ using MediaPortal.TagReader;
 using MediaPortal.Video.Database;
 using MediaPortal.Util;
 
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class MovieDatabase : MediaPortal.Configuration.SectionSettings, IMDB.IProgress

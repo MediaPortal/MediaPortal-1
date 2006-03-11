@@ -27,7 +27,7 @@ using System;
 using System.Windows.Forms;
 using System.IO;
 using MediaPortal.Util;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class MusicImport : MediaPortal.Configuration.SectionSettings

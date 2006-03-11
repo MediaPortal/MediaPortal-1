@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
+#pragma warning disable 618
 namespace DShowNET.Helper
 {
 	/// <summary>

@@ -31,7 +31,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.Util;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class Skin : MediaPortal.Configuration.SectionSettings

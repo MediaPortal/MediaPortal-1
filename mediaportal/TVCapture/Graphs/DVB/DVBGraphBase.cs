@@ -50,7 +50,7 @@ using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
 using MediaPortal.TV.BDA;
 #endregion
-
+#pragma warning disable 618
 namespace MediaPortal.TV.Recording
 {
   /// <summary>
@@ -2299,7 +2299,7 @@ namespace MediaPortal.TV.Recording
           //FilterState state;
           //_mediaControl.GetState(50, out state);
           Log.Write("wait for pmt :{0}", _lastPMTVersion);
-          bool gotPMT = false;
+          //bool gotPMT = false;
           //Log.Write("DVBGraph:Get PMT {0}", _graphState);
           IntPtr pmtMem = Marshal.AllocCoTaskMem(4096);// max. size for pmt
           if (pmtMem != IntPtr.Zero)
@@ -2315,7 +2315,7 @@ namespace MediaPortal.TV.Recording
               int pmtProgramNumber = (pmt[3] << 8) + pmt[4];
               if (pmtProgramNumber == _currentTuningObject.ProgramNumber)
               {
-                gotPMT = true;
+                //gotPMT = true;
                 //Log.Write("DVBGraph:Got PMT version:{0} {1}", version, _lastPMTVersion);
                 if (_lastPMTVersion != version)
                 {
@@ -2505,7 +2505,7 @@ namespace MediaPortal.TV.Recording
             Log.WriteFile(Log.LogType.Log, "DVBGraph:  tuning details: frequency:{0} kHz polarisation:{1} innerFec:{2} symbolrate:{3} ONID:{4} TSID:{5} SID:{6} provider:{7}",
               ch.Frequency, ch.Polarity, ch.FEC, ch.Symbolrate, ch.NetworkID, ch.TransportStreamID, ch.ProgramNumber, ch.ServiceProvider);
 
-            bool needSwitch = true;
+            //bool needSwitch = true;
             /*if (_currentTuningObject!=null)
             {
               if (_currentTuningObject.Frequency==frequency &&
@@ -2564,7 +2564,7 @@ namespace MediaPortal.TV.Recording
             Log.WriteFile(Log.LogType.Log, "DVBGraph:  tuning details: frequency:{0} kHz ONID:{1} TSID:{2} SID:{3} provider:{4}", frequency, ONID, TSID, SID, providerName);
             //get the IDVBTLocator interface from the new tuning request
 
-            bool needSwitch = true;
+            //bool needSwitch = true;
             /*if (_currentTuningObject!=null)
             {
               if (_currentTuningObject.Frequency==frequency &&

@@ -1,5 +1,6 @@
 namespace MediaPortal.Configuration.Sections
 {
+#pragma warning disable 108
   partial class PluginsNew
   {
     /// <summary> 

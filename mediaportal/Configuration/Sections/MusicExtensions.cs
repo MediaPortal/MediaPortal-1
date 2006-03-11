@@ -24,7 +24,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
 	public class MusicExtensions : MediaPortal.Configuration.Sections.FileExtensions

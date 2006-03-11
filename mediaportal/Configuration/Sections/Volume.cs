@@ -30,7 +30,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Text;
 using MediaPortal.UserInterface.Controls;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class Volume : MediaPortal.Configuration.SectionSettings

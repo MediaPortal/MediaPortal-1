@@ -32,7 +32,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
 

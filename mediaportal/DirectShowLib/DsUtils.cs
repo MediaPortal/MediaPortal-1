@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Reflection;
 using DirectShowLib.Dvd;
-
+#pragma warning disable 618
 namespace DirectShowLib
 
 {

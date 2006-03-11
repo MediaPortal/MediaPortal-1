@@ -33,7 +33,7 @@ using System.Runtime.Serialization.Formatters.Soap;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class MovieViews : SectionSettings

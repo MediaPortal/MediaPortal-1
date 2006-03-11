@@ -38,7 +38,7 @@ using MediaPortal.Util;
 using MediaPortal.GUI.Library;
 using MediaPortal.Database;
 using MediaPortal.Music.Database;
-
+#pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {

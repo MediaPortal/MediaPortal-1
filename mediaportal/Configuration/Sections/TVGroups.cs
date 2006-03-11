@@ -42,7 +42,7 @@ using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using DShowNET;
 using DirectShowLib;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class TVGroups : MediaPortal.Configuration.SectionSettings

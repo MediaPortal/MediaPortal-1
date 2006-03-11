@@ -590,7 +590,7 @@ namespace MediaPortal.TV.Recording
                     mtEPG.subType = MediaSubType.None;
                     mtEPG.formatType = FormatType.None;
 
-                    IPin pinEPGout, pinMHW1Out, pinMHW2Out;
+                    //IPin pinEPGout, pinMHW1Out, pinMHW2Out;
                     hr = demuxer.CreateOutputPin(mtEPG, "EPG", out _pinDemuxerEPG);
                     if (hr != 0 || _pinDemuxerEPG == null)
                     {

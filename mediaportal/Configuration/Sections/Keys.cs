@@ -32,7 +32,7 @@ using System.Windows.Forms;
 using System.Xml;
 
 using MediaPortal.GUI.Library;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class Keys : MediaPortal.Configuration.SectionSettings

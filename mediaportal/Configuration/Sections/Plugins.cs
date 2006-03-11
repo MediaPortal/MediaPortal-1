@@ -34,7 +34,7 @@ using System.Windows.Forms;
 using MediaPortal.Configuration.Controls;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class Plugins : SectionSettings

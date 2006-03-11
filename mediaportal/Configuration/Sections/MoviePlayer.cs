@@ -32,7 +32,7 @@ using System.Windows.Forms;
 using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
-
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class MoviePlayer : MediaPortal.Configuration.SectionSettings

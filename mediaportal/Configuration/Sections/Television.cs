@@ -33,6 +33,7 @@ using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
 
+#pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
   public class Television : MediaPortal.Configuration.SectionSettings

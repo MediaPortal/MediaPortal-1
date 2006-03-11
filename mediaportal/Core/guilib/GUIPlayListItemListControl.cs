@@ -421,7 +421,7 @@ namespace MediaPortal.GUI.Library
             }
         }
 
-        protected virtual void OnUp()
+        protected override void OnUp()
         {
             Action action = new Action();
             action.wID = Action.ActionType.ACTION_MOVE_UP;
@@ -467,7 +467,7 @@ namespace MediaPortal.GUI.Library
         /// <summary>
         /// Implementation of the OnDown action.
         /// </summary>
-        protected virtual void OnDown()
+        protected override void OnDown()
         {
             Action action = new Action();
             action.wID = Action.ActionType.ACTION_MOVE_DOWN;
@@ -728,7 +728,7 @@ namespace MediaPortal.GUI.Library
             }
         }
 
-        protected virtual void RenderLabel(float timePassed, int buttonNr, int dwPosX, int dwPosY, bool gotFocus)
+        protected override void RenderLabel(float timePassed, int buttonNr, int dwPosX, int dwPosY, bool gotFocus)
         {
             GUIListItem pItem = _listItems[buttonNr + _offset];
             long dwColor = _textColor;
