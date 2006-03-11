@@ -1397,6 +1397,10 @@ namespace MediaPortal.TV.Recording
       //stop playback of this channel
       if (_currentGraph != null)
       {
+        if (g_Player.Playing && g_Player.CurrentFile == _processor.GetTimeShiftFileName(ID - 1))
+        {
+          g_Player.Stop();
+        }
         //Log.WriteFile(Log.LogType.Log, "TvCaptureDevice:RebuildGraph() delete graph");
         _currentGraph.StopEpgGrabbing();
         _currentGraph.StopTimeShifting();
@@ -1410,6 +1414,7 @@ namespace MediaPortal.TV.Recording
       {
         _currentGraph.StartTimeShifting(channel, _processor.GetTimeShiftFileName(ID - 1));
         _lastChannelChange = DateTime.Now;
+        _processor.ResetTimeshiftTimer();
       }
       else
       {
