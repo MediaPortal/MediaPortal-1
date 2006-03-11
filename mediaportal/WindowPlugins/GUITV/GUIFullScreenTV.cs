@@ -633,7 +633,30 @@ namespace MediaPortal.GUI.TV
 
         case Action.ActionType.ACTION_PAUSE:
           {
-            if (g_Player.IsTimeShifting) g_Player.Pause();
+            if (g_Player.IsTimeShifting)
+            {
+              g_Player.Pause();
+            }
+            else if (Recorder.View)
+            {
+              //user wants to pause live tv, but is not timeshifting
+              //so first start timeshifting
+              string message;
+              Recorder.StartViewing(Recorder.TVChannelName, true, true, true, out message);
+              //wait until playback has been started
+              int count = 1;
+              while (!g_Player.Playing && count < 20)
+              {
+                System.Threading.Thread.Sleep(100);
+                count++;
+              }
+
+              //then pause live tv
+              if (g_Player.Playing)
+              {
+                g_Player.Pause();
+              }
+            }
 
             ScreenStateChanged();
             UpdateGUI();

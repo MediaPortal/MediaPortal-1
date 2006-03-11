@@ -594,7 +594,7 @@ namespace MediaPortal.GUI.Music
                 //MusicDatabase m_database = new MusicDatabase();
                 string m_strDiscId = string.Empty;
                 int m_iSelectedAlbum = 0;
-                bool bCDDAFailed = false;
+                //bool bCDDAFailed = false;
 
                 Freedb.FreeDBHttpImpl freedb = new Freedb.FreeDBHttpImpl();
                 char driveLetter = System.IO.Path.GetFullPath(path).ToCharArray()[0];
@@ -656,13 +656,13 @@ namespace MediaPortal.GUI.Music
                         }
                     }
                     freedb.Disconnect();
-                    if (GUIMusicFiles.MusicCD == null) bCDDAFailed = true;
+                    //if (GUIMusicFiles.MusicCD == null) bCDDAFailed = true;
                 }
 
                 catch (Exception)
                 {
                     GUIMusicFiles.MusicCD = null;
-                    bCDDAFailed = true;
+//                    bCDDAFailed = true;
                 }
 
                 if (!bFound && GUIMusicFiles.MusicCD != null) // if musicCD was configured correctly...

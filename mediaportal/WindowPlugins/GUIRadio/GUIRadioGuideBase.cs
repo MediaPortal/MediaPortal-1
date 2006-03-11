@@ -111,7 +111,7 @@ namespace MediaPortal.GUI.Radio
 
     DateTime _keyPressedTimer = DateTime.Now;
     string _lineInput = String.Empty;
-    static bool _workerThreadRunning = false;
+    //static bool _workerThreadRunning = false;
 
     #endregion
 
@@ -1012,9 +1012,9 @@ namespace MediaPortal.GUI.Radio
         _currentTime = strTime;
         _currentRadioStation = _currentProgram.Channel;
 
-        bool bRecording = false;
-        bool bSeries = false;
-        bool bConflict = false;
+        //bool bRecording = false;
+        //bool bSeries = false;
+        //bool bConflict = false;
         GUIControl.HideControl(GetID, (int)Controls.IMG_REC_PIN);
       }
     }//void SetProperties()

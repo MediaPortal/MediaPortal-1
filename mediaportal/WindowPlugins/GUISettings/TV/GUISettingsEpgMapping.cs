@@ -18,7 +18,7 @@ namespace WindowPlugins.GUISettings.Epg
   /// </summary>
   public class GUIWizardEpgMapping : GUIEpgSelectBase
   {
-    string _country="";
+    //string _country="";
     public GUIWizardEpgMapping()
     {
       GetID = (int)GUIWindow.Window.WINDOW_SETTINGS_TV_EPG_MAPPING;

@@ -108,7 +108,7 @@ namespace MediaPortal.GUI.Music
                         break;
 
                     case "playlist":
-                        PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST; break;
+                        PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST; 
                         break;
 
                     case "none":
