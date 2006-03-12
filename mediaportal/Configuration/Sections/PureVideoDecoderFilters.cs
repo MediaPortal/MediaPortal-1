@@ -225,6 +225,7 @@ namespace MediaPortal.Configuration.Sections
             this.comboBoxDeInterlaceMode.FormattingEnabled = true;
             this.comboBoxDeInterlaceMode.Items.AddRange(new object[] {
             "VMR default",
+            "VMR pixel adaptive",
             "VMR vertical stretch"});
             this.comboBoxDeInterlaceMode.Location = new System.Drawing.Point(256, 122);
             this.comboBoxDeInterlaceMode.Name = "comboBoxDeInterlaceMode";
@@ -471,10 +472,12 @@ namespace MediaPortal.Configuration.Sections
                     comboBoxDeInterlaceControl.SelectedIndex = regValue;
 
                     regValue = (Int32)subkey.GetValue("DeinterlaceMode", 0);
+                    Int32 regAdaptive = (Int32)subkey.GetValue("VMRDeinterlace", 2);
                     if (regValue >= 0)
                     {
                         if (regValue == 0) comboBoxDeInterlaceMode.SelectedIndex = 0;
-                        if (regValue == 5) comboBoxDeInterlaceMode.SelectedIndex = 1;
+                        if (regValue == 5 && regAdaptive == 40) comboBoxDeInterlaceMode.SelectedIndex = 1;
+                        if (regValue == 5 && regAdaptive == 2) comboBoxDeInterlaceMode.SelectedIndex = 2;
                     }
                 }
                 catch (Exception)
@@ -608,17 +611,23 @@ namespace MediaPortal.Configuration.Sections
                 int DeIntMode;
                 Int32 regDeIntMode;
                 DeIntMode = comboBoxDeInterlaceMode.SelectedIndex;
-                // Since we force & use VMR9 this option needs to be set
-                subkey.SetValue("VMRDeinterlace", 2);
                 if (DeIntMode == 0)
                 {
                     regDeIntMode = 0;
                     subkey.SetValue("DeinterlaceMode", regDeIntMode);
+                    subkey.SetValue("VMRDeinterlace", 2);
                 }
                 if (DeIntMode == 1)
                 {
                     regDeIntMode = 5;
                     subkey.SetValue("DeinterlaceMode", regDeIntMode);
+                    subkey.SetValue("VMRDeinterlace", 40);
+                }
+                if (DeIntMode == 2)
+                {
+                    regDeIntMode = 5;
+                    subkey.SetValue("DeinterlaceMode", regDeIntMode);
+                    subkey.SetValue("VMRDeinterlace", 2);
                 }
                 {
                 }
