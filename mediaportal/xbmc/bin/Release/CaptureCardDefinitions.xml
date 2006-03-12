@@ -3335,7 +3335,7 @@
     </tv>
   </capturecard> 
 
-<!--  <capturecard commercialname="ATI AIW 9200 Cards or earlier" capturename="ATI Rage Theater Video Capture" devid="ntativrv35">
+  <capturecard commercialname="ATI AIW 9200 Cards or earlier" capturename="ATI Rage Theater Video Capture" devid="ntativrv35">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
@@ -3386,7 +3386,7 @@
         <connection sourcefilter="audencoder"		sourcepin="0" sinkfilter="mux"				sinkpin="0"/>
       </connections>
     </tv>
-  </capturecard> -->
+  </capturecard>
 
   <capturecard commercialname="Creatix SAA7134 DVB-T" capturename="Creatix BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_000316be&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
