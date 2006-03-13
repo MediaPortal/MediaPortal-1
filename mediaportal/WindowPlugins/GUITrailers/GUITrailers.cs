@@ -159,12 +159,18 @@ namespace MediaPortal.GUI.Video
         ToggleButtonCast();
       base.OnClicked(controlId, control, actionType);
     }
-    public override void OnAction(Action action)
-    {
-      if (action.wID == Action.ActionType.ACTION_STOP)
-        SetGUIProperties();
-      base.OnAction(action);
-    }
+      public override void OnAction(Action action)
+      {
+          if (action.wID == Action.ActionType.ACTION_STOP)
+              SetGUIProperties();
+          if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && mainview!=true)
+          {
+              OnClick(0);
+              return;
+          }
+
+          base.OnAction(action);
+      }
     protected override void OnPageDestroy(int newWindowId)
     {
       if (GermanTrailers.G_viewInfoAndTrailer == true || YahooTrailers.tview == true || YahooTrailers.cview == true || YahooTrailers.mview == true)
