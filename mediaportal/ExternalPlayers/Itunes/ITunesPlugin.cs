@@ -67,7 +67,7 @@ namespace MediaPortal.ITunesPlayer
     /// </summary>
     public override string VersionNumber
     {
-      get { return "1.0"; }
+      get { return "1.1"; }
     }
 
     /// <summary>

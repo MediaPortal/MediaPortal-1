@@ -159,8 +159,8 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Interop.iTunesLib">
-      <Name>Interop.iTunesLib</Name>
+    <Reference Include="Interop.iTunesLib, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Interop.iTunesLib.dll</HintPath>
     </Reference>
     <Reference Include="System">
