@@ -880,6 +880,9 @@ namespace DirectShowLib
 
         /// <summary> MEDIATYPE_MPEG2_SECTIONS </summary>
         public static readonly Guid Mpeg2Sections = new Guid(0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
+
+        /// <summary> MEDIATYPE_MPEG2_PES </summary>
+        public static readonly Guid MPEG2_PES = new Guid(0xe06d8020, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x5f, 0x6c, 0xbb, 0xea);
     }
 
     public class MediaSubType
@@ -1258,6 +1261,9 @@ namespace DirectShowLib
         /// <summary> MEDIASUBTYPE_MPEG2_TRANSPORT_STRIDE </summary>
         public static readonly Guid Mpeg2TransportStride = new Guid(0x138aa9a4, 0x1ee2, 0x4c5b, 0x98, 0x8e, 0x19, 0xab, 0xfd, 0xbc, 0x8a, 0x11);
 
+        /// <summary> MEDIASUBTYPE_DVD_LPCM_AUDIO </summary>
+        public static readonly Guid DVD_LPCM_AUDIO = new Guid(0xe06d8032, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x05f, 0x6c, 0xbb, 0xea);
+
         /// <summary> MEDIASUBTYPE_None </summary>
         public static readonly Guid None = new Guid(0xe436eb8e, 0x524f, 0x11ce, 0x9f, 0x53, 0x00, 0x20, 0xaf, 0x0b, 0xa7, 0x70);
     }
@@ -1298,7 +1304,8 @@ namespace DirectShowLib
 
         /// <summary> FORMAT_MPEG2Audio </summary>
         public static readonly Guid Mpeg2Audio = new Guid(0xe06d80e5, 0xdb46, 0x11cf, 0xb4, 0xd1, 0x00, 0x80, 0x5f, 0x6c, 0xbb, 0xea);
-    }
+
+        }
 
     public class PropSetID
     {
