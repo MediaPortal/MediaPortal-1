@@ -36,9 +36,10 @@ namespace MediaPortal.ITunesPlayer
   /// </summary>
   public class ITunesPlugin : IExternalPlayer
   {
-    iTunesLib.IiTunes iTunesApp = null;
-    bool playerPaused;
-    string currentFile = String.Empty;
+    iTunesLib.IiTunes _iTunesApplication = null;
+    bool _playerIsPaused;
+    string _currentFile = String.Empty;
+    bool _started;
 
     private string[] m_supportedExtensions = new string[0];
     public ITunesPlugin()
@@ -141,33 +142,24 @@ namespace MediaPortal.ITunesPlayer
     {
       try
       {
-        if (iTunesApp == null)
+        if (_iTunesApplication == null)
         {
-          iTunesApp = new iTunesLib.iTunesAppClass();
+          _iTunesApplication = new iTunesLib.iTunesAppClass();
         }
 
-        iTunesApp.Stop();
-        iTunesApp.PlayFile(strFile);
+        _started = false;
+        _iTunesApplication.Stop();
+        _iTunesApplication.PlayFile(strFile);
 
+        _playerIsPaused = false;
+        _currentFile = strFile;
 
-        playerPaused = false;
-        currentFile = strFile;
-        int count = 0;
-        while (iTunesApp.PlayerState != ITPlayerState.ITPlayerStatePlaying)
-        {
-          System.Threading.Thread.Sleep(100);
-          if (count++ > 50) break;
-        }
-        if (iTunesApp.PlayerState != ITPlayerState.ITPlayerStatePlaying)
-        {
-          iTunesApp.Stop();
-          return false;
-        }
+        UpdateStatus();
         return true;
       }
       catch (Exception)
       {
-        iTunesApp = null;
+        _iTunesApplication = null;
       }
       return false;
     }
@@ -176,14 +168,16 @@ namespace MediaPortal.ITunesPlayer
     {
       get
       {
-        if (iTunesApp == null) return 0.0d;
+        if (_iTunesApplication == null) return 0.0d;
+        UpdateStatus();
+        if (_started==false) return 300;
         try
         {
-          return iTunesApp.CurrentTrack.Duration;
+          return _iTunesApplication.CurrentTrack.Duration;
         }
         catch (Exception)
         {
-          iTunesApp = null;
+          _iTunesApplication = null;
           return 0.0d;
         }
       }
@@ -195,12 +189,14 @@ namespace MediaPortal.ITunesPlayer
       {
         try
         {
-          if (iTunesApp == null) return 0.0d;
-          return (double)iTunesApp.PlayerPosition;
+          if (_iTunesApplication == null) return 0.0d;
+          UpdateStatus();
+          if (_started==false) return 0.0d;
+          return (double)_iTunesApplication.PlayerPosition;
         }
         catch (Exception)
         {
-          iTunesApp = null;
+          _iTunesApplication = null;
           return 0.0d;
         }
       }
@@ -208,23 +204,25 @@ namespace MediaPortal.ITunesPlayer
 
     public override void Pause()
     {
-      if (iTunesApp == null) return;
+      if (_iTunesApplication == null) return;
+      UpdateStatus();
+      if (_started == false) return;
       try
       {
         if (Paused)
         {
-          iTunesApp.Play();
-          playerPaused = false;
+          _iTunesApplication.Play();
+          _playerIsPaused = false;
         }
         else
         {
-          iTunesApp.Pause();
-          playerPaused = true;
+          _iTunesApplication.Pause();
+          _playerIsPaused = true;
         }
       }
       catch (Exception)
       {
-        iTunesApp = null;
+        _iTunesApplication = null;
         return;
       }
     }
@@ -235,12 +233,14 @@ namespace MediaPortal.ITunesPlayer
       {
         try
         {
-          if (iTunesApp == null) return false;
-          return playerPaused;
+          UpdateStatus();
+          if (_started == false) return false;
+          if (_iTunesApplication == null) return false;
+          return _playerIsPaused;
         }
         catch (Exception)
         {
-          iTunesApp = null;
+          _iTunesApplication = null;
           return false;
         }
       }
@@ -252,15 +252,17 @@ namespace MediaPortal.ITunesPlayer
       {
         try
         {
-          if (iTunesApp == null)
+          if (_iTunesApplication == null)
             return false;
+          UpdateStatus();
+          if (_started == false) return true;
           if (Paused) return true;
-          return (iTunesApp.PlayerState != ITPlayerState.ITPlayerStateStopped);
+          return (_iTunesApplication.PlayerState != ITPlayerState.ITPlayerStateStopped);
 
         }
         catch (Exception)
         {
-          iTunesApp = null;
+          _iTunesApplication = null;
           return false;
         }
       }
@@ -270,17 +272,19 @@ namespace MediaPortal.ITunesPlayer
     {
       get
       {
-        if (iTunesApp == null)
+        if (_iTunesApplication == null)
           return true;
         try
         {
+          UpdateStatus();
+          if (_started == false) return false;
           if (Paused) return false;
-          return (iTunesApp.PlayerState == ITPlayerState.ITPlayerStateStopped);
+          return (_iTunesApplication.PlayerState == ITPlayerState.ITPlayerStateStopped);
 
         }
         catch (Exception)
         {
-          iTunesApp = null;
+          _iTunesApplication = null;
           return true;
         }
       }
@@ -292,15 +296,17 @@ namespace MediaPortal.ITunesPlayer
       {
         try
         {
-          if (iTunesApp == null)
+          if (_iTunesApplication == null)
             return true;
+          UpdateStatus();
+          if (_started == false) return false;
           if (Paused) return false;
-          return (iTunesApp.PlayerState == ITPlayerState.ITPlayerStateStopped);
+          return (_iTunesApplication.PlayerState == ITPlayerState.ITPlayerStateStopped);
 
         }
         catch (Exception)
         {
-          iTunesApp = null;
+          _iTunesApplication = null;
           return true;
         }
       }
@@ -310,22 +316,22 @@ namespace MediaPortal.ITunesPlayer
     {
       get
       {
-        return currentFile;
+        return _currentFile;
       }
     }
 
     public override void Stop()
     {
-      if (iTunesApp == null) return;
+      if (_iTunesApplication == null) return;
       try
       {
-        iTunesApp.Stop();
-        playerPaused = false;
-
+        _iTunesApplication.Stop();
+        _playerIsPaused = false;
+        _started = false;
       }
       catch (Exception)
       {
-        iTunesApp = null;
+        _iTunesApplication = null;
       }
     }
 
@@ -333,28 +339,28 @@ namespace MediaPortal.ITunesPlayer
     {
       get
       {
-        if (iTunesApp == null) return 0;
+        if (_iTunesApplication == null) return 0;
         try
         {
-          return iTunesApp.SoundVolume;
+          return _iTunesApplication.SoundVolume;
         }
         catch (Exception)
         {
-          iTunesApp = null;
+          _iTunesApplication = null;
           return 0;
         }
       }
       set
       {
-        if (iTunesApp == null || value < 0 || value > 100) return;
-        iTunesApp.SoundVolume = value;
+        if (_iTunesApplication == null || value < 0 || value > 100) return;
+        _iTunesApplication.SoundVolume = value;
         try
         {
 
         }
         catch (Exception)
         {
-          iTunesApp = null;
+          _iTunesApplication = null;
         }
       }
     }
@@ -376,10 +382,10 @@ namespace MediaPortal.ITunesPlayer
       if (dTime < Duration)
       {
         //m_winampController.Position = dTime;
-        if (iTunesApp == null) return;
+        if (_iTunesApplication == null) return;
         try
         {
-          iTunesApp.PlayerPosition = (int)dTime;
+          _iTunesApplication.PlayerPosition = (int)dTime;
         }
         catch (Exception) { }
       }
@@ -409,6 +415,11 @@ namespace MediaPortal.ITunesPlayer
       double fPercent = Duration / 100.0f;
       fPercent *= (double)iPercentage;
       SeekAbsolute(fPercent);
+    }
+    private void UpdateStatus()
+    {
+      if (_started) return;
+      _started = (_iTunesApplication.PlayerState == ITPlayerState.ITPlayerStatePlaying);
     }
 
   }
