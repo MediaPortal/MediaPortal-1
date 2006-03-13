@@ -807,8 +807,11 @@ namespace MediaPortal.Configuration.Sections
                     
                 // Headphones
                 regValue = comboBoxHeadphones.SelectedIndex;
-                subkey2.SetValue("DHPPropControl", regValue);
-                subkey2.SetValue("DolbyHeadphoneMode", regValue);
+                if (regValue >= 0)
+                {
+                    subkey2.SetValue("DHPPropControl", regValue);
+                    subkey2.SetValue("DolbyHeadphoneMode", regValue);
+                }
 
                 //Receiver
                 int Receiver;
