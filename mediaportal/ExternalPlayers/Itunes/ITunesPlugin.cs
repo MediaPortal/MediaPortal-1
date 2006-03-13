@@ -155,7 +155,7 @@ namespace MediaPortal.ITunesPlayer
         int count = 0;
         while (iTunesApp.PlayerState != ITPlayerState.ITPlayerStatePlaying)
         {
-          System.Threading.Thread.Sleep(10);
+          System.Threading.Thread.Sleep(100);
           if (count++ > 50) break;
         }
         if (iTunesApp.PlayerState != ITPlayerState.ITPlayerStatePlaying)
