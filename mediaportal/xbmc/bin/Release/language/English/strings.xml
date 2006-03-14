@@ -5240,7 +5240,7 @@
     <value>Track information not available</value>
   </string>  
   <!-- End Playing Now Strings -->
-  <!-- Begin Play Menu Strings -->
+  <!-- Begin Addtional MyMusic Strings -->
   <string>
     <id>4550</id>
     <value>Enqueue</value>
@@ -5261,7 +5261,11 @@
     <id>4554</id>
     <value>Lookup CD info</value>
   </string>  
-  <!-- End Play Menu Strings -->
+  <string>
+    <id>4555</id>
+    <value>Current Playlist</value>
+  </string>  
+  <!-- End Addtional MyMusic Strings -->
   <!-- Begin Minesweeper Strings -->
   <string>
     <id>10100</id>

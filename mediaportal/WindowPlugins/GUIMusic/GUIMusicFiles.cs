@@ -156,6 +156,9 @@ namespace MediaPortal.GUI.Music
         [SkinControlAttribute(10)]
         protected GUIButtonControl btnPlaylistFolder;
 
+        [SkinControlAttribute(12)]
+        protected GUIButtonControl btnSearch;
+
         public GUIMusicFiles()
         {
             GetID = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
@@ -353,6 +356,8 @@ namespace MediaPortal.GUI.Music
             }
             LoadFolderSettings(m_strDirectory);
             LoadDirectory(m_strDirectory);
+
+            btnSearch.Disabled = true;
         }
         protected override void OnPageDestroy(int newWindowId)
         {
@@ -979,6 +984,18 @@ namespace MediaPortal.GUI.Music
         }
 
         #endregion
+
+        public void PlayCD()
+        {
+            for (char c = 'C'; c <= 'Z'; c++)
+            {
+                if ((Utils.GetDriveType(c + ":") & 5) == 5)
+                {
+                    OnPlayCD(c + ":", false);
+                    break;
+                }
+            }
+        }
 
         void OnPlayCD(string strDriveLetter, bool AskForAlbum)
         {

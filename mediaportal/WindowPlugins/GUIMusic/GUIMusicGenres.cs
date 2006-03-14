@@ -69,6 +69,14 @@ namespace MediaPortal.GUI.Music
         [SkinControlAttribute(9)]
         protected GUIButtonControl btnSearch = null;
 
+        [SkinControlAttribute(14)]
+        protected GUIButtonControl btnPlaylistFolder;
+
+        [SkinControlAttribute(12)]
+        protected GUIButtonControl btnPlayCd;
+
+        string m_strCurrentFolder = String.Empty;
+
         private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
         private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
 
@@ -160,26 +168,34 @@ namespace MediaPortal.GUI.Music
 
         public override void OnAction(Action action)
         {
-
             if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
             {
-                if (facadeView.Focus)
+                if (m_strDirectory != m_strPlayListPath)
                 {
-                    GUIListItem item = facadeView[0];
-                    if (item != null && item.IsFolder)
+                    if (facadeView.Focus)
                     {
-                        if (item.Label == "..")
+                        GUIListItem item = facadeView[0];
+                        if (item != null && item.IsFolder)
                         {
-                            if (handler.CurrentLevel > 0)
+                            if (item.Label == "..")
                             {
-                                handler.CurrentLevel--;
-                                LoadDirectory(item.Path);
-                                return;
+                                if (handler.CurrentLevel > 0)
+                                {
+                                    handler.CurrentLevel--;
+                                    LoadDirectory(item.Path);
+                                    return;
+                                }
                             }
                         }
                     }
                 }
+                else
+                {
+                    LoadDirectory(m_strCurrentFolder);
+                    return;
+                }
             }
+
             if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
             {
                 GUIListItem item = facadeView[0];
@@ -256,6 +272,7 @@ namespace MediaPortal.GUI.Music
                 }
             }
             _showArtist = String.Empty;
+            //btnPlaylistFolder.Disabled = true;
         }
         protected override void OnPageDestroy(int newWindowId)
         {
@@ -287,6 +304,29 @@ namespace MediaPortal.GUI.Music
                 keyBoard.TextChanged += new MediaPortal.Dialogs.VirtualSearchKeyboard.TextChangedEventHandler(keyboard_TextChanged); // add the event handler
                 keyBoard.DoModal(activeWindow); // show it...
                 keyBoard.TextChanged -= new MediaPortal.Dialogs.VirtualSearchKeyboard.TextChangedEventHandler(keyboard_TextChanged);	// remove the handler			
+            }
+
+            else if (control == btnPlaylistFolder)
+            {
+                if (m_strDirectory != m_strPlayListPath)
+                {
+                    m_strCurrentFolder = m_strDirectory;
+                    m_strDirectory = m_strPlayListPath;
+                }
+
+                else
+                {
+                    m_strDirectory = m_strCurrentFolder;
+                }
+
+                Console.WriteLine("m_strCurrentFolder:{0}  m_strDirectory:{1}", m_strCurrentFolder, m_strDirectory);
+                LoadPlaylistDirectory(m_strDirectory);
+            }
+
+            if (control == btnPlayCd)
+            {
+                GUIMusicFiles musicFilesWnd = (GUIMusicFiles)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_FILES);
+                musicFilesWnd.PlayCD();
             }
 
             base.OnClicked(controlId, control, actionType);
@@ -381,6 +421,13 @@ namespace MediaPortal.GUI.Music
         {
             GUIListItem item = facadeView.SelectedListItem;
             if (item == null) return;
+
+            if (PlayListFactory.IsPlayList(item.Path))
+            {
+                LoadPlayList(item.Path);
+                return;
+            }
+
             if (item.IsFolder)
             {
                 if (item.Label == ".." && item.Path != String.Empty)
@@ -446,8 +493,6 @@ namespace MediaPortal.GUI.Music
             }
         }
 
-
-
         protected override void OnShowContextMenu()
         {
             GUIListItem item = facadeView.SelectedListItem;
@@ -459,11 +504,9 @@ namespace MediaPortal.GUI.Music
             dlg.Reset();
             dlg.SetHeading(924); // menu
 
-            //dlg.AddLocalizedString(208);  //play
             dlg.AddLocalizedString(926);    // Add to playlist
             dlg.AddLocalizedString(4551);   // Play next
             dlg.AddLocalizedString(4552);   // Play now
-            //dlg.AddLocalizedString(136);  //PlayList
             dlg.AddLocalizedString(4553);   // Show playlist
 
             if (!item.IsFolder && !item.IsRemote)
@@ -484,10 +527,6 @@ namespace MediaPortal.GUI.Music
             if (dlg.SelectedLabel == -1) return;
             switch (dlg.SelectedId)
             {
-                //case 208: // play
-                //    OnClick(itemNo);
-                //    break;
-
                 case 4552:  // Play now (clear playlist, play, and jump to Now playing)
                     //OnPlayNow(itemNo);
                     OnPlayNow(item, itemNo);
@@ -986,7 +1025,7 @@ namespace MediaPortal.GUI.Music
             }
         }
 
-        // Need to remove this and allow the rmote plugins to handle anti-repeat logic.
+        // Need to remove this and allow the remote plugins to handle anti-repeat logic.
         // We also need some way for MP to handle anti-repeat for keyboard events
         private bool AntiRepeatActive()
         {
@@ -998,6 +1037,48 @@ namespace MediaPortal.GUI.Music
 
             else
                 return false;
+        }
+
+        protected void LoadPlaylistDirectory(string strNewDirectory)
+        {
+            GUIListItem SelectedItem = facadeView.SelectedListItem;
+
+            if (SelectedItem != null)
+            {
+                if (SelectedItem.IsFolder && SelectedItem.Label != "..")
+                    m_history.Set(SelectedItem.Label, m_strDirectory);
+            }
+
+            m_strDirectory = strNewDirectory;
+
+            GUIControl.ClearControl(GetID, facadeView.GetID);
+
+            string strObjects = String.Empty;
+
+            List<GUIListItem> itemlist = m_directory.GetDirectoryExt(m_strPlayListPath);
+            int iItem = 0;
+
+            foreach (GUIListItem item in itemlist)
+            {
+                if (item.Label == ".." && m_strDirectory == m_strPlayListPath) 
+                    continue;
+
+                facadeView.Add(item);
+            }
+
+            int iTotalItems = itemlist.Count;
+            
+            if (itemlist.Count > 0)
+            {
+                GUIListItem rootItem = itemlist[0];
+                if (rootItem.Label == "..") iTotalItems--;
+            }
+            
+            strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
+            GUIPropertyManager.SetProperty("#itemcount", strObjects);
+
+            if (m_iItemSelected >= 0)
+                GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
         }
     }
 }
