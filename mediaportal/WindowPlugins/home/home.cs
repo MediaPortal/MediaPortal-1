@@ -432,7 +432,8 @@ namespace MediaPortal.GUI.Home
 					
 				}
 
-				if (m_bAllowScroll)
+
+       if (m_bAllowScroll)
 				{
 					int iMid=(m_iMaxHeight/2) - ((m_iButtonHeight)/2);
 					iMid += m_iStartYoff;
@@ -513,6 +514,7 @@ namespace MediaPortal.GUI.Home
 					return;
 				}
 				int off=3;
+        if (!m_bAllowScroll) off = 2;
 				if (fixedScroll) off=5;
 				if (m_iOffset+m_iMiddle+off< m_iVisibleItems)
 				{
@@ -548,7 +550,8 @@ namespace MediaPortal.GUI.Home
 					return;
 				}
 				int off=1;
-				if (fixedScroll) off=3;
+        if (!m_bAllowScroll) off = 0; 
+        if (fixedScroll) off = 3;
 				if (m_iOffset+m_iMiddle-off>1)
 				{
 					m_iOffset--;
