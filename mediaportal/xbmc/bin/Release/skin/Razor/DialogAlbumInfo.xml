@@ -3,6 +3,7 @@
     <defaultcontrol>5</defaultcontrol> 
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:</define>
+	<define>#header.location:</define>
 	<define>#header.image:info_logo.png</define>
 	<define>#header.hover:</define>
 	<controls>

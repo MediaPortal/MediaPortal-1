@@ -3,6 +3,7 @@
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:8</define>
+	<define>#header.location:</define>
 	<define>#header.image:weather_logo.png</define>
 	<define>#header.hover:hover_my weather.png</define>
 	<define>#selecteditem:-</define>

@@ -3,7 +3,8 @@
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<define>#header.image:television_logo.png</define>
-	<define>#header.label:</define>
+	<define>#header.location:</define>
+	<define>#header.label:605</define>
 	<define>#header.hover:hover_my tv.png</define>
 	<controls>
 		<import>common.window.xml</import>
@@ -36,7 +37,7 @@
 			</control>	
 			<control>
 				<description>Group button</description>
-				<type>selectbutton</type>
+				<type>button</type>
 				<id>6</id>
 				<label>971</label>
 				<onup>3</onup>
@@ -45,7 +46,7 @@
 			</control>
 			<control>
 				<description>Channel button</description>
-				<type>selectbutton</type>
+				<type>button</type>
 				<id>7</id>
 				<label>602</label>
 				<onup>6</onup>

@@ -3,6 +3,7 @@
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:5900</define>
+	<define>#header.location:#title</define>
 	<define>#header.image:trailers_logo.png</define>
 	<define>#header.hover:hover_my trailers.png</define>
 	<controls>
@@ -15,18 +16,6 @@
 			<width>210</width>
 			<height>55</height>
 			<texture>location_background.png</texture>
-		</control>
-		<control>
-			<type>fadelabel</type>
-			<description>Movie Title value</description>
-			<id>1</id>
-			<posX>3</posX>
-			<posY>42</posY>
-			<width>200</width>
-			<label>#title</label>
-			<font>font11</font>
-			<align>center</align>
-			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
 			<type>togglebutton</type>

@@ -3,6 +3,7 @@
 	<defaultcontrol>502</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:652</define>
+	<define>#header.location:</define>
 	<define>#header.image:tv_logo.png</define>
 	<define>#header.hover:hover_my tv.png</define>
 	<controls>

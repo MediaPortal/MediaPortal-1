@@ -1,8 +1,9 @@
 <window>
 	<id>3</id>
-	<defaultcontrol>2</defaultcontrol>
+	<defaultcontrol>50</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:#curheader</define>
+	<define>#header.location:</define>
 	<define>#header.image:programs_logo.png</define>
 	<define>#header.hover:hover_my programs.png</define>
 	<controls>

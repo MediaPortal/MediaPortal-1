@@ -1,8 +1,9 @@
 <window>
 	<id>2</id>
-	<defaultcontrol>2</defaultcontrol>
+	<defaultcontrol>50</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:1</define>
+	<define>#header.location:</define>
 	<define>#header.image:pictures_logo.png</define>
 	<define>#header.hover:hover_my pictures.png</define>
 	<controls>

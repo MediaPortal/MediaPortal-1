@@ -3,60 +3,6 @@
   <defaultcontrol>2</defaultcontrol> 
   <controls>
 	<control>
-		<description>now playing label</description>
-		<type>label</type>
-		<id>288</id>
-		<posX>1025</posX>
-		<posY>590</posY>
-		<label>Now playing</label>
-		<align>right</align>
-		<font>font10</font>
-		<textcolor>88000000</textcolor>
-	</control>
-	<control>
-		<description>play time label</description> 
-		<type>label</type> 
-		<id>2</id> 
-		<posX>1025</posX> 
-		<posY>665</posY> 
-		<label>#currentplaytime / #duration</label> 
-		<align>right</align> 
-		<font>font10</font> 
-		<textcolor>88000000</textcolor> 
-	</control>
-	<control>
-		<description>play logo</description> 
-		<type>image</type> 
-		<id>3</id> 
-		<posX>1060</posX> 
-		<posY>610</posY> 
-		<texture>logo_play.png</texture> 
-	</control>
-	<control>
-		<description>Pause logo</description> 
-		<type>image</type> 
-		<id>4</id> 
-		<posX>1055</posX> 
-		<posY>610</posY> 
-		<texture>logo_pause.png</texture> 
-	</control>
-	<control>
-		<description>FF logo</description> 
-		<type>image</type> 
-		<id>7</id> 
-		<posX>1048</posX> 
-		<posY>610</posY>
-		<texture>logo_fastforward.png</texture> 
-	</control>
-	<control>
-		<description>RW logo</description> 
-		<type>image</type> 
-		<id>8</id> 
-		<posX>1048</posX> 
-		<posY>610</posY>  
-		<texture>logo_rewind.png</texture> 
-	</control>
-	<control>
 		<description>Video Overlay Bottom bar</description>
 		<type>image</type>
 		<id>25</id>
@@ -71,7 +17,7 @@
 		<type>fadelabel</type> 
 		<width>900</width> 
 		<height>30</height>
-		<posX>1025</posX> 
+		<posX>1100</posX>
 		<posY>620</posY>
 		<align>right</align>
 		<font>font16</font> 
@@ -98,6 +44,79 @@
 		<width>118</width> 
 		<height>118</height> 
 		<texture>#Play.Current.Thumb</texture> 
+	</control>
+	<control>
+		<description>now playing label</description>
+		<type>label</type>
+		<id>288</id>
+		<posX>1100</posX>
+		<posY>590</posY>
+		<label>Now playing</label>
+		<align>right</align>
+		<font>font10</font>
+		<textcolor>88000000</textcolor>
+	</control>
+	<control>
+		<description>play time label</description> 
+		<type>label</type> 
+		<id>2</id> 
+		<posX>1100</posX> 
+		<posY>665</posY> 
+		<label>#currentplaytime / #duration</label> 
+		<align>right</align> 
+		<font>font10</font> 
+		<textcolor>88000000</textcolor> 
+	</control>
+	<control>
+		<description>logo background</description> 
+		<type>image</type> 
+		<id>0</id> 
+		<posX>1141</posX> 
+		<posY>633</posY>
+		<width>118</width>
+		<height>70</height>
+		<texture>logo_background.png</texture>
+		<visible>yes</visible>
+	</control>
+	<control>
+		<description>play logo</description> 
+		<type>image</type> 
+		<id>3</id> 
+		<posX>1165</posX> 
+		<posY>648</posY>
+		<width>70</width>
+		<height>60</height>
+		<texture>logo_play.png</texture> 
+	</control>
+	<control>
+		<description>Pause logo</description> 
+		<type>image</type> 
+		<id>4</id> 
+		<posX>1165</posX> 
+		<posY>648</posY>
+		<width>70</width>
+		<height>60</height>
+		<texture>logo_pause.png</texture> 
+	</control>
+	<control>
+		<description>FF logo</description> 
+		<type>image</type> 
+		<id>7</id> 
+		<posX>1165</posX> 
+		<posY>648</posY>
+		<width>70</width>
+		<height>60</height>
+		<texture>logo_fastforward.png</texture> 
+	</control>
+	<control>
+		<description>RW logo</description> 
+		<type>image</type> 
+		<id>8</id> 
+		<posX>1165</posX> 
+		<posY>648</posY>
+		<width>70</width>
+		<height>60</height>
+		<texture>logo_rewind.png</texture> 
 	</control>
     </controls>
 </window>

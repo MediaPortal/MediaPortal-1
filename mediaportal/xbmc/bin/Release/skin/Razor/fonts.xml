@@ -27,6 +27,12 @@
     <height>10</height>
   </font>
   <font>
+    <name>font10bold</name>
+    <filename>Lucida Sans Unicode</filename>
+    <height>10</height>
+    <bold>yes</bold>
+  </font>
+  <font>
     <name>font11</name>
     <filename>Lucida Sans Unicode</filename>
     <height>11</height>

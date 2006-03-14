@@ -3,6 +3,7 @@
 	<defaultcontrol>3</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:#burner_title</define>
+	<define>#header.location:</define>
 	<define>#header.image:</define>
 	<define>#header.hover:hover_my burner.png</define>
 	<controls>

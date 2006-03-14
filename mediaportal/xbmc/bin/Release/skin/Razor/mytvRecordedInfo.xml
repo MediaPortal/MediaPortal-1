@@ -4,6 +4,7 @@
 	<allowoverlay>no</allowoverlay>
 	<define>#header.image:television_logo.png</define>
 	<define>#header.label:1037</define>
+	<define>#header.location:</define>
 	<define>#header.hover:hover_my tv.png</define>
 	<controls>
 		<import>common.window.xml</import>
@@ -139,5 +140,49 @@
 			<font>font13</font>
 			<textcolor>FFB2D4F5</textcolor>
 		</control>
+			<control>
+		<description>Video Overlay Bottom bar</description>
+		<type>image</type>
+		<id>25</id>
+		<posX>220</posX>
+		<posY>563</posY>
+		<width>1060</width>
+		<height>157</height>
+		<texture>videooverlay_bottom.png</texture>
+	</control>
+	<control>
+		<description>video rectangle</description> 
+		<type>image</type> 
+		<id>0</id> 
+		<posX>1025</posX> 
+		<posY>563</posY> 
+		<width>260</width> 
+		<height>160</height> 
+		<texture>playback_background.png</texture> 
+		<colorkey>0</colorkey> 
+		<colordiffuse>ffffffff</colordiffuse> 
+	</control>
+	<control>
+		<description>video preview window</description> 
+		<type>videowindow</type> 
+		<id>1</id> 
+		<posX>1052</posX> 
+		<posY>585</posY> 
+		<width>208</width> 
+		<height>117</height> 
+		<action>18</action>
+		<textureFocus>tv_green_border.png</textureFocus> 
+	</control>
+	<control>
+		<description>logo background</description> 
+		<type>image</type> 
+		<id>0</id> 
+		<posX>1052</posX> 
+		<posY>633</posY>
+		<width>208</width>
+		<height>70</height>
+		<texture>logo_background.png</texture>
+		<visible>yes</visible>
+	</control>
 	</controls>
 </window>

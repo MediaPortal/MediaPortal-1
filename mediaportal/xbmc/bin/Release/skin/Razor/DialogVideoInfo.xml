@@ -2,7 +2,8 @@
   	<id>2003</id> 
   	<defaultcontrol>2</defaultcontrol> 
   	<allowoverlay>yes</allowoverlay>
-	<define>#header.label:</define>
+	<define>#header.label:3</define>
+	<define>#header.location:</define>
 	<define>#header.image:videos_logo.png</define>
 	<define>#header.hover:hover_my videos.png</define>
   	<controls>

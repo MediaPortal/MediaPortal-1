@@ -3,6 +3,7 @@
    	<defaultcontrol>4</defaultcontrol>
    	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:Setup - Remote Control</define>
+	<define>#header.location:</define>
 	<define>#header.hover:hover_remote.png</define>
 	<controls>
 		<import>common.window.xml</import>

@@ -15,9 +15,8 @@
 			<type>image</type>
 			<id>1</id>
 			<posX>0</posX>
-			<posY>-25</posY>
-			<width>250</width>
-			<height>773</height>
+			<posY>0</posY>
+			<colordiffuse>ccffffff</colordiffuse>
 			<texture>menu_background.png</texture>
 			<visible>yes</visible>
 		</control>
@@ -44,35 +43,47 @@
 		<textcolor>ffb9d5dd</textcolor>
 	</control>
 		<control>
-			<type>label</type>
+			<type>fadelabel</type>
 			<id>1</id>
-			<posX>400</posX>
-			<posY>40</posY>
+			<posX>3</posX>
+			<posY>42</posY>
+			<width>200</width>
 			<label>#header.label</label>
 			<font>font11</font>
+			<align>center</align>
+			<textcolor>ffffffff</textcolor>
+		</control>
+		<control>
+			<type>fadelabel</type>
+			<id>0</id>
+			<posX>433</posX>
+			<posY>32</posY>
+			<width>200</width>
+			<label>#header.location</label>
+			<font>font11</font>
 			<align>left</align>
-			<textcolor>ffb9d5dd</textcolor>
+			<textcolor>ffffffff</textcolor>
 		</control>
 		<control>
 			<description>Number of Files Label</description>
 			<type>label</type>
 			<id>1</id>
-			<posX>400</posX>
-			<posY>519</posY>
+			<posX>480</posX>
+			<posY>65</posY>
 			<label>#itemcount</label>
-			<align>left</align>
-			<font>font11</font>
+			<align>right</align>
+			<font>font10</font>
 			<textcolor>ffb9d5dd</textcolor>
 		</control>
 		<control>
 			<description>Selected item Label</description>
 			<type>fadelabel</type>
 			<id>1</id>
-			<posX>400</posX>
-			<posY>80</posY>
+			<posX>505</posX>
+			<posY>65</posY>
 			<width>400</width>
 			<label>#selecteditem</label>
-			<font>font8</font>
+			<font>font10bold</font>
 			<align>left</align>
 			<textcolor>ffb9d5dd</textcolor>
 		</control>

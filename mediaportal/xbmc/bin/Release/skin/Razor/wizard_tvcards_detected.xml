@@ -3,6 +3,7 @@
    <defaultcontrol>5</defaultcontrol>
    <allowoverlay>yes</allowoverlay>
 	<define>#header.label:TV Setup</define>
+	<define>#header.location:</define>
 	<define>#header.hover:hover_my tv.png</define>
 	<controls>
 		<import>common.window.xml</import>

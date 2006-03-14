@@ -3,6 +3,7 @@
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:5</define>
+	<define>#header.location:</define>
 	<define>#header.hover:hover_my music.png</define>
 	<controls>
 	<import>common.settings.xml</import>

@@ -2,22 +2,12 @@
 	<id>500</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
-	<define>#header.label:#view</define>
+	<define>#header.label:136</define>
+	<define>#header.location:</define>
 	<define>#header.image:music_logo.png</define>
 	<define>#header.hover:hover_my music.png</define>
 	<controls>
 		<import>common.window.xml</import>
-		<control>
-			<description>Playlist text label</description>
-			<type>label</type>
-			<id>1</id>
-			<posX>300</posX>
-			<posY>60</posY>
-			<label>136</label>
-			<font>font16</font>
-			<align>right</align>
-			<textcolor>ffffffff</textcolor>
-		</control>
 		<control>
 			<type>group</type>
 			<description>group element</description>
@@ -104,21 +94,8 @@
 				<description>Party Shuffle Mode button</description>
 				<type>togglebutton</type>
 				<id>26</id>
-				<posX>0</posX>
 				<posY>377</posY>
-				<width>260</width>
-				<height>40</height>
-				<textXOff>40</textXOff>
-				<textYOff>4</textYOff>
-				<font>font13</font>
-				<textcolor>ffb9d5dd</textcolor>
-				<colordiffuse>ffffffff</colordiffuse>
-				<disabledcolor>60ffffff</disabledcolor>
 				<label>16001</label>
-				<AltTextureFocus>togglebutton-off-focus.png</AltTextureFocus>
-				<AltTextureNoFocus>togglebutton-off-nofocus.png</AltTextureNoFocus>
-				<textureFocus>togglebutton-on-focus.png</textureFocus>
-				<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 				<onup>25</onup>
 				<ondown>99</ondown>
 				<onleft>26</onleft>
@@ -133,16 +110,6 @@
 				<description>composite control consisting of a list control and a thumbnail panel</description>
 			    <type>facadeview</type>
 			    <id>50</id>			
-				<control>
-					<description>listcontrol</description>
-					<type>listcontrol</type>
-					<id>50</id>
-					<onleft>2</onleft>
-					<onright>51</onright>
-					<onup>2</onup>
-					<ondown>2</ondown>
-					<textcolor>FFFFFFFF</textcolor>
-				</control>
 			    <control>
 				    <description>Thumbnail Panel</description>
 				    <type>thumbnailpanel</type>
@@ -178,6 +145,16 @@
 					<onup>2</onup>
 					<ondown>2</ondown>
 				</control>
+				<control>
+          			<description>playlist control</description>
+			        <type>playlistcontrol</type>
+			        <id>53</id>
+			        <onleft>2</onleft>
+			        <onright>53</onright>
+			        <onup>2</onup>
+			        <ondown>2</ondown>
+			        <textcolor>FFFFFFFF</textcolor>
+        		</control>
 			</control>
 		</control>
 	</controls>

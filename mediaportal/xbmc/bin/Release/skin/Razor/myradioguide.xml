@@ -4,6 +4,7 @@
 	<allowoverlay>no</allowoverlay>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:</define>
+	<define>#header.location:</define>
 	<define>hover_my radio.png:</define>
 	<controls>
 		<import>common.window.xml</import>

@@ -3,6 +3,7 @@
   <defaultcontrol>50</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:</define>
+	<define>#header.location:</define>
 	<define>#header.image:videos_logo.png</define>
 	<define>#header.hover:hover_my videos.png</define>
 	<controls>

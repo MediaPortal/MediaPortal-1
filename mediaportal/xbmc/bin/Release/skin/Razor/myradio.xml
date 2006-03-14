@@ -2,7 +2,8 @@
 	<id>30</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
-	<define>#header.label:666</define>
+	<define>#header.label:665</define>
+	<define>#header.location:666</define>
 	<define>#header.hover:hover_my radio.png</define>
 	<controls>
 		<import>common.window.xml</import>

@@ -3,6 +3,7 @@
   <defaultcontrol>2</defaultcontrol> 
   <allowoverlay>yes</allowoverlay>
   <define>#header.label:861</define>
+  <define>#header.location:</define>
   <define>#header.image:alarm_logo.png</define>
   <define>#header.hover:hover_my alarm.png</define>
     <controls>

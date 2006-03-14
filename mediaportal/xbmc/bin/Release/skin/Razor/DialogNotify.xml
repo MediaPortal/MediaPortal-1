@@ -1,7 +1,7 @@
 ﻿<window>
   <id>2016</id> 
   <defaultcontrol>4</defaultcontrol> 
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
     <controls>
  	<control>
 		<type>group</type>

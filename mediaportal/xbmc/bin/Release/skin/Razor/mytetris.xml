@@ -3,6 +3,7 @@
 	<defaultcontrol>10</defaultcontrol>
 	<allowoverlay>no</allowoverlay>
 	<define>#header.label:19001</define>
+	<define>#header.location:</define>
 	<define>#header.image:tetris\logo.png</define>
 	<define>#header.hover:</define>
 	<controls>

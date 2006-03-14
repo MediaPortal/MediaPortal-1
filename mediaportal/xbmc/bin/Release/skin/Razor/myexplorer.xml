@@ -3,6 +3,7 @@
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:#explorer_title</define>
+	<define>#header.location:</define>
 	<define>#header.image:explorer_logo.png</define>
 	<define>#header.hover:hover_my explorer.png</define>
 	<controls>
