@@ -68,7 +68,7 @@ namespace MediaPortal.TV.Recording
       : base()
     {
       //load tv cards
-      _tvcards = new TvCardCollection(this);
+      _tvcards = new TvCardCollection();
 
       _epgProcessor = new EPGProcessor();
       _scheduler = new Scheduler();
@@ -124,7 +124,7 @@ namespace MediaPortal.TV.Recording
     {
       if (card < 0 || card >= _tvcards.Count) return String.Empty;
       TVCaptureDevice dev = _tvcards[card];
-      string fileName = String.Format(@"{0}\card{1}\{2}", dev.RecordingPath, card + 1, dev.TimeShiftFileName);
+      string fileName = dev.TimeShiftFullFileName;
       return fileName;
     }
 

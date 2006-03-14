@@ -740,7 +740,7 @@ namespace MediaPortal.TV.Recording
     {
       if (card < 0 || card >= _commandProcessor.TVCards.Count) return String.Empty;
       TVCaptureDevice dev = _commandProcessor.TVCards[card];
-      string FileName = String.Format(@"{0}\card{1}\{2}", dev.RecordingPath, card + 1, dev.TimeShiftFileName);
+      string FileName = dev.TimeShiftFullFileName;
       return FileName;
     }
 
@@ -756,7 +756,7 @@ namespace MediaPortal.TV.Recording
         TVCaptureDevice dev = _commandProcessor.TVCards[i];
         if (dev.ID == cardId)
         {
-          string FileName = String.Format(@"{0}\card{1}\{2}", dev.RecordingPath, i + 1, dev.TimeShiftFileName);
+          string FileName = dev.TimeShiftFullFileName;
           return FileName;
         }
       }

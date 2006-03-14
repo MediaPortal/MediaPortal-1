@@ -156,8 +156,6 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     GraphHelper _graphHelper = new GraphHelper();
     [NonSerialized]
-    CommandProcessor _processor;
-    [NonSerialized]
     static Hashtable _devices = new Hashtable();
 
     /// <summary>
@@ -208,10 +206,6 @@ namespace MediaPortal.TV.Recording
     #endregion
 
     #region properties
-    public void SetCommandProcessor(CommandProcessor processor)
-    {
-      _processor = processor;
-    }
     public GraphHelper Graph
     {
       get
@@ -579,7 +573,7 @@ namespace MediaPortal.TV.Recording
         Log.Write("TVCapture: change channel to :{0}", value);
         if (IsTimeShifting || IsRecording)
         {
-          if (g_Player.Playing && g_Player.CurrentFile == _processor.GetTimeShiftFileName(ID - 1))
+          if (g_Player.Playing && g_Player.CurrentFile == TimeShiftFullFileName)
           {
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
             GUIGraphicsContext.SendMessage(msg);
@@ -809,6 +803,20 @@ namespace MediaPortal.TV.Recording
         }
       }
     }
+    public string TimeShiftFilePath
+    {
+        get
+        {
+            return String.Format(@"{0}\card{1}", RecordingPath, ID);
+        }
+    }
+    public string TimeShiftFullFileName
+    {
+        get
+        {
+            return String.Format(@"{0}\{1}", TimeShiftFilePath, TimeShiftFileName);
+        }
+    }
     public IBaseFilter AudiodeviceFilter
     {
       get
@@ -962,7 +970,7 @@ namespace MediaPortal.TV.Recording
         StopTimeShifting();
         return;
       }
-      string timeshiftFilename = String.Format(@"{0}\card{1}\{2}", RecordingPath, ID, TimeShiftFileName);
+      string timeshiftFilename = TimeShiftFullFileName;
       if (!g_Player.CurrentFile.Equals(timeshiftFilename))
       {
         StopTimeShifting();
@@ -1184,7 +1192,7 @@ namespace MediaPortal.TV.Recording
 
 
 
-      string strFileName = _processor.GetTimeShiftFileName(ID - 1);
+      string strFileName = TimeShiftFullFileName;
 
 
 
@@ -1215,7 +1223,7 @@ namespace MediaPortal.TV.Recording
       //stopping timeshifting will also remove the live.tv file 
       Log.WriteFile(Log.LogType.Log, "TVCapture.StopTimeShifting() Card:{0}", ID);
       bool result = _currentGraph.StopTimeShifting();
-      string fileName = _processor.GetTimeShiftFileName(ID - 1);
+      string fileName = TimeShiftFullFileName;
       Utils.FileDelete(fileName);
       _currentTvChannelName = "";
       _timeTimeshiftingStarted = DateTime.MinValue;
@@ -1397,7 +1405,7 @@ namespace MediaPortal.TV.Recording
       //stop playback of this channel
       if (_currentGraph != null)
       {
-        if (g_Player.Playing && g_Player.CurrentFile == _processor.GetTimeShiftFileName(ID - 1))
+          if (g_Player.Playing && g_Player.CurrentFile == TimeShiftFullFileName)
         {
           g_Player.Stop();
         }
@@ -1412,9 +1420,8 @@ namespace MediaPortal.TV.Recording
       TVChannel channel = GetChannel(_currentTvChannelName);
       if (_currentGraphState == State.Timeshifting)
       {
-        _currentGraph.StartTimeShifting(channel, _processor.GetTimeShiftFileName(ID - 1));
+        _currentGraph.StartTimeShifting(channel, TimeShiftFullFileName);
         _lastChannelChange = DateTime.Now;
-        _processor.ResetTimeshiftTimer();
       }
       else
       {
