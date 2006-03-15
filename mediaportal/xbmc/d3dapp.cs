@@ -258,7 +258,8 @@ namespace MediaPortal
     private bool m_bRestore = false;
     private double m_dCurrentPos = 0;
     private string m_strCurrentFile;
-    private PlayListType m_currentPlayList = PlayListType.PLAYLIST_NONE;
+    private PlayListType m_currentPlayListType = PlayListType.PLAYLIST_NONE;
+    private PlayList m_currentPlayList = null;
     private int m_iSleepingTime = 50;
     private bool autoHideTaskbar = true;
     private bool alwaysOnTop = false;
@@ -1415,17 +1416,6 @@ namespace MediaPortal
       }
 
 
-      try
-      {
-        if (!GUIGraphicsContext.Vmr9Active)
-        {
-          Render(GUIGraphicsContext.TimePassed);
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Write(ex);
-      }
 
       if (!deviceLost && !m_bNeedReset)
       {
@@ -1437,20 +1427,21 @@ namespace MediaPortal
             Log.Write("App.Render3dEnvironment() play:{0}", m_strCurrentFile);
             m_bWasPlaying = false;
 
-            // If a single file was played, play only that file - don't
-            // try to restore the playlist - otherwise restore the PlayListPlayer
-            if (m_currentPlayList == PlayListType.PLAYLIST_MUSIC_TEMP
-                || m_currentPlayList == PlayListType.PLAYLIST_VIDEO_TEMP)
+            playlistPlayer.Init();
+            playlistPlayer.Reset();
+            playlistPlayer.CurrentPlaylistType = m_currentPlayListType;
+            PlayList playlist = playlistPlayer.GetPlaylist(m_currentPlayListType);
+            playlist.Clear();
+            if (m_currentPlayList != null)
             {
-              g_Player.Play(m_strCurrentFile);
+                for (int i = 0; i < (int)m_currentPlayList.Count; ++i)
+                {
+                  PlayListItem itemNew = m_currentPlayList[i];
+                  playlist.Add(itemNew);
+                }
             }
-            else
-            {
-              playlistPlayer.Init();
-              playlistPlayer.CurrentPlaylistType = m_currentPlayList;
-              playlistPlayer.Play(m_strCurrentFile);
-            }
-            Log.Write("App.Render3dEnvironment() play:{0}", m_strCurrentFile);
+            playlistPlayer.Play(m_strCurrentFile);
+            Log.Write("App.Render3dEnvironment() playing:{0}", m_strCurrentFile);
             if (g_Player.Playing)
             {
               g_Player.SeekAbsolute(m_dCurrentPos);
@@ -1459,7 +1450,18 @@ namespace MediaPortal
           GUIWindowManager.ActivateWindow(m_iActiveWindow);
         }
       }
-    }
+      try
+      {
+          if (!GUIGraphicsContext.Vmr9Active)
+          {
+              Render(GUIGraphicsContext.TimePassed);
+          }
+      }
+      catch (Exception ex)
+      {
+          Log.Write(ex);
+      }
+  }
 
     private void HandleCursor()
     {
@@ -2173,14 +2175,24 @@ namespace MediaPortal
 
       if (g_Player.Playing && (g_Player.IsTV || g_Player.IsVideo || g_Player.IsDVD))
       {
-        Log.Write("Form resized: stop media");
         m_bRestore = false;
         m_bRestoreTmp = true;
         m_bWasPlaying = g_Player.Playing;
         m_dCurrentPos = g_Player.CurrentPosition;
-        m_currentPlayList = playlistPlayer.CurrentPlaylistType;
+        m_currentPlayListType = playlistPlayer.CurrentPlaylistType;
+        m_currentPlayList = new PlayList();
+        PlayList tempList = playlistPlayer.GetPlaylist(m_currentPlayListType);
+        if (tempList != null)
+        {
+            for (int i = 0; i < (int)tempList.Count; ++i)
+            {
+                PlayListItem itemNew = tempList[i];
+                m_currentPlayList.Add(itemNew);
+            }
+        }
         m_strCurrentFile = playlistPlayer.Get(playlistPlayer.CurrentSong);
         m_iActiveWindow = GUIWindowManager.ActiveWindow;
+        Log.Write("Form resized: stop media:current playlist:Type:{0} Size:{1} Current Item:{2} FileName:{3} Position:{4}", m_currentPlayListType, m_currentPlayList.Count, playlistPlayer.CurrentSong, m_strCurrentFile, m_dCurrentPos);
         try
         {
           g_Player.Stop();
