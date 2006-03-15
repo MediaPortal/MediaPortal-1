@@ -407,34 +407,40 @@ namespace MediaPortal.GUI.GUIExplorer
 							}
 							else if(item.Label.StartsWith("("))
 							{
-								LoadListControl(item.Label[1] + @":\", currentExt);
+                if (item.Label.Contains(":)"))  LoadListControl(item.Label[1] + @":\", currentExt);
+                else LoadListControl(item.Path, currentExt); // is a folder
 							}
 							else if (item.Label.StartsWith("["))		// is a share
 							{ 
 								String shareName=item.Label.Substring(1);
 								shareName=shareName.Substring(0,shareName.Length-1);
+                bool shareFound = false;
 								for (int i=0; i<20; i++) 
 								{
 									if (pname[i]==shareName)
 									{
 										currentFolder=pictures[i];
 										LoadListControl(currentFolder,currentExt);
+                    shareFound = true;
 										break;
 									}
 									if (sname[i]==shareName)
 									{
 										currentFolder=sound[i];
 										LoadListControl(currentFolder,currentExt);
+                    shareFound = true;
 										break;
 									}
 									if (vname[i]==shareName)
 									{
 										currentFolder=video[i];
 										LoadListControl(currentFolder,currentExt);
+                    shareFound = true;
 										break;
 									}
 								}
-								LoadListControl(currentFolder,currentExt);
+                if (shareFound)	LoadListControl(currentFolder,currentExt);
+                else LoadListControl(item.Path, currentExt); // is a folder
 							} 
 							else if (item.IsFolder)								// is a folder
 							{		
