@@ -56,6 +56,7 @@ namespace DShowNET.Helper
     IMpeg2Demultiplexer _mpeg2DemultiplexerInterface = null;
     IPin _pinAudioOut = null;
     IPin _pinVideoout = null;
+    IPin _pinLPCMOut = null;
     IPin _pinDemuxerInput = null;
     IPin _pinVideoAnalyzerInput = null;
     IPin _pinVideoAnalyzerOutput = null;
@@ -156,7 +157,7 @@ namespace DShowNET.Helper
         0x10, 0x00,             // wBitsPerSample   = 16
         0x16, 0x00,             // extra size       = 0x0016 = 22 bytes
         0x02, 0x00,             // fwHeadLayer
-        0x00, 0xE8,0x03, 0x00,  // dwHeadBitrate
+        0x00, 0x70,0x17, 0x00,  // dwHeadBitrate
         0x01, 0x00,             // fwHeadMode
         0x01, 0x00,             // fwHeadModeExt
         0x01, 0x00,             // wHeadEmphasis
@@ -164,6 +165,16 @@ namespace DShowNET.Helper
         0x00, 0x00, 0x00, 0x00, // dwPTSLow
         0x00, 0x00, 0x00, 0x00  // dwPTSHigh
       };
+      static byte[] LPCMAudioFormat =
+        {
+          0x00, 0x00,             // format type      = 0x0000=WAVE_FORMAT_UNKNOWN
+          0x02, 0x00,             // channels
+          0x80, 0xBB, 0x00, 0x00, // samplerate       = 0x0000bb80=48000
+          0x00, 0x7D, 0x00, 0x00, // nAvgBytesPerSec  = 0x00007d00=32000
+          0x00, 0x03,             // nBlockAlign      = 0x0300 = 768
+          0x10, 0x00,             // wBitsPerSample   = 16
+          0x16, 0x00,             // extra size       = 0x0016 = 22 bytes
+          };
 
     #endregion
 
@@ -190,6 +201,11 @@ namespace DShowNET.Helper
     public IPin AudioOutputPin
     {
       get { return _pinAudioOut; }
+    }
+
+    public IPin LPCMOutputPin
+    {
+        get { return _pinLPCMOut; }
     }
 
     public IPin VideoOutputPin
@@ -301,13 +317,35 @@ namespace DShowNET.Helper
 
 
       //render the audio output pin, this will create the audio renderer which plays the audio part
-      hr = _graphBuilderInterface.Render(_pinAudioOut);
-      if (hr != 0)
+      IBaseFilter capture;
+      _graphBuilderInterface.FindFilterByName("Adaptec USB Capture Device", out capture);
+      if (capture == null)
       {
-        Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
-        return false;
+          _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
+          if (capture == null)
+          {
+              Log.WriteFile(Log.LogType.Log, "mpeg2:FAILED to find Adaptec Capture Device");
+              hr = _graphBuilderInterface.Render(_pinAudioOut);
+              if (hr != 0)
+              {
+                  Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
+                  return false;
+              }
+              Log.WriteFile(Log.LogType.Log, "mpeg2:demux mpeg audio out connected ");
+          }
       }
-      Log.WriteFile(Log.LogType.Log, "mpeg2:demux audio out connected ");
+
+      if (capture != null)
+      {
+          Log.WriteFile(Log.LogType.Log, "mpeg2:Found Adaptec Capture Device");
+          hr = _graphBuilderInterface.Render(_pinLPCMOut);
+          if (hr != 0)
+          {
+              Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
+              return false;
+          }
+          Log.WriteFile(Log.LogType.Log, "mpeg2:demux lpcm audio out connected ");
+      }
 
       bool useOverlay = true;
       if (vmr9 != null && vmr9.IsVMR9Connected && vmr9.UseVmr9)
@@ -483,11 +521,30 @@ namespace DShowNET.Helper
         return;
       }
 
-      int hr = _graphBuilderInterface.Render(_pinAudioOut);
-      if (hr == 0)
-        Log.WriteFile(Log.LogType.Log, "mpeg2:demux audio out connected ");
-      else
-        Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
+      IBaseFilter capture;
+      _graphBuilderInterface.FindFilterByName("Adaptec USB Capture Device", out capture);
+      if (capture == null)
+      {
+          _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
+          if (capture == null)
+          {
+              Log.WriteFile(Log.LogType.Log, "mpeg2:FAILED to find Adaptec Capture Device");
+              int hr = _graphBuilderInterface.Render(_pinAudioOut);
+              if (hr == 0)
+                  Log.WriteFile(Log.LogType.Log, "mpeg2:demux mpeg audio out connected ");
+              else
+                  Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux mpeg audio out:0x{0:X}", hr);
+          }
+      }
+      if (capture == null)
+      {
+          Log.WriteFile(Log.LogType.Log, "mpeg2:Found Adaptec Capture Device");
+          int hr = _graphBuilderInterface.Render(_pinLPCMOut);
+          if (hr != 0)
+              Log.WriteFile(Log.LogType.Log, "mpeg2:demux lpcm audio out connected ");
+          else
+              Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux lpcm audio out:0x{0:X}", hr);
+      }
       _isRendered = true;
       if (_mediaControlInterface == null)
         _mediaControlInterface = _graphBuilderInterface as IMediaControl;
@@ -601,14 +658,36 @@ namespace DShowNET.Helper
           return false;
         }
         //mpeg2 demux audio out->streambuffer in#1
-        Log.WriteFile(Log.LogType.Log, "mpeg2:demux audio out->stream buffer");
-        hr = _graphBuilderInterface.Connect(_pinAudioOut, _pinStreamBufferIn1);
-        if (hr != 0)
+        IBaseFilter capture;
+        _graphBuilderInterface.FindFilterByName("Adaptec USB Capture Device", out capture);
+        if (capture == null)
         {
-          Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to connect audio out to streambuffer:0x{0:X}", hr);
-          return false;
+            _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
+            if (capture == null)
+            {
+                Log.WriteFile(Log.LogType.Log, "mpeg2:FAILED to find Adaptec Capture Device");
+                Log.WriteFile(Log.LogType.Log, "mpeg2:demux mpeg audio out->stream buffer");
+                hr = _graphBuilderInterface.Connect(_pinAudioOut, _pinStreamBufferIn1);
+                if (hr != 0)
+                {
+                    Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to connect audio out to streambuffer:0x{0:X}", hr);
+                    return false;
+                }
+                Log.WriteFile(Log.LogType.Log, "mpeg2:mpeg audio out connected to streambuffer");
+            }
         }
-        Log.WriteFile(Log.LogType.Log, "mpeg2:audio out connected to streambuffer");
+        if (capture != null)
+        {
+            Log.WriteFile(Log.LogType.Log, "mpeg2:FAILED to find Adaptec Capture Device");
+            Log.WriteFile(Log.LogType.Log, "mpeg2:demux lpcm audio out->stream buffer");
+            hr = _graphBuilderInterface.Connect(_pinLPCMOut, _pinStreamBufferIn1);
+            if (hr != 0)
+            {
+                Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to connect lpcm audio out to streambuffer:0x{0:X}", hr);
+                return false;
+            }
+            Log.WriteFile(Log.LogType.Log, "mpeg2:lpcm audio out connected to streambuffer");
+        }
         //set mpeg2 demux as reference clock 
         (_graphBuilderInterface as IMediaFilter).SetSyncSource(_filterMpeg2Demultiplexer as IReferenceClock);
 
@@ -782,6 +861,18 @@ namespace DShowNET.Helper
       mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
       System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
 
+      AMMediaType lpcmAudioOut = new AMMediaType();
+      lpcmAudioOut.majorType = MediaType.Audio;
+      lpcmAudioOut.subType = MediaSubType.DVD_LPCM_AUDIO;
+      lpcmAudioOut.sampleSize = 0;
+      lpcmAudioOut.temporalCompression = true;
+      lpcmAudioOut.fixedSizeSamples = true;
+      lpcmAudioOut.unkPtr = IntPtr.Zero;
+      lpcmAudioOut.formatType = FormatType.WaveEx;
+      lpcmAudioOut.formatSize = LPCMAudioFormat.GetLength(0);
+      lpcmAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(lpcmAudioOut.formatSize);
+      System.Runtime.InteropServices.Marshal.Copy(LPCMAudioFormat, 0, lpcmAudioOut.formatPtr, lpcmAudioOut.formatSize);
+
       Log.WriteFile(Log.LogType.Log, "mpeg2:create video out pin on MPEG2 demuxer");
       hr = _mpeg2DemultiplexerInterface.CreateOutputPin(mpegVideoOut/*vidOut*/, "video", out _pinVideoout);
       if (hr != 0)
@@ -790,14 +881,21 @@ namespace DShowNET.Helper
         return false;
       }
 
-      Log.WriteFile(Log.LogType.Log, "mpeg2:create audio out pin on MPEG2 demuxer");
+      Log.WriteFile(Log.LogType.Log, "mpeg2:create mpeg audio out pin on MPEG2 demuxer");
       hr = _mpeg2DemultiplexerInterface.CreateOutputPin(mpegAudioOut, "audio", out _pinAudioOut);
       if (hr != 0)
       {
-        Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to create audioout pin:0x{0:X}", hr);
+        Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to create mpeg audio out pin:0x{0:X}", hr);
         return false;
       }
 
+      Log.WriteFile(Log.LogType.Log, "mpeg2:create lpcm audio out pin on MPEG2 demuxer");
+      hr = _mpeg2DemultiplexerInterface.CreateOutputPin(lpcmAudioOut, "lpcm", out _pinLPCMOut);
+      if (hr != 0)
+      {
+          Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to create lpcm audio out pin:0x{0:X}", hr);
+          return false;
+      }
       //  Marshal.FreeCoTaskMem(mpegAudioOut.formatPtr);
       //  Marshal.FreeCoTaskMem(mpegVideoOut.formatPtr);
 
@@ -826,6 +924,7 @@ namespace DShowNET.Helper
     {
       if (_pinVideoout == null) return false;
       if (_pinAudioOut == null) return false;
+      if (_pinLPCMOut == null) return false;
       IMPEG2StreamIdMap pStreamId;
       Log.WriteFile(Log.LogType.Log, "mpeg2:MPEG2 demuxer map MPG stream 0xe0->video output pin");
       pStreamId = (IMPEG2StreamIdMap)_pinVideoout;
@@ -848,6 +947,17 @@ namespace DShowNET.Helper
       }
       else
         Log.WriteFile(Log.LogType.Log, "mpeg2:mapped MPEG2 demuxer stream 0xc0->audio output");
+
+      Log.WriteFile(Log.LogType.Log, "mpeg2:MPEG2 demuxer map LPCM stream 0xbd->audio output pin");
+      pStreamId = (IMPEG2StreamIdMap)_pinLPCMOut;
+      hr = pStreamId.MapStreamId(0xBD, MPEG2Program.ElementaryStream, 0xA0, 7);
+      if (hr != 0)
+      {
+        Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to map stream 0xbd->audio:0x{0:X}", hr);
+        return false;
+      }
+      else
+        Log.WriteFile(Log.LogType.Log, "mpeg2:mapped MPEG2 demuxer stream 0xbd->audio output");
       return true;
     }
     void DeleteSBESink()
@@ -994,6 +1104,11 @@ namespace DShowNET.Helper
       {
         hr = Marshal.ReleaseComObject(_pinAudioOut);
         _pinAudioOut = null;
+      }
+      if (_pinLPCMOut != null)
+      {
+          hr = Marshal.ReleaseComObject(_pinLPCMOut);
+          _pinLPCMOut = null;
       }
       if (_pinVideoout != null)
       {
