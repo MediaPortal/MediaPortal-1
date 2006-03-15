@@ -176,7 +176,10 @@ namespace MediaPortal.GUI.Library
 				xmlWriter.SetValue("screen","overscantop",m_iOverScanTop.ToString());
 				xmlWriter.SetValue("screen","overscanwidth",m_iOverScanWidth.ToString());
 				xmlWriter.SetValue("screen","overscanheight",m_iOverScanHeight.ToString());
-				xmlWriter.SetValue("screen","pixelratio",m_fPixelRatio.ToString());
+        float pixelRatio = m_fPixelRatio;
+        pixelRatio *= 10000f;
+        int intPixelRatio = (int)pixelRatio;
+        xmlWriter.SetValue("screen", "pixelratio", intPixelRatio.ToString());
 				xmlWriter.SetValue("screen","subtitles",m_iSubtitles.ToString());
 			}
 
@@ -208,7 +211,9 @@ namespace MediaPortal.GUI.Library
 				m_iOverScanWidth=xmlReader.GetValueAsInt("screen","overscanwidth",Width);
 				m_iOverScanHeight=xmlReader.GetValueAsInt("screen","overscanheight",Height);
 				m_iSubtitles=xmlReader.GetValueAsInt("screen","subtitles",Height-50);
-				m_fPixelRatio=xmlReader.GetValueAsFloat("screen","pixelratio",1.0f);
+        int intPixelRation = xmlReader.GetValueAsInt("screen", "pixelratio", 10000);
+        m_fPixelRatio = (float)intPixelRation;
+        m_fPixelRatio /= 10000f;
 			}
 
 			using (MediaPortal.Profile.Settings xmlReader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
