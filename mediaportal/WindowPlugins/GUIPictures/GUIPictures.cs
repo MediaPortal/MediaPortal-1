@@ -36,6 +36,7 @@ using System.Xml.Serialization;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
+using MediaPortal.Database;
 using MediaPortal.Picture.Database;
 using MediaPortal.Dialogs;
 

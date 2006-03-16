@@ -33,6 +33,7 @@ using System.Xml.Serialization;
 using MediaPortal.Dispatcher;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using MediaPortal.Database;
 using MediaPortal.Video.Database;
 using MediaPortal.TV.Database;
 using MediaPortal.Player;

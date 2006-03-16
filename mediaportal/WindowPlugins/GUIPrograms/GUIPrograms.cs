@@ -22,6 +22,7 @@
 using System;
 using System.IO;
 using System.Xml.Serialization;
+using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;

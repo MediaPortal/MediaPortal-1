@@ -198,9 +198,12 @@
     <Compile Include="DatabaseUtility.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Folders\FolderSettings.cs">
+    <Compile Include="Folders\FolderSettings.cs" />
+    <Compile Include="Folders\SqlLite\FolderSettingsSqlLite.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Folders\IFolderSettings.cs" />
+    <Compile Include="Folders\ADO\FolderSettingAdo.cs" />
     <Compile Include="Music\AlbumInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -252,6 +255,7 @@
     <Compile Include="SQLSelectBuilder.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SqlServerUtility.cs" />
     <Compile Include="TV\DVBChannel.cs">
       <SubType>Code</SubType>
     </Compile>
