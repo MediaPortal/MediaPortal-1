@@ -128,7 +128,7 @@ namespace MediaPortal.GUI.WebBrowser
       strButtonText = GUILocalizeStrings.Get(4000);
       strButtonImage = "";
       strButtonImageFocus = "";
-      strPictureImage = "hover_web browser.png";
+      strPictureImage = "hover_webbrowser.png";
       return true;
     }
 
