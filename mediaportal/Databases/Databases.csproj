@@ -234,9 +234,12 @@
     <Compile Include="Music\Song.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Pictures\ADO\PictureDatabaseADO.cs" />
     <Compile Include="Pictures\Database.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Pictures\IPictureDatabase.cs" />
+    <Compile Include="Pictures\SqlLite\PictureDatabaseSqlLite.cs" />
     <Compile Include="Radio\RadioDatabase.cs">
       <SubType>Code</SubType>
     </Compile>
