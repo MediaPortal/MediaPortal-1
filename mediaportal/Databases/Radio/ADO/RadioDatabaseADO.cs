@@ -127,8 +127,6 @@ namespace MediaPortal.Radio.Database
       SqlServerUtility.ExecuteNonQuery(_connection, "delete from tblATSCMapping");
       SqlServerUtility.ExecuteNonQuery(_connection, "delete from tblDVBTMapping");
       SqlServerUtility.ExecuteNonQuery(_connection, "delete from tblChannelCard");
-
-
     }
 
   }
