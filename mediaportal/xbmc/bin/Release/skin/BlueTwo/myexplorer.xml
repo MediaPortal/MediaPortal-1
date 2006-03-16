@@ -56,33 +56,63 @@
 				<ondown>5</ondown>
 			</control>
 			<control>
-				<description>make dir</description>
+				<description>move files</description>
 				<type>button</type>
 				<id>5</id>
-				<label>2204</label>
+				<label>2213</label>
 				<onleft>5</onleft>
 				<onright>20</onright>
 				<onup>4</onup>
 				<ondown>6</ondown>
 			</control>
 			<control>
-				<description>reset selection</description>
+				<description>delete files</description>
 				<type>button</type>
 				<id>6</id>
-				<label>2205</label>
-				<onleft>5</onleft>
+				<label>2212</label>
+				<onleft>6</onleft>
 				<onright>20</onright>
 				<onup>5</onup>
 				<ondown>7</ondown>
 			</control>
 			<control>
-				<description>mark all</description>
+				<description>make dir</description>
 				<type>button</type>
 				<id>7</id>
-				<label>2206</label>
-				<onleft>6</onleft>
+				<label>2204</label>
+				<onleft>5</onleft>
 				<onright>20</onright>
 				<onup>6</onup>
+				<ondown>8</ondown>
+			</control>
+			<control>
+				<description>reset selection</description>
+				<type>button</type>
+				<id>8</id>
+				<label>2205</label>
+				<onleft>8</onleft>
+				<onright>20</onright>
+				<onup>7</onup>
+				<ondown>9</ondown>
+			</control>
+			<control>
+				<description>mark all</description>
+				<type>button</type>
+				<id>9</id>
+				<label>2206</label>
+				<onleft>9</onleft>
+				<onright>20</onright>
+				<onup>8</onup>
+				<ondown>10</ondown>
+			</control>
+			<control>
+				<description>trashcan</description>
+				<type>button</type>
+				<id>10</id>
+				<label>2223</label>
+				<onleft>10</onleft>
+				<onright>20</onright>
+				<onup>9</onup>
 				<ondown>2</ondown>
 			</control>
 		</control>
