@@ -326,6 +326,7 @@ public class MediaPortalApp : D3DApp, IRender
       Win32API.ShowStartBar(true);
       if (useRestartOptions)
       {
+        Log.Write("MediaPortal exit windows:{0}", restartOptions);
         WindowsController.ExitWindows(restartOptions, true);
       }
     }
@@ -565,25 +566,53 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Write("WM_POWERBROADCAST: {0}", msg.WParam.ToInt32());
         switch (msg.WParam.ToInt32())
         {
+          //The PBT_APMQUERYSUSPEND message is sent to request permission to suspend the computer.
+          //An application that grants permission should carry out preparations for the suspension before returning.
+          //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
           case PBT_APMQUERYSUSPEND:
-          case PBT_APMQUERYSTANDBY:
-            // Stop all media before suspending or hibernating
-            Log.Write("Suspend/standby requested!");
-            g_Player.Stop();
-            Recorder.StopViewing();
-            Recorder.Stop();
+            Log.Write("  windows wants to suspend(hibernate)");
+            OnSuspend();
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
             break;
-          case PBT_APMRESUMECRITICAL:
-          case PBT_APMRESUMESUSPEND:
-          case PBT_APMRESUMESTANDBY:
-          case PBT_APMRESUMEAUTOMATIC:
-            // TODO: Insert some handling to fix bad performance after resume here
 
+          //The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
+          //An application that grants permission should carry out preparations for the suspension before returning.
+          //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
+          case PBT_APMQUERYSTANDBY: 
+            // Stop all media before suspending or hibernating
+            Log.Write("  windows wants to go to standbye mode!");
+            OnSuspend();
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+            break;
+
+          //The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
+          //this event can indicate that some or all applications did not receive a PBT_APMSUSPEND event. 
+          //For example, this event can be broadcast after a critical suspension caused by a failing battery.
+          case PBT_APMRESUMECRITICAL:
+            Log.Write("  windows has resumed from hibernate critical");
+            OnResume();
+            break;
+
+          //The PBT_APMRESUMESUSPEND event is broadcast as a notification that the system has resumed operation after being suspended.
+          case PBT_APMRESUMESUSPEND:
+            Log.Write("  windows has resumed from hibernate normally");
+            OnResume();
+            break;
+
+          //The PBT_APMRESUMESTANDBY event is broadcast as a notification that the system has resumed operation after being standbye.
+          case PBT_APMRESUMESTANDBY:
+            Log.Write("  windows has resumed from standbye normally");
+            OnResume();
+            break;
+
+          //The PBT_APMRESUMEAUTOMATIC event is broadcast when the computer wakes up automatically to
+          //handle an event. An application will not generally respond unless it is handling the event, because the user is not present.
+          case PBT_APMRESUMEAUTOMATIC:
+            Log.Write("  windows has resumed from standbye/hibernate to handle an event");
+            OnResume();
             break;
         }
       }
-
       //if (msg.Msg==WM_KEYDOWN) Debug.WriteLine("msg keydown");
       g_Player.WndProc(ref msg);
       base.WndProc(ref msg);
@@ -592,6 +621,33 @@ public class MediaPortalApp : D3DApp, IRender
     {
       Log.Write(ex);
     }
+  }
+  //called when windows wants to hibernate or go into standbye mode
+  void OnSuspend()
+  {
+    //stop playback
+    Log.Write("Mediaportal:stop playback");
+    g_Player.Stop();
+    Log.Write("Mediaportal:stop recorder");
+    Recorder.Stop();
+    Log.Write("Mediaportal:switch to home screen");
+    GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+
+    //switch to windowed mode
+    if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && isMaximized)
+    {
+      Log.Write("Mediaportal:switch to windowed mode");
+      SwitchFullScreenOrWindowed(true, true);
+    }
+  }
+
+  //called when windows wakes up again
+  void OnResume()
+  {
+    Log.Write("Mediaportal:start recorder");
+    Recorder.Start();
+    Log.Write("Mediaportal:switch to home screen");
+    GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
   }
 
   #endregion
@@ -730,7 +786,7 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   protected override void OnExit()
   {
-    Log.Write("Mediaportal.OnExit()");  
+    Log.Write("Mediaportal.OnExit()");
     JobDispatcher.Term();
 
     if (usbuirtdevice != null)
@@ -1340,7 +1396,7 @@ public class MediaPortalApp : D3DApp, IRender
         case Action.ActionType.ACTION_REBOOT:
           {
             //reboot
-            Log.Write("Mediaportal action reboot()"); 
+            Log.Write("Mediaportal action reboot()");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
             msg.Param1 = 630;
             msg.Param2 = 0;
@@ -1375,16 +1431,16 @@ public class MediaPortalApp : D3DApp, IRender
 
         case Action.ActionType.ACTION_SHUTDOWN:
           {
-            Log.Write("Mediaportal action shutdown"); 
+            Log.Write("Mediaportal: show shutdown/restart/sleep dialog");
             GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
             if (dlg != null)
             {
               dlg.Reset();
               dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
-              dlg.AddLocalizedString(1030); //shutdown
-              dlg.AddLocalizedString(1031); //Restart
-              dlg.AddLocalizedString(1032); //Sleep
-              dlg.AddLocalizedString(1049); //Sleep
+              dlg.AddLocalizedString(1030); //PowerOff
+              dlg.AddLocalizedString(1031); //Reboot
+              dlg.AddLocalizedString(1032); //Suspend
+              dlg.AddLocalizedString(1049); //Hibernate
               dlg.DoModal(GUIWindowManager.ActiveWindow);
               RestartOptions option = RestartOptions.Suspend;
               if (dlg.SelectedId < 0)
@@ -1421,10 +1477,13 @@ public class MediaPortalApp : D3DApp, IRender
               }
               if ((option == RestartOptions.Suspend) || (option == RestartOptions.Hibernate))
               {
+                useRestartOptions = false;
+                Log.Write("Mediaportal: exit :{0}", option);
                 WindowsController.ExitWindows(option, true);
               }
               else
               {
+                Log.Write("Mediaportal: exit :{0}", option);
                 restartOptions = option;
                 useRestartOptions = true;
                 GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
