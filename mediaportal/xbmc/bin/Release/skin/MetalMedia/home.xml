@@ -3,6 +3,22 @@
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 <controls>
+
+   <Page.Triggers>
+
+      <!-- animate the width of the first button when the window is loaded -->
+      <EventTrigger RoutedEvent="Window.Loaded">
+         <EventTrigger.Actions>
+            <BeginStoryboard>
+               <Storyboard>
+                  <DoubleAnimation Storyboard.TargetName="button1" Storyboard.TargetProperty="(Button.Width)" From="0" To="500" Duration="0:0:10" />
+               </Storyboard>
+            </BeginStoryboard>
+         </EventTrigger.Actions>
+      </EventTrigger>
+
+   </Page.Triggers>
+
 	<control>
 		<description>background image</description>
 		<type>image</type>
@@ -16,7 +32,7 @@
 	<control>
 		<type>image</type>
 		<id>1</id>
-		<posX>250</posX>
+		<posX>320</posX>
 		<posY>100</posY>
 		<width>303</width>
 		<height>37</height>
@@ -36,7 +52,7 @@
 	  <description>template for hover image</description>
 		<type>image</type>
 		<id>1000</id>
-		<posX>350</posX>
+		<posX>415</posX>
 		<posY>200</posY>
 		<width>128</width>
 		<height>128</height>

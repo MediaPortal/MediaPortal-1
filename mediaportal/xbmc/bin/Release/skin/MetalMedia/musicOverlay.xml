@@ -2,15 +2,19 @@
   <id>2004</id>
   <defaultcontrol>2</defaultcontrol>
   <controls>
-	<control>
+
+	<control>  <!-- Made really small so it is not visible -->
 		<description>music rectangle</description>
 		<type>image</type>
 		<id>0</id>
-		<posX>65</posX>
-		<posY>420</posY>
-		<width>130</width>
-		<height>110</height>
-		<texture>panel.png</texture>
+		<posX>70</posX>
+		<posY>425</posY>
+		<width>120</width>
+		<height>100</height>
+		<texture>missing_coverart.png</texture>
+		<keepaspectratio>yes</keepaspectratio>
+		<centered>yes</centered>
+		<visible>no</visible>
 	</control>
 	<control>
 		<description>music logo</description>
@@ -22,7 +26,7 @@
 		<height>100</height>
 		<keepaspectratio>yes</keepaspectratio>
 		<centered>yes</centered>
-		<texture>#thumb</texture>
+		<texture>#Play.Current.Thumb</texture>
 	</control>
 	<control>
 		<description>lcd display shine</description>
@@ -94,7 +98,7 @@
 		<posY>32</posY>
 		<align>right</align>
 		<font>font10</font>
-		<label>#title\r#artist\r#album\r#duration</label>
+		<label>#Play.Current.Title\r#Play.Current.Artist\r#Play.Current.Album\r#Play.Current.Duration</label>
 		<textcolor>FF000000</textcolor>
 		<id>5</id>
 	</control>
