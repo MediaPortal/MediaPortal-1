@@ -108,6 +108,13 @@ namespace MediaPortal.TV.Recording
     }
     #endregion
 
+    static public bool Running
+    {
+      get
+      {
+        return (_state != State.None);
+      }
+    }
     /// <summary>
     /// This method will Start the recorder. It
     ///   -Loads the capture cards from capturecards.xml (made by the setup)
@@ -117,7 +124,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     static public void Start()
     {
-      if (_state != State.None) return;//if we are initialized already then no need todo anything
+      if (Running) return;//if we are initialized already then no need todo anything
       CommandProcessor processor = new CommandProcessor();
       processor.Start();
       Start(processor);
@@ -125,7 +132,7 @@ namespace MediaPortal.TV.Recording
 
     static public void Start(CommandProcessor processor)
     {
-      if (_state != State.None) return;//if we are initialized already then no need todo anything
+      if (Running) return;//if we are initialized already then no need todo anything
       _state = State.Initializing;
       _commandProcessor = processor;
       RecorderProperties.Init();
@@ -195,7 +202,7 @@ namespace MediaPortal.TV.Recording
     static public void Stop()
     {
 
-      if (_state != State.Initialized) return;
+      if (!Running) return;
       //unsubscribe from events
       GUIWindowManager.OnActivateWindow -= new GUIWindowManager.WindowActivationHandler(GUIWindowManager_OnActivateWindow);
       GUIWindowManager.Receivers -= new SendMessageHandler(Recorder.OnMessage);
@@ -239,6 +246,7 @@ namespace MediaPortal.TV.Recording
     {
       //Note, because of a direct3d limitation we cannot switch between
       //normal / exclusive mode when a file is playing
+      if (!Running) return;
       if (g_Player.Playing) return;
       if (GUIGraphicsContext.IsTvWindow(windowId))
       {
@@ -270,7 +278,7 @@ namespace MediaPortal.TV.Recording
     /// </returns>
     static public bool NeedChannelSwitchForRecording(TVRecording rec)
     {
-      if (_commandProcessor == null) return false;
+      if (!Running) return false;
       //are we viewing the channel requested, then there is no need to switch
       if (IsViewing() && _commandProcessor.TVChannelName == rec.Channel) return false;
 
@@ -305,7 +313,8 @@ namespace MediaPortal.TV.Recording
     {
       if (channelName == null) return;
       if (channelName == String.Empty) return;
-      if (_state != State.Initialized) return;
+
+      if (!Running) return;
 
       // create a new recording which records the next 2 hours...
       TVRecording tmpRec = new TVRecording();
@@ -386,7 +395,7 @@ namespace MediaPortal.TV.Recording
     /// <param name="rec">recording to stop</param>
     static public void StopRecording(TVRecording rec)
     {
-      if (_state != State.Initialized) return;
+      if (!Running) return;
       //add a new RecorderCommand which holds 'rec'
       //and tell the process thread to handle it
       Log.WriteFile(Log.LogType.Recorder, "Recorder:StopRecording({0})", rec.Title);
@@ -401,7 +410,7 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     static public void StopRecording()
     {
-      if (_state != State.Initialized) return;
+      if (!Running) return ;
       //add a new RecorderCommand to tell the process thread
       //that it must stop recording
       Log.WriteFile(Log.LogType.Recorder, "Recorder:StopRecording()");
@@ -414,7 +423,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     static public bool IsAnyCardRecording()
     {
-      if (_state != State.Initialized) return false;
+      if (!Running) return false;
 
       for (int i = 0; i < _commandProcessor.TVCards.Count; ++i)
       {
@@ -429,7 +438,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     static public bool IsRecordingChannel(string channel)
     {
-      if (_state != State.Initialized) return false;
+      if (!Running) return false;
 
       for (int i = 0; i < _commandProcessor.TVCards.Count; ++i)
       {
@@ -445,7 +454,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     static public bool IsRecording()
     {
-      if (_state != State.Initialized) return false;
+      if (!Running) return false;
       if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return false;
 
       TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
@@ -457,7 +466,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     static public bool HasTeletext()
     {
-      if (_state != State.Initialized) return false;
+      if (!Running) return false;
       if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return false;
       TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
       return dev.HasTeletext;
@@ -468,7 +477,7 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     static public bool DoesSupportTimeshifting()
     {
-      if (_state != State.Initialized) return false;
+      if (!Running) return false;
       if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return false;
 
       TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
@@ -482,7 +491,7 @@ namespace MediaPortal.TV.Recording
     /// <returns>string which contains the friendly name</returns>
     static public string GetFriendlyNameForCard(int card)
     {
-      if (_state != State.Initialized) return String.Empty;
+      if (!Running) return String.Empty;
       if (card < 0 || card >= _commandProcessor.TVCards.Count) return String.Empty;
       TVCaptureDevice dev = _commandProcessor.TVCards[card];
       return dev.FriendlyName;
@@ -496,7 +505,7 @@ namespace MediaPortal.TV.Recording
     /// </returns>
     static public string GetTVChannelName()
     {
-      if (_state != State.Initialized) return String.Empty;
+      if (!Running) return String.Empty;
       if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return String.Empty;
       return _commandProcessor.TVChannelName;
     }//static public string GetTVChannelName()
@@ -508,7 +517,7 @@ namespace MediaPortal.TV.Recording
     /// </returns>
     static public TVRecording GetTVRecording()
     {
-      if (_state != State.Initialized) return null;
+      if (!Running) return null;
       if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return null;
 
       TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
@@ -527,7 +536,7 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_state != State.Initialized) return null;
+        if (!Running) return null;
         if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return null;
         TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
         if (dev.IsRecording) return dev.CurrentProgramRecording;
@@ -545,7 +554,7 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_state != State.Initialized) return null;
+        if (!Running) return null;
         if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return null;
         TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
         if (dev.IsRecording) return dev.CurrentTVRecording;
@@ -560,7 +569,7 @@ namespace MediaPortal.TV.Recording
     /// <returns></returns>
     static public bool IsTimeShifting()
     {
-      if (_state != State.Initialized) return false;
+      if (!Running) return false;
       if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return false;
       TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
       if (dev.IsTimeShifting) return true;
@@ -573,8 +582,7 @@ namespace MediaPortal.TV.Recording
     /// <returns></returns>
     static public bool IsViewing()
     {
-
-      if (_state != State.Initialized) return false;
+      if (!Running) return false;
       if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return false;
       TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
       if (dev.View) return true;
@@ -597,7 +605,7 @@ namespace MediaPortal.TV.Recording
     /// <returns></returns>
     static public bool IsCardViewing(int cardId)
     {
-      if (_state != State.Initialized) return false;
+      if (!Running) return false;
       if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return false;
       TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
       if (dev.ID != cardId) return false;
@@ -618,6 +626,7 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
+        if (!Running) return false;
         //return if we're viewing tv or not.
         //if we're playing a timeshift file, then we're watching tv so return true
         if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording) return true;
@@ -641,6 +650,7 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
+        if (!Running) return DateTime.MinValue;
         if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return DateTime.Now;
         TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
         if (dev.IsRecording)
@@ -658,6 +668,7 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
+        if (!Running) return DateTime.MinValue;
         if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return DateTime.Now;
         TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
         if (!dev.IsRecording && dev.IsTimeShifting)
@@ -673,7 +684,11 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     static public int Count
     {
-      get { return _commandProcessor.TVCards.Count; }
+      get
+      {
+        if (!Running) return 0;
+        return _commandProcessor.TVCards.Count; 
+      }
     }
 
     /// <summary>
@@ -683,6 +698,7 @@ namespace MediaPortal.TV.Recording
     /// <returns>TVCaptureDevice object</returns>
     static public TVCaptureDevice Get(int index)
     {
+      if (!Running) return null;
       if (index < 0 || index >= _commandProcessor.TVCards.Count) return null;
       return _commandProcessor.TVCards[index] as TVCaptureDevice;
     }
@@ -693,7 +709,7 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_state != State.Initialized) return 0;
+        if (!Running) return 0;
         if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return 0;
 
         TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
@@ -708,7 +724,9 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
-        if (_state != State.Initialized) return 0;
+
+
+        if (!Running) return 0;
         if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return 0;
 
         TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
@@ -723,6 +741,8 @@ namespace MediaPortal.TV.Recording
     /// <returns>filename for the recording</returns>
     static public string GetRecordingFileName(TVRecording rec)
     {
+
+      if (!Running) return String.Empty;
       int card;
       if (!_commandProcessor.IsRecordingSchedule(rec, out card)) return String.Empty;
       TVCaptureDevice dev = _commandProcessor.TVCards[card] as TVCaptureDevice;
@@ -738,6 +758,8 @@ namespace MediaPortal.TV.Recording
     /// <returns>filename of the timeshifting file</returns>
     static public string GetTimeShiftFileName(int card)
     {
+
+      if (!Running) return String.Empty;
       if (card < 0 || card >= _commandProcessor.TVCards.Count) return String.Empty;
       TVCaptureDevice dev = _commandProcessor.TVCards[card];
       string FileName = dev.TimeShiftFullFileName;
@@ -751,6 +773,8 @@ namespace MediaPortal.TV.Recording
     /// <returns>filename of the timeshifting file</returns>
     static public string GetTimeShiftFileNameByCardId(int cardId)
     {
+
+      if (!Running) return String.Empty;
       for (int i = 0; i < _commandProcessor.TVCards.Count; ++i)
       {
         TVCaptureDevice dev = _commandProcessor.TVCards[i];
@@ -772,6 +796,8 @@ namespace MediaPortal.TV.Recording
     /// <returns>true if listening to radio</returns>
     static public bool IsRadio()
     {
+
+      if (!Running) return false;
       for (int i = 0; i < _commandProcessor.TVCards.Count; ++i)
       {
         TVCaptureDevice dev = _commandProcessor.TVCards[i];
@@ -789,6 +815,8 @@ namespace MediaPortal.TV.Recording
     /// <returns>station name when listening to radio, else emty string</returns>
     static public string RadioStationName()
     {
+
+      if (!Running) return String.Empty;
       for (int i = 0; i < _commandProcessor.TVCards.Count; ++i)
       {
         TVCaptureDevice dev = _commandProcessor.TVCards[i];
@@ -805,6 +833,8 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     static public void StopRadio()
     {
+
+      if (!Running) return;
       //Send command to process thread to stop listening to radio
 
       StopRadioCommand cmd = new StopRadioCommand();
@@ -817,6 +847,8 @@ namespace MediaPortal.TV.Recording
     /// <param name="radioStationName"></param>
     static public void StartRadio(string radioStationName)
     {
+
+      if (!Running) return;
       //Send command to process thread to start listening to radio
       StartRadioCommand cmd = new StartRadioCommand(radioStationName);
       _commandProcessor.AddCommand(cmd);
@@ -829,6 +861,7 @@ namespace MediaPortal.TV.Recording
     static bool reEntrantStopViewing = false;
     static public void StopViewing()
     {
+      if (!Running) return;
       if (reEntrantStopViewing) return;
       try
       {
@@ -875,6 +908,12 @@ namespace MediaPortal.TV.Recording
     static bool reEntrantStartViewing = false;
     static public bool StartViewing(string channel, bool TVOnOff, bool timeshift, bool wait, out string errorMessage)
     {
+
+      if (!Running)
+      {
+        errorMessage = "Recorder is not started";
+        return false;
+      }
       errorMessage = String.Empty;
       if (reEntrantStartViewing)
       {
@@ -948,11 +987,8 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     static public void Process()
     {
-      if (_state != State.Initialized)
-      {
-        Recorder.Start();
-        return;
-      }
+
+      if (!Running) return;
       if (_commandProcessor.Paused) return;
       if (GUIGraphicsContext.InVmr9Render) return;
       TimeSpan ts = DateTime.Now - _progressBarTimer;
@@ -1002,6 +1038,8 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     static public void OnMessage(GUIMessage message)
     {
+
+      if (!Running) return;
       if (message == null) return;
       switch (message.Message)
       {
@@ -1080,7 +1118,7 @@ namespace MediaPortal.TV.Recording
 
     static public int GetAudioLanguage()
     {
-      if (_state != State.Initialized) return -1;
+      if (!Running) return -1;
       if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return -1;
       TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
 
@@ -1089,14 +1127,15 @@ namespace MediaPortal.TV.Recording
 
     static public void SetAudioLanguage(int audioPid)
     {
-      if (_state != State.Initialized) return;
+      if (!Running) return ;
       SetAudioLanguageCommand cmd = new SetAudioLanguageCommand(audioPid);
       _commandProcessor.AddCommand(cmd);
     }
 
     static public ArrayList GetAudioLanguageList()
     {
-      if (_state != State.Initialized) return null;
+
+      if (!Running) return null;
       if (_commandProcessor.CurrentCardIndex < 0 || _commandProcessor.CurrentCardIndex >= _commandProcessor.TVCards.Count) return null;
       TVCaptureDevice dev = _commandProcessor.TVCards[_commandProcessor.CurrentCardIndex];
 
@@ -1113,16 +1152,25 @@ namespace MediaPortal.TV.Recording
 
     static public bool IsRecordingSchedule(TVRecording rec, out int card)
     {
+      card = -1;
+      if (!Running) return false;
       return _commandProcessor.IsRecordingSchedule(rec, out  card);
     }
     static public bool Paused
     {
-      get { return _commandProcessor.Paused; }
+      get {
+
+        if (!Running) return true;
+        return _commandProcessor.Paused; 
+      }
       set { _commandProcessor.Paused = value; }
     }
     static public string TVChannelName
     {
-      get { return _commandProcessor.TVChannelName; }
+      get {
+        if (!Running) return String.Empty;
+        return _commandProcessor.TVChannelName; 
+      }
     }
 
   }//public class Recorder

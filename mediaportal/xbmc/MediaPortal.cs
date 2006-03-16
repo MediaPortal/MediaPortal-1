@@ -80,6 +80,7 @@ public class MediaPortalApp : D3DApp, IRender
   private bool useScreenSaver = true;
   private bool restoreTopMost = false;
   private bool startWithBasicHome = false;
+  private bool _suspended = false;
 #if AUTOUPDATE
   string m_strNewVersion = "";
     bool m_bNewVersionAvailable = false;
@@ -99,7 +100,7 @@ public class MediaPortalApp : D3DApp, IRender
   private const int PBT_APMQUERYSTANDBY = 0x0001;
   //private const int PBT_APMQUERYSUSPENDFAILED = 0x0002;
   //private const int PBT_APMQUERYSTANDBYFAILED = 0x0003;
-  //private const int PBT_APMSUSPEND = 0x0004;
+  private const int PBT_APMSUSPEND = 0x0004;
   //private const int PBT_APMSTANDBY = 0x0005;
   private const int PBT_APMRESUMECRITICAL = 0x0006;
   private const int PBT_APMRESUMESUSPEND = 0x0007;
@@ -572,7 +573,6 @@ public class MediaPortalApp : D3DApp, IRender
           case PBT_APMQUERYSUSPEND:
             Log.Write("  windows wants to suspend(hibernate)");
             OnSuspend();
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
             break;
 
           //The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
@@ -582,7 +582,9 @@ public class MediaPortalApp : D3DApp, IRender
             // Stop all media before suspending or hibernating
             Log.Write("  windows wants to go to standbye mode!");
             OnSuspend();
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+            break;
+          case PBT_APMSUSPEND:
+            Log.Write("  windows is suspending!");
             break;
 
           //The PBT_APMRESUMECRITICAL event is broadcast as a notification that the system has resumed operation. 
@@ -626,12 +628,11 @@ public class MediaPortalApp : D3DApp, IRender
   void OnSuspend()
   {
     //stop playback
+    _suspended = true;
     Log.Write("Mediaportal:stop playback");
     g_Player.Stop();
     Log.Write("Mediaportal:stop recorder");
     Recorder.Stop();
-    Log.Write("Mediaportal:switch to home screen");
-    GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
 
     //switch to windowed mode
     if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && isMaximized)
@@ -644,10 +645,12 @@ public class MediaPortalApp : D3DApp, IRender
   //called when windows wakes up again
   void OnResume()
   {
+    if (Recorder.Running) return;
     Log.Write("Mediaportal:start recorder");
     Recorder.Start();
     Log.Write("Mediaportal:switch to home screen");
     GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+    _suspended = false;
   }
 
   #endregion
@@ -672,6 +675,7 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   public void Process()
   {
+    if (_suspended) return;//we are suspended/hibernated
     try
     {
       g_Player.Process();
@@ -695,6 +699,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   public void RenderFrame(float timePassed)
   {
+    if (_suspended) return;//we are suspended/hibernated
     try
     {
       CreateStateBlock();
@@ -1184,6 +1189,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void FrameMove()
   {
+    if (_suspended) return;//we are suspended/hibernated
     try
     {
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
@@ -1245,6 +1251,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   private void OnAction(Action action)
   {
+    if (_suspended) return;
     try
     {
       GUIWindow window;
@@ -1479,7 +1486,7 @@ public class MediaPortalApp : D3DApp, IRender
               {
                 useRestartOptions = false;
                 Log.Write("Mediaportal: exit :{0}", option);
-                WindowsController.ExitWindows(option, true);
+                WindowsController.ExitWindows(option, false);
               }
               else
               {
@@ -2103,6 +2110,7 @@ public class MediaPortalApp : D3DApp, IRender
 
   private void OnMessage(GUIMessage message)
   {
+    if (_suspended) return;
     switch (message.Message)
     {
       case GUIMessage.MessageType.GUI_MSG_RESTART_REMOTE_CONTROLS:
