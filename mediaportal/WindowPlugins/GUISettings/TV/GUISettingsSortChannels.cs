@@ -32,6 +32,12 @@ namespace WindowPlugins.GUISettings.TV
 			base.OnPageLoad ();
 			UpdateList();
 		}
+    protected override void OnPageDestroy(int new_windowId)
+    {
+      base.OnPageDestroy(new_windowId);
+      MediaPortal.GUI.TV.GUITVHome.Navigator.ReLoad();
+      
+    }
 
 		void UpdateList()
 		{

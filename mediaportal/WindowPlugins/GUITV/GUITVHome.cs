@@ -948,10 +948,17 @@ namespace MediaPortal.GUI.TV
     public ChannelNavigator()
     {
       // Load all groups
+      ReLoad();
+      TVDatabase.OnChannelsChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(OnChannelsChanged);
+    }
+    public void ReLoad()
+    {
+      m_groups.Clear();
       List<TVGroup> groups = new List<TVGroup>();
       TVDatabase.GetGroups(ref groups); // Put groups in a local variable to ensure the "All" group is first always
 
       channels.Clear();
+
       // Add a group containing all channels
       TVDatabase.GetChannels(ref channels); // Load all channels
       TVGroup tvgroup = new TVGroup();
@@ -961,9 +968,8 @@ namespace MediaPortal.GUI.TV
       m_groups.Add(tvgroup);
 
       m_groups.AddRange(groups); // Add rest of the groups to the end of the list
-      TVDatabase.OnChannelsChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(OnChannelsChanged);
-    }
 
+    }
     #endregion
 
     #region Public properties
