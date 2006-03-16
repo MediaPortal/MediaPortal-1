@@ -27,14 +27,19 @@ namespace MediaPortal.Database
         cmd.CommandType = CommandType.Text;
         cmd.ExecuteNonQuery();
         cmd.CommandText = "select @@identity";
-        SqlDataReader reader=cmd.ExecuteReader();
-        if (reader.Read())
+        using (SqlDataReader reader = cmd.ExecuteReader())
         {
-          int id = (int)((decimal)reader[0]);
+          if (reader.Read())
+          {
+            if (reader[0].GetType() != typeof(DBNull))
+            {
+              int id = Int32.Parse(reader[0].ToString());
+              reader.Close();
+              return id;
+            }
+          }
           reader.Close();
-          return id;
         }
-        reader.Close();
         return -1;
       }
     }
@@ -59,11 +64,22 @@ namespace MediaPortal.Database
 
       ExecuteNonQuery(connection, sql);
     }
+    public static void AddIndex(SqlConnection connection, string constraintName, string sqlCreateStatement)
+    {
+      string sql = String.Format("if not exists (select * from sysindexes where name like '{0}')\n", constraintName);
+      sql += "begin\n";
+      sql += sqlCreateStatement;
+      sql += "\n";
+      sql += "end\n";
+
+      ExecuteNonQuery(connection, sql);
+    }
 
     public static void AddPrimaryKey(SqlConnection connection,string table, string field)
     {
       string sql = String.Format("ALTER TABLE {0} WITH NOCHECK ADD CONSTRAINT PK_{0} PRIMARY KEY ({1})", table,field);
       AddConstraint(connection, String.Format("PK_{0}", table), sql);
     }
+
   }
 }

@@ -31,11 +31,11 @@ namespace Databases.Folders.SqlServer
 
     void CreateTables()
     {
-      SqlServerUtility.AddTable(_connection, "tblPath", "CREATE TABLE tblPath ( idPath int IDENTITY(1,1) NOT NULL, strPath varchar(2048))");
-      SqlServerUtility.AddPrimaryKey(_connection, "tblPath", "idPath");
+      SqlServerUtility.AddTable(_connection, "tblFolderPath", "CREATE TABLE tblFolderPath ( idPath int IDENTITY(1,1) NOT NULL, strPath varchar(2048))");
+      SqlServerUtility.AddPrimaryKey(_connection, "tblFolderPath", "idPath");
 
-      SqlServerUtility.AddTable(_connection, "tblSetting", "CREATE TABLE tblSetting ( idSetting int IDENTITY(1,1) NOT NULL, idPath int NOT NULL, tagName varchar(2048), tagValue varchar(2048))");
-      SqlServerUtility.AddPrimaryKey(_connection, "tblSetting", "idSetting");
+      SqlServerUtility.AddTable(_connection, "tblFolderSetting", "CREATE TABLE tblFolderSetting ( idSetting int IDENTITY(1,1) NOT NULL, idPath int NOT NULL, tagName varchar(2048), tagValue varchar(2048))");
+      SqlServerUtility.AddPrimaryKey(_connection, "tblFolderSetting", "idSetting");
     }
 
     int AddPath(string filteredPath)
@@ -44,23 +44,25 @@ namespace Databases.Folders.SqlServer
       if (filteredPath == String.Empty) return -1;
       try
       {
-        string sql = String.Format("select * from tblPath where strPath like '{0}'", filteredPath);
+        string sql = String.Format("select * from tblFolderPath where strPath like '{0}'", filteredPath);
         using (SqlCommand cmd = _connection.CreateCommand())
         {
           cmd.CommandType = CommandType.Text;
           cmd.CommandText = sql;
-          SqlDataReader reader=cmd.ExecuteReader();
-          if (reader.Read())
+          using (SqlDataReader reader = cmd.ExecuteReader())
           {
-            int id = (int)reader["idPath"];
-            reader.Close();
-            return id;
-          }
-          else
-          {
-            reader.Close();
-            sql = String.Format("insert into tblPath ( strPath) values (  '{0}' )", filteredPath);
-            return SqlServerUtility.InsertRecord(_connection, sql);
+            if (reader.Read())
+            {
+              int id = (int)reader["idPath"];
+              reader.Close();
+              return id;
+            }
+            else
+            {
+              reader.Close();
+              sql = String.Format("insert into tblFolderPath ( strPath) values (  '{0}' )", filteredPath);
+              return SqlServerUtility.InsertRecord(_connection, sql);
+            }
           }
         }
       }
@@ -86,7 +88,7 @@ namespace Databases.Folders.SqlServer
 
         int PathId = AddPath(pathFiltered);
         if (PathId < 0) return;
-        string strSQL = String.Format("delete from tblSetting where idPath={0} and tagName ='{1}'", PathId, keyFiltered);
+        string strSQL = String.Format("delete from tblFolderSetting where idPath={0} and tagName ='{1}'", PathId, keyFiltered);
         SqlServerUtility.ExecuteNonQuery(_connection,strSQL);
       }
       catch (Exception ex)
@@ -131,7 +133,7 @@ namespace Databases.Folders.SqlServer
               string valueFiltered = valueText;
               DatabaseUtility.RemoveInvalidChars(ref valueFiltered);
 
-              string sql = String.Format("insert into tblSetting (idPath, tagName,tagValue) values( {0}, '{1}', '{2}') ", idPath, keyFiltered, valueFiltered);
+              string sql = String.Format("insert into tblFolderSetting (idPath, tagName,tagValue) values( {0}, '{1}', '{2}') ", idPath, keyFiltered, valueFiltered);
               SqlServerUtility.InsertRecord(_connection,sql);
             }
           }
@@ -163,19 +165,21 @@ namespace Databases.Folders.SqlServer
         if (idPath<0) return ;
         
         string strValue=String.Empty;
-        string sql = String.Format("select * from tblSetting where idPath={0} and tagName like '{1}'", idPath, keyFiltered);
+        string sql = String.Format("select * from tblFolderSetting where idPath={0} and tagName like '{1}'", idPath, keyFiltered);
         using (SqlCommand cmd = _connection.CreateCommand())
         {
           cmd.CommandType=CommandType.Text;
           cmd.CommandText=sql;
-          SqlDataReader reader = cmd.ExecuteReader();
-          if (!reader.Read())
+          using (SqlDataReader reader = cmd.ExecuteReader())
           {
+            if (!reader.Read())
+            {
+              reader.Close();
+              return;
+            }
+            strValue = reader["tagValue"].ToString();
             reader.Close();
-            return;
           }
-          strValue = reader["tagValue"].ToString();
-          reader.Close();
         }
         //deserialize...
 

@@ -33,8 +33,8 @@ namespace MediaPortal.Picture.Database
     }
     void CreateTables()
     {
-      SqlServerUtility.AddTable(_connection, "picture", "CREATE TABLE picture ( idPicture int IDENTITY(1,1) NOT NULL, strFile varchar(2048), iRotation int, strDateTaken datetime)");
-      SqlServerUtility.AddPrimaryKey(_connection, "picture", "idPicture");
+      SqlServerUtility.AddTable(_connection, "tblPicture", "CREATE TABLE tblPicture ( idPicture int IDENTITY(1,1) NOT NULL, strFile varchar(2048), iRotation int, strDateTaken datetime)");
+      SqlServerUtility.AddPrimaryKey(_connection, "tblPicture", "idPicture");
     }
 
     public void Dispose()
@@ -56,19 +56,21 @@ namespace MediaPortal.Picture.Database
           string strPic = strPicture;
           DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-          strSQL = String.Format("select * from picture where strFile like '{0}'", strPic);
+          strSQL = String.Format("select * from tblPicture where strFile like '{0}'", strPic);
           using (SqlCommand cmd = _connection.CreateCommand())
           {
             cmd.CommandType = CommandType.Text;
             cmd.CommandText = strSQL;
-            SqlDataReader reader = cmd.ExecuteReader();
-            if (reader.Read())
+            using (SqlDataReader reader = cmd.ExecuteReader())
             {
-              int id = (int)reader["idPicture"];
+              if (reader.Read())
+              {
+                int id = (int)reader["idPicture"];
+                reader.Close();
+                return id;
+              }
               reader.Close();
-              return id;
             }
-            reader.Close();
           }
 
           //Changed mbuzina
@@ -90,7 +92,7 @@ namespace MediaPortal.Picture.Database
             //						if(iRotation == -1)
             iRotation = EXIFOrientationToRotation(Convert.ToInt32(metaData.Orientation.Hex));
           }
-          strSQL = String.Format("insert into picture (strFile, iRotation, strDateTaken) values('{0}',{1},'{2}')", strPic, iRotation, dateTaken);
+          strSQL = String.Format("insert into tblPicture (strFile, iRotation, strDateTaken) values('{0}',{1},'{2}')", strPic, iRotation, dateTaken);
           return SqlServerUtility.InsertRecord(_connection, strSQL);
         }
         catch (Exception ex)
@@ -108,7 +110,7 @@ namespace MediaPortal.Picture.Database
         string strPic = strPicture;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-        strSQL = String.Format("delete from picture where strFile like '{0}'", strPic);
+        strSQL = String.Format("delete from tblPicture where strFile like '{0}'", strPic);
         SqlServerUtility.ExecuteNonQuery(_connection,strSQL);
       }
       catch (Exception ex)
@@ -127,19 +129,21 @@ namespace MediaPortal.Picture.Database
         int iRotation;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-        strSQL = String.Format("select * from picture where strFile like '{0}'", strPic);
+        strSQL = String.Format("select * from tblPicture where strFile like '{0}'", strPic);
         using (SqlCommand cmd = _connection.CreateCommand())
         {
           cmd.CommandType = CommandType.Text;
           cmd.CommandText = strSQL;
-          SqlDataReader reader = cmd.ExecuteReader();
-          if (reader.Read())
+          using (SqlDataReader reader = cmd.ExecuteReader())
           {
-            iRotation = (int)reader["iRotation"];
+            if (reader.Read())
+            {
+              iRotation = (int)reader["iRotation"];
+              reader.Close();
+              return iRotation;
+            }
             reader.Close();
-            return iRotation;
           }
-          reader.Close();
         }
 
         ExifMetadata extractor = new ExifMetadata();
@@ -169,7 +173,7 @@ namespace MediaPortal.Picture.Database
         long lPicId = AddPicture(strPicture, iRotation);
         if (lPicId >= 0)
         {
-          strSQL = String.Format("update picture set iRotation={0} where strFile like '{1}'", iRotation, strPic);
+          strSQL = String.Format("update tblPicture set iRotation={0} where strFile like '{1}'", iRotation, strPic);
           SqlServerUtility.ExecuteNonQuery(_connection,strSQL);
         }
       }
@@ -188,19 +192,21 @@ namespace MediaPortal.Picture.Database
         string strPic = strPicture;
         DatabaseUtility.RemoveInvalidChars(ref strPic);
 
-        strSQL = String.Format("select * from picture where strFile like '{0}'", strPic);
+        strSQL = String.Format("select * from tblPicture where strFile like '{0}'", strPic);
         using (SqlCommand cmd = _connection.CreateCommand())
         {
           cmd.CommandType = CommandType.Text;
           cmd.CommandText = strSQL;
-          SqlDataReader reader = cmd.ExecuteReader();
-          if (reader.Read())
+          using (SqlDataReader reader = cmd.ExecuteReader())
           {
-            DateTime dtDateTime=(DateTime)reader["strDateTaken"];
+            if (reader.Read())
+            {
+              DateTime dtDateTime = (DateTime)reader["strDateTaken"];
+              reader.Close();
+              return dtDateTime;
+            }
             reader.Close();
-            return dtDateTime;
           }
-          reader.Close();
         }
         AddPicture(strPicture, -1);
         string strDateTime;
