@@ -1234,9 +1234,6 @@ namespace DShowNET.Helper
         {
           startTime = (long)tsMaxTimeBack.TotalSeconds;
         }
-
-
-        startTime *= -10000000L;//in reference time 
       }
 
       /*

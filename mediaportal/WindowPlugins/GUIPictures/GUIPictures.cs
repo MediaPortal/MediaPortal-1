@@ -889,8 +889,11 @@ namespace MediaPortal.GUI.Pictures
           SlideShow.Add(item.Path);
         }
       }
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
-      SlideShow.Select(strFile);
+      if (SlideShow.Count > 0)
+      {
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
+        SlideShow.Select(strFile);
+      }
     }
 
     void AddDir(GUISlideShow SlideShow, string strDir)
@@ -918,8 +921,11 @@ namespace MediaPortal.GUI.Pictures
 
       SlideShow.Reset();
       AddDir(SlideShow, currentFolder);
-      SlideShow.StartSlideShow(currentFolder);
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
+      if (SlideShow.Count > 0)
+      {
+        SlideShow.StartSlideShow(currentFolder);
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
+      }
     }
 
     void OnSlideShow()
@@ -951,8 +957,11 @@ namespace MediaPortal.GUI.Pictures
       }
       while (i != iStartItem);
 
-      SlideShow.StartSlideShow(currentFolder);
-      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
+      if (SlideShow.Count > 0)
+      {
+        SlideShow.StartSlideShow(currentFolder);
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SLIDESHOW);
+      }
     }
 
     void OnCreateThumbs()

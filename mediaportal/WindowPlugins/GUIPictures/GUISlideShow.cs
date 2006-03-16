@@ -689,6 +689,13 @@ namespace MediaPortal.GUI.Pictures
       get { return _backgroundTexture != null; }
     }
 
+    public int Count
+    {
+      get
+      {
+        return _slideList.Count;
+      }
+    }
     public void Add(string filename)
     {
       /*if (string.Compare(filename, SegmentIndicator) == 0)

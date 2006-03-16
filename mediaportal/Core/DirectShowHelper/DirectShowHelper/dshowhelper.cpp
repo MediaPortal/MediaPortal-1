@@ -503,28 +503,32 @@ bool DvrMsCreate(LONG *id, IBaseFilter* streamBufferSink, LPCWSTR strPath, DWORD
 	}
 	return TRUE;
 }
-void DvrMsStart(LONG id, LONG startTime)
+void DvrMsStart(LONG id, ULONG startTime)
 {
 	imapRecordControl it = m_mapRecordControl.find(id);
 	if (it==m_mapRecordControl.end()) return;
-
 	try
 	{
-		Log("CStreamBufferRecorder::Start():%d id:%d", startTime,id);
+
+		Log("CStreamBufferRecorder::Start():time:-%d secs in past id:%d", startTime,id);
 		if (it->second==NULL)
 		{
 			Log("CStreamBufferRecorder::Start() recorded=null");
 			return ;
 		}
 		Log("CStreamBufferRecorder::Start(1) %x",m_mapRecordControl[id]);
-		REFERENCE_TIME timeStart=startTime;
+		REFERENCE_TIME timeStart = startTime;
+		timeStart *= UNITS;
+		timeStart *= -1LL;
+
 		int hr=it->second->Start(&timeStart);
 		if (!SUCCEEDED(hr))
 		{
-			Log("CStreamBufferRecorder::Start() start failed:%X", hr);
+			Log("CStreamBufferRecorder::Start() start at -%d sec failed:%X", startTime,hr);
 			if (startTime!=0)
 			{
 				timeStart=0;
+				Log("CStreamBufferRecorder::Start() start at 0 sec");
 				int hr=it->second->Start(&timeStart);
 				if (!SUCCEEDED(hr))
 				{
@@ -538,7 +542,9 @@ void DvrMsStart(LONG id, LONG startTime)
 		HRESULT hrOut;
 		BOOL started,stopped;
 		it->second->GetRecordingStatus(&hrOut,&started,&stopped);
-		Log("CStreamBufferRecorder::Start() start status:%x started:%d stopped:%d", hrOut,started,stopped);
+		timeStart/=UNITS;
+		Log("CStreamBufferRecorder::Start() start status:%x started:%d stopped:%d at:%d secs", 
+			hrOut,started,stopped, (long)timeStart);
 		Log("CStreamBufferRecorder::Start() done");
 	}
 	catch(...)

@@ -491,9 +491,6 @@ namespace MediaPortal.TV.Recording
           {
             lStartTime = (long)tsMaxTimeBack.TotalSeconds;
           }
-
-
-          lStartTime *= -10000000L;//in reference time
         }//if (!bContentRecording)
         /*
             foreach (MetadataItem item in attributes.Values)
@@ -2851,7 +2848,7 @@ namespace MediaPortal.TV.Recording
 
       if (Network() == NetworkType.ATSC)
       {
-        ushort count=0;
+        ushort count = 0;
         while (true)
         {
           TimeSpan ts = DateTime.Now - dt;

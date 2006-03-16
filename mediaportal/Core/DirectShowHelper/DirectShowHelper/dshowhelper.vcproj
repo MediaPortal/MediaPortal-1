@@ -145,7 +145,7 @@
 				AdditionalDependencies="strmbase.lib winmm.lib comsupp.lib dxguid.lib d3d9.lib d3dx9.lib"
 				OutputFile="$(OutDir)/dshowhelper.dll"
 				LinkIncremental="1"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="dshowhelper.def"
 				AddModuleNamesToAssembly=""
 				GenerateDebugInformation="true"
@@ -195,10 +195,6 @@
 			</File>
 			<File
 				RelativePath=".\DX9AllocatorPresenter.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\FireDtv.cpp"
 				>
 			</File>
 			<File
