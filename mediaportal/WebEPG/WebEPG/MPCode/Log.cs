@@ -83,17 +83,9 @@ namespace MediaPortal.Webepg.GUI.Library
 		static string GetFileName(LogType type)
 		{
 			string fname=@"log\WebEPG.log";
-			switch (type)
+			if (type == LogType.Error)
 			{
-				case LogType.Log:
-					fname=@"log\capture.log";
-					break;
-				case LogType.Recorder:
-					fname=@"log\recorder.log";
-					break;
-				case LogType.Error:
 					fname=@"log\error.log";
-					break;
 			}
 			return fname;
 		}
