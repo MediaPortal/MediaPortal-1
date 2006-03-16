@@ -304,6 +304,12 @@ namespace MediaPortal.GUI.TV
 
       if (channelName != String.Empty)
       {
+        if (Recorder.View)
+        {
+          channelName = Recorder.TVChannelName;
+          _isTimeShifting = Recorder.IsTimeShifting();
+          _isTvOn = true;
+        }
         Log.Write("tv home init:{0}", channelName);
         ViewChannelAndCheck(channelName);
       }
@@ -744,6 +750,7 @@ namespace MediaPortal.GUI.TV
         Log.Write("GUITVHome.ViewChannel(): turn tv off");
 
       string errorMessage;
+
       bool succeeded=Recorder.StartViewing(channel, _isTvOn, _isTimeShifting, true, out errorMessage);
       
       if (succeeded) return;

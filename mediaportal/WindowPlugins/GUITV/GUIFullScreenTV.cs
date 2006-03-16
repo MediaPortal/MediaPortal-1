@@ -645,9 +645,10 @@ namespace MediaPortal.GUI.TV
               Recorder.StartViewing(Recorder.TVChannelName, true, true, true, out message);
               //wait until playback has been started
               int count = 1;
-              while (!g_Player.Playing && count < 20)
+              while (!g_Player.Playing && count < 40)
               {
-                System.Threading.Thread.Sleep(100);
+                System.Threading.Thread.Sleep(50);
+                GUIWindowManager.Process();
                 count++;
               }
 
