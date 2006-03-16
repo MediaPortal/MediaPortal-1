@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <mappings version="3">
-	<remote family="x10 Remote">
+	<remote family="X10 Remote">
 		<button name="0" code="20">
 			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="80" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="2" command="ACTION" cmdproperty="80" sound="click.wav" />

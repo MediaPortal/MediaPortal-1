@@ -70,23 +70,40 @@
          <onleft>6</onleft>
          <onright>26</onright>
          <onup>6</onup>
+         <ondown>11</ondown>
+         <shadow>no</shadow>
+         <textureCheckmark>check-box.png</textureCheckmark>
+         <MarkWidth>16</MarkWidth>
+         <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
+         <MarkHeight>16</MarkHeight>
+         <label>Medion X10</label>
+         <align>right</align>
+      </control>
+      <control>
+         <type>checkmark</type>
+         <id>11</id>
+         <posX>122</posX>
+         <posY>288</posY>
+         <onleft>7</onleft>
+         <onright>26</onright>
+         <onup>7</onup>
          <ondown>8</ondown>
          <shadow>no</shadow>
          <textureCheckmark>check-box.png</textureCheckmark>
          <MarkWidth>16</MarkWidth>
          <textureCheckmarkNoFocus>check-boxNF.png</textureCheckmarkNoFocus>
          <MarkHeight>16</MarkHeight>
-         <label>x10 Series (e.g. ATI/Medion)</label>
+         <label>ATI X10</label>
          <align>right</align>
       </control>
       <control>
          <type>checkmark</type>
          <id>8</id>
          <posX>122</posX>
-         <posY>288</posY>
-         <onleft>7</onleft>
+         <posY>312</posY>
+         <onleft>11</onleft>
          <onright>26</onright>
-         <onup>7</onup>
+         <onup>11</onup>
          <ondown>9</ondown>
          <shadow>no</shadow>
          <textureCheckmark>check-box.png</textureCheckmark>
@@ -100,7 +117,7 @@
          <type>checkmark</type>
          <id>9</id>
          <posX>122</posX>
-         <posY>312</posY>
+         <posY>336</posY>
          <onleft>7</onleft>
          <onright>26</onright>
          <onup>8</onup>

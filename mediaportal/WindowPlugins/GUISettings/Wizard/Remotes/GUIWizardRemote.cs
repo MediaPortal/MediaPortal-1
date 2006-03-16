@@ -37,7 +37,9 @@ namespace MediaPortal.GUI.Settings.Wizard
     [SkinControlAttribute(6)]
     protected GUICheckMarkControl cmHauppauge = null;
     [SkinControlAttribute(7)]
-    protected GUICheckMarkControl cmX10 = null;
+    protected GUICheckMarkControl cmX10Medion = null;
+    [SkinControlAttribute(11)]
+    protected GUICheckMarkControl cmX10Ati = null;
     [SkinControlAttribute(8)]
     protected GUICheckMarkControl cmFireDTV = null;
     [SkinControlAttribute(9)]
@@ -75,7 +77,8 @@ namespace MediaPortal.GUI.Settings.Wizard
       if (cmMicrosoftUSA == control) OnMicrosoftUSA();
       if (cmMicrosoftEU == control) OnMicrosoftEU();
       if (cmHauppauge == control) OnHauppauge();
-      if (cmX10 == control) OnX10();
+      if (cmX10Medion == control) OnX10Medion();
+      if (cmX10Ati == control) OnX10Ati();
       if (cmFireDTV == control) OnFireDTV();
       if (cmOther == control) OnOther();
       if (btnNext == control) OnNextPage();
@@ -89,7 +92,8 @@ namespace MediaPortal.GUI.Settings.Wizard
       cmMicrosoftUSA.Selected = true;
       cmMicrosoftEU.Selected = false;
       cmHauppauge.Selected = false;
-      cmX10.Selected = false;
+      cmX10Medion.Selected = false;
+      cmX10Ati.Selected = false;
       cmFireDTV.Selected = false;
       cmOther.Selected = false;
       imgRemote.SetFileName(@"Wizards\remote_mce_us.png");
@@ -102,7 +106,8 @@ namespace MediaPortal.GUI.Settings.Wizard
       cmMicrosoftUSA.Selected = false;
       cmMicrosoftEU.Selected = true;
       cmHauppauge.Selected = false;
-      cmX10.Selected = false;
+      cmX10Medion.Selected = false;
+      cmX10Ati.Selected = false;
       cmFireDTV.Selected = false;
       cmOther.Selected = false;
       imgRemote.SetFileName(@"Wizards\remote_mce_eu.png");
@@ -115,7 +120,8 @@ namespace MediaPortal.GUI.Settings.Wizard
       cmMicrosoftUSA.Selected = false;
       cmMicrosoftEU.Selected = false;
       cmHauppauge.Selected = true;
-      cmX10.Selected = false;
+      cmX10Medion.Selected = false;
+      cmX10Ati.Selected = false;
       cmFireDTV.Selected = false;
       cmOther.Selected = false;
       imgRemote.SetFileName(@"Wizards\remote_hcw.png");
@@ -123,16 +129,31 @@ namespace MediaPortal.GUI.Settings.Wizard
     }
 
 
-    void OnX10()
+    void OnX10Medion()
     {
       cmMicrosoftUSA.Selected = false;
       cmMicrosoftEU.Selected = false;
       cmHauppauge.Selected = false;
-      cmX10.Selected = true;
+      cmX10Medion.Selected = true;
+      cmX10Ati.Selected = false;
       cmFireDTV.Selected = false;
       cmOther.Selected = false;
       imgRemote.SetFileName(@"Wizards\remote_x10.png");
-      GUIControl.FocusControl(GetID, cmX10.GetID);
+      GUIControl.FocusControl(GetID, cmX10Medion.GetID);
+    }
+
+
+    void OnX10Ati()
+    {
+      cmMicrosoftUSA.Selected = false;
+      cmMicrosoftEU.Selected = false;
+      cmHauppauge.Selected = false;
+      cmX10Medion.Selected = false;
+      cmX10Ati.Selected = true;
+      cmFireDTV.Selected = false;
+      cmOther.Selected = false;
+      imgRemote.SetFileName(@"Wizards\remote_x10.png");
+      GUIControl.FocusControl(GetID, cmX10Ati.GetID);
     }
 
 
@@ -141,7 +162,8 @@ namespace MediaPortal.GUI.Settings.Wizard
       cmMicrosoftUSA.Selected = false;
       cmMicrosoftEU.Selected = false;
       cmHauppauge.Selected = false;
-      cmX10.Selected = false;
+      cmX10Medion.Selected = false;
+      cmX10Ati.Selected = false;
       cmFireDTV.Selected = true;
       cmOther.Selected = false;
       imgRemote.SetFileName(@"Wizards\remote_firedtv.png");
@@ -154,7 +176,8 @@ namespace MediaPortal.GUI.Settings.Wizard
       cmMicrosoftUSA.Selected = false;
       cmMicrosoftEU.Selected = false;
       cmHauppauge.Selected = false;
-      cmX10.Selected = false;
+      cmX10Medion.Selected = false;
+      cmX10Ati.Selected = false;
       cmFireDTV.Selected = false;
       cmOther.Selected = true;
       imgRemote.SetFileName(@"Wizards\remote_other.png");
@@ -170,11 +193,14 @@ namespace MediaPortal.GUI.Settings.Wizard
         bool useMCEUSA = xmlreader.GetValueAsBool("remote", "USAModel", false);
         bool useHCW = xmlreader.GetValueAsBool("remote", "HCW", false);
         bool useX10 = xmlreader.GetValueAsBool("remote", "x10", false);
+        bool useX10Medion = xmlreader.GetValueAsBool("remote", "x10medion", false);
+        bool useX10Ati = xmlreader.GetValueAsBool("remote", "x10ati", false);
         bool useFireDTV = xmlreader.GetValueAsBool("remote", "FireDTV", false);
         if (useMCE && useMCEUSA) OnMicrosoftUSA();
         else if (useMCE && !useMCEUSA) OnMicrosoftEU();
         else if (useHCW) OnHauppauge();
-        else if (useX10) OnX10();
+        else if (useX10 && useX10Medion) OnX10Medion();
+        else if (useX10 && useX10Ati) OnX10Ati();
         else if (useFireDTV) OnFireDTV();
         else OnOther();
       }
@@ -188,7 +214,9 @@ namespace MediaPortal.GUI.Settings.Wizard
         xmlwriter.SetValueAsBool("remote", "mce2005", (cmMicrosoftUSA.Selected || cmMicrosoftEU.Selected));
         xmlwriter.SetValueAsBool("remote", "USAModel", cmMicrosoftUSA.Selected);
         xmlwriter.SetValueAsBool("remote", "HCW", cmHauppauge.Selected);
-        xmlwriter.SetValueAsBool("remote", "x10", cmX10.Selected);
+        xmlwriter.SetValueAsBool("remote", "x10", cmX10Medion.Selected || cmX10Ati.Selected);
+        xmlwriter.SetValueAsBool("remote", "x10medion", cmX10Medion.Selected);
+        xmlwriter.SetValueAsBool("remote", "x10ati", cmX10Ati.Selected);
         xmlwriter.SetValueAsBool("remote", "FireDTV", cmFireDTV.Selected);
       }
       GUIPropertyManager.SetProperty("#Wizard.Remote.Done", "yes");

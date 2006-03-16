@@ -41,6 +41,8 @@ namespace MediaPortal.InputDevices
     InputHandler x10Handler;
     bool controlEnabled = false;
     bool logVerbose = false;
+    bool x10Medion = true;
+    bool x10Ati = false;
 
     public X10Remote()
     {
@@ -51,15 +53,29 @@ namespace MediaPortal.InputDevices
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         controlEnabled = xmlreader.GetValueAsBool("remote", "x10", false);
+        x10Medion = xmlreader.GetValueAsBool("remote", "x10medion", true);
+        x10Ati = xmlreader.GetValueAsBool("remote", "x10ati", true);
         logVerbose = xmlreader.GetValueAsBool("remote", "x10VerboseLog", false);
       }
       if (controlEnabled)
-        x10Handler = new InputHandler("x10");
+        if (x10Medion)
+          x10Handler = new InputHandler("Medion X10");
+        else if (x10Ati)
+          x10Handler = new InputHandler("ATI X10");
+        else
+          x10Handler = new InputHandler("Other X10");
       else
         return;
 
       if (logVerbose)
-        Log.Write("x10Remote: Start");
+      {
+        if (x10Medion)
+          Log.Write("x10Remote: Start Medion");
+        else if (x10Ati)
+          Log.Write("x10Remote: Start Ati");
+        else
+          Log.Write("x10Remote: Start Other");
+      }
       try
       {
         x10Form = new X10RemoteForm(new AxX10._DIX10InterfaceEvents_X10CommandEventHandler(this.IX10_X10Command));
