@@ -202,7 +202,7 @@ namespace MediaPortal.Database
 				iCol=(int)results.ColumnIndices[strColum];
 				if (arr.fields[iCol]==null) return String.Empty;
 				string strLine = (arr.fields[iCol]).Trim();
-				strLine = strLine.Replace("''","'");
+				//strLine = strLine.Replace("''","'");
 				return strLine;
 			}
 			int pos=strColum.IndexOf(".");
@@ -213,7 +213,7 @@ namespace MediaPortal.Database
 				iCol=(int)results.ColumnIndices[strColum];
 				if (arr.fields[iCol]==null) return String.Empty;
 				string strLine = (arr.fields[iCol]).Trim();
-				strLine = strLine.Replace("''","'");
+				//strLine = strLine.Replace("''","'");
 				return strLine;
 			}
 
@@ -254,7 +254,7 @@ namespace MediaPortal.Database
 			SQLiteResultSet.Row arr = results.Rows[iRecord];
 			if (arr.fields[column]==null) return String.Empty;
 			string strLine = (arr.fields[column]).Trim();
-			strLine = strLine.Replace("''","'");
+			//strLine = strLine.Replace("''","'");
 			return strLine;;
 		}
 
