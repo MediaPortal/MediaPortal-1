@@ -240,12 +240,15 @@
     </Compile>
     <Compile Include="Pictures\IPictureDatabase.cs" />
     <Compile Include="Pictures\SqlLite\PictureDatabaseSqlLite.cs" />
+    <Compile Include="Radio\ADO\RadioDatabaseADO.cs" />
+    <Compile Include="Radio\IRadioDatabase.cs" />
     <Compile Include="Radio\RadioDatabase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Radio\RadioStation.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Radio\SqlLite\RadioDatabaseSqlLite.cs" />
     <Compile Include="SQLiteClient.cs">
       <SubType>Code</SubType>
     </Compile>
