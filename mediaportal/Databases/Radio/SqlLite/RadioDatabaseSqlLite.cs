@@ -1340,6 +1340,7 @@ namespace MediaPortal.Radio.Database
         {
           if (null == m_db) return false;
           string strSQL;
+          genres.Clear();
           strSQL = String.Format("select * from genre");
           SQLiteResultSet results;
           results = m_db.Execute(strSQL);
@@ -1348,6 +1349,7 @@ namespace MediaPortal.Radio.Database
           {
             int id = DatabaseUtility.GetAsInt(results, i, "idGenre");
             string genre = DatabaseUtility.Get(results, i, "strGenre");
+            genres.Add(genre);
           }
 
           return true;

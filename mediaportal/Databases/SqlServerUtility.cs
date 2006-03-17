@@ -9,6 +9,19 @@ namespace MediaPortal.Database
   public class SqlServerUtility
   {
     public const string DefaultConnectionString = "server=127.0.0.1;Integrated Security=false;database=mediaportal;User=sa;Password=sa;";
+    public static int GetRowCount(SqlConnection connection, string sql)
+    {
+      using (SqlCommand cmd = connection.CreateCommand())
+      {
+        cmd.CommandText = sql;
+        cmd.CommandType = CommandType.Text;
+        using (SqlDataReader reader = cmd.ExecuteReader())
+        {
+          return reader.RecordsAffected;
+        }
+      }
+      return 0;
+    }
     public static void ExecuteNonQuery(SqlConnection connection,string sql)
     {
       using (SqlCommand cmd = connection.CreateCommand())
