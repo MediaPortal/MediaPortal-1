@@ -134,9 +134,9 @@ namespace MediaPortal.TV.Recording
       int counter = 0;
       while (VMR9Util.g_vmr9 != null)
       {
-        System.Threading.Thread.Sleep(10);
+        System.Threading.Thread.Sleep(100);
         counter++;
-        if (counter > 500) break;
+        if (counter > 100) break;
       }
       if (VMR9Util.g_vmr9 != null)
       {
