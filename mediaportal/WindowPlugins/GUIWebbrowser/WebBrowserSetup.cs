@@ -103,7 +103,7 @@ namespace MediaPortal.GUI.WebBrowser
     /// <returns></returns>
     public bool DefaultEnabled()
     {
-      return true;
+      return false;
     }
 
     /// <summary>
