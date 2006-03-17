@@ -246,12 +246,12 @@ namespace MediaPortal.GUI.Alarm
 
 		public bool DisallowShutdown()
 		{
-			return false;// !PreShutdownCheck();
+            return Alarm.DisallowShutdown;
 		}
 
 		public DateTime GetNextEvent(DateTime earliestWakeupTime)
-		{	
-			return Alarm.GetNextAlarmDateTime(DateTime.Now);
+		{
+            return Alarm.GetNextAlarmDateTime(earliestWakeupTime);
 		}
 		public string PluginName()
 		{

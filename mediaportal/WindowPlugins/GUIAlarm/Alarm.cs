@@ -40,6 +40,7 @@ namespace MediaPortal.GUI.Alarm
     private static AlarmCollection _Alarms;
     private System.Windows.Forms.Timer _AlarmTimer = new System.Windows.Forms.Timer();
     private System.Windows.Forms.Timer _VolumeFadeTimer = new System.Windows.Forms.Timer();
+    private static System.Windows.Forms.Timer _DisallowShutdownTimer;
     private int _Id;
     private bool _Enabled;
     private string _Name;
@@ -60,6 +61,7 @@ namespace MediaPortal.GUI.Alarm
     private string _Message;
     private int _RepeatCount;
     private PlayListPlayer playlistPlayer;
+    private static bool _disallowShutdown;
 
     //constants
     private const int _MaxAlarms = 20;
@@ -242,12 +244,19 @@ namespace MediaPortal.GUI.Alarm
       get { return _Message; }
       set { _Message = value; }
     }
+      public static bool DisallowShutdown
+      {
+          get
+          {
+              return _disallowShutdown;
+          }
+      }
     #endregion
 
     #region Private Methods
 
     /// <summary>
-    /// Initializes the timer object
+    /// Initializes the timer objects
     /// </summary>
     private void InitializeTimer()
     {
@@ -274,6 +283,9 @@ namespace MediaPortal.GUI.Alarm
           if (_AlarmType == AlarmType.Recurring && IsDayEnabled() || _AlarmType == AlarmType.Once)
           {
             Log.Write("Alarm {0} fired at {1}", _Name, DateTime.Now);
+
+            //reset the disallowshutdown flag after delay for alarm to load
+             StartDisallowShutdownTimer();
 
             if (!GUIGraphicsContext.IsFullScreenVideo)
             {
@@ -319,14 +331,21 @@ namespace MediaPortal.GUI.Alarm
     /// </summary>
     void DisplayNotifyMessage()
     {
-      if (_Message.Length != 0)
-      {
+       //message displayed regardless of setting - workaround for PowerScheduler shutdown timer
+       //otherwise, PowerScheduler's shutdown timer remains active, and will shutdown the 
+       //computer once the timer expires, turning the alarm off in the process.
+       
+       //if (_Message.Length != 0)
+      //{
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY, 0, 0, 0, 0, 0, 0);
         msg.Label = string.Format("{0} - {1}", this.Name, this.Time.ToShortTimeString());
         msg.Label2 = this.Message;
         msg.Label3 = String.Format("{0}\\{1}", GUIGraphicsContext.Skin, "Media\\dialog_information.png");
         GUIGraphicsContext.SendMessage(msg);
-      }
+
+        MediaPortal.Dialogs.GUIDialogNotify notifyWin = (MediaPortal.Dialogs.GUIDialogNotify)MediaPortal.GUI.Library.GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        notifyWin.TimeOut = 0;
+      //}
     }
 
 
@@ -839,66 +858,114 @@ namespace MediaPortal.GUI.Alarm
         }
       }
     }
-
-
+      
     /// <summary>
     /// Gets the DateTime for the next active alarm to wake up the pc.
     /// </summary>
-    /// <param name="alarms">ArrayList of loaded alarms</param>
-    /// <returns>alarm object</returns>
+    /// <param name="earliestStartTime">Interface parameter for PowerScheduler - defines when the next wake up can start</param>
+    /// <returns>DateTime</returns>
     public static DateTime GetNextAlarmDateTime(DateTime earliestStartTime)
     {
       if (_Alarms == null) return new DateTime(2100, 1, 1, 1, 0, 0, 0);
-      //timespan to search.
-      DateTime NextStartTime = new DateTime();//=  DateTime.Now.AddMonths(1);
+
+      DateTime NextStartTime = new DateTime();
       DateTime tmpNextStartTime = new DateTime();
+
+        //reset disallowshutdown flag if timer is not running
+        if (_DisallowShutdownTimer == null)
+        {
+            _disallowShutdown = false;
+        }
+        else if (_DisallowShutdownTimer.Enabled == false)
+        {
+            _disallowShutdown = false;
+        }
+      
+
+      //make the starting off nextdatetime a year away so earlier (real alarm trigger) times can be compared
+      NextStartTime = DateTime.Now.AddYears(1);
 
       foreach (Alarm a in _Alarms)
       {
         //alarm must be enabled and set to wake up the pc.
         if (a.Enabled && a.Wakeup)
         {
-          switch (a.AlarmOccurrenceType)
-          {
-            case AlarmType.Once:
-              tmpNextStartTime = a.Time;
-              break;
-            case AlarmType.Recurring:
-              //check if alarm has passed
-              if (a.Time.Ticks < DateTime.Now.Ticks)
-              {
-                //alarm has passed, loop through the next 7 days to 
-                //find the next enabled day for the alarm
-                for (int i = 1; i < 8; i++)
-                {
-                  DateTime DateToCheck = DateTime.Now.AddDays(i);
 
-                  if (a.IsDayEnabled(DateToCheck.DayOfWeek))
-                  {
-                    //found next enabled day
-                    tmpNextStartTime = DateToCheck;
+            switch (a.AlarmOccurrenceType)
+            {
+                case AlarmType.Once:
+                    tmpNextStartTime = a.Time;
                     break;
-                  }
-                }
-              }
-              else
-              {
-                //alarm has not passed
-                tmpNextStartTime = a.Time;
-              }
-              break;
-          }
 
-          if (tmpNextStartTime.Ticks > earliestStartTime.Ticks)
+                case AlarmType.Recurring:
+                    //resolve recurring alarm to next trigger date
+                    //loop through the next 7 days to 
+                    //find the next enabled day for the alarm
+                    for (int i = 0; i < 8; i++)
+                    {
+                        DateTime DateToCheck = DateTime.Now.AddDays(i);
+
+                        //check to see if day is enabled for this alarm
+                        if (a.IsDayEnabled(DateToCheck.DayOfWeek))
+                        {
+                            //found next enabled day - build new date from the new date found, combined with the alarm trigger time
+                            tmpNextStartTime = new DateTime(DateToCheck.Year, DateToCheck.Month, DateToCheck.Day, a.Time.Hour, a.Time.Minute, a.Time.Second);
+
+                            //check to see if the alarm for this day has passed or not
+                            if (DateTime.Compare(tmpNextStartTime, DateTime.Now) > 0)
+                            {
+                                //trigger time has not passed yet, therefore this is the next trigger time for this alarm
+                                break;
+                            }
+                        }
+                    }
+                    break;
+            }
+
+          if (DateTime.Compare(tmpNextStartTime, earliestStartTime) >= 0)
           {
-            NextStartTime = new DateTime(tmpNextStartTime.Ticks);
+              if (DateTime.Compare(tmpNextStartTime, NextStartTime) < 0)
+              {
+                  NextStartTime = new DateTime(tmpNextStartTime.Ticks);
+              }
+          }
+          else
+          {
+           //next alarm is before the earliestStartTime, so disallowshutdown
+              _disallowShutdown = true;
           }
         }
 
       }
 
-      return NextStartTime;
+      MediaPortal.GUI.Library.Log.Write("Alarm: next alarm trigger time: {0}", NextStartTime.ToString());
+      
+        return NextStartTime;
     }
+
+      /// <summary>
+      /// Provides delay before resetting thw disallowshutdown flag.
+      /// Allows the alarm to fire properly and for the alarm to load - e.g. music, radio etc.
+      /// </summary>
+      private static void StartDisallowShutdownTimer()
+      {
+          _DisallowShutdownTimer = new System.Windows.Forms.Timer();
+
+          _DisallowShutdownTimer.Tick += new EventHandler(OnDisallowShutdownTimer);
+          _DisallowShutdownTimer.Interval = 60000; //60 seconds
+          _DisallowShutdownTimer.Enabled = true;
+      }
+
+      /// <summary>
+      /// Responds to DisallowShutdownTimer - resets the disallowshutdown flag after alarm has fired and the delay
+      /// </summary>
+      /// <param name="sender"></param>
+      /// <param name="e"></param>
+      private static void OnDisallowShutdownTimer(Object sender, EventArgs e)
+      {
+          _disallowShutdown = false;
+          _DisallowShutdownTimer.Enabled = false;
+      }
 
 
     #endregion
