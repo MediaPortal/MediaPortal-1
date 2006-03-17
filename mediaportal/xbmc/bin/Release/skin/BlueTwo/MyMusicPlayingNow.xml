@@ -141,7 +141,7 @@
       <width>200</width>
       <height>200</height>
       <texture>-</texture>
-      <keepaspectratio>no</keepaspectratio>
+      <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
       <type>fadelabel</type>
