@@ -446,10 +446,10 @@ namespace MediaPortal.Player
 
     public override void Release()
     {
-      /*
+      
       if (_wmp10Player == null) return;
       _wmp10Player.Visible = false;
-
+      /*
       try
       {
         GUIGraphicsContext.form.Controls.Remove(_wmp10Player);
