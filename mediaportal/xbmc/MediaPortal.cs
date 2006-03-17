@@ -1366,6 +1366,20 @@ public class MediaPortalApp : D3DApp, IRender
           }
           return;
 
+        case Action.ActionType.ACTION_SWITCH_HOME:
+          if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_HOME)
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+          else if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME)
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+          else
+          {
+            if (startWithBasicHome)
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+            else
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+          }
+          return;
+
         case Action.ActionType.ACTION_EXIT:
           Log.Write("Mediaportal action exit()");
           // is the minimize on gui option set?  If so, minimize to tray...
