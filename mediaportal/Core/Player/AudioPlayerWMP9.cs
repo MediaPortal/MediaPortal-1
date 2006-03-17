@@ -110,6 +110,7 @@ namespace MediaPortal.Player
 
       _wmp10Player.enableContextMenu = false;
       _wmp10Player.Ctlenabled = false;
+      _wmp10Player.ClientSize = new Size(0, 0);
       _wmp10Player.Visible = false;
       GUIGraphicsContext.form.ResumeLayout(false);
 
@@ -262,6 +263,7 @@ namespace MediaPortal.Player
         _wmp10Player.URL = strFile;
       }
       _wmp10Player.Ctlcontrols.play();
+      _wmp10Player.ClientSize = new Size(0, 0);
       _wmp10Player.Visible = false;
 
 
@@ -305,6 +307,7 @@ namespace MediaPortal.Player
       _currentFile = "";
       if (_wmp10Player != null)
       {
+        _wmp10Player.ClientSize = new Size(0, 0);
         _wmp10Player.Visible = false;
         _wmp10Player.PlayStateChange -= new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(OnPlayStateChange);
       }
@@ -411,6 +414,7 @@ namespace MediaPortal.Player
       if (_graphState != PlayState.Init)
       {
         _wmp10Player.Ctlcontrols.stop();
+        _wmp10Player.ClientSize = new Size(0, 0);
         _wmp10Player.Visible = false;
         SongEnded(true);
       }
@@ -446,8 +450,9 @@ namespace MediaPortal.Player
 
     public override void Release()
     {
-      
+
       if (_wmp10Player == null) return;
+      _wmp10Player.ClientSize = new Size(0, 0);
       _wmp10Player.Visible = false;
       /*
       try
