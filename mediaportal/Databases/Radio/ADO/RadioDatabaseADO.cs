@@ -329,7 +329,7 @@ namespace MediaPortal.Radio.Database
               // doesnt exists, add it
               int scrambled = 0;
               if (channel.Scrambled) scrambled = 1;
-              strSQL = String.Format("insert into tblRadioStation (idChannel, strName,iChannelNr ,frequency,URL,bitrate,genre,scrambled,isort,epgLastUpdate,epgHours) values ( NULL, '{0}', {1}, {2}, '{3}',{4},'{5}',{6},{7},'{8}',{9} )",
+              strSQL = String.Format("insert into tblRadioStation (strName,iChannelNr ,frequency,URL,bitrate,genre,scrambled,isort,epgLastUpdate,epgHours) values ( '{0}', {1}, {2}, '{3}',{4},'{5}',{6},{7},'{8}',{9} )",
                                     strChannel, channel.Channel, channel.Frequency.ToString(),
                                     strURL, channel.BitRate, strGenre, scrambled, channel.Sort,
                                     channel.LastDateTimeEpgGrabbed, channel.EpgHours);
@@ -837,7 +837,7 @@ namespace MediaPortal.Radio.Database
         if (SqlServerUtility.GetRowCount(_connection, strSQL) == 0)
         {
           // doesnt exists, add it
-          strSQL = String.Format("insert into tblRadioChannelCard (idChannelCard, idChannel,card) values ( NULL, {0}, {1})", channelId, card);
+          strSQL = String.Format("insert into tblRadioChannelCard (idChannel,card) values ( {0}, {1})", channelId, card);
           SqlServerUtility.ExecuteNonQuery(_connection, strSQL);
         }
       }
@@ -1056,7 +1056,7 @@ namespace MediaPortal.Radio.Database
         int iChannelId = GetStationId(prog.Channel);
         if (iChannelId < 0) return -1;
 
-        strSQL = String.Format("insert into tblRadioPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')",
+        strSQL = String.Format("insert into tblRadioPrograms (idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat) values ( {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')",
           iChannelId, iGenreId, strTitle, prog.Start.ToString(),
           prog.End.ToString(), strDescription, strEpisode, strRepeat);
         return SqlServerUtility.InsertRecord(_connection, strSQL);
@@ -1092,7 +1092,7 @@ namespace MediaPortal.Radio.Database
         }
 
         // doesnt exists, add it
-        strSQL = String.Format("insert into tblRadioGenre (idGenre, strGenre) values ( NULL, '{0}' )", strGenre);
+        strSQL = String.Format("insert into tblRadioGenre (strGenre) values ( '{0}' )", strGenre);
         return SqlServerUtility.InsertRecord(_connection, strSQL);
       }
       catch (Exception ex)
@@ -1160,7 +1160,7 @@ namespace MediaPortal.Radio.Database
           }
         }
         // then add the new shows
-        strSQL = String.Format("insert into tblRadioPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')",
+        strSQL = String.Format("insert into tblRadioPrograms (idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification) values ( {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')",
           iChannelId, iGenreId, strTitle, prog.Start.ToString(),
           prog.End.ToString(), strDescription, strEpisode, strRepeat, strSeriesNum, strEpisodeNum, strEpisodePart, strDate, strStarRating, strClassification);
         //          Log.WriteFile(Log.LogType.EPG,strSQL);
