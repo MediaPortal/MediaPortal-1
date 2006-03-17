@@ -1767,15 +1767,15 @@
 	</string>
 	<string>
 		<id>530</id>
-		<value>Foto disk isat, vil du åbne den ?</value>
+		<value>Foto disk isat, vil du se indholdet ?</value>
 	</string>
 	<string>
 		<id>531</id>
-		<value>Film disk isat, vil du åbne den ?</value>
+		<value>Film disk isat, vil du se indholdet ?</value>
 	</string>
 	<string>
 		<id>532</id>
-		<value>Musik CD isat, vil du åbne den ?</value>
+		<value>Musik disk isat, vil du se indholdet ?</value>
 	</string>
 	<string>
 		<id>533</id>
@@ -1851,7 +1851,7 @@
 	</string>
 	<string>
 		<id>616</id>
-		<value>Vælg optagelses metode</value>
+		<value>Vælg optagelses strategi</value>
 	</string>
 	<string>
 		<id>617</id>
@@ -2356,6 +2356,58 @@
 	<string>
 		<id>751</id>
 		<value>Vis alle sange med denne kunstner</value>
+	</string>
+	<string>
+		<id>752</id>
+		<value>Ingen optagelse er valgt</value>
+	</string>
+	<string>
+		<id>753</id>
+		<value>Ingen modtagerkort er installeret</value>
+	</string>
+	<string>
+		<id>754</id>
+		<value>Ingen modtager optager det valgte program</value>
+	</string>
+	<string>
+		<id>755</id>
+		<value>Ingen modtager viser TV</value>
+	</string>
+	<string>
+		<id>756</id>
+		<value>Ingen modtager kan modtage:{0}</value>
+	</string>
+	<string>
+		<id>757</id>
+		<value>Alle modtagere er i brug</value>
+	</string>
+	<string>
+		<id>758</id>
+		<value>Modtager optager ikke</value>
+	</string>
+	<string>
+		<id>759</id>
+		<value>Kunne ikke starte tidsforskydning</value>
+	</string>
+	<string>
+		<id>760</id>
+		<value>Ingen modtager er ledig til tidsforskydning</value>
+	</string>
+	<string>
+		<id>761</id>
+		<value>Kunne ikke stoppe tidsforskydning</value>
+	</string>
+	<string>
+		<id>762</id>
+		<value>Kunne ikke starte TV</value>
+	</string>
+	<string>
+		<id>763</id>
+		<value>Optageren er i brug</value>
+	</string>
+	<string>
+		<id>764</id>
+		<value>Optageren er i pause</value>
 	</string>
 	<string>
 		<id>800</id>
@@ -3115,7 +3167,7 @@
 	</string>
 	<string>
 		<id>1038</id>
-		<value>Avanceret optagelse</value>
+		<value>Optagelses strategi</value>
 	</string>
 	<string>
 		<id>1039</id>
@@ -4935,7 +4987,7 @@
 	</string>
 	<string>
 		<id>200027</id>
-		<value>Setup - generelt</value>
+		<value>Setup - Generelt</value>
 	</string>
 	<string>
 		<id>200028</id>
@@ -4943,11 +4995,15 @@
 	</string>
 	<string>
 		<id>200029</id>
-		<value>Start MediaPortal som helskærm</value>
+		<value>Hvordan vil du bruge MediaPortal ?</value>
 	</string>
 	<string>
 		<id>200030</id>
-		<value>Start MediaPortal når PC´en tændes?</value>
+		<value>På en dedikeret PC - en HTPC</value>
+	</string>
+	<string>
+		<id>200038</id>
+		<value>På en PC der også bruges til andre programmer</value>
 	</string>
 	<string>
 		<id>200031</id>
@@ -5116,6 +5172,10 @@
 	<string>
 		<id>4553</id>
 		<value>Vis playliste</value>
+	</string>
+	<string>
+		<id>4554</id>
+		<value>Søger CD information</value>
 	</string>
 	<string>
 		<id>10100</id>

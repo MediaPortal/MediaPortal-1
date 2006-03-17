@@ -5178,6 +5178,10 @@
 		<value>Zeige Album-Informationen</value>
 	</string>
 	<string>
+		<id>4555</id>
+		<value>Aktuelle Wiedergabeliste</value>
+	</string>
+	<string>
 		<id>10100</id>
 		<value>Versteckte Minen</value>
 	</string>

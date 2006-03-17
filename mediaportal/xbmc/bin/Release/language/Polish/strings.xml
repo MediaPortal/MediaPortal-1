@@ -1138,10 +1138,6 @@
 		<value>Czarny</value>
 	</string>
 	<string>
-		<id>354</id>
-		<value>Matrix Trails</value>
-	</string>
-	<string>
 		<id>355</id>
 		<value>W³±cz wygaszacz po</value>
 	</string>
@@ -1778,6 +1774,10 @@
 		<value>Wykryto dysk z muzyk±, czy chcesz go otworzyæ?</value>
 	</string>
 	<string>
+		<id>533</id>
+		<value>Przewodnik</value>
+	</string>
+	<string>
 		<id>550</id>
 		<value>Przytnij</value>
 	</string>
@@ -2352,6 +2352,42 @@
 	<string>
 		<id>751</id>
 		<value>Poka¿ wszystkie piosenki dla tego artysty</value>
+	</string>
+	<string>
+		<id>753</id>
+		<value>Nie zainstalowano kart z tunerem</value>
+	</string>
+	<string>
+		<id>757</id>
+		<value>Wszystkie tunery s± zajête</value>
+	</string>
+	<string>
+		<id>758</id>
+		<value>Tuner nie nagrywa</value>
+	</string>
+	<string>
+		<id>759</id>
+		<value>Nieudana próba uruchmienia timeshifting</value>
+	</string>
+	<string>
+		<id>760</id>
+		<value>Nie ma dostêpnych tunerów dla timeshifting</value>
+	</string>
+	<string>
+		<id>761</id>
+		<value>Nieudana próba zatrzymania timeshifting</value>
+	</string>
+	<string>
+		<id>762</id>
+		<value>Nieudana próba uruchomienia TV</value>
+	</string>
+	<string>
+		<id>763</id>
+		<value>Nagrywarka jest zajêta</value>
+	</string>
+	<string>
+		<id>764</id>
+		<value>Nagrywarka jest zatrzymana</value>
 	</string>
 	<string>
 		<id>800</id>
@@ -3164,6 +3200,10 @@
 	<string>
 		<id>1051</id>
 		<value>Nagrywaj Sob-Nie</value>
+	</string>
+	<string>
+		<id>1052</id>
+		<value>Piosenki</value>
 	</string>
 	<string>
 		<id>1100</id>
@@ -4063,11 +4103,11 @@
 	</string>
 	<string>
 		<id>8014</id>
-		<value>Serwer&apos;{0}&apos;nie odpowiada!</value>
+		<value>Serwer&apos; {0}&apos; nie odpowiada!</value>
 	</string>
 	<string>
 		<id>8015</id>
-		<value>Sprawd¼ konfiguracjê skrzynki&apos;{0}&apos;</value>
+		<value>Sprawd¼ konfiguracjê skrzynki &apos;{0}&apos;</value>
 	</string>
 	<string>
 		<id>8016</id>
@@ -4707,7 +4747,7 @@
 	</string>
 	<string>
 		<id>102001</id>
-		<value>Muzyka/Informacje</value>
+		<value>Muzyka/informacje</value>
 	</string>
 	<string>
 		<id>102002</id>
@@ -4847,27 +4887,27 @@
 	</string>
 	<string>
 		<id>200010</id>
-		<value>MediaPortal Zmieni Twójego PC w bardzo zaawansowane centum mulimedialne / HTPC.</value>
+		<value>MediaPortal Zmieni Twojgo PC w bardzo zaawansowane centrum multimedialne / HTPC.</value>
 	</string>
 	<string>
 		<id>200011</id>
-		<value>Dziêki MediaPortal bêdziesz móg³ cieszyæ siê swoj± ulubion± muzyk±, radio, przegl±daæ swoje zdjêcia,</value>
+		<value>Dziêki MediaPortal bêdziesz cieszyæ siê swoj± ulubion± muzyk±, radiem, przegl±daæ swoje zdjêcia,</value>
 	</string>
 	<string>
 		<id>200012</id>
-		<value>ogl±daæ filmy, DVD i telewizjê oraz znacznie wiêcej</value>
+		<value>ogl±daæ wideo, DVD, telewizjê oraz znacznie wiêcej</value>
 	</string>
 	<string>
 		<id>200013</id>
-		<value>To pozwoli Ci s³uchaæ twojej ulubionej muzyki oraz radio, ogl±daæ Video i DVD</value>
+		<value>Ten kreator pomo¿e Ci ³atwo i szybko skonfigurowaæ MediaPortal. Prosze wykonaæ wszyskie kroki,</value>
 	</string>
 	<string>
 		<id>200014</id>
-		<value>zdjêciami, plikami video, pgl±daæ/nagrywaæ telewizje na ¿ywo oraz znacznie wiêcej.</value>
+		<value>zacznij od ustawienia swojego jêzyka oraz lokacji:</value>
 	</string>
 	<string>
 		<id>200015</id>
-		<value>Ten kreator pomo¿e Ci ³atwo i szybko skonfigurowaæ MediaPortal. Proszê wykonaj nastêpuj±ce kroki w tym</value>
+		<value>Teraz naci¶nij Dalej aby rozpocz±æ</value>
 	</string>
 	<string>
 		<id>200017</id>
@@ -4915,15 +4955,19 @@
 	</string>
 	<string>
 		<id>200028</id>
-		<value>Czy ten komputer ma dostêp do Internetu?</value>
+		<value>Czy ten komputer ma zawsze dostêp do Internetu?</value>
 	</string>
 	<string>
 		<id>200029</id>
-		<value>Czy uruchamiaæ Media Portal w trybie pe³no ekranowym</value>
+		<value>Jak bêdziesz u¿ywa³ MediaPortal</value>
 	</string>
 	<string>
 		<id>200030</id>
-		<value>Czy uruchamiaæ Media Portal wraz ze startem systemu ?</value>
+		<value>Na dedykowanym PC</value>
+	</string>
+	<string>
+		<id>200038</id>
+		<value>Na komputerze którego u¿ywasz tak¿e do innych aplikacji</value>
 	</string>
 	<string>
 		<id>200031</id>
@@ -4970,6 +5014,18 @@
 		<value>Proszê ustawiæ folder ulubione w ustawieniach</value>
 	</string>
 	<string>
+		<id>4500</id>
+		<value>Pomiñ albumy z istniej±cymi ok³adkami</value>
+	</string>
+	<string>
+		<id>4501</id>
+		<value>Zapisz ok³adkê w folderze albumu</value>
+	</string>
+	<string>
+		<id>4502</id>
+		<value>Zapisz ok³adkê w folderze miniatur</value>
+	</string>
+	<string>
 		<id>4504</id>
 		<value>{0}% - {1} z {2}</value>
 	</string>
@@ -4982,6 +5038,14 @@
 		<value>[pusty]</value>
 	</string>
 	<string>
+		<id>4508</id>
+		<value>Pobieranie ok³adek zkoñczone pomy¶lnie</value>
+	</string>
+	<string>
+		<id>4509</id>
+		<value>Pobieranie ok³adek zkoñczone z b³êdami</value>
+	</string>
+	<string>
 		<id>4512</id>
 		<value>Wszystki ok³adki aktualne</value>
 	</string>
@@ -4990,12 +5054,20 @@
 		<value>Ró¿ne</value>
 	</string>
 	<string>
+		<id>4516</id>
+		<value>Nie odnaleziono ok³adki</value>
+	</string>
+	<string>
 		<id>4517</id>
 		<value>Zamknij</value>
 	</string>
 	<string>
 		<id>4518</id>
 		<value>Tytu³ albumu nieodnaleziony\r\nPróbujê: {0}</value>
+	</string>
+	<string>
+		<id>4519</id>
+		<value>Obecna ok³adka</value>
 	</string>
 	<string>
 		<id>4520</id>
@@ -5012,6 +5084,10 @@
 	<string>
 		<id>4541</id>
 		<value>Nastêpny utwór</value>
+	</string>
+	<string>
+		<id>4542</id>
+		<value>Nie za³adowano listy odtwarzania</value>
 	</string>
 	<string>
 		<id>4543</id>

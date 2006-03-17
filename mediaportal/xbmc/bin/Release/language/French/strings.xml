@@ -2358,6 +2358,14 @@
 		<value>Montrez toutes les chansons de cet artiste</value>
 	</string>
 	<string>
+		<id>753</id>
+		<value>Aucune carte TV installé</value>
+	</string>
+	<string>
+		<id>764</id>
+		<value>Enregistrement en pause</value>
+	</string>
+	<string>
 		<id>800</id>
 		<value>Commence par</value>
 	</string>
@@ -4942,6 +4950,18 @@
 		<value>Ce PC a-t-il toujours accès à Internet?</value>
 	</string>
 	<string>
+		<id>200029</id>
+		<value>Comment utilisez-vous MediaPortal? </value>
+	</string>
+	<string>
+		<id>200030</id>
+		<value>Sur un PC dédié</value>
+	</string>
+	<string>
+		<id>200038</id>
+		<value>Sur un PC de bureau partagé avec d&apos;autres applications </value>
+	</string>
+	<string>
 		<id>200031</id>
 		<value>Oui</value>
 	</string>
@@ -5079,7 +5099,7 @@
 	</string>
 	<string>
 		<id>4540</id>
-		<value>Titre joué</value>
+		<value>Lecture en cours</value>
 	</string>
 	<string>
 		<id>4541</id>
@@ -5094,8 +5114,20 @@
 		<value>Information non disponible</value>
 	</string>
 	<string>
+		<id>4551</id>
+		<value>Lancer après</value>
+	</string>
+	<string>
+		<id>4552</id>
+		<value>Lancer maintenant</value>
+	</string>
+	<string>
 		<id>4553</id>
 		<value>Montrez la playlist</value>
+	</string>
+	<string>
+		<id>4555</id>
+		<value>Playlist actuelle</value>
 	</string>
 	<string>
 		<id>10100</id>

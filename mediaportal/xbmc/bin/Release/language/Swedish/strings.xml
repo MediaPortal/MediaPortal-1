@@ -1795,7 +1795,7 @@
 	</string>
 	<string>
 		<id>602</id>
-		<value>Kanal: </value>
+		<value>Kanal:</value>
 	</string>
 	<string>
 		<id>603</id>
@@ -2356,6 +2356,58 @@
 	<string>
 		<id>751</id>
 		<value>Visa alla låtar från denna artist</value>
+	</string>
+	<string>
+		<id>752</id>
+		<value>Ingen inspelning vald</value>
+	</string>
+	<string>
+		<id>753</id>
+		<value>Inga tv-kort installerade</value>
+	</string>
+	<string>
+		<id>754</id>
+		<value>Inget tv-kort spelar in det valda programmet</value>
+	</string>
+	<string>
+		<id>755</id>
+		<value>Inget tv-kort visar tv</value>
+	</string>
+	<string>
+		<id>756</id>
+		<value>Inget tv-kort kan ta emot:{0}</value>
+	</string>
+	<string>
+		<id>757</id>
+		<value>Alla tv-kort är upptagna</value>
+	</string>
+	<string>
+		<id>758</id>
+		<value>Tv-kortet spelar inte in</value>
+	</string>
+	<string>
+		<id>759</id>
+		<value>Misslyckades med att påbörja timeshifting</value>
+	</string>
+	<string>
+		<id>760</id>
+		<value>Inget tv-kort tillgängligt för timeshifting</value>
+	</string>
+	<string>
+		<id>761</id>
+		<value>Misslyckades med att avbryta timeshifting</value>
+	</string>
+	<string>
+		<id>762</id>
+		<value>Misslyckades med att starta tv-visning</value>
+	</string>
+	<string>
+		<id>763</id>
+		<value>Inspelaren är upptagen</value>
+	</string>
+	<string>
+		<id>764</id>
+		<value>Inspelaren är pausad</value>
 	</string>
 	<string>
 		<id>800</id>
@@ -4935,11 +4987,15 @@
 	</string>
 	<string>
 		<id>200029</id>
-		<value>Starta MediaPortal i fullskärmsläge?</value>
+		<value>Hur kommer du att använda MediaPortal?</value>
 	</string>
 	<string>
 		<id>200030</id>
-		<value>Starta MediaPortal automatiskt när datorn startar?</value>
+		<value>På en PC bara för MediaPortal</value>
+	</string>
+	<string>
+		<id>200038</id>
+		<value>På en PC som även används till annat</value>
 	</string>
 	<string>
 		<id>200031</id>
@@ -5083,7 +5139,7 @@
 	</string>
 	<string>
 		<id>4541</id>
-		<value>Nästa låt</value>
+		<value>Nästa spår</value>
 	</string>
 	<string>
 		<id>4542</id>
@@ -5099,7 +5155,7 @@
 	</string>
 	<string>
 		<id>4551</id>
-		<value>Ställ först i kön</value>
+		<value>Spela som nästa spår</value>
 	</string>
 	<string>
 		<id>4552</id>
@@ -5112,6 +5168,10 @@
 	<string>
 		<id>4554</id>
 		<value>Sök CD-info</value>
+	</string>
+	<string>
+		<id>4555</id>
+		<value>Aktuell spellista</value>
 	</string>
 	<string>
 		<id>10100</id>

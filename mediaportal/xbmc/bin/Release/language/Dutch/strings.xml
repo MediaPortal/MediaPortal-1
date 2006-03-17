@@ -1778,6 +1778,10 @@
 		<value>Audio CD gevonden, wilt U de CD beluisteren?</value>
 	</string>
 	<string>
+		<id>533</id>
+		<value>Gids</value>
+	</string>
+	<string>
 		<id>550</id>
 		<value>Bijsnijden</value>
 	</string>
@@ -2348,6 +2352,62 @@
 	<string>
 		<id>750</id>
 		<value>Plaatjes</value>
+	</string>
+	<string>
+		<id>751</id>
+		<value>Toon alle nummers van deze artiest</value>
+	</string>
+	<string>
+		<id>752</id>
+		<value>Geen opname gespecificeerd</value>
+	</string>
+	<string>
+		<id>753</id>
+		<value>Geen tunerkaart geinstalleerd</value>
+	</string>
+	<string>
+		<id>754</id>
+		<value>Geen enkele tuner neemt deze show op</value>
+	</string>
+	<string>
+		<id>755</id>
+		<value>Geen enkele tuner in gebruik voor TV kijken</value>
+	</string>
+	<string>
+		<id>756</id>
+		<value>Geen enkele tuner kan {0} ontvangen</value>
+	</string>
+	<string>
+		<id>757</id>
+		<value>Alle tuners zijn bezet</value>
+	</string>
+	<string>
+		<id>758</id>
+		<value>Tuner neemt niet op</value>
+	</string>
+	<string>
+		<id>759</id>
+		<value>Starten van timeshifting mislukt</value>
+	</string>
+	<string>
+		<id>760</id>
+		<value>Geen enkele tuner beschikbaar voor timeshifting</value>
+	</string>
+	<string>
+		<id>761</id>
+		<value>Stoppen timeshifting mislukt</value>
+	</string>
+	<string>
+		<id>762</id>
+		<value>TV starten niet gelukt</value>
+	</string>
+	<string>
+		<id>763</id>
+		<value>Record is bezet</value>
+	</string>
+	<string>
+		<id>764</id>
+		<value>Recorder is gepauzeerd</value>
 	</string>
 	<string>
 		<id>800</id>
@@ -3160,6 +3220,10 @@
 	<string>
 		<id>1051</id>
 		<value>Opnemen za/zo</value>
+	</string>
+	<string>
+		<id>1052</id>
+		<value>Nummers</value>
 	</string>
 	<string>
 		<id>1100</id>
@@ -3988,6 +4052,38 @@
 	<string>
 		<id>5917</id>
 		<value>Duitse trailers</value>
+	</string>
+	<string>
+		<id>5918</id>
+		<value>Television Suisse Romande VOD</value>
+	</string>
+	<string>
+		<id>5919</id>
+		<value>Weekend Top 10</value>
+	</string>
+	<string>
+		<id>5920</id>
+		<value>Premierefilms deze week</value>
+	</string>
+	<string>
+		<id>5921</id>
+		<value>Binnenkort in premiere</value>
+	</string>
+	<string>
+		<id>5922</id>
+		<value>Top verkopende DVDs</value>
+	</string>
+	<string>
+		<id>5923</id>
+		<value>Nieuw op DVD deze week</value>
+	</string>
+	<string>
+		<id>5924</id>
+		<value>Nieuw op DVD volgende week</value>
+	</string>
+	<string>
+		<id>5925</id>
+		<value>DVD voor-bestellingen</value>
 	</string>
 	<string>
 		<id>8000</id>
@@ -4906,6 +5002,10 @@
 		<value>Moet MediaPortal automatisch beginnen als de PC wordt aangezet?</value>
 	</string>
 	<string>
+		<id>200038</id>
+		<value>Op een desktop PC gedeeld met andere applicaties</value>
+	</string>
+	<string>
 		<id>200031</id>
 		<value>Ja</value>
 	</string>
@@ -5032,6 +5132,54 @@
 	<string>
 		<id>4520</id>
 		<value>Overslaan</value>
+	</string>
+	<string>
+		<id>4521</id>
+		<value>Toon album info</value>
+	</string>
+	<string>
+		<id>4522</id>
+		<value>Vastleggen: {0}..</value>
+	</string>
+	<string>
+		<id>4540</id>
+		<value>Nu speelt</value>
+	</string>
+	<string>
+		<id>4541</id>
+		<value>Volgende afspelen</value>
+	</string>
+	<string>
+		<id>4542</id>
+		<value>Geen afspeellijsten geladen</value>
+	</string>
+	<string>
+		<id>4543</id>
+		<value>Track informatie niet beschikbaar</value>
+	</string>
+	<string>
+		<id>4550</id>
+		<value>In wachtrij</value>
+	</string>
+	<string>
+		<id>4551</id>
+		<value>Volgende afspelen</value>
+	</string>
+	<string>
+		<id>4552</id>
+		<value>Nu afspelen</value>
+	</string>
+	<string>
+		<id>4553</id>
+		<value>Toon afspeellijst</value>
+	</string>
+	<string>
+		<id>4554</id>
+		<value>CD info opzoeken</value>
+	</string>
+	<string>
+		<id>4555</id>
+		<value>Huidige afspeellijst</value>
 	</string>
 	<string>
 		<id>10100</id>
