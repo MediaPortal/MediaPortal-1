@@ -85,7 +85,7 @@
 		<textureFocus>button_tvdesktop_focus.png</textureFocus>
 		<textureNoFocus>button_tvdesktop_nofocus.png</textureNoFocus>
 		<label>-</label>
-		<hyperlink>35</hyperlink>
+		<action>115</action>
 		<onleft>10</onleft>
 		<onright>12</onright>
 		<onup>11</onup>
