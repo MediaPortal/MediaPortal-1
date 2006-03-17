@@ -9410,13 +9410,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		  name="EZ-TV TVP3XP TVTuner"     checkdevice="true"/>
-        <filter cat="tvaudio"		  name="EZ-TV TVP3XP TVAudio"     checkdevice="true"/>
-        <filter cat="crossbar"		name="EZ-TV TVP3XP Crossbar"			    checkdevice="true"/>
-        <filter cat="capture"		  name="EZ-TV TVP3XP WDM Video Capture (NTSC)"		  checkdevice="true"/>
-        <filter cat="videncoder"	name="%videoencoder%"	checkdevice="false"/>
-        <filter cat="audencoder"	name="%audioencoder%"		  checkdevice="false"/>
-        <filter cat="mux"			    name="%mpegmux%"			    checkdevice="false"/>
+        <filter cat="tvtuner"		  name="EZ-TV TVP3XP TVTuner"                   checkdevice="true"/>
+        <filter cat="tvaudio"		  name="EZ-TV TVP3XP TVAudio"                   checkdevice="true"/>
+        <filter cat="crossbar"		name="EZ-TV TVP3XP Crossbar"                  checkdevice="true"/>
+        <filter cat="capture"		  name="EZ-TV TVP3XP WDM Video Capture (NTSC)"  checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"                         checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"                         checkdevice="false"/>
+        <filter cat="mux"			    name="%mpegmux%"                              checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -9437,14 +9437,14 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		  name="Conexant TvTuner"  checkdevice="true"/>
-        <filter cat="tvaudio"		  name="Conexant TvAudio"	checkdevice="true"/>
-        <filter cat="crossbar"		name="Conexant Crossbar"	checkdevice="true"/>
-        <filter cat="capture"     name="Conexant Capture"	checkdevice="true"/>
-        <filter cat="audcapture"	name="%soundcard%"						  checkdevice="true"/>
-		    <filter cat="videncoder"	name="%videoencoder%"           checkdevice="false"/>
-		    <filter cat="audencoder"	name="%audioencoder%"           checkdevice="false"/>
-		    <filter cat="mux"			    name="%mpegmux%"                checkdevice="false"/>
+        <filter cat="tvtuner"		  name="Conexant TvTuner"   checkdevice="true"/>
+        <filter cat="tvaudio"		  name="Conexant TvAudio"   checkdevice="true"/>
+        <filter cat="crossbar"		name="Conexant Crossbar"  checkdevice="true"/>
+        <filter cat="capture"     name="Conexant Capture"   checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"        checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"     checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"     checkdevice="false"/>
+        <filter cat="mux"			    name="%mpegmux%"          checkdevice="false"/>
       </filters>
       <connections>
 		    <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -9464,14 +9464,14 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		  name="Conexant TvTuner"  checkdevice="true"/>
-        <filter cat="tvaudio"		  name="Conexant TvAudio"	checkdevice="true"/>
-        <filter cat="crossbar"		name="Conexant Crossbar"	checkdevice="true"/>
-        <filter cat="capture"     name="Conexant Capture"	checkdevice="true"/>
-        <filter cat="audcapture"	name="%soundcard%"						  checkdevice="true"/>
-		    <filter cat="videncoder"	name="%videoencoder%"           checkdevice="false"/>
-		    <filter cat="audencoder"	name="%audioencoder%"           checkdevice="false"/>
-		    <filter cat="mux"			    name="%mpegmux%"                checkdevice="false"/>
+        <filter cat="tvtuner"		  name="Conexant TvTuner"   checkdevice="true"/>
+        <filter cat="tvaudio"		  name="Conexant TvAudio"   checkdevice="true"/>
+        <filter cat="crossbar"		name="Conexant Crossbar"  checkdevice="true"/>
+        <filter cat="capture"     name="Conexant Capture"   checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"        checkdevice="true"/>
+		    <filter cat="videncoder"	name="%videoencoder%"     checkdevice="false"/>
+		    <filter cat="audencoder"	name="%audioencoder%"     checkdevice="false"/>
+		    <filter cat="mux"			    name="%mpegmux%"          checkdevice="false"/>
       </filters>
       <connections>
 		    <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -9491,14 +9491,14 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		  name="Conexant TvTuner"  checkdevice="true"/>
-        <filter cat="tvaudio"		  name="Conexant TvAudio"	checkdevice="true"/>
-        <filter cat="crossbar"		name="Conexant Crossbar"	checkdevice="true"/>
-        <filter cat="capture"     name="Conexant Capture"	checkdevice="true"/>
-        <filter cat="audcapture"	name="%soundcard%"						  checkdevice="true"/>
-		    <filter cat="videncoder"	name="%videoencoder%"           checkdevice="false"/>
-		    <filter cat="audencoder"	name="%audioencoder%"           checkdevice="false"/>
-		    <filter cat="mux"			    name="%mpegmux%"                checkdevice="false"/>
+        <filter cat="tvtuner"		  name="Conexant TvTuner"   checkdevice="true"/>
+        <filter cat="tvaudio"		  name="Conexant TvAudio"   checkdevice="true"/>
+        <filter cat="crossbar"		name="Conexant Crossbar"  checkdevice="true"/>
+        <filter cat="capture"     name="Conexant Capture"   checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"        checkdevice="true"/>
+		    <filter cat="videncoder"	name="%videoencoder%"     checkdevice="false"/>
+		    <filter cat="audencoder"	name="%audioencoder%"     checkdevice="false"/>
+		    <filter cat="mux"			    name="%mpegmux%"          checkdevice="false"/>
       </filters>
       <connections>
 		    <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -9518,14 +9518,14 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		  name="Conexant TvTuner"  checkdevice="true"/>
-        <filter cat="tvaudio"		  name="Conexant TvAudio"	checkdevice="true"/>
-        <filter cat="crossbar"		name="Conexant Crossbar"	checkdevice="true"/>
-        <filter cat="capture"     name="Conexant Capture"	checkdevice="true"/>
-        <filter cat="audcapture"	name="%soundcard%"						  checkdevice="true"/>
-		    <filter cat="videncoder"	name="%videoencoder%"           checkdevice="false"/>
-		    <filter cat="audencoder"	name="%audioencoder%"           checkdevice="false"/>
-		    <filter cat="mux"			    name="%mpegmux%"                checkdevice="false"/>
+        <filter cat="tvtuner"		  name="Conexant TvTuner"   checkdevice="true"/>
+        <filter cat="tvaudio"		  name="Conexant TvAudio"   checkdevice="true"/>
+        <filter cat="crossbar"		name="Conexant Crossbar"  checkdevice="true"/>
+        <filter cat="capture"     name="Conexant Capture"   checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"        checkdevice="true"/>
+		    <filter cat="videncoder"	name="%videoencoder%"     checkdevice="false"/>
+		    <filter cat="audencoder"	name="%audioencoder%"     checkdevice="false"/>
+		    <filter cat="mux"			    name="%mpegmux%"          checkdevice="false"/>
       </filters>
       <connections>
 		    <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -9556,6 +9556,33 @@
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Asus My Cinema-P7131 Dual (Analogue)" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_48621043&amp;rev_d0">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="713x BDA Analog Tv Tuner"     checkdevice="true"/>
+        <filter cat="tvaudio"     name="713x BDA Analog TV Audio"     checkdevice="true"/>
+        <filter cat="crossbar"    name="713x BDA Analog Xbar"         checkdevice="true"/>
+        <filter cat="capture"     name="713x BDA Analog Capture"      checkdevice="true"/>
+        <filter cat="videncoder"  name="Cyberlink MPEG Video Encoder" checkdevice="false"/>
+        <filter cat="audencoder"  name="Cyberlink Audio Encoder"      checkdevice="false"/>
+        <filter cat="mux"         name="Cyberlink MPEG Muxer"         checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"    sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"    sinkpin="0"/>
+        <connection sourcefilter="crossbar"   sourcepin="3" sinkfilter="capture"    sinkpin="1"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder" sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="1" sinkfilter="audencoder" sinkpin="1"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="1" sinkfilter="mux"        sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
