@@ -309,6 +309,7 @@ namespace MediaPortal.Picture.Database
           try
           {
             m_db.Close();
+            m_db.Dispose();
           }
           catch (Exception) { }
           m_db = null;

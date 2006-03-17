@@ -30,22 +30,19 @@ namespace MediaPortal.Video.Database
 	/// <summary>
 	/// Summary description for Class1.
 	/// </summary>
-	public class VideoDatabase
+	public class VideoDatabaseSqlLite : IVideoDatabase, IDisposable
 	{
-		static public SQLiteClient m_db=null;
+		public SQLiteClient m_db=null;
+
 		#region ctor
-		// singleton. Dont allow any instance of this class
-		private VideoDatabase()
-		{
-		}
-		static VideoDatabase()
+    public VideoDatabaseSqlLite()
 		{
 			Open();
 		}
 		#endregion
 
 		#region helper funcs
-		static void Open()
+		void Open()
 		{
       
 			Log.WriteFile(Log.LogType.Log,false,"opening video database");
@@ -72,8 +69,17 @@ namespace MediaPortal.Video.Database
       
 			Log.WriteFile(Log.LogType.Log,false,"video database opened");
 		}
+    public void Dispose()
+    {
+      if (m_db != null)
+      {
+        m_db.Close();
+        m_db.Dispose();
+        m_db = null;
+      }
+    }
 
-		static bool CreateTables()
+		bool CreateTables()
 		{
 			if (m_db==null) return false;
 			DatabaseUtility.AddTable(m_db,"bookmark","CREATE TABLE bookmark ( idBookmark integer primary key, idFile integer, fPercentage text)");
@@ -96,7 +102,7 @@ namespace MediaPortal.Video.Database
 		#endregion
 
 		#region Movie files and paths
-		static public int AddFile(int lMovieId, int lPathId,  string strFileName)
+		public int AddFile(int lMovieId, int lPathId,  string strFileName)
 		{
 			if (m_db==null) return -1;
 			string strSQL="";
@@ -126,7 +132,7 @@ namespace MediaPortal.Video.Database
 			return -1;
 		}
 
-		static int GetFile( string strFilenameAndPath,out int lPathId,out int lMovieId, bool bExact)
+		public int GetFile( string strFilenameAndPath,out int lPathId,out int lMovieId, bool bExact)
 		{
 			lPathId=-1;
 			lMovieId=-1;
@@ -191,7 +197,7 @@ namespace MediaPortal.Video.Database
 			return -1;
 		}
 
-		static public int AddMovieFile( string strFile)
+		public int AddMovieFile( string strFile)
 		{
 			bool bHassubtitles=false;
 			if (strFile.ToLower().IndexOf(".ifo")>=0) bHassubtitles=true;
@@ -216,7 +222,7 @@ namespace MediaPortal.Video.Database
 			return VideoDatabase.AddMovie(strFile, bHassubtitles);
 		}
 
-		static public int AddPath( string strPath)
+		public int AddPath( string strPath)
 		{
 			try
 			{
@@ -253,7 +259,7 @@ namespace MediaPortal.Video.Database
 			return -1;
 		}
 
-		static int GetPath( string strPath)
+		public int GetPath( string strPath)
 		{
 			try
 			{
@@ -280,7 +286,7 @@ namespace MediaPortal.Video.Database
 			return -1;
 		}
 
-		static public void DeleteFile(int iFileId)
+		public void DeleteFile(int iFileId)
 		{
 			try
 			{
@@ -300,7 +306,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public void RemoveFilesForMovie(int lMovieId)
+		public void RemoveFilesForMovie(int lMovieId)
 		{
 			try
 			{
@@ -315,14 +321,14 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public int GetFileId( string strFilenameAndPath)
+		public int GetFileId( string strFilenameAndPath)
 		{
 			int lPathId;
 			int lMovieId;
 			return GetFile(strFilenameAndPath, out lPathId,out  lMovieId, true);
 		}
 
-		static public void	GetFiles(int lMovieId, ref ArrayList movies)
+		public void	GetFiles(int lMovieId, ref ArrayList movies)
 		{
 			try
 			{
@@ -357,7 +363,7 @@ namespace MediaPortal.Video.Database
 		#endregion
 
 		#region Genres
-		static public int AddGenre( string strGenre1)
+		public int AddGenre( string strGenre1)
 		{
 			try
 			{
@@ -394,7 +400,7 @@ namespace MediaPortal.Video.Database
 			return -1;
 		}
 
-		static public void GetGenres(ArrayList genres)
+		public void GetGenres(ArrayList genres)
 		{
 			if (m_db==null) return ;
 			try
@@ -417,7 +423,7 @@ namespace MediaPortal.Video.Database
 
 		}
 
-		static public void AddGenreToMovie(int lMovieId, int lGenreId)
+		public void AddGenreToMovie(int lMovieId, int lGenreId)
 		{
 			try
 			{
@@ -441,7 +447,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public void DeleteGenre(string genre)
+		public void DeleteGenre(string genre)
 		{
 			try
 			{
@@ -466,7 +472,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public void RemoveGenresForMovie(int lMovieId)
+		public void RemoveGenresForMovie(int lMovieId)
 		{
 			try
 			{
@@ -485,7 +491,7 @@ namespace MediaPortal.Video.Database
 		#endregion
 
 		#region Actors
-		static public int AddActor( string strActor1)
+		public int AddActor( string strActor1)
 		{
 			try
 			{
@@ -523,7 +529,7 @@ namespace MediaPortal.Video.Database
 			return -1;
 		}
 
-		static public void GetActors(ArrayList actors)
+		public void GetActors(ArrayList actors)
 		{
 			if (m_db==null) return ;
 			try
@@ -545,7 +551,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static void AddActorToMovie(int lMovieId, int lActorId)
+		public void AddActorToMovie(int lMovieId, int lActorId)
 		{
 			try
 			{
@@ -569,7 +575,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public void DeleteActor(string actor)
+		public void DeleteActor(string actor)
 		{		
 			try
 			{
@@ -594,7 +600,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 		
-		static public void RemoveActorsForMovie(int lMovieId)
+		public void RemoveActorsForMovie(int lMovieId)
 		{
 			try
 			{
@@ -613,7 +619,7 @@ namespace MediaPortal.Video.Database
 		#endregion
 		
 		#region bookmarks
-		static public void ClearBookMarksOfMovie( string strFilenameAndPath)
+		public void ClearBookMarksOfMovie( string strFilenameAndPath)
 		{
 			try
 			{
@@ -631,7 +637,7 @@ namespace MediaPortal.Video.Database
 				Open();
 			}
 		}
-		static public void AddBookMarkToMovie( string strFilenameAndPath, float fTime)
+		public void AddBookMarkToMovie( string strFilenameAndPath, float fTime)
 		{
 			try
 			{
@@ -655,7 +661,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public void GetBookMarksForMovie( string strFilenameAndPath, ref ArrayList bookmarks)
+		public void GetBookMarksForMovie( string strFilenameAndPath, ref ArrayList bookmarks)
 		{
 			bookmarks.Clear();
 			try
@@ -687,7 +693,7 @@ namespace MediaPortal.Video.Database
 		#endregion
 
 		#region MovieInfo
-		static public void SetMovieInfo( string strFilenameAndPath, ref IMDBMovie details)
+		public void SetMovieInfo( string strFilenameAndPath, ref IMDBMovie details)
 		{
 			if (strFilenameAndPath.Length==0) return ;
 			int lMovieId=GetMovie(strFilenameAndPath,true);
@@ -700,7 +706,7 @@ namespace MediaPortal.Video.Database
 			details.Path=strPath;
 			details.File=strFileName;
 		}
-		static public void SetMovieInfoById( int lMovieId, ref IMDBMovie details)
+		public void SetMovieInfoById( int lMovieId, ref IMDBMovie details)
 		{
 			try
 			{
@@ -818,13 +824,13 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public void DeleteMovieInfo( string strFileNameAndPath)
+		public void DeleteMovieInfo( string strFileNameAndPath)
 		{   
 			int lMovieId=GetMovie(strFileNameAndPath,false);
 			if ( lMovieId < 0) return ;
 			DeleteMovieInfoById(lMovieId);
 		}
-		static public void DeleteMovieInfoById( long lMovieId)
+		public void DeleteMovieInfoById( long lMovieId)
 		{
 			try
 			{
@@ -847,7 +853,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public bool HasMovieInfo( string strFilenameAndPath)
+		public bool HasMovieInfo( string strFilenameAndPath)
 		{
 			if (strFilenameAndPath==null || strFilenameAndPath.Length==0 )return false;
 			try
@@ -874,7 +880,7 @@ namespace MediaPortal.Video.Database
 			return false;
 		}
 
-		static public int  GetMovieInfo( string strFilenameAndPath, ref IMDBMovie details)
+		public int  GetMovieInfo( string strFilenameAndPath, ref IMDBMovie details)
 		{
 			int lMovieId=GetMovie(strFilenameAndPath,false);
 			if (lMovieId<0) return -1;
@@ -884,7 +890,7 @@ namespace MediaPortal.Video.Database
 			return lMovieId;
 		}
 
-		static public void GetMovieInfoById( int lMovieId, ref IMDBMovie details)
+		public void GetMovieInfoById( int lMovieId, ref IMDBMovie details)
 		{
 			try
 			{
@@ -925,7 +931,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public void SetWatched(IMDBMovie details)
+		public void SetWatched(IMDBMovie details)
 		{
 			try
 			{
@@ -946,7 +952,7 @@ namespace MediaPortal.Video.Database
 		#endregion
 
 		#region Movie Resume
-		static public void DeleteMovieStopTime(int iFileId)
+		public void DeleteMovieStopTime(int iFileId)
 		{
 			try
 			{
@@ -960,7 +966,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public int GetMovieStopTime(int iFileId)
+		public int GetMovieStopTime(int iFileId)
 		{
 			try
 			{
@@ -980,7 +986,7 @@ namespace MediaPortal.Video.Database
 			return 0;
 		}
 
-		static public void SetMovieStopTime(int iFileId, int stoptime)
+		public void SetMovieStopTime(int iFileId, int stoptime)
 		{
 			try
 			{
@@ -1006,7 +1012,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static byte[] FromHexString(string s) 
+		byte[] FromHexString(string s) 
 		{
 			byte[] bytes = new byte[s.Length / 2];
 			for (int i = 0; i < bytes.Length; i++) 
@@ -1016,7 +1022,7 @@ namespace MediaPortal.Video.Database
 			return bytes;
 		}
  
-		static string ToHexString(byte[] bytes) 
+		string ToHexString(byte[] bytes) 
 		{
 			char[] hexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 			char[] chars = new char[bytes.Length * 2];
@@ -1029,7 +1035,7 @@ namespace MediaPortal.Video.Database
 			return new string(chars);
 		}
 
-		static public int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData)
+		public int GetMovieStopTimeAndResumeData(int iFileId, out byte[] resumeData)
 		{
 			resumeData = null;
 
@@ -1054,7 +1060,7 @@ namespace MediaPortal.Video.Database
 			return 0;
 		}
 
-		static public void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData)
+		public void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData)
 		{
 			try
 			{
@@ -1083,7 +1089,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public int GetMovieDuration(int iFileId)
+		public int GetMovieDuration(int iFileId)
 		{
 			try
 			{
@@ -1103,7 +1109,7 @@ namespace MediaPortal.Video.Database
 			return 0;
 		}
 
-		static public void SetMovieDuration(int iFileId, int duration)
+		public void SetMovieDuration(int iFileId, int duration)
 		{
 			try
 			{
@@ -1132,7 +1138,7 @@ namespace MediaPortal.Video.Database
 		#endregion
 		
 		#region Movie
-		static public void DeleteMovie( string strFilenameAndPath)
+		public void DeleteMovie( string strFilenameAndPath)
 		{
 			try
 			{
@@ -1177,7 +1183,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public int AddMovie( string strFilenameAndPath, bool bHassubtitles)
+		public int AddMovie( string strFilenameAndPath, bool bHassubtitles)
 		{
 			if (m_db==null) return -1;
 			try
@@ -1221,7 +1227,7 @@ namespace MediaPortal.Video.Database
 			return -1;
 		}
 
-		static int GetMovie( string strFilenameAndPath, bool bExact)
+		int GetMovie( string strFilenameAndPath, bool bExact)
 		{
 			int lPathId;
 			int lMovieId;
@@ -1232,7 +1238,7 @@ namespace MediaPortal.Video.Database
 			return lMovieId;
 		}
 
-		static public void GetMovies(ref ArrayList movies)
+		public void GetMovies(ref ArrayList movies)
 		{
 			try
 			{
@@ -1280,12 +1286,12 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public int GetMovieId( string strFilenameAndPath)
+		public int GetMovieId( string strFilenameAndPath)
 		{
 			int lMovieId=GetMovie(strFilenameAndPath,true);
 			return lMovieId;
 		}
-		static public bool HasSubtitle( string strFilenameAndPath)
+		public bool HasSubtitle( string strFilenameAndPath)
 		{
 			try
 			{
@@ -1314,7 +1320,7 @@ namespace MediaPortal.Video.Database
 		}
 
 
-		static public void SetThumbURL(int lMovieId, string thumbURL)
+		public void SetThumbURL(int lMovieId, string thumbURL)
 		{
 			DatabaseUtility.RemoveInvalidChars(ref thumbURL);
 			try
@@ -1332,7 +1338,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public void SetDVDLabel(int lMovieId, string strDVDLabel1)
+		public void SetDVDLabel(int lMovieId, string strDVDLabel1)
 		{
 			string strDVDLabel=strDVDLabel1;
 			DatabaseUtility.RemoveInvalidChars(ref strDVDLabel);
@@ -1355,7 +1361,7 @@ namespace MediaPortal.Video.Database
 		#endregion
 
 		#region Movie Queries
-		static public void GetYears(ArrayList years)
+		public void GetYears(ArrayList years)
 		{
 			if (m_db==null) return;
 			try
@@ -1383,7 +1389,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public void GetMoviesByGenre(string strGenre1, ref ArrayList movies)
+		public void GetMoviesByGenre(string strGenre1, ref ArrayList movies)
 		{
 			try
 			{
@@ -1434,7 +1440,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public void GetMoviesByActor(string strActor1, ref ArrayList movies)
+		public void GetMoviesByActor(string strActor1, ref ArrayList movies)
 		{
 			try
 			{
@@ -1485,7 +1491,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public void GetMoviesByYear(string strYear, ref ArrayList movies)
+		public void GetMoviesByYear(string strYear, ref ArrayList movies)
 		{
 			try
 			{
@@ -1536,7 +1542,7 @@ namespace MediaPortal.Video.Database
 
 		}
 
-		static public void GetMoviesByPath(string strPath1, ref ArrayList movies)
+		public void GetMoviesByPath(string strPath1, ref ArrayList movies)
 		{
 			try
 			{
@@ -1580,7 +1586,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static public void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable,  bool movieinfoTable, bool genreTable)
+		public void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable,  bool movieinfoTable, bool genreTable)
 		{
 			movies=new ArrayList();
 			try
@@ -1643,7 +1649,7 @@ namespace MediaPortal.Video.Database
 			return ;		
 		}
 
-		static public void UpdateCDLabel(IMDBMovie movieDetails, string CDlabel)
+		public void UpdateCDLabel(IMDBMovie movieDetails, string CDlabel)
 		{
 			if (movieDetails == null) return;
 			SQLiteResultSet results;
@@ -1662,7 +1668,7 @@ namespace MediaPortal.Video.Database
 			}
 		}
 
-		static string GetDVDLabel(string strFile)
+		public string GetDVDLabel(string strFile)
 		{
 			string cdlabel=String.Empty;
 			if (Utils.IsDVD(strFile)) 
@@ -1672,7 +1678,7 @@ namespace MediaPortal.Video.Database
 			return cdlabel;
 		}
 
-		static public SQLiteResultSet GetResults(string sql)
+		public SQLiteResultSet GetResults(string sql)
 		{
 			try
 			{
@@ -1693,7 +1699,7 @@ namespace MediaPortal.Video.Database
 		#endregion
 
 		#region ActorInfo
-		static public void AddActorInfo(int idActor, IMDBActor actor)
+		public void AddActorInfo(int idActor, IMDBActor actor)
 		{
 			//"CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text
 			try
@@ -1725,7 +1731,7 @@ namespace MediaPortal.Video.Database
 			}
 			return ;
 		}
-		static public void AddActorInfoMovie(int idActor, IMDBActor.IMDBActorMovie movie)
+		public void AddActorInfoMovie(int idActor, IMDBActor.IMDBActorMovie movie)
 		{
 			//idActor, idDirector , strPlotOutline , strPlot , strTagLine , strVotes , fRating ,strCast ,strCredits , iYear , strGenre , strPictureURL , strTitle , IMDBID , mpaa ,runtime , iswatched , role 
 			try
@@ -1744,7 +1750,7 @@ namespace MediaPortal.Video.Database
 			return ;
 		}
 
-		static public IMDBActor GetActorInfo(int idActor)
+		public IMDBActor GetActorInfo(int idActor)
 		{
 			//"CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text
 			try

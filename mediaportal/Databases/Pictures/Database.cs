@@ -34,8 +34,7 @@ namespace MediaPortal.Picture.Database
   /// </summary>
   public class PictureDatabase : IPictureDatabase, IDisposable
   {
-   IPictureDatabase _database = new PictureDatabaseSqlLite();
-   // IPictureDatabase _database = new PictureDatabaseADO();
+    IPictureDatabase _database = DatabaseFactory.GetPictureDatabase();
 
     public void Dispose()
     {

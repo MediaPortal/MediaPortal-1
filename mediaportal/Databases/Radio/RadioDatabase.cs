@@ -31,8 +31,13 @@ namespace MediaPortal.Radio.Database
 {
   static public class RadioDatabase 
   {
-    static IRadioDatabase _database = new RadioDatabaseSqlLite();
+    static IRadioDatabase _database = DatabaseFactory.GetRadioDatabase();
     //static IRadioDatabase _database = new RadioDatabaseADO();
+    static public void Dispose()
+    {
+      _database.Dispose();
+      _database = null;
+    }
 
     static public void ClearAll()
     {

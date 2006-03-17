@@ -33,7 +33,7 @@ namespace Databases.Folders
 	/// <summary>
 	/// 
 	/// </summary>
-  public class FolderSettingsSqlLite : IFolderSettings
+  public class FolderSettingsSqlLite : IFolderSettings, IDisposable
 	{
     public SQLiteClient m_db=null;
 
@@ -54,6 +54,15 @@ namespace Databases.Folders
       catch (Exception ex) 
       {
         Log.Write(ex);
+      }
+    }
+    public void Dispose()
+    {
+      if (m_db != null)
+      {
+        m_db.Close();
+        m_db.Dispose();
+        m_db = null;
       }
     }
   

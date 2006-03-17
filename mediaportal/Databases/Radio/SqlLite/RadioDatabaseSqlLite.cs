@@ -29,7 +29,7 @@ using MediaPortal.TV.Database;
 
 namespace MediaPortal.Radio.Database
 {
-  public class RadioDatabaseSqlLite : IRadioDatabase
+  public class RadioDatabaseSqlLite : IRadioDatabase,IDisposable
   {
     public SQLiteClient m_db = null;
 
@@ -37,6 +37,17 @@ namespace MediaPortal.Radio.Database
     {
       Open();
     }
+
+    public void Dispose()
+    {
+      if (m_db != null)
+      {
+        m_db.Close();
+        m_db.Dispose();
+        m_db = null;
+      }
+    }
+
     void Open()
     {
       try

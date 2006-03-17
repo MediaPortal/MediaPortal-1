@@ -39,9 +39,12 @@ namespace MediaPortal.Picture.Database
 
     public void Dispose()
     {
-      _connection.Close();
-      _connection.Dispose();
-      _connection = null;
+      if (_connection != null)
+      {
+        _connection.Close();
+        _connection.Dispose();
+        _connection = null;
+      }
     }
 
     public int AddPicture(string strPicture, int iRotation)

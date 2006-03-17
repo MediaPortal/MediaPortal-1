@@ -195,6 +195,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DatabaseFactory.cs" />
     <Compile Include="DatabaseUtility.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -286,7 +287,7 @@
     <Compile Include="TV\XMLTVImport.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Video\database.cs">
+    <Compile Include="Video\SqlLite\VideoDatabaseSqlLite.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Video\IMDB.cs">
@@ -298,6 +299,11 @@
     <Compile Include="Video\IMDBMovie.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Video\IVideoDatabase.cs" />
+    <Compile Include="Video\VideoDatabase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Video\Ado\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

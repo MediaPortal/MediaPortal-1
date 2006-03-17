@@ -30,7 +30,7 @@ using MediaPortal.TV.Database;
 
 namespace MediaPortal.Radio.Database
 {
-  public class RadioDatabaseADO : IRadioDatabase
+  public class RadioDatabaseADO : IRadioDatabase, IDisposable
   {
     SqlConnection _connection;
     public RadioDatabaseADO()
@@ -45,6 +45,16 @@ namespace MediaPortal.Radio.Database
       CreateTables();
       UpdateFromPreviousVersion();
     }
+    public void Dispose()
+    {
+      if (_connection != null)
+      {
+        _connection.Close();
+        _connection.Dispose();
+        _connection = null;
+      }
+    }
+
 
     void CreateTables()
     {

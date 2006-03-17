@@ -30,6 +30,7 @@ namespace MediaPortal.Radio.Database
 {
   public interface IRadioDatabase
   {
+    void Dispose();
     void ClearAll();
     void GetStations(ref ArrayList stations);
     bool GetStation(string radioName, out RadioStation station);

@@ -7,9 +7,13 @@ namespace MediaPortal.Database
 {
   public class FolderSettings
   {
-    static IFolderSettings _database = new FolderSettingsSqlLite();
-    //static IFolderSettings _database = new FolderSettingAdo();
+    static IFolderSettings _database = DatabaseFactory.GetFolderDatabase();
 
+    static public void Dispose()
+    {
+      _database.Dispose();
+      _database = null;
+    }
     static public void DeleteFolderSetting(string path, string Key)
     {
       _database.DeleteFolderSetting(path, Key);

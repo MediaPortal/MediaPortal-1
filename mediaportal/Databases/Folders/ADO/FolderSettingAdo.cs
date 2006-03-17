@@ -13,7 +13,7 @@ using MediaPortal.Database;
 
 namespace Databases.Folders.SqlServer
 {
-  public class FolderSettingAdo: IFolderSettings
+  public class FolderSettingAdo: IFolderSettings, IDisposable
   {
     SqlConnection _connection;
 
@@ -27,6 +27,15 @@ namespace Databases.Folders.SqlServer
       _connection = new SqlConnection(connectionString);
       _connection.Open();
       CreateTables();
+    }
+    public void Dispose()
+    {
+      if (_connection != null)
+      {
+        _connection.Close();
+        _connection.Dispose();
+        _connection = null;
+      }
     }
 
     void CreateTables()
