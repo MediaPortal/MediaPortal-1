@@ -67,14 +67,14 @@ namespace MediaPortal.GUI.Library
     {
       try
       {
-        string name=GetFileName(type);
-        string bakFile = name.Replace(".log",".bak");
+        string name = GetFileName(type);
+        string bakFile = name.Replace(".log", ".bak");
         if (File.Exists(bakFile))
           File.Delete(bakFile);
         if (File.Exists(name))
-          File.Move(name,bakFile);
+          File.Move(name, bakFile);
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.Write(ex);
       }
@@ -96,29 +96,59 @@ namespace MediaPortal.GUI.Library
     /// <param name="arg">An array containing the actual data of the string.</param>
     static public void Write(string format, params object[] arg)
     {
-		// uncomment the following four lines to help identify the calling method, this
-		// is useful in situations where an unreported exception causes problems
-//		StackTrace stackTrace = new StackTrace();
-//		StackFrame stackFrame = stackTrace.GetFrame(1);
-//		MethodBase methodBase = stackFrame.GetMethod();
-//		WriteFile(LogType.Log, "{0}", methodBase.Name);
+      // uncomment the following four lines to help identify the calling method, this
+      // is useful in situations where an unreported exception causes problems
+      //		StackTrace stackTrace = new StackTrace();
+      //		StackFrame stackFrame = stackTrace.GetFrame(1);
+      //		MethodBase methodBase = stackFrame.GetMethod();
+      //		WriteFile(LogType.Log, "{0}", methodBase.Name);
 
-		WriteFile(LogType.Log,format,arg);
+      WriteFile(LogType.Log, format, arg);
+    }
+
+    /// <summary>
+    /// Write a string to the logfile.
+    /// </summary>
+    /// <param name="format">The format of the string.</param>
+    /// <param name="arg">An array containing the actual data of the string.</param>
+    static public void WriteThreadId(string format, params object[] arg)
+    {
+      // uncomment the following four lines to help identify the calling method, this
+      // is useful in situations where an unreported exception causes problems
+      //		StackTrace stackTrace = new StackTrace();
+      //		StackFrame stackFrame = stackTrace.GetFrame(1);
+      //		MethodBase methodBase = stackFrame.GetMethod();
+      //		WriteFile(LogType.Log, "{0}", methodBase.Name);
+      String log = String.Format("{0:X} {1}", 
+          System.Threading.Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
+      WriteFile(LogType.Log, log);
+    }
+    static public void WriteThreadId(LogType type, string format, params object[] arg)
+    {
+      String log = String.Format("{0:X} {1}",
+          System.Threading.Thread.CurrentThread.ManagedThreadId, String.Format(format, arg));
+      WriteFile(type, log);
+    }
+    static public void WriteFileThreadId(LogType type, bool isError, string format, params object[] arg)
+    {
+      WriteThreadId(type, format, arg);
+      if (isError)
+        WriteThreadId(LogType.Error, format, arg);
     }
 
     static string GetFileName(LogType type)
     {
-      string fname=@"log\MediaPortal.log";
+      string fname = @"log\MediaPortal.log";
       switch (type)
       {
         case LogType.Recorder:
-          fname=@"log\recorder.log";
+          fname = @"log\recorder.log";
           break;
         case LogType.Error:
-          fname=@"log\error.log";
+          fname = @"log\error.log";
           break;
         case LogType.EPG:
-          fname=@"log\epg.log";
+          fname = @"log\epg.log";
           break;
       }
       return fname;
@@ -143,22 +173,22 @@ namespace MediaPortal.GUI.Library
             BackupLogFiles();
           }
 
-          using (StreamWriter writer = new StreamWriter(GetFileName(type),true))
+          using (StreamWriter writer = new StreamWriter(GetFileName(type), true))
           {
             writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
-            writer.Write(DateTime.Now.ToShortDateString()+ " "+DateTime.Now.ToLongTimeString()+ " ");
-            writer.WriteLine(format,arg);
+            writer.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " ");
+            writer.WriteLine(format, arg);
             writer.Close();
           }
         }
-        catch(Exception)
+        catch (Exception)
         {
         }
       }
 
       //
-      if (type != LogType.Log && type != LogType.Error&& type != LogType.EPG)
-        WriteFile(LogType.Log,format,arg);
+      if (type != LogType.Log && type != LogType.Error && type != LogType.EPG)
+        WriteFile(LogType.Log, format, arg);
     }//static public void WriteFile(LogType type, string format, params object[] arg)
   }
 }

@@ -1422,6 +1422,10 @@ namespace MediaPortal.TV.Recording
       {
         _currentGraph.StartTimeShifting(channel, TimeShiftFullFileName);
         _lastChannelChange = DateTime.Now;
+        if (Recorder.Running)
+        {
+          Recorder.CommandProcessor.ResetTimeshiftTimer();
+        }
       }
       else
       {
