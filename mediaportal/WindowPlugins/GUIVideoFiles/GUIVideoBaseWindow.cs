@@ -65,6 +65,8 @@ namespace MediaPortal.GUI.Video
     protected GUIButtonControl btnViews = null;
     [SkinControlAttribute(6)]
     protected GUIButtonControl btnPlayDVD = null;
+    [SkinControlAttribute(7)]
+    protected GUIButtonControl btnTrailers = null;
     protected PlayListPlayer playlistPlayer;
 
     public GUIVideoBaseWindow()
@@ -117,6 +119,8 @@ namespace MediaPortal.GUI.Video
         currentSortMethodRoot = (VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", (int)VideoSort.SortMethod.Name);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
         m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", true);
+
+        
       }
 
       SwitchView();

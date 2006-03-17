@@ -111,7 +111,8 @@ namespace MediaPortal.GUI.Video
     bool fileMenuEnabled = false;
     string fileMenuPinCode = String.Empty;
     static PlayListPlayer playlistPlayer;
-
+    bool ShowTrailerButton = true;
+      
     static GUIVideoFiles()
     {
       playlistPlayer = PlayListPlayer.SingletonPlayer;
@@ -182,9 +183,9 @@ namespace MediaPortal.GUI.Video
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
+        ShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", true);
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         fileMenuPinCode = xmlreader.GetValueAsString("filemenu", "pincode", String.Empty);
-
         m_directory.Clear();
         string strDefault = xmlreader.GetValueAsString("movies", "default", String.Empty);
         for (int i = 0; i < 20; i++)
@@ -280,6 +281,12 @@ namespace MediaPortal.GUI.Video
         GUIWindowManager.ReplaceWindow(VideoState.StartWindow);
         return;
       }
+      // Check if mytrailers-plugin is enabled
+      if (ShowTrailerButton != true)
+      {
+          btnTrailers.Visible = false;
+          btnPlayDVD.NavigateDown = 99;
+      } 
       LoadFolderSettings(currentFolder);
       LoadDirectory(currentFolder);
     }
