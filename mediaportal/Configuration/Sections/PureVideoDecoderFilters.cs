@@ -226,6 +226,7 @@ namespace MediaPortal.Configuration.Sections
             this.comboBoxDeInterlaceMode.Items.AddRange(new object[] {
             "VMR default",
             "VMR pixel adaptive",
+            "VMR median filtering",
             "VMR vertical stretch"});
             this.comboBoxDeInterlaceMode.Location = new System.Drawing.Point(256, 122);
             this.comboBoxDeInterlaceMode.Name = "comboBoxDeInterlaceMode";
@@ -477,7 +478,8 @@ namespace MediaPortal.Configuration.Sections
                     {
                         if (regValue == 0) comboBoxDeInterlaceMode.SelectedIndex = 0;
                         if (regValue == 5 && regAdaptive == 40) comboBoxDeInterlaceMode.SelectedIndex = 1;
-                        if (regValue == 5 && regAdaptive == 2) comboBoxDeInterlaceMode.SelectedIndex = 2;
+                        if (regValue == 5 && regAdaptive == 4) comboBoxDeInterlaceMode.SelectedIndex = 2;
+                        if (regValue == 5 && regAdaptive == 2) comboBoxDeInterlaceMode.SelectedIndex = 3;
                     }
                 }
                 catch (Exception)
@@ -624,6 +626,12 @@ namespace MediaPortal.Configuration.Sections
                     subkey.SetValue("VMRDeinterlace", 40);
                 }
                 if (DeIntMode == 2)
+                {
+                    regDeIntMode = 5;
+                    subkey.SetValue("DeinterlaceMode", regDeIntMode);
+                    subkey.SetValue("VMRDeinterlace", 4);
+                }
+                if (DeIntMode == 3)
                 {
                     regDeIntMode = 5;
                     subkey.SetValue("DeinterlaceMode", regDeIntMode);
