@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- version : 1.0.0.8                                                          -->
-<!-- changed : 31-January-2006 by mosquiss                                       -->
-<!-- contains:									-->
+<!-- version : 2.0                                                          -->
+<!-- changed : 17-March-2006 by Maschine                                   -->
+<!-- contains:								-->
 <!--   - Europe 								-->
 <!--   - Australia 								-->
 <!--   - Belgium   								-->
 <!--   - Danmmark  								-->
 <!--   - Finland 								-->
-<!--   - France									-->
+<!--   - France								-->
 <!--   - Sweden 								-->
 <!--   - Germany 								-->
 <!--   - UK 									-->
-<!--   - Netherlands 								-->
+<!--   - Netherlands 							-->
 <!--   - Taiwan 								-->
 <!--   - Italy 									-->
-<!--   - Spain 									-->
+<!--   - Spain 								-->
 <dvbt>
 	<country name="Australia - All Regions" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
@@ -390,6 +390,14 @@
 		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="778000" bandwidth="8" />
 		<carrier frequency="826000" bandwidth="8" />		
+	</country>
+  <country name="Germany - Hannover" offset="125">
+		<carrier frequency="198500" bandwidth="7" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
 	</country>
 	<country name="Netherlands - All Regions">
 		<carrier frequency="177500" />
