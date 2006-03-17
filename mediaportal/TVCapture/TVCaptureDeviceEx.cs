@@ -170,15 +170,15 @@ namespace MediaPortal.TV.Recording
     public event OnTvRecordingHandler OnTvRecordingStarted = null;
     #endregion
 
-      public static TVCaptureDevice GetTVCaptureDevice(int cardId)
-      {
-          return (TVCaptureDevice)_devices[cardId];
-      }
-      public static Hashtable GetTVCaptureDevices()
-      {
-          return _devices;           
-      }
-      #region ctor
+    public static TVCaptureDevice GetTVCaptureDevice(int cardId)
+    {
+      return (TVCaptureDevice)_devices[cardId];
+    }
+    public static Hashtable GetTVCaptureDevices()
+    {
+      return _devices;
+    }
+    #region ctor
     /// <summary>
     /// Default constructor
     /// </summary>
@@ -417,22 +417,22 @@ namespace MediaPortal.TV.Recording
     public int ID
     {
       get { return _cardId; }
-        set 
+      set
+      {
+        if (_cardId != -1)
         {
-            if (_cardId != -1)
-            {
-                _devices.Remove(_cardId);
-            }
-            _cardId = value;
-            if (_devices.ContainsKey(_cardId))
-            {
-                _devices[_cardId] = this;
-            }
-            else
-            {
-                _devices.Add(_cardId, this);
-            }
+          _devices.Remove(_cardId);
         }
+        _cardId = value;
+        if (_devices.ContainsKey(_cardId))
+        {
+          _devices[_cardId] = this;
+        }
+        else
+        {
+          _devices.Add(_cardId, this);
+        }
+      }
     }
 
     /// <summary>
@@ -547,9 +547,9 @@ namespace MediaPortal.TV.Recording
     }
     public bool IsRadio
     {
-      get 
+      get
       {
-          return (_currentGraphState == State.Radio || _currentGraphState == State.RadioTimeshifting); 
+        return (_currentGraphState == State.Radio || _currentGraphState == State.RadioTimeshifting);
       }
     }
 
@@ -653,12 +653,12 @@ namespace MediaPortal.TV.Recording
       return result;
 
     }
-    
+
     public bool StopEpgGrabbing()
     {
       if (!IsEpgGrabbing) return false;
       if (_currentGraph == null) return false;
-      bool result=_currentGraph.StopEpgGrabbing();
+      bool result = _currentGraph.StopEpgGrabbing();
       _currentGraphState = State.Initialized;
       return result;
     }
@@ -805,17 +805,17 @@ namespace MediaPortal.TV.Recording
     }
     public string TimeShiftFilePath
     {
-        get
-        {
-            return String.Format(@"{0}\card{1}", RecordingPath, ID);
-        }
+      get
+      {
+        return String.Format(@"{0}\card{1}", RecordingPath, ID);
+      }
     }
     public string TimeShiftFullFileName
     {
-        get
-        {
-            return String.Format(@"{0}\{1}", TimeShiftFilePath, TimeShiftFileName);
-        }
+      get
+      {
+        return String.Format(@"{0}\{1}", TimeShiftFilePath, TimeShiftFileName);
+      }
     }
     public IBaseFilter AudiodeviceFilter
     {
@@ -911,7 +911,7 @@ namespace MediaPortal.TV.Recording
     public bool GrabEpg(TVChannel channel)
     {
       if (CreateGraph() == false) return false;
-      bool result=_currentGraph.GrabEpg(channel);
+      bool result = _currentGraph.GrabEpg(channel);
       _epgTimeOutTimer = DateTime.Now;
       return result;
     }
@@ -1405,9 +1405,9 @@ namespace MediaPortal.TV.Recording
       //stop playback of this channel
       if (_currentGraph != null)
       {
-          if (g_Player.Playing && g_Player.CurrentFile == TimeShiftFullFileName)
+        if (g_Player.Playing && g_Player.CurrentFile == TimeShiftFullFileName)
         {
-          g_Player.Stop();
+          Recorder.CommandProcessor.StopPlayer();
         }
         //Log.WriteFile(Log.LogType.Log, "TvCaptureDevice:RebuildGraph() delete graph");
         _currentGraph.StopEpgGrabbing();
