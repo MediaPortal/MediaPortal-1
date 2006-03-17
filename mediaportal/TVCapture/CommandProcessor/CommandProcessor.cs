@@ -92,16 +92,11 @@ namespace MediaPortal.TV.Recording
     #region public members
     public void Execute(CardCommand command)
     {
-      AutoResetEvent waitEvent = new AutoResetEvent(false);
-      try
+      AddCommand(command);
+      while (!command.Finished)
       {
-        command.Event = waitEvent;
-        AddCommand(command);
-        command.WaitOne();
-      }
-      finally
-      {
-        waitEvent.Close();
+        GUIWindowManager.DispatchThreadMessages();
+        System.Threading.Thread.Sleep(100);
       }
     }
 

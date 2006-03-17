@@ -923,10 +923,15 @@ namespace MediaPortal.TV.Recording
       if (TVOnOff)
       {
         if (IsViewing() && IsTimeShifting() == timeshift && TVChannelName == channel) return true;
+        if (timeshift == false)
+        {
+          g_Player.Stop();
+        }
       }
       else
       {
-        if (IsViewing() ==false) return true;
+        g_Player.Stop();
+        if (IsViewing() == false) return true;
       }
       try
       {
