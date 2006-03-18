@@ -1099,7 +1099,7 @@ namespace MediaPortal.TV.Recording
                         return;
                     }
 
-                    Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Lnb:{0} kHz {1}", LNBSelectionType.Lnb22kHz);
+                    Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Lnb:{0}", LNBSelectionType.Lnb22kHz);
                     hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int)LNBSelectionType.Lnb22kHz);
                     if (hr != 0)
                     {
