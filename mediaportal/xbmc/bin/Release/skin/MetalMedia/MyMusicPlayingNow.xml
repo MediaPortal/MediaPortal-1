@@ -241,7 +241,7 @@
       <id>9</id>
       <posX>64</posX>
       <posY>370</posY>
-      <label>-</label>
+      <label>#currentplaytime</label>
       <visible>no</visible>
       <textcolor>ffffffff</textcolor>
     </control>
@@ -251,7 +251,7 @@
       <id>10</id>
       <posX>656</posX>
       <posY>370</posY>
-      <label>-</label>
+      <label>#duration</label>
       <align>right</align>
       <visible>no</visible>
       <textcolor>ffffffff</textcolor>

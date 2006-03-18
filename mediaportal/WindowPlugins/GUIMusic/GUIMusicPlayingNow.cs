@@ -51,8 +51,6 @@ namespace MediaPortal.GUI.Music
             LBL_ARTIST_NAME = 6,
             IMG_TRACK_PROGRESS_BG = 7,
             PROG_TRACK = 8,
-            LBL_TRACK_PROGRESS = 9,
-            LBL_TRACK_DURATION = 10,
             LBL_UP_NEXT = 20,
             LBL_NEXT_TRACK_NAME = 21,
             LBL_NEXT_ALBUM_NAME = 22,
@@ -100,12 +98,6 @@ namespace MediaPortal.GUI.Music
         [SkinControlAttribute((int)ControlIDs.IMG_TRACK_PROGRESS_BG)]
         protected GUIImage ImgTrackProgressBkGrnd = null;
 
-        [SkinControlAttribute((int)ControlIDs.LBL_TRACK_PROGRESS)]
-        protected GUILabelControl LblTrackProgress = null;
-
-        [SkinControlAttribute((int)ControlIDs.LBL_TRACK_DURATION)]
-        protected GUILabelControl LblTrackDuration = null;
-
         [SkinControlAttribute((int)ControlIDs.LBL_UP_NEXT)]
         protected GUILabelControl LblUpNext = null;
 
@@ -137,8 +129,6 @@ namespace MediaPortal.GUI.Music
         protected GUIButtonControl BtnNext = null;
 
         public enum TrackProgressType { Elapsed, CountDown };
-        private TrackProgressType ProgressType = TrackProgressType.Elapsed;
-        //private TrackProgressType ProgressType = TrackProgressType.CountDown;
 
         private bool ControlsInitialized = false;
         private PlayListPlayer PlaylistPlayer = null;
@@ -195,13 +185,6 @@ namespace MediaPortal.GUI.Music
 
             CurrentTrackFileName = filename;
             NextTrackFileName = PlaylistPlayer.GetNext();
-
-            string curTrackTimePos = GetFormattedTimeString(g_Player.CurrentPosition);
-            string curTrackDuration = GetFormattedTimeString(g_Player.Duration);
-
-            LblTrackProgress.Label = curTrackTimePos;
-            LblTrackDuration.Label = curTrackDuration;
-
             GetTrackTags();
 
             CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, filename, CurrentTrackTag);
@@ -404,27 +387,12 @@ namespace MediaPortal.GUI.Music
             }
         }
 
-        private string GetFormattedTimeString(double timeVal)
-        {
-            int hh = (int)(timeVal / 3600) % 100;
-            int mm = (int)((timeVal / 60) % 60);
-            int ss = (int)((timeVal / 1) % 60);
-
-            string h = hh > 0 ? string.Format("{0}}:", hh) : "";
-            string m = mm > 0 ? string.Format("{0:d2}:", mm) : "00:";
-            string s = ss > 0 ? string.Format("{0:d2}", ss) : "00";
-
-            string timeStr = string.Format("{0}{1}{2}", h, m, s);
-            return timeStr;
-        }
-
         private void ResetTrackInfo()
         {
             ImgCoverArt.SetFileName("");
             LblTrackName.Label = "";
             LblAlbumName.Label = "";
             LblArtistName.Label = "";
-            LblTrackProgress.Label = "";
             LblUpNext.Label = "";
             LblNextTrackName.Label = "";
             LblNextAlbumName.Label = "";
@@ -439,16 +407,7 @@ namespace MediaPortal.GUI.Music
             int progPrecent = (int)(curTrackPostion / trackDuration * 100d);
 
             this.ProgTrack.Percentage = progPrecent;
-
-            string curTrackTimePos = GetFormattedTimeString(curTrackPostion);
-            LblTrackProgress.Label = curTrackTimePos;
             ProgTrack.Visible = ProgTrack.Percentage > 0;
-
-            if (ProgressType == TrackProgressType.Elapsed)
-                LblTrackDuration.Label = GetFormattedTimeString(trackDuration);
-
-            else   // TrackProgressType.CountDown 
-                LblTrackDuration.Label = string.Format("-{0}", GetFormattedTimeString(trackDuration - curTrackPostion));
         }
 
         private void GetTrackTags()
@@ -591,10 +550,8 @@ namespace MediaPortal.GUI.Music
                     return;
                 }
 
-                //MusicDatabase m_database = new MusicDatabase();
                 string m_strDiscId = string.Empty;
                 int m_iSelectedAlbum = 0;
-                //bool bCDDAFailed = false;
 
                 Freedb.FreeDBHttpImpl freedb = new Freedb.FreeDBHttpImpl();
                 char driveLetter = System.IO.Path.GetFullPath(path).ToCharArray()[0];
@@ -662,7 +619,6 @@ namespace MediaPortal.GUI.Music
                 catch (Exception)
                 {
                     GUIMusicFiles.MusicCD = null;
-//                    bCDDAFailed = true;
                 }
 
                 if (!bFound && GUIMusicFiles.MusicCD != null) // if musicCD was configured correctly...
