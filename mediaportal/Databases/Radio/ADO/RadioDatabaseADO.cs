@@ -787,7 +787,7 @@ namespace MediaPortal.Radio.Database
           {
             if (reader.Read())
             {
-              int i = 0;
+              //int i = 0;
               freq = (int)reader["sFreq"];
               symrate = (int)reader["sSymbrate"];
               fec = (int)reader["sFEC"];
@@ -1034,7 +1034,7 @@ namespace MediaPortal.Radio.Database
 
     public int AddProgram(TVProgram prog)
     {
-      int lRetId = -1;
+      //int lRetId = -1;
       string strSQL;
       try
       {
@@ -1115,7 +1115,7 @@ namespace MediaPortal.Radio.Database
 
     public int UpdateProgram(TVProgram prog)
     {
-      int lRetId = -1;
+      //int lRetId = -1;
       string strSQL;
       try
       {

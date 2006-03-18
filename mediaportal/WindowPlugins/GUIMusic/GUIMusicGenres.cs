@@ -1056,7 +1056,7 @@ namespace MediaPortal.GUI.Music
             string strObjects = String.Empty;
 
             List<GUIListItem> itemlist = m_directory.GetDirectoryExt(m_strPlayListPath);
-            int iItem = 0;
+            //int iItem = 0;
 
             foreach (GUIListItem item in itemlist)
             {

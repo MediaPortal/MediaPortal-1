@@ -165,7 +165,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void Save()
 		{
-			string strFileName=String.Format("calibration{0}x{1}.xml", Width,Height);
+			string strFileName=String.Format("calib{0}x{1}.xml", Width,Height);
 			// Log.Write("save {0}" ,strFileName);
 			using (MediaPortal.Profile.Settings xmlWriter= new MediaPortal.Profile.Settings(strFileName))
 			{
@@ -199,7 +199,7 @@ namespace MediaPortal.GUI.Library
 			OverScanWidth=Width;
 			OverScanHeight=Height;
 
-			string strFileName=String.Format("calibration{0}x{1}.xml", Width,Height);
+			string strFileName=String.Format("calib{0}x{1}.xml", Width,Height);
 			Log.Write("  load {0}" ,strFileName);
 			using (MediaPortal.Profile.Settings xmlReader= new MediaPortal.Profile.Settings(strFileName))
 			{
