@@ -2358,6 +2358,58 @@
 		<value>Näytä kaikki artistin kappaleet</value>
 	</string>
 	<string>
+		<id>752</id>
+		<value>Tallennusta ei ole määritelty</value>
+	</string>
+	<string>
+		<id>753</id>
+		<value>Viritintä ei ole asennettu</value>
+	</string>
+	<string>
+		<id>754</id>
+		<value>Ohjelman tallentamiseen ei ole määritelty viritintä </value>
+	</string>
+	<string>
+		<id>755</id>
+		<value>Viritin ei vastaanota</value>
+	</string>
+	<string>
+		<id>756</id>
+		<value>Viritin ei voi vastaanottaa: {0}</value>
+	</string>
+	<string>
+		<id>757</id>
+		<value>Kaikki virittimet ovat varattuja</value>
+	</string>
+	<string>
+		<id>758</id>
+		<value>Viritin ei tallenna</value>
+	</string>
+	<string>
+		<id>759</id>
+		<value>Ajansiirron käynnistys epäonnistui</value>
+	</string>
+	<string>
+		<id>760</id>
+		<value>Ei vapaata viritintä ajansiirtoon</value>
+	</string>
+	<string>
+		<id>761</id>
+		<value>Ajansiirron pysäytys epäonnistui</value>
+	</string>
+	<string>
+		<id>762</id>
+		<value>TV käynnistys epäonnistui</value>
+	</string>
+	<string>
+		<id>763</id>
+		<value>Tallennin on varattu</value>
+	</string>
+	<string>
+		<id>764</id>
+		<value>Tallennin on taukotilassa</value>
+	</string>
+	<string>
 		<id>800</id>
 		<value>Alkaa kirjaimella</value>
 	</string>
@@ -4943,11 +4995,15 @@
 	</string>
 	<string>
 		<id>200029</id>
-		<value>Käynnistä MediaPortal ohjelmisto koko ruutuun?</value>
+		<value>Käytätkö mediaportal ohjelmistoa?</value>
 	</string>
 	<string>
 		<id>200030</id>
-		<value>Käynnistä MediaPortal ohjelmisto automaattisesti käynnistyksen yhteydessä?</value>
+		<value>Täysin MediaPortal ohjelmistolle varatussa tietokoneessa</value>
+	</string>
+	<string>
+		<id>200038</id>
+		<value>Yleiskäyttöisessä tietokoneessa yhdessä muiden ohjelmistojen kanssa</value>
 	</string>
 	<string>
 		<id>200031</id>
@@ -5122,6 +5178,10 @@
 		<value>Hae CD:n tiedot</value>
 	</string>
 	<string>
+		<id>4555</id>
+		<value>Aktiivinen soittolista</value>
+	</string>
+	<string>
 		<id>10100</id>
 		<value>Miinaa piilossa</value>
 	</string>
@@ -5138,4 +5198,3 @@
 		<value>Miinaharava</value>
 	</string>
 </strings>
-
