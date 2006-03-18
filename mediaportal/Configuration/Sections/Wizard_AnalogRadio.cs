@@ -792,7 +792,7 @@ namespace MediaPortal.Configuration.Sections
               _card.IsCableInput = isCableInput;
               using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
               {
-                  xmlwriter.SetValue("capture", "tuner", cbInput.Text);
+                  xmlwriter.SetValue("capture", "radiotuner", cbInput.Text);
               }
               if (listView1.SelectedIndices.Count > 0)
               {
@@ -949,7 +949,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        cbInput.SelectedItem = xmlreader.GetValueAsString("capture", "tuner", "Antenna");
+        cbInput.SelectedItem = xmlreader.GetValueAsString("capture", "radiotuner", "Antenna");
         string countryName = xmlreader.GetValueAsString("capture", "countryname", "The Netherlands");
         int countryId = xmlreader.GetValueAsInt("capture", "country", 31);
 
@@ -967,7 +967,7 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        xmlwriter.SetValue("capture", "tuner", cbInput.Text);
+        xmlwriter.SetValue("capture", "radiotuner", cbInput.Text);
         if (cbCountry.Text.Length > 0)
         {
           TunerCountry tunerCountry = cbCountry.SelectedItem as TunerCountry;

@@ -61,6 +61,8 @@ namespace MediaPortal.Configuration.Sections
         private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonReceiver;
         private MediaPortal.UserInterface.Controls.MPComboBox comboBoxOutPutMode;
         private MediaPortal.UserInterface.Controls.MPGroupBox SpeakerSetup;
+        private MediaPortal.UserInterface.Controls.MPLabel ColourScheme;
+        private MediaPortal.UserInterface.Controls.MPComboBox comboBoxColourScheme;
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
@@ -127,6 +129,8 @@ namespace MediaPortal.Configuration.Sections
             this.radioButtonReceiver = new MediaPortal.UserInterface.Controls.MPRadioButton();
             this.radioButtonHeadphones = new MediaPortal.UserInterface.Controls.MPRadioButton();
             this.radioButtonSpeakers = new MediaPortal.UserInterface.Controls.MPRadioButton();
+            this.comboBoxColourScheme = new MediaPortal.UserInterface.Controls.MPComboBox();
+            this.ColourScheme = new MediaPortal.UserInterface.Controls.MPLabel();
             this.VideoDecoderSettings.SuspendLayout();
             this.DisplayType.SuspendLayout();
             this.AudioDecoderSettings.SuspendLayout();
@@ -135,6 +139,8 @@ namespace MediaPortal.Configuration.Sections
             // 
             // VideoDecoderSettings
             // 
+            this.VideoDecoderSettings.Controls.Add(this.ColourScheme);
+            this.VideoDecoderSettings.Controls.Add(this.comboBoxColourScheme);
             this.VideoDecoderSettings.Controls.Add(this.DisplayType);
             this.VideoDecoderSettings.Controls.Add(this.DeinterlaceMode);
             this.VideoDecoderSettings.Controls.Add(this.comboBoxDeInterlaceMode);
@@ -142,9 +148,9 @@ namespace MediaPortal.Configuration.Sections
             this.VideoDecoderSettings.Controls.Add(this.DeinterlaceControl);
             this.VideoDecoderSettings.Controls.Add(this.checkBoxDxVA);
             this.VideoDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.VideoDecoderSettings.Location = new System.Drawing.Point(0, 14);
+            this.VideoDecoderSettings.Location = new System.Drawing.Point(0, 5);
             this.VideoDecoderSettings.Name = "VideoDecoderSettings";
-            this.VideoDecoderSettings.Size = new System.Drawing.Size(472, 161);
+            this.VideoDecoderSettings.Size = new System.Drawing.Size(472, 181);
             this.VideoDecoderSettings.TabIndex = 3;
             this.VideoDecoderSettings.TabStop = false;
             this.VideoDecoderSettings.Text = "Video Decoder Settings";
@@ -156,7 +162,7 @@ namespace MediaPortal.Configuration.Sections
             this.DisplayType.Controls.Add(this.radioButtonDTLetterbox);
             this.DisplayType.Controls.Add(this.radioButtonDTDefault);
             this.DisplayType.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.DisplayType.Location = new System.Drawing.Point(18, 23);
+            this.DisplayType.Location = new System.Drawing.Point(18, 48);
             this.DisplayType.Name = "DisplayType";
             this.DisplayType.Size = new System.Drawing.Size(217, 120);
             this.DisplayType.TabIndex = 6;
@@ -214,7 +220,7 @@ namespace MediaPortal.Configuration.Sections
             // DeinterlaceMode
             // 
             this.DeinterlaceMode.AutoSize = true;
-            this.DeinterlaceMode.Location = new System.Drawing.Point(253, 103);
+            this.DeinterlaceMode.Location = new System.Drawing.Point(253, 71);
             this.DeinterlaceMode.Name = "DeinterlaceMode";
             this.DeinterlaceMode.Size = new System.Drawing.Size(95, 13);
             this.DeinterlaceMode.TabIndex = 5;
@@ -228,7 +234,7 @@ namespace MediaPortal.Configuration.Sections
             "VMR pixel adaptive",
             "VMR median filtering",
             "VMR vertical stretch"});
-            this.comboBoxDeInterlaceMode.Location = new System.Drawing.Point(256, 122);
+            this.comboBoxDeInterlaceMode.Location = new System.Drawing.Point(256, 90);
             this.comboBoxDeInterlaceMode.Name = "comboBoxDeInterlaceMode";
             this.comboBoxDeInterlaceMode.Size = new System.Drawing.Size(198, 21);
             this.comboBoxDeInterlaceMode.TabIndex = 4;
@@ -241,7 +247,7 @@ namespace MediaPortal.Configuration.Sections
             "Film",
             "Video",
             "Smart"});
-            this.comboBoxDeInterlaceControl.Location = new System.Drawing.Point(256, 72);
+            this.comboBoxDeInterlaceControl.Location = new System.Drawing.Point(256, 41);
             this.comboBoxDeInterlaceControl.Name = "comboBoxDeInterlaceControl";
             this.comboBoxDeInterlaceControl.Size = new System.Drawing.Size(198, 21);
             this.comboBoxDeInterlaceControl.TabIndex = 3;
@@ -249,7 +255,7 @@ namespace MediaPortal.Configuration.Sections
             // DeinterlaceControl
             // 
             this.DeinterlaceControl.AutoSize = true;
-            this.DeinterlaceControl.Location = new System.Drawing.Point(253, 53);
+            this.DeinterlaceControl.Location = new System.Drawing.Point(253, 22);
             this.DeinterlaceControl.Name = "DeinterlaceControl";
             this.DeinterlaceControl.Size = new System.Drawing.Size(101, 13);
             this.DeinterlaceControl.TabIndex = 2;
@@ -259,7 +265,7 @@ namespace MediaPortal.Configuration.Sections
             // 
             this.checkBoxDxVA.AutoSize = true;
             this.checkBoxDxVA.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.checkBoxDxVA.Location = new System.Drawing.Point(256, 23);
+            this.checkBoxDxVA.Location = new System.Drawing.Point(38, 23);
             this.checkBoxDxVA.Name = "checkBoxDxVA";
             this.checkBoxDxVA.Size = new System.Drawing.Size(149, 17);
             this.checkBoxDxVA.TabIndex = 0;
@@ -277,7 +283,7 @@ namespace MediaPortal.Configuration.Sections
             this.AudioDecoderSettings.Controls.Add(this.comboBoxHeadphones);
             this.AudioDecoderSettings.Controls.Add(this.SpeakerSetup);
             this.AudioDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.AudioDecoderSettings.Location = new System.Drawing.Point(0, 185);
+            this.AudioDecoderSettings.Location = new System.Drawing.Point(0, 192);
             this.AudioDecoderSettings.Name = "AudioDecoderSettings";
             this.AudioDecoderSettings.Size = new System.Drawing.Size(472, 207);
             this.AudioDecoderSettings.TabIndex = 2;
@@ -426,6 +432,29 @@ namespace MediaPortal.Configuration.Sections
             this.radioButtonSpeakers.UseVisualStyleBackColor = true;
             this.radioButtonSpeakers.CheckedChanged += new System.EventHandler(this.radioButtonSpeakers_CheckedChanged);
             // 
+            // comboBoxColourScheme
+            // 
+            this.comboBoxColourScheme.FormattingEnabled = true;
+            this.comboBoxColourScheme.Items.AddRange(new object[] {
+            "Default",
+            "Theater",
+            "Office",
+            "Airplane",
+            "Car"});
+            this.comboBoxColourScheme.Location = new System.Drawing.Point(256, 140);
+            this.comboBoxColourScheme.Name = "comboBoxColourScheme";
+            this.comboBoxColourScheme.Size = new System.Drawing.Size(198, 21);
+            this.comboBoxColourScheme.TabIndex = 7;
+            // 
+            // ColourScheme
+            // 
+            this.ColourScheme.AutoSize = true;
+            this.ColourScheme.Location = new System.Drawing.Point(253, 119);
+            this.ColourScheme.Name = "ColourScheme";
+            this.ColourScheme.Size = new System.Drawing.Size(79, 13);
+            this.ColourScheme.TabIndex = 8;
+            this.ColourScheme.Text = "Colour Scheme";
+            // 
             // PureVideoDecoderFilters
             // 
             this.Controls.Add(this.VideoDecoderSettings);
@@ -481,6 +510,13 @@ namespace MediaPortal.Configuration.Sections
                         if (regValue == 5 && regAdaptive == 4) comboBoxDeInterlaceMode.SelectedIndex = 2;
                         if (regValue == 5 && regAdaptive == 2) comboBoxDeInterlaceMode.SelectedIndex = 3;
                     }
+
+                    regValue = (Int32)subkey.GetValue("Brightness", 0);
+                    if (regValue == 0) comboBoxColourScheme.SelectedIndex = 0;
+                    if (regValue == -5) comboBoxColourScheme.SelectedIndex = 1;
+                    if (regValue == -3) comboBoxColourScheme.SelectedIndex = 2;
+                    if (regValue == 5) comboBoxColourScheme.SelectedIndex = 3;
+                    if (regValue == 15) comboBoxColourScheme.SelectedIndex = 4;
                 }
                 catch (Exception)
                 {
@@ -636,6 +672,40 @@ namespace MediaPortal.Configuration.Sections
                     regDeIntMode = 5;
                     subkey.SetValue("DeinterlaceMode", regDeIntMode);
                     subkey.SetValue("VMRDeinterlace", 2);
+                }
+                
+                // Colour Scheme
+                int ColourScheme;
+                ColourScheme = comboBoxColourScheme.SelectedIndex;
+                if (ColourScheme == 0)
+                {
+                    subkey.SetValue("Brightness", 0);
+                    subkey.SetValue("Contrast", 0);
+                    subkey.SetValue("Saturation", 0);
+                }
+                if (ColourScheme == 1)
+                {
+                    subkey.SetValue("Brightness", -5);
+                    subkey.SetValue("Contrast", 5);
+                    subkey.SetValue("Saturation", 0);
+                }
+                if (ColourScheme == 2)
+                {
+                    subkey.SetValue("Brightness", -3);
+                    subkey.SetValue("Contrast", 10);
+                    subkey.SetValue("Saturation", 5);
+                }
+                if (ColourScheme == 3)
+                {
+                    subkey.SetValue("Brightness", 5);
+                    subkey.SetValue("Contrast", 50);
+                    subkey.SetValue("Saturation", 5);
+                }
+                if (ColourScheme == 4)
+                {
+                    subkey.SetValue("Brightness", 15);
+                    subkey.SetValue("Contrast", 50);
+                    subkey.SetValue("Saturation", 5);
                 }
                 {
                 }
