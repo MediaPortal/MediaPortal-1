@@ -25,8 +25,25 @@
 		<label>-</label>
 		<action>10</action>
 		<onleft>31</onleft>
-		<onright>22</onright>
+		<onright>26</onright>
 		<onup>21</onup>
+		<ondown>2</ondown>
+	</control>
+	<control>
+		<description>basichome button button</description>
+		<type>button</type>
+		<id>26</id>
+		<posX>97</posX>
+		<posY>5</posY>
+		<width>42</width>
+		<height>42</height>
+		<textureFocus>nav_refresh_focus.png</textureFocus>
+		<textureNoFocus>nav_refresh_nofocus.png</textureNoFocus>
+		<label>-</label>
+		<action>115</action>
+		<onleft>21</onleft>
+		<onright>22</onright>
+		<onup>26</onup>
 		<ondown>2</ondown>
 	</control>
 	<control>
@@ -41,7 +58,7 @@
 		<textureNoFocus>skipback_disabled.png</textureNoFocus>
 		<action>15</action>
 		<label>-</label>
-		<onleft>21</onleft>
+		<onleft>26</onleft>
 		<onright>23</onright>
 		<onup>22</onup>
 		<ondown>2</ondown>
@@ -182,6 +199,6 @@
 		<onright>21</onright>
 		<onup>31</onup>
 		<ondown>2</ondown>
-	</control>		
+	</control>
 </controls>
 </window>
