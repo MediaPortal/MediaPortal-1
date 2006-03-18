@@ -210,7 +210,7 @@ namespace MediaPortal.GUI.TV
         _tvGuideFileWatcher.Filter = "*.xml";
         // Add event handlers.
         _tvGuideFileWatcher.Changed += new FileSystemEventHandler(OnChanged);
-        //_tvGuideFileWatcher.Created += new FileSystemEventHandler(OnChanged);
+        _tvGuideFileWatcher.Created += new FileSystemEventHandler(OnChanged);
         _tvGuideFileWatcher.Renamed += new RenamedEventHandler(OnRenamed);
         _tvGuideFileWatcher.EnableRaisingEvents = true;
       }
@@ -2122,7 +2122,7 @@ namespace MediaPortal.GUI.TV
       {
         _workerThreadRunning = true;
         Thread workerThread = new Thread(new ThreadStart(ThreadFunctionImportTVGuide));
-        workerThread.Priority = ThreadPriority.BelowNormal;
+        workerThread.Priority = ThreadPriority.Lowest;
         workerThread.Start();
       }
     }
@@ -2133,7 +2133,7 @@ namespace MediaPortal.GUI.TV
       Thread.Sleep(500);
       try
       {
-        XMLTVImport import = new XMLTVImport();
+        XMLTVImport import = new XMLTVImport(10);  // add 10 msec dely to the background thread
         import.Import(_tvGuideFileName, false);
       }
       catch (Exception)

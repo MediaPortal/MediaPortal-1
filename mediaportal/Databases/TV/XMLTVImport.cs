@@ -25,6 +25,7 @@ using System.Collections;
 using System.Globalization;
 using System.Xml;
 using System.Net;
+using System.Threading;
 //using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -82,11 +83,18 @@ namespace MediaPortal.TV.Database
     
     string m_strErrorMessage="";
 		Stats  m_stats = new Stats();
+    int _backgroundDelay = 0;
     
     static bool   m_bImport=false;      
-    public XMLTVImport()
+    public XMLTVImport() : this(0)
 		{
 		}
+
+
+    public XMLTVImport(int backgroundDelay)
+    {
+      _backgroundDelay = backgroundDelay;
+    }
 
     public string ErrorMessage
     {
@@ -163,14 +171,14 @@ namespace MediaPortal.TV.Database
 			  TVDatabase.BeginTransaction();
         TVDatabase.ClearCache();
         TVDatabase.RemoveOldPrograms();
-	        
+	      
 			  ArrayList tvchannels = new ArrayList();
 			  int iChannel=0;
 			  foreach (XmlNode nodeChannel in channelList)
 			  {
 				  if (nodeChannel.Attributes!=null)
 				  {
-					  XmlNode nodeId=nodeChannel.Attributes.GetNamedItem("id");
+            XmlNode nodeId=nodeChannel.Attributes.GetNamedItem("id");
 					  if (nodeId!=null&&nodeId.InnerText!=null && nodeId.InnerText.Length>0)
 					  {
 						  XmlNode nodeName=nodeChannel.SelectSingleNode("display-name");
@@ -285,7 +293,7 @@ namespace MediaPortal.TV.Database
 			  {
 				  if (programNode.Attributes!=null)
 				  {
-					  XmlNode nodeStart=programNode.Attributes.GetNamedItem("start");
+            XmlNode nodeStart=programNode.Attributes.GetNamedItem("start");
 					  XmlNode nodeStop=programNode.Attributes.GetNamedItem("stop");
 					  XmlNode nodeChannel=programNode.Attributes.GetNamedItem("channel");
 					  XmlNode nodeTitle=programNode.SelectSingleNode("title");
@@ -574,13 +582,14 @@ namespace MediaPortal.TV.Database
 					  // dont import programs which have already ended...
 					  if (prog.EndTime > dtStartDate)
 					  {
-						  Log.WriteFile(Log.LogType.EPG,false,"epg-import :{0,-20} {1} {2}-{3} {4}",
+              Thread.Sleep(_backgroundDelay);
+              Log.WriteFile(Log.LogType.EPG,false,"epg-import :{0,-20} {1} {2}-{3} {4}",
 												prog.Channel, 
 								        prog.StartTime.ToShortDateString(),
 												prog.StartTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat) , 
 												prog.EndTime.ToString("t",CultureInfo.CurrentCulture.DateTimeFormat) , 
-								        prog.Title); 
-
+								        prog.Title);
+              
 							TVDatabase.UpdateProgram(prog);
 						  if (prog.StartTime < m_stats.StartTime) m_stats.StartTime=prog.StartTime;
 						  if (prog.EndTime > m_stats.EndTime) m_stats.EndTime=prog.EndTime;
