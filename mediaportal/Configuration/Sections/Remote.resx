@@ -991,6 +991,9 @@
         XqwD+f8DtDWz50SV3YQAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="tabPageX10.GridSize" type="System.Drawing.Size, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>4, 4</value>
+  </metadata>
   <data name="pictureBoxEU.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAGQAAAE2CAYAAACX0zccAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -2087,9 +2090,6 @@
         BzK9++EAAAAASUVORK5CYII=
 </value>
   </data>
-  <metadata name="tabPageX10.GridSize" type="System.Drawing.Size, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>4, 4</value>
-  </metadata>
   <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>

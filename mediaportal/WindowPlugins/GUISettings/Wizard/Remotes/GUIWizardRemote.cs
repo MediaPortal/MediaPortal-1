@@ -192,9 +192,9 @@ namespace MediaPortal.GUI.Settings.Wizard
         bool useMCE = xmlreader.GetValueAsBool("remote", "mce2005", false);
         bool useMCEUSA = xmlreader.GetValueAsBool("remote", "USAModel", false);
         bool useHCW = xmlreader.GetValueAsBool("remote", "HCW", false);
-        bool useX10 = xmlreader.GetValueAsBool("remote", "x10", false);
-        bool useX10Medion = xmlreader.GetValueAsBool("remote", "x10medion", false);
-        bool useX10Ati = xmlreader.GetValueAsBool("remote", "x10ati", false);
+        bool useX10 = xmlreader.GetValueAsBool("remote", "X10", false);
+        bool useX10Medion = xmlreader.GetValueAsBool("remote", "X10Medion", false);
+        bool useX10Ati = xmlreader.GetValueAsBool("remote", "X10ATI", false);
         bool useFireDTV = xmlreader.GetValueAsBool("remote", "FireDTV", false);
         if (useMCE && useMCEUSA) OnMicrosoftUSA();
         else if (useMCE && !useMCEUSA) OnMicrosoftEU();
@@ -214,9 +214,9 @@ namespace MediaPortal.GUI.Settings.Wizard
         xmlwriter.SetValueAsBool("remote", "mce2005", (cmMicrosoftUSA.Selected || cmMicrosoftEU.Selected));
         xmlwriter.SetValueAsBool("remote", "USAModel", cmMicrosoftUSA.Selected);
         xmlwriter.SetValueAsBool("remote", "HCW", cmHauppauge.Selected);
-        xmlwriter.SetValueAsBool("remote", "x10", cmX10Medion.Selected || cmX10Ati.Selected);
-        xmlwriter.SetValueAsBool("remote", "x10medion", cmX10Medion.Selected);
-        xmlwriter.SetValueAsBool("remote", "x10ati", cmX10Ati.Selected);
+        xmlwriter.SetValueAsBool("remote", "X10", cmX10Medion.Selected || cmX10Ati.Selected);
+        xmlwriter.SetValueAsBool("remote", "X10Medion", cmX10Medion.Selected);
+        xmlwriter.SetValueAsBool("remote", "X10ATI", cmX10Ati.Selected);
         xmlwriter.SetValueAsBool("remote", "FireDTV", cmFireDTV.Selected);
       }
       GUIPropertyManager.SetProperty("#Wizard.Remote.Done", "yes");

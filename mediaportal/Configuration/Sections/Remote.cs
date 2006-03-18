@@ -85,15 +85,19 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxX10ExtendedLogging;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxX10Status;
     private MediaPortal.UserInterface.Controls.MPButton buttonX10Defaults;
-    private MediaPortal.UserInterface.Controls.MPLabel labelX10DriverStatus;
     private LinkLabel linkLabelHcwDownload;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonX10Ati;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonX10Medion;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonX10Other;
     private LinkLabel linkLabelDownloadX10;
-    private Label label2;
+    private Label labelX10DriverInfo;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxX10ChannelControl;
+    private MediaPortal.UserInterface.Controls.MPButton buttonX10LearnChannel;
     private System.ComponentModel.IContainer components = null;
     private enum hcwRepeatSpeed { slow, medium, fast };
+    private int x10Channel = 0;
+    private Label labelX10Status;
+    X10RemoteForm x10Form = null;
 
     public struct RAWINPUTDEVICE
     {
@@ -177,12 +181,15 @@ namespace MediaPortal.Configuration.Sections
         hScrollBarHcwRepeatSpeed.Value = xmlreader.GetValueAsInt("remote", "HCWRepeatSpeed", 0);
         checkBoxHcwFilterDoubleKlicks.Checked = xmlreader.GetValueAsBool("remote", "HCWFilterDoubleKlicks", false);
 
-        checkBoxX10Enabled.Checked = xmlreader.GetValueAsBool("remote", "x10", false);
-        radioButtonX10Medion.Checked = xmlreader.GetValueAsBool("remote", "x10medion", true);
-        radioButtonX10Ati.Checked = xmlreader.GetValueAsBool("remote", "x10ati", false);
+        checkBoxX10Enabled.Checked = xmlreader.GetValueAsBool("remote", "X10", false);
+        radioButtonX10Medion.Checked = xmlreader.GetValueAsBool("remote", "X10Medion", true);
+        radioButtonX10Ati.Checked = xmlreader.GetValueAsBool("remote", "X10ATI", false);
         radioButtonX10Other.Checked = (!radioButtonX10Medion.Checked && !radioButtonX10Ati.Checked);
-        radioButtonX10Medion.Enabled = radioButtonX10Ati.Enabled = radioButtonX10Other.Enabled = buttonX10Mapping.Enabled = checkBoxX10Enabled.Checked;
-        checkBoxX10ExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "x10VerboseLog", false);
+        checkBoxX10ExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "X10VerboseLog", false);
+        checkBoxX10ChannelControl.Checked = xmlreader.GetValueAsBool("remote", "X10UseChannelControl", false);
+        x10Channel = xmlreader.GetValueAsInt("remote", "X10Channel", 0);
+        radioButtonX10Medion.Enabled = radioButtonX10Ati.Enabled = radioButtonX10Other.Enabled = buttonX10Mapping.Enabled = checkBoxX10ChannelControl.Enabled = checkBoxX10ExtendedLogging.Enabled = checkBoxX10Enabled.Checked;
+        buttonX10LearnChannel.Enabled = checkBoxX10ChannelControl.Enabled && checkBoxX10ChannelControl.Checked;
       }
 
       radioButtonEurope.Checked = !radioButtonUSA.Checked;
@@ -293,10 +300,12 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("remote", "HCWRepeatSpeed", hScrollBarHcwRepeatSpeed.Value);
         xmlwriter.SetValueAsBool("remote", "HCWFilterDoubleKlicks", checkBoxHcwFilterDoubleKlicks.Checked);
 
-        xmlwriter.SetValueAsBool("remote", "x10", checkBoxX10Enabled.Checked);
-        xmlwriter.SetValueAsBool("remote", "x10medion", radioButtonX10Medion.Checked);
-        xmlwriter.SetValueAsBool("remote", "x10ati", radioButtonX10Ati.Checked);
-        xmlwriter.SetValueAsBool("remote", "x10VerboseLog", checkBoxX10ExtendedLogging.Checked);
+        xmlwriter.SetValueAsBool("remote", "X10", checkBoxX10Enabled.Checked);
+        xmlwriter.SetValueAsBool("remote", "X10Medion", radioButtonX10Medion.Checked);
+        xmlwriter.SetValueAsBool("remote", "X10ATI", radioButtonX10Ati.Checked);
+        xmlwriter.SetValueAsBool("remote", "X10VerboseLog", checkBoxX10ExtendedLogging.Checked);
+        xmlwriter.SetValueAsBool("remote", "X10UseChannelControl", checkBoxX10ChannelControl.Checked);
+        xmlwriter.SetValue("remote", "X10Channel", x10Channel);
       }
 
       fireDTVRemote.SaveSettings();
@@ -363,21 +372,23 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxHcwExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPageX10 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBoxX10Status = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label2 = new System.Windows.Forms.Label();
+      this.labelX10DriverInfo = new System.Windows.Forms.Label();
       this.linkLabelDownloadX10 = new System.Windows.Forms.LinkLabel();
-      this.buttonX10Defaults = new MediaPortal.UserInterface.Controls.MPButton();
-      this.labelX10DriverStatus = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxX10General = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.radioButtonX10Other = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonX10Ati = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonX10Medion = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.buttonX10Mapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxX10Enabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.buttonX10Defaults = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxX10Settings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.buttonX10LearnChannel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.checkBoxX10ChannelControl = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxX10ExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabPageFireDTV = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.fireDTVRemote = new MediaPortal.Configuration.Sections.FireDTVRemote();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+      this.labelX10Status = new System.Windows.Forms.Label();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxUSA)).BeginInit();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMCE.SuspendLayout();
@@ -809,8 +820,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.tabPageX10.Controls.Add(this.groupBoxX10Status);
       this.tabPageX10.Controls.Add(this.groupBoxX10General);
+      this.tabPageX10.Controls.Add(this.buttonX10Defaults);
       this.tabPageX10.Controls.Add(this.groupBoxX10Settings);
-      this.tabPageX10.Controls.Add(this.labelX10DriverStatus);
       this.tabPageX10.Location = new System.Drawing.Point(4, 22);
       this.tabPageX10.Name = "tabPageX10";
       this.tabPageX10.Padding = new System.Windows.Forms.Padding(3);
@@ -823,25 +834,25 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxX10Status.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxX10Status.Controls.Add(this.label2);
+      this.groupBoxX10Status.Controls.Add(this.labelX10DriverInfo);
       this.groupBoxX10Status.Controls.Add(this.linkLabelDownloadX10);
-      this.groupBoxX10Status.Controls.Add(this.buttonX10Defaults);
+      this.groupBoxX10Status.Controls.Add(this.labelX10Status);
       this.groupBoxX10Status.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxX10Status.Location = new System.Drawing.Point(12, 200);
+      this.groupBoxX10Status.Location = new System.Drawing.Point(12, 228);
       this.groupBoxX10Status.Name = "groupBoxX10Status";
       this.groupBoxX10Status.Size = new System.Drawing.Size(440, 80);
       this.groupBoxX10Status.TabIndex = 4;
       this.groupBoxX10Status.TabStop = false;
       this.groupBoxX10Status.Text = "Status";
       // 
-      // label2
+      // labelX10DriverInfo
       // 
-      this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(16, 24);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(392, 13);
-      this.label2.TabIndex = 6;
-      this.label2.Text = "You have to use the driver below, or your remote might not work with MediaPortal." +
+      this.labelX10DriverInfo.AutoSize = true;
+      this.labelX10DriverInfo.Location = new System.Drawing.Point(16, 24);
+      this.labelX10DriverInfo.Name = "labelX10DriverInfo";
+      this.labelX10DriverInfo.Size = new System.Drawing.Size(392, 13);
+      this.labelX10DriverInfo.TabIndex = 6;
+      this.labelX10DriverInfo.Text = "You have to use the driver below, or your remote might not work with MediaPortal." +
           "";
       // 
       // linkLabelDownloadX10
@@ -854,31 +865,6 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabelDownloadX10.TabStop = true;
       this.linkLabelDownloadX10.Text = "Click here to download the X10 remote driver.";
       this.linkLabelDownloadX10.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDownloadX10_LinkClicked);
-      // 
-      // buttonX10Defaults
-      // 
-      this.buttonX10Defaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonX10Defaults.Location = new System.Drawing.Point(352, 48);
-      this.buttonX10Defaults.Name = "buttonX10Defaults";
-      this.buttonX10Defaults.Size = new System.Drawing.Size(72, 22);
-      this.buttonX10Defaults.TabIndex = 1;
-      this.buttonX10Defaults.Text = "&Defaults";
-      this.buttonX10Defaults.UseVisualStyleBackColor = true;
-      this.buttonX10Defaults.Click += new System.EventHandler(this.buttonX10Defaults_Click);
-      // 
-      // labelX10DriverStatus
-      // 
-      this.labelX10DriverStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelX10DriverStatus.AutoSize = true;
-      this.labelX10DriverStatus.ForeColor = System.Drawing.SystemColors.ControlText;
-      this.labelX10DriverStatus.Location = new System.Drawing.Point(12, 352);
-      this.labelX10DriverStatus.Name = "labelX10DriverStatus";
-      this.labelX10DriverStatus.Size = new System.Drawing.Size(147, 13);
-      this.labelX10DriverStatus.TabIndex = 0;
-      this.labelX10DriverStatus.Text = "Status is not implemented yet.";
-      this.labelX10DriverStatus.Visible = false;
       // 
       // groupBoxX10General
       // 
@@ -952,18 +938,54 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxX10Enabled.UseVisualStyleBackColor = true;
       this.checkBoxX10Enabled.CheckedChanged += new System.EventHandler(this.checkBoxX10Enabled_CheckedChanged);
       // 
+      // buttonX10Defaults
+      // 
+      this.buttonX10Defaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonX10Defaults.Location = new System.Drawing.Point(364, 328);
+      this.buttonX10Defaults.Name = "buttonX10Defaults";
+      this.buttonX10Defaults.Size = new System.Drawing.Size(72, 22);
+      this.buttonX10Defaults.TabIndex = 1;
+      this.buttonX10Defaults.Text = "&Defaults";
+      this.buttonX10Defaults.UseVisualStyleBackColor = true;
+      this.buttonX10Defaults.Click += new System.EventHandler(this.buttonX10Defaults_Click);
+      // 
       // groupBoxX10Settings
       // 
       this.groupBoxX10Settings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxX10Settings.Controls.Add(this.buttonX10LearnChannel);
+      this.groupBoxX10Settings.Controls.Add(this.checkBoxX10ChannelControl);
       this.groupBoxX10Settings.Controls.Add(this.checkBoxX10ExtendedLogging);
       this.groupBoxX10Settings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxX10Settings.Location = new System.Drawing.Point(12, 136);
       this.groupBoxX10Settings.Name = "groupBoxX10Settings";
-      this.groupBoxX10Settings.Size = new System.Drawing.Size(440, 56);
+      this.groupBoxX10Settings.Size = new System.Drawing.Size(440, 80);
       this.groupBoxX10Settings.TabIndex = 3;
       this.groupBoxX10Settings.TabStop = false;
       this.groupBoxX10Settings.Text = "Settings";
+      // 
+      // buttonX10LearnChannel
+      // 
+      this.buttonX10LearnChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonX10LearnChannel.Location = new System.Drawing.Point(352, 44);
+      this.buttonX10LearnChannel.Name = "buttonX10LearnChannel";
+      this.buttonX10LearnChannel.Size = new System.Drawing.Size(72, 22);
+      this.buttonX10LearnChannel.TabIndex = 5;
+      this.buttonX10LearnChannel.Text = "&Learn";
+      this.buttonX10LearnChannel.UseVisualStyleBackColor = true;
+      this.buttonX10LearnChannel.Click += new System.EventHandler(this.buttonX10LearnChannel_Click);
+      // 
+      // checkBoxX10ChannelControl
+      // 
+      this.checkBoxX10ChannelControl.AutoSize = true;
+      this.checkBoxX10ChannelControl.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxX10ChannelControl.Location = new System.Drawing.Point(16, 48);
+      this.checkBoxX10ChannelControl.Name = "checkBoxX10ChannelControl";
+      this.checkBoxX10ChannelControl.Size = new System.Drawing.Size(136, 17);
+      this.checkBoxX10ChannelControl.TabIndex = 4;
+      this.checkBoxX10ChannelControl.Text = "Use RF channel control";
+      this.checkBoxX10ChannelControl.UseVisualStyleBackColor = true;
+      this.checkBoxX10ChannelControl.CheckedChanged += new System.EventHandler(this.checkBoxChannelControl_CheckedChanged);
       // 
       // checkBoxX10ExtendedLogging
       // 
@@ -998,6 +1020,16 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.toolTip.ShowAlways = true;
       // 
+      // labelX10Status
+      // 
+      this.labelX10Status.AutoSize = true;
+      this.labelX10Status.Location = new System.Drawing.Point(16, 24);
+      this.labelX10Status.Name = "labelX10Status";
+      this.labelX10Status.Size = new System.Drawing.Size(35, 13);
+      this.labelX10Status.TabIndex = 5;
+      this.labelX10Status.Text = "label2";
+      this.labelX10Status.Visible = false;
+      // 
       // Remote
       // 
       this.Controls.Add(this.tabControlRemotes);
@@ -1019,7 +1051,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSettings.ResumeLayout(false);
       this.groupBoxSettings.PerformLayout();
       this.tabPageX10.ResumeLayout(false);
-      this.tabPageX10.PerformLayout();
       this.groupBoxX10Status.ResumeLayout(false);
       this.groupBoxX10Status.PerformLayout();
       this.groupBoxX10General.ResumeLayout(false);
@@ -1131,6 +1162,8 @@ namespace MediaPortal.Configuration.Sections
     private void buttonX10Defaults_Click(object sender, EventArgs e)
     {
       checkBoxX10ExtendedLogging.Checked = false;
+      checkBoxX10ChannelControl.Checked = false;
+      buttonX10LearnChannel.Enabled = checkBoxX10ChannelControl.Enabled && checkBoxX10ChannelControl.Checked;
     }
 
     private void linkLabelHcwDownload_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -1140,12 +1173,54 @@ namespace MediaPortal.Configuration.Sections
 
     private void checkBoxX10Enabled_CheckedChanged(object sender, EventArgs e)
     {
-      radioButtonX10Medion.Enabled = radioButtonX10Ati.Enabled = radioButtonX10Other.Enabled = buttonX10Mapping.Enabled = checkBoxX10Enabled.Checked;
+      radioButtonX10Medion.Enabled = radioButtonX10Ati.Enabled = radioButtonX10Other.Enabled = buttonX10Mapping.Enabled = checkBoxX10ChannelControl.Enabled = checkBoxX10ExtendedLogging.Enabled = checkBoxX10Enabled.Checked;
+      buttonX10LearnChannel.Enabled = checkBoxX10ChannelControl.Enabled && checkBoxX10ChannelControl.Checked;
     }
 
     private void linkLabelDownloadX10_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       System.Diagnostics.Process.Start("http://www1.medion.de/downloads/download.pl?id=1675&type=treiber&filename=remote_x10.exe&lang=de");
+    }
+
+    private void checkBoxChannelControl_CheckedChanged(object sender, EventArgs e)
+    {
+      buttonX10LearnChannel.Enabled = checkBoxX10ChannelControl.Enabled && checkBoxX10ChannelControl.Checked;
+    }
+
+    private void buttonX10LearnChannel_Click(object sender, EventArgs e)
+    {
+      buttonX10LearnChannel.Enabled = false;
+      try
+      {
+        if (x10Form == null)
+          x10Form = new X10RemoteForm(new AxX10._DIX10InterfaceEvents_X10CommandEventHandler(this.IX10_X10Command));
+      }
+      catch (System.Runtime.InteropServices.COMException)
+      {
+        Log.Write("x10Remote: Can't initialize");
+        x10Form = null;
+        labelX10DriverInfo.Visible = false;
+        linkLabelDownloadX10.Visible = false;
+        labelX10Status.Visible = true;
+        labelX10Status.Text = "X10 driver is not installed.";
+        buttonX10LearnChannel.Enabled = true;
+        return;
+      }
+      labelX10DriverInfo.Visible = false;
+      linkLabelDownloadX10.Visible = false;
+      labelX10Status.Visible = true;
+      labelX10Status.Text = "Press a button on your remote control.";
+    }
+
+    public void IX10_X10Command(object sender, AxX10._DIX10InterfaceEvents_X10CommandEvent e)
+    {
+      if (e.eKeyState.ToString() == "X10KEY_ON" || e.eKeyState.ToString() == "X10KEY_REPEAT")
+      {
+        x10Channel = e.lAddress;
+        buttonX10LearnChannel.Enabled = true;
+        labelX10Status.Text = "Remote control successfully set to channel " + x10Channel.ToString() + ".";
+        x10Form = null;
+      }
     }
 
   }

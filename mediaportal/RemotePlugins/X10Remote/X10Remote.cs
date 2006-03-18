@@ -43,6 +43,8 @@ namespace MediaPortal.InputDevices
     bool logVerbose = false;
     bool x10Medion = true;
     bool x10Ati = false;
+    bool x10UseChannelControl = false;
+    int x10Channel = 0;
 
     public X10Remote()
     {
@@ -52,10 +54,12 @@ namespace MediaPortal.InputDevices
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        controlEnabled = xmlreader.GetValueAsBool("remote", "x10", false);
-        x10Medion = xmlreader.GetValueAsBool("remote", "x10medion", true);
-        x10Ati = xmlreader.GetValueAsBool("remote", "x10ati", true);
-        logVerbose = xmlreader.GetValueAsBool("remote", "x10VerboseLog", false);
+        controlEnabled = xmlreader.GetValueAsBool("remote", "X10", false);
+        x10Medion = xmlreader.GetValueAsBool("remote", "X10Medion", true);
+        x10Ati = xmlreader.GetValueAsBool("remote", "X10ATI", true);
+        logVerbose = xmlreader.GetValueAsBool("remote", "X10VerboseLog", false);
+        x10UseChannelControl = xmlreader.GetValueAsBool("remote", "X10UseChannelControl", false);
+        x10Channel = xmlreader.GetValueAsInt("remote", "X10Channel", 0);
       }
       if (controlEnabled)
         if (x10Medion)
@@ -70,11 +74,11 @@ namespace MediaPortal.InputDevices
       if (logVerbose)
       {
         if (x10Medion)
-          Log.Write("x10Remote: Start Medion");
+          Log.Write("X10Remote: Start Medion");
         else if (x10Ati)
-          Log.Write("x10Remote: Start Ati");
+          Log.Write("X10Remote: Start ATI");
         else
-          Log.Write("x10Remote: Start Other");
+          Log.Write("X10Remote: Start Other");
       }
       try
       {
@@ -83,7 +87,7 @@ namespace MediaPortal.InputDevices
       catch (System.Runtime.InteropServices.COMException)
       {
         controlEnabled = false;
-        Log.Write("x10Remote: Can't initialize");
+        Log.Write("X10Remote: Can't initialize");
       }
     }
 
@@ -99,7 +103,7 @@ namespace MediaPortal.InputDevices
       x10Handler = null;
 
       if (logVerbose)
-        Log.Write("x10Remote: Stop");
+        Log.Write("X10Remote: Stop");
     }
 
 
@@ -107,30 +111,33 @@ namespace MediaPortal.InputDevices
     {
       if (logVerbose)
       {
-        Log.Write("x10Remote: Command Start --------------------------------------------");
-        Log.Write("x10Remote: e            = {0}", e.ToString());
-        Log.Write("x10Remote: bszCommand   = {0}", e.bszCommand.ToString());
-        Log.Write("x10Remote: eCommand     = {0} - {1}", (int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString()), e.eCommand.ToString());
-        Log.Write("x10Remote: eCommandType = {0}", e.eCommandType.ToString());
-        Log.Write("x10Remote: eKeyState    = {0}", e.eKeyState.ToString());
-        Log.Write("x10Remote: lAddress     = {0}", e.lAddress.ToString());
-        Log.Write("x10Remote: lSequence    = {0}", e.lSequence.ToString());
-        Log.Write("x10Remote: varTimestamp = {0}", e.varTimestamp.ToString());
-        Log.Write("x10Remote: Command End ----------------------------------------------");
+        Log.Write("X10Remote: Command Start --------------------------------------------");
+        Log.Write("X10Remote: e            = {0}", e.ToString());
+        Log.Write("X10Remote: bszCommand   = {0}", e.bszCommand.ToString());
+        Log.Write("X10Remote: eCommand     = {0} - {1}", (int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString()), e.eCommand.ToString());
+        Log.Write("X10Remote: eCommandType = {0}", e.eCommandType.ToString());
+        Log.Write("X10Remote: eKeyState    = {0}", e.eKeyState.ToString());
+        Log.Write("X10Remote: lAddress     = {0}", e.lAddress.ToString());
+        Log.Write("X10Remote: lSequence    = {0}", e.lSequence.ToString());
+        Log.Write("X10Remote: varTimestamp = {0}", e.varTimestamp.ToString());
+        Log.Write("X10Remote: Command End ----------------------------------------------");
       }
-
+      
       if (e.eKeyState.ToString() == "X10KEY_ON" || e.eKeyState.ToString() == "X10KEY_REPEAT")
       {
+        if (x10UseChannelControl && (e.lAddress != x10Channel))
+          return;
+
         try
         {
           x10Handler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString()));
           if (logVerbose)
-            Log.Write("x10Remote: Action mapped");
+            Log.Write("X10Remote: Action mapped");
         }
         catch (ApplicationException)
         {
           if (logVerbose)
-            Log.Write("x10Remote: Action not mapped");
+            Log.Write("X10Remote: Action not mapped");
         }
       }
     }
