@@ -300,7 +300,8 @@ namespace MediaPortal.PowerScheduler
               m_iActiveWindow = -1; //check again next time
             }
 
-            if (Recorder.IsRadio())
+            //if (Recorder.IsRadio())
+            if (g_Player.IsRadio || g_Player.IsMusic || Recorder.IsRadio())
             {
               // then disable shutdown
               ResetShutdownTimer(0);
