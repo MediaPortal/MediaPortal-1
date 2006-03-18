@@ -621,6 +621,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_06DD621FE3794134901EBB9EFC0B7ED0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_06DFEB6284384299A848D2D9CF94A294"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -760,12 +766,6 @@
         "Entry"
         {
         "MsmKey" = "8:_0939D011F0DC4FB0810BE73499BB9B02"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_09575C001D944035B299AFDB6C985597"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1461,12 +1461,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_14EE7D3C541246E289BB254D61E40E5F"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_1522493765D74B16B937BACB302BA050"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1648,6 +1642,12 @@
         "Entry"
         {
         "MsmKey" = "8:_176DB3D4748C4B159E3758FEED32CFE4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_177D19B2FDD04985960040FAD833B5D3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1978,6 +1978,12 @@
         "Entry"
         {
         "MsmKey" = "8:_1A665986C2964F349379F90620D8E649"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1AB1A4B0ADEF4E5FA1313D8673D4122D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -2625,12 +2631,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2410F40BF9144A67878437050E85418B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_241FB687BE204BD881A44090FCA9E4AF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -2752,12 +2752,6 @@
         "Entry"
         {
         "MsmKey" = "8:_25ED168BD9714078974A40CE6016856B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_26004371371B4AFDA58C890D66EF8354"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3561,12 +3555,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_31DDE254AF4548E9B83F4B5492C68595"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_31E2BDF8EF024D1392EDA9EC0BB354AE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -3736,6 +3724,12 @@
         "Entry"
         {
         "MsmKey" = "8:_3441A2D1185B4D2B8CE65E1C87BA5D22"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_344463B53ADE4ACD830D69E62CBCDA69"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -3939,12 +3933,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_3690F339A7FC4D239C421549B269B84B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_3698C7C52CB44E3A90451F6D849B8488"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -4066,12 +4054,6 @@
         "Entry"
         {
         "MsmKey" = "8:_3840E1CE553641A39341395B4800A505"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_384675F0337540A0A9970346177668AC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -4246,6 +4228,12 @@
         "Entry"
         {
         "MsmKey" = "8:_3AB3705EF4214A51BB5430E3C127ADF9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3ABD90C8B11A4B3CB1AAEDC9EDEF9ECA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -4785,12 +4773,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_4234B3C877B64A3E9358A7ED5F733B02"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_424806CF295643C19B6BE82D3FB5C7EE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -5002,12 +4984,6 @@
         "Entry"
         {
         "MsmKey" = "8:_44F74E86B37E46569CFDB11BB7E2C231"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4504A41B038C434A8BA96EA60FF97342"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -5619,6 +5595,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_4DFA300490094146BC3BA64885036862"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_4E07E8D1FC1642C097F85459FF2CDC94"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -5643,7 +5625,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_4E793767413C47D781A1B6BDC69A0E6F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_4EADB6884F934076B5FD2A369482478B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4EC729A5108E481EB9E76FAECC8439C1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -5721,12 +5715,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_502ED82382D74EB9A4DE2E9B65429D5C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_504A86A3BCA04A96A144654765D24E77"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -5782,6 +5770,12 @@
         "Entry"
         {
         "MsmKey" = "8:_510AF5593091436ABEDDE76A978024E7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_511D86F5408E418CBCD64178E64F1460"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -5854,6 +5848,12 @@
         "Entry"
         {
         "MsmKey" = "8:_521DED0CD2F64448B5CFBFA6183361FC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_523AA8E30AE44D37BB2D393B12F4A7CD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -5968,12 +5968,6 @@
         "Entry"
         {
         "MsmKey" = "8:_53C2273D9EFE4EF282CD5921AF87544A"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_53C4EF1AC43046D88803DDDFC1C5341C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -6285,12 +6279,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_578DD9AC0C904ABE8B725B3E10803559"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_57B06F62085046B5B1A8518297D41BF8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -6460,6 +6448,12 @@
         "Entry"
         {
         "MsmKey" = "8:_5984AFD8900E4C999EBBBADEED3E7E98"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_59D353CDA8D640B7AF6FA03F77E5F62C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -6915,6 +6909,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_60247FC0832A4EEC8885837B295139B5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_603F6C1AAA1943A5BE9123CCF8579E6C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -7131,6 +7131,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_63FC0AE7A1A243C1B4A49D239F58EB11"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_641554C768644956A27AE1F962FC2EA0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -7234,12 +7240,6 @@
         "Entry"
         {
         "MsmKey" = "8:_663E12A27DF14A5AB30BFB8CAF0044CC"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_663E39A976E4461D856B9CC90A39C1CC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -7893,12 +7893,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_70B904C013ED4DE682BB3ED4C17CC716"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_70DA9C2534254342BD96109C61F4C5A2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -8109,6 +8103,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7359FAA9940943238D26712C339E66EE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_73668B5853E3499A8CB2C0008B89F7A2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -8139,6 +8139,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_739B09CBD33C4FBB90824549DF49835C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_73CBE14AC1D34D188E6480915204D0F4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -8164,12 +8170,6 @@
         "Entry"
         {
         "MsmKey" = "8:_7438599F21974D0CA6D8AE0AEB546315"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_74650C989906406D9A1345E48C6B1781"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -8865,6 +8865,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7F07211D54EE422F983ADC3624584542"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_7F34E01D1B7642DBB65E9449346BA4C2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -8884,12 +8890,6 @@
         "Entry"
         {
         "MsmKey" = "8:_7F854453D8E84F59A42A7D70EF6210D3"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_7F92D62AF12348349D8F5DA0B529084D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -8950,12 +8950,6 @@
         "Entry"
         {
         "MsmKey" = "8:_8059751D8F714B0AAFE47619A5EA1707"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_806047AD522F40E7B2C3702E1651562C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -9261,6 +9255,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_84D6C5A9D82B46279DD42A72761644B8"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_84E8FA6D84DF47D29D474F26385DF995"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -9400,6 +9400,12 @@
         "Entry"
         {
         "MsmKey" = "8:_86D789BEDB9B4B68AFC3D1093B4C3424"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_86FB4170C035454580766A87AFF8B773"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -9568,6 +9574,12 @@
         "Entry"
         {
         "MsmKey" = "8:_895073B857CE4B73B5E0C332CB45D8F4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_89537B94D6404D4E88988A5AB806A1DD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -10179,12 +10191,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_8FA16139E2854623923AFDB40E3DFA0B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_8FC2C0B637A4479F9FF2857AD77B9884"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -10479,6 +10485,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_93B45FEF6BD54261902D3E4B9B15CE1A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_93F4907F2AB24C6183D8EBA5F80FF54C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -10605,7 +10617,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_96CF33CF2A81489D87BF69F504C089CF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_96D329209EF245438030B60F1F11675F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_96ED31434B8C4B28A57AF70110BBCA9A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -10761,12 +10785,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_994E39208EAD430CA72AE09645B6D749"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_997D4BCF14E345F8ADDBC2873994D26C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -10846,6 +10864,12 @@
         "Entry"
         {
         "MsmKey" = "8:_9ADBD7C700CA48CE94033EA85FB3B06F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9AFFD16EBF334BB5BDD0A34F3AB9CDD5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -11140,6 +11164,12 @@
         "Entry"
         {
         "MsmKey" = "8:_9EA5394EBB2A4D51A3DAAD4EE5F47FAE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9EC60A8A5A304543AF7D74F68F27EBC3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -12123,6 +12153,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_AB09CEC3D7FF423984AF05007260B698"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_AB103F92E17B4C4FB3285FFACED515A3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -12148,6 +12184,12 @@
         "Entry"
         {
         "MsmKey" = "8:_AB4BE5EF26DD485F93018A7879FCE2EC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AB56D7E0763E4B81A3A91B563813501A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -12766,12 +12808,6 @@
         "Entry"
         {
         "MsmKey" = "8:_B45C2AC0751347BDBE7D0D7DBD007910"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B46894A6DF5F4498AD66F654D79F6B13"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -13779,12 +13815,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C0CAF32962D440DA861224812526A6DB"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C1113F31DA7C499081D58D900F86DDFC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -13947,12 +13977,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C3A32C9A30F84217B61451EE30863958"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C3B60C3D3DD54A5497D13727933E3AC7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -13960,12 +13984,6 @@
         "Entry"
         {
         "MsmKey" = "8:_C3D009D226FC4A9BB9D311500EE75CE6"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C3D8A15C242046E1BE6CB63861A6CB83"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -14338,12 +14356,6 @@
         "Entry"
         {
         "MsmKey" = "8:_C75BBA84E15C4655AAD61AD0C34872CA"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C75BEA301D414D98BFDDEF22EDC58C50"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -14763,6 +14775,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_CD5E851EFCC942EF8BAEC4F5068B9AE3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_CD6E4A2A87A749D39ECC392833B9B460"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -14794,12 +14812,6 @@
         "Entry"
         {
         "MsmKey" = "8:_CDC8D153DA734838845DF8E5F3269234"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_CDD956CD5E494778823736AE1E35D2F7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -14985,12 +14997,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_D044888DBF744AF8A941A81E711029E7"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_D045BD21051F439B9DDFBB52739D0852"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -15076,12 +15082,6 @@
         "Entry"
         {
         "MsmKey" = "8:_D175AB5A58AF4C408DA549718636292C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D195040F8B7D498A9A14B91F0C3AB1B0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -15196,12 +15196,6 @@
         "Entry"
         {
         "MsmKey" = "8:_D2841B5E406946429D8B0FE6923EFEBA"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D292B73157D8466789E7ADD1922101A0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -15394,12 +15388,6 @@
         "Entry"
         {
         "MsmKey" = "8:_D4E8B9EA41B341E4ABDF79E3A55622E9"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D4E9648E290E4205AA0E6615B3CF1362"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -15598,6 +15586,12 @@
         "Entry"
         {
         "MsmKey" = "8:_D7378365DFED47A296F9725015D24D9A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D758A042F0C34FA3BA71BAA9EF80B30F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -15927,12 +15921,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_DC1FF96F30CF4B3D9121550253DC4A38"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_DC4BB9D9B19D4E4BAE0EF705501D9686"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -16035,12 +16023,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_DD75D342BDBF4DB8AF32120F4DC52D71"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_DD7CDBEAFCD14CDC9F03419B55BB18A8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -16132,6 +16114,12 @@
         "Entry"
         {
         "MsmKey" = "8:_DEB07A9C1C3B4EC1842C765BE0B2DD6B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DEB5E791EAFC4E2ABFE212C97539B315"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -16642,6 +16630,12 @@
         "Entry"
         {
         "MsmKey" = "8:_E65B4AD160F748639A80CBE8FDBF47C5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E6675AFC70DE46E1A8FABB6D8317538E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -17715,6 +17709,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F3EFB888696940768A3475B9E9E24D9F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F3F2AC3EDE424B4BAF4FDC508898A5D7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -17967,6 +17967,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F891F9FB321E4AA68EBD1E9464BB1841"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F8AC0A7B026F4AF19DFF6F3232BA332A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -18130,12 +18136,6 @@
         "Entry"
         {
         "MsmKey" = "8:_FB55250488A54667B37F018E67EE05C0"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_FB63259460AB46F9ABD5E98695665F91"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -21106,6 +21106,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_06DD621FE3794134901EBB9EFC0B7ED0"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\MT-12232A.dll"
+            "TargetName" = "8:MT-12232A.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_06DFEB6284384299A848D2D9CF94A294"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\Tuningparameters\\8degreesWest.tpl"
@@ -21572,26 +21592,6 @@
             "TargetName" = "8:black.bmp"
             "Tag" = "8:"
             "Folder" = "8:_26728B68D53242A2B44274DD22576AB8"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_09575C001D944035B299AFDB6C985597"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\noritake_gu3900.dll"
-            "TargetName" = "8:noritake_gu3900.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -23901,26 +23901,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_14EE7D3C541246E289BB254D61E40E5F"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\irtrans.dll"
-            "TargetName" = "8:irtrans.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1522493765D74B16B937BACB302BA050"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\Project X\\slideshow.xml"
@@ -24527,6 +24507,26 @@
             "TargetName" = "8:osd_bg.png"
             "Tag" = "8:"
             "Folder" = "8:_1AAB5CBE521342C5AC5C638830AD41AC"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_177D19B2FDD04985960040FAD833B5D3"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\sed1520.dll"
+            "TargetName" = "8:sed1520.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -25238,6 +25238,26 @@
             "TargetName" = "8:myalarmdetails.xml"
             "Tag" = "8:"
             "Folder" = "8:_F197EB8DEA5B4DBBA364C20BBA681BB4"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1AB1A4B0ADEF4E5FA1313D8673D4122D"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\irtrans.dll"
+            "TargetName" = "8:irtrans.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -27216,26 +27236,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2410F40BF9144A67878437050E85418B"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\lintec1601.dll"
-            "TargetName" = "8:lintec1601.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_241FB687BE204BD881A44090FCA9E4AF"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\list_sub_focus.png"
@@ -27674,26 +27674,6 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:4"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_26004371371B4AFDA58C890D66EF8354"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\slx2016.dll"
-            "TargetName" = "8:slx2016.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
@@ -30395,26 +30375,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_31DDE254AF4548E9B83F4B5492C68595"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\lcdh_g15.dll"
-            "TargetName" = "8:lcdh_g15.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_31E2BDF8EF024D1392EDA9EC0BB354AE"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\mce\\media\\tvguide_button_light_left.png"
@@ -30992,6 +30952,26 @@
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_344463B53ADE4ACD830D69E62CBCDA69"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\t6963c.dll"
+            "TargetName" = "8:t6963c.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -31666,26 +31646,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3690F339A7FC4D239C421549B269B84B"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\HP12542R.dll"
-            "TargetName" = "8:HP12542R.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3698C7C52CB44E3A90451F6D849B8488"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\mce\\media\\tvguide_recordconflict_button.png"
@@ -32103,26 +32063,6 @@
             "TargetName" = "8:TVOSD.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_384675F0337540A0A9970346177668AC"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\noritake_gu7000.dll"
-            "TargetName" = "8:noritake_gu7000.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -32714,6 +32654,26 @@
             "TargetName" = "8:osd_progress_mid_red.png"
             "Tag" = "8:"
             "Folder" = "8:_D95A9A75A195450EAA8CD66DD0FB0CC7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3ABD90C8B11A4B3CB1AAEDC9EDEF9ECA"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\m50530_24x8.dll"
+            "TargetName" = "8:m50530_24x8.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -34470,26 +34430,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4234B3C877B64A3E9358A7ED5F733B02"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\lph7508.dll"
-            "TargetName" = "8:lph7508.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_424806CF295643C19B6BE82D3FB5C7EE"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\Project X\\Media\\defaultCddaBig.png"
@@ -35196,26 +35136,6 @@
             "TargetName" = "8:hover_my programs.png"
             "Tag" = "8:"
             "Folder" = "8:_1AAB5CBE521342C5AC5C638830AD41AC"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4504A41B038C434A8BA96EA60FF97342"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\fanomatic.dll"
-            "TargetName" = "8:fanomatic.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -37250,6 +37170,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4DFA300490094146BC3BA64885036862"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\sed1530.dll"
+            "TargetName" = "8:sed1530.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4E07E8D1FC1642C097F85459FF2CDC94"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MetalMedia\\tvOverlay.xml"
@@ -37330,12 +37270,52 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4E793767413C47D781A1B6BDC69A0E6F"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\noritake_gu_128x32_311.dll"
+            "TargetName" = "8:noritake_gu_128x32_311.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4EADB6884F934076B5FD2A369482478B"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\Project X\\mytvcompress.xml"
             "TargetName" = "8:mytvcompress.xml"
             "Tag" = "8:"
             "Folder" = "8:_382685758DF349A6BACEE18D5A782CDA"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4EC729A5108E481EB9E76FAECC8439C1"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\m50530s.dll"
+            "TargetName" = "8:m50530s.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -37601,26 +37581,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_502ED82382D74EB9A4DE2E9B65429D5C"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\ba66.dll"
-            "TargetName" = "8:ba66.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_504A86A3BCA04A96A144654765D24E77"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\Project X\\Media\\tvguide_arrow_selected_right.png"
@@ -37807,6 +37767,26 @@
             "TargetName" = "8:dialogue_ok_nofocus.png"
             "Tag" = "8:"
             "Folder" = "8:_D95A9A75A195450EAA8CD66DD0FB0CC7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_511D86F5408E418CBCD64178E64F1460"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\sed133x_usb_lui.dll"
+            "TargetName" = "8:sed133x_usb_lui.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -38047,6 +38027,26 @@
             "TargetName" = "8:playlist_item_up_nofocus.png"
             "Tag" = "8:"
             "Folder" = "8:_D95A9A75A195450EAA8CD66DD0FB0CC7"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_523AA8E30AE44D37BB2D393B12F4A7CD"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\belc.dll"
+            "TargetName" = "8:belc.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -38427,26 +38427,6 @@
             "TargetName" = "8:album_background_focus.png"
             "Tag" = "8:"
             "Folder" = "8:_F0B6FB54EF9E4C4BAEC66C63C99C5345"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_53C4EF1AC43046D88803DDDFC1C5341C"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\nju6426.dll"
-            "TargetName" = "8:nju6426.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -39472,26 +39452,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_578DD9AC0C904ABE8B725B3E10803559"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\MT-12232A.dll"
-            "TargetName" = "8:MT-12232A.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_57B06F62085046B5B1A8518297D41BF8"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\mce\\mymusicgenres.xml"
@@ -40058,6 +40018,26 @@
             "TargetName" = "8:nofocus_hp_selectionbar.png"
             "Tag" = "8:"
             "Folder" = "8:_1AAB5CBE521342C5AC5C638830AD41AC"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_59D353CDA8D640B7AF6FA03F77E5F62C"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\noritake_gu7000.dll"
+            "TargetName" = "8:noritake_gu7000.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -41583,6 +41563,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_60247FC0832A4EEC8885837B295139B5"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\lcdh_g15.dll"
+            "TargetName" = "8:lcdh_g15.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_603F6C1AAA1943A5BE9123CCF8579E6C"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\mce\\media\\hover_my radio.png"
@@ -42285,6 +42285,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_63FC0AE7A1A243C1B4A49D239F58EB11"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\lph7508.dll"
+            "TargetName" = "8:lph7508.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_641554C768644956A27AE1F962FC2EA0"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MetalMedia\\media\\DefaultMyradioBigLocked.png"
@@ -42631,26 +42651,6 @@
             "TargetName" = "8:BM_Pictures_focus.png"
             "Tag" = "8:"
             "Folder" = "8:_1AAB5CBE521342C5AC5C638830AD41AC"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_663E39A976E4461D856B9CC90A39C1CC"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\futabavfd.dll"
-            "TargetName" = "8:futabavfd.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -44807,26 +44807,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_70B904C013ED4DE682BB3ED4C17CC716"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\hd61830.dll"
-            "TargetName" = "8:hd61830.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_70DA9C2534254342BD96109C61F4C5A2"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\Razor\\Media\\minimize_disabled.png"
@@ -45527,6 +45507,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7359FAA9940943238D26712C339E66EE"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\noritake_gu3900.dll"
+            "TargetName" = "8:noritake_gu3900.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_73668B5853E3499A8CB2C0008B89F7A2"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\weather\\128x128\\0.png"
@@ -45627,6 +45627,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_739B09CBD33C4FBB90824549DF49835C"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\futabavfd.dll"
+            "TargetName" = "8:futabavfd.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_73CBE14AC1D34D188E6480915204D0F4"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\bar_hor.png"
@@ -45713,26 +45733,6 @@
             "TargetName" = "8:DialogFileInfo.xml"
             "Tag" = "8:"
             "Folder" = "8:_985169F5319B4A4193208F60F14C18A2"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_74650C989906406D9A1345E48C6B1781"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\noritake_tseries.dll"
-            "TargetName" = "8:noritake_tseries.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -48102,6 +48102,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7F07211D54EE422F983ADC3624584542"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\PCF8548.dll"
+            "TargetName" = "8:PCF8548.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7F34E01D1B7642DBB65E9449346BA4C2"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\defaultDVDEmptyBig.png"
@@ -48168,26 +48188,6 @@
             "TargetName" = "8:osd_icon_video_nofocus.png"
             "Tag" = "8:"
             "Folder" = "8:_F0B6FB54EF9E4C4BAEC66C63C99C5345"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7F92D62AF12348349D8F5DA0B529084D"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\belc.dll"
-            "TargetName" = "8:belc.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -48388,26 +48388,6 @@
             "TargetName" = "8:slider_vertical.png"
             "Tag" = "8:"
             "Folder" = "8:_D95A9A75A195450EAA8CD66DD0FB0CC7"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_806047AD522F40E7B2C3702E1651562C"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\iMonVfd.dll"
-            "TargetName" = "8:iMonVfd.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -49404,6 +49384,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_84D6C5A9D82B46279DD42A72761644B8"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\noritake_tseries.dll"
+            "TargetName" = "8:noritake_tseries.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_84E8FA6D84DF47D29D474F26385DF995"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MetalMedia\\media\\Tetris\\block_yellow.png"
@@ -49872,6 +49872,26 @@
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_86FB4170C035454580766A87AFF8B773"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\hd44780.dll"
+            "TargetName" = "8:hd44780.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -50394,6 +50414,26 @@
             "TargetName" = "8:21.png"
             "Tag" = "8:"
             "Folder" = "8:_ACF31979169F467BA4027796744FCBA0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_89537B94D6404D4E88988A5AB806A1DD"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\ba66.dll"
+            "TargetName" = "8:ba66.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -52439,26 +52479,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8FA16139E2854623923AFDB40E3DFA0B"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\m50530s.dll"
-            "TargetName" = "8:m50530s.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8FC2C0B637A4479F9FF2857AD77B9884"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\Razor\\Media\\keyNF.bmp"
@@ -53461,6 +53481,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_93B45FEF6BD54261902D3E4B9B15CE1A"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\sed133x.dll"
+            "TargetName" = "8:sed133x.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_93F4907F2AB24C6183D8EBA5F80FF54C"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\mce\\media\\defaultVideoBig.png"
@@ -53881,12 +53921,52 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_96CF33CF2A81489D87BF69F504C089CF"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\lintec1601.dll"
+            "TargetName" = "8:lintec1601.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_96D329209EF245438030B60F1F11675F"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\Razor\\mytvRecordedInfo.xml"
             "TargetName" = "8:mytvRecordedInfo.xml"
             "Tag" = "8:"
             "Folder" = "8:_7F75BE40BF11424496CA4077B651DA7A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_96ED31434B8C4B28A57AF70110BBCA9A"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\fanomatic.dll"
+            "TargetName" = "8:fanomatic.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -54401,26 +54481,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_994E39208EAD430CA72AE09645B6D749"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\hd44780.dll"
-            "TargetName" = "8:hd44780.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_997D4BCF14E345F8ADDBC2873994D26C"
             {
             "SourcePath" = "8:..\\MPTS.ax"
@@ -54687,6 +54747,26 @@
             "TargetName" = "8:defaultAlbum.png"
             "Tag" = "8:"
             "Folder" = "8:_F0B6FB54EF9E4C4BAEC66C63C99C5345"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9AFFD16EBF334BB5BDD0A34F3AB9CDD5"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\nju6426.dll"
+            "TargetName" = "8:nju6426.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -55678,6 +55758,26 @@
             "TargetName" = "8:mypics.xml"
             "Tag" = "8:"
             "Folder" = "8:_7F75BE40BF11424496CA4077B651DA7A"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9EC60A8A5A304543AF7D74F68F27EBC3"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\bt62005.dll"
+            "TargetName" = "8:bt62005.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -58985,6 +59085,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AB09CEC3D7FF423984AF05007260B698"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\eep_serial.dll"
+            "TargetName" = "8:eep_serial.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AB103F92E17B4C4FB3285FFACED515A3"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\Project X\\mailInfo.xml"
@@ -59071,6 +59191,26 @@
             "TargetName" = "8:check-box.png"
             "Tag" = "8:"
             "Folder" = "8:_F0B6FB54EF9E4C4BAEC66C63C99C5345"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AB56D7E0763E4B81A3A91B563813501A"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\hd61830.dll"
+            "TargetName" = "8:hd61830.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -61153,26 +61293,6 @@
             "TargetName" = "8:ISDNCodes.xml"
             "Tag" = "8:"
             "Folder" = "8:_6A291DBA77BA49F7993B1420AD183252"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B46894A6DF5F4498AD66F654D79F6B13"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\PCF8548.dll"
-            "TargetName" = "8:PCF8548.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -64153,26 +64273,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C0CAF32962D440DA861224812526A6DB"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\ks0108_128x64.dll"
-            "TargetName" = "8:ks0108_128x64.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C1113F31DA7C499081D58D900F86DDFC"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\Razor\\wizard_tvcard_dvbc_scan.xml"
@@ -64713,26 +64813,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C3A32C9A30F84217B61451EE30863958"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\bt62005.dll"
-            "TargetName" = "8:bt62005.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C3B60C3D3DD54A5497D13727933E3AC7"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\BlueTwo\\Media\\osd_back_focus.png"
@@ -64759,26 +64839,6 @@
             "TargetName" = "8:21.png"
             "Tag" = "8:"
             "Folder" = "8:_7D6905F7A787435781EE0A4A810582D0"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C3D8A15C242046E1BE6CB63861A6CB83"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\m50530_24x8.dll"
-            "TargetName" = "8:m50530_24x8.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -65852,26 +65912,6 @@
             "TargetName" = "8:icon_news.png"
             "Tag" = "8:"
             "Folder" = "8:_1AAB5CBE521342C5AC5C638830AD41AC"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C75BEA301D414D98BFDDEF22EDC58C50"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\sed1530.dll"
-            "TargetName" = "8:sed1530.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -67288,6 +67328,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CD5E851EFCC942EF8BAEC4F5068B9AE3"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\HP12542R.dll"
+            "TargetName" = "8:HP12542R.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CD6E4A2A87A749D39ECC392833B9B460"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\mce\\media\\defaultDVDRom.png"
@@ -67394,26 +67454,6 @@
             "TargetName" = "8:mytetris.xml"
             "Tag" = "8:"
             "Folder" = "8:_7708596F8F9440CBB76E212C37BB547C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CDD956CD5E494778823736AE1E35D2F7"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\sed133x_usb_lui.dll"
-            "TargetName" = "8:sed133x_usb_lui.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -68050,26 +68090,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D044888DBF744AF8A941A81E711029E7"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\sed133x.dll"
-            "TargetName" = "8:sed133x.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D045BD21051F439B9DDFBB52739D0852"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\Project X\\videoFullScreen.xml"
@@ -68367,26 +68387,6 @@
             "TargetName" = "8:wizard_remote_control.xml"
             "Tag" = "8:"
             "Folder" = "8:_F197EB8DEA5B4DBBA364C20BBA681BB4"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D195040F8B7D498A9A14B91F0C3AB1B0"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\eep_serial.dll"
-            "TargetName" = "8:eep_serial.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -68767,26 +68767,6 @@
             "TargetName" = "8:check-box.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D292B73157D8466789E7ADD1922101A0"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\sed1520.dll"
-            "TargetName" = "8:sed1520.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -69441,26 +69421,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D4E9648E290E4205AA0E6615B3CF1362"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\noritake_gu_128x32_311.dll"
-            "TargetName" = "8:noritake_gu_128x32_311.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D4EDCC5B319947C4BE201A038564D97A"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\Wizards\\wizard_television.png"
@@ -70058,6 +70018,26 @@
             "TargetName" = "8:myvideoplaylist.xml"
             "Tag" = "8:"
             "Folder" = "8:_F197EB8DEA5B4DBBA364C20BBA681BB4"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D758A042F0C34FA3BA71BAA9EF80B30F"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\slx2016.dll"
+            "TargetName" = "8:slx2016.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -71143,26 +71123,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DC1FF96F30CF4B3D9121550253DC4A38"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\hd44780_4x40.dll"
-            "TargetName" = "8:hd44780_4x40.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DC4BB9D9B19D4E4BAE0EF705501D9686"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MetalMedia\\media\\buttonNF_my plugins.png"
@@ -71503,26 +71463,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DD75D342BDBF4DB8AF32120F4DC52D71"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\t6963c.dll"
-            "TargetName" = "8:t6963c.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DD7CDBEAFCD14CDC9F03419B55BB18A8"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\musicViews.xml"
@@ -71829,6 +71769,26 @@
             "TargetName" = "8:calibrate_bottomright.png"
             "Tag" = "8:"
             "Folder" = "8:_F0B6FB54EF9E4C4BAEC66C63C99C5345"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DEB5E791EAFC4E2ABFE212C97539B315"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\ks0108_128x64.dll"
+            "TargetName" = "8:ks0108_128x64.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -73522,6 +73482,26 @@
             "TargetName" = "8:myrecipies.png"
             "Tag" = "8:"
             "Folder" = "8:_EC9EF7BA9268404C9E4B75A4A588B08F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E6675AFC70DE46E1A8FABB6D8317538E"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\iMonVfd.dll"
+            "TargetName" = "8:iMonVfd.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -77069,6 +77049,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F3EFB888696940768A3475B9E9E24D9F"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\hd44780_4x40.dll"
+            "TargetName" = "8:hd44780_4x40.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F3F2AC3EDE424B4BAF4FDC508898A5D7"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\Project X\\Media\\check-boxNF.png"
@@ -77909,6 +77909,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F891F9FB321E4AA68EBD1E9464BB1841"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\pcd8544.dll"
+            "TargetName" = "8:pcd8544.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F8AC0A7B026F4AF19DFF6F3232BA332A"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\Wizards\\FirstTimeSetup.xml"
@@ -78455,26 +78475,6 @@
             "TargetName" = "8:block_red_glow.png"
             "Tag" = "8:"
             "Folder" = "8:_919E09CEB1AF407998B3787BFA54C449"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FB63259460AB46F9ABD5E98695665F91"
-            {
-            "SourcePath" = "8:..\\..\\..\\mediaportal\\xbmc\\bin\\Release\\plugins\\Process\\LCDDrivers\\pcd8544.dll"
-            "TargetName" = "8:pcd8544.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_8C0C206649D54D8CA3B3737ABE1BF0BB"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
