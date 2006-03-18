@@ -1,1 +1,0 @@
-@if exist calibration*.* del calibration*.*
