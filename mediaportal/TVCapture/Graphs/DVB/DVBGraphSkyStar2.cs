@@ -1079,14 +1079,6 @@ namespace MediaPortal.TV.Recording
             return;
           }
 
-          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  LNBFrequency:{0} MHz", ch.LNBFrequency);
-          hr = _interfaceB2C2TunerCtrl.SetLnbFrequency(ch.LNBKHz);
-          if (hr != 0)
-          {
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetLnbFrequency() failed:0x{0:X}", hr);
-            return;
-          }
-
           int fec = (int)FecType.Fec_Auto;
           Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Fec:{0} {1}", ((FecType)fec), fec);
           hr = _interfaceB2C2TunerCtrl.SetFec(fec);
@@ -1145,6 +1137,15 @@ namespace MediaPortal.TV.Recording
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetDiseqc() failed:0x{0:X}", hr);
             return;
           }
+
+          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  LNBFrequency:{0} MHz", ch.LNBFrequency);
+          hr = _interfaceB2C2TunerCtrl.SetLnbFrequency(ch.LNBKHz);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetLnbFrequency() failed:0x{0:X}", hr);
+            return;
+          }
+
           break;
       }
 
@@ -1155,29 +1156,35 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:could not lock tuner");
         //dump all values:
-        int dummy;
+        int dummy,hr;
 
-        _interfaceB2C2TunerCtrl.GetFrequency(out dummy);
+        hr=_interfaceB2C2TunerCtrl.GetFrequency(out dummy);
         Log.Write("DVBGraphSkyStar2 tuner dump:");
-        Log.Write("DVBGraphSkyStar2    freq:{0} MHz", dummy);
+        Log.Write("DVBGraphSkyStar2    freq:{0} MHz {1:X}", dummy,hr);
 
+        dummy = 0;
         _interfaceB2C2TunerCtrl.GetLnbFrequency(out dummy);
-        Log.Write("DVBGraphSkyStar2    LNB freq:{0} MHz", dummy);
+        Log.Write("DVBGraphSkyStar2    LNB freq:{0} MHz {1:X}", dummy, hr);
 
+        dummy = 0;
         _interfaceB2C2TunerCtrl.GetLnbKHz(out dummy);
-        Log.Write("DVBGraphSkyStar2    LNB kHz:{0}", ((LNBSelectionType)dummy));
+        Log.Write("DVBGraphSkyStar2    LNB kHz:{0} {1:X}", ((LNBSelectionType)dummy), hr);
 
+        dummy = 0;
         _interfaceB2C2TunerCtrl.GetDiseqc(out dummy);
-        Log.Write("DVBGraphSkyStar2    diseqc:{0}", ((DisEqcType)dummy));
+        Log.Write("DVBGraphSkyStar2    diseqc:{0} {1:X}", ((DisEqcType)dummy),hr);
 
+        dummy = 0;
         _interfaceB2C2TunerCtrl.GetFec(out dummy);
-        Log.Write("DVBGraphSkyStar2    fec:{0}", ((FecType)dummy));
+        Log.Write("DVBGraphSkyStar2    fec:{0} {1:X}", ((FecType)dummy),hr);
 
+        dummy = 0;
         _interfaceB2C2TunerCtrl.GetPolarity(out dummy);
-        Log.Write("DVBGraphSkyStar2    polarity:{0}", ((PolarityType)dummy));
+        Log.Write("DVBGraphSkyStar2    polarity:{0} {1:X}", ((PolarityType)dummy),hr);
 
+        dummy = 0;
         _interfaceB2C2TunerCtrl.GetSymbolRate(out dummy);
-        Log.Write("DVBGraphSkyStar2    symbol rate:{0} kHz", dummy);
+        Log.Write("DVBGraphSkyStar2    symbol rate:{0} kHz {1:X}", dummy, hr);
       }
       else
       {
