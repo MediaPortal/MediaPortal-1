@@ -15,6 +15,8 @@ namespace MediaPortal.TV.DiskSpace
   class RecordingImporterWorker
   {
     static bool importing = false;
+    static List<TVChannel> channels = new List<TVChannel>();
+    static List<TVRecorded> recordings = new List<TVRecorded>();
     static public void ImportDvrMsFiles()
     {
       //dont import during recording...
@@ -34,54 +36,18 @@ namespace MediaPortal.TV.DiskSpace
         importing = true;
         //dont import during recording...
         if (Recorder.IsAnyCardRecording()) return;
-        List<TVRecorded> recordings = new List<TVRecorded>();
         TVDatabase.GetRecordedTV(ref recordings);
+        TVDatabase.GetChannels(ref channels);
         for (int i = 0; i < Recorder.Count; i++)
         {
           TVCaptureDevice dev = Recorder.Get(i);
           if (dev == null) continue;
-          try
+          ProcessDirectory(dev.RecordingPath);
+          string[] directories = System.IO.Directory.GetDirectories(dev.RecordingPath, "*", SearchOption.AllDirectories);
+          foreach (string directory in directories)
           {
-            string[] directories = System.IO.Directory.GetDirectories(dev.RecordingPath, "*", SearchOption.AllDirectories);
-            foreach (string directory in directories)
-            {
-              int index = directory.IndexOf("card");
-              if ((index == -1) || ((index != -1) && ((directory.Substring(index - 1, 1) != "\\"))))
-              {
-                string[] files = System.IO.Directory.GetFiles(directory, "*.dvr-ms");
-                foreach (string file in files)
-                {
-                  System.Threading.Thread.Sleep(100);
-                  bool add = true;
-                  foreach (TVRecorded rec in recordings)
-                  {
-                    if (Recorder.IsAnyCardRecording()) return;
-                    if (rec.FileName != null)
-                    {
-                      if (String.Compare(rec.FileName, file, true) == 0)
-                      {
-                        add = false;
-                        break;
-                      }
-                    }
-                  }
-                  if (add)
-                  {
-                    TVRecorded rec = AddFileToTvDatabase(file);
-                    if (rec != null)
-                    {
-                      recordings.Add(rec);
-                    }
-                    System.Threading.Thread.Sleep(100);
-                  }//if (add)
-                }//foreach (string file in files)
-              }//if ((index == -1)
-            }//foreach (string directory in directories)
-          }
-          catch (Exception ex)
-          {
-            Log.Write(ex);
-          }
+            ProcessDirectory(directory);
+          }//foreach (string directory in directories)
         }//for (int i=0; i < Recorder.Count;++i)
 
       }
@@ -93,6 +59,51 @@ namespace MediaPortal.TV.DiskSpace
         importing = false;
       }
     } //static void ImportDvrMsFiles()
+
+
+    static void ProcessDirectory(string directory)
+    {
+      try
+      {
+        int index = directory.IndexOf("card");
+        if ((index == -1) || ((index != -1) && ((directory.Substring(index - 1, 1) != "\\"))))
+        {
+          string[] files = System.IO.Directory.GetFiles(directory, "*.dvr-ms");
+          foreach (string file in files)
+          {
+            System.Threading.Thread.Sleep(100);
+            bool add = true;
+            foreach (TVRecorded rec in recordings)
+            {
+              if (Recorder.IsAnyCardRecording()) return;
+              if (rec.FileName != null)
+              {
+                if (String.Compare(rec.FileName, file, true) == 0)
+                {
+                  add = false;
+                  break;
+                }
+              }
+            }
+            if (add)
+            {
+              TVRecorded rec = AddFileToTvDatabase(file);
+              if (rec != null)
+              {
+                recordings.Add(rec);
+              }
+              System.Threading.Thread.Sleep(100);
+            }//if (add)
+          }//foreach (string file in files)
+        }//if ((index == -1)
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+    }
+
+
 
     static TVRecorded AddFileToTvDatabase(string fileName)
     {
@@ -130,9 +141,26 @@ namespace MediaPortal.TV.DiskSpace
           if (newRec.Channel == null)
           {
             string name = Utils.GetFilename(fileName);
-            string[] parts = name.Split('_');
-            if (parts.Length > 0)
-              newRec.Channel = parts[0];
+            foreach (TVChannel channel in channels)
+            {
+              if (name.Contains(channel.Name))
+              {
+                if ((newRec.Channel!= null) && (newRec.Channel.Length > 0))
+                {
+                  if (newRec.Channel.Length > channel.Name.Length) continue;
+                }
+                newRec.Channel = channel.Name;
+              }
+            }
+            if ((newRec.Channel == null) && (channels.Count > 0))  // still no channel found
+            {
+              newRec.Channel = channels[0].Name;                   // assign the first one to have it in the DB
+            }
+          }
+
+          if (newRec.Title == null || newRec.Title.Length == 0)
+          {
+            newRec.Title = Utils.GetFilename(fileName);  // to have at least one info in the data base about what it is
           }
 
           if (newRec.Channel != null && newRec.Channel.Length > 0)
