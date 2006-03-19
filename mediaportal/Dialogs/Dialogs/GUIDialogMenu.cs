@@ -233,7 +233,10 @@ namespace MediaPortal.Dialogs
           {
             m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
-            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
+            int parentWindowId=GUIWindowManager.ActiveWindow;
+            GUIWindow parentWindow=GUIWindowManager.GetWindow(parentWindowId);
+
+            GUIGraphicsContext.Overlay = parentWindow.IsOverlayAllowed;
             listView.Clear();
 
             for (int i = 0; i < listItems.Count; i++)
