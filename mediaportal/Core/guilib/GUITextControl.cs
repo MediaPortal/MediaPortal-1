@@ -101,7 +101,7 @@ namespace MediaPortal.GUI.Library
 		public override void FinalizeConstruction()
 		{
 			base.FinalizeConstruction ();
-      _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
+      _upDownControl = new GUISpinControl(_controlId, _controlId, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
       _upDownControl.ParentControl = this;
 			_font=GUIFontManager.GetFont(_fontName);
 			if (_property.IndexOf("#")>=0) 
