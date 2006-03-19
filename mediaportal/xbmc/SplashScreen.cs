@@ -146,10 +146,12 @@ namespace MediaPortal
         GUI.Library.Log.Write("Application Version: {0}", strVersion[0]);
         if (strVersion.Length > 1)
         {
-          string date = strVersion[1].Substring(4, 10);
+          string day = strVersion[1].Substring(4, 2);
+          string month = strVersion[1].Substring(7, 2);
+          string year = strVersion[1].Substring(10, 4);
           string time = strVersion[1].Substring(15, 5);
-          GUI.Library.Log.Write("CVS Version: {0} / {1}", date, time);
-          cvsLabel.Text = string.Format("CVS Build {0}-{1}", date, time);
+          GUI.Library.Log.Write("CVS Version: {0}-{1}-{2} / {3}", month, day, year, time);
+          cvsLabel.Text = string.Format("CVS Build {0}-{1}-{2}/{3}", month, day, year, time);
         }
         Update();
       }
