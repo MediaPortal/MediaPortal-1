@@ -2933,6 +2933,7 @@ namespace MediaPortal.Music.Database
                         if (ext == ".pls") continue;
                         if (ext == ".wpl") continue;
                         if (ext == ".b4s") continue;
+                        if ((File.GetAttributes(files[i]) & FileAttributes.Hidden) == FileAttributes.Hidden) continue;
                         availableFiles.Add(files[i]);
                         totalFiles++;
                     }
