@@ -69,7 +69,7 @@ namespace MediaPortal.Player
 					m_bInternal   =xmlreader.GetValueAsBool("radio","internal",true);
 					strPlayerFile =xmlreader.GetValueAsString("radio","player","");
 					strPlayerArgs =xmlreader.GetValueAsString("radio","args","f %MHZ%");
-          strTunerType  =xmlreader.GetValueAsString("radio","radiotuner","Antenna");
+          strTunerType  =xmlreader.GetValueAsString("radio","tuner","Antenna");
           iTunerCountry =xmlreader.GetValueAsInt("capture","country",31);
           m_strRadioDevice=xmlreader.GetValueAsString("radio","device","");
           m_strAudioDevice=xmlreader.GetValueAsString("radio","audiodevice","");
