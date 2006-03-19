@@ -30,6 +30,7 @@ using MediaPortal.Util;
 using MediaPortal.TV.Recording;
 using MediaPortal.TV.Database;
 using MediaPortal.Player;
+using MediaPortal.Playlists;
 using MediaPortal.Ripper;
 namespace MediaPortal.PowerScheduler
 {
@@ -286,28 +287,18 @@ namespace MediaPortal.PowerScheduler
 
         if (m_iActiveWindow == (int)GUIWindow.Window.WINDOW_HOME)
         {
+          if (m_bExtensiveLog) Log.Write(" PowerScheduler: ShutdownManager - in HOME Window ");
           bool enableShutdown = true;
-          //are we playing something
-          if (g_Player.Playing)
+          //are we playing something?
+          if ((g_Player.Playing && g_Player.IsRadio) ||  //are we playing internet radio?
+              (Recorder.IsRadio())                   ||  //are we playing analog or digital radio?    
+              (Recorder.IsRecording()) )                 //are we recording something? 
           {
-            //yes, if its not TV
-            //or its a recorded tv
-            if (!g_Player.IsTV || (g_Player.IsTV && !g_Player.IsTimeShifting))
-            {
-              // then disable shutdown
-              ResetShutdownTimer(0);
-              enableShutdown = false;
-              m_iActiveWindow = -1; //check again next time
-            }
-
-            //if (Recorder.IsRadio())
-            if (g_Player.IsRadio || g_Player.IsMusic || Recorder.IsRadio())
-            {
-              // then disable shutdown
-              ResetShutdownTimer(0);
-              enableShutdown = false;
-              m_iActiveWindow = -1; //check again next time
-            }
+            //yes -> then disable shutdown
+            if (m_bExtensiveLog) Log.Write(" PowerScheduler: shutdown disabled - we are playing something");
+            ResetShutdownTimer(0);
+            enableShutdown = false;
+            m_iActiveWindow = -1; //check again next time
           }
 
           if (!m_bShutdownEnabled && enableShutdown)
