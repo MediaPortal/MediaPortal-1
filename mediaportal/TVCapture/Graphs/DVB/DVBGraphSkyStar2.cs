@@ -1156,7 +1156,7 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:could not lock tuner");
         //dump all values:
-        int dummy,hr;
+        int dummy;
 
         hr=_interfaceB2C2TunerCtrl.GetFrequency(out dummy);
         Log.Write("DVBGraphSkyStar2 tuner dump:");
