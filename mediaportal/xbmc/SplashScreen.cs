@@ -112,6 +112,7 @@ namespace MediaPortal
     {
       private Panel panel1;
       private Label versionLabel;
+      private Label cvsLabel;
       private Label informationLabel;
       private PictureBox pictureBox1;
 
@@ -130,7 +131,6 @@ namespace MediaPortal
         //
         // TODO: Add any constructor code after InitializeComponent call
         //
-        SetVersion(System.Windows.Forms.Application.ProductVersion);
       }
 
       public void SetInformation(string information)
@@ -141,7 +141,16 @@ namespace MediaPortal
 
       public void SetVersion(string version)
       {
-        versionLabel.Text = version;
+        string[] strVersion = version.Split('$');
+        versionLabel.Text = strVersion[0];
+        GUI.Library.Log.Write("Application Version: {0}", strVersion[0]);
+        if (strVersion.Length > 1)
+        {
+          string date = strVersion[1].Substring(4, 10);
+          string time = strVersion[1].Substring(15, 5);
+          GUI.Library.Log.Write("CVS Version: {0} / {1}", date, time);
+          cvsLabel.Text = string.Format("CVS Build {0}-{1}", date, time);
+        }
         Update();
       }
 
@@ -190,6 +199,7 @@ namespace MediaPortal
         this.panel1 = new System.Windows.Forms.Panel();
         this.informationLabel = new System.Windows.Forms.Label();
         this.versionLabel = new System.Windows.Forms.Label();
+        this.cvsLabel = new System.Windows.Forms.Label();
         this.pictureBox1 = new System.Windows.Forms.PictureBox();
         this.panel1.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -201,6 +211,7 @@ namespace MediaPortal
         this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
         this.panel1.Controls.Add(this.informationLabel);
         this.panel1.Controls.Add(this.versionLabel);
+        this.panel1.Controls.Add(this.cvsLabel);
         this.panel1.Controls.Add(this.pictureBox1);
         this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
         this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -235,12 +246,29 @@ namespace MediaPortal
         this.versionLabel.Font =
           new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
                                   ((byte)(0)));
-        this.versionLabel.Location = new System.Drawing.Point(280, 79);
+        this.versionLabel.Location = new System.Drawing.Point(262, 79);
         this.versionLabel.Name = "versionLabel";
-        this.versionLabel.Size = new System.Drawing.Size(85, 16);
+        this.versionLabel.Size = new System.Drawing.Size(100, 16);
         this.versionLabel.TabIndex = 5;
         this.versionLabel.Text = "Version";
         this.versionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+        // 
+        // cvsLabel
+        // 
+        this.cvsLabel.Anchor =
+          ((System.Windows.Forms.AnchorStyles)
+           (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+             | System.Windows.Forms.AnchorStyles.Right)));
+        this.cvsLabel.BackColor = System.Drawing.Color.Transparent;
+        this.cvsLabel.Font =
+          new System.Drawing.Font("Arial", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point,
+                                  ((byte)(0)));
+        this.cvsLabel.Location = new System.Drawing.Point(30, 79);
+        this.cvsLabel.Name = "cvsLabel";
+        this.cvsLabel.Size = new System.Drawing.Size(180, 16);
+        this.cvsLabel.TabIndex = 5;
+        this.cvsLabel.Text = "";
+        this.cvsLabel.TextAlign = System.Drawing.ContentAlignment.TopLeft;
         // 
         // pictureBox1
         // 
