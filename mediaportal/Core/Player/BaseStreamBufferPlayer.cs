@@ -1052,6 +1052,7 @@ namespace MediaPortal.Player
     }
     void UpdateDuration()
     {
+        if (_mediaSeeking == null) return;
       //GetDuration(): Returns (content start – content stop). 
       //content start: The time of the earliest available content. 
       //               For live content, the value starts at zero and increases whenever the 

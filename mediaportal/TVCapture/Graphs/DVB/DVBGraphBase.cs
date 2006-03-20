@@ -658,7 +658,7 @@ namespace MediaPortal.TV.Recording
         }
 
         // and set it up
-        hr = _videoWindowInterface.put_Owner(GUIGraphicsContext.form.Handle);
+        hr = _videoWindowInterface.put_Owner(GUIGraphicsContext.ActiveForm);
         if (hr != 0)
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph: FAILED:set Video window:0x{0:X}", hr);
 
@@ -752,7 +752,7 @@ namespace MediaPortal.TV.Recording
     }
 
     #endregion
-    #region Start/Stop Timeshifting
+#region Start/Stop Timeshifting
     /// <summary>
     /// Starts timeshifting the TV channel and stores the timeshifting
     /// files in the specified filename
@@ -877,7 +877,7 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-    #region overrides
+#region overrides
     /// <summary>
     /// Callback from GUIGraphicsContext. Will get called when the video window position or width/height changes
     /// </summary>
@@ -983,7 +983,7 @@ namespace MediaPortal.TV.Recording
       return false;
     }
 
-    #region Stream-Audio handling
+#region Stream-Audio handling
     public int GetAudioLanguage()
     {
       return _currentTuningObject.AudioPid;
@@ -1214,7 +1214,7 @@ namespace MediaPortal.TV.Recording
 
     #endregion
 
-    #region graph building helper functions
+#region graph building helper functions
     protected void AddPreferredCodecs(bool audio, bool video)
     {
       // add preferred video & audio codecs
@@ -1563,7 +1563,7 @@ namespace MediaPortal.TV.Recording
       if ((hr < 0) || (pinEnum == null))
         return false;
 
-      #region Attempt to connect preferred output pin first
+#region Attempt to connect preferred output pin first
       if (preferredOutputPin > 0)
       {
         IPin[] outPin = new IPin[1];
@@ -1704,7 +1704,7 @@ namespace MediaPortal.TV.Recording
 
     #endregion
 
-    #region process helper functions
+#region process helper functions
     // send PMT to firedtv device
     protected bool SendPMT()
     {
@@ -2601,7 +2601,7 @@ namespace MediaPortal.TV.Recording
           } break;
       }	//switch (_networkType)
     }
-    #region Tuning
+#region Tuning
     /// <summary>
     /// Switches / tunes to another TV channel
     /// </summary>
@@ -2737,13 +2737,13 @@ namespace MediaPortal.TV.Recording
     }
 
 
-    #region TuneRequest
+#region TuneRequest
     protected virtual void SubmitTuneRequest(DVBChannel ch)
     {
     }
 
     #endregion
-    #region AutoTuning
+#region AutoTuning
     /// <summary>
     /// Tune to a specific channel
     /// </summary>
@@ -3525,7 +3525,7 @@ namespace MediaPortal.TV.Recording
 
     #endregion
 
-    #region Radio
+#region Radio
     protected void GetRadioChannelFromDatabase(RadioStation channel)
     {
 
@@ -3822,7 +3822,7 @@ namespace MediaPortal.TV.Recording
     #endregion
 
 
-    #region demuxer callbacks
+#region demuxer callbacks
     protected bool m_streamDemuxer_AudioHasChanged(MediaPortal.TV.Recording.DVBDemuxer.AudioHeader audioFormat)
     {
       return false;
