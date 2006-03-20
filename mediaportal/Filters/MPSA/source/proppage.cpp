@@ -338,7 +338,7 @@ HRESULT MPDSTProperties::OnApplyChanges()
 // Fill the list box with an enumeration of the media type
 //
 void MPDSTProperties::FillListBox()
-{
+{/*
     TCHAR szBuffer[255];
     int Loop = 0, wextent = 0;
     SIZE extent={0};
@@ -390,7 +390,7 @@ void MPDSTProperties::FillListBox()
     // if the filter is in a running state, disable the list box and allow
     // no input.
     //
-
+*/
 } // FillListBox
 
 

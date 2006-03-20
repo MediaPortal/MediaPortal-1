@@ -109,7 +109,7 @@ ULONG Sections::GetCRC32(BYTE *pData,WORD len)
 }
 Sections::Sections()
 {
-	for (int i=0; i < 10;++i)
+	for (int i=0; i < MAX_PAT_TABLES;++i)
 	{
 		m_patTSID[i]=-1;
 		m_patSectionLen[i]=-1;
@@ -413,7 +413,8 @@ int Sections::decodeSDT(BYTE *buf,ChannelInfo ch[],int channels, int len)
 			//
 			if(channel==-1)
 			{
-				Log("sdt: channel not found for program:%d", service_id);
+				return -1;
+				//Log("sdt: channel not found for program:%d", service_id);
 			}
 
 			while (len2 > 0)
@@ -549,6 +550,8 @@ bool Sections::IsNewPat(BYTE *pData, int len)
 }
 void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int len)
 {
+	if (m_patsFound>=MAX_PAT_TABLES) return;
+	if ((*channelCount)>=500) return;
 	try
 	{
 		int table_id = pData[0];
@@ -571,6 +574,7 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 		m_patTSID[m_patsFound]=transport_stream_id;
 		m_patSectionLen[m_patsFound]=section_length;
 		int channelOffset=*channelCount;
+		if (channelOffset>500) return;
 
 		Log("Decode pat:0x%x len:0x%x tsid:0x%x version:0x%x (%d/%d) channels:%d",
 			table_id,section_length,transport_stream_id,version_number,section_number,last_section_number,(*channelCount));
@@ -591,7 +595,10 @@ void Sections::decodePAT(BYTE *pData,ChannelInfo chInfo[],int *channelCount, int
 			if(ch.ProgrammPMTPID>0x12)
 			{
 				chInfo[channelOffset+pmtcount]=ch;
+
 				pmtcount++;
+				if (channelOffset+pmtcount>500)
+					break;
 			}
 			if(i>254)
 				break;
@@ -782,7 +789,7 @@ HRESULT Sections::ParseAudioHeader(BYTE *data,AudioHeader *head)
 void Sections::ResetPAT()
 {
 	Log("sections::Reset");
-	for (int i=0; i < 10;++i)
+	for (int i=0; i < MAX_PAT_TABLES;++i)
 	{
 		m_patTSID[i]=-1;
 		m_patSectionLen[i]=-1;
@@ -945,8 +952,8 @@ void  Sections::decodeNITTable(byte* buf,ChannelInfo *channels, int channelCount
 			}
 		}
 		
-		Log("NIT: terrestial:%d satellite:%d cable:%d LCN:%d",
-			m_nit.terrestialNIT.size(),m_nit.satteliteNIT.size(),m_nit.cableNIT.size(),m_nit.lcnNIT.size());
+		//Log("NIT: terrestial:%d satellite:%d cable:%d LCN:%d",
+		//	m_nit.terrestialNIT.size(),m_nit.satteliteNIT.size(),m_nit.cableNIT.size(),m_nit.lcnNIT.size());
 	}
 	catch(...)
 	{

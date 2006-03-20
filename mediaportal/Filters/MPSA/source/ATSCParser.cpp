@@ -700,6 +700,7 @@ int ATSCParser::GetEPGCount()
 	{
 		Dump("unhandled exception in ATSCParser::GetEPGCount()");
 	}
+	return 0;
 }
 void ATSCParser::GetEPGTitle(WORD no, WORD* source_id, ULONG* starttime, WORD* length_in_secs, char** title, char** description)
 {

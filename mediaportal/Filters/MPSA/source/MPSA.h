@@ -256,7 +256,7 @@ public:
 	HRESULT NotifyFinished(int EVENT);
 	Sections*				m_pSections;
 	SplitterSetup*			m_pDemuxer;
-	ChannelInfo				m_patTable[255];
+	ChannelInfo				m_patTable[512];
 	int						m_patChannelsCount;
 	ULONG					m_pmtGrabProgNum;
 	BYTE					m_pmtGrabData[4096];

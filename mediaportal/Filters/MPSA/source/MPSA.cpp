@@ -354,8 +354,8 @@ CStreamAnalyzer::CStreamAnalyzer(LPUNKNOWN pUnk, HRESULT *phr) :
 	m_patChannelsCount(0),m_pmtGrabProgNum(0),
 	m_currentPMTLen(0)
 {
-	::DeleteFile("mpsa.log");
-	Log("----mpsa::Initialize MPSA v1.09 ----");
+	//::DeleteFile("mpsa.log");
+	Log("----mpsa::Initialize MPSA v1.10 ----");
 
 	m_pCallback=NULL;
 	m_bDecodeATSC=false;
@@ -540,7 +540,9 @@ STDMETHODIMP CStreamAnalyzer::ResetPids()
 }
 HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 {
-	Log("mpsa:process");
+	if (pbData==NULL) return S_OK;
+	if (len <2) return S_OK;
+	//Log("mpsa:process");
 	try
 	{
 		if (m_bReset)
@@ -620,8 +622,8 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		if(pbData[0]==0x02)// pmt
 		{
 			ULONG prgNumber=(pbData[3]<<8)+pbData[4];
-			Log("pmt prog:%x", prgNumber);
-			for(int n=0;n<m_patChannelsCount;n++)
+			//Log("pmt prog:%x", prgNumber);
+			for(int n=0;n<m_patChannelsCount && n < 512;n++)
 			{
 				if(m_patTable[n].ProgrammNumber==prgNumber )
 				{
@@ -661,7 +663,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 
 		if(pbData[0]==0x00)// pat
 		{
-			Log("PAT");
+			//Log("PAT");
 			// we need to check if we received a new PAT
 			// reason, after submitting a tune request (zap to another channel) we might still
 			// receive the old PAT for a couple of msec until the tuner has
@@ -687,7 +689,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 					m_pSections->decodePAT(pbData,m_patTable,&m_patChannelsCount,len);
 					Log("mpsa::PAT decoded and found %d channels, map pids", m_patChannelsCount);
 					int pids[512];
-					for(int n=0;n<m_patChannelsCount;n++)
+					for(int n=0;n<m_patChannelsCount && n < 512;n++)
 					{
 						pids[n]=m_patTable[n].ProgrammPMTPID;
 					}
@@ -707,7 +709,7 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		{
 			try
 			{
-				Log("mpsa::decode SDT");
+				//Log("mpsa::decode SDT");
 				if (m_patChannelsCount>0)
 				{
 					m_pSections->decodeSDT(pbData,m_patTable,m_patChannelsCount,len);
@@ -721,12 +723,12 @@ HRESULT CStreamAnalyzer::Process(BYTE *pbData,long len)
 		}
 		if (pbData[0]==0x40) //NIT
 		{
-			Log("mpsa::decode NIT");
+			//Log("mpsa::decode NIT");
 			try
 			{
 				if (m_patChannelsCount>0)
 				{
-					m_pSections->decodeNITTable(pbData,m_patTable,m_patChannelsCount);
+					//m_pSections->decodeNITTable(pbData,m_patTable,m_patChannelsCount);
 				}
 			}
 			catch(...)

@@ -10,7 +10,7 @@
 #include <vector>
 #include <string>
 using namespace std;
-
+#define MAX_PAT_TABLES 10
 //
 // nit structs
 typedef  struct stNITLCN
@@ -235,9 +235,9 @@ public:
 
 private:
 	int		m_patsFound;
-	int     m_patTableVersion[10];
-	int     m_patTSID[10];
-	int     m_patSectionLen[10];
+	int     m_patTableVersion[MAX_PAT_TABLES];
+	int     m_patTSID[MAX_PAT_TABLES];
+	int     m_patSectionLen[MAX_PAT_TABLES];
 	
 	DVBNetworkInfo m_nit;
 
