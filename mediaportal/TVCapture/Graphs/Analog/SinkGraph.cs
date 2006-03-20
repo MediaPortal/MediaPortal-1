@@ -1077,6 +1077,7 @@ namespace MediaPortal.TV.Recording
         {
           //doesn't exists
           tvChan = new TVChannel();
+          tvChan.Frequency = VideoFrequency();
           tvChan.Scrambled = false;
           //then add a new channel to the database
           tvChan.Name = GetTeletextChannelName();

@@ -78,6 +78,7 @@ namespace MediaPortal.Configuration.Sections
     public Wizard_AnalogTV()
       : this("Analog TV")
     {
+      CheckForIllegalCrossThreadCalls = false;
     }
 
     public Wizard_AnalogTV(string name)
@@ -87,6 +88,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // TODO: Add any initialization after the InitializeComponent call
+      CheckForIllegalCrossThreadCalls = false;
     }
 
 
