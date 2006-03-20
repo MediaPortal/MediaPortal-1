@@ -797,7 +797,6 @@ namespace MediaPortal.TV.Recording
     /// </returns>
     public bool SignalPresent()
     {
-      if (_graphState != State.Radio && _graphState != State.Recording && _graphState != State.TimeShifting && _graphState != State.Viewing) return false;
       if (_tvTunerInterface == null) return false;
       if (_channelNumber >= (int)ExternalInputs.svhs) return true;
       AMTunerSignalStrength strength;
@@ -807,7 +806,6 @@ namespace MediaPortal.TV.Recording
 
     public int SignalQuality()
     {
-      if (_graphState != State.Radio && _graphState != State.Recording && _graphState != State.TimeShifting && _graphState != State.Viewing) return 1;
       if (_tvTunerInterface == null) return 1;
       if (_channelNumber >= (int)ExternalInputs.svhs) return 100;
       AMTunerSignalStrength strength;
@@ -818,7 +816,6 @@ namespace MediaPortal.TV.Recording
 
     public int SignalStrength()
     {
-      if (_graphState != State.Radio && _graphState != State.Recording && _graphState != State.TimeShifting && _graphState != State.Viewing) return 1;
       if (_tvTunerInterface == null) return 1;
       if (_channelNumber >= (int)ExternalInputs.svhs) return 100;
       AMTunerSignalStrength strength;
@@ -833,8 +830,6 @@ namespace MediaPortal.TV.Recording
     /// <returns>video frequency in Hz </returns>
     public long VideoFrequency()
     {
-
-      if (_graphState != State.Recording && _graphState != State.TimeShifting && _graphState != State.Viewing) return 0;
       if (_tvTunerInterface == null) return 0;
       int lFreq;
       _tvTunerInterface.get_VideoFrequency(out lFreq);
