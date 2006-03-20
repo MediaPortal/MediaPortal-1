@@ -640,153 +640,153 @@ namespace MediaPortal.Configuration.Sections
     {
       if (isDirty == true)
       {
-          int countryCode = 31;
-          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-          {
-              countryCode = xmlreader.GetValueAsInt("capture", "country", 31);
-          }
+        int countryCode = 31;
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        {
+          countryCode = xmlreader.GetValueAsInt("capture", "country", 31);
+        }
 
 
-          RegistryKey registryKey = Registry.LocalMachine;
+        RegistryKey registryKey = Registry.LocalMachine;
 
-          string[] registryLocations = new string[] { String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-1", countryCode),
+        string[] registryLocations = new string[] { String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-1", countryCode),
 																  String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-0", countryCode),
 																  String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-1"),
 																  String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-0")
 															  };
 
-          //
-          // Start by removing any old tv channels from the database and from the registry.
-          // Information stored in the registry is the channel frequency.
-          //
-          ArrayList channels = new ArrayList();
-          TVDatabase.GetChannels(ref channels);
+        //
+        // Start by removing any old tv channels from the database and from the registry.
+        // Information stored in the registry is the channel frequency.
+        //
+        ArrayList channels = new ArrayList();
+        TVDatabase.GetChannels(ref channels);
 
-          if (channels != null && channels.Count > 0)
+        if (channels != null && channels.Count > 0)
+        {
+          foreach (MediaPortal.TV.Database.TVChannel channel in channels)
           {
-            foreach (MediaPortal.TV.Database.TVChannel channel in channels)
+            bool found = false;
+            foreach (ListViewItem listItem in channelsListView.Items)
             {
-              bool found = false;
-              foreach (ListViewItem listItem in channelsListView.Items)
+              TelevisionChannel tvChannel = listItem.Tag as TelevisionChannel;
+              if (channel.Name.ToLower() == tvChannel.Name.ToLower())
               {
-                TelevisionChannel tvChannel = listItem.Tag as TelevisionChannel;
-                if (channel.Name.ToLower() == tvChannel.Name.ToLower())
-                {
-                  found = true;
-                  break;
-                }
+                found = true;
+                break;
               }
-              if (!found)
-                TVDatabase.RemoveChannel(channel.Name);
             }
-
-            //
-            // Remove channel frequencies from the registry
-            //
-            for (int index = 0; index < registryLocations.Length; index++)
-            {
-              registryKey = Registry.LocalMachine;
-              registryKey = registryKey.CreateSubKey(registryLocations[index]);
-
-              for (int channelIndex = 0; channelIndex < 200; channelIndex++)
-              {
-                registryKey.DeleteValue(channelIndex.ToString(), false);
-              }
-
-              registryKey.Close();
-            }
+            if (!found)
+              TVDatabase.RemoveChannel(channel.Name);
           }
 
           //
-          // Add current channels
-          //
-          TVDatabase.GetChannels(ref channels);
-          foreach (ListViewItem listItem in channelsListView.Items)
-          {
-            MediaPortal.TV.Database.TVChannel channel = new MediaPortal.TV.Database.TVChannel();
-            TelevisionChannel tvChannel = listItem.Tag as TelevisionChannel;
-
-            if (tvChannel != null)
-            {
-              channel.Name = tvChannel.Name;
-
-              //does channel already exists in database?
-              bool exists = false;
-              foreach (TVChannel chan in channels)
-              {
-                if (String.Compare(chan.Name, channel.Name, true) == 0)
-                {
-                  exists = true;
-                  channel = chan.Clone();
-                  break;
-                }
-              }
-              channel.Number = tvChannel.Channel;
-              channel.VisibleInGuide = tvChannel.VisibleInGuide;
-              channel.Country = tvChannel.Country;
-              channel.ID = tvChannel.ID;
-
-              //
-              // Calculate frequency
-              //
-              if (tvChannel.Frequency.Herz < 1000)
-                tvChannel.Frequency.Herz *= 1000000L;
-
-              channel.Frequency = tvChannel.Frequency.Herz;
-
-              channel.External = tvChannel.External;
-              channel.ExternalTunerChannel = tvChannel.ExternalTunerChannel;
-              channel.TVStandard = tvChannel.standard;
-              channel.Scrambled = tvChannel.Scrambled;
-
-              if (exists)
-              {
-                TVDatabase.UpdateChannel(channel, listItem.Index);
-              }
-              else
-              {
-                TVDatabase.AddChannel(channel);
-
-                //
-                // Set the sort order
-                //
-                TVDatabase.SetChannelSort(channel.Name, listItem.Index);
-              }
-            }
-          }
-
-          //
-          // Add frequencies to the registry
+          // Remove channel frequencies from the registry
           //
           for (int index = 0; index < registryLocations.Length; index++)
           {
             registryKey = Registry.LocalMachine;
             registryKey = registryKey.CreateSubKey(registryLocations[index]);
 
-            foreach (ListViewItem listItem in channelsListView.Items)
+            for (int channelIndex = 0; channelIndex < 200; channelIndex++)
             {
-              TelevisionChannel tvChannel = listItem.Tag as TelevisionChannel;
-
-              if (tvChannel != null)
-              {
-                //
-                // Don't add frequency to the registry if it has no frequency or if we have the predefined
-                // channels for Composite and SVIDEO
-                //
-                if (tvChannel.Frequency.Herz > 0 &&
-                  tvChannel.Channel != (int)ExternalInputs.svhs &&
-                  tvChannel.Channel != (int)ExternalInputs.cvbs1 &&
-                  tvChannel.Channel != (int)ExternalInputs.cvbs2 &&
-                  tvChannel.Channel != (int)ExternalInputs.rgb)
-                {
-                  registryKey.SetValue(tvChannel.Channel.ToString(), (int)tvChannel.Frequency.Herz);
-                }
-              }
+              registryKey.DeleteValue(channelIndex.ToString(), false);
             }
 
             registryKey.Close();
           }
-        
+        }
+
+        //
+        // Add current channels
+        //
+        TVDatabase.GetChannels(ref channels);
+        foreach (ListViewItem listItem in channelsListView.Items)
+        {
+          MediaPortal.TV.Database.TVChannel channel = new MediaPortal.TV.Database.TVChannel();
+          TelevisionChannel tvChannel = listItem.Tag as TelevisionChannel;
+
+          if (tvChannel != null)
+          {
+            channel.Name = tvChannel.Name;
+
+            //does channel already exists in database?
+            bool exists = false;
+            foreach (TVChannel chan in channels)
+            {
+              if (String.Compare(chan.Name, channel.Name, true) == 0)
+              {
+                exists = true;
+                channel = chan.Clone();
+                break;
+              }
+            }
+            channel.Number = tvChannel.Channel;
+            channel.VisibleInGuide = tvChannel.VisibleInGuide;
+            channel.Country = tvChannel.Country;
+            channel.ID = tvChannel.ID;
+
+            //
+            // Calculate frequency
+            //
+            if (tvChannel.Frequency.Herz < 1000)
+              tvChannel.Frequency.Herz *= 1000000L;
+
+            channel.Frequency = tvChannel.Frequency.Herz;
+
+            channel.External = tvChannel.External;
+            channel.ExternalTunerChannel = tvChannel.ExternalTunerChannel;
+            channel.TVStandard = tvChannel.standard;
+            channel.Scrambled = tvChannel.Scrambled;
+
+            if (exists)
+            {
+              TVDatabase.UpdateChannel(channel, listItem.Index);
+            }
+            else
+            {
+              TVDatabase.AddChannel(channel);
+
+              //
+              // Set the sort order
+              //
+              TVDatabase.SetChannelSort(channel.Name, listItem.Index);
+            }
+          }
+        }
+
+        //
+        // Add frequencies to the registry
+        //
+        for (int index = 0; index < registryLocations.Length; index++)
+        {
+          registryKey = Registry.LocalMachine;
+          registryKey = registryKey.CreateSubKey(registryLocations[index]);
+
+          foreach (ListViewItem listItem in channelsListView.Items)
+          {
+            TelevisionChannel tvChannel = listItem.Tag as TelevisionChannel;
+
+            if (tvChannel != null)
+            {
+              //
+              // Don't add frequency to the registry if it has no frequency or if we have the predefined
+              // channels for Composite and SVIDEO
+              //
+              if (tvChannel.Frequency.Herz > 0 &&
+                tvChannel.Channel != (int)ExternalInputs.svhs &&
+                tvChannel.Channel != (int)ExternalInputs.cvbs1 &&
+                tvChannel.Channel != (int)ExternalInputs.cvbs2 &&
+                tvChannel.Channel != (int)ExternalInputs.rgb)
+              {
+                registryKey.SetValue(tvChannel.Channel.ToString(), (int)tvChannel.Frequency.Herz);
+              }
+            }
+          }
+
+          registryKey.Close();
+        }
+
       }
     }
 
@@ -1236,6 +1236,7 @@ namespace MediaPortal.Configuration.Sections
             channels.SetValue(listItem.Index.ToString(), "INDEX", listItem.Index.ToString());
 
             //Channel data
+
             channels.SetValueAsBool(listItem.Index.ToString(), "Scrambled", Selected_Chan.Scrambled);
             channels.SetValue(listItem.Index.ToString(), "ID", Selected_Chan.ID.ToString());
             channels.SetValue(listItem.Index.ToString(), "Number", Selected_Chan.Channel.ToString());
@@ -1243,7 +1244,7 @@ namespace MediaPortal.Configuration.Sections
             channels.SetValue(listItem.Index.ToString(), "Country", Selected_Chan.Country.ToString());
             channels.SetValueAsBool(listItem.Index.ToString(), "External", Selected_Chan.External);
             channels.SetValue(listItem.Index.ToString(), "External Tuner Channel", Selected_Chan.ExternalTunerChannel.ToString());
-            channels.SetValue(listItem.Index.ToString(), "Frequency", Selected_Chan.Frequency.ToString());
+            channels.SetValue(listItem.Index.ToString(), "Frequency", Selected_Chan.Frequency.Herz.ToString());
             channels.SetValue(listItem.Index.ToString(), "Analog Standard Index", Selected_Chan.standard.ToString());
             channels.SetValueAsBool(listItem.Index.ToString(), "Visible in Guide", Selected_Chan.VisibleInGuide);
             if (Selected_Chan.Channel >= 0)
@@ -1254,12 +1255,15 @@ namespace MediaPortal.Configuration.Sections
               string audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3;
               bool HasEITPresentFollow, HasEITSchedule;
               //DVB-T
-              TVDatabase.GetDVBTTuneRequest(Selected_Chan.ID, out provider, out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
+              TVDatabase.GetDVBTTuneRequest(Selected_Chan.ID, out provider, out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth,
+                                            out audio1, out audio2, out audio3, out ac3Pid,
+                                            out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3,
+                                            out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
+              channels.SetValue(listItem.Index.ToString(), "DVBTProvider", provider);
               channels.SetValue(listItem.Index.ToString(), "DVBTFreq", freq.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBTONID", ONID.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBTTSID", TSID.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBTSID", SID.ToString());
-              channels.SetValue(listItem.Index.ToString(), "DVBTProvider", provider);
               channels.SetValue(listItem.Index.ToString(), "DVBTAudioPid", audioPid.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBTVideoPid", videoPid.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBTTeletextPid", teletextPid.ToString());
@@ -1269,24 +1273,27 @@ namespace MediaPortal.Configuration.Sections
               channels.SetValue(listItem.Index.ToString(), "DVBTAudio2Pid", audio2.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBTAudio3Pid", audio3.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBTAC3Pid", ac3Pid.ToString());
-              channels.SetValue(listItem.Index.ToString(), "DVBTPCRPid", pcrPid.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBTAudioLanguage", audioLanguage);
               channels.SetValue(listItem.Index.ToString(), "DVBTAudioLanguage1", audioLanguage1);
               channels.SetValue(listItem.Index.ToString(), "DVBTAudioLanguage2", audioLanguage2);
               channels.SetValue(listItem.Index.ToString(), "DVBTAudioLanguage3", audioLanguage3);
               channels.SetValueAsBool(listItem.Index.ToString(), "DVBTHasEITPresentFollow", HasEITPresentFollow);
               channels.SetValueAsBool(listItem.Index.ToString(), "DVBTHasEITSchedule", HasEITSchedule);
+              channels.SetValue(listItem.Index.ToString(), "DVBTPCRPid", pcrPid.ToString());
 
               //DVB-C
-              TVDatabase.GetDVBCTuneRequest(Selected_Chan.ID, out provider, out freq, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
+              TVDatabase.GetDVBCTuneRequest(Selected_Chan.ID, out provider, out freq, out symbolrate, out innerFec, out modulation,
+                                            out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid,
+                                            out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1,
+                                            out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
+              channels.SetValue(listItem.Index.ToString(), "DVBCProvider", provider);
               channels.SetValue(listItem.Index.ToString(), "DVBCFreq", freq.ToString());
-              channels.SetValue(listItem.Index.ToString(), "DVBCONID", ONID.ToString());
-              channels.SetValue(listItem.Index.ToString(), "DVBCTSID", TSID.ToString());
-              channels.SetValue(listItem.Index.ToString(), "DVBCSID", SID.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBCSR", symbolrate.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBCInnerFeq", innerFec.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBCModulation", modulation.ToString());
-              channels.SetValue(listItem.Index.ToString(), "DVBCProvider", provider);
+              channels.SetValue(listItem.Index.ToString(), "DVBCONID", ONID.ToString());
+              channels.SetValue(listItem.Index.ToString(), "DVBCTSID", TSID.ToString());
+              channels.SetValue(listItem.Index.ToString(), "DVBCSID", SID.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBCAudioPid", audioPid.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBCVideoPid", videoPid.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBCTeletextPid", teletextPid.ToString());
@@ -1296,13 +1303,13 @@ namespace MediaPortal.Configuration.Sections
               channels.SetValue(listItem.Index.ToString(), "DVBCAudio2Pid", audio2.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBCAudio3Pid", audio3.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBCAC3Pid", ac3Pid.ToString());
-              channels.SetValue(listItem.Index.ToString(), "DVBCPCRPid", pcrPid.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBCAudioLanguage", audioLanguage);
               channels.SetValue(listItem.Index.ToString(), "DVBCAudioLanguage1", audioLanguage1);
               channels.SetValue(listItem.Index.ToString(), "DVBCAudioLanguage2", audioLanguage2);
               channels.SetValue(listItem.Index.ToString(), "DVBCAudioLanguage3", audioLanguage3);
               channels.SetValueAsBool(listItem.Index.ToString(), "DVBCHasEITPresentFollow", HasEITPresentFollow);
               channels.SetValueAsBool(listItem.Index.ToString(), "DVBCHasEITSchedule", HasEITSchedule);
+              channels.SetValue(listItem.Index.ToString(), "DVBCPCRPid", pcrPid.ToString());
 
               //DVB-S
               DVBChannel ch = new DVBChannel();
@@ -1312,7 +1319,7 @@ namespace MediaPortal.Configuration.Sections
               channels.SetValue(listItem.Index.ToString(), "DVBSTSID", ch.TransportStreamID.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBSSID", ch.ProgramNumber.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBSSymbolrate", ch.Symbolrate.ToString());
-              channels.SetValue(listItem.Index.ToString(), "DvbSInnerFec", ch.FEC.ToString());
+              channels.SetValue(listItem.Index.ToString(), "DVBSInnerFec", ch.FEC.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBSPolarisation", ch.Polarity.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBSProvider", ch.ServiceProvider);
               channels.SetValue(listItem.Index.ToString(), "DVBSAudioPid", ch.AudioPid.ToString());
@@ -1332,6 +1339,42 @@ namespace MediaPortal.Configuration.Sections
               channels.SetValue(listItem.Index.ToString(), "DVBSAudioLanguage3", ch.AudioLanguage3);
               channels.SetValueAsBool(listItem.Index.ToString(), "DVBSHasEITPresentFollow", ch.HasEITPresentFollow);
               channels.SetValueAsBool(listItem.Index.ToString(), "DVBSHasEITSchedule", ch.HasEITSchedule);
+
+              int minorChannel, majorChannel, physicalChannel;
+              TVDatabase.GetATSCTuneRequest(Selected_Chan.ID, out physicalChannel, out provider, out freq, out symbolrate, out innerFec,
+                                            out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid,
+                                            out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1,
+                                            out audioLanguage2, out audioLanguage3, out minorChannel, out majorChannel,
+                                            out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
+
+              channels.SetValue(listItem.Index.ToString(), "ATSCPhysical", physicalChannel.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCProvider", provider);
+              channels.SetValue(listItem.Index.ToString(), "ATSCFreq", freq.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCSymbolrate", symbolrate.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCInnerFec", innerFec.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCModulation", modulation.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCONID", ONID.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCTSID", TSID.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCSID", SID.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCAudioPid", audioPid.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCVideoPid", videoPid.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCTeletextPid", teletextPid.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCPmtPid", pmtPid.ToString());
+
+              channels.SetValue(listItem.Index.ToString(), "ATSCAudio1Pid", audio1.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCAudio2Pid", audio2.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCAudio3Pid", audio3.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCAC3Pid", ac3Pid.ToString());
+              channels.SetValue(listItem.Index.ToString(), "ATSCAudioLanguage", audioLanguage);
+              channels.SetValue(listItem.Index.ToString(), "ATSCAudioLanguage1", audioLanguage1);
+              channels.SetValue(listItem.Index.ToString(), "ATSCAudioLanguage2", audioLanguage2);
+              channels.SetValue(listItem.Index.ToString(), "ATSCAudioLanguage3", audioLanguage3);
+              channels.SetValue(listItem.Index.ToString(), "ATSCMinor", minorChannel);
+              channels.SetValue(listItem.Index.ToString(), "ATSCMajor", majorChannel);
+              channels.SetValueAsBool(listItem.Index.ToString(), "ATSCHasEITPresentFollow", HasEITPresentFollow);
+              channels.SetValueAsBool(listItem.Index.ToString(), "ATSCHasEITSchedule", HasEITSchedule);
+              channels.SetValue(listItem.Index.ToString(), "ATSCPCRPid", pcrPid.ToString());
+
 
             }
           }
@@ -1568,7 +1611,7 @@ namespace MediaPortal.Configuration.Sections
           Import_Chan.Country = channels.GetValueAsInt(i.ToString(), "Country", 0);
           Import_Chan.External = channels.GetValueAsBool(i.ToString(), "External", false);
           Import_Chan.ExternalTunerChannel = channels.GetValueAsString(i.ToString(), "External Tuner Channel", "");
-          Import_Chan.Frequency.MegaHerz = Convert.ToDouble(channels.GetValueAsFloat(i.ToString(), "Frequency", 0));
+          Import_Chan.Frequency.Herz = channels.GetValueAsInt(i.ToString(), "Frequency", 0);
           Import_Chan.standard = Convert_AVS(channels.GetValueAsString(i.ToString(), "Analog Standard Index", "None"));
           Import_Chan.VisibleInGuide = channels.GetValueAsBool(i.ToString(), "Visible in Guide", false);
           Import_Chan.Scrambled = channels.GetValueAsBool(i.ToString(), "Scrambled", false);
@@ -1728,7 +1771,7 @@ namespace MediaPortal.Configuration.Sections
                   TSID = channels.GetValueAsInt(i.ToString(), "DVBSTSID", 0);
                   SID = channels.GetValueAsInt(i.ToString(), "DVBSSID", 0);
                   symbolrate = channels.GetValueAsInt(i.ToString(), "DVBSSymbolrate", 0);
-                  innerFec = channels.GetValueAsInt(i.ToString(), "DvbSInnerFec", 0);
+                  innerFec = channels.GetValueAsInt(i.ToString(), "DVBSInnerFec", 0);
                   polarisation = channels.GetValueAsInt(i.ToString(), "DVBSPolarisation", 0);
                   provider = channels.GetValueAsString(i.ToString(), "DVBSProvider", "");
                   audioPid = channels.GetValueAsInt(i.ToString(), "DVBSAudioPid", 0);
@@ -1782,6 +1825,52 @@ namespace MediaPortal.Configuration.Sections
                 catch (Exception)
                 {
                   MessageBox.Show("OOPS! Something odd happened.\nCouldn't import DVB-S data.");
+                }
+                //ATSC
+                try
+                {
+
+
+                  int minorChannel, majorChannel, physicalChannel;
+                  physicalChannel = channels.GetValueAsInt(i.ToString(), "ATSCPhysical", -1);
+                  provider = channels.GetValueAsString(i.ToString(), "ATSCProvider", "");
+                  freq = channels.GetValueAsInt(i.ToString(), "ATSCFreq", 0);
+                  symbolrate = channels.GetValueAsInt(i.ToString(), "ATSCSymbolrate", 0);
+                  innerFec = channels.GetValueAsInt(i.ToString(), "ATSCInnerFec", 0);
+                  modulation = channels.GetValueAsInt(i.ToString(), "ATSCModulation", 0);
+
+                  ONID = channels.GetValueAsInt(i.ToString(), "ATSCONID", 0);
+                  TSID = channels.GetValueAsInt(i.ToString(), "ATSCTSID", 0);
+                  SID = channels.GetValueAsInt(i.ToString(), "ATSCSID", 0);
+                  audioPid = channels.GetValueAsInt(i.ToString(), "ATSCAudioPid", 0);
+                  videoPid = channels.GetValueAsInt(i.ToString(), "ATSCVideoPid", 0);
+                  teletextPid = channels.GetValueAsInt(i.ToString(), "ATSCTeletextPid", 0);
+                  pmtPid = channels.GetValueAsInt(i.ToString(), "ATSCPmtPid", 0);
+                  audio1 = channels.GetValueAsInt(i.ToString(), "ATSCAudio1Pid", -1);
+                  audio2 = channels.GetValueAsInt(i.ToString(), "ATSCAudio2Pid", -1);
+                  audio3 = channels.GetValueAsInt(i.ToString(), "ATSCAudio3Pid", -1);
+                  ac3Pid = channels.GetValueAsInt(i.ToString(), "ATSCAC3Pid", -1);
+                  audioLanguage = channels.GetValueAsString(i.ToString(), "ATSCAudioLanguage", "");
+                  audioLanguage1 = channels.GetValueAsString(i.ToString(), "ATSCAudioLanguage1", "");
+                  audioLanguage2 = channels.GetValueAsString(i.ToString(), "ATSCAudioLanguage2", "");
+                  audioLanguage3 = channels.GetValueAsString(i.ToString(), "ATSCAudioLanguage3", "");
+                  minorChannel = channels.GetValueAsInt(i.ToString(), "ATSCMinor", -1);
+                  majorChannel = channels.GetValueAsInt(i.ToString(), "ATSCMajor", -1);
+                  HasEITPresentFollow = channels.GetValueAsBool(i.ToString(), "ATSCHasEITPresentFollow", false);
+                  HasEITSchedule = channels.GetValueAsBool(i.ToString(), "ATSCHasEITSchedule", false);
+                  pcrPid = channels.GetValueAsInt(i.ToString(), "ATSCPCRPid", -1);
+
+                  if (physicalChannel > 0 && minorChannel >= 0 && majorChannel >=0 )
+                  {
+                    TVDatabase.MapATSCChannel(Import_Chan.Name, physicalChannel,minorChannel,majorChannel,provider, Import_Chan.ID, 
+                                              freq, symbolrate, innerFec, modulation, ONID, TSID, SID, audioPid, videoPid, teletextPid, 
+                                              pmtPid, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2, 
+                                              audioLanguage3, HasEITPresentFollow, HasEITSchedule);
+                  }
+                }
+                catch (Exception)
+                {
+                  MessageBox.Show("OOPS! Something odd happened.\nCouldn't import ATSC data.");
                 }
               }
             }
