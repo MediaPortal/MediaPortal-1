@@ -41,8 +41,10 @@
 		<description>template for hover image</description>
 		<type>image</type>
 		<id>1000</id>
-		<posX>250</posX>
-		<posY>150</posY>
+		<posX>280</posX>
+		<posY>165</posY>
+		<width>430</width>
+		<height>560</height>
 		<align>center</align>
 		<texture>-</texture>
 		<visible>no</visible>
