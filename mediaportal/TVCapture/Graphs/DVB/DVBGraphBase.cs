@@ -2102,7 +2102,7 @@ namespace MediaPortal.TV.Recording
       {
         if (dvbSpace == null) return;
         //
-        // A:LOWORD -> LOBYTE -> Bit0 for Position (0-A,1-B)
+        // A:LOWORD -> LOBYTE -> Bit0 for Position (0-A,1-B)          
         // B:LOWORD -> HIBYTE -> Bit0 for 22kHz    (0-Off,1-On)
         // C:HIWORD -> LOBYTE -> Bit0 for Option   (0-A,1-B)
         // D:HIWORD -> HIBYTE -> Bit0 for Burst    (0-Off,1-On)
@@ -2121,19 +2121,19 @@ namespace MediaPortal.TV.Recording
           case 2: //simple B
             Log.Write("DVBGraph: disEqc:simple B (not supported)");
             return;
-          case 3: //Level 1 A/A
+          case 3: //Level 1 A/A     0000-0000 0000-0000
             Log.Write("DVBGraph: disEqc:level 1 A/A");
             inputRange = 0;
             break;
-          case 4: //Level 1 B/A
+          case 4: //Level 1 B/A     0000-0001 0000-0000
             Log.Write("DVBGraph: disEqc:level 1 B/A");
             inputRange = 1 << 16;
             break;
-          case 5: //Level 1 A/B
+          case 5: //Level 1 A/B     0000-0000 0000-0001
             Log.Write("DVBGraph: disEqc:level 1 A/B");
             inputRange = 1;
             break;
-          case 6: //Level 1 B/B
+          case 6: //Level 1 B/B     0000-0001 0000-0001
             Log.Write("DVBGraph: disEqc:level 1 B/B");
             inputRange = (1 << 16) + 1;
             break;
@@ -2141,7 +2141,7 @@ namespace MediaPortal.TV.Recording
         // test with burst on
         //inputRange|=1<<24;
 
-        if (_currentTuningObject.LnbSwitchFrequency == 1) // 22kHz
+        if (_currentTuningObject.Frequency >= _currentTuningObject.LnbSwitchFrequency) // 22kHz
           inputRange |= (1 << 8);
 
         Log.Write("DVBGraph: Set inputrange to:{0:X}", inputRange);
