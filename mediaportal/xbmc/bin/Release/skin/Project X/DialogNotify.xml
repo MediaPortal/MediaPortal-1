@@ -30,10 +30,10 @@
 				<description>Exit button</description>
 				<type>button</type>
 				<id>4</id>
-				<posX>635</posX>
-				<posY>435</posY>
-				<width>32</width>
-				<height>32</height>
+				<posX>645</posX>
+				<posY>425</posY>
+				<width>16</width>
+				<height>16</height>
 				<textureFocus>button_close_focus.png</textureFocus>
 				<textureNoFocus>button_close_nofocus.png</textureNoFocus>
 				<label>-</label>
