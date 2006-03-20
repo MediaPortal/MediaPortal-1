@@ -342,6 +342,7 @@ namespace MediaPortal.GUI.Library
 			_upDownControl.AllocResources();
 
       _font=GUIFontManager.GetFont(_fontName);
+      _upDownControl.WindowId = this._windowId;
 			Calculate();
 
 		}

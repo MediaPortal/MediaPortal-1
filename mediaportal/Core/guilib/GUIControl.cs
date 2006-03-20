@@ -231,7 +231,7 @@ namespace MediaPortal.GUI.Library
 						controlId = Navigate((Direction)action.wID);
 
 					if(controlId != -1 && controlId != GetID)
-						FocusControl(GUIWindowManager.ActiveWindowEx, controlId, (Direction)action.wID);
+						FocusControl(WindowId, controlId, (Direction)action.wID);
 
 					break;
 				}
@@ -255,7 +255,7 @@ namespace MediaPortal.GUI.Library
 			double distanceMin = 10000;
 			double bearingMin = 10000;
 
-			foreach(GUIControl control in FlattenHierarchy(GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindowEx).Children))
+      foreach (GUIControl control in FlattenHierarchy(GUIWindowManager.GetWindow(WindowId).Children))
 			{
 				if(control.GetID == GetID)
 					continue;
