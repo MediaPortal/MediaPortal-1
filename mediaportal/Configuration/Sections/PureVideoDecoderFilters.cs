@@ -506,7 +506,7 @@ namespace MediaPortal.Configuration.Sections
                     if (regValue >= 0)
                     {
                         if (regValue == 0) comboBoxDeInterlaceMode.SelectedIndex = 0;
-                        if (regValue == 5 && regAdaptive == 40) comboBoxDeInterlaceMode.SelectedIndex = 1;
+                        if (regValue == 5 && regAdaptive == 64) comboBoxDeInterlaceMode.SelectedIndex = 1;
                         if (regValue == 5 && regAdaptive == 4) comboBoxDeInterlaceMode.SelectedIndex = 2;
                         if (regValue == 5 && regAdaptive == 2) comboBoxDeInterlaceMode.SelectedIndex = 3;
                     }
@@ -659,7 +659,7 @@ namespace MediaPortal.Configuration.Sections
                 {
                     regDeIntMode = 5;
                     subkey.SetValue("DeinterlaceMode", regDeIntMode);
-                    subkey.SetValue("VMRDeinterlace", 40);
+                    subkey.SetValue("VMRDeinterlace", 64);
                 }
                 if (DeIntMode == 2)
                 {
