@@ -140,7 +140,7 @@ namespace MediaPortal.TV.Recording
       get
       {
         TimeSpan ts = DateTime.Now - _scheduleTimer;
-        if (ts.TotalSeconds < 10) return false;
+        if (ts.TotalSeconds < 60) return false;
         return true;
       }
     }

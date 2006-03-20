@@ -947,7 +947,7 @@ namespace MediaPortal.TV.Recording
             break;
         }
 
-        int hr = _interfaceTTPremium.Tune(ch.Frequency, ch.Symbolrate, ch.Polarity, ch.LNBKHz, ch.LNBFrequency, true, ch.DiSEqC, mod, bw, false);
+        int hr = _interfaceTTPremium.Tune(ch.Frequency, ch.Symbolrate, ch.Polarity, ch.LnbSwitchFrequency, ch.LNBFrequency, true, ch.DiSEqC, mod, bw, false);
         if (hr != 0)
         {
           Log.WriteFile(Log.LogType.Error, "DVBGraphTTPremium:SubmitTureRequest(), filter tune request failed:{0}", hr);
@@ -961,10 +961,10 @@ namespace MediaPortal.TV.Recording
         int lnbKhzTone=0;
         GetDisEqcSettings(ref ch, out low, out high,out  lnbKhzTone, out diseq);
         ch.LNBFrequency = low;
-        int hr = _interfaceTTPremium.Tune(ch.Frequency, ch.Symbolrate, ch.Polarity, ch.LNBKHz, ch.LNBFrequency, true, diseq, mod, bw, false);
+        int hr = _interfaceTTPremium.Tune(ch.Frequency, ch.Symbolrate, ch.Polarity, ch.LnbSwitchFrequency, ch.LNBFrequency, true, diseq, mod, bw, false);
         if (hr != 0)
         {
-          Log.WriteFile(Log.LogType.Error, "DVBGraphTTPremium:SubmitTuneRequest(), filter tune request failed:{0},{1},{2},{3},{4},{5},{6},{7},{8}", ch.Frequency, ch.Symbolrate, ch.Polarity, ch.LNBKHz, ch.LNBFrequency, true, diseq, mod, bw, false);
+          Log.WriteFile(Log.LogType.Error, "DVBGraphTTPremium:SubmitTuneRequest(), filter tune request failed:{0},{1},{2},{3},{4},{5},{6},{7},{8}", ch.Frequency, ch.Symbolrate, ch.Polarity, ch.LnbSwitchFrequency, ch.LNBFrequency, true, diseq, mod, bw, false);
           _signalPresent = false;
           _signalQuality = 0;
           _signalLevel = 0;

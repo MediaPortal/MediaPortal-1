@@ -29,7 +29,7 @@ namespace MediaPortal.TV.Database
 	public class DVBChannel
 	{
 		public DVBChannel(		
-			int idChannel,int sFreq ,int sSymbrate,int sFEC,int sLNBKhz,int sDiseqc,int sProgramNumber,int sServiceType,
+			int idChannel,int sFreq ,int sSymbrate,int sFEC,int lnbSwitchFrequency,int sDiseqc,int sProgramNumber,int sServiceType,
 			string sProviderName,string sChannelName,int sEitSched,
 			int sEitPreFol,int sAudioPid,int sVideoPid,int sAC3Pid,int sAudio1Pid,int sAudio2Pid,int sAudio3Pid,int sTeletextPid,
 			int sScrambled,int sPol,int sLNBFreq,int sNetworkID,int sTSID,int sPCRPid,string aLangCode,string aLangCode1,string aLangCode2,string aLangCode3,int ecm,int pmt)
@@ -38,7 +38,7 @@ namespace MediaPortal.TV.Database
 			 m_sFreq =sFreq;
 			 m_sSymbrate=sSymbrate;
 			 m_sFEC=sFEC;
-			 m_sLNBKhz=sLNBKhz;
+			 m_sLnbSwitchFrequency=lnbSwitchFrequency;
 			 m_sDiseqc=sDiseqc;
 			 m_sProgramNumber=sProgramNumber;
 			 m_sServiceType=sServiceType;
@@ -77,7 +77,7 @@ namespace MediaPortal.TV.Database
 		int m_sFreq ;
 		int m_sSymbrate;
 		int m_sFEC;
-		int m_sLNBKhz;
+		int m_sLnbSwitchFrequency;
 		int m_sDiseqc;
 		int m_sProgramNumber;
 		int m_sServiceType;
@@ -199,12 +199,12 @@ namespace MediaPortal.TV.Database
 		[BrowsableAttribute(true),Category("DiSEqC / LNB Config"),
 		ReadOnly(false)]
 
-		public int LNBKHz
+		public int LnbSwitchFrequency
 		{
 			get
-			{return m_sLNBKhz;}
+			{return m_sLnbSwitchFrequency;}
 			set
-			{m_sLNBKhz=value;}
+			{m_sLnbSwitchFrequency=value;}
 		}
 		[BrowsableAttribute(true),Category("DiSEqC / LNB Config"),
 		ReadOnly(false)]

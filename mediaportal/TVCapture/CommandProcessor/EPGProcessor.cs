@@ -60,7 +60,7 @@ namespace MediaPortal.TV.Recording
     {
       if (_autoGrabEpg == false) return;
       TimeSpan ts = DateTime.Now - _epgTimer;
-      if (ts.TotalMilliseconds < 30000) return;
+      if (ts.TotalSeconds < 60) return;
 
       //Log.WriteFile(Log.LogType.EPG, "epg grabber process");
       bool isGrabbing = false;

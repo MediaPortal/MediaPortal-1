@@ -2066,7 +2066,7 @@ namespace MediaPortal.TV.Recording
         
 
         // LNB switch frequency
-        ch.LNBKHz = lnbswMHZ * 1000;//11700
+        ch.LnbSwitchFrequency = lnbswMHZ * 1000;//11700
 
         if (ch.Frequency >= lnbswMHZ * 1000)
         {
@@ -2082,7 +2082,7 @@ namespace MediaPortal.TV.Recording
         hiOsc = lnb1MHZ;
         lnbKhzTone = lnbKhz;
         diseqcUsed = diseqc;
-        Log.WriteFile(Log.LogType.Log, "DVBGraph: LNB Settings: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LNBKHz, ch.LNBFrequency, ch.DiSEqC);
+        Log.WriteFile(Log.LogType.Log, "DVBGraph: LNB Settings: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LnbSwitchFrequency, ch.LNBFrequency, ch.DiSEqC);
       }
       catch (Exception)
       {
@@ -2141,7 +2141,7 @@ namespace MediaPortal.TV.Recording
         // test with burst on
         //inputRange|=1<<24;
 
-        if (_currentTuningObject.LNBKHz == 1) // 22kHz
+        if (_currentTuningObject.LnbSwitchFrequency == 1) // 22kHz
           inputRange |= (1 << 8);
 
         Log.Write("DVBGraph: Set inputrange to:{0:X}", inputRange);
@@ -2546,7 +2546,7 @@ namespace MediaPortal.TV.Recording
             _currentTuningObject.Audio3 = ch.Audio3;
             _currentTuningObject.DiSEqC = ch.DiSEqC;
             _currentTuningObject.LNBFrequency = ch.LNBFrequency;
-            _currentTuningObject.LNBKHz = ch.LNBKHz;
+            _currentTuningObject.LnbSwitchFrequency = ch.LnbSwitchFrequency;
             _currentTuningObject.HasEITPresentFollow = ch.HasEITPresentFollow;
             _currentTuningObject.HasEITSchedule = ch.HasEITSchedule;
           } break;
@@ -3235,7 +3235,7 @@ namespace MediaPortal.TV.Recording
         newchannel.AudioLanguage3 = _currentTuningObject.AudioLanguage3;
         newchannel.DiSEqC = _currentTuningObject.DiSEqC;
         newchannel.LNBFrequency = _currentTuningObject.LNBFrequency;
-        newchannel.LNBKHz = _currentTuningObject.LNBKHz;
+        newchannel.LnbSwitchFrequency = _currentTuningObject.LnbSwitchFrequency;
         newchannel.PhysicalChannel = _currentTuningObject.PhysicalChannel;
         newchannel.MinorChannel = info.minorChannel;
         newchannel.MajorChannel = info.majorChannel;
@@ -3465,7 +3465,7 @@ namespace MediaPortal.TV.Recording
             int scrambled = 0;
             if (newchannel.IsScrambled) scrambled = 1;
             RadioDatabase.MapDVBSChannel(newchannel.ID, newchannel.Frequency, newchannel.Symbolrate,
-              newchannel.FEC, newchannel.LNBKHz, 0, newchannel.ProgramNumber,
+              newchannel.FEC, newchannel.LnbSwitchFrequency, 0, newchannel.ProgramNumber,
               0, newchannel.ServiceProvider, newchannel.ServiceName,
               0, 0, newchannel.AudioPid, newchannel.VideoPid, newchannel.AC3Pid,
               0, 0, 0, 0, scrambled,
@@ -3637,7 +3637,7 @@ namespace MediaPortal.TV.Recording
             _currentTuningObject.Audio3 = ch.Audio3;
             _currentTuningObject.DiSEqC = ch.DiSEqC;
             _currentTuningObject.LNBFrequency = ch.LNBFrequency;
-            _currentTuningObject.LNBKHz = ch.LNBKHz;
+            _currentTuningObject.LnbSwitchFrequency = ch.LnbSwitchFrequency;
             _currentTuningObject.HasEITPresentFollow = ch.HasEITPresentFollow;
             _currentTuningObject.HasEITSchedule = ch.HasEITSchedule;
 

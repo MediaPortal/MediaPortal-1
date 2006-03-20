@@ -433,7 +433,7 @@ namespace MediaPortal.TV.Database
             DatabaseUtility.RemoveInvalidChars(ref al3);
 
             strSQL = String.Format("insert into tblDVBSMapping (idChannel,sFreq,sSymbrate,sFEC,sLNBKhz,sDiseqc,sProgramNumber,sServiceType,sProviderName,sChannelName,sEitSched,sEitPreFol,sAudioPid,sVideoPid,sAC3Pid,sAudio1Pid,sAudio2Pid,sAudio3Pid,sTeletextPid,sScrambled,sPol,sLNBFreq,sNetworkID,sTSID,sPCRPid,sAudioLang,sAudioLang1,sAudioLang2,sAudioLang3,sECMPid,sPMTPid) values ( {0}, {1}, {2}, {3}, {4}, {5},{6}, {7}, '{8}' ,'{9}', {10}, {11}, {12}, {13}, {14},{15}, {16}, {17},{18}, {19}, {20},{21}, {22},{23},{24},'{25}','{26}','{27}','{28}',{29},{30})",
-              ch.ID, ch.Frequency, ch.Symbolrate, ch.FEC, ch.LNBKHz, ch.DiSEqC,
+              ch.ID, ch.Frequency, ch.Symbolrate, ch.FEC, ch.LnbSwitchFrequency, ch.DiSEqC,
               ch.ProgramNumber, ch.ServiceType, provider, service, (ch.HasEITSchedule == true ? 1 : 0),
               (ch.HasEITPresentFollow == true ? 1 : 0), ch.AudioPid, ch.VideoPid, ch.AC3Pid, ch.Audio1, ch.Audio2, ch.Audio3,
               ch.TeletextPid, (ch.IsScrambled == true ? 1 : 0), ch.Polarity, ch.LNBFrequency, ch.NetworkID, ch.TransportStreamID, ch.PCRPid, al, al1, al2, al3, ch.ECMPid, ch.PMTPid);
@@ -575,7 +575,7 @@ namespace MediaPortal.TV.Database
           if (null == m_db) return;
                                         
           string strSQL=String.Format( "update tblDVBSMapping set sFreq={0},sSymbrate={1},sFEC={2},sLNBKhz={3},sDiseqc={4},sProgramNumber={5},sServiceType={6},sProviderName='{7}',sChannelName='{8}',sEitSched={9},sEitPreFol={10},sAudioPid={11},sVideoPid={12},sAC3Pid={13},sAudio1Pid={14},sAudio2Pid={15},sAudio3Pid={16},sTeletextPid={17},sScrambled={18},sPol={19},sLNBFreq={20},sNetworkID={21},sTSID={22},sPCRPid={23} where idChannel = {24}", 
-                      ch.Frequency,ch.Symbolrate, ch.FEC,ch.LNBKHz,ch.DiSEqC,
+                      ch.Frequency,ch.Symbolrate, ch.FEC,ch.LnbSwitchFrequency,ch.DiSEqC,
                       ch.ProgramNumber,ch.ServiceType,strProvider,strChannel, (int)(ch.HasEITSchedule==true?1:0),
                       (int)(ch.HasEITPresentFollow==true?1:0), ch.AudioPid,ch.VideoPid,ch.AC3Pid,ch.Audio1, ch.Audio2, ch.Audio3,
                       ch.TeletextPid,(int)(ch.IsScrambled==true?1:0), ch.Polarity,ch.LNBFrequency,ch.NetworkID,ch.TransportStreamID,ch.PCRPid,ch.ID);

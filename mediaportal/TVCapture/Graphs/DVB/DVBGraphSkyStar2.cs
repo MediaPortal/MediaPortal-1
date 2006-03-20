@@ -1119,6 +1119,10 @@ namespace MediaPortal.TV.Recording
               lnbSelection = LNBSelectionType.Lnb44kHz;
               break;
           }
+          if (ch.Frequency < ch.LnbSwitchFrequency)
+          {
+            lnbSelection = LNBSelectionType.Lnb0;
+          }
           Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Lnb:{0}", lnbSelection);
           hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int)lnbSelection);
           if (hr != 0)
@@ -1160,7 +1164,7 @@ namespace MediaPortal.TV.Recording
             return;
           }
 
-          ch.LNBKHz /= 1000;//in MHz
+          ch.LnbSwitchFrequency /= 1000;//in MHz
           Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  LNBFrequency:{0} MHz", ch.LNBFrequency);
           hr = _interfaceB2C2TunerCtrl.SetLnbFrequency(ch.LNBFrequency);
           if (hr != 0)
@@ -1181,9 +1185,9 @@ namespace MediaPortal.TV.Recording
         //dump all values:
         int dummy;
 
-        hr=_interfaceB2C2TunerCtrl.GetFrequency(out dummy);
+        hr = _interfaceB2C2TunerCtrl.GetFrequency(out dummy);
         Log.Write("DVBGraphSkyStar2 tuner dump:");
-        Log.Write("DVBGraphSkyStar2    freq:{0} MHz {1:X}", dummy,hr);
+        Log.Write("DVBGraphSkyStar2    freq:{0} MHz {1:X}", dummy, hr);
 
         dummy = 0;
         hr = _interfaceB2C2TunerCtrl.GetLnbFrequency(out dummy);
@@ -1195,15 +1199,15 @@ namespace MediaPortal.TV.Recording
 
         dummy = 0;
         hr = _interfaceB2C2TunerCtrl.GetDiseqc(out dummy);
-        Log.Write("DVBGraphSkyStar2    diseqc:{0} {1:X}", ((DisEqcType)dummy),hr);
+        Log.Write("DVBGraphSkyStar2    diseqc:{0} {1:X}", ((DisEqcType)dummy), hr);
 
         dummy = 0;
         hr = _interfaceB2C2TunerCtrl.GetFec(out dummy);
-        Log.Write("DVBGraphSkyStar2    fec:{0} {1:X}", ((FecType)dummy),hr);
+        Log.Write("DVBGraphSkyStar2    fec:{0} {1:X}", ((FecType)dummy), hr);
 
         dummy = 0;
         hr = _interfaceB2C2TunerCtrl.GetPolarity(out dummy);
-        Log.Write("DVBGraphSkyStar2    polarity:{0} {1:X}", ((PolarityType)dummy),hr);
+        Log.Write("DVBGraphSkyStar2    polarity:{0} {1:X}", ((PolarityType)dummy), hr);
 
         dummy = 0;
         hr = _interfaceB2C2TunerCtrl.GetSymbolRate(out dummy);
@@ -1337,14 +1341,14 @@ namespace MediaPortal.TV.Recording
       if (ch.Frequency >= lnbswMHZ * 1000)
       {
         ch.LNBFrequency = lnb1MHZ;
-        ch.LNBKHz = lnbKhzVal;
+        ch.LnbSwitchFrequency = lnbKhzVal;
       }
       else
       {
         ch.LNBFrequency = lnb0MHZ;
-        ch.LNBKHz = 0;
+        ch.LnbSwitchFrequency = 0;
       }
-      Log.WriteFile(Log.LogType.Log, "auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LNBKHz, ch.LNBFrequency, ch.DiSEqC);
+      Log.WriteFile(Log.LogType.Log, "auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LnbSwitchFrequency, ch.LNBFrequency, ch.DiSEqC);
       return ch;
 
     }// LoadDiseqcSettings()
@@ -1422,14 +1426,14 @@ namespace MediaPortal.TV.Recording
       if (_currentTuningObject.Frequency >= lnbswMHZ * 1000)
       {
         _currentTuningObject.LNBFrequency = lnb1MHZ;
-        _currentTuningObject.LNBKHz = lnbKhzVal;
+        _currentTuningObject.LnbSwitchFrequency = lnbKhzVal;
       }
       else
       {
         _currentTuningObject.LNBFrequency = lnb0MHZ;
-        _currentTuningObject.LNBKHz = 0;
+        _currentTuningObject.LnbSwitchFrequency = 0;
       }
-      Log.WriteFile(Log.LogType.Log, "auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", _currentTuningObject.Frequency, _currentTuningObject.LNBKHz, _currentTuningObject.LNBFrequency, _currentTuningObject.DiSEqC);
+      Log.WriteFile(Log.LogType.Log, "auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", _currentTuningObject.Frequency, _currentTuningObject.LnbSwitchFrequency, _currentTuningObject.LNBFrequency, _currentTuningObject.DiSEqC);
     }// LoadDiseqcSettings()
 
     public override bool SupportsHardwarePidFiltering()

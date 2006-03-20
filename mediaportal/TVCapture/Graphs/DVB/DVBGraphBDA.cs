@@ -1874,16 +1874,16 @@ namespace MediaPortal.TV.Recording
                 return;
               }
 
-              Log.WriteFile(Log.LogType.Log, false, "DVBGraphBDA: set LNBSwitch to {0} kHz lowOsc={1} MHz hiOsc={2} MHz disecq:{3}", ch.LNBKHz, lowOsc, hiOsc, diseqcUsed);
+              Log.WriteFile(Log.LogType.Log, false, "DVBGraphBDA: set LNBSwitch to {0} kHz lowOsc={1} MHz hiOsc={2} MHz disecq:{3}", ch.LnbSwitchFrequency, lowOsc, hiOsc, diseqcUsed);
 
-              dvbSpace.LNBSwitch = ch.LNBKHz;
+              dvbSpace.LNBSwitch = ch.LnbSwitchFrequency;
               dvbSpace.SpectralInversion = TunerLib.SpectralInversion.BDA_SPECTRAL_INVERSION_AUTOMATIC;
               dvbSpace.LowOscillator = lowOsc * 1000;
               dvbSpace.HighOscillator = hiOsc * 1000;
 
               if (_cardProperties.SupportsDiseqCommand() && (diseqcUsed != 0))
               {
-                _cardProperties.SendDiseqCommand(diseqcUsed, _currentTuningObject.Frequency, ch.LNBKHz, _currentTuningObject.Polarity, diseqcUsed);
+                _cardProperties.SendDiseqCommand(diseqcUsed, _currentTuningObject.Frequency, ch.LnbSwitchFrequency, _currentTuningObject.Polarity, diseqcUsed);
               }
               else
               {
