@@ -26,9 +26,9 @@ namespace MediaPortal.GUI.Library
 {
   public class GUILayerManager
   {
-    public enum LayerType:int
+    public enum LayerType : int
     {
-      Gui=0,
+      Gui = 0,
       MusicOverlay,
       VideoOverlay,
       TvOverlay,
@@ -71,13 +71,25 @@ namespace MediaPortal.GUI.Library
     static public void Render(float timePassed)
     {
       if (GUIGraphicsContext.BlankScreen) return;
-
+      int videoLayer = (int)LayerType.Video;
+      if (GUIGraphicsContext.ShowBackground == false)
+      {
+        if (_layers[videoLayer] != null)
+        {
+          if (_layers[videoLayer].ShouldRenderLayer())
+          {
+            _layers[videoLayer].RenderLayer(timePassed);
+            GUIFontManager.Present();
+          }
+        }
+      }
       for (int i = 0; i < MAX_LAYERS; ++i)
       {
-        if (_layers[i] !=null)
+        if (_layers[i] != null)
         {
           if (_layers[i].ShouldRenderLayer())
           {
+            if (GUIGraphicsContext.ShowBackground == false && i == videoLayer) continue;
             _layers[i].RenderLayer(timePassed);
             GUIFontManager.Present();
           }

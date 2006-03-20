@@ -810,6 +810,7 @@ namespace MediaPortal.Player
         FontEngineDrawSurface(_sourceRect.Left, _sourceRect.Top, _sourceRect.Width, _sourceRect.Height,
                               _destinationRect.Left, _destinationRect.Top, _destinationRect.Width, _destinationRect.Height,
                                 ptr.ToPointer());
+
       }
     }
 
