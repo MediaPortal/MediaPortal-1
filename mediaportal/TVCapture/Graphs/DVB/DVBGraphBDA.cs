@@ -1861,10 +1861,11 @@ namespace MediaPortal.TV.Recording
             {
               //get the IDVBSLocator interface
               int lowOsc, hiOsc, diseqcUsed;
+              int lnbKhzTone = 0;
               if (ch.DiSEqC < 1) ch.DiSEqC = 1;
               if (ch.DiSEqC > 4) ch.DiSEqC = 4;
 
-              GetDisEqcSettings(ref ch, out lowOsc, out hiOsc, out diseqcUsed);
+              GetDisEqcSettings(ref ch, out lowOsc, out hiOsc, out lnbKhzTone,out diseqcUsed);
 
               TunerLib.IDVBSTuningSpace dvbSpace = myTuner.TuningSpace as TunerLib.IDVBSTuningSpace;
               if (dvbSpace == null)

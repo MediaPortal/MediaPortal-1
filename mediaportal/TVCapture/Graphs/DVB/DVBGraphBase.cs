@@ -1992,11 +1992,12 @@ namespace MediaPortal.TV.Recording
     /// <param name="lowOsc">[out] low oscillator</param>
     /// <param name="hiOsc">[out] high oscillator</param>
     /// <param name="diseqcUsed">[out] diseqc used for this channel (0-6)</param>
-    protected void GetDisEqcSettings(ref DVBChannel ch, out int lowOsc, out int hiOsc, out int diseqcUsed)
+    protected void GetDisEqcSettings(ref DVBChannel ch, out int lowOsc, out int hiOsc, out int lnbKhzTone, out int diseqcUsed)
     {
       diseqcUsed = 0;
       lowOsc = 9750;
       hiOsc = 10600;
+      lnbKhzTone = 0;
       try
       {
         string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
@@ -2062,21 +2063,24 @@ namespace MediaPortal.TV.Recording
           case 2: // Circular-Band
             break;
         }
-        // set values to dvbchannel-object
-        // set the lnb parameter
-        ch.LNBKHz = lnbswMHZ * 1000;
+        
+
+        // LNB switch frequency
+        ch.LNBKHz = lnbswMHZ * 1000;//11700
+
         if (ch.Frequency >= lnbswMHZ * 1000)
         {
-          ch.LNBFrequency = lnb1MHZ;
-          //ch.LNBKHz = lnbKhz;
+          //set LNB frequency to high band
+          ch.LNBFrequency = lnb1MHZ;//10600
         }
         else
         {
-          ch.LNBFrequency = lnb0MHZ;
-          //ch.LNBKHz = lnbKhz;
+          //set LNB frequency to lo band
+          ch.LNBFrequency = lnb0MHZ;//9750
         }
         lowOsc = lnb0MHZ;
         hiOsc = lnb1MHZ;
+        lnbKhzTone = lnbKhz;
         diseqcUsed = diseqc;
         Log.WriteFile(Log.LogType.Log, "DVBGraph: LNB Settings: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LNBKHz, ch.LNBFrequency, ch.DiSEqC);
       }

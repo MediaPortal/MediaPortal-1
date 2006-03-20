@@ -973,9 +973,15 @@ namespace MediaPortal.TV.Recording
 
     protected override void SubmitTuneRequest(DVBChannel ch)
     {
-      //b2settuner -a eth1 -i s -f 12426 -s 27500 -l 11250 -e auto -o h -k 22 -d b/a -pd 0x501 -pd 0x3e9
-      //Tune() freq:11919000 SR:27500 FEC:6 POL:1 LNBKHz:3 Diseq:1 LNBFreq:10600 ecmPid:0 pmtPid:0 pcrPid0
-
+      //DVBS-LoBand example
+      //Transponder       10832 MHz
+      //Tuner frequency   1082  MHz
+      //SymbolRate        22000 kS/s
+      //Fec               5/6
+      //Polarity          Horizontal/Left (high)
+      //LNB frequency     9750 MHz
+      //LNB selection     none
+      //DisEQC            none
       int frequency = ch.Frequency;
       if (frequency > 13000)
         frequency /= 1000;
@@ -1062,10 +1068,10 @@ namespace MediaPortal.TV.Recording
 
         case NetworkType.DVBS:
 
-          int lowOsc, hiOsc, disEqcUsed;
+          int lowOsc, hiOsc, disEqcUsed, lnbKhzTone;
           if (ch.DiSEqC < 1) ch.DiSEqC = 1;
           if (ch.DiSEqC > 4) ch.DiSEqC = 4;
-          GetDisEqcSettings(ref ch, out lowOsc, out hiOsc, out disEqcUsed);
+          GetDisEqcSettings(ref ch, out lowOsc, out hiOsc, out lnbKhzTone, out disEqcUsed);
 
           if (ch.LNBFrequency >= frequency)
           {
@@ -1097,8 +1103,24 @@ namespace MediaPortal.TV.Recording
             return;
           }
 
-          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Lnb:{0}", LNBSelectionType.Lnb22kHz);
-          hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int)LNBSelectionType.Lnb22kHz);
+          LNBSelectionType lnbSelection = LNBSelectionType.Lnb0;
+          switch (lnbKhzTone)
+          {
+            case 0:
+              lnbSelection = LNBSelectionType.Lnb0;
+              break;
+            case 22:
+              lnbSelection = LNBSelectionType.Lnb22kHz;
+              break;
+            case 33:
+              lnbSelection = LNBSelectionType.Lnb33kHz;
+              break;
+            case 44:
+              lnbSelection = LNBSelectionType.Lnb44kHz;
+              break;
+          }
+          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Lnb:{0}", lnbSelection);
+          hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int)lnbSelection);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetLnbKHz() failed:0x{0:X}", hr);
@@ -1138,8 +1160,9 @@ namespace MediaPortal.TV.Recording
             return;
           }
 
+          ch.LNBKHz /= 1000;//in MHz
           Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  LNBFrequency:{0} MHz", ch.LNBFrequency);
-          hr = _interfaceB2C2TunerCtrl.SetLnbFrequency(ch.LNBKHz);
+          hr = _interfaceB2C2TunerCtrl.SetLnbFrequency(ch.LNBFrequency);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetLnbFrequency() failed:0x{0:X}", hr);

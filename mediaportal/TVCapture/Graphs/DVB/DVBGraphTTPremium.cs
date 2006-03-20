@@ -958,7 +958,8 @@ namespace MediaPortal.TV.Recording
         int diseq = 0;
         int low = 0;
         int high = 0;
-        GetDisEqcSettings(ref ch, out low, out high, out diseq);
+        int lnbKhzTone=0;
+        GetDisEqcSettings(ref ch, out low, out high,out  lnbKhzTone, out diseq);
         ch.LNBFrequency = low;
         int hr = _interfaceTTPremium.Tune(ch.Frequency, ch.Symbolrate, ch.Polarity, ch.LNBKHz, ch.LNBFrequency, true, diseq, mod, bw, false);
         if (hr != 0)
