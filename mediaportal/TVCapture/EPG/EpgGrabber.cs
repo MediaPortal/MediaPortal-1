@@ -502,7 +502,7 @@ namespace MediaPortal.TV.Epg
       Log.WriteFile(Log.LogType.EPG, "epg: update database");
       try
       {
-        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Lowest;
         Log.WriteFile(Log.LogType.EPG, "epg: remove old programs");
         TVDatabase.RemoveOldPrograms();
         RadioDatabase.RemoveOldPrograms();
@@ -635,7 +635,7 @@ namespace MediaPortal.TV.Epg
       {
         Log.WriteFile(Log.LogType.EPG, "mhw-grab: updating tv database");
         _epgChannels = new List<EpgChannelUpdate>();
-        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Normal;
+        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Lowest;
         TVDatabase.RemoveOldPrograms();
         List<MHWEvent> events = _listMhwEvents;
         _listMhwEvents = null;
@@ -743,7 +743,7 @@ namespace MediaPortal.TV.Epg
       {
         Log.WriteFile(Log.LogType.EPG, "atsc-grab: updating tv database");
         _epgChannels = new List<EpgChannelUpdate>();
-        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Lowest;
         TVDatabase.RemoveOldPrograms();
         List<ATSCEvent> events = _listAtscEvents;
         _listAtscEvents = null;
