@@ -61,7 +61,7 @@ namespace MediaPortal.TV.Recording
 
     public override void Execute(CommandProcessor handler)
     {
-      Log.WriteFile(Log.LogType.Recorder, "Command:Stop tv card:{0}",CardNo);
+      Log.WriteFile(Log.LogType.Recorder, "Command:Stop all card except card:{0}",CardNo);
       
       if (handler.TVCards.Count == 0)
       {

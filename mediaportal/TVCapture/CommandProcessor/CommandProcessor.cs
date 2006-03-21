@@ -61,6 +61,7 @@ namespace MediaPortal.TV.Recording
     DateTime _startTimeShiftTimer=DateTime.MinValue;
     TvCardCollection _tvcards;
     AutoResetEvent _waitMutex;
+    bool _controlTimeShifting = true;
     #endregion
 
     #region ctor
@@ -273,6 +274,12 @@ namespace MediaPortal.TV.Recording
       Log.WriteFile(Log.LogType.Recorder, "Commandprocessor stopped");
     }
 
+    public bool ControlTimeShifting
+    {
+      get { return _controlTimeShifting; }
+      set { _controlTimeShifting = value; }
+    }
+
     public void ProcessScheduler()
     {
       _scheduler.Process(this);
@@ -339,76 +346,80 @@ namespace MediaPortal.TV.Recording
         TVCaptureDevice dev = TVCards[i];
         dev.Process();
 
-        if (CurrentCardIndex == i)
-        {
-          if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow) || GUIGraphicsContext.DX9Device==null)
-          {
-            if (dev.IsTimeShifting || dev.IsRecording)
-            {
-              if (!g_Player.Playing)
-              {
-                if (dev.CanViewTimeShiftFile())
-                {
-                  TimeSpan ts=DateTime.Now-_startTimeShiftTimer;
-                  if (ts.TotalSeconds>5)
-                  {
-                    //yes, check if we're already playing/watching it
-                    string timeShiftFileName = GetTimeShiftFileName(CurrentCardIndex);
-                    Log.WriteFile(Log.LogType.Recorder, "Recorder:  start viewing timeshift file of card {0}", dev.CommercialName);
-                    GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
-                    msg.Label = timeShiftFileName;
-                    GUIGraphicsContext.SendMessage(msg);
-                    ResetTimeshiftTimer();
-                    _startTimeShiftTimer=DateTime.Now;
-                  }
-                }
-                else
-                {
-                  _startTimeShiftTimer=DateTime.MinValue;
-                }
-                return;
-              }
-              else
-              {
-                _startTimeShiftTimer=DateTime.MinValue;
-              }
-            }
-            else
-            {
-              _startTimeShiftTimer=DateTime.MinValue;
-            }
-          }
-        }
-        //if card is timeshifting, but player has stopped, then stop the card also
-        if (dev.IsTimeShifting && !dev.IsRecording && !dev.IsRadio)
+        if (ControlTimeShifting)
         {
           if (CurrentCardIndex == i)
           {
-
-            //player not playing?
-            if (!g_Player.Playing)
+            if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow) || GUIGraphicsContext.DX9Device == null)
             {
-              // for more then 10 secs?
-              TimeSpan ts = DateTime.Now - _killTimeshiftingTimer;
-              if (ts.TotalSeconds > 10)
+              if (dev.IsTimeShifting || dev.IsRecording)
               {
-                //then stop the card
-                Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", dev.CommercialName);
-                dev.StopTimeShifting();
-                CurrentCardIndex = -1;
-                OnTvStopped(i, dev);
+                if (!g_Player.Playing)
+                {
+                  if (dev.CanViewTimeShiftFile())
+                  {
+                    TimeSpan ts = DateTime.Now - _startTimeShiftTimer;
+                    if (ts.TotalSeconds > 7)
+                    {
+                      //yes, check if we're already playing/watching it
+                      string timeShiftFileName = GetTimeShiftFileName(CurrentCardIndex);
+                      Log.WriteFile(Log.LogType.Recorder, "Recorder:  start viewing timeshift file of card {0}", dev.CommercialName);
+                      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
+                      msg.Label = timeShiftFileName;
+                      GUIGraphicsContext.SendMessage(msg);
+                      ResetTimeshiftTimer();
+                      _startTimeShiftTimer = DateTime.Now;
+                    }
+                    //else Log.WriteFile(Log.LogType.Recorder, "Recorder:wait {0}...", ts.TotalSeconds);
+                  }
+                  else
+                  {
+                    _startTimeShiftTimer = DateTime.MinValue;
+                  }
+                  return;
+                }
+                else
+                {
+                  _startTimeShiftTimer = DateTime.MinValue;
+                }
               }
+              else
+              {
+                _startTimeShiftTimer = DateTime.MinValue;
+              }
+            }
+          }
+          //if card is timeshifting, but player has stopped, then stop the card also
+          if (dev.IsTimeShifting && !dev.IsRecording && !dev.IsRadio)
+          {
+            if (CurrentCardIndex == i)
+            {
+
+              //player not playing?
+              if (!g_Player.Playing)
+              {
+                // for more then 10 secs?
+                TimeSpan ts = DateTime.Now - _killTimeshiftingTimer;
+                if (ts.TotalSeconds > 10)
+                {
+                  //then stop the card
+                  Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", dev.CommercialName);
+                  dev.StopTimeShifting();
+                  CurrentCardIndex = -1;
+                  OnTvStopped(i, dev);
+                }
+              }
+              else
+              {
+                _killTimeshiftingTimer = DateTime.Now;
+              }
+
             }
             else
             {
-              _killTimeshiftingTimer = DateTime.Now;
+              Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", dev.CommercialName);
+              dev.StopTimeShifting();
             }
-
-          }
-          else
-          {
-            Log.WriteFile(Log.LogType.Recorder, "Recorder:Stop card:{0}", dev.CommercialName);
-            dev.StopTimeShifting();
           }
         }
       }

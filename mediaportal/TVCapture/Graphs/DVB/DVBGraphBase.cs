@@ -4131,7 +4131,8 @@ namespace MediaPortal.TV.Recording
     public bool CanViewTimeShiftFile()
     {
       if (_graphState != State.TimeShifting && _graphState != State.Recording) return false;
-      return (_refreshPmtTable == false);
+      return SignalPresent();
+      //return (_refreshPmtTable == false);
     }
 
     public bool IsRadio()

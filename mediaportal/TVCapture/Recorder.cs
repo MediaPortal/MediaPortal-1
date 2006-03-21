@@ -908,30 +908,31 @@ namespace MediaPortal.TV.Recording
     static bool reEntrantStartViewing = false;
     static public bool StartViewing(string channel, bool TVOnOff, bool timeshift, bool wait, out string errorMessage)
     {
-      if (!Running)
-      {
-        errorMessage = "Recorder is not started";
-        return false;
-      }
-      errorMessage = String.Empty;
-      if (reEntrantStartViewing)
-      {
-        errorMessage = GUILocalizeStrings.Get(763);// "Recorder is busy";
-        Log.WriteFile(Log.LogType.Recorder, true, "Recorder:StartViewing() reentrant");
-        return false;
-      }
-      if (TVOnOff)
-      {
-        if (IsViewing() && IsTimeShifting() == timeshift && TVChannelName == channel) return true;
-        g_Player.Stop();
-      }
-      else
-      {
-        g_Player.Stop();
-        if (IsViewing() == false) return true;
-      }
       try
       {
+        CommandProcessor.ControlTimeShifting = false;
+        if (!Running)
+        {
+          errorMessage = "Recorder is not started";
+          return false;
+        }
+        errorMessage = String.Empty;
+        if (reEntrantStartViewing)
+        {
+          errorMessage = GUILocalizeStrings.Get(763);// "Recorder is busy";
+          Log.WriteFile(Log.LogType.Recorder, true, "Recorder:StartViewing() reentrant");
+          return false;
+        }
+        if (TVOnOff)
+        {
+          if (IsViewing() && IsTimeShifting() == timeshift && TVChannelName == channel) return true;
+          g_Player.Stop();
+        }
+        else
+        {
+          g_Player.Stop();
+          if (IsViewing() == false) return true;
+        }
         if (_commandProcessor.Paused)
         {
           errorMessage = GUILocalizeStrings.Get(764);//"Recorder is paused";
@@ -974,6 +975,7 @@ namespace MediaPortal.TV.Recording
       }
       finally
       {
+        CommandProcessor.ControlTimeShifting = true;
         reEntrantStartViewing = false;
       }
       return true;

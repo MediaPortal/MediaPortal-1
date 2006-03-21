@@ -243,16 +243,16 @@ namespace MediaPortal.Player
 
       if (_isLive)
       {
-
+        /*
         DateTime dt = DateTime.Now;
         do
         {
           UpdateDuration();
           System.Windows.Forms.Application.DoEvents();
           TimeSpan ts = DateTime.Now - dt;
-          if (ts.TotalSeconds >= 5) break;
+          if (ts.TotalSeconds > 0) break;
         } while (_duration < 4);
-
+        */
         UpdateCurrentPosition();
         double dPos = _duration - 2;
         if (dPos >= 0 && CurrentPosition < dPos)
