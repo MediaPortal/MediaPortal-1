@@ -1990,8 +1990,6 @@ namespace MediaPortal.TV.Recording
               //Marshal.ReleaseComObject(myTuneRequest);
             } break;
         }
-        UpdateSignalPresent();
-        Log.Write("DVBGraphBDA: signal strength:{0} signal quality:{1} signal present:{2} locked:{3}", SignalStrength(), SignalQuality(), SignalPresent(), TunerLocked() );
       }
       catch (Exception ex)
       {
@@ -2002,6 +2000,7 @@ namespace MediaPortal.TV.Recording
       _processTimer = DateTime.MinValue;
       _pmtSendCounter = 0;
       UpdateSignalPresent();
+      Log.Write("DVBGraphBDA: signal strength:{0} signal quality:{1} signal present:{2} locked:{3}", SignalStrength(), SignalQuality(), SignalPresent(), TunerLocked());
     }
 
     protected override void SetupDiseqc(int disecqNo)

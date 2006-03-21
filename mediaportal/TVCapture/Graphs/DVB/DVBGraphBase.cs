@@ -752,7 +752,7 @@ namespace MediaPortal.TV.Recording
     }
 
     #endregion
-#region Start/Stop Timeshifting
+    #region Start/Stop Timeshifting
     /// <summary>
     /// Starts timeshifting the TV channel and stores the timeshifting
     /// files in the specified filename
@@ -849,7 +849,7 @@ namespace MediaPortal.TV.Recording
       return true;
     }//public bool StopTimeShifting()
 
-    #endregion
+#endregion
     #endregion
 
     public bool Overlay
@@ -877,7 +877,7 @@ namespace MediaPortal.TV.Recording
       }
     }
 
-#region overrides
+    #region overrides
     /// <summary>
     /// Callback from GUIGraphicsContext. Will get called when the video window position or width/height changes
     /// </summary>
@@ -983,7 +983,7 @@ namespace MediaPortal.TV.Recording
       return false;
     }
 
-#region Stream-Audio handling
+    #region Stream-Audio handling
     public int GetAudioLanguage()
     {
       return _currentTuningObject.AudioPid;
@@ -1214,7 +1214,7 @@ namespace MediaPortal.TV.Recording
 
     #endregion
 
-#region graph building helper functions
+    #region graph building helper functions
     protected void AddPreferredCodecs(bool audio, bool video)
     {
       // add preferred video & audio codecs
@@ -1563,7 +1563,7 @@ namespace MediaPortal.TV.Recording
       if ((hr < 0) || (pinEnum == null))
         return false;
 
-#region Attempt to connect preferred output pin first
+      #region Attempt to connect preferred output pin first
       if (preferredOutputPin > 0)
       {
         IPin[] outPin = new IPin[1];
@@ -1704,7 +1704,7 @@ namespace MediaPortal.TV.Recording
 
     #endregion
 
-#region process helper functions
+    #region process helper functions
     // send PMT to firedtv device
     protected bool SendPMT()
     {
@@ -2063,7 +2063,7 @@ namespace MediaPortal.TV.Recording
           case 2: // Circular-Band
             break;
         }
-        
+
 
         // LNB switch frequency
         ch.LnbSwitchFrequency = lnbswMHZ * 1000;//11700
@@ -2601,7 +2601,7 @@ namespace MediaPortal.TV.Recording
           } break;
       }	//switch (_networkType)
     }
-#region Tuning
+    #region Tuning
     /// <summary>
     /// Switches / tunes to another TV channel
     /// </summary>
@@ -2670,21 +2670,14 @@ namespace MediaPortal.TV.Recording
         {
           Log.Write(ex);
         }
-        Log.WriteFile(Log.LogType.Log, "DVBGraph:TuneChannel() done freq:{0} ONID:{1} TSID:{2} prog:{3} audio:{4:X} video:{5:X} pmt:{6:X} ac3:{7:X} txt:{8:X}",
-                                            _currentTuningObject.Frequency,
-                                            _currentTuningObject.NetworkID, _currentTuningObject.TransportStreamID,
-                                            _currentTuningObject.ProgramNumber, _currentTuningObject.Audio1,
-                                            _currentTuningObject.VideoPid, _currentTuningObject.PMTPid,
-                                            _currentTuningObject.AC3Pid, _currentTuningObject.TeletextPid);
-
         //SendPMT();
         _refreshPmtTable = true;
         _lastPMTVersion = -1;
         _pmtRetyCount = 0;
         _analyzerInterface.ResetParser();
         SetupMTSDemuxerPin();
-        Log.WriteFile(Log.LogType.Log, false, "DVBGraph:set mpeg2demuxer video:0x{0:x} audio:0x{1:X} ac3:0x{2:X}",
-                        _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, _currentTuningObject.AC3Pid);
+        //Log.WriteFile(Log.LogType.Log, false, "DVBGraph:set mpeg2demuxer video:0x{0:x} audio:0x{1:X} ac3:0x{2:X}",
+        //                _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, _currentTuningObject.AC3Pid);
         SetupDemuxer(_pinDemuxerVideo, _currentTuningObject.VideoPid, _pinDemuxerAudio, _currentTuningObject.AudioPid, _pinAC3Out, _currentTuningObject.AC3Pid);
         if (_streamDemuxer != null)
         {
@@ -2728,7 +2721,8 @@ namespace MediaPortal.TV.Recording
         //_analyzerInterface.SetPidFilterCallback(this);
       }
       catch (Exception) { }
-
+      UpdateSignalPresent();
+      Log.Write("DVBGraph:TuneChannel done signal strength:{0} signal quality:{1} locked:{2}", SignalStrength(), SignalQuality(), _tunerLocked);
     }//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
 
@@ -2737,13 +2731,13 @@ namespace MediaPortal.TV.Recording
     }
 
 
-#region TuneRequest
+    #region TuneRequest
     protected virtual void SubmitTuneRequest(DVBChannel ch)
     {
     }
 
     #endregion
-#region AutoTuning
+    #region AutoTuning
     /// <summary>
     /// Tune to a specific channel
     /// </summary>
@@ -3521,11 +3515,11 @@ namespace MediaPortal.TV.Recording
         count++;
       }
     }
-    #endregion
+#endregion
 
     #endregion
 
-#region Radio
+    #region Radio
     protected void GetRadioChannelFromDatabase(RadioStation channel)
     {
 
@@ -3822,7 +3816,7 @@ namespace MediaPortal.TV.Recording
     #endregion
 
 
-#region demuxer callbacks
+    #region demuxer callbacks
     protected bool m_streamDemuxer_AudioHasChanged(MediaPortal.TV.Recording.DVBDemuxer.AudioHeader audioFormat)
     {
       return false;

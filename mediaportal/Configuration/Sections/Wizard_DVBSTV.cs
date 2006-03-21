@@ -974,7 +974,7 @@ namespace MediaPortal.Configuration.Sections
           case 1: lnbkind4.SelectedItem = "C-Band"; break;
           case 2: lnbkind4.SelectedItem = "Circular"; break;
         }
-        int diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 1);
+        int diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc", 0);
         switch (diseqc)
         {
           case 0: diseqca.SelectedItem = "None"; break;
@@ -986,7 +986,7 @@ namespace MediaPortal.Configuration.Sections
           case 6: diseqca.SelectedItem = "Level 1 B/B"; break;
 
         }
-        diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 1);
+        diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc2", 0);
         switch (diseqc)
         {
           case 0: diseqcb.SelectedItem = "None"; break;
@@ -998,7 +998,7 @@ namespace MediaPortal.Configuration.Sections
           case 6: diseqcb.SelectedItem = "Level 1 B/B"; break;
 
         }
-        diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 1);
+        diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc3", 0);
         switch (diseqc)
         {
           case 0: diseqcc.SelectedItem = "None"; break;
@@ -1010,7 +1010,7 @@ namespace MediaPortal.Configuration.Sections
           case 6: diseqcc.SelectedItem = "Level 1 B/B"; break;
 
         }
-        diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 1);
+        diseqc = xmlreader.GetValueAsInt("dvbs", "diseqc4", 0);
         switch (diseqc)
         {
           case 0: diseqcd.SelectedItem = "None"; break;
