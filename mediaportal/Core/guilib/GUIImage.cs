@@ -56,44 +56,44 @@ namespace MediaPortal.GUI.Library
     private long m_dwColorKey = 0;
     //private VertexBuffer						m_vbBuffer=null;
     [XMLSkinElement("texture")]
-    private string m_strFileName = "";
+    private string _textureFileNameTag = "";
     /// <summary>The width of the current texture.</summary>
     private int _textureWidth = 0;
     private int _textureHeight = 0;
     /// <summary>The width of the image containing the textures.</summary>
     private int _imageWidth = 0;
     private int _imageHeight = 0;
-    private int m_iBitmap = 0;
+    private int _selectedFrameNumber = 0;
     private int m_dwItems = 0;
-    private int m_iCurrentLoop = 0;
-    private int m_iCurrentImage = 0;
+    private int _currentAnimationLoop = 0;
+    private int _currentFrameNumber = 0;
     [XMLSkinElement("keepaspectratio")]
     private bool _keepAspectRatio = false;
     [XMLSkinElement("zoom")]
-    private bool m_bZoom = false;
+    private bool _zoomIn = false;
     [XMLSkinElement("zoomfromtop")]
-    private bool m_bZoomFromTop = false;
+    private bool _zoomFromTop = false;
     [XMLSkinElement("fixedheight")]
-    private bool m_bFixedHeight = false;
-    private CachedTexture.Frame[] m_vecTextures = null;
+    private bool _isFixedHeight = false;
+    private CachedTexture.Frame[] _listTextures = null;
 
     //TODO GIF PALLETTE
     //private PaletteEntry						m_pPalette=null;
     /// <summary>The width of in which the texture will be rendered after scaling texture.</summary>
     private int m_iRenderWidth = 0;
     private int m_iRenderHeight = 0;
-    private bool m_bWasVisible = false;
     private System.Drawing.Image m_image = null;
     private Rectangle m_destRect;
-    string m_strTextureFileName = "";
+    string _cachedTextureFileName = "";
     int g_nAnisotropy = 0;
     [XMLSkinElement("filtered")]
-    bool m_bFiltering = true;
+    bool _filterImage = true;
     [XMLSkinElement("centered")]
-    bool m_bCentered = false;
-    string m_strTxt;
-    DateTime m_AnimationTime = DateTime.MinValue;
+    bool _centerImage = false;
+
+    DateTime _animationTimer = DateTime.MinValue;
     bool _containsProperty = false;
+    bool _propertyChanged = false;
     //    StateBlock                      savedStateBlock;
     Rectangle sourceRect;
     Rectangle destinationRect;
@@ -102,12 +102,15 @@ namespace MediaPortal.GUI.Library
     float scaleY = 1;
     float _fx, _fy, _nw, _nh;
     float _uoff, _voff, _umax, _vmax;
-    int _color;
+
     float _texUoff, _texVoff, _texUmax, _texVmax;
     Texture _packedTexture = null;
     int _packedTextureNo = -1;
     static bool logtextures = false;
     System.Drawing.Image memoryImage = null;
+    bool _isFullScreenImage = false;
+    bool _reCalculate = false;
+    bool _allocated = false;
 
     public GUIImage(int dwParentID)
       : base(dwParentID)
@@ -134,16 +137,16 @@ namespace MediaPortal.GUI.Library
       : base(dwParentID, dwControlId, dwPosX, dwPosY, dwWidth, dwHeight)
     {
       _diffuseColor = 0xFFFFFFFF;
-      m_strFileName = strTexture;
+      _textureFileNameTag = strTexture;
       _textureWidth = 0;
       _textureHeight = 0;
       m_dwColorKey = dwColorKey;
-      m_iBitmap = 0;
+      _selectedFrameNumber = 0;
 
-      m_iCurrentImage = 0;
+      _currentFrameNumber = 0;
       _keepAspectRatio = false;
-      m_bZoom = false;
-      m_iCurrentLoop = 0;
+      _zoomIn = false;
+      _currentAnimationLoop = 0;
       _imageWidth = 0;
       _imageHeight = 0;
       FinalizeConstruction();
@@ -160,18 +163,18 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void ScaleToScreenResolution()
     {
-      if (m_strFileName == null) m_strFileName = String.Empty;
-      if (m_strFileName != "-" && m_strFileName != "")
+      if (_textureFileNameTag == null) _textureFileNameTag = String.Empty;
+      if (_textureFileNameTag != "-" && _textureFileNameTag != "")
       {
         if (_width == 0 || _height == 0)
         {
           try
           {
             string strFileNameTemp = "";
-            if (!System.IO.File.Exists(m_strFileName))
+            if (!System.IO.File.Exists(_textureFileNameTag))
             {
-              if (m_strFileName[1] != ':')
-                strFileNameTemp = GUIGraphicsContext.Skin + @"\media\" + m_strFileName;
+              if (_textureFileNameTag[1] != ':')
+                strFileNameTemp = GUIGraphicsContext.Skin + @"\media\" + _textureFileNameTag;
             }
 
             if (strFileNameTemp.Length > 0 && strFileNameTemp.IndexOf(@"\#") != -1)
@@ -201,11 +204,10 @@ namespace MediaPortal.GUI.Library
       base.FinalizeConstruction();
 
       m_dwItems = 1;
-      m_bWasVisible = IsVisible;
 
       m_iRenderWidth = _width;
       m_iRenderHeight = _height;
-      if (m_strFileName.IndexOf("#") >= 0) _containsProperty = true;
+      if (_textureFileNameTag.IndexOf("#") >= 0) _containsProperty = true;
     }
 
     /// <summary>
@@ -216,8 +218,9 @@ namespace MediaPortal.GUI.Library
       get { return _textureWidth; }
       set
       {
-        if (_textureWidth < 0) return;
-        _textureWidth = value; Update();
+        if (value < 0 || value == _textureWidth) return;
+        _textureWidth = value;
+        _reCalculate = true;
       }
     }
 
@@ -229,8 +232,9 @@ namespace MediaPortal.GUI.Library
       get { return _textureHeight; }
       set
       {
-        if (_textureHeight < 0) return;
-        _textureHeight = value; Update();
+        if (value < 0 || value == _textureHeight) return;
+        _textureHeight = value;
+        _reCalculate = true;
       }
     }
 
@@ -239,8 +243,12 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string FileName
     {
-      get { return m_strFileName; }
-      set { m_strFileName = value; }
+      get { return _textureFileNameTag; }
+      set
+      {
+
+        SetFileName(value);
+      }
     }
 
     /// <summary>
@@ -249,7 +257,14 @@ namespace MediaPortal.GUI.Library
     public long ColorKey
     {
       get { return m_dwColorKey; }
-      set { m_dwColorKey = value; }
+      set
+      {
+        if (m_dwColorKey != value)
+        {
+          m_dwColorKey = value;
+          _reCalculate = true;
+        }
+      }
     }
 
     /// <summary>
@@ -258,7 +273,14 @@ namespace MediaPortal.GUI.Library
     public bool KeepAspectRatio
     {
       get { return _keepAspectRatio; }
-      set { _keepAspectRatio = value; }
+      set
+      {
+        if (_keepAspectRatio != value)
+        {
+          _keepAspectRatio = value;
+          _reCalculate = true;
+        }
+      }
     }
 
     /// <summary>
@@ -291,11 +313,11 @@ namespace MediaPortal.GUI.Library
     /// then you can select the current frame with this method
     /// </summary>
     /// <param name="iBitmap"></param>
-    public void Select(int iBitmap)
+    public void Select(int frameNumber)
     {
-      if (m_iBitmap == iBitmap) return;
-      m_iBitmap = iBitmap;
-      Update();
+      if (_selectedFrameNumber == frameNumber) return;
+      _selectedFrameNumber = frameNumber;
+      _reCalculate = true;
     }
 
     /// <summary>
@@ -313,26 +335,20 @@ namespace MediaPortal.GUI.Library
     /// This function will do the animation (when texture is an animated gif)
     /// by switching from frame 1->frame2->frame 3->...
     /// </summary>
-    protected void Process()
+    protected void Animate()
     {
-      if (m_vecTextures == null) return;
+      if (_listTextures == null) return;
       // If the number of textures that correspond to this control is lower than or equal to 1 do not change the texture.
-      if (m_vecTextures.Length <= 1)
-        return;
-
-      // If the GUIImage has not been visible before start at the first texture in the m_vecTextures.
-      if (!m_bWasVisible)
+      if (_listTextures.Length <= 1)
       {
-        m_iCurrentLoop = 0;
-        m_iCurrentImage = 0;
-        m_bWasVisible = true;
+        _currentFrameNumber = 0;
         return;
       }
 
-      if (m_iCurrentImage >= m_vecTextures.Length)
-        m_iCurrentImage = 0;
+      if (_currentFrameNumber >= _listTextures.Length)
+        _currentFrameNumber = 0;
 
-      CachedTexture.Frame frame = m_vecTextures[m_iCurrentImage];
+      CachedTexture.Frame frame = _listTextures[_currentFrameNumber];
       // Check the delay.
       int dwDelay = frame.Duration;
       int iMaxLoops = 0;
@@ -341,34 +357,34 @@ namespace MediaPortal.GUI.Library
       // Default delay = 100;
       if (0 == dwDelay) dwDelay = 100;
 
-      TimeSpan ts = DateTime.Now - m_AnimationTime;
+      TimeSpan ts = DateTime.Now - _animationTimer;
       if (ts.TotalMilliseconds > dwDelay)
       {
-        m_AnimationTime = DateTime.Now;
+        _animationTimer = DateTime.Now;
 
         // Reset the current image
-        if (m_iCurrentImage + 1 >= m_vecTextures.Length)
+        if (_currentFrameNumber + 1 >= _listTextures.Length)
         {
           // Check if another loop is required
           if (iMaxLoops > 0)
           {
             // Go to the next loop
-            if (m_iCurrentLoop + 1 < iMaxLoops)
+            if (_currentAnimationLoop + 1 < iMaxLoops)
             {
-              m_iCurrentLoop++;
-              m_iCurrentImage = 0;
+              _currentAnimationLoop++;
+              _currentFrameNumber = 0;
             }
           }
           else
           {
             // 0 == loop forever
-            m_iCurrentImage = 0;
+            _currentFrameNumber = 0;
           }
         }
         // Switch to the next image.
         else
         {
-          m_iCurrentImage++;
+          _currentFrameNumber++;
         }
       }
     }
@@ -378,58 +394,89 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void AllocResources()
     {
-
-      //imageSprite = new Sprite(GUIGraphicsContext.DX9Device);
-
-      g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
-
-      //reset animation
-      m_iCurrentImage = 0;
-      m_iCurrentLoop = 0;
-
-      //get the filename of the texture
-      string strFile = m_strFileName;
-      if (_containsProperty)
-        strFile = GUIPropertyManager.Parse(m_strFileName);
-      if (m_strFileName == "-") return;
-      if (m_strFileName == "") return;
-
-      if (logtextures) Log.Write("GUIImage:AllocResources:{0}", strFile);
-      if (GUITextureManager.GetPackedTexture(strFile, out _texUoff, out _texVoff, out _texUmax, out _texVmax, out _textureWidth, out _textureHeight, out _packedTexture, out _packedTextureNo))
+      try
       {
-        Update();
-        return;
-      }
+        GUIPropertyManager.OnPropertyChanged += new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+        _propertyChanged = false;
 
-      //load the texture
-      int iImages = 0;
-      if (strFile == "#useMemoryImage")
-      {
-        iImages = GUITextureManager.LoadFromMemory(memoryImage, m_dwColorKey, m_iRenderWidth, _textureHeight);
-        if (0 == iImages)
+        g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
+
+        //reset animation
+        _currentFrameNumber = 0;
+        _currentAnimationLoop = 0;
+
+        //get the filename of the texture
+        string fileName = _textureFileNameTag;
+        if (_containsProperty)
+          fileName = GUIPropertyManager.Parse(_textureFileNameTag);
+        if (fileName.Length == 0) return;
+        if (_textureFileNameTag.Length == 0) return;
+        if (_textureFileNameTag == "") return;
+
+        if (logtextures) Log.Write("GUIImage:AllocResources:{0}", fileName);
+        if (GUITextureManager.GetPackedTexture(fileName, out _texUoff, out _texVoff, out _texUmax, out _texVmax, out _textureWidth, out _textureHeight, out _packedTexture, out _packedTextureNo))
         {
-          return;// unable to load texture
+          _reCalculate = true;
+          return;
         }
 
-      }
-      else
-      {
-        iImages = GUITextureManager.Load(strFile, m_dwColorKey, m_iRenderWidth, _textureHeight);
-        if (0 == iImages)
+        //load the texture
+        int frameCount = 0;
+        if (fileName == "#useMemoryImage")
         {
-          return;// unable to load texture
+          frameCount = GUITextureManager.LoadFromMemory(memoryImage, m_dwColorKey, m_iRenderWidth, _textureHeight);
+          if (0 == frameCount)
+          {
+            return;// unable to load texture
+          }
+
+        }
+        else
+        {
+          frameCount = GUITextureManager.Load(fileName, m_dwColorKey, m_iRenderWidth, _textureHeight);
+          if (0 == frameCount)
+          {
+            return;// unable to load texture
+          }
+        }
+        //get each frame of the texture
+        _listTextures = new CachedTexture.Frame[frameCount];
+        for (int i = 0; i < frameCount; i++)
+        {
+          _listTextures[i] = GUITextureManager.GetTexture(fileName, i, out _textureWidth, out _textureHeight);//,m_pPalette);
+          _listTextures[i].Disposed += new EventHandler(OnImageDisposedEvent);
+        }
+
+        // Set state to render the image
+        _reCalculate = true;
+      }
+      finally
+      {
+        _allocated = true;
+      }
+    }
+
+    void OnImageDisposedEvent(object sender, EventArgs e)
+    {
+      if (_listTextures == null) return;
+      if (sender == null) return;
+      for (int i = 0; i < _listTextures.Length; ++i)
+      {
+        if (_listTextures[i] == sender)
+        {
+          _listTextures[i].Disposed -= new EventHandler(OnImageDisposedEvent);
+          _listTextures[i] = null;
         }
       }
-      //get each frame of the texture
-      m_vecTextures = new CachedTexture.Frame[iImages];
-      for (int i = 0; i < iImages; i++)
+    }
+
+    void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
+    {
+      if (!_containsProperty) return;
+      if (_textureFileNameTag.IndexOf(tag) >= 0)
       {
-        m_vecTextures[i] = GUITextureManager.GetTexture(strFile, i, out _textureWidth, out _textureHeight);//,m_pPalette);
+        _propertyChanged = true;
       }
-
-      // Set state to render the image
-      Update();
-
     }
 
     /// <summary>
@@ -437,13 +484,16 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void FreeResources()
     {
+      _allocated = false;
       lock (this)
       {
-        string file = m_strFileName;
+        GUIPropertyManager.OnPropertyChanged -= new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+
+        string file = _textureFileNameTag;
         _packedTexture = null;
         if (_containsProperty)
         {
-          file = GUIPropertyManager.Parse(m_strFileName);
+          file = GUIPropertyManager.Parse(_textureFileNameTag);
         }
         if (file != null && file != String.Empty)
         {
@@ -456,33 +506,38 @@ namespace MediaPortal.GUI.Library
         Cleanup();
       }
     }
+
     void Cleanup()
     {
-      m_strTextureFileName = "";
-      /*if (m_vbBuffer!=null)
-      {
-        if (!m_vbBuffer.Disposed) m_vbBuffer.Dispose();
-        m_vbBuffer=null;
-      }*/
-
+      _cachedTextureFileName = "";
       m_image = null;
-
-      m_vecTextures = null;
-      m_iCurrentImage = 0;
-      m_iCurrentLoop = 0;
+      if (_listTextures != null)
+      {
+        for (int i = 0; i < _listTextures.Length; ++i)
+        {
+          if (_listTextures[i] != null)
+          {
+            _listTextures[i].Disposed -= new EventHandler(OnImageDisposedEvent);
+          }
+        }
+      }
+      _listTextures = null;
+      _currentFrameNumber = 0;
+      _currentAnimationLoop = 0;
       _imageWidth = 0;
       _imageHeight = 0;
       _textureWidth = 0;
       _textureHeight = 0;
-      //if (savedStateBlock!=null) savedStateBlock.Dispose();
-      //savedStateBlock=null;
+      _allocated = false;
+      _packedTexture = null;
     }
 
     /// <summary>
     /// Sets the state to render the image
     /// </summary>
-    protected override void Update()
+    protected void Calculate()
     {
+      _reCalculate = false;
       float x = (float)_positionX;
       float y = (float)_positionY;
       if (_packedTexture != null)
@@ -495,11 +550,11 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        if (m_vecTextures == null) return;
-        if (m_vecTextures.Length == 0) return;
-        if (m_iCurrentImage < 0 || m_iCurrentImage >= m_vecTextures.Length) return;
+        if (_listTextures == null) return;
+        if (_listTextures.Length == 0) return;
+        if (_currentFrameNumber < 0 || _currentFrameNumber >= _listTextures.Length) return;
 
-        CachedTexture.Frame frame = m_vecTextures[m_iCurrentImage];
+        CachedTexture.Frame frame = _listTextures[_currentFrameNumber];
         if (frame == null) return;
         Direct3D.Texture texture = frame.Image;
         frame = null;
@@ -564,7 +619,7 @@ namespace MediaPortal.GUI.Library
       //adjust image based on current aspect ratio setting
       float fSourceFrameRatio = 1;
       float fOutputFrameRatio = 1;
-      if (!m_bZoom && !m_bZoomFromTop && _keepAspectRatio && _textureWidth != 0 && _textureHeight != 0)
+      if (!_zoomIn && !_zoomFromTop && _keepAspectRatio && _textureWidth != 0 && _textureHeight != 0)
       {
         // TODO: remove or complete HDTV_1080i code
         //int iResolution=g_stSettings.m_ScreenResolution;
@@ -604,7 +659,7 @@ namespace MediaPortal.GUI.Library
 
       // if necessary then center the image 
       // in the controls rectangle
-      if (m_bCentered)
+      if (_centerImage)
       {
         x += ((((float)_width) - nw) / 2.0f);
         y += ((((float)_height) - nh) / 2.0f);
@@ -617,7 +672,7 @@ namespace MediaPortal.GUI.Library
       int iSourceWidth = _textureWidth;
       int iSourceHeight = _textureHeight;
 
-      if ((m_bZoom || m_bZoomFromTop) && _keepAspectRatio)
+      if ((_zoomIn || _zoomFromTop) && _keepAspectRatio)
       {
         fSourceFrameRatio = ((float)nw) / ((float)nh);
         fOutputFrameRatio = fSourceFrameRatio * GUIGraphicsContext.PixelRatio;
@@ -643,11 +698,11 @@ namespace MediaPortal.GUI.Library
           }
         }
 
-        if (!m_bZoomFromTop) iSourceY = (_textureHeight - iSourceHeight) / 2;
+        if (!_zoomFromTop) iSourceY = (_textureHeight - iSourceHeight) / 2;
         iSourceX = (_textureWidth - iSourceWidth) / 2;
       }
 
-      if (m_bFixedHeight)
+      if (_isFixedHeight)
       {
         y = (float)_positionY;
         nh = (float)_height;
@@ -691,7 +746,7 @@ namespace MediaPortal.GUI.Library
 
       // copy all coordinates to the vertex buffer
       // x-offset in texture
-      float uoffs = ((float)(m_iBitmap * _width + iSourceX)) / ((float)_imageWidth);
+      float uoffs = ((float)(_selectedFrameNumber * _width + iSourceX)) / ((float)_imageWidth);
 
       // y-offset in texture
       float voffs = ((float)iSourceY) / ((float)_imageHeight);
@@ -713,7 +768,6 @@ namespace MediaPortal.GUI.Library
       }
 
       _fx = x; _fy = y; _nw = nw; _nh = nh;
-      _color = (int)_diffuseColor;
 
       _uoff = uoffs;
       _voff = voffs;
@@ -729,7 +783,7 @@ namespace MediaPortal.GUI.Library
       }
 
       pntPosition = new Vector3(x, y, 0);
-      sourceRect = new Rectangle(m_iBitmap * _width + iSourceX, iSourceY, iSourceWidth, iSourceHeight);
+      sourceRect = new Rectangle(_selectedFrameNumber * _width + iSourceX, iSourceY, iSourceWidth, iSourceHeight);
       destinationRect = new Rectangle(0, 0, (int)nw, (int)nh);
       m_destRect = new Rectangle((int)x, (int)y, (int)nw, (int)nh);
 
@@ -737,208 +791,151 @@ namespace MediaPortal.GUI.Library
       scaleY = (float)destinationRect.Height / (float)iSourceHeight;
       pntPosition.X /= scaleX;
       pntPosition.Y /= scaleY;
-    }
 
-    /// <summary>
-    /// Check 
-    ///  -IsVisible
-    ///  -Filename
-    ///  -Filename changed cause it contains a property
-    ///  -m_vecTextures
-    ///  -m_vbBuffer
-    ///  -GUIGraphicsContext.DX9Device
-    /// </summary>
-    /// <returns></returns>
-    public bool PreRender()
+      _isFullScreenImage = false;
+      if (m_iRenderWidth == GUIGraphicsContext.Width && m_iRenderHeight == GUIGraphicsContext.Height)
+        _isFullScreenImage = true;
+    }
+    public override bool IsVisible
     {
-      // Do not render if not visible
-      if (false == IsVisible)
+      get
       {
-        m_bWasVisible = false;
-        return false;
+        return base.IsVisible;
       }
-      if (_packedTexture != null && GUIGraphicsContext.graphics == null)
+      set
       {
-        // if we are not rendering the GUI background
-        if (!GUIGraphicsContext.ShowBackground)
+        if (base.IsVisible != value)
         {
-          // then check if this image is the background
-          if (m_iRenderWidth == GUIGraphicsContext.Width && m_iRenderHeight == GUIGraphicsContext.Height)
+          _currentAnimationLoop = 0;
+          _currentFrameNumber = 0;
+        }
+        base.IsVisible = value;
+      }
+    }
+    /*
+      /// <summary>
+      /// Check 
+      ///  -IsVisible
+      ///  -Filename
+      ///  -Filename changed cause it contains a property
+      ///  -m_vecTextures
+      ///  -m_vbBuffer
+      ///  -GUIGraphicsContext.DX9Device
+      /// </summary>
+      /// <returns></returns>
+      public bool PreRender()
+      { 
+
+        //check if we should use GDI to draw the image
+        if (GUIGraphicsContext.graphics != null)
+        {
+          // yes, If the GDI Image is not loaded, load the Image
+          if (m_image == null)
           {
-            // and we're playing video or tv
-            if (GUIGraphicsContext.IsPlaying && GUIGraphicsContext.IsPlayingVideo)
+            string strFileName = _textureFileNameTag;
+            if (_containsProperty)
+              strFileName = GUIPropertyManager.Parse(_textureFileNameTag);
+            if (strFileName != "-")
             {
-              //if all true then don't render this image
-              return false;
+              if (!System.IO.File.Exists(strFileName))
+              {
+                if (strFileName[1] != ':')
+                  strFileName = GUIGraphicsContext.Skin + @"\media\" + strFileName;
+              }
+              m_image = GUITextureManager.GetImage(strFileName);
+              strFileName = null;
             }
           }
+
+          // Draw the GDI image
+          if (m_image != null)
+          {
+            GUIGraphicsContext.graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+            GUIGraphicsContext.graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+            GUIGraphicsContext.graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            GUIGraphicsContext.graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+
+            try
+            {
+              GUIGraphicsContext.graphics.DrawImage(m_image, m_destRect);
+            }
+            catch (Exception)
+            {
+            }
+            return false;
+          }
         }
+
+        // if image is an animation then present the next frame
+        if (m_vecTextures == null) return false;
+        if (m_vecTextures.Length != 1)
+          Process();
+
+        // if the current frame is invalid then return
+        if (_currentFrameNumber < 0 || _currentFrameNumber >= m_vecTextures.Length) return false;
+
+        //get the current frame
+        CachedTexture.Frame frame = m_vecTextures[_currentFrameNumber];
+        if (frame == null) return false; // no frame? then return
+
+        //get the texture of the frame
+        Direct3D.Texture texture = frame.Image;
+        if (texture == null)
+        {
+          // no texture? then return
+          m_image = null;
+
+          m_vecTextures = null;
+          _currentFrameNumber = 0;
+          _currentAnimationLoop = 0;
+          _imageWidth = 0;
+          _imageHeight = 0;
+          _textureWidth = 0;
+          _textureHeight = 0;
+          frame = null;
+          AllocResources();
+          return false;
+        }
+        // is texture still valid?
+        if (texture.Disposed)
+        {
+          //no? then return
+          m_image = null;
+
+          m_vecTextures = null;
+          _currentFrameNumber = 0;
+          _currentAnimationLoop = 0;
+          _imageWidth = 0;
+          _imageHeight = 0;
+          _textureWidth = 0;
+          _textureHeight = 0;
+          frame = null;
+          texture = null;
+          AllocResources();
+          return false;
+        }
+
         return true;
       }
 
-      // if filename contains a property, then get the value of the property
-      if (_containsProperty)
+      public void RenderToSprite(Sprite sprite)
       {
-        m_strTxt = GUIPropertyManager.Parse(m_strFileName);
+        if (sprite == null) return;
+        if (sprite.Disposed) return;
 
-        // if value changed or if we dont got any textures yet
-        if (m_strTextureFileName != m_strTxt || m_vecTextures == null || 0 == m_vecTextures.Length)
-        {
-          // then free our resources, and reload the (new) image
-          if (logtextures) Log.Write("GUIImage:PreRender() image changed:{0}->{1}", m_strTextureFileName, m_strTxt);
-          FreeResources();
-          m_strTextureFileName = m_strTxt;
-          if (m_strTxt.Length == 0)
-          {
-            // filename for new image is empty
-            // no need to load it
-            m_strTxt = null;
-            return false;
-          }
-          IsVisible = true;
-          AllocResources();
-          Update();
-        }
-        m_strTxt = null;
+        if (!PreRender()) return; // SLOW
+
+        //get the current frame
+        CachedTexture.Frame frame = m_vecTextures[_currentFrameNumber];
+        if (frame == null) return; // no frame? then return
+
+        //get the texture of the frame
+        Direct3D.Texture texture = frame.Image;
+        // Set the scaling transform
+        sprite.Transform = Matrix.Scaling(scaleX, scaleY, 1.0f);
+        sprite.Draw(texture, sourceRect, new Vector3(), pntPosition, unchecked((int)_diffuseColor));
       }
-
-
-      // if we are not rendering the GUI background
-      if (!GUIGraphicsContext.ShowBackground)
-      {
-        // then check if this image is the background
-        if (m_iRenderWidth == GUIGraphicsContext.Width && m_iRenderHeight == GUIGraphicsContext.Height)
-        {
-          // and we're playing video or tv
-          if (GUIGraphicsContext.IsPlaying && GUIGraphicsContext.IsPlayingVideo)
-          {
-            //if all true then don't render this image
-            return false;
-          }
-        }
-      }
-
-      //check if we should use GDI to draw the image
-      if (GUIGraphicsContext.graphics != null)
-      {
-        // yes, If the GDI Image is not loaded, load the Image
-        if (m_image == null)
-        {
-          string strFileName = m_strFileName;
-          if (_containsProperty)
-            strFileName = GUIPropertyManager.Parse(m_strFileName);
-          if (strFileName != "-")
-          {
-            if (!System.IO.File.Exists(strFileName))
-            {
-              if (strFileName[1] != ':')
-                strFileName = GUIGraphicsContext.Skin + @"\media\" + strFileName;
-            }
-            m_image = GUITextureManager.GetImage(strFileName);
-            strFileName = null;
-          }
-        }
-
-        // Draw the GDI image
-        if (m_image != null)
-        {
-          GUIGraphicsContext.graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-          GUIGraphicsContext.graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-          GUIGraphicsContext.graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-          GUIGraphicsContext.graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-
-          try
-          {/*
-						float xoff = GUIGraphicsContext.VideoSize.Width/GUIGraphicsContext.Width;
-						if (xoff>=1f) xoff=1f;
-						float yoff = GUIGraphicsContext.VideoSize.Height/GUIGraphicsContext.Height;
-						if (yoff>=1f) yoff=1f;
-
-						Rectangle rect = m_destRect;
-						rect.X = (int)Math.Floor( ((float)rect.X) * xoff);
-						rect.Y = (int)Math.Floor( ((float)rect.Y) * xoff);
-						rect.Width = (int)Math.Floor( ((float)rect.Width) * xoff);
-						rect.Height = (int)Math.Floor( ((float)rect.Height) * xoff);
-            GUIGraphicsContext.graphics.DrawImage(m_image,rect);*/
-            GUIGraphicsContext.graphics.DrawImage(m_image, m_destRect);
-          }
-          catch (Exception)
-          {
-          }
-          return false;
-        }
-      }
-
-      // if image is an animation then present the next frame
-      if (m_vecTextures == null) return false;
-      if (m_vecTextures.Length != 1)
-        Process();
-
-      // if the current frame is invalid then return
-      if (m_iCurrentImage < 0 || m_iCurrentImage >= m_vecTextures.Length) return false;
-
-      //get the current frame
-      CachedTexture.Frame frame = m_vecTextures[m_iCurrentImage];
-      if (frame == null) return false; // no frame? then return
-
-      //get the texture of the frame
-      Direct3D.Texture texture = frame.Image;
-      if (texture == null)
-      {
-        // no texture? then return
-        m_image = null;
-
-        m_vecTextures = null;
-        m_iCurrentImage = 0;
-        m_iCurrentLoop = 0;
-        _imageWidth = 0;
-        _imageHeight = 0;
-        _textureWidth = 0;
-        _textureHeight = 0;
-        frame = null;
-        AllocResources();
-        return false;
-      }
-      // is texture still valid?
-      if (texture.Disposed)
-      {
-        //no? then return
-        m_image = null;
-
-        m_vecTextures = null;
-        m_iCurrentImage = 0;
-        m_iCurrentLoop = 0;
-        _imageWidth = 0;
-        _imageHeight = 0;
-        _textureWidth = 0;
-        _textureHeight = 0;
-        frame = null;
-        texture = null;
-        AllocResources();
-        return false;
-      }
-
-      return true;
-    }
-
-    public void RenderToSprite(Sprite sprite)
-    {
-      if (sprite == null) return;
-      if (sprite.Disposed) return;
-
-      if (!PreRender()) return; // SLOW
-
-      //get the current frame
-      CachedTexture.Frame frame = m_vecTextures[m_iCurrentImage];
-      if (frame == null) return; // no frame? then return
-
-      //get the texture of the frame
-      Direct3D.Texture texture = frame.Image;
-      // Set the scaling transform
-      sprite.Transform = Matrix.Scaling(scaleX, scaleY, 1.0f);
-      sprite.Draw(texture, sourceRect, new Vector3(), pntPosition, unchecked((int)_diffuseColor));
-    }
-
+      */
     public void RenderRect(float timePassed, Rectangle rectSrc, Rectangle rectDst)
     {
       _fx = rectDst.Left;
@@ -965,42 +962,89 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void Render(float timePassed)
     {
-      if (!IsVisible) return;
-      if (!PreRender()) return;
+      if (!IsVisible || !_allocated) return;
+      if (!GUIGraphicsContext.ShowBackground && _isFullScreenImage) return;
+      if (_containsProperty && _propertyChanged)
+      {
+        _propertyChanged = false;
+        string fileName = GUIPropertyManager.Parse(_textureFileNameTag);
+
+        // if value changed or if we dont got any textures yet
+        if (_cachedTextureFileName != fileName || _listTextures == null || 0 == _listTextures.Length)
+        {
+          // then free our resources, and reload the (new) image
+          if (logtextures) Log.Write("GUIImage:PreRender() image changed:{0}->{1}", _cachedTextureFileName, fileName);
+          FreeResources();
+          _cachedTextureFileName = fileName;
+          if (fileName.Length == 0)
+          {
+            // filename for new image is empty
+            // no need to load it
+            return;
+          }
+          IsVisible = true;
+          AllocResources();
+          _reCalculate = true;
+        }
+      }
+
+      if (_reCalculate)
+      {
+        Calculate();
+      }
 
       //get the current frame
       if (_packedTextureNo >= 0)
       {
         if (Dimmed)
-          FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (_color & DimColor));
+          FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)(_diffuseColor & DimColor));
         else
-          FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _color);
+          FontEngineDrawTexture(_packedTextureNo, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)_diffuseColor);
         return;
       }
-      CachedTexture.Frame frame = m_vecTextures[m_iCurrentImage];
-      if (frame == null) return; // no frame? then return
-      if (Dimmed)
-        frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (_color & DimColor));
-      else
-        frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _color);
-      frame = null;
+      else if (_listTextures != null)
+      {
+        if (_listTextures.Length > 0)
+        {
+          Animate();
+          CachedTexture.Frame frame = _listTextures[_currentFrameNumber];
+          if (frame == null)
+          {
+            Cleanup();
+            AllocResources();
+            return;
+          }
+          if (frame.Image == null)
+          {
+            Cleanup();
+            AllocResources();
+            return;
+          }
+          if (Dimmed)
+            frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)(_diffuseColor & DimColor));
+          else
+            frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)_diffuseColor);
+          frame = null;
+        }
+      }
     }
 
     /// <summary>
     /// Set the filename of the texture and re-allocates the DirectX resources for this GUIImage.
     /// </summary>
     /// <param name="strFileName"></param>
-    public void SetFileName(string strFileName)
+    public void SetFileName(string fileName)
     {
-      if (strFileName == null) return;
-      if (m_strFileName == strFileName) return;// same file, no need to do anything
+      if (fileName == null) return;
+      if (_textureFileNameTag == fileName) return;// same file, no need to do anything
 
-      if (logtextures) Log.Write("GUIImage:SetFileName() {0", strFileName);
-      m_strFileName = strFileName;
-      if (m_strFileName.IndexOf("#") >= 0) _containsProperty = true;
+      if (logtextures) Log.Write("GUIImage:SetFileName() {0", fileName);
+      _textureFileNameTag = fileName;
+      if (_textureFileNameTag.IndexOf("#") >= 0) _containsProperty = true;
       else _containsProperty = false;
 
       //reallocate & load then new image
+      _allocated = false;
       Cleanup();
       AllocResources();
     }
@@ -1018,8 +1062,16 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public bool Filtering
     {
-      get { return m_bFiltering; }
-      set { m_bFiltering = value;/*CreateStateBlock();*/}
+      get { return _filterImage; }
+      set
+      {
+        if (_filterImage != value)
+        {
+          _filterImage = value;/*CreateStateBlock();*/
+          _reCalculate = true;
+        }
+
+      }
     }
 
     /// <summary>
@@ -1028,8 +1080,15 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public bool Centered
     {
-      get { return m_bCentered; }
-      set { m_bCentered = value; }
+      get { return _centerImage; }
+      set
+      {
+        if (_centerImage != value)
+        {
+          _centerImage = value;
+          _reCalculate = true;
+        }
+      }
     }
 
     /// <summary>
@@ -1038,11 +1097,14 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public bool Zoom
     {
-      get { return m_bZoom; }
+      get { return _zoomIn; }
       set
       {
-        m_bZoom = value;
-        Update();
+        if (_zoomIn != value)
+        {
+          _zoomIn = value;
+          _reCalculate = true;
+        }
       }
     }
 
@@ -1052,11 +1114,14 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public bool FixedHeight
     {
-      get { return m_bFixedHeight; }
+      get { return _isFixedHeight; }
       set
       {
-        m_bFixedHeight = value;
-        Update();
+        if (_isFixedHeight != value)
+        {
+          _isFixedHeight = value;
+          _reCalculate = true;
+        }
       }
     }
 
@@ -1066,18 +1131,21 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public bool ZoomFromTop
     {
-      get { return m_bZoomFromTop; }
+      get { return _zoomFromTop; }
       set
       {
-        m_bZoomFromTop = value;
-        Update();
+        if (_zoomFromTop != value)
+        {
+          _zoomFromTop = value;
+          _reCalculate = true;
+        }
       }
     }
 
     // recalculate the image dimensions & position
     public void Refresh()
     {
-      Update();
+      Calculate();
     }
 
     /// <summary>
@@ -1093,102 +1161,58 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    /// <summary>
-    /// Create a Direct3d stateblock
-    /// </summary>
-    /// 
-    /*
-    void CreateStateBlock()
+    public override int Width
     {
-      
-      lock (this)
+      get
       {
-        if (savedStateBlock!=null)
-        {
-          savedStateBlock.Dispose();
-        }
-        savedStateBlock=null;
-        bool supportsAlphaBlend = Manager.CheckDeviceFormat(
-          GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, 
-          GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, 
-          GUIGraphicsContext.DX9Device.DisplayMode.Format, 
-          Usage.RenderTarget | Usage.QueryPostPixelShaderBlending, ResourceType.Textures, 
-          Format.A8R8G8B8);
-        bool supportsFiltering=Manager.CheckDeviceFormat(
-          GUIGraphicsContext.DX9Device.DeviceCaps.AdapterOrdinal, 
-          GUIGraphicsContext.DX9Device.DeviceCaps.DeviceType, 
-          GUIGraphicsContext.DX9Device.DisplayMode.Format, 
-          Usage.RenderTarget | Usage.QueryFilter, ResourceType.Textures, 
-          Format.A8R8G8B8);
-
-        GUIGraphicsContext.DX9Device.BeginStateBlock();
-        
-          
-        
-
-
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorOperation =Direct3D.TextureOperation.Modulate;
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument1 =Direct3D.TextureArgument.TextureColor;
-        GUIGraphicsContext.DX9Device.TextureState[0].ColorArgument2 =Direct3D.TextureArgument.Diffuse;
-  				
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaOperation =Direct3D.TextureOperation.Modulate;
-  				
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument1 =Direct3D.TextureArgument.TextureColor;
-        GUIGraphicsContext.DX9Device.TextureState[0].AlphaArgument2 =Direct3D.TextureArgument.Diffuse;
-        GUIGraphicsContext.DX9Device.TextureState[1].ColorOperation =Direct3D.TextureOperation.Disable;
-        GUIGraphicsContext.DX9Device.TextureState[1].AlphaOperation =Direct3D.TextureOperation.Disable ;
-
-        if (m_bFiltering)
-        { 
-          if (supportsFiltering)
-          {
-            GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.Linear;
-            GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter=TextureFilter.Linear;
-            GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter=TextureFilter.Linear;
-            GUIGraphicsContext.DX9Device.SamplerState[0].MaxAnisotropy=g_nAnisotropy;
-    	      
-            GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter=TextureFilter.Linear;
-            GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter=TextureFilter.Linear;
-            GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter=TextureFilter.Linear;
-            GUIGraphicsContext.DX9Device.SamplerState[1].MaxAnisotropy=g_nAnisotropy;
-          }
-          else
-          {
-            GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.Point;
-            GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter=TextureFilter.Point;
-            GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter=TextureFilter.Point;
-    	      
-            GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter=TextureFilter.Point;
-            GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter=TextureFilter.Point;
-            GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter=TextureFilter.Point;
-          }
-        }
-        else
-        {
-          GUIGraphicsContext.DX9Device.SamplerState[0].MinFilter=TextureFilter.None;
-          GUIGraphicsContext.DX9Device.SamplerState[0].MagFilter=TextureFilter.None;
-          GUIGraphicsContext.DX9Device.SamplerState[0].MipFilter=TextureFilter.None;
-          GUIGraphicsContext.DX9Device.SamplerState[1].MinFilter=TextureFilter.None;
-          GUIGraphicsContext.DX9Device.SamplerState[1].MagFilter=TextureFilter.None;
-          GUIGraphicsContext.DX9Device.SamplerState[1].MipFilter=TextureFilter.None;
-        }
-        GUIGraphicsContext.DX9Device.RenderState.ZBufferEnable=false;
-        GUIGraphicsContext.DX9Device.RenderState.FogEnable=false;
-        GUIGraphicsContext.DX9Device.RenderState.FogTableMode=Direct3D.FogMode.None;
-        GUIGraphicsContext.DX9Device.RenderState.FillMode=Direct3D.FillMode.Solid;
-        GUIGraphicsContext.DX9Device.RenderState.CullMode=Direct3D.Cull.CounterClockwise;
-        if (supportsAlphaBlend)
-        {
-          GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=true;
-          GUIGraphicsContext.DX9Device.RenderState.SourceBlend=Direct3D.Blend.SourceAlpha;
-          GUIGraphicsContext.DX9Device.RenderState.DestinationBlend=Direct3D.Blend.InvSourceAlpha;
-        }
-        else
-        {
-          GUIGraphicsContext.DX9Device.RenderState.AlphaBlendEnable=false;
-        }
-        savedStateBlock = GUIGraphicsContext.DX9Device.EndStateBlock();
+        return base.Width;
       }
-    }*/
+      set
+      {
+        if (base.Width != value)
+        {
+          base.Width = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    public override int Height
+    {
+      get
+      {
+        return base.Height;
+      }
+      set
+      {
+        if (base.Height != value)
+        {
+          base.Height = value;
+          _reCalculate = true;
+        }
+      }
+    }
+
+    public override long ColourDiffuse
+    {
+      get
+      {
+        return base.ColourDiffuse;
+      }
+      set
+      {
+        if (base.ColourDiffuse != value)
+        {
+          base.ColourDiffuse = value;
+        }
+      }
+    }
+    public override void SetPosition(int dwPosX, int dwPosY)
+    {
+      if (_positionX == dwPosX && _positionY == dwPosY) return;
+      _positionX = dwPosX;
+      _positionY = dwPosY;
+      _reCalculate = true;
+    }
   }
 }

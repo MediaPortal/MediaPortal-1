@@ -410,7 +410,7 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     static public void StopRecording()
     {
-      if (!Running) return ;
+      if (!Running) return;
       //add a new RecorderCommand to tell the process thread
       //that it must stop recording
       Log.WriteFile(Log.LogType.Recorder, "Recorder:StopRecording()");
@@ -687,7 +687,7 @@ namespace MediaPortal.TV.Recording
       get
       {
         if (!Running) return 0;
-        return _commandProcessor.TVCards.Count; 
+        return _commandProcessor.TVCards.Count;
       }
     }
 
@@ -923,10 +923,7 @@ namespace MediaPortal.TV.Recording
       if (TVOnOff)
       {
         if (IsViewing() && IsTimeShifting() == timeshift && TVChannelName == channel) return true;
-        if (timeshift == false)
-        {
-          g_Player.Stop();
-        }
+        g_Player.Stop();
       }
       else
       {
@@ -1139,7 +1136,7 @@ namespace MediaPortal.TV.Recording
 
     static public void SetAudioLanguage(int audioPid)
     {
-      if (!Running) return ;
+      if (!Running) return;
       SetAudioLanguageCommand cmd = new SetAudioLanguageCommand(audioPid);
       _commandProcessor.AddCommand(cmd);
     }
@@ -1170,18 +1167,20 @@ namespace MediaPortal.TV.Recording
     }
     static public bool Paused
     {
-      get {
+      get
+      {
 
         if (!Running) return true;
-        return _commandProcessor.Paused; 
+        return _commandProcessor.Paused;
       }
       set { _commandProcessor.Paused = value; }
     }
     static public string TVChannelName
     {
-      get {
+      get
+      {
         if (!Running) return String.Empty;
-        return _commandProcessor.TVChannelName; 
+        return _commandProcessor.TVChannelName;
       }
     }
 

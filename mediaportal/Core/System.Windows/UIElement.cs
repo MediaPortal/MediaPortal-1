@@ -540,7 +540,7 @@ namespace System.Windows
 		}
 
 		[MediaPortal.GUI.Library.XMLSkinElement("visible")]
-		public bool IsVisible
+		public virtual bool IsVisible
 		{
 			// TODO: there should be no set accessor
 			get { return Visibility == Visibility.Visible; }

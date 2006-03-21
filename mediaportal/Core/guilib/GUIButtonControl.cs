@@ -196,7 +196,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-      _labelControl._width = labelWidth;
+      _labelControl.Width = labelWidth;
       _labelControl.TextAlignment = _textAlignment;
       _labelControl.Label = _label;
       _labelControl.TextColor = Disabled ? _disabledColor : _textColor;

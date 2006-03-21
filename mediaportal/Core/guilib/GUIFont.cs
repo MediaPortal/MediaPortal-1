@@ -297,7 +297,7 @@ namespace MediaPortal.GUI.Library
       if (text.Length==0) return;
       if (xpos <= 0) return;
       if (ypos <= 0) return;
-
+      if (maxWidth < -1) return;
 
       GUIGraphicsContext.Correct(ref xpos, ref ypos);
       if (GUIGraphicsContext.graphics != null)

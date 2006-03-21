@@ -60,12 +60,20 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public class Frame
     {
+      #region variables
       Texture _image;			//texture of current frame
       int _duration;	//duration of current frame
-      int _textureNumber;
+      int _textureNumber=-1;
       public readonly bool UseNewTextureEngine = true;
       string _imageName = String.Empty;
       static private bool logTextures = false;
+      #endregion
+
+      #region events
+      public event EventHandler Disposing;
+      public event EventHandler Disposed;
+      #endregion
+
       public Frame(string name, Texture image, int duration)
       {
         _imageName = name;
@@ -97,17 +105,20 @@ namespace MediaPortal.GUI.Library
         {
           if (_image != null)
           {
+            if (Disposing != null) Disposing(this, new EventArgs());
             try
             {
               if (logTextures) Log.Write("Frame:Image fontengine: remove texture:{0} {1}", _textureNumber.ToString(), _imageName);
               FontEngineRemoveTexture(_textureNumber);
               if (!_image.Disposed)
                 _image.Dispose();
+              _textureNumber = -1;
             }
             catch (Exception)
             {
               //already disposed?
             }
+            if (Disposed != null) Disposed(this, new EventArgs());
           }
           _image = value;
 
@@ -138,6 +149,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_image != null)
         {
+          if (Disposing != null) Disposing(this, new EventArgs());
           if (logTextures) Log.Write("Frame: dispose() fontengine: remove texture:" + _textureNumber.ToString());
           try
           {
@@ -151,7 +163,12 @@ namespace MediaPortal.GUI.Library
             //image already disposed?
           }
           _image = null;
-          FontEngineRemoveTexture(_textureNumber);
+          if (_textureNumber >= 0)
+          {
+            FontEngineRemoveTexture(_textureNumber);
+            _textureNumber = -1;
+          }
+          if (Disposed != null) Disposed(this, new EventArgs());
         }
       }
 
