@@ -143,7 +143,7 @@ namespace MediaPortal.Configuration.Sections
 												new string[] { "general", "dblclickasrightclick", "false" },
 												new string[] { "general", "hidetaskbar", "true" },
 												new string[] { "general", "alwaysontop", "true" },
-												new string[] { "general", "exclusivemode", "false" },
+												new string[] { "general", "exclusivemode", "true" },
 												new string[] { "general", "enableguisounds", "true" },
 												new string[] { "general", "screensaver", "false" },
 												new string[] { "general", "startbasichome", "false" }
