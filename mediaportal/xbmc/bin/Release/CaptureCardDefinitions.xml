@@ -9716,5 +9716,86 @@
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/> 
       </connections> 
     </tv> 
-  </capturecard> 
+  </capturecard>
+
+  <capturecard commercialname="ATI AIW X series" capturename="ATI T200 AVStream Analog Capture" devid="ntativrv01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="ATI T200 AVStream Analog Tuner"     checkdevice="true"/>
+        <filter cat="tvaudio"     name="ATI T200 AVStream Analog TV Audio"  checkdevice="true"/>
+        <filter cat="crossbar"    name="ATI T200 AVStream Analog Xbar"      checkdevice="true"/>
+        <filter cat="capture"     name="ATI T200 AVStream Analog Capture"   checkdevice="true"/>
+        <filter cat="videncoder"	name="ATI Media Center Video Encoder"     checkdevice="false"/>
+        <filter cat="audencoder"	name="ATI Media Center Audio Encoder"     checkdevice="false"/>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"       checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="crossbar"     sourcepin="1" sinkfilter="capture"	  sinkpin="1"/>
+        <connection sourcefilter="capture"			sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"			sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+        <connection sourcefilter="audencoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI AIW X series" capturename="ATI T200 AVStream Analog Capture" devid="ntativrv02">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="ATI T200 AVStream Analog Tuner"     checkdevice="true"/>
+        <filter cat="tvaudio"     name="ATI T200 AVStream Analog TV Audio"  checkdevice="true"/>
+        <filter cat="crossbar"    name="ATI T200 AVStream Analog Xbar"      checkdevice="true"/>
+        <filter cat="capture"     name="ATI T200 AVStream Analog Capture"   checkdevice="true"/>
+        <filter cat="videncoder"	name="ATI Media Center Video Encoder"     checkdevice="false"/>
+        <filter cat="audencoder"	name="ATI Media Center Audio Encoder"     checkdevice="false"/>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"       checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="crossbar"     sourcepin="1" sinkfilter="capture"	  sinkpin="1"/>
+        <connection sourcefilter="capture"			sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"			sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+        <connection sourcefilter="audencoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI AIW X series" capturename="ATI T200 AVStream Analog Capture" devid="ntativrv03">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="ATI T200 AVStream Analog Tuner"     checkdevice="true"/>
+        <filter cat="tvaudio"     name="ATI T200 AVStream Analog TV Audio"  checkdevice="true"/>
+        <filter cat="crossbar"    name="ATI T200 AVStream Analog Xbar"      checkdevice="true"/>
+        <filter cat="capture"     name="ATI T200 AVStream Analog Capture"   checkdevice="true"/>
+        <filter cat="videncoder"	name="ATI Media Center Video Encoder"     checkdevice="false"/>
+        <filter cat="audencoder"	name="ATI Media Center Audio Encoder"     checkdevice="false"/>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"       checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="crossbar"     sourcepin="1" sinkfilter="capture"	  sinkpin="1"/>
+        <connection sourcefilter="capture"			sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"			sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+        <connection sourcefilter="audencoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
