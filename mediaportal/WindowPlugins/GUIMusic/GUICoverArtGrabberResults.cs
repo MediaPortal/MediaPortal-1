@@ -653,14 +653,19 @@ namespace MediaPortal.GUI.Music
                     listView.Add(item);
                 }
 
+                //listView.Focus = true;
+                //btnCancel.Focus = false;
+
                 listView.Focus = true;
                 btnCancel.Focus = false;
+                btnSkip.Focus = false;
             }
 
             else
             {
                 listView.Focus = false;
                 btnCancel.Focus = true;
+                btnSkip.Focus = false;
             }
         }
 
