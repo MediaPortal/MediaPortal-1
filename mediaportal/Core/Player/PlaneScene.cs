@@ -512,7 +512,7 @@ namespace MediaPortal.Player
         _surfaceAdress = pSurface;
         if (_vmr9Util.FrameCounter == 0)
         {
-          Log.Write("planescene: PresentSurface() ");
+          //Log.Write("planescene: PresentSurface() ");
         }
         if (pSurface == 0)
         {
