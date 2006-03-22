@@ -6,6 +6,7 @@
 #include "mpsa.h"
 #include "crc.h"
 #include "autostring.h"
+#include "entercriticalsection.h"
 
 extern void Log(const char *fmt, ...) ;
 extern void Dump(const char *fmt, ...) ;
@@ -25,6 +26,7 @@ CEPGParser::~CEPGParser()
 
 HRESULT CEPGParser::DecodeEPG(byte* buf,int len)
 {
+	CEnterCriticalSection lock (m_critSection);
 	try
 	{
 		//30-08-2005 19:54:38 DecodeEPG() check section 0 (50 f0 0f 2e e3 c9 d32ff20)
@@ -572,6 +574,7 @@ void CEPGParser::DecodeContentDescription(byte* buf,EPGEvent& epgEvent)
 
 void CEPGParser::ResetEPG()
 {
+	CEnterCriticalSection lock (m_critSection);
 	Log("epg:ResetEPG()");
 	EPGChannel ch;
 	EPGEvent evt;
@@ -589,6 +592,7 @@ void CEPGParser::ResetEPG()
 
 void CEPGParser::GrabEPG()
 {
+	CEnterCriticalSection lock (m_critSection);
 	Log("epg:GrabEPG()");
 	EPGChannel ch;
 	EPGEvent evt;
@@ -617,11 +621,15 @@ bool CEPGParser::IsEPGReady()
 }
 ULONG CEPGParser::GetEPGChannelCount( )
 {
+	
+	CEnterCriticalSection lock (m_critSection);
 	//	Log("GetEPGChannelCount:%d",m_mapEPG.size());
 	return m_mapEPG.size();
 }
 bool CEPGParser::GetChannelByindex(ULONG channelIndex, EPGChannel& epgChannel)
 {
+	
+	CEnterCriticalSection lock (m_critSection);
 	EPGEvent evt;
 	m_prevEventIndex=-1;
 	m_prevEvent=evt;
@@ -644,12 +652,16 @@ bool CEPGParser::GetChannelByindex(ULONG channelIndex, EPGChannel& epgChannel)
 
 ULONG  CEPGParser::GetEPGEventCount( ULONG channel)
 {
+	
+	CEnterCriticalSection lock (m_critSection);
 	EPGChannel epgChannel;
 	if (!GetChannelByindex(channel,epgChannel)) return 0;
 	return epgChannel.mapEvents.size();
 }
 void CEPGParser::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transportid, WORD* service_id  )
 {
+	
+	CEnterCriticalSection lock (m_critSection);
 	*networkId=0;
 	*transportid=0;
 	*service_id=0;
@@ -670,6 +682,8 @@ void CEPGParser::GetEPGChannel( ULONG channel,  WORD* networkId,  WORD* transpor
 }
 void CEPGParser::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* languageCount, ULONG* dateMJD, ULONG* timeUTC, ULONG* duration, char** genre    )
 {
+	
+	CEnterCriticalSection lock (m_critSection);
 	*languageCount=0;
 	*dateMJD=0;
 	*timeUTC=0;
@@ -701,6 +715,7 @@ void CEPGParser::GetEPGEvent( ULONG channel,  ULONG eventid,ULONG* languageCount
 }
 void CEPGParser::GetEPGLanguage(ULONG channel, ULONG eventid,ULONG languageIndex,ULONG* language,char** eventText, char** eventDescription    )
 {
+	CEnterCriticalSection lock (m_critSection);
 	*language=0;
 	*eventText=(char*)"";
 	*eventDescription=(char*)"";

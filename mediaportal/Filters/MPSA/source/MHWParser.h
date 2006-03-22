@@ -4,6 +4,8 @@
 #include <string>
 using namespace std;
 
+#include "criticalsection.h"
+using namespace Mediaportal;
 class CMHWParser
 {
 
@@ -55,6 +57,7 @@ public:
 	void GetTheme(WORD themeId, char** theme);
 
 private:
+	CCriticalSection m_critSection;
 	vector<MHWChannel> m_vecChannels;
 	typedef vector<MHWChannel>::iterator imapChannels;
 

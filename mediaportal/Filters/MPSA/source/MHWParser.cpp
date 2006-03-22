@@ -21,6 +21,8 @@
 #pragma warning(disable: 4786)
 #include <windows.h>
 #include ".\mhwparser.h"
+#include "entercriticalSection.h"  
+
 extern void Log(const char *fmt, ...) ;
 
 CMHWParser::CMHWParser(void)
@@ -32,6 +34,7 @@ CMHWParser::~CMHWParser(void)
 }
 void CMHWParser::Reset()
 {
+	CEnterCriticalSection lock (m_critSection);
 	m_mapTitles.clear();
 	m_vecChannels.clear();
 	m_mapSummaries.clear();
@@ -41,6 +44,7 @@ void CMHWParser::Reset()
 
 bool CMHWParser::ParseChannels(byte* data, int dataLen)
 {
+	CEnterCriticalSection lock (m_critSection);
 	if (data==NULL) return false;
 	if (dataLen<4) return false;
 	if (m_vecChannels.size()>0) return false;
@@ -71,6 +75,7 @@ bool CMHWParser::ParseSummaries(byte* data, int maxLen)
 	if (maxLen < 12 /*|| data[7] != 0xFF || data[8] != 0xFF || data[9] !=0xFF || data[10] >= 10*/) 
 		return false;	/* Invalid Data */
 
+	CEnterCriticalSection lock (m_critSection);
 	int dataLen=((data[1]-0x70)<<8)+data[2];
 	int n=0;
 	MHWSummary sum;
@@ -105,6 +110,8 @@ bool CMHWParser::ParseTitles(byte* data, int dataLen)
 		return false;
 	if (dataLen<42) 
 		return false;
+	
+	CEnterCriticalSection lock (m_critSection);
 //	if(data[3]==0xff) 
 //		return;
 
@@ -169,6 +176,7 @@ bool CMHWParser::ParseThemes(byte* data, int dataLen)
 		return false; // already got channles table
     if (data==NULL) return false;
 
+	CEnterCriticalSection lock (m_critSection);
 	int themesIndex = 3;
 	int themesNames = 19;
 	int theme=0;			
@@ -201,11 +209,13 @@ bool CMHWParser::ParseThemes(byte* data, int dataLen)
 
 int CMHWParser::GetTitleCount()
 {
+	CEnterCriticalSection lock (m_critSection);
 	return m_vecTitles.size();
 }
 
 void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networkId, WORD* channelId, WORD* programId, WORD* themeId, WORD* PPV, BYTE* Summaries, WORD* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
 {
+	CEnterCriticalSection lock (m_critSection);
 	*id = 0;
 	*transportId=0;
 	*networkId=0;
@@ -241,6 +251,7 @@ void CMHWParser::GetTitle(int program, WORD* id, WORD* transportId, WORD* networ
 
 void CMHWParser::GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, WORD* transportId, char** channelName)
 {
+	CEnterCriticalSection lock (m_critSection);
 	*channelName="";
 	
 	if (channelNr>=m_vecChannels.size()) return;
@@ -258,6 +269,7 @@ void CMHWParser::GetChannel(WORD channelNr, WORD* channelId, WORD* networkId, WO
 
 void CMHWParser::GetSummary(WORD programId, char** summary)
 {
+	CEnterCriticalSection lock (m_critSection);
 	*summary="";
 	imapSummaries it=m_mapSummaries.find((int)programId);
 	if (it!=m_mapSummaries.end())
@@ -270,6 +282,7 @@ void CMHWParser::GetSummary(WORD programId, char** summary)
 }
 void CMHWParser::GetTheme(WORD themeId, char** theme)
 {
+	CEnterCriticalSection lock (m_critSection);
 	*theme="";
 	ivecThemes it =m_vecThemes.begin();
 	while (it != m_vecThemes.end())

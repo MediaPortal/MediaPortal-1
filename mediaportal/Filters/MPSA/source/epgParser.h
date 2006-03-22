@@ -5,6 +5,8 @@
 #include <string>
 using namespace std;
 
+#include "criticalsection.h"
+using namespace Mediaportal;
 typedef  struct stEPGLanguage
 {
 	DWORD language;
@@ -73,6 +75,7 @@ private:
 	long	   m_prevEventIndex;
 	EPGChannel m_prevChannel;
 	EPGEvent   m_prevEvent;
+	CCriticalSection m_critSection;
 };
 
 #endif
