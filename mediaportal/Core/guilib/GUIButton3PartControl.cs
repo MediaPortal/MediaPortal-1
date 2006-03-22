@@ -467,10 +467,16 @@ namespace MediaPortal.GUI.Library
       {
         if (_imageIcon != null && _imageIcon.FileName != value)
         {
+          _imageIcon.IsVisible = true;
           _imageIcon.SetFileName(value);
           _imageIcon.Width = _iconWidth;
           _imageIcon.Height = _iconHeight;
           _reCalculate = true;
+
+          if (value == String.Empty)
+          {
+            _imageIcon.IsVisible = false;
+          }
         }
       }
     }

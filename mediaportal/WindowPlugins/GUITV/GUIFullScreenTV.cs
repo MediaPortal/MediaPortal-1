@@ -419,33 +419,33 @@ namespace MediaPortal.GUI.TV
           break;
 
         case Action.ActionType.ACTION_SHOW_INFO:
-          case Action.ActionType.ACTION_SHOW_CURRENT_TV_INFO:
+        case Action.ActionType.ACTION_SHOW_CURRENT_TV_INFO:
           {
-              if (action.fAmount1 != 0)
-              {
-                _zapTimeOutTimer = DateTime.MaxValue;
-                _zapTimeOutTimer = DateTime.Now;
-              }
-              else
-              {
-                  _zapTimeOutTimer = DateTime.Now;
-              }
+            if (action.fAmount1 != 0)
+            {
+              _zapTimeOutTimer = DateTime.MaxValue;
+              _zapTimeOutTimer = DateTime.Now;
+            }
+            else
+            {
+              _zapTimeOutTimer = DateTime.Now;
+            }
 
-              if (!_zapOsdVisible)
+            if (!_zapOsdVisible)
+            {
+              if (!_useVMR9Zap)
               {
-                  if (!_useVMR9Zap)
-                  {
-                      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
-                      _zapWindow.OnMessage(msg);
-                      Log.Write("ZAP OSD:ON");
-                      _zapTimeOutTimer = DateTime.Now;
-                      _zapOsdVisible = true;
-                  }
+                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
+                _zapWindow.OnMessage(msg);
+                Log.Write("ZAP OSD:ON");
+                _zapTimeOutTimer = DateTime.Now;
+                _zapOsdVisible = true;
               }
-              else
-              {
-                  _zapWindow.UpdateChannelInfo();
-              }
+            }
+            else
+            {
+              _zapWindow.UpdateChannelInfo();
+            }
           }
           break;
         case Action.ActionType.ACTION_SHOW_MSN_OSD:
@@ -776,6 +776,9 @@ namespace MediaPortal.GUI.TV
                   //manual record
                   Recorder.RecordNow(channel, true);
                   break;
+                default:
+                  return;
+
               }
             }
           }
@@ -889,40 +892,40 @@ namespace MediaPortal.GUI.TV
       }
       if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY)
       {
-          GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-          if (dlgNotify == null) return true;
-          string channel = GUIPropertyManager.GetProperty("#TV.View.channel");
-          string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel);
-          dlgNotify.Reset();
-          dlgNotify.ClearAll();
-          dlgNotify.SetImage(strLogo);
-          dlgNotify.SetHeading(channel);
-          dlgNotify.SetText(message.Label);
-          dlgNotify.TimeOut = message.Param1;
-          _notifyDialogVisible = true;
-          dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
-          _notifyDialogVisible = false;
-          Log.Write("Notify Message:" + channel + ", " + message.Label);
-          return true;
+        GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        if (dlgNotify == null) return true;
+        string channel = GUIPropertyManager.GetProperty("#TV.View.channel");
+        string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel);
+        dlgNotify.Reset();
+        dlgNotify.ClearAll();
+        dlgNotify.SetImage(strLogo);
+        dlgNotify.SetHeading(channel);
+        dlgNotify.SetText(message.Label);
+        dlgNotify.TimeOut = message.Param1;
+        _notifyDialogVisible = true;
+        dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+        _notifyDialogVisible = false;
+        Log.Write("Notify Message:" + channel + ", " + message.Label);
+        return true;
       }
 
-      
+
       if (_isOsdVisible)
       {
 
         if ((message.Message != GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT))
         {
-            _osdTimeoutTimer = DateTime.Now;
-            // route messages to OSD window
-            if (_osdWindow.OnMessage(message))
-            {
-                return true;
-            }
+          _osdTimeoutTimer = DateTime.Now;
+          // route messages to OSD window
+          if (_osdWindow.OnMessage(message))
+          {
+            return true;
+          }
         }
         else if (message.Param1 == GetID)
         {
-            _osdTimeoutTimer = DateTime.Now;
-            _osdWindow.OnMessage(message);
+          _osdTimeoutTimer = DateTime.Now;
+          _osdWindow.OnMessage(message);
         }
       }
 
@@ -1166,14 +1169,14 @@ namespace MediaPortal.GUI.TV
       switch (dlg.SelectedId)
       {
         case 4: //TVChannels
-        {
-          GUITVGuideDialog dlgTvGuide = (GUITVGuideDialog)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE);
+          {
+            GUITVGuideDialog dlgTvGuide = (GUITVGuideDialog)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE);
 
-          _isDialogVisible = true;
-          dlgTvGuide.DoModal(GetID);
-          _isDialogVisible = false;
-          break;
-        }
+            _isDialogVisible = true;
+            dlgTvGuide.DoModal(GetID);
+            _isDialogVisible = false;
+            break;
+          }
 
         case 915: //TVChannels
           {
@@ -1377,7 +1380,7 @@ namespace MediaPortal.GUI.TV
     public override void Process()
     {
       //	_isTvOn=true;
-      
+
 
       CheckTimeOuts();
       if (ScreenStateChanged())
@@ -1822,19 +1825,19 @@ namespace MediaPortal.GUI.TV
       Log.Write("UpdateOSD()");
       if (_isOsdVisible)
       {
-          _osdWindow.UpdateChannelInfo();
-          _osdTimeoutTimer = DateTime.Now;
+        _osdWindow.UpdateChannelInfo();
+        _osdTimeoutTimer = DateTime.Now;
       }
       else
       {
-          Action myaction = new Action();
-          //Show ZAP window indefinetely until channel has been tuned
-          myaction.fAmount1 = -1;
-          myaction.wID = Action.ActionType.ACTION_SHOW_INFO;
-          this.OnAction(myaction);
-          myaction = null;
+        Action myaction = new Action();
+        //Show ZAP window indefinetely until channel has been tuned
+        myaction.fAmount1 = -1;
+        myaction.wID = Action.ActionType.ACTION_SHOW_INFO;
+        this.OnAction(myaction);
+        myaction = null;
       }
-  }
+    }
 
 
     public void RenderForm(float timePassed)
@@ -1913,7 +1916,7 @@ namespace MediaPortal.GUI.TV
         GUIControl cntTarget = base.GetControl((int)Control.LABEL_ROW1);
         if (cntTarget != null)
         {
-            cntTarget.OnMessage(msg);
+          cntTarget.OnMessage(msg);
         }
         cntTarget = null;
 

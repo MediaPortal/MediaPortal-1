@@ -47,7 +47,7 @@ namespace MediaPortal.Player
   /// scene.Stop();
   /// scene.DeInit();
   /// </summary>
-  public class PlaneScene : IVMR9PresentCallback, IRenderLayer  
+  public class PlaneScene : IVMR9PresentCallback, IRenderLayer
   {
     #region imports
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
@@ -105,7 +105,7 @@ namespace MediaPortal.Player
     static bool _reEntrant = false;
     bool _drawVideoAllowed = true;
     int _debugStep = 0;
-      Texture blackTexture;
+    Texture blackTexture;
     #endregion
 
     #region ctor
@@ -128,14 +128,16 @@ namespace MediaPortal.Player
 
       if (GUITextureManager.GetPackedTexture("black.bmp", out _texUoff, out _texVoff, out _texUmax, out _texVmax, out _textureWidth, out _textureHeight, out blackTexture, out _packedTextureNo))
       {
-          return;
+        Log.WriteFile(Log.LogType.Error, "PlaneScene:unable to get texture for black.bmp");
+        return;
       }
 
-      int iImages = GUITextureManager.Load("black.bmp", 1, 15,15);
+      int iImages = GUITextureManager.Load("black.bmp", 1, 15, 15);
       if (0 == iImages)
       {
-          blackTexture = null;// unable to load texture
-          return;
+        Log.WriteFile(Log.LogType.Error, "PlaneScene:texture black.bmp contains no frames");
+        blackTexture = null;// unable to load texture
+        return;
       }
       CachedTexture.Frame frame = GUITextureManager.GetTexture("black.bmp", 0, out _textureWidth, out _textureHeight);
       blackTexture = frame.Image;
@@ -246,24 +248,24 @@ namespace MediaPortal.Player
       GUILayerManager.UnRegisterLayer(this);
       if (_renderTarget != null)
       {
-          //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
-          if (!_renderTarget.Disposed)
-              GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
+        //VMR9 changes the directx 9 render target. Thats why we set it back to what it was
+        if (!_renderTarget.Disposed)
+          GUIGraphicsContext.DX9Device.SetRenderTarget(0, _renderTarget);
         _renderTarget.Dispose();
         _renderTarget = null;
       }
       if (_vertexBuffer != null)
       {
-          _vertexBuffer.Dispose();
+        _vertexBuffer.Dispose();
         _vertexBuffer = null;
       }
       if (blackTexture != null)
       {
-          if (GUITextureManager.IsTemporary("black.bmp"))
-          {
-              GUITextureManager.ReleaseTexture("black.bmp");
-          }
-          blackTexture = null;
+        if (GUITextureManager.IsTemporary("black.bmp"))
+        {
+          GUITextureManager.ReleaseTexture("black.bmp");
+        }
+        blackTexture = null;
       }
     }
 
@@ -469,10 +471,14 @@ namespace MediaPortal.Player
     {
       try
       {
-          _textureAddress = pTex;
+        _textureAddress = pTex;
+        if (_vmr9Util.FrameCounter == 0)
+        {
+          Log.Write("planescene: PresentImage() ");
+        }
         if (pTex == 0)
         {
-          //Log.Write("PlaneScene: dispose surfaces");
+          Log.Write("PlaneScene: PresentImage() dispose surfaces");
           _surfaceAdress = 0;
           _vmr9Util.VideoWidth = 0;
           _vmr9Util.VideoHeight = 0;
@@ -485,7 +491,7 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
         if (!_drawVideoAllowed || !_isEnabled)
         {
-          //Log.Write("planescene:frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter,_isEnabled,_drawVideoAllowed);
+          Log.Write("planescene:PresentImage() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled, _drawVideoAllowed);
           _vmr9Util.FrameCounter++;
           return 0;
         }
@@ -504,9 +510,13 @@ namespace MediaPortal.Player
       try
       {
         _surfaceAdress = pSurface;
+        if (_vmr9Util.FrameCounter == 0)
+        {
+          Log.Write("planescene: PresentSurface() ");
+        }
         if (pSurface == 0)
         {
-          //Log.Write("PlaneScene: dispose surfaces");
+          Log.Write("PlaneScene: PresentSurface() dispose surfaces");
           _textureAddress = 0;
           _vmr9Util.VideoWidth = 0;
           _vmr9Util.VideoHeight = 0;
@@ -519,7 +529,7 @@ namespace MediaPortal.Player
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
         if (!_drawVideoAllowed || !_isEnabled)
         {
-          //Log.Write("planescene:frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter,_isEnabled,_drawVideoAllowed);
+          Log.Write("planescene: PresentSurface() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled, _drawVideoAllowed);
           _vmr9Util.FrameCounter++;
           return 0;
         }
@@ -717,7 +727,7 @@ namespace MediaPortal.Player
         //clear screen
         try
         {
-            GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
+          GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
         }
         catch (Exception)
         {
@@ -819,28 +829,28 @@ namespace MediaPortal.Player
     #region IRenderLayer members
     public void RenderLayer(float timePassed)
     {
-        if (VideoRendererStatistics.VideoState == VideoRendererStatistics.State.VideoPresent)
+      if (VideoRendererStatistics.VideoState == VideoRendererStatistics.State.VideoPresent)
+      {
+        //Render video texture
+        if (_renderTexture == false) return;
+        if (_surfaceAdress != 0)
         {
-            //Render video texture
-            if (_renderTexture == false) return;
-            if (_surfaceAdress != 0)
-            {
-                DrawSurface(_surfaceAdress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
-            }
-            if (_textureAddress != 0)
-            {
-                DrawTexture(_textureAddress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
-            }
+          DrawSurface(_surfaceAdress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
         }
-        else
+        if (_textureAddress != 0)
         {
-            IntPtr ptr = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(blackTexture);
-            uint _blackTextureAddress = (uint)ptr.ToInt32();
-            if (_blackTextureAddress != 0)
-            {
-                DrawTexture(_blackTextureAddress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
-            }
+          DrawTexture(_textureAddress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
         }
+      }
+      else
+      {
+        IntPtr ptr = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(blackTexture);
+        uint _blackTextureAddress = (uint)ptr.ToInt32();
+        if (_blackTextureAddress != 0)
+        {
+          DrawTexture(_blackTextureAddress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
+        }
+      }
     }
     public bool ShouldRenderLayer()
     {

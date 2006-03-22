@@ -387,7 +387,7 @@ namespace MediaPortal.Player
 		{
 			if (!_isVmr9Initialized) return;
 			if( !GUIGraphicsContext.Vmr9Active) return;
-      //Log.Write("VMR9Helper: SetRepaint()");
+      Log.Write("VMR9Helper: SetRepaint()");
 			FrameCounter=0;
 			_repaintTimer=DateTime.Now;
 			currentVmr9State = Vmr9PlayState.Repaint;
@@ -420,7 +420,7 @@ namespace MediaPortal.Player
         _scene.DrawVideo = true;
         _repaintTimer = DateTime.Now;
       }
-      if (currentVmr9State == Vmr9PlayState.Playing && GUIGraphicsContext.Vmr9FPS<5f)
+      else if (currentVmr9State == Vmr9PlayState.Playing && GUIGraphicsContext.Vmr9FPS<5f)
       {
         Log.WriteThreadId("VMR9Helper: playing->repaint");
         GUIGraphicsContext.Vmr9FPS = 0f;
@@ -466,7 +466,7 @@ namespace MediaPortal.Player
     }
     public void Enable(bool onOff)
 		{
-      // Log.Write("Vmr9:Enable:{0}", onOff);
+      Log.Write("Vmr9:Enable:{0}", onOff);
 			if (!_isVmr9Initialized) return;
       if (_scene != null) _scene.Enabled = onOff;
       if (onOff)
