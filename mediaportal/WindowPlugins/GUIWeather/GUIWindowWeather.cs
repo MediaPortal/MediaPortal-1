@@ -1377,13 +1377,11 @@ namespace MediaPortal.GUI.Weather
       {
         Bitmap image = _geochronGenerator.update(DateTime.UtcNow);
         System.Drawing.Image img = (Image)image.Clone();
-        clockImage.FileName = "";
-        clockImage.FreeResources();
         clockImage.IsVisible = false;
+        clockImage.FileName = "";
         GUITextureManager.ReleaseTexture("#useMemoryImage");
-        clockImage.FileName = "#useMemoryImage";
         clockImage.MemoryImage = img;
-        clockImage.AllocResources();
+        clockImage.FileName = "#useMemoryImage";
         clockImage.IsVisible = true;
       }
     }

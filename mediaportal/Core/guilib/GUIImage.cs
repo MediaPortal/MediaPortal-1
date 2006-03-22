@@ -1039,7 +1039,7 @@ namespace MediaPortal.GUI.Library
       if (fileName == null) return;
       if (_textureFileNameTag == fileName) return;// same file, no need to do anything
 
-      if (logtextures) Log.Write("GUIImage:SetFileName() {0", fileName);
+      if (logtextures) Log.Write("GUIImage:SetFileName() {0}", fileName);
       _textureFileNameTag = fileName;
       if (_textureFileNameTag.IndexOf("#") >= 0) _containsProperty = true;
       else _containsProperty = false;
@@ -1047,6 +1047,7 @@ namespace MediaPortal.GUI.Library
       //reallocate & load then new image
       _allocated = false;
       Cleanup();
+
       AllocResources();
     }
 

@@ -133,7 +133,7 @@ namespace MediaPortal.GUI.TV
           }
         }
       }
-      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
+      GUILayerManager.UnRegisterLayer(this);
       base.OnPageDestroy(newWindowId);
     }
 
@@ -386,16 +386,14 @@ namespace MediaPortal.GUI.TV
         lock (imgTeletext)
         {
           System.Drawing.Image img = (Image)bmpTeletextPage.Clone();
-          imgTeletext.FileName = "";
-          imgTeletext.FreeResources();
           imgTeletext.IsVisible = false;
+          imgTeletext.FileName = "";
           GUITextureManager.ReleaseTexture("#useMemoryImage");
           Utils.FileDelete(@"teletext.png");
           //img.Save(@"teletext.png",System.Drawing.Imaging.ImageFormat.Png);
-          imgTeletext.FileName = "#useMemoryImage";
           imgTeletext.MemoryImage = img;
+          imgTeletext.FileName = "#useMemoryImage";
           imgTeletext.ColorKey = System.Drawing.Color.HotPink.ToArgb();
-          imgTeletext.AllocResources();
           imgTeletext.IsVisible = true;
           imgTeletext.Centered = false;
           imgTeletext.KeepAspectRatio = false;
@@ -408,7 +406,7 @@ namespace MediaPortal.GUI.TV
       }
       catch (Exception ex)
       {
-        Log.Write("ex:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Write(ex);
       }
     }
 

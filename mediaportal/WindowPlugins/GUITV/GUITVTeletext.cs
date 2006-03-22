@@ -414,22 +414,20 @@ namespace MediaPortal.GUI.TV
 					lblMessage.IsVisible=false;
 				lock (imgTeletextPage)
 				{
-					System.Drawing.Image img=(Image)bitmapTeletextPage.Clone();
+          System.Drawing.Image img = (Image)bitmapTeletextPage.Clone();
+          imgTeletextPage.IsVisible = false;
 					imgTeletextPage.FileName="";
-					imgTeletextPage.FreeResources();
-					imgTeletextPage.IsVisible=false;
 					//Utils.FileDelete(@"teletext.jpg");
 					GUITextureManager.ReleaseTexture("#useMemoryImage");
-					//bitmapTeletextPage.Save(@"teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
+          //bitmapTeletextPage.Save(@"teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
+          imgTeletextPage.MemoryImage = img;
 					imgTeletextPage.FileName="#useMemoryImage";
-					imgTeletextPage.MemoryImage=img;
-					imgTeletextPage.AllocResources();
 					imgTeletextPage.IsVisible=true;
 				}
 			}
 			catch (Exception ex)
 			{
-				Log.Write("ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+        Log.Write(ex);
 			}
 		}
 		public override void Render(float timePassed)

@@ -252,7 +252,8 @@ namespace MediaPortal.GUI.Library
         }
         catch (Exception ex)
         {
-          Log.Write("exception loading texture {0} err:{1} stack:{2}", fileName, ex.Message, ex.StackTrace);
+          Log.Write("TextureManager:exception loading texture {0}", fileName);
+          Log.Write(ex);
         }
         return 0;
       }
@@ -290,6 +291,8 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      if (memoryImage.FrameDimensionsList == null) return 0;
+      if (memoryImage.FrameDimensionsList.Length==0) return 0;
 
       try
       {
@@ -332,7 +335,8 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Write("exception loading texture {0} err:{1} stack:{2}", "memoryImage", ex.Message, ex.StackTrace);
+        Log.Write("TextureManager: exception loading texture memoryImage");
+        Log.Write(ex);
       }
       return 0;
 
@@ -472,7 +476,8 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "TextureManage:LoadGraphic({0}) failed:{1}", fileName, ex.ToString());
+        Log.WriteFile(Log.LogType.Log, true, "TextureManage:LoadGraphic({0})", fileName);
+        Log.Write(ex);
       }
       finally
       {
@@ -507,7 +512,8 @@ namespace MediaPortal.GUI.Library
             }
             catch (Exception ex)
             {
-              Log.WriteFile(Log.LogType.Log, true, "TextureManage:GetImage({0}) failed:{1}", fileName, ex.ToString());
+              Log.WriteFile(Log.LogType.Log, true, "TextureManage:GetImage({0}) ", fileName);
+              Log.Write(ex);
               return null;
             }
             return cached.image;
@@ -523,7 +529,8 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "TextureManage:GetImage({0}) failed:{1}", fileName, ex.ToString());
+        Log.WriteFile(Log.LogType.Log, true, "TextureManage:GetImage({0})", fileName);
+        Log.Write(ex);
         return null;
       }
       if (img != null)
@@ -594,7 +601,8 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "TextureManage:ReleaseTexture({0}) failed:{1}", fileName, ex.ToString());
+        Log.WriteFile(Log.LogType.Log, true, "TextureManage:ReleaseTexture({0})", fileName);
+        Log.Write(ex);
       }
     }
 
@@ -626,7 +634,8 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        Log.Write("TextureManage:CleanupThumbs() failed:{0}", ex.ToString());
+        Log.Write("TextureManage:CleanupThumbs() ");
+        Log.Write(ex);
       }
     }
 
