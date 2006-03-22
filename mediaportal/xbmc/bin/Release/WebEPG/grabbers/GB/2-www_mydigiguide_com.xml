@@ -2,6 +2,7 @@
 
 <!-- xmltv_radiotimes_com.xml  Version 1.0 -->
 <!-- 26-01-2006		Added ITV4, More4 & More4+1		Version 1.1 -->
+<!-- 21-03/2006		Added Sky Three					Version 1.2 -->
 
 <profile>
 	<section name="ChannelList">
@@ -292,6 +293,7 @@
 		<entry name="skytravel@sky.com">71</entry>          <!-- Sky Travel -->
 		<entry name="skytravelex@sky.com">6280</entry>          <!-- Sky Travel Extra -->
 		<entry name="skytravelp1@sky.com">50285</entry>          <!-- Sky Travel Plus 1 -->
+		<entry name="skythree@sky.com">50468</entry>          <!-- Sky Three -->
 		<entry name="tv@smashhits.net">6262</entry>          <!-- Smash Hits! -->
 		<entry name="spiceuk.tv">652</entry>          <!-- Spice -->
 		<entry name="news@uk.startv.com">631</entry>          <!-- Star News -->
