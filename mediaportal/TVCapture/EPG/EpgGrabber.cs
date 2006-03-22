@@ -807,19 +807,22 @@ namespace MediaPortal.TV.Epg
 
     void UpdateChannels()
     {
-      if (_epgChannels == null) return;
-      if (_epgChannels.Count == 0) return;
-      Log.WriteFile(Log.LogType.EPG, "epg-grab: update {0} channels", _epgChannels.Count);
+      List<EpgChannelUpdate> updates = _epgChannels;
+      _epgChannels = new List<EpgChannelUpdate>();
+      if (updates == null) return;
+      if (updates.Count == 0) return;
+      Log.WriteFile(Log.LogType.EPG, "epg-grab: update {0} channels", updates.Count);
 
       List<TVChannel> listChannels = new List<TVChannel>();
       ArrayList stations = new ArrayList();
       TVDatabase.GetChannels(ref listChannels);
-      RadioDatabase.GetStations(ref stations);
-      foreach (EpgChannelUpdate ch in _epgChannels)
+      if (listChannels == null) return;
+      if (listChannels.Count == 0) return;
+      foreach (EpgChannelUpdate ch in updates)
       {
         ch.Update(ref listChannels, ref stations);
       }
-      _epgChannels.Clear();
+      updates.Clear();
     }
 
     void OnDone()
