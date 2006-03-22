@@ -54,6 +54,7 @@ namespace MediaPortal.GUI.TV
     int acutalPageNumber = 100;
     int actualSubPageNumber = 0;
     bool isPageDirty = false;
+    bool _isFullScreenVideo = false;
 
     public GUITVFullscreenTeletext()
     {
@@ -134,11 +135,13 @@ namespace MediaPortal.GUI.TV
         }
       }
       GUILayerManager.UnRegisterLayer(this);
+      GUIGraphicsContext.IsFullScreenVideo = _isFullScreenVideo;
       base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnPageLoad()
     {
+      _isFullScreenVideo = GUIGraphicsContext.IsFullScreenVideo;
       base.OnPageLoad();
 
       acutalPageNumber = 100;
