@@ -15,7 +15,7 @@
       <type>button</type>
       <description>next button</description>
       <id>35</id>
-      <posX>264</posX>
+      <posX>304</posX>
       <posY>510</posY>
       <onleft>34</onleft>
       <onright>35</onright>
@@ -32,7 +32,7 @@
       <type>button</type>
       <description>stop button</description>
       <id>34</id>
-      <posX>216</posX>
+      <posX>256</posX>
       <posY>510</posY>
       <onleft>33</onleft>
       <onright>35</onright>
@@ -49,7 +49,7 @@
       <type>button</type>
       <description>pause button</description>
       <id>33</id>
-      <posX>168</posX>
+      <posX>208</posX>
       <posY>510</posY>
       <onleft>32</onleft>
       <onright>34</onright>
@@ -66,7 +66,7 @@
       <type>button</type>
       <description>play button</description>
       <id>32</id>
-      <posX>120</posX>
+      <posX>160</posX>
       <posY>510</posY>
       <onleft>31</onleft>
       <onright>33</onright>
@@ -83,7 +83,7 @@
       <type>button</type>
       <description>back button</description>
       <id>31</id>
-      <posX>72</posX>
+      <posX>112</posX>
       <posY>510</posY>
       <onleft>30</onleft>
       <onright>32</onright>
@@ -100,7 +100,7 @@
       <type>button</type>
       <description>previous screen button</description>
       <id>30</id>
-      <posX>24</posX>
+      <posX>64</posX>
       <posY>510</posY>
       <onleft>30</onleft>
       <onright>31</onright>

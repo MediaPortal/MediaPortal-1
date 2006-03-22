@@ -158,10 +158,10 @@
           <textYOff>4</textYOff>
           <textXOff2>415</textXOff2>
           <textYOff2>60</textYOff2>
-          <itemWidth>81</itemWidth>
-          <itemHeight>81</itemHeight>
-          <spaceBetweenItems>14</spaceBetweenItems>
-          <textureHeight>90</textureHeight>
+          <itemWidth>80</itemWidth>
+          <itemHeight>80</itemHeight>
+          <spaceBetweenItems>4</spaceBetweenItems>
+          <textureHeight>99</textureHeight>
           <onleft>2</onleft>
           <onright>53</onright>
           <onup>2</onup>

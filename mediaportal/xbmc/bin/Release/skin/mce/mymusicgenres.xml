@@ -13,12 +13,11 @@
       <animation>FlyInFromLeft</animation>
       <posX>60</posX>
       <posY>97</posY>
+      <layout>StackLayout</layout>
       <control>
         <description>View-As button</description>
         <type>button</type>
         <id>2</id>
-        <posX>60</posX>
-        <posY>97</posY>
         <label>100</label>
         <onleft>2</onleft>
         <onright>50</onright>
@@ -28,8 +27,6 @@
       <control>
         <type>sortbutton</type>
         <id>3</id>
-        <posX>60</posX>
-        <posY>131</posY>
         <label>103</label>
         <onleft>3</onleft>
         <onright>50</onright>
@@ -40,8 +37,6 @@
         <description>Albums/Artists/Songs/Genres button</description>
         <type>button</type>
         <id>6</id>
-        <posX>60</posX>
-        <posY>165</posY>
         <label>457</label>
         <onleft>6</onleft>
         <onright>50</onright>
@@ -52,8 +47,6 @@
         <description>Search button</description>
         <type>button</type>
         <id>9</id>
-        <posX>60</posX>
-        <posY>199</posY>
         <label>137</label>
         <onleft>9</onleft>
         <onright>50</onright>
@@ -64,8 +57,6 @@
         <description>Play CD</description>
         <type>button</type>
         <id>12</id>
-        <posX>60</posX>
-        <posY>233</posY>
         <label>890</label>
         <onleft>12</onleft>
         <onright>50</onright>
@@ -76,8 +67,6 @@
         <description>Eject Disc</description>
         <type>button</type>
         <id>10</id>
-        <posX>60</posX>
-        <posY>267</posY>
         <label>654</label>
         <onleft>10</onleft>
         <onright>50</onright>
@@ -89,8 +78,6 @@
         <type>image</type>
         <description>Divider image</description>
         <id>999</id>
-        <posX>60</posX>
-        <posY>300</posY>
         <texture>hbar1.png</texture>
         <keepaspectratio>yes</keepaspectratio>
       </control>
@@ -98,8 +85,6 @@
         <description>Now playing button</description>
         <type>button</type>
         <id>11</id>
-        <posX>60</posX>
-        <posY>318</posY>
         <label>4540</label>
         <onleft>11</onleft>
         <onright>50</onright>
@@ -111,8 +96,6 @@
         <description>Playlist button</description>
         <type>button</type>
         <id>8</id>
-        <posX>60</posX>
-        <posY>352</posY>
         <label>4555</label>
         <action>33</action>
         <onleft>8</onleft>
@@ -124,8 +107,6 @@
         <description>My Playlists</description>
         <type>button</type>
         <id>14</id>
-        <posX>60</posX>
-        <posY>386</posY>
         <label>983</label>
         <onleft>14</onleft>
         <onright>50</onright>
@@ -177,10 +158,10 @@
           <textYOff>4</textYOff>
           <textXOff2>415</textXOff2>
           <textYOff2>60</textYOff2>
-          <itemWidth>81</itemWidth>
-          <itemHeight>81</itemHeight>
-          <spaceBetweenItems>14</spaceBetweenItems>
-          <textureHeight>90</textureHeight>
+          <itemWidth>80</itemWidth>
+          <itemHeight>80</itemHeight>
+          <spaceBetweenItems>4</spaceBetweenItems>
+          <textureHeight>99</textureHeight>
           <onleft>2</onleft>
           <onright>53</onright>
           <onup>2</onup>

@@ -15,7 +15,7 @@
       <type>button</type>
       <description>next button</description>
       <id>35</id>
-      <posX>264</posX>
+      <posX>304</posX>
       <posY>510</posY>
       <onleft>34</onleft>
       <onright>35</onright>
@@ -25,14 +25,14 @@
       <label>-</label>
       <width>42</width>
       <height>42</height>
-      <textureFocus>osd_next_focus.png</textureFocus>
-      <textureNoFocus>osd_next_nofocus.png</textureNoFocus>
+      <textureFocus>skipforward_enabled.png</textureFocus>
+      <textureNoFocus>skipforward_disabled.png</textureNoFocus>
     </control>
     <control>
       <type>button</type>
       <description>stop button</description>
       <id>34</id>
-      <posX>216</posX>
+      <posX>256</posX>
       <posY>510</posY>
       <onleft>33</onleft>
       <onright>35</onright>
@@ -42,14 +42,14 @@
       <label>-</label>
       <width>42</width>
       <height>42</height>
-      <textureFocus>osd_stop_focus.png</textureFocus>
-      <textureNoFocus>osd_stop_nofocus.png</textureNoFocus>
+      <textureFocus>stop_enabled.png</textureFocus>
+      <textureNoFocus>stop_disabled.png</textureNoFocus>
     </control>
     <control>
       <type>button</type>
       <description>pause button</description>
       <id>33</id>
-      <posX>168</posX>
+      <posX>208</posX>
       <posY>510</posY>
       <onleft>32</onleft>
       <onright>34</onright>
@@ -59,14 +59,14 @@
       <label>-</label>
       <width>42</width>
       <height>42</height>
-      <textureFocus>osd_pause_focus.png</textureFocus>
-      <textureNoFocus>osd_pause_nofocus.png</textureNoFocus>
+      <textureFocus>pause_enabled.png</textureFocus>
+      <textureNoFocus>pause_disabled.png</textureNoFocus>
     </control>
     <control>
       <type>button</type>
       <description>play button</description>
       <id>32</id>
-      <posX>120</posX>
+      <posX>160</posX>
       <posY>510</posY>
       <onleft>31</onleft>
       <onright>33</onright>
@@ -76,14 +76,14 @@
       <label>-</label>
       <width>42</width>
       <height>42</height>
-      <textureFocus>osd_play_focus.png</textureFocus>
-      <textureNoFocus>osd_play_nofocus.png</textureNoFocus>
+      <textureFocus>play_enabled.png</textureFocus>
+      <textureNoFocus>play_disabled.png</textureNoFocus>
     </control>
     <control>
       <type>button</type>
       <description>back button</description>
       <id>31</id>
-      <posX>72</posX>
+      <posX>112</posX>
       <posY>510</posY>
       <onleft>30</onleft>
       <onright>32</onright>
@@ -93,14 +93,14 @@
       <label>-</label>
       <width>42</width>
       <height>42</height>
-      <textureFocus>osd_back_focus.png</textureFocus>
-      <textureNoFocus>osd_back_nofocus.png</textureNoFocus>
+      <textureFocus>skipback_enabled.png</textureFocus>
+      <textureNoFocus>skipback_disabled.png</textureNoFocus>
     </control>
     <control>
       <type>button</type>
       <description>previous screen button</description>
       <id>30</id>
-      <posX>24</posX>
+      <posX>64</posX>
       <posY>510</posY>
       <onleft>30</onleft>
       <onright>31</onright>
@@ -110,8 +110,8 @@
       <label>-</label>
       <width>42</width>
       <height>42</height>
-      <textureFocus>nav_back_focus.png</textureFocus>
-      <textureNoFocus>nav_back_nofocus.png</textureNoFocus>
+      <textureFocus>back_enabled.png</textureFocus>
+      <textureNoFocus>back_disabled.png</textureNoFocus>
     </control>
     <control>
       <type>image</type>
@@ -141,7 +141,7 @@
       <width>200</width>
       <height>200</height>
       <texture>-</texture>
-      <keepaspectratio>no</keepaspectratio>
+      <keepaspectratio>yes</keepaspectratio>
     </control>
     <control>
       <type>fadelabel</type>
