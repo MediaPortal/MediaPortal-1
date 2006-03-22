@@ -278,7 +278,7 @@ namespace MediaPortal.Configuration.Sections
             this.enableCoverArtFlipping.Name = "enableCoverArtFlipping";
             this.enableCoverArtFlipping.Size = new System.Drawing.Size(258, 30);
             this.enableCoverArtFlipping.TabIndex = 3;
-            this.enableCoverArtFlipping.Text = "Enable music overlay cover art flipping (Windows \r\nMedia Player only)";
+            this.enableCoverArtFlipping.Text = "Enable visualisation (Windows \r\nMedia Player only)";
             this.enableCoverArtFlipping.UseVisualStyleBackColor = true;
             // 
             // label2

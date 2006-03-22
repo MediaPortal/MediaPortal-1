@@ -444,11 +444,12 @@ namespace MediaPortal.GUI.Music
           else
           {
             //center logo in rect
-            AlbumArtPicture.Visible = false;
-            GUIGraphicsContext.VideoWindow = new Rectangle((int)fXPos, (int)fYPos, (int)iWidth, (int)iHeight);
-            //int iw = (SurroundingRectangle.Width - AlbumArtPicture.Width) / 2;
-            //int ih = (SurroundingRectangle.Height - AlbumArtPicture.Height) / 2;
-            //AlbumArtPicture.SetPosition(SurroundingRectangle.XPosition + iw, SurroundingRectangle.YPosition + ih);
+            g_Player.Visible = false;
+            AlbumArtPicture.Visible = true;
+            GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
+            int iw = (SurroundingRectangle.Width - AlbumArtPicture.Width) / 2;
+            int ih = (SurroundingRectangle.Height - AlbumArtPicture.Height) / 2;
+            AlbumArtPicture.SetPosition(SurroundingRectangle.XPosition + iw, SurroundingRectangle.YPosition + ih);
           }
         }
         catch (Exception)

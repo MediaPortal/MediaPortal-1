@@ -777,7 +777,7 @@ namespace MediaPortal.GUI.TV
                   Recorder.RecordNow(channel, true);
                   break;
                 default:
-                  return;
+                  return true ;
 
               }
             }
