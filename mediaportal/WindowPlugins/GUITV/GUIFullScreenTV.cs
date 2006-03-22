@@ -1092,7 +1092,7 @@ namespace MediaPortal.GUI.TV
             _dialogYesNoVisible = false;
             _bottomDialogMenuVisible = false;
             _statusTimeOutTimer = DateTime.Now;
-
+            RenderVolume(false);
             ScreenStateChanged();
             UpdateGUI();
 
@@ -2047,6 +2047,7 @@ namespace MediaPortal.GUI.TV
       {
         _isVolumeVisible = false;
         imgVolumeBar.Visible = false;
+        imgVolumeMuteIcon.Visible = false;
         return;
       }
       else
