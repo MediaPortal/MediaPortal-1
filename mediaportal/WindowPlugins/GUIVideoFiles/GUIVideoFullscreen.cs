@@ -745,6 +745,8 @@ namespace MediaPortal.GUI.Video
             UpdateGUI();
             needToClearScreen = false;
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
+            RenderVolume(false);
+
 
             return true;
           }
@@ -1319,6 +1321,7 @@ namespace MediaPortal.GUI.Video
       {
         _isVolumeVisible = false;
         imgVolumeBar.Visible = false;
+        imgVolumeMuteIcon.Visible = false;
         return;
       }
       else
