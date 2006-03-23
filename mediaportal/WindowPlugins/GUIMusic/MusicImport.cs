@@ -354,7 +354,10 @@ namespace MediaPortal.MusicImport
                 MusicTag tag = TagReader.TagReader.ReadTag(trackInfo.TargetFileName, ref imageBytes);
                 if (tag != null)
                 {
-                  trackInfo.MusicTag.Duration = tag.Duration;
+                  if (trackInfo.MusicTag.Duration == 0)
+                  {
+                    trackInfo.MusicTag.Duration = tag.Duration;
+                  }
                   //extract embedded coverart from file
                   if (imageBytes != null)
                   {
