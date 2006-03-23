@@ -796,23 +796,7 @@ namespace MediaPortal.GUI.Library
       if (m_iRenderWidth == GUIGraphicsContext.Width && m_iRenderHeight == GUIGraphicsContext.Height)
         _isFullScreenImage = true;
     }
-    [MediaPortal.GUI.Library.XMLSkinElement("visible")]
-    public override bool IsVisible
-    {
-      get
-      {
-        return base.IsVisible;
-      }
-      set
-      {
-        if (base.IsVisible != value)
-        {
-          _currentAnimationLoop = 0;
-          _currentFrameNumber = 0;
-        }
-        base.IsVisible = value;
-      }
-    }
+
     /*
       /// <summary>
       /// Check 
