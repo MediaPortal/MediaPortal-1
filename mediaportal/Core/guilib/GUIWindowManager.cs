@@ -935,7 +935,9 @@ namespace MediaPortal.GUI.Library
 			if (null!=Callbacks)
 			{
 				Callbacks();
-			}
+      }
+      if (!GUIGraphicsContext.Vmr9Active)
+        System.Threading.Thread.Sleep(50);
     }
 
 		#endregion

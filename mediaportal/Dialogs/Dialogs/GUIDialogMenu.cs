@@ -185,8 +185,6 @@ namespace MediaPortal.Dialogs
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
-        if (!GUIGraphicsContext.Vmr9Active)
-          System.Threading.Thread.Sleep(50);
       }
       GUIGraphicsContext.Overlay = m_bPrevOverlay;
       FreeResources();

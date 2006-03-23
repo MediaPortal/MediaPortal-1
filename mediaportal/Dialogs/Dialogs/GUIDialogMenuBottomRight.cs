@@ -201,8 +201,6 @@ namespace MediaPortal.Dialogs
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
-        if (!GUIGraphicsContext.Vmr9Active)
-          System.Threading.Thread.Sleep(100);
         TimeSpan ts = DateTime.Now - startTime;
         if (timeoutInSeconds > 0 && ts.TotalSeconds > timeoutInSeconds)
         {

@@ -130,7 +130,6 @@ namespace MediaPortal.GUI.TV
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
-        System.Threading.Thread.Sleep(100);
 
         if ((GUIMSNPlugin.CurrentConversation == null) || !GUIMSNPlugin.Messenger.Connected)
         {

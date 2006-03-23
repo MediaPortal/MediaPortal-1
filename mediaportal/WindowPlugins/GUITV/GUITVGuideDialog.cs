@@ -92,8 +92,6 @@ namespace MediaPortal.GUI.TV
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
-        if (!GUIGraphicsContext.Vmr9Active)
-          System.Threading.Thread.Sleep(50);
       }
       GUILayerManager.UnRegisterLayer(this);
     }

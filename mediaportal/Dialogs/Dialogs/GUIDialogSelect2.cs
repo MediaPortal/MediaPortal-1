@@ -125,7 +125,6 @@ namespace MediaPortal.Dialogs
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
-        System.Threading.Thread.Sleep(100);
 
       }
     }
