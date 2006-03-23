@@ -466,7 +466,7 @@ namespace MediaPortal.Player
     }
     public void Enable(bool onOff)
 		{
-      Log.Write("Vmr9:Enable:{0}", onOff);
+      //Log.Write("Vmr9:Enable:{0}", onOff);
 			if (!_isVmr9Initialized) return;
       if (_scene != null) _scene.Enabled = onOff;
       if (onOff)
