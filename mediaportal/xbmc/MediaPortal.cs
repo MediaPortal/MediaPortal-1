@@ -1719,8 +1719,6 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected override void OnMouseWheel(MouseEventArgs e)
   {
-    screenSaverTimer = DateTime.Now;
-    GUIGraphicsContext.BlankScreen = false;
     // Calculate Mouse position
     Point ptClientUL;
     Point ptScreenUL = new Point();
@@ -1742,19 +1740,24 @@ public class MediaPortalApp : D3DApp, IRender
       Action action = new Action(Action.ActionType.ACTION_MOVE_UP, x, y);
       action.MouseButton = e.Button;
       GUIGraphicsContext.OnAction(action);
+
+      screenSaverTimer = DateTime.Now;
+      GUIGraphicsContext.BlankScreen = false;
     }
     else if (e.Delta < 0)
     {
       Action action = new Action(Action.ActionType.ACTION_MOVE_DOWN, x, y);
       action.MouseButton = e.Button;
       GUIGraphicsContext.OnAction(action);
+
+      screenSaverTimer = DateTime.Now;
+      GUIGraphicsContext.BlankScreen = false;
     }
     base.OnMouseWheel(e);
   }
 
   protected override void mousemove(MouseEventArgs e)
   {
-    screenSaverTimer = DateTime.Now;
     // Disable first mouse action when mouse was hidden
     if (!_showCursor)
     {
@@ -1777,6 +1780,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       if ((Math.Abs(m_iLastMousePositionX - iCursorX) > 10) || (Math.Abs(m_iLastMousePositionY - iCursorY) > 10))
       {
+        screenSaverTimer = DateTime.Now;
         GUIGraphicsContext.BlankScreen = false;
       }
       // check any still waiting single click events
