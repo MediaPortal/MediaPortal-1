@@ -2699,7 +2699,7 @@ namespace MediaPortal
 
         StartFrameClock();
         FullRender();
-        if (g_Player.Playing && !g_Player.IsExternalPlayer && g_Player.IsMusic)
+        if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic)
         {
           if (GUIGraphicsContext.CurrentFPS < GUIGraphicsContext.MaxFPS)
           {
