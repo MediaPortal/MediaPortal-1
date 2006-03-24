@@ -289,12 +289,12 @@ namespace MediaPortal.Playlists
         iSong = 0;
       }
 
-      Play(iSong);
-
-
-      if (!g_Player.Playing)
+      if (!Play(iSong))
       {
-        PlayNext();
+        if (!g_Player.Playing)
+        {
+          PlayNext();
+        }
       }
     }
 
@@ -310,10 +310,12 @@ namespace MediaPortal.Playlists
       if (iSong < 0)
         iSong = playlist.Count - 1;
 
-      Play(iSong);
-      if (!g_Player.Playing)
+      if (!Play(iSong))
       {
-        PlayPrevious();
+        if (!g_Player.Playing)
+        {
+          PlayPrevious();
+        }
       }
     }
 
@@ -334,18 +336,18 @@ namespace MediaPortal.Playlists
       }
     }
 
-    public void Play(int iSong)
+    public bool Play(int iSong)
     {
       if (_currentPlayList == PlayListType.PLAYLIST_NONE)
       {
         Log.WriteFile(Log.LogType.Log, "PlaylistPlayer.Play() no playlist selected");
-        return;
+        return false;
       }
       PlayList playlist = GetPlaylist(_currentPlayList);
       if (playlist.Count <= 0)
       {
         Log.WriteFile(Log.LogType.Log, "PlaylistPlayer.Play() playlist is empty");
-        return;
+        return false;
       }
       if (iSong < 0) iSong = 0;
       if (iSong >= playlist.Count) iSong = playlist.Count - 1;
@@ -366,7 +368,7 @@ namespace MediaPortal.Playlists
         msg.Label = item.Description;
         GUIGraphicsContext.SendMessage(msg);
         item.Played = true;
-        return;
+        return true;
       }
 
       if (!g_Player.Play(item.FileName))
@@ -375,6 +377,7 @@ namespace MediaPortal.Playlists
         //	that couldn't be played
         _entriesNotFound++;
         Log.Write("PlaylistPlayer.Play unable to play:{0}", item.FileName);
+        return false;
       }
       else
       {
@@ -388,6 +391,7 @@ namespace MediaPortal.Playlists
           }
         }
       }
+      return g_Player.Playing;
     }
 
     public int CurrentSong
