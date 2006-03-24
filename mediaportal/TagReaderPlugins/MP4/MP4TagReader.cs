@@ -56,6 +56,7 @@ namespace MediaPortal.TagReader.MP4
 		{
 			Log.Write("mp4 tag: scan {0}",strFileName);
 			m_tag.Clear();
+      _imageBytes = null;
 			try 
 			{
 				ParsedAtom[] atoms = MP4Parser.parseAtoms(strFileName);
