@@ -33,7 +33,6 @@ using MediaPortal.Ripper;
 using MediaPortal.Music.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.Util;
-using MediaPortal.TagReader;
 using Yeti.MMedia;
 using Yeti.MMedia.Mp3;
 using Yeti.Lame;
@@ -350,44 +349,6 @@ namespace MediaPortal.MusicImport
 
               if (File.Exists(trackInfo.TargetFileName) && mp3Database)
               {
-                byte[] imageBytes = null;
-                MusicTag tag = TagReader.TagReader.ReadTag(trackInfo.TargetFileName, ref imageBytes);
-                if (tag != null)
-                {
-                  if (trackInfo.MusicTag.Duration == 0)
-                  {
-                    trackInfo.MusicTag.Duration = tag.Duration;
-                  }
-                  //extract embedded coverart from file
-                  if (imageBytes != null)
-                  {
-                    try
-                    {
-                      using (MemoryStream memoryStream = new MemoryStream(imageBytes))
-                      {
-                        using (System.Drawing.Image image = System.Drawing.Image.FromStream(memoryStream))
-                        {
-                          String tagAlbumName = String.Format("{0}-{1}", tag.Artist, tag.Album);
-                          string strSmallThumb = Utils.GetCoverArtName(Thumbs.MusicAlbum, tagAlbumName);
-                          string strLargeThumb = Utils.GetLargeCoverArtName(Thumbs.MusicAlbum, tagAlbumName);
-                          MediaPortal.Util.Picture.CreateThumbnail(image, strSmallThumb, 128, 128, 0);
-                          MediaPortal.Util.Picture.CreateThumbnail(image, strLargeThumb, 512, 512, 0);
-                          string folderThumb = Utils.GetFolderThumb(trackInfo.TargetFileName);
-                          if (!System.IO.File.Exists(folderThumb))
-                          {
-                            try
-                            {
-                              System.IO.File.Copy(strSmallThumb, folderThumb, true);
-                              System.IO.File.SetAttributes(folderThumb, System.IO.File.GetAttributes(folderThumb) | System.IO.FileAttributes.Hidden);
-                            }
-                            catch (Exception) { }
-                          }
-                        }
-                      }
-                    }
-                    catch (Exception) { }
-                  }
-                }
                 if (importUnknown || (trackInfo.MusicTag.Artist != "Unknown Artist") || (trackInfo.MusicTag.Album != "Unknown Album"))
                 {
                   MusicDatabase dbs = new MusicDatabase();
@@ -487,6 +448,8 @@ namespace MediaPortal.MusicImport
                   if (mp3MONO)
                     mp3Config.format.lhv1.nMode = MpegMode.MONO;
 
+                  mp3Config.format.lhv1.bWriteVBRHeader = 1;
+
                   Stream WaveFile = new FileStream(trackInfo.TempFileName, FileMode.Create, FileAccess.Write);
                   m_Writer = new Mp3Writer(WaveFile, Format, mp3Config);
                   if (!m_CancelRipping) try
@@ -524,6 +487,7 @@ namespace MediaPortal.MusicImport
                       m_Writer.Close();
                       m_Writer = null;
                       WaveFile.Close();
+                      Yeti.Lame.Lame_encDll.beWriteVBRHeader(trackInfo.TempFileName);
                     }
                 }
                 finally
