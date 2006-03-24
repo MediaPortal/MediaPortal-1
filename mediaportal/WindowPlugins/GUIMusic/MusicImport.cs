@@ -253,7 +253,7 @@ namespace MediaPortal.MusicImport
         strName = string.Format("{0:00} " + Utils.MakeFileName(trackInfo.MusicTag.Title), trackInfo.MusicTag.Track);
 
       strName = Utils.MakeFileName(strName);
-      if (File.Exists(mp3ImportDir + "\\" + strDirectory + "\\" + strName + ".mp3"))
+      if (File.Exists(mp3ImportDir + "\\" + strDirectory + "\\" + strName + ".mp3") && !mp3ReplaceExisting)
       {
         int i = 1;
         while (File.Exists(mp3ImportDir + "\\" + strDirectory + "\\" + strName + "_" + i.ToString() + ".mp3"))
