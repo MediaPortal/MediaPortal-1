@@ -203,8 +203,10 @@ namespace Core.Util
         newConnection.Port=port;
         newConnection.Busy=false;
         newConnection.Connection = new FTPClient();
+        newConnection.Connection.RemoteHost = hostname;
         newConnection.HostName=hostname;
         newConnection.Port = port;
+        newConnection.Connection.Connect();
         newConnection.Connection.Login(login,password);
         newConnection.Connection.ConnectMode=FTPConnectMode.ACTIVE;
         ftpConnections.Add(newConnection);
