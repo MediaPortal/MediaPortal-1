@@ -36,10 +36,11 @@ namespace MediaPortal.ITunesPlayer
   /// </summary>
   public class ITunesPlugin : IExternalPlayer
   {
-    iTunesLib.IiTunes _iTunesApplication = null;
+    iTunesLib.iTunesAppClass _iTunesApplication = null;
     bool _playerIsPaused;
     string _currentFile = String.Empty;
     bool _started;
+    bool _ended;
     double _duration;
     double _currentPosition;
     ITPlayerState _playerState;
@@ -70,7 +71,7 @@ namespace MediaPortal.ITunesPlayer
     /// </summary>
     public override string VersionNumber
     {
-      get { return "1.1"; }
+      get { return "1.2"; }
     }
 
     /// <summary>
@@ -148,10 +149,13 @@ namespace MediaPortal.ITunesPlayer
         if (_iTunesApplication == null)
         {
           _iTunesApplication = new iTunesLib.iTunesAppClass();
+          _iTunesApplication.OnPlayerPlayEvent += new _IiTunesEvents_OnPlayerPlayEventEventHandler(_iTunesApplication_OnPlayerPlayEvent);
+          _iTunesApplication.OnPlayerStopEvent += new _IiTunesEvents_OnPlayerStopEventEventHandler(_iTunesApplication_OnPlayerStopEvent);
+          _iTunesApplication.OnPlayerPlayingTrackChangedEvent += new _IiTunesEvents_OnPlayerPlayingTrackChangedEventEventHandler(_iTunesApplication_OnPlayerPlayingTrackChangedEvent);
         }
 
         _started = false;
-        _iTunesApplication.Stop();
+        _ended = false;
         _iTunesApplication.PlayFile(strFile);
 
         _playerIsPaused = false;
@@ -169,6 +173,30 @@ namespace MediaPortal.ITunesPlayer
         _iTunesApplication = null;
       }
       return false;
+    }
+
+    void _iTunesApplication_OnPlayerPlayingTrackChangedEvent(object iTrack)
+    {
+      iTunesLib.IITTrack track = iTrack as iTunesLib.IITTrack;
+      Log.Write("ITunes:track changed track :{0} duration:{1}", track.Name, track.Duration);
+      _iTunesApplication.Stop();
+      _ended = true;
+    }
+
+    void _iTunesApplication_OnPlayerStopEvent(object iTrack)
+    {
+      iTunesLib.IITTrack track = iTrack as iTunesLib.IITTrack;
+      Log.Write("ITunes:playback stopped track :{0} duration:{1}", track.Name, track.Duration);
+
+      _iTunesApplication.Stop();
+      _ended = true;
+    }
+
+    void _iTunesApplication_OnPlayerPlayEvent(object iTrack)
+    {
+      iTunesLib.IITTrack track = iTrack as iTunesLib.IITTrack;
+      Log.Write("ITunes:playback started track :{0} duration:{1}", track.Name, track.Duration);
+      _started = true;
     }
 
     public override double Duration
@@ -285,7 +313,7 @@ namespace MediaPortal.ITunesPlayer
           UpdateStatus();
           if (_started == false) return false;
           if (Paused) return false;
-          return (_playerState == ITPlayerState.ITPlayerStateStopped);
+          return (_ended);
 
         }
         catch (Exception)
@@ -307,7 +335,7 @@ namespace MediaPortal.ITunesPlayer
           UpdateStatus();
           if (_started == false) return false;
           if (Paused) return false;
-          return (_playerState == ITPlayerState.ITPlayerStateStopped);
+          return (_ended);
 
         }
         catch (Exception)
@@ -424,18 +452,14 @@ namespace MediaPortal.ITunesPlayer
     }
     private void UpdateStatus()
     {
+      if (_started == false) return;
       TimeSpan ts = DateTime.Now - _updateTimer;
       if (ts.TotalSeconds >= 1 || _duration < 0 || _started==false)
       {
         _playerState = _iTunesApplication.PlayerState;
-        if (_started == false)
-        {
-          _started = (_playerState == ITPlayerState.ITPlayerStatePlaying);
-        }
         _duration = _iTunesApplication.CurrentTrack.Duration;
-        _updateTimer = DateTime.Now;
         _currentPosition = (double)_iTunesApplication.PlayerPosition;
-
+        _updateTimer = DateTime.Now;
       }
     }
 
