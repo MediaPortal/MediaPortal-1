@@ -75,7 +75,6 @@ namespace MediaPortal.GUI.TV
     #endregion
 
     #region variables
-    bool _infoVisible = false;
     bool _stepSeekVisible = false;
     bool _statusVisible = false;
     bool _groupVisible = false;
@@ -612,7 +611,7 @@ namespace MediaPortal.GUI.TV
           {
             if (g_Player.IsTimeShifting)
             {
-              _infoVisible = true;
+              _statusVisible = true;
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekRelativePercentage(-10);
             }
@@ -624,7 +623,7 @@ namespace MediaPortal.GUI.TV
           {
             if (g_Player.IsTimeShifting)
             {
-              _infoVisible = true;
+              _statusVisible = true;
               _statusTimeOutTimer = DateTime.Now;
               g_Player.SeekRelativePercentage(10);
             }
@@ -1013,7 +1012,7 @@ namespace MediaPortal.GUI.TV
             _channelName = "";
             _isOsdVisible = false;
             _updateTimer = DateTime.Now;
-            _infoVisible = false;
+            
             _stepSeekVisible = false;
             _statusVisible = false;
             _groupVisible = false;
@@ -1087,7 +1086,7 @@ namespace MediaPortal.GUI.TV
             _isOsdVisible = false;
             _updateTimer = DateTime.Now;
             //					_zapTimeOutTimer=DateTime.Now;
-            _infoVisible = false;
+            
             _stepSeekVisible = false;
             _statusVisible = false;
             _groupVisible = false;
@@ -1520,7 +1519,7 @@ namespace MediaPortal.GUI.TV
 
     void UpdateGUI()
     {
-      if ((_statusVisible || _infoVisible || _stepSeekVisible || (!_isOsdVisible && g_Player.Speed != 1) || (!_isOsdVisible && g_Player.Paused)))
+      if ((_statusVisible || _stepSeekVisible || (!_isOsdVisible && g_Player.Speed != 1) || (!_isOsdVisible && g_Player.Paused)))
       {
         if (!_isOsdVisible)
         {
