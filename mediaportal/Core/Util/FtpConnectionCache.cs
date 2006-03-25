@@ -163,7 +163,7 @@ namespace Core.Util
       {
         try
         {
-          if (abs(bytesTransferred.ByteCount - BytesTransferred) > 16384)
+          if (Math.Abs(bytesTransferred.ByteCount - BytesTransferred) > 16384)
           {
             BytesTransferred = bytesTransferred.ByteCount;
 
