@@ -36,8 +36,6 @@ namespace MediaPortal.Dialogs
 
     #region Base Dialog Variables
     bool m_bRunning = false;
-    int m_dwParentWindowID = 0;
-    GUIWindow m_pParentWindow = null;
     #endregion
     [SkinControlAttribute(2)]
     protected GUIButtonControl btnClose = null;
@@ -168,7 +166,6 @@ namespace MediaPortal.Dialogs
         OnMessage(msg);
 
         GUIWindowManager.UnRoute();
-        m_pParentWindow = null;
         m_bRunning = false;
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
@@ -180,13 +177,13 @@ namespace MediaPortal.Dialogs
       {
         Close();
       }
-      m_dwParentWindowID = dwParentId;
-      m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
-      if (null == m_pParentWindow)
+      GUIWindow parentWindow = GUIWindowManager.GetWindow(dwParentId); ;
+      if (null == parentWindow)
       {
-        m_dwParentWindowID = 0;
         return;
       }
+      bool wasRouted = GUIWindowManager.IsRouted;
+      IRenderLayer prevLayer = GUILayerManager.GetLayer(GUILayerManager.LayerType.Dialog);
 
       GUIWindowManager.IsSwitchingToNewWindow = true;
       GUIWindowManager.RouteToWindow(GetID);
@@ -195,6 +192,7 @@ namespace MediaPortal.Dialogs
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, -1, 0, null);
       OnMessage(msg);
 
+      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
       GUIWindowManager.IsSwitchingToNewWindow = false;
       m_bRunning = true;
       DateTime startTime = DateTime.Now;
@@ -204,13 +202,22 @@ namespace MediaPortal.Dialogs
         TimeSpan ts = DateTime.Now - startTime;
         if (timeoutInSeconds > 0 && ts.TotalSeconds > timeoutInSeconds)
         {
-          Close();
           selectedItemIndex = -1;
           selectedId = -1;
           timedOut = true;
-          return;
+          break;
         }
       }
+      GUIGraphicsContext.Overlay = m_bPrevOverlay;
+      FreeResources();
+      DeInitControls();
+      GUILayerManager.UnRegisterLayer(this);
+      if (wasRouted)
+      {
+        GUIWindowManager.RouteToWindow(dwParentId);
+        GUILayerManager.RegisterLayer(prevLayer, GUILayerManager.LayerType.Dialog);
+      }
+
     }
     #endregion
 
@@ -240,13 +247,7 @@ namespace MediaPortal.Dialogs
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
-
-            m_pParentWindow = null;
             m_bRunning = false;
-            GUIGraphicsContext.Overlay = m_bPrevOverlay;
-            FreeResources();
-            DeInitControls();
-            GUILayerManager.UnRegisterLayer(this);
             return true;
           }
 
@@ -254,7 +255,10 @@ namespace MediaPortal.Dialogs
           {
             m_bPrevOverlay = GUIGraphicsContext.Overlay;
             base.OnMessage(message);
-            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
+            int parentWindowId = GUIWindowManager.ActiveWindow;
+            GUIWindow parentWindow = GUIWindowManager.GetWindow(parentWindowId);
+
+            GUIGraphicsContext.Overlay = parentWindow.IsOverlayAllowed;
             listView.Clear();
 
 

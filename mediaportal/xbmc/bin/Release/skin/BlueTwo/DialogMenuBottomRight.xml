@@ -1,7 +1,7 @@
 <window>
   <id>2015</id>
   <defaultcontrol>3</defaultcontrol>
-  <allowoverlay>no</allowoverlay>
+  <allowoverlay>yes</allowoverlay>
   <controls>
     <control>
       <type>image</type>

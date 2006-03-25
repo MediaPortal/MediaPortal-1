@@ -16,6 +16,7 @@
 		<filtered>yes</filtered>
 		<centered>no</centered>
 		<keepaspectratio>no</keepaspectratio>
+    <visible>yes</visible>
 	</control>
 	<control>
 		<description>default label</description>
