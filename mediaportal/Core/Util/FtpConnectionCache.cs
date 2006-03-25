@@ -44,9 +44,9 @@ namespace Core.Util
       public string    Password=String.Empty;		//password
       public int       Port=21;									//tcp/ip port of the server
       public bool      Busy=false;							//Flag indicating if we are busy downloading a file
-      public string    remoteFile=String.Empty;	//remote file we're downloading
-      public string    localFile=String.Empty;	//local file where download is stored
-      public string    originalRemoteFile=String.Empty;	//original remote filename
+      public string    RemoteFileName=String.Empty;	//remote file we're downloading
+      public string    LocalFileName=String.Empty;	//local file where download is stored
+      public string    OriginalRemoteFileName=String.Empty;	//original remote filename
       public long      BytesTransferred=0;			// bytes transferred
       public long      BytesOffset=0;						// bytes offset when resuming an ftp download
 
@@ -71,7 +71,7 @@ namespace Core.Util
         BytesTransferred=0;
         BytesOffset=0;
         Busy=false;
-        Log.Write("ftp download finished {0}->{1}", remoteFile, localFile);
+        Log.Write("ftp download finished {0}->{1}", RemoteFileName, LocalFileName);
       }
       
 			/// <summary>
@@ -87,23 +87,24 @@ namespace Core.Util
         ftp.Connection.BytesTransferred +=new BytesTransferredHandler(OnBytesTransferred);
         ftp.Connection.TransferType=FTPTransferType.BINARY;
 
-
-        Log.Write("ftp download{0}->{1}", ftp.remoteFile, ftp.localFile);
-        if (System.IO.File.Exists(ftp.localFile))
+        string tempFileName = ftp.LocalFileName;
+        System.IO.Path.ChangeExtension(tempFileName ,".tmp");
+        Log.Write("ftp download{0}->{1}", ftp.RemoteFileName, tempFileName);
+        if (System.IO.File.Exists(tempFileName))
         {
-          FileInfo info = new FileInfo(ftp.localFile);
+          FileInfo info = new FileInfo(tempFileName);
           BytesOffset=info.Length;
           ftp.Connection.Resume();
         }
         
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING,0,0,0,0,0,null);
-        msg.Label=originalRemoteFile;
-        msg.Label2=localFile;
+        msg.Label=OriginalRemoteFileName;
+        msg.Label2=LocalFileName;
         msg.Param1=(int)(BytesTransferred+BytesOffset);
         GUIGraphicsContext.SendMessage(msg);
 
-        ftp.Connection.Get(ftp.localFile,ftp.remoteFile);
+        ftp.Connection.Get(ftp.LocalFileName,ftp.RemoteFileName);
       }
 
 
@@ -115,9 +116,9 @@ namespace Core.Util
 			/// <param name="localfile"></param>
       public void Download(string orgremoteFile,string remotefile, string localfile)
       {
-        localFile=localfile;
-        remoteFile=remotefile;
-        originalRemoteFile=orgremoteFile;
+        LocalFileName=localfile;
+        RemoteFileName=remotefile;
+        OriginalRemoteFileName=orgremoteFile;
         
         OnDownLoad +=new OnDownloadHandler(StartDownLoad);
         AsyncCallback callback = new AsyncCallback(GetCallback);
@@ -136,8 +137,8 @@ namespace Core.Util
         BytesTransferred=bytesTransferred.ByteCount;
         
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING,0,0,0,0,0,null);
-        msg.Label=originalRemoteFile;
-        msg.Label2=localFile;
+        msg.Label=OriginalRemoteFileName;
+        msg.Label2=LocalFileName;
         msg.Param1=(int)(BytesTransferred+BytesOffset);
         GUIGraphicsContext.SendMessage(msg);
       }
@@ -281,7 +282,7 @@ namespace Core.Util
     {
       foreach (FtpConnection client in ftpConnections)
       {
-        if (client.Busy && client.originalRemoteFile==remotefile)
+        if (client.Busy && client.OriginalRemoteFileName==remotefile)
         {
           return true;
         }
@@ -303,9 +304,24 @@ namespace Core.Util
         if (client.Connection==ftpclient)
         {
           client.Connection.TransferCompleteEx -= new TransferHandler(Connection_TransferCompleteEx);
+
+          string tempFileName = client.LocalFileName;
+          System.IO.Path.ChangeExtension(tempFileName, ".tmp");
+          try
+          {
+
+            if (System.IO.File.Exists(client.LocalFileName))
+            {
+              System.IO.File.Delete(client.LocalFileName);
+            }
+            System.IO.Directory.Move(tempFileName, client.LocalFileName);
+          }
+          catch (Exception)
+          {
+          }
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED,0,0,0,0,0,null);
-          msg.Label=client.originalRemoteFile;
-          msg.Label2=client.localFile;
+          msg.Label=client.OriginalRemoteFileName;
+          msg.Label2=client.LocalFileName;
           GUIGraphicsContext.SendMessage(msg);
           return;
         }
