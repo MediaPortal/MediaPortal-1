@@ -58,9 +58,9 @@ namespace MediaPortal.Dialogs
     string selectedItemLabel = String.Empty;
     ArrayList listItems = new ArrayList();
     bool m_bPrevOverlay = false;
-      bool showQuickNumbers = true;
-      DateTime keyTimer = DateTime.Now;
-      string keySelection = string.Empty;
+    bool showQuickNumbers = true;
+    DateTime keyTimer = DateTime.Now;
+    string keySelection = string.Empty;
 
 
     public GUIDialogMenuBottomRight()
@@ -94,65 +94,65 @@ namespace MediaPortal.Dialogs
 
       if ((action.wID == Action.ActionType.ACTION_KEY_PRESSED) || ((Action.ActionType.REMOTE_0 <= action.wID) && (Action.ActionType.REMOTE_9 >= action.wID)))
       {
-            if (action.m_key != null)
-            {
-              if (action.m_key.KeyChar >= '0' && action.m_key.KeyChar <= '9')
-              {
-                // Get offset to item
-                key = (char)action.m_key.KeyChar;
-              }
-            }
-            else
-            {
-              key = (char)('0'+action.wID - Action.ActionType.REMOTE_0);
-            }
-            if (key == (char)0) return;
-            keySelection += key;
-            if (keySelection.Length == listItems.Count.ToString().Length)
-            {
-                selectOpcion(keySelection);
-                keySelection = string.Empty;
-                return;
-            }
-            keyTimer = DateTime.Now;
-            return;
+        if (action.m_key != null)
+        {
+          if (action.m_key.KeyChar >= '0' && action.m_key.KeyChar <= '9')
+          {
+            // Get offset to item
+            key = (char)action.m_key.KeyChar;
+          }
+        }
+        else
+        {
+          key = (char)('0' + action.wID - Action.ActionType.REMOTE_0);
+        }
+        if (key == (char)0) return;
+        keySelection += key;
+        if (keySelection.Length == listItems.Count.ToString().Length)
+        {
+          selectOpcion(keySelection);
+          keySelection = string.Empty;
+          return;
+        }
+        keyTimer = DateTime.Now;
+        return;
       }
 
       base.OnAction(action);
     }
-      public void selectOpcion(string keySelected)
+    public void selectOpcion(string keySelected)
+    {
+      int selected;
+      try
       {
-          int selected;
-          try
-          {
-              selected = int.Parse(keySelected) - 1;
-          }
-          catch (Exception)
-          {
-              selected = -1;
-          }
+        selected = int.Parse(keySelected) - 1;
+      }
+      catch (Exception)
+      {
+        selected = -1;
+      }
 
-          if (selected >= 0 && selected < listItems.Count)
-          {
-              // Select dialog item
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, listView.GetID, 0, 0, null);
-              OnMessage(msg);
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, selected, 0, null);
-              OnMessage(msg);
-              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
-              OnMessage(msg);
-          }
-      }
-      public override void Process()
+      if (selected >= 0 && selected < listItems.Count)
       {
-          if (keySelection == string.Empty) return;
-          TimeSpan ts = DateTime.Now - keyTimer;
-          if (ts.TotalMilliseconds >= 1000)
-          {
-              selectOpcion(keySelection);
-              keySelection = string.Empty;
-          }
+        // Select dialog item
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, listView.GetID, 0, 0, null);
+        OnMessage(msg);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0, listView.GetID, selected, 0, null);
+        OnMessage(msg);
+        msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, listView.GetID, 0, 0, 0, null);
+        OnMessage(msg);
       }
+    }
+    public override void Process()
+    {
+      if (keySelection == string.Empty) return;
+      TimeSpan ts = DateTime.Now - keyTimer;
+      if (ts.TotalMilliseconds >= 1000)
+      {
+        selectOpcion(keySelection);
+        keySelection = string.Empty;
+      }
+    }
 
 
     #region Base Dialog Members
@@ -319,35 +319,35 @@ namespace MediaPortal.Dialogs
       int iItemIndex = listItems.Count + 1;
       GUIListItem pItem = new GUIListItem();
       if (showQuickNumbers)
-          pItem.Label = iItemIndex.ToString() + " " + strLabel;
+        pItem.Label = iItemIndex.ToString() + " " + strLabel;
       else
-          pItem.Label = strLabel;
+        pItem.Label = strLabel;
       pItem.ItemId = iItemIndex;
       listItems.Add(pItem);
     }
 
     public void AddLocalizedString(int iLocalizedString)
     {
-        int iItemIndex = listItems.Count + 1;
-        GUIListItem pItem = new GUIListItem();
-        if (showQuickNumbers)
-        {
-            pItem.Label = iItemIndex.ToString() + " " + GUILocalizeStrings.Get(iLocalizedString);
-            pItem.ItemId = iLocalizedString;
-            listItems.Add(pItem);
-        }
-        else
-        {
-            pItem.Label = GUILocalizeStrings.Get(iLocalizedString);
-            pItem.ItemId = iLocalizedString;
-            listItems.Add(pItem);
-        }
-    }
-      public bool ShowQuickNumbers
+      int iItemIndex = listItems.Count + 1;
+      GUIListItem pItem = new GUIListItem();
+      if (showQuickNumbers)
       {
-          get { return showQuickNumbers; }
-          set { showQuickNumbers = value; }
+        pItem.Label = iItemIndex.ToString() + " " + GUILocalizeStrings.Get(iLocalizedString);
+        pItem.ItemId = iLocalizedString;
+        listItems.Add(pItem);
       }
+      else
+      {
+        pItem.Label = GUILocalizeStrings.Get(iLocalizedString);
+        pItem.ItemId = iLocalizedString;
+        listItems.Add(pItem);
+      }
+    }
+    public bool ShowQuickNumbers
+    {
+      get { return showQuickNumbers; }
+      set { showQuickNumbers = value; }
+    }
 
 
     public int SelectedLabel

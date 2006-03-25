@@ -35,639 +35,639 @@ using MediaPortal.Drawing.Layouts;
 
 namespace MediaPortal.GUI.Library
 {
-	/// <summary>
-	/// Creates new GUIControls based on Skin Xml data, and handles
-	/// the skin references.xml file which contains default properties for most controls.
-	/// </summary>
-	public class GUIControlFactory
-	{
-		#region Constructors
+  /// <summary>
+  /// Creates new GUIControls based on Skin Xml data, and handles
+  /// the skin references.xml file which contains default properties for most controls.
+  /// </summary>
+  public class GUIControlFactory
+  {
+    #region Constructors
 
-		private GUIControlFactory() // NON-CREATABLE
-		{
-		}
-		
-		#endregion Constructors
+    private GUIControlFactory() // NON-CREATABLE
+    {
+    }
 
-		#region Methods
+    #endregion Constructors
 
-		public static void LoadReferences(string referenceFile)
-		{
-			try
-			{		
-				if (m_referenceNodesByControlType != null)
-					return;
-				Log.Write("  Loading references from {0}", referenceFile);
-				m_referenceNodesByControlType = new Hashtable();
-                _cachedStyleNodes = new Dictionary<string, XmlNode>();
+    #region Methods
 
-                XmlDocument doc = new XmlDocument();
+    public static void LoadReferences(string referenceFile)
+    {
+      try
+      {
+        if (m_referenceNodesByControlType != null)
+          return;
+        Log.Write("  Loading references from {0}", referenceFile);
+        m_referenceNodesByControlType = new Hashtable();
+        _cachedStyleNodes = new Dictionary<string, XmlNode>();
 
-				doc.PreserveWhitespace = true;
-				doc.Load(referenceFile);
-				// Check the root element
-				if (doc.DocumentElement == null || doc.DocumentElement.Name != "controls")
-					return;
+        XmlDocument doc = new XmlDocument();
 
-				ReadSkinSizeFromReferenceFile(doc);
+        doc.PreserveWhitespace = true;
+        doc.Load(referenceFile);
+        // Check the root element
+        if (doc.DocumentElement == null || doc.DocumentElement.Name != "controls")
+          return;
 
-				XmlNodeList list = doc.DocumentElement.SelectNodes("/controls/control");
-				foreach (XmlNode controlNode in list)
-				{
-					if (GetControlType(controlNode) != null)
-						m_referenceNodesByControlType[GetControlType(controlNode)] = controlNode;
-				}
+        ReadSkinSizeFromReferenceFile(doc);
 
-                // cache the styles
-                foreach (XmlNode node in doc.DocumentElement.SelectNodes("/controls/style"))
+        XmlNodeList list = doc.DocumentElement.SelectNodes("/controls/control");
+        foreach (XmlNode controlNode in list)
+        {
+          if (GetControlType(controlNode) != null)
+            m_referenceNodesByControlType[GetControlType(controlNode)] = controlNode;
+        }
+
+        // cache the styles
+        foreach (XmlNode node in doc.DocumentElement.SelectNodes("/controls/style"))
+        {
+          XmlAttribute styleNameAttribute = node.Attributes["Name"];
+
+          if (styleNameAttribute != null)
+            _cachedStyleNodes[styleNameAttribute.Value] = node;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write("exception loading references {0} err:{1} stack:{2}",
+          referenceFile, ex.Message, ex.StackTrace);
+      }
+    }
+
+
+    /// <summary>
+    /// Deletes all reference nodes from memory (Use this to change skins in runtime).
+    /// </summary>
+    public static void ClearReferences()
+    {
+      m_referenceNodesByControlType = null;
+      _cachedStyleNodes = null;
+    }
+
+    private static void ReadSkinSizeFromReferenceFile(XmlDocument doc)
+    {
+      GUIGraphicsContext.SkinSize = new System.Drawing.Size(720, 576);
+      XmlNode nodeSkinWidth = doc.DocumentElement.SelectSingleNode("/controls/skin/width/text()");
+      XmlNode nodeSkinHeight = doc.DocumentElement.SelectSingleNode("/controls/skin/height/text()");
+      if (nodeSkinWidth != null && nodeSkinHeight != null)
+      {
+        try
+        {
+          int iWidth = Convert.ToInt16(nodeSkinWidth.Value);
+          int iHeight = Convert.ToInt16(nodeSkinHeight.Value);
+          Log.Write("  original skin size:{0}x{1}", iWidth, iHeight);
+          GUIGraphicsContext.SkinSize = new System.Drawing.Size(iWidth, iHeight);
+        }
+        catch (FormatException) // Size values were invalid.
+        {
+        }
+      }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="guiControlType">The type of control you wish to update.</param>
+    /// <returns>A hashtable which contains the MemberInfo objects for every
+    /// updatable field, indexed by their corresponding Xml Element name. </returns>
+    static Hashtable GetMembersToUpdate(Type guiControlType)
+    {
+      // Lazy Initializiation...
+      if (m_reflectionCacheByControlType.ContainsKey(guiControlType))
+        return (Hashtable)m_reflectionCacheByControlType[guiControlType];
+
+      Hashtable membersTable = new Hashtable();
+
+      MemberInfo[] allMembers = guiControlType.GetMembers(
+        BindingFlags.Instance
+        | BindingFlags.NonPublic
+        | BindingFlags.FlattenHierarchy
+        | BindingFlags.Public);
+
+      foreach (MemberInfo member in allMembers)
+      {
+        if (member.IsDefined(typeof(XMLSkinElementAttribute), false))
+        {
+          XMLSkinElementAttribute atrb = (XMLSkinElementAttribute)
+            member.GetCustomAttributes(typeof(XMLSkinElementAttribute), false)[0];
+
+          membersTable[atrb.XmlElementName] = member;
+        }
+      }
+      m_reflectionCacheByControlType[guiControlType] = membersTable;
+      return membersTable;
+    }
+
+    private static object ConvertXmlStringToObject(string valueName, string valueText, Type type)
+    {
+      if (type == typeof(bool))
+      {
+        if (string.Compare(valueText, "off", true) == 0 ||
+          string.Compare(valueText, "no", true) == 0 ||
+          string.Compare(valueText, "disabled", true) == 0)
+        {
+          return false;
+        }
+
+        return true;
+      }
+
+      try
+      {
+        if (type == typeof(double))
+        {
+          double result = 0;
+
+          if (double.TryParse(valueText, NumberStyles.Number, null, out result))
+            return result;
+
+          return 1;
+        }
+
+        if (type == typeof(int) || type == typeof(long))
+        {
+          if (string.Compare(valueName, "textcolor", true) == 0 ||
+            string.Compare(valueName, "colorkey", true) == 0 ||
+            string.Compare(valueName, "colordiffuse", true) == 0)
+          {
+            if (valueText.Length > 0)
+            {
+              bool isNamedColor = false;
+
+              foreach (char ch in valueText)
+              {
+                if (ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'F' || ch >= 'a' && ch <= 'f')
+                  continue;
+
+                isNamedColor = true;
+                break;
+              }
+
+              if (isNamedColor)
+              {
+                int index = valueText.IndexOf(':');
+
+                if (index != -1)
                 {
-                    XmlAttribute styleNameAttribute = node.Attributes["Name"];
+                  Color color = ColorTranslator.FromHtml(valueText.Substring(0, index));
+                  int alpha = 255;
 
-                    if (styleNameAttribute != null)
-                        _cachedStyleNodes[styleNameAttribute.Value] = node;
+                  if (index < valueText.Length)
+                  {
+                    if (valueText[index + 1] == '#')
+                      alpha = int.Parse(valueText.Substring(index + 2), NumberStyles.HexNumber);
+                    else
+                      alpha = int.Parse(valueText.Substring(index + 1));
+                  }
+
+                  return Color.FromArgb(alpha, color).ToArgb();
                 }
+
+                return Color.FromName(valueText).ToArgb();
+              }
+
+              try
+              {
+                Color color = ColorTranslator.FromHtml('#' + valueText);
+
+                return color.ToArgb();
+              }
+              catch
+              {
+                Log.Write("GUIControlFactory.ConvertXmlStringToObject: Invalid color format '#{0}' reverting to White", valueText);
+
+                return Color.White.ToArgb();
+              }
             }
-			catch (Exception ex)
-			{
-				Log.Write("exception loading references {0} err:{1} stack:{2}",
-					referenceFile, ex.Message, ex.StackTrace);
-			}
-		}
+          }
+        }
 
-		
-		/// <summary>
-		/// Deletes all reference nodes from memory (Use this to change skins in runtime).
-		/// </summary>
-		public static void ClearReferences()
-		{
-			m_referenceNodesByControlType = null;
-            _cachedStyleNodes = null;
-		}
-
-		private static void ReadSkinSizeFromReferenceFile(XmlDocument doc)
-		{
-			GUIGraphicsContext.SkinSize = new System.Drawing.Size(720, 576);
-			XmlNode nodeSkinWidth = doc.DocumentElement.SelectSingleNode("/controls/skin/width/text()");
-			XmlNode nodeSkinHeight = doc.DocumentElement.SelectSingleNode("/controls/skin/height/text()");
-			if (nodeSkinWidth != null && nodeSkinHeight != null)
-			{
-				try
-				{
-					int iWidth = Convert.ToInt16(nodeSkinWidth.Value);
-					int iHeight = Convert.ToInt16(nodeSkinHeight.Value);
-					Log.Write("  original skin size:{0}x{1}", iWidth, iHeight);
-					GUIGraphicsContext.SkinSize = new System.Drawing.Size(iWidth, iHeight);
-				}
-				catch (FormatException) // Size values were invalid.
-				{
-				}
-			}
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="guiControlType">The type of control you wish to update.</param>
-		/// <returns>A hashtable which contains the MemberInfo objects for every
-		/// updatable field, indexed by their corresponding Xml Element name. </returns>
-		static Hashtable GetMembersToUpdate(Type guiControlType)
-		{
-					// Lazy Initializiation...
-			if (m_reflectionCacheByControlType.ContainsKey(guiControlType)) 
-				return (Hashtable)m_reflectionCacheByControlType[guiControlType]; 
-
-			Hashtable membersTable = new Hashtable();
-
-			MemberInfo[] allMembers = guiControlType.GetMembers(
-				BindingFlags.Instance 
-				|BindingFlags.NonPublic
-				|BindingFlags.FlattenHierarchy
-				|BindingFlags.Public);
-
-			foreach(MemberInfo member in allMembers)
-			{
-				if(member.IsDefined(typeof(XMLSkinElementAttribute), false))
-				{
-					XMLSkinElementAttribute atrb = (XMLSkinElementAttribute)
-						member.GetCustomAttributes(typeof(XMLSkinElementAttribute), false)[0];
-
-					membersTable[atrb.XmlElementName] = member;
-				}
-			}
-			m_reflectionCacheByControlType[guiControlType] = membersTable;
-			return membersTable;
-		}
-
-		private static object ConvertXmlStringToObject(string valueName, string valueText, Type type)
-		{
-			if (type == typeof (bool))
-			{
-				if(string.Compare(valueText, "off", true) == 0 ||
-					string.Compare(valueText, "no", true) == 0 ||
-					string.Compare(valueText, "disabled", true) == 0)
-				{
-					return false;
-				}
-
-				return true;
-			}
-
-			try
-			{
-				if(type == typeof(double))
-				{
-					double result = 0;
-
-					if(double.TryParse(valueText, NumberStyles.Number, null, out result))
-						return result;
-
-					return 1;
-				}
-
-				if(type == typeof(int) || type == typeof(long))
-				{
-					if(string.Compare(valueName, "textcolor", true) == 0 || 
-						string.Compare(valueName, "colorkey", true) == 0 || 
-						string.Compare(valueName, "colordiffuse", true) == 0)
-					{
-						if(valueText.Length > 0)
-						{
-							bool isNamedColor = false;
-
-							foreach(char ch in valueText)
-							{
-								if(ch >= '0' && ch <= '9' || ch >= 'A' && ch <= 'F' || ch >= 'a' && ch <= 'f')
-									continue;
-
-								isNamedColor = true;
-								break;
-							}
-
-							if(isNamedColor)
-							{
-								int index = valueText.IndexOf(':');
-
-								if(index != -1)
-								{
-									Color color = ColorTranslator.FromHtml(valueText.Substring(0, index));
-									int alpha = 255;
-
-									if(index < valueText.Length)
-									{
-										if(valueText[index + 1] == '#')
-											alpha = int.Parse(valueText.Substring(index + 2), NumberStyles.HexNumber);
-										else
-											alpha = int.Parse(valueText.Substring(index + 1));
-									}
-
-									return Color.FromArgb(alpha, color).ToArgb();
-								}
-
-								return Color.FromName(valueText).ToArgb();
-							}
-
-                            try
-                            {
-                                Color color = ColorTranslator.FromHtml('#' + valueText);
-
-                                return color.ToArgb();
-                            }
-                            catch
-                            {
-                                Log.Write("GUIControlFactory.ConvertXmlStringToObject: Invalid color format '#{0}' reverting to White", valueText);
-
-                                return Color.White.ToArgb();
-                            }
-						}
-					}
-				}
-
-				if (type == typeof (int))
-				{
-					if (valueText.CompareTo("-")==0) return 0;
+        if (type == typeof(int))
+        {
+          if (valueText.CompareTo("-") == 0) return 0;
           int res;
-					if (int.TryParse(valueText, out res))
+          if (int.TryParse(valueText, out res))
             return res;
-          if (int.TryParse(valueText, NumberStyles.HexNumber,null,out res))
+          if (int.TryParse(valueText, NumberStyles.HexNumber, null, out res))
             return res;
-   			}
-				if (type == typeof (long))
-				{
-					if (valueText.CompareTo("-")==0) return 0;
-					return System.Int64.Parse(valueText, NumberStyles.HexNumber);
-				}
-			}
-			catch(Exception)
-			{
-				return 0;
-			}
-
-			if(type == typeof(ILayout))
-				return ParseLayout(valueText);
-
-			// much of the above could be changed to use the following, needs time for thorough testing though
-			TypeConverter converter = TypeDescriptor.GetConverter(type);
-
-			if(converter.CanConvertFrom(typeof(string)))
-				return converter.ConvertFromString(valueText);
-		
-			return null;
-		}
-
-		public static GUIControl Create(int dwParentId, XmlNode pControlNode, IDictionary defines)
-		{
-			Type typeOfControlToCreate = GetControlType(pControlNode);
-			if (typeOfControlToCreate == null)
-				return null;
-
-			object[] ctorParams = { dwParentId };			
-			GUIControl control = (GUIControl)
-				Activator.CreateInstance(typeOfControlToCreate,ctorParams);
-
-			try
-			{
-//				if(control is ISupportInitialize)
-					((ISupportInitialize)control).BeginInit();
-
-				XmlNode referenceNode = 
-					(XmlNode) m_referenceNodesByControlType[typeOfControlToCreate];
-
-                if (referenceNode != null)
-					UpdateControlWithXmlData(control,typeOfControlToCreate, referenceNode, defines);
-
-                XmlAttribute styleAttribute = pControlNode.Attributes["Style"];
-
-                if (styleAttribute != null)
-                {
-                    XmlNode styleNode = _cachedStyleNodes[styleAttribute.Value];
-
-                    if (styleNode != null)
-                    {
-                        Log.Write("Styling");
-                        UpdateControlWithXmlData(control, typeOfControlToCreate, styleNode, defines);
-                    }
-                }
-
-				UpdateControlWithXmlData(control,typeOfControlToCreate, pControlNode, defines);
-				
-				control.ScaleToScreenResolution();
-				AddSubitemsToControl(pControlNode,control);
-				control.FinalizeConstruction();
-				
-				if(control is IAddChild)
-				{
-					foreach(XmlNode subControlNode in pControlNode.SelectNodes("control"))
-						((IAddChild)control).AddChild(Create(dwParentId, subControlNode, defines));
-				}
-
-				if (typeOfControlToCreate == typeof (GUIFacadeControl))
-				{
-					GUIFacadeControl facade = (GUIFacadeControl) control;
-					XmlNodeList nodeList = pControlNode.SelectNodes("control");
-					foreach (XmlNode subControlNode in nodeList)
-					{
-						GUIControl subControl = Create(dwParentId, subControlNode, defines);
-
-                        if (subControl is GUIPlayListItemListControl)
-                        {
-                            GUIPlayListItemListControl list = subControl as GUIPlayListItemListControl;
-                            facade.PlayListView = list;
-                        }
-
-                        else if (subControl is GUIListControl)
-						{
-							GUIListControl list = subControl as GUIListControl;
-							if ( list.SubType=="album")
-								facade.AlbumListView = list;
-							else
-								facade.ListView = list;
-						}
-						if (subControl is GUIThumbnailPanel)
-							facade.ThumbnailView = subControl as GUIThumbnailPanel;
-						if (subControl is GUIFilmstripControl)
-							facade.FilmstripView = subControl as GUIFilmstripControl;
-					}
-				}
-
-//				if(control is ISupportInitialize)
-					((ISupportInitialize)control).EndInit();
-			}
-			catch(Exception e)
-			{
-				Log.Write("GUIControlFactory.Create: {0}\r\n\r\n{1}\r\n\r\n", e.Message, e.StackTrace);
-				Log.Write("Parent: {0} Id: {1}", dwParentId, control.GetID);
-			}
-
-			return control;
-		}
-
-		private static void UpdateControlWithXmlData(GUIControl control, 
-			Type controlType,
-			XmlNode pControlNode, IDictionary defines)
-		{
-			Hashtable membersThatCanBeUpdated = GetMembersToUpdate(controlType);
-
-			XmlNodeList childNodes = pControlNode.ChildNodes;
-			foreach (XmlNode element in childNodes)
-			{
-				MemberInfo correspondingMember =
-					membersThatCanBeUpdated[element.Name] as MemberInfo;
-
-				if (correspondingMember != null)
-				{
-					string text = element.InnerText;
-
-					if(text.Length > 0 && text[0] == '#' && defines.Contains(text))
-						text = (string)defines[text];
-
-					object newValue = null;
-					
-					if(correspondingMember.MemberType == MemberTypes.Field)
-						newValue = ConvertXmlStringToObject(element.Name, text, ((FieldInfo)correspondingMember).FieldType);
-					else if(correspondingMember.MemberType == MemberTypes.Property)
-						newValue = ConvertXmlStringToObject(element.Name, text, ((PropertyInfo)correspondingMember).PropertyType);
-			
-					try
-					{
-						if(correspondingMember.MemberType == MemberTypes.Field)
-							((FieldInfo)correspondingMember).SetValue(control, newValue);
-						else if(correspondingMember.MemberType == MemberTypes.Property)
-							((PropertyInfo)correspondingMember).SetValue(control, newValue, null);
-					}
-					catch (Exception e)
-					{
-						Log.Write("Couldn't place {0}, which is {1} in {2}. Exception:{3}",  
-							newValue, newValue.GetType(), correspondingMember,e) ;
-					}
-				}
-				else
-				{
-					if(char.IsUpper(element.Name[0]))
-					{
-						PropertyInfo propertyInfo;
-
-						if(element.Name.IndexOf('.') != -1)
-						{
-							propertyInfo = controlType.GetProperty(element.Name.Split('.')[1]);
-						}
-						else
-						{
-							propertyInfo = controlType.GetProperty(element.Name);
-						}
-
-						if(propertyInfo == null)
-						{
-							Log.Write("GUIControlFactory.UpdateControlWithXmlData: '{0}' does not contain a definition for '{1}'", controlType, element.Name);
-							return;
-						}
-
-						string xml = element.OuterXml;
-
-						if(xml.IndexOf("Button.") != -1)
-							xml = xml.Replace("Button.", "GUIControl.");
-						else if(xml.IndexOf("Window.") != -1)
-							xml = xml.Replace("Window.", "GUIWindow.");
-						
-						XamlParser.LoadXml(xml, XmlNodeType.Element, control);
-					}
-				}
-			}
-		}
-
-		private static void AddSubitemsToControl(XmlNode subItemsNode, GUIControl control)
-		{
-			XmlNodeList subNodes=subItemsNode.SelectNodes("subitems/subitem/text()");
-			foreach (XmlNode subNode in subNodes)
-			{
-				string strSubItem = subNode.Value;
-				if (Char.IsDigit(strSubItem[0]))
-				{
-					GUILocalizeStrings.LocalizeLabel(ref strSubItem);
-				}
-				control.AddSubItem(strSubItem);
-			}
-		}
-
-		private static Type GetControlType(XmlNode controlNode)
-		{
-			XmlNode typeText = controlNode.SelectSingleNode("type/text()");
-			if (typeText == null || typeText.Value == "")
-				return null;
-			string xmlTypeName = typeText.Value;
-			switch (xmlTypeName)
-			{
-				case ("image"):
-					return typeof (GUIImage);
-				case ("imagelist"):
-					return typeof (GUIImageList);
-				case ("slider"):
-					return typeof (GUISliderControl);
-				case ("fadelabel"):
-					return typeof (GUIFadeLabel);
-				case ("label"):
-					return typeof (GUILabelControl);
-				case ("button"):
-					return typeof (GUIButtonControl);
-				case ("updownbutton"):
-					return typeof (GUIUpDownButton);
-				case ("button3part"):
-					return typeof (GUIButton3PartControl);
-				case ("statusbar"):
-					return typeof (GUIStatusbarControl);
-				case ("progress"):
-					return typeof (GUIProgressControl);
-				case ("tvprogress"):
-					return typeof (GUITVProgressControl);
-				case ("hscrollbar"):
-					return typeof (GUIHorizontalScrollbar);
-				case ("vscrollbar"):
-					return typeof (GUIverticalScrollbar);
-				case ("textbox"):
-					return typeof (GUITextControl);
-				case ("textboxscrollup"):
-					return typeof (GUITextScrollUpControl);
-				case ("thumbnailpanel"):
-					return typeof (GUIThumbnailPanel);
-				case ("spincontrol"):
-					return typeof (GUISpinControl);
-				case ("checkmark"):
-					return typeof (GUICheckMarkControl);
-				case ("selectbutton"):
-					return typeof (GUISelectButtonControl);
-				case ("listcontrol"):
-					return typeof (GUIListControl);
-				case ("updownlistcontrol"):
-					return typeof (GUIUpDownListControl);
-				case ("checklistcontrol"):
-					return typeof (GUICheckListControl);
-				case ("togglebutton"):
-					return typeof (GUIToggleButtonControl);
-				case ("group"):
-					return typeof (GUIGroup);
-				case ("videowindow"):
-					return typeof (GUIVideoControl);
-				case ("facadeview"):
-					return typeof (GUIFacadeControl);
-				case ("filmstrip"):
-					return typeof (GUIFilmstripControl);
-				case ("smsinput"):
-					return typeof (GUISMSInputControl);
-				case ("sortbutton"):
-					return typeof (GUISortButtonControl);
-				case ("volumebar"):
-					return typeof (GUIVolumeBar);
-				case ("animation"):
-					return typeof (GUIAnimation);
-                case("playlistbutton"):
-                    return typeof(GUIPlayListButtonControl);
-                case("playlistcontrol"):
-                    return typeof(GUIPlayListItemListControl);
-				default:
-					Type t = (Type)m_hashCustomControls[xmlTypeName];
-
-					if(t == null)
-					{
-						Log.Write("ERROR: unknown control:<{0}>",xmlTypeName);
-						return null;
-					}
-
-					return t;
-			}
-		}
-
-		public static void RegisterControl(string strName, Type t)
-		{
-			m_hashCustomControls[strName] = t;
-		}
-
-		static object ParseLayout(string valueText)
-		{
-			int openingBracket = valueText.IndexOf('(');
-			int[] valueParameters = null;
-			string layoutClass = null;
-
-			if(openingBracket != -1)
-			{
-				layoutClass = valueText.Substring(0, openingBracket);
-				valueParameters = ParseParameters(valueText.Substring(openingBracket).Trim());
-			}
-			else
-			{
-				layoutClass = valueText;
-				valueParameters = new int[0];
-			}
-
-			if(string.Compare(layoutClass, "GridLayout", true) == 0)
-			{
-				if(valueParameters.Length >= 5)
-					return new GridLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3], (Orientation)valueParameters[4]);
-
-				if(valueParameters.Length >= 4)
-					return new GridLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3]);
-
-				if(valueParameters.Length >= 2)
-					return new GridLayout(valueParameters[0], valueParameters[1]);
-
-				if(valueParameters.Length >= 1)
-					return new GridLayout(valueParameters[0]);
-
-				if(valueParameters.Length == 0)
-					return new GridLayout();
-
-				return null;
-			}
-
-			if(string.Compare(layoutClass, "StackLayout", true) == 0)
-			{
-				if(valueParameters.Length >= 2)
-					return new StackLayout(valueParameters[0], (Orientation)valueParameters[1]);
-
-				if(valueParameters.Length >= 1)
-					return new StackLayout(valueParameters[0]);
-
-				if(valueParameters.Length == 0)
-					return new StackLayout();
-
-				return null;
-			}
-
-			if(string.Compare(layoutClass, "RingLayout", true) == 0)
-			{
-				if(valueParameters.Length >= 2)
-					return new RingLayout(valueParameters[0], valueParameters[1]);
-
-				if(valueParameters.Length >= 1)
-					return new RingLayout(valueParameters[0]);
-
-				if(valueParameters.Length == 0)
-					return new RingLayout();
-
-				return null;
-			}
-
-			return null;
-		}
-
-		static int[] ParseParameters(string valueText)
-		{
-			if(!(valueText.StartsWith("(") && valueText.EndsWith(")")))
-				return new int[0];
-
-			valueText = valueText.Substring(1, valueText.Length - 2);
-
-			try
-			{
-				ArrayList valuesTemp = new ArrayList();
-
-				foreach(string token in valueText.Split(new char[] { ',', ' ' }))
-				{
-					if(token == string.Empty)
-						continue;
-
-					if(string.Compare(token, "Horizontal") == 0)
-					{
-						valuesTemp.Add((int)Orientation.Horizontal);
-					}
-					else if(string.Compare(token, "Vertical") == 0)
-					{
-						valuesTemp.Add((int)Orientation.Vertical);
-					}
-					else
-					{
-						valuesTemp.Add(int.Parse(token));	
-					}
-				}
-
-				int[] values = new int[valuesTemp.Count];
-
-				Array.Copy(valuesTemp.ToArray(), values, values.Length);
-
-				return values;
-			}
-			catch { }
-
-			return new int[0];
-		}
-
-		#endregion Methods
-
-		#region Fields
-
-		/// <summary>
-		/// Contains all of the reference nodes, indexed by control Type.
-		/// </summary>
-		static Hashtable			m_referenceNodesByControlType = null;
-
-		static Hashtable			m_hashCustomControls = new Hashtable();
-
-		/// <summary>
-		/// A hashtable which contains the reflection results for every control.
-		/// </summary>
-		static Hashtable m_reflectionCacheByControlType = new Hashtable(20);
-
-        // same as above but for caching style nodes
-        static Dictionary<string, XmlNode> _cachedStyleNodes;
-
-		#endregion Fields
-	}
+        }
+        if (type == typeof(long))
+        {
+          if (valueText.CompareTo("-") == 0) return 0;
+          return System.Int64.Parse(valueText, NumberStyles.HexNumber);
+        }
+      }
+      catch (Exception)
+      {
+        return 0;
+      }
+
+      if (type == typeof(ILayout))
+        return ParseLayout(valueText);
+
+      // much of the above could be changed to use the following, needs time for thorough testing though
+      TypeConverter converter = TypeDescriptor.GetConverter(type);
+
+      if (converter.CanConvertFrom(typeof(string)))
+        return converter.ConvertFromString(valueText);
+
+      return null;
+    }
+
+    public static GUIControl Create(int dwParentId, XmlNode pControlNode, IDictionary defines)
+    {
+      Type typeOfControlToCreate = GetControlType(pControlNode);
+      if (typeOfControlToCreate == null)
+        return null;
+
+      object[] ctorParams = { dwParentId };
+      GUIControl control = (GUIControl)
+        Activator.CreateInstance(typeOfControlToCreate, ctorParams);
+
+      try
+      {
+        //				if(control is ISupportInitialize)
+        ((ISupportInitialize)control).BeginInit();
+
+        XmlNode referenceNode =
+          (XmlNode)m_referenceNodesByControlType[typeOfControlToCreate];
+
+        if (referenceNode != null)
+          UpdateControlWithXmlData(control, typeOfControlToCreate, referenceNode, defines);
+
+        XmlAttribute styleAttribute = pControlNode.Attributes["Style"];
+
+        if (styleAttribute != null)
+        {
+          XmlNode styleNode = _cachedStyleNodes[styleAttribute.Value];
+
+          if (styleNode != null)
+          {
+            Log.Write("Styling");
+            UpdateControlWithXmlData(control, typeOfControlToCreate, styleNode, defines);
+          }
+        }
+
+        UpdateControlWithXmlData(control, typeOfControlToCreate, pControlNode, defines);
+
+        control.ScaleToScreenResolution();
+        AddSubitemsToControl(pControlNode, control);
+        control.FinalizeConstruction();
+
+        if (control is IAddChild)
+        {
+          foreach (XmlNode subControlNode in pControlNode.SelectNodes("control"))
+            ((IAddChild)control).AddChild(Create(dwParentId, subControlNode, defines));
+        }
+
+        if (typeOfControlToCreate == typeof(GUIFacadeControl))
+        {
+          GUIFacadeControl facade = (GUIFacadeControl)control;
+          XmlNodeList nodeList = pControlNode.SelectNodes("control");
+          foreach (XmlNode subControlNode in nodeList)
+          {
+            GUIControl subControl = Create(dwParentId, subControlNode, defines);
+
+            if (subControl is GUIPlayListItemListControl)
+            {
+              GUIPlayListItemListControl list = subControl as GUIPlayListItemListControl;
+              facade.PlayListView = list;
+            }
+
+            else if (subControl is GUIListControl)
+            {
+              GUIListControl list = subControl as GUIListControl;
+              if (list.SubType == "album")
+                facade.AlbumListView = list;
+              else
+                facade.ListView = list;
+            }
+            if (subControl is GUIThumbnailPanel)
+              facade.ThumbnailView = subControl as GUIThumbnailPanel;
+            if (subControl is GUIFilmstripControl)
+              facade.FilmstripView = subControl as GUIFilmstripControl;
+          }
+        }
+
+        //				if(control is ISupportInitialize)
+        ((ISupportInitialize)control).EndInit();
+      }
+      catch (Exception e)
+      {
+        Log.Write("GUIControlFactory.Create: {0}\r\n\r\n{1}\r\n\r\n", e.Message, e.StackTrace);
+        Log.Write("Parent: {0} Id: {1}", dwParentId, control.GetID);
+      }
+
+      return control;
+    }
+
+    private static void UpdateControlWithXmlData(GUIControl control,
+      Type controlType,
+      XmlNode pControlNode, IDictionary defines)
+    {
+      Hashtable membersThatCanBeUpdated = GetMembersToUpdate(controlType);
+
+      XmlNodeList childNodes = pControlNode.ChildNodes;
+      foreach (XmlNode element in childNodes)
+      {
+        MemberInfo correspondingMember =
+          membersThatCanBeUpdated[element.Name] as MemberInfo;
+
+        if (correspondingMember != null)
+        {
+          string text = element.InnerText;
+
+          if (text.Length > 0 && text[0] == '#' && defines.Contains(text))
+            text = (string)defines[text];
+
+          object newValue = null;
+
+          if (correspondingMember.MemberType == MemberTypes.Field)
+            newValue = ConvertXmlStringToObject(element.Name, text, ((FieldInfo)correspondingMember).FieldType);
+          else if (correspondingMember.MemberType == MemberTypes.Property)
+            newValue = ConvertXmlStringToObject(element.Name, text, ((PropertyInfo)correspondingMember).PropertyType);
+
+          try
+          {
+            if (correspondingMember.MemberType == MemberTypes.Field)
+              ((FieldInfo)correspondingMember).SetValue(control, newValue);
+            else if (correspondingMember.MemberType == MemberTypes.Property)
+              ((PropertyInfo)correspondingMember).SetValue(control, newValue, null);
+          }
+          catch (Exception e)
+          {
+            Log.Write("Couldn't place {0}, which is {1} in {2}. Exception:{3}",
+              newValue, newValue.GetType(), correspondingMember, e);
+          }
+        }
+        else
+        {
+          if (char.IsUpper(element.Name[0]))
+          {
+            PropertyInfo propertyInfo;
+
+            if (element.Name.IndexOf('.') != -1)
+            {
+              propertyInfo = controlType.GetProperty(element.Name.Split('.')[1]);
+            }
+            else
+            {
+              propertyInfo = controlType.GetProperty(element.Name);
+            }
+
+            if (propertyInfo == null)
+            {
+              Log.Write("GUIControlFactory.UpdateControlWithXmlData: '{0}' does not contain a definition for '{1}'", controlType, element.Name);
+              return;
+            }
+
+            string xml = element.OuterXml;
+
+            if (xml.IndexOf("Button.") != -1)
+              xml = xml.Replace("Button.", "GUIControl.");
+            else if (xml.IndexOf("Window.") != -1)
+              xml = xml.Replace("Window.", "GUIWindow.");
+
+            XamlParser.LoadXml(xml, XmlNodeType.Element, control);
+          }
+        }
+      }
+    }
+
+    private static void AddSubitemsToControl(XmlNode subItemsNode, GUIControl control)
+    {
+      XmlNodeList subNodes = subItemsNode.SelectNodes("subitems/subitem/text()");
+      foreach (XmlNode subNode in subNodes)
+      {
+        string strSubItem = subNode.Value;
+        if (Char.IsDigit(strSubItem[0]))
+        {
+          GUILocalizeStrings.LocalizeLabel(ref strSubItem);
+        }
+        control.AddSubItem(strSubItem);
+      }
+    }
+
+    private static Type GetControlType(XmlNode controlNode)
+    {
+      XmlNode typeText = controlNode.SelectSingleNode("type/text()");
+      if (typeText == null || typeText.Value == "")
+        return null;
+      string xmlTypeName = typeText.Value;
+      switch (xmlTypeName)
+      {
+        case ("image"):
+          return typeof(GUIImage);
+        case ("imagelist"):
+          return typeof(GUIImageList);
+        case ("slider"):
+          return typeof(GUISliderControl);
+        case ("fadelabel"):
+          return typeof(GUIFadeLabel);
+        case ("label"):
+          return typeof(GUILabelControl);
+        case ("button"):
+          return typeof(GUIButtonControl);
+        case ("updownbutton"):
+          return typeof(GUIUpDownButton);
+        case ("button3part"):
+          return typeof(GUIButton3PartControl);
+        case ("statusbar"):
+          return typeof(GUIStatusbarControl);
+        case ("progress"):
+          return typeof(GUIProgressControl);
+        case ("tvprogress"):
+          return typeof(GUITVProgressControl);
+        case ("hscrollbar"):
+          return typeof(GUIHorizontalScrollbar);
+        case ("vscrollbar"):
+          return typeof(GUIverticalScrollbar);
+        case ("textbox"):
+          return typeof(GUITextControl);
+        case ("textboxscrollup"):
+          return typeof(GUITextScrollUpControl);
+        case ("thumbnailpanel"):
+          return typeof(GUIThumbnailPanel);
+        case ("spincontrol"):
+          return typeof(GUISpinControl);
+        case ("checkmark"):
+          return typeof(GUICheckMarkControl);
+        case ("selectbutton"):
+          return typeof(GUISelectButtonControl);
+        case ("listcontrol"):
+          return typeof(GUIListControl);
+        case ("updownlistcontrol"):
+          return typeof(GUIUpDownListControl);
+        case ("checklistcontrol"):
+          return typeof(GUICheckListControl);
+        case ("togglebutton"):
+          return typeof(GUIToggleButtonControl);
+        case ("group"):
+          return typeof(GUIGroup);
+        case ("videowindow"):
+          return typeof(GUIVideoControl);
+        case ("facadeview"):
+          return typeof(GUIFacadeControl);
+        case ("filmstrip"):
+          return typeof(GUIFilmstripControl);
+        case ("smsinput"):
+          return typeof(GUISMSInputControl);
+        case ("sortbutton"):
+          return typeof(GUISortButtonControl);
+        case ("volumebar"):
+          return typeof(GUIVolumeBar);
+        case ("animation"):
+          return typeof(GUIAnimation);
+        case ("playlistbutton"):
+          return typeof(GUIPlayListButtonControl);
+        case ("playlistcontrol"):
+          return typeof(GUIPlayListItemListControl);
+        default:
+          Type t = (Type)m_hashCustomControls[xmlTypeName];
+
+          if (t == null)
+          {
+            Log.Write("ERROR: unknown control:<{0}>", xmlTypeName);
+            return null;
+          }
+
+          return t;
+      }
+    }
+
+    public static void RegisterControl(string strName, Type t)
+    {
+      m_hashCustomControls[strName] = t;
+    }
+
+    static object ParseLayout(string valueText)
+    {
+      int openingBracket = valueText.IndexOf('(');
+      int[] valueParameters = null;
+      string layoutClass = null;
+
+      if (openingBracket != -1)
+      {
+        layoutClass = valueText.Substring(0, openingBracket);
+        valueParameters = ParseParameters(valueText.Substring(openingBracket).Trim());
+      }
+      else
+      {
+        layoutClass = valueText;
+        valueParameters = new int[0];
+      }
+
+      if (string.Compare(layoutClass, "GridLayout", true) == 0)
+      {
+        if (valueParameters.Length >= 5)
+          return new GridLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3], (Orientation)valueParameters[4]);
+
+        if (valueParameters.Length >= 4)
+          return new GridLayout(valueParameters[0], valueParameters[1], valueParameters[2], valueParameters[3]);
+
+        if (valueParameters.Length >= 2)
+          return new GridLayout(valueParameters[0], valueParameters[1]);
+
+        if (valueParameters.Length >= 1)
+          return new GridLayout(valueParameters[0]);
+
+        if (valueParameters.Length == 0)
+          return new GridLayout();
+
+        return null;
+      }
+
+      if (string.Compare(layoutClass, "StackLayout", true) == 0)
+      {
+        if (valueParameters.Length >= 2)
+          return new StackLayout(valueParameters[0], (Orientation)valueParameters[1]);
+
+        if (valueParameters.Length >= 1)
+          return new StackLayout(valueParameters[0]);
+
+        if (valueParameters.Length == 0)
+          return new StackLayout();
+
+        return null;
+      }
+
+      if (string.Compare(layoutClass, "RingLayout", true) == 0)
+      {
+        if (valueParameters.Length >= 2)
+          return new RingLayout(valueParameters[0], valueParameters[1]);
+
+        if (valueParameters.Length >= 1)
+          return new RingLayout(valueParameters[0]);
+
+        if (valueParameters.Length == 0)
+          return new RingLayout();
+
+        return null;
+      }
+
+      return null;
+    }
+
+    static int[] ParseParameters(string valueText)
+    {
+      if (!(valueText.StartsWith("(") && valueText.EndsWith(")")))
+        return new int[0];
+
+      valueText = valueText.Substring(1, valueText.Length - 2);
+
+      try
+      {
+        ArrayList valuesTemp = new ArrayList();
+
+        foreach (string token in valueText.Split(new char[] { ',', ' ' }))
+        {
+          if (token == string.Empty)
+            continue;
+
+          if (string.Compare(token, "Horizontal") == 0)
+          {
+            valuesTemp.Add((int)Orientation.Horizontal);
+          }
+          else if (string.Compare(token, "Vertical") == 0)
+          {
+            valuesTemp.Add((int)Orientation.Vertical);
+          }
+          else
+          {
+            valuesTemp.Add(int.Parse(token));
+          }
+        }
+
+        int[] values = new int[valuesTemp.Count];
+
+        Array.Copy(valuesTemp.ToArray(), values, values.Length);
+
+        return values;
+      }
+      catch { }
+
+      return new int[0];
+    }
+
+    #endregion Methods
+
+    #region Fields
+
+    /// <summary>
+    /// Contains all of the reference nodes, indexed by control Type.
+    /// </summary>
+    static Hashtable m_referenceNodesByControlType = null;
+
+    static Hashtable m_hashCustomControls = new Hashtable();
+
+    /// <summary>
+    /// A hashtable which contains the reflection results for every control.
+    /// </summary>
+    static Hashtable m_reflectionCacheByControlType = new Hashtable(20);
+
+    // same as above but for caching style nodes
+    static Dictionary<string, XmlNode> _cachedStyleNodes;
+
+    #endregion Fields
+  }
 }
