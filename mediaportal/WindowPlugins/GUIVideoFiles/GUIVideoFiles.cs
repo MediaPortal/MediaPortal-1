@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
@@ -509,7 +510,7 @@ namespace MediaPortal.GUI.Video
       if (item == null) return;
       bool isFolderAMovie = false;
 
-      if (item.IsFolder)
+      if (item.IsFolder && !item.IsRemote)
       {
         // Check if folder is actually a DVD. If so don't browse this folder, but play the DVD!
         if ((System.IO.File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO")) && (item.Label != ".."))
@@ -520,29 +521,6 @@ namespace MediaPortal.GUI.Video
         else
         {
           isFolderAMovie = false;
-
-          /* Mars Warrior @ 11-sep-2004 -- REMOVED
-          // Check if folder is a folder containig a single movie file. If so, (again), don't
-          // browse the folder, but play the movie!
-          ArrayList items = this.m_directory.GetDirectory(item.Path);
-          int iVideoFilesCount = 0;
-          string strVideoFile = String.Empty;
-          for (int i = 0; i < items.Count; ++i)
-          {
-            GUIListItem temporaryListItem = (GUIListItem)items[i];
-            if (Utils.IsVideo(temporaryListItem.Path) && !PlayListFactory.IsPlayList(temporaryListItem.Path))
-            {
-              iVideoFilesCount++;
-              if (iVideoFilesCount == 1) strVideoFile = temporaryListItem.Path;
-            }
-          }
-          if (iVideoFilesCount == 1)
-          {
-            isFolderAMovie = true;
-            item.Path      = strVideoFile;
-          }
-          else isFolderAMovie = false;
-          -- REMOVED */
         }
       }
 
@@ -576,16 +554,35 @@ namespace MediaPortal.GUI.Video
             {
 
               //download subtitle files
+              bool isDVD=(item.Path.ToUpper().IndexOf("VIDEO_TS") >=0);
+              List<GUIListItem> listFiles = m_directory.GetDirectoryUnProtectedExt(currentFolder, false);
               string[] sub_exts = { ".utf", ".utf8", ".utf-8", ".sub", ".srt", ".smi", ".rt", ".txt", ".ssa", ".aqt", ".jss", ".ass", ".idx", ".ifo" };
-              // check if movie has subtitles
-              for (int i = 0; i < sub_exts.Length; i++)
+              if (!isDVD)
               {
-                string subTitleFileName = item.Path;
-                subTitleFileName = System.IO.Path.ChangeExtension(subTitleFileName, sub_exts[i]);
-
-                string localSubtitleFileName = m_directory.GetLocalFilename(subTitleFileName);
-                Utils.FileDelete(localSubtitleFileName);
-                m_directory.DownloadRemoteFile(subTitleFileName, 0);
+                // check if movie has subtitles
+                for (int i = 0; i < sub_exts.Length; i++)
+                {
+                  for (int x = 0; x < listFiles.Count; ++x)
+                  {
+                    if (listFiles[x].IsFolder) continue;
+                    string subTitleFileName = listFiles[x].Path;
+                    subTitleFileName = System.IO.Path.ChangeExtension(subTitleFileName, sub_exts[i]);
+                    if (String.Compare(listFiles[x].Path, subTitleFileName, true) == 0)
+                    {
+                      string localSubtitleFileName = m_directory.GetLocalFilename(subTitleFileName);
+                      Utils.FileDelete(localSubtitleFileName);
+                      m_directory.DownloadRemoteFile(subTitleFileName, 0);
+                    }
+                  }
+                }
+              }
+              else //download entire DVD
+              {
+                for (int i = 0; i < listFiles.Count; ++i)
+                {
+                  if (listFiles[i].IsFolder) continue;
+                  m_directory.DownloadRemoteFile(listFiles[i].Path, 0);
+                }
               }
             }
           }

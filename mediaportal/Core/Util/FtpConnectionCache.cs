@@ -69,6 +69,12 @@ namespace Core.Util
           System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Lowest;
           BytesTransferred = 0;
           BytesOffset = 0;
+
+          Connection.TransferNotifyInterval = 65535;//send notify after receiving 64KB
+
+          Connection.CommandSent += new FTPMessageHandler(Connection_CommandSent);
+          Connection.ReplyReceived += new FTPMessageHandler(Connection_ReplyReceived);
+          Connection.TransferStartedEx += new TransferHandler(Connection_TransferStartedEx);
           Connection.TransferCompleteEx += new TransferHandler(Connection_TransferCompleteEx);
           Connection.BytesTransferred += new BytesTransferredHandler(OnBytesTransferred);
           Connection.TransferType = FTPTransferType.BINARY;
@@ -90,9 +96,6 @@ namespace Core.Util
 
           Connection.Get(LocalFileName, RemoteFileName);
           Connection.BytesTransferred -= new BytesTransferredHandler(OnBytesTransferred);
-          BytesTransferred = 0;
-          BytesOffset = 0;
-          Busy = false;
           Log.Write("ftp:download finished {0}->{1}", RemoteFileName, LocalFileName);
         }
         catch (Exception ex)
@@ -100,7 +103,36 @@ namespace Core.Util
           Log.Write("ftp:download of {0} stopped", LocalFileName);
           Log.Write(ex);
         }
+        finally
+        {
 
+          Connection.TransferStartedEx -= new TransferHandler(Connection_TransferStartedEx);
+          Connection.CommandSent -= new FTPMessageHandler(Connection_CommandSent);
+          Connection.ReplyReceived -= new FTPMessageHandler(Connection_ReplyReceived);
+          Connection.BytesTransferred -= new BytesTransferredHandler(OnBytesTransferred);
+          if (Connection.Connected)
+          {
+            Connection.QuitImmediately();
+          }
+          BytesTransferred = 0;
+          BytesOffset = 0;
+          Busy = false;
+        }
+      }
+
+      void Connection_TransferStartedEx(object sender, TransferEventArgs e)
+      {
+        Log.Write("ftp: Transfer started {0}->{1}",e.RemoteFilename, e.LocalFilePath);
+      }
+
+      void Connection_ReplyReceived(object sender, FTPMessageEventArgs e)
+      {
+        Log.Write("ftp:Cmd  :{0}", e.Message);
+      }
+
+      void Connection_CommandSent(object sender, FTPMessageEventArgs e)
+      {
+        Log.Write("ftp:reply:{0}", e.Message);
       }
 
 
@@ -135,6 +167,10 @@ namespace Core.Util
           }
           if (!fileExists)
           {
+            if (Connection.Connected)
+            {
+              Connection.QuitImmediately();
+            }
             Busy = false;
             return;
           }
@@ -163,16 +199,13 @@ namespace Core.Util
       {
         try
         {
-          if (Math.Abs(bytesTransferred.ByteCount - BytesTransferred) > 16384)
-          {
-            BytesTransferred = bytesTransferred.ByteCount;
+          BytesTransferred = bytesTransferred.ByteCount;
 
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING, 0, 0, 0, 0, 0, null);
-            msg.Label = OriginalRemoteFileName;
-            msg.Label2 = LocalFileName;
-            msg.Param1 = (int)(BytesTransferred + BytesOffset);
-            GUIGraphicsContext.SendMessage(msg);
-          }
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING, 0, 0, 0, 0, 0, null);
+          msg.Label = OriginalRemoteFileName;
+          msg.Label2 = LocalFileName;
+          msg.Param1 = (int)(BytesTransferred + BytesOffset);
+          GUIGraphicsContext.SendMessage(msg);
         }
         catch (Exception ex)
         {
@@ -335,6 +368,7 @@ namespace Core.Util
     /// <param name="e"></param>
     static void Connection_TransferCompleteEx(object sender, TransferEventArgs e)
     {
+      Log.Write("ftp: Transfer completed:{0}->{1}",e.RemoteFilename, e.LocalFilePath);
       try
       {
         FTPClient ftpclient = sender as FTPClient;
@@ -342,8 +376,6 @@ namespace Core.Util
         {
           if (client.Connection == ftpclient)
           {
-            client.Connection.TransferCompleteEx -= new TransferHandler(Connection_TransferCompleteEx);
-
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED, 0, 0, 0, 0, 0, null);
             msg.Label = client.OriginalRemoteFileName;
             msg.Label2 = client.LocalFileName;

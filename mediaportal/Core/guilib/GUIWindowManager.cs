@@ -174,7 +174,7 @@ namespace MediaPortal.GUI.Library
 		{
 			if (_listThreadMessages.Count>0)
 			{
-				System.Diagnostics.Debug.WriteLine("process messages");
+//				System.Diagnostics.Debug.WriteLine("process messages");
         List<GUIMessage> list = _listThreadMessages;
 				_listThreadMessages=new List<GUIMessage>();
 				for (int i=0; i < list.Count;++i)
@@ -185,7 +185,7 @@ namespace MediaPortal.GUI.Library
 			}
 			if (_listThreadActions.Count>0)
 			{
-				System.Diagnostics.Debug.WriteLine("process actions");
+//				System.Diagnostics.Debug.WriteLine("process actions");
         List<Action> list = _listThreadActions;
         _listThreadActions = new List<Action>();
 				for (int i=0; i < list.Count;++i)

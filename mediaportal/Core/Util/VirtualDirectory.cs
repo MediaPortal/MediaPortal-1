@@ -1526,6 +1526,98 @@ namespace MediaPortal.Util
         strParent = strDir.Substring(0, ipos);
       }
 
+      GUIListItem item = null;
+      if (IsRemote(strDir))
+      {
+        FTPClient ftp = GetFtpClient(strDir);
+        if (ftp == null) return items;
+
+        string folder = strDir.Substring("remote:".Length);
+        string[] subitems = folder.Split(new char[] { '?' });
+        if (subitems[4] == String.Empty) subitems[4] = "/";
+
+        FTPFile[] files;
+        try
+        {
+          ftp.ChDir(subitems[4]);
+          files = ftp.DirDetails(subitems[4]);
+        }
+        catch (Exception)
+        {
+          //maybe this socket has timed out, remove it and get a new one
+          FtpConnectionCache.Remove(ftp);
+          ftp = GetFtpClient(strDir);
+          if (ftp == null) return items;
+          try
+          {
+            ftp.ChDir(subitems[4]);
+          }
+          catch (Exception ex)
+          {
+            Log.Write("VirtualDirectory:unable to chdir to remote folder:{0} reason:{1} {2}", subitems[4], ex.Message, ex.StackTrace);
+            return items;
+          }
+          try
+          {
+            files = ftp.DirDetails(subitems[4]);
+          }
+          catch (Exception ex)
+          {
+            Log.Write("VirtualDirectory:unable to get remote folder:{0} reason:{1}  {2}", subitems[4], ex.Message, ex.StackTrace);
+            return items;
+          }
+        }
+        for (int i = 0; i < files.Length; ++i)
+        {
+          FTPFile file = files[i];
+          //Log.Write("VirtualDirectory: {0} {1}",file.Name,file.Dir);
+          if (file.Dir)
+          {
+            if (file.Name != "." && file.Name != "..")
+            {
+              item = new GUIListItem();
+              item.IsFolder = true;
+              item.Label = file.Name;
+              item.Label2 = "";
+              item.Path = String.Format("{0}/{1}", strDir, file.Name);
+              item.IsRemote = true;
+              item.FileInfo = null;
+              Utils.SetDefaultIcons(item);
+              Utils.SetThumbnails(ref item);
+              items.Add(item);
+            }
+          }
+          else
+          {
+            if (IsValidExtension(file.Name) || (useExtensions==false))
+            {
+              item = new GUIListItem();
+              item.IsFolder = false;
+              item.Label = file.Name;
+              item.Label2 = "";
+              item.Path = String.Format("{0}/{1}", strDir, file.Name);
+              item.IsRemote = true;
+              if (IsRemoteFileDownloaded(item.Path, file.Size))
+              {
+                item.Path = GetLocalFilename(item.Path);
+                item.IsRemote = false;
+              }
+              else if (FtpConnectionCache.IsDownloading(item.Path))
+              {
+                item.IsDownloading = true;
+              }
+              item.FileInfo = new FileInformation();
+              DateTime modified = file.LastModified;
+              item.FileInfo.CreationTime = modified;
+              item.FileInfo.Length = file.Size;
+              Utils.SetDefaultIcons(item);
+              Utils.SetThumbnails(ref item);
+              items.Add(item);
+            }
+          }
+        }
+      }
+
 
       bool VirtualShare = false;
       if (DaemonTools.IsEnabled)
@@ -1562,7 +1654,6 @@ namespace MediaPortal.Util
       }
 
 
-      GUIListItem item = null;
       if (!IsRootShare(strDir) || VirtualShare)
       {
         item = new GUIListItem();
