@@ -104,7 +104,7 @@ namespace Core.Util
         msg.Param1=(int)(BytesTransferred+BytesOffset);
         GUIGraphicsContext.SendMessage(msg);
 
-        ftp.Connection.Get(ftp.LocalFileName,ftp.RemoteFileName);
+        ftp.Connection.Get(tempFileName, ftp.RemoteFileName);
       }
 
 
