@@ -581,6 +581,7 @@ namespace MediaPortal.GUI.Video
                 for (int i = 0; i < listFiles.Count; ++i)
                 {
                   if (listFiles[i].IsFolder) continue;
+                  if (String.Compare(listFiles[i].Path, item.Path, true) == 0) continue;
                   m_directory.DownloadRemoteFile(listFiles[i].Path, 0);
                 }
               }
