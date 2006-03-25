@@ -96,6 +96,75 @@
 	<entry name="channel31-per@channel31.com.au">31-Per</entry>		<!-- Channel 31 Melbourne -->
 
 
+<!-- Foxtel Channels -->
+	<entry name="showtime@foxtel.com.au">SHOW</entry>			<!-- Foxtel Showtime -->	
+	<entry name="showtime2@foxtel.com.au">SHW2</entry>			<!-- Foxtel Showtime 2  -->	
+	<entry name="showtimegreats@foxtel.com.au">SHWGRTS</entry>		<!-- Foxtel Showtime Greats  -->	
+	<entry name="movieone@foxtel.com.au">MOV1</entry>				<!-- Foxtel Movie One  -->	
+	<entry name="movieonetake2@foxtel.com.au">MOV%2B2</entry>			<!-- Foxtel Movie One Take 2  -->	
+	<entry name="movieextra@foxtel.com.au">MOVX</entry>			<!-- Foxtel Movie Extra  -->	
+	<entry name="moviegreats@foxtel.com.au">MOVG</entry>			<!-- Foxtel Movie Greats  -->	
+	<entry name="tcm@foxtel.com.au">TCM</entry>				<!-- Foxtel TCM  -->	
+	<entry name="discoverychannel@foxtel.com.au">DISC</entry>			<!-- Foxtel Discovery Channel  -->	
+	<entry name="nationalgeo@foxtel.com.au">NGEO</entry>			<!-- Foxtel National Geographic  -->	
+	<entry name="channelv@foxtel.com.au">V</entry>				<!-- Foxtel Channel [V] -->	
+	<entry name="arenatv@foxtel.com.au">ARNA</entry>				<!-- Foxtel Arena TV -->	
+	<entry name="arenatv+2@foxtel.com.au">ARNA%2B2</entry>			<!-- Foxtel Arena TV + 2  -->	
+	<entry name="skynews@foxtel.com.au">SKYN</entry>				<!-- Foxtel Sky News Channel -->	
+	<entry name="bbcworld@foxtel.com.au">BBC</entry>				<!-- Foxtel BBC World -->	
+	<entry name="cnbc@foxtel.com.au">CNBC</entry>				<!-- Foxtel CNBC -->	
+	<entry name="cnni@foxtel.com.au">CNNI</entry>				<!-- Foxtel CNN -->	
+	<entry name="foxnews@foxtel.com.au">FOXN</entry>				<!-- Foxtel Fox News  -->	
+	<entry name="foxsports1@foxtel.com.au">FS1</entry>				<!-- Foxtel Fox Sports 1 -->	
+	<entry name="foxsports2@foxtel.com.au">FS2</entry>				<!-- Foxtel Fox Sports 2 -->	
+	<entry name="fox8@foxtel.com.au">FOX8</entry>				<!-- Foxtel Fox 8 -->	
+	<entry name="fox8+2@foxtel.com.au">FOX8%2B2</entry>			<!-- Foxtel Fox 8 + 2 -->	
+	<entry name="tv1@foxtel.com.au">TV1</entry>				<!-- Foxtel TV1 -->	
+	<entry name="tv1+2@foxtel.com.au">TV1%2B2</entry>				<!-- Foxtel TV1 + 2 -->	
+	<entry name="uktv@foxtel.com.au">UKTV</entry>				<!-- Foxtel UKTV -->	
+	<entry name="uktv+2@foxtel.com.au">UKTV%2B2</entry>			<!-- Foxtel UKTV + 2 -->	
+	<entry name="lifestylechannel@foxtel.com.au">LIFE</entry>			<!-- Foxtel The Lifestyle Channel -->	
+	<entry name="lifestylechannel+2@foxtel.com.au">LIFE%2B2</entry>		<!-- Foxtel The Lifestyle Channel + 2 -->		
+<!-- Untested Foxtel Channels -->
+	<entry name="w@foxtel.com.au">W</entry>					<!-- Foxtel Unknown -->	
+	<entry name="nick@foxtel.com.au">NICK</entry>				<!-- Foxtel Nickelodian -->	
+	<entry name="nickjr@foxtel.com.au">NICKJR</entry>				<!-- Foxtel Nickelodian Junior -->	
+	<entry name="playhousedisney@foxtel.com.au">PHDISN</entry>			<!-- Foxtel Playhouse Disney -->	
+	<entry name="cartoonnetwork@foxtel.com.au">CART</entry>			<!-- Foxtel Cartoon Network -->	
+	<entry name="boomerang@foxtel.com.au">BOOM</entry>			<!-- Foxtel Boomerang -->	
+	<entry name="clubv@foxtel.com.au">CLUBV</entry>				<!-- Foxtel Club [V] -->	
+	<entry name="mtv@foxtel.com.au">MTV</entry>				<!-- Foxtel Music Television -->	
+	<entry name="vh1@foxtel.com.au">VH1</entry>				<!-- Foxtel VH1 -->	
+	<entry name="cmc@foxtel.com.au">CMC</entry>				<!-- Foxtel Country Music Channel -->	
+	<entry name="food@foxtel.com.au">FOOD</entry>				<!-- Foxtel Food Channel -->	
+	<entry name="howto@foxtel.com.au">HOWTO</entry>				<!-- Foxtel How To Channel -->	
+	<entry name="comedychannel@foxtel.com.au">CMDY</entry>			<!-- Foxtel The Comedy Channel -->	
+	<entry name="comedychannel+2@foxtel.com.au">CMDY%2B2</entry>		<!-- Foxtel The Comedy Channel + 2 -->	
+	<entry name="entertainmentchannel@foxtel.com.au">E!</entry>			<!-- Foxtel The Entertainment Channel -->	
+	<entry name="hallmark@foxtel.com.au">HALL</entry>				<!-- Foxtel Hallmark -->	
+	<entry name="ovation@foxtel.com.au">OVAT</entry>				<!-- Foxtel Ovation -->	
+	<entry name="fueltv@foxtel.com.au">FUEL</entry>				<!-- Foxtel Fuel TV -->	
+	<entry name="televisionshoppingnetwork@foxtel.com.au">TVSN</entry>		<!-- Foxtel Television Shopping Network -->	
+	<entry name="aurora@foxtel.com.au">AUR</entry>				<!-- Foxtel Aurora -->	
+	<entry name="worldmovies@foxtel.com.au">WMOV</entry>			<!-- Foxtel World Movies -->	
+	<entry name="eurosportnews@foxtel.com.au">	EUROSPORT</entry>		<!-- Foxtel Euro Sport News -->	
+	<entry name="espn@foxtel.com.au">ESPN</entry>				<!-- Foxtel ESPN -->	
+	<entry name="skyracing@foxtel.com.au">SKYR</entry>				<!-- Foxtel Sky Racing Channel -->	
+	<entry name="bloomberg@foxtel.com.au">BOOM </entry>			<!-- Foxtel Bloomberg Channel -->	
+	<entry name="animalplanet@foxtel.com.au">ANIMAL</entry>			<!-- Foxtel Animal Planet -->	
+	<entry name="adventure1@foxtel.com.au">ADV1</entry>			<!-- Foxtel Adventure 1 -->	
+	<entry name="discoverytravel@foxtel.com.au">TRAVEL</entry>			<!-- Foxtel Discovery Travel Channel -->	
+	<entry name="discoveryhealth@foxtel.com.au">HEALTH</entry>			<!-- Foxtel Discovery Health Channel-->	
+	<entry name="biography@foxtel.com.au">BIOG</entry>				<!-- Foxtel Biography Channel -->	
+	<entry name="historychannel@foxtel.com.au">HIST</entry>			<!-- Foxtel History Channel -->	
+	<entry name="historychannel+2@foxtel.com.au">HIST%2B2</entry>		<!-- Foxtel History Channel + 2 -->	
+	<entry name="discoveryscience@foxtel.com.au">SCIENCE</entry>			<!-- Foxtel Discovery Science Channel -->	
+<!-- End Of Foxtel Channels -->
+
+
+
+
+
 
   </section>
 <!-- Formating of Listing -->
@@ -113,6 +182,8 @@
   <section name="Info">
     <entry name="GuideDays">7</entry>
     <entry name="Lang">en</entry>
-    <entry name="Login">yes</entry>   
+    <entry name="Login">yes</entry>
+    <entry name="TimeZone">Greenwich Standard Time</entry>
+    <entry name="TimeAdjustOnly">yes</entry>
   </section>
 </profile>
