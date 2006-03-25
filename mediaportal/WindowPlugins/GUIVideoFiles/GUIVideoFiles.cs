@@ -585,7 +585,7 @@ namespace MediaPortal.GUI.Video
 
                 string localSubtitleFileName = m_directory.GetLocalFilename(subTitleFileName);
                 Utils.FileDelete(localSubtitleFileName);
-                m_directory.DownloadRemoteFile(item.Path, 0);
+                m_directory.DownloadRemoteFile(subTitleFileName, 0);
               }
             }
           }
