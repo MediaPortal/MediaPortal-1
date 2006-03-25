@@ -1672,6 +1672,7 @@ public class MediaPortalApp : D3DApp, IRender
       GUIGraphicsContext.OnAction(action);
       return;
     }
+
     if (key.KeyChar == '!')
     {
       m_bShowStats = !m_bShowStats;

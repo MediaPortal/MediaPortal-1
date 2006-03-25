@@ -489,5 +489,10 @@ namespace MediaPortal.GUI.Library
     {
       Update();
     }
+    public override void Animate(float timePassed, Animator animator)
+    {
+      base.Animate(timePassed, animator);
+      _reCalculate = true;
+    }
   }
 }

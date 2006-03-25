@@ -1200,5 +1200,10 @@ namespace MediaPortal.GUI.Library
       _positionY = dwPosY;
       _reCalculate = true;
     }
+    public override void Animate(float timePassed, Animator animator)
+    {
+      base.Animate( timePassed, animator);
+      _reCalculate=true;
+    }
   }
 }
