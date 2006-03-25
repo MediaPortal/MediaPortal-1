@@ -305,7 +305,14 @@ namespace MediaPortal.GUI.Library
     protected void OnSelectionChanged()
     {
       if (!IsVisible) return;
+      
+      _scrollPosition = 0;
+      _scrollPosititionX = 0;
+      _lastItem = -1;
 
+      _scrollOffset = 0.0f;
+      _currentFrame = 0;
+      _timeElapsed = 0.0f;
       // Reset searchstring
       if (_lastSearchItem != (_cursorX + _offset))
       {
