@@ -64,34 +64,43 @@ namespace Core.Util
       /// <param name="ftp"></param>
       void StartDownLoad(object sender, DoWorkEventArgs e)
       {
-        System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Lowest;
-        BytesTransferred = 0;
-        BytesOffset = 0;
-        Connection.TransferCompleteEx += new TransferHandler(Connection_TransferCompleteEx);
-        Connection.BytesTransferred += new BytesTransferredHandler(OnBytesTransferred);
-        Connection.TransferType = FTPTransferType.BINARY;
-
-        Log.Write("ftp download{0}->{1}", RemoteFileName, LocalFileName);
-        if (System.IO.File.Exists(LocalFileName))
+        try
         {
-          FileInfo info = new FileInfo(LocalFileName);
-          BytesOffset = info.Length;
-          Connection.Resume();
+          System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Lowest;
+          BytesTransferred = 0;
+          BytesOffset = 0;
+          Connection.TransferCompleteEx += new TransferHandler(Connection_TransferCompleteEx);
+          Connection.BytesTransferred += new BytesTransferredHandler(OnBytesTransferred);
+          Connection.TransferType = FTPTransferType.BINARY;
+
+          Log.Write("ftp:Start Download:{0}->{1}", RemoteFileName, LocalFileName);
+          if (System.IO.File.Exists(LocalFileName))
+          {
+            FileInfo info = new FileInfo(LocalFileName);
+            BytesOffset = info.Length;
+            Connection.Resume();
+          }
+
+
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING, 0, 0, 0, 0, 0, null);
+          msg.Label = OriginalRemoteFileName;
+          msg.Label2 = LocalFileName;
+          msg.Param1 = (int)(BytesTransferred + BytesOffset);
+          GUIGraphicsContext.SendMessage(msg);
+
+          Connection.Get(LocalFileName, RemoteFileName);
+          Connection.BytesTransferred -= new BytesTransferredHandler(OnBytesTransferred);
+          BytesTransferred = 0;
+          BytesOffset = 0;
+          Busy = false;
+          Log.Write("ftp:download finished {0}->{1}", RemoteFileName, LocalFileName);
+        }
+        catch (Exception ex)
+        {
+          Log.Write("ftp:download of {0} stopped", LocalFileName);
+          Log.Write(ex);
         }
 
-
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING, 0, 0, 0, 0, 0, null);
-        msg.Label = OriginalRemoteFileName;
-        msg.Label2 = LocalFileName;
-        msg.Param1 = (int)(BytesTransferred + BytesOffset);
-        GUIGraphicsContext.SendMessage(msg);
-
-        Connection.Get(LocalFileName, RemoteFileName);
-        Connection.BytesTransferred -= new BytesTransferredHandler(OnBytesTransferred);
-        BytesTransferred = 0;
-        BytesOffset = 0;
-        Busy = false;
-        Log.Write("ftp download finished {0}->{1}", RemoteFileName, LocalFileName);
       }
 
 
@@ -103,7 +112,7 @@ namespace Core.Util
       /// <param name="localfile"></param>
       public void Download(string orgremoteFile, string remotefile, string localfile)
       {
-        string name=System.IO.Path.GetFileName(remotefile);
+        string name = System.IO.Path.GetFileName(remotefile);
         string folder = orgremoteFile.Substring("remote:".Length);
         folder = folder.Substring(0, folder.Length - (name.Length + 1));
         string[] subitems = folder.Split(new char[] { '?' });
@@ -135,7 +144,7 @@ namespace Core.Util
           return;
         }
 
-        Log.Write("download:{0}", remotefile);
+        Log.Write("ftp: download:{0}", remotefile);
         LocalFileName = localfile;
         RemoteFileName = remotefile;
         OriginalRemoteFileName = orgremoteFile;
@@ -152,13 +161,23 @@ namespace Core.Util
       /// <param name="bytesTransferred"></param>
       private void OnBytesTransferred(object ftpClient, BytesTransferredEventArgs bytesTransferred)
       {
-        BytesTransferred = bytesTransferred.ByteCount;
+        try
+        {
+          if (abs(bytesTransferred.ByteCount - BytesTransferred) > 16384)
+          {
+            BytesTransferred = bytesTransferred.ByteCount;
 
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING, 0, 0, 0, 0, 0, null);
-        msg.Label = OriginalRemoteFileName;
-        msg.Label2 = LocalFileName;
-        msg.Param1 = (int)(BytesTransferred + BytesOffset);
-        GUIGraphicsContext.SendMessage(msg);
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING, 0, 0, 0, 0, 0, null);
+            msg.Label = OriginalRemoteFileName;
+            msg.Label2 = LocalFileName;
+            msg.Param1 = (int)(BytesTransferred + BytesOffset);
+            GUIGraphicsContext.SendMessage(msg);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Write(ex);
+        }
       }
     }
 
@@ -214,7 +233,7 @@ namespace Core.Util
     {
       try
       {
-        Log.Write("ftp connect to ftp://{0}:{1}", hostname, port);
+        Log.Write("ftp:connect to ftp://{0}:{1}", hostname, port);
         FtpConnection newConnection = new FtpConnection();
         newConnection.HostName = hostname;
         newConnection.LoginName = login;
@@ -236,7 +255,7 @@ namespace Core.Util
       }
       catch (Exception ex)
       {
-        Log.Write("ftp unable to connect to ftp://{0}:{1} reason:{2}", hostname, port, ex.Message);
+        Log.Write("ftp:unable to connect to ftp://{0}:{1} reason:{2}", hostname, port, ex.Message);
         return null;
       }
     }
@@ -316,19 +335,26 @@ namespace Core.Util
     /// <param name="e"></param>
     static void Connection_TransferCompleteEx(object sender, TransferEventArgs e)
     {
-      FTPClient ftpclient = sender as FTPClient;
-      foreach (FtpConnection client in ftpConnections)
+      try
       {
-        if (client.Connection == ftpclient)
+        FTPClient ftpclient = sender as FTPClient;
+        foreach (FtpConnection client in ftpConnections)
         {
-          client.Connection.TransferCompleteEx -= new TransferHandler(Connection_TransferCompleteEx);
+          if (client.Connection == ftpclient)
+          {
+            client.Connection.TransferCompleteEx -= new TransferHandler(Connection_TransferCompleteEx);
 
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED, 0, 0, 0, 0, 0, null);
-          msg.Label = client.OriginalRemoteFileName;
-          msg.Label2 = client.LocalFileName;
-          GUIGraphicsContext.SendMessage(msg);
-          return;
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED, 0, 0, 0, 0, 0, null);
+            msg.Label = client.OriginalRemoteFileName;
+            msg.Label2 = client.LocalFileName;
+            GUIGraphicsContext.SendMessage(msg);
+            return;
+          }
         }
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
       }
     }
   }
