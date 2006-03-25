@@ -4,9 +4,9 @@
 
 <profile>
   <section name="ChannelList">
-    <entry name="tvone@tvnz.co.nz">TV One</entry>
-    <entry name="tv2@tvnz.co.nz">TV 2</entry>
-    <entry name="tv3.co.nz">TV 3</entry>
+    <entry name="tvone@tvnz.co.nz">One</entry>
+    <entry name="tv2@tvnz.co.nz">2</entry>
+    <entry name="tv3.co.nz">3</entry>
     <entry name="tritv.co.nz">TriTV</entry>
     <entry name="JTV@wtv.co.nz">JTV</entry>
     <entry name="KTV@wtv.co.nz">KTV</entry>
@@ -16,7 +16,7 @@
     <entry name="CTV4@wtv.co.nz">CTV 4</entry>
     <entry name="CTV5@wtv.co.nz">CTV 5</entry>
     <entry name="southlandtv.co.nz">Southland TV</entry>
-    <entry name="maoritelevision.com">Maori Television</entry>
+    <entry name="maoritelevision.com">Maori</entry>
     <entry name="primetv.co.nz">Prime</entry>
     <entry name="bbcworld.com">BBC World</entry>
     <entry name="cnni-apac@cnn.com">CNN</entry>
@@ -60,13 +60,6 @@
     <entry name="Rugby_Channel@skytv.co.nz">Rugby Channel</entry>
     <entry name="arts_channel@theartschannel.co.nz">Arts Channel</entry>
 
-<!--    Following same as under another name
-    <entry name="bbcworld.com">Maori</entry>
-    <entry name="bbcworld.com">One</entry>
-    <entry name="bbcworld.com">3</entry>
-    <entry name="bbcworld.com">2</entry>  -->
-
-
   </section>
 
 <!-- Formating of Listing -->
@@ -85,7 +78,7 @@
     <entry name="DescEntry">desc</entry>
   </section>
 
-  <section name="DateTime">
+  <section name="Info">
     <entry name="TimeZone">New Zealand Standard Time</entry>
   </section>
 </profile>
