@@ -1466,6 +1466,8 @@ public class MediaPortalApp : D3DApp, IRender
               RestartOptions option = RestartOptions.Suspend;
               if (dlg.SelectedId < 0)
               {
+                GUIOverlayWindow topBar = (GUIOverlayWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBARHOME);
+                if (topBar != null) topBar.Focused = true;
                 return;
               }
               switch (dlg.SelectedId)
@@ -1493,6 +1495,8 @@ public class MediaPortalApp : D3DApp, IRender
 
                 if (msg.Param1 != 1)
                 {
+                  GUIOverlayWindow topBar = (GUIOverlayWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBARHOME);
+                  if (topBar != null) topBar.Focused = true;
                   return;
                 }
               }
