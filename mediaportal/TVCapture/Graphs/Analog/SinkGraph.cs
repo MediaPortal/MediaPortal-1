@@ -1289,26 +1289,32 @@ namespace MediaPortal.TV.Recording
       string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
       {
-        string frameRate = xmlreader.GetValueAsString("analog", "framerate", "25");
-        string frameSize = xmlreader.GetValueAsString("analog", "framesize", "720x576");
-        if (frameRate == "29.76")
-          _videoCaptureHelper.SetFrameRate(29.76);
-        else if (frameRate == "25")
+        string frameRate = xmlreader.GetValueAsString("analog", "framerate", "25 fps (PAL/SECAM)");
+        string frameSize = xmlreader.GetValueAsString("analog", "framesize", "720x576 PAL/SECAM ITU-601 D1 (recommended)");
+        if (frameRate == "29.97 fps (NTSC)")
+          _videoCaptureHelper.SetFrameRate(29.97);
+        else if (frameRate == "25 fps (PAL/SECAM)")
           _videoCaptureHelper.SetFrameRate(25);
-        else if (frameRate == "15")
+        else if (frameRate == "15 fps")
           _videoCaptureHelper.SetFrameRate(15);
 
-        if (frameSize == "768x576")
+        if (frameSize == "768x576 PAL square pixels")
           _videoCaptureHelper.SetFrameSize(new Size(768, 576));
-        else if (frameSize == "720x576")
+        else if (frameSize == "720x576 PAL/SECAM ITU-601 D1 (recommended)")
           _videoCaptureHelper.SetFrameSize(new Size(720, 576));
-        else if (frameSize == "720x480")
+        else if (frameSize == "720x480 NTSC ITU-601 D1 (recommended)")
           _videoCaptureHelper.SetFrameSize(new Size(720, 480));
-        else if (frameSize == "640x480")
+        else if (frameSize == "704x576 PAL/SECAM TV broadcast")
+          _videoCaptureHelper.SetFrameSize(new Size(704, 576));
+        else if (frameSize == "704x480 NTSC TV broadcast")
+          _videoCaptureHelper.SetFrameSize(new Size(704, 480));
+        else if (frameSize == "640x480 NTSC square pixels")
           _videoCaptureHelper.SetFrameSize(new Size(640, 480));
-        else if (frameSize == "352x288")
+        else if (frameSize == "352x288 PAL CIF")
           _videoCaptureHelper.SetFrameSize(new Size(352, 288));
-        else if (frameSize == "352x240")
+        else if (frameSize == "352x240 NTSC CIF")
+          _videoCaptureHelper.SetFrameSize(new Size(352, 240));
+        else if (frameSize == "320x240 NTSC CIF square pixels")
           _videoCaptureHelper.SetFrameSize(new Size(352, 240));
       }
     }

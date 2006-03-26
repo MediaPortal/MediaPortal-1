@@ -449,750 +449,753 @@ namespace MediaPortal.Configuration
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditCaptureCardForm));
-      this.checkBoxHiQuality = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.useRecordingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.useWatchingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cardComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.textBoxName = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label12 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
-      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.lblFrameRate = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.comboBoxFrameRate = new System.Windows.Forms.ComboBox();
-      this.lblFrameSize = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.comboBoxFrameSize = new System.Windows.Forms.ComboBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.comboBoxCAM = new System.Windows.Forms.ComboBox();
-      this.checkBoxHWPidFiltering = new System.Windows.Forms.CheckBox();
-      this.label24 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.updownPrio = new System.Windows.Forms.NumericUpDown();
-      this.groupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.buttonBrowse = new MediaPortal.UserInterface.Controls.MPButton();
-      this.tbRecordingFolder = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label26 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.cbRgbAudio = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.cbRgbVideo = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label35 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label14 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.comboBox3Audio = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.comboBox3Video = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.comboBox2Audio = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.comboBox2Video = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.comboBox1Audio = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.comboBox1Video = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label16 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label17 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage5 = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.groupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.cbHighVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tbHighMax = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbHighMin = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label37 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbMedVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tbMedMax = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbMedMin = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label36 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbLowVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tbLowMax = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbLowMin = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label34 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label29 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label28 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label27 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbPortVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tbPortMax = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbPortMin = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label19 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label18 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label25 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.comboBoxQuality = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.tabPageAutotune = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.tabPageAutotuneRadio = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.tabControl1.SuspendLayout();
-      this.tabPage1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
-      this.groupBox5.SuspendLayout();
-      this.tabPage3.SuspendLayout();
-      this.tabPage5.SuspendLayout();
-      this.groupBox7.SuspendLayout();
-      this.SuspendLayout();
-      // 
-      // checkBoxHiQuality
-      // 
-      this.checkBoxHiQuality.AutoSize = true;
-      this.checkBoxHiQuality.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxHiQuality.Location = new System.Drawing.Point(24, 24);
-      this.checkBoxHiQuality.Name = "checkBoxHiQuality";
-      this.checkBoxHiQuality.Size = new System.Drawing.Size(113, 17);
-      this.checkBoxHiQuality.TabIndex = 7;
-      this.checkBoxHiQuality.Text = "Use Quality control";
-      this.checkBoxHiQuality.UseVisualStyleBackColor = true;
-      // 
-      // useRecordingCheckBox
-      // 
-      this.useRecordingCheckBox.AutoSize = true;
-      this.useRecordingCheckBox.Checked = true;
-      this.useRecordingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.useRecordingCheckBox.Enabled = false;
-      this.useRecordingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useRecordingCheckBox.Location = new System.Drawing.Point(11, 183);
-      this.useRecordingCheckBox.Name = "useRecordingCheckBox";
-      this.useRecordingCheckBox.Size = new System.Drawing.Size(165, 17);
-      this.useRecordingCheckBox.TabIndex = 9;
-      this.useRecordingCheckBox.Text = "Use this card for recording TV";
-      this.useRecordingCheckBox.UseVisualStyleBackColor = true;
-      this.useRecordingCheckBox.CheckedChanged += new System.EventHandler(this.useRecording_Check_Changed);
-      // 
-      // useWatchingCheckBox
-      // 
-      this.useWatchingCheckBox.AutoSize = true;
-      this.useWatchingCheckBox.Checked = true;
-      this.useWatchingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.useWatchingCheckBox.Enabled = false;
-      this.useWatchingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useWatchingCheckBox.Location = new System.Drawing.Point(11, 160);
-      this.useWatchingCheckBox.Name = "useWatchingCheckBox";
-      this.useWatchingCheckBox.Size = new System.Drawing.Size(157, 17);
-      this.useWatchingCheckBox.TabIndex = 8;
-      this.useWatchingCheckBox.Text = "Use this card for viewing TV";
-      this.useWatchingCheckBox.UseVisualStyleBackColor = true;
-      // 
-      // cardComboBox
-      // 
-      this.cardComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.cardComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cardComboBox.Location = new System.Drawing.Point(112, 8);
-      this.cardComboBox.Name = "cardComboBox";
-      this.cardComboBox.Size = new System.Drawing.Size(414, 21);
-      this.cardComboBox.TabIndex = 0;
-      this.cardComboBox.SelectedIndexChanged += new System.EventHandler(this.cardComboBox_SelectedIndexChanged);
-      // 
-      // label1
-      // 
-      this.label1.Location = new System.Drawing.Point(8, 16);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(100, 23);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "TV Capture card";
-      // 
-      // textBoxName
-      // 
-      this.textBoxName.Location = new System.Drawing.Point(0, 0);
-      this.textBoxName.Name = "textBoxName";
-      this.textBoxName.Size = new System.Drawing.Size(100, 20);
-      this.textBoxName.TabIndex = 0;
-      // 
-      // label12
-      // 
-      this.label12.Location = new System.Drawing.Point(0, 0);
-      this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(100, 23);
-      this.label12.TabIndex = 0;
-      // 
-      // cancelButton
-      // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.cancelButton.Location = new System.Drawing.Point(471, 464);
-      this.cancelButton.Name = "cancelButton";
-      this.cancelButton.Size = new System.Drawing.Size(75, 23);
-      this.cancelButton.TabIndex = 4;
-      this.cancelButton.Text = "Cancel";
-      this.cancelButton.UseVisualStyleBackColor = true;
-      this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
-      // 
-      // okButton
-      // 
-      this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.Location = new System.Drawing.Point(391, 464);
-      this.okButton.Name = "okButton";
-      this.okButton.Size = new System.Drawing.Size(75, 23);
-      this.okButton.TabIndex = 3;
-      this.okButton.Text = "OK";
-      this.okButton.UseVisualStyleBackColor = true;
-      this.okButton.Click += new System.EventHandler(this.okButton_Click);
-      // 
-      // tabControl1
-      // 
-      this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Controls.Add(this.tabPage3);
-      this.tabControl1.Controls.Add(this.tabPage5);
-      this.tabControl1.Location = new System.Drawing.Point(8, 8);
-      this.tabControl1.Name = "tabControl1";
-      this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(550, 450);
-      this.tabControl1.TabIndex = 5;
-      // 
-      // tabPage1
-      // 
-      this.tabPage1.Controls.Add(this.lblFrameRate);
-      this.tabPage1.Controls.Add(this.comboBoxFrameRate);
-      this.tabPage1.Controls.Add(this.lblFrameSize);
-      this.tabPage1.Controls.Add(this.comboBoxFrameSize);
-      this.tabPage1.Controls.Add(this.mpLabel1);
-      this.tabPage1.Controls.Add(this.comboBoxCAM);
-      this.tabPage1.Controls.Add(this.checkBoxHWPidFiltering);
-      this.tabPage1.Controls.Add(this.label24);
-      this.tabPage1.Controls.Add(this.updownPrio);
-      this.tabPage1.Controls.Add(this.cardComboBox);
-      this.tabPage1.Controls.Add(this.label1);
-      this.tabPage1.Controls.Add(this.useRecordingCheckBox);
-      this.tabPage1.Controls.Add(this.useWatchingCheckBox);
-      this.tabPage1.Controls.Add(this.groupBox5);
-      this.tabPage1.Location = new System.Drawing.Point(4, 22);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Size = new System.Drawing.Size(542, 424);
-      this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Capture card";
-      this.tabPage1.UseVisualStyleBackColor = true;
-      // 
-      // lblFrameRate
-      // 
-      this.lblFrameRate.Location = new System.Drawing.Point(213, 125);
-      this.lblFrameRate.Name = "lblFrameRate";
-      this.lblFrameRate.Size = new System.Drawing.Size(79, 16);
-      this.lblFrameRate.TabIndex = 65;
-      this.lblFrameRate.Text = "Frame Rate:";
-      // 
-      // comboBoxFrameRate
-      // 
-      this.comboBoxFrameRate.FormattingEnabled = true;
-      this.comboBoxFrameRate.Items.AddRange(new object[] {
-            "29.976 fps",
-            "25 fps",
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditCaptureCardForm));
+        this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
+        this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
+        this.comboBoxFrameRate = new System.Windows.Forms.ComboBox();
+        this.lblFrameRate = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.lblFrameSize = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.comboBoxFrameSize = new System.Windows.Forms.ComboBox();
+        this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.comboBoxCAM = new System.Windows.Forms.ComboBox();
+        this.checkBoxHWPidFiltering = new System.Windows.Forms.CheckBox();
+        this.label24 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.updownPrio = new System.Windows.Forms.NumericUpDown();
+        this.cardComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.useRecordingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+        this.useWatchingCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+        this.groupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+        this.buttonBrowse = new MediaPortal.UserInterface.Controls.MPButton();
+        this.tbRecordingFolder = new MediaPortal.UserInterface.Controls.MPTextBox();
+        this.label26 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
+        this.cbRgbAudio = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.cbRgbVideo = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.label35 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.label14 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.comboBox3Audio = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.comboBox3Video = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.comboBox2Audio = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.comboBox2Video = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.comboBox1Audio = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.comboBox1Video = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.label16 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.label17 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.tabPage5 = new MediaPortal.UserInterface.Controls.MPTabPage();
+        this.groupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+        this.cbHighVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
+        this.tbHighMax = new MediaPortal.UserInterface.Controls.MPTextBox();
+        this.tbHighMin = new MediaPortal.UserInterface.Controls.MPTextBox();
+        this.label37 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.cbMedVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
+        this.tbMedMax = new MediaPortal.UserInterface.Controls.MPTextBox();
+        this.tbMedMin = new MediaPortal.UserInterface.Controls.MPTextBox();
+        this.label36 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.cbLowVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
+        this.tbLowMax = new MediaPortal.UserInterface.Controls.MPTextBox();
+        this.tbLowMin = new MediaPortal.UserInterface.Controls.MPTextBox();
+        this.label34 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.label29 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.label28 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.label27 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.cbPortVBR = new MediaPortal.UserInterface.Controls.MPCheckBox();
+        this.tbPortMax = new MediaPortal.UserInterface.Controls.MPTextBox();
+        this.tbPortMin = new MediaPortal.UserInterface.Controls.MPTextBox();
+        this.label19 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.label18 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.label25 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.comboBoxQuality = new MediaPortal.UserInterface.Controls.MPComboBox();
+        this.checkBoxHiQuality = new MediaPortal.UserInterface.Controls.MPCheckBox();
+        this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
+        this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
+        this.textBoxName = new MediaPortal.UserInterface.Controls.MPTextBox();
+        this.label12 = new MediaPortal.UserInterface.Controls.MPLabel();
+        this.tabPageAutotune = new MediaPortal.UserInterface.Controls.MPTabPage();
+        this.tabPageAutotuneRadio = new MediaPortal.UserInterface.Controls.MPTabPage();
+        this.tabControl1.SuspendLayout();
+        this.tabPage1.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)(this.updownPrio)).BeginInit();
+        this.groupBox5.SuspendLayout();
+        this.tabPage3.SuspendLayout();
+        this.tabPage5.SuspendLayout();
+        this.groupBox7.SuspendLayout();
+        this.SuspendLayout();
+        // 
+        // tabControl1
+        // 
+        this.tabControl1.Controls.Add(this.tabPage1);
+        this.tabControl1.Controls.Add(this.tabPage3);
+        this.tabControl1.Controls.Add(this.tabPage5);
+        this.tabControl1.Location = new System.Drawing.Point(8, 8);
+        this.tabControl1.Name = "tabControl1";
+        this.tabControl1.SelectedIndex = 0;
+        this.tabControl1.Size = new System.Drawing.Size(550, 450);
+        this.tabControl1.TabIndex = 5;
+        // 
+        // tabPage1
+        // 
+        this.tabPage1.Controls.Add(this.comboBoxFrameRate);
+        this.tabPage1.Controls.Add(this.lblFrameRate);
+        this.tabPage1.Controls.Add(this.lblFrameSize);
+        this.tabPage1.Controls.Add(this.comboBoxFrameSize);
+        this.tabPage1.Controls.Add(this.mpLabel1);
+        this.tabPage1.Controls.Add(this.comboBoxCAM);
+        this.tabPage1.Controls.Add(this.checkBoxHWPidFiltering);
+        this.tabPage1.Controls.Add(this.label24);
+        this.tabPage1.Controls.Add(this.updownPrio);
+        this.tabPage1.Controls.Add(this.cardComboBox);
+        this.tabPage1.Controls.Add(this.label1);
+        this.tabPage1.Controls.Add(this.useRecordingCheckBox);
+        this.tabPage1.Controls.Add(this.useWatchingCheckBox);
+        this.tabPage1.Controls.Add(this.groupBox5);
+        this.tabPage1.Location = new System.Drawing.Point(4, 22);
+        this.tabPage1.Name = "tabPage1";
+        this.tabPage1.Size = new System.Drawing.Size(542, 424);
+        this.tabPage1.TabIndex = 0;
+        this.tabPage1.Text = "Capture card";
+        this.tabPage1.UseVisualStyleBackColor = true;
+        // 
+        // comboBoxFrameRate
+        // 
+        this.comboBoxFrameRate.FormattingEnabled = true;
+        this.comboBoxFrameRate.Items.AddRange(new object[] {
+            "29.97 fps (NTSC)",
+            "25 fps (PAL/SECAM)",
             "15 fps"});
-      this.comboBoxFrameRate.Location = new System.Drawing.Point(291, 122);
-      this.comboBoxFrameRate.Name = "comboBoxFrameRate";
-      this.comboBoxFrameRate.Size = new System.Drawing.Size(90, 21);
-      this.comboBoxFrameRate.TabIndex = 64;
-      // 
-      // lblFrameSize
-      // 
-      this.lblFrameSize.Location = new System.Drawing.Point(9, 125);
-      this.lblFrameSize.Name = "lblFrameSize";
-      this.lblFrameSize.Size = new System.Drawing.Size(60, 16);
-      this.lblFrameSize.TabIndex = 63;
-      this.lblFrameSize.Text = "Frame size:";
-      // 
-      // comboBoxFrameSize
-      // 
-      this.comboBoxFrameSize.FormattingEnabled = true;
-      this.comboBoxFrameSize.Items.AddRange(new object[] {
-            "768x576",
-            "720x576",
-            "720x480",
-            "640x480",
-            "352x288",
-            "352x240"});
-      this.comboBoxFrameSize.Location = new System.Drawing.Point(74, 125);
-      this.comboBoxFrameSize.Name = "comboBoxFrameSize";
-      this.comboBoxFrameSize.Size = new System.Drawing.Size(121, 21);
-      this.comboBoxFrameSize.TabIndex = 62;
-      // 
-      // mpLabel1
-      // 
-      this.mpLabel1.Location = new System.Drawing.Point(9, 100);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(60, 16);
-      this.mpLabel1.TabIndex = 55;
-      this.mpLabel1.Text = "CAM type:";
-      // 
-      // comboBoxCAM
-      // 
-      this.comboBoxCAM.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxCAM.FormattingEnabled = true;
-      this.comboBoxCAM.Items.AddRange(new object[] {
+        this.comboBoxFrameRate.Location = new System.Drawing.Point(375, 125);
+        this.comboBoxFrameRate.Name = "comboBoxFrameRate";
+        this.comboBoxFrameRate.Size = new System.Drawing.Size(151, 21);
+        this.comboBoxFrameRate.TabIndex = 64;
+        // 
+        // lblFrameRate
+        // 
+        this.lblFrameRate.Location = new System.Drawing.Point(356, 106);
+        this.lblFrameRate.Name = "lblFrameRate";
+        this.lblFrameRate.Size = new System.Drawing.Size(79, 16);
+        this.lblFrameRate.TabIndex = 65;
+        this.lblFrameRate.Text = "Frame Rate:";
+        // 
+        // lblFrameSize
+        // 
+        this.lblFrameSize.Location = new System.Drawing.Point(9, 108);
+        this.lblFrameSize.Name = "lblFrameSize";
+        this.lblFrameSize.Size = new System.Drawing.Size(73, 16);
+        this.lblFrameSize.TabIndex = 63;
+        this.lblFrameSize.Text = "Frame size:";
+        // 
+        // comboBoxFrameSize
+        // 
+        this.comboBoxFrameSize.FormattingEnabled = true;
+        this.comboBoxFrameSize.Items.AddRange(new object[] {
+            "768x576 PAL square pixels",
+            "720x576 PAL/SECAM ITU-601 D1 (recommended)",
+            "720x480 NTSC ITU-601 D1 (recommended)",
+            "704x576 PAL/SECAM TV broadcast",
+            "704x480 NTSC TV broadcast",
+            "640x480 NTSC square pixels",
+            "352x288 PAL CIF",
+            "352x240 NTSC CIF",
+            "320x240 NTSC CIF square pixels"});
+        this.comboBoxFrameSize.Location = new System.Drawing.Point(35, 125);
+        this.comboBoxFrameSize.Name = "comboBoxFrameSize";
+        this.comboBoxFrameSize.Size = new System.Drawing.Size(299, 21);
+        this.comboBoxFrameSize.TabIndex = 62;
+        // 
+        // mpLabel1
+        // 
+        this.mpLabel1.Location = new System.Drawing.Point(356, 46);
+        this.mpLabel1.Name = "mpLabel1";
+        this.mpLabel1.Size = new System.Drawing.Size(110, 16);
+        this.mpLabel1.TabIndex = 55;
+        this.mpLabel1.Text = "Twinhan CAM type:";
+        // 
+        // comboBoxCAM
+        // 
+        this.comboBoxCAM.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+        this.comboBoxCAM.FormattingEnabled = true;
+        this.comboBoxCAM.Items.AddRange(new object[] {
             "Default",
             "Viaccess",
             "Aston",
             "Conax",
             "Cryptoworks"});
-      this.comboBoxCAM.Location = new System.Drawing.Point(75, 97);
-      this.comboBoxCAM.Name = "comboBoxCAM";
-      this.comboBoxCAM.Size = new System.Drawing.Size(121, 21);
-      this.comboBoxCAM.TabIndex = 54;
-      // 
-      // checkBoxHWPidFiltering
-      // 
-      this.checkBoxHWPidFiltering.AutoSize = true;
-      this.checkBoxHWPidFiltering.Location = new System.Drawing.Point(11, 77);
-      this.checkBoxHWPidFiltering.Name = "checkBoxHWPidFiltering";
-      this.checkBoxHWPidFiltering.Size = new System.Drawing.Size(323, 17);
-      this.checkBoxHWPidFiltering.TabIndex = 53;
-      this.checkBoxHWPidFiltering.Text = "Enable Hardware Pid filtering (needed for high-bitrate channels)";
-      this.checkBoxHWPidFiltering.UseVisualStyleBackColor = true;
-      // 
-      // label24
-      // 
-      this.label24.Location = new System.Drawing.Point(9, 46);
-      this.label24.Name = "label24";
-      this.label24.Size = new System.Drawing.Size(136, 16);
-      this.label24.TabIndex = 52;
-      this.label24.Text = "Priority (1=low,10=high)";
-      // 
-      // updownPrio
-      // 
-      this.updownPrio.Location = new System.Drawing.Point(152, 42);
-      this.updownPrio.Maximum = new decimal(new int[] {
+        this.comboBoxCAM.Location = new System.Drawing.Point(405, 65);
+        this.comboBoxCAM.Name = "comboBoxCAM";
+        this.comboBoxCAM.Size = new System.Drawing.Size(121, 21);
+        this.comboBoxCAM.TabIndex = 54;
+        // 
+        // checkBoxHWPidFiltering
+        // 
+        this.checkBoxHWPidFiltering.AutoSize = true;
+        this.checkBoxHWPidFiltering.Location = new System.Drawing.Point(11, 77);
+        this.checkBoxHWPidFiltering.Name = "checkBoxHWPidFiltering";
+        this.checkBoxHWPidFiltering.Size = new System.Drawing.Size(323, 17);
+        this.checkBoxHWPidFiltering.TabIndex = 53;
+        this.checkBoxHWPidFiltering.Text = "Enable Hardware Pid filtering (needed for high-bitrate channels)";
+        this.checkBoxHWPidFiltering.UseVisualStyleBackColor = true;
+        // 
+        // label24
+        // 
+        this.label24.Location = new System.Drawing.Point(9, 46);
+        this.label24.Name = "label24";
+        this.label24.Size = new System.Drawing.Size(136, 16);
+        this.label24.TabIndex = 52;
+        this.label24.Text = "Priority (1=low,10=high)";
+        // 
+        // updownPrio
+        // 
+        this.updownPrio.Location = new System.Drawing.Point(152, 42);
+        this.updownPrio.Maximum = new decimal(new int[] {
             10,
             0,
             0,
             0});
-      this.updownPrio.Minimum = new decimal(new int[] {
+        this.updownPrio.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-      this.updownPrio.Name = "updownPrio";
-      this.updownPrio.Size = new System.Drawing.Size(56, 20);
-      this.updownPrio.TabIndex = 51;
-      this.updownPrio.Value = new decimal(new int[] {
+        this.updownPrio.Name = "updownPrio";
+        this.updownPrio.Size = new System.Drawing.Size(56, 20);
+        this.updownPrio.TabIndex = 51;
+        this.updownPrio.Value = new decimal(new int[] {
             1,
             0,
             0,
             0});
-      // 
-      // groupBox5
-      // 
-      this.groupBox5.Controls.Add(this.buttonBrowse);
-      this.groupBox5.Controls.Add(this.tbRecordingFolder);
-      this.groupBox5.Controls.Add(this.label26);
-      this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox5.Location = new System.Drawing.Point(11, 207);
-      this.groupBox5.Name = "groupBox5";
-      this.groupBox5.Size = new System.Drawing.Size(424, 100);
-      this.groupBox5.TabIndex = 61;
-      this.groupBox5.TabStop = false;
-      this.groupBox5.Text = "Recording folder:";
-      // 
-      // buttonBrowse
-      // 
-      this.buttonBrowse.Location = new System.Drawing.Point(280, 56);
-      this.buttonBrowse.Name = "buttonBrowse";
-      this.buttonBrowse.Size = new System.Drawing.Size(56, 23);
-      this.buttonBrowse.TabIndex = 58;
-      this.buttonBrowse.Text = "Browse";
-      this.buttonBrowse.UseVisualStyleBackColor = true;
-      this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click_1);
-      // 
-      // tbRecordingFolder
-      // 
-      this.tbRecordingFolder.Location = new System.Drawing.Point(24, 56);
-      this.tbRecordingFolder.Name = "tbRecordingFolder";
-      this.tbRecordingFolder.Size = new System.Drawing.Size(248, 20);
-      this.tbRecordingFolder.TabIndex = 57;
-      // 
-      // label26
-      // 
-      this.label26.Location = new System.Drawing.Point(21, 30);
-      this.label26.Name = "label26";
-      this.label26.Size = new System.Drawing.Size(384, 23);
-      this.label26.TabIndex = 60;
-      this.label26.Text = "Specify the folder in which the recordings of this tv card should be saved:";
-      // 
-      // tabPage3
-      // 
-      this.tabPage3.Controls.Add(this.cbRgbAudio);
-      this.tabPage3.Controls.Add(this.cbRgbVideo);
-      this.tabPage3.Controls.Add(this.label35);
-      this.tabPage3.Controls.Add(this.label14);
-      this.tabPage3.Controls.Add(this.comboBox3Audio);
-      this.tabPage3.Controls.Add(this.comboBox3Video);
-      this.tabPage3.Controls.Add(this.comboBox2Audio);
-      this.tabPage3.Controls.Add(this.comboBox2Video);
-      this.tabPage3.Controls.Add(this.comboBox1Audio);
-      this.tabPage3.Controls.Add(this.comboBox1Video);
-      this.tabPage3.Controls.Add(this.label15);
-      this.tabPage3.Controls.Add(this.label16);
-      this.tabPage3.Controls.Add(this.label17);
-      this.tabPage3.Location = new System.Drawing.Point(4, 22);
-      this.tabPage3.Name = "tabPage3";
-      this.tabPage3.Size = new System.Drawing.Size(542, 424);
-      this.tabPage3.TabIndex = 2;
-      this.tabPage3.Text = "Audio mapping";
-      this.tabPage3.UseVisualStyleBackColor = true;
-      // 
-      // cbRgbAudio
-      // 
-      this.cbRgbAudio.Location = new System.Drawing.Point(72, 264);
-      this.cbRgbAudio.Name = "cbRgbAudio";
-      this.cbRgbAudio.Size = new System.Drawing.Size(121, 21);
-      this.cbRgbAudio.TabIndex = 21;
-      // 
-      // cbRgbVideo
-      // 
-      this.cbRgbVideo.Location = new System.Drawing.Point(72, 240);
-      this.cbRgbVideo.Name = "cbRgbVideo";
-      this.cbRgbVideo.Size = new System.Drawing.Size(121, 21);
-      this.cbRgbVideo.TabIndex = 20;
-      // 
-      // label35
-      // 
-      this.label35.Location = new System.Drawing.Point(16, 248);
-      this.label35.Name = "label35";
-      this.label35.Size = new System.Drawing.Size(40, 23);
-      this.label35.TabIndex = 19;
-      this.label35.Text = "RGB";
-      // 
-      // label14
-      // 
-      this.label14.Location = new System.Drawing.Point(16, 16);
-      this.label14.Name = "label14";
-      this.label14.Size = new System.Drawing.Size(328, 40);
-      this.label14.TabIndex = 18;
-      this.label14.Text = "Map the video/audio inputs of your TV card to the CVBS1, CVBS2 and SVHS channels";
-      // 
-      // comboBox3Audio
-      // 
-      this.comboBox3Audio.Location = new System.Drawing.Point(72, 208);
-      this.comboBox3Audio.Name = "comboBox3Audio";
-      this.comboBox3Audio.Size = new System.Drawing.Size(121, 21);
-      this.comboBox3Audio.TabIndex = 16;
-      // 
-      // comboBox3Video
-      // 
-      this.comboBox3Video.Location = new System.Drawing.Point(72, 184);
-      this.comboBox3Video.Name = "comboBox3Video";
-      this.comboBox3Video.Size = new System.Drawing.Size(121, 21);
-      this.comboBox3Video.TabIndex = 15;
-      // 
-      // comboBox2Audio
-      // 
-      this.comboBox2Audio.Location = new System.Drawing.Point(72, 144);
-      this.comboBox2Audio.Name = "comboBox2Audio";
-      this.comboBox2Audio.Size = new System.Drawing.Size(121, 21);
-      this.comboBox2Audio.TabIndex = 14;
-      // 
-      // comboBox2Video
-      // 
-      this.comboBox2Video.Location = new System.Drawing.Point(72, 120);
-      this.comboBox2Video.Name = "comboBox2Video";
-      this.comboBox2Video.Size = new System.Drawing.Size(121, 21);
-      this.comboBox2Video.TabIndex = 13;
-      // 
-      // comboBox1Audio
-      // 
-      this.comboBox1Audio.Location = new System.Drawing.Point(72, 88);
-      this.comboBox1Audio.Name = "comboBox1Audio";
-      this.comboBox1Audio.Size = new System.Drawing.Size(121, 21);
-      this.comboBox1Audio.TabIndex = 10;
-      // 
-      // comboBox1Video
-      // 
-      this.comboBox1Video.Location = new System.Drawing.Point(72, 64);
-      this.comboBox1Video.Name = "comboBox1Video";
-      this.comboBox1Video.Size = new System.Drawing.Size(121, 21);
-      this.comboBox1Video.TabIndex = 8;
-      // 
-      // label15
-      // 
-      this.label15.Location = new System.Drawing.Point(16, 200);
-      this.label15.Name = "label15";
-      this.label15.Size = new System.Drawing.Size(40, 23);
-      this.label15.TabIndex = 12;
-      this.label15.Text = "SVHS";
-      // 
-      // label16
-      // 
-      this.label16.Location = new System.Drawing.Point(8, 136);
-      this.label16.Name = "label16";
-      this.label16.Size = new System.Drawing.Size(48, 16);
-      this.label16.TabIndex = 11;
-      this.label16.Text = "CVBS#2";
-      // 
-      // label17
-      // 
-      this.label17.Location = new System.Drawing.Point(8, 80);
-      this.label17.Name = "label17";
-      this.label17.Size = new System.Drawing.Size(56, 16);
-      this.label17.TabIndex = 9;
-      this.label17.Text = "CVBS #1";
-      // 
-      // tabPage5
-      // 
-      this.tabPage5.Controls.Add(this.groupBox7);
-      this.tabPage5.Controls.Add(this.label18);
-      this.tabPage5.Controls.Add(this.label25);
-      this.tabPage5.Controls.Add(this.comboBoxQuality);
-      this.tabPage5.Controls.Add(this.checkBoxHiQuality);
-      this.tabPage5.Location = new System.Drawing.Point(4, 22);
-      this.tabPage5.Name = "tabPage5";
-      this.tabPage5.Size = new System.Drawing.Size(542, 424);
-      this.tabPage5.TabIndex = 4;
-      this.tabPage5.Text = "Quality";
-      this.tabPage5.UseVisualStyleBackColor = true;
-      // 
-      // groupBox7
-      // 
-      this.groupBox7.Controls.Add(this.cbHighVBR);
-      this.groupBox7.Controls.Add(this.tbHighMax);
-      this.groupBox7.Controls.Add(this.tbHighMin);
-      this.groupBox7.Controls.Add(this.label37);
-      this.groupBox7.Controls.Add(this.cbMedVBR);
-      this.groupBox7.Controls.Add(this.tbMedMax);
-      this.groupBox7.Controls.Add(this.tbMedMin);
-      this.groupBox7.Controls.Add(this.label36);
-      this.groupBox7.Controls.Add(this.cbLowVBR);
-      this.groupBox7.Controls.Add(this.tbLowMax);
-      this.groupBox7.Controls.Add(this.tbLowMin);
-      this.groupBox7.Controls.Add(this.label34);
-      this.groupBox7.Controls.Add(this.label29);
-      this.groupBox7.Controls.Add(this.label28);
-      this.groupBox7.Controls.Add(this.label27);
-      this.groupBox7.Controls.Add(this.cbPortVBR);
-      this.groupBox7.Controls.Add(this.tbPortMax);
-      this.groupBox7.Controls.Add(this.tbPortMin);
-      this.groupBox7.Controls.Add(this.label19);
-      this.groupBox7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox7.Location = new System.Drawing.Point(24, 144);
-      this.groupBox7.Name = "groupBox7";
-      this.groupBox7.Size = new System.Drawing.Size(456, 224);
-      this.groupBox7.TabIndex = 11;
-      this.groupBox7.TabStop = false;
-      this.groupBox7.Text = "Quality settings:";
-      // 
-      // cbHighVBR
-      // 
-      this.cbHighVBR.AutoSize = true;
-      this.cbHighVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbHighVBR.Location = new System.Drawing.Point(248, 152);
-      this.cbHighVBR.Name = "cbHighVBR";
-      this.cbHighVBR.Size = new System.Drawing.Size(13, 12);
-      this.cbHighVBR.TabIndex = 18;
-      this.cbHighVBR.UseVisualStyleBackColor = true;
-      // 
-      // tbHighMax
-      // 
-      this.tbHighMax.Location = new System.Drawing.Point(168, 152);
-      this.tbHighMax.Name = "tbHighMax";
-      this.tbHighMax.Size = new System.Drawing.Size(64, 20);
-      this.tbHighMax.TabIndex = 17;
-      this.tbHighMax.Text = "300";
-      // 
-      // tbHighMin
-      // 
-      this.tbHighMin.Location = new System.Drawing.Point(80, 152);
-      this.tbHighMin.Name = "tbHighMin";
-      this.tbHighMin.Size = new System.Drawing.Size(64, 20);
-      this.tbHighMin.TabIndex = 16;
-      this.tbHighMin.Text = "100";
-      // 
-      // label37
-      // 
-      this.label37.Location = new System.Drawing.Point(16, 152);
-      this.label37.Name = "label37";
-      this.label37.Size = new System.Drawing.Size(64, 16);
-      this.label37.TabIndex = 15;
-      this.label37.Text = "High:";
-      // 
-      // cbMedVBR
-      // 
-      this.cbMedVBR.AutoSize = true;
-      this.cbMedVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbMedVBR.Location = new System.Drawing.Point(248, 120);
-      this.cbMedVBR.Name = "cbMedVBR";
-      this.cbMedVBR.Size = new System.Drawing.Size(13, 12);
-      this.cbMedVBR.TabIndex = 14;
-      this.cbMedVBR.UseVisualStyleBackColor = true;
-      // 
-      // tbMedMax
-      // 
-      this.tbMedMax.Location = new System.Drawing.Point(168, 120);
-      this.tbMedMax.Name = "tbMedMax";
-      this.tbMedMax.Size = new System.Drawing.Size(64, 20);
-      this.tbMedMax.TabIndex = 13;
-      this.tbMedMax.Text = "300";
-      // 
-      // tbMedMin
-      // 
-      this.tbMedMin.Location = new System.Drawing.Point(80, 120);
-      this.tbMedMin.Name = "tbMedMin";
-      this.tbMedMin.Size = new System.Drawing.Size(64, 20);
-      this.tbMedMin.TabIndex = 12;
-      this.tbMedMin.Text = "100";
-      // 
-      // label36
-      // 
-      this.label36.Location = new System.Drawing.Point(16, 120);
-      this.label36.Name = "label36";
-      this.label36.Size = new System.Drawing.Size(64, 16);
-      this.label36.TabIndex = 11;
-      this.label36.Text = "Medium:";
-      // 
-      // cbLowVBR
-      // 
-      this.cbLowVBR.AutoSize = true;
-      this.cbLowVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbLowVBR.Location = new System.Drawing.Point(248, 88);
-      this.cbLowVBR.Name = "cbLowVBR";
-      this.cbLowVBR.Size = new System.Drawing.Size(13, 12);
-      this.cbLowVBR.TabIndex = 10;
-      this.cbLowVBR.UseVisualStyleBackColor = true;
-      // 
-      // tbLowMax
-      // 
-      this.tbLowMax.Location = new System.Drawing.Point(168, 88);
-      this.tbLowMax.Name = "tbLowMax";
-      this.tbLowMax.Size = new System.Drawing.Size(64, 20);
-      this.tbLowMax.TabIndex = 9;
-      this.tbLowMax.Text = "300";
-      // 
-      // tbLowMin
-      // 
-      this.tbLowMin.Location = new System.Drawing.Point(80, 88);
-      this.tbLowMin.Name = "tbLowMin";
-      this.tbLowMin.Size = new System.Drawing.Size(64, 20);
-      this.tbLowMin.TabIndex = 8;
-      this.tbLowMin.Text = "100";
-      // 
-      // label34
-      // 
-      this.label34.Location = new System.Drawing.Point(16, 88);
-      this.label34.Name = "label34";
-      this.label34.Size = new System.Drawing.Size(64, 16);
-      this.label34.TabIndex = 7;
-      this.label34.Text = "Low:";
-      // 
-      // label29
-      // 
-      this.label29.Location = new System.Drawing.Point(248, 24);
-      this.label29.Name = "label29";
-      this.label29.Size = new System.Drawing.Size(40, 16);
-      this.label29.TabIndex = 6;
-      this.label29.Text = "VBR";
-      // 
-      // label28
-      // 
-      this.label28.Location = new System.Drawing.Point(168, 16);
-      this.label28.Name = "label28";
-      this.label28.Size = new System.Drawing.Size(72, 32);
-      this.label28.TabIndex = 5;
-      this.label28.Text = "Peak bitrate (KBPS)";
-      // 
-      // label27
-      // 
-      this.label27.Location = new System.Drawing.Point(80, 16);
-      this.label27.Name = "label27";
-      this.label27.Size = new System.Drawing.Size(88, 32);
-      this.label27.TabIndex = 4;
-      this.label27.Text = "Average bitrate (KBPS)";
-      // 
-      // cbPortVBR
-      // 
-      this.cbPortVBR.AutoSize = true;
-      this.cbPortVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbPortVBR.Location = new System.Drawing.Point(248, 56);
-      this.cbPortVBR.Name = "cbPortVBR";
-      this.cbPortVBR.Size = new System.Drawing.Size(13, 12);
-      this.cbPortVBR.TabIndex = 3;
-      this.cbPortVBR.UseVisualStyleBackColor = true;
-      // 
-      // tbPortMax
-      // 
-      this.tbPortMax.Location = new System.Drawing.Point(168, 56);
-      this.tbPortMax.Name = "tbPortMax";
-      this.tbPortMax.Size = new System.Drawing.Size(64, 20);
-      this.tbPortMax.TabIndex = 2;
-      this.tbPortMax.Text = "300";
-      // 
-      // tbPortMin
-      // 
-      this.tbPortMin.Location = new System.Drawing.Point(80, 56);
-      this.tbPortMin.Name = "tbPortMin";
-      this.tbPortMin.Size = new System.Drawing.Size(64, 20);
-      this.tbPortMin.TabIndex = 1;
-      this.tbPortMin.Text = "100";
-      // 
-      // label19
-      // 
-      this.label19.Location = new System.Drawing.Point(16, 56);
-      this.label19.Name = "label19";
-      this.label19.Size = new System.Drawing.Size(64, 16);
-      this.label19.TabIndex = 0;
-      this.label19.Text = "Portable:";
-      // 
-      // label18
-      // 
-      this.label18.Location = new System.Drawing.Point(24, 80);
-      this.label18.Name = "label18";
-      this.label18.Size = new System.Drawing.Size(408, 72);
-      this.label18.TabIndex = 10;
-      this.label18.Text = resources.GetString("label18.Text");
-      // 
-      // label25
-      // 
-      this.label25.Location = new System.Drawing.Point(40, 48);
-      this.label25.Name = "label25";
-      this.label25.Size = new System.Drawing.Size(80, 16);
-      this.label25.TabIndex = 9;
-      this.label25.Text = "Default quality:";
-      // 
-      // comboBoxQuality
-      // 
-      this.comboBoxQuality.Items.AddRange(new object[] {
+        // 
+        // cardComboBox
+        // 
+        this.cardComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.cardComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+        this.cardComboBox.Location = new System.Drawing.Point(112, 8);
+        this.cardComboBox.Name = "cardComboBox";
+        this.cardComboBox.Size = new System.Drawing.Size(414, 21);
+        this.cardComboBox.TabIndex = 0;
+        this.cardComboBox.SelectedIndexChanged += new System.EventHandler(this.cardComboBox_SelectedIndexChanged);
+        // 
+        // label1
+        // 
+        this.label1.Location = new System.Drawing.Point(8, 16);
+        this.label1.Name = "label1";
+        this.label1.Size = new System.Drawing.Size(100, 23);
+        this.label1.TabIndex = 0;
+        this.label1.Text = "TV Capture card";
+        // 
+        // useRecordingCheckBox
+        // 
+        this.useRecordingCheckBox.AutoSize = true;
+        this.useRecordingCheckBox.Checked = true;
+        this.useRecordingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+        this.useRecordingCheckBox.Enabled = false;
+        this.useRecordingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.useRecordingCheckBox.Location = new System.Drawing.Point(11, 183);
+        this.useRecordingCheckBox.Name = "useRecordingCheckBox";
+        this.useRecordingCheckBox.Size = new System.Drawing.Size(165, 17);
+        this.useRecordingCheckBox.TabIndex = 9;
+        this.useRecordingCheckBox.Text = "Use this card for recording TV";
+        this.useRecordingCheckBox.UseVisualStyleBackColor = true;
+        this.useRecordingCheckBox.CheckedChanged += new System.EventHandler(this.useRecording_Check_Changed);
+        // 
+        // useWatchingCheckBox
+        // 
+        this.useWatchingCheckBox.AutoSize = true;
+        this.useWatchingCheckBox.Checked = true;
+        this.useWatchingCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+        this.useWatchingCheckBox.Enabled = false;
+        this.useWatchingCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.useWatchingCheckBox.Location = new System.Drawing.Point(11, 160);
+        this.useWatchingCheckBox.Name = "useWatchingCheckBox";
+        this.useWatchingCheckBox.Size = new System.Drawing.Size(157, 17);
+        this.useWatchingCheckBox.TabIndex = 8;
+        this.useWatchingCheckBox.Text = "Use this card for viewing TV";
+        this.useWatchingCheckBox.UseVisualStyleBackColor = true;
+        // 
+        // groupBox5
+        // 
+        this.groupBox5.Controls.Add(this.buttonBrowse);
+        this.groupBox5.Controls.Add(this.tbRecordingFolder);
+        this.groupBox5.Controls.Add(this.label26);
+        this.groupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.groupBox5.Location = new System.Drawing.Point(11, 207);
+        this.groupBox5.Name = "groupBox5";
+        this.groupBox5.Size = new System.Drawing.Size(424, 100);
+        this.groupBox5.TabIndex = 61;
+        this.groupBox5.TabStop = false;
+        this.groupBox5.Text = "Recording folder:";
+        // 
+        // buttonBrowse
+        // 
+        this.buttonBrowse.Location = new System.Drawing.Point(280, 56);
+        this.buttonBrowse.Name = "buttonBrowse";
+        this.buttonBrowse.Size = new System.Drawing.Size(56, 23);
+        this.buttonBrowse.TabIndex = 58;
+        this.buttonBrowse.Text = "Browse";
+        this.buttonBrowse.UseVisualStyleBackColor = true;
+        this.buttonBrowse.Click += new System.EventHandler(this.buttonBrowse_Click_1);
+        // 
+        // tbRecordingFolder
+        // 
+        this.tbRecordingFolder.Location = new System.Drawing.Point(24, 56);
+        this.tbRecordingFolder.Name = "tbRecordingFolder";
+        this.tbRecordingFolder.Size = new System.Drawing.Size(248, 20);
+        this.tbRecordingFolder.TabIndex = 57;
+        // 
+        // label26
+        // 
+        this.label26.Location = new System.Drawing.Point(21, 30);
+        this.label26.Name = "label26";
+        this.label26.Size = new System.Drawing.Size(384, 23);
+        this.label26.TabIndex = 60;
+        this.label26.Text = "Specify the folder in which the recordings of this tv card should be saved:";
+        // 
+        // tabPage3
+        // 
+        this.tabPage3.Controls.Add(this.cbRgbAudio);
+        this.tabPage3.Controls.Add(this.cbRgbVideo);
+        this.tabPage3.Controls.Add(this.label35);
+        this.tabPage3.Controls.Add(this.label14);
+        this.tabPage3.Controls.Add(this.comboBox3Audio);
+        this.tabPage3.Controls.Add(this.comboBox3Video);
+        this.tabPage3.Controls.Add(this.comboBox2Audio);
+        this.tabPage3.Controls.Add(this.comboBox2Video);
+        this.tabPage3.Controls.Add(this.comboBox1Audio);
+        this.tabPage3.Controls.Add(this.comboBox1Video);
+        this.tabPage3.Controls.Add(this.label15);
+        this.tabPage3.Controls.Add(this.label16);
+        this.tabPage3.Controls.Add(this.label17);
+        this.tabPage3.Location = new System.Drawing.Point(4, 22);
+        this.tabPage3.Name = "tabPage3";
+        this.tabPage3.Size = new System.Drawing.Size(542, 424);
+        this.tabPage3.TabIndex = 2;
+        this.tabPage3.Text = "Audio mapping";
+        this.tabPage3.UseVisualStyleBackColor = true;
+        // 
+        // cbRgbAudio
+        // 
+        this.cbRgbAudio.Location = new System.Drawing.Point(72, 264);
+        this.cbRgbAudio.Name = "cbRgbAudio";
+        this.cbRgbAudio.Size = new System.Drawing.Size(121, 21);
+        this.cbRgbAudio.TabIndex = 21;
+        // 
+        // cbRgbVideo
+        // 
+        this.cbRgbVideo.Location = new System.Drawing.Point(72, 240);
+        this.cbRgbVideo.Name = "cbRgbVideo";
+        this.cbRgbVideo.Size = new System.Drawing.Size(121, 21);
+        this.cbRgbVideo.TabIndex = 20;
+        // 
+        // label35
+        // 
+        this.label35.Location = new System.Drawing.Point(16, 248);
+        this.label35.Name = "label35";
+        this.label35.Size = new System.Drawing.Size(40, 23);
+        this.label35.TabIndex = 19;
+        this.label35.Text = "RGB";
+        // 
+        // label14
+        // 
+        this.label14.Location = new System.Drawing.Point(16, 16);
+        this.label14.Name = "label14";
+        this.label14.Size = new System.Drawing.Size(328, 40);
+        this.label14.TabIndex = 18;
+        this.label14.Text = "Map the video/audio inputs of your TV card to the CVBS1, CVBS2 and SVHS channels";
+        // 
+        // comboBox3Audio
+        // 
+        this.comboBox3Audio.Location = new System.Drawing.Point(72, 208);
+        this.comboBox3Audio.Name = "comboBox3Audio";
+        this.comboBox3Audio.Size = new System.Drawing.Size(121, 21);
+        this.comboBox3Audio.TabIndex = 16;
+        // 
+        // comboBox3Video
+        // 
+        this.comboBox3Video.Location = new System.Drawing.Point(72, 184);
+        this.comboBox3Video.Name = "comboBox3Video";
+        this.comboBox3Video.Size = new System.Drawing.Size(121, 21);
+        this.comboBox3Video.TabIndex = 15;
+        // 
+        // comboBox2Audio
+        // 
+        this.comboBox2Audio.Location = new System.Drawing.Point(72, 144);
+        this.comboBox2Audio.Name = "comboBox2Audio";
+        this.comboBox2Audio.Size = new System.Drawing.Size(121, 21);
+        this.comboBox2Audio.TabIndex = 14;
+        // 
+        // comboBox2Video
+        // 
+        this.comboBox2Video.Location = new System.Drawing.Point(72, 120);
+        this.comboBox2Video.Name = "comboBox2Video";
+        this.comboBox2Video.Size = new System.Drawing.Size(121, 21);
+        this.comboBox2Video.TabIndex = 13;
+        // 
+        // comboBox1Audio
+        // 
+        this.comboBox1Audio.Location = new System.Drawing.Point(72, 88);
+        this.comboBox1Audio.Name = "comboBox1Audio";
+        this.comboBox1Audio.Size = new System.Drawing.Size(121, 21);
+        this.comboBox1Audio.TabIndex = 10;
+        // 
+        // comboBox1Video
+        // 
+        this.comboBox1Video.Location = new System.Drawing.Point(72, 64);
+        this.comboBox1Video.Name = "comboBox1Video";
+        this.comboBox1Video.Size = new System.Drawing.Size(121, 21);
+        this.comboBox1Video.TabIndex = 8;
+        // 
+        // label15
+        // 
+        this.label15.Location = new System.Drawing.Point(16, 200);
+        this.label15.Name = "label15";
+        this.label15.Size = new System.Drawing.Size(40, 23);
+        this.label15.TabIndex = 12;
+        this.label15.Text = "SVHS";
+        // 
+        // label16
+        // 
+        this.label16.Location = new System.Drawing.Point(8, 136);
+        this.label16.Name = "label16";
+        this.label16.Size = new System.Drawing.Size(48, 16);
+        this.label16.TabIndex = 11;
+        this.label16.Text = "CVBS#2";
+        // 
+        // label17
+        // 
+        this.label17.Location = new System.Drawing.Point(8, 80);
+        this.label17.Name = "label17";
+        this.label17.Size = new System.Drawing.Size(56, 16);
+        this.label17.TabIndex = 9;
+        this.label17.Text = "CVBS #1";
+        // 
+        // tabPage5
+        // 
+        this.tabPage5.Controls.Add(this.groupBox7);
+        this.tabPage5.Controls.Add(this.label18);
+        this.tabPage5.Controls.Add(this.label25);
+        this.tabPage5.Controls.Add(this.comboBoxQuality);
+        this.tabPage5.Controls.Add(this.checkBoxHiQuality);
+        this.tabPage5.Location = new System.Drawing.Point(4, 22);
+        this.tabPage5.Name = "tabPage5";
+        this.tabPage5.Size = new System.Drawing.Size(542, 424);
+        this.tabPage5.TabIndex = 4;
+        this.tabPage5.Text = "Quality";
+        this.tabPage5.UseVisualStyleBackColor = true;
+        // 
+        // groupBox7
+        // 
+        this.groupBox7.Controls.Add(this.cbHighVBR);
+        this.groupBox7.Controls.Add(this.tbHighMax);
+        this.groupBox7.Controls.Add(this.tbHighMin);
+        this.groupBox7.Controls.Add(this.label37);
+        this.groupBox7.Controls.Add(this.cbMedVBR);
+        this.groupBox7.Controls.Add(this.tbMedMax);
+        this.groupBox7.Controls.Add(this.tbMedMin);
+        this.groupBox7.Controls.Add(this.label36);
+        this.groupBox7.Controls.Add(this.cbLowVBR);
+        this.groupBox7.Controls.Add(this.tbLowMax);
+        this.groupBox7.Controls.Add(this.tbLowMin);
+        this.groupBox7.Controls.Add(this.label34);
+        this.groupBox7.Controls.Add(this.label29);
+        this.groupBox7.Controls.Add(this.label28);
+        this.groupBox7.Controls.Add(this.label27);
+        this.groupBox7.Controls.Add(this.cbPortVBR);
+        this.groupBox7.Controls.Add(this.tbPortMax);
+        this.groupBox7.Controls.Add(this.tbPortMin);
+        this.groupBox7.Controls.Add(this.label19);
+        this.groupBox7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.groupBox7.Location = new System.Drawing.Point(24, 144);
+        this.groupBox7.Name = "groupBox7";
+        this.groupBox7.Size = new System.Drawing.Size(456, 224);
+        this.groupBox7.TabIndex = 11;
+        this.groupBox7.TabStop = false;
+        this.groupBox7.Text = "Quality settings:";
+        // 
+        // cbHighVBR
+        // 
+        this.cbHighVBR.AutoSize = true;
+        this.cbHighVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.cbHighVBR.Location = new System.Drawing.Point(248, 152);
+        this.cbHighVBR.Name = "cbHighVBR";
+        this.cbHighVBR.Size = new System.Drawing.Size(13, 12);
+        this.cbHighVBR.TabIndex = 18;
+        this.cbHighVBR.UseVisualStyleBackColor = true;
+        // 
+        // tbHighMax
+        // 
+        this.tbHighMax.Location = new System.Drawing.Point(168, 152);
+        this.tbHighMax.Name = "tbHighMax";
+        this.tbHighMax.Size = new System.Drawing.Size(64, 20);
+        this.tbHighMax.TabIndex = 17;
+        this.tbHighMax.Text = "300";
+        // 
+        // tbHighMin
+        // 
+        this.tbHighMin.Location = new System.Drawing.Point(80, 152);
+        this.tbHighMin.Name = "tbHighMin";
+        this.tbHighMin.Size = new System.Drawing.Size(64, 20);
+        this.tbHighMin.TabIndex = 16;
+        this.tbHighMin.Text = "100";
+        // 
+        // label37
+        // 
+        this.label37.Location = new System.Drawing.Point(16, 152);
+        this.label37.Name = "label37";
+        this.label37.Size = new System.Drawing.Size(64, 16);
+        this.label37.TabIndex = 15;
+        this.label37.Text = "High:";
+        // 
+        // cbMedVBR
+        // 
+        this.cbMedVBR.AutoSize = true;
+        this.cbMedVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.cbMedVBR.Location = new System.Drawing.Point(248, 120);
+        this.cbMedVBR.Name = "cbMedVBR";
+        this.cbMedVBR.Size = new System.Drawing.Size(13, 12);
+        this.cbMedVBR.TabIndex = 14;
+        this.cbMedVBR.UseVisualStyleBackColor = true;
+        // 
+        // tbMedMax
+        // 
+        this.tbMedMax.Location = new System.Drawing.Point(168, 120);
+        this.tbMedMax.Name = "tbMedMax";
+        this.tbMedMax.Size = new System.Drawing.Size(64, 20);
+        this.tbMedMax.TabIndex = 13;
+        this.tbMedMax.Text = "300";
+        // 
+        // tbMedMin
+        // 
+        this.tbMedMin.Location = new System.Drawing.Point(80, 120);
+        this.tbMedMin.Name = "tbMedMin";
+        this.tbMedMin.Size = new System.Drawing.Size(64, 20);
+        this.tbMedMin.TabIndex = 12;
+        this.tbMedMin.Text = "100";
+        // 
+        // label36
+        // 
+        this.label36.Location = new System.Drawing.Point(16, 120);
+        this.label36.Name = "label36";
+        this.label36.Size = new System.Drawing.Size(64, 16);
+        this.label36.TabIndex = 11;
+        this.label36.Text = "Medium:";
+        // 
+        // cbLowVBR
+        // 
+        this.cbLowVBR.AutoSize = true;
+        this.cbLowVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.cbLowVBR.Location = new System.Drawing.Point(248, 88);
+        this.cbLowVBR.Name = "cbLowVBR";
+        this.cbLowVBR.Size = new System.Drawing.Size(13, 12);
+        this.cbLowVBR.TabIndex = 10;
+        this.cbLowVBR.UseVisualStyleBackColor = true;
+        // 
+        // tbLowMax
+        // 
+        this.tbLowMax.Location = new System.Drawing.Point(168, 88);
+        this.tbLowMax.Name = "tbLowMax";
+        this.tbLowMax.Size = new System.Drawing.Size(64, 20);
+        this.tbLowMax.TabIndex = 9;
+        this.tbLowMax.Text = "300";
+        // 
+        // tbLowMin
+        // 
+        this.tbLowMin.Location = new System.Drawing.Point(80, 88);
+        this.tbLowMin.Name = "tbLowMin";
+        this.tbLowMin.Size = new System.Drawing.Size(64, 20);
+        this.tbLowMin.TabIndex = 8;
+        this.tbLowMin.Text = "100";
+        // 
+        // label34
+        // 
+        this.label34.Location = new System.Drawing.Point(16, 88);
+        this.label34.Name = "label34";
+        this.label34.Size = new System.Drawing.Size(64, 16);
+        this.label34.TabIndex = 7;
+        this.label34.Text = "Low:";
+        // 
+        // label29
+        // 
+        this.label29.Location = new System.Drawing.Point(248, 24);
+        this.label29.Name = "label29";
+        this.label29.Size = new System.Drawing.Size(40, 16);
+        this.label29.TabIndex = 6;
+        this.label29.Text = "VBR";
+        // 
+        // label28
+        // 
+        this.label28.Location = new System.Drawing.Point(168, 16);
+        this.label28.Name = "label28";
+        this.label28.Size = new System.Drawing.Size(72, 32);
+        this.label28.TabIndex = 5;
+        this.label28.Text = "Peak bitrate (KBPS)";
+        // 
+        // label27
+        // 
+        this.label27.Location = new System.Drawing.Point(80, 16);
+        this.label27.Name = "label27";
+        this.label27.Size = new System.Drawing.Size(88, 32);
+        this.label27.TabIndex = 4;
+        this.label27.Text = "Average bitrate (KBPS)";
+        // 
+        // cbPortVBR
+        // 
+        this.cbPortVBR.AutoSize = true;
+        this.cbPortVBR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.cbPortVBR.Location = new System.Drawing.Point(248, 56);
+        this.cbPortVBR.Name = "cbPortVBR";
+        this.cbPortVBR.Size = new System.Drawing.Size(13, 12);
+        this.cbPortVBR.TabIndex = 3;
+        this.cbPortVBR.UseVisualStyleBackColor = true;
+        // 
+        // tbPortMax
+        // 
+        this.tbPortMax.Location = new System.Drawing.Point(168, 56);
+        this.tbPortMax.Name = "tbPortMax";
+        this.tbPortMax.Size = new System.Drawing.Size(64, 20);
+        this.tbPortMax.TabIndex = 2;
+        this.tbPortMax.Text = "300";
+        // 
+        // tbPortMin
+        // 
+        this.tbPortMin.Location = new System.Drawing.Point(80, 56);
+        this.tbPortMin.Name = "tbPortMin";
+        this.tbPortMin.Size = new System.Drawing.Size(64, 20);
+        this.tbPortMin.TabIndex = 1;
+        this.tbPortMin.Text = "100";
+        // 
+        // label19
+        // 
+        this.label19.Location = new System.Drawing.Point(16, 56);
+        this.label19.Name = "label19";
+        this.label19.Size = new System.Drawing.Size(64, 16);
+        this.label19.TabIndex = 0;
+        this.label19.Text = "Portable:";
+        // 
+        // label18
+        // 
+        this.label18.Location = new System.Drawing.Point(24, 80);
+        this.label18.Name = "label18";
+        this.label18.Size = new System.Drawing.Size(408, 72);
+        this.label18.TabIndex = 10;
+        this.label18.Text = resources.GetString("label18.Text");
+        // 
+        // label25
+        // 
+        this.label25.Location = new System.Drawing.Point(40, 48);
+        this.label25.Name = "label25";
+        this.label25.Size = new System.Drawing.Size(80, 16);
+        this.label25.TabIndex = 9;
+        this.label25.Text = "Default quality:";
+        // 
+        // comboBoxQuality
+        // 
+        this.comboBoxQuality.Items.AddRange(new object[] {
             "Portable",
             "Low",
             "Medium",
             "High"});
-      this.comboBoxQuality.Location = new System.Drawing.Point(128, 48);
-      this.comboBoxQuality.Name = "comboBoxQuality";
-      this.comboBoxQuality.Size = new System.Drawing.Size(240, 21);
-      this.comboBoxQuality.TabIndex = 8;
-      // 
-      // tabPageAutotune
-      // 
-      this.tabPageAutotune.Location = new System.Drawing.Point(4, 22);
-      this.tabPageAutotune.Name = "tabPageAutotune";
-      this.tabPageAutotune.Size = new System.Drawing.Size(542, 424);
-      this.tabPageAutotune.TabIndex = 1;
-      this.tabPageAutotune.Text = "Autotune";
-      this.tabPageAutotune.UseVisualStyleBackColor = true;
-      this.tabPageAutotune.Enter += new System.EventHandler(this.tabPageAutotune_Enter);
-      // 
-      // tabPageAutotuneRadio
-      // 
-      this.tabPageAutotuneRadio.Location = new System.Drawing.Point(4, 22);
-      this.tabPageAutotuneRadio.Name = "tabPageAutotuneRadio";
-      this.tabPageAutotuneRadio.Size = new System.Drawing.Size(542, 424);
-      this.tabPageAutotuneRadio.TabIndex = 1;
-      this.tabPageAutotuneRadio.Text = "Autotune Radio";
-      this.tabPageAutotuneRadio.UseVisualStyleBackColor = true;
-      this.tabPageAutotuneRadio.Enter += new System.EventHandler(this.tabPageAutotuneRadio_Enter);
-      // 
-      // EditCaptureCardForm
-      // 
-      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(564, 496);
-      this.Controls.Add(this.tabControl1);
-      this.Controls.Add(this.okButton);
-      this.Controls.Add(this.cancelButton);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-      this.MinimumSize = new System.Drawing.Size(480, 296);
-      this.Name = "EditCaptureCardForm";
-      this.ShowInTaskbar = false;
-      this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-      this.Text = "Edit properties of your TV card";
-      this.Closing += new System.ComponentModel.CancelEventHandler(this.EditCaptureCardForm_Closing);
-      this.Load += new System.EventHandler(this.EditCaptureCardForm_Load);
-      this.tabControl1.ResumeLayout(false);
-      this.tabPage1.ResumeLayout(false);
-      this.tabPage1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.updownPrio)).EndInit();
-      this.groupBox5.ResumeLayout(false);
-      this.groupBox5.PerformLayout();
-      this.tabPage3.ResumeLayout(false);
-      this.tabPage5.ResumeLayout(false);
-      this.tabPage5.PerformLayout();
-      this.groupBox7.ResumeLayout(false);
-      this.groupBox7.PerformLayout();
-      this.ResumeLayout(false);
+        this.comboBoxQuality.Location = new System.Drawing.Point(128, 48);
+        this.comboBoxQuality.Name = "comboBoxQuality";
+        this.comboBoxQuality.Size = new System.Drawing.Size(240, 21);
+        this.comboBoxQuality.TabIndex = 8;
+        // 
+        // checkBoxHiQuality
+        // 
+        this.checkBoxHiQuality.AutoSize = true;
+        this.checkBoxHiQuality.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.checkBoxHiQuality.Location = new System.Drawing.Point(24, 24);
+        this.checkBoxHiQuality.Name = "checkBoxHiQuality";
+        this.checkBoxHiQuality.Size = new System.Drawing.Size(113, 17);
+        this.checkBoxHiQuality.TabIndex = 7;
+        this.checkBoxHiQuality.Text = "Use Quality control";
+        this.checkBoxHiQuality.UseVisualStyleBackColor = true;
+        // 
+        // okButton
+        // 
+        this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+        this.okButton.Location = new System.Drawing.Point(391, 464);
+        this.okButton.Name = "okButton";
+        this.okButton.Size = new System.Drawing.Size(75, 23);
+        this.okButton.TabIndex = 3;
+        this.okButton.Text = "OK";
+        this.okButton.UseVisualStyleBackColor = true;
+        this.okButton.Click += new System.EventHandler(this.okButton_Click);
+        // 
+        // cancelButton
+        // 
+        this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+        this.cancelButton.Location = new System.Drawing.Point(471, 464);
+        this.cancelButton.Name = "cancelButton";
+        this.cancelButton.Size = new System.Drawing.Size(75, 23);
+        this.cancelButton.TabIndex = 4;
+        this.cancelButton.Text = "Cancel";
+        this.cancelButton.UseVisualStyleBackColor = true;
+        this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+        // 
+        // textBoxName
+        // 
+        this.textBoxName.Location = new System.Drawing.Point(0, 0);
+        this.textBoxName.Name = "textBoxName";
+        this.textBoxName.Size = new System.Drawing.Size(100, 20);
+        this.textBoxName.TabIndex = 0;
+        // 
+        // label12
+        // 
+        this.label12.Location = new System.Drawing.Point(0, 0);
+        this.label12.Name = "label12";
+        this.label12.Size = new System.Drawing.Size(100, 23);
+        this.label12.TabIndex = 0;
+        // 
+        // tabPageAutotune
+        // 
+        this.tabPageAutotune.Location = new System.Drawing.Point(4, 22);
+        this.tabPageAutotune.Name = "tabPageAutotune";
+        this.tabPageAutotune.Size = new System.Drawing.Size(542, 424);
+        this.tabPageAutotune.TabIndex = 1;
+        this.tabPageAutotune.Text = "Autotune";
+        this.tabPageAutotune.UseVisualStyleBackColor = true;
+        this.tabPageAutotune.Enter += new System.EventHandler(this.tabPageAutotune_Enter);
+        // 
+        // tabPageAutotuneRadio
+        // 
+        this.tabPageAutotuneRadio.Location = new System.Drawing.Point(4, 22);
+        this.tabPageAutotuneRadio.Name = "tabPageAutotuneRadio";
+        this.tabPageAutotuneRadio.Size = new System.Drawing.Size(542, 424);
+        this.tabPageAutotuneRadio.TabIndex = 1;
+        this.tabPageAutotuneRadio.Text = "Autotune Radio";
+        this.tabPageAutotuneRadio.UseVisualStyleBackColor = true;
+        this.tabPageAutotuneRadio.Enter += new System.EventHandler(this.tabPageAutotuneRadio_Enter);
+        // 
+        // EditCaptureCardForm
+        // 
+        this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+        this.ClientSize = new System.Drawing.Size(564, 496);
+        this.Controls.Add(this.tabControl1);
+        this.Controls.Add(this.okButton);
+        this.Controls.Add(this.cancelButton);
+        this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+        this.MinimumSize = new System.Drawing.Size(480, 296);
+        this.Name = "EditCaptureCardForm";
+        this.ShowInTaskbar = false;
+        this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+        this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+        this.Text = "Edit properties of your TV card";
+        this.Closing += new System.ComponentModel.CancelEventHandler(this.EditCaptureCardForm_Closing);
+        this.Load += new System.EventHandler(this.EditCaptureCardForm_Load);
+        this.tabControl1.ResumeLayout(false);
+        this.tabPage1.ResumeLayout(false);
+        this.tabPage1.PerformLayout();
+        ((System.ComponentModel.ISupportInitialize)(this.updownPrio)).EndInit();
+        this.groupBox5.ResumeLayout(false);
+        this.groupBox5.PerformLayout();
+        this.tabPage3.ResumeLayout(false);
+        this.tabPage5.ResumeLayout(false);
+        this.tabPage5.PerformLayout();
+        this.groupBox7.ResumeLayout(false);
+        this.groupBox7.PerformLayout();
+        this.ResumeLayout(false);
 
     }
     #endregion
