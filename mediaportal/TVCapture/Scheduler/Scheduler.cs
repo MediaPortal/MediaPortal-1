@@ -86,6 +86,7 @@ namespace MediaPortal.TV.Recording
     }
     private void OnRecordingsChanged(TVDatabase.RecordingChange change)
     {
+      Log.Write("Scheduler:Recordings changed");
       _recordingsListChanged = true;
     }
     public void ResetTimer()
@@ -154,6 +155,7 @@ namespace MediaPortal.TV.Recording
       // then we need to re-load the recordings from the database
       if (_recordingsListChanged)
       {
+        Log.Write("Scheduler:reload recordings");
         ReloadRecordingList(handler);
         _recordingsListChanged = false;
       }//if (_recordingsListChanged)
@@ -593,6 +595,7 @@ namespace MediaPortal.TV.Recording
         TimeShiftTvCommand cmd = new TimeShiftTvCommand(rec.Channel);
         cmd.Execute(handler);
       }
+      handler.LogTunerStatus();
       return true;
     }//bool Record(DateTime currentTime,TVRecording rec, TVProgram currentProgram,int iPreRecordInterval, int iPostRecordInterval)
 

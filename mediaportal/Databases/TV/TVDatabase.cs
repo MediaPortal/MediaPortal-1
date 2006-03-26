@@ -2018,6 +2018,7 @@ namespace MediaPortal.TV.Database
           Open();
         }
       }
+      SupressEvents = false;
       RecordingsChanged(change);
     }
     static public void SetRecordingQuality(TVRecording recording)
@@ -2045,6 +2046,7 @@ namespace MediaPortal.TV.Database
           Open();
         }
       }
+      SupressEvents = false;
       RecordingsChanged(RecordingChange.QualityChange);
     }
     static public void SetRecordingPriority(TVRecording recording)
@@ -2072,6 +2074,7 @@ namespace MediaPortal.TV.Database
           Open();
         }
       }
+      SupressEvents = false;
       RecordingsChanged(RecordingChange.PriorityChange);
     }
     static public void SetRecordingEpisodesToKeep(TVRecording recording)
@@ -2099,6 +2102,7 @@ namespace MediaPortal.TV.Database
           Open();
         }
       }
+      SupressEvents = false;
       RecordingsChanged(RecordingChange.EpisodesToKeepChange);
     }
 
@@ -2159,6 +2163,8 @@ namespace MediaPortal.TV.Database
           Open();
         }
       }
+
+      SupressEvents = false;
       RecordingsChanged(RecordingChange.Added);
       return lNewId;
     }
@@ -2181,6 +2187,7 @@ namespace MediaPortal.TV.Database
           Open();
         }
       }
+      SupressEvents = false;
       RecordingsChanged(RecordingChange.Deleted);
     }
 
