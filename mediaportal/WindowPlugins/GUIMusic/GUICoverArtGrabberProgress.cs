@@ -184,8 +184,11 @@ namespace MediaPortal.GUI.Music
                 if (value < 0)
                     value = 0;
 
-                if (value > 100)
-                    value = 100;
+                //if (value > 100)
+                //    value = 100;
+
+                if (_AlbumCount >= 0 && value > _AlbumCount)
+                    value = _AlbumCount;
 
                 _CurrentCoverArtIndex = value;
                 int progPrecent = 0;
@@ -426,6 +429,18 @@ namespace MediaPortal.GUI.Music
             ControlColorDisabled = btnStart.DisabledColor;
             ControlColorUnfocused = checkSaveInAlbumFolder.DisabledColor;
             EnableControls(true);
+        }
+
+        public override void OnAction(Action action)
+        {
+            if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+            {
+                //_Abort = true;
+                Close();
+                return;
+            }
+            
+            base.OnAction(action);
         }
 
         public override bool OnMessage(GUIMessage message)
@@ -871,7 +886,19 @@ namespace MediaPortal.GUI.Music
             btnStart.Focus = false;
             btnCancel.Focus = true;
 
+            progCurrent.Percentage = 0;
+            progOverall.Percentage = 0;
+
+            lblCurrentAlbum.Label = "";
+            lblCurrentProgress.Label = "";
+            lblFilteredSearch.Label = "";
+            lblFolderName.Label = "";
+            lblOverallProgress.Label = "";
+
             EnableControls(false);
+
+            // Force a redraw...
+            GUIWindowManager.Process();
 
             if (_MusicDatabase == null)
                 _MusicDatabase = new MusicDatabase();

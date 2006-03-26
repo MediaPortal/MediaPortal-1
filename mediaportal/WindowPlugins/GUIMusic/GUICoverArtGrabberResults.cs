@@ -664,8 +664,10 @@ namespace MediaPortal.GUI.Music
             else
             {
                 listView.Focus = false;
-                btnCancel.Focus = true;
-                btnSkip.Focus = false;
+                //btnCancel.Focus = true;
+                //btnSkip.Focus = false;
+                btnCancel.Focus = false;
+                btnSkip.Focus = true;
             }
         }
 
