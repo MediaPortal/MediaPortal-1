@@ -651,6 +651,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void ShowPreviousWindow()
 		{
+      Log.Write("Windowmanager:goto previous window");
 			_isSwitchingToNewWindow=true;
 			try
 			{
@@ -973,7 +974,12 @@ namespace MediaPortal.GUI.Library
 		/// tell the window manager to unroute the current routing
 		/// </summary>
 		static public void UnRoute()
-		{			
+    {
+      if (_routedWindow != null)
+      {
+        Log.Write("WindowManager:unroute to {0}:{1}->{2}:{3}",
+                _routedWindow, _routedWindow.GetID, GetWindow(ActiveWindow), ActiveWindow);
+      }
 			if (_currentWindowName != String.Empty && _routedWindow != null)
 				GUIPropertyManager.SetProperty("#currentmodule", _currentWindowName);
 			else
@@ -986,6 +992,8 @@ namespace MediaPortal.GUI.Library
 		{
 			_shouldRefresh=true;
 			_routedWindow=GetWindow(dialogId);
+      Log.Write("WindowManager:route {0}:{1}->{2}:{3}",
+                GetWindow(ActiveWindow), ActiveWindow, _routedWindow, dialogId);
 			_currentWindowName=GUIPropertyManager.GetProperty("#currentmodule");
 		}
 

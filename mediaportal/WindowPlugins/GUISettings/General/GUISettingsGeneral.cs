@@ -196,7 +196,13 @@ namespace WindowPlugins.GUISettings
 		{
 			SaveSettings();
 			GUIGraphicsContext.Skin=@"skin\"+btnSkin.SelectedLabel;
+      GUITextureManager.Init();
+      GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
+      GUIFontManager.InitializeDeviceObjects();
+      GUIFontManager.RestoreDeviceObjects();
 			GUIWindowManager.OnResize();
+      FreeResources();
+      AllocResources();
 			OnPageLoad();
 			GUIControl.FocusControl(GetID,btnSkin.GetID);
 		}
