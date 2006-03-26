@@ -147,17 +147,17 @@
           <subtype>album</subtype>
           <id>52</id>
           <font>font13</font>
-          <font2>font13</font2>
+          <font2>font18</font2>
           <selectedColor>FFFF6600</selectedColor>
           <textcolor>FFB2D4F5</textcolor>
           <selectedColor2>FFFF6600</selectedColor2>
           <textcolor2>FFB2D4F5</textcolor2>
           <colordiffuse>ffffffff</colordiffuse>
           <suffix>|</suffix>
-          <textXOff>0</textXOff>
-          <textYOff>4</textYOff>
+          <textXOff>5</textXOff>
+          <textYOff>15</textYOff>
           <textXOff2>415</textXOff2>
-          <textYOff2>60</textYOff2>
+          <textYOff2>50</textYOff2>
           <itemWidth>80</itemWidth>
           <itemHeight>80</itemHeight>
           <spaceBetweenItems>4</spaceBetweenItems>
