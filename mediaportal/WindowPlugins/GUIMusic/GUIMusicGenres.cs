@@ -65,6 +65,7 @@ namespace MediaPortal.GUI.Music
 
         int _currentLevel;
         ViewDefinition _currentView;
+        List<Share> _shareList = new List<Share>();
 
         [SkinControlAttribute(9)]
         protected GUIButtonControl btnSearch = null;
@@ -94,6 +95,53 @@ namespace MediaPortal.GUI.Music
 
             GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
         }
+
+
+      #region Serialisation
+      protected override void LoadSettings()
+      {
+        base.LoadSettings();
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        {
+          string strDefault = xmlreader.GetValueAsString("music", "default", String.Empty);
+          _shareList.Clear();
+          for (int i = 0; i < 20; i++)
+          {
+            string strShareName = String.Format("sharename{0}", i);
+            string strSharePath = String.Format("sharepath{0}", i);
+            string strPincode = String.Format("pincode{0}", i); ;
+
+            string shareType = String.Format("sharetype{0}", i);
+            string shareServer = String.Format("shareserver{0}", i);
+            string shareLogin = String.Format("sharelogin{0}", i);
+            string sharePwd = String.Format("sharepassword{0}", i);
+            string sharePort = String.Format("shareport{0}", i);
+            string remoteFolder = String.Format("shareremotepath{0}", i);
+            string shareViewPath = String.Format("shareview{0}", i);
+
+            Share share = new Share();
+            share.Name = xmlreader.GetValueAsString("music", strShareName, String.Empty);
+            share.Path = xmlreader.GetValueAsString("music", strSharePath, String.Empty);
+            share.Pincode = xmlreader.GetValueAsInt("music", strPincode, -1);
+
+            share.IsFtpShare = xmlreader.GetValueAsBool("music", shareType, false);
+            share.FtpServer = xmlreader.GetValueAsString("music", shareServer, String.Empty);
+            share.FtpLoginName = xmlreader.GetValueAsString("music", shareLogin, String.Empty);
+            share.FtpPassword = xmlreader.GetValueAsString("music", sharePwd, String.Empty);
+            share.FtpPort = xmlreader.GetValueAsInt("music", sharePort, 21);
+            share.FtpFolder = xmlreader.GetValueAsString("music", remoteFolder, "/");
+            share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("music", shareViewPath, (int)Share.Views.List);
+
+            if (share.Name.Length > 0)
+            {
+              if (strDefault == share.Name) share.Default = true;
+              _shareList.Add(share);
+            }
+            else break;
+          }
+        }
+      }
+      #endregion
 
         // Make sure we get all of the ACTION_PLAY event (OnAction only receives the ACTION_PLAY event when 
         // the player is not playing)...
@@ -656,6 +704,32 @@ namespace MediaPortal.GUI.Music
             TimeSpan totalPlayingTime = new TimeSpan();
 
             List<Song> songs = handler.Execute();
+            if (songs.Count > 0)    // some songs in there?
+            {
+              Song song = songs[0];
+              if (song.FileName.Length > 0)  // does a filename exits
+              {
+                foreach(Share share in _shareList) { 
+                  if (song.FileName.Contains(share.Path)) // compare it with shares
+                  {
+                    if (share.Pincode != -1)              // does it have a pincode?
+                    {
+                      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+                      GUIWindowManager.SendMessage(msg);   // ask for the userinput
+                      int iPincode = -1;
+                      try
+                      {
+                        iPincode = Int32.Parse(msg.Label);
+                      }
+                      catch (Exception)  {  }
+                      if (iPincode != share.Pincode) songs.Clear();
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+
             if (handler.CurrentLevel > 0)
             {
                 GUIListItem pItem = new GUIListItem("..");
