@@ -168,6 +168,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbAddRecordingsToMovie.Size = new System.Drawing.Size(185, 17);
       this.cbAddRecordingsToMovie.TabIndex = 7;
       this.cbAddRecordingsToMovie.Text = "Add recordings to movie database";
+      this.cbAddRecordingsToMovie.UseVisualStyleBackColor = true;
       // 
       // endTextBox
       // 
@@ -237,9 +238,10 @@ namespace MediaPortal.Configuration.Sections
       this.cbDeleteWatchedShows.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbDeleteWatchedShows.Location = new System.Drawing.Point(16, 80);
       this.cbDeleteWatchedShows.Name = "cbDeleteWatchedShows";
-      this.cbDeleteWatchedShows.Size = new System.Drawing.Size(232, 17);
+      this.cbDeleteWatchedShows.Size = new System.Drawing.Size(240, 17);
       this.cbDeleteWatchedShows.TabIndex = 6;
-      this.cbDeleteWatchedShows.Text = "Automaticly delete recordings after watching";
+      this.cbDeleteWatchedShows.Text = "Automatically delete recordings after watching";
+      this.cbDeleteWatchedShows.UseVisualStyleBackColor = true;
       // 
       // groupBox2
       // 
@@ -408,6 +410,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageSettings.Size = new System.Drawing.Size(464, 374);
       this.tabPageSettings.TabIndex = 0;
       this.tabPageSettings.Text = "Settings";
+      this.tabPageSettings.UseVisualStyleBackColor = true;
       // 
       // groupBox3
       // 
@@ -435,6 +438,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage2.Size = new System.Drawing.Size(464, 374);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Custom Paths and Filenames";
+      this.tabPage2.UseVisualStyleBackColor = true;
       // 
       // tabPage1
       // 
@@ -444,6 +448,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.Size = new System.Drawing.Size(464, 374);
       this.tabPage1.TabIndex = 2;
       this.tabPage1.Text = "Disk quota";
+      this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // groupBox4
       // 

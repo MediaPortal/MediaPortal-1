@@ -261,9 +261,9 @@ namespace MediaPortal.Configuration.Sections
       // RunGrabberButton
       // 
       this.RunGrabberButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.RunGrabberButton.Location = new System.Drawing.Point(344, 192);
+      this.RunGrabberButton.Location = new System.Drawing.Point(320, 192);
       this.RunGrabberButton.Name = "RunGrabberButton";
-      this.RunGrabberButton.Size = new System.Drawing.Size(72, 22);
+      this.RunGrabberButton.Size = new System.Drawing.Size(96, 22);
       this.RunGrabberButton.TabIndex = 11;
       this.RunGrabberButton.Text = "Run Grabber";
       this.RunGrabberButton.UseVisualStyleBackColor = true;
@@ -551,9 +551,9 @@ namespace MediaPortal.Configuration.Sections
       // DeleteTaskButton
       // 
       this.DeleteTaskButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.DeleteTaskButton.Location = new System.Drawing.Point(344, 88);
+      this.DeleteTaskButton.Location = new System.Drawing.Point(320, 88);
       this.DeleteTaskButton.Name = "DeleteTaskButton";
-      this.DeleteTaskButton.Size = new System.Drawing.Size(72, 22);
+      this.DeleteTaskButton.Size = new System.Drawing.Size(96, 22);
       this.DeleteTaskButton.TabIndex = 12;
       this.DeleteTaskButton.Text = "Delete Task";
       this.DeleteTaskButton.UseVisualStyleBackColor = true;
