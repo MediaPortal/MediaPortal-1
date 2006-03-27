@@ -522,6 +522,8 @@ namespace MediaPortal.GUI.Library
           return typeof(GUIPlayListButtonControl);
         case ("playlistcontrol"):
           return typeof(GUIPlayListItemListControl);
+        case ("gridcontrol"):
+          return typeof(GUIGridControl);
         default:
           Type t = (Type)m_hashCustomControls[xmlTypeName];
 
