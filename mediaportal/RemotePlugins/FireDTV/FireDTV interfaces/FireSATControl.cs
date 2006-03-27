@@ -24,6 +24,9 @@ using System.Text;
 using System.Collections;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
+using System.Reflection;
+using System.IO;
 
 namespace MadMouse.FireDTV
 {
@@ -324,9 +327,28 @@ namespace MadMouse.FireDTV
 	/// </summary>
 	public class FireDTVBaseControl
 	{
+    /// <summary>
+    /// The SetDllDirectory function adds a directory to the search path used to locate DLLs for the application.
+    /// http://msdn.microsoft.com/library/en-us/dllproc/base/setdlldirectory.asp
+    /// </summary>
+    /// <param name="PathName">Pointer to a null-terminated string that specifies the directory to be added to the search path.</param>
+    /// <returns></returns>
+    [DllImport("kernel32.dll")]
+    static extern bool SetDllDirectory(
+      string PathName);
+
 		#region Constructor / Destructor
 		public FireDTVBaseControl(int windowHandle):base()
 		{
+      RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DigitalEverywhere\\FireDTV");
+      if (rkey != null)
+      {
+        string dllPath = rkey.GetValue("InstallFolder").ToString();
+        string fullDllPath = string.Format("{0}{1}", dllPath.Substring(0, dllPath.LastIndexOf('\\') + 1), "Tools\\");
+        bool success = SetDllDirectory(fullDllPath);
+        MediaPortal.GUI.Library.Log.Write("FireDTV: Set DLL directory: {0} / {1}", fullDllPath, success);
+      }
+
 			_windowHandle = windowHandle;
 			InitializeFireDTVLibrary();
 			RegisterGeneralNotifications();
@@ -671,7 +693,6 @@ namespace MadMouse.FireDTV
 	{
 		public FireDTVControl(int windowHandle) : base(windowHandle)
 		{
-
 		}
 		#region Private Variable
 		

@@ -31,6 +31,8 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using System.Reflection;
 using MadMouse;
+using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
 namespace MediaPortal.RemoteControls
 {
@@ -91,9 +93,17 @@ namespace MediaPortal.RemoteControls
 			try
 			{
 				_windowHandle = hwnd;
-				_FireSAPapiFound = File.Exists("FiresatApi.dll");
-				if (!_FireSAPapiFound) 
-					_remoteEnabled=false;
+
+        RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DigitalEverywhere\\FireDTV");
+        if (rkey != null)
+        {
+          string dllPath = rkey.GetValue("InstallFolder").ToString();
+          string fullDllPath = string.Format("{0}{1}", dllPath.Substring(0, dllPath.LastIndexOf('\\') + 1), "Tools\\");
+          _FireSAPapiFound = File.Exists(fullDllPath + "FiresatApi.dll");
+          if (!_FireSAPapiFound)
+            _remoteEnabled = false;
+          MediaPortal.GUI.Library.Log.Write("FireDTV: DLL found in directory: {0}", fullDllPath);
+        }
 
 				using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 				{
