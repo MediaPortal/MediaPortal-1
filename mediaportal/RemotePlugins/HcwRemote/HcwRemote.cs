@@ -335,7 +335,8 @@ namespace MediaPortal.InputDevices
               }
               catch (ApplicationException ex)
               {
-                Log.Write("HCW: Exception: ", ex.Message);
+                Log.Write("HCW: Exception: {0}", ex.Message);
+                Log.Write("HCW: Exception: {1}", ex.InnerException);
               }
               if (logVerbose) Log.Write("HCW: repeat filter accepted: {0}", newCommand.ToString());
             }
