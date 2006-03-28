@@ -242,6 +242,8 @@ namespace MediaPortal.TV.Recording
       TuneChannel(channel);
       _mpeg2DemuxHelper.StartTimeshifting(strFileName);
 
+      //use default quality
+      SetQuality(4);
       return true;
     }
 
@@ -656,6 +658,8 @@ namespace MediaPortal.TV.Recording
         }
       }
 
+      //use default quality
+      SetQuality(4);
       Log.WriteFile(Log.LogType.Log, "SinkGraph:StartViewing() started ");
       return true;
     }

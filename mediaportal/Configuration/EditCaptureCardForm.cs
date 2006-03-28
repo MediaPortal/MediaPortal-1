@@ -1498,7 +1498,7 @@ namespace MediaPortal.Configuration
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
             {
               checkBoxHiQuality.Checked = xmlreader.GetValueAsBool("quality", "enabled", false);
-              comboBoxQuality.SelectedIndex=xmlwriter.GetValueAsInt("quality", "default", 2);
+              comboBoxQuality.SelectedIndex = xmlreader.GetValueAsInt("quality", "default", 2);
               comboBox1Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio1", 0);
               comboBox2Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio2", 1);
               comboBox3Audio.SelectedIndex = xmlreader.GetValueAsInt("mapping", "audio3", 0);
