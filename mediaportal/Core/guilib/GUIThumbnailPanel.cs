@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms; // used for Keys definition
 using Microsoft.DirectX.Direct3D;
-
+using ThumbDBLib;
 namespace MediaPortal.GUI.Library
 {
   /// <summary>
@@ -334,18 +334,28 @@ namespace MediaPortal.GUI.Library
         GUIImage pImage = pItem.Thumbnail;
         if (null == pImage /*&& _sleeper==0 */&& !IsAnimating)
         {
-          pImage = new GUIImage(0, 0, _xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY, _thumbNailWidth + 2*iOverSized, _thumbnaiHeight + 2*iOverSized, pItem.ThumbnailImage, 0x0);
-          pImage.ParentControl = this;
-          pImage.KeepAspectRatio = true;
-          pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
-          pImage.AllocResources();
+          if (pItem.ThumbnailImage == "[mpthumbs.db]")
+          {
+            pImage = GetThumbnail(pItem);
+          }
+          else
+          {
+            pImage = new GUIImage(0, 0, _xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized, _thumbnaiHeight + 2 * iOverSized, pItem.ThumbnailImage, 0x0);
+          }
+          if (pImage!=null)
+          {
+            pImage.ParentControl = this;
+            pImage.KeepAspectRatio = true;
+            pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
+            pImage.AllocResources();
 
-          pItem.Thumbnail = pImage;
-          int xOff = (_thumbNailWidth + 2*iOverSized - pImage.RenderWidth)/2;
-          int yOff = (_thumbnaiHeight + 2*iOverSized - pImage.RenderHeight)/2;
-          pImage.SetPosition(_xPositionThumbNail - iOverSized + dwPosX + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
-          pImage.Render(timePassed);
-          _sleeper += SLEEP_FRAME_COUNT;
+            pItem.Thumbnail = pImage;
+            int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
+            int yOff = (_thumbnaiHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
+            pImage.SetPosition(_xPositionThumbNail - iOverSized + dwPosX + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
+            pImage.Render(timePassed);
+            _sleeper += SLEEP_FRAME_COUNT;
+          }
         }
         if (null != pImage)
         {
@@ -2229,6 +2239,40 @@ namespace MediaPortal.GUI.Library
         }
 
         return selectedItemIndex;
+    }
+
+    GUIImage GetThumbnail(GUIListItem item)
+    {
+      if (item.IsRemote) return null;
+      if (item.IsFolder)
+      {
+        if (item.Label == "..") return null;
+        string file = System.IO.Path.GetFileName(item.Path); 
+        string path = item.Path.Substring(0, item.Path.Length - (file.Length + 1));
+        ThumbnailDatabase dbs = ThumbnailDatabaseCache.Get(path);
+        ThumbNail thumb = dbs.Get(item.Path);
+        if (thumb == null) return null;
+        using (Image img = thumb.Image)
+        {
+          GUITextureManager.LoadFromMemory(img, String.Format("[{0}]", file), 0, img.Width, img.Height);
+          GUIImage guiImage = new GUIImage(0, 0, 0, 0, 0, 0, String.Format("[{0}]", file), 0x0);
+          return guiImage;
+        }
+      }
+      else
+      {
+        string file = System.IO.Path.GetFileName(item.Path); ;
+        string path = item.Path.Substring(0, item.Path.Length - (file.Length + 1));
+        ThumbnailDatabase dbs = ThumbnailDatabaseCache.Get(path);
+        ThumbNail thumb = dbs.Get(file);
+        if (thumb == null) return null;
+        using (Image img = thumb.Image)
+        {
+          GUITextureManager.LoadFromMemory(img, String.Format("[{0}]", file), 0, img.Width, img.Height);
+          GUIImage guiImage = new GUIImage(0, 0, 0, 0, 0, 0, String.Format("[{0}]", file), 0x0);
+          return guiImage;
+        }
+      }
     }
   }
 }

@@ -141,7 +141,7 @@ namespace MediaPortal.GUI.Library
       {
         foreach (DownloadedImage image in _cacheDownload)
         {
-          if (String.Compare(image.URL,fileName,true)==0)
+          if (String.Compare(image.URL, fileName, true) == 0)
           {
             if (image.ShouldDownLoad)
             {
@@ -173,7 +173,7 @@ namespace MediaPortal.GUI.Library
       {
         CachedTexture cached = (CachedTexture)_cache[i];
 
-        if (String.Compare(cached.Name ,fileName,true)==0)
+        if (String.Compare(cached.Name, fileName, true) == 0)
         {
           return cached.Frames;
         }
@@ -277,28 +277,27 @@ namespace MediaPortal.GUI.Library
       }
       return 0;
     }
-    static public int LoadFromMemory(System.Drawing.Image memoryImage, long lColorKey, int iMaxWidth, int iMaxHeight)
+    static public int LoadFromMemory(System.Drawing.Image memoryImage, string name, long lColorKey, int iMaxWidth, int iMaxHeight)
     {
-      if (memoryImage == null) return 0;
-
+      string cacheName = name;
       for (int i = 0; i < _cache.Count; ++i)
       {
         CachedTexture cached = (CachedTexture)_cache[i];
 
-        if (String.Compare(cached.Name ,"#useMemoryImage",true)==0)
+        if (String.Compare(cached.Name, cacheName, true) == 0)
         {
           return cached.Frames;
         }
       }
-
+      if (memoryImage == null) return 0;
       if (memoryImage.FrameDimensionsList == null) return 0;
-      if (memoryImage.FrameDimensionsList.Length==0) return 0;
+      if (memoryImage.FrameDimensionsList.Length == 0) return 0;
 
       try
       {
         CachedTexture newCache = new CachedTexture();
 
-        newCache.Name = "#useMemoryImage";
+        newCache.Name = cacheName;
         FrameDimension oDimension = new FrameDimension(memoryImage.FrameDimensionsList[0]);
         newCache.Frames = memoryImage.GetFrameCount(oDimension);
         if (newCache.Frames != 1) return 0;
@@ -323,7 +322,7 @@ namespace MediaPortal.GUI.Library
             ref info2);
           newCache.Width = info2.Width;
           newCache.Height = info2.Height;
-          newCache.texture = new CachedTexture.Frame("#useMemoryImage", texture, 0);
+          newCache.texture = new CachedTexture.Frame(cacheName, texture, 0);
         }
         memoryImage.Dispose();
         memoryImage = null;
@@ -339,8 +338,6 @@ namespace MediaPortal.GUI.Library
         Log.Write(ex);
       }
       return 0;
-
-
     }
     static Direct3D.Texture LoadGraphic(string fileName, long lColorKey, int iMaxWidth, int iMaxHeight, out int width, out int height)
     {
@@ -499,7 +496,7 @@ namespace MediaPortal.GUI.Library
       for (int i = 0; i < _cache.Count; ++i)
       {
         CachedTexture cached = (CachedTexture)_cache[i];
-        if (String.Compare(cached.Name ,fileName,true)==0)
+        if (String.Compare(cached.Name, fileName, true) == 0)
         {
           if (cached.image != null)
             return cached.image;
@@ -553,17 +550,17 @@ namespace MediaPortal.GUI.Library
       iTextureWidth = 0;
       iTextureHeight = 0;
       string fileName = "";
-      if (fileNameOrg != "#useMemoryImage")
+      if (!fileNameOrg.StartsWith("["))
       {
         fileName = GetFileName(fileNameOrg);
         if (fileName == "") return null;
       }
       else
-        fileName = "#useMemoryImage";
+        fileName = fileNameOrg;
       for (int i = 0; i < _cache.Count; ++i)
       {
         CachedTexture cached = (CachedTexture)_cache[i];
-        if (String.Compare(cached.Name ,fileName,true)==0)
+        if (String.Compare(cached.Name, fileName, true) == 0)
         {
           iTextureWidth = cached.Width;
           iTextureHeight = cached.Height;
@@ -588,7 +585,7 @@ namespace MediaPortal.GUI.Library
           continueRemoving = false;
           foreach (CachedTexture cached in _cache)
           {
-            if (String.Compare(cached.Name,fileName,true)==0)
+            if (String.Compare(cached.Name, fileName, true) == 0)
             {
               Log.Write("texturemanager:dispose:{0} frames:{1} total:{2} mem left:{3}", cached.Name, cached.Frames, _cache.Count, GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
               _cache.Remove(cached);

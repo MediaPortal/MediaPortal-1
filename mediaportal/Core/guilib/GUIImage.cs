@@ -422,9 +422,9 @@ namespace MediaPortal.GUI.Library
 
         //load the texture
         int frameCount = 0;
-        if (fileName == "#useMemoryImage")
+        if (fileName.StartsWith("["))
         {
-          frameCount = GUITextureManager.LoadFromMemory(memoryImage, m_dwColorKey, m_iRenderWidth, _textureHeight);
+          frameCount = GUITextureManager.LoadFromMemory(memoryImage, fileName,m_dwColorKey, m_iRenderWidth, _textureHeight);
           if (0 == frameCount)
           {
             return;// unable to load texture
