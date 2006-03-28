@@ -206,8 +206,15 @@ namespace MediaPortal.Configuration.Sections
         HandleAdvMode(this);
 
         string DeviceName = xmlreader.GetValueAsString("remote", "FireDTVDeviceName", string.Empty);
-        if (DeviceName != string.Empty)
-          comboBoxFireDTVDevice.SelectedValue = DeviceName;
+        try
+        {
+          if (DeviceName != string.Empty)
+            comboBoxFireDTVDevice.SelectedValue = DeviceName;
+        }
+        catch (InvalidOperationException ex)
+        {
+          Log.Write("FireDTV: Error setting device name - device unplugged?! - {0}", ex.Message);
+        }
 
       }
       try
