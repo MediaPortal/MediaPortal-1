@@ -80,6 +80,17 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Property which indicate if we're playing a DVD Menu or not
+    /// </summary>
+    public virtual bool IsDVDMenu
+    {
+      get
+      {
+        return false;
+      }
+    }
+
+    /// <summary>
     /// Property which indicate if we're playing a TV recording or timeshifting file 
     /// </summary>
     public virtual bool IsTV

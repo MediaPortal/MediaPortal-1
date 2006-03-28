@@ -1605,6 +1605,15 @@ namespace MediaPortal.Player
         return true;
       }
     }
+
+    public override bool IsDVDMenu
+    {
+      get
+      {
+        return _menuOn;
+      }
+    }
+
     public override bool OnAction(Action action)
     {
 			try

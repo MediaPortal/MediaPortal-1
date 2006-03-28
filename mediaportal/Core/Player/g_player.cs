@@ -221,6 +221,16 @@ namespace MediaPortal.Player
         return _player.IsDVD;
       }
     }
+
+    public static bool IsDVDMenu
+    {
+      get
+      {
+        if (_player == null) return false;
+        return _player.IsDVDMenu;
+      }
+    }
+
     public static bool IsTV
     {
       get
@@ -1189,7 +1199,7 @@ namespace MediaPortal.Player
       get
       {
         if (_player == null) return false;
-        return _player.CanSeek();
+        return (_player.CanSeek() && !_player.IsDVDMenu);
       }
     }
 
