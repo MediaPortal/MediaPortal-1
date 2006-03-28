@@ -915,8 +915,18 @@ namespace MediaPortal.Player
 									_menuOn=true;
 									break;
 								case DvdDomain.Title:
-									Log.Write("EVT:DVDPlayer:domain=title (no menu)");
-									_menuOn=false;
+                  int a, b;
+                  int result = _dvdInfo.GetCurrentButton(out a, out b);
+                  if (hr == 0 && a > 0 && b > 0)
+                  {
+                    _menuOn = true;
+                    _dvdCtrl.ShowMenu(0, (DvdCmdFlags)((int)DvdCmdFlags.Block | (int)DvdCmdFlags.Flush), out _cmdOption);
+                  }
+                  else
+                  {
+                    _menuOn = false;
+                  }
+                  Log.Write("EVT:DVDPlayer:domain=title (menu:{0})",_menuOn);
 									break;  
 								default:
 									Log.Write("EVT:DvdDomChange:{0}",p1);

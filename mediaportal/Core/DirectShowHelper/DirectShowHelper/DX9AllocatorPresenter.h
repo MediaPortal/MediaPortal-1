@@ -17,6 +17,7 @@ class CVMR9AllocatorPresenter
 	: public CCritSec
 	, public IVMRSurfaceAllocator9
 	, public IVMRImagePresenter9
+  , public IVMRWindowlessControl9
 {
 
 public:
@@ -35,6 +36,58 @@ public:
     virtual HRESULT STDMETHODCALLTYPE  StopPresenting(DWORD_PTR dwUserID);
     virtual HRESULT STDMETHODCALLTYPE  PresentImage(DWORD_PTR dwUserID, VMR9PresentationInfo* lpPresInfo);
 
+    //IVMRWindowlessControl
+    virtual HRESULT STDMETHODCALLTYPE GetNativeVideoSize( 
+        /* [out] */ LONG *lpWidth,
+        /* [out] */ LONG *lpHeight,
+        /* [out] */ LONG *lpARWidth,
+        /* [out] */ LONG *lpARHeight) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE GetMinIdealVideoSize( 
+        /* [out] */ LONG *lpWidth,
+        /* [out] */ LONG *lpHeight) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE GetMaxIdealVideoSize( 
+        /* [out] */ LONG *lpWidth,
+        /* [out] */ LONG *lpHeight) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE SetVideoPosition( 
+        /* [in] */ const LPRECT lpSRCRect,
+        /* [in] */ const LPRECT lpDSTRect) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE GetVideoPosition( 
+        /* [out] */ LPRECT lpSRCRect,
+        /* [out] */ LPRECT lpDSTRect) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE GetAspectRatioMode( 
+        /* [out] */ DWORD *lpAspectRatioMode) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE SetAspectRatioMode( 
+        /* [in] */ DWORD AspectRatioMode) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE SetVideoClippingWindow( 
+        /* [in] */ HWND hwnd) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE RepaintVideo( 
+        /* [in] */ HWND hwnd,
+        /* [in] */ HDC hdc) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE DisplayModeChanged( void) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE GetCurrentImage( 
+        /* [out] */ BYTE **lpDib) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE SetBorderColor( 
+        /* [in] */ COLORREF Clr) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE GetBorderColor( 
+        /* [out] */ COLORREF *lpClr) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE SetColorKey( 
+        /* [in] */ COLORREF Clr) ;
+    
+    virtual HRESULT STDMETHODCALLTYPE GetColorKey( 
+        /* [out] */ COLORREF *lpClr) ;
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface( 
         REFIID riid,

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="dshowhelper"
 	ProjectGUID="{7C2419B3-501B-4B10-B3D4-E81BEB16843F}"
 	RootNamespace="dshowhelper"
@@ -145,7 +145,7 @@
 				AdditionalDependencies="strmbase.lib winmm.lib comsupp.lib dxguid.lib d3d9.lib d3dx9.lib"
 				OutputFile="$(OutDir)/dshowhelper.dll"
 				LinkIncremental="1"
-				IgnoreDefaultLibraryNames=""
+				IgnoreDefaultLibraryNames="libcmt.lib"
 				ModuleDefinitionFile="dshowhelper.def"
 				AddModuleNamesToAssembly=""
 				GenerateDebugInformation="true"

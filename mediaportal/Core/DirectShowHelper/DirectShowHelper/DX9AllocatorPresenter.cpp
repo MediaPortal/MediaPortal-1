@@ -89,6 +89,11 @@ HRESULT CVMR9AllocatorPresenter::QueryInterface(
         AddRef();
         hr = S_OK;
     } 
+    else if( riid == IID_IVMRWindowlessControl9  ) {
+        *ppvObject = static_cast<IVMRWindowlessControl9*>( this );
+        AddRef();
+        hr = S_OK;
+    } 
     else if( riid == IID_IUnknown ) {
         *ppvObject = 
             static_cast<IUnknown*>( 
@@ -387,4 +392,117 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRa
 	{
 		Log("vmr9:Paint() invalid exception");
 	}
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::GetNativeVideoSize( 
+/* [out] */ LONG *lpWidth,
+/* [out] */ LONG *lpHeight,
+/* [out] */ LONG *lpARWidth,
+/* [out] */ LONG *lpARHeight) 
+{
+  *lpWidth=m_iVideoWidth;
+  *lpHeight=m_iVideoHeight;
+  *lpARWidth=m_iARX;
+  *lpARHeight=m_iARY;
+  return S_OK;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::GetMinIdealVideoSize( 
+/* [out] */ LONG *lpWidth,
+/* [out] */ LONG *lpHeight)
+{
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::GetMaxIdealVideoSize( 
+/* [out] */ LONG *lpWidth,
+/* [out] */ LONG *lpHeight)
+{
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::SetVideoPosition( 
+/* [in] */ const LPRECT lpSRCRect,
+/* [in] */ const LPRECT lpDSTRect) 
+{
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::GetVideoPosition( 
+/* [out] */ LPRECT lpSRCRect,
+/* [out] */ LPRECT lpDSTRect) 
+{
+  lpSRCRect->left=0;
+  lpSRCRect->top=0;
+  lpSRCRect->right=m_iVideoWidth;
+  lpSRCRect->bottom=m_iVideoHeight;
+
+  
+  lpDSTRect->left=0;
+  lpDSTRect->top=0;
+  lpDSTRect->right=m_iVideoWidth;
+  lpDSTRect->bottom=m_iVideoHeight;
+  return S_OK;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::GetAspectRatioMode( 
+/* [out] */ DWORD *lpAspectRatioMode) 
+{
+  *lpAspectRatioMode=VMR_ARMODE_NONE;
+  return S_OK;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::SetAspectRatioMode( 
+/* [in] */ DWORD AspectRatioMode) 
+{
+  return S_OK;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::SetVideoClippingWindow( 
+/* [in] */ HWND hwnd) 
+{
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::RepaintVideo( 
+/* [in] */ HWND hwnd,
+/* [in] */ HDC hdc) 
+{
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::DisplayModeChanged( void) 
+{
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::GetCurrentImage( 
+/* [out] */ BYTE **lpDib) 
+{
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::SetBorderColor( 
+/* [in] */ COLORREF Clr) 
+{
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::GetBorderColor( 
+/* [out] */ COLORREF *lpClr) 
+{
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::SetColorKey( 
+/* [in] */ COLORREF Clr) 
+{
+  return E_NOTIMPL;
+}
+
+STDMETHODIMP CVMR9AllocatorPresenter::GetColorKey( 
+/* [out] */ COLORREF *lpClr) 
+{
+  if(lpClr) *lpClr = 0;
+	return S_OK;
 }
