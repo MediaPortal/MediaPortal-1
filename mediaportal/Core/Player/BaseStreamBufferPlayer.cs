@@ -253,6 +253,7 @@ namespace MediaPortal.Player
           if (ts.TotalSeconds > 0) break;
         } while (_duration < 4);
         */
+        UpdateDuration();
         UpdateCurrentPosition();
         double dPos = _duration - 2;
         if (dPos >= 0 && CurrentPosition < dPos)

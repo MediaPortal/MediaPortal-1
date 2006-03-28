@@ -3746,20 +3746,13 @@ namespace MediaPortal.TV.Recording
         }
         if (_currentTuningObject.PCRPid <= 0 || _currentTuningObject.PCRPid >= 0x1fff)
         {
+          Log.Write("DVBGraph: map pid 0x:{0:X} to mpg1 pin pcr:0x{1:X}", _currentTuningObject.AudioPid, _currentTuningObject.PCRPid);
           SetupDemuxer(_pinDemuxerVideo, 0, _pinDemuxerAudio, 0, _pinAC3Out, 0);
           SetupDemuxerPin(_pinMPG1Out, _currentTuningObject.AudioPid, (int)MediaSampleContent.TransportPayload, true);
           SetupDemuxerPin(_pinMPG1Out, _currentTuningObject.PCRPid, (int)MediaSampleContent.TransportPacket, false);
           //setup demuxer MTS pin
           SetupMTSDemuxerPin();
-
-          IMpeg2Demultiplexer mpeg2Demuxer = _filterMpeg2Demultiplexer as IMpeg2Demultiplexer;
-          if (mpeg2Demuxer != null)
-          {
-            Log.Write("DVBGraph:MPEG2 demultiplexer PID mapping:");
-            uint pid = 0, sampletype = 0;
-            GetPidMap(_pinMPG1Out, ref pid, ref sampletype);
-            Log.Write("DVBGraph:  Pin:mpg1 is mapped to pid:{0:x} content:{1}", pid, sampletype);
-          }
+          Log.Write("DVBGraph: render mpg1 pin");
           if (_graphBuilder.Render(_pinMPG1Out/*_pinDemuxerAudio*/) != 0)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render audio out pin MPEG-2 Demultiplexer");
@@ -3768,7 +3761,7 @@ namespace MediaPortal.TV.Recording
         }
         else
         {
-          //Log.WriteFile(Log.LogType.Log,"DVBGraph:StartRadio() render demux output pin");
+          Log.Write("DVBGraph: render audio pin");
           if (_graphBuilder.Render(_pinDemuxerAudio) != 0)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render audio out pin MPEG-2 Demultiplexer");
@@ -3794,7 +3787,6 @@ namespace MediaPortal.TV.Recording
         {
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph: FAILED cannot get IMediaControl");
         }
-
 
         TuneRadioChannel(station);
         _isGraphRunning = true;

@@ -1301,7 +1301,8 @@ namespace MediaPortal.TV.Recording
     {
       if (!IsRadio)
       {
-        //DeleteGraph();TESTTEST
+
+        StopEpgGrabbing();
         StopTimeShifting();
         StopViewing();
         if (!CreateGraph()) return;
