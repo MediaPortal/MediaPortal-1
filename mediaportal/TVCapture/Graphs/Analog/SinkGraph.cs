@@ -373,6 +373,11 @@ namespace MediaPortal.TV.Recording
         if (recording.Quality == TVRecording.QualityType.High)
           SetQuality(3);
       }
+      else
+      {
+        //use default quality
+        SetQuality(4);
+      }
       SetFrameRateAndSize();
       _mpeg2DemuxHelper.Record(attribtutes, strFileName, bContentRecording, timeProgStart, _startTime);
       _graphState = State.Recording;
@@ -1326,6 +1331,11 @@ namespace MediaPortal.TV.Recording
         bool enabled = xmlreader.GetValueAsBool("quality", "enabled", false);
         if (!enabled) return;
 
+        int defaultQuality = xmlreader.GetValueAsInt("quality", "default", 2);
+        if (Quality == 4)
+        {
+          Quality = defaultQuality;
+        }
         int portableMinKbps = xmlreader.GetValueAsInt("quality", "portLow", 100);
         int portableMaxKbps = xmlreader.GetValueAsInt("quality", "portMax", 300);
         bool portableVBR = xmlreader.GetValueAsBool("quality", "portVBR", false);
