@@ -1266,7 +1266,7 @@ namespace MediaPortal.Configuration
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings(filename))
         {
           xmlwriter.SetValueAsBool("quality", "enabled", checkBoxHiQuality.Checked);
-          xmlwriter.SetValueAsInt("quality", "default", comboBoxQuality.SelectedIndex);
+          xmlwriter.SetValue("quality", "default", comboBoxQuality.SelectedIndex);
           xmlwriter.SetValue("mapping", "audio1", comboBox1Audio.SelectedIndex);
           xmlwriter.SetValue("mapping", "audio2", comboBox2Audio.SelectedIndex);
           xmlwriter.SetValue("mapping", "audio3", comboBox3Audio.SelectedIndex);
