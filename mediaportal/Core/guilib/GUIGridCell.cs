@@ -203,18 +203,18 @@ namespace MediaPortal.GUI.Library
       return null;
     }
 
-    public GUIGridCell OnUp()
+    public GUIGridCell OnUp(int x)
     {
       GUIGridRow row = Row.GetRowAt(_control.YPosition - 1);
       if (row == null) return null;
-      return GetColumnAt(row, _control.XPosition);
+      return GetColumnAt(row, x);
     }
 
-    public GUIGridCell OnDown()
+    public GUIGridCell OnDown(int x)
     {
       GUIGridRow row = Row.GetRowAt(_control.YPosition + Row.RenderHeight + 1);
       if (row == null) return null;
-      return GetColumnAt(row, _control.XPosition);
+      return GetColumnAt(row, x);
     }
 
     public GUIGridCell OnLeft()
