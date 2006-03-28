@@ -40,9 +40,11 @@ namespace ThumbDBLib
 
       try
       {
-        using (ThumbnailCreator creator = new ThumbnailCreator())
+        using (ThumbnailCreatorNet creator = new ThumbnailCreatorNet())
+        //using (ThumbnailCreator creator = new ThumbnailCreator())
         {
-          creator.DesiredSize = new Size(128, 128);
+          //creator.DesiredSize = new Size(128, 128);
+          creator.SetParams(128, 128, false, true);
           using (Image image = creator.GetThumbNail(fileName))
           {
             AddThumbnail(fileName, image);

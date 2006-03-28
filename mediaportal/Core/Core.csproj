@@ -275,6 +275,7 @@
     <Compile Include="Player\IPlayerFactory.cs" />
     <Compile Include="ThumbDbLib\Thumbnail.cs" />
     <Compile Include="ThumbDbLib\ThumbnailCreator.cs" />
+    <Compile Include="ThumbDbLib\ThumbnailCreatorNet.cs" />
     <Compile Include="ThumbDbLib\ThumbnailDatabase.cs" />
     <Compile Include="ThumbDbLib\ThumbnailDatabaseCache.cs" />
     <Compile Include="UserInterfaceControls\MPContextMenuStrip.cs">
