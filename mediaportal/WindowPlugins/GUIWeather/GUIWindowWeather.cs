@@ -1379,9 +1379,9 @@ namespace MediaPortal.GUI.Weather
         System.Drawing.Image img = (Image)image.Clone();
         clockImage.IsVisible = false;
         clockImage.FileName = "";
-        GUITextureManager.ReleaseTexture("#useMemoryImage");
+        GUITextureManager.ReleaseTexture("[weatherImage]");
         clockImage.MemoryImage = img;
-        clockImage.FileName = "#useMemoryImage";
+        clockImage.FileName = "[weatherImage]";
         clockImage.IsVisible = true;
       }
     }

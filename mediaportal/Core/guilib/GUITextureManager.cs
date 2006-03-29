@@ -489,8 +489,8 @@ namespace MediaPortal.GUI.Library
     static public Image GetImage(string fileNameOrg)
     {
       string fileName = GetFileName(fileNameOrg);
-      if (fileNameOrg == "#useMemoryImage")
-        fileName = "useMemoryImage";
+      if (fileNameOrg.StartsWith == "[")
+        fileName = fileNameOrg;
       if (fileName == "") return null;
 
       for (int i = 0; i < _cache.Count; ++i)
