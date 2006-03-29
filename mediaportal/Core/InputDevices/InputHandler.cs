@@ -381,32 +381,53 @@ namespace MediaPortal.InputDevices
                   found = map;
                 break;
               case "FULLSCREEN":  // Fullscreen = true/false
-                if (GUIGraphicsContext.IsFullScreenVideo == Convert.ToBoolean(map.ConProperty))
+                if ((GUIGraphicsContext.IsFullScreenVideo == Convert.ToBoolean(map.ConProperty)) && !GUIWindowManager.IsRouted)
                   found = map;
                 break;
               case "PLAYER":  // Playing TV/DVD/general
-                switch (map.ConProperty)
-                {
-                  case "TV":
-                    if (g_Player.IsTV)
-                      found = map;
-                    break;
-                  case "DVD":
-                    if (g_Player.IsDVD)
-                      found = map;
-                    break;
-                  case "MEDIA":
-                    if (g_Player.Playing)
-                      found = map;
-                    break;
-                }
+                if (!GUIWindowManager.IsRouted)
+                  switch (map.ConProperty)
+                  {
+                    case "TV":
+                      if (g_Player.IsTV)
+                        found = map;
+                      break;
+                    case "DVD":
+                      if (g_Player.IsDVD)
+                        found = map;
+                      break;
+                    case "MEDIA":
+                      if (g_Player.Playing)
+                        found = map;
+                      break;
+                  }
                 break;
             }
             if (found != null)
             {
+              Log.Write("MAP: Button mapping found");
+              Log.Write("GUIWindowManager.ActiveWindowEx: {0}", GUIWindowManager.ActiveWindowEx);
+              Log.Write("GUIWindowManager.ActiveWindow: {0}", GUIWindowManager.ActiveWindow);
+              Log.Write("GUIWindowManager.IsRouted: {0}", GUIWindowManager.IsRouted);
+              Log.Write("GUIWindowManager.RoutedWindow: {0}", GUIWindowManager.RoutedWindow);
+              Log.Write("GUIGraphicsContext.Overlay: {0}", GUIGraphicsContext.Overlay);
+              Log.Write("CmdKeyChar : {0}", found.CmdKeyChar);
+              Log.Write("CmdKeyCode : {0}", found.CmdKeyCode);
+              Log.Write("CmdProperty: {0}", found.CmdProperty);
+              Log.Write("Command    : {0}", found.Command);
+              Log.Write("Condition  : {0}", found.Condition);
+              Log.Write("ConProperty: {0}", found.ConProperty);
+              Log.Write("Layer      : {0}", found.Layer);
+              Log.Write("Sound      : {0}", found.Sound);
               return found;
             }
           }
+      Log.Write("MAP: No button mapping found");
+      Log.Write("GUIWindowManager.ActiveWindowEx: {0}", GUIWindowManager.ActiveWindowEx);
+      Log.Write("GUIWindowManager.ActiveWindow: {0}", GUIWindowManager.ActiveWindow);
+      Log.Write("GUIWindowManager.IsRouted: {0}", GUIWindowManager.IsRouted);
+      Log.Write("GUIWindowManager.RoutedWindow: {0}", GUIWindowManager.RoutedWindow);
+      Log.Write("GUIGraphicsContext.Overlay: {0}", GUIGraphicsContext.Overlay);
       throw new ApplicationException("No button mapping found");
     }
   }
