@@ -304,7 +304,7 @@ namespace MediaPortal.GUI.TV
       }
       if (_isOsdVisible)
       {
-        if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI)) && !_osdWindow.SubMenuVisible) // hide the OSD
+        if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI) || (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)) && !_osdWindow.SubMenuVisible) // hide the OSD
         {
           lock (this)
           {
@@ -390,7 +390,7 @@ namespace MediaPortal.GUI.TV
       }
       else if (_zapOsdVisible)
       {
-        if ((action.wID == Action.ActionType.ACTION_SHOW_GUI) || (action.wID == Action.ActionType.ACTION_SHOW_OSD))
+        if ((action.wID == Action.ActionType.ACTION_SHOW_GUI) || (action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU))
         {
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
           _zapWindow.OnMessage(msg);
@@ -521,13 +521,6 @@ namespace MediaPortal.GUI.TV
           }
           break;
 
-        case Action.ActionType.ACTION_PREVIOUS_MENU:
-          {
-            Log.Write("fullscreentv:goto previous menu");
-            GUIWindowManager.ShowPreviousWindow();
-            return;
-          }
-
         case Action.ActionType.ACTION_REWIND:
           {
             if (g_Player.IsTimeShifting)
@@ -555,6 +548,7 @@ namespace MediaPortal.GUI.TV
           }
           break;
 
+        case Action.ActionType.ACTION_PREVIOUS_MENU:
         case Action.ActionType.ACTION_SHOW_GUI:
           Log.Write("fullscreentv:show gui");
           //if(_vmr9OSD!=null)

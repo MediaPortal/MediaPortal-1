@@ -404,30 +404,8 @@ namespace MediaPortal.InputDevices
                 break;
             }
             if (found != null)
-            {
-              Log.Write("MAP: Button mapping found");
-              Log.Write("GUIWindowManager.ActiveWindowEx: {0}", GUIWindowManager.ActiveWindowEx);
-              Log.Write("GUIWindowManager.ActiveWindow: {0}", GUIWindowManager.ActiveWindow);
-              Log.Write("GUIWindowManager.IsRouted: {0}", GUIWindowManager.IsRouted);
-              Log.Write("GUIWindowManager.RoutedWindow: {0}", GUIWindowManager.RoutedWindow);
-              Log.Write("GUIGraphicsContext.Overlay: {0}", GUIGraphicsContext.Overlay);
-              Log.Write("CmdKeyChar : {0}", found.CmdKeyChar);
-              Log.Write("CmdKeyCode : {0}", found.CmdKeyCode);
-              Log.Write("CmdProperty: {0}", found.CmdProperty);
-              Log.Write("Command    : {0}", found.Command);
-              Log.Write("Condition  : {0}", found.Condition);
-              Log.Write("ConProperty: {0}", found.ConProperty);
-              Log.Write("Layer      : {0}", found.Layer);
-              Log.Write("Sound      : {0}", found.Sound);
               return found;
-            }
           }
-      Log.Write("MAP: No button mapping found");
-      Log.Write("GUIWindowManager.ActiveWindowEx: {0}", GUIWindowManager.ActiveWindowEx);
-      Log.Write("GUIWindowManager.ActiveWindow: {0}", GUIWindowManager.ActiveWindow);
-      Log.Write("GUIWindowManager.IsRouted: {0}", GUIWindowManager.IsRouted);
-      Log.Write("GUIWindowManager.RoutedWindow: {0}", GUIWindowManager.RoutedWindow);
-      Log.Write("GUIGraphicsContext.Overlay: {0}", GUIGraphicsContext.Overlay);
       throw new ApplicationException("No button mapping found");
     }
   }

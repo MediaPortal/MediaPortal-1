@@ -147,8 +147,6 @@
 		<button name="Ch. Search" code="97">
 		</button>
 		<button name="Back/Delete" code="98">
-			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="10" sound="back.wav" />
-			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="18" sound="back.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
 		</button>
 		<button name="Rename" code="151">

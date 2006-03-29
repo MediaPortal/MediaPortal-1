@@ -153,6 +153,7 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_OSD_HIDESUBMENU:
           break;
+        case Action.ActionType.ACTION_PREVIOUS_MENU:
         case Action.ActionType.ACTION_SHOW_OSD:
           {
             if (m_bSubMenuOn)						// is sub menu on?

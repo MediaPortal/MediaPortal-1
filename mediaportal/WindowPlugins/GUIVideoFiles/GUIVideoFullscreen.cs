@@ -213,7 +213,7 @@ namespace MediaPortal.GUI.Video
 
     void OnOsdAction(Action action)
     {
-      if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI)) && !m_osdWindow.SubMenuVisible) // hide the OSD
+      if (((action.wID == Action.ActionType.ACTION_SHOW_OSD) || (action.wID == Action.ActionType.ACTION_SHOW_GUI) || (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)) && !m_osdWindow.SubMenuVisible) // hide the OSD
       {
         lock (this)
         {
@@ -265,11 +265,7 @@ namespace MediaPortal.GUI.Video
         else
         {
           // route unhandled actions to OSD window
-          if (!m_osdWindow.SubMenuVisible)
-          {
-            m_osdWindow.OnAction(action);
-
-          }
+          m_osdWindow.OnAction(action);
         }
       }
       return;
@@ -385,6 +381,7 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
+        case Action.ActionType.ACTION_PREVIOUS_MENU:
         case Action.ActionType.ACTION_SHOW_GUI:
           {
             // switch back to the menu
