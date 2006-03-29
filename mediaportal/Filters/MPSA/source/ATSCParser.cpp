@@ -316,6 +316,7 @@ void ATSCParser::ATSCDecodeChannelEIT(byte* buf, int len)
 }
 void ATSCParser::ATSCDecodeEPG(byte* buf, int len)
 {
+  return;
 	try
 	{
 		CAutoLock lock(&m_Lock);
@@ -491,12 +492,7 @@ void ATSCParser::ATSCDecodeChannelTable(BYTE *buf,ChannelInfo *ch, int* channels
 
 			start += 18;
 			int len=0;
-			if (descriptors_length<=0)
-			{
-				*channelsFound=0;
-				return;
-			}
-			while (len < descriptors_length)
+			while (len < descriptors_length && descriptors_length>0)
 			{
 				int descriptor_tag = buf[start+len];
 				int descriptor_len = buf[start+len+1];

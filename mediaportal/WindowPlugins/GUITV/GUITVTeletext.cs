@@ -418,10 +418,10 @@ namespace MediaPortal.GUI.TV
           imgTeletextPage.IsVisible = false;
 					imgTeletextPage.FileName="";
 					//Utils.FileDelete(@"teletext.jpg");
-					GUITextureManager.ReleaseTexture("#useMemoryImage");
+					GUITextureManager.ReleaseTexture("[teletextpage]");
           //bitmapTeletextPage.Save(@"teletext.jpg",System.Drawing.Imaging.ImageFormat.Jpeg);
           imgTeletextPage.MemoryImage = img;
-					imgTeletextPage.FileName="#useMemoryImage";
+          imgTeletextPage.FileName = "[teletextpage]";
 					imgTeletextPage.IsVisible=true;
 				}
 			}

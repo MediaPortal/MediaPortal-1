@@ -391,11 +391,11 @@ namespace MediaPortal.GUI.TV
           System.Drawing.Image img = (Image)bmpTeletextPage.Clone();
           imgTeletext.IsVisible = false;
           imgTeletext.FileName = "";
-          GUITextureManager.ReleaseTexture("#useMemoryImage");
+          GUITextureManager.ReleaseTexture("[teletextpage]");
           Utils.FileDelete(@"teletext.png");
           //img.Save(@"teletext.png",System.Drawing.Imaging.ImageFormat.Png);
           imgTeletext.MemoryImage = img;
-          imgTeletext.FileName = "#useMemoryImage";
+          imgTeletext.FileName = "[teletextpage]";
           imgTeletext.ColorKey = System.Drawing.Color.HotPink.ToArgb();
           imgTeletext.IsVisible = true;
           imgTeletext.Centered = false;
