@@ -489,7 +489,7 @@ namespace MediaPortal.GUI.Library
     static public Image GetImage(string fileNameOrg)
     {
       string fileName = GetFileName(fileNameOrg);
-      if (fileNameOrg.StartsWith == "[")
+      if (fileNameOrg.StartsWith("["))
         fileName = fileNameOrg;
       if (fileName == "") return null;
 

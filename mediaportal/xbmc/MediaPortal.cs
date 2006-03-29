@@ -275,37 +275,37 @@ public class MediaPortalApp : D3DApp, IRender
       try
       {
 #endif
-        if (splashScreen != null)
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Initializing DirectX...");
+      }
+      MediaPortalApp app = new MediaPortalApp();
+      Log.Write("  initializing DirectX");
+      if (app.CreateGraphicsSample())
+      {
+        IMessageFilter filter = new ThreadMessageFilter(app);
+        Application.AddMessageFilter(filter);
+        try
         {
-          splashScreen.SetInformation("Initializing DirectX...");
+          //app.PreRun();
+          Log.Write("running...");
+          GUIGraphicsContext.BlankScreen = false;
+          Application.Run(app);
+          Debug.WriteLine("after Application.Run");
         }
-        MediaPortalApp app = new MediaPortalApp();
-        Log.Write("  initializing DirectX");
-        if (app.CreateGraphicsSample())
+        //#if !DEBUG
+        catch (Exception ex)
         {
-          IMessageFilter filter = new ThreadMessageFilter(app);
-          Application.AddMessageFilter(filter);
-          try
-          {
-            //app.PreRun();
-            Log.Write("running...");
-            GUIGraphicsContext.BlankScreen = false;
-            Application.Run(app);
-            Debug.WriteLine("after Application.Run");
-          }
-          //#if !DEBUG
-          catch (Exception ex)
-          {
-            Log.Write(ex);
-            Log.WriteFile(Log.LogType.Log, true, "MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-          }
-          //#endif
-          finally
-          {
-            Application.RemoveMessageFilter(filter);
-          }
-          app.OnExit();
+          Log.Write(ex);
+          Log.WriteFile(Log.LogType.Log, true, "MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
         }
+        //#endif
+        finally
+        {
+          Application.RemoveMessageFilter(filter);
+        }
+        app.OnExit();
+      }
 #if !DEBUG
       }
       catch (Exception ex)
@@ -578,7 +578,7 @@ public class MediaPortalApp : D3DApp, IRender
           //The PBT_APMQUERYSTANDBY message is sent to request permission to suspend the computer.
           //An application that grants permission should carry out preparations for the suspension before returning.
           //Return TRUE to grant the request to suspend. To deny the request, return BROADCAST_QUERY_DENY.
-          case PBT_APMQUERYSTANDBY: 
+          case PBT_APMQUERYSTANDBY:
             // Stop all media before suspending or hibernating
             Log.Write("  windows wants to go to standbye mode!");
             OnSuspend();
@@ -1262,8 +1262,8 @@ public class MediaPortalApp : D3DApp, IRender
       }
       switch (action.wID)
       {
+        // record current tv program
         case Action.ActionType.ACTION_RECORD:
-          // record current program
           GUIWindow tvHome = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
           if (tvHome != null)
           {
@@ -1274,6 +1274,8 @@ public class MediaPortalApp : D3DApp, IRender
             }
           }
           break;
+
+        //show DVD menu
         case Action.ActionType.ACTION_DVD_MENU:
           if (g_Player.IsDVD && g_Player.Playing)
           {
@@ -1281,6 +1283,8 @@ public class MediaPortalApp : D3DApp, IRender
             return;
           }
           break;
+
+        //DVD: goto next chapter
         case Action.ActionType.ACTION_NEXT_CHAPTER:
           if (g_Player.IsDVD && g_Player.Playing)
           {
@@ -1288,6 +1292,8 @@ public class MediaPortalApp : D3DApp, IRender
             return;
           }
           break;
+
+        //DVD: goto previous chapter
         case Action.ActionType.ACTION_PREV_CHAPTER:
           if (g_Player.IsDVD && g_Player.Playing)
           {
@@ -1295,46 +1301,59 @@ public class MediaPortalApp : D3DApp, IRender
             return;
           }
           break;
+
+        //TV: zap to previous channel
         case Action.ActionType.ACTION_PREV_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
             window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
+            return;
           }
-          return;
+          break;
 
+        //TV: zap to next channel
         case Action.ActionType.ACTION_NEXT_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
             window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
+            return;
           }
-          return;
+          break;
 
+        //TV: zap to last channel viewed
         case Action.ActionType.ACTION_LAST_VIEWED_CHANNEL: // mPod
           if (!GUIWindowManager.IsRouted)
           {
             window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
+            return;
           }
-          return;
+          break;
+
+        //toggle between directx windowed and exclusive mode
         case Action.ActionType.ACTION_TOGGLE_WINDOWED_FULSLCREEN:
           ToggleFullWindowed();
           return;
         //break;
 
+        //mute or unmute audio
         case Action.ActionType.ACTION_VOLUME_MUTE:
           VolumeHandler.Instance.IsMuted = !VolumeHandler.Instance.IsMuted;
           break;
 
+        //decrease volume 
         case Action.ActionType.ACTION_VOLUME_DOWN:
           VolumeHandler.Instance.Volume = VolumeHandler.Instance.Previous;
           return;
 
+        //increase volume 
         case Action.ActionType.ACTION_VOLUME_UP:
           VolumeHandler.Instance.Volume = VolumeHandler.Instance.Next;
           break;
 
+        //toggle live tv in background
         case Action.ActionType.ACTION_BACKGROUND_TOGGLE:
 
           //show livetv or video as background instead of the static GUI background
@@ -1366,6 +1385,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
           return;
 
+        //switch between several home windows
         case Action.ActionType.ACTION_SWITCH_HOME:
           if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_HOME)
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
@@ -1380,6 +1400,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
           return;
 
+        //exit mediaportal
         case Action.ActionType.ACTION_EXIT:
           Log.Write("Mediaportal action exit()");
           // is the minimize on gui option set?  If so, minimize to tray...
@@ -1414,6 +1435,7 @@ public class MediaPortalApp : D3DApp, IRender
           GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
           return;
 
+        //reboot pc
         case Action.ActionType.ACTION_REBOOT:
           {
             //reboot
@@ -1446,10 +1468,12 @@ public class MediaPortalApp : D3DApp, IRender
           }
           return;
 
+        //eject cd
         case Action.ActionType.ACTION_EJECTCD:
           Utils.EjectCDROM();
           return;
 
+        //shutdown pc
         case Action.ActionType.ACTION_SHUTDOWN:
           {
             Log.Write("Mediaportal: show shutdown/restart/sleep dialog");
@@ -1521,6 +1545,7 @@ public class MediaPortalApp : D3DApp, IRender
             break;
           }
 
+        //stop radio
         case Action.ActionType.ACTION_STOP:
           if (Recorder.IsRadio())
           {
@@ -1533,6 +1558,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         switch (action.wID)
         {
+          //switch between GUI and fullscreen video/tv
           case Action.ActionType.ACTION_SHOW_GUI:
             if (!GUIGraphicsContext.IsFullScreenVideo)
             {
@@ -1558,32 +1584,33 @@ public class MediaPortalApp : D3DApp, IRender
             }
             break;
 
+          //play previous item from playlist;
           case Action.ActionType.ACTION_PREV_ITEM:
-            if (ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
+            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
             {
-              return;
+              playlistPlayer.PlayPrevious();
             }
-            playlistPlayer.PlayPrevious();
             break;
 
+          //play next item from playlist;
           case Action.ActionType.ACTION_NEXT_ITEM:
-            if (ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
+            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
             {
-              return;
+              playlistPlayer.PlayNext();
             }
-            playlistPlayer.PlayNext();
             break;
 
+          //stop playback
           case Action.ActionType.ACTION_STOP:
             if (!GUIGraphicsContext.IsFullScreenVideo)
             {
               Log.Write("App.Onaction() stop media");
               g_Player.Stop();
-
               return;
             }
             break;
 
+          //play music
           case Action.ActionType.ACTION_MUSIC_PLAY:
             if (!GUIGraphicsContext.IsFullScreenVideo)
             {
@@ -1598,6 +1625,7 @@ public class MediaPortalApp : D3DApp, IRender
             }
             break;
 
+          //pause (or resume playback)
           case Action.ActionType.ACTION_PAUSE:
             if (!GUIGraphicsContext.IsFullScreenVideo)
             {
@@ -1606,6 +1634,7 @@ public class MediaPortalApp : D3DApp, IRender
             }
             break;
 
+          //resume playback
           case Action.ActionType.ACTION_PLAY:
             if (!GUIGraphicsContext.IsFullScreenVideo)
             {
@@ -1621,7 +1650,7 @@ public class MediaPortalApp : D3DApp, IRender
             }
             break;
 
-
+          //fast forward...
           case Action.ActionType.ACTION_FORWARD:
           case Action.ActionType.ACTION_MUSIC_FORWARD:
             if (!GUIGraphicsContext.IsFullScreenVideo)
@@ -1633,6 +1662,8 @@ public class MediaPortalApp : D3DApp, IRender
               }
             }
             break;
+
+          //fast rewind...
           case Action.ActionType.ACTION_REWIND:
           case Action.ActionType.ACTION_MUSIC_REWIND:
             if (!GUIGraphicsContext.IsFullScreenVideo)
@@ -1669,15 +1700,25 @@ public class MediaPortalApp : D3DApp, IRender
   {
     GUIGraphicsContext.BlankScreen = false;
     char keyc = e.KeyChar;
-
-    Log.Write("key:{0} 0x{1:X} (2)", (int)keyc, (int)keyc, keyc);
+    // Log.Write("key:{0} 0x{1:X} (2)", (int)keyc, (int)keyc, keyc);
     Key key = new Key(e.KeyChar, 0);
     Action action = new Action();
     if (GUIWindowManager.IsRouted)
     {
       screenSaverTimer = DateTime.Now;
-      action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
-      GUIGraphicsContext.OnAction(action);
+      if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
+      {
+        if (action.SoundFileName.Length > 0)
+        {
+          Utils.PlaySound(action.SoundFileName, false, true);
+        }
+        GUIGraphicsContext.OnAction(action);
+      }
+      else
+      {
+        action = new Action(key, Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+        GUIGraphicsContext.OnAction(action);
+      }
       return;
     }
 

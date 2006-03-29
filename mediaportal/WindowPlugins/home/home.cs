@@ -145,7 +145,8 @@ namespace MediaPortal.GUI.Home
 		/// </summary>
 		/// <returns>A bool containing true if the initialization was perfomed correctly.</returns>
 		public override bool Init()
-		{
+    {
+      GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
 			return Load (GUIGraphicsContext.Skin+@"\home.xml");			
 		}
 
@@ -200,7 +201,6 @@ namespace MediaPortal.GUI.Home
 			plugins=null;
 			m_iCurrentButton=m_iButtons/2;
 			LayoutButtons(0);
-			GUIWindowManager.Receivers += new SendMessageHandler(OnGlobalMessage);
 			topBar.UseTopBarSub=false;
 			topBarHome.UseTopBarSub=false;
 		}
