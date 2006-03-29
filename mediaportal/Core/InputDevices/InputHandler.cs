@@ -377,7 +377,7 @@ namespace MediaPortal.InputDevices
                 found = map;
                 break;
               case "WINDOW":  // Window-ID = x
-                if (GUIWindowManager.ActiveWindow == Convert.ToInt32(map.ConProperty))
+                if (GUIWindowManager.ActiveWindowEx == Convert.ToInt32(map.ConProperty))
                   found = map;
                 break;
               case "FULLSCREEN":  // Fullscreen = true/false
