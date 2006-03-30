@@ -49,7 +49,7 @@ namespace MediaPortal.EPG.TestWebEPG
         epg.Import();
         Log.WriteFile(Log.LogType.Log, false, "WebEPG: Finished");
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.WriteFile(Log.LogType.Log, true, "WebEPG: Fatal Error");
         Log.WriteFile(Log.LogType.Log, true, "WebEPG: {0}", ex.Message);

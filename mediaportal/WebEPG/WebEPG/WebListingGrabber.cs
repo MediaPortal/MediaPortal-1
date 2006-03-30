@@ -544,7 +544,11 @@ namespace MediaPortal.EPG
           Log.WriteFile(Log.LogType.Log, false, "WebEPG: Reading {0}", strLinkURL);
           Thread.Sleep(_grabDelay);
           Profiler SubProfile = _templateSubProfile.GetPageProfiler(strLinkURL);
-          int Count = SubProfile.subProfileCount();
+          int Count = 0;
+          if (SubProfile != null)
+            Count = SubProfile.subProfileCount();
+          else
+            Log.WriteFile(Log.LogType.Log, true, "Linked page error");
 
           if(Count > 0)
           {
