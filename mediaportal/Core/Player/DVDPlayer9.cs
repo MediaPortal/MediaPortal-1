@@ -58,14 +58,14 @@ namespace MediaPortal.Player
       _freeNavigator=true;
       _dvdInfo=null;
       _dvdCtrl=null;
-			_videoWin=null;
+      _videoWin=null;
       string dvdDNavigator="DVD Navigator";
       string aspectRatio="";
       string displayMode="";
       using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-				dvdDNavigator=xmlreader.GetValueAsString("dvdplayer","navigator","DVD Navigator");
-				aspectRatio=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
+	    dvdDNavigator=xmlreader.GetValueAsString("dvdplayer","navigator","DVD Navigator");
+		aspectRatio=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
         if ( aspectRatio=="crop") arMode=AspectRatioMode.Crop;
         if ( aspectRatio=="letterbox") arMode=AspectRatioMode.LetterBox;
         if ( aspectRatio=="stretch") arMode=AspectRatioMode.Stretched;
@@ -78,9 +78,9 @@ namespace MediaPortal.Player
         if (displayMode == "4:3 letterbox") _videoPref = DvdPreferredDisplayMode.Display4x3LetterBoxPreferred;
       }
 
-      Log.Write("DVD:enable dx9 exclusive mode");
-			GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
-			GUIWindowManager.SendMessage(msg);
+        Log.Write("DVD:enable dx9 exclusive mode");
+	    GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
+	    GUIWindowManager.SendMessage(msg);
 
       try 
       {
@@ -128,18 +128,18 @@ namespace MediaPortal.Player
 				Guid riid ;
 
         if (_dvdInfo==null)
-				{
-					Log.Write("Dvdplayer9:volume rendered, get interfaces");
-          riid = typeof( IDvdInfo2 ).GUID;
-          hr = _dvdGraph.GetDvdInterface(  riid, out comobj );
-          if( hr < 0 )
-            Marshal.ThrowExceptionForHR( hr );
-          _dvdInfo = (IDvdInfo2) comobj; comobj = null;
+		{
+		    Log.Write("Dvdplayer9:volume rendered, get interfaces");
+            riid = typeof( IDvdInfo2 ).GUID;
+            hr = _dvdGraph.GetDvdInterface(  riid, out comobj );
+            if( hr < 0 )
+                Marshal.ThrowExceptionForHR( hr );
+            _dvdInfo = (IDvdInfo2) comobj; comobj = null;
         }
 
         if (_dvdCtrl==null)
         {
-					Log.Write("Dvdplayer9: get IDvdControl2");
+		  Log.Write("Dvdplayer9: get IDvdControl2");
           riid = typeof( IDvdControl2 ).GUID;
           hr = _dvdGraph.GetDvdInterface(  riid, out comobj );
           if( hr < 0 )
@@ -157,8 +157,6 @@ namespace MediaPortal.Player
         _basicAudio	= _graphBuilder as IBasicAudio;
         _mediaPos	= (IMediaPosition) _graphBuilder;
         _basicVideo	= _graphBuilder as IBasicVideo2;
-
-      
 
         Log.Write("Dvdplayer9:disable line 21");
         // disable Closed Captions!
@@ -189,20 +187,18 @@ namespace MediaPortal.Player
         //m_ovMgr = new OVTOOLLib.OvMgrClass();
         //m_ovMgr.SetGraph(_graphBuilder);
 
-
-
         _videoWidth=_vmr9.VideoWidth;
         _videoHeight=_vmr9.VideoHeight;
 
-
-				if (!_vmr9.IsVMR9Connected)
-				{
-					Log.Write("DVDPlayer9:failed vmr9 not connected");
-					_mediaCtrl=null;
-					Cleanup();
-					return base.GetInterfaces(path);
-				}
-				_vmr9.SetDeinterlaceMode();
+        if (!_vmr9.IsVMR9Connected)
+		{
+		    Log.Write("DVDPlayer9:failed vmr9 not connected");
+			_mediaCtrl=null;
+			Cleanup();
+			return base.GetInterfaces(path);
+		}
+		
+        _vmr9.SetDeinterlaceMode();
         Log.Write("Dvdplayer9:graph created");
         _started=true;
         return true;
@@ -235,10 +231,10 @@ namespace MediaPortal.Player
 					hr = _mediaCtrl.Stop();
 					_mediaCtrl = null;
 				}
-        _state = PlayState.Stopped;
+                _state = PlayState.Stopped;
 				_visible=false;
 
-        _mediaEvt = null;
+                _mediaEvt = null;
 				_dvdCtrl = null;
 				_dvdInfo = null;
 				_basicVideo=null;
@@ -248,7 +244,7 @@ namespace MediaPortal.Player
 
 				if (_vmr9!=null) 
 				{
-          _vmr9.Dispose();
+                    _vmr9.Dispose();
 				}
 				_vmr9=null;
 
@@ -280,7 +276,7 @@ namespace MediaPortal.Player
         if( _cmdOption!= null )
           Marshal.ReleaseComObject( _cmdOption ); 
 				_cmdOption= null;
-        _pendingCmd = false;
+                _pendingCmd = false;
 
 				if( _dvdbasefilter != null )
 				{
@@ -335,6 +331,11 @@ namespace MediaPortal.Player
     {
       //_sourceRectangle=m_scene.SourceRect;
       //_videoRectangle=m_scene.DestRect;
+    }
+
+    protected override void Repaint()
+    {
+        _vmr9.Repaint();
     }
   }
 }

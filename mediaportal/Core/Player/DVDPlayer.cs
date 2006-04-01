@@ -827,7 +827,7 @@ namespace MediaPortal.Player
 							_currTitle = p1;
 							SelectSubtitleLanguage(_subtitleLanguage);
 
-              DvdHMSFTimeCode totaltime = new DvdHMSFTimeCode();
+                            DvdHMSFTimeCode totaltime = new DvdHMSFTimeCode();
 							DvdTimeCodeFlags         ulTimeCodeFlags; 
 							_dvdInfo.GetTotalTitleTime(  totaltime, out ulTimeCodeFlags );
           
@@ -837,9 +837,7 @@ namespace MediaPortal.Player
 
 							break;
 						}
-	          
-				
-						case EventCode.DvdCmdStart:
+                        case EventCode.DvdCmdStart:
 						{
 							if( _pendingCmd )
 								Log.Write( "  DvdCmdStart with pending" );
@@ -850,7 +848,6 @@ namespace MediaPortal.Player
 							OnCmdComplete( p1, p2 );
 							break;
 						}
-
 						case EventCode.DvdStillOn:
 						{
 							Log.Write("EVT:DvdStillOn:{0}",p1);
@@ -869,7 +866,29 @@ namespace MediaPortal.Player
 						}
 						case EventCode.DvdButtonChange:
 						{
-							Log.Write("EVT:DvdButtonChange: buttons:#{0}",p1);
+                            Repaint();
+                            
+                            // Menu buttons might not be available even if the menu is on
+                            // (buttons appear after menu animation) ( DvdDomain.VideoManagerMenu or 
+                            // DvdDomain.VideoTitleSetMenu event is already received at that point )
+                            if (!_menuOn)
+                            {
+                                int buttonCount, focusedButton;
+                                int result = _dvdInfo.GetCurrentButton(out buttonCount, out focusedButton);
+                                if (result == 0 && buttonCount > 0 && focusedButton > 0)
+                                {
+                                    // Menu button(s) found, enable menu
+                                    _menuOn = true;
+                                    _dvdCtrl.ShowMenu(0, (DvdCmdFlags)((int)DvdCmdFlags.Block | (int)DvdCmdFlags.Flush), out _cmdOption);
+                                }
+                                else
+                                {
+                                    _menuOn = false;
+                                }
+                                Log.Write("EVT:DVDPlayer:domain=title (menu:{0})", _menuOn);
+                            }
+                            
+                            Log.Write("EVT:DvdButtonChange: buttons:#{0}",p1);
 							if( p1 <= 0 )
 								_menuMode = MenuMode.No;
 							else
@@ -915,18 +934,7 @@ namespace MediaPortal.Player
 									_menuOn=true;
 									break;
 								case DvdDomain.Title:
-                  int a, b;
-                  int result = _dvdInfo.GetCurrentButton(out a, out b);
-                  if (hr == 0 && a > 0 && b > 0)
-                  {
-                    _menuOn = true;
-                    _dvdCtrl.ShowMenu(0, (DvdCmdFlags)((int)DvdCmdFlags.Block | (int)DvdCmdFlags.Flush), out _cmdOption);
-                  }
-                  else
-                  {
-                    _menuOn = false;
-                  }
-                  Log.Write("EVT:DVDPlayer:domain=title (menu:{0})",_menuOn);
+                                    _menuOn = false;
 									break;  
 								default:
 									Log.Write("EVT:DvdDomChange:{0}",p1);
@@ -2005,6 +2013,10 @@ namespace MediaPortal.Player
       if ( (_UOPs & UOP_FLAG_Play_Title_Or_AtTime)==0) return true;
       if ( (_UOPs & UOP_FLAG_Play_Chapter_Or_AtTime)==0) return true;
       return false;
+    }
+
+    protected virtual void Repaint()
+    {
     }
   }
 }
