@@ -751,11 +751,11 @@ namespace MediaPortal.TV.Recording
           }
 */
           //create ts timeshifting pin
-          AMMediaType mtTS = new AMMediaType();
+          /*AMMediaType mtTS = new AMMediaType();
           mtTS.majorType = MediaType.Stream;
           mtTS.subType = MediaSubType.Mpeg2Transport;
           mtTS.formatType = FormatType.None;
-          hr = demuxer.CreateOutputPin(mtTS, "TS", out _pinDemuxerTS);
+          hr = demuxer.CreateOutputPin(mtTS, "TS", out _pinDemuxerTS);*/
 
 
           //create EPG pins
@@ -1015,11 +1015,11 @@ namespace MediaPortal.TV.Recording
           _pinDemuxerVideoMPEG4 = null;
         }*/
         
-        if (_pinDemuxerTS != null)
+        /*if (_pinDemuxerTS != null)
         {
           while ((hr = Marshal.ReleaseComObject(_pinDemuxerTS)) > 0) ;
           _pinDemuxerTS = null;
-        }
+        }*/
 
         if (_pinDemuxerAudio != null)
         {
