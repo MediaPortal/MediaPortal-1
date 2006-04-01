@@ -127,6 +127,7 @@ namespace MediaPortal.GUI.TV
       switch (action.wID)
       {
         case Action.ActionType.ACTION_PREVIOUS_MENU:
+        case Action.ActionType.ACTION_CONTEXT_MENU:
           m_bRunning = false;
           return;
       }

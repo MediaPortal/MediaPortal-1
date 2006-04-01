@@ -113,6 +113,9 @@ namespace MediaPortal.GUI.TV
         case Action.ActionType.ACTION_REMOTE_SUBPAGE_DOWN:
           SubpageDown();
           break;
+        case Action.ActionType.ACTION_CONTEXT_MENU:
+          GUIWindowManager.ShowPreviousWindow();
+          break;
       }
       base.OnAction(action);
     }
