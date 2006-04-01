@@ -25,6 +25,15 @@ using MediaPortal.Utils.Web;
 
 namespace MediaPortal.WebEPG
 {
+  public class ProgramDateTime
+  {
+    public int Hour = 0;
+    public int Minute = 0;
+    public int Day = 0;
+    public int Month = 0;
+    public int Year = 0;
+  }
+
   public class ProgramData : ParserData
   {
     public string ChannelID = String.Empty;
@@ -34,8 +43,8 @@ namespace MediaPortal.WebEPG
     public string Month = String.Empty;
     public string Genre = String.Empty;
     public int Day = 0;
-    public int[] StartTime;
-    public int[] EndTime;
+    public ProgramDateTime StartTime;
+    public ProgramDateTime EndTime;
 
     override public void SetElement(string tag, string element)
     {
@@ -134,22 +143,22 @@ namespace MediaPortal.WebEPG
       return SearchParams;
     }
 
-    private int[] getTime(string strTime)
+    private ProgramDateTime getTime(string strTime)
     {
       if(strTime == "")
         return null;
 
       int sepPos;
       //bool found = false;
-      int[] iTime = new int[2];
+      ProgramDateTime dt = new ProgramDateTime();
       char[] timeSeperators = { ':', '.', 'h' };
 
       if ((sepPos = strTime.IndexOfAny(timeSeperators)) != -1) // IndexOf(":")) != -1)
       {
         try
         {
-          iTime[0] = int.Parse(strTime.Substring(0, sepPos));
-          iTime[1] = int.Parse(strTime.Substring(sepPos + 1, 2));
+          dt.Hour = int.Parse(strTime.Substring(0, sepPos));
+          dt.Minute = int.Parse(strTime.Substring(sepPos + 1, 2));
         }
         catch(Exception)
         {
@@ -180,16 +189,16 @@ namespace MediaPortal.WebEPG
         if (!found)
         */
 
-      if (strTime.ToLower().IndexOf("pm") != -1 && iTime[0] != 0)
+      if (strTime.ToLower().IndexOf("pm") != -1 && dt.Hour != 0)
       {
-        if(iTime[0] != 12)
-          iTime[0] += 12;
+        if(dt.Hour != 12)
+          dt.Hour += 12;
       }
 
-      if (strTime.ToLower().IndexOf("am") != -1 && iTime[0] == 12)
-        iTime[0] = 0;
+      if (strTime.ToLower().IndexOf("am") != -1 && dt.Hour == 12)
+        dt.Hour = 0;
 
-      return iTime;
+      return dt;
     }
   }
 }

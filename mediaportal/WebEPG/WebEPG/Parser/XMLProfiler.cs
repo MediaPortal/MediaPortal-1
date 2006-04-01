@@ -104,22 +104,28 @@ namespace MediaPortal.WebEPG
       }
     }
 
-    private int[] GetDateTime(string strDateTime)
+    private ProgramDateTime GetDateTime(string strDateTime)
     {
-      int[] time = new int[2];
+      ProgramDateTime time = new ProgramDateTime();
       if(strDateTime.Length > 4)
       {
         long ldate = long.Parse(strDateTime.Substring(0,14));
         ldate /=100L;
-        time[1]=(int)(ldate%100L);
+        time.Minute =(int)(ldate%100L);
         ldate /=100L;
-        time[0]=(int)(ldate%100L);
+        time.Hour =(int)(ldate%100L);
+        ldate /= 100L;
+        time.Day = (int)(ldate % 100L); 
+        ldate /= 100L;
+        time.Month = (int)(ldate % 100L); 
+        ldate /= 100L;
+        time.Year = (int)ldate;
       }
       else
       {
         int idate = int.Parse(strDateTime);
-        time[1] = idate%100;
-        time[0] = idate / 100;
+        time.Minute = idate%100;
+        time.Hour = idate / 100;
       }
       return time;
     }
