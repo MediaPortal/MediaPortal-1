@@ -1177,6 +1177,9 @@ namespace MediaPortal.TV.Recording
         }
         switch (pmt.stream_type)
         {
+          case 0x1b://MPEG4
+            pmt.isVideo = true;
+            break;
           case 0x1:
             pmt.isVideo = true;
             break;

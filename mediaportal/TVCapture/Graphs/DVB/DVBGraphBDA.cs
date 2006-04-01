@@ -730,6 +730,33 @@ namespace MediaPortal.TV.Recording
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to create MPG1 pin:0x{0:X}", hr);
           }
+/*
+          //Log.WriteFile(Log.LogType.Log, false, "DVBGraphBDA: create mpg4 video pin");
+          AMMediaType mediaMPG4 = new AMMediaType();
+          mediaMPG4.majorType = MediaType.Video;
+          mediaMPG4.subType = new Guid(0x8d2d71cb, 0x243f, 0x45e3, 0xb2,0xd8, 0x5f, 0xd7, 0x96, 0x7e, 0xc0, 0x9b);
+          mediaMPG4.sampleSize = 0;
+          mediaMPG4.temporalCompression = false;
+          mediaMPG4.fixedSizeSamples = false;
+          mediaMPG4.unkPtr = IntPtr.Zero;
+          mediaMPG4.formatType = FormatType.Mpeg2Video;
+          mediaMPG4.formatSize = Mpeg2ProgramVideo.GetLength(0);
+          mediaMPG4.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mediaMPG4.formatSize);
+          System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mediaMPG4.formatPtr, mediaMPG4.formatSize);
+
+          hr = demuxer.CreateOutputPin(mediaMPG4, "videoMPG4", out _pinDemuxerVideoMPEG4);
+          if (hr != 0 || _pinDemuxerVideoMPEG4 == null)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to create MPG4 pin:0x{0:X}", hr);
+          }
+*/
+          //create ts timeshifting pin
+          AMMediaType mtTS = new AMMediaType();
+          mtTS.majorType = MediaType.Stream;
+          mtTS.subType = MediaSubType.Mpeg2Transport;
+          mtTS.formatType = FormatType.None;
+          hr = demuxer.CreateOutputPin(mtTS, "TS", out _pinDemuxerTS);
+
 
           //create EPG pins
           //Log.Write("DVBGraphBDA:Create EPG pin");
@@ -980,6 +1007,18 @@ namespace MediaPortal.TV.Recording
         {
           while ((hr = Marshal.ReleaseComObject(_pinAC3Out)) > 0) ;
           _pinAC3Out = null;
+        }
+
+        /*if (_pinDemuxerVideoMPEG4 != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_pinDemuxerVideoMPEG4)) > 0) ;
+          _pinDemuxerVideoMPEG4 = null;
+        }*/
+        
+        if (_pinDemuxerTS != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_pinDemuxerTS)) > 0) ;
+          _pinDemuxerTS = null;
         }
 
         if (_pinDemuxerAudio != null)
