@@ -1782,7 +1782,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="ATI TV Wonder Elite PCIe" capturename="ATI AVStream Analog Capture" devid="ven_1002&amp;dev_4d53">
+  <capturecard commercialname="ATI TV Wonder Elite PCIe" capturename="ATI AVStream Analog Capture" devid="ven_1002&amp;dev_4d53&amp;subsys_a3471002&amp;rev_00">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
@@ -6527,7 +6527,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Video Capture Device" devid="ven_14f1&amp;dev_8800&amp;subsys_084017de&amp;rev_05">
+  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_084017de&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -6550,7 +6550,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Video Capture Device" devid="ven_14f1&amp;dev_8800&amp;subsys_084217DE&amp;rev_05">
+  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_084217DE&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -6573,7 +6573,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Video Capture Device" devid="ven_14f1&amp;dev_8800&amp;subsys_084417DE&amp;rev_05">
+  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_084417DE&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -6596,7 +6596,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Video Capture Device" devid="ven_14f1&amp;dev_8800&amp;subsys_084117DE&amp;rev_05">
+  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_084117DE&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -6619,7 +6619,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Video Capture Device" devid="ven_14f1&amp;dev_8800&amp;subsys_084317DE&amp;rev_05">
+  <capturecard commercialname="KWorld Creator TV - MCE TV 200 Deluxe" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_084317DE&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -7543,7 +7543,7 @@
         <filter cat="capture"		name="WinFast VC100 WDM Video Capture"	checkdevice="true"/>
         <filter cat="audcapture"	name="%soundcard%"						checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"		checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"		checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"		checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"				checkdevice="false"/>
       </filters>
       <connections>
@@ -8205,7 +8205,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"									checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"					checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"					checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"							checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -8232,7 +8232,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"									checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"					checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"					checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"							checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -8259,7 +8259,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"									checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"					checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"					checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"							checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -8286,7 +8286,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"									checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"					checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"					checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"							checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -8313,7 +8313,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"									checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"					checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"					checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"							checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -8340,7 +8340,7 @@
 		<filter cat="capture"		name="WinFast TV2000 XP Global WDM Video Capture."	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"									checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"					checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"					checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"							checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -8367,7 +8367,7 @@
 		<filter cat="capture"		name="WinFast DTV2000 WDM Video Capture."	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -8392,7 +8392,7 @@
 		<filter cat="capture"		name="WinFast DTV1000T WDM Video Capture."	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"			checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"			checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"			checkdevice="false"/>
 		<filter cat="mux"			name="Leadtek MPEG Muxer"					checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -8590,9 +8590,9 @@
         <filter cat="crossbar"		name="ATI DTV Wonder Analog AV Crossbar"	checkdevice="true"/>
         <filter cat="capture"  		name="ATI DTV Wonder Analog AV Capture"  	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"							checkdevice="true"/>
-        <filter cat="videncoder"	name="ATI Media Center Video Encoder"		checkdevice="false"/>
-        <filter cat="audencoder"	name="ATI Media Center Audio Encoder"		checkdevice="false"/>
-        <filter cat="mux"      		name="ATI Media Center Multiplexer"			checkdevice="false"/>
+        <filter cat="videncoder"	name="ATI MPEG Video Encoder"		checkdevice="false"/>
+        <filter cat="audencoder"	name="ATI MPEG Audio Encoder"		checkdevice="false"/>
+        <filter cat="mux"      		name="ATI MPEG Multiplexer"			checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -9303,7 +9303,7 @@
 		<filter cat="capture"     name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"									                checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					          checkdevice="false"/>
-		<filter cat="audencoder"	name="Leadtek MPEG Audio Encoder"					          checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"					          checkdevice="false"/>
 		<filter cat="mux"			    name="Leadtek MPEG Muxer"							              checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -10299,6 +10299,87 @@
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
         <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
         <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KWorld PVR-TV 883" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_088317de&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="Conexant 2388x Tuner"			    checkdevice="true"/>
+        <filter cat="tvaudio"     name="Conexant 2388x TvAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"    name="Conexant 2388x Crossbar"		  checkdevice="true"/>
+        <filter cat="capture"     name="Conexant 2388x Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"  name="%soundcard%"                  checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"					      checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"					      checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"						        checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"	      sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"	      sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KWorld PVR-TV 883" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_088217de&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="Conexant 2388x Tuner"			    checkdevice="true"/>
+        <filter cat="tvaudio"     name="Conexant 2388x TvAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"    name="Conexant 2388x Crossbar"		  checkdevice="true"/>
+        <filter cat="capture"     name="Conexant 2388x Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"  name="%soundcard%"                  checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"					      checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"					      checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"						        checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"	      sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"	      sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="KWorld PVR-TV 883" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_00000000&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="Conexant 2388x Tuner"			    checkdevice="true"/>
+        <filter cat="tvaudio"     name="Conexant 2388x TvAudio"		    checkdevice="true"/>
+        <filter cat="crossbar"    name="Conexant 2388x Crossbar"		  checkdevice="true"/>
+        <filter cat="capture"     name="Conexant 2388x Video Capture"	checkdevice="true"/>
+        <filter cat="audcapture"  name="%soundcard%"                  checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"					      checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"					      checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"						        checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"	      sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"	      sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
