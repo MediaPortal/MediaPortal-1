@@ -509,7 +509,7 @@ namespace MediaPortal.Music.Database
 
         public int AddAlbum(string strAlbum1, int lArtistId)
         {
-            string strSQL;
+          string strSQL;
             try
             {
                 string strAlbum = strAlbum1;
@@ -527,7 +527,7 @@ namespace MediaPortal.Music.Database
                     //if (name1.Equals(name2) && album.idArtist == lArtistId)
                     // Temporarily disabled (albums tracks with multiple artists are added as seperate albums. 
                     // Need to do more work with how MP handles various artist albums.
-                    if (name1.Equals(name2))
+                    if ((name1.Equals(name2)) && (album.idArtist == lArtistId))
                     {
                         return album.idAlbum;
                     }
@@ -541,12 +541,12 @@ namespace MediaPortal.Music.Database
                 SQLiteResultSet results;
                 results = m_db.Execute(strSQL);
 
-                if (results.Rows.Count == 0)
+                if (lArtistId != DatabaseUtility.GetAsInt(results, 0, "idArtist"))
                 {
-                    // doesnt exists, add it
+                  // doesnt exists, add it
                     strSQL = String.Format("insert into album (idAlbum, strAlbum,idArtist) values( NULL, '{0}', {1})", strAlbum, lArtistId);
                     m_db.Execute(strSQL);
-
+        
                     AlbumInfoCache album = new AlbumInfoCache();
                     album.idAlbum = m_db.LastInsertID();
                     album.Album = strAlbum1;
@@ -2200,7 +2200,7 @@ namespace MediaPortal.Music.Database
                 /// Cleanup foreign keys tables.
                 /// We added, deleted new files
                 /// We update all the tags
-                /// Now lets clean up all the foreign keus
+                /// Now lets clean up all the foreign keys
                 MyArgs.progress = 90;
                 MyArgs.phase = "Checking Artists";
                 OnDatabaseReorgChanged(MyArgs);
