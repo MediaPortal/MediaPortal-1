@@ -1990,6 +1990,9 @@ namespace MediaPortal.GUI.TV
       if (_cursorX < 0) return;
       if (_cursorY == 0)
       {
+        GUIControl.UnfocusControl(GetID, (int)Controls.SPINCONTROL_DAY);
+        GUIControl.UnfocusControl(GetID, (int)Controls.SPINCONTROL_TIME_INTERVAL);
+
         int controlid = (int)Controls.IMG_CHAN1 + _cursorX;
         GUIControl.FocusControl(GetID, controlid);
       }
