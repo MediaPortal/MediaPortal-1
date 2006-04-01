@@ -775,21 +775,21 @@ namespace MediaPortal.GUI.GUIExplorer
 					pname[i]=xmlreader.GetValueAsString("pictures","sharename"+i.ToString()," ").Trim();
 					pictures[i]=xmlreader.GetValueAsString("pictures","sharepath"+i.ToString()," ").Trim();
 
-					if (pname[i].StartsWith("CD/")==false && pictures[i]!="") 
+					if (pname[i].Contains("CD/")==false && pictures[i]!="") 
 					{
 						drives[driveCount]="["+pname[i]+"]";
 						driveCount++;
 						drivesCd[driveCdCount]="["+pname[i]+"]";
 						driveCdCount++;
 					}
-					if (vname[i].StartsWith("CD/")==false && video[i]!="") 
+                    if (vname[i].Contains("CD/") == false && video[i] != "") 
 					{
 						drives[driveCount]="["+vname[i]+"]";
 						driveCount++;
 						drivesCd[driveCdCount]="["+vname[i]+"]";
 						driveCdCount++;
 					}
-					if (sname[i].StartsWith("CD/")==false && sound[i]!="") 
+                    if (sname[i].Contains("CD/") == false && sound[i] != "") 
 					{
 						drives[driveCount]="["+sname[i]+"]";
 						driveCount++;
