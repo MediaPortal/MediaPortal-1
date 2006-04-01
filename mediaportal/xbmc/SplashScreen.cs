@@ -150,8 +150,8 @@ namespace MediaPortal
           string month = strVersion[1].Substring(7, 2);
           string year = strVersion[1].Substring(10, 4);
           string time = strVersion[1].Substring(15, 5);
-          GUI.Library.Log.Write("CVS Version: {0}-{1}-{2} / {3}", month, day, year, time);
-          cvsLabel.Text = string.Format("CVS Build {0}-{1}-{2}/{3}", month, day, year, time);
+          GUI.Library.Log.Write("SVN Build: {0}-{1}-{2} / {3}", month, day, year, time);
+          cvsLabel.Text = string.Format("SVN Build {0}-{1}-{2}/{3}", month, day, year, time);
         }
         Update();
       }
