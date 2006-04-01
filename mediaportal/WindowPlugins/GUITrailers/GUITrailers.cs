@@ -697,18 +697,18 @@ namespace MediaPortal.GUI.Video
       MainListOptions[9] = GUILocalizeStrings.Get(5905);
       MainListMenu[9] = MainListOptions[9];
 
-      string language = "";
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      {
-        language = xmlreader.GetValue("skin", "language");
-      }
+      //string language = "";
+      //using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      //{
+      //  language = xmlreader.GetValue("skin", "language");
+      //}
       int iNextItem = 10;
-      if (language.Equals("German") == true || Show_GT == true)
-      {
-        MainListOptions[iNextItem] = GUILocalizeStrings.Get(5917);
-        MainListMenu[iNextItem] = "GERMAN";
-        iNextItem++;
-      }
+      //if (language.Equals("German") == true || Show_GT == true)
+      //{
+      //  MainListOptions[iNextItem] = GUILocalizeStrings.Get(5917);
+      //  MainListMenu[iNextItem] = "GERMAN";
+      //  iNextItem++;
+      //}
       if (Show_TSR == true)
       {
         MainListOptions[iNextItem] = GUILocalizeStrings.Get(5918);
