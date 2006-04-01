@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -24,21 +24,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-
+#pragma warning disable 618
 namespace DirectShowLib
 {
-
     #region Declarations
 
-	/// <summary>
-	/// From _AM_PIN_FLOW_CONTROL_BLOCK_FLAGS
-	/// </summary>
-	[Flags]
-	public enum AMPinFlowControl
-	{
+    /// <summary>
+    /// From _AM_PIN_FLOW_CONTROL_BLOCK_FLAGS
+    /// </summary>
+    [Flags]
+    public enum AMPinFlowControl
+    {
         None = 0x00000000,
-		Block = 0x00000001
-	}
+        Block = 0x00000001
+    }
 
     /// <summary>
     /// From AM_GRAPH_CONFIG_RECONNECT_FLAGS
@@ -76,22 +75,22 @@ namespace DirectShowLib
 
     #region Interfaces
 
-	//--------------------------------------------------------------------
-	//
-	//  IPinFlowControl - supported by output pins
-	//
-	//--------------------------------------------------------------------
+    //--------------------------------------------------------------------
+    //
+    //  IPinFlowControl - supported by output pins
+    //
+    //--------------------------------------------------------------------
 
-	[Guid("c56e9858-dbf3-4f6b-8119-384af2060deb"),
-		InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IPinFlowControl
-	{
-		[PreserveSig]
-		int Block(
-			[In] AMPinFlowControl dwBlockFlags,
-			[In] IntPtr hEvent // HEVENT
-			);
-	}
+    [Guid("c56e9858-dbf3-4f6b-8119-384af2060deb"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IPinFlowControl
+    {
+        [PreserveSig]
+        int Block(
+            [In] AMPinFlowControl dwBlockFlags,
+            [In] IntPtr hEvent // HEVENT
+            );
+    }
 
 
     [Guid("DCFBDCF6-0DC2-45f5-9AB2-7C330EA09C29"),

@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -25,10 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-
+#pragma warning disable 618
 namespace DirectShowLib.MultimediaStreaming
 {
-
     #region Interfaces
 
 #if ALLOW_UNTESTED_INTERFACES
@@ -62,7 +61,7 @@ namespace DirectShowLib.MultimediaStreaming
     Guid("54C719C0-AF60-11D0-8212-00C04FC32C45")]
     public interface IAudioData : IMemoryData
     {
-        #region IMemoryData Methods
+    #region IMemoryData Methods
 
         [PreserveSig]
         new int SetBuffer(
@@ -83,7 +82,7 @@ namespace DirectShowLib.MultimediaStreaming
             [In] int cbDataValid
             );
 
-        #endregion
+    #endregion
 
         [PreserveSig]
         int GetFormat(
@@ -101,7 +100,7 @@ namespace DirectShowLib.MultimediaStreaming
     Guid("345FEE00-ABA5-11D0-8212-00C04FC32C45")]
     public interface IAudioStreamSample : IStreamSample
     {
-        #region IStreamSample Methods
+    #region IStreamSample Methods
 
         [PreserveSig]
         new int GetMediaStream(
@@ -135,7 +134,7 @@ namespace DirectShowLib.MultimediaStreaming
             [In] int dwMilliseconds
             );
 
-        #endregion
+    #endregion
 
         [PreserveSig]
         int GetAudioData(

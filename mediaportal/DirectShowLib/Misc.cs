@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -27,32 +27,31 @@ using System.Runtime.InteropServices;
 #pragma warning disable 618
 namespace DirectShowLib
 {
+    #region Declarations
 
-	#region Declarations
-
-	/// <summary>
-	/// From KSMULTIPLE_ITEM - Note that data is returned in the memory IMMEDIATELY following this struct.
-	/// The Size parm indicates ths size of the KSMultipleItem plus the extra bytes.
-	/// </summary>
-	[StructLayout(LayoutKind.Sequential)]
-	public class KSMultipleItem
-	{
-		public int Size;
-		public int Count;
-	}
+    /// <summary>
+    /// From KSMULTIPLE_ITEM - Note that data is returned in the memory IMMEDIATELY following this struct.
+    /// The Size parm indicates ths size of the KSMultipleItem plus the extra bytes.
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public class KSMultipleItem
+    {
+        public int Size;
+        public int Count;
+    }
 
     #endregion
 
-	#region Interfaces
+    #region Interfaces
 
-	[Guid("00000109-0000-0000-C000-000000000046"),
-		InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IPersistStream : IPersist
-	{
+    [Guid("00000109-0000-0000-C000-000000000046"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IPersistStream : IPersist
+    {
         #region IPersist Methods
 
-		[PreserveSig]
-		new int GetClassID([Out] out Guid pClassID);
+        [PreserveSig]
+        new int GetClassID([Out] out Guid pClassID);
 
         #endregion
 

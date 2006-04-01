@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-
+#pragma warning disable 618
 namespace DirectShowLib
 {
     #region Declarations
@@ -189,7 +189,7 @@ namespace DirectShowLib
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVPConfig : IVPBaseConfig
     {
-        #region IVPBaseConfig Methods
+    #region IVPBaseConfig Methods
 
         [PreserveSig]
         new int GetConnectInfo(
@@ -262,7 +262,7 @@ namespace DirectShowLib
             int dwYOrigin
             );
 
-        #endregion
+    #endregion
 
         [PreserveSig]
         int IsVPDecimationAllowed(
@@ -279,7 +279,7 @@ namespace DirectShowLib
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVPVBIConfig : IVPBaseConfig
     {
-        #region IVPBaseConfig Methods
+    #region IVPBaseConfig Methods
 
         [PreserveSig]
         new int GetConnectInfo(
@@ -352,7 +352,7 @@ namespace DirectShowLib
             int dwYOrigin
             );
 
-        #endregion
+    #endregion
 
     }
 
@@ -367,12 +367,12 @@ namespace DirectShowLib
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVPNotify : IVPBaseNotify
     {
-        #region IVPBaseNotify
+    #region IVPBaseNotify
 
         [PreserveSig]
         new int RenegotiateVPParameters();
 
-        #endregion
+    #endregion
 
         [PreserveSig]
         int SetDeinterlaceMode(
@@ -389,14 +389,14 @@ namespace DirectShowLib
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVPNotify2 : IVPNotify
     {
-        #region IVPBaseNotify
+    #region IVPBaseNotify
 
         [PreserveSig]
         new int RenegotiateVPParameters();
 
-        #endregion
+    #endregion
 
-        #region IVPNotify Methods
+    #region IVPNotify Methods
 
         [PreserveSig]
         new int SetDeinterlaceMode(
@@ -408,7 +408,7 @@ namespace DirectShowLib
             out AMVP_Mode pMode
             );
 
-        #endregion
+    #endregion
 
         [PreserveSig]
         int SetVPSyncMaster(
@@ -426,15 +426,14 @@ namespace DirectShowLib
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IVPVBINotify : IVPBaseNotify
     {
-        #region IVPBaseNotify
+    #region IVPBaseNotify
 
         [PreserveSig]
         new int RenegotiateVPParameters();
 
-        #endregion
+    #endregion
 
     }
 #endif
     #endregion
 }
-

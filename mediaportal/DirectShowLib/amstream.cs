@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -28,7 +28,6 @@ using System.Runtime.InteropServices;
 #pragma warning disable 618
 namespace DirectShowLib.MultimediaStreaming
 {
-
     #region Declarations
 
     /// <summary>
@@ -78,7 +77,7 @@ namespace DirectShowLib.MultimediaStreaming
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IAMMediaStream : IMediaStream
     {
-        #region IMediaStream Methods
+    #region IMediaStream Methods
 
         [PreserveSig]
         new int GetMultiMediaStream(
@@ -115,7 +114,7 @@ namespace DirectShowLib.MultimediaStreaming
             int dwFlags
             );
 
-        #endregion
+    #endregion
 
         [PreserveSig]
         int Initialize(
@@ -574,4 +573,3 @@ namespace DirectShowLib.MultimediaStreaming
 
     #endregion
 }
-

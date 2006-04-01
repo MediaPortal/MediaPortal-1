@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -27,11 +27,12 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
+
 [assembly : AssemblyTitle("DirectShow Net Library")]
 [assembly : AssemblyDescription(".NET Interfaces for calling DirectShow.  See http://directshownet.sourceforge.net/")]
 [assembly : AssemblyConfiguration("")]
 [assembly : AssemblyCompany("")]
-[assembly : AssemblyVersion("1.2.0.0")]
+[assembly : AssemblyVersion("1.3.0.*")]
 #if DEBUG
 [assembly : AssemblyProduct("Debug Version")]
 #else

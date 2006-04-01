@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -25,10 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-
+#pragma warning disable 618
 namespace DirectShowLib
 {
-
     #region Declarations
 
 #if ALLOW_UNTESTED_INTERFACES
@@ -225,20 +224,55 @@ namespace DirectShowLib
     }
 
     /// <summary>
+    /// From ACM_MPEG_LAYER* defines
+    /// </summary>
+    public enum AcmMpegHeadLayer : short
+    {
+        Layer1 = 1,
+        Layer2,
+        Layer3
+    }
+
+    /// <summary>
+    /// From ACM_MPEG_* defines
+    /// </summary>
+    public enum AcmMpegHeadMode : short
+    {
+        Stereo = 1,
+        JointStereo,
+        DualChannel,
+        SingleChannel
+    }
+
+    /// <summary>
+    /// From ACM_MPEG_* defines
+    /// </summary>
+    [Flags]
+    public enum AcmMpegHeadFlags
+    {
+        None = 0x0,
+        PrivateBit = 0x1,
+        Copyright = 0x2,
+        OriginalHome = 0x4,
+        ProtectionBit = 0x8,
+        IDMpeg1 = 0x10
+    }
+
+    /// <summary>
     /// From MPEG1WAVEFORMAT
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct MPEG1WaveFormat
     {
-        public WaveFormatEx    wfx;
-        public short            fwHeadLayer;
-        public int           dwHeadBitrate;
-        public short            fwHeadMode;
-        public short            fwHeadModeExt;
-        public short            wHeadEmphasis;
-        public short            fwHeadFlags;
-        public int           dwPTSLow;
-        public int           dwPTSHigh;
+        public WaveFormatEx wfx;
+        public AcmMpegHeadLayer fwHeadLayer;
+        public int dwHeadBitrate;
+        public AcmMpegHeadMode fwHeadMode;
+        public short fwHeadModeExt;
+        public short wHeadEmphasis;
+        public AcmMpegHeadFlags fwHeadFlags;
+        public int dwPTSLow;
+        public int dwPTSHigh;
     }
 
     #endregion

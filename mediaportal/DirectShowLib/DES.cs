@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -26,7 +26,7 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using System.Text;
-
+#pragma warning disable 618
 namespace DirectShowLib.DES
 {
     #region Utility Classes
@@ -369,7 +369,7 @@ namespace DirectShowLib.DES
     [StructLayout(LayoutKind.Sequential, Pack=4)]
     public class SCompFmt0
     {
-        public long nFormatId;
+        public int nFormatId;
         public AMMediaType MediaType;
     }
 
@@ -2344,5 +2344,4 @@ namespace DirectShowLib.DES
 
 
     #endregion
-
 }

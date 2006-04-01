@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -25,10 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-
+#pragma warning disable 618
 namespace DirectShowLib.Dvd
 {
-
     #region Declarations
 
 #if ALLOW_UNTESTED_INTERFACES
@@ -1339,7 +1338,7 @@ namespace DirectShowLib.Dvd
         int GetKaraokeAttributes(
             [In] int ulStream,
             [In, Out, MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(DKAMarshaler))] DvdKaraokeAttributes pAttributes
-                );
+            );
 
         [PreserveSig]
         int GetSubpictureAttributes(
@@ -1390,7 +1389,7 @@ namespace DirectShowLib.Dvd
         int GetPlayerParentalLevel(
             [Out] out int pulParentalLevel,
             [Out, MarshalAs(UnmanagedType.LPArray, SizeConst=2)] byte[] pbCountryCode
-                );
+            );
 
         [PreserveSig]
         int GetNumberOfChapters(
@@ -1499,5 +1498,4 @@ namespace DirectShowLib.Dvd
     }
 
     #endregion
-
 }

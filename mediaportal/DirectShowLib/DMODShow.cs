@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -24,21 +24,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-
+#pragma warning disable 618
 namespace DirectShowLib
 {
-	#region Interfaces
+    #region Interfaces
 
-	[Guid("52d6f586-9f0f-4824-8fc8-e32ca04930c2"),
-		InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IDMOWrapperFilter
-	{
-		[PreserveSig]
-		int Init(
-			[In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidDMO,
-			[In, MarshalAs(UnmanagedType.LPStruct)] Guid catDMO
-			);
-	}
+    [Guid("52d6f586-9f0f-4824-8fc8-e32ca04930c2"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IDMOWrapperFilter
+    {
+        [PreserveSig]
+        int Init(
+            [In, MarshalAs(UnmanagedType.LPStruct)] Guid clsidDMO,
+            [In, MarshalAs(UnmanagedType.LPStruct)] Guid catDMO
+            );
+    }
 
-	#endregion
+    #endregion
 }

@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -29,8 +29,7 @@ using System.Text;
 #pragma warning disable 618
 namespace DirectShowLib
 {
-
-	#region Declarations
+    #region Declarations
 
 #if ALLOW_UNTESTED_INTERFACES
 	/// <summary>
@@ -356,672 +355,923 @@ namespace DirectShowLib
 
 #endif
 
-	/// <summary>
-	/// From _AM_FILTER_MISC_FLAGS
-	/// </summary>
-	[Flags]
-	public enum AMFilterMiscFlags
-	{
-		IsRenderer = 0x00000001,
-		IsSource = 0x00000002
-	}
+    /// <summary>
+    /// From _AM_FILTER_MISC_FLAGS
+    /// </summary>
+    [Flags]
+    public enum AMFilterMiscFlags
+    {
+        IsRenderer = 0x00000001,
+        IsSource = 0x00000002
+    }
 
-	/// <summary>
-	/// From AM_STREAM_INFO_FLAGS
-	/// </summary>
-	[Flags]
-	public enum AMStreamInfoFlags
-	{
-		None = 0x00000000,
-		StartDefined = 0x00000001,
-		StopDefined = 0x00000002,
-		Discarding = 0x00000004,
-		StopSendExtra = 0x00000010
-	}
+    /// <summary>
+    /// From AM_STREAM_INFO_FLAGS
+    /// </summary>
+    [Flags]
+    public enum AMStreamInfoFlags
+    {
+        None = 0x00000000,
+        StartDefined = 0x00000001,
+        StopDefined = 0x00000002,
+        Discarding = 0x00000004,
+        StopSendExtra = 0x00000010
+    }
 
-	/// <summary>
-	/// From MPEG2_PROGRAM_* defines
-	/// </summary>
-	public enum MPEG2Program
-	{
-		StreamMap = 0x00000000,
-		ElementaryStream = 0x00000001,
-		DirecoryPesPacket = 0x00000002,
-		PackHeader = 0x00000003,
-		PesSteam = 0x00000004,
-		SystemHeader = 0x00000005,
-	}
+    /// <summary>
+    /// From MPEG2_PROGRAM_* defines
+    /// </summary>
+    public enum MPEG2Program
+    {
+        StreamMap = 0x00000000,
+        ElementaryStream = 0x00000001,
+        DirecoryPesPacket = 0x00000002,
+        PackHeader = 0x00000003,
+        PesSteam = 0x00000004,
+        SystemHeader = 0x00000005,
+    }
 
-	/// <summary>
-	/// From AM_STREAM_INFO
-	/// </summary>
-	[StructLayout(LayoutKind.Sequential)]
-	public struct AMStreamInfo
-	{
-		public long tStart;
-		public long tStop;
-		public int dwStartCookie;
-		public int dwStopCookie;
-		public AMStreamInfoFlags dwFlags;
-	}
+    /// <summary>
+    /// From AM_STREAM_INFO
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct AMStreamInfo
+    {
+        public long tStart;
+        public long tStop;
+        public int dwStartCookie;
+        public int dwStopCookie;
+        public AMStreamInfoFlags dwFlags;
+    }
 
-	/// <summary>
-	/// From _DVDECODERRESOLUTION
-	/// </summary>
-	public enum DVDecoderResolution
-	{
-		r720x480 = 1000,
-		r360x240 = 1001,
-		r180x120 = 1002,
-		r88x60 = 1003
-	}
+    /// <summary>
+    /// From _DVDECODERRESOLUTION
+    /// </summary>
+    public enum DVDecoderResolution
+    {
+        r720x480 = 1000,
+        r360x240 = 1001,
+        r180x120 = 1002,
+        r88x60 = 1003
+    }
 
-	/// <summary>
-	/// From _AM_INTF_SEARCH_FLAGS
-	/// </summary>
-	[Flags]
-	public enum AMIntfSearchFlags
-	{
-		None = 0x00000000,
-		InputPin = 0x00000001,
-		OutputPin = 0x00000002,
-		Filter = 0x00000004
-	}
+    /// <summary>
+    /// From _AM_INTF_SEARCH_FLAGS
+    /// </summary>
+    [Flags]
+    public enum AMIntfSearchFlags
+    {
+        None = 0x00000000,
+        InputPin = 0x00000001,
+        OutputPin = 0x00000002,
+        Filter = 0x00000004
+    }
 
-	/// <summary>
-	/// From AM_QUERY_DECODER_* defines
-	/// </summary>
-	public enum AMQueryDecoder
-	{
-		VMRSupport = 0x00000001,
-		DXVA_1Support = 0x00000002,
-		DVDSupport = 0x00000003,
-		ATSC_SDSupport = 0x00000004,
-		ATSC_HDSupport = 0x00000005,
-		VMR9Support = 0x00000006
-	}
+    /// <summary>
+    /// From AM_QUERY_DECODER_* defines
+    /// </summary>
+    public enum AMQueryDecoder
+    {
+        VMRSupport = 0x00000001,
+        DXVA_1Support = 0x00000002,
+        DVDSupport = 0x00000003,
+        ATSC_SDSupport = 0x00000004,
+        ATSC_HDSupport = 0x00000005,
+        VMR9Support = 0x00000006
+    }
 
-	/// <summary>
-	/// From DECODER_CAP_* defines
-	/// </summary>
-	public enum DecoderCap
-	{
-		NotSupported = 0x00000000,
-		Supported = 0x00000001
-	}
+    /// <summary>
+    /// From DECODER_CAP_* defines
+    /// </summary>
+    public enum DecoderCap
+    {
+        NotSupported = 0x00000000,
+        Supported = 0x00000001
+    }
 
-	/// <summary>
-	/// From DECIMATION_USAGE
-	/// </summary>
-	public enum DecimationUsage
-	{
-		Legacy,
-		UseDecoderOnly,
-		UseVideoPortOnly,
-		UseOverlayOnly,
-		Default
-	}
+    /// <summary>
+    /// From DECIMATION_USAGE
+    /// </summary>
+    public enum DecimationUsage
+    {
+        Legacy,
+        UseDecoderOnly,
+        UseVideoPortOnly,
+        UseOverlayOnly,
+        Default
+    }
 
-	/// <summary>
-	/// From AMOVERLAYFX
-	/// </summary>
-	[Flags]
-	public enum AMOverlayFX
-	{
-		NoFX = 0x00000000,
-		MirrorLeftRight = 0x00000002,
-		MirrorUpDown = 0x00000004,
-		Deinterlace = 0x00000008
-	}
+    /// <summary>
+    /// From AMOVERLAYFX
+    /// </summary>
+    [Flags]
+    public enum AMOverlayFX
+    {
+        NoFX = 0x00000000,
+        MirrorLeftRight = 0x00000002,
+        MirrorUpDown = 0x00000004,
+        Deinterlace = 0x00000008
+    }
 
-	/// <summary>
-	/// From _AMRESCTL_RESERVEFLAGS
-	/// </summary>
-	[Flags]
-	public enum AMResCtlReserveFlags
-	{
-		Reserve = 0x00,
-		UnReserve = 0x01
-	}
+    /// <summary>
+    /// From _AMRESCTL_RESERVEFLAGS
+    /// </summary>
+    [Flags]
+    public enum AMResCtlReserveFlags
+    {
+        Reserve = 0x00,
+        UnReserve = 0x01
+    }
 
-	/// <summary>
-	/// From _AMSTREAMSELECTINFOFLAGS
-	/// </summary>
-	[Flags]
-	public enum AMStreamSelectInfoFlags
-	{
-		Disabled = 0x0,
-		Enabled = 0x01,
-		Exclusive = 0x02
-	}
+    /// <summary>
+    /// From _AMSTREAMSELECTINFOFLAGS
+    /// </summary>
+    [Flags]
+    public enum AMStreamSelectInfoFlags
+    {
+        Disabled = 0x0,
+        Enabled = 0x01,
+        Exclusive = 0x02
+    }
 
-	/// <summary>
-	/// From _AMSTREAMSELECTENABLEFLAGS
-	/// </summary>
-	[Flags]
-	public enum AMStreamSelectEnableFlags
-	{
-		DisableAll = 0x0,
-		Enable = 0x01,
-		EnableAll = 0x02
-	}
+    /// <summary>
+    /// From _AMSTREAMSELECTENABLEFLAGS
+    /// </summary>
+    [Flags]
+    public enum AMStreamSelectEnableFlags
+    {
+        DisableAll = 0x0,
+        Enable = 0x01,
+        EnableAll = 0x02
+    }
 
-	/// <summary>
-	/// unnamed enum
-	/// </summary>
-	[Flags]
-	public enum Merit
-	{
-		Preferred    = 0x800000,
-		Normal       = 0x600000,
-		Unlikely     = 0x400000,
-		DoNotUse     = 0x200000,
-		SWCompressor = 0x100000,
-		HWCompressor = 0x100050
-	}
+    /// <summary>
+    /// unnamed enum
+    /// </summary>
+    [Flags]
+    public enum Merit
+    {
+        Preferred    = 0x800000,
+        Normal       = 0x600000,
+        Unlikely     = 0x400000,
+        DoNotUse     = 0x200000,
+        SWCompressor = 0x100000,
+        HWCompressor = 0x100050
+    }
 
-	/// <summary>
-	/// From COLORKEY
-	/// </summary>
-	[StructLayout(LayoutKind.Sequential)]
-	public class ColorKey
-	{
-		public int KeyType;
-		public int PaletteIndex;
-		public int LowColorValue;
-		public int HighColorValue;
-	}
+    /// <summary>
+    /// From COLORKEY
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public class ColorKey
+    {
+        public int KeyType;
+        public int PaletteIndex;
+        public int LowColorValue;
+        public int HighColorValue;
+    }
 
-	/// <summary>
-	/// From REGPINMEDIUM
-	/// </summary>
-	[StructLayout(LayoutKind.Sequential)]
-	public class RegPinMedium
-	{
-		public Guid clsMedium;
-		public int dw1;
-		public int dw2;
-	}
+    /// <summary>
+    /// From REGPINMEDIUM
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public class RegPinMedium
+    {
+        public Guid clsMedium;
+        public int dw1;
+        public int dw2;
+    }
 
-	/// <summary>
-	/// From DVINFO
-	/// </summary>
-	[StructLayout(LayoutKind.Sequential)]
-	public struct DVInfo
-	{
-		public int dwDVAAuxSrc;
-		public int dwDVAAuxCtl;
-		public int dwDVAAuxSrc1;
-		public int dwDVAAuxCtl1;
-		public int dwDVVAuxSrc;
-		public int dwDVVAuxCtl;
-		public int dwDVReserved1;
-		public int dwDVReserved2;
-	}
+    /// <summary>
+    /// From DVINFO
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct DVInfo
+    {
+        public int dwDVAAuxSrc;
+        public int dwDVAAuxCtl;
+        public int dwDVAAuxSrc1;
+        public int dwDVAAuxCtl1;
+        public int dwDVVAuxSrc;
+        public int dwDVVAuxCtl;
+        public int dwDVReserved1;
+        public int dwDVReserved2;
+    }
 
-	/// <summary>
-	/// From _DVENCODERRESOLUTION
-	/// </summary>
-	public enum DVEncoderResolution
-	{
-		r720x480 = 2012,
-		r360x240 = 2013,
-		r180x120 = 2014,
-		r88x60 = 2015
-	}
+    /// <summary>
+    /// From _DVENCODERRESOLUTION
+    /// </summary>
+    public enum DVEncoderResolution
+    {
+        r720x480 = 2012,
+        r360x240 = 2013,
+        r180x120 = 2014,
+        r88x60 = 2015
+    }
 
-	/// <summary>
-	/// From _DVENCODERFORMAT
-	/// </summary>
-	public enum DVEncoderFormat
-	{
-		DVSD = 2007,
-		DVHD = 2008,
-		DVSL = 2009
-	}
+    /// <summary>
+    /// From _DVENCODERFORMAT
+    /// </summary>
+    public enum DVEncoderFormat
+    {
+        DVSD = 2007,
+        DVHD = 2008,
+        DVSL = 2009
+    }
 
-	/// <summary>
-	/// From _DVENCODERVIDEOFORMAT
-	/// </summary>
-	public enum DVEncoderVideoFormat
-	{
-		NTSC = 2000,
-		PAL = 2001
-	}
+    /// <summary>
+    /// From _DVENCODERVIDEOFORMAT
+    /// </summary>
+    public enum DVEncoderVideoFormat
+    {
+        NTSC = 2000,
+        PAL = 2001
+    }
 
-	/// <summary>
-	/// From _AM_RENSDEREXFLAGS
-	/// </summary>
-	[Flags]
-	public enum AMRenderExFlags
-	{
-		None = 0,
-		RenderToExistingRenderers = 1
-	}
+    /// <summary>
+    /// From _AM_RENSDEREXFLAGS
+    /// </summary>
+    [Flags]
+    public enum AMRenderExFlags
+    {
+        None = 0,
+        RenderToExistingRenderers = 1
+    }
 
-	/// <summary>
-	/// From InterleavingMode
-	/// </summary>
-	public enum InterleavingMode
-	{
-		None,
-		Capture,
-		Full,
-		NoneBuffered
-	}
+    /// <summary>
+    /// From InterleavingMode
+    /// </summary>
+    public enum InterleavingMode
+    {
+        None,
+        Capture,
+        Full,
+        NoneBuffered
+    }
 
-	/// <summary>
-	/// From AM_FILESINK_FLAGS
-	/// </summary>
-	[Flags]
-	public enum AMFileSinkFlags
-	{
-		None = 0,
-		OverWrite = 0x00000001
-	}
+    /// <summary>
+    /// From AM_FILESINK_FLAGS
+    /// </summary>
+    [Flags]
+    public enum AMFileSinkFlags
+    {
+        None = 0,
+        OverWrite = 0x00000001
+    }
 
-	/// <summary>
-	/// From KSPROPERTY_SUPPORT_* defines
-	/// </summary>
-	[Flags]
-	public enum KSPropertySupport
-	{
-		Get = 1,
-		Set = 2
-	}
+    /// <summary>
+    /// From KSPROPERTY_SUPPORT_* defines
+    /// </summary>
+    [Flags]
+    public enum KSPropertySupport
+    {
+        Get = 1,
+        Set = 2
+    }
 
-	/// <summary>
-	/// From AMPROPERTY_PIN
-	/// </summary>
-	public enum AMPropertyPin
-	{
-		Category,
-		Medium
-	}
+    /// <summary>
+    /// From AMPROPERTY_PIN
+    /// </summary>
+    public enum AMPropertyPin
+    {
+        Category,
+        Medium
+    }
 
-	/// <summary>
-	/// From AMTunerSubChannel
-	/// </summary>
-	public enum AMTunerSubChannel
-	{
-		NoTune = -2,
-		Default = -1
-	}
+    /// <summary>
+    /// From AMTunerSubChannel
+    /// </summary>
+    public enum AMTunerSubChannel
+    {
+        NoTune = -2,
+        Default = -1
+    }
 
-	/// <summary>
-	/// From AMTunerSignalStrength
-	/// </summary>
-	public enum AMTunerSignalStrength
-	{
-		HasNoSignalStrength = -1,
-		NoSignal = 0,
-		SignalPresent = 1
-	}
+    /// <summary>
+    /// From AMTunerSignalStrength
+    /// </summary>
+    public enum AMTunerSignalStrength
+    {
+        HasNoSignalStrength = -1,
+        NoSignal = 0,
+        SignalPresent = 1
+    }
 
-	/// <summary>
-	/// From AMTunerModeType
-	/// </summary>
-	[Flags]
-	public enum AMTunerModeType
-	{
-		Default = 0x0000,
-		TV = 0x0001,
-		FMRadio = 0x0002,
-		AMRadio = 0x0004,
-		Dss = 0x0008,
-		DTV = 0x0010
-	}
+    /// <summary>
+    /// From AMTunerModeType
+    /// </summary>
+    [Flags]
+    public enum AMTunerModeType
+    {
+        Default = 0x0000,
+        TV = 0x0001,
+        FMRadio = 0x0002,
+        AMRadio = 0x0004,
+        Dss = 0x0008,
+        DTV = 0x0010
+    }
 
-	/// <summary>
-	/// From AMTunerEventType
-	/// </summary>
-	public enum AMTunerEventType
-	{
-		Changed = 0x0001
-	}
+    /// <summary>
+    /// From AMTunerEventType
+    /// </summary>
+    public enum AMTunerEventType
+    {
+        Changed = 0x0001
+    }
 
-	/// <summary>
-	/// From AnalogVideoStandard
-	/// </summary>
-	[Flags]
-	public enum AnalogVideoStandard
-	{
-		None = 0x00000000,
-		NTSC_M = 0x00000001,
-		NTSC_M_J = 0x00000002,
-		NTSC_433 = 0x00000004,
-		PAL_B = 0x00000010,
-		PAL_D = 0x00000020,
-		PAL_G = 0x00000040,
-		PAL_H = 0x00000080,
-		PAL_I = 0x00000100,
-		PAL_M = 0x00000200,
-		PAL_N = 0x00000400,
-		PAL_60 = 0x00000800,
-		SECAM_B = 0x00001000,
-		SECAM_D = 0x00002000,
-		SECAM_G = 0x00004000,
-		SECAM_H = 0x00008000,
-		SECAM_K = 0x00010000,
-		SECAM_K1 = 0x00020000,
-		SECAM_L = 0x00040000,
-		SECAM_L1 = 0x00080000,
-		PAL_N_COMBO = 0x00100000,
+    /// <summary>
+    /// From AnalogVideoStandard
+    /// </summary>
+    [Flags]
+    public enum AnalogVideoStandard
+    {
+        None = 0x00000000,
+        NTSC_M = 0x00000001,
+        NTSC_M_J = 0x00000002,
+        NTSC_433 = 0x00000004,
+        PAL_B = 0x00000010,
+        PAL_D = 0x00000020,
+        PAL_G = 0x00000040,
+        PAL_H = 0x00000080,
+        PAL_I = 0x00000100,
+        PAL_M = 0x00000200,
+        PAL_N = 0x00000400,
+        PAL_60 = 0x00000800,
+        SECAM_B = 0x00001000,
+        SECAM_D = 0x00002000,
+        SECAM_G = 0x00004000,
+        SECAM_H = 0x00008000,
+        SECAM_K = 0x00010000,
+        SECAM_K1 = 0x00020000,
+        SECAM_L = 0x00040000,
+        SECAM_L1 = 0x00080000,
+        PAL_N_COMBO = 0x00100000,
 
-		NTSCMask = 0x00000007,
-		PALMask = 0x00100FF0,
-		SECAMMask = 0x000FF000
-	}
+        NTSCMask = 0x00000007,
+        PALMask = 0x00100FF0,
+        SECAMMask = 0x000FF000
+    }
 
-	/// <summary>
-	/// From TunerInputType
-	/// </summary>
-	public enum TunerInputType
-	{
-		Cable,
-		Antenna
-	}
+    /// <summary>
+    /// From TunerInputType
+    /// </summary>
+    public enum TunerInputType
+    {
+        Cable,
+        Antenna
+    }
 
-	/// <summary>
-	/// From VideoControlFlags
-	/// </summary>
-	[Flags]
-	public enum VideoControlFlags
-	{
-		None = 0x0,
-		FlipHorizontal = 0x0001,
-		FlipVertical = 0x0002,
-		ExternalTriggerEnable = 0x0004,
-		Trigger = 0x0008
-	}
+    /// <summary>
+    /// From VideoControlFlags
+    /// </summary>
+    [Flags]
+    public enum VideoControlFlags
+    {
+        None = 0x0,
+        FlipHorizontal = 0x0001,
+        FlipVertical = 0x0002,
+        ExternalTriggerEnable = 0x0004,
+        Trigger = 0x0008
+    }
 
-	/// <summary>
-	/// From TVAudioMode
-	/// </summary>
-	[Flags]
-	public enum TVAudioMode
-	{
-		Mono = 0x0001,
-		Stereo = 0x0002,
-		LangA = 0x0010,
-		LangB = 0x0020,
-		LangC = 0x0040,
-	}
+    /// <summary>
+    /// From TVAudioMode
+    /// </summary>
+    [Flags]
+    public enum TVAudioMode
+    {
+        Mono = 0x0001,
+        Stereo = 0x0002,
+        LangA = 0x0010,
+        LangB = 0x0020,
+        LangC = 0x0040,
+    }
 
-	/// <summary>
-	/// From VideoProcAmpProperty
-	/// </summary>
-	public enum VideoProcAmpProperty
-	{
-		Brightness,
-		Contrast,
-		Hue,
-		Saturation,
-		Sharpness,
-		Gamma,
-		ColorEnable,
-		WhiteBalance,
-		BacklightCompensation,
-		Gain
-	}
+    /// <summary>
+    /// From VideoProcAmpProperty
+    /// </summary>
+    public enum VideoProcAmpProperty
+    {
+        Brightness,
+        Contrast,
+        Hue,
+        Saturation,
+        Sharpness,
+        Gamma,
+        ColorEnable,
+        WhiteBalance,
+        BacklightCompensation,
+        Gain
+    }
 
-	/// <summary>
-	/// From VideoProcAmpFlags
-	/// </summary>
-	[Flags]
-	public enum VideoProcAmpFlags
-	{
-		Auto = 0x0001,
-		Manual = 0x0002
-	}
+    /// <summary>
+    /// From VideoProcAmpFlags
+    /// </summary>
+    [Flags]
+    public enum VideoProcAmpFlags
+    {
+        Auto = 0x0001,
+        Manual = 0x0002
+    }
 
-	/// <summary>
-	/// From PhysicalConnectorType
-	/// </summary>
-	public enum PhysicalConnectorType
-	{
-		Video_Tuner = 1,
-		Video_Composite,
-		Video_SVideo,
-		Video_RGB,
-		Video_YRYBY,
-		Video_SerialDigital,
-		Video_ParallelDigital,
-		Video_SCSI,
-		Video_AUX,
-		Video_1394,
-		Video_USB,
-		Video_VideoDecoder,
-		Video_VideoEncoder,
-		Video_SCART,
-		Video_Black,
+    /// <summary>
+    /// From PhysicalConnectorType
+    /// </summary>
+    public enum PhysicalConnectorType
+    {
+        Video_Tuner = 1,
+        Video_Composite,
+        Video_SVideo,
+        Video_RGB,
+        Video_YRYBY,
+        Video_SerialDigital,
+        Video_ParallelDigital,
+        Video_SCSI,
+        Video_AUX,
+        Video_1394,
+        Video_USB,
+        Video_VideoDecoder,
+        Video_VideoEncoder,
+        Video_SCART,
+        Video_Black,
 
-		Audio_Tuner = 0x1000,
-		Audio_Line,
-		Audio_Mic,
-		Audio_AESDigital,
-		Audio_SPDIFDigital,
-		Audio_SCSI,
-		Audio_AUX,
-		Audio_1394,
-		Audio_USB,
-		Audio_AudioDecoder,
-	}
+        Audio_Tuner = 0x1000,
+        Audio_Line,
+        Audio_Mic,
+        Audio_AESDigital,
+        Audio_SPDIFDigital,
+        Audio_SCSI,
+        Audio_AUX,
+        Audio_1394,
+        Audio_USB,
+        Audio_AudioDecoder,
+    }
 
-	/// <summary>
-	/// From AMTVAudioEventType
-	/// </summary>
-	[Flags]
-	public enum AMTVAudioEventType
-	{
-		Changed = 0x0001
-	}
+    /// <summary>
+    /// From AMTVAudioEventType
+    /// </summary>
+    [Flags]
+    public enum AMTVAudioEventType
+    {
+        Changed = 0x0001
+    }
 
-	/// <summary>
-	/// From CompressionCaps
-	/// </summary>
-	[Flags]
-	public enum CompressionCaps
-	{
-		None = 0x0,
-		CanQuality = 0x01,
-		CanCrunch = 0x02,
-		CanKeyFrame = 0x04,
-		CanBFrame = 0x08,
-		CanWindow = 0x10
-	}
+    /// <summary>
+    /// From CompressionCaps
+    /// </summary>
+    [Flags]
+    public enum CompressionCaps
+    {
+        None = 0x0,
+        CanQuality = 0x01,
+        CanCrunch = 0x02,
+        CanKeyFrame = 0x04,
+        CanBFrame = 0x08,
+        CanWindow = 0x10
+    }
 
-	/// <summary>
-	/// From VfwCompressDialogs
-	/// </summary>
-	[Flags]
-	public enum VfwCompressDialogs
-	{
-		Config = 0x01,
-		About = 0x02,
-		QueryConfig = 0x04,
-		QueryAbout = 0x08
-	}
+    /// <summary>
+    /// From VfwCompressDialogs
+    /// </summary>
+    [Flags]
+    public enum VfwCompressDialogs
+    {
+        Config = 0x01,
+        About = 0x02,
+        QueryConfig = 0x04,
+        QueryAbout = 0x08
+    }
 
-	/// <summary>
-	/// From VfwCaptureDialogs
-	/// </summary>
-	[Flags]
-	public enum VfwCaptureDialogs
-	{
-		None = 0x00,
-		Source = 0x01,
-		Format = 0x02,
-		Display = 0x04
-	}
+    /// <summary>
+    /// From VfwCaptureDialogs
+    /// </summary>
+    [Flags]
+    public enum VfwCaptureDialogs
+    {
+        None = 0x00,
+        Source = 0x01,
+        Format = 0x02,
+        Display = 0x04
+    }
 
-	/// <summary>
-	/// From DEV_PORT_*
-	/// </summary>
-	public enum ExtDevicePort
-	{
-		Sim = 1,
-		Com1 = 2,
-		Com2 = 3,
-		Com3 = 4,
-		Com4 = 5,
-		Diaq = 6,
-		Arti = 7,
-		FireWire1394 = 8,
-		Usb = 9,
-		Min = Sim,
-		Max = Usb
-	}
+    /// <summary>
+    /// From DEV_PORT_*
+    /// </summary>
+    public enum ExtDevicePort
+    {
+        Sim = 1,
+        Com1 = 2,
+        Com2 = 3,
+        Com3 = 4,
+        Com4 = 5,
+        Diaq = 6,
+        Arti = 7,
+        FireWire1394 = 8,
+        Usb = 9,
+        Min = Sim,
+        Max = Usb
+    }
 
-	public enum ExtDeviceBase
-	{
-		Base = 0x1000
-	}
+    public enum ExtDeviceBase
+    {
+        Base = 0x1000
+    }
 
-	/// <summary>
-	/// From ED_DEVCAP*, ED_DEVTYPE* etc.
-	/// </summary>
-	public enum ExtDeviceCaps
-	{
-		None = 0, 
-		CanRecord = ExtDeviceBase.Base+1,
-		CanRecordStrobe =ExtDeviceBase.Base+2,
-		HasAudio =ExtDeviceBase.Base+3,
-		HasVideo = ExtDeviceBase.Base+4,
-		UsesFiles = ExtDeviceBase.Base+5,
-		CanSave = ExtDeviceBase.Base+6,
-		DeviceType = ExtDeviceBase.Base+7,
-		VCR = ExtDeviceBase.Base+8,
-		LaserDisk = ExtDeviceBase.Base+9,
-		ATR = ExtDeviceBase.Base+10,
-		DDR = ExtDeviceBase.Base+11,
-		Router = ExtDeviceBase.Base+12,
-		Keyer = ExtDeviceBase.Base+13,
-		MixerVideo = ExtDeviceBase.Base+14,
-		DVE = ExtDeviceBase.Base+15,
-		WipeGen = ExtDeviceBase.Base+16,
-		MixerAudio = ExtDeviceBase.Base+17,
-		CG = ExtDeviceBase.Base+18,
-		TBC = ExtDeviceBase.Base+19,
-		TCG = ExtDeviceBase.Base+20,
-		GPI = ExtDeviceBase.Base+21, 
-		Joystick = ExtDeviceBase.Base+22,
-		Keyboard = ExtDeviceBase.Base+3,
-		ExternalDeviceID = ExtDeviceBase.Base+24,
-		TimeCodeRead = ExtDeviceBase.Base+25,
-		TimeCodeWrite = ExtDeviceBase.Base+26,
-		CtlTrkRead = ExtDeviceBase.Base+27,
-		IndexRead = ExtDeviceBase.Base+28,
-		PreRoll = ExtDeviceBase.Base+29,
-		PostRoll = ExtDeviceBase.Base+30,
-		SyncAccuracy = ExtDeviceBase.Base+31,
-		Precise = ExtDeviceBase.Base+32,
-		Frame = ExtDeviceBase.Base+33,
-		Rough = ExtDeviceBase.Base+34,
-		NormalRate = ExtDeviceBase.Base+35,
-		Rate24 = ExtDeviceBase.Base+36,
-		Rate25 = ExtDeviceBase.Base+37,
-		Rate2997 = ExtDeviceBase.Base+38,
-		Rate30 = ExtDeviceBase.Base+39,
-		CanPreview = ExtDeviceBase.Base+40,
-		CanMonitorSources = ExtDeviceBase.Base+41,
-		CanTest = ExtDeviceBase.Base+42,
-		VideoInputs = ExtDeviceBase.Base+43,
-		AudioInputs = ExtDeviceBase.Base+44,
-		NeedsCalibrating = ExtDeviceBase.Base+45,
-		SeekType = ExtDeviceBase.Base+46,
-		Perfect = ExtDeviceBase.Base+47,
-		Fast = ExtDeviceBase.Base+48,
-		Slow = ExtDeviceBase.Base+49,
-		On = ExtDeviceBase.Base+50,
-		Off = ExtDeviceBase.Base+51,
-		Standby = ExtDeviceBase.Base+52,
-		Active = ExtDeviceBase.Base+53,
-		Inactive = ExtDeviceBase.Base+54,
-		All = ExtDeviceBase.Base+55,
-		Test = ExtDeviceBase.Base+56
-	}
+    /// <summary>
+    /// From ED_DEVCAP*, ED_DEVTYPE* etc.
+    /// </summary>
+    public enum ExtDeviceCaps
+    {
+        None = 0, 
+        CanRecord = ExtDeviceBase.Base+1,
+        CanRecordStrobe =ExtDeviceBase.Base+2,
+        HasAudio =ExtDeviceBase.Base+3,
+        HasVideo = ExtDeviceBase.Base+4,
+        UsesFiles = ExtDeviceBase.Base+5,
+        CanSave = ExtDeviceBase.Base+6,
+        DeviceType = ExtDeviceBase.Base+7,
+        VCR = ExtDeviceBase.Base+8,
+        LaserDisk = ExtDeviceBase.Base+9,
+        ATR = ExtDeviceBase.Base+10,
+        DDR = ExtDeviceBase.Base+11,
+        Router = ExtDeviceBase.Base+12,
+        Keyer = ExtDeviceBase.Base+13,
+        MixerVideo = ExtDeviceBase.Base+14,
+        DVE = ExtDeviceBase.Base+15,
+        WipeGen = ExtDeviceBase.Base+16,
+        MixerAudio = ExtDeviceBase.Base+17,
+        CG = ExtDeviceBase.Base+18,
+        TBC = ExtDeviceBase.Base+19,
+        TCG = ExtDeviceBase.Base+20,
+        GPI = ExtDeviceBase.Base+21, 
+        Joystick = ExtDeviceBase.Base+22,
+        Keyboard = ExtDeviceBase.Base+3,
+        ExternalDeviceID = ExtDeviceBase.Base+24,
+        TimeCodeRead = ExtDeviceBase.Base+25,
+        TimeCodeWrite = ExtDeviceBase.Base+26,
+        CtlTrkRead = ExtDeviceBase.Base+27,
+        IndexRead = ExtDeviceBase.Base+28,
+        PreRoll = ExtDeviceBase.Base+29,
+        PostRoll = ExtDeviceBase.Base+30,
+        SyncAccuracy = ExtDeviceBase.Base+31,
+        Precise = ExtDeviceBase.Base+32,
+        Frame = ExtDeviceBase.Base+33,
+        Rough = ExtDeviceBase.Base+34,
+        NormalRate = ExtDeviceBase.Base+35,
+        Rate24 = ExtDeviceBase.Base+36,
+        Rate25 = ExtDeviceBase.Base+37,
+        Rate2997 = ExtDeviceBase.Base+38,
+        Rate30 = ExtDeviceBase.Base+39,
+        CanPreview = ExtDeviceBase.Base+40,
+        CanMonitorSources = ExtDeviceBase.Base+41,
+        CanTest = ExtDeviceBase.Base+42,
+        VideoInputs = ExtDeviceBase.Base+43,
+        AudioInputs = ExtDeviceBase.Base+44,
+        NeedsCalibrating = ExtDeviceBase.Base+45,
+        SeekType = ExtDeviceBase.Base+46,
+        Perfect = ExtDeviceBase.Base+47,
+        Fast = ExtDeviceBase.Base+48,
+        Slow = ExtDeviceBase.Base+49,
+        On = ExtDeviceBase.Base+50,
+        Off = ExtDeviceBase.Base+51,
+        Standby = ExtDeviceBase.Base+52,
+        All = ExtDeviceBase.Base+55,
+        Test = ExtDeviceBase.Base+56,
+        DeviceTypeCamera = ExtDeviceBase.Base+900,
+        DeviceTypeTuner = ExtDeviceBase.Base+901,
+        DeviceTypeDvhs = ExtDeviceBase.Base+902,
+        DeviceTypeUnknown = ExtDeviceBase.Base+903,
+        CapabilityUnknown = ExtDeviceBase.Base+910,
+    }
 
-	/// <summary>
-	/// From ED_TRANSCAP*
-	/// </summary>
-	public enum ExtTransportCaps
-	{
-		None = 0,
-		CanEject = ExtDeviceBase.Base+100,
-		CanBumpPlay = ExtDeviceBase.Base+101,
-		CanPlayBackwards = ExtDeviceBase.Base+102,
-		CanSetEE = ExtDeviceBase.Base+103,
-		CanSetPB = ExtDeviceBase.Base+104,
-		CanDelayVideoIn = ExtDeviceBase.Base+105,
-		CanDelayVideoOut = ExtDeviceBase.Base+106,
-		CanDelayAudioIn = ExtDeviceBase.Base+107,
-		CanDelayAudioOut = ExtDeviceBase.Base+108,
-		FwdVariableMax = ExtDeviceBase.Base+109,
-		FwdVariableMin = ExtDeviceBase.Base+800,
-		RevVariableMax = ExtDeviceBase.Base+110,
-		RevVariableMin = ExtDeviceBase.Base+801,
-		FwdShuttleMax = ExtDeviceBase.Base+802,
-		FwdShuttleMin = ExtDeviceBase.Base+803,
-		RevShuttleMax = ExtDeviceBase.Base+804,
-		RevShuttleMin = ExtDeviceBase.Base+805,
-		NumAudioTracks = ExtDeviceBase.Base+111,
-		LTCTrack = ExtDeviceBase.Base+112,
-		NeedsTBC = ExtDeviceBase.Base+113,
-		NeedsCueing = ExtDeviceBase.Base+114,
-		CanInsert = ExtDeviceBase.Base+115,
-		CanAssemble = ExtDeviceBase.Base+116,
-		FieldStep = ExtDeviceBase.Base+117,
-		ClockIncRate = ExtDeviceBase.Base+118,
-		CanDetechLength = ExtDeviceBase.Base+119,
-		CanFreeze = ExtDeviceBase.Base+120,
-		HasTuner = ExtDeviceBase.Base+121,
-		HasTimer = ExtDeviceBase.Base+122,
-		HasClock = ExtDeviceBase.Base+123,
-		MultipleEdits = ExtDeviceBase.Base+806,
-		IsMaster = ExtDeviceBase.Base+807,
-		HasDT = ExtDeviceBase.Base+808
-	}
+    /// <summary>
+    /// From ED_TRANSCAP*
+    /// </summary>
+    public enum ExtTransportCaps
+    {
+        None = 0,
+        CanEject = ExtDeviceBase.Base+100,
+        CanBumpPlay = ExtDeviceBase.Base+101,
+        CanPlayBackwards = ExtDeviceBase.Base+102,
+        CanSetEE = ExtDeviceBase.Base+103,
+        CanSetPB = ExtDeviceBase.Base+104,
+        CanDelayVideoIn = ExtDeviceBase.Base+105,
+        CanDelayVideoOut = ExtDeviceBase.Base+106,
+        CanDelayAudioIn = ExtDeviceBase.Base+107,
+        CanDelayAudioOut = ExtDeviceBase.Base+108,
+        FwdVariableMax = ExtDeviceBase.Base+109,
+        FwdVariableMin = ExtDeviceBase.Base+800,
+        RevVariableMax = ExtDeviceBase.Base+110,
+        RevVariableMin = ExtDeviceBase.Base+801,
+        FwdShuttleMax = ExtDeviceBase.Base+802,
+        FwdShuttleMin = ExtDeviceBase.Base+803,
+        RevShuttleMax = ExtDeviceBase.Base+804,
+        RevShuttleMin = ExtDeviceBase.Base+805,
+        NumAudioTracks = ExtDeviceBase.Base+111,
+        LTCTrack = ExtDeviceBase.Base+112,
+        NeedsTBC = ExtDeviceBase.Base+113,
+        NeedsCueing = ExtDeviceBase.Base+114,
+        CanInsert = ExtDeviceBase.Base+115,
+        CanAssemble = ExtDeviceBase.Base+116,
+        FieldStep = ExtDeviceBase.Base+117,
+        ClockIncRate = ExtDeviceBase.Base+118,
+        CanDetechLength = ExtDeviceBase.Base+119,
+        CanFreeze = ExtDeviceBase.Base+120,
+        HasTuner = ExtDeviceBase.Base+121,
+        HasTimer = ExtDeviceBase.Base+122,
+        HasClock = ExtDeviceBase.Base+123,
+        MultipleEdits = ExtDeviceBase.Base+806,
+        IsMaster = ExtDeviceBase.Base+807,
+        HasDT = ExtDeviceBase.Base+814
+    }
 
-	/// <summary>
-	/// From ED_MEDIA*
-	/// </summary>
-	public enum ExtTransportMediaStates
-	{
-		None = 0,
-		SpinUp = ExtDeviceBase.Base+130,
-		SpinDown = ExtDeviceBase.Base+131,
-		Unload = ExtDeviceBase.Base+132
-	}
+    /// <summary>
+    /// From ED_MEDIA*
+    /// </summary>
+    public enum ExtTransportMediaStates
+    {
+        None = 0,
+        SpinUp = ExtDeviceBase.Base+130,
+        SpinDown = ExtDeviceBase.Base+131,
+        Unload = ExtDeviceBase.Base+132
+    }
 
-	/// <summary>
-	/// From ED_MODE*
-	/// </summary>
-	public enum ExtTransportModes
-	{
-		None = 0,
-		Play = ExtDeviceBase.Base+200,
-		Stop = ExtDeviceBase.Base+201,
-		Freeze = ExtDeviceBase.Base+202,
-		Thaw = ExtDeviceBase.Base+203,
-		FF = ExtDeviceBase.Base+204,
-		Rew = ExtDeviceBase.Base+205,
-		Record = ExtDeviceBase.Base+206,
-		RecordStrobe = ExtDeviceBase.Base+207,
-		RecordFreeze = ExtDeviceBase.Base+808,
-		Step = ExtDeviceBase.Base+208,
-		StepFwd = Step,
-		StepRew = ExtDeviceBase.Base+809,
-		Shuttle = ExtDeviceBase.Base+209,
-		EditCue = ExtDeviceBase.Base+210,
-		VarSpeed = ExtDeviceBase.Base+211,
-		Perform = ExtDeviceBase.Base+212,
-		LinkOn = ExtDeviceBase.Base+280,
-		LinkOff = ExtDeviceBase.Base+281,
-		NotifyEnable = ExtDeviceBase.Base+810,
-		NotifyDisable = ExtDeviceBase.Base+811,
-		ShotSearch = ExtDeviceBase.Base+812
-	}
+    /// <summary>
+    /// From ED_MODE*
+    /// </summary>
+    public enum ExtTransportModes
+    {
+        None = 0,
+        Play = ExtDeviceBase.Base+200,
+        Stop = ExtDeviceBase.Base+201,
+        Freeze = ExtDeviceBase.Base+202,
+        Thaw = ExtDeviceBase.Base+203,
+        FF = ExtDeviceBase.Base+204,
+        Rew = ExtDeviceBase.Base+205,
+        Record = ExtDeviceBase.Base+206,
+        RecordStrobe = ExtDeviceBase.Base+207,
+        RecordFreeze = ExtDeviceBase.Base+808,
+        Step = ExtDeviceBase.Base+208,
+        StepFwd = Step,
+        StepRew = ExtDeviceBase.Base+809,
+        Shuttle = ExtDeviceBase.Base+209,
+        EditCue = ExtDeviceBase.Base+210,
+        VarSpeed = ExtDeviceBase.Base+211,
+        Perform = ExtDeviceBase.Base+212,
+        LinkOn = ExtDeviceBase.Base+280,
+        LinkOff = ExtDeviceBase.Base+281,
+        NotifyEnable = ExtDeviceBase.Base+810,
+        NotifyDisable = ExtDeviceBase.Base+811,
+        ShotSearch = ExtDeviceBase.Base+812,
+        PlayFastestFwd = ExtDeviceBase.Base+933,
+        PlaySlowestFwd = ExtDeviceBase.Base+934,
+        PlayFastestRev = ExtDeviceBase.Base+935,
+        PlaySlowestRev = ExtDeviceBase.Base+936,
+        Wind = ExtDeviceBase.Base+937,
+        RewFastest = ExtDeviceBase.Base+938,
+        RevPlay = ExtDeviceBase.Base+939
+    }
+
+    /// <summary>
+    /// from ED_MEDIA* etc.
+    /// </summary>
+    public enum ExtTransportStatus
+    {
+        None = 0,
+        Mode = ExtDeviceBase.Base+500,
+        Error = ExtDeviceBase.Base+501, 
+        Local = ExtDeviceBase.Base+502,
+        RecordInhibit = ExtDeviceBase.Base+503,
+        ServoLock = ExtDeviceBase.Base+504,
+        MediaPresent = ExtDeviceBase.Base+505,
+        MediaLength = ExtDeviceBase.Base+506,
+        MediaSize = ExtDeviceBase.Base+507,
+        MediaTrackCount = ExtDeviceBase.Base+508,
+        MediaTrackLength = ExtDeviceBase.Base+509,
+        MediaSide = ExtDeviceBase.Base+510,
+        MediaType = ExtDeviceBase.Base+511,
+        MediaVhs = ExtDeviceBase.Base+512,
+        MediaSvhs = ExtDeviceBase.Base+513,
+        MediaHi8 = ExtDeviceBase.Base+514,
+        MediaUmatic = ExtDeviceBase.Base+515,
+        MediaDvc = ExtDeviceBase.Base+516,
+        Media1Inch = ExtDeviceBase.Base+517,
+        MediaD1 = ExtDeviceBase.Base+518,
+        MediaD2 = ExtDeviceBase.Base+519,
+        MediaD3 = ExtDeviceBase.Base+520,
+        MediaD5 = ExtDeviceBase.Base+521,
+        MediaDBeta = ExtDeviceBase.Base+522,
+        MediaBeta = ExtDeviceBase.Base+523,
+        Media8mm = ExtDeviceBase.Base+524,
+        MediaDdr = ExtDeviceBase.Base+525,
+        MediaSx = ExtDeviceBase.Base+813,
+        MediaOther = ExtDeviceBase.Base+526,
+        MediaClv = ExtDeviceBase.Base+527,
+        MediaCav = ExtDeviceBase.Base+528,
+        MediaPosition = ExtDeviceBase.Base+529,
+        MediaNeo = ExtDeviceBase.Base+531, 
+        MediaVhsc = ExtDeviceBase.Base+925, 
+        MediaUnknown = ExtDeviceBase.Base+926, 
+        MediaNotPresent = ExtDeviceBase.Base+927, 
+        LinkMode = ExtDeviceBase.Base+530,
+        DevRemovedHeventGet = ExtDeviceBase.Base+960,
+        DevRemovedHeventRelease = ExtDeviceBase.Base+961,
+        ModeChangeNotify = ExtDeviceBase.Base+932,
+        ControlHeventGet = ExtDeviceBase.Base+928,
+        ControlHeventRelease = ExtDeviceBase.Base+929,
+        NotifyHeventGet =  ExtDeviceBase.Base+930,
+        NotifyHeventRelease =  ExtDeviceBase.Base+931
+    }
+
+    /// <summary>
+    /// From ED_TRANSBASIC* etc.
+    /// </summary>
+    public enum ExtTransportParameters
+    {
+        None = 0,
+        TimeFormat = ExtDeviceBase.Base + 540,
+        TimeFormatMilliseconds = ExtDeviceBase.Base + 541,
+        TimeFormatFrames = ExtDeviceBase.Base + 542,
+        TimeFormatReferenceTime = ExtDeviceBase.Base + 543,
+        TimeFormatHmsf = ExtDeviceBase.Base + 547,
+        TimeFormatTmsf = ExtDeviceBase.Base + 548,
+        TimeReference = ExtDeviceBase.Base + 549,
+        TimeReferenceTimeCode = ExtDeviceBase.Base + 550,
+        TimeReferenceControlTrack = ExtDeviceBase.Base + 551,
+        TimeReferenceIndex = ExtDeviceBase.Base + 552,
+        TimeReferenceAtn = ExtDeviceBase.Base + 958,
+        SuperImpose = ExtDeviceBase.Base + 553,
+        EndStopAction = ExtDeviceBase.Base + 554,
+        RecordFormat = ExtDeviceBase.Base + 555,
+        RecordFormatSp = ExtDeviceBase.Base + 556,
+        RecordFormatLp = ExtDeviceBase.Base + 557,
+        RecordFormatEp = ExtDeviceBase.Base + 558,
+        StepCount = ExtDeviceBase.Base + 559,
+        StepUnit = ExtDeviceBase.Base + 560,
+        StepField = ExtDeviceBase.Base + 561,
+        StepFrame = ExtDeviceBase.Base + 562,
+        Step3_2 = ExtDeviceBase.Base + 563,
+        PreRoll = ExtDeviceBase.Base + 564,
+        RecPreRoll = ExtDeviceBase.Base + 565,
+        PostRoll = ExtDeviceBase.Base + 566,
+        EditDelay = ExtDeviceBase.Base + 567,
+        PlayTcDelay = ExtDeviceBase.Base + 568,
+        RecTcDelay = ExtDeviceBase.Base + 569,
+        EditField = ExtDeviceBase.Base + 570,
+        FrameServo = ExtDeviceBase.Base + 571,
+        CfServo = ExtDeviceBase.Base + 572,
+        ServoRef = ExtDeviceBase.Base + 573,
+        ServoRefExternal = ExtDeviceBase.Base + 574,
+        ServoRefInput = ExtDeviceBase.Base + 575,
+        ServoRefInternal = ExtDeviceBase.Base + 576,
+        ServoRefAuto = ExtDeviceBase.Base + 577,
+        WarnGl = ExtDeviceBase.Base + 578,
+        SetTracking = ExtDeviceBase.Base + 579,
+        SetTrackingPlus = ExtDeviceBase.Base + 580,
+        SetTrackingMinus = ExtDeviceBase.Base + 581,
+        SetTrackingReset = ExtDeviceBase.Base + 582,
+        SetFreezeTimeout = ExtDeviceBase.Base + 583,
+        VolumeName = ExtDeviceBase.Base + 584,
+        Ballistic_1 = ExtDeviceBase.Base + 585,
+        Ballistic_2 = ExtDeviceBase.Base + 586,
+        Ballistic_3 = ExtDeviceBase.Base + 587,
+        Ballistic_4 = ExtDeviceBase.Base + 588,
+        Ballistic_5 = ExtDeviceBase.Base + 589,
+        Ballistic_6 = ExtDeviceBase.Base + 590,
+        Ballistic_7 = ExtDeviceBase.Base + 591,
+        Ballistic_8 = ExtDeviceBase.Base + 592,
+        Ballistic_9 = ExtDeviceBase.Base + 593,
+        Ballistic_10 = ExtDeviceBase.Base + 594,
+        Ballistic_11 = ExtDeviceBase.Base + 595,
+        Ballistic_12 = ExtDeviceBase.Base + 596,
+        Ballistic_13 = ExtDeviceBase.Base + 597,
+        Ballistic_14 = ExtDeviceBase.Base + 598,
+        Ballistic_15 = ExtDeviceBase.Base + 599,
+        Ballistic_16 = ExtDeviceBase.Base + 600,
+        Ballistic_17 = ExtDeviceBase.Base + 601,
+        Ballistic_18 = ExtDeviceBase.Base + 602,
+        Ballistic_19 = ExtDeviceBase.Base + 603,
+        Ballistic_20 = ExtDeviceBase.Base + 604,
+        SetClock = ExtDeviceBase.Base + 605,
+        SetCounterFormat = ExtDeviceBase.Base + 606,
+        SetCounterValue  = ExtDeviceBase.Base + 607,
+        SetTunerChUp = ExtDeviceBase.Base + 608,
+        SetTunerChDn = ExtDeviceBase.Base + 609,
+        SetTunerSkUp = ExtDeviceBase.Base + 610,
+        SetTunerSkDn = ExtDeviceBase.Base + 611,
+        SetTunerCh = ExtDeviceBase.Base + 612,
+        SetTunerNum = ExtDeviceBase.Base + 613,
+        SetTimerEvent = ExtDeviceBase.Base + 614,
+        SetTimerStartDay = ExtDeviceBase.Base + 615,
+        SetTimerStartTime = ExtDeviceBase.Base + 616,
+        SetTimerStopDay = ExtDeviceBase.Base + 617,
+        SetTimerStopTime = ExtDeviceBase.Base + 618,
+        VideoSetOutput = ExtDeviceBase.Base + 630,
+        E2E = ExtDeviceBase.Base + 631,
+        Playback = ExtDeviceBase.Base + 632,
+        Off = ExtDeviceBase.Base + 633,
+        VideoSetSource = ExtDeviceBase.Base + 634,
+        AudioEnableOutput = ExtDeviceBase.Base + 640,
+        AudioEnableRecord = ExtDeviceBase.Base + 642,
+        AudioEnableSelsync = ExtDeviceBase.Base + 643,
+        AudioSetSource = ExtDeviceBase.Base + 644,
+        AudioSetMonitor = ExtDeviceBase.Base + 645,
+        RawExtDeviceCommand = ExtDeviceBase.Base + 920,
+        InputSignal = ExtDeviceBase.Base + 940,
+        OutputSignal = ExtDeviceBase.Base + 941,
+        Signal_525_60_SD = ExtDeviceBase.Base + 942,
+        Signal_525_60_SDL = ExtDeviceBase.Base + 943,
+        Signal_625_50_SD = ExtDeviceBase.Base + 944,
+        Signal_625_50_SDL = ExtDeviceBase.Base + 945,
+        Signal_MPEG2TS = ExtDeviceBase.Base + 946,
+        Signal_625_60_HD =  ExtDeviceBase.Base + 947,
+        Signal_625_50_HD =  ExtDeviceBase.Base + 948,
+        Signal_2500_60_MPEG = ExtDeviceBase.Base + 980,
+        Signal_1250_60_MPEG = ExtDeviceBase.Base + 981,
+        Signal_0625_60_MPEG = ExtDeviceBase.Base + 982,
+        Signal_2500_50_MPEG = ExtDeviceBase.Base + 985,
+        Signal_1250_50_MPEG = ExtDeviceBase.Base + 986,
+        Signal_0625_50_MPEG = ExtDeviceBase.Base + 987,
+        SignalUnknown = ExtDeviceBase.Base + 990
+    }
+	
+    /// <summary>
+    /// From ED_AUDIO*
+    /// </summary>
+    [Flags]
+    public enum ExtTransportAudio
+    {
+        AudioAll = 0x10000000,	//	or any of the following OR'd together
+        Audio1 = 0x0000001,
+        Audio2 = 0x0000002,
+        Audio3 = 0x0000004,
+        Audio4 = 0x0000008,
+        Audio5 = 0x0000010,
+        Audio6 = 0x0000020,
+        Audio7 = 0x0000040,
+        Audio8 = 0x0000080,
+        Audio9 = 0x0000100,
+        Audio10 = 0x0000200,
+        Audio11 = 0x0000400,
+        Audio12 = 0x0000800,
+        Audio13 = 0x0001000,
+        Audio14 = 0x0002000,
+        Audio15 = 0x0004000,
+        Audio16 = 0x0008000,
+        Audio17 = 0x0010000,
+        Audio18 = 0x0020000,
+        Audio19 = 0x0040000,
+        Audio20 = 0x0080000,
+        Audio21 = 0x0100000,
+        Audio22 = 0x0200000,
+        Audio23 = 0x0400000,
+        Audio24 = 0x0800000,
+        Video = 0x2000000
+    }
+
+    /// <summary>
+    /// From ED_EDIT*
+    /// </summary>
+    public enum ExtTransportEdit
+    {
+        Invalid = ExtDeviceBase.Base + 652,
+        Executing = ExtDeviceBase.Base + 653,
+        Active = ExtDeviceBase.Base+53,
+        Inactive = ExtDeviceBase.Base+54,
+        Register = ExtDeviceBase.Base + 654,
+        Delete = ExtDeviceBase.Base + 655,
+        Hevent = ExtDeviceBase.Base + 656,
+        Test = ExtDeviceBase.Base + 657,
+        Immediate = ExtDeviceBase.Base + 658,
+        Mode = ExtDeviceBase.Base + 659,
+        ModeAssemble = ExtDeviceBase.Base + 660,
+        ModeInsert = ExtDeviceBase.Base + 661,
+        ModeCrashRecord = ExtDeviceBase.Base + 662,
+        ModeBookmarkTime = ExtDeviceBase.Base + 663,
+        ModeBookmarkChapter = ExtDeviceBase.Base + 664,
+        Master = ExtDeviceBase.Base + 666,
+        Track = ExtDeviceBase.Base + 667,
+        SourceInPoint = ExtDeviceBase.Base + 668,
+        SourceOutPoint = ExtDeviceBase.Base + 669,
+        RecInPoint = ExtDeviceBase.Base + 670,
+        RecOutPoint = ExtDeviceBase.Base + 671,
+        RehearseMode = ExtDeviceBase.Base + 672,
+        BVB = ExtDeviceBase.Base + 673,
+        VBV = ExtDeviceBase.Base + 674,
+        VVV = ExtDeviceBase.Base + 675,
+        Perform = ExtDeviceBase.Base + 676,
+        Abort = ExtDeviceBase.Base + 677,
+        TimeOut = ExtDeviceBase.Base + 678,
+        Seek = ExtDeviceBase.Base + 679,
+        SeekMode = ExtDeviceBase.Base + 680,
+        SeekEditIn = ExtDeviceBase.Base + 681,
+        SeekEditOut = ExtDeviceBase.Base + 682,
+        SeekPreRoll = ExtDeviceBase.Base + 683,
+        SeekPreRollCt = ExtDeviceBase.Base + 684,
+        SeekBookmark = ExtDeviceBase.Base + 685,
+        Offset = ExtDeviceBase.Base + 686,
+        PreRead = ExtDeviceBase.Base + 815,
+    }
 
     /// <summary>
     /// From VIDEO_STREAM_CONFIG_CAPS
@@ -1699,150 +1949,6 @@ namespace DirectShowLib
             [Out] out PhysicalConnectorType pType,
             [Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszType
             );
-    }
-
-    [Guid("A03CD5F0-3045-11cf-8C44-00AA006B6814"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IAMExtTransport
-    {
-        [PreserveSig]
-        int GetCapability(
-            [In] ExtTransportCaps Capability,
-            [Out] out int pValue,
-            [Out] out double pdblValue
-            );
-
-        [PreserveSig]
-        int put_MediaState([In] ExtTransportMediaStates State);
-
-        [PreserveSig]
-        int get_MediaState([Out] out ExtTransportMediaStates pState);
-
-        [PreserveSig]
-        int put_LocalControl([In] int State);
-
-        [PreserveSig]
-        int get_LocalControl([Out] out int pState);
-
-        [PreserveSig]
-        int GetStatus(
-            [In] int StatusItem,
-            [Out] out int pValue
-            );
-
-        [PreserveSig]
-        int GetTransportBasicParameters(
-            [In] int Param,
-            [Out] out int pValue,
-            [Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszData
-            );
-
-        [PreserveSig]
-        int SetTransportBasicParameters(
-            [In] int Param,
-            [In] int Value,
-            [In, MarshalAs(UnmanagedType.LPWStr)] string pszData
-            );
-
-        [PreserveSig]
-        int GetTransportVideoParameters(
-            [In] int Param,
-            [Out] out int pValue
-            );
-
-        [PreserveSig]
-        int SetTransportVideoParameters(
-            [In] int Param,
-            [In] int Value
-            );
-
-        [PreserveSig]
-        int GetTransportAudioParameters(
-            [In] int Param,
-            [Out] out int pValue
-            );
-
-        [PreserveSig]
-        int SetTransportAudioParameters(
-            [In] int Param,
-            [In] int Value
-            );
-
-        [PreserveSig]
-        int put_Mode([In] ExtTransportModes Mode);
-
-        [PreserveSig]
-        int get_Mode([Out] out ExtTransportModes pMode);
-
-        [PreserveSig]
-        int put_Rate([In] double dblRate);
-
-        [PreserveSig]
-        int get_Rate([Out] out double pdblRate);
-
-        [PreserveSig]
-        int GetChase(
-            [Out] out int pEnabled,
-            [Out] out int pOffset,
-            [Out] out IntPtr phEvent // HEVENT
-            );
-
-        [PreserveSig]
-        int SetChase(
-            [In] int Enable,
-            [In] int Offset,
-            [In] IntPtr hEvent // HEVENT
-            );
-
-        [PreserveSig]
-        int GetBump(
-            [Out] out int pSpeed,
-            [Out] out int pDuration
-            );
-
-        [PreserveSig]
-        int SetBump(
-            [In] int Speed,
-            [In] int Duration
-            );
-
-        [PreserveSig]
-        int get_AntiClogControl([Out] out int pEnabled);
-
-        [PreserveSig]
-        int put_AntiClogControl([In] int Enable);
-
-        [PreserveSig]
-        int GetEditPropertySet(
-            [In] int EditID,
-            [Out] out int pState
-            );
-
-        [PreserveSig]
-        int SetEditPropertySet(
-            [In, Out] ref int pEditID,
-            [In] int State
-            );
-
-        [PreserveSig]
-        int GetEditProperty(
-            [In] int EditID,
-            [In] int Param,
-            [Out] out int pValue
-            );
-
-        [PreserveSig]
-        int SetEditProperty(
-            [In] int EditID,
-            [In] int Param,
-            [In] int Value
-            );
-
-        [PreserveSig]
-        int get_EditStart([Out] out int pValue);
-
-        [PreserveSig]
-        int put_EditStart([In] int Value);
     }
 
     [Guid("9B496CE1-811B-11cf-8C77-00AA006B6814"),
@@ -3657,70 +3763,213 @@ namespace DirectShowLib
         int DeleteOutputPin([In, MarshalAs(UnmanagedType.LPWStr)] string pszPinName);
     }
 
-	[Guid("B5730A90-1A2C-11cf-8C23-00AA006B6814"),
-	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IAMExtDevice
-	{
-		[PreserveSig]
-		int GetCapability(
-			[In] ExtDeviceCaps Capability,
-			[Out] out ExtDeviceCaps pValue,
-			[Out] out double pdblValue
-			);
+    [Guid("B5730A90-1A2C-11cf-8C23-00AA006B6814"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IAMExtDevice
+    {
+        [PreserveSig]
+        int GetCapability(
+            [In] ExtDeviceCaps Capability,
+            [Out] out ExtDeviceCaps pValue,
+            [Out] out double pdblValue
+            );
 
-		[PreserveSig]
-		int get_ExternalDeviceID([Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszData);
+        [PreserveSig]
+        int get_ExternalDeviceID([Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszData);
 
-		[PreserveSig]
-		int get_ExternalDeviceVersion([Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszData);
+        [PreserveSig]
+        int get_ExternalDeviceVersion([Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszData);
 
-		[PreserveSig]
-		int put_DevicePower([In] ExtDeviceCaps PowerMode);
+        [PreserveSig]
+        int put_DevicePower([In] ExtDeviceCaps PowerMode);
 
-		[PreserveSig]
-		int get_DevicePower([Out] out ExtDeviceCaps pPowerMode);
+        [PreserveSig]
+        int get_DevicePower([Out] out ExtDeviceCaps pPowerMode);
 
-		[PreserveSig]
-		int Calibrate(
-			[In] IntPtr hEvent, // HEVENT
-			[In] ExtDeviceCaps Mode, //Active / Inactive
-			[Out] out int pStatus
-			);
+        [PreserveSig]
+        int Calibrate(
+            [In] IntPtr hEvent, // HEVENT
+            [In] ExtTransportEdit Mode, //Active / Inactive
+            [Out] out int pStatus
+            );
 
-		[PreserveSig]
-		int put_DevicePort([In] ExtDevicePort DevicePort);
+        [PreserveSig]
+        int put_DevicePort([In] ExtDevicePort DevicePort);
 
-		[PreserveSig]
-		int get_DevicePort([Out] out ExtDevicePort pDevicePort);
-	}
+        [PreserveSig]
+        int get_DevicePort([Out] out ExtDevicePort pDevicePort);
+    }
 
-	[Guid("D0E04C47-25B8-4369-925A-362A01D95444"),
-	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IMPEG2StreamIdMap
-	{
-		[PreserveSig]
-		int MapStreamId(
-			[In] int ulStreamId,
-			[In] MPEG2Program MediaSampleContent,
-			[In] int ulSubstreamFilterValue,
-			[In] int iDataOffset
-			);
+    [Guid("D0E04C47-25B8-4369-925A-362A01D95444"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IMPEG2StreamIdMap
+    {
+        [PreserveSig]
+        int MapStreamId(
+            [In] int ulStreamId,
+            [In] MPEG2Program MediaSampleContent,
+            [In] int ulSubstreamFilterValue,
+            [In] int iDataOffset
+            );
 
-		[PreserveSig]
-		int UnmapStreamId(
-			[In] int culStreamId,
-			[In, MarshalAs(UnmanagedType.LPArray)] int[] pulStreamId
-			);
+        [PreserveSig]
+        int UnmapStreamId(
+            [In] int culStreamId,
+            [In, MarshalAs(UnmanagedType.LPArray)] int[] pulStreamId
+            );
 
-		[PreserveSig,
-		Obsolete("Because of bug in DS 9.0c, you can't get the StreamId map from .NET", false)]
+        [PreserveSig,
+        Obsolete("Because of bug in DS 9.0c, you can't get the StreamId map from .NET", false)]
 #if ALLOW_UNTESTED_INTERFACES
 		int EnumStreamIdMap([Out] out IEnumStreamIdMap ppIEnumStreamIdMap);
 #else
-		int EnumStreamIdMap([Out] out object ppIEnumStreamIdMap);
+        int EnumStreamIdMap([Out] out object ppIEnumStreamIdMap);
 #endif
-	}
+    }
 
-	#endregion
+    [Guid("A03CD5F0-3045-11cf-8C44-00AA006B6814"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IAMExtTransport
+    {
+        [PreserveSig]
+        int GetCapability(
+            [In] ExtTransportCaps Capability,
+            [Out] out int pValue,
+            [Out] out double pdblValue
+            );
 
+        [PreserveSig]
+        int put_MediaState([In] ExtTransportMediaStates State);
+
+        [PreserveSig]
+        int get_MediaState([Out] out ExtTransportMediaStates pState);
+
+        [PreserveSig]
+        int put_LocalControl([In] int State);
+
+        [PreserveSig]
+        int get_LocalControl([Out] out int pState);
+
+        [PreserveSig]
+        int GetStatus(
+            [In] ExtTransportStatus StatusItem,
+            [Out] out int pValue
+            );
+
+        [PreserveSig]
+        int GetTransportBasicParameters(
+            [In] ExtTransportParameters Param,
+            [Out] out int pValue,
+            [Out, MarshalAs(UnmanagedType.LPWStr)] out string ppszData
+            );
+
+        [PreserveSig]
+        int SetTransportBasicParameters(
+            [In] ExtTransportParameters Param,
+            [In] int Value,
+            [In, MarshalAs(UnmanagedType.LPWStr)] string pszData
+            );
+
+        [PreserveSig]
+        int GetTransportVideoParameters(
+            [In] ExtTransportParameters Param,
+            [Out] out int pValue
+            );
+
+        [PreserveSig]
+        int SetTransportVideoParameters(
+            [In] ExtTransportParameters Param,
+            [In] int Value
+            );
+
+        [PreserveSig]
+        int GetTransportAudioParameters(
+            [In] ExtTransportParameters Param,
+            [Out] out int pValue
+            );
+
+        [PreserveSig]
+        int SetTransportAudioParameters(
+            [In] ExtTransportParameters Param,
+            [In] ExtTransportAudio Value
+            );
+
+        [PreserveSig]
+        int put_Mode([In] ExtTransportModes Mode);
+
+        [PreserveSig]
+        int get_Mode([Out] out ExtTransportModes pMode);
+
+        [PreserveSig]
+        int put_Rate([In] double dblRate);
+
+        [PreserveSig]
+        int get_Rate([Out] out double pdblRate);
+
+        [PreserveSig]
+        int GetChase(
+            [Out] out int pEnabled,
+            [Out] out int pOffset,
+            [Out] out IntPtr phEvent // HEVENT
+            );
+
+        [PreserveSig]
+        int SetChase(
+            [In] int Enable,
+            [In] int Offset,
+            [In] IntPtr hEvent // HEVENT
+            );
+
+        [PreserveSig]
+        int GetBump(
+            [Out] out int pSpeed,
+            [Out] out int pDuration
+            );
+
+        [PreserveSig]
+        int SetBump(
+            [In] int Speed,
+            [In] int Duration
+            );
+
+        [PreserveSig]
+        int get_AntiClogControl([Out] out int pEnabled);
+
+        [PreserveSig]
+        int put_AntiClogControl([In] int Enable);
+
+        [PreserveSig]
+        int GetEditPropertySet(
+            [In] int EditID,
+            [Out] out ExtTransportEdit pState
+            );
+
+        [PreserveSig]
+        int SetEditPropertySet(
+            [In, Out] ref int pEditID,
+            [In] ExtTransportEdit State
+            );
+
+        [PreserveSig]
+        int GetEditProperty(
+            [In] int EditID,
+            [In] ExtTransportEdit Param,
+            [Out] out int pValue
+            );
+
+        [PreserveSig]
+        int SetEditProperty(
+            [In] int EditID,
+            [In] ExtTransportEdit Param,
+            [In] int Value
+            );
+
+        [PreserveSig]
+        int get_EditStart([Out] out int pValue);
+
+        [PreserveSig]
+        int put_EditStart([In] int Value);
+    }
+
+    #endregion
 }

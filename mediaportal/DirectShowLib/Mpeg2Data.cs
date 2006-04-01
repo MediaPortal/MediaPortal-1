@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -25,10 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-
+#pragma warning disable 618
 namespace DirectShowLib
 {
-
     #region Declarations
 
     /// <summary>
@@ -73,29 +72,29 @@ namespace DirectShowLib
     [StructLayout(LayoutKind.Sequential, Pack=1)]
     public struct DSMCCFilterOptions
     {
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fSpecifyProtocol;
-      public byte Protocol;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fSpecifyType;
-      public byte Type;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fSpecifyMessageId;
-      public short MessageId;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fSpecifyTransactionId;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fUseTrxIdMessageIdMask;
-      public int TransactionId;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fSpecifyModuleVersion;
-      public byte ModuleVersion;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fSpecifyBlockNumber;
-      public short BlockNumber;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fGetModuleCall;
-      public short NumberOfBlocksInModule;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fSpecifyProtocol;
+        public byte Protocol;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fSpecifyType;
+        public byte Type;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fSpecifyMessageId;
+        public short MessageId;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fSpecifyTransactionId;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fUseTrxIdMessageIdMask;
+        public int TransactionId;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fSpecifyModuleVersion;
+        public byte ModuleVersion;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fSpecifyBlockNumber;
+        public short BlockNumber;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fGetModuleCall;
+        public short NumberOfBlocksInModule;
     }
 
     /// <summary>
@@ -115,35 +114,35 @@ namespace DirectShowLib
     [StructLayout(LayoutKind.Sequential, Pack=1)]
     public class MPEG2Filter
     {
-      public byte bVersionNumber;
-      public short wFilterSize;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fUseRawFilteringBits;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst=16)]
-      public byte[] Filter;
-      [MarshalAs(UnmanagedType.ByValArray, SizeConst=16)]
-      public byte[] Mask;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fSpecifyTableIdExtension;
-      public short TableIdExtension;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fSpecifyVersion;
-      public byte Version;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fSpecifySectionNumber;
-      public byte SectionNumber;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fSpecifyCurrentNext;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fNext;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fSpecifyDsmccOptions;
-      [MarshalAs(UnmanagedType.Struct)]
-      public DSMCCFilterOptions Dsmcc;
-      [MarshalAs(UnmanagedType.Bool)]
-      public bool fSpecifyAtscOptions;
-      [MarshalAs(UnmanagedType.Struct)]
-      public ATSCFilterOptions Atsc;
+        public byte bVersionNumber;
+        public short wFilterSize;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fUseRawFilteringBits;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst=16)]
+        public byte[] Filter;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst=16)]
+        public byte[] Mask;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fSpecifyTableIdExtension;
+        public short TableIdExtension;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fSpecifyVersion;
+        public byte Version;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fSpecifySectionNumber;
+        public byte SectionNumber;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fSpecifyCurrentNext;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fNext;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fSpecifyDsmccOptions;
+        [MarshalAs(UnmanagedType.Struct)]
+        public DSMCCFilterOptions Dsmcc;
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool fSpecifyAtscOptions;
+        [MarshalAs(UnmanagedType.Struct)]
+        public ATSCFilterOptions Atsc;
     }
 
 
@@ -308,5 +307,5 @@ namespace DirectShowLib
     }
 
 
-	#endregion
+    #endregion
 }

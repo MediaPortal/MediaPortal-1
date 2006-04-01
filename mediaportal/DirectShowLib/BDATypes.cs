@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -24,10 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-
+#pragma warning disable 618
 namespace DirectShowLib.BDA
 {
-
     #region Declarations
 
 #if ALLOW_UNTESTED_INTERFACES
@@ -261,42 +260,42 @@ namespace DirectShowLib.BDA
         Data
     }
 
-	/// <summary>
-	/// From MPEG2StreamType
-	/// </summary>
-	public enum MPEG2StreamType
-	{
-		BdaUninitializedMpeg2StreamType = -1,
-		Reserved1 = 0x0,
-		IsoIec11172_2_Video = Reserved1 + 1,
-		IsoIec13818_2_Video = IsoIec11172_2_Video + 1,
-		IsoIec11172_3_Audio = IsoIec13818_2_Video + 1,
-		IsoIec13818_3_Audio = IsoIec11172_3_Audio + 1,
-		IsoIec13818_1_PrivateSection = IsoIec13818_3_Audio + 1,
-		IsoIec13818_1_Pes = IsoIec13818_1_PrivateSection + 1,
-		IsoIec13522_Mheg = IsoIec13818_1_Pes + 1,
-		AnnexADsmCC = IsoIec13522_Mheg + 1,
-		ItuTRecH222_1 = AnnexADsmCC + 1,
-		IsoIec13818_6_TypeA = ItuTRecH222_1 + 1,
-		IsoIec13818_6_TypeB = IsoIec13818_6_TypeA + 1,
-		IsoIec13818_6_TypeC = IsoIec13818_6_TypeB + 1,
-		IsoIec13818_6_TypeD = IsoIec13818_6_TypeC + 1,
-		IsoIec13818_1_Auxiliary = IsoIec13818_6_TypeD + 1,
-		IsoIec13818_1_Reserved = IsoIec13818_1_Auxiliary + 1,
-		UserPrivate = IsoIec13818_1_Reserved + 1
-	}
+    /// <summary>
+    /// From MPEG2StreamType
+    /// </summary>
+    public enum MPEG2StreamType
+    {
+        BdaUninitializedMpeg2StreamType = -1,
+        Reserved1 = 0x0,
+        IsoIec11172_2_Video = Reserved1 + 1,
+        IsoIec13818_2_Video = IsoIec11172_2_Video + 1,
+        IsoIec11172_3_Audio = IsoIec13818_2_Video + 1,
+        IsoIec13818_3_Audio = IsoIec11172_3_Audio + 1,
+        IsoIec13818_1_PrivateSection = IsoIec13818_3_Audio + 1,
+        IsoIec13818_1_Pes = IsoIec13818_1_PrivateSection + 1,
+        IsoIec13522_Mheg = IsoIec13818_1_Pes + 1,
+        AnnexADsmCC = IsoIec13522_Mheg + 1,
+        ItuTRecH222_1 = AnnexADsmCC + 1,
+        IsoIec13818_6_TypeA = ItuTRecH222_1 + 1,
+        IsoIec13818_6_TypeB = IsoIec13818_6_TypeA + 1,
+        IsoIec13818_6_TypeC = IsoIec13818_6_TypeB + 1,
+        IsoIec13818_6_TypeD = IsoIec13818_6_TypeC + 1,
+        IsoIec13818_1_Auxiliary = IsoIec13818_6_TypeD + 1,
+        IsoIec13818_1_Reserved = IsoIec13818_1_Auxiliary + 1,
+        UserPrivate = IsoIec13818_1_Reserved + 1
+    }
 
-	/// <summary>
-	/// From ATSCComponentTypeFlags
-	/// </summary>
-	[Flags]
-	public enum ATSCComponentTypeFlags
-	{
-		None = 0x0,
-		ATSCCT_AC3 = 0x00000001
-	}
+    /// <summary>
+    /// From ATSCComponentTypeFlags
+    /// </summary>
+    [Flags]
+    public enum ATSCComponentTypeFlags
+    {
+        None = 0x0,
+        ATSCCT_AC3 = 0x00000001
+    }
 
-	/// <summary>
+    /// <summary>
     /// From BDA_TEMPLATE_CONNECTION
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]

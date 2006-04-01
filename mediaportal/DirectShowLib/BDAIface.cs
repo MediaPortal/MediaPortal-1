@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -24,10 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-
+#pragma warning disable 618
 namespace DirectShowLib.BDA
 {
-
     #region Declarations
 
 #if ALLOW_UNTESTED_INTERFACES
@@ -54,37 +53,37 @@ namespace DirectShowLib.BDA
 
 #endif
 
-	/// <summary>
-	/// From BDA_CHANGE_STATE
-	/// </summary>
-	public enum BDAChangeState
-	{
-		ChangesComplete = 0,
-		ChangesPending 
-	}
+    /// <summary>
+    /// From BDA_CHANGE_STATE
+    /// </summary>
+    public enum BDAChangeState
+    {
+        ChangesComplete = 0,
+        ChangesPending 
+    }
 
-	/// <summary>
-	/// From BDA_MULTICAST_MODE
-	/// </summary>
-	public enum MulticastMode
-	{
-		PromiscuousMulticast = 0,
-		FilteredMulticast,
-		NoMulticast
-	}
+    /// <summary>
+    /// From BDA_MULTICAST_MODE
+    /// </summary>
+    public enum MulticastMode
+    {
+        PromiscuousMulticast = 0,
+        FilteredMulticast,
+        NoMulticast
+    }
 
-	/// <summary>
-	/// From MEDIA_SAMPLE_CONTENT
-	/// </summary>
-	public enum MediaSampleContent
-	{
-		TransportPacket,
-		ElementaryStream,
-		Mpeg2PSI,
-		TransportPayload
-	}
+    /// <summary>
+    /// From MEDIA_SAMPLE_CONTENT
+    /// </summary>
+    public enum MediaSampleContent
+    {
+        TransportPacket,
+        ElementaryStream,
+        Mpeg2PSI,
+        TransportPayload
+    }
 
-	/// <summary>
+    /// <summary>
     /// From BDANODE_DESCRIPTOR
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
@@ -127,20 +126,6 @@ namespace DirectShowLib.BDA
 
         [PreserveSig]
         int UnRegisterDeviceFilter([In] int pvRegistrationContext);
-    }
-
-    [Guid("0DED49D5-A8B7-4d5d-97A1-12B0C195874D"),
-    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IBDA_PinControl
-    {
-        [PreserveSig]
-        int GetPinID([Out] out int pulPinID);
-
-        [PreserveSig]
-        int GetPinType([Out] out int pulPinType);
-
-        [PreserveSig]
-        int RegistrationContext([Out] out int pulRegistrationCtx);
     }
 
     [Guid("D2F1644B-B409-11d2-BC69-00A0C9EE9E16"),
@@ -360,287 +345,301 @@ namespace DirectShowLib.BDA
 
     }
 
-	[Guid("DDF15B12-BD25-11d2-9CA0-00C04F7971E0"),
-	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IBDA_AutoDemodulate
-	{
-		[PreserveSig]
-		int put_AutoDemodulate();
-	}
+    [Guid("DDF15B12-BD25-11d2-9CA0-00C04F7971E0"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IBDA_AutoDemodulate
+    {
+        [PreserveSig]
+        int put_AutoDemodulate();
+    }
 
-	[Guid("FD0A5AF3-B41D-11d2-9C95-00C04F7971E0"),
-	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IBDA_DeviceControl
-	{
-		[PreserveSig]
-		int StartChanges();
+    [Guid("FD0A5AF3-B41D-11d2-9C95-00C04F7971E0"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IBDA_DeviceControl
+    {
+        [PreserveSig]
+        int StartChanges();
 
-		[PreserveSig]
-		int CheckChanges();
+        [PreserveSig]
+        int CheckChanges();
 
-		[PreserveSig]
-		int CommitChanges();
+        [PreserveSig]
+        int CommitChanges();
 
-		[PreserveSig]
-		int GetChangeState([Out] out BDAChangeState pState);
-	}
+        [PreserveSig]
+        int GetChangeState([Out] out BDAChangeState pState);
+    }
 
-	[Guid("EF30F379-985B-4d10-B640-A79D5E04E1E0"),
-	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IBDA_DigitalDemodulator
-	{
-		[PreserveSig]
-		int put_ModulationType([In] ref ModulationType pModulationType);
+    [Guid("EF30F379-985B-4d10-B640-A79D5E04E1E0"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IBDA_DigitalDemodulator
+    {
+        [PreserveSig]
+        int put_ModulationType([In] ref ModulationType pModulationType);
 
-		[PreserveSig]
-		int get_ModulationType([Out] out ModulationType pModulationType);
+        [PreserveSig]
+        int get_ModulationType([Out] out ModulationType pModulationType);
 
-		[PreserveSig]
-		int put_InnerFECMethod([In] ref FECMethod pFECMethod);
+        [PreserveSig]
+        int put_InnerFECMethod([In] ref FECMethod pFECMethod);
 
-		[PreserveSig]
-		int get_InnerFECMethod([Out] out FECMethod pFECMethod);
+        [PreserveSig]
+        int get_InnerFECMethod([Out] out FECMethod pFECMethod);
 
-		[PreserveSig]
-		int put_InnerFECRate([In] ref BinaryConvolutionCodeRate pFECRate);
+        [PreserveSig]
+        int put_InnerFECRate([In] ref BinaryConvolutionCodeRate pFECRate);
 
-		[PreserveSig]
-		int get_InnerFECRate([Out] out BinaryConvolutionCodeRate pFECRate);
+        [PreserveSig]
+        int get_InnerFECRate([Out] out BinaryConvolutionCodeRate pFECRate);
 
-		[PreserveSig]
-		int put_OuterFECMethod([In] ref FECMethod pFECMethod);
+        [PreserveSig]
+        int put_OuterFECMethod([In] ref FECMethod pFECMethod);
 
-		[PreserveSig]
-		int get_OuterFECMethod([Out] out FECMethod pFECMethod);
+        [PreserveSig]
+        int get_OuterFECMethod([Out] out FECMethod pFECMethod);
 
-		[PreserveSig]
-		int put_OuterFECRate([In] ref BinaryConvolutionCodeRate pFECRate);
+        [PreserveSig]
+        int put_OuterFECRate([In] ref BinaryConvolutionCodeRate pFECRate);
 
-		[PreserveSig]
-		int get_OuterFECRate([Out] out BinaryConvolutionCodeRate pFECRate);
+        [PreserveSig]
+        int get_OuterFECRate([Out] out BinaryConvolutionCodeRate pFECRate);
 
-		[PreserveSig]
-		int put_SymbolRate([In] ref int pSymbolRate);
+        [PreserveSig]
+        int put_SymbolRate([In] ref int pSymbolRate);
 
-		[PreserveSig]
-		int get_SymbolRate([Out] out int pSymbolRate);
+        [PreserveSig]
+        int get_SymbolRate([Out] out int pSymbolRate);
 
-		[PreserveSig]
-		int put_SpectralInversion([In] ref SpectralInversion pSpectralInversion);
+        [PreserveSig]
+        int put_SpectralInversion([In] ref SpectralInversion pSpectralInversion);
 
-		[PreserveSig]
-		int get_SpectralInversion([Out] out SpectralInversion pSpectralInversion);
-	}
+        [PreserveSig]
+        int get_SpectralInversion([Out] out SpectralInversion pSpectralInversion);
+    }
 
-	[Guid("71985F43-1CA1-11d3-9CC8-00C04F7971E0"),
-	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IBDA_EthernetFilter
-	{
-		[PreserveSig]
-		int GetMulticastListSize( 
-			out int pulcbAddresses);
+    [Guid("71985F43-1CA1-11d3-9CC8-00C04F7971E0"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IBDA_EthernetFilter
+    {
+        [PreserveSig]
+        int GetMulticastListSize( 
+            out int pulcbAddresses);
         
-		[PreserveSig]
-		int PutMulticastList( 
-			int ulcbAddresses,
-			IntPtr pAddressList);
+        [PreserveSig]
+        int PutMulticastList( 
+            int ulcbAddresses,
+            IntPtr pAddressList);
         
-		[PreserveSig]
-		int GetMulticastList( 
-			ref int pulcbAddresses,
-			IntPtr pAddressList);
+        [PreserveSig]
+        int GetMulticastList( 
+            ref int pulcbAddresses,
+            IntPtr pAddressList);
         
-		[PreserveSig]
-		int PutMulticastMode( 
-			MulticastMode ulModeMask);
+        [PreserveSig]
+        int PutMulticastMode( 
+            MulticastMode ulModeMask);
         
-		[PreserveSig]
-		int GetMulticastMode( 
-			out MulticastMode pulModeMask);
+        [PreserveSig]
+        int GetMulticastMode( 
+            out MulticastMode pulModeMask);
         
-	}
+    }
 
-	[Guid("71985F47-1CA1-11d3-9CC8-00C04F7971E0"),
-	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IBDA_FrequencyFilter
-	{
-		[PreserveSig]
-		int put_Autotune([In] int ulTransponder);
+    [Guid("71985F47-1CA1-11d3-9CC8-00C04F7971E0"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IBDA_FrequencyFilter
+    {
+        [PreserveSig]
+        int put_Autotune([In] int ulTransponder);
 
-		[PreserveSig]
-		int get_Autotune([Out] out int pulTransponder);
+        [PreserveSig]
+        int get_Autotune([Out] out int pulTransponder);
 
-		[PreserveSig]
-		int put_Frequency([In] int ulFrequency);
+        [PreserveSig]
+        int put_Frequency([In] int ulFrequency);
 
-		[PreserveSig]
-		int get_Frequency([Out] out int pulFrequency);
+        [PreserveSig]
+        int get_Frequency([Out] out int pulFrequency);
 
-		[PreserveSig]
-		int put_Polarity([In] Polarisation Polarity);
+        [PreserveSig]
+        int put_Polarity([In] Polarisation Polarity);
 
-		[PreserveSig]
-		int get_Polarity([Out] out Polarisation pPolarity);
+        [PreserveSig]
+        int get_Polarity([Out] out Polarisation pPolarity);
 
-		[PreserveSig]
-		int put_Range([In] int ulRange);
+        [PreserveSig]
+        int put_Range([In] int ulRange);
 
-		[PreserveSig]
-		int get_Range([Out] out int pulRange);
+        [PreserveSig]
+        int get_Range([Out] out int pulRange);
 
-		[PreserveSig]
-		int put_Bandwidth([In] int ulBandwidth);
+        [PreserveSig]
+        int put_Bandwidth([In] int ulBandwidth);
 
-		[PreserveSig]
-		int get_Bandwidth([Out] out int pulBandwidth);
+        [PreserveSig]
+        int get_Bandwidth([Out] out int pulBandwidth);
 
-		[PreserveSig]
-		int put_FrequencyMultiplier([In] int ulMultiplier);
+        [PreserveSig]
+        int put_FrequencyMultiplier([In] int ulMultiplier);
 
-		[PreserveSig]
-		int get_FrequencyMultiplier([Out] out int pulMultiplier);
-	}
+        [PreserveSig]
+        int get_FrequencyMultiplier([Out] out int pulMultiplier);
+    }
 
-	[Guid("3F4DC8E2-4050-11d3-8F4B-00C04F7971E2"),
-	InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-	Obsolete("IBDA_IPSinkControl is no longer being supported for Ring 3 clients. Use the BDA_IPSinkInfo interface instead.")]
-	public interface IBDA_IPSinkControl
-	{
-		[PreserveSig]
-		int GetMulticastList( 
-			out int pulcbSize,
-			out IntPtr pbBuffer); // BYTE **
+    [Guid("3F4DC8E2-4050-11d3-8F4B-00C04F7971E2"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+    Obsolete("IBDA_IPSinkControl is no longer being supported for Ring 3 clients. Use the BDA_IPSinkInfo interface instead.")]
+    public interface IBDA_IPSinkControl
+    {
+        [PreserveSig]
+        int GetMulticastList( 
+            out int pulcbSize,
+            out IntPtr pbBuffer); // BYTE **
         
-		[PreserveSig]
-		int GetAdapterIPAddress( 
-			out int pulcbSize,
-			out IntPtr pbBuffer); // BYTE **
-	}
+        [PreserveSig]
+        int GetAdapterIPAddress( 
+            out int pulcbSize,
+            out IntPtr pbBuffer); // BYTE **
+    }
 
-	[Guid("A750108F-492E-4d51-95F7-649B23FF7AD7"),
-	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IBDA_IPSinkInfo
-	{
-		[PreserveSig]
-		int get_MulticastList( 
-			out int pulcbAddresses,
-			out IntPtr ppbAddressList); // BYTE **
+    [Guid("A750108F-492E-4d51-95F7-649B23FF7AD7"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IBDA_IPSinkInfo
+    {
+        [PreserveSig]
+        int get_MulticastList( 
+            out int pulcbAddresses,
+            out IntPtr ppbAddressList); // BYTE **
         
-		[PreserveSig]
-		int get_AdapterIPAddress( 
-			[MarshalAs(UnmanagedType.BStr)] out string pbstrBuffer);
+        [PreserveSig]
+        int get_AdapterIPAddress( 
+            [MarshalAs(UnmanagedType.BStr)] out string pbstrBuffer);
         
-		[PreserveSig]
-		int get_AdapterDescription( 
-			[MarshalAs(UnmanagedType.BStr)]  out string pbstrBuffer);
-	}
+        [PreserveSig]
+        int get_AdapterDescription( 
+            [MarshalAs(UnmanagedType.BStr)]  out string pbstrBuffer);
+    }
 
-	[Guid("71985F44-1CA1-11d3-9CC8-00C04F7971E0"),
-	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IBDA_IPV4Filter
-	{
-		[PreserveSig]
-		int GetMulticastListSize( 
-			out int pulcbAddresses);
+    [Guid("71985F44-1CA1-11d3-9CC8-00C04F7971E0"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IBDA_IPV4Filter
+    {
+        [PreserveSig]
+        int GetMulticastListSize( 
+            out int pulcbAddresses);
         
-		[PreserveSig]
-		int PutMulticastList( 
-			int ulcbAddresses,
-			IntPtr pAddressList);
+        [PreserveSig]
+        int PutMulticastList( 
+            int ulcbAddresses,
+            IntPtr pAddressList);
         
-		[PreserveSig]
-		int GetMulticastList( 
-			ref int pulcbAddresses,
-			IntPtr pAddressList);
+        [PreserveSig]
+        int GetMulticastList( 
+            ref int pulcbAddresses,
+            IntPtr pAddressList);
         
-		[PreserveSig]
-		int PutMulticastMode( 
-			MulticastMode ulModeMask);
+        [PreserveSig]
+        int PutMulticastMode( 
+            MulticastMode ulModeMask);
         
-		[PreserveSig]
-		int GetMulticastMode( 
-			out MulticastMode pulModeMask);
+        [PreserveSig]
+        int GetMulticastMode( 
+            out MulticastMode pulModeMask);
         
-	}
+    }
 
-	[Guid("E1785A74-2A23-4fb3-9245-A8F88017EF33"),
-	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IBDA_IPV6Filter
-	{
-		[PreserveSig]
-		int GetMulticastListSize( 
-			out int pulcbAddresses);
+    [Guid("E1785A74-2A23-4fb3-9245-A8F88017EF33"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IBDA_IPV6Filter
+    {
+        [PreserveSig]
+        int GetMulticastListSize( 
+            out int pulcbAddresses);
         
-		[PreserveSig]
-		int PutMulticastList( 
-			int ulcbAddresses,
-			IntPtr pAddressList);  // BYTE []
+        [PreserveSig]
+        int PutMulticastList( 
+            int ulcbAddresses,
+            IntPtr pAddressList);  // BYTE []
         
-		[PreserveSig]
-		int GetMulticastList( 
-			ref int pulcbAddresses,
-			IntPtr pAddressList);  // BYTE []
+        [PreserveSig]
+        int GetMulticastList( 
+            ref int pulcbAddresses,
+            IntPtr pAddressList);  // BYTE []
         
-		[PreserveSig]
-		int PutMulticastMode( 
-			MulticastMode ulModeMask);
+        [PreserveSig]
+        int PutMulticastMode( 
+            MulticastMode ulModeMask);
         
-		[PreserveSig]
-		int GetMulticastMode( 
-			out MulticastMode pulModeMask);
-	}
+        [PreserveSig]
+        int GetMulticastMode( 
+            out MulticastMode pulModeMask);
+    }
 
 
-	[Guid("992CF102-49F9-4719-A664-C4F23E2408F4"),
-	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IBDA_LNBInfo
-	{
-		[PreserveSig]
-		int put_LocalOscilatorFrequencyLowBand([In] int ulLOFLow);
+    [Guid("992CF102-49F9-4719-A664-C4F23E2408F4"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IBDA_LNBInfo
+    {
+        [PreserveSig]
+        int put_LocalOscilatorFrequencyLowBand([In] int ulLOFLow);
 
-		[PreserveSig]
-		int get_LocalOscilatorFrequencyLowBand([Out] out int pulLOFLow);
+        [PreserveSig]
+        int get_LocalOscilatorFrequencyLowBand([Out] out int pulLOFLow);
 
-		[PreserveSig]
-		int put_LocalOscilatorFrequencyHighBand([In] int ulLOFHigh);
+        [PreserveSig]
+        int put_LocalOscilatorFrequencyHighBand([In] int ulLOFHigh);
 
-		[PreserveSig]
-		int get_LocalOscilatorFrequencyHighBand([Out] out int pulLOFHigh);
+        [PreserveSig]
+        int get_LocalOscilatorFrequencyHighBand([Out] out int pulLOFHigh);
 
-		[PreserveSig]
-		int put_HighLowSwitchFrequency([In] int ulSwitchFrequency);
+        [PreserveSig]
+        int put_HighLowSwitchFrequency([In] int ulSwitchFrequency);
 
-		[PreserveSig]
-		int get_HighLowSwitchFrequency([Out] out int pulSwitchFrequency);
-	}
+        [PreserveSig]
+        int get_HighLowSwitchFrequency([Out] out int pulSwitchFrequency);
+    }
 
-	[Guid("afb6c2a1-2c41-11d3-8a60-0000f81e0e4a"),
-	InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-	public interface IMPEG2PIDMap
-	{
-		[PreserveSig]
-		int MapPID(
-			[In] int culPID,
-			[In, MarshalAs(UnmanagedType.LPArray)] int [] pulPID,
-			[In] MediaSampleContent MediaSampleContent
-			);
+    [Guid("afb6c2a1-2c41-11d3-8a60-0000f81e0e4a"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IMPEG2PIDMap
+    {
+        [PreserveSig]
+        int MapPID(
+            [In] int culPID,
+            [In, MarshalAs(UnmanagedType.LPArray)] int [] pulPID,
+            [In] MediaSampleContent MediaSampleContent
+            );
 
-		[PreserveSig]
-		int UnmapPID(
-			[In] int culPID,
-			[In, MarshalAs(UnmanagedType.LPArray)] int [] pulPID
-			);
+        [PreserveSig]
+        int UnmapPID(
+            [In] int culPID,
+            [In, MarshalAs(UnmanagedType.LPArray)] int [] pulPID
+            );
 
-		[PreserveSig,
-		Obsolete("Because of bug in DS 9.0c, you can't get the PID map from .NET", false)]
+        [PreserveSig,
+        Obsolete("Because of bug in DS 9.0c, you can't get the PID map from .NET", false)]
 #if ALLOW_UNTESTED_INTERFACES
 		int EnumPIDMap([Out] out IEnumPIDMap pIEnumPIDMap);
 #else
-		int EnumPIDMap([Out] out object pIEnumPIDMap);
+        int EnumPIDMap([Out] out object pIEnumPIDMap);
 #endif
 
-	}
+    }
 
 
-	#endregion
+    [Guid("0DED49D5-A8B7-4d5d-97A1-12B0C195874D"),
+    InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    public interface IBDA_PinControl
+    {
+        [PreserveSig]
+        int GetPinID([Out] out int pulPinID);
+
+        [PreserveSig]
+        int GetPinType([Out] out int pulPinType);
+
+        [PreserveSig]
+        int RegistrationContext([Out] out int pulRegistrationCtx);
+    }
+
+    #endregion
 }

@@ -3,7 +3,7 @@
 /************************************************************************
 
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -33,7 +33,6 @@ using System.Reflection;
 using DirectShowLib.Dvd;
 #pragma warning disable 618
 namespace DirectShowLib
-
 {
     #region Declarations
 

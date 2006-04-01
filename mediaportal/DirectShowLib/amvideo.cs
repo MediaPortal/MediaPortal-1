@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -25,10 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-
+#pragma warning disable 618
 namespace DirectShowLib
 {
-
     #region Declarations
 
 #if ALLOW_UNTESTED_INTERFACES
@@ -225,7 +224,7 @@ namespace DirectShowLib
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IFullScreenVideoEx : IFullScreenVideo
     {
-        #region IFullScreenVideo methods
+    #region IFullScreenVideo methods
 
         [PreserveSig]
         new int CountModes(out int pModes);
@@ -277,7 +276,7 @@ namespace DirectShowLib
 
         [PreserveSig]
         new int SetDefault();
-        #endregion
+    #endregion
 
         [PreserveSig]
         int SetAcceleratorTable(IntPtr hwnd,IntPtr hAccel); // HACCEL

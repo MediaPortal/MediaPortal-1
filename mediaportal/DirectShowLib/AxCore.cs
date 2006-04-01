@@ -2,7 +2,7 @@
 
 /*
 DirectShowLib - Provide access to DirectShow interfaces via .NET
-Copyright (C) 2005
+Copyright (C) 2006
 http://sourceforge.net/projects/directshownet/
 
 This library is free software; you can redistribute it and/or
@@ -24,10 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
-
+#pragma warning disable 618
 namespace DirectShowLib
 {
-
     #region Declarations
 
 #if ALLOW_UNTESTED_INTERFACES
@@ -46,45 +45,45 @@ namespace DirectShowLib
 
 #endif
 
-	/// <summary>
-	/// From AM_VIDEO_FLAG_* defines
-	/// </summary>
-	[Flags]
-	public enum AMVideoFlag
-	{
-		FieldMask         = 0x0003,
-		InterleavedFrame  = 0x0000,
-		Field1            = 0x0001,
-		Field2            = 0x0002,
-		Field1First       = 0x0004,
-		Weave             = 0x0008,
-		IPBMask           = 0x0030,
-		ISample           = 0x0000,
-		PSample           = 0x0010,
-		BSample           = 0x0020,
-		RepeatField       = 0x0040
-	}
+    /// <summary>
+    /// From AM_VIDEO_FLAG_* defines
+    /// </summary>
+    [Flags]
+    public enum AMVideoFlag
+    {
+        FieldMask         = 0x0003,
+        InterleavedFrame  = 0x0000,
+        Field1            = 0x0001,
+        Field2            = 0x0002,
+        Field1First       = 0x0004,
+        Weave             = 0x0008,
+        IPBMask           = 0x0030,
+        ISample           = 0x0000,
+        PSample           = 0x0010,
+        BSample           = 0x0020,
+        RepeatField       = 0x0040
+    }
 
-	/// <summary>
-	/// From AM_SAMPLE_PROPERTY_FLAGS
-	/// </summary>
-	[Flags] // May not be flags?
-	public enum AMSamplePropertyFlags
-	{
-		SplicePoint = 0x01,
-		PreRoll = 0x02,
-		DataDiscontinuity = 0x04,
-		TypeChanged = 0x08,
-		TimeValid = 0x10,
-		TimeDiscontinuity = 0x40,
-		FlushOnPause = 0x80,
-		StopValid = 0x100,
-		EndOfStream = 0x200,
-		Media = 0,
-		Control = 1
-	}
+    /// <summary>
+    /// From AM_SAMPLE_PROPERTY_FLAGS
+    /// </summary>
+    [Flags] // May not be flags?
+    public enum AMSamplePropertyFlags
+    {
+        SplicePoint = 0x01,
+        PreRoll = 0x02,
+        DataDiscontinuity = 0x04,
+        TypeChanged = 0x08,
+        TimeValid = 0x10,
+        TimeDiscontinuity = 0x40,
+        FlushOnPause = 0x80,
+        StopValid = 0x100,
+        EndOfStream = 0x200,
+        Media = 0,
+        Control = 1
+    }
 
-	/// <summary>
+    /// <summary>
     /// From PIN_INFO
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack=1, CharSet=CharSet.Unicode)]
@@ -188,26 +187,26 @@ namespace DirectShowLib
         public int cbPrefix;
     }
 
-	/// <summary>
-	/// From AM_SAMPLE2_PROPERTIES
-	/// </summary>
-	[StructLayout(LayoutKind.Sequential)]
-	public struct AMSample2Properties
-	{
-		public int cbData;
-		public AMVideoFlag dwTypeSpecificFlags;
-		public AMSamplePropertyFlags dwSampleFlags;
-		public int lActual;
-		public long tStart;
-		public long tStop;
-		public int dwStreamId;
-		[MarshalAs(UnmanagedType.LPStruct)] public AMMediaType pMediaType;
-		public IntPtr pbBuffer; // BYTE *
-		public int cbBuffer;
-	}
+    /// <summary>
+    /// From AM_SAMPLE2_PROPERTIES
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct AMSample2Properties
+    {
+        public int cbData;
+        public AMVideoFlag dwTypeSpecificFlags;
+        public AMSamplePropertyFlags dwSampleFlags;
+        public int lActual;
+        public long tStart;
+        public long tStop;
+        public int dwStreamId;
+        [MarshalAs(UnmanagedType.LPStruct)] public AMMediaType pMediaType;
+        public IntPtr pbBuffer; // BYTE *
+        public int cbBuffer;
+    }
 
 
-	#endregion
+    #endregion
 
     #region Interfaces
 
