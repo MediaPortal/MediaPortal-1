@@ -424,8 +424,7 @@ namespace MediaPortal.GUI.Library
             width = info2.Width;
             height = info2.Height;
 
-            //Log.Write("Texturemanager loaded temporay:{0} {1}x{2} format:{3}",
-              fileName, width, height, info2.Format);
+            //Log.Write("Texturemanager loaded temporay:{0} {1}x{2} format:{3}", fileName, width, height, info2.Format);
           }
         }
         else
