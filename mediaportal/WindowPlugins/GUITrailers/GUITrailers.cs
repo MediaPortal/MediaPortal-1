@@ -809,6 +809,12 @@ namespace MediaPortal.GUI.Video
       preleasedate = GUIPropertyManager.GetProperty("#year");
       pplot = GUIPropertyManager.GetProperty("#plot");
       pcast = GUIPropertyManager.GetProperty("#cast");
+      GUIPropertyManager.SetProperty("#title", string.Empty);
+      GUIPropertyManager.SetProperty("#genre", string.Empty);
+      GUIPropertyManager.SetProperty("#runtime", string.Empty);
+      GUIPropertyManager.SetProperty("#year", string.Empty);
+      GUIPropertyManager.SetProperty("#plot", string.Empty);
+      GUIPropertyManager.SetProperty("#cast", string.Empty);
       //float.Parse(prating) = GUIPropertyManager.GetProperty("#rating");
     }
     void SetGUIProperties()
