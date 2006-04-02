@@ -126,8 +126,14 @@ namespace MediaPortal.GUI.TV
     {
       switch (action.wID)
       {
-        case Action.ActionType.ACTION_PREVIOUS_MENU:
         case Action.ActionType.ACTION_CONTEXT_MENU:
+          if (GetFocusControlId() == -1)
+          {
+            m_bRunning = false;
+            return;
+          }
+          break;
+        case Action.ActionType.ACTION_PREVIOUS_MENU:
           m_bRunning = false;
           return;
       }
