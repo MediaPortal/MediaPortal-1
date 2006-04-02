@@ -592,7 +592,7 @@ namespace MediaPortal.Player
       bool  useAC3Filter=false;
       using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        dvdNavigator=xmlreader.GetValueAsString("dvdplayer","navigator","");
+        dvdNavigator=xmlreader.GetValueAsString("dvdplayer","navigator","DVD Navigator");
         aspectRatioMode=xmlreader.GetValueAsString("dvdplayer","armode","").ToLower();
         if ( aspectRatioMode=="crop") arMode=AspectRatioMode.Crop;
         if ( aspectRatioMode=="letterbox") arMode=AspectRatioMode.LetterBox;
