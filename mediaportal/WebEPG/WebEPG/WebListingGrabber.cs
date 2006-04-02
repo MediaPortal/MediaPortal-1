@@ -66,6 +66,7 @@ namespace MediaPortal.EPG
     bool _monthLookup;
     bool _searchRegex;
     bool _searchRemove;
+    bool _dblookup = true;
     //bool _timeAdjustOnly;
     int _listingTime;
     int _linkStart;
@@ -470,8 +471,7 @@ namespace MediaPortal.EPG
     private void AdjustTimeZone(ProgramData guideData, ref TVProgram program)
     {
       DateTime dtStart = new DateTime(guideData.StartTime.Year, guideData.StartTime.Month, guideData.StartTime.Day, guideData.StartTime.Hour, guideData.StartTime.Minute, 0);
-      DateTime dtEnd = new DateTime(guideData.EndTime.Year, guideData.EndTime.Month, guideData.EndTime.Day, guideData.EndTime.Hour, guideData.EndTime.Minute, 0);
-
+      
       // Check TimeZone
       if (_SiteTimeZone != null && !_SiteTimeZone.IsLocalTimeZone())
       {
@@ -483,18 +483,20 @@ namespace MediaPortal.EPG
 
         if (guideData.EndTime != null)
         {
+          DateTime dtEnd = new DateTime(guideData.EndTime.Year, guideData.EndTime.Month, guideData.EndTime.Day, guideData.EndTime.Hour, guideData.EndTime.Minute, 0);
+
           Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: TimeZone, Adjusting from end Guide Time: {0} {1}", dtEnd.ToShortTimeString(), dtEnd.ToShortDateString());
-            dtEnd = _SiteTimeZone.ToLocalTime(dtEnd);
-            //if (_timeAdjustOnly)
-            //  dtEnd = new DateTime(guideData.EndTime.Year, guideData.EndTime.Month, guideData.EndTime.Day, dtEnd.Hour, dtEnd.Minute, 0, 0);
-            Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: TimeZone, Adjusting to   end Local Time: {0} {1}", dtEnd.ToShortTimeString(), dtEnd.ToShortDateString());
+          dtEnd = _SiteTimeZone.ToLocalTime(dtEnd);
+          //if (_timeAdjustOnly)
+          //  dtEnd = new DateTime(guideData.EndTime.Year, guideData.EndTime.Month, guideData.EndTime.Day, dtEnd.Hour, dtEnd.Minute, 0, 0);
+          Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: TimeZone, Adjusting to   end Local Time: {0} {1}", dtEnd.ToShortTimeString(), dtEnd.ToShortDateString());
+          program.End = GetLongDateTime(dtEnd);
         }
       }
 
       program.Start = GetLongDateTime(dtStart);
       if(guideData.EndTime != null)
       {
-        program.End = GetLongDateTime(dtEnd);
         Log.WriteFile(Log.LogType.Log, false, "[Info.] WebEPG: Guide, Program Info: {0} / {1} - {2}", program.Start, program.End, guideData.Title);
       }
       else
@@ -533,7 +535,10 @@ namespace MediaPortal.EPG
 
       Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: Guide, Program title: {0}", guideData.Title);
       Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: Guide, Program start: {0}:{1} - {2}/{3}/{4}", guideData.StartTime.Hour, guideData.StartTime.Minute, guideData.StartTime.Day, guideData.StartTime.Month, guideData.StartTime.Year);
-      Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", guideData.EndTime.Hour, guideData.EndTime.Minute, guideData.EndTime.Day, guideData.EndTime.Month, guideData.EndTime.Year);
+      if(guideData.EndTime != null)
+        Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", guideData.EndTime.Hour, guideData.EndTime.Minute, guideData.EndTime.Day, guideData.EndTime.Month, guideData.EndTime.Year);
+      Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: Guide, Program desc.: {0}", guideData.Description);
+      Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: Guide, Program genre: {0}", guideData.Genre);
 
       program.Channel = _strID;
       program.Title = guideData.Title;
@@ -549,12 +554,15 @@ namespace MediaPortal.EPG
       AdjustTimeZone(guideData, ref program);
 
       // Check TV db if program exists
-      TVProgram dbProg = dbProgram(program.Title, program.Start);
-      if (dbProg != null)
+      if (_dblookup)
       {
-        Log.WriteFile(Log.LogType.Log, false, "[Info.] WebEPG: Program in db copying it");
-        dbProg.Channel = _strID;
-        return dbProg;
+        TVProgram dbProg = dbProgram(program.Title, program.Start);
+        if (dbProg != null)
+        {
+          Log.WriteFile(Log.LogType.Log, false, "[Info.] WebEPG: Program in db copying it");
+          dbProg.Channel = _strID;
+          return dbProg;
+        }
       }
 
       if (guideData.Description != "")
@@ -719,11 +727,19 @@ namespace MediaPortal.EPG
       _dbPrograms = new ArrayList();
       _dbLastProg = 0;
 
-      if(TVDatabase.GetEPGMapping(strChannelID, out dbChannelId, out dbChannelName)) // (nodeId.InnerText, out idTvChannel, out strTvChannel);
+      try
       {
-        DateTime endGrab = _StartGrab.AddDays(_MaxGrabDays+1);
-        DateTime startGrab = _StartGrab.AddHours(-1);
-        TVDatabase.GetProgramsPerChannel(dbChannelName, GetLongDateTime(startGrab), GetLongDateTime(endGrab), ref _dbPrograms);
+        if (TVDatabase.GetEPGMapping(strChannelID, out dbChannelId, out dbChannelName)) // (nodeId.InnerText, out idTvChannel, out strTvChannel);
+        {
+          DateTime endGrab = _StartGrab.AddDays(_MaxGrabDays + 1);
+          DateTime startGrab = _StartGrab.AddHours(-1);
+          TVDatabase.GetProgramsPerChannel(dbChannelName, GetLongDateTime(startGrab), GetLongDateTime(endGrab), ref _dbPrograms);
+        }
+      }
+      catch (Exception)
+      {
+        Log.WriteFile(Log.LogType.Log, true, "[ERROR] WebEPG: Database failed, disabling db lookup");
+        _dblookup = false;
       }
 
 
