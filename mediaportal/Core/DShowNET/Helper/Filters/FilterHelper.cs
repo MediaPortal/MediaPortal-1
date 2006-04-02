@@ -158,12 +158,13 @@ namespace DShowNET.Helper
 
 			foreach (Filter filter in filters.LegacyFilters) 
 			{
-				if ( String.Compare(filter.Name, "DVD Navigator", true) == 0 ||
-					String.Compare(filter.Name, "InterVideo Navigator", true) == 0 ||
-					String.Compare(filter.Name, "NVIDIA Navigator", true) == 0 ||
-					String.Compare(filter.Name, "CyberLink DVD Navigator", true) == 0 ||
-					String.Compare(filter.Name, "Cyberlink DVD Navigator (ATI)", true) == 0 ||
-					String.Compare(filter.Name, "CyberLink DVD Navigator (PDVD6)", true) == 0)
+				//Now use only DVD Navigator as a selectable option to avoid issues
+                if ( String.Compare(filter.Name, "DVD Navigator", true) == 0) //||
+                    /*String.Compare(filter.Name, "InterVideo Navigator", true) == 0 ||
+                    String.Compare(filter.Name, "NVIDIA Navigator", true) == 0 ||
+                    String.Compare(filter.Name, "CyberLink DVD Navigator", true) == 0 ||
+                    String.Compare(filter.Name, "Cyberlink DVD Navigator (ATI)", true) == 0 ||
+                    String.Compare(filter.Name, "CyberLink DVD Navigator (PDVD6)", true) == 0)*/
 				{
 					navigators.Add(filter.Name);      
 				}
