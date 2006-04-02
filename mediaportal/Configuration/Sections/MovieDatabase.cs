@@ -2227,8 +2227,12 @@ namespace MediaPortal.Configuration.Sections
         XmlNodeList genreList = nodeDVD.SelectNodes("Genres/Genre");
         foreach (XmlNode nodeGenre in genreList)
         {
-          if (genre.Length > 0) genre += " / ";
-          genre += nodeGenre.InnerText;
+            // added check to see if nodeGenre was valid
+            if (nodeGenre != null && nodeGenre.InnerText != null)
+            {
+                if (genre.Length > 0) genre += " / ";
+                genre += nodeGenre.InnerText;
+            }
         }
         string cast = "Cast overview:";
         XmlNodeList actorsList = nodeDVD.SelectNodes("Actors/Actor");
@@ -2252,11 +2256,15 @@ namespace MediaPortal.Configuration.Sections
         XmlNodeList creditsList = nodeDVD.SelectNodes("Credits/Credit");
         foreach (XmlNode nodeCredit in creditsList)
         {
+          // Added check for firstname, lastname valid
+          string firstname = String.Empty;
+          string lastname = String.Empty;
           XmlNode nodeFirstName = nodeCredit.SelectSingleNode("FirstName");
           XmlNode nodeLastName = nodeCredit.SelectSingleNode("LastName");
-
+          if (nodeFirstName != null && nodeFirstName.InnerText != null) firstname = nodeFirstName.InnerText;
+          if (nodeLastName != null && nodeLastName.InnerText != null) lastname = nodeLastName.InnerText;
           if (credits.Length > 0) credits += " / ";
-          credits += String.Format("{0} {1}", nodeFirstName.InnerText, nodeLastName.InnerText);
+          credits += String.Format("{0} {1}", firstname, lastname);
         }
 
         IMDBMovie movie = new IMDBMovie();
@@ -2267,12 +2275,18 @@ namespace MediaPortal.Configuration.Sections
         movie.File = String.Empty;
         movie.Genre = genre;
         movie.IMDBNumber = String.Empty;
-        movie.MPARating = nodeRating.InnerText;
+        // Added check to validate rating
+        if (nodeRating != null && nodeRating.InnerText != null) movie.MPARating = nodeRating.InnerText;
+        else movie.MPARating = "NR";
         movie.Path = String.Empty;
-        movie.Plot = nodeOverview.InnerText;
+        // Added check to validate overview and duration
+        if (nodeOverview != null && nodeOverview.InnerText != null) movie.Plot = nodeOverview.InnerText;
+        else movie.Plot = String.Empty;
         movie.PlotOutline = String.Empty;
         movie.Rating = 0;
-        movie.RunTime = Int32.Parse(nodeDuration.InnerText);
+        if (nodeDuration != null && nodeDuration.InnerText != null)
+            movie.RunTime = Int32.Parse(nodeDuration.InnerText);
+        else movie.RunTime = 0;
         movie.SearchString = String.Empty;
         movie.TagLine = String.Empty;
         movie.ThumbURL = String.Empty;
@@ -2281,7 +2295,9 @@ namespace MediaPortal.Configuration.Sections
         movie.Votes = String.Empty;
         movie.Watched = 0;
         movie.WritingCredits = credits;
-        movie.Year = Int32.Parse(nodeYear.InnerText);
+        // Added check to validate year
+        if (nodeYear != null && nodeYear != null) movie.Year = Int32.Parse(nodeYear.InnerText);
+        else movie.Year = 0;
         int id = VideoDatabase.AddMovie(movie.Title, true);
         movie.ID = id;
         VideoDatabase.SetMovieInfoById(id, ref movie);
