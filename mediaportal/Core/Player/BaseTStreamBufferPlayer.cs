@@ -1008,7 +1008,7 @@ namespace MediaPortal.Player
       double fPos = _currentPos;
       fCurrentPos -= fContentStart;
       _currentPos = fCurrentPos;
-      Log.Write("Position:{0}", _currentPos.ToString("f2"));
+    //  Log.Write("Position:{0}", _currentPos.ToString("f2"));
       _contentStart = fContentStart;
 #if DEBUG
       TimeSpan ts=DateTime.Now-dtStart;
@@ -1040,7 +1040,7 @@ namespace MediaPortal.Player
       _mediaSeeking.GetDuration(out lDuration);
       _duration = lDuration;
       _duration /= 10000000d;
-      Log.Write("Duration:{0}", _duration.ToString("f2"));
+      //Log.Write("Duration:{0}", _duration.ToString("f2"));
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>

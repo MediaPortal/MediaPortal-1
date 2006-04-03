@@ -2126,6 +2126,7 @@ namespace MediaPortal.TV.Recording
           return;
         }
         //no, then state = no signal
+        Log.Write("DVBGraphBDA: No signal quality:{0} strength:{1} locked:{2} fps:{3}", SignalQuality(), SignalStrength(), SignalPresent(), GUIGraphicsContext.Vmr9FPS);
         VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
         return;
       }/*
@@ -2145,6 +2146,7 @@ namespace MediaPortal.TV.Recording
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
             return;
           }
+          Log.Write("DVBGraphBDA: VMR9 stopped quality:{0} strength:{1} locked:{2} fps:{3}", SignalQuality(), SignalStrength(), SignalPresent(), GUIGraphicsContext.Vmr9FPS);
           VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
           return;
         }
@@ -2195,8 +2197,8 @@ namespace MediaPortal.TV.Recording
 
       if (_inScanningMode == true) return;
 
-      if (_streamDemuxer != null)
-        _streamDemuxer.Process();
+      //if (_streamDemuxer != null)
+      //  _streamDemuxer.Process();
 
       if (ProcessEpg()) return;
 
