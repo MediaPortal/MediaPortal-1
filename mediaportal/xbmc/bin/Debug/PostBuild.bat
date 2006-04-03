@@ -86,7 +86,6 @@ copy ..\..\..\Configuration\bin\debug\Configuration.exe.config .
 copy ..\..\..\Configuration\bin\debug\Configuration.pdb .
 copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.exe .
 copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.pdb .
-copy ..\..\..\mbm5.dll .
 copy ..\..\..\madlldlib.dll .
 copy ..\..\..\ECP2Assembly.dll .
 copy ..\..\..\edtftpnet-1.2.2.dll .
@@ -96,7 +95,6 @@ copy ..\..\..\Interop.WMEncoderLib.dll .
 copy ..\..\..\Interop.TunerLib.dll .
 copy ..\..\..\Interop.iTunesLib.dll .
 copy ..\..\..\Microsoft.Office.Interop.Outlook.dll .
-copy ..\..\..\XPBurnComponent.dll .
 
 copy ..\..\..\core\bin\debug\DirectShowLib.dll .
 copy ..\..\..\core\bin\debug\DirectShowLib.pdb .
