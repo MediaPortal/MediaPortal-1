@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005/2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -4039,7 +4039,14 @@ namespace MediaPortal.TV.Recording
     public bool CanViewTimeShiftFile()
     {
       if (_graphState != State.TimeShifting && _graphState != State.Recording) return false;
-      return SignalPresent();
+      if (!SignalPresent()) return false;
+      if (!UseTsTimeShifting) return true;
+      ITSFileSink sink = _filterTsFileSink as ITSFileSink;
+      if (sink == null) return false;
+      int size=0;
+      sink.GetBufferSize(ref size);
+      return (size>20*1024);
+
       //return (_refreshPmtTable == false);
     }
 
