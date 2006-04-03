@@ -62,6 +62,7 @@
 	<entry name="terranova.de">205</entry> <!--Terra Nova-->
 	<entry name="tv2@tv2.dk">208</entry> <!--TV 2-->
 	<entry name="das-vierte.de">210</entry> <!--Das Vierte-->
+	<entry name="nick.de">217</entry> <!--Nick-->
 	
 	<!-- Lokale -->
 	<entry name="tvb.de">182</entry> <!--TVBerlin-->
@@ -151,7 +152,7 @@
 
   <section name="Listing">
 
-    <entry name="BaseURL">http://www03.tvinfo.de/</entry>
+    <entry name="BaseURL">http://www.tvinfo.de/</entry>
     <entry name="SearchURL">exe.php3?target=senderlist.inc&amp;newD=#_D&amp;newM=#_M&amp;newY=#YYYY&amp;showSenderID=#ID</entry>
     <entry name="Tags">TA</entry>
     <entry name="Template">
@@ -164,14 +165,12 @@
   
   <section name="SubListing">
     
-   <entry name="Start">SMS-Reminder</entry>
-   <entry name="End">Als TV-Tipp per E-Mail an Freunde verschicken</entry>
+   <entry name="Start">END PARTNER PROGRAM</entry>
    <entry name="Ahrefs">yes</entry>
    <entry name="Tags">TA</entry>
 	
    <entry name="Template">
-    <!-- &#60;/table&#62;&#60;#DESCRIPTION&#62;&#60;/TD&#62;&#60;/TR&#62;&#60;/table&#62;&#60;table&#62;&#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;/tr&#62;&#60;/table&#62;&#60;table&#62;&#60;tr&#62;&#60;td&#62;&#60;TABLE&#62;&#60;tr&#62;&#60;td&#62;&#60;a href&#62; -->
-	&#60;TD&#62;&#60;table&#62;&#60;tr&#62;&#60;td&#62;&#60;p&#62;&#60;/td&#62;&#60;/tr&#62;&#60;/table&#62;&#60;#DESCRIPTION&#62;&#60;/TD&#62;&#60;/TR&#62;&#60;/table&#62; 
+	&#60;TD&#62;&#60;#DESCRIPTION&#62;&#60;/TD&#62;&#60;/TR&#62;&#60;/table&#62; 
    </entry>	
   </section>
 
