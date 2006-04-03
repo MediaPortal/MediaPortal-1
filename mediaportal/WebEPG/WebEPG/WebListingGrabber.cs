@@ -470,6 +470,7 @@ namespace MediaPortal.EPG
 
     private void AdjustTimeZone(ProgramData guideData, ref TVProgram program)
     {
+      // Start Time
       DateTime dtStart = new DateTime(guideData.StartTime.Year, guideData.StartTime.Month, guideData.StartTime.Day, guideData.StartTime.Hour, guideData.StartTime.Minute, 0);
       
       // Check TimeZone
@@ -480,23 +481,27 @@ namespace MediaPortal.EPG
         //if (_timeAdjustOnly)
         //  dtStart = new DateTime(guideData.StartTime.Year, guideData.StartTime.Month, guideData.StartTime.Day, dtStart.Hour, dtStart.Minute, 0);
         Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: TimeZone, Adjusting to   start Local Time: {0} {1}", dtStart.ToShortTimeString(), dtStart.ToShortDateString());
+      }
 
-        if (guideData.EndTime != null)
+      program.Start = GetLongDateTime(dtStart);
+      
+      // End Time
+      if (guideData.EndTime != null)
+      {
+        DateTime dtEnd = new DateTime(guideData.EndTime.Year, guideData.EndTime.Month, guideData.EndTime.Day, guideData.EndTime.Hour, guideData.EndTime.Minute, 0);
+
+        // Check TimeZone
+        if (_SiteTimeZone != null && !_SiteTimeZone.IsLocalTimeZone())
         {
-          DateTime dtEnd = new DateTime(guideData.EndTime.Year, guideData.EndTime.Month, guideData.EndTime.Day, guideData.EndTime.Hour, guideData.EndTime.Minute, 0);
-
           Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: TimeZone, Adjusting from end Guide Time: {0} {1}", dtEnd.ToShortTimeString(), dtEnd.ToShortDateString());
           dtEnd = _SiteTimeZone.ToLocalTime(dtEnd);
           //if (_timeAdjustOnly)
           //  dtEnd = new DateTime(guideData.EndTime.Year, guideData.EndTime.Month, guideData.EndTime.Day, dtEnd.Hour, dtEnd.Minute, 0, 0);
           Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: TimeZone, Adjusting to   end Local Time: {0} {1}", dtEnd.ToShortTimeString(), dtEnd.ToShortDateString());
-          program.End = GetLongDateTime(dtEnd);
         }
-      }
+      
+        program.End = GetLongDateTime(dtEnd);
 
-      program.Start = GetLongDateTime(dtStart);
-      if(guideData.EndTime != null)
-      {
         Log.WriteFile(Log.LogType.Log, false, "[Info.] WebEPG: Guide, Program Info: {0} / {1} - {2}", program.Start, program.End, guideData.Title);
       }
       else
