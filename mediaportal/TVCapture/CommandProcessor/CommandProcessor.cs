@@ -354,7 +354,7 @@ namespace MediaPortal.TV.Recording
             {
               if (dev.IsTimeShifting || dev.IsRecording)
               {
-                if (!g_Player.Playing)
+                if (!g_Player.Playing && !g_Player.Starting)
                 {
                   if (dev.CanViewTimeShiftFile())
                   {
@@ -396,7 +396,7 @@ namespace MediaPortal.TV.Recording
             {
 
               //player not playing?
-              if (!g_Player.Playing)
+              if (!g_Player.Playing && !g_Player.Starting)
               {
                 // for more then 10 secs?
                 TimeSpan ts = DateTime.Now - _killTimeshiftingTimer;
