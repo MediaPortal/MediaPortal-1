@@ -315,16 +315,16 @@ namespace MediaPortal.Utils.Web
 					}
 				}
 
+        int end = -1;
 				if(delim != '>')
 				{
 					start = -1;
-					int end = -1;
 					start = result.IndexOf(delim);
-					if(start != -1)
-						end = result.IndexOf(delim, ++start);
-					if(end != -1)
-						strLinkURL = result.Substring(start, end-start);
-				}
+        }
+				if(start != -1)
+					end = result.IndexOf(delim, ++start);
+				if(end != -1)
+					strLinkURL = result.Substring(start, end-start);
 			}
 
 			if(strLinkURL.ToLower().IndexOf("http") == -1)

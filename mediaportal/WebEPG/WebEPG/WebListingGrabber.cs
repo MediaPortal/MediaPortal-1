@@ -596,23 +596,33 @@ namespace MediaPortal.EPG
           else
             Log.WriteFile(Log.LogType.Log, true, "[ERROR] Linked page error");
 
-          if(Count > 0)
+          if (Count > 0)
           {
-            ProgramData SubData =  new ProgramData();
-            ParserData refdata = (ParserData) SubData;
+            ProgramData SubData = new ProgramData();
+            ParserData refdata = (ParserData)SubData;
             SubProfile.GetParserData(0, ref refdata);
 
             if (SubData.IsProgram(_removeProgramsList))
               return null;
 
             if (SubData.Description != "")
+            {
               program.Description = SubData.Description;
+              Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: Guide, Program desc.: {0}", program.Description);
+            }
 
             if (SubData.Genre != "")
+            {
               program.Genre = getGenre(SubData.Genre);
+              Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: Guide, Program genre: {0}", program.Genre);
+            }
 
             if (SubData.SubTitle != "")
               program.Episode = SubData.SubTitle;
+          }
+          else
+          {
+            Log.WriteFile(Log.LogType.Log, true, "[ERROR] No information found on linked page");
           }
         }
 
