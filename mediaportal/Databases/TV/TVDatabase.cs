@@ -4336,7 +4336,11 @@ namespace MediaPortal.TV.Database
         if (dvbs)
         {
           TVDatabase.GetSatChannel(chan.ID, 1, ref ch);
-          if (ch.TransportStreamID == transportid && ch.ProgramNumber == serviceid) return chan;
+          if (ch.TransportStreamID == transportid && ch.ProgramNumber == serviceid)
+          {
+            provider = ch.ServiceProvider;
+            return chan;
+          }
         }
 
         if (dvbt)
