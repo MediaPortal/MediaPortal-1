@@ -3164,6 +3164,7 @@ namespace MediaPortal.TV.Recording
 
         if (info.serviceType == Mpeg2VideoServiceType || info.serviceType == Mpeg4VideoServiceType)//tv
         {
+
           Log.WriteFile(Log.LogType.Log, "DVBGraph: channel {0} is a tv channel", newchannel.ServiceName);
           //check if this channel already exists in the tv database
           bool isNewChannel = true;
@@ -3175,13 +3176,45 @@ namespace MediaPortal.TV.Recording
           {
             if (tvchan.Name.Equals(newchannel.ServiceName))
             {
-              if (TVDatabase.DoesChannelExist(tvchan.ID, newchannel.TransportStreamID, newchannel.NetworkID))
+              //yes already exists
+              tvChan = tvchan;
+              isNewChannel = false;
+              channelId = tvchan.ID;
+              break;
+            }
+          }
+          if (isNewChannel == false)
+          {
+            //channel already exists, check the provider name...
+            string providerName;
+            TVChannel existingChannel = TVDatabase.GetTVChannelByStream(
+                                            Network() == NetworkType.ATSC,
+                                            Network() == NetworkType.DVBT,
+                                            Network() == NetworkType.DVBC,
+                                            Network() == NetworkType.DVBS,
+                                            newchannel.NetworkID,
+                                            newchannel.TransportStreamID,
+                                            newchannel.ProgramNumber, out providerName);
+            if (existingChannel != null)
+            {
+              if (providerName != existingChannel.ProviderName)
               {
-                //yes already exists
-                tvChan = tvchan;
-                isNewChannel = false;
-                channelId = tvchan.ID;
-                break;
+                channelId = -1;
+                tvChan = null;
+                isNewChannel = true;
+                tvChan.Name = newchannel.ServiceName;
+                newchannel.ServiceName = String.Format("{0}-{1}", newchannel.ServiceName, newchannel.ServiceProvider);
+                foreach (TVChannel tvchan in tvChannels)
+                {
+                  if (tvchan.Name.Equals(newchannel.ServiceName))
+                  {
+                    //this one also exists
+                    tvChan = tvchan;
+                    isNewChannel = false;
+                    channelId = tvchan.ID;
+                    break;
+                  }
+                }
               }
             }
           }
@@ -4085,6 +4118,7 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot get IFileSinkFilter from TsFileSink");
         return false;
       }
+
 
       //set filename
       AMMediaType mt = new AMMediaType();
