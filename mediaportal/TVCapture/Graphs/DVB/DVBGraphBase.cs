@@ -2117,6 +2117,7 @@ namespace MediaPortal.TV.Recording
       //      _streamDemuxer.ReceivingPackets, _lastPMTVersion, GUIGraphicsContext.Vmr9Active, GUIGraphicsContext.Vmr9FPS, TunerLocked(), SignalQuality(), SignalStrength());
 
       // do we receive any packets?
+      /*
       if (!SignalPresent())
       {
         TimeSpan ts = DateTime.Now - _signalLostTimer;
@@ -2129,14 +2130,16 @@ namespace MediaPortal.TV.Recording
         Log.Write("DVBGraphBDA: No signal quality:{0} strength:{1} locked:{2} fps:{3}", SignalQuality(), SignalStrength(), SignalPresent(), GUIGraphicsContext.Vmr9FPS);
         VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
         return;
-      }/*
+      }
       else if (_streamDemuxer.IsScrambled)
       {
         VideoRendererStatistics.VideoState = VideoRendererStatistics.State.Scrambled;
         _signalLostTimer = DateTime.Now;
         return;
-      }*/
-      else if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
+      }
+      else 
+       */
+      if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
       {
         if ((g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing))
         {
