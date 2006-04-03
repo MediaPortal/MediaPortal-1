@@ -947,13 +947,13 @@
     <Compile Include="GUIX10\SetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="home\GUIBasicHome.cs">
+    <Compile Include="Home\GUIBasicHome.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="home\home.cs">
+    <Compile Include="Home\home.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="home\SetupForm.cs">
+    <Compile Include="Home\SetupForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <EmbeddedResource Include="GUIAlarm\AlarmSetupForm.resx">
@@ -1056,10 +1056,10 @@
     <EmbeddedResource Include="GUIX10\SetupForm.resx">
       <DependentUpon>SetupForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="home\resources\folder.png" />
-    <EmbeddedResource Include="home\resources\node.png" />
-    <EmbeddedResource Include="home\resources\script.png" />
-    <EmbeddedResource Include="home\SetupForm.resx">
+    <EmbeddedResource Include="Home\resources\folder.png" />
+    <EmbeddedResource Include="Home\resources\node.png" />
+    <EmbeddedResource Include="Home\resources\script.png" />
+    <EmbeddedResource Include="Home\SetupForm.resx">
       <DependentUpon>SetupForm.cs</DependentUpon>
     </EmbeddedResource>
     <Content Include="GUIPrograms\FileDetailContents.xml" />
