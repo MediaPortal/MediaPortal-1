@@ -77,7 +77,6 @@ rem copy ..\..\..\X10Plugin.* .
 copy ..\..\..\X10Unified.* .
 copy ..\..\..\xAPMessage.dll .
 copy ..\..\..\xAPTransport.dll .
-copy ..\..\..\mbm5.dll .
 copy ..\..\..\madlldlib.dll .
 copy ..\..\..\ECP2Assembly.dll .
 copy ..\..\..\edtftpnet-1.2.2.dll .
@@ -86,7 +85,6 @@ copy ..\..\..\Interop.WMEncoderLib.dll .
 copy ..\..\..\Interop.TunerLib.dll .
 copy ..\..\..\Interop.iTunesLib.dll .
 copy ..\..\..\Microsoft.Office.Interop.Outlook.dll .
-copy ..\..\..\XPBurnComponent.dll .
 
 copy ..\..\..\Configuration\Wizards\*.* Wizards
 copy ..\..\..\Configuration\bin\Release\Configuration.exe .
