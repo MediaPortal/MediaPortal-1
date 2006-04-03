@@ -1,5 +1,5 @@
 /*
- *	Copyright (C) 2005/2006 Team MediaPortal
+ *	Copyright (C) 2005 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -4043,9 +4043,9 @@ namespace MediaPortal.TV.Recording
       if (!UseTsTimeShifting) return true;
       ITSFileSink sink = _filterTsFileSink as ITSFileSink;
       if (sink == null) return false;
-      int size=0;
-      sink.GetBufferSize(ref size);
-      return (size>20*1024);
+      long filesize = 0;
+      sink.GetFileBufferSize(ref filesize);
+      return (filesize > 1024L * 1024L * 4L);//4MB
 
       //return (_refreshPmtTable == false);
     }
