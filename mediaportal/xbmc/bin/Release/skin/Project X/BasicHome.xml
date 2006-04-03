@@ -17,7 +17,7 @@
 	<control>
 		<description>Big text</description>
 		<type>label</type>
-		<id>200</id>
+		<id>203</id>
 		<posX>368</posX>
 		<posY>450</posY>
 		<label>#highlightedbutton</label>
@@ -32,15 +32,15 @@
 			<id>2</id>
 			<posX>37</posX>
 			<posY>260</posY>
-			<width>-</width>
-			<height>-</height>
+			<width>135</width>
+			<height>140</height>
 			<textureFocus>BM_Radio_focus.png</textureFocus>
 			<textureNoFocus>BM_Radio_nofocus.png</textureNoFocus>
 			 <thumbZoom>yes</thumbZoom>
 			<hyperlink>30</hyperlink>
 			<label>665</label>
   		<textcolor>00ffffff</textcolor>
-			<onleft>5</onleft>
+			<onleft>6</onleft>
 			<onright>3</onright>
 			<onup>21</onup>
 			<ondown>2</ondown>
@@ -51,8 +51,8 @@
 			<id>3</id>
 			<posX>167</posX>
 			<posY>260</posY>
-			<width>-</width>
-			<height>-</height>
+			<width>135</width>
+			<height>140</height>
 			<textureFocus>BM_Video_focus.png</textureFocus>
 			<textureNoFocus>BM_Video_nofocus.png</textureNoFocus>
 			<hyperlink>6</hyperlink>
@@ -69,8 +69,8 @@
 			<id>4</id>
 			<posX>302</posX>
 			<posY>260</posY>
-			<width>-</width>
-			<height>-</height>
+			<width>135</width>
+			<height>140</height>
 			<textureFocus>BM_FFS_focus.png</textureFocus>
 			<textureNoFocus>BM_FFS_nofocus.png</textureNoFocus>
 			<hyperlink>1</hyperlink>
@@ -87,8 +87,8 @@
 			<id>5</id>
 			<posX>427</posX>
 			<posY>260</posY>
-			<width>-</width>
-			<height>-</height>
+			<width>135</width>
+			<height>140</height>
 			<textureFocus>BM_Music_focus.png</textureFocus>
 			<textureNoFocus>BM_Music_nofocus.png</textureNoFocus>
 			<hyperlink>501</hyperlink>
@@ -105,8 +105,8 @@
 			<id>6</id>
 			<posX>557</posX>
 			<posY>260</posY>
-			<width>-</width>
-			<height>-</height>
+			<width>135</width>
+			<height>140</height>
 			<textureFocus>BM_Pictures_focus.png</textureFocus>
 			<textureNoFocus>BM_Pictures_nofocus.png</textureNoFocus>
 			<hyperlink>2</hyperlink>
