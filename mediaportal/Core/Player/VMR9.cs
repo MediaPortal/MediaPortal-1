@@ -422,7 +422,7 @@ namespace MediaPortal.Player
       }
       else if (currentVmr9State == Vmr9PlayState.Playing && GUIGraphicsContext.Vmr9FPS<5f)
       {
-        Log.WriteThreadId("VMR9Helper: playing->repaint");
+        Log.WriteThreadId("VMR9Helper: playing->repaint {0}", frames);
         GUIGraphicsContext.Vmr9FPS = 0f;
         currentVmr9State = Vmr9PlayState.Repaint;
         _scene.DrawVideo = false;
