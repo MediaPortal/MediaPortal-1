@@ -3197,7 +3197,7 @@ namespace MediaPortal.TV.Recording
                                             newchannel.ProgramNumber, out providerName);
             if (existingChannel != null)
             {
-              if (providerName != existingChannel.ProviderName)
+              if (providerName != newchannel.ProviderName)
               {
                 channelId = -1;
                 tvChan = null;
