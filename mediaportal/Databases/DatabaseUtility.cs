@@ -194,6 +194,7 @@ namespace MediaPortal.Database
 		static public string Get(SQLiteResultSet results, int iRecord, string strColum)
 		{
 			if (null == results) return String.Empty;
+      if (results.Rows.Count == 0) return String.Empty;
 			if (results.Rows.Count < iRecord) return String.Empty;
       SQLiteResultSet.Row arr = results.Rows[iRecord];
 			int iCol = 0;
