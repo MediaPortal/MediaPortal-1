@@ -187,10 +187,6 @@
       <Name>KCS.Utilities</Name>
       <HintPath>..\KCS.Utilities.dll</HintPath>
     </Reference>
-    <Reference Include="mbm5">
-      <Name>mbm5</Name>
-      <HintPath>..\mbm5.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.DirectX">
       <Name>Microsoft.DirectX</Name>
       <HintPath>..\Microsoft.DirectX.dll</HintPath>
@@ -250,10 +246,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\XihSolutions.DotMSN.dll</HintPath>
     </Reference>
-    <Reference Include="XPBurnComponent">
-      <Name>XPBurnComponent</Name>
-      <HintPath>..\XPBurnComponent.dll</HintPath>
-    </Reference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Name>Core</Name>
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
@@ -305,24 +297,6 @@
     </Compile>
     <Compile Include="GUIAlarm\GUISleepTimer.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIBurner\BurnerThread.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIBurner\GUIBurner.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIBurner\MadlldlibWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIBurner\SetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUIExplorer\GUIExplorer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIExplorer\SetupForm.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="GUIMSNPlugin\GUIMSNChatWindow.cs">
       <SubType>Code</SubType>
@@ -549,15 +523,6 @@
     </Compile>
     <Compile Include="GUIRadio\GUIRadioGuide.cs" />
     <Compile Include="GUIRadio\GUIRadioGuideBase.cs" />
-    <Compile Include="GUIRecipes\CatReader.cs" />
-    <Compile Include="GUIRecipes\GUIRecipes.cs" />
-    <Compile Include="GUIRecipes\Recipe.cs" />
-    <Compile Include="GUIRecipes\RecipeDatabase.cs" />
-    <Compile Include="GUIRecipes\RecipePrinter.cs" />
-    <Compile Include="GUIRecipes\RecipeReader.cs" />
-    <Compile Include="GUIRecipes\SetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="GUIRSSFeed\DBBool.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -782,18 +747,6 @@
     <Compile Include="GUISettings\Wizard\Remotes\GUIWizardRemote.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUIStatus\GUIStatus.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIStatus\GUIStatusDetails.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIStatus\GUIStatusPrefs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIStatus\SetupForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="GUITetris\MyTetris.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1006,12 +959,6 @@
     <EmbeddedResource Include="GUIAlarm\AlarmSetupForm.resx">
       <DependentUpon>AlarmSetupForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUIBurner\SetupForm.resx">
-      <DependentUpon>SetupForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUIExplorer\SetupForm.resx">
-      <DependentUpon>SetupForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="GUIMSNPlugin\MessengerSetup.resx">
       <DependentUpon>MessengerSetup.cs</DependentUpon>
     </EmbeddedResource>
@@ -1075,10 +1022,6 @@
     <EmbeddedResource Include="GUIPrograms\taggedMenuItem.resx">
       <DependentUpon>taggedMenuItem.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="GUIRecipes\SetupForm.resx">
-      <DependentUpon>SetupForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="GUIRSSFeed\DetailsForm.resx">
       <DependentUpon>DetailsForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -1088,9 +1031,6 @@
       <DependentUpon>SetupForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUIScript\SetupForm.resx">
-      <DependentUpon>SetupForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUIStatus\SetupForm.resx">
       <DependentUpon>SetupForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GUITopbar\TopBarSetupForm.resx">
@@ -1124,14 +1064,6 @@
     </EmbeddedResource>
     <Content Include="GUIPrograms\FileDetailContents.xml" />
     <Content Include="GUIPrograms\ProgramSettingProfiles.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="GUIRecipes\CVS\Entries" />
-    <None Include="GUIRecipes\CVS\Entries.Extra" />
-    <None Include="GUIRecipes\CVS\Entries.Extra.Old" />
-    <None Include="GUIRecipes\CVS\Entries.Old" />
-    <None Include="GUIRecipes\CVS\Repository" />
-    <None Include="GUIRecipes\CVS\Root" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
