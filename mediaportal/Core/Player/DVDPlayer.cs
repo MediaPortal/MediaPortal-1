@@ -1280,18 +1280,24 @@ namespace MediaPortal.Player
             timeCode.bFrames=0;
             DvdPlaybackLocation2 loc;
             _currTitle=_dvdInfo.GetCurrentLocation(out loc);
-						
-			
-						int hr=_dvdCtrl.PlayAtTime( timeCode,DvdCmdFlags.Block,out _cmdOption);
-            if (hr!=0)
+
+            try
             {
-              if ( ((uint)hr)==VFW_E_DVD_OPERATION_INHIBITED) Log.Write("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) not allowed at this point",hours,minutes,seconds);
-              else if ( ((uint)hr)==VFW_E_DVD_INVALIDDOMAIN) Log.Write("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) invalid domain",hours,minutes,seconds);
-              else Log.WriteFile(Log.LogType.Log,true,"DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) failed:0x{3:X}",hours,minutes,seconds,hr); 
+
+              int hr = _dvdCtrl.PlayAtTime(timeCode, DvdCmdFlags.Block, out _cmdOption);
+              if (hr != 0)
+              {
+                if (((uint)hr) == VFW_E_DVD_OPERATION_INHIBITED) Log.Write("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) not allowed at this point", hours, minutes, seconds);
+                else if (((uint)hr) == VFW_E_DVD_INVALIDDOMAIN) Log.Write("DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) invalid domain", hours, minutes, seconds);
+                else Log.WriteFile(Log.LogType.Log, true, "DVDPlayer:PlayAtTimeInTitle( {0}:{1:00}:{2:00}) failed:0x{3:X}", hours, minutes, seconds, hr);
+              }
+              //SetDefaultLanguages();
+              Log.Write("DVDPlayer:Seek to {0}:{1}:{2} done", hours, minutes, seconds);
             }
-            //SetDefaultLanguages();
-						
-						Log.Write("DVDPlayer:Seek to {0}:{1}:{2} done", hours,minutes,seconds);
+            catch (Exception)
+            {
+              //sometimes we get a DivideByZeroException  in _dvdCtrl.PlayAtTime()
+            }
           }
         }
       }
