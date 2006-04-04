@@ -3199,49 +3199,53 @@ namespace MediaPortal.TV.Recording
         {
 
           Log.WriteFile(Log.LogType.Log, "DVBGraph: channel {0} is a tv channel", newchannel.ServiceName);
-          //check if this channel already exists in the tv database
           bool isNewChannel = true;
           TVChannel tvChan = new TVChannel();
           tvChan.Name = newchannel.ServiceName;
 
           int channelId = -1;
+          //check if there is a TV channel with the DVB channel service name
           foreach (TVChannel tvchan in tvChannels)
           {
             if (tvchan.Name.Equals(newchannel.ServiceName))
             {
-              //yes already exists
+              //yes TV channel with this name exists in the database...
               tvChan = tvchan;
               isNewChannel = false;
               channelId = tvchan.ID;
               break;
             }
           }
+
           if (isNewChannel == false)
           {
-            //channel already exists, check the provider name...
+            // tv channel with the service name already exists
+            // check if there is a DVB channel mapped to the TVChannel
             string providerName;
-            TVChannel existingChannel = TVDatabase.GetTVChannelByStream(
-                                            Network() == NetworkType.ATSC,
-                                            Network() == NetworkType.DVBT,
-                                            Network() == NetworkType.DVBC,
-                                            Network() == NetworkType.DVBS,
-                                            newchannel.NetworkID,
-                                            newchannel.TransportStreamID,
-                                            newchannel.ProgramNumber, out providerName);
-            if (existingChannel != null)
+            if (TVDatabase.IsMapped(tvChan,
+                                    Network() == NetworkType.ATSC,
+                                    Network() == NetworkType.DVBT,
+                                    Network() == NetworkType.DVBC,
+                                    Network() == NetworkType.DVBS,
+                                    out providerName))
             {
-              if (providerName != newchannel.ServiceProvider)
+              //channel is already mapped
+              //check if provider differs
+              if (String.Compare(providerName, newchannel.ServiceProvider, true) != 0)
               {
-                channelId = -1;
+                //different provider. change Tv channel name to include the provider as well
                 tvChan = null;
                 isNewChannel = true;
-                tvChan.Name = newchannel.ServiceName;
+                channelId = -1;
                 newchannel.ServiceName = String.Format("{0}-{1}", newchannel.ServiceName, newchannel.ServiceProvider);
+                tvChan.Name = newchannel.ServiceName;
+
+                //check if there is a TV channel with the name: servicename-providername
                 foreach (TVChannel tvchan in tvChannels)
                 {
                   if (tvchan.Name.Equals(newchannel.ServiceName))
                   {
-                    //this one also exists
+                    //yes TV channel with this name exists in the database...
                     tvChan = tvchan;
                     isNewChannel = false;
                     channelId = tvchan.ID;
@@ -3249,7 +3253,20 @@ namespace MediaPortal.TV.Recording
                   }
                 }
               }
+              else
+              {
+                //channel is already mapped
+                //and provider name is the same
+              }
             }
+            else
+            {
+              //channel is not mapped yet so we can map the dvb channel to the TV channel
+            }
+          }
+          else
+          {
+            //channel does not exists in tv database yet
           }
 
           tvChan.Scrambled = newchannel.IsScrambled;

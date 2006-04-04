@@ -4360,6 +4360,38 @@ namespace MediaPortal.TV.Database
       provider = "";
       return null;
     }
+
+    static public bool IsMapped(TVChannel channel, bool atsc, bool dvbt, bool dvbc, bool dvbs, out string provider)
+    {
+      int freq, symbolrate, innerFec, modulation, ONID, TSID, SID;
+      int audioPid, videoPid, teletextPid, pmtPid, bandWidth;
+      int audio1, audio2, audio3, ac3Pid, pcrPid;
+      string audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3;
+      bool HasEITPresentFollow, HasEITSchedule;
+      provider = "";
+
+      DVBChannel ch = new DVBChannel();
+      if (dvbc)
+      {
+        if (TVDatabase.GetDVBCTuneRequest(channel.ID, out provider, out freq, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid))
+          return true;
+      }
+      if (dvbs)
+      {
+        if (TVDatabase.GetSatChannel(channel.ID, 1, ref ch))
+          return true;
+      }
+
+      if (dvbt)
+      {
+        if (TVDatabase.GetDVBTTuneRequest(channel.ID, out provider, out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid))
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
     static public bool IsDigitalChannel(TVChannel channel)
     {
       int freq, symbolrate, innerFec, modulation, ONID, TSID, SID;
