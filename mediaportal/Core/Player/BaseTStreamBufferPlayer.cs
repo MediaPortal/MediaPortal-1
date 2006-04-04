@@ -121,6 +121,13 @@ namespace MediaPortal.Player
 
     #region public members
 
+    public override bool SupportsReplay
+    {
+      get
+      {
+        return true;
+      }
+    }
     public override bool Play(string strFile)
     {
       Log.Write("Streambufferplayer play:{0}", strFile);
@@ -149,18 +156,27 @@ namespace MediaPortal.Player
       _geometry = MediaPortal.GUI.Library.Geometry.Type.Normal;
 
       _updateNeeded = true;
-      Log.Write("TSStreamBufferPlayer:play {0}", strFile);
-      GC.Collect();
-      CloseInterfaces();
-      GC.Collect();
-      _isStarted = false;
-      if (!GetInterfaces(strFile))
+      if (_fileSource != null)
       {
-        Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer:GetInterfaces() failed");
-        _currentFile = "";
-        return false;
+        Log.Write("TSStreamBufferPlayer:replay {0}", strFile);
+        IFileSourceFilter interFaceFile = (IFileSourceFilter)_fileSource;
+        interFaceFile.Load(strFile, null);
       }
-      _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+      else
+      {
+        Log.Write("TSStreamBufferPlayer:play {0}", strFile);
+        GC.Collect();
+        CloseInterfaces();
+        GC.Collect();
+        _isStarted = false;
+        if (!GetInterfaces(strFile))
+        {
+          Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer:GetInterfaces() failed");
+          _currentFile = "";
+          return false;
+        }
+        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+      }
 
       int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
       if (hr < 0)
@@ -742,36 +758,10 @@ namespace MediaPortal.Player
     public override void Stop()
     {
       Log.Write("TSStreamBufferPlayer:stop");
-      CloseInterfaces();
+      if (_mediaCtrl == null) return;
+      _mediaCtrl.Stop();
     }
-    /*
-        public override int Speed
-        {
-          get
-          {
-            //lock (this)
-          {
-            return _speed;
-          }
-          }
-          set 
-          {
-            //lock (this)
-          {
-            if (_speed!=value)
-            {
-              _speed=value;
-              if (_mediaSeeking==null) return ;
-              double dRate=value;
-              int hr=_mediaSeeking.SetRate(dRate);
-              dRate=0;
-              _mediaSeeking.GetRate(out dRate);
-              Log.Write("TSStreamBufferPlayer:SetRate to:{0} hr:{1} {2}", value,hr, dRate);
-            }
-          }
-          }
-        }
-    */
+
 
     public override int Volume
     {
