@@ -4076,13 +4076,13 @@ namespace MediaPortal.TV.Recording
       if (_graphState != State.TimeShifting && _graphState != State.Recording) return false;
       if (!SignalPresent()) return false;
       if (!UseTsTimeShifting) return true;
+      
       ITSFileSink sink = _filterTsFileSink as ITSFileSink;
       if (sink == null) return false;
       long filesize = 0;
       sink.GetFileBufferSize(ref filesize);
-      return (filesize > 1024L * 1024L * 4L);//4MB
+      return (filesize > 4L*1024L * 1024L);//1MB
 
-      //return (_refreshPmtTable == false);
     }
 
     public bool IsRadio()

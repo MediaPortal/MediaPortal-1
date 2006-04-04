@@ -222,6 +222,8 @@ namespace MediaPortal.Player
         _mediaCtrl.Pause();
         long duration = 0;
         ushort vpid = 0, apid = 0, pmtpid = 0, sid = 0, pcr = 0, prgmNumb = 0, ac3 = 0;
+        Log.Write("TsBaseStreamBuffer:parse file");
+
         while (true)
         {
           _interfaceTsFileSource.Refresh();
@@ -237,15 +239,15 @@ namespace MediaPortal.Player
           dur /= 10000000d;
           if (dur >= 1.0d) break;
           else System.Threading.Thread.Sleep(100);
-          Log.Write(" vpid:0x{0:X} apid:0x{1:X} pmt:0x{2:X} sid:0x{3:X} pcr:0x{4:X} ac3pid:0x{5:X} prgmNumb:0x{6:X} duration:{7} {8}",vpid, apid, pmtpid, sid, pcr, ac3, prgmNumb, duration,dur);
         }
+        Log.Write("TsBaseStreamBuffer: vpid:0x{0:X} apid:0x{1:X} pmt:0x{2:X} sid:0x{3:X} pcr:0x{4:X} ac3pid:0x{5:X} prgmNumb:0x{6:X} duration:{7}",vpid, apid, pmtpid, sid, pcr, ac3, prgmNumb, duration);
         _mediaCtrl.Run();
         UpdateDuration();
         UpdateCurrentPosition();
         double dPos = _duration - 2;
         if (dPos >= 0 && CurrentPosition < dPos)
         {
-          Log.Write("StreamBufferPlayer:Seek to end");
+          Log.Write("TsBaseStreamBuffer:Seek to end");
           SeekAbsolute(dPos);
         }
       }
