@@ -86,7 +86,6 @@ copy ..\..\..\Configuration\bin\debug\Configuration.exe.config .
 copy ..\..\..\Configuration\bin\debug\Configuration.pdb .
 copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.exe .
 copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.pdb .
-copy ..\..\..\madlldlib.dll .
 copy ..\..\..\ECP2Assembly.dll .
 copy ..\..\..\edtftpnet-1.2.2.dll .
 copy ..\..\..\dvblib.dll .

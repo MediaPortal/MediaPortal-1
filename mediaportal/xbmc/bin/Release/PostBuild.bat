@@ -77,7 +77,6 @@ rem copy ..\..\..\X10Plugin.* .
 copy ..\..\..\X10Unified.* .
 copy ..\..\..\xAPMessage.dll .
 copy ..\..\..\xAPTransport.dll .
-copy ..\..\..\madlldlib.dll .
 copy ..\..\..\ECP2Assembly.dll .
 copy ..\..\..\edtftpnet-1.2.2.dll .
 copy ..\..\..\dvblib.dll .
