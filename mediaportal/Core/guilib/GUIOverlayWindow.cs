@@ -28,12 +28,18 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class GUIOverlayWindow : GUIWindow
 	{
-		public override void PreInit()
-		{
-			base.PreInit ();
-			//GUIWindowManager.OnPostRender+=new MediaPortal.GUI.Library.GUIWindowManager.PostRendererHandler(OnPostRender);
-			GUIWindowManager.OnPostRenderAction+=new MediaPortal.GUI.Library.GUIWindowManager.PostRenderActionHandler(OnPostRenderAction);
-		}
+    public GUIOverlayWindow()
+    {
+      GUIWindowManager.OnPostRenderAction += new MediaPortal.GUI.Library.GUIWindowManager.PostRenderActionHandler(OnPostRenderAction);
+    }
+
+    // Moved to Ctor to prevent multiple event registrations (fixes http://mantis.team-mediaportal.com/view.php?id=724 )
+    // public override void PreInit()
+		// {
+		// 	base.PreInit ();
+		// 	//GUIWindowManager.OnPostRender+=new MediaPortal.GUI.Library.GUIWindowManager.PostRendererHandler(OnPostRender);
+		// 	GUIWindowManager.OnPostRenderAction+=new MediaPortal.GUI.Library.GUIWindowManager.PostRenderActionHandler(OnPostRenderAction);
+		// }
 
 		/// <summary>
 		/// PostRender() gives the window the oppertunity to overlay itself ontop of
