@@ -302,6 +302,7 @@ namespace MediaPortal.TV.Recording
     protected DateTime _pmtTimer;
     protected DateTime _processTimer = DateTime.MinValue;
     protected IPin _pinTeletext;
+    protected string _currentTimeShiftFileName;
 
 #if DUMP
 		System.IO.FileStream fileout;
@@ -1246,6 +1247,7 @@ namespace MediaPortal.TV.Recording
 
     protected virtual bool CreateSinkSource(string fileName, bool useAC3)
     {
+      _currentTimeShiftFileName = fileName;
       int hr = 0;
       IPin pinObj0 = null;
       IPin pinObj1 = null;
@@ -2564,6 +2566,25 @@ namespace MediaPortal.TV.Recording
       _pmtRetyCount = 0;
       _inScanningMode = false;
       //bool restartGraph=false;
+
+      if (UseTsTimeShifting)
+      {
+        if (_graphState == State.TimeShifting)
+        {
+          if (_filterTsFileSink!=null)
+          {
+            if (_graphState == State.TimeShifting)
+            {
+              _mediaControl.Stop();
+              int hr=_graphBuilder.RemoveFilter((IBaseFilter)_filterTsFileSink);
+              Log.WriteFile(Log.LogType.Log, "DVBGraph:remove TsFileSink:0x{0:X}", hr);
+              CreateTsTimeShifting(_currentTimeShiftFileName, false);
+              _mediaControl.Run();
+            }
+          }
+        }
+      }
+
       try
       {
         VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
@@ -4093,9 +4114,12 @@ namespace MediaPortal.TV.Recording
     {
       return (_graphState == State.Recording);
     }
+
     #region TsTimeShifting
     bool CreateTsTimeShifting(string fileName, bool useAc3)
     {
+      _currentTimeShiftFileName = fileName;
+      Log.WriteFile(Log.LogType.Log, "DVBGraph:add TsFileSink");
       //delete any old timeshifting files
       string file = System.IO.Path.GetFileName(fileName);
       string path = fileName.Substring(0, fileName.Length - (file.Length + 1));
@@ -4103,7 +4127,10 @@ namespace MediaPortal.TV.Recording
       for (int i = 0; i < files.Length; ++i)
       {
         if (files[i].IndexOf(file) >= 0)
+        {
+          Log.WriteFile(Log.LogType.Log, "DVBGraph:delete old file {0}", files[i]);
           Utils.FileDelete(files[i]);
+        }
       }
 
       //create new TsFileSink filter
