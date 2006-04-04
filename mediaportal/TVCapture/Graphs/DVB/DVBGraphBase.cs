@@ -187,6 +187,8 @@ namespace MediaPortal.TV.Recording
     [ComImport, Guid("5CDD5C68-80DC-43E1-9E44-C849CA8026E7")]
     protected class TsFileSink { };
 
+    [ComImport, Guid("BC650178-0DE4-47DF-AF50-BBD9C7AEF5A9")]
+    protected class MpgMux { };
     #endregion
 
     #region enums
@@ -556,8 +558,10 @@ namespace MediaPortal.TV.Recording
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render video out pin MPEG-2 Demultiplexer");
           return false;
         }
+      
       }
-      _isUsingAC3 = TVDatabase.DoesChannelHaveAC3(channel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC);
+      int serviceType;
+      _isUsingAC3 = TVDatabase.DoesChannelHaveAC3(channel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC, out serviceType);
       if (_isUsingAC3)
         Log.WriteFile(Log.LogType.Log, "DVBGraph: channel {0} uses AC3", channel.Name);
       else
@@ -750,7 +754,8 @@ namespace MediaPortal.TV.Recording
       _isUsingAC3 = false;
       if (channel != null)
       {
-        _isUsingAC3 = TVDatabase.DoesChannelHaveAC3(channel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC);
+        int serviceType;;
+        _isUsingAC3 = TVDatabase.DoesChannelHaveAC3(channel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC, out serviceType);
         if (_isUsingAC3)
           Log.WriteFile(Log.LogType.Log, "DVBGraph: channel {0} uses AC3", channel.Name);
         else
@@ -964,10 +969,15 @@ namespace MediaPortal.TV.Recording
         Log.Write("DVBGraph: ShouldRebuildGraph({0})  false, not viewing", newChannel.Name);
         return false;
       }
-      bool useAC3 = TVDatabase.DoesChannelHaveAC3(newChannel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC);
+      int serviceType;
+      bool useAC3 = TVDatabase.DoesChannelHaveAC3(newChannel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC, out serviceType);
       Log.Write("DVBGraph: ShouldRebuildGraph({0})  current ac3:{1} new channel ac3:{2}",
                   newChannel.Name, _isUsingAC3, useAC3);
       if (useAC3 != _isUsingAC3) return true;
+      if (_currentTuningObject != null)
+      {
+        if (serviceType != _currentTuningObject.ServiceType) return true;
+      }
       return false;
     }
 
@@ -2566,7 +2576,7 @@ namespace MediaPortal.TV.Recording
       _pmtRetyCount = 0;
       _inScanningMode = false;
       //bool restartGraph=false;
-
+      /*
       if (UseTsTimeShifting)
       {
         if (_graphState == State.TimeShifting)
@@ -2583,7 +2593,7 @@ namespace MediaPortal.TV.Recording
             }
           }
         }
-      }
+      }*/
 
       try
       {
@@ -4132,10 +4142,60 @@ namespace MediaPortal.TV.Recording
           Utils.FileDelete(files[i]);
         }
       }
+      //create new MpgMux filter
+      MpgMux mux = new MpgMux();
+      IBaseFilter filterMux=(IBaseFilter)mux;
+      int hr = _graphBuilder.AddFilter(filterMux, "MpgMux");
+      if (hr != 0)
+      {
+        Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot add MpgMux:{0:X}", hr);
+        return false;
+      }
+
+      //connect mpeg-2 demuxer->MpgMux
+      IPin pinMuxVideo = DsFindPin.ByDirection(filterMux, PinDirection.Input, 0);
+      IPin pinMuxAudio = DsFindPin.ByDirection(filterMux, PinDirection.Input, 1);
+      if (!useAc3)
+      {
+        _graphBuilder.Connect(_pinDemuxerAudio, pinMuxAudio);
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot connect audio mpeg2 demux->mux input 1:{0:X}", hr);
+          return false;
+        }
+      }
+      else
+      {
+        _graphBuilder.Connect(_pinAC3Out, pinMuxAudio);
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot connect ac3 mpeg2 demux->mux input 1:{0:X}", hr);
+          return false;
+        }
+      }
+
+      if (_currentTuningObject.ServiceType == Mpeg4VideoServiceType)
+      {
+        hr = _graphBuilder.Connect(_pinDemuxerVideoMPEG4, pinMuxVideo);
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot connect video mpeg4 demux->mux input 2:{0:X}", hr);
+          return false;
+        }
+      }
+      else
+      {
+        hr = _graphBuilder.Connect(_pinDemuxerVideo, pinMuxVideo);
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot connect video mpeg2 demux->mux input 2:{0:X}", hr);
+          return false;
+        }
+      }
 
       //create new TsFileSink filter
       _filterTsFileSink = new TsFileSink();
-      int hr = _graphBuilder.AddFilter((IBaseFilter)_filterTsFileSink, "TsFileSink");
+      hr = _graphBuilder.AddFilter((IBaseFilter)_filterTsFileSink, "TsFileSink");
       if (hr != 0)
       {
         Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot add TsFileSink:{0:X}", hr);
@@ -4153,6 +4213,11 @@ namespace MediaPortal.TV.Recording
       AMMediaType mt = new AMMediaType();
       interfaceFile.SetFileName(fileName, mt);
 
+      //connect MpgMux -> TsFileSink
+      IBaseFilter baseFilterSink = _filterTsFileSink as IBaseFilter;
+      ConnectFilters(ref filterMux, ref baseFilterSink, 0);
+
+      /*
       //connect mpeg2 demux->TsFileSink
       IPin pinIn = DsFindPin.ByDirection((IBaseFilter)_filterTsFileSink, PinDirection.Input, 0);
       if (pinIn == null)
@@ -4165,13 +4230,15 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot connect demuxer->TsFileSink:{0:X}", hr);
         return false;
-      }
+      }*/
       return true;
     }
 
     void SetupTsDemuxerMapping()
-    {
+    { /*
       if (UseTsTimeShifting == false) return;
+
+     
       if (Network() == NetworkType.ATSC)
       {
         SetupDemuxerPin(_pinDemuxerTS, 0x1ffb, (int)MediaSampleContent.TransportPacket, true);
@@ -4207,7 +4274,7 @@ namespace MediaPortal.TV.Recording
         SetupDemuxerPin(_pinDemuxerTS, _currentTuningObject.PMTPid, (int)MediaSampleContent.TransportPacket, false);
 
       DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
-      return;
+       */
     }
     #endregion
   }//public class DVBGraphBDA

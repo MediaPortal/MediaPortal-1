@@ -4134,7 +4134,7 @@ namespace MediaPortal.TV.Database
 
       return false;
     }
-    static public bool DoesChannelHaveAC3(TVChannel chan, bool checkDVBC, bool checkDVBT, bool checkDVBS, bool checkATSC)
+    static public bool DoesChannelHaveAC3(TVChannel chan, bool checkDVBC, bool checkDVBT, bool checkDVBS, bool checkATSC, out int serviceType)
     {
       int audio1, audio2, audio3, ac3Pid, pcrPid;
       string audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3;
@@ -4142,6 +4142,7 @@ namespace MediaPortal.TV.Database
       bool HasEITPresentFollow, HasEITSchedule;
 
       string provider;
+      serviceType = 1;
 
       if (checkDVBT)
       {
@@ -4151,18 +4152,25 @@ namespace MediaPortal.TV.Database
       if (checkDVBC)
       {
         GetDVBCTuneRequest(chan.ID, out provider, out freq, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
+        serviceType = 1;
         if (ac3Pid > 0) return true;
       }
       if (checkDVBS)
       {
         DVBChannel ch = new DVBChannel();
-        TVDatabase.GetSatChannel(chan.ID, 1, ref ch);
+        serviceType = ch.ServiceType;
+        if (!TVDatabase.GetSatChannel(chan.ID, 1, ref ch))
+        {
+          TVDatabase.GetSatChannel(chan.ID, 1000, ref ch);
+          serviceType = 1000;
+        }
         if (ch.AC3Pid > 0) return true;
       }
       if (checkATSC)
       {
         int physical, minor, major;
         TVDatabase.GetATSCTuneRequest(chan.ID, out  physical, out provider, out freq, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out minor, out major, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
+        serviceType = 1;
         if (ac3Pid > 0) return true;
       }
       return false;
