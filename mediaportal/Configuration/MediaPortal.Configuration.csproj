@@ -170,10 +170,6 @@
     <Reference Include="Interop.X10, Version=1.0.0.0, Culture=neutral">
       <HintPath>.\Interop.X10.dll</HintPath>
     </Reference>
-    <Reference Include="mbm5">
-      <Name>mbm5</Name>
-      <HintPath>..\mbm5.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.DirectX">
       <Name>Microsoft.DirectX</Name>
       <HintPath>C:\WINDOWS\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll</HintPath>
