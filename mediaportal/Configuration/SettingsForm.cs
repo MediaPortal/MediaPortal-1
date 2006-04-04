@@ -34,6 +34,9 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
+using DShowNET;
+using DShowNET.Helper;
+using DirectShowLib;
 using Keys = MediaPortal.Configuration.Sections.Keys;
 
 namespace MediaPortal.Configuration
@@ -227,21 +230,68 @@ namespace MediaPortal.Configuration
       dinputRemote = new DirectInputRemote();
       AddChildSection(remote, dinputRemote);
 
+      //Look for Audio Decoders, if exist assume decoders are installed & present config option
       FiltersSection filterSection = new FiltersSection();
       AddSection(filterSection);
-      AddChildSection(filterSection, new MPEG2DecAudioFilter());
-      AddChildSection(filterSection, new MPEG2DecVideoFilter());
+      ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+      if (availableAudioFilters.Count > 0)
+      {
+          foreach (string filter in availableAudioFilters)
+          {
+              if (filter.Equals("NVIDIA Audio Decoder"))
+              {
+                  AddChildSection(filterSection, new PureVideoDecoderFilters());
+              }
+              if (filter.Equals("InterVideo Audio Decoder"))
+              {
+                  AddChildSection(filterSection, new WinDVD7DecoderFilters());
+              }
+              if (filter.Equals("CyberLink Audio Decoder"))
+              {
+                  AddChildSection(filterSection, new PowerDVD6DecoderFilters());
+              }
+              if (filter.Equals("MPEG/AC3/DTS/LPCM Audio Decoder"))
+              {
+                  AddChildSection(filterSection, new MPEG2DecAudioFilter());
+              }
+              if (filter.Equals("DScaler Audio Decoder"))
+              {
+                  AddChildSection(filterSection, new DScalerAudioFilter());
+              }
+          }
+      }
+      
+      //Look for Video Decoders, if exist assume decoders are installed & present config option
+      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+      if (availableVideoFilters.Count > 0)
+      {
+          foreach (string filter in availableVideoFilters)
+          {
+              if (filter.Equals("Mpeg2Dec Filter"))
+              {
+                  AddChildSection(filterSection, new MPEG2DecVideoFilter());
+              }
+              if (filter.Equals("DScaler Mpeg2 Video Decoder"))
+              {
+                  AddChildSection(filterSection, new DScalerVideoFilter());
+              }
+          }          
+      }
 
-      AddChildSection(filterSection, new DScalerAudioFilter());
-      AddChildSection(filterSection, new DScalerVideoFilter());
-
-      AddChildSection(filterSection, new PowerDVD6DecoderFilters());
-      AddChildSection(filterSection, new WinDVD7DecoderFilters());
-      AddChildSection(filterSection, new PureVideoDecoderFilters());
-
-      EncoderFiltersSection EncoderfilterSection = new EncoderFiltersSection();
-      AddSection(EncoderfilterSection);
-      AddChildSection(EncoderfilterSection, new InterVideoEncoderFilters());
+      //Look for Audio Encoders, if exist assume encoders are installed & present config option
+      Filters filters = new Filters();
+      string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
+      FilterCollection legacyFilters = filters.LegacyFilters;
+      foreach (Filter audioCodec in legacyFilters)
+      for (int i = 0; i < audioEncoders.Length; ++i)
+      {
+          if (String.Compare(audioCodec.Name, audioEncoders[i], true) == 0)
+          {
+              EncoderFiltersSection EncoderfilterSection = new EncoderFiltersSection();
+              AddSection(EncoderfilterSection);
+              AddChildSection(EncoderfilterSection, new InterVideoEncoderFilters());
+          }
+      }
       
       Log.Write("add weather section");
       AddSection(new Weather());
