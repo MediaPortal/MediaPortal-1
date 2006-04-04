@@ -41,13 +41,18 @@ namespace MediaPortal.TV.Recording
     static TVProgram _lastProgramRecording = null;
     static List<TVChannel> _tvChannelList = new List<TVChannel>();
     static long _programStart = -1;
+    static bool _subscribeRecorderHandler = false;
     static public void Init()
     {
       _tvChannelList.Clear();
       TVDatabase.GetChannels(ref _tvChannelList);
 
-      Recorder.OnTvChannelChanged += new MediaPortal.TV.Recording.Recorder.OnTvChannelChangeHandler(Recorder_OnTvChannelChanged);
-      Recorder.OnTvRecordingChanged += new MediaPortal.TV.Recording.Recorder.OnTvRecordingChangedHandler(Recorder_OnTvRecordingChanged);
+      if (!_subscribeRecorderHandler)
+      {
+        _subscribeRecorderHandler = true;
+        Recorder.OnTvChannelChanged += new MediaPortal.TV.Recording.Recorder.OnTvChannelChangeHandler(Recorder_OnTvChannelChanged);
+        Recorder.OnTvRecordingChanged += new MediaPortal.TV.Recording.Recorder.OnTvRecordingChangedHandler(Recorder_OnTvRecordingChanged);
+      }
       Clean();
     }
 
