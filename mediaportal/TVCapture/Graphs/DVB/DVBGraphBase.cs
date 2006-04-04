@@ -3234,7 +3234,7 @@ namespace MediaPortal.TV.Recording
               if (String.Compare(providerName, newchannel.ServiceProvider, true) != 0)
               {
                 //different provider. change Tv channel name to include the provider as well
-                tvChan = null;
+                
                 isNewChannel = true;
                 channelId = -1;
                 newchannel.ServiceName = String.Format("{0}-{1}", newchannel.ServiceName, newchannel.ServiceProvider);
