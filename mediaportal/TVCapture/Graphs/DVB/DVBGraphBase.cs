@@ -67,7 +67,7 @@ namespace MediaPortal.TV.Recording
   /// </summary>
   public class DVBGraphBase : MediaPortal.TV.Recording.IGraph, IHardwarePidFiltering
   {
-    const bool UseTsTimeShifting = false;
+    protected const bool UseTsTimeShifting = false;
     #region guids
     public static Guid MEDIATYPE_MPEG2_SECTIONS = new Guid(0x455f176c, 0x4b06, 0x47ce, 0x9a, 0xef, 0x8c, 0xae, 0xf7, 0x3d, 0xf7, 0xb5);
     public static Guid MEDIASUBTYPE_MPEG2_DATA = new Guid(0xc892e55b, 0x252d, 0x42b5, 0xa3, 0x16, 0xd9, 0x97, 0xe7, 0xa5, 0xd9, 0x95);
@@ -247,6 +247,7 @@ namespace MediaPortal.TV.Recording
     protected IBaseFilter _filterTunerDevice = null;			// BDA Digital Tuner Device
     protected IBaseFilter _filterCaptureDevice = null;			// BDA Digital Capture Device
     protected IBaseFilter _filterMpeg2Demultiplexer = null;			// Mpeg2 Demultiplexer that connects to Preview pin on Smart Tee (must connect before capture)
+    protected IBaseFilter _filterTsMpeg2Demultiplexer = null;
     protected IStreamAnalyzer _analyzerInterface = null;
     protected IEPGGrabber _epgGrabberInterface = null;
     protected IMHWGrabber _mhwGrabberInterface = null;
@@ -269,6 +270,7 @@ namespace MediaPortal.TV.Recording
     protected IMediaControl _mediaControl = null;
     protected IBaseFilter _filterSampleGrabber = null;
     protected ISampleGrabber _sampleInterface = null;
+    protected IBaseFilter _filterInfTee = null;
 
     protected StreamBufferSink m_StreamBufferSink = null;
     protected StreamBufferConfig m_StreamBufferConfig = null;
