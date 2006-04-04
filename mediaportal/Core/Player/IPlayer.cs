@@ -68,6 +68,13 @@ namespace MediaPortal.Player
       return false;
     }
 
+    public virtual bool SupportsReplay
+    {
+      get
+      {
+        return false;
+      }
+    }
     /// <summary>
     /// Property which indicate if we're playing a DVD or not
     /// </summary>

@@ -61,6 +61,7 @@ namespace MediaPortal.Player
     static Steps _currentStep = Steps.Sec0;
     static DateTime _seekTimer = DateTime.MinValue;
     static Player.IPlayer _player = null;
+    static Player.IPlayer _prevPlayer = null;
     static SubTitles _subs = null;
     static bool _isInitalized = false;
     static string _currentFilePlaying = "";
@@ -188,8 +189,17 @@ namespace MediaPortal.Player
         GUIGraphicsContext.IsFullScreenVideo = false;
         GUIGraphicsContext.IsPlaying = false;
         GUIGraphicsContext.IsPlayingVideo = false;
-        _player.Release();
-        _player = null;
+        if (_player.SupportsReplay)
+        {
+          _prevPlayer = _player;
+          _player = null;
+        }
+        else
+        {
+          _player.Release();
+          _player = null;
+          _prevPlayer = null;
+        }
       }
     }
 
@@ -453,6 +463,7 @@ namespace MediaPortal.Player
       try
       {
         Starting = true;
+
         //stop radio
         if (!Utils.IsLiveRadio(strFile))
         {
@@ -528,26 +539,22 @@ namespace MediaPortal.Player
         _player = _factory.Create(strFile);
         if (_player != null)
         {
-          if (Utils.IsVideo(strFile))
+          if (_prevPlayer != null)
           {
-            //string strSubFile=System.IO.Path.ChangeExtension(strFile,".srt");
-            //_subs=SubReader.ReadTag(strSubFile);
-            //if (_subs==null)
-            //{
-            //  strSubFile=System.IO.Path.ChangeExtension(strFile,".smi");
-            //  _subs=SubReader.ReadTag(strSubFile);
-            //}
-            //if (_subs==null)
-            //{
-            //  strSubFile=System.IO.Path.ChangeExtension(strFile,".sami");
-            //  _subs=SubReader.ReadTag(strSubFile);
-            //}
-            //if (_subs!=null)
-            //{
-            //  _subs.LoadSettings();
-            //}
+            if (_prevPlayer.GetType() == _player.GetType())
+            {
+              if (_prevPlayer.SupportsReplay)
+              {
+                _player = _prevPlayer;
+                _prevPlayer = null;
+              }
+            }
           }
-
+          if (_prevPlayer != null)
+          {
+            _prevPlayer.Release();
+            _prevPlayer = null;
+          }
           bool bResult = _player.Play(strFile);
           if (!bResult)
           {

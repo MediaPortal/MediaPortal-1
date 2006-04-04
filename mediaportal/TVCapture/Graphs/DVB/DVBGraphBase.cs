@@ -4112,8 +4112,7 @@ namespace MediaPortal.TV.Recording
       if (sink == null) return false;
       long filesize = 0;
       sink.GetFileBufferSize(ref filesize);
-      return (filesize > 4L*1024L * 1024L);//1MB
-
+      return (filesize > 20L*1024L);//4L*1024L * 1024L);//4MB
     }
 
     public bool IsRadio()

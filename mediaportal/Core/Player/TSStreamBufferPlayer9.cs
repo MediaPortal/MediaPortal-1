@@ -31,11 +31,92 @@ using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
 
-namespace MediaPortal.Player 
+namespace MediaPortal.Player
 {
   public class TStreamBufferPlayer9 : BaseTStreamBufferPlayer
   {
+    #region imports
+    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+    protected static extern int SetupDemuxerPin(IPin pin, int pid, int elementaryStream, bool unmapOtherPins);
+    [DllImport("dvblib.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+    protected static extern int DumpMpeg2DemuxerMappings(IBaseFilter filter);
+    #endregion
 
+    #region structs
+
+    static byte[] Mpeg2ProgramVideo = 
+    {
+      0x00, 0x00, 0x00, 0x00,                         //00  .hdr.rcSource.left              = 0x00000000
+      0x00, 0x00, 0x00, 0x00,                         //04  .hdr.rcSource.top               = 0x00000000
+      0xD0, 0x02, 0x00, 0x00,                         //08  .hdr.rcSource.right             = 0x000002d0 //720
+      0x40, 0x02, 0x00, 0x00,                         //0c  .hdr.rcSource.bottom            = 0x00000240 //576
+      0x00, 0x00, 0x00, 0x00,                         //10  .hdr.rcTarget.left              = 0x00000000
+      0x00, 0x00, 0x00, 0x00,                         //14  .hdr.rcTarget.top               = 0x00000000
+      0xD0, 0x02, 0x00, 0x00,                         //18  .hdr.rcTarget.right             = 0x000002d0 //720
+      0x40, 0x02, 0x00, 0x00,                         //1c  .hdr.rcTarget.bottom            = 0x00000240// 576
+      0x00, 0x09, 0x3D, 0x00,                         //20  .hdr.dwBitRate                  = 0x003d0900
+      0x00, 0x00, 0x00, 0x00,                         //24  .hdr.dwBitErrorRate             = 0x00000000
+
+      //0x051736=333667-> 10000000/333667 = 29.97fps
+      //0x061A80=400000-> 10000000/400000 = 25fps
+      0x80, 0x1A, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, //28  .hdr.AvgTimePerFrame            = 0x0000000000051763 ->1000000/ 40000 = 25fps
+      0x00, 0x00, 0x00, 0x00,                         //2c  .hdr.dwInterlaceFlags           = 0x00000000
+      0x00, 0x00, 0x00, 0x00,                         //30  .hdr.dwCopyProtectFlags         = 0x00000000
+      0x04, 0x00, 0x00, 0x00,                         //34  .hdr.dwPictAspectRatioX         = 0x00000004
+      0x03, 0x00, 0x00, 0x00,                         //38  .hdr.dwPictAspectRatioY         = 0x00000003
+      0x00, 0x00, 0x00, 0x00,                         //3c  .hdr.dwReserved1                = 0x00000000
+      0x00, 0x00, 0x00, 0x00,                         //40  .hdr.dwReserved2                = 0x00000000
+      0x28, 0x00, 0x00, 0x00,                         //44  .hdr.bmiHeader.biSize           = 0x00000028
+      0xD0, 0x02, 0x00, 0x00,                         //48  .hdr.bmiHeader.biWidth          = 0x000002d0 //720
+      0x40, 0x02, 0x00, 0x00,                         //4c  .hdr.bmiHeader.biHeight         = 0x00000240 //576
+      0x00, 0x00,                                     //50  .hdr.bmiHeader.biPlanes         = 0x0000
+      0x00, 0x00,                                     //54  .hdr.bmiHeader.biBitCount       = 0x0000
+      0x00, 0x00, 0x00, 0x00,                         //58  .hdr.bmiHeader.biCompression    = 0x00000000
+      0x00, 0x00, 0x00, 0x00,                         //5c  .hdr.bmiHeader.biSizeImage      = 0x00000000
+      0xD0, 0x07, 0x00, 0x00,                         //60  .hdr.bmiHeader.biXPelsPerMeter  = 0x000007d0
+      0x27, 0xCF, 0x00, 0x00,                         //64  .hdr.bmiHeader.biYPelsPerMeter  = 0x0000cf27
+      0x00, 0x00, 0x00, 0x00,                         //68  .hdr.bmiHeader.biClrUsed        = 0x00000000
+      0x00, 0x00, 0x00, 0x00,                         //6c  .hdr.bmiHeader.biClrImportant   = 0x00000000
+      0x98, 0xF4, 0x06, 0x00,                         //70  .dwStartTimeCode                = 0x0006f498
+      //0x56, 0x00, 0x00, 0x00,                         //74  .cbSequenceHeader               = 0x00000056
+      0x00, 0x00, 0x00, 0x00,                         //74  .cbSequenceHeader               = 0x00000000
+      0x02, 0x00, 0x00, 0x00,                         //78  .dwProfile                      = 0x00000002
+      0x02, 0x00, 0x00, 0x00,                         //7c  .dwLevel                        = 0x00000002
+      0x00, 0x00, 0x00, 0x00,                         //80  .Flags                          = 0x00000000
+      /*
+       * //  .dwSequenceHeader [1]
+      0x00, 0x00, 0x01, 0xB3, 0x2D, 0x01, 0xE0, 0x24,
+      0x09, 0xC4, 0x23, 0x81, 0x10, 0x11, 0x11, 0x12, 
+      0x12, 0x12, 0x13, 0x13, 0x13, 0x13, 0x14, 0x14, 
+      0x14, 0x14, 0x14, 0x15, 0x15, 0x15, 0x15, 0x15, 
+      0x15, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 0x16, 
+      0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 
+      0x18, 0x18, 0x18, 0x19, 0x18, 0x18, 0x18, 0x19, 
+      0x1A, 0x1A, 0x1A, 0x1A, 0x19, 0x1B, 0x1B, 0x1B, 
+      0x1B, 0x1B, 0x1C, 0x1C, 0x1C, 0x1C, 0x1E, 0x1E, 
+      0x1E, 0x1F, 0x1F, 0x21, 0x00, 0x00, 0x01, 0xB5, 
+      0x14, 0x82, 0x00, 0x01, 0x00, 0x00*/
+      0x00, 0x00, 0x00, 0x00
+    };
+    static byte[] MPEG1AudioFormat = 
+    {
+      0x50, 0x00,             // format type      = 0x0050=WAVE_FORMAT_MPEG
+      0x02, 0x00,             // channels
+      0x80, 0xBB, 0x00, 0x00, // samplerate       = 0x0000bb80=48000
+      0x00, 0x7D, 0x00, 0x00, // nAvgBytesPerSec  = 0x00007d00=32000
+      0x00, 0x03,             // nBlockAlign      = 0x0300 = 768
+      0x10, 0x00,             // wBitsPerSample   = 16
+      0x16, 0x00,             // extra size       = 0x0016 = 22 bytes
+      0x02, 0x00,             // fwHeadLayer
+      0x00, 0x70,0x17, 0x00,  // dwHeadBitrate
+      0x01, 0x00,             // fwHeadMode
+      0x01, 0x00,             // fwHeadModeExt
+      0x01, 0x00,             // wHeadEmphasis
+      0x1C, 0x00,             // fwHeadFlags
+      0x00, 0x00, 0x00, 0x00, // dwPTSLow
+      0x00, 0x00, 0x00, 0x00  // dwPTSHigh
+    };
+    #endregion
     VMR9Util _vmr9 = null;
     public TStreamBufferPlayer9()
     {
@@ -92,8 +173,58 @@ namespace MediaPortal.Player
         MPEG2Demultiplexer demux = new MPEG2Demultiplexer();
         hr = _graphBuilder.AddFilter((IBaseFilter)demux, "MPEG-2 Demultiplexer");
         _fileSource = new TsFileSource();
+        /*
+        if (IsTimeShifting)
+        {
+          IPin pinAudio, pinVideo;
+          //create mpeg-2 demux output pins
+          IMpeg2Demultiplexer demuxer = demux as IMpeg2Demultiplexer;
+          AMMediaType mpegAudioOut = new AMMediaType();
+          mpegAudioOut.majorType = MediaType.Audio;
+          mpegAudioOut.subType = MediaSubType.Mpeg2Audio;
+          mpegAudioOut.sampleSize = 0;
+          mpegAudioOut.temporalCompression = false;
+          mpegAudioOut.fixedSizeSamples = true;
+          mpegAudioOut.unkPtr = IntPtr.Zero;
+          mpegAudioOut.formatType = FormatType.WaveEx;
+          mpegAudioOut.formatSize = MPEG1AudioFormat.GetLength(0);
+          mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
+          System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
+          hr = demuxer.CreateOutputPin(mpegAudioOut, "audio", out pinAudio);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA: FAILED to create audio output pin on demuxer");
+            return false;
+          }
 
+          AMMediaType mpegVideoOut = new AMMediaType();
+          mpegVideoOut.majorType = MediaType.Video;
+          mpegVideoOut.subType = MediaSubType.Mpeg2Video;
 
+          Size FrameSize = new Size(100, 100);
+          mpegVideoOut.unkPtr = IntPtr.Zero;
+          mpegVideoOut.sampleSize = 0;
+          mpegVideoOut.temporalCompression = false;
+          mpegVideoOut.fixedSizeSamples = true;
+
+          //Mpeg2ProgramVideo=new byte[Mpeg2ProgramVideo.GetLength(0)];
+          mpegVideoOut.formatType = FormatType.Mpeg2Video;
+          mpegVideoOut.formatSize = Mpeg2ProgramVideo.GetLength(0);
+          mpegVideoOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegVideoOut.formatSize);
+          System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mpegVideoOut.formatPtr, mpegVideoOut.formatSize);
+          hr = demuxer.CreateOutputPin(mpegVideoOut, "video", out pinVideo);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA: FAILED to create video output pin on demuxer");
+            return false;
+          }
+
+          SetupDemuxerPin(pinAudio, 0xc0, 1, true);
+          SetupDemuxerPin(pinVideo, 0xe0, 1, true);
+
+          DumpMpeg2DemuxerMappings((IBaseFilter)demux);
+        }
+        */
         IBaseFilter filter = (IBaseFilter)_fileSource;
         hr = _graphBuilder.AddFilter(filter, "TsFileSource");
         if (hr != 0)
@@ -232,7 +363,7 @@ namespace MediaPortal.Player
         _videoWin = null;
         _basicAudio = null;
         _basicVideo = null;
-        
+
 
         if (_fileSource != null)
         {

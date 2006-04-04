@@ -126,7 +126,13 @@ namespace MediaPortal.Player
     #endregion
 
     #region public members
-
+    public override bool SupportsReplay
+    {
+      get
+      {
+        return true;
+      }
+    }
     public override bool Play(string strFile)
     {
       Log.Write("Streambufferplayer play:{0}", strFile);
@@ -166,19 +172,27 @@ namespace MediaPortal.Player
       _geometry = MediaPortal.GUI.Library.Geometry.Type.Normal;
 
       _updateNeeded = true;
-      Log.Write("StreamBufferPlayer:play {0}", strFile);
-      GC.Collect();
-      CloseInterfaces();
-      GC.Collect();
-      _isStarted = false;
-      if (!GetInterfaces(strFile))
+      if (_bufferSource != null)
       {
-        Log.WriteFile(Log.LogType.Log, true, "StreamBufferPlayer:GetInterfaces() failed");
-        _currentFile = "";
-        return false;
+        Log.Write("StreamBufferPlayer:replay {0}", strFile);
+        IFileSourceFilter fileSource = (IFileSourceFilter)_bufferSource;
+        fileSource.Load(strFile, null);
       }
-      _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
-
+      else
+      {
+        Log.Write("StreamBufferPlayer:play {0}", strFile);
+        GC.Collect();
+        CloseInterfaces();
+        GC.Collect();
+        _isStarted = false;
+        if (!GetInterfaces(strFile))
+        {
+          Log.WriteFile(Log.LogType.Log, true, "StreamBufferPlayer:GetInterfaces() failed");
+          _currentFile = "";
+          return false;
+        }
+        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+      }
       int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
       if (hr < 0)
       {
@@ -766,7 +780,9 @@ namespace MediaPortal.Player
     public override void Stop()
     {
       Log.Write("StreamBufferPlayer:stop");
-      CloseInterfaces();
+      if (_mediaCtrl == null) return;
+      _mediaCtrl.Stop();
+      //CloseInterfaces();
     }
     /*
         public override int Speed
