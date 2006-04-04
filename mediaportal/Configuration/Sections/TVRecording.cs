@@ -604,10 +604,9 @@ namespace MediaPortal.Configuration.Sections
     {
       string strName = string.Empty;
       string strDirectory = string.Empty;
-      IFormatProvider culture = new CultureInfo("en-US");
       Example[] example = new Example[2];
-      example[0] = new Example("ProSieben", "Philadelphia", "unknown", "unknown", "unknown", "unknown", "Drama", DateTime.Parse("12/23/2005 08:15 PM", culture), DateTime.Parse("12/23/2005 10:45 PM", culture));
-      example[1] = new Example("ABC", "Friends", "Joey's Birthday", "4", "32", "part 1 of 1", "Comedy", DateTime.Parse("12/23/2005 08:15 PM", culture), DateTime.Parse("12/23/2005 08:45 PM", culture));
+      example[0] = new Example("ProSieben", "Philadelphia", "unknown", "unknown", "unknown", "unknown", "Drama", new DateTime(2005, 12, 23, 20, 15, 0), new DateTime(2005, 12, 23, 22, 45, 0));
+      example[1] = new Example("ABC", "Friends", "Joey's Birthday", "4", "32", "part 1 of 1", "Comedy", new DateTime(2005, 12, 23, 20, 15, 0), new DateTime(2005, 12, 23, 20, 45, 0));
       string strDefaultName = String.Format("{0}_{1}_{2}{3:00}{4:00}{5:00}{6:00}p{7}{8}",
                                   example[recType].Channel, example[recType].Title,
                                   example[recType].StartDate.Year, example[recType].StartDate.Month, example[recType].StartDate.Day,
