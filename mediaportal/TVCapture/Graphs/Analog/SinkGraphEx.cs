@@ -718,7 +718,7 @@ namespace MediaPortal.TV.Recording
       if (String.Compare(filterName, "%audioencoder%", true) == 0)
       {
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  preferred filter %audioencoder%");
-        string[] audioEncoders = new string[] {"InterVideo Audio Encoder", "CyberLink Audio Encoder" };
+        string[] audioEncoders = new string[] { "InterVideo Audio Encoder", "MainConcept MPEG Audio Encoder", "MainConcept Demo MPEG Audio Encoder", "CyberLink Audio Encoder" };
         Filters filters = new Filters();
         FilterCollection audioCodecs = filters.AudioCompressors;
         FilterCollection legacyFilters = filters.LegacyFilters;
@@ -783,7 +783,7 @@ namespace MediaPortal.TV.Recording
       if (String.Compare(filterName, "%videoencoder%", true) == 0)
       {
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  preferred filter %videoencoder%");
-        string[] videoEncoders = new string[] { "InterVideo Video Encoder", "CyberLink MPEG Video Encoder" };
+        string[] videoEncoders = new string[] { "InterVideo Video Encoder", "MainConcept MPEG Video Encoder", "MainConcept Demo MPEG Video Encoder", "CyberLink MPEG Video Encoder" };
         Filters filters = new Filters();
         FilterCollection legacyFilters = filters.LegacyFilters;
         FilterCollection videoCodecs = filters.VideoCompressors;
@@ -850,7 +850,7 @@ namespace MediaPortal.TV.Recording
       if (String.Compare(filterName, "%mpegmux%", true) == 0)
       {
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  preferred filter %mpegmux%");
-        string[] multiplexers = new string[] { "InterVideo Multiplexer", "CyberLink MPEG Muxer" };
+        string[] multiplexers = new string[] { "InterVideo Multiplexer", "Mainconcept MPEG Multiplexer", "Mainconcept Demo MPEG Multiplexer", "CyberLink MPEG Muxer" };
         Filters filters = new Filters();
         FilterCollection legacyFilters = filters.LegacyFilters;
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  legacy filters installed:{0} preferred:{1}", legacyFilters.Count, multiplexers.Length);
