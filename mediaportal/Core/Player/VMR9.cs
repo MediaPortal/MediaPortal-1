@@ -397,6 +397,14 @@ namespace MediaPortal.Player
 		{
 			if (!_isVmr9Initialized) return;
 			if( !GUIGraphicsContext.Vmr9Active) return;
+      if (g_Player.Playing && g_Player.IsDVD && g_Player.IsDVDMenu)
+      {
+        GUIGraphicsContext.Vmr9FPS = 50f;
+        currentVmr9State = Vmr9PlayState.Playing;
+        _scene.DrawVideo = true;
+        _repaintTimer = DateTime.Now;
+        return;
+      }
       
 			TimeSpan ts = DateTime.Now - _repaintTimer;
 			int frames = FrameCounter;
