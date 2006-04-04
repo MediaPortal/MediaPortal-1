@@ -2739,7 +2739,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="YUAN PVR PG600 / ZAP-TV1100" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;sybsys_0600ffab&amp;rev_01">
+  <capturecard commercialname="YUAN PVR PG600 / ZAP-TV1100" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;subsys_0600ffab&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -2801,7 +2801,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="YUAN PVR MiniPCI MPC622" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;sybsys_d998ff01&amp;rev_01">
+  <capturecard commercialname="YUAN PVR MiniPCI MPC622" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;subsys_d998ff01&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
