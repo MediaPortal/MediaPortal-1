@@ -603,6 +603,7 @@ namespace MediaPortal.EPG
 
           if (Count > 0)
           {
+            Log.WriteFile(Log.LogType.Log, false, "[Debug] Count {0}", Count);
             ProgramData SubData = new ProgramData();
             ParserData refdata = (ParserData)SubData;
             SubProfile.GetParserData(0, ref refdata);
@@ -627,7 +628,7 @@ namespace MediaPortal.EPG
           }
           else
           {
-            Log.WriteFile(Log.LogType.Log, true, "[ERROR] No information found on linked page");
+            Log.WriteFile(Log.LogType.Log, false, "[Warn.] No information found on linked page");
           }
         }
 
@@ -732,6 +733,7 @@ namespace MediaPortal.EPG
 
       _GrabDay = 0;
       _StartGrab = DateTime.Now;
+      Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: Grab Start {0} {1}", _StartGrab.ToShortTimeString(), _StartGrab.ToShortDateString());
 
       //TVDatabase.BeginTransaction();
       //TVDatabase.ClearCache();
