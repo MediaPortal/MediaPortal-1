@@ -18,7 +18,7 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-//#define USEMTSWRITER
+
 #if (UseCaptureCardDefinitions)
 
 #region usings
@@ -595,33 +595,13 @@ namespace MediaPortal.TV.Recording
               _lastChannelChange = DateTime.Now;
               return;
             }
-#if USEMTSWRITER
-						//stop playback before we zap channels
-						if (IsTimeShifting && !View)
-						{
-							if (g_Player.Playing && g_Player.CurrentFile == _processor.GetTimeShiftFileName(ID-1))
-							{
-								g_Player.Stop();
-								//if (!g_Player.Paused)
-								//	g_Player.Pause();
-							}
-						}
-#endif
+
             _currentGraph.TuneChannel(channel);
             _lastChannelChange = DateTime.Now;
             if (IsTimeShifting)
             {
               _timeTimeshiftingStarted = DateTime.Now;
             }
-            /*
-#if !USEMTSWRITER
-            if (IsTimeShifting && !View)
-            {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SEEK_POSITION, 0, 0, 0, 0, 0, null);
-              GUIGraphicsContext.SendMessage(msg);
-            }
-#endif
-            */
           }//if (_currentGraph != null)
         }//if (!IsRecording)
       }
