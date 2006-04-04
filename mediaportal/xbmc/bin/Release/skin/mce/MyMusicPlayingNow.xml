@@ -25,8 +25,8 @@
       <label>-</label>
       <width>42</width>
       <height>42</height>
-      <textureFocus>skipforward_enabled.png</textureFocus>
-      <textureNoFocus>skipforward_disabled.png</textureNoFocus>
+      <textureFocus>osd_next_focus.png</textureFocus>
+      <textureNoFocus>osd_next_nofocus.png</textureNoFocus>
     </control>
     <control>
       <type>button</type>
@@ -59,8 +59,8 @@
       <label>-</label>
       <width>42</width>
       <height>42</height>
-      <textureFocus>pause_enabled.png</textureFocus>
-      <textureNoFocus>pause_disabled.png</textureNoFocus>
+      <textureFocus>osd_pause_focus.png</textureFocus>
+      <textureNoFocus>osd_pause_nofocus.png</textureNoFocus>
     </control>
     <control>
       <type>button</type>
@@ -76,8 +76,8 @@
       <label>-</label>
       <width>42</width>
       <height>42</height>
-      <textureFocus>play_enabled.png</textureFocus>
-      <textureNoFocus>play_disabled.png</textureNoFocus>
+      <textureFocus>osd_play_focus.png</textureFocus>
+      <textureNoFocus>osd_play_nofocus.png</textureNoFocus>
     </control>
     <control>
       <type>button</type>
@@ -93,8 +93,8 @@
       <label>-</label>
       <width>42</width>
       <height>42</height>
-      <textureFocus>skipback_enabled.png</textureFocus>
-      <textureNoFocus>skipback_disabled.png</textureNoFocus>
+      <textureFocus>osd_back_focus.png</textureFocus>
+      <textureNoFocus>osd_back_nofocus.png</textureNoFocus>
     </control>
     <control>
       <type>button</type>
@@ -110,8 +110,8 @@
       <label>-</label>
       <width>42</width>
       <height>42</height>
-      <textureFocus>back_enabled.png</textureFocus>
-      <textureNoFocus>back_disabled.png</textureNoFocus>
+      <textureFocus>nav_back_focus.png</textureFocus>
+      <textureNoFocus>nav_back_nofocus.png</textureNoFocus>
     </control>
     <control>
       <type>image</type>
