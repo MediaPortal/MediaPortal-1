@@ -3255,7 +3255,7 @@ namespace MediaPortal.TV.Recording
               }
               else
               {
-                //channel is already mapped
+                //channel is already mapped 
                 //and provider name is the same
               }
             }
