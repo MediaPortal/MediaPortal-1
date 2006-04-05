@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <strings>
 	<characters>255</characters>
 	<string>
@@ -27,7 +27,7 @@
 	</string>
 	<string>
 		<id>6</id>
-		<value>Media Portal CVS Version</value>
+		<value>MediaPortal CVS Version</value>
 	</string>
 	<string>
 		<id>7</id>
@@ -123,7 +123,7 @@
 	</string>
 	<string>
 		<id>50</id>
-		<value>DVD</value>
+		<value>DVDs</value>
 	</string>
 	<string>
 		<id>100</id>
@@ -383,7 +383,7 @@
 	</string>
 	<string>
 		<id>164</id>
-		<value>Disc fehlt</value>
+		<value>keine Disc</value>
 	</string>
 	<string>
 		<id>165</id>
@@ -1095,7 +1095,7 @@
 	</string>
 	<string>
 		<id>343</id>
-		<value>Wiederholrate anpassen</value>
+		<value>Bildwiederholrate anpassen</value>
 	</string>
 	<string>
 		<id>344</id>
@@ -2923,11 +2923,11 @@
 	</string>
 	<string>
 		<id>975</id>
-		<value>Vorheriger Kanal</value>
+		<value>Vorheriges Kapitel</value>
 	</string>
 	<string>
 		<id>976</id>
-		<value>Nächster Kanal</value>
+		<value>Nächstes Kapitel</value>
 	</string>
 	<string>
 		<id>977</id>
@@ -4139,11 +4139,11 @@
 	</string>
 	<string>
 		<id>8014</id>
-		<value>Der Server&apos;{0}&apos;reagiert nicht!</value>
+		<value>Der Server'{0}'reagiert nicht!</value>
 	</string>
 	<string>
 		<id>8015</id>
-		<value>Überprüfen sie das Setup für Mailbox&apos;{0}&apos;</value>
+		<value>Überprüfen sie das Setup für Mailbox'{0}'</value>
 	</string>
 	<string>
 		<id>8016</id>
