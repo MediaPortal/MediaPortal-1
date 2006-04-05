@@ -204,12 +204,20 @@ namespace MediaPortal.TV.Recording
         Succeeded = false;
         return;
       }
+      if (Utils.GetFreeDiskSpace(dev.TimeShiftFullFileName) < (1024L * 1024L * 1024L))// 1 GB
+      {
+        Log.WriteFile(Log.LogType.Recorder, true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", dev.TimeShiftFullFileName[0]);
+        ErrorMessage = GUILocalizeStrings.Get(765);// "Not enough free diskspace";
+        Succeeded = false;
+        return;
+      }
       Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting card {0} channel:{1}", dev.CommercialName, _channelName);
 
       if (dev.IsTimeShifting)
       {
         dev.TVChannel = _channelName;
       }
+
       if (dev.StartTimeShifting(_channelName) == false)
       {
         Succeeded = false;
