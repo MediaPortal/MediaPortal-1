@@ -1,7 +1,7 @@
-#region Copyright (C) 2005 Team MediaPortal
+#region Copyright (C) 2005-2006 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -142,7 +142,7 @@ public class MediaPortalApp : D3DApp, IRender
     Log.Write("MediaPortal is starting up");
 
     FileInfo mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);
-    Log.Write("Assembly creation time: {0}", mpFi.LastWriteTimeUtc.ToUniversalTime());
+    Log.Write("Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
 
     using (ProcessLock processLock = new ProcessLock(mpMutex))
     {
