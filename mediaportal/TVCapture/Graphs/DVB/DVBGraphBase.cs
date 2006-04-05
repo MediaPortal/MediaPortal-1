@@ -558,7 +558,7 @@ namespace MediaPortal.TV.Recording
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render video out pin MPEG-2 Demultiplexer");
           return false;
         }
-      
+
       }
       int serviceType;
       _isUsingAC3 = TVDatabase.DoesChannelHaveAC3(channel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC, out serviceType);
@@ -754,7 +754,7 @@ namespace MediaPortal.TV.Recording
       _isUsingAC3 = false;
       if (channel != null)
       {
-        int serviceType;;
+        int serviceType; ;
         _isUsingAC3 = TVDatabase.DoesChannelHaveAC3(channel, Network() == NetworkType.DVBC, Network() == NetworkType.DVBT, Network() == NetworkType.DVBS, Network() == NetworkType.ATSC, out serviceType);
         if (_isUsingAC3)
           Log.WriteFile(Log.LogType.Log, "DVBGraph: channel {0} uses AC3", channel.Name);
@@ -3200,17 +3200,17 @@ namespace MediaPortal.TV.Recording
 
           Log.WriteFile(Log.LogType.Log, "DVBGraph: channel {0} is a tv channel", newchannel.ServiceName);
           bool isNewChannel = true;
-          TVChannel tvChan = new TVChannel();
-          tvChan.Name = newchannel.ServiceName;
+          TVChannel existingTvChannel = new TVChannel();
+          existingTvChannel.Name = newchannel.ServiceName;
 
           int channelId = -1;
           //check if there is a TV channel with the DVB channel service name
           foreach (TVChannel tvchan in tvChannels)
           {
-            if (tvchan.Name.Equals(newchannel.ServiceName))
+            if (String.Compare(tvchan.Name, newchannel.ServiceName, true) == 0)
             {
               //yes TV channel with this name exists in the database...
-              tvChan = tvchan;
+              existingTvChannel = tvchan;
               isNewChannel = false;
               channelId = tvchan.ID;
               break;
@@ -3221,14 +3221,16 @@ namespace MediaPortal.TV.Recording
           {
             // tv channel with the service name already exists
             // check if there is a DVB channel mapped to the TVChannel
+            
             string providerName;
-            if (TVDatabase.IsMapped(tvChan,
+            if (TVDatabase.IsMapped(existingTvChannel,
                                     Network() == NetworkType.ATSC,
                                     Network() == NetworkType.DVBT,
                                     Network() == NetworkType.DVBC,
                                     Network() == NetworkType.DVBS,
                                     out providerName))
             {
+              
               //channel is already mapped
               //check if provider differs
               if (String.Compare(providerName, newchannel.ServiceProvider, true) != 0)
@@ -3238,15 +3240,17 @@ namespace MediaPortal.TV.Recording
                 isNewChannel = true;
                 channelId = -1;
                 newchannel.ServiceName = String.Format("{0}-{1}", newchannel.ServiceName, newchannel.ServiceProvider);
-                tvChan.Name = newchannel.ServiceName;
-
+                existingTvChannel = new TVChannel();
+                existingTvChannel.Name = newchannel.ServiceName;
+                
                 //check if there is a TV channel with the name: servicename-providername
                 foreach (TVChannel tvchan in tvChannels)
                 {
-                  if (tvchan.Name.Equals(newchannel.ServiceName))
+                  if (String.Compare(tvchan.Name,newchannel.ServiceName,true)==0)
                   {
                     //yes TV channel with this name exists in the database...
-                    tvChan = tvchan;
+                    
+                    existingTvChannel = tvchan;
                     isNewChannel = false;
                     channelId = tvchan.ID;
                     break;
@@ -3269,27 +3273,27 @@ namespace MediaPortal.TV.Recording
             //channel does not exists in tv database yet
           }
 
-          tvChan.Scrambled = newchannel.IsScrambled;
+          existingTvChannel.Scrambled = newchannel.IsScrambled;
           if (isNewChannel)
           {
             //then add a new channel to the database
-            tvChan.ID = -1;
-            tvChan.Number = TVDatabase.FindFreeTvChannelNumber(newchannel.ProgramNumber);
-            tvChan.Sort = 40000;
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: add new channel for {0}:{1}:{2}", tvChan.Name, tvChan.Number, tvChan.Sort);
-            int id = TVDatabase.AddChannel(tvChan);
+            existingTvChannel.ID = -1;
+            existingTvChannel.Number = TVDatabase.FindFreeTvChannelNumber(newchannel.ProgramNumber);
+            existingTvChannel.Sort = 40000;
+            Log.WriteFile(Log.LogType.Log, "DVBGraph: add new channel for {0}:{1}:{2}", existingTvChannel.Name, existingTvChannel.Number, existingTvChannel.Sort);
+            int id = TVDatabase.AddChannel(existingTvChannel);
             if (id < 0)
             {
-              Log.WriteFile(Log.LogType.Log, true, "DVBGraph: failed to add new channel for {0}:{1}:{2} to database", tvChan.Name, tvChan.Number, tvChan.Sort);
+              Log.WriteFile(Log.LogType.Log, true, "DVBGraph: failed to add new channel for {0}:{1}:{2} to database", existingTvChannel.Name, existingTvChannel.Number, existingTvChannel.Sort);
             }
             channelId = id;
             newChannels++;
           }
           else
           {
-            TVDatabase.UpdateChannel(tvChan, tvChan.Sort);
+            TVDatabase.UpdateChannel(existingTvChannel, existingTvChannel.Sort);
             updatedChannels++;
-            Log.WriteFile(Log.LogType.Log, "DVBGraph: update channel {0}:{1}:{2} {3}", tvChan.Name, tvChan.Number, tvChan.Sort, tvChan.ID);
+            Log.WriteFile(Log.LogType.Log, "DVBGraph: update channel {0}:{1}:{2} {3}", existingTvChannel.Name, existingTvChannel.Number, existingTvChannel.Sort, existingTvChannel.ID);
           }
 
           if (Network() == NetworkType.DVBT)
@@ -3381,7 +3385,7 @@ namespace MediaPortal.TV.Recording
           group.ID = groupid;
           TVChannel tvTmp = new TVChannel();
           tvTmp.Name = newchannel.ServiceName;
-          tvTmp.Number = tvChan.Number;
+          tvTmp.Number = existingTvChannel.Number;
           tvTmp.ID = channelId;
           TVDatabase.MapChannelToGroup(group, tvTmp);
 
@@ -3392,7 +3396,7 @@ namespace MediaPortal.TV.Recording
           group.ID = groupid;
           tvTmp = new TVChannel();
           tvTmp.Name = newchannel.ServiceName;
-          tvTmp.Number = tvChan.Number;
+          tvTmp.Number = existingTvChannel.Number;
           tvTmp.ID = channelId;
           TVDatabase.MapChannelToGroup(group, tvTmp);
 
@@ -4124,12 +4128,12 @@ namespace MediaPortal.TV.Recording
       if (_graphState != State.TimeShifting && _graphState != State.Recording) return false;
       if (!SignalPresent()) return false;
       if (!UseTsTimeShifting) return true;
-      
+
       ITSFileSink sink = _filterTsFileSink as ITSFileSink;
       if (sink == null) return false;
       long filesize = 0;
       sink.GetFileBufferSize(ref filesize);
-      return (filesize > 20L*1024L);//4L*1024L * 1024L);//4MB
+      return (filesize > 20L * 1024L);//4L*1024L * 1024L);//4MB
     }
 
     public bool IsRadio()
@@ -4160,7 +4164,7 @@ namespace MediaPortal.TV.Recording
       }
       //create new MpgMux filter
       MpgMux mux = new MpgMux();
-      IBaseFilter filterMux=(IBaseFilter)mux;
+      IBaseFilter filterMux = (IBaseFilter)mux;
       int hr = _graphBuilder.AddFilter(filterMux, "MpgMux");
       if (hr != 0)
       {

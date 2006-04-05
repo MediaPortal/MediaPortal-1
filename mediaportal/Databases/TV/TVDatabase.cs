@@ -4379,7 +4379,10 @@ namespace MediaPortal.TV.Database
       if (dvbs)
       {
         if (TVDatabase.GetSatChannel(channel.ID, 1, ref ch))
+        {
+          provider = ch.ServiceProvider;
           return true;
+        }
       }
 
       if (dvbt)
