@@ -4,7 +4,7 @@
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:134</define>
 	<define>#header.image:videos_logo.png</define>
-	<define>#header.hover:hover_my videos.png</define>
+	<define>#header.hover:#selectedthumb</define>
 	<controls>
 		<import>common.window.xml</import>
 		<control>
