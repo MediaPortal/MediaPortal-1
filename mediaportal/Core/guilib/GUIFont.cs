@@ -50,7 +50,7 @@ namespace MediaPortal.GUI.Library
     unsafe private static extern void FontEngineRemoveFont(int fontNumber);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    unsafe private static extern void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fValue);
+    unsafe private static extern void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fValue1, float fValue2, float fValue3, float fValue4);
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     unsafe private static extern void FontEngineDrawText3D(int fontNumber, void* text, int xposStart, int yposStart, uint intColor, int maxWidth);
@@ -230,7 +230,7 @@ namespace MediaPortal.GUI.Library
     public void DrawText(float xpos, float ypos, long color, string label, GUIControl.Alignment alignment, int maxWidth)
     {
       if (label == null) return;
-      if (label.Length==0) return;
+      if (label.Length == 0) return;
       if (xpos <= 0) return;
       if (ypos <= 0) return;
       int alpha = (int)((color >> 24) & 0xff);
@@ -284,7 +284,8 @@ namespace MediaPortal.GUI.Library
     {
       if (!_fontAdded)
       {
-        if (logfonts) Log.Write("GUIFont:Present() Fontengine  ERROR font not added:" + ID.ToString());
+        Restore();
+        return;
       }
       else if (ID >= 0)
       {
@@ -301,9 +302,13 @@ namespace MediaPortal.GUI.Library
     /// <param name="flags">Font render flags.</param>
     protected void DrawText(float xpos, float ypos, Color color, string text, RenderFlags flags, int maxWidth)
     {
-      if (!_fontAdded) return;
+      if (!_fontAdded)
+      {
+        Restore();
+        return;
+      }
       if (text == null) return;
-      if (text.Length==0) return;
+      if (text.Length == 0) return;
       if (xpos <= 0) return;
       if (ypos <= 0) return;
       if (maxWidth < -1) return;
@@ -318,12 +323,7 @@ namespace MediaPortal.GUI.Library
       }
 
 
-      if (!_fontAdded)
-      {
-        if (logfonts) Log.Write("GUIFont:DrawText Fontengine ERROR font not added:" + ID.ToString());
-        return;
-      }
-      else if (ID >= 0)
+      if (ID >= 0)
       {
         int intColor = color.ToArgb();
         unsafe
@@ -379,7 +379,11 @@ namespace MediaPortal.GUI.Library
     {
       textwidth = 0.0f;
       textheight = 0.0f;
-      if (!_fontAdded) return;
+      if (!_fontAdded)
+      {
+        Restore();
+        return;
+      }
       if (null == text || text == String.Empty) return;
 
       float fRowWidth = 0.0f;
@@ -419,8 +423,10 @@ namespace MediaPortal.GUI.Library
         _systemFont.Dispose();
 
       if (_textureFont != null)
+      {
+        _textureFont.Disposing -= new EventHandler(_textureFont_Disposing);
         _textureFont.Dispose();
-
+      }
       _textureFont = null;
       _systemFont = null;
       if (_fontAdded)
@@ -453,7 +459,7 @@ namespace MediaPortal.GUI.Library
     {
       _textureScale = 1.0f; // Draw fonts into texture without scaling
 
-      int colorKey=0;
+      int colorKey = 0;
       System.Drawing.Imaging.PixelFormat pixelFormat = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
       // Create a directory to cache the font bitmaps
       string strCache = String.Format(@"{0}\fonts\", GUIGraphicsContext.Skin);
@@ -525,7 +531,7 @@ namespace MediaPortal.GUI.Library
                                             colorKey,
                                             ref info);
 
-
+          _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
           _textureHeight = info.Height;
           _textureWidth = info.Width;
           RestoreDeviceObjects();
@@ -639,6 +645,7 @@ namespace MediaPortal.GUI.Library
                                               Filter.None,
                                               (int)colorKey,
                                               ref info);
+            _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
             _textureCoords[_EndCharacter - _StartCharacter, 0] = _spacingPerChar;
             try
             {
@@ -662,6 +669,37 @@ namespace MediaPortal.GUI.Library
       SetFontEgine();
     }
 
+    void _textureFont_Disposing(object sender, EventArgs e)
+    {
+      Log.Write("GUIFont:texture disposing:{0} {1}", ID, _fontName);
+      _textureFont = null;
+      if (_fontAdded && ID >= 0)
+      {
+        FontEngineRemoveFont(ID);
+      }
+      _fontAdded = false;
+    }
+    void Restore()
+    {
+      Log.Write("GUIFont:restore font:{0} {1}" ,ID,_fontName);
+      Format fmt = Format.Unknown;
+      int colorKey = 0;
+      string strCache = String.Format(@"{0}\fonts\{1}_{2}.png", GUIGraphicsContext.Skin, _fontName, _fontHeight);
+      ImageInformation info = new ImageInformation();
+      _textureFont = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
+                                        strCache,
+                                        0, 0, //width/height
+                                        1,//miplevels
+                                        0,
+                                        fmt,
+                                        Pool.Managed,
+                                        Filter.None,
+                                        Filter.None,
+                                        colorKey,
+                                        ref info);
+      _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
+      SetFontEgine();
+    }
     public void RestoreDeviceObjects()
     {
     }
@@ -684,10 +722,7 @@ namespace MediaPortal.GUI.Library
       int length = _textureCoords.GetLength(0);
       for (int i = 0; i < length; ++i)
       {
-        FontEngineSetCoordinate(ID, i, 0, _textureCoords[i, 0]);
-        FontEngineSetCoordinate(ID, i, 1, _textureCoords[i, 1]);
-        FontEngineSetCoordinate(ID, i, 2, _textureCoords[i, 2]);
-        FontEngineSetCoordinate(ID, i, 3, _textureCoords[i, 3]);
+        FontEngineSetCoordinate(ID, i, 0, _textureCoords[i, 0], _textureCoords[i, 1], _textureCoords[i, 2], _textureCoords[i, 3]);
       }
       _fontAdded = true;
 

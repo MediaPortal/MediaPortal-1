@@ -28,7 +28,7 @@ using Microsoft.DirectX.Direct3D;
 using Direct3D=Microsoft.DirectX.Direct3D;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Soap;
+using System.Runtime.Serialization.Formatters.Binary;
 using DShowNET.Helper;
 namespace MediaPortal.GUI.Library
 {
@@ -37,6 +37,8 @@ namespace MediaPortal.GUI.Library
 	/// </summary>
 	public class TexturePacker
   {
+    public delegate void DisposeEventHandler(object sender, int texutureNumber);
+    public event DisposeEventHandler Disposing;
     #region imports
 
     [DllImport("fontEngine.dll", ExactSpelling=true, CharSet=CharSet.Auto, SetLastError=true)]
@@ -188,7 +190,7 @@ namespace MediaPortal.GUI.Library
 
 		void SavePackedSkin(string skinName)
 		{
-			string packedXml=String.Format(@"{0}\packedgfx2.xml",skinName);
+			string packedXml=String.Format(@"{0}\packedgfx2.bxml",skinName);
 			using(FileStream fileStream = new FileStream(packedXml, FileMode.Create, FileAccess.Write, FileShare.Read))
 			{
         ArrayList packedTextures = new ArrayList();
@@ -196,7 +198,7 @@ namespace MediaPortal.GUI.Library
         {
           packedTextures.Add(packed);
         }
-				SoapFormatter formatter = new SoapFormatter();
+        BinaryFormatter formatter = new BinaryFormatter();
 				formatter.Serialize(fileStream, packedTextures);
 				fileStream.Close();
 			}
@@ -204,7 +206,7 @@ namespace MediaPortal.GUI.Library
 
 		bool LoadPackedSkin(string skinName)
 		{
-			string packedXml=String.Format(@"{0}\packedgfx2.xml",skinName);
+			string packedXml=String.Format(@"{0}\packedgfx2.bxml",skinName);
 			if(File.Exists(packedXml))
 			{
 				using(FileStream fileStream = new FileStream(packedXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -213,7 +215,7 @@ namespace MediaPortal.GUI.Library
 					{
             _packedTextures = new List<PackedTexture>();
             ArrayList packedTextures = new ArrayList();
-						SoapFormatter formatter = new SoapFormatter();
+            BinaryFormatter formatter = new BinaryFormatter();
 						packedTextures = (ArrayList)formatter.Deserialize(fileStream);
             foreach (PackedTexture packed in packedTextures)
             {
@@ -330,9 +332,35 @@ namespace MediaPortal.GUI.Library
 					(int)0,
 					ref info2);
 				bigOne.texture=tex;
+        bigOne.texture.Disposing += new EventHandler(texture_Disposing);
+
 				Log.Write("TexturePacker: Loaded {0} texture:{1}x{2} miplevels:{3}",fileName, info2.Width,info2.Height, tex.LevelCount);
 			}
 		}
+
+    void texture_Disposing(object sender, EventArgs e)
+    {
+      if ((sender as Texture)==null) return;
+      for (int i=0; i < _packedTextures.Count;++i)
+      {
+        PackedTexture bigOne = _packedTextures[i];
+        if (bigOne.texture == (Texture)sender)
+        {
+          if (bigOne.textureNo >= 0)
+          {
+            Log.Write("TexturePacker: disposing texture:{0}", bigOne.textureNo);
+            FontEngineRemoveTexture(bigOne.textureNo);
+            if (Disposing != null)
+            {
+              Disposing(this, bigOne.textureNo);
+            }
+          }
+          bigOne.texture = null;
+          bigOne.textureNo = -1;
+          return;
+        }
+      }
+    }
 
 		bool AddBitmap(PackedTextureNode root, Image rootImage, string file, out bool dontAdd)
 		{
@@ -420,8 +448,12 @@ namespace MediaPortal.GUI.Library
 				{
 					if (bigOne.textureNo>=0)
 					{
-						Log.Write("TexturePacker: fontengine remove texture:{0}",bigOne.textureNo);
+						Log.Write("TexturePacker: remove texture:{0}",bigOne.textureNo);
 						FontEngineRemoveTexture(bigOne.textureNo);
+            if (Disposing != null)
+            {
+              Disposing(this, bigOne.textureNo);
+            }
 					}
 					if (bigOne.texture!=null)
 					{
@@ -429,6 +461,7 @@ namespace MediaPortal.GUI.Library
 						{
 							try
 							{
+                bigOne.texture.Disposing -=new EventHandler(texture_Disposing);
 								bigOne.texture.Dispose();
 							}
 							catch(Exception){}
@@ -438,6 +471,7 @@ namespace MediaPortal.GUI.Library
 				}
 			}
 		}
+
 		bool IsCompressedTextureFormatOk( Direct3D.Format textureFormat) 
 		{
 			if (Manager.CheckDeviceFormat(0, DeviceType.Hardware, GUIGraphicsContext.DirectXPresentParameters.BackBufferFormat,

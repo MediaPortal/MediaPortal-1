@@ -223,7 +223,7 @@ namespace MediaPortal.Util
       {
         iWidth=theImage.Width;
         iHeight=theImage.Height;
-        return Texture.FromBitmap(GUIGraphicsContext.DX9Device,theImage,Direct3D.Usage.None,Pool.Managed);
+        return Texture.FromBitmap(GUIGraphicsContext.DX9Device, theImage, Direct3D.Usage.None, Pool.Managed);
       }
       catch(Exception)
       {
@@ -297,7 +297,7 @@ namespace MediaPortal.Util
       {
         m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
           4, GUIGraphicsContext.DX9Device, 
-          0, CustomVertex.TransformedColoredTextured.Format, 
+          0, CustomVertex.TransformedColoredTextured.Format,
           Pool.Managed);
 
         Direct3D.SurfaceDescription desc;
@@ -438,8 +438,8 @@ namespace MediaPortal.Util
 			{
 				m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
 					4, GUIGraphicsContext.DX9Device, 
-					0, CustomVertex.TransformedColoredTextured.Format, 
-					Pool.Managed);
+					0, CustomVertex.TransformedColoredTextured.Format,
+          Pool.Managed);
 
 				Direct3D.SurfaceDescription desc;
 				desc=texture.GetLevelDescription(0);
@@ -579,7 +579,7 @@ namespace MediaPortal.Util
       {
         m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
           4, GUIGraphicsContext.DX9Device, 
-          0, CustomVertex.TransformedColoredTextured.Format, 
+          0, CustomVertex.TransformedColoredTextured.Format,
           Pool.Managed);
 
         Direct3D.SurfaceDescription desc;
@@ -719,8 +719,8 @@ namespace MediaPortal.Util
 			{
 				m_vbBuffer = new VertexBuffer(typeof(CustomVertex.TransformedColoredTextured),
 					4, GUIGraphicsContext.DX9Device, 
-					0, CustomVertex.TransformedColoredTextured.Format, 
-					Pool.Managed);
+					0, CustomVertex.TransformedColoredTextured.Format,
+          Pool.Managed);
 
 				Direct3D.SurfaceDescription desc;
 				desc=texture.GetLevelDescription(0);

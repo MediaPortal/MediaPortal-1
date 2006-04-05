@@ -428,8 +428,8 @@ namespace MediaPortal.Player
 
       if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendMessage(msg);
+        //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+        //GUIWindowManager.SendMessage(msg);
       }
 
       Log.Write("TSStreamBufferPlayer9:cleanup done");

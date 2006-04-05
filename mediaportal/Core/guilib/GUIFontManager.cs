@@ -181,6 +181,7 @@ namespace MediaPortal.GUI.Library
 		/// </summary>
 		static public void	Dispose()
 		{
+			Log.Write("  fonts.Dispose()");
 			foreach (GUIFont font in _listFonts)
 			{
 				font.Dispose(null,null);

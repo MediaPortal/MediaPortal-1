@@ -397,6 +397,8 @@ namespace MediaPortal.GUI.Library
     {
       try
       {
+        if (GUIGraphicsContext.DX9Device == null) return;
+        if (GUIGraphicsContext.DX9Device.Disposed) return;
         if (_registeredForEvent == false)
         {
           GUIPropertyManager.OnPropertyChanged += new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
@@ -966,6 +968,17 @@ namespace MediaPortal.GUI.Library
     {
       if (!IsVisible) return; 
       if (!GUIGraphicsContext.ShowBackground && _isFullScreenImage) return;
+      if (_packedTextureNo >= 0 && _packedTexture != null)
+      {
+        if (_packedTexture.Disposed)
+        {
+          FreeResourcesAndRegEvent();
+          AllocResources();
+          _reCalculate = true;
+          return;
+        }
+      }
+
       if (_containsProperty && _propertyChanged)
       {
         _propertyChanged = false;

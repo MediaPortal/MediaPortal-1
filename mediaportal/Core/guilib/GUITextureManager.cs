@@ -44,6 +44,7 @@ namespace MediaPortal.GUI.Library
     static List<DownloadedImage> _cacheDownload = new List<DownloadedImage>();
     static TexturePacker _packer = new TexturePacker();
 
+
     // singleton. Dont allow any instance of this class
     private GUITextureManager()
     {

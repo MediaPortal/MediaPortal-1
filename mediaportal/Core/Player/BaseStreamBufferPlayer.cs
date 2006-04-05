@@ -130,7 +130,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        return true;
+        return false;
       }
     }
     public override bool Play(string strFile)

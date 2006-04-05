@@ -784,6 +784,7 @@ namespace MediaPortal
         BuildPresentParamsFromSettings();
         try
         {
+          
           GUIGraphicsContext.DX9Device.Reset(presentParams);
         }
         catch (Exception)

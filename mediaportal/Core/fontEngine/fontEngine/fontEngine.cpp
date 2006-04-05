@@ -640,12 +640,15 @@ void FontEngineAddFont( int fontNumber,void* fontTexture, int firstChar, int end
 }
 
 //*******************************************************************************************************************
-void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fValue)
+void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fValue1, float fValue2, float fValue3, float fValue4)
 {
 	if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
 	if (index < 0     || index > MAX_TEXTURE_COORDS) return;
 	if (subindex < 0  || subindex > 3) return;
-	fontData[fontNumber].textureCoord[index][subindex]=fValue;
+	fontData[fontNumber].textureCoord[index][0]=fValue1;
+	fontData[fontNumber].textureCoord[index][1]=fValue2;
+	fontData[fontNumber].textureCoord[index][2]=fValue3;
+	fontData[fontNumber].textureCoord[index][3]=fValue4;
 }
 
 // Updates a vertex in the memory buffer if needed

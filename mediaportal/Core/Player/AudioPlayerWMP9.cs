@@ -194,6 +194,8 @@ namespace MediaPortal.Player
       _graphState = PlayState.Init;
       _currentFile = strFile;
 
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+      GUIWindowManager.SendMessage(msg);
       _notifyPlaying = true;
       GC.Collect();
       CreateInstance();
@@ -267,7 +269,7 @@ namespace MediaPortal.Player
       _wmp10Player.Visible = false;
 
 
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
+      msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
       msg.Label = strFile;
 
       GUIWindowManager.SendThreadMessage(msg);
