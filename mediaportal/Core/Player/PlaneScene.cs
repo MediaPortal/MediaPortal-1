@@ -105,7 +105,7 @@ namespace MediaPortal.Player
     static bool _reEntrant = false;
     bool _drawVideoAllowed = true;
     int _debugStep = 0;
-    Texture blackTexture;
+    GUIImage _blackImage;
     #endregion
 
     #region ctor
@@ -122,25 +122,9 @@ namespace MediaPortal.Player
                                     0, CustomVertex.TransformedColoredTextured.Format,
                                     Pool.Managed);
 
-      float _texUoff, _texVoff, _texUmax, _texVmax;
-      int _textureWidth, _textureHeight;
-      int _packedTextureNo;
-
-      if (GUITextureManager.GetPackedTexture("black.bmp", out _texUoff, out _texVoff, out _texUmax, out _texVmax, out _textureWidth, out _textureHeight, out blackTexture, out _packedTextureNo))
-      {
-        Log.WriteFile(Log.LogType.Error, "PlaneScene:unable to get texture for black.bmp");
-        return;
-      }
-
-      int iImages = GUITextureManager.Load("black.bmp", 1, 15, 15);
-      if (0 == iImages)
-      {
-        Log.WriteFile(Log.LogType.Error, "PlaneScene:texture black.bmp contains no frames");
-        blackTexture = null;// unable to load texture
-        return;
-      }
-      CachedTexture.Frame frame = GUITextureManager.GetTexture("black.bmp", 0, out _textureWidth, out _textureHeight);
-      blackTexture = frame.Image;
+      _blackImage = new GUIImage(0);
+      _blackImage.SetFileName("black.bmp");
+      _blackImage.AllocResources();
     }
     #endregion
 
@@ -259,13 +243,10 @@ namespace MediaPortal.Player
         _vertexBuffer.Dispose();
         _vertexBuffer = null;
       }
-      if (blackTexture != null)
+      if (_blackImage != null)
       {
-        if (GUITextureManager.IsTemporary("black.bmp"))
-        {
-          GUITextureManager.ReleaseTexture("black.bmp");
-        }
-        blackTexture = null;
+        _blackImage.FreeResources();
+        _blackImage = null;
       }
     }
 
@@ -844,12 +825,10 @@ namespace MediaPortal.Player
       }
       else
       {
-        IntPtr ptr = DShowNET.Helper.DirectShowUtil.GetUnmanagedTexture(blackTexture);
-        uint _blackTextureAddress = (uint)ptr.ToInt32();
-        if (_blackTextureAddress != 0)
-        {
-          DrawTexture(_blackTextureAddress, _fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, _diffuseColor);
-        }
+        _blackImage.SetPosition((int)_fx, (int)_fy);
+        _blackImage.Width = (int)_nw;
+        _blackImage.Height = (int)_nh;
+        _blackImage.Render(timePassed);
       }
     }
     public bool ShouldRenderLayer()
