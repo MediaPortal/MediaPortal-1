@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,10 +21,15 @@
  *
  */
 
+#endregion
+
 using System;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using System.Reflection;
+using System.IO;
+
 namespace MediaPortal.Configuration
 {
 	/// <summary>
@@ -78,6 +85,12 @@ namespace MediaPortal.Configuration
 		public void Start()
 		{
       Log.BackupLogFiles();
+
+      Log.Write("Configuration is starting up");
+
+      FileInfo mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);
+      Log.Write("Assembly creation time: {0} (UTC)", mpFi.LastWriteTimeUtc.ToUniversalTime());
+
 			Form applicationForm = null;
 
 			switch(startupMode)
