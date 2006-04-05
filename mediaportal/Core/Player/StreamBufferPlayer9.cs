@@ -38,6 +38,8 @@ namespace MediaPortal.Player
   {
 
     VMR9Util _vmr9 = null;
+    IPin _pinVmr9ConnectedTo = null;
+
     public StreamBufferPlayer9()
     {
     }
@@ -208,7 +210,7 @@ namespace MediaPortal.Player
           Cleanup();
           return base.GetInterfaces(filename);
         }
-
+        _pinVmr9ConnectedTo = _vmr9.PinConnectedTo;
         _vmr9.SetDeinterlaceMode();
         return true;
 
@@ -266,6 +268,7 @@ namespace MediaPortal.Player
         _basicAudio = null;
         _basicVideo = null;
         _bufferSource = null;
+        _pinVmr9ConnectedTo = null;
 
         if (streamConfig2 != null)
         {
@@ -398,5 +401,48 @@ namespace MediaPortal.Player
       }
     }
 
+    protected override void ReInit()
+    {
+      _vmr9 = new VMR9Util();
+      _vmr9.AddVMR9(_graphBuilder);
+      _vmr9.Enable(false);
+      _graphBuilder.Render(_pinVmr9ConnectedTo);
+      
+    }
+    public override void Stop()
+    {
+      if (SupportsReplay)
+      {
+        Log.Write("StreamBufferPlayer:stop");
+        if (_mediaCtrl == null) return;
+
+        if (_vmr9 != null)
+        {
+          Log.Write("StreamBufferPlayer9: vmr9 disable");
+          _vmr9.Enable(false);
+        }
+        int counter = 0;
+        while (GUIGraphicsContext.InVmr9Render)
+        {
+          counter++;
+          System.Threading.Thread.Sleep(1);
+          if (counter > 200) break;
+        }
+
+        _mediaCtrl.Stop();
+
+        if (_vmr9 != null)
+        {
+          Log.Write("StreamBufferPlayer9: vmr9 dispose");
+          _vmr9.Dispose();
+          _vmr9 = null;
+        }
+      }
+      else
+      {
+        CloseInterfaces();
+      }
+      //CloseInterfaces();
+    }
   }
 }

@@ -227,6 +227,21 @@ namespace MediaPortal.Player
 				_videoAspectRatioY = value;
 			}
     }
+    public IPin PinConnectedTo
+    {
+      get
+      {
+        IPin pinIn, pinConnected;
+        pinIn = DsFindPin.ByDirection(_vmr9Filter, PinDirection.Input, 0);
+        if (pinIn == null)
+        {
+          //no input pin found, vmr9 is not possible
+          return null;
+        }
+        pinIn.ConnectedTo(out pinConnected);
+        return pinConnected;
+      }
+    }
     /// <summary>
     /// This method returns true if VMR9 is enabled AND WORKING!
     /// this allows players to check if if VMR9 is working after setting up the playing graph
