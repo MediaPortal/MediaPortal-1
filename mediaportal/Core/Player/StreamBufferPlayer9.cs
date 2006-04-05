@@ -64,8 +64,48 @@ namespace MediaPortal.Player
       _isStarted = true;
 
     }
-
-
+    public override void Stop()
+    {
+      if (SupportsReplay)
+      {
+        Log.Write("StreamBufferPlayer9:stop");
+        if (_vmr9 != null)
+        {
+          Log.Write("StreamBufferPlayer9: vmr9 disable");
+          _vmr9.Enable(false);
+        }
+        int counter = 0;
+        while (GUIGraphicsContext.InVmr9Render)
+        {
+          counter++;
+          System.Threading.Thread.Sleep(1);
+          if (counter > 200) break;
+        }
+        if (_mediaCtrl == null) return;
+        _mediaCtrl.Stop();
+        if (_vmr9 != null)
+        {
+          Log.Write("StreamBufferPlayer9: vmr9 dispose");
+          _vmr9.Dispose();
+          _vmr9 = null;
+        }
+      }
+      else
+      {
+        CloseInterfaces();
+      }
+      //CloseInterfaces();
+    }
+    protected override void ReInit()
+    {
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
+      GUIWindowManager.SendMessage(msg);
+      _vmr9 = new VMR9Util();
+      _vmr9.AddVMR9(_graphBuilder);
+      _vmr9.Enable(false);
+      DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_bufferSource);
+      _vmr9.SetDeinterlaceMode();
+    }
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces(string filename)
     {

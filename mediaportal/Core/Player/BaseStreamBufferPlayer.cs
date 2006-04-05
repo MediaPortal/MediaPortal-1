@@ -177,6 +177,7 @@ namespace MediaPortal.Player
         Log.Write("StreamBufferPlayer:replay {0}", strFile);
         IFileSourceFilter fileSource = (IFileSourceFilter)_bufferSource;
         fileSource.Load(strFile, null);
+        ReInit();
       }
       else
       {
@@ -779,9 +780,16 @@ namespace MediaPortal.Player
 
     public override void Stop()
     {
-      Log.Write("StreamBufferPlayer:stop");
-      if (_mediaCtrl == null) return;
-      _mediaCtrl.Stop();
+      if (SupportsReplay)
+      {
+        Log.Write("StreamBufferPlayer:stop");
+        if (_mediaCtrl == null) return;
+        _mediaCtrl.Stop();
+      }
+      else
+      {
+        CloseInterfaces();
+      }
       //CloseInterfaces();
     }
     /*
@@ -1434,6 +1442,9 @@ namespace MediaPortal.Player
       _elapsedTimer = DateTime.Now;
     }
 
+    protected virtual void ReInit()
+    {
+    }
     #endregion
 
     #region IDisposable Members

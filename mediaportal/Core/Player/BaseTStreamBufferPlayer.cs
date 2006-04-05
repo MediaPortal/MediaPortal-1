@@ -125,7 +125,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        return true;
+        return false;
       }
     }
     public override bool Play(string strFile)
@@ -757,9 +757,16 @@ namespace MediaPortal.Player
 
     public override void Stop()
     {
-      Log.Write("TSStreamBufferPlayer:stop");
-      if (_mediaCtrl == null) return;
-      _mediaCtrl.Stop();
+      if (SupportsReplay)
+      {
+        Log.Write("TSStreamBufferPlayer:stop");
+        if (_mediaCtrl == null) return;
+        _mediaCtrl.Stop();
+      }
+      else
+      {
+        CloseInterfaces();
+      }
     }
 
 

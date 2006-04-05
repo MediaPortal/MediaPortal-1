@@ -93,7 +93,7 @@ namespace MediaPortal.Player
     public static Player.IPlayerFactory Factory
     {
       get { return _factory; }
-      set { _factory=value; }
+      set { _factory = value; }
     }
     #endregion
 
@@ -179,7 +179,7 @@ namespace MediaPortal.Player
         OnStopped();
         GUIGraphicsContext.ShowBackground = true;
         _player.Stop();
-        if (GUIGraphicsContext.form!=null)
+        if (GUIGraphicsContext.form != null)
         {
           GUIGraphicsContext.form.Invalidate(true);
         }
@@ -293,8 +293,8 @@ namespace MediaPortal.Player
         GUIWindowManager.SendMessage(msgRadio);
 
         //stop timeshifting tv
-        GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendMessage(msgTv);
+        //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
+        //GUIWindowManager.SendMessage(msgTv);
 
         Log.Write("g_Player.PlayDVD()");
         _currentStep = Steps.Sec0;
@@ -321,7 +321,7 @@ namespace MediaPortal.Player
         }
 
         _player = new DVDPlayer9();
-
+        _player = CachePreviousPlayer(_player);
         bool bResult = _player.Play(strPath);
         if (!bResult)
         {
@@ -366,8 +366,8 @@ namespace MediaPortal.Player
         GUIWindowManager.SendMessage(msgRadio);
 
         //stop timeshifting tv
-        GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendMessage(msgTv);
+        //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
+        //GUIWindowManager.SendMessage(msgTv);
 
         _currentStep = Steps.Sec0;
         _seekTimer = DateTime.MinValue;
@@ -457,6 +457,31 @@ namespace MediaPortal.Player
         Starting = false;
       }
     }
+    static IPlayer CachePreviousPlayer(IPlayer newPlayer)
+    {
+      IPlayer player = newPlayer;
+      if (newPlayer != null)
+      {
+        if (_prevPlayer != null)
+        {
+          if (_prevPlayer.GetType() == newPlayer.GetType())
+          {
+            if (_prevPlayer.SupportsReplay)
+            {
+              player = _prevPlayer;
+              _prevPlayer = null;
+            }
+          }
+        }
+
+        if (_prevPlayer != null)
+        {
+          _prevPlayer.Release();
+          _prevPlayer = null;
+        }
+      }
+      return player;
+    }
 
     public static bool Play(string strFile)
     {
@@ -475,9 +500,9 @@ namespace MediaPortal.Player
         {
           //file is not a live tv file
           //so tell recorder to stop timeshifting live-tv
-          Log.Write("player: file is not live tv, so stop timeshifting:{0}", strFile);
-          GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
-          GUIWindowManager.SendMessage(msgTv);
+          //Log.Write("player: file is not live tv, so stop timeshifting:{0}", strFile);
+          //GUIMessage msgTv = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
+          //GUIWindowManager.SendMessage(msgTv);
         }
 
         _currentStep = Steps.Sec0;
@@ -513,7 +538,7 @@ namespace MediaPortal.Player
             }
 
             _player = new DVDPlayer9();
-
+            _player = CachePreviousPlayer(_player);
             bool bResult = _player.Play(strFile);
             if (!bResult)
             {
@@ -539,22 +564,7 @@ namespace MediaPortal.Player
         _player = _factory.Create(strFile);
         if (_player != null)
         {
-          if (_prevPlayer != null)
-          {
-            if (_prevPlayer.GetType() == _player.GetType())
-            {
-              if (_prevPlayer.SupportsReplay)
-              {
-                _player = _prevPlayer;
-                _prevPlayer = null;
-              }
-            }
-          }
-          if (_prevPlayer != null)
-          {
-            _prevPlayer.Release();
-            _prevPlayer = null;
-          }
+          _player = CachePreviousPlayer(_player);
           bool bResult = _player.Play(strFile);
           if (!bResult)
           {

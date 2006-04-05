@@ -124,8 +124,8 @@ namespace MediaPortal.Player
         {
           if (extension == ".sbe" || extension == ".dvr-ms")
           {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
-            GUIWindowManager.SendMessage(msg);
+            //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_TIMESHIFT, 0, 0, 0, 0, 0, null);
+            //GUIWindowManager.SendMessage(msg);
           }
          
           newPlayer = new Player.StreamBufferPlayer9();

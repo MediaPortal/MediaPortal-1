@@ -257,7 +257,7 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:disable dx9 exclusive mode");
+        //Log.WriteFile(Log.LogType.Recorder, "Recorder:disable dx9 exclusive mode");
         // we leave my tv, disable exclusive mode
         //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
         //GUIWindowManager.SendMessage(msg);
