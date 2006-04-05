@@ -111,6 +111,7 @@ namespace MediaPortal.GUI.Library
     bool _isFullScreenImage = false;
     bool _reCalculate = false;
     bool _allocated = false;
+    bool _registeredForEvent = false;
 
     public GUIImage(int dwParentID)
       : base(dwParentID)
@@ -396,7 +397,11 @@ namespace MediaPortal.GUI.Library
     {
       try
       {
-        GUIPropertyManager.OnPropertyChanged += new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+        if (_registeredForEvent == false)
+        {
+          GUIPropertyManager.OnPropertyChanged += new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+          _registeredForEvent = true;
+        }
         _propertyChanged = false;
 
         g_nAnisotropy = GUIGraphicsContext.DX9Device.DeviceCaps.MaxAnisotropy;
@@ -479,6 +484,15 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    void FreeResourcesAndRegEvent()
+    {
+      FreeResources();
+      if (_registeredForEvent==false)
+      {
+        GUIPropertyManager.OnPropertyChanged += new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+        _registeredForEvent = true;
+      }
+    }
     /// <summary>
     /// Free the DirectX resources needed for rendering this GUIImage.
     /// </summary>
@@ -487,8 +501,11 @@ namespace MediaPortal.GUI.Library
       _allocated = false;
       lock (this)
       {
-        GUIPropertyManager.OnPropertyChanged -= new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
-
+        if (_registeredForEvent)
+        {
+          GUIPropertyManager.OnPropertyChanged -= new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
+          _registeredForEvent = false;
+        }
         string file = _textureFileNameTag;
         _packedTexture = null;
         if (_containsProperty)
@@ -568,7 +585,7 @@ namespace MediaPortal.GUI.Library
         if (texture.Disposed)
         {
           texture = null;
-          FreeResources();
+          FreeResourcesAndRegEvent();
           texture = null;
           return;
         }
@@ -947,7 +964,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void Render(float timePassed)
     {
-      if (!IsVisible || !_allocated) return;
+      if (!IsVisible) return; 
       if (!GUIGraphicsContext.ShowBackground && _isFullScreenImage) return;
       if (_containsProperty && _propertyChanged)
       {
@@ -959,7 +976,7 @@ namespace MediaPortal.GUI.Library
         {
           // then free our resources, and reload the (new) image
           if (logtextures) Log.Write("GUIImage:PreRender() image changed:{0}->{1}", _cachedTextureFileName, fileName);
-          FreeResources();
+          FreeResourcesAndRegEvent();
           _cachedTextureFileName = fileName;
           if (fileName.Length == 0)
           {
@@ -972,6 +989,7 @@ namespace MediaPortal.GUI.Library
           _reCalculate = true;
         }
       }
+      if (!_allocated) return;
 
       if (_reCalculate)
       {
