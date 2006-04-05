@@ -189,17 +189,22 @@ namespace MediaPortal.Player
         GUIGraphicsContext.IsFullScreenVideo = false;
         GUIGraphicsContext.IsPlaying = false;
         GUIGraphicsContext.IsPlayingVideo = false;
-        if (_player.SupportsReplay)
-        {
-          _prevPlayer = _player;
-          _player = null;
-        }
-        else
-        {
-          _player.Release();
-          _player = null;
-          _prevPlayer = null;
-        }
+        CachePlayer();
+      }
+    }
+
+    static void CachePlayer()
+    {
+      if (_player.SupportsReplay)
+      {
+        _prevPlayer = _player;
+        _player = null;
+      }
+      else
+      {
+        _player.Release();
+        _player = null;
+        _prevPlayer = null;
       }
     }
 
@@ -273,8 +278,7 @@ namespace MediaPortal.Player
       if (_player != null)
       {
         _player.Stop();
-        _player.Release();
-        _player = null;
+        CachePlayer();
       }
     }
     public static bool PlayDVD()
@@ -305,6 +309,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext.ShowBackground = true;
           OnStopped();
           _player.Stop();
+          CachePlayer();
           GUIGraphicsContext.form.Invalidate(true);
           _player = null;
         }
@@ -379,6 +384,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext.ShowBackground = true;
           OnStopped();
           _player.Stop();
+          CachePlayer();
           GUIGraphicsContext.form.Invalidate(true);
           _player = null;
         }
@@ -423,6 +429,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext.ShowBackground = true;
           OnStopped();
           _player.Stop();
+          CachePlayer();
           GUIGraphicsContext.form.Invalidate(true);
           _player = null;
         }
@@ -519,6 +526,7 @@ namespace MediaPortal.Player
           GUIGraphicsContext.ShowBackground = true;
           OnStopped();
           _player.Stop();
+          CachePlayer();
           _player = null;
           GC.Collect(); GC.Collect(); GC.Collect(); GC.Collect();
         }
