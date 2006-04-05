@@ -855,6 +855,9 @@ namespace MediaPortal.Player
 								_menuMode = MenuMode.Buttons;
 							else
 								_menuMode = MenuMode.Still;
+                            
+                            Repaint();
+
 							break;
 						}
 						case EventCode.DvdStillOff:
