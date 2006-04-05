@@ -1174,7 +1174,12 @@ namespace MediaPortal.TV.Recording
 
       string strFileName = TimeShiftFullFileName;
 
-
+      ulong freeSpace = Utils.GetFreeDiskSpace(strFileName);
+      if (freeSpace < (1024L * 1024L * 1024L))// 1 GB
+      {
+        Log.WriteFile(Log.LogType.Recorder, true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", strFileName[0]);
+        return false;
+      }
 
       //Log.WriteFile(Log.LogType.Log, "Card:{0} timeshift to file:{1}", ID, strFileName);
       bool bResult = _currentGraph.StartTimeShifting(channel, strFileName);
@@ -1587,8 +1592,13 @@ namespace MediaPortal.TV.Recording
           DateTime.Now.Minute, DateTime.Now.Second,
           recEngineExt);
       }
-
       string fullFileName = String.Format(@"{0}\{1}", fullPath, Utils.MakeFileName(fileName));
+      ulong freeSpace = Utils.GetFreeDiskSpace(fullFileName);
+      if (freeSpace < (1024L * 1024L * 1024L))// 1 GB
+      {
+        Log.WriteFile(Log.LogType.Recorder, true, "Recorder:  failed to start recording since drive {0}: has less then 1GB freediskspace", fullFileName[0]);
+        return false;
+      }
       Log.Write("Recorder: recording to {0}", fullFileName);
 
       TVChannel channel = GetChannel(_currentTvChannelName);

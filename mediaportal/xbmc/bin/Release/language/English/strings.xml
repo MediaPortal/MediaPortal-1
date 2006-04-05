@@ -2414,6 +2414,10 @@
     <id>764</id>
     <value>Recorder is paused</value>
   </string>
+  <string>
+    <id>765</id>
+    <value>Not enough free diskspace</value>
+  </string>
 
 
   <string>

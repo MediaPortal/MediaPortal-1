@@ -584,6 +584,8 @@ namespace MediaPortal.TV.Recording
         card.StopRecording();
       }
 
+
+
       //finally start recording...
       handler.TuneExternalChannel(rec.Channel, false);
       card.Record(rec, currentProgram, iPostRecordInterval, iPostRecordInterval);

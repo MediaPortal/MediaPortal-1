@@ -104,6 +104,17 @@ namespace MediaPortal.TV.Recording
         dev = handler.TVCards[cardNo];
         Log.WriteFile(Log.LogType.Recorder, "Recorder:  Found card:{0}", dev.CommercialName);
 
+        string fileName = dev.TimeShiftFullFileName;
+        ulong freeSpace = Utils.GetFreeDiskSpace(fileName);
+        if (freeSpace < (1024L * 1024L * 1024L) )// 1 GB
+        {
+          Log.WriteFile(Log.LogType.Recorder,true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", fileName[0]);
+          ErrorMessage = GUILocalizeStrings.Get(765);// "Not enough free diskspace";
+          Succeeded = false;
+          return;
+        }
+
+
         //stop viewing on any other card
         TurnTvOff(handler, cardNo);
         handler.CurrentCardIndex = cardNo;
@@ -115,6 +126,7 @@ namespace MediaPortal.TV.Recording
 
         if (!dev.IsRecording && !dev.IsTimeShifting && dev.SupportsTimeShifting)
         {
+
           Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting on card:{0}", dev.CommercialName);
           if (dev.StartTimeShifting(_channelName) == false)
           {
@@ -193,7 +205,7 @@ namespace MediaPortal.TV.Recording
         return;
       }
       Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting card {0} channel:{1}", dev.CommercialName, _channelName);
-      
+
       if (dev.IsTimeShifting)
       {
         dev.TVChannel = _channelName;
