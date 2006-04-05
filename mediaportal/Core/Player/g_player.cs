@@ -383,6 +383,7 @@ namespace MediaPortal.Player
           _player = null;
         }
         _player = new AudioPlayerWMP9();
+        _player = CachePreviousPlayer(_player);
 
         bool bResult = _player.Play(strURL);
         if (!bResult)
@@ -435,6 +436,7 @@ namespace MediaPortal.Player
         else
           _player = new Player.VideoPlayerVMR9();
 
+        _player = CachePreviousPlayer(_player);
         bool bResult = _player.Play(strURL);
         if (!bResult)
         {
