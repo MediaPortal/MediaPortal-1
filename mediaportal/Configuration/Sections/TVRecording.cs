@@ -757,7 +757,12 @@ namespace MediaPortal.Configuration.Sections
         float percent = (float)trackBar1.Value;
         percent /= 100f;
         float quota = percent * ((float)totalSpace);
-
+        if (quota < (52428800f)) //50MB
+        {
+          quota = (52428800f);//50MB
+          percent = (quota / ((float)totalSpace))*100f;
+          trackBar1.Value = (int)percent;
+        }
         labelQuota.Text = Utils.GetSize((long)quota);
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
@@ -770,8 +775,9 @@ namespace MediaPortal.Configuration.Sections
       {
         using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
-          string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "0");
+          string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "51200");
           float quota = (float)Int32.Parse(quotaText);
+          if (quota < 51200) quota = 51200;
           quota *= 1024;//kbyte
           labelQuota.Text = Utils.GetSize((long)quota);
 

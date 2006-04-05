@@ -103,9 +103,12 @@ namespace ProcessPlugins.DiskSpace
       ulong minimiumFreeDiskSpace = 0;
       using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "0");
+        string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "51200");
         minimiumFreeDiskSpace = (ulong)Int32.Parse(quotaText);
-        if (minimiumFreeDiskSpace <= 0) return false;
+        if (minimiumFreeDiskSpace <= 51200) // 50MB
+        {
+          minimiumFreeDiskSpace = 51200;
+        }
         minimiumFreeDiskSpace *= 1024;
       }
       if (minimiumFreeDiskSpace <= 0) return false;
