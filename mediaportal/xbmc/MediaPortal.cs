@@ -35,6 +35,7 @@ using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
+using System.Reflection;
 using MediaPortal;
 using MediaPortal.Dialogs;
 using MediaPortal.Dispatcher;
@@ -139,6 +140,10 @@ public class MediaPortalApp : D3DApp, IRender
 
     Log.BackupLogFiles();
     Log.Write("MediaPortal is starting up");
+
+    FileInfo mpFi = new FileInfo(Assembly.GetExecutingAssembly().Location);
+    Log.Write("Assembly creation time: {0}", mpFi.LastWriteTimeUtc.ToUniversalTime());
+
     using (ProcessLock processLock = new ProcessLock(mpMutex))
     {
       if (processLock.AlreadyExists)
