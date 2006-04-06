@@ -44,7 +44,7 @@ namespace MediaPortal.TV.Scanning
     int _scanOffset = 0;
     int _newChannels, _updatedChannels;
     int _newRadioChannels, _updatedRadioChannels;
-
+    bool _channelsFound = false;
     public DVBTTuning()
     {
     }
@@ -53,15 +53,15 @@ namespace MediaPortal.TV.Scanning
 
     public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] parameters)
     {
-        String countryName = null;
-        if ((parameters == null) || (parameters.Length == 0))
-        {
-            return;
-        }
-        else
-        {
-            countryName = parameters[0];
-        }
+      String countryName = null;
+      if ((parameters == null) || (parameters.Length == 0))
+      {
+        return;
+      }
+      else
+      {
+        countryName = parameters[0];
+      }
 
       _newRadioChannels = 0;
       _updatedRadioChannels = 0;
@@ -88,32 +88,32 @@ namespace MediaPortal.TV.Scanning
       XPathNavigator countryNav = nav.SelectSingleNode(expr);
       if (countryNav != null)
       {
-          Log.WriteFile(Log.LogType.Log, "dvbt-scan:found country {0} in dvbt.xml", countryName);
-          XmlNode nodeCountry = ((IHasXmlNode)countryNav).GetNode();
+        Log.WriteFile(Log.LogType.Log, "dvbt-scan:found country {0} in dvbt.xml", countryName);
+        XmlNode nodeCountry = ((IHasXmlNode)countryNav).GetNode();
+        try
+        {
+          _scanOffset = XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
+          Log.WriteFile(Log.LogType.Log, "dvbt-scan:scanoffset: {0} ", _scanOffset);
+        }
+        catch (Exception) { }
+
+        XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
+        Log.WriteFile(Log.LogType.Log, "dvbt-scan:number of carriers:{0}", frequencyList.Count);
+        int[] carrier;
+        foreach (XmlNode node in frequencyList)
+        {
+          carrier = new int[2];
+          carrier[0] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"frequency").InnerText);
           try
           {
-              _scanOffset = XmlConvert.ToInt32(nodeCountry.Attributes.GetNamedItem(@"offset").InnerText);
-              Log.WriteFile(Log.LogType.Log, "dvbt-scan:scanoffset: {0} ", _scanOffset);
+            carrier[1] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"bandwidth").InnerText);
           }
           catch (Exception) { }
 
-          XmlNodeList frequencyList = nodeCountry.SelectNodes("carrier");
-          Log.WriteFile(Log.LogType.Log, "dvbt-scan:number of carriers:{0}", frequencyList.Count);
-          int[] carrier;
-          foreach (XmlNode node in frequencyList)
-          {
-              carrier = new int[2];
-              carrier[0] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"frequency").InnerText);
-              try
-              {
-                  carrier[1] = XmlConvert.ToInt32(node.Attributes.GetNamedItem(@"bandwidth").InnerText);
-              }
-              catch (Exception) { }
-
-              if (carrier[1] == 0) carrier[1] = 8;
-              _listFrequencies.Add(carrier);
-              Log.WriteFile(Log.LogType.Log, "dvbt-scan:added:{0}", carrier[0]);
-          }
+          if (carrier[1] == 0) carrier[1] = 8;
+          _listFrequencies.Add(carrier);
+          Log.WriteFile(Log.LogType.Log, "dvbt-scan:added:{0}", carrier[0]);
+        }
       }
       if (_listFrequencies.Count == 0) return;
 
@@ -136,26 +136,33 @@ namespace MediaPortal.TV.Scanning
 
     public bool IsFinished()
     {
-      if (_currentFrequencyIndex  >= _listFrequencies.Count) return true;
+      if (_currentFrequencyIndex >= _listFrequencies.Count) return true;
       return false;
     }
 
     public void Next()
     {
-      if ( IsFinished() ) return;
+      if (IsFinished()) return;
       UpdateStatus();
+      _channelsFound = false;
       Tune(0);
       Scan();
 
       if (_scanOffset != 0)
       {
-        Tune(-_scanOffset);
-        Scan();
-        Tune(_scanOffset);
-        Scan();
+        if (_channelsFound == false)
+        {
+          Tune(-_scanOffset);
+          Scan();
+          if (_channelsFound == false)
+          {
+            Tune(_scanOffset);
+            Scan();
+          }
+        }
       }
       _currentFrequencyIndex++;
-    } 
+    }
     public void AutoTuneRadio(TVCaptureDevice card, AutoTuneCallback _callback)
     {
       // TODO:  Add DVBTTuning.AutoTuneRadio implementation
@@ -197,10 +204,20 @@ namespace MediaPortal.TV.Scanning
       _callback.OnSignal(_captureCard.SignalQuality, _captureCard.SignalStrength);
       Log.Write("ScanChannels() {0} {1}", _captureCard.SignalStrength, _captureCard.SignalQuality);
       _callback.OnStatus2(String.Format("new tv:{0} new radio:{1} updated tv:{2} updated radio:{3}", _newChannels, _newRadioChannels, _updatedChannels, _updatedRadioChannels));
+      int newChannels = _newChannels;
+      int updatedChannels = _updatedChannels;
+      int newRadio = _newRadioChannels;
+      int updatedRadio = _updatedRadioChannels;
       _captureCard.StoreTunedChannels(false, true, ref _newChannels, ref _updatedChannels, ref _newRadioChannels, ref _updatedRadioChannels);
       _callback.OnStatus2(String.Format("new tv:{0} new radio:{1} updated tv:{2} updated radio:{3}", _newChannels, _newRadioChannels, _updatedChannels, _updatedRadioChannels));
       _callback.UpdateList();
       Log.Write("dvbt-scan:ScanChannels() done");
+
+      if (newChannels != _newChannels ||updatedChannels != _updatedChannels ||
+          newRadio != _newRadioChannels ||updatedRadio != _updatedRadioChannels)
+      {
+        _channelsFound = true;
+      }
     }
 
     void Scan()
