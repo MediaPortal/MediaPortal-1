@@ -439,6 +439,9 @@ namespace MediaPortal.GUI.TV
         Log.Write("tv home timeshift onoff:{0}", _isTimeShifting);
         SaveSettings();
         ViewChannelAndCheck(Navigator.CurrentChannel);
+
+        _isTimeShifting = Recorder.IsTimeShifting();
+        
         UpdateStateOfButtons();
         UpdateProgressPercentageBar();
       }
@@ -735,14 +738,14 @@ namespace MediaPortal.GUI.TV
       Navigator.ZapToPreviousChannel(false);
     }
 
-    static public void ViewChannelAndCheck(string channel)
+    static public bool ViewChannelAndCheck(string channel)
     {
       if (g_Player.Playing)
       {
-        if (g_Player.IsTVRecording) return;
-        if (g_Player.IsVideo) return;
-        if (g_Player.IsDVD) return;
-        if ((g_Player.IsMusic && g_Player.HasVideo)) return;
+        if (g_Player.IsTVRecording) return true;
+        if (g_Player.IsVideo) return true;
+        if (g_Player.IsDVD) return true;
+        if ((g_Player.IsMusic && g_Player.HasVideo)) return true;
       }
       if (_isTvOn)
         Log.Write("GUITVHome.ViewChannel(): View channel={0} ts:{1}", channel, _isTimeShifting);
@@ -753,7 +756,7 @@ namespace MediaPortal.GUI.TV
 
       bool succeeded=Recorder.StartViewing(channel, _isTvOn, _isTimeShifting, true, out errorMessage);
       
-      if (succeeded) return;
+      if (succeeded) return true;
 
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
       if (pDlgOK != null)
@@ -772,6 +775,7 @@ namespace MediaPortal.GUI.TV
           pDlgOK.SetLine(3, "");
         pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
       }
+      return false;
     }
     static public void ViewChannel(string channel)
     {
