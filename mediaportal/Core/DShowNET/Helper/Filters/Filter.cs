@@ -46,25 +46,33 @@ namespace DShowNET.Helper
 	public class Filter : IComparable 
 	{
 		/// <summary> Human-readable name of the filter </summary>
-		public string Name;
+		string _name=String.Empty;
+    bool _nameResolved = false;
 
 		/// <summary> Unique string referencing this filter. This string can be used to recreate this filter. </summary>
 		public string MonikerString;
 
+
 		/// <summary> Create a new filter from its moniker string. </summary>
 		public Filter( string monikerString )
 		{
-			Name = getName( monikerString );
 			MonikerString = monikerString;
 		}
 
 		/// <summary> Create a new filter from its moniker </summary>
     internal Filter(UCOMIMoniker moniker)
 		{
-			Name = getName( moniker );
 			MonikerString = getMonikerString( moniker );
 		}
-
+    public string Name
+    {
+      get
+      {
+        if (_nameResolved) return _name;
+        _name = getName(MonikerString);
+        return _name;
+      }
+    }
 		/// <summary> Retrieve the a moniker's display name (i.e. it's unique string) </summary>
     protected string getMonikerString(UCOMIMoniker moniker)
 		{
@@ -101,6 +109,8 @@ namespace DShowNET.Helper
 				bag = null;
 				if( bagObj != null )
 					Marshal.ReleaseComObject( bagObj ); bagObj = null;
+
+        _nameResolved = true;
 			}
 		}
 
@@ -122,6 +132,7 @@ namespace DShowNET.Helper
 					Marshal.ReleaseComObject( parser ); parser = null;
 				if ( moniker != null )
 					Marshal.ReleaseComObject( moniker ); moniker = null;
+        _nameResolved = true;
 			}
 		}
 

@@ -452,13 +452,15 @@ namespace DShowNET.Helper
             formatStruct = new MPEG2VideoInfo();
           else if (mediaType.formatType == FormatType.None)
           {
-            Log.Write("VideoCaptureDevice:getStreamConfigSetting() FAILED no format returned");
-            throw new NotSupportedException("This device does not support a recognized format block.");
+            //Log.Write("VideoCaptureDevice:getStreamConfigSetting() FAILED no format returned");
+            //throw new NotSupportedException("This device does not support a recognized format block.");
+            return null;
           }
           else
           {
-            Log.Write("VideoCaptureDevice:getStreamConfigSetting() FAILED unknown fmt:{0} {1} {2}", mediaType.formatType, mediaType.majorType, mediaType.subType);
-            throw new NotSupportedException("This device does not support a recognized format block.");
+            //Log.Write("VideoCaptureDevice:getStreamConfigSetting() FAILED unknown fmt:{0} {1} {2}", mediaType.formatType, mediaType.majorType, mediaType.subType);
+            //throw new NotSupportedException("This device does not support a recognized format block.");
+            return null;
           }
 
           //Log.Write("  VideoCaptureDevice.getStreamConfigSetting() get formatptr");
@@ -471,8 +473,9 @@ namespace DShowNET.Helper
           FieldInfo fieldInfo = structType.GetField(fieldName);
           if (fieldInfo == null)
           {
-            Log.Write("VideoCaptureDevice.getStreamConfigSetting() FAILED to to find member:{0}", fieldName);
-            throw new NotSupportedException("VideoCaptureDevice:FAILED to find the member '" + fieldName + "' in the format block.");
+            //Log.Write("VideoCaptureDevice.getStreamConfigSetting() FAILED to to find member:{0}", fieldName);
+            //throw new NotSupportedException("VideoCaptureDevice:FAILED to find the member '" + fieldName + "' in the format block.");
+            return null;
           }
 
           // Extract the field's current value
@@ -507,7 +510,7 @@ namespace DShowNET.Helper
           if (hr != 0)
           {
             Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED to set:{0} (getformat) hr:{1}", fieldName, hr);
-            Marshal.ThrowExceptionForHR(hr);
+            return null;//Marshal.ThrowExceptionForHR(hr);
           }
           //Log.Write("  VideoCaptureDevice:setStreamConfigSetting() get formattype");
           // The formatPtr member points to different structures
@@ -524,12 +527,12 @@ namespace DShowNET.Helper
           else if (mediaType.formatType == FormatType.None)
           {
             Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED no format returned");
-            throw new NotSupportedException("This device does not support a recognized format block.");
+            return null;// throw new NotSupportedException("This device does not support a recognized format block.");
           }
           else
           {
             Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED unknown fmt");
-            throw new NotSupportedException("This device does not support a recognized format block.");
+            return null;//throw new NotSupportedException("This device does not support a recognized format block.");
           }
           //Log.Write("  VideoCaptureDevice.setStreamConfigSetting() get formatptr");
           // Retrieve the nested structure
@@ -557,7 +560,7 @@ namespace DShowNET.Helper
           if (hr != 0)
           {
             Log.Write("  VideoCaptureDevice:setStreamConfigSetting() FAILED to set:{0} {1}", fieldName, hr);
-            Marshal.ThrowExceptionForHR(hr);
+            return null;//Marshal.ThrowExceptionForHR(hr);
           }
           //else Log.Write("  VideoCaptureDevice.setStreamConfigSetting() set:{0}",fieldName);
           //Log.Write("  VideoCaptureDevice.setStreamConfigSetting() done");
