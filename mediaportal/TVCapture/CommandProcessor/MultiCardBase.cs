@@ -132,6 +132,7 @@ namespace MediaPortal.TV.Recording
       if (!g_Player.Playing) return;
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_STOP_FILE, 0, 0, 0, 0, 0, null);
       GUIGraphicsContext.SendMessage(msg);
+      /*
       int counter = 0;
       while (g_Player.Playing )
       {
@@ -142,8 +143,8 @@ namespace MediaPortal.TV.Recording
       if (g_Player.Playing)
       {
         Log.WriteFile(Log.LogType.Log, true, "Handler.StopPlayer() player still active");
-      }
-      /*int counter = 0;
+      }*/
+      int counter = 0;
       while (VMR9Util.g_vmr9 != null)
       {
         System.Threading.Thread.Sleep(100);
@@ -153,7 +154,7 @@ namespace MediaPortal.TV.Recording
       if (VMR9Util.g_vmr9 != null)
       {
         Log.WriteFile(Log.LogType.Log,true,"Handler.StopPlayer() vmr9 still active");
-      }*/
+      }
     }
   }
 }
