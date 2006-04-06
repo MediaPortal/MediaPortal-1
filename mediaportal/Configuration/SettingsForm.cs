@@ -230,6 +230,9 @@ namespace MediaPortal.Configuration
       dinputRemote = new DirectInputRemote();
       AddChildSection(remote, dinputRemote);
 
+      Log.Write("add IRTrans section");
+      AddChildSection(remote, new IrTrans());
+
       //Look for Audio Decoders, if exist assume decoders are installed & present config option
       FiltersSection filterSection = new FiltersSection();
       AddSection(filterSection);

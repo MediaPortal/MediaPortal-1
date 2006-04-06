@@ -58,21 +58,32 @@ namespace MediaPortal.InputDevices
 
     public IrTransListener()
     {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        IrTransEnabled = xmlreader.GetValueAsBool("remote", "IRTrans", false);
+      }
     }
 
     public void Init(IntPtr hwnd)
     {
-      try
-      {
-        irt = new IRTransServer("localhost");
-        irt.StartAsnycReceiver();
-        IrTransEnabled = true;
-        Log.Write("IRTrans: Remote enabled");
-        irt.IRReceive += new IRTransServer.IRReceiveEventHandler(IRReceived);
-      }
-      catch (IRTrans.NET.IRTransConnectionException)
-      {
-      }
+      if (IrTransEnabled)
+        try
+        {
+          irt = new IRTransServer("localhost");
+          irt.StartAsnycReceiver();
+          IrTransEnabled = true;
+          Log.Write("IRTrans: Remote enabled");
+          irt.IRReceive += new IRTransServer.IRReceiveEventHandler(IRReceived);
+        }
+        catch (IRTrans.NET.IRTransConnectionException)
+        {
+          Log.Write("IRTrans: Error initializing remote, IRTrans disabled");
+          IrTransEnabled = false;
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          {
+            xmlwriter.SetValueAsBool("remote", "IRTrans", IrTransEnabled);
+          }
+        }
     }
 
     public void DeInit()
