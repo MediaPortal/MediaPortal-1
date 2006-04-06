@@ -173,9 +173,18 @@ namespace MediaPortal.InputDevices
 
       try
       {
-        CheckXmlFile(pathCustom);
-        path = pathCustom;
-        Log.Write("MAP: using custom mappings for {0}", deviceXmlName);
+        if (System.IO.File.Exists(pathCustom))
+        {
+          CheckXmlFile(pathCustom);
+          path = pathCustom;
+          Log.Write("MAP: using custom mappings for {0}", deviceXmlName);
+        }
+        else
+        {
+          CheckXmlFile(pathDefault);
+          path = pathDefault;
+          Log.Write("MAP: using default mappings for {0}", deviceXmlName);
+        }
       }
       catch
       {
