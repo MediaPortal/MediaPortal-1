@@ -1812,14 +1812,17 @@ namespace MediaPortal.Util
       try
       {
         directory = String.Format(@"{0}\TempDVR", path);
-        files = System.IO.Directory.GetFiles(directory, "*.tmp");
-        foreach (string fileName in files)
+        if (System.IO.Directory.Exists(directory))
         {
-          try
+          files = System.IO.Directory.GetFiles(directory, "*.tmp");
+          foreach (string fileName in files)
           {
-            System.IO.File.Delete(fileName);
+            try
+            {
+              System.IO.File.Delete(fileName);
+            }
+            catch (Exception) { }
           }
-          catch (Exception) { }
         }
       }
       catch (Exception) { }
@@ -1828,14 +1831,17 @@ namespace MediaPortal.Util
       try
       {
         directory = String.Format(@"{0}\TempSBE", path);
-        files = System.IO.Directory.GetFiles(directory, "*.tmp");
-        foreach (string fileName in files)
+        if (System.IO.Directory.Exists(directory))
         {
-          try
+          files = System.IO.Directory.GetFiles(directory, "*.tmp");
+          foreach (string fileName in files)
           {
-            System.IO.File.Delete(fileName);
+            try
+            {
+              System.IO.File.Delete(fileName);
+            }
+            catch (Exception) { }
           }
-          catch (Exception) { }
         }
       }
       catch (Exception) { }
@@ -1844,14 +1850,17 @@ namespace MediaPortal.Util
       try
       {
         directory = String.Format(@"{0}", path);
-        files = System.IO.Directory.GetFiles(directory, "*.tv");
-        foreach (string fileName in files)
+        if (System.IO.Directory.Exists(directory))
         {
-          try
+          files = System.IO.Directory.GetFiles(directory, "*.tv");
+          foreach (string fileName in files)
           {
-            System.IO.File.Delete(fileName);
+            try
+            {
+              System.IO.File.Delete(fileName);
+            }
+            catch (Exception) { }
           }
-          catch (Exception) { }
         }
       }
       catch (Exception) { }
