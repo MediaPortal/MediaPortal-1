@@ -270,6 +270,12 @@ namespace MediaPortal.Player
         _bufferSource = null;
         _pinVmr9ConnectedTo = null;
 
+        if (_pinVmr9ConnectedTo != null)
+        {
+          Marshal.ReleaseComObject(_pinVmr9ConnectedTo) ;
+          _pinVmr9ConnectedTo = null;
+        }
+
         if (streamConfig2 != null)
         {
           while ((hr = Marshal.ReleaseComObject(streamConfig2)) > 0) ;
@@ -403,10 +409,18 @@ namespace MediaPortal.Player
 
     protected override void ReInit()
     {
+      if (_vmr9 != null)
+      {
+        int xx = 2;
+      }
       _vmr9 = new VMR9Util();
       _vmr9.AddVMR9(_graphBuilder);
       _vmr9.Enable(false);
       _graphBuilder.Render(_pinVmr9ConnectedTo);
+      if (!_vmr9.IsVMR9Connected)
+      {
+        int x = 1;
+      }
       
     }
     public override void Stop()

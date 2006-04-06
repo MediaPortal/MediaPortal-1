@@ -231,6 +231,12 @@ namespace MediaPortal.Player
     {
       get
       {
+        if (!_isVmr9Initialized) return null;
+        if (_vmr9Filter == null || !_useVmr9)
+        {
+          return null;
+        }
+
         IPin pinIn, pinConnected;
         pinIn = DsFindPin.ByDirection(_vmr9Filter, PinDirection.Input, 0);
         if (pinIn == null)
@@ -239,6 +245,7 @@ namespace MediaPortal.Player
           return null;
         }
         pinIn.ConnectedTo(out pinConnected);
+        Marshal.ReleaseComObject(pinIn);
         return pinConnected;
       }
     }
@@ -686,7 +693,10 @@ namespace MediaPortal.Player
       try
       {
         result = Marshal.ReleaseComObject(_vmr9Filter);
-        if (result != 0) Log.WriteThreadId("VMR9:ReleaseComObject():{0}", result);
+        if (result != 0)
+        {
+          Log.WriteThreadId("VMR9:ReleaseComObject():{0}", result);
+        }
       }
       catch (Exception)
       {
