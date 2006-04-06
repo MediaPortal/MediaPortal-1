@@ -299,5 +299,9 @@ namespace MediaPortal.TV.Recording
     {
       return (_state == State.Recording);
     }
+    public string LastError()
+    {
+      return String.Empty;
+    }
   }
 }

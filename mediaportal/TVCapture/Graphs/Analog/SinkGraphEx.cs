@@ -89,30 +89,39 @@ namespace MediaPortal.TV.Recording
     {
       try
       {
+        _lastError = "";
         _hasTeletext = false;
         _grabTeletext = false;
-        _vmr9 = new VMR9Util(); 
+        _vmr9 = new VMR9Util();
 
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx:CreateGraph() IN");
-        if (_graphState != State.None) return false;		// If doing something already, return...
+        if (_graphState != State.None)
+        {
+          _lastError = "Graph already created";
+          return false;		// If doing something already, return...
+        }
         if (_card == null)
         {
+          _lastError = "No card specified";
           Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx:card is not defined");
           return false;
         }
 
         if (!_card.LoadDefinitions())											// Load configuration for this card
         {
+          _lastError = "Unable to load card definition";
           Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Loading card definitions for card {0} failed", _card.Graph.CommercialName);
           return false;
         }
-        if ((_card.Graph == null) ||(_card.Graph.TvFilterDefinitions == null))
+        if ((_card.Graph == null) || (_card.Graph.TvFilterDefinitions == null))
         {
+          _lastError = "Card definition does not contain any filters";
           Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx:card does not contain filters?");
           return false;
         }
         if ((_card.Graph == null) || (_card.Graph.TvConnectionDefinitions == null))
         {
+          _lastError = "Card definition does not contain any tv filters";
           Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx:card does not contain connections for tv?");
           return false;
         }
@@ -138,6 +147,7 @@ namespace MediaPortal.TV.Recording
         hr = _captureGraphBuilderInterface.SetFiltergraph(_graphBuilderInterface);
         if (hr < 0)
         {
+          _lastError = "Unable to create graph";
           Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Error: link FAILED");
           Log.WriteFile(Log.LogType.Log, "SinkGraphEx:CreateGraph() OUT");
           return false;
@@ -166,6 +176,7 @@ namespace MediaPortal.TV.Recording
           }
           else
           {
+            
             Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  Error! Failed adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
             Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  Error! Result code = {0}", hr);
           }
@@ -329,13 +340,13 @@ namespace MediaPortal.TV.Recording
         _videoCaptureHelper.SetFrameRate(25.0d);
         if (!SetFrameSize(720, 576))
         {
-            if (!SetFrameSize(720, 480))
+          if (!SetFrameSize(720, 480))
           {
-              if (!SetFrameSize(768, 576))
+            if (!SetFrameSize(768, 576))
             {
-              if (!SetFrameSize(640,480))
+              if (!SetFrameSize(640, 480))
               {
-                if (!SetFrameSize(320,240))
+                if (!SetFrameSize(320, 240))
                 {
                   //???
                 }
@@ -344,7 +355,7 @@ namespace MediaPortal.TV.Recording
           }
         }
         _sizeFrame = _videoCaptureHelper.GetFrameSize();
-        
+
 
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Capturing:{0}x{1}", _sizeFrame.Width, _sizeFrame.Height);
         _mpeg2DemuxHelper = null;
@@ -369,6 +380,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
+        _lastError = String.Format("Unable to create graph");
         Log.Write(ex);
         return false;
       }
@@ -397,7 +409,7 @@ namespace MediaPortal.TV.Recording
         return;
       }
 
-      int hr = _captureGraphBuilderInterface.RenderStream(new DsGuid( ClassId.PinCategoryVBI ), null, _filterCapture, teesink, wstCodec);
+      int hr = _captureGraphBuilderInterface.RenderStream(new DsGuid(ClassId.PinCategoryVBI), null, _filterCapture, teesink, wstCodec);
       if (hr != 0)
       {
         _graphBuilderInterface.RemoveFilter(teesink);
@@ -416,7 +428,7 @@ namespace MediaPortal.TV.Recording
       mt.majorType = MediaType.VBI;
       mt.subType = MediaSubTypeEx.Teletext;
       _sampleGrabberInterface.SetCallback(this, 1);
-      _sampleGrabberInterface.SetMediaType( mt);
+      _sampleGrabberInterface.SetMediaType(mt);
       _sampleGrabberInterface.SetBufferSamples(false);
       hr = _captureGraphBuilderInterface.RenderStream(null, null, wstCodec, null, _filterSampleGrabber);
       if (hr != 0)
@@ -568,7 +580,7 @@ namespace MediaPortal.TV.Recording
 
       GUIGraphicsContext.OnGammaContrastBrightnessChanged -= new VideoGammaContrastBrightnessHandler(OnGammaContrastBrightnessChanged);
       _vmr9 = null;
-       
+
       _analogVideoDecoderInterface = null;
       if (_videoProcAmpHelper != null)
       {
@@ -587,8 +599,8 @@ namespace MediaPortal.TV.Recording
         _videoCaptureHelper = null;
       }
 
-//      if (_tvTunerInterface != null)
-//        Marshal.ReleaseComObject(_tvTunerInterface); _tvTunerInterface = null;
+      //      if (_tvTunerInterface != null)
+      //        Marshal.ReleaseComObject(_tvTunerInterface); _tvTunerInterface = null;
 
       _sampleGrabberInterface = null;
       if (_filterSampleGrabber != null)
@@ -614,26 +626,26 @@ namespace MediaPortal.TV.Recording
       }
       _rotEntry = null;
 
-      if ((_card != null)&&(_card.Graph != null)&&(_card.Graph.TvFilterDefinitions != null))
+      if ((_card != null) && (_card.Graph != null) && (_card.Graph.TvFilterDefinitions != null))
       {
-          foreach (FilterDefinition dsFilter in _card.Graph.TvFilterDefinitions)
+        foreach (FilterDefinition dsFilter in _card.Graph.TvFilterDefinitions)
+        {
+          if (dsFilter.DSFilter != null)
           {
-            if (dsFilter.DSFilter != null)
-            {
-              while ((hr = Marshal.ReleaseComObject(dsFilter.DSFilter)) > 0);
-            }
-            dsFilter.DSFilter = null;
+            while ((hr = Marshal.ReleaseComObject(dsFilter.DSFilter)) > 0) ;
           }
+          dsFilter.DSFilter = null;
+        }
       }
       if (_captureGraphBuilderInterface != null)
       {
-        while ((hr = Marshal.ReleaseComObject(_captureGraphBuilderInterface)) > 0); 
+        while ((hr = Marshal.ReleaseComObject(_captureGraphBuilderInterface)) > 0) ;
         _captureGraphBuilderInterface = null;
       }
 
       if (_graphBuilderInterface != null)
       {
-        while ((hr = Marshal.ReleaseComObject(_graphBuilderInterface)) > 0) ; 
+        while ((hr = Marshal.ReleaseComObject(_graphBuilderInterface)) > 0) ;
         _graphBuilderInterface = null;
       }
       _hasTeletext = false;
@@ -674,7 +686,7 @@ namespace MediaPortal.TV.Recording
       return sinkPin;
     }
 
-    IPin FindCrossBarPin(IBaseFilter filter,PhysicalConnectorType inputPinType)
+    IPin FindCrossBarPin(IBaseFilter filter, PhysicalConnectorType inputPinType)
     {
       IAMCrossbar crossbar = filter as IAMCrossbar;
       if (crossbar == null) return null;
@@ -687,7 +699,7 @@ namespace MediaPortal.TV.Recording
         crossbar.get_CrossbarPinInfo(true, i, out relatedPin, out physicalTypeIn);
         if (physicalTypeIn == inputPinType)
         {
-          IPin pin= DsFindPin.ByDirection(filter, PinDirection.Input, i);
+          IPin pin = DsFindPin.ByDirection(filter, PinDirection.Input, i);
           return pin;
         }
       }
@@ -731,7 +743,7 @@ namespace MediaPortal.TV.Recording
           {
             foreach (Filter audioCodec in audioCodecs)
             {
-              if (String.Compare(audioCodec.Name,audioEncoders[i],true)==0)
+              if (String.Compare(audioCodec.Name, audioEncoders[i], true) == 0)
               {
                 Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  audio codec:'{0}' is installed", audioEncoders[i]);
                 try

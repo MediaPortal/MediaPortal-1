@@ -245,6 +245,7 @@ namespace MediaPortal.GUI.Library
         if (type == typeof(int))
         {
           if (valueText.CompareTo("-") == 0) return 0;
+          if (valueText.CompareTo("") == 0) return 0;
           int res;
           if (int.TryParse(valueText, out res))
             return res;
@@ -254,7 +255,11 @@ namespace MediaPortal.GUI.Library
         if (type == typeof(long))
         {
           if (valueText.CompareTo("-") == 0) return 0;
-          return System.Int64.Parse(valueText, NumberStyles.HexNumber);
+          if (valueText.CompareTo("") == 0) return 0;
+          long res;
+          if (System.Int64.TryParse(valueText, NumberStyles.HexNumber, null, out res))
+            return res;
+          return 0;
         }
       }
       catch (Exception)

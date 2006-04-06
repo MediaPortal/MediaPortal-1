@@ -73,6 +73,7 @@ namespace MediaPortal.TV.Recording
         return;
       }
       int cardNo = -1;
+
       // tv should be turned on
       // check if any card is already tuned to this channel...
       for (int i = 0; i < handler.TVCards.Count; ++i)
@@ -128,7 +129,8 @@ namespace MediaPortal.TV.Recording
             Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting on card:{0}", dev.CommercialName);
             if (dev.StartTimeShifting(_channelName) == false)
             {
-              ErrorMessage = GUILocalizeStrings.Get(759);//"Failed to start timeshifting";
+              ErrorMessage = String.Format("{0}\r{1}", GUILocalizeStrings.Get(759),dev.GetLastError());//"Failed to start timeshifting";
+
               Succeeded = false;
               return;
             }
@@ -162,7 +164,7 @@ namespace MediaPortal.TV.Recording
             Log.WriteFile(Log.LogType.Recorder, "Recorder:  stop timeshifting on card:{0}", dev.CommercialName);
             if (false == dev.StopTimeShifting())
             {
-              ErrorMessage = GUILocalizeStrings.Get(761);//"Failed to stop timeshifting";
+              ErrorMessage = String.Format("{0}\r{1}", GUILocalizeStrings.Get(761), dev.GetLastError());//"Failed to stop timeshifting";
               Succeeded = false;
               return;
             }
@@ -175,7 +177,7 @@ namespace MediaPortal.TV.Recording
           if (dev.StartViewing(_channelName) == false)
           {
             Succeeded = false;
-            ErrorMessage = GUILocalizeStrings.Get(762);// "Failed to start tv";
+            ErrorMessage = String.Format("{0}\r{1}", GUILocalizeStrings.Get(762), dev.GetLastError());//"Failed to start tv";
           }
           handler.OnTvStart(handler.CurrentCardIndex, dev);
           handler.ResetTimeshiftTimer();
@@ -232,7 +234,7 @@ namespace MediaPortal.TV.Recording
       handler.TuneExternalChannel(_channelName, true);
       if (dev.StartViewing(_channelName) == false)
       {
-        ErrorMessage = GUILocalizeStrings.Get(762);// "Failed to start tv";
+        ErrorMessage = String.Format("{0}\r{1}", GUILocalizeStrings.Get(762), dev.GetLastError());//"Failed to start tv";
         Succeeded = false;
         return;
       }

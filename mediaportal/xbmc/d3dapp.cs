@@ -1828,6 +1828,7 @@ namespace MediaPortal
       try
       {
         // give an external app a change to be notified when the appliction has reached the final stage of startup
+
         EventWaitHandle handle = EventWaitHandle.OpenExisting("MediaPortalHandleCreated");
 
         if (handle.SafeWaitHandle.IsInvalid)

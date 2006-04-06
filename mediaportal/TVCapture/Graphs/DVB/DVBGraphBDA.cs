@@ -106,6 +106,7 @@ namespace MediaPortal.TV.Recording
         //no card defined? then we cannot build a graph
         if (_card == null)
         {
+          _lastError = "No card setup";
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:card is not defined");
           return false;
         }
@@ -113,6 +114,7 @@ namespace MediaPortal.TV.Recording
         //load card definition from CaptureCardDefinitions.xml
         if (!_card.LoadDefinitions())
         {
+          _lastError = "No definitions for card";
           Log.WriteFile(Log.LogType.Log, "DVBGraphBDA: Loading card definitions for card {0} failed", _card.Graph.CommercialName);
           return false;
         }
@@ -120,6 +122,7 @@ namespace MediaPortal.TV.Recording
         //check if definition contains a tv filter graph
         if ((_card.Graph == null) || (_card.Graph.TvFilterDefinitions == null))
         {
+          _lastError = "definitions dont contain filters";
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED card does not contain filters?");
           return false;
         }
@@ -127,6 +130,7 @@ namespace MediaPortal.TV.Recording
         //check if definition contains <connections> for the tv filter graph
         if ((_card.Graph == null) || (_card.Graph.TvConnectionDefinitions == null))
         {
+          _lastError = "definitions dont contain tv filters";
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED card does not contain connections for tv?");
           return false;
         }
@@ -174,6 +178,7 @@ namespace MediaPortal.TV.Recording
           Log.WriteFile(Log.LogType.Log, "DVBGraphBDA:  Adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
           if (dsFilter.MonikerDisplayName == String.Empty)
           {
+            _lastError = String.Format("Cannot add filter {0}",dsFilter.FriendlyName);
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:  no moniker found for filter:{0}", dsFilter.FriendlyName);
             return false;
           }
@@ -185,6 +190,7 @@ namespace MediaPortal.TV.Recording
           }
           else
           {
+            _lastError = String.Format("Cannot add filter {0}", dsFilter.FriendlyName);
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:  Error! Failed adding filter <{0}> with moniker <{1}>", dsFilter.FriendlyName, dsFilter.MonikerDisplayName);
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:  Error! Result code = 0x{0:X}", hr);
             return false;
@@ -198,6 +204,7 @@ namespace MediaPortal.TV.Recording
             // Initialise Tuning Space (using the setupTuningSpace function)
             if (!setupTuningSpace())
             {
+              _lastError = String.Format("Failed to setup the tuning space");
               Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:CreateGraph() FAILED couldnt create tuning space");
               return false;
             }
@@ -211,6 +218,7 @@ namespace MediaPortal.TV.Recording
         //no network provider specified? then we cannot build the graph
         if (_filterNetworkProvider == null)
         {
+          _lastError = String.Format("No network provider filter present");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:CreateGraph() FAILED networkprovider filter not found");
           return false;
         }
@@ -218,6 +226,7 @@ namespace MediaPortal.TV.Recording
         //no capture device specified? then we cannot build the graph
         if (_filterCaptureDevice == null)
         {
+          _lastError = String.Format("No capture filter present");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:CreateGraph() FAILED capture filter not found");
         }
 
@@ -423,6 +432,7 @@ namespace MediaPortal.TV.Recording
         // no interface defined or interface not found? then return
         if (lastFilter == null)
         {
+          _lastError = String.Format("Last filter not defined");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:CreateGraph() FAILED interface filter not found");
           return false;
         }
@@ -432,6 +442,7 @@ namespace MediaPortal.TV.Recording
         {
           if (!ConnectFilters(ref lastFilter.DSFilter, ref _filterSampleGrabber))
           {
+            _lastError = String.Format("Failed to connect filters");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:Failed to connect Tee/Sink-Sink converter filter->grabber");
             return false;
           }
@@ -444,6 +455,7 @@ namespace MediaPortal.TV.Recording
         _filterMpeg2Demultiplexer = (IBaseFilter)new MPEG2Demultiplexer();
         if (_filterMpeg2Demultiplexer == null)
         {
+          _lastError = String.Format("Failed to add Mpeg2 Demultiplexer filter");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:Failed to create Mpeg2 Demultiplexer");
           return false;
         }
@@ -460,6 +472,7 @@ namespace MediaPortal.TV.Recording
         object tmpObject;
         if (!findNamedFilter(FilterCategories.KSCATEGORY_BDA_TRANSPORT_INFORMATION, "BDA MPEG2 Transport Information Filter", out tmpObject))
         {
+          _lastError = String.Format("Failed to add BDA MPEG2 Transport Information Filter");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:CreateGraph() FAILED Failed to find BDA MPEG2 Transport Information Filter");
           return false;
         }
@@ -467,6 +480,7 @@ namespace MediaPortal.TV.Recording
         tmpObject = null;
         if (_filterTIF == null)
         {
+          _lastError = String.Format("Failed to add BDA MPEG2 Transport Information Filter");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:CreateGraph() FAILED BDA MPEG2 Transport Information Filter is null");
           return false;
         }
@@ -505,6 +519,7 @@ namespace MediaPortal.TV.Recording
           //Log.WriteFile(Log.LogType.Log, "DVBGraphBDA:CreateGraph() connect grabber->demuxer");
           if (!ConnectFilters(ref _filterSampleGrabber, ref _filterMpeg2Demultiplexer))
           {
+            _lastError = String.Format("Failed to connect Sample grabber->Mpeg2 Demultiplexer");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
             return false;
           }
@@ -514,6 +529,7 @@ namespace MediaPortal.TV.Recording
           //Log.WriteFile(Log.LogType.Log, "DVBGraphBDA:CreateGraph() connect capture->demuxer");
           if (!ConnectFilters(ref lastFilter.DSFilter, ref _filterMpeg2Demultiplexer))
           {
+            _lastError = String.Format("Failed to Capture filter->MPEG2 demultiplexer");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:Failed to connect samplegrabber filter->mpeg2 demultiplexer");
             return false;
           }
@@ -532,6 +548,7 @@ namespace MediaPortal.TV.Recording
         //        Log.WriteFile(Log.LogType.Log, "DVBGraphBDA:CreateGraph() connect demuxer->tif");
         if (!ConnectFilters(ref _filterMpeg2Demultiplexer, ref _filterTIF))
         {
+          _lastError = String.Format("Failed to MPEG2 demultiplexer->TIF filter");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:Failed to connect mpeg2 demultiplexer->TIF");
           //return false;
         }
@@ -548,6 +565,7 @@ namespace MediaPortal.TV.Recording
         hr = _graphBuilder.AddFilter(_filterDvbAnalyzer, "Stream-Analyzer");
         if (hr != 0)
         {
+          _lastError = String.Format("Failed to add MPEG2 sections and tables filter");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA: FAILED to add SectionsFilter 0x{0:X}", hr);
           return false;
         }
@@ -628,12 +646,14 @@ namespace MediaPortal.TV.Recording
         if (_pinDemuxerVideo == null)
         {
           //video pin not found
+          _lastError = String.Format("No video output pin found");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:Failed to get pin '{0}' (video out) from MPEG-2 Demultiplexer", _pinDemuxerVideo);
           return false;
         }
         if (_pinDemuxerAudio == null)
         {
           //audio pin not found
+          _lastError = String.Format("No audio output pin found");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:Failed to get pin '{0}' (audio out)  from MPEG-2 Demultiplexer", _pinDemuxerAudio);
           return false;
         }
@@ -671,6 +691,7 @@ namespace MediaPortal.TV.Recording
           hr = demuxer.CreateOutputPin(mpegAudioOut, "audio", out _pinDemuxerAudio);
           if (hr != 0)
           {
+            _lastError = String.Format("failed to add mpg1 audio pin");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA: FAILED to create audio output pin on demuxer");
             return false;
           }
@@ -678,6 +699,7 @@ namespace MediaPortal.TV.Recording
           hr = demuxer.CreateOutputPin(mpegVideoOut/*vidOut*/, "video", out _pinDemuxerVideo);
           if (hr != 0)
           {
+            _lastError = String.Format("failed to add mpg2 video pin");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA: FAILED to create video output pin on demuxer");
             return false;
           }
@@ -698,6 +720,7 @@ namespace MediaPortal.TV.Recording
           hr = demuxer.CreateOutputPin(mediaAC3/*vidOut*/, "AC3", out _pinAC3Out);
           if (hr != 0 || _pinAC3Out == null)
           {
+            _lastError = String.Format("failed to add ac3 audio pin");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to create AC3 pin:0x{0:X}", hr);
           }
 
@@ -717,6 +740,7 @@ namespace MediaPortal.TV.Recording
           hr = demuxer.CreateOutputPin(mediaMPG1/*vidOut*/, "audioMpg1", out _pinMPG1Out);
           if (hr != 0 || _pinMPG1Out == null)
           {
+            _lastError = String.Format("failed to add mpg1 audio pin");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to create MPG1 pin:0x{0:X}", hr);
           }
 
@@ -736,6 +760,7 @@ namespace MediaPortal.TV.Recording
           hr = demuxer.CreateOutputPin(mediaMPG4, "MPG4", out _pinDemuxerVideoMPEG4);
           if (hr != 0 || _pinDemuxerVideoMPEG4 == null)
           {
+            _lastError = String.Format("failed to add mpg4 video pin");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to create MPG4 pin:0x{0:X}", hr);
           }
 
@@ -752,18 +777,21 @@ namespace MediaPortal.TV.Recording
           hr = demuxer.CreateOutputPin(mtEPG, "EPG", out _pinDemuxerEPG);
           if (hr != 0 || _pinDemuxerEPG == null)
           {
+            _lastError = String.Format("failed to add EPG pin");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to create EPG pin:0x{0:X}", hr);
             return false;
           }
           hr = demuxer.CreateOutputPin(mtEPG, "MHW1", out _pinDemuxerMHWd2);
           if (hr != 0 || _pinDemuxerMHWd2 == null)
           {
+            _lastError = String.Format("failed to add MHW1 pin");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to create MHW1 pin:0x{0:X}", hr);
             return false;
           }
           hr = demuxer.CreateOutputPin(mtEPG, "MHW2", out _pinDemuxerMHWd3);
           if (hr != 0 || _pinDemuxerMHWd3 == null)
           {
+            _lastError = String.Format("failed to add MHW2 pin");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to create MHW2 pin:0x{0:X}", hr);
             return false;
           }
@@ -772,18 +800,21 @@ namespace MediaPortal.TV.Recording
           IPin pinMHW1In = DsFindPin.ByDirection(_filterDvbAnalyzer, PinDirection.Input, 1);
           if (pinMHW1In == null)
           {
+            _lastError = String.Format("failed to connect analyzer filter");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to get MHW1 pin on MSPA");
             return false;
           }
           IPin pinMHW2In = DsFindPin.ByDirection(_filterDvbAnalyzer, PinDirection.Input, 2);
           if (pinMHW2In == null)
           {
+            _lastError = String.Format("failed to connect analyzer filter");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to get MHW2 pin on MSPA");
             return false;
           }
           IPin pinEPGIn = DsFindPin.ByDirection(_filterDvbAnalyzer, PinDirection.Input, 3);
           if (pinEPGIn == null)
           {
+            _lastError = String.Format("failed to connect analyzer filter");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to get EPG pin on MSPA");
             return false;
           }
@@ -792,18 +823,21 @@ namespace MediaPortal.TV.Recording
           hr = _graphBuilder.Connect(_pinDemuxerEPG, pinEPGIn);
           if (hr != 0)
           {
+            _lastError = String.Format("failed to connect analyzer filter");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to connect EPG pin:0x{0:X}", hr);
             return false;
           }
           hr = _graphBuilder.Connect(_pinDemuxerMHWd2, pinMHW1In);
           if (hr != 0)
           {
+            _lastError = String.Format("failed to connect analyzer filter");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to connect MHW1 pin:0x{0:X}", hr);
             return false;
           }
           hr = _graphBuilder.Connect(_pinDemuxerMHWd3, pinMHW2In);
           if (hr != 0)
           {
+            _lastError = String.Format("failed to connect analyzer filter");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to connect MHW2 pin:0x{0:X}", hr);
             return false;
           }
@@ -823,6 +857,7 @@ namespace MediaPortal.TV.Recording
             hr = demuxer.CreateOutputPin(txtMediaType, "ttx", out _pinTeletext);
             if (hr != 0 || _pinTeletext == null)
             {
+              _lastError = String.Format("failed to add ttx pin");
               Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to create ttx pin:0x{0:X}", hr);
               return false;
             }
@@ -834,12 +869,14 @@ namespace MediaPortal.TV.Recording
             IPin pinIn = DsFindPin.ByDirection(_filterSampleGrabber, PinDirection.Input, 0);
             if (pinIn == null)
             {
+              _lastError = String.Format("failed to sample grabber");
               Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:unable to find sample grabber input:0x{0:X}", hr);
               return false;
             }
             hr = _graphBuilder.Connect(_pinTeletext, pinIn);
             if (hr != 0)
             {
+              _lastError = String.Format("failed to sample grabber");
               Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:FAILED to connect demux->sample grabber:0x{0:X}", hr);
               return false;
             }
@@ -851,8 +888,10 @@ namespace MediaPortal.TV.Recording
           }
         }
         else
+        {
+          _lastError = String.Format("Unable to get IMPEG2Demultiplexer");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:mapped IMPEG2Demultiplexer not found");
-
+        }
         //=========================================================================================================
         // Create the streambuffer engine and mpeg2 video analyzer components since we need them for
         // recording and timeshifting
@@ -865,6 +904,7 @@ namespace MediaPortal.TV.Recording
         GetTunerSignalStatistics();
         if (_tunerStatistics.Count == 0)
         {
+          _lastError = String.Format("Unable to get tuner statistics");
           Log.Write("DVBGraphBDA:Failed to get tuner statistics");
         }
         Log.Write("DVBGraphBDA:got {0} tuner statistics", _tunerStatistics.Count);
@@ -900,6 +940,7 @@ namespace MediaPortal.TV.Recording
       }
       catch (Exception ex)
       {
+        _lastError = String.Format("Unable to create graph");
         Log.Write(ex);
         return false;
       }

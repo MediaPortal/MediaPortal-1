@@ -758,9 +758,18 @@ namespace MediaPortal.GUI.TV
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
       if (pDlgOK != null)
       {
+        string[] lines = errorMessage.Split('\r');
         pDlgOK.SetHeading(605);//my tv
-        pDlgOK.SetLine(1, errorMessage);
-        pDlgOK.SetLine(2, "");
+        pDlgOK.SetLine(1, lines[0]);
+        if (lines.Length > 1)
+          pDlgOK.SetLine(2, lines[1]);
+        else
+          pDlgOK.SetLine(2, "");
+
+        if (lines.Length > 2)
+          pDlgOK.SetLine(3, lines[2]);
+        else
+          pDlgOK.SetLine(3, "");
         pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
       }
     }

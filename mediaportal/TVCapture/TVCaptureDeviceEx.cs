@@ -1100,6 +1100,11 @@ namespace MediaPortal.TV.Recording
       }
       return true;
     }
+    public string GetLastError()
+    {
+      if (_currentGraph == null) return String.Empty;
+      return _currentGraph.LastError();
+    }
 
     /// <summary>
     /// Deletes the current DirectShow graph created with CreateGraph()
@@ -1173,14 +1178,6 @@ namespace MediaPortal.TV.Recording
 
 
       string strFileName = TimeShiftFullFileName;
-
-      ulong freeSpace = Utils.GetFreeDiskSpace(strFileName);
-      if (freeSpace < (1024L * 1024L * 1024L))// 1 GB
-      {
-        Log.WriteFile(Log.LogType.Recorder, true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", strFileName[0]);
-        return false;
-      }
-
       //Log.WriteFile(Log.LogType.Log, "Card:{0} timeshift to file:{1}", ID, strFileName);
       bool bResult = _currentGraph.StartTimeShifting(channel, strFileName);
       if (bResult == true)

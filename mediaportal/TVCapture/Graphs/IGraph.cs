@@ -311,5 +311,6 @@ namespace MediaPortal.TV.Recording
     bool CanViewTimeShiftFile();
     bool IsRadio();
     bool IsRecording();
+    string LastError();
   }
 }

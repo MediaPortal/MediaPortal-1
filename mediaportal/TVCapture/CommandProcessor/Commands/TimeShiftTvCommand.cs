@@ -130,7 +130,7 @@ namespace MediaPortal.TV.Recording
           Log.WriteFile(Log.LogType.Recorder, "Recorder:  start timeshifting on card:{0}", dev.CommercialName);
           if (dev.StartTimeShifting(_channelName) == false)
           {
-            ErrorMessage = GUILocalizeStrings.Get(759);// "Failed to start timeshifting";
+            ErrorMessage = String.Format("{0}\r{1}", GUILocalizeStrings.Get(759), dev.GetLastError());//"Failed to start timeshifting";
             Succeeded = false;
             return;
           }
@@ -221,7 +221,7 @@ namespace MediaPortal.TV.Recording
       if (dev.StartTimeShifting(_channelName) == false)
       {
         Succeeded = false;
-        ErrorMessage = GUILocalizeStrings.Get(759);// "Failed to start timeshifting";
+        ErrorMessage = String.Format("{0}\r{1}", GUILocalizeStrings.Get(759), dev.GetLastError());//"Failed to start timeshifting";
         return;
       }
       handler.TuneExternalChannel(_channelName, true);

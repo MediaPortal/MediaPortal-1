@@ -86,6 +86,7 @@ namespace MediaPortal.TV.Recording
     protected bool _grabTeletext = false;
     protected bool _hasTeletext = false;
     bool _isTuning = false;
+    protected string _lastError = String.Empty;
 
     /// <summary>
     /// Constructor
@@ -215,6 +216,14 @@ namespace MediaPortal.TV.Recording
     public bool StartTimeShifting(TVChannel channel, string strFileName)
     {
       if (_graphState != State.Created && _graphState != State.TimeShifting) return false;
+
+      ulong freeSpace = Utils.GetFreeDiskSpace(strFileName);
+      if (freeSpace < (1024L * 1024L * 1024L))// 1 GB
+      {
+        _lastError = GUILocalizeStrings.Get(765);// "Not enough free diskspace";
+        Log.WriteFile(Log.LogType.Recorder, true, "Recorder:  failed to start timeshifting since drive {0}: has less then 1GB freediskspace", strFileName[0]);
+        return false;
+      }
       if (_mpeg2DemuxHelper == null) return false;
       _countryCode = channel.Country;
 
@@ -592,11 +601,13 @@ namespace MediaPortal.TV.Recording
       _countryCode = channel.Country;
       if (_mpeg2DemuxHelper == null)
       {
+        _lastError="Graph not correctly build";
         Log.WriteFile(Log.LogType.Log, true, "SinkGraph:StartViewing() FAILED: no mpeg2 demuxer present");
         return false;
       }
       if (_videoCaptureHelper == null)
       {
+        _lastError="Graph not correctly build";
         Log.WriteFile(Log.LogType.Log, true, "SinkGraph:StartViewing() FAILED: no video capture device present");
         return false;
       }
@@ -1523,6 +1534,10 @@ namespace MediaPortal.TV.Recording
     public bool IsRecording()
     {
       return (_graphState == State.Recording);
+    }
+    public string LastError()
+    {
+      return _lastError;
     }
   }
 }
