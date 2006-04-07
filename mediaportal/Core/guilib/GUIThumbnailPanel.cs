@@ -2016,8 +2016,8 @@ namespace MediaPortal.GUI.Library
       int iCursorX = (x/_itemWidth);
 
       // Check item inside panel
-      if (iCursorX < 0 || iCursorX >= _rowCount) return false;
-      if (iCursorY < 0 || iCursorY >= _columnCount) return false;
+      if (iCursorX < 0 || iCursorX >= _columnCount) return false;
+      if (iCursorY < 0 || iCursorY >= _rowCount) return false;
       _cursorY = iCursorY;
       _cursorX = iCursorX;
 
