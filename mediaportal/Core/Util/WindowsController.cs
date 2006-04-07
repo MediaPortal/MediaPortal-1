@@ -24,6 +24,7 @@ using System;
 using System.Text;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Utils = MediaPortal.Util.Utils;
 
 namespace MediaPortal.Util 
 {
@@ -204,10 +205,12 @@ namespace MediaPortal.Util
 		public static void ExitWindows(RestartOptions how , bool force ) {
 			switch(how) {
 				case RestartOptions.Suspend:
-					SuspendSystem(false, force);
+          Utils.SuspendSystem(force);
+					//SuspendSystem(false, force);
 					break;
 				case RestartOptions.Hibernate:
-					SuspendSystem(true, force);
+          Utils.HibernateSystem(force);
+					//SuspendSystem(true, force);
 					break;
 				default:
 					ExitWindows((int)how, force);
