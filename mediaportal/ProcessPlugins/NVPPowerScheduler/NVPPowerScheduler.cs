@@ -59,6 +59,16 @@ namespace MediaPortal.PowerScheduler
     static DateTime m_dtLastTimercheck = DateTime.Now;	// store last time active to be able to calculate if a power up has ocurrued 
     static bool m_bFirstLogRec = true;			// when aborting shutdown due to recording in progress, write to log only once
 
+    public bool IsEnabled 
+    { get { return !m_bDisabled; } }
+
+    public string ShutdownMode
+    {
+      get { return m_shutdownMode;  }
+      set { m_shutdownMode = value; }
+    }
+
+
     // Instanceate a waitabletimer
     static private WaitableTimer m_Timer = new WaitableTimer();
 
@@ -174,6 +184,8 @@ namespace MediaPortal.PowerScheduler
 
         // start recorder if needed
         Recorder.Start();
+        
+        LoadSettings();  // Settings may changed by Mediaportal.cs
 
         m_bShutdownEnabled = false;
         ResetShutdownTimer(m_iShutdownInterval);
@@ -352,10 +364,10 @@ namespace MediaPortal.PowerScheduler
           return;
 
         g_Player.Stop();
-        AutoPlay.StopListening();
-        GUIWindowManager.Dispose();
-        GUITextureManager.Dispose();
-        GUIFontManager.Dispose();
+        //AutoPlay.StopListening();
+        //GUIWindowManager.Dispose();
+        //GUITextureManager.Dispose();
+        //GUIFontManager.Dispose();
         ResetShutdownTimer(0);
 
         if (m_shutdownMode.StartsWith("None"))
@@ -366,13 +378,15 @@ namespace MediaPortal.PowerScheduler
         if (m_shutdownMode.StartsWith("Suspend"))
         {
           Log.Write("PowerScheduler: Suspend system");
-          WindowsController.ExitWindows(RestartOptions.Suspend, m_bForceShutdown);
+          Utils.SuspendSystem(m_bForceShutdown);
+          //WindowsController.ExitWindows(RestartOptions.Suspend, m_bForceShutdown);
         }
 
         if (m_shutdownMode.StartsWith("Hibernate"))
         {
           Log.Write("PowerScheduler: Hibernate system");
-          WindowsController.ExitWindows(RestartOptions.Hibernate, m_bForceShutdown);
+          Utils.HibernateSystem(m_bForceShutdown);
+          //WindowsController.ExitWindows(RestartOptions.Hibernate, m_bForceShutdown);
         }
 
         if (m_shutdownMode.StartsWith("Shutdown"))

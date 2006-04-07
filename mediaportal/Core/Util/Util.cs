@@ -31,8 +31,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Xml;
 using System.ServiceProcess;
+using System.Windows.Forms;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
+using MediaPortal.Ripper;
+using MediaPortal.Player;
 
 
 namespace MediaPortal.Util
@@ -1899,6 +1902,30 @@ namespace MediaPortal.Util
       }
       catch (Exception) { }
     }
+
+    static public bool HibernateSystem(bool forceShutDown)
+    {
+      Log.Write("Utils: Hibernate system");
+      return (SetSuspendState(PowerState.Hibernate, forceShutDown));
+    }
+
+    static public bool SuspendSystem(bool forceShutDown)
+    {
+      Log.Write("Utils: Suspend system");
+      return (SetSuspendState(PowerState.Suspend, forceShutDown));
+    }
+
+    static private bool SetSuspendState(PowerState state, bool forceShutDown)
+    {
+      g_Player.Stop();
+      AutoPlay.StopListening();
+      GUIWindowManager.Dispose();
+      GUITextureManager.Dispose();
+      GUIFontManager.Dispose();
+
+      return (Application.SetSuspendState(state, forceShutDown, false));
+    }
+
   }
 }
 

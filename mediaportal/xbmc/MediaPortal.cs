@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -82,6 +83,7 @@ public class MediaPortalApp : D3DApp, IRender
   private bool restoreTopMost = false;
   private bool startWithBasicHome = false;
   private bool _suspended = false;
+  private bool _onResumeRunning = false;
 #if AUTOUPDATE
   string m_strNewVersion = "";
     bool m_bNewVersionAvailable = false;
@@ -650,12 +652,20 @@ public class MediaPortalApp : D3DApp, IRender
   //called when windows wakes up again
   void OnResume()
   {
-    if (Recorder.Running) return;
-    Log.Write("Mediaportal:start recorder");
-    Recorder.Start();
     Log.Write("Mediaportal:switch to home screen");
     GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
     _suspended = false;
+    
+    if (Recorder.Running) return;
+    if (_onResumeRunning)
+    {
+        Log.Write("Mediaportal: OnResume is RUNNING: Recorder.Running = " + Recorder.Running.ToString());
+        return;
+    }
+    _onResumeRunning = true;
+    Log.Write("Mediaportal:start recorder");
+    Recorder.Start();
+    _onResumeRunning = false;
   }
 
   #endregion
@@ -1501,21 +1511,7 @@ public class MediaPortalApp : D3DApp, IRender
                 if (topBar != null) topBar.Focused = true;
                 return;
               }
-              switch (dlg.SelectedId)
-              {
-                case 1030:
-                  option = RestartOptions.PowerOff;
-                  break;
-                case 1031:
-                  option = RestartOptions.Reboot;
-                  break;
-                case 1032:
-                  option = RestartOptions.Suspend;
-                  break;
-                case 1049:
-                  option = RestartOptions.Hibernate;
-                  break;
-              }
+              
               if (Recorder.IsAnyCardRecording())
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
@@ -1533,19 +1529,29 @@ public class MediaPortalApp : D3DApp, IRender
                   return;
                 }
               }
-              if ((option == RestartOptions.Suspend) || (option == RestartOptions.Hibernate))
+              
+              switch (dlg.SelectedId)
               {
-                useRestartOptions = false;
-                Log.Write("Mediaportal: exit :{0}", option);
-                WindowsController.ExitWindows(option, false);
+                case 1030: 
+                  restartOptions = RestartOptions.PowerOff; 
+                  useRestartOptions = true;
+                  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+                  break;
+                case 1031: 
+                  restartOptions = RestartOptions.Reboot;   
+                  useRestartOptions = true;
+                  GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
+                  break;
+                case 1032:
+                  restartOptions = RestartOptions.Suspend;
+                  Utils.SuspendSystem(false);
+                  break;
+                case 1049:
+                  restartOptions = RestartOptions.Hibernate;
+                  Utils.HibernateSystem(false);   
+                  break;
               }
-              else
-              {
-                Log.Write("Mediaportal: exit :{0}", option);
-                restartOptions = option;
-                useRestartOptions = true;
-                GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
-              }
+              
             }
             break;
           }
