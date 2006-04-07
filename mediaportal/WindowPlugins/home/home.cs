@@ -1474,6 +1474,7 @@ namespace MediaPortal.GUI.Home
 						fPos -= ( ((float)iPercentage)/100f );
 					}
 					float fPercent = 1f - ((fPos) / ((float)(iMaxItems+1)));
+          if (!m_bAllowScroll) fPercent = 1;
 					if (fPercent >=1.0f) fPercent=(2.0f-fPercent);
 					
 					button.SetAlpha( (int)(fPercent * 255f));
@@ -1523,6 +1524,7 @@ namespace MediaPortal.GUI.Home
 						fPos += ( ((float)iPercentage)/100f );
 					}
 					float fPercent = 1f - ((fPos) / ((float)(iMaxItems+1)));
+          if (!m_bAllowScroll) fPercent = 1;
 
 					//	button.Height = (int) (fPercent * ((float)m_iButtonHeight));
 					button.SetAlpha( (int)(fPercent * 255f) );
