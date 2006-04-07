@@ -59,16 +59,6 @@ namespace MediaPortal.PowerScheduler
     static DateTime m_dtLastTimercheck = DateTime.Now;	// store last time active to be able to calculate if a power up has ocurrued 
     static bool m_bFirstLogRec = true;			// when aborting shutdown due to recording in progress, write to log only once
 
-    public bool IsEnabled 
-    { get { return !m_bDisabled; } }
-
-    public string ShutdownMode
-    {
-      get { return m_shutdownMode;  }
-      set { m_shutdownMode = value; }
-    }
-
-
     // Instanceate a waitabletimer
     static private WaitableTimer m_Timer = new WaitableTimer();
 
@@ -363,7 +353,7 @@ namespace MediaPortal.PowerScheduler
         if (abortshutdown)
           return;
 
-        g_Player.Stop();
+        //g_Player.Stop();
         //AutoPlay.StopListening();
         //GUIWindowManager.Dispose();
         //GUITextureManager.Dispose();
