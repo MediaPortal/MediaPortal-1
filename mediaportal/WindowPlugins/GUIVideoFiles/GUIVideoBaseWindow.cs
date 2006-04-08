@@ -67,6 +67,8 @@ namespace MediaPortal.GUI.Video
     protected GUIButtonControl btnPlayDVD = null;
     [SkinControlAttribute(7)]
     protected GUIButtonControl btnTrailers = null;
+    
+
     protected PlayListPlayer playlistPlayer;
 
     public GUIVideoBaseWindow()
@@ -366,6 +368,9 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnPageLoad()
     {
+      GUIVideoOverlay videoOverlay = (GUIVideoOverlay)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY);
+      if ((videoOverlay != null) && (videoOverlay.Focused)) videoOverlay.Focused = false;
+
       LoadSettings();
 
       if (btnSortBy != null)
