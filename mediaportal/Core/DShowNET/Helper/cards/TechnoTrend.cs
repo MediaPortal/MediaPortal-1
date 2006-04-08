@@ -23,6 +23,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
+using System.Windows.Forms;
 
 namespace DShowNET
 {
@@ -108,6 +109,13 @@ namespace DShowNET
     [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetDiSEqCMsg", CallingConvention = CallingConvention.StdCall)]
     public static extern int bdaapiSetDiSEqCMsg(uint hOpen, IntPtr data, byte length, byte repeat, byte toneburst, int polarity);
 
+    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiSetDVBTAntPwr", CallingConvention = CallingConvention.StdCall)]
+    public static extern int bdaapiSetDVBTAntPwr(uint hOpen, bool bAntPwrOnOff);
+
+    [DllImport("ttBdaDrvApi_Dll.dll", EntryPoint = "bdaapiGetDVBTAntPwr", CallingConvention = CallingConvention.StdCall)]
+    public static extern int bdaapiGetDVBTAntPwr(uint hOpen, ref int uiAntPwrOnOff);
+    //public static extern int bdaapiGetDVBTAntPwr(uint hOpen, UIntPtr uiAntPwrOnOff);
+
     #endregion
 
     #region variables
@@ -145,30 +153,30 @@ namespace DShowNET
           (info.achName == TechnoTrend.USB2_T_TUNER) ||
           (info.achName == TechnoTrend.USB2_S_TUNER))
       {
-          Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2);
-          _deviceType = TechnoTrendDeviceType.eDevTypeUsb2;
+        Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2);
+        _deviceType = TechnoTrendDeviceType.eDevTypeUsb2;
       }
       else if (info.achName == TechnoTrend.BUDGET3_TUNER)
       {
-          Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB3);
-          _deviceType = TechnoTrendDeviceType.eDevTypeB3;
+        Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB3);
+        _deviceType = TechnoTrendDeviceType.eDevTypeB3;
       }
       else if ((info.achName == TechnoTrend.BUDGET2_C_TUNER) ||
                 (info.achName == TechnoTrend.BUDGET2_S_TUNER) ||
                 (info.achName == TechnoTrend.BUDGET2_T_TUNER))
       {
-          Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB2);
-          _deviceType = TechnoTrendDeviceType.eDevTypeB2;
+        Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeB2);
+        _deviceType = TechnoTrendDeviceType.eDevTypeB2;
       }
       else if (info.achName == TechnoTrend.USB2_PINNACLE_TUNER)
       {
-          Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2Pinnacle);
-          _deviceType = TechnoTrendDeviceType.eDevTypeUsb2Pinnacle;
+        Log.WriteFile(Log.LogType.Log, "TechnoTrend card type:{0}", TechnoTrendDeviceType.eDevTypeUsb2Pinnacle);
+        _deviceType = TechnoTrendDeviceType.eDevTypeUsb2Pinnacle;
       }
       else
       {
-         // Log.WriteFile(Log.LogType.Log, "Technotrend Unknown card type");
-          _deviceType = TechnoTrendDeviceType.eTypeUnknown;
+        // Log.WriteFile(Log.LogType.Log, "Technotrend Unknown card type");
+        _deviceType = TechnoTrendDeviceType.eTypeUnknown;
       }
 
       if (!IsTechnoTrend) return;
@@ -268,13 +276,21 @@ namespace DShowNET
       }
     }
 
+    public bool IsTechnoTrendUSBDVBT
+    {
+      get
+      {
+        return (_deviceType == TechnoTrendDeviceType.eDevTypeUsb2);
+      }
+    }
+
     public bool SendPMT(int serviceId)
     {
-        if ((bool)_isCamInitializedTable[_handle] == false)
-        {
-            Log.WriteFile(Log.LogType.Log, false, "Technotrend: service cannot be decoded because the CAM is not ready yet");
-            return false;
-        }
+      if ((bool)_isCamInitializedTable[_handle] == false)
+      {
+        Log.WriteFile(Log.LogType.Log, false, "Technotrend: service cannot be decoded because the CAM is not ready yet");
+        return false;
+      }
       int hr = bdaapiCIReadPSIFastDrvDemux(_handle, serviceId);
       if (hr == 0)
       {
@@ -391,6 +407,20 @@ namespace DShowNET
     public bool IsCamPresent()
     {
       return (_hasCam);
+    }
+
+    // Here we turn on the USB DVB-T antennae
+    public void EnableAntenna(bool onOff)
+    {
+      int uiAntPwrOnOff = 0;
+      string Get5vAntennae = "Disabled";
+      Log.WriteFile(Log.LogType.Log, "Setting TechnoTrend DVB-T 5v Antennae Power enabled:{0}", onOff);
+      bdaapiSetDVBTAntPwr(_handle, onOff);
+      bdaapiGetDVBTAntPwr(_handle, ref uiAntPwrOnOff);
+      if (uiAntPwrOnOff == 0) Get5vAntennae = "Disabled";
+      if (uiAntPwrOnOff == 1) Get5vAntennae = "Enabled";
+      if (uiAntPwrOnOff == 2) Get5vAntennae = "Not Connected";
+      Log.WriteFile(Log.LogType.Log, "TechnoTrend DVB-T 5v Antennae status:{0}", Get5vAntennae);
     }
 
     unsafe public static void OnSlotStatus(UInt32 Context, Byte nSlot, Byte nStatus, SlotInfo* csInfo)
