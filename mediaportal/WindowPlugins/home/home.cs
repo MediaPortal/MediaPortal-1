@@ -211,8 +211,8 @@ namespace MediaPortal.GUI.Home
 		}
     protected override void OnPageLoad()
     {
-      GUIVideoOverlay videoOverlay = (GUIVideoOverlay)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY);
-      if ((videoOverlay != null) && (videoOverlay.Focused)) videoOverlay.Focused = false;
+      GUIOverlayWindow overlayWin = GetPreviewWindow();
+      if ((overlayWin != null) && (overlayWin.Focused)) overlayWin.Focused = false;
       _previewSelected = false;
     }
 
@@ -508,12 +508,13 @@ namespace MediaPortal.GUI.Home
           GUIControl cntl = GetControl(base.GetFocusControlId());
           if (cntl != null) cntl.Focus = false;
 
-          if ((g_Player.Visible) && (g_Player.IsVideo)) // when a video is displayed
+          //if ((g_Player.Visible) && (g_Player.IsVideo)) // when a video is displayed
+          if (g_Player.Visible)
           {
-            GUIVideoOverlay videoOverlay = (GUIVideoOverlay)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY);
-            if (videoOverlay != null)
+            GUIOverlayWindow overlayWin = GetPreviewWindow();
+            if (overlayWin != null)
             {
-              videoOverlay.Focused = true;
+              overlayWin.Focused = true;
               _previewSelected = true;
             }
             else  // no preview Window present -> focus Topbar
@@ -531,8 +532,8 @@ namespace MediaPortal.GUI.Home
           _previewSelected = false;
           
           // loose Focus on PreView Window
-          GUIVideoOverlay videoOverlay = (GUIVideoOverlay)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY);
-          if (videoOverlay != null) videoOverlay.Focused = false;
+          GUIOverlayWindow overlayWin = GetPreviewWindow();
+          if (overlayWin != null) overlayWin.Focused = false;
           GUIControl cntl = GetControl(base.GetFocusControlId());
           if (action.wID == Action.ActionType.ACTION_MOVE_LEFT)
           {
@@ -1921,6 +1922,14 @@ namespace MediaPortal.GUI.Home
 			GUIWindow window=GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBARHOME);
 			return (window.Focused);
 		}
+
+    GUIOverlayWindow GetPreviewWindow()
+    {
+      if (g_Player.IsVideo) return (GUIOverlayWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY);
+      if (g_Player.IsMusic) return (GUIOverlayWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY);
+      if (g_Player.IsTV) return (GUIOverlayWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY);
+      return null;
+    }
 		#endregion
 
 	}
