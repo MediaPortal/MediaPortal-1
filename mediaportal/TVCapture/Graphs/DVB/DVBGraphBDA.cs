@@ -2070,6 +2070,20 @@ namespace MediaPortal.TV.Recording
       _currentTuningObject.DiSEqC = disecqNo;
     }
 
+    protected void SetupAntennae5v()
+    {
+        string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+        {
+            bool isAntennae5vEnabled = xmlreader.GetValueAsBool("general", "Antennae5v", false);
+
+            if (_cardProperties.Supports5vAntennae)
+            {
+                _cardProperties.EnableAntenna(isAntennae5vEnabled);
+            }
+        }
+    }
+
     protected override void SendHWPids(ArrayList pids)
     {
       string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);

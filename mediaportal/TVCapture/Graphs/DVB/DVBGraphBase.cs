@@ -4154,6 +4154,11 @@ namespace MediaPortal.TV.Recording
       if (_cardProperties == null) return false;
       return _cardProperties.SupportsHardwarePidFiltering;
     }
+    public virtual bool Supports5vAntennae()
+    {
+        if (_cardProperties == null) return false;
+        return _cardProperties.Supports5vAntennae;
+    }
     public bool SupportsCamSelection()
     {
       if (_cardProperties == null) return false;

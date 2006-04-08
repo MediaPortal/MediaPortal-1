@@ -1441,6 +1441,11 @@ namespace MediaPortal.TV.Recording
       return true;
     }
 
+    public override bool Supports5vAntennae()
+    {
+        return false;
+    }
+
     private void GetTunerCapabilities()
     {
       try
