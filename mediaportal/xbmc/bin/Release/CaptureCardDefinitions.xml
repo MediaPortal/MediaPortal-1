@@ -4664,7 +4664,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"/>
-        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600 - ATSC)"		checkdevice="true"/>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600)"		checkdevice="true"/>
         <filter cat="capture"         name="VBox Bic951 Capture"				checkdevice="true"/>
       </filters>
       <connections>
@@ -4680,7 +4680,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"/>
-        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600 - ATSC)"		checkdevice="true"/>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600)"		checkdevice="true"/>
         <filter cat="capture"         name="VBox Bic951 Capture"				checkdevice="true"/>
       </filters>
       <connections>
@@ -11158,6 +11158,28 @@
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
         <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"	sinkpin="0"/>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"	sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="goTView PCI DVD" capturename="GOTVIEW DVD Video Capture" devid="ven_4444&amp;dev_0016&amp;subsys_060012ab&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="GOTVIEW DVD Tuner"         checkdevice="true"/>
+        <filter cat="tvaudio"  name="GOTVIEW DVD TvAudio"       checkdevice="true"/>
+        <filter cat="crossbar" name="GOTVIEW DVD Crossbar"      checkdevice="true"/>
+        <filter cat="capture"  name="GOTVIEW DVD Video Capture" checkdevice="true"/>
+        <filter cat="encoder"  name="GOTVIEW DVD Encoder"      checkdevice="true"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"	sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
