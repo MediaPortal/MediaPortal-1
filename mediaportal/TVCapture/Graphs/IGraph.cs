@@ -307,6 +307,7 @@ namespace MediaPortal.TV.Recording
     bool GrabEpg(TVChannel chan);
     bool StopEpgGrabbing();
     bool SupportsHardwarePidFiltering();
+    bool Supports5vAntennae();
     bool SupportsCamSelection();
     bool CanViewTimeShiftFile();
     bool IsRadio();
