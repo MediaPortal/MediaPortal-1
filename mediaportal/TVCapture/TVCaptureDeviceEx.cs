@@ -822,6 +822,15 @@ namespace MediaPortal.TV.Recording
       }
     }
 
+    public bool Supports5vAntennae
+    {
+        get
+        {
+            if (_currentGraph == null) return false;
+            return _currentGraph.Supports5vAntennae();
+        }
+    }
+      
     public bool SupportsTV
     {
       get { return _supportsTv; }
