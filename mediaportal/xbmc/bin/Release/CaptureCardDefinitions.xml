@@ -635,7 +635,7 @@
   </capturecard>
   
    <capturecard commercialname="Hauppauge PVR150" capturename="Hauppauge WinTV PVR PCI II Capture" devid="ven_4444&amp;dev_0016&amp;subsys_80030070&amp;rev_01">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
@@ -2644,12 +2644,12 @@
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
         <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
-
-<!--    Emuzed Angel PCI MPEG PVR - Not confirmed working yet   -->
 
   <capturecard commercialname="Emuzed Angel PCI MPEG PVR (a)" capturename="Angel Device" devid="ven_1033&amp;dev_013a&amp;subsys_001a1809">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
@@ -2667,7 +2667,9 @@
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
         <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -2688,7 +2690,9 @@
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
         <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -9817,7 +9821,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="HP M1070N PVR" capturename="Video Capture Device" devid="ven_14f1&amp;dev_8800&amp;subsys_48231043&amp;rev_05">
+  <capturecard commercialname="HP M1070N PVR" capturename="Conexant 2388x Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_48231043&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -9825,7 +9829,7 @@
         <filter cat="tvtuner"  name="Conexant 2388x Tuner"			  checkdevice="true"/>
         <filter cat="tvaudio"  name="Conexant 2388x TvAudio"		  checkdevice="true"/>
         <filter cat="crossbar" name="Conexant 2388x Crossbar"		  checkdevice="true"/>
-        <filter cat="capture"  name="Video Capture Device"	      checkdevice="true"/>
+        <filter cat="capture"  name="Conexant 2388x Video Capture"	      checkdevice="true"/>
         <filter cat="encoder"  name="Conexant 2388x MPEG Encoder"	checkdevice="true"/>
       </filters>
       <connections>
@@ -9834,8 +9838,8 @@
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
-        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"	sinkpin="0"/>
-        <connection sourcefilter="capture"  sourcepin="4" sinkfilter="encoder"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"	sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
