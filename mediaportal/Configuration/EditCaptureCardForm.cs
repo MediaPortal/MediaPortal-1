@@ -128,6 +128,7 @@ namespace MediaPortal.Configuration
     private ComboBox comboBoxFrameSize;
     private MediaPortal.UserInterface.Controls.MPLabel lblFrameRate;
     private ComboBox comboBoxFrameRate;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBox5vAntennae;
     TVCaptureDevice prevDevice = null;
 
     /// <summary>
@@ -452,6 +453,7 @@ namespace MediaPortal.Configuration
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditCaptureCardForm));
         this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
         this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
+        this.checkBox5vAntennae = new MediaPortal.UserInterface.Controls.MPCheckBox();
         this.comboBoxFrameRate = new System.Windows.Forms.ComboBox();
         this.lblFrameRate = new MediaPortal.UserInterface.Controls.MPLabel();
         this.lblFrameSize = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -536,6 +538,7 @@ namespace MediaPortal.Configuration
         // 
         // tabPage1
         // 
+        this.tabPage1.Controls.Add(this.checkBox5vAntennae);
         this.tabPage1.Controls.Add(this.comboBoxFrameRate);
         this.tabPage1.Controls.Add(this.lblFrameRate);
         this.tabPage1.Controls.Add(this.lblFrameSize);
@@ -556,6 +559,18 @@ namespace MediaPortal.Configuration
         this.tabPage1.TabIndex = 0;
         this.tabPage1.Text = "Capture card";
         this.tabPage1.UseVisualStyleBackColor = true;
+        // 
+        // checkBox5vAntennae
+        // 
+        this.checkBox5vAntennae.AutoSize = true;
+        this.checkBox5vAntennae.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+        this.checkBox5vAntennae.Location = new System.Drawing.Point(226, 160);
+        this.checkBox5vAntennae.Name = "checkBox5vAntennae";
+        this.checkBox5vAntennae.Size = new System.Drawing.Size(227, 17);
+        this.checkBox5vAntennae.TabIndex = 66;
+        this.checkBox5vAntennae.Text = "TechnoTrend USB - 5V antennae activation";
+        this.checkBox5vAntennae.UseVisualStyleBackColor = true;
+        this.checkBox5vAntennae.CheckedChanged += new System.EventHandler(this.checkBox5vAntennae_CheckedChanged);
         // 
         // comboBoxFrameRate
         // 
@@ -1304,6 +1319,8 @@ namespace MediaPortal.Configuration
             xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.Text);
           if (comboBoxFrameSize.Visible)
             xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.Text);
+          if (checkBox5vAntennae.Visible)
+            xmlwriter.SetValueAsBool("general", "Antennae5v", checkBox5vAntennae.Checked);
         }
         IEnumerator enumerator = this.tabPageAutotune.Controls.GetEnumerator();
         if (enumerator.MoveNext())
@@ -1377,6 +1394,7 @@ namespace MediaPortal.Configuration
       comboBoxFrameSize.Visible = false;
       lblFrameRate.Visible = false;
       lblFrameSize.Visible = false;
+      checkBox5vAntennae.Visible = false;
       TVCaptureDevice capture = CaptureCard;
       useRecordingCheckBox.Enabled = useWatchingCheckBox.Enabled = cardComboBox.Text.Length > 0;
       try
@@ -1403,6 +1421,10 @@ namespace MediaPortal.Configuration
             if (capture.SupportsHardwarePidFiltering)
             {
               checkBoxHWPidFiltering.Visible = true;
+            }
+            if (capture.Supports5vAntennae)
+            {
+                checkBox5vAntennae.Visible = true;
             }
           }
           else return false;
@@ -1538,6 +1560,7 @@ namespace MediaPortal.Configuration
 
 
               checkBoxHWPidFiltering.Checked = xmlreader.GetValueAsBool("general", "hwfiltering", false);
+              checkBox5vAntennae.Checked = xmlreader.GetValueAsBool("general", "Antennae5v", false);
               comboBoxCAM.SelectedItem = xmlreader.GetValueAsString("dvbs", "cam", "Default");
               comboBoxFrameRate.Text = xmlreader.GetValueAsString("analog", "framerate", "25 fps");
               comboBoxFrameSize.Text = xmlreader.GetValueAsString("analog", "framesize", "720x576");
@@ -1661,7 +1684,8 @@ namespace MediaPortal.Configuration
             xmlwriter.SetValue("analog", "framerate", comboBoxFrameRate.Text);
           if (comboBoxFrameSize.Visible)
             xmlwriter.SetValue("analog", "framesize", comboBoxFrameSize.Text);
-
+          if (checkBox5vAntennae.Visible)
+            xmlwriter.SetValueAsBool("general", "Antennae5v", checkBox5vAntennae.Checked);
         }
         if (capture.CardType == TVCapture.CardTypes.Digital_SS2 ||
             capture.CardType == TVCapture.CardTypes.Digital_TTPremium)
@@ -1693,6 +1717,8 @@ namespace MediaPortal.Configuration
         {
           if (checkBoxHWPidFiltering.Visible)
             xmlwriter.SetValueAsBool("general", "hwfiltering", checkBoxHWPidFiltering.Checked);
+          if (checkBox5vAntennae.Visible)
+            xmlwriter.SetValueAsBool("general", "Antennae5v", checkBox5vAntennae.Checked);
           if (comboBoxCAM.Visible)
             xmlwriter.SetValue("dvbs", "cam", comboBoxCAM.SelectedItem);
           if (comboBoxFrameRate.Visible)
@@ -1753,6 +1779,11 @@ namespace MediaPortal.Configuration
           tbRecordingFolder.Text = folderBrowserDialog.SelectedPath;
         }
       }
+    }
+
+    private void checkBox5vAntennae_CheckedChanged(object sender, EventArgs e)
+    {
+    
     }
   }
   public class CaptureFormat
