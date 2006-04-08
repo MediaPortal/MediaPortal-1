@@ -280,6 +280,10 @@ namespace MediaPortal.TV.Recording
     {
       return false;
     }
+    public bool Supports5vAntennae()
+    {
+        return false;
+    }
     public bool SupportsCamSelection()
     {
       return false;
