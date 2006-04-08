@@ -193,7 +193,7 @@ namespace MediaPortal.GUI.TV
       {
         _tvGuideFileName = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         _tvGuideFileName = Utils.RemoveTrailingSlash(_tvGuideFileName);
-        _useColorsForGenres = xmlreader.GetValueAsBool("xmltv", "_colorList", false);
+        _useColorsForGenres = xmlreader.GetValueAsBool("xmltv", "colors", false);
       }
 
       // Create a new FileSystemWatcher and set its properties.

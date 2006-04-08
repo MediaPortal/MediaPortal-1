@@ -192,7 +192,7 @@ namespace MediaPortal.GUI.Radio
       {
         _tvGuideFileName = xmlreader.GetValueAsString("xmltv", "folder", "xmltv");
         _tvGuideFileName = Utils.RemoveTrailingSlash(_tvGuideFileName);
-        _useColorsForGenres = xmlreader.GetValueAsBool("xmltv", "_colorList", false);
+        _useColorsForGenres = xmlreader.GetValueAsBool("xmltv", "colors", false);
       }
 
     }
