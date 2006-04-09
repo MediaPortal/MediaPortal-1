@@ -211,10 +211,6 @@ namespace MediaPortal.GUI.TV
 
     public override void OnAction(Action action)
     {
-      // translate the left right move from the FullScreen TV back
-      //if (action.wID == Action.ActionType.ACTION_STEP_BACK) action.wID = Action.ActionType.ACTION_MOVE_LEFT;
-      //if (action.wID == Action.ActionType.ACTION_STEP_FORWARD) action.wID = Action.ActionType.ACTION_MOVE_RIGHT;
-
       switch (action.wID)
       {
         // translate movements (up, down, left right) back
