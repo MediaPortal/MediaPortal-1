@@ -46,16 +46,20 @@
 				<id>6</id>
 				<label>341</label>
 			</control>
-
-			<!-- Trailers -->
+		        <control>
+        			<description>Eject Disc</description>
+       				<type>button</type>
+        			<id>7</id>
+        			<label>654</label>
+       				<action>100</action>
+      			</control>
 			<control>
+				<description>Trailers</description>
 				<type>button</type>
-				<id>7</id>
+				<id>8</id>
 				<hyperlink>5900</hyperlink>
 				<label>5906</label>
-				<ondown>99</ondown>
 			</control>
-			
 		</control>
 		<import>common.facade.xml</import>
 	</controls>
