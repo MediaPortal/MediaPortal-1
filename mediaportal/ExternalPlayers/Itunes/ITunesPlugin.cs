@@ -154,6 +154,10 @@ namespace MediaPortal.ITunesPlayer
           _iTunesApplication.OnPlayerPlayingTrackChangedEvent += new _IiTunesEvents_OnPlayerPlayingTrackChangedEventEventHandler(_iTunesApplication_OnPlayerPlayingTrackChangedEvent);
         }
 
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
+        msg.Label = strFile;
+        GUIWindowManager.SendThreadMessage(msg);
+
         _started = false;
         _ended = false;
         _iTunesApplication.PlayFile(strFile);
