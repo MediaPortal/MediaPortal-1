@@ -11166,16 +11166,16 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="goTView PCI DVD" capturename="GOTVIEW DVD Video Capture" devid="ven_4444&amp;dev_0016&amp;subsys_060012ab&amp;rev_01">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
+  <capturecard commercialname="goTView PCI DVD" capturename="GOTVIEW PCI DVD Video Capture" devid="ven_4444&amp;dev_0016&amp;subsys_060012ab&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="GOTVIEW DVD Tuner"         checkdevice="true"/>
-        <filter cat="tvaudio"  name="GOTVIEW DVD TvAudio"       checkdevice="true"/>
-        <filter cat="crossbar" name="GOTVIEW DVD Crossbar"      checkdevice="true"/>
-        <filter cat="capture"  name="GOTVIEW DVD Video Capture" checkdevice="true"/>
-        <filter cat="encoder"  name="GOTVIEW DVD Encoder"      checkdevice="true"/>
+        <filter cat="tvtuner"  name="GOTVIEW PCI DVD Tuner"         checkdevice="true"/>
+        <filter cat="tvaudio"  name="GOTVIEW PCI DVD TvAudio"       checkdevice="true"/>
+        <filter cat="crossbar" name="GOTVIEW PCI DVD Crossbar"      checkdevice="true"/>
+        <filter cat="capture"  name="GOTVIEW PCI DVD Video Capture" checkdevice="true"/>
+        <filter cat="encoder"  name="GOTVIEW PCI DVD Encoder"      checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
