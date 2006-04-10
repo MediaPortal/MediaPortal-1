@@ -69,7 +69,7 @@ namespace MediaPortal.InputDevices
       }
     }
 
-    public boid DeInit()
+    public void DeInit()
     {
     }
 
