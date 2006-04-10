@@ -159,7 +159,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="HcwRemote\irremote.cs" />
-    <Compile Include="HID\HIDListener.cs">
+    <Compile Include="Hid\HidListener.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="InputDevices.cs">
