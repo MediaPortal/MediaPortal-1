@@ -8,6 +8,10 @@
     <entry name="tv2@tvnz.co.nz">2</entry>
     <entry name="tv3.co.nz">3</entry>
     <entry name="tritv.co.nz">TriTV</entry>
+    <entry name="maoritelevision.com">Maori</entry>
+    <entry name="primetv.co.nz">Prime</entry>
+
+<!-- Following channels are no longer available from this source
     <entry name="JTV@wtv.co.nz">JTV</entry>
     <entry name="KTV@wtv.co.nz">KTV</entry>
     <entry name="CTV1@wtv.co.nz">CTV 1</entry>
@@ -16,8 +20,6 @@
     <entry name="CTV4@wtv.co.nz">CTV 4</entry>
     <entry name="CTV5@wtv.co.nz">CTV 5</entry>
     <entry name="southlandtv.co.nz">Southland TV</entry>
-    <entry name="maoritelevision.com">Maori</entry>
-    <entry name="primetv.co.nz">Prime</entry>
     <entry name="bbcworld.com">BBC World</entry>
     <entry name="cnni-apac@cnn.com">CNN</entry>
     <entry name="c4tv.co.nz">C4</entry>
@@ -58,7 +60,7 @@
     <entry name="SKY_Sport_2@skytv.co.nz">SKY Sport 2</entry>
     <entry name="SKY_Sport_3@skytv.co.nz">SKY Sport 3</entry>
     <entry name="Rugby_Channel@skytv.co.nz">Rugby Channel</entry>
-    <entry name="arts_channel@theartschannel.co.nz">Arts Channel</entry>
+    <entry name="arts_channel@theartschannel.co.nz">Arts Channel</entry> -->
 
   </section>
 
