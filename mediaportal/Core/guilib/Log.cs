@@ -56,10 +56,15 @@ namespace MediaPortal.GUI.Library
     }
     public static void BackupLogFiles()
     {
-      Initialize(LogType.Log);
-      Initialize(LogType.Recorder);
-      Initialize(LogType.Error);
-      Initialize(LogType.EPG);
+      BackupLogFile(LogType.Log);
+      BackupLogFile(LogType.Recorder);
+      BackupLogFile(LogType.Error);
+      BackupLogFile(LogType.EPG);
+    }
+
+    public static void BackupLogFile(LogType logType)
+    {
+      Initialize(logType);
     }
 
     static void Initialize(LogType type)
