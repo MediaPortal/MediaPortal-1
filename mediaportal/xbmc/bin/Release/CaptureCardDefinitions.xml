@@ -5565,7 +5565,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Toshiba MPEG TV Tuner" capturename="TOSHIBA PCI TV Tuner MPEG Encoder" devid="ven_4444&amp;dev_0016&amp;subsys_00011179;rev_01">
+  <capturecard commercialname="Toshiba MPEG TV Tuner" capturename="TOSHIBA PCI TV Tuner MPEG Encoder" devid="ven_4444&amp;dev_0016&amp;subsys_00011179&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -10193,7 +10193,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Angel II Dual TV Tuner (Tuner 1)" capturename="Angel II MPEG Device" devid="ven_1033&amp;dev_013a&amp;subsys_001b1809&amp;rev_0b">
+  <capturecard commercialname="Angel II Dual TV Tuner (Tuner 1)" capturename="Angel II MPEG Device" devid="ven_1033&amp;dev_013a&amp;subsys_001b1809&amp;rev_0c">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -11460,6 +11460,29 @@
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
         <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"	sinkpin="0"/>
         <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"	sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Angel LP Single TV Tuner" capturename="Angel LP MPEG Device" devid="ven_1033&amp;dev_013a&amp;subsys_001c1809">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="Angel LP TvAudio"      checkdevice="true"/>
+        <filter cat="tvaudio"  name="Angel LP TvAudio"      checkdevice="true"/>
+        <filter cat="crossbar" name="Angel LP Crossbar"     checkdevice="true"/>
+        <filter cat="capture"  name="Angel LP MPEG Device"  checkdevice="true"/>
+        <filter cat="encoder"  name="Angel LP Encoder"      checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="2" sinkfilter="encoder"	sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
