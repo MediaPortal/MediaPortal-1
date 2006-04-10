@@ -898,7 +898,7 @@ namespace WebEPG_conf
           if( dirList.Length == 1)
           {
               System.IO.DirectoryInfo g = dirList[0];
-          if (g.Name == "CVS")
+          if (g.Name == ".svn")
               GetGrabbers(ref Main, Location);
           }
           else
