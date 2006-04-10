@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<mappings version="3">
+	<remote family="General HID">
+		<button name="BrowserBackward" code="1">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
+		</button>
+		<button name="BrowserForward" code="2" />
+		<button name="BrowserRefresh" code="3" />
+		<button name="BrowserStop" code="4" />
+		<button name="BrowserSearch" code="5" />
+		<button name="BrowserFavorites" code="6" />
+		<button name="BrowserHome" code="7" />
+		<button name="VolumeMute" code="8">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="9982" sound="click.wav" />
+		</button>
+		<button name="VolumeDown" code="9">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="102" sound="cursor.wav" />
+		</button>
+		<button name="VolumeUp" code="10">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="103" sound="cursor.wav" />
+		</button>
+		<button name="MediaNextTrack" code="11">
+			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="91" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" sound="cursor.wav" />
+		</button>
+		<button name="MediaPreviousTrack" code="12">
+			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="92" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="15" sound="cursor.wav" />
+		</button>
+		<button name="MediaStop" code="13">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="13" sound="click.wav" />
+		</button>
+		<button name="MediaPlayPause" code="14">
+			<action layer="0" condition="PLAYER" conproperty="MEDIA" command="ACTION" cmdproperty="12" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="68" sound="click.wav" />
+		</button>
+		<button name="LaunchMail" code="15" />
+		<button name="LaunchMediaSelect" code="16" />
+		<button name="LaunchApp1" code="17" />
+		<button name="LaunchApp2" code="18" />
+		<button name="BassDown" code="19" />
+		<button name="BassBoost" code="20" />
+		<button name="BassUp" code="21" />
+		<button name="TrebleDown" code="22" />
+		<button name="TrebleUp" code="23" />
+		<button name="MicrophoneVolumeMute" code="24" />
+		<button name="MicrophoneVolumeDown" code="25" />
+		<button name="MicrophoneVolumeUp" code="26" />
+		<button name="Help" code="27" />
+		<button name="Find" code="28" />
+		<button name="New" code="29" />
+		<button name="Open" code="30" />
+		<button name="Close" code="31" />
+		<button name="Save" code="32" />
+		<button name="Print" code="33" />
+		<button name="Undo" code="34" />
+		<button name="Redo" code="35" />
+		<button name="Copy" code="36" />
+		<button name="Cut" code="37" />
+		<button name="Paste" code="38" />
+		<button name="ReplyToMail" code="39" />
+		<button name="ForwardMail" code="40" />
+		<button name="SendMail" code="41" />
+		<button name="SpellCheck" code="42" />
+		<button name="DictateOrCommandControlToggle" code="43" />
+		<button name="MicrophoneOnOffToggle" code="44" />
+		<button name="CorrectionList" code="45" />
+		<button name="MediaPlay" code="46">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="68" sound="click.wav" />
+		</button>
+		<button name="MediaPause" code="47">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="12" sound="click.wav" />
+		</button>
+		<button name="MediaRecord" code="48">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="89" sound="click.wav" />
+		</button>
+		<button name="MediaFastForward" code="49">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="16" sound="cursor.wav" />
+		</button>
+		<button name="MediaRewind" code="50">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="17" sound="cursor.wav" />
+		</button>
+		<button name="MediaChannelUp" code="51">
+			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="95" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="5" sound="cursor.wav" />
+		</button>
+		<button name="MediaChannelDown" code="52">
+			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="94" sound="cursor.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="6" sound="cursor.wav" />
+		</button>
+	</remote>
+</mappings>

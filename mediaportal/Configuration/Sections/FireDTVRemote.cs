@@ -42,7 +42,7 @@ namespace MediaPortal.Configuration.Sections
   /// <summary>
   /// Summary description for FireDTVRemote.
   /// </summary>
-  public class FireDTVRemote : MediaPortal.Configuration.SectionSettings
+  public class FireDtvRemote : MediaPortal.Configuration.SectionSettings
   {
     private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.Splitter splitter1;
@@ -244,12 +244,12 @@ namespace MediaPortal.Configuration.Sections
     }
     #endregion
     #region Constructor and Destructor
-    public FireDTVRemote()
+    public FireDtvRemote()
       : this("FireDTV Remote")
     {
     }
 
-    public FireDTVRemote(string name)
+    public FireDtvRemote(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.
@@ -278,7 +278,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FireDTVRemote));
+      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FireDtvRemote));
       this.panel1 = new System.Windows.Forms.Panel();
       this.dataGrid1 = new System.Windows.Forms.DataGrid();
       this.contextMenu1 = new System.Windows.Forms.ContextMenu();

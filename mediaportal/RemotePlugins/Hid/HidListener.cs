@@ -30,9 +30,50 @@ using MediaPortal.Player;
 
 namespace MediaPortal.InputDevices
 {
-	public class HIDListener
+	public class HidListener
 	{
-		public static bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
+    bool controlEnabled = false;
+    bool logVerbose = false;           // Verbose logging
+    InputHandler inputHandler;
+
+    public void Init(IntPtr hwnd)
+    {
+      Init();
+    }
+
+    void Init()
+    {
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        controlEnabled = xmlreader.GetValueAsBool("remote", "HID", true);
+        logVerbose = xmlreader.GetValueAsBool("remote", "HIDVerboseLog", false);
+      }
+      try
+      {
+        inputHandler = new InputHandler("General HID");
+      }
+      catch (System.IO.FileNotFoundException)
+      {
+        controlEnabled = false;
+        Log.Write("HID: can't find default mapping file - reinstall MediaPortal");
+      }
+      catch (System.Xml.XmlException)
+      {
+        controlEnabled = false;
+        Log.Write("HID: error in default mapping file - reinstall MediaPortal");
+      }
+      catch (System.ApplicationException)
+      {
+        controlEnabled = false;
+        Log.Write("HID: version mismatch in default mapping file - reinstall MediaPortal");
+      }
+    }
+
+    public boid DeInit()
+    {
+    }
+
+		public bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
 		{
 			action = null;
 			key = (char)0;
@@ -52,90 +93,10 @@ namespace MediaPortal.InputDevices
 
 			InputDevices.LastHidRequest = (AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000);
 
-			switch(InputDevices.LastHidRequest)
-			{
-				case AppCommands.BrowserBackward:
-				{
-					keyCode = Keys.Escape;
-					return true;
-				}
+      if (logVerbose) Log.Write("HID: Command: {0} - {1}", ((msg.LParam.ToInt32() >> 16) & ~0xF000), InputDevices.LastHidRequest.ToString());
 
-				case AppCommands.MediaChannelUp:
-					if (GUIGraphicsContext.IsFullScreenVideo)
-						action = new Action(Action.ActionType.ACTION_NEXT_CHANNEL,0,0);
-					else
-						action = new Action(Action.ActionType.ACTION_PAGE_UP,0,0);
-					break;
-
-				case AppCommands.MediaChannelDown:
-					if (GUIGraphicsContext.IsFullScreenVideo)
-						action = new Action(Action.ActionType.ACTION_PREV_CHANNEL,0,0);
-					else
-						action = new Action(Action.ActionType.ACTION_PAGE_DOWN,0,0);
-					break;
-
-				case AppCommands.MediaFastForward:
-					action = new Action(Action.ActionType.ACTION_FORWARD,0,0);
-					break;
-
-				case AppCommands.MediaPause:
-					action = new Action(Action.ActionType.ACTION_PAUSE,0,0);
-					break;
-
-				case AppCommands.MediaPlay:
-					action = new Action(Action.ActionType.ACTION_PLAY,0,0);
-					break;
-
-				case AppCommands.MediaPlayPause:
-					if(g_Player.Playing)
-						action = new Action(Action.ActionType.ACTION_PAUSE,0,0);
-					else if(g_Player.Paused)
-						action = new Action(Action.ActionType.ACTION_PLAY,0,0);
-
-					break;
-
-				case AppCommands.MediaStop:
-					action = new Action(Action.ActionType.ACTION_STOP,0,0);
-					break;
-
-				case AppCommands.MediaRecord:
-					action = new Action(Action.ActionType.ACTION_RECORD,0,0);
-					break;
-
-				case AppCommands.MediaRewind:
-					action = new Action(Action.ActionType.ACTION_REWIND,0,0);
-					break;
-
-				case AppCommands.MediaNextTrack:
-					if ((g_Player.Playing) && (g_Player.IsDVD))
-						action = new Action(Action.ActionType.ACTION_NEXT_CHAPTER,0,0);
-					else
-						action = new Action(Action.ActionType.ACTION_NEXT_ITEM,0,0);
-					break;
-
-				case AppCommands.MediaPreviousTrack:
-					if ((g_Player.Playing) && (g_Player.IsDVD))
-						action = new Action(Action.ActionType.ACTION_PREV_CHAPTER,0,0);
-					else
-						action = new Action(Action.ActionType.ACTION_PREV_ITEM,0,0);
-					break;
-
-				case AppCommands.VolumeDown:
-					action = new Action(Action.ActionType.ACTION_VOLUME_DOWN,0,0);
-					break;
-
-				case AppCommands.VolumeMute:
-					action = new Action(Action.ActionType.ACTION_VOLUME_MUTE,0,0);
-					break;
-
-				case AppCommands.VolumeUp:
-					action = new Action(Action.ActionType.ACTION_VOLUME_UP,0,0);
-					break;
-
-				default:
-					Log.Write("Not handled by HIDListener: {0}", (AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000));
-					return false;
-			}
+      if (!inputHandler.MapAction((msg.LParam.ToInt32() >> 16) & ~0xF000))
+        return false;
 
 			msg.Result = new IntPtr(1);
 

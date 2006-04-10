@@ -34,8 +34,9 @@ namespace MediaPortal.InputDevices
   {
     #region Methods
 
-    public static void Init(/* SplashScreen splashScreen */)
+    public static void Init()
     {
+      HidListener.Init(GUIGraphicsContext.ActiveForm);
       MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
       FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
       HCWRemote.Init(GUIGraphicsContext.ActiveForm);
@@ -45,6 +46,7 @@ namespace MediaPortal.InputDevices
 
     public static void Stop()
     {
+      HidListener.DeInit();
       MCE2005Remote.DeInit();
       FireDTVRemote.DeInit();
       HCWRemote.DeInit();
@@ -61,7 +63,7 @@ namespace MediaPortal.InputDevices
 
       HCWRemote.WndProc(msg);
 
-      if (HIDListener.WndProc(ref msg, out action, out key, out keyCode))
+      if (HidListener.WndProc(ref msg, out action, out key, out keyCode))
         return true;
 
       if (MCE2005Remote.WndProc(ref msg, out action, out key, out keyCode))
@@ -95,6 +97,7 @@ namespace MediaPortal.InputDevices
 
     #region Fields
 
+    static HidListener HidListener = new HidListener();
     static MCE2005Remote MCE2005Remote = new MCE2005Remote();
     static HcwRemote HCWRemote = new HcwRemote();
     static X10Remote X10Remote = new X10Remote();

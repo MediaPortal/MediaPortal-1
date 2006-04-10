@@ -245,9 +245,9 @@ namespace MediaPortal.InputDevices
     /// <param name="btnCode">Button code (ref: XML file)</param>
     /// Possible exceptions: ApplicationException("No button mapping found")
     ///                      ApplicationException("No button mapping loaded")
-    public void MapAction(int btnCode)
+    public bool MapAction(int btnCode)
     {
-      DoMapAction(btnCode, -1);
+      return DoMapAction(btnCode, -1);
     }
 
 
@@ -258,9 +258,9 @@ namespace MediaPortal.InputDevices
     /// <param name="processID">Process-ID for close/kill commands</param>
     /// Possible exceptions: ApplicationException("No button mapping found")
     ///                      ApplicationException("No button mapping loaded")
-    public void MapAction(int btnCode, int processID)
+    public bool MapAction(int btnCode, int processID)
     {
-      DoMapAction(btnCode, processID);
+      return DoMapAction(btnCode, processID);
     }
 
 
@@ -271,7 +271,7 @@ namespace MediaPortal.InputDevices
     /// <param name="processID">Process-ID for close/kill commands</param>
     /// Possible exceptions: ApplicationException("No button mapping found")
     ///                      ApplicationException("No button mapping loaded")
-    void DoMapAction(int btnCode, int processID)
+    bool DoMapAction(int btnCode, int processID)
     {
       if (remote == null)   // No mapping loaded
         throw new ApplicationException("No button mapping loaded");
@@ -355,7 +355,10 @@ namespace MediaPortal.InputDevices
             }
           }
           break;
+        default:
+          return false;
       }
+      return true;
     }
 
 
