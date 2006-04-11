@@ -335,6 +335,8 @@ namespace MediaPortal.GUI.Library
      ,
       WINDOW_VIDEO_OVERLAY_TOP = 3008
      ,
+      WINDOW_MINI_GUIDE = 3009
+     ,
       WINDOW_TELETEXT = 7700
      ,
       WINDOW_FULLSCREEN_TELETEXT = 7701
