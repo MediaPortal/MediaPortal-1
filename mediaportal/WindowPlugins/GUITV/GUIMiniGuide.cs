@@ -115,10 +115,13 @@ namespace MediaPortal.GUI.TV
                     {
                         if (message.SenderControlId == 35) // listbox
                         {
-                            // switching logic
-                            GUITVHome.Navigator.ZapToChannel(lstChannels.SelectedListItem.Label2, false);
-                            GUITVHome.Navigator.ZapNow();
-                            Close();
+                            if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
+                            {
+                                // switching logic
+                                GUITVHome.Navigator.ZapToChannel(lstChannels.SelectedListItem.Label2, false);
+                                GUITVHome.Navigator.ZapNow();
+                                Close();
+                            }
                         }
                         else if (message.SenderControlId == 36) // spincontrol
                         {
