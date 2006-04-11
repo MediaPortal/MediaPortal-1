@@ -728,8 +728,11 @@ namespace MediaPortal.GUI.Library
           // render the icon
           RenderIcon(timePassed, i, dwPosX + _iconOffsetX, dwPosY + _iconOffsetY, gotFocus);
 
-          dwPosX += (_imageWidth + 10);
+          int ten = 10;
+          int buff = 0;
+          GUIGraphicsContext.ScalePosToScreenResolution(ref ten, ref buff);
 
+          dwPosX += (_imageWidth + ten);
           // render the text
           RenderLabel(timePassed, i, dwPosX, dwPosY, gotFocus);
 
