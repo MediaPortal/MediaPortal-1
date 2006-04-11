@@ -37,8 +37,8 @@ namespace MediaPortal.InputDevices
   /// </summary>
   public class X10Remote
   {
-    X10RemoteForm x10Form;
-    InputHandler x10Handler;
+    X10RemoteForm x10Form = null;
+    InputHandler x10Handler = null;
     bool controlEnabled = false;
     bool logVerbose = false;
     bool x10Medion = true;
@@ -61,33 +61,39 @@ namespace MediaPortal.InputDevices
         x10UseChannelControl = xmlreader.GetValueAsBool("remote", "X10UseChannelControl", false);
         x10Channel = xmlreader.GetValueAsInt("remote", "X10Channel", 0);
       }
-      if (controlEnabled)
-        if (x10Medion)
-          x10Handler = new InputHandler("Medion X10");
-        else if (x10Ati)
-          x10Handler = new InputHandler("ATI X10");
+      if (x10Handler == null)
+      {
+        if (controlEnabled)
+          if (x10Medion)
+            x10Handler = new InputHandler("Medion X10");
+          else if (x10Ati)
+            x10Handler = new InputHandler("ATI X10");
+          else
+            x10Handler = new InputHandler("Other X10");
         else
-          x10Handler = new InputHandler("Other X10");
-      else
-        return;
+          return;
 
-      if (logVerbose)
-      {
-        if (x10Medion)
-          Log.Write("X10Remote: Start Medion");
-        else if (x10Ati)
-          Log.Write("X10Remote: Start ATI");
-        else
-          Log.Write("X10Remote: Start Other");
+        if (logVerbose)
+        {
+          if (x10Medion)
+            Log.Write("X10Remote: Start Medion");
+          else if (x10Ati)
+            Log.Write("X10Remote: Start ATI");
+          else
+            Log.Write("X10Remote: Start Other");
+        }
       }
-      try
+      if (x10Form == null)
       {
-        x10Form = new X10RemoteForm(new AxX10._DIX10InterfaceEvents_X10CommandEventHandler(this.IX10_X10Command));
-      }
-      catch (System.Runtime.InteropServices.COMException)
-      {
-        controlEnabled = false;
-        Log.Write("X10Remote: Can't initialize");
+        try
+        {
+          x10Form = new X10RemoteForm(new AxX10._DIX10InterfaceEvents_X10CommandEventHandler(this.IX10_X10Command));
+        }
+        catch (System.Runtime.InteropServices.COMException)
+        {
+          controlEnabled = false;
+          Log.Write("X10Remote: Can't initialize");
+        }
       }
     }
 
