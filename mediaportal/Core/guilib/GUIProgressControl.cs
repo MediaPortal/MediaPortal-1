@@ -161,14 +161,14 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref iHeightLeft);
       GUIGraphicsContext.ScaleVertical(ref iHeightRight);
       //iHeight=20;
+      int off = 12;
+      GUIGraphicsContext.ScaleHorizontal(ref off);
       int percent = _percentage;
       if (percent > 100) percent = 100;
       float fWidth = (float)percent;
       fWidth /= 100.0f;
-      fWidth *= (float)(_imageBackGround.Width - 24 - iWidthLeft - iWidthRight);
+      fWidth *= (float)(_imageBackGround.Width - 2*off - iWidthLeft - iWidthRight);
 
-      int off = 12;
-      GUIGraphicsContext.ScaleHorizontal(ref off);
       int iXPos = off + _imageBackGround.XPosition;
 
       int iYPos = _imageBackGround.YPosition + (iBkgHeight - iHeightLeft) / 2;
