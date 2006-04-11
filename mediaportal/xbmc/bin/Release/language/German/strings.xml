@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <strings>
 	<characters>255</characters>
 	<string>
@@ -2410,6 +2410,10 @@
 		<value>Rekorder pausiert</value>
 	</string>
 	<string>
+		<id>765</id>
+		<value>Nicht genug freier Speicher auf Festplatte</value>
+	</string>
+	<string>
 		<id>800</id>
 		<value>Fängt an mit</value>
 	</string>
@@ -4139,11 +4143,11 @@
 	</string>
 	<string>
 		<id>8014</id>
-		<value>Der Server'{0}'reagiert nicht!</value>
+		<value>Der Server&apos;{0}&apos;reagiert nicht!</value>
 	</string>
 	<string>
 		<id>8015</id>
-		<value>Überprüfen sie das Setup für Mailbox'{0}'</value>
+		<value>Überprüfen sie das Setup für Mailbox&apos;{0}&apos;</value>
 	</string>
 	<string>
 		<id>8016</id>
