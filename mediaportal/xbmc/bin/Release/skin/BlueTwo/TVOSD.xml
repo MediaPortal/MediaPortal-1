@@ -77,8 +77,8 @@
 		<description>rec logo</description> 
 		<type>image</type> 
 		<id>39</id> 
-		<posX>400</posX> 
-		<posY>508</posY> 
+		<posX>600</posX> 
+		<posY>20</posY> 
 		<texture>rec.png</texture> 
 		<colordiffuse>ffffffff</colordiffuse>
 		<visible>yes</visible> 
@@ -88,12 +88,12 @@
 		<type>textboxscrollup</type>
 		<id>38</id>
 		<posX>220</posX> 
-		<posY>450</posY>
+		<posY>455</posY>
 		<width>330</width> 
-		<height>50</height>
+		<height>85</height>
 		<align>left</align> 
 		<label>#TV.View.description</label>
-		<font>font10</font>
+		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
@@ -117,7 +117,7 @@
 		<posX>220</posX> 
 		<posY>430</posY>
 		<align>left</align> 
-		<font>font10</font> 
+		<font>font13</font> 
 		<textcolor>FFFFFFFF</textcolor>
 	</control>
 	<control>
