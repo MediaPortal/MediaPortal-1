@@ -38,7 +38,8 @@ namespace MediaPortal.GUI.Library
       Osd,
       Topbar1,
       Topbar2,
-      Dialog
+      Dialog,
+      MiniEPG
     }
     // layers:
     //      [GUI] - [PREVIEW] - [VIDEO] - [OSD] - [TOPBAR1] - [TOPBAR2] - [DIALOG]
