@@ -38,11 +38,11 @@
 			<width>444</width>
 			<height>280</height>
 			<textXOff>5</textXOff>
-			<textYOff>20</textYOff>
+			<textYOff>17</textYOff>
 			<textXOff2>420</textXOff2>
-			<textYOff2>4</textYOff2>
+			<textYOff2>10</textYOff2>
 			<textXOff3>50</textXOff3>
-			<textYOff3>4</textYOff3>
+			<textYOff3>2</textYOff3>
 			<IconXOff>12</IconXOff>
 			<IconYOff>4</IconYOff>
 			<spinPosX>530</spinPosX>
@@ -56,9 +56,9 @@
 			<spaceBetweenItems>3</spaceBetweenItems>
 			<textureHeight>44</textureHeight>
 			<keepaspectratio>no</keepaspectratio>
-			<font>font10</font>
-			<font2>font10</font2>
-			<font3>font10</font3>
+			<font>font13</font>
+			<font2>font13</font2>
+			<font3>font13</font3>
 			<remoteColor>ffffffff</remoteColor>   <!-- used for selected channel -->
 			<onleft>36</onleft>
 			<onright>34</onright>
