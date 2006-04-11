@@ -5288,4 +5288,8 @@
     <value>Minesweeper</value>
   </string>    
   <!-- End Minesweeper Strings -->
+  <string>
+	<id>10104</id>
+	<value>Mini EPG</value>
+  </string>
 </strings>
