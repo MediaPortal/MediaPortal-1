@@ -10,19 +10,19 @@
 			<texture>context_background.png</texture>
 			<width>-</width>
 			<height>-</height>
-			<posX>100</posX>
-			<posY>100</posY>
+			<posX>130</posX>
+			<posY>130</posY>
 		</control>
 		<control>
 			<description>exit button</description>
 			<type>button</type>
 			<id>34</id>
-			<posX>560</posX>
-			<posY>135</posY>
-			<width>44</width>
-			<height>44</height>
-			<textureFocus>dialogue_shutdown_focus.png</textureFocus>
-			<textureNoFocus>dialogue_shutdown_nofocus.png</textureNoFocus>
+			<posX>575</posX>
+			<posY>132</posY>
+			<width>30</width>
+			<height>30</height>
+			<textureFocus>button_close_focus.png</textureFocus>
+			<textureNoFocus>button_close_nofocus.png</textureNoFocus>
 			<label>-</label>
 			<onleft>36</onleft>
 			<onright>34</onright>
@@ -37,13 +37,13 @@
 			<posY>180</posY>
 			<width>444</width>
 			<height>280</height>
-			<textXOff>5</textXOff>
-			<textYOff>20</textYOff>
+			<textXOff>55</textXOff>
+			<textYOff>22</textYOff>
 			<textXOff2>420</textXOff2>
-			<textYOff2>4</textYOff2>
-			<textXOff3>50</textXOff3>
-			<textYOff3>4</textYOff3>
-			<IconXOff>12</IconXOff>
+			<textYOff2>0</textYOff2>
+			<textXOff3>100</textXOff3>
+			<textYOff3>0</textYOff3>
+			<IconXOff>30</IconXOff>
 			<IconYOff>4</IconYOff>
 			<spinPosX>530</spinPosX>
 			<spinPosY>414</spinPosY>
@@ -57,7 +57,7 @@
 			<textureHeight>44</textureHeight>
 			<keepaspectratio>no</keepaspectratio>
 			<font>font10</font>
-			<font2>font10</font2>
+			<font2>font13</font2>
 			<font3>font10</font3>
 			<remoteColor>ffffffff</remoteColor>   <!-- used for selected channel -->
 			<onleft>36</onleft>
