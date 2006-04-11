@@ -1069,7 +1069,12 @@ namespace MediaPortal.TV.Recording
         }
       }
       _currentTuningObject.AudioPid = audioPid;
-
+      if (_cardProperties.IsCISupported())
+      {
+        Log.WriteFile(Log.LogType.Log, true, "DVBGraph: resending PMT to CAM");
+        UpdateCAM();
+      }
+      
       //      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }
 
@@ -1967,6 +1972,214 @@ namespace MediaPortal.TV.Recording
       }
       return false;
     }//SendPMT()
+
+    //Here we update the CAM which is required for some cards when changing audio streams on the channel
+    protected bool UpdateCAM()
+    {
+      try
+      {
+        //load PMT from disk
+        string pmtName = String.Format(@"database\pmt\pmt_{0}_{1}_{2}_{3}_{4}.dat",
+          Utils.FilterFileName(_currentTuningObject.ServiceName),
+          _currentTuningObject.NetworkID,
+          _currentTuningObject.TransportStreamID,
+          _currentTuningObject.ProgramNumber,
+          (int)Network());
+        if (!System.IO.File.Exists(pmtName))
+        {
+          //PMT is not on disk...
+          Log.WriteFile(Log.LogType.Log, true, "pmt {0} not found", pmtName);
+          _pmtRetyCount = 0;
+          _lastPMTVersion = -1;
+          _refreshPmtTable = true;
+          return false;
+        }
+
+        byte[] pmt = null;
+        using (System.IO.FileStream stream = new System.IO.FileStream(pmtName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.None))
+        {
+          long len = stream.Length;
+          //is file length valid?
+          if (len > 6)
+          {
+            //yes then read the PMT
+            pmt = new byte[len];
+            stream.Read(pmt, 0, (int)len);
+            stream.Close();
+          }
+        }
+        if (pmt == null)
+        {
+          //NO PMT read
+          Log.WriteFile(Log.LogType.Log, true, "pmt {0} empty", pmtName);
+          _pmtRetyCount = 0;
+          _lastPMTVersion = -1;
+          _refreshPmtTable = true;
+          return false;
+        }
+        if (pmt.Length < 6)
+        {
+          //PMT length is invalid
+          Log.WriteFile(Log.LogType.Log, true, "pmt {0} invalid", pmtName);
+          _pmtRetyCount = 0;
+          _lastPMTVersion = -1;
+          _refreshPmtTable = true;
+          return false;
+        }
+
+        //decode PMT
+        DVBSections sections = new DVBSections();
+        DVBSections.ChannelInfo info = new DVBSections.ChannelInfo();
+        if (!sections.GetChannelInfoFromPMT(pmt, ref info))
+        {
+          //decoding failed
+          Log.WriteFile(Log.LogType.Log, true, "pmt {0} failed to decode", pmtName);
+          _pmtRetyCount = 0;
+          _lastPMTVersion = -1;
+          _refreshPmtTable = true;
+          return false;
+        }
+        //get all pids from the PMT and check for changes
+        DVBChannel newChannel = new DVBChannel();
+        if (info.pid_list != null)
+        {
+
+          bool hasAudio = false;
+          int audioOptions = 0;
+          for (int pids = 0; pids < info.pid_list.Count; pids++)
+          {
+            DVBSections.PMTData data = (DVBSections.PMTData)info.pid_list[pids];
+            if (data.elementary_PID <= 0)
+            {
+              data.elementary_PID = -1;
+              continue;
+            }
+            if (data.isVideo)
+            {
+              newChannel.VideoPid = data.elementary_PID;
+            }
+
+            if (data.isAudio)
+            {
+              switch (audioOptions)
+              {
+                case 0:
+                  newChannel.Audio1 = data.elementary_PID;
+                  if (data.data != null)
+                  {
+                    if (data.data.Length == 3)
+                      newChannel.AudioLanguage1 = DVBSections.GetLanguageFromCode(data.data);
+                  }
+                  audioOptions++;
+                  break;
+                case 1:
+                  newChannel.Audio2 = data.elementary_PID;
+                  if (data.data != null)
+                  {
+                    if (data.data.Length == 3)
+                      newChannel.AudioLanguage2 = DVBSections.GetLanguageFromCode(data.data);
+                  }
+                  audioOptions++;
+                  break;
+                case 2:
+                  newChannel.Audio3 = data.elementary_PID;
+                  if (data.data != null)
+                  {
+                    if (data.data.Length == 3)
+                      newChannel.AudioLanguage3 = DVBSections.GetLanguageFromCode(data.data);
+                  }
+                  audioOptions++;
+                  break;
+
+              }
+
+              if (hasAudio == false)
+              {
+                newChannel.AudioPid = data.elementary_PID;
+                if (data.data != null)
+                {
+                  if (data.data.Length == 3)
+                    newChannel.AudioLanguage = DVBSections.GetLanguageFromCode(data.data);
+                }
+                hasAudio = true;
+              }
+            }//if (data.isAudio)
+
+            if (data.isAC3Audio)
+            {
+              newChannel.AC3Pid = data.elementary_PID;
+            }
+
+            if (data.isTeletext)
+            {
+              newChannel.TeletextPid = data.elementary_PID;
+            }
+
+            if (data.isDVBSubtitle)
+            {
+              newChannel.SubtitlePid = data.elementary_PID;
+            }
+          }//for (int pids =0; pids < info.pid_list.Count;pids++)
+
+          newChannel.PCRPid = info.pcr_pid;
+          _refreshPmtTable = false;
+          int pmtVersion = ((pmt[5] >> 1) & 0x1F);
+          _lastPMTVersion = pmtVersion;
+          if (_cardProperties != null)
+          {
+            // send the PMT table to the device
+            _pmtTimer = DateTime.Now;
+            _pmtSendCounter++;
+            if (_cardProperties.IsCISupported())
+            {
+              string camType = "";
+              string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
+              using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
+              {
+                camType = xmlreader.GetValueAsString("dvbs", "cam", "Viaccess");
+              }
+              Log.Write("DVBGraph:Send PMT#{0} version:{1} signal strength:{2} signal quality:{3} locked:{4} cam:{5}", _pmtSendCounter, pmtVersion, SignalStrength(), SignalQuality(), _tunerLocked, camType);
+              _streamDemuxer.DumpPMT(pmt);
+              if (_currentTuningObject.AC3Pid != 0x0)
+              {
+                if (_cardProperties.SendPMT(camType, _currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AC3Pid, pmt, (int)pmt.Length))
+                {
+                  return true;
+                }
+                else
+                {
+                  Log.Write("DVBGraph:Send PMT#{0} version:{1} failed", _pmtSendCounter, pmtVersion);
+                  _refreshPmtTable = true;
+                  _lastPMTVersion = -1;
+                  _pmtSendCounter = 0;
+                  return true;
+                }
+              }
+              else
+              {
+                if (_cardProperties.SendPMT(camType, _currentTuningObject.ProgramNumber, _currentTuningObject.VideoPid, _currentTuningObject.AudioPid, pmt, (int)pmt.Length))
+                {
+                  return true;
+                }
+                else
+                {
+                  Log.Write("DVBGraph:Send PMT#{0} version:{1} failed", _pmtSendCounter, pmtVersion);
+                  _refreshPmtTable = true;
+                  _lastPMTVersion = -1;
+                  _pmtSendCounter = 0;
+                  return true;
+                }
+              }
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+      }
+      return false;
+    }
 
     /// <summary>
     /// GetDisEqcSettings()
@@ -4130,7 +4343,7 @@ namespace MediaPortal.TV.Recording
       if (_pinDemuxerTS != null)
         DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinDemuxerTS);
       if (_pinDemuxerVideoMPEG4 != null)
-        DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinDemuxerVideoMPEG4);
+      DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinDemuxerVideoMPEG4);
       DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinAC3Out);
       DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinMPG1Out);
       DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinDemuxerAudio);
@@ -4148,7 +4361,7 @@ namespace MediaPortal.TV.Recording
       _graphState = State.Created;
       return true;
     }
-
+    
     public virtual bool SupportsHardwarePidFiltering()
     {
       if (_cardProperties == null) return false;
