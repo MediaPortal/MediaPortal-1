@@ -443,18 +443,25 @@ namespace MediaPortal.GUI.Music
                     else if(strThumb.Length == 0)
                     {
                         string albumPath = m_database.GetAlbumPath(song.artistId, song.albumId);
-                        strThumb = Utils.GetFolderThumb(albumPath);
-                        if (System.IO.File.Exists(strThumb))
+
+                        if (albumPath.Length > 0)
                         {
-                            item.IconImage = strThumb;
-                            item.IconImageBig = strThumb;
-                            item.ThumbnailImage = strThumb;
+                            albumPath = albumPath.TrimEnd(new char[]{'\\'});
+                            albumPath += "\\";
 
-                            // Save a copy to the \thumbs folder so we don't need to do this again
-                            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(strThumb);
+                            strThumb = Utils.GetFolderThumb(albumPath);
+                            if (System.IO.File.Exists(strThumb))
+                            {
+                                item.IconImage = strThumb;
+                                item.IconImageBig = strThumb;
+                                item.ThumbnailImage = strThumb;
 
-                            if(bmp != null)
-                                bmp.Save(albumThumb);
+                                // Save a copy to the \thumbs folder so we don't need to do this again
+                                System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(strThumb);
+
+                                if (bmp != null)
+                                    bmp.Save(albumThumb);
+                            }
                         }
                     }
                 }

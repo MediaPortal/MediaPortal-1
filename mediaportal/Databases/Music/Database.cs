@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -76,6 +76,10 @@ namespace MediaPortal.Music.Database
         {
             public int idAlbum = 0;
             public int idArtist = 0;
+
+            // SV
+            public int idPath = -1;
+            // \SV
         };
 
 
@@ -92,7 +96,15 @@ namespace MediaPortal.Music.Database
         ArrayList m_pathids = new ArrayList();
         ArrayList m_shares = new ArrayList();
 
+        bool TreatFolderAsAlbum = false;
+        bool ScanForVariousArtists = true;
+        bool AppendPrefixToSortableNameEnd = true;
 
+        string[] ArtistNamePrefixes = new string[]
+            {
+                "the",
+                "les",
+            };
 
 
         // An event that clients can use to be notified whenever the
@@ -136,6 +148,41 @@ namespace MediaPortal.Music.Database
         {
             Open();
         }
+
+        //static void Open()
+        //{
+        //    Log.WriteFile(Log.LogType.Log, false, "Opening music database");
+        //    try
+        //    {
+        //        // Open database
+
+        //        String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
+        //          GetExecutingAssembly().Location);
+        //        try
+        //        {
+        //            System.IO.Directory.CreateDirectory(strPath + @"\database");
+        //        }
+        //        catch (Exception) { }
+        //        m_db = new SQLiteClient(@"database\musicdatabase4.db3");
+
+        //        DatabaseUtility.SetPragmas(m_db);
+        //        DatabaseUtility.AddTable(m_db, "artist", "CREATE TABLE artist ( idArtist integer primary key, strArtist text)");
+        //        DatabaseUtility.AddTable(m_db, "album", "CREATE TABLE album ( idAlbum integer primary key, idArtist integer, strAlbum text)");
+        //        DatabaseUtility.AddTable(m_db, "genre", "CREATE TABLE genre ( idGenre integer primary key, strGenre text)");
+        //        DatabaseUtility.AddTable(m_db, "path", "CREATE TABLE path ( idPath integer primary key,  strPath text)");
+        //        DatabaseUtility.AddTable(m_db, "albuminfo", "CREATE TABLE albuminfo ( idAlbumInfo integer primary key, idAlbum integer, idArtist integer,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer)");
+        //        DatabaseUtility.AddTable(m_db, "artistinfo", "CREATE TABLE artistinfo ( idArtistInfo integer primary key, idArtist integer, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text)");
+        //        DatabaseUtility.AddTable(m_db, "song", "CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer, favorite integer)");
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Log.WriteFile(Log.LogType.Log, true, "musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        //    }
+        //    Log.WriteFile(Log.LogType.Log, false, "music database opened");
+        //}
+
         static void Open()
         {
             Log.WriteFile(Log.LogType.Log, false, "Opening music database");
@@ -150,29 +197,40 @@ namespace MediaPortal.Music.Database
                     System.IO.Directory.CreateDirectory(strPath + @"\database");
                 }
                 catch (Exception) { }
-                m_db = new SQLiteClient(@"database\musicdatabase4.db3");
+
+                if(!File.Exists(@"database\musicdatabase5.db3"))
+                    Log.WriteFile(Log.LogType.Log, false, "**** Please rescan your music shares ****");
+
+                m_db = new SQLiteClient(@"database\musicdatabase5.db3");
 
                 DatabaseUtility.SetPragmas(m_db);
-                DatabaseUtility.AddTable(m_db, "artist", "CREATE TABLE artist ( idArtist integer primary key, strArtist text)");
+
+                DatabaseUtility.AddTable(m_db, "artist", "CREATE TABLE artist ( idArtist integer primary key, strArtist text, strSortName text)");
+                DatabaseUtility.AddTable(m_db, "album", "CREATE TABLE album ( idAlbum integer primary key, idArtist integer, strAlbum text, iNumArtists integer)");
+
                 DatabaseUtility.AddTable(m_db, "album", "CREATE TABLE album ( idAlbum integer primary key, idArtist integer, strAlbum text)");
                 DatabaseUtility.AddTable(m_db, "genre", "CREATE TABLE genre ( idGenre integer primary key, strGenre text)");
                 DatabaseUtility.AddTable(m_db, "path", "CREATE TABLE path ( idPath integer primary key,  strPath text)");
                 DatabaseUtility.AddTable(m_db, "albuminfo", "CREATE TABLE albuminfo ( idAlbumInfo integer primary key, idAlbum integer, idArtist integer,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer)");
                 DatabaseUtility.AddTable(m_db, "artistinfo", "CREATE TABLE artistinfo ( idArtistInfo integer primary key, idArtist integer, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text)");
                 DatabaseUtility.AddTable(m_db, "song", "CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer, favorite integer)");
-
-
             }
+
             catch (Exception ex)
             {
                 Log.WriteFile(Log.LogType.Log, true, "musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
             }
             Log.WriteFile(Log.LogType.Log, false, "music database opened");
         }
+
         ~MusicDatabase()
         {
         }
 
+        void temp()
+        {
+
+        }
         static public SQLiteClient DBHandle
         {
             get { return m_db; }
@@ -462,8 +520,12 @@ namespace MediaPortal.Music.Database
                         song.albumId = DatabaseUtility.GetAsInt(results, i, "album.idAlbum");
                         song.artistId = DatabaseUtility.GetAsInt(results, i, "album.idArtist");
 
-                        if (fields.fields.Count >= 5)
-                            song.Artist = fields.fields[4];
+                        //if (fields.fields.Count >= 5)
+                        //    song.Artist = fields.fields[4];
+
+                        if (fields.fields.Count >= 6)
+                            song.Artist = fields.fields[5];
+
                     }
                     if (genreTable && !songTable)
                     {
@@ -506,10 +568,14 @@ namespace MediaPortal.Music.Database
             return;
         }
 
-
         public int AddAlbum(string strAlbum1, int lArtistId)
         {
-          string strSQL;
+            return AddAlbum(strAlbum1, lArtistId, -1);
+        }
+
+        public int AddAlbum(string strAlbum1, int lArtistId, int lPathId)
+        {
+            string strSQL;
             try
             {
                 string strAlbum = strAlbum1;
@@ -523,47 +589,56 @@ namespace MediaPortal.Music.Database
                     string name1 = album.Album.ToLower().Trim();
                     name1 = Regex.Replace(name1, @"[^a-z0-9]*", string.Empty);
 
-                    // SourceForge Patch 1438582 (hwahrmann) Part 1 of 2
-                    //if (name1.Equals(name2) && album.idArtist == lArtistId)
-                    // Temporarily disabled (albums tracks with multiple artists are added as seperate albums. 
-                    // Need to do more work with how MP handles various artist albums.
-                    if ((name1.Equals(name2)) && (album.idArtist == lArtistId))
+                    if (lPathId != -1)
                     {
-                        return album.idAlbum;
+                        if (name1.Equals(name2) && album.idPath == lPathId)
+                        {
+                            return album.idAlbum;
+                        }
+                    }
+
+                    else
+                    {
+                        if (name1.Equals(name2))
+                        {
+                            return album.idAlbum;
+                        }
                     }
                 }
 
-                // SourceForge Patch 1438582 (hwahrmann) Part 2 of 2
-                //strSQL = String.Format("select * from album where strAlbum like '{0}' and idArtist = {1}", strAlbum, lArtistId);
-                // Temporarily disabled (albums tracks with multiple artists are added as seperate albums. 
-                // Need to do more work with how MP handles various artist albums.
                 strSQL = String.Format("select * from album where strAlbum like '{0}'", strAlbum);
                 SQLiteResultSet results;
                 results = m_db.Execute(strSQL);
 
-                if (lArtistId != DatabaseUtility.GetAsInt(results, 0, "idArtist"))
+                if (results.Rows.Count == 0)
                 {
-                  // doesnt exists, add it
+                    // doesnt exists, add it
                     strSQL = String.Format("insert into album (idAlbum, strAlbum,idArtist) values( NULL, '{0}', {1})", strAlbum, lArtistId);
                     m_db.Execute(strSQL);
-        
+
                     AlbumInfoCache album = new AlbumInfoCache();
                     album.idAlbum = m_db.LastInsertID();
                     album.Album = strAlbum1;
                     album.idArtist = lArtistId;
+                    album.idPath = lPathId;
+
                     m_albumCache.Add(album);
                     return album.idAlbum;
                 }
+
                 else
                 {
                     AlbumInfoCache album = new AlbumInfoCache();
                     album.idAlbum = DatabaseUtility.GetAsInt(results, 0, "idAlbum");
                     album.Album = strAlbum1;
                     album.idArtist = DatabaseUtility.GetAsInt(results, 0, "idArtist");
+                    album.idPath = lPathId;
+
                     m_albumCache.Add(album);
                     return album.idAlbum;
                 }
             }
+
             catch (Exception ex)
             {
                 Log.WriteFile(Log.LogType.Log, true, "musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
@@ -580,7 +655,7 @@ namespace MediaPortal.Music.Database
             m_pathCache.Clear();
             m_albumCache.Clear();
         }
-        
+
         public bool IsOpen
         {
             get { return m_db != null; }
@@ -904,6 +979,7 @@ namespace MediaPortal.Music.Database
 
             return false;
         }
+
         //added by Sam
         public bool GetRandomSong(ref Song song)
         {
@@ -1084,6 +1160,42 @@ namespace MediaPortal.Music.Database
             return false;
         }
 
+        public bool GetSongsByPathId(int nPathId, ref List<Song> songs)
+        {
+            songs.Clear();
+            if (null == m_db) return false;
+
+            string strSQL;
+            strSQL = String.Format("select * from song,path,album,genre,artist where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and path.idPath='{0}'", nPathId);
+            SQLiteResultSet results;
+            results = m_db.Execute(strSQL);
+            if (results.Rows.Count == 0) return false;
+            for (int i = 0; i < results.Rows.Count; ++i)
+            {
+                Song song = new Song();
+                song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
+                song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
+                song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
+                song.Track = DatabaseUtility.GetAsInt(results, i, "song.iTrack");
+                song.Duration = DatabaseUtility.GetAsInt(results, i, "song.iDuration");
+                song.Year = DatabaseUtility.GetAsInt(results, i, "song.iYear");
+                song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
+                song.TimesPlayed = DatabaseUtility.GetAsInt(results, i, "song.iTimesPlayed");
+                song.Rating = DatabaseUtility.GetAsInt(results, i, "song.iRating");
+                song.Favorite = (int)Math.Floor(0.5d + Double.Parse(DatabaseUtility.Get(results, i, "song.favorite"))) != 0;
+                string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
+                strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
+                song.songId = DatabaseUtility.GetAsInt(results, i, "song.idSong");
+                song.artistId = DatabaseUtility.GetAsInt(results, i, "artist.idArtist");
+                song.albumId = DatabaseUtility.GetAsInt(results, i, "album.idAlbum");
+                song.genreId = DatabaseUtility.GetAsInt(results, i, "genre.idGenre");
+                song.FileName = strFileName;
+                songs.Add(song);
+            }
+
+            return true;
+        }
+
         public bool GetSongsByArtist(int nArtistId, ref List<Song> songs)
         {
             try
@@ -1095,7 +1207,7 @@ namespace MediaPortal.Music.Database
 
                 string temp = "select distinct album.* from song,album,genre,artist,path where song.idPath=path.idPath";
                 temp += " and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist";
-                temp += " and  song.idArtist='{0}'  order by strAlbum asc";
+                temp += " and song.idArtist='{0}'  order by strAlbum asc";
 
                 string sql = string.Format(temp, nArtistId);
                 GetSongsByFilter(sql, out songs, false, true, false, false);
@@ -1138,8 +1250,7 @@ namespace MediaPortal.Music.Database
 
                 string temp = "select * from song,album,genre,artist,path where song.idPath=path.idPath ";
                 temp += "and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist  ";
-                //temp += "and  song.idArtist='{0}' and  album.idAlbum='{1}'  order by strTitle asc";
-                temp += "and  song.idArtist='{0}' and  album.idAlbum='{1}'  order by iTrack asc";
+                temp += "and song.idArtist='{0}' and  album.idAlbum='{1}'  order by iTrack asc";
 
                 string sql = string.Format(temp, nArtistId, nAlbumId);
                 GetSongsByFilter(sql, out songs, true, true, true, true);
@@ -1267,7 +1378,7 @@ namespace MediaPortal.Music.Database
             }
             return false;
         }
-        //
+
         public bool GetArtists(int searchKind, string strArtist1, ref ArrayList artists)
         {
             try
@@ -1317,7 +1428,7 @@ namespace MediaPortal.Music.Database
 
             return false;
         }
-        //
+
         public bool GetArtists(ref ArrayList artists)
         {
             try
@@ -1429,6 +1540,44 @@ namespace MediaPortal.Music.Database
 
             return false;
         }
+
+        public bool GetVariousArtistsAlbums(ref List<AlbumInfo> albums)
+        {
+            try
+            {
+                albums.Clear();
+                if (null == m_db) return false;
+
+                string variousArtists = GUILocalizeStrings.Get(340);
+
+                if (variousArtists.Length == 0)
+                    variousArtists = "Various Artists";
+
+                long idVariousArtists = AddArtist(variousArtists);
+
+                string strSQL;
+                strSQL = String.Format("select * from album where album.idArtist='{0}'", idVariousArtists);
+                SQLiteResultSet results;
+                results = m_db.Execute(strSQL);
+                if (results.Rows.Count == 0) return false;
+                for (int i = 0; i < results.Rows.Count; ++i)
+                {
+                    AlbumInfo album = new AlbumInfo();
+                    album.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
+                    album.Artist = variousArtists;
+                    albums.Add(album);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteFile(Log.LogType.Log, true, "musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+                Open();
+            }
+
+            return false;
+        }
+
         public bool GetGenres(ref ArrayList genres)
         {
             try
@@ -1455,7 +1604,7 @@ namespace MediaPortal.Music.Database
             }
             return false;
         }
-        //
+
         public bool GetGenres(int searchKind, string strGenere1, ref ArrayList genres)
         {
             try
@@ -1499,6 +1648,7 @@ namespace MediaPortal.Music.Database
             }
             return false;
         }
+
         public bool GetSongsByPath(string strPath1, ref ArrayList songs)
         {
             try
@@ -1552,7 +1702,6 @@ namespace MediaPortal.Music.Database
             return false;
         }
 
-
         public bool GetRecentlyPlayedAlbums(ref ArrayList albums)
         {
             try
@@ -1590,7 +1739,8 @@ namespace MediaPortal.Music.Database
                 if (null == m_db)
                     return string.Empty;
 
-                string sql = string.Format("select * from song, path where song.idPath=path.idPath and song.idArtist='{0}' and  song.idAlbum='{1}'  limit 1", nArtistId, nAlbumId);
+                //string sql = string.Format("select * from song, path where song.idPath=path.idPath and song.idArtist='{0}' and  song.idAlbum='{1}'  limit 1", nArtistId, nAlbumId);
+                string sql = string.Format("select path.strPath from song,path,album where song.idPath=path.idPath and album.idAlbum=song.idAlbum and album.idArtist='{0}' and  album.idAlbum='{1}'  limit 1", nArtistId, nAlbumId);
                 SQLiteResultSet results = m_db.Execute(sql);
 
                 if (results.Rows.Count > 0)
@@ -2046,6 +2196,55 @@ namespace MediaPortal.Music.Database
             return false;
 
         }
+
+        public bool GetSongsByAlbumID(int albumId, ref List<Song> songs)
+        {
+            try
+            {
+                songs.Clear();
+                if (null == m_db) return false;
+
+                string strSQL;
+                strSQL = String.Format("select song.idSong,artist.idArtist,album.idAlbum,genre.idGenre,song.favorite,song.strTitle, song.iYear, song.iDuration, song.iTrack, song.iTimesPlayed, song.strFileName, song.iRating, path.strPath, genre.strGenre, album.strAlbum, artist.strArtist from song,path,album,genre,artist where song.idPath=path.idPath and song.idAlbum=album.idAlbum and song.idGenre=genre.idGenre and song.idArtist=artist.idArtist and album.idAlbum={0} and path.idPath=song.idPath order by song.iTrack", albumId);
+                SQLiteResultSet results;
+                results = m_db.Execute(strSQL);
+                if (results.Rows.Count == 0) return false;
+                for (int i = 0; i < results.Rows.Count; ++i)
+                {
+                    Song song = new Song();
+                    song.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
+                    song.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
+                    song.Genre = DatabaseUtility.Get(results, i, "genre.strGenre");
+                    song.Track = DatabaseUtility.GetAsInt(results, i, "song.iTrack");
+                    song.Duration = DatabaseUtility.GetAsInt(results, i, "song.iDuration");
+                    song.Year = DatabaseUtility.GetAsInt(results, i, "song.iYear");
+                    song.Title = DatabaseUtility.Get(results, i, "song.strTitle");
+                    song.Favorite = (int)Math.Floor(0.5d + Double.Parse(DatabaseUtility.Get(results, i, "song.favorite"))) != 0;
+                    song.TimesPlayed = DatabaseUtility.GetAsInt(results, i, "song.iTimesPlayed");
+                    song.Rating = DatabaseUtility.GetAsInt(results, i, "song.iRating");
+
+                    song.artistId = DatabaseUtility.GetAsInt(results, i, "artist.idArtist");
+                    song.albumId = DatabaseUtility.GetAsInt(results, i, "album.idAlbum");
+                    song.genreId = DatabaseUtility.GetAsInt(results, i, "genre.idGenre");
+                    string strFileName = DatabaseUtility.Get(results, i, "path.strPath");
+                    strFileName += DatabaseUtility.Get(results, i, "song.strFileName");
+                    song.FileName = strFileName;
+
+                    songs.Add(song);
+                }
+
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Log.WriteFile(Log.LogType.Log, true, "musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+                Open();
+            }
+
+            return false;
+        }
+
         public void CheckVariousArtistsAndCoverArt()
         {
             if (m_albumCache.Count <= 0)
@@ -2153,9 +2352,18 @@ namespace MediaPortal.Music.Database
         int PathNum;
         string strSQL;
 
-
         public int MusicDatabaseReorg(ArrayList shares)
         {
+            return MusicDatabaseReorg(shares, TreatFolderAsAlbum, ScanForVariousArtists);
+        }
+
+        public int MusicDatabaseReorg(ArrayList shares, bool treatFolderAsAlbum, bool scanForVariousArtists)
+        {
+            // Make sure we use the selected settings if the user hasn't saved the
+            // configuration...
+            TreatFolderAsAlbum = treatFolderAsAlbum;
+            ScanForVariousArtists = scanForVariousArtists;
+
             if (shares == null)
             {
                 LoadShares();
@@ -2166,8 +2374,13 @@ namespace MediaPortal.Music.Database
             }
             DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
 
+            DateTime startTime = DateTime.Now;
+            int fileCount = 0;
+
             try
             {
+                Log.Write("Musicdatabasereorg: Beginning music database reorganization...");
+
                 BeginTransaction();
                 /// Delete song that are in non-existing MusicFolders (for example: you moved everything to another disk)
                 MyArgs.progress = 2;
@@ -2177,7 +2390,6 @@ namespace MediaPortal.Music.Database
 
 
                 /// Delete files that don't exist anymore (example: you deleted files from the Windows Explorer)
-                /// MyArgs.progress=10;
                 MyArgs.progress = 4;
                 MyArgs.phase = "Removing non existing songs";
                 OnDatabaseReorgChanged(MyArgs);
@@ -2188,49 +2400,75 @@ namespace MediaPortal.Music.Database
                 MyArgs.phase = "Adding new files";
                 OnDatabaseReorgChanged(MyArgs);
 
-                int AddMissingFilesResult = AddMissingFiles(8, 50);
+                int AddMissingFilesResult = AddMissingFiles(8, 36, ref fileCount);
+                //int AddMissingFilesResult = AddMissingFiles(8, 50);
                 Log.Write("Musicdatabasereorg: Addmissingfiles: {0} files added", AddMissingFilesResult);
 
                 /// Update the tags
-                MyArgs.progress = 50;
+                MyArgs.progress = 38;
                 MyArgs.phase = "Updating tags";
                 OnDatabaseReorgChanged(MyArgs);
-                UpdateTags(52, 88);	//This one works for all the files in the MusicDatabase
+                UpdateTags(40, 82);	//This one works for all the files in the MusicDatabase
 
                 /// Cleanup foreign keys tables.
                 /// We added, deleted new files
                 /// We update all the tags
                 /// Now lets clean up all the foreign keys
-                MyArgs.progress = 90;
+                MyArgs.progress = 84;
                 MyArgs.phase = "Checking Artists";
                 OnDatabaseReorgChanged(MyArgs);
                 ExamineAndDeleteArtistids();
 
-                MyArgs.progress = 92;
+                MyArgs.progress = 86;
                 MyArgs.phase = "Checking Genres";
                 OnDatabaseReorgChanged(MyArgs);
                 ExamineAndDeleteGenreids();
 
-                MyArgs.progress = 94;
+                MyArgs.progress = 88;
                 MyArgs.phase = "Checking Paths";
                 OnDatabaseReorgChanged(MyArgs);
                 ExamineAndDeletePathids();
 
-                MyArgs.progress = 96;
+                MyArgs.progress = 90;
                 MyArgs.phase = "Checking Albums";
                 OnDatabaseReorgChanged(MyArgs);
                 ExamineAndDeleteAlbumids();
+
+                MyArgs.progress = 92;
+                MyArgs.phase = "Updating album artists counts";
+                OnDatabaseReorgChanged(MyArgs);
+                UpdateAlbumArtistsCounts(92, 94);
+
+                MyArgs.progress = 94;
+                MyArgs.phase = "Updating sortable artist names";
+                OnDatabaseReorgChanged(MyArgs);
+                UpdateSortableArtistNames();
+
+                // Check for a database backup and delete it if it exists
+                string basePath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                string backupDbPath = Path.Combine(basePath + @"\database", "musicdatabase4.db3.bak");
+
+                if (File.Exists(backupDbPath))
+                {
+                    MyArgs.progress = 95;
+                    MyArgs.phase = "Deleting backup database";
+                    OnDatabaseReorgChanged(MyArgs);
+
+                    File.Delete(backupDbPath);
+                }
             }
+
             catch (Exception ex)
             {
                 Log.WriteFile(Log.LogType.Error, true, "music-scan{0} {1} {2}",
                                     ex.Message, ex.Source, ex.StackTrace);
             }
+
             finally
             {
                 CommitTransaction();
 
-                MyArgs.progress = 100;
+                MyArgs.progress = 96;
                 MyArgs.phase = "Finished";
                 OnDatabaseReorgChanged(MyArgs);
 
@@ -2244,6 +2482,18 @@ namespace MediaPortal.Music.Database
                 MyArgs.phase = "done";
                 OnDatabaseReorgChanged(MyArgs);
                 EmptyCache();
+
+
+                DateTime stopTime = DateTime.Now;
+                TimeSpan ts = stopTime - startTime;
+                float fSecsPerTrack = ((float)ts.TotalSeconds / (float)fileCount);
+                string trackPerSecSummary = "";
+
+                if (fileCount > 0)
+                    trackPerSecSummary = string.Format(" ({0} seconds per track)", fSecsPerTrack);
+
+                Log.Write("Musicdatabasereorg: Music database reorganization done.  Processed {0} tracks in: {1:d2}:{2:d2}:{3:d2}{4}",
+                    fileCount, ts.Hours, ts.Minutes, ts.Seconds, trackPerSecSummary);
             }
             return (int)Errors.ERROR_OK;
         }
@@ -2445,8 +2695,13 @@ namespace MediaPortal.Music.Database
                     //Log.Write ("Tag.Artist = {0}",tag.Artist);
                     idPath = AddPath(strPath);
                     //Log.Write ("strPath= {0}",strPath);
-                    idAlbum = AddAlbum(tag.Album, idArtist);
-                    //Log.Write ("Tag.Album = {0}",tag.Album);
+
+                    if (TreatFolderAsAlbum)
+                        idAlbum = AddAlbum(tag.Album, idArtist, idPath);
+
+                    else
+                        idAlbum = AddAlbum(tag.Album, idArtist);
+                    // \SV
 
                     ulong dwCRC = 0;
                     CRCTool crc = new CRCTool();
@@ -2690,6 +2945,11 @@ namespace MediaPortal.Music.Database
                     if (SharePath.Length > 0)
                         m_shares.Add(SharePath);
                 }
+
+                // SV
+                TreatFolderAsAlbum = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
+                ScanForVariousArtists = xmlreader.GetValueAsBool("musicfiles", "scanForVariousArtists", true);
+                // \SV
             }
             return 0;
         }
@@ -2767,8 +3027,7 @@ namespace MediaPortal.Music.Database
 
         ArrayList availableFiles;
 
-
-        private int AddMissingFiles(int StartProgress, int EndProgress)
+        private int AddMissingFiles(int StartProgress, int EndProgress, ref int fileCount)
         {
             /// This seems to clear the arraylist and make it valid
             availableFiles = new ArrayList();
@@ -2824,7 +3083,8 @@ namespace MediaPortal.Music.Database
                         return (int)Errors.ERROR_REORG_SONGS;
                     }
                 }
-                catch (Exception)
+
+                catch (Exception ex)
                 {
                     Log.WriteFile(Log.LogType.Error, true, "Musicdatabasereorg: AddMissingFiles finished with error (exception for select)");
                     //m_db.Execute("rollback");
@@ -2854,6 +3114,10 @@ namespace MediaPortal.Music.Database
             } //end for-each
             Log.Write("Musicdatabasereorg: AddMissingFiles finished with SongCounter = {0}", SongCounter);
             Log.Write("Musicdatabasereorg: AddMissingFiles finished with AddedCounter = {0}", AddedCounter);
+
+            // SV
+            fileCount = SongCounter;
+            // \SV
             return SongCounter;
         }
 
@@ -2872,7 +3136,15 @@ namespace MediaPortal.Music.Database
 
             int idPath = AddPath(MusicFilePath);
             int idArtist = AddArtist(Strings.Unknown);
-            int idAlbum = AddAlbum(Strings.Unknown, idArtist);
+
+            int idAlbum = -1;
+
+            if (TreatFolderAsAlbum)
+                idAlbum = AddAlbum(Strings.Unknown, idArtist, idPath);
+
+            else
+                idAlbum = AddAlbum(Strings.Unknown, idArtist);
+
             int idGenre = AddGenre(Strings.Unknown);
 
             /// Here we are gonna make a CRC code to add to the database
@@ -2965,6 +3237,163 @@ namespace MediaPortal.Music.Database
             catch
             {
                 // Ignore
+            }
+        }
+
+        private void UpdateAlbumArtistsCounts(int startProgress, int endProgress)
+        {
+            if (m_albumCache.Count == 0)
+                return;
+
+            DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
+            int progressRange = endProgress - startProgress;
+            int totalAlbums = m_albumCache.Count;
+            int albumCounter = 0;
+            double newProgress = 0;
+
+            Hashtable artistCountTable = new Hashtable();
+            bool variousArtistsFound = false;
+
+            string strSQL;
+
+            try
+            {
+                foreach (AlbumInfoCache album in m_albumCache)
+                {
+                    artistCountTable.Clear();
+
+                    if (album.Album == Strings.Unknown)
+                        continue;
+
+                    int lAlbumId = album.idAlbum;
+                    int lArtistId = album.idArtist;
+                    bool bVarious = false;
+
+                    List<Song> songs = new List<Song>();
+
+                    if (TreatFolderAsAlbum)
+                        GetSongsByPathId(album.idPath, ref songs);
+
+                    else
+                        this.GetSongsByAlbumID(album.idAlbum, ref songs);
+
+                    ++albumCounter;
+
+                    if (songs.Count > 1)
+                    {
+                        //	Are the artists of this album all the same
+                        for (int i = 0; i < songs.Count; i++)
+                        {
+                            Song song = (Song)songs[i];
+                            artistCountTable[song.artistId] = song;
+                        }
+                    }
+
+                    int artistCount = Math.Max(1, artistCountTable.Count);
+
+                    if (artistCount > 1)
+                    {
+                        variousArtistsFound = true;
+                        Log.Write("Musicdatabasereorg: multiple album artists album found: {0}.  Updating album artist count ({1}).", album.Album, artistCount);
+
+                        foreach (DictionaryEntry entry in artistCountTable)
+                        {
+                            Song s = (Song)entry.Value;
+                            Log.Write("   ArtistID:{0}  Artist Name:{1}  Track Title:{2}", s.artistId, s.Artist, s.Title);
+                        }
+                    }
+
+                    strSQL = string.Format("update album set iNumArtists={0} where idAlbum={1}", artistCount, album.idAlbum);
+                    m_db.Execute(strSQL);
+
+                    if ((albumCounter % 10) == 0)
+                    {
+                        newProgress = startProgress + ((progressRange * albumCounter) / totalAlbums);
+                        MyArgs.progress = Convert.ToInt32(newProgress);
+                        MyArgs.phase = String.Format("Updating album {0}/{1} artist counts", albumCounter, totalAlbums);
+                        OnDatabaseReorgChanged(MyArgs);
+                    }
+                }
+
+                // Finally, set the artist id to the "Various Artists" id on all albums with more than one artist
+                if (ScanForVariousArtists && variousArtistsFound)
+                {
+                    string variousArtists = GUILocalizeStrings.Get(340);
+
+                    if (variousArtists.Length == 0)
+                        variousArtists = "various artists";
+
+                    long idVariousArtists = AddArtist(variousArtists);
+
+                    if (idVariousArtists != -1)
+                    {
+                        Log.Write("Musicdatabasereorg: updating artist id's for 'Various Artists' albums");
+
+                        strSQL = string.Format("update album set idArtist={0} where iNumArtists>1", idVariousArtists);
+                        m_db.Execute(strSQL);
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+                Log.Write("Musicdatabasereorg: {0}", ex);
+            }
+        }
+
+        private bool StripArtistNamePrefix(ref string artistName, bool appendPrefix)
+        {
+            string temp = artistName.ToLower();
+
+            foreach (string s in ArtistNamePrefixes)
+            {
+                if (s.Length == 0)
+                    continue;
+
+                string prefix = s;
+                prefix = prefix.Trim().ToLower();
+                int pos = temp.IndexOf(prefix + " ");
+                if (pos == 0)
+                {
+                    string tempName = artistName.Substring(prefix.Length).Trim();
+
+                    if (appendPrefix)
+                        artistName = string.Format("{0}, {1}", tempName, artistName.Substring(0, prefix.Length));
+
+                    else
+                        artistName = temp;
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void UpdateSortableArtistNames()
+        {
+            ArrayList artists = new ArrayList();
+            this.GetArtists(ref artists);
+
+            for (int i = 0; i < artists.Count; i++)
+            {
+                string origArtistName = (string)artists[i];
+                string sortableArtistName = origArtistName;
+
+                StripArtistNamePrefix(ref sortableArtistName, true);
+
+                try
+                {
+                    DatabaseUtility.RemoveInvalidChars(ref sortableArtistName);
+                    DatabaseUtility.RemoveInvalidChars(ref origArtistName);
+                    string strSQL = String.Format("update artist set strSortName='{0}' where strArtist like '{1}'", sortableArtistName, origArtistName);
+                    m_db.Execute(strSQL);
+                }
+
+                catch (Exception ex)
+                {
+                    Log.Write("UpdateSortableArtistNames: {0}", ex);
+                }
             }
         }
     }
