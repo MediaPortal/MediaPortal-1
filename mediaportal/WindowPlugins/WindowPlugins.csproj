@@ -790,6 +790,7 @@
     <Compile Include="GUITV\GUIFullScreenTV.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUITV\GUIMiniGuide.cs" />
     <Compile Include="GUITV\GUIRecordedTV.cs">
       <SubType>Code</SubType>
     </Compile>
