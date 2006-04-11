@@ -148,10 +148,10 @@
           <id>52</id>
           <font>font13</font>
           <font2>font18</font2>
-          <selectedColor>FFFF6600</selectedColor>
-          <textcolor>FFB2D4F5</textcolor>
-          <selectedColor2>FFFF6600</selectedColor2>
-          <textcolor2>FFB2D4F5</textcolor2>
+          <selectedColor>FFF8BC70</selectedColor>
+          <textcolor>ffffffff</textcolor>
+          <selectedColor2>FFF8BC70</selectedColor2>
+          <textcolor2>ffffffff</textcolor2>
           <colordiffuse>ffffffff</colordiffuse>
           <suffix>|</suffix>
           <textXOff>5</textXOff>
