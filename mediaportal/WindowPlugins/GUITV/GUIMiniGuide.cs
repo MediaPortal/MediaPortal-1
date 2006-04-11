@@ -141,6 +141,21 @@ namespace MediaPortal.GUI.TV
         /*****************************************/
         public override void OnAction(Action action)
         {
+            switch (action.wID)
+            {
+                case Action.ActionType.ACTION_CONTEXT_MENU:
+                    if (GetFocusControlId() == -1)
+                    {
+                        //m_bRunning = false;
+                        Close();
+                        return;
+                    }
+                    break;
+                case Action.ActionType.ACTION_PREVIOUS_MENU:
+                    //m_bRunning = false;
+                    Close();
+                    return;
+            }
             base.OnAction(action);
         }
         /*****************************************/
