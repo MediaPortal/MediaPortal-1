@@ -2628,7 +2628,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Emuzed Angel USB MPEG PVR" capturename="Angel USB Device" devid="vid_1009&amp;pid_0013">
+  <capturecard commercialname="Angel USB MPEG PVR" capturename="Angel USB MPEG Device" devid="vid_1009&amp;pid_0013">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
@@ -2636,54 +2636,8 @@
         <filter cat="tvtuner"  name="Angel USB TvTuner"  checkdevice="true"/>
         <filter cat="tvaudio"  name="Angel USB TvAudio"  checkdevice="true"/>
         <filter cat="crossbar" name="Angel USB Crossbar" checkdevice="true"/>
-        <filter cat="capture"  name="Angel USB Device"   checkdevice="true"/>
+        <filter cat="capture"  name="Angel USB MPEG Device"   checkdevice="true"/>
         <filter cat="encoder"  name="Angel USB Encoder"  checkdevice="true"/>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
-        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
-        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
-        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"	sinkpin="0"/>
-        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="1"/>
-      </connections>
-    </tv>
-  </capturecard>
-
-  <capturecard commercialname="Emuzed Angel PCI MPEG PVR (a)" capturename="Angel Device" devid="ven_1033&amp;dev_013a&amp;subsys_001a1809">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-    <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"/>
-      <filters>
-        <filter cat="tvtuner"  name="Angel TvTuner"  checkdevice="true"/>
-        <filter cat="tvaudio"  name="Angel TvAudio"  checkdevice="true"/>
-        <filter cat="crossbar" name="Angel Crossbar" checkdevice="true"/>
-        <filter cat="capture"  name="Angel Device"   checkdevice="true"/>
-        <filter cat="encoder"  name="Angel Encoder"  checkdevice="true"/>
-      </filters>
-      <connections>
-        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
-        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
-        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
-        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
-        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
-        <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"	sinkpin="0"/>
-        <connection sourcefilter="capture"  sourcepin="1" sinkfilter="encoder"	sinkpin="1"/>
-      </connections>
-    </tv>
-  </capturecard>
-
-  <capturecard commercialname="Emuzed Angel PCI MPEG PVR (b)" capturename="Angel Device" devid="angel_ch2_rev0">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
-    <tv>
-      <interface cat="encoder" video="" audio="" mpeg2="0"/>
-      <filters>
-        <filter cat="tvtuner"  name="Angel TvTuner"  checkdevice="true"/>
-        <filter cat="tvaudio"  name="Angel TvAudio"  checkdevice="true"/>
-        <filter cat="crossbar" name="Angel Crossbar" checkdevice="true"/>
-        <filter cat="capture"  name="Angel Device"   checkdevice="true"/>
-        <filter cat="encoder"  name="Angel Encoder"  checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
@@ -9307,7 +9261,7 @@
 		<filter cat="capture"     name="WinFast TV2000 XP Expert WDM Video Capture."	checkdevice="true"/>
 		<filter cat="audcapture"	name="%soundcard%"									                checkdevice="true"/>
 		<filter cat="videncoder"	name="LeadTek MPEG Video Encoder"					          checkdevice="false"/>
-		<filter cat="audencoder"	name="LeadTek Audio Encoder"					          checkdevice="false"/>
+		<filter cat="audencoder"	name="LeadTek Audio Encoder"					              checkdevice="false"/>
 		<filter cat="mux"			    name="Leadtek MPEG Muxer"							              checkdevice="false"/>
 	  </filters>
 	  <connections>
@@ -9387,20 +9341,20 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		  name="Hauppauge WinTV TvTuner"  checkdevice="true"/>
-        <filter cat="tvaudio"		  name="Hauppauge WinTV TvAudio"	checkdevice="true"/>
-        <filter cat="crossbar"		name="Hauppauge WinTV Crossbar"	checkdevice="true"/>
-        <filter cat="capture"     name="Hauppauge WinTV Capture"	checkdevice="true"/>
-        <filter cat="audcapture"	name="%soundcard%"						  checkdevice="true"/>
-		    <filter cat="mux"			    name="MainConcept (MCE) MPEG Encoder"                checkdevice="false"/>
+        <filter cat="tvtuner"		  name="Hauppauge WinTV TvTuner"        checkdevice="true"/>
+        <filter cat="tvaudio"		  name="Hauppauge WinTV TvAudio"        checkdevice="true"/>
+        <filter cat="crossbar"		name="Hauppauge WinTV Crossbar"       checkdevice="true"/>
+        <filter cat="capture"     name="Hauppauge WinTV Capture"        checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"                    checkdevice="true"/>
+		    <filter cat="mux"			    name="MainConcept (MCE) MPEG Encoder" checkdevice="false"/>
       </filters>
       <connections>
-		    <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"	sinkpin="0"/>
-        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="mux"	sinkpin="1"/>
+		    <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"      sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="mux"      sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -10152,7 +10106,7 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="Angel TvAudio"     checkdevice="true"/>
+        <filter cat="tvtuner"  name="Angel TvTuner"     checkdevice="true"/>
         <filter cat="tvaudio"  name="Angel TvAudio"     checkdevice="true"/>
         <filter cat="crossbar" name="Angel Crossbar"    checkdevice="true"/>
         <filter cat="capture"  name="Angel MPEG Device" checkdevice="true"/>
@@ -10175,7 +10129,7 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="Angel TvAudio"     checkdevice="true"/>
+        <filter cat="tvtuner"  name="Angel TvTuner"     checkdevice="true"/>
         <filter cat="tvaudio"  name="Angel TvAudio"     checkdevice="true"/>
         <filter cat="crossbar" name="Angel Crossbar"    checkdevice="true"/>
         <filter cat="capture"  name="Angel MPEG Device" checkdevice="true"/>
@@ -10198,7 +10152,7 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="Angel II TvAudio"      checkdevice="true"/>
+        <filter cat="tvtuner"  name="Angel II TvTuner"      checkdevice="true"/>
         <filter cat="tvaudio"  name="Angel II TvAudio"      checkdevice="true"/>
         <filter cat="crossbar" name="Angel II Crossbar"     checkdevice="true"/>
         <filter cat="capture"  name="Angel II MPEG Device"  checkdevice="true"/>
@@ -10221,7 +10175,7 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="Angel II TvAudio"      checkdevice="true"/>
+        <filter cat="tvtuner"  name="Angel II TvTuner"      checkdevice="true"/>
         <filter cat="tvaudio"  name="Angel II TvAudio"      checkdevice="true"/>
         <filter cat="crossbar" name="Angel II Crossbar"     checkdevice="true"/>
         <filter cat="capture"  name="Angel II MPEG Device"  checkdevice="true"/>
@@ -11060,11 +11014,11 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"				checkdevice="true"/>
-        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"				checkdevice="true"/>
-        <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		checkdevice="true"/>
-        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture"   checkdevice="true"/>
-        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"			checkdevice="true"/>
+        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"				      checkdevice="true"/>
+        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"				    checkdevice="true"/>
+        <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"      checkdevice="true"/>
+        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture" checkdevice="true"/>
+        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"       checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
@@ -11106,7 +11060,7 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="networkprovider" name="Microsoft DVBS Network Provider"  checkdevice="false"/>
         <filter cat="tunerdevice"     name="DTV-DVB Mantis DVBS BDA Receiver"	checkdevice="true"/>
       </filters>
       <connections>
@@ -11121,7 +11075,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
-        <filter cat="tunerdevice"     name="DTV-DVB Mantis DVBS BDA Receiver"	checkdevice="true"/>
+        <filter cat="tunerdevice"     name="DTV-DVB Mantis DVBT BDA Receiver"	checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
@@ -11134,8 +11088,8 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
-        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
-        <filter cat="tunerdevice"     name="DTV-DVB Mantis DVBS BDA Receiver"	checkdevice="true"/>
+        <filter cat="networkprovider" name="Microsoft DVBC Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="DTV-DVB Mantis DVBC BDA Receiver"	checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
@@ -11175,7 +11129,7 @@
         <filter cat="tvaudio"  name="GOTVIEW PCI DVD TvAudio"       checkdevice="true"/>
         <filter cat="crossbar" name="GOTVIEW PCI DVD Crossbar"      checkdevice="true"/>
         <filter cat="capture"  name="GOTVIEW PCI DVD Video Capture" checkdevice="true"/>
-        <filter cat="encoder"  name="GOTVIEW PCI DVD Encoder"      checkdevice="true"/>
+        <filter cat="encoder"  name="GOTVIEW PCI DVD Encoder"       checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
@@ -11469,7 +11423,7 @@
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="Angel LP TvAudio"      checkdevice="true"/>
+        <filter cat="tvtuner"  name="Angel LP TvTuner"      checkdevice="true"/>
         <filter cat="tvaudio"  name="Angel LP TvAudio"      checkdevice="true"/>
         <filter cat="crossbar" name="Angel LP Crossbar"     checkdevice="true"/>
         <filter cat="capture"  name="Angel LP MPEG Device"  checkdevice="true"/>
