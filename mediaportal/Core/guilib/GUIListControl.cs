@@ -82,6 +82,7 @@ namespace MediaPortal.GUI.Library
 
     protected GUIFont _font = null;
     protected GUIFont _font2 = null;
+    protected GUIFont _font3 = null;
     protected GUISpinControl _upDownControl = null;
     protected List<GUIControl> _listButtons = null;
     protected GUIverticalScrollbar _verticalScrollbar = null;
@@ -141,6 +142,8 @@ namespace MediaPortal.GUI.Library
     protected string _fontName = "";
     [XMLSkinElement("font2")]
     protected string _fontName2Name = "";
+    [XMLSkinElement("font3")]
+    protected string _fontName3Name = "";
     [XMLSkinElement("textcolor")]
     protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("textcolor2")]
@@ -274,7 +277,9 @@ namespace MediaPortal.GUI.Library
 
       _font = GUIFontManager.GetFont(_fontName);
       if (_fontName2Name == String.Empty) _fontName2Name = _fontName;
+      if (_fontName3Name == String.Empty) _fontName3Name = _fontName2Name;
       Font2 = _fontName2Name;
+      Font3 = _fontName3Name;
 
       _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
       _upDownControl.ParentControl = this;
@@ -668,7 +673,7 @@ namespace MediaPortal.GUI.Library
                   label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
                 label3.Label = pItem.Label3;
                 label3.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
-                label3.FontName = _fontName2Name;
+                label3.FontName = _fontName3Name;
                 label3.Render(timePassed);
                 label3 = null;
                 //_font.DrawText((float)dwPosX, (float)ypos, dwColor, pItem.Label3, GUIControl.Alignment.ALIGN_LEFT);
@@ -1989,6 +1994,33 @@ namespace MediaPortal.GUI.Library
           _font2 = GUIFontManager.GetFont(_fontName);
         }
       }
+    }
+
+    /// <summary>
+    /// Get/set the font for the second label.
+    /// </summary>
+    public string Font3
+    {
+        get { return _fontName3Name; }
+        set
+        {
+            if (value == null) return;
+            if (value != "")
+            {
+                _fontName3Name = value;
+                _font3 = GUIFontManager.GetFont(value);
+                if (null == _font3)
+                {
+                    _fontName3Name = _fontName2Name;
+                    _font3 = GUIFontManager.GetFont(_fontName2Name);
+                }
+            }
+            else
+            {
+                _fontName3Name = _fontName2Name;
+                _font3 = GUIFontManager.GetFont(_fontName2Name);
+            }
+        }
     }
 
     /// <summary>
