@@ -391,7 +391,7 @@ namespace MediaPortal.GUI.Music
           int iWidth = AlbumArtPicture.Width;
           int iHeight = AlbumArtPicture.Height;
           GUIGraphicsContext.Correct(ref fXPos, ref fYPos);
-
+          
           // if we also have video or visualsation
           if (CoverartFlippingEnabled && g_Player.HasVideo && g_Player.IsDVD == false && g_Player.IsTV == false && g_Player.IsTVRecording == false)
           {
@@ -443,13 +443,11 @@ namespace MediaPortal.GUI.Music
           }
           else
           {
-            //center logo in rect
+            //show albumart
             g_Player.Visible = false;
             AlbumArtPicture.Visible = true;
             GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
-            int iw = (SurroundingRectangle.Width - AlbumArtPicture.Width) / 2;
-            int ih = (SurroundingRectangle.Height - AlbumArtPicture.Height) / 2;
-            AlbumArtPicture.SetPosition(SurroundingRectangle.XPosition + iw, SurroundingRectangle.YPosition + ih);
+            AlbumArtPicture.SetPosition(((int)fXPos-GUIGraphicsContext.OffsetX), (int)fYPos);
           }
         }
         catch (Exception)
