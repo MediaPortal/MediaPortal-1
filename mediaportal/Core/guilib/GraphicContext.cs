@@ -82,9 +82,11 @@ namespace MediaPortal.GUI.Library
 		static float                    m_fPixelRatio=1.0f;						// current pixel ratio correction
 		static State                    m_eState;											// state of application
 		static bool                     m_bOverlay=true;							// boolean indicating if the overlay window is allowed to be shown
-		static int                      m_iOffsetX=0;									// x offset of GUI calibration
-		static int                      m_iOffsetY=0;									// y offset of GUI calibration
-		static bool                     m_bTopBarHidden=false; 				// Topbar hidden status for autohide
+		static int                      m_iOffsetX=0;						// x offset of GUI calibration
+		static int                      m_iOffsetY=0;						// y offset of GUI calibration
+        static float                    m_fZoomHorizontal = 1.0f;           // x zoom of GUI calibration
+        static float                    m_fZoomVertical = 1.0f;             // y zoom of GUI calibration
+        static bool                     m_bTopBarHidden=false; 				// Topbar hidden status for autohide
 		static bool											m_bAutoHideTopBar=false;      // Topbar autohide status
 		static bool											m_bDefaultTopBarHide=false;      // Topbar.xml default autohide status
 		static DateTime                 m_dtTopBarTimeOut=DateTime.Now; // Topbar timeout timer
@@ -171,7 +173,9 @@ namespace MediaPortal.GUI.Library
 			{
 				xmlWriter.SetValue("screen","offsetx",m_iOffsetX.ToString() );
 				xmlWriter.SetValue("screen","offsety",m_iOffsetY.ToString() );
-				xmlWriter.SetValue("screen","offsetosd",m_iOSDOffset.ToString());
+                xmlWriter.SetValue("screen", "zoomhorizontal", m_fZoomHorizontal.ToString());
+                xmlWriter.SetValue("screen", "zoomvertical", m_fZoomVertical.ToString());
+                xmlWriter.SetValue("screen", "offsetosd", m_iOSDOffset.ToString());
 				xmlWriter.SetValue("screen","overscanleft",m_iOverScanLeft.ToString());
 				xmlWriter.SetValue("screen","overscantop",m_iOverScanTop.ToString());
 				xmlWriter.SetValue("screen","overscanwidth",m_iOverScanWidth.ToString());
@@ -198,6 +202,8 @@ namespace MediaPortal.GUI.Library
 			Subtitles=Height-50;
 			OverScanWidth=Width;
 			OverScanHeight=Height;
+            ZoomHorizontal = 1.0f;
+            ZoomVertical = 1.0f;
 
 			string strFileName=String.Format("calib{0}x{1}.xml", Width,Height);
 			Log.Write("  load {0}" ,strFileName);
@@ -205,7 +211,9 @@ namespace MediaPortal.GUI.Library
 			{
 				m_iOffsetX=xmlReader.GetValueAsInt("screen","offsetx",0);
 				m_iOffsetY=xmlReader.GetValueAsInt("screen","offsety",0);
-				m_iOSDOffset=xmlReader.GetValueAsInt("screen","offsetosd",0);
+                m_fZoomHorizontal = xmlReader.GetValueAsFloat("screen", "zoomhorizontal", 1.0f);
+                m_fZoomVertical = xmlReader.GetValueAsFloat("screen", "zoomvertical", 1.0f);
+                m_iOSDOffset = xmlReader.GetValueAsInt("screen", "offsetosd", 0);
 				m_iOverScanLeft=xmlReader.GetValueAsInt("screen","overscanleft",0);
 				m_iOverScanTop=xmlReader.GetValueAsInt("screen","overscantop",0);
 				m_iOverScanWidth=xmlReader.GetValueAsInt("screen","overscanwidth",Width);
@@ -301,16 +309,22 @@ namespace MediaPortal.GUI.Library
 		/// <param name="bottom">bottom side</param>
 		static public void ScaleRectToScreenResolution( ref int left, ref int top, ref int right, ref int bottom)
 		{
+            // Adjust for global zoom.
+            float fZoomedScreenWidth = (float)Width * ZoomHorizontal;
+            float fZoomedScreenHeight = (float)Height * ZoomVertical;
+
+            // Get skin size
 			float fSkinWidth =(float)m_skinSize.Width;
 			float fSkinHeight=(float)m_skinSize.Height;
 
-			float fPercentX = ((float)Width ) / fSkinWidth;
-			left   = (int)Math.Round( ((float)left)	* fPercentX); 
-			right  = (int)Math.Round( ((float)right)	* fPercentX); 
-      
-			float fPercentY = ((float)Height) / fSkinHeight;
-			top    = (int)Math.Round ( ((float)top)		 * fPercentY); 
-			bottom = (int)Math.Round ( ((float)bottom) * fPercentY); 
+            // X
+			float fPercentX = fZoomedScreenWidth / fSkinWidth;
+			left   = (int)Math.Round( ((float)left)  * fPercentX); 
+			right  = (int)Math.Round( ((float)right) * fPercentX);     
+            // Y
+			float fPercentY = fZoomedScreenHeight / fSkinHeight;
+			top    = (int)Math.Round ( ((float)top)	   * fPercentY);
+            bottom = (int)Math.Round ( ((float)bottom) * fPercentY);
 		}
 
 		/// <summary>
@@ -320,13 +334,18 @@ namespace MediaPortal.GUI.Library
 		/// <param name="y">Y coordinate to scale.</param>
 		static public void ScalePosToScreenResolution(ref int x, ref int y)
 		{
-			float fSkinWidth =(float)m_skinSize.Width;
+            // Adjust for global zoom.
+            float fZoomedScreenWidth = (float)Width * ZoomHorizontal;
+            float fZoomedScreenHeight = (float)Height * ZoomVertical;
+
+            float fSkinWidth = (float)m_skinSize.Width;
 			float fSkinHeight=(float)m_skinSize.Height;
 
-			float fPercentX = ((float)Width ) / fSkinWidth;
-			float fPercentY = ((float)Height) / fSkinHeight;
-			x  = (int)Math.Round  ( ((float)x)		 * fPercentX); 
-			y  = (int)Math.Round  ( ((float)y)		 * fPercentY); 
+            // X,Y
+            float fPercentX = fZoomedScreenWidth / fSkinWidth;
+            float fPercentY = fZoomedScreenHeight / fSkinHeight;
+            x = (int)Math.Round(((float)x) * fPercentX);
+            y = (int)Math.Round(((float)y) * fPercentY);
 		}
 
 		/// <summary>
@@ -335,10 +354,14 @@ namespace MediaPortal.GUI.Library
 		/// <param name="y">Y coordinate to scale.</param>
 		static public void ScaleVertical(ref int y)
 		{
-			float fSkinHeight=(float)m_skinSize.Height;
-			float fPercentY = ((float)Height) / fSkinHeight;
-			y  = (int)Math.Round  ( ((float)y)		 * fPercentY); 
-		}
+            // Adjust for global zoom.
+            float fZoomedScreenHeight = (float)Height * ZoomVertical;
+
+            float fSkinHeight = (float)m_skinSize.Height;
+
+            float fPercentY = fZoomedScreenHeight / fSkinHeight;
+            y = (int)Math.Round(((float)y) * fPercentY);
+        }
 
         /// <summary>
         /// Scale y position for current resolution
@@ -346,9 +369,9 @@ namespace MediaPortal.GUI.Library
         /// <param name="y">Y coordinate to scale.</param>
         static public int ScaleVertical(int y)
         {
-            float fSkinHeight = (float)m_skinSize.Height;
-            float fPercentY = ((float)Height) / fSkinHeight;
-            return ((int)Math.Round(((float)y) * fPercentY));
+            int sy = y;
+            ScaleVertical(ref sy);
+            return sy;
         }
 
 		/// <summary>
@@ -357,10 +380,16 @@ namespace MediaPortal.GUI.Library
 		/// <param name="y">X coordinate to scale.</param>
 		static public void ScaleHorizontal(ref int x)
 		{
-			float fSkinWidth =(float)m_skinSize.Width;
-			float fPercentX = ((float)Width ) / fSkinWidth;
-			x  = (int)Math.Round  ( ((float)x)		 * fPercentX); 
-		}
+            // Adjust for global zoom.
+            float fZoomedScreenWidth = (float)Width * ZoomHorizontal;
+
+            float fSkinWidth = (float)m_skinSize.Width;
+
+            // X
+            float fPercentX = (fZoomedScreenWidth) / fSkinWidth;
+            x = (int)Math.Round(((float)x) * fPercentX);
+        }
+
 
         /// <summary>
         /// Scale X position for current resolution
@@ -368,9 +397,9 @@ namespace MediaPortal.GUI.Library
         /// <param name="y">X coordinate to scale.</param>
         static public int ScaleHorizontal(int x)
         {
-            float fSkinWidth = (float)m_skinSize.Width;
-            float fPercentX = ((float)Width) / fSkinWidth;
-            return ((int)Math.Round(((float)x) * fPercentX));
+            int sx = x;
+            ScaleHorizontal(ref sx);
+            return sx;
         }
 
 		/// <summary>
@@ -380,13 +409,17 @@ namespace MediaPortal.GUI.Library
 		/// <param name="y">Y coordinate to descale.</param>
 		static public void DescalePosToScreenResolution(ref int x, ref int y)
 		{
-			float fSkinWidth =(float)m_skinSize.Width;
-			float fSkinHeight=(float)m_skinSize.Height;
+            // Adjust for global zoom.
+            float fZoomedScreenWidth = (float)Width * ZoomHorizontal;
+            float fZoomedScreenHeight = (float)Height * ZoomVertical;
+            
+            float fSkinWidth = (float)m_skinSize.Width;
+			float fSkinHeight =(float)m_skinSize.Height;
 
-			float fPercentX = fSkinWidth/((float)Width ) ;
-			float fPercentY = fSkinHeight/((float)Height) ;
-			x  = (int)Math.Round  ( ((float)x)		 * fPercentX); 
-			y  = (int)Math.Round  ( ((float)y)		 * fPercentY); 
+            float fPercentX = fSkinWidth / fZoomedScreenWidth;
+            float fPercentY = fSkinHeight / fZoomedScreenHeight;
+            x = (int)Math.Round(((float)x) * fPercentX);
+            y = (int)Math.Round(((float)y) * fPercentY); 
 		}
 
 		/// <summary>
@@ -480,7 +513,7 @@ namespace MediaPortal.GUI.Library
 				if (value != m_bFullScreenVideo)
 				{
 					m_bFullScreenVideo=value;
-					if (OnVideoWindowChanged!=null) OnVideoWindowChanged();
+ 					if (OnVideoWindowChanged!=null) OnVideoWindowChanged();
 				}
 			}
 		}
@@ -564,6 +597,24 @@ namespace MediaPortal.GUI.Library
 			get { return m_iOffsetY;}
 			set { m_iOffsetY=value;}
 		}
+
+        /// <summary>
+        /// Get/Set vertical zoom screen calibration
+        /// </summary>
+        static public float ZoomVertical
+        {
+            get { return m_fZoomVertical; }
+            set { m_fZoomVertical = value; }
+        }
+
+        /// <summary>
+        /// Get/Set vertical zoom screen calibration
+        /// </summary>
+        static public float ZoomHorizontal
+        {
+            get { return m_fZoomHorizontal; }
+            set { m_fZoomHorizontal = value; }
+        }
 
 		/// <summary>
 		/// Get/Set topbar hidden status
