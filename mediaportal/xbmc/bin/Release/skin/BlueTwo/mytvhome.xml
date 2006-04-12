@@ -277,7 +277,7 @@
 			<description>record pin</description>
 			<type>image</type>
 			<id>24</id>
-			<posX>670</posX>
+			<posX>260</posX>
 			<posY>425</posY>
 			<texture>tvguide_record_button.png</texture>
 			<visible>no</visible>

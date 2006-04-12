@@ -4,8 +4,8 @@
 			<description>Date</description>
 			<type>label</type>
 			<id>200</id>
-			<posX>680</posX>
-			<posY>30</posY>
+			<posX>670</posX>
+			<posY>50</posY>
 			<label>#date</label>
 			<align>right</align>
 			<font>font13</font>
@@ -15,8 +15,8 @@
 			<description>Time</description>
 			<type>label</type>
 			<id>201</id>
-			<posX>680</posX>
-			<posY>50</posY>
+			<posX>670</posX>
+			<posY>70</posY>
 			<label>#time</label>
 			<align>right</align>
 			<font>font13</font>
