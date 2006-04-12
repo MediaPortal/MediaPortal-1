@@ -1179,7 +1179,8 @@ namespace MediaPortal.GUI.TV
               break;
           }
 
-        case 915: //TVChannels
+        //TV Channels not needed anymore after MiniEPG
+        /*case 915: //TVChannels
           {
             dlg.Reset();
             dlg.SetHeading(GUILocalizeStrings.Get(915));//TV Channels
@@ -1210,9 +1211,10 @@ namespace MediaPortal.GUI.TV
             if (dlg.SelectedLabel == -1) return;
             ChangeChannelNr(dlg.SelectedLabel + 1);
           }
-          break;
-
-        case 971: //group
+          break;*/
+        
+        //Groups not used anymore
+        /*case 971: //group
           {
             dlg.Reset();
             dlg.SetHeading(GUILocalizeStrings.Get(971));//Group
@@ -1235,7 +1237,7 @@ namespace MediaPortal.GUI.TV
               GUITVHome.Navigator.SetCurrentGroup(group.GroupName);
             }
           }
-          break;
+          break;*/
 
         case 941: // Change aspect ratio
           ShowAspectRatioMenu();
