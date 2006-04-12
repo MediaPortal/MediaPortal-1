@@ -287,7 +287,8 @@ namespace MediaPortal.PowerScheduler
       {
         m_iActiveWindow = GUIWindowManager.ActiveWindow;
 
-        if (m_iActiveWindow == (int)GUIWindow.Window.WINDOW_HOME)
+        if ((m_iActiveWindow == (int)GUIWindow.Window.WINDOW_HOME) ||
+            (m_iActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME))
         {
           if (m_bExtensiveLog) Log.Write(" PowerScheduler: ShutdownManager - in HOME Window ");
           bool enableShutdown = true;
@@ -676,7 +677,8 @@ namespace MediaPortal.PowerScheduler
     {
       if (m_bExtensiveLog) Log.Write(" PowerScheduler: PreShutdownCheck() ");
 
-      if (GUIWindowManager.ActiveWindow != 0)
+      if (!((GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_HOME) ||
+            (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME)))
       {
         Log.Write("PowerScheduler: Shutdown process aborted - home is not the active window");
         ResetShutdownTimer(0);
