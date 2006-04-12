@@ -339,7 +339,18 @@ namespace MediaPortal.GUI.Library
 			float fPercentY = ((float)Height) / fSkinHeight;
 			y  = (int)Math.Round  ( ((float)y)		 * fPercentY); 
 		}
-		
+
+        /// <summary>
+        /// Scale y position for current resolution
+        /// </summary>
+        /// <param name="y">Y coordinate to scale.</param>
+        static public int ScaleVertical(int y)
+        {
+            float fSkinHeight = (float)m_skinSize.Height;
+            float fPercentY = ((float)Height) / fSkinHeight;
+            return ((int)Math.Round(((float)y) * fPercentY));
+        }
+
 		/// <summary>
 		/// Scale X position for current resolution
 		/// </summary>
@@ -350,6 +361,17 @@ namespace MediaPortal.GUI.Library
 			float fPercentX = ((float)Width ) / fSkinWidth;
 			x  = (int)Math.Round  ( ((float)x)		 * fPercentX); 
 		}
+
+        /// <summary>
+        /// Scale X position for current resolution
+        /// </summary>
+        /// <param name="y">X coordinate to scale.</param>
+        static public int ScaleHorizontal(int x)
+        {
+            float fSkinWidth = (float)m_skinSize.Width;
+            float fPercentX = ((float)Width) / fSkinWidth;
+            return ((int)Math.Round(((float)x) * fPercentX));
+        }
 
 		/// <summary>
 		/// Descale a position from screen->skin resolutions
