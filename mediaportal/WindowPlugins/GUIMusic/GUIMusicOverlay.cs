@@ -447,11 +447,9 @@ namespace MediaPortal.GUI.Music
             g_Player.Visible = false;
             AlbumArtPicture.Visible = true;
             GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
-//            int iw = (SurroundingRectangle.Width - AlbumArtPicture.Width) / 2;
-//            int ih = (SurroundingRectangle.Height - AlbumArtPicture.Height) / 2;
-//            AlbumArtPicture.SetPosition(SurroundingRectangle.XPosition + iw, SurroundingRectangle.YPosition + ih);
-            AlbumArtPicture.SetPosition(fXPos, fYPos);
-  
+            int iw = (SurroundingRectangle.Width - AlbumArtPicture.Width) / 2;
+            int ih = (SurroundingRectangle.Height - AlbumArtPicture.Height) / 2;
+            AlbumArtPicture.SetPosition(SurroundingRectangle.XPosition + iw, SurroundingRectangle.YPosition + ih);
           }
         }
         catch (Exception)
