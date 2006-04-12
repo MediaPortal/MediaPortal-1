@@ -363,8 +363,8 @@ namespace MediaPortal.GUI.Music
         if (g_Player.HasVideo)
         {
           // if we have a video or visualisation then move surrounding rectangle by 20,20 pixels
-          int xoff = 20;
-          int yoff = 20;
+          int xoff = GUIGraphicsContext.ScaleHorizontal(20);
+          int yoff = GUIGraphicsContext.ScaleVertical(20);
           GUIGraphicsContext.ScaleHorizontal(ref xoff);
           GUIGraphicsContext.ScaleHorizontal(ref yoff);
 
