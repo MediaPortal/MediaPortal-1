@@ -243,7 +243,7 @@ namespace MediaPortal.GUI.TV
                 if (prog != null)
                 {
 //                    item.Label3 = prog.Title + " [" + prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
-                    item.Label3 = prog.Title + " [" + CalculateProgress(prog).ToString() + "%]";
+                    item.Label3 = prog.Title + " : " + CalculateProgress(prog).ToString() + "%";
                 }
                 prognext = GetNextProgram(current, prog);
                 if (prognext != null)
@@ -261,10 +261,11 @@ namespace MediaPortal.GUI.TV
         {
             TimeSpan length = prog.EndTime - prog.StartTime;
             TimeSpan passed = DateTime.Now - prog.StartTime;
-            if (passed.TotalMinutes > 0)
+            if (length.TotalMinutes > 0)
             {
                 double fprogress = (passed.TotalMinutes / length.TotalMinutes) * 100;
                 fprogress = Math.Floor(fprogress);
+                if (fprogress > 100.0f) return 100.0f;
                 return fprogress;
             }
             else
