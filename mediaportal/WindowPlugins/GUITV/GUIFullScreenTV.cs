@@ -1132,17 +1132,16 @@ namespace MediaPortal.GUI.TV
       dlg.SetHeading(924); // menu
 
       dlg.AddLocalizedString(10104); // TV MiniEPG
-      dlg.AddLocalizedString(915); // TV Channels
+      //dlg.AddLocalizedString(915); // TV Channels
       dlg.AddLocalizedString(4); // TV Guide
 
-      if (GUITVHome.Navigator.Groups.Count > 1)
-        dlg.AddLocalizedString(971); // Group
+      /*if (GUITVHome.Navigator.Groups.Count > 1)
+        dlg.AddLocalizedString(971); // Group*/
       if (Recorder.HasTeletext())
         dlg.AddLocalizedString(1441); // Fullscreen teletext
       dlg.AddLocalizedString(941); // Change aspect ratio
       if (PluginManager.IsPluginNameEnabled("MSN Messenger"))
       {
-
         dlg.AddLocalizedString(12902); // MSN Messenger
         dlg.AddLocalizedString(902); // MSN Online contacts
       }
