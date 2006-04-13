@@ -303,7 +303,6 @@ namespace MediaPortal.GUI.Video
 		{	
 			base.OnAction (action);
 			if ((action.wID==Action.ActionType.ACTION_MOVE_UP) ||
-          (action.wID == Action.ActionType.ACTION_MOVE_LEFT) ||
           (action.wID == Action.ActionType.ACTION_MOVE_RIGHT))
 			{
 				Focused=false;

@@ -329,9 +329,12 @@ namespace MediaPortal.GUI.Home
 			{
 				if(action.m_key.KeyChar == 89 || action.m_key.KeyChar == 121 ) 
 				{
-
+          return;
 				}
-				return;
+        if ((action.m_key.KeyChar == 98)  && (_previewSelected == true)) //PreView Window present and 'B' hit
+        {
+          SelectMenu();
+        }
 			}
 			if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) 
 			{
@@ -500,7 +503,24 @@ namespace MediaPortal.GUI.Home
 				}
 			}
 
-			if (action.wID==Action.ActionType.ACTION_MOVE_LEFT||action.wID==Action.ActionType.ACTION_MOVE_RIGHT)
+      if (action.wID == Action.ActionType.ACTION_MOVE_RIGHT)
+      { 
+        if (_previewSelected == false) // we are coming from Menu
+        {
+          // loose Focus on Menu
+          GUIControl cntl = GetControl(base.GetFocusControlId());
+          if (cntl != null) cntl.Focus = false;
+          // focus Topbar
+          action.wID = Action.ActionType.ACTION_MOVE_UP;
+        }
+        else  // we are coming from Preview window
+        {
+          SelectMenu();
+        }
+        return;
+			}
+
+      if (action.wID==Action.ActionType.ACTION_MOVE_LEFT)
 			{
         if (_previewSelected == false) // we are coming from Menu
         {
@@ -508,19 +528,9 @@ namespace MediaPortal.GUI.Home
           GUIControl cntl = GetControl(base.GetFocusControlId());
           if (cntl != null) cntl.Focus = false;
 
-          //if ((g_Player.Visible) && (g_Player.IsVideo)) // when a video is displayed
-          if (g_Player.Visible)
+          if (g_Player.Visible)     // when preview window is visible
           {
-            GUIOverlayWindow overlayWin = GetPreviewWindow();
-            if (overlayWin != null)
-            {
-              overlayWin.Focused = true;
-              _previewSelected = true;
-            }
-            else  // no preview Window present -> focus Topbar
-            {
-              action.wID = Action.ActionType.ACTION_MOVE_UP;
-            }
+            SelectPreView();
           }
           else   // no video present -> focus Topbar
           {
@@ -529,36 +539,18 @@ namespace MediaPortal.GUI.Home
         }
         else  // we are coming from Preview window
         {
-          _previewSelected = false;
-          
-          // loose Focus on PreView Window
-          GUIOverlayWindow overlayWin = GetPreviewWindow();
-          if (overlayWin != null) overlayWin.Focused = false;
-          GUIControl cntl = GetControl(base.GetFocusControlId());
-          if (action.wID == Action.ActionType.ACTION_MOVE_LEFT)
-          {
-            // loose Focus on Menu
-            if (cntl != null) cntl.Focus = false;
-
-            // Focus Topbar
-            action.wID = Action.ActionType.ACTION_MOVE_UP;
-          }
-          else
-          {
-            // Focus on Menu
-            if (cntl != null) cntl.Focus = true;
-          }
+          // do nothing
+          action.wID = Action.ActionType.ACTION_INVALID;
+          return;
+          // do nothing
         }
-
-        
         return;
 			}
 
 			if (action.wID==Action.ActionType.ACTION_MOVE_DOWN)
 			{	
 				if (IsTopBarActive())
-				{
-					
+				{				
 					FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
 					return;
 				}
@@ -592,9 +584,21 @@ namespace MediaPortal.GUI.Home
 
 			if (action.wID==Action.ActionType.ACTION_MOVE_UP)
 			{
-				if (IsTopBarActive())
-				{
-					
+        if (_previewSelected) // PreView Window has the focus
+        {
+          _previewSelected = false;
+          // loose Focus on PreView Window
+          GUIOverlayWindow overlayWin = GetPreviewWindow();
+          if (overlayWin != null) overlayWin.Focused = false;
+          // loose Focus on Menu
+          GUIControl cntl = GetControl(base.GetFocusControlId());
+          if (cntl != null) cntl.Focus = false;
+          // Focus Topbar
+          action.wID = Action.ActionType.ACTION_MOVE_UP;  
+          return;
+        }
+        if (IsTopBarActive())
+				{					
 					FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
 					return;
 				}
@@ -1929,6 +1933,33 @@ namespace MediaPortal.GUI.Home
       if (g_Player.IsMusic) return (GUIOverlayWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MUSIC_OVERLAY);
       if (g_Player.IsTV) return (GUIOverlayWindow)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_OVERLAY);
       return null;
+    }
+
+    void SelectMenu()
+    {
+      // loose Focus on PreView Window
+       _previewSelected = false;
+      GUIOverlayWindow overlayWin = GetPreviewWindow();
+      if (overlayWin != null) overlayWin.Focused = false;
+      //loose Focus on TopBar
+      GUIWindow winTopbar = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBARHOME);
+      if (winTopbar != null) winTopbar.Focused = false;
+      // Focus on Menu
+      FocusControl(GetID, m_iButtonIds[m_iOffset + m_iMiddle]);
+    }
+
+    void SelectPreView()
+    {
+      // loose Focus on Menu
+      GUIControl cntl = GetControl(base.GetFocusControlId());
+      if (cntl != null) cntl.Focus = false;
+      //loose Focus on TopBar
+      GUIWindow winTopbar = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBARHOME);
+      if (winTopbar != null) winTopbar.Focused = false;
+      // Focus on PreView Window
+      _previewSelected = true;
+      GUIOverlayWindow overlayWin = GetPreviewWindow();
+      if (overlayWin != null) overlayWin.Focused = true;
     }
 		#endregion
 
