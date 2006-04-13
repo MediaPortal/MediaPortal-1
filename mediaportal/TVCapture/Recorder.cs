@@ -910,7 +910,7 @@ namespace MediaPortal.TV.Recording
     {
       try
       {
-        CommandProcessor.ControlTimeShifting = false;
+        if (CommandProcessor != null) CommandProcessor.ControlTimeShifting = false;
         if (!Running)
         {
           errorMessage = "Recorder is not started";

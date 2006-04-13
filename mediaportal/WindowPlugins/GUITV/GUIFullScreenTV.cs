@@ -1804,7 +1804,7 @@ namespace MediaPortal.GUI.TV
 
       if (Recorder.IsViewing()) return;
       if (g_Player.Playing && g_Player.IsTVRecording) return;
-      if (Recorder.CommandProcessor.IsBusy) return;
+      if ((Recorder.CommandProcessor!=null) &&(Recorder.CommandProcessor.IsBusy)) return;
       //close window
       GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
       _osdWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
