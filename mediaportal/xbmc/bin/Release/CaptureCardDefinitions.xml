@@ -4622,7 +4622,7 @@
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider" name="Microsoft ATSC Network Provider"	checkdevice="false"/>
-        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600)"		checkdevice="true"/>
+        <filter cat="tunerdevice"     name="VBox TV Tuner (DTF8600 - ATSC)"		checkdevice="true"/>
         <filter cat="capture"         name="VBox Bic951 Capture"				checkdevice="true"/>
       </filters>
       <connections>
