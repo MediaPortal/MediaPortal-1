@@ -1100,10 +1100,19 @@ namespace MediaPortal.TV.Recording
           tvChan.Frequency = VideoFrequency();
           tvChan.Scrambled = false;
           //then add a new channel to the database
-          tvChan.Name = GetTeletextChannelName();
-          if (tvChan.Name == string.Empty)
+          string channelName = GetTeletextChannelName();
+          if (channelName == string.Empty)
           {
-            tvChan.Name = _channelNumber.ToString();
+              channelName = _channelNumber.ToString();
+          }
+          int otherChannelId = TVDatabase.GetChannelId(channelName);
+          if (otherChannelId == -1)
+          {
+              tvChan.Name = channelName;
+          }
+          else
+          {
+              tvChan.Name = channelName + "-" + _channelNumber.ToString();
           }
           tvChan.ID = -1;
           tvChan.Number = _channelNumber;
