@@ -1399,7 +1399,7 @@ namespace MediaPortal.TV.Recording
       {
         if (g_Player.Playing && g_Player.CurrentFile == TimeShiftFullFileName)
         {
-          Recorder.CommandProcessor.StopPlayer();
+          if (Recorder.CommandProcessor != null) Recorder.CommandProcessor.StopPlayer();
         }
         //Log.WriteFile(Log.LogType.Log, "TvCaptureDevice:RebuildGraph() delete graph");
         _currentGraph.StopEpgGrabbing();

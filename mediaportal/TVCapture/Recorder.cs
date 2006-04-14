@@ -112,6 +112,7 @@ namespace MediaPortal.TV.Recording
     {
       get
       {
+        if (_commandProcessor == null) _state = State.None;
         return (_state != State.None);
       }
     }
@@ -138,7 +139,7 @@ namespace MediaPortal.TV.Recording
       RecorderProperties.Init();
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        _commandProcessor.TVChannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
+        if (_commandProcessor != null) _commandProcessor.TVChannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
       }
 
       //import any recordings which are on disk, but not in the tv database
@@ -157,7 +158,7 @@ namespace MediaPortal.TV.Recording
 
       if (GUIGraphicsContext.DX9Device == null)
       {
-        _commandProcessor.Paused = true;
+        if (_commandProcessor != null) _commandProcessor.Paused = true;
       }
 
 
@@ -166,13 +167,16 @@ namespace MediaPortal.TV.Recording
       GUIWindowManager.Receivers += new SendMessageHandler(Recorder.OnMessage);
       _state = State.Initialized;
 
-      _commandProcessor.OnTvChannelChanged += new MultiCardBase.OnTvChannelChangeHandler(_commandProcessor_OnTvChannelChanged);
-      _commandProcessor.OnTvViewingStarted += new MultiCardBase.OnTvViewHandler(_commandProcessor_OnTvViewingStarted);
-      _commandProcessor.OnTvViewingStopped += new MultiCardBase.OnTvViewHandler(_commandProcessor_OnTvViewingStopped);
+      if (_commandProcessor != null)
+      {
+        _commandProcessor.OnTvChannelChanged += new MultiCardBase.OnTvChannelChangeHandler(_commandProcessor_OnTvChannelChanged);
+        _commandProcessor.OnTvViewingStarted += new MultiCardBase.OnTvViewHandler(_commandProcessor_OnTvViewingStarted);
+        _commandProcessor.OnTvViewingStopped += new MultiCardBase.OnTvViewHandler(_commandProcessor_OnTvViewingStopped);
 
-      _commandProcessor.TVCards.OnTvRecordingChanged += new TvCardCollection.OnTvRecordingChangedHandler(TVCards_OnTvRecordingChanged);
-      _commandProcessor.TVCards.OnTvRecordingEnded += new TvCardCollection.OnTvRecordingHandler(TVCards_OnTvRecordingEnded);
-      _commandProcessor.TVCards.OnTvRecordingStarted += new TvCardCollection.OnTvRecordingHandler(TVCards_OnTvRecordingStarted);
+        _commandProcessor.TVCards.OnTvRecordingChanged += new TvCardCollection.OnTvRecordingChangedHandler(TVCards_OnTvRecordingChanged);
+        _commandProcessor.TVCards.OnTvRecordingEnded += new TvCardCollection.OnTvRecordingHandler(TVCards_OnTvRecordingEnded);
+        _commandProcessor.TVCards.OnTvRecordingStarted += new TvCardCollection.OnTvRecordingHandler(TVCards_OnTvRecordingStarted);
+      }
     }
 
     #region recording event callbacks
@@ -211,7 +215,7 @@ namespace MediaPortal.TV.Recording
 
       //wait until the process thread has stopped.
       _state = State.None;
-      _commandProcessor.Dispose();
+      if (_commandProcessor != null) _commandProcessor.Dispose();
       _commandProcessor = null;
     }//static public void Stop()
 
