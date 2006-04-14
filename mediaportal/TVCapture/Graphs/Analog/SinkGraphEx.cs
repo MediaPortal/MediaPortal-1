@@ -38,6 +38,7 @@ using MediaPortal.GUI.Library;
 using Microsoft.Win32;
 using System.Xml;
 using TVCapture;
+using System.Windows.Forms;
 //using DirectX.Capture;
 using MediaPortal.TV.Teletext;
 
@@ -761,6 +762,10 @@ namespace MediaPortal.TV.Recording
           }
           catch (Exception ex)
           {
+            if (GUIGraphicsContext.RenderGUI == null)
+            {
+              MessageBox.Show("No supported MPEG-1 Layer II encoder found. Please install supported encoders for this device!!", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
             Log.Write(ex);
           }
 
@@ -787,6 +792,10 @@ namespace MediaPortal.TV.Recording
           }
           catch (Exception ex)
           {
+            if (GUIGraphicsContext.RenderGUI == null)
+            {
+              MessageBox.Show("No supported MPEG-1 Layer II encoder found. Please install supported encoders for this device!!", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
             Log.Write(ex);
           }
         }
@@ -828,6 +837,10 @@ namespace MediaPortal.TV.Recording
           }
           catch (Exception ex)
           {
+            if (GUIGraphicsContext.RenderGUI == null)
+            {
+              MessageBox.Show("No supported MPEG-2 video encoder found. Please install supported encoders for this device!!", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
             Log.Write(ex);
           }
 
@@ -854,6 +867,10 @@ namespace MediaPortal.TV.Recording
           }
           catch (Exception ex)
           {
+            if (GUIGraphicsContext.RenderGUI == null)
+            {
+              MessageBox.Show("No supported MPEG-2 video encoder found. Please install supported encoders for this device!!", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
             Log.Write(ex);
           }
         }
@@ -891,6 +908,10 @@ namespace MediaPortal.TV.Recording
           }
           catch (Exception ex)
           {
+            if (GUIGraphicsContext.RenderGUI == null)
+            {
+              MessageBox.Show("No supported MPEG-2 multiplexer found. Please install supported multiplexer for this device!!", "MediaPortal Settings", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
             Log.Write(ex);
           }
         }
