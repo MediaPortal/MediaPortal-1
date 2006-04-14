@@ -339,20 +339,15 @@ namespace MediaPortal.GUI.Music
 
         if (SurroundingRectangle != null)
         {
-          // if no video or visualisation, then hide the surrounding rectangle also
-          if (!g_Player.HasVideo) SurroundingRectangle.IsVisible = false;
-          else
-          {
-            //else make surrounding rectangle visible
-            SurroundingRectangle.IsVisible = true;
-            SurroundingRectangle.SetPosition(m_iPosXRect, m_iPosYRect);
+          //make surrounding rectangle visible
+          SurroundingRectangle.IsVisible = true;
+          SurroundingRectangle.SetPosition(m_iPosXRect, m_iPosYRect);
 
-            // and position the video/visualisation in middle of the rectangle
-            fx = AlbumArtPicture.XPosition;
-            fy = AlbumArtPicture.YPosition;
-            GUIGraphicsContext.Correct(ref fx, ref fy);
-            GUIGraphicsContext.VideoWindow = new Rectangle((int)fx, (int)fy, AlbumArtPicture.Width, AlbumArtPicture.Height);
-          }
+          // and position the video/visualisation in middle of the rectangle
+          fx = AlbumArtPicture.XPosition;
+          fy = AlbumArtPicture.YPosition;
+          GUIGraphicsContext.Correct(ref fx, ref fy);
+          GUIGraphicsContext.VideoWindow = new Rectangle((int)fx, (int)fy, AlbumArtPicture.Width, AlbumArtPicture.Height);
         }
       }
       else
