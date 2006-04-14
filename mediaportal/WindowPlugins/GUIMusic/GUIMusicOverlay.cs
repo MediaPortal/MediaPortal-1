@@ -330,18 +330,18 @@ namespace MediaPortal.GUI.Music
 
 
       GUIImage AlbumArtPicture = (GUIImage)GetControl((int)Controls.CONTROL_LOGO_PIC);
-      GUIImage SurroundingRectangle = (GUIImage)GetControl((int)Controls.CONTROL_LOGO_RECT);
+      GUIImage OverlayBackground = (GUIImage)GetControl((int)Controls.CONTROL_LOGO_RECT);
       // do we have album art?
       if (strThumb.Length == 0)
       {
         // no then hide the album art picture
         if (AlbumArtPicture != null) AlbumArtPicture.IsVisible = false;
 
-        if (SurroundingRectangle != null)
+        if (OverlayBackground != null)
         {
-          //make surrounding rectangle visible
-          SurroundingRectangle.IsVisible = true;
-          SurroundingRectangle.SetPosition(m_iPosXRect, m_iPosYRect);
+          //make Overlay Background visible
+          OverlayBackground.IsVisible = true;
+          OverlayBackground.SetPosition(m_iPosXRect, m_iPosYRect);
 
           // and position the video/visualisation in middle of the rectangle
           fx = AlbumArtPicture.XPosition;
@@ -353,21 +353,21 @@ namespace MediaPortal.GUI.Music
       else
       {
         // ok, we have an album art picture!
-        SurroundingRectangle.IsVisible = true;
+        OverlayBackground.IsVisible = true;
         AlbumArtPicture.IsVisible = false;
         if (g_Player.HasVideo)
         {
-          // if we have a video or visualisation then move surrounding rectangle by 20,20 pixels
+          // if we have a video or visualisation then move background by 20,20 pixels
           int xoff = 20;
           int yoff = 20;
           GUIGraphicsContext.ScaleHorizontal(ref xoff);
           GUIGraphicsContext.ScaleVertical(ref yoff);
 
-          SurroundingRectangle.SetPosition(GUIGraphicsContext.OffsetX + m_iPosXRect + xoff, GUIGraphicsContext.OffsetY + m_iPosYRect + yoff);
+          OverlayBackground.SetPosition(GUIGraphicsContext.OffsetX + m_iPosXRect + xoff, GUIGraphicsContext.OffsetY + m_iPosYRect + yoff);
         }
         else
         {
-          SurroundingRectangle.SetPosition(GUIGraphicsContext.OffsetX + m_iPosXRect, GUIGraphicsContext.OffsetY + m_iPosYRect);
+          OverlayBackground.SetPosition(GUIGraphicsContext.OffsetX + m_iPosXRect, GUIGraphicsContext.OffsetY + m_iPosYRect);
         }
       }
       // if we have an album art picture
@@ -376,7 +376,7 @@ namespace MediaPortal.GUI.Music
         try
         {
           base.RestoreControlPosition((int)Controls.CONTROL_LOGO_PIC);
-          //SurroundingRectangle.Visible=true;
+          //OverlayBackground.Visible=true;
 
           // make album art visible
           AlbumArtPicture.IsVisible = true;
