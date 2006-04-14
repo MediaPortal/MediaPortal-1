@@ -49,7 +49,7 @@ namespace MediaPortal.Configuration.Sections
         private MediaPortal.UserInterface.Controls.MPComboBox autoPlayComboBox;
         private MediaPortal.UserInterface.Controls.MPLabel labelAutoPlay;
         private System.ComponentModel.IContainer components = null;
-        private CheckBox enableCoverArtFlipping;
+        private CheckBox enableVisualisation;
 
         string[] autoPlayOptions = new string[] { "Autoplay, never ask", "Don't autoplay, never ask", "Ask every time a CD is inserted" };
 
@@ -84,7 +84,7 @@ namespace MediaPortal.Configuration.Sections
                 repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "repeat", true);
                 showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", false);
                 autoShuffleCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", true);
-                enableCoverArtFlipping.Checked = xmlreader.GetValueAsBool("musicfiles", "docoverartflipping", true);
+                enableVisualisation.Checked = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", true);
 
                 string playListFolder = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
                 playListFolder += @"\My Playlists";
@@ -124,7 +124,7 @@ namespace MediaPortal.Configuration.Sections
                 xmlwriter.SetValueAsBool("musicfiles", "repeat", repeatPlaylistCheckBox.Checked);
                 xmlwriter.SetValueAsBool("musicfiles", "showid3", showID3CheckBox.Checked);
                 xmlwriter.SetValueAsBool("musicfiles", "autoshuffle", autoShuffleCheckBox.Checked);
-                xmlwriter.SetValueAsBool("musicfiles", "docoverartflipping", enableCoverArtFlipping.Checked);
+                xmlwriter.SetValueAsBool("musicfiles", "doVisualisation", enableVisualisation.Checked);
 
                 xmlwriter.SetValue("music", "playlists", playlistFolderTextBox.Text);
 
@@ -173,7 +173,7 @@ namespace MediaPortal.Configuration.Sections
             this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-            this.enableCoverArtFlipping = new System.Windows.Forms.CheckBox();
+            this.enableVisualisation = new System.Windows.Forms.CheckBox();
             this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
             this.showID3CheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
             this.audioPlayerComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -258,7 +258,7 @@ namespace MediaPortal.Configuration.Sections
             // 
             this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.mpGroupBox1.Controls.Add(this.enableCoverArtFlipping);
+            this.mpGroupBox1.Controls.Add(this.enableVisualisation);
             this.mpGroupBox1.Controls.Add(this.label2);
             this.mpGroupBox1.Controls.Add(this.showID3CheckBox);
             this.mpGroupBox1.Controls.Add(this.audioPlayerComboBox);
@@ -270,16 +270,16 @@ namespace MediaPortal.Configuration.Sections
             this.mpGroupBox1.TabStop = false;
             this.mpGroupBox1.Text = "General Settings";
             // 
-            // enableCoverArtFlipping
+            // enableVisualisation
             // 
-            this.enableCoverArtFlipping.AutoSize = true;
-            this.enableCoverArtFlipping.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.enableCoverArtFlipping.Location = new System.Drawing.Point(162, 74);
-            this.enableCoverArtFlipping.Name = "enableCoverArtFlipping";
-            this.enableCoverArtFlipping.Size = new System.Drawing.Size(258, 30);
-            this.enableCoverArtFlipping.TabIndex = 3;
-            this.enableCoverArtFlipping.Text = "Enable visualisation (Windows \r\nMedia Player only)";
-            this.enableCoverArtFlipping.UseVisualStyleBackColor = true;
+            this.enableVisualisation.AutoSize = true;
+            this.enableVisualisation.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.enableVisualisation.Location = new System.Drawing.Point(162, 74);
+            this.enableVisualisation.Name = "enableVisualisation";
+            this.enableVisualisation.Size = new System.Drawing.Size(258, 30);
+            this.enableVisualisation.TabIndex = 3;
+            this.enableVisualisation.Text = "Enable visualisation (Windows \r\nMedia Player only)";
+            this.enableVisualisation.UseVisualStyleBackColor = true;
             // 
             // label2
             // 
