@@ -60,7 +60,7 @@ namespace MediaPortal.GUI.Music
     int m_iPosYRect = 0;
     int m_iFrame = 0;
     string m_strThumb = String.Empty;
-    bool CoverartFlippingEnabled = true;
+    bool VisualisationEnabled = true;
 
     enum Controls
     {
@@ -91,7 +91,7 @@ namespace MediaPortal.GUI.Music
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        CoverartFlippingEnabled = xmlreader.GetValueAsBool("musicfiles", "docoverartflipping", true);
+        VisualisationEnabled = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", true);
       }
     }
 
@@ -388,7 +388,7 @@ namespace MediaPortal.GUI.Music
           GUIGraphicsContext.Correct(ref fXPos, ref fYPos);
           
           // if we also have video or visualsation
-          if (CoverartFlippingEnabled && g_Player.HasVideo && g_Player.IsDVD == false && g_Player.IsTV == false && g_Player.IsTVRecording == false)
+          if (VisualisationEnabled && g_Player.HasVideo && g_Player.IsDVD == false && g_Player.IsTV == false && g_Player.IsTVRecording == false)
           {
             AlbumArtPicture.YPosition = (int)fYPos;
             int iStep = iWidth / 15;
@@ -450,6 +450,7 @@ namespace MediaPortal.GUI.Music
           m_strFile = String.Empty;
         }
       }
+      if (!VisualisationEnabled) GUIGraphicsContext.VideoWindow = new Rectangle(0, 0, 0, 0);
       base.Render(timePassed);
     }
 
