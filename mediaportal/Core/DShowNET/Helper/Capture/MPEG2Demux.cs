@@ -322,29 +322,28 @@ namespace DShowNET.Helper
       if (capture == null)
       {
           _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
-          if (capture == null)
-          {
-              Log.WriteFile(Log.LogType.Log, "mpeg2:FAILED to find Adaptec Capture Device");
-              hr = _graphBuilderInterface.Render(_pinAudioOut);
-              if (hr != 0)
-              {
-                  Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
-                  return false;
-              }
-              Log.WriteFile(Log.LogType.Log, "mpeg2:demux mpeg audio out connected ");
-          }
       }
-
+      if (capture == null)
+      {
+        //Log.WriteFile(Log.LogType.Log, "mpeg2:FAILED to find Adaptec Capture Device");
+        hr = _graphBuilderInterface.Render(_pinAudioOut);
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
+          return false;
+        }
+        Log.WriteFile(Log.LogType.Log, "mpeg2:demux mpeg audio out connected ");
+      }
       if (capture != null)
       {
-          Log.WriteFile(Log.LogType.Log, "mpeg2:Found Adaptec Capture Device");
-          hr = _graphBuilderInterface.Render(_pinLPCMOut);
-          if (hr != 0)
-          {
-              Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
-              return false;
-          }
-          Log.WriteFile(Log.LogType.Log, "mpeg2:demux lpcm audio out connected ");
+        //Log.WriteFile(Log.LogType.Log, "mpeg2:Found Adaptec Capture Device");
+        hr = _graphBuilderInterface.Render(_pinLPCMOut);
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux audio out:0x{0:X}", hr);
+          return false;
+        }
+        Log.WriteFile(Log.LogType.Log, "mpeg2:demux lpcm audio out connected ");
       }
 
       bool useOverlay = true;
@@ -522,33 +521,36 @@ namespace DShowNET.Helper
       }
 
       IBaseFilter capture;
-      _graphBuilderInterface.FindFilterByName("Adaptec USB Capture Device", out capture);
+      _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
+      /*if (capture == null)
+      {
+          _graphBuilderInterface.FindFilterByName("Adaptec USB Capture Device", out capture);
+      }*/
       if (capture == null)
       {
-          _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
-          if (capture == null)
-          {
-              Log.WriteFile(Log.LogType.Log, "mpeg2:FAILED to find Adaptec Capture Device");
-              int hr = _graphBuilderInterface.Render(_pinAudioOut);
-              if (hr == 0)
-                  Log.WriteFile(Log.LogType.Log, "mpeg2:demux mpeg audio out connected ");
-              else
-                  Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux mpeg audio out:0x{0:X}", hr);
-          }
+        //Log.WriteFile(Log.LogType.Log, "mpeg2:FAILED to find Adaptec Capture Device");
+        int hr = _graphBuilderInterface.Render(_pinAudioOut);
+        if (hr == 0)
+        {
+          Log.WriteFile(Log.LogType.Log, "mpeg2:demux mpeg audio out connected ");
+        }
+        else
+          Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux mpeg audio out:0x{0:X}", hr);
       }
-      if (capture == null)
+      if (capture != null)
       {
-          Log.WriteFile(Log.LogType.Log, "mpeg2:Found Adaptec Capture Device");
-          int hr = _graphBuilderInterface.Render(_pinLPCMOut);
-          if (hr != 0)
-              Log.WriteFile(Log.LogType.Log, "mpeg2:demux lpcm audio out connected ");
-          else
-              Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux lpcm audio out:0x{0:X}", hr);
+        //Log.WriteFile(Log.LogType.Log, "mpeg2:Found Adaptec Capture Device");
+        int hr = _graphBuilderInterface.Render(_pinLPCMOut);
+        if (hr == 0)
+        {
+          Log.WriteFile(Log.LogType.Log, "mpeg2:demux lpcm audio out connected ");
+        }
+        else
+          Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to render mpeg2demux lpcm audio out:0x{0:X}", hr);
       }
       _isRendered = true;
       if (_mediaControlInterface == null)
         _mediaControlInterface = _graphBuilderInterface as IMediaControl;
-
 
       StartGraph();
     }
@@ -663,30 +665,30 @@ namespace DShowNET.Helper
         if (capture == null)
         {
             _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
-            if (capture == null)
-            {
-                Log.WriteFile(Log.LogType.Log, "mpeg2:FAILED to find Adaptec Capture Device");
-                Log.WriteFile(Log.LogType.Log, "mpeg2:demux mpeg audio out->stream buffer");
-                hr = _graphBuilderInterface.Connect(_pinAudioOut, _pinStreamBufferIn1);
-                if (hr != 0)
-                {
-                    Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to connect audio out to streambuffer:0x{0:X}", hr);
-                    return false;
-                }
-                Log.WriteFile(Log.LogType.Log, "mpeg2:mpeg audio out connected to streambuffer");
-            }
+        }
+        if (capture == null)
+        {
+          //Log.WriteFile(Log.LogType.Log, "mpeg2:FAILED to find Adaptec Capture Device");
+          Log.WriteFile(Log.LogType.Log, "mpeg2:demux mpeg audio out->stream buffer");
+          hr = _graphBuilderInterface.Connect(_pinAudioOut, _pinStreamBufferIn1);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to connect audio out to streambuffer:0x{0:X}", hr);
+            return false;
+          }
+          Log.WriteFile(Log.LogType.Log, "mpeg2:mpeg audio out connected to streambuffer");
         }
         if (capture != null)
         {
-            Log.WriteFile(Log.LogType.Log, "mpeg2:FAILED to find Adaptec Capture Device");
-            Log.WriteFile(Log.LogType.Log, "mpeg2:demux lpcm audio out->stream buffer");
-            hr = _graphBuilderInterface.Connect(_pinLPCMOut, _pinStreamBufferIn1);
-            if (hr != 0)
-            {
-                Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to connect lpcm audio out to streambuffer:0x{0:X}", hr);
-                return false;
-            }
-            Log.WriteFile(Log.LogType.Log, "mpeg2:lpcm audio out connected to streambuffer");
+          //Log.WriteFile(Log.LogType.Log, "mpeg2:Found Adaptec Capture Device");
+          Log.WriteFile(Log.LogType.Log, "mpeg2:demux lpcm audio out->stream buffer");
+          hr = _graphBuilderInterface.Connect(_pinLPCMOut, _pinStreamBufferIn1);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "mpeg2:FAILED to connect lpcm audio out to streambuffer:0x{0:X}", hr);
+            return false;
+          }
+          Log.WriteFile(Log.LogType.Log, "mpeg2:lpcm audio out connected to streambuffer");
         }
         //set mpeg2 demux as reference clock 
         (_graphBuilderInterface as IMediaFilter).SetSyncSource(_filterMpeg2Demultiplexer as IReferenceClock);
