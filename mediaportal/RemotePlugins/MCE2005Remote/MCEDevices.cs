@@ -179,7 +179,7 @@ namespace MediaPortal.Devices
 
 		void OnReadComplete(IAsyncResult asyncResult)
 		{
-			try
+      try
 			{
 				if(_deviceStream.EndRead(asyncResult) == 13 && _deviceBuffer[1] == 1)
 				{
@@ -201,9 +201,10 @@ namespace MediaPortal.Devices
 				// begin another asynchronous read from the device
 				_deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
 			}
-			catch(Exception)
-			{
-			}
+      catch (Exception ex)
+      {
+        Log.Write("MCEDevices Exception: {0}", ex);
+      }
 		}
 
 		void OnSettingsChanged()

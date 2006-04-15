@@ -67,7 +67,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPTabControl tabControlRemotes;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPageFireDtv;
     private System.Windows.Forms.PictureBox pictureBoxMceEurope;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMceGeneral;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMceGeneralx;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHcwGeneral;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHcwRepeatDelay;
     private HScrollBar hScrollBarHcwButtonRelease;
@@ -115,6 +115,16 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHidSettings;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHidExtendedLogging;
     private MediaPortal.UserInterface.Controls.MPButton buttonHidDefaults;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMceGeneral;
+    private MediaPortal.UserInterface.Controls.MPButton buttonMceMapping;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMceType;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMceExtendedLogging;
+    private MediaPortal.UserInterface.Controls.MPButton buttonMceDefaults;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMceColouredButtons;
+    private RadioButton radioButtonMceGeneral;
+    private RadioButton radioButtonMceNoTeletext;
+    private RadioButton radioButtonMceTeletext;
+    private GroupBox groupBoxMceSettings;
     const string errHcwMissingExe = "IR application not found. You might want to use it to control external applications.\nReinstall the Hauppauge IR drivers to fix this problem.";
 
     #endregion
@@ -169,32 +179,50 @@ namespace MediaPortal.Configuration.Sections
 
         #region MCE
 
-        checkBoxMceEnabled.Checked = xmlreader.GetValueAsBool("remote", "mce2005", false);
-        radioButtonMceUsa.Checked = xmlreader.GetValueAsBool("remote", "USAModel", false);
+        checkBoxMceEnabled.Checked = xmlreader.GetValueAsBool("remote", "MCE", true);
+        checkBoxMceExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);
+        string mceType = xmlreader.GetValueAsString("remote", "MCEType", "Teletext");
 
-        radioButtonMceEurope.Checked = !radioButtonMceUsa.Checked;
+        switch (mceType)
+        {
+          case "NoTeletext":
+            radioButtonMceNoTeletext.Checked = true;
+          break;
+          case "General":
+            radioButtonMceGeneral.Checked = true;
+          break;
+          default:
+            radioButtonMceTeletext.Checked = true;
+          break;
+        }
 
-        if (checkBoxMceEnabled.Checked)
-        {
-          radioButtonMceEurope.Enabled = true;
-          radioButtonMceUsa.Enabled = true;
-        }
-        else
-        {
-          radioButtonMceEurope.Enabled = false;
-          radioButtonMceUsa.Enabled = false;
-        }
+        groupBoxMceType.Enabled = groupBoxMceSettings.Enabled = checkBoxMceEnabled.Checked;
 
-        if (radioButtonMceUsa.Checked)
-        {
-          pictureBoxMceUsa.Visible = true;
-          pictureBoxMceEurope.Visible = false;
-        }
-        else
-        {
-          pictureBoxMceEurope.Visible = true;
-          pictureBoxMceUsa.Visible = false;
-        }
+        //radioButtonMceUsa.Checked = xmlreader.GetValueAsBool("remote", "USAModel", false);
+
+        //radioButtonMceEurope.Checked = !radioButtonMceUsa.Checked;
+
+        //if (checkBoxMceEnabled.Checked)
+        //{
+        //  radioButtonMceEurope.Enabled = true;
+        //  radioButtonMceUsa.Enabled = true;
+        //}
+        //else
+        //{
+        //  radioButtonMceEurope.Enabled = false;
+        //  radioButtonMceUsa.Enabled = false;
+        //}
+
+        //if (radioButtonMceUsa.Checked)
+        //{
+        //  pictureBoxMceUsa.Visible = true;
+        //  pictureBoxMceEurope.Visible = false;
+        //}
+        //else
+        //{
+        //  pictureBoxMceEurope.Visible = true;
+        //  pictureBoxMceUsa.Visible = false;
+        //}
 
         #endregion
 
@@ -285,7 +313,7 @@ namespace MediaPortal.Configuration.Sections
         checkBoxX10ExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "X10VerboseLog", false);
         checkBoxX10ChannelControl.Checked = xmlreader.GetValueAsBool("remote", "X10UseChannelControl", false);
         x10Channel = xmlreader.GetValueAsInt("remote", "X10Channel", 0);
-        radioButtonX10Medion.Enabled = radioButtonX10Ati.Enabled = radioButtonX10Other.Enabled = buttonX10Mapping.Enabled = checkBoxX10ChannelControl.Enabled = checkBoxX10ExtendedLogging.Enabled = checkBoxX10Enabled.Checked;
+        radioButtonX10Medion.Enabled = radioButtonX10Ati.Enabled = radioButtonX10Other.Enabled = buttonX10Mapping.Enabled = groupBoxX10Settings.Enabled = checkBoxX10Enabled.Checked;
         buttonX10LearnChannel.Enabled = checkBoxX10ChannelControl.Enabled && checkBoxX10ChannelControl.Checked;
 
         #endregion
@@ -314,8 +342,18 @@ namespace MediaPortal.Configuration.Sections
       {
         #region MCE
 
-        xmlwriter.SetValueAsBool("remote", "mce2005", checkBoxMceEnabled.Checked);
-        xmlwriter.SetValueAsBool("remote", "USAModel", radioButtonMceUsa.Checked);
+        xmlwriter.SetValueAsBool("remote", "MCE", checkBoxMceEnabled.Checked);
+        xmlwriter.SetValueAsBool("remote", "MCEVerboseLog", checkBoxMceExtendedLogging.Checked);
+
+        if (radioButtonMceTeletext.Checked)
+          xmlwriter.SetValue("remote", "MCEType", "Teletext");
+        else if (radioButtonMceNoTeletext.Checked)
+          xmlwriter.SetValue("remote", "MCEType", "NoTeletext");
+        else
+          xmlwriter.SetValue("remote", "MCEType", "General");
+
+        //xmlwriter.SetValueAsBool("remote", "mce2005", checkBoxMceEnabled.Checked);
+        //xmlwriter.SetValueAsBool("remote", "USAModel", radioButtonMceUsa.Checked);
 
         #endregion
 
@@ -390,10 +428,20 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxMceEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlRemotes = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageMce = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.groupBoxMceSettings = new System.Windows.Forms.GroupBox();
+      this.checkBoxMceExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.buttonMceDefaults = new MediaPortal.UserInterface.Controls.MPButton();
+      this.groupBoxMceType = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.radioButtonMceGeneral = new System.Windows.Forms.RadioButton();
+      this.radioButtonMceNoTeletext = new System.Windows.Forms.RadioButton();
+      this.radioButtonMceTeletext = new System.Windows.Forms.RadioButton();
       this.groupBoxMceGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.buttonMceMapping = new MediaPortal.UserInterface.Controls.MPButton();
+      this.groupBoxMceGeneralx = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.radioButtonMceEurope = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.radioButtonMceUsa = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.pictureBoxMceEurope = new System.Windows.Forms.PictureBox();
+      this.checkBoxMceColouredButtons = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.radioButtonMceUsa = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.tabPageHcw = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBoxHcwRepeatDelay = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.hScrollBarHcwRepeatSpeed = new System.Windows.Forms.HScrollBar();
@@ -436,9 +484,8 @@ namespace MediaPortal.Configuration.Sections
       this.buttonX10LearnChannel = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxX10ChannelControl = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxX10ExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tabPageFireDtv = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.fireDtvRemote = new MediaPortal.Configuration.Sections.FireDtvRemote();
       this.tabPageHid = new System.Windows.Forms.TabPage();
+      this.buttonHidDefaults = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxHidSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxHidExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxHidInfo = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -446,12 +493,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxHidGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonHidMapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxHidEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.tabPageFireDtv = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.fireDtvRemote = new MediaPortal.Configuration.Sections.FireDtvRemote();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-      this.buttonHidDefaults = new MediaPortal.UserInterface.Controls.MPButton();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceUsa)).BeginInit();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMce.SuspendLayout();
+      this.groupBoxMceSettings.SuspendLayout();
+      this.groupBoxMceType.SuspendLayout();
       this.groupBoxMceGeneral.SuspendLayout();
+      this.groupBoxMceGeneralx.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceEurope)).BeginInit();
       this.tabPageHcw.SuspendLayout();
       this.groupBoxHcwRepeatDelay.SuspendLayout();
@@ -462,17 +513,17 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxX10Status.SuspendLayout();
       this.groupBoxX10General.SuspendLayout();
       this.groupBoxX10Settings.SuspendLayout();
-      this.tabPageFireDtv.SuspendLayout();
       this.tabPageHid.SuspendLayout();
       this.groupBoxHidSettings.SuspendLayout();
       this.groupBoxHidInfo.SuspendLayout();
       this.groupBoxHidGeneral.SuspendLayout();
+      this.tabPageFireDtv.SuspendLayout();
       this.SuspendLayout();
       // 
       // pictureBoxMceUsa
       // 
       this.pictureBoxMceUsa.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxMceUsa.Image")));
-      this.pictureBoxMceUsa.Location = new System.Drawing.Point(248, 24);
+      this.pictureBoxMceUsa.Location = new System.Drawing.Point(208, 16);
       this.pictureBoxMceUsa.Name = "pictureBoxMceUsa";
       this.pictureBoxMceUsa.Size = new System.Drawing.Size(100, 310);
       this.pictureBoxMceUsa.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -499,8 +550,8 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlRemotes.Controls.Add(this.tabPageMce);
       this.tabControlRemotes.Controls.Add(this.tabPageHcw);
       this.tabControlRemotes.Controls.Add(this.tabPageX10);
-      this.tabControlRemotes.Controls.Add(this.tabPageFireDtv);
       this.tabControlRemotes.Controls.Add(this.tabPageHid);
+      this.tabControlRemotes.Controls.Add(this.tabPageFireDtv);
       this.tabControlRemotes.Location = new System.Drawing.Point(0, 8);
       this.tabControlRemotes.Name = "tabControlRemotes";
       this.tabControlRemotes.SelectedIndex = 0;
@@ -509,7 +560,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPageMce
       // 
+      this.tabPageMce.Controls.Add(this.groupBoxMceSettings);
+      this.tabPageMce.Controls.Add(this.buttonMceDefaults);
+      this.tabPageMce.Controls.Add(this.groupBoxMceType);
       this.tabPageMce.Controls.Add(this.groupBoxMceGeneral);
+      this.tabPageMce.Controls.Add(this.groupBoxMceGeneralx);
       this.tabPageMce.Location = new System.Drawing.Point(4, 22);
       this.tabPageMce.Name = "tabPageMce";
       this.tabPageMce.Size = new System.Drawing.Size(464, 374);
@@ -517,27 +572,132 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageMce.Text = "Microsoft MCE";
       this.tabPageMce.UseVisualStyleBackColor = true;
       // 
+      // groupBoxMceSettings
+      // 
+      this.groupBoxMceSettings.Controls.Add(this.checkBoxMceExtendedLogging);
+      this.groupBoxMceSettings.Location = new System.Drawing.Point(12, 184);
+      this.groupBoxMceSettings.Name = "groupBoxMceSettings";
+      this.groupBoxMceSettings.Size = new System.Drawing.Size(440, 56);
+      this.groupBoxMceSettings.TabIndex = 5;
+      this.groupBoxMceSettings.TabStop = false;
+      this.groupBoxMceSettings.Text = "Settings";
+      // 
+      // checkBoxMceExtendedLogging
+      // 
+      this.checkBoxMceExtendedLogging.AutoSize = true;
+      this.checkBoxMceExtendedLogging.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxMceExtendedLogging.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxMceExtendedLogging.Name = "checkBoxMceExtendedLogging";
+      this.checkBoxMceExtendedLogging.Size = new System.Drawing.Size(106, 17);
+      this.checkBoxMceExtendedLogging.TabIndex = 3;
+      this.checkBoxMceExtendedLogging.Text = "Extended logging";
+      this.checkBoxMceExtendedLogging.UseVisualStyleBackColor = true;
+      // 
+      // buttonMceDefaults
+      // 
+      this.buttonMceDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonMceDefaults.Location = new System.Drawing.Point(364, 328);
+      this.buttonMceDefaults.Name = "buttonMceDefaults";
+      this.buttonMceDefaults.Size = new System.Drawing.Size(72, 22);
+      this.buttonMceDefaults.TabIndex = 7;
+      this.buttonMceDefaults.Text = "&Defaults";
+      this.buttonMceDefaults.UseVisualStyleBackColor = true;
+      this.buttonMceDefaults.Click += new System.EventHandler(this.buttonMceDefaults_Click);
+      // 
+      // groupBoxMceType
+      // 
+      this.groupBoxMceType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxMceType.Controls.Add(this.radioButtonMceGeneral);
+      this.groupBoxMceType.Controls.Add(this.radioButtonMceNoTeletext);
+      this.groupBoxMceType.Controls.Add(this.radioButtonMceTeletext);
+      this.groupBoxMceType.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxMceType.Location = new System.Drawing.Point(12, 72);
+      this.groupBoxMceType.Name = "groupBoxMceType";
+      this.groupBoxMceType.Size = new System.Drawing.Size(440, 104);
+      this.groupBoxMceType.TabIndex = 6;
+      this.groupBoxMceType.TabStop = false;
+      this.groupBoxMceType.Text = "MCE device type";
+      // 
+      // radioButtonMceGeneral
+      // 
+      this.radioButtonMceGeneral.AutoSize = true;
+      this.radioButtonMceGeneral.Location = new System.Drawing.Point(16, 72);
+      this.radioButtonMceGeneral.Name = "radioButtonMceGeneral";
+      this.radioButtonMceGeneral.Size = new System.Drawing.Size(208, 17);
+      this.radioButtonMceGeneral.TabIndex = 7;
+      this.radioButtonMceGeneral.TabStop = true;
+      this.radioButtonMceGeneral.Text = "Keyboard or other general MCE device";
+      this.radioButtonMceGeneral.UseVisualStyleBackColor = true;
+      // 
+      // radioButtonMceNoTeletext
+      // 
+      this.radioButtonMceNoTeletext.AutoSize = true;
+      this.radioButtonMceNoTeletext.Location = new System.Drawing.Point(16, 48);
+      this.radioButtonMceNoTeletext.Name = "radioButtonMceNoTeletext";
+      this.radioButtonMceNoTeletext.Size = new System.Drawing.Size(242, 17);
+      this.radioButtonMceNoTeletext.TabIndex = 6;
+      this.radioButtonMceNoTeletext.TabStop = true;
+      this.radioButtonMceNoTeletext.Text = "Remote without coloured teletext buttons (US)";
+      this.radioButtonMceNoTeletext.UseVisualStyleBackColor = true;
+      // 
+      // radioButtonMceTeletext
+      // 
+      this.radioButtonMceTeletext.AutoSize = true;
+      this.radioButtonMceTeletext.Location = new System.Drawing.Point(16, 24);
+      this.radioButtonMceTeletext.Name = "radioButtonMceTeletext";
+      this.radioButtonMceTeletext.Size = new System.Drawing.Size(248, 17);
+      this.radioButtonMceTeletext.TabIndex = 5;
+      this.radioButtonMceTeletext.TabStop = true;
+      this.radioButtonMceTeletext.Text = "Remote with coloured teletext buttons (non-US)";
+      this.radioButtonMceTeletext.UseVisualStyleBackColor = true;
+      // 
       // groupBoxMceGeneral
       // 
       this.groupBoxMceGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxMceGeneral.Controls.Add(this.checkBoxMceEnabled);
-      this.groupBoxMceGeneral.Controls.Add(this.radioButtonMceEurope);
-      this.groupBoxMceGeneral.Controls.Add(this.radioButtonMceUsa);
-      this.groupBoxMceGeneral.Controls.Add(this.pictureBoxMceUsa);
-      this.groupBoxMceGeneral.Controls.Add(this.pictureBoxMceEurope);
+      this.groupBoxMceGeneral.Controls.Add(this.buttonMceMapping);
       this.groupBoxMceGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxMceGeneral.Location = new System.Drawing.Point(12, 8);
       this.groupBoxMceGeneral.Name = "groupBoxMceGeneral";
-      this.groupBoxMceGeneral.Size = new System.Drawing.Size(440, 352);
-      this.groupBoxMceGeneral.TabIndex = 0;
+      this.groupBoxMceGeneral.Size = new System.Drawing.Size(440, 56);
+      this.groupBoxMceGeneral.TabIndex = 2;
       this.groupBoxMceGeneral.TabStop = false;
+      // 
+      // buttonMceMapping
+      // 
+      this.buttonMceMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonMceMapping.Location = new System.Drawing.Point(352, 20);
+      this.buttonMceMapping.Name = "buttonMceMapping";
+      this.buttonMceMapping.Size = new System.Drawing.Size(72, 22);
+      this.buttonMceMapping.TabIndex = 1;
+      this.buttonMceMapping.Text = "Mapping";
+      this.buttonMceMapping.UseVisualStyleBackColor = true;
+      this.buttonMceMapping.Click += new System.EventHandler(this.buttonMceMapping_Click);
+      // 
+      // groupBoxMceGeneralx
+      // 
+      this.groupBoxMceGeneralx.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxMceGeneralx.Controls.Add(this.radioButtonMceEurope);
+      this.groupBoxMceGeneralx.Controls.Add(this.pictureBoxMceUsa);
+      this.groupBoxMceGeneralx.Controls.Add(this.pictureBoxMceEurope);
+      this.groupBoxMceGeneralx.Controls.Add(this.checkBoxMceColouredButtons);
+      this.groupBoxMceGeneralx.Controls.Add(this.radioButtonMceUsa);
+      this.groupBoxMceGeneralx.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxMceGeneralx.Location = new System.Drawing.Point(12, 160);
+      this.groupBoxMceGeneralx.Name = "groupBoxMceGeneralx";
+      this.groupBoxMceGeneralx.Size = new System.Drawing.Size(324, 240);
+      this.groupBoxMceGeneralx.TabIndex = 0;
+      this.groupBoxMceGeneralx.TabStop = false;
+      this.groupBoxMceGeneralx.Visible = false;
       // 
       // radioButtonMceEurope
       // 
       this.radioButtonMceEurope.AutoSize = true;
       this.radioButtonMceEurope.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioButtonMceEurope.Location = new System.Drawing.Point(32, 68);
+      this.radioButtonMceEurope.Location = new System.Drawing.Point(8, 36);
       this.radioButtonMceEurope.Name = "radioButtonMceEurope";
       this.radioButtonMceEurope.Size = new System.Drawing.Size(107, 17);
       this.radioButtonMceEurope.TabIndex = 2;
@@ -545,27 +705,38 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonMceEurope.UseVisualStyleBackColor = true;
       this.radioButtonMceEurope.CheckedChanged += new System.EventHandler(this.radioButtonMceEurope_CheckedChanged);
       // 
+      // pictureBoxMceEurope
+      // 
+      this.pictureBoxMceEurope.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxMceEurope.Image")));
+      this.pictureBoxMceEurope.Location = new System.Drawing.Point(208, 16);
+      this.pictureBoxMceEurope.Name = "pictureBoxMceEurope";
+      this.pictureBoxMceEurope.Size = new System.Drawing.Size(100, 310);
+      this.pictureBoxMceEurope.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+      this.pictureBoxMceEurope.TabIndex = 4;
+      this.pictureBoxMceEurope.TabStop = false;
+      // 
+      // checkBoxMceColouredButtons
+      // 
+      this.checkBoxMceColouredButtons.AutoSize = true;
+      this.checkBoxMceColouredButtons.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxMceColouredButtons.Location = new System.Drawing.Point(24, 136);
+      this.checkBoxMceColouredButtons.Name = "checkBoxMceColouredButtons";
+      this.checkBoxMceColouredButtons.Size = new System.Drawing.Size(245, 17);
+      this.checkBoxMceColouredButtons.TabIndex = 4;
+      this.checkBoxMceColouredButtons.Text = "Remote has coloured teletext buttons (non-US)";
+      this.checkBoxMceColouredButtons.UseVisualStyleBackColor = true;
+      // 
       // radioButtonMceUsa
       // 
       this.radioButtonMceUsa.AutoSize = true;
       this.radioButtonMceUsa.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioButtonMceUsa.Location = new System.Drawing.Point(32, 48);
+      this.radioButtonMceUsa.Location = new System.Drawing.Point(8, 16);
       this.radioButtonMceUsa.Name = "radioButtonMceUsa";
       this.radioButtonMceUsa.Size = new System.Drawing.Size(203, 17);
       this.radioButtonMceUsa.TabIndex = 1;
       this.radioButtonMceUsa.Text = "USA version / Hauppauge MCE OEM";
       this.radioButtonMceUsa.UseVisualStyleBackColor = true;
       this.radioButtonMceUsa.CheckedChanged += new System.EventHandler(this.radioButtonMceUsa_CheckedChanged);
-      // 
-      // pictureBoxMceEurope
-      // 
-      this.pictureBoxMceEurope.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxMceEurope.Image")));
-      this.pictureBoxMceEurope.Location = new System.Drawing.Point(248, 24);
-      this.pictureBoxMceEurope.Name = "pictureBoxMceEurope";
-      this.pictureBoxMceEurope.Size = new System.Drawing.Size(100, 310);
-      this.pictureBoxMceEurope.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-      this.pictureBoxMceEurope.TabIndex = 4;
-      this.pictureBoxMceEurope.TabStop = false;
       // 
       // tabPageHcw
       // 
@@ -1072,24 +1243,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxX10ExtendedLogging.Text = "Extended logging";
       this.checkBoxX10ExtendedLogging.UseVisualStyleBackColor = true;
       // 
-      // tabPageFireDtv
-      // 
-      this.tabPageFireDtv.Controls.Add(this.fireDtvRemote);
-      this.tabPageFireDtv.Location = new System.Drawing.Point(4, 22);
-      this.tabPageFireDtv.Name = "tabPageFireDtv";
-      this.tabPageFireDtv.Size = new System.Drawing.Size(464, 374);
-      this.tabPageFireDtv.TabIndex = 2;
-      this.tabPageFireDtv.Text = "FireDTV";
-      this.tabPageFireDtv.UseVisualStyleBackColor = true;
-      // 
-      // fireDtvRemote
-      // 
-      this.fireDtvRemote.AutoScroll = true;
-      this.fireDtvRemote.Location = new System.Drawing.Point(0, 0);
-      this.fireDtvRemote.Name = "fireDtvRemote";
-      this.fireDtvRemote.Size = new System.Drawing.Size(520, 368);
-      this.fireDtvRemote.TabIndex = 0;
-      // 
       // tabPageHid
       // 
       this.tabPageHid.Controls.Add(this.buttonHidDefaults);
@@ -1103,6 +1256,17 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageHid.TabIndex = 4;
       this.tabPageHid.Text = "General HID";
       this.tabPageHid.UseVisualStyleBackColor = true;
+      // 
+      // buttonHidDefaults
+      // 
+      this.buttonHidDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonHidDefaults.Location = new System.Drawing.Point(364, 328);
+      this.buttonHidDefaults.Name = "buttonHidDefaults";
+      this.buttonHidDefaults.Size = new System.Drawing.Size(72, 22);
+      this.buttonHidDefaults.TabIndex = 6;
+      this.buttonHidDefaults.Text = "&Defaults";
+      this.buttonHidDefaults.UseVisualStyleBackColor = true;
+      this.buttonHidDefaults.Click += new System.EventHandler(this.buttonHidDefaults_Click);
       // 
       // groupBoxHidSettings
       // 
@@ -1185,20 +1349,27 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxHidEnabled.UseVisualStyleBackColor = true;
       this.checkBoxHidEnabled.CheckedChanged += new System.EventHandler(this.checkBoxHidEnabled_CheckedChanged);
       // 
+      // tabPageFireDtv
+      // 
+      this.tabPageFireDtv.Controls.Add(this.fireDtvRemote);
+      this.tabPageFireDtv.Location = new System.Drawing.Point(4, 22);
+      this.tabPageFireDtv.Name = "tabPageFireDtv";
+      this.tabPageFireDtv.Size = new System.Drawing.Size(464, 374);
+      this.tabPageFireDtv.TabIndex = 2;
+      this.tabPageFireDtv.Text = "FireDTV";
+      this.tabPageFireDtv.UseVisualStyleBackColor = true;
+      // 
+      // fireDtvRemote
+      // 
+      this.fireDtvRemote.AutoScroll = true;
+      this.fireDtvRemote.Location = new System.Drawing.Point(0, 0);
+      this.fireDtvRemote.Name = "fireDtvRemote";
+      this.fireDtvRemote.Size = new System.Drawing.Size(520, 368);
+      this.fireDtvRemote.TabIndex = 0;
+      // 
       // toolTip
       // 
       this.toolTip.ShowAlways = true;
-      // 
-      // buttonHidDefaults
-      // 
-      this.buttonHidDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonHidDefaults.Location = new System.Drawing.Point(364, 328);
-      this.buttonHidDefaults.Name = "buttonHidDefaults";
-      this.buttonHidDefaults.Size = new System.Drawing.Size(72, 22);
-      this.buttonHidDefaults.TabIndex = 6;
-      this.buttonHidDefaults.Text = "&Defaults";
-      this.buttonHidDefaults.UseVisualStyleBackColor = true;
-      this.buttonHidDefaults.Click += new System.EventHandler(this.buttonHidDefaults_Click);
       // 
       // Remote
       // 
@@ -1208,8 +1379,14 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceUsa)).EndInit();
       this.tabControlRemotes.ResumeLayout(false);
       this.tabPageMce.ResumeLayout(false);
+      this.groupBoxMceSettings.ResumeLayout(false);
+      this.groupBoxMceSettings.PerformLayout();
+      this.groupBoxMceType.ResumeLayout(false);
+      this.groupBoxMceType.PerformLayout();
       this.groupBoxMceGeneral.ResumeLayout(false);
       this.groupBoxMceGeneral.PerformLayout();
+      this.groupBoxMceGeneralx.ResumeLayout(false);
+      this.groupBoxMceGeneralx.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceEurope)).EndInit();
       this.tabPageHcw.ResumeLayout(false);
       this.groupBoxHcwRepeatDelay.ResumeLayout(false);
@@ -1227,13 +1404,13 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxX10General.PerformLayout();
       this.groupBoxX10Settings.ResumeLayout(false);
       this.groupBoxX10Settings.PerformLayout();
-      this.tabPageFireDtv.ResumeLayout(false);
       this.tabPageHid.ResumeLayout(false);
       this.groupBoxHidSettings.ResumeLayout(false);
       this.groupBoxHidSettings.PerformLayout();
       this.groupBoxHidInfo.ResumeLayout(false);
       this.groupBoxHidGeneral.ResumeLayout(false);
       this.groupBoxHidGeneral.PerformLayout();
+      this.tabPageFireDtv.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -1268,8 +1445,30 @@ namespace MediaPortal.Configuration.Sections
     //
     private void checkBoxMceEnabled_CheckedChanged(object sender, System.EventArgs e)
     {
-      radioButtonMceEurope.Enabled = checkBoxMceEnabled.Checked;
-      radioButtonMceUsa.Enabled = checkBoxMceEnabled.Checked;
+      groupBoxMceType.Enabled = groupBoxMceSettings.Enabled = checkBoxMceEnabled.Checked;
+
+      //radioButtonMceEurope.Enabled = checkBoxMceEnabled.Checked;
+      //radioButtonMceUsa.Enabled = checkBoxMceEnabled.Checked;
+    }
+
+    private void buttonMceDefaults_Click(object sender, EventArgs e)
+    {
+      radioButtonMceTeletext.Checked = true;
+      checkBoxMceExtendedLogging.Checked = false;
+    }
+
+    private void buttonMceMapping_Click(object sender, EventArgs e)
+    {
+      InputMappingForm dlg;
+
+      if (radioButtonMceTeletext.Checked)
+        dlg = new InputMappingForm("Microsoft MCE with Teletext");
+      else if (radioButtonMceNoTeletext.Checked)
+        dlg = new InputMappingForm("Microsoft MCE");
+      else
+        dlg = new InputMappingForm("Microsoft MCE General");
+
+      dlg.ShowDialog(this);
     }
 
     #region Helper methods/commands MCE
@@ -1396,7 +1595,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void checkBoxX10Enabled_CheckedChanged(object sender, EventArgs e)
     {
-      radioButtonX10Medion.Enabled = radioButtonX10Ati.Enabled = radioButtonX10Other.Enabled = buttonX10Mapping.Enabled = checkBoxX10ChannelControl.Enabled = checkBoxX10ExtendedLogging.Enabled = checkBoxX10Enabled.Checked;
+      radioButtonX10Medion.Enabled = radioButtonX10Ati.Enabled = radioButtonX10Other.Enabled = buttonX10Mapping.Enabled = groupBoxX10Settings.Enabled = checkBoxX10Enabled.Checked;
       buttonX10LearnChannel.Enabled = checkBoxX10ChannelControl.Enabled && checkBoxX10ChannelControl.Checked;
     }
 
@@ -1476,6 +1675,10 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
+
+
+
+
 
   }
 }

@@ -41,7 +41,6 @@ namespace MediaPortal.InputDevices
       FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
       HCWRemote.Init(GUIGraphicsContext.ActiveForm);
       X10Remote.Init(GUIGraphicsContext.ActiveForm);
-      IrTrans.Init(GUIGraphicsContext.ActiveForm);
     }
 
     public static void Stop()
@@ -51,7 +50,6 @@ namespace MediaPortal.InputDevices
       FireDTVRemote.DeInit();
       HCWRemote.DeInit();
       X10Remote.DeInit();
-      IrTrans.DeInit();
       diRemote.Stop();
     }
 
@@ -61,18 +59,13 @@ namespace MediaPortal.InputDevices
       key = (char)0;
       keyCode = Keys.A;
 
-      HCWRemote.WndProc(msg);
-
-      if (HidListener.WndProc(ref msg, out action, out key, out keyCode))
-        return true;
-
-      if (MCE2005Remote.WndProc(ref msg, out action, out key, out keyCode))
+      if (HCWRemote.WndProc(msg))
         return true;
 
       if (FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
         return true;
 
-      if (IrTrans.WndProc(ref msg, out action, out  key, out keyCode))
+      if (HidListener.WndProc(ref msg, out action, out key, out keyCode))
         return true;
 
       return false;
@@ -101,7 +94,6 @@ namespace MediaPortal.InputDevices
     static MCE2005Remote MCE2005Remote = new MCE2005Remote();
     static HcwRemote HCWRemote = new HcwRemote();
     static X10Remote X10Remote = new X10Remote();
-    static IrTransListener IrTrans = new IrTransListener();
     static DirectInputHandler diRemote = new DirectInputHandler();
     static RemoteControls.FireDTVRemote FireDTVRemote = new RemoteControls.FireDTVRemote();
     static AppCommands _lastHidRequest;
