@@ -165,7 +165,6 @@
     <Compile Include="InputDevices.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IrTrans\IrTransListener.cs" />
     <Compile Include="MCE2005Remote\MCE2005Remote.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -184,7 +183,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="IrTrans\IRTrans.NET.dll" />
     <Content Include="X10Remote\AxInterop.X10.dll">
     </Content>
     <Content Include="X10Remote\Interop.X10.dll">
