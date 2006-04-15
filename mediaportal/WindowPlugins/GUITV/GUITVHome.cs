@@ -406,6 +406,11 @@ namespace MediaPortal.GUI.TV
         }
         else
         {
+          if (!Recorder.Running)
+          {
+            Log.Write("TVHome: Recorder.Start()");
+            Recorder.Start();
+          }
           // tv on
           Log.Write("TVHome:turn tv on {0}", Navigator.CurrentChannel);
           _isTvOn = true;
@@ -742,10 +747,8 @@ namespace MediaPortal.GUI.TV
     {
       if (!Recorder.Running)
       {
-        Log.Write("GUITVHome.ViewChannelAndCheck(): setting _isTvOn and _isTimeShifting to false");
-        _isTvOn = false;
-        _isTimeShifting = false;
-        return true;
+        Log.Write("GUITVHome.ViewChannelAndCheck(): Recorder.Running = false");
+        return false;
       }
       if (g_Player.Playing)
       {
