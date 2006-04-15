@@ -25,6 +25,7 @@
 
 using System;
 using System.Windows.Forms;
+using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 
@@ -48,25 +49,27 @@ namespace MediaPortal.InputDevices
         controlEnabled = xmlreader.GetValueAsBool("remote", "HID", true);
         logVerbose = xmlreader.GetValueAsBool("remote", "HIDVerboseLog", false);
       }
-      try
-      {
-        inputHandler = new InputHandler("General HID");
-      }
-      catch (System.IO.FileNotFoundException)
-      {
-        controlEnabled = false;
-        Log.Write("HID: can't find default mapping file - reinstall MediaPortal");
-      }
-      catch (System.Xml.XmlException)
-      {
-        controlEnabled = false;
-        Log.Write("HID: error in default mapping file - reinstall MediaPortal");
-      }
-      catch (System.ApplicationException)
-      {
-        controlEnabled = false;
-        Log.Write("HID: version mismatch in default mapping file - reinstall MediaPortal");
-      }
+
+      if (controlEnabled)
+        try
+        {
+          inputHandler = new InputHandler("General HID");
+        }
+        catch (System.IO.FileNotFoundException)
+        {
+          controlEnabled = false;
+          Log.Write("HID: can't find default mapping file - reinstall MediaPortal");
+        }
+        catch (System.Xml.XmlException)
+        {
+          controlEnabled = false;
+          Log.Write("HID: error in default mapping file - reinstall MediaPortal");
+        }
+        catch (System.ApplicationException)
+        {
+          controlEnabled = false;
+          Log.Write("HID: version mismatch in default mapping file - reinstall MediaPortal");
+        }
     }
 
     public void DeInit()
@@ -79,28 +82,32 @@ namespace MediaPortal.InputDevices
 			key = (char)0;
 			keyCode = Keys.A;
 
-			// we are only interested in WM_APPCOMMAND
-			if(msg.Msg != 0x0319)
-				return false;
+      if (controlEnabled)
+      {
+        // we are only interested in WM_APPCOMMAND
+        if (msg.Msg != 0x0319)
+          return false;
 
-			// find out which request the MCE remote handled last
-			if((AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000) == InputDevices.LastHidRequest)
-			{
-				// possible that it is the same request mapped to an app command?
-				if(Environment.TickCount - InputDevices.LastHidRequestTick < 300)
-					return true;
-			}
+        // find out which request the MCE remote handled last
+        if ((AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000) == InputDevices.LastHidRequest)
+        {
+          // possible that it is the same request mapped to an app command?
+          if (Environment.TickCount - InputDevices.LastHidRequestTick < 500)
+            return true;
+        }
 
-			InputDevices.LastHidRequest = (AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000);
+        InputDevices.LastHidRequest = (AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000);
 
-      if (logVerbose) Log.Write("HID: Command: {0} - {1}", ((msg.LParam.ToInt32() >> 16) & ~0xF000), InputDevices.LastHidRequest.ToString());
+        if (logVerbose) Log.Write("HID: Command: {0} - {1}", ((msg.LParam.ToInt32() >> 16) & ~0xF000), InputDevices.LastHidRequest.ToString());
 
-      if (!inputHandler.MapAction((msg.LParam.ToInt32() >> 16) & ~0xF000))
-        return false;
+        if (!inputHandler.MapAction((msg.LParam.ToInt32() >> 16) & ~0xF000))
+          return false;
 
-			msg.Result = new IntPtr(1);
+        msg.Result = new IntPtr(1);
 
-			return true;
+        return true;
+      }
+      return false;
 		}
 	}
 }

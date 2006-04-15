@@ -378,17 +378,21 @@ namespace MediaPortal.InputDevices
 
 
     /// <summary>
-    /// Evaluates received messages and sends them to the mapper
+    /// Handle energy saving situations
     /// </summary>
     /// <param name="msg">Message</param>
-    public void WndProc(Message msg)
+    /// <returns>Message handled</returns>
+    public bool WndProc(Message msg)
     {
       if (controlEnabled)
         switch (msg.Msg)
         {
           case WM_POWERBROADCAST:
             if (msg.WParam.ToInt32() == PBT_APMRESUMEAUTOMATIC)
+            {
               StartHcw();
+              return true;
+            }
             break;
 
           case WM_ACTIVATE:
@@ -397,16 +401,21 @@ namespace MediaPortal.InputDevices
               {
                 case WA_INACTIVE:
                   if (logVerbose) Log.Write("HCW: lost focus");
-                  StopHcw();
-                  break;
+                  {
+                    StopHcw();
+                    return true;
+                  }
                 case WA_ACTIVE:
                 case WA_CLICKACTIVE:
                   if (logVerbose) Log.Write("HCW: got focus");
-                  StartHcw();
-                  break;
+                  {
+                    StartHcw();
+                    return true;
+                  }
               }
             break;
         }
+      return false;
     }
 
   }

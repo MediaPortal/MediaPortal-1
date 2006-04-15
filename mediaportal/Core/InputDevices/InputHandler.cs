@@ -67,6 +67,7 @@ namespace MediaPortal.InputDevices
       int cmdKeyChar;
       int cmdKeyCode;
       string sound;
+      bool focus;
 
       public int Layer { get { return layer; } }
       public string Condition { get { return condition; } }
@@ -76,9 +77,10 @@ namespace MediaPortal.InputDevices
       public int CmdKeyChar { get { return cmdKeyChar; } }
       public int CmdKeyCode { get { return cmdKeyCode; } }
       public string Sound { get { return sound; } }
+      public bool Focus { get { return focus; } }
 
       public Mapping(int newLayer, string newCondition, string newConProperty, string newCommand,
-        string newCmdProperty, int newCmdKeyChar, int newCmdKeyCode, string newSound)
+        string newCmdProperty, int newCmdKeyChar, int newCmdKeyCode, string newSound, bool newFocus)
       {
         layer = newLayer;
         condition = newCondition;
@@ -88,6 +90,7 @@ namespace MediaPortal.InputDevices
         cmdKeyChar = newCmdKeyChar;
         cmdKeyCode = newCmdKeyCode;
         sound = newSound;
+        focus = newFocus;
       }
     }
 
@@ -229,8 +232,12 @@ namespace MediaPortal.InputDevices
             cmdKeyCode = Convert.ToInt32(nodeAction.Attributes["cmdkeycode"].Value);
           }
           string sound = nodeAction.Attributes["sound"].Value;
+          bool focus = false;
+          XmlAttribute focusAttribute = nodeAction.Attributes["focus"];
+          if (focusAttribute != null)
+            focus = Convert.ToBoolean(focusAttribute.Value);
           int layer = Convert.ToInt32(nodeAction.Attributes["layer"].Value);
-          Mapping conditionMap = new Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound);
+          Mapping conditionMap = new Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound, focus);
           mapping.Add(conditionMap);
         }
         RemoteMap remoteMap = new RemoteMap(value, name, mapping);
@@ -283,6 +290,8 @@ namespace MediaPortal.InputDevices
       Action action;
       if (map.Sound != string.Empty)
         Utils.PlaySound(map.Sound, false, true);
+      if (map.Focus)
+        GainFocus.MainWindow();
       switch (map.Command)
       {
         case "ACTION":  // execute Action x
@@ -307,34 +316,32 @@ namespace MediaPortal.InputDevices
             currentLayer = 1;
           break;
         case "POWER": // power down commands
+          if ((map.CmdProperty == "STANDBY") || (map.CmdProperty == "HIBERNATE"))
           {
-            if ((map.CmdProperty == "STANDBY") || (map.CmdProperty == "HIBERNATE"))
-            {
-              // Stop all media before suspending or hibernating
-              g_Player.Stop();
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
-            }
-            switch (map.CmdProperty)
-            {
-              case "EXIT":
-                action = new Action(Action.ActionType.ACTION_EXIT, 0, 0);
-                GUIGraphicsContext.OnAction(action);
-                break;
-              case "REBOOT":
-                action = new Action(Action.ActionType.ACTION_REBOOT, 0, 0);
-                GUIGraphicsContext.OnAction(action);
-                break;
-              case "SHUTDOWN":
-                action = new Action(Action.ActionType.ACTION_SHUTDOWN, 0, 0);
-                GUIGraphicsContext.OnAction(action);
-                break;
-              case "STANDBY":
-                WindowsController.ExitWindows(RestartOptions.Suspend, true);
-                break;
-              case "HIBERNATE":
-                WindowsController.ExitWindows(RestartOptions.Hibernate, true);
-                break;
-            }
+            // Stop all media before suspending or hibernating
+            g_Player.Stop();
+            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+          }
+          switch (map.CmdProperty)
+          {
+            case "EXIT":
+              action = new Action(Action.ActionType.ACTION_EXIT, 0, 0);
+              GUIGraphicsContext.OnAction(action);
+              break;
+            case "REBOOT":
+              action = new Action(Action.ActionType.ACTION_REBOOT, 0, 0);
+              GUIGraphicsContext.OnAction(action);
+              break;
+            case "SHUTDOWN":
+              action = new Action(Action.ActionType.ACTION_SHUTDOWN, 0, 0);
+              GUIGraphicsContext.OnAction(action);
+              break;
+            case "STANDBY":
+              WindowsController.ExitWindows(RestartOptions.Suspend, true);
+              break;
+            case "HIBERNATE":
+              WindowsController.ExitWindows(RestartOptions.Hibernate, true);
+              break;
           }
           break;
         case "PROCESS":
@@ -361,7 +368,7 @@ namespace MediaPortal.InputDevices
       return true;
     }
 
-
+    
     /// <summary>
     /// Get mappings for a given button code based on the current conditions
     /// </summary>

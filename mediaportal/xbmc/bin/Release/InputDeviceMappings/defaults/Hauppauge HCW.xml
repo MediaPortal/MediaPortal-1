@@ -54,6 +54,7 @@
 			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9976" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="1" command="WINDOW" cmdproperty="7700" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="602" command="WINDOW" cmdproperty="7701" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="0" sound="click.wav" />
 		</button>
 		<button name="Yellow" code="2056">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9977" sound="click.wav" />
@@ -132,12 +133,12 @@
 		</button>
 		<button name="Rewind" code="2050">
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="87" sound="cursor.wav" />
-			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="cursor.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="17" sound="cursor.wav" />
 		</button>
 		<button name="Fast Forward" code="2052">
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="86" sound="cursor.wav" />
-			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="cursor.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="16" sound="cursor.wav" />
 		</button>
 		<button name="Skip Forward" code="2030">
@@ -266,6 +267,7 @@
 			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9976" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="1" command="WINDOW" cmdproperty="7700" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="602" command="WINDOW" cmdproperty="7701" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="0" sound="click.wav" />
 		</button>
 		<button name="Yellow" code="1056">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9977" sound="click.wav" />
@@ -352,12 +354,12 @@
 		</button>
 		<button name="Rewind" code="1050">
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="87" sound="cursor.wav" />
-			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="cursor.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="17" sound="cursor.wav" />
 		</button>
 		<button name="Fast Forward" code="1052">
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="86" sound="cursor.wav" />
-			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="cursor.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="16" sound="cursor.wav" />
 		</button>
 		<button name="Skip Forward" code="1030">
