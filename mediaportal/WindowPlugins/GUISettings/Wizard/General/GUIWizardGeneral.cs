@@ -105,10 +105,10 @@ namespace MediaPortal.GUI.Settings.Wizard
         bool baloontips = false;
         bool hidetaskbar = false;
         bool dblclickasrightclick = false;
-        bool alwaysontop = true;
-        bool exclusivemode = false;
+        bool alwaysontop = false;
+        bool exclusivemode = true;
         bool useVMR9ZapOSD = false;
-        bool enableguisounds = false;
+        bool enableguisounds = true;
         bool screensaver = false;
 
 				if (cmDeadicatedPC.Selected)
