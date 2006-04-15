@@ -198,9 +198,11 @@ namespace MediaPortal.InputDevices
       catch (System.ApplicationException ex)
       {
         if (ex.Message == "No button mapping found")
+        {
           if (logVerbose) Log.Write("MCE: No button mapping found for button \"{0}\"", button);
-          else
-            Log.Write("MCE: Button \"{0}\" threw exception: {1}", button, ex);
+        }
+        else
+          Log.Write("MCE: Button \"{0}\" threw exception: {1}", button, ex);
       }
       catch (Exception ex)
       {
