@@ -89,7 +89,7 @@
          <onleft>6</onleft>
          <onright>7</onright>
          <onup>4</onup>
-         <ondown>8</ondown>
+         <ondown>7</ondown>
          <shadow>no</shadow>
          <textureCheckmark>check-box.png</textureCheckmark>
          <MarkWidth>16</MarkWidth>
@@ -104,9 +104,9 @@
          <posX>62</posX>
          <posY>246</posY>
          <onleft>6</onleft>
-         <onright>7</onright>
-         <onup>5</onup>
-         <ondown>9</ondown>
+         <onright>26</onright>
+         <onup>6</onup>
+         <ondown>25</ondown>
          <shadow>no</shadow>
          <textureCheckmark>check-box.png</textureCheckmark>
          <MarkWidth>16</MarkWidth>
@@ -131,7 +131,7 @@
          <posY>504</posY>
          <onleft>25</onleft>
          <onright>26</onright>
-         <onup>6</onup>
+         <onup>7</onup>
          <ondown>4</ondown>
          <label>200007</label>
          <width>96</width>
@@ -169,7 +169,7 @@
          <posY>504</posY>
          <onleft>25</onleft>
          <onright>26</onright>
-         <onup>6</onup>
+         <onup>7</onup>
          <ondown>4</ondown>
          <label>200009</label>
          <width>96</width>
