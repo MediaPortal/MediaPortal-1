@@ -23,7 +23,6 @@ copy ..\..\..\MediaPortal.Support\bin\Release\ICSharpCode.SharpZipLib.dll .
 copy ..\..\..\RemotePlugins\HCWHelper\HCWHelper\bin\Release\HCWHelper.exe .
 copy ..\..\..\RemotePlugins\X10Remote\AxInterop.X10.dll .
 copy ..\..\..\RemotePlugins\X10Remote\Interop.X10.dll .
-copy ..\..\..\RemotePlugins\IrTrans\IRTrans.NET.dll .
 if exist ..\..\..\lame_enc.dll copy ..\..\..\lame_enc.dll .
 copy ..\..\..\MPSA.ax .
 copy ..\..\..\TSFileSource.ax .
