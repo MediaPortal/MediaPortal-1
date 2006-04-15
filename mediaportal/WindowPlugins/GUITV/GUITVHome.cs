@@ -740,6 +740,13 @@ namespace MediaPortal.GUI.TV
 
     static public bool ViewChannelAndCheck(string channel)
     {
+      if (!Recorder.Running)
+      {
+        Log.Write("GUITVHome.ViewChannelAndCheck(): setting _isTvOn and _isTimeShifting to false");
+        _isTvOn = false;
+        _isTimeShifting = false;
+        return true;
+      }
       if (g_Player.Playing)
       {
         if (g_Player.IsTVRecording) return true;

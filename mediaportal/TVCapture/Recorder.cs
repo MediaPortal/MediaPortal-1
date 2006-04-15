@@ -979,7 +979,7 @@ namespace MediaPortal.TV.Recording
       }
       finally
       {
-        CommandProcessor.ControlTimeShifting = true;
+        if (CommandProcessor != null) CommandProcessor.ControlTimeShifting = true;
         reEntrantStartViewing = false;
       }
       return true;
