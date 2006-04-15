@@ -70,6 +70,8 @@ namespace MediaPortal.InputDevices
         logVerbose = xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);
         string mceType = xmlreader.GetValueAsString("remote", "MCEType", "Teletext");
 
+        if (logVerbose) Log.Write("MCE: Init");
+
         try
         {
           switch (mceType)
@@ -131,6 +133,7 @@ namespace MediaPortal.InputDevices
     /// </summary>
     public void DeInit()
     {
+      if (logVerbose) Log.Write("MCE: DeInit");
       Remote.Click -= new RemoteEventHandler(OnRemoteClick);
     }
 
@@ -141,6 +144,8 @@ namespace MediaPortal.InputDevices
     /// <param name="button">Remote Button</param>
     void OnRemoteClick(RemoteButton button)
     {
+      if (logVerbose) Log.Write("MCE: Incoming button command: {0}", button);
+
       // Set LastHidRequest, otherwise the HID handler (if enabled) would react on some remote buttons (double execution of command)
       switch (button)
       {
@@ -192,8 +197,10 @@ namespace MediaPortal.InputDevices
       try
       {
         if (inputHandler.MapAction((int)button))
+        {
           if (logVerbose) Log.Write("MCE: Command \"{0}\" mapped", button);
-          else if (logVerbose) Log.Write("MCE: Command \"{0}\" not mapped", button);
+        }
+        else if (logVerbose) Log.Write("MCE: Command \"{0}\" not mapped", button);
       }
       catch (System.ApplicationException ex)
       {

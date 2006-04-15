@@ -36,6 +36,14 @@ namespace MediaPortal.InputDevices
 
     public static void Init()
     {
+      if (_initialized)
+      {
+        Log.Write("Remotes: Init was called before Stop - stopping devices now");
+        Stop();
+      }
+
+      _initialized = true;
+
       HidListener.Init(GUIGraphicsContext.ActiveForm);
       MCE2005Remote.Init(GUIGraphicsContext.ActiveForm);
       FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
@@ -45,12 +53,20 @@ namespace MediaPortal.InputDevices
 
     public static void Stop()
     {
+      if (!_initialized)
+      {
+        Log.Write("Remotes: Stop was called without Init - exiting");
+        return;
+      }
+
       HidListener.DeInit();
       MCE2005Remote.DeInit();
       FireDTVRemote.DeInit();
       HCWRemote.DeInit();
       X10Remote.DeInit();
       diRemote.Stop();
+
+      _initialized = false;
     }
 
     public static bool WndProc(ref Message msg, out Action action, out char key, out Keys keyCode)
@@ -98,6 +114,7 @@ namespace MediaPortal.InputDevices
     static RemoteControls.FireDTVRemote FireDTVRemote = new RemoteControls.FireDTVRemote();
     static AppCommands _lastHidRequest;
     static int _lastHidRequestTick;
+    static bool _initialized = false;
 
     #endregion Fields
   }
