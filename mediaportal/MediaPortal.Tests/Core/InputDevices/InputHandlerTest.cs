@@ -123,25 +123,27 @@ namespace MediaPortal.Tests.Core.InputDevices
     [Test]
     public void MappingConstructor()
     {
-      int layer = 0;
-      string condition = "*";
+      int    layer       = 0;
+      string condition   = "*";
       string conProperty = "-1";
-      string command = "ACTION";
+      string command     = "ACTION";
       string cmdProperty = "93";
-      int cmdKeyChar = 48;
-      int cmdKeyCode = 0;
-      string sound = "cursor.wav";
+      int    cmdKeyChar  = 48;
+      int    cmdKeyCode  = 0;
+      string sound       = "cursor.wav";
+      bool   focus       = true;
 
-      InputHandler.Mapping mapTest = new InputHandler.Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound);
+      InputHandler.Mapping mapTest = new InputHandler.Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound, focus);
 
-      Assert.AreEqual(layer, mapTest.Layer);
-      Assert.AreEqual(condition, mapTest.Condition);
+      Assert.AreEqual(layer      , mapTest.Layer);
+      Assert.AreEqual(condition  , mapTest.Condition);
       Assert.AreEqual(conProperty, mapTest.ConProperty);
-      Assert.AreEqual(command, mapTest.Command);
+      Assert.AreEqual(command    , mapTest.Command);
       Assert.AreEqual(cmdProperty, mapTest.CmdProperty);
-      Assert.AreEqual(cmdKeyChar, mapTest.CmdKeyChar);
-      Assert.AreEqual(cmdKeyCode, mapTest.CmdKeyCode);
-      Assert.AreEqual(sound, mapTest.Sound);
+      Assert.AreEqual(cmdKeyChar , mapTest.CmdKeyChar);
+      Assert.AreEqual(cmdKeyCode , mapTest.CmdKeyCode);
+      Assert.AreEqual(sound      , mapTest.Sound);
+      Assert.AreEqual(focus      , mapTest.Focus);
     }
 
     [Test]
@@ -158,8 +160,9 @@ namespace MediaPortal.Tests.Core.InputDevices
       int    cmdKeyChar  = 48;
       int    cmdKeyCode  = 0;
       string sound       = "cursor.wav";
+      bool   focus       = true;
 
-      InputHandler.Mapping mapExpected = new InputHandler.Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound);
+      InputHandler.Mapping mapExpected = new InputHandler.Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound, focus);
       InputHandler.Mapping mapTest = inputHandler.GetMapping(0);
 
       Assert.AreEqual(mapExpected.Layer      , mapTest.Layer);
@@ -170,6 +173,7 @@ namespace MediaPortal.Tests.Core.InputDevices
       Assert.AreEqual(mapExpected.CmdKeyChar , mapTest.CmdKeyChar);
       Assert.AreEqual(mapExpected.CmdKeyCode , mapTest.CmdKeyCode);
       Assert.AreEqual(mapExpected.Sound      , mapTest.Sound);
+      Assert.AreEqual(mapExpected.Focus      , mapTest.Focus);
     }
 
     [Test]
