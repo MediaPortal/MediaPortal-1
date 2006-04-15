@@ -599,7 +599,7 @@ namespace MediaPortal.Music.Database
 
                     else
                     {
-                        if (name1.Equals(name2))
+                        if (name1.Equals(name2) && album.idArtist == lArtistId)
                         {
                             return album.idAlbum;
                         }
@@ -610,7 +610,8 @@ namespace MediaPortal.Music.Database
                 SQLiteResultSet results;
                 results = m_db.Execute(strSQL);
 
-                if (results.Rows.Count == 0)
+                if ((lPathId == -1 && lArtistId != DatabaseUtility.GetAsInt64(results, 0, "idArtist")) ||
+                    (lPathId != -1 && lPathId   != DatabaseUtility.GetAsInt64(results, 0, "idPath")))
                 {
                     // doesnt exists, add it
                     strSQL = String.Format("insert into album (idAlbum, strAlbum,idArtist) values( NULL, '{0}', {1})", strAlbum, lArtistId);
