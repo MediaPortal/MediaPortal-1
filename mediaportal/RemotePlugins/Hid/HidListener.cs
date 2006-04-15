@@ -46,7 +46,7 @@ namespace MediaPortal.InputDevices
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        controlEnabled = xmlreader.GetValueAsBool("remote", "HID", true);
+        controlEnabled = xmlreader.GetValueAsBool("remote", "HID", false);
         logVerbose = xmlreader.GetValueAsBool("remote", "HIDVerboseLog", false);
       }
 
