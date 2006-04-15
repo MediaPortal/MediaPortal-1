@@ -601,13 +601,13 @@ namespace MediaPortal.TV.Recording
       _countryCode = channel.Country;
       if (_mpeg2DemuxHelper == null)
       {
-        _lastError="Graph not correctly build";
+        _lastError="Graph not built correctly";
         Log.WriteFile(Log.LogType.Log, true, "SinkGraph:StartViewing() FAILED: no mpeg2 demuxer present");
         return false;
       }
       if (_videoCaptureHelper == null)
       {
-        _lastError="Graph not correctly build";
+        _lastError="Graph not built correctly";
         Log.WriteFile(Log.LogType.Log, true, "SinkGraph:StartViewing() FAILED: no video capture device present");
         return false;
       }
