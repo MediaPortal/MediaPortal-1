@@ -181,19 +181,19 @@ namespace MediaPortal.Configuration.Sections
 
         checkBoxMceEnabled.Checked = xmlreader.GetValueAsBool("remote", "MCE", true);
         checkBoxMceExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);
-        string mceType = xmlreader.GetValueAsString("remote", "MCEType", "Teletext");
+        string mceType = xmlreader.GetValueAsString("remote", "MCEType", "General");
 
         switch (mceType)
         {
           case "NoTeletext":
             radioButtonMceNoTeletext.Checked = true;
-          break;
-          case "General":
-            radioButtonMceGeneral.Checked = true;
-          break;
-          default:
+            break;
+          case "Teletext":
             radioButtonMceTeletext.Checked = true;
-          break;
+            break;
+          default:
+            radioButtonMceGeneral.Checked = true;
+            break;
         }
 
         groupBoxMceType.Enabled = groupBoxMceSettings.Enabled = checkBoxMceEnabled.Checked;
