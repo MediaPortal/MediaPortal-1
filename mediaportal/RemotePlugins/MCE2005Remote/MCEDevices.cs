@@ -96,6 +96,9 @@ namespace MediaPortal.Devices
 
 		// MCE keyboard specific
 		MyTV = 70,
+    MyMusic = 71,
+    MyPictures = 73,
+    MyVideos = 74,
 		MyRadio = 80,
 		Messenger = 100,
 
