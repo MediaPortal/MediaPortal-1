@@ -93,6 +93,11 @@ namespace MediaPortal.Player
           Marshal.ThrowExceptionForHR(hr);
 
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+        
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        {
+          _vmr9.UseRGBMode(xmlreader.GetValueAsBool("dvdplayer", "usergbmode", false));
+        }
         _vmr9.AddVMR9(_graphBuilder);
         try
         {
