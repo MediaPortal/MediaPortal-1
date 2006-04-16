@@ -47,14 +47,14 @@
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
 		</button>
 		<button name="Up" code="30" />
+		<button name="Down" code="31" />
+		<button name="Left" code="32" />
+		<button name="Right" code="33" />
+		<button name="Ok" code="34" />
 		<button name="Info" code="15">
 			<action layer="0" condition="FULLSCREEN" conproperty="TRUE" command="ACTION" cmdproperty="24" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="11" sound="click.wav" />
 		</button>
-		<button name="Left" code="32" />
-		<button name="Ok" code="34" />
-		<button name="Right" code="33" />
-		<button name="Down" code="31" />
 		<button name="Volume +" code="16">
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="103" sound="cursor.wav" />
 		</button>
@@ -146,7 +146,7 @@
 	</remote>
 	<remote family="Extended buttons">
 		<button name="My TV" code="70">
-			<action layer="0" condition="WINDOW" conproperty="602" command="WINDOW" cmdproperty="602" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7701" command="WINDOW" cmdproperty="602" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="1" command="ACTION" cmdproperty="18" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="18" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="18" sound="click.wav" />
