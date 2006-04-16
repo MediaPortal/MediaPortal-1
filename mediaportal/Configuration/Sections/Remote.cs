@@ -117,13 +117,9 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton buttonHidDefaults;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMceGeneral;
     private MediaPortal.UserInterface.Controls.MPButton buttonMceMapping;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMceType;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMceExtendedLogging;
     private MediaPortal.UserInterface.Controls.MPButton buttonMceDefaults;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMceColouredButtons;
-    private RadioButton radioButtonMceGeneral;
-    private RadioButton radioButtonMceNoTeletext;
-    private RadioButton radioButtonMceTeletext;
     private GroupBox groupBoxMceSettings;
     const string errHcwMissingExe = "IR application not found. You might want to use it to control external applications.\nReinstall the Hauppauge IR drivers to fix this problem.";
 
@@ -181,22 +177,8 @@ namespace MediaPortal.Configuration.Sections
 
         checkBoxMceEnabled.Checked = xmlreader.GetValueAsBool("remote", "MCE", true);
         checkBoxMceExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);
-        string mceType = xmlreader.GetValueAsString("remote", "MCEType", "General");
 
-        switch (mceType)
-        {
-          case "NoTeletext":
-            radioButtonMceNoTeletext.Checked = true;
-            break;
-          case "Teletext":
-            radioButtonMceTeletext.Checked = true;
-            break;
-          default:
-            radioButtonMceGeneral.Checked = true;
-            break;
-        }
-
-        groupBoxMceType.Enabled = groupBoxMceSettings.Enabled = checkBoxMceEnabled.Checked;
+        groupBoxMceSettings.Enabled = buttonMceMapping.Enabled = checkBoxMceEnabled.Checked;
 
         //radioButtonMceUsa.Checked = xmlreader.GetValueAsBool("remote", "USAModel", false);
 
@@ -345,13 +327,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("remote", "MCE", checkBoxMceEnabled.Checked);
         xmlwriter.SetValueAsBool("remote", "MCEVerboseLog", checkBoxMceExtendedLogging.Checked);
 
-        if (radioButtonMceTeletext.Checked)
-          xmlwriter.SetValue("remote", "MCEType", "Teletext");
-        else if (radioButtonMceNoTeletext.Checked)
-          xmlwriter.SetValue("remote", "MCEType", "NoTeletext");
-        else
-          xmlwriter.SetValue("remote", "MCEType", "General");
-
         //xmlwriter.SetValueAsBool("remote", "mce2005", checkBoxMceEnabled.Checked);
         //xmlwriter.SetValueAsBool("remote", "USAModel", radioButtonMceUsa.Checked);
 
@@ -431,10 +406,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxMceSettings = new System.Windows.Forms.GroupBox();
       this.checkBoxMceExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonMceDefaults = new MediaPortal.UserInterface.Controls.MPButton();
-      this.groupBoxMceType = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.radioButtonMceGeneral = new System.Windows.Forms.RadioButton();
-      this.radioButtonMceNoTeletext = new System.Windows.Forms.RadioButton();
-      this.radioButtonMceTeletext = new System.Windows.Forms.RadioButton();
       this.groupBoxMceGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonMceMapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxMceGeneralx = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -500,7 +471,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMce.SuspendLayout();
       this.groupBoxMceSettings.SuspendLayout();
-      this.groupBoxMceType.SuspendLayout();
       this.groupBoxMceGeneral.SuspendLayout();
       this.groupBoxMceGeneralx.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceEurope)).BeginInit();
@@ -536,9 +506,9 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxMceEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxMceEnabled.Location = new System.Drawing.Point(16, 24);
       this.checkBoxMceEnabled.Name = "checkBoxMceEnabled";
-      this.checkBoxMceEnabled.Size = new System.Drawing.Size(150, 17);
+      this.checkBoxMceEnabled.Size = new System.Drawing.Size(209, 17);
       this.checkBoxMceEnabled.TabIndex = 0;
-      this.checkBoxMceEnabled.Text = "Use Microsoft MCE remote";
+      this.checkBoxMceEnabled.Text = "Use Microsoft MCE remote or keyboard";
       this.checkBoxMceEnabled.UseVisualStyleBackColor = true;
       this.checkBoxMceEnabled.CheckedChanged += new System.EventHandler(this.checkBoxMceEnabled_CheckedChanged);
       // 
@@ -562,7 +532,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.tabPageMce.Controls.Add(this.groupBoxMceSettings);
       this.tabPageMce.Controls.Add(this.buttonMceDefaults);
-      this.tabPageMce.Controls.Add(this.groupBoxMceType);
       this.tabPageMce.Controls.Add(this.groupBoxMceGeneral);
       this.tabPageMce.Controls.Add(this.groupBoxMceGeneralx);
       this.tabPageMce.Location = new System.Drawing.Point(4, 22);
@@ -575,7 +544,7 @@ namespace MediaPortal.Configuration.Sections
       // groupBoxMceSettings
       // 
       this.groupBoxMceSettings.Controls.Add(this.checkBoxMceExtendedLogging);
-      this.groupBoxMceSettings.Location = new System.Drawing.Point(12, 184);
+      this.groupBoxMceSettings.Location = new System.Drawing.Point(12, 72);
       this.groupBoxMceSettings.Name = "groupBoxMceSettings";
       this.groupBoxMceSettings.Size = new System.Drawing.Size(440, 56);
       this.groupBoxMceSettings.TabIndex = 5;
@@ -603,54 +572,6 @@ namespace MediaPortal.Configuration.Sections
       this.buttonMceDefaults.Text = "&Defaults";
       this.buttonMceDefaults.UseVisualStyleBackColor = true;
       this.buttonMceDefaults.Click += new System.EventHandler(this.buttonMceDefaults_Click);
-      // 
-      // groupBoxMceType
-      // 
-      this.groupBoxMceType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxMceType.Controls.Add(this.radioButtonMceGeneral);
-      this.groupBoxMceType.Controls.Add(this.radioButtonMceNoTeletext);
-      this.groupBoxMceType.Controls.Add(this.radioButtonMceTeletext);
-      this.groupBoxMceType.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxMceType.Location = new System.Drawing.Point(12, 72);
-      this.groupBoxMceType.Name = "groupBoxMceType";
-      this.groupBoxMceType.Size = new System.Drawing.Size(440, 104);
-      this.groupBoxMceType.TabIndex = 6;
-      this.groupBoxMceType.TabStop = false;
-      this.groupBoxMceType.Text = "MCE device type";
-      // 
-      // radioButtonMceGeneral
-      // 
-      this.radioButtonMceGeneral.AutoSize = true;
-      this.radioButtonMceGeneral.Location = new System.Drawing.Point(16, 72);
-      this.radioButtonMceGeneral.Name = "radioButtonMceGeneral";
-      this.radioButtonMceGeneral.Size = new System.Drawing.Size(208, 17);
-      this.radioButtonMceGeneral.TabIndex = 7;
-      this.radioButtonMceGeneral.TabStop = true;
-      this.radioButtonMceGeneral.Text = "Keyboard or other general MCE device";
-      this.radioButtonMceGeneral.UseVisualStyleBackColor = true;
-      // 
-      // radioButtonMceNoTeletext
-      // 
-      this.radioButtonMceNoTeletext.AutoSize = true;
-      this.radioButtonMceNoTeletext.Location = new System.Drawing.Point(16, 48);
-      this.radioButtonMceNoTeletext.Name = "radioButtonMceNoTeletext";
-      this.radioButtonMceNoTeletext.Size = new System.Drawing.Size(242, 17);
-      this.radioButtonMceNoTeletext.TabIndex = 6;
-      this.radioButtonMceNoTeletext.TabStop = true;
-      this.radioButtonMceNoTeletext.Text = "Remote without coloured teletext buttons (US)";
-      this.radioButtonMceNoTeletext.UseVisualStyleBackColor = true;
-      // 
-      // radioButtonMceTeletext
-      // 
-      this.radioButtonMceTeletext.AutoSize = true;
-      this.radioButtonMceTeletext.Location = new System.Drawing.Point(16, 24);
-      this.radioButtonMceTeletext.Name = "radioButtonMceTeletext";
-      this.radioButtonMceTeletext.Size = new System.Drawing.Size(248, 17);
-      this.radioButtonMceTeletext.TabIndex = 5;
-      this.radioButtonMceTeletext.TabStop = true;
-      this.radioButtonMceTeletext.Text = "Remote with coloured teletext buttons (non-US)";
-      this.radioButtonMceTeletext.UseVisualStyleBackColor = true;
       // 
       // groupBoxMceGeneral
       // 
@@ -1381,8 +1302,6 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageMce.ResumeLayout(false);
       this.groupBoxMceSettings.ResumeLayout(false);
       this.groupBoxMceSettings.PerformLayout();
-      this.groupBoxMceType.ResumeLayout(false);
-      this.groupBoxMceType.PerformLayout();
       this.groupBoxMceGeneral.ResumeLayout(false);
       this.groupBoxMceGeneral.PerformLayout();
       this.groupBoxMceGeneralx.ResumeLayout(false);
@@ -1445,7 +1364,7 @@ namespace MediaPortal.Configuration.Sections
     //
     private void checkBoxMceEnabled_CheckedChanged(object sender, System.EventArgs e)
     {
-      groupBoxMceType.Enabled = groupBoxMceSettings.Enabled = checkBoxMceEnabled.Checked;
+      groupBoxMceSettings.Enabled = buttonMceMapping.Enabled = checkBoxMceEnabled.Checked;
 
       //radioButtonMceEurope.Enabled = checkBoxMceEnabled.Checked;
       //radioButtonMceUsa.Enabled = checkBoxMceEnabled.Checked;
@@ -1453,7 +1372,6 @@ namespace MediaPortal.Configuration.Sections
 
     private void buttonMceDefaults_Click(object sender, EventArgs e)
     {
-      radioButtonMceTeletext.Checked = true;
       checkBoxMceExtendedLogging.Checked = false;
     }
 
@@ -1461,13 +1379,8 @@ namespace MediaPortal.Configuration.Sections
     {
       InputMappingForm dlg;
 
-      if (radioButtonMceTeletext.Checked)
-        dlg = new InputMappingForm("Microsoft MCE with Teletext");
-      else if (radioButtonMceNoTeletext.Checked)
-        dlg = new InputMappingForm("Microsoft MCE");
-      else
-        dlg = new InputMappingForm("Microsoft MCE General");
-
+      dlg = new InputMappingForm("Microsoft MCE");
+      
       dlg.ShowDialog(this);
     }
 

@@ -69,24 +69,12 @@ namespace MediaPortal.InputDevices
       {
         controlEnabled = xmlreader.GetValueAsBool("remote", "MCE", true);
         logVerbose = xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);
-        string mceType = xmlreader.GetValueAsString("remote", "MCEType", "Teletext");
 
         if (logVerbose) Log.Write("MCE: Init");
 
         try
         {
-          switch (mceType)
-          {
-            case "NoTeletext":
-              inputHandler = new InputHandler("Microsoft MCE");
-              break;
-            case "General":
-              inputHandler = new InputHandler("Microsoft MCE General");
-              break;
-            default:
-              inputHandler = new InputHandler("Microsoft MCE with Teletext");
-              break;
-          }
+          inputHandler = new InputHandler("Microsoft MCE");
         }
         catch (System.IO.FileNotFoundException)
         {
