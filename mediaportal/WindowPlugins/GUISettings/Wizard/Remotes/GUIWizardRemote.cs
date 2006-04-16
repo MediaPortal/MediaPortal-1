@@ -31,11 +31,7 @@ namespace MediaPortal.GUI.Settings.Wizard
   public class GUIWizardRemote : GUIWindow
   {
     [SkinControlAttribute(4)]
-    protected GUICheckMarkControl cmMicrosoftWithoutTeletext = null;
-    [SkinControlAttribute(5)]
-    protected GUICheckMarkControl cmMicrosoftWithTeletext = null;
-    [SkinControlAttribute(12)]
-    protected GUICheckMarkControl cmMicrosoftOther = null;
+    protected GUICheckMarkControl cmMicrosoftMCE = null;
     [SkinControlAttribute(6)]
     protected GUICheckMarkControl cmHauppauge = null;
     [SkinControlAttribute(7)]
@@ -76,9 +72,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
     protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
     {
-      if (cmMicrosoftWithoutTeletext == control) OnMicrosoftWithoutTeletext();
-      if (cmMicrosoftWithTeletext == control) OnMicrosoftWithTeletext();
-      if (cmMicrosoftOther == control) OnMicrosoftOther();
+      if (cmMicrosoftMCE == control) OnMicrosoftMCE();
       if (cmHauppauge == control) OnHauppauge();
       if (cmX10Medion == control) OnX10Medion();
       if (cmX10Ati == control) OnX10Ati();
@@ -90,54 +84,22 @@ namespace MediaPortal.GUI.Settings.Wizard
     }
 
 
-    void OnMicrosoftWithoutTeletext()
+    void OnMicrosoftMCE()
     {
-      cmMicrosoftWithoutTeletext.Selected = true;
-      cmMicrosoftWithTeletext.Selected = false;
-      cmMicrosoftOther.Selected = false;
-      cmHauppauge.Selected = false;
-      cmX10Medion.Selected = false;
-      cmX10Ati.Selected = false;
-      cmFireDTV.Selected = false;
-      cmOther.Selected = false;
-      imgRemote.SetFileName(@"Wizards\remote_mce_us.png");
-      GUIControl.FocusControl(GetID, cmMicrosoftWithoutTeletext.GetID);
-    }
-
-
-    void OnMicrosoftWithTeletext()
-    {
-      cmMicrosoftWithoutTeletext.Selected = false;
-      cmMicrosoftWithTeletext.Selected = true;
-      cmMicrosoftOther.Selected = false;
+      cmMicrosoftMCE.Selected = true;
       cmHauppauge.Selected = false;
       cmX10Medion.Selected = false;
       cmX10Ati.Selected = false;
       cmFireDTV.Selected = false;
       cmOther.Selected = false;
       imgRemote.SetFileName(@"Wizards\remote_mce_eu.png");
-      GUIControl.FocusControl(GetID, cmMicrosoftWithTeletext.GetID);
+      GUIControl.FocusControl(GetID, cmMicrosoftMCE.GetID);
     }
 
-    void OnMicrosoftOther()
-    {
-      cmMicrosoftWithoutTeletext.Selected = false;
-      cmMicrosoftWithTeletext.Selected = false;
-      cmMicrosoftOther.Selected = true;
-      cmHauppauge.Selected = false;
-      cmX10Medion.Selected = false;
-      cmX10Ati.Selected = false;
-      cmFireDTV.Selected = false;
-      cmOther.Selected = false;
-      imgRemote.SetFileName(@"Wizards\remote_other.png");
-      GUIControl.FocusControl(GetID, cmMicrosoftOther.GetID);
-    }
 
     void OnHauppauge()
     {
-      cmMicrosoftWithoutTeletext.Selected = false;
-      cmMicrosoftWithTeletext.Selected = false;
-      cmMicrosoftOther.Selected = false;
+      cmMicrosoftMCE.Selected = false;
       cmHauppauge.Selected = true;
       cmX10Medion.Selected = false;
       cmX10Ati.Selected = false;
@@ -150,9 +112,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
     void OnX10Medion()
     {
-      cmMicrosoftWithoutTeletext.Selected = false;
-      cmMicrosoftWithTeletext.Selected = false;
-      cmMicrosoftOther.Selected = false;
+      cmMicrosoftMCE.Selected = false;
       cmHauppauge.Selected = false;
       cmX10Medion.Selected = true;
       cmX10Ati.Selected = false;
@@ -165,9 +125,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
     void OnX10Ati()
     {
-      cmMicrosoftWithoutTeletext.Selected = false;
-      cmMicrosoftWithTeletext.Selected = false;
-      cmMicrosoftOther.Selected = false;
+      cmMicrosoftMCE.Selected = false;
       cmHauppauge.Selected = false;
       cmX10Medion.Selected = false;
       cmX10Ati.Selected = true;
@@ -180,9 +138,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
     void OnFireDTV()
     {
-      cmMicrosoftWithoutTeletext.Selected = false;
-      cmMicrosoftWithTeletext.Selected = false;
-      cmMicrosoftOther.Selected = false;
+      cmMicrosoftMCE.Selected = false;
       cmHauppauge.Selected = false;
       cmX10Medion.Selected = false;
       cmX10Ati.Selected = false;
@@ -195,9 +151,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 
     void OnOther()
     {
-      cmMicrosoftWithoutTeletext.Selected = false;
-      cmMicrosoftWithTeletext.Selected = false;
-      cmMicrosoftOther.Selected = false;
+      cmMicrosoftMCE.Selected = false;
       cmHauppauge.Selected = false;
       cmX10Medion.Selected = false;
       cmX10Ati.Selected = false;
@@ -213,25 +167,13 @@ namespace MediaPortal.GUI.Settings.Wizard
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         bool useMicrosoft = xmlreader.GetValueAsBool("remote", "MCE", true);
-        string mceType = xmlreader.GetValueAsString("remote", "MCEType", "Teletext");
         bool useHCW = xmlreader.GetValueAsBool("remote", "HCW", false);
         bool useX10 = xmlreader.GetValueAsBool("remote", "X10", false);
         bool useX10Medion = xmlreader.GetValueAsBool("remote", "X10Medion", false);
         bool useX10Ati = xmlreader.GetValueAsBool("remote", "X10ATI", false);
         bool useFireDTV = xmlreader.GetValueAsBool("remote", "FireDTV", false);
-        if (useMicrosoft)
-          switch (mceType)
-          {
-            case "NoTeletext":
-              OnMicrosoftWithoutTeletext();
-              break;
-            case "General":
-              OnMicrosoftOther();
-              break;
-            default:
-              OnMicrosoftWithTeletext();
-              break;
-          }
+
+        if (useMicrosoft) OnMicrosoftMCE();
         else if (useHCW) OnHauppauge();
         else if (useX10 && useX10Medion) OnX10Medion();
         else if (useX10 && useX10Ati) OnX10Ati();
@@ -245,24 +187,7 @@ namespace MediaPortal.GUI.Settings.Wizard
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        if (cmMicrosoftWithTeletext.Selected)
-        {
-          xmlwriter.SetValueAsBool("remote", "MCE", true);
-          xmlwriter.SetValue("remote", "MCEType", "Teletext");
-        }
-        else if (cmMicrosoftWithoutTeletext.Selected)
-        {
-          xmlwriter.SetValueAsBool("remote", "MCE", true);
-          xmlwriter.SetValue("remote", "MCEType", "NoTeletext");
-        }
-        else if (cmMicrosoftOther.Selected)
-        {
-          xmlwriter.SetValueAsBool("remote", "MCE", true);
-          xmlwriter.SetValue("remote", "MCEType", "General");
-        }
-        else
-          xmlwriter.SetValueAsBool("remote", "MCE", false);
-
+        xmlwriter.SetValueAsBool("remote", "MCE", cmMicrosoftMCE.Selected);
         xmlwriter.SetValueAsBool("remote", "HCW", cmHauppauge.Selected);
         xmlwriter.SetValueAsBool("remote", "X10", cmX10Medion.Selected || cmX10Ati.Selected);
         xmlwriter.SetValueAsBool("remote", "X10Medion", cmX10Medion.Selected);
