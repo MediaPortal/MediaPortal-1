@@ -221,10 +221,10 @@ namespace MediaPortal.GUI.TV
           action.wID = Action.ActionType.ACTION_MOVE_RIGHT;
           break;
         case Action.ActionType.ACTION_BIG_STEP_BACK:
-          action.wID = Action.ActionType.ACTION_MOVE_UP;
+          action.wID = Action.ActionType.ACTION_MOVE_DOWN;
           break;
         case Action.ActionType.ACTION_BIG_STEP_FORWARD:
-          action.wID = Action.ActionType.ACTION_MOVE_DOWN;
+          action.wID = Action.ActionType.ACTION_MOVE_UP;
           break;
         case Action.ActionType.ACTION_OSD_SHOW_LEFT:
           break;
