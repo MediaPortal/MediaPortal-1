@@ -27,6 +27,7 @@ namespace MediaPortal.Music.Database
 	/// </summary>
 	public class AlbumInfo 
 	{
+    int    m_iIdAlbum=0;
     string m_strAlbum="";
     string m_strArtist="";
     string m_strGenre="";
@@ -46,6 +47,7 @@ namespace MediaPortal.Music.Database
     public AlbumInfo Clone()
     {
       AlbumInfo newalbum = new AlbumInfo();
+      newalbum.IdAlbum = IdAlbum;
       newalbum.Album=Album;
       newalbum.Artist=Artist;
       newalbum.Genre=Genre;
@@ -105,6 +107,12 @@ namespace MediaPortal.Music.Database
       get { return m_strAlbum;}
       set { m_strAlbum=value;}
     }
+    public int IdAlbum
+    {
+      get { return m_iIdAlbum; }
+      set { m_iIdAlbum = value; }
+    }
+    
     public string Tracks
     {
       get

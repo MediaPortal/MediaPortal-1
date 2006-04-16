@@ -519,6 +519,7 @@ namespace MediaPortal.Music.Database
                         song.Album = fields.fields[2];
                         song.albumId = DatabaseUtility.GetAsInt(results, i, "album.idAlbum");
                         song.artistId = DatabaseUtility.GetAsInt(results, i, "album.idArtist");
+                      
 
                         //if (fields.fields.Count >= 5)
                         //    song.Artist = fields.fields[4];
@@ -1482,6 +1483,7 @@ namespace MediaPortal.Music.Database
                     AlbumInfo album = new AlbumInfo();
                     album.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
                     album.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
+                    album.IdAlbum = DatabaseUtility.GetAsInt(results, i, "album.idArtist");
                     albums.Add(album);
                 }
                 return true;
@@ -1529,6 +1531,7 @@ namespace MediaPortal.Music.Database
                     AlbumInfo album = new AlbumInfo();
                     album.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
                     album.Artist = DatabaseUtility.Get(results, i, "artist.strArtist");
+                    album.IdAlbum = DatabaseUtility.GetAsInt(results, i, "album.idArtist");
                     albums.Add(album);
                 }
                 return true;
@@ -1565,6 +1568,7 @@ namespace MediaPortal.Music.Database
                 {
                     AlbumInfo album = new AlbumInfo();
                     album.Album = DatabaseUtility.Get(results, i, "album.strAlbum");
+                    album.IdAlbum = DatabaseUtility.GetAsInt(results, i, "album.idArtist");
                     album.Artist = variousArtists;
                     albums.Add(album);
                 }

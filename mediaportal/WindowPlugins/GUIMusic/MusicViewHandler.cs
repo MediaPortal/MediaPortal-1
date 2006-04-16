@@ -349,7 +349,7 @@ namespace MediaPortal.GUI.Music
                     {
                         foreach (AlbumInfo album in albums)
                         {
-                            if (song.Album.Equals(album.Album))
+                            if (song.Album.Equals(album.Album) && song.artistId == album.IdAlbum) //album.Rating includes artistId
                             {
                                 song.Artist = album.Artist;
                                 break;
