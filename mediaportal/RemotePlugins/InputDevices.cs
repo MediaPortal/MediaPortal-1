@@ -84,6 +84,9 @@ namespace MediaPortal.InputDevices
       if (HidListener.WndProc(ref msg, out action, out key, out keyCode))
         return true;
 
+      if (MCE2005Remote.WndProc(msg))
+        return true;
+
       return false;
     }
 

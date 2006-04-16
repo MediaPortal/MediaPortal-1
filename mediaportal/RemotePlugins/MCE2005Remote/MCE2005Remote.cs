@@ -26,6 +26,7 @@
 using System;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Devices;
 
@@ -135,6 +136,17 @@ namespace MediaPortal.InputDevices
     {
       if (logVerbose) Log.Write("MCE: DeInit");
       Remote.Click -= new RemoteEventHandler(OnRemoteClick);
+    }
+
+
+    /// <summary>
+    /// Let everybody know that this HID message may not be handled by anyone else
+    /// </summary>
+    /// <param name="msg">System.Windows.Forms.Message</param>
+    /// <returns>Command handled</returns>
+    public bool WndProc(Message msg)
+    {
+      return (controlEnabled && msg.Msg == 0x0319);
     }
 
 
