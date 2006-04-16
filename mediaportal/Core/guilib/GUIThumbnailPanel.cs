@@ -48,7 +48,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("thumbPosX")] protected int _xPositionThumbNail = 8;
     [XMLSkinElement("thumbPosY")] protected int _yPositionThumbNail = 8;
     [XMLSkinElement("thumbWidth")] protected int _thumbNailWidth = 64;
-    [XMLSkinElement("thumbHeight")] protected int _thumbnaiHeight = 64;
+    [XMLSkinElement("thumbHeight")] protected int _thumbNailHeight = 64;
 
     [XMLSkinElement("itemHeight")] protected int _itemHeight;
     [XMLSkinElement("itemWidth")] protected int _itemWidth;
@@ -56,13 +56,17 @@ namespace MediaPortal.GUI.Library
     protected int _lowItemHeight;
     /*"itemWidth"*/
     protected int _lowItemWidth;
-    [XMLSkinElement("textureHeight")] protected int _lowTextureHeight;
-    [XMLSkinElement("textureWidth")] protected int _lowTextureWidth;
+    [XMLSkinElement("textureHeight")] protected int _textureHeight;
+    [XMLSkinElement("textureWidth")] protected int _textureWidth;
+    /*"textureHeight"*/
+    protected int _lowTextureHeight;
+    /*"textureWidth"*/
+    protected int _lowTextureWidth;
 
     [XMLSkinElement("itemHeightBig")] protected int _bigItemHeight = 150;
     [XMLSkinElement("itemWidthBig")] protected int _bigItemWidth = 150;
-    [XMLSkinElement("thumbWidthBig")] protected int _textureWidth = 80;
-    [XMLSkinElement("thumbHeightBig")] protected int _textureHeight = 80;
+    [XMLSkinElement("thumbWidthBig")] protected int _bigThumbWidth = 80;
+    [XMLSkinElement("thumbHeightBig")] protected int _bigThumbHeight = 80;
     [XMLSkinElement("thumbZoom")] protected bool _zoom = false;
     [XMLSkinElement("textureHeightBig")] protected int _bigTextureHeight = 128;
     [XMLSkinElement("textureWidthBig")] protected int _bigTextureWidth = 128;
@@ -215,7 +219,7 @@ namespace MediaPortal.GUI.Library
       _verticalScrollBar.SendNotifies = false;
       _font = GUIFontManager.GetFont(_fontName);
       SetTextureDimensions(_textureWidth, _textureHeight);
-      SetThumbDimensionsLow(_xPositionThumbNail, _yPositionThumbNail, _thumbNailWidth, _thumbnaiHeight);
+      SetThumbDimensionsLow(_xPositionThumbNail, _yPositionThumbNail, _thumbNailWidth, _thumbNailHeight);
 
     }
 
@@ -228,7 +232,7 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScalePosToScreenResolution
         (ref _textureWidth, ref _textureHeight);
       GUIGraphicsContext.ScaleRectToScreenResolution
-        (ref _xPositionThumbNail, ref _yPositionThumbNail, ref _thumbNailWidth, ref _thumbnaiHeight);
+        (ref _xPositionThumbNail, ref _yPositionThumbNail, ref _thumbNailWidth, ref _thumbNailHeight);
       GUIGraphicsContext.ScalePosToScreenResolution
         (ref _bigTextureWidth, ref _bigTextureHeight);
       GUIGraphicsContext.ScaleRectToScreenResolution
@@ -326,7 +330,7 @@ namespace MediaPortal.GUI.Library
       int iOverSized = 0;
       if (bFocus && Focus)
       {
-        iOverSized = (_thumbNailWidth + _thumbnaiHeight)/THUMBNAIL_OVERSIZED_DIVIDER;
+        iOverSized = (_thumbNailWidth + _thumbNailHeight)/THUMBNAIL_OVERSIZED_DIVIDER;
       }
 
       if (pItem.HasThumbnail)
@@ -340,7 +344,7 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            pImage = new GUIImage(0, 0, _xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized, _thumbnaiHeight + 2 * iOverSized, pItem.ThumbnailImage, 0x0);
+            pImage = new GUIImage(0, 0, _xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY, _thumbNailWidth + 2 * iOverSized, _thumbNailHeight + 2 * iOverSized, pItem.ThumbnailImage, 0x0);
           }
           if (pImage!=null)
           {
@@ -351,7 +355,7 @@ namespace MediaPortal.GUI.Library
 
             pItem.Thumbnail = pImage;
             int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
-            int yOff = (_thumbnaiHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
+            int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
             pImage.SetPosition(_xPositionThumbNail - iOverSized + dwPosX + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
             pImage.Render(timePassed);
             _sleeper += SLEEP_FRAME_COUNT;
@@ -366,9 +370,9 @@ namespace MediaPortal.GUI.Library
           }
           pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
           pImage.Width = _thumbNailWidth + 2*iOverSized;
-          pImage.Height = _thumbnaiHeight + 2*iOverSized;
+          pImage.Height = _thumbNailHeight + 2*iOverSized;
           int xOff = (_thumbNailWidth + 2*iOverSized - pImage.RenderWidth)/2;
-          int yOff = (_thumbnaiHeight + 2*iOverSized - pImage.RenderHeight)/2;
+          int yOff = (_thumbNailHeight + 2*iOverSized - pImage.RenderHeight)/2;
           pImage.SetPosition(_xPositionThumbNail + dwPosX - iOverSized + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
 					if (bFocus)
 						pImage.ColourDiffuse=0xffffffff;
@@ -385,7 +389,7 @@ namespace MediaPortal.GUI.Library
           GUIImage pImage = pItem.IconBig;
           if (null == pImage /*&& _sleeper==0 */&& !IsAnimating)
           {
-            pImage = new GUIImage(0, 0, _xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY, _thumbNailWidth + 2*iOverSized, _thumbnaiHeight + 2*iOverSized, pItem.IconImageBig, 0x0);
+            pImage = new GUIImage(0, 0, _xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY, _thumbNailWidth + 2*iOverSized, _thumbNailHeight + 2*iOverSized, pItem.IconImageBig, 0x0);
             pImage.ParentControl = this;
             pImage.KeepAspectRatio = true;
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
@@ -393,7 +397,7 @@ namespace MediaPortal.GUI.Library
             pImage.AllocResources();
             pItem.IconBig = pImage;
             int xOff = (_thumbNailWidth + 2*iOverSized - pImage.RenderWidth)/2;
-            int yOff = (_thumbnaiHeight + 2*iOverSized - pImage.RenderHeight)/2;
+            int yOff = (_thumbNailHeight + 2*iOverSized - pImage.RenderHeight)/2;
             pImage.SetPosition(_xPositionThumbNail + dwPosX - iOverSized + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
             pImage.Render(timePassed);
             _sleeper += SLEEP_FRAME_COUNT;
@@ -407,9 +411,9 @@ namespace MediaPortal.GUI.Library
             }
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
             pImage.Width = _thumbNailWidth + 2*iOverSized;
-            pImage.Height = _thumbnaiHeight + 2*iOverSized;
+            pImage.Height = _thumbNailHeight + 2*iOverSized;
             int xOff = (_thumbNailWidth + 2*iOverSized - pImage.RenderWidth)/2;
-            int yOff = (_thumbnaiHeight + 2*iOverSized - pImage.RenderHeight)/2;
+            int yOff = (_thumbNailHeight + 2*iOverSized - pImage.RenderHeight)/2;
 						pImage.SetPosition(_xPositionThumbNail - iOverSized + dwPosX + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
 						if (bFocus)
 							pImage.ColourDiffuse=0xffffffff;
@@ -1696,7 +1700,7 @@ namespace MediaPortal.GUI.Library
     {
       if (iXpos < 0 || iYpos < 0 || iWidth < 0 || iHeight < 0) return;
       _thumbNailWidth = iWidth;
-      _thumbnaiHeight = iHeight;
+      _thumbNailHeight = iHeight;
       _xPositionThumbNail = iXpos;
       _yPositionThumbNail = iYpos;
     }
@@ -1704,7 +1708,7 @@ namespace MediaPortal.GUI.Library
     public void GetThumbDimensions(ref int iXpos, ref int iYpos, ref int iWidth, ref int iHeight)
     {
       iWidth = _thumbNailWidth;
-      iHeight = _thumbnaiHeight;
+      iHeight = _thumbNailHeight;
       iXpos = _xPositionThumbNail;
       iYpos = _yPositionThumbNail;
     }
