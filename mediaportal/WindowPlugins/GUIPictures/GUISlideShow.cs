@@ -903,6 +903,7 @@ namespace MediaPortal.GUI.Pictures
 
       // Reset slide time
       _slideTime = (int)(DateTime.Now.Ticks / 10000);
+      _frameCounter = 0;
     }
 
     void ShowPrevious()
@@ -939,6 +940,7 @@ namespace MediaPortal.GUI.Pictures
 
       // Reset slide time
       _slideTime = (int)(DateTime.Now.Ticks / 10000);
+      _frameCounter = 0;
     }
 
     #region render transition methods
