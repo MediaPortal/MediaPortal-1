@@ -1319,10 +1319,19 @@ namespace MediaPortal.GUI.Library
       }
       else if (_upDownControl != null)
       {
-        _upDownControl.OnAction(action);
-        if (!_upDownControl.Focus)
+        if (_upDownControl.SelectedButton == GUISpinControl.SpinSelect.SPIN_BUTTON_UP)
         {
-          base.OnAction(action);
+          _upDownControl.Focus = false;
+          _listType = GUIListControl.ListType.CONTROL_LIST;
+          this.Focus = true;
+        }
+        else
+        {
+          _upDownControl.OnAction(action);
+          if (!_upDownControl.Focus)
+          {
+            base.OnAction(action);
+          }
         }
         OnSelectionChanged();
       }
@@ -1361,7 +1370,16 @@ namespace MediaPortal.GUI.Library
       }
       else if (_upDownControl != null)
       {
-        _upDownControl.OnAction(action);
+        if (_upDownControl.SelectedButton == GUISpinControl.SpinSelect.SPIN_BUTTON_DOWN)
+        {
+          _upDownControl.Focus = false;
+          _listType = GUIListControl.ListType.CONTROL_LIST;
+          this.Focus = true;
+        }
+        else
+        {
+          _upDownControl.OnAction(action);
+        }
         if (!_upDownControl.Focus)
         {
           _listType = GUIListControl.ListType.CONTROL_LIST;
@@ -2271,11 +2289,13 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public override void Animate(float timePassed, Animator animator)
   {
+    Log.Write("GUIFilmstripControl.Animate - Start ({0})", timePassed);    
     if (animator == null) return;
     if (_imageInfo != null) _imageInfo.Animate(timePassed, animator);
     if (_upDownControl != null) _upDownControl.Animate(timePassed, animator);
     if (_imageBackground != null) _imageBackground.Animate(timePassed, animator);
     base.Animate(timePassed, animator);
+    Log.Write("GUIFilmstripControl.Animate - Stop ({0})", timePassed);    
   }
 
 
