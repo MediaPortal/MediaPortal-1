@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <mappings version="3">
 	<remote family="Medion X10 Remote">
 		<button name="TV" code="158">
@@ -34,11 +34,10 @@
 			<action layer="0" condition="WINDOW" conproperty="602" command="ACTION" cmdproperty="111" sound="back.wav" />
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="96" sound="back.wav" />
 			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="90" sound="back.wav" />
-			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="76" sound="back.wav" />
+			<action layer="0" condition="FULLSCREEN" conproperty="TRUE" command="ACTION" cmdproperty="76" sound="back.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="9" sound="back.wav" />
 		</button>
-		<button name="Setup" code="77">
-		</button>
+		<button name="Setup" code="77" />
 		<button name="Video Desktop" code="140">
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
 		</button>
@@ -81,8 +80,8 @@
 		<button name="Yellow" code="143">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9977" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9977" sound="click.wav" />
-			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="24" sound="click.wav" />
-			<action layer="0" condition="FULLSCREEN" conproperty="false" command="ACTION" cmdproperty="11" sound="click.wav" />
+			<action layer="0" condition="FULLSCREEN" conproperty="TRUE" command="ACTION" cmdproperty="24" sound="click.wav" />
+			<action layer="0" condition="FULLSCREEN" conproperty="FALSE" command="ACTION" cmdproperty="11" sound="click.wav" />
 		</button>
 		<button name="Blue" code="153">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9978" sound="click.wav" />
@@ -144,15 +143,12 @@
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="88" sound="back.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="93" cmdkeychar="48" cmdkeycode="0" sound="cursor.wav" />
 		</button>
-		<button name="Ch. Search" code="97">
-		</button>
+		<button name="Ch. Search" code="97" />
 		<button name="Back/Delete" code="98">
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
 		</button>
-		<button name="Rename" code="151">
-		</button>
-		<button name="Snapshot" code="157">
-		</button>
+		<button name="Rename" code="151" />
+		<button name="Snapshot" code="157" />
 		<button name="Cursor Up" code="19">
 			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="31" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="3" sound="cursor.wav" />
@@ -175,10 +171,8 @@
 			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="105" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav" />
 		</button>
-		<button name="Acquire Image" code="154">
-		</button>
-		<button name="Edit Image" code="152">
-		</button>
+		<button name="Acquire Image" code="154" />
+		<button name="Edit Image" code="152" />
 		<button name="Rewind" code="2">
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="87" sound="cursor.wav" />
 			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
@@ -217,7 +211,7 @@
 		<button name="Skip Forward" code="79">
 			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="91" sound="cursor.wav" />
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="5" sound="cursor.wav" />
-			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="28" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" sound="cursor.wav" />
 		</button>
 		<button name="DVD Menu" code="76">
@@ -226,7 +220,6 @@
 		<button name="Power" code="30">
 			<action layer="0" condition="*" conproperty="-1" command="POWER" cmdproperty="EXIT" sound="back.wav" />
 		</button>
-		<button name="DVD Audio" code="144">
-		</button>
+		<button name="DVD Audio" code="144" />
 	</remote>
 </mappings>
