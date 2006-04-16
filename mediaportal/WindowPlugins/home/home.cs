@@ -377,6 +377,8 @@ namespace MediaPortal.GUI.Home
 						while (m_iButtons<10)
 							ProcessPlugins(ref plugins);
 					}
+          m_aryPreControlList.Clear();
+          m_aryPostControlList.Clear();
 					plugins=null;
 
 					m_iCurrentButton=m_iButtons/2;
@@ -651,6 +653,8 @@ namespace MediaPortal.GUI.Home
 					ResetButtons();
 					VerifyButtonIndex(ref m_iCurrentButton);
 					LayoutButtons(0);
+          m_aryPreControlList.Clear();
+          m_aryPostControlList.Clear();
 					if (m_iOffset!=0)
 					{
 						FocusControl(GetID,m_iButtonIds[m_iOffset+m_iMiddle]);
@@ -697,7 +701,8 @@ namespace MediaPortal.GUI.Home
 					break;
 				case GUIMessage.MessageType.GUI_MSG_CLICKED:  // Handle Menu tags
 					//get sender control
-					base.OnMessage(message);
+          Log.Write(" OnMessage : MessageType.GUI_MSG_CLICKED");
+          base.OnMessage(message);
 					int bControl=message.SenderControlId;
 					if (bControl>1 && bControl<60)
 					{
@@ -753,6 +758,8 @@ namespace MediaPortal.GUI.Home
 										while (m_iButtons<10)
 											ProcessPlugins(ref plugins);
 									}
+                  m_aryPreControlList.Clear();
+                  m_aryPostControlList.Clear();
 									plugins=null;
 									m_iCurrentButton=m_iButtons/2;
 									VerifyButtonIndex(ref m_iCurrentButton);
@@ -845,7 +852,7 @@ namespace MediaPortal.GUI.Home
 								ResetButtons();
 								ArrayList plugins=PluginManager.SetupForms;
 								ProcessPlugins(ref plugins);
-								if (menuView > m_iButtons && noScrollSubs==true) 
+                if (menuView > m_iButtons && noScrollSubs==true) 
 								{
 									int xm = (menuView-m_iButtons)/2;
 									for (int iButt=2; iButt < 60; iButt++)
@@ -882,6 +889,8 @@ namespace MediaPortal.GUI.Home
 											ProcessPlugins(ref plugins);
 									}
 								}
+                m_aryPreControlList.Clear();
+                m_aryPostControlList.Clear();
 								plugins=null;
 								m_iCurrentButton=m_iButtons/2;
 								for (int i=102; i < 160; i++)
@@ -966,7 +975,9 @@ namespace MediaPortal.GUI.Home
 				while (m_iButtons<10)
 					ProcessPlugins(ref plugins);
 			}
-			plugins=null;
+      m_aryPreControlList.Clear();
+      m_aryPostControlList.Clear();
+      plugins=null;
 			m_iCurrentButton=m_iButtons/2;
 			VerifyButtonIndex(ref m_iCurrentButton);
 			LayoutButtons(0);
@@ -1509,7 +1520,7 @@ namespace MediaPortal.GUI.Home
 				scbutton.SetPosition(xscpos, iScMid);
 				scbutton.IsVisible=true;
 			}
-
+      
 			while (iTel <= iMaxItems)
 			{
 				GUIButtonControl button = GetControl(iButton+2) as GUIButtonControl;
@@ -1562,7 +1573,6 @@ namespace MediaPortal.GUI.Home
 			iButton=m_iCurrentButton+1;
 
 			VerifyButtonIndex(ref iButton);
-
 			while (iTel <= iMaxItems)
 			{
 				GUIButtonControl button = GetControl(iButton+2) as GUIButtonControl;
@@ -1601,7 +1611,7 @@ namespace MediaPortal.GUI.Home
 					int ypos=button.YPosition;
 					int height=button.Height;
 					button.IsVisible=true;
-					if (iTel==iMaxItems-1) m_iOffset2=button.GetID;
+      		if (iTel==iMaxItems-1) m_iOffset2=button.GetID;
 					iButton++;
 					if (iButton>=m_iButtons) iButton=0;
 					m_iVisibleItems++;
@@ -1720,8 +1730,8 @@ namespace MediaPortal.GUI.Home
 
 		void ResetButtons()
 		{			
-			m_aryPreControlList.Clear();
-			m_aryPostControlList.Clear();
+			//m_aryPreControlList.Clear();
+			//m_aryPostControlList.Clear();
 			m_iMaxHeight    = GetControl( (int)Controls.TemplatePanel).Height;
 			m_iMaxWidth     = GetControl( (int)Controls.TemplatePanel).Width;
 			m_iStartXoff    = GetControl( (int)Controls.TemplatePanel).XPosition;
