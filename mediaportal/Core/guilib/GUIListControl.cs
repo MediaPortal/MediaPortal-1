@@ -1708,7 +1708,15 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        _upDownControl.OnAction(action);
+        if (_upDownControl.SelectedButton == GUISpinControl.SpinSelect.SPIN_BUTTON_UP)
+        {
+          _upDownControl.Focus = false;
+          this.Focus = true;
+        }
+        else
+        {
+          _upDownControl.OnAction(action);
+        }
         if (!_upDownControl.Focus)
         {
           if (base._rightControlId != GetID)
@@ -1737,11 +1745,19 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        _upDownControl.OnAction(action);
-        if (!_upDownControl.Focus)
+        if (_upDownControl.SelectedButton == GUISpinControl.SpinSelect.SPIN_BUTTON_DOWN)
         {
-          _listType = ListType.CONTROL_LIST;
+          _upDownControl.Focus = false;
+          this.Focus = true;
         }
+        else
+        {
+          _upDownControl.OnAction(action);
+        }
+          if (!_upDownControl.Focus)
+          {
+            _listType = ListType.CONTROL_LIST;
+          }
       }
     }
 
