@@ -6,7 +6,6 @@
 		</button>
 		<button name="Power 2" code="12" />
 		<button name="Record" code="23">
-			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="7" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="113" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="89" sound="click.wav" />
 		</button>

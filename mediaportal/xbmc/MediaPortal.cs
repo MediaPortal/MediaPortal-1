@@ -1279,13 +1279,17 @@ public class MediaPortalApp : D3DApp, IRender
       {
         // record current tv program
         case Action.ActionType.ACTION_RECORD:
-          GUIWindow tvHome = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
-          if (tvHome != null)
+          if ((GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_TVGUIDE) &&
+            (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE))
           {
-            if (tvHome.GetID != GUIWindowManager.ActiveWindow)
+            GUIWindow tvHome = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
+            if (tvHome != null)
             {
-              tvHome.OnAction(action);
-              return;
+              if (tvHome.GetID != GUIWindowManager.ActiveWindow)
+              {
+                tvHome.OnAction(action);
+                return;
+              }
             }
           }
           break;

@@ -243,9 +243,14 @@ namespace MediaPortal.GUI.TV
             }
             else
             {
-              OnRecord(true);
+              OnSelectItem(true);
             }
           }
+          break;
+
+        case Action.ActionType.ACTION_RECORD:
+          if ((GetFocusControlId() == 1) && (_cursorY > 0) && (_cursorX >= 0))
+            OnRecord();
           break;
 
         case Action.ActionType.ACTION_MOUSE_MOVE:
@@ -659,7 +664,7 @@ namespace MediaPortal.GUI.TV
           }
           if (iControl >= 100)
           {
-            OnRecord(true);
+            OnSelectItem(true);
             Update(false);
             SetFocus();
           }
@@ -2226,7 +2231,7 @@ namespace MediaPortal.GUI.TV
             break;
 
           case 264: // record
-            OnRecord(false);
+            OnRecord();
             break;
         }
       }
@@ -2259,7 +2264,8 @@ namespace MediaPortal.GUI.TV
       GUITVProgramInfo.CurrentProgram = _currentProgram;
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO);
     }
-    void OnRecord(bool isItemSelected)
+
+    void OnSelectItem(bool isItemSelected)
     {
       if (_currentProgram == null) return;
       if (isItemSelected)
@@ -2297,6 +2303,22 @@ namespace MediaPortal.GUI.TV
         ShowProgramInfo();
       }
     }
+
+    void OnRecord()
+    {
+      if (_currentProgram == null) return;
+      if (_currentProgram.IsRunningAt(DateTime.Now) ||
+          _currentProgram.EndTime <= DateTime.Now)
+      {
+        //record current programme
+        GUIWindow tvHome = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
+        if ((tvHome != null) && (tvHome.GetID != GUIWindowManager.ActiveWindow))
+          tvHome.OnAction(new Action(Action.ActionType.ACTION_RECORD, 0, 0));
+      }
+      else
+        ShowProgramInfo();
+    }
+
     void CheckRecordingConflicts()
     {
     }

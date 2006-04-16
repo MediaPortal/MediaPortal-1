@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <mappings version="3">
 	<remote family="ATI X10 Remote">
 		<button name="A" code="74">
@@ -141,8 +141,8 @@
 		<button name="E" code="78">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9977" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9977" sound="click.wav" />
-			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="24" sound="click.wav" />
-			<action layer="0" condition="FULLSCREEN" conproperty="false" command="ACTION" cmdproperty="11" sound="click.wav" />
+			<action layer="0" condition="FULLSCREEN" conproperty="TRUE" command="ACTION" cmdproperty="24" sound="click.wav" />
+			<action layer="0" condition="FULLSCREEN" conproperty="FALSE" command="ACTION" cmdproperty="11" sound="click.wav" />
 		</button>
 		<button name="F" code="79">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9978" sound="click.wav" />
@@ -192,7 +192,6 @@
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="16" sound="cursor.wav" />
 		</button>
 		<button name="Record" code="1">
-			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="7" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="113" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="89" sound="click.wav" />
 		</button>
