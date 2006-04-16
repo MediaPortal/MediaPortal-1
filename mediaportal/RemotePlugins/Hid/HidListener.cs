@@ -92,7 +92,7 @@ namespace MediaPortal.InputDevices
         if ((AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000) == InputDevices.LastHidRequest)
         {
           // possible that it is the same request mapped to an app command?
-          if (Environment.TickCount - InputDevices.LastHidRequestTick < 500)
+          if (Environment.TickCount - InputDevices.LastHidRequestTick < 1000)
             return true;
         }
 
