@@ -2288,14 +2288,12 @@ namespace MediaPortal.GUI.Library
   /// Method to get animate the current control
   /// </summary>
   public override void Animate(float timePassed, Animator animator)
-  {
-    Log.Write("GUIFilmstripControl.Animate - Start ({0})", timePassed);    
+  {   
     if (animator == null) return;
     if (_imageInfo != null) _imageInfo.Animate(timePassed, animator);
     if (_upDownControl != null) _upDownControl.Animate(timePassed, animator);
     if (_imageBackground != null) _imageBackground.Animate(timePassed, animator);
     base.Animate(timePassed, animator);
-    Log.Write("GUIFilmstripControl.Animate - Stop ({0})", timePassed);    
   }
 
 
