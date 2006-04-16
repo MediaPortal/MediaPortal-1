@@ -231,7 +231,10 @@ namespace MediaPortal.InputDevices
             cmdKeyChar = Convert.ToInt32(nodeAction.Attributes["cmdkeychar"].Value);
             cmdKeyCode = Convert.ToInt32(nodeAction.Attributes["cmdkeycode"].Value);
           }
-          string sound = nodeAction.Attributes["sound"].Value;
+          string sound = string.Empty;
+          XmlAttribute soundAttribute = nodeAction.Attributes["sound"];
+          if (soundAttribute != null)
+            sound = soundAttribute.Value;
           bool focus = false;
           XmlAttribute focusAttribute = nodeAction.Attributes["focus"];
           if (focusAttribute != null)
