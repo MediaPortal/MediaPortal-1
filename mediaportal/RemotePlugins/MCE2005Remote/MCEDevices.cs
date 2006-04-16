@@ -100,7 +100,7 @@ namespace MediaPortal.Devices
     MyPictures = 73,
     MyVideos = 74,
 		MyRadio = 80,
-		Messenger = 100,
+		Messenger = 105,
 
 		// FIC Spectra specific
 		AspectRatio = 39,
