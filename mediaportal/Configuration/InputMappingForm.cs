@@ -1713,6 +1713,8 @@ namespace MediaPortal.Configuration
 
     private void labelExpand_Click(object sender, EventArgs e)
     {
+      if (treeMapping.SelectedNode == null)
+        treeMapping.Select();
       treeMapping.SelectedNode.ExpandAll();
     }
 
