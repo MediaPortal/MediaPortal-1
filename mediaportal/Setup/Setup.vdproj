@@ -951,6 +951,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_0C5567AC400E402EA2307789B7BBC27B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_0C5BB8FC868C4877889EDDD628C88730"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -4624,12 +4630,6 @@
         "Entry"
         {
         "MsmKey" = "8:_428A3C517CD4660ADB62353B853A90DE"
-        "OwnerKey" = "8:_0958D570D5B1495E9228DF67C6CABF16"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_428A3C517CD4660ADB62353B853A90DE"
         "OwnerKey" = "8:_D04F024288844EC48816A1BE83D6FB15"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -7539,12 +7539,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_6B7B7CD46EE94F69808BA65B5405F02C"
-        "OwnerKey" = "8:_416D221129EA4472920D97B19D66A6A4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_6BBDA3E9DEC04129B27295E03B0663C1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -8651,6 +8645,12 @@
         {
         "MsmKey" = "8:_7A9E469CB919423EA513A980E9896E48"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7ADD281850B94578B082883A977E66FA"
+        "OwnerKey" = "8:_416D221129EA4472920D97B19D66A6A4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -11961,6 +11961,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_AB0764AB8B8149BBB7235F9E47FD22B9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_AB09CEC3D7FF423984AF05007260B698"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -13030,6 +13036,12 @@
         "Entry"
         {
         "MsmKey" = "8:_B911C0A9ABF943EE9B41AC8B470ACCCC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B92B63731BAE492CBA18E0DF732A757D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -15418,6 +15430,12 @@
         "Entry"
         {
         "MsmKey" = "8:_D7F740D79C454638A942C32862AF7176"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D7F9E94E8712414BB7DDC4F5B88FA9F9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -20884,7 +20902,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.2298.12754, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:TVCapture, Version=1.0.2298.24229, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_07EBDF70D2C62A0311E7639D24F3BC99"
@@ -21255,7 +21273,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ExternalPlayers, Version=1.0.2298.12766, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:ExternalPlayers, Version=1.0.2298.24234, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_0958D570D5B1495E9228DF67C6CABF16"
@@ -21848,6 +21866,26 @@
             "TargetName" = "8:wizard_tvcard_dvbt_scan.xml"
             "Tag" = "8:"
             "Folder" = "8:_F197EB8DEA5B4DBBA364C20BBA681BB4"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0C5567AC400E402EA2307789B7BBC27B"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\osdskin-media\\volume_level_0.png"
+            "TargetName" = "8:volume_level_0.png"
+            "Tag" = "8:"
+            "Folder" = "8:_F0BA1AB9D06B4960A728D07E75586D36"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -24608,7 +24646,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2298.12755, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:RemotePlugins, Version=1.0.2298.26299, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_193689270945C4CCC8EC17731EDEFBFF"
@@ -30765,7 +30803,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:WebEPG-channels, Version=1.0.2298.12759, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:WebEPG-channels, Version=1.0.2298.24233, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_3441A2D1185B4D2B8CE65E1C87BA5D22"
@@ -31816,7 +31854,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:WebEPG-xmltv, Version=1.0.2298.12760, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:WebEPG-xmltv, Version=1.0.2298.24234, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_37F953F66CCF47E385CB11D28B11EBFF"
@@ -34089,7 +34127,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.2298.12751, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Core, Version=1.0.2298.24224, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_428A3C517CD4660ADB62353B853A90DE"
@@ -35500,7 +35538,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:WebEPG, Version=1.0.2298.12756, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:WebEPG, Version=1.0.2298.24230, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_48299CC58D353F0846A68651F5889A97"
@@ -44484,7 +44522,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.2298.12753, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Databases, Version=1.0.2298.24227, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_70A855261928A4CA12282DE3B2023252"
@@ -50030,7 +50068,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:WindowPlugins, Version=1.0.2298.12764, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:WindowPlugins, Version=1.0.2298.26315, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_894D541DFBC64BF8B85970D80D840D18"
@@ -51621,7 +51659,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Configuration, Version=1.0.2298.12773, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:Configuration, Version=1.0.2298.26311, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_8E4E5CF6FB5B4D9B86434402B55C1010"
@@ -52692,7 +52730,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:SubtitlePlugins, Version=1.0.2298.12760, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:SubtitlePlugins, Version=1.0.2298.24235, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_921D520796DA402E9BB49B790F745D59"
@@ -58132,6 +58170,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AB0764AB8B8149BBB7235F9E47FD22B9"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\osdskin-media\\volume_level_10.png"
+            "TargetName" = "8:volume_level_10.png"
+            "Tag" = "8:"
+            "Folder" = "8:_F0BA1AB9D06B4960A728D07E75586D36"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AB09CEC3D7FF423984AF05007260B698"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\plugins\\process\\LCDDrivers\\eep_serial.dll"
@@ -61623,6 +61681,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B92B63731BAE492CBA18E0DF732A757D"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\osdskin-media\\volume.states.mute.png"
+            "TargetName" = "8:volume.states.mute.png"
+            "Tag" = "8:"
+            "Folder" = "8:_F0BA1AB9D06B4960A728D07E75586D36"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B949E5FA6C364947A08B88D01496A35D"
             {
             "SourcePath" = "8:..\\xbmc\\bin\\Release\\skin\\MetalMedia\\media\\hover_X10 plugin.png"
@@ -64982,7 +65060,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:TagReaderPlugins, Version=1.0.2298.12761, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:TagReaderPlugins, Version=1.0.2298.24235, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_C6AB5A4444074B968E88450E6D2E4516"
@@ -66826,7 +66904,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ProcessPlugins, Version=1.0.2298.12758, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:ProcessPlugins, Version=1.0.2298.26307, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_CE5A0520AB4148528826DEE5FFA22725"
@@ -67377,7 +67455,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:WebEPG-conf, Version=1.0.2298.12759, Culture=neutral, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:WebEPG-conf, Version=1.0.2298.24233, Culture=neutral, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_D04F024288844EC48816A1BE83D6FB15"
@@ -69481,6 +69559,26 @@
             "TargetName" = "8:dialogProgress.xml"
             "Tag" = "8:"
             "Folder" = "8:_382685758DF349A6BACEE18D5A782CDA"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D7F9E94E8712414BB7DDC4F5B88FA9F9"
+            {
+            "SourcePath" = "8:..\\xbmc\\bin\\Release\\osdskin-media\\volume.states.png"
+            "TargetName" = "8:volume.states.png"
+            "Tag" = "8:"
+            "Folder" = "8:_F0BA1AB9D06B4960A728D07E75586D36"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -80281,6 +80379,17 @@
                             }
                         }
                     }
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_F0BA1AB9D06B4960A728D07E75586D36"
+                    {
+                    "Name" = "8:OSDSkin-Media"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_AD15EA18FE42411E99301E01FABCB715"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
             "{1525181F-901A-416C-8A58-119130FE478E}:_6A6D58D8D5B54CE3B9D1DC496AD508B4"
@@ -81607,7 +81716,7 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_6B7B7CD46EE94F69808BA65B5405F02C"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_7ADD281850B94578B082883A977E66FA"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
