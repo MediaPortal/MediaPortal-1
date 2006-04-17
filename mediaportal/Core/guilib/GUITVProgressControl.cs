@@ -274,8 +274,8 @@ namespace MediaPortal.GUI.Library
       _imageFillBackground.Render(timePassed);
 
       // render first color
-      int xoff = 5;
-      GUIGraphicsContext.ScaleHorizontal(ref xoff);
+      int xoff = GUIGraphicsContext.ScaleHorizontal(3);
+     
       xPos = _positionX + _imageLeft.TextureWidth + _fillBackgroundOffsetX + xoff;
       int yPos = _imageFillBackground.YPosition + (_imageFillBackground.Height / 2) - (_fillBackgroundHeight / 2);
       if (yPos < _positionY) yPos = _positionY;
@@ -306,8 +306,8 @@ namespace MediaPortal.GUI.Library
       if (iWidth2 > 0)
       {
         _imageFill2.Width = iWidth2;
-        _imageFill2.Height = _imageFill1.Height;
-        _imageFill2.SetPosition(iCurPos, _imageFill1.YPosition);
+        _imageFill2.Height = _fillBackgroundHeight;
+        _imageFill2.SetPosition(iCurPos, yPos);
         _imageFill2.Render(timePassed);
       }
       iCurPos = iWidth1 + iWidth2 + xPos;
@@ -325,8 +325,8 @@ namespace MediaPortal.GUI.Library
       if (iWidth3 > 0)
       {
         _imageFill3.Width = iWidth3;
-        _imageFill3.Height = _imageFill2.Height;
-        _imageFill3.SetPosition(iCurPos, _imageFill2.YPosition);
+        _imageFill3.Height = _fillBackgroundHeight;
+        _imageFill3.SetPosition(iCurPos, yPos);
         _imageFill3.Render(timePassed);
       }
 
@@ -350,8 +350,11 @@ namespace MediaPortal.GUI.Library
       }
 
       // render top
-      xPos = iCurPos - (_imageTop.TextureWidth / 2);
-      _imageTop.SetPosition(xPos, _positionY - _imageTop.TextureHeight + _topTextureOffsetY);
+      _imageTop.Height = GUIGraphicsContext.ScaleVertical(_imageTop.TextureHeight);
+      _imageTop.Width = GUIGraphicsContext.ScaleHorizontal(_imageTop.TextureWidth);
+
+      xPos = iCurPos - (_imageTop.Width / 2);
+      _imageTop.SetPosition(xPos, _positionY - _imageTop.Height + _topTextureOffsetY - GUIGraphicsContext.ScaleVertical(1));
       _imageTop.Render(timePassed);
 
       //render tick @ current position
