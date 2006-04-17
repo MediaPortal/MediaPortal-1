@@ -466,10 +466,13 @@ public class MediaPortalApp : D3DApp, IRender
     try
     {
       RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.CreateSubKey("Control Panel\\Desktop");
+      RegistryKey subkey = hkcu.OpenSubKey(@"Control Panel\Desktop", true);
 
       if (allowFocus)
         subkey.SetValue("ForegroundLockTimeout", 0);
+
+      subkey.Close();
+      hkcu.Close();
     }
     catch (Exception)
     {

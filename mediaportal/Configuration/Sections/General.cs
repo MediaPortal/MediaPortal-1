@@ -32,11 +32,21 @@ using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using MediaPortal.Util;
+using System.Runtime.InteropServices;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
   public class General : MediaPortal.Configuration.SectionSettings
   {
+    [DllImport("user32")]
+    static extern int SendMessageTimeout(IntPtr hwnd, int msg, int wParam, string lParam, int fuFlags, int uTimeout, out int lpdwResult);
+
+    const int HWND_BROADCAST = 0xffff;
+    const int WM_SETTINGCHANGE = 0x001A;
+    const int SMTO_ABORTIFHUNG = 0x0002;
+
     const string LanguageDirectory = @"language\";
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
     private MediaPortal.UserInterface.Controls.MPComboBox languageComboBox;
@@ -226,11 +236,27 @@ namespace MediaPortal.Configuration.Sections
         subkey = hkcu.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", true);
         subkey.SetValue("EnableBalloonTips", iValue);
         subkey.Close();
+
+
+        if (settingsCheckedListBox.GetItemChecked(16))
+        {
+          subkey = hkcu.OpenSubKey(@"Control Panel\Desktop", true);
+          subkey.SetValue("ForegroundLockTimeout", 0);
+          subkey.Close();
+        }
+
         hkcu.Close();
 
+        int result;
+        GUI.Library.Log.Write("SendMessageTimeout: {0}", SendMessageTimeout((IntPtr)HWND_BROADCAST, WM_SETTINGCHANGE, 0, "intl", SMTO_ABORTIFHUNG, 10000, out result));
+        GUI.Library.Log.Write("SendMessageTimeout result: {0}", result);
+
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        GUI.Library.Log.Write("Exception: {0}", ex.Message);
+        GUI.Library.Log.Write("Exception: {0}", ex);
+        GUI.Library.Log.Write("Exception: {0}", ex.StackTrace);
       }
     }
 
