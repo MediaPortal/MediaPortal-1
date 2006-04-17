@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.Pictures
     const float KENBURNS_ZOOM_FACTOR_FS = 1.20f; // Zoom factor for pictures that are filling the whole screen 
 
     const float KENBURNS_MAXZOOM = 1.30f;
-    const int KENBURNS_XFADE_FRAMES = 15;
+    const int KENBURNS_XFADE_FRAMES = 60;
     #endregion
 
     #region variables
@@ -449,6 +449,7 @@ namespace MediaPortal.GUI.Pictures
           if (_currentTexture == null)
           {
             int totalFrames = (_speed * (int)(1.0 / TIME_PER_FRAME)) + _slideShowTransistionFrames;
+            if (_useKenBurns) totalFrames =_kenBurnTransistionSpeed * 30;
             if (_frameCounter >= totalFrames || _backgroundTexture == null)
             {
               if ((!_isPaused && !_isPictureZoomed) || _backgroundTexture == null)
