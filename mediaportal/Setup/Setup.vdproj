@@ -81,12 +81,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_00DDB5E5FC254DB8AE21445A77D99F7E"
-        "OwnerKey" = "8:_416D221129EA4472920D97B19D66A6A4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_00FE6BA2AA394F08A1EF95B3F3A81026"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -4185,12 +4179,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_3BAA227AB4824A169D9D55CE1F6E4B39"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_3BAA6B4474714EEC8667A3A97D449C7D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -4631,6 +4619,12 @@
         {
         "MsmKey" = "8:_428A3C517CD4660ADB62353B853A90DE"
         "OwnerKey" = "8:_149F2A675D5B435C9105A3F6F372B97E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_428A3C517CD4660ADB62353B853A90DE"
+        "OwnerKey" = "8:_0958D570D5B1495E9228DF67C6CABF16"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -7541,6 +7535,12 @@
         {
         "MsmKey" = "8:_6B56E5DD766B428F91F702C96B225654"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6B7B7CD46EE94F69808BA65B5405F02C"
+        "OwnerKey" = "8:_416D221129EA4472920D97B19D66A6A4"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -32640,26 +32640,6 @@
             "TargetName" = "8:osd_settings_video_nofocus.png"
             "Tag" = "8:"
             "Folder" = "8:_F0B6FB54EF9E4C4BAEC66C63C99C5345"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3BAA227AB4824A169D9D55CE1F6E4B39"
-            {
-            "SourcePath" = "8:..\\Docs\\LICENSE.GPL"
-            "TargetName" = "8:LICENSE.GPL"
-            "Tag" = "8:"
-            "Folder" = "8:_6C315C96DB0E461CA03C0F35479EC599"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -80385,7 +80365,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:MediaPortal"
         "ProductCode" = "8:{B52E16E0-4D00-49E7-BEFB-985E2C6E39DE}"
-        "PackageCode" = "8:{05418614-7BE4-4801-A6F2-8619E996FC82}"
+        "PackageCode" = "8:{DB0EF8E4-2A03-4791-8690-E6AA79EBED99}"
         "UpgradeCode" = "8:{D194CC39-ABB8-4BC5-8C2D-4D4383088C67}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
@@ -81613,11 +81593,11 @@
         }
         "MergeModule"
         {
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_00DDB5E5FC254DB8AE21445A77D99F7E"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_416D221129EA4472920D97B19D66A6A4"
             {
             "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
-            "SourcePath" = "8:policy_8_0_microsoft_vc80_mfc_x86.msm"
+            "IsDependency" = "11:FALSE"
+            "SourcePath" = "8:C:\\Programme\\Gemeinsame Dateien\\Merge Modules\\Microsoft_VC80_MFC_x86.msm"
                 "Properties"
                 {
                 }
@@ -81627,11 +81607,11 @@
             "Feature" = "8:"
             "IsolateTo" = "8:"
             }
-            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_416D221129EA4472920D97B19D66A6A4"
+            "{CEE29DC0-9FBA-4B99-8D47-5BC643D9B626}:_6B7B7CD46EE94F69808BA65B5405F02C"
             {
             "UseDynamicProperties" = "11:TRUE"
-            "IsDependency" = "11:FALSE"
-            "SourcePath" = "8:C:\\Programme\\Gemeinsame Dateien\\Merge Modules\\Microsoft_VC80_MFC_x86.msm"
+            "IsDependency" = "11:TRUE"
+            "SourcePath" = "8:policy_8_0_microsoft_vc80_mfc_x86.msm"
                 "Properties"
                 {
                 }
