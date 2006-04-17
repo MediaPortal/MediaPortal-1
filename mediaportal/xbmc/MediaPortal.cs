@@ -2328,6 +2328,12 @@ public class MediaPortalApp : D3DApp, IRender
 
 
         break;
+
+      case GUIMessage.MessageType.GUI_MSG_GETFOCUS:
+        Log.Write("FOCUS: Setting focus");
+        this.Activate();
+        //Force.SetForegroundWindow(this.Handle, true);
+        break;
     }
   }
 

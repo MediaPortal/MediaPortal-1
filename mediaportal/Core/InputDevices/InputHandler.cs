@@ -294,7 +294,11 @@ namespace MediaPortal.InputDevices
       if (map.Sound != string.Empty)
         Utils.PlaySound(map.Sound, false, true);
       if (map.Focus)
-        Force.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true);
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GETFOCUS, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendThreadMessage(msg);
+        //Force.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true);
+      }
       switch (map.Command)
       {
         case "ACTION":  // execute Action x

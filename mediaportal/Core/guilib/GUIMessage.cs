@@ -108,8 +108,8 @@ namespace MediaPortal.GUI.Library
 				GetList,
 				GUI_MSG_SEEK_POSITION,
 				GUI_MSG_PLAYER_POSITION_CHANGED,
-        GUI_MSG_RECORD
-
+        GUI_MSG_RECORD,
+      GUI_MSG_GETFOCUS
 		};
 
 		private string 				_label="";
