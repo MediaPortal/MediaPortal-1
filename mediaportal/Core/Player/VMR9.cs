@@ -112,7 +112,7 @@ namespace MediaPortal.Player
 		bool _isVmr9Initialized=false;
     int _threadId;
     Vmr9PlayState currentVmr9State = Vmr9PlayState.Playing;
-    bool _useRGBmode = false;
+    //bool _useRGBmode = false;
     #endregion
 
     #region ctor
@@ -385,12 +385,12 @@ namespace MediaPortal.Player
             mixer.GetMixingPrefs(out dwPrefs);
             dwPrefs &= ~VMR9MixerPrefs.RenderTargetMask;
 
-            if (_useRGBmode)
+            /*if (_useRGBmode)
             {
               dwPrefs |= VMR9MixerPrefs.RenderTargetRGB;
               Log.Write("VMR9: enable RGB mixing");
             }
-            else
+            else*/
             {
               dwPrefs |= VMR9MixerPrefs.RenderTargetYUV;
               Log.Write("VMR9: enable YUV mixing");
@@ -518,10 +518,10 @@ namespace MediaPortal.Player
       }
     }
     
-     public void UseRGBMode(bool onOff)
+     /*public void UseRGBMode(bool onOff)
      {
        _useRGBmode = onOff;
-     }
+     }*/
 
 		public bool SaveBitmap(System.Drawing.Bitmap bitmap,bool show,bool transparent,float alphaValue)
 		{
