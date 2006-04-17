@@ -31,7 +31,7 @@
 	</string>
 	<string>
 		<id>7</id>
-		<value>Dateimanager</value>
+		<value>Datei-Manager</value>
 	</string>
 	<string>
 		<id>8</id>
@@ -1643,7 +1643,7 @@
 	</string>
 	<string>
 		<id>482</id>
-		<value>Über Media Portal</value>
+		<value>Über MediaPortal</value>
 	</string>
 	<string>
 		<id>483</id>
@@ -1903,7 +1903,7 @@
 	</string>
 	<string>
 		<id>629</id>
-		<value>Aufnahme benden</value>
+		<value>Aufnahme beenden</value>
 	</string>
 	<string>
 		<id>630</id>
@@ -2075,7 +2075,7 @@
 	</string>
 	<string>
 		<id>672</id>
-		<value>Aufnahme Montags - Freitags</value>
+		<value>Montags - Freitags</value>
 	</string>
 	<string>
 		<id>673</id>
@@ -2533,6 +2533,8 @@
 		<id>868</id>
 		<value>Reset</value>
 	</string>
+
+  <!-- Default name for new alarm -->
 	<string>
 		<id>869</id>
 		<value>Neuer Alarm</value>
@@ -2543,7 +2545,7 @@
 	</string>
 	<string>
 		<id>871</id>
-		<value>Media Portal aufwecken</value>
+		<value>MediaPortal aufwecken</value>
 	</string>
 	<string>
 		<id>872</id>
@@ -2617,6 +2619,8 @@
 		<id>889</id>
 		<value>Alle Folgen</value>
 	</string>
+
+  <!-- End My Alarm Strings -->
 	<string>
 		<id>890</id>
 		<value>CD-Wiedergabe</value>
@@ -3223,7 +3227,7 @@
 	</string>
 	<string>
 		<id>1051</id>
-		<value>Aufnahme Samstags und Sonntags</value>
+		<value>Samstags und Sonntags</value>
 	</string>
 	<string>
 		<id>1052</id>
@@ -3893,6 +3897,8 @@
 		<id>2225</id>
 		<value>Verzeichnis angelegt!</value>
 	</string>
+  <!-- End of My Explorer Strings -->
+
 	<string>
 		<id>3000</id>
 		<value>Programmoptionen</value>
@@ -3967,7 +3973,7 @@
 	</string>
 	<string>
 		<id>3018</id>
-		<value>Minute verbleibend</value>
+		<value>Minuten verbleibend</value>
 	</string>
 	<string>
 		<id>3019</id>
@@ -4031,7 +4037,7 @@
 	</string>
 	<string>
 		<id>5911</id>
-		<value>Neuerscheinungen</value>
+		<value>Neu im Kino</value>
 	</string>
 	<string>
 		<id>5912</id>
@@ -4063,7 +4069,7 @@
 	</string>
 	<string>
 		<id>5919</id>
-		<value>Kino-Kassen-Schlager</value>
+		<value>Kino Kasseneinnahmen</value>
 	</string>
 	<string>
 		<id>5920</id>
@@ -4071,11 +4077,11 @@
 	</string>
 	<string>
 		<id>5921</id>
-		<value>Bald im Kino</value>
+		<value>Bald erscheinend</value>
 	</string>
 	<string>
 		<id>5922</id>
-		<value>Verkaufshits</value>
+		<value>DVD Verkaufs-Hits</value>
 	</string>
 	<string>
 		<id>5923</id>
@@ -4251,8 +4257,10 @@
 	</string>
 	<string>
 		<id>9011</id>
-		<value>Zeige Kommentare:</value>
+		<value>Kommentar:</value>
 	</string>
+
+  <!-- TV.Com -->
 	<string>
 		<id>99845</id>
 		<value>Suche bei TV.com</value>
@@ -4261,6 +4269,8 @@
 		<id>12902</id>
 		<value>MSN Messenger OSD</value>
 	</string>
+
+  <!-- My Programs -->
 	<string>
 		<id>13000</id>
 		<value>System:</value>
@@ -4359,7 +4369,7 @@
 	</string>
 	<string>
 		<id>19004</id>
-		<value>Töne</value>
+		<value>Klang</value>
 	</string>
 	<string>
 		<id>19005</id>
@@ -4393,10 +4403,15 @@
 		<id>19012</id>
 		<value>Spiel beendet</value>
 	</string>
+
+  <!-- For the My Weather Geoclock -->
 	<string>
 		<id>19100</id>
 		<value>Sonnenuhr</value>
 	</string>
+
+
+  <!-- id 100000 and higher are reserved!! -->
 	<string>
 		<id>100000</id>
 		<value>Hauptmenü</value>
@@ -4927,11 +4942,11 @@
 	</string>
 	<string>
 		<id>200010</id>
-		<value>Media Portal verwandelt ihren PC in ein fortschrittliches Multi-Media-Center.</value>
+		<value>MediaPortal verwandelt ihren PC in ein fortschrittliches Multi-Media-Center.</value>
 	</string>
 	<string>
 		<id>200011</id>
-		<value>Mit Media Portal können sie Fernsehen oder ihre Lieblingsmusik geniessen</value>
+		<value>Mit MediaPortal können sie Fernsehen oder ihre Lieblingsmusik geniessen</value>
 	</string>
 	<string>
 		<id>200012</id>
@@ -4939,7 +4954,7 @@
 	</string>
 	<string>
 		<id>200013</id>
-		<value>Dieser Assistent wird ihnen helfen, Media Portal schnell und einfach einzurichten.</value>
+		<value>Dieser Assistent wird ihnen helfen, MediaPortal schnell und einfach einzurichten.</value>
 	</string>
 	<string>
 		<id>200014</id>
@@ -4951,11 +4966,11 @@
 	</string>
 	<string>
 		<id>200017</id>
-		<value>Willkommen bei Media Portal.</value>
+		<value>Willkommen bei MediaPortal.</value>
 	</string>
 	<string>
 		<id>200018</id>
-		<value>Herzlichen Glückwunsch - Media Portal ist jetzt fertig eingerichtet!</value>
+		<value>Herzlichen Glückwunsch - MediaPortal ist jetzt fertig eingerichtet!</value>
 	</string>
 	<string>
 		<id>200019</id>
@@ -4971,7 +4986,7 @@
 	</string>
 	<string>
 		<id>200022</id>
-		<value>Media Portal hat folgende TV-Karten gefunden:</value>
+		<value>MediaPortal hat folgende TV-Karten gefunden:</value>
 	</string>
 	<string>
 		<id>200023</id>
@@ -4999,11 +5014,11 @@
 	</string>
 	<string>
 		<id>200029</id>
-		<value>Media Portal im Vollbild-Modus starten?</value>
+		<value>MediaPortal im Vollbild-Modus starten?</value>
 	</string>
 	<string>
 		<id>200030</id>
-		<value>Media Portal mit Windows starten?</value>
+		<value>MediaPortal mit Windows starten?</value>
 	</string>
 	<string>
 		<id>200038</id>
@@ -5037,6 +5052,9 @@
 		<id>200037</id>
 		<value>Überspringen&gt;</value>
 	</string>
+
+
+  <!-- Web Browser Strings -->
 	<string>
 		<id>4000</id>
 		<value>Internet</value>
@@ -5053,6 +5071,8 @@
 		<id>4003</id>
 		<value>Bitte legen sie in den Einstellungen einen Ordner für die Lesezeichen fest.</value>
 	</string>
+
+  <!-- Begin Cover Art Grabber Strings -->
 	<string>
 		<id>4500</id>
 		<value>Alben mit vorhandenem Cover überspringen</value>
@@ -5145,6 +5165,8 @@
 		<id>4522</id>
 		<value>Lade {0}...</value>
 	</string>
+  <!-- End Cover Art Grabber Strings -->
+  <!-- Begin Playing Now Strings -->
 	<string>
 		<id>4540</id>
 		<value>Aktueller Titel</value>
@@ -5161,6 +5183,8 @@
 		<id>4543</id>
 		<value>Keine Titel-Informationen verfügbar</value>
 	</string>
+  <!-- End Playing Now Strings -->
+  <!-- Begin Addtional MyMusic Strings -->
 	<string>
 		<id>4550</id>
 		<value>An Liste anfügen</value>
@@ -5185,6 +5209,8 @@
 		<id>4555</id>
 		<value>Aktuelle Wiedergabeliste</value>
 	</string>
+  <!-- End Addtional MyMusic Strings -->
+  <!-- Begin Minesweeper Strings -->
 	<string>
 		<id>10100</id>
 		<value>Versteckte Minen</value>
@@ -5201,4 +5227,9 @@
 		<id>10103</id>
 		<value>Minesweeper</value>
 	</string>
+  <!-- End Minesweeper Strings -->
+  <string>
+	<id>10104</id>
+	<value>Kanal-Vorschau</value>
+  </string>
 </strings>
