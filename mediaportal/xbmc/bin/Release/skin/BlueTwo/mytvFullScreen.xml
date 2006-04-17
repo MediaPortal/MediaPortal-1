@@ -202,7 +202,7 @@
 			<id>100</id> 
 			<posX>159</posX> 
 			<posY>497</posY> 
-			<width>400</width>
+			<width>394</width>
 			<toptexture>osd_progress_indicator.png</toptexture> 
 			<TextureOffsetY>22</TextureOffsetY>
 			<bottomtexture>-</bottomtexture>

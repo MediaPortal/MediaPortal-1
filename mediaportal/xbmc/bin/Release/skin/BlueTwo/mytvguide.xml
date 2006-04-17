@@ -229,8 +229,8 @@
 		<type>image</type>
 		<id>25</id>
 		<posX>30</posX>
-		<posY>125</posY>
-		<height>272</height>
+		<posY>124</posY>
+		<height>273</height>
 		<colordiffuse>c0ffffff</colordiffuse>
 		<texture>tvguide_slider.png</texture>
 	</control>	
