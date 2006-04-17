@@ -129,25 +129,23 @@ namespace MediaPortal.Configuration.Sections
     }
 
     string[][] sectionEntries = new string[][] { 
-												new string[] { "general", "startfullscreen", "false" },
-
-												new string[] { "general", "minimizeonstartup", "false" },
-                                                new string[] { "general", "minimizeonexit", "false" },
-
-                                                new string[] { "general", "autohidemouse", "false" },
-												new string[] { "general", "mousesupport", "true" }, 
-                                                new string[] { "general", "hideextensions", "true" },
-                                                new string[] { "general", "animations", "true" },
-												new string[] { "general", "autostart", "false" },
-												new string[] { "general", "baloontips", "false" },
-												new string[] { "general", "dblclickasrightclick", "false" },
-												new string[] { "general", "hidetaskbar", "true" },
-												new string[] { "general", "alwaysontop", "true" },
-												new string[] { "general", "exclusivemode", "true" },
-												new string[] { "general", "enableguisounds", "true" },
-												new string[] { "general", "screensaver", "false" },
-												new string[] { "general", "startbasichome", "false" }
-												};
+      new string[] { "general", "startfullscreen", "false" },
+      new string[] { "general", "minimizeonstartup", "false" },
+      new string[] { "general", "minimizeonexit", "false" },
+      new string[] { "general", "autohidemouse", "false" },
+			new string[] { "general", "mousesupport", "true" }, 
+      new string[] { "general", "hideextensions", "true" },
+      new string[] { "general", "animations", "true" },
+			new string[] { "general", "autostart", "false" },
+			new string[] { "general", "baloontips", "false" },
+			new string[] { "general", "dblclickasrightclick", "false" },
+			new string[] { "general", "hidetaskbar", "true" },
+			new string[] { "general", "alwaysontop", "true" },
+			new string[] { "general", "exclusivemode", "true" },
+			new string[] { "general", "enableguisounds", "true" },
+			new string[] { "general", "screensaver", "false" },
+			new string[] { "general", "startbasichome", "false" },
+      new string[] { "general", "allowfocus", "true" } };
 
     /// <summary>
     /// 
@@ -264,6 +262,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.languageComboBox);
       this.mpGroupBox1.Controls.Add(this.label2);
+      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 56);
@@ -295,9 +294,10 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.settingsCheckedListBox);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 64);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 288);
+      this.groupBox1.Size = new System.Drawing.Size(472, 304);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "General Settings";
@@ -320,13 +320,14 @@ namespace MediaPortal.Configuration.Sections
             "Use mouse left double click as right click",
             "Hide taskbar in fullscreen mode",
             "MediaPortal always on top",
-            "use Exclusive DirectX Mode for fullscreen tv/video",
-            "enable GUI sound effects",
-            "enable Screensaver in fullscreen mode",
-            "start with basic home screen"});
+            "Use Exclusive DirectX Mode for fullscreen tv/video",
+            "Enable GUI sound effects",
+            "Enable Screensaver in fullscreen mode",
+            "Start with basic home screen",
+            "Allow MediaPortal (and other applications) to gain focus (per-user setting)"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 244);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 259);
       this.settingsCheckedListBox.TabIndex = 0;
       // 
       // groupBox2
@@ -336,6 +337,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.Controls.Add(this.label1);
       this.groupBox2.Controls.Add(this.numericUpDown1);
       this.groupBox2.Controls.Add(this.label3);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(0, 368);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 56);

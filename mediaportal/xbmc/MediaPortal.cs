@@ -434,6 +434,8 @@ public class MediaPortalApp : D3DApp, IRender
     GUIGraphicsContext.form = this;
     GUIGraphicsContext.graphics = null;
     GUIGraphicsContext.RenderGUI = this;
+    bool allowFocus = true;
+
     try
     {
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
@@ -445,6 +447,7 @@ public class MediaPortalApp : D3DApp, IRender
         GUIGraphicsContext.DBLClickAsRightClick = xmlreader.GetValueAsBool("general", "dblclickasrightclick", false);
         _minimizeOnStartup = xmlreader.GetValueAsBool("general", "minimizeonstartup", false);
         _minimizeOnGuiExit = xmlreader.GetValueAsBool("general", "minimizeonexit", false);
+        allowFocus = xmlreader.GetValueAsBool("general", "allowfocus", true);
       }
     }
     catch (Exception)
@@ -459,6 +462,19 @@ public class MediaPortalApp : D3DApp, IRender
 
     Log.Write("  Check skin version");
     CheckSkinVersion();
+
+    try
+    {
+      RegistryKey hkcu = Registry.CurrentUser;
+      RegistryKey subkey = hkcu.CreateSubKey("Control Panel\\Desktop");
+
+      if (allowFocus)
+        subkey.SetValue("ForegroundLockTimeout", 0);
+    }
+    catch (Exception)
+    {
+      Log.Write("Focus: Error setting registry entry for focus control (HKCU)");
+    }
 
     DoStartupJobs();
     //    startThread.Priority = ThreadPriority.BelowNormal;
