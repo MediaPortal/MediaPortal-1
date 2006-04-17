@@ -163,7 +163,7 @@
 		<button name="My Radio" code="80">
 			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="30" sound="click.wav" />
 		</button>
-		<button name="Messenger" code="100">
+		<button name="Messenger" code="105">
 			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="32" sound="click.wav" />
 		</button>
 		<button name="Aspect Ratio" code="39">
