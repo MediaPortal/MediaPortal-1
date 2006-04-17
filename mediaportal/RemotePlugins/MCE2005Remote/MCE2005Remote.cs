@@ -28,7 +28,7 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.Devices;
+using MediaPortal.Hardware;
 
 namespace MediaPortal.InputDevices
 {
@@ -93,27 +93,31 @@ namespace MediaPortal.InputDevices
         }
       }
 
-      // Register Device
-      Remote.Click += new RemoteEventHandler(OnRemoteClick);
+      if (controlEnabled)
+      {
 
-      // Kill ehtray.exe since that program catches the MCE remote keys and would start MCE 2005
-      Process[] myProcesses;
-      myProcesses = Process.GetProcesses();
-      foreach (Process myProcess in myProcesses)
-        if (myProcess.ProcessName.ToLower().Equals("ehtray"))
-          try
-          {
-            myProcess.Kill();
-          }
-          catch (Exception)
-          {
-            if (logVerbose) Log.Write("MCE: Cannot stop ehtray.exe!");
-          }
-      if (logVerbose)
-        if (controlEnabled)
-          Log.Write("MCE: MCE remote enabled");
-        else
-          Log.Write("MCE: MCE remote disabled");
+        // Register Device
+        Remote.Click += new RemoteEventHandler(OnRemoteClick);
+
+        // Kill ehtray.exe since that program catches the MCE remote keys and would start MCE 2005
+        Process[] myProcesses;
+        myProcesses = Process.GetProcesses();
+        foreach (Process myProcess in myProcesses)
+          if (myProcess.ProcessName.ToLower().Equals("ehtray"))
+            try
+            {
+              myProcess.Kill();
+            }
+            catch (Exception)
+            {
+              if (logVerbose) Log.Write("MCE: Cannot stop ehtray.exe!");
+            }
+        if (logVerbose)
+          if (controlEnabled)
+            Log.Write("MCE: MCE remote enabled");
+          else
+            Log.Write("MCE: MCE remote disabled");
+      }
     }
 
 
@@ -126,6 +130,17 @@ namespace MediaPortal.InputDevices
       Remote.Click -= new RemoteEventHandler(OnRemoteClick);
     }
 
+    void OnDeviceRemoval()
+    {
+      Log.Write("MCE: OnDeviceRemoval");
+      DeInit();
+    }
+
+    void OnDeviceArrival()
+    {
+      Log.Write("MCE: OnDeviceArrival");
+      Init();
+    }
 
     /// <summary>
     /// Let everybody know that this HID message may not be handled by anyone else
@@ -142,8 +157,10 @@ namespace MediaPortal.InputDevices
     /// Evaluate button press from remote
     /// </summary>
     /// <param name="button">Remote Button</param>
-    void OnRemoteClick(RemoteButton button)
+    void OnRemoteClick(object sender, RemoteEventArgs e)
+      //RemoteButton button)
     {
+      RemoteButton button = e.Button;
       if (logVerbose) Log.Write("MCE: Incoming button command: {0}", button);
 
       // Set LastHidRequest, otherwise the HID handler (if enabled) would react on some remote buttons (double execution of command)

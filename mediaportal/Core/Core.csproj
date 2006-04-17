@@ -272,7 +272,7 @@
     <Compile Include="guilib\GUIGridRow.cs" />
     <Compile Include="guilib\GUIPlayListItemListControl.cs" />
     <Compile Include="guilib\GUIPlayListtButtonControl.cs" />
-    <Compile Include="InputDevices\GainFocus.cs" />
+    <Compile Include="InputDevices\Force.cs" />
     <Compile Include="Player\DummyPlayer.cs" />
     <Compile Include="Player\DummyPlayerFactory.cs" />
     <Compile Include="Player\IPlayerFactory.cs" />

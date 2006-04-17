@@ -294,7 +294,7 @@ namespace MediaPortal.InputDevices
       if (map.Sound != string.Empty)
         Utils.PlaySound(map.Sound, false, true);
       if (map.Focus)
-        GainFocus.MainWindow();
+        Force.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true);
       switch (map.Command)
       {
         case "ACTION":  // execute Action x
