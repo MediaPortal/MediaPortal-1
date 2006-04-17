@@ -463,6 +463,10 @@ namespace MediaPortal.Configuration.Sections
               if (checkBoxDxVA.Checked) regDxVA = 1;
               else regDxVA = 0;
               subkey2.SetValue("DXVA", regDxVA);
+              using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+              {
+                xmlwriter.SetValue("videocodec", "intervideo", regDxVA);
+              }
 
               Int32 regHWMC;
               if (checkBoxHWMC.Checked) regHWMC = 1;

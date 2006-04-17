@@ -622,6 +622,10 @@ namespace MediaPortal.Configuration.Sections
         }
         subkey.Close();
       }
+      /*using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValue("videocodec", "", audioRendererComboBox.Text);
+      }*/
       RegistryKey subkey2 = hkcu.CreateSubKey(@"Software\Cyberlink\Common\CLVSD\MediaPortal");
 
       if (subkey2 != null)
@@ -630,6 +634,10 @@ namespace MediaPortal.Configuration.Sections
           if (checkBoxUIUseHVA.Checked) regUIUseHVA = 1;
           else regUIUseHVA = 0;
           subkey2.SetValue("UIUseHVA", regUIUseHVA);
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          {
+            xmlwriter.SetValue("videocodec", "cyberlink", regUIUseHVA);
+          }
 
           int DeInterlace;
           Int32 regDeInterlace;
