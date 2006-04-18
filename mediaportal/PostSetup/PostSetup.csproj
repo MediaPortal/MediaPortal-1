@@ -190,6 +190,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MPRecommendations.resx">
       <DependentUpon>MPRecommendations.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
