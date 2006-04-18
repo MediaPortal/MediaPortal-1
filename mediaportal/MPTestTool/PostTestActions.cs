@@ -205,7 +205,7 @@ namespace MPTestTool
       String localVersion = String.Empty;
       String localHash = String.Empty;
       String localCreationTime = String.Empty;
-      String MPexe = mpdir + "Mediaportal.exe";
+      String MPexe = mpdir + "MediaPortal.exe";
 
       // Create the DataSet
       DataSet ds = new DataSet("mediaportalversions");

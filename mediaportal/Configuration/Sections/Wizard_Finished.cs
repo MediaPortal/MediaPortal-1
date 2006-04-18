@@ -142,7 +142,7 @@ namespace MediaPortal.Configuration.Sections
       this.bodyLabel.Name = "bodyLabel";
       this.bodyLabel.Size = new System.Drawing.Size(276, 360);
       this.bodyLabel.TabIndex = 8;
-      this.bodyLabel.Text = "Mediaportal is now configured and ready to use";
+      this.bodyLabel.Text = "MediaPortal is now configured and ready to use";
       // 
       // pictureBox
       // 

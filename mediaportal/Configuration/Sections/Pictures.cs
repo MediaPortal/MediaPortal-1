@@ -132,7 +132,7 @@ namespace MediaPortal.Configuration.Sections
       // groupBox1
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.kenburnsTextBox);
       this.groupBox1.Controls.Add(this.label3);
       this.groupBox1.Controls.Add(this.transitionTextBox);
@@ -141,6 +141,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.repeatSlideshowCheckBox);
       this.groupBox1.Controls.Add(this.autoShuffleCheckBox);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 112);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 160);
@@ -151,80 +152,87 @@ namespace MediaPortal.Configuration.Sections
       // kenburnsTextBox
       // 
       this.kenburnsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.kenburnsTextBox.Location = new System.Drawing.Point(168, 68);
       this.kenburnsTextBox.Name = "kenburnsTextBox";
       this.kenburnsTextBox.Size = new System.Drawing.Size(288, 20);
       this.kenburnsTextBox.TabIndex = 5;
-      this.kenburnsTextBox.Text = "";
       // 
       // label3
       // 
+      this.label3.AutoSize = true;
       this.label3.Location = new System.Drawing.Point(16, 72);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(96, 16);
+      this.label3.Size = new System.Drawing.Size(91, 13);
       this.label3.TabIndex = 4;
       this.label3.Text = "Ken Burns speed:";
       // 
       // transitionTextBox
       // 
       this.transitionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.transitionTextBox.Location = new System.Drawing.Point(168, 44);
       this.transitionTextBox.Name = "transitionTextBox";
       this.transitionTextBox.Size = new System.Drawing.Size(288, 20);
       this.transitionTextBox.TabIndex = 3;
-      this.transitionTextBox.Text = "";
       // 
       // durationTextBox
       // 
       this.durationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.durationTextBox.Location = new System.Drawing.Point(168, 20);
       this.durationTextBox.Name = "durationTextBox";
       this.durationTextBox.Size = new System.Drawing.Size(288, 20);
       this.durationTextBox.TabIndex = 1;
-      this.durationTextBox.Text = "";
       // 
       // label2
       // 
+      this.label2.AutoSize = true;
       this.label2.Location = new System.Drawing.Point(16, 48);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(104, 16);
+      this.label2.Size = new System.Drawing.Size(96, 13);
       this.label2.TabIndex = 2;
       this.label2.Text = "Transition (frames):";
       // 
       // label1
       // 
+      this.label1.AutoSize = true;
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(136, 16);
+      this.label1.Size = new System.Drawing.Size(124, 13);
       this.label1.TabIndex = 0;
       this.label1.Text = "Picture visible (seconds):";
       // 
       // repeatSlideshowCheckBox
       // 
+      this.repeatSlideshowCheckBox.AutoSize = true;
+      this.repeatSlideshowCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.repeatSlideshowCheckBox.Location = new System.Drawing.Point(16, 104);
       this.repeatSlideshowCheckBox.Name = "repeatSlideshowCheckBox";
-      this.repeatSlideshowCheckBox.Size = new System.Drawing.Size(136, 16);
+      this.repeatSlideshowCheckBox.Size = new System.Drawing.Size(133, 17);
       this.repeatSlideshowCheckBox.TabIndex = 6;
       this.repeatSlideshowCheckBox.Text = "Repeat/loop slideshow";
+      this.repeatSlideshowCheckBox.UseVisualStyleBackColor = true;
       // 
       // autoShuffleCheckBox
       // 
+      this.autoShuffleCheckBox.AutoSize = true;
+      this.autoShuffleCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.autoShuffleCheckBox.Location = new System.Drawing.Point(16, 128);
       this.autoShuffleCheckBox.Name = "autoShuffleCheckBox";
-      this.autoShuffleCheckBox.Size = new System.Drawing.Size(128, 16);
+      this.autoShuffleCheckBox.Size = new System.Drawing.Size(129, 17);
       this.autoShuffleCheckBox.TabIndex = 7;
       this.autoShuffleCheckBox.Text = "Auto shuffle slideshow";
+      this.autoShuffleCheckBox.UseVisualStyleBackColor = true;
       // 
       // groupBox2
       // 
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.radioButtonKenBurns);
       this.groupBox2.Controls.Add(this.radioButtonRandom);
       this.groupBox2.Controls.Add(this.radioButtonXFade);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(0, 0);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 104);
@@ -234,27 +242,36 @@ namespace MediaPortal.Configuration.Sections
       // 
       // radioButtonKenBurns
       // 
+      this.radioButtonKenBurns.AutoSize = true;
+      this.radioButtonKenBurns.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonKenBurns.Location = new System.Drawing.Point(24, 24);
       this.radioButtonKenBurns.Name = "radioButtonKenBurns";
-      this.radioButtonKenBurns.Size = new System.Drawing.Size(176, 16);
+      this.radioButtonKenBurns.Size = new System.Drawing.Size(180, 17);
       this.radioButtonKenBurns.TabIndex = 0;
       this.radioButtonKenBurns.Text = "Use Ken Burns effect on pictures";
+      this.radioButtonKenBurns.UseVisualStyleBackColor = true;
       // 
       // radioButtonRandom
       // 
+      this.radioButtonRandom.AutoSize = true;
+      this.radioButtonRandom.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonRandom.Location = new System.Drawing.Point(24, 48);
       this.radioButtonRandom.Name = "radioButtonRandom";
-      this.radioButtonRandom.Size = new System.Drawing.Size(216, 16);
+      this.radioButtonRandom.Size = new System.Drawing.Size(215, 17);
       this.radioButtonRandom.TabIndex = 1;
       this.radioButtonRandom.Text = "Use random transitions between pictures";
+      this.radioButtonRandom.UseVisualStyleBackColor = true;
       // 
       // radioButtonXFade
       // 
+      this.radioButtonXFade.AutoSize = true;
+      this.radioButtonXFade.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.radioButtonXFade.Location = new System.Drawing.Point(24, 72);
       this.radioButtonXFade.Name = "radioButtonXFade";
-      this.radioButtonXFade.Size = new System.Drawing.Size(208, 16);
+      this.radioButtonXFade.Size = new System.Drawing.Size(206, 17);
       this.radioButtonXFade.TabIndex = 2;
       this.radioButtonXFade.Text = "Use X-fade transition between pictures";
+      this.radioButtonXFade.UseVisualStyleBackColor = true;
       // 
       // Pictures
       // 
@@ -263,7 +280,9 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "Pictures";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.groupBox2.ResumeLayout(false);
+      this.groupBox2.PerformLayout();
       this.ResumeLayout(false);
 
     }

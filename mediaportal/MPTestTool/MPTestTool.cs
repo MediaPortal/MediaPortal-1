@@ -84,7 +84,7 @@ namespace MPTestTool
     private string myPath;
     private System.ComponentModel.IContainer components;
     private string strDefaultMPDir = Environment.GetEnvironmentVariable("ProgramFiles") +
-          @"\Team MediaPortal\Mediaportal";
+          @"\Team MediaPortal\MediaPortal";
 
     protected override void OnLoad(EventArgs e)
     {

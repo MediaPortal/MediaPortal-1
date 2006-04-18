@@ -417,7 +417,7 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.CreateSubKey(@"Software\Mediaportal\Mpeg Audio Filter");
+      RegistryKey subkey = hkcu.CreateSubKey(@"Software\MediaPortal\Mpeg Audio Filter");
       if (subkey != null)
       {
         try
@@ -483,7 +483,7 @@ namespace MediaPortal.Configuration.Sections
     public override void SaveSettings()
     {
       RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.CreateSubKey(@"Software\Mediaportal\Mpeg Audio Filter");
+      RegistryKey subkey = hkcu.CreateSubKey(@"Software\MediaPortal\Mpeg Audio Filter");
       if (subkey != null)
       {
         Int32 regValue;

@@ -343,7 +343,7 @@ namespace MediaPortal.TV.Recording
 
       tinfo.status = Status.Busy;
       TranscodeInfo info = new TranscodeInfo();
-      info.Author = "Mediaportal";
+      info.Author = "MediaPortal";
       info.Channel = tinfo.recorded.Channel;
       info.Description = tinfo.recorded.Description;
       info.Title = tinfo.recorded.Title;

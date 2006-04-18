@@ -13,7 +13,7 @@ namespace MediaPortal
   {
     public void LogCrash(object sender, UnhandledExceptionEventArgs eventArgs)
     {
-      Log.WriteFile(Log.LogType.Error,true,"Mediaportal:unhandled exception occured");
+      Log.WriteFile(Log.LogType.Error,true,"MediaPortal:unhandled exception occured");
       string directory = "log";
 
       Exception ex;
@@ -35,7 +35,7 @@ namespace MediaPortal
       ExceptionLogger logger = new ExceptionLogger(ex);
       logger.CreateLogs(directory);
 
-      Log.Write("Mediaportal: stop...");
+      Log.Write("MediaPortal: stop...");
       //Process.Start("crash.exe");
       Application.Exit();
     }

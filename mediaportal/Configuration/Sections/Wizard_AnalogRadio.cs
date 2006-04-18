@@ -672,7 +672,7 @@ namespace MediaPortal.Configuration.Sections
       try
       {
           XmlDocument doc = new XmlDocument();
-          UriBuilder builder = new UriBuilder("http", "mediaportal.sourceforge.net", 80, "tvsetup/analog/" + xmlFile);
+          UriBuilder builder = new UriBuilder("http", "www.team-mediaportal.com", 80, "tvsetup/analog/" + xmlFile);
           doc.Load(builder.Uri.AbsoluteUri);
           XmlNodeList listRadioChannels = doc.DocumentElement.SelectNodes("/mediaportal/radio/channel");
           foreach (XmlNode nodeChannel in listRadioChannels)

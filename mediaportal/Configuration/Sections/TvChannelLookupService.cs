@@ -220,7 +220,7 @@ namespace MediaPortal.Configuration.Sections
     void ImportAnalogChannels(string xmlFile)
     {
       XmlDocument doc = new XmlDocument();
-      UriBuilder builder = new UriBuilder("http", "mediaportal.sourceforge.net", 80, "tvsetup/analog/" + xmlFile);
+      UriBuilder builder = new UriBuilder("http", "www.team-mediaportal.com", 80, "tvsetup/analog/" + xmlFile);
       doc.Load(builder.Uri.AbsoluteUri);
       XmlNodeList listTvChannels = doc.DocumentElement.SelectNodes("/mediaportal/tv/channel");
       foreach (XmlNode nodeChannel in listTvChannels)

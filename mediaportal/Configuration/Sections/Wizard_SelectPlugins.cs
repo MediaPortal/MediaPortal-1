@@ -272,7 +272,7 @@ namespace MediaPortal.Configuration.Sections
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(408, 16);
       this.label1.TabIndex = 0;
-      this.label1.Text = "Mediaportal will now search your harddisk(s) for any music, photo\'s and movies.";
+      this.label1.Text = "MediaPortal will now search your harddisk(s) for any music, photo\'s and movies.";
       // 
       // timer1
       // 

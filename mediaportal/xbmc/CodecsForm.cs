@@ -118,7 +118,7 @@ namespace MediaPortal
 		this.labelMPEG2.Size = new System.Drawing.Size(512, 32);
 		this.labelMPEG2.TabIndex = 0;
 		this.labelMPEG2.Text = "No MPEG2 video/audio codecs are installed on your PC. To play MPEG2 files, DVD\'s " +
-			"or watch TV you\'ll need to install an MPEG2 codec. The Mediaportal team recommen" +
+			"or watch TV you\'ll need to install an MPEG2 codec. The MediaPortal team recommen" +
 			"ds WinDVD6 or PowerDVD6";
 		// 
 		// LinkLabel1

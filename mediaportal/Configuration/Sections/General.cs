@@ -149,7 +149,7 @@ namespace MediaPortal.Configuration.Sections
       new string[] { "general", "startfullscreen", "false" },
       new string[] { "general", "minimizeonstartup", "false" },
       new string[] { "general", "minimizeonexit", "false" },
-      new string[] { "general", "autohidemouse", "false" },
+      new string[] { "general", "autohidemouse", "true" },
 			new string[] { "general", "mousesupport", "true" }, 
       new string[] { "general", "hideextensions", "true" },
       new string[] { "general", "animations", "true" },
@@ -230,13 +230,13 @@ namespace MediaPortal.Configuration.Sections
         {
           string fileName = String.Format("\"{0}\"", System.IO.Path.GetFullPath("mediaportal.exe"));
           subkey = hkcu.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-          subkey.SetValue("Mediaportal", fileName);
+          subkey.SetValue("MediaPortal", fileName);
           subkey.Close();
         }
         else
         {
           subkey = hkcu.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-          subkey.DeleteValue("Mediaportal", false);
+          subkey.DeleteValue("MediaPortal", false);
           subkey.Close();
         }
 
@@ -355,14 +355,14 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.settingsCheckedListBox.Items.AddRange(new object[] {
-            "Start Media Portal in fullscreen mode",
+            "Start MediaPortal in fullscreen mode",
             "Minimize to tray on start up",
             "Minimize to tray on GUI exit",
             "Auto hide mouse cursor when inactive",
             "Show special mouse controls (scrollbars, etc)",
             "Dont show file extensions like .mp3, .avi, .mpg,...",
             "Enable animations",
-            "Autostart Mediaportal when windows starts",
+            "Autostart MediaPortal when windows starts",
             "Disable Windows XP balloon tips",
             "Use mouse left double click as right click",
             "Hide taskbar in fullscreen mode",

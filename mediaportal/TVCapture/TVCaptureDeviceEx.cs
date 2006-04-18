@@ -1445,7 +1445,7 @@ namespace MediaPortal.TV.Recording
 
       propsToSet.Add("channel", new MetadataItem("channel", StripIllegalChars(_recordedTvObject.Channel), MetadataItemType.String));
 
-      propsToSet.Add("recordedby", new MetadataItem("recordedby", "Mediaportal", MetadataItemType.String));
+      propsToSet.Add("recordedby", new MetadataItem("recordedby", "MediaPortal", MetadataItemType.String));
 
       if (_recordedTvObject.Title != null && _recordedTvObject.Title.Length > 0)
         propsToSet.Add("title", new MetadataItem("title", StripIllegalChars(_recordedTvObject.Title), MetadataItemType.String));

@@ -150,7 +150,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       if (processLock.AlreadyExists)
       {
-        Log.Write("Mediaportal is already running...");
+        Log.Write("MediaPortal is already running...");
         ActivatePreviousInstance();
       }
 
@@ -213,7 +213,7 @@ public class MediaPortalApp : D3DApp, IRender
               {
                 string strLine = "Please install DirectX 9.0c!\r\n";
                 strLine = strLine + "Current version installed:" + strVersion + "\r\n\r\n";
-                strLine = strLine + "Mediaportal cannot run without DirectX 9.0c\r\n";
+                strLine = strLine + "MediaPortal cannot run without DirectX 9.0c\r\n";
                 strLine = strLine + "http://www.microsoft.com/directx";
                 MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -265,7 +265,7 @@ public class MediaPortalApp : D3DApp, IRender
         else
         {
           string strLine = "Please install Windows Mediaplayer 9/10\r\n";
-          strLine = strLine + "Mediaportal cannot run without Windows Mediaplayer 9/10";
+          strLine = strLine + "MediaPortal cannot run without Windows Mediaplayer 9/10";
           MessageBox.Show(strLine, "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
@@ -637,15 +637,15 @@ public class MediaPortalApp : D3DApp, IRender
   {
     //stop playback
     _suspended = true;
-    Log.Write("Mediaportal:stop playback");
+    Log.Write("MediaPortal:stop playback");
     g_Player.Stop();
-    Log.Write("Mediaportal:stop recorder");
+    Log.Write("MediaPortal:stop recorder");
     Recorder.Stop();
 
     //switch to windowed mode
     if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false && isMaximized)
     {
-      Log.Write("Mediaportal:switch to windowed mode");
+      Log.Write("MediaPortal:switch to windowed mode");
       SwitchFullScreenOrWindowed(true, true);
     }
   }
@@ -653,18 +653,18 @@ public class MediaPortalApp : D3DApp, IRender
   //called when windows wakes up again
   void OnResume()
   {
-    Log.Write("Mediaportal:switch to home screen");
+    Log.Write("MediaPortal:switch to home screen");
     GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
     _suspended = false;
     
     if (Recorder.Running) return;
     if (_onResumeRunning)
     {
-        Log.Write("Mediaportal: OnResume is RUNNING: Recorder.Running = " + Recorder.Running.ToString());
+        Log.Write("MediaPortal: OnResume is RUNNING: Recorder.Running = " + Recorder.Running.ToString());
         return;
     }
     _onResumeRunning = true;
-    Log.Write("Mediaportal:start recorder");
+    Log.Write("MediaPortal:start recorder");
     Recorder.Start();
     _onResumeRunning = false;
   }
@@ -741,7 +741,7 @@ public class MediaPortalApp : D3DApp, IRender
     Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
     // set window form styles
     // these styles enable double buffering, which results in no flickering
-    Log.Write("Mediaportal.OnStartup()");
+    Log.Write("MediaPortal.OnStartup()");
 
     // set process priority
     _mouseTimeOutTimer = DateTime.Now;
@@ -807,7 +807,7 @@ public class MediaPortalApp : D3DApp, IRender
   /// </summary>
   protected override void OnExit()
   {
-    Log.Write("Mediaportal.OnExit()");
+    Log.Write("MediaPortal.OnExit()");
     JobDispatcher.Term();
 
     if (usbuirtdevice != null)
@@ -1027,13 +1027,13 @@ public class MediaPortalApp : D3DApp, IRender
     }
     if (GUIGraphicsContext.InVmr9Render)
     {
-      Log.WriteFile(Log.LogType.Log, true, "Mediaportal.Render() called while in vmr9 render {0} {1}",
+      Log.WriteFile(Log.LogType.Log, true, "MediaPortal.Render() called while in vmr9 render {0} {1}",
                     GUIGraphicsContext.Vmr9Active, GUIGraphicsContext.Vmr9FPS);
       return;
     }
     if (GUIGraphicsContext.Vmr9Active)
     {
-      Log.WriteFile(Log.LogType.Log, true, "Mediaportal.Render() called while vmr9 active");
+      Log.WriteFile(Log.LogType.Log, true, "MediaPortal.Render() called while vmr9 active");
       return;
     }
 
@@ -1210,7 +1210,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
       {
-        Log.Write("Mediaportal.FrameMove stopping()");
+        Log.Write("MediaPortal.FrameMove stopping()");
         Close();
       }
       try
@@ -1422,7 +1422,7 @@ public class MediaPortalApp : D3DApp, IRender
 
         //exit mediaportal
         case Action.ActionType.ACTION_EXIT:
-          Log.Write("Mediaportal action exit()");
+          Log.Write("MediaPortal action exit()");
           // is the minimize on gui option set?  If so, minimize to tray...
           if (_minimizeOnGuiExit && !_shuttingDown)
           {
@@ -1459,7 +1459,7 @@ public class MediaPortalApp : D3DApp, IRender
         case Action.ActionType.ACTION_REBOOT:
           {
             //reboot
-            Log.Write("Mediaportal action reboot()");
+            Log.Write("MediaPortal action reboot()");
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
             msg.Param1 = 630;
             msg.Param2 = 0;
@@ -1496,7 +1496,7 @@ public class MediaPortalApp : D3DApp, IRender
         //shutdown pc
         case Action.ActionType.ACTION_SHUTDOWN:
           {
-            Log.Write("Mediaportal: show shutdown/restart/sleep dialog");
+            Log.Write("MediaPortal: show shutdown/restart/sleep dialog");
             GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
             if (dlg != null)
             {
@@ -2642,7 +2642,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         node.InnerText = Directory.GetCurrentDirectory();
       }
-      doc.Save("Mediaportal.exe.config");
+      doc.Save("MediaPortal.exe.config");
     }
     catch (Exception)
     { }

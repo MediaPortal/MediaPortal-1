@@ -1595,22 +1595,22 @@ namespace MediaPortal.TV.Recording
           {
             myTuningSpaces = TuningSpaceContainer._TuningSpacesForCLSID(ref TuningSpaces.CLSID_ATSCTuningSpace);
             //ATSCInputType = "Antenna"; // Need to change to allow cable
-            uniqueName = "Mediaportal ATSC";
+            uniqueName = "MediaPortal ATSC";
           } break;
         case NetworkType.DVBC:
           {
             myTuningSpaces = TuningSpaceContainer._TuningSpacesForCLSID(ref TuningSpaces.CLSID_DVBTuningSpace);
-            uniqueName = "Mediaportal DVB-C";
+            uniqueName = "MediaPortal DVB-C";
           } break;
         case NetworkType.DVBS:
           {
             myTuningSpaces = TuningSpaceContainer._TuningSpacesForCLSID(ref TuningSpaces.CLSID_DVBSTuningSpace);
-            uniqueName = "Mediaportal DVB-S";
+            uniqueName = "MediaPortal DVB-S";
           } break;
         case NetworkType.DVBT:
           {
             myTuningSpaces = TuningSpaceContainer._TuningSpacesForCLSID(ref TuningSpaces.CLSID_DVBTuningSpace);
-            uniqueName = "Mediaportal DVB-T";
+            uniqueName = "MediaPortal DVB-T";
           } break;
       }//switch (_networkType) 
 
