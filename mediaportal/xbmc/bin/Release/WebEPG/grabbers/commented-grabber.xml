@@ -46,7 +46,8 @@
 <!-- Can include any of the following: -->
 <!-- #ID		- Site Channel ID - from the ChannelList section -->
 <!-- #LIST_OFFSET	- offset position in a list longer then one page -->
-<!-- #DAY_OFFSET 	- offset of the day from today (0) -->
+<!-- 			  starts at 0 and is then the number is listings found on the page ie 10 for the next page. -->
+<!-- #DAY_OFFSET 	- offset of the day from today (0). See OffsetStart to change the start.-->
 <!-- #YYYY 		- year -->
 <!-- #MONTH 		- month full name (ie January) -->
 <!-- #MM 		- month with leading 0 -->
