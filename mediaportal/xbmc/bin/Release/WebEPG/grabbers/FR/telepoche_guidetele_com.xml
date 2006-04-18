@@ -193,9 +193,7 @@
 <!-- Template of the Listing information -->
     <entry name="Template">
 	&#60;td&#62;
-	&#60;/td&#62;
-	&#60;td&#62;
-	&#60;a href="" class="" id="" onMouseover="showmenu('&#60;#START&#62;-&#60;#END&#62;&#60;br&#62;&#60;#DESCRIPTION&#62;','&#60;#TITLE&#62;')"&#62;&#60;/a&#62;
+	&#60;a href="" class="" id="" onMouseover="showmenu('&#60;#START&#62;-&#60;#END&#62;&#60;br&#62;&#60;#GENRE&#62;&#60;br&#62;&#60;#DESCRIPTION&#62;','&#60;#TITLE&#62;')"&#62;&#60;/a&#62;
 	&#60;/td&#62;
     </entry>
   </section>
