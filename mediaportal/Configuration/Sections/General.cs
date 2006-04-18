@@ -40,12 +40,19 @@ namespace MediaPortal.Configuration.Sections
 {
   public class General : MediaPortal.Configuration.SectionSettings
   {
-    [DllImport("user32")]
-    static extern int SendMessageTimeout(IntPtr hwnd, int msg, int wParam, string lParam, int fuFlags, int uTimeout, out int lpdwResult);
+    [DllImport("User32.dll", CharSet = CharSet.Auto)]
+    public static extern int SendMessageTimeout(
+      IntPtr hwnd,
+      IntPtr msg,
+      IntPtr wParam,
+      IntPtr lParam,
+      IntPtr fuFlags,
+      IntPtr uTimeout,
+      out IntPtr lpdwResult);
 
-    const int HWND_BROADCAST = 0xffff;
-    const int WM_SETTINGCHANGE = 0x001A;
-    const int SMTO_ABORTIFHUNG = 0x0002;
+    const int WM_SETTINGCHANGE = 0x1A;
+    const int SMTO_ABORTIFHUNG = 0x2;
+    const int HWND_BROADCAST = 0xFFFF;
 
     const string LanguageDirectory = @"language\";
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
@@ -155,7 +162,7 @@ namespace MediaPortal.Configuration.Sections
 			new string[] { "general", "enableguisounds", "true" },
 			new string[] { "general", "screensaver", "false" },
 			new string[] { "general", "startbasichome", "false" },
-      new string[] { "general", "allowfocus", "true" } };
+      new string[] { "general", "allowfocus", "false" } };
 
     /// <summary>
     /// 
@@ -180,8 +187,13 @@ namespace MediaPortal.Configuration.Sections
         languageComboBox.Text = xmlreader.GetValueAsString("skin", "language", languageComboBox.Text);
         //numericUpDown1.Value=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);
 
+        // Allow Focus
+        RegistryKey hkcu = Registry.CurrentUser;
+        RegistryKey subkey = hkcu.OpenSubKey(@"Control Panel\Desktop", false);
+        settingsCheckedListBox.SetItemChecked(16, ((int)subkey.GetValue("ForegroundLockTimeout", 2000000) == 0));
+        subkey.Close();
+        hkcu.Close();
       }
-
     }
 
     public override void SaveSettings()
@@ -191,7 +203,7 @@ namespace MediaPortal.Configuration.Sections
         //
         // Load general settings
         //
-        for (int index = 0; index < sectionEntries.Length; index++)
+        for (int index = 0; index < sectionEntries.Length - 1; index++)  // Leave out last setting (focus)!
         {
           string[] currentSection = sectionEntries[index];
           xmlwriter.SetValueAsBool(currentSection[0], currentSection[1], settingsCheckedListBox.GetItemChecked(index));
@@ -245,12 +257,21 @@ namespace MediaPortal.Configuration.Sections
           subkey.Close();
         }
 
+        // Allow Focus
+        subkey = hkcu.OpenSubKey(@"Control Panel\Desktop", true);
+        bool focusChecked = ((int)subkey.GetValue("ForegroundLockTimeout", 200000) == 0);
+
+        if (focusChecked != settingsCheckedListBox.GetItemChecked(16))
+          if (settingsCheckedListBox.GetItemChecked(16))
+            subkey.SetValue("ForegroundLockTimeout", 0);
+          else
+            subkey.SetValue("ForegroundLockTimeout", 200000);
+
+        subkey.Close();
         hkcu.Close();
 
-        int result;
-        GUI.Library.Log.Write("SendMessageTimeout: {0}", SendMessageTimeout((IntPtr)HWND_BROADCAST, WM_SETTINGCHANGE, 0, "intl", SMTO_ABORTIFHUNG, 10000, out result));
-        GUI.Library.Log.Write("SendMessageTimeout result: {0}", result);
-
+        IntPtr result = IntPtr.Zero;
+        SendMessageTimeout((IntPtr)HWND_BROADCAST, (IntPtr)WM_SETTINGCHANGE, IntPtr.Zero, Marshal.StringToBSTR(String.Empty), (IntPtr)SMTO_ABORTIFHUNG, (IntPtr)3, out result);
       }
       catch (Exception ex)
       {
@@ -350,7 +371,8 @@ namespace MediaPortal.Configuration.Sections
             "Enable GUI sound effects",
             "Enable Screensaver in fullscreen mode",
             "Start with basic home screen",
-            "Allow MediaPortal (and other applications) to gain focus (per-user setting)"});
+            "Allow MediaPortal (and other appl.) to gain focus (per-user setting - needs reboo" +
+                "t!)"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
       this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 259);
