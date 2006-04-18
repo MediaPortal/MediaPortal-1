@@ -124,7 +124,7 @@ namespace MediaPortal.Music.Database
                 MusicAlbumInfo newAlbumInfo = new MusicAlbumInfo();
                 util.ConvertHTMLToAnsi(albumName, out albumNameStripped);
                 newAlbumInfo.Title2=albumNameStripped;
-                newAlbumInfo.AlbumURL=albumUrl;
+                newAlbumInfo.AlbumURL = util.ConvertHTMLToAnsi(albumUrl);
                 newAlbumInfo.Artist = util.ConvertHTMLToAnsi(nameOfArtist);
                 newAlbumInfo.Title = util.ConvertHTMLToAnsi(nameOfAlbum);
                 _albumList.Add(newAlbumInfo);
