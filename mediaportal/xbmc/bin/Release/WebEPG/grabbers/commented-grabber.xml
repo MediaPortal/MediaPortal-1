@@ -99,6 +99,7 @@
 <!-- P = p -->
 <!-- Default Value: T -->
     <entry name="Tags">T</entry>
+
 <!-- _________________________ -->
 <!-- Template of the Listing information -->
 <!-- This give the layout of the program listing in HTML -->
@@ -115,22 +116,27 @@
 <!-- <#MONTH> 		- program month (required if not part of page lookup) -->
 <!-- All '<' and '>' must be replaced with &#60; and &#62; -->
 <!-- tabs and newlines are ignored so these can be used for formating -->
-
+<!-- only the most important HTML tags should be used to identify the structure of the guide data -->
+<!-- here less is often more. -->
+<!-- The HTML tags are used as the major locators to find the guide data and seperate the data (#tags) -->
+<!-- However, plan text/key words can also be used to seperate the data inside the HTML tag structure -->
+<!-- the text in front of a #tag is always used for that tag -->
+<!-- ie. xxx<#DESCRIPTION>yyy<#GENRE> -->
+<!-- here the xxx will be used to find the start location of #DESCRIPTION and the yyy the start of #GENRE -->
+<!-- any other text between the xxx and the yyy will be included in #DESCRIPTION -->
+<!-- if yyy is not found all text until the next HTML tag will be placed into the first #tag (in this case #DESCRIPTION) -->
+<!-- if xxx is not found no text will be included into #DESCRIPTION -->
+<!-- to set a different end for #DECSRIPTION the following syntax is used -->
+<!-- <#TAG:start text,end text> -->
+<!-- ie. <#DESCRIPTION:xxx,zzz>yyy<#GENRE> -->
+<!-- here xxx is still the start string however, now zzz will be the end of #DESCRIPTION and -->
+<!-- anything between zzz and yyy will be discarded. -->
     <entry name="Template">
-<!-- Example from www.fernsehen.ch -->
-	&#60;tr&#62;
-	&#60;td&#62;xxx &#60;/td&#62;
-	&#60;td&#62;Samstag&#60;br&#62;&#60;#DAY&#62;. &#60;#MONTH&#62;&#60;br&#62;&#60;#START&#62; - &#60;#END&#62;&#60;br&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;#NAME&#62;&#60;br&#62;&#60;#TEXT&#62;&#60;/td&#62;
-	&#60;/tr&#62;
-<!-- Example from www.tvtoday.de -->
-	&#60;table&#62;
 	&#60;tr&#62;
 	&#60;td&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
-	&#60;td&#62;&#60;#NAME&#62;(xxx) 38 Min. bis &#60;#END&#62;   Showview  80-45-935&#60;br&#62;&#60;#TEXT&#62;&#60;br&#62; &#60;br&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;br&#62;&#60;#DAY&#62;. &#60;#MONTH&#62;&#60;br&#62;&#60;#START&#62; - &#60;#END&#62;&#60;br&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#TITLE&#62;&#60;br&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;
 	&#60;/tr&#62;
-	&#60;/table&#62;
     </entry>
 <!-- _________________________ -->
 <!-- SubListingLink: If the site has more detailed information on a linked page -->
