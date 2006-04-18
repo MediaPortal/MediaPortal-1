@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- The grabber xml file describes how to get the program listing infomation from the page. -->
+<!-- It has the following format: -->
+
+<profile>
+
+<!-- ========================= -->
+<!-- Channel section lists all the channels available from this website. -->
+
+  <section name="ChannelList">
+
+    <entry name="Channel DB ID">.Site Channel ID.</entry>	<!-- Full channel name here -->
+
+<!-- Channel DB ID -->
+<!-- This is a unique ID for all channels in the world -->
+<!-- modeled on the XMLTV id with the following format: -->
+<!-- subchannel@provider_url -->
+<!-- provider_url 	= the domain url of the channel provider. Example mtv.com -->
+<!--			  If a provider does not have a website/URL then one can be created -->
+<!--			  with the format "channel/provider name"_"country". where "-" replaces the "." normally used in URLs -->
+<!-- subchannel 	= if a provider has more then one channel. Example mtv2@mtv.com -->
+<!-- Check the existing ids before creating new ones, using the Webepg-channels.exe program -->
+<!-- if two channels have the same guide (same programs at the same time) then they should have the same ID -->
+<!-- regardless if they are in a different country or language and have a local URL -->
+<!-- In this case the highest level URL should be used .com for example -->
+
+  </section>
+
+<!-- ========================= -->
+<!-- Formating of Listing -->
+<!-- This section describes how to find the program infomation -->
+  <section name="Listing">
+
+<!-- _________________________ -->
+<!-- BaseURL -->
+<!-- The base URL of the site, must start with 'http://'  -->
+<!-- Any sub links will be added to this base. -->
+<!-- Should normally have '/' on the end. However, if this is included in the sub link -->
+<!-- then include the '/' at the start of the search string -->
+    <entry name="BaseURL">http://www.tvsite.tv/guide/</entry>
+
+<!-- _________________________ -->
+<!-- SearchURL -->
+<!-- The part of the url use to load the guide pages for different channels and days. -->
+<!-- Can include any of the following: -->
+<!-- #ID		- Site Channel ID - from the ChannelList section -->
+<!-- #LIST_OFFSET	- offset position in a list longer then one page -->
+<!-- #DAY_OFFSET 	- offset of the day from today (0) -->
+<!-- #YYYY 		- year -->
+<!-- #MONTH 		- month full name (ie January) -->
+<!-- #MM 		- month with leading 0 -->
+<!-- #_M 		- month without leading 0 -->
+<!-- #WEEKDAY		- day of week full name (ie Monday) -->
+<!-- #DD 		- day with leading 0 -->
+<!-- #_D 		- day without leading 0 -->
+<!-- #EPOCH_TIME	- number of seconds since 1/1/1970 8:00:00 AM -->
+<!-- #EPOCH_DATE	- number of days since 1/1/1970 8:00:00 AM -->
+<!-- #DAY_NAME		- a string for the name example: today, tomorrow, etc. Requires DayNames section-->
+<!-- replace & with &amp; -->
+    <entry name="SearchURL">search.php3?channel=#ID&amp;limit=#LIST_OFFSET</entry>
+
+
+<!-- _________________________ -->
+<!-- Encoding [optional] -->
+<!-- In most cases the Encoding is correctly detected by WebEPG -->
+<!-- This forces the give encoding to be used -->
+    <entry name="Encoding">UTF-8</entry>
+
+<!-- _________________________ -->
+<!-- MaxCount [optional] -->
+<!-- Maximum Number of listings per page -->
+<!-- Optional only required if a single day's listing are over more then on page -->
+<!-- Used together with #LIST_OFFSET -->
+    <entry name="MaxCount">10</entry>
+
+<!-- _________________________ -->
+<!-- Start [optional] -->
+<!-- Unique Listing Start string -->
+<!-- speeds search by reducing, search area. Search string from start of HTML source -->
+<!-- Default value: "<body" -->
+    <entry name="Start">&#60;!-- Vorschlag Output DB start--&#62;</entry>
+
+<!-- _________________________ -->
+<!-- End [optional] -->
+<!-- Unique Listing End string -->
+<!-- speeds search by reducing, search area. Search string from postion of start string -->
+<!-- Default value: "</body" -->
+    <entry name="End">&#60;!-- Vorschlag Include output DB ende --&#62;</entry>
+<!-- _________________________ -->
+<!-- Tags [optional] -->
+<!-- The types of HTML tags used for template matching -->
+<!-- the first letter of the required tags, all other tags will be ignored -->
+<!-- although the first letter is not unique in all cases it is sufficient for template matching -->
+<!-- Common Examples: -->
+<!-- T = table, TR, TD, etc (all table tags) -->
+<!-- A = A href -->
+<!-- D = Div -->
+<!-- P = p -->
+<!-- Default Value: T -->
+    <entry name="Tags">T</entry>
+<!-- _________________________ -->
+<!-- Template of the Listing information -->
+<!-- This give the layout of the program listing in HTML -->
+<!-- Currently only looks at the following tags: table, tr, td and br -->
+<!-- These tags can be simplied by remove everything after the tag name. ie <tr xxx> = <tr> -->
+<!-- All other tags can be removed. -->
+<!-- Required: -->
+<!-- <#TITLE>		- program name/title -->
+<!-- <#START> 		- program start time -->
+<!-- Optional: -->
+<!-- <#END> 		- program end time -->
+<!-- <#DESCRIPTION>	- program describtion text -->
+<!-- <#DAY> 		- program day (required if not part of page lookup) -->
+<!-- <#MONTH> 		- program month (required if not part of page lookup) -->
+<!-- All '<' and '>' must be replaced with &#60; and &#62; -->
+<!-- tabs and newlines are ignored so these can be used for formating -->
+
+    <entry name="Template">
+<!-- Example from www.fernsehen.ch -->
+	&#60;tr&#62;
+	&#60;td&#62;xxx &#60;/td&#62;
+	&#60;td&#62;Samstag&#60;br&#62;&#60;#DAY&#62;. &#60;#MONTH&#62;&#60;br&#62;&#60;#START&#62; - &#60;#END&#62;&#60;br&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#NAME&#62;&#60;br&#62;&#60;#TEXT&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+<!-- Example from www.tvtoday.de -->
+	&#60;table&#62;
+	&#60;tr&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;#NAME&#62;(xxx) 38 Min. bis &#60;#END&#62;   Showview  80-45-935&#60;br&#62;&#60;#TEXT&#62;&#60;br&#62; &#60;br&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+	&#60;/table&#62;
+    </entry>
+<!-- _________________________ -->
+<!-- SubListingLink: If the site has more detailed information on a linked page -->
+<!-- this is use to identify the correct link to follow. -->
+<!-- the link (A href) must be inside the HTML code section examined by the template. -->
+<!-- The "A" tag doesn't have to form part of the template. However, the link must be found -->
+<!-- between the first and last tag used in the template. -->
+    <entry name="SubListingLink">programmadetail</entry>
+  </section>
+
+
+<!-- ========================= -->
+<!-- SubListing Section -->
+<!-- If SubListingLink is used in the main listing section. -->
+<!-- then a template is required to parse the linked page. -->
+<!-- This section has the same entries as the main listing section. -->
+  <section name="SubListing">
+    <entry name="Tags">TA</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">progDetail</entry>
+
+<!-- Unique Listing End string -->
+<!--    <entry name="End"></entry> -->
+
+<!-- Template tags -->
+    <entry name="Tags">T</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+	&#60;td&#62;
+	&#60;p&#62;&#60;#SUBTITLE&#62;&#60;/p&#62;
+	&#60;p&#62;&#60;#DESCRIPTION&#62;&#60;/p&#62;
+	&#60;p&#62;&#60;/p&#62;
+	&#60;p&#62;&#60;a href&#62;&#60;/a&#62;&#60;a href="/zoeken/?genre=&#60;#GENRE:genre=,&#62;"&#62;&#60;/a&#62;&#60;/p&#62;
+	&#60;p&#62;&#60;a href&#62;&#60;/a&#62;&#60;/p&#62;
+	&#60;/td&#62;
+    </entry>
+  </section>
+
+
+<!-- ========================= -->
+<!-- Info Section -->
+  <section name="Info">
+
+<!-- Days of guide information available on this site -->
+    <entry name="GuideDays">7</entry>
+
+<!-- Language of the guide information -->
+    <entry name="Lang">de</entry>
+
+<!-- TimeZone of the site -->
+<!-- HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones -->
+    <entry name="TimeZone">W. Europe Standard Time</entry>
+  </section>
+
+<!-- ========================= -->
+<!-- DayNames Section [optional]-->
+<!-- When #DAY_NAME tag is used in the search URL this section is required -->
+<!-- A mapping from a day offset to a name string -->
+<!-- start day or today = 0 -->
+  <section name="DayNames">
+    <entry name="0">tanaan</entry>
+    <entry name="1">huomenna</entry>
+    <entry name="2">ylihuomenna</entry>
+    <entry name="3">plus3</entry>
+    <entry name="4">plus4</entry>
+    <entry name="5">plus5</entry>
+    <entry name="6">plus6</entry>
+  </section>
+
+<!-- ========================= -->
+<!-- DateTime Section [optional]-->
+<!-- If the months are listed on the page as text they must be entered here. -->
+<!-- If the page uses day offset or yyyy/mm/dd to load the page then this is not required -->
+<!-- enter 'no' for Months and leave the rest out or leave the whole section out. -->
+  <section name="DateTime">
+    <entry name="Months">yes</entry>
+    <entry name="Januar">1</entry>
+    <entry name="Februar">2</entry>
+    <entry name="M&#228;rz">3</entry>
+    <entry name="April">4</entry>
+    <entry name="Mai">5</entry>
+    <entry name="Juni">6</entry>
+    <entry name="Juli">7</entry>
+    <entry name="August">8</entry>
+    <entry name="September">9</entry>
+    <entry name="Oktober">10</entry>
+    <entry name="November">11</entry>
+    <entry name="Dezember">12</entry>
+  </section>
+
+<!-- ========================= -->
+<!-- Genre Map Section [optional]-->
+<!-- Allows the Genre on the site to be replaced with another string -->
+<!-- This is to enable genre from different sites to be mapped to a common set -->
+<section name="GenreMap">
+   <entry name="Amusement" >Amusement</entry>
+   <entry name="Animatie" >Animatie</entry>
+   <entry name="Comedy" >Comedy</entry>
+   <entry name="Documentaire" >Documentaire</entry>
+   <entry name="Erotiek" >Erotiek</entry>
+   <entry name="Film" >Film</entry>
+   <entry name="Informatief" >Informatief</entry>
+   <entry name="Jeugd" >Jeugd</entry>
+   <entry name="Kunst/Cultuur" >Kunst/Cultuur</entry>
+   <entry name="Misdaad" >Misdaad</entry>
+   <entry name="Muziek" >Muziek</entry>
+   <entry name="Natuur" >Natuur</entry>
+   <entry name="Nieuws/Actualiteiten" >Nieuws/Actualiteiten</entry>
+   <entry name="Overige" >Overige</entry>
+   <entry name="Religieus" >Religieus</entry>
+   <entry name="Serie/Soap" >Serie/Soap</entry>
+   <entry name="Sport" >Sport</entry>
+   <entry name="Theater" >Theater</entry>
+   <entry name="Wetenschap" >Wetenschap</entry>
+  </section>
+
+<!-- ========================= -->
+<!-- Remove Programs Section [optional]-->
+<!-- Allows the removal of certain programs -->
+  <section name="RemovePrograms">
+     <entry name="ned3@omroep.nl">[TITLE]"Z@pp";[TITLE]"Nederland 3"</entry>	
+  </section>
+
+</profile>
