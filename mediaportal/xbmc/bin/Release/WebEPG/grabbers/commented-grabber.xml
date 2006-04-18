@@ -75,6 +75,12 @@
     <entry name="MaxCount">10</entry>
 
 <!-- _________________________ -->
+<!-- OffsetStart [optional] -->
+<!-- Added to #DAY_OFFSET so #DAY_OFFSET + OffsetStart -->
+<!-- Used together with #DAY_OFFSET -->
+    <entry name="OffsetStart">1</entry>
+
+<!-- _________________________ -->
 <!-- Start [optional] -->
 <!-- Unique Listing Start string -->
 <!-- speeds search by reducing, search area. Search string from start of HTML source -->
