@@ -526,6 +526,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    
     void Cleanup()
     {
       _cachedTextureFileName = "";
@@ -1236,5 +1237,11 @@ namespace MediaPortal.GUI.Library
       base.Animate( timePassed, animator);
       _reCalculate=true;
     }
+
+    protected override void Update() 
+    {
+      _reCalculate = true;
+    }
+
   }
 }
