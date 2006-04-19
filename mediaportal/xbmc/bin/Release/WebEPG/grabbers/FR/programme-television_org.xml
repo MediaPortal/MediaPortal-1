@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<profile>
+
+  <section name="ChannelList">
+<entry name="TF1">1</entry>
+<entry name="France 2">2</entry>
+<entry name="France 3">3</entry>
+<entry name="France 4">10</entry>
+<entry name="France 5">7</entry>
+<entry name="M6">6</entry>
+<entry name="TMC">9</entry>
+<entry name="Canal+">4</entry>
+<entry name="Arte">5</entry>
+<entry name="Direct8">11</entry>
+<entry name="LCP">12</entry>
+<entry name="NRJ 12">13</entry>
+<entry name="NT1">14</entry>
+<entry name="W9">15</entry>
+<entry name="BFM TV">16</entry>
+<entry name="Europe 2 TV">17</entry>
+<entry name="Gulli">18</entry>
+<entry name="I-TV">19</entry>
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing">
+    <entry name="BaseURL">http://www.programme-television.org</entry>
+    <entry name="SearchURL">/moteur.php?numpage=#PAGE_OFFSET&amp;recherche=&amp;par=desc&amp;genre=&amp;critere=1&amp;fonct=&amp;pardate=on&amp;pardate2=1&amp;datedu=#DD/#MM/#YYYY&amp;dateau=#DD/#MM/#YYYY&amp;dateav=#DD/#MM/#YYYY&amp;dateap=#DD/#MM/#YYYY&amp;c1=6B8DEE&amp;c2=B2C4F9&amp;chaine=#ID</entry>
+    <entry name="MaxCount">10</entry>
+    <entry name="PageStart">1</entry>
+<!--    <entry name="GrabDelay">5000</entry>-->
+
+<!-- Unique Listing Start string -->
+
+<!-- Template of the Listing information -->
+	<entry name="Tags">TAI</entry>   
+    <entry name="Template">
+	&#60;tr&#62;
+	&#60;td&#62;&#60;#TITLE&#62;&#60;I&#62;&#60;#GENRE&#62;&#60;/I&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+	&#60;tr&#62;
+	&#60;td&#62;&#60;a&#62;&#224;&#60;#START&#62;&#60;/a&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+    </entry>
+    <entry name="SubListingLink">description</entry>
+  </section>
+
+<section name="SubListing">
+<!-- Template of the Listing information -->
+	<entry name="Tags">T</entry>
+	<entry name="Start">SOIREE</entry>
+
+	<entry name="Template">
+
+	&#60;TABLE&#62;&#60;TR&#62;&#60;TD&#62;&#60;/TD&#62;&#60;TD&#62;&#60;/TD&#62;&#60;/TR&#62;&#60;/TABLE&#62;
+	&#60;TABLE&#62;&#60;TR&#62;&#60;TD&#62;&#60;/TD&#62;&#60;/TR&#62;&#60;TR&#62;&#60;TD&#62;&#60;#DESCRIPTION&#62;&#60;/TD&#62;&#60;/TR&#62;&#60;/TABLE&#62;
+
+    	</entry>
+
+  </section>
+
+  <section name="Info">
+    <entry name="GuideDays">14</entry>
+    <entry name="Lang">fr</entry>
+  </section>
+</profile>
+
+
+
+
