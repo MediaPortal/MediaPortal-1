@@ -230,7 +230,8 @@ namespace MediaPortal.GUI.Music
                                 if (handler.CurrentLevel > 0)
                                 {
                                     handler.CurrentLevel--;
-                                    LoadDirectory(item.Path);
+                                    //LoadDirectory(item.Path);
+                                    LoadDirectory((handler.CurrentLevel+1).ToString());
                                     return;
                                 }
                             }
