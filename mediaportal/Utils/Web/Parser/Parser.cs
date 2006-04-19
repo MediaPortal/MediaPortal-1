@@ -34,6 +34,7 @@ namespace MediaPortal.Utils.Web
 
 		public Parser(int size)
 		{
+      if (size < 0) size = 0;
 			_aProfile = new string[size];
 			index=0;
 		}
