@@ -72,6 +72,7 @@ namespace MediaPortal.EPG
     int _linkStart;
     int _linkEnd;
     int _maxListingCount;
+    int _pageStart;
     int _offsetStart;
     int _LastStart;
     int _grabDelay;
@@ -120,6 +121,7 @@ namespace MediaPortal.EPG
       _grabDelay = _xmlreader.GetValueAsInt("Listing", "GrabDelay", 500);
       _maxListingCount = _xmlreader.GetValueAsInt("Listing", "MaxCount", 0);
       _offsetStart = _xmlreader.GetValueAsInt("Listing", "OffsetStart", 0);
+      _pageStart = _xmlreader.GetValueAsInt("Listing", "PageStart", 0);
       _guideDays = _xmlreader.GetValueAsInt("Info", "GuideDays", 0);
 
       string strTimeZone = _xmlreader.GetValueAsString("Info", "TimeZone", "");
@@ -644,7 +646,8 @@ namespace MediaPortal.EPG
       bool bMore = false;
       error = false;
 
-      strURL = strURL.Replace("#LIST_OFFSET", offset.ToString());
+      strURL = strURL.Replace("#LIST_OFFSET", (offset * _maxListingCount).ToString());
+      strURL = strURL.Replace("#PAGE_OFFSET", (offset + _pageStart).ToString());
 
       Log.WriteFile(Log.LogType.Log, false, "[Info.] WebEPG: Reading {0}{1}", _strURLbase, strURL);
 
@@ -788,7 +791,7 @@ namespace MediaPortal.EPG
           Thread.Sleep(_grabDelay);
           if (_maxListingCount == 0)
             break;
-          offset += _maxListingCount;
+          offset++; // += _maxListingCount;
         }
         if (error)
         {
