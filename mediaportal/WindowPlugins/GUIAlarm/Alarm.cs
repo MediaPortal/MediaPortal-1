@@ -40,11 +40,14 @@ namespace MediaPortal.GUI.Alarm
     private static AlarmCollection _Alarms;
     private System.Windows.Forms.Timer _AlarmTimer = new System.Windows.Forms.Timer();
     private System.Windows.Forms.Timer _VolumeFadeTimer = new System.Windows.Forms.Timer();
-    private static System.Windows.Forms.Timer _DisallowShutdownTimer;
+    private System.Windows.Forms.Timer _DisallowShutdownTimer;
+    private static System.Windows.Forms.Timer _StopAlarmTimer = new System.Windows.Forms.Timer();
     private int _Id;
     private bool _Enabled;
     private string _Name;
     private DateTime _Time;
+    private DateTime _SnoozeAlarmTime;
+    private static DateTime _StopAlarmTime = new DateTime(1901, 1, 1); //ensure that its before the current time
     private bool _Mon;
     private bool _Tue;
     private bool _Wed;
@@ -61,7 +64,10 @@ namespace MediaPortal.GUI.Alarm
     private string _Message;
     private int _RepeatCount;
     private PlayListPlayer playlistPlayer;
-    private static bool _disallowShutdown;
+    private bool _disallowShutdown;
+    private bool _switchedWindow;
+    private static bool _initializedStopAlarmTimer;
+    private System.ComponentModel.BackgroundWorker _backgroundWorker;
 
     //constants
     private const int _MaxAlarms = 20;
@@ -103,6 +109,10 @@ namespace MediaPortal.GUI.Alarm
       _Wakeup = wakeup;
       _AlarmType = (AlarmType)alarmType;
       _Message = message;
+      _SnoozeAlarmTime = new DateTime(1901,1,1); //ensure that its before the actual alarm trigger time
+      _disallowShutdown = false;
+      _switchedWindow = false;
+
       InitializeTimer();
       
     }
@@ -120,7 +130,7 @@ namespace MediaPortal.GUI.Alarm
     }
     #endregion
 
-    #region Properties
+    #region Private Properties
     public AlarmType AlarmOccurrenceType
     {
       get { return _AlarmType; }
@@ -185,6 +195,20 @@ namespace MediaPortal.GUI.Alarm
       get { return _Time; }
       set { _Time = value; }
     }
+    public DateTime NextAlarmTriggerTime
+      {
+          get
+          {
+              if (DateTime.Compare(_Time, _SnoozeAlarmTime) < 0)
+              {
+                  return _SnoozeAlarmTime;
+              }
+              else
+              {
+                  return _Time;
+              }
+          }
+      }
     public string Sound
     {
       get { return _Sound; }
@@ -244,20 +268,41 @@ namespace MediaPortal.GUI.Alarm
       get { return _Message; }
       set { _Message = value; }
     }
-      public static bool DisallowShutdown
+    public bool DisallowShutdown
       {
           get
           {
               return _disallowShutdown;
           }
+
+          set
+          {
+              _disallowShutdown = value;
+              
+          }
       }
+    public bool AlarmTriggerDialogOpen
+      {
+          get
+          {
+              if (_backgroundWorker == null)
+              {
+                  return false;
+              }
+              else
+              {
+                  return _backgroundWorker.IsBusy;
+              }
+          }
+      }
+
     #endregion
 
     #region Private Methods
 
     /// <summary>
-    /// Initializes the timer objects
-    /// </summary>
+          /// Initializes the timer objects
+          /// </summary>
     private void InitializeTimer()
     {
       _AlarmTimer.Tick += new EventHandler(OnTimer);
@@ -270,7 +315,7 @@ namespace MediaPortal.GUI.Alarm
     }
 
     /// <summary>
-    /// Executes on the interval of the timer object.
+    /// Executes on the interval of the timer objects.
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -278,11 +323,11 @@ namespace MediaPortal.GUI.Alarm
     {
       if (sender == _AlarmTimer)
       {
-        if (DateTime.Now.Hour == _Time.Hour && DateTime.Now.Minute == _Time.Minute)
+          if (DateTime.Now.Hour == NextAlarmTriggerTime.Hour && DateTime.Now.Minute == NextAlarmTriggerTime.Minute)
         {
           if (_AlarmType == AlarmType.Recurring && IsDayEnabled() || _AlarmType == AlarmType.Once)
           {
-            Log.Write("Alarm {0} fired at {1}", _Name, DateTime.Now);
+            Log.Write("Alarm: {0} fired at {1}", _Name, DateTime.Now);
 
             //reset the disallowshutdown flag after delay for alarm to load
              StartDisallowShutdownTimer();
@@ -296,21 +341,48 @@ namespace MediaPortal.GUI.Alarm
                 g_Player.Volume = 0;
                 _VolumeFadeTimer.Enabled = true;
               }
-
-              //activate the my alarm window. (handles snooze button)
-              //TODO:Handle this globally somehow??
-              //GUIWindowManager.ActivateWindow(GUIAlarm.WindowAlarm);			
+		
             }
-            //display the notify message
-            DisplayNotifyMessage();
 
             //disable the timer.
             _AlarmTimer.Enabled = false;
+
+            //set StopAlarmTime if media is playing (radio only feature due to MP limitations)
+            if (this.AlarmMediaType == MediaType.Radio)
+            {
+                Alarm.StopAlarmTime = DateTime.Now.AddMinutes(Alarm.AlarmTimeout);
+            }
+
+            //temporary workaround for PowerScheduler issue
+            if (MediaPortal.GUI.Library.GUIWindowManager.ActiveWindow == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_HOME || MediaPortal.GUI.Library.GUIWindowManager.ActiveWindow == (int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_SECOND_HOME)
+            {
+                MediaPortal.GUI.Library.GUIWindowManager.ActivateWindow(5000);
+                _switchedWindow = true;
+            }
+              
+            //load alarm dialog in different thread - allows PowerScheduler to continue working properly (as it requires the UI thread, and dialogs steal the UI thread when modal)
+            _backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            _backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(ShowAlarmTriggeredDialog_DoWork);
+            _backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(ShowAlarmTriggeredDialog_RunWorkerCompleted);
+            
+            //build dialog title
+            string dialogTitle;
+            if (this.Message == string.Empty)
+            {
+                dialogTitle = GUILocalizeStrings.Get(850) + " - " + this.Name;
+            }
+            else
+            {
+                dialogTitle = this.Message;
+            }
+            
+            //run thread
+            _backgroundWorker.RunWorkerAsync(dialogTitle);
           }
 
         }
       }
-      if (sender == _VolumeFadeTimer)
+      else if (sender == _VolumeFadeTimer)
       {
         if (g_Player.Volume < 99)
         {
@@ -322,33 +394,99 @@ namespace MediaPortal.GUI.Alarm
           _VolumeFadeTimer.Enabled = false;
         }
       }
-
-
     }
 
     /// <summary>
-    /// Displays the configured notification message.
-    /// </summary>
-    void DisplayNotifyMessage()
-    {
-       //message displayed regardless of setting - workaround for PowerScheduler shutdown timer
-       //otherwise, PowerScheduler's shutdown timer remains active, and will shutdown the 
-       //computer once the timer expires, turning the alarm off in the process.
-       
-       //if (_Message.Length != 0)
-      //{
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY, 0, 0, 0, 0, 0, 0);
-        msg.Label = string.Format("{0} - {1}", this.Name, this.Time.ToShortTimeString());
-        msg.Label2 = this.Message;
-        msg.Label3 = String.Format("{0}\\{1}", GUIGraphicsContext.Skin, "Media\\dialog_information.png");
-        GUIGraphicsContext.SendMessage(msg);
+      /// Method that shows the alarm triggered dialog - to dismiss or snooze alarm
+      /// </summary>
+    public void ShowAlarmTriggeredDialog_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+          {
+              GUIDialogMenu dlgAlarmOpts = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+              dlgAlarmOpts.Reset();
 
-        MediaPortal.Dialogs.GUIDialogNotify notifyWin = (MediaPortal.Dialogs.GUIDialogNotify)MediaPortal.GUI.Library.GUIWindowManager.GetWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-        notifyWin.TimeOut = 0;
-      //}
-    }
+              dlgAlarmOpts.SetHeading((string)e.Argument);
 
+              dlgAlarmOpts.Add(GUILocalizeStrings.Get(857) + " 5 " + GUILocalizeStrings.Get(3004));
+              dlgAlarmOpts.Add(GUILocalizeStrings.Get(857) + " 10 " + GUILocalizeStrings.Get(3004));
+              dlgAlarmOpts.Add(GUILocalizeStrings.Get(857) + " 15 " + GUILocalizeStrings.Get(3004));
+              dlgAlarmOpts.Add(GUILocalizeStrings.Get(857) + " 30 " + GUILocalizeStrings.Get(3004));
+              dlgAlarmOpts.Add(GUILocalizeStrings.Get(857) + " 1 " + GUILocalizeStrings.Get(3001));
+              dlgAlarmOpts.Add(GUILocalizeStrings.Get(858));
 
+              dlgAlarmOpts.DoModal(GUI.Library.GUIWindowManager.ActiveWindow);
+    
+              //process dialog result
+              switch (dlgAlarmOpts.SelectedLabel)
+              {
+                  case 0:
+                      e.Result = 5;
+                      break;
+
+                  case 1:
+                      e.Result = 10;
+                      break;
+
+                  case 2:
+                      e.Result = 15;
+                      break;
+
+                  case 3:
+                      e.Result = 30;
+                      break;
+
+                  case 4:
+                      e.Result = 60;
+                      break;
+
+                  default:
+                      e.Result = 0;
+                      break;
+              }
+          }
+
+    /// <summary>
+      /// Event handler for when the AlarmTriggeredDialog thread is finished
+      /// </summary>
+      /// <param name="sender"></param>
+      /// <param name="e"></param>
+    private void ShowAlarmTriggeredDialog_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+      {
+          SetSnoozePeriod((int)e.Result);
+          _backgroundWorker.Dispose();
+      }
+
+    /// <summary>
+      /// Sets the snooze period and reenables the alarm timer
+      /// </summary>
+      /// <param name="minutes"></param>
+    private void SetSnoozePeriod(int minutes)
+      {
+          if (minutes == 0)
+          {
+              //temporary workaround for PowerScheduler issue
+              //returns to home screen if the alarm screen was activated during trigger of alarm
+              if (_switchedWindow == true)
+              {
+                  MediaPortal.GUI.Library.GUIWindowManager.ActivateWindow(0, true);
+                  _switchedWindow = false;
+              }
+          }
+          else
+          {
+              if (_MediaType != MediaType.Message) { g_Player.Stop(); }
+              _SnoozeAlarmTime = DateTime.Now.AddMinutes(minutes);
+              _AlarmTimer.Enabled = true;
+              _AlarmTimer.Start();
+
+              //temporary workaround for PowerScheduler issue
+              //returns to home screen if the alarm screen was activated during trigger of alarm
+              if ((_switchedWindow == true) && (this.Wakeup == true))
+              {
+                  MediaPortal.GUI.Library.GUIWindowManager.ActivateWindow(0, true);
+                  _switchedWindow = false;
+              }
+          }
+      }    
 
     /// <summary>
     /// Checks if the current dayofweek for the alarm is enabled
@@ -726,7 +864,6 @@ namespace MediaPortal.GUI.Alarm
       }
     }
 
-
     /// <summary>
     /// Refreshes the loaded alarms from the config file
     /// </summary>
@@ -743,6 +880,66 @@ namespace MediaPortal.GUI.Alarm
         //Load all the alarms 
         Alarm.LoadAll();
       }
+    }
+
+    /// <summary>
+    /// Checks to see if the stopalarmtimer has been initialized; if not, initialize it
+    /// </summary>
+    private static void InitializeStopAlarmTimer()
+    {
+        if (_initializedStopAlarmTimer == false)
+        {
+            _StopAlarmTimer.Interval = 10000; //10 seconds
+            _StopAlarmTimer.Tick += new EventHandler(OnStopAlarmTimer);
+
+            g_Player.PlayBackEnded += new g_Player.EndedHandler(Static_g_Player_PlaybackEnded);
+
+            _initializedStopAlarmTimer = true;
+        }
+    }
+
+    /// <summary>
+    /// Reacts to the StopAlarmTimer - if the time has passed, stop the alarm.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private static void OnStopAlarmTimer(Object sender, EventArgs e)
+    {
+        if (DateTime.Compare(_StopAlarmTime, DateTime.Now) <= 0)
+        {
+            bool alarmTriggerDialogOpen = false;
+
+            foreach (Alarm a in _Alarms)
+            {
+                if (a.AlarmTriggerDialogOpen == true)
+                {
+                    alarmTriggerDialogOpen = true;
+                }
+            }
+
+            //if the dialog is open, dismiss it
+            if (alarmTriggerDialogOpen == true)
+            {
+                MediaPortal.GUI.Library.Action act = new Action();
+                act.wID = MediaPortal.GUI.Library.Action.ActionType.REMOTE_6; //number for the dismiss option
+
+                MediaPortal.GUI.Library.GUIGraphicsContext.OnAction(act);
+            }
+
+            g_Player.Stop();
+            _StopAlarmTimer.Enabled = false;
+        }
+    }
+
+    /// <summary>
+    /// Disable the StopAlarmTimer if the alarm has been stopped.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="stoptime"></param>
+    /// <param name="filename"></param>
+    private static void Static_g_Player_PlaybackEnded(MediaPortal.Player.g_Player.MediaType type, string filename)
+    {
+        _StopAlarmTime = new DateTime(1901, 1, 1);
     }
 
     #endregion
@@ -782,30 +979,17 @@ namespace MediaPortal.GUI.Alarm
         }
       }
     }
-    /// <summary>
-    /// Gets the snooze time from the configuration file
-    /// </summary>
-    public static int SnoozeTime
-    {
-      get
-      {
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-        {
-          return xmlreader.GetValueAsInt("alarm", "alarmSnoozeTime", 5);
-        }
-      }
-    }
 
     /// <summary>
-    /// Gets the configured message display length
+    /// Gets the configured timeout period in minutes
     /// </summary>
-    public static int MessageDisplayLength
+    public static int AlarmTimeout
     {
       get
       {
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
-          return xmlreader.GetValueAsInt("alarm", "alarmMessageDisplayLength", 10);
+          return xmlreader.GetValueAsInt("alarm", "alarmTimeout", 60);
         }
       }
     }
@@ -836,6 +1020,53 @@ namespace MediaPortal.GUI.Alarm
           return xmlreader.GetValueAsInt("alarm", "alarmRepeatCount", 5);
         }
       }
+    }
+    
+    /// <summary>
+    /// Checks all alarms for disallowShutdown flag
+    /// </summary>
+    public static bool DisallowShutdownCheckAllAlarms
+    {
+        get
+        {
+            bool disallowShutdown = false;
+            foreach (Alarm a in _Alarms)
+            {
+                if (a.DisallowShutdown == true)
+                {
+                    disallowShutdown = true;
+                }
+            }
+
+            return disallowShutdown;
+        }
+    }
+    
+    /// <summary>
+    /// Gets/sets the stopalarmtime
+    /// </summary>
+    public static DateTime StopAlarmTime
+    {
+        get
+        {
+            return _StopAlarmTime;
+        }
+        set
+        {
+            //only take the later datetime value
+            if (DateTime.Compare(value, _StopAlarmTime) > 0)
+            {
+                _StopAlarmTime = value;
+                InitializeStopAlarmTimer();
+                _StopAlarmTimer.Enabled = true;
+            }
+            //if value is before current time, assume StopAlarmTimer is to be disabled
+            else if (DateTime.Compare(value, DateTime.Now) < 0)
+            {
+                _StopAlarmTime = value;
+                _StopAlarmTimer.Enabled = false;
+            }
+        }
     }
 
     #endregion
@@ -871,17 +1102,6 @@ namespace MediaPortal.GUI.Alarm
       DateTime NextStartTime = new DateTime();
       DateTime tmpNextStartTime = new DateTime();
 
-        //reset disallowshutdown flag if timer is not running
-        if (_DisallowShutdownTimer == null)
-        {
-            _disallowShutdown = false;
-        }
-        else if (_DisallowShutdownTimer.Enabled == false)
-        {
-            _disallowShutdown = false;
-        }
-      
-
       //make the starting off nextdatetime a year away so earlier (real alarm trigger) times can be compared
       NextStartTime = DateTime.Now.AddYears(1);
 
@@ -890,11 +1110,10 @@ namespace MediaPortal.GUI.Alarm
         //alarm must be enabled and set to wake up the pc.
         if (a.Enabled && a.Wakeup)
         {
-
             switch (a.AlarmOccurrenceType)
             {
                 case AlarmType.Once:
-                    tmpNextStartTime = a.Time;
+                    tmpNextStartTime = a.NextAlarmTriggerTime;
                     break;
 
                 case AlarmType.Recurring:
@@ -909,7 +1128,7 @@ namespace MediaPortal.GUI.Alarm
                         if (a.IsDayEnabled(DateToCheck.DayOfWeek))
                         {
                             //found next enabled day - build new date from the new date found, combined with the alarm trigger time
-                            tmpNextStartTime = new DateTime(DateToCheck.Year, DateToCheck.Month, DateToCheck.Day, a.Time.Hour, a.Time.Minute, a.Time.Second);
+                            tmpNextStartTime = new DateTime(DateToCheck.Year, DateToCheck.Month, DateToCheck.Day, a.NextAlarmTriggerTime.Hour, a.NextAlarmTriggerTime.Minute, a.NextAlarmTriggerTime.Second);
 
                             //check to see if the alarm for this day has passed or not
                             if (DateTime.Compare(tmpNextStartTime, DateTime.Now) > 0)
@@ -921,39 +1140,43 @@ namespace MediaPortal.GUI.Alarm
                     }
                     break;
             }
-
+            
           if (DateTime.Compare(tmpNextStartTime, earliestStartTime) >= 0)
           {
               if (DateTime.Compare(tmpNextStartTime, NextStartTime) < 0)
               {
                   NextStartTime = new DateTime(tmpNextStartTime.Ticks);
               }
+
+              //reset disallowshutdown flag
+              a.DisallowShutdown = false;
           }
-          else
+          else if (DateTime.Compare(tmpNextStartTime,DateTime.Now)>=0)
           {
            //next alarm is before the earliestStartTime, so disallowshutdown
-              _disallowShutdown = true;
+              a.DisallowShutdown = true;
           }
         }
 
       }
 
-      MediaPortal.GUI.Library.Log.Write("Alarm: next alarm trigger time: {0}", NextStartTime.ToString());
+      //MediaPortal.GUI.Library.Log.Write("Alarm: next alarm trigger time: {0}", NextStartTime.ToString());
       
         return NextStartTime;
     }
 
       /// <summary>
-      /// Provides delay before resetting thw disallowshutdown flag.
+      /// Provides delay before resetting the disallowshutdown flag.
       /// Allows the alarm to fire properly and for the alarm to load - e.g. music, radio etc.
       /// </summary>
-      private static void StartDisallowShutdownTimer()
+      private void StartDisallowShutdownTimer()
       {
           _DisallowShutdownTimer = new System.Windows.Forms.Timer();
 
           _DisallowShutdownTimer.Tick += new EventHandler(OnDisallowShutdownTimer);
           _DisallowShutdownTimer.Interval = 60000; //60 seconds
           _DisallowShutdownTimer.Enabled = true;
+
       }
 
       /// <summary>
@@ -961,10 +1184,11 @@ namespace MediaPortal.GUI.Alarm
       /// </summary>
       /// <param name="sender"></param>
       /// <param name="e"></param>
-      private static void OnDisallowShutdownTimer(Object sender, EventArgs e)
+      private void OnDisallowShutdownTimer(Object sender, EventArgs e)
       {
           _disallowShutdown = false;
           _DisallowShutdownTimer.Enabled = false;
+
       }
 
 

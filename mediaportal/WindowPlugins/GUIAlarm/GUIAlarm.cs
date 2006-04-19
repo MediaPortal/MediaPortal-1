@@ -37,9 +37,6 @@ namespace MediaPortal.GUI.Alarm
 
 		#region Private Variables		
 			private static int _SelectedItemNumber;
-			private System.Windows.Forms.Timer _SnoozeTimer = new System.Windows.Forms.Timer();
-			private int	_SnoozeCount;
-			private int _SnoozeTime;
 		#endregion
 		
 		#region Private Enumerations
@@ -74,17 +71,6 @@ namespace MediaPortal.GUI.Alarm
 				{
 					GUIWindowManager.ShowPreviousWindow();
 					return;
-				}
-				case Action.ActionType.ACTION_KEY_PRESSED:
-				{
-					//space bar
-					if(action.m_key.KeyChar == 32)
-					{	
-						//enable snooze timer
-						_SnoozeCount = 0;
-						_SnoozeTimer.Enabled = true;
-					}
-					break;
 				}
 			}
 			
@@ -152,38 +138,10 @@ namespace MediaPortal.GUI.Alarm
 
 		#region Private Methods
 		/// <summary>
-		/// Initializes the snooze timer object
-		/// </summary>
-		private void InitializeSnoozeTimer()
-		{
-			_SnoozeTimer.Tick += new EventHandler(OnTimer);
-			_SnoozeTimer.Interval = 60000; //minute	
-		}
-		/// <summary>
-		/// Executes on the interval of the timer object.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void OnTimer(Object sender, EventArgs e)
-		{
-			if(_SnoozeCount == _SnoozeTime)
-			{
-				_SnoozeTimer.Enabled= false;
-				if (g_Player.Paused) g_Player.Pause();
-			}
-			else
-			{
-				_SnoozeCount++;
-			}
-		}
-		/// <summary>
 		/// Loads my alarm settings from the profile xml.
 		/// </summary>
 		private void LoadSettings()
 		{ 
-			InitializeSnoozeTimer();
-			_SnoozeTime = Alarm.SnoozeTime;
-
 			//Load all the alarms 
 			Alarm.LoadAll();
 		}
@@ -246,7 +204,7 @@ namespace MediaPortal.GUI.Alarm
 
 		public bool DisallowShutdown()
 		{
-            return Alarm.DisallowShutdown;
+            return Alarm.DisallowShutdownCheckAllAlarms;
 		}
 
 		public DateTime GetNextEvent(DateTime earliestWakeupTime)
@@ -264,7 +222,7 @@ namespace MediaPortal.GUI.Alarm
 
 		public void Dispose()
 		{
-			_SnoozeTimer.Dispose();
+
 		}
 
 		#endregion
