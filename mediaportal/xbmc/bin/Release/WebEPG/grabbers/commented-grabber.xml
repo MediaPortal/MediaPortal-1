@@ -46,7 +46,9 @@
 <!-- Can include any of the following: -->
 <!-- #ID		- Site Channel ID - from the ChannelList section -->
 <!-- #LIST_OFFSET	- offset position in a list longer then one page -->
-<!-- 			  starts at 0 and is then the number is listings found on the page ie 10 for the next page. -->
+<!-- 			  starts at 0 and is the MaxCount for the next page, MaxCount is added for each page after -->
+<!--                      used together with MaxCount if number of listings on a page is less then MaxCount it stops look for next pages -->
+<!-- #PAGE_OFFSET       - Same as LIST_OFFSET but only 1 is added for each new page and not MaxCount --> 
 <!-- #DAY_OFFSET 	- offset of the day from today (0). See OffsetStart to change the start.-->
 <!-- #YYYY 		- year -->
 <!-- #MONTH 		- month full name (ie January) -->
@@ -80,6 +82,12 @@
 <!-- Added to #DAY_OFFSET so #DAY_OFFSET + OffsetStart -->
 <!-- Used together with #DAY_OFFSET -->
     <entry name="OffsetStart">1</entry>
+
+<!-- _________________________ -->
+<!-- PageStart [optional] -->
+<!-- Added to #PAGE_OFFSET -->
+<!-- Used together with #PAGE_OFFSET -->
+    <entry name="PageStart">1</entry>
 
 <!-- _________________________ -->
 <!-- Start [optional] -->
