@@ -646,9 +646,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbGrabDVBEPG.Size = new System.Drawing.Size(13, 12);
       this.cbGrabDVBEPG.TabIndex = 4;
       this.cbGrabDVBEPG.TextAlign = System.Drawing.ContentAlignment.TopLeft;
-      this.cbGrabDVBEPG.ThreeState = true;
       this.cbGrabDVBEPG.UseVisualStyleBackColor = true;
-      this.cbGrabDVBEPG.CheckedChanged += new System.EventHandler(this.cbGrabDVBEPG_CheckedChanged);
       // 
       // listView1
       // 
@@ -781,7 +779,6 @@ namespace MediaPortal.Configuration.Sections
       this.runGrabberLowPriorityCheckBox.TabIndex = 12;
       this.runGrabberLowPriorityCheckBox.Text = "Run grabber with lower priority";
       this.runGrabberLowPriorityCheckBox.UseVisualStyleBackColor = true;
-      this.runGrabberLowPriorityCheckBox.CheckedChanged += new System.EventHandler(this.mpCheckBox1_CheckedChanged);
       // 
       // label14
       // 
@@ -1297,15 +1294,6 @@ namespace MediaPortal.Configuration.Sections
 
     }
 
-    private void mpCheckBox1_CheckedChanged(object sender, System.EventArgs e)
-    {
-
-    }
-
-    private void cbGrabDVBEPG_CheckedChanged(object sender, EventArgs e)
-    {
-
-    }
   }
 }
 
