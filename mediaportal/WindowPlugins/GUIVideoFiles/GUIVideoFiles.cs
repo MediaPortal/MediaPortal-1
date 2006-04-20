@@ -2506,7 +2506,7 @@ namespace MediaPortal.GUI.Video
 
       tvDotComParser tvParser = new tvDotComParser();
 
-      tvParser.tvComLogWriteline("Starting Operation on \"" + strFileName + "\"");
+      Log.WriteFile(Log.LogType.TVCom, "Starting Operation on \"" + strFileName + "\"");
       // we get info from the filename
       int season, ep;
       string showname, episodeTitle = string.Empty;
@@ -2523,14 +2523,14 @@ namespace MediaPortal.GUI.Video
         while (searchDone || (!tvParser.getSeasonEpisode(tmpFilename, out season, out ep, out showname) && !(TVcomSettings.lookupIfNoSEinFilename && tvParser.getShownameEpisodeTitleOnly(tmpFilename, out showname, out episodeTitle))))
         {
           if (searchDone)
-            tvParser.tvComLogWriteline("Showing Keyboard..");
+              Log.WriteFile(Log.LogType.TVCom, "Showing Keyboard..");
           else
-            tvParser.tvComLogWriteline("Could not get enough Info from Filename. Showing Keyboard..");
+              Log.WriteFile(Log.LogType.TVCom, "Could not get enough Info from Filename. Showing Keyboard..");
 
           searchDone = false;
           oldFilename = tmpFilename;
           GetStringFromKeyboard(ref tmpFilename);
-          tvParser.tvComLogWriteline("User entered: " + tmpFilename);
+          Log.WriteFile(Log.LogType.TVCom, "User entered: " + tmpFilename);
           if (oldFilename == tmpFilename || tmpFilename.Length == 0)
           {
             return;
@@ -2545,7 +2545,7 @@ namespace MediaPortal.GUI.Video
         {
           // we use seasonno + epno to search
 
-          tvParser.tvComLogWriteline("I think this file is \"" + showname + "\" Season: " + season.ToString() + " Episode: " + ep.ToString());
+          Log.WriteFile(Log.LogType.TVCom, "I think this file is \"" + showname + "\" Season: " + season.ToString() + " Episode: " + ep.ToString());
           pDlgProgress.SetLine(2, "\"" + showname + "\" - Season: " + season.ToString() + " - Episode: " + ep.ToString());
           //ShowProgress("Now querying TV.com","Info from Filename found!","\"" + showname + "\" - Season: " + season.ToString() + " - Episode: " + ep.ToString(),15);
         }
@@ -2553,12 +2553,12 @@ namespace MediaPortal.GUI.Video
         {
           // we use the episodetitle to search
 
-          tvParser.tvComLogWriteline("I think this file is \"" + showname + "\" EpisodeTitle: " + episodeTitle);
+          Log.WriteFile(Log.LogType.TVCom, "I think this file is \"" + showname + "\" EpisodeTitle: " + episodeTitle);
           pDlgProgress.SetLine(2, "\"" + showname + "\" - Episode: \"" + episodeTitle + "\"");
           //ShowProgress("Now querying TV.com","Info from Filename found!","\"" + showname + "\" - Episode: " + episodeTitle,15);
         }
 
-        tvParser.tvComLogWriteline("Calling Search..");
+        Log.WriteFile(Log.LogType.TVCom, "Calling Search..");
 
 
         pDlgProgress.SetLine(1, "Starting Search...");
@@ -2570,7 +2570,7 @@ namespace MediaPortal.GUI.Video
         searchResults = tvParser.searchMapping(showname);
 
         if (searchResults[0] != "-1")
-          tvParser.tvComLogWriteline("Mapping found, skipping search.");
+          Log.WriteFile(Log.LogType.TVCom, "Mapping found, skipping search.");
         else
         {
           // means no mapping found, we will search, otherwise we skip search altogether
@@ -2582,7 +2582,7 @@ namespace MediaPortal.GUI.Video
           // we display the results (if more than one match)
           if (searchResults.Length > 2)
           {
-            tvParser.tvComLogWriteline(searchResults.Length / 2 + " Results found, awaiting user selection...");
+            Log.WriteFile(Log.LogType.TVCom, searchResults.Length / 2 + " Results found, awaiting user selection...");
             pDlgProgress.Close();
             dlg.Reset();
             dlg.SetHeading("Search results for: " + showname);
@@ -2594,14 +2594,14 @@ namespace MediaPortal.GUI.Video
             pick = (pick * 2 - 2);
             try
             {
-              tvParser.tvComLogWriteline("User picked number " + pick.ToString() + ": " + searchResults[pick]);
+              Log.WriteFile(Log.LogType.TVCom, "User picked number " + pick.ToString() + ": " + searchResults[pick]);
             }
             catch
             {
               // most likely the user selected manual on the resultlit
               // or pressed esc
               // we want to return to the keyboard input
-              tvParser.tvComLogWriteline("User selected to manually input...");
+              Log.WriteFile(Log.LogType.TVCom, "User selected to manually input...");
               searchResults = new string[0];
               repeat = true;
 
@@ -2611,8 +2611,8 @@ namespace MediaPortal.GUI.Video
           }
           else if (searchResults.Length == 0)
           {
-            tvParser.tvComLogWriteline("No results for: " + showname + " -> aborting...");
-            tvParser.tvComLogWriteline("--------------------------");
+            Log.WriteFile(Log.LogType.TVCom, "No results for: " + showname + " -> aborting...");
+            Log.WriteFile(Log.LogType.TVCom, "--------------------------");
             //pDlgProgress.Close();
             pDlgOK.SetHeading("No results");
             pDlgOK.SetLine(1, "Sorry, no results returned on: " + showname);
@@ -2623,7 +2623,7 @@ namespace MediaPortal.GUI.Video
             repeat = true;
           }
           else
-            tvParser.tvComLogWriteline("Only one result: " + searchResults[pick] + " , skipping Resultlist.");
+            Log.WriteFile(Log.LogType.TVCom, "Only one result: " + searchResults[pick] + " , skipping Resultlist.");
         }
 
       } while (searchResults.Length == 0 && repeat && searchDone);
@@ -2643,7 +2643,7 @@ namespace MediaPortal.GUI.Video
 
       //ShowProgress("Now querying TV.com","Show and Episode identified!","\"" + searchResults[pick] + "\" - Season: " + season.ToString() + " - Episode: " + ep.ToString(),35);
 
-      tvParser.tvComLogWriteline("Now downloading Guides, this may take some time...");
+      Log.WriteFile(Log.LogType.TVCom, "Now downloading Guides, this may take some time...");
 
 
 
@@ -2681,7 +2681,7 @@ namespace MediaPortal.GUI.Video
 
           if (sl.ContainsKey(1))
           {
-            tvParser.tvComLogWriteline("Exact Match on Episode Title found:");
+            Log.WriteFile(Log.LogType.TVCom, "Exact Match on Episode Title found:");
 
             string[] split;
             string tmp = (string)sl[1];
@@ -2691,12 +2691,12 @@ namespace MediaPortal.GUI.Video
             ep = Convert.ToInt32(tmp.Split('|')[2]);
             // we had a direct hit
 
-            tvParser.tvComLogWriteline("Direct Hit on EpisodeTitle Search: " + correctTitle + " - " + season.ToString() + "x" + ep.ToString());
+            Log.WriteFile(Log.LogType.TVCom, "Direct Hit on EpisodeTitle Search: " + correctTitle + " - " + season.ToString() + "x" + ep.ToString());
           }
           else
           {
-            tvParser.tvComLogWriteline("Possible Episode Hits:");
-            tvParser.tvComLogWriteline(sl.Count + " Results found, awaiting user selection...");
+            Log.WriteFile(Log.LogType.TVCom, "Possible Episode Hits:");
+            Log.WriteFile(Log.LogType.TVCom, sl.Count + " Results found, awaiting user selection...");
             pDlgProgress.Close();
             dlg.Reset();
             dlg.SetHeading("Search results for: " + showname + " - " + episodeTitle);
@@ -2707,7 +2707,7 @@ namespace MediaPortal.GUI.Video
               season = Convert.ToInt32(tmp1.Split('|')[1]);
               ep = Convert.ToInt32(tmp1.Split('|')[2]);
 
-              tvParser.tvComLogWriteline(correctTitle + " - " + season.ToString() + "x" + ep.ToString());
+              Log.WriteFile(Log.LogType.TVCom, correctTitle + " - " + season.ToString() + "x" + ep.ToString());
 
               dlg.Add(correctTitle + " - " + season.ToString() + "x" + ep.ToString());
 
@@ -2725,7 +2725,7 @@ namespace MediaPortal.GUI.Video
                 sl = new SortedList();
                 // we also erase the episodetitle
                 episodeTitle = string.Empty;
-                tvParser.tvComLogWriteline("User manually selected to show all Episodes");
+                Log.WriteFile(Log.LogType.TVCom, "User manually selected to show all Episodes");
 
               }
               //string tmp2 = (string)sl.GetByIndex(sl.Count - Convert.ToInt32(EnterMessageBox.input) +1);
@@ -2733,12 +2733,12 @@ namespace MediaPortal.GUI.Video
               //correctTitle = tmp.Split(';')[0];
               season = Convert.ToInt32(tmp.Split('|')[1]);
               ep = Convert.ToInt32(tmp.Split('|')[2]);
-              tvParser.tvComLogWriteline("User picked number " + season.ToString() + "x" + ep.ToString());
+              Log.WriteFile(Log.LogType.TVCom, "User picked number " + season.ToString() + "x" + ep.ToString());
             }
             catch
             {
               // most likely the user pressed escape on the resultlist
-              tvParser.tvComLogWriteline("Pressed ESC on Episode Results?");
+              Log.WriteFile(Log.LogType.TVCom, "Pressed ESC on Episode Results?");
               if (episodeTitle != string.Empty)
                 return;
             }
@@ -2748,7 +2748,7 @@ namespace MediaPortal.GUI.Video
         }
         if (sl.Count == 0)
         {
-          tvParser.tvComLogWriteline("Showing all Episodes...");
+          Log.WriteFile(Log.LogType.TVCom, "Showing all Episodes...");
           pDlgProgress.SetPercentage(80);
           if (episodeTitle != string.Empty)
           {
@@ -2765,7 +2765,7 @@ namespace MediaPortal.GUI.Video
           // showing all episodes
 
           tvParser.searchEpisodebyTitle(searchResults[pick], searchResults[pick + 1], episodeTitle, out sl, true);
-          tvParser.tvComLogWriteline(sl.Count.ToString());
+          Log.WriteFile(Log.LogType.TVCom, sl.Count.ToString());
           pDlgProgress.Close();
           dlg.Reset();
           dlg.SetHeading("Episodes for: " + searchResults[pick]);
@@ -2777,7 +2777,7 @@ namespace MediaPortal.GUI.Video
             season = Convert.ToInt32(tmp1.Split('|')[1]);
             ep = Convert.ToInt32(tmp1.Split('|')[2]);
 
-            tvParser.tvComLogWriteline(correctTitle + " - " + season.ToString() + "x" + ep.ToString());
+            Log.WriteFile(Log.LogType.TVCom, correctTitle + " - " + season.ToString() + "x" + ep.ToString());
 
             dlg.Add(season.ToString() + "x" + ep.ToString("00") + " - " + correctTitle);
 
@@ -2789,21 +2789,21 @@ namespace MediaPortal.GUI.Video
             dlg.DoModal(GetID);
 
             int pick2 = dlg.SelectedId - 1;
-            tvParser.tvComLogWriteline(pick2.ToString());
+            Log.WriteFile(Log.LogType.TVCom, pick2.ToString());
 
             //string tmp2 = (string)sl.GetByIndex(sl.Count - Convert.ToInt32(EnterMessageBox.input) +1);
             string tmp = (string)sl.GetByIndex(pick2);
             //correctTitle = tmp.Split(';')[0];
             season = Convert.ToInt32(tmp.Split('|')[1]);
             ep = Convert.ToInt32(tmp.Split('|')[2]);
-            tvParser.tvComLogWriteline("User picked number " + season.ToString() + "x" + ep.ToString());
+            Log.WriteFile(Log.LogType.TVCom, "User picked number " + season.ToString() + "x" + ep.ToString());
           }
           catch
           {
             // most likely the user pressed escape on the resultlist
             // or he selected Start over
 
-            tvParser.tvComLogWriteline("Either selected to Start over or pressed ESC on Episode Results?");
+            Log.WriteFile(Log.LogType.TVCom, "Either selected to Start over or pressed ESC on Episode Results?");
             onTVcom(strFileName, out newPathAndFilename);
             return;
           }
@@ -2825,14 +2825,14 @@ namespace MediaPortal.GUI.Video
       do
       {
         count++;
-        tvParser.tvComLogWriteline("starting download - loop: " + count.ToString());
+        Log.WriteFile(Log.LogType.TVCom, "starting download - loop: " + count.ToString());
         if ((freshlydownloaded = tvParser.downloadGuides(searchResults[pick + 1], season, ep, searchResults[pick], reDownload)))
         {
-          tvParser.tvComLogWriteline("Download complete!");
+          Log.WriteFile(Log.LogType.TVCom, "Download complete!");
         }
         else
         {
-          tvParser.tvComLogWriteline("There was an error during the download, or the download was skipped, it might still work though...");
+          Log.WriteFile(Log.LogType.TVCom, "There was an error during the download, or the download was skipped, it might still work though...");
         }
 
         pDlgProgress.SetPercentage(90);
@@ -2843,13 +2843,13 @@ namespace MediaPortal.GUI.Video
         // we parse the info and write to the db
         try
         {
-          tvParser.tvComLogWriteline("Trying to get info from Downloaded Files...");
+          Log.WriteFile(Log.LogType.TVCom, "Trying to get info from Downloaded Files...");
 
           episode_info ef = tvParser.getEpisodeInfo(searchResults[pick], season, ep);
 
           if (ef.description.ToLower().IndexOf("coming soon") != -1 && ef.description.Length < 75 && !freshlydownloaded)
           {
-            tvParser.tvComLogWriteline("Episode Descripton contained \"coming soon\", so we will redownload a fresh copy of the guide...");
+            Log.WriteFile(Log.LogType.TVCom, "Episode Descripton contained \"coming soon\", so we will redownload a fresh copy of the guide...");
             reDownload = true;
           }
           else if (freshlydownloaded && ef.description.IndexOf("coming soon") != -1 && ef.description.Length < 75)
@@ -2870,7 +2870,7 @@ namespace MediaPortal.GUI.Video
             movieDetails.Year = ef.firstAired.Year;
             //movieDetails.Title = searchResults[pick];
 
-            tvParser.tvComLogWriteline("Trying to construct Title...");
+            Log.WriteFile(Log.LogType.TVCom, "Trying to construct Title...");
 
             // for title and filename we need to clear genre of the "/" seperator for multiple genres
             ef.genre = ef.genre.Replace("/", " ").Replace("  ", " ");
@@ -2899,7 +2899,7 @@ namespace MediaPortal.GUI.Video
 
             movieDetails.Title = tvParser.getFilennameFriendlyString(movieDetails.Title);
 
-            tvParser.tvComLogWriteline("Title constructed: " + movieDetails.Title);
+            Log.WriteFile(Log.LogType.TVCom, "Title constructed: " + movieDetails.Title);
 
             movieDetails.RunTime = ef.runtime;
 
@@ -2949,10 +2949,10 @@ namespace MediaPortal.GUI.Video
 
             if (TVcomSettings.lookupActors)
             {
-              tvParser.tvComLogWriteline("Getting info for Actors and Director (imdb function). This might take some time...");
+              Log.WriteFile(Log.LogType.TVCom, "Getting info for Actors and Director (imdb function). This might take some time...");
               DownloadActors(movieDetails);
               DownloadDirector(movieDetails);
-              tvParser.tvComLogWriteline("Actor Information downloaded!");
+              Log.WriteFile(Log.LogType.TVCom, "Actor Information downloaded!");
             }
 
             if (TVcomSettings.renameFiles)
@@ -2978,13 +2978,13 @@ namespace MediaPortal.GUI.Video
 
                   newFilename = tvParser.getFilennameFriendlyString(newFilename);
 
-                  tvParser.tvComLogWriteline("Renaming File...");
-                  tvParser.tvComLogWriteline("...Old Filename: " + strFileName);
+                  Log.WriteFile(Log.LogType.TVCom, "Renaming File...");
+                  Log.WriteFile(Log.LogType.TVCom, "...Old Filename: " + strFileName);
 
 
                   if (TVcomSettings.replaceSpacesWith != ' ')
                     newFilename = newFilename.Replace(' ', TVcomSettings.replaceSpacesWith);
-                  tvParser.tvComLogWriteline("...New Filename: " + newFilename);
+                  Log.WriteFile(Log.LogType.TVCom, "...New Filename: " + newFilename);
 
                   try
                   {
@@ -2996,17 +2996,17 @@ namespace MediaPortal.GUI.Video
                     movieDetails.Path = Path.GetDirectoryName(newFilename);
                     pathAndFilename = Path.GetDirectoryName(pathAndFilename) + "\\" + newFilename;
                     newPathAndFilename = pathAndFilename;
-                    tvParser.tvComLogWriteline("Sucessfully renamed File!");
+                    Log.WriteFile(Log.LogType.TVCom, "Sucessfully renamed File!");
 
                   }
                   catch (Exception e)
                   {
-                    tvParser.tvComLogWriteline("Could not rename File...is the Format correct?");
-                    tvParser.tvComLogWriteline(e.Message);
+                    Log.WriteFile(Log.LogType.TVCom, "Could not rename File...is the Format correct?");
+                    Log.WriteFile(Log.LogType.TVCom, e.Message);
                   }
                 }
                 else
-                  tvParser.tvComLogWriteline("Tried to rename, but the specified format is invalid - " + TVcomSettings.renameFormat);
+                    Log.WriteFile(Log.LogType.TVCom, "Tried to rename, but the specified format is invalid - " + TVcomSettings.renameFormat);
               }
             }
 
@@ -3022,34 +3022,34 @@ namespace MediaPortal.GUI.Video
               pDlgProgress.SetPercentage(95);
               pDlgProgress.Progress();
 
-              tvParser.tvComLogWriteline("Trying to copy Image according to constructed Title: " + movieDetails.Title);
+              Log.WriteFile(Log.LogType.TVCom, "Trying to copy Image according to constructed Title: " + movieDetails.Title);
 
               System.IO.File.Copy(currentPictureFilename, picturePath + movieDetails.Title + ".jpg", false);
               System.IO.File.Copy(currentPictureFilename.Replace(".jpg", "L.jpg"), picturePath + movieDetails.Title + "L.jpg", false);
 
-              tvParser.tvComLogWriteline("Sucessfully created Thumbnail!");
+              Log.WriteFile(Log.LogType.TVCom, "Sucessfully created Thumbnail!");
 
             }
             catch (Exception e)
             {
-              tvParser.tvComLogWriteline("Could not copy Image...(probably the image already exists, however you might also have your title constructed in a way that you cannot name files, please double check:)");
-              tvParser.tvComLogWriteline(e.Message);
+              Log.WriteFile(Log.LogType.TVCom, "Could not copy Image...(probably the image already exists, however you might also have your title constructed in a way that you cannot name files, please double check:)");
+              Log.WriteFile(Log.LogType.TVCom, e.Message);
             }
 
             try
             {
               if (TVcomSettings.genreFormat.IndexOf("[SHOWNAME]") != -1)
               {
-                tvParser.tvComLogWriteline("Since the Genre Format includes the Showname, we will also create a thumbnail for the Genre!");
+                Log.WriteFile(Log.LogType.TVCom, "Since the Genre Format includes the Showname, we will also create a thumbnail for the Genre!");
                 System.IO.File.Copy(currentPictureFilename, picturePath.Replace("title", "genre") + movieDetails.Genre + ".jpg", false);
                 System.IO.File.Copy(currentPictureFilename.Replace(".jpg", "L.jpg"), picturePath.Replace("title", "genre") + movieDetails.Genre + "L.jpg", false);
-                tvParser.tvComLogWriteline("Sucessfully created Thumbnail!");
+                Log.WriteFile(Log.LogType.TVCom, "Sucessfully created Thumbnail!");
               }
             }
             catch (Exception e)
             {
-              tvParser.tvComLogWriteline("Could not copy Image...(probably the image already exists, however you might also have your genre constructed in a way that you cannot name files, please double check:)");
-              tvParser.tvComLogWriteline(e.Message);
+              Log.WriteFile(Log.LogType.TVCom, "Could not copy Image...(probably the image already exists, however you might also have your genre constructed in a way that you cannot name files, please double check:)");
+              Log.WriteFile(Log.LogType.TVCom, e.Message);
             }
             // write to db
 
@@ -3057,17 +3057,17 @@ namespace MediaPortal.GUI.Video
             pDlgProgress.SetLine(3, "Writing to Database..");
             pDlgProgress.ContinueModal();
             pDlgProgress.Progress();
-            tvParser.tvComLogWriteline("Now writing to DB...");
+            Log.WriteFile(Log.LogType.TVCom, "Now writing to DB...");
             VideoDatabase.AddMovie(pathAndFilename, false);
             VideoDatabase.SetMovieInfo(pathAndFilename, ref movieDetails);
           }
         }
         catch (Exception except)
         {
-          tvParser.tvComLogWriteline(reDownload.ToString() + freshlydownloaded.ToString());
+          Log.WriteFile(Log.LogType.TVCom, reDownload.ToString() + freshlydownloaded.ToString());
           if (reDownload)
           {
-            tvParser.tvComLogWriteline(except.Message);
+            Log.WriteFile(Log.LogType.TVCom, except.Message);
             dlg.Reset();
             dlg.Add("There was an error...");
             dlg.Add(except.Message);
@@ -3115,8 +3115,8 @@ namespace MediaPortal.GUI.Video
 
         if (item.Label != "..")
         {
-          tvDotComParser.tvComLogWritelineStatic("Beginning Folder Operation!");
-          tvDotComParser.tvComLogWritelineStatic("___________________________");
+          Log.WriteFile(Log.LogType.TVCom, "Beginning Folder Operation!");
+          Log.WriteFile(Log.LogType.TVCom, "___________________________");
           ArrayList items = new ArrayList();
 
           items = m_directory.GetDirectoryUnProtected(item.Path, true);
@@ -3128,16 +3128,16 @@ namespace MediaPortal.GUI.Video
             {
               if (!subItem.IsFolder) // we dont want recursive
               {
-                tvDotComParser.tvComLogWritelineStatic("--------------------------");
+                Log.WriteFile(Log.LogType.TVCom, "--------------------------");
                 onTVcom(subItem.Path, out pathandFilename);
-                tvDotComParser.tvComLogWritelineStatic("--------------------------");
+                Log.WriteFile(Log.LogType.TVCom, "--------------------------");
               }
             }
             skipFirstItem = false;
           }
           VideoDatabase.GetMovieInfo(pathandFilename, ref movieDetails);
-          tvDotComParser.tvComLogWritelineStatic("End Folder Operation!");
-          tvDotComParser.tvComLogWritelineStatic("___________________________");
+          Log.WriteFile(Log.LogType.TVCom, "End Folder Operation!");
+          Log.WriteFile(Log.LogType.TVCom, "___________________________");
           return;
         }
         else
@@ -3147,9 +3147,9 @@ namespace MediaPortal.GUI.Video
       {
         // single file operation
         string pathandFilename;
-        tvDotComParser.tvComLogWritelineStatic("--------------------------");
+        Log.WriteFile(Log.LogType.TVCom, "--------------------------");
         onTVcom(pItem.Path, out pathandFilename);
-        tvDotComParser.tvComLogWritelineStatic("--------------------------");
+        Log.WriteFile(Log.LogType.TVCom, "--------------------------");
         VideoDatabase.GetMovieInfo(pathandFilename, ref movieDetails);
       }
 

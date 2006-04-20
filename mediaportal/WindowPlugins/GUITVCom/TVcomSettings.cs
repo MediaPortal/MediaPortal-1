@@ -21,6 +21,7 @@
 
 using System;
 using System.Text;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.Video
 {
@@ -37,19 +38,14 @@ namespace MediaPortal.GUI.Video
 		public static string renameFormat = "[SHOWNAME] - [SEASONNO]x[EPISODENO] - [EPISODETITLE]";
 		public static char replaceSpacesWith = ' ';
 		public static bool lookupActors = false;
-
 		public static string titleFormat = "[SHOWNAME] - [SEASONNO]x[EPISODENO] - [EPISODETITLE]";
-
 		public static string genreFormat = "[SHOWNAME] ([GENRE])";
-
 		private const string settingsFilePath = "Episode Guides/settings";
-
-
 
 
 		private static bool loadSettings()
 		{
-			tvDotComParser.tvComLogWritelineStatic("Loading Settings...");
+            Log.WriteFile(Log.LogType.TVCom, "Loading Settings...");
 			try
 			{
 				System.IO.StreamReader r = new System.IO.StreamReader(settingsFilePath);
@@ -62,22 +58,22 @@ namespace MediaPortal.GUI.Video
 				genreFormat = r.ReadLine();
 				lookupActors =  Convert.ToBoolean(r.ReadLine());
 				r.Close();
-				tvDotComParser.tvComLogWritelineStatic("Settings loaded Succesfully");
 
-				tvDotComParser.tvComLogWritelineStatic(lookupIfNoSEinFilename.ToString());
-				tvDotComParser.tvComLogWritelineStatic(renameFiles.ToString());
-				tvDotComParser.tvComLogWritelineStatic(renameOnlyIfNoSEinFilename.ToString());
-				tvDotComParser.tvComLogWritelineStatic(renameFormat);
-				tvDotComParser.tvComLogWritelineStatic(replaceSpacesWith.ToString());
-				tvDotComParser.tvComLogWritelineStatic(titleFormat);
-				tvDotComParser.tvComLogWritelineStatic(genreFormat);
-				tvDotComParser.tvComLogWritelineStatic(lookupActors.ToString());
+                Log.WriteFile(Log.LogType.TVCom, "Settings loaded Succesfully");
+                Log.WriteFile(Log.LogType.TVCom, lookupIfNoSEinFilename.ToString());
+                Log.WriteFile(Log.LogType.TVCom, renameFiles.ToString());
+                Log.WriteFile(Log.LogType.TVCom, renameOnlyIfNoSEinFilename.ToString());
+                Log.WriteFile(Log.LogType.TVCom, renameFormat);
+                Log.WriteFile(Log.LogType.TVCom, replaceSpacesWith.ToString());
+                Log.WriteFile(Log.LogType.TVCom, titleFormat);
+                Log.WriteFile(Log.LogType.TVCom, genreFormat);
+                Log.WriteFile(Log.LogType.TVCom, lookupActors.ToString());
 
 				return true;
 			}
 			catch
 			{
-				tvDotComParser.tvComLogWritelineStatic("There was an error loading the Settings!");
+                Log.WriteFile(Log.LogType.TVCom, "There was an error loading the Settings!");
 				
 				return false;
 			}
@@ -101,16 +97,15 @@ namespace MediaPortal.GUI.Video
 			w.WriteLine(lookupActors.ToString());
 			w.Close();
 
-			tvDotComParser.tvComLogWritelineStatic("Settings updated:");
-
-			tvDotComParser.tvComLogWritelineStatic(lookupIfNoSEinFilename.ToString());
-			tvDotComParser.tvComLogWritelineStatic(renameFiles.ToString());
-			tvDotComParser.tvComLogWritelineStatic(renameOnlyIfNoSEinFilename.ToString());
-			tvDotComParser.tvComLogWritelineStatic(renameFormat);
-			tvDotComParser.tvComLogWritelineStatic(replaceSpacesWith.ToString());
-			tvDotComParser.tvComLogWritelineStatic(titleFormat);
-			tvDotComParser.tvComLogWritelineStatic(genreFormat);
-			tvDotComParser.tvComLogWritelineStatic(lookupActors.ToString());
+            Log.WriteFile(Log.LogType.TVCom, "Settings updated:");
+            Log.WriteFile(Log.LogType.TVCom, lookupIfNoSEinFilename.ToString());
+            Log.WriteFile(Log.LogType.TVCom, renameFiles.ToString());
+            Log.WriteFile(Log.LogType.TVCom, renameOnlyIfNoSEinFilename.ToString());
+            Log.WriteFile(Log.LogType.TVCom, renameFormat);
+            Log.WriteFile(Log.LogType.TVCom, replaceSpacesWith.ToString());
+            Log.WriteFile(Log.LogType.TVCom, titleFormat);
+            Log.WriteFile(Log.LogType.TVCom, genreFormat);
+            Log.WriteFile(Log.LogType.TVCom, lookupActors.ToString());
 
 		}
 	}
