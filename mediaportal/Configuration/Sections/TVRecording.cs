@@ -777,12 +777,11 @@ namespace MediaPortal.Configuration.Sections
         {
           string quotaText = xmlReader.GetValueAsString("freediskspace", drive[0].ToString(), "51200");
           float quota = (float)Int32.Parse(quotaText);
-          if (quota < 51200) quota = 51200;
-          quota *= 1024;//kbyte
+          if (quota < 51200) quota = 51200f;
+          quota *= 1024f;//kbyte
           labelQuota.Text = Utils.GetSize((long)quota);
 
-          float percent = quota / ((float)totalSpace);
-          percent *= 100f;
+          float percent = (quota / ((float)totalSpace)) * 100f;
           trackBar1.Value = (int)percent;
 
         }
