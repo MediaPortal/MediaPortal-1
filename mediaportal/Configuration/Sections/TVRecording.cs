@@ -761,7 +761,14 @@ namespace MediaPortal.Configuration.Sections
         {
           quota = (52428800f);//50MB
           percent = (quota / ((float)totalSpace))*100f;
-          trackBar1.Value = (int)percent;
+          try
+          {
+            trackBar1.Value = (int)percent;
+          }
+          catch (ArgumentOutOfRangeException)
+          {
+            trackBar1.Value = 0;
+          }
         }
         labelQuota.Text = Utils.GetSize((long)quota);
         using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
@@ -782,7 +789,14 @@ namespace MediaPortal.Configuration.Sections
           labelQuota.Text = Utils.GetSize((long)quota);
 
           float percent = (quota / ((float)totalSpace)) * 100f;
-          trackBar1.Value = (int)percent;
+          try
+          {
+            trackBar1.Value = (int)percent;
+          }
+          catch (ArgumentOutOfRangeException)
+          {
+            trackBar1.Value = 0;
+          }
 
         }
       }
