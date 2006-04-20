@@ -294,6 +294,7 @@ namespace MediaPortal.PowerScheduler
           bool enableShutdown = true;
           //are we playing something?
           if ((g_Player.Playing && g_Player.IsRadio) ||  //are we playing internet radio?
+              (g_Player.Playing && g_Player.IsMusic) ||  // are we playing music? 
               (Recorder.IsRadio())                   ||  //are we playing analog or digital radio?    
               (Recorder.IsRecording()) )                 //are we recording something? 
           {
