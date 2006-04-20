@@ -751,6 +751,8 @@ namespace MediaPortal.Configuration.Sections
       long totalSpace = Utils.GetDiskSize(drive);
       lblFreeDiskSpace.Text = Utils.GetSize((long)freeSpace);
       lblTotalSpace.Text = Utils.GetSize((long)totalSpace);
+      if (lblTotalSpace.Text == "0")
+        lblTotalSpace.Text = "Not available - WMI service not available";
 
       if (save)
       {
