@@ -353,6 +353,8 @@ namespace MediaPortal.GUI.Library
 
       long dwColor = _textColor;
       if (pItem.Selected) dwColor = _selectedColor;
+      if (!bFocus)
+        dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
       if (pItem.IsRemote)
       {
         dwColor = _remoteColor;
@@ -396,6 +398,7 @@ namespace MediaPortal.GUI.Library
           int xOff = (_widthThumbnail + 2 * iOverSized - pImage.RenderWidth) / 2;
           int yOff = (_heightThumbnail + 2 * iOverSized - pImage.RenderHeight) / 2;
           pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
+          pImage.SetUnfocusedAlpha(_unfocusedAlpha); 
           pImage.Render(timePassed);
           _sleeper += SLEEP_FRAME_COUNT;
         }
@@ -412,6 +415,7 @@ namespace MediaPortal.GUI.Library
           int xOff = (_widthThumbnail + 2 * iOverSized - pImage.RenderWidth) / 2;
           int yOff = (_heightThumbnail + 2 * iOverSized - pImage.RenderHeight) / 2;
           pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
+          pImage.SetUnfocusedAlpha(_unfocusedAlpha);
           pImage.Render(timePassed);
         }
       }
@@ -431,6 +435,7 @@ namespace MediaPortal.GUI.Library
             int xOff = (_widthThumbnail + 2 * iOverSized - pImage.RenderWidth) / 2;
             int yOff = (_heightThumbnail + 2 * iOverSized - pImage.RenderHeight) / 2;
             pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
+            pImage.SetUnfocusedAlpha(_unfocusedAlpha); 
             pImage.Render(timePassed);
             _sleeper += SLEEP_FRAME_COUNT;
           }
@@ -442,6 +447,7 @@ namespace MediaPortal.GUI.Library
             int xOff = (_widthThumbnail + 2 * iOverSized - pImage.RenderWidth) / 2;
             int yOff = (_heightThumbnail + 2 * iOverSized - pImage.RenderHeight) / 2;
             pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
+            pImage.SetUnfocusedAlpha(_unfocusedAlpha); 
             pImage.Render(timePassed);
           }
         }

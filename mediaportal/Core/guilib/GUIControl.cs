@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.Library
     protected GUIControl _parentControl = null;
     protected bool _isDimmed = false;
 
-    protected const int DimColor = 0x60ffffff;
+    protected int DimColor = 0x60ffffff;
 
     /// <summary>
     /// enum to specify the alignment of the control
@@ -148,7 +148,11 @@ namespace MediaPortal.GUI.Library
       {
         _isDimmed = value;
       }
+    }
 
+    public void SetUnfocusedAlpha(int unfocusedAlpha)
+    {
+      DimColor = System.Drawing.Color.FromArgb(unfocusedAlpha, System.Drawing.Color.FromArgb(255,255,255)).ToArgb();
     }
 
     /// <summary> 
