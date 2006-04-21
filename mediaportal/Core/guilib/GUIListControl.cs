@@ -1002,20 +1002,16 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_MOVE_DOWN:
           {
-            if (_searchString.Trim() != "")
-              SearchItem(_searchString, SearchType.SEARCH_NEXT);
-            else
-              OnDown();
+            _searchString = "";
+            OnDown();
             _refresh = true;
           }
           break;
 
         case Action.ActionType.ACTION_MOVE_UP:
           {
-            if (_searchString.Trim() != "")
-              SearchItem(_searchString, SearchType.SEARCH_PREV);
-            else
-              OnUp();
+            _searchString = "";
+            OnUp();
             _refresh = true;
           }
           break;
@@ -1560,7 +1556,7 @@ namespace MediaPortal.GUI.Library
     void CheckTimer()
     {
       TimeSpan ts = DateTime.Now - _timerKey;
-      if (ts.TotalMilliseconds >= 800)
+      if (ts.TotalMilliseconds >= 1000)
       {
         _previousKey = (char)0;
         _currentKey = (char)0;
