@@ -923,7 +923,7 @@ namespace MediaPortal.GUI.Library
       }
       return false;
     }
-    protected void			MoveUp()
+    public void			MoveUp()
     {
       switch (_spinType)
       {
@@ -964,7 +964,7 @@ namespace MediaPortal.GUI.Library
 
     }
 
-    protected void			MoveDown()
+    public void			MoveDown()
     {
       switch (_spinType)
       {
