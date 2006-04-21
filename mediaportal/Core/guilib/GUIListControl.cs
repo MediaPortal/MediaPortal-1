@@ -1694,6 +1694,7 @@ namespace MediaPortal.GUI.Library
       {
         if (_upDownControl.GetMaximum() > 1)
         {
+          OnSelectionChanged();
           _listType = ListType.CONTROL_UPDOWN;
           _upDownControl.Focus = true;
           if (!_upDownControl.Focus)
@@ -1729,6 +1730,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     protected virtual void OnLeft()
     {
+      OnSelectionChanged();
       Action action = new Action();
       action.wID = Action.ActionType.ACTION_MOVE_LEFT;
       if (_listType == ListType.CONTROL_LIST)
