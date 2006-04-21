@@ -158,6 +158,18 @@ namespace MediaPortal.GUI.TV
                     //m_bRunning = false;
                     Close();
                     return;
+                case Action.ActionType.ACTION_MOVE_LEFT:
+                    // switch group
+                    spinGroup.MoveDown();
+                    GUITVHome.Navigator.SetCurrentGroup(spinGroup.GetLabel());
+                    FillChannelList();
+                    return;
+                case Action.ActionType.ACTION_MOVE_RIGHT:
+                    // switch group
+                    spinGroup.MoveUp();
+                    GUITVHome.Navigator.SetCurrentGroup(spinGroup.GetLabel());
+                    FillChannelList();
+                    return;
             }
             base.OnAction(action);
         }
@@ -215,6 +227,7 @@ namespace MediaPortal.GUI.TV
             TVProgram prog = null;
             TVProgram prognext = null;
             string logo = "";
+            int selected = 0;
 
             for (int i = 0; i < tvChannelList.Count; i++)
             {
@@ -227,6 +240,7 @@ namespace MediaPortal.GUI.TV
                 if (GUITVHome.Navigator.CurrentChannel.CompareTo(tvChannelList[i].Name) == 0)
                 {
                     item.IsRemote = true;
+                    selected = i;
                 }
 
                 if (System.IO.File.Exists(logo))
@@ -252,6 +266,7 @@ namespace MediaPortal.GUI.TV
                     item.Label = prognext.Title;
                 }
                 lstChannels.Add(item);
+                lstChannels.SelectedListItemIndex = selected;
             }
         }
         /*****************************************/
@@ -276,10 +291,10 @@ namespace MediaPortal.GUI.TV
         /*****************************************/
         private TVProgram GetCurrentProgram(TVChannel channel)
         {
-            DateTime timeshiftStart = Recorder.TimeTimeshiftingStarted; 
-            DateTime livePoint = timeshiftStart.AddSeconds(g_Player.CurrentPosition);
-            livePoint = livePoint.AddSeconds(g_Player.ContentStart);
-            TVProgram prog = channel.GetProgramAt(livePoint);
+            //DateTime timeshiftStart = Recorder.TimeTimeshiftingStarted; 
+            //DateTime livePoint = timeshiftStart.AddSeconds(g_Player.CurrentPosition);
+            //livePoint = livePoint.AddSeconds(g_Player.ContentStart);
+            TVProgram prog = channel.CurrentProgram;
             return prog;
         }
         /*****************************************/
