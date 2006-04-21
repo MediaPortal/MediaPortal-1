@@ -250,6 +250,14 @@ namespace MediaPortal.GUI.Library
     {
       if (!IsVisible) return;
 
+      _scrollPosition = 0;
+      _scrollPosititionX = 0;
+      _lastItem = -1;
+
+      _scrollOffset = 0.0f;
+      _currentFrame = 0;
+      _timeElapsed = 0.0f;
+
       // Reset searchstring
       if (_lastSearchItem != (_offset + _cursorY*_columnCount + _cursorX))
       {
@@ -265,7 +273,6 @@ namespace MediaPortal.GUI.Library
 
       if (!GUIWindowManager.IsRouted)
       {
-
         GUIPropertyManager.SetProperty("#selecteditem", strSelected);
         GUIPropertyManager.SetProperty("#selecteditem2", strSelected2);
         GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
@@ -688,9 +695,7 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_MOVE_DOWN:
           {
-            if (_searchString != "")
-              SearchItem(_searchString, SearchType.SEARCH_NEXT);
-            else
+              _searchString = "";
               OnDown();
             _refresh = true;
           }
@@ -698,9 +703,7 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_MOVE_UP:
           {
-            if (_searchString != "")
-              SearchItem(_searchString, SearchType.SEARCH_PREV);
-            else
+              _searchString = "";
               OnUp();
             _refresh = true;
           }
@@ -1224,7 +1227,7 @@ namespace MediaPortal.GUI.Library
     void CheckTimer()
     {
       TimeSpan ts = DateTime.Now - _keyTimer;
-      if (ts.TotalMilliseconds >= 800)
+      if (ts.TotalMilliseconds >= 1000)
       {
         _previousKey = (char) 0;
         _currentKey = (char) 0;

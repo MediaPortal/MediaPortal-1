@@ -300,6 +300,14 @@ namespace MediaPortal.GUI.Library
     {
       if (!IsVisible) return;
 
+      _scrollPosition = 0;
+      _scrollPosititionX = 0;
+      _lastItem = -1;
+
+      _scrollOffset = 0.0f;
+      _currentFrame = 0;
+      _timeElapsed = 0.0f;
+
       // Reset searchstring
       if (_lastSearchItem != (_cursorX + _offset))
       {
@@ -711,6 +719,7 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_MOVE_DOWN:
           {
+            _searchString = "";
             OnDown();
             _refresh = true;
           }
@@ -718,6 +727,7 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_MOVE_UP:
           {
+            _searchString = "";
             if (!OnUp())
             {
               base.OnAction(action);
@@ -729,20 +739,16 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_MOVE_LEFT:
           {
-            if (_searchString != "")
-              SearchItem(_searchString, SearchType.SEARCH_PREV);
-            else
-              OnLeft();
+            _searchString = ""; 
+            OnLeft();
             _refresh = true;
           }
           break;
 
         case Action.ActionType.ACTION_MOVE_RIGHT:
           {
-            if (_searchString != "")
-              SearchItem(_searchString, SearchType.SEARCH_NEXT);
-            else
-              OnRight();
+            _searchString = "";
+            OnRight();
             _refresh = true;
           }
           break;
@@ -822,6 +828,7 @@ namespace MediaPortal.GUI.Library
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, (int)action.wID, 0, null);
               GUIGraphicsContext.SendMessage(msg);
+              _searchString = "";
               _refresh = true;
             }
             else
@@ -1177,10 +1184,11 @@ namespace MediaPortal.GUI.Library
     void CheckTimer()
     {
       TimeSpan ts = DateTime.Now - _timerKey;
-      if (ts.TotalMilliseconds >= 800)
+      if (ts.TotalMilliseconds >= 1000)
       {
         _previousKey = (char)0;
         _currentKey = (char)0;
+//        _searchString = string.Empty;
       }
     }
 
@@ -1396,6 +1404,7 @@ namespace MediaPortal.GUI.Library
 
     bool OnUp()
     {
+      OnSelectionChanged();
       Action action = new Action();
       action.wID = Action.ActionType.ACTION_MOVE_UP;
       if (_listType == GUIListControl.ListType.CONTROL_LIST)
@@ -1415,6 +1424,7 @@ namespace MediaPortal.GUI.Library
 
     void OnDown()
     {
+      OnSelectionChanged();
       Action action = new Action();
       action.wID = Action.ActionType.ACTION_MOVE_DOWN;
       if (_listType == GUIListControl.ListType.CONTROL_LIST)
