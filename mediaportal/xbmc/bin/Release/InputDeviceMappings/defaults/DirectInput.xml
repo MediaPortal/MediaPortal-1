@@ -2,16 +2,16 @@
 <mappings version="3">
 	<remote family="DirectInput Joystick / Gamepad">
 		<button name="axisX Up" code="3000">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{RIGHT}" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="2" sound="cursor.wav" />
 		</button>
 		<button name="axisX Down" code="3001">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{LEFT}" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="1" sound="cursor.wav" />
 		</button>
 		<button name="axisY Up" code="3002">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{DOWN}" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="4" sound="cursor.wav" />
 		</button>
 		<button name="axisY Down" code="3003">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{UP}" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="3" sound="cursor.wav" />
 		</button>
 		<button name="axisZ Up" code="3004" />
 		<button name="axisZ Down" code="3005" />
@@ -22,28 +22,28 @@
 		<button name="rotationZ Up" code="3014" />
 		<button name="rotationZ Down" code="3015" />
 		<button name="pov N" code="3020">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{UP}" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="3" sound="cursor.wav" />
 		</button>
 		<button name="pov NE" code="3021" />
 		<button name="pov E" code="3022">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{RIGHT}" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="2" sound="cursor.wav" />
 		</button>
 		<button name="pov SE" code="3023" />
 		<button name="pov S" code="3024">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{DOWN}" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="4" sound="cursor.wav" />
 		</button>
 		<button name="pov SW" code="3025" />
 		<button name="pov W" code="3026">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{LEFT}" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="1" sound="cursor.wav" />
 		</button>
 		<button name="pov NW" code="3027" />
 		<button name="Button 1" code="3030">
 			<action layer="0" condition="WINDOW" conproperty="11" command="ACTION" cmdproperty="47" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="10" command="ACTION" cmdproperty="10" sound="back.wav" />
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{ENTER}" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="7" sound="click.wav" />
 		</button>
 		<button name="Button 2" code="3031">
-			<action layer="0" condition="*" conproperty="-1" command="KEY" cmdproperty="{ESC}" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
 		</button>
 		<button name="Button 3" code="3032">
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="13" sound="click.wav" />
