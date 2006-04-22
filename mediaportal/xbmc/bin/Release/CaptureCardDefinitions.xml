@@ -6648,7 +6648,7 @@
 	</tv> 
   </capturecard>
 
-  <capturecard commercialname="Leadtek WinFast DTV 1000T" capturename="WinFast DTV 1000T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665F107D&amp;rev_05"> 
+  <capturecard commercialname="Leadtek WinFast DTV 1000T" capturename="WinFast DTV 1000T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665f107d&amp;rev_05"> 
 	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/> 
 	<tv> 
 	  <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
@@ -6664,7 +6664,7 @@
 	</tv> 
   </capturecard>
 
-  <capturecard commercialname="Leadtek WinFast DTV1000 T" capturename="WinFast DTV1000 T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665F107D&amp;rev_05"> 
+  <capturecard commercialname="Leadtek WinFast DTV1000 T" capturename="WinFast DTV1000 T BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665f107d&amp;rev_05"> 
 	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/> 
 	<tv> 
 	  <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/> 
@@ -6680,7 +6680,7 @@
 	</tv> 
   </capturecard>
 
-  <capturecard commercialname="Leadtek WinFast DTV2000 H" capturename="WinFast DTV2000 H BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665E107D&amp;rev_05"> 
+  <capturecard commercialname="Leadtek WinFast DTV2000 H (Digital)" capturename="WinFast DTV2000 H BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665e107d&amp;rev_05"> 
 	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/> 
 	<tv> 
 	  <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/> 
@@ -10208,7 +10208,8 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="ASUS TV FM 7134(PAL)" capturename="Asus TV7134 WDM Video Capture" devid="ven_1131&amp;dev_7134&amp;subsys_48421043&amp;rev_01">    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+  <capturecard commercialname="ASUS TV FM 7134(PAL)" capturename="Asus TV7134 WDM Video Capture" devid="ven_1131&amp;dev_7134&amp;subsys_48421043&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
@@ -11494,6 +11495,121 @@
         <connection sourcefilter="capture"    sourcepin="3" sinkfilter="audencoder" sinkpin="1"/>
         <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
         <connection sourcefilter="audencoder" sourcepin="1" sinkfilter="mux"        sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Adaptec Dual TV Tuner (Tuner #1)" capturename="Adaptec USB Capture Device" devid="vid_03f3&amp;pid_0091">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="Adaptec USB TvTuner"			checkdevice="true"/>
+        <filter cat="tvaudio"  name="Adaptec USB TvAudio"			checkdevice="true"/>
+        <filter cat="crossbar" name="Adaptec USB Crossbar"			checkdevice="true"/>
+        <filter cat="capture"  name="Adaptec USB Capture Device"	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Adaptec Dual TV Tuner (Tuner #2)" capturename="Adaptec USB Capture Device" devid="vid_03f3&amp;pid_0093">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="Adaptec USB TvTuner"			checkdevice="true"/>
+        <filter cat="tvaudio"  name="Adaptec USB TvAudio"			checkdevice="true"/>
+        <filter cat="crossbar" name="Adaptec USB Crossbar"			checkdevice="true"/>
+        <filter cat="capture"  name="Adaptec USB Capture Device"	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ASUS TV FM 7134(PAL)" capturename="ASUS TV7134 WDM Video Capture" devid="ven_1131&amp;dev_7134&amp;subsys_48421043&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="ASUS TV Tuner"							    checkdevice="true"/>
+        <filter cat="tvaudio"		  name="ASUS TV7134 TVAudio"			      checkdevice="true"/>
+        <filter cat="crossbar"    name="ASUS TV7134 Crossbar"			      checkdevice="true"/>
+        <filter cat="capture"     name="ASUS TV7134 WDM Video Capture"  checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"					        checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"					        checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"						          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"		sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="2" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV 88x based" capturename="Hauppauge WinTV Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_34010070&amp;rev_03">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="Hauppauge WinTV TvTuner"        checkdevice="true"/>
+        <filter cat="tvaudio"		  name="Hauppauge WinTV TvAudio"	      checkdevice="true"/>
+        <filter cat="crossbar"		name="Hauppauge WinTV Crossbar"	      checkdevice="true"/>
+        <filter cat="capture"     name="Hauppauge WinTV Capture"	      checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"						        checkdevice="true"/>
+        <filter cat="mux"			    name="MainConcept (MCE) MPEG Encoder" checkdevice="false"/>
+      </filters>
+      <connections>
+		    <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Leadtek WinFast DTV2000 H (Analogue)" capturename="WinFast DTV2000 H WDM Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_665e107d&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="WinFast DTV2000 H WDM TVTuner"        checkdevice="true"/>
+        <filter cat="tvaudio"		  name="WinFast DTV2000 H WDM TV Audio"	      checkdevice="true"/>
+        <filter cat="crossbar"		name="WinFast DTV2000 H WDM Crossbar"	      checkdevice="true"/>
+        <filter cat="capture"     name="WinFast DTV2000 H WDM Video Capture"  checkdevice="true"/>
+        <filter cat="audcapture"	name="%soundcard%"						              checkdevice="true"/>
+        <filter cat="videncoder"  name="LeadTek MPEG Video Encoder"           checkdevice="false"/>
+        <filter cat="audencoder"  name="LeadTek Audio Encoder"                checkdevice="false"/>
+        <filter cat="mux"			    name="Leadtek MPEG Muxer"                   checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder" sinkpin="0"/>
+        <connection sourcefilter="audcapture"	sourcepin="0" sinkfilter="audencoder" sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
