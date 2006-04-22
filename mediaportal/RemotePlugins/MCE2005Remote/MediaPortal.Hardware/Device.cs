@@ -128,65 +128,26 @@ namespace MediaPortal.Hardware
           throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
         }
 
-        Log.Write("Device: {0}", deviceInterfaceDetailData.DevicePath);
-
-        // Microsoft/Philips 2005
-        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0471&pid_0815") != -1)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          devicePath = deviceInterfaceDetailData.DevicePath;
-          break;
-        }
-
-        // Microsoft/Philips 2004
-        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_006d") != -1)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          devicePath = deviceInterfaceDetailData.DevicePath;
-          break;
-        }
-
-        // HP (as per Critifier)
-        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1460&pid_9150") != -1)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          devicePath = deviceInterfaceDetailData.DevicePath;
-          break;
-        }
-
-        // FIC Spectra/Mycom Mediacenter (as per MrMario64)
-        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_107b&pid_3009") != -1)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          devicePath = deviceInterfaceDetailData.DevicePath;
-          break;
-        }
-
-        // Toshiba MCE remote
-        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0609&pid_031d") != -1)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          devicePath = deviceInterfaceDetailData.DevicePath;
-          break;
-        }
-
-        // Mitsumi MCE remote
-        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_03ee&pid_2501") != -1)
-        {
-          SetupDiDestroyDeviceInfoList(handle);
-          devicePath = deviceInterfaceDetailData.DevicePath;
-          break;
-        }
-
-        // Zalman HD160 MCE remote
-        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_0040") != -1)
+        Log.Write("MCE: Found: {0}", deviceInterfaceDetailData.DevicePath);
+        
+        if ((deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0471&pid_0815") != -1) || // Microsoft/Philips 2005
+        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_006d") != -1) ||     // Microsoft/Philips 2004
+        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1460&pid_9150") != -1) ||     // HP
+        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_107b&pid_3009") != -1) ||     // FIC Spectra/Mycom Mediacenter
+        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0609&pid_031d") != -1) ||     // Toshiba MCE remote
+        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_03ee&pid_2501") != -1) ||     // Mitsumi MCE remote
+        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_0040") != -1) ||     // Zalman HD160 MCE remote
+        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_18b1&pid_0037") != -1))       // Maxter
         {
           SetupDiDestroyDeviceInfoList(handle);
           devicePath = deviceInterfaceDetailData.DevicePath;
           break;
         }
       }
-
+      if (devicePath != string.Empty)
+        Log.Write("MCE: Using: {0}", devicePath);
+      else
+        Log.Write("MCE: No compatible device found");
       return devicePath;
     }
 

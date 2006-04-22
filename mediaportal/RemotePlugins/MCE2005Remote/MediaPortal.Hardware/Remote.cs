@@ -70,7 +70,7 @@ namespace MediaPortal.Hardware
 			}
 			catch(Exception e)
 			{
-				Log.Write("Remote.Init: {0}", e.Message);
+				Log.Write("MCE: Init - Exception {0}", e.Message);
 			}
 		}
 
@@ -83,43 +83,46 @@ namespace MediaPortal.Hardware
 
 			IntPtr deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
 
-			if(deviceHandle.ToInt32() == -1)
+      if (deviceHandle.ToInt32() == INVALID_HANDLE_VALUE)
 				throw new Exception(string.Format("Failed to open remote ({0})", GetLastError()));
 
 			_deviceWatcher.RegisterDeviceRemoval(deviceHandle);
 
 			// open a stream from the device and begin an asynchronous read
 			_deviceStream = new FileStream(deviceHandle, FileAccess.Read, true, 128, true);
-			_deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
+      IAsyncResult aResult = _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
 		}
 
 		void OnReadComplete(IAsyncResult asyncResult)
 		{
-			try
-			{
-				if(_deviceStream.EndRead(asyncResult) == 13 && _deviceBuffer[1] == 1)
-				{
-					if(_deviceBuffer[5] == (int)_doubleClickButton && Environment.TickCount - _doubleClickTick <= _doubleClickTime)
-					{
-						if(DoubleClick != null)
-							DoubleClick(this, new RemoteEventArgs(_doubleClickButton));
-					}
-					else
-					{
-						_doubleClickButton = (RemoteButton)_deviceBuffer[5];
-						_doubleClickTick = Environment.TickCount;
+      try
+      {
+        if (_deviceStream.EndRead(asyncResult) == 13 && _deviceBuffer[1] == 1)
+        {
+          if (_deviceBuffer[5] == (int)_doubleClickButton && Environment.TickCount - _doubleClickTick <= _doubleClickTime)
+          {
+            if (DoubleClick != null)
+              DoubleClick(this, new RemoteEventArgs(_doubleClickButton));
+          }
+          else
+          {
+            _doubleClickButton = (RemoteButton)_deviceBuffer[5];
+            _doubleClickTick = Environment.TickCount;
 
-						if(Click != null)
-							Click(this, new RemoteEventArgs(_doubleClickButton));
-					}
-				}
-
-				// begin another asynchronous read from the device
-				_deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
-			}
-			catch(Exception)
-			{
-			}
+            if (Click != null)
+              Click(this, new RemoteEventArgs(_doubleClickButton));
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Write("MCE: OnReadComplete - Exception {0}", ex);
+      }
+      finally
+      {
+        // begin another asynchronous read from the device
+        _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
+      }
 		}
 
 		void OnSettingsChanged()
@@ -149,6 +152,8 @@ namespace MediaPortal.Hardware
 		int							_doubleClickTime = -1;
 		int							_doubleClickTick = 0;
 		RemoteButton				_doubleClickButton;
+
+    const int INVALID_HANDLE_VALUE = -1;
 
 		#endregion Members
 	}

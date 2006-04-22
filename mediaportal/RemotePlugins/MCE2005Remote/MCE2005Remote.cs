@@ -110,7 +110,7 @@ namespace MediaPortal.InputDevices
             }
             catch (Exception)
             {
-              if (logVerbose) Log.Write("MCE: Cannot stop ehtray.exe!");
+              if (logVerbose) Log.Write("MCE: Cannot stop ehtray.exe");
             }
         if (logVerbose)
           if (controlEnabled)
