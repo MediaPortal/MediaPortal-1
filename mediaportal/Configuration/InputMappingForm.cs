@@ -948,7 +948,7 @@ namespace MediaPortal.Configuration
                       }
                       condition = (string)((Data)conditionNode.Tag).Parameter;
                       conProperty = ((Data)conditionNode.Tag).Value.ToString();
-                      layer = (string)((Data)layerNode.Tag).Value;
+                      layer = Convert.ToString( ((Data)layerNode.Tag).Value );
                       writer.WriteStartElement("action"); // <action>
                       writer.WriteAttributeString("layer", layer);
                       writer.WriteAttributeString("condition", condition);
