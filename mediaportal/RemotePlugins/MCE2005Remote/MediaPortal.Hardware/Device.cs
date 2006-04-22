@@ -34,253 +34,261 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Hardware
 {
-	public abstract class Device
-	{
-		#region Implementation
+  public abstract class Device
+  {
+    #region Implementation
 
-		protected void OnDeviceArrival(object sender, EventArgs e)
-		{
-			if(_deviceStream != null)
-				return;
+    protected void OnDeviceArrival(object sender, EventArgs e)
+    {
+      if (_deviceStream != null)
+        return;
 
-			Open();
-	
-			if(DeviceArrival != null)
-				DeviceArrival(sender, e);
-		}
+      Open();
 
-		protected abstract void Open();
+      if (DeviceArrival != null)
+        DeviceArrival(sender, e);
+    }
 
-		protected void OnDeviceRemoval(object sender, EventArgs e)
-		{
-			if(_deviceStream == null)
-				return;
+    protected abstract void Open();
 
-			try
-			{
-				_deviceStream.Close();
-				_deviceStream = null;
-			}
-			catch(IOException)
-			{ 
-				// we are closing the stream so ignore this
-			}
+    protected void OnDeviceRemoval(object sender, EventArgs e)
+    {
+      if (_deviceStream == null)
+        return;
 
-			if(DeviceRemoval != null)
-				DeviceRemoval(sender, e);
-		}
+      try
+      {
+        _deviceStream.Close();
+        _deviceStream = null;
+      }
+      catch (IOException)
+      {
+        // we are closing the stream so ignore this
+      }
 
-		public static DeviceCollection GetDevicesByClass(Guid guid)
-		{
-			return new DeviceCollection();
-		}
+      if (DeviceRemoval != null)
+        DeviceRemoval(sender, e);
+    }
 
-		protected string FindDevice(Guid classGuid)
-		{
-			IntPtr handle = SetupDiGetClassDevs(ref classGuid, 0, 0, 0x12);
+    public static DeviceCollection GetDevicesByClass(Guid guid)
+    {
+      return new DeviceCollection();
+    }
 
-			string devicePath = null;
+    protected string FindDevice(Guid classGuid)
+    {
+      IntPtr handle = SetupDiGetClassDevs(ref classGuid, 0, 0, 0x12);
 
-			if(handle.ToInt32() == -1)
-				throw new Exception(string.Format("Failed in call to SetupDiGetClassDevs ({0})", GetLastError()));
+      string devicePath = null;
 
-			for(int deviceIndex = 0; ; deviceIndex++)
-			{
-				DeviceInfoData deviceInfoData = new DeviceInfoData();
-				deviceInfoData.Size = Marshal.SizeOf(deviceInfoData);
+      if (handle.ToInt32() == -1)
+        throw new Exception(string.Format("Failed in call to SetupDiGetClassDevs ({0})", GetLastError()));
 
-				if(SetupDiEnumDeviceInfo(handle, deviceIndex, ref deviceInfoData) == false)
-				{
-					// out of devices or do we have an error?
-					if(GetLastError() != 0x103 && GetLastError() != 0x7E)
-					{
-						SetupDiDestroyDeviceInfoList(handle);
-						throw new Exception(string.Format("Failed in call to SetupDiEnumDeviceInfo ({0})", GetLastError()));
-					}
+      for (int deviceIndex = 0; ; deviceIndex++)
+      {
+        DeviceInfoData deviceInfoData = new DeviceInfoData();
+        deviceInfoData.Size = Marshal.SizeOf(deviceInfoData);
 
-					SetupDiDestroyDeviceInfoList(handle);
-					break;
-				}
+        if (SetupDiEnumDeviceInfo(handle, deviceIndex, ref deviceInfoData) == false)
+        {
+          // out of devices or do we have an error?
+          if (GetLastError() != 0x103 && GetLastError() != 0x7E)
+          {
+            SetupDiDestroyDeviceInfoList(handle);
+            throw new Exception(string.Format("Failed in call to SetupDiEnumDeviceInfo ({0})", GetLastError()));
+          }
 
-				DeviceInterfaceData deviceInterfaceData = new DeviceInterfaceData();
-				deviceInterfaceData.Size = Marshal.SizeOf(deviceInterfaceData);
+          SetupDiDestroyDeviceInfoList(handle);
+          break;
+        }
 
-				if(SetupDiEnumDeviceInterfaces(handle, ref deviceInfoData, ref classGuid, 0, ref deviceInterfaceData) == false)
-				{
-					SetupDiDestroyDeviceInfoList(handle);
-					throw new Exception(string.Format("Failed in call to SetupDiEnumDeviceInterfaces ({0})", GetLastError()));
-				}
+        DeviceInterfaceData deviceInterfaceData = new DeviceInterfaceData();
+        deviceInterfaceData.Size = Marshal.SizeOf(deviceInterfaceData);
 
-				uint cbData = 0;
+        if (SetupDiEnumDeviceInterfaces(handle, ref deviceInfoData, ref classGuid, 0, ref deviceInterfaceData) == false)
+        {
+          SetupDiDestroyDeviceInfoList(handle);
+          throw new Exception(string.Format("Failed in call to SetupDiEnumDeviceInterfaces ({0})", GetLastError()));
+        }
 
-				if(SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, 0, 0, ref cbData, 0) == false && cbData == 0)
-				{
-					SetupDiDestroyDeviceInfoList(handle);
-					throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
-				}
+        uint cbData = 0;
 
-				DeviceInterfaceDetailData deviceInterfaceDetailData = new DeviceInterfaceDetailData();
-				deviceInterfaceDetailData.Size = 5;
+        if (SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, 0, 0, ref cbData, 0) == false && cbData == 0)
+        {
+          SetupDiDestroyDeviceInfoList(handle);
+          throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
+        }
 
-				if(SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, ref deviceInterfaceDetailData, cbData, 0, 0) == false)
-				{
-					SetupDiDestroyDeviceInfoList(handle);
-					throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
-				}
+        DeviceInterfaceDetailData deviceInterfaceDetailData = new DeviceInterfaceDetailData();
+        deviceInterfaceDetailData.Size = 5;
 
-				Log.Write("Device: {0}", deviceInterfaceDetailData.DevicePath);
+        if (SetupDiGetDeviceInterfaceDetail(handle, ref deviceInterfaceData, ref deviceInterfaceDetailData, cbData, 0, 0) == false)
+        {
+          SetupDiDestroyDeviceInfoList(handle);
+          throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
+        }
 
-				// Microsoft/Philips 2005
-				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0471&pid_0815") != -1)
-				{
-					SetupDiDestroyDeviceInfoList(handle);
-					devicePath = deviceInterfaceDetailData.DevicePath;
-					break;
-				}
+        Log.Write("Device: {0}", deviceInterfaceDetailData.DevicePath);
 
-				// Microsoft/Philips 2004
-				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_006d") != -1)
-				{
-					SetupDiDestroyDeviceInfoList(handle);
-					devicePath = deviceInterfaceDetailData.DevicePath;
-					break;
-				}
+        // Microsoft/Philips 2005
+        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0471&pid_0815") != -1)
+        {
+          SetupDiDestroyDeviceInfoList(handle);
+          devicePath = deviceInterfaceDetailData.DevicePath;
+          break;
+        }
 
-				// HP (as per Critifier)
-				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1460&pid_9150") != -1)
-				{
-					SetupDiDestroyDeviceInfoList(handle);
-					devicePath = deviceInterfaceDetailData.DevicePath;
-					break;
-				}
+        // Microsoft/Philips 2004
+        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_006d") != -1)
+        {
+          SetupDiDestroyDeviceInfoList(handle);
+          devicePath = deviceInterfaceDetailData.DevicePath;
+          break;
+        }
 
-				// FIC Spectra/Mycom Mediacenter (as per MrMario64)
-				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_107b&pid_3009") != -1)
-				{
-					SetupDiDestroyDeviceInfoList(handle);
-					devicePath = deviceInterfaceDetailData.DevicePath;
-					break;
-				}
+        // HP (as per Critifier)
+        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1460&pid_9150") != -1)
+        {
+          SetupDiDestroyDeviceInfoList(handle);
+          devicePath = deviceInterfaceDetailData.DevicePath;
+          break;
+        }
 
-				// Toshiba MCE remote
-				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0609&pid_031d") != -1)
-				{
-					SetupDiDestroyDeviceInfoList(handle);
-					devicePath = deviceInterfaceDetailData.DevicePath;
-					break;
-				}
-				
-				// Mitsumi MCE remote
-				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_03ee&pid_2501") != -1)
-				{
-					SetupDiDestroyDeviceInfoList(handle);
-					devicePath = deviceInterfaceDetailData.DevicePath;
-					break;
-				}
-			}
+        // FIC Spectra/Mycom Mediacenter (as per MrMario64)
+        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_107b&pid_3009") != -1)
+        {
+          SetupDiDestroyDeviceInfoList(handle);
+          devicePath = deviceInterfaceDetailData.DevicePath;
+          break;
+        }
 
-			return devicePath;
-		}
+        // Toshiba MCE remote
+        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0609&pid_031d") != -1)
+        {
+          SetupDiDestroyDeviceInfoList(handle);
+          devicePath = deviceInterfaceDetailData.DevicePath;
+          break;
+        }
 
-		#endregion Implementation
+        // Mitsumi MCE remote
+        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_03ee&pid_2501") != -1)
+        {
+          SetupDiDestroyDeviceInfoList(handle);
+          devicePath = deviceInterfaceDetailData.DevicePath;
+          break;
+        }
 
-		#region Interop
+        // Zalman HD160 MCE remote
+        if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_0040") != -1)
+        {
+          SetupDiDestroyDeviceInfoList(handle);
+          devicePath = deviceInterfaceDetailData.DevicePath;
+          break;
+        }
+      }
 
-		[DllImport("kernel32", SetLastError=true)]
-		protected static extern IntPtr CreateFile(string FileName, [MarshalAs(UnmanagedType.U4)] FileAccess DesiredAccess, [MarshalAs(UnmanagedType.U4)] FileShare ShareMode, uint SecurityAttributes, [MarshalAs(UnmanagedType.U4)] FileMode CreationDisposition, FileFlag FlagsAndAttributes, int hTemplateFile);
+      return devicePath;
+    }
 
-		[DllImport("kernel32", SetLastError=true)]
-		protected static extern bool CloseHandle(IntPtr hObject);
+    #endregion Implementation
 
-		[DllImport("kernel32", SetLastError=true)]
-		protected static extern int GetLastError();
+    #region Interop
 
-		protected enum FileFlag
-		{ 
-			Overlapped = 0x40000000,
-		}
+    [DllImport("kernel32", SetLastError = true)]
+    protected static extern IntPtr CreateFile(string FileName, [MarshalAs(UnmanagedType.U4)] FileAccess DesiredAccess, [MarshalAs(UnmanagedType.U4)] FileShare ShareMode, uint SecurityAttributes, [MarshalAs(UnmanagedType.U4)] FileMode CreationDisposition, FileFlag FlagsAndAttributes, int hTemplateFile);
 
-		[StructLayout(LayoutKind.Sequential)]
-		protected struct DeviceInfoData
-		{
-			public int				Size;
-			public Guid				Class;
-			public uint				DevInst;
-			public uint				Reserved;
-		}
+    [DllImport("kernel32", SetLastError = true)]
+    protected static extern bool CloseHandle(IntPtr hObject);
 
-		[StructLayout(LayoutKind.Sequential)]
-		protected struct DeviceInterfaceData
-		{
-			public int				Size;
-			public Guid				Class;
-			public uint				Flags;
-			public uint				Reserved;
-		}
+    [DllImport("kernel32", SetLastError = true)]
+    protected static extern int GetLastError();
 
-		[StructLayout(LayoutKind.Sequential)]
-		protected struct DeviceInterfaceDetailData 
-		{
-			public int				Size;
+    protected enum FileFlag
+    {
+      Overlapped = 0x40000000,
+    }
 
-			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=256)]
-			public string			DevicePath;
-		}
+    [StructLayout(LayoutKind.Sequential)]
+    protected struct DeviceInfoData
+    {
+      public int Size;
+      public Guid Class;
+      public uint DevInst;
+      public uint Reserved;
+    }
 
-		[DllImport("hid")]
-		protected static extern void HidD_GetHidGuid(ref Guid guid);
+    [StructLayout(LayoutKind.Sequential)]
+    protected struct DeviceInterfaceData
+    {
+      public int Size;
+      public Guid Class;
+      public uint Flags;
+      public uint Reserved;
+    }
 
-		[DllImport("setupapi", SetLastError=true)]
-		protected static extern IntPtr SetupDiGetClassDevs(ref Guid guid, int Enumerator, int hwndParent, int Flags);
+    [StructLayout(LayoutKind.Sequential)]
+    protected struct DeviceInterfaceDetailData
+    {
+      public int Size;
 
-		[DllImport("setupapi", SetLastError=true)]
-		protected static extern bool SetupDiEnumDeviceInfo(IntPtr handle, int Index, ref DeviceInfoData deviceInfoData);
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+      public string DevicePath;
+    }
 
-		[DllImport("setupapi", SetLastError=true)]
-		protected static extern bool SetupDiEnumDeviceInterfaces(IntPtr handle, ref DeviceInfoData deviceInfoData, ref Guid guidClass, int MemberIndex, ref DeviceInterfaceData deviceInterfaceData);
+    [DllImport("hid")]
+    protected static extern void HidD_GetHidGuid(ref Guid guid);
 
-		[DllImport("setupapi", SetLastError=true)]
-		protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle, ref DeviceInterfaceData deviceInterfaceData, int unused1, int unused2, ref uint requiredSize, int unused3);
-		
-		[DllImport("setupapi", SetLastError=true)]
-		protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle, ref DeviceInterfaceData deviceInterfaceData, ref DeviceInterfaceDetailData deviceInterfaceDetailData, uint detailSize, int unused1, int unused2);
+    [DllImport("setupapi", SetLastError = true)]
+    protected static extern IntPtr SetupDiGetClassDevs(ref Guid guid, int Enumerator, int hwndParent, int Flags);
 
-		[DllImport("setupapi")]
-		protected static extern bool SetupDiDestroyDeviceInfoList(IntPtr handle);
+    [DllImport("setupapi", SetLastError = true)]
+    protected static extern bool SetupDiEnumDeviceInfo(IntPtr handle, int Index, ref DeviceInfoData deviceInfoData);
 
-		#endregion Interop
+    [DllImport("setupapi", SetLastError = true)]
+    protected static extern bool SetupDiEnumDeviceInterfaces(IntPtr handle, ref DeviceInfoData deviceInfoData, ref Guid guidClass, int MemberIndex, ref DeviceInterfaceData deviceInterfaceData);
 
-		#region Events
+    [DllImport("setupapi", SetLastError = true)]
+    protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle, ref DeviceInterfaceData deviceInterfaceData, int unused1, int unused2, ref uint requiredSize, int unused3);
 
-		public static DeviceEventHandler DeviceArrival = null;
-		public static DeviceEventHandler DeviceRemoval = null;
+    [DllImport("setupapi", SetLastError = true)]
+    protected static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr handle, ref DeviceInterfaceData deviceInterfaceData, ref DeviceInterfaceDetailData deviceInterfaceDetailData, uint detailSize, int unused1, int unused2);
 
-		#endregion Events
+    [DllImport("setupapi")]
+    protected static extern bool SetupDiDestroyDeviceInfoList(IntPtr handle);
 
-		#region Members
+    #endregion Interop
 
-		protected Guid				_deviceClass;
-		protected FileStream		_deviceStream;
-		protected byte[]			_deviceBuffer;
-		internal DeviceWatcher		_deviceWatcher;
+    #region Events
 
-		#endregion Members
+    public static DeviceEventHandler DeviceArrival = null;
+    public static DeviceEventHandler DeviceRemoval = null;
 
-		#region Properties
+    #endregion Events
 
-		public static Guid HidGuid
-		{
-			get
-			{
-				Guid guid = new Guid();
+    #region Members
 
-				// ask the OS for the class (GUID) that represents human input devices
-				HidD_GetHidGuid(ref guid);
+    protected Guid _deviceClass;
+    protected FileStream _deviceStream;
+    protected byte[] _deviceBuffer;
+    internal DeviceWatcher _deviceWatcher;
 
-				return guid;
-			}
-		}
-		
-		#endregion Properties
-	}
+    #endregion Members
+
+    #region Properties
+
+    public static Guid HidGuid
+    {
+      get
+      {
+        Guid guid = new Guid();
+
+        // ask the OS for the class (GUID) that represents human input devices
+        HidD_GetHidGuid(ref guid);
+
+        return guid;
+      }
+    }
+
+    #endregion Properties
+  }
 }
