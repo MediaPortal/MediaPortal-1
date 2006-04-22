@@ -522,10 +522,10 @@ namespace DShowNET.Helper
 
       IBaseFilter capture;
       _graphBuilderInterface.FindFilterByName("Adaptec PCI Capture Device", out capture);
-      /*if (capture == null)
+      if (capture == null)
       {
           _graphBuilderInterface.FindFilterByName("Adaptec USB Capture Device", out capture);
-      }*/
+      }
       if (capture == null)
       {
         //Log.WriteFile(Log.LogType.Log, "mpeg2:FAILED to find Adaptec Capture Device");
