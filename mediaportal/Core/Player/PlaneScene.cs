@@ -369,8 +369,8 @@ namespace MediaPortal.Player
 
         if (_sourceRect.Y == 0)
         {
-          _sourceRect.Y += 5;
-          _sourceRect.Height -= 10;
+        //  _sourceRect.Y += 5;
+        //  _sourceRect.Height -= 10;
         }
 
         //next calculate which part of the video texture should be copied
