@@ -169,6 +169,14 @@ namespace MediaPortal.Hardware
 					devicePath = deviceInterfaceDetailData.DevicePath;
 					break;
 				}
+				
+				// Mitsumi MCE remote
+				if(deviceInterfaceDetailData.DevicePath.IndexOf("#vid_03ee&pid_2501") != -1)
+				{
+					SetupDiDestroyDeviceInfoList(handle);
+					devicePath = deviceInterfaceDetailData.DevicePath;
+					break;
+				}
 			}
 
 			return devicePath;
