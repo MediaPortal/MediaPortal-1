@@ -150,7 +150,7 @@ namespace MediaPortal.GUI.Video
         int itemIndex = (int)msg.Param1;
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
-          OnClick(itemIndex);
+           OnClick(itemIndex);
         }
       }
       if (control == btntoggleplot)
@@ -165,6 +165,12 @@ namespace MediaPortal.GUI.Video
               SetGUIProperties();
           if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU && mainview!=true)
           {
+              if (TrailersUtility._workerCompleted == false)
+              {
+                  TrailersUtility._workerCompleted = true;
+                  TrailersUtility.interupted = true;
+                  ShowLabelsFalse();
+              }
               OnClick(0);
               return;
           }
@@ -177,7 +183,7 @@ namespace MediaPortal.GUI.Video
       {
         Prev_SelectedItem = listview.SelectedListItemIndex;
       }
-      GetGUIProperties();
+      //GetGUIProperties();
       base.OnPageDestroy(newWindowId);
     }
     protected override void OnPageLoad()
@@ -393,12 +399,23 @@ namespace MediaPortal.GUI.Video
         else
         {
           SelectedItem[1] = listview.SelectedListItemIndex;
-          YahooTrailers.RSSTitle = GUIPropertyManager.GetProperty("#title");
-          YahooTrailers.tcmview = true;
           YahooTrailers.GetMovieInfo(YahooTrailers.RSSMovieUrl[itemindex - 1], YahooTrailers.RSSMovieName[itemindex - 1]);
+          if (TrailersUtility.interupted == true)
+          {
+              TrailersUtility.interupted = false;
+              return;
+          }
           ShowListView(YahooTrailers.TrailersClipsMore, false);
           YahooTrailers.GetMovieDetails(YahooTrailers.RSSMovieUrl[itemindex - 1], YahooTrailers.RSSMovieName[itemindex - 1]);
+          if (TrailersUtility.interupted == true)
+          {
+              TrailersUtility.interupted = false;
+              return;
+          }
           ShowMovieInfo(YahooTrailers.RSSMovieName[itemindex - 1], YahooTrailers.PosterUrl);
+          YahooTrailers.RSSTitle = GUIPropertyManager.GetProperty("#title");
+          YahooTrailers.tcmview = true;
+          GetGUIProperties();
         }
       }
       // Letterbutton view
@@ -809,12 +826,15 @@ namespace MediaPortal.GUI.Video
       preleasedate = GUIPropertyManager.GetProperty("#year");
       pplot = GUIPropertyManager.GetProperty("#plot");
       pcast = GUIPropertyManager.GetProperty("#cast");
-      GUIPropertyManager.SetProperty("#title", string.Empty);
-      GUIPropertyManager.SetProperty("#genre", string.Empty);
-      GUIPropertyManager.SetProperty("#runtime", string.Empty);
-      GUIPropertyManager.SetProperty("#year", string.Empty);
-      GUIPropertyManager.SetProperty("#plot", string.Empty);
-      GUIPropertyManager.SetProperty("#cast", string.Empty);
+      if (YahooTrailers.tcmview != true)
+      {
+          GUIPropertyManager.SetProperty("#title", string.Empty);
+          GUIPropertyManager.SetProperty("#genre", string.Empty);
+          GUIPropertyManager.SetProperty("#runtime", string.Empty);
+          GUIPropertyManager.SetProperty("#year", string.Empty);
+          GUIPropertyManager.SetProperty("#plot", string.Empty);
+          GUIPropertyManager.SetProperty("#cast", string.Empty);
+      }
       //float.Parse(prating) = GUIPropertyManager.GetProperty("#rating");
     }
     void SetGUIProperties()
@@ -895,6 +915,11 @@ namespace MediaPortal.GUI.Video
     }
     public void ShowListView(string[] _TrailerName, int _titlenumber)
     {
+        if (TrailersUtility.interupted == true)
+        {
+            TrailersUtility.interupted = false;
+            return;
+        }
       poster.SetFileName(GUIGraphicsContext.Skin + @"\media\" + backgroundposter);
       GUIPropertyManager.SetProperty("#title", GUILocalizeStrings.Get(_titlenumber));
 

@@ -67,7 +67,8 @@ namespace MediaPortal.GUI.Video
 			_workerCompleted = true;
 		}
 
-		public bool _workerCompleted = true;
+		public static bool _workerCompleted = true;
+        public static bool interupted = false;
 
 		public void DownloadPoster(string downloadurl, string moviename)
 		{
