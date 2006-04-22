@@ -154,17 +154,15 @@
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
 		</button>
 		<button name="Rename" code="151">
-			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="24" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="24" />
 		</button>
 		<button name="Snapshot" code="157">
-			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="111" sound="" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="111" />
 		</button>
 		<button name="Cursor Up" code="19">
-			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="31" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="3" sound="cursor.wav" />
 		</button>
 		<button name="Cursor Down" code="12">
-			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="30" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="4" sound="cursor.wav" />
 		</button>
 		<button name="Cursor Left" code="13">
