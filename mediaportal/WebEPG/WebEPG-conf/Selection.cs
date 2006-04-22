@@ -266,7 +266,7 @@ namespace WebEPG_conf
       this.treeView1.Nodes.Clear();
       if (rbChannels.Checked)
       {
-        this.treeView1.Nodes.Add(tChannels);
+        this.treeView1.Nodes.Add((TreeNode) tChannels.Clone());
         //				if(sNode.Tag != null)
         //				{
         //					TreeNode nNode = FindNode(tChannels, (string []) sNode.Tag);
@@ -275,7 +275,7 @@ namespace WebEPG_conf
       }
       else
       {
-        this.treeView1.Nodes.Add(tGrabbers);
+        this.treeView1.Nodes.Add((TreeNode) tGrabbers.Clone());
       }
     }
 
