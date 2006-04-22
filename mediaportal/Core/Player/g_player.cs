@@ -418,6 +418,10 @@ namespace MediaPortal.Player
     {
       try
       {
+        //stop radio
+        GUIMessage msgRadio = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_RADIO, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msgRadio);
+
         Starting = true;
         _currentStep = Steps.Sec0;
         _seekTimer = DateTime.MinValue;
