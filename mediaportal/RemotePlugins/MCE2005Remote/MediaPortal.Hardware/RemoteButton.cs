@@ -85,8 +85,8 @@ namespace MediaPortal.Hardware
     MyRadio = 80,
     Messenger = 105,
 
-    // FIC Spectra specific
-    AspectRatio = 39,
-    Print = 78,
+    // Special OEM buttons
+    AspectRatio = 39, // FIC Spectra
+    Print = 78,       // Hewlett Packard MCE Edition
   }
 }
