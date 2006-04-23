@@ -90,170 +90,171 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-        this.checkBoxDxVA = new MediaPortal.UserInterface.Controls.MPCheckBox();
-        this.checkBoxHWMC = new MediaPortal.UserInterface.Controls.MPCheckBox();
-        this.comboBoxDeInterlace = new MediaPortal.UserInterface.Controls.MPComboBox();
-        this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-        this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-        this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.comboBoxOutPutMode = new MediaPortal.UserInterface.Controls.MPComboBox();
-        this.comboBoxSpeakerConfig = new MediaPortal.UserInterface.Controls.MPComboBox();
-        this.mpGroupBox1.SuspendLayout();
-        this.mpGroupBox2.SuspendLayout();
-        this.SuspendLayout();
-        // 
-        // checkBoxDxVA
-        // 
-        this.checkBoxDxVA.AutoSize = true;
-        this.checkBoxDxVA.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.checkBoxDxVA.Location = new System.Drawing.Point(62, 25);
-        this.checkBoxDxVA.Name = "checkBoxDxVA";
-        this.checkBoxDxVA.Size = new System.Drawing.Size(87, 17);
-        this.checkBoxDxVA.TabIndex = 2;
-        this.checkBoxDxVA.Text = "Enable DxVA";
-        this.checkBoxDxVA.UseVisualStyleBackColor = true;
-        this.checkBoxDxVA.CheckedChanged += new System.EventHandler(this.checkBoxDxVA_CheckedChanged);
-        // 
-        // checkBoxHWMC
-        // 
-        this.checkBoxHWMC.AutoSize = true;
-        this.checkBoxHWMC.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.checkBoxHWMC.Location = new System.Drawing.Point(62, 48);
-        this.checkBoxHWMC.Name = "checkBoxHWMC";
-        this.checkBoxHWMC.Size = new System.Drawing.Size(95, 17);
-        this.checkBoxHWMC.TabIndex = 3;
-        this.checkBoxHWMC.Text = "Enable HWMC";
-        this.checkBoxHWMC.UseVisualStyleBackColor = true;
-        this.checkBoxHWMC.CheckedChanged += new System.EventHandler(this.checkBoxHWMC_CheckedChanged);
-        // 
-        // comboBoxDeInterlace
-        // 
-        this.comboBoxDeInterlace.FormattingEnabled = true;
-        this.comboBoxDeInterlace.Items.AddRange(new object[] {
+      this.checkBoxDxVA = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxHWMC = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.comboBoxDeInterlace = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxOutPutMode = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.comboBoxSpeakerConfig = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpGroupBox1.SuspendLayout();
+      this.mpGroupBox2.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // checkBoxDxVA
+      // 
+      this.checkBoxDxVA.AutoSize = true;
+      this.checkBoxDxVA.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxDxVA.Location = new System.Drawing.Point(62, 25);
+      this.checkBoxDxVA.Name = "checkBoxDxVA";
+      this.checkBoxDxVA.Size = new System.Drawing.Size(87, 17);
+      this.checkBoxDxVA.TabIndex = 2;
+      this.checkBoxDxVA.Text = "Enable DxVA";
+      this.checkBoxDxVA.UseVisualStyleBackColor = true;
+      this.checkBoxDxVA.CheckedChanged += new System.EventHandler(this.checkBoxDxVA_CheckedChanged);
+      // 
+      // checkBoxHWMC
+      // 
+      this.checkBoxHWMC.AutoSize = true;
+      this.checkBoxHWMC.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxHWMC.Location = new System.Drawing.Point(62, 48);
+      this.checkBoxHWMC.Name = "checkBoxHWMC";
+      this.checkBoxHWMC.Size = new System.Drawing.Size(95, 17);
+      this.checkBoxHWMC.TabIndex = 3;
+      this.checkBoxHWMC.Text = "Enable HWMC";
+      this.checkBoxHWMC.UseVisualStyleBackColor = true;
+      this.checkBoxHWMC.CheckedChanged += new System.EventHandler(this.checkBoxHWMC_CheckedChanged);
+      // 
+      // comboBoxDeInterlace
+      // 
+      this.comboBoxDeInterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxDeInterlace.FormattingEnabled = true;
+      this.comboBoxDeInterlace.Items.AddRange(new object[] {
             "Auto",
             "Bob",
             "Weave",
             "Progressive"});
-        this.comboBoxDeInterlace.Location = new System.Drawing.Point(62, 102);
-        this.comboBoxDeInterlace.Name = "comboBoxDeInterlace";
-        this.comboBoxDeInterlace.Size = new System.Drawing.Size(125, 21);
-        this.comboBoxDeInterlace.TabIndex = 4;
-        this.comboBoxDeInterlace.SelectedIndexChanged += new System.EventHandler(this.comboBoxDeInterlace_SelectedIndexChanged);
-        // 
-        // mpGroupBox1
-        // 
-        this.mpGroupBox1.Controls.Add(this.mpLabel4);
-        this.mpGroupBox1.Controls.Add(this.mpLabel1);
-        this.mpGroupBox1.Controls.Add(this.checkBoxHWMC);
-        this.mpGroupBox1.Controls.Add(this.comboBoxDeInterlace);
-        this.mpGroupBox1.Controls.Add(this.checkBoxDxVA);
-        this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.mpGroupBox1.Location = new System.Drawing.Point(0, 36);
-        this.mpGroupBox1.Name = "mpGroupBox1";
-        this.mpGroupBox1.Size = new System.Drawing.Size(472, 143);
-        this.mpGroupBox1.TabIndex = 5;
-        this.mpGroupBox1.TabStop = false;
-        this.mpGroupBox1.Text = "Video Decoder Settings";
-        // 
-        // mpLabel4
-        // 
-        this.mpLabel4.AutoSize = true;
-        this.mpLabel4.Location = new System.Drawing.Point(182, 25);
-        this.mpLabel4.MaximumSize = new System.Drawing.Size(240, 0);
-        this.mpLabel4.Name = "mpLabel4";
-        this.mpLabel4.RightToLeft = System.Windows.Forms.RightToLeft.No;
-        this.mpLabel4.Size = new System.Drawing.Size(231, 39);
-        this.mpLabel4.TabIndex = 6;
-        this.mpLabel4.Text = "Team MediaPortal recommends enabling these options for better CPU utlization. If " +
-            "DxVA is enable then De-Interlacing is done with VMR9.";
-        // 
-        // mpLabel1
-        // 
-        this.mpLabel1.AutoSize = true;
-        this.mpLabel1.Location = new System.Drawing.Point(7, 77);
-        this.mpLabel1.Name = "mpLabel1";
-        this.mpLabel1.Size = new System.Drawing.Size(106, 13);
-        this.mpLabel1.TabIndex = 5;
-        this.mpLabel1.Text = "De-Interlace Settings";
-        // 
-        // mpGroupBox2
-        // 
-        this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.mpGroupBox2.Controls.Add(this.mpLabel3);
-        this.mpGroupBox2.Controls.Add(this.mpLabel2);
-        this.mpGroupBox2.Controls.Add(this.comboBoxOutPutMode);
-        this.mpGroupBox2.Controls.Add(this.comboBoxSpeakerConfig);
-        this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.mpGroupBox2.Location = new System.Drawing.Point(0, 195);
-        this.mpGroupBox2.Name = "mpGroupBox2";
-        this.mpGroupBox2.Size = new System.Drawing.Size(472, 166);
-        this.mpGroupBox2.TabIndex = 0;
-        this.mpGroupBox2.TabStop = false;
-        this.mpGroupBox2.Text = "Audio Decoder Settings";
-        // 
-        // mpLabel3
-        // 
-        this.mpLabel3.AutoSize = true;
-        this.mpLabel3.Location = new System.Drawing.Point(7, 96);
-        this.mpLabel3.Name = "mpLabel3";
-        this.mpLabel3.Size = new System.Drawing.Size(69, 13);
-        this.mpLabel3.TabIndex = 3;
-        this.mpLabel3.Text = "Output Mode";
-        // 
-        // mpLabel2
-        // 
-        this.mpLabel2.AutoSize = true;
-        this.mpLabel2.Location = new System.Drawing.Point(7, 32);
-        this.mpLabel2.Name = "mpLabel2";
-        this.mpLabel2.Size = new System.Drawing.Size(88, 13);
-        this.mpLabel2.TabIndex = 2;
-        this.mpLabel2.Text = "Speaker Settings";
-        // 
-        // comboBoxOutPutMode
-        // 
-        this.comboBoxOutPutMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.comboBoxOutPutMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-        this.comboBoxOutPutMode.DropDownWidth = 372;
-        this.comboBoxOutPutMode.Location = new System.Drawing.Point(62, 123);
-        this.comboBoxOutPutMode.Name = "comboBoxOutPutMode";
-        this.comboBoxOutPutMode.Size = new System.Drawing.Size(372, 21);
-        this.comboBoxOutPutMode.TabIndex = 0;
-        this.comboBoxOutPutMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxOutPutMode_SelectedIndexChanged);
-        // 
-        // comboBoxSpeakerConfig
-        // 
-        this.comboBoxSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.comboBoxSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-        this.comboBoxSpeakerConfig.Items.AddRange(new object[] {
+      this.comboBoxDeInterlace.Location = new System.Drawing.Point(62, 102);
+      this.comboBoxDeInterlace.Name = "comboBoxDeInterlace";
+      this.comboBoxDeInterlace.Size = new System.Drawing.Size(125, 21);
+      this.comboBoxDeInterlace.TabIndex = 4;
+      this.comboBoxDeInterlace.SelectedIndexChanged += new System.EventHandler(this.comboBoxDeInterlace_SelectedIndexChanged);
+      // 
+      // mpGroupBox1
+      // 
+      this.mpGroupBox1.Controls.Add(this.mpLabel4);
+      this.mpGroupBox1.Controls.Add(this.mpLabel1);
+      this.mpGroupBox1.Controls.Add(this.checkBoxHWMC);
+      this.mpGroupBox1.Controls.Add(this.comboBoxDeInterlace);
+      this.mpGroupBox1.Controls.Add(this.checkBoxDxVA);
+      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox1.Location = new System.Drawing.Point(0, 36);
+      this.mpGroupBox1.Name = "mpGroupBox1";
+      this.mpGroupBox1.Size = new System.Drawing.Size(472, 143);
+      this.mpGroupBox1.TabIndex = 5;
+      this.mpGroupBox1.TabStop = false;
+      this.mpGroupBox1.Text = "Video Decoder Settings";
+      // 
+      // mpLabel4
+      // 
+      this.mpLabel4.AutoSize = true;
+      this.mpLabel4.Location = new System.Drawing.Point(182, 25);
+      this.mpLabel4.MaximumSize = new System.Drawing.Size(240, 0);
+      this.mpLabel4.Name = "mpLabel4";
+      this.mpLabel4.RightToLeft = System.Windows.Forms.RightToLeft.No;
+      this.mpLabel4.Size = new System.Drawing.Size(231, 39);
+      this.mpLabel4.TabIndex = 6;
+      this.mpLabel4.Text = "Team MediaPortal recommends enabling these options for better CPU utlization. If " +
+          "DxVA is enable then De-Interlacing is done with VMR9.";
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.Location = new System.Drawing.Point(7, 77);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(106, 13);
+      this.mpLabel1.TabIndex = 5;
+      this.mpLabel1.Text = "De-Interlace Settings";
+      // 
+      // mpGroupBox2
+      // 
+      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Controls.Add(this.mpLabel3);
+      this.mpGroupBox2.Controls.Add(this.mpLabel2);
+      this.mpGroupBox2.Controls.Add(this.comboBoxOutPutMode);
+      this.mpGroupBox2.Controls.Add(this.comboBoxSpeakerConfig);
+      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox2.Location = new System.Drawing.Point(0, 195);
+      this.mpGroupBox2.Name = "mpGroupBox2";
+      this.mpGroupBox2.Size = new System.Drawing.Size(472, 166);
+      this.mpGroupBox2.TabIndex = 0;
+      this.mpGroupBox2.TabStop = false;
+      this.mpGroupBox2.Text = "Audio Decoder Settings";
+      // 
+      // mpLabel3
+      // 
+      this.mpLabel3.AutoSize = true;
+      this.mpLabel3.Location = new System.Drawing.Point(7, 96);
+      this.mpLabel3.Name = "mpLabel3";
+      this.mpLabel3.Size = new System.Drawing.Size(69, 13);
+      this.mpLabel3.TabIndex = 3;
+      this.mpLabel3.Text = "Output Mode";
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.AutoSize = true;
+      this.mpLabel2.Location = new System.Drawing.Point(7, 32);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(88, 13);
+      this.mpLabel2.TabIndex = 2;
+      this.mpLabel2.Text = "Speaker Settings";
+      // 
+      // comboBoxOutPutMode
+      // 
+      this.comboBoxOutPutMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxOutPutMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxOutPutMode.DropDownWidth = 372;
+      this.comboBoxOutPutMode.Location = new System.Drawing.Point(62, 123);
+      this.comboBoxOutPutMode.Name = "comboBoxOutPutMode";
+      this.comboBoxOutPutMode.Size = new System.Drawing.Size(372, 21);
+      this.comboBoxOutPutMode.TabIndex = 0;
+      this.comboBoxOutPutMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxOutPutMode_SelectedIndexChanged);
+      // 
+      // comboBoxSpeakerConfig
+      // 
+      this.comboBoxSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxSpeakerConfig.Items.AddRange(new object[] {
             "2 Speaker",
             "4 Speaker",
             "6 Speaker (5.1)",
             "7 Speaker (6.1)",
             "8 Speaker (7.1)",
             "S/PDIF Out"});
-        this.comboBoxSpeakerConfig.Location = new System.Drawing.Point(62, 57);
-        this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
-        this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(372, 21);
-        this.comboBoxSpeakerConfig.TabIndex = 1;
-        this.comboBoxSpeakerConfig.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpeakerConfig_SelectedIndexChanged);
-        // 
-        // WinDVD7DecoderFilters
-        // 
-        this.Controls.Add(this.mpGroupBox2);
-        this.Controls.Add(this.mpGroupBox1);
-        this.Name = "WinDVD7DecoderFilters";
-        this.Size = new System.Drawing.Size(472, 408);
-        this.mpGroupBox1.ResumeLayout(false);
-        this.mpGroupBox1.PerformLayout();
-        this.mpGroupBox2.ResumeLayout(false);
-        this.mpGroupBox2.PerformLayout();
-        this.ResumeLayout(false);
+      this.comboBoxSpeakerConfig.Location = new System.Drawing.Point(62, 57);
+      this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
+      this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(372, 21);
+      this.comboBoxSpeakerConfig.TabIndex = 1;
+      this.comboBoxSpeakerConfig.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpeakerConfig_SelectedIndexChanged);
+      // 
+      // WinDVD7DecoderFilters
+      // 
+      this.Controls.Add(this.mpGroupBox2);
+      this.Controls.Add(this.mpGroupBox1);
+      this.Name = "WinDVD7DecoderFilters";
+      this.Size = new System.Drawing.Size(472, 408);
+      this.mpGroupBox1.ResumeLayout(false);
+      this.mpGroupBox1.PerformLayout();
+      this.mpGroupBox2.ResumeLayout(false);
+      this.mpGroupBox2.PerformLayout();
+      this.ResumeLayout(false);
 
     }
     #endregion

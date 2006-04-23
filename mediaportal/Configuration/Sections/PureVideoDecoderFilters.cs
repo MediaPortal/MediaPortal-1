@@ -106,370 +106,376 @@ namespace MediaPortal.Configuration.Sections
         /// </summary>
         private void InitializeComponent()
         {
-            this.VideoDecoderSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
-            this.DisplayType = new MediaPortal.UserInterface.Controls.MPGroupBox();
-            this.radioButtonDTAnamorphic = new MediaPortal.UserInterface.Controls.MPRadioButton();
-            this.radioButtonDTPan = new MediaPortal.UserInterface.Controls.MPRadioButton();
-            this.radioButtonDTLetterbox = new MediaPortal.UserInterface.Controls.MPRadioButton();
-            this.radioButtonDTDefault = new MediaPortal.UserInterface.Controls.MPRadioButton();
-            this.DeinterlaceMode = new MediaPortal.UserInterface.Controls.MPLabel();
-            this.comboBoxDeInterlaceMode = new MediaPortal.UserInterface.Controls.MPComboBox();
-            this.comboBoxDeInterlaceControl = new MediaPortal.UserInterface.Controls.MPComboBox();
-            this.DeinterlaceControl = new MediaPortal.UserInterface.Controls.MPLabel();
-            this.checkBoxDxVA = new MediaPortal.UserInterface.Controls.MPCheckBox();
-            this.AudioDecoderSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
-            this.comboBoxOutPutMode = new MediaPortal.UserInterface.Controls.MPComboBox();
-            this.DynamicRangeControl = new MediaPortal.UserInterface.Controls.MPLabel();
-            this.ProLogicII = new MediaPortal.UserInterface.Controls.MPLabel();
-            this.comboBoxProLogicII = new MediaPortal.UserInterface.Controls.MPComboBox();
-            this.comboBoxDRC = new MediaPortal.UserInterface.Controls.MPComboBox();
-            this.comboBoxSpeakerSetup = new MediaPortal.UserInterface.Controls.MPComboBox();
-            this.comboBoxHeadphones = new MediaPortal.UserInterface.Controls.MPComboBox();
-            this.SpeakerSetup = new MediaPortal.UserInterface.Controls.MPGroupBox();
-            this.radioButtonReceiver = new MediaPortal.UserInterface.Controls.MPRadioButton();
-            this.radioButtonHeadphones = new MediaPortal.UserInterface.Controls.MPRadioButton();
-            this.radioButtonSpeakers = new MediaPortal.UserInterface.Controls.MPRadioButton();
-            this.comboBoxColourScheme = new MediaPortal.UserInterface.Controls.MPComboBox();
-            this.ColourScheme = new MediaPortal.UserInterface.Controls.MPLabel();
-            this.VideoDecoderSettings.SuspendLayout();
-            this.DisplayType.SuspendLayout();
-            this.AudioDecoderSettings.SuspendLayout();
-            this.SpeakerSetup.SuspendLayout();
-            this.SuspendLayout();
-            // 
-            // VideoDecoderSettings
-            // 
-            this.VideoDecoderSettings.Controls.Add(this.ColourScheme);
-            this.VideoDecoderSettings.Controls.Add(this.comboBoxColourScheme);
-            this.VideoDecoderSettings.Controls.Add(this.DisplayType);
-            this.VideoDecoderSettings.Controls.Add(this.DeinterlaceMode);
-            this.VideoDecoderSettings.Controls.Add(this.comboBoxDeInterlaceMode);
-            this.VideoDecoderSettings.Controls.Add(this.comboBoxDeInterlaceControl);
-            this.VideoDecoderSettings.Controls.Add(this.DeinterlaceControl);
-            this.VideoDecoderSettings.Controls.Add(this.checkBoxDxVA);
-            this.VideoDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.VideoDecoderSettings.Location = new System.Drawing.Point(0, 5);
-            this.VideoDecoderSettings.Name = "VideoDecoderSettings";
-            this.VideoDecoderSettings.Size = new System.Drawing.Size(472, 181);
-            this.VideoDecoderSettings.TabIndex = 3;
-            this.VideoDecoderSettings.TabStop = false;
-            this.VideoDecoderSettings.Text = "Video Decoder Settings";
-            // 
-            // DisplayType
-            // 
-            this.DisplayType.Controls.Add(this.radioButtonDTAnamorphic);
-            this.DisplayType.Controls.Add(this.radioButtonDTPan);
-            this.DisplayType.Controls.Add(this.radioButtonDTLetterbox);
-            this.DisplayType.Controls.Add(this.radioButtonDTDefault);
-            this.DisplayType.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.DisplayType.Location = new System.Drawing.Point(18, 48);
-            this.DisplayType.Name = "DisplayType";
-            this.DisplayType.Size = new System.Drawing.Size(217, 120);
-            this.DisplayType.TabIndex = 6;
-            this.DisplayType.TabStop = false;
-            this.DisplayType.Text = "Display Type";
-            // 
-            // radioButtonDTAnamorphic
-            // 
-            this.radioButtonDTAnamorphic.AutoSize = true;
-            this.radioButtonDTAnamorphic.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.radioButtonDTAnamorphic.Location = new System.Drawing.Point(20, 91);
-            this.radioButtonDTAnamorphic.Name = "radioButtonDTAnamorphic";
-            this.radioButtonDTAnamorphic.Size = new System.Drawing.Size(149, 17);
-            this.radioButtonDTAnamorphic.TabIndex = 3;
-            this.radioButtonDTAnamorphic.TabStop = true;
-            this.radioButtonDTAnamorphic.Text = "Anamorphic / Raw Aspect";
-            this.radioButtonDTAnamorphic.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonDTPan
-            // 
-            this.radioButtonDTPan.AutoSize = true;
-            this.radioButtonDTPan.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.radioButtonDTPan.Location = new System.Drawing.Point(20, 69);
-            this.radioButtonDTPan.Name = "radioButtonDTPan";
-            this.radioButtonDTPan.Size = new System.Drawing.Size(92, 17);
-            this.radioButtonDTPan.TabIndex = 2;
-            this.radioButtonDTPan.TabStop = true;
-            this.radioButtonDTPan.Text = "Pan and Scan";
-            this.radioButtonDTPan.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonDTLetterbox
-            // 
-            this.radioButtonDTLetterbox.AutoSize = true;
-            this.radioButtonDTLetterbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.radioButtonDTLetterbox.Location = new System.Drawing.Point(20, 45);
-            this.radioButtonDTLetterbox.Name = "radioButtonDTLetterbox";
-            this.radioButtonDTLetterbox.Size = new System.Drawing.Size(68, 17);
-            this.radioButtonDTLetterbox.TabIndex = 1;
-            this.radioButtonDTLetterbox.TabStop = true;
-            this.radioButtonDTLetterbox.Text = "Letterbox";
-            this.radioButtonDTLetterbox.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonDTDefault
-            // 
-            this.radioButtonDTDefault.AutoSize = true;
-            this.radioButtonDTDefault.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.radioButtonDTDefault.Location = new System.Drawing.Point(20, 21);
-            this.radioButtonDTDefault.Name = "radioButtonDTDefault";
-            this.radioButtonDTDefault.Size = new System.Drawing.Size(96, 17);
-            this.radioButtonDTDefault.TabIndex = 0;
-            this.radioButtonDTDefault.TabStop = true;
-            this.radioButtonDTDefault.Text = "Content default";
-            this.radioButtonDTDefault.UseVisualStyleBackColor = true;
-            // 
-            // DeinterlaceMode
-            // 
-            this.DeinterlaceMode.AutoSize = true;
-            this.DeinterlaceMode.Location = new System.Drawing.Point(253, 71);
-            this.DeinterlaceMode.Name = "DeinterlaceMode";
-            this.DeinterlaceMode.Size = new System.Drawing.Size(95, 13);
-            this.DeinterlaceMode.TabIndex = 5;
-            this.DeinterlaceMode.Text = "De-Interlace Mode";
-            // 
-            // comboBoxDeInterlaceMode
-            // 
-            this.comboBoxDeInterlaceMode.FormattingEnabled = true;
-            this.comboBoxDeInterlaceMode.Items.AddRange(new object[] {
+          this.VideoDecoderSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+          this.ColourScheme = new MediaPortal.UserInterface.Controls.MPLabel();
+          this.comboBoxColourScheme = new MediaPortal.UserInterface.Controls.MPComboBox();
+          this.DisplayType = new MediaPortal.UserInterface.Controls.MPGroupBox();
+          this.radioButtonDTAnamorphic = new MediaPortal.UserInterface.Controls.MPRadioButton();
+          this.radioButtonDTPan = new MediaPortal.UserInterface.Controls.MPRadioButton();
+          this.radioButtonDTLetterbox = new MediaPortal.UserInterface.Controls.MPRadioButton();
+          this.radioButtonDTDefault = new MediaPortal.UserInterface.Controls.MPRadioButton();
+          this.DeinterlaceMode = new MediaPortal.UserInterface.Controls.MPLabel();
+          this.comboBoxDeInterlaceMode = new MediaPortal.UserInterface.Controls.MPComboBox();
+          this.comboBoxDeInterlaceControl = new MediaPortal.UserInterface.Controls.MPComboBox();
+          this.DeinterlaceControl = new MediaPortal.UserInterface.Controls.MPLabel();
+          this.checkBoxDxVA = new MediaPortal.UserInterface.Controls.MPCheckBox();
+          this.AudioDecoderSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+          this.comboBoxOutPutMode = new MediaPortal.UserInterface.Controls.MPComboBox();
+          this.DynamicRangeControl = new MediaPortal.UserInterface.Controls.MPLabel();
+          this.ProLogicII = new MediaPortal.UserInterface.Controls.MPLabel();
+          this.comboBoxProLogicII = new MediaPortal.UserInterface.Controls.MPComboBox();
+          this.comboBoxDRC = new MediaPortal.UserInterface.Controls.MPComboBox();
+          this.comboBoxSpeakerSetup = new MediaPortal.UserInterface.Controls.MPComboBox();
+          this.comboBoxHeadphones = new MediaPortal.UserInterface.Controls.MPComboBox();
+          this.SpeakerSetup = new MediaPortal.UserInterface.Controls.MPGroupBox();
+          this.radioButtonReceiver = new MediaPortal.UserInterface.Controls.MPRadioButton();
+          this.radioButtonHeadphones = new MediaPortal.UserInterface.Controls.MPRadioButton();
+          this.radioButtonSpeakers = new MediaPortal.UserInterface.Controls.MPRadioButton();
+          this.VideoDecoderSettings.SuspendLayout();
+          this.DisplayType.SuspendLayout();
+          this.AudioDecoderSettings.SuspendLayout();
+          this.SpeakerSetup.SuspendLayout();
+          this.SuspendLayout();
+          // 
+          // VideoDecoderSettings
+          // 
+          this.VideoDecoderSettings.Controls.Add(this.ColourScheme);
+          this.VideoDecoderSettings.Controls.Add(this.comboBoxColourScheme);
+          this.VideoDecoderSettings.Controls.Add(this.DisplayType);
+          this.VideoDecoderSettings.Controls.Add(this.DeinterlaceMode);
+          this.VideoDecoderSettings.Controls.Add(this.comboBoxDeInterlaceMode);
+          this.VideoDecoderSettings.Controls.Add(this.comboBoxDeInterlaceControl);
+          this.VideoDecoderSettings.Controls.Add(this.DeinterlaceControl);
+          this.VideoDecoderSettings.Controls.Add(this.checkBoxDxVA);
+          this.VideoDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+          this.VideoDecoderSettings.Location = new System.Drawing.Point(0, 5);
+          this.VideoDecoderSettings.Name = "VideoDecoderSettings";
+          this.VideoDecoderSettings.Size = new System.Drawing.Size(472, 181);
+          this.VideoDecoderSettings.TabIndex = 3;
+          this.VideoDecoderSettings.TabStop = false;
+          this.VideoDecoderSettings.Text = "Video Decoder Settings";
+          // 
+          // ColourScheme
+          // 
+          this.ColourScheme.AutoSize = true;
+          this.ColourScheme.Location = new System.Drawing.Point(253, 119);
+          this.ColourScheme.Name = "ColourScheme";
+          this.ColourScheme.Size = new System.Drawing.Size(79, 13);
+          this.ColourScheme.TabIndex = 8;
+          this.ColourScheme.Text = "Colour Scheme";
+          // 
+          // comboBoxColourScheme
+          // 
+          this.comboBoxColourScheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.comboBoxColourScheme.FormattingEnabled = true;
+          this.comboBoxColourScheme.Items.AddRange(new object[] {
+            "Default",
+            "Theater",
+            "Office",
+            "Airplane",
+            "Car"});
+          this.comboBoxColourScheme.Location = new System.Drawing.Point(256, 140);
+          this.comboBoxColourScheme.Name = "comboBoxColourScheme";
+          this.comboBoxColourScheme.Size = new System.Drawing.Size(198, 21);
+          this.comboBoxColourScheme.TabIndex = 7;
+          // 
+          // DisplayType
+          // 
+          this.DisplayType.Controls.Add(this.radioButtonDTAnamorphic);
+          this.DisplayType.Controls.Add(this.radioButtonDTPan);
+          this.DisplayType.Controls.Add(this.radioButtonDTLetterbox);
+          this.DisplayType.Controls.Add(this.radioButtonDTDefault);
+          this.DisplayType.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+          this.DisplayType.Location = new System.Drawing.Point(18, 48);
+          this.DisplayType.Name = "DisplayType";
+          this.DisplayType.Size = new System.Drawing.Size(217, 120);
+          this.DisplayType.TabIndex = 6;
+          this.DisplayType.TabStop = false;
+          this.DisplayType.Text = "Display Type";
+          // 
+          // radioButtonDTAnamorphic
+          // 
+          this.radioButtonDTAnamorphic.AutoSize = true;
+          this.radioButtonDTAnamorphic.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+          this.radioButtonDTAnamorphic.Location = new System.Drawing.Point(20, 91);
+          this.radioButtonDTAnamorphic.Name = "radioButtonDTAnamorphic";
+          this.radioButtonDTAnamorphic.Size = new System.Drawing.Size(149, 17);
+          this.radioButtonDTAnamorphic.TabIndex = 3;
+          this.radioButtonDTAnamorphic.TabStop = true;
+          this.radioButtonDTAnamorphic.Text = "Anamorphic / Raw Aspect";
+          this.radioButtonDTAnamorphic.UseVisualStyleBackColor = true;
+          // 
+          // radioButtonDTPan
+          // 
+          this.radioButtonDTPan.AutoSize = true;
+          this.radioButtonDTPan.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+          this.radioButtonDTPan.Location = new System.Drawing.Point(20, 69);
+          this.radioButtonDTPan.Name = "radioButtonDTPan";
+          this.radioButtonDTPan.Size = new System.Drawing.Size(92, 17);
+          this.radioButtonDTPan.TabIndex = 2;
+          this.radioButtonDTPan.TabStop = true;
+          this.radioButtonDTPan.Text = "Pan and Scan";
+          this.radioButtonDTPan.UseVisualStyleBackColor = true;
+          // 
+          // radioButtonDTLetterbox
+          // 
+          this.radioButtonDTLetterbox.AutoSize = true;
+          this.radioButtonDTLetterbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+          this.radioButtonDTLetterbox.Location = new System.Drawing.Point(20, 45);
+          this.radioButtonDTLetterbox.Name = "radioButtonDTLetterbox";
+          this.radioButtonDTLetterbox.Size = new System.Drawing.Size(68, 17);
+          this.radioButtonDTLetterbox.TabIndex = 1;
+          this.radioButtonDTLetterbox.TabStop = true;
+          this.radioButtonDTLetterbox.Text = "Letterbox";
+          this.radioButtonDTLetterbox.UseVisualStyleBackColor = true;
+          // 
+          // radioButtonDTDefault
+          // 
+          this.radioButtonDTDefault.AutoSize = true;
+          this.radioButtonDTDefault.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+          this.radioButtonDTDefault.Location = new System.Drawing.Point(20, 21);
+          this.radioButtonDTDefault.Name = "radioButtonDTDefault";
+          this.radioButtonDTDefault.Size = new System.Drawing.Size(96, 17);
+          this.radioButtonDTDefault.TabIndex = 0;
+          this.radioButtonDTDefault.TabStop = true;
+          this.radioButtonDTDefault.Text = "Content default";
+          this.radioButtonDTDefault.UseVisualStyleBackColor = true;
+          // 
+          // DeinterlaceMode
+          // 
+          this.DeinterlaceMode.AutoSize = true;
+          this.DeinterlaceMode.Location = new System.Drawing.Point(253, 71);
+          this.DeinterlaceMode.Name = "DeinterlaceMode";
+          this.DeinterlaceMode.Size = new System.Drawing.Size(95, 13);
+          this.DeinterlaceMode.TabIndex = 5;
+          this.DeinterlaceMode.Text = "De-Interlace Mode";
+          // 
+          // comboBoxDeInterlaceMode
+          // 
+          this.comboBoxDeInterlaceMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.comboBoxDeInterlaceMode.FormattingEnabled = true;
+          this.comboBoxDeInterlaceMode.Items.AddRange(new object[] {
             "VMR default",
             "VMR pixel adaptive",
             "VMR median filtering",
             "VMR vertical stretch"});
-            this.comboBoxDeInterlaceMode.Location = new System.Drawing.Point(256, 90);
-            this.comboBoxDeInterlaceMode.Name = "comboBoxDeInterlaceMode";
-            this.comboBoxDeInterlaceMode.Size = new System.Drawing.Size(198, 21);
-            this.comboBoxDeInterlaceMode.TabIndex = 4;
-            // 
-            // comboBoxDeInterlaceControl
-            // 
-            this.comboBoxDeInterlaceControl.FormattingEnabled = true;
-            this.comboBoxDeInterlaceControl.Items.AddRange(new object[] {
+          this.comboBoxDeInterlaceMode.Location = new System.Drawing.Point(256, 90);
+          this.comboBoxDeInterlaceMode.Name = "comboBoxDeInterlaceMode";
+          this.comboBoxDeInterlaceMode.Size = new System.Drawing.Size(198, 21);
+          this.comboBoxDeInterlaceMode.TabIndex = 4;
+          // 
+          // comboBoxDeInterlaceControl
+          // 
+          this.comboBoxDeInterlaceControl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.comboBoxDeInterlaceControl.FormattingEnabled = true;
+          this.comboBoxDeInterlaceControl.Items.AddRange(new object[] {
             "Automatic",
             "Film",
             "Video",
             "Smart"});
-            this.comboBoxDeInterlaceControl.Location = new System.Drawing.Point(256, 41);
-            this.comboBoxDeInterlaceControl.Name = "comboBoxDeInterlaceControl";
-            this.comboBoxDeInterlaceControl.Size = new System.Drawing.Size(198, 21);
-            this.comboBoxDeInterlaceControl.TabIndex = 3;
-            // 
-            // DeinterlaceControl
-            // 
-            this.DeinterlaceControl.AutoSize = true;
-            this.DeinterlaceControl.Location = new System.Drawing.Point(253, 22);
-            this.DeinterlaceControl.Name = "DeinterlaceControl";
-            this.DeinterlaceControl.Size = new System.Drawing.Size(101, 13);
-            this.DeinterlaceControl.TabIndex = 2;
-            this.DeinterlaceControl.Text = "De-Interlace Control";
-            // 
-            // checkBoxDxVA
-            // 
-            this.checkBoxDxVA.AutoSize = true;
-            this.checkBoxDxVA.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.checkBoxDxVA.Location = new System.Drawing.Point(38, 23);
-            this.checkBoxDxVA.Name = "checkBoxDxVA";
-            this.checkBoxDxVA.Size = new System.Drawing.Size(149, 17);
-            this.checkBoxDxVA.TabIndex = 0;
-            this.checkBoxDxVA.Text = "Use Hardware Accelerator";
-            this.checkBoxDxVA.UseVisualStyleBackColor = true;
-            // 
-            // AudioDecoderSettings
-            // 
-            this.AudioDecoderSettings.Controls.Add(this.comboBoxOutPutMode);
-            this.AudioDecoderSettings.Controls.Add(this.DynamicRangeControl);
-            this.AudioDecoderSettings.Controls.Add(this.ProLogicII);
-            this.AudioDecoderSettings.Controls.Add(this.comboBoxProLogicII);
-            this.AudioDecoderSettings.Controls.Add(this.comboBoxDRC);
-            this.AudioDecoderSettings.Controls.Add(this.comboBoxSpeakerSetup);
-            this.AudioDecoderSettings.Controls.Add(this.comboBoxHeadphones);
-            this.AudioDecoderSettings.Controls.Add(this.SpeakerSetup);
-            this.AudioDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.AudioDecoderSettings.Location = new System.Drawing.Point(0, 192);
-            this.AudioDecoderSettings.Name = "AudioDecoderSettings";
-            this.AudioDecoderSettings.Size = new System.Drawing.Size(472, 207);
-            this.AudioDecoderSettings.TabIndex = 2;
-            this.AudioDecoderSettings.TabStop = false;
-            this.AudioDecoderSettings.Text = "Audio Decoder Settings";
-            // 
-            // comboBoxOutPutMode
-            // 
-            this.comboBoxOutPutMode.FormattingEnabled = true;
-            this.comboBoxOutPutMode.Items.AddRange(new object[] {
+          this.comboBoxDeInterlaceControl.Location = new System.Drawing.Point(256, 41);
+          this.comboBoxDeInterlaceControl.Name = "comboBoxDeInterlaceControl";
+          this.comboBoxDeInterlaceControl.Size = new System.Drawing.Size(198, 21);
+          this.comboBoxDeInterlaceControl.TabIndex = 3;
+          // 
+          // DeinterlaceControl
+          // 
+          this.DeinterlaceControl.AutoSize = true;
+          this.DeinterlaceControl.Location = new System.Drawing.Point(253, 22);
+          this.DeinterlaceControl.Name = "DeinterlaceControl";
+          this.DeinterlaceControl.Size = new System.Drawing.Size(101, 13);
+          this.DeinterlaceControl.TabIndex = 2;
+          this.DeinterlaceControl.Text = "De-Interlace Control";
+          // 
+          // checkBoxDxVA
+          // 
+          this.checkBoxDxVA.AutoSize = true;
+          this.checkBoxDxVA.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+          this.checkBoxDxVA.Location = new System.Drawing.Point(38, 23);
+          this.checkBoxDxVA.Name = "checkBoxDxVA";
+          this.checkBoxDxVA.Size = new System.Drawing.Size(149, 17);
+          this.checkBoxDxVA.TabIndex = 0;
+          this.checkBoxDxVA.Text = "Use Hardware Accelerator";
+          this.checkBoxDxVA.UseVisualStyleBackColor = true;
+          // 
+          // AudioDecoderSettings
+          // 
+          this.AudioDecoderSettings.Controls.Add(this.comboBoxOutPutMode);
+          this.AudioDecoderSettings.Controls.Add(this.DynamicRangeControl);
+          this.AudioDecoderSettings.Controls.Add(this.ProLogicII);
+          this.AudioDecoderSettings.Controls.Add(this.comboBoxProLogicII);
+          this.AudioDecoderSettings.Controls.Add(this.comboBoxDRC);
+          this.AudioDecoderSettings.Controls.Add(this.comboBoxSpeakerSetup);
+          this.AudioDecoderSettings.Controls.Add(this.comboBoxHeadphones);
+          this.AudioDecoderSettings.Controls.Add(this.SpeakerSetup);
+          this.AudioDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+          this.AudioDecoderSettings.Location = new System.Drawing.Point(0, 192);
+          this.AudioDecoderSettings.Name = "AudioDecoderSettings";
+          this.AudioDecoderSettings.Size = new System.Drawing.Size(472, 207);
+          this.AudioDecoderSettings.TabIndex = 2;
+          this.AudioDecoderSettings.TabStop = false;
+          this.AudioDecoderSettings.Text = "Audio Decoder Settings";
+          // 
+          // comboBoxOutPutMode
+          // 
+          this.comboBoxOutPutMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.comboBoxOutPutMode.FormattingEnabled = true;
+          this.comboBoxOutPutMode.Items.AddRange(new object[] {
             "SPDIF Mode",
             "Pro Logic Mode"});
-            this.comboBoxOutPutMode.Location = new System.Drawing.Point(214, 104);
-            this.comboBoxOutPutMode.Name = "comboBoxOutPutMode";
-            this.comboBoxOutPutMode.Size = new System.Drawing.Size(183, 21);
-            this.comboBoxOutPutMode.TabIndex = 12;
-            this.comboBoxOutPutMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxOutPutMode_SelectedIndexChanged);
-            // 
-            // DynamicRangeControl
-            // 
-            this.DynamicRangeControl.AutoSize = true;
-            this.DynamicRangeControl.Location = new System.Drawing.Point(243, 146);
-            this.DynamicRangeControl.Name = "DynamicRangeControl";
-            this.DynamicRangeControl.Size = new System.Drawing.Size(119, 13);
-            this.DynamicRangeControl.TabIndex = 10;
-            this.DynamicRangeControl.Text = "Dynamic Range Control";
-            // 
-            // ProLogicII
-            // 
-            this.ProLogicII.AutoSize = true;
-            this.ProLogicII.Location = new System.Drawing.Point(22, 147);
-            this.ProLogicII.Name = "ProLogicII";
-            this.ProLogicII.Size = new System.Drawing.Size(61, 13);
-            this.ProLogicII.TabIndex = 8;
-            this.ProLogicII.Text = "Pro Logic II";
-            // 
-            // comboBoxProLogicII
-            // 
-            this.comboBoxProLogicII.FormattingEnabled = true;
-            this.comboBoxProLogicII.Items.AddRange(new object[] {
+          this.comboBoxOutPutMode.Location = new System.Drawing.Point(214, 104);
+          this.comboBoxOutPutMode.Name = "comboBoxOutPutMode";
+          this.comboBoxOutPutMode.Size = new System.Drawing.Size(183, 21);
+          this.comboBoxOutPutMode.TabIndex = 12;
+          this.comboBoxOutPutMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxOutPutMode_SelectedIndexChanged);
+          // 
+          // DynamicRangeControl
+          // 
+          this.DynamicRangeControl.AutoSize = true;
+          this.DynamicRangeControl.Location = new System.Drawing.Point(243, 146);
+          this.DynamicRangeControl.Name = "DynamicRangeControl";
+          this.DynamicRangeControl.Size = new System.Drawing.Size(119, 13);
+          this.DynamicRangeControl.TabIndex = 10;
+          this.DynamicRangeControl.Text = "Dynamic Range Control";
+          // 
+          // ProLogicII
+          // 
+          this.ProLogicII.AutoSize = true;
+          this.ProLogicII.Location = new System.Drawing.Point(22, 147);
+          this.ProLogicII.Name = "ProLogicII";
+          this.ProLogicII.Size = new System.Drawing.Size(61, 13);
+          this.ProLogicII.TabIndex = 8;
+          this.ProLogicII.Text = "Pro Logic II";
+          // 
+          // comboBoxProLogicII
+          // 
+          this.comboBoxProLogicII.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.comboBoxProLogicII.FormattingEnabled = true;
+          this.comboBoxProLogicII.Items.AddRange(new object[] {
             "Off",
             "Pro Logic",
             "Music Mode",
             "Movie Mode",
             "Matrix Mode"});
-            this.comboBoxProLogicII.Location = new System.Drawing.Point(38, 167);
-            this.comboBoxProLogicII.Name = "comboBoxProLogicII";
-            this.comboBoxProLogicII.Size = new System.Drawing.Size(183, 21);
-            this.comboBoxProLogicII.TabIndex = 7;
-            // 
-            // comboBoxDRC
-            // 
-            this.comboBoxDRC.FormattingEnabled = true;
-            this.comboBoxDRC.Items.AddRange(new object[] {
+          this.comboBoxProLogicII.Location = new System.Drawing.Point(38, 167);
+          this.comboBoxProLogicII.Name = "comboBoxProLogicII";
+          this.comboBoxProLogicII.Size = new System.Drawing.Size(183, 21);
+          this.comboBoxProLogicII.TabIndex = 7;
+          // 
+          // comboBoxDRC
+          // 
+          this.comboBoxDRC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.comboBoxDRC.FormattingEnabled = true;
+          this.comboBoxDRC.Items.AddRange(new object[] {
             "Normal",
             "Late Night",
             "Theatre"});
-            this.comboBoxDRC.Location = new System.Drawing.Point(262, 167);
-            this.comboBoxDRC.Name = "comboBoxDRC";
-            this.comboBoxDRC.Size = new System.Drawing.Size(192, 21);
-            this.comboBoxDRC.TabIndex = 4;
-            // 
-            // comboBoxSpeakerSetup
-            // 
-            this.comboBoxSpeakerSetup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxSpeakerSetup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxSpeakerSetup.Items.AddRange(new object[] {
+          this.comboBoxDRC.Location = new System.Drawing.Point(262, 167);
+          this.comboBoxDRC.Name = "comboBoxDRC";
+          this.comboBoxDRC.Size = new System.Drawing.Size(192, 21);
+          this.comboBoxDRC.TabIndex = 4;
+          // 
+          // comboBoxSpeakerSetup
+          // 
+          this.comboBoxSpeakerSetup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                      | System.Windows.Forms.AnchorStyles.Right)));
+          this.comboBoxSpeakerSetup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.comboBoxSpeakerSetup.Items.AddRange(new object[] {
             "Mono",
             "Stereo",
             "3 Speakers (2.1)",
             "4 Speakers",
             "5 Speakers",
             "6 Speakers (6.1)"});
-            this.comboBoxSpeakerSetup.Location = new System.Drawing.Point(214, 46);
-            this.comboBoxSpeakerSetup.Name = "comboBoxSpeakerSetup";
-            this.comboBoxSpeakerSetup.Size = new System.Drawing.Size(183, 21);
-            this.comboBoxSpeakerSetup.TabIndex = 1;
-            this.comboBoxSpeakerSetup.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpeakerSetup_SelectedIndexChanged);
-            // 
-            // comboBoxHeadphones
-            // 
-            this.comboBoxHeadphones.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxHeadphones.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxHeadphones.DropDownWidth = 183;
-            this.comboBoxHeadphones.Items.AddRange(new object[] {
+          this.comboBoxSpeakerSetup.Location = new System.Drawing.Point(214, 46);
+          this.comboBoxSpeakerSetup.Name = "comboBoxSpeakerSetup";
+          this.comboBoxSpeakerSetup.Size = new System.Drawing.Size(183, 21);
+          this.comboBoxSpeakerSetup.TabIndex = 1;
+          this.comboBoxSpeakerSetup.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpeakerSetup_SelectedIndexChanged);
+          // 
+          // comboBoxHeadphones
+          // 
+          this.comboBoxHeadphones.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                      | System.Windows.Forms.AnchorStyles.Right)));
+          this.comboBoxHeadphones.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+          this.comboBoxHeadphones.DropDownWidth = 183;
+          this.comboBoxHeadphones.Items.AddRange(new object[] {
             "None",
             "Dolby Headphone 1",
             "Dolby Headphone 2",
             "Dolby Headphone 3"});
-            this.comboBoxHeadphones.Location = new System.Drawing.Point(214, 76);
-            this.comboBoxHeadphones.Name = "comboBoxHeadphones";
-            this.comboBoxHeadphones.Size = new System.Drawing.Size(183, 21);
-            this.comboBoxHeadphones.TabIndex = 0;
-            // 
-            // SpeakerSetup
-            // 
-            this.SpeakerSetup.Controls.Add(this.radioButtonReceiver);
-            this.SpeakerSetup.Controls.Add(this.radioButtonHeadphones);
-            this.SpeakerSetup.Controls.Add(this.radioButtonSpeakers);
-            this.SpeakerSetup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.SpeakerSetup.Location = new System.Drawing.Point(18, 19);
-            this.SpeakerSetup.Name = "SpeakerSetup";
-            this.SpeakerSetup.Size = new System.Drawing.Size(436, 114);
-            this.SpeakerSetup.TabIndex = 13;
-            this.SpeakerSetup.TabStop = false;
-            this.SpeakerSetup.Text = "SpeakerSetup";
-            // 
-            // radioButtonReceiver
-            // 
-            this.radioButtonReceiver.AutoSize = true;
-            this.radioButtonReceiver.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.radioButtonReceiver.Location = new System.Drawing.Point(20, 86);
-            this.radioButtonReceiver.Name = "radioButtonReceiver";
-            this.radioButtonReceiver.Size = new System.Drawing.Size(108, 17);
-            this.radioButtonReceiver.TabIndex = 11;
-            this.radioButtonReceiver.TabStop = true;
-            this.radioButtonReceiver.Text = "External Receiver";
-            this.radioButtonReceiver.UseVisualStyleBackColor = true;
-            this.radioButtonReceiver.CheckedChanged += new System.EventHandler(this.radioButtonReceiver_CheckedChanged);
-            // 
-            // radioButtonHeadphones
-            // 
-            this.radioButtonHeadphones.AutoSize = true;
-            this.radioButtonHeadphones.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.radioButtonHeadphones.Location = new System.Drawing.Point(20, 58);
-            this.radioButtonHeadphones.Name = "radioButtonHeadphones";
-            this.radioButtonHeadphones.Size = new System.Drawing.Size(85, 17);
-            this.radioButtonHeadphones.TabIndex = 9;
-            this.radioButtonHeadphones.TabStop = true;
-            this.radioButtonHeadphones.Text = "Headphones";
-            this.radioButtonHeadphones.UseVisualStyleBackColor = true;
-            this.radioButtonHeadphones.CheckedChanged += new System.EventHandler(this.radioButtonHeadphones_CheckedChanged);
-            // 
-            // radioButtonSpeakers
-            // 
-            this.radioButtonSpeakers.AutoSize = true;
-            this.radioButtonSpeakers.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.radioButtonSpeakers.Location = new System.Drawing.Point(20, 31);
-            this.radioButtonSpeakers.Name = "radioButtonSpeakers";
-            this.radioButtonSpeakers.Size = new System.Drawing.Size(117, 17);
-            this.radioButtonSpeakers.TabIndex = 6;
-            this.radioButtonSpeakers.TabStop = true;
-            this.radioButtonSpeakers.Text = "Computer Speakers";
-            this.radioButtonSpeakers.UseVisualStyleBackColor = true;
-            this.radioButtonSpeakers.CheckedChanged += new System.EventHandler(this.radioButtonSpeakers_CheckedChanged);
-            // 
-            // comboBoxColourScheme
-            // 
-            this.comboBoxColourScheme.FormattingEnabled = true;
-            this.comboBoxColourScheme.Items.AddRange(new object[] {
-            "Default",
-            "Theater",
-            "Office",
-            "Airplane",
-            "Car"});
-            this.comboBoxColourScheme.Location = new System.Drawing.Point(256, 140);
-            this.comboBoxColourScheme.Name = "comboBoxColourScheme";
-            this.comboBoxColourScheme.Size = new System.Drawing.Size(198, 21);
-            this.comboBoxColourScheme.TabIndex = 7;
-            // 
-            // ColourScheme
-            // 
-            this.ColourScheme.AutoSize = true;
-            this.ColourScheme.Location = new System.Drawing.Point(253, 119);
-            this.ColourScheme.Name = "ColourScheme";
-            this.ColourScheme.Size = new System.Drawing.Size(79, 13);
-            this.ColourScheme.TabIndex = 8;
-            this.ColourScheme.Text = "Colour Scheme";
-            // 
-            // PureVideoDecoderFilters
-            // 
-            this.Controls.Add(this.VideoDecoderSettings);
-            this.Controls.Add(this.AudioDecoderSettings);
-            this.Name = "PureVideoDecoderFilters";
-            this.Size = new System.Drawing.Size(472, 408);
-            this.VideoDecoderSettings.ResumeLayout(false);
-            this.VideoDecoderSettings.PerformLayout();
-            this.DisplayType.ResumeLayout(false);
-            this.DisplayType.PerformLayout();
-            this.AudioDecoderSettings.ResumeLayout(false);
-            this.AudioDecoderSettings.PerformLayout();
-            this.SpeakerSetup.ResumeLayout(false);
-            this.SpeakerSetup.PerformLayout();
-            this.ResumeLayout(false);
+          this.comboBoxHeadphones.Location = new System.Drawing.Point(214, 76);
+          this.comboBoxHeadphones.Name = "comboBoxHeadphones";
+          this.comboBoxHeadphones.Size = new System.Drawing.Size(183, 21);
+          this.comboBoxHeadphones.TabIndex = 0;
+          // 
+          // SpeakerSetup
+          // 
+          this.SpeakerSetup.Controls.Add(this.radioButtonReceiver);
+          this.SpeakerSetup.Controls.Add(this.radioButtonHeadphones);
+          this.SpeakerSetup.Controls.Add(this.radioButtonSpeakers);
+          this.SpeakerSetup.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+          this.SpeakerSetup.Location = new System.Drawing.Point(18, 19);
+          this.SpeakerSetup.Name = "SpeakerSetup";
+          this.SpeakerSetup.Size = new System.Drawing.Size(436, 114);
+          this.SpeakerSetup.TabIndex = 13;
+          this.SpeakerSetup.TabStop = false;
+          this.SpeakerSetup.Text = "SpeakerSetup";
+          // 
+          // radioButtonReceiver
+          // 
+          this.radioButtonReceiver.AutoSize = true;
+          this.radioButtonReceiver.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+          this.radioButtonReceiver.Location = new System.Drawing.Point(20, 86);
+          this.radioButtonReceiver.Name = "radioButtonReceiver";
+          this.radioButtonReceiver.Size = new System.Drawing.Size(108, 17);
+          this.radioButtonReceiver.TabIndex = 11;
+          this.radioButtonReceiver.TabStop = true;
+          this.radioButtonReceiver.Text = "External Receiver";
+          this.radioButtonReceiver.UseVisualStyleBackColor = true;
+          this.radioButtonReceiver.CheckedChanged += new System.EventHandler(this.radioButtonReceiver_CheckedChanged);
+          // 
+          // radioButtonHeadphones
+          // 
+          this.radioButtonHeadphones.AutoSize = true;
+          this.radioButtonHeadphones.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+          this.radioButtonHeadphones.Location = new System.Drawing.Point(20, 58);
+          this.radioButtonHeadphones.Name = "radioButtonHeadphones";
+          this.radioButtonHeadphones.Size = new System.Drawing.Size(85, 17);
+          this.radioButtonHeadphones.TabIndex = 9;
+          this.radioButtonHeadphones.TabStop = true;
+          this.radioButtonHeadphones.Text = "Headphones";
+          this.radioButtonHeadphones.UseVisualStyleBackColor = true;
+          this.radioButtonHeadphones.CheckedChanged += new System.EventHandler(this.radioButtonHeadphones_CheckedChanged);
+          // 
+          // radioButtonSpeakers
+          // 
+          this.radioButtonSpeakers.AutoSize = true;
+          this.radioButtonSpeakers.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+          this.radioButtonSpeakers.Location = new System.Drawing.Point(20, 31);
+          this.radioButtonSpeakers.Name = "radioButtonSpeakers";
+          this.radioButtonSpeakers.Size = new System.Drawing.Size(117, 17);
+          this.radioButtonSpeakers.TabIndex = 6;
+          this.radioButtonSpeakers.TabStop = true;
+          this.radioButtonSpeakers.Text = "Computer Speakers";
+          this.radioButtonSpeakers.UseVisualStyleBackColor = true;
+          this.radioButtonSpeakers.CheckedChanged += new System.EventHandler(this.radioButtonSpeakers_CheckedChanged);
+          // 
+          // PureVideoDecoderFilters
+          // 
+          this.Controls.Add(this.VideoDecoderSettings);
+          this.Controls.Add(this.AudioDecoderSettings);
+          this.Name = "PureVideoDecoderFilters";
+          this.Size = new System.Drawing.Size(472, 408);
+          this.VideoDecoderSettings.ResumeLayout(false);
+          this.VideoDecoderSettings.PerformLayout();
+          this.DisplayType.ResumeLayout(false);
+          this.DisplayType.PerformLayout();
+          this.AudioDecoderSettings.ResumeLayout(false);
+          this.AudioDecoderSettings.PerformLayout();
+          this.SpeakerSetup.ResumeLayout(false);
+          this.SpeakerSetup.PerformLayout();
+          this.ResumeLayout(false);
 
         }
         #endregion
