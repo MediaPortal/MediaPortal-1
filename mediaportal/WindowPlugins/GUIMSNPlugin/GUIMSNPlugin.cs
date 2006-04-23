@@ -138,7 +138,10 @@ namespace MediaPortal.GUI.MSN
     {
       if (_currentconversation != null)
       {
-        _currentconversation.Switchboard.Close();
+        if (_currentconversation.Switchboard.IsSessionEstablished)
+        {
+          _currentconversation.Switchboard.Close();
+        }
       }
       _currentconversation = null;
       contactname = String.Empty;
@@ -218,6 +221,7 @@ namespace MediaPortal.GUI.MSN
           UpdateStatusButton();
           UpdateSortButton();
           Update();
+          _refreshContactList = true;
           return true;
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
@@ -250,6 +254,7 @@ namespace MediaPortal.GUI.MSN
               _isDialogVisible = true;
 
               StartMSN(true);
+
             }
 
             ShowThumbPanel();
@@ -753,8 +758,10 @@ namespace MediaPortal.GUI.MSN
           _messenger = new XihSolutions.DotMSN.Messenger();
           _messenger.Credentials.Account = emailadres;
           _messenger.Credentials.Password = password;
-          _messenger.Credentials.ClientCode = "12345";
-          _messenger.Credentials.ClientID = "12345";
+          // We need to use a valid ClientCode/ID for Server Pings (Challenges)
+          // otherwise we receive a server error 540 after a while and loose the connection
+          _messenger.Credentials.ClientCode = "Q1P7W2E4J9R8U3S5";
+          _messenger.Credentials.ClientID = "msmsgs@msnmsgr.com";
           Log.Write("MSN: email:{0} pwd:*********", emailadres);
           using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
           {
@@ -856,6 +863,11 @@ namespace MediaPortal.GUI.MSN
     private void Nameserver_SignedIn(object sender, EventArgs e)
     {
       Log.Write("MSN:signed in.");
+      if (_isDialogVisible)
+      {
+        _isDialogVisible = false;
+        _dlgProgress.Close();
+      }
       _refreshContactList = true;
     }
 
@@ -864,6 +876,7 @@ namespace MediaPortal.GUI.MSN
     /// </summary>
     private void Nameserver_SignedOff(object sender, SignedOffEventArgs e)
     {
+      Update();
       Log.Write("MSN:signed off.");
     }
 
