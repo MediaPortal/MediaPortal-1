@@ -152,7 +152,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.comboBoxDeInterlace);
       this.mpGroupBox1.Controls.Add(this.checkBoxDxVA);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(0, 36);
+      this.mpGroupBox1.Location = new System.Drawing.Point(0, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(472, 143);
       this.mpGroupBox1.TabIndex = 5;
@@ -166,10 +166,10 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel4.MaximumSize = new System.Drawing.Size(240, 0);
       this.mpLabel4.Name = "mpLabel4";
       this.mpLabel4.RightToLeft = System.Windows.Forms.RightToLeft.No;
-      this.mpLabel4.Size = new System.Drawing.Size(231, 39);
+      this.mpLabel4.Size = new System.Drawing.Size(224, 39);
       this.mpLabel4.TabIndex = 6;
-      this.mpLabel4.Text = "Team MediaPortal recommends enabling these options for better CPU utlization. If " +
-          "DxVA is enable then De-Interlacing is done with VMR9.";
+      this.mpLabel4.Text = "It is recommended to enable these options for better CPU utlization. If DxVA is e" +
+          "nabled, De-Interlacing is done using VMR9.";
       // 
       // mpLabel1
       // 
@@ -189,7 +189,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.Controls.Add(this.comboBoxOutPutMode);
       this.mpGroupBox2.Controls.Add(this.comboBoxSpeakerConfig);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(0, 195);
+      this.mpGroupBox2.Location = new System.Drawing.Point(0, 152);
       this.mpGroupBox2.Name = "mpGroupBox2";
       this.mpGroupBox2.Size = new System.Drawing.Size(472, 166);
       this.mpGroupBox2.TabIndex = 0;

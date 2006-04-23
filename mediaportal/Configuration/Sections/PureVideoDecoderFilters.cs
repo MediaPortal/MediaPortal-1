@@ -293,9 +293,9 @@ namespace MediaPortal.Configuration.Sections
           this.checkBoxDxVA.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
           this.checkBoxDxVA.Location = new System.Drawing.Point(38, 23);
           this.checkBoxDxVA.Name = "checkBoxDxVA";
-          this.checkBoxDxVA.Size = new System.Drawing.Size(149, 17);
+          this.checkBoxDxVA.Size = new System.Drawing.Size(154, 17);
           this.checkBoxDxVA.TabIndex = 0;
-          this.checkBoxDxVA.Text = "Use Hardware Accelerator";
+          this.checkBoxDxVA.Text = "Use Hardware Acceleration";
           this.checkBoxDxVA.UseVisualStyleBackColor = true;
           // 
           // AudioDecoderSettings
