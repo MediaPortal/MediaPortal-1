@@ -87,5 +87,6 @@ namespace MediaPortal.Hardware
 
     // FIC Spectra specific
     AspectRatio = 39,
+    Print = 78,
   }
 }
