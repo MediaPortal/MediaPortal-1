@@ -257,6 +257,7 @@ namespace MediaPortal.Configuration.Sections
       } while (found);
 
       EditCaptureCardForm editCard = new EditCaptureCardForm(cardid, true, null);
+      if (editCard.IsDisposed) return;
 
       DialogResult dialogResult = editCard.ShowDialog(this);
       if (dialogResult == DialogResult.OK)
