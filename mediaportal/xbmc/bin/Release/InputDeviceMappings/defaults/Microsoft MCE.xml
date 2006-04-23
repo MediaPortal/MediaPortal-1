@@ -169,5 +169,8 @@
 		<button name="Aspect Ratio" code="39">
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
 		</button>
+		<button name="Print" code="78">
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
+		</button>
 	</remote>
 </mappings>
