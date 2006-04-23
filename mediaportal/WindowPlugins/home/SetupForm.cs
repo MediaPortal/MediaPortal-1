@@ -2451,6 +2451,11 @@ namespace home
       this.treeView.ItemHeight = this.treeView.ItemHeight + 3;
       this.treeView.Indent = this.treeView.Indent + 3;
 
+      availablePlugins.Clear();
+      loadedPlugins.Clear();
+      listBox.Items.Clear();
+      listView.Items.Clear();
+
       EnumeratePlugins();
       LoadPlugins();
       PopulateListBox();
