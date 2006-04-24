@@ -1184,41 +1184,77 @@ namespace MediaPortal.GUI.Pictures
               g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
               g.DrawImage(imgFolder, 0, 0, width, height);
-
+              Log.Write("Lade: " + (string)pictureList[0]);
               int x, y, w, h;
               x = 0; y = 0; w = thumbnailWidth; h = thumbnailHeight;
-              using (Image img = LoadPicture((string)pictureList[0]))
+
+              //Load first of 4 images for the folder thumb.
+              //Avoid crashes caused by damaged image files:
+              try
               {
-                g.DrawImage(img, x + 10, y + 10, w, h);
+                using (Image img = LoadPicture((string)pictureList[0]))
+                {
+                  g.DrawImage(img, x + 10, y + 10, w, h);
+                }
+              }
+              catch (Exception)
+              {
+                Log.Write("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[0]);
               }
 
+              //If exists load second of 4 images for the folder thumb.
               if (pictureList.Count > 1)
               {
-                using (Image img = LoadPicture((string)pictureList[1]))
+                try
                 {
-                  g.DrawImage(img, x + thumbnailWidth + 20, y + 10, w, h);
+                  using (Image img = LoadPicture((string)pictureList[1]))
+                  {
+                    g.DrawImage(img, x + thumbnailWidth + 20, y + 10, w, h);
+                  }
+                }
+                catch (Exception)
+                {
+                  Log.Write("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[1]);
                 }
               }
 
+              //If exists load third of 4 images for the folder thumb.
               if (pictureList.Count > 2)
               {
-                using (Image img = LoadPicture((string)pictureList[2]))
+                try
                 {
-                  g.DrawImage(img, x + 10, y + thumbnailHeight + 20, w, h);
+                  using (Image img = LoadPicture((string)pictureList[2]))
+                  {
+                    g.DrawImage(img, x + 10, y + thumbnailHeight + 20, w, h);
+                  }
+                }
+                catch (Exception)
+                {
+                  Log.Write("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[2]);
                 }
               }
+
+              //If exists load fourth of 4 images for the folder thumb.
               if (pictureList.Count > 3)
               {
-                using (Image img = LoadPicture((string)pictureList[3]))
+                try
                 {
-                  g.DrawImage(img, x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
+                  using (Image img = LoadPicture((string)pictureList[3]))
+                  {
+                    g.DrawImage(img, x + thumbnailWidth + 20, y + thumbnailHeight + 20, w, h);
+                  }
+                }
+                catch (Exception)
+                {
+                  Log.Write("Damaged picture file found: {0}. Try to repair or delete this file please!", (string)pictureList[3]);
                 }
               }
             }//using (Graphics g = Graphics.FromImage(bmp) )
             try
             {
               string thumbnailImageName = path + @"\folder.jpg";
-              Utils.FileDelete(thumbnailImageName);
+              if (System.IO.File.Exists(thumbnailImageName))
+                Utils.FileDelete(thumbnailImageName);
               bmp.Save(thumbnailImageName, System.Drawing.Imaging.ImageFormat.Jpeg);
 
               File.SetAttributes(thumbnailImageName, FileAttributes.Hidden);
