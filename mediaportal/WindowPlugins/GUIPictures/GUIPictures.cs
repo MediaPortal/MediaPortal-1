@@ -1184,7 +1184,6 @@ namespace MediaPortal.GUI.Pictures
               g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
               g.DrawImage(imgFolder, 0, 0, width, height);
-              Log.Write("Lade: " + (string)pictureList[0]);
               int x, y, w, h;
               x = 0; y = 0; w = thumbnailWidth; h = thumbnailHeight;
 
