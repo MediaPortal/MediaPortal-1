@@ -231,7 +231,16 @@ namespace MediaPortal.Util
       if (!isRemote)
       {
         if (strDir != "cdda:")
-          strRoot = System.IO.Path.GetFullPath(strDir);
+        {
+          try
+          {
+            strRoot = System.IO.Path.GetFullPath(strDir);
+          }
+          catch (Exception ex)
+          {
+            Log.Write("VirtualDirectory: Unable to get path for Root Share:{0} reason:{1}", strDir, ex.Message);
+          }
+        }
       }
 
       foreach (Share share in m_shares)
@@ -282,7 +291,16 @@ namespace MediaPortal.Util
       if (!isRemote)
       {
         if (strDir != "cdda:")
-          strRoot = System.IO.Path.GetFullPath(strDir);
+        {
+          try
+          {
+            strRoot = System.IO.Path.GetFullPath(strDir);
+          }
+          catch (Exception ex)
+          {
+            Log.Write("VirtualDirectory: Unable to get path for Protected Share:{0} reason:{1)", strDir, ex.Message);
+          }
+        }
       }
 
       foreach (Share share in m_shares)
