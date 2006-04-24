@@ -49,37 +49,33 @@ namespace MediaPortal.Hardware
 
 		void Init()
 		{
-			try
-			{
-				_deviceClass = Device.HidGuid;
+      _deviceClass = Device.HidGuid;
 
-				DeviceCollection devices = Device.GetDevicesByClass(_deviceClass);
+      DeviceCollection devices = Device.GetDevicesByClass(_deviceClass);
 
-				_doubleClickTime = GetDoubleClickTime();
+      _doubleClickTime = GetDoubleClickTime();
 
-				_deviceBuffer = new byte[256];
-				_deviceWatcher = new DeviceWatcher();
-				_deviceWatcher.Create();
-				_deviceWatcher.Class = _deviceClass;
-				_deviceWatcher.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
-				_deviceWatcher.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
-				_deviceWatcher.SettingsChanged += new SettingsChanged(OnSettingsChanged);
-				_deviceWatcher.RegisterDeviceArrival();
-				
-				Open();
-			}
-			catch(Exception e)
-			{
-				Log.Write("MCE: Init - Exception {0}", e.Message);
-			}
+      _deviceBuffer = new byte[256];
+      _deviceWatcher = new DeviceWatcher();
+      _deviceWatcher.Create();
+      _deviceWatcher.Class = _deviceClass;
+
+      Open();
+
+      _deviceWatcher.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
+      _deviceWatcher.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
+      _deviceWatcher.SettingsChanged += new SettingsChanged(OnSettingsChanged);
+      _deviceWatcher.RegisterDeviceArrival();
 		}
 
 		protected override void Open()
 		{
 			string devicePath = FindDevice(_deviceClass);
 
-			if(devicePath == null)
-				return;
+      if (devicePath == null)
+        throw new Exception("No MCE remote found");
+
+      if (LogVerbose) Log.Write("MCE: Using: {0}", devicePath);
 
 			IntPtr deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open, FileFlag.Overlapped, 0);
 
@@ -113,15 +109,11 @@ namespace MediaPortal.Hardware
               Click(this, new RemoteEventArgs(_doubleClickButton));
           }
         }
-      }
-      catch (Exception ex)
-      {
-        Log.Write("MCE: OnReadComplete - Exception {0}", ex);
-      }
-      finally
-      {
         // begin another asynchronous read from the device
         _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
+      }
+      catch (System.IO.IOException)
+      {
       }
 		}
 
@@ -153,8 +145,9 @@ namespace MediaPortal.Hardware
 		int							_doubleClickTick = 0;
 		RemoteButton				_doubleClickButton;
 
+    #endregion Members
+
     const int INVALID_HANDLE_VALUE = -1;
 
-		#endregion Members
 	}
 }

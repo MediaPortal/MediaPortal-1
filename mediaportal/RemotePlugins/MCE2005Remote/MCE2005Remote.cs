@@ -69,54 +69,66 @@ namespace MediaPortal.InputDevices
       {
         controlEnabled = xmlreader.GetValueAsBool("remote", "MCE", true);
         logVerbose = xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);
-
-        if (logVerbose) Log.Write("MCE: Init");
-
-        try
-        {
-          inputHandler = new InputHandler("Microsoft MCE");
-        }
-        catch (System.IO.FileNotFoundException)
-        {
-          controlEnabled = false;
-          Log.Write("MCE: can't find default mapping file - reinstall MediaPortal");
-        }
-        catch (System.Xml.XmlException)
-        {
-          controlEnabled = false;
-          Log.Write("MCE: error in default mapping file - reinstall MediaPortal");
-        }
-        catch (System.ApplicationException)
-        {
-          controlEnabled = false;
-          Log.Write("MCE: version mismatch in default mapping file - reinstall MediaPortal");
-        }
       }
+      if (!controlEnabled)
+        return;
 
-      if (controlEnabled)
+      if (logVerbose) Log.Write("MCE: Initializing MCE remote");
+
+      try
       {
-
+        Remote.LogVerbose = logVerbose;
         // Register Device
         Remote.Click += new RemoteEventHandler(OnRemoteClick);
+        Remote.DeviceRemoval += new DeviceEventHandler(OnDeviceRemoval);
+      }
+      catch (Exception ex)
+      {
+        controlEnabled = false;
+        Log.Write("MCE: {0} - support disabled until MP restart", ex.InnerException.Message);
+        return;
+      }
 
-        // Kill ehtray.exe since that program catches the MCE remote keys and would start MCE 2005
-        Process[] myProcesses;
-        myProcesses = Process.GetProcesses();
-        foreach (Process myProcess in myProcesses)
-          if (myProcess.ProcessName.ToLower().Equals("ehtray"))
-            try
-            {
-              myProcess.Kill();
-            }
-            catch (Exception)
-            {
-              if (logVerbose) Log.Write("MCE: Cannot stop ehtray.exe");
-            }
-        if (logVerbose)
-          if (controlEnabled)
-            Log.Write("MCE: MCE remote enabled");
-          else
-            Log.Write("MCE: MCE remote disabled");
+      // Kill ehtray.exe since that program catches the MCE remote keys and would start MCE 2005
+      Process[] myProcesses;
+      myProcesses = Process.GetProcesses();
+      foreach (Process myProcess in myProcesses)
+        if (myProcess.ProcessName.ToLower().Equals("ehtray"))
+          try
+          {
+            Log.Write("MCE: Stopping Microsoft ehtray");
+            myProcess.Kill();
+          }
+          catch (Exception)
+          {
+            Log.Write("MCE: Cannot stop Microsoft ehtray");
+            DeInit();
+            return;
+          }
+
+      Log.Write("MCE: MCE remote enabled");
+
+      try
+      {
+        inputHandler = new InputHandler("Microsoft MCE");
+      }
+      catch (System.IO.FileNotFoundException)
+      {
+        Log.Write("MCE: can't find default mapping file - reinstall MediaPortal");
+        DeInit();
+        return;
+      }
+      catch (System.Xml.XmlException)
+      {
+        Log.Write("MCE: error in default mapping file - reinstall MediaPortal");
+        DeInit();
+        return;
+      }
+      catch (System.ApplicationException)
+      {
+        Log.Write("MCE: version mismatch in default mapping file - reinstall MediaPortal");
+        DeInit();
+        return;
       }
     }
 
@@ -126,19 +138,27 @@ namespace MediaPortal.InputDevices
     /// </summary>
     public void DeInit()
     {
-      if (logVerbose) Log.Write("MCE: DeInit");
-      Remote.Click -= new RemoteEventHandler(OnRemoteClick);
+      if (controlEnabled)
+      {
+        if (logVerbose) Log.Write("MCE: Stopping MCE remote");
+        Remote.Click -= new RemoteEventHandler(OnRemoteClick);
+        inputHandler = null;
+        controlEnabled = false;
+      }
     }
 
-    void OnDeviceRemoval()
+    void OnDeviceRemoval(object sender, EventArgs e)
     {
-      Log.Write("MCE: OnDeviceRemoval");
+      Remote.DeviceRemoval -= new DeviceEventHandler(OnDeviceRemoval);
+      Remote.DeviceArrival += new DeviceEventHandler(OnDeviceArrival);
+      Log.Write("MCE: MCE receiver has been unplugged");
       DeInit();
     }
 
-    void OnDeviceArrival()
+    void OnDeviceArrival(object sender, EventArgs e)
     {
-      Log.Write("MCE: OnDeviceArrival");
+      Remote.DeviceArrival -= new DeviceEventHandler(OnDeviceArrival);
+      Log.Write("MCE: MCE receiver detected");
       Init();
     }
 
@@ -158,7 +178,7 @@ namespace MediaPortal.InputDevices
     /// </summary>
     /// <param name="button">Remote Button</param>
     void OnRemoteClick(object sender, RemoteEventArgs e)
-      //RemoteButton button)
+    //RemoteButton button)
     {
       RemoteButton button = e.Button;
       if (logVerbose) Log.Write("MCE: Incoming button command: {0}", button);

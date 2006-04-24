@@ -128,26 +128,20 @@ namespace MediaPortal.Hardware
           throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
         }
 
-        Log.Write("MCE: Found: {0}", deviceInterfaceDetailData.DevicePath);
-        
+        if (LogVerbose) Log.Write("MCE: Found: {0}", deviceInterfaceDetailData.DevicePath);
+
         if ((deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0471&pid_0815") != -1) || // Microsoft/Philips 2005
         (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_006d") != -1) ||     // Microsoft/Philips 2004
         (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1460&pid_9150") != -1) ||     // HP
         (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_107b&pid_3009") != -1) ||     // FIC Spectra/Mycom Mediacenter
-        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0609&pid_031d") != -1) ||     // Toshiba MCE remote
-        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_03ee&pid_2501") != -1) ||     // Mitsumi MCE remote
-        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_045e&pid_0040") != -1) ||     // Zalman HD160 MCE remote
-        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_18b1&pid_0037") != -1))       // Maxter
+        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0609&pid_031d") != -1) ||     // Toshiba/Hauppauge SMK MCE remote
+        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_03ee&pid_2501") != -1))       // Mitsumi MCE remote
         {
           SetupDiDestroyDeviceInfoList(handle);
           devicePath = deviceInterfaceDetailData.DevicePath;
           break;
         }
       }
-      if (devicePath != string.Empty)
-        Log.Write("MCE: Using: {0}", devicePath);
-      else
-        Log.Write("MCE: No compatible device found");
       return devicePath;
     }
 
@@ -232,6 +226,7 @@ namespace MediaPortal.Hardware
     protected FileStream _deviceStream;
     protected byte[] _deviceBuffer;
     internal DeviceWatcher _deviceWatcher;
+    static bool _logVerbose;
 
     #endregion Members
 
@@ -247,6 +242,18 @@ namespace MediaPortal.Hardware
         HidD_GetHidGuid(ref guid);
 
         return guid;
+      }
+    }
+
+    public static bool LogVerbose
+    {
+      set
+      {
+        _logVerbose = value;
+      }
+      get
+      {
+        return _logVerbose;
       }
     }
 
