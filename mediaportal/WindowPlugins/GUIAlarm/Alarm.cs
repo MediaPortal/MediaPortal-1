@@ -1030,12 +1030,15 @@ namespace MediaPortal.GUI.Alarm
         get
         {
             bool disallowShutdown = false;
-            foreach (Alarm a in _Alarms)
+            if (_Alarms != null)
             {
+              foreach (Alarm a in _Alarms)
+              {
                 if (a.DisallowShutdown == true)
                 {
-                    disallowShutdown = true;
+                  disallowShutdown = true;
                 }
+              }
             }
 
             return disallowShutdown;
