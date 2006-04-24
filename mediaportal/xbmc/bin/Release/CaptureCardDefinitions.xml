@@ -98,13 +98,13 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="NVTV Tuner"				checkdevice="true"/>
-        <filter cat="tvaudio"		name="NVTV Audio"				checkdevice="true"/>
-        <filter cat="crossbar"		name="NVTV Crossbar"			checkdevice="true"/>
-        <filter cat="capture"		name="NVTV"						checkdevice="true"/>
-        <filter cat="videncoder"	name="NVTV Encoder"				checkdevice="true"/>
-        <filter cat="audencoder"	name="NVIDIA Audio Encoder"		checkdevice="false"/>
-        <filter cat="mux"			name="NVIDIA MPEG Multiplexer"	checkdevice="false"/>
+        <filter cat="tvtuner"		  name="NVTV Tuner"				        checkdevice="true"/>
+        <filter cat="tvaudio"		  name="NVTV Audio"				        checkdevice="true"/>
+        <filter cat="crossbar"		name="NVTV Crossbar"			      checkdevice="true"/>
+        <filter cat="capture"		  name="NVTV"						          checkdevice="true"/>
+        <filter cat="videncoder"	name="NVTV Encoder"				      checkdevice="true"/>
+        <filter cat="audencoder"	name="NVIDIA Audio Encoder"		  checkdevice="false"/>
+        <filter cat="mux"			    name="NVIDIA MPEG Multiplexer"	checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
@@ -114,8 +114,8 @@
         <connection sourcefilter="crossbar"     sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
         <connection sourcefilter="capture"      sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"      sourcepin="1" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+        <connection sourcefilter="videncoder"	  sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+        <connection sourcefilter="audencoder"	  sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -11758,6 +11758,42 @@
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
         <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
         <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"        sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Conexant Falcon II" capturename="Conexant Falcon Video Capture" devid="ven_4444&amp;dev_0016&amp;subsys_052b1154&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
+    <tv>
+      <interface cat="encoder" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"  name="Conexant Falcon Tuner"         checkdevice="true"/>
+        <filter cat="tvaudio"  name="Conexant Falcon TvAudio"       checkdevice="true"/>
+        <filter cat="crossbar" name="Conexant Falcon Crossbar"      checkdevice="true"/>
+        <filter cat="capture"  name="Conexant Falcon Video Capture" checkdevice="true"/>
+        <filter cat="encoder"  name="Conexant Falcon Encoder"       checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar" sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar" sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="encoder"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Club 3D Zap-TV255M" capturename="DVB-T Mobility TV receiver" devid="vid_10b8&amp;pid_0bc7&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="tunerdevice" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"/>
+        <filter cat="tunerdevice"     name="DVB-T Mobility TV receiver"       checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
