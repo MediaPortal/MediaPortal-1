@@ -62,7 +62,7 @@ namespace MediaPortal.GUI.MSN
 				msg.SendToTargetWindow = true;
 				GUIGraphicsContext.SendMessage(msg);
 				
-				GUIMSNPlugin.CloseConversation();
+				// GUIMSNPlugin.CloseConversation();
 
 				GUIWindowManager.ShowPreviousWindow();
         return;
@@ -78,7 +78,15 @@ namespace MediaPortal.GUI.MSN
 					OnMessage(msg);
 				}
       }
-
+      else
+      {
+        // translate all other actions from regular keypresses back to keypresses
+        if (action.m_key != null && action.m_key.KeyChar >= 32)
+        {
+          action.wID = Action.ActionType.ACTION_KEY_PRESSED;
+        }
+      } 
+      
       base.OnAction(action);
     }
 
@@ -120,7 +128,7 @@ namespace MediaPortal.GUI.MSN
           {
             if (g_Player.IsVideo || g_Player.IsDVD) g_Player.Pause();
           }
-*/          
+*/
 					GUIWindowManager.UnRoute();
           break;
 

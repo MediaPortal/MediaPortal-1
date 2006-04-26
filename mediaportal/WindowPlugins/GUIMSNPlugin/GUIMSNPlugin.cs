@@ -960,6 +960,10 @@ namespace MediaPortal.GUI.MSN
       // we want to be accept filetransfer invitations
       //e.Conversation.FileTransferHandler.InvitationReceived +=new DotMSN.FileTransferHandler.FileTransferInvitationHandler(FileTransferHandler_FileTransferInvitation);
       UpdateStatusButton();
+      if (_currentconversation == null)
+      {
+        _currentconversation = e.Conversation;
+      }
     }
 
     void Switchboard_AllContactsLeft(object sender, EventArgs e)
