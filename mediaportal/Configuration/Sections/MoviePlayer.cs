@@ -96,12 +96,61 @@ namespace MediaPortal.Configuration.Sections
 
         audioRendererComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "Default DirectSound Device");
 
-
         //
         // Set codecs
+        string videoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
+        string audioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
 
-        audioCodecComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
-        videoCodecComboBox.SelectedItem = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
+        if (audioCodec == String.Empty)
+        {
+          ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+          if (availableAudioFilters.Count > 0)
+          {
+            bool Mpeg2DecFilterFound = true;
+            bool DScalerFilterFound = true;
+            audioCodec = (string)availableAudioFilters[0];
+            foreach (string filter in availableAudioFilters)
+            {
+              if (filter.Equals("MPEG/AC3/DTS/LPCM Audio Decoder"))
+              {
+                Mpeg2DecFilterFound = true;
+              }
+              if (filter.Equals("DScaler Audio Decoder"))
+              {
+                DScalerFilterFound = true;
+              }
+            }
+            if (Mpeg2DecFilterFound) audioCodec = "MPEG/AC3/DTS/LPCM Audio Decoder";
+            else if (DScalerFilterFound) audioCodec = "DScaler Audio Decoder";
+          }
+        }
+
+        if (videoCodec == String.Empty)
+        {
+          ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+          bool Mpeg2DecFilterFound = true;
+          bool DScalerFilterFound = true;
+          if (availableVideoFilters.Count > 0)
+          {
+            videoCodec = (string)availableVideoFilters[0];
+            foreach (string filter in availableVideoFilters)
+            {
+              if (filter.Equals("Mpeg2Dec Filter"))
+              {
+                Mpeg2DecFilterFound = true;
+              }
+              if (filter.Equals("DScaler Mpeg2 Video Decoder"))
+              {
+                DScalerFilterFound = true;
+              }
+            }
+            if (Mpeg2DecFilterFound) videoCodec = "Mpeg2Dec Filter";
+            else if (DScalerFilterFound) videoCodec = "DScaler Mpeg2 Video Decoder";
+          }
+        }
+
+        audioCodecComboBox.SelectedItem = audioCodec;
+        videoCodecComboBox.SelectedItem = videoCodec;
       }
     }
 
