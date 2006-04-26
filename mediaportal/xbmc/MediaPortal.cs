@@ -2513,11 +2513,19 @@ public class MediaPortalApp : D3DApp, IRender
 
   public static void SetDWORDRegKey(RegistryKey hklm, string Key, string Value, Int32 iValue)
   {
-    RegistryKey subkey = hklm.CreateSubKey(Key);
-    if (subkey != null)
+    try
     {
-      subkey.SetValue(Value, iValue);
-      subkey.Close();
+      using (RegistryKey subkey = hklm.CreateSubKey(Key))
+        if (subkey != null)
+          subkey.SetValue(Value, iValue);
+    }
+    catch (System.Security.SecurityException)
+    {
+      Log.Write(@"User does not have sufficient rights to modify registry key HKLM\{0}", Key);
+    }
+    catch (System.UnauthorizedAccessException)
+    {
+      Log.Write(@"User does not have sufficient rights to modify registry key HKLM\{0}", Key);
     }
   }
 
