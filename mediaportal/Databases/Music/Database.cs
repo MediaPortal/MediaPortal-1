@@ -850,17 +850,28 @@ namespace MediaPortal.Music.Database
                             m_db.Execute(strSQL);
 
                             // remove from cache
-                            foreach (CPathCache path in m_pathCache)
+                            //foreach (CPathCache path in m_pathCache)
+                            //{
+                            //    if (path.idPath == lPathId)
+                            //    {
+                            //        int iIndex = m_pathCache.IndexOf(path);
+                            //        if (iIndex != -1)
+                            //        {
+                            //            m_pathCache.RemoveAt(iIndex);
+                            //        }
+                            //    }
+                            //}
+
+                            // remove from cache 
+                            for (int i = 0; i < m_pathCache.Count; i++)
                             {
+                                CPathCache path = (CPathCache)m_pathCache[i];
                                 if (path.idPath == lPathId)
                                 {
-                                    int iIndex = m_pathCache.IndexOf(path);
-                                    if (iIndex != -1)
-                                    {
-                                        m_pathCache.RemoveAt(iIndex);
-                                    }
+                                    m_pathCache.RemoveAt(i);
+                                    break;
                                 }
-                            }
+                            } 
                         }
 
                         // Check genre
