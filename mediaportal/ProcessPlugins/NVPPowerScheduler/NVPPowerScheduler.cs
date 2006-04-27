@@ -293,8 +293,10 @@ namespace MediaPortal.PowerScheduler
           if (m_bExtensiveLog) Log.Write(" PowerScheduler: ShutdownManager - in HOME Window ");
           bool enableShutdown = true;
           //are we playing something?
-          if ((g_Player.Playing && g_Player.IsRadio) ||  //are we playing internet radio?
-              (g_Player.Playing && g_Player.IsMusic) ||  // are we playing music? 
+          if (
+              //(g_Player.Playing && g_Player.IsRadio) ||  //are we playing internet radio?
+              //(g_Player.Playing && g_Player.IsMusic) ||  // are we playing music? 
+              (g_Player.Playing)                     ||   // are we playing something ? 
               (Recorder.IsRadio())                   ||  //are we playing analog or digital radio?    
               (Recorder.IsRecording()) )                 //are we recording something? 
           {
