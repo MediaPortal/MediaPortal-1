@@ -75,9 +75,10 @@
        <description>channel listcontrol</description>
        <type>checklistcontrol</type>
        <id>10</id>
-       <width>425</width>
+       <posX>260</posX>
        <posY>140</posY>
-       <height>370</height>
+       <width>425</width>
+       <height>400</height>
        <textXOff>50</textXOff>
        <textYOff>2</textYOff>
        <textXOff2>420</textXOff2>
@@ -87,13 +88,13 @@
        <IconXOff>12</IconXOff>
        <IconYOff>2</IconYOff>
        <spinPosX>606</spinPosX>
-       <spinPosY>418</spinPosY>
+       <spinPosY>520</spinPosY>
        <itemWidth>15</itemWidth>
        <itemHeight>15</itemHeight>
        <textureFocus>recording_background_focus.png</textureFocus>
        <textureNoFocus>recording_background_nofocus.png</textureNoFocus>
        <spaceBetweenItems>5</spaceBetweenItems>
-       <textureHeight>20</textureHeight>
+       <textureHeight>28</textureHeight>
        <keepaspectratio>no</keepaspectratio>
        <MarkOffsetY>2</MarkOffsetY>
        <font2>font10</font2>
