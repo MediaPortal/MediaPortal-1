@@ -91,7 +91,7 @@ namespace MediaPortal.GUI.Music
         protected PlayListPlayer playlistPlayer;
 
         protected int PlayNowJumpToWindowID = (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW;
-        protected bool PlayAllOnSingleItemPlayNow = true;
+        protected bool PlayAllOnSingleItemPlayNow = false;
         protected string m_strPlayListPath = string.Empty;
 
         public GUIMusicBaseWindow()

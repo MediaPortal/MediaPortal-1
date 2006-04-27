@@ -1981,7 +1981,13 @@ namespace MediaPortal.GUI.Music
 
             int index = Math.Max(playlistPlayer.CurrentSong, 0);
 
-            if (playList.Count > 0)
+            if (playList.Count == 1)
+            {
+                AddItemToPlayList(pItem, ref playList);
+            }
+
+            //if (playList.Count > 0)
+            if (playList.Count > 1)
             {
                 PlayList tempPlayList = new PlayList();
 
