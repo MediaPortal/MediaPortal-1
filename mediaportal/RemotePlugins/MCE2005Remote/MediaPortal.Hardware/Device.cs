@@ -135,7 +135,8 @@ namespace MediaPortal.Hardware
         (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1460&pid_9150") != -1) ||     // HP
         (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_107b&pid_3009") != -1) ||     // FIC Spectra/Mycom Mediacenter
         (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0609&pid_031d") != -1) ||     // Toshiba/Hauppauge SMK MCE remote
-        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_03ee&pid_2501") != -1))       // Mitsumi MCE remote
+        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_03ee&pid_2501") != -1) ||     // Mitsumi MCE remote
+        (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_1509&pid_9242") != -1))       // Fujitsu Scaleo-E
         {
           SetupDiDestroyDeviceInfoList(handle);
           devicePath = deviceInterfaceDetailData.DevicePath;
