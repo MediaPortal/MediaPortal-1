@@ -1497,16 +1497,16 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="AverMedia M150 (PAL)" capturename="AVerMedia AverTV MPEG Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_c00b1461&amp;rev_05">
+  <capturecard commercialname="AverMedia M150 (PAL)" capturename="AVerMedia AVerTV MPEG Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_c00b1461&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"				      checkdevice="true"/>
-        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"				    checkdevice="true"/>
-        <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		  checkdevice="true"/>
-        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture" checkdevice="true"/>
-        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"			  checkdevice="true"/>
+        <filter cat="tvtuner"  name="AVerMedia AVerTV Tuner"				      checkdevice="true"/>
+        <filter cat="tvaudio"  name="AVerMedia AVerTV TvAudio"				    checkdevice="true"/>
+        <filter cat="crossbar" name="AVerMedia AVerTV MPEG Crossbar"		  checkdevice="true"/>
+        <filter cat="capture"  name="AVerMedia AVerTV MPEG Video Capture" checkdevice="true"/>
+        <filter cat="encoder"  name="AVerMedia AVerTV MPEG Encoder"			  checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
@@ -1520,16 +1520,16 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="AverMedia M150 (PAL)" capturename="AVerMedia AverTV MPEG Video Capture" devid="ven_14f1&amp;dev_8810&amp;subsys_c00b1461&amp;rev_05">
+  <capturecard commercialname="AverMedia M150 (PAL)" capturename="AVerMedia AVerTV MPEG Video Capture" devid="ven_14f1&amp;dev_8810&amp;subsys_c00b1461&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"				      checkdevice="true"/>
-        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"				    checkdevice="true"/>
-        <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		  checkdevice="true"/>
-        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture" checkdevice="true"/>
-        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"			  checkdevice="true"/>
+        <filter cat="tvtuner"  name="AVerMedia AVerTV Tuner"				      checkdevice="true"/>
+        <filter cat="tvaudio"  name="AVerMedia AVerTV TvAudio"				    checkdevice="true"/>
+        <filter cat="crossbar" name="AVerMedia AVerTV MPEG Crossbar"		  checkdevice="true"/>
+        <filter cat="capture"  name="AVerMedia AVerTV MPEG Video Capture" checkdevice="true"/>
+        <filter cat="encoder"  name="AVerMedia AVerTV MPEG Encoder"			  checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
@@ -1543,16 +1543,16 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="AverMedia M150 (PAL)" capturename="AVerMedia AverTV MPEG Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_c10b1461&amp;rev_05">
+  <capturecard commercialname="AverMedia M150 (PAL)" capturename="AVerMedia AVerTV MPEG Video Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_c10b1461&amp;rev_05">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="encoder" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"  name="AVerMedia AverTV Tuner"				      checkdevice="true"/>
-        <filter cat="tvaudio"  name="AVerMedia AverTV TvAudio"				    checkdevice="true"/>
-        <filter cat="crossbar" name="AVerMedia AverTV MPEG Crossbar"		  checkdevice="true"/>
-        <filter cat="capture"  name="AVerMedia AverTV MPEG Video Capture" checkdevice="true"/>
-        <filter cat="encoder"  name="AVerMedia AverTV MPEG Encoder"			  checkdevice="true"/>
+        <filter cat="tvtuner"  name="AVerMedia AVerTV Tuner"				      checkdevice="true"/>
+        <filter cat="tvaudio"  name="AVerMedia AVerTV TvAudio"				    checkdevice="true"/>
+        <filter cat="crossbar" name="AVerMedia AVerTV MPEG Crossbar"		  checkdevice="true"/>
+        <filter cat="capture"  name="AVerMedia AVerTV MPEG Video Capture" checkdevice="true"/>
+        <filter cat="encoder"  name="AVerMedia AVerTV MPEG Encoder"			  checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
@@ -12150,6 +12150,38 @@
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
         <connection sourcefilter="capture"	sourcepin="3" sinkfilter="encoder"	sinkpin="0"/>
         <connection sourcefilter="capture"	sourcepin="4" sinkfilter="encoder"	sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV Nova-T-USB (Stick)" capturename="Nova-T Stick DVB-T Capture (Dev1 Path0)" devid="vid_2040&amp;pid_7051&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+	  <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+	  <filters>
+		<filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	        checkdevice="false"/>
+		<filter cat="tunerdevice"		  name="Nova-T Stick DVB-T Tuner (Dev1 Path0)"	  checkdevice="true"/>
+		<filter cat="capture"			    name="Nova-T Stick DVB-T Capture (Dev1 Path0)"	checkdevice="true"/>
+	  </filters>
+	  <connections>
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+	  </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV DVB-T USB Stick" capturename="Pinnacle PCTV DVB-T USB Stick" devid="vid_eb1a&amp;pid_2870">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"	checkdevice="false"/>
+        <filter cat="tunerdevice"     name="BDA 2870 TVTuner"					        checkdevice="true"/>
+        <filter cat="capture"         name="Pinnacle PCTV DVB-T USB Stick"		checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
