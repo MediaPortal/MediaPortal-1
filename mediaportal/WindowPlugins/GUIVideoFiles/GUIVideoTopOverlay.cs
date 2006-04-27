@@ -73,10 +73,9 @@ namespace MediaPortal.GUI.Video
 			if (GUIGraphicsContext.IsFullScreenVideo) return false;
 			if (GUIGraphicsContext.Calibrating) return false;
 			if (!GUIGraphicsContext.Overlay) return false;
-      if (!g_Player.Playing) 
-      {
-        return false;
-      }
+      if (!g_Player.Playing) return false;
+      if (g_Player.IsMusic) return false;
+      
       return true;
     }
     
