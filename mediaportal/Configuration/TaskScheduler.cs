@@ -39,7 +39,7 @@ namespace MediaPortal.Configuration
       foreach (string name in taskNames) 
       {
         Task t = st.OpenTask(name);
-        if (t.Name.StartsWith("MPGuideScheduler"))
+        if (t != null && t.Name.StartsWith("MPGuideScheduler"))
         {
           taskfound = true;
           try
