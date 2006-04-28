@@ -88,7 +88,7 @@
        <IconXOff>12</IconXOff>
        <IconYOff>2</IconYOff>
        <spinPosX>606</spinPosX>
-       <spinPosY>520</spinPosY>
+       <spinPosY>525</spinPosY>
        <itemWidth>15</itemWidth>
        <itemHeight>15</itemHeight>
        <textureFocus>recording_background_focus.png</textureFocus>
@@ -96,7 +96,7 @@
        <spaceBetweenItems>5</spaceBetweenItems>
        <textureHeight>28</textureHeight>
        <keepaspectratio>no</keepaspectratio>
-       <MarkOffsetY>2</MarkOffsetY>
+       <MarkOffsetY>5</MarkOffsetY>
        <font2>font10</font2>
        <font3>font10</font3>
        <onleft>2</onleft>
