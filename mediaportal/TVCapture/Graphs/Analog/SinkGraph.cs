@@ -65,6 +65,7 @@ namespace MediaPortal.TV.Recording
     protected ICaptureGraphBuilder2 _captureGraphBuilderInterface = null;
     protected IBaseFilter _filterCapture = null;
     protected IAMTVTuner _tvTunerInterface = null;
+    protected IAMTVAudio _tvAudioTunerInterface = null;
     protected IAMAnalogVideoDecoder _analogVideoDecoderInterface = null;
     protected VideoCaptureDevice _videoCaptureHelper = null;
     protected MPEG2Demux _mpeg2DemuxHelper = null;
@@ -82,7 +83,7 @@ namespace MediaPortal.TV.Recording
     DateTime _signalLostTimer;
     protected string _cardName;
     ArrayList _listAudioPids = new ArrayList();
-    int _selectedAudioLanguage = 11;
+    int _selectedAudioLanguage = 1;
     protected bool _grabTeletext = false;
     protected bool _hasTeletext = false;
     bool _isTuning = false;
@@ -601,13 +602,13 @@ namespace MediaPortal.TV.Recording
       _countryCode = channel.Country;
       if (_mpeg2DemuxHelper == null)
       {
-        _lastError="Graph not built correctly";
+        _lastError = "Graph not built correctly";
         Log.WriteFile(Log.LogType.Log, true, "SinkGraph:StartViewing() FAILED: no mpeg2 demuxer present");
         return false;
       }
       if (_videoCaptureHelper == null)
       {
-        _lastError="Graph not built correctly";
+        _lastError = "Graph not built correctly";
         Log.WriteFile(Log.LogType.Log, true, "SinkGraph:StartViewing() FAILED: no video capture device present");
         return false;
       }
@@ -1103,16 +1104,16 @@ namespace MediaPortal.TV.Recording
           string channelName = GetTeletextChannelName();
           if (channelName == string.Empty)
           {
-              channelName = _channelNumber.ToString();
+            channelName = _channelNumber.ToString();
           }
           int otherChannelId = TVDatabase.GetChannelId(channelName);
           if (otherChannelId == -1)
           {
-              tvChan.Name = channelName;
+            tvChan.Name = channelName;
           }
           else
           {
-              tvChan.Name = channelName + "-" + _channelNumber.ToString();
+            tvChan.Name = channelName + "-" + _channelNumber.ToString();
           }
           tvChan.ID = -1;
           tvChan.Number = _channelNumber;
@@ -1423,36 +1424,82 @@ namespace MediaPortal.TV.Recording
     {
       return _hasTeletext;
     }
-
+    #region Stream-Audio handling
     public int GetAudioLanguage()
     {
       return _selectedAudioLanguage;
     }
+
     public void SetAudioLanguage(int audioPid)
     {
+
       _selectedAudioLanguage = audioPid;
+      if (_tvAudioTunerInterface == null) return;
+      switch (_selectedAudioLanguage)
+      {
+        case 0://mono
+          _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.Mono);
+          break;
+        case 1://stereo
+          _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.Stereo);
+          break;
+        case 2://Language#1
+          _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangA);
+          break;
+        case 3://Language#2
+          _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangB);
+          break;
+        case 4://Language#3
+          _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangC);
+          break;
+      }
     }
     public ArrayList GetAudioLanguageList()
     {
-#if DEBUG
-			DVBSections.AudioLanguage al;
-			_listAudioPids.Clear();
+      TVAudioMode modes;
+      _tvAudioTunerInterface.GetAvailableTVAudioModes(out modes);
 
-			// Add two debug languages
-			al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
-			al.AudioPid=10;
-			al.AudioLanguageCode="eng";
-			_listAudioPids.Add(al);
+      DVBSections.AudioLanguage al;
+      if (((int)(modes & TVAudioMode.Mono)) != 0)
+      {
+        _listAudioPids.Clear();
+        al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+        al.AudioPid = 0;
+        al.AudioLanguageCode = "Mono";
+        _listAudioPids.Add(al);
+      }
+      if (((int)(modes & TVAudioMode.Stereo)) != 0)
+      {
+        al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+        al.AudioPid = 1;
+        al.AudioLanguageCode = "Stereo";
+        _listAudioPids.Add(al);
+      }
 
-			al=new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
-			al.AudioPid=11;
-			al.AudioLanguageCode="dut";
-			_listAudioPids.Add(al);
-
-#endif
+      if (((int)(modes & TVAudioMode.LangA)) != 0)
+      {
+        al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+        al.AudioPid = 2;
+        al.AudioLanguageCode = "Language A";
+        _listAudioPids.Add(al);
+      }
+      if (((int)(modes & TVAudioMode.LangB)) != 0)
+      {
+        al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+        al.AudioPid = 3;
+        al.AudioLanguageCode = "Language B";
+        _listAudioPids.Add(al);
+      }
+      if (((int)(modes & TVAudioMode.LangC)) != 0)
+      {
+        al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+        al.AudioPid = 4;
+        al.AudioLanguageCode = "Language C";
+        _listAudioPids.Add(al);
+      }
       return _listAudioPids;
     }
-
+    #endregion
     public string TvTimeshiftFileName()
     {
       return "live.tv";
@@ -1528,7 +1575,7 @@ namespace MediaPortal.TV.Recording
     }
     public bool Supports5vAntennae()
     {
-        return false;
+      return false;
     }
     public bool SupportsCamSelection()
     {
