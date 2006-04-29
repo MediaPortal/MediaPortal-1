@@ -22,6 +22,7 @@
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using DirectShowLib;
 #pragma warning disable 618
 namespace DShowNET.Helper
@@ -46,8 +47,8 @@ namespace DShowNET.Helper
 			int					hr;
 			object				comObj = null;
 			ICreateDevEnum		enumDev = null;
-      UCOMIEnumMoniker enumMon = null;
-      UCOMIMoniker[] mon = new UCOMIMoniker[1];
+      IEnumMoniker enumMon = null;
+      IMoniker[] mon = new IMoniker[1];
 
 			try 
 			{
@@ -65,11 +66,11 @@ namespace DShowNET.Helper
           return;//throw new NotSupportedException( "No devices of the category" );
         }
 				// Loop through the enumerator
-        int f;
+        IntPtr f = IntPtr.Zero;
 				do
 				{
 					// Next filter
-					hr = enumMon.Next( 1, mon, out f );
+					hr = enumMon.Next( 1, mon,  f );
 					if( (hr != 0) || (mon[0] == null) )
 						break;
 					

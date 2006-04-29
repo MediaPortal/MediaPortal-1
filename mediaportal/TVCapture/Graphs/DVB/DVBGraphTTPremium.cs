@@ -1001,6 +1001,7 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Error,"DVBGraphTTPremium:DeleteAllPids(), couldn't find pin:{0}", pinIndex);
       }
 
+
       IMPEG2PIDMap mpPidMap = pin as IMPEG2PIDMap;
       IEnumPIDMap enumPid = null;
       // Enumerate all the PIDs

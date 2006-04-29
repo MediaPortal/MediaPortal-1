@@ -30,6 +30,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using Microsoft.Win32;
 using DShowNET;
 using DShowNET.Helper;
@@ -1629,7 +1630,7 @@ namespace MediaPortal.TV.Recording
     {
       int hr;
       ICreateDevEnum sysDevEnum = null;
-      UCOMIEnumMoniker enumMoniker = null;
+      IEnumMoniker enumMoniker = null;
 
       sysDevEnum = (ICreateDevEnum)Activator.CreateInstance(Type.GetTypeFromCLSID(ClassId.SystemDeviceEnum, true));
       // Enumerate the filter category
@@ -1637,9 +1638,9 @@ namespace MediaPortal.TV.Recording
       if (hr != 0)
         throw new NotSupportedException("No devices in this category");
 
-      int fetched;
-      UCOMIMoniker[] deviceMoniker = new UCOMIMoniker[1];
-      while (enumMoniker.Next(1, deviceMoniker, out fetched) == 0) // while == S_OK
+      IntPtr fetched=IntPtr.Zero;
+      IMoniker[] deviceMoniker = new IMoniker[1];
+      while (enumMoniker.Next(1, deviceMoniker,  fetched) == 0) // while == S_OK
       {
         object bagObj = null;
         Guid bagId = typeof(IPropertyBag).GUID;

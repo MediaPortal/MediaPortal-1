@@ -24,6 +24,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 using System;
 using System.Runtime.InteropServices;
+#if !USING_NET11
+using System.Runtime.InteropServices.ComTypes;
+#endif
 #pragma warning disable 618
 namespace DirectShowLib.BDA
 {
@@ -227,7 +230,11 @@ namespace DirectShowLib.BDA
         new int EnumCategoryGUIDs([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppEnum); // IEnumGUID** 
 
         [PreserveSig]
+#if USING_NET11
         new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+#else
+        new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
+#endif
 
         [PreserveSig]
         new int get_DefaultPreferredComponentTypes([Out] out IComponentTypes ComponentTypes);
@@ -324,7 +331,11 @@ namespace DirectShowLib.BDA
         new int EnumCategoryGUIDs([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppEnum); // IEnumGUID** 
 
         [PreserveSig]
+#if USING_NET11
         new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+#else
+        new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
+#endif
 
         [PreserveSig]
         new int get_DefaultPreferredComponentTypes([Out] out IComponentTypes ComponentTypes);
@@ -435,7 +446,11 @@ namespace DirectShowLib.BDA
         new int EnumCategoryGUIDs([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppEnum); // IEnumGUID** 
 
         [PreserveSig]
+#if USING_NET11
         new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+#else
+        new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
+#endif
 
         [PreserveSig]
         new int get_DefaultPreferredComponentTypes([Out] out IComponentTypes ComponentTypes);
@@ -584,7 +599,11 @@ namespace DirectShowLib.BDA
         int EnumCategoryGUIDs([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppEnum); // IEnumGUID** 
 
         [PreserveSig]
+#if USING_NET11
         int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+#else
+        int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
+#endif
 
         [PreserveSig]
         int get_DefaultPreferredComponentTypes([Out] out IComponentTypes ComponentTypes);
@@ -791,7 +810,11 @@ namespace DirectShowLib.BDA
         new int EnumCategoryGUIDs([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppEnum); // IEnumGUID** 
 
         [PreserveSig]
+#if USING_NET11
         new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+#else
+        new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
+#endif
 
         [PreserveSig]
         new int get_DefaultPreferredComponentTypes([Out] out IComponentTypes ComponentTypes);
@@ -959,7 +982,11 @@ namespace DirectShowLib.BDA
         new int EnumCategoryGUIDs([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppEnum); // IEnumGUID** 
 
         [PreserveSig]
+#if USING_NET11
         new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+#else
+        new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
+#endif
 
         [PreserveSig]
         new int get_DefaultPreferredComponentTypes([Out] out IComponentTypes ComponentTypes);
@@ -1032,7 +1059,11 @@ namespace DirectShowLib.BDA
         new int EnumCategoryGUIDs([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppEnum); // IEnumGUID** 
 
         [PreserveSig]
+#if USING_NET11
         new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+#else
+        new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
+#endif
 
         [PreserveSig]
         new int get_DefaultPreferredComponentTypes([Out] out IComponentTypes ComponentTypes);
@@ -1102,7 +1133,11 @@ namespace DirectShowLib.BDA
         int get_Count([Out] out int Count);
 
         [PreserveSig]
+#if USING_NET11
         int get__NewEnum([Out] out UCOMIEnumVARIANT ppNewEnum);
+#else
+        int get__NewEnum([Out] out IEnumVARIANT ppNewEnum);
+#endif
 
         [PreserveSig]
         int get_Item(
@@ -1168,7 +1203,11 @@ namespace DirectShowLib.BDA
         int get_Count([Out] out int Count);
 
         [PreserveSig]
+#if USING_NET11
         int get__NewEnum([Out] out UCOMIEnumVARIANT ppNewEnum);
+#else
+        int get__NewEnum([Out] out IEnumVARIANT ppNewEnum);
+#endif
 
         [PreserveSig]
         int get_Item(
@@ -1441,7 +1480,11 @@ namespace DirectShowLib.BDA
 
         [PreserveSig]
         int get__NewEnum(
+#if USING_NET11
             [Out] out UCOMIEnumVARIANT ppNewEnum
+#else
+            [Out] out IEnumVARIANT ppNewEnum
+#endif
             );
 
         [PreserveSig]
@@ -1487,7 +1530,11 @@ namespace DirectShowLib.BDA
         int get_Count([Out] out int Count);
 
         [PreserveSig]
+#if USING_NET11
         int get__NewEnum([Out] out UCOMIEnumVARIANT ppNewEnum);
+#else
+        int get__NewEnum([Out] out IEnumVARIANT ppNewEnum);
+#endif
 
         [PreserveSig]
         int EnumComponents([Out] out IEnumComponents ppNewEnum);
@@ -1628,7 +1675,11 @@ namespace DirectShowLib.BDA
 
         [PreserveSig]
         int get__NewEnum(
+#if USING_NET11
             [Out] out UCOMIEnumVARIANT ppNewEnum
+#else
+            [Out] out IEnumVARIANT ppNewEnum
+#endif
             );
 
         [PreserveSig]
@@ -1699,7 +1750,11 @@ namespace DirectShowLib.BDA
         new int EnumCategoryGUIDs([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppEnum); // IEnumGUID** 
 
         [PreserveSig]
+#if USING_NET11
         new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+#else
+        new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
+#endif
 
         [PreserveSig]
         new int get_DefaultPreferredComponentTypes([Out] out IComponentTypes ComponentTypes);
@@ -1984,7 +2039,11 @@ namespace DirectShowLib.BDA
         new int EnumCategoryGUIDs([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppEnum); // IEnumGUID** 
 
         [PreserveSig]
+#if USING_NET11
         new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+#else
+        new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
+#endif
 
         [PreserveSig]
         new int get_DefaultPreferredComponentTypes([Out] out IComponentTypes ComponentTypes);
@@ -2333,7 +2392,11 @@ namespace DirectShowLib.BDA
         new int EnumCategoryGUIDs([Out, MarshalAs(UnmanagedType.IUnknown)] out object ppEnum); // IEnumGUID** 
 
         [PreserveSig]
+#if USING_NET11
         new int EnumDeviceMonikers([Out] out UCOMIEnumMoniker ppEnum);
+#else
+        new int EnumDeviceMonikers([Out] out IEnumMoniker ppEnum);
+#endif
 
         [PreserveSig]
         new int get_DefaultPreferredComponentTypes([Out] out IComponentTypes ComponentTypes);

@@ -20,7 +20,7 @@
  */
 using System;
 using System.Collections;
-
+using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices;
 
 using DirectShowLib;
@@ -211,8 +211,8 @@ namespace DShowNET.Helper
 		{
 			ArrayList filters = new ArrayList();
 
-			UCOMIEnumMoniker enumMoniker = null;
-      UCOMIMoniker[] moniker = new UCOMIMoniker[1];
+			IEnumMoniker enumMoniker = null;
+      IMoniker[] moniker = new IMoniker[1];
 
       IFilterMapper2 mapper = (IFilterMapper2) new FilterMapper2();
 
@@ -235,10 +235,10 @@ namespace DShowNET.Helper
           null,
           null);
 
-        int fetched=-1;
+        IntPtr fetched = IntPtr.Zero;
 				do
 				{
-          hResult = enumMoniker.Next(1, moniker, out fetched);
+          hResult = enumMoniker.Next(1, moniker,  fetched);
 
 					if((moniker[0] == null))
 					{

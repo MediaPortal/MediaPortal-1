@@ -262,7 +262,7 @@ namespace DirectShowLib
     /// From MPEG1WAVEFORMAT
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct MPEG1WaveFormat
+    public class MPEG1WaveFormat
     {
         public WaveFormatEx wfx;
         public AcmMpegHeadLayer fwHeadLayer;

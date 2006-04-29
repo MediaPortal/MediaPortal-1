@@ -251,11 +251,13 @@ namespace DirectShowLib
         [PreserveSig]
         int SetProperties(
             [In] AllocatorProperties pRequest,
-            [Out] out AllocatorProperties pActual
+            [Out, MarshalAs(UnmanagedType.LPStruct)] out AllocatorProperties pActual
             );
 
         [PreserveSig]
-        int GetProperties([Out] AllocatorProperties pProps);
+        int GetProperties(
+            [Out, MarshalAs(UnmanagedType.LPStruct)] AllocatorProperties pProps
+            );
 
         [PreserveSig]
         int Commit();
@@ -272,7 +274,9 @@ namespace DirectShowLib
             );
 
         [PreserveSig]
-        int ReleaseBuffer([In] IMediaSample pBuffer);
+        int ReleaseBuffer(
+            [In] IMediaSample pBuffer
+            );
     }
 
 

@@ -23,6 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endregion
 
 using System.Runtime.InteropServices;
+#if !USING_NET11
+using System.Runtime.InteropServices.ComTypes;
+#endif
 #pragma warning disable 618
 namespace DirectShowLib.BDA
 {
@@ -225,7 +228,11 @@ namespace DirectShowLib.BDA
 			);
 
 		[PreserveSig]
+#if USING_NET11
 		int GetGuideProgramIDs([Out] out UCOMIEnumVARIANT pEnumPrograms);
+#else
+		int GetGuideProgramIDs([Out] out IEnumVARIANT pEnumPrograms);
+#endif
 
 		[PreserveSig]
 		int GetProgramProperties(
@@ -234,7 +241,11 @@ namespace DirectShowLib.BDA
 			);
 
 		[PreserveSig]
-		int GetScheduleEntryIDs([Out] out UCOMIEnumVARIANT pEnumScheduleEntries);
+#if USING_NET11
+        int GetScheduleEntryIDs([Out] out UCOMIEnumVARIANT pEnumScheduleEntries);
+#else
+        int GetScheduleEntryIDs([Out] out IEnumVARIANT pEnumScheduleEntries);
+#endif
 
 		[PreserveSig]
 		int GetScheduleEntryProperties(

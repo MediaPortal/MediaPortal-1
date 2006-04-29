@@ -20,7 +20,8 @@
  */
 using System;
 using System.IO;
-using System.Runtime.InteropServices; 
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
@@ -703,7 +704,7 @@ namespace DShowNET.Helper
       }
       return;
     }
-    public static string GetFriendlyName(UCOMIMoniker mon)
+    public static string GetFriendlyName(IMoniker mon)
     {
       if (mon == null) return String.Empty;
       object bagObj = null;

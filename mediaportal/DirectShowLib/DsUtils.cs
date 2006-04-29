@@ -31,6 +31,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Reflection;
 using DirectShowLib.Dvd;
+#if !USING_NET11
+using System.Runtime.InteropServices.ComTypes;
+#endif
 #pragma warning disable 618
 namespace DirectShowLib
 {
@@ -873,19 +876,30 @@ namespace DirectShowLib
 
         #region APIs
         [DllImport("ole32.dll", ExactSpelling=true)]
-        private static extern int GetRunningObjectTable(int r,
-            out UCOMIRunningObjectTable pprot);
+#if USING_NET11
+        private static extern int GetRunningObjectTable(int r, out UCOMIRunningObjectTable pprot);
+#else
+        private static extern int GetRunningObjectTable(int r, out IRunningObjectTable pprot);
+#endif
 
         [DllImport("ole32.dll", CharSet=CharSet.Unicode, ExactSpelling=true)]
-        private static extern int CreateItemMoniker(string delim,
-            string item, out UCOMIMoniker ppmk);
+#if USING_NET11
+        private static extern int CreateItemMoniker(string delim, string item, out UCOMIMoniker ppmk);
+#else
+        private static extern int CreateItemMoniker(string delim, string item, out IMoniker ppmk);
+#endif
         #endregion
 
         public DsROTEntry(IFilterGraph graph)
         {
             int hr = 0;
+#if USING_NET11
             UCOMIRunningObjectTable rot = null;
             UCOMIMoniker mk = null;
+#else
+            IRunningObjectTable rot = null;
+            IMoniker mk = null;
+#endif
             try
             {
                 // First, get a pointer to the running object table
@@ -902,7 +916,11 @@ namespace DirectShowLib
                 DsError.ThrowExceptionForHR(hr);
 
                 // Add the object to the table
+#if USING_NET11
                 rot.Register((int)ROTFlags.RegistrationKeepsAlive, graph, mk, out m_cookie);
+#else
+                m_cookie = rot.Register((int)ROTFlags.RegistrationKeepsAlive, graph, mk);
+#endif
             }
             finally
             {
@@ -929,24 +947,26 @@ namespace DirectShowLib
             if (m_cookie != 0)
             {
                 GC.SuppressFinalize(this);
+#if USING_NET11
                 UCOMIRunningObjectTable rot = null;
+#else
+                IRunningObjectTable rot = null;
+#endif
+
+                // Get a pointer to the running object table
+                int hr = GetRunningObjectTable(0, out rot);
+                DsError.ThrowExceptionForHR(hr);
+
                 try
                 {
-                    // Get a pointer to the running object table
-                    int hr = GetRunningObjectTable(0, out rot);
-                    DsError.ThrowExceptionForHR(hr);
-
                     // Remove our entry
                     rot.Revoke(m_cookie);
                     m_cookie = 0;
                 }
                 finally
                 {
-                    if (rot != null)
-                    {
-                        Marshal.ReleaseComObject(rot);
-                        rot = null;
-                    }
+                    Marshal.ReleaseComObject(rot);
+                    rot = null;
                 }
             }
         }
@@ -955,16 +975,28 @@ namespace DirectShowLib
 
     public class DsDevice : IDisposable
     {
+#if USING_NET11
         private UCOMIMoniker m_Mon;
+#else
+        private IMoniker m_Mon;
+#endif
         private string m_Name;
 
+#if USING_NET11
         public DsDevice(UCOMIMoniker Mon)
+#else
+        public DsDevice(IMoniker Mon)
+#endif
         {
             m_Mon = Mon;
             m_Name = null;
         }
 
+#if USING_NET11
         public UCOMIMoniker Mon
+#else
+        public IMoniker Mon
+#endif
         {
             get
             {
@@ -1011,56 +1043,76 @@ namespace DirectShowLib
         /// <param name="cat">Any one of FilterCategory</param>
         public static DsDevice[] GetDevicesOfCat(Guid FilterCategory)
         {
-            // Use arrayList to build the retun list since it is easily resizable
-            ArrayList devs = new ArrayList();
-            DsDevice [] devret;
             int hr;
-            ICreateDevEnum enumDev = null;
-            UCOMIEnumMoniker enumMon = null;
-            UCOMIMoniker[] mon = new UCOMIMoniker[1];
 
-            try
+            // Use arrayList to build the retun list since it is easily resizable
+            DsDevice[] devret;
+            ArrayList devs = new ArrayList();
+#if USING_NET11
+            UCOMIEnumMoniker enumMon;
+#else
+            IEnumMoniker enumMon;
+#endif
+
+            ICreateDevEnum enumDev = (ICreateDevEnum)new CreateDevEnum();
+            hr = enumDev.CreateClassEnumerator(FilterCategory, out enumMon, 0);
+            DsError.ThrowExceptionForHR(hr);
+
+            // CreateClassEnumerator returns null for enumMon if there are no entries
+            if (hr != 1)
             {
-                enumDev = (ICreateDevEnum) new CreateDevEnum();
-                hr = enumDev.CreateClassEnumerator(FilterCategory, out enumMon, 0);
-                DsError.ThrowExceptionForHR(hr);
-
-                // CreateClassEnumerator returns null for enumMon if there are no entries
-                if (hr != 1)
+                try
                 {
-                    int lFetched;
-                    while ((enumMon.Next(1, mon, out lFetched) == 0))
+                    try
                     {
-                        devs.Add(new DsDevice(mon[0]));
-                        mon[0] = null;
-                    }
-                }
+#if USING_NET11
+                        UCOMIMoniker[] mon = new UCOMIMoniker[1];
+#else
+                        IMoniker[] mon = new IMoniker[1];
+#endif
 
-                // Copy the ArrayList to the DsDevicep[]
-                devret = new DsDevice[devs.Count];
-                devs.CopyTo(devret, 0);
+#if USING_NET11
+						int j;
+						while ((enumMon.Next(1, mon, out j) == 0))
+#else
+                        while ((enumMon.Next(1, mon, IntPtr.Zero) == 0))
+#endif
+                        {
+                            try
+                            {
+                                // The devs array now owns this object.  Don't
+                                // release it if we are going to be successfully
+                                // returning the devret array
+                                devs.Add(new DsDevice(mon[0]));
+                            }
+                            catch
+                            {
+                                Marshal.ReleaseComObject(mon[0]);
+                                throw;
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        Marshal.ReleaseComObject(enumMon);
+                    }
+
+                    // Copy the ArrayList to the DsDevice[]
+                    devret = new DsDevice[devs.Count];
+                    devs.CopyTo(devret);
+                }
+                catch
+                {
+                    foreach (DsDevice d in devs)
+                    {
+                        d.Dispose();
+                    }
+                    throw;
+                }
             }
-            catch
+            else
             {
-                foreach (DsDevice d in devs)
-                {
-                    d.Dispose();
-                }
-                throw;
-            }
-            finally
-            {
-                enumDev = null;
-                if (mon[0] != null)
-                {
-                    Marshal.ReleaseComObject(mon[0]);
-                    mon[0] = null;
-                }
-                if (enumMon != null)
-                {
-                    Marshal.ReleaseComObject(enumMon);
-                    enumMon = null;
-                }
+                devret = new DsDevice[0];
             }
 
             return devret;
@@ -1091,7 +1143,7 @@ namespace DirectShowLib
             }
             catch
             {
-                return null;
+                ret = null;
             }
             finally
             {
