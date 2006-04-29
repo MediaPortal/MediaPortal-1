@@ -137,6 +137,7 @@ namespace MediaPortal.GUI.Library
       GUILocalizeStrings.LocalizeLabel(ref _label);
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName, _label, _textColor, GUIControl.Alignment.ALIGN_LEFT, false);
       _labelControl.TextAlignment = _textAlignment;
+      _labelControl.DimColor = DimColor;
       _labelControl.ParentControl = this;
     }
 
@@ -643,6 +644,7 @@ namespace MediaPortal.GUI.Library
         base.DimColor = value;
         if (_imageFocused != null) _imageFocused.DimColor = value;
         if (_imageNonFocused != null) _imageNonFocused.DimColor = value;
+        if (_labelControl != null) _labelControl.DimColor = value;
       }
     }
 
