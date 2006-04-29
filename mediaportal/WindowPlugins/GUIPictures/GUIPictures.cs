@@ -1358,7 +1358,7 @@ namespace MediaPortal.GUI.Pictures
           if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return;
           if (!item.IsFolder)
           {
-            if (Utils.IsPicture(item.Path))
+            if (!item.IsRemote && Utils.IsPicture(item.Path))
             {
               string thumbnailImage = GetThumbnail(item.Path);
               if (!System.IO.File.Exists(thumbnailImage))
@@ -1382,7 +1382,7 @@ namespace MediaPortal.GUI.Pictures
             if (item.Label != "..")
             {
               string thumbnailImage = item.Path + @"\folder.jpg";
-              if (!System.IO.File.Exists(thumbnailImage))
+              if (!item.IsRemote && !System.IO.File.Exists(thumbnailImage))
               {
                 CreateFolderThumb(item.Path);
                 //  System.Threading.Thread.Sleep(100);
