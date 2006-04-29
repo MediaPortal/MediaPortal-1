@@ -283,10 +283,12 @@ namespace MediaPortal.GUI.Library
 
       _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
       _upDownControl.ParentControl = this;
-
+      _upDownControl.DimColor = DimColor;
+      
       _verticalScrollbar = new GUIverticalScrollbar(_controlId, 0, 5 + _positionX + _width, _positionY, 15, _height, _scrollbarBackgroundName, _scrollbarTopName, _scrollbarBottomName);
       _verticalScrollbar.ParentControl = this;
       _verticalScrollbar.SendNotifies = false;
+      _verticalScrollbar.DimColor = DimColor;
       _upDownControl.WindowId = WindowId;
     }
 
@@ -460,7 +462,7 @@ namespace MediaPortal.GUI.Library
           pImage.ColourDiffuse = 0xffffffff;
         else
           pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
-
+        pImage.DimColor = DimColor;
         pImage.Render(timePassed);
         pImage = null;
       }
@@ -499,6 +501,7 @@ namespace MediaPortal.GUI.Library
           pinImage.ColourDiffuse = 0xffffffff;
         else
           pinImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+        pinImage.DimColor = DimColor;
         pinImage.Render(timePassed);
         pinImage = null;
       } //if (pItem.HasPinIcon)
@@ -1580,6 +1583,7 @@ namespace MediaPortal.GUI.Library
         GUIButtonControl cntl = new GUIButtonControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _width, _itemHeight, _buttonFocusName, _buttonNonFocusName);
         cntl.ParentControl = this;
         cntl.AllocResources();
+        cntl.DimColor = DimColor;
         _listButtons.Add(cntl);
       }
     }
@@ -1627,6 +1631,9 @@ namespace MediaPortal.GUI.Library
         cntl1.AllocResources();
         cntl2.AllocResources();
         cntl3.AllocResources();
+        cntl1.DimColor = DimColor;
+        cntl2.DimColor = DimColor;
+        cntl3.DimColor = DimColor;
         _labelControls1.Add(cntl1);
         _labelControls2.Add(cntl2);
         _labelControls3.Add(cntl3);
@@ -1640,6 +1647,8 @@ namespace MediaPortal.GUI.Library
       }
       _upDownControl.SetRange(1, iPages);
       _upDownControl.Value = 1;
+      _upDownControl.DimColor = DimColor;
+      _verticalScrollbar.DimColor = DimColor;
     }
 
     /// <summary>
@@ -2800,5 +2809,22 @@ namespace MediaPortal.GUI.Library
 
       return selectedItemIndex;
     }
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_upDownControl != null) _upDownControl.DimColor = value;
+        if (_verticalScrollbar != null) _verticalScrollbar.DimColor = value;
+        //foreach (GUIButtonControl ctl in _listButtons) ctl.DimColor = value;
+        foreach (GUIListItem item in _listItems) item.DimColor = value;
+        foreach (GUILabelControl ctl in _labelControls1) ctl.DimColor = value;
+        foreach (GUILabelControl ctl in _labelControls2) ctl.DimColor = value;
+        foreach (GUILabelControl ctl in _labelControls3) ctl.DimColor = value;
+      }
+    }
+
   }
 }

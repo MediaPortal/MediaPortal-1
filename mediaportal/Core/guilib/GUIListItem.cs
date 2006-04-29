@@ -66,7 +66,8 @@ namespace MediaPortal.GUI.Library
     protected bool _isDownloading = false;            // indicating if this file is being downloaded
     int _idItem = 0;                // General item id
     bool _retrieveCoverArtAllowed = true;
-
+    int _dimColor = 0x60ffffff;
+    
     /// <summary>
     /// The (empty) constructor of the GUIListItem.
     /// </summary>
@@ -282,7 +283,10 @@ namespace MediaPortal.GUI.Library
     public GUIImage Thumbnail
     {
       get { return _thumbnailImage; }
-      set { _thumbnailImage = value; }
+      set { 
+        _thumbnailImage = value;
+        if (_thumbnailImage != null) _thumbnailImage.DimColor = DimColor;
+      }
     }
 
     /// <summary>
@@ -291,7 +295,10 @@ namespace MediaPortal.GUI.Library
     public GUIImage Icon
     {
       get { return _imageIcon; }
-      set { _imageIcon = value; }
+      set { 
+        _imageIcon = value;
+        if (_imageIcon != null) _imageIcon.DimColor = DimColor;
+      }
     }
 
     /// <summary>
@@ -300,7 +307,10 @@ namespace MediaPortal.GUI.Library
     public GUIImage PinIcon
     {
       get { return _imagePinIcon; }
-      set { _imagePinIcon = value; }
+      set { 
+        _imagePinIcon = value;
+        if (_imagePinIcon != null) _imagePinIcon.DimColor = DimColor;
+      }
     }
 
     /// <summary>
@@ -309,7 +319,11 @@ namespace MediaPortal.GUI.Library
     public GUIImage IconBig
     {
       get { return _imageBigPinIcon; }
-      set { _imageBigPinIcon = value; }
+      set { 
+        _imageBigPinIcon = value;
+        if (_imageBigPinIcon != null) _imageBigPinIcon.DimColor = DimColor;
+
+      }
     }
 
     /// <summary>
@@ -448,7 +462,7 @@ namespace MediaPortal.GUI.Library
       get { return _shaded; }
       set { _shaded = value; }
     }
-
+    
     /// <summary>
     /// Free the memory that is used.
     /// </summary>
@@ -539,5 +553,20 @@ namespace MediaPortal.GUI.Library
       get { return _retrieveCoverArtAllowed; }
       set { _retrieveCoverArtAllowed = value; }
     }
+
+    public virtual int DimColor
+    {
+      get { return _dimColor; }
+      set
+      {
+        _dimColor = value;
+        if (_thumbnailImage != null)  _thumbnailImage.DimColor = value;
+        if (_imageIcon != null)       _imageIcon.DimColor = value;
+        if (_imageBigPinIcon != null) _imageBigPinIcon.DimColor = value;
+        if (_imagePinIcon != null)    _imagePinIcon.DimColor = value;
+      }
+    }
+
+
   }
 }

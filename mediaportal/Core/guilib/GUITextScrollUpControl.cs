@@ -245,6 +245,7 @@ namespace MediaPortal.GUI.Library
           _containsProperty = false;
           _property = "";
           GUIListItem pItem = (GUIListItem) message.Object;
+          pItem.DimColor = DimColor;
           _listItems.Add(pItem);
         }
 
@@ -405,6 +406,7 @@ namespace MediaPortal.GUI.Library
           if (szLine.Length > 0 || _listItems.Count > 0)
           {
             GUIListItem item = new GUIListItem(szLine);
+            item.DimColor = DimColor;
             _listItems.Add(item);
           }
           iLastSpace = -1;
@@ -439,6 +441,7 @@ namespace MediaPortal.GUI.Library
             if (szLine.Length > 0 || _listItems.Count > 0)
             {
               GUIListItem item = new GUIListItem(szLine);
+              item.DimColor = DimColor;
               _listItems.Add(item);
             }
             iLastSpaceInLine = -1;
@@ -456,6 +459,7 @@ namespace MediaPortal.GUI.Library
       if (lpos > 0)
       {
         GUIListItem item = new GUIListItem(szLine);
+        item.DimColor = DimColor;
         _listItems.Add(item);
       }
 
@@ -526,5 +530,17 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        foreach (GUIListItem item in _listItems) item.DimColor = value;
+
+      }
+    }
+
   }
 }

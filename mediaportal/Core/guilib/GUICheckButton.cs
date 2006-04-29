@@ -98,17 +98,21 @@ namespace MediaPortal.GUI.Library
 			_imageFocused  = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _focusedTextureName,0);
       _imageFocused.ParentControl = this;
       _imageFocused.Filtering = false;
+      _imageFocused.DimColor = DimColor;
 
 			_imageNonFocused= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _nonFocusedTextureName,0);
       _imageNonFocused.ParentControl = this;
 			_imageNonFocused.Filtering=false;
+      _imageNonFocused.DimColor = DimColor;
 			GUILocalizeStrings.LocalizeLabel(ref _label);
 
 			_labelControl = new GUILabelControl(_parentControlId,0,_positionX,_positionY,_width, _height,_fontName,_label,_textColor,GUIControl.Alignment.ALIGN_LEFT,false);
       _labelControl.ParentControl = this;
+      _labelControl.DimColor = DimColor;
 
 			checkMark = new GUICheckMarkControl(0,0,_positionX+_width-_checkMarkWidth, _positionY ,_checkMarkWidth,_checkMarkHeight, _checkMarkFocusTextureName,_checkMarkNoFocusTextureName,_checkMarkWidth,_checkMarkWidth,GUIControl.Alignment.ALIGN_LEFT);
       checkMark.ParentControl = this;
+      checkMark.DimColor = DimColor;
 		}
 
 		/// <summary>
@@ -573,6 +577,18 @@ namespace MediaPortal.GUI.Library
 				else _selectedItem=0;
 			}
 		}
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set {
+        base.DimColor = value;
+        if (_imageFocused != null) _imageFocused.DimColor = value;
+        if (_imageNonFocused != null) _imageNonFocused.DimColor = value;
+        if (_labelControl != null) _labelControl.DimColor = value;
+        if (checkMark != null) checkMark.DimColor = value;
+      }
+    }
 
 	}
 }

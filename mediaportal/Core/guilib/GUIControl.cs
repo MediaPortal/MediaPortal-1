@@ -58,6 +58,9 @@ namespace MediaPortal.GUI.Library
     protected string _controlType = "";
     [XMLSkinElement("description")]
     protected string _description = "";
+    [XMLSkinElement("dimcolor")]
+    protected int _dimColor = 0x60ffffff;
+    
     protected int _parentControlId = 0;
     protected bool _isSelected = false;
     protected bool _calibration = true;
@@ -71,7 +74,7 @@ namespace MediaPortal.GUI.Library
     protected GUIControl _parentControl = null;
     protected bool _isDimmed = false;
 
-    protected int DimColor = 0x60ffffff;
+    //protected int DimColor = 0x60ffffff;
 
     /// <summary>
     /// enum to specify the alignment of the control
@@ -149,12 +152,7 @@ namespace MediaPortal.GUI.Library
         _isDimmed = value;
       }
     }
-
-    public void SetUnfocusedAlpha(int unfocusedAlpha)
-    {
-      DimColor = System.Drawing.Color.FromArgb(unfocusedAlpha, System.Drawing.Color.FromArgb(255,255,255)).ToArgb();
-    }
-
+        
     /// <summary> 
     /// This function is called after all of the XmlSkinnable fields have been filled
     /// with appropriate data.
@@ -1099,6 +1097,12 @@ namespace MediaPortal.GUI.Library
     public bool IsAnimating
     {
       get { return _isAnimating; }
+    }
+
+    public virtual int DimColor
+    {
+      get { return _dimColor;  }
+      set { _dimColor = value; }
     }
 
     /// <summary>

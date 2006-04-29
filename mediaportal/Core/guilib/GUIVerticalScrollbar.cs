@@ -64,6 +64,7 @@ namespace MediaPortal.GUI.Library
 		  _scrollbarTopTextureName =strTopTexture;
 		  _scrollbarBottomTextureName = strBottomTexture;
 		  FinalizeConstruction();
+      DimColor = base.DimColor;
 	  }
 	  public override void FinalizeConstruction()
 	  {
@@ -75,6 +76,10 @@ namespace MediaPortal.GUI.Library
       _imageBackground.ParentControl = this;
       _imageTop.ParentControl = this;
       _imageBottom.ParentControl = this;
+
+      _imageBackground.DimColor = DimColor;
+      _imageTop.DimColor = DimColor;
+      _imageBottom.DimColor = DimColor;
 	  }
 
 
@@ -179,6 +184,9 @@ namespace MediaPortal.GUI.Library
       _imageBottom.AllocResources();
       _imageTop.AllocResources();
 
+      _imageBackground.DimColor = DimColor;
+      _imageTop.DimColor = DimColor;
+      _imageBottom.DimColor = DimColor;
     }
 
 		/// <summary>
@@ -302,6 +310,19 @@ namespace MediaPortal.GUI.Library
       _imageBackground.DoUpdate();
       base.DoUpdate ();
     }
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_imageBackground != null) _imageBackground.DimColor = value;
+        if (_imageTop  != null) _imageTop .DimColor = value;
+        if (_imageBottom != null) _imageBottom.DimColor = value;
+      }
+    }
+
 
   }
 }

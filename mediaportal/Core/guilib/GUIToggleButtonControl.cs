@@ -71,6 +71,7 @@ namespace MediaPortal.GUI.Library
       _alternativeNonFocusTextureName = textureAltNoFocusName;
       _isSelected = false;
       FinalizeConstruction();
+      DimColor = base.DimColor;
     }
     public override void FinalizeConstruction()
     {
@@ -335,6 +336,19 @@ namespace MediaPortal.GUI.Library
     {
       get { return _textOffsetY; }
       set { _textOffsetY = value; }
+    }
+    
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_imageFocused != null) _imageFocused.DimColor = value;
+        if (_imageNonFocused != null) _imageNonFocused.DimColor = value;
+        if (_imageAlternativeFocused != null) _imageAlternativeFocused.DimColor = value;
+        if (_imageAlternativeNonFocused != null) _imageAlternativeNonFocused.DimColor = value;
+      }
     }
 
 

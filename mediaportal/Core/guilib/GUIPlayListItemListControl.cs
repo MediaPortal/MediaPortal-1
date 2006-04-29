@@ -260,6 +260,7 @@ namespace MediaPortal.GUI.Library
                 cntl.ParentControl = this;
                 cntl.FinalizeConstruction();
                 cntl.AllocResources();
+                cntl.DimColor = DimColor;
                 _listButtons.Add(cntl);
             }
         }

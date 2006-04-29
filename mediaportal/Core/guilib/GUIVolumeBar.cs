@@ -25,6 +25,7 @@ namespace MediaPortal.GUI.Library
 		{
       _imageVolumeBar = new GUIImage(dwParentID, 0, 0, 0, 0, 0, "", 0);
       _imageVolumeBar.ParentControl = this;
+      DimColor = base.DimColor;
 		}
 		
 		public GUIVolumeBar(int dwParentID, int dwControlId, int dwPosX, int dwPosY, int dwWidth, int dwHeight)
@@ -132,5 +133,16 @@ namespace MediaPortal.GUI.Library
 		{
 			get { return _imageVolumeBar.TextureWidth;}
 		}
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_imageVolumeBar != null) _imageVolumeBar.DimColor = value;
+      }
+    }
+
 	}
 }

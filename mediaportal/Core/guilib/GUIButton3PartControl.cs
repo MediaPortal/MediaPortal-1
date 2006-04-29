@@ -123,6 +123,16 @@ namespace MediaPortal.GUI.Library
       _imageNonFocusedRight.ParentControl = this;
       _labelControl1.ParentControl = this;
       _labelControl2.ParentControl = this;
+
+      _imageFocusedLeft.DimColor = DimColor;
+      _imageFocusedMid.DimColor = DimColor;
+      _imageFocusedRight.DimColor = DimColor;
+      _imageNonFocusedLeft.DimColor = DimColor;
+      _imageNonFocusedMid.DimColor = DimColor;
+      _imageNonFocusedRight.DimColor = DimColor;
+      _imageIcon.DimColor = DimColor;
+      _labelControl1.DimColor = DimColor;
+      _labelControl2.DimColor = DimColor;
     }
 
     /// <summary>
@@ -336,6 +346,7 @@ namespace MediaPortal.GUI.Library
       _property1Changed = true;
       _property2Changed = true;
       _reCalculate = true;
+
       GUIPropertyManager.OnPropertyChanged += new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
     }
 
@@ -998,5 +1009,24 @@ namespace MediaPortal.GUI.Library
       _positionY = dwPosY;
       _reCalculate = true;
     }
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_imageFocusedLeft != null) _imageFocusedLeft.DimColor = value;
+        if (_imageFocusedMid != null) _imageFocusedMid.DimColor = value;
+        if (_imageFocusedRight != null) _imageFocusedRight.DimColor = value;
+        if (_imageNonFocusedLeft != null) _imageNonFocusedLeft.DimColor = value;
+        if (_imageNonFocusedMid != null) _imageNonFocusedMid.DimColor = value;
+        if (_imageNonFocusedRight != null) _imageNonFocusedRight.DimColor = value;
+        if (_imageIcon != null) _imageIcon.DimColor = value;
+        if (_labelControl1 != null) _labelControl1.DimColor = value;
+        if (_labelControl2 != null) _labelControl2.DimColor = value;
+      }
+    }
+
   }
 }

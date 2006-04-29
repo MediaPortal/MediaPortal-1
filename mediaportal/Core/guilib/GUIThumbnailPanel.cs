@@ -209,6 +209,7 @@ namespace MediaPortal.GUI.Library
                                     GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT,
                                     GUIControl.Alignment.ALIGN_LEFT);
       _controlUpDown.ParentControl = this;
+      _controlUpDown.DimColor = DimColor;
 
       int xpos = 5 + _positionX + _width;
       if (xpos + 15 > GUIGraphicsContext.Width) xpos = GUIGraphicsContext.Width - 15;
@@ -217,6 +218,7 @@ namespace MediaPortal.GUI.Library
                                                  _scrollbarBackGroundTextureName, _scrollbarTopTextureName, _scrollbarBottomTextureName);
       _verticalScrollBar.ParentControl = this;
       _verticalScrollBar.SendNotifies = false;
+      _verticalScrollBar.DimColor = DimColor;
       _font = GUIFontManager.GetFont(_fontName);
       SetTextureDimensions(_textureWidth, _textureHeight);
       SetThumbDimensionsLow(_xPositionThumbNail, _yPositionThumbNail, _thumbNailWidth, _thumbNailHeight);
@@ -299,15 +301,16 @@ namespace MediaPortal.GUI.Library
       float fTextPosY = (float) dwPosY + (float) _textureHeight;
 
       long dwColor = _textColor;
-      if (pItem.Selected) dwColor = _selectedColor;
-			if (!bFocus)
-				dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+      if (pItem.Selected)    dwColor = _selectedColor;
+			if (!bFocus || !Focus) dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
 
       if (pItem.IsRemote)
       {
         dwColor = _remoteColor;
         if (pItem.IsDownloading) dwColor = _downloadColor;
       }
+      if (!Focus) dwColor &= DimColor;
+
       if (bFocus == true && Focus && m_iSelect == GUIListControl.ListType.CONTROL_LIST)
       {
         if (buttonOnly)
@@ -364,6 +367,7 @@ namespace MediaPortal.GUI.Library
             int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
             int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
             pImage.SetPosition(_xPositionThumbNail - iOverSized + dwPosX + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
+            pImage.DimColor = DimColor;
             pImage.Render(timePassed);
             _sleeper += SLEEP_FRAME_COUNT;
           }
@@ -381,10 +385,7 @@ namespace MediaPortal.GUI.Library
           int xOff = (_thumbNailWidth + 2*iOverSized - pImage.RenderWidth)/2;
           int yOff = (_thumbNailHeight + 2*iOverSized - pImage.RenderHeight)/2;
           pImage.SetPosition(_xPositionThumbNail + dwPosX - iOverSized + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
-          pImage.SetUnfocusedAlpha(_unfocusedAlpha); 
-          //if (bFocus)			pImage.ColourDiffuse=0xffffffff;
-					//else				pImage.ColourDiffuse=Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
-
+          pImage.DimColor = DimColor;
           pImage.Render(timePassed);
         }
       }
@@ -405,6 +406,7 @@ namespace MediaPortal.GUI.Library
             int xOff = (_thumbNailWidth + 2*iOverSized - pImage.RenderWidth)/2;
             int yOff = (_thumbNailHeight + 2*iOverSized - pImage.RenderHeight)/2;
             pImage.SetPosition(_xPositionThumbNail + dwPosX - iOverSized + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
+            pImage.DimColor = DimColor;
             pImage.Render(timePassed);
             _sleeper += SLEEP_FRAME_COUNT;
           }
@@ -421,10 +423,7 @@ namespace MediaPortal.GUI.Library
             int xOff = (_thumbNailWidth + 2*iOverSized - pImage.RenderWidth)/2;
             int yOff = (_thumbNailHeight + 2*iOverSized - pImage.RenderHeight)/2;
 						pImage.SetPosition(_xPositionThumbNail - iOverSized + dwPosX + xOff, _yPositionThumbNail - iOverSized + dwPosY + yOff);
-            pImage.SetUnfocusedAlpha(_unfocusedAlpha); 
-            //if (bFocus)							pImage.ColourDiffuse=0xffffffff;
-						//else							pImage.ColourDiffuse=Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
-
+            pImage.DimColor = DimColor;
             pImage.Render(timePassed);
           }
         }
@@ -1290,7 +1289,9 @@ namespace MediaPortal.GUI.Library
       _font = GUIFontManager.GetFont(_fontName);
       base.AllocResources();
       _controlUpDown.AllocResources();
+      _controlUpDown.DimColor = DimColor;
       _verticalScrollBar.AllocResources();
+      _verticalScrollBar.DimColor = DimColor;
       Calculate();
     }
 
@@ -2279,5 +2280,18 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
+    
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_controlUpDown != null) _controlUpDown.DimColor = value;
+        if (_verticalScrollBar != null) _verticalScrollBar.DimColor = value;
+        foreach (GUIListItem item in _listItems) item.DimColor = value;
+      }
+    }
+
   }
 }

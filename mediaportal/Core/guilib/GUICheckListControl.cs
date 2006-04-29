@@ -100,6 +100,7 @@ namespace MediaPortal.GUI.Library
 				cntl.AllocResources();
 				cntl.CheckOffsetX=markOffsetX;
 				cntl.CheckOffsetY=markOffsetY;
+        cntl.DimColor = DimColor;
 				_listButtons.Add(cntl);
 			}
 		}
@@ -168,9 +169,6 @@ namespace MediaPortal.GUI.Library
 			}
 			return result;
 		}
-
-
-
 
 	}
 }

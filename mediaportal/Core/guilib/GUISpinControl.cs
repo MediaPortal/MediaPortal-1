@@ -111,15 +111,19 @@ namespace MediaPortal.GUI.Library
 		  base.FinalizeConstruction();
 		  _imageSpinUp		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,_upTextureName,0);
       _imageSpinUp.ParentControl = this;
+      _imageSpinUp.DimColor = DimColor;
 
 		  _imageSpinDown		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height,_downTextureName,0);
       _imageSpinDown.ParentControl = this;
+      _imageSpinDown.DimColor = DimColor;
 
       _imageSpinUpFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _upTextureNameFocus, 0);
       _imageSpinUpFocus.ParentControl = this;
+      _imageSpinUpFocus.DimColor = DimColor;
       
       _imageSpinDownFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _downTextureNameFocus, 0);
       _imageSpinDownFocus.ParentControl = this;
+      _imageSpinDownFocus.DimColor = DimColor;
 
       _imageSpinUp.Filtering=false;
       _imageSpinDown.Filtering=false;
@@ -128,6 +132,7 @@ namespace MediaPortal.GUI.Library
       _labelControl = new GUILabelControl(_parentControlId);
       _labelControl.CacheFont=true;
       _labelControl.ParentControl = this;
+      _labelControl.DimColor = DimColor;
 	  }
 
     public override void 	Render(float timePassed)
@@ -303,8 +308,7 @@ namespace MediaPortal.GUI.Library
         _labelControl.TextColor=_textColor;
         _labelControl.Label=wszText;
 	  
-				if (Disabled)
-					_labelControl.TextColor &= 0x80ffffff;
+				if (Disabled) 	_labelControl.TextColor &= 0x80ffffff;
         if ( _alignment!= GUIControl.Alignment.ALIGN_CENTER)
 				{
 					if (wszText!=null && wszText.Length>0)
@@ -1105,5 +1109,19 @@ namespace MediaPortal.GUI.Library
 			get { return _spinSelect;}
 			set { _spinSelect=value;}
 		}
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_imageSpinUp != null) _imageSpinUp.DimColor = value;
+		    if (_imageSpinDown != null) _imageSpinDown.DimColor = value;
+		    if (_imageSpinUpFocus != null) _imageSpinUpFocus.DimColor = value;
+        if (_imageSpinDownFocus != null) _imageSpinDownFocus.DimColor = value;
+      }
+    }
+
 	}
 }

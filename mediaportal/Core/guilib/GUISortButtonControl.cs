@@ -68,6 +68,10 @@ namespace MediaPortal.GUI.Library
       _sortImages[1].ParentControl = this;
       _sortImages[2].ParentControl = this;
       _sortImages[3].ParentControl = this;
+      _sortImages[0].DimColor = DimColor;
+      _sortImages[1].DimColor = DimColor;
+      _sortImages[2].DimColor = DimColor;
+      _sortImages[3].DimColor = DimColor;
 		}
 		public override void ScaleToScreenResolution()
 		{
@@ -164,8 +168,8 @@ namespace MediaPortal.GUI.Library
 			_sortImages[0].SetPosition(x, y);
 			_sortImages[1].SetPosition(x, y);
 			_sortImages[2].SetPosition(x, y);
-			_sortImages[3].SetPosition(x, y);
-		}
+			_sortImages[3].SetPosition(x, y);     
+    }
 
 		public override void OnAction(Action action)
 		{
@@ -214,6 +218,19 @@ namespace MediaPortal.GUI.Library
 			get { return _isAscending; }
 			set { _isAscending = value; }
 		}
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        _sortImages[0].DimColor = value;
+        _sortImages[1].DimColor = value;
+        _sortImages[2].DimColor = value;
+        _sortImages[3].DimColor = value;
+      }
+    }
 
 		#endregion Properties
 

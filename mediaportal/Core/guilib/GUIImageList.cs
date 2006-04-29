@@ -60,6 +60,7 @@ namespace MediaPortal.GUI.Library
 				string strTexture = (string)GetSubItem(i);
 				GUIImage img= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_textureWidth, _textureHeight,strTexture,0);
         img.ParentControl = this;
+        img.DimColor = DimColor;
 				_itemList.Add(img);
 			}
 		}
@@ -145,5 +146,16 @@ namespace MediaPortal.GUI.Library
 			get { return m_iPercentage;}
 			set { m_iPercentage=value;}
 		}
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        foreach (GUIImage img in _itemList) img.DimColor = value;
+      }
+    }
+
 	}
 }

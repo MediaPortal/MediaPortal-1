@@ -84,14 +84,14 @@ namespace MediaPortal.GUI.Library
 		  _imageCheckMarkFocused = new GUIImage
 			  (_parentControlId, _controlId, _positionX, _positionY,
 			   _checkMarkWidth, _checkMarkHeight, _checkMarkFocusTextureName ,0);
-
       _imageCheckMarkFocused.ParentControl = this;
+      _imageCheckMarkFocused.DimColor = DimColor;
 		  
 		  _imageCheckMarkNonFocused = new GUIImage
 			  (_parentControlId, _controlId, _positionX, _positionY,
 			   _checkMarkWidth, _checkMarkHeight, _checkMarkNoFocusTextureName,0);
-
       _imageCheckMarkNonFocused.ParentControl = this;
+      _imageCheckMarkNonFocused.DimColor = DimColor;
 		  
 		  if (_fontName!="" && _fontName!="-")
 			  _font=GUIFontManager.GetFont(_fontName);
@@ -169,13 +169,13 @@ namespace MediaPortal.GUI.Library
 			// Render the selected checkmark image
       if (_isSelected)
       {
-        _imageCheckMarkFocused.SetPosition(dwCheckMarkPosX, _positionY); 
+        _imageCheckMarkFocused.SetPosition(dwCheckMarkPosX, _positionY);
         _imageCheckMarkFocused.Render(timePassed);
       }
       else
       {
 				// Render the non-selected checkmark image
-				_imageCheckMarkNonFocused.SetPosition(dwCheckMarkPosX, _positionY); 
+				_imageCheckMarkNonFocused.SetPosition(dwCheckMarkPosX, _positionY);
         _imageCheckMarkNonFocused.Render(timePassed);
       }
     }
@@ -383,6 +383,18 @@ namespace MediaPortal.GUI.Library
 			}
 			return false;
 		}
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_imageCheckMarkFocused != null) _imageCheckMarkFocused.DimColor = value;
+        if (_imageCheckMarkNonFocused != null) _imageCheckMarkNonFocused.DimColor = value;
+      }
+    }
+
 
 	}
 }

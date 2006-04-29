@@ -123,6 +123,7 @@ namespace MediaPortal.GUI.Library
       _tickFill3TextureName = strTextureFill3;
       _logoTextureName = strLogoTextureName;
       FinalizeConstruction();
+      DimColor = base.DimColor;
     }
     public override void FinalizeConstruction()
     {
@@ -709,6 +710,26 @@ namespace MediaPortal.GUI.Library
       {
         if (value < 0) return;
         _topTextureOffsetY = value;
+      }
+    }
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_imageTop  != null) _imageTop .DimColor = value;
+        if (_imageLogo  != null) _imageLogo .DimColor = value;
+        if (_imageBottom  != null) _imageBottom .DimColor = value;
+        if (_imageTick  != null) _imageTick .DimColor = value;
+        if (_imageFillBackground  != null) _imageFillBackground .DimColor = value;
+        if (_imageFill1 != null) _imageFill1.DimColor = value;
+        if (_imageFill2 != null) _imageFill2.DimColor = value;
+        if (_imageFill3 != null) _imageFill3.DimColor = value;
+        if (_imageLeft != null) _imageLeft.DimColor = value;
+        if (_imageMid  != null) _imageMid .DimColor = value;
+        if (_imageRight != null) _imageRight.DimColor = value;
       }
     }
 

@@ -873,5 +873,22 @@ namespace MediaPortal.GUI.Library
 
             return selectedItemIndex;
         }
+
+/*      public override int DimColor
+      {
+        get { return base.DimColor; }
+        set
+        {
+          base.DimColor = value;
+          if (_viewPlayList != null) _viewPlayList.DimColor = value;
+          if (_viewList != null) _viewList.DimColor = value;
+          if (_viewAlbum != null) _viewAlbum.DimColor = value;
+          if (_viewThumbnail != null) _viewThumbnail.DimColor = value;
+          if (_viewFilmStrip != null) _viewFilmStrip.DimColor = value;
+          foreach (GUIListItem item in _itemList) item.DimColor = value;
+        }
+      }
+*/
+
     }
 }

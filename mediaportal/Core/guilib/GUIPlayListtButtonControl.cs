@@ -303,6 +303,8 @@ namespace MediaPortal.GUI.Library
             ImgUpButtonFocused = new GUIImage(WindowId, WindowId + 10001, 0, 0, UpBtnWidth, UpBtnHeight, TextureMoveUpFocusedFileName, 0);
             ImgUpButtonNormal.ParentControl = this;
             ImgUpButtonFocused.ParentControl = this;
+            ImgUpButtonNormal.DimColor = DimColor;
+            ImgUpButtonFocused.DimColor = DimColor;
             ImgUpButtonNormal.BringIntoView();
             ImgUpButtonFocused.BringIntoView();
 
@@ -310,6 +312,8 @@ namespace MediaPortal.GUI.Library
             ImgDownButtonFocused = new GUIImage(WindowId, WindowId + 10004, 0, 0, DownBtnWidth, DownBtnHeight, TextureMoveDownFocusedFileName, 0);
             ImgDownButtonNormal.ParentControl = this;
             ImgDownButtonFocused.ParentControl = this;
+            ImgDownButtonNormal.DimColor = DimColor;
+            ImgDownButtonFocused.DimColor = DimColor;
             ImgDownButtonNormal.BringIntoView();
             ImgDownButtonFocused.BringIntoView();
 
@@ -317,6 +321,8 @@ namespace MediaPortal.GUI.Library
             ImgDeleteButtonFocused = new GUIImage(WindowId, WindowId + 10007, 0, 0, DeleteBtnWidth, DeleteBtnHeight, TextureDeleteFocusedFileName, 0);
             ImgDeleteButtonNormal.ParentControl = this;
             ImgDeleteButtonFocused.ParentControl = this;
+            ImgDeleteButtonNormal.DimColor = DimColor;
+            ImgDeleteButtonFocused.DimColor = DimColor;
             ImgDeleteButtonNormal.BringIntoView();
             ImgDeleteButtonFocused.BringIntoView();
 
@@ -796,5 +802,26 @@ namespace MediaPortal.GUI.Library
 
             return guiImg;
         }
+
+      public override int DimColor
+      {
+        get { return base.DimColor; }
+        set
+        {
+          base.DimColor = value;
+          if (ImgUpButtonNormal != null) ImgUpButtonNormal.DimColor = value;
+          if (ImgUpButtonFocused != null) ImgUpButtonFocused.DimColor = value;
+          if (ImgUpButtonDisabled != null) ImgUpButtonDisabled.DimColor = value;
+
+          if (ImgDownButtonNormal != null) ImgDownButtonNormal.DimColor = value;
+          if (ImgDownButtonFocused != null) ImgDownButtonFocused.DimColor = value;
+          if (ImgDownButtonDisabled != null) ImgDownButtonDisabled.DimColor = value;
+
+          if (ImgDeleteButtonNormal != null) ImgDeleteButtonNormal.DimColor = value;
+          if (ImgDeleteButtonFocused != null) ImgDeleteButtonFocused.DimColor = value;
+          if (ImgDeleteButtonDisabled != null) ImgDeleteButtonDisabled.DimColor = value;
+        }
+      }
+
     }
 }

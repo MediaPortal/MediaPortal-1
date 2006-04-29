@@ -97,6 +97,7 @@ namespace MediaPortal.GUI.Library
 			_spinControlPositionY = dwSpinY;
 			_textColor=dwTextColor;
 			FinalizeConstruction();
+      DimColor = base.DimColor;  // let us init all GUIControls with DimColor
 		}		
 		public override void FinalizeConstruction()
 		{
@@ -771,5 +772,16 @@ namespace MediaPortal.GUI.Library
 				}
 			}
 		}
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_upDownControl != null) _upDownControl.DimColor = value;
+      }
+    }
+
 	}
 }

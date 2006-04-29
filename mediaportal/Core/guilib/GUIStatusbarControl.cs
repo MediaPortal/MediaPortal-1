@@ -93,7 +93,12 @@ namespace MediaPortal.GUI.Library
       _imageMid.ParentControl = this;
       _imageRight.ParentControl = this;
 
-			_imageBackground.KeepAspectRatio=false;
+      _imageBackground.DimColor = DimColor;
+      _imageLeft.DimColor = DimColor;
+      _imageMid.DimColor = DimColor;
+      _imageRight.DimColor = DimColor;
+
+      _imageBackground.KeepAspectRatio=false;
 			_imageMid.KeepAspectRatio=false;
 			_imageRight.KeepAspectRatio=false;
 			if (_property==null) _property=String.Empty;
@@ -334,5 +339,19 @@ namespace MediaPortal.GUI.Library
 				}
 			}
 		}
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_imageBackground != null) _imageBackground.DimColor = value;
+        if (_imageLeft  != null) _imageLeft .DimColor = value;
+        if (_imageMid  != null) _imageMid .DimColor = value;
+        if (_imageRight != null) _imageRight.DimColor = value;
+      }
+    }
+
   }
 }

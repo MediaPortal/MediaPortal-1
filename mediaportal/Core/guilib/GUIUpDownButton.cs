@@ -73,6 +73,7 @@ namespace MediaPortal.GUI.Library
 			_focusedTextureName = strTextureFocus;
 			_nonFocusedTextureName = strTextureNoFocus;
 			FinalizeConstruction();
+      DimColor = base.DimColor;
 		}
 
 		public override void FinalizeConstruction()
@@ -164,5 +165,16 @@ namespace MediaPortal.GUI.Library
 		{
 			get { return _spinControl;}
 		}
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_spinControl != null) _spinControl.DimColor = value;
+      }
+    }
+
 	}
 }

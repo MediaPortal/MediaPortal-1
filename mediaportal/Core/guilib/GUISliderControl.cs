@@ -96,12 +96,15 @@ namespace MediaPortal.GUI.Library
       base.FinalizeConstruction();
       _imageBackGround = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName, 0);
       _imageBackGround.ParentControl = this;
+      _imageBackGround.DimColor = DimColor;
 
       _imageMid = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _sliderTextureName, 0);
       _imageMid.ParentControl = this;
+      _imageMid.DimColor = DimColor;
 
       _imageMidFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _sliderFocusTextureName, 0);
       _imageMidFocus.ParentControl = this;
+      _imageMidFocus.DimColor = DimColor;
     }
 
 
@@ -455,5 +458,18 @@ namespace MediaPortal.GUI.Library
     {
       _imageBackGround.SetPosition(XPosition, YPosition);
     }
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_imageBackGround != null) _imageBackGround.DimColor = value;
+        if (_imageMid != null) _imageMid.DimColor = value;
+        if (_imageMidFocus != null) _imageMidFocus.DimColor = value;
+      }
+    }
+
   }
 }

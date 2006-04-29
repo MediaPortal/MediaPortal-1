@@ -124,6 +124,7 @@ namespace MediaPortal.GUI.Library
 
       _image = new GUIImage(this.GetID, 1, 0, 0, _widthTextBox, 10, "bar_hor.png", 1);
       _image.ParentControl = this;
+      _image.DimColor = DimColor;
       _image.AllocResources();
     }
 
@@ -634,5 +635,15 @@ namespace MediaPortal.GUI.Library
         _heightTextBox = value;
       }
     }
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        _image.DimColor = value;
+      }
+    }
+
   }
 }

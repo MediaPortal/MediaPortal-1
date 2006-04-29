@@ -242,32 +242,40 @@ namespace MediaPortal.GUI.Library
       if (_positionY > _positionY && _spinControlPositionY < _positionY + _height) _spinControlPositionY = _positionY + _height;
       _imageFolder = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _imageFolderName, 0);
       _imageFolder.ParentControl = this;
+      _imageFolder.DimColor = DimColor;
 
       _imageFolderFocus = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight, _imageFolderNameFocus, 0);
       _imageFolderFocus.ParentControl = this;
+      _imageFolderFocus.DimColor = DimColor;
 
       _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
       _upDownControl.ParentControl = this;
+      _upDownControl.DimColor = DimColor;
+
       _font = GUIFontManager.GetFont(_fontName);
       int xpos = 5 + _positionX + _width;
       if (xpos + 15 > GUIGraphicsContext.Width) xpos = GUIGraphicsContext.Width - 15;
       _horizontalScrollbar = new GUIverticalScrollbar(_controlId, 0, 5 + _positionX + _width, _positionY, 15, _height, _scrollbarBackgroundName, _scrollbarTopName, _scrollbarBottomName);
       _horizontalScrollbar.ParentControl = this;
-
       _horizontalScrollbar.SendNotifies = false;
+      _horizontalScrollbar.DimColor = DimColor;
+
       _upDownControl.Orientation = GUISpinControl.eOrientation.Horizontal;
       _upDownControl.SetReverse(true);
+      
       _imageBackground = new GUIImage(0, 0, _backGroundPositionX, _backGroundPositionY, _backGroundWidth, _backGroundHeight, _backgroundTextureName, 0);
       _imageBackground.ParentControl = this;
+      _imageBackground.DimColor = DimColor;
+
       _imageInfo = new GUIImage(0, 0, _infoImagePositionX, _infoImagePositionY, _infoImageWidth, _infoImageHeight, _infoImageName, 0);
       _imageInfo.ParentControl = this;
       _imageInfo.Filtering = true;
       _imageInfo.KeepAspectRatio = true;
       _imageInfo.Centered = true;
+      _imageInfo.DimColor = DimColor;
 
       SetThumbDimensionsLow(_thumbNailPositionX, _thumbNailPositionY, _widthThumbnail, _heightThumbnail);
       SetTextureDimensions(_textureWidth, _textureHeight);
-
     }
 
     public override void ScaleToScreenResolution()
@@ -360,14 +368,14 @@ namespace MediaPortal.GUI.Library
       float fTextPosY = (float)dwPosY + (float)_textureHeight;
 
       long dwColor = _textColor;
-      if (pItem.Selected) dwColor = _selectedColor;
-      if (!bFocus)
-        dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+      if (pItem.Selected)    dwColor = _selectedColor;
+      if (!bFocus || !Focus) dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
       if (pItem.IsRemote)
       {
         dwColor = _remoteColor;
         if (pItem.IsDownloading) dwColor = _downloadColor;
       }
+      if (!Focus) dwColor &= DimColor;
 
       if (bFocus == true && Focus && _listType == GUIListControl.ListType.CONTROL_LIST)
       {
@@ -406,7 +414,7 @@ namespace MediaPortal.GUI.Library
           int xOff = (_widthThumbnail + 2 * iOverSized - pImage.RenderWidth) / 2;
           int yOff = (_heightThumbnail + 2 * iOverSized - pImage.RenderHeight) / 2;
           pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
-          pImage.SetUnfocusedAlpha(_unfocusedAlpha); 
+          pImage.DimColor = DimColor;
           pImage.Render(timePassed);
           _sleeper += SLEEP_FRAME_COUNT;
         }
@@ -423,7 +431,7 @@ namespace MediaPortal.GUI.Library
           int xOff = (_widthThumbnail + 2 * iOverSized - pImage.RenderWidth) / 2;
           int yOff = (_heightThumbnail + 2 * iOverSized - pImage.RenderHeight) / 2;
           pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
-          pImage.SetUnfocusedAlpha(_unfocusedAlpha);
+          pImage.DimColor = DimColor;
           pImage.Render(timePassed);
         }
       }
@@ -443,7 +451,7 @@ namespace MediaPortal.GUI.Library
             int xOff = (_widthThumbnail + 2 * iOverSized - pImage.RenderWidth) / 2;
             int yOff = (_heightThumbnail + 2 * iOverSized - pImage.RenderHeight) / 2;
             pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
-            pImage.SetUnfocusedAlpha(_unfocusedAlpha); 
+            pImage.DimColor = DimColor;
             pImage.Render(timePassed);
             _sleeper += SLEEP_FRAME_COUNT;
           }
@@ -455,7 +463,7 @@ namespace MediaPortal.GUI.Library
             int xOff = (_widthThumbnail + 2 * iOverSized - pImage.RenderWidth) / 2;
             int yOff = (_heightThumbnail + 2 * iOverSized - pImage.RenderHeight) / 2;
             pImage.SetPosition(_thumbNailPositionX - iOverSized + dwPosX + xOff, _thumbNailPositionY - iOverSized + dwPosY + yOff);
-            pImage.SetUnfocusedAlpha(_unfocusedAlpha); 
+            pImage.DimColor = DimColor;
             pImage.Render(timePassed);
           }
         }
@@ -2377,5 +2385,22 @@ namespace MediaPortal.GUI.Library
     _refresh = true;
     OnSelectionChanged();
   }
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_imageBackground != null) _imageBackground.DimColor = value;
+        if (_imageInfo != null) _imageInfo.DimColor = value;
+        if (_upDownControl != null) _upDownControl.DimColor = value;
+        if (_imageFolder != null) _imageFolder.DimColor = value;
+        if (_imageFolderFocus != null) _imageFolderFocus.DimColor = value;
+        if (_horizontalScrollbar != null) _horizontalScrollbar.DimColor = value;
+        foreach (GUIListItem item in _listItems) item.DimColor = value;
+      }
+    }
+
 }
 }

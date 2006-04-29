@@ -55,7 +55,8 @@ namespace MediaPortal.GUI.Library
 
 		public void AddControl(GUIControl control)
 		{
-			Children.Add(control);
+      control.DimColor = DimColor;
+      Children.Add(control);
 		}
 
     public override bool Dimmed
@@ -284,8 +285,9 @@ namespace MediaPortal.GUI.Library
 		{
 			if(value is GUIControl == false)
 				return;
-
-			Children.Add((GUIControl)value);
+      GUIControl cntl = (GUIControl)value;
+      cntl.DimColor = DimColor;
+			Children.Add(cntl);
 		}
 
 		void IAddChild.AddText(string text)
@@ -338,6 +340,20 @@ namespace MediaPortal.GUI.Library
 
 			return this.Size = _layout.Size;
 		}
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        foreach (GUIControl control in Children)
+        {
+          if (control != null) control.DimColor = value;
+        }
+      }
+    }
+
 
 		#endregion Methods
 

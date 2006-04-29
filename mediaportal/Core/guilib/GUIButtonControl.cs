@@ -117,10 +117,12 @@ namespace MediaPortal.GUI.Library
       _imageFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,
         _width, _height, _focusedTextureName, 0);
       _imageFocused.ParentControl = this;
+      _imageFocused.DimColor = DimColor;
 
       _imageNonFocused = new GUIImage(_parentControlId, _controlId, _positionX, _positionY,
         _width, _height, _nonFocusedTextureName, 0);
       _imageNonFocused.ParentControl = this;
+      _imageNonFocused.DimColor = DimColor;
 
       if (_hoverFilename != string.Empty)
       {
@@ -632,5 +634,17 @@ namespace MediaPortal.GUI.Library
       if (dialog.SelectedId == -1)
         return;
     }
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_imageFocused != null) _imageFocused.DimColor = value;
+        if (_imageNonFocused != null) _imageNonFocused.DimColor = value;
+      }
+    }
+
   }
 }

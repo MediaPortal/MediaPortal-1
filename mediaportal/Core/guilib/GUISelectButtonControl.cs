@@ -119,24 +119,31 @@ namespace MediaPortal.GUI.Library
 		  GUIGraphicsContext.ScalePosToScreenResolution(ref x1,ref y1);
 		  _imageFocused		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _textureFocusName,0);
       _imageFocused.ParentControl = this;
+      _imageFocused.DimColor = DimColor;
 
 		  _imageNonFocused		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _textureNoFocusName,0);
       _imageNonFocused.ParentControl = this;
+      _imageNonFocused.DimColor = DimColor;
 
 		  _imageBackground	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY,_width, _height, _backgroundTextureName,0);
       _imageBackground.ParentControl = this;
+      _imageBackground.DimColor = DimColor;
 
 		  _imageLeft			= new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1,_leftTextureName,0);
+      _imageLeft.DimColor = DimColor;
       _imageLeft.ParentControl = this;
 
 		  _imageLeftFocus	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1,_leftFocusName,0);
       _imageLeftFocus.ParentControl = this;
+      _imageLeftFocus.DimColor = DimColor;
 
 		  _imageRight		= new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1,_rightTextureName,0);
       _imageRight.ParentControl = this;
+      _imageRight.DimColor = DimColor;
 
 		  _imageRightFocus	= new GUIImage(_parentControlId, _controlId, _positionX, _positionY, x1, y1,_rightFocusName,0);
       _imageRightFocus.ParentControl = this;
+      _imageRightFocus.DimColor = DimColor;
 
 		  if (_fontName!="" && _fontName!="-")
 			  _font=GUIFontManager.GetFont(_fontName);
@@ -938,5 +945,23 @@ namespace MediaPortal.GUI.Library
 				_resetSelectionAfterFocusLost=value;
 			}
 		}
+
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+				if (_imageBackground != null) _imageBackground.DimColor = value;
+				if (_imageLeft != null) _imageLeft.DimColor = value;
+				if (_imageLeftFocus != null) _imageLeftFocus.DimColor = value;
+				if (_imageRight != null) _imageRight.DimColor = value;
+				if (_imageRightFocus != null) _imageRightFocus.DimColor = value;
+				if (_imageFocused != null) _imageFocused.DimColor = value;
+				if (_imageNonFocused != null) _imageNonFocused.DimColor = value;
+        if (_labelControl != null) _labelControl.DimColor = value;
+      }
+    }
+
 	}
 }

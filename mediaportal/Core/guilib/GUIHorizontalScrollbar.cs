@@ -77,11 +77,14 @@ namespace MediaPortal.GUI.Library
       if (_leftTextureName == null) _leftTextureName = "";
       _imageBackGround = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _backgroundTextureName, 0);
       _imageBackGround.ParentControl = this;
+      _imageBackGround.DimColor = DimColor;
 
       _imageLeft = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _leftTextureName, 0);
       _imageLeft.ParentControl = this;
+      _imageLeft.DimColor = DimColor;
       _imageRight = new GUIImage(_parentControlId, _controlId, _positionX, _positionY, _width, _height, _rightTextureName, 0);
       _imageRight.ParentControl = this;
+      _imageRight.DimColor = DimColor;
     }
 
     /// Renders the control.
@@ -290,5 +293,18 @@ namespace MediaPortal.GUI.Library
       }
       return false;
     }
+    
+    public override int DimColor
+    {
+      get { return base.DimColor; }
+      set
+      {
+        base.DimColor = value;
+        if (_imageBackGround != null) _imageBackGround.DimColor = value;
+        if (_imageLeft != null) _imageLeft.DimColor = value;
+        if (_imageRight != null) _imageRight.DimColor = value;
+      }
+    }
+
   }
 }
