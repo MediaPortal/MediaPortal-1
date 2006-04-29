@@ -534,6 +534,13 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
+	<country name="Sweden - Stockholm - Nacka" offset="125">
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+	</country>
 	<country name="Taiwan - All Regions" offset="0">
 		<carrier frequency="533000" bandwidth="6" />
 		<carrier frequency="539000" bandwidth="6" />
