@@ -54,6 +54,14 @@ namespace MediaPortal.GUI.Alarm
       private NumericUpDown NUDAlarmTimeout;
       private Label lblAlarmTimeout;
       private Label LblRadioOnlyMsg;
+      private GroupBox grpAlarmVol;
+      private NumericUpDown NUDAlarmVol;
+      private CheckBox chkEnableDefaultVol;
+      private Label lblAlarmVol2;
+      private Label lblAlarmVol1;
+      private Label lblAlarmVol3;
+      private Label lblAlarmVol4;
+      private Button cmdAlarmVolTest;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -107,19 +115,29 @@ namespace MediaPortal.GUI.Alarm
         this.LblRadioOnlyMsg = new System.Windows.Forms.Label();
         this.NUDAlarmTimeout = new System.Windows.Forms.NumericUpDown();
         this.lblAlarmTimeout = new System.Windows.Forms.Label();
+        this.grpAlarmVol = new System.Windows.Forms.GroupBox();
+        this.cmdAlarmVolTest = new System.Windows.Forms.Button();
+        this.lblAlarmVol4 = new System.Windows.Forms.Label();
+        this.lblAlarmVol3 = new System.Windows.Forms.Label();
+        this.lblAlarmVol2 = new System.Windows.Forms.Label();
+        this.lblAlarmVol1 = new System.Windows.Forms.Label();
+        this.NUDAlarmVol = new System.Windows.Forms.NumericUpDown();
+        this.chkEnableDefaultVol = new System.Windows.Forms.CheckBox();
         this.grpSounds.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)(this.RepeatCount)).BeginInit();
         ((System.ComponentModel.ISupportInitialize)(this.RepeatSeconds)).BeginInit();
         this.grpAlarmTimeout.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)(this.NUDAlarmTimeout)).BeginInit();
+        this.grpAlarmVol.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)(this.NUDAlarmVol)).BeginInit();
         this.SuspendLayout();
         // 
         // btnOk
         // 
-        this.btnOk.Location = new System.Drawing.Point(245, 182);
+        this.btnOk.Location = new System.Drawing.Point(245, 286);
         this.btnOk.Name = "btnOk";
         this.btnOk.Size = new System.Drawing.Size(75, 23);
-        this.btnOk.TabIndex = 2;
+        this.btnOk.TabIndex = 3;
         this.btnOk.Text = "&Ok";
         this.btnOk.UseVisualStyleBackColor = true;
         this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
@@ -127,10 +145,10 @@ namespace MediaPortal.GUI.Alarm
         // btnCancel
         // 
         this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-        this.btnCancel.Location = new System.Drawing.Point(325, 182);
+        this.btnCancel.Location = new System.Drawing.Point(325, 286);
         this.btnCancel.Name = "btnCancel";
         this.btnCancel.Size = new System.Drawing.Size(75, 23);
-        this.btnCancel.TabIndex = 3;
+        this.btnCancel.TabIndex = 4;
         this.btnCancel.Text = "&Cancel";
         this.btnCancel.UseVisualStyleBackColor = true;
         this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -269,7 +287,7 @@ namespace MediaPortal.GUI.Alarm
         this.grpAlarmTimeout.Controls.Add(this.lblAlarmTimeout);
         this.grpAlarmTimeout.Location = new System.Drawing.Point(8, 121);
         this.grpAlarmTimeout.Name = "grpAlarmTimeout";
-        this.grpAlarmTimeout.Size = new System.Drawing.Size(392, 55);
+        this.grpAlarmTimeout.Size = new System.Drawing.Size(392, 67);
         this.grpAlarmTimeout.TabIndex = 1;
         this.grpAlarmTimeout.TabStop = false;
         this.grpAlarmTimeout.Text = "Alarm Timeout";
@@ -277,15 +295,15 @@ namespace MediaPortal.GUI.Alarm
         // LblRadioOnlyMsg
         // 
         this.LblRadioOnlyMsg.AutoSize = true;
-        this.LblRadioOnlyMsg.Location = new System.Drawing.Point(181, 25);
+        this.LblRadioOnlyMsg.Location = new System.Drawing.Point(8, 16);
         this.LblRadioOnlyMsg.Name = "LblRadioOnlyMsg";
-        this.LblRadioOnlyMsg.Size = new System.Drawing.Size(195, 13);
+        this.LblRadioOnlyMsg.Size = new System.Drawing.Size(250, 13);
         this.LblRadioOnlyMsg.TabIndex = 1;
-        this.LblRadioOnlyMsg.Text = "This feature only applies to radio alarms.";
+        this.LblRadioOnlyMsg.Text = "This feature only applies to radio and playlist alarms.";
         // 
         // NUDAlarmTimeout
         // 
-        this.NUDAlarmTimeout.Location = new System.Drawing.Point(107, 23);
+        this.NUDAlarmTimeout.Location = new System.Drawing.Point(107, 36);
         this.NUDAlarmTimeout.Maximum = new decimal(new int[] {
             300,
             0,
@@ -308,16 +326,98 @@ namespace MediaPortal.GUI.Alarm
         // lblAlarmTimeout
         // 
         this.lblAlarmTimeout.AutoSize = true;
-        this.lblAlarmTimeout.Location = new System.Drawing.Point(8, 25);
+        this.lblAlarmTimeout.Location = new System.Drawing.Point(8, 38);
         this.lblAlarmTimeout.Name = "lblAlarmTimeout";
         this.lblAlarmTimeout.Size = new System.Drawing.Size(93, 13);
         this.lblAlarmTimeout.TabIndex = 0;
         this.lblAlarmTimeout.Text = "Timeout (minutes):";
         // 
+        // grpAlarmVol
+        // 
+        this.grpAlarmVol.Controls.Add(this.cmdAlarmVolTest);
+        this.grpAlarmVol.Controls.Add(this.lblAlarmVol4);
+        this.grpAlarmVol.Controls.Add(this.lblAlarmVol3);
+        this.grpAlarmVol.Controls.Add(this.lblAlarmVol2);
+        this.grpAlarmVol.Controls.Add(this.lblAlarmVol1);
+        this.grpAlarmVol.Controls.Add(this.NUDAlarmVol);
+        this.grpAlarmVol.Controls.Add(this.chkEnableDefaultVol);
+        this.grpAlarmVol.Location = new System.Drawing.Point(8, 194);
+        this.grpAlarmVol.Name = "grpAlarmVol";
+        this.grpAlarmVol.Size = new System.Drawing.Size(392, 86);
+        this.grpAlarmVol.TabIndex = 2;
+        this.grpAlarmVol.TabStop = false;
+        this.grpAlarmVol.Text = "Alarm Volume";
+        // 
+        // cmdAlarmVolTest
+        // 
+        this.cmdAlarmVolTest.Location = new System.Drawing.Point(287, 51);
+        this.cmdAlarmVolTest.Name = "cmdAlarmVolTest";
+        this.cmdAlarmVolTest.Size = new System.Drawing.Size(89, 23);
+        this.cmdAlarmVolTest.TabIndex = 2;
+        this.cmdAlarmVolTest.Text = "Test Volume";
+        this.cmdAlarmVolTest.UseVisualStyleBackColor = true;
+        this.cmdAlarmVolTest.Click += new System.EventHandler(this.cmdAlarmVolTest_Click);
+        // 
+        // lblAlarmVol4
+        // 
+        this.lblAlarmVol4.AutoSize = true;
+        this.lblAlarmVol4.Location = new System.Drawing.Point(249, 56);
+        this.lblAlarmVol4.Name = "lblAlarmVol4";
+        this.lblAlarmVol4.Size = new System.Drawing.Size(15, 13);
+        this.lblAlarmVol4.TabIndex = 5;
+        this.lblAlarmVol4.Text = "%";
+        // 
+        // lblAlarmVol3
+        // 
+        this.lblAlarmVol3.AutoSize = true;
+        this.lblAlarmVol3.Location = new System.Drawing.Point(96, 56);
+        this.lblAlarmVol3.Name = "lblAlarmVol3";
+        this.lblAlarmVol3.Size = new System.Drawing.Size(79, 13);
+        this.lblAlarmVol3.TabIndex = 4;
+        this.lblAlarmVol3.Text = "Volume setting:";
+        // 
+        // lblAlarmVol2
+        // 
+        this.lblAlarmVol2.AutoSize = true;
+        this.lblAlarmVol2.Location = new System.Drawing.Point(8, 29);
+        this.lblAlarmVol2.Name = "lblAlarmVol2";
+        this.lblAlarmVol2.Size = new System.Drawing.Size(126, 13);
+        this.lblAlarmVol2.TabIndex = 3;
+        this.lblAlarmVol2.Text = "(except message alarms).";
+        // 
+        // lblAlarmVol1
+        // 
+        this.lblAlarmVol1.AutoSize = true;
+        this.lblAlarmVol1.Location = new System.Drawing.Point(8, 16);
+        this.lblAlarmVol1.Name = "lblAlarmVol1";
+        this.lblAlarmVol1.Size = new System.Drawing.Size(345, 13);
+        this.lblAlarmVol1.TabIndex = 2;
+        this.lblAlarmVol1.Text = "When set, this volume setting will be set whenever an alarm is activated";
+        // 
+        // NUDAlarmVol
+        // 
+        this.NUDAlarmVol.Enabled = false;
+        this.NUDAlarmVol.Location = new System.Drawing.Point(181, 52);
+        this.NUDAlarmVol.Name = "NUDAlarmVol";
+        this.NUDAlarmVol.Size = new System.Drawing.Size(62, 20);
+        this.NUDAlarmVol.TabIndex = 1;
+        // 
+        // chkEnableDefaultVol
+        // 
+        this.chkEnableDefaultVol.AutoSize = true;
+        this.chkEnableDefaultVol.Location = new System.Drawing.Point(11, 55);
+        this.chkEnableDefaultVol.Name = "chkEnableDefaultVol";
+        this.chkEnableDefaultVol.Size = new System.Drawing.Size(65, 17);
+        this.chkEnableDefaultVol.TabIndex = 0;
+        this.chkEnableDefaultVol.Text = "Enable?";
+        this.chkEnableDefaultVol.UseVisualStyleBackColor = true;
+        this.chkEnableDefaultVol.CheckedChanged += new System.EventHandler(this.chkEnableDefaultVol_CheckedChanged);
+        // 
         // AlarmSetupForm
         // 
         this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-        this.ClientSize = new System.Drawing.Size(410, 213);
+        this.ClientSize = new System.Drawing.Size(410, 316);
+        this.Controls.Add(this.grpAlarmVol);
         this.Controls.Add(this.grpAlarmTimeout);
         this.Controls.Add(this.grpSounds);
         this.Controls.Add(this.btnCancel);
@@ -336,6 +436,9 @@ namespace MediaPortal.GUI.Alarm
         this.grpAlarmTimeout.ResumeLayout(false);
         this.grpAlarmTimeout.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)(this.NUDAlarmTimeout)).EndInit();
+        this.grpAlarmVol.ResumeLayout(false);
+        this.grpAlarmVol.PerformLayout();
+        ((System.ComponentModel.ISupportInitialize)(this.NUDAlarmVol)).EndInit();
         this.ResumeLayout(false);
 
     }
@@ -444,6 +547,60 @@ namespace MediaPortal.GUI.Alarm
       SaveSettings();
       this.Close();
     }
+
+      /// <summary>
+      /// Enables/disables the volume setting box
+      /// </summary>
+      /// <param name="sender"></param>
+      /// <param name="e"></param>
+      private void chkEnableDefaultVol_CheckedChanged(object sender, EventArgs e)
+      {
+          if (chkEnableDefaultVol.Checked == true)
+          {
+              NUDAlarmVol.Enabled = true;
+              cmdAlarmVolTest.Enabled = true;
+          }
+          else
+          {
+              NUDAlarmVol.Enabled = false;
+              cmdAlarmVolTest.Enabled = false;
+          }
+      }
+
+      /// <summary>
+      /// Plays a test sound to test out the set alarm volume setting
+      /// </summary>
+      /// <param name="sender"></param>
+      /// <param name="e"></param>
+      private void cmdAlarmVolTest_Click(object sender, EventArgs e)
+      {
+          MediaPortal.Player.VolumeHandler volumeHandler = new MediaPortal.Player.VolumeHandler();
+          
+          //convert the volume percentage into real value
+          int realVolume;
+          realVolume = ConvertPercentageToRealVolume(NUDAlarmVol.Value);
+
+          //save the current volume setting
+          int existingVolume;
+          existingVolume = volumeHandler.Volume;
+
+          //set the test volume setting
+          volumeHandler.Volume = realVolume;
+
+          //play windows sound
+          const string testAudioFilePath = @"C:\windows\Media\chimes.wav";
+          if (System.IO.File.Exists(testAudioFilePath))
+          {
+              MediaPortal.Util.Utils.PlaySound(testAudioFilePath, true, true);
+          }
+          else
+          {
+              MessageBox.Show("Cannot find the file " + testAudioFilePath + "." + Environment.NewLine + Environment.NewLine + "Try using another program to play something now - the current volume setting is the alarm volume setting. Pressing OK now will revert the volume to the previous setting.");
+          }
+
+          //revert the volume setting to the previous one
+          volumeHandler.Volume = existingVolume;
+      }
     #endregion
 
     #region Private Methods
@@ -467,6 +624,10 @@ namespace MediaPortal.GUI.Alarm
         xmlwriter.SetValue("alarm", "alarmTimeout", NUDAlarmTimeout.Value);
         xmlwriter.SetValue("alarm", "alarmRepeatSeconds", RepeatSeconds.Value);
         xmlwriter.SetValue("alarm", "alarmRepeatCount", RepeatCount.Value);
+        xmlwriter.SetValueAsBool("alarm", "alarmAlarmVolEnable", chkEnableDefaultVol.Checked);
+        
+        //convert the volume percentage into real value first
+        xmlwriter.SetValue("alarm", "alarmAlarmVol", ConvertPercentageToRealVolume(NUDAlarmVol.Value));
       }
     }
 
@@ -481,10 +642,48 @@ namespace MediaPortal.GUI.Alarm
         NUDAlarmTimeout.Value = xmlreader.GetValueAsInt("alarm", "alarmTimeout", 60);
         RepeatSeconds.Value = xmlreader.GetValueAsInt("alarm", "alarmRepeatSeconds", 120);
         RepeatCount.Value = xmlreader.GetValueAsInt("alarm", "alarmRepeatCount", 5);
+        chkEnableDefaultVol.Checked = xmlreader.GetValueAsBool("alarm", "alarmAlarmVolEnable", false);
+        //make sure the button states are correct
+        chkEnableDefaultVol_CheckedChanged(this, new System.EventArgs());
+
+        //convert real volume value to percentage first
+        NUDAlarmVol.Value = ConvertRealVolumeToPercentage(xmlreader.GetValueAsInt("alarm", "alarmAlarmVol", 0));
       }
     }
 
-    #endregion
+      /// <summary>
+      /// Converts the real volume value into a volume percentage
+      /// </summary>
+      /// <param name="realVolume">real volume value</param>
+      /// <returns></returns>
+      private int ConvertRealVolumeToPercentage(decimal realVolume)
+      {
+          decimal tmpVolume;
+          MediaPortal.Player.VolumeHandler volumeHandler = new MediaPortal.Player.VolumeHandler();
+          tmpVolume = realVolume;
+          tmpVolume = tmpVolume / (volumeHandler.Maximum - volumeHandler.Minimum);
+          tmpVolume = tmpVolume * 100;
+          return (int)System.Math.Round(tmpVolume, 0);
+      }
 
+      /// <summary>
+      /// Converts the volume percentage into a real volume value
+      /// </summary>
+      /// <param name="percentVolume">volume percentage value, e.g. 50</param>
+      /// <returns></returns>
+      private int ConvertPercentageToRealVolume(decimal percentVolume)
+      {
+          MediaPortal.Player.VolumeHandler volumeHandler = new MediaPortal.Player.VolumeHandler();
+          
+          decimal tmpVolume;
+          tmpVolume = percentVolume;
+          tmpVolume = tmpVolume / 100;
+          tmpVolume = tmpVolume * (volumeHandler.Maximum - volumeHandler.Minimum);
+          tmpVolume = tmpVolume + volumeHandler.Minimum;
+
+          return (int)System.Math.Round(tmpVolume, 0);
+      }
+
+    #endregion
   }
 }
