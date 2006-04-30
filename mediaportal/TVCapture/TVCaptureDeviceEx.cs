@@ -119,8 +119,7 @@ namespace MediaPortal.TV.Recording
       RadioTimeshifting
     }
 
-    [NonSerialized]
-    private bool _isAnalogCable;				// #MW# Should be made serializable...??
+    private bool _isAnalogCable;
     [NonSerialized]
     private int _defaultCountryCode;				// #MW# Should be made serializable...??
     [NonSerialized]
