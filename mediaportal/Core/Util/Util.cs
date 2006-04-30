@@ -602,7 +602,7 @@ namespace MediaPortal.Util
           case DayOfWeek.Thursday: day = GUILocalizeStrings.Get(660); break;
           case DayOfWeek.Friday: day = GUILocalizeStrings.Get(661); break;
           case DayOfWeek.Saturday: day = GUILocalizeStrings.Get(662); break;
-          default: day = GUILocalizeStrings.Get(17); break;
+          default: day = GUILocalizeStrings.Get(663); break;
         }
         return String.Format("{0} {1}-{2}", day, dt.Day, dt.Month);
       }
