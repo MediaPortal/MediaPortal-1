@@ -89,13 +89,13 @@ namespace MediaPortal.GUI.Library
     protected int _itemHeight;
     [XMLSkinElement("itemWidth")]
     protected int _itemWidth;
-    [XMLSkinElement("textureHeight")]
+    [XMLSkinElement("texturelowHeight")]
     protected int _textureLowHeight;
-    [XMLSkinElement("textureWidth")]
+    [XMLSkinElement("textureLowWidth")]
     protected int _textureLowWidth;
-    [XMLSkinElement("thumbWidthBig")]
+    [XMLSkinElement("textureWidth")]
     protected int _textureWidth = 80;
-    [XMLSkinElement("thumbHeightBig")]
+    [XMLSkinElement("textureHeight")]
     protected int _textureHeight = 80;
     [XMLSkinElement("thumbPosX")]
     protected int _thumbNailPositionX = 8;
