@@ -120,8 +120,7 @@ namespace MediaPortal.TV.Recording
     }
 
     private bool _isAnalogCable;
-    [NonSerialized]
-    private int _defaultCountryCode;				// #MW# Should be made serializable...??
+    private int _defaultCountryCode;
     [NonSerialized]
     private int _cardId = -1;
     [NonSerialized]
