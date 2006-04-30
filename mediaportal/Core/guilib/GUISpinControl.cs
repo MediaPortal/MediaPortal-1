@@ -85,7 +85,7 @@ namespace MediaPortal.GUI.Library
     
 		protected GUIFont  _font=null;
 		protected string   _typed="";
-    GUILabelControl      _labelControl=null;
+    GUILabelControl    _labelControl=null;
 	
 		public GUISpinControl (int dwParentID) : base(dwParentID)
 		{
@@ -1120,6 +1120,7 @@ namespace MediaPortal.GUI.Library
 		    if (_imageSpinDown != null) _imageSpinDown.DimColor = value;
 		    if (_imageSpinUpFocus != null) _imageSpinUpFocus.DimColor = value;
         if (_imageSpinDownFocus != null) _imageSpinDownFocus.DimColor = value;
+        if (_labelControl != null) _labelControl.DimColor = value;
       }
     }
 

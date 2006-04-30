@@ -58,7 +58,7 @@ namespace MediaPortal.GUI.Library
     protected string _controlType = "";
     [XMLSkinElement("description")]
     protected string _description = "";
-    [XMLSkinElement("dimcolor")]
+    [XMLSkinElement("dimColor")]
     protected int _dimColor = 0x60ffffff;
     
     protected int _parentControlId = 0;
