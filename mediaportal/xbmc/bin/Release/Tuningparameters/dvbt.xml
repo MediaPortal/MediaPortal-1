@@ -261,6 +261,15 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
+	<country name="UK - Winter Hill" offset="167">
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+	</country>
 	<country name="Finland - All Regions" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
 		<carrier frequency="184500" bandwidth="7" />
@@ -1081,7 +1090,5 @@
 		<carrier frequency="842000" bandwidth="8" />
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
-	</country>
-
-	
+	</country>	
 </dvbt>
