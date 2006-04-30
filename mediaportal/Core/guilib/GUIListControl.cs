@@ -527,9 +527,8 @@ namespace MediaPortal.GUI.Library
       {
         bSelected = true;
       }
-
-
-      int dMaxWidth = (_width - _imageWidth - GUIGraphicsContext.ScaleHorizontal(16));
+      
+      int dMaxWidth = (_width - _textOffsetX -_imageWidth - GUIGraphicsContext.ScaleHorizontal(20));
       if (_text2Visible && pItem.Label2.Length > 0)
       {
         if (_textOffsetY == _textOffsetY2)
@@ -566,7 +565,7 @@ namespace MediaPortal.GUI.Library
                 label2.Label = pItem.Label2;
                 label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
                 label2.FontName = _fontName2Name;
-                dMaxWidth -= label2.TextWidth + GUIGraphicsContext.ScaleHorizontal(20);
+                dMaxWidth -= (label2.TextWidth + GUIGraphicsContext.ScaleHorizontal(20));
               }
             }
           }
@@ -621,7 +620,7 @@ namespace MediaPortal.GUI.Library
               GUILabelControl label2 = _labelControls2[buttonNr];
               if (label2 != null)
               {
-                label2.SetPosition(dwPosX, dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
+                label2.SetPosition(dwPosX-GUIGraphicsContext.ScaleHorizontal(6), dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
                 if (gotFocus)
                   label2.TextColor = dwColor;
                 else
