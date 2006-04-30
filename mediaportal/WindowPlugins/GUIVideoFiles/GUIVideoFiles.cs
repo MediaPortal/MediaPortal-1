@@ -1115,13 +1115,14 @@ namespace MediaPortal.GUI.Video
             {
               movieDetails.ThumbURL = search[0];
             }
+            string orgMovieTitle = movieDetails.Title;
             VideoDatabase.SetMovieInfo(movieFileName, ref movieDetails);
             string strThumb = String.Empty;
             string strImage = movieDetails.ThumbURL;
             if (strImage.Length > 0 && movieDetails.ThumbURL.Length > 0)
             {
-              string LargeThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
-              strThumb = Utils.GetCoverArtName(Thumbs.MovieTitle, movieDetails.Title);
+              string LargeThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, orgMovieTitle);
+              strThumb = Utils.GetCoverArtName(Thumbs.MovieTitle, orgMovieTitle);
               Utils.FileDelete(strThumb);
               Utils.FileDelete(LargeThumb);
 
