@@ -605,7 +605,7 @@ namespace MediaPortal.Util
         try
         {
           ftp.ChDir(subitems[4]);
-          files=ftp.DirDetails(subitems[4]);
+          files=ftp.DirDetails(); //subitems[4]);
         }
         catch(Exception)
         {
@@ -624,7 +624,7 @@ namespace MediaPortal.Util
           }
           try
           {
-            files=ftp.DirDetails(subitems[4]);
+            files=ftp.DirDetails(); //subitems[4]);
           }
           catch(Exception ex)
           {
@@ -1358,7 +1358,7 @@ namespace MediaPortal.Util
         try
         {
           ftp.ChDir(subitems[4]);
-          files = ftp.DirDetails(subitems[4]);
+          files = ftp.DirDetails(); //subitems[4]);
         }
         catch (Exception)
         {
@@ -1558,7 +1558,7 @@ namespace MediaPortal.Util
         try
         {
           ftp.ChDir(subitems[4]);
-          files = ftp.DirDetails(subitems[4]);
+          files = ftp.DirDetails(); //subitems[4]);
         }
         catch (Exception)
         {
@@ -1577,7 +1577,7 @@ namespace MediaPortal.Util
           }
           try
           {
-            files = ftp.DirDetails(subitems[4]);
+            files = ftp.DirDetails(); //subitems[4]);
           }
           catch (Exception ex)
           {
