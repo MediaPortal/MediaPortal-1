@@ -1076,8 +1076,8 @@ namespace MediaPortal.GUI.Pictures
 
       CreateThumbnails();
       string objectCount = String.Empty;
-
       List<GUIListItem> itemlist = virtualDirectory.GetDirectoryExt(currentFolder);
+      Log.Write("[Debug] ShowFileMenu: {0} Count = {1}", currentFolder, itemlist.Count);
       Filter(ref itemlist);
 
       string strSelectedItem = folderHistory.Get(currentFolder);
@@ -1152,6 +1152,7 @@ namespace MediaPortal.GUI.Pictures
     {
       // find first 4 jpegs in this subfolder
       List<GUIListItem> itemlist = virtualDirectory.GetDirectoryUnProtectedExt(path, true);
+      Log.Write("[Debug] CreateFolderThumb: {0} Count = {1}", path, itemlist.Count);
       Filter(ref itemlist);
       List<string> pictureList = new List<string>();
       foreach (GUIListItem subitem in itemlist)
@@ -1349,6 +1350,7 @@ namespace MediaPortal.GUI.Pictures
     {
       string path = currentFolder;
       List<GUIListItem> itemlist = virtualDirectory.GetDirectoryUnProtectedExt(path, true);
+      Log.Write("[Debug] WorkerThread: {0} Count = {1}", currentFolder, itemlist.Count);
       using (PictureDatabase dbs = new PictureDatabase())
       {
         foreach (GUIListItem item in itemlist)

@@ -1377,7 +1377,7 @@ namespace MediaPortal.Util
           }
           try
           {
-            files = ftp.DirDetails(subitems[4]);
+            files = ftp.DirDetails(); //subitems[4]);
           }
           catch (Exception ex)
           {
