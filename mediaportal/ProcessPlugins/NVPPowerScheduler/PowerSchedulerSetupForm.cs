@@ -112,160 +112,178 @@ namespace MediaPortal.PowerScheduler
     /// </summary>
     private void InitializeComponent()
     {
-        this.cb_ok = new MediaPortal.UserInterface.Controls.MPButton();
-        this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.cobx_shutdown = new MediaPortal.UserInterface.Controls.MPComboBox();
-        this.nud_wakeup = new System.Windows.Forms.NumericUpDown();
-        this.nud_shutdown = new System.Windows.Forms.NumericUpDown();
-        this.cbxExtensive = new MediaPortal.UserInterface.Controls.MPCheckBox();
-        this.cbxForced = new MediaPortal.UserInterface.Controls.MPCheckBox();
-        this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-        ((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).BeginInit();
-        ((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).BeginInit();
-        this.groupBox1.SuspendLayout();
-        this.SuspendLayout();
-        // 
-        // cb_ok
-        // 
-        this.cb_ok.Location = new System.Drawing.Point(280, 248);
-        this.cb_ok.Name = "cb_ok";
-        this.cb_ok.Size = new System.Drawing.Size(75, 23);
-        this.cb_ok.TabIndex = 0;
-        this.cb_ok.Text = "OK";
-        this.cb_ok.UseVisualStyleBackColor = true;
-        this.cb_ok.Click += new System.EventHandler(this.cb_ok_Click);
-        // 
-        // label2
-        // 
-        this.label2.Location = new System.Drawing.Point(16, 8);
-        this.label2.Name = "label2";
-        this.label2.Size = new System.Drawing.Size(296, 32);
-        this.label2.TabIndex = 0;
-        this.label2.Text = "Time in minutes to resume system before recording starts. Zero (0) minutes disabl" +
-            "es wakeup. (1 min recommended)";
-        // 
-        // label3
-        // 
-        this.label3.Location = new System.Drawing.Point(16, 48);
-        this.label3.Name = "label3";
-        this.label3.Size = new System.Drawing.Size(304, 40);
-        this.label3.TabIndex = 0;
-        this.label3.Text = "Idle time in minutes (MP HOME) before system shuts down. Zero (0) minutes disable" +
-            "s shutdown. (at least 3 min recommended)";
-        // 
-        // label1
-        // 
-        this.label1.Location = new System.Drawing.Point(16, 96);
-        this.label1.Name = "label1";
-        this.label1.Size = new System.Drawing.Size(96, 16);
-        this.label1.TabIndex = 0;
-        this.label1.Text = "Shutdown mode";
-        // 
-        // cobx_shutdown
-        // 
-        this.cobx_shutdown.Items.AddRange(new object[] {
+      this.cb_ok = new MediaPortal.UserInterface.Controls.MPButton();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.cobx_shutdown = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.nud_wakeup = new System.Windows.Forms.NumericUpDown();
+      this.nud_shutdown = new System.Windows.Forms.NumericUpDown();
+      this.cbxExtensive = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbxForced = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      ((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).BeginInit();
+      this.groupBox1.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // cb_ok
+      // 
+      this.cb_ok.Location = new System.Drawing.Point(277, 246);
+      this.cb_ok.Name = "cb_ok";
+      this.cb_ok.Size = new System.Drawing.Size(75, 23);
+      this.cb_ok.TabIndex = 0;
+      this.cb_ok.Text = "OK";
+      this.cb_ok.UseVisualStyleBackColor = true;
+      this.cb_ok.Click += new System.EventHandler(this.cb_ok_Click);
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(16, 8);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(296, 45);
+      this.label2.TabIndex = 0;
+      this.label2.Text = "Time in minutes to resume system before recording starts. Zero (0) minutes disabl" +
+          "es wakeup. (1 min recommended, value must be lower then Idle time)";
+      // 
+      // label3
+      // 
+      this.label3.Location = new System.Drawing.Point(16, 58);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(304, 40);
+      this.label3.TabIndex = 0;
+      this.label3.Text = "Idle time in minutes (MP HOME) before system shuts down. Zero (0) minutes disable" +
+          "s shutdown. (at least 3 min recommended)";
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(16, 115);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(96, 16);
+      this.label1.TabIndex = 0;
+      this.label1.Text = "Shutdown mode";
+      // 
+      // cobx_shutdown
+      // 
+      this.cobx_shutdown.Items.AddRange(new object[] {
             "Hibernate",
             "Suspend",
             "Shutdown (no wakeup)",
             "None (or windows inbuilt)"});
-        this.cobx_shutdown.Location = new System.Drawing.Point(200, 88);
-        this.cobx_shutdown.Name = "cobx_shutdown";
-        this.cobx_shutdown.Size = new System.Drawing.Size(160, 21);
-        this.cobx_shutdown.TabIndex = 14;
-        // 
-        // nud_wakeup
-        // 
-        this.nud_wakeup.Location = new System.Drawing.Point(320, 8);
-        this.nud_wakeup.Maximum = new decimal(new int[] {
+      this.cobx_shutdown.Location = new System.Drawing.Point(133, 112);
+      this.cobx_shutdown.Name = "cobx_shutdown";
+      this.cobx_shutdown.Size = new System.Drawing.Size(219, 21);
+      this.cobx_shutdown.TabIndex = 14;
+      // 
+      // nud_wakeup
+      // 
+      this.nud_wakeup.Location = new System.Drawing.Point(304, 14);
+      this.nud_wakeup.Maximum = new decimal(new int[] {
             60,
             0,
             0,
             0});
-        this.nud_wakeup.Name = "nud_wakeup";
-        this.nud_wakeup.Size = new System.Drawing.Size(40, 20);
-        this.nud_wakeup.TabIndex = 12;
-        // 
-        // nud_shutdown
-        // 
-        this.nud_shutdown.Location = new System.Drawing.Point(320, 48);
-        this.nud_shutdown.Maximum = new decimal(new int[] {
+      this.nud_wakeup.Name = "nud_wakeup";
+      this.nud_wakeup.Size = new System.Drawing.Size(48, 20);
+      this.nud_wakeup.TabIndex = 12;
+      // 
+      // nud_shutdown
+      // 
+      this.nud_shutdown.Location = new System.Drawing.Point(304, 66);
+      this.nud_shutdown.Maximum = new decimal(new int[] {
             60,
             0,
             0,
             0});
-        this.nud_shutdown.Name = "nud_shutdown";
-        this.nud_shutdown.Size = new System.Drawing.Size(40, 20);
-        this.nud_shutdown.TabIndex = 13;
-        // 
-        // cbxExtensive
-        // 
-        this.cbxExtensive.AutoSize = true;
-        this.cbxExtensive.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-        this.cbxExtensive.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.cbxExtensive.Location = new System.Drawing.Point(8, 70);
-        this.cbxExtensive.Name = "cbxExtensive";
-        this.cbxExtensive.Size = new System.Drawing.Size(107, 17);
-        this.cbxExtensive.TabIndex = 17;
-        this.cbxExtensive.Text = "Extensive logging";
-        this.cbxExtensive.UseVisualStyleBackColor = true;
-        // 
-        // cbxForced
-        // 
-        this.cbxForced.AutoSize = true;
-        this.cbxForced.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-        this.cbxForced.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.cbxForced.Location = new System.Drawing.Point(8, 32);
-        this.cbxForced.Name = "cbxForced";
-        this.cbxForced.Size = new System.Drawing.Size(106, 17);
-        this.cbxForced.TabIndex = 15;
-        this.cbxForced.Text = "Forced shutdown";
-        this.cbxForced.UseVisualStyleBackColor = true;
-        // 
-        // groupBox1
-        // 
-        this.groupBox1.Controls.Add(this.cbxForced);
-        this.groupBox1.Controls.Add(this.cbxExtensive);
-        this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.groupBox1.Location = new System.Drawing.Point(8, 128);
-        this.groupBox1.Name = "groupBox1";
-        this.groupBox1.Size = new System.Drawing.Size(352, 112);
-        this.groupBox1.TabIndex = 18;
-        this.groupBox1.TabStop = false;
-        this.groupBox1.Text = "Advanced options";
-        // 
-        // PowerSchedulerSetupForm
-        // 
-        this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-        this.ClientSize = new System.Drawing.Size(368, 277);
-        this.Controls.Add(this.nud_shutdown);
-        this.Controls.Add(this.nud_wakeup);
-        this.Controls.Add(this.cobx_shutdown);
-        this.Controls.Add(this.label1);
-        this.Controls.Add(this.label3);
-        this.Controls.Add(this.label2);
-        this.Controls.Add(this.cb_ok);
-        this.Controls.Add(this.groupBox1);
-        this.Name = "PowerSchedulerSetupForm";
-        this.Text = "Power Scheduler configuration 0.3 ";
-        ((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).EndInit();
-        ((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).EndInit();
-        this.groupBox1.ResumeLayout(false);
-        this.groupBox1.PerformLayout();
-        this.ResumeLayout(false);
+      this.nud_shutdown.Name = "nud_shutdown";
+      this.nud_shutdown.Size = new System.Drawing.Size(48, 20);
+      this.nud_shutdown.TabIndex = 13;
+      // 
+      // cbxExtensive
+      // 
+      this.cbxExtensive.AutoSize = true;
+      this.cbxExtensive.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.cbxExtensive.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbxExtensive.Location = new System.Drawing.Point(8, 57);
+      this.cbxExtensive.Name = "cbxExtensive";
+      this.cbxExtensive.Size = new System.Drawing.Size(107, 17);
+      this.cbxExtensive.TabIndex = 17;
+      this.cbxExtensive.Text = "Extensive logging";
+      this.cbxExtensive.UseVisualStyleBackColor = true;
+      // 
+      // cbxForced
+      // 
+      this.cbxForced.AutoSize = true;
+      this.cbxForced.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.cbxForced.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbxForced.Location = new System.Drawing.Point(8, 24);
+      this.cbxForced.Name = "cbxForced";
+      this.cbxForced.Size = new System.Drawing.Size(106, 17);
+      this.cbxForced.TabIndex = 15;
+      this.cbxForced.Text = "Forced shutdown";
+      this.cbxForced.UseVisualStyleBackColor = true;
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Controls.Add(this.cbxForced);
+      this.groupBox1.Controls.Add(this.cbxExtensive);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox1.Location = new System.Drawing.Point(19, 148);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(333, 92);
+      this.groupBox1.TabIndex = 18;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Advanced options";
+      // 
+      // PowerSchedulerSetupForm
+      // 
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.ClientSize = new System.Drawing.Size(368, 277);
+      this.Controls.Add(this.nud_shutdown);
+      this.Controls.Add(this.nud_wakeup);
+      this.Controls.Add(this.cobx_shutdown);
+      this.Controls.Add(this.label1);
+      this.Controls.Add(this.label3);
+      this.Controls.Add(this.label2);
+      this.Controls.Add(this.cb_ok);
+      this.Controls.Add(this.groupBox1);
+      this.Name = "PowerSchedulerSetupForm";
+      this.Text = "Power Scheduler configuration 0.3 ";
+      ((System.ComponentModel.ISupportInitialize)(this.nud_wakeup)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.nud_shutdown)).EndInit();
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
+      this.ResumeLayout(false);
 
     }
     #endregion
 
 
-
+    private bool CheckValues()
+    {
+      if (nud_shutdown.Value > 0)
+      {
+        if (nud_wakeup.Value >= nud_shutdown.Value)
+        {
+          if (MessageBox.Show(
+               "Resume time (before recording) is not smaller then Idle time!\n" +
+               "This will lead to recording problems!\n" +
+               "\n" +
+               "Do you want to correct it (highly recommmended)?", 
+               "PROBLEM found at value check",
+               MessageBoxButtons.YesNo) == DialogResult.Yes) return false;  
+        }
+      }
+      return true;
+    }
 
 
     private void cb_ok_Click(object sender, System.EventArgs e)
     {
-      if (SaveSettings())
-        this.Close();
+      if (CheckValues())
+      {
+        if (SaveSettings()) this.Close();
+      }
     }
 
 
