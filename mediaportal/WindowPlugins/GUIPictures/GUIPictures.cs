@@ -1159,7 +1159,7 @@ namespace MediaPortal.GUI.Pictures
       {
         if (!subitem.IsFolder)
         {
-          if (Utils.IsPicture(subitem.Path))
+          if (!subitem.IsRemote && Utils.IsPicture(subitem.Path))
           {
             pictureList.Add(subitem.Path);
             if (pictureList.Count >= 4) break;
