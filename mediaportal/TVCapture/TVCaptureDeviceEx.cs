@@ -209,7 +209,12 @@ namespace MediaPortal.TV.Recording
       get
       {
         if (_graphHelper == null)
-          LoadDefinitions();
+        {
+          _graphHelper = new GraphHelper();
+          _graphHelper.DeviceId = DeviceId;
+          _graphHelper.CommercialName = CommercialName;
+          _graphHelper.LoadDefinitions(VideoDevice, VideoDeviceMoniker);
+        }
         return _graphHelper;
       }
     }
