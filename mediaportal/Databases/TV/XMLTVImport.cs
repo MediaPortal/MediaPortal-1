@@ -109,7 +109,7 @@ namespace MediaPortal.TV.Database
     {
       if (m_bImport==true)
       {
-          m_strErrorMessage = GUILocalizeStrings.Get(665); //"already importing..."
+          m_strErrorMessage = GUILocalizeStrings.Get(766); //"already importing..."
         return false;
       }
       m_bImport=true;
@@ -146,7 +146,7 @@ namespace MediaPortal.TV.Database
 			  xml.Load(strFileName);
 			  if (xml.DocumentElement==null)
 			  {
-                  m_strErrorMessage = GUILocalizeStrings.Get(666); //"Invalid XMLTV file"
+                  m_strErrorMessage = GUILocalizeStrings.Get(767); //"Invalid XMLTV file"
 				  Log.WriteFile(Log.LogType.Log,true,"  {0} is not a valid xml file");
 				  xml=null;
 				  m_bImport=false;
@@ -156,7 +156,7 @@ namespace MediaPortal.TV.Database
 			  XmlNodeList channelList=xml.DocumentElement.SelectNodes("/tv/channel");
 			  if (channelList==null || channelList.Count==0)
 			  {
-                  m_strErrorMessage = GUILocalizeStrings.Get(667); // "No channels found"
+                  m_strErrorMessage = GUILocalizeStrings.Get(768); // "No channels found"
 				  Log.WriteFile(Log.LogType.Log,true,"  {0} does not contain any channels");
 				  xml=null;
 				  m_bImport=false;
@@ -609,12 +609,12 @@ namespace MediaPortal.TV.Database
 			  {
 				  return true;
 			  }
-			  m_strErrorMessage=GUILocalizeStrings.Get(668); //"No programs found"
+			  m_strErrorMessage=GUILocalizeStrings.Get(769); //"No programs found"
               return false;
 		  }
 		  else
 		  {
-              m_strErrorMessage = GUILocalizeStrings.Get(669); // "No xmltv file found"
+              m_strErrorMessage = GUILocalizeStrings.Get(770); // "No xmltv file found"
         m_stats.Status=m_strErrorMessage;
         Log.Write("xmltv data file was not found");
 		  }
