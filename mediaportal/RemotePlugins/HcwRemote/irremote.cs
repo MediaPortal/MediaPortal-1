@@ -60,10 +60,10 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     [DllImport("irremote.dll")]
     static extern bool IR_Open(
-      IntPtr WindowHandle,
+      int WindowHandle,
       uint Msg,
       bool Verbose,
-      uint IRPort);
+      ushort IRPort);
 
     /// <summary>
     /// Gets the received key code (new version, works for PVR-150 as well)
@@ -74,9 +74,9 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     [DllImport("irremote.dll")]
     static extern bool IR_GetSystemKeyCode(
-      ref IntPtr RepeatCount,
-      ref IntPtr RemoteCode,
-      ref IntPtr KeyCode);
+      out int RepeatCount,
+      out int RemoteCode,
+      out int KeyCode);
 
     /// <summary>
     /// Unregisters window handle from Hauppauge IR driver
@@ -86,7 +86,7 @@ namespace MediaPortal.InputDevices
     /// <returns></returns>
     [DllImport("irremote.dll")]
     static extern bool IR_Close(
-      IntPtr WindowHandle,
+      int WindowHandle,
       uint Msg);
 
     #endregion
@@ -111,21 +111,21 @@ namespace MediaPortal.InputDevices
 
     public static void IRClose(IntPtr WindowHandle, uint Msg)
     {
-      bool result = IR_Close(WindowHandle, Msg);
+      bool result = IR_Close((int)WindowHandle, Msg);
       if (!result)
         throw new IRFailedException();
     }
 
-    public static void IRGetSystemKeyCode(ref IntPtr RepeatCount, ref IntPtr RemoteCode, ref IntPtr KeyCode)
+    public static void IRGetSystemKeyCode(out int RepeatCount, out int RemoteCode, out int KeyCode)
     {
-      bool result = IR_GetSystemKeyCode(ref RepeatCount, ref RemoteCode, ref KeyCode);
+      bool result = IR_GetSystemKeyCode(out RepeatCount, out RemoteCode, out KeyCode);
       if (!result)
         throw new IRNoMessage();
     }
 
-    public static void IROpen(IntPtr WindowHandle, uint Msg, bool Verbose, uint IRPort)
+    public static void IROpen(IntPtr WindowHandle, uint Msg, bool Verbose, ushort IRPort)
     {
-      bool result = IR_Open(WindowHandle, Msg, Verbose, IRPort);
+      bool result = IR_Open((int)WindowHandle, Msg, Verbose, IRPort);
       if (!result)
         throw new IRFailedException();
     }

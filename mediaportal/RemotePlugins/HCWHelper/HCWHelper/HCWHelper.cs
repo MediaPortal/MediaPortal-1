@@ -243,12 +243,12 @@ namespace MediaPortal.InputDevices.HcwHelper
       switch (msg.Msg)
       {
         case WM_TIMER:
-          IntPtr repeatCount = new IntPtr();
-          IntPtr remoteCode = new IntPtr();
-          IntPtr keyCode = new IntPtr();
+          int repeatCount = 0;
+          int remoteCode = 0;
+          int keyCode = 0;
           try
           {
-            irremote.IRGetSystemKeyCode(ref repeatCount, ref remoteCode, ref keyCode);
+            irremote.IRGetSystemKeyCode(out repeatCount, out remoteCode, out keyCode);
           }
           catch (irremote.IRNoMessage)
           {
@@ -257,13 +257,13 @@ namespace MediaPortal.InputDevices.HcwHelper
           DateTime attackTime = DateTime.Now;
 
           int remoteCommand = 0;
-          switch ((int)remoteCode)
+          switch (remoteCode)
           {
             case HCWPVR:
-              remoteCommand = ((int)keyCode) + 1000;
+              remoteCommand = keyCode + 1000;
               break;
             case HCWPVR2:
-              remoteCommand = ((int)keyCode) + 2000;
+              remoteCommand = keyCode + 2000;
               break;
           }
           connection.Send(port + 1, "CMD", remoteCommand.ToString(), attackTime);
