@@ -544,7 +544,7 @@ namespace MediaPortal.Util
               VirtualShare=true;
             }
 
-						if (VirtualShare && !g_Player.Playing) // dont interrupt if we're already playing
+						if (VirtualShare/* && !g_Player.Playing*/) // dont interrupt if we're already playing
 						{
 							if (!askBeforePlayingDVDImage)
 							{
@@ -1297,7 +1297,7 @@ namespace MediaPortal.Util
               VirtualShare = true;
             }
 
-            if (VirtualShare && !g_Player.Playing) // dont interrupt if we're already playing
+            if (VirtualShare /*&& !g_Player.Playing*/) // dont interrupt if we're already playing
             {
               if (!askBeforePlayingDVDImage)
               {
