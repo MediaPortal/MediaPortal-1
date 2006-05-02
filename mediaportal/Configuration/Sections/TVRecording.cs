@@ -706,6 +706,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("capture", "moviesformat", formatString[0]);
         xmlwriter.SetValue("capture", "seriesformat", formatString[1]);
       }
+      UpdateDriveInfo(true);
     }
 
     private void startTextBox_KeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
