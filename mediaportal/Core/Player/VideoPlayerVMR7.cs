@@ -252,7 +252,7 @@ namespace MediaPortal.Player
         msg.Label=strFile;
         GUIWindowManager.SendThreadMessage(msg);
         m_state=PlayState.Playing;
-        GUIGraphicsContext.IsFullScreenVideo=true;
+        //Brutus GUIGraphicsContext.IsFullScreenVideo=true;
         m_iPositionX=GUIGraphicsContext.VideoWindow.X;
         m_iPositionY=GUIGraphicsContext.VideoWindow.Y;
         m_iWidth    =GUIGraphicsContext.VideoWindow.Width;
