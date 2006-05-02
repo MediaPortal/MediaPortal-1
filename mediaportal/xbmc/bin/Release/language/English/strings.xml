@@ -2048,26 +2048,7 @@
     <id>664</id>
     <value>Delete this picture?</value>
   </string>
-  <string>
-    <id>665</id>
-    <value>already importing...</value>
-  </string>
-  <string>
-    <id>666</id>
-    <value>Invalid XMLTV file</value>
-  </string>
-  <string>
-    <id>667</id>
-    <value>No channels found</value>
-  </string>
-    <string>
-    <id>668</id>
-    <value>No programs found</value>
-  </string>
-    <string>
-    <id>669</id>
-    <value>No xmltv file found</value>
-  </string>
+  
   <string Prefix="My ">
     <id>665</id>
     <value>Radio</value>
@@ -2437,6 +2418,26 @@
   <string>
     <id>765</id>
     <value>Not enough free diskspace</value>
+  </string>
+   <string>
+    <id>766</id>
+    <value>already importing...</value>
+  </string>
+  <string>
+    <id>767</id>
+    <value>Invalid XMLTV file</value>
+  </string>
+  <string>
+    <id>768</id>
+    <value>No channels found</value>
+  </string>
+    <string>
+    <id>769</id>
+    <value>No programs found</value>
+  </string>
+    <string>
+    <id>770</id>
+    <value>No xmltv file found</value>
   </string>
 
 
