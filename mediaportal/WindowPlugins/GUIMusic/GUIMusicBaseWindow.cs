@@ -794,9 +794,15 @@ namespace MediaPortal.GUI.Music
             string strThumb = GUIMusicFiles.GetCoverArt(item.IsFolder, item.Path, tag);
             if (strThumb != String.Empty)
             {
-                item.ThumbnailImage = strThumb;
-                item.IconImageBig = strThumb;
-                item.IconImage = strThumb;
+              item.ThumbnailImage = strThumb;
+              item.IconImageBig = strThumb;
+              item.IconImage = strThumb;
+              // let us test if there is a larger cover art image
+              string strLarge = Utils.ConvertToLargeCoverArt(strThumb);
+              if (System.IO.File.Exists(strLarge))
+              {
+                item.ThumbnailImage = strLarge;
+              }
             }
         }
 
