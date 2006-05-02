@@ -795,6 +795,11 @@ namespace MediaPortal.GUI.Library
 				if (_activeWindowId < 0) return 0;
 				else return _activeWindowId;
 			}
+            set
+            {
+                _activeWindowId = value;
+            }
+
 		}
 		/// <summary>
 		/// return the ID of the current active window or dialog
