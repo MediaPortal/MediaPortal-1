@@ -66,166 +66,174 @@ namespace MediaPortal.TV.Teletext
 
     public void Decode(byte[] rowData, int rows)
     {
-      int line = 0;
-      int b = 0, byte1 = 0, byte2 = 0;
-      int packetNumber;
-      byte magazine;
-      for (line = 0; line < rows; line++)
+      try
       {
-        int off = line * 42;
-        bool copyData = false;
-        byte1 = Hamming.Decode[rowData[off + 0]];
-        byte2 = Hamming.Decode[rowData[off + 1]];
-
-        //check for invalid hamming bytes
-        if (byte1 == 0xFF || byte2 == 0xFF)
-          continue;
-
-        //get packet number
-        packetNumber = Hamming.GetPacketNumber(off, ref rowData);
-
-        //  get magazine 
-        magazine = (byte)(Hamming.Decode[rowData[off+0]] & 7);
-        _magazineLastRow[magazine] = packetNumber;
-
-        if (packetNumber == 30)
+        int line = 0;
+        int b = 0, byte1 = 0, byte2 = 0;
+        int packetNumber;
+        byte magazine;
+        for (line = 0; line < rows; line++)
         {
+          int off = line * 42;
+          bool copyData = false;
+          byte1 = Hamming.Decode[rowData[off + 0]];
+          byte2 = Hamming.Decode[rowData[off + 1]];
+
+          //check for invalid hamming bytes
+          if (byte1 == 0xFF || byte2 == 0xFF)
+            continue;
+
+          //get packet number
+          packetNumber = Hamming.GetPacketNumber(off, ref rowData);
+
+          //  get magazine 
+          magazine = (byte)(Hamming.Decode[rowData[off + 0]] & 7);
+          _magazineLastRow[magazine] = packetNumber;
+
+          if (packetNumber == 30)
+          {
             byte type = (byte)(Hamming.Decode[rowData[off + 2]]);
             if ((type != 0) && (type != 2))
             {
-                continue;
+              continue;
             }
             //Log.Write("Packet Number:{0}, type:{1}", packetNumber, type);
             string channelName = "";
             for (int i = 0; i < 20; i++)
             {
-                 char char1 = (char)(rowData[off + 22 + i] & 127);
-                 //Log.Write("{0}-{1:x}", char1, (byte)(rowData[off + 22 + i] & 127));
-                 channelName += char1;
+              char char1 = (char)(rowData[off + 22 + i] & 127);
+              //Log.Write("{0}-{1:x}", char1, (byte)(rowData[off + 22 + i] & 127));
+              channelName += char1;
             }
-            int pos = channelName.LastIndexOf("teletext",StringComparison.InvariantCultureIgnoreCase);
+            int pos = channelName.LastIndexOf("teletext", StringComparison.InvariantCultureIgnoreCase);
             if (pos != -1)
             {
-                channelName = channelName.Substring(0, pos);
+              channelName = channelName.Substring(0, pos);
             }
             //Some times channel name includes program name after :
             pos = channelName.LastIndexOf(":");
             if (pos != -1)
             {
-                channelName = channelName.Substring(0, pos);
+              channelName = channelName.Substring(0, pos);
             }
-            channelName = channelName.TrimEnd(new char[] { '\'', '\"','´','`'});
+            channelName = channelName.TrimEnd(new char[] { '\'', '\"', '´', '`' });
             channelName = channelName.Trim();
             _pageCache.ChannelName = channelName;
             continue;
-        }
-        //ignore invalid packets and packets 25,26,28,29,30,31
-        if (packetNumber < 0 || packetNumber == 25 || packetNumber == 26 || packetNumber > 27) continue;
-        
+          }
+          //ignore invalid packets and packets 25,26,28,29,30,31
+          if (packetNumber < 0 || packetNumber == 25 || packetNumber == 26 || packetNumber > 27) continue;
 
-        if (packetNumber == 0)
-        {
-          if (PageUpdatedEvent != null)
+
+          if (packetNumber == 0)
+          {
+            if (PageUpdatedEvent != null)
+            {
+              if (_magazineCurrentPageNr[magazine] != -1 && _magazineCurrentSubPage[magazine] != -1)
+              {
+                PageUpdatedEvent(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine]);
+              }
+            }
+            // start of new teletext page...
+            bool headerError = false;
+            for (int i = 2; i <= 9; ++i)
+            {
+              if (Hamming.Decode[rowData[off + i]] == 0xFF)
+              {
+                headerError = true;
+                break;
+              }
+            }
+            if (headerError == true)
+            {
+              _magazineCurrentPageNr[magazine] = -1;
+              _magazineCurrentSubPage[magazine] = -1;
+              continue;
+            }
+
+            int pageNr = Hamming.GetPageNumber(off, ref rowData);
+            int subPageNr = Hamming.GetSubPageNumber(off, ref rowData);
+
+            if (!ToptextDecoder.IsTopTextPage(pageNr, subPageNr))
+            {
+              if (!IsDecimalPage(pageNr))
+              {
+                _magazineCurrentPageNr[magazine] = -1;
+                _magazineCurrentSubPage[magazine] = -1;
+                continue;
+              }
+              if (!IsDecimalSubPage(subPageNr))
+              {
+                _magazineCurrentPageNr[magazine] = -1;
+                _magazineCurrentSubPage[magazine] = -1;
+                continue;
+              }
+            }
+            else
+            {
+              subPageNr = 0;
+            }
+            _magazineCurrentPageNr[magazine] = pageNr;
+            _magazineCurrentSubPage[magazine] = subPageNr;
+
+            //strip parity of header
+            for (b = 10; b < 42; b++)
+            {
+              rowData[off + b] &= 0x7f;
+            }
+
+            if (Hamming.IsEraseBitSet(off, ref rowData))   /* C4 -> erase page */
+            {
+              _pageCache.ClearPage(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine]);
+            }
+            copyData = true;
+          }
+          else if (packetNumber <= 24)
+          {
+            if (_magazineCurrentPageNr[magazine] == -1)
+            {
+              continue;
+            }
+            if (_magazineLastRow[magazine] != 27)
+            {
+              if (packetNumber < _magazineLastRow[magazine])
+              {
+                continue;
+              }
+            }
+
+            for (b = 2; b < 42; b++)
+            {
+              rowData[off + b] &= 0x7f; // strip parity
+            }
+            copyData = true;
+          }
+          else if (packetNumber == 27)
+          {
+            if (_magazineCurrentPageNr[magazine] == -1) continue;
+            if (packetNumber < _magazineLastRow[magazine]) continue;
+            copyData = true;
+          }
+
+          if (copyData)
           {
             if (_magazineCurrentPageNr[magazine] != -1 && _magazineCurrentSubPage[magazine] != -1)
             {
-              PageUpdatedEvent(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine]);
+              _pageCache.AllocPage(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine]);
+              IntPtr ptrPage = _pageCache.GetPagePtr(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine]);
+              if (ptrPage != IntPtr.Zero)
+              {
+                Marshal.Copy(rowData, off, new IntPtr(ptrPage.ToInt32() + (packetNumber * 42)), 42);
+              }
             }
           }
-          // start of new teletext page...
-          bool headerError = false;
-          for (int i = 2; i <= 9; ++i)
-          {
-            if (Hamming.Decode[rowData[off + i]] == 0xFF)
-            {
-              headerError = true;
-              break;
-            }
-          }
-          if (headerError == true)
-          {
-            _magazineCurrentPageNr[magazine] = -1;
-            _magazineCurrentSubPage[magazine] = -1;
-            continue;
-          }
-
-          int pageNr = Hamming.GetPageNumber(off, ref rowData);
-          int subPageNr = Hamming.GetSubPageNumber(off, ref rowData);
-
-          if (!ToptextDecoder.IsTopTextPage(pageNr, subPageNr))
-          {
-            if (!IsDecimalPage(pageNr))
-            {
-              _magazineCurrentPageNr[magazine] = -1;
-              _magazineCurrentSubPage[magazine] = -1;
-              continue;
-            }
-            if (!IsDecimalSubPage(subPageNr))
-            {
-              _magazineCurrentPageNr[magazine] = -1;
-              _magazineCurrentSubPage[magazine] = -1;
-              continue;
-            }
-          }
-          else
-          {
-            subPageNr = 0;
-          }
-          _magazineCurrentPageNr[magazine] = pageNr;
-          _magazineCurrentSubPage[magazine] = subPageNr;
-
-          //strip parity of header
-          for (b = 10; b < 42; b++)
-          {
-            rowData[off+b] &= 0x7f;
-          }
-
-          if (Hamming.IsEraseBitSet(off, ref rowData))   /* C4 -> erase page */
-          {
-            _pageCache.ClearPage(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine]);
-          }
-          copyData = true;
-        }
-        else if (packetNumber <= 24)
-        {
-          if (_magazineCurrentPageNr[magazine] == -1)
-          {
-            continue;
-          }
-          if (_magazineLastRow[magazine] != 27)
-          {
-            if (packetNumber < _magazineLastRow[magazine])
-            {
-              continue;
-            }
-          }
-
-          for (b = 2; b < 42; b++)
-          {
-            rowData[off+b] &= 0x7f; // strip parity
-          }
-          copyData = true;
-        }
-        else if (packetNumber == 27)
-        {
-          if (_magazineCurrentPageNr[magazine] == -1) continue;
-          if (packetNumber < _magazineLastRow[magazine]) continue;
-          copyData = true;
-        }
-
-        if (copyData)
-        {
-          if (_magazineCurrentPageNr[magazine] != -1 && _magazineCurrentSubPage[magazine] != -1)
-          {
-            _pageCache.AllocPage(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine]);
-            IntPtr ptrPage=_pageCache.GetPagePtr(_magazineCurrentPageNr[magazine], _magazineCurrentSubPage[magazine]);
-            if (ptrPage != IntPtr.Zero)
-            {
-              Marshal.Copy(rowData, off, new IntPtr(ptrPage.ToInt32() + (packetNumber * 42)), 42);
-            }
-          }
-        }
-      }// for (line = 0; line < rows; line++)
+        }// for (line = 0; line < rows; line++)
+      }
+      catch (Exception ex)
+      {
+        Log.WriteFile(Log.LogType.Error,true,"Exception while decoding teletext");
+        Log.Write(ex);
+      }
     }//void Decode(byte[] rowData)
     #endregion
 
