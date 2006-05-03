@@ -23,6 +23,7 @@ using System.Xml;
 using DShowNET;
 using DShowNET.Helper;
 using System.Collections;
+using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 namespace TVCapture
 {
@@ -93,7 +94,7 @@ namespace TVCapture
     #region Private Members
     private static volatile AvailableFilters _mInstance;
     private static object _mSyncRoot = new Object();
-    private static Hashtable _mAvailableFilters = new Hashtable();
+    private static Dictionary<string, List<Filter>> _mAvailableFilters = new Dictionary<string, List<Filter>>();
     #endregion
 
     #region Constructors
@@ -103,8 +104,8 @@ namespace TVCapture
     private AvailableFilters()
     {
       // Get all available filters categories and use this in a loop to fetch all filters
+      _mAvailableFilters = new Dictionary<string, List<Filter>>();
       FilterCollection filters = new Filters().AllFilters;
-      Hashtable fcol = new Hashtable();
       for (int i = 0; i < filters.Count; i++)
       {
         Guid clsId;
@@ -129,15 +130,15 @@ namespace TVCapture
             // occurs when having more than one capture card of the same type...
             if (_mAvailableFilters.ContainsKey(ff.Name))
             {
-              System.Collections.ArrayList al = _mAvailableFilters[ff.Name] as System.Collections.ArrayList;
-              al.Add(ff);
+              List<Filter> subFilters = _mAvailableFilters[ff.Name];
+              subFilters.Add(ff);
             }
             else
             {
               // Add new entry to list
-              System.Collections.ArrayList al = new System.Collections.ArrayList();
-              al.Add(ff);
-              _mAvailableFilters.Add(ff.Name, al);
+              List<Filter> subFilters = new List<Filter>();
+              subFilters.Add(ff);
+              _mAvailableFilters[ff.Name] = subFilters;
             }
           }
         }
@@ -172,7 +173,7 @@ namespace TVCapture
     /// <summary>
     /// Property that returns the list of filters
     /// </summary>
-    public static Hashtable Filters
+    public static Dictionary<string,List<Filter>> Filters
     {
       get
       {

@@ -336,53 +336,54 @@ namespace MediaPortal.TV.Recording
     /// <returns>
     /// A string of format "PCI bus x, device y" where x and y are numbers
     /// </returns>
-      public string GetHardwareLocation(string monikerName)
+    public string GetHardwareLocation(string monikerName)
+    {
+      //Log.WriteFile(Log.LogType.Log, "    GetHardwareLocation: filter:{1}", monikerName);
+
+      int pos1 = monikerName.IndexOf("#");
+      if (pos1 < 0) return String.Empty;
+      int pos2 = monikerName.LastIndexOf("#");
+      if (pos2 < 0) return String.Empty;
+      string left = monikerName.Substring(0, pos1);
+      string mid = monikerName.Substring(pos1 + 1, (pos2 - pos1) - 1);
+      mid = mid.Replace("#", "\\");
+      string right = monikerName.Substring(pos2 + 1);
+      string registryKeyName = mid;
+
+      registryKeyName = @"SYSTEM\CurrentControlSet\Enum\PCI\" + mid;
+      Log.Write("        key:{0}", registryKeyName);
+
+      RegistryKey hklm = Registry.LocalMachine;
+      RegistryKey subkey = hklm.OpenSubKey(registryKeyName, false);
+      if (subkey != null)
       {
-          //Log.WriteFile(Log.LogType.Log, "    GetHardwareLocation: filter:{1}", monikerName);
-
-          int pos1 = monikerName.IndexOf("#");
-          if (pos1 < 0) return String.Empty;
-          int pos2 = monikerName.LastIndexOf("#");
-          if (pos2 < 0) return String.Empty;
-          string left = monikerName.Substring(0, pos1);
-          string mid = monikerName.Substring(pos1 + 1, (pos2 - pos1) - 1);
-          mid = mid.Replace("#", "\\");
-          string right = monikerName.Substring(pos2 + 1);
-          string registryKeyName = mid;
-
-          registryKeyName = @"SYSTEM\CurrentControlSet\Enum\PCI\" + mid;
-          Log.Write("        key:{0}", registryKeyName);
-
-          RegistryKey hklm = Registry.LocalMachine;
-          RegistryKey subkey = hklm.OpenSubKey(registryKeyName, false);
-          if (subkey != null)
-          {
-              string locInfo = (string)subkey.GetValue("LocationInformation");
-              if (locInfo == null) locInfo = string.Empty;
-              //Log.Write("        LocationInformation:{0}", locInfo);
-              int fPos = locInfo.LastIndexOf(",");
-              locInfo = locInfo.Substring(0, fPos);
-              return locInfo;
-          }
-          hklm.Close();
-          return String.Empty;
+        string locInfo = (string)subkey.GetValue("LocationInformation");
+        if (locInfo == null) locInfo = string.Empty;
+        //Log.Write("        LocationInformation:{0}", locInfo);
+        int fPos = locInfo.LastIndexOf(",");
+        locInfo = locInfo.Substring(0, fPos);
+        return locInfo;
       }
+      hklm.Close();
+      return String.Empty;
+    }
 
 
     /// <summary>
     /// #MW#
     /// </summary>
     /// <returns></returns>
-    public bool LoadDefinitions( string videoDevice,string videoDeviceMoniker)
+    public bool LoadDefinitions(string videoDevice, string videoDeviceMoniker)
     {
       if (_definitionLoaded) return true;
       _definitionLoaded = true;
       _captureCardDefinition = null;
       try
       {
-         Log.WriteFile(Log.LogType.Log, "LoadDefs for device at {0}",GetHardwareLocation(videoDeviceMoniker));
+        Log.WriteFile(Log.LogType.Log, "LoadDefs for device at {0}", GetHardwareLocation(videoDeviceMoniker));
         //Log.WriteFile(Log.LogType.Log, "LoadDefinitions() card:{0} {1}", ID, this.FriendlyName);
         CaptureCardDefinitions captureCardDefinitions = CaptureCardDefinitions.Instance;
+        Log.WriteFile(Log.LogType.Log, "defs loaded for device at {0}", GetHardwareLocation(videoDeviceMoniker));
         if (CaptureCardDefinitions.CaptureCards.Count == 0)
         {
           // Load failed!!!
@@ -435,15 +436,15 @@ namespace MediaPortal.TV.Recording
         _captureCardDefinition.Tv.FilterDefinitions = new ArrayList();
         foreach (FilterDefinition fd in ccd.Tv.FilterDefinitions)
         {
-            fd.DSFilter = null;
-            fd.MonikerDisplayName = String.Empty;
-            FilterDefinition fd_copy = new FilterDefinition();
-            fd_copy.Category = fd.Category;
-            fd_copy.CheckDevice = fd.CheckDevice;
-            fd_copy.DSFilter = fd.DSFilter;
-            fd_copy.FriendlyName = fd.FriendlyName;
-            fd_copy.MonikerDisplayName = fd.MonikerDisplayName;
-            _captureCardDefinition.Tv.FilterDefinitions.Add(fd_copy);
+          fd.DSFilter = null;
+          fd.MonikerDisplayName = String.Empty;
+          FilterDefinition fd_copy = new FilterDefinition();
+          fd_copy.Category = fd.Category;
+          fd_copy.CheckDevice = fd.CheckDevice;
+          fd_copy.DSFilter = fd.DSFilter;
+          fd_copy.FriendlyName = fd.FriendlyName;
+          fd_copy.MonikerDisplayName = fd.MonikerDisplayName;
+          _captureCardDefinition.Tv.FilterDefinitions.Add(fd_copy);
         }
         _captureCardDefinition.Tv.ConnectionDefinitions = ccd.Tv.ConnectionDefinitions;
         _captureCardDefinition.Tv.InterfaceDefinition = ccd.Tv.InterfaceDefinition;
@@ -482,8 +483,8 @@ namespace MediaPortal.TV.Recording
           {
             // check if this filter has the correct friendly name
             Filter tmpFilter;
-            ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
-            tmpFilter = (Filter)al[0];
+            List<Filter> al = (List<Filter>)AvailableFilters.Filters[key];
+            tmpFilter = al[0];
             if (String.Compare(tmpFilter.Name, fd.FriendlyName, true) != 0) continue;
             if (fd.CheckDevice)
             {
@@ -524,11 +525,11 @@ namespace MediaPortal.TV.Recording
           foreach (string key in AvailableFilters.Filters.Keys)
           {
             Filter filter;
-            ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
+            List<Filter> al = AvailableFilters.Filters[key] ;
             filter = (Filter)al[0];
 
             // if directshow filter name == video filter name
-            if (filter.Name.ToLower()==fd.FriendlyName.ToLower())
+            if (filter.Name.ToLower() == fd.FriendlyName.ToLower())
             {
               // FriendlyName found. Now check if this name should be checked against a (PnP) device
               // to make sure that we found the right filter...z
@@ -561,17 +562,19 @@ namespace MediaPortal.TV.Recording
                 // associated with the same piece of hardware.
                 if (!filterFound)
                 {
-                    foreach (Filter f in al) {
-                        string locf = GetHardwareLocation(f.MonikerString);
-                        string locv = GetHardwareLocation(videoDeviceMoniker);
-                        if (locf.Equals(locv) && !locf.Equals(string.Empty) && !locv.Equals(string.Empty) ) {
-                            filter = f;
-                            filterFound = true;
-                            Log.WriteFile(Log.LogType.Log, "Filter matched on hardware location: {1} -> {0}", f.MonikerString, GetHardwareLocation(f.MonikerString));
-                            break;
-                        }
+                  foreach (Filter f in al)
+                  {
+                    string locf = GetHardwareLocation(f.MonikerString);
+                    string locv = GetHardwareLocation(videoDeviceMoniker);
+                    if (locf.Equals(locv) && !locf.Equals(string.Empty) && !locv.Equals(string.Empty))
+                    {
+                      filter = f;
+                      filterFound = true;
+                      Log.WriteFile(Log.LogType.Log, "Filter matched on hardware location: {1} -> {0}", f.MonikerString, GetHardwareLocation(f.MonikerString));
+                      break;
                     }
-                    if (!filterFound) Log.WriteFile(Log.LogType.Log, "No filters matched on hardware location");
+                  }
+                  if (!filterFound) Log.WriteFile(Log.LogType.Log, "No filters matched on hardware location");
                 }
 
                 if (!filterFound)
@@ -608,7 +611,7 @@ namespace MediaPortal.TV.Recording
           // Log the error and return false...
           if (!filterFound)
           {
-            if (fd.FriendlyName.StartsWith("%") == false || fd.FriendlyName.EndsWith("%") == false )
+            if (fd.FriendlyName.StartsWith("%") == false || fd.FriendlyName.EndsWith("%") == false)
             {
               Log.WriteFile(Log.LogType.Log, true, "  Filter {0} not found in definitions file", friendlyName);
               return (false);
@@ -621,6 +624,8 @@ namespace MediaPortal.TV.Recording
         Log.Write(ex);
         return (false);
       }
+
+      Log.WriteFile(Log.LogType.Log, "LoadDefinitions done");
       return (true);
     }
     #endregion

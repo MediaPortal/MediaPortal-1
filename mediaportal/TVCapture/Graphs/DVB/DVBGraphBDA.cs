@@ -355,7 +355,7 @@ namespace MediaPortal.TV.Recording
               foreach (string key in AvailableFilters.Filters.Keys)
               {
                 Filter filter;
-                ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
+                List<Filter> al = AvailableFilters.Filters[key] ;
                 filter = (Filter)al[0];
                 if (filter.Name.Equals(sinkFilter.FriendlyName))
                 {

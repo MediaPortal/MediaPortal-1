@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using DShowNET;
@@ -475,7 +476,7 @@ namespace MediaPortal.TV.Recording
       {
         int hr;
         Filter filter;
-        ArrayList al = AvailableFilters.Filters[key] as System.Collections.ArrayList;
+        List<Filter> al = AvailableFilters.Filters[key] ;
         filter = (Filter)al[0];
         if (filter.Name.Equals(sourceFilter.FriendlyName))
         {

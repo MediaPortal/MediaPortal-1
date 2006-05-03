@@ -525,7 +525,10 @@ namespace MediaPortal.TV.Recording
 
 
           }
-          catch (Exception) { }
+          catch (Exception ex) 
+          {
+            Log.Write(ex);
+          }
         }
         else
         {
@@ -1456,6 +1459,10 @@ namespace MediaPortal.TV.Recording
     }
     public ArrayList GetAudioLanguageList()
     {
+      if (_tvAudioTunerInterface == null)
+      {
+        return new ArrayList();
+      }
       TVAudioMode modes;
       _tvAudioTunerInterface.GetAvailableTVAudioModes(out modes);
 
