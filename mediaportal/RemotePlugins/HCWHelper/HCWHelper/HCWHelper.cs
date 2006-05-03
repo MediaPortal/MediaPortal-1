@@ -144,14 +144,11 @@ namespace MediaPortal.InputDevices.HcwHelper
         Exit();
       }
       else
-        try
-        {
-          irremote.IROpen(this.Handle, 0, false, 0);
+        if (irremote.IROpen(this.Handle, 0, false, 0))
           registered = true;
-        }
-        catch (irremote.IRFailedException ex)
+        else
         {
-          Log.Write("HCWHelper: (open) {0}", ex.Message);
+          Log.Write("HCWHelper: Can't open IR device - IR in use?");
           Exit();
         }
     }
@@ -162,16 +159,14 @@ namespace MediaPortal.InputDevices.HcwHelper
     /// </summary>
     private void StopIR()
     {
-      try
+      if (irremote.IRClose(this.Handle, 0))
       {
-        irremote.IRClose(this.Handle, 0);
         registered = false;
         if (logVerbose) Log.Write("HCWHelper: closing driver successful");
       }
-      catch (irremote.IRFailedException ex)
-      {
-        Log.Write("HCWHelper: (close) {0}", ex.Message);
-      }
+      else
+        Log.Write("HCWHelper: Can't close IR device");
+
       if (restartIRApp)
         try
         {
@@ -246,14 +241,8 @@ namespace MediaPortal.InputDevices.HcwHelper
           int repeatCount = 0;
           int remoteCode = 0;
           int keyCode = 0;
-          try
-          {
-            irremote.IRGetSystemKeyCode(out repeatCount, out remoteCode, out keyCode);
-          }
-          catch (irremote.IRNoMessage)
-          {
+          if (!irremote.IRGetSystemKeyCode(out repeatCount, out remoteCode, out keyCode))
             break;
-          }
           DateTime attackTime = DateTime.Now;
 
           int remoteCommand = 0;

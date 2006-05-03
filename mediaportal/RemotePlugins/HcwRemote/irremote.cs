@@ -93,30 +93,12 @@ namespace MediaPortal.InputDevices
 
     public static string CurrentVersion = "2.49.23332";
 
-    public class IRFailedException : Exception
+    public static bool IRClose(IntPtr WindowHandle, uint Msg)
     {
-      const string message = "Can't open/close IR device - IR in use?";
-      public IRFailedException()
-        : base(message)
-      { }
+      return IR_Close((int)WindowHandle, Msg);
     }
 
-    public class IRNoMessage : Exception
-    {
-      const string message = "No IR command queued.";
-      public IRNoMessage()
-        : base(message)
-      { }
-    }
-
-    public static void IRClose(IntPtr WindowHandle, uint Msg)
-    {
-      bool result = IR_Close((int)WindowHandle, Msg);
-      if (!result)
-        throw new IRFailedException();
-    }
-
-    public static void IRGetSystemKeyCode(out int RepeatCount, out int RemoteCode, out int KeyCode)
+    public static bool IRGetSystemKeyCode(out int RepeatCount, out int RemoteCode, out int KeyCode)
     {
       RepeatCount = 0;
       RemoteCode = 0;
@@ -133,15 +115,12 @@ namespace MediaPortal.InputDevices
       {
         Log.Write("HCW: Exception while querying remote: {0}", ex.Message);
       }
-      if (!result)
-        throw new IRNoMessage();
+      return result;
     }
 
-    public static void IROpen(IntPtr WindowHandle, uint Msg, bool Verbose, ushort IRPort)
+    public static bool IROpen(IntPtr WindowHandle, uint Msg, bool Verbose, ushort IRPort)
     {
-      bool result = IR_Open((int)WindowHandle, Msg, Verbose, IRPort);
-      if (!result)
-        throw new IRFailedException();
+      return IR_Open((int)WindowHandle, Msg, Verbose, IRPort);
     }
 
     public static bool IRSetDllDirectory(string PathName)
