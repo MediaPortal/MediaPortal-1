@@ -304,22 +304,25 @@ namespace MediaPortal.TV.Recording
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Recorder, true, "Command:{0} failed",cmd.ToString());
+          Log.WriteFile(Log.LogType.Recorder, true, "Command:{0} failed", cmd.ToString());
           Log.Write(ex);
         }
-        TimeSpan ts=DateTime.Now-dtStart;
-        if (cmd.Succeeded == false)
+        finally
         {
-          Log.WriteFile(Log.LogType.Recorder, true, "Command:{0} failed reason:{1} time:{2} msec",cmd.ToString(), cmd.ErrorMessage, ts.TotalMilliseconds);
-        }
-        else
-        {
-          Log.WriteFile(Log.LogType.Recorder, false, "Command:{0} time:{1} msec",cmd.ToString(), ts.TotalMilliseconds);
-        }
-        cmd.Finished=true;
-        lock (_listCommands)
-        {
-          _listCommands.RemoveAt(0);
+          TimeSpan ts = DateTime.Now - dtStart;
+          if (cmd.Succeeded == false)
+          {
+            Log.WriteFile(Log.LogType.Recorder, true, "Command:{0} failed reason:{1} time:{2} msec", cmd.ToString(), cmd.ErrorMessage, ts.TotalMilliseconds);
+          }
+          else
+          {
+            Log.WriteFile(Log.LogType.Recorder, false, "Command:{0} time:{1} msec", cmd.ToString(), ts.TotalMilliseconds);
+          }
+          cmd.Finished = true;
+          lock (_listCommands)
+          {
+            _listCommands.RemoveAt(0);
+          }
         }
         LogTunerStatus();
       }

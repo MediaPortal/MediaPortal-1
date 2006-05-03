@@ -1,3 +1,4 @@
+//#define PERFCOUNTER
 /* 
  *	Copyright (C) 2005 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -201,6 +202,11 @@ namespace MediaPortal
 
     protected PlayListPlayer playlistPlayer;
 
+#if PERFCOUNTER
+    PerformanceCounter _perfCounterCpu;
+#endif
+
+
     // Overridable functions for the 3D scene created by the app
     protected virtual bool ConfirmDevice(Caps caps, VertexProcessingType vertexProcessingType,
                                          Format adapterFormat, Format backBufferFormat)
@@ -279,6 +285,12 @@ namespace MediaPortal
     /// </summary>
     public D3DApp()
     {
+#if PERFCOUNTER
+      _perfCounterCpu = new PerformanceCounter();
+      _perfCounterCpu.CategoryName = "Processor";
+      _perfCounterCpu.CounterName = "% Processor Time";
+      _perfCounterCpu.InstanceName = "_Total"; 
+#endif
       //GUIGraphicsContext.DX9Device = null;
       try
       {
@@ -1636,6 +1648,14 @@ namespace MediaPortal
                                        VideoRendererStatistics.FramesDrawn,
                                        VideoRendererStatistics.FramesDropped,
                                        VideoRendererStatistics.Jitter);
+#if PERFCOUNTER
+        long MBUsed = Process.GetCurrentProcess().PrivateMemorySize;
+        MBUsed /= 1024; // KByte;
+        MBUsed /= 1024; // MByte;
+
+        quality += String.Format(" Memory:{0} Mb cpu:{1}%",
+              MBUsed, _perfCounterCpu.NextValue().ToString("f2"));
+#endif
         frameStats += quality;
         //long lTotalMemory=GC.GetTotalMemory(false);
         //string memory=String.Format("\nTotal Memory allocated:{0}",Utils.GetSize(lTotalMemory) );
