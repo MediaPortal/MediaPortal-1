@@ -118,7 +118,21 @@ namespace MediaPortal.InputDevices
 
     public static void IRGetSystemKeyCode(out int RepeatCount, out int RemoteCode, out int KeyCode)
     {
-      bool result = IR_GetSystemKeyCode(out RepeatCount, out RemoteCode, out KeyCode);
+      RepeatCount = 0;
+      RemoteCode = 0;
+      KeyCode = 0;
+      bool result = false;
+      try
+      {
+        result = IR_GetSystemKeyCode(out RepeatCount, out RemoteCode, out KeyCode);
+      }
+      catch (System.AccessViolationException)
+      {
+      }
+      catch (Exception ex)
+      {
+        Log.Write("HCW: Exception while querying remote: {0}", ex.Message);
+      }
       if (!result)
         throw new IRNoMessage();
     }
