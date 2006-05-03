@@ -170,16 +170,6 @@
     <Reference Include="Interop.X10, Version=1.0.0.0, Culture=neutral">
       <HintPath>.\Interop.X10.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.DirectX">
-      <Name>Microsoft.DirectX</Name>
-      <HintPath>C:\WINDOWS\Microsoft.NET\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.dll</HintPath>
-      <AssemblyFolderKey>hklm\dn\dx_1.0.2902.0</AssemblyFolderKey>
-    </Reference>
-    <Reference Include="Microsoft.DirectX.DirectInput">
-      <Name>Microsoft.DirectX.DirectInput</Name>
-      <HintPath>C:\WINDOWS\Microsoft.NET\Managed DirectX\v9.02.2904\Microsoft.DirectX.DirectInput.dll</HintPath>
-      <AssemblyFolderKey>hklm\current managed directx 9.2</AssemblyFolderKey>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
