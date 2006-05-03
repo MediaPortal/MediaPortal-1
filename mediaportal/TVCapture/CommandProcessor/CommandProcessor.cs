@@ -39,6 +39,7 @@ using MediaPortal.Player;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Teletext;
 using MediaPortal.TV.DiskSpace;
+using TVCapture;
 #endregion
 
 namespace MediaPortal.TV.Recording
@@ -251,6 +252,7 @@ namespace MediaPortal.TV.Recording
     void ProcessThread(object sender, DoWorkEventArgs e)
     {
         System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
+        AvailableFilters af = AvailableFilters.Instance;
         while (_isRunning)
         {
           try
