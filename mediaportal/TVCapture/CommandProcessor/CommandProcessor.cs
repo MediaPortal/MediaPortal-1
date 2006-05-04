@@ -252,7 +252,7 @@ namespace MediaPortal.TV.Recording
     void ProcessThread(object sender, DoWorkEventArgs e)
     {
       Log.WriteFile(Log.LogType.Log, "Commandprocessor:starting");
-      AvailableFilters af = AvailableFilters.Instance
+      AvailableFilters af = AvailableFilters.Instance;
       Log.WriteFile(Log.LogType.Log, "Commandprocessor:starting tv cards");
 
         for (int i = 0; i < TVCards.Count; ++i)
