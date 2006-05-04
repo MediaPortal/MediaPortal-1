@@ -298,6 +298,7 @@
     <Compile Include="GUIAlarm\GUISleepTimer.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUIDVD\GUIDVDFullscreen.cs" />
     <Compile Include="GUIMSNPlugin\GUIMSNChatWindow.cs">
       <SubType>Code</SubType>
     </Compile>
