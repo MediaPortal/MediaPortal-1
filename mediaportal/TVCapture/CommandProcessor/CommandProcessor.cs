@@ -252,14 +252,17 @@ namespace MediaPortal.TV.Recording
     void ProcessThread(object sender, DoWorkEventArgs e)
     {
       Log.WriteFile(Log.LogType.Log, "Commandprocessor:starting");
-      AvailableFilters af = AvailableFilters.Instance;
-      Log.WriteFile(Log.LogType.Log, "Commandprocessor:starting tv cards");
+      if (GUIGraphicsContext.DX9Device != null)
+      {
+        AvailableFilters af = AvailableFilters.Instance;
+        Log.WriteFile(Log.LogType.Log, "Commandprocessor:starting tv cards");
 
         for (int i = 0; i < TVCards.Count; ++i)
         {
           Log.WriteFile(Log.LogType.Recorder, "Recorder:start card:{0}", TVCards[i].CommercialName);
           TVCards[i].CreateGraph();
         }
+      }
         Log.WriteFile(Log.LogType.Log, "Commandprocessor:running");
         System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
         

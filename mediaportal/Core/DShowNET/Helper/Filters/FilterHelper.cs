@@ -146,23 +146,8 @@ namespace DShowNET.Helper
 		public static ArrayList GetDVDNavigators()
 		{
 			ArrayList navigators = new ArrayList();
-
-
-      foreach (Filter filter in Filters.LegacyFilters) 
-			{
-				//Now use only DVD Navigator as a selectable option to avoid issues
-                if ( String.Compare(filter.Name, "DVD Navigator", true) == 0) //||
-                    /*String.Compare(filter.Name, "InterVideo Navigator", true) == 0 ||
-                    String.Compare(filter.Name, "NVIDIA Navigator", true) == 0 ||
-                    String.Compare(filter.Name, "CyberLink DVD Navigator", true) == 0 ||
-                    String.Compare(filter.Name, "Cyberlink DVD Navigator (ATI)", true) == 0 ||
-                    String.Compare(filter.Name, "CyberLink DVD Navigator (PDVD6)", true) == 0)*/
-				{
-					navigators.Add(filter.Name);      
-				}
-			}
-			
-			return navigators;
+      navigators.Add("DVD Navigator");
+      return navigators;
     }
 
     public static void GetMPEG2AudioEncoders(ArrayList list)

@@ -92,6 +92,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ColumnHeader columnHeader11;
     ListViewColumnSorter _columnSorter;
     private MediaPortal.UserInterface.Controls.MPButton buttonCombine;
+    bool _init=false;
 
     //
     // Private members
@@ -110,6 +111,15 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
     }
 
+    public override void OnSectionActivated()
+    {
+      base.OnSectionActivated();
+      if (_init == false)
+      {
+        _init = true;
+        LoadSettings();
+      }
+    }
     /// <summary>
     /// Clean up any resources being used.
     /// </summary>
@@ -620,12 +630,14 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
+      if (_init == false) return;
       LoadTVChannels();
       LoadCards();
     }
 
     public override void SaveSettings()
     {
+      if (_init == false) return;
       if (reloadList)
       {
         LoadTVChannels();

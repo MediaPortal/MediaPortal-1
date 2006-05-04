@@ -55,7 +55,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox cbTurnOnTv;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox3;
     private MediaPortal.UserInterface.Controls.MPCheckBox byIndexCheckBox;
-
+    bool _init = false;
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 
     public Television()
@@ -69,16 +69,25 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
-      //
-      // Populate video and audio codecs
-      //
-      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-      ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
-
-      videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
-      audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
     }
 
+    public override void OnSectionActivated()
+    {
+      base.OnSectionActivated();
+      if (_init == false)
+      {
+        //
+        // Populate video and audio codecs
+        //
+        ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+        ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+
+        videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
+        audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
+        _init = true;
+        LoadSettings();
+      }
+    }
     /// <summary>
     /// Clean up any resources being used.
     /// </summary>
@@ -323,6 +332,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
+      if (_init == false) return;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         cbTurnOnTv.Checked = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
@@ -405,6 +415,7 @@ namespace MediaPortal.Configuration.Sections
 
     public override void SaveSettings()
     {
+      if (_init == false) return;
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         if (cbDeinterlace.SelectedIndex >= 0)
@@ -426,10 +437,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("mytv", "videocodec", videoCodecComboBox.Text);
 
       }
-    }
-    public override void OnSectionActivated()
-    {
-
     }
 
   }

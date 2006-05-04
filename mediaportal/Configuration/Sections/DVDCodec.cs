@@ -28,7 +28,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
+using MediaPortal.GUI.Library;
 using System.Runtime.InteropServices;
 
 using DShowNET;
@@ -53,7 +53,7 @@ namespace MediaPortal.Configuration.Sections
     //private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxRGB;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDXVA;
     private System.ComponentModel.IContainer components = null;
-
+    bool _init = false;
     /// <summary>
     /// 
     /// </summary>
@@ -71,29 +71,39 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
-      //
-      // Fetch available DirectShow filters
-      //
-      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-      ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
 
-      //
-      // Fetch available DVD navigators
-      //
-      ArrayList availableDVDNavigators = FilterHelper.GetDVDNavigators();
 
-      //
-      // Fetch available Audio Renderers
-      //
-      ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
+    }
+    public override void OnSectionActivated()
+    {
+      base.OnSectionActivated();
+      if (_init == false)
+      {
+        //
+        // Fetch available DirectShow filters
+        //
+        ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+        ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+        //
+        // Fetch available DVD navigators
+        //
+        ArrayList availableDVDNavigators = FilterHelper.GetDVDNavigators();
 
-      //
-      // Populate combo boxes
-      //
-      audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
-      videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
-      dvdNavigatorComboBox.Items.AddRange(availableDVDNavigators.ToArray());
-      audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
+        //
+        // Fetch available Audio Renderers
+        //
+        ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
+
+        //
+        // Populate combo boxes
+        //
+        audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
+        videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
+        dvdNavigatorComboBox.Items.AddRange(availableDVDNavigators.ToArray());
+        audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
+        _init = true;
+        LoadSettings();
+      }
     }
 
     /// <summary>
@@ -101,6 +111,8 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void LoadSettings()
     {
+      if (_init == false) return;
+      Log.WriteFile(Log.LogType.Log, "load dvd");
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         string audioRenderer = xmlreader.GetValueAsString("dvdplayer", "audiorenderer", "Default DirectSound Device");
@@ -166,10 +178,13 @@ namespace MediaPortal.Configuration.Sections
         videoCodecComboBox.SelectedItem = videoCodec;
 
       }
+      Log.WriteFile(Log.LogType.Log, "load dvd done");
     }
 
     public override void SaveSettings()
     {
+      if (_init == false) return;
+
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValue("dvdplayer", "audiorenderer", audioRendererComboBox.Text);

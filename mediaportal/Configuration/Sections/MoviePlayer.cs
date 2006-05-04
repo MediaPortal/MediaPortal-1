@@ -54,7 +54,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPComboBox videoCodecComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel label6;
     private System.ComponentModel.IContainer components = null;
-
+    bool _init = false;
     public MoviePlayer()
       : this("Movie Player")
     {
@@ -66,26 +66,36 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
-      // 
-      // Fetch available audio and video renderers
-      //
-      ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
-      //
-      // Populate video and audio codecs
-      //
-      ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
-      ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
-
-      videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
-      audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
-      audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
     }
 
+    public override void OnSectionActivated()
+    {
+      base.OnSectionActivated();
+      if (_init == false)
+      {
+        // 
+        // Fetch available audio and video renderers
+        //
+        ArrayList availableAudioRenderers = FilterHelper.GetAudioRenderers();
+        //
+        // Populate video and audio codecs
+        //
+        ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
+        ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+
+        videoCodecComboBox.Items.AddRange(availableVideoFilters.ToArray());
+        audioCodecComboBox.Items.AddRange(availableAudioFilters.ToArray());
+        audioRendererComboBox.Items.AddRange(availableAudioRenderers.ToArray());
+        _init = true;
+        LoadSettings();
+      }
+    }
     /// <summary>
     /// 
     /// </summary>
     public override void LoadSettings()
     {
+      if (_init == false) return;
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         fileNameTextBox.Text = xmlreader.GetValueAsString("movieplayer", "path", "");
@@ -159,6 +169,7 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     public override void SaveSettings()
     {
+      if (_init == false) return;
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValue("movieplayer", "path", fileNameTextBox.Text);

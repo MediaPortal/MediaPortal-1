@@ -54,6 +54,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ColumnHeader columnHeader3;
     private System.ComponentModel.IContainer components = null;
     private System.Windows.Forms.ColumnHeader columnHeader4;
+    bool _init = false;
 
     //
     // Privare members
@@ -71,17 +72,26 @@ namespace MediaPortal.Configuration.Sections
       // This call is required by the Windows Form Designer.
       InitializeComponent();
 
-      //
-      // Load capture cards
-      //
-      LoadCaptureCards();
-
-      // 
-      // Populate the list view
-      //
-      PopulateListView();
     }
 
+    public override void OnSectionActivated()
+    {
+      base.OnSectionActivated();
+      if (_init == false)
+      {
+
+        //
+        // Load capture cards
+        //
+        LoadCaptureCards();
+
+        // 
+        // Populate the list view
+        //
+        PopulateListView();
+        _init = true;
+      }
+    }
     private void PopulateListView()
     {
       cardsListView.Items.Clear();
@@ -380,6 +390,7 @@ namespace MediaPortal.Configuration.Sections
     }
     public override void SaveSettings()
     {
+      if (_init == false) return;
       ArrayList availableCards = new ArrayList();
 
       foreach (ListViewItem listItem in cardsListView.Items)
