@@ -73,14 +73,13 @@ namespace MediaPortal.Player
       m_iTuningSpace=tuningspace;
       m_iCountryCode = country;
 
-      Filters filters = new Filters();
       Filter filterAudioCaptureDevice = null;
       Filter filterVideoCaptureDevice = null;
 
       // find the audio capture device
       if (m_strAudioDevice.Length > 0)
       {
-        foreach (Filter filter in filters.AudioInputDevices)
+        foreach (Filter filter in Filters.AudioInputDevices)
         {
           if (filter.Name.Equals(m_strAudioDevice))
           {
@@ -93,7 +92,7 @@ namespace MediaPortal.Player
       // find the Video capture device
       if (m_strVideoCaptureFilter.Length > 0)
       {
-        foreach (Filter filter in filters.VideoInputDevices)
+        foreach (Filter filter in Filters.VideoInputDevices)
         {
           if (filter.Name.Equals(m_strVideoCaptureFilter))
           {
@@ -180,14 +179,14 @@ namespace MediaPortal.Player
       {
         // add default directsound renderer
         string strDefault="@device:cm:{E0F158E1-CB04-11D0-BD4E-00A0C911CE86}";
-        for (int i=0; i < filters.AudioRenderers.Count;++i)
+        for (int i = 0; i < Filters.AudioRenderers.Count; ++i)
         {
-          if (filters.AudioRenderers[i].MonikerString.IndexOf(strDefault)>=0)
+          if (Filters.AudioRenderers[i].MonikerString.IndexOf(strDefault) >= 0)
           {
-            Log.Write("RadioGraph:adding {0} to graph",filters.AudioRenderers[i].Name);
+            Log.Write("RadioGraph:adding {0} to graph", Filters.AudioRenderers[i].Name);
 						try
 						{
-							m_audioFilter=DirectShowUtil.AddAudioRendererToGraph( m_graphBuilder, filters.AudioRenderers[i].Name,false);
+              m_audioFilter = DirectShowUtil.AddAudioRendererToGraph(m_graphBuilder, Filters.AudioRenderers[i].Name, false);
 							bAdded=true;
 						}
 						catch(Exception)

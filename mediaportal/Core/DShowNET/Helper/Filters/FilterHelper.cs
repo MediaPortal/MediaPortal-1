@@ -33,9 +33,8 @@ namespace DShowNET.Helper
     {
       ArrayList compressors = new ArrayList();
 
-      Filters filters = new Filters();
-			
-      foreach(Filter compressor in filters.VideoCompressors)
+
+      foreach (Filter compressor in Filters.VideoCompressors)
       {
         compressors.Add(compressor.Name);
       }
@@ -47,9 +46,8 @@ namespace DShowNET.Helper
     {
       ArrayList compressors = new ArrayList();
 
-      Filters filters = new Filters();
-			
-      foreach(Filter compressor in filters.AudioCompressors)
+
+      foreach (Filter compressor in Filters.AudioCompressors)
       {
         compressors.Add(compressor.Name);
       }
@@ -61,9 +59,8 @@ namespace DShowNET.Helper
     {
       ArrayList devices = new ArrayList();
 
-      Filters filters = new Filters();
-			
-      foreach(Filter device in filters.AudioInputDevices)
+
+      foreach (Filter device in Filters.AudioInputDevices)
       {
         devices.Add(device.Name);
       }
@@ -82,20 +79,19 @@ namespace DShowNET.Helper
 		{
 			ArrayList devices = new ArrayList();
 
-			Filters filters = new Filters();
-			
-			foreach(Filter device in filters.VideoInputDevices)
+
+      foreach (Filter device in Filters.VideoInputDevices)
 			{
 				devices.Add(device.MonikerString);
 			}
 			//b2c2
-			foreach(Filter device in filters.LegacyFilters)
+      foreach (Filter device in Filters.LegacyFilters)
 			{
 				if(device.Name=="B2C2 MPEG-2 Source")
 					devices.Add(device.MonikerString);
 			}
-			
-			foreach(Filter device in filters.BDAReceivers)
+
+      foreach (Filter device in Filters.BDAReceivers)
 			{
 				if (device.Name.ToLower() =="bda slip de-framer") continue;
 				if (device.Name.ToLower() =="bda mpe filter") continue;	
@@ -111,20 +107,18 @@ namespace DShowNET.Helper
 		{
 			ArrayList devices = new ArrayList();
 
-			Filters filters = new Filters();
-			
-			foreach(Filter device in filters.VideoInputDevices)
+      foreach (Filter device in Filters.VideoInputDevices)
 			{
 				devices.Add(device.Name);
 			}
 			//b2c2
-			foreach(Filter device in filters.LegacyFilters)
+      foreach (Filter device in Filters.LegacyFilters)
 			{
 				if(device.Name=="B2C2 MPEG-2 Source")
 					devices.Add(device.Name);
 			}
-			
-			foreach(Filter device in filters.BDAReceivers)
+
+      foreach (Filter device in Filters.BDAReceivers)
 			{
 				if (device.Name.ToLower() =="bda slip de-framer") continue;	
 				if (device.Name.ToLower() =="bda mpe filter") continue;	
@@ -140,9 +134,8 @@ namespace DShowNET.Helper
 		{
 			ArrayList renderers = new ArrayList();
 
-			Filters filters = new Filters();
 
-			foreach(Filter audioRenderer in filters.AudioRenderers) 
+      foreach (Filter audioRenderer in Filters.AudioRenderers) 
 			{
 				renderers.Add(audioRenderer.Name);
 			}
@@ -154,9 +147,8 @@ namespace DShowNET.Helper
 		{
 			ArrayList navigators = new ArrayList();
 
-			Filters filters = new Filters();
 
-			foreach (Filter filter in filters.LegacyFilters) 
+      foreach (Filter filter in Filters.LegacyFilters) 
 			{
 				//Now use only DVD Navigator as a selectable option to avoid issues
                 if ( String.Compare(filter.Name, "DVD Navigator", true) == 0) //||
@@ -175,9 +167,8 @@ namespace DShowNET.Helper
 
     public static void GetMPEG2AudioEncoders(ArrayList list)
     {
-      Filters filters = new Filters();
 
-      foreach (Filter filter in filters.LegacyFilters) 
+      foreach (Filter filter in Filters.LegacyFilters) 
       {
         
         bool add=false;
@@ -192,9 +183,8 @@ namespace DShowNET.Helper
 
     public static void GetMPEG2VideoEncoders(ArrayList list)
     {
-      Filters filters = new Filters();
 
-      foreach (Filter filter in filters.LegacyFilters) 
+      foreach (Filter filter in Filters.LegacyFilters) 
       {
         
         bool add=false;

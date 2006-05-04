@@ -975,6 +975,7 @@ public class MediaPortalApp : D3DApp, IRender
                                                     Format.A8R8G8B8);
 
     new GUILayerRenderer();
+    Recorder.Start();
   }
 
   /// <summary>

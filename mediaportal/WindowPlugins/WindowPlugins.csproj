@@ -329,9 +329,6 @@
     <Compile Include="GUIMusic\GUIMusicOverlay.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUIMusic\GUIMusicPlaylist.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="GUIMusic\MusicSort.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -714,8 +714,8 @@ namespace MediaPortal.TV.Recording
       if (String.Compare(filterName, "%soundcard%", true) == 0)
       {
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  preferred filter %soundcard%");
-        Filters filters = new Filters();
-        FilterCollection audioInputs = filters.AudioInputDevices;
+        
+        FilterCollection audioInputs = Filters.AudioInputDevices;
         if (audioInputs.Count > 0)
         {
           Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  adding filter <{0}>", audioInputs[0].Name);
@@ -734,9 +734,9 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  preferred filter %audioencoder%");
         string[] audioEncoders = new string[] { "InterVideo Audio Encoder", "MainConcept MPEG Audio Encoder", "MainConcept Demo MPEG Audio Encoder", "CyberLink Audio Encoder" };
-        Filters filters = new Filters();
-        FilterCollection audioCodecs = filters.AudioCompressors;
-        FilterCollection legacyFilters = filters.LegacyFilters;
+        
+        FilterCollection audioCodecs = Filters.AudioCompressors;
+        FilterCollection legacyFilters = Filters.LegacyFilters;
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  audio codecs installed:{0} preferred:{1}", audioCodecs.Count, audioEncoders.Length);
         for (int i = 0; i < audioEncoders.Length; ++i)
         {
@@ -807,9 +807,9 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  preferred filter %videoencoder%");
         string[] videoEncoders = new string[] { "InterVideo Video Encoder", "MainConcept MPEG Video Encoder", "MainConcept Demo MPEG Video Encoder", "CyberLink MPEG Video Encoder" };
-        Filters filters = new Filters();
-        FilterCollection legacyFilters = filters.LegacyFilters;
-        FilterCollection videoCodecs = filters.VideoCompressors;
+        
+        FilterCollection legacyFilters = Filters.LegacyFilters;
+        FilterCollection videoCodecs = Filters.VideoCompressors;
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  video codecs installed:{0} preferred:{1}", videoCodecs.Count, videoEncoders.Length);
 
         for (int i = 0; i < videoEncoders.Length; ++i)
@@ -882,8 +882,8 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  preferred filter %mpegmux%");
         string[] multiplexers = new string[] { "InterVideo Multiplexer", "Mainconcept MPEG Multiplexer", "Mainconcept Demo MPEG Multiplexer", "CyberLink MPEG Muxer" };
-        Filters filters = new Filters();
-        FilterCollection legacyFilters = filters.LegacyFilters;
+        
+        FilterCollection legacyFilters = Filters.LegacyFilters;
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx:  legacy filters installed:{0} preferred:{1}", legacyFilters.Count, multiplexers.Length);
         for (int i = 0; i < multiplexers.Length; ++i)
         {

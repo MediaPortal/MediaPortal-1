@@ -74,6 +74,11 @@ namespace DShowNET.Helper
         return _name;
       }
     }
+    public void ResolveName()
+    {
+      if (_nameResolved) return;
+      _name = getName(MonikerString);
+    }
 		/// <summary> Retrieve the a moniker's display name (i.e. it's unique string) </summary>
     protected string getMonikerString(IMoniker moniker)
 		{

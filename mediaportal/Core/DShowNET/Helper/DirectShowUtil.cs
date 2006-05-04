@@ -43,14 +43,13 @@ namespace DShowNET.Helper
 			try
 			{
 				IBaseFilter NewFilter=null;
-				Log.WriteFile(Log.LogType.Log,"add filter:{0} to graph", strFilterName);
-				Filters filters = new Filters();
-				foreach (Filter filter in filters.LegacyFilters)
+        foreach (Filter filter in Filters.LegacyFilters)
 				{
 					if (String.Compare(filter.Name,strFilterName,true) ==0)
-					{
+          {
 						NewFilter = (IBaseFilter) Marshal.BindToMoniker( filter.MonikerString );
-						int hr = graphBuilder.AddFilter( NewFilter, strFilterName );
+
+            int hr = graphBuilder.AddFilter(NewFilter, strFilterName);
 						if( hr < 0 ) 
 						{
 							Log.WriteFile(Log.LogType.Error,true,"failed:unable to add filter:{0} to graph", strFilterName);
@@ -84,11 +83,10 @@ namespace DShowNET.Helper
 				IPin pinOut=null;
 				IBaseFilter NewFilter=null;
 				Log.WriteFile(Log.LogType.Log,"add filter:{0} to graph clock:{0}", strFilterName,setAsReferenceClock);
-				Filters filters = new Filters();
 	      
 				//check first if audio renderer exists!
 				bool bRendererExists=false;
-				foreach (Filter filter in filters.AudioRenderers)
+        foreach (Filter filter in Filters.AudioRenderers)
 				{
 					if (String.Compare(filter.Name,strFilterName,true) ==0)
 					{
@@ -116,7 +114,7 @@ namespace DShowNET.Helper
 						hr=enumFilters.Next(1, pBasefilter,out iFetched);
 						if (hr<0 || iFetched!=1 || pBasefilter[0]==null) break;
 
-						foreach (Filter filter in filters.AudioRenderers)
+            foreach (Filter filter in Filters.AudioRenderers)
 						{
 							Guid classId1;
 							Guid classId2;
@@ -158,7 +156,7 @@ namespace DShowNET.Helper
 
 				if (!bNeedAdd) return null;
 				// next add the new one...
-				foreach (Filter filter in filters.AudioRenderers)
+        foreach (Filter filter in Filters.AudioRenderers)
 				{
 					if (String.Compare(filter.Name,strFilterName,true) ==0)
 					{

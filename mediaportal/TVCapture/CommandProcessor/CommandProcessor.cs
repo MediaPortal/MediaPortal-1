@@ -309,6 +309,7 @@ namespace MediaPortal.TV.Recording
         DateTime dtStart = DateTime.Now;
         try
         {
+          System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Highest;
           cmd.Execute(this);
         }
         catch (Exception ex)
@@ -318,6 +319,7 @@ namespace MediaPortal.TV.Recording
         }
         finally
         {
+          System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
           TimeSpan ts = DateTime.Now - dtStart;
           if (cmd.Succeeded == false)
           {

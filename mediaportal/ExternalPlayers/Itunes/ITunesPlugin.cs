@@ -28,7 +28,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 
 using iTunesLib;
-using MediaPortal.GUI.Library;
+//using MediaPortal.GUI.Library;
 
 namespace MediaPortal.ITunesPlayer
 {

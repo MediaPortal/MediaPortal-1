@@ -105,7 +105,7 @@ namespace TVCapture
     {
       // Get all available filters categories and use this in a loop to fetch all filters
       _mAvailableFilters = new Dictionary<string, List<Filter>>();
-      FilterCollection filters = new Filters().AllFilters;
+      FilterCollection filters = DShowNET.Helper.Filters.AllFilters;
       for (int i = 0; i < filters.Count; i++)
       {
         Guid clsId;
@@ -118,7 +118,7 @@ namespace TVCapture
         string[] tmp = f.MonikerString.Split(@"\".ToCharArray());
         clsIdName = tmp[tmp.GetUpperBound(0)];
         clsId = new Guid(clsIdName);
-        FilterCollection fc = new FilterCollection(clsId);
+        FilterCollection fc = new FilterCollection(clsId, true);
         if (null != fc)
         {
           for (int y = 0; y < fc.Count; y++)
@@ -173,7 +173,7 @@ namespace TVCapture
     /// <summary>
     /// Property that returns the list of filters
     /// </summary>
-    public static Dictionary<string,List<Filter>> Filters
+    public static Dictionary<string, List<Filter>> Filters
     {
       get
       {
@@ -338,7 +338,7 @@ namespace TVCapture
               bool isMce = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mce").InnerText);
               bool isMpeg2 = XmlConvert.ToBoolean(capNode.Attributes.GetNamedItem(@"mpeg2").InnerText);
               if (isBda)
-                cardConfig.Capabilities.CardType=CardTypes.Digital_BDA;
+                cardConfig.Capabilities.CardType = CardTypes.Digital_BDA;
               else if (isMce)
                 cardConfig.Capabilities.CardType = CardTypes.Analog;
               else if (isMpeg2)

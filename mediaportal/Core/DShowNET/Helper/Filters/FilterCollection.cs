@@ -41,6 +41,16 @@ namespace DShowNET.Helper
 			getFilters( category );
 		}
 
+    /// <summary> Populate the collection with a list of filters from a particular category. </summary>
+    public FilterCollection(Guid category, bool resolveNames)
+    {
+      getFilters(category);
+      foreach (Filter f in InnerList)
+      {
+        f.ResolveName();
+      }
+    }
+
 		/// <summary> Populate the InnerList with a list of filters from a particular category </summary>
 		protected void getFilters(Guid category)
 		{

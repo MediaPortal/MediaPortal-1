@@ -279,9 +279,8 @@ namespace MediaPortal.Configuration
       }
 
       //Look for Audio Encoders, if exist assume encoders are installed & present config option
-      Filters filters = new Filters();
       string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
-      FilterCollection legacyFilters = filters.LegacyFilters;
+      FilterCollection legacyFilters = Filters.LegacyFilters;
       foreach (Filter audioCodec in legacyFilters)
       for (int i = 0; i < audioEncoders.Length; ++i)
       {
