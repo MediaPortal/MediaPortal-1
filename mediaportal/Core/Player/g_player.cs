@@ -1267,6 +1267,19 @@ namespace MediaPortal.Player
       }
     }
 
+      static public void SwitchToNextLanguage()
+      {
+          //AudioStreams
+          //CurrentAudioStream
+          if (AudioStreams > 1)
+          {
+              if (CurrentAudioStream < AudioStreams - 1)
+                  CurrentAudioStream++;
+              else
+                  CurrentAudioStream = 0;
+          }
+      }
+      
     #endregion
 
   }
