@@ -59,7 +59,7 @@ namespace MediaPortal.TV.Recording
     bool _isRunning;
     bool _isStopped;
     bool _isPaused;
-    DateTime _startTimeShiftTimer=DateTime.MinValue;
+    DateTime _startTimeShiftTimer = DateTime.MinValue;
     TvCardCollection _tvcards;
     AutoResetEvent _waitMutex;
     bool _controlTimeShifting = true;
@@ -107,7 +107,7 @@ namespace MediaPortal.TV.Recording
       lock (_listCommands)
       {
         _listCommands.Add(command);
-        Log.WriteFile(Log.LogType.Recorder, "add cmd:{0} #{1}", command.ToString(),_listCommands.Count);
+        Log.WriteFile(Log.LogType.Recorder, "add cmd:{0} #{1}", command.ToString(), _listCommands.Count);
         _waitMutex.Set();
       }
     }
@@ -251,19 +251,28 @@ namespace MediaPortal.TV.Recording
     #region private members
     void ProcessThread(object sender, DoWorkEventArgs e)
     {
+      Log.WriteFile(Log.LogType.Log, "Commandprocessor:starting");
+      AvailableFilters af = AvailableFilters.Instance
+      Log.WriteFile(Log.LogType.Log, "Commandprocessor:starting tv cards");
+
+        for (int i = 0; i < TVCards.Count; ++i)
+        {
+          Log.WriteFile(Log.LogType.Recorder, "Recorder:start card:{0}", TVCards[i].CommercialName);
+          TVCards[i].CreateGraph();
+        }
+        Log.WriteFile(Log.LogType.Log, "Commandprocessor:running");
         System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.BelowNormal;
-        AvailableFilters af = AvailableFilters.Instance;
+        
         while (_isRunning)
         {
           try
           {
-            _waitMutex.WaitOne(500,true);
+            _waitMutex.WaitOne(500, true);
             if (_isPaused) continue;
 
             ProcessCommands();
             ProcessCards();
             ProcessScheduler();
-
             _epgProcessor.Process(this);
           }
           catch (Exception ex)
@@ -337,7 +346,7 @@ namespace MediaPortal.TV.Recording
         TVCards[i].Stop();
       }
     }
-    
+
     public override void ResetTimeshiftTimer()
     {
       _killTimeshiftingTimer = DateTime.Now;
