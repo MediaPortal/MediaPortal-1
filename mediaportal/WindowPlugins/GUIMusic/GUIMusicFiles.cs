@@ -675,6 +675,7 @@ namespace MediaPortal.GUI.Music
                     dlg.AddLocalizedString(928);    //find coverart
                     dlg.AddLocalizedString(4521);   //Show Album Info
                     dlg.AddLocalizedString(926);    // Add to playlist     
+                    dlg.AddLocalizedString(4557);    // Add all to playlist
                     dlg.AddLocalizedString(4551);   // Play next
                     dlg.AddLocalizedString(4552);   // Play now
 
@@ -720,6 +721,10 @@ namespace MediaPortal.GUI.Music
 
                 case 926: // add to playlist
                     OnQueueItem(itemNo);
+                    break;
+
+                case 4557: // add all items in current list to end of playlist
+                    OnQueueAllItems();
                     break;
 
                 case 4551: // Play next
@@ -1969,6 +1974,30 @@ namespace MediaPortal.GUI.Music
             }
         }
 
+        private void OnQueueAllItems()
+        {
+            
+            PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+            int index = Math.Max(playlistPlayer.CurrentSong, 0);
+
+            for (int i = 0; i < facadeView.Count; i++)
+            {
+                GUIListItem item = facadeView[i];
+
+                if (item == null)
+                    continue;
+
+                if (item.Label != "...")
+                    AddItemToPlayList(item);
+            }
+
+            if (!g_Player.Playing)
+            {
+                playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+                playlistPlayer.Play(index);
+            }
+        }
+
         protected void OnPlayNext(GUIListItem pItem)
         {
             if (pItem == null || pItem.IsRemote || PlayListFactory.IsPlayList(pItem.Path))
@@ -2017,7 +2046,10 @@ namespace MediaPortal.GUI.Music
             }
 
             if (!g_Player.Playing)
+            {
+                playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
                 playlistPlayer.Play(index);
+            }
         }
 
         protected void OnPlayNow(GUIListItem pItem)
@@ -2079,7 +2111,10 @@ namespace MediaPortal.GUI.Music
                 }
 
                 if (!g_Player.Playing)
+                {
+                    playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
                     playlistPlayer.Play(playStartIndex);
+                }
             }
         }
 

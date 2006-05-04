@@ -101,7 +101,6 @@ namespace MediaPortal.GUI.Music
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
             {
                 string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "nowplaying");
-                //>>>>>>> 1.56
 
                 switch (playNowJumpTo)
                 {
@@ -1552,6 +1551,26 @@ namespace MediaPortal.GUI.Music
             UpdateButtonStates();
 
             //			GUIControl.FocusControl(GetID, control.GetID);
+        }
+
+        protected virtual bool IsSortableView(ViewDefinition view, int viewLevel)
+        {
+            if(view == null || viewLevel < 0 || viewLevel >= view.Filters.Count)
+                return false;
+
+            string sWhere = ((FilterDefinition)view.Filters[viewLevel]).Where;
+            
+            if(sWhere.Length == 0)
+                return true;
+
+            switch (sWhere.ToLower())
+            {
+                case "timesplayed":
+                    return false;
+
+                default:
+                    return true;
+            }
         }
     }
 }

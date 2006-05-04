@@ -139,11 +139,8 @@ namespace MediaPortal.Configuration.Sections
             using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
             {
                 buildThumbsCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "buildThumbs", false);
-
-                // SV
                 folderAsAlbumCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
                 scanForVariousArtistsCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "scanForVariousArtists", true);
-                // \SV
             }
         }
 
@@ -393,11 +390,7 @@ namespace MediaPortal.Configuration.Sections
             //RebuildDatabase();
             progressBar.Maximum = 100;
 
-            // SV
-            //int appel = m_dbs.MusicDatabaseReorg(shares);
             int appel = m_dbs.MusicDatabaseReorg(shares, folderAsAlbumCheckBox.Checked, scanForVariousArtistsCheckBox.Checked);
-            // \SV
-
             progressBar.Value = 100;
 
             groupBox1.Enabled = true;
@@ -435,13 +428,6 @@ namespace MediaPortal.Configuration.Sections
 
             if (dialogResult == DialogResult.Yes)
             {
-                // SV
-                //string database = @"database\musicdatabase4.db3";
-                //if (File.Exists(database))
-                //{
-                //    File.Delete(database);
-                //}
-
                 string database = @"database\musicdatabase4.db3";
                 
                 if (File.Exists(database))
@@ -451,7 +437,6 @@ namespace MediaPortal.Configuration.Sections
 
                 if (File.Exists(database))
                     File.Delete(database);
-                // \SV
 
                 MessageBox.Show("Music database has been cleared");
             }

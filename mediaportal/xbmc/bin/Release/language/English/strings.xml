@@ -5289,7 +5289,15 @@
   <string>
     <id>4555</id>
     <value>Current Playlist</value>
-  </string>  
+  </string>
+  <string>
+    <id>4556</id>
+    <value>Various Artists</value>
+  </string>
+  <string>
+    <id>4557</id>
+    <value>Add all to playlist</value>
+  </string>
   <!-- End Addtional MyMusic Strings -->
   <!-- Begin Minesweeper Strings -->
   <string>

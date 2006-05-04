@@ -76,10 +76,7 @@ namespace MediaPortal.Music.Database
         {
             public int idAlbum = 0;
             public int idArtist = 0;
-
-            // SV
             public int idPath = -1;
-            // \SV
         };
 
 
@@ -96,8 +93,8 @@ namespace MediaPortal.Music.Database
         ArrayList m_pathids = new ArrayList();
         ArrayList m_shares = new ArrayList();
 
-        bool TreatFolderAsAlbum = false;
-        bool ScanForVariousArtists = true;
+        static bool TreatFolderAsAlbum = false;
+        static bool ScanForVariousArtists = true;
         bool AppendPrefixToSortableNameEnd = true;
 
         string[] ArtistNamePrefixes = new string[]
@@ -146,42 +143,14 @@ namespace MediaPortal.Music.Database
         static public SQLiteClient m_db = null;
         static MusicDatabase()
         {
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+            {
+                TreatFolderAsAlbum = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
+                ScanForVariousArtists = xmlreader.GetValueAsBool("musicfiles", "scanForVariousArtists", true);
+            }
+         
             Open();
         }
-
-        //static void Open()
-        //{
-        //    Log.WriteFile(Log.LogType.Log, false, "Opening music database");
-        //    try
-        //    {
-        //        // Open database
-
-        //        String strPath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.
-        //          GetExecutingAssembly().Location);
-        //        try
-        //        {
-        //            System.IO.Directory.CreateDirectory(strPath + @"\database");
-        //        }
-        //        catch (Exception) { }
-        //        m_db = new SQLiteClient(@"database\musicdatabase4.db3");
-
-        //        DatabaseUtility.SetPragmas(m_db);
-        //        DatabaseUtility.AddTable(m_db, "artist", "CREATE TABLE artist ( idArtist integer primary key, strArtist text)");
-        //        DatabaseUtility.AddTable(m_db, "album", "CREATE TABLE album ( idAlbum integer primary key, idArtist integer, strAlbum text)");
-        //        DatabaseUtility.AddTable(m_db, "genre", "CREATE TABLE genre ( idGenre integer primary key, strGenre text)");
-        //        DatabaseUtility.AddTable(m_db, "path", "CREATE TABLE path ( idPath integer primary key,  strPath text)");
-        //        DatabaseUtility.AddTable(m_db, "albuminfo", "CREATE TABLE albuminfo ( idAlbumInfo integer primary key, idAlbum integer, idArtist integer,iYear integer, idGenre integer, strTones text, strStyles text, strReview text, strImage text, strTracks text, iRating integer)");
-        //        DatabaseUtility.AddTable(m_db, "artistinfo", "CREATE TABLE artistinfo ( idArtistInfo integer primary key, idArtist integer, strBorn text, strYearsActive text, strGenres text, strTones text, strStyles text, strInstruments text, strImage text, strAMGBio text, strAlbums text, strCompilations text, strSingles text, strMisc text)");
-        //        DatabaseUtility.AddTable(m_db, "song", "CREATE TABLE song ( idSong integer primary key, idArtist integer, idAlbum integer, idGenre integer, idPath integer, strTitle text, iTrack integer, iDuration integer, iYear integer, dwFileNameCRC text, strFileName text, iTimesPlayed integer, iRating integer, favorite integer)");
-
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Log.WriteFile(Log.LogType.Log, true, "musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-        //    }
-        //    Log.WriteFile(Log.LogType.Log, false, "music database opened");
-        //}
 
         static void Open()
         {
@@ -699,7 +668,18 @@ namespace MediaPortal.Music.Database
                 int lGenreId = AddGenre(song.Genre);
                 int lArtistId = AddArtist(song.Artist);
                 int lPathId = AddPath(strPath);
-                int lAlbumId = AddAlbum(song.Album, lArtistId);
+                
+                // SV
+                //int lAlbumId = AddAlbum(song.Album, lArtistId);
+
+                int lAlbumId = -1;
+
+                if (TreatFolderAsAlbum)
+                    lAlbumId = AddAlbum(song.Album, lArtistId, lPathId);
+                
+                else
+                    lAlbumId = AddAlbum(song.Album, lArtistId); 
+                // \SV
 
                 //Log.Write ("Getting a CRC for {0}",song.FileName);
 
@@ -2639,7 +2619,7 @@ namespace MediaPortal.Music.Database
             return (int)Errors.ERROR_OK;
         }
 
-        bool UpdateSong(string strPathSong, int idSong, ref int idAlbum, ref int idArtist, ref int idGenre, ref int idPath)
+        public bool UpdateSong(string strPathSong, int idSong, ref int idAlbum, ref int idArtist, ref int idGenre, ref int idPath)
         {
             try
             {
@@ -2717,7 +2697,6 @@ namespace MediaPortal.Music.Database
 
                     else
                         idAlbum = AddAlbum(tag.Album, idArtist);
-                    // \SV
 
                     ulong dwCRC = 0;
                     CRCTool crc = new CRCTool();
@@ -2961,11 +2940,6 @@ namespace MediaPortal.Music.Database
                     if (SharePath.Length > 0)
                         m_shares.Add(SharePath);
                 }
-
-                // SV
-                TreatFolderAsAlbum = xmlreader.GetValueAsBool("musicfiles", "treatFolderAsAlbum", false);
-                ScanForVariousArtists = xmlreader.GetValueAsBool("musicfiles", "scanForVariousArtists", true);
-                // \SV
             }
             return 0;
         }
@@ -3131,9 +3105,7 @@ namespace MediaPortal.Music.Database
             Log.Write("Musicdatabasereorg: AddMissingFiles finished with SongCounter = {0}", SongCounter);
             Log.Write("Musicdatabasereorg: AddMissingFiles finished with AddedCounter = {0}", AddedCounter);
 
-            // SV
             fileCount = SongCounter;
-            // \SV
             return SongCounter;
         }
 

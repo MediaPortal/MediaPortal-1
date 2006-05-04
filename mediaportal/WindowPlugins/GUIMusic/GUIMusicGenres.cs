@@ -97,51 +97,51 @@ namespace MediaPortal.GUI.Music
         }
 
 
-      #region Serialisation
-      protected override void LoadSettings()
-      {
-        base.LoadSettings();
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        #region Serialisation
+        protected override void LoadSettings()
         {
-          string strDefault = xmlreader.GetValueAsString("music", "default", String.Empty);
-          _shareList.Clear();
-          for (int i = 0; i < 20; i++)
-          {
-            string strShareName = String.Format("sharename{0}", i);
-            string strSharePath = String.Format("sharepath{0}", i);
-            string strPincode = String.Format("pincode{0}", i); ;
-
-            string shareType = String.Format("sharetype{0}", i);
-            string shareServer = String.Format("shareserver{0}", i);
-            string shareLogin = String.Format("sharelogin{0}", i);
-            string sharePwd = String.Format("sharepassword{0}", i);
-            string sharePort = String.Format("shareport{0}", i);
-            string remoteFolder = String.Format("shareremotepath{0}", i);
-            string shareViewPath = String.Format("shareview{0}", i);
-
-            Share share = new Share();
-            share.Name = xmlreader.GetValueAsString("music", strShareName, String.Empty);
-            share.Path = xmlreader.GetValueAsString("music", strSharePath, String.Empty);
-            share.Pincode = xmlreader.GetValueAsInt("music", strPincode, -1);
-
-            share.IsFtpShare = xmlreader.GetValueAsBool("music", shareType, false);
-            share.FtpServer = xmlreader.GetValueAsString("music", shareServer, String.Empty);
-            share.FtpLoginName = xmlreader.GetValueAsString("music", shareLogin, String.Empty);
-            share.FtpPassword = xmlreader.GetValueAsString("music", sharePwd, String.Empty);
-            share.FtpPort = xmlreader.GetValueAsInt("music", sharePort, 21);
-            share.FtpFolder = xmlreader.GetValueAsString("music", remoteFolder, "/");
-            share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("music", shareViewPath, (int)Share.Views.List);
-
-            if (share.Name.Length > 0)
+            base.LoadSettings();
+            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
             {
-              if (strDefault == share.Name) share.Default = true;
-              _shareList.Add(share);
+                string strDefault = xmlreader.GetValueAsString("music", "default", String.Empty);
+                _shareList.Clear();
+                for (int i = 0; i < 20; i++)
+                {
+                    string strShareName = String.Format("sharename{0}", i);
+                    string strSharePath = String.Format("sharepath{0}", i);
+                    string strPincode = String.Format("pincode{0}", i); ;
+
+                    string shareType = String.Format("sharetype{0}", i);
+                    string shareServer = String.Format("shareserver{0}", i);
+                    string shareLogin = String.Format("sharelogin{0}", i);
+                    string sharePwd = String.Format("sharepassword{0}", i);
+                    string sharePort = String.Format("shareport{0}", i);
+                    string remoteFolder = String.Format("shareremotepath{0}", i);
+                    string shareViewPath = String.Format("shareview{0}", i);
+
+                    Share share = new Share();
+                    share.Name = xmlreader.GetValueAsString("music", strShareName, String.Empty);
+                    share.Path = xmlreader.GetValueAsString("music", strSharePath, String.Empty);
+                    share.Pincode = xmlreader.GetValueAsInt("music", strPincode, -1);
+
+                    share.IsFtpShare = xmlreader.GetValueAsBool("music", shareType, false);
+                    share.FtpServer = xmlreader.GetValueAsString("music", shareServer, String.Empty);
+                    share.FtpLoginName = xmlreader.GetValueAsString("music", shareLogin, String.Empty);
+                    share.FtpPassword = xmlreader.GetValueAsString("music", sharePwd, String.Empty);
+                    share.FtpPort = xmlreader.GetValueAsInt("music", sharePort, 21);
+                    share.FtpFolder = xmlreader.GetValueAsString("music", remoteFolder, "/");
+                    share.DefaultView = (Share.Views)xmlreader.GetValueAsInt("music", shareViewPath, (int)Share.Views.List);
+
+                    if (share.Name.Length > 0)
+                    {
+                        if (strDefault == share.Name) share.Default = true;
+                        _shareList.Add(share);
+                    }
+                    else break;
+                }
             }
-            else break;
-          }
         }
-      }
-      #endregion
+        #endregion
 
         // Make sure we get all of the ACTION_PLAY event (OnAction only receives the ACTION_PLAY event when 
         // the player is not playing)...
@@ -231,7 +231,7 @@ namespace MediaPortal.GUI.Music
                                 {
                                     handler.CurrentLevel--;
                                     //LoadDirectory(item.Path);
-                                    LoadDirectory((handler.CurrentLevel+1).ToString());
+                                    LoadDirectory((handler.CurrentLevel + 1).ToString());
                                     return;
                                 }
                             }
@@ -370,6 +370,7 @@ namespace MediaPortal.GUI.Music
 
                 Console.WriteLine("m_strCurrentFolder:{0}  m_strDirectory:{1}", m_strCurrentFolder, m_strDirectory);
                 LoadPlaylistDirectory(m_strDirectory);
+                btnSortBy.Disabled = false;
             }
 
             if (control == btnPlayCd)
@@ -441,13 +442,13 @@ namespace MediaPortal.GUI.Music
 
                     // Utils.GetFolderThumb returns an empty string when item.Path.Length == 0
                     // so we'll pull to info from the db to reconstruct the full album path
-                    else if(strThumb.Length == 0)
+                    else if (strThumb.Length == 0)
                     {
                         string albumPath = m_database.GetAlbumPath(song.artistId, song.albumId);
 
                         if (albumPath.Length > 0)
                         {
-                            albumPath = albumPath.TrimEnd(new char[]{'\\'});
+                            albumPath = albumPath.TrimEnd(new char[] { '\\' });
                             albumPath += "\\";
 
                             strThumb = Utils.GetFolderThumb(albumPath);
@@ -561,6 +562,7 @@ namespace MediaPortal.GUI.Music
             dlg.SetHeading(924); // menu
 
             dlg.AddLocalizedString(926);    // Add to playlist
+            dlg.AddLocalizedString(4557);    // Add all to playlist
             dlg.AddLocalizedString(4551);   // Play next
             dlg.AddLocalizedString(4552);   // Play now
             dlg.AddLocalizedString(4553);   // Show playlist
@@ -595,6 +597,10 @@ namespace MediaPortal.GUI.Music
 
                 case 926: // add to playlist (add to end of playlist)
                     OnQueueItem(itemNo);
+                    break;
+
+                case 4557: // add all items in current list to end of playlist
+                    OnQueueAllItems();
                     break;
 
                 //case 136: // show playlist
@@ -714,28 +720,29 @@ namespace MediaPortal.GUI.Music
             List<Song> songs = handler.Execute();
             if (songs.Count > 0)    // some songs in there?
             {
-              Song song = songs[0];
-              if (song.FileName.Length > 0)  // does a filename exits
-              {
-                foreach(Share share in _shareList) { 
-                  if (song.FileName.Contains(share.Path)) // compare it with shares
-                  {
-                    if (share.Pincode != -1)              // does it have a pincode?
+                Song song = songs[0];
+                if (song.FileName.Length > 0)  // does a filename exits
+                {
+                    foreach (Share share in _shareList)
                     {
-                      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
-                      GUIWindowManager.SendMessage(msg);   // ask for the userinput
-                      int iPincode = -1;
-                      try
-                      {
-                        iPincode = Int32.Parse(msg.Label);
-                      }
-                      catch (Exception)  {  }
-                      if (iPincode != share.Pincode) songs.Clear();
-                      break;
+                        if (song.FileName.Contains(share.Path)) // compare it with shares
+                        {
+                            if (share.Pincode != -1)              // does it have a pincode?
+                            {
+                                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+                                GUIWindowManager.SendMessage(msg);   // ask for the userinput
+                                int iPincode = -1;
+                                try
+                                {
+                                    iPincode = Int32.Parse(msg.Label);
+                                }
+                                catch (Exception) { }
+                                if (iPincode != share.Pincode) songs.Clear();
+                                break;
+                            }
+                        }
                     }
-                  }
                 }
-              }
             }
 
             if (handler.CurrentLevel > 0)
@@ -769,6 +776,8 @@ namespace MediaPortal.GUI.Music
                 tag.Year = song.Year;
                 tag.Rating = song.Rating;
                 item.Duration = tag.Duration;
+                tag.TimesPlayed = song.TimesPlayed;
+
                 if (item.Duration > 0)
                     totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, item.Duration));
                 item.Rating = song.Rating;
@@ -831,7 +840,38 @@ namespace MediaPortal.GUI.Music
 
         protected override void SetLabels()
         {
-            base.SetLabels();
+            ////base.SetLabels();
+            ////for (int i = 0; i < facadeView.Count; ++i)
+            ////{
+            ////    GUIListItem item = facadeView[i];
+            ////    handler.SetLabel(item.AlbumInfoTag as Song, ref item);
+            ////}
+
+
+            // SV
+            // "Top100" can be renamed so this won't work...
+            //if (handler.CurrentView == "Top100")
+
+            // So we do this instead...
+            if(!IsSortableView(handler.View, handler.CurrentLevel))
+            {
+                for (int i = 0; i < facadeView.Count; ++i)
+                {
+                    GUIListItem item = facadeView[i];
+                    MusicTag tag = (MusicTag)item.MusicTag;
+                    if (tag != null)
+                    {
+                        int playCount = tag.TimesPlayed;
+                        string duration = Utils.SecondsToHMSString(playCount * tag.Duration);
+                        item.Label = string.Format("{0:00}. {1} - {2}", playCount, tag.Artist, tag.Title);
+                        item.Label2 = duration;
+                    }
+                }
+            }
+
+            else
+                base.SetLabels();
+
             for (int i = 0; i < facadeView.Count; ++i)
             {
                 GUIListItem item = facadeView[i];
@@ -847,7 +887,8 @@ namespace MediaPortal.GUI.Music
                 case GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC:
                     if (GUIWindowManager.ActiveWindow == GetID)
                     {
-                        if (handler != null && handler.CurrentView == "Top100") return;
+                        // SV
+                        //if (handler != null && handler.CurrentView == "Top100") return;
                     }
                     string strFile = message.Label;
                     if (Utils.IsAudio(strFile))
@@ -1008,6 +1049,12 @@ namespace MediaPortal.GUI.Music
 
         protected void OnPlayNext(GUIListItem pItem, int iItem)
         {
+            if (pItem == null)
+                return;
+
+            if (PlayListFactory.IsPlayList(pItem.Path))
+                return;
+            
             PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
             if (playList == null)
@@ -1020,7 +1067,6 @@ namespace MediaPortal.GUI.Music
                 AddItemToPlayList(pItem, ref playList);
             }
 
-            //if (playList.Count > 0)
             else if (playList.Count > 1)
             {
                 PlayList tempPlayList = new PlayList();
@@ -1051,11 +1097,20 @@ namespace MediaPortal.GUI.Music
             }
 
             if (!g_Player.Playing)
+            {
+                playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
                 playlistPlayer.Play(index);
+            }
         }
 
         protected void OnPlayNow(GUIListItem pItem, int iItem)
         {
+            if (pItem == null)
+                return;
+            
+            if (PlayListFactory.IsPlayList(pItem.Path))
+                return;
+            
             int playStartIndex = 0;
             PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
 
@@ -1109,7 +1164,10 @@ namespace MediaPortal.GUI.Music
                 }
 
                 if (!g_Player.Playing)
+                {
+                    playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
                     playlistPlayer.Play(playStartIndex);
+                }
             }
         }
 
@@ -1148,25 +1206,67 @@ namespace MediaPortal.GUI.Music
 
             foreach (GUIListItem item in itemlist)
             {
-                if (item.Label == ".." && m_strDirectory == m_strPlayListPath) 
+                if (item.Label == ".." && m_strDirectory == m_strPlayListPath)
                     continue;
 
                 facadeView.Add(item);
             }
 
             int iTotalItems = itemlist.Count;
-            
+
             if (itemlist.Count > 0)
             {
                 GUIListItem rootItem = itemlist[0];
                 if (rootItem.Label == "..") iTotalItems--;
             }
-            
+
             strObjects = String.Format("{0} {1}", iTotalItems, GUILocalizeStrings.Get(632));
             GUIPropertyManager.SetProperty("#itemcount", strObjects);
 
             if (m_iItemSelected >= 0)
                 GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
+
+            else if (itemlist.Count > 1)
+                GUIControl.SelectItemControl(GetID, facadeView.GetID, 1);
+        }
+
+        private void OnQueueAllItems()
+        {
+            PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+            int index = Math.Max(playlistPlayer.CurrentSong, 0);
+
+            for (int i = 0; i < facadeView.Count; i++)
+            {
+                GUIListItem item = facadeView[i];
+
+                if (item.Label != "...")
+                    AddItemToPlayList(item);
+            }
+
+            if (!g_Player.Playing)
+            {
+                playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
+                playlistPlayer.Play(index);
+            }
+        }
+
+        protected override void OnSort()
+        {
+            SetLabels();
+
+            bool isSortable = true;
+
+            // "Top100" can be renamed so this won't work...
+            // isSortable = handler.CurrentView != "Top100";
+            
+            // So we do this instead...
+            isSortable = IsSortableView(handler.View, handler.CurrentLevel);
+
+            if (isSortable)
+                facadeView.Sort(new MusicSort(CurrentSortMethod, CurrentSortAsc));
+
+            UpdateButtonStates();
+            btnSortBy.Disabled = !isSortable;
         }
     }
 }

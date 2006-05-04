@@ -51,6 +51,10 @@ namespace MediaPortal.GUI.Music
             LBL_ARTIST_NAME = 6,
             IMG_TRACK_PROGRESS_BG = 7,
             PROG_TRACK = 8,
+
+            IMGLIST_RATING = 11,
+            IMGLIST_NEXTRATING = 12,
+
             LBL_UP_NEXT = 20,
             LBL_NEXT_TRACK_NAME = 21,
             LBL_NEXT_ALBUM_NAME = 22,
@@ -128,6 +132,15 @@ namespace MediaPortal.GUI.Music
         [SkinControlAttribute((int)ControlIDs.BTN_NEXT)]
         protected GUIButtonControl BtnNext = null;
 
+        [SkinControlAttribute((int)ControlIDs.IMGLIST_RATING)]
+        protected GUIImageList ImgListRating = null;
+
+        [SkinControlAttribute((int)ControlIDs.IMGLIST_NEXTRATING)]
+        protected GUIImageList ImgListNextRating = null;
+
+        //[SkinControlAttribute((int)ControlIDs.BTN_NEXT)]
+        //protected GUIButtonControl BtnNext = null;
+        
         public enum TrackProgressType { Elapsed, CountDown };
 
         private bool ControlsInitialized = false;
@@ -340,6 +353,12 @@ namespace MediaPortal.GUI.Music
 
                 else
                     LblAlbumYear.Label = "";
+
+                if (ImgListNextRating != null)
+                {
+                    int rating = CurrentTrackTag.Rating;
+                    ImgListRating.Percentage = rating;
+                }
             }
 
             else
@@ -373,6 +392,12 @@ namespace MediaPortal.GUI.Music
                 LblNextTrackName.Label = NextTrackTag.Title;
                 LblNextAlbumName.Label = NextTrackTag.Album;
                 LblNextArtistName.Label = NextTrackTag.Artist;
+
+                if (ImgListNextRating != null)
+                {
+                    int rating = NextTrackTag.Rating;
+                    ImgListNextRating.Percentage = rating;
+                }
             }
 
             else
