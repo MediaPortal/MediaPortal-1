@@ -1819,7 +1819,7 @@
 	</string>
 	<string>
 		<id>608</id>
-		<value>Fehler beim Importieren</value>
+		<value>Import fehlgeschlagen</value>
 	</string>
 	<string>
 		<id>609</id>
@@ -2255,7 +2255,7 @@
 	</string>
 	<string>
 		<id>725</id>
-		<value>Genres</value>
+		<value>Genre</value>
 	</string>
 	<string>
 		<id>726</id>
@@ -2275,11 +2275,11 @@
 	</string>
 	<string>
 		<id>730</id>
-		<value>Sendung wird derzeit aufgenommen</value>
+		<value>Diese Sendung wird derzeit aufgenommen.</value>
 	</string>
 	<string>
 		<id>731</id>
-		<value>Die Aufnahme wird beim Löschen beendet!</value>
+		<value>Beim Löschen wird die Aufnahme beendet!</value>
 	</string>
 	<string>
 		<id>732</id>
@@ -2412,7 +2412,29 @@
 	<string>
 		<id>765</id>
 		<value>Nicht genug freier Speicher auf Festplatte</value>
-	</string>
+	</string>	
+    <string>
+      <id>766</id>
+      <value>Aktualisierung bereits aktiv</value>
+    </string>
+    <string>
+      <id>767</id>
+      <value>Format von TVGuide.xml unzulässig</value>
+    </string>
+    <string>
+      <id>768</id>
+      <value>Keine Sender gefunden</value>
+    </string>
+    <string>
+      <id>769</id>
+      <value>Keine Programme gefunden</value>
+    </string>
+    <string>
+      <id>770</id>
+      <value>Keine xmltv Datei gefunden</value>
+    </string>
+
+
 	<string>
 		<id>800</id>
 		<value>Fängt an mit</value>
@@ -3223,7 +3245,7 @@
 	</string>
 	<string>
 		<id>1050</id>
-		<value>Sa-So</value>
+		<value>Sa+So</value>
 	</string>
 	<string>
 		<id>1051</id>
