@@ -279,7 +279,13 @@ namespace MediaPortal.PowerScheduler
     /// </summary>
     private void ShutdownManager()
     {
-      if (m_bExtensiveLog) Log.Write(" PowerScheduler: ShutdownManager() ");
+      if (m_bExtensiveLog)
+      {
+        Log.Write(" PowerScheduler: ShutdownManager() ");
+        Log.Write("   - Recorder.IsRecording() = " + Recorder.IsRecording().ToString());
+        Log.Write("   - Recorder.IsRadio()     = " + Recorder.IsRadio().ToString());
+        Log.Write("   - g_Player.Playing       = " + g_Player.Playing.ToString());
+      }
 
       // when the active window has changed check if 
       // to enable or disable shutdown
