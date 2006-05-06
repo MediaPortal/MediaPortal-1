@@ -83,7 +83,7 @@ namespace MediaPortal.TV.Recording
     DateTime _signalLostTimer;
     protected string _cardName;
     ArrayList _listAudioPids = new ArrayList();
-    int _selectedAudioLanguage = 1;
+    int _selectedAudioLanguage = 11; // multiple channel support =1;
     protected bool _grabTeletext = false;
     protected bool _hasTeletext = false;
     bool _isTuning = false;
@@ -1435,78 +1435,79 @@ namespace MediaPortal.TV.Recording
 
     public void SetAudioLanguage(int audioPid)
     {
-
       _selectedAudioLanguage = audioPid;
-      if (_tvAudioTunerInterface == null) return;
-      switch (_selectedAudioLanguage)
-      {
-        case 0://mono
-          _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.Mono);
-          break;
-        case 1://stereo
-          _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.Stereo);
-          break;
-        case 2://Language#1
-          _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangA);
-          break;
-        case 3://Language#2
-          _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangB);
-          break;
-        case 4://Language#3
-          _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangC);
-          break;
-      }
+    //  if (_tvAudioTunerInterface == null) return;
+    //  switch (_selectedAudioLanguage)
+    //  {
+    //    case 0://mono
+    //      _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.Mono);
+    //      break;
+    //    case 1://stereo
+    //      _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.Stereo);
+    //      break;
+    //    case 2://Language#1
+    //      _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangA);
+    //      break;
+    //    case 3://Language#2
+    //      _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangB);
+    //      break;
+    //    case 4://Language#3
+    //      _tvAudioTunerInterface.put_TVAudioMode(TVAudioMode.LangC);
+    //      break;
+    //  }
     }
+
     public ArrayList GetAudioLanguageList()
     {
-      if (_tvAudioTunerInterface == null)
-      {
-        return new ArrayList();
-      }
-      TVAudioMode modes;
-      _tvAudioTunerInterface.GetAvailableTVAudioModes(out modes);
+    //  if (_tvAudioTunerInterface == null)
+    //  {
+    //    return new ArrayList();
+    //  }
+    //  TVAudioMode modes;
+    //  _tvAudioTunerInterface.GetAvailableTVAudioModes(out modes);
 
-      DVBSections.AudioLanguage al;
-      if (((int)(modes & TVAudioMode.Mono)) != 0)
-      {
-        _listAudioPids.Clear();
-        al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
-        al.AudioPid = 0;
-        al.AudioLanguageCode = "Mono";
-        _listAudioPids.Add(al);
-      }
-      if (((int)(modes & TVAudioMode.Stereo)) != 0)
-      {
-        al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
-        al.AudioPid = 1;
-        al.AudioLanguageCode = "Stereo";
-        _listAudioPids.Add(al);
-      }
+    //  DVBSections.AudioLanguage al;
+    //  if (((int)(modes & TVAudioMode.Mono)) != 0)
+    //  {
+    //    _listAudioPids.Clear();
+    //    al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+    //    al.AudioPid = 0;
+    //    al.AudioLanguageCode = "Mono";
+    //    _listAudioPids.Add(al);
+    //  }
+    //  if (((int)(modes & TVAudioMode.Stereo)) != 0)
+    //  {
+    //    al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+    //    al.AudioPid = 1;
+    //    al.AudioLanguageCode = "Stereo";
+    //    _listAudioPids.Add(al);
+    //  }
 
-      if (((int)(modes & TVAudioMode.LangA)) != 0)
-      {
-        al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
-        al.AudioPid = 2;
-        al.AudioLanguageCode = "Language A";
-        _listAudioPids.Add(al);
-      }
-      if (((int)(modes & TVAudioMode.LangB)) != 0)
-      {
-        al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
-        al.AudioPid = 3;
-        al.AudioLanguageCode = "Language B";
-        _listAudioPids.Add(al);
-      }
-      if (((int)(modes & TVAudioMode.LangC)) != 0)
-      {
-        al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
-        al.AudioPid = 4;
-        al.AudioLanguageCode = "Language C";
-        _listAudioPids.Add(al);
-      }
+    //  if (((int)(modes & TVAudioMode.LangA)) != 0)
+    //  {
+    //    al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+    //    al.AudioPid = 2;
+    //    al.AudioLanguageCode = "Language A";
+    //    _listAudioPids.Add(al);
+    //  }
+    //  if (((int)(modes & TVAudioMode.LangB)) != 0)
+    //  {
+    //    al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+    //    al.AudioPid = 3;
+    //    al.AudioLanguageCode = "Language B";
+    //    _listAudioPids.Add(al);
+    //  }
+    //  if (((int)(modes & TVAudioMode.LangC)) != 0)
+    //  {
+    //    al = new MediaPortal.TV.Recording.DVBSections.AudioLanguage();
+    //    al.AudioPid = 4;
+    //    al.AudioLanguageCode = "Language C";
+    //    _listAudioPids.Add(al);
+    //  }
       return _listAudioPids;
     }
     #endregion
+
     public string TvTimeshiftFileName()
     {
       return "live.tv";

@@ -186,7 +186,7 @@ namespace MediaPortal.TV.Recording
           // Support the "legacy" member variables. This could be done different using properties
           // through which the filters are accessable. More implementation independent...
           if (dsFilter.Category == "tvtuner") _tvTunerInterface = dsFilter.DSFilter as IAMTVTuner;
-          if (dsFilter.Category == "tvaudio") _tvAudioTunerInterface = dsFilter.DSFilter as IAMTVAudio;
+          //if (dsFilter.Category == "tvaudio") _tvAudioTunerInterface = dsFilter.DSFilter as IAMTVAudio;
           if (dsFilter.Category == "capture") _filterCapture = dsFilter.DSFilter;
         }
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Adding configured filters...DONE");
