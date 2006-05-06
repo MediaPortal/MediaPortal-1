@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<profile>
+
+  <section name="ChannelList">
+<entry name="13emerue.fr">78</entry>
+<entry name="3sat.de">15</entry>
+<entry name="ab1tv.fr">16</entry>
+<entry name="action@tps.fr">71</entry>
+<entry name="animauxtv.fr">79</entry>
+<entry name="ard.de">90</entry>
+<entry name="arte-tv.com">22</entry>
+<entry name="bbcprime.com">21</entry>
+<entry name="bbcworld.com">27</entry>
+<entry name="1@betv.be">85</entry>
+<entry name="cine2@betv.be">53</entry>
+<entry name="cine2@betv.be">77</entry>
+<entry name="bfmtv.fr">43</entry>
+<entry name="bloomberg.co.uk">147</entry>
+<entry name="canalcinema@canalsat.fr">34</entry>
+<entry name="cplusdecale@canalsat.fr">87</entry>
+<entry name="cplussport@canalsat.fr">17</entry>
+<entry name="canalj.net">70</entry>
+<entry name="cplus.fr">121</entry>
+<entry name="cartoonnetwork.fr">100</entry>
+<entry name="lachainemeteo.com">44</entry>
+<entry name="lcp@assemblee-nat.fr">64</entry>
+<entry name="chasseetpechetv.com">107</entry>
+<entry name="cineauteur@canalsat.fr">133</entry>
+<entry name="cineclassic@canalsat.fr">132</entry>
+<entry name="cineemotion@canalsat.fr">129</entry>
+<entry name="cinefamiz@canalsat.fr">135</entry>
+<entry name="cinefrisson@canalsat.fr">130</entry>
+<entry name="cinefx@absat.fr">150</entry>
+<entry name="cinepolar@absat.fr">86</entry>
+<entry name="cinepremier@canalsat.fr">128</entry>
+<entry name="club@rtl.be">91</entry>
+<entry name="cnn.com">4</entry>
+<entry name="comedie.com">25</entry>
+<entry name="demain.fr">2</entry>
+<entry name="direct8.fr">151</entry>
+<entry name="disneychannel@disney.fr">48</entry>
+<entry name="encyclopedia.fr">6</entry>
+<entry name="equidia.fr">10</entry>
+<entry name="escalestv.fr">29</entry>
+<entry name="euronews.net">99</entry>
+<entry name="europe2tv.fr">148</entry>
+<entry name="eurosport.fr">74</entry>
+<entry name="eurosport2@eurosport.com">47</entry>
+<entry name="foxlife-pt">142</entry>
+<entry name="france2.fr">122</entry>
+<entry name="france3.fr">32</entry>
+<entry name="france4.fr">143</entry>
+<entry name="france.5.fr">31</entry>
+<entry name="franceo.rfo.fr">144</entry>
+<entry name="funtv@m6.fr">88</entry>
+<entry name="gameone.boomtown.net">59</entry>
+<entry name="gullitv.fr">62</entry>
+<entry name="histoire.fr">23</entry>
+<entry name="itelevision.fr">145</entry>
+<entry name="infosport.tm.fr">146</entry>
+<entry name="jetix@canalsat.fr">97</entry>
+<entry name="canaljimmy.fr">33</entry>
+<entry name="Kiosque 1">55</entry>
+<entry name="kiosque1@canalsat.fr">111</entry>
+<entry name="kiosque2@canalsat.fr">18</entry>
+<entry name="kiosque3@canalsat.fr">60</entry>
+<entry name="kiosque4@canalsat.fr">82</entry>
+<entry name="kiosque5@canalsat.fr">75</entry>
+<entry name="kiosque6@canalsat.fr">80</entry>
+<entry name="kiosque7@canalsat.fr">9</entry>
+<entry name="kiosque8@canalsat.fr">3</entry>
+<entry name="kiosque1@canalsat.fr">113</entry>
+<entry name="lequipetv.fr">45</entry>
+<entry name="ladeux.be">1</entry>
+<entry name="la1.be">109</entry>
+<entry name="lci.fr">102</entry>
+<entry name="m6.fr">76</entry>
+<entry name="m6musichits.m6.fr">54</entry>
+<entry name="mangas.fr">120</entry>
+<entry name="mcm@mcm.fr">68</entry>
+<entry name="mezzo.tv">110</entry>
+<entry name="abmoteurs.fr">95</entry>
+<entry name="motorstv.com">89</entry>
+<entry name="mtv.fr">67</entry>
+<entry name="multivision1@tps.fr">56</entry>
+<entry name="multivision2@tps.fr">26</entry>
+<entry name="multivision3@tps.fr">66</entry>
+<entry name="multivision4@tps.fr">72</entry>
+<entry name="multivision5@tps.fr">61</entry>
+<entry name="multivision6@tps.fr">30</entry>
+<entry name="multivision7@tps.fr">112</entry>
+<entry name="musiqueclassique.fr">114</entry>
+<entry name="nationalgeographic.com">7</entry>
+<entry name="nrj12.fr">63</entry>
+<entry name="nt1.tv">49</entry>
+<entry name="odyssee.com">35</entry>
+<entry name="orf1@orf.at">93</entry>
+<entry name="parispremiere@m6.fr">98</entry>
+<entry name="pinktv.fr">65</entry>
+<entry name="planete@planete.com">14</entry>
+<entry name="planete-choc@planete.com">136</entry>
+<entry name="planete-thalassa@planete.com">137</entry>
+<entry name="raidue.rai.it">42</entry>
+<entry name="raiuno.rai.it">36</entry>
+<entry name="rtl.de">101</entry>
+<entry name="rtl9.com">40</entry>
+<entry name="tvi@rtl.be">105</entry>
+<entry name="rtp1@rtp.pt">37</entry>
+<entry name="sat1.de">104</entry>
+<entry name="seasons.fr">38</entry>
+<entry name="serieclub@m6.fr">13</entry>
+<entry name="sf1@sfdrs.ch">57</entry>
+<entry name="sf2@sfdrs.ch">52</entry>
+<entry name="sport+@canalsat.fr">152</entry>
+<entry name="tcm.com">83</entry>
+<entry name="teletoon.fr">73</entry>
+<entry name="teva@m6.fr">116</entry>
+<entry name="tf1.fr">24</entry>
+<entry name="tf6.fr">124</entry>
+<entry name="tiji.tv">153</entry>
+<entry name="tmc.tv">103</entry>
+<entry name="toutelhistoire.com">84</entry>
+<entry name="cineclub@tps.fr">92</entry>
+<entry name="cinecomedie@tps.fr">149</entry>
+<entry name="cineculte@tps.fr">19</entry>
+<entry name="cinefamily@tps.fr">94</entry>
+<entry name="cinestar@tps.fr">81</entry>
+<entry name="cinetoile@tps.fr">20</entry>
+<entry name="cinextreme@tps.fr">11</entry>
+<entry name="homecinema@tps.fr">39</entry>
+<entry name="tpsstar@tps.fr">125</entry>
+<entry name="trace.tv">138</entry>
+<entry name="tsi1@rtsi.ch">8</entry>
+<entry name="tsi2@rtsi.ch">119</entry>
+<entry name="tsr1@tsr.ch">118</entry>
+<entry name="tsr2@tsr.ch">5</entry>
+<entry name="tvbreizh.fr">127</entry>
+<entry name="tv5.org">108</entry>
+<entry name="tve.es">50</entry>
+<entry name="Ushuaia TV">123</entry>
+<entry name="voyage.fr">96</entry>
+<entry name="xxltv.fr">115</entry>
+<entry name="zdf.de">117</entry>
+
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing">
+    <entry name="BaseURL">http://telecineobs.nouvelobs.com</entry>
+    <entry name="SearchURL">/ASP/ListeProgrammes.asp?Recherche=Recherche=No&amp;Goto=#PAGE_OFFSET</entry>
+    <entry name="PostQuery">centre=emission_liste.cfm&amp;cboJour=#DD/#MM/#YYYY&amp;cboCreneau=0&amp;cboChaine=#ID&amp;cboGenre=0&amp;txtMotCle=</entry>
+    <entry name="MaxCount">15</entry>
+    <entry name="PageStart">1</entry>
+    <entry name="GrabDelay">2000</entry>
+    <entry name="Start">--CENTRE--</entry>
+<!-- Unique Listing Start string -->
+
+<!-- Template of the Listing information -->
+	<entry name="Tags">TA</entry>   
+    <entry name="Template">
+&#60;tr&#62;
+&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+&#60;td&#62;&#60;/td&#62;
+&#60;td&#62;&#60;a&#62;&#60;#TITLE&#62;&#60;/a&#62;&#60;/td&#62;&#60;/tr&#62;
+    </entry>
+    <entry name="SubListingLink">DetailProgramme</entry>
+  </section>
+<section name="SubListing">
+<!-- Template of the Listing information -->
+	<entry name="Tags">T</entry>
+<entry name="Start">--CENTRE--</entry>
+	<entry name="Template">
+	&#60;table&#62;
+        &#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;/tr&#62;
+        &#60;tr&#62;&#60;td&#62;xxx &#60;#DAY&#62; &#60;#MONTH&#62; xxx&#60;/td&#62;
+		    &#60;td&#62;&#60;/td&#62;
+		    &#60;td&#62;xxx - &#60;#END&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+        &#60;tr&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+	&#60;tr&#62;
+	&#60;td&#62;&#60;#GENRE&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;/tr&#62;
+        &#60;tr&#62;
+	&#60;td&#62;&#60;/td&#62;
+	&#60;/tr&#62;	
+        &#60;tr&#62;
+		&#60;td&#62;
+		&#60;table&#62;	
+		&#60;tr&#62;
+		&#60;td&#62;&#60;td&#62;&#60;/td&#62;
+		&#60;/tr&#62;
+		&#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;/tr&#62;&#60;tr&#62;&#60;td&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;
+		&#60;/tr&#62;&#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;/tr&#62;&#60;tr&#62;&#60;td&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;&#60;/tr&#62;
+		&#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;/tr&#62;&#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;/tr&#62;
+		&#60;/table&#62;
+		&#60;/td&#62;
+	&#60;/tr&#62;
+
+    	</entry>
+
+  </section>
+- <section name="DateTime">
+  <entry name="Months">yes</entry> 
+  <entry name="JANVIER">1</entry> 
+  <entry name="FEVRIER">2</entry> 
+  <entry name="MARS">3</entry> 
+  <entry name="AVRIL">4</entry> 
+  <entry name="MAI">5</entry> 
+  <entry name="JUIN">6</entry> 
+  <entry name="JUILLET">7</entry> 
+  <entry name="AOUT">8</entry> 
+  <entry name="SEPTEMBRE">9</entry> 
+  <entry name="OCTOBRE">10</entry> 
+  <entry name="NOVEMBRE">11</entry> 
+  <entry name="DECEMBRE">12</entry> 
+  </section>
+  <section name="Info">
+    <entry name="GuideDays">3</entry>
+    <entry name="Lang">fr</entry>
+  </section>
+</profile>
+
+
+
+
