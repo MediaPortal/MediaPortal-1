@@ -521,7 +521,7 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
-
+        case Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE:
         case Action.ActionType.ACTION_NEXT_AUDIO:
           {
               m_bShowStatus = true;
@@ -573,9 +573,6 @@ namespace MediaPortal.GUI.Video
           break;
         case Action.ActionType.ACTION_AUDIO_DELAY_PLUS:
           //g_application.m_pPlayer.AudioOffset(true);
-          break;
-        case Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE:
-          //g_application.m_pPlayer.AudioOffset(false);
           break;
 
         case Action.ActionType.ACTION_REWIND:
