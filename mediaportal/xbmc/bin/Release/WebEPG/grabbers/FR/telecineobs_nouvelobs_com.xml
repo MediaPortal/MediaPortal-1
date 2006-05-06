@@ -147,8 +147,8 @@
 
 <!-- Formating of Listing -->
   <section name="Listing">
-    <entry name="BaseURL">http://telecineobs.nouvelobs.com</entry>
-    <entry name="SearchURL">/ASP/ListeProgrammes.asp?Recherche=Recherche=No&amp;Goto=#PAGE_OFFSET</entry>
+    <entry name="BaseURL">http://telecineobs.nouvelobs.com/ASP/</entry>
+    <entry name="SearchURL">ListeProgrammes.asp?Recherche=Recherche=No&amp;Goto=#PAGE_OFFSET</entry>
     <entry name="PostQuery">centre=emission_liste.cfm&amp;cboJour=#DD/#MM/#YYYY&amp;cboCreneau=0&amp;cboChaine=#ID&amp;cboGenre=0&amp;txtMotCle=</entry>
     <entry name="MaxCount">15</entry>
     <entry name="PageStart">1</entry>
