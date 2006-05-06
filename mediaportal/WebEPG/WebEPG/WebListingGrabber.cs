@@ -49,9 +49,8 @@ namespace MediaPortal.EPG
   public class WebListingGrabber
   {
     WorldTimeZone _SiteTimeZone = null;
-    string _strURLbase = string.Empty;
+    HTTPRequest _listingRequest;
     string _strSubURL = string.Empty;
-    string _strURLsearch = string.Empty;
     string _strID = string.Empty;
     string _strBaseDir = "";
     string _SubListingLink;
@@ -73,6 +72,7 @@ namespace MediaPortal.EPG
     int _linkEnd;
     int _maxListingCount;
     int _pageStart;
+    int _pageEnd;
     int _offsetStart;
     int _LastStart;
     int _grabDelay;
@@ -110,18 +110,23 @@ namespace MediaPortal.EPG
 
       _xmlreader = new MediaPortal.Webepg.Profile.Xml(_strBaseDir + File);
 
-      _strURLbase = _xmlreader.GetValueAsString("Listing", "BaseURL", "");
-      if (_strURLbase == "")
+      string baseUrl = _xmlreader.GetValueAsString("Listing", "BaseURL", "");
+      if (baseUrl == "")
       {
         Log.WriteFile(Log.LogType.Log, true, "[ERROR] WebEPG: {0}: No BaseURL defined", File);
         return false;
       }
 
-      _strURLsearch = _xmlreader.GetValueAsString("Listing", "SearchURL", "");
+      _listingRequest = new HTTPRequest();
+      _listingRequest.Host = baseUrl;
+      _listingRequest.GetQuery = _xmlreader.GetValueAsString("Listing", "SearchURL", "");
+      _listingRequest.PostQuery = _xmlreader.GetValueAsString("Listing", "PostQuery", "");
+
       _grabDelay = _xmlreader.GetValueAsInt("Listing", "GrabDelay", 500);
       _maxListingCount = _xmlreader.GetValueAsInt("Listing", "MaxCount", 0);
       _offsetStart = _xmlreader.GetValueAsInt("Listing", "OffsetStart", 0);
       _pageStart = _xmlreader.GetValueAsInt("Listing", "PageStart", 0);
+      _pageEnd = _xmlreader.GetValueAsInt("Listing", "PageEnd", 0); 
       _guideDays = _xmlreader.GetValueAsInt("Info", "GuideDays", 0);
 
       string strTimeZone = _xmlreader.GetValueAsString("Info", "TimeZone", "");
@@ -588,15 +593,16 @@ namespace MediaPortal.EPG
         if(_strSubURL != "")
           linkURL = _strSubURL;
         else
-          linkURL = _strURLbase;
+          linkURL = _listingRequest.Host;
 
         string strLinkURL = htmlProf.GetHyperLink(index, _SubListingLink, linkURL);
 
         if(strLinkURL != "")
         {
+          HTTPRequest sublinkRequest = new HTTPRequest(strLinkURL);
           Log.WriteFile(Log.LogType.Log, false, "[Info.] WebEPG: Reading {0}", strLinkURL);
           Thread.Sleep(_grabDelay);
-          Profiler SubProfile = _templateSubProfile.GetPageProfiler(strLinkURL);
+          Profiler SubProfile = _templateSubProfile.GetPageProfiler(sublinkRequest);
           int Count = 0;
           if (SubProfile != null)
             Count = SubProfile.subProfileCount();
@@ -639,24 +645,24 @@ namespace MediaPortal.EPG
       return program;
     }
 
-    private bool GetListing(string strURL, int offset, string strChannel, out bool error)
+    private bool GetListing(HTTPRequest request, int offset, string strChannel, out bool error)
     {
       Profiler guideProfile;
       int listingCount = 0;
       bool bMore = false;
       error = false;
 
-      strURL = strURL.Replace("#LIST_OFFSET", (offset * _maxListingCount).ToString());
-      strURL = strURL.Replace("#PAGE_OFFSET", (offset + _pageStart).ToString());
+      request.ReplaceTag("#LIST_OFFSET", (offset * _maxListingCount).ToString());
+      request.ReplaceTag("#PAGE_OFFSET", (offset + _pageStart).ToString());
 
-      Log.WriteFile(Log.LogType.Log, false, "[Info.] WebEPG: Reading {0}{1}", _strURLbase, strURL);
+      Log.WriteFile(Log.LogType.Log, false, "[Info.] WebEPG: Reading {0}", request.ToString());
 
       if(_templateProfile is XMLProfiler)
       {
         XMLProfiler templateProfile = (XMLProfiler) _templateProfile;
         templateProfile.SetChannelID(strChannel);
       }
-      guideProfile = _templateProfile.GetPageProfiler(_strURLbase + strURL);
+      guideProfile = _templateProfile.GetPageProfiler(request);
       if(guideProfile != null)
         listingCount = guideProfile.subProfileCount();
 
@@ -678,7 +684,7 @@ namespace MediaPortal.EPG
       {
         Log.WriteFile(Log.LogType.Log, false, "[Info.] WebEPG: Listing Count {0}", listingCount);
 
-        if (listingCount == _maxListingCount)
+        if (listingCount == _maxListingCount) // || _pageStart + offset < _pageEnd)
           bMore = true;
 
         for (int i = 0; i < listingCount; i++)
@@ -729,8 +735,8 @@ namespace MediaPortal.EPG
 
       _programs = new ArrayList();
 
-      string strURLid = _strURLsearch.Replace("#ID", searchID);
-      string strURL;
+      _listingRequest.ReplaceTag("#ID", searchID);
+      HTTPRequest pageRequest;
 
       Log.WriteFile(Log.LogType.Log, false, "[Info.] WebEPG: ChannelId: {0}", strChannelID);
 
@@ -765,20 +771,20 @@ namespace MediaPortal.EPG
 
       while (_GrabDay < _MaxGrabDays)
       {
-        strURL = strURLid;
+        pageRequest = new HTTPRequest(_listingRequest);
         if(_strDayNames != null)
-          strURL = strURL.Replace("#DAY_NAME", _strDayNames[_GrabDay]);
+          pageRequest.ReplaceTag("#DAY_NAME", _strDayNames[_GrabDay]);
 
-        strURL = strURL.Replace("#DAY_OFFSET", (_GrabDay+_offsetStart).ToString());
-        strURL = strURL.Replace("#EPOCH_TIME", GetEpochTime(_StartGrab).ToString());
-        strURL = strURL.Replace("#EPOCH_DATE", GetEpochDate(_StartGrab).ToString());
-        strURL = strURL.Replace("#YYYY", _StartGrab.Year.ToString());
-        strURL = strURL.Replace("#MM", String.Format("{0:00}", _StartGrab.Month));
-        strURL = strURL.Replace("#_M", _StartGrab.Month.ToString());
-        strURL = strURL.Replace("#MONTH", _StartGrab.ToString("MMMM", culture));
-        strURL = strURL.Replace("#DD", String.Format("{0:00}", _StartGrab.Day));
-        strURL = strURL.Replace("#_D", _StartGrab.Day.ToString());
-        strURL = strURL.Replace("#WEEKDAY", _StartGrab.ToString(_strWeekDay, culture));
+        pageRequest.ReplaceTag("#DAY_OFFSET", (_GrabDay + _offsetStart).ToString());
+        pageRequest.ReplaceTag("#EPOCH_TIME", GetEpochTime(_StartGrab).ToString());
+        pageRequest.ReplaceTag("#EPOCH_DATE", GetEpochDate(_StartGrab).ToString());
+        pageRequest.ReplaceTag("#YYYY", _StartGrab.Year.ToString());
+        pageRequest.ReplaceTag("#MM", String.Format("{0:00}", _StartGrab.Month));
+        pageRequest.ReplaceTag("#_M", _StartGrab.Month.ToString());
+        pageRequest.ReplaceTag("#MONTH", _StartGrab.ToString("MMMM", culture));
+        pageRequest.ReplaceTag("#DD", String.Format("{0:00}", _StartGrab.Day));
+        pageRequest.ReplaceTag("#_D", _StartGrab.Day.ToString());
+        pageRequest.ReplaceTag("#WEEKDAY", _StartGrab.ToString(_strWeekDay, culture));
 
         offset = 0;
         _LastStart=0;
@@ -786,7 +792,7 @@ namespace MediaPortal.EPG
         _listingTime = (int) Expect.Start;
 
         bool error;
-        while (GetListing(strURL, offset, searchID, out error))
+        while (GetListing(new HTTPRequest(pageRequest), offset, searchID, out error))
         {
           Thread.Sleep(_grabDelay);
           if (_maxListingCount == 0)
@@ -799,14 +805,14 @@ namespace MediaPortal.EPG
           break;
         }
         //_GrabDay++;
-        if (strURL != strURLid)
+        if (_listingRequest != pageRequest)
         {
           _StartGrab = _StartGrab.AddDays(1);
           _GrabDay++;
         }
         else
         {
-          if (strURL.IndexOf("#LIST_OFFSET") == -1)
+          if (!pageRequest.HasTag("#LIST_OFFSET"))
             break;
         }
       }

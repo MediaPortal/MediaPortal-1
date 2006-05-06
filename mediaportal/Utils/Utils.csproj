@@ -113,6 +113,7 @@
     <Compile Include="Service\LogFileWriter.cs" />
     <Compile Include="Service\ServiceProvider.cs" />
     <Compile Include="Time\WorldTimeZone.cs" />
+    <Compile Include="Web\http\HTTPRequest.cs" />
     <Compile Include="Web\http\HTTPAuth.cs" />
     <Compile Include="Web\http\HTMLCache.cs">
       <SubType>Code</SubType>

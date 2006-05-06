@@ -44,28 +44,28 @@ namespace MediaPortal.Utils.Web
 			Caching = true;
 		}
 
-		static public void DeleteCachePage(string strURL)
+    static public void DeleteCachePage(Uri pageUri)
 		{
-			string file = GetCacheFileName(strURL);
+			string file = GetCacheFileName(pageUri);
 
 			if(System.IO.File.Exists(file))
 				System.IO.File.Delete(file);
 		}
 
-		static public bool LoadPage(string strURL)
+		static public bool LoadPage(Uri pageUri)
 		{
 			if(Caching)
 			{
-				if(LoadCacheFile(GetCacheFileName(strURL)))
+				if(LoadCacheFile(GetCacheFileName(pageUri)))
 					return true;
 			}
 			return false;
     }
 
-		static public void SavePage(string strURL, string strSource)
+		static public void SavePage(Uri pageUri, string strSource)
 		{
 			if(Caching)
-				SaveCacheFile(GetCacheFileName(strURL), strSource);
+				SaveCacheFile(GetCacheFileName(pageUri), strSource);
 		}
 
     static public string GetPage() //string strURL, string strEncode)
@@ -97,10 +97,8 @@ namespace MediaPortal.Utils.Web
 			CacheFile.Close();
 		}
 
-		static private string GetCacheFileName(string strURL)
+    static private string GetCacheFileName(Uri Page)
 		{
-			Uri Page = new Uri(strURL);
-
 			int hash = Page.GetHashCode();
 				
 			return CACHE_DIR + "/" + hash.ToString() + ".html";

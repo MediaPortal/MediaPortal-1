@@ -36,43 +36,101 @@ namespace MediaPortal.WebEPG
 
   public class ProgramData : ParserData
   {
-    public string ChannelID = String.Empty;
-    public string Title = String.Empty;
-    public string SubTitle = String.Empty;
-    public string Description = String.Empty;
-    public string Month = String.Empty;
-    public string Genre = String.Empty;
-    public int Day = 0;
-    public ProgramDateTime StartTime;
-    public ProgramDateTime EndTime;
+    private string _channelID = String.Empty;
+    private string _title = String.Empty;
+    private string _subTitle = String.Empty;
+    private string _description = String.Empty;
+    private string _month = String.Empty;
+    private string _genre = String.Empty;
+    private int _day = 0;
+    private ProgramDateTime _startTime;
+    private ProgramDateTime _endTime;
+
+    public string ChannelID
+    {
+      get { return _channelID; }
+      set { _channelID = value; }
+    }
+
+    public string Title
+    {
+      get { return _title; }
+      set { _title = value; }
+    }
+
+    public string SubTitle
+    {
+      get { return _subTitle; }
+      set { _subTitle = value; }
+    }
+
+    public string Description
+    {
+      get { return _description; }
+      set { _description = value; }
+    }
+
+    public string Month
+    {
+      get { return _month; }
+      set { _month = value; }
+    }
+
+    public string Genre
+    {
+      get { return _genre; }
+      set { _genre = value; }
+    }
+
+    public int Day
+    {
+      get { return _day; }
+      set { _day = value; }
+    }
+
+    public ProgramDateTime StartTime
+    {
+      get { return _startTime; }
+      set { _startTime = value; }
+    }
+
+    public ProgramDateTime EndTime
+    {
+      get { return _endTime; }
+      set { _endTime = value; }
+    }
+
 
     override public void SetElement(string tag, string element)
     {
       switch (tag)
       {
       case "<#START>":
-        StartTime = getTime(element);
+        _startTime = getTime(element);
         break;
       case "<#END>":
-        EndTime = getTime(element);
+        _endTime = getTime(element);
         break;
       case "<#DAY>":
-        Day = int.Parse(element);
+        _day = int.Parse(element);
         break;
       case "<#DESCRIPTION>":
-        Description = element.Trim(' ', '\n', '\t');
+        if(_description == string.Empty)
+          _description = element.Trim(' ', '\n', '\t');
+        else
+          _description = _description + "\n" + element.Trim(' ', '\n', '\t');
         break;
       case "<#MONTH>":
-        Month = element.Trim(' ', '\n', '\t');
+        _month = element.Trim(' ', '\n', '\t');
         break;
       case "<#TITLE>":
-        Title = element.Trim(' ', '\n', '\t');
+        _title = element.Trim(' ', '\n', '\t');
         break;
       case "<#SUBTITLE>":
-        SubTitle = element.Trim(' ', '\n', '\t');
+        _subTitle = element.Trim(' ', '\n', '\t');
         break;
       case "<#GENRE>":
-        Genre = element.Trim(' ', '\n', '\t');
+        _genre = element.Trim(' ', '\n', '\t');
         break;
       default:
         break;

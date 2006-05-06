@@ -33,7 +33,7 @@ namespace MediaPortal.WebEPG
     XMLProfilerData _Data;
     //XmlDocument _xmlDoc;
     XmlNodeList _nodeList;
-    string _strURL="";
+    HTTPRequest _page;
 
     public XMLProfiler(string strSource, XMLProfilerData data)
     {
@@ -48,13 +48,13 @@ namespace MediaPortal.WebEPG
       _Data.ChannelID = id;
     }
 
-    override public Profiler GetPageProfiler(string strURL)
+    override public Profiler GetPageProfiler(HTTPRequest page)
     {
-      if(strURL != _strURL)
+      if(_page == null && page != _page)
       {
-        HTMLPage webPage = new HTMLPage(strURL);
+        HTMLPage webPage = new HTMLPage(page);
         _strSource = webPage.GetPage();
-        _strURL = strURL;
+        _page = page;
       }
       return new XMLProfiler(_strSource, _Data);
     }

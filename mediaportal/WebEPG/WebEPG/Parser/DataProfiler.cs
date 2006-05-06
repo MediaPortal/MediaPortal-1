@@ -50,9 +50,9 @@ namespace MediaPortal.WebEPG
       return this._strSource.Substring(sourceStart, sourceLength);
     }
 
-    override public Profiler GetPageProfiler(string strURL)
+    override public Profiler GetPageProfiler(HTTPRequest page)
     {
-      HTMLPage webPage = new HTMLPage(strURL);
+      HTMLPage webPage = new HTMLPage(page);
       DataProfiler retProfiler = new DataProfiler(webPage.GetPage(), _cTag, _cDelim);
       retProfiler.Template = GetProfileParser(0);
       return retProfiler;

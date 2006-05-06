@@ -50,7 +50,7 @@ namespace MediaPortal.Utils.Web
 
 		abstract public void GetParserData(int index, ref ParserData data);
 
-		abstract public Profiler GetPageProfiler(string strURL);
+		abstract public Profiler GetPageProfiler(HTTPRequest page);
 
 		abstract public Parser GetProfileParser(int index);
     }

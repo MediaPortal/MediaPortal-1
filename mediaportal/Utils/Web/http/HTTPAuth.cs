@@ -24,32 +24,33 @@ using System.Net;
 
 namespace MediaPortal.Utils.Web
 {
-	public class HTTPAuth
-	{
-		static Hashtable _AuthList;
+  public class HTTPAuth
+  {
+    static Hashtable _AuthList;
 
-        static HTTPAuth()
-        {
-        }
-
-        public static NetworkCredential Get(string site)
-        {
-            NetworkCredential login = null;
-
-            if (_AuthList != null)
-            {
-                login = (NetworkCredential)_AuthList[site];
-            }
-
-            return login;
-        }
-
-        public static void Add(string site, NetworkCredential login)
-        {
-            if (_AuthList == null)
-                _AuthList = new Hashtable();
-
-            _AuthList.Add(site, login);
-        }
+    static HTTPAuth()
+    {
     }
+
+    public static NetworkCredential Get(string site)
+    {
+      NetworkCredential login = null;
+
+      if (_AuthList != null)
+      {
+        login = (NetworkCredential)_AuthList[site];
+      }
+
+      return login;
+    }
+
+    public static void Add(string site, NetworkCredential login)
+    {
+      if (_AuthList == null)
+        _AuthList = new Hashtable();
+
+      _AuthList.Add(site, login);
+    }
+  }
 }
+

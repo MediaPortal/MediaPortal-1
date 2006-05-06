@@ -41,15 +41,15 @@ namespace MediaPortal.Utils.Web
     {
     }
 
-    public HTMLPage(string strURL)
+    public HTMLPage(HTTPRequest page)
     {
-      LoadPage(strURL);
+      LoadPage(page);
     }
 
-		public HTMLPage(string strURL, string encoding)
+    public HTMLPage(HTTPRequest page, string encoding)
 		{
 			_Encoding = encoding;
-			LoadPage(strURL);
+			LoadPage(page);
 		}
 
 		public string Encoding
@@ -63,11 +63,11 @@ namespace MediaPortal.Utils.Web
 			return _Error;
 		}
 
-		public bool LoadPage(string strURL)
+    public bool LoadPage(HTTPRequest page)
 		{
 			if(HTMLCache.Caching)
 			{
-				if(HTMLCache.LoadPage(strURL))
+				if(HTMLCache.LoadPage(page.GetUri()))
 				{
 					_strPageSource = HTMLCache.GetPage();
 					return true;
@@ -77,7 +77,7 @@ namespace MediaPortal.Utils.Web
 			Encoding encode;
 			string strEncode = defaultEncode;
 
-			if(Page.HTTPGet(strURL))
+			if(Page.HTTPGet(page))
 			{
 				byte[] pageData = Page.GetData();
 				int i;
@@ -121,7 +121,7 @@ namespace MediaPortal.Utils.Web
 				}
 
 				if(HTMLCache.Caching)
-					HTMLCache.SavePage(strURL, _strPageSource);
+					HTMLCache.SavePage(page.GetUri(), _strPageSource);
 
 				return true;
 			}
