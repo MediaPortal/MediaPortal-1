@@ -524,17 +524,17 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE:
         case Action.ActionType.ACTION_NEXT_AUDIO:
           {
-              m_bShowStatus = true;
-              m_dwTimeStatusShowTime = (DateTime.Now.Ticks / 10000);
-              Log.Write("GUIVideoFullscreen:switch audio");
-              g_Player.SwitchToNextLanguage();
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
-              string strStatus;
-              int intStream = g_Player.CurrentAudioStream + 1;
-              strStatus = g_Player.AudioLanguage(g_Player.CurrentAudioStream)+" ("+(intStream.ToString())+"/"+(g_Player.AudioStreams.ToString())+")";
-              msg.Label = strStatus;
-              OnMessage(msg);
-              Log.Write("GUIVideoFullscreen: switched audio to {0}",msg.Label);
+            m_bShowStatus = true;
+            m_dwTimeStatusShowTime = (DateTime.Now.Ticks / 10000);
+            Log.Write("GUIVideoFullscreen: switch audio");
+            g_Player.SwitchToNextLanguage();
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+            string strStatus;
+            int intStream = g_Player.CurrentAudioStream + 1;
+            strStatus = g_Player.AudioLanguage(g_Player.CurrentAudioStream) + " (" + (intStream.ToString()) + "/" + (g_Player.AudioStreams.ToString()) + ")";
+            msg.Label = strStatus;
+            OnMessage(msg);
+            Log.Write("GUIVideoFullscreen: switched audio to {0}", msg.Label);
           }
           break;
 
