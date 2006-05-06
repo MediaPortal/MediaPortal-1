@@ -735,7 +735,7 @@ namespace MediaPortal.EPG
 
       _programs = new ArrayList();
 
-      HTTPRequest channelReguest = new HTTPRequest(_listingRequest);
+      HTTPRequest channelRequest = new HTTPRequest(_listingRequest);
       channelRequest.ReplaceTag("#ID", searchID);
       HTTPRequest pageRequest;
 
@@ -772,7 +772,7 @@ namespace MediaPortal.EPG
 
       while (_GrabDay < _MaxGrabDays)
       {
-        pageRequest = new HTTPRequest(channelReguest);
+        pageRequest = new HTTPRequest(channelRequest);
         if(_strDayNames != null)
           pageRequest.ReplaceTag("#DAY_NAME", _strDayNames[_GrabDay]);
 
