@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<profile>
+  <section name="ChannelList">
+	<entry name="raiuno.rai.it">0</entry>
+	<entry name="raidue.rai.it">1</entry>
+	<entry name="raitre.rai.it">2</entry>
+	<entry name="rete4.mediaset.it">3</entry>
+	<entry name="canale5.mediaset.it">4</entry>
+	<entry name="italia1.mediaset.it">5</entry>
+	<entry name="tmc.tv">6</entry>
+	<entry name="mtv.com">6</entry>
+	<entry name="la7.it">7</entry>
+  </section>
+
+<!-- Formating of Listing -->
+
+  <section name="Listing">
+
+    	<entry name="BaseURL">http://www.adnkronos.com/Pages/GuidaTv</entry>
+    	<entry name="SearchURL">/index.php?codCanale=#ID&amp;codDay=#DAY_OFFSET</entry>
+    	<entry name="GrabDelay">5000</entry>
+
+<!-- Unique Listing Start string -->
+
+<!-- Template of the Listing information -->
+
+	<entry name="Tags">TD</entry> 
+  
+    	<entry name="Template">
+
+		&#60;TR&#62;
+		&#60;TD&#62;
+		&#60;DIV&#62;&#60;#START&#62;&#60;/DIV&#62;
+		&#60;DIV&#62;&#60;#GENRE&#62;&#60;/DIV&#62;
+		&#60;/TD&#62;
+		&#60;TD&#62;&#60;DIV&#62;&#60;#TITLE&#62;&#60;/DIV&#62;&#60;DIV&#62;&#60;#DESCRIPTION&#62;&#60;/DIV&#62;&#60;/TD&#62;
+		&#60;/TR&#62;
+
+	</entry>
+
+  </section>
+
+  <section name="Info">
+    <entry name="GuideDays">7</entry>
+    <entry name="Lang">it</entry>
+  </section>
+</profile>
+
+
+
+
