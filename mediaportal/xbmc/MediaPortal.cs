@@ -282,37 +282,37 @@ public class MediaPortalApp : D3DApp, IRender
       try
       {
 #endif
-      if (splashScreen != null)
-      {
-        splashScreen.SetInformation("Initializing DirectX...");
-      }
-      MediaPortalApp app = new MediaPortalApp();
-      Log.Write("  initializing DirectX");
-      if (app.CreateGraphicsSample())
-      {
-        IMessageFilter filter = new ThreadMessageFilter(app);
-        Application.AddMessageFilter(filter);
-        try
+        if (splashScreen != null)
         {
-          //app.PreRun();
-          Log.Write("running...");
-          GUIGraphicsContext.BlankScreen = false;
-          Application.Run(app);
-          Debug.WriteLine("after Application.Run");
+          splashScreen.SetInformation("Initializing DirectX...");
         }
-        //#if !DEBUG
-        catch (Exception ex)
+        MediaPortalApp app = new MediaPortalApp();
+        Log.Write("  initializing DirectX");
+        if (app.CreateGraphicsSample())
         {
-          Log.Write(ex);
-          Log.WriteFile(Log.LogType.Log, true, "MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+          IMessageFilter filter = new ThreadMessageFilter(app);
+          Application.AddMessageFilter(filter);
+          try
+          {
+            //app.PreRun();
+            Log.Write("running...");
+            GUIGraphicsContext.BlankScreen = false;
+            Application.Run(app);
+            Debug.WriteLine("after Application.Run");
+          }
+          //#if !DEBUG
+          catch (Exception ex)
+          {
+            Log.Write(ex);
+            Log.WriteFile(Log.LogType.Log, true, "MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+          }
+          //#endif
+          finally
+          {
+            Application.RemoveMessageFilter(filter);
+          }
+          app.OnExit();
         }
-        //#endif
-        finally
-        {
-          Application.RemoveMessageFilter(filter);
-        }
-        app.OnExit();
-      }
 #if !DEBUG
       }
       catch (Exception ex)
@@ -656,12 +656,12 @@ public class MediaPortalApp : D3DApp, IRender
     Log.Write("MediaPortal:switch to home screen");
     GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
     _suspended = false;
-    
+
     if (Recorder.Running) return;
     if (_onResumeRunning)
     {
-        Log.Write("MediaPortal: OnResume is RUNNING: Recorder.Running = " + Recorder.Running.ToString());
-        return;
+      Log.Write("MediaPortal: OnResume is RUNNING: Recorder.Running = " + Recorder.Running.ToString());
+      return;
     }
     _onResumeRunning = true;
     Log.Write("MediaPortal:start recorder");
@@ -1517,7 +1517,7 @@ public class MediaPortalApp : D3DApp, IRender
                 if (topBar != null) topBar.Focused = true;
                 return;
               }
-              
+
               if (Recorder.IsAnyCardRecording())
               {
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
@@ -1535,16 +1535,16 @@ public class MediaPortalApp : D3DApp, IRender
                   return;
                 }
               }
-              
+
               switch (dlg.SelectedId)
               {
-                case 1030: 
-                  restartOptions = RestartOptions.PowerOff; 
+                case 1030:
+                  restartOptions = RestartOptions.PowerOff;
                   useRestartOptions = true;
                   GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
                   break;
-                case 1031: 
-                  restartOptions = RestartOptions.Reboot;   
+                case 1031:
+                  restartOptions = RestartOptions.Reboot;
                   useRestartOptions = true;
                   GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.STOPPING;
                   break;
@@ -1554,10 +1554,10 @@ public class MediaPortalApp : D3DApp, IRender
                   break;
                 case 1049:
                   restartOptions = RestartOptions.Hibernate;
-                  Utils.HibernateSystem(false);   
+                  Utils.HibernateSystem(false);
                   break;
               }
-              
+
             }
             break;
           }
@@ -2314,7 +2314,10 @@ public class MediaPortalApp : D3DApp, IRender
 
       case GUIMessage.MessageType.GUI_MSG_GETFOCUS:
         Log.Write("FOCUS: Setting focus");
-        this.Activate();
+        if (this.WindowState == FormWindowState.Minimized)
+          this.Restore();
+        else
+          this.Activate();
         //Force.SetForegroundWindow(this.Handle, true);
         break;
     }
