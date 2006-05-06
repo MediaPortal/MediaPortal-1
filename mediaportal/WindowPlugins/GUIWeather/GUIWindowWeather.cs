@@ -967,31 +967,30 @@ namespace MediaPortal.GUI.Weather
 
       string[] tokens = result.Split(' ');
 
-		if (tokens.Length == 2)
-		{
-			try
-			{
-				string[] timePart = tokens[0].Split(':');
-				DateTime now = DateTime.Now;
-
-				DateTime time = new DateTime(
+      if (tokens.Length == 2)
+      {
+        try
+        {
+          string[] timePart = tokens[0].Split(':');
+          DateTime now = DateTime.Now;
+          DateTime time = new DateTime(
                     now.Year,
-				    now.Month,
+                    now.Month,
                     now.Day,
                     Int32.Parse(timePart[0]) + (String.Compare(tokens[1], "PM", true) == 0 ? 12 : 0),
                     Int32.Parse(timePart[1]),
                     0
-				);
+          );
 
-				result = time.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-			}
-			catch (Exception)
-			{
-				// default value is ok
-			}
-		}
-		return result;
-	}
+          result = time.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+        }
+        catch (Exception)
+        {
+          // default value is ok
+        }
+      }
+    return result;
+  }
 
     string RelocalizeDateTime(string usFormatDateTime)
     {
@@ -1154,7 +1153,6 @@ namespace MediaPortal.GUI.Weather
       string tempString = String.Empty;
       string unitTemperature = String.Empty;
       string unitSpeed = String.Empty;
-      DateTime time = DateTime.Now;
 
       // load the xml file
       XmlDocument doc = new XmlDocument();
@@ -1254,7 +1252,7 @@ namespace MediaPortal.GUI.Weather
       //future forcast
       element = xmlElement.SelectSingleNode("dayf");
       GetString(element, "lsup", out _forcastUpdated, String.Empty);
-	  _forcastUpdated = RelocalizeDateTime(_forcastUpdated);
+      _forcastUpdated = RelocalizeDateTime(_forcastUpdated);
       if (null != element)
       {
         XmlNode pOneDayElement = element.SelectSingleNode("day"); ;
@@ -1281,21 +1279,26 @@ namespace MediaPortal.GUI.Weather
             if (tempString == "N/A")
               _forecast[i].SunRise = String.Empty;
             else
-			{
-			  tempString = RelocalizeTime(tempString);
+            {
+              tempString = RelocalizeTime(tempString);
               _forecast[i].SunRise = String.Format("{0}", tempString);
-			}
+            }
             GetString(pOneDayElement, "suns", out  tempString, String.Empty);
             if (tempString == "N/A")
               _forecast[i].SunSet = String.Empty;
             else
-			{
-			  tempString = RelocalizeTime(tempString);
+            {
+              tempString = RelocalizeTime(tempString);
               _forecast[i].SunSet = String.Format("{0}", tempString);
-			}
+            }
             XmlNode pDayTimeElement = pOneDayElement.SelectSingleNode("part");	//grab the first day/night part (should be day)
-            if (i == 0 && (time.Hour < 7 || time.Hour >= 19))	//weather.com works on a 7am to 7pm basis so grab night if its late in the day
-              pDayTimeElement = pDayTimeElement.NextSibling;//.NextSiblingElement("part");
+            if (null != pDayTimeElement && i == 0)
+            {
+              GetString(pDayTimeElement, "t", out  tempString, String.Empty);
+              // If day forecast is not available (at the end of the day), show night forecast
+              if (tempString == "N/A")
+                pDayTimeElement = pDayTimeElement.NextSibling;
+            }
 
             if (null != pDayTimeElement)
             {
