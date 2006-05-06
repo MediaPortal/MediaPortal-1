@@ -735,7 +735,8 @@ namespace MediaPortal.EPG
 
       _programs = new ArrayList();
 
-      _listingRequest.ReplaceTag("#ID", searchID);
+      HTTPRequest channelReguest = new HTTPRequest(_listingRequest);
+      channelRequest.ReplaceTag("#ID", searchID);
       HTTPRequest pageRequest;
 
       Log.WriteFile(Log.LogType.Log, false, "[Info.] WebEPG: ChannelId: {0}", strChannelID);
@@ -771,13 +772,14 @@ namespace MediaPortal.EPG
 
       while (_GrabDay < _MaxGrabDays)
       {
-        pageRequest = new HTTPRequest(_listingRequest);
+        pageRequest = new HTTPRequest(channelReguest);
         if(_strDayNames != null)
           pageRequest.ReplaceTag("#DAY_NAME", _strDayNames[_GrabDay]);
 
         pageRequest.ReplaceTag("#DAY_OFFSET", (_GrabDay + _offsetStart).ToString());
         pageRequest.ReplaceTag("#EPOCH_TIME", GetEpochTime(_StartGrab).ToString());
         pageRequest.ReplaceTag("#EPOCH_DATE", GetEpochDate(_StartGrab).ToString());
+        pageRequest.ReplaceTag("#DAYOFYEAR", _StartGrab.DayOfYear.ToString());
         pageRequest.ReplaceTag("#YYYY", _StartGrab.Year.ToString());
         pageRequest.ReplaceTag("#MM", String.Format("{0:00}", _StartGrab.Month));
         pageRequest.ReplaceTag("#_M", _StartGrab.Month.ToString());
@@ -805,7 +807,7 @@ namespace MediaPortal.EPG
           break;
         }
         //_GrabDay++;
-        if (_listingRequest != pageRequest)
+        if (channelRequest != pageRequest)
         {
           _StartGrab = _StartGrab.AddDays(1);
           _GrabDay++;

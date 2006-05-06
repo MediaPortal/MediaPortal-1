@@ -132,9 +132,9 @@ namespace MediaPortal.WebEPG
 
     private void NodeProfiler()
     {
+      XmlDocument _xmlDoc = new XmlDocument();
       try
       {
-        XmlDocument _xmlDoc = new XmlDocument();
         _xmlDoc.LoadXml(_strSource);
         if(_Data.ChannelEntry != "")
           _nodeList =  _xmlDoc.DocumentElement.SelectNodes(_Data.XPath + "[@" + _Data.ChannelEntry + "=\"" + _Data.ChannelID + "\"]");
@@ -144,9 +144,13 @@ namespace MediaPortal.WebEPG
       catch(System.Xml.XmlException) // ex)
       {
         Log.WriteFile(Log.LogType.Log, true, "WebEPG: XML failed");
+        return;
       }
 
-      _profileCount = _nodeList.Count;
+      if(_nodeList == null)
+        Log.WriteFile(Log.LogType.Log, false, "WebEPG: No programs found");
+      else
+        _profileCount = _nodeList.Count;
     }
   }
 
