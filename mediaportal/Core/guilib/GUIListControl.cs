@@ -418,12 +418,8 @@ namespace MediaPortal.GUI.Library
           GUIControl btn = _listButtons[buttonNr];
           if (btn != null)
           {
-            if (gotFocus)
-              btn.ColourDiffuse = 0xffffffff;
-            else
-            {
-              btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
-            }
+            if (gotFocus || !Focus) btn.ColourDiffuse = 0xffffffff;
+            else                    btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
             btn.Focus = gotFocus;
             btn.SetPosition(x, y);
             btn.Render(timePassed);
@@ -458,10 +454,8 @@ namespace MediaPortal.GUI.Library
         pImage.Width = _imageWidth;
         pImage.Height = _imageHeight;
         pImage.SetPosition(x, y);
-        if (gotFocus)
-          pImage.ColourDiffuse = 0xffffffff;
-        else
-          pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+        if (gotFocus || !Focus) pImage.ColourDiffuse = 0xffffffff;
+        else                    pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
         pImage.DimColor = DimColor;
         pImage.Render(timePassed);
         pImage = null;
@@ -497,10 +491,8 @@ namespace MediaPortal.GUI.Library
         {
           pinImage.SetPosition(x + PinIconOffsetX, y + PinIconOffsetY);
         }
-        if (gotFocus)
-          pinImage.ColourDiffuse = 0xffffffff;
-        else
-          pinImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+        if (gotFocus || !Focus) pinImage.ColourDiffuse = 0xffffffff;
+        else                    pinImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
         pinImage.DimColor = DimColor;
         pinImage.Render(timePassed);
         pinImage = null;
@@ -558,10 +550,8 @@ namespace MediaPortal.GUI.Library
               if (label2 != null)
               {
                 label2.SetPosition(xpos, ypos + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
-                if (gotFocus)
-                  label2.TextColor = dwColor;
-                else
-                  label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+                if (gotFocus || !Focus) label2.TextColor = dwColor;
+                else                    label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
                 label2.Label = pItem.Label2;
                 label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
                 label2.FontName = _fontName2Name;
@@ -586,8 +576,7 @@ namespace MediaPortal.GUI.Library
           dwColor = _remoteColor;
           if (pItem.IsDownloading) dwColor = _downloadColor;
         }
-        if (!gotFocus)
-          dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+        if (!gotFocus && Focus) dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
         RenderText(timePassed, buttonNr, (float)dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, (float)dMaxWidth, dwColor, _textLine, bSelected);
       } //if (_text1Visible)
 
@@ -621,10 +610,8 @@ namespace MediaPortal.GUI.Library
               if (label2 != null)
               {
                 label2.SetPosition(dwPosX-GUIGraphicsContext.ScaleHorizontal(6), dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
-                if (gotFocus)
-                  label2.TextColor = dwColor;
-                else
-                  label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+                if (gotFocus || !Focus)  label2.TextColor = dwColor;
+                else                     label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
                 label2.Label = _textLine;
                 label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
                 label2.FontName = _fontName2Name;
@@ -669,10 +656,8 @@ namespace MediaPortal.GUI.Library
               if (label3 != null)
               {
                 label3.SetPosition(dwPosX, ypos);
-                if (gotFocus)
-                  label3.TextColor = dwColor;
-                else
-                  label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+                if (gotFocus || !Focus) label3.TextColor = dwColor;
+                else                    label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
                 label3.Label = pItem.Label3;
                 label3.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
                 label3.FontName = _fontName3Name;
