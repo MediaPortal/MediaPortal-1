@@ -188,7 +188,7 @@ namespace MediaPortal.GUI.Library
       {
         _imageMid.SetPosition(iXPos, iYPos);
         _imageMid.Height = iHeightLeft;//_imageMid.TextureHeight;
-        _imageMid.Width = (int)fWidth;
+        _imageMid.Width = (int)Math.Abs(fWidth);
         _imageMid.SetPosition(iXPos, iYPos);
         _imageMid.Render(timePassed);
         iXPos += (int)fWidth;

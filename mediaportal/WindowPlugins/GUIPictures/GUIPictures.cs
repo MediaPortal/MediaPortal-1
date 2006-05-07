@@ -975,6 +975,7 @@ namespace MediaPortal.GUI.Pictures
         dlgProgress.SetLine(1, String.Empty);
         dlgProgress.SetLine(2, String.Empty);
         dlgProgress.StartModal(GetID);
+        dlgProgress.ShowProgressBar(true);
         dlgProgress.Progress();
       }
 
@@ -983,25 +984,37 @@ namespace MediaPortal.GUI.Pictures
       {
         for (int i = 0; i < GetItemCount(); ++i)
         {
-          int percent = (i * 100) / (GetItemCount() + 1);
+          int percent = ((i+1) * 100) / GetItemCount();
           GUIListItem item = GetItem(i);
           if (item.IsRemote) continue;
           if (dlgProgress != null)
+          {
             dlgProgress.SetPercentage(percent);
+            string progressLine = String.Format(GUILocalizeStrings.Get(8033) + ": {0}/{1}", i + 1, GetItemCount());
+            dlgProgress.SetLine(1, String.Empty);
+            dlgProgress.SetLine(2, progressLine);
+          }
+          if (item.IsRemote)
+          {
+            if (dlgProgress != null)
+            {
+              dlgProgress.Progress();
+              if (dlgProgress.IsCanceled) break;
+            }
+            continue;
+          }
+
           if (!item.IsFolder)
           {
             if (Utils.IsPicture(item.Path))
             {
-              string strFile = String.Format(GUILocalizeStrings.Get(863) + ": {0}", item.Label);
-              string progressLine = String.Format(GUILocalizeStrings.Get(8033) + ": {0}/{1}", i + 1, GetItemCount());
               if (dlgProgress != null)
               {
+                string strFile = String.Format(GUILocalizeStrings.Get(863) + ": {0}", item.Label);
                 dlgProgress.SetLine(1, strFile);
-                dlgProgress.SetLine(2, progressLine);
                 dlgProgress.Progress();
                 if (dlgProgress.IsCanceled) break;
               }
-
 
               string thumbnailImage = GetThumbnail(item.Path);
               int iRotate = dbs.GetRotation(item.Path);
@@ -1119,30 +1132,38 @@ namespace MediaPortal.GUI.Pictures
         dlgProgress.SetHeading(110);
         dlgProgress.SetLine(1, String.Empty);
         dlgProgress.SetLine(2, String.Empty);
-        dlgProgress.ShowProgressBar(true);
         dlgProgress.StartModal(GetID);
+        dlgProgress.ShowProgressBar(true);
         dlgProgress.Progress();
       }
       for (int i = 0; i < GetItemCount(); ++i)
       {
-        int percent = (i * 100) / (GetItemCount() + 1);
+        int percent = ((i+1) * 100) / GetItemCount();
         if (dlgProgress != null)
+        {
           dlgProgress.SetPercentage(percent);
+          string progressLine = String.Format(GUILocalizeStrings.Get(8033) + ": {0}/{1}", i + 1, GetItemCount());
+          dlgProgress.SetLine(1, String.Empty);
+          dlgProgress.SetLine(2, progressLine);
+        }
         GUIListItem item = GetItem(i);
         if (item.IsFolder && item.Label != "..")
-        {
-          string fileName = String.Format(GUILocalizeStrings.Get(519) + ": {0}", item.Label);
-          string progressLine = String.Format(GUILocalizeStrings.Get(8033) + ": {0}/{1}", i + 1, GetItemCount());
+        { 
           if (dlgProgress != null)
           {
+            string fileName = String.Format(GUILocalizeStrings.Get(519) + ": {0}", item.Label);
             dlgProgress.SetLine(1, fileName);
-            dlgProgress.SetLine(2, progressLine);
             dlgProgress.Progress();
             if (dlgProgress.IsCanceled) break;
           }
 
           CreateFolderThumb(item.Path);
         }//if (item.IsFolder)
+        else if (dlgProgress != null)
+        {
+          dlgProgress.Progress();
+          if (dlgProgress.IsCanceled) break;
+        }
       }//for (int i=0; i < GetItemCount(); ++i)
       if (dlgProgress != null) dlgProgress.Close();
     }
