@@ -289,14 +289,15 @@ namespace MediaPortal.Utils.Web
 			return "";
 		}
 
-		public string GetHyperLink(int profileIndex, string match, string linkURL)
+		public bool GetHyperLink(int profileIndex, string match, ref HTTPRequest linkURL)
 		{
 
 			string regex = "<a href=[^>]*" + match.ToLower() + "[^>]*>";
 
 			string result = SearchRegex(profileIndex, regex, false);
 
-			string strLinkURL="";
+			bool linkFound = false;
+      string strLinkURL = string.Empty;
 
 			if(result != "")
 			{
@@ -323,8 +324,11 @@ namespace MediaPortal.Utils.Web
         }
 				if(start != -1)
 					end = result.IndexOf(delim, ++start);
-				if(end != -1)
-					strLinkURL = result.Substring(start, end-start);
+        if (end != -1)
+        {
+          strLinkURL = result.Substring(start, end - start);
+          linkFound = true;
+        }
 			}
 
 			if(strLinkURL.ToLower().IndexOf("http") == -1)
@@ -333,18 +337,16 @@ namespace MediaPortal.Utils.Web
 				{
 					string [] param = GetJavaSubLinkParams(strLinkURL);
 
-					strLinkURL = linkURL;
-
 					for(int i = 0; i < param.Length; i++)
-						strLinkURL = strLinkURL.Replace("#" + (i + 1).ToString(), param[i]);
+						linkURL.ReplaceTag("#" + (i + 1).ToString(), param[i]);
 				}
 				else
 				{
-					strLinkURL = linkURL + strLinkURL;
+					linkURL.GetQuery = strLinkURL;
 				}
 			}
 
-			return strLinkURL;
+			return linkFound;
 		}
 
 		private string [] GetJavaSubLinkParams(string link)
@@ -381,7 +383,7 @@ namespace MediaPortal.Utils.Web
 				args++;
 				array = new string[args];
 				for(int i = 0; i < args; i++)
-					array[i] = link.Substring(param[i,0], param[i,1]-param[i,0]).Trim('\"');
+					array[i] = link.Substring(param[i,0], param[i,1]-param[i,0]).Trim('\"', '\'');
 			}
 
 			return array;

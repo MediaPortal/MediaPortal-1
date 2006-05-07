@@ -50,7 +50,7 @@ namespace MediaPortal.EPG
   {
     WorldTimeZone _SiteTimeZone = null;
     HTTPRequest _listingRequest;
-    string _strSubURL = string.Empty;
+    HTTPRequest _requestSubURL;
     string _strID = string.Empty;
     string _strBaseDir = "";
     string _SubListingLink;
@@ -211,7 +211,8 @@ namespace MediaPortal.EPG
           string strSubStart = _xmlreader.GetValueAsString("SubListing", "Start", "<body");
           string strSubEnd = _xmlreader.GetValueAsString("SubListing", "End", "</body");
           string subencoding = _xmlreader.GetValueAsString("SubListing", "Encoding", "");
-          _strSubURL = _xmlreader.GetValueAsString("SubListing", "URL", "");
+          _requestSubURL = new HTTPRequest(_xmlreader.GetValueAsString("SubListing", "URL", ""));
+          _requestSubURL.PostQuery = _xmlreader.GetValueAsString("SubListing", "PostQuery", "");
           string Subtags = _xmlreader.GetValueAsString("SubListing", "Tags", "T");
           string sublistingTemplate = _xmlreader.GetValueAsString("SubListing", "Template", "");
           if (sublistingTemplate == "")
@@ -589,18 +590,15 @@ namespace MediaPortal.EPG
          && guideData.StartTime.Hour <= _linkEnd
          && htmlProf != null)
       {
-        string linkURL;
-        if(_strSubURL != "")
-          linkURL = _strSubURL;
+        HTTPRequest sublinkRequest;
+        if(_requestSubURL != null)
+          sublinkRequest = new HTTPRequest(_requestSubURL);
         else
-          linkURL = _listingRequest.Host;
+          sublinkRequest = new HTTPRequest(_listingRequest);
 
-        string strLinkURL = htmlProf.GetHyperLink(index, _SubListingLink, linkURL);
-
-        if(strLinkURL != "")
+        if(htmlProf.GetHyperLink(index, _SubListingLink, ref sublinkRequest))
         {
-          HTTPRequest sublinkRequest = new HTTPRequest(strLinkURL);
-          Log.WriteFile(Log.LogType.Log, false, "[Info.] WebEPG: Reading {0}", strLinkURL);
+          Log.WriteFile(Log.LogType.Log, false, "[Info.] WebEPG: Reading {0}", sublinkRequest.ToString());
           Thread.Sleep(_grabDelay);
           Profiler SubProfile = _templateSubProfile.GetPageProfiler(sublinkRequest);
           int Count = 0;

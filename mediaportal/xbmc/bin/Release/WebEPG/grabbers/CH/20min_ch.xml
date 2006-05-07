@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- www_fernsehen_ch.xml  Version 1.0 -->
+
+<profile>
+  <section name="ChannelList"> <!-- Canal NV 164, CNF 165, PLN 176, -->
+
+<!-- Schweiz - Haupt -->
+    <entry name="sf1@sfdrs.ch">5</entry>		<!-- SF 1 -->
+    <entry name="sf2@sfdrs.ch">14</entry>		<!-- SF 2 -->
+    <entry name="tsr1@tsr.ch">19</entry>		<!-- TSR 1 -->
+    <entry name="tsr2@tsr.ch">20</entry>		<!-- TSR 2 -->
+    <entry name="tsi1@rtsi.ch">180</entry>		<!-- TSI 1 -->
+
+<!-- Schweiz - Regional -->
+    <entry name="startv.ch">15</entry>			<!-- *Star TV -->
+    <entry name="www.telezueri.ch">33</entry>		<!-- Tele Zueri -->
+
+<!-- Oesterreich -->
+    <entry name="orf1@orf.at">3</entry>		<!-- ORF 1 -->
+    <entry name="orf2@orf.at">4</entry>		<!-- ORF 2 -->
+
+<!-- Deutschland - Haupt -->
+    <entry name="ard.de">2</entry> 			<!-- ARD -->
+    <entry name="pro-sieben.de">10</entry>		<!-- Pro 7 -->
+    <entry name="3sat.de">7</entry> 			<!-- 3sat -->
+    <entry name="sat1.de">13</entry> 			<!-- Sat.1 -->
+    <entry name="arte-tv.com">8</entry> 			<!-- arte -->
+    <entry name="rtl.de">11</entry>			<!-- RTL -->
+    <entry name="rtl2.de">12</entry>			<!-- RTL 2 -->
+    <entry name="super-rtl.de">16</entry>		<!-- SuperRTL -->
+    <entry name="kabel1.de">9</entry> 		<!-- Kabel1 -->
+    <entry name="vox.de">21</entry> 			<!-- VOX -->
+    <entry name="zdf.de">6</entry> 			<!-- ZDF -->
+    <entry name="dsf.de">25</entry> 			<!-- DSF -->
+
+<!-- Deutschland - Regional -->
+    <entry name="wdr.de">22</entry> 			<!-- WDR -->
+    <entry name="swr.de">17</entry> 			<!-- Suedwest -->
+    <entry name="br-online.de">39</entry> 		<!-- Bayern -->
+    <entry name="ndrtv.de">40</entry> 			<!-- Nord 3 NDR -->
+    <entry name="mdr.de">28</entry> 			<!-- MDR -->
+
+<!-- Deutschland - Extra -->
+    <entry name="neunlive.de">50</entry> 		<!-- Neun Live -->
+    <entry name="viva.tv">35</entry>			<!-- VIVA -->
+    <entry name="vivaplus.tv">55</entry>		<!-- VIVA Plus -->
+    <entry name="mtv.de">29</entry>			<!-- MTV Deutsch -->
+
+<!-- Frankreich -->
+    <entry name="tf1.fr">34</entry>			<!-- TF1 -->
+    <entry name="france2.fr">168</entry>		<!-- france 2 -->
+    <entry name="france3.fr">169</entry> 		<!-- france 3 -->
+    <entry name="rtl9.com">177</entry>			<!-- RTL 9 -->
+    <entry name="f@tv5.fr">181</entry>			<!-- TV5 francophone -->
+
+<!-- Grossbritannien -->
+    <entry name="bbcprime.com">1</entry>		<!-- BBC Prime -->
+
+<!-- Europa --> 
+    <entry name="eurosport@eurosport.com">26</entry> 	<!-- EuroSport -->
+
+<!-- International -->
+    <entry name="cnni-emea@cnn.com">24</entry>		<!-- CNN International - EMEA -->
+  </section>
+
+<!-- Formating of Listing -->
+  <section name="Listing">
+    <entry name="BaseURL">http://www.20min.ch/unterhaltung/tv-guide/</entry>
+    <entry name="PostQuery">program_id=&amp;cb-#ID=on&amp;dates=0-6&amp;time=all_day&amp;text=&amp;cat=all&amp;subcat=all</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">show_program</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+&#60;tr&#62;
+&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+&#60;td&#62;&#60;/td&#62;
+&#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
+&#60;/tr&#62;
+    </entry>
+        <entry name="SubListingLink">show_program</entry>
+  </section>
+
+<section name="SubListing">
+<!-- Template of the Listing information -->
+        <entry name="URL">http://www.20min.ch/unterhaltung/tv-guide/</entry>
+        <entry name="PostQuery">program_id=#1&amp;cb-5=on&amp;dates=0-6&amp;time=all_day&amp;text=&amp;cat=all&amp;subcat=all</entry>
+	<entry name="Tags">T</entry>
+	<entry name="Start">Kanal</entry>
+
+	<entry name="Template">
+
+               &#60;/tr&#62;&#60;tr&#62;
+                 &#60;td&#62;&#60;/td&#62;
+                 &#60;td&#62;&#60;#GENRE&#62;&#60;/td&#62;
+               &#60;/tr&#62;&#60;tr&#62;
+                 &#60;td&#62;&#60;/td&#62;
+                 &#60;td&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;
+               &#60;/tr&#62;&#60;tr&#62;
+    	</entry>
+  </section>
+
+  <section name="Info">
+    <entry name="GuideDays">7</entry>
+    <entry name="Lang">de</entry>
+    <entry name="Description">MAIN</entry>
+    <entry name="TimeZone">W. Europe Standard Time</entry>
+  </section>
+</profile>
