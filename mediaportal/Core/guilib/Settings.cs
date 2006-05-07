@@ -97,7 +97,7 @@ namespace MediaPortal.Profile
     public int GetValueAsInt(string section, string entry, int iDefault)
     {
       object obj = xmlDoc.GetValue(section, entry);
-      if (obj==null) return iDefault;
+      if (obj == null) return iDefault;
       string strValue = obj.ToString();
       if (strValue == null) return iDefault;
       if (strValue.Length == 0) return iDefault;
@@ -111,31 +111,32 @@ namespace MediaPortal.Profile
       }
       return iDefault;
     }
-    public float GetValueAsFloat(string section, string entry, float fDefault)
-    {
-      object obj = xmlDoc.GetValue(section, entry);
-      if (obj == null) return fDefault;
-      string strValue = obj.ToString();
-      if (strValue == null) return fDefault;
-      if (strValue.Length == 0) return fDefault;
-      try
-      {
-        float test=123.456f;
-        string tmp=test.ToString();
-        bool useCommas = (tmp.IndexOf(",") >= 0);
-        if (useCommas==false) 
-          strValue = strValue.Replace(',', '.');
-        else
-          strValue = strValue.Replace('.', ',');
 
-        float fRet = (float)System.Double.Parse(strValue, NumberFormatInfo.InvariantInfo);
-        return fRet;
-      }
-      catch (Exception)
-      {
-      }
-      return fDefault;
-    }
+    //public float GetValueAsFloat(string section, string entry, float fDefault)
+    //{
+    //  object obj = xmlDoc.GetValue(section, entry);
+    //  if (obj == null) return fDefault;
+    //  string strValue = obj.ToString();
+    //  if (strValue == null) return fDefault;
+    //  if (strValue.Length == 0) return fDefault;
+    //  try
+    //  {
+    //    float test=123.456f;
+    //    string tmp=test.ToString();
+    //    bool useCommas = (tmp.IndexOf(",") >= 0);
+    //    if (useCommas==false) 
+    //      strValue = strValue.Replace(',', '.');
+    //    else
+    //      strValue = strValue.Replace('.', ',');
+
+    //    float fRet = (float)System.Double.Parse(strValue, NumberFormatInfo.InvariantInfo);
+    //    return fRet;
+    //  }
+    //  catch (Exception)
+    //  {
+    //  }
+    //  return fDefault;
+    //}
 
     public void SetValue(string section, string entry, object objValue)
     {

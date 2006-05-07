@@ -58,14 +58,14 @@ namespace MediaPortal.Tests.Core.Profile
       Assert.AreEqual(31, ret);
     }
 
-    [Test]
-    public void GetValueAsFloat()
-    {
-      Settings doc = CreateXml();
+    //[Test]
+    //public void GetValueAsFloat()
+    //{
+    //  Settings doc = CreateXml();
 
-      float ret = doc.GetValueAsFloat("capture", "floattest", 0);
-      Assert.AreEqual(3.141592, ret);
-    }
+    //  float ret = doc.GetValueAsFloat("capture", "floattest", 0);
+    //  Assert.AreEqual(3.141592, ret);
+    //}
 
     [Test]
     public void SetValueSetsValue()
@@ -94,7 +94,7 @@ namespace MediaPortal.Tests.Core.Profile
       doc.Dispose();
 
       doc = CreateXml();
-      int intValue=doc.GetValueAsInt("test", "test",444);
+      int intValue = doc.GetValueAsInt("test", "test", 444);
       Assert.AreEqual(intValue, 123);
     }
 
