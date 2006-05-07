@@ -992,8 +992,8 @@ namespace MediaPortal.GUI.Pictures
           {
             if (Utils.IsPicture(item.Path))
             {
-              string progressLine = String.Format("progress:{0}/{1}", i + 1, GetItemCount());
-              string strFile = String.Format("picture:{0}", item.Label);
+              string strFile = String.Format(GUILocalizeStrings.Get(863) + ": {0}", item.Label);
+              string progressLine = String.Format(GUILocalizeStrings.Get(8033) + ": {0}/{1}", i + 1, GetItemCount());
               if (dlgProgress != null)
               {
                 dlgProgress.SetLine(1, strFile);
@@ -1131,8 +1131,8 @@ namespace MediaPortal.GUI.Pictures
         GUIListItem item = GetItem(i);
         if (item.IsFolder && item.Label != "..")
         {
-          string progressLine = String.Format("progress:{0}/{1}", i + 1, GetItemCount());
-          string fileName = String.Format("folder:{0}", item.Label);
+          string fileName = String.Format(GUILocalizeStrings.Get(519) + ": {0}", item.Label);
+          string progressLine = String.Format(GUILocalizeStrings.Get(8033) + ": {0}/{1}", i + 1, GetItemCount());
           if (dlgProgress != null)
           {
             dlgProgress.SetLine(1, fileName);

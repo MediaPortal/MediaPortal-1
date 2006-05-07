@@ -1764,6 +1764,10 @@
     <id>518</id>
     <value>Delete this song?</value>
   </string>
+  <string>
+    <id>519</id>
+    <value>Folder</value>
+  </string>
 
   <string>
     <id>530</id>
