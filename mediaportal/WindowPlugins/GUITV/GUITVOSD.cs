@@ -412,10 +412,10 @@ namespace MediaPortal.GUI.TV
               TVProgram prog = GUITVHome.Navigator.GetTVChannel(GetChannelName()).GetProgramAt(m_dateTime);
               if (prog != null)
               {
-                prog = GUITVHome.Navigator.GetTVChannel(GetChannelName()).GetProgramAt(prog.StartTime.AddMinutes(-1));
+                prog = GUITVHome.Navigator.GetTVChannel(GetChannelName()).GetProgramAt(prog.StartTime.Subtract(new TimeSpan(0, 1, 0)));
                 if (prog != null)
                 {
-                  m_dateTime = prog.StartTime;
+                  m_dateTime = prog.StartTime.AddMinutes(1);
                 }
               }
               ShowPrograms();
