@@ -69,7 +69,11 @@ namespace MediaPortal.TV.Database
           TVRecording recNew = new TVRecording(rec);
           recNew.RecType = TVRecording.RecordingType.Once;
           recNew.Start = Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0));
+          if (rec.EndTime.Day > rec.StartTime.Day)
+            dtDay = dtDay.AddDays(1);
           recNew.End = Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0));
+          if (rec.EndTime.Day > rec.StartTime.Day)
+            dtDay = dtDay.AddDays(-1);
           recNew.Series = true;
           if (recNew.StartTime >= DateTime.Now)
           {
@@ -91,7 +95,11 @@ namespace MediaPortal.TV.Database
             TVRecording recNew = new TVRecording(rec);
             recNew.RecType = TVRecording.RecordingType.Once;
             recNew.Start = Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0));
+            if (rec.EndTime.Day > rec.StartTime.Day)
+              dtDay = dtDay.AddDays(1);
             recNew.End = Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0));
+            if (rec.EndTime.Day > rec.StartTime.Day)
+              dtDay = dtDay.AddDays(-1);
             recNew.Series = true;
             if (rec.IsSerieIsCanceled(recNew.StartTime))
               recNew.Canceled = recNew.Start;
@@ -138,7 +146,11 @@ namespace MediaPortal.TV.Database
             TVRecording recNew = new TVRecording(rec);
             recNew.RecType = TVRecording.RecordingType.Once;
             recNew.Start = Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.StartTime.Hour, rec.StartTime.Minute, 0));
+            if (rec.EndTime.Day > rec.StartTime.Day)
+              dtDay = dtDay.AddDays(1);
             recNew.End = Utils.datetolong(new DateTime(dtDay.Year, dtDay.Month, dtDay.Day, rec.EndTime.Hour, rec.EndTime.Minute, 0));
+            if (rec.EndTime.Day > rec.StartTime.Day)
+              dtDay = dtDay.AddDays(-1);
             recNew.Series = true;
             if (rec.IsSerieIsCanceled(recNew.StartTime))
               recNew.Canceled = recNew.Start;
