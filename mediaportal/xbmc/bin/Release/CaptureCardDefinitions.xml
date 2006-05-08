@@ -11825,14 +11825,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KNC ONE TV-Station DVB-C" capturename="KNC ONE TV-Station DVB-C/C+ (CU1216)" devid="ven_1131&amp;dev_7146&amp;subsys_00201894&amp;rev_01">
+  <capturecard commercialname="KNC ONE TV-Station DVB-C" capturename="KNC ONE TV Station DVB-C/C+ (CU1216)" devid="ven_1131&amp;dev_7146&amp;subsys_00201894&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBC Network Provider" 	    checkdevice="false"/>
         <filter cat="tunerdevice"     name="Philips BDA/DVB-C Tuner (CU1216)"		  checkdevice="true"/>
-        <filter cat="capture"         name="KNC ONE TV-Station DVB-C/C+ (CU1216)"	checkdevice="true"/>
+        <filter cat="capture"         name="KNC ONE TV Station DVB-C/C+ (CU1216)"	checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
@@ -11841,14 +11841,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="KNC ONE TV-Station DVB-C+" capturename="KNC ONE TV-Station DVB-C/C+ (CU1216)" devid="ven_1131&amp;dev_7146&amp;subsys_00211894&amp;rev_01">
+  <capturecard commercialname="KNC ONE TV-Station DVB-C+" capturename="KNC ONE TV Station DVB-C/C+ (CU1216)" devid="ven_1131&amp;dev_7146&amp;subsys_00211894&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider" name="Microsoft DVBC Network Provider"      checkdevice="false"/>
         <filter cat="tunerdevice" 		name="Philips BDA/DVB-C Tuner (CU1216)"     checkdevice="true"/>
-        <filter cat="capture" 			  name="KNC ONE TV-Station DVB-C/C+ (CU1216)" checkdevice="true"/>
+        <filter cat="capture" 			  name="KNC ONE TV Station DVB-C/C+ (CU1216)" checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
