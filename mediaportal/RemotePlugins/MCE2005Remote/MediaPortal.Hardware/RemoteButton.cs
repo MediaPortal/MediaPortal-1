@@ -32,6 +32,7 @@ namespace MediaPortal.Hardware
     None = 0,
     Power1 = 165,
     Power2 = 12,
+    PowerTV = 101,
     Record = 23,
     Stop = 25,
     Pause = 24,
