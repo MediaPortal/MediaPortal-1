@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <capturecards>
   <capturecard commercialname="WinTv USB" capturename="Hauppauge WinTV USB Pro Capture" devid="vid_0573&amp;pid_4d21">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
@@ -12366,9 +12366,6 @@
         <filter cat="crossbar"		name="Conexant Crossbar"  checkdevice="true"/>
         <filter cat="capture"     name="Conexant Capture"   checkdevice="true"/>
         <filter cat="audcapture"	name="%soundcard%"        checkdevice="true"/>
-        <filter cat="videncoder"	name="%videoencoder%"     checkdevice="false"/>
-        <filter cat="audencoder"	name="%audioencoder%"     checkdevice="false"/>
-        <filter cat="mux"			    name="%mpegmux%"          checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
@@ -12381,5 +12378,31 @@
         <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
     </tv>
-  </capturecard>  
+  </capturecard>
+
+  <capturecard commercialname="Compro VideoMate TV Gold Plus" capturename="VideoMate TV Capture" devid="ven_1131&amp;dev_7133&amp;subsys_c100185b&amp;rev_10">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="VideoMate TV Tuner"     checkdevice="true"/>
+        <filter cat="tvaudio"		  name="VideoMate TV Audio"     checkdevice="true"/>
+        <filter cat="crossbar"		name="VideoMate TV Crossbar"  checkdevice="true"/>
+        <filter cat="capture"     name="VideoMate TV Capture"   checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"     checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"     checkdevice="false"/>
+        <filter cat="mux"			    name="%mpegmux%"          checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"	sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
