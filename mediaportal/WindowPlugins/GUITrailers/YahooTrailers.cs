@@ -65,7 +65,7 @@ namespace MediaPortal.GUI.Video
 			if(TempHTML == null || TempHTML == string.Empty)
 				return;
 
-			MatchCollection mc = Regex.Matches(TempHTML, @"<a\shref=.(?<trailerurl>/shop.*).>(?<moviename>.*)</a>");
+            MatchCollection mc = Regex.Matches(TempHTML, @"<a\shref=.(?<trailerurl>/movie.*?).>(?<moviename>.*?)</a>");
 
 			int i = 0;
 
