@@ -72,9 +72,9 @@ namespace MediaPortal.Utils.Web
       set { _postQuery = value; }
     }
 
-    public Uri GetUri()
+    public Uri Uri
     {
-      return new Uri(_host + _getQuery);
+      get { return new Uri(_host + _getQuery); }
     }
 
     public void ReplaceTag(string tag, string value)

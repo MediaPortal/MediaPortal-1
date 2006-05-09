@@ -67,7 +67,7 @@ namespace MediaPortal.Utils.Web
 		{
 			if(HTMLCache.Caching)
 			{
-				if(HTMLCache.LoadPage(page.GetUri()))
+				if(HTMLCache.LoadPage(page.Uri))
 				{
 					_strPageSource = HTMLCache.GetPage();
 					return true;
@@ -121,7 +121,7 @@ namespace MediaPortal.Utils.Web
 				}
 
 				if(HTMLCache.Caching)
-					HTMLCache.SavePage(page.GetUri(), _strPageSource);
+					HTMLCache.SavePage(page.Uri, _strPageSource);
 
 				return true;
 			}

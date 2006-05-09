@@ -342,7 +342,7 @@ namespace MediaPortal.Utils.Web
 				}
 				else
 				{
-					linkURL.GetQuery = strLinkURL;
+					linkURL.GetQuery = strLinkURL.Trim();
 				}
 			}
 

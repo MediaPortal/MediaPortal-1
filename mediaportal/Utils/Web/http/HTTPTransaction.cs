@@ -84,7 +84,7 @@ namespace MediaPortal.Utils.Web
       {
         // Make the Webrequest
         // Create the request header
-        Uri pageUri = pageRequest.GetUri();
+        Uri pageUri = pageRequest.Uri;
         HttpWebRequest request = (HttpWebRequest) WebRequest.Create(pageUri);
         request.UserAgent = _agent;
         if (pageRequest.PostQuery == string.Empty)

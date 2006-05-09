@@ -39,21 +39,30 @@ namespace MediaPortal.EPG.TestWebEPG
     /// </summary>
     [STAThread]
 
-      static void Main()
+    static void Main()
     {
       Log.WriteFile(Log.LogType.Log, false, "WebEPG: Starting");
+      System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
+
+#if DEBUG
+        
+      WebEPG epg = new WebEPG();
+      epg.Import();
+        
+#else
       try
       {
-        System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
         WebEPG epg = new WebEPG();
         epg.Import();
-        Log.WriteFile(Log.LogType.Log, false, "WebEPG: Finished");
       }
       catch (Exception ex)
       {
         Log.WriteFile(Log.LogType.Log, true, "WebEPG: Fatal Error");
         Log.WriteFile(Log.LogType.Log, true, "WebEPG: {0}", ex.Message);
       }
+#endif
+
+      Log.WriteFile(Log.LogType.Log, false, "WebEPG: Finished");
     }
   }
 }

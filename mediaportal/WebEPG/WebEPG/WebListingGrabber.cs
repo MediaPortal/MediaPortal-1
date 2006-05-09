@@ -211,8 +211,12 @@ namespace MediaPortal.EPG
           string strSubStart = _xmlreader.GetValueAsString("SubListing", "Start", "<body");
           string strSubEnd = _xmlreader.GetValueAsString("SubListing", "End", "</body");
           string subencoding = _xmlreader.GetValueAsString("SubListing", "Encoding", "");
-          _requestSubURL = new HTTPRequest(_xmlreader.GetValueAsString("SubListing", "URL", ""));
-          _requestSubURL.PostQuery = _xmlreader.GetValueAsString("SubListing", "PostQuery", "");
+          string subUrl = _xmlreader.GetValueAsString("SubListing", "URL", "");
+          if (subUrl != "")
+          {
+            _requestSubURL = new HTTPRequest(subUrl);
+            _requestSubURL.PostQuery = _xmlreader.GetValueAsString("SubListing", "PostQuery", "");
+          }
           string Subtags = _xmlreader.GetValueAsString("SubListing", "Tags", "T");
           string sublistingTemplate = _xmlreader.GetValueAsString("SubListing", "Template", "");
           if (sublistingTemplate == "")
@@ -594,7 +598,10 @@ namespace MediaPortal.EPG
         if(_requestSubURL != null)
           sublinkRequest = new HTTPRequest(_requestSubURL);
         else
-          sublinkRequest = new HTTPRequest(_listingRequest);
+        {
+          sublinkRequest = new HTTPRequest();
+          sublinkRequest.Host = _listingRequest.Host;
+        }
 
         if(htmlProf.GetHyperLink(index, _SubListingLink, ref sublinkRequest))
         {
