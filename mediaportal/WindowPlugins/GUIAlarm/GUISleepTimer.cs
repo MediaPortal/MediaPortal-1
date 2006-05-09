@@ -39,6 +39,7 @@ namespace MediaPortal.GUI.Alarm
 		#region Private Variables	
 			private System.Windows.Forms.Timer _SleepTimer = new System.Windows.Forms.Timer();
 			private long _SleepCount;
+            private int _PreviousgPlayerVolume = 0;
 		#endregion
 		
 		#region Private Enumerations
@@ -106,7 +107,17 @@ namespace MediaPortal.GUI.Alarm
 							if(!btnEnabled.Selected)
 							{
 								_SleepTimer.Enabled = false;
-								GUIPropertyManager.SetProperty("#currentsleeptime","00:00");	
+								GUIPropertyManager.SetProperty("#currentsleeptime","00:00");
+
+                                //revert volume to original volume
+                                if (_PreviousgPlayerVolume > 0)
+                                {
+                                    g_Player.Volume = _PreviousgPlayerVolume;
+                                }
+                                else
+                                {
+                                    g_Player.Volume = 99;
+                                }
 							}
 							else
 							{
@@ -115,6 +126,7 @@ namespace MediaPortal.GUI.Alarm
 								if(ctlMinutes.Value > 0)
 								{
 									_SleepTimer.Enabled = true;
+                                    _PreviousgPlayerVolume = g_Player.Volume;
 								}
 								else
 								{
@@ -194,6 +206,16 @@ namespace MediaPortal.GUI.Alarm
 					_SleepTimer.Enabled=false;
 					g_Player.Stop();
 					((GUIToggleButtonControl)GetControl((int)Controls.EnableButton)).Selected = false;
+
+                    //revert volume to original volume
+                    if (_PreviousgPlayerVolume > 0)
+                    {
+                        g_Player.Volume = _PreviousgPlayerVolume;
+                    }
+                    else
+                    {
+                        g_Player.Volume = 99;
+                    }
 						
 					//returns to the home screen so powerscheduler plugin can suspend the pc
 					if(((GUICheckMarkControl)GetControl((int)Controls.ReturnHomeButton)).Selected)
