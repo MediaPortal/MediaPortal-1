@@ -12150,14 +12150,14 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Hauppauge WinTV Nova-T-USB (Stick)" capturename="Nova-T Stick DVB-T Capture (Dev1 Path0)" devid="vid_2040&amp;pid_7051&amp;mi_00">
+  <capturecard commercialname="Hauppauge WinTV Nova-T-USB (Stick)" capturename="Nova-T Stick DVB-T Capture (Dev1 Path0) " devid="vid_2040&amp;pid_7051&amp;mi_00">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
         <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"	        checkdevice="false"/>
-        <filter cat="tunerdevice"		  name="Nova-T Stick DVB-T Tuner (Dev1 Path0)"	  checkdevice="true"/>
-        <filter cat="capture"			    name="Nova-T Stick DVB-T Capture (Dev1 Path0)"	checkdevice="true"/>
+        <filter cat="tunerdevice"		  name="Nova-T Stick DVB-T Tuner (Dev1 Path0) "	  checkdevice="true"/>
+        <filter cat="capture"			    name="Nova-T Stick DVB-T Capture (Dev1 Path0) "	checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
