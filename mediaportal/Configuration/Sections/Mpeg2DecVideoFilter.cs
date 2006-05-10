@@ -121,7 +121,7 @@ namespace MediaPortal.Configuration.Sections
       // groupBox1
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label8);
       this.groupBox1.Controls.Add(this.label7);
       this.groupBox1.Controls.Add(this.label6);
@@ -134,6 +134,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.tbHue);
       this.groupBox1.Controls.Add(this.tbContrast);
       this.groupBox1.Controls.Add(this.tbBrightness);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 272);
@@ -176,13 +177,14 @@ namespace MediaPortal.Configuration.Sections
       // cbDeinterlace
       // 
       this.cbDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbDeinterlace.Items.AddRange(new object[] {
-                                                       "Auto",
-                                                       "Weave",
-                                                       "Blend",
-                                                       "BOB"});
+            "Auto",
+            "Weave",
+            "Blend",
+            "BOB",
+            "Field Shift"});
       this.cbDeinterlace.Location = new System.Drawing.Point(168, 236);
       this.cbDeinterlace.Name = "cbDeinterlace";
       this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
@@ -198,28 +200,34 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbForcedSubtitles
       // 
+      this.cbForcedSubtitles.AutoSize = true;
       this.cbForcedSubtitles.Checked = true;
       this.cbForcedSubtitles.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbForcedSubtitles.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbForcedSubtitles.Location = new System.Drawing.Point(16, 48);
       this.cbForcedSubtitles.Name = "cbForcedSubtitles";
-      this.cbForcedSubtitles.Size = new System.Drawing.Size(168, 16);
+      this.cbForcedSubtitles.Size = new System.Drawing.Size(166, 17);
       this.cbForcedSubtitles.TabIndex = 1;
       this.cbForcedSubtitles.Text = "Always display forced subtitles";
+      this.cbForcedSubtitles.UseVisualStyleBackColor = true;
       // 
       // cbPlanar
       // 
+      this.cbPlanar.AutoSize = true;
       this.cbPlanar.Checked = true;
       this.cbPlanar.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbPlanar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbPlanar.Location = new System.Drawing.Point(16, 24);
       this.cbPlanar.Name = "cbPlanar";
-      this.cbPlanar.Size = new System.Drawing.Size(264, 16);
+      this.cbPlanar.Size = new System.Drawing.Size(266, 17);
       this.cbPlanar.TabIndex = 0;
       this.cbPlanar.Text = "Enable planar YUV media types (YV12, I420, IYUV)";
+      this.cbPlanar.UseVisualStyleBackColor = true;
       // 
       // tbSaturation
       // 
       this.tbSaturation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tbSaturation.Location = new System.Drawing.Point(160, 196);
       this.tbSaturation.Maximum = 200;
       this.tbSaturation.Name = "tbSaturation";
@@ -231,7 +239,7 @@ namespace MediaPortal.Configuration.Sections
       // tbHue
       // 
       this.tbHue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tbHue.Location = new System.Drawing.Point(160, 156);
       this.tbHue.Maximum = 360;
       this.tbHue.Name = "tbHue";
@@ -243,7 +251,7 @@ namespace MediaPortal.Configuration.Sections
       // tbContrast
       // 
       this.tbContrast.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tbContrast.Location = new System.Drawing.Point(160, 116);
       this.tbContrast.Maximum = 200;
       this.tbContrast.Name = "tbContrast";
@@ -255,7 +263,7 @@ namespace MediaPortal.Configuration.Sections
       // tbBrightness
       // 
       this.tbBrightness.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tbBrightness.Location = new System.Drawing.Point(160, 76);
       this.tbBrightness.Maximum = 255;
       this.tbBrightness.Name = "tbBrightness";
@@ -270,6 +278,7 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "MPEG2DecVideoFilter";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.tbSaturation)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.tbHue)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).EndInit();
@@ -282,21 +291,21 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.CreateSubKey(@"Software\MediaPortal\Mpeg Video Filter");
+      RegistryKey subkey = hkcu.CreateSubKey(@"Software\Gabest\Filters\MPEG Video Decoder");
       if (subkey != null)
       {
         try
         {
-          Int32 regValue = (Int32)subkey.GetValue("Enable Planar YUV Modes");
+          Int32 regValue = (Int32)subkey.GetValue("PlanarYUV");
           if (regValue == 1) cbPlanar.Checked = true;
           else cbPlanar.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("Forced Subtitles");
+          regValue = (Int32)subkey.GetValue("ForcedSubtitles");
           if (regValue == 1) cbForcedSubtitles.Checked = true;
           else cbForcedSubtitles.Checked = false;
 
 
-          regValue = (Int32)subkey.GetValue("Deinterlace");
+          regValue = (Int32)subkey.GetValue("DeinterlaceMethod");
           cbDeinterlace.SelectedIndex = regValue;
 
           regValue = (Int32)subkey.GetValue("Brightness");
@@ -323,19 +332,19 @@ namespace MediaPortal.Configuration.Sections
     public override void SaveSettings()
     {
       RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.CreateSubKey(@"Software\MediaPortal\Mpeg Video Filter");
+      RegistryKey subkey = hkcu.CreateSubKey(@"Software\Gabest\Filters\MPEG Video Decoder");
       if (subkey != null)
       {
         Int32 regValue;
         if (cbPlanar.Checked) regValue = 1;
         else regValue = 0;
-        subkey.SetValue("Enable Planar YUV Modes", regValue);
+        subkey.SetValue("PlanarYUV", regValue);
 
         if (cbForcedSubtitles.Checked) regValue = 1;
         else regValue = 0;
-        subkey.SetValue("Forced Subtitles", regValue);
+        subkey.SetValue("ForcedSubtitles", regValue);
 
-        subkey.SetValue("Deinterlace", (Int32)cbDeinterlace.SelectedIndex);
+        subkey.SetValue("DeinterlaceMethod", (Int32)cbDeinterlace.SelectedIndex);
 
         subkey.SetValue("Brightness", (Int32)tbBrightness.Value);
         subkey.SetValue("Contrast", (Int32)tbContrast.Value);
