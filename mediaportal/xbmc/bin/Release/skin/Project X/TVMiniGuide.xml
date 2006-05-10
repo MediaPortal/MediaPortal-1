@@ -10,8 +10,8 @@
 			<texture>context_background.png</texture>
 			<width>-</width>
 			<height>-</height>
-			<posX>100</posX>
-			<posY>100</posY>
+			<posX>132</posX>
+			<posY>128</posY>
 		</control>
 		<control>
 			<description>exit button</description>

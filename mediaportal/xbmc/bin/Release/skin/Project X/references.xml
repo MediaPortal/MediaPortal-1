@@ -21,6 +21,12 @@
     <centered>no</centered>
     <keepaspectratio>no</keepaspectratio>
   </control>
+   <control>
+    	<description>default group</description>
+         <type>group</type>
+         <id>1</id>
+		<dimColor>ffffffff</dimColor>
+    </control>
   <control>
     <description>default label</description>
     <type>label</type>
@@ -45,6 +51,7 @@
     <textureFocus>menu_list_focus.png</textureFocus>
     <textureNoFocus>menu_list_nofocus.png</textureNoFocus>
     <font>font13</font>
+     <dimColor>ffffffff</dimColor>
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
@@ -97,6 +104,7 @@
     <textureDelete>playlist_item_delete_nofocus.png</textureDelete>
     <textureDeleteFocused>playlist_item_delete_focus.png</textureDeleteFocused>
     <font>font13</font>
+     <dimColor>ffffffff</dimColor>
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
@@ -117,6 +125,7 @@
     <AltTextureNoFocus>arrow_round_down_nofocus.png</AltTextureNoFocus>
     <label>-</label>
     <font>font13</font>
+     <dimColor>ffffffff</dimColor>
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
@@ -139,6 +148,7 @@
     <offsetSortButtonWidth>16</offsetSortButtonWidth>
     <offsetSortButtonHeight>16</offsetSortButtonHeight>
     <font>font13</font>
+     <dimColor>ffffffff</dimColor>
     <textcolor>White</textcolor>
     <colordiffuse>White</colordiffuse>
     <disabledcolor>60ffffff</disabledcolor>
@@ -166,6 +176,7 @@
     <textureHeight>32</textureHeight>
     <image>folder_focus.png</image>
     <font>font13</font>
+     <dimColor>ffffffff</dimColor>
     <shadedColor>20ffffff</shadedColor>
     <selectedColor>FFF8BC70</selectedColor>
     <textcolor>ffffffff</textcolor>
@@ -284,6 +295,7 @@
     <textureHeight>32</textureHeight>
     <image>folder_focus.png</image>
     <font>font13</font>
+     <dimColor>ffffffff</dimColor>
     <shadedColor>20ffffff</shadedColor>
     <selectedColor>FFF8BC70</selectedColor>
     <textcolor>ffffffff</textcolor>
@@ -349,6 +361,7 @@
     <imageFolder>icon_empty_nofocus.png</imageFolder>
     <imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
     <font>font13</font>
+     <dimColor>ffffffff</dimColor>
     <selectedColor>ffffffff</selectedColor>
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
@@ -393,6 +406,7 @@
     <imageFolder>icon_empty_nofocus.png</imageFolder>
     <imageFolderFocus>icon_empty_focus.png</imageFolderFocus>
     <font>font13</font>
+     <dimColor>ffffffff</dimColor>
     <selectedColor>ffffffff</selectedColor>
     <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
