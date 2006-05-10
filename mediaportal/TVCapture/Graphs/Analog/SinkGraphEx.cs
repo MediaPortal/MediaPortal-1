@@ -372,6 +372,15 @@ namespace MediaPortal.TV.Recording
         _mpeg2DemuxHelper.CreateMappings();
 
         _videoProcAmpHelper = new VideoProcAmp(_filterCapture as IAMVideoProcAmp);
+        if (_videoProcAmpHelper != null)
+        {
+          Log.WriteFile(Log.LogType.Log, "SinkGraphEx: VideoProcAmp setting defaults");
+          _videoProcAmpHelper.Contrast = _videoProcAmpHelper.ContrastDefault;
+          _videoProcAmpHelper.Brightness = _videoProcAmpHelper.BrightnessDefault;
+          _videoProcAmpHelper.Gamma = _videoProcAmpHelper.GammaDefault;
+          _videoProcAmpHelper.Saturation = _videoProcAmpHelper.SaturationDefault;
+          _videoProcAmpHelper.Sharpness = _videoProcAmpHelper.SharpnessDefault;
+        }
 
         _graphState = State.Created;
         Log.WriteFile(Log.LogType.Log, "SinkGraphEx:CreateGraph() OUT");

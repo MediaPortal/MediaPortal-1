@@ -874,8 +874,9 @@ namespace MediaPortal.TV.Recording
       if (reentrant) return;
       reentrant = true;
 
+      // #DM# follow code needs to be re-written to take into consideration multiple cards with differing VideoProcAmp settings
       //set the changed values
-      if (GUIGraphicsContext.Brightness > -1)
+      /*if (GUIGraphicsContext.Brightness > -1)
       {
         _videoProcAmpHelper.Brightness = GUIGraphicsContext.Brightness;
       }
@@ -927,7 +928,7 @@ namespace MediaPortal.TV.Recording
       GUIGraphicsContext.Contrast = _videoProcAmpHelper.Contrast;
       GUIGraphicsContext.Gamma = _videoProcAmpHelper.Gamma;
       GUIGraphicsContext.Saturation = _videoProcAmpHelper.Saturation;
-      GUIGraphicsContext.Sharpness = _videoProcAmpHelper.Sharpness;
+      GUIGraphicsContext.Sharpness = _videoProcAmpHelper.Sharpness;*/
       reentrant = false;
     }
 
