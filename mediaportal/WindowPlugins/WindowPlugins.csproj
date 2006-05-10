@@ -910,28 +910,6 @@
     <Compile Include="GUIWeather\GUIWindowWeather.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="GUIWebbrowser\Common.cs" />
-    <Compile Include="GUIWebbrowser\GUIFavorites.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIWebbrowser\GUIWebBrowser.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIWebbrowser\INIFile.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIWebbrowser\WebBrowserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="GUIWebbrowser\WebBrowserControl.designer.cs">
-      <DependentUpon>WebBrowserControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GUIWebbrowser\WebBrowserSetup.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GUIWebbrowser\WebBrowserSetup.designer.cs">
-      <DependentUpon>WebBrowserSetup.cs</DependentUpon>
-    </Compile>
     <Compile Include="GUIX10\ApplianceConfiguration.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1041,14 +1019,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="GUITVCom\tvComSetupForm.resx">
       <DependentUpon>tvComSetupForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUIWebbrowser\WebBrowserControl.resx">
-      <DependentUpon>WebBrowserControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="GUIWebbrowser\WebBrowserSetup.resx">
-      <DependentUpon>WebBrowserSetup.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="GUIX10\ApplianceForm.resx">
       <DependentUpon>ApplianceForm.cs</DependentUpon>
