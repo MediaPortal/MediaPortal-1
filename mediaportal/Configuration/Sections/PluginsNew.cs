@@ -152,7 +152,14 @@ namespace MediaPortal.Configuration.Sections
     {
       foreach (string pluginFile in availablePlugins)
       {
-        Assembly pluginAssembly = Assembly.LoadFrom(pluginFile);
+        Assembly pluginAssembly = null;
+        try
+        {
+          pluginAssembly = Assembly.LoadFrom(pluginFile);
+        }
+        catch (System.BadImageFormatException)
+        {
+        }
 
         if (pluginAssembly != null)
         {
