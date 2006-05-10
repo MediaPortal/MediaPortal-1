@@ -236,61 +236,61 @@ namespace MediaPortal.Configuration
       ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
       if (availableAudioFilters.Count > 0)
       {
-          foreach (string filter in availableAudioFilters)
+        foreach (string filter in availableAudioFilters)
+        {
+          if (filter.Equals("NVIDIA Audio Decoder"))
           {
-              if (filter.Equals("NVIDIA Audio Decoder"))
-              {
-                  AddChildSection(filterSection, new PureVideoDecoderFilters());
-              }
-              if (filter.Equals("InterVideo Audio Decoder"))
-              {
-                  AddChildSection(filterSection, new WinDVD7DecoderFilters());
-              }
-              if (filter.Equals("CyberLink Audio Decoder"))
-              {
-                  AddChildSection(filterSection, new PowerDVD6DecoderFilters());
-              }
-              if (filter.Equals("MPEG/AC3/DTS/LPCM Audio Decoder"))
-              {
-                  AddChildSection(filterSection, new MPEG2DecAudioFilter());
-              }
-              if (filter.Equals("DScaler Audio Decoder"))
-              {
-                  AddChildSection(filterSection, new DScalerAudioFilter());
-              }
+            AddChildSection(filterSection, new PureVideoDecoderFilters());
           }
+          if (filter.Equals("InterVideo Audio Decoder"))
+          {
+            AddChildSection(filterSection, new WinDVD7DecoderFilters());
+          }
+          if (filter.Equals("CyberLink Audio Decoder"))
+          {
+            AddChildSection(filterSection, new PowerDVD6DecoderFilters());
+          }
+          if (filter.Equals("MPA Decoder Filter"))
+          {
+            AddChildSection(filterSection, new MPEG2DecAudioFilter());
+          }
+          if (filter.Equals("DScaler Audio Decoder"))
+          {
+            AddChildSection(filterSection, new DScalerAudioFilter());
+          }
+        }
       }
       
       //Look for Video Decoders, if exist assume decoders are installed & present config option
       ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubTypeEx.MPEG2);
       if (availableVideoFilters.Count > 0)
       {
-          foreach (string filter in availableVideoFilters)
+        foreach (string filter in availableVideoFilters)
+        {
+          if (filter.Equals("MPV Decoder Filter"))
           {
-              if (filter.Equals("Mpeg2Dec Filter"))
-              {
-                  AddChildSection(filterSection, new MPEG2DecVideoFilter());
-              }
-              if (filter.Equals("DScaler Mpeg2 Video Decoder"))
-              {
-                  AddChildSection(filterSection, new DScalerVideoFilter());
-              }
-          }          
+            AddChildSection(filterSection, new MPEG2DecVideoFilter());
+          }
+          if (filter.Equals("DScaler Mpeg2 Video Decoder"))
+          {
+            AddChildSection(filterSection, new DScalerVideoFilter());
+          }
+        }
       }
 
       //Look for Audio Encoders, if exist assume encoders are installed & present config option
       string[] audioEncoders = new string[] { "InterVideo Audio Encoder" };
       FilterCollection legacyFilters = Filters.LegacyFilters;
       foreach (Filter audioCodec in legacyFilters)
-      for (int i = 0; i < audioEncoders.Length; ++i)
-      {
+        for (int i = 0; i < audioEncoders.Length; ++i)
+        {
           if (String.Compare(audioCodec.Name, audioEncoders[i], true) == 0)
           {
-              EncoderFiltersSection EncoderfilterSection = new EncoderFiltersSection();
-              AddSection(EncoderfilterSection);
-              AddChildSection(EncoderfilterSection, new InterVideoEncoderFilters());
+            EncoderFiltersSection EncoderfilterSection = new EncoderFiltersSection();
+            AddSection(EncoderfilterSection);
+            AddChildSection(EncoderfilterSection, new InterVideoEncoderFilters());
           }
-      }
+        }
       
       Log.Write("add weather section");
       AddSection(new Weather());
