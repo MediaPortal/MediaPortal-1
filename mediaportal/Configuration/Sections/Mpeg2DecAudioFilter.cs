@@ -500,7 +500,7 @@ namespace MediaPortal.Configuration.Sections
           else checkBoxAC3DynamicRange.Checked = false;
 
           regValue = (Int32)subkey.GetValue("Ac3SpeakerConfig");
-          if (regValue == 4294967278) checkBoxAC3LFE.Checked = true;
+          if (regValue >= 16) checkBoxAC3LFE.Checked = true;
           else checkBoxAC3LFE.Checked = false;
 
           regValue = (Int32)subkey.GetValue("DtsDynamicRangeControl");
@@ -533,12 +533,12 @@ namespace MediaPortal.Configuration.Sections
 
           regValue = (Int32)subkey.GetValue("Ac3SpeakerConfig");
           radioButtonAC3Speakers.Checked = (regValue == 0);
-          radioButtonAC3SPDIF.Checked = (regValue == 4294967294);
+          radioButtonAC3SPDIF.Checked = (regValue <= -1);
 
 
           regValue = (Int32)subkey.GetValue("DtsSpeakerConfig");
           radioButtonDTSSpeakers.Checked = (regValue == 0);
-          radioButtonDTSSPDIF.Checked = (regValue == 4294967294);
+          radioButtonDTSSPDIF.Checked = (regValue == -1);
         }
         catch (Exception)
         {
@@ -568,7 +568,7 @@ namespace MediaPortal.Configuration.Sections
         else regValue = 0;
         subkey.SetValue("Ac3DynamicRangeControl", regValue);
 
-        if (checkBoxAC3LFE.Checked) regValue = 4294967278;
+        if (checkBoxAC3LFE.Checked) regValue = -1;
         else regValue = 0;
         subkey.SetValue("Ac3SpeakerConfig", regValue);
 
@@ -576,7 +576,7 @@ namespace MediaPortal.Configuration.Sections
         else regValue = 0;
         subkey.SetValue("DtsDynamicRangeControl", regValue);
 
-        if (checkBoxDTSLFE.Checked) regValue = 4294967166;
+        if (checkBoxDTSLFE.Checked) regValue = -1;
         else regValue = 0;
         subkey.SetValue("DtsSpeakerConfig", regValue);
 
@@ -595,11 +595,11 @@ namespace MediaPortal.Configuration.Sections
         subkey.SetValue("SampleFormat", regValue);
 
         if (radioButtonAC3Speakers.Checked) regValue = 0;
-        if (radioButtonAC3SPDIF.Checked) regValue = 4294967294;
+        if (radioButtonAC3SPDIF.Checked) regValue = -1;
         subkey.SetValue("Ac3SpeakerConfig", regValue);
 
         if (radioButtonDTSSpeakers.Checked) regValue = 0;
-        if (radioButtonDTSSPDIF.Checked) regValue = 4294967294;
+        if (radioButtonDTSSPDIF.Checked) regValue = -1;
         subkey.SetValue("DtsSpeakerConfig", regValue);
 
         subkey.Close();
