@@ -153,7 +153,7 @@ namespace MediaPortal.GUI.Video
         }
         public string PluginName()
         {
-            return "My DVD";
+            return "Play DVD";
         }
 
         public bool DefaultEnabled()
