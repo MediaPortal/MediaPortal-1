@@ -1766,6 +1766,10 @@
 		<value>Radera denna låt?</value>
 	</string>
 	<string>
+		<id>519</id>
+		<value>Folder</value>
+	</string>
+	<string>
 		<id>530</id>
 		<value>Fotoskiva isatt, vill du öppna den?</value>
 	</string>
@@ -2410,6 +2414,30 @@
 		<value>Inspelaren är pausad</value>
 	</string>
 	<string>
+		<id>765</id>
+		<value>Inte tillräckligt med diskutrymme</value>
+	</string>
+	<string>
+		<id>766</id>
+		<value>import är redan startad...</value>
+	</string>
+	<string>
+		<id>767</id>
+		<value>Felaktig XMLTV-fil</value>
+	</string>
+	<string>
+		<id>768</id>
+		<value>Hittade inga kanaler</value>
+	</string>
+	<string>
+		<id>769</id>
+		<value>Hittade inga program</value>
+	</string>
+	<string>
+		<id>770</id>
+		<value>Hittade ingen XMLTV-fil</value>
+	</string>
+	<string>
 		<id>800</id>
 		<value>Startar med</value>
 	</string>
@@ -2555,11 +2583,11 @@
 	</string>
 	<string>
 		<id>875</id>
-		<value>Aktuellt program</value>
+		<value>Endast detta program</value>
 	</string>
 	<string>
 		<id>876</id>
-		<value>Till manuellt stopp</value>
+		<value>Tills manuellt stopp</value>
 	</string>
 	<string>
 		<id>877</id>
@@ -3143,7 +3171,7 @@
 	</string>
 	<string>
 		<id>1032</id>
-		<value>Viloläge</value>
+		<value>Vänteläge</value>
 	</string>
 	<string>
 		<id>1033</id>
@@ -4052,6 +4080,14 @@
 	<string>
 		<id>5917</id>
 		<value>Tyska trailrar</value>
+	</string>
+	<string>
+		<id>5918</id>
+		<value>Télévision Suisse Romande VOD</value>
+	</string>
+	<string>
+		<id>5919</id>
+		<value>Biotoppen</value>
 	</string>
 	<string>
 		<id>5920</id>
@@ -5174,6 +5210,14 @@
 		<value>Aktuell spellista</value>
 	</string>
 	<string>
+		<id>4556</id>
+		<value>Blandade artister</value>
+	</string>
+	<string>
+		<id>4557</id>
+		<value>Lägg till alla i spellistan</value>
+	</string>
+	<string>
 		<id>10100</id>
 		<value>Gömda minor</value>
 	</string>
@@ -5188,5 +5232,9 @@
 	<string>
 		<id>10103</id>
 		<value>Minesweeper</value>
+	</string>
+	<string>
+		<id>10104</id>
+		<value>Liten TV-tablå</value>
 	</string>
 </strings>
