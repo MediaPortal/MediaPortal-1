@@ -182,7 +182,7 @@ namespace MediaPortal.GUI.Video
 
         public string Description()
         {
-            return "Watch your DVD";
+            return "Adds \"Play DVD\" button to homescreen";
         }
 
         public void ShowPlugin()
