@@ -912,9 +912,10 @@ namespace MediaPortal.Configuration.Sections
     {
       TVGroup group = (TVGroup)comboBox1.SelectedItem;
       TVDatabase.DeleteChannelsFromGroup(group);
+      group.TvChannels.Clear();
       for (int index = 0; index < listViewTVGroupChannels.Items.Count; index++)
       {
-        group.TvChannels.Clear();
+        //group.TvChannels.Clear();
         ListViewItem listItem = listViewTVGroupChannels.Items[index];
         group.TvChannels.Add((TVChannel)listItem.Tag);
         TVChannel ch = ((TVChannel)listItem.Tag).Clone();
