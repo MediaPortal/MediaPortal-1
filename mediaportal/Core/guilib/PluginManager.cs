@@ -276,7 +276,7 @@ namespace MediaPortal.GUI.Library
       try
       {
         Assembly assem = Assembly.LoadFrom(strFile);
-        if (assem!=null)
+        if (assem != null)
         {
           Type[] types = assem.GetExportedTypes();
           Type[] foundInterfaces = null;
@@ -287,93 +287,96 @@ namespace MediaPortal.GUI.Library
             {
               if (t.IsClass)
               {
-                if( t.IsAbstract ) continue;
+                if (t.IsAbstract) continue;
                 Object newObj = null;
-                if (t.IsSubclassOf (typeof(MediaPortal.GUI.Library.GUIWindow)))
+                if (t.IsSubclassOf(typeof(MediaPortal.GUI.Library.GUIWindow)))
                 {
                   try
                   {
-                    newObj=(object)Activator.CreateInstance(t);
-                    GUIWindow win=(GUIWindow)newObj;
-										
-                    if (win.GetID>=0 && IsWindowPlugInEnabled(win.GetType().ToString()))
+                    newObj = (object)Activator.CreateInstance(t);
+                    GUIWindow win = (GUIWindow)newObj;
+
+                    if (win.GetID >= 0 && IsWindowPlugInEnabled(win.GetType().ToString()))
                     {
                       try
                       {
                         win.Init();
                       }
-                      catch(Exception ex)
+                      catch (Exception ex)
                       {
-                        Log.WriteFile(Log.LogType.Log,true,"Error initializing window:{0} {1} {2} {3}", win.ToString(), ex.Message,ex.Source,ex.StackTrace);
+                        Log.WriteFile(Log.LogType.Log, true, "Error initializing window:{0} {1} {2} {3}", win.ToString(), ex.Message, ex.Source, ex.StackTrace);
                       }
                       GUIWindowManager.Add(ref win);
                     }
                     //else Log.Write("  plugin:{0} not enabled",win.GetType().ToString());
                   }
-                  catch( Exception guiWindowsException )
+                  catch (Exception guiWindowsException)
                   {
-                    Log.WriteFile(Log.LogType.Log,true,"Exception while loading GUIWindows instances: {0}", t.FullName);
-                    Log.WriteFile(Log.LogType.Log,true,guiWindowsException.Message);
-                    Log.WriteFile(Log.LogType.Log,true,guiWindowsException.StackTrace);
+                    Log.WriteFile(Log.LogType.Log, true, "Exception while loading GUIWindows instances: {0}", t.FullName);
+                    Log.WriteFile(Log.LogType.Log, true, guiWindowsException.Message);
+                    Log.WriteFile(Log.LogType.Log, true, guiWindowsException.StackTrace);
                   }
                 }
                 TypeFilter myFilter2 = new TypeFilter(MyInterfaceFilter);
                 try
                 {
-                  foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.ISetupForm");
-                  if (foundInterfaces.Length>0)
+                  foundInterfaces = t.FindInterfaces(myFilter2, "MediaPortal.GUI.Library.ISetupForm");
+                  if (foundInterfaces.Length > 0)
                   {
-                    if (newObj==null)
-                      newObj=(object)Activator.CreateInstance(t);
-                    ISetupForm  setup=(ISetupForm)newObj;
+                    if (newObj == null)
+                      newObj = (object)Activator.CreateInstance(t);
+                    ISetupForm setup = (ISetupForm)newObj;
                     if (IsPluginNameEnabled(setup.PluginName()))
                     {
                       _SetupForms.Add(setup);
                     }
                   }
                 }
-                catch( Exception iSetupFormException )
+                catch (Exception iSetupFormException)
                 {
-                  Log.WriteFile(Log.LogType.Log,true,"Exception while loading ISetupForm instances: {0}", t.FullName);
+                  Log.WriteFile(Log.LogType.Log, true, "Exception while loading ISetupForm instances: {0}", t.FullName);
 
-                  Log.WriteFile(Log.LogType.Log,true,iSetupFormException.Message);
-                  Log.WriteFile(Log.LogType.Log,true,iSetupFormException.StackTrace);
+                  Log.WriteFile(Log.LogType.Log, true, iSetupFormException.Message);
+                  Log.WriteFile(Log.LogType.Log, true, iSetupFormException.StackTrace);
                 }
 
                 try
                 {
-                  foundInterfaces=t.FindInterfaces(myFilter2,"MediaPortal.GUI.Library.IWakeable");
-                  if (foundInterfaces.Length>0)
+                  foundInterfaces = t.FindInterfaces(myFilter2, "MediaPortal.GUI.Library.IWakeable");
+                  if (foundInterfaces.Length > 0)
                   {
-                    if (newObj==null)
-                      newObj=(object)Activator.CreateInstance(t);
-                    IWakeable  setup=(IWakeable)newObj;
+                    if (newObj == null)
+                      newObj = (object)Activator.CreateInstance(t);
+                    IWakeable setup = (IWakeable)newObj;
                     if (IsPluginNameEnabled(setup.PluginName()))
                     {
                       _Wakeables.Add(setup);
                     }
                   }
                 }
-                catch( Exception iWakeableException )
+                catch (Exception iWakeableException)
                 {
-                  Log.WriteFile(Log.LogType.Log,true,"Exception while loading IWakeable instances: {0}", t.FullName);
+                  Log.WriteFile(Log.LogType.Log, true, "Exception while loading IWakeable instances: {0}", t.FullName);
 
-                  Log.WriteFile(Log.LogType.Log,true,iWakeableException.Message);
-                  Log.WriteFile(Log.LogType.Log,true,iWakeableException.StackTrace);
+                  Log.WriteFile(Log.LogType.Log, true, iWakeableException.Message);
+                  Log.WriteFile(Log.LogType.Log, true, iWakeableException.StackTrace);
                 }
               }
             }
             catch (System.NullReferenceException)
             {
-							
+
             }
           }
         }
       }
+      catch (System.BadImageFormatException)
+      {
+      }
       catch (Exception ex)
       {
-        string strEx=ex.Message;
-        Log.WriteFile(Log.LogType.Log,true,"ex:{0} {1} {2}", ex.Message,ex.Source,ex.StackTrace);
+        string strEx = ex.Message;
+        Log.WriteFile(Log.LogType.Log, true, "ex:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
       }
     }
 
