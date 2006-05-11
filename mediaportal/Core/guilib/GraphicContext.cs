@@ -163,13 +163,29 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Property to get windowed/fullscreen state of application
+    /// </summary>
+    static bool Fullscreen
+    {
+      get
+      {
+        return ((Width == Screen.PrimaryScreen.Bounds.Width) && (Height == Screen.PrimaryScreen.Bounds.Height));
+      }
+    }
+
+    /// <summary>
     /// Save calibration settings to calibrationWxH.xml
     /// where W=resolution width
     /// H=resolution height
     /// </summary>
     static public void Save()
     {
-      string strFileName = String.Format("ScreenCalibration{0}x{1}.xml", Width, Height);
+      string strFileName = String.Format("ScreenCalibration{0}x{1}", Width, Height);
+      if (Fullscreen)
+        strFileName += ".fs.xml";
+      else
+        strFileName += ".xml";
+
       // Log.Write("save {0}" ,strFileName);
       using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings(strFileName))
       {
@@ -215,7 +231,12 @@ namespace MediaPortal.GUI.Library
       ZoomHorizontal = 1.0f;
       ZoomVertical = 1.0f;
 
-      string strFileName = String.Format("ScreenCalibration{0}x{1}.xml", Width, Height);
+      string strFileName = String.Format("ScreenCalibration{0}x{1}", Width, Height);
+      if (Fullscreen)
+        strFileName += ".fs.xml";
+      else
+        strFileName += ".xml";
+
       Log.Write("  load {0}", strFileName);
       using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings(strFileName))
       {
