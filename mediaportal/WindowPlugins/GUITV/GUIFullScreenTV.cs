@@ -1915,7 +1915,8 @@ namespace MediaPortal.GUI.TV
         _keyPressedTimer = DateTime.Now;
         _channelName += chKey;
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
-        msg.Label = String.Format("{0}{1}", GUILocalizeStrings.Get(602), _channelName);
+        msg.Label = String.Format("{0} {1} ({2})", GUILocalizeStrings.Get(602), _channelName, GUITVHome.Navigator.CurrentGroup.TvChannels[Int32.Parse(_channelName) - 1].Name);
+
         GUIControl cntTarget = base.GetControl((int)Control.LABEL_ROW1);
         if (cntTarget != null)
         {
