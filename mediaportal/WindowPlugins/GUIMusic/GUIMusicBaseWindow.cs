@@ -421,7 +421,7 @@ namespace MediaPortal.GUI.Music
                     strLine = GUILocalizeStrings.Get(417);
                     break;
                 case View.Albums:
-                    strLine = GUILocalizeStrings.Get(101);
+                    strLine = GUILocalizeStrings.Get(529);
                     break;
                 case View.FilmStrip:
                     strLine = GUILocalizeStrings.Get(733);

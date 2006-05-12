@@ -1764,10 +1764,12 @@
     <id>518</id>
     <value>Delete this song?</value>
   </string>
+
   <string>
-    <id>519</id>
-    <value>Folder</value>
+    <id>529</id>
+    <value>View: Big Icon List</value>
   </string>
+
 
   <string>
     <id>530</id>
@@ -2052,7 +2054,6 @@
     <id>664</id>
     <value>Delete this picture?</value>
   </string>
-  
   <string Prefix="My ">
     <id>665</id>
     <value>Radio</value>
@@ -2422,26 +2423,6 @@
   <string>
     <id>765</id>
     <value>Not enough free diskspace</value>
-  </string>
-   <string>
-    <id>766</id>
-    <value>already importing...</value>
-  </string>
-  <string>
-    <id>767</id>
-    <value>Invalid XMLTV file</value>
-  </string>
-  <string>
-    <id>768</id>
-    <value>No channels found</value>
-  </string>
-    <string>
-    <id>769</id>
-    <value>No programs found</value>
-  </string>
-    <string>
-    <id>770</id>
-    <value>No xmltv file found</value>
   </string>
 
 
@@ -5293,15 +5274,7 @@
   <string>
     <id>4555</id>
     <value>Current Playlist</value>
-  </string>
-  <string>
-    <id>4556</id>
-    <value>Various Artists</value>
-  </string>
-  <string>
-    <id>4557</id>
-    <value>Add all to playlist</value>
-  </string>
+  </string>  
   <!-- End Addtional MyMusic Strings -->
   <!-- Begin Minesweeper Strings -->
   <string>
