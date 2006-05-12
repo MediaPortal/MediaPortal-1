@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- version : 2.0                                                          -->
-<!-- changed : 17-March-2006 by Maschine                                   -->
+<!-- changed : 12-May-2006 by Maschine                                   -->
 <!-- contains:								-->
 <!--   - Europe 								-->
 <!--   - Australia 								-->
@@ -67,6 +66,187 @@
 		<carrier frequency="802500" bandwidth="7" />
 		<carrier frequency="809500" bandwidth="7" />
 		<carrier frequency="816500" bandwidth="7" />
+	</country>
+	<country name="Australia - ACT - Canberra" offset="125">
+		<carrier frequency="177500" bandwidth="7" />
+		<carrier frequency="205500" bandwidth="7" />
+		<carrier frequency="219500" bandwidth="7" />
+		<carrier frequency="226500" bandwidth="7" />
+		<carrier frequency="543500" bandwidth="7" />
+	</country>
+	<country name="Australia - ACT - Other Regions" offset="125">
+		<carrier frequency="732500" bandwidth="7" />
+		<carrier frequency="746500" bandwidth="7" />
+		<carrier frequency="767500" bandwidth="7" />
+		<carrier frequency="788500" bandwidth="7" />
+		<carrier frequency="809500" bandwidth="7" />
+	</country>
+	<country name="Australia - Qld - Brisbane" offset="125">
+		<carrier frequency="177500" bandwidth="7" />
+		<carrier frequency="191500" bandwidth="7" />
+		<carrier frequency="219500" bandwidth="7" />
+		<carrier frequency="226500" bandwidth="7" />
+		<carrier frequency="585500" bandwidth="7" />
+	</country>
+	<country name="Australia - NSW - Sydney" offset="125">
+		<carrier frequency="177500" bandwidth="7" />
+		<carrier frequency="191500" bandwidth="7" />
+		<carrier frequency="219500" bandwidth="7" />
+		<carrier frequency="226500" bandwidth="7" />
+		<carrier frequency="571500" bandwidth="7" />
+		<carrier frequency="578500" bandwidth="7" />
+	</country>
+	<country name="Australia - NSW - Sydney - Eastern Suburbs" offset="125">
+		<carrier frequency="543500" bandwidth="7" />
+		<carrier frequency="564500" bandwidth="7" />
+		<carrier frequency="571500" bandwidth="7" />
+		<carrier frequency="648500" bandwidth="7" />
+		<carrier frequency="669500" bandwidth="7" />
+	</country>
+	<country name="Australia - NSW - Sydney - Manly/Mosman" offset="125">
+		<carrier frequency="543500" bandwidth="7" />
+		<carrier frequency="564500" bandwidth="7" />
+		<carrier frequency="571500" bandwidth="7" />
+		<carrier frequency="648500" bandwidth="7" />
+		<carrier frequency="669500" bandwidth="7" />
+	</country>
+	<country name="Australia - NT - Darwin" offset="125">
+		<carrier frequency="536500" bandwidth="7" />
+		<carrier frequency="543500" bandwidth="7" />
+		<carrier frequency="550500" bandwidth="7" />
+		<carrier frequency="557500" bandwidth="7" />
+	</country>
+	<country name="Australia - SA - Adelaide" offset="125">
+		<carrier frequency="177500" bandwidth="7" />
+		<carrier frequency="191500" bandwidth="7" />
+		<carrier frequency="219500" bandwidth="7" />
+		<carrier frequency="226500" bandwidth="7" />
+		<carrier frequency="564500" bandwidth="7" />
+	</country>
+	<country name="Australia - SA - Adelaide - Elizabeth South" offset="125">
+		<carrier frequency="711500" bandwidth="7" />
+		<carrier frequency="732500" bandwidth="7" />
+		<carrier frequency="760500" bandwidth="7" />
+		<carrier frequency="781500" bandwidth="7" />
+		<carrier frequency="795500" bandwidth="7" />
+	</country>
+	<country name="Australia - SA - Adelaide - Foothills" offset="125">
+		<carrier frequency="732500" bandwidth="7" />
+		<carrier frequency="760500" bandwidth="7" />
+		<carrier frequency="781500" bandwidth="7" />
+		<carrier frequency="795500" bandwidth="7" />
+	</country>
+	<country name="Australia - SA - Adelaide - Victor Harbour" offset="125">
+		<carrier frequency="704500" bandwidth="7" />
+		<carrier frequency="725500" bandwidth="7" />
+		<carrier frequency="746500" bandwidth="7" />
+		<carrier frequency="760500" bandwidth="7" />
+		<carrier frequency="788500" bandwidth="7" />
+	</country>
+	<country name="Australia - Tas - Hobart" offset="125">
+		<carrier frequency="184500" bandwidth="7" />
+		<carrier frequency="191500" bandwidth="7" />
+		<carrier frequency="205500" bandwidth="7" />
+		<carrier frequency="212500" bandwidth="7" />
+		<carrier frequency="219500" bandwidth="7" />
+	</country>
+	<country name="Australia - Tas - Hobart - Cygnet" offset="125">
+		<carrier frequency="620500" bandwidth="7" />
+		<carrier frequency="641500" bandwidth="7" />
+		<carrier frequency="662500" bandwidth="7" />
+		<carrier frequency="683500" bandwidth="7" />
+		<carrier frequency="697500" bandwidth="7" />
+	</country>
+	<country name="Australia - Tas - Hobart - North Eastern Suburbs" offset="125">
+		<carrier frequency="725500" bandwidth="7" />
+		<carrier frequency="767500" bandwidth="7" />
+		<carrier frequency="781500" bandwidth="7" />
+		<carrier frequency="788500" bandwidth="7" />
+		<carrier frequency="795500" bandwidth="7" />
+	</country>
+	<country name="Australia - Vic - Melbourne" offset="125">
+		<carrier frequency="177500" bandwidth="7" />
+		<carrier frequency="191500" bandwidth="7" />
+		<carrier frequency="219500" bandwidth="7" />
+		<carrier frequency="226500" bandwidth="7" />
+		<carrier frequency="536500" bandwidth="7" />
+	</country>
+	<country name="Australia - Vic - Melbourne - Ferntree Gully" offset="125">
+		<carrier frequency="620500" bandwidth="7" />
+		<carrier frequency="641500" bandwidth="7" />
+		<carrier frequency="662500" bandwidth="7" />
+		<carrier frequency="683500" bandwidth="7" />
+		<carrier frequency="711500" bandwidth="7" />
+	</country>
+	<country name="Australia - Vic - Melbourne - Marysville" offset="125">
+		<carrier frequency="690500" bandwidth="7" />
+		<carrier frequency="711500" bandwidth="7" />
+		<carrier frequency="732500" bandwidth="7" />
+		<carrier frequency="753500" bandwidth="7" />
+		<carrier frequency="774500" bandwidth="7" />
+	</country>
+	<country name="Australia - Vic - Melbourne - Rosebud" offset="125">
+		<carrier frequency="690500" bandwidth="7" />
+		<carrier frequency="711500" bandwidth="7" />
+		<carrier frequency="732500" bandwidth="7" />
+		<carrier frequency="753500" bandwidth="7" />
+		<carrier frequency="774500" bandwidth="7" />
+	</country>
+	<country name="Australia - Vic - Melbourne - Safety Beach" offset="125">
+		<carrier frequency="690500" bandwidth="7" />
+		<carrier frequency="711500" bandwidth="7" />
+		<carrier frequency="732500" bandwidth="7" />
+		<carrier frequency="753500" bandwidth="7" />
+		<carrier frequency="774500" bandwidth="7" />
+	</country>
+	<country name="Australia - Vic - Melbourne - Selby" offset="125">
+		<carrier frequency="620500" bandwidth="7" />
+		<carrier frequency="641500" bandwidth="7" />
+		<carrier frequency="662500" bandwidth="7" />
+		<carrier frequency="683500" bandwidth="7" />
+		<carrier frequency="711500" bandwidth="7" />
+	</country>
+	<country name="Australia - Vic - Melbourne - South Yarra" offset="125">
+		<carrier frequency="690500" bandwidth="7" />
+		<carrier frequency="711500" bandwidth="7" />
+		<carrier frequency="732500" bandwidth="7" />
+		<carrier frequency="753500" bandwidth="7" />
+		<carrier frequency="774500" bandwidth="7" />
+	</country>
+	<country name="Australia - Vic - Melbourne - Upway" offset="125">
+		<carrier frequency="620500" bandwidth="7" />
+		<carrier frequency="641500" bandwidth="7" />
+		<carrier frequency="662500" bandwidth="7" />
+		<carrier frequency="683500" bandwidth="7" />
+		<carrier frequency="711500" bandwidth="7" />
+	</country>
+	<country name="Australia - Vic - Melbourne - Warburton" offset="125">
+		<carrier frequency="690500" bandwidth="7" />
+		<carrier frequency="711500" bandwidth="7" />
+		<carrier frequency="732500" bandwidth="7" />
+		<carrier frequency="753500" bandwidth="7" />
+		<carrier frequency="774500" bandwidth="7" />
+	</country>
+	<country name="Australia - WA - Perth" offset="125">
+		<carrier frequency="177500" bandwidth="7" />
+		<carrier frequency="191500" bandwidth="7" />
+		<carrier frequency="219500" bandwidth="7" />
+		<carrier frequency="226500" bandwidth="7" />
+		<carrier frequency="536500" bandwidth="7" />
+	</country>
+	<country name="Australia - WA - Perth - Roleystone" offset="125">
+		<carrier frequency="704500" bandwidth="7" />
+		<carrier frequency="725500" bandwidth="7" />
+		<carrier frequency="746500" bandwidth="7" />
+		<carrier frequency="767500" bandwidth="7" />
+		<carrier frequency="788500" bandwidth="7" />
+	</country>
+	<country name="Australia - WA - Perth - Toodyay" offset="125">
+		<carrier frequency="704500" bandwidth="7" />
+		<carrier frequency="725500" bandwidth="7" />
+		<carrier frequency="746500" bandwidth="7" />
+		<carrier frequency="767500" bandwidth="7" />
+		<carrier frequency="788500" bandwidth="7" />
 	</country>
 	<country name="Belgium - All regions" offset="125">
 		<carrier frequency="482000" bandwidth="8"/>
@@ -388,7 +568,7 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
-  <country name="Germany - Berlin" offset="125">
+	<country name="Germany - Berlin" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
 		<carrier frequency="191500" bandwidth="7" />
 		<carrier frequency="506000" bandwidth="8" />
@@ -400,7 +580,7 @@
 		<carrier frequency="778000" bandwidth="8" />
 		<carrier frequency="826000" bandwidth="8" />		
 	</country>
-  <country name="Germany - Hannover" offset="125">
+	<country name="Germany - Hannover" offset="125">
 		<carrier frequency="198500" bandwidth="7" />
 		<carrier frequency="490000" bandwidth="8" />
 		<carrier frequency="498000" bandwidth="8" />
@@ -875,7 +1055,7 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
-  <country name="Spain - Castilla y Leon - Palencia">
+	<country name="Spain - Castilla y Leon - Palencia">
 		<carrier frequency="802000" bandwidth="8" />
 		<carrier frequency="762000" bandwidth="8" />
 		<carrier frequency="834000" bandwidth="8" />
