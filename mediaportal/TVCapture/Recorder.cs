@@ -856,6 +856,11 @@ namespace MediaPortal.TV.Recording
       //Send command to process thread to start listening to radio
       StartRadioCommand cmd = new StartRadioCommand(radioStationName);
       _commandProcessor.Execute(cmd);
+      if (!cmd.Succeeded)
+      {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SHOW_WARNING, GUIWindowManager.ActiveWindow, 0, 0, 665, 757, null);
+        GUIWindowManager.SendThreadMessage(msg);
+      }
     }
 
 
