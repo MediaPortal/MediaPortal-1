@@ -31,7 +31,7 @@ using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using NZlib.Zip;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace PostSetup
 {

@@ -22,7 +22,7 @@
 // Copyright(C) 2002 Hugo Rumayor Montemayor, All rights reserved.
 using System;
 using System.IO;
-using NZlib.Streams;
+using System.IO.Compression;
 
 namespace id3
 {
@@ -169,7 +169,7 @@ namespace id3
 					}
 				}
 				index=0;
-				stream = new InflaterInputStream(stream);
+                stream = new DeflateStream(stream, CompressionMode.Decompress);
 			}
 			if(Encryption == true)
 			{
