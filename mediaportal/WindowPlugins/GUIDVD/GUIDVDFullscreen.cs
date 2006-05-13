@@ -77,6 +77,11 @@ namespace MediaPortal.GUI.Video
         protected bool OnPlayDVD()
         {
             Log.Write("GUIDVDFullscreen playDVD");
+            if (g_Player.Playing && g_Player.IsDVD)
+            {
+                return true;
+            }
+
             //check if dvd is inserted
             string[] drives = Environment.GetLogicalDrives();
 
