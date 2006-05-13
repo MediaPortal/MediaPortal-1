@@ -1569,6 +1569,29 @@ public class MediaPortalApp : D3DApp, IRender
             Recorder.StopRadio();
           }
           break;
+
+        // Take Screenshot
+        case Action.ActionType.ACTION_TAKE_SCREENSHOT:
+          {
+            try
+            {
+              string directory = string.Format("{0}\\MediaPortal Screenshots\\{1:0000}-{2:00}-{3:00}", Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+              if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+              string fileName = string.Format("{0}\\{1:00}-{2:00}-{3:00}", directory, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+
+              Surface backbuffer = GUIGraphicsContext.DX9Device.GetBackBuffer(0, 0, BackBufferType.Mono);
+              SurfaceLoader.Save(fileName + ".png", ImageFileFormat.Png, backbuffer);
+              backbuffer.Dispose();
+            }
+            catch (Exception ex)
+            {
+              Log.Write("Error taking screenshot: {0}", ex.Message);
+            }
+          }
+          break;
       }
 
       if (g_Player.Playing || Recorder.IsRadio())

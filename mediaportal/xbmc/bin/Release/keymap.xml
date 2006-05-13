@@ -230,6 +230,12 @@
       <sound />
       <description>Mute</description>
     </action>
+    <action>
+      <id>85</id>
+      <key>F11</key>
+      <sound>photo.wav</sound>
+      <description>Take Screenshot</description>
+    </action>
   </global>
   <window>
     <id>603</id>
