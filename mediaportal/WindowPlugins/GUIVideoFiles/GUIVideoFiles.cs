@@ -2082,13 +2082,13 @@ namespace MediaPortal.GUI.Video
       dlgFile.DoModal(GetID);
       destinationFolder = dlgFile.GetDestinationDir();
 
-      //final		
+      //final
       if (dlgFile.Reload())
       {
         int selectedItem = facadeView.SelectedListItemIndex;
         if (currentFolder != dlgFile.GetSourceDir()) selectedItem = -1;
 
-        currentFolder = System.IO.Path.GetDirectoryName(dlgFile.GetSourceDir());
+        //currentFolder = System.IO.Path.GetDirectoryName(dlgFile.GetSourceDir());
         LoadDirectory(currentFolder);
         if (selectedItem >= 0)
         {
