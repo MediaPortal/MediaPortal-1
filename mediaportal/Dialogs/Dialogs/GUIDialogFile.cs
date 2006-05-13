@@ -598,23 +598,25 @@ namespace MediaPortal.Dialogs
 				case 118: // rename
 				{
 					string strSourceName = "";
-					if (item.IsFolder)
+          string strExtension = System.IO.Path.GetExtension(item.Path);
+
+          if (item.IsFolder && !VirtualDirectory.IsImageFile(strExtension))
 						strSourceName = System.IO.Path.GetFileName(item.Path);
 					else
 						strSourceName = System.IO.Path.GetFileNameWithoutExtension(item.Path);
 
-					string strExtension = System.IO.Path.GetExtension(item.Path);
-					string strDestinationName = strSourceName;
+          string strDestinationName = strSourceName;
+					
 					if (GetUserInputString(ref strDestinationName) == true)
 					{
-						if (item.IsFolder)
+            if (item.IsFolder && !VirtualDirectory.IsImageFile(strExtension))
 						{
 							// directory rename
 							if (Directory.Exists(sourceFolder+"\\"+strSourceName))
 							{
 								try
 								{
-									Directory.Move(sourceFolder+"\\"+strSourceName, sourceFolder+"\\"+strDestinationName);
+                  Directory.Move(sourceFolder + "\\" + strSourceName, sourceFolder + "\\" + strDestinationName);
 								}
 								catch(Exception) 
 								{
@@ -626,19 +628,19 @@ namespace MediaPortal.Dialogs
 						else
 						{
 							// file rename
-							if (File.Exists(item.Path))
-							{
-								string strDestinationFile = sourceFolder+"\\"+strDestinationName+strExtension;
-								try
-								{									
-									File.Move(item.Path, strDestinationFile);
-								}
-								catch(Exception) 
-								{
-									ShowErrorDialog(dlg.SelectedId, sourceFolder+"\\"+strSourceName);
-								}
-								m_bReload = true;
-							}
+              if (File.Exists(item.Path))
+              {
+                string strDestinationFile = sourceFolder + "\\" + strDestinationName + strExtension;
+                try
+                {
+                  File.Move(item.Path, strDestinationFile);
+                }
+                catch (Exception)
+                {
+                  ShowErrorDialog(dlg.SelectedId, sourceFolder + "\\" + strSourceName);
+                }
+                m_bReload = true;
+              }
 						}						
 					}
 				}
