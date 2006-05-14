@@ -322,13 +322,14 @@ namespace MediaPortal
       minDepthBits = 16;
       minStencilBits = 0;
       showCursorWhenFullscreen = false;
-
+      bool debugChangeDeviceHack = false;
 
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
       {
         useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
         alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
+        debugChangeDeviceHack = xmlreader.GetValueAsBool("debug", "changedevicehack", false);
       }
       //      startFullscreen=true;
       // When clipCursorWhenFullscreen is TRUE, the cursor is limited to
@@ -338,6 +339,16 @@ namespace MediaPortal
       // multimon debugging difficult.
       clipCursorWhenFullscreen = false;
       InitializeComponent();
+      if (debugChangeDeviceHack)
+      {
+        this.mnuFile.MenuItems.Clear();
+        this.mnuFile.MenuItems.AddRange(new MenuItem[]
+                                        {
+                                          this.mnuChange,
+                                          this.mnuBreak2,
+                                          this.mnuExit
+                                        });
+      }
       this.TopMost = alwaysOnTop;
 
       playlistPlayer = PlayListPlayer.SingletonPlayer;
@@ -2032,8 +2043,8 @@ namespace MediaPortal
       this.mnuFile.Index = 0;
       this.mnuFile.MenuItems.AddRange(new MenuItem[]
                                         {
-                                          this.mnuChange,
-                                          this.mnuBreak2,
+                                          //this.mnuChange,
+                                          //this.mnuBreak2,
                                           this.mnuExit
                                         });
       this.mnuFile.Text = "&File";
@@ -2046,12 +2057,12 @@ namespace MediaPortal
       // 
       // mnuBreak2
       // 
-      this.mnuBreak2.Index = 1;
+      this.mnuBreak2.Index = 0;
       this.mnuBreak2.Text = "-";
       // 
       // mnuExit
       // 
-      this.mnuExit.Index = 2;
+      this.mnuExit.Index = 0;
       this.mnuExit.Text = "Exit";
       this.mnuExit.Click += new EventHandler(this.ExitSample);
       // 
