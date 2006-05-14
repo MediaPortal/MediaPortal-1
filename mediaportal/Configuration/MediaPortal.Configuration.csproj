@@ -274,6 +274,9 @@
     <Compile Include="SectionSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\GeneralOSD.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\EncoderFilters.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -564,6 +567,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SectionSettings.resx">
       <DependentUpon>SectionSettings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralOSD.resx">
+      <DependentUpon>GeneralOSD.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\EncoderFilters.resx">
