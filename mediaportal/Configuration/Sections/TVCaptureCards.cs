@@ -352,7 +352,7 @@ namespace MediaPortal.Configuration.Sections
             for (int i = 0; i < captureCards.Count; i++)
             {
               ((TVCaptureDevice)captureCards[i]).ID = (i + 1);
-              ((TVCaptureDevice)captureCards[i]).LoadDefinitions();
+
             }
             //
             // Finally close our file stream
@@ -511,7 +511,6 @@ namespace MediaPortal.Configuration.Sections
             cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
             cd.VideoDevice = ccd.CaptureName;
             cd.CommercialName = ccd.CommercialName;
-            cd.LoadDefinitions();
             cd.CardType = ccd.Capabilities.CardType;
             cd.DeviceId = ccd.DeviceId;
             cd.SupportsTV = ccd.Capabilities.HasTv;
