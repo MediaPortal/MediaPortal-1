@@ -1915,7 +1915,23 @@ namespace MediaPortal.GUI.TV
         _keyPressedTimer = DateTime.Now;
         _channelName += chKey;
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
-        msg.Label = String.Format("{0} {1} ({2})", GUILocalizeStrings.Get(602), _channelName, GUITVHome.Navigator.CurrentGroup.TvChannels[Int32.Parse(_channelName) - 1].Name);
+
+        string displayedChannelName = string.Empty;
+
+        if (_byIndex)
+          displayedChannelName = GUITVHome.Navigator.CurrentGroup.TvChannels[Int32.Parse(_channelName) - 1].Name;
+        else
+          for (int ChannelCnt = 0; ChannelCnt < GUITVHome.Navigator.CurrentGroup.TvChannels.Count; ChannelCnt++)
+            if (GUITVHome.Navigator.CurrentGroup.TvChannels[ChannelCnt].Number == Int32.Parse(_channelName))
+            {
+              displayedChannelName = GUITVHome.Navigator.CurrentGroup.TvChannels[ChannelCnt].Name;
+              break;
+            }
+          
+        if (displayedChannelName != string.Empty)
+          msg.Label = String.Format("{0} {1} ({2})", GUILocalizeStrings.Get(602), _channelName, displayedChannelName);
+        else
+          msg.Label = String.Format("{0} {1}", GUILocalizeStrings.Get(602), _channelName);
 
         GUIControl cntTarget = base.GetControl((int)Control.LABEL_ROW1);
         if (cntTarget != null)
@@ -1935,6 +1951,37 @@ namespace MediaPortal.GUI.TV
       }
     }
 
+    /*
+      List<TVChannel> channels = CurrentGroup.TvChannels;
+      channelNr--;
+      if (channelNr >= 0 && channelNr < channels.Count)
+      {
+        TVChannel chan = (TVChannel)channels[channelNr];
+        ZapToChannel(chan.Name, useZapDelay);
+      }
+     */
+
+
+    /*
+          List<TVChannel> channels = CurrentGroup.TvChannels;
+      if (channelNr >= 0)
+      {
+        bool found = false;
+        int ChannelCnt = 0;
+        TVChannel chan;
+        while (found == false && ChannelCnt < channels.Count)
+        {
+          chan = (TVChannel)channels[ChannelCnt];
+          if (chan.Number == channelNr)
+          {
+            ZapToChannel(chan.Name, useZapDelay);
+            found = true;
+          }
+          else
+            ChannelCnt++;
+        }
+      }
+*/
     private void OnPageDown()
     {
       // Switch to the next channel group and tune to the first channel in the group
