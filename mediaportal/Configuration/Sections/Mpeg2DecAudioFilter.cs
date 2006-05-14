@@ -34,7 +34,9 @@ using System.Runtime.InteropServices;
 
 using DShowNET;
 using DirectShowLib;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
 
@@ -487,56 +489,55 @@ namespace MediaPortal.Configuration.Sections
       {
         try
         {
-          Int32 regValue = (Int32)subkey.GetValue("AacSpeakerConfig");
+          long regValue = (long)subkey.GetValue("AacSpeakerConfig");
           if (regValue == 1) checkBoxAACDownmix.Checked = true;
           else checkBoxAACDownmix.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("AacDynamicRangeControl");
-          if (regValue == 1) checkBoxAC3DynamicRange.Checked = true;
-          else checkBoxAC3DynamicRange.Checked = false;
-          
-          regValue = (Int32)subkey.GetValue("Ac3DynamicRangeControl");
+          regValue = (long)subkey.GetValue("AacDynamicRangeControl");
           if (regValue == 1) checkBoxAC3DynamicRange.Checked = true;
           else checkBoxAC3DynamicRange.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("Ac3SpeakerConfig");
+          regValue = (long)subkey.GetValue("Ac3DynamicRangeControl");
+          if (regValue == 1) checkBoxAC3DynamicRange.Checked = true;
+          else checkBoxAC3DynamicRange.Checked = false;
+
+          regValue = (long)subkey.GetValue("Ac3SpeakerConfig");
           if (regValue >= 16) checkBoxAC3LFE.Checked = true;
           else checkBoxAC3LFE.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("DtsDynamicRangeControl");
+          regValue = (long)subkey.GetValue("DtsDynamicRangeControl");
           if (regValue == 1) checkBoxDTSDynamicRange.Checked = true;
           else checkBoxDTSDynamicRange.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("DtsSpeakerConfig");
+          regValue = (long)subkey.GetValue("DtsSpeakerConfig");
           if (regValue == 4294967166) checkBoxDTSLFE.Checked = true;
           else checkBoxDTSLFE.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("Normalize");
+          regValue = (long)subkey.GetValue("Normalize");
           if (regValue == 1) checkBoxNormalize.Checked = true;
           else checkBoxNormalize.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("Ac3SpeakerConfig");
-          comboBoxAC3SpeakerConfig.SelectedIndex = regValue;
+          regValue = (long)subkey.GetValue("Ac3SpeakerConfig");
+          comboBoxAC3SpeakerConfig.SelectedIndex = (int)regValue;
 
-          regValue = (Int32)subkey.GetValue("DtsSpeakerConfig");
-          comboBoxDTSSpeakerConfig.SelectedIndex = regValue;
+          regValue = (long)subkey.GetValue("DtsSpeakerConfig");
+          comboBoxDTSSpeakerConfig.SelectedIndex = (int)regValue;
 
+          regValue = (long)subkey.GetValue("Boost");
+          trackBarBoost.Value = (int)regValue;
 
-          regValue = (Int32)subkey.GetValue("Boost");
-          trackBarBoost.Value = regValue;
-
-          regValue = (Int32)subkey.GetValue("SampleFormat");
+          regValue = (long)subkey.GetValue("SampleFormat");
           radioPCM16Bit.Checked = (regValue == 0);
           radioButtonPCM24Bit.Checked = (regValue == 1);
           radioButtonPCM32Bit.Checked = (regValue == 2);
           radioButtonIEEE.Checked = (regValue == 3);
 
-          regValue = (Int32)subkey.GetValue("Ac3SpeakerConfig");
+          regValue = (long)subkey.GetValue("Ac3SpeakerConfig");
           radioButtonAC3Speakers.Checked = (regValue == 0);
           radioButtonAC3SPDIF.Checked = (regValue <= -1);
 
 
-          regValue = (Int32)subkey.GetValue("DtsSpeakerConfig");
+          regValue = (long)subkey.GetValue("DtsSpeakerConfig");
           radioButtonDTSSpeakers.Checked = (regValue == 0);
           radioButtonDTSSPDIF.Checked = (regValue == -1);
         }
