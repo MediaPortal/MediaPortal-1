@@ -254,11 +254,27 @@ namespace MediaPortal.InputDevices
       }
 
       // Get & execute Mapping
-      if (inputHandler.MapAction((int)button))
+      try
       {
-        if (logVerbose) Log.Write("MCE: Command \"{0}\" mapped", button);
+        if (inputHandler.MapAction((int)button))
+        {
+          if (logVerbose) Log.Write("MCE: Command \"{0}\" mapped", button);
+        }
+        else if (logVerbose) Log.Write("MCE: Command \"{0}\" not mapped", button);
       }
-      else if (logVerbose) Log.Write("MCE: Command \"{0}\" not mapped", button);
+      catch (System.ApplicationException ex)
+      {
+        if (ex.Message == "No button mapping found")
+        {
+          if (logVerbose) Log.Write("MCE: No button mapping found for button \"{0}\"", button);
+        }
+        else
+          Log.Write("MCE: Button \"{0}\" threw exception: {1}", button, ex);
+      }
+      catch (Exception ex)
+      {
+        Log.Write("MCE: Button \"{0}\" threw exception: {1}", button, ex);
+      }
     }
 
   }
