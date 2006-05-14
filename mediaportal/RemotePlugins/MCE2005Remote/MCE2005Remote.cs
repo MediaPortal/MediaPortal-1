@@ -169,7 +169,32 @@ namespace MediaPortal.InputDevices
     /// <returns>Command handled</returns>
     public bool WndProc(Message msg)
     {
-      return (controlEnabled && msg.Msg == 0x0319);
+      if (controlEnabled && (msg.Msg == 0x0319))
+      {
+        int command = (msg.LParam.ToInt32() >> 16) & ~0xF000;
+        InputDevices.LastHidRequest = (AppCommands)command;
+
+        RemoteButton button = RemoteButton.None;
+
+        if ((AppCommands)command == AppCommands.VolumeUp)
+          button = RemoteButton.VolumeUp;
+
+        if ((AppCommands)command == AppCommands.VolumeDown)
+          button = RemoteButton.VolumeDown;
+
+        if (button != RemoteButton.None)
+        {
+          // Get & execute Mapping
+          if (inputHandler.MapAction((int)button))
+          {
+            if (logVerbose) Log.Write("MCE: Command \"{0}\" mapped", button);
+          }
+          else if (logVerbose) Log.Write("MCE: Command \"{0}\" not mapped", button);
+        }
+
+        return true;
+      }
+      return false;
     }
 
 
@@ -213,12 +238,6 @@ namespace MediaPortal.InputDevices
         case RemoteButton.Back:
           InputDevices.LastHidRequest = AppCommands.BrowserBackward;
           break;
-        case RemoteButton.VolumeUp:
-          InputDevices.LastHidRequest = AppCommands.VolumeUp;
-          break;
-        case RemoteButton.VolumeDown:
-          InputDevices.LastHidRequest = AppCommands.VolumeDown;
-          break;
         case RemoteButton.ChannelUp:
           InputDevices.LastHidRequest = AppCommands.MediaChannelUp;
           break;
@@ -228,30 +247,18 @@ namespace MediaPortal.InputDevices
         case RemoteButton.Mute:
           InputDevices.LastHidRequest = AppCommands.VolumeMute;
           break;
+        case RemoteButton.VolumeUp:
+          return; // Don't handle this command, benefit from OS' repeat handling instead
+        case RemoteButton.VolumeDown:
+          return; // Don't handle this command, benefit from OS' repeat handling instead
       }
 
       // Get & execute Mapping
-      try
+      if (inputHandler.MapAction((int)button))
       {
-        if (inputHandler.MapAction((int)button))
-        {
-          if (logVerbose) Log.Write("MCE: Command \"{0}\" mapped", button);
-        }
-        else if (logVerbose) Log.Write("MCE: Command \"{0}\" not mapped", button);
+        if (logVerbose) Log.Write("MCE: Command \"{0}\" mapped", button);
       }
-      catch (System.ApplicationException ex)
-      {
-        if (ex.Message == "No button mapping found")
-        {
-          if (logVerbose) Log.Write("MCE: No button mapping found for button \"{0}\"", button);
-        }
-        else
-          Log.Write("MCE: Button \"{0}\" threw exception: {1}", button, ex);
-      }
-      catch (Exception ex)
-      {
-        Log.Write("MCE: Button \"{0}\" threw exception: {1}", button, ex);
-      }
+      else if (logVerbose) Log.Write("MCE: Command \"{0}\" not mapped", button);
     }
 
   }
