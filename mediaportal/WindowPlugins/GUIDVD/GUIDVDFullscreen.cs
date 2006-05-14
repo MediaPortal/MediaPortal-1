@@ -107,7 +107,7 @@ namespace MediaPortal.GUI.Video
             if ((idMovie >= 0) && (idFile >= 0))
             {
               timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
-              Log.Write("DVD Fullscreen: Playback stopped: idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
+              Log.Write("DVDFullscreen: Playback stopped: idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
               if (timeMovieStopped > 0)
               {
                 string title = System.IO.Path.GetFileName(fileName);
