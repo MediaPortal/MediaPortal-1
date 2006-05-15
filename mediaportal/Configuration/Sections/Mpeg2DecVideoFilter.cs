@@ -29,11 +29,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Win32;
-
-//using MediaPortal.GUI.Library;  no longer needed for logging
-
 using System.Runtime.InteropServices;
-
 using DShowNET;
 using DirectShowLib;
 
@@ -44,29 +40,29 @@ namespace MediaPortal.Configuration.Sections
 
   public class MPEG2DecVideoFilter : MediaPortal.Configuration.SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbDeinterlace;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbForcedSubtitles;
-    private MediaPortal.UserInterface.Controls.MPCheckBox cbPlanar;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private MediaPortal.UserInterface.Controls.MPLabel label7;
-    private MediaPortal.UserInterface.Controls.MPLabel label8;
-    private System.Windows.Forms.TrackBar tbBrightness;
-    private System.Windows.Forms.TrackBar tbContrast;
-    private System.Windows.Forms.TrackBar tbHue;
-    private System.Windows.Forms.TrackBar tbSaturation;
-    private Label lblCNote;
-    private Button btnReset;
-    private Button button1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxSettings;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDeinterlaceMethod;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDeinterlace;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxForcedSubtitles;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxPlanar;
+    private MediaPortal.UserInterface.Controls.MPLabel labelBrightness;
+    private MediaPortal.UserInterface.Controls.MPLabel labelContrast;
+    private MediaPortal.UserInterface.Controls.MPLabel labelHue;
+    private MediaPortal.UserInterface.Controls.MPLabel labelSaturation;
+    private System.Windows.Forms.TrackBar trackBarBrightness;
+    private System.Windows.Forms.TrackBar trackBarContrast;
+    private System.Windows.Forms.TrackBar trackBarHue;
+    private System.Windows.Forms.TrackBar trackBarSaturation;
+    private MediaPortal.UserInterface.Controls.MPLabel labelNote;
+    private MediaPortal.UserInterface.Controls.MPButton buttonReset;
+    private MediaPortal.UserInterface.Controls.MPButton buttonTvDefaults;
     private System.ComponentModel.IContainer components = null;
 
     /// <summary>
     /// 
     /// </summary>
     public MPEG2DecVideoFilter()
-      : this("MPEG2Dec Video Decoder")
+      : this("MPV Decoder")
     {
     }
 
@@ -102,237 +98,245 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbDeinterlace = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbForcedSubtitles = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.cbPlanar = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tbSaturation = new System.Windows.Forms.TrackBar();
-      this.tbHue = new System.Windows.Forms.TrackBar();
-      this.tbContrast = new System.Windows.Forms.TrackBar();
-      this.tbBrightness = new System.Windows.Forms.TrackBar();
-      this.lblCNote = new System.Windows.Forms.Label();
-      this.button1 = new System.Windows.Forms.Button();
-      this.btnReset = new System.Windows.Forms.Button();
-      this.groupBox1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.tbSaturation)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.tbHue)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).BeginInit();
+      this.groupBoxSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.buttonReset = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonTvDefaults = new MediaPortal.UserInterface.Controls.MPButton();
+      this.labelNote = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelSaturation = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelHue = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelContrast = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelBrightness = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxDeinterlace = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.labelDeinterlaceMethod = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.checkBoxForcedSubtitles = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxPlanar = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.trackBarSaturation = new System.Windows.Forms.TrackBar();
+      this.trackBarHue = new System.Windows.Forms.TrackBar();
+      this.trackBarContrast = new System.Windows.Forms.TrackBar();
+      this.trackBarBrightness = new System.Windows.Forms.TrackBar();
+      this.groupBoxSettings.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarSaturation)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarHue)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarContrast)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarBrightness)).BeginInit();
       this.SuspendLayout();
       // 
-      // groupBox1
+      // groupBoxSettings
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.btnReset);
-      this.groupBox1.Controls.Add(this.button1);
-      this.groupBox1.Controls.Add(this.lblCNote);
-      this.groupBox1.Controls.Add(this.label8);
-      this.groupBox1.Controls.Add(this.label7);
-      this.groupBox1.Controls.Add(this.label6);
-      this.groupBox1.Controls.Add(this.label4);
-      this.groupBox1.Controls.Add(this.cbDeinterlace);
-      this.groupBox1.Controls.Add(this.label2);
-      this.groupBox1.Controls.Add(this.cbForcedSubtitles);
-      this.groupBox1.Controls.Add(this.cbPlanar);
-      this.groupBox1.Controls.Add(this.tbSaturation);
-      this.groupBox1.Controls.Add(this.tbHue);
-      this.groupBox1.Controls.Add(this.tbContrast);
-      this.groupBox1.Controls.Add(this.tbBrightness);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 405);
-      this.groupBox1.TabIndex = 0;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Settings";
+      this.groupBoxSettings.Controls.Add(this.buttonReset);
+      this.groupBoxSettings.Controls.Add(this.buttonTvDefaults);
+      this.groupBoxSettings.Controls.Add(this.labelNote);
+      this.groupBoxSettings.Controls.Add(this.labelSaturation);
+      this.groupBoxSettings.Controls.Add(this.labelHue);
+      this.groupBoxSettings.Controls.Add(this.labelContrast);
+      this.groupBoxSettings.Controls.Add(this.labelBrightness);
+      this.groupBoxSettings.Controls.Add(this.comboBoxDeinterlace);
+      this.groupBoxSettings.Controls.Add(this.labelDeinterlaceMethod);
+      this.groupBoxSettings.Controls.Add(this.checkBoxForcedSubtitles);
+      this.groupBoxSettings.Controls.Add(this.checkBoxPlanar);
+      this.groupBoxSettings.Controls.Add(this.trackBarSaturation);
+      this.groupBoxSettings.Controls.Add(this.trackBarHue);
+      this.groupBoxSettings.Controls.Add(this.trackBarContrast);
+      this.groupBoxSettings.Controls.Add(this.trackBarBrightness);
+      this.groupBoxSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxSettings.Location = new System.Drawing.Point(0, 0);
+      this.groupBoxSettings.Name = "groupBoxSettings";
+      this.groupBoxSettings.Size = new System.Drawing.Size(472, 405);
+      this.groupBoxSettings.TabIndex = 0;
+      this.groupBoxSettings.TabStop = false;
+      this.groupBoxSettings.Text = "Settings";
       // 
-      // label8
+      // buttonReset
       // 
-      this.label8.Location = new System.Drawing.Point(13, 253);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(64, 16);
-      this.label8.TabIndex = 8;
-      this.label8.Text = "Saturation:";
+      this.buttonReset.Location = new System.Drawing.Point(272, 303);
+      this.buttonReset.Name = "buttonReset";
+      this.buttonReset.Size = new System.Drawing.Size(75, 23);
+      this.buttonReset.TabIndex = 14;
+      this.buttonReset.Text = "Reset";
+      this.buttonReset.UseVisualStyleBackColor = true;
+      this.buttonReset.Click += new System.EventHandler(this.btnReset_Click);
       // 
-      // label7
+      // buttonTvDefaults
       // 
-      this.label7.Location = new System.Drawing.Point(13, 213);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(32, 16);
-      this.label7.TabIndex = 6;
-      this.label7.Text = "Hue:";
+      this.buttonTvDefaults.Location = new System.Drawing.Point(165, 303);
+      this.buttonTvDefaults.Name = "buttonTvDefaults";
+      this.buttonTvDefaults.Size = new System.Drawing.Size(75, 23);
+      this.buttonTvDefaults.TabIndex = 13;
+      this.buttonTvDefaults.Text = "TV defaults";
+      this.buttonTvDefaults.UseVisualStyleBackColor = true;
+      this.buttonTvDefaults.Click += new System.EventHandler(this.button1_Click);
       // 
-      // label6
+      // labelNote
       // 
-      this.label6.Location = new System.Drawing.Point(13, 173);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(56, 16);
-      this.label6.TabIndex = 4;
-      this.label6.Text = "Contrast:";
-      // 
-      // label4
-      // 
-      this.label4.Location = new System.Drawing.Point(13, 133);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(64, 16);
-      this.label4.TabIndex = 2;
-      this.label4.Text = "Brightness:";
-      // 
-      // cbDeinterlace
-      // 
-      this.cbDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.labelNote.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.cbDeinterlace.Items.AddRange(new object[] {
+      this.labelNote.Location = new System.Drawing.Point(13, 362);
+      this.labelNote.Name = "labelNote";
+      this.labelNote.Size = new System.Drawing.Size(440, 40);
+      this.labelNote.TabIndex = 12;
+      this.labelNote.Text = "Note: Using a non-planar output format, bob deinterlacer, or adjusting color prop" +
+          "erties may degrade performance. \"Auto\" deinterlacer will switch to \"Blend\" if ne" +
+          "cessary.";
+      // 
+      // labelSaturation
+      // 
+      this.labelSaturation.Location = new System.Drawing.Point(13, 253);
+      this.labelSaturation.Name = "labelSaturation";
+      this.labelSaturation.Size = new System.Drawing.Size(64, 16);
+      this.labelSaturation.TabIndex = 8;
+      this.labelSaturation.Text = "Saturation:";
+      // 
+      // labelHue
+      // 
+      this.labelHue.Location = new System.Drawing.Point(13, 213);
+      this.labelHue.Name = "labelHue";
+      this.labelHue.Size = new System.Drawing.Size(32, 16);
+      this.labelHue.TabIndex = 6;
+      this.labelHue.Text = "Hue:";
+      // 
+      // labelContrast
+      // 
+      this.labelContrast.Location = new System.Drawing.Point(13, 173);
+      this.labelContrast.Name = "labelContrast";
+      this.labelContrast.Size = new System.Drawing.Size(56, 16);
+      this.labelContrast.TabIndex = 4;
+      this.labelContrast.Text = "Contrast:";
+      // 
+      // labelBrightness
+      // 
+      this.labelBrightness.Location = new System.Drawing.Point(13, 133);
+      this.labelBrightness.Name = "labelBrightness";
+      this.labelBrightness.Size = new System.Drawing.Size(64, 16);
+      this.labelBrightness.TabIndex = 2;
+      this.labelBrightness.Text = "Brightness:";
+      // 
+      // comboBoxDeinterlace
+      // 
+      this.comboBoxDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxDeinterlace.Items.AddRange(new object[] {
             "Auto",
             "Weave",
             "Blend",
             "BOB",
             "Field Shift"});
-      this.cbDeinterlace.Location = new System.Drawing.Point(165, 87);
-      this.cbDeinterlace.Name = "cbDeinterlace";
-      this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
-      this.cbDeinterlace.TabIndex = 11;
+      this.comboBoxDeinterlace.Location = new System.Drawing.Point(165, 87);
+      this.comboBoxDeinterlace.Name = "comboBoxDeinterlace";
+      this.comboBoxDeinterlace.Size = new System.Drawing.Size(288, 21);
+      this.comboBoxDeinterlace.TabIndex = 11;
       // 
-      // label2
+      // labelDeinterlaceMethod
       // 
-      this.label2.Location = new System.Drawing.Point(13, 91);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(112, 16);
-      this.label2.TabIndex = 10;
-      this.label2.Text = "Deinterlace method:";
+      this.labelDeinterlaceMethod.Location = new System.Drawing.Point(13, 91);
+      this.labelDeinterlaceMethod.Name = "labelDeinterlaceMethod";
+      this.labelDeinterlaceMethod.Size = new System.Drawing.Size(112, 16);
+      this.labelDeinterlaceMethod.TabIndex = 10;
+      this.labelDeinterlaceMethod.Text = "Deinterlace method:";
       // 
-      // cbForcedSubtitles
+      // checkBoxForcedSubtitles
       // 
-      this.cbForcedSubtitles.AutoSize = true;
-      this.cbForcedSubtitles.Checked = true;
-      this.cbForcedSubtitles.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.cbForcedSubtitles.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbForcedSubtitles.Location = new System.Drawing.Point(16, 48);
-      this.cbForcedSubtitles.Name = "cbForcedSubtitles";
-      this.cbForcedSubtitles.Size = new System.Drawing.Size(166, 17);
-      this.cbForcedSubtitles.TabIndex = 1;
-      this.cbForcedSubtitles.Text = "Always display forced subtitles";
-      this.cbForcedSubtitles.UseVisualStyleBackColor = true;
+      this.checkBoxForcedSubtitles.AutoSize = true;
+      this.checkBoxForcedSubtitles.Checked = true;
+      this.checkBoxForcedSubtitles.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxForcedSubtitles.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxForcedSubtitles.Location = new System.Drawing.Point(16, 48);
+      this.checkBoxForcedSubtitles.Name = "checkBoxForcedSubtitles";
+      this.checkBoxForcedSubtitles.Size = new System.Drawing.Size(166, 17);
+      this.checkBoxForcedSubtitles.TabIndex = 1;
+      this.checkBoxForcedSubtitles.Text = "Always display forced subtitles";
+      this.checkBoxForcedSubtitles.UseVisualStyleBackColor = true;
       // 
-      // cbPlanar
+      // checkBoxPlanar
       // 
-      this.cbPlanar.AutoSize = true;
-      this.cbPlanar.Checked = true;
-      this.cbPlanar.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.cbPlanar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbPlanar.Location = new System.Drawing.Point(16, 24);
-      this.cbPlanar.Name = "cbPlanar";
-      this.cbPlanar.Size = new System.Drawing.Size(266, 17);
-      this.cbPlanar.TabIndex = 0;
-      this.cbPlanar.Text = "Enable planar YUV media types (YV12, I420, IYUV)";
-      this.cbPlanar.UseVisualStyleBackColor = true;
+      this.checkBoxPlanar.AutoSize = true;
+      this.checkBoxPlanar.Checked = true;
+      this.checkBoxPlanar.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxPlanar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxPlanar.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxPlanar.Name = "checkBoxPlanar";
+      this.checkBoxPlanar.Size = new System.Drawing.Size(266, 17);
+      this.checkBoxPlanar.TabIndex = 0;
+      this.checkBoxPlanar.Text = "Enable planar YUV media types (YV12, I420, IYUV)";
+      this.checkBoxPlanar.UseVisualStyleBackColor = true;
       // 
-      // tbSaturation
+      // trackBarSaturation
       // 
-      this.tbSaturation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.trackBarSaturation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.tbSaturation.LargeChange = 10;
-      this.tbSaturation.Location = new System.Drawing.Point(157, 249);
-      this.tbSaturation.Maximum = 200;
-      this.tbSaturation.Name = "tbSaturation";
-      this.tbSaturation.Size = new System.Drawing.Size(304, 48);
-      this.tbSaturation.TabIndex = 9;
-      this.tbSaturation.TickFrequency = 20;
-      this.tbSaturation.Value = 100;
+      this.trackBarSaturation.LargeChange = 10;
+      this.trackBarSaturation.Location = new System.Drawing.Point(157, 249);
+      this.trackBarSaturation.Maximum = 200;
+      this.trackBarSaturation.Name = "trackBarSaturation";
+      this.trackBarSaturation.Size = new System.Drawing.Size(304, 45);
+      this.trackBarSaturation.TabIndex = 9;
+      this.trackBarSaturation.TickFrequency = 20;
+      this.trackBarSaturation.Value = 100;
       // 
-      // tbHue
+      // trackBarHue
       // 
-      this.tbHue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.trackBarHue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.tbHue.LargeChange = 16;
-      this.tbHue.Location = new System.Drawing.Point(157, 209);
-      this.tbHue.Maximum = 360;
-      this.tbHue.Name = "tbHue";
-      this.tbHue.Size = new System.Drawing.Size(304, 48);
-      this.tbHue.TabIndex = 7;
-      this.tbHue.TickFrequency = 30;
-      this.tbHue.Value = 180;
+      this.trackBarHue.LargeChange = 16;
+      this.trackBarHue.Location = new System.Drawing.Point(157, 209);
+      this.trackBarHue.Maximum = 360;
+      this.trackBarHue.Name = "trackBarHue";
+      this.trackBarHue.Size = new System.Drawing.Size(304, 45);
+      this.trackBarHue.TabIndex = 7;
+      this.trackBarHue.TickFrequency = 30;
+      this.trackBarHue.Value = 180;
       // 
-      // tbContrast
+      // trackBarContrast
       // 
-      this.tbContrast.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.trackBarContrast.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.tbContrast.LargeChange = 10;
-      this.tbContrast.Location = new System.Drawing.Point(157, 169);
-      this.tbContrast.Maximum = 200;
-      this.tbContrast.Name = "tbContrast";
-      this.tbContrast.Size = new System.Drawing.Size(304, 48);
-      this.tbContrast.TabIndex = 5;
-      this.tbContrast.TickFrequency = 20;
-      this.tbContrast.Value = 100;
+      this.trackBarContrast.LargeChange = 10;
+      this.trackBarContrast.Location = new System.Drawing.Point(157, 169);
+      this.trackBarContrast.Maximum = 200;
+      this.trackBarContrast.Name = "trackBarContrast";
+      this.trackBarContrast.Size = new System.Drawing.Size(304, 45);
+      this.trackBarContrast.TabIndex = 5;
+      this.trackBarContrast.TickFrequency = 20;
+      this.trackBarContrast.Value = 100;
       // 
-      // tbBrightness
+      // trackBarBrightness
       // 
-      this.tbBrightness.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.trackBarBrightness.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.tbBrightness.LargeChange = 16;
-      this.tbBrightness.Location = new System.Drawing.Point(157, 129);
-      this.tbBrightness.Maximum = 255;
-      this.tbBrightness.Name = "tbBrightness";
-      this.tbBrightness.Size = new System.Drawing.Size(304, 48);
-      this.tbBrightness.TabIndex = 3;
-      this.tbBrightness.TickFrequency = 16;
-      this.tbBrightness.Value = 128;
-      // 
-      // lblCNote
-      // 
-      this.lblCNote.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.lblCNote.Location = new System.Drawing.Point(13, 362);
-      this.lblCNote.Name = "lblCNote";
-      this.lblCNote.Size = new System.Drawing.Size(440, 40);
-      this.lblCNote.TabIndex = 12;
-      this.lblCNote.Text = "Note: Using a non-planar output format, bob deinterlacer, or adjusting color prop" +
-          "eries may degrade performance. \"Auto\" deinterlacer will switch to \"Blend\" if nec" +
-          "essary.";
-      // 
-      // button1
-      // 
-      this.button1.Location = new System.Drawing.Point(165, 303);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(75, 23);
-      this.button1.TabIndex = 13;
-      this.button1.Text = "PC -> TV";
-      this.button1.UseVisualStyleBackColor = true;
-      this.button1.Click += new System.EventHandler(this.button1_Click);
-      // 
-      // btnReset
-      // 
-      this.btnReset.Location = new System.Drawing.Point(272, 303);
-      this.btnReset.Name = "btnReset";
-      this.btnReset.Size = new System.Drawing.Size(75, 23);
-      this.btnReset.TabIndex = 14;
-      this.btnReset.Text = "Reset";
-      this.btnReset.UseVisualStyleBackColor = true;
-      this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+      this.trackBarBrightness.LargeChange = 16;
+      this.trackBarBrightness.Location = new System.Drawing.Point(157, 129);
+      this.trackBarBrightness.Maximum = 255;
+      this.trackBarBrightness.Name = "trackBarBrightness";
+      this.trackBarBrightness.Size = new System.Drawing.Size(304, 45);
+      this.trackBarBrightness.TabIndex = 3;
+      this.trackBarBrightness.TickFrequency = 16;
+      this.trackBarBrightness.Value = 128;
       // 
       // MPEG2DecVideoFilter
       // 
-      this.Controls.Add(this.groupBox1);
+      this.Controls.Add(this.groupBoxSettings);
       this.Name = "MPEG2DecVideoFilter";
       this.Size = new System.Drawing.Size(472, 408);
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.tbSaturation)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.tbHue)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.tbContrast)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.tbBrightness)).EndInit();
+      this.groupBoxSettings.ResumeLayout(false);
+      this.groupBoxSettings.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarSaturation)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarHue)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarContrast)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.trackBarBrightness)).EndInit();
       this.ResumeLayout(false);
 
     }
     #endregion
+
+    byte[] ConvertFromRegisty(int regValue)
+    {
+      byte[] tempArray = new byte[4];
+      for (int i = 0; i < 4; i++)
+        tempArray[i] = (byte)((regValue & (0xFF << 8 * i)) >> 8 * i);
+      return tempArray;
+    }
 
     public override void LoadSettings()
     {
@@ -342,69 +346,55 @@ namespace MediaPortal.Configuration.Sections
       {
         try
         {
-          Int32 regValue = (Int32)subkey.GetValue("PlanarYUV");
-          if (regValue == 1)
-            cbPlanar.Checked = true;
+          if ((int)subkey.GetValue("PlanarYUV") == 1)
+            checkBoxPlanar.Checked = true;
           else
-            cbPlanar.Checked = false;
+            checkBoxPlanar.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("ForcedSubtitles");
-          if (regValue == 1)
-            cbForcedSubtitles.Checked = true;
+          if ((int)subkey.GetValue("ForcedSubtitles") == 1)
+            checkBoxForcedSubtitles.Checked = true;
           else
-            cbForcedSubtitles.Checked = false;
+            checkBoxForcedSubtitles.Checked = false;
 
+          comboBoxDeinterlace.SelectedIndex = (int)subkey.GetValue("DeinterlaceMethod");
 
-          regValue = (Int32)subkey.GetValue("DeinterlaceMethod");
-          cbDeinterlace.SelectedIndex = regValue;
-          ///
-          /// needs some cleanup here - one single function could do..
-          /// 
-          regValue = (Int32)subkey.GetValue("Brightness");
-          byte[] foo = new byte[4];
-          for (int i = 0; i < 4; i++)
-            foo[i] = (byte)((regValue & (0xFF << 8 * i)) >> 8 * i);
+          byte[] convertedKey;
+
+          convertedKey = ConvertFromRegisty((int)subkey.GetValue("Brightness"));
+          trackBarBrightness.Value = (int)((BitConverter.ToSingle(convertedKey, 0)) + ((BitConverter.ToSingle(convertedKey, 0)) >= 0 ? 0.5f : -0.5f)) + 128;
+
+          convertedKey = ConvertFromRegisty((int)subkey.GetValue("Contrast"));
+          trackBarContrast.Value = (int)((100 * BitConverter.ToSingle(convertedKey, 0) + 0.5f));
+
+          convertedKey = ConvertFromRegisty((int)subkey.GetValue("Hue"));
+          trackBarHue.Value = (int)((BitConverter.ToSingle(convertedKey, 0)) + ((BitConverter.ToSingle(convertedKey, 0)) >= 0 ? 0.5f : -0.5f)) + 180;
+
+          convertedKey = ConvertFromRegisty((int)subkey.GetValue("Saturation"));
+          trackBarSaturation.Value = (int)((100 * BitConverter.ToSingle(convertedKey, 0) + 0.5f));
+
           //Log.Write("DEBUG: Brightness - reg obj. value: {0}", BitConverter.ToInt32(foo, 0).ToString());
           ///(int)(m_procamp[0] + (m_procamp[0] >= 0 ? 0.5f : -0.5f)) + 128
-          regValue = (int)((BitConverter.ToSingle(foo, 0)) + ((BitConverter.ToSingle(foo, 0)) >= 0 ? 0.5f : -0.5f)) + 128;
           //Log.Write("DEBUG: Brightness - prepared Int value: {0}", regValue.ToString());
-          tbBrightness.Value = regValue;
 
-          regValue = (Int32)subkey.GetValue("Contrast");
-          for (int i = 0; i < 4; i++)
-            foo[i] = (byte)((regValue & (0xFF << 8 * i)) >> 8 * i);
           //Log.Write("DEBUG: Contrast - reg obj. value: {0}", BitConverter.ToInt32(foo, 0).ToString());
           /// m_procamp_slider[3].SetPos((int)(100*m_procamp[3] + 0.5f));
-          regValue = (int)((100 * BitConverter.ToSingle(foo, 0) + 0.5f));
           //Log.Write("DEBUG: Contrast - prepared Int value: {0}", regValue.ToString());
-          tbContrast.Value = regValue;
 
-          regValue = (Int32)subkey.GetValue("Hue");
-          for (int i = 0; i < 4; i++)
-            foo[i] = (byte)((regValue & (0xFF << 8 * i)) >> 8 * i);
           //Log.Write("DEBUG: Hue - reg obj. value: {0}", BitConverter.ToInt32(foo, 0).ToString());
           ///(int)(m_procamp[0] + (m_procamp[0] >= 0 ? 0.5f : -0.5f)) + 180
-          regValue = (int)((BitConverter.ToSingle(foo, 0)) + ((BitConverter.ToSingle(foo, 0)) >= 0 ? 0.5f : -0.5f)) + 180;
           //Log.Write("DEBUG: Hue - prepared Int value: {0}", regValue.ToString());
           //byte[] arBitshift = new byte[4];
           //for (int i = 0; i < 32; i++)
           //{
           //    arBitshift[i % 8] += (byte)(((UInt32)((regValue >> i) & 1)) << i);
           //}
-          tbHue.Value = regValue;
 
-          regValue = (Int32)subkey.GetValue("Saturation");
-          for (int i = 0; i < 4; i++)
-            foo[i] = (byte)((regValue & (0xFF << 8 * i)) >> 8 * i);
           //Log.Write("DEBUG: Saturation - reg obj. value: {0}", BitConverter.ToInt32(foo, 0).ToString());
-          regValue = (int)((100 * BitConverter.ToSingle(foo, 0) + 0.5f));
           //Log.Write("DEBUG: Saturation - prepared Int value: {0}", regValue.ToString());
-          tbSaturation.Value = regValue;
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-          MediaPortal.GUI.Library.Log.Write("Exception while loading MPV settings: {0}", e.Message);
-          //throw e;
+          MediaPortal.GUI.Library.Log.Write("Exception while loading MPV settings: {0}", ex.Message);
         }
         finally
         {
@@ -414,6 +404,7 @@ namespace MediaPortal.Configuration.Sections
       else
         MediaPortal.GUI.Library.Log.Write("Registry Key not found: {0}", "Software\\Gabest\\Filters\\MPEG Video Decoder", true);
     }
+
     public override void SaveSettings()
     {
       RegistryKey hkcu = Registry.CurrentUser;
@@ -421,20 +412,39 @@ namespace MediaPortal.Configuration.Sections
 
       if (subkey != null)
       {
-        Int32 regValue;
-        if (cbPlanar.Checked)
+        int regValue;
+
+        if (checkBoxPlanar.Checked)
           regValue = 1;
         else
           regValue = 0;
         subkey.SetValue("PlanarYUV", regValue);
 
-        if (cbForcedSubtitles.Checked)
+        if (checkBoxForcedSubtitles.Checked)
           regValue = 1;
         else
           regValue = 0;
         subkey.SetValue("ForcedSubtitles", regValue);
 
-        subkey.SetValue("DeinterlaceMethod", (Int32)cbDeinterlace.SelectedIndex);
+        subkey.SetValue("DeinterlaceMethod", (int)comboBoxDeinterlace.SelectedIndex);
+
+        float brightness = Convert.ToSingle((UInt32)(trackBarBrightness.Value));
+        brightness = (brightness - (brightness >= 0 ? 0.5f : -0.5f)) - 128;
+        subkey.SetValue("Brightness", BitConverter.ToInt32(BitConverter.GetBytes(brightness), 0), RegistryValueKind.DWord);
+
+        float contrast = Convert.ToSingle((UInt32)(trackBarContrast.Value));
+        contrast = contrast / 100; //- 0.5f;
+        subkey.SetValue("Contrast", BitConverter.ToInt32(BitConverter.GetBytes(contrast), 0), RegistryValueKind.DWord);
+
+        float hue = Convert.ToSingle((UInt32)(trackBarHue.Value));
+        hue = (hue - (hue >= 0 ? 0.5f : -0.5f)) - 180;
+        subkey.SetValue("Hue", BitConverter.ToInt32(BitConverter.GetBytes(hue), 0), RegistryValueKind.DWord);
+
+        float saturation = Convert.ToSingle((UInt32)(trackBarSaturation.Value));
+        saturation = saturation / 100; //- 0.5f;
+        subkey.SetValue("Saturation", BitConverter.ToInt32(BitConverter.GetBytes(saturation), 0), RegistryValueKind.DWord);
+
+        subkey.Close();
 
         /// Floats are dumped to the registry by taking their address and moving 4 bytes into it (unsigned long conversion)
         /// see ~CMpeg2DecFilter()
@@ -447,46 +457,25 @@ namespace MediaPortal.Configuration.Sections
         //arBitshift[3] = (regValue >> 24) & FF;
         //subkey.SetValue("Contrast", BitConverter.GetBytes(arBitshift), RegistryValueKind.DWord);
 
-        UInt32 valueInt = (UInt32)(tbBrightness.Value);
-        float valueFloat = Convert.ToSingle(valueInt);
-        valueFloat = (valueFloat - (valueFloat >= 0 ? 0.5f : -0.5f)) - 128;
         //Log.Write("DEBUG: Write_Brightness - calc value: {0}", valueFloat.ToString());
-        subkey.SetValue("Brightness", BitConverter.ToInt32(BitConverter.GetBytes(valueFloat), 0), RegistryValueKind.DWord);
-
-        valueInt = (UInt32)(tbContrast.Value);
-        valueFloat = Convert.ToSingle(valueInt);
-        valueFloat = valueFloat / 100; //- 0.5f;
         //Log.Write("DEBUG: Write_Contrast - calc value: {0}", valueFloat.ToString());
-        subkey.SetValue("Contrast", BitConverter.ToInt32(BitConverter.GetBytes(valueFloat), 0), RegistryValueKind.DWord);
-
-        valueInt = (UInt32)(tbHue.Value);
-        valueFloat = Convert.ToSingle(valueInt);
-        valueFloat = (valueFloat - (valueFloat >= 0 ? 0.5f : -0.5f)) - 180;
         //Log.Write("DEBUG: Write_Hue - calc value: {0}", valueFloat.ToString());
-        subkey.SetValue("Hue", BitConverter.ToInt32(BitConverter.GetBytes(valueFloat), 0), RegistryValueKind.DWord);
-
-        valueInt = (UInt32)(tbSaturation.Value);
-        valueFloat = Convert.ToSingle(valueInt);
-        valueFloat = valueFloat / 100; //- 0.5f;
         //Log.Write("DEBUG: Write_Saturation - calc value: {0}", valueFloat.ToString());
-        subkey.SetValue("Saturation", BitConverter.ToInt32(BitConverter.GetBytes(valueFloat), 0), RegistryValueKind.DWord);
-
-        subkey.Close();
       }
     }
 
     private void btnReset_Click(object sender, EventArgs e)
     {
-      tbBrightness.Value = 128;
-      tbContrast.Value = 100;
-      tbHue.Value = 180;
-      tbSaturation.Value = 100;
+      trackBarBrightness.Value = 128;
+      trackBarContrast.Value = 100;
+      trackBarHue.Value = 180;
+      trackBarSaturation.Value = 100;
     }
 
     private void button1_Click(object sender, EventArgs e)
     {
-      tbBrightness.Value = 112;
-      tbContrast.Value = 116;
+      trackBarBrightness.Value = 112;
+      trackBarContrast.Value = 116;
     }
 
   }

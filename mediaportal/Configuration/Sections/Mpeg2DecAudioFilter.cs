@@ -75,7 +75,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public MPEG2DecAudioFilter()
-      : this("MPEG/AC3/DTS/LPCM Audio Decoder")
+      : this("MPA Decoder")
     {
     }
 
