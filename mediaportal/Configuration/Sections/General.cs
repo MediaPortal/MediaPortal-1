@@ -369,7 +369,7 @@ namespace MediaPortal.Configuration.Sections
             "MediaPortal always on top",
             "Use Exclusive DirectX Mode for fullscreen tv/video",
             "Enable GUI sound effects",
-            "Enable blank screen in fullscreen mode when idle",
+            "Blank screen in fullscreen mode when MediaPortal is idle",
             "Start with basic home screen",
             "Allow MediaPortal (and other appl.) to gain focus (per-user setting - needs reboo" +
                 "t!)"});
