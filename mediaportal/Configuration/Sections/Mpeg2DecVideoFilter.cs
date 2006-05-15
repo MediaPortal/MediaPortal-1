@@ -371,26 +371,6 @@ namespace MediaPortal.Configuration.Sections
 
           convertedKey = ConvertFromRegisty((int)subkey.GetValue("Saturation"));
           trackBarSaturation.Value = (int)((100 * BitConverter.ToSingle(convertedKey, 0) + 0.5f));
-
-          //Log.Write("DEBUG: Brightness - reg obj. value: {0}", BitConverter.ToInt32(foo, 0).ToString());
-          ///(int)(m_procamp[0] + (m_procamp[0] >= 0 ? 0.5f : -0.5f)) + 128
-          //Log.Write("DEBUG: Brightness - prepared Int value: {0}", regValue.ToString());
-
-          //Log.Write("DEBUG: Contrast - reg obj. value: {0}", BitConverter.ToInt32(foo, 0).ToString());
-          /// m_procamp_slider[3].SetPos((int)(100*m_procamp[3] + 0.5f));
-          //Log.Write("DEBUG: Contrast - prepared Int value: {0}", regValue.ToString());
-
-          //Log.Write("DEBUG: Hue - reg obj. value: {0}", BitConverter.ToInt32(foo, 0).ToString());
-          ///(int)(m_procamp[0] + (m_procamp[0] >= 0 ? 0.5f : -0.5f)) + 180
-          //Log.Write("DEBUG: Hue - prepared Int value: {0}", regValue.ToString());
-          //byte[] arBitshift = new byte[4];
-          //for (int i = 0; i < 32; i++)
-          //{
-          //    arBitshift[i % 8] += (byte)(((UInt32)((regValue >> i) & 1)) << i);
-          //}
-
-          //Log.Write("DEBUG: Saturation - reg obj. value: {0}", BitConverter.ToInt32(foo, 0).ToString());
-          //Log.Write("DEBUG: Saturation - prepared Int value: {0}", regValue.ToString());
         }
         catch (Exception ex)
         {
@@ -429,19 +409,19 @@ namespace MediaPortal.Configuration.Sections
         subkey.SetValue("DeinterlaceMethod", (int)comboBoxDeinterlace.SelectedIndex);
 
         float brightness = Convert.ToSingle((UInt32)(trackBarBrightness.Value));
-        brightness = (brightness - (brightness >= 0 ? 0.5f : -0.5f)) - 128;
+        brightness = (brightness - (brightness >= 0 ? 0.5f : -0.5f)) - 127.5f;
         subkey.SetValue("Brightness", BitConverter.ToInt32(BitConverter.GetBytes(brightness), 0), RegistryValueKind.DWord);
 
         float contrast = Convert.ToSingle((UInt32)(trackBarContrast.Value));
-        contrast = contrast / 100; //- 0.5f;
+        contrast = contrast / 100;
         subkey.SetValue("Contrast", BitConverter.ToInt32(BitConverter.GetBytes(contrast), 0), RegistryValueKind.DWord);
 
         float hue = Convert.ToSingle((UInt32)(trackBarHue.Value));
-        hue = (hue - (hue >= 0 ? 0.5f : -0.5f)) - 180;
+        hue = (hue - (hue >= 0 ? 0.5f : -0.5f)) - 179.5f;
         subkey.SetValue("Hue", BitConverter.ToInt32(BitConverter.GetBytes(hue), 0), RegistryValueKind.DWord);
 
         float saturation = Convert.ToSingle((UInt32)(trackBarSaturation.Value));
-        saturation = saturation / 100; //- 0.5f;
+        saturation = saturation / 100;
         subkey.SetValue("Saturation", BitConverter.ToInt32(BitConverter.GetBytes(saturation), 0), RegistryValueKind.DWord);
 
         subkey.Close();
@@ -456,11 +436,6 @@ namespace MediaPortal.Configuration.Sections
         //arBitshift[2] = (regValue >> 16) & FF;
         //arBitshift[3] = (regValue >> 24) & FF;
         //subkey.SetValue("Contrast", BitConverter.GetBytes(arBitshift), RegistryValueKind.DWord);
-
-        //Log.Write("DEBUG: Write_Brightness - calc value: {0}", valueFloat.ToString());
-        //Log.Write("DEBUG: Write_Contrast - calc value: {0}", valueFloat.ToString());
-        //Log.Write("DEBUG: Write_Hue - calc value: {0}", valueFloat.ToString());
-        //Log.Write("DEBUG: Write_Saturation - calc value: {0}", valueFloat.ToString());
       }
     }
 
@@ -470,6 +445,7 @@ namespace MediaPortal.Configuration.Sections
       trackBarContrast.Value = 100;
       trackBarHue.Value = 180;
       trackBarSaturation.Value = 100;
+      checkBoxPlanar.Checked = true;
     }
 
     private void button1_Click(object sender, EventArgs e)
