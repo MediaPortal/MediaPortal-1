@@ -447,29 +447,29 @@ namespace MediaPortal.Configuration.Sections
         //arBitshift[3] = (regValue >> 24) & FF;
         //subkey.SetValue("Contrast", BitConverter.GetBytes(arBitshift), RegistryValueKind.DWord);
 
-        UInt32 iTmpShit = (UInt32)(tbBrightness.Value);
-        float fTmpShit = Convert.ToSingle(iTmpShit);
-        fTmpShit = (fTmpShit - (fTmpShit >= 0 ? 0.5f : -0.5f)) - 128;
-        //Log.Write("DEBUG: Write_Brightness - calc value: {0}", fTmpShit.ToString());
-        subkey.SetValue("Brightness", BitConverter.ToInt32(BitConverter.GetBytes(fTmpShit), 0), RegistryValueKind.DWord);
+        UInt32 valueInt = (UInt32)(tbBrightness.Value);
+        float valueFloat = Convert.ToSingle(valueInt);
+        valueFloat = (valueFloat - (valueFloat >= 0 ? 0.5f : -0.5f)) - 128;
+        //Log.Write("DEBUG: Write_Brightness - calc value: {0}", valueFloat.ToString());
+        subkey.SetValue("Brightness", BitConverter.ToInt32(BitConverter.GetBytes(valueFloat), 0), RegistryValueKind.DWord);
 
-        iTmpShit = (UInt32)(tbContrast.Value);
-        fTmpShit = Convert.ToSingle(iTmpShit);
-        fTmpShit = fTmpShit / 100; //- 0.5f;
-        //Log.Write("DEBUG: Write_Contrast - calc value: {0}", fTmpShit.ToString());
-        subkey.SetValue("Contrast", BitConverter.ToInt32(BitConverter.GetBytes(fTmpShit), 0), RegistryValueKind.DWord);
+        valueInt = (UInt32)(tbContrast.Value);
+        valueFloat = Convert.ToSingle(valueInt);
+        valueFloat = valueFloat / 100; //- 0.5f;
+        //Log.Write("DEBUG: Write_Contrast - calc value: {0}", valueFloat.ToString());
+        subkey.SetValue("Contrast", BitConverter.ToInt32(BitConverter.GetBytes(valueFloat), 0), RegistryValueKind.DWord);
 
-        iTmpShit = (UInt32)(tbHue.Value);
-        fTmpShit = Convert.ToSingle(iTmpShit);
-        fTmpShit = (fTmpShit - (fTmpShit >= 0 ? 0.5f : -0.5f)) - 180;
-        //Log.Write("DEBUG: Write_Hue - calc value: {0}", fTmpShit.ToString());
-        subkey.SetValue("Hue", BitConverter.ToInt32(BitConverter.GetBytes(fTmpShit), 0), RegistryValueKind.DWord);
+        valueInt = (UInt32)(tbHue.Value);
+        valueFloat = Convert.ToSingle(valueInt);
+        valueFloat = (valueFloat - (valueFloat >= 0 ? 0.5f : -0.5f)) - 180;
+        //Log.Write("DEBUG: Write_Hue - calc value: {0}", valueFloat.ToString());
+        subkey.SetValue("Hue", BitConverter.ToInt32(BitConverter.GetBytes(valueFloat), 0), RegistryValueKind.DWord);
 
-        iTmpShit = (UInt32)(tbSaturation.Value);
-        fTmpShit = Convert.ToSingle(iTmpShit);
-        fTmpShit = fTmpShit / 100; //- 0.5f;
-        //Log.Write("DEBUG: Write_Saturation - calc value: {0}", fTmpShit.ToString());
-        subkey.SetValue("Saturation", BitConverter.ToInt32(BitConverter.GetBytes(fTmpShit), 0), RegistryValueKind.DWord);
+        valueInt = (UInt32)(tbSaturation.Value);
+        valueFloat = Convert.ToSingle(valueInt);
+        valueFloat = valueFloat / 100; //- 0.5f;
+        //Log.Write("DEBUG: Write_Saturation - calc value: {0}", valueFloat.ToString());
+        subkey.SetValue("Saturation", BitConverter.ToInt32(BitConverter.GetBytes(valueFloat), 0), RegistryValueKind.DWord);
 
         subkey.Close();
       }
