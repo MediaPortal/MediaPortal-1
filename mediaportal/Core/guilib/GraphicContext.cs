@@ -26,6 +26,7 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using AMS.Profile;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal.GUI.Library
 {
@@ -122,6 +123,15 @@ namespace MediaPortal.GUI.Library
     static PresentParameters presentParameters;
     static bool vmr9Allowed = true;
     static Size videoSize;
+
+    const uint SC_MONITORPOWER = 0xF170;
+    const uint WM_SYSCOMMAND = 0x0112;
+    const uint MONITOR_ON = 0x0001;
+    const uint MONITOR_OFF = 0x0002;
+
+    [DllImport("user32.dll")]
+    static extern bool SendMessage(IntPtr hWnd, uint Msg, uint wParam, uint lParam);
+
     // singleton. Dont allow any instance of this class
     private GUIGraphicsContext()
     {
@@ -137,6 +147,11 @@ namespace MediaPortal.GUI.Library
       {
         if (value != blankScreen)
         {
+          if (value)
+            SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, MONITOR_OFF);
+          else
+            SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, MONITOR_ON);
+
           blankScreen = value;
           if (OnVideoWindowChanged != null)
             OnVideoWindowChanged();

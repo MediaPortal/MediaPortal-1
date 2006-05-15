@@ -80,6 +80,7 @@ public class MediaPortalApp : D3DApp, IRender
   private RedEye redeyedevice; //PB00//
   private DateTime screenSaverTimer = DateTime.Now;
   private bool useScreenSaver = true;
+  private int timeScreenSaver = 60;
   private bool restoreTopMost = false;
   private bool startWithBasicHome = false;
   private bool _suspended = false;
@@ -412,6 +413,7 @@ public class MediaPortalApp : D3DApp, IRender
     using (Settings xmlreader = new Settings("MediaPortal.xml"))
     {
       useScreenSaver = xmlreader.GetValueAsBool("general", "screensaver", true);
+      timeScreenSaver = xmlreader.GetValueAsInt("general", "screensavertime", 60);
     }
 
     // check if MediaPortal is already running...
@@ -1243,7 +1245,7 @@ public class MediaPortalApp : D3DApp, IRender
                 window > (int)GUIWindow.Window.WINDOW_WIZARD_FINISHED)
             {
               TimeSpan ts = DateTime.Now - screenSaverTimer;
-              if (ts.TotalSeconds >= 60)
+              if (ts.TotalSeconds >= timeScreenSaver)
               {
                 GUIGraphicsContext.BlankScreen = true;
               }
