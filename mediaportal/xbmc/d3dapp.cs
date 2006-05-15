@@ -351,8 +351,43 @@ namespace MediaPortal
       }
       this.TopMost = alwaysOnTop;
 
+      this.Deactivate += new EventHandler(D3DApp_Deactivate);
+      this.Activated += new EventHandler(D3DApp_Activated);
+
       playlistPlayer = PlayListPlayer.SingletonPlayer;
     }
+
+    /// <summary>
+    /// When MediaPortal is minimized or other applicaion gains focus, disable exclusive mode
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    void D3DApp_Deactivate(object sender, EventArgs e)
+    {
+      if (this.useExclusiveDirectXMode)
+      {
+        PresentParameters pp = GUIGraphicsContext.DX9Device.PresentationParameters;
+        pp.Windowed = true;
+
+        GUIGraphicsContext.DX9Device.Reset(pp);
+      }
+    }
+
+    /// <summary>
+    /// When MediaPortal gains focus, enable exclusive mode
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    void D3DApp_Activated(object sender, EventArgs e)
+    {
+      if (this.useExclusiveDirectXMode)
+      {
+        PresentParameters pp = GUIGraphicsContext.DX9Device.PresentationParameters;
+        pp.Windowed = false;
+
+        GUIGraphicsContext.DX9Device.Reset(pp);
+      }
+    } 
 
     protected void SetupCamera2D()
     {
