@@ -81,10 +81,10 @@ namespace MediaPortal.InputDevices
       if (FireDTVRemote.WndProc(ref msg, out action, out  key, out keyCode))
         return true;
 
-      if (HidListener.WndProc(ref msg, out action, out key, out keyCode))
+      if (MCE2005Remote.WndProc(msg))
         return true;
 
-      if (MCE2005Remote.WndProc(msg))
+      if (HidListener.WndProc(ref msg, out action, out key, out keyCode))
         return true;
 
       return false;

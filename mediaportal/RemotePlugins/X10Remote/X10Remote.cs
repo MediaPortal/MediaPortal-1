@@ -37,14 +37,14 @@ namespace MediaPortal.InputDevices
   /// </summary>
   public class X10Remote
   {
-    X10RemoteForm x10Form = null;
-    InputHandler x10Handler = null;
-    bool controlEnabled = false;
-    bool logVerbose = false;
-    bool x10Medion = true;
-    bool x10Ati = false;
-    bool x10UseChannelControl = false;
-    int x10Channel = 0;
+    X10RemoteForm _x10Form = null;
+    InputHandler _inputHandler = null;
+    bool _controlEnabled = false;
+    bool _logVerbose = false;
+    bool _x10Medion = true;
+    bool _x10Ati = false;
+    bool _x10UseChannelControl = false;
+    int _x10Channel = 0;
 
     public X10Remote()
     {
@@ -54,44 +54,51 @@ namespace MediaPortal.InputDevices
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        controlEnabled = xmlreader.GetValueAsBool("remote", "X10", false);
-        x10Medion = xmlreader.GetValueAsBool("remote", "X10Medion", true);
-        x10Ati = xmlreader.GetValueAsBool("remote", "X10ATI", true);
-        logVerbose = xmlreader.GetValueAsBool("remote", "X10VerboseLog", false);
-        x10UseChannelControl = xmlreader.GetValueAsBool("remote", "X10UseChannelControl", false);
-        x10Channel = xmlreader.GetValueAsInt("remote", "X10Channel", 0);
+        _controlEnabled = xmlreader.GetValueAsBool("remote", "X10", false);
+        _x10Medion = xmlreader.GetValueAsBool("remote", "X10Medion", true);
+        _x10Ati = xmlreader.GetValueAsBool("remote", "X10ATI", true);
+        _logVerbose = xmlreader.GetValueAsBool("remote", "X10VerboseLog", false);
+        _x10UseChannelControl = xmlreader.GetValueAsBool("remote", "X10UseChannelControl", false);
+        _x10Channel = xmlreader.GetValueAsInt("remote", "X10Channel", 0);
       }
-      if (x10Handler == null)
+      if (_inputHandler == null)
       {
-        if (controlEnabled)
-          if (x10Medion)
-            x10Handler = new InputHandler("Medion X10");
-          else if (x10Ati)
-            x10Handler = new InputHandler("ATI X10");
+        if (_controlEnabled)
+          if (_x10Medion)
+            _inputHandler = new InputHandler("Medion X10");
+          else if (_x10Ati)
+            _inputHandler = new InputHandler("ATI X10");
           else
-            x10Handler = new InputHandler("Other X10");
+            _inputHandler = new InputHandler("Other X10");
         else
           return;
 
-        if (logVerbose)
+        if (!_inputHandler.IsLoaded)
         {
-          if (x10Medion)
+          _controlEnabled = false;
+          Log.Write("X10: Error loading default mapping file - please reinstall MediaPortal");
+          return;
+        }
+
+        if (_logVerbose)
+        {
+          if (_x10Medion)
             Log.Write("X10Remote: Start Medion");
-          else if (x10Ati)
+          else if (_x10Ati)
             Log.Write("X10Remote: Start ATI");
           else
             Log.Write("X10Remote: Start Other");
         }
       }
-      if (x10Form == null)
+      if (_x10Form == null)
       {
         try
         {
-          x10Form = new X10RemoteForm(new AxX10._DIX10InterfaceEvents_X10CommandEventHandler(this.IX10_X10Command));
+          _x10Form = new X10RemoteForm(new AxX10._DIX10InterfaceEvents_X10CommandEventHandler(this.IX10_X10Command));
         }
         catch (System.Runtime.InteropServices.COMException)
         {
-          controlEnabled = false;
+          _controlEnabled = false;
           Log.Write("X10Remote: Can't initialize");
         }
       }
@@ -99,23 +106,22 @@ namespace MediaPortal.InputDevices
 
     public void DeInit()
     {
-      if (!controlEnabled)
+      if (!_controlEnabled)
         return;
 
-      x10Form.Close();
-      x10Form.Dispose();
-      x10Form = null;
+      _x10Form.Close();
+      _x10Form.Dispose();
+      _x10Form = null;
 
-      x10Handler = null;
+      _inputHandler = null;
 
-      if (logVerbose)
+      if (_logVerbose)
         Log.Write("X10Remote: Stop");
     }
 
-
     public void IX10_X10Command(object sender, AxX10._DIX10InterfaceEvents_X10CommandEvent e)
     {
-      if (logVerbose)
+      if (_logVerbose)
       {
         Log.Write("X10Remote: Command Start --------------------------------------------");
         Log.Write("X10Remote: e            = {0}", e.ToString());
@@ -131,21 +137,19 @@ namespace MediaPortal.InputDevices
       
       if (e.eKeyState.ToString() == "X10KEY_ON" || e.eKeyState.ToString() == "X10KEY_REPEAT")
       {
-        if (x10UseChannelControl && (e.lAddress != x10Channel))
+        if (_x10UseChannelControl && (e.lAddress != _x10Channel))
           return;
 
-        try
+        if (_inputHandler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString())))
         {
-          x10Handler.MapAction((int)Enum.Parse(typeof(X10.EX10Command), e.eCommand.ToString()));
-          if (logVerbose)
-            Log.Write("X10Remote: Action mapped");
+          if (_logVerbose) Log.Write("X10Remote: Action mapped");
         }
-        catch (ApplicationException)
+        else
         {
-          if (logVerbose)
-            Log.Write("X10Remote: Action not mapped");
+          if (_logVerbose) Log.Write("X10Remote: Action not mapped");
         }
       }
     }
+
   }
 }

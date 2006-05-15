@@ -69,12 +69,11 @@ namespace MediaPortal.Tests.Core.InputDevices
     }
 
     [Test]
-    [ExpectedException(typeof(System.IO.FileNotFoundException))]
     public void GetPathFail()
     {
       string xmlFile = "TestFail";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreNotEqual("InputDeviceMappings\\defaults\\TestFail.xml", inputHandler.GetXmlPath(xmlFile));
+      Assert.AreEqual(string.Empty, inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
@@ -103,21 +102,19 @@ namespace MediaPortal.Tests.Core.InputDevices
     }
 
     [Test]
-    [ExpectedException(typeof(System.ApplicationException), "XML version mismatch")]
     public void CheckXmlVersionDefaultFail()
     {
       string xmlFile = "TestVersion";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      inputHandler.CheckXmlFile("InputDeviceMappings\\defaults\\TestVersion.xml");
+      Assert.AreEqual(false, inputHandler.CheckXmlFile("InputDeviceMappings\\defaults\\TestVersion.xml"));
     }
 
     [Test]
-    [ExpectedException(typeof(System.ApplicationException), "XML version mismatch")]
     public void CheckXmlVersionCustomFail()
     {
       string xmlFile = "TestVersion2";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      inputHandler.CheckXmlFile("InputDeviceMappings\\custom\\TestVersion2.xml");
+      Assert.AreEqual(false, inputHandler.CheckXmlFile("InputDeviceMappings\\custom\\TestVersion2.xml"));
     }
 
     [Test]
@@ -177,12 +174,11 @@ namespace MediaPortal.Tests.Core.InputDevices
     }
 
     [Test]
-    [ExpectedException(typeof(System.ApplicationException), "No button mapping found")]
     public void GetMappingNotFound()
     {
       string xmlFile = "TestDefault";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      InputHandler.Mapping mapTest = inputHandler.GetMapping(1);
+      Assert.AreEqual(null, inputHandler.GetMapping(1));
     }
 
     [Test]

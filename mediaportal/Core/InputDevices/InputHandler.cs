@@ -43,15 +43,20 @@ namespace MediaPortal.InputDevices
   /// </summary>
   public class InputHandler
   {
-    int xmlVersion = 3;
-    ArrayList remote;
-    int currentLayer = 1;
+    int _xmlVersion = 3;
+    ArrayList _remote;
+    int _currentLayer = 1;
+    bool _isLoaded = false;
 
+    /// <summary>
+    /// Mapping successful loaded
+    /// </summary>
+    public bool IsLoaded { get { return _isLoaded; } }
 
     /// <summary>
     /// Get current Layer (Multi-Layer support)
     /// </summary>
-    public int CurrentLayer { get { return currentLayer; } }
+    public int CurrentLayer { get { return _currentLayer; } }
 
 
     /// <summary>
@@ -121,9 +126,6 @@ namespace MediaPortal.InputDevices
     /// Constructor: Initializes mappings from XML file
     /// </summary>
     /// <param name="deviceXmlName">Input device name</param>
-    /// Possible exceptions: System.IO.FileNotFoundException
-    ///                      System.Xml.XmlException
-    ///                      ApplicationException("XML version mismatch")
     public InputHandler(string deviceXmlName)
     {
       string xmlPath = GetXmlPath(deviceXmlName);
@@ -151,12 +153,11 @@ namespace MediaPortal.InputDevices
     /// Possible exceptions: System.IO.FileNotFoundException
     ///                      System.Xml.XmlException
     ///                      ApplicationException("XML version mismatch")
-    public void CheckXmlFile(string xmlPath)
+    public bool CheckXmlFile(string xmlPath)
     {
-      if (!File.Exists(xmlPath))
-        throw new System.IO.FileNotFoundException();
-      if (GetXmlVersion(xmlPath) != xmlVersion)
-        throw new ApplicationException("XML version mismatch");
+      if (!File.Exists(xmlPath) || (GetXmlVersion(xmlPath) != _xmlVersion))
+        return false;
+      return true;
     }
 
 
@@ -174,24 +175,13 @@ namespace MediaPortal.InputDevices
       string pathCustom = "InputDeviceMappings\\custom\\" + deviceXmlName + ".xml";
       string pathDefault = "InputDeviceMappings\\defaults\\" + deviceXmlName + ".xml";
 
-      try
+      if (System.IO.File.Exists(pathCustom) && CheckXmlFile(pathCustom))
       {
-        if (System.IO.File.Exists(pathCustom))
-        {
-          CheckXmlFile(pathCustom);
-          path = pathCustom;
-          Log.Write("MAP: using custom mappings for {0}", deviceXmlName);
-        }
-        else
-        {
-          CheckXmlFile(pathDefault);
-          path = pathDefault;
-          Log.Write("MAP: using default mappings for {0}", deviceXmlName);
-        }
+        path = pathCustom;
+        Log.Write("MAP: using custom mappings for {0}", deviceXmlName);
       }
-      catch
+      else if (System.IO.File.Exists(pathDefault) && CheckXmlFile(pathDefault))
       {
-        CheckXmlFile(pathDefault);
         path = pathDefault;
         Log.Write("MAP: using default mappings for {0}", deviceXmlName);
       }
@@ -203,48 +193,50 @@ namespace MediaPortal.InputDevices
     /// Load mapping from XML file
     /// </summary>
     /// <param name="xmlPath">Path to XML file</param>
-    /// Possible exceptions: System.IO.FileNotFoundException
-    ///                      System.Xml.XmlException
     public void LoadMapping(string xmlPath)
     {
-      remote = new ArrayList();
-      XmlDocument doc = new XmlDocument();
-      doc.Load(xmlPath);
-      XmlNodeList listButtons = doc.DocumentElement.SelectNodes("/mappings/remote/button");
-      foreach (XmlNode nodeButton in listButtons)
+      if (xmlPath != string.Empty)
       {
-        string name = nodeButton.Attributes["name"].Value;
-        int value = Convert.ToInt32(nodeButton.Attributes["code"].Value);
-
-        ArrayList mapping = new ArrayList();
-        XmlNodeList listActions = nodeButton.SelectNodes("action");
-        foreach (XmlNode nodeAction in listActions)
+        _remote = new ArrayList();
+        XmlDocument doc = new XmlDocument();
+        doc.Load(xmlPath);
+        XmlNodeList listButtons = doc.DocumentElement.SelectNodes("/mappings/remote/button");
+        foreach (XmlNode nodeButton in listButtons)
         {
-          int cmdKeyChar = 0;
-          int cmdKeyCode = 0;
-          string condition = nodeAction.Attributes["condition"].Value.ToUpper();
-          string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpper();
-          string command = nodeAction.Attributes["command"].Value.ToUpper();
-          string cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpper();
-          if ((command == "ACTION") && (cmdProperty == "93"))
+          string name = nodeButton.Attributes["name"].Value;
+          int value = Convert.ToInt32(nodeButton.Attributes["code"].Value);
+
+          ArrayList mapping = new ArrayList();
+          XmlNodeList listActions = nodeButton.SelectNodes("action");
+          foreach (XmlNode nodeAction in listActions)
           {
-            cmdKeyChar = Convert.ToInt32(nodeAction.Attributes["cmdkeychar"].Value);
-            cmdKeyCode = Convert.ToInt32(nodeAction.Attributes["cmdkeycode"].Value);
+            int cmdKeyChar = 0;
+            int cmdKeyCode = 0;
+            string condition = nodeAction.Attributes["condition"].Value.ToUpper();
+            string conProperty = nodeAction.Attributes["conproperty"].Value.ToUpper();
+            string command = nodeAction.Attributes["command"].Value.ToUpper();
+            string cmdProperty = nodeAction.Attributes["cmdproperty"].Value.ToUpper();
+            if ((command == "ACTION") && (cmdProperty == "93"))
+            {
+              cmdKeyChar = Convert.ToInt32(nodeAction.Attributes["cmdkeychar"].Value);
+              cmdKeyCode = Convert.ToInt32(nodeAction.Attributes["cmdkeycode"].Value);
+            }
+            string sound = string.Empty;
+            XmlAttribute soundAttribute = nodeAction.Attributes["sound"];
+            if (soundAttribute != null)
+              sound = soundAttribute.Value;
+            bool focus = false;
+            XmlAttribute focusAttribute = nodeAction.Attributes["focus"];
+            if (focusAttribute != null)
+              focus = Convert.ToBoolean(focusAttribute.Value);
+            int layer = Convert.ToInt32(nodeAction.Attributes["layer"].Value);
+            Mapping conditionMap = new Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound, focus);
+            mapping.Add(conditionMap);
           }
-          string sound = string.Empty;
-          XmlAttribute soundAttribute = nodeAction.Attributes["sound"];
-          if (soundAttribute != null)
-            sound = soundAttribute.Value;
-          bool focus = false;
-          XmlAttribute focusAttribute = nodeAction.Attributes["focus"];
-          if (focusAttribute != null)
-            focus = Convert.ToBoolean(focusAttribute.Value);
-          int layer = Convert.ToInt32(nodeAction.Attributes["layer"].Value);
-          Mapping conditionMap = new Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound, focus);
-          mapping.Add(conditionMap);
+          RemoteMap remoteMap = new RemoteMap(value, name, mapping);
+          _remote.Add(remoteMap);
         }
-        RemoteMap remoteMap = new RemoteMap(value, name, mapping);
-        remote.Add(remoteMap);
+        _isLoaded = true;
       }
     }
 
@@ -253,8 +245,6 @@ namespace MediaPortal.InputDevices
     /// Evaluates the button number, gets its mapping and executes the action
     /// </summary>
     /// <param name="btnCode">Button code (ref: XML file)</param>
-    /// Possible exceptions: ApplicationException("No button mapping found")
-    ///                      ApplicationException("No button mapping loaded")
     public bool MapAction(int btnCode)
     {
       return DoMapAction(btnCode, -1);
@@ -266,8 +256,6 @@ namespace MediaPortal.InputDevices
     /// </summary>
     /// <param name="btnCode">Button code (ref: XML file)</param>
     /// <param name="processID">Process-ID for close/kill commands</param>
-    /// Possible exceptions: ApplicationException("No button mapping found")
-    ///                      ApplicationException("No button mapping loaded")
     public bool MapAction(int btnCode, int processID)
     {
       return DoMapAction(btnCode, processID);
@@ -279,14 +267,17 @@ namespace MediaPortal.InputDevices
     /// </summary>
     /// <param name="btnCode">Button code (ref: XML file)</param>
     /// <param name="processID">Process-ID for close/kill commands</param>
-    /// Possible exceptions: ApplicationException("No button mapping found")
-    ///                      ApplicationException("No button mapping loaded")
     bool DoMapAction(int btnCode, int processID)
     {
-      if (remote == null)   // No mapping loaded
-        throw new ApplicationException("No button mapping loaded");
+      if (!_isLoaded)   // No mapping loaded
+      {
+        Log.Write("Map: No button mapping loaded");
+        return false;
+      }
       Mapping map = null;
       map = GetMapping(btnCode);
+      if (map == null)
+        return false;
 #if DEBUG
       Log.Write("{0} / {1} / {2} / {3}", map.Condition, map.ConProperty, map.Command, map.CmdProperty);
 #endif
@@ -297,7 +288,6 @@ namespace MediaPortal.InputDevices
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GETFOCUS, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendThreadMessage(msg);
-        //Force.SetForegroundWindow(GUIGraphicsContext.ActiveForm, true);
       }
       switch (map.Command)
       {
@@ -317,10 +307,10 @@ namespace MediaPortal.InputDevices
           GUIWindowManager.SendThreadMessage(msg);
           break;
         case "TOGGLE":  // toggle Layer 1/2
-          if (currentLayer == 1)
-            currentLayer = 2;
+          if (_currentLayer == 1)
+            _currentLayer = 2;
           else
-            currentLayer = 1;
+            _currentLayer = 1;
           break;
         case "POWER": // power down commands
           if ((map.CmdProperty == "STANDBY") || (map.CmdProperty == "HIBERNATE"))
@@ -381,13 +371,12 @@ namespace MediaPortal.InputDevices
     /// </summary>
     /// <param name="btnCode">Button code (ref: XML file)</param>
     /// <returns>Mapping</returns>
-    /// Possible exceptions: ApplicationException("No button mapping found")
     public Mapping GetMapping(int btnCode)
     {
       RemoteMap button = null;
       Mapping found = null;
 
-      foreach (RemoteMap btn in remote)
+      foreach (RemoteMap btn in _remote)
         if (btnCode == btn.Code)
         {
           button = btn;
@@ -395,7 +384,7 @@ namespace MediaPortal.InputDevices
         }
       if (button != null)
         foreach (Mapping map in button.Mapping)
-          if ((map.Layer == 0) || (map.Layer == currentLayer))
+          if ((map.Layer == 0) || (map.Layer == _currentLayer))
           {
             switch (map.Condition)
             {
@@ -432,7 +421,7 @@ namespace MediaPortal.InputDevices
             if (found != null)
               return found;
           }
-      throw new ApplicationException("No button mapping found");
+      return null;
     }
   }
 }

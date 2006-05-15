@@ -39,7 +39,7 @@ namespace MediaPortal.InputDevices
   {
     bool controlEnabled = false;  // MCE Remote enabled
     bool logVerbose = false;      // Verbose logging
-    InputHandler inputHandler;    // Input Mapper
+    InputHandler _inputHandler;    // Input Mapper
 
 
     /// <summary>
@@ -106,30 +106,15 @@ namespace MediaPortal.InputDevices
             return;
           }
 
-      Log.Write("MCE: MCE remote enabled");
-
-      try
+      _inputHandler = new InputHandler("Microsoft MCE");
+      if (!_inputHandler.IsLoaded)
       {
-        inputHandler = new InputHandler("Microsoft MCE");
-      }
-      catch (System.IO.FileNotFoundException)
-      {
-        Log.Write("MCE: can't find default mapping file - reinstall MediaPortal");
+        Log.Write("MCE: Error loading default mapping file - please reinstall MediaPortal");
         DeInit();
         return;
       }
-      catch (System.Xml.XmlException)
-      {
-        Log.Write("MCE: error in default mapping file - reinstall MediaPortal");
-        DeInit();
-        return;
-      }
-      catch (System.ApplicationException)
-      {
-        Log.Write("MCE: version mismatch in default mapping file - reinstall MediaPortal");
-        DeInit();
-        return;
-      }
+      else
+        Log.Write("MCE: MCE remote enabled");
     }
 
 
@@ -142,7 +127,7 @@ namespace MediaPortal.InputDevices
       {
         if (logVerbose) Log.Write("MCE: Stopping MCE remote");
         Remote.Click -= new RemoteEventHandler(OnRemoteClick);
-        inputHandler = null;
+        _inputHandler = null;
         controlEnabled = false;
       }
     }
@@ -185,7 +170,7 @@ namespace MediaPortal.InputDevices
         if (button != RemoteButton.None)
         {
           // Get & execute Mapping
-          if (inputHandler.MapAction((int)button))
+          if (_inputHandler.MapAction((int)button))
           {
             if (logVerbose) Log.Write("MCE: Command \"{0}\" mapped", button);
           }
@@ -254,27 +239,11 @@ namespace MediaPortal.InputDevices
       }
 
       // Get & execute Mapping
-      try
+      if (_inputHandler.MapAction((int)button))
       {
-        if (inputHandler.MapAction((int)button))
-        {
-          if (logVerbose) Log.Write("MCE: Command \"{0}\" mapped", button);
-        }
-        else if (logVerbose) Log.Write("MCE: Command \"{0}\" not mapped", button);
+        if (logVerbose) Log.Write("MCE: Command \"{0}\" mapped", button);
       }
-      catch (System.ApplicationException ex)
-      {
-        if (ex.Message == "No button mapping found")
-        {
-          if (logVerbose) Log.Write("MCE: No button mapping found for button \"{0}\"", button);
-        }
-        else
-          Log.Write("MCE: Button \"{0}\" threw exception: {1}", button, ex);
-      }
-      catch (Exception ex)
-      {
-        Log.Write("MCE: Button \"{0}\" threw exception: {1}", button, ex);
-      }
+      else if (logVerbose) Log.Write("MCE: Command \"{0}\" not mapped", button);
     }
 
   }

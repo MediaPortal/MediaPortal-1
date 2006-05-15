@@ -36,7 +36,7 @@ namespace MediaPortal.InputDevices
     const int WM_KEYDOWN             = 0x0100;
     const int WM_SYSKEYDOWN          = 0x0104;
 
-    InputHandler MameMapper;
+    InputHandler _inputHandler;
 
 		public MameDevice()
 		{
@@ -91,7 +91,6 @@ namespace MediaPortal.InputDevices
     {
       MappingForm dlg = new MappingForm("MameDevice");
       dlg.Show();
-//      dlg.ShowDialog(this);
     }
 
     #endregion
@@ -100,7 +99,9 @@ namespace MediaPortal.InputDevices
 
     public bool WndProc(ref System.Windows.Forms.Message msg)
     {
-			if (MameMapper==null) return false;
+			if (!_inputHandler.IsLoaded)
+        return false;
+
       if ((msg.Msg == WM_KEYDOWN) || (msg.Msg == WM_SYSKEYDOWN))
       {
 				//disabled: following code produces a stack overflow exception
@@ -109,7 +110,7 @@ namespace MediaPortal.InputDevices
         Log.Write("WM_KEYDOWN: wParam {0}", (int)msg.WParam);
         try
         {
-          MameMapper.MapAction((int)msg.WParam);
+          _inputHandler.MapAction((int)msg.WParam);
         }
         catch (ApplicationException)
         {
@@ -128,16 +129,9 @@ namespace MediaPortal.InputDevices
 
     public void Start()
     {
-      try
-      {
-        MameMapper = new InputHandler("MameDevice");
-      }
-      catch (System.IO.FileNotFoundException)
-      {
-      }
-      catch (System.Xml.XmlException)
-      {
-      }
+      _inputHandler = new InputHandler("MameDevice");
+      if (!_inputHandler.IsLoaded)
+        Log.Write("MameDevice: Error loading default mapping file - please reinstall MediaPortal");
     }
 
     public void Stop()

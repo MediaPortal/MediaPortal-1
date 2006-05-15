@@ -35,7 +35,7 @@ namespace MediaPortal.InputDevices
 	{
     bool controlEnabled = false;
     bool logVerbose = false;           // Verbose logging
-    InputHandler inputHandler;
+    InputHandler _inputHandler;
 
     public void Init(IntPtr hwnd)
     {
@@ -51,25 +51,14 @@ namespace MediaPortal.InputDevices
       }
 
       if (controlEnabled)
-        try
-        {
-          inputHandler = new InputHandler("General HID");
-        }
-        catch (System.IO.FileNotFoundException)
+      {
+        _inputHandler = new InputHandler("General HID");
+        if (!_inputHandler.IsLoaded)
         {
           controlEnabled = false;
-          Log.Write("HID: can't find default mapping file - reinstall MediaPortal");
+          Log.Write("HID: Error loading default mapping file - please reinstall MediaPortal");
         }
-        catch (System.Xml.XmlException)
-        {
-          controlEnabled = false;
-          Log.Write("HID: error in default mapping file - reinstall MediaPortal");
-        }
-        catch (System.ApplicationException)
-        {
-          controlEnabled = false;
-          Log.Write("HID: version mismatch in default mapping file - reinstall MediaPortal");
-        }
+      }
     }
 
     public void DeInit()
@@ -88,19 +77,21 @@ namespace MediaPortal.InputDevices
         if (msg.Msg != 0x0319)
           return false;
 
+        AppCommands appCommand = (AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000);
+
         // find out which request the MCE remote handled last
-        if ((AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000) == InputDevices.LastHidRequest)
+        if ((appCommand == InputDevices.LastHidRequest) && (appCommand != AppCommands.VolumeDown) && (appCommand != AppCommands.VolumeUp))
         {
           // possible that it is the same request mapped to an app command?
           if (Environment.TickCount - InputDevices.LastHidRequestTick < 1000)
             return true;
         }
 
-        InputDevices.LastHidRequest = (AppCommands)((msg.LParam.ToInt32() >> 16) & ~0xF000);
+        InputDevices.LastHidRequest = appCommand;
 
         if (logVerbose) Log.Write("HID: Command: {0} - {1}", ((msg.LParam.ToInt32() >> 16) & ~0xF000), InputDevices.LastHidRequest.ToString());
 
-        if (!inputHandler.MapAction((msg.LParam.ToInt32() >> 16) & ~0xF000))
+        if (!_inputHandler.MapAction((msg.LParam.ToInt32() >> 16) & ~0xF000))
           return false;
 
         msg.Result = new IntPtr(1);
