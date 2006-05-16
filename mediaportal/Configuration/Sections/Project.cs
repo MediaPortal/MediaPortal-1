@@ -28,25 +28,27 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
   public class Project : MediaPortal.Configuration.SectionSettings
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private System.Windows.Forms.LinkLabel linkLabel2;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private System.Windows.Forms.LinkLabel linkLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private System.Windows.Forms.LinkLabel linkLabel3;
-    private MediaPortal.UserInterface.Controls.MPLabel label7;
-    private System.Windows.Forms.LinkLabel linkLabel4;
-    private MediaPortal.UserInterface.Controls.MPLabel label8;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxInfo;
+    private MediaPortal.UserInterface.Controls.MPLabel labelInfo1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxContact;
+    private MediaPortal.UserInterface.Controls.MPLabel labelIrcChannelData;
+    private MediaPortal.UserInterface.Controls.MPLabel labelIrcChannel;
+    private System.Windows.Forms.LinkLabel linkLabelForums;
+    private MediaPortal.UserInterface.Controls.MPLabel labelForums;
+    private System.Windows.Forms.LinkLabel linkLabelHomepage;
+    private MediaPortal.UserInterface.Controls.MPLabel labelHomepage;
+    private MediaPortal.UserInterface.Controls.MPLabel labelOnlineDocumentation;
+    private System.Windows.Forms.LinkLabel linkLabelOnlineDocumentation;
+    private MediaPortal.UserInterface.Controls.MPLabel labelSourceForge;
+    private System.Windows.Forms.LinkLabel linkLabelSourceforge;
+    private MediaPortal.UserInterface.Controls.MPLabel labelInfo2;
     private System.ComponentModel.IContainer components = null;
 
     public Project()
@@ -85,175 +87,188 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.linkLabel4 = new System.Windows.Forms.LinkLabel();
-      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.linkLabel3 = new System.Windows.Forms.LinkLabel();
-      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.linkLabel2 = new System.Windows.Forms.LinkLabel();
-      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupBox1.SuspendLayout();
-      this.groupBox2.SuspendLayout();
+      this.groupBoxInfo = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.labelInfo2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelInfo1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBoxContact = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.linkLabelSourceforge = new System.Windows.Forms.LinkLabel();
+      this.labelSourceForge = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.linkLabelOnlineDocumentation = new System.Windows.Forms.LinkLabel();
+      this.labelOnlineDocumentation = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelIrcChannelData = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelIrcChannel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.linkLabelForums = new System.Windows.Forms.LinkLabel();
+      this.labelForums = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.linkLabelHomepage = new System.Windows.Forms.LinkLabel();
+      this.labelHomepage = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBoxInfo.SuspendLayout();
+      this.groupBoxContact.SuspendLayout();
       this.SuspendLayout();
       // 
-      // groupBox1
+      // groupBoxInfo
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.label8);
-      this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 104);
-      this.groupBox1.TabIndex = 0;
-      this.groupBox1.TabStop = false;
+      this.groupBoxInfo.Controls.Add(this.labelInfo2);
+      this.groupBoxInfo.Controls.Add(this.labelInfo1);
+      this.groupBoxInfo.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxInfo.Location = new System.Drawing.Point(0, 0);
+      this.groupBoxInfo.Name = "groupBoxInfo";
+      this.groupBoxInfo.Size = new System.Drawing.Size(472, 104);
+      this.groupBoxInfo.TabIndex = 0;
+      this.groupBoxInfo.TabStop = false;
       // 
-      // label8
+      // labelInfo2
       // 
-      this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.labelInfo2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.label8.Location = new System.Drawing.Point(16, 56);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(440, 30);
-      this.label8.TabIndex = 1;
-      this.label8.Text = "It allows you to listen to your favorite music and radio, watch your videos and D" +
+      this.labelInfo2.Location = new System.Drawing.Point(16, 56);
+      this.labelInfo2.Name = "labelInfo2";
+      this.labelInfo2.Size = new System.Drawing.Size(440, 30);
+      this.labelInfo2.TabIndex = 1;
+      this.labelInfo2.Text = "It allows you to listen to your favorite music and radio, watch your videos and D" +
           "VDs, view, schedule and record live TV and much more!";
       // 
-      // label1
+      // labelInfo1
       // 
-      this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.labelInfo1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.label1.Location = new System.Drawing.Point(16, 24);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(440, 32);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "MediaPortal is an OpenSource project, hosted at SourceForge, that will turn your " +
-          "home computer into a fully fledged multi media center (HTPC).";
+      this.labelInfo1.Location = new System.Drawing.Point(16, 24);
+      this.labelInfo1.Name = "labelInfo1";
+      this.labelInfo1.Size = new System.Drawing.Size(440, 32);
+      this.labelInfo1.TabIndex = 0;
+      this.labelInfo1.Text = "MediaPortal is an open source project, hosted at SourceForge, that will turn your" +
+          " home computer into a fully fledged multi media center (HTPC).";
       // 
-      // groupBox2
+      // groupBoxContact
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxContact.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox2.Controls.Add(this.linkLabel4);
-      this.groupBox2.Controls.Add(this.label7);
-      this.groupBox2.Controls.Add(this.linkLabel3);
-      this.groupBox2.Controls.Add(this.label6);
-      this.groupBox2.Controls.Add(this.label5);
-      this.groupBox2.Controls.Add(this.label4);
-      this.groupBox2.Controls.Add(this.linkLabel2);
-      this.groupBox2.Controls.Add(this.label3);
-      this.groupBox2.Controls.Add(this.linkLabel1);
-      this.groupBox2.Controls.Add(this.label2);
-      this.groupBox2.Location = new System.Drawing.Point(0, 112);
-      this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(472, 232);
-      this.groupBox2.TabIndex = 1;
-      this.groupBox2.TabStop = false;
-      this.groupBox2.Text = "Contact";
+      this.groupBoxContact.Controls.Add(this.linkLabelSourceforge);
+      this.groupBoxContact.Controls.Add(this.labelSourceForge);
+      this.groupBoxContact.Controls.Add(this.linkLabelOnlineDocumentation);
+      this.groupBoxContact.Controls.Add(this.labelOnlineDocumentation);
+      this.groupBoxContact.Controls.Add(this.labelIrcChannelData);
+      this.groupBoxContact.Controls.Add(this.labelIrcChannel);
+      this.groupBoxContact.Controls.Add(this.linkLabelForums);
+      this.groupBoxContact.Controls.Add(this.labelForums);
+      this.groupBoxContact.Controls.Add(this.linkLabelHomepage);
+      this.groupBoxContact.Controls.Add(this.labelHomepage);
+      this.groupBoxContact.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxContact.Location = new System.Drawing.Point(0, 112);
+      this.groupBoxContact.Name = "groupBoxContact";
+      this.groupBoxContact.Size = new System.Drawing.Size(472, 232);
+      this.groupBoxContact.TabIndex = 1;
+      this.groupBoxContact.TabStop = false;
+      this.groupBoxContact.Text = "Contact";
       // 
-      // linkLabel4
+      // linkLabelSourceforge
       // 
-      this.linkLabel4.Location = new System.Drawing.Point(24, 160);
-      this.linkLabel4.Name = "linkLabel4";
-      this.linkLabel4.Size = new System.Drawing.Size(224, 16);
-      this.linkLabel4.TabIndex = 7;
-      this.linkLabel4.TabStop = true;
-      this.linkLabel4.Text = "http://sourceforge.net/projects/mediaportal";
-      this.linkLabel4.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel4_LinkClicked);
+      this.linkLabelSourceforge.AutoSize = true;
+      this.linkLabelSourceforge.Location = new System.Drawing.Point(24, 160);
+      this.linkLabelSourceforge.Name = "linkLabelSourceforge";
+      this.linkLabelSourceforge.Size = new System.Drawing.Size(213, 13);
+      this.linkLabelSourceforge.TabIndex = 7;
+      this.linkLabelSourceforge.TabStop = true;
+      this.linkLabelSourceforge.Text = "http://sourceforge.net/projects/mediaportal";
+      this.linkLabelSourceforge.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel4_LinkClicked);
       // 
-      // label7
+      // labelSourceForge
       // 
-      this.label7.Location = new System.Drawing.Point(16, 144);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(72, 15);
-      this.label7.TabIndex = 6;
-      this.label7.Text = "Sourceforge:";
+      this.labelSourceForge.AutoSize = true;
+      this.labelSourceForge.Location = new System.Drawing.Point(16, 144);
+      this.labelSourceForge.Name = "labelSourceForge";
+      this.labelSourceForge.Size = new System.Drawing.Size(135, 13);
+      this.labelSourceForge.TabIndex = 6;
+      this.labelSourceForge.Text = "SourceForge Project Page:";
       // 
-      // linkLabel3
+      // linkLabelOnlineDocumentation
       // 
-      this.linkLabel3.Location = new System.Drawing.Point(24, 120);
-      this.linkLabel3.Name = "linkLabel3";
-      this.linkLabel3.Size = new System.Drawing.Size(216, 16);
-      this.linkLabel3.TabIndex = 5;
-      this.linkLabel3.TabStop = true;
-      this.linkLabel3.Text = "http://www.team-mediaportal.com/dokuw";
-      this.linkLabel3.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel3_LinkClicked);
+      this.linkLabelOnlineDocumentation.AutoSize = true;
+      this.linkLabelOnlineDocumentation.Location = new System.Drawing.Point(24, 120);
+      this.linkLabelOnlineDocumentation.Name = "linkLabelOnlineDocumentation";
+      this.linkLabelOnlineDocumentation.Size = new System.Drawing.Size(205, 13);
+      this.linkLabelOnlineDocumentation.TabIndex = 5;
+      this.linkLabelOnlineDocumentation.TabStop = true;
+      this.linkLabelOnlineDocumentation.Text = "http://www.team-mediaportal.com/mpwiki";
+      this.linkLabelOnlineDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel3_LinkClicked);
       // 
-      // label6
+      // labelOnlineDocumentation
       // 
-      this.label6.Location = new System.Drawing.Point(16, 105);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(100, 15);
-      this.label6.TabIndex = 4;
-      this.label6.Text = "Wiki:";
+      this.labelOnlineDocumentation.AutoSize = true;
+      this.labelOnlineDocumentation.Location = new System.Drawing.Point(16, 105);
+      this.labelOnlineDocumentation.Name = "labelOnlineDocumentation";
+      this.labelOnlineDocumentation.Size = new System.Drawing.Size(115, 13);
+      this.labelOnlineDocumentation.TabIndex = 4;
+      this.labelOnlineDocumentation.Text = "Online Documentation:";
       // 
-      // label5
+      // labelIrcChannelData
       // 
-      this.label5.Location = new System.Drawing.Point(24, 200);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(232, 16);
-      this.label5.TabIndex = 9;
-      this.label5.Text = "IRC network: EFNet / channel: #MediaPortal";
+      this.labelIrcChannelData.AutoSize = true;
+      this.labelIrcChannelData.Location = new System.Drawing.Point(24, 200);
+      this.labelIrcChannelData.Name = "labelIrcChannelData";
+      this.labelIrcChannelData.Size = new System.Drawing.Size(220, 13);
+      this.labelIrcChannelData.TabIndex = 9;
+      this.labelIrcChannelData.Text = "IRC network: EFNet / channel: #MediaPortal";
       // 
-      // label4
+      // labelIrcChannel
       // 
-      this.label4.Location = new System.Drawing.Point(16, 184);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(32, 16);
-      this.label4.TabIndex = 8;
-      this.label4.Text = "IRC:";
+      this.labelIrcChannel.AutoSize = true;
+      this.labelIrcChannel.Location = new System.Drawing.Point(16, 184);
+      this.labelIrcChannel.Name = "labelIrcChannel";
+      this.labelIrcChannel.Size = new System.Drawing.Size(105, 13);
+      this.labelIrcChannel.TabIndex = 8;
+      this.labelIrcChannel.Text = "Official IRC Channel:";
       // 
-      // linkLabel2
+      // linkLabelForums
       // 
-      this.linkLabel2.Location = new System.Drawing.Point(24, 80);
-      this.linkLabel2.Name = "linkLabel2";
-      this.linkLabel2.Size = new System.Drawing.Size(304, 16);
-      this.linkLabel2.TabIndex = 3;
-      this.linkLabel2.TabStop = true;
-      this.linkLabel2.Text = "http://nolanparty.com/mediaportal.sourceforge.net/phpBB2";
-      this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
+      this.linkLabelForums.AutoSize = true;
+      this.linkLabelForums.Location = new System.Drawing.Point(24, 80);
+      this.linkLabelForums.Name = "linkLabelForums";
+      this.linkLabelForums.Size = new System.Drawing.Size(170, 13);
+      this.linkLabelForums.TabIndex = 3;
+      this.linkLabelForums.TabStop = true;
+      this.linkLabelForums.Text = "http://forum.team-mediaportal.com";
+      this.linkLabelForums.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
       // 
-      // label3
+      // labelForums
       // 
-      this.label3.Location = new System.Drawing.Point(16, 64);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(48, 16);
-      this.label3.TabIndex = 2;
-      this.label3.Text = "Forums:";
+      this.labelForums.AutoSize = true;
+      this.labelForums.Location = new System.Drawing.Point(16, 64);
+      this.labelForums.Name = "labelForums";
+      this.labelForums.Size = new System.Drawing.Size(44, 13);
+      this.labelForums.TabIndex = 2;
+      this.labelForums.Text = "Forums:";
       // 
-      // linkLabel1
+      // linkLabelHomepage
       // 
-      this.linkLabel1.Location = new System.Drawing.Point(24, 40);
-      this.linkLabel1.Name = "linkLabel1";
-      this.linkLabel1.Size = new System.Drawing.Size(176, 16);
-      this.linkLabel1.TabIndex = 1;
-      this.linkLabel1.TabStop = true;
-      this.linkLabel1.Text = "http://www.team-mediaportal.com";
-      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      this.linkLabelHomepage.AutoSize = true;
+      this.linkLabelHomepage.Location = new System.Drawing.Point(24, 40);
+      this.linkLabelHomepage.Name = "linkLabelHomepage";
+      this.linkLabelHomepage.Size = new System.Drawing.Size(168, 13);
+      this.linkLabelHomepage.TabIndex = 1;
+      this.linkLabelHomepage.TabStop = true;
+      this.linkLabelHomepage.Text = "http://www.team-mediaportal.com";
+      this.linkLabelHomepage.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
       // 
-      // label2
+      // labelHomepage
       // 
-      this.label2.Location = new System.Drawing.Point(16, 24);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(64, 16);
-      this.label2.TabIndex = 0;
-      this.label2.Text = "Homepage:";
+      this.labelHomepage.AutoSize = true;
+      this.labelHomepage.Location = new System.Drawing.Point(16, 24);
+      this.labelHomepage.Name = "labelHomepage";
+      this.labelHomepage.Size = new System.Drawing.Size(62, 13);
+      this.labelHomepage.TabIndex = 0;
+      this.labelHomepage.Text = "Homepage:";
       // 
       // Project
       // 
-      this.Controls.Add(this.groupBox2);
-      this.Controls.Add(this.groupBox1);
+      this.Controls.Add(this.groupBoxContact);
+      this.Controls.Add(this.groupBoxInfo);
       this.Name = "Project";
       this.Size = new System.Drawing.Size(472, 408);
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox2.ResumeLayout(false);
+      this.groupBoxInfo.ResumeLayout(false);
+      this.groupBoxContact.ResumeLayout(false);
+      this.groupBoxContact.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -261,44 +276,44 @@ namespace MediaPortal.Configuration.Sections
 
     private void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
     {
-      if (linkLabel1.Text == null)
+      if (linkLabelHomepage.Text == null)
         return;
-      if (linkLabel1.Text.Length > 0)
+      if (linkLabelHomepage.Text.Length > 0)
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabel1.Text);
+        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelHomepage.Text);
         System.Diagnostics.Process.Start(sInfo);
       }
     }
 
     private void linkLabel2_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
     {
-      if (linkLabel2.Text == null)
+      if (linkLabelForums.Text == null)
         return;
-      if (linkLabel2.Text.Length > 0)
+      if (linkLabelForums.Text.Length > 0)
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabel2.Text);
+        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelForums.Text);
         System.Diagnostics.Process.Start(sInfo);
       }
     }
 
     private void linkLabel3_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
     {
-      if (linkLabel3.Text == null)
+      if (linkLabelOnlineDocumentation.Text == null)
         return;
-      if (linkLabel3.Text.Length > 0)
+      if (linkLabelOnlineDocumentation.Text.Length > 0)
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabel3.Text);
+        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelOnlineDocumentation.Text);
         System.Diagnostics.Process.Start(sInfo);
       }
     }
 
     private void linkLabel4_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
     {
-      if (linkLabel4.Text == null)
+      if (linkLabelSourceforge.Text == null)
         return;
-      if (linkLabel4.Text.Length > 0)
+      if (linkLabelSourceforge.Text.Length > 0)
       {
-        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabel4.Text);
+        System.Diagnostics.ProcessStartInfo sInfo = new System.Diagnostics.ProcessStartInfo(linkLabelSourceforge.Text);
         System.Diagnostics.Process.Start(sInfo);
       }
     }
