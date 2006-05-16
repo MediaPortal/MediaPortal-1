@@ -161,6 +161,7 @@ namespace MediaPortal.Configuration.Sections
 			new string[] { "general", "exclusivemode", "true" },
 			new string[] { "general", "enableguisounds", "true" },
 			new string[] { "general", "screensaver", "false" },
+      new string[] { "general", "turnoffmonitor", "false" },
 			new string[] { "general", "startbasichome", "false" },
       new string[] { "general", "allowfocus", "false" } };
 
@@ -190,7 +191,7 @@ namespace MediaPortal.Configuration.Sections
         // Allow Focus
         RegistryKey hkcu = Registry.CurrentUser;
         RegistryKey subkey = hkcu.OpenSubKey(@"Control Panel\Desktop", false);
-        settingsCheckedListBox.SetItemChecked(16, ((int)subkey.GetValue("ForegroundLockTimeout", 2000000) == 0));
+        settingsCheckedListBox.SetItemChecked(17, ((int)subkey.GetValue("ForegroundLockTimeout", 2000000) == 0));
         subkey.Close();
         hkcu.Close();
       }
@@ -250,7 +251,7 @@ namespace MediaPortal.Configuration.Sections
         subkey.Close();
 
 
-        if (settingsCheckedListBox.GetItemChecked(16))
+        if (settingsCheckedListBox.GetItemChecked(17))
         {
           subkey = hkcu.OpenSubKey(@"Control Panel\Desktop", true);
           subkey.SetValue("ForegroundLockTimeout", 0);
@@ -261,8 +262,8 @@ namespace MediaPortal.Configuration.Sections
         subkey = hkcu.OpenSubKey(@"Control Panel\Desktop", true);
         bool focusChecked = ((int)subkey.GetValue("ForegroundLockTimeout", 200000) == 0);
 
-        if (focusChecked != settingsCheckedListBox.GetItemChecked(16))
-          if (settingsCheckedListBox.GetItemChecked(16))
+        if (focusChecked != settingsCheckedListBox.GetItemChecked(17))
+          if (settingsCheckedListBox.GetItemChecked(17))
             subkey.SetValue("ForegroundLockTimeout", 0);
           else
             subkey.SetValue("ForegroundLockTimeout", 200000);
@@ -344,7 +345,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 64);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 304);
+      this.groupBox1.Size = new System.Drawing.Size(472, 320);
       this.groupBox1.TabIndex = 1;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "General Settings";
@@ -370,12 +371,13 @@ namespace MediaPortal.Configuration.Sections
             "Use Exclusive DirectX Mode for fullscreen tv/video",
             "Enable GUI sound effects",
             "Blank screen in fullscreen mode when MediaPortal is idle",
+            "Turn off monitor when blanking screen",
             "Start with basic home screen",
-            "Allow MediaPortal (and other appl.) to gain focus (per-user setting - needs reboo" +
+            "Allow MediaPortal (and other apps) to gain focus (per-user setting - needs reboo" +
                 "t!)"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 259);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 274);
       this.settingsCheckedListBox.TabIndex = 0;
       // 
       // groupBox2

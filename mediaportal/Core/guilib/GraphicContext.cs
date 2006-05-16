@@ -120,6 +120,7 @@ namespace MediaPortal.GUI.Library
     static float lasttime = 0f;
     static bool vmr9RenderBusy = false;
     static bool blankScreen = false;
+    static bool turnOffMonitor = false;
     static PresentParameters presentParameters;
     static bool vmr9Allowed = true;
     static Size videoSize;
@@ -138,7 +139,7 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// Property to enable/disable screenoutput
+    /// Enable/disable screen output
     /// </summary>
     static public bool BlankScreen
     {
@@ -147,10 +148,13 @@ namespace MediaPortal.GUI.Library
       {
         if (value != blankScreen)
         {
-          if (value)
-            SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, MONITOR_OFF);
-          else
-            SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, MONITOR_ON);
+          if (turnOffMonitor)
+          {
+            if (value)
+              SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, MONITOR_OFF);
+            else
+              SendMessage(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER, MONITOR_ON);
+          }
 
           blankScreen = value;
           if (OnVideoWindowChanged != null)
@@ -284,6 +288,7 @@ namespace MediaPortal.GUI.Library
         m_iScrollSpeedVertical = xmlReader.GetValueAsInt("general", "scrollspeedvertical", 5);
         m_iScrollSpeedHorizontal = xmlReader.GetValueAsInt("general", "scrollspeedhorizontal", 5);
         m_bAnimations = xmlReader.GetValueAsBool("general", "animations", true);
+        turnOffMonitor = xmlReader.GetValueAsBool("general", "turnoffmonitor", false);
       }
     }
 
