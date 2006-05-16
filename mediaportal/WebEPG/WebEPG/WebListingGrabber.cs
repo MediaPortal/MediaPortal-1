@@ -117,8 +117,7 @@ namespace MediaPortal.EPG
         return false;
       }
 
-      _listingRequest = new HTTPRequest();
-      _listingRequest.Host = baseUrl;
+      _listingRequest = new HTTPRequest(baseUrl);
       _listingRequest.GetQuery = _xmlreader.GetValueAsString("Listing", "SearchURL", "");
       _listingRequest.PostQuery = _xmlreader.GetValueAsString("Listing", "PostQuery", "");
 
@@ -598,10 +597,8 @@ namespace MediaPortal.EPG
         if(_requestSubURL != null)
           sublinkRequest = new HTTPRequest(_requestSubURL);
         else
-        {
-          sublinkRequest = new HTTPRequest();
-          sublinkRequest.Host = _listingRequest.Host;
-        }
+          sublinkRequest = new HTTPRequest(_listingRequest.Url);
+
 
         if(htmlProf.GetHyperLink(index, _SubListingLink, ref sublinkRequest))
         {
@@ -623,6 +620,12 @@ namespace MediaPortal.EPG
 
             if (SubData.IsProgram(_removeProgramsList))
               return null;
+
+            //if (program.EndTime == null && SubData.EndTime != null)
+            //{
+            //  program.EndTime = SubData.EndTime;
+            //  Log.WriteFile(Log.LogType.Log, false, "[Debug] WebEPG: Guide, Program end  : {0}:{1} - {2}/{3}/{4}", SubData.EndTime.Hour, guideData.EndTime.Minute, SubData.EndTime.Day, SubData.EndTime.Month, guideData.EndTime.Year);
+            //}
 
             if (SubData.Description != "")
             {

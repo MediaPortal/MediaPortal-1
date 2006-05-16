@@ -26,6 +26,7 @@ namespace MediaPortal.Utils.Web
 {
   public class HTTPRequest : IComparable
   {
+    private string _scheme = string.Empty;
     private string _host = string.Empty;
     private string _getQuery = string.Empty;
     private string _postQuery = string.Empty;
@@ -34,24 +35,35 @@ namespace MediaPortal.Utils.Web
     {
     }
 
-    public HTTPRequest(string Url, string getQuery, string postQuery)
+    public HTTPRequest(string url, string getQuery, string postQuery)
     {
-      _host = Url;
+      Uri request = new Uri(url);
+      _host = request.Authority;
+      _scheme = request.Scheme;
       _getQuery = getQuery;
       _postQuery = postQuery;
     }
 
     public HTTPRequest(HTTPRequest request)
     {
+      _scheme = request._scheme;
       _host = request._host;
       _getQuery = request._getQuery;
       _postQuery = request._postQuery;
     }
 
+    public HTTPRequest(Uri request)
+    {
+      _host = request.Authority;
+      _scheme = request.Scheme;
+      _getQuery = request.PathAndQuery;
+    }
+
     public HTTPRequest(string uri)
     {
       Uri request = new Uri(uri);
-      _host = request.Scheme + Uri.SchemeDelimiter + request.Authority;
+      _host = request.Authority;
+      _scheme = request.Scheme;
       _getQuery = request.PathAndQuery;
     }
 
@@ -64,13 +76,17 @@ namespace MediaPortal.Utils.Web
     public string Host
     {
       get { return _host;}
-      set { _host = value; }
     }
 
     public string GetQuery
     {
       get { return _getQuery;}
-      set { _getQuery = value; }
+      set 
+      { 
+        _getQuery = value;
+        if (_getQuery[0] != '/')
+          _getQuery = "/" + _getQuery;
+      }
     }
 
     public string PostQuery
@@ -79,9 +95,26 @@ namespace MediaPortal.Utils.Web
       set { _postQuery = value; }
     }
 
+    public string Url
+    {
+      get { return _scheme + Uri.SchemeDelimiter + _host + _getQuery; }
+    }
+
     public Uri Uri
     {
-      get { return new Uri(_host + _getQuery); }
+      get { return new Uri(Url); }
+    }
+
+    public Uri BaseUri
+    {
+      get { return new Uri(_scheme + Uri.SchemeDelimiter + _host); }
+    }
+
+    // Add relative or absolute url
+    public HTTPRequest Add(string relativeUri)
+    {
+      Uri newUri = new Uri(Uri, relativeUri);
+      return new HTTPRequest(newUri);
     }
 
     public void ReplaceTag(string tag, string value)
@@ -103,7 +136,7 @@ namespace MediaPortal.Utils.Web
 
     public string ToString()
     {
-      return _host + _getQuery + " POST: " + _postQuery;
+      return Url + " POST: " + _postQuery;
     }
 
     #region IComparable Members

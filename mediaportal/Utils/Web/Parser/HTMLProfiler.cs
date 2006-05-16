@@ -331,8 +331,8 @@ namespace MediaPortal.Utils.Web
         }
 			}
 
-			if(strLinkURL.ToLower().IndexOf("http") == -1)
-			{
+      //if(strLinkURL.ToLower().IndexOf("http") == -1)
+      //{
 				if(strLinkURL.ToLower().IndexOf("javascript") != -1)
 				{
 					string [] param = GetJavaSubLinkParams(strLinkURL);
@@ -342,9 +342,9 @@ namespace MediaPortal.Utils.Web
 				}
 				else
 				{
-					linkURL.GetQuery = strLinkURL.Trim();
+					linkURL = linkURL.Add(strLinkURL.Trim());
 				}
-			}
+      //}
 
 			return linkFound;
 		}
