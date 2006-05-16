@@ -86,6 +86,10 @@ namespace MediaPortal.GUI.Video
       {
         return true;
       }
+      if (g_Player.Playing && !g_Player.IsDVD)
+      {
+          g_Player.Stop();
+      }
 
       // Check if DVD is inserted
       string[] drives = Environment.GetLogicalDrives();
