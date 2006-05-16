@@ -34,6 +34,13 @@ namespace MediaPortal.Utils.Web
     {
     }
 
+    public HTTPRequest(string Url, string getQuery, string postQuery)
+    {
+      _host = Url;
+      _getQuery = getQuery;
+      _postQuery = postQuery;
+    }
+
     public HTTPRequest(HTTPRequest request)
     {
       _host = request._host;
