@@ -53,7 +53,7 @@ rem copy ..\..\..\Interop.DirectShowHelperLib.dll .
 copy ..\..\..\mfc71.dll .
 copy ..\..\..\msvcp71.dll .
 copy ..\..\..\msvcr71.dll .
-copy ..\..\..\AxInterop.MOZILLACONTROLLib.dll .
+rem copy ..\..\..\AxInterop.MOZILLACONTROLLib.dll .
 copy ..\..\..\Interop.MOZILLACONTROLLib.dll .
 copy ..\..\..\Microsoft.ApplicationBlocks*.dll .
 copy ..\..\..\d3dx9_26.dll .
@@ -68,8 +68,8 @@ rem usbuirt driver should only reside in windows\system32
 rem copy ..\..\..\FTD2XX.DLL .
 copy ..\..\..\SG_VFD.dll .
 copy ..\..\..\inpout32.dll .
-if not exist LUI\. mkdir LUI
-copy ..\..\..\LUI.dll LUI\.
+rem if not exist LUI\. mkdir LUI
+rem copy ..\..\..\LUI.dll LUI\.
 copy ..\..\..\Communications.dll .
 copy ..\..\..\Interop.GIRDERLib.dll .
 copy ..\..\..\MediaPadLayer.dll .
@@ -85,7 +85,7 @@ copy ..\..\..\Configuration\bin\debug\Configuration.exe.config .
 copy ..\..\..\Configuration\bin\debug\Configuration.pdb .
 copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.exe .
 copy ..\..\..\TVGuideScheduler\bin\debug\TVGuideScheduler.pdb .
-copy ..\..\..\ECP2Assembly.dll .
+rem copy ..\..\..\ECP2Assembly.dll .
 copy ..\..\..\edtftpnet-1.2.2.dll .
 copy ..\..\..\dvblib.dll .
 rem copy ..\..\..\*.tpl .
