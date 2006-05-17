@@ -211,9 +211,14 @@ namespace MediaPortal.GUI.Home
 		}
     protected override void OnPageLoad()
     {
-      GUIOverlayWindow overlayWin = GetPreviewWindow();
-      if ((overlayWin != null) && (overlayWin.Focused)) overlayWin.Focused = false;
-      _previewSelected = false;
+      if (inMyPlugins)
+        GoBackMenu();
+      else
+      {
+        GUIOverlayWindow overlayWin = GetPreviewWindow();
+        if ((overlayWin != null) && (overlayWin.Focused)) overlayWin.Focused = false;
+        _previewSelected = false;
+      }
     }
 
 		private void OnGlobalMessage(GUIMessage message)
