@@ -56,6 +56,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelNote;
     private MediaPortal.UserInterface.Controls.MPButton buttonReset;
     private MediaPortal.UserInterface.Controls.MPButton buttonTvDefaults;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxOutputInterlaced;
     private System.ComponentModel.IContainer components = null;
 
     /// <summary>
@@ -99,6 +100,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBoxSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxOutputInterlaced = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonReset = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonTvDefaults = new MediaPortal.UserInterface.Controls.MPButton();
       this.labelNote = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -125,6 +127,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxSettings.Controls.Add(this.checkBoxOutputInterlaced);
       this.groupBoxSettings.Controls.Add(this.buttonReset);
       this.groupBoxSettings.Controls.Add(this.buttonTvDefaults);
       this.groupBoxSettings.Controls.Add(this.labelNote);
@@ -148,9 +151,21 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSettings.TabStop = false;
       this.groupBoxSettings.Text = "Settings";
       // 
+      // checkBoxOutputInterlaced
+      // 
+      this.checkBoxOutputInterlaced.AutoSize = true;
+      this.checkBoxOutputInterlaced.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxOutputInterlaced.Location = new System.Drawing.Point(16, 70);
+      this.checkBoxOutputInterlaced.Name = "checkBoxOutputInterlaced";
+      this.checkBoxOutputInterlaced.Size = new System.Drawing.Size(157, 17);
+      this.checkBoxOutputInterlaced.TabIndex = 15;
+      this.checkBoxOutputInterlaced.Text = "Set interlaced flag for output";
+      this.checkBoxOutputInterlaced.UseVisualStyleBackColor = true;
+      this.checkBoxOutputInterlaced.CheckedChanged += new System.EventHandler(this.checkBoxOutputInterlaced_CheckedChanged);
+      // 
       // buttonReset
       // 
-      this.buttonReset.Location = new System.Drawing.Point(272, 303);
+      this.buttonReset.Location = new System.Drawing.Point(272, 322);
       this.buttonReset.Name = "buttonReset";
       this.buttonReset.Size = new System.Drawing.Size(75, 23);
       this.buttonReset.TabIndex = 14;
@@ -160,13 +175,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonTvDefaults
       // 
-      this.buttonTvDefaults.Location = new System.Drawing.Point(165, 303);
+      this.buttonTvDefaults.Location = new System.Drawing.Point(165, 322);
       this.buttonTvDefaults.Name = "buttonTvDefaults";
       this.buttonTvDefaults.Size = new System.Drawing.Size(75, 23);
       this.buttonTvDefaults.TabIndex = 13;
       this.buttonTvDefaults.Text = "TV defaults";
       this.buttonTvDefaults.UseVisualStyleBackColor = true;
-      this.buttonTvDefaults.Click += new System.EventHandler(this.button1_Click);
+      this.buttonTvDefaults.Click += new System.EventHandler(this.buttonTvDefaults_Click);
       // 
       // labelNote
       // 
@@ -182,7 +197,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelSaturation
       // 
-      this.labelSaturation.Location = new System.Drawing.Point(13, 253);
+      this.labelSaturation.Location = new System.Drawing.Point(13, 272);
       this.labelSaturation.Name = "labelSaturation";
       this.labelSaturation.Size = new System.Drawing.Size(64, 16);
       this.labelSaturation.TabIndex = 8;
@@ -190,7 +205,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelHue
       // 
-      this.labelHue.Location = new System.Drawing.Point(13, 213);
+      this.labelHue.Location = new System.Drawing.Point(13, 232);
       this.labelHue.Name = "labelHue";
       this.labelHue.Size = new System.Drawing.Size(32, 16);
       this.labelHue.TabIndex = 6;
@@ -198,7 +213,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelContrast
       // 
-      this.labelContrast.Location = new System.Drawing.Point(13, 173);
+      this.labelContrast.Location = new System.Drawing.Point(13, 192);
       this.labelContrast.Name = "labelContrast";
       this.labelContrast.Size = new System.Drawing.Size(56, 16);
       this.labelContrast.TabIndex = 4;
@@ -206,7 +221,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelBrightness
       // 
-      this.labelBrightness.Location = new System.Drawing.Point(13, 133);
+      this.labelBrightness.Location = new System.Drawing.Point(13, 152);
       this.labelBrightness.Name = "labelBrightness";
       this.labelBrightness.Size = new System.Drawing.Size(64, 16);
       this.labelBrightness.TabIndex = 2;
@@ -221,16 +236,16 @@ namespace MediaPortal.Configuration.Sections
             "Auto",
             "Weave",
             "Blend",
-            "BOB",
+            "Bob",
             "Field Shift"});
-      this.comboBoxDeinterlace.Location = new System.Drawing.Point(165, 87);
+      this.comboBoxDeinterlace.Location = new System.Drawing.Point(131, 103);
       this.comboBoxDeinterlace.Name = "comboBoxDeinterlace";
-      this.comboBoxDeinterlace.Size = new System.Drawing.Size(288, 21);
+      this.comboBoxDeinterlace.Size = new System.Drawing.Size(322, 21);
       this.comboBoxDeinterlace.TabIndex = 11;
       // 
       // labelDeinterlaceMethod
       // 
-      this.labelDeinterlaceMethod.Location = new System.Drawing.Point(13, 91);
+      this.labelDeinterlaceMethod.Location = new System.Drawing.Point(13, 106);
       this.labelDeinterlaceMethod.Name = "labelDeinterlaceMethod";
       this.labelDeinterlaceMethod.Size = new System.Drawing.Size(112, 16);
       this.labelDeinterlaceMethod.TabIndex = 10;
@@ -242,7 +257,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxForcedSubtitles.Checked = true;
       this.checkBoxForcedSubtitles.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxForcedSubtitles.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxForcedSubtitles.Location = new System.Drawing.Point(16, 48);
+      this.checkBoxForcedSubtitles.Location = new System.Drawing.Point(16, 47);
       this.checkBoxForcedSubtitles.Name = "checkBoxForcedSubtitles";
       this.checkBoxForcedSubtitles.Size = new System.Drawing.Size(166, 17);
       this.checkBoxForcedSubtitles.TabIndex = 1;
@@ -267,25 +282,25 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarSaturation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarSaturation.LargeChange = 10;
-      this.trackBarSaturation.Location = new System.Drawing.Point(157, 249);
+      this.trackBarSaturation.Location = new System.Drawing.Point(131, 268);
       this.trackBarSaturation.Maximum = 200;
       this.trackBarSaturation.Name = "trackBarSaturation";
-      this.trackBarSaturation.Size = new System.Drawing.Size(304, 45);
+      this.trackBarSaturation.Size = new System.Drawing.Size(330, 45);
       this.trackBarSaturation.TabIndex = 9;
-      this.trackBarSaturation.TickFrequency = 20;
+      this.trackBarSaturation.TickFrequency = 25;
       this.trackBarSaturation.Value = 100;
       // 
       // trackBarHue
       // 
       this.trackBarHue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.trackBarHue.LargeChange = 16;
-      this.trackBarHue.Location = new System.Drawing.Point(157, 209);
+      this.trackBarHue.LargeChange = 15;
+      this.trackBarHue.Location = new System.Drawing.Point(131, 228);
       this.trackBarHue.Maximum = 360;
       this.trackBarHue.Name = "trackBarHue";
-      this.trackBarHue.Size = new System.Drawing.Size(304, 45);
+      this.trackBarHue.Size = new System.Drawing.Size(330, 45);
       this.trackBarHue.TabIndex = 7;
-      this.trackBarHue.TickFrequency = 30;
+      this.trackBarHue.TickFrequency = 45;
       this.trackBarHue.Value = 180;
       // 
       // trackBarContrast
@@ -293,12 +308,12 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarContrast.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarContrast.LargeChange = 10;
-      this.trackBarContrast.Location = new System.Drawing.Point(157, 169);
+      this.trackBarContrast.Location = new System.Drawing.Point(131, 188);
       this.trackBarContrast.Maximum = 200;
       this.trackBarContrast.Name = "trackBarContrast";
-      this.trackBarContrast.Size = new System.Drawing.Size(304, 45);
+      this.trackBarContrast.Size = new System.Drawing.Size(330, 45);
       this.trackBarContrast.TabIndex = 5;
-      this.trackBarContrast.TickFrequency = 20;
+      this.trackBarContrast.TickFrequency = 25;
       this.trackBarContrast.Value = 100;
       // 
       // trackBarBrightness
@@ -306,12 +321,12 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarBrightness.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarBrightness.LargeChange = 16;
-      this.trackBarBrightness.Location = new System.Drawing.Point(157, 129);
-      this.trackBarBrightness.Maximum = 255;
+      this.trackBarBrightness.Location = new System.Drawing.Point(131, 148);
+      this.trackBarBrightness.Maximum = 256;
       this.trackBarBrightness.Name = "trackBarBrightness";
-      this.trackBarBrightness.Size = new System.Drawing.Size(304, 45);
+      this.trackBarBrightness.Size = new System.Drawing.Size(330, 45);
       this.trackBarBrightness.TabIndex = 3;
-      this.trackBarBrightness.TickFrequency = 16;
+      this.trackBarBrightness.TickFrequency = 32;
       this.trackBarBrightness.Value = 128;
       // 
       // MPEG2DecVideoFilter
@@ -356,6 +371,11 @@ namespace MediaPortal.Configuration.Sections
           else
             checkBoxForcedSubtitles.Checked = false;
 
+          if ((int)subkey.GetValue("Interlaced") == 1)
+            checkBoxOutputInterlaced.Checked = true;
+          else
+            checkBoxOutputInterlaced.Checked = false;
+          
           comboBoxDeinterlace.SelectedIndex = (int)subkey.GetValue("DeinterlaceMethod");
 
           byte[] convertedKey;
@@ -406,6 +426,12 @@ namespace MediaPortal.Configuration.Sections
           regValue = 0;
         subkey.SetValue("ForcedSubtitles", regValue);
 
+        if (checkBoxOutputInterlaced.Checked)
+          regValue = 1;
+        else
+          regValue = 0;
+        subkey.SetValue("Interlaced", regValue);
+
         subkey.SetValue("DeinterlaceMethod", (int)comboBoxDeinterlace.SelectedIndex);
 
         float brightness = Convert.ToSingle((UInt32)(trackBarBrightness.Value));
@@ -446,12 +472,24 @@ namespace MediaPortal.Configuration.Sections
       trackBarHue.Value = 180;
       trackBarSaturation.Value = 100;
       checkBoxPlanar.Checked = true;
+      comboBoxDeinterlace.SelectedIndex = 0;
+      checkBoxOutputInterlaced.Checked = false;
     }
 
-    private void button1_Click(object sender, EventArgs e)
+    private void buttonTvDefaults_Click(object sender, EventArgs e)
     {
       trackBarBrightness.Value = 112;
       trackBarContrast.Value = 116;
+      comboBoxDeinterlace.SelectedIndex = 3;
+      checkBoxOutputInterlaced.Checked = false;
+    }
+
+    private void checkBoxOutputInterlaced_CheckedChanged(object sender, EventArgs e)
+    {
+      if (checkBoxOutputInterlaced.Checked)
+        comboBoxDeinterlace.Enabled = false;
+      else
+        comboBoxDeinterlace.Enabled = true;
     }
 
   }
