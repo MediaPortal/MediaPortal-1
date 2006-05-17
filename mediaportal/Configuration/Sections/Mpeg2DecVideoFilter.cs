@@ -486,10 +486,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void checkBoxOutputInterlaced_CheckedChanged(object sender, EventArgs e)
     {
-      if (checkBoxOutputInterlaced.Checked)
-        comboBoxDeinterlace.Enabled = false;
-      else
-        comboBoxDeinterlace.Enabled = true;
+      comboBoxDeinterlace.Enabled = !checkBoxOutputInterlaced.Checked;
     }
 
   }
