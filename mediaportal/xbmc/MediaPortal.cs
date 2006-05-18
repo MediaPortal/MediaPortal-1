@@ -1748,7 +1748,10 @@ public class MediaPortalApp : D3DApp, IRender
     if (GUIWindowManager.IsRouted)
     {
       screenSaverTimer = DateTime.Now;
-      if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
+      if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action) &&
+        (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD) &&
+        (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_VIRTUAL_SEARCH_KEYBOARD) &&
+        (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_VIRTUAL_WEB_KEYBOARD))
       {
         if (action.SoundFileName.Length > 0)
         {
