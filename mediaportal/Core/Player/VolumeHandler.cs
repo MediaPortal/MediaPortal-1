@@ -38,7 +38,8 @@ namespace MediaPortal.Player
 
 		public VolumeHandler(int[] volumeTable)
 		{
-			bool isDigital = true;
+			//bool isDigital = true;
+      string mixerControlledComponent = "Wave";
 
 			using(MediaPortal.Profile.Settings reader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
@@ -53,11 +54,12 @@ namespace MediaPortal.Player
 				if(levelStyle == 2)
 					_startupVolume = Math.Max(0, Math.Min(65535, reader.GetValueAsInt("volume", "startuplevel", 52428)));
 
-				isDigital = reader.GetValueAsBool("volume", "digital", false);
+        mixerControlledComponent = reader.GetValueAsString("volume", "controlledMixer", "Wave");
+				//isDigital = reader.GetValueAsBool("volume", "digital", false);
 			}
 
 			_mixer = new Mixer.Mixer();
-			_mixer.Open(0, isDigital);
+      _mixer.Open(0, mixerControlledComponent);
 			_volumeTable = volumeTable;
 		}
 

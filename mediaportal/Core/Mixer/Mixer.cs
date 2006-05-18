@@ -60,15 +60,47 @@ namespace MediaPortal.Mixer
 
 		public void Open()
 		{
-			Open(0, false);
+			Open(0, "Master");
 		}
 
-		public void Open(int mixerIndex, bool isDigital)
+		public void Open(int mixerIndex, string MixerControlledComponent)
 		{
 			lock(this)
 			{
-				if(isDigital)
-					_componentType = MixerComponentType.SourceWave;
+        if (MixerControlledComponent != "Master")
+          switch (MixerControlledComponent)
+          {
+            case "Digital":
+              _componentType = MixerComponentType.SourceDigital;
+              break;
+            case "Wave":
+              _componentType = MixerComponentType.SourceWave;
+              break;
+            case "Line":
+              _componentType = MixerComponentType.SourceLine;
+              break;
+            case "Microphone":
+              _componentType = MixerComponentType.SourceMicrophone;
+              break;
+            case "Synthesizer":
+              _componentType = MixerComponentType.SourceSynthesizer;
+              break;
+            case "CompactDisc":
+              _componentType = MixerComponentType.SourceCompactDisc;
+              break;
+            case "Telephone":
+              _componentType = MixerComponentType.SourceTelephone;
+              break;
+            case "Auxiliary":
+              _componentType = MixerComponentType.SourceAuxiliary;
+              break;
+            case "Analog":
+              _componentType = MixerComponentType.SourceAnalog;
+              break;
+            default:
+              _componentType = MixerComponentType.SourceWave;
+              break;
+          }
 
 				if(_mixerEventListener == null)
 				{
