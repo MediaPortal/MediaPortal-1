@@ -20,6 +20,7 @@
  */
 
 using System;
+using System.Web;
 //using MediaPortal.Utils.Web.Parser;
 
 namespace MediaPortal.Utils.Web
@@ -135,51 +136,63 @@ namespace MediaPortal.Utils.Web
 
 		private string ReplaceSpecial(string strSource)
 		{
-			int index = 0;
-			string strDest = "";
+      string strStripped = "";
 
-			strSource = strSource.Replace("<br>", "\n");
-			strSource = strSource.Replace("<BR>", "\n");
-			strSource = strSource.Replace("&amp;", "&");
-			strSource = strSource.Replace("&nbsp;", " ");
-			strSource = strSource.Replace("&rsquo;", "’");
+      if (strSource.Length > 0)
+      {
+        strStripped = HttpUtility.HtmlDecode(strSource);
+        strStripped = strStripped.Replace("<br>", "\n");
+        
+        // replace unicode characters
+        //strStripped = strStripped.Replace((char) 145, '’');
+        strStripped = strStripped.Replace((char) 150, '-');
+      }
+      return strStripped;
+      //int index = 0;
+      //string strDest = "";
 
-			while(index < strSource.Length)
-			{
-				if (strSource[index] == '&' && strSource[index+1]=='#')
-				{
-					index+=2;
-					int ipos = 0;
-					string szDigit="";
-					while ( ipos < 12 && index < strSource.Length && Char.IsDigit(strSource[index])) 
-					{
-						szDigit+=strSource[index];
-						ipos++;
-						index++;
-					}
-					if(strSource[index] == ';')
-						index++;
-					int dig = Int32.Parse(szDigit);
-					switch(dig)
-					{
-						case 145:
-							strDest += '’';
-							break;
-						case 150:
-							strDest += '-';
-							break;
-						default:
-							strDest += (char) dig;
-							break;
-					}
-				}
-				else
-				{
-					strDest+= strSource[index++];
-				}
-			}
+      //strSource = strSource.Replace("<br>", "\n");
+      //strSource = strSource.Replace("<BR>", "\n");
+      //strSource = strSource.Replace("&amp;", "&");
+      //strSource = strSource.Replace("&nbsp;", " ");
+      //strSource = strSource.Replace("&rsquo;", "’");
 
-			return strDest;
+      //while(index < strSource.Length)
+      //{
+      //  if (strSource[index] == '&' && strSource[index+1]=='#')
+      //  {
+      //    index+=2;
+      //    int ipos = 0;
+      //    string szDigit="";
+      //    while ( ipos < 12 && index < strSource.Length && Char.IsDigit(strSource[index])) 
+      //    {
+      //      szDigit+=strSource[index];
+      //      ipos++;
+      //      index++;
+      //    }
+      //    if(strSource[index] == ';')
+      //      index++;
+      //    int dig = Int32.Parse(szDigit);
+      //    switch(dig)
+      //    {
+      //      case 145:
+      //        strDest += '’';
+      //        break;
+      //      case 150:
+      //        strDest += '-';
+      //        break;
+      //      default:
+      //        strDest += (char) dig;
+      //        break;
+      //    }
+      //  }
+      //  else
+      //  {
+      //    strDest+= strSource[index++];
+      //  }
+      //}
+
+      //return strDest;
 		}	
 	}
 }

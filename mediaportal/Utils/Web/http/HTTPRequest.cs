@@ -61,10 +61,17 @@ namespace MediaPortal.Utils.Web
 
     public HTTPRequest(string uri)
     {
+      string taggedQuery = "";
+      if (uri.IndexOf('#') != -1)
+      {
+        int pos = uri.LastIndexOf('/');
+        taggedQuery = uri.Substring(pos);
+        uri = uri.Substring(0, uri.Length - taggedQuery.Length);
+      }
       Uri request = new Uri(uri);
       _host = request.Authority;
       _scheme = request.Scheme;
-      _getQuery = request.PathAndQuery;
+      _getQuery = request.PathAndQuery + taggedQuery;
     }
 
     public HTTPRequest(string host, string getQuery)
@@ -134,7 +141,7 @@ namespace MediaPortal.Utils.Web
       return false;
     }
 
-    public string ToString()
+    public override string ToString()
     {
       return Url + " POST: " + _postQuery;
     }

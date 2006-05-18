@@ -118,7 +118,7 @@ namespace MediaPortal.EPG
       }
 
       _listingRequest = new HTTPRequest(baseUrl);
-      _listingRequest.GetQuery = _xmlreader.GetValueAsString("Listing", "SearchURL", "");
+      _listingRequest.GetQuery = _listingRequest.GetQuery + _xmlreader.GetValueAsString("Listing", "SearchURL", "");
       _listingRequest.PostQuery = _xmlreader.GetValueAsString("Listing", "PostQuery", "");
 
       _grabDelay = _xmlreader.GetValueAsInt("Listing", "GrabDelay", 500);

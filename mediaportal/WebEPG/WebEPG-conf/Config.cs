@@ -612,6 +612,8 @@ namespace WebEPG_conf
 
     private void DoEvent(Object source, EventArgs e)
     {
+      nEnd.Minimum = nStart.Value;
+
       if (source == cbLinked)
       {
         nStart.ReadOnly = !cbLinked.Checked;
@@ -789,8 +791,16 @@ namespace WebEPG_conf
                 nStart.ReadOnly = !cbLinked.Checked;
                 nEnd.ReadOnly = !cbLinked.Checked;
                 nStart.Value = info.linkStart;
-                nEnd.Value = info.linkEnd;
+                if (info.linkEnd < nEnd.Minimum)
+                { 
+                  nEnd.Value = nEnd.Minimum; 
+                }
+                else
+                { 
+                  nEnd.Value = info.linkEnd; 
+                }
               }
+
             }
           }
         }

@@ -33,7 +33,8 @@ namespace MediaPortal.Utils.Web
 		HTTPTransaction Page = new HTTPTransaction();
 		string _strPageHead = string.Empty;
     string _strPageSource = string.Empty;
-		string defaultEncode = "iso-8859-1";
+		string _defaultEncode = "iso-8859-1";
+    string _pageEncodingMessage = string.Empty;
 		string _Encoding = string.Empty;
 		string _Error;
 
@@ -58,9 +59,14 @@ namespace MediaPortal.Utils.Web
 			set { _Encoding = value;}
 		}
 
-		public string GetError()
+    public string PageEncodingMessage
+    {
+      get { return _pageEncodingMessage; }
+    }
+
+		public string Error
 		{
-			return _Error;
+      get { return _Error; }
 		}
 
     public bool LoadPage(HTTPRequest page)
@@ -75,7 +81,7 @@ namespace MediaPortal.Utils.Web
 			}
 
 			Encoding encode;
-			string strEncode = defaultEncode;
+			string strEncode = _defaultEncode;
 
 			if(Page.HTTPGet(page))
 			{
@@ -85,10 +91,11 @@ namespace MediaPortal.Utils.Web
 				if(_Encoding != "")
 				{
 					strEncode = _Encoding;
+          _pageEncodingMessage = "Forced: " + _Encoding;
 				}
 				else
 				{
-					encode = System.Text.Encoding.GetEncoding(defaultEncode);
+					encode = System.Text.Encoding.GetEncoding(_defaultEncode);
 					_strPageSource = encode.GetString(pageData);
                     int headEnd;
                     if ((headEnd = _strPageSource.ToLower().IndexOf("</head")) != -1)
@@ -103,12 +110,19 @@ namespace MediaPortal.Utils.Web
                         }
 
                         if (strEncode == "")
-                            strEncode = defaultEncode;
+                        {
+                          strEncode = _defaultEncode;
+                          _pageEncodingMessage = "Default: " + _defaultEncode;
+                        }
+                        else
+                        {
+                          _pageEncodingMessage = strEncode;
+                        }
                     }
 				}
 
 				// Encoding: depends on selected page
-				if(_strPageSource == "" || strEncode != defaultEncode)
+				if(_strPageSource == "" || strEncode.ToLower() != _defaultEncode)
 				{
                     try
                     { 
