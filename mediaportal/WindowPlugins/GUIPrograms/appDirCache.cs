@@ -27,6 +27,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Programs.Utils;
 using SQLite.NET;
+using System.Windows.Forms;
 
 namespace ProgramsDatabase
 {
@@ -78,9 +79,9 @@ namespace ProgramsDatabase
           filenameNoExtension = Path.ChangeExtension(filenameNoExtension, null);
           filenameNoExtension = Path.GetFileNameWithoutExtension(filenameNoExtension);
 
-          string[] exactMatchesJPG = Directory.GetFiles(curDir, filenameNoExtension + "*.jpg");
-          string[] exactMatchesGIF = Directory.GetFiles(curDir, filenameNoExtension + "*.gif");
-          string[] exactMatchesPNG = Directory.GetFiles(curDir, filenameNoExtension + "*.png");
+          string[] exactMatchesJPG = Directory.GetFiles(curDir, filenameNoExtension + ".jpg");
+          string[] exactMatchesGIF = Directory.GetFiles(curDir, filenameNoExtension + ".gif");
+          string[] exactMatchesPNG = Directory.GetFiles(curDir, filenameNoExtension + ".png");
           if (exactMatchesJPG.Length > 0)
           {
             thumbFolder = exactMatchesJPG[0];
@@ -95,21 +96,39 @@ namespace ProgramsDatabase
           }
           else
           {
-            // no exact match found! Redo with near matches!
-            string[] nearMatchesJPG = Directory.GetFiles(curDir, fileTitle + "*.jpg");
-            string[] nearMatchesGIF = Directory.GetFiles(curDir, fileTitle + "*.gif");
-            string[] nearMatchesPNG = Directory.GetFiles(curDir, fileTitle + "*.png");
-            if (nearMatchesJPG.Length > 0)
+            string[] almostexactMatchesJPG = Directory.GetFiles(curDir, filenameNoExtension + "*.jpg");
+            string[] almostexactMatchesGIF = Directory.GetFiles(curDir, filenameNoExtension + "*.gif");
+            string[] almostexactMatchesPNG = Directory.GetFiles(curDir, filenameNoExtension + "*.png");
+            if (almostexactMatchesJPG.Length > 0)
             {
-              thumbFolder = nearMatchesJPG[0];
+              thumbFolder = almostexactMatchesJPG[0];
             }
-            else if (nearMatchesGIF.Length > 0)
+            else if (almostexactMatchesGIF.Length > 0)
             {
-              thumbFolder = nearMatchesGIF[0];
+              thumbFolder = almostexactMatchesGIF[0];
             }
-            else if (nearMatchesPNG.Length > 0)
+            else if (almostexactMatchesPNG.Length > 0)
             {
-              thumbFolder = nearMatchesPNG[0];
+                thumbFolder = almostexactMatchesPNG[0];
+            }
+            else
+            {
+                // no exact match found! Redo with near matches!
+                string[] nearMatchesJPG = Directory.GetFiles(curDir, fileTitle + "*.jpg");
+                string[] nearMatchesGIF = Directory.GetFiles(curDir, fileTitle + "*.gif");
+                string[] nearMatchesPNG = Directory.GetFiles(curDir, fileTitle + "*.png");
+                if (nearMatchesJPG.Length > 0)
+                {
+                    thumbFolder = nearMatchesJPG[0];
+                }
+                else if (nearMatchesGIF.Length > 0)
+                {
+                    thumbFolder = nearMatchesGIF[0];
+                }
+                else if (nearMatchesPNG.Length > 0)
+                {
+                    thumbFolder = nearMatchesPNG[0];
+                }
             }
           }
         }
@@ -165,10 +184,38 @@ namespace ProgramsDatabase
       SendRefreshInfo(String.Format("{0} {1}", GUILocalizeStrings.Get(13005), guiFile.Label));
     }
 
+    private void DeleteOrphaned()
+    {
+      string TheFileName;
+      this.Files.Load(AppID, "");
+      foreach (FileItem DBfile in this.Files)
+      {
+          if (this.UseQuotes && !DBfile.IsFolder)
+          {
+              TheFileName = DBfile.Filename.Substring(1, DBfile.Filename.Length -2);
+          }
+          else
+          {
+              TheFileName = DBfile.Filename;
+          }
+          if (!DBfile.IsFolder)
+          {
+              if (!File.Exists(TheFileName)) { DBfile.Delete(); }
+          }
+          else
+          {
+              if (!Directory.Exists(TheFileName)) { DBfile.Delete(); }
+
+          }
+
+      }
+    }
+
     private void ImportDirectory(string curPath, bool mpGuiMode)
     {
       VirtualDirectory virtDir = new VirtualDirectory();
       ProgramUtils.SetFileExtensions(virtDir, ValidExtensions);
+      Boolean FileExists;
 /*
  *       ArrayList dirExtensions = new ArrayList(this.ValidExtensions.Split(','));
       virtDir.SetExtensions(dirExtensions);
@@ -176,29 +223,58 @@ namespace ProgramsDatabase
 
       // read files
       ArrayList arrFiles = virtDir.GetDirectory(curPath);
+      this.Files.Load(AppID, curPath);
       foreach (GUIListItem file in arrFiles)
       {
-        if (!file.IsFolder)
-        {
-          ImportFileItem(file);
-          UpdateProgressDialog(file, mpGuiMode);
+        FileExists = false;
+        if (!file.IsFolder) {
+            foreach (FileItem DBfile in this.Files)
+            {
+                if ((((this.UseQuotes) && (DBfile.Filename == "\"" + file.Path + "\""))
+                       || ((!this.UseQuotes) && (DBfile.Filename == file.Path)))
+                       && (!DBfile.IsFolder))
+                {
+                    FileExists = true;
+                    break;
+                }
+            }
+            if (!FileExists)
+            {
+                ImportFileItem(file);
+                UpdateProgressDialog(file, mpGuiMode);
+            }
         }
       }
+
 
       //read subdirectories
       try
       {
-        string[] directories = Directory.GetDirectories(curPath);
-        foreach (string directory in directories)
-        {
-          WriteFolderItem(directory);
-          // recursively call importer for every subdirectory
-          ImportDirectory(directory, mpGuiMode);
-        }
+          string[] directories = Directory.GetDirectories(curPath);
+          foreach (string directory in directories)
+          {
+              FileExists = false;
+              foreach (FileItem DBfile in this.Files)
+              {
+                  if (DBfile.IsFolder && DBfile.Filename == directory)
+                  {
+                      FileExists = true;
+                      break;
+                  }
+              }
+              if (!FileExists)
+              {
+                  WriteFolderItem(directory);
+              }
+              // recursively call importer for every subdirectory
+              ImportDirectory(directory, mpGuiMode);
+          }
+
+
       }
-      catch 
+      catch
       {
-        // Ignore
+          // Ignore
       }
 
     }
@@ -284,7 +360,7 @@ namespace ProgramsDatabase
     override public void Refresh(bool mpGuiMode)
     {
       base.Refresh(mpGuiMode);
-      DeleteFiles();
+      DeleteOrphaned();
       DoDirCacheImport(mpGuiMode);
       FixFileLinks();
       LoadFiles();
