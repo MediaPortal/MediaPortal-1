@@ -47,6 +47,7 @@ namespace MediaPortal.InputDevices
     ArrayList _remote;
     int _currentLayer = 1;
     bool _isLoaded = false;
+    bool _basicHome = false;
 
     /// <summary>
     /// Mapping successful loaded
@@ -128,6 +129,9 @@ namespace MediaPortal.InputDevices
     /// <param name="deviceXmlName">Input device name</param>
     public InputHandler(string deviceXmlName)
     {
+      using (Profile.Settings xmlreader = new Profile.Settings("MediaPortal.xml"))
+        _basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+
       string xmlPath = GetXmlPath(deviceXmlName);
       LoadMapping(xmlPath);
     }
@@ -303,7 +307,18 @@ namespace MediaPortal.InputDevices
           SendKeys.SendWait(map.CmdProperty);
           break;
         case "WINDOW":  // activate Window x
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, Convert.ToInt32(map.CmdProperty), 0, null);
+          GUIMessage msg;
+          if ((Convert.ToInt32(map.CmdProperty) == (int)GUIWindow.Window.WINDOW_HOME) ||
+            (Convert.ToInt32(map.CmdProperty) == (int)GUIWindow.Window.WINDOW_SECOND_HOME))
+          {
+            if (_basicHome)
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
+            else
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_HOME, 0, null);
+          }
+          else
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, Convert.ToInt32(map.CmdProperty), 0, null);
+
           GUIWindowManager.SendThreadMessage(msg);
           break;
         case "TOGGLE":  // toggle Layer 1/2
@@ -317,7 +332,13 @@ namespace MediaPortal.InputDevices
           {
             // Stop all media before suspending or hibernating
             g_Player.Stop();
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+
+            if (_basicHome)
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
+            else
+              msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_HOME, 0, null);
+
+            GUIWindowManager.SendThreadMessage(msg);
           }
           switch (map.CmdProperty)
           {
@@ -365,7 +386,7 @@ namespace MediaPortal.InputDevices
       return true;
     }
 
-    
+
     /// <summary>
     /// Get mappings for a given button code based on the current conditions
     /// </summary>
