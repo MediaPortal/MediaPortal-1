@@ -2424,7 +2424,14 @@
     <id>765</id>
     <value>Not enough free diskspace</value>
   </string>
-
+	<string>
+		<id>766</id>
+		<value>The entered PIN could not be accepted</value>
+	</string>
+	<string>
+		<id>767</id>
+		<value>Do you want to try again?</value>
+	</string>
 
   <string>
     <id>800</id>
