@@ -1087,7 +1087,7 @@
 	</string>
 	<string>
 		<id>341</id>
-		<value>DVD-Wiedergabe</value>
+		<value>DVD</value>
 	</string>
 	<string>
 		<id>342</id>
@@ -1765,6 +1765,10 @@
 		<id>518</id>
 		<value>Dieses Lied löschen?</value>
 	</string>
+  <string>
+    <id>529</id>
+    <value>Ansicht: Vorschau-Liste</value>
+  </string>
 	<string>
 		<id>530</id>
 		<value>Foto-CD eingelegt! Öffnen?</value>
@@ -2287,7 +2291,7 @@
 	</string>
 	<string>
 		<id>733</id>
-		<value>Zeige: Vorschau</value>
+		<value>Ansicht: Cover</value>
 	</string>
 	<string>
 		<id>734</id>
@@ -2415,7 +2419,7 @@
 	</string>	
     <string>
       <id>766</id>
-      <value>Aktualisierung bereits aktiv</value>
+      <value>Aktualisierung erfolgt bereits</value>
     </string>
     <string>
       <id>767</id>
@@ -2432,6 +2436,14 @@
     <string>
       <id>770</id>
       <value>Keine xmltv Datei gefunden</value>
+    </string>
+	<string>
+		<id>771</id>
+		<value>Diese PIN wurde nicht akzeptiert</value>
+	</string>
+	<string>
+		<id>772</id>
+		<value>Erneut versuchen?</value>
     </string>
 
 
@@ -2789,7 +2801,7 @@
 	</string>
 	<string>
 		<id>926</id>
-		<value>Zur Wiedergabeliste hinzufügen</value>
+		<value>Titel zur Wiedergabeliste hinzufügen</value>
 	</string>
 	<string>
 		<id>927</id>
@@ -5233,6 +5245,10 @@
 	<string>
 		<id>4555</id>
 		<value>Aktuelle Wiedergabeliste</value>
+    </string>  
+    <string>
+    <id>4557</id>
+    <value>Alle zur Wiedergabeliste hinzufügen</value>
 	</string>
   <!-- End Addtional MyMusic Strings -->
   <!-- Begin Minesweeper Strings -->
