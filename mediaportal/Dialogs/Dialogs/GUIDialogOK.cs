@@ -143,7 +143,8 @@ namespace MediaPortal.Dialogs
           m_bPrevOverlay=GUIGraphicsContext.Overlay;
           m_bConfirmed = false;
           base.OnMessage(message);
-          GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
+          //GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
+          GUIGraphicsContext.Overlay = m_pParentWindow.IsOverlayAllowed;
         }
         return true;
 
