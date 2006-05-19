@@ -2424,6 +2424,26 @@
     <id>765</id>
     <value>Not enough free diskspace</value>
   </string>
+  <string>
+    <id>766</id>
+    <value>already importing...</value>
+  </string>
+  <string>
+    <id>767</id>
+    <value>Invalid XMLTV file</value>
+  </string>
+  <string>
+    <id>768</id>
+    <value>No channels found</value>
+  </string>
+    <string>
+    <id>769</id>
+    <value>No programs found</value>
+  </string>
+    <string>
+    <id>770</id>
+    <value>No xmltv file found</value>
+  </string>
 	<string>
 		<id>771</id>
 		<value>The entered PIN could not be accepted</value>
