@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Text;
 using System.IO;
+using Microsoft.Win32;
 
 namespace MediaPortal.FoobarPlugin
 {
@@ -38,16 +39,20 @@ namespace MediaPortal.FoobarPlugin
   /// </summary>
   public class FoobarConfigForm : System.Windows.Forms.Form
   {
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPButton browseButton;
-    private MediaPortal.UserInterface.Controls.MPTextBox extensionsTextBox;
-    private MediaPortal.UserInterface.Controls.MPTextBox portTextBox;
-    private MediaPortal.UserInterface.Controls.MPTextBox hotnameTextBox;
-    private MediaPortal.UserInterface.Controls.MPTextBox foobarLocationTextBox;
-    private System.Windows.Forms.LinkLabel linkLabel1;
+    private System.Windows.Forms.LinkLabel linkLabelPluginSource;
+    private GroupBox groupBoxFoobarLocation;
+    private MediaPortal.UserInterface.Controls.MPLabel labelPortNumber;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxPortNumber;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxHostname;
+    private MediaPortal.UserInterface.Controls.MPButton buttonBrowseFoobarLoc;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxFoobarPath;
+    private MediaPortal.UserInterface.Controls.MPLabel labelHostname;
+    private MediaPortal.UserInterface.Controls.MPLabel labelLocation;
+    private GroupBox groupBoxFoobarSettings;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxFoobarExtensions;
+    private MediaPortal.UserInterface.Controls.MPLabel labelFoobarFileTypes;
+    private LinkLabel linkLabelStartupParameter;
+    private TextBox textBoxStartupParameter;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -87,133 +92,216 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     private void InitializeComponent()
     {
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(FoobarConfigForm));
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.foobarLocationTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.browseButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.hotnameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.portTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.extensionsTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FoobarConfigForm));
+      this.linkLabelPluginSource = new System.Windows.Forms.LinkLabel();
+      this.groupBoxFoobarLocation = new System.Windows.Forms.GroupBox();
+      this.labelPortNumber = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxPortNumber = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxHostname = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.buttonBrowseFoobarLoc = new MediaPortal.UserInterface.Controls.MPButton();
+      this.textBoxFoobarPath = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelHostname = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelLocation = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBoxFoobarSettings = new System.Windows.Forms.GroupBox();
+      this.linkLabelStartupParameter = new System.Windows.Forms.LinkLabel();
+      this.textBoxStartupParameter = new System.Windows.Forms.TextBox();
+      this.textBoxFoobarExtensions = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelFoobarFileTypes = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBoxFoobarLocation.SuspendLayout();
+      this.groupBoxFoobarSettings.SuspendLayout();
       this.SuspendLayout();
       // 
-      // label1
+      // linkLabelPluginSource
       // 
-      this.label1.Location = new System.Drawing.Point(16, 16);
-      this.label1.Name = "label1";
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Foobar Location";
+      this.linkLabelPluginSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.linkLabelPluginSource.LinkArea = new System.Windows.Forms.LinkArea(37, 19);
+      this.linkLabelPluginSource.Location = new System.Drawing.Point(12, 254);
+      this.linkLabelPluginSource.Name = "linkLabelPluginSource";
+      this.linkLabelPluginSource.Size = new System.Drawing.Size(392, 32);
+      this.linkLabelPluginSource.TabIndex = 5;
+      this.linkLabelPluginSource.TabStop = true;
+      this.linkLabelPluginSource.Text = "NOTE:  Remember to install and setup foo_httpserver_ctrl (version B1) in your foo" +
+          "bar\\components directory.";
+      this.linkLabelPluginSource.UseCompatibleTextRendering = true;
+      this.linkLabelPluginSource.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelPluginSource_LinkClicked);
       // 
-      // label2
+      // groupBoxFoobarLocation
       // 
-      this.label2.Location = new System.Drawing.Point(16, 48);
-      this.label2.Name = "label2";
-      this.label2.TabIndex = 1;
-      this.label2.Text = "Hostname";
+      this.groupBoxFoobarLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxFoobarLocation.Controls.Add(this.labelPortNumber);
+      this.groupBoxFoobarLocation.Controls.Add(this.textBoxPortNumber);
+      this.groupBoxFoobarLocation.Controls.Add(this.textBoxHostname);
+      this.groupBoxFoobarLocation.Controls.Add(this.buttonBrowseFoobarLoc);
+      this.groupBoxFoobarLocation.Controls.Add(this.textBoxFoobarPath);
+      this.groupBoxFoobarLocation.Controls.Add(this.labelHostname);
+      this.groupBoxFoobarLocation.Controls.Add(this.labelLocation);
+      this.groupBoxFoobarLocation.Location = new System.Drawing.Point(12, 12);
+      this.groupBoxFoobarLocation.Name = "groupBoxFoobarLocation";
+      this.groupBoxFoobarLocation.Size = new System.Drawing.Size(392, 91);
+      this.groupBoxFoobarLocation.TabIndex = 7;
+      this.groupBoxFoobarLocation.TabStop = false;
+      this.groupBoxFoobarLocation.Text = "Location";
       // 
-      // label3
+      // labelPortNumber
       // 
-      this.label3.Location = new System.Drawing.Point(16, 80);
-      this.label3.Name = "label3";
-      this.label3.TabIndex = 2;
-      this.label3.Text = "Port Number";
+      this.labelPortNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelPortNumber.AutoSize = true;
+      this.labelPortNumber.Location = new System.Drawing.Point(300, 57);
+      this.labelPortNumber.Name = "labelPortNumber";
+      this.labelPortNumber.Size = new System.Drawing.Size(26, 13);
+      this.labelPortNumber.TabIndex = 13;
+      this.labelPortNumber.Text = "Port";
       // 
-      // label5
+      // textBoxPortNumber
       // 
-      this.label5.Location = new System.Drawing.Point(16, 112);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(100, 24);
-      this.label5.TabIndex = 4;
-      this.label5.Text = "Extensions";
+      this.textBoxPortNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxPortNumber.Enabled = false;
+      this.textBoxPortNumber.Location = new System.Drawing.Point(326, 54);
+      this.textBoxPortNumber.Name = "textBoxPortNumber";
+      this.textBoxPortNumber.Size = new System.Drawing.Size(54, 20);
+      this.textBoxPortNumber.TabIndex = 11;
+      this.textBoxPortNumber.Text = "8989";
+      this.textBoxPortNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
-      // foobarLocationTextBox
+      // textBoxHostname
       // 
-      this.foobarLocationTextBox.Enabled = false;
-      this.foobarLocationTextBox.Location = new System.Drawing.Point(128, 16);
-      this.foobarLocationTextBox.Name = "foobarLocationTextBox";
-      this.foobarLocationTextBox.Size = new System.Drawing.Size(232, 20);
-      this.foobarLocationTextBox.TabIndex = 5;
-      this.foobarLocationTextBox.Text = "";
+      this.textBoxHostname.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxHostname.Enabled = false;
+      this.textBoxHostname.Location = new System.Drawing.Point(92, 54);
+      this.textBoxHostname.Name = "textBoxHostname";
+      this.textBoxHostname.Size = new System.Drawing.Size(195, 20);
+      this.textBoxHostname.TabIndex = 10;
+      this.textBoxHostname.Text = "localhost";
       // 
-      // browseButton
+      // buttonBrowseFoobarLoc
       // 
-      this.browseButton.Location = new System.Drawing.Point(362, 14);
-      this.browseButton.Name = "browseButton";
-      this.browseButton.Size = new System.Drawing.Size(24, 23);
-      this.browseButton.TabIndex = 1;
-      this.browseButton.Text = "...";
-      this.browseButton.Click += new System.EventHandler(this.browseButton_Click);
+      this.buttonBrowseFoobarLoc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonBrowseFoobarLoc.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.buttonBrowseFoobarLoc.Location = new System.Drawing.Point(356, 19);
+      this.buttonBrowseFoobarLoc.Name = "buttonBrowseFoobarLoc";
+      this.buttonBrowseFoobarLoc.Size = new System.Drawing.Size(24, 23);
+      this.buttonBrowseFoobarLoc.TabIndex = 8;
+      this.buttonBrowseFoobarLoc.Text = "...";
+      this.buttonBrowseFoobarLoc.UseVisualStyleBackColor = true;
+      this.buttonBrowseFoobarLoc.Click += new System.EventHandler(this.buttonBrowseFoobarLoc_Click);
       // 
-      // hotnameTextBox
+      // textBoxFoobarPath
       // 
-      this.hotnameTextBox.Location = new System.Drawing.Point(128, 48);
-      this.hotnameTextBox.Name = "hotnameTextBox";
-      this.hotnameTextBox.Size = new System.Drawing.Size(232, 20);
-      this.hotnameTextBox.TabIndex = 2;
-      this.hotnameTextBox.Text = "localhost";
+      this.textBoxFoobarPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFoobarPath.Enabled = false;
+      this.textBoxFoobarPath.Location = new System.Drawing.Point(92, 21);
+      this.textBoxFoobarPath.Name = "textBoxFoobarPath";
+      this.textBoxFoobarPath.Size = new System.Drawing.Size(252, 20);
+      this.textBoxFoobarPath.TabIndex = 12;
       // 
-      // portTextBox
+      // labelHostname
       // 
-      this.portTextBox.Location = new System.Drawing.Point(128, 80);
-      this.portTextBox.Name = "portTextBox";
-      this.portTextBox.Size = new System.Drawing.Size(232, 20);
-      this.portTextBox.TabIndex = 3;
-      this.portTextBox.Text = "8989";
+      this.labelHostname.AutoSize = true;
+      this.labelHostname.Location = new System.Drawing.Point(10, 57);
+      this.labelHostname.Name = "labelHostname";
+      this.labelHostname.Size = new System.Drawing.Size(55, 13);
+      this.labelHostname.TabIndex = 9;
+      this.labelHostname.Text = "Hostname";
       // 
-      // extensionsTextBox
+      // labelLocation
       // 
-      this.extensionsTextBox.Location = new System.Drawing.Point(128, 112);
-      this.extensionsTextBox.Name = "extensionsTextBox";
-      this.extensionsTextBox.Size = new System.Drawing.Size(232, 20);
-      this.extensionsTextBox.TabIndex = 4;
-      this.extensionsTextBox.Text = ".cda,.mp3,.mid";
+      this.labelLocation.AutoSize = true;
+      this.labelLocation.Location = new System.Drawing.Point(10, 24);
+      this.labelLocation.Name = "labelLocation";
+      this.labelLocation.Size = new System.Drawing.Size(76, 13);
+      this.labelLocation.TabIndex = 7;
+      this.labelLocation.Text = "foobar2k v.8.3";
       // 
-      // linkLabel1
+      // groupBoxFoobarSettings
       // 
-      this.linkLabel1.LinkArea = new System.Windows.Forms.LinkArea(33, 19);
-      this.linkLabel1.Location = new System.Drawing.Point(16, 152);
-      this.linkLabel1.Name = "linkLabel1";
-      this.linkLabel1.Size = new System.Drawing.Size(376, 32);
-      this.linkLabel1.TabIndex = 5;
-      this.linkLabel1.TabStop = true;
-      this.linkLabel1.Text = "NOTE:  Remember to install/setup foo_httpserver_ctrl (version B1) in your foobar/" +
-        "components directory.";
-      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      this.groupBoxFoobarSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxFoobarSettings.Controls.Add(this.linkLabelStartupParameter);
+      this.groupBoxFoobarSettings.Controls.Add(this.textBoxStartupParameter);
+      this.groupBoxFoobarSettings.Controls.Add(this.textBoxFoobarExtensions);
+      this.groupBoxFoobarSettings.Controls.Add(this.labelFoobarFileTypes);
+      this.groupBoxFoobarSettings.Location = new System.Drawing.Point(12, 109);
+      this.groupBoxFoobarSettings.Name = "groupBoxFoobarSettings";
+      this.groupBoxFoobarSettings.Size = new System.Drawing.Size(392, 132);
+      this.groupBoxFoobarSettings.TabIndex = 8;
+      this.groupBoxFoobarSettings.TabStop = false;
+      this.groupBoxFoobarSettings.Text = "Settings";
+      // 
+      // linkLabelStartupParameter
+      // 
+      this.linkLabelStartupParameter.AutoSize = true;
+      this.linkLabelStartupParameter.LinkArea = new System.Windows.Forms.LinkArea(8, 9);
+      this.linkLabelStartupParameter.Location = new System.Drawing.Point(13, 25);
+      this.linkLabelStartupParameter.Name = "linkLabelStartupParameter";
+      this.linkLabelStartupParameter.Size = new System.Drawing.Size(95, 17);
+      this.linkLabelStartupParameter.TabIndex = 9;
+      this.linkLabelStartupParameter.TabStop = true;
+      this.linkLabelStartupParameter.Text = "Startup parameter";
+      this.linkLabelStartupParameter.UseCompatibleTextRendering = true;
+      this.linkLabelStartupParameter.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelStartupParameter_LinkClicked);
+      // 
+      // textBoxStartupParameter
+      // 
+      this.textBoxStartupParameter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxStartupParameter.Location = new System.Drawing.Point(13, 45);
+      this.textBoxStartupParameter.Name = "textBoxStartupParameter";
+      this.textBoxStartupParameter.Size = new System.Drawing.Size(367, 20);
+      this.textBoxStartupParameter.TabIndex = 7;
+      this.textBoxStartupParameter.Text = "/hide /command:\"Playback/Order/Default\"";
+      // 
+      // textBoxFoobarExtensions
+      // 
+      this.textBoxFoobarExtensions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxFoobarExtensions.Location = new System.Drawing.Point(13, 93);
+      this.textBoxFoobarExtensions.Name = "textBoxFoobarExtensions";
+      this.textBoxFoobarExtensions.Size = new System.Drawing.Size(367, 20);
+      this.textBoxFoobarExtensions.TabIndex = 6;
+      this.textBoxFoobarExtensions.Text = ".cda,.mp3,.mid,.wav,.mpc,.aac,.shn,.wma,.ac3,.ogg";
+      // 
+      // labelFoobarFileTypes
+      // 
+      this.labelFoobarFileTypes.AutoSize = true;
+      this.labelFoobarFileTypes.Location = new System.Drawing.Point(10, 77);
+      this.labelFoobarFileTypes.Name = "labelFoobarFileTypes";
+      this.labelFoobarFileTypes.Size = new System.Drawing.Size(328, 13);
+      this.labelFoobarFileTypes.TabIndex = 5;
+      this.labelFoobarFileTypes.Text = "Supported file types (other files will be played by MP\'s internal player)";
       // 
       // FoobarConfigForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(416, 189);
-      this.Controls.Add(this.linkLabel1);
-      this.Controls.Add(this.extensionsTextBox);
-      this.Controls.Add(this.portTextBox);
-      this.Controls.Add(this.hotnameTextBox);
-      this.Controls.Add(this.browseButton);
-      this.Controls.Add(this.foobarLocationTextBox);
-      this.Controls.Add(this.label5);
-      this.Controls.Add(this.label3);
-      this.Controls.Add(this.label2);
-      this.Controls.Add(this.label1);
+      this.ClientSize = new System.Drawing.Size(416, 293);
+      this.Controls.Add(this.groupBoxFoobarSettings);
+      this.Controls.Add(this.groupBoxFoobarLocation);
+      this.Controls.Add(this.linkLabelPluginSource);
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "FoobarConfigForm";
-      this.Text = "FoobarConfigForm";
+      this.Text = "Foobar2000 plugin settings";
       this.Closing += new System.ComponentModel.CancelEventHandler(this.FoobarConfigForm_Closing);
       this.Load += new System.EventHandler(this.FoobarConfigForm_Load);
+      this.groupBoxFoobarLocation.ResumeLayout(false);
+      this.groupBoxFoobarLocation.PerformLayout();
+      this.groupBoxFoobarSettings.ResumeLayout(false);
+      this.groupBoxFoobarSettings.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
 
 
     /// <summary>
-    /// This method is called whenever the browse button is click
+    /// This method is called whenever the browse button is clicked
     /// </summary>
     /// <param name="sender">the sender instance</param>
     /// <param name="e">the event.  In this case click!</param>
-    private void browseButton_Click(object sender, System.EventArgs e)
+    private void buttonBrowseFoobarLoc_Click(object sender, System.EventArgs e)
     {
       string curDir = Directory.GetCurrentDirectory();
       // The filter for the dialog window is foobar2000.exe
@@ -225,7 +313,7 @@ namespace MediaPortal.FoobarPlugin
       // open dialog
       if (dlg.ShowDialog(this) == DialogResult.OK)
       {
-        foobarLocationTextBox.Text = dlg.FileName;
+        textBoxFoobarPath.Text = dlg.FileName;
       }
       Directory.SetCurrentDirectory(curDir);
     }
@@ -240,15 +328,26 @@ namespace MediaPortal.FoobarPlugin
     {
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        extensionsTextBox.Text = xmlreader.GetValueAsString("foobarplugin", "enabledextensions", ".cda,.mp3,.mid");
-        portTextBox.Text = xmlreader.GetValueAsString("foobarplugin", "port", "8989");
-        hotnameTextBox.Text = xmlreader.GetValueAsString("foobarplugin", "host", "localhost");
-        foobarLocationTextBox.Text = xmlreader.GetValueAsString("foobarplugin", "path", "");
+        textBoxFoobarExtensions.Text = xmlreader.GetValueAsString("foobarplugin", "enabledextensions", ".cda,.mp3,.mid,.wav,.mpc,.aac,.shn,.wma,.ac3,.ogg");
+        textBoxPortNumber.Text = xmlreader.GetValueAsString("foobarplugin", "port", "8989");
+        textBoxHostname.Text = xmlreader.GetValueAsString("foobarplugin", "host", "localhost");
+        textBoxFoobarPath.Text = xmlreader.GetValueAsString("foobarplugin", "path", "");
+        textBoxStartupParameter.Text = xmlreader.GetValueAsString("foobarplugin", "startupparameter", "/hide /command:\"Playback/Order/Default\"");
+      }
+      if (textBoxFoobarPath.Text == "")
+      {
+        RegistryKey pRegKey = Registry.CurrentUser;
+        pRegKey = pRegKey.OpenSubKey("Software\\foobar2000");
+        Object val = pRegKey.GetValue("InstallDir");
+        if (val.ToString().Trim().Length > 0)
+        {
+          textBoxFoobarPath.Text = val.ToString() + "\\foobar2000.exe";
+        }
       }
     }
 
     /// <summary>
-    /// When this form closes, write the variables from the form to the configuration file
+    /// Write the variables from the form to the configuration file when this form closes
     /// </summary>
     /// <param name="sender">the sender instance</param>
     /// <param name="e">the event.  Closing!</param>
@@ -256,12 +355,12 @@ namespace MediaPortal.FoobarPlugin
     {
       using (MediaPortal.Profile.Settings xmlWriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        xmlWriter.SetValue("foobarplugin", "port", portTextBox.Text);
-        xmlWriter.SetValue("foobarplugin", "host", hotnameTextBox.Text);
-        xmlWriter.SetValue("foobarplugin", "path", foobarLocationTextBox.Text);
-
+        xmlWriter.SetValue("foobarplugin", "port", textBoxPortNumber.Text);
+        xmlWriter.SetValue("foobarplugin", "host", textBoxHostname.Text);
+        xmlWriter.SetValue("foobarplugin", "path", textBoxFoobarPath.Text);
+        xmlWriter.SetValue("foobarplugin", "startupparameter", textBoxStartupParameter.Text);
         // make sure all the extensions starts with "."  If not, add it in...
-        string[] exts = extensionsTextBox.Text.Split(new char[] { ',' });
+        string[] exts = textBoxFoobarExtensions.Text.Split(new char[] { ',' });
         StringBuilder buff = new StringBuilder();
         foreach (string ext in exts)
         {
@@ -271,22 +370,31 @@ namespace MediaPortal.FoobarPlugin
             buff.Append('.');
           buff.Append(ext);
         }
-
-        xmlWriter.SetValue("foobarplugin", "enabledextensions", buff.ToString());
-        //xmlWriter.Save();
+        xmlWriter.SetValue("foobarplugin", "enabledextensions", buff.ToString());        
       }
     }
 
-
+    private void linkLabelStartupParameter_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      // Determine which link was clicked within the LinkLabel.
+      this.linkLabelStartupParameter.Links[linkLabelStartupParameter.Links.IndexOf(e.Link)].Visited = true;
+      try
+      {
+        Help.ShowHelp(this, "http://wiki.hydrogenaudio.org/index.php?title=Foobar2000:Commandline_Guide");
+      }
+      catch
+      {
+      }
+    }
     /// <summary>
     /// The link will open the link on a browser to get the foobar plugin from the source
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void linkLabel1_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
+    private void linkLabelPluginSource_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       // Determine which link was clicked within the LinkLabel.
-      this.linkLabel1.Links[linkLabel1.Links.IndexOf(e.Link)].Visited = true;
+      this.linkLabelPluginSource.Links[linkLabelPluginSource.Links.IndexOf(e.Link)].Visited = true;
       try
       {
         Help.ShowHelp(this, "http://sourceforge.net/projects/foohttpserver");
@@ -294,8 +402,12 @@ namespace MediaPortal.FoobarPlugin
       catch
       {
       }
-
     }
   }
 }
+
+
+    
+  
+
 

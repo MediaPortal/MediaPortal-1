@@ -32,6 +32,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using MediaPortal.GUI.Library;
+using MediaPortal.Util;
 
 namespace MediaPortal.FoobarPlugin
 {
@@ -40,19 +41,17 @@ namespace MediaPortal.FoobarPlugin
     /// </summary>
     public class FoobarPlugin : MediaPortal.Player.IExternalPlayer
     {
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr FindWindow(
-          [MarshalAs(UnmanagedType.LPTStr)] string lpClassName,
-          [MarshalAs(UnmanagedType.LPTStr)] string lpWindowName);
-
+      [DllImport("user32.dll", CharSet = CharSet.Auto)]
+      public static extern IntPtr FindWindow(
+        [MarshalAs(UnmanagedType.LPTStr)] string lpClassName,
+        [MarshalAs(UnmanagedType.LPTStr)] string lpWindowName);
         [StructLayout(LayoutKind.Sequential)]
-        struct COPYDATASTRUCT
+      struct COPYDATASTRUCT
         {
-            public IntPtr dwData;
-            public int cbData;
-            public IntPtr lpData;
+          public IntPtr dwData;
+          public int cbData;
+          public IntPtr lpData;
         }
-
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         static extern int SendMessage(IntPtr hwnd, int wMsg, int wParam,
@@ -88,26 +87,26 @@ namespace MediaPortal.FoobarPlugin
         private const int SW_SHOW = 5;
         private const int SW_RESTORE = 9;
 
-
-        private const string m_author = "int_20h";
+        private const string m_author = "int_20h/rtv";
         private const string m_player = "Foobar2000";
-        private const string m_version = "1.0";
+        private const string m_version = "2.0b";
 
         // set in configuration
         private string[] m_supportedExtensions = new string[0];
         private string m_execPath = null;
         private string m_hostname = "localhost";
-        private int m_port = 8989;
+        private int    m_port = 8989;    
+        private string m_startupparameter = null;
         private string m_windowName = null;
 
         // internally maintain
         private string m_strCurrentFile = null;
 
         private Process m_foobarProcess = null;
-        private IntPtr m_hwnd = IntPtr.Zero;
-        private IntPtr m_hwndPlugin = IntPtr.Zero;
-        private bool m_bStoppedManualy = false;
-        private bool _notifyPlaying = false;
+        private IntPtr  m_hwnd = IntPtr.Zero;
+        private IntPtr  m_hwndPlugin = IntPtr.Zero;
+        private bool    m_bStoppedManualy = false;
+        private bool    _notifyPlaying = false;
 
         /// <summary>
         /// Empty constructor.  Nothing to initialize 
@@ -122,24 +121,26 @@ namespace MediaPortal.FoobarPlugin
         /// </summary>
         private void startPlayerIfNecessary()
         {
-            if (m_execPath != null && m_execPath.Length > 0)
-            {
-                if (m_windowName != null && m_windowName.Length > 0)
-                {
-                    m_hwnd = FindWindow(null, m_windowName);
-                    m_hwndPlugin = FindWindow("foo_httpserver_ctrl", null);
-                    if (m_hwnd.ToInt32() <= 0) // try to find it and start it since it's not found
-                    {
-                        IntPtr mpHwnd = GetActiveWindow();
-                        RunProgram(m_execPath, "");
-                        ShowWindow(mpHwnd, SW_RESTORE);
-                        SetForegroundWindow(mpHwnd);
-                        m_hwnd = FindWindow(null, m_windowName);
-                        m_hwndPlugin = FindWindow("foo_httpserver_ctrl", null);
-                    }
-                }
-            }
-        }
+           if (m_execPath != null && m_execPath.Length > 0)
+           {
+              if (m_windowName != null && m_windowName.Length > 0)
+              {
+                 m_hwnd = FindWindow(null, m_windowName);
+                 m_hwndPlugin = FindWindow("foo_httpserver_ctrl", null);
+              }
+              if (m_hwnd.ToInt32() <= 0) // try to find it and start it since it's not found
+              {
+                 IntPtr mpHwnd = GetActiveWindow();
+                 RunProgram(m_execPath, m_startupparameter);
+                 Log.Write("ExternalPlayers: Started foobar2000 with {0}", m_startupparameter);
+                 ShowWindow(mpHwnd, SW_RESTORE);
+                 SetForegroundWindow(mpHwnd);
+                 m_hwnd = FindWindow(null, m_windowName);
+                 m_hwndPlugin = FindWindow("foo_httpserver_ctrl", null);
+              }
+           }
+        }  
+
 
         /// <summary>
         /// Runs a particular program in the local file system
@@ -148,33 +149,30 @@ namespace MediaPortal.FoobarPlugin
         /// <param name="argsLine"></param>
         private void RunProgram(string exeName, string argsLine)
         {
-            ProcessStartInfo psI = new ProcessStartInfo(exeName, argsLine);
-            Process newProcess = new Process();
+           ProcessStartInfo psI = new ProcessStartInfo(exeName, argsLine);
+           Process newProcess = new Process();
+           try
+           {
+              newProcess.StartInfo.FileName = exeName;
+              newProcess.StartInfo.Arguments = argsLine;
+              newProcess.StartInfo.UseShellExecute = true;
+              newProcess.StartInfo.CreateNoWindow = true;
+              newProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
+              newProcess.Start();
 
-            try
-            {
-                newProcess.StartInfo.FileName = exeName;
-                newProcess.StartInfo.Arguments = argsLine;
-                newProcess.StartInfo.UseShellExecute = true;
-                newProcess.StartInfo.CreateNoWindow = true;
-                newProcess.StartInfo.WindowStyle = ProcessWindowStyle.Minimized;
-                newProcess.Start();
-
-                IntPtr httpPluginWindow;
-                for (int i = 0; i < 15; i++) // wait for up to 3 seconds for Foobar2k to start.
-                {
-                    Thread.Sleep(200);
-                    httpPluginWindow = FindWindow("foo_httpserver_ctrl", null);
-                    if (httpPluginWindow.ToInt32() > 0) // window handle was found
-                        break;
-                }
-
-                m_foobarProcess = newProcess;
+              IntPtr httpPluginWindow;              
+              for (int i = 0; i < (2 * 6); i++) // wait 6 seconds for Foobar2k to start.
+              {
+                 Thread.Sleep(500);
+                 httpPluginWindow = FindWindow("foo_httpserver_ctrl", null);              
+                 if (httpPluginWindow.ToInt32() > 0) // window handle was found
+                   break;
+              }        
+              m_foobarProcess = newProcess;
             }
-
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw e;
+                throw ex;
             }
         }
 
@@ -183,98 +181,104 @@ namespace MediaPortal.FoobarPlugin
         /// </summary>
         private void readConfig()
         {
-            string strExt = null;
-            string execPath = null;
-            string hostname = null;
-            string port = null;
-            string windowName = null;
+           string strExt = null;
+           string execPath = null;
+           string hostname = null;
+           string port = null;
+           string windowName = null;
+           string startupparameter = null;
 
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-            {
-                // extensions to play by this player
-                strExt = xmlreader.GetValueAsString("foobarplugin", "enabledextensions", "");
-                // where is foobar executable
-                execPath = xmlreader.GetValueAsString("foobarplugin", "path", "");
-                // which host to talk to
-                hostname = xmlreader.GetValueAsString("foobarplugin", "host", "localhost");
-                // which port to talk to
-                port = xmlreader.GetValueAsString("foobarplugin", "port", "8989");
-                // what's the window name of the program
-                windowName = xmlreader.GetValueAsString("foobarplugin", "windowname", "");
+           using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+           {
+             // extensions to play by this player
+             strExt = xmlreader.GetValueAsString("foobarplugin", "enabledextensions", "");
+             // where is foobar executable
+             execPath = xmlreader.GetValueAsString("foobarplugin", "path", "");
+             // which host to talk to
+             hostname = xmlreader.GetValueAsString("foobarplugin", "host", "localhost");
+             // which port to talk to
+             port = xmlreader.GetValueAsString("foobarplugin", "port", "8989");
+             // what's the window name of the program
+             windowName = xmlreader.GetValueAsString("foobarplugin", "windowname", "");             
+             // additional startup options
+             startupparameter = xmlreader.GetValueAsString("foobarplugin", "startupparameter", " /hide /command:\"Playback/ReplayGain/Album\"");
             }
             if (strExt != null && strExt.Length > 0)
             {
-                m_supportedExtensions = strExt.Split(new char[] { ',' });
+               m_supportedExtensions = strExt.Split(new char[] { ',' });
             }
             if (execPath != null && execPath.Length > 0)
             {
-                m_execPath = execPath;
+               m_execPath = execPath;
             }
             if (hostname != null && hostname.Length > 0)
             {
-                m_hostname = hostname;
+               m_hostname = hostname;
             }
             if (port != null && port.Length > 0)
             {
-                try
-                {
-                    m_port = Convert.ToInt32(port);
-                }
-                catch { }
+               try
+               {
+                 m_port = Convert.ToInt32(port);
+               }
+               catch { }
             }
-            if (windowName != null && windowName.Length > 0)
-            {
-                m_windowName = windowName;
-            }
-            else
-            {
-                // lets figure it out by openning the installer.ini file and look at the version.
-                // The window name is "foobar2000 v<version>" so, if we need to find the window,
-                // we need the version number!
-                StringBuilder buff = new StringBuilder();
-                StreamReader sr = null;
-                string version = null;
+           if (startupparameter != null && startupparameter.Length > 0)
+           {
+              m_startupparameter = startupparameter;
+           }
+           if (windowName != null && windowName.Length > 0)
+           {
+             m_windowName = windowName;
+           }
+           else
+           {
+             // lets figure it out by openning the installer.ini file and look at the version.
+             // The window name is "foobar2000 v<version>" so, if we need to find the window,
+             // we need the version number!
+             StringBuilder buff = new StringBuilder();
+             StreamReader sr = null;
+             string version = null;
+             
+             try
+               {
+                 string path = m_execPath.ToLower();
+                 int index = path.LastIndexOf("foobar");
+                 string iniFile = m_execPath.Substring(0, index) + "installer.ini";
 
-                try
-                {
-                    string path = m_execPath.ToLower();
-                    int index = path.LastIndexOf("foobar");
-                    string iniFile = m_execPath.Substring(0, index) + "installer.ini";
-
-                    //Pass the file path and file name to the StreamReader constructor
-                    sr = new StreamReader(iniFile);
-
-                    //Read the first line of text
-                    string line = sr.ReadLine();
-
-                    //Continue to read until you reach end of file
-                    while (line != null)
-                    {
-                        if (line.ToLower().Trim().StartsWith("version"))
-                        {
-                            index = line.IndexOf("=");
-                            version = line.Substring(index + 1).Trim();
-                        }
-                        //Read the next line
-                        line = sr.ReadLine();
-                    }
-                    //close the file
-                    sr.Close();
-                    sr = null;
+                 //Pass the file path and file name to the StreamReader constructor
+                 sr = new StreamReader(iniFile);
+                 //Read the first line of text
+                 string line = sr.ReadLine();               
+                 //Continue to read until you reach end of file
+                    
+                 while (line != null)
+                 {
+                   if (line.ToLower().Trim().StartsWith("version"))
+                   {
+                      index = line.IndexOf("=");
+                      version = line.Substring(index + 1).Trim();
+                   }
+                   //Read the next line
+                   line = sr.ReadLine();
+                 }
+                 //close the file
+                 sr.Close();
+                 sr = null;
                 }
-                catch (Exception e)
+              catch (Exception e)
                 {
-                    Console.WriteLine("Exception: " + e.Message);
+                   Console.WriteLine("Exception: " + e.Message);
                 }
                 if (sr != null)
                 {
-                    sr.Close();
-                    sr = null;
+                   sr.Close();
+                   sr = null;
                 }
 
                 if (version != null)
                 {
-                    m_windowName = "foobar2000 v" + version;
+                   m_windowName = "foobar2000 v" + version;
                 }
             }
         }
@@ -335,7 +339,6 @@ namespace MediaPortal.FoobarPlugin
                 retval = "ERROR: mismatch command";
             }
             return retval;
-
         }
 
         /// <summary>
@@ -429,7 +432,6 @@ namespace MediaPortal.FoobarPlugin
                 if (m_supportedExtensions[i].Equals(ext))
                     return true;
             }
-
             // could not match the extension, so return false;
             return false;
 
@@ -442,76 +444,75 @@ namespace MediaPortal.FoobarPlugin
         /// <returns></returns>
         public override bool Play(string strFile)
         {
-
-            if (strFile.IndexOf(".cda") >= 0)
-            {
-                string strTrack = "";
-                int pos = strFile.IndexOf(".cda");
-                if (pos >= 0)
-                {
+           if (strFile.IndexOf(".cda") >= 0)
+           {
+              string strTrack = "";
+              int pos = strFile.IndexOf(".cda");
+              if (pos >= 0)
+              {
+                 pos--;
+                 while (Char.IsDigit(strFile[pos]) && pos > 0)
+                 {
+                    strTrack = strFile[pos] + strTrack;
                     pos--;
-                    while (Char.IsDigit(strFile[pos]) && pos > 0)
-                    {
-                        strTrack = strFile[pos] + strTrack;
-                        pos--;
-                    }
-                }
+                 }
+              }
 
-                string strDrive = strFile.Substring(0, 1);
-                strDrive += ":";
-                strFile = String.Format("{0}Track{1}.cda", strDrive, strTrack);
-            }
-            try
-            {
-                m_bStoppedManualy = false;
-                // check if the player is running, if not run it.
-                startPlayerIfNecessary();
+              string strDrive = strFile.Substring(0, 1);
+              strDrive += ":";
+              strFile = String.Format("{0}Track{1}.cda", strDrive, strTrack);
+           }
+           try
+           {
+              m_bStoppedManualy = false;
+              // check if the player is running, if not run it.
+              startPlayerIfNecessary();
 
-                string playListName = "MPPlaylist";
-                COPYDATASTRUCT cds;
-                cds.dwData = (IntPtr)1;  // find/create playlist
-                cds.lpData = Marshal.StringToCoTaskMemAnsi(playListName);
-                cds.cbData = playListName.Length + 1;
+              string playListName = "MPPlaylist";
+              COPYDATASTRUCT cds;
+              cds.dwData = (IntPtr)1;  // find/create playlist
+              cds.lpData = Marshal.StringToCoTaskMemAnsi(playListName);
+              cds.cbData = playListName.Length + 1;
 
-                // create the playlist or switch to it if there
-                int index = SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds);
-                Marshal.FreeCoTaskMem(cds.lpData);
+              // create the playlist or switch to it if there
+              int index = SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds);
+              Marshal.FreeCoTaskMem(cds.lpData);
 
-                // set the playlist as the active one
-                SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SETACTIVEPLAYLIST, index);
+              // set the playlist as the active one
+              SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_SETACTIVEPLAYLIST, index);
 
-                // Clear playlist
-                SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_CLEARPLAYLIST, 0);
-
-
-                Encoding encode = System.Text.Encoding.Default;
-                // Let's encode the filename so any extended ASCII character is played correctly
-                // by the Foobar Plugin
-                byte[] byData = encode.GetBytes(HttpUtility.UrlEncode(strFile).Replace("+", "%20"));
-                cds.dwData = (IntPtr)0;  // Play song
-                cds.lpData = Marshal.AllocCoTaskMem(byData.Length + 1);
-                cds.cbData = byData.Length + 1;
-                // write all the bytes to the lpData byte by byte
-                for (int i = 0; i < byData.Length; ++i)
-                {
-                    Marshal.WriteByte(cds.lpData, i, byData[i]);
-                }
-                // write the end of string '\0'
-                Marshal.WriteByte(cds.lpData, byData.Length, (byte)0);
-                if (SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds) == 0)
-                {
-                    Marshal.FreeCoTaskMem(cds.lpData);
-                    Thread.Sleep(1000); // wait for 1 secs so that foobar starts playing
-                    m_strCurrentFile = strFile;
-                    _notifyPlaying = true;
-                    return true;
-                }
-                else
-                {
-                    _notifyPlaying = false;
-                    Marshal.FreeCoTaskMem(cds.lpData);
-                    return false;
-                }
+              // Clear playlist
+              SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_CLEARPLAYLIST, 0);
+             
+             
+              Encoding encode = System.Text.Encoding.Default;
+              // Let's encode the filename so any extended ASCII character is played correctly
+              // by the Foobar Plugin
+              byte[] byData = encode.GetBytes(HttpUtility.UrlEncode(strFile).Replace("+", "%20"));
+              cds.dwData = (IntPtr)0;  // Play song
+              cds.lpData = Marshal.AllocCoTaskMem(byData.Length + 1);
+              cds.cbData = byData.Length + 1;
+              // write all the bytes to the lpData byte by byte
+              for (int i = 0; i < byData.Length; ++i)
+              {
+                 Marshal.WriteByte(cds.lpData, i, byData[i]);
+              }
+              // write the end of string '\0'
+              Marshal.WriteByte(cds.lpData, byData.Length, (byte)0);
+              if (SendMessage(m_hwndPlugin, WM_COPYDATA, 0, ref cds) == 0)
+              {
+                 Marshal.FreeCoTaskMem(cds.lpData);
+                 Thread.Sleep(1000); // wait for 1 secs so that foobar starts playing
+                 m_strCurrentFile = strFile;
+                 _notifyPlaying = true;
+                 return true;
+              }
+              else
+              {
+                 _notifyPlaying = false;
+                 Marshal.FreeCoTaskMem(cds.lpData);
+                 return false;
+              }
             }
             catch
             {
@@ -541,6 +542,7 @@ namespace MediaPortal.FoobarPlugin
             }
         }
 
+
         /// <summary>
         /// This method pauses the currently played song
         /// </summary>
@@ -562,6 +564,7 @@ namespace MediaPortal.FoobarPlugin
             }
         }
 
+
         /// <summary>
         /// This method returns if the player is in playing state
         /// </summary>
@@ -574,6 +577,7 @@ namespace MediaPortal.FoobarPlugin
             }
         }
 
+
         public override bool Ended
         {
             get
@@ -584,6 +588,7 @@ namespace MediaPortal.FoobarPlugin
                 return (state == 2);
             }
         }
+
 
         /// <summary>
         /// This method returns if the player is in stop state
@@ -597,6 +602,7 @@ namespace MediaPortal.FoobarPlugin
                 return (state == 2);
             }
         }
+
 
         /// <summary>
         /// This method returns the file that is been played
@@ -615,6 +621,7 @@ namespace MediaPortal.FoobarPlugin
             SendMessageA(m_hwndPlugin, WM_HTTPSERVER_MSG_CMD, WM_HTTPSERVER_MSG_STOP, 0);
             _notifyPlaying = false;
         }
+
 
         /// <summary>
         /// Volume property for the player
@@ -732,16 +739,17 @@ namespace MediaPortal.FoobarPlugin
 
         public override void Process()
         {
-            if (!Playing)
-                return;
+           if (!Playing)
+             return;
 
-            if (_notifyPlaying && CurrentPosition >= 10.0)
-            {
-                _notifyPlaying = false;
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC, 0, 0, 0, 0, 0, null);
-                msg.Label = CurrentFile;
-                GUIWindowManager.SendThreadMessage(msg);
-            }
+           if (_notifyPlaying && CurrentPosition >= 10.0)
+           {
+              _notifyPlaying = false;
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYING_10SEC, 0, 0, 0, 0, 0, null);
+              msg.Label = CurrentFile;
+              GUIWindowManager.SendThreadMessage(msg);
+           }
         }
-    }
+
+      } // public class FoobarPlugin : MediaPortal.Player.IExternalPlayer
 }
