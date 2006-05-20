@@ -339,7 +339,8 @@ namespace MediaPortal.Util
           else
           {
             string strFullPath = System.IO.Path.GetFullPath(share.Path);
-            if (strRoot.ToLower().StartsWith(strFullPath.ToLower()))
+            //if (strRoot.ToLower().StartsWith(strFullPath.ToLower()))
+            if (strRoot.ToLower() == strFullPath.ToLower())
             {
               currentShare = strFullPath;
               iPincode = share.Pincode;
@@ -439,12 +440,7 @@ namespace MediaPortal.Util
     /// </returns>
     public ArrayList GetDirectory(string strDir)
     {
-      if (strDir == null)
-      {
-        m_strPreviousDir = "";
-        return GetRoot();
-      }
-      if (strDir == "")
+      if ((strDir == null) || (strDir == ""))
       {
         m_strPreviousDir = "";
         return GetRoot();
@@ -479,7 +475,7 @@ namespace MediaPortal.Util
 
       //is this directory protected
       int iPincodeCorrect;
-      if (IsProtectedShare(strDir, out iPincodeCorrect))
+      if (IsProtectedShare(strDir, out iPincodeCorrect) && !m_strPreviousDir.StartsWith(currentShare))
       {
         bool retry = true;
         {

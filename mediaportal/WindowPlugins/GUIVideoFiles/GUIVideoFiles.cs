@@ -113,7 +113,7 @@ namespace MediaPortal.GUI.Video
     string fileMenuPinCode = String.Empty;
     static PlayListPlayer playlistPlayer;
     bool ShowTrailerButton = true;
-      
+
     static GUIVideoFiles()
     {
       playlistPlayer = PlayListPlayer.SingletonPlayer;
@@ -285,9 +285,9 @@ namespace MediaPortal.GUI.Video
       // Check if mytrailers-plugin is enabled
       if (ShowTrailerButton != true)
       {
-          btnTrailers.Visible = false;
-          btnPlayDVD.NavigateDown = 99;
-      } 
+        btnTrailers.Visible = false;
+        btnPlayDVD.NavigateDown = 99;
+      }
       LoadFolderSettings(currentFolder);
       LoadDirectory(currentFolder);
     }
@@ -384,126 +384,126 @@ namespace MediaPortal.GUI.Video
       FolderSettings.AddFolderSetting(folderName, "VideoFiles", typeof(GUIVideoFiles.MapSettings), mapSettings);
     }
 
-      protected override void LoadDirectory(string newFolderName)
+    protected override void LoadDirectory(string newFolderName)
+    {
+      GUIListItem selectedListItem = facadeView.SelectedListItem;
+      if (selectedListItem != null)
       {
-          GUIListItem selectedListItem = facadeView.SelectedListItem;
-          if (selectedListItem != null)
-          {
-              if (selectedListItem.IsFolder && selectedListItem.Label != "..")
-              {
-                  m_history.Set(selectedListItem.Label, currentFolder);
-              }
-          }
-          if (newFolderName != currentFolder && mapSettings != null)
-          {
-              SaveFolderSettings(currentFolder);
-          }
-
-          if (newFolderName != currentFolder || mapSettings == null)
-          {
-              LoadFolderSettings(newFolderName);
-          }
-
-          currentFolder = newFolderName;
-
-          string objectCount = String.Empty;
-
-          ArrayList itemlist;
-
-          // Mounting and loading a DVD image file takes a long time,
-          // so display a message letting the user know that something 
-          // is happening.
-          if (!m_askBeforePlayingDVDImage && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(currentFolder)))
-          {
-              itemlist = PlayMountedImageFile(GetID, currentFolder);
-
-              // Remember the directory that the image file is in rather than the
-              // image file itself.  This prevents repeated playing of the image file.
-              if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(currentFolder)))
-              {
-                  currentFolder = System.IO.Path.GetDirectoryName(currentFolder);
-              }
-          }
-          else
-          {
-              GUIControl.ClearControl(GetID, facadeView.GetID);
-              itemlist = m_directory.GetDirectory(currentFolder);
-          }
-
-          if (mapSettings.Stack)
-          {
-              ArrayList itemfiltered = new ArrayList();
-              for (int x = 0; x < itemlist.Count; ++x)
-              {
-                  bool addItem = true;
-                  GUIListItem item1 = (GUIListItem)itemlist[x];
-                  for (int y = 0; y < itemlist.Count; ++y)
-                  {
-                      GUIListItem item2 = (GUIListItem)itemlist[y];
-                      if (x != y)
-                      {
-                          if (!item1.IsFolder || !item2.IsFolder)
-                          {
-                              if (!item1.IsRemote && !item2.IsRemote)
-                              {
-                                  if (Utils.ShouldStack(item1.Path, item2.Path))
-                                  {
-                                      if (String.Compare(item1.Path, item2.Path, true) > 0)
-                                      {
-                                          addItem = false;
-                                          // Update to reflect the stacked size
-                                          item2.FileInfo.Length +=item1.FileInfo.Length;
-                                      }
-                                  }
-                              }
-                          }
-                      }
-                  }
-
-                  if (addItem)
-                  {
-                      string label = item1.Label;
-
-                      Utils.RemoveStackEndings(ref label);
-                      item1.Label = label;
-                      itemfiltered.Add(item1);
-                  }
-              }
-              itemlist = itemfiltered;
-          }
-
-          SetIMDBThumbs(itemlist);
-          string selectedItemLabel = m_history.Get(currentFolder);
-          int itemIndex = 0;
-          foreach (GUIListItem item in itemlist)
-          {
-              item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-              facadeView.Add(item);
-          }
-          OnSort();
-          for (int i = 0; i < facadeView.Count; ++i)
-          {
-              GUIListItem item = facadeView[i];
-              if (item.Label == selectedItemLabel)
-              {
-                  GUIControl.SelectItemControl(GetID, facadeView.GetID, i);
-                  break;
-              }
-              itemIndex++;
-          }
-          int totalItems = itemlist.Count;
-          if (itemlist.Count > 0)
-          {
-              GUIListItem rootItem = (GUIListItem)itemlist[0];
-              if (rootItem.Label == "..") totalItems--;
-          }
-          objectCount = String.Format("{0} {1}", totalItems, GUILocalizeStrings.Get(632));
-          GUIPropertyManager.SetProperty("#itemcount", objectCount);
-          if (currentSelectedItem >= 0)
-          {
-              GUIControl.SelectItemControl(GetID, facadeView.GetID, currentSelectedItem);
-          }
+        if (selectedListItem.IsFolder && selectedListItem.Label != "..")
+        {
+          m_history.Set(selectedListItem.Label, currentFolder);
+        }
       }
+      if (newFolderName != currentFolder && mapSettings != null)
+      {
+        SaveFolderSettings(currentFolder);
+      }
+
+      if (newFolderName != currentFolder || mapSettings == null)
+      {
+        LoadFolderSettings(newFolderName);
+      }
+
+      currentFolder = newFolderName;
+
+      string objectCount = String.Empty;
+
+      ArrayList itemlist;
+
+      // Mounting and loading a DVD image file takes a long time,
+      // so display a message letting the user know that something 
+      // is happening.
+      if (!m_askBeforePlayingDVDImage && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(currentFolder)))
+      {
+        itemlist = PlayMountedImageFile(GetID, currentFolder);
+
+        // Remember the directory that the image file is in rather than the
+        // image file itself.  This prevents repeated playing of the image file.
+        if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(currentFolder)))
+        {
+          currentFolder = System.IO.Path.GetDirectoryName(currentFolder);
+        }
+      }
+      else
+      {
+        GUIControl.ClearControl(GetID, facadeView.GetID);
+        itemlist = m_directory.GetDirectory(currentFolder);
+      }
+
+      if (mapSettings.Stack)
+      {
+        ArrayList itemfiltered = new ArrayList();
+        for (int x = 0; x < itemlist.Count; ++x)
+        {
+          bool addItem = true;
+          GUIListItem item1 = (GUIListItem)itemlist[x];
+          for (int y = 0; y < itemlist.Count; ++y)
+          {
+            GUIListItem item2 = (GUIListItem)itemlist[y];
+            if (x != y)
+            {
+              if (!item1.IsFolder || !item2.IsFolder)
+              {
+                if (!item1.IsRemote && !item2.IsRemote)
+                {
+                  if (Utils.ShouldStack(item1.Path, item2.Path))
+                  {
+                    if (String.Compare(item1.Path, item2.Path, true) > 0)
+                    {
+                      addItem = false;
+                      // Update to reflect the stacked size
+                      item2.FileInfo.Length += item1.FileInfo.Length;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          if (addItem)
+          {
+            string label = item1.Label;
+
+            Utils.RemoveStackEndings(ref label);
+            item1.Label = label;
+            itemfiltered.Add(item1);
+          }
+        }
+        itemlist = itemfiltered;
+      }
+
+      SetIMDBThumbs(itemlist);
+      string selectedItemLabel = m_history.Get(currentFolder);
+      int itemIndex = 0;
+      foreach (GUIListItem item in itemlist)
+      {
+        item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+        facadeView.Add(item);
+      }
+      OnSort();
+      for (int i = 0; i < facadeView.Count; ++i)
+      {
+        GUIListItem item = facadeView[i];
+        if (item.Label == selectedItemLabel)
+        {
+          GUIControl.SelectItemControl(GetID, facadeView.GetID, i);
+          break;
+        }
+        itemIndex++;
+      }
+      int totalItems = itemlist.Count;
+      if (itemlist.Count > 0)
+      {
+        GUIListItem rootItem = (GUIListItem)itemlist[0];
+        if (rootItem.Label == "..") totalItems--;
+      }
+      objectCount = String.Format("{0} {1}", totalItems, GUILocalizeStrings.Get(632));
+      GUIPropertyManager.SetProperty("#itemcount", objectCount);
+      if (currentSelectedItem >= 0)
+      {
+        GUIControl.SelectItemControl(GetID, facadeView.GetID, currentSelectedItem);
+      }
+    }
     #endregion
 
 
@@ -558,7 +558,7 @@ namespace MediaPortal.GUI.Video
             {
 
               //download subtitle files
-              bool isDVD=(item.Path.ToUpper().IndexOf("VIDEO_TS") >=0);
+              bool isDVD = (item.Path.ToUpper().IndexOf("VIDEO_TS") >= 0);
               List<GUIListItem> listFiles = m_directory.GetDirectoryUnProtectedExt(currentFolder, false);
               string[] sub_exts = { ".utf", ".utf8", ".utf-8", ".sub", ".srt", ".smi", ".rt", ".txt", ".ssa", ".aqt", ".jss", ".ass", ".idx", ".ifo" };
               if (!isDVD)
@@ -2524,9 +2524,9 @@ namespace MediaPortal.GUI.Video
         while (searchDone || (!tvParser.getSeasonEpisode(tmpFilename, out season, out ep, out showname) && !(TVcomSettings.lookupIfNoSEinFilename && tvParser.getShownameEpisodeTitleOnly(tmpFilename, out showname, out episodeTitle))))
         {
           if (searchDone)
-              Log.WriteFile(Log.LogType.TVCom, "Showing Keyboard..");
+            Log.WriteFile(Log.LogType.TVCom, "Showing Keyboard..");
           else
-              Log.WriteFile(Log.LogType.TVCom, "Could not get enough Info from Filename. Showing Keyboard..");
+            Log.WriteFile(Log.LogType.TVCom, "Could not get enough Info from Filename. Showing Keyboard..");
 
           searchDone = false;
           oldFilename = tmpFilename;
@@ -3007,7 +3007,7 @@ namespace MediaPortal.GUI.Video
                   }
                 }
                 else
-                    Log.WriteFile(Log.LogType.TVCom, "Tried to rename, but the specified format is invalid - " + TVcomSettings.renameFormat);
+                  Log.WriteFile(Log.LogType.TVCom, "Tried to rename, but the specified format is invalid - " + TVcomSettings.renameFormat);
               }
             }
 
