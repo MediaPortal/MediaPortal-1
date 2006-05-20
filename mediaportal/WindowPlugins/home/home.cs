@@ -305,14 +305,22 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD:
-          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-          if (dlgYesNo == null)
-            return;
-          dlgYesNo.SetHeading(771); // The entered PIN could not be accepted
-          dlgYesNo.SetLine(1, 772); // Do you want to try again?
-          dlgYesNo.SetDefaultToYes(true);
-          dlgYesNo.DoModal(GetID);
-          message.Object = dlgYesNo.IsConfirmed;
+          using (Profile.Settings xmlreader = new Profile.Settings("MediaPortal.xml"))
+          {
+            if (!xmlreader.GetValueAsBool("general", "hidewrongpin", false))
+            {
+              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+              if (dlgYesNo == null)
+                return;
+              dlgYesNo.SetHeading(771); // The entered PIN could not be accepted
+              dlgYesNo.SetLine(1, 772); // Do you want to try again?
+              dlgYesNo.SetDefaultToYes(true);
+              dlgYesNo.DoModal(GetID);
+              message.Object = dlgYesNo.IsConfirmed;
+            }
+            else
+              message.Object = false;
+          }
           break;
       }
     }
