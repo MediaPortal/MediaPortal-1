@@ -32,7 +32,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using MediaPortal.Util;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
   public class FileMenu : MediaPortal.Configuration.SectionSettings
@@ -82,7 +84,7 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         chbEnabled.Checked = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        textPinCodeBox.Text = xmlreader.GetValueAsString("filemenu", "pincode", "");
+        textPinCodeBox.Text = Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", ""));
         textTrashcanFolder.Text = xmlreader.GetValueAsString("filemenu", "trashcan", "");
       }
     }
@@ -92,8 +94,8 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValueAsBool("filemenu", "enabled", chbEnabled.Checked);
-        xmlwriter.SetValue("filemenu", "pincode", textPinCodeBox.Text);
-        xmlwriter.SetValue("filemenu", "trashcane", textTrashcanFolder.Text);
+        xmlwriter.SetValue("filemenu", "pincode", Utils.EncryptPin(textPinCodeBox.Text));
+        xmlwriter.SetValue("filemenu", "trashcan", textTrashcanFolder.Text);
       }
     }
 

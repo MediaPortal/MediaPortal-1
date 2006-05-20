@@ -43,7 +43,9 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.View;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
+
 #pragma warning disable 108
+
 namespace MediaPortal.GUI.Video
 {
   /// <summary>
@@ -186,7 +188,7 @@ namespace MediaPortal.GUI.Video
       {
         ShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", true);
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        fileMenuPinCode = xmlreader.GetValueAsString("filemenu", "pincode", String.Empty);
+        fileMenuPinCode = Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
         m_directory.Clear();
         string strDefault = xmlreader.GetValueAsString("movies", "default", String.Empty);
         for (int i = 0; i < 20; i++)
@@ -206,7 +208,11 @@ namespace MediaPortal.GUI.Video
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString("movies", strShareName, String.Empty);
           share.Path = xmlreader.GetValueAsString("movies", strSharePath, String.Empty);
-          share.Pincode = xmlreader.GetValueAsInt("movies", strPincode, -1);
+          string pinCode = Utils.DecryptPin(xmlreader.GetValueAsString("movies", strPincode, string.Empty));
+          if (pinCode != string.Empty)
+            share.Pincode = Convert.ToInt32(pinCode);
+          else
+            share.Pincode = -1;
 
           share.IsFtpShare = xmlreader.GetValueAsBool("movies", shareType, false);
           share.FtpServer = xmlreader.GetValueAsString("movies", shareServer, String.Empty);

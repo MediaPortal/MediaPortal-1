@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Drawing;
 using System.IO;
@@ -41,14 +46,14 @@ using MediaPortal.Player;
 namespace MediaPortal.Util
 {
 
-	/// <summary>
-	/// 
-	/// </summary>
+  /// <summary>
+  /// 
+  /// </summary>
   public class Utils
   {
 
     [DllImport("kernel32.dll")]
-    extern static bool GetDiskFreeSpaceEx(string lpDirectoryName,out UInt64 lpFreeBytesAvailable,out UInt64 lpTotalNumberOfBytes,out UInt64 lpTotalNumberOfFreeBytes);
+    extern static bool GetDiskFreeSpaceEx(string lpDirectoryName, out UInt64 lpFreeBytesAvailable, out UInt64 lpTotalNumberOfBytes, out UInt64 lpTotalNumberOfFreeBytes);
 
     [DllImport("Kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     extern static bool GetVolumeInformation(
@@ -100,6 +105,8 @@ namespace MediaPortal.Util
     static bool restartMCEehSched = false;
     static ServiceController ehRecvr = new ServiceController("ehRecvr");
     static ServiceController ehSched = new ServiceController("ehSched");
+
+    static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
 
     // singleton. Dont allow any instance of this class
     private Utils()
@@ -1926,6 +1933,34 @@ namespace MediaPortal.Util
       return (Application.SetSuspendState(state, forceShutDown, false));
     }
 
+    static public string EncryptPin(string code)
+    {
+      string result = string.Empty;
+      foreach (char c in code)
+        try
+        {
+          result += crypt[(int)c - 48];
+        }
+        catch { }
+      return result;
+
+    }
+
+    static public string DecryptPin(string code)
+    {
+      string result = string.Empty;
+      foreach (char c in code)
+      {
+        try
+        {
+          for (int i = 0; i < crypt.Length; i++)
+            if (crypt[i] == c)
+              result += (i).ToString();
+        }
+        catch { }
+      }
+      return result;
+    }
+
   }
 }
-

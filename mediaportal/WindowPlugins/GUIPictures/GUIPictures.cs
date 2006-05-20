@@ -154,7 +154,7 @@ namespace MediaPortal.GUI.Pictures
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         isFileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-        fileMenuPinCode = xmlreader.GetValueAsString("filemenu", "pincode", String.Empty);
+        fileMenuPinCode = Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
         string strDefault = xmlreader.GetValueAsString("pictures", "default", String.Empty);
         virtualDirectory.Clear();
         for (int i = 0; i < 20; i++)
@@ -174,7 +174,11 @@ namespace MediaPortal.GUI.Pictures
           Share share = new Share();
           share.Name = xmlreader.GetValueAsString("pictures", shareName, String.Empty);
           share.Path = xmlreader.GetValueAsString("pictures", sharePath, String.Empty);
-          share.Pincode = xmlreader.GetValueAsInt("pictures", strPincode, -1);
+          string pinCode = Utils.DecryptPin(xmlreader.GetValueAsString("pictures", strPincode, string.Empty));
+          if (pinCode != string.Empty)
+            share.Pincode = Convert.ToInt32(pinCode);
+          else
+            share.Pincode = -1;
 
           share.IsFtpShare = xmlreader.GetValueAsBool("pictures", shareType, false);
           share.FtpServer = xmlreader.GetValueAsString("pictures", shareServer, String.Empty);
@@ -984,7 +988,7 @@ namespace MediaPortal.GUI.Pictures
       {
         for (int i = 0; i < GetItemCount(); ++i)
         {
-          int percent = ((i+1) * 100) / GetItemCount();
+          int percent = ((i + 1) * 100) / GetItemCount();
           GUIListItem item = GetItem(i);
           if (item.IsRemote) continue;
           if (dlgProgress != null)
@@ -1138,7 +1142,7 @@ namespace MediaPortal.GUI.Pictures
       }
       for (int i = 0; i < GetItemCount(); ++i)
       {
-        int percent = ((i+1) * 100) / GetItemCount();
+        int percent = ((i + 1) * 100) / GetItemCount();
         if (dlgProgress != null)
         {
           dlgProgress.SetPercentage(percent);
@@ -1148,7 +1152,7 @@ namespace MediaPortal.GUI.Pictures
         }
         GUIListItem item = GetItem(i);
         if (item.IsFolder && item.Label != "..")
-        { 
+        {
           if (dlgProgress != null)
           {
             string fileName = String.Format(GUILocalizeStrings.Get(519) + ": {0}", item.Label);
