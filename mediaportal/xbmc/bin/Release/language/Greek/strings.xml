@@ -416,34 +416,35 @@
 <string><id>485</id><value>Διαγραφή Αλμπουμ</value></string>
 <string><id>486</id><value>Επανάληψη</value></string>
 <string><id>487</id><value>Επανάληψη Μονή</value></string>
-<string><id>488</id><value>Repeat folder playlist</value></string>
-<string><id>489</id><value>Use playlist in songs</value></string>
-<string><id>490</id><value>Auto switch list and icons in songs</value></string>
+<string><id>488</id><value>Επανάληψη playlist φακέλου</value></string>
+<string><id>489</id><value>Χρήση playlist στα τραγούδια</value></string>
+<string><id>490</id><value>Αυτόματο γύρισμα λίστας και εικονιδίων στα τραγούδια</value></string>
 <string><id>491</id><value>Χρησιμοποίηση Μεγάλων Εικονιδίων</value></string>
-<string><id>492</id><value>Audio language</value></string>
-<string><id>493</id><value>Actor:</value></string>
+<string><id>492</id><value>Γλώσσα ήχου</value></string>
+<string><id>493</id><value>Ηθοποιός:</value></string>
 <string><id>500</id><value>Μενού Αρχείων</value></string>
-<string><id>501</id><value>Ορισμός ως Προορισμός</value></string>
-<string><id>502</id><value>Αδύνατο να Ολοκληρωθεί</value></string>
+<string><id>501</id><value>Ορισμός ως προορισμός</value></string>
+<string><id>502</id><value>Αδύνατο να ολοκληρωθεί</value></string>
 <string><id>503</id><value>Διαγραφή του Φακέλου</value></string>
 <string><id>504</id><value>Πήγαινε στον προορισμό</value></string>
 <string><id>505</id><value>Υπολογισμός</value></string>
-<string><id>506</id><value>Είσαι Σίγουρος;</value></string>
+<string><id>506</id><value>Σίγουρα;</value></string>
 <string><id>507</id><value>αντικείμενα</value></string>
 <string><id>508</id><value>Στο</value></string>
-<string><id>509</id><value>Το Αρχείο Υπάρχει Ήδη. Ξανα-αντιγραφή ;</value></string>
+<string><id>509</id><value>Το αρχείο υπάρχει ήδη. Επανεγγραφή;</value></string>
 <string><id>510</id><value>Ακύρωση</value></string>
 <string><id>511</id><value>Πάντα</value></string>
 <string><id>512</id><value>Ποτέ</value></string>
-<string><id>513</id><value>Item is protected, action not completed</value></string>
-<string><id>514</id><value>Error creating folder, action not completed</value></string>
-<string><id>515</id><value>Error deleting folder, action not completed</value></string>
-<string><id>516</id><value>Unable to delete destination file, action not completed</value></string>
-<string><id>517</id><value>Fatal error, action not completed</value></string>
-<string><id>518</id><value>Delete this song?</value></string>
-<string><id>530</id><value>Photo disc εισήχθει, θέλετε να τον ανοίξετε ;</value></string>
-<string><id>531</id><value>Movie disc εισήχθει, θέλετε να τον ανοίξετε ;</value></string>
-<string><id>532</id><value>Audio disc εισήχθει, θέλετε να τον ανοίξετε ;</value></string>
+<string><id>513</id><value>Το αντικείμενο είναι προστατευμένο, η ενέργεια δεν ολοκληρώθηκε</value></string>
+<string><id>514</id><value>Πρόβλημα στη δημιουργία φακέλου, η ενέργεια δεν ολοκληρώθηκε</value></string>
+<string><id>515</id><value>Πρόβλημα στη διαγραφή φακέλου, η ενέργεια δεν ολοκληρώθηκε</value></string>
+<string><id>516</id><value>Πρόβλημα στη διαγραφή του τελικού αρχείου, η ενέργεια δεν ολοκληρώθηκε</value></string>
+<string><id>517</id><value>Σοβαρό πρόβλημα, η ενέργεια δεν ολοκληρώθηκε</value></string>
+<string><id>518</id><value>Διαγραφή αυτού του τραγουδιού;</value></string>
+<string><id>529</id><value>Όψη: Λίστα Εικονιδίων</value></string>
+<string><id>530</id><value>Δίσκος με φωτογραφίες εισήχθει, θέλετε να τον ανοίξετε ;</value></string>
+<string><id>531</id><value>Δίσκος με βίντεο εισήχθει, θέλετε να τον ανοίξετε ;</value></string>
+<string><id>532</id><value>Δίσκος με ήχο εισήχθει, θέλετε να τον ανοίξετε ;</value></string>
 <string><id>533</id><value>Οδηγός</value></string>
 <string><id>550</id><value>Κοπή</value></string>
 <string><id>600</id><value>Οδηγός TV</value></string>
@@ -557,7 +558,7 @@
 <string><id>716</id><value>Δορυφόρος</value></string>
 <string><id>717</id><value>Καιρός</value></string>
 <string><id>718</id><value>Καθαρισμός Top100</value></string>
-<string><id>719</id><value>Είστε σίγουροι για το reset της top 100 Λίστας;</value></string>
+<string><id>719</id><value>Είστε σίγουροι για το reset της top 100 λίστας;</value></string>
 <string><id>720</id><value>Επίδειξη: Διάρκειας</value></string>
 <string><id>721</id><value>Επίδειξη: Φορές Παιξίματος</value></string>
 <string><id>722</id><value>Αδύνατη η αναπαραγωγή του Δίσκου</value></string>
@@ -608,6 +609,8 @@
 <string><id>768</id><value>Δεν βρέθηκαν κανάλια</value></string>
 <string><id>769</id><value>Δεν βρέθηκαν προγράμματα</value></string>
 <string><id>770</id><value>Δεν βρέθηκε αρχείο XMLTV</value></string>
+<string><id>771</id>	<value>Το PIN που εισήχθει είναι λάθος</value></string>
+<string><id>772</id>	<value>Θα δοκιμάσετε πάλι;</value></string>
 <string><id>800</id><value>Εναρξη με</value></string>
 <string><id>801</id><value>Περιέχει</value></string>
 <string><id>802</id><value>Τελειώνει με</value></string>
@@ -621,7 +624,7 @@
 <string><id>810</id><value>Κάρτα</value></string>
 <!-- My Alarm Strings -->
 <string><id>850</id><value>Ξυπνητήρι</value></string>
-<string><id>851</id><value>Λίστα παιξίματος</value></string>
+<string><id>851</id><value>Playlist</value></string>
 <string><id>852</id><value>Ξυπνητήρι on/off</value></string>
 <string><id>853</id><value>Ονομα:</value></string>
 <string><id>854</id><value>Ενεργό τις μέρες</value></string>
@@ -1056,11 +1059,11 @@
 <string><id>4550</id><value>Στην ουρά</value></string>
 <string><id>4551</id><value>Επόμενο</value></string>
 <string><id>4552</id><value>Παίξιμο Τώρα</value></string>
-<string><id>4553</id><value>Λίστα παιξίματος</value></string>
+<string><id>4553</id><value>Playlist</value></string>
 <string><id>4554</id><value>Έρευνα πληροφοριών CD</value></string>
-<string><id>4555</id><value>Τρέχουσα λίστα παιξίματος</value></string>
+<string><id>4555</id><value>Τρέχουσα playlist</value></string>
 <string><id>4556</id><value>Διάφοροι</value></string>
-<string><id>4557</id><value>Προσθήκη όλων στη λίστα παιξίματος</value></string>
+<string><id>4557</id><value>Προσθήκη όλων στη playlist</value></string>
 <!-- End Addtional MyMusic Strings -->
 <!-- My Trailers Strings -->
 <string><id>5900</id><value>Τρέιλερ</value></string>
@@ -1115,64 +1118,68 @@
 <string><id>8024</id><value>Προβολή Μυνήματος</value></string>
 <string><id>8025</id><value>Parsing Message</value></string>
 <string><id>8030</id><value>Σύνδεση με το server</value></string>
-<string><id>8031</id><value>Λήψη Αριθμού Mail</value></string>
+<string><id>8031</id><value>Λήψη αριθμού mail</value></string>
 <string><id>8033</id><value>Πρόοδος</value></string>
 <string><id>8034</id><value>Προβολή HTML</value></string>
 <string><id>9000</id><value>Διαστάσεις Εικόνας:</value></string>
 <string><id>9001</id><value>Ανάλυση:</value></string>
-<string><id>9002</id><value>Flash:</value></string>
+<string><id>9002</id><value>Φλας:</value></string>
 <string><id>9003</id><value>Metering Mode:</value></string>
 <string><id>9004</id><value>Compensation:</value></string>
-<string><id>9005</id><value>Shutter Speed:</value></string>
+<string><id>9005</id><value>Ταχύτητα κλείστρου:</value></string>
 <string><id>9006</id><value>Ημέρα Λήψης:</value></string>
 <string><id>9007</id><value>Fstop:</value></string>
-<string><id>9008</id><value>Exposure time:</value></string>
-<string><id>9009</id><value>Μοντέλο Κάμερας:</value></string>
+<string><id>9008</id><value>Χρόνος έκθεσης:</value></string>
+<string><id>9009</id><value>Μοντέλο κάμερας:</value></string>
 <string><id>9010</id><value>Equipment make:</value></string>
-<string><id>9011</id><value>Προβολή Σχολίον:</value></string>
+<string><id>9011</id><value>Προβολή σχολίων:</value></string>
 <string><id>10000</id><value>Home</value></string>
 <string><id>10001</id><value>Τηλεόραση</value></string>
-<string><id>10002</id><value>Οι Φωτογραφίες μου</value></string>
-<string><id>10003</id><value>Τα Αρχεία μου</value></string>
+<string><id>10002</id><value>Φωτογραφίες</value></string>
+<string><id>10003</id><value>Αρχεία</value></string>
 <string><id>10004</id><value>Ρυθμίσεις</value></string>
-<string><id>10005</id><value>Η Μουσική μου</value></string>
-<string><id>10006</id><value>Τα Βιντεό μου</value></string>
+<string><id>10005</id><value>Μουσική</value></string>
+<string><id>10006</id><value>Βιντεό</value></string>
 <string><id>10007</id><value>Πληροφορίες Συστήματος</value></string>
 <string><id>10008</id><value>Ρυθμίσεις->Γενικά</value></string>
 <string><id>10009</id><value>Ρυθμίσεις->Οθόνη</value></string>
 <string><id>10010</id><value>Ρυθμίσεις->Οθόνη->UI Ρυθμίσεις</value></string>
 <string><id>10011</id><value>Ρυθμίσεις->Οθόνη->Ρυθμίσεις Οθόνης</value></string>
-<string><id>10012</id><value>Ρυθμίσεις->SlideShow</value></string>
+<string><id>10012</id><value>Ρυθμίσεις->Παρουσίαση</value></string>
 <string><id>10013</id><value>Ρυθμίσεις->Οθόνη->Φίλτρα</value></string>
 <string><id>10014</id><value>Ρυθμίσεις->Μουσική</value></string>
 <string><id>10015</id><value>Ρυθμίσεις->Οθόνη->Υπότιτλοι</value></string>
 <string><id>10016</id><value>Ρυθμίσεις->Οθόνη->Screensaver</value></string>
 <string><id>10017</id><value>Ρυθμίσεις->Καιρός</value></string>
 <string><id>10020</id><value>Ρυθμίσεις->Scripts</value></string>
-<string><id>10021</id><value>Τα Βιντεό μου/είδος</value></string>
-<string><id>10022</id><value>Τα Βιντεό μου/ηθοποιοί</value></string>
-<string><id>10023</id><value>Τα Βιντεό μου/ετος</value></string>
+<string><id>10021</id><value>Βιντεό/είδος</value></string>
+<string><id>10022</id><value>Βιντεό/ηθοποιοί</value></string>
+<string><id>10023</id><value>Βιντεό/ετος</value></string>
 <string><id>10024</id><value>Ρυθμίσεις->Προγράμματα</value></string>
-<string><id>10025</id><value>Τα Βιντεό μου/τίτλος</value></string>
-<string><id>10026</id><value>Ρυθμίσεις->General->Cache</value></string>
-<string><id>10027</id><value>Ρυθμίσεις->General->Autorun</value></string>
-<string><id>10028</id><value>Τα Βιντεό μου/playlist</value></string>
+<string><id>10025</id><value>Βιντεό/τίτλος</value></string>
+<string><id>10026</id><value>Ρυθμίσεις->Γενικές->Κασέ</value></string>
+<string><id>10027</id><value>Ρυθμίσεις->Γενικές->Αυτόματο τρέξιμο</value></string>
+<string><id>10028</id><value>Βιντεό/playlist</value></string>
 <string><id>10029</id><value>Ρυθμίσεις->Γενικά->LCD</value></string>
 <string><id>10030</id><value>Ραδιόφωνο</value></string>
-<string><id>10031</id><value>Ρυθμίσεις->Οθόνη->scroll speed</value></string>
+<string><id>10031</id><value>Ρυθμίσεις->Οθόνη->ταχύτητα κύλισης</value></string>
 <string><id>10032</id><value>MSN Messenger</value></string>
 <string><id>10033</id><value>MSN Messenger chat</value></string>
 <string><id>10034</id><value>Πρόσθετα</value></string>
-<string><id>10100</id><value>Yes/no dialog</value></string>
-<string><id>10101</id><value>Progress dialog</value></string>
-<string><id>10104</id><value>Mini EPG</value></string>
-<string><id>10500</id><value>Η Μουσική μου/playlist</value></string>
-<string><id>10501</id><value>Η Μουσική μου/αρχεία</value></string>
-<string><id>10502</id><value>Η Μουσική μου/αλμπουμ</value></string>
-<string><id>10503</id><value>Η Μουσική μου/καλ/χνες</value></string>
-<string><id>10504</id><value>Η Μουσική μου/είδη</value></string>
-<string><id>10505</id><value>Η Μουσική μου/top100</value></string>
-<string><id>10506</id><value>Η Μουσική μου/Αγαπημένα</value></string>
+<!-- Begin Minesweeper Strings -->
+<string><id>10100</id><value>Κρυμένες νάρκες</value></string>
+<string><id>10101</id><value>Ώρα παιχνιδιού</value></string>
+<string><id>10102</id><value>Γρηγορότερος χρόνος</value></string>
+<string><id>10103</id><value>Ναρκαλιευτής</value></string>
+<!-- End Minesweeper Strings -->
+<string><id>10104</id><value>Μίνι οδηγός</value></string>
+<string><id>10500</id><value>Μουσική/playlist</value></string>
+<string><id>10501</id><value>Μουσική/αρχεία</value></string>
+<string><id>10502</id><value>Μουσική/αλμπουμ</value></string>
+<string><id>10503</id><value>Μουσική/καλ/χνες</value></string>
+<string><id>10504</id><value>Μουσική/είδη</value></string>
+<string><id>10505</id><value>Μουσική/τοπ 100</value></string>
+<string><id>10506</id><value>Μουσική/Αγαπημένα</value></string>
 <string><id>10600</id><value>Τηλεόραση/Οδηγός</value></string>
 <string><id>10601</id><value>Τηλεόραση/Προγραμματισμός</value></string>
 <string><id>10602</id><value>Τηλεόραση/Πλήρη οθόνη</value></string>
