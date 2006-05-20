@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,14 +20,17 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
 using DirectShowLib.SBE;
 using MediaPortal.GUI.Library;
-
 using System.Runtime.InteropServices;
+
 namespace MediaPortal.Core.Transcoding
 {
   /// <summary>
@@ -84,7 +89,7 @@ namespace MediaPortal.Core.Transcoding
 
 
         Log.Write("DVR2MPG: Add Cyberlink MPEG2 multiplexer to graph");
-        string monikerPowerDvdMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{BC650178-0DE4-47DF-AF50-BBD9C7AEF5A9}";
+        string monikerPowerDvdMuxer = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{6770E328-9B73-40C5-91E6-E2F321AEDE57}";
         powerDvdMuxer = Marshal.BindToMoniker(monikerPowerDvdMuxer) as IBaseFilter;
         if (powerDvdMuxer == null)
         {
@@ -147,25 +152,36 @@ namespace MediaPortal.Core.Transcoding
           return false;
         }
 
+        bool usingAc3 = false;
         AMMediaType amAudio = new AMMediaType();
         amAudio.majorType = MediaType.Audio;
         amAudio.subType = MediaSubType.Mpeg2Audio;
-        pinOut0.Connect(pinIn1,  amAudio);
+        hr = pinOut0.Connect(pinIn1, amAudio);
         if (hr != 0)
         {
-          Log.Write("DVR2MPG: FAILED:unable to connect audio pins :0x{0:X}", hr);
+          amAudio.subType = MediaSubType.DolbyAC3;
+          hr = pinOut0.Connect(pinIn1, amAudio);
+          usingAc3 = true;
+        }
+        if (hr != 0)
+        {
+          Log.Write("DVR2MPG: FAILED: unable to connect audio pins: 0x{0:X}", hr);
           Cleanup();
           return false;
         }
 
+        if (usingAc3)
+          Log.Write("DVR2MPG: using AC3 audio");
+        else
+          Log.Write("DVR2MPG: using MPEG audio");
 
         AMMediaType amVideo = new AMMediaType();
         amVideo.majorType = MediaType.Video;
         amVideo.subType = MediaSubType.Mpeg2Video;
-        pinOut1.Connect(pinIn0,  amVideo);
+        hr = pinOut1.Connect(pinIn0, amVideo);
         if (hr != 0)
         {
-          Log.Write("DVR2MPG: FAILED:unable to connect video pins :0x{0:X}", hr);
+          Log.Write("DVR2MPG: FAILED: unable to connect video pins: 0x{0:X}", hr);
           Cleanup();
           return false;
         }
@@ -175,21 +191,21 @@ namespace MediaPortal.Core.Transcoding
         Log.Write("DVR2MPG: connect multiplexer->filewriter");
         IPin pinOut, pinIn;
         pinOut = DsFindPin.ByDirection(powerDvdMuxer, PinDirection.Output, 0);
-        if ( pinOut == null)
+        if (pinOut == null)
         {
           Log.Write("DVR2MPG: FAILED:cannot get output pin of Cyberlink MPEG muxer :0x{0:X}", hr);
           Cleanup();
           return false;
         }
         pinIn = DsFindPin.ByDirection(fileWriterbase, PinDirection.Input, 0);
-        if ( pinIn == null)
+        if (pinIn == null)
         {
           Log.Write("DVR2MPG: FAILED:cannot get input pin of Filewriter :0x{0:X}", hr);
           Cleanup();
           return false;
         }
         AMMediaType mt = new AMMediaType();
-        hr = pinOut.Connect(pinIn,  mt);
+        hr = pinOut.Connect(pinIn, mt);
         if (hr != 0)
         {
           Log.Write("DVR2MPG: FAILED:connect muxer->filewriter :0x{0:X}", hr);
@@ -224,7 +240,7 @@ namespace MediaPortal.Core.Transcoding
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "DVR2MPG: Unable create graph", ex.Message);
+        Log.WriteFile(Log.LogType.Log, true, "DVR2MPG: Unable create graph: {0}", ex.Message);
         Cleanup();
         return false;
       }
