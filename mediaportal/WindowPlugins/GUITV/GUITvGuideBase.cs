@@ -2315,8 +2315,9 @@ namespace MediaPortal.GUI.TV
     void OnRecord()
     {
       if (_currentProgram == null) return;
-      if (_currentProgram.IsRunningAt(DateTime.Now) ||
-          _currentProgram.EndTime <= DateTime.Now)
+      if ((_currentProgram.IsRunningAt(DateTime.Now) ||
+          (_currentProgram.EndTime <= DateTime.Now)) &&
+          (Recorder.IsViewing() || Recorder.IsTimeShifting()))
       {
         //record current programme
         GUIWindow tvHome = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
