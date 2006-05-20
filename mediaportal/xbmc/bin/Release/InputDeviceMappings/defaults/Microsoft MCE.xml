@@ -44,14 +44,15 @@
 		<button name="Back" code="35">
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="10" sound="back.wav" />
 		</button>
+		<!-- Unmappable, handled by OS
 		<button name="Up" code="30" />
 		<button name="Down" code="31" />
 		<button name="Left" code="32" />
 		<button name="Right" code="33" />
 		<button name="Ok" code="34" />
+		-->
 		<button name="Info" code="15">
-			<action layer="0" condition="FULLSCREEN" conproperty="TRUE" command="ACTION" cmdproperty="24" sound="click.wav" />
-			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="11" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
 		</button>
 		<button name="Volume +" code="16">
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="103" sound="cursor.wav" />
@@ -97,8 +98,9 @@
 		</button>
 		<button name="DVD Menu" code="36">
 			<action layer="0" condition="PLAYER" conproperty="DVD" command="ACTION" cmdproperty="90" sound="click.wav" />
-			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
+			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="3001" sound="click.wav" />
 		</button>
+		<!-- Unmappable, handled by OS
 		<button name="1" code="1" />
 		<button name="2" code="2" />
 		<button name="3" code="3" />
@@ -113,6 +115,7 @@
 		<button name="#" code="28" />
 		<button name="Clear" code="10" />
 		<button name="Enter" code="11" />
+		-->
 	</remote>
 	<remote family="Teletext specific buttons">
 		<button name="Teletext" code="90">
@@ -135,7 +138,8 @@
 		<button name="Yellow" code="93">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9977" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="7700" command="ACTION" cmdproperty="9977" sound="click.wav" />
-			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
+			<action layer="0" condition="FULLSCREEN" conproperty="TRUE" command="ACTION" cmdproperty="24" sound="click.wav" />
+			<action layer="0" condition="FULLSCREEN" conproperty="FALSE" command="ACTION" cmdproperty="11" sound="click.wav" />
 		</button>
 		<button name="Blue" code="94">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9978" sound="click.wav" />
