@@ -1,7 +1,7 @@
-#region Copyright (C) 2005 Team MediaPortal
+#region Copyright (C) 2005-2006 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -29,239 +29,246 @@ using System.Collections;
 using System.IO;
 using System.Threading;
 using System.Windows.Media.Animation;
-
 using MediaPortal.Drawing;
 
 namespace MediaPortal.GUI.Library
 {
-	public class GUIAnimation : GUIControl
-	{
-		#region Constructors
+  public class GUIAnimation : GUIControl
+  {
+    #region Constructors
 
-		public GUIAnimation()
-		{
-		}
+    public GUIAnimation()
+    {
+    }
 
-		public GUIAnimation(int parentId) : base(parentId)
-		{
-		}
+    public GUIAnimation(int parentId)
+      : base(parentId)
+    {
+    }
 
-		#endregion Constructors
+    #endregion Constructors
 
-		#region Methods
+    #region Methods
 
-		public void Begin()
-		{
-			_startTick = AnimationTimer.TickCount;
-			_animating = true;
-		}
+    public void Begin()
+    {
+      _startTick = AnimationTimer.TickCount;
+      _animating = true;
+    }
 
-		public override void AllocResources()
-		{
-			if(_filenames == null)
-			{
-				_filenames = new ArrayList();
+    public override void AllocResources()
+    {
+      using (Profile.Settings xmlreader = new Profile.Settings("MediaPortal.xml"))
+        _hidePngAnimations = (xmlreader.GetValueAsBool("general", "hidepnganimations", false));
 
-				foreach(string filename in _textureNames.Split(';'))
-				{
-					if(filename.IndexOfAny(new char[] { '?', '*' }) != -1)
-					{
-						foreach(string match in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", filename))
-							_filenames.Add(Path.GetFileName(match));
-					}
-					else
-					{
-						_filenames.Add(filename.Trim());
-					}
-				}
-			}
+      if (_filenames == null)
+      {
+        _filenames = new ArrayList();
 
-			_images = new GUIImage[_filenames.Count];
+        foreach (string filename in _textureNames.Split(';'))
+        {
+          if (filename.IndexOfAny(new char[] { '?', '*' }) != -1)
+          {
+            foreach (string match in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", filename))
+              _filenames.Add(Path.GetFileName(match));
+          }
+          else
+          {
+            _filenames.Add(filename.Trim());
+          }
+        }
+      }
 
-			int w = 0;
-			int h = 0;
+      _images = new GUIImage[_filenames.Count];
 
-			for(int index = 0; index < _images.Length; index++)
-			{
-				_imageId++;
-				_images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, 0, 0, (string)_filenames[index], Color.White);
+      int w = 0;
+      int h = 0;
+
+      for (int index = 0; index < _images.Length; index++)
+      {
+        _imageId++;
+        _images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, 0, 0, (string)_filenames[index], Color.White);
         _images[index].ParentControl = this;
-				_images[index].AllocResources();
+        _images[index].AllocResources();
 
-				w = Math.Max(w, _images[index].Width);
-				h = Math.Max(h, _images[index].Height);
-			}
+        w = Math.Max(w, _images[index].Width);
+        h = Math.Max(h, _images[index].Height);
+      }
 
-			for(int index = 0; index < _images.Length; index++)
-			{
-				int x = _positionX;
-				int y = _positionY;
+      for (int index = 0; index < _images.Length; index++)
+      {
+        int x = _positionX;
+        int y = _positionY;
 
-				if(_horizontalAlignment == HorizontalAlignment.Center)
-				{
-					x = x - (w / 2);
-				}
-				else if(_horizontalAlignment == HorizontalAlignment.Right)
-				{
-					x = x - w;
-				}
+        if (_horizontalAlignment == HorizontalAlignment.Center)
+        {
+          x = x - (w / 2);
+        }
+        else if (_horizontalAlignment == HorizontalAlignment.Right)
+        {
+          x = x - w;
+        }
 
-				if(_verticalAlignment == VerticalAlignment.Center)
-				{
-					y = y - (h / 2);
-				}
-				else if(_verticalAlignment == VerticalAlignment.Bottom)
-				{
-					y = y - h;
-				}
+        if (_verticalAlignment == VerticalAlignment.Center)
+        {
+          y = y - (h / 2);
+        }
+        else if (_verticalAlignment == VerticalAlignment.Bottom)
+        {
+          y = y - h;
+        }
 
-				_images[index].SetPosition(x, y);
-			}
-		}
+        _images[index].SetPosition(x, y);
+      }
+    }
 
-		public override void FreeResources()
-		{
-			if(_images == null)
-				return;
+    public override void FreeResources()
+    {
+      if (_images == null)
+        return;
 
-			for(int index = 0; index < _images.Length; index++)
-				_images[index].FreeResources();
+      for (int index = 0; index < _images.Length; index++)
+        _images[index].FreeResources();
 
-			_images = null;
-		}
+      _images = null;
+    }
 
-		public override void Render(float timePassed)
-		{
-			if(_images == null)
-				return;
+    public override void Render(float timePassed)
+    {
+      if (_images == null)
+        return;
 
-			if(_images.Length == 0)
-				return;
+      if (_images.Length == 0)
+        return;
 
-			if(_isFirstRender)
-			{
-				_startTick = AnimationTimer.TickCount;
-				_animating = true;
-				_isFirstRender = false;
-			}
+      if (_isFirstRender)
+      {
+        _startTick = AnimationTimer.TickCount;
+        _animating = true;
+        _isFirstRender = false;
+      }
 
-			double elapsedTicks = AnimationTimer.TickCount - _startTick;
-			double progress = Math.Min(1, TweenHelper.Interpolate(_easing, 0, 1, _startTick, _duration));
+      if (_hidePngAnimations)
+        _animating = false;
 
-			// determine whether we are repeating
-			if(_animating && _duration < elapsedTicks)
-			{
-				// keep track of iterations regardless of the repeat behaviour
-				_iterationCount++;
+      double elapsedTicks = AnimationTimer.TickCount - _startTick;
+      double progress = Math.Min(1, TweenHelper.Interpolate(_easing, 0, 1, _startTick, _duration));
 
-				if(_repeatBehavior.IsIterationCount && _repeatBehavior.IterationCount <= _iterationCount)
-				{
-					_animating = false;
+      // determine whether we are repeating
+      if (_animating && _duration < elapsedTicks)
+      {
+        // keep track of iterations regardless of the repeat behaviour
+        _iterationCount++;
 
-					// XAML: fire event
-				}
-				else if(_repeatBehavior.IsRepeatDuration && _repeatBehavior.RepeatDuration <= elapsedTicks)
-				{
-					_animating = false;
+        if (_repeatBehavior.IsIterationCount && _repeatBehavior.IterationCount <= _iterationCount)
+        {
+          _animating = false;
 
-					// XAML: fire event
-				}
+          // XAML: fire event
+        }
+        else if (_repeatBehavior.IsRepeatDuration && _repeatBehavior.RepeatDuration <= elapsedTicks)
+        {
+          _animating = false;
 
-				if(_animating)
-					_startTick = AnimationTimer.TickCount;
-			}
+          // XAML: fire event
+        }
 
-			int index = _fillBehavior == FillBehavior.Stop ? 0 : _images.Length - 1;
+        if (_animating)
+          _startTick = AnimationTimer.TickCount;
+      }
 
-			if(_animating && progress <= 1)
-				index = (int)(progress * _images.Length);
+      int index = _fillBehavior == FillBehavior.Stop ? 0 : _images.Length - 1;
 
-			if(index >= _images.Length)
-				index = _images.Length - 1;
+      if (_animating && progress <= 1)
+        index = (int)(progress * _images.Length);
 
-//			_images[index].SetPosition((int)(progress * 700), _images[index].YPosition);
-			_images[index].Render(timePassed);
-		}
+      if (index >= _images.Length)
+        index = _images.Length - 1;
 
-		#endregion Methods
+      //			_images[index].SetPosition((int)(progress * 700), _images[index].YPosition);
+      _images[index].Render(timePassed);
+    }
 
-		#region Properties
+    #endregion Methods
 
-		public Duration Duration
-		{
-			get { return _duration; }
-			set { _duration = value; }
-		}
+    #region Properties
 
-		public Easing Easing
-		{
-			get { return _easing; }
-			set { _easing = value; }
-		}
+    public Duration Duration
+    {
+      get { return _duration; }
+      set { _duration = value; }
+    }
 
-		public ArrayList Filenames
-		{
-			get { if(_filenames == null) _filenames = new ArrayList(); return _filenames; }
-		}
+    public Easing Easing
+    {
+      get { return _easing; }
+      set { _easing = value; }
+    }
 
-		public new HorizontalAlignment HorizontalAlignment
-		{
-			get { return _horizontalAlignment; }
-			set { _horizontalAlignment = value; }
-		}
+    public ArrayList Filenames
+    {
+      get { if (_filenames == null) _filenames = new ArrayList(); return _filenames; }
+    }
 
-		public RepeatBehavior RepeatBehavior
-		{
-			get { return _repeatBehavior; }
-			set { _repeatBehavior = value; }
-		}
-		
-		public new VerticalAlignment VerticalAlignment
-		{
-			get { return _verticalAlignment; }
-			set { _verticalAlignment = value; }
-		}
+    public new HorizontalAlignment HorizontalAlignment
+    {
+      get { return _horizontalAlignment; }
+      set { _horizontalAlignment = value; }
+    }
 
-		#endregion Properties
+    public RepeatBehavior RepeatBehavior
+    {
+      get { return _repeatBehavior; }
+      set { _repeatBehavior = value; }
+    }
 
-		#region Properties (Skin)
+    public new VerticalAlignment VerticalAlignment
+    {
+      get { return _verticalAlignment; }
+      set { _verticalAlignment = value; }
+    }
 
-		[XMLSkinElement("Easing")]
-		protected Easing						_easing = Easing.Linear;
+    #endregion Properties
 
-		[XMLSkinElement("FillBehavior")]
-		protected FillBehavior					_fillBehavior = FillBehavior.HoldEnd;
+    #region Properties (Skin)
 
-		[XMLSkinElement("HorizontalAlignment")]
-		protected HorizontalAlignment			_horizontalAlignment = HorizontalAlignment.Left;
+    [XMLSkinElement("Easing")]
+    protected Easing _easing = Easing.Linear;
 
-		[XMLSkinElement("textures")]
-		protected string						_textureNames = string.Empty;
+    [XMLSkinElement("FillBehavior")]
+    protected FillBehavior _fillBehavior = FillBehavior.HoldEnd;
 
-		[XMLSkinElement("rate")]
-		protected double						_rate = 1;
+    [XMLSkinElement("HorizontalAlignment")]
+    protected HorizontalAlignment _horizontalAlignment = HorizontalAlignment.Left;
 
-		[XMLSkinElement("Duration")]
-		protected Duration						_duration = Duration.Automatic;
+    [XMLSkinElement("textures")]
+    protected string _textureNames = string.Empty;
 
-		[XMLSkinElement("RepeatBehavior")]	
-		protected RepeatBehavior				_repeatBehavior = RepeatBehavior.Forever;
+    [XMLSkinElement("rate")]
+    protected double _rate = 1;
 
-		[XMLSkinElement("VerticalAlignment")]
-		protected VerticalAlignment				_verticalAlignment = VerticalAlignment.Top;
+    [XMLSkinElement("Duration")]
+    protected Duration _duration = Duration.Automatic;
 
-		#endregion Properties (Skin)
+    [XMLSkinElement("RepeatBehavior")]
+    protected RepeatBehavior _repeatBehavior = RepeatBehavior.Forever;
 
-		#region Fields
+    [XMLSkinElement("VerticalAlignment")]
+    protected VerticalAlignment _verticalAlignment = VerticalAlignment.Top;
 
-		ArrayList						_filenames;
-		GUIImage[]						_images;
-		bool							_animating = false;
-		bool							_isFirstRender = true;
-		int								_iterationCount = 0;
-		static int						_imageId = 200000;
-		double							_startTick = 0;
+    #endregion Properties (Skin)
 
-		#endregion Fields
-	}
+    #region Fields
+
+    ArrayList _filenames;
+    GUIImage[] _images;
+    bool _animating = false;
+    bool _isFirstRender = true;
+    int _iterationCount = 0;
+    static int _imageId = 200000;
+    double _startTick = 0;
+    bool _hidePngAnimations = false;
+
+    #endregion Fields
+  }
 }
