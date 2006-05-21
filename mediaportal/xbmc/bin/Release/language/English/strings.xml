@@ -2445,14 +2445,21 @@
     <value>No xmltv file found</value>
   </string>
 	<string>
-		<id>771</id>
-		<value>The entered PIN could not be accepted</value>
-	</string>
-	<string>
-		<id>772</id>
-		<value>Do you want to try again?</value>
-	</string>
-
+	<id>771</id>
+	<value>The entered PIN could not be accepted</value>
+  </string>
+  <string>
+	<id>772</id>
+	<value>Do you want to try again?</value>
+  </string>
+  <string>
+	<id>773</id>
+	<value>START</value>
+  </string>
+  <string>
+	<id>774</id>
+    <value>END</value>
+  </string>    
   <string>
     <id>800</id>
     <value>Starts with</value>
@@ -3970,7 +3977,18 @@
     <value>Folder created</value>
   </string>
   <!-- End of My Explorer Strings -->
-
+  <string>
+    <id>2997</id>
+    <value>hrs</value>
+  </string>
+  <string>
+    <id>2998</id>
+    <value>min</value>
+  </string>
+  <string>
+    <id>2999</id>
+    <value>sec</value>
+  </string>    
   <string>
     <id>3000</id>
     <value>Program Options</value>

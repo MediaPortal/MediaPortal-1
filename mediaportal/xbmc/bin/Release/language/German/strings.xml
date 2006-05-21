@@ -2445,8 +2445,14 @@
 		<id>772</id>
 		<value>Erneut versuchen?</value>
     </string>
-
-
+    <string>
+	  <id>773</id>
+	  <value>Anfang</value>
+    </string>
+    <string>
+	  <id>774</id>
+      <value>Ende</value>
+    </string> 
 	<string>
 		<id>800</id>
 		<value>Fängt an mit</value>
@@ -3935,8 +3941,19 @@
 		<value>Verzeichnis angelegt!</value>
 	</string>
   <!-- End of My Explorer Strings -->
-
-	<string>
+    <string>
+      <id>2997</id>
+        <value>Std</value>
+    </string>
+    <string>
+      <id>2998</id>
+        <value>Min</value>
+    </string>
+    <string>
+      <id>2999</id>
+        <value>Sek</value>
+    </string> 
+  	<string>
 		<id>3000</id>
 		<value>Programmoptionen</value>
 	</string>
