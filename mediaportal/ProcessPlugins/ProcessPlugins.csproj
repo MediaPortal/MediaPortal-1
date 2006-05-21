@@ -301,6 +301,7 @@
     <Compile Include="ExternalDisplay\Setting\Condition.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ExternalDisplay\Setting\FixedValue.cs" />
     <Compile Include="ExternalDisplay\Setting\IsNullCondition.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -319,6 +320,7 @@
     <Compile Include="ExternalDisplay\Setting\Parse.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ExternalDisplay\Setting\PerformanceCounter.cs" />
     <Compile Include="ExternalDisplay\Setting\Property.cs">
       <SubType>Code</SubType>
     </Compile>
