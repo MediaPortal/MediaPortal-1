@@ -136,7 +136,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
 	<entry name="BaseURL">http://www.dagenstv.com/se/chart/</entry>
-	<entry name="SearchURL">?dat=#YYYY-#MM-#DD&amp;cha=#ID</entry>
+	<entry name="SearchURL">?dat=[YYYY]-[MM]-[DD]&amp;cha=[ID]</entry>
 
     <entry name="Start">&#60;!-- Indrag --&#62;</entry>
 

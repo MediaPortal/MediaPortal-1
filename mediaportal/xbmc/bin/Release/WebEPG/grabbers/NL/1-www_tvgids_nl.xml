@@ -100,7 +100,7 @@
 <!-- This section describes how to find the program infomation -->
   <section name="Listing">
     <entry name="BaseURL">http://www.tvgids.nl</entry>
-    <entry name="SearchURL">/zoeken/?trefwoord=Titel+of+trefwoord&amp;station=#ID&amp;genre=&amp;interval=0&amp;periode=7&amp;timeslot=0</entry>
+    <entry name="SearchURL">/zoeken/?trefwoord=Titel+of+trefwoord&amp;station=[ID]&amp;genre=&amp;interval=0&amp;periode=7&amp;timeslot=0</entry>
 
 <!-- Unique Listing Start string -->
 

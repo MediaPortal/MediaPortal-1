@@ -77,7 +77,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://au.tv.yahoo.com/</entry>
-    <entry name="SearchURL">venueresults.html?dt=#YYYY-#MM-#DD&amp;vn=#ID</entry>
+    <entry name="SearchURL">venueresults.html?dt=[YYYY]-[MM]-[DD]&amp;vn=[ID]</entry>
 
     <entry name="GrabDelay">5000</entry>
 
@@ -95,6 +95,7 @@
   </section>
 
   <section name="SubListing">
+    <entry name="URL">http://au.tv.yahoo.com/[1]</entry>
     <entry name="Tags">TP</entry>
 
 <!-- Template of the Listing information -->

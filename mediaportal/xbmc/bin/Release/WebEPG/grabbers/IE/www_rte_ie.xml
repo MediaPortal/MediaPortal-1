@@ -11,7 +11,7 @@
    <!-- Formating of Listing -->
    <section name="Listing">
      <entry name="BaseURL">http://isis.rte.ie/rteguide/</entry>
-     <entry name="SearchURL">SingleChannel.aspx?gen=TV&amp;date=#DD/#MM/#YYYY&amp;ch=#ID</entry>
+     <entry name="SearchURL">SingleChannel.aspx?gen=TV&amp;date=[DD]/[MM]/[YYYY]&amp;ch=#ID</entry>
 
    <!-- Template of the Listing information -->
     <entry name="Template">

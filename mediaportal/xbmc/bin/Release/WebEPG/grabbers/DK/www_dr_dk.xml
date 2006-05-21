@@ -31,7 +31,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://www.dr.dk/nav/programoversigt/w3c/inc/</entry>
-    <entry name="SearchURL">channel.aframe?media=TV&amp;channel=#ID&amp;seldate=#DAY_OFFSET&amp;seltime=0</entry>
+    <entry name="SearchURL">channel.aframe?media=TV&amp;channel=[ID]&amp;seldate=[DAY_OFFSET]&amp;seltime=0</entry>
 
     <entry name="Tags">TI</entry>
 

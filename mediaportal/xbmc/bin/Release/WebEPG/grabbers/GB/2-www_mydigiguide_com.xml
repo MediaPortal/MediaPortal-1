@@ -362,7 +362,7 @@
 	<section name="Listing">
 
 		<entry name="BaseURL">http://www.mydigiguide.com/</entry>
-		<entry name="SearchURL">dgx/wbl.dll?h=35&amp;a=2&amp;ch=#ID&amp;dt=#DAY_OFFSET&amp;el=</entry>
+		<entry name="SearchURL">dgx/wbl.dll?h=35&amp;a=2&amp;ch=[ID]&amp;dt=[DAY_OFFSET]&amp;el=</entry>
 
 
 		<!-- Template of the Listing information -->

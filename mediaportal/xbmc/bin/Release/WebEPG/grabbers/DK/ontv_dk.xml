@@ -20,7 +20,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://ontv.dk</entry>
-    <entry name="SearchURL">/?s=tv&amp;guide=&amp;kanal=#ID&amp;date=#YYYY-#MM-#DD</entry>
+    <entry name="SearchURL">/?s=tv&amp;guide=&amp;kanal=[ID]&amp;date=[YYYY]-[MM]-[DD]</entry>
 
     <entry name="Tags">TP</entry>
 

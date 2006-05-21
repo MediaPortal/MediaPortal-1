@@ -49,7 +49,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://tv.tv2.dk/tv/</entry>
-    <entry name="SearchURL">listning.php?#ID&amp;Soegeord=&amp;Dato=#DAY_OFFSET&amp;Kategori=0&amp;Periode=1</entry>
+    <entry name="SearchURL">listning.php?[ID]&amp;Soegeord=&amp;Dato=[DAY_OFFSET]&amp;Kategori=0&amp;Periode=1</entry>
 
     <entry name="Tags">DS</entry>
 

@@ -10,7 +10,7 @@
 <!-- Formating of Listing -->
   <section name="Listing"> 
     <entry name="BaseURL">http://www.primetv.co.nz/</entry>
-    <entry name="SearchURL">whatson.asp?dayID=#DAY_OFFSET</entry>
+    <entry name="SearchURL">whatson.asp?dayID=[DAY_OFFSET]</entry>
 
 <!-- Unique Listing Start string -->
     <entry name="Start">epg_programmes_content_container</entry>

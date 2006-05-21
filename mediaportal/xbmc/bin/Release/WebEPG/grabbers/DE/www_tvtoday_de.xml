@@ -129,7 +129,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://www.tvtoday.de/tv/programm/</entry>
-    <entry name="SearchURL">programm.php?ztag=#DAY_OFFSET&amp;sparte=alle&amp;uhrzeit=05%3A00%3A00&amp;sender=#ID&amp;von=#LIST_OFFSET</entry>
+    <entry name="SearchURL">programm.php?ztag=[DAY_OFFSET]&amp;sparte=alle&amp;uhrzeit=05%3A00%3A00&amp;sender=[ID]&amp;von=[LIST_OFFSET]</entry>
 
 <!-- Maximum Number of listings per page -->
     <entry name="MaxCount">12</entry>

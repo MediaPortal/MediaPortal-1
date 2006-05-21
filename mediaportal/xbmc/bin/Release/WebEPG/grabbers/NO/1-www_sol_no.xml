@@ -93,7 +93,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://www.sol.no/underholdning/tv/guiden/</entry>
-    <entry name="SearchURL">index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=#YYYY-#MM-#DD&amp;Categories=*&amp;Channels=#ID</entry>
+    <entry name="SearchURL">index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]</entry>
 
     <entry name="Start"/>
 

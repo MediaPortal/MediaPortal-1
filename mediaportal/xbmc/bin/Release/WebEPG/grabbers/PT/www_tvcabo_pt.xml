@@ -75,7 +75,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://www.tvcabo.pt/TV/</entry>
-    <entry name="SearchURL">ProgramacaoTv.aspx?programId=1&amp;channelSigla=#ID&amp;SelectedDay=#DAY_OFFSET</entry>
+    <entry name="SearchURL">ProgramacaoTv.aspx?programId=1&amp;channelSigla=[ID]&amp;SelectedDay=[DAY_OFFSET]</entry>
 
     <entry name="Tags">TA</entry>
     <entry name="OffsetStart">7</entry>
@@ -95,7 +95,7 @@
   </section>
 
   <section name="SubListing">
-   <entry name="URL">http://www.tvcabo.pt/TV/ProgramacaoTv.aspx?programId=#1&amp;channelSigla=#2</entry>
+   <entry name="URL">http://www.tvcabo.pt/TV/ProgramacaoTv.aspx?programId=[1]&amp;channelSigla=[2]</entry>
    <entry name="Start">Menu Topo</entry>
    <entry name="End">//Menu Topo</entry>
    <entry name="Tags">TA</entry>

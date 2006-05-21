@@ -18,7 +18,7 @@
   <section name="Listing">
 
     	<entry name="BaseURL">http://www.adnkronos.com/Pages/GuidaTv</entry>
-    	<entry name="SearchURL">/index.php?codCanale=#ID&amp;codDay=#DAY_OFFSET</entry>
+    	<entry name="SearchURL">/index.php?codCanale=[ID]&amp;codDay=[DAY_OFFSET]</entry>
     	<entry name="GrabDelay">5000</entry>
 
 <!-- Unique Listing Start string -->

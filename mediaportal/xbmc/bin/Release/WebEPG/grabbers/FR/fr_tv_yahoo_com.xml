@@ -2,9 +2,6 @@
 
 <profile>
 
-<!-- Channel section lists all the channels available from this website. -->
-<!-- This is JUST MELBOURNE, VIC, METRO, DIGITAL, non-HD ...more to come -->
-
   <section name="ChannelList">
 
     <entry name="tf1.fr">id=166009873&amp;channels=europe_tf1</entry>
@@ -21,7 +18,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://fr.tv.yahoo.com</entry>
-    <entry name="SearchURL">/tvpdb?d=tvs&amp;#ID&amp;lineup=fr&amp;.intl=fr&amp;startdate=#EPOCH_TIME</entry>
+    <entry name="SearchURL">/tvpdb?d=tvs&amp;[ID]&amp;lineup=fr&amp;.intl=fr&amp;startdate=[EPOCH_TIME]</entry>
 
     <entry name="GrabDelay">5000</entry>
 

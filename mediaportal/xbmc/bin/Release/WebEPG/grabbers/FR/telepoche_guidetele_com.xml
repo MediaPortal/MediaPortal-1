@@ -182,7 +182,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://telepoche.guidetele.com/gtv/</entry>
-    <entry name="SearchURL">journee?openagent&amp;c=#ID&amp;d=#DAY_OFFSET</entry>
+    <entry name="SearchURL">journee?openagent&amp;c=[ID]&amp;d=[DAY_OFFSET]</entry>
 
     <entry name="Tags">TA</entry>
     <entry name="OffsetStart">2</entry>

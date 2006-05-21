@@ -67,7 +67,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://www.20min.ch/unterhaltung/tv-guide/</entry>
-    <entry name="PostQuery">program_id=&amp;cb-#ID=on&amp;dates=0-6&amp;time=all_day&amp;text=&amp;cat=all&amp;subcat=all</entry>
+    <entry name="PostQuery">program_id=&amp;cb-[ID]=on&amp;dates=0-6&amp;time=all_day&amp;text=&amp;cat=all&amp;subcat=all</entry>
 
 <!-- Unique Listing Start string -->
     <entry name="Start">show_program</entry>
@@ -86,7 +86,7 @@
 <section name="SubListing">
 <!-- Template of the Listing information -->
         <entry name="URL">http://www.20min.ch/unterhaltung/tv-guide/</entry>
-        <entry name="PostQuery">program_id=#1&amp;cb-5=on&amp;dates=0-6&amp;time=all_day&amp;text=&amp;cat=all&amp;subcat=all</entry>
+        <entry name="PostQuery">program_id=[1]&amp;cb-5=on&amp;dates=0-6&amp;time=all_day&amp;text=&amp;cat=all&amp;subcat=all</entry>
 	<entry name="Tags">T</entry>
 	<entry name="Start">Kanal</entry>
 

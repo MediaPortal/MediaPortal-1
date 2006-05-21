@@ -26,7 +26,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://www.programme-television.org</entry>
-    <entry name="SearchURL">/moteur.php?numpage=#PAGE_OFFSET&amp;recherche=&amp;par=desc&amp;genre=&amp;critere=1&amp;fonct=&amp;pardate=on&amp;pardate2=1&amp;datedu=#DD/#MM/#YYYY&amp;dateau=#DD/#MM/#YYYY&amp;dateav=#DD/#MM/#YYYY&amp;dateap=#DD/#MM/#YYYY&amp;c1=6B8DEE&amp;c2=B2C4F9&amp;chaine=#ID</entry>
+    <entry name="SearchURL">/moteur.php?numpage=[PAGE_OFFSET]&amp;recherche=&amp;par=desc&amp;genre=&amp;critere=1&amp;fonct=&amp;pardate=on&amp;pardate2=1&amp;datedu=[DD]/[MM]/[YYYY]&amp;dateau=[DD]/[MM]/[YYYY]&amp;dateav=[DD]/[MM]/[YYYY]&amp;dateap=[DD]/[MM]/[YYYY]&amp;c1=6B8DEE&amp;c2=B2C4F9&amp;chaine=[ID]</entry>
     <entry name="MaxCount">10</entry>
     <entry name="PageStart">1</entry>
 <!--    <entry name="GrabDelay">5000</entry>-->

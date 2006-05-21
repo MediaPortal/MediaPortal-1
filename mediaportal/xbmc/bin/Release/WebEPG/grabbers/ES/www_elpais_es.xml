@@ -25,7 +25,7 @@
   </section>
   <section name="Listing">
     <entry name="BaseURL">http://www.elpais.es/parrillatv/</entry>
-    <entry name="SearchURL">resultados.html?franja=&amp;tipo=&amp;canal=#ID&amp;dia=#YYYY#MM#DD</entry>
+    <entry name="SearchURL">resultados.html?franja=&amp;tipo=&amp;canal=[ID]&amp;dia=[YYYY][MM][DD]</entry>
 
 <!-- Unique Listing Start string -->
     <entry name="Start">Programa</entry>

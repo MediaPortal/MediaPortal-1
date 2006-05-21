@@ -104,7 +104,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
 	<entry name="BaseURL">http://fredag.dagbladet.no/tv/</entry>
-	<entry name="SearchURL">index.html?kategori_id=&amp;kanal_id=#ID&amp;dag=#DAY_OFFSET&amp;fra_tid=0&amp;til_tid=24</entry>
+	<entry name="SearchURL">index.html?kategori_id=&amp;kanal_id=[ID]&amp;dag=[DAY_OFFSET]&amp;fra_tid=0&amp;til_tid=24</entry>
 
 <!-- Unique Listing Start string -->
     <entry name="Start">&lt;!-- hovedtabell --></entry>

@@ -78,7 +78,7 @@
 <!-- This section describes how to find the program infomation -->
   <section name="Listing">
     <entry name="BaseURL">http://sbs6.sbs.nl/</entry>
-    <entry name="SearchURL">modules.php?name=televisiegids&amp;site=televisiegids&amp;zender=#ID-1&amp;hrselect=all&amp;datum=#YYYY-#MM-#DD</entry>
+    <entry name="SearchURL">modules.php?name=televisiegids&amp;site=televisiegids&amp;zender=[ID]-1&amp;hrselect=all&amp;datum=[YYYY]-[MM]-[DD]</entry>
 
 <!-- Unique Listing Start string -->
 

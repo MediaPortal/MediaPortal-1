@@ -22,7 +22,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://www.abc.net.au/tv/guide/</entry>
-    <entry name="SearchURL">#ID/#YYYY#MM/#YYYY#MM#DD.htm</entry>
+    <entry name="SearchURL">[ID]/[YYYY][MM]/[YYYY][MM][DD].htm</entry>
 
     <entry name="Ahrefs">no</entry>
 

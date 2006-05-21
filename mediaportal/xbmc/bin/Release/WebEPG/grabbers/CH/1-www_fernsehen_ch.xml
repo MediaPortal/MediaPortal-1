@@ -117,7 +117,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://www.fernsehen.ch/sender/</entry>
-    <entry name="SearchURL">senderprogramm.php3?sender=#ID&amp;limit=#LIST_OFFSET</entry>
+    <entry name="SearchURL">senderprogramm.php3?sender=[ID]&amp;limit=[LIST_OFFSET]</entry>
 
 <!-- Maximum Number of listings per page -->
     <entry name="MaxCount">10</entry>

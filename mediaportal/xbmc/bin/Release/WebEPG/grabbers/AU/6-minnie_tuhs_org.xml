@@ -170,7 +170,7 @@
 <!-- Formating of Listing -->
   <section name="Listing"> 
     <entry name="BaseURL">http://minnie.tuhs.org/tivo-bin/tvguide.pl</entry>
-    <entry name="SearchURL">?page=rawstationday&amp;type=view&amp;data=#EPOCH_DATE&amp;data2=#ID</entry>
+    <entry name="SearchURL">?page=rawstationday&amp;type=view&amp;data=[EPOCH_DATE]&amp;data2=[ID]</entry>
     <entry name="ListingType">XML</entry>
     <entry name="XPath">//programme</entry>
     <entry name="StartEntry">start</entry>

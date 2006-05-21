@@ -101,7 +101,7 @@ Grabber stworzony przez DragonGC z duża pomocą James-a. Kanały, które dodał
   <section name="Listing">
 
     <entry name="BaseURL">http://www.telemagazyn.com.pl/</entry>
-    <entry name="SearchURL">?p=1&amp;dzien=#YYYY-#MM-#DD&amp;godzina=3&amp;nadawca=#ID&amp;kategoria=0&amp;x=53&amp;y=21</entry>
+    <entry name="SearchURL">?p=1&amp;dzien=[YYYY]-[MM]-[DD]&amp;godzina=3&amp;nadawca=#ID&amp;kategoria=0&amp;x=53&amp;y=21</entry>
 
     <entry name="Start">&#60;!-- naglowki programow koniec --&#62;</entry>
 

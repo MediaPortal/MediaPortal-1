@@ -14,7 +14,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://www.sbs.com.au/whatson/</entry>
-    <entry name="SearchURL">index.php3?progdate=#DD:#MM:#YYYY</entry>
+    <entry name="SearchURL">index.php3?progdate=[DD]:[MM]:[YYYY]</entry>
 
     <entry name="Ahrefs">no</entry>
 

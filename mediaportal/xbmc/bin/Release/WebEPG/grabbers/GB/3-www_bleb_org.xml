@@ -91,7 +91,7 @@
 <!-- Formating of Listing -->
   <section name="Listing"> 
     <entry name="BaseURL">http://www.bleb.org/tv/data/listings/</entry>
-    <entry name="SearchURL">#DAY_OFFSET/#ID.xml?WebEPG</entry>
+    <entry name="SearchURL">[DAY_OFFSET]/[ID].xml?WebEPG</entry>
 
     <entry name="GrabDelay">2000</entry>
 

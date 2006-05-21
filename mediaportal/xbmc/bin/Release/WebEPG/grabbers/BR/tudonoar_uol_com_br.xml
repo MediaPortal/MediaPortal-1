@@ -14,7 +14,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://tudonoar.uol.com.br/</entry>
-    <entry name="SearchURL">tudonoar/detalheCanal.aspx?IDcanal=#ID&amp;data=#_D/#_M/#YYYY</entry>
+    <entry name="SearchURL">tudonoar/detalheCanal.aspx?IDcanal=[ID]&amp;data=[_D]/[_M]/[YYYY]</entry>
 
     <entry name="Start">tblProgramacao</entry>
     <entry name="End">Imprimir</entry>

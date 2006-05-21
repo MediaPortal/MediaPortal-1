@@ -26,7 +26,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://www.in.gr/TV/</entry>
-    <entry name="SearchURL">results.asp?dtmDate=#YYYY-#MM-#DD&amp;lngChannelID=#ID</entry>
+    <entry name="SearchURL">results.asp?dtmDate=[YYYY]-[MM]-[DD]&amp;lngChannelID=[ID]</entry>
 
 <!-- Maximum Number of listings per page -->
     <entry name="MaxCount">40</entry>

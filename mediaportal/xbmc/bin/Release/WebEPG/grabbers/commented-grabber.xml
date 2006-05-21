@@ -44,24 +44,24 @@
 <!-- SearchURL -->
 <!-- The part of the url use to load the guide pages for different channels and days. -->
 <!-- Can include any of the following: -->
-<!-- #ID		- Site Channel ID - from the ChannelList section -->
-<!-- #LIST_OFFSET	- offset position in a list longer then one page -->
+<!-- [ID]		- Site Channel ID - from the ChannelList section -->
+<!-- [LIST_OFFSET]	- offset position in a list longer then one page -->
 <!-- 			  starts at 0 and is the MaxCount for the next page, MaxCount is added for each page after -->
 <!--                      used together with MaxCount if number of listings on a page is less then MaxCount it stops look for next pages -->
-<!-- #PAGE_OFFSET       - Same as LIST_OFFSET but only 1 is added for each new page and not MaxCount --> 
-<!-- #DAY_OFFSET 	- offset of the day from today (0). See OffsetStart to change the start.-->
-<!-- #YYYY 		- year -->
-<!-- #MONTH 		- month full name (ie January) -->
-<!-- #MM 		- month with leading 0 -->
-<!-- #_M 		- month without leading 0 -->
-<!-- #WEEKDAY		- day of week full name (ie Monday) -->
-<!-- #DD 		- day with leading 0 -->
-<!-- #_D 		- day without leading 0 -->
-<!-- #EPOCH_TIME	- number of seconds since 1/1/1970 8:00:00 AM -->
-<!-- #EPOCH_DATE	- number of days since 1/1/1970 8:00:00 AM -->
-<!-- #DAY_NAME		- a string for the name example: today, tomorrow, etc. Requires DayNames section-->
+<!-- [PAGE_OFFSET]      - Same as LIST_OFFSET but only 1 is added for each new page and not MaxCount --> 
+<!-- [DAY_OFFSET] 	- offset of the day from today (0). See OffsetStart to change the start.-->
+<!-- [YYYY] 		- year -->
+<!-- [MONTH] 		- month full name (ie January) -->
+<!-- [MM] 		- month with leading 0 -->
+<!-- [_M] 		- month without leading 0 -->
+<!-- [WEEKDAY]		- day of week full name (ie Monday) -->
+<!-- [DD] 		- day with leading 0 -->
+<!-- [_D] 		- day without leading 0 -->
+<!-- [EPOCH_TIME]	- number of seconds since 1/1/1970 8:00:00 AM -->
+<!-- [EPOCH_DATE]	- number of days since 1/1/1970 8:00:00 AM -->
+<!-- [DAY_NAME]		- a string for the name example: today, tomorrow, etc. Requires DayNames section-->
 <!-- replace & with &amp; -->
-    <entry name="SearchURL">search.php3?channel=#ID&amp;limit=#LIST_OFFSET</entry>
+    <entry name="SearchURL">search.php3?channel=[ID]&amp;limit=[LIST_OFFSET]</entry>
 
 
 <!-- _________________________ -->

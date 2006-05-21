@@ -14,7 +14,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://programas.rtp.pt/EPG/</entry>
-    <entry name="SearchURL">epg-dia.php?datai=-2&amp;dia=#DD-#MM-#YYYY&amp;sem=e&amp;canal=#ID&amp;gen=&amp;time=</entry>
+    <entry name="SearchURL">epg-dia.php?datai=-2&amp;dia=[DD]-[MM]-[YYYY]&amp;sem=e&amp;canal=[ID]&amp;gen=&amp;time=</entry>
 
 <!--    <entry name="Ahrefs">yes</entry> -->
 

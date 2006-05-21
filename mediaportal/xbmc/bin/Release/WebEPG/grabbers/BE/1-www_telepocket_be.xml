@@ -62,7 +62,7 @@
 <!-- Formating of Listing -->
   <section name="Listing">
     <entry name="BaseURL">http://www.telepocket.be/fr/</entry>
-    <entry name="SearchURL">zender.asp?move=full&amp;channel=#ID&amp;dag=#_M/#_D/#YYYY</entry>
+    <entry name="SearchURL">zender.asp?move=full&amp;channel=[ID]&amp;dag=[_M]/[_D]/[YYYY]</entry>
 
 <!-- Unique Listing Start string -->
     <entry name="Start">Complet</entry>
