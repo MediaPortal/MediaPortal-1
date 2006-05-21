@@ -256,6 +256,9 @@ namespace MediaPortal.WebEPG
       if (strTime.ToLower().IndexOf("am") != -1 && dt.Hour == 12)
         dt.Hour = 0;
 
+      if (dt.Hour == 24)
+        dt.Hour = 0;
+
       return dt;
     }
   }

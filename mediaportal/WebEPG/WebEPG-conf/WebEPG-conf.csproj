@@ -141,6 +141,7 @@
     </Compile>
     <EmbeddedResource Include="Config.resx">
       <DependentUpon>Config.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Selection.resx">
       <DependentUpon>Selection.cs</DependentUpon>
