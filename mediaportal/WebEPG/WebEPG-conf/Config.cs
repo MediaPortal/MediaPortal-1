@@ -30,6 +30,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using MediaPortal.Webepg.GUI.Library;
+using MediaPortal.TV.Database;
 
 namespace WebEPG_conf
 {
@@ -158,6 +159,13 @@ namespace WebEPG_conf
       this.tbLanguage = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.bRemove = new MediaPortal.UserInterface.Controls.MPButton();
       this.gbGrabber = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.gbLinked = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.nEnd = new System.Windows.Forms.NumericUpDown();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.nStart = new System.Windows.Forms.NumericUpDown();
+      this.cbLinked = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.lShour = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbSiteDescription = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.lSiteDesc = new MediaPortal.UserInterface.Controls.MPLabel();
       this.lGuideDays = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbGrabDays = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -165,20 +173,13 @@ namespace WebEPG_conf
       this.Grabber = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbGrabSite = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.importFile = new System.Windows.Forms.OpenFileDialog();
-      this.tbSiteDescription = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.lShour = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.nStart = new System.Windows.Forms.NumericUpDown();
-      this.nEnd = new System.Windows.Forms.NumericUpDown();
-      this.cbLinked = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.gbLinked = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBox2.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nMaxGrab)).BeginInit();
       this.gbChannelDetails.SuspendLayout();
       this.gbGrabber.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.nStart)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.nEnd)).BeginInit();
       this.gbLinked.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.nEnd)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.nStart)).BeginInit();
       this.SuspendLayout();
       // 
       // bAdd
@@ -188,6 +189,7 @@ namespace WebEPG_conf
       this.bAdd.Size = new System.Drawing.Size(72, 24);
       this.bAdd.TabIndex = 12;
       this.bAdd.Text = "Add";
+      this.bAdd.UseVisualStyleBackColor = true;
       // 
       // bImport
       // 
@@ -196,11 +198,11 @@ namespace WebEPG_conf
       this.bImport.Size = new System.Drawing.Size(72, 24);
       this.bImport.TabIndex = 11;
       this.bImport.Text = "Import";
+      this.bImport.UseVisualStyleBackColor = true;
       // 
       // lbChannels
       // 
       this.lbChannels.Location = new System.Drawing.Point(32, 32);
-      this.lbChannels.MultiColumn = true;
       this.lbChannels.Name = "lbChannels";
       this.lbChannels.Size = new System.Drawing.Size(168, 277);
       this.lbChannels.TabIndex = 10;
@@ -213,6 +215,7 @@ namespace WebEPG_conf
       this.groupBox2.Controls.Add(this.bSave);
       this.groupBox2.Controls.Add(this.lGrabDay);
       this.groupBox2.Controls.Add(this.nMaxGrab);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(16, 8);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(200, 400);
@@ -235,7 +238,6 @@ namespace WebEPG_conf
       this.tbCount.Name = "tbCount";
       this.tbCount.Size = new System.Drawing.Size(72, 20);
       this.tbCount.TabIndex = 0;
-      this.tbCount.Text = "";
       // 
       // bSave
       // 
@@ -244,6 +246,7 @@ namespace WebEPG_conf
       this.bSave.Size = new System.Drawing.Size(72, 24);
       this.bSave.TabIndex = 16;
       this.bSave.Text = "Save";
+      this.bSave.UseVisualStyleBackColor = true;
       // 
       // lGrabDay
       // 
@@ -256,24 +259,24 @@ namespace WebEPG_conf
       // nMaxGrab
       // 
       this.nMaxGrab.Location = new System.Drawing.Point(16, 328);
-      this.nMaxGrab.Maximum = new System.Decimal(new int[] {
-																	 14,
-																	 0,
-																	 0,
-																	 0});
-      this.nMaxGrab.Minimum = new System.Decimal(new int[] {
-																	 1,
-																	 0,
-																	 0,
-																	 0});
+      this.nMaxGrab.Maximum = new decimal(new int[] {
+            14,
+            0,
+            0,
+            0});
+      this.nMaxGrab.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
       this.nMaxGrab.Name = "nMaxGrab";
       this.nMaxGrab.Size = new System.Drawing.Size(72, 20);
       this.nMaxGrab.TabIndex = 13;
-      this.nMaxGrab.Value = new System.Decimal(new int[] {
-																   2,
-																   0,
-																   0,
-																   0});
+      this.nMaxGrab.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
       // 
       // gbChannelDetails
       // 
@@ -288,6 +291,7 @@ namespace WebEPG_conf
       this.gbChannelDetails.Controls.Add(this.bAdd);
       this.gbChannelDetails.Controls.Add(this.bRemove);
       this.gbChannelDetails.Controls.Add(this.gbGrabber);
+      this.gbChannelDetails.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbChannelDetails.Location = new System.Drawing.Point(224, 8);
       this.gbChannelDetails.Name = "gbChannelDetails";
       this.gbChannelDetails.Size = new System.Drawing.Size(312, 400);
@@ -302,6 +306,7 @@ namespace WebEPG_conf
       this.bUpdate.Size = new System.Drawing.Size(72, 24);
       this.bUpdate.TabIndex = 18;
       this.bUpdate.Text = "Update";
+      this.bUpdate.UseVisualStyleBackColor = true;
       this.bUpdate.Visible = false;
       // 
       // tbDisplayName
@@ -310,7 +315,6 @@ namespace WebEPG_conf
       this.tbDisplayName.Name = "tbDisplayName";
       this.tbDisplayName.Size = new System.Drawing.Size(176, 20);
       this.tbDisplayName.TabIndex = 13;
-      this.tbDisplayName.Text = "";
       // 
       // label4
       // 
@@ -327,6 +331,7 @@ namespace WebEPG_conf
       this.bChannelID.Size = new System.Drawing.Size(22, 20);
       this.bChannelID.TabIndex = 9;
       this.bChannelID.Text = "...";
+      this.bChannelID.UseVisualStyleBackColor = true;
       // 
       // l_cID
       // 
@@ -343,7 +348,6 @@ namespace WebEPG_conf
       this.tbChannelName.ReadOnly = true;
       this.tbChannelName.Size = new System.Drawing.Size(176, 20);
       this.tbChannelName.TabIndex = 7;
-      this.tbChannelName.Text = "";
       // 
       // Lang
       // 
@@ -361,7 +365,6 @@ namespace WebEPG_conf
       this.tbLanguage.ReadOnly = true;
       this.tbLanguage.Size = new System.Drawing.Size(104, 20);
       this.tbLanguage.TabIndex = 4;
-      this.tbLanguage.Text = "";
       this.tbLanguage.Visible = false;
       // 
       // bRemove
@@ -371,6 +374,7 @@ namespace WebEPG_conf
       this.bRemove.Size = new System.Drawing.Size(72, 24);
       this.bRemove.TabIndex = 17;
       this.bRemove.Text = "Remove";
+      this.bRemove.UseVisualStyleBackColor = true;
       // 
       // gbGrabber
       // 
@@ -382,12 +386,100 @@ namespace WebEPG_conf
       this.gbGrabber.Controls.Add(this.bGrabber);
       this.gbGrabber.Controls.Add(this.Grabber);
       this.gbGrabber.Controls.Add(this.tbGrabSite);
+      this.gbGrabber.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbGrabber.Location = new System.Drawing.Point(8, 104);
       this.gbGrabber.Name = "gbGrabber";
       this.gbGrabber.Size = new System.Drawing.Size(296, 256);
       this.gbGrabber.TabIndex = 15;
       this.gbGrabber.TabStop = false;
       this.gbGrabber.Text = "Grabber Details";
+      // 
+      // gbLinked
+      // 
+      this.gbLinked.Controls.Add(this.nEnd);
+      this.gbLinked.Controls.Add(this.label2);
+      this.gbLinked.Controls.Add(this.nStart);
+      this.gbLinked.Controls.Add(this.cbLinked);
+      this.gbLinked.Controls.Add(this.lShour);
+      this.gbLinked.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.gbLinked.Location = new System.Drawing.Point(8, 176);
+      this.gbLinked.Name = "gbLinked";
+      this.gbLinked.Size = new System.Drawing.Size(280, 72);
+      this.gbLinked.TabIndex = 21;
+      this.gbLinked.TabStop = false;
+      this.gbLinked.Text = "Linked Pages";
+      this.gbLinked.Visible = false;
+      // 
+      // nEnd
+      // 
+      this.nEnd.Location = new System.Drawing.Point(168, 16);
+      this.nEnd.Maximum = new decimal(new int[] {
+            23,
+            0,
+            0,
+            0});
+      this.nEnd.Name = "nEnd";
+      this.nEnd.Size = new System.Drawing.Size(40, 20);
+      this.nEnd.TabIndex = 19;
+      this.nEnd.Value = new decimal(new int[] {
+            23,
+            0,
+            0,
+            0});
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(208, 18);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(64, 16);
+      this.label2.TabIndex = 17;
+      this.label2.Text = "End (Hour)";
+      // 
+      // nStart
+      // 
+      this.nStart.Location = new System.Drawing.Point(72, 16);
+      this.nStart.Maximum = new decimal(new int[] {
+            23,
+            0,
+            0,
+            0});
+      this.nStart.Name = "nStart";
+      this.nStart.Size = new System.Drawing.Size(40, 20);
+      this.nStart.TabIndex = 18;
+      this.nStart.Value = new decimal(new int[] {
+            18,
+            0,
+            0,
+            0});
+      // 
+      // cbLinked
+      // 
+      this.cbLinked.AutoSize = true;
+      this.cbLinked.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbLinked.Location = new System.Drawing.Point(8, 16);
+      this.cbLinked.Name = "cbLinked";
+      this.cbLinked.Size = new System.Drawing.Size(57, 17);
+      this.cbLinked.TabIndex = 20;
+      this.cbLinked.Text = "Enable";
+      this.cbLinked.UseVisualStyleBackColor = true;
+      // 
+      // lShour
+      // 
+      this.lShour.Location = new System.Drawing.Point(120, 18);
+      this.lShour.Name = "lShour";
+      this.lShour.Size = new System.Drawing.Size(40, 16);
+      this.lShour.TabIndex = 15;
+      this.lShour.Text = "Start -";
+      // 
+      // tbSiteDescription
+      // 
+      this.tbSiteDescription.BackColor = System.Drawing.SystemColors.ScrollBar;
+      this.tbSiteDescription.Location = new System.Drawing.Point(80, 48);
+      this.tbSiteDescription.Multiline = true;
+      this.tbSiteDescription.Name = "tbSiteDescription";
+      this.tbSiteDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+      this.tbSiteDescription.Size = new System.Drawing.Size(176, 88);
+      this.tbSiteDescription.TabIndex = 12;
       // 
       // lSiteDesc
       // 
@@ -413,7 +505,6 @@ namespace WebEPG_conf
       this.tbGrabDays.ReadOnly = true;
       this.tbGrabDays.Size = new System.Drawing.Size(104, 20);
       this.tbGrabDays.TabIndex = 7;
-      this.tbGrabDays.Text = "";
       // 
       // bGrabber
       // 
@@ -422,6 +513,7 @@ namespace WebEPG_conf
       this.bGrabber.Size = new System.Drawing.Size(22, 20);
       this.bGrabber.TabIndex = 6;
       this.bGrabber.Text = "...";
+      this.bGrabber.UseVisualStyleBackColor = true;
       // 
       // Grabber
       // 
@@ -438,97 +530,12 @@ namespace WebEPG_conf
       this.tbGrabSite.ReadOnly = true;
       this.tbGrabSite.Size = new System.Drawing.Size(176, 20);
       this.tbGrabSite.TabIndex = 0;
-      this.tbGrabSite.Text = "";
       // 
       // importFile
       // 
       this.importFile.FileName = "ChannelList.xml";
       this.importFile.Filter = "Xml Files (*.xml)|*.xml";
       this.importFile.Title = "Import MP Channel File";
-      // 
-      // tbSiteDescription
-      // 
-      this.tbSiteDescription.BackColor = System.Drawing.SystemColors.ScrollBar;
-      this.tbSiteDescription.Location = new System.Drawing.Point(80, 48);
-      this.tbSiteDescription.Multiline = true;
-      this.tbSiteDescription.Name = "tbSiteDescription";
-      this.tbSiteDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-      this.tbSiteDescription.Size = new System.Drawing.Size(176, 88);
-      this.tbSiteDescription.TabIndex = 12;
-      this.tbSiteDescription.Text = "";
-      // 
-      // lShour
-      // 
-      this.lShour.Location = new System.Drawing.Point(120, 18);
-      this.lShour.Name = "lShour";
-      this.lShour.Size = new System.Drawing.Size(40, 16);
-      this.lShour.TabIndex = 15;
-      this.lShour.Text = "Start -";
-      // 
-      // label2
-      // 
-      this.label2.Location = new System.Drawing.Point(208, 18);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(64, 16);
-      this.label2.TabIndex = 17;
-      this.label2.Text = "End (Hour)";
-      // 
-      // nStart
-      // 
-      this.nStart.Location = new System.Drawing.Point(72, 16);
-      this.nStart.Maximum = new System.Decimal(new int[] {
-																   23,
-																   0,
-																   0,
-																   0});
-      this.nStart.Name = "nStart";
-      this.nStart.Size = new System.Drawing.Size(40, 20);
-      this.nStart.TabIndex = 18;
-      this.nStart.Value = new System.Decimal(new int[] {
-																 18,
-																 0,
-																 0,
-																 0});
-      // 
-      // nEnd
-      // 
-      this.nEnd.Location = new System.Drawing.Point(168, 16);
-      this.nEnd.Maximum = new System.Decimal(new int[] {
-																 23,
-																 0,
-																 0,
-																 0});
-      this.nEnd.Name = "nEnd";
-      this.nEnd.Size = new System.Drawing.Size(40, 20);
-      this.nEnd.TabIndex = 19;
-      this.nEnd.Value = new System.Decimal(new int[] {
-															   23,
-															   0,
-															   0,
-															   0});
-      // 
-      // cbLinked
-      // 
-      this.cbLinked.Location = new System.Drawing.Point(8, 16);
-      this.cbLinked.Name = "cbLinked";
-      this.cbLinked.Size = new System.Drawing.Size(72, 24);
-      this.cbLinked.TabIndex = 20;
-      this.cbLinked.Text = "Enable";
-      // 
-      // gbLinked
-      // 
-      this.gbLinked.Controls.Add(this.nEnd);
-      this.gbLinked.Controls.Add(this.label2);
-      this.gbLinked.Controls.Add(this.nStart);
-      this.gbLinked.Controls.Add(this.cbLinked);
-      this.gbLinked.Controls.Add(this.lShour);
-      this.gbLinked.Location = new System.Drawing.Point(8, 176);
-      this.gbLinked.Name = "gbLinked";
-      this.gbLinked.Size = new System.Drawing.Size(280, 72);
-      this.gbLinked.TabIndex = 21;
-      this.gbLinked.TabStop = false;
-      this.gbLinked.Text = "Linked Pages";
-      this.gbLinked.Visible = false;
       // 
       // fChannels
       // 
@@ -541,12 +548,16 @@ namespace WebEPG_conf
       this.Name = "fChannels";
       this.Text = "WebEPG Config";
       this.groupBox2.ResumeLayout(false);
+      this.groupBox2.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nMaxGrab)).EndInit();
       this.gbChannelDetails.ResumeLayout(false);
+      this.gbChannelDetails.PerformLayout();
       this.gbGrabber.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.nStart)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.nEnd)).EndInit();
+      this.gbGrabber.PerformLayout();
       this.gbLinked.ResumeLayout(false);
+      this.gbLinked.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.nEnd)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.nStart)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -642,42 +653,56 @@ namespace WebEPG_conf
       if (source == bImport)
       {
         Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Button: Import");
-        if (importFile.ShowDialog() != DialogResult.Cancel)
+        ArrayList channels = new ArrayList();
+        TVDatabase.GetChannels(ref channels);
+        for (int i = 0; i < channels.Count; i++)
         {
-          Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Importing MP ChannelList: {0}", importFile.FileName);
-          MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(importFile.FileName);
-          int version = xmlreader.GetValueAsInt("MP channel export list", "version", 0);
-          if (version == 1)
+          TVChannel chan = (TVChannel) channels[i];
+          if (ChannelList[chan.Name] == null)
           {
-            //ChannelList.Clear();
-
-            //int channels = xmlreader.GetValueAsInt("Group 0", "TOTAL CHANNELS", 0);
-
-            for (int i = 0; i <= 999; i++)
-            {
-              string name = xmlreader.GetValueAsString(i.ToString(), "Name", "");
-              if (name != "")
-              {
-                if (ChannelList[name] == null)
-                {
-                  ChannelInfo channel = new ChannelInfo();
-                  channel.DisplayName = name;
-                  channel.Linked = false;
-                  ChannelList.Add(name, channel);
-                }
-              }
-              else
-              {
-                break;
-              }
-            }
-            UpdateList("", -1);
-          }
-          else
-          {
-
+            ChannelInfo channel = new ChannelInfo();
+            channel.DisplayName = chan.Name;
+            channel.Linked = false;
+            ChannelList.Add(chan.Name, channel);
           }
         }
+        UpdateList("", -1);
+        //if (importFile.ShowDialog() != DialogResult.Cancel)
+        //{
+        //  Log.WriteFile(Log.LogType.Log, false, "WebEPG Config: Importing MP ChannelList: {0}", importFile.FileName);
+        //  MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(importFile.FileName);
+        //  int version = xmlreader.GetValueAsInt("MP channel export list", "version", 0);
+        //  if (version == 1)
+        //  {
+        //    //ChannelList.Clear();
+
+        //    //int channels = xmlreader.GetValueAsInt("Group 0", "TOTAL CHANNELS", 0);
+
+        //    for (int i = 0; i <= 999; i++)
+        //    {
+        //      string name = xmlreader.GetValueAsString(i.ToString(), "Name", "");
+        //      if (name != "")
+        //      {
+        //        if (ChannelList[name] == null)
+        //        {
+        //          ChannelInfo channel = new ChannelInfo();
+        //          channel.DisplayName = name;
+        //          channel.Linked = false;
+        //          ChannelList.Add(name, channel);
+        //        }
+        //      }
+        //      else
+        //      {
+        //        break;
+        //      }
+        //    }
+        //    UpdateList("", -1);
+        //  }
+        //  else
+        //  {
+
+        //  }
+        //}
       }
 
       if (source == bSave)

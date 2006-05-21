@@ -112,6 +112,10 @@
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
       <Name>Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Databases\Databases.csproj">
+      <Project>{C1BCEC3E-6074-4328-B5D9-391A457C8FFB}</Project>
+      <Name>Databases</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WebEPG\WebEPG.csproj">
       <Name>WebEPG %28WebEPG\WebEPG%29</Name>
       <Project>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</Project>
