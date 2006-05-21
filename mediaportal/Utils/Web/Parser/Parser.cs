@@ -144,7 +144,7 @@ namespace MediaPortal.Utils.Web
         strStripped = strStripped.Replace("<br>", "\n");
         
         // replace unicode characters
-        //strStripped = strStripped.Replace((char) 145, '’');
+        strStripped = strStripped.Replace((char) 145, '’');
         strStripped = strStripped.Replace((char) 150, '-');
       }
       return strStripped;
