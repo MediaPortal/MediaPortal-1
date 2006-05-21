@@ -21,6 +21,7 @@
 using System;
 using System.IO;
 using System.Drawing;
+using System.Collections.Generic;
 using System.Collections;
 using System.Globalization;
 using System.Xml;
@@ -579,6 +580,12 @@ namespace MediaPortal.TV.Database
 							  prog.End=progNext.Start;
 						  }
 					  }
+          }
+          RemoveOverlappingPrograms(ref progChan.programs); // be sure that we do not have any overlapping
+          
+          for (int i = 0; i < progChan.programs.Count; ++i)
+          {
+            TVProgram prog = (TVProgram)progChan.programs[i];
 					  // dont import programs which have already ended...
 					  if (prog.EndTime > dtStartDate)
 					  {
@@ -599,7 +606,7 @@ namespace MediaPortal.TV.Database
 				  }
 			  }
 			  TVDatabase.CommitTransaction();
-				TVDatabase.RemoveOverlappingPrograms();
+				//TVDatabase.RemoveOverlappingPrograms();
 			  Programs.Clear();
 			  Programs=null;
 			  xml=null;
@@ -694,6 +701,104 @@ namespace MediaPortal.TV.Database
 
 			return newDateTime;
 		}
+
+    public void RemoveOverlappingPrograms(ref ArrayList TVPrograms)
+    {
+      TVPrograms.Sort(this);
+      TVProgram prevProg = (TVProgram)TVPrograms[0];
+      for (int i = 1; i < TVPrograms.Count; i++)
+      {
+        TVProgram newProg = (TVProgram)TVPrograms[i];
+        if (newProg.Start < prevProg.End)   // we have an overlap here
+        {
+          // let us find out which one is the correct one
+          if (newProg.Start > prevProg.Start)  // newProg will create hole -> delete it
+          {
+            TVPrograms.Remove(newProg);
+            i--;                              // stay at the same position
+            continue;
+          }
+
+          List<TVProgram> prevList = new List<TVProgram>();
+          List<TVProgram> newList = new List<TVProgram>();
+          prevList.Add(prevProg);
+          newList.Add(newProg);
+          TVProgram syncPrev = prevProg;
+          TVProgram syncProg = newProg;
+          for (int j = i + 1; j < TVPrograms.Count; j++)
+          {
+            TVProgram syncNew = (TVProgram)TVPrograms[j];
+            if (syncPrev.End == syncNew.Start)
+            {
+              prevList.Add(syncNew);
+              syncPrev = syncNew;
+              if (syncNew.Start > syncProg.End)
+              {
+                // stop point reached => delete TVPrograms in newList
+                foreach (TVProgram Prog in newList) TVPrograms.Remove(Prog);
+                i = j - 1;
+                prevProg = syncPrev;
+                newList.Clear();
+                prevList.Clear();
+                break;
+              }
+            }
+            else if (syncProg.End == syncNew.Start)
+            {
+              newList.Add(syncNew);
+              syncProg = syncNew;
+              if (syncNew.Start > syncPrev.End)
+              {
+                // stop point reached => delete TVPrograms in prevList
+                foreach (TVProgram Prog in prevList) TVPrograms.Remove(Prog);
+                i = j - 1;
+                prevProg = syncProg;
+                newList.Clear();
+                prevList.Clear();
+                break;
+              }
+            }
+          }
+          // check if a stop point was reached => if not delete newList
+          if (newList.Count > 0)
+          {
+            foreach (TVProgram Prog in prevList) TVPrograms.Remove(Prog);
+            i = TVPrograms.Count;
+            break;
+          }
+        }
+        prevProg = newProg;
+      }
+    }
+
+    public void FillInMissingDataFromDB(ref ArrayList TVPrograms, ArrayList dbEPG)
+    {
+      TVPrograms.Sort(this);
+      dbEPG.Sort(this);
+      TVProgram prevProg = (TVProgram)TVPrograms[0];
+      for (int i = 1; i < TVPrograms.Count; i++)
+      {
+        TVProgram newProg = (TVProgram)TVPrograms[i];
+        if (newProg.Start > prevProg.End)   // we have a gab here
+        {
+          // try to find data in the database
+          foreach (TVProgram dbProg in dbEPG)
+          {
+            if ((dbProg.Start >= prevProg.End) && (dbProg.End <= newProg.Start))
+            {
+              TVPrograms.Insert(i, dbProg.Clone());
+              i++;
+              prevProg = dbProg;
+            }
+            if (dbProg.Start >= newProg.End) break; // no more data available
+          }
+        }
+        prevProg = newProg;
+      }
+    }
+
+
+
     #region Sort Members
 
 

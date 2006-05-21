@@ -151,7 +151,7 @@ namespace MediaPortal.TV.Database
       int currentVersion = 8;
       int versionNr = 0;
 
-      DatabaseUtility.AddTable(m_db,"tblversion", "CREATE TABLE tblversion( idVersion integer)");
+      DatabaseUtility.AddTable(m_db, "tblversion", "CREATE TABLE tblversion( idVersion integer)");
 
       SQLiteResultSet results;
       results = m_db.Execute("SELECT * FROM tblversion");
@@ -269,7 +269,7 @@ namespace MediaPortal.TV.Database
       lock (typeof(TVDatabase))
       {
         if (m_db == null) return false;
-        if (DatabaseUtility.AddTable(m_db,"channel", "CREATE TABLE channel ( idChannel integer primary key, strChannel text, iChannelNr integer, frequency text, iSort integer, bExternal integer, ExternalChannel text, standard integer, Visible integer, Country integer, scrambled integer)"))
+        if (DatabaseUtility.AddTable(m_db, "channel", "CREATE TABLE channel ( idChannel integer primary key, strChannel text, iChannelNr integer, frequency text, iSort integer, bExternal integer, ExternalChannel text, standard integer, Visible integer, Country integer, scrambled integer)"))
         {
           try
           {
@@ -278,7 +278,7 @@ namespace MediaPortal.TV.Database
           catch (Exception) { }
         }
 
-        if (DatabaseUtility.AddTable(m_db,"tblPrograms", "CREATE TABLE tblPrograms ( idProgram integer primary key, idChannel integer, idGenre integer, strTitle text, iStartTime integer, iEndTime text, strDescription text,strEpisodeName text,strRepeat text,strSeriesNum text,strEpisodeNum text,strEpisodePart text,strDate text,strStarRating text,strClassification text)"))
+        if (DatabaseUtility.AddTable(m_db, "tblPrograms", "CREATE TABLE tblPrograms ( idProgram integer primary key, idChannel integer, idGenre integer, strTitle text, iStartTime integer, iEndTime text, strDescription text,strEpisodeName text,strRepeat text,strSeriesNum text,strEpisodeNum text,strEpisodePart text,strDate text,strStarRating text,strClassification text)"))
         {
           try
           {
@@ -287,7 +287,7 @@ namespace MediaPortal.TV.Database
           catch (Exception) { }
         }
 
-        if (DatabaseUtility.AddTable(m_db,"genre", "CREATE TABLE genre ( idGenre integer primary key, strGenre text)"))
+        if (DatabaseUtility.AddTable(m_db, "genre", "CREATE TABLE genre ( idGenre integer primary key, strGenre text)"))
         {
           try
           {
@@ -296,24 +296,24 @@ namespace MediaPortal.TV.Database
           catch (Exception) { }
         }
 
-        DatabaseUtility.AddTable(m_db,"recording", "CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime integer, iEndTime integer, iCancelTime integer, bContentRecording integer, priority integer, quality integer, episodesToKeep integer)");
-        DatabaseUtility.AddTable(m_db,"canceledseries", "CREATE TABLE canceledseries ( idRecording integer, idChannel integer, iCancelTime text)");
+        DatabaseUtility.AddTable(m_db, "recording", "CREATE TABLE recording ( idRecording integer primary key, idChannel integer, iRecordingType integer, strProgram text, iStartTime integer, iEndTime integer, iCancelTime integer, bContentRecording integer, priority integer, quality integer, episodesToKeep integer)");
+        DatabaseUtility.AddTable(m_db, "canceledseries", "CREATE TABLE canceledseries ( idRecording integer, idChannel integer, iCancelTime text)");
 
-        DatabaseUtility.AddTable(m_db,"recorded", "CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime integer, iEndTime integer, strDescription text, strFileName text, iPlayed integer)");
+        DatabaseUtility.AddTable(m_db, "recorded", "CREATE TABLE recorded ( idRecorded integer primary key, idChannel integer, idGenre integer, strProgram text, iStartTime integer, iEndTime integer, strDescription text, strFileName text, iPlayed integer)");
 
-        DatabaseUtility.AddTable(m_db,"tblDVBSMapping", "CREATE TABLE tblDVBSMapping ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer)");
-        DatabaseUtility.AddTable(m_db,"tblDVBCMapping", "CREATE TABLE tblDVBCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, HasEITPresentFollow integer, HasEITSchedule integer)");
-        DatabaseUtility.AddTable(m_db,"tblATSCMapping", "CREATE TABLE tblATSCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, channelNumber integer,minorChannel integer, majorChannel integer, HasEITPresentFollow integer, HasEITSchedule integer)");
-        DatabaseUtility.AddTable(m_db,"tblDVBTMapping", "CREATE TABLE tblDVBTMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, HasEITPresentFollow integer, HasEITSchedule integer)");
-        DatabaseUtility.AddTable(m_db,"tblGroups", "CREATE TABLE tblGroups ( idGroup integer primary key, strName text, iSort integer, Pincode integer)");
-        DatabaseUtility.AddTable(m_db,"tblGroupMapping", "CREATE TABLE tblGroupMapping( idGroupMapping integer primary key, idGroup integer, idChannel integer)");
+        DatabaseUtility.AddTable(m_db, "tblDVBSMapping", "CREATE TABLE tblDVBSMapping ( idChannel integer,sPCRPid integer,sTSID integer,sFreq integer,sSymbrate integer,sFEC integer,sLNBKhz integer,sDiseqc integer,sProgramNumber integer,sServiceType integer,sProviderName text,sChannelName text,sEitSched integer,sEitPreFol integer,sAudioPid integer,sVideoPid integer,sAC3Pid integer,sAudio1Pid integer,sAudio2Pid integer,sAudio3Pid integer,sTeletextPid integer,sScrambled integer,sPol integer,sLNBFreq integer,sNetworkID integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text,sECMPid integer,sPMTPid integer)");
+        DatabaseUtility.AddTable(m_db, "tblDVBCMapping", "CREATE TABLE tblDVBCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, HasEITPresentFollow integer, HasEITSchedule integer)");
+        DatabaseUtility.AddTable(m_db, "tblATSCMapping", "CREATE TABLE tblATSCMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, symbolrate integer, innerFec integer, modulation integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, channelNumber integer,minorChannel integer, majorChannel integer, HasEITPresentFollow integer, HasEITSchedule integer)");
+        DatabaseUtility.AddTable(m_db, "tblDVBTMapping", "CREATE TABLE tblDVBTMapping ( idChannel integer primary key, strChannel text, strProvider text, iLCN integer, frequency text, bandwidth integer, ONID integer, TSID integer, SID integer, Visible integer, audioPid integer, videoPid integer, teletextPid integer, pmtPid integer, ac3Pid integer, audio1Pid integer, audio2Pid integer, audio3Pid integer,sAudioLang text,sAudioLang1 text,sAudioLang2 text,sAudioLang3 text, HasEITPresentFollow integer, HasEITSchedule integer)");
+        DatabaseUtility.AddTable(m_db, "tblGroups", "CREATE TABLE tblGroups ( idGroup integer primary key, strName text, iSort integer, Pincode integer)");
+        DatabaseUtility.AddTable(m_db, "tblGroupMapping", "CREATE TABLE tblGroupMapping( idGroupMapping integer primary key, idGroup integer, idChannel integer)");
 
         //following table specifies which channels can be received by which card
-        DatabaseUtility.AddTable(m_db,"tblChannelCard", "CREATE TABLE tblChannelCard( idChannelCard integer primary key, idChannel integer, card integer)");
-        DatabaseUtility.AddTable(m_db,"tblNotifies", "CREATE TABLE tblNotifies( idNotify integer primary key, idProgram integer)");
+        DatabaseUtility.AddTable(m_db, "tblChannelCard", "CREATE TABLE tblChannelCard( idChannelCard integer primary key, idChannel integer, card integer)");
+        DatabaseUtility.AddTable(m_db, "tblNotifies", "CREATE TABLE tblNotifies( idNotify integer primary key, idProgram integer)");
 
         //xmltv->tv channel mapping
-        DatabaseUtility.AddTable(m_db,"tblEPGMapping", "CREATE TABLE tblEPGMapping ( idChannel integer primary key, strChannel text, xmltvid text)");
+        DatabaseUtility.AddTable(m_db, "tblEPGMapping", "CREATE TABLE tblEPGMapping ( idChannel integer primary key, strChannel text, xmltvid text)");
 
         return true;
       }
@@ -560,7 +560,7 @@ namespace MediaPortal.TV.Database
         return false;
       }
     }
-    static public void UpdateSatChannel(int channelId,DVBChannel ch)
+    static public void UpdateSatChannel(int channelId, DVBChannel ch)
     {
 
       lock (typeof(TVDatabase))
@@ -573,12 +573,12 @@ namespace MediaPortal.TV.Database
           DatabaseUtility.RemoveInvalidChars(ref strProvider);
 
           if (null == m_db) return;
-                                        
-          string strSQL=String.Format( "update tblDVBSMapping set sFreq={0},sSymbrate={1},sFEC={2},sLNBKhz={3},sDiseqc={4},sProgramNumber={5},sServiceType={6},sProviderName='{7}',sChannelName='{8}',sEitSched={9},sEitPreFol={10},sAudioPid={11},sVideoPid={12},sAC3Pid={13},sAudio1Pid={14},sAudio2Pid={15},sAudio3Pid={16},sTeletextPid={17},sScrambled={18},sPol={19},sLNBFreq={20},sNetworkID={21},sTSID={22},sPCRPid={23} where idChannel = {24}", 
-                      ch.Frequency,ch.Symbolrate, ch.FEC,ch.LnbSwitchFrequency,ch.DiSEqC,
-                      ch.ProgramNumber,ch.ServiceType,strProvider,strChannel, (int)(ch.HasEITSchedule==true?1:0),
-                      (int)(ch.HasEITPresentFollow==true?1:0), ch.AudioPid,ch.VideoPid,ch.AC3Pid,ch.Audio1, ch.Audio2, ch.Audio3,
-                      ch.TeletextPid,(int)(ch.IsScrambled==true?1:0), ch.Polarity,ch.LNBFrequency,ch.NetworkID,ch.TransportStreamID,ch.PCRPid,ch.ID);
+
+          string strSQL = String.Format("update tblDVBSMapping set sFreq={0},sSymbrate={1},sFEC={2},sLNBKhz={3},sDiseqc={4},sProgramNumber={5},sServiceType={6},sProviderName='{7}',sChannelName='{8}',sEitSched={9},sEitPreFol={10},sAudioPid={11},sVideoPid={12},sAC3Pid={13},sAudio1Pid={14},sAudio2Pid={15},sAudio3Pid={16},sTeletextPid={17},sScrambled={18},sPol={19},sLNBFreq={20},sNetworkID={21},sTSID={22},sPCRPid={23} where idChannel = {24}",
+                      ch.Frequency, ch.Symbolrate, ch.FEC, ch.LnbSwitchFrequency, ch.DiSEqC,
+                      ch.ProgramNumber, ch.ServiceType, strProvider, strChannel, (int)(ch.HasEITSchedule == true ? 1 : 0),
+                      (int)(ch.HasEITPresentFollow == true ? 1 : 0), ch.AudioPid, ch.VideoPid, ch.AC3Pid, ch.Audio1, ch.Audio2, ch.Audio3,
+                      ch.TeletextPid, (int)(ch.IsScrambled == true ? 1 : 0), ch.Polarity, ch.LNBFrequency, ch.NetworkID, ch.TransportStreamID, ch.PCRPid, ch.ID);
           m_db.Execute(strSQL);
         }
         catch (Exception ex)
@@ -894,7 +894,7 @@ namespace MediaPortal.TV.Database
 
           if (null == m_db) return -1;
 
-          
+
           //foreach (CachedChannel cache in m_channelCache)
           //{
           //  if (cache.strChannel == strChannel) return cache.idChannel;
@@ -1095,29 +1095,44 @@ namespace MediaPortal.TV.Database
 
           //check if program is already in database
           //check if other programs exist between the start - finish time of this program
-          long endTime = Utils.datetolong(prog.EndTime.AddMinutes(-1));
+          //     s------------------e               = prog
+          //-------e                                = db 
+          //       s--------------e                 = db
+          //                      s------------     = db 
 
           strSQL = String.Format("SELECT * FROM tblPrograms WHERE idChannel={0} AND ", iChannelId);
-          strSQL += String.Format("  ( ('{0}' <= iStartTime and '{1}' >= iStartTime) or  ",
-                                prog.Start.ToString(), endTime.ToString());
-          strSQL += String.Format("    ('{0}' >= iStartTime and '{1}' >= iStartTime and '{2}' < iEndTime) )",
-                      prog.Start.ToString(), endTime.ToString(), prog.Start.ToString());
+          strSQL += String.Format("  ( ('{0}' < iEndTime and '{1}' > iEndTime) or  ",
+                                         prog.Start.ToString(),  prog.End.ToString());
+          strSQL += String.Format("    ('{0}' <= iStartTime and '{1}' >= iEndTime) or  ",
+                                         prog.Start.ToString(), prog.End.ToString());
+          strSQL += String.Format("    ('{0}' < iStartTime and '{1}' > iStartTime ) )",
+                                          prog.Start.ToString(), prog.End.ToString());
           //  Log.WriteFile(Log.LogType.EPG, "sql:{0} {1}-{2} {3}", prog.Channel, prog.Start.ToString(), endTime.ToString(), strSQL);
           SQLiteResultSet results2;
           results2 = m_db.Execute(strSQL);
           if (results2.Rows.Count > 0)
           {
-            long idProgram = DatabaseUtility.GetAsInt64(results2, 0, "idProgram");
-            return (int)idProgram;//program already exists
-            /*
+            if (results2.Rows.Count == 1)
+            {
+              string title = DatabaseUtility.Get(results2, 0, "strTitle");
+              long start = DatabaseUtility.GetAsInt64(results2, 0, "iStartTime");
+              long end = DatabaseUtility.GetAsInt64(results2, 0, "iEndTime");
+
+              if ((prog.Title.Equals(title)) && (prog.Start == start) && (prog.End == end))    // only when equal
+              {
+                long idProgram = DatabaseUtility.GetAsInt64(results2, 0, "idProgram");
+                return (int)idProgram;//program already exists
+              }
+            }
+
             //and delete them
             for (int i = 0; i < results2.Rows.Count; ++i)
             {
-               idProgram = DatabaseUtility.GetAsInt64(results2, i, "idProgram");
-              //Log.WriteFile(Log.LogType.EPG, "sql: del {0} id:{1} {2}-{3}", i, idProgram,DatabaseUtility.Get(results2, i, "iStartTime"), DatabaseUtility.Get(results2, i, "iEndTime"));
+              long idProgram = DatabaseUtility.GetAsInt64(results2, i, "idProgram");
+              Log.WriteFile(Log.LogType.EPG, "sql: del {0} id:{1} {2}-{3}", i, idProgram,DatabaseUtility.Get(results2, i, "iStartTime"), DatabaseUtility.Get(results2, i, "iEndTime"));
               strSQL = String.Format("DELETE FROM tblPrograms WHERE idProgram={0}", idProgram);
               m_db.Execute(strSQL);
-            }*/
+            }
           }
           // then add the new shows
           strSQL = String.Format("insert into tblPrograms (idProgram,idChannel,idGenre,strTitle,iStartTime,iEndTime,strDescription,strEpisodeName,strRepeat,strSeriesNum,strEpisodeNum,strEpisodePart,strDate,strStarRating,strClassification) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}', '{12}', '{13}')",
@@ -5207,7 +5222,7 @@ namespace MediaPortal.TV.Database
     public static void UpdatePids(bool isATSC, bool isDVBC, bool isDVBS, bool isDVBT, DVBChannel dvbChannel)
     {
       string provider;
-      TVChannel channel=TVDatabase.GetTVChannelByStream(isATSC,isDVBT,isDVBC,isDVBS,dvbChannel.NetworkID,dvbChannel.TransportStreamID,dvbChannel.ProgramNumber,out provider);
+      TVChannel channel = TVDatabase.GetTVChannelByStream(isATSC, isDVBT, isDVBC, isDVBS, dvbChannel.NetworkID, dvbChannel.TransportStreamID, dvbChannel.ProgramNumber, out provider);
       if (channel == null)
       {
         Log.Write("tvdatabase cannot get channel for :{0}", dvbChannel.ServiceName);
@@ -5239,11 +5254,11 @@ namespace MediaPortal.TV.Database
       if (isDVBS)
       {
         Log.Write("update dvbs channel:{0}", channel.Name);
-        UpdateSatChannel(channel.ID,dvbChannel);
+        UpdateSatChannel(channel.ID, dvbChannel);
       }
       if (isATSC)
       {
-        Log.Write("update atsc channel:{0}",channel.Name);
+        Log.Write("update atsc channel:{0}", channel.Name);
         MapATSCChannel(channel.Name, dvbChannel.PhysicalChannel, dvbChannel.MinorChannel, dvbChannel.MajorChannel,
           dvbChannel.ServiceProvider, channel.ID, dvbChannel.Frequency, dvbChannel.Symbolrate, dvbChannel.FEC,
           dvbChannel.Modulation, dvbChannel.NetworkID, dvbChannel.TransportStreamID, dvbChannel.ProgramNumber,
