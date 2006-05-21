@@ -75,6 +75,7 @@
     <Compile Include="Core\Playlists\PlayListWPLTest.cs" />
     <Compile Include="Core\UdpHelper\UdpHelperTest.cs" />
     <Compile Include="Core\InputDevices\InputHandlerTest.cs" />
+    <Compile Include="WebEPG\ProgramDataTest.cs" />
     <Compile Include="Support\DxDiagLogTests.cs" />
     <Compile Include="Support\EventLogLoggerTests.cs" />
     <Compile Include="Support\EventLogsTests.cs" />
@@ -132,6 +133,10 @@
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebEPG\WebEPG\WebEPG.csproj">
+      <Project>{F7CB2A9F-004E-4667-BEAF-782F1C28E2D3}</Project>
+      <Name>WebEPG %28WebEPG\WebEPG%29</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
