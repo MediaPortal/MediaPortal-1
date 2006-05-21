@@ -26,10 +26,10 @@ using System.Web;
 using System.Text;
 using System.Collections;
 using MediaPortal.Webepg.Profile;
-using MediaPortal.Webepg.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.WebEPG;
 using MediaPortal.Utils;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.EPG
 {
@@ -56,6 +56,8 @@ namespace MediaPortal.EPG
 
     public bool Import()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
 
       string grabberLast = "";
       string grabberDir;
@@ -68,7 +70,7 @@ namespace MediaPortal.EPG
 
       if (!File.Exists(configFile))
       {
-        Log.WriteFile(Log.LogType.Log, false, "File not found: WebEPG.xml");
+        log.Info("File not found: WebEPG.xml");
         return false;
       }
 
@@ -80,7 +82,7 @@ namespace MediaPortal.EPG
 
       xmltv.Open();
 
-      Log.WriteFile(Log.LogType.Log, false, "Loading ChannelMap: WebEPG.xml");
+      log.Info("Loading ChannelMap: WebEPG.xml");
 
       m_xmlreader = new MediaPortal.Webepg.Profile.Xml(configFile);
       maxGrabDays = m_xmlreader.GetValueAsInt("General", "MaxDays", 1);
@@ -136,12 +138,12 @@ namespace MediaPortal.EPG
 
       for (int i = 1; i <= channelCount; i++)
       {
-        Log.WriteFile(Log.LogType.Log, false, "WebEPG: Getting Channel {0} of {1}", i, channelCount);
+        log.Info("WebEPG: Getting Channel {0} of {1}", i, channelCount);
         GrabberInfo channel = (GrabberInfo) channels[i-1];
 
         if(channel.iscopy)
         {
-          Log.WriteFile(Log.LogType.Log, false, "WebEPG: Channel is a copy of Channel {0}", channel.copies+1);
+          log.Info("WebEPG: Channel is a copy of Channel {0}", channel.copies+1);
 
         }
         else
@@ -169,7 +171,7 @@ namespace MediaPortal.EPG
           }
           else
           {
-            Log.WriteFile(Log.LogType.Log, false, "WebEPG: Grabber failed for: {0}", channel.name);
+            log.Info("WebEPG: Grabber failed for: {0}", channel.name);
           }
         }
 

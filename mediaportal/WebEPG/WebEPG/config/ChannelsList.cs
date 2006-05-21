@@ -22,7 +22,6 @@
 using System;
 using System.Xml;
 using System.Collections;
-using MediaPortal.Webepg.GUI.Library;
 using MediaPortal.Util;
 
 namespace MediaPortal.EPG.config

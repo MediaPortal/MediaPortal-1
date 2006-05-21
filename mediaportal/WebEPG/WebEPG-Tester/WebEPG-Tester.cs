@@ -27,9 +27,9 @@ using System.Text;
 using System.Collections;
 using System.Windows.Forms;
 using MediaPortal.Utils.Web;
+using MediaPortal.Utils.Services;
 using MediaPortal.EPG;
 using MediaPortal.WebEPG;
-using MediaPortal.Webepg.GUI.Library;
 using MediaPortal.TV.Database;
 using MediaPortal.EPG.config;
 
@@ -44,6 +44,12 @@ namespace MediaPortal.EPG.WebEPGTester
 
     static void Main()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = new Log("WebEPG-Tester", Log.Level.Debug);
+
+      StringWriter logString = new StringWriter();
+      ILog errorLog = new Log(logString, Log.Level.Error);
+      services.Add<ILog>(errorLog);
       ChannelsList config = new ChannelsList(Environment.CurrentDirectory + "\\WebEPG");
 
       string testDir = Environment.CurrentDirectory + "\\test";
@@ -78,6 +84,7 @@ namespace MediaPortal.EPG.WebEPGTester
             IDictionaryEnumerator enumerator = channels.GetEnumerator();
             WebListingGrabber m_EPGGrabber = new WebListingGrabber(2, Environment.CurrentDirectory + "\\WebEPG\\grabbers\\");
 
+            log.Info("WebEPG: Grabber {0}\\{1}", countries[c], grabbers[g]);
             XMLTVExport xmltv = new XMLTVExport(grabberDir);
             xmltv.Open();
 
@@ -85,7 +92,7 @@ namespace MediaPortal.EPG.WebEPGTester
             {
               ChannelInfo channel = (ChannelInfo)enumerator.Value;
               xmltv.WriteChannel(channel.ChannelID, channel.FullName);
-              Log.WriteFile(Log.LogType.Log, false, "WebEPG: Getting Channel {0}", channel.ChannelID);
+              log.Info("WebEPG: Getting Channel {0}", channel.ChannelID);
 
               string countryGrabber = countries[c] + "\\" + grabbers[g];
               string grabTimeStr = xmlreader.GetValueAsString("Grabbers", countryGrabber, "");
@@ -118,8 +125,11 @@ namespace MediaPortal.EPG.WebEPGTester
               }
               else
               {
-                Log.WriteFile(Log.LogType.Log, false, "WebEPG: Grabber failed for: {0}", channel.ChannelID);
+                log.Error("WebEPG: Grabber failed for: {0}", channel.ChannelID);
               }
+              if(logString.ToString() != String.Empty)
+                log.Error("WebEPG: Grabber failed for: {0}", channel.ChannelID);
+              logString.Flush();
             }
             xmltv.Close();
           }

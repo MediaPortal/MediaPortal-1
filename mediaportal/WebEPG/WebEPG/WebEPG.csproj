@@ -136,9 +136,6 @@
     <Compile Include="config\GrabberInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MPCode\Log.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="MPCode\TVProgram.cs">
       <SubType>Code</SubType>
     </Compile>

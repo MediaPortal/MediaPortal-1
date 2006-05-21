@@ -27,7 +27,7 @@ using System.Text;
 //using System.Collections.Generic;
 using System.Windows.Forms;
 using MediaPortal.EPG;
-using MediaPortal.Webepg.GUI.Library;
+using MediaPortal.Utils.Services;
 using MediaPortal.Webepg.TV.Database;
 
 namespace MediaPortal.EPG.TestWebEPG
@@ -41,7 +41,11 @@ namespace MediaPortal.EPG.TestWebEPG
 
     static void Main()
     {
-      Log.WriteFile(Log.LogType.Log, false, "WebEPG: Starting");
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = new Log("WebEPG", Log.Level.Debug);
+      services.Add<ILog>(log);
+
+      log.Info("WebEPG: Starting");
       System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.BelowNormal;
 
 #if DEBUG
@@ -57,12 +61,12 @@ namespace MediaPortal.EPG.TestWebEPG
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "WebEPG: Fatal Error");
-        Log.WriteFile(Log.LogType.Log, true, "WebEPG: {0}", ex.Message);
+        log.Error("WebEPG: Fatal Error");
+        log.Error("WebEPG: {0}", ex.Message);
       }
 #endif
 
-      Log.WriteFile(Log.LogType.Log, false, "WebEPG: Finished");
+      log.Info("WebEPG: Finished");
     }
   }
 }

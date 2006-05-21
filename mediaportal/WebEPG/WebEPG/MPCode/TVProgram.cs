@@ -20,7 +20,6 @@
  */
 
 using System;
-using MediaPortal.Webepg.GUI.Library;
 using System.Diagnostics;
 using System.Text;
 

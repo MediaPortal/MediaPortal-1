@@ -23,7 +23,7 @@ using System;
 using System.Text;
 using System.Xml;
 using MediaPortal.Utils.Web;
-using MediaPortal.Webepg.GUI.Library;
+using MediaPortal.Utils.Services;
 using MediaPortal.Webepg.TV.Database;
 
 namespace MediaPortal.WebEPG
@@ -34,9 +34,12 @@ namespace MediaPortal.WebEPG
     //XmlDocument _xmlDoc;
     XmlNodeList _nodeList;
     HTTPRequest _page;
+    ILog _log;
 
     public XMLProfiler(string strSource, XMLProfilerData data)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      _log = services.Get<ILog>();
       _strSource = strSource;
       _Data = data;
       if(_strSource != "")
@@ -143,12 +146,12 @@ namespace MediaPortal.WebEPG
       }
       catch(System.Xml.XmlException) // ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "WebEPG: XML failed");
+        _log.Error("WebEPG: XML failed");
         return;
       }
 
       if(_nodeList == null)
-        Log.WriteFile(Log.LogType.Log, false, "WebEPG: No programs found");
+        _log.Warn("WebEPG: No programs found");
       else
         _profileCount = _nodeList.Count;
     }
