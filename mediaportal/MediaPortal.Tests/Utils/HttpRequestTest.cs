@@ -65,18 +65,17 @@ namespace MediaPortal.Tests.Utils.Web
         [Test]
         public void ReplaceTag()
         {
-          HTTPRequest request = new HTTPRequest("http://www.somewhere.com/");
-          request.GetQuery = "/#PATH/#FILE";
-          request.PostQuery = "#PATH?#POSTDATA";
+          HTTPRequest request = new HTTPRequest("http://www.somewhere.com/[PATH]/[FILE]");
+          request.PostQuery = "[PATH]?[POSTDATA]";
 
-          request.ReplaceTag("#PATH", "tagpath");
-          Assert.IsTrue("/tagpath/#FILE" == request.GetQuery);
-          Assert.IsTrue("tagpath?#POSTDATA" == request.PostQuery);
+          request.ReplaceTag("[PATH]", "tagpath");
+          Assert.IsTrue("/tagpath/[FILE]" == request.GetQuery);
+          Assert.IsTrue("tagpath?[POSTDATA]" == request.PostQuery);
           
-          request.ReplaceTag("#FILE", "tagfile.html");
+          request.ReplaceTag("[FILE]", "tagfile.html");
           Assert.IsTrue("/tagpath/tagfile.html" == request.GetQuery);
 
-          request.ReplaceTag("#POSTDATA", "tagpostdata");
+          request.ReplaceTag("[POSTDATA]", "tagpostdata");
           Assert.IsTrue("tagpath?tagpostdata" == request.PostQuery);
           
         }
