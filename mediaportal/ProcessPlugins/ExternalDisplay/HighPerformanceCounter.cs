@@ -51,9 +51,9 @@ namespace ProcessPlugins.ExternalDisplay
     /// </summary>
     public void Start()
     {
-      if (QueryPerformanceCounter(out this.start) == 0)
+      if (QueryPerformanceCounter(out start) == 0)
       {
-        this.start = 0;
+        start = 0;
       }
     }
 
@@ -65,9 +65,9 @@ namespace ProcessPlugins.ExternalDisplay
     /// of (micro/milli)seconds make sense.</remarks>
     public void End()
     {
-      if (QueryPerformanceCounter(out this.end) == 0)
+      if (QueryPerformanceCounter(out end) == 0)
       {
-        this.end = 0;
+        end = 0;
       }
     }
 
@@ -80,7 +80,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// </value>
     public long PeriodCount
     {
-      get { return (this.end - this.start); }
+      get { return (end - start); }
     }
 
     /// <summary>
@@ -94,7 +94,7 @@ namespace ProcessPlugins.ExternalDisplay
     {
       get
       {
-        long period = this.PeriodCount;
+        long period = PeriodCount;
         if (period < 0x8637bd05af6)
         {
           return ((period * 1000000) / frequency);
@@ -114,7 +114,7 @@ namespace ProcessPlugins.ExternalDisplay
     {
       get
       {
-        long period = this.PeriodCount;
+        long period = PeriodCount;
         if (period < 0x20c49ba5e353f7)
         {
           return ((period * 1000) / frequency);
@@ -132,7 +132,7 @@ namespace ProcessPlugins.ExternalDisplay
     /// </value>
     public long Seconds
     {
-      get { return (this.PeriodCount / frequency); }
+      get { return (PeriodCount / frequency); }
     }
 
   }
