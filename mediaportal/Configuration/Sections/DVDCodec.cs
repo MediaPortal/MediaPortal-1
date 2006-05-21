@@ -136,7 +136,7 @@ namespace MediaPortal.Configuration.Sections
             audioCodec = (string)availableAudioFilters[0];
             foreach (string filter in availableAudioFilters)
             {
-              if (filter.Equals("MPEG/AC3/DTS/LPCM Audio Decoder"))
+              if (filter.Equals("MPA Decoder Filter"))
               {
                 Mpeg2DecFilterFound = true;
               }
@@ -145,7 +145,7 @@ namespace MediaPortal.Configuration.Sections
                 DScalerFilterFound = true;
               }
             }
-            if (Mpeg2DecFilterFound) audioCodec = "MPEG/AC3/DTS/LPCM Audio Decoder";
+            if (Mpeg2DecFilterFound) audioCodec = "MPA Decoder Filter";
             else if (DScalerFilterFound) audioCodec = "DScaler Audio Decoder";
           }
         }
@@ -160,7 +160,7 @@ namespace MediaPortal.Configuration.Sections
             videoCodec = (string)availableVideoFilters[0];
             foreach (string filter in availableVideoFilters)
             {
-              if (filter.Equals("Mpeg2Dec Filter"))
+              if (filter.Equals("MPV Decoder Filter"))
               {
                 Mpeg2DecFilterFound = true;
               }
@@ -169,7 +169,7 @@ namespace MediaPortal.Configuration.Sections
                 DScalerFilterFound = true;
               }
             }
-            if (Mpeg2DecFilterFound) videoCodec = "Mpeg2Dec Filter";
+            if (Mpeg2DecFilterFound) videoCodec = "MPV Decoder Filter";
             else if (DScalerFilterFound) videoCodec = "DScaler Mpeg2 Video Decoder";
           }
         }

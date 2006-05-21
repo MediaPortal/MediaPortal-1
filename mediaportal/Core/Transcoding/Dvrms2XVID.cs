@@ -123,8 +123,8 @@ namespace MediaPortal.Core.Transcoding
 
 
 				//add mpeg2 audio/video codecs
-				string strVideoCodecMoniker=@"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{F50B3F13-19C4-11CF-AA9A-02608C9BABA2}";
-				string strAudioCodec="MPEG/AC3/DTS/LPCM Audio Decoder";
+        string strVideoCodecMoniker = @"@device:sw:{083863F1-70DE-11D0-BD40-00A0C911CE86}\{39F498AF-1A09-4275-B193-673B0BA3D478}";
+        string strAudioCodec = "MPA Decoder Filter";
 				Log.Write("DVR2XVID: add elecard mpeg2 video codec");
 				Mpeg2VideoCodec = Marshal.BindToMoniker( strVideoCodecMoniker ) as IBaseFilter;
 				if (Mpeg2VideoCodec==null)
