@@ -144,7 +144,7 @@ namespace ProcessPlugins.ExternalDisplay
     {
       maxLines = lines;
       maxColumns = cols;
-      this.textLines = new string[lines];
+      textLines = new string[lines];
       Clear();
     }
 

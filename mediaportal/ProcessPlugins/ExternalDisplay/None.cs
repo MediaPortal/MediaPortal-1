@@ -35,11 +35,7 @@ namespace ProcessPlugins.ExternalDisplay
     private int row = 0;
     private int col = 0;
 
-    public None()
-    {
-    }
-
-    /// <summary>
+      /// <summary>
     /// This method is called by MP to initialize our plugin
     /// </summary>
     public void Start()
