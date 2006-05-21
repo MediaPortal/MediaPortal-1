@@ -19,6 +19,7 @@
  *
  */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -41,7 +42,8 @@ namespace ProcessPlugins.ExternalDisplay
   /// this class.
   /// </remarks>
   /// <author>JoeDalton</author>
-  public class Settings
+    [Serializable]
+    public class Settings
   {
     #region Singleton implementation
 
