@@ -35,12 +35,11 @@ namespace MediaPortal.Utils.Web
     {
     }
 
-    public HTTPRequest(string url, string getQuery, string postQuery)
+    public HTTPRequest(string baseUrl, string getQuery, string postQuery)
     {
-      Uri request = new Uri(url);
-      _host = request.Authority;
-      _scheme = request.Scheme;
-      _getQuery = getQuery;
+      Uri baseUri = new Uri(baseUrl);
+      Uri request = new Uri(baseUri, getQuery);
+      BuildRequest(request);
       _postQuery = postQuery;
     }
 
@@ -54,30 +53,28 @@ namespace MediaPortal.Utils.Web
 
     public HTTPRequest(Uri request)
     {
-      _host = request.Authority;
-      _scheme = request.Scheme;
-      _getQuery = request.PathAndQuery;
+      BuildRequest(request);
     }
 
     public HTTPRequest(string uri)
     {
-      string taggedQuery = "";
-      if (uri.IndexOf('#') != -1)
-      {
-        int pos = uri.LastIndexOf('/');
-        taggedQuery = uri.Substring(pos);
-        uri = uri.Substring(0, uri.Length - taggedQuery.Length);
-      }
       Uri request = new Uri(uri);
-      _host = request.Authority;
-      _scheme = request.Scheme;
-      _getQuery = request.PathAndQuery + taggedQuery;
+      BuildRequest(request);
     }
 
     public HTTPRequest(string host, string getQuery)
     {
       _host = host;
       _getQuery = getQuery;
+    }
+
+    private void BuildRequest(Uri request)
+    {
+      _host = request.Authority;
+      _scheme = request.Scheme;
+      _getQuery = request.PathAndQuery;
+      _getQuery = _getQuery.Replace("%5B", "[");
+      _getQuery = _getQuery.Replace("%5D", "]");
     }
 
     public string Host
@@ -88,12 +85,6 @@ namespace MediaPortal.Utils.Web
     public string GetQuery
     {
       get { return _getQuery;}
-      set 
-      { 
-        _getQuery = value;
-        if (_getQuery[0] != '/')
-          _getQuery = "/" + _getQuery;
-      }
     }
 
     public string PostQuery

@@ -71,7 +71,7 @@ namespace MediaPortal.Utils.Web
 
     public bool LoadPage(HTTPRequest page)
 		{
-			if(HTMLCache.Caching)
+			if(HTMLCache.Initialised)
 			{
 				if(HTMLCache.LoadPage(page.Uri))
 				{
@@ -134,7 +134,7 @@ namespace MediaPortal.Utils.Web
                     }
 				}
 
-				if(HTMLCache.Caching)
+				if(HTMLCache.Initialised)
 					HTMLCache.SavePage(page.Uri, _strPageSource);
 
 				return true;

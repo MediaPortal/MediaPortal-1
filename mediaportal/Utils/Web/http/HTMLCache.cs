@@ -29,20 +29,39 @@ namespace MediaPortal.Utils.Web
 	public class HTMLCache
 	{
 		const string CACHE_DIR = "WebCache";
-		static public bool Caching = false;
+    static bool _initialised = false;
+    static Mode _cacheMode = Mode.Disabled;
 		static string _strPageSource;
+
+    public enum Mode
+    {
+      Disabled = 0,
+      Enabled = 1,
+      Replace = 2
+    }
 
 		static HTMLCache()
 		{
 		}
 
-		static public void WebCacheIntialise()
+		static public void WebCacheInitialise()
 		{
 			if(!System.IO.Directory.Exists(CACHE_DIR))
 				System.IO.Directory.CreateDirectory(CACHE_DIR);
 
-			Caching = true;
+      _initialised = true;
 		}
+
+    static public bool Initialised
+    {
+      get { return _initialised; }
+    }
+
+    static public Mode CacheMode
+    {
+      get { return _cacheMode; }
+      set { _cacheMode = value; }
+    }
 
     static public void DeleteCachePage(Uri pageUri)
 		{
@@ -54,7 +73,7 @@ namespace MediaPortal.Utils.Web
 
 		static public bool LoadPage(Uri pageUri)
 		{
-			if(Caching)
+			if(_cacheMode == Mode.Enabled)
 			{
 				if(LoadCacheFile(GetCacheFileName(pageUri)))
 					return true;
@@ -64,7 +83,7 @@ namespace MediaPortal.Utils.Web
 
 		static public void SavePage(Uri pageUri, string strSource)
 		{
-			if(Caching)
+			if(_cacheMode != Mode.Disabled)
 				SaveCacheFile(GetCacheFileName(pageUri), strSource);
 		}
 

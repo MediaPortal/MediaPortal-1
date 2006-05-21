@@ -340,7 +340,7 @@ namespace MediaPortal.Utils.Web
         string[] param = GetJavaSubLinkParams(strLinkURL);
 
         for (int i = 0; i < param.Length; i++)
-          linkURL.ReplaceTag("#" + (i + 1).ToString(), param[i]);
+          linkURL.ReplaceTag("[" + (i + 1).ToString() + "]", param[i]);
       }
       else
       {
