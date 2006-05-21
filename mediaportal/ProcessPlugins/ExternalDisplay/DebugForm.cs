@@ -49,7 +49,7 @@ namespace ProcessPlugins.ExternalDisplay
         // Required for Windows Form Designer support
         //
         InitializeComponent();
-        this.SuspendLayout();
+        SuspendLayout();
         //Dynamically create textboxes for the number of configured display lines
         textLines = new TextBox[Settings.Instance.TextHeight];
         for (int i = 0; i < Settings.Instance.TextHeight; i++)
@@ -63,10 +63,10 @@ namespace ProcessPlugins.ExternalDisplay
           line.TabIndex = 0;
           line.Text = "";
           textLines[i] = line;
-          this.Controls.Add(line);
+          Controls.Add(line);
         }
-        this.Height = Settings.Instance.TextHeight * 24 + 50;
-        this.ResumeLayout(false);
+        Height = Settings.Instance.TextHeight * 24 + 50;
+        ResumeLayout(false);
       }
       catch (Exception ex)
       {
@@ -85,7 +85,7 @@ namespace ProcessPlugins.ExternalDisplay
         if(components != null)
         {
           components.Dispose();
-          this.Hide();
+          Hide();
         }
       }
       base.Dispose( disposing );
@@ -132,10 +132,10 @@ namespace ProcessPlugins.ExternalDisplay
     {
       if (InvokeRequired)
       {
-        this.Invoke(new MethodInvoker(Start));
+        Invoke(new MethodInvoker(Start));
         return;
       }
-      this.Show();
+      Show();
     }
 
     /// <summary>
@@ -145,10 +145,10 @@ namespace ProcessPlugins.ExternalDisplay
     {
       if (InvokeRequired)
       {
-        this.Invoke(new MethodInvoker(Stop));
+        Invoke(new MethodInvoker(Stop));
         return;
       }
-      this.Close();
+      Close();
     }
 
     /// <summary>
@@ -160,11 +160,11 @@ namespace ProcessPlugins.ExternalDisplay
     {
       if (InvokeRequired)
       {
-        this.Invoke(new SetLineDelegate(SetLine), _line, _message);
+        Invoke(new SetLineDelegate(SetLine), _line, _message);
         return;
       }
       textLines[_line].Text = _message;
-      this.Update(); //Give this form the time to repaint itself...
+      Update(); //Give this form the time to repaint itself...
     }
 
     #endregion
@@ -194,7 +194,7 @@ namespace ProcessPlugins.ExternalDisplay
       if (InvokeRequired)
         Invoke(new MethodInvoker(Show));
       else
-        this.Show();
+        Show();
       Clear();
     }
 

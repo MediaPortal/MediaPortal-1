@@ -45,7 +45,7 @@ namespace ProcessPlugins.ExternalDisplay
     private delegate void SetActiveWindowDelegate(GUIWindow.Window _window);
     private DataGrid dataGrid1;
     private IContainer components = null;
-    private System.Windows.Forms.Panel panel1;
+    private Panel panel1;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private MediaPortal.UserInterface.Controls.MPTextBox txtActiveWindow;
     private MediaPortal.UserInterface.Controls.MPLabel label2;
@@ -171,14 +171,14 @@ namespace ProcessPlugins.ExternalDisplay
     public void SetStatus(Status _status)
     {
       if (InvokeRequired)
-        this.Invoke(new SetStatusDelegate(SetStatus), _status);
+        Invoke(new SetStatusDelegate(SetStatus), _status);
       txtStatus.Text = _status.ToString();
     }
 
     public void SetActiveWindow(GUIWindow.Window _window)
     {
       if (InvokeRequired)
-        this.Invoke(new SetActiveWindowDelegate(SetActiveWindow), _window);
+        Invoke(new SetActiveWindowDelegate(SetActiveWindow), _window);
       txtActiveWindow.Text = _window.ToString();
     }
 
