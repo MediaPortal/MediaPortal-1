@@ -785,7 +785,7 @@ namespace MediaPortal.Configuration.Sections
 									, Action.ActionType.ACTION_DEFAULT_TIMEBLOCK
 									, Action.ActionType.ACTION_TVGUIDE_RESET
 									, Action.ActionType.ACTION_BACKGROUND_TOGGLE
-									, Action.ActionType.ACTION_TOGGLE_WINDOWED_FULSLCREEN
+									, Action.ActionType.ACTION_TOGGLE_WINDOWED_FULLSCREEN
 									, Action.ActionType.ACTION_REBOOT
 								};
 

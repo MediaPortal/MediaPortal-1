@@ -151,7 +151,7 @@ namespace MediaPortal.IR
 								Action.ActionType.ACTION_DEFAULT_TIMEBLOCK,
 								Action.ActionType.ACTION_TVGUIDE_RESET,
 								Action.ActionType.ACTION_BACKGROUND_TOGGLE,
-								Action.ActionType.ACTION_TOGGLE_WINDOWED_FULSLCREEN,
+								Action.ActionType.ACTION_TOGGLE_WINDOWED_FULLSCREEN,
 
 								USBUIRT.JumpToActionType.JUMP_TO_HOME,
 								USBUIRT.JumpToActionType.JUMP_TO_TV_GUIDE,
