@@ -197,13 +197,13 @@ namespace MediaPortal.Util
 			int pos1=ahref.IndexOf("\"");
 			if (pos1 < 0) return;
 			int pos2=ahref.IndexOf("\"",pos1+1);
-			if (pos1 < 0) return;
+			if (pos2 < 0) return;
 			url=ahref.Substring(pos1+1,pos2-pos1-1);
 
 			pos1=ahref.IndexOf(">");
-			if (pos1 < 0) return;;
+			if (pos1 < 0) return;
 			pos2=ahref.IndexOf("<",pos1);
-			if (pos2 < 0) return;;
+			if (pos2 < 0) return;
 			title=ahref.Substring(pos1+1,pos2-pos1-1);
 			
 		}
