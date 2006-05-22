@@ -1071,8 +1071,6 @@ namespace MediaPortal.Configuration.Sections
             for (int i = 0; i < captureCards.Count; i++)
             {
               ((TVCaptureDevice)captureCards[i]).ID = (i + 1);
-              ((TVCaptureDevice)captureCards[i]).LoadDefinitions();
-
 
               TVCaptureDevice device = (TVCaptureDevice)captureCards[i];
               ComboCard combo = new ComboCard();
