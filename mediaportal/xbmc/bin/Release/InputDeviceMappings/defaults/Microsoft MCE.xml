@@ -52,6 +52,7 @@
 		<button name="Ok" code="34" />
 		-->
 		<button name="Info" code="15">
+			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="24" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
 		</button>
 		<button name="Volume +" code="16">

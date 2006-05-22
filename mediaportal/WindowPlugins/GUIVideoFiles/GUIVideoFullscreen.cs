@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Diagnostics;
@@ -59,45 +63,26 @@ namespace MediaPortal.GUI.Video
 
     enum Control
     {
-      BLUE_BAR = 0
-      ,
-      OSD_VIDEOPROGRESS = 1
-    ,
-      LABEL_ROW1 = 10
-    ,
-      LABEL_ROW2 = 11
-    ,
-      LABEL_ROW3 = 12
-    ,
-      IMG_PAUSE = 16
-    ,
-      IMG_2X = 17
-    ,
-      IMG_4X = 18
-    ,
-      IMG_8X = 19
-    ,
-      IMG_16X = 20
-    ,
-      IMG_32X = 21
-
-    ,
-      IMG_MIN2X = 23
-    ,
-      IMG_MIN4X = 24
-    ,
-      IMG_MIN8X = 25
-    ,
-      IMG_MIN16X = 26
-    ,
-      IMG_MIN32X = 27
-    ,
-      LABEL_CURRENT_TIME = 22
-    ,
-      OSD_TIMEINFO = 100
-    ,
-      PANEL1 = 101
-    , PANEL2 = 150
+      BLUE_BAR = 0,
+      OSD_VIDEOPROGRESS = 1,
+      LABEL_ROW1 = 10,
+      LABEL_ROW2 = 11,
+      LABEL_ROW3 = 12,
+      IMG_PAUSE = 16,
+      IMG_2X = 17,
+      IMG_4X = 18,
+      IMG_8X = 19,
+      IMG_16X = 20,
+      IMG_32X = 21,
+      IMG_MIN2X = 23,
+      IMG_MIN4X = 24,
+      IMG_MIN8X = 25,
+      IMG_MIN16X = 26,
+      IMG_MIN32X = 27,
+      LABEL_CURRENT_TIME = 22,
+      OSD_TIMEINFO = 100,
+      PANEL1 = 101,
+      PANEL2 = 150
     };
 
     [SkinControlAttribute(500)]
@@ -220,7 +205,7 @@ namespace MediaPortal.GUI.Video
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, m_osdWindow.GetID, 0, 0, GetID, 0, null);
           m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
           isOsdVisible = false;
-
+          GUIWindowManager.IsOsdVisible = false;
         }
       }
       else
@@ -251,7 +236,7 @@ namespace MediaPortal.GUI.Video
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, m_osdWindow.GetID, 0, 0, GetID, 0, null);
                 m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
                 isOsdVisible = false;
-
+                GUIWindowManager.IsOsdVisible = false;
               }
             }
           }
@@ -279,7 +264,7 @@ namespace MediaPortal.GUI.Video
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, m_msnWindow.GetID, 0, 0, GetID, 0, null);
           m_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
           m_bMSNChatVisible = false;
-
+          GUIWindowManager.IsOsdVisible = false;
         }
         return;
       }
@@ -298,6 +283,7 @@ namespace MediaPortal.GUI.Video
       if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK && action.MouseButton == MouseButtons.Right)
       {
         isOsdVisible = false;
+        GUIWindowManager.IsOsdVisible = false;
         GUIGraphicsContext.IsFullScreenVideo = false;
         GUIWindowManager.ShowPreviousWindow();
         return;
@@ -330,7 +316,7 @@ namespace MediaPortal.GUI.Video
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, m_osdWindow.GetID, 0, 0, GetID, 0, null);
           m_osdWindow.OnMessage(msg);	// Send an init msg to the OSD
           isOsdVisible = true;
-
+          GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_OSD;
         }
       }
 
@@ -362,8 +348,10 @@ namespace MediaPortal.GUI.Video
             Log.Write("MSN CHAT:ON");
 
             m_bMSNChatVisible = true;
+            GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_MSNOSD;
             m_msnWindow.DoModal(GetID, null);
             m_bMSNChatVisible = false;
+            GUIWindowManager.IsOsdVisible = false;
           }
           break;
 
@@ -386,11 +374,11 @@ namespace MediaPortal.GUI.Video
           {
             // switch back to the menu
             isOsdVisible = false;
+            GUIWindowManager.IsOsdVisible = false;
             GUIGraphicsContext.IsFullScreenVideo = false;
             GUIWindowManager.ShowPreviousWindow();
             if (m_vmr9OSD != null)
               m_vmr9OSD.HideBitmap();
-
             return;
           }
 
@@ -510,8 +498,7 @@ namespace MediaPortal.GUI.Video
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, m_osdWindow.GetID, 0, 0, GetID, 0, null);
             m_osdWindow.OnMessage(msg);	// Send an init msg to the OSD
             isOsdVisible = true;
-
-
+            GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_OSD;
           }
           break;
 
@@ -688,6 +675,7 @@ namespace MediaPortal.GUI.Video
             m_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
           }
           m_bMSNChatVisible = false;
+          GUIWindowManager.IsOsdVisible = false;
           break;
 
         case GUIMessage.MessageType.GUI_MSG_MSN_STATUS_MESSAGE:
@@ -697,16 +685,17 @@ namespace MediaPortal.GUI.Video
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, m_osdWindow.GetID, 0, 0, GetID, 0, null);
             m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
             isOsdVisible = false;
-
+            GUIWindowManager.IsOsdVisible = false;
           }
 
           if (!m_bMSNChatVisible && m_bMSNChatPopup && (m_msnWindow != null))
           {
             Log.Write("MSN CHAT:ON");
             m_bMSNChatVisible = true;
+            GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_MSNOSD;
             m_msnWindow.DoModal(GetID, message);
             m_bMSNChatVisible = false;
-
+            GUIWindowManager.IsOsdVisible = false;
           }
           break;
 
@@ -723,6 +712,7 @@ namespace MediaPortal.GUI.Video
             HideControl(GetID, (int)Control.LABEL_CURRENT_TIME);
 
             isOsdVisible = false;
+            GUIWindowManager.IsOsdVisible = false;
 
             m_bShowStep = false;
             m_bShowStatus = false;
@@ -763,6 +753,7 @@ namespace MediaPortal.GUI.Video
                 m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
               }
               isOsdVisible = false;
+              GUIWindowManager.IsOsdVisible = false;
 
               if (m_bMSNChatVisible)
               {
@@ -770,6 +761,7 @@ namespace MediaPortal.GUI.Video
                 m_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
               }
               m_bMSNChatVisible = false;
+              GUIWindowManager.IsOsdVisible = false;
 
               if (VMR7Util.g_vmr7 != null)
               {
@@ -858,8 +850,10 @@ namespace MediaPortal.GUI.Video
         case 12902: // MSN Messenger
           Log.Write("MSN CHAT:ON");
           m_bMSNChatVisible = true;
+          GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_MSNOSD;
           m_msnWindow.DoModal(GetID, null);
           m_bMSNChatVisible = false;
+          GUIWindowManager.IsOsdVisible = false;
           break;
 
         case 902: // Online contacts
@@ -870,6 +864,7 @@ namespace MediaPortal.GUI.Video
           // switch back to MyMovies window
           isOsdVisible = false;
           m_bMSNChatVisible = false;
+          GUIWindowManager.IsOsdVisible = false;
           GUIGraphicsContext.IsFullScreenVideo = false;
           GUIWindowManager.ShowPreviousWindow();
           break;
@@ -1169,6 +1164,7 @@ namespace MediaPortal.GUI.Video
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, m_osdWindow.GetID, 0, 0, GetID, 0, null);
           m_osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
           isOsdVisible = false;
+          GUIWindowManager.IsOsdVisible = false;
           msg = null;
         }
       }
@@ -1191,6 +1187,7 @@ namespace MediaPortal.GUI.Video
           return;
         }
         isOsdVisible = false;
+        GUIWindowManager.IsOsdVisible = false;
         GUIWindowManager.ShowPreviousWindow();
         return;
       }

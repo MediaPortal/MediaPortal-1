@@ -1,7 +1,7 @@
-#region Copyright (C) 2005 Team MediaPortal
+#region Copyright (C) 2005-2006 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -298,6 +298,7 @@ namespace MediaPortal.GUI.TV
         // switch back to the menu
         _isOsdVisible = false;
         _msnWindowVisible = false;
+        GUIWindowManager.IsOsdVisible = false;
         GUIGraphicsContext.IsFullScreenVideo = false;
         GUIWindowManager.ShowPreviousWindow();
         return;
@@ -311,6 +312,7 @@ namespace MediaPortal.GUI.TV
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
             _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
             _isOsdVisible = false;
+            GUIWindowManager.IsOsdVisible = false;
             return;
           }
         }
@@ -347,6 +349,7 @@ namespace MediaPortal.GUI.TV
                 GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
                 _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
                 _isOsdVisible = false;
+                GUIWindowManager.IsOsdVisible = false;
                 return;
               }
             }
@@ -364,7 +367,7 @@ namespace MediaPortal.GUI.TV
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
             _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
             _msnWindowVisible = false;
-
+            GUIWindowManager.IsOsdVisible = false;
           }
           return;
         }
@@ -385,7 +388,7 @@ namespace MediaPortal.GUI.TV
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
           _osdWindow.OnMessage(msg);	// Send an init msg to the OSD
           _isOsdVisible = true;
-
+          GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVOSD;
         }
       }
       else if (_zapOsdVisible)
@@ -453,8 +456,10 @@ namespace MediaPortal.GUI.TV
             Log.Write("MSN CHAT:ON");
 
             _msnWindowVisible = true;
+            GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
             _msnWindow.DoModal(GetID, null);
             _msnWindowVisible = false;
+            GUIWindowManager.IsOsdVisible = false;
           }
           break;
 
@@ -563,6 +568,7 @@ namespace MediaPortal.GUI.TV
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
             _osdWindow.OnMessage(msg);	// Send an init msg to the OSD
             _isOsdVisible = true;
+            GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVOSD;
 
 
           }
@@ -770,7 +776,7 @@ namespace MediaPortal.GUI.TV
                   Recorder.RecordNow(channel, true);
                   break;
                 default:
-                  return true ;
+                  return true;
 
               }
             }
@@ -832,23 +838,27 @@ namespace MediaPortal.GUI.TV
 
         _messageBoxVisible = false;
         _msnWindowVisible = false;
+        GUIWindowManager.IsOsdVisible = false;
         if (_zapOsdVisible)
         {
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
           _zapWindow.OnMessage(msg);
           _zapOsdVisible = false;
+          GUIWindowManager.IsOsdVisible = false;
         }
         if (_isOsdVisible)
         {
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
           _osdWindow.OnMessage(msg);
           _isOsdVisible = false;
+          GUIWindowManager.IsOsdVisible = false;
         }
         if (_msnWindowVisible)
         {
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
           _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
           _msnWindowVisible = false;
+          GUIWindowManager.IsOsdVisible = false;
         }
         if (_isDialogVisible && dlg != null)
         {
@@ -962,6 +972,7 @@ namespace MediaPortal.GUI.TV
             _msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
           }
           _msnWindowVisible = false;
+          GUIWindowManager.IsOsdVisible = false;
           break;
 
         case GUIMessage.MessageType.GUI_MSG_MSN_STATUS_MESSAGE:
@@ -971,6 +982,7 @@ namespace MediaPortal.GUI.TV
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
             _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
             _isOsdVisible = false;
+            GUIWindowManager.IsOsdVisible = false;
 
           }
 
@@ -978,8 +990,10 @@ namespace MediaPortal.GUI.TV
           {
             Log.Write("MSN CHAT:ON");
             _msnWindowVisible = true;
+            GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
             _msnWindow.DoModal(GetID, message);
             _msnWindowVisible = false;
+            GUIWindowManager.IsOsdVisible = false;
 
           }
           break;
@@ -993,6 +1007,7 @@ namespace MediaPortal.GUI.TV
               _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
             }
             _isOsdVisible = false;
+            GUIWindowManager.IsOsdVisible = false;
 
             if (_msnWindowVisible)
             {
@@ -1001,12 +1016,12 @@ namespace MediaPortal.GUI.TV
             }
 
             _isOsdVisible = false;
+            GUIWindowManager.IsOsdVisible = false;
             _channelInputVisible = false;
             _keyPressedTimer = DateTime.Now;
             _channelName = "";
-            _isOsdVisible = false;
             _updateTimer = DateTime.Now;
-            
+
             _stepSeekVisible = false;
             _statusVisible = false;
             _groupVisible = false;
@@ -1072,15 +1087,17 @@ namespace MediaPortal.GUI.TV
             Log.Write("start fullscreen channel:{0}", Recorder.TVChannelName);
             Log.Write("init->OSD:Off");
             _isOsdVisible = false;
+            GUIWindowManager.IsOsdVisible = false;
             _channelInputVisible = false;
             _keyPressedTimer = DateTime.Now;
             _channelName = "";
             //					m_sZapChannel="";
 
             _isOsdVisible = false;
+            GUIWindowManager.IsOsdVisible = false;
             _updateTimer = DateTime.Now;
             //					_zapTimeOutTimer=DateTime.Now;
-            
+
             _stepSeekVisible = false;
             _statusVisible = false;
             _groupVisible = false;
@@ -1170,13 +1187,13 @@ namespace MediaPortal.GUI.TV
             _isDialogVisible = false;
             break;
           }
-      case 10104: // MiniEPG
+        case 10104: // MiniEPG
           {
-              GUIMiniGuide miniGuide = (GUIMiniGuide)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MINI_GUIDE);
-              _isDialogVisible = true;
-              miniGuide.DoModal(GetID);
-              _isDialogVisible = false;
-              break;
+            GUIMiniGuide miniGuide = (GUIMiniGuide)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MINI_GUIDE);
+            _isDialogVisible = true;
+            miniGuide.DoModal(GetID);
+            _isDialogVisible = false;
+            break;
           }
 
         //TV Channels not needed anymore after MiniEPG
@@ -1212,7 +1229,7 @@ namespace MediaPortal.GUI.TV
             ChangeChannelNr(dlg.SelectedLabel + 1);
           }
           break;*/
-        
+
         //Groups not used anymore
         /*case 971: //group
           {
@@ -1250,8 +1267,10 @@ namespace MediaPortal.GUI.TV
         case 12902: // MSN Messenger
           Log.Write("MSN CHAT:ON");
           _msnWindowVisible = true;
+          GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
           _msnWindow.DoModal(GetID, null);
           _msnWindowVisible = false;
+          GUIWindowManager.IsOsdVisible = false;
           break;
 
         case 902: // Online contacts
@@ -1266,6 +1285,7 @@ namespace MediaPortal.GUI.TV
           // switch back to previous window
           _isOsdVisible = false;
           _msnWindowVisible = false;
+          GUIWindowManager.IsOsdVisible = false;
           GUIGraphicsContext.IsFullScreenVideo = false;
           GUIWindowManager.ShowPreviousWindow();
           break;
@@ -1706,6 +1726,7 @@ namespace MediaPortal.GUI.TV
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
           _osdWindow.OnMessage(msg);	// Send a de-init msg to the OSD
           _isOsdVisible = false;
+          GUIWindowManager.IsOsdVisible = false;
           msg = null;
         }
       }
@@ -1804,19 +1825,21 @@ namespace MediaPortal.GUI.TV
 
       if (Recorder.IsViewing()) return;
       if (g_Player.Playing && g_Player.IsTVRecording) return;
-      if ((Recorder.CommandProcessor!=null) &&(Recorder.CommandProcessor.IsBusy)) return;
+      if ((Recorder.CommandProcessor != null) && (Recorder.CommandProcessor.IsBusy)) return;
       //close window
       GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
       _osdWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
       msg2 = null;
       Log.Write("timeout->OSD:Off");
       _isOsdVisible = false;
+      GUIWindowManager.IsOsdVisible = false;
 
       //close window
       msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
       _msnWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
       msg2 = null;
       _msnWindowVisible = false;
+      GUIWindowManager.IsOsdVisible = false;
 
       Log.Write("fullscreentv:not viewing anymore");
       GUIWindowManager.ShowPreviousWindow();
@@ -1927,7 +1950,7 @@ namespace MediaPortal.GUI.TV
               displayedChannelName = GUITVHome.Navigator.CurrentGroup.TvChannels[ChannelCnt].Name;
               break;
             }
-          
+
         if (displayedChannelName != string.Empty)
           msg.Label = String.Format("{0} {1} ({2})", GUILocalizeStrings.Get(602), _channelName, displayedChannelName);
         else

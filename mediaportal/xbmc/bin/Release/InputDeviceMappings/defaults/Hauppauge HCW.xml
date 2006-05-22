@@ -78,6 +78,7 @@
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
 		</button>
 		<button name="Menu/i" code="2013">
+			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="24" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
 		</button>
 		<button name="Mute" code="2015">
@@ -295,6 +296,7 @@
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="19" sound="click.wav" />
 		</button>
 		<button name="Menu/i" code="1013">
+			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="24" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
 		</button>
 		<button name="Mute" code="1015">

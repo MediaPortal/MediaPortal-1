@@ -125,6 +125,7 @@
 			<action layer="0" condition="PLAYER" conproperty="TV" command="WINDOW" cmdproperty="7701" sound="click.wav" />
 		</button>
 		<button name="Checkmark Symbol" code="157">
+			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="24" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
 		</button>
 		<button name="C" code="76">

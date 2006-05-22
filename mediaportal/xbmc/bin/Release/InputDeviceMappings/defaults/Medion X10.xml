@@ -226,6 +226,7 @@
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="14" sound="cursor.wav" />
 		</button>
 		<button name="DVD Menu" code="76">
+			<action layer="0" condition="FULLSCREEN" conproperty="true" command="ACTION" cmdproperty="24" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="106" sound="click.wav" />
 		</button>
 		<button name="Power" code="30">

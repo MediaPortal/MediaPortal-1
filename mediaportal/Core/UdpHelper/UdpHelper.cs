@@ -69,7 +69,12 @@ namespace UdpHelper
 
     public void Stop()
     {
-      udpClient.Close();
+      try
+      {
+        udpClient.Close();
+      }
+      catch (System.NullReferenceException)
+      { }
       udpClient = null;
       socket = null;
     }

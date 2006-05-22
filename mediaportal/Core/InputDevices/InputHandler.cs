@@ -413,11 +413,12 @@ namespace MediaPortal.InputDevices
                 found = map;
                 break;
               case "WINDOW":  // Window-ID = x
-                if (GUIWindowManager.ActiveWindowEx == Convert.ToInt32(map.ConProperty))
+                if ((!GUIWindowManager.IsOsdVisible && (GUIWindowManager.ActiveWindowEx == Convert.ToInt32(map.ConProperty))) ||
+                  ((int)GUIWindowManager.VisibleOsd == Convert.ToInt32(map.ConProperty)))
                   found = map;
                 break;
               case "FULLSCREEN":  // Fullscreen = true/false
-                if ((GUIGraphicsContext.IsFullScreenVideo == Convert.ToBoolean(map.ConProperty)) && !GUIWindowManager.IsRouted)
+                if ((GUIGraphicsContext.IsFullScreenVideo == Convert.ToBoolean(map.ConProperty)) && !GUIWindowManager.IsRouted && !GUIWindowManager.IsOsdVisible)
                   found = map;
                 break;
               case "PLAYER":  // Playing TV/DVD/general

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Drawing;
@@ -40,50 +44,50 @@ namespace MediaPortal.GUI.Video
   {
     enum Controls
     {
-      OSD_VIDEOPROGRESS = 1
-    ,      OSD_SKIPBWD = 210
-    ,      OSD_REWIND = 211
-    ,      OSD_STOP = 212
-    ,      OSD_PLAY = 213
-    ,      OSD_FFWD = 214
-    ,      OSD_SKIPFWD = 215
-    ,      OSD_MUTE = 216
-       //, OSD_SYNC =217 - not used
-    ,      OSD_SUBTITLES = 218
-    ,      OSD_BOOKMARKS = 219
-    ,      OSD_VIDEO = 220
-    ,      OSD_AUDIO = 221
-    ,      OSD_VOLUMESLIDER = 400
-    ,      OSD_AVDELAY = 500
-    ,      OSD_AVDELAY_LABEL = 550
-    ,      OSD_AUDIOSTREAM_LIST = 501
-    ,      OSD_CREATEBOOKMARK = 600
-    ,      OSD_BOOKMARKS_LIST = 601
-    ,      OSD_BOOKMARKS_LIST_LABEL = 650
-    ,      OSD_CLEARBOOKMARKS = 602
-    ,      OSD_VIDEOPOS = 700
-    ,      OSD_VIDEOPOS_LABEL = 750
-    ,      OSD_NONINTERLEAVED = 701
-    ,      OSD_NOCACHE = 702
-    ,      OSD_ADJFRAMERATE = 703
-    ,      OSD_BRIGHTNESS = 704
-    ,      OSD_BRIGHTNESSLABEL = 752
-    ,      OSD_CONTRAST = 705
-    ,      OSD_CONTRASTLABEL = 753
-    ,      OSD_GAMMA = 706
-    ,      OSD_GAMMALABEL = 754
-    ,      OSD_SUBTITLE_DELAY = 800
-    ,      OSD_SUBTITLE_DELAY_LABEL = 850
-    ,      OSD_SUBTITLE_ONOFF = 801
-    ,      OSD_SUBTITLE_LIST = 802
-    ,      OSD_TIMEINFO = 100
-    ,      OSD_SUBMENU_BG_VOL = 300
-     //,   OSD_SUBMENU_BG_SYNC 301	- not used
-    ,      OSD_SUBMENU_BG_SUBTITLES = 302
-    ,      OSD_SUBMENU_BG_BOOKMARKS = 303
-    ,      OSD_SUBMENU_BG_VIDEO = 304
-    ,      OSD_SUBMENU_BG_AUDIO = 305
-    ,      OSD_SUBMENU_NIB = 350
+      OSD_VIDEOPROGRESS = 1,
+      OSD_SKIPBWD = 210,
+      OSD_REWIND = 211,
+      OSD_STOP = 212,
+      OSD_PLAY = 213,
+      OSD_FFWD = 214,
+      OSD_SKIPFWD = 215,
+      OSD_MUTE = 216,
+      // OSD_SYNC =217 - not used
+      OSD_SUBTITLES = 218,
+      OSD_BOOKMARKS = 219,
+      OSD_VIDEO = 220,
+      OSD_AUDIO = 221,
+      OSD_VOLUMESLIDER = 400,
+      OSD_AVDELAY = 500,
+      OSD_AVDELAY_LABEL = 550,
+      OSD_AUDIOSTREAM_LIST = 501,
+      OSD_CREATEBOOKMARK = 600,
+      OSD_BOOKMARKS_LIST = 601,
+      OSD_BOOKMARKS_LIST_LABEL = 650,
+      OSD_CLEARBOOKMARKS = 602,
+      OSD_VIDEOPOS = 700,
+      OSD_VIDEOPOS_LABEL = 750,
+      OSD_NONINTERLEAVED = 701,
+      OSD_NOCACHE = 702,
+      OSD_ADJFRAMERATE = 703,
+      OSD_BRIGHTNESS = 704,
+      OSD_BRIGHTNESSLABEL = 752,
+      OSD_CONTRAST = 705,
+      OSD_CONTRASTLABEL = 753,
+      OSD_GAMMA = 706,
+      OSD_GAMMALABEL = 754,
+      OSD_SUBTITLE_DELAY = 800,
+      OSD_SUBTITLE_DELAY_LABEL = 850,
+      OSD_SUBTITLE_ONOFF = 801,
+      OSD_SUBTITLE_LIST = 802,
+      OSD_TIMEINFO = 100,
+      OSD_SUBMENU_BG_VOL = 300,
+      // OSD_SUBMENU_BG_SYNC 301	- not used
+      OSD_SUBMENU_BG_SUBTITLES = 302,
+      OSD_SUBMENU_BG_BOOKMARKS = 303,
+      OSD_SUBMENU_BG_VIDEO = 304,
+      OSD_SUBMENU_BG_AUDIO = 305,
+      OSD_SUBMENU_NIB = 350
     };
     bool m_bSubMenuOn = false;
     int m_iActiveMenu = 0;
@@ -153,6 +157,7 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_OSD_HIDESUBMENU:
           break;
+        case Action.ActionType.ACTION_CONTEXT_MENU:
         case Action.ActionType.ACTION_PREVIOUS_MENU:
         case Action.ActionType.ACTION_SHOW_OSD:
           {
@@ -160,6 +165,12 @@ namespace MediaPortal.GUI.Video
             {
               FocusControl(GetID, m_iActiveMenuButtonID, 0);	// set focus to last menu button
               ToggleSubMenu(0, m_iActiveMenu);						// hide the currently active sub-menu
+            }
+            if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
+            {
+              GUIVideoFullscreen videoWindow = (GUIVideoFullscreen)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+              videoWindow.OnAction(new Action(Action.ActionType.ACTION_SHOW_OSD, 0, 0));
+              videoWindow.OnAction(action);
             }
             return;
           }

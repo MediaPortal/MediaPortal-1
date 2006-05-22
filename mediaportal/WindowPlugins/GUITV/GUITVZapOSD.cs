@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.Globalization;
@@ -106,6 +110,17 @@ namespace MediaPortal.GUI.TV
         case Action.ActionType.ACTION_PREV_CHANNEL:
           {
             OnPreviousChannel();
+            return;
+          }
+
+        case Action.ActionType.ACTION_CONTEXT_MENU:
+          {
+            if (action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
+            {
+              GUIFullScreenTV tvWindow = (GUIFullScreenTV)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              tvWindow.OnAction(new Action(Action.ActionType.ACTION_SHOW_OSD, 0, 0));
+              tvWindow.OnAction(action);
+            }
             return;
           }
       }
