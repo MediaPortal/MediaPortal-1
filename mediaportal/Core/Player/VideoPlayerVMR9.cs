@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,253 +20,256 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.InteropServices;
-//using DirectX.Capture;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
 using MediaPortal.Util;
-
-
 using MediaPortal.GUI.Library;
 using DirectShowLib;
 using DShowNET.Helper;
-namespace MediaPortal.Player 
+
+namespace MediaPortal.Player
 {
 
 
-	public class VideoPlayerVMR9 : VideoPlayerVMR7
-	{
+  public class VideoPlayerVMR9 : VideoPlayerVMR7
+  {
 
-		VMR9Util Vmr9 = null;
-		public VideoPlayerVMR9()
-		{
-		}
+    VMR9Util Vmr9 = null;
+    public VideoPlayerVMR9()
+    {
+    }
 
-		protected override void OnInitialized()
-		{
-			if (Vmr9!=null)
-			{
-				Vmr9.Enable(true);
-				_updateNeeded=true;
-				SetVideoWindow();
-			}
-		}
-		/// <summary> create the used COM components and get the interfaces. </summary>
-		protected override bool GetInterfaces()
-		{
-			Vmr9 = new VMR9Util();
-      //switch back to directx fullscreen mode
-      GUIMessage msg =new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED,0,0,0,1,0,null);
+    protected override void OnInitialized()
+    {
+      if (Vmr9 != null)
+      {
+        Vmr9.Enable(true);
+        _updateNeeded = true;
+        SetVideoWindow();
+      }
+    }
+    /// <summary> create the used COM components and get the interfaces. </summary>
+    protected override bool GetInterfaces()
+    {
+      Vmr9 = new VMR9Util();
+
+      // switch back to directx fullscreen mode
+      Log.Write("VideoPlayerVMR9: Enabling DX9 exclusive mode");
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
       GUIWindowManager.SendMessage(msg);
 
       //Type comtype = null;
       //object comobj = null;
 
       DsRect rect = new DsRect();
-			rect.top = 0;
-			rect.bottom =GUIGraphicsContext.form.Height;
-			rect.left = 0;
-			rect.right = GUIGraphicsContext.form.Width;
-				
+      rect.top = 0;
+      rect.bottom = GUIGraphicsContext.form.Height;
+      rect.left = 0;
+      rect.right = GUIGraphicsContext.form.Width;
 
-			try 
-			{
+
+      try
+      {
         graphBuilder = (IGraphBuilder)new FilterGraph();
-			
-				Vmr9.AddVMR9(graphBuilder);
-				Vmr9.Enable(false);
+
+        Vmr9.AddVMR9(graphBuilder);
+        Vmr9.Enable(false);
 
         // add preferred video & audio codecs
-        string strVideoCodec="";
-        string strAudioCodec="";
-				string strAudiorenderer="";
-        bool   bAddFFDshow=false;
-        using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        string strVideoCodec = "";
+        string strAudioCodec = "";
+        string strAudiorenderer = "";
+        bool bAddFFDshow = false;
+        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
-          bAddFFDshow=xmlreader.GetValueAsBool("movieplayer","ffdshow",false);
-          strVideoCodec=xmlreader.GetValueAsString("movieplayer","mpeg2videocodec","");
-					strAudioCodec=xmlreader.GetValueAsString("movieplayer","mpeg2audiocodec","");
-					strAudiorenderer=xmlreader.GetValueAsString("movieplayer","audiorenderer","");
+          bAddFFDshow = xmlreader.GetValueAsBool("movieplayer", "ffdshow", false);
+          strVideoCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2videocodec", "");
+          strAudioCodec = xmlreader.GetValueAsString("movieplayer", "mpeg2audiocodec", "");
+          strAudiorenderer = xmlreader.GetValueAsString("movieplayer", "audiorenderer", "");
         }
-        string extension=System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
-        if (extension.Equals(".dvr-ms") ||extension.Equals(".mpg") ||extension.Equals(".mpeg")||extension.Equals(".bin")||extension.Equals(".dat"))
+        string extension = System.IO.Path.GetExtension(m_strCurrentFile).ToLower();
+        if (extension.Equals(".dvr-ms") || extension.Equals(".mpg") || extension.Equals(".mpeg") || extension.Equals(".bin") || extension.Equals(".dat"))
         {
-          if (strVideoCodec.Length>0) videoCodecFilter= DirectShowUtil.AddFilterToGraph(graphBuilder,strVideoCodec);
-					if (strAudioCodec.Length>0) audioCodecFilter= DirectShowUtil.AddFilterToGraph(graphBuilder,strAudioCodec);
+          if (strVideoCodec.Length > 0) videoCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strVideoCodec);
+          if (strAudioCodec.Length > 0) audioCodecFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
         }
-        if (bAddFFDshow) ffdShowFilter= DirectShowUtil.AddFilterToGraph(graphBuilder,"ffdshow raw video filter");
-				if (strAudiorenderer.Length>0) audioRendererFilter= DirectShowUtil.AddAudioRendererToGraph(graphBuilder,strAudiorenderer,false);
+        if (bAddFFDshow) ffdShowFilter = DirectShowUtil.AddFilterToGraph(graphBuilder, "ffdshow raw video filter");
+        if (strAudiorenderer.Length > 0) audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(graphBuilder, strAudiorenderer, false);
 
 
-				int hr = graphBuilder.RenderFile( m_strCurrentFile,String.Empty);
-        if (hr!=0) 
+        int hr = graphBuilder.RenderFile(m_strCurrentFile, String.Empty);
+        if (hr != 0)
         {
-          Error.SetError("Unable to play movie","Unable to render file. Missing codecs?");
-          Log.WriteFile(Log.LogType.Log,true,"VideoPlayer9:Failed to render file -> vmr9");
+          Error.SetError("Unable to play movie", "Unable to render file. Missing codecs?");
+          Log.WriteFile(Log.LogType.Log, true, "VideoPlayer9:Failed to render file -> vmr9");
           return false;
         }
-        
-        mediaCtrl	= (IMediaControl)  graphBuilder;
-				mediaEvt	= (IMediaEventEx)  graphBuilder;
-				mediaSeek	= (IMediaSeeking)  graphBuilder;
-				mediaPos	= (IMediaPosition) graphBuilder;
-				basicAudio	= graphBuilder as IBasicAudio;
-				//DirectShowUtil.SetARMode(graphBuilder,AspectRatioMode.Stretched);
-				DirectShowUtil.EnableDeInterlace(graphBuilder);
-        m_iVideoWidth=Vmr9.VideoWidth;
-        m_iVideoHeight=Vmr9.VideoHeight;
+
+        mediaCtrl = (IMediaControl)graphBuilder;
+        mediaEvt = (IMediaEventEx)graphBuilder;
+        mediaSeek = (IMediaSeeking)graphBuilder;
+        mediaPos = (IMediaPosition)graphBuilder;
+        basicAudio = graphBuilder as IBasicAudio;
+        //DirectShowUtil.SetARMode(graphBuilder,AspectRatioMode.Stretched);
+        DirectShowUtil.EnableDeInterlace(graphBuilder);
+        m_iVideoWidth = Vmr9.VideoWidth;
+        m_iVideoHeight = Vmr9.VideoHeight;
 
         ushort b;
         unchecked
         {
-          b=(ushort)0xfffff845;
+          b = (ushort)0xfffff845;
         }
-        Guid classID=new Guid(0x9852a670,b,0x491b,0x9b,0xe6,0xeb,0xd8,0x41,0xb8,0xa6,0x13);
+        Guid classID = new Guid(0x9852a670, b, 0x491b, 0x9b, 0xe6, 0xeb, 0xd8, 0x41, 0xb8, 0xa6, 0x13);
         IBaseFilter filter;
         DirectShowUtil.FindFilterByClassID(graphBuilder, classID, out filter);
         vobSub = null;
         vobSub = filter as IDirectVobSub;
-        if (vobSub!=null)
+        if (vobSub != null)
         {
-					string defaultLanguage;
-					using(MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          string defaultLanguage;
+          using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
           {
-            string strTmp="";
-            string strFont=xmlreader.GetValueAsString("subtitles","fontface","Arial");
-            int    iFontSize=xmlreader.GetValueAsInt("subtitles","fontsize",18);
-            bool   bBold=xmlreader.GetValueAsBool("subtitles","bold",true);
-						defaultLanguage= xmlreader.GetValueAsString("subtitles", "language", "English");
-            
-            strTmp=xmlreader.GetValueAsString("subtitles","color","ffffff");
-            long iColor=Convert.ToInt64(strTmp,16);
-            int  iShadow=xmlreader.GetValueAsInt("subtitles","shadow",5);
-          
+            string strTmp = "";
+            string strFont = xmlreader.GetValueAsString("subtitles", "fontface", "Arial");
+            int iFontSize = xmlreader.GetValueAsInt("subtitles", "fontsize", 18);
+            bool bBold = xmlreader.GetValueAsBool("subtitles", "bold", true);
+            defaultLanguage = xmlreader.GetValueAsString("subtitles", "language", "English");
+
+            strTmp = xmlreader.GetValueAsString("subtitles", "color", "ffffff");
+            long iColor = Convert.ToInt64(strTmp, 16);
+            int iShadow = xmlreader.GetValueAsInt("subtitles", "shadow", 5);
+
             LOGFONT logFont = new LOGFONT();
             int txtcolor;
             bool fShadow, fOutLine, fAdvancedRenderer = false;
             int size = Marshal.SizeOf(typeof(LOGFONT));
-            vobSub.get_TextSettings(logFont, size,out txtcolor, out fShadow, out fOutLine, out fAdvancedRenderer);
+            vobSub.get_TextSettings(logFont, size, out txtcolor, out fShadow, out fOutLine, out fAdvancedRenderer);
 
-            FontStyle fontStyle=FontStyle.Regular;
-            if (bBold) fontStyle=FontStyle.Bold;
-						System.Drawing.Font Subfont = new System.Drawing.Font(strFont,iFontSize,fontStyle,System.Drawing.GraphicsUnit.Point, 1);
+            FontStyle fontStyle = FontStyle.Regular;
+            if (bBold) fontStyle = FontStyle.Bold;
+            System.Drawing.Font Subfont = new System.Drawing.Font(strFont, iFontSize, fontStyle, System.Drawing.GraphicsUnit.Point, 1);
             Subfont.ToLogFont(logFont);
-            int R=(int)((iColor>>16)&0xff);
-            int G=(int)((iColor>>8)&0xff);
-            int B=(int)((iColor)&0xff);
-            txtcolor=(B<<16)+(G<<8)+R;
-            if (iShadow>0) fShadow=true;
-            int res = vobSub.put_TextSettings(logFont, size, txtcolor,  fShadow, fOutLine, fAdvancedRenderer);
+            int R = (int)((iColor >> 16) & 0xff);
+            int G = (int)((iColor >> 8) & 0xff);
+            int B = (int)((iColor) & 0xff);
+            txtcolor = (B << 16) + (G << 8) + R;
+            if (iShadow > 0) fShadow = true;
+            int res = vobSub.put_TextSettings(logFont, size, txtcolor, fShadow, fOutLine, fAdvancedRenderer);
           }
-					
-					for (int i=0; i < SubtitleStreams;++i)
-					{
-						string language=SubtitleLanguage(i);
-						if (String.Compare(language,defaultLanguage,true)==0)
-						{
-							CurrentSubtitleStream=i;
-							break;
-						}
-					}
+
+          for (int i = 0; i < SubtitleStreams; ++i)
+          {
+            string language = SubtitleLanguage(i);
+            if (String.Compare(language, defaultLanguage, true) == 0)
+            {
+              CurrentSubtitleStream = i;
+              break;
+            }
+          }
         }
-        if( filter != null )
-          Marshal.ReleaseComObject( filter ); filter = null;
+        if (filter != null)
+          Marshal.ReleaseComObject(filter); filter = null;
 
 
-				if ( !Vmr9.IsVMR9Connected )
-				{
-					//VMR9 is not supported, switch to overlay
-					mediaCtrl=null;
-					Cleanup();
-					return base.GetInterfaces();
-				}
-				Vmr9.SetDeinterlaceMode();
-        
-				return true;
-			}
-			catch( Exception  ex)
-			{
-        Error.SetError("Unable to play movie","Unable build graph for VMR9");
-				Log.WriteFile(Log.LogType.Log,true,"VideoPlayer9:exception while creating DShow graph {0} {1}",ex.Message, ex.StackTrace);
-				return false;
-			}
-		}
+        if (!Vmr9.IsVMR9Connected)
+        {
+          //VMR9 is not supported, switch to overlay
+          mediaCtrl = null;
+          Cleanup();
+          return base.GetInterfaces();
+        }
+        Vmr9.SetDeinterlaceMode();
 
-		protected override void OnProcess()
-		{
-			if (Vmr9!=null)
-			{
-				m_iVideoWidth=Vmr9.VideoWidth;
-				m_iVideoHeight=Vmr9.VideoHeight;
-			}
-		}
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Error.SetError("Unable to play movie", "Unable build graph for VMR9");
+        Log.WriteFile(Log.LogType.Log, true, "VideoPlayer9:exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        return false;
+      }
+    }
 
-		/// <summary> do cleanup and release DirectShow. </summary>
-		protected override void CloseInterfaces()
-		{
-			Cleanup();
-		}
+    protected override void OnProcess()
+    {
+      if (Vmr9 != null)
+      {
+        m_iVideoWidth = Vmr9.VideoWidth;
+        m_iVideoHeight = Vmr9.VideoHeight;
+      }
+    }
 
-		void Cleanup()
-		{
-      if (graphBuilder==null) return;
+    /// <summary> do cleanup and release DirectShow. </summary>
+    protected override void CloseInterfaces()
+    {
+      Cleanup();
+    }
+
+    void Cleanup()
+    {
+      if (graphBuilder == null) return;
       int hr;
       Log.Write("VideoPlayer9:cleanup DShow graph");
-      try 
+      try
       {
-				videoWin	= graphBuilder as IVideoWindow;
-				if (videoWin!=null)
-					videoWin.put_Visible(OABool.False );
-				if (Vmr9!=null)
-				{
-					Vmr9.Enable(false);
-				}
-        if( mediaCtrl != null )
+        videoWin = graphBuilder as IVideoWindow;
+        if (videoWin != null)
+          videoWin.put_Visible(OABool.False);
+        if (Vmr9 != null)
         {
-					
-					int counter=0;
-					while (GUIGraphicsContext.InVmr9Render)
-					{
-						counter++;
-						System.Threading.Thread.Sleep(1);
-						if (counter >200) break;
-					}
-          hr = mediaCtrl.Stop();
-					FilterState state;
-					hr=mediaCtrl.GetState(10,out state);
-					Log.Write("state:{0} {1:X}",state.ToString(),hr);
-					mediaCtrl=null;
+          Vmr9.Enable(false);
         }
-  	    mediaEvt = null;
-        
+        if (mediaCtrl != null)
+        {
 
-				if (Vmr9!=null)
-				{
+          int counter = 0;
+          while (GUIGraphicsContext.InVmr9Render)
+          {
+            counter++;
+            System.Threading.Thread.Sleep(1);
+            if (counter > 200) break;
+          }
+          hr = mediaCtrl.Stop();
+          FilterState state;
+          hr = mediaCtrl.GetState(10, out state);
+          Log.Write("state:{0} {1:X}", state.ToString(), hr);
+          mediaCtrl = null;
+        }
+        mediaEvt = null;
+
+
+        if (Vmr9 != null)
+        {
           Vmr9.Dispose();
-					Vmr9=null;
-				}
+          Vmr9 = null;
+        }
 
-				mediaSeek	= null;
-				mediaPos	= null;
-				basicAudio	= null;
-				basicVideo=null;
-				videoWin=null;
-				
-				if (videoCodecFilter!=null) Marshal.ReleaseComObject(videoCodecFilter); videoCodecFilter=null;
-				if (audioCodecFilter!=null) Marshal.ReleaseComObject(audioCodecFilter); audioCodecFilter=null;
-				if (audioRendererFilter!=null) Marshal.ReleaseComObject(audioRendererFilter); audioRendererFilter=null;
-				if (ffdShowFilter!=null) Marshal.ReleaseComObject(ffdShowFilter); ffdShowFilter=null;
+        mediaSeek = null;
+        mediaPos = null;
+        basicAudio = null;
+        basicVideo = null;
+        videoWin = null;
 
-				if( vobSub != null )
-				{
-					while((hr=Marshal.ReleaseComObject( vobSub ))>0); 
-					vobSub = null;
-				}
-			//	DsUtils.RemoveFilters(graphBuilder);
+        if (videoCodecFilter != null) Marshal.ReleaseComObject(videoCodecFilter); videoCodecFilter = null;
+        if (audioCodecFilter != null) Marshal.ReleaseComObject(audioCodecFilter); audioCodecFilter = null;
+        if (audioRendererFilter != null) Marshal.ReleaseComObject(audioRendererFilter); audioRendererFilter = null;
+        if (ffdShowFilter != null) Marshal.ReleaseComObject(ffdShowFilter); ffdShowFilter = null;
+
+        if (vobSub != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(vobSub)) > 0) ;
+          vobSub = null;
+        }
+        //	DsUtils.RemoveFilters(graphBuilder);
 
         if (_rotEntry != null)
         {
@@ -272,29 +277,29 @@ namespace MediaPortal.Player
         }
         _rotEntry = null;
 
-				if( graphBuilder != null )
-				{
-					while((hr=Marshal.ReleaseComObject( graphBuilder ))>0); 
-					graphBuilder = null;
-				}
+        if (graphBuilder != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(graphBuilder)) > 0) ;
+          graphBuilder = null;
+        }
 
         GUIGraphicsContext.form.Invalidate(true);
         m_state = PlayState.Init;
         GC.Collect();
       }
-      catch( Exception ex)
+      catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log,true,"VideoPlayer9:exception while cleanuping DShow graph {0} {1}",ex.Message, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log, true, "VideoPlayerVMR9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
 
       //switch back to directx windowed mode
-
       if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
-        //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-       // GUIWindowManager.SendMessage(msg);
+        Log.Write("VideoPlayerVMR9: Disabling DX9 exclusive mode");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
       }
 
-		}
-	}
+    }
+  }
 }

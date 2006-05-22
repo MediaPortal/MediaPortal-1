@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Windows.Forms;
@@ -30,14 +35,12 @@ using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
 using Direct3D = Microsoft.DirectX.Direct3D;
-
-
-
 using MediaPortal.GUI.Library;
 using DirectShowLib;
+
 namespace MediaPortal.Player
 {
-  public class AudioPlayerWMP9 : IPlayer  
+  public class AudioPlayerWMP9 : IPlayer
   {
 
     public enum PlayState
@@ -82,7 +85,7 @@ namespace MediaPortal.Player
       catch (Exception) { }
 
       _wmp10Player = new AxWMPLib.AxWindowsMediaPlayer();
-      
+
 
       _wmp10Player.BeginInit();
       GUIGraphicsContext.form.SuspendLayout();
@@ -99,7 +102,7 @@ namespace MediaPortal.Player
 
       try
       {
-          _wmp10Player.EndInit();
+        _wmp10Player.EndInit();
       }
       catch (COMException)
       {
@@ -194,8 +197,13 @@ namespace MediaPortal.Player
       _graphState = PlayState.Init;
       _currentFile = strFile;
 
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-      GUIWindowManager.SendMessage(msg);
+      if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
+      {
+        Log.Write("AudioPlayerWMP9: Disabling DX9 exclusive mode");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
+      }
+
       _notifyPlaying = true;
       GC.Collect();
       CreateInstance();
@@ -269,10 +277,10 @@ namespace MediaPortal.Player
       _wmp10Player.Visible = false;
 
 
-      msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
-      msg.Label = strFile;
+      GUIMessage msgPb = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
+      msgPb.Label = strFile;
 
-      GUIWindowManager.SendThreadMessage(msg);
+      GUIWindowManager.SendThreadMessage(msgPb);
       _graphState = PlayState.Playing;
       GC.Collect();
       _needUpdate = true;

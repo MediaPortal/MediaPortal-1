@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,11 +20,13 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.InteropServices;
-//using DirectX.Capture;
 using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
@@ -152,11 +156,11 @@ namespace MediaPortal.Player
       Speed = 1;
       Log.Write("TSStreamBufferPlayer9: GetInterfaces()");
 
-      //switch back to directx fullscreen mode
-
-      //		Log.Write("TSStreamBufferPlayer9: switch to fullscreen mode");
+      // switch back to directx fullscreen mode
+      Log.Write("TSStreamBufferPlayer9: Enabling DX9 exclusive mode");
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
       GUIWindowManager.SendMessage(msg);
+
       //Log.Write("TSStreamBufferPlayer9: build graph");
 
       try
@@ -420,19 +424,19 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer9:exception while cleaning DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer9: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
 
-      //Log.Write("TSStreamBufferPlayer9:switch");
-      //switch back to directx windowed mode
 
+      //switch back to directx windowed mode
       if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
-        //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-        //GUIWindowManager.SendMessage(msg);
+        Log.Write("TSStreamBufferPlayer9: Disabling DX9 exclusive mode");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
       }
 
-      Log.Write("TSStreamBufferPlayer9:cleanup done");
+      Log.Write("TSStreamBufferPlayer9: Cleanup done");
     }
 
     protected override void OnProcess()

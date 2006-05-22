@@ -1,6 +1,7 @@
-//#define PERFCOUNTER
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -19,6 +20,10 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
+//#define PERFCOUNTER
 //98472 85932
 //enable to following line for profiling
 //this will cause Mediaportal to draw the maxium number of FPS. It will use 100% cpu time 
@@ -51,6 +56,7 @@ using Surface = Microsoft.DirectX.DirectDraw.Surface;
 using SurfaceDescription = Microsoft.DirectX.DirectDraw.SurfaceDescription;
 using Timer = System.Windows.Forms.Timer;
 using Utils = MediaPortal.Util.Utils;
+using MediaPortal.TV.Recording;
 
 namespace MediaPortal
 {
@@ -66,35 +72,30 @@ namespace MediaPortal
     #region Menu Information
 
     // The menu items that *all* samples will need
-    protected MainMenu mnuMain;
-    protected MenuItem mnuFile;
-    private MenuItem mnuChange;
-    private MenuItem mnuBreak2;
-    protected MenuItem mnuExit;
+    protected MainMenu menuStripMain;
+    protected MenuItem menuItemFile;
+    private MenuItem menuItemChangeDevice;
+    private MenuItem menuBreakFile;
+    protected MenuItem menuItemExit;
 
     #endregion
 
-    // Minimize to tray on startup and on gui exit
-    protected bool _minimizeOnStartup = false;
+    protected bool _minimizeOnStartup = false;  // Minimize to tray on startup and on gui exit
     protected bool _minimizeOnGuiExit = false;
     protected bool _shuttingDown = false;
     protected bool _firstTimeWindowDisplayed = true;
     protected bool _autoHideMouse = false;
     protected bool _needUpdate = false;
     protected DateTime _mouseTimeOutTimer = DateTime.Now;
-    // The window we will render too
-    private Control ourRenderTarget;
-    // Should we use the default windows
-    protected bool isUsingMenus = true;
+    private Control ourRenderTarget;  // The window we will render too
+    protected bool isUsingMenus = true; // Should we use the default windows
     private float lastTime = 0.0f; // The last time
     protected int frames = 0; // Number of frames since our last update
 
-    // fps-limiting stuff
-    private long startFrame = 0;
+    private long startFrame = 0;  // fps-limiting stuff
     private long endFrame = 0;
 
-    // We need to keep track of our enumeration settings
-    protected D3DEnumeration enumerationSettings = new D3DEnumeration();
+    protected D3DEnumeration enumerationSettings = new D3DEnumeration();  // We need to keep track of our enumeration settings
     protected D3DSettings graphicsSettings = new D3DSettings();
     protected bool isMaximized = false; // Are we maximized?
     private bool isHandlingSizeChanges = true; // Are we handling size changes?
@@ -107,15 +108,14 @@ namespace MediaPortal
 
     private static int lastx = -1;
     private static int lasty = -1;
-    // Internal variables for the state of the app
-    protected bool windowed;
+
+    protected bool windowed;  // Internal variables for the state of the app
     protected bool active;
     protected bool ready;
     protected bool hasFocus;
     protected bool isMultiThreaded = true;
 
-    // Internal variables used for timing
-    protected bool frameMoving;
+    protected bool frameMoving; // Internal variables used for timing
     protected bool singleStep;
     // Main objects used for creating and rendering the 3D scene
     protected PresentParameters presentParams = new PresentParameters(); // Parameters for CreateDevice/Reset
@@ -182,22 +182,22 @@ namespace MediaPortal
 
     protected Size storedSize;
     protected Point storedLocation;
-    private MenuItem menuItem1;
-    private MenuItem menuItem2;
+    private MenuItem menuItemOptions;
+    private MenuItem menuItemConfiguration;
 
     private IContainer components;
-    private MenuItem menuItem4;
-    private MenuItem dvdMenuItem;
-    private MenuItem moviesMenuItem;
-    private MenuItem musicMenuItem;
-    private MenuItem picturesMenuItem;
-    private MenuItem televisionMenuItem;
-    private NotifyIcon notifyIcon1;
-    private ContextMenu contextMenu1;
-    private MenuItem menuItem3;
+    private MenuItem menuItemWizards;
+    private MenuItem menuItemDVD;
+    private MenuItem menuItemMovies;
+    private MenuItem menuItemMusic;
+    private MenuItem menuItemPictures;
+    private MenuItem menuItemTelevision;
+    private NotifyIcon notifyIcon;
+    private ContextMenu contextMenu;
+    private MenuItem menuItemContext;
     private MenuItem menuItem5;
     private MenuItem menuItemFullscreen;
-    private Timer timer1;
+    private Timer timer;
     protected Rectangle oldBounds;
 
     protected PlayListPlayer playlistPlayer;
@@ -266,6 +266,10 @@ namespace MediaPortal
     private string m_strCurrentFile;
     private PlayListType m_currentPlayListType = PlayListType.PLAYLIST_NONE;
     private PlayList m_currentPlayList = null;
+    private bool _fullscreen = false;
+    private bool _wasTV = false;
+    private string _tvChannel = string.Empty;
+    private bool _tvTimeshift = false;
     private int m_iSleepingTime = 50;
     private bool autoHideTaskbar = true;
     private bool alwaysOnTop = false;
@@ -330,13 +334,17 @@ namespace MediaPortal
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
         alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
       }
-      //      startFullscreen=true;
+
       // When clipCursorWhenFullscreen is TRUE, the cursor is limited to
       // the device window when the app goes fullscreen.  This prevents users
       // from accidentally clicking outside the app window on a multimon system.
       // This flag is turned off by default for debug builds, since it makes 
       // multimon debugging difficult.
+#if debug
       clipCursorWhenFullscreen = false;
+#else
+      clipCursorWhenFullscreen = true;
+#endif
       InitializeComponent();
       this.TopMost = alwaysOnTop;
 
@@ -380,7 +388,7 @@ namespace MediaPortal
       // ignore the menus, add our menu
       if ((ourRenderTarget == this) && (isUsingMenus))
       {
-        this.Menu = mnuMain;
+        this.Menu = menuStripMain;
       }
 
       try
@@ -406,7 +414,7 @@ namespace MediaPortal
               Win32API.ShowStartBar(false);
             }
 
-            Log.Write("start fullscreen");
+            Log.Write("D3D: Starting fullscreen");
             this.FormBorderStyle = FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -416,7 +424,7 @@ namespace MediaPortal
             this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
             //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth=Screen.PrimaryScreen.Bounds.Width;
             //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight=Screen.PrimaryScreen.Bounds.Height;
-            Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
+            Log.Write("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
                       this.ClientSize.Width, this.ClientSize.Height,
                       Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
@@ -712,7 +720,6 @@ namespace MediaPortal
       presentParams.EnableAutoDepthStencil = false;
       presentParams.ForceNoMultiThreadedFlag = false;
 
-
       if (windowed)
       {
         presentParams.MultiSample = graphicsSettings.WindowedMultisampleType;
@@ -751,21 +758,16 @@ namespace MediaPortal
     public bool SwitchFullScreenOrWindowed(bool bWindowed, bool bRemoveHandler)
     {
       if (!useExclusiveDirectXMode)
-      {
         return true;
-      }
+
       if (bRemoveHandler)
-      {
         GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
-      }
+      
       if (bWindowed)
-      {
-        Log.Write("app:Switch to windowed mode {0}", g_Player.Playing);
-      }
+        Log.Write("D3D: Switch to windowed mode - Playing media: {0}", g_Player.Playing);
       else
-      {
-        Log.Write("app:Switch to fullscreen mode {0}", g_Player.Playing);
-      }
+        Log.Write("D3D: Switch to fullscreen mode - Playing media: {0}", g_Player.Playing);
+
       windowed = bWindowed;
       BuildPresentParamsFromSettings();
       try
@@ -773,50 +775,41 @@ namespace MediaPortal
         GUIGraphicsContext.DX9Device.Reset(presentParams);
 
         if (bRemoveHandler)
-        {
           GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
-        }
+
         if (windowed)
-        {
           TopMost = alwaysOnTop;
-        }
+
         this.Activate();
       }
       catch (Exception ex)
       {
         if (windowed)
-        {
-          Log.Write("app:Switch to windowed mode failed:{0}", ex.ToString());
-        }
+          Log.Write("D3D: Switch to windowed mode failed - {0}", ex.ToString());
         else
-        {
-          Log.Write("app:Switch to fullscreen mode failed:{0}", ex.ToString());
-        }
+          Log.Write("D3D: Switch to fullscreen mode failed - {0}", ex.ToString());
+
         windowed = !bWindowed;
         BuildPresentParamsFromSettings();
         try
         {
-          
           GUIGraphicsContext.DX9Device.Reset(presentParams);
         }
         catch (Exception)
         { }
 
         if (bRemoveHandler)
-        {
           GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
-        }
+
         this.Activate();
         return false;
       }
+
       if (windowed)
-      {
-        Log.Write("app:Switched to windowed mode");
-      }
+        Log.Write("D3D: Switched to windowed mode successfully");
       else
-      {
-        Log.Write("app:Switched to fullscreen mode");
-      }
+        Log.Write("D3D: Switched to fullscreen mode successfully");
+
       return true;
     }
 
@@ -835,32 +828,20 @@ namespace MediaPortal
       BuildPresentParamsFromSettings();
 
       if (deviceInfo.Caps.PrimitiveMiscCaps.IsNullReference)
-      {
         // Warn user about null ref device that can't render anything
         HandleSampleException(new NullReferenceDeviceException(), ApplicationMessage.None);
-      }
 
       CreateFlags createFlags = new CreateFlags();
       if (graphicsSettings.VertexProcessingType == VertexProcessingType.Software)
-      {
         createFlags = CreateFlags.SoftwareVertexProcessing;
-      }
       else if (graphicsSettings.VertexProcessingType == VertexProcessingType.Mixed)
-      {
         createFlags = CreateFlags.MixedVertexProcessing;
-      }
       else if (graphicsSettings.VertexProcessingType == VertexProcessingType.Hardware)
-      {
         createFlags = CreateFlags.HardwareVertexProcessing;
-      }
       else if (graphicsSettings.VertexProcessingType == VertexProcessingType.PureHardware)
-      {
         createFlags = CreateFlags.HardwareVertexProcessing; // | CreateFlags.PureDevice;
-      }
       else
-      {
         throw new ApplicationException();
-      }
 
       // Make sure to allow multithreaded apps if we need them
       presentParams.ForceNoMultiThreadedFlag = !isMultiThreaded;
@@ -868,13 +849,11 @@ namespace MediaPortal
       try
       {
         // Create the device
-
         GUIGraphicsContext.DX9Device = new Microsoft.DirectX.Direct3D.Device(graphicsSettings.AdapterOrdinal,
                                                                              graphicsSettings.DevType,
                                                                              windowed ? ourRenderTarget : this,
                                                                              createFlags | CreateFlags.MultiThreaded,
                                                                              presentParams);
-
 
         // Cache our local objects
         //renderState = GUIGraphicsContext.DX9Device.RenderState;
@@ -893,7 +872,6 @@ namespace MediaPortal
           // Make sure main window isn't topmost, so error message is visible
           Size currentClientSize = this.ClientSize;
 
-
           this.Size = this.ClientSize;
           this.SendToBack();
           this.BringToFront();
@@ -909,57 +887,31 @@ namespace MediaPortal
 
         // Store device description
         if (deviceInfo.DevType == DeviceType.Reference)
-        {
           sb.Append("REF");
-        }
         else if (deviceInfo.DevType == DeviceType.Hardware)
-        {
           sb.Append("HAL");
-        }
         else if (deviceInfo.DevType == DeviceType.Software)
-        {
           sb.Append("SW");
-        }
 
         BehaviorFlags behaviorFlags = new BehaviorFlags(createFlags);
         if ((behaviorFlags.HardwareVertexProcessing) &&
             (behaviorFlags.PureDevice))
-        {
           if (deviceInfo.DevType == DeviceType.Hardware)
-          {
             sb.Append(" (pure hw vp)");
-          }
           else
-          {
             sb.Append(" (simulated pure hw vp)");
-          }
-        }
         else if (behaviorFlags.HardwareVertexProcessing)
-        {
           if (deviceInfo.DevType == DeviceType.Hardware)
-          {
             sb.Append(" (hw vp)");
-          }
           else
-          {
             sb.Append(" (simulated hw vp)");
-          }
-        }
         else if (behaviorFlags.MixedVertexProcessing)
-        {
           if (deviceInfo.DevType == DeviceType.Hardware)
-          {
             sb.Append(" (mixed vp)");
-          }
           else
-          {
             sb.Append(" (simulated mixed vp)");
-          }
-        }
         else if (behaviorFlags.SoftwareVertexProcessing)
-        {
           sb.Append(" (sw vp)");
-        }
 
         if (deviceInfo.DevType == DeviceType.Hardware)
         {
@@ -979,14 +931,11 @@ namespace MediaPortal
         }
 
         // Confine cursor to fullscreen window
-        if (clipCursorWhenFullscreen)
+        if (clipCursorWhenFullscreen && !windowed)
         {
-          if (!windowed)
-          {
-            Rectangle rcWindow = this.ClientRectangle;
-          }
+          Rectangle rcWindow = this.ClientRectangle;
         }
-
+       
         // Setup the event handlers for our device
         //GUIGraphicsContext.DX9Device.DeviceLost += new System.EventHandler(this.OnDeviceLost);
         GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
@@ -1003,23 +952,20 @@ namespace MediaPortal
         }
         catch (Exception ex)
         {
-          Log.WriteFile(Log.LogType.Log, true, "InitializeDeviceObjects() exception:{0}", ex.ToString());
+          Log.WriteFile(Log.LogType.Log, true, "D3D: InitializeDeviceObjects - Exception: {0}", ex.ToString());
           // Cleanup before we try again
           //OnDeviceLost(null, null);
           //OnDeviceDisposing(null, null);
           GUIGraphicsContext.DX9Device.Dispose();
           GUIGraphicsContext.DX9Device = null;
           if (this.Disposing)
-          {
             return;
-          }
         }
       }
       catch (Exception)
       {
         // If that failed, fall back to the reference rasterizer
         if (deviceInfo.DevType == DeviceType.Hardware)
-        {
           if (FindBestWindowedMode(false, true))
           {
             windowed = true;
@@ -1037,7 +983,6 @@ namespace MediaPortal
 
             InitializeEnvironment();
           }
-        }
       }
     }
 
@@ -1052,12 +997,11 @@ namespace MediaPortal
       try
       {
         if (UseMillisecondTiming)
-        {
           timeEndPeriod(MILLI_SECONDS_TIMER);
-        }
       }
       catch (Exception)
       { }
+
       UseMillisecondTiming = false;
       // Build a message to display to the user
       string strMsg = "";
@@ -1069,30 +1013,24 @@ namespace MediaPortal
         strSource = e.Source;
         strStack = e.StackTrace;
       }
-      Log.WriteFile(Log.LogType.Log, true, "  exception: {0} {1} {2}", strMsg, strSource, strStack);
+      Log.WriteFile(Log.LogType.Log, true, "D3D: Exception: {0} {1} {2}", strMsg, strSource, strStack);
       if (ApplicationMessage.ApplicationMustExit == Type)
       {
-        strMsg += "\n\nThis sample will now exit.";
-        MessageBox.Show(strMsg, this.Text,
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+        strMsg += "\n\nMediaPortal has to be closed.";
+        MessageBox.Show(strMsg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 
         // Close the window, which shuts down the app
         if (this.IsHandleCreated)
-        {
           this.Close();
-        }
       }
       else
       {
         if (ApplicationMessage.WarnSwitchToRef == Type)
-        {
           strMsg = "\n\nSwitching to the reference rasterizer,\n";
-        }
+
         strMsg += "a software device that implements the entire\n";
         strMsg += "Direct3D feature set, but runs very slowly.";
-
-        MessageBox.Show(strMsg, this.Text,
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show(strMsg, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
       }
     }
 
@@ -1115,14 +1053,10 @@ namespace MediaPortal
       // Check to see if we're minimizing and our rendering object
       // is not the form, if so, cancel the resize
       if ((ourRenderTarget != this) && (this.WindowState == FormWindowState.Minimized))
-      {
         e.Cancel = true;
-      }
-
+      
       if (!isWindowActive)
-      {
         e.Cancel = true;
-      }
 
       // Set up the fullscreen cursor
       if (showCursorWhenFullscreen && !windowed)
@@ -1139,6 +1073,7 @@ namespace MediaPortal
     /// </summary>
     public void ToggleFullscreen()
     {
+      Log.Write("D3D: ToggleFullscreen");
       int AdapterOrdinalOld = graphicsSettings.AdapterOrdinal;
       DeviceType DevTypeOld = graphicsSettings.DevType;
 
@@ -1151,9 +1086,7 @@ namespace MediaPortal
 
       // Save our maximized settings..
       if (!windowed && isMaximized)
-      {
         this.WindowState = FormWindowState.Normal;
-      }
 
       graphicsSettings.IsWindowed = windowed;
 
@@ -1172,11 +1105,8 @@ namespace MediaPortal
         catch
         {
           if (windowed)
-          {
             ForceWindowed();
-          }
           else
-          {
             // Sit in a loop until the device passes Reset()
             try
             {
@@ -1191,7 +1121,6 @@ namespace MediaPortal
 #endif
               goto RETRY;
             }
-          }
         }
         EnvironmentResized(GUIGraphicsContext.DX9Device, new CancelEventArgs());
       }
@@ -1216,17 +1145,13 @@ namespace MediaPortal
         // if our render target is the main window and we haven't said 
         // ignore the menus, add our menu
         if ((ourRenderTarget == this) && (isUsingMenus))
-        {
-          this.Menu = mnuMain;
-        }
+          this.Menu = menuStripMain;
         this.FormBorderStyle = FormBorderStyle.Sizable;
         isChangingFormStyle = false;
 
         // We were maximized, restore that state
         if (isMaximized)
-        {
           this.WindowState = FormWindowState.Maximized;
-        }
         this.SendToBack();
         this.BringToFront();
         this.ClientSize = storedSize;
@@ -1237,9 +1162,7 @@ namespace MediaPortal
       else
       {
         if (this.Menu != null)
-        {
           this.Menu = null;
-        }
 
         this.FormBorderStyle = FormBorderStyle.None;
         isChangingFormStyle = false;
@@ -1255,14 +1178,11 @@ namespace MediaPortal
     public void ForceWindowed()
     {
       if (windowed)
-      {
         return;
-      }
 
       if (!FindBestWindowedMode(false, false))
-      {
         return;
-      }
+
       windowed = true;
 
       // Now destroy the current 3D device objects, then reinitialize
@@ -1306,9 +1226,8 @@ namespace MediaPortal
         HandleCursor();
 
         if ((ActiveForm != this) && (alwaysOnTop))
-        {
           this.Activate();
-        }
+
         return;
       }
       // Render a frame during idle time (no messages are waiting)
@@ -1319,21 +1238,21 @@ namespace MediaPortal
         try
         {
 #endif
-          if ((deviceLost) || (ActiveForm != this))
-          {
-            // Yield some CPU time to other processes
+        if ((deviceLost) || (ActiveForm != this))
+        {
+          // Yield some CPU time to other processes
 #if !PROFILING
-            Thread.Sleep(100); // 100 milliseconds
+          Thread.Sleep(100); // 100 milliseconds
 #endif
-          }
-          Render3DEnvironment();
+        }
+        Render3DEnvironment();
 #if DEBUG
 #else
         }
         catch (Exception ee)
         {
-          Log.Write(ee);
-          System.Windows.Forms.MessageBox.Show("An exception has occurred.  This sample must exit.\r\n\r\n" + ee.ToString(), "Exception",
+          Log.Write("D3D: Exception {0}", ee);
+          System.Windows.Forms.MessageBox.Show("An exception has occurred.  MediaPortal has to be closed.\r\n\r\n" + ee.ToString(), "Exception",
             System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
           this.Close();
         }
@@ -1344,27 +1263,21 @@ namespace MediaPortal
 #if !PROFILING
         // if we dont got the focus, then dont use all the CPU
         if (ActiveForm != this)
-        {
           Thread.Sleep(100);
-        }
 #endif
       }
 
       HandleCursor();
 
       if ((ActiveForm != this) && (alwaysOnTop))
-      {
         Activate();
-      }
     }
 
 
     private void DoSleep(int sleepTime)
     {
       if (sleepTime <= 0)
-      {
         sleepTime = 5;
-      }
 #if !PROFILING
       Thread.Sleep(sleepTime);
 #endif
@@ -1416,9 +1329,13 @@ namespace MediaPortal
 
           // Reset the device and resize it
 
-          Log.Write("app.Reset()");
+          Log.Write("D3D: Resetting DX9 device");
 
-          GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
+          try
+          {
+            GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
+          }
+          catch { }
 
           //Log.Write("app.EnvironmentResized()");
           EnvironmentResized(GUIGraphicsContext.DX9Device, new CancelEventArgs());
@@ -1428,16 +1345,13 @@ namespace MediaPortal
         _needUpdate = true;
       }
 
-
-
       if (!deviceLost && !m_bNeedReset)
-      {
         if (m_bRestore)
         {
           m_bRestore = false;
           if (m_bWasPlaying)
           {
-            Log.Write("App.Render3dEnvironment() play:{0}", m_strCurrentFile);
+            Log.Write("D3D: Render3DEnvironment - Resuming: {0}", m_strCurrentFile);
             m_bWasPlaying = false;
 
             playlistPlayer.Init();
@@ -1446,35 +1360,61 @@ namespace MediaPortal
             PlayList playlist = playlistPlayer.GetPlaylist(m_currentPlayListType);
             playlist.Clear();
             if (m_currentPlayList != null)
-            {
-                for (int i = 0; i < (int)m_currentPlayList.Count; ++i)
-                {
-                  PlayListItem itemNew = m_currentPlayList[i];
-                  playlist.Add(itemNew);
-                }
-            }
+              for (int i = 0; i < (int)m_currentPlayList.Count; ++i)
+              {
+                PlayListItem itemNew = m_currentPlayList[i];
+                playlist.Add(itemNew);
+              }
             playlistPlayer.Play(m_strCurrentFile);
-            Log.Write("App.Render3dEnvironment() playing:{0}", m_strCurrentFile);
+            
             if (g_Player.Playing)
-            {
               g_Player.SeekAbsolute(m_dCurrentPos);
-            }
+
+            GUIGraphicsContext.IsFullScreenVideo = _fullscreen;
+            GUIWindowManager.ActivateWindow(m_iActiveWindow);
           }
-          GUIWindowManager.ActivateWindow(m_iActiveWindow);
+          else if (_wasTV)
+          {
+            Log.Write("D3D: Render3DEnvironment - Resuming: {0}", _tvChannel);
+            string _errorMessage = string.Empty;
+            bool success = Recorder.StartViewing(_tvChannel, true, _tvTimeshift, true, out _errorMessage);
+            if (success)
+              if ((m_iActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) ||
+                (m_iActiveWindow == (int)GUIWindow.Window.WINDOW_TV))
+              {
+                GUIWindowManager.ActivateWindow(m_iActiveWindow);
+                Log.Write("D3D: Resumed TV successfully");
+              }
+              else
+              {
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+                Thread tvWaitThread = new Thread(TvWaitThread);
+                tvWaitThread.Start();
+              }
+            else
+              Log.Write("D3D: Error resuming TV: {0}", _errorMessage);
+          }
         }
-      }
       try
       {
-          if (!GUIGraphicsContext.Vmr9Active)
-          {
-              Render(GUIGraphicsContext.TimePassed);
-          }
+        if (!GUIGraphicsContext.Vmr9Active)
+          Render(GUIGraphicsContext.TimePassed);
       }
       catch (Exception ex)
       {
-          Log.Write(ex);
+        Log.Write("D3D: Exception: {0}", ex);
       }
-  }
+    }
+
+    private void TvWaitThread()
+    {
+      while (!g_Player.Playing)
+        Thread.Sleep(100);
+
+      Log.Write("D3D: Resumed TV successfully");
+      GUIGraphicsContext.IsFullScreenVideo = _fullscreen;
+      GUIWindowManager.ActivateWindow(m_iActiveWindow);
+    }
 
     private void HandleCursor()
     {
@@ -1483,15 +1423,12 @@ namespace MediaPortal
         if (_showCursor != _lastShowCursor)
         {
           if (!_showCursor)
-          {
             Cursor.Hide();
-          }
           else
-          {
             Cursor.Show();
-          }
           _lastShowCursor = _showCursor;
         }
+
         if (_showCursor)
         {
           TimeSpan ts = DateTime.Now - _mouseTimeOutTimer;
@@ -1511,28 +1448,22 @@ namespace MediaPortal
     {
       // Render the scene as normal
       if (GUIGraphicsContext.Vmr9Active)
-      {
         if (GUIGraphicsContext.Vmr9FPS > 5f)
-        {
           // if we're playing a movie with vmr9 then the player will draw the GUI
           // so we just sleep 50msec here ...
           return false;
-        }
-      }
+
       //if we're playing a movie or watching tv (fullscreen)
       if (GUIGraphicsContext.IsFullScreenVideo)
-      {
         return false;
-      }
       return true;
     }
 
     private int GetSleepingTime()
     {
       if (!ShouldUseSleepingTime())
-      {
         return 100;
-      }
+
       return m_iSleepingTime;
     }
 
@@ -1568,15 +1499,10 @@ namespace MediaPortal
 
         string strDepthFmt;
         if (enumerationSettings.AppUsesDepthBuffer)
-        {
-          strDepthFmt = String.Format(" ({0})",
-                                      graphicsSettings.DepthStencilBufferFormat.ToString());
-        }
+          strDepthFmt = String.Format(" ({0})", graphicsSettings.DepthStencilBufferFormat.ToString());
         else
-        {
           // No depth buffer
           strDepthFmt = "";
-        }
 
         string strMultiSample;
         switch (graphicsSettings.MultisampleType)
@@ -1633,15 +1559,16 @@ namespace MediaPortal
             strMultiSample = string.Empty;
             break;
         }
+
         frameStats = String.Format("{0} fps ({1}x{2}), {3} {4}{5}{6} {7}",
                                    GUIGraphicsContext.CurrentFPS.ToString("f2"),
                                    GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth,
                                    GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight,
                                    GetSleepingTime(), strFmt, strDepthFmt, strMultiSample, ShouldUseSleepingTime());
+
         if (GUIGraphicsContext.Vmr9Active)
-        {
           frameStats += String.Format(" VMR9 {0}", GUIGraphicsContext.Vmr9FPS.ToString("f2"));
-        }
+
         string quality = String.Format("\nfps:{0} sync:{1} drawn:{2} dropped:{3} jitter:{4}",
                                        VideoRendererStatistics.AverageFrameRate.ToString("f2"),
                                        VideoRendererStatistics.AverageSyncOffset,
@@ -1673,9 +1600,7 @@ namespace MediaPortal
       active = false;
       ready = false;
       if (GUIGraphicsContext.DX9Device != null)
-      {
         GUIGraphicsContext.DX9Device.Dispose();
-      }
     }
 
     #region Menu EventHandlers
@@ -1683,28 +1608,24 @@ namespace MediaPortal
     public void OnSetup(object sender, EventArgs e)
     {
       string processName = "Configuration.exe";
-      foreach (Process process in Process.GetProcesses())
-      {
-        if (process.ProcessName.Equals(processName))
-        {
-          return;
-        }
-      }
 
-      Log.Write("App.OnSetup():stop");
+      foreach (Process process in Process.GetProcesses())
+        if (process.ProcessName.Equals(processName))
+          return;
+
+      Log.Write("D3D: OnSetup - Stopping media");
       g_Player.Stop();
-      if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-      {
+
+      if (!GUIGraphicsContext.DX9Device.PresentationParameters.Windowed)
         SwitchFullScreenOrWindowed(true, true);
-      }
+
       _autoHideMouse = false;
       Cursor.Show();
       Invalidate(true);
 
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
-      {
         xmlreader.Clear();
-      }
+
       Utils.StartProcess("Configuration.exe", "", false, false);
     }
 
@@ -1715,9 +1636,7 @@ namespace MediaPortal
     {
       // Prompt the user to select a new device or mode
       if (active && ready)
-      {
         DoSelectNewDevice();
-      }
     }
 
 
@@ -1730,7 +1649,6 @@ namespace MediaPortal
       isHandlingSizeChanges = false;
       // Can't display dialogs in fullscreen mode
       if (windowed == false)
-      {
         try
         {
           ToggleFullscreen();
@@ -1741,7 +1659,6 @@ namespace MediaPortal
           HandleSampleException(new ResetFailedException(), ApplicationMessage.ApplicationMustExit);
           return;
         }
-      }
 
       // Make sure the main form is in the background
       this.SendToBack();
@@ -1798,10 +1715,11 @@ namespace MediaPortal
     protected override void Dispose(bool disposing)
     {
       CleanupEnvironment();
-      if (notifyIcon1 != null)
-      {
-        this.notifyIcon1.Dispose();
-      } //we dispose our tray icon here
+
+      if (notifyIcon != null)
+        //we dispose our tray icon here
+        this.notifyIcon.Dispose();
+      
       base.Dispose(disposing);
 
       if (autoHideTaskbar)
@@ -1827,9 +1745,7 @@ namespace MediaPortal
 
       // Allow the control to handle the keystroke now
       if (!e.Handled)
-      {
         base.OnKeyPress(e);
-      }
     }
 
 
@@ -1852,9 +1768,7 @@ namespace MediaPortal
         EventWaitHandle handle = EventWaitHandle.OpenExisting("MediaPortalHandleCreated");
 
         if (handle.SafeWaitHandle.IsInvalid)
-        {
           return;
-        }
 
         handle.Set();
         handle.Close();
@@ -1874,9 +1788,8 @@ namespace MediaPortal
     private void D3DApp_Click(object sender, MouseEventArgs e)
     {
       if (ActiveForm != this)
-      {
         return;
-      }
+
       mouseclick(e);
     }
 
@@ -1884,24 +1797,27 @@ namespace MediaPortal
     private void D3DApp_MouseMove(object sender, MouseEventArgs e)
     {
       if (ActiveForm != this)
-      {
         return;
-      }
+
       mousemove(e);
     }
 
 
     protected void ToggleFullWindowed()
     {
-      Log.Write("App.ToggleFullWindowed()");
+      Log.Write("D3D: Fullscreen / windowed mode toggled");
+
+      GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
+
       isMaximized = !isMaximized;
+
       GUITextureManager.CleanupThumbs();
       GUITextureManager.Dispose();
       GUIFontManager.Dispose();
-      GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
+
       if (isMaximized)
       {
-        Log.Write("windowed->fullscreen");
+        Log.Write("D3D: Switching windowed mode -> fullscreen");
         if (autoHideTaskbar)
         {
           Win32API.EnableStartBar(false);
@@ -1915,34 +1831,38 @@ namespace MediaPortal
         this.Bounds = new Rectangle(0, 0, Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
         this.ClientSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
         this.Update();
-        Log.Write("windowed->fullscreen done {0}", isMaximized);
-        Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
+
+        Log.Write("D3D: Switching windowed mode -> fullscreen done - Maximized: {0}", isMaximized);
+        Log.Write("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
                   this.ClientSize.Width, this.ClientSize.Height,
                   Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-        SwitchFullScreenOrWindowed(windowed, false);
+
+        SwitchFullScreenOrWindowed(false, false);
       }
       else
       {
-        Log.Write("fullscreen->windowed");
+        Log.Write("D3D: Switching fullscreen -> windowed mode");
         if (autoHideTaskbar)
         {
           Win32API.EnableStartBar(true);
           Win32API.ShowStartBar(true);
         }
-
         this.WindowState = FormWindowState.Normal;
         this.FormBorderStyle = FormBorderStyle.Sizable;
         this.MaximizeBox = true;
         this.MinimizeBox = true;
-        this.Menu = mnuMain;
+        this.Menu = menuStripMain;
         this.Location = storedLocation;
-        Bounds = new Rectangle(oldBounds.X, oldBounds.Y, oldBounds.Width, oldBounds.Height);
+        this.Bounds = new Rectangle(oldBounds.X, oldBounds.Y, oldBounds.Width, oldBounds.Height);
         this.ClientSize = storedSize;
-        Log.Write("fullscreen->windowed done {0}", isMaximized);
-        Log.Write("ClientSize: {0}x{1} screen:{2}x{3}",
+        this.Update();
+
+        Log.Write("D3D: Switching fullscreen -> windowed mode done - Maximized: {0}", isMaximized);
+        Log.Write("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
                   this.ClientSize.Width, this.ClientSize.Height,
                   Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
-        SwitchFullScreenOrWindowed(windowed, false);
+
+        SwitchFullScreenOrWindowed(true, false);
       }
       GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
       OnDeviceReset(null, null);
@@ -1963,7 +1883,6 @@ namespace MediaPortal
                 // Toggle the fullscreen/window mode
                 if (active && ready)
                 {
-
                   try
                   {
                     ToggleFullscreen();                    
@@ -1980,14 +1899,10 @@ namespace MediaPortal
                 }*/
       }
       else if (e.KeyCode == Keys.F2)
-      {
         OnSetup(null, null);
-      }
 
       if (e.Handled == false)
-      {
         keydown(e);
-      }
     }
 
 
@@ -1996,179 +1911,170 @@ namespace MediaPortal
     /// </summary>
     private void InitializeComponent()
     {
-      this.components = new Container();
-      ResourceManager resources = new ResourceManager(typeof(D3DApp));
-      this.mnuMain = new MainMenu();
-      this.mnuFile = new MenuItem();
-      this.mnuChange = new MenuItem();
-      this.mnuBreak2 = new MenuItem();
-      this.mnuExit = new MenuItem();
-      this.menuItem1 = new MenuItem();
-      this.menuItemFullscreen = new MenuItem();
-      this.menuItem2 = new MenuItem();
-      this.menuItem4 = new MenuItem();
-      this.dvdMenuItem = new MenuItem();
-      this.moviesMenuItem = new MenuItem();
-      this.musicMenuItem = new MenuItem();
-      this.picturesMenuItem = new MenuItem();
-      this.televisionMenuItem = new MenuItem();
-      this.notifyIcon1 = new NotifyIcon(this.components);
-      this.contextMenu1 = new ContextMenu();
-      this.menuItem3 = new MenuItem();
-      this.menuItem5 = new MenuItem();
-      this.timer1 = new Timer(this.components);
+      this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(D3DApp));
+      this.menuStripMain = new System.Windows.Forms.MainMenu(this.components);
+      this.menuItemFile = new System.Windows.Forms.MenuItem();
+      this.menuItemChangeDevice = new System.Windows.Forms.MenuItem();
+      this.menuBreakFile = new System.Windows.Forms.MenuItem();
+      this.menuItemExit = new System.Windows.Forms.MenuItem();
+      this.menuItemOptions = new System.Windows.Forms.MenuItem();
+      this.menuItemFullscreen = new System.Windows.Forms.MenuItem();
+      this.menuItemConfiguration = new System.Windows.Forms.MenuItem();
+      this.menuItemWizards = new System.Windows.Forms.MenuItem();
+      this.menuItemDVD = new System.Windows.Forms.MenuItem();
+      this.menuItemMovies = new System.Windows.Forms.MenuItem();
+      this.menuItemMusic = new System.Windows.Forms.MenuItem();
+      this.menuItemPictures = new System.Windows.Forms.MenuItem();
+      this.menuItemTelevision = new System.Windows.Forms.MenuItem();
+      this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+      this.contextMenu = new System.Windows.Forms.ContextMenu();
+      this.menuItemContext = new System.Windows.Forms.MenuItem();
+      this.menuItem5 = new System.Windows.Forms.MenuItem();
+      this.timer = new System.Windows.Forms.Timer(this.components);
+      this.SuspendLayout();
       // 
-      // mnuMain
+      // menuStripMain
       // 
-      this.mnuMain.MenuItems.AddRange(new MenuItem[]
-                                        {
-                                          this.mnuFile,
-                                          this.menuItem1,
-                                          this.menuItem4
-                                        });
+      this.menuStripMain.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItemFile,
+            this.menuItemOptions,
+            this.menuItemWizards});
       // 
-      // mnuFile
+      // menuItemFile
       // 
-      this.mnuFile.Index = 0;
-      this.mnuFile.MenuItems.AddRange(new MenuItem[]
-                                        {
-                                          this.mnuChange,
-                                          this.mnuBreak2,
-                                          this.mnuExit
-                                        });
-      this.mnuFile.Text = "&File";
+      this.menuItemFile.Index = 0;
+      this.menuItemFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItemChangeDevice,
+            this.menuBreakFile,
+            this.menuItemExit});
+      this.menuItemFile.Text = "&File";
       // 
-      // mnuChange
+      // menuItemChangeDevice
       // 
-      this.mnuChange.Index = 0;
-      this.mnuChange.Text = "&Change Device...";
-      this.mnuChange.Click += new EventHandler(this.UserSelectNewDevice);
+      this.menuItemChangeDevice.Index = 0;
+      this.menuItemChangeDevice.Text = "&Change Device...";
+      this.menuItemChangeDevice.Click += new System.EventHandler(this.UserSelectNewDevice);
       // 
-      // mnuBreak2
+      // menuBreakFile
       // 
-      this.mnuBreak2.Index = 1;
-      this.mnuBreak2.Text = "-";
+      this.menuBreakFile.Index = 1;
+      this.menuBreakFile.Text = "-";
       // 
-      // mnuExit
+      // menuItemExit
       // 
-      this.mnuExit.Index = 2;
-      this.mnuExit.Text = "Exit";
-      this.mnuExit.Click += new EventHandler(this.ExitSample);
+      this.menuItemExit.Index = 2;
+      this.menuItemExit.Text = "Exit";
+      this.menuItemExit.Click += new System.EventHandler(this.ExitSample);
       // 
-      // menuItem1
+      // menuItemOptions
       // 
-      this.menuItem1.Index = 1;
-      this.menuItem1.MenuItems.AddRange(new MenuItem[]
-                                          {
-                                            this.menuItemFullscreen,
-                                            this.menuItem2
-                                          });
-      this.menuItem1.Text = "&Options";
+      this.menuItemOptions.Index = 1;
+      this.menuItemOptions.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItemFullscreen,
+            this.menuItemConfiguration});
+      this.menuItemOptions.Text = "&Options";
       // 
       // menuItemFullscreen
       // 
       this.menuItemFullscreen.Index = 0;
       this.menuItemFullscreen.Text = "&Fullscreen";
-      this.menuItemFullscreen.Click += new EventHandler(this.menuItemFullscreen_Click);
+      this.menuItemFullscreen.Click += new System.EventHandler(this.menuItemFullscreen_Click);
       // 
-      // menuItem2
+      // menuItemConfiguration
       // 
-      this.menuItem2.Index = 1;
-      this.menuItem2.Shortcut = Shortcut.F2;
-      this.menuItem2.Text = "&Configuration...";
-      this.menuItem2.Click += new EventHandler(this.menuItem2_Click);
+      this.menuItemConfiguration.Index = 1;
+      this.menuItemConfiguration.Shortcut = System.Windows.Forms.Shortcut.F2;
+      this.menuItemConfiguration.Text = "&Configuration...";
+      this.menuItemConfiguration.Click += new System.EventHandler(this.menuItem2_Click);
       // 
-      // menuItem4
+      // menuItemWizards
       // 
-      this.menuItem4.Index = 2;
-      this.menuItem4.MenuItems.AddRange(new MenuItem[]
-                                          {
-                                            this.dvdMenuItem,
-                                            this.moviesMenuItem,
-                                            this.musicMenuItem,
-                                            this.picturesMenuItem,
-                                            this.televisionMenuItem
-                                          });
-      this.menuItem4.Text = "Wizards";
+      this.menuItemWizards.Index = 2;
+      this.menuItemWizards.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItemDVD,
+            this.menuItemMovies,
+            this.menuItemMusic,
+            this.menuItemPictures,
+            this.menuItemTelevision});
+      this.menuItemWizards.Text = "Wizards";
       // 
-      // dvdMenuItem
+      // menuItemDVD
       // 
-      this.dvdMenuItem.Index = 0;
-      this.dvdMenuItem.Text = "DVD";
-      this.dvdMenuItem.Click += new EventHandler(this.dvdMenuItem_Click);
+      this.menuItemDVD.Index = 0;
+      this.menuItemDVD.Text = "DVD";
+      this.menuItemDVD.Click += new System.EventHandler(this.dvdMenuItem_Click);
       // 
-      // moviesMenuItem
+      // menuItemMovies
       // 
-      this.moviesMenuItem.Index = 1;
-      this.moviesMenuItem.Text = "Movies";
-      this.moviesMenuItem.Click += new EventHandler(this.moviesMenuItem_Click);
+      this.menuItemMovies.Index = 1;
+      this.menuItemMovies.Text = "Movies";
+      this.menuItemMovies.Click += new System.EventHandler(this.moviesMenuItem_Click);
       // 
-      // musicMenuItem
+      // menuItemMusic
       // 
-      this.musicMenuItem.Index = 2;
-      this.musicMenuItem.Text = "Music";
-      this.musicMenuItem.Click += new EventHandler(this.musicMenuItem_Click);
+      this.menuItemMusic.Index = 2;
+      this.menuItemMusic.Text = "Music";
+      this.menuItemMusic.Click += new System.EventHandler(this.musicMenuItem_Click);
       // 
-      // picturesMenuItem
+      // menuItemPictures
       // 
-      this.picturesMenuItem.Index = 3;
-      this.picturesMenuItem.Text = "Pictures";
-      this.picturesMenuItem.Click += new EventHandler(this.picturesMenuItem_Click);
+      this.menuItemPictures.Index = 3;
+      this.menuItemPictures.Text = "Pictures";
+      this.menuItemPictures.Click += new System.EventHandler(this.picturesMenuItem_Click);
       // 
-      // televisionMenuItem
+      // menuItemTelevision
       // 
-      this.televisionMenuItem.Index = 4;
-      this.televisionMenuItem.Text = "Television";
-      this.televisionMenuItem.Click += new EventHandler(this.televisionMenuItem_Click);
+      this.menuItemTelevision.Index = 4;
+      this.menuItemTelevision.Text = "Television";
+      this.menuItemTelevision.Click += new System.EventHandler(this.televisionMenuItem_Click);
       // 
-      // notifyIcon1
+      // notifyIcon
       // 
-      this.notifyIcon1.ContextMenu = this.contextMenu1;
-      this.notifyIcon1.Icon = ((Icon)(resources.GetObject("notifyIcon1.Icon")));
-      this.notifyIcon1.Text = "MediaPortal";
-      this.notifyIcon1.DoubleClick += new EventHandler(this.Restore_OnClick);
+      this.notifyIcon.ContextMenu = this.contextMenu;
+      this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
+      this.notifyIcon.Text = "MediaPortal";
+      this.notifyIcon.DoubleClick += new System.EventHandler(this.Restore_OnClick);
       // 
-      // contextMenu1
+      // contextMenu
       // 
-      this.contextMenu1.MenuItems.AddRange(new MenuItem[]
-                                             {
-                                               this.menuItem3
-                                             });
-      this.contextMenu1.Popup += new EventHandler(this.contextMenu1_Popup);
+      this.contextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItemContext});
+      this.contextMenu.Popup += new System.EventHandler(this.contextMenu1_Popup);
       // 
-      // menuItem3
+      // menuItemContext
       // 
-      this.menuItem3.Index = 0;
-      this.menuItem3.MenuItems.AddRange(new MenuItem[]
-                                          {
-                                            this.menuItem5
-                                          });
-      this.menuItem3.Text = "";
+      this.menuItemContext.Index = 0;
+      this.menuItemContext.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItem5});
+      this.menuItemContext.Text = "";
       // 
       // menuItem5
       // 
       this.menuItem5.Index = 0;
       this.menuItem5.Text = "";
       // 
-      // timer1
+      // timer
       // 
-      this.timer1.Enabled = true;
-      this.timer1.Interval = 300;
+      this.timer.Enabled = true;
+      this.timer.Interval = 300;
       // 
       // D3DApp
       // 
-      this.AutoScaleBaseSize = new Size(5, 13);
-      this.ClientSize = new Size(720, 576);
-      this.Icon = ((Icon)(resources.GetObject("$this.Icon")));
+      this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+      this.ClientSize = new System.Drawing.Size(720, 576);
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.KeyPreview = true;
-      this.MinimumSize = new Size(100, 100);
+      this.MinimumSize = new System.Drawing.Size(100, 100);
       this.Name = "D3DApp";
-      this.KeyDown += new KeyEventHandler(this.OnKeyDown);
-      this.MouseDown += new MouseEventHandler(this.D3DApp_Click);
-      this.Closing += new CancelEventHandler(this.D3DApp_Closing);
-      this.KeyPress += new KeyPressEventHandler(this.OnKeyPress);
-      this.Load += new EventHandler(this.D3DApp_Load);
-      this.MouseMove += new MouseEventHandler(this.D3DApp_MouseMove);
+      this.Closing += new System.ComponentModel.CancelEventHandler(this.D3DApp_Closing);
+      this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
+      this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
+      this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
+      this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.D3DApp_Click);
+      this.Load += new System.EventHandler(this.D3DApp_Load);
+      this.ResumeLayout(false);
+
     }
 
 
@@ -2179,57 +2085,11 @@ namespace MediaPortal
     {
       _mouseTimeOutTimer = DateTime.Now;
       if ((GUIGraphicsContext.DX9Device != null) && (!GUIGraphicsContext.DX9Device.Disposed))
-      {
         // Move the D3D cursor
         GUIGraphicsContext.DX9Device.SetCursorPosition(e.X, e.Y, false);
-      }
+      
       // Let the control handle the mouse now
       base.OnMouseMove(e);
-    }
-
-
-    /// <summary>
-    /// Handle size changed events
-    /// </summary>
-    protected override void OnSizeChanged(EventArgs e)
-    {
-      bool m_bRestoreTmp = false;
-
-      if (g_Player.Playing && (g_Player.IsTV || g_Player.IsVideo || g_Player.IsDVD))
-      {
-        m_bRestore = false;
-        m_bRestoreTmp = true;
-        m_bWasPlaying = g_Player.Playing;
-        m_dCurrentPos = g_Player.CurrentPosition;
-        m_currentPlayListType = playlistPlayer.CurrentPlaylistType;
-        m_currentPlayList = new PlayList();
-        PlayList tempList = playlistPlayer.GetPlaylist(m_currentPlayListType);
-        if (tempList != null)
-        {
-            for (int i = 0; i < (int)tempList.Count; ++i)
-            {
-                PlayListItem itemNew = tempList[i];
-                m_currentPlayList.Add(itemNew);
-            }
-        }
-        m_strCurrentFile = playlistPlayer.Get(playlistPlayer.CurrentSong);
-        m_iActiveWindow = GUIWindowManager.ActiveWindow;
-        Log.Write("Form resized: stop media:current playlist:Type:{0} Size:{1} Current Item:{2} FileName:{3} Position:{4}", m_currentPlayListType, m_currentPlayList.Count, playlistPlayer.CurrentSong, m_strCurrentFile, m_dCurrentPos);
-        try
-        {
-          g_Player.Stop();
-        }
-        catch
-        { }
-      }
-
-      this.OnResize(e);
-      base.OnSizeChanged(e);
-
-      if (m_bRestoreTmp)
-      {
-        m_bRestore = true;
-      }
     }
 
 
@@ -2238,26 +2098,68 @@ namespace MediaPortal
     /// </summary>
     protected override void OnResize(EventArgs e)
     {
+      bool m_bRestoreTmp = false;
+
+      if (!m_bRestore && g_Player.Playing && (g_Player.IsTV || g_Player.IsVideo || g_Player.IsDVD))
+      {
+        _wasTV = Recorder.IsViewing();
+        _fullscreen = g_Player.FullScreen;
+        m_bRestore = false;
+        m_bRestoreTmp = true;
+
+        if (_wasTV)
+        {
+          _tvChannel = Recorder.TVChannelName;
+          _tvTimeshift = Recorder.IsTimeShifting();
+          m_bRestoreTmp = true;
+          Log.Write("D3D: Form resized - Stopping TV - Current channel: {0} / Timeshifting: {1}", _tvChannel, _tvTimeshift);
+          Recorder.StopViewing();
+        }
+        else
+        {
+          m_bWasPlaying = true;
+          m_dCurrentPos = g_Player.CurrentPosition;
+          m_currentPlayListType = playlistPlayer.CurrentPlaylistType;
+          m_currentPlayList = new PlayList();
+
+          Log.Write("D3D: Saving fullscreen state for resume: {0}", _fullscreen);
+          PlayList tempList = playlistPlayer.GetPlaylist(m_currentPlayListType);
+          if (tempList != null)
+          {
+            for (int i = 0; i < (int)tempList.Count; ++i)
+            {
+              PlayListItem itemNew = tempList[i];
+              m_currentPlayList.Add(itemNew);
+            }
+          }
+          m_strCurrentFile = playlistPlayer.Get(playlistPlayer.CurrentSong);
+          Log.Write("D3D: Form resized - Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}", m_currentPlayListType, m_currentPlayList.Count, playlistPlayer.CurrentSong, m_strCurrentFile, m_dCurrentPos);
+          g_Player.Stop();
+        }
+
+        m_iActiveWindow = GUIWindowManager.ActiveWindow;
+      }
+
+      if (m_bRestoreTmp)
+        m_bRestore = true;
+
+      if (notifyIcon != null)
+        if (notifyIcon.Visible == false && this.WindowState == FormWindowState.Minimized)
+        {
+          notifyIcon.Visible = true;
+          this.Hide();
+          return;
+        }
+        else if (notifyIcon.Visible == true && this.WindowState != FormWindowState.Minimized)
+          notifyIcon.Visible = false;
+
+      active = !(this.WindowState == FormWindowState.Minimized);
+
       try
       {
-        if (notifyIcon1 != null)
-        {
-          if (notifyIcon1.Visible == false && this.WindowState == FormWindowState.Minimized)
-          {
-            notifyIcon1.Visible = true;
-            this.Hide();
-            return;
-          }
-          else if (notifyIcon1.Visible == true && this.WindowState != FormWindowState.Minimized)
-          {
-            notifyIcon1.Visible = false;
-          }
-        }
+        base.OnResize(e);
       }
-      catch (Exception)
-      { }
-      active = !(this.WindowState == FormWindowState.Minimized);
-      base.OnResize(e);
+      catch { }
     }
 
 
@@ -2294,9 +2196,7 @@ namespace MediaPortal
       if (this._minimizeOnGuiExit && !_shuttingDown)
       {
         if (WindowState != FormWindowState.Minimized)
-        {
-          Log.Write("Minimizing to tray on GUI exit");
-        }
+          Log.Write("D3D: Minimizing to tray on GUI exit");
 
         isClosing = false;
         this.WindowState = FormWindowState.Minimized;
@@ -2317,10 +2217,12 @@ namespace MediaPortal
     #endregion
 
     protected virtual void keypressed(KeyPressEventArgs e)
-    { }
+    {
+    }
 
     protected virtual void keydown(KeyEventArgs e)
-    { }
+    {
+    }
 
     protected virtual void mousemove(MouseEventArgs e)
     {
@@ -2389,57 +2291,51 @@ namespace MediaPortal
     private void televisionMenuItem_Click(object sender, EventArgs e)
     {
       g_Player.Stop();
+
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-      {
         SwitchFullScreenOrWindowed(true, true);
-      }
 
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
-      {
         xmlreader.Clear();
-      }
+
       Process.Start("configuration.exe", @"/wizard /section=wizards\television.xml");
     }
 
     private void picturesMenuItem_Click(object sender, EventArgs e)
     {
       g_Player.Stop();
+
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-      {
         SwitchFullScreenOrWindowed(true, true);
-      }
+
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
-      {
         xmlreader.Clear();
-      }
+
       Process.Start("configuration.exe", @"/wizard /section=wizards\pictures.xml");
     }
 
     private void musicMenuItem_Click(object sender, EventArgs e)
     {
       g_Player.Stop();
+
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-      {
         SwitchFullScreenOrWindowed(true, true);
-      }
+
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
-      {
         xmlreader.Clear();
-      }
+
       Process.Start("configuration.exe", @"/wizard /section=wizards\music.xml");
     }
 
     private void moviesMenuItem_Click(object sender, EventArgs e)
     {
       g_Player.Stop();
+
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-      {
         SwitchFullScreenOrWindowed(true, true);
-      }
+
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
-      {
         xmlreader.Clear();
-      }
 
       Process.Start("configuration.exe", @"/wizard /section=wizards\movies.xml");
     }
@@ -2447,39 +2343,36 @@ namespace MediaPortal
     private void dvdMenuItem_Click(object sender, EventArgs e)
     {
       g_Player.Stop();
+
       if (GUIGraphicsContext.DX9Device.PresentationParameters.Windowed == false)
-      {
         SwitchFullScreenOrWindowed(true, true);
-      }
+
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
-      {
         xmlreader.Clear();
-      }
+
       Process.Start("configuration.exe", @"/wizard /section=wizards\dvd.xml");
     }
 
-    private Win32API.MSG msg1 = new Win32API.MSG();
+    private Win32API.MSG msgApi = new Win32API.MSG();
 
     public void HandleMessage()
     {
       try
       {
-        if (!Win32API.PeekMessage(ref msg1, IntPtr.Zero, 0, 0, 0))
-        {
+        if (!Win32API.PeekMessage(ref msgApi, IntPtr.Zero, 0, 0, 0))
           return;
-        }
-        if (!Win32API.GetMessageA(ref msg1, IntPtr.Zero, 0, 0))
-        {
+
+        if (!Win32API.GetMessageA(ref msgApi, IntPtr.Zero, 0, 0))
           return;
-        }
-        Win32API.TranslateMessage(ref msg1);
-        Win32API.DispatchMessageA(ref msg1);
+
+        Win32API.TranslateMessage(ref msgApi);
+        Win32API.DispatchMessageA(ref msgApi);
         //	System.Windows.Forms.Application.DoEvents();//SLOW
       }
 #if DEBUG
       catch (Exception ex)
       {
-        Log.Write("exception:{0}", ex.ToString());
+        Log.Write("D3D: Exception: {0}", ex.ToString());
 #else
       catch (Exception)
       {
@@ -2498,9 +2391,7 @@ namespace MediaPortal
       NativeMethods.QueryPerformanceCounter(ref endFrame);
       timeElapsed = endFrame - startFrame;
       if (timeElapsed < GUIGraphicsContext.DesiredFrameTime)
-      {
         return true;
-      }
       return false;
     }
 
@@ -2518,9 +2409,7 @@ namespace MediaPortal
       {
         milliSecondsLeft = (((GUIGraphicsContext.DesiredFrameTime - timeElapsed) * 1000) / DXUtil.TicksPerSecond);
         if (milliSecondsLeft > 0)
-        {
           DoSleep((int)milliSecondsLeft);
-        }
       }
     }
 
@@ -2641,13 +2530,12 @@ namespace MediaPortal
 
     private void contextMenu1_Popup(object sender, EventArgs e)
     {
-      contextMenu1.MenuItems.Clear();
+      contextMenu.MenuItems.Clear();
 
       // Add a menu item 
-      contextMenu1.MenuItems.Add("Restore", new EventHandler(this.Restore_OnClick));
-      contextMenu1.MenuItems.Add("Exit", new EventHandler(this.Exit_OnClick));
+      contextMenu.MenuItems.Add("Restore", new EventHandler(this.Restore_OnClick));
+      contextMenu.MenuItems.Add("Exit", new EventHandler(this.Exit_OnClick));
     }
-
 
     protected void Restore_OnClick(Object sender, EventArgs e)
     {
@@ -2656,10 +2544,10 @@ namespace MediaPortal
 
     public void Restore()
     {
-      Log.Write("Restoring from tray");
+      Log.Write("D3D: Restoring from tray");
 
       Show();
-      notifyIcon1.Visible = false;
+      notifyIcon.Visible = false;
       this.WindowState = FormWindowState.Normal;
       Activate();
       active = true;
@@ -2672,7 +2560,7 @@ namespace MediaPortal
       {
         Win32API.EnableStartBar(false);
         Win32API.ShowStartBar(false);
-        Log.Write("Hiding Start Bar");
+        Log.Write("D3D: Hiding taskbar");
       }
     }
 
@@ -2701,7 +2589,7 @@ namespace MediaPortal
 
     private bool AppStillIdle()
     {
-      bool result = Win32API.PeekMessage(ref msg1, IntPtr.Zero, 0, 0, 0);
+      bool result = Win32API.PeekMessage(ref msgApi, IntPtr.Zero, 0, 0, 0);
       if (result)
       {
         //System.Diagnostics.Debug.WriteLine(String.Format("msg :hwnd:{0:X} msg:{1:x} wparm:{2:X} lparm:{3:X}", msg1.hwnd, msg1.message, msg1.wParam, msg1.lParam));
@@ -2725,14 +2613,11 @@ namespace MediaPortal
         if (g_Player.Playing /*&& !g_Player.IsExternalPlayer*/ && g_Player.IsMusic && !g_Player.HasVideo)
         {
           if (GUIGraphicsContext.CurrentFPS < GUIGraphicsContext.MaxFPS)
-          {
             loopCount++;
-          }
           //else if (loopCount > 0)
           else if (GUIGraphicsContext.CurrentFPS > GUIGraphicsContext.MaxFPS)
-          {
             loopCount--;
-          }
+
           sleepCount++;
           if (sleepCount >= loopCount)
           {
@@ -2747,20 +2632,18 @@ namespace MediaPortal
           WaitForFrameClock();
         }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING)
-        {
           break;
-        }
       }
       while (AppStillIdle());
     }
 
     protected void DoMinimizeOnStartup()
     {
-      Log.Write("Minimizing to tray on startup");
+      Log.Write("D3D: Minimizing to tray on startup");
 
       WindowState = FormWindowState.Minimized;
       Hide();
-      notifyIcon1.Visible = true;
+      notifyIcon.Visible = true;
     }
   }
 
@@ -2774,7 +2657,7 @@ namespace MediaPortal
     None,
     ApplicationMustExit,
     WarnSwitchToRef
-  } ;
+  }
 
   #endregion
 
@@ -2904,9 +2787,7 @@ namespace MediaPortal
         string strMsg = string.Empty;
         strMsg = "Could not load required media.";
         if (mediaFile.Length > 0)
-        {
           strMsg += string.Format("\r\nFile: {0}", mediaFile);
-        }
 
         return strMsg;
       }

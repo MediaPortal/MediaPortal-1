@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.IO;
@@ -39,7 +43,6 @@ using MediaPortal.Player;
 using MediaPortal.Dialogs;
 using MediaPortal.TV.Teletext;
 using MediaPortal.TV.DiskSpace;
-
 
 namespace MediaPortal.TV.Recording
 {
@@ -205,7 +208,6 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     static public void Stop()
     {
-
       if (!Running) return;
       //unsubscribe from events
       GUIWindowManager.OnActivateWindow -= new GUIWindowManager.WindowActivationHandler(GUIWindowManager_OnActivateWindow);
@@ -255,16 +257,16 @@ namespace MediaPortal.TV.Recording
       if (GUIGraphicsContext.IsTvWindow(windowId))
       {
         // we enter my tv, enable exclusive mode
-        Log.WriteFile(Log.LogType.Recorder, "Recorder:enable dx9 exclusive mode");
+        Log.WriteFile(Log.LogType.Recorder, "Recorder: Enabling DX9 exclusive mode");
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
         GUIWindowManager.SendMessage(msg);
       }
       else
       {
-        //Log.WriteFile(Log.LogType.Recorder, "Recorder:disable dx9 exclusive mode");
         // we leave my tv, disable exclusive mode
-        //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-        //GUIWindowManager.SendMessage(msg);
+        Log.WriteFile(Log.LogType.Recorder, "Recorder: Disabling DX9 exclusive mode");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
       }
     }//static public void GUIWindowManager_OnActivateWindow()
 
@@ -870,6 +872,13 @@ namespace MediaPortal.TV.Recording
     static bool reEntrantStopViewing = false;
     static public void StopViewing()
     {
+      if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
+      {
+        Log.Write("Recorder: Disabling DX9 exclusive mode");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
+      }
+
       if (!Running) return;
       if (reEntrantStopViewing) return;
       try

@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -29,7 +34,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using MediaPortal.GUI.Library;
-//using DirectX.Capture;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;
@@ -37,7 +41,6 @@ using DShowNET.Helper;
 using DirectShowLib;
 using DirectShowLib.Dvd;
 using Microsoft.Win32;
-
 
 namespace MediaPortal.Player
 {
@@ -136,7 +139,7 @@ namespace MediaPortal.Player
         }
       }
 
-      Log.Write("DVD:enable dx9 exclusive mode");
+      Log.Write("DVDPlayer9: Enabling DX9 exclusive mode");
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
       GUIWindowManager.SendMessage(msg);
 
@@ -151,7 +154,7 @@ namespace MediaPortal.Player
           Marshal.ThrowExceptionForHR(hr);
 
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
-        
+
         /*using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
         {
           _vmr9.UseRGBMode(xmlreader.GetValueAsBool("dvdplayer", "usergbmode", false));
@@ -317,110 +320,110 @@ namespace MediaPortal.Player
           subkey3.SetValue("EnableDXVA", codecValue);
         }
       }
-        try
+      try
+      {
+        Log.Write("DVDPlayer9:cleanup DShow graph");
+        if (_mediaCtrl != null)
         {
-          Log.Write("DVDPlayer9:cleanup DShow graph");
-          if (_mediaCtrl != null)
-          {
-            hr = _mediaCtrl.Stop();
-            _mediaCtrl = null;
-          }
-          _state = PlayState.Stopped;
-          _visible = false;
-
-          _mediaEvt = null;
-          _dvdCtrl = null;
-          _dvdInfo = null;
-          _basicVideo = null;
-          _basicAudio = null;
-          _mediaPos = null;
-          _videoWin = null;
-
-          if (_vmr9 != null)
-          {
-            _vmr9.Dispose();
-          }
-          _vmr9 = null;
-
-
-          if (_videoCodecFilter != null)
-          {
-            while ((hr = Marshal.ReleaseComObject(_videoCodecFilter)) > 0) ;
-            _videoCodecFilter = null;
-          }
-          if (_audioCodecFilter != null)
-          {
-            while ((hr = Marshal.ReleaseComObject(_audioCodecFilter)) > 0) ;
-            _audioCodecFilter = null;
-          }
-
-          if (_audioRendererFilter != null)
-          {
-            while ((hr = Marshal.ReleaseComObject(_audioRendererFilter)) > 0) ;
-            _audioRendererFilter = null;
-          }
-
-          if (_ffdShowFilter != null)
-          {
-            while ((hr = Marshal.ReleaseComObject(_ffdShowFilter)) > 0) ;
-            _ffdShowFilter = null;
-          }
-
-
-          if (_cmdOption != null)
-            Marshal.ReleaseComObject(_cmdOption);
-          _cmdOption = null;
-          _pendingCmd = false;
-
-          if (_dvdbasefilter != null)
-          {
-            while ((hr = Marshal.ReleaseComObject(_dvdbasefilter)) > 0) ;
-            _dvdbasefilter = null;
-          }
-
-          if (_dvdGraph != null)
-          {
-            while ((hr = Marshal.ReleaseComObject(_dvdGraph)) > 0) ;
-            _dvdGraph = null;
-          }
-          if (_line21Decoder != null)
-          {
-            while ((hr = Marshal.ReleaseComObject(_line21Decoder)) > 0) ;
-            _line21Decoder = null;
-          }
-
-
-          if (_rotEntry != null)
-          {
-            _rotEntry.Dispose();
-          }
-          _rotEntry = null;
-
-          if (_graphBuilder != null)
-          {
-            DirectShowUtil.RemoveFilters(_graphBuilder);
-            while ((hr = Marshal.ReleaseComObject(_graphBuilder)) > 0) ;
-            _graphBuilder = null;
-          }
-
-          _state = PlayState.Init;
-
-          if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
-          {
-            //Log.Write("DVD:disable dx9 exclusive mode");
-            //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-            //GUIWindowManager.SendMessage(msg);
-          }
-
-          GUIGraphicsContext.form.Invalidate(true);
-          GUIGraphicsContext.form.Activate();
+          hr = _mediaCtrl.Stop();
+          _mediaCtrl = null;
         }
-        catch (Exception ex)
+        _state = PlayState.Stopped;
+        _visible = false;
+
+        _mediaEvt = null;
+        _dvdCtrl = null;
+        _dvdInfo = null;
+        _basicVideo = null;
+        _basicAudio = null;
+        _mediaPos = null;
+        _videoWin = null;
+
+        if (_vmr9 != null)
         {
-          Log.WriteFile(Log.LogType.Log, true, "DVDPlayer9:exception while cleanuping DShow graph {0} {1}", ex.Message, ex.StackTrace);
+          _vmr9.Dispose();
         }
+        _vmr9 = null;
+
+
+        if (_videoCodecFilter != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_videoCodecFilter)) > 0) ;
+          _videoCodecFilter = null;
+        }
+        if (_audioCodecFilter != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_audioCodecFilter)) > 0) ;
+          _audioCodecFilter = null;
+        }
+
+        if (_audioRendererFilter != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_audioRendererFilter)) > 0) ;
+          _audioRendererFilter = null;
+        }
+
+        if (_ffdShowFilter != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_ffdShowFilter)) > 0) ;
+          _ffdShowFilter = null;
+        }
+
+
+        if (_cmdOption != null)
+          Marshal.ReleaseComObject(_cmdOption);
+        _cmdOption = null;
+        _pendingCmd = false;
+
+        if (_dvdbasefilter != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_dvdbasefilter)) > 0) ;
+          _dvdbasefilter = null;
+        }
+
+        if (_dvdGraph != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_dvdGraph)) > 0) ;
+          _dvdGraph = null;
+        }
+        if (_line21Decoder != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_line21Decoder)) > 0) ;
+          _line21Decoder = null;
+        }
+
+
+        if (_rotEntry != null)
+        {
+          _rotEntry.Dispose();
+        }
+        _rotEntry = null;
+
+        if (_graphBuilder != null)
+        {
+          DirectShowUtil.RemoveFilters(_graphBuilder);
+          while ((hr = Marshal.ReleaseComObject(_graphBuilder)) > 0) ;
+          _graphBuilder = null;
+        }
+
+        _state = PlayState.Init;
+
+        if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
+        {
+          Log.Write("DVDPlayer9: Disabling DX9 exclusive mode");
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendMessage(msg);
+        }
+
+        GUIGraphicsContext.form.Invalidate(true);
+        GUIGraphicsContext.form.Activate();
+      }
+      catch (Exception ex)
+      {
+        Log.WriteFile(Log.LogType.Log, true, "DVDPlayer9: Exception while cleanuping DShow graph - {0} {1}", ex.Message, ex.StackTrace);
+      }
     }
-    
+
     protected override void OnProcess()
     {
       //_sourceRectangle=m_scene.SourceRect;

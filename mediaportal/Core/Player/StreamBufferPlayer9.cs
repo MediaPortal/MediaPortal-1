@@ -1,5 +1,7 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
- *	Copyright (C) 2005 Team MediaPortal
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -18,11 +20,13 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.InteropServices;
-//using DirectX.Capture;
 using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
@@ -76,8 +80,10 @@ namespace MediaPortal.Player
       //switch back to directx fullscreen mode
 
       //		Log.Write("StreamBufferPlayer9: switch to fullscreen mode");
+      Log.Write("StreamBufferPlayer9: Enabling DX9 exclusive mode");
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
       GUIWindowManager.SendMessage(msg);
+
       //Log.Write("StreamBufferPlayer9: build graph");
 
       try
@@ -272,7 +278,7 @@ namespace MediaPortal.Player
 
         if (_pinVmr9ConnectedTo != null)
         {
-          Marshal.ReleaseComObject(_pinVmr9ConnectedTo) ;
+          Marshal.ReleaseComObject(_pinVmr9ConnectedTo);
           _pinVmr9ConnectedTo = null;
         }
 
@@ -332,19 +338,18 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        Log.WriteFile(Log.LogType.Log, true, "StreamBufferPlayer9:exception while cleaning DShow graph {0} {1}", ex.Message, ex.StackTrace);
+        Log.WriteFile(Log.LogType.Log, true, "StreamBufferPlayer9: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
 
-      //Log.Write("StreamBufferPlayer9:switch");
       //switch back to directx windowed mode
-
       if (!GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
       {
-        //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-        //GUIWindowManager.SendMessage(msg);
+        Log.Write("StreamBufferPlayer9: Disabling DX9 exclusive mode");
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
       }
 
-      Log.Write("StreamBufferPlayer9:cleanup done");
+      Log.Write("StreamBufferPlayer9: Cleanup done");
     }
 
     protected override void OnProcess()
@@ -421,7 +426,7 @@ namespace MediaPortal.Player
       {
         int x = 1;
       }
-      
+
     }
     public override void Stop()
     {
