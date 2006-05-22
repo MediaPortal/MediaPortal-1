@@ -1001,14 +1001,17 @@ namespace MediaPortal.GUI.Library
 
     /// <summary>
     /// Returns the ID of the current visible OSD
-    /// <returns>null if no OSD is visible</returns>
-    /// <returns>GUIWindow when OSD is visible</returns>
+    /// <returns>GUIWindow.Window.WINDOW_INVALID if no OSD is visible</returns>
+    /// <returns>GUIWindow.Window when OSD is visible</returns>
     /// </summary>
     static public GUIWindow.Window VisibleOsd
     {
       get
       {
-        return (GUIWindow.Window)_displayedOsd.GetID;
+        if (_displayedOsd != null)
+          return (GUIWindow.Window)_displayedOsd.GetID;
+        else
+          return GUIWindow.Window.WINDOW_INVALID;
       }
       set
       {
