@@ -171,10 +171,10 @@ namespace MediaPortal.Util
           item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
                 share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
         }
-        if (Directory.Exists(item.Path))
+        if(File.Exists(item.Path+"\folder.jpg"))
         {
-          item.IconImage = Utils.GetCoverArtName(item.Path, "folder");
-          item.IconImageBig = Utils.GetLargeCoverArtName(item.Path, "folder");
+            item.IconImage = Utils.GetCoverArtName(item.Path, "folder");
+            item.IconImageBig = Utils.GetLargeCoverArtName(item.Path, "folder");
         }
         else
         {
