@@ -171,7 +171,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ListView listViewFiles;
     private System.Windows.Forms.ColumnHeader columnHeader4;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox7;
-    private MediaPortal.UserInterface.Controls.MPLabel label19;
+    private MediaPortal.UserInterface.Controls.MPButton btnAmazon;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxPictures;
     private MediaPortal.UserInterface.Controls.MPButton btnLookupImage;
     private MediaPortal.UserInterface.Controls.MPLabel label15;
@@ -241,7 +241,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       UpdateControlStatus();
-      LoadMovies();
+      LoadMovies(0);
       if (cbTitle.Items.Count > 0)
         cbTitle.SelectedIndex = 0;
     }
@@ -345,7 +345,7 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
       this.tabPage7 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.label19 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.btnAmazon = new MediaPortal.UserInterface.Controls.MPButton();
       this.comboBoxPictures = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.btnLookupImage = new MediaPortal.UserInterface.Controls.MPButton();
       this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -1156,7 +1156,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
         | System.Windows.Forms.AnchorStyles.Left)
         | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox7.Controls.Add(this.label19);
+      this.groupBox7.Controls.Add(this.btnAmazon);
       this.groupBox7.Controls.Add(this.comboBoxPictures);
       this.groupBox7.Controls.Add(this.btnLookupImage);
       this.groupBox7.Controls.Add(this.label15);
@@ -1168,13 +1168,15 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox7.TabIndex = 0;
       this.groupBox7.TabStop = false;
       // 
-      // label19
+      // btnAmazon
       // 
-      this.label19.Location = new System.Drawing.Point(16, 48);
-      this.label19.Name = "label19";
-      this.label19.Size = new System.Drawing.Size(96, 16);
-      this.label19.TabIndex = 3;
-      this.label19.Text = "Available Images:";
+      this.btnAmazon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnAmazon.Location = new System.Drawing.Point(16, 44);
+      this.btnAmazon.Name = "btnAmazon";
+      this.btnAmazon.Size = new System.Drawing.Size(96, 22);
+      this.btnAmazon.TabIndex = 3;
+      this.btnAmazon.Text = "Search Amazon";
+      this.btnAmazon.Click += new System.EventHandler(this.btnAmazon_Click);
       // 
       // comboBoxPictures
       // 
@@ -1186,6 +1188,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxPictures.Size = new System.Drawing.Size(288, 21);
       this.comboBoxPictures.TabIndex = 4;
       this.comboBoxPictures.SelectedIndexChanged += new System.EventHandler(this.comboBoxPictures_SelectedIndexChanged);
+      this.comboBoxPictures.Enabled = false;
       // 
       // btnLookupImage
       // 
@@ -1194,7 +1197,7 @@ namespace MediaPortal.Configuration.Sections
       this.btnLookupImage.Name = "btnLookupImage";
       this.btnLookupImage.Size = new System.Drawing.Size(72, 22);
       this.btnLookupImage.TabIndex = 2;
-      this.btnLookupImage.Text = "Lookup";
+      this.btnLookupImage.Text = "Download";
       this.btnLookupImage.Click += new System.EventHandler(this.btnLookupImage_Click);
       // 
       // label15
@@ -1509,7 +1512,9 @@ namespace MediaPortal.Configuration.Sections
 
       foreach (string file in availableFiles)
       {
-        ScanFile(file, -1);
+         SetCount(currentCount, totalFiles);
+         progressBar.PerformStep();
+         ScanFile(file);
 
         //
         // Update stats
@@ -1530,7 +1535,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     /// <param name="file"></param>
-    private IMDBMovie ScanFile(string file, int ID)
+    private IMDBMovie ScanFile(string file)
     {
       if (stopRebuild) return null;
 
@@ -1538,45 +1543,14 @@ namespace MediaPortal.Configuration.Sections
       if (ext == ".ifo") return null;
       if (ext == ".vob") return null;
       IMDBMovie movieDetails = new IMDBMovie();
-      IMDB imdb = new IMDB(this);
-
-      // if not fuzzy matching select the first match
-      int selectedItem = _isFuzzyMatching ? -1 : 0;
-
       int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
-
+      string searchForMovie = Utils.GetFilename(file, true);
+      System.Windows.Forms.Application.DoEvents();
+      movieDetails = FindMovieDetails(searchForMovie);
+      System.Windows.Forms.Application.DoEvents();
+      if (stopRebuild) return null;
       if (id < 0)
       {
-        string searchForMovie = Utils.GetFilename(file, true);
-        System.Windows.Forms.Application.DoEvents();
-        imdb.Find(searchForMovie);
-        System.Windows.Forms.Application.DoEvents();
-        if (stopRebuild) return null;
-        if (imdb.Count <= 0) return null;
-        if (imdb.Count > 0)
-        {
-          if (_isFuzzyMatching)
-            selectedItem = MatchLevenshtein(searchForMovie, imdb);
-
-          if (_isFuzzyMatching == false || selectedItem == -1)
-          {
-            DlgMovieList dlg = new DlgMovieList();
-            dlg.imdb = imdb;
-            dlg.Filename = file;
-            for (int i = 0; i < imdb.Count; ++i)
-              dlg.AddMovie(imdb[i].Title);
-            if (dlg.ShowDialog() == DialogResult.Cancel) return null;
-            selectedItem = dlg.SelectedItem;
-          }
-        }
-
-        if (stopRebuild) return null;
-        if (imdb.GetDetails(imdb[selectedItem], ref movieDetails))
-        {
-          if (stopRebuild) return null;
-          System.Windows.Forms.Application.DoEvents();
-          if (ID < 0)
-          {
             string path, filename;
             Utils.Split(file, out path, out filename);
             VirtualDirectory dir = new VirtualDirectory();
@@ -1590,37 +1564,64 @@ namespace MediaPortal.Configuration.Sections
                 VideoDatabase.AddMovieFile(item.Path);
               }
             }
-            id = VideoDatabase.AddMovie(file, false);
+            id = VideoDatabase.AddMovieFile(file);
             movieDetails.ID = id;
-          }
-          else
-          {
-            id = ID;
-            movieDetails.ID = ID;
-          }
-
-          AmazonImageSearch search = new AmazonImageSearch();
-          search.Search(movieDetails.Title);
-          if (search.Count > 0)
-          {
-            movieDetails.ThumbURL = search[0];
-          }
-          VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
-          if (stopRebuild) return null;
-          //download thumbnail
-          DownloadThumnail(Thumbs.MovieTitle, movieDetails.ThumbURL, movieDetails.Title);
-
-          if (stopRebuild) return null;
-          System.Windows.Forms.Application.DoEvents();
-        }
+            VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
       }
-      if (id >= 0)
+      else
       {
-        //"Cast overview:\nNaomi Watts as Rachel Keller\nMartin Henderson as Noah Clay\nDavid Dorfman as Aidan Keller\nBrian Cox as Richard Morgan\nJane Alexander as Dr. Grasnik\nLindsay Frost as Ruth Embry\nAmber Tamblyn as Katie Embry\nRachael Bella as Rebecca ''Becca'' Kotler\nDaveigh Chase as Samara Morgan\nShannon Cochran as Anna Morgan\nSandra Thigpen as Teacher\nRichard Lineback as Innkeeper\nSasha Barrese as Girl Teen #1\nTess Hall as Girl Teen #2\nAdam Brody as Kellen, Male Teen #1"
-        DownloadActors(movieDetails);
-        DownloadDirector(movieDetails);
+            movieDetails.ID = id;
+            VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
       }
       return movieDetails;
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="searchForMovie"></param>
+    private IMDBMovie FindMovieDetails(string searchForMovie)
+    {
+        IMDBMovie movieDetails = new IMDBMovie();
+        IMDB imdb = new IMDB(this);
+
+        // if not fuzzy matching select the first match
+        int selectedItem = _isFuzzyMatching ? -1 : 0;
+        imdb.Find(searchForMovie);
+        if (imdb.Count <= 0) return null;
+        if (imdb.Count > 0)
+        {
+                if (_isFuzzyMatching)
+                    selectedItem = MatchLevenshtein(searchForMovie, imdb);
+
+                if (_isFuzzyMatching == false || selectedItem == -1)
+                {
+                    DlgMovieList dlg = new DlgMovieList();
+                    dlg.imdb = imdb;
+                    dlg.Filename = searchForMovie;
+                    for (int i = 0; i < imdb.Count; ++i)
+                        dlg.AddMovie(imdb[i].Title);
+                    if (dlg.ShowDialog() == DialogResult.Cancel) return null;
+                    selectedItem = dlg.SelectedItem;
+                }
+        }
+        if (imdb.GetDetails(imdb[selectedItem], ref movieDetails))
+        {
+                if (movieDetails.ThumbURL == string.Empty)
+                {
+                    AmazonImageSearch search = new AmazonImageSearch();
+                    search.Search(movieDetails.Title);
+                    if (search.Count > 0)
+                    {
+                        movieDetails.ThumbURL = search[0];
+                    }
+                }
+                //download thumbnail
+                DownloadThumnail(Thumbs.MovieTitle, movieDetails.ThumbURL, movieDetails.Title);
+                //"Cast overview:\nNaomi Watts as Rachel Keller\nMartin Henderson as Noah Clay\nDavid Dorfman as Aidan Keller\nBrian Cox as Richard Morgan\nJane Alexander as Dr. Grasnik\nLindsay Frost as Ruth Embry\nAmber Tamblyn as Katie Embry\nRachael Bella as Rebecca ''Becca'' Kotler\nDaveigh Chase as Samara Morgan\nShannon Cochran as Anna Morgan\nSandra Thigpen as Teacher\nRichard Lineback as Innkeeper\nSasha Barrese as Girl Teen #1\nTess Hall as Girl Teen #2\nAdam Brody as Kellen, Male Teen #1"
+                DownloadActors(movieDetails);
+                DownloadDirector(movieDetails);
+        }
+        return movieDetails;
     }
 
     void DownloadThumnail(string folder, string url, string name)
@@ -1639,8 +1640,9 @@ namespace MediaPortal.Configuration.Sections
         {
           string strTemp = "temp";
           strTemp += strExtension;
+          strThumb = System.IO.Path.ChangeExtension(strThumb, strExtension);
+          LargeThumb = System.IO.Path.ChangeExtension(LargeThumb, strExtension);
           Utils.FileDelete(strTemp);
-
           Utils.DownLoadImage(url, strTemp);
           if (System.IO.File.Exists(strTemp))
           {
@@ -1681,15 +1683,20 @@ namespace MediaPortal.Configuration.Sections
     void DownloadActors(IMDBMovie movieDetails)
     {
       IMDB imdb = new IMDB(this);
-      string[] actors = movieDetails.Cast.Split('\n');
-      if (actors.Length > 1)
+      char[] splitter  = {'\n',','};
+      string[] actors = movieDetails.Cast.Split(splitter);
+      if (actors.Length > 0)
       {
-        for (int i = 1; i < actors.Length; ++i)
+        for (int i = 0; i < actors.Length; ++i)
         {
           if (stopRebuild) return;
           int pos = actors[i].IndexOf(" as ");
-          if (pos < 0) continue;
-          string actor = actors[i].Substring(0, pos);
+          string actor = actors[i];
+          if (pos >= 0)
+          {
+              actor = actors[i].Substring(0, pos);
+          }
+          actor = actor.Trim();
           string strThumb = Utils.GetCoverArtName(Thumbs.MovieActors, actor);
           if (!System.IO.File.Exists(strThumb))
           {
@@ -1742,18 +1749,22 @@ namespace MediaPortal.Configuration.Sections
     {
     }
 
-    void LoadMovies()
+    void LoadMovies(int id)
     {
       cbTitle.Items.Clear();
       ArrayList movies = new ArrayList();
       VideoDatabase.GetMovies(ref movies);
       movies.Sort(new MovieTitleComparer());
       int i = 0;
+      int index = 0;
       foreach (IMDBMovie movie in movies)
       {
         ComboBoxItemMovie newItem = new ComboBoxItemMovie(movie.Title, movie);
         cbTitle.Items.Add(newItem);
-        if (i == 0) UpdateEdit(movie);
+        if (id == movie.ID)
+        {
+            index = i;
+        }
         ++i;
       }
 
@@ -1762,6 +1773,7 @@ namespace MediaPortal.Configuration.Sections
       movieNew.Title = "New...";
       ComboBoxItemMovie emptyItem = new ComboBoxItemMovie("New...", movieNew);
       cbTitle.Items.Add(emptyItem);
+      cbTitle.SelectedIndex = index;
     }
     void UpdateEdit(IMDBMovie movie)
     {
@@ -1784,112 +1796,115 @@ namespace MediaPortal.Configuration.Sections
         pictureBox1.Image.Dispose();
         pictureBox1.Image = null;
       }
-      string file = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movie.Title);
-      if (System.IO.File.Exists(file))
-      {
-        using (Image img = Image.FromFile(file))
-        {
-          Bitmap result = new Bitmap(img.Width, img.Height);
-          using (Graphics g = Graphics.FromImage(result))
-          {
-            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            g.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height));
-          }
-          pictureBox1.Image = result;
-        }
-      }
       listViewMovieActors.Items.Clear();
-      string[] actors = movie.Cast.Split('\n');
-      if (actors.Length > 1)
+      listViewGenres.Items.Clear();
+      listViewAllGenres.Items.Clear();
+      listViewAllActors.Items.Clear();
+      listViewFiles.Items.Clear();
+      comboBoxPictures.Items.Clear();
+      comboBoxPictures.Enabled = false;
+      if (movie.ID>=0)
       {
-        for (int i = 1; i < actors.Length; ++i)
-        {
-          string actor;
-          string role = "";
-          int pos = actors[i].IndexOf(" as ");
-          if (pos >= 0)
+          string file = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movie.Title);
+          if (System.IO.File.Exists(file))
           {
-            actor = actors[i].Substring(0, pos);
-            role = actors[i].Substring(pos + 4);
+              using (Image img = Image.FromFile(file))
+              {
+                  Bitmap result = new Bitmap(img.Width, img.Height);
+                  using (Graphics g = Graphics.FromImage(result))
+                  {
+                      g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                      g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                      g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                      g.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height));
+                  }
+                  pictureBox1.Image = result;
+              }
+          }
+          char[] splitter = { '\n', ',' };
+          string[] actors = movie.Cast.Split(splitter);
+          if (actors.Length > 0)
+          {
+              for (int i = 0; i < actors.Length; ++i)
+              {
+                  string actor;
+                  string role = "";
+                  int pos = actors[i].IndexOf(" as ");
+                  if (pos >= 0)
+                  {
+                      actor = actors[i].Substring(0, pos);
+                      role = actors[i].Substring(pos + 4);
+                  }
+                  else
+                      actor = actors[i];
+                  actor = actor.Trim();
+                  ListViewItem item = new ListViewItem(actor);
+                  item.SubItems.Add(role);
+                  listViewMovieActors.Items.Add(item);
+              }
+          }
+          listViewMovieActors.Sort();
+
+          string szGenres = movie.Genre;
+          ArrayList vecGenres = new ArrayList();
+          if (szGenres.IndexOf("/") >= 0)
+          {
+              Tokens f = new Tokens(szGenres, new char[] { '/' });
+              foreach (string strGenre in f)
+              {
+                  listViewGenres.Items.Add(strGenre.Trim());
+              }
           }
           else
-            actor = actors[i];
+          {
+              string strGenre = movie.Genre;
+              listViewGenres.Items.Add(strGenre.Trim());
+          }
 
-          ListViewItem item = new ListViewItem(actor);
-          item.SubItems.Add(role);
-          listViewMovieActors.Items.Add(item);
-        }
+          listViewGenres.Sort();
+          ArrayList filenames = new ArrayList();
+          VideoDatabase.GetFiles(movie.ID, ref filenames);
+          foreach (string filename in filenames)
+          {
+              listViewFiles.Items.Add(filename);
+          }
       }
-      listViewMovieActors.Sort();
-
-      listViewGenres.Items.Clear();
-      string szGenres = movie.Genre;
-      ArrayList vecGenres = new ArrayList();
-      if (szGenres.IndexOf("/") >= 0)
-      {
-        Tokens f = new Tokens(szGenres, new char[] { '/' });
-        foreach (string strGenre in f)
-        {
-          listViewGenres.Items.Add(strGenre.Trim());
-        }
-      }
-      else
-      {
-        string strGenre = movie.Genre;
-        listViewGenres.Items.Add(strGenre.Trim());
-      }
-
-      listViewGenres.Sort();
-
-
-      listViewAllGenres.Items.Clear();
       ArrayList genres = new ArrayList();
       VideoDatabase.GetGenres(genres);
       foreach (string genre in genres)
       {
-        bool add = true;
-        foreach (ListViewItem item in listViewGenres.Items)
-        {
-          if (item.Text == genre)
+          bool add = true;
+          foreach (ListViewItem item in listViewGenres.Items)
           {
-            add = false;
-            break;
+              if (item.Text == genre)
+              {
+                  add = false;
+                  break;
+              }
           }
-        }
-        if (add)
-          listViewAllGenres.Items.Add(genre);
+          if (add)
+              listViewAllGenres.Items.Add(genre);
       }
       listViewAllGenres.Sort();
 
-
-      listViewAllActors.Items.Clear();
       ArrayList listActors = new ArrayList();
       VideoDatabase.GetActors(listActors);
       foreach (string actor in listActors)
       {
-        bool add = true;
-        foreach (ListViewItem item in listViewMovieActors.Items)
-        {
-          if (item.Text == actor)
+          bool add = true;
+          foreach (ListViewItem item in listViewMovieActors.Items)
           {
-            add = false;
-            break;
+              if (item.Text == actor)
+              {
+                  add = false;
+                  break;
+              }
           }
-        }
-        if (add)
-          listViewAllActors.Items.Add(actor);
+          if (add)
+              listViewAllActors.Items.Add(actor);
       }
       listViewAllActors.Sort();
 
-      listViewFiles.Items.Clear();
-      ArrayList filenames = new ArrayList();
-      VideoDatabase.GetFiles(movie.ID, ref filenames);
-      foreach (string filename in filenames)
-      {
-        listViewFiles.Items.Add(filename);
-      }
     }
 
     private void cbTitle_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -1903,7 +1918,7 @@ namespace MediaPortal.Configuration.Sections
     {
       if (tabControl1.SelectedTab == tabPage1)
       {
-        LoadMovies();
+        LoadMovies(0);
       }
     }
 
@@ -2014,6 +2029,16 @@ namespace MediaPortal.Configuration.Sections
           ListViewItem listItem = listViewAllActors.SelectedItems[i];
           VideoDatabase.DeleteActor(listItem.Text);
           listViewAllActors.Items.Remove(listItem);
+          string file = Utils.GetLargeCoverArtName(Thumbs.MovieActors, listItem.Text);
+          if (System.IO.File.Exists(file))
+          {
+              System.IO.File.Delete(file);
+          }
+          file = Utils.GetCoverArtName(Thumbs.MovieActors, listItem.Text);
+          if (System.IO.File.Exists(file))
+          {
+              System.IO.File.Delete(file);
+          }
         }
       }
     }
@@ -2059,44 +2084,27 @@ namespace MediaPortal.Configuration.Sections
       if (tbTitle.Text == String.Empty)
       {
         MessageBox.Show("Please enter a movie title", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); ;
+        return;
       }
       buttonLookupMovie.Enabled = false;
       btnSave.Enabled = false;
       tabControl2.Enabled = false;
       tabControl1.Enabled = false;
       int id = CurrentMovie.ID;
-      IMDBMovie movie = ScanFile(tbTitle.Text, id);
+      IMDBMovie movie = FindMovieDetails(tbTitle.Text);
       if (movie != null)
       {
-        LoadMovies();
-        foreach (ComboBoxItemMovie item in cbTitle.Items)
-        {
-          if (item.Title == movie.Title)
+          if (id == -1)
           {
-            cbTitle.SelectedItem = item;
-            break;
+              id = VideoDatabase.AddMovieFile(tbTitle.Text);
           }
-        }
-        if (cbTitle.SelectedItem == null)
-        {
-          foreach (ComboBoxItemMovie item in cbTitle.Items)
-          {
-            if (item.Movie.ID == id)
-            {
-              cbTitle.SelectedItem = item;
-              break;
-            }
-          }
-        }
+          movie.ID = id;
+          VideoDatabase.SetMovieInfoById(movie.ID, ref movie);
+          LoadMovies(movie.ID);
       }
       else
       {
         MessageBox.Show("Movie details could not be found", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation); ;
-      }
-      if (cbTitle.SelectedItem != null)
-      {
-        ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
-        UpdateEdit(item.Movie);
       }
       buttonLookupMovie.Enabled = true;
       btnSave.Enabled = true;
@@ -2128,6 +2136,7 @@ namespace MediaPortal.Configuration.Sections
         int pathId = VideoDatabase.AddPath(strPath);
         VideoDatabase.AddFile(details.ID, pathId, strFileName);
       }
+      LoadMovies(details.ID);
     }
 
     private void btnLookupImage_Click(object sender, System.EventArgs e)
@@ -2161,6 +2170,33 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
+      private void btnAmazon_Click(object sender, System.EventArgs e)
+      {
+              btnAmazon.Enabled = false;
+              comboBoxPictures.Items.Clear();
+              comboBoxPictures.Enabled = false;
+              comboBoxPictures.Items.Add(new ComboBoxArt("Loading from Amazon", ""));
+              comboBoxPictures.SelectedIndex = 0;
+              AmazonImageSearch search = new AmazonImageSearch();
+              search.Search(CurrentMovie.Title);
+              if (search.Count > 0)
+              {
+                  comboBoxPictures.Items.Clear();
+                  for (int i = 0; i < search.Count; ++i)
+                  {
+                      ComboBoxArt art = new ComboBoxArt(String.Format("Picture {0}", (i + 1)), search[i]);
+                      comboBoxPictures.Items.Add(art);
+                  }
+                  comboBoxPictures.Enabled = true;
+              }
+              else
+              {
+                  comboBoxPictures.Items.Clear();
+                  comboBoxPictures.Items.Add(new ComboBoxArt("No results found...", ""));
+                  comboBoxPictures.SelectedIndex = 0;
+              }
+              btnAmazon.Enabled = true;
+          }
 
     private void btnDelete_Click(object sender, System.EventArgs e)
     {
@@ -2172,39 +2208,37 @@ namespace MediaPortal.Configuration.Sections
       if (dialogResult == DialogResult.Yes)
       {
         VideoDatabase.DeleteMovieInfoById(CurrentMovie.ID);
-        LoadMovies();
+        string file = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, CurrentMovie.Title);
+        if (System.IO.File.Exists(file))
+        {
+            System.IO.File.Delete(file);
+        }
+        file = Utils.GetCoverArtName(Thumbs.MovieTitle, CurrentMovie.Title);
+        if (System.IO.File.Exists(file))
+        {
+            System.IO.File.Delete(file);
+        }
+        LoadMovies(0);
       }
     }
 
     private void comboBoxPictures_SelectedIndexChanged(object sender, System.EventArgs e)
     {
       ComboBoxArt art = comboBoxPictures.SelectedItem as ComboBoxArt;
-      if (art != null)
+      if ((art != null)&&(comboBoxPictures.Enabled))
       {
+          Log.Write("Combobox selected picture:{0}", art.URL);
         textBoxPictureURL.Text = art.URL;
       }
     }
 
     private void tabControl2_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-      if (tabControl2.SelectedTab == tabPage7)
-      {
-        comboBoxPictures.Items.Clear();
-        AmazonImageSearch search = new AmazonImageSearch();
-        search.Search(CurrentMovie.Title);
-        if (search.Count > 0)
-        {
-          for (int i = 0; i < search.Count; ++i)
-          {
-            ComboBoxArt art = new ComboBoxArt(String.Format("{0}", (i + 1)), search[i]);
-            comboBoxPictures.Items.Add(art);
-          }
-        }
-      }
     }
 
     private void buttonImport_Click(object sender, System.EventArgs e)
     {
+      int id = 0;
       System.Windows.Forms.OpenFileDialog find_file = new OpenFileDialog();
       find_file.RestoreDirectory = true;
       find_file.DefaultExt = "xml";
@@ -2298,12 +2332,12 @@ namespace MediaPortal.Configuration.Sections
         // Added check to validate year
         if (nodeYear != null && nodeYear != null) movie.Year = Int32.Parse(nodeYear.InnerText);
         else movie.Year = 0;
-        int id = VideoDatabase.AddMovie(movie.Title, true);
+        id = VideoDatabase.AddMovie(movie.Title, true);
         movie.ID = id;
         VideoDatabase.SetMovieInfoById(id, ref movie);
         System.Windows.Forms.Application.DoEvents();
       }
-      LoadMovies();
+      LoadMovies(id);
     }
 
     IMDBMovie CurrentMovie
@@ -2314,9 +2348,7 @@ namespace MediaPortal.Configuration.Sections
         if (cbTitle.SelectedItem != null)
         {
           ComboBoxItemMovie cbMovie = (ComboBoxItemMovie)cbTitle.SelectedItem;
-          movie = cbMovie.Movie;
-          movie.Genre = "";
-          movie.Cast = "";
+          movie.ID = cbMovie.Movie.ID;
         }
         //movie.File=
         //movie.Path=

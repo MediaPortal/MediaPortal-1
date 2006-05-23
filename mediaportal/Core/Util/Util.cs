@@ -1576,6 +1576,10 @@ namespace MediaPortal.Util
       if (strFileName.Length == 0) return String.Empty;
 
       string strThumb = Utils.GetCoverArt(strFolder, strFileName);
+      if (strThumb == string.Empty)
+      {
+          strThumb = String.Format(@"{0}\{1}.jpg", strFolder, Utils.FilterFileName(strFileName));
+      }
       return strThumb;
     }
     static public string GetLargeCoverArtName(string strFolder, string strFileName)
@@ -1586,12 +1590,7 @@ namespace MediaPortal.Util
       if (strFileName == null) return String.Empty;
       if (strFileName.Length == 0) return String.Empty;
 
-      string strThumb = Utils.GetCoverArt(strFolder, strFileName+"L");
-      if (strThumb == String.Empty)
-      {
-        strThumb = Utils.GetCoverArt(strFolder, strFileName);
-      }
-      return strThumb;
+      return Utils.GetCoverArtName(strFolder, strFileName+"L");
     }
 
 

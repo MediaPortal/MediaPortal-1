@@ -48,7 +48,8 @@ namespace MediaPortal.GUI.Video
 		[SkinControlAttribute(21)]		protected GUIImage imgCoverArt=null;
 		[SkinControlAttribute(22)]		protected GUITextControl tbTextArea=null;
 		[SkinControlAttribute(30)]		protected GUILabelControl lblImage=null;
-		enum ViewMode
+        [SkinControlAttribute(100)]     protected GUILabelControl lblDisc = null;
+        enum ViewMode
     {
       Image,
       Cast,
@@ -349,7 +350,7 @@ namespace MediaPortal.GUI.Video
 				tbPlotArea.IsVisible=false;
 				tbTextArea.IsVisible=true;
 				imgCoverArt.IsVisible=true;
-				lblImage.IsVisible=false;
+				lblDisc.IsVisible=false;
 				spinDisc.IsVisible=false;
 				btnPlot.Selected=false;
 				btnCast.Selected=true;
@@ -360,7 +361,7 @@ namespace MediaPortal.GUI.Video
 				tbPlotArea.IsVisible=true;
 				tbTextArea.IsVisible=false;
 				imgCoverArt.IsVisible=true;
-				lblImage.IsVisible=true;
+				lblDisc.IsVisible=true;
 				spinDisc.IsVisible=true;
 				btnPlot.Selected=true;
 				btnCast.Selected=false;

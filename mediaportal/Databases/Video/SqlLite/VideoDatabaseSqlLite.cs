@@ -590,7 +590,7 @@ namespace MediaPortal.Video.Database
 				m_db.Execute(sql);
 
 				m_db.Execute( String.Format("delete from actorlinkmovie where idActor={0}",idactor) );
-				m_db.Execute( String.Format("delete from actor where idActor={0}",idactor) );
+				m_db.Execute( String.Format("delete from actors where idActor={0}",idactor) );
 
 			}
 			catch (Exception ex) 
@@ -708,6 +708,7 @@ namespace MediaPortal.Video.Database
 		}
 		public void SetMovieInfoById( int lMovieId, ref IMDBMovie details)
 		{
+            Log.Write("Saving movie info:{0}", details.Title);
 			try
 			{
 				details.ID=lMovieId;
@@ -756,13 +757,18 @@ namespace MediaPortal.Video.Database
 
 				// add cast...
 				ArrayList vecActors = new ArrayList();
-				string[] actors=details.Cast.Split('\n');
-				for (int i=1; i < actors.Length;++i)
+                char[] splitter = { '\n', ',' };
+                string[] actors = details.Cast.Split(splitter);
+                for (int i = 0; i < actors.Length; ++i)
 				{
 					int pos =actors[i].IndexOf(" as ");
-					if (pos <0) continue;
-					string actor=actors[i].Substring(0,pos);
-					int lActorId=AddActor(actor);
+                    string actor = actors[i];
+                    if (pos >= 0)
+                    {
+                        actor = actors[i].Substring(0, pos);
+                    }
+                    actor = actor.Trim();
+                    int lActorId = AddActor(actor);
 					vecActors.Add(lActorId);
 				}
 
@@ -835,7 +841,8 @@ namespace MediaPortal.Video.Database
 			try
 			{
 				if (null==m_db) return ;
-		    
+                if (lMovieId == -1) return;
+                Log.Write("Removing movie:{0}", lMovieId);
 				string strSQL;
 				strSQL = String.Format("delete from genrelinkmovie where idmovie={0}", lMovieId);
 				m_db.Execute(strSQL);
@@ -844,8 +851,14 @@ namespace MediaPortal.Video.Database
 				m_db.Execute(strSQL);
 
 				strSQL = String.Format("delete from movieinfo where idmovie={0}", lMovieId);
-				m_db.Execute(strSQL);  
-			}
+				m_db.Execute(strSQL);
+
+                strSQL = String.Format("delete from files where idMovie={0}", lMovieId);
+                m_db.Execute(strSQL);
+
+                strSQL = String.Format("delete from movie where idMovie={0}", lMovieId);
+                m_db.Execute(strSQL);
+            }
 			catch (Exception ex) 
 			{
 				Log.WriteFile(Log.LogType.Log,true,"videodatabase exception err:{0} stack:{1}", ex.Message,ex.StackTrace);

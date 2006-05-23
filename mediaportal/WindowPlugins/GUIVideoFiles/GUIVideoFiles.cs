@@ -2248,6 +2248,8 @@ namespace MediaPortal.GUI.Video
         {
           string strTemp = "temp";
           strTemp += strExtension;
+          strThumb = System.IO.Path.ChangeExtension(strThumb, strExtension);
+          LargeThumb = System.IO.Path.ChangeExtension(LargeThumb, strExtension);
           Utils.FileDelete(strTemp);
 
           Utils.DownLoadImage(url, strTemp);
@@ -2288,15 +2290,21 @@ namespace MediaPortal.GUI.Video
     }
     static void DownloadActors(IMDBMovie movieDetails)
     {
-      string[] actors = movieDetails.Cast.Split('\n');
-      if (actors.Length > 1)
+
+      char[] splitter = { '\n', ',' };
+      string[] actors = movieDetails.Cast.Split(splitter);
+      if (actors.Length > 0)
       {
-        for (int i = 1; i < actors.Length; ++i)
+        for (int i = 0; i < actors.Length; ++i)
         {
           int percent = (int)(i * 100) / (1 + actors.Length);
           int pos = actors[i].IndexOf(" as ");
-          if (pos < 0) continue;
-          string actor = actors[i].Substring(0, pos);
+          string actor = actors[i];
+          if (pos >= 0)
+          {
+              actor = actors[i].Substring(0, pos);
+          }
+          actor = actor.Trim();
           string strThumb = Utils.GetCoverArtName(Thumbs.MovieActors, actor);
           if (!System.IO.File.Exists(strThumb))
           {

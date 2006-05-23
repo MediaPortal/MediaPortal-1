@@ -835,10 +835,10 @@ namespace MediaPortal.Util
     /// </param>
     static public void CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
     {
+      Log.Write("create thumbnail for {0}-{1}", strFile, strThumb);
       if (strFile == null || strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0) return;
       if (strFile == String.Empty || strThumb == String.Empty) return;
 
-      Log.Write("create thumbnail for {0}", strFile);
       Image theImage = null;
 
       try

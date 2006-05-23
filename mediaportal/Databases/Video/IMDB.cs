@@ -473,6 +473,20 @@ namespace MediaPortal.Video.Database
 									m_progress.OnProgress(line1,line2,line3,percent);
 								// END FRDB support
 								break;
+                            case "FILMAFFINITY":
+                                // FilmAffinity support
+                                percent = 66;
+                                if (m_progress != null)
+                                    m_progress.OnProgress(line1, line2, line3, percent);
+                                line1 = GUILocalizeStrings.Get(984) + ":FilmAffinity";
+                                strURL = "http://www.filmaffinity.com/es/search.php?stype=title&stext=" + strSearch;
+                                FindFilmAffinity(strURL, aLimits[i]);
+                                percent = 100;
+                                if (m_progress != null)
+                                    m_progress.OnProgress(line1, line2, line3, percent);
+                                // END FilmAffinity support
+                                break;
+
 
 							default:
 								// unsupported database?
@@ -724,7 +738,9 @@ namespace MediaPortal.Video.Database
 					case "FRDB":
 						return	GetDetailsFRDB(url, ref movieDetails);
 
-					default:
+                    case "FilmAffinity":
+                        return GetDetailsFilmAffinity(url, ref movieDetails);
+                    default:
 						// Not supported Database / Host
 						Log.WriteFile(Log.LogType.Log,true,"Movie DB lookup GetDetails(): Unknown Database {0}",url.Database);
 						return	false;
@@ -1069,7 +1085,6 @@ namespace MediaPortal.Video.Database
 
 					if(iRealEnd>=0 &&  iStart>=0 && iEnd>=0)
 					{
-						movieDetails.Cast = "Cast overview:\n";
 						while(iRealEnd > iStart) 
 						{
 							//string strurl = "";
@@ -1791,6 +1806,260 @@ namespace MediaPortal.Video.Database
 		// END of FRDB support
 		// --------------------------------------------------------------------------------
 		#endregion
+        #region FilmAffinity
+        private void FindFilmAffinity(string strURL, int iLimit)
+        {
+            int iCount = 0;
+            string strTitle = String.Empty;
+            try
+            {
+                string absoluteUri;
+                string strBody = GetPage(strURL, "ISO-8859-1", out absoluteUri);
+
+                // First try to find an Exact Match. If no exact match found, just look
+                // for any match and add all those to the list. This narrows it down more easily...
+
+                int iStartOfMovieList = strBody.IndexOf("Resultados por título");
+                if (iStartOfMovieList < 0)
+                {
+                    HTMLParser p = new HTMLParser(strBody);
+                    if (p.skipToEndOfNoCase("<img src=\"http://www.filmaffinity.com/images/movie.gif\" border=\"0\">"))
+                    {
+                        p.extractTo("</span>", ref strTitle);
+                        strTitle = Utils.stripHTMLtags(strTitle);
+                        HTMLUtil htmlUtil = new HTMLUtil();
+                        htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
+                        IMDBUrl url = new IMDBUrl(strURL, strTitle + " (filmaffinity)", "FilmAffinity");
+                        elements.Add(url);
+                        return;
+                    }
+                }
+
+                HTMLParser parser = new HTMLParser(strBody);
+                parser.skipToEndOf("Resultados por título");
+                while ((parser.Position<strBody.Length) && (iCount < iLimit))
+                {
+                    if (parser.skipToEndOfNoCase("Añadir a listas</a>") &&
+                        parser.skipToEndOfNoCase("<a") &&
+                        parser.skipToEndOfNoCase("href=\"") &&
+                        parser.extractTo("\"", ref strURL))
+                    {
+                        strURL = String.Format("http://www.filmaffinity.com{0}", strURL);
+                        if (parser.skipToEndOfNoCase(">") &&
+                            parser.extractTo("</a>", ref strTitle))
+                        {
+                            HTMLUtil htmlUtil = new HTMLUtil();
+                            htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
+                            IMDBUrl url = new IMDBUrl(strURL, strTitle + " (filmaffinity)", "FilmAffinity");
+                            elements.Add(url);
+                            iCount++;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.WriteFile(Log.LogType.Log, true, "exception for filmaffinity lookup of {0} err:{1} stack:{2}", strURL, ex.Message, ex.StackTrace);
+            }
+        }
+
+        private bool GetDetailsFilmAffinity(IMDB.IMDBUrl url, ref IMDBMovie movieDetails)
+        {
+            try
+            {
+                movieDetails.Reset();
+                // add databaseinfo
+                movieDetails.Database = "FilmAffinity";
+                HTMLUtil htmlUtil = new HTMLUtil();
+                string strAbsURL;
+                string strBody = GetPage(url.URL, "ISO-8859-1", out strAbsURL);
+                if (strBody == null) return false;
+                if (strBody.Length == 0) return false;
+                HTMLParser parser = new HTMLParser(strBody);
+                if (parser.skipToEndOfNoCase("<img src=\"http://www.filmaffinity.com/images/movie.gif\" border=\"0\">"))
+                {
+                    string strTitle = String.Empty;
+                    string strYear = String.Empty;
+                    string runtime = String.Empty;
+                    string strDirector = String.Empty;
+                    string strWriting = String.Empty;
+                    string strCast = String.Empty;
+                    string strGenre = String.Empty;
+                    string strPlot = String.Empty;
+                    string strNumber = String.Empty;
+                    string strThumb = String.Empty;
+                    string strRating = String.Empty;
+                    string strVotes = String.Empty;
+                    parser.extractTo("</span>", ref strTitle);
+                    Log.Write("FilmAffinity:Title:{0}", strTitle);
+                    strTitle = Utils.stripHTMLtags(strTitle);
+                    movieDetails.Title = strTitle;
+                    if (parser.skipToEndOfNoCase("<b>AÑO</b>") &&
+                        parser.skipToEndOfNoCase("<table") &&
+                        parser.skipToEndOfNoCase("<tr>") &&
+                        parser.skipToEndOfNoCase("<td >") &&
+                        parser.extractTo("</td>", ref strYear))
+                    {
+                        Log.Write("FilmAffinity:Year:{0}", strYear);
+                        try
+                        {
+                            movieDetails.Year = System.Int32.Parse(strYear);
+                        }
+                        catch (Exception)
+                        {
+                            movieDetails.Year = 1970;
+                        }
+                    }
+                    if (parser.skipToEndOfNoCase("<b>DURACIÓN</b>") &&
+                        parser.skipToEndOfNoCase("<td >") &&
+                        parser.extractTo(" min.</td>", ref runtime))
+                    {
+                        Log.Write("FilmAffinity:Runtime:{0}", runtime);
+                        try
+                        {
+                            movieDetails.RunTime = Int32.Parse(runtime);
+                        }
+                        catch (Exception)
+                        {
+                            movieDetails.RunTime = 0;
+                        }
+                    }
+                    if (parser.skipToEndOfNoCase("<b>DIRECTOR</b>") &&
+                        parser.skipToEndOfNoCase("<td >") &&
+                        parser.skipToEndOfNoCase("<a") &&
+                        parser.skipToEndOfNoCase(">") &&
+                        parser.extractTo("</a>", ref strDirector))
+                    {
+                        Log.Write("FilmAffinity:Director:{0}", strDirector);
+                        movieDetails.Director = strDirector;
+                    }
+                    if (parser.skipToEndOfNoCase("<b>GUIÓN</b>") &&
+                        parser.skipToEndOfNoCase("<td >") &&
+                        parser.extractTo("</td>", ref strWriting))
+                    {
+                        strWriting = HTMLParser.removeHtml(strWriting);
+                        Log.Write("FilmAffinity:Writing:{0}", strWriting);
+                        movieDetails.WritingCredits = strWriting;
+                    }
+                    if (parser.skipToEndOfNoCase("<b>REPARTO</b>") &&
+                        parser.skipToEndOfNoCase("<td  >") &&
+                        parser.extractTo("</td>", ref strCast))
+                    {
+                        strCast = HTMLParser.removeHtml(strCast);
+                        Log.Write("FilmAffinity:Cast:{0}", strCast);
+                        movieDetails.Cast = strCast;
+                    }
+                    if (parser.skipToEndOfNoCase("<b>GÉNERO Y CRÍTICA</b>") &&
+                                            parser.skipToEndOfNoCase("<td") &&
+                                            parser.skipToEndOfNoCase(">") &&
+                                            parser.extractTo(" / ", ref strGenre))
+                    {
+                        string strGenre2 = string.Empty;
+                        if (parser.extractTo(" / ", ref strGenre2))
+                        {
+                            strGenre = strGenre2;
+                        }
+                        Log.Write("FilmAffinity:Genre:{0}", strGenre);
+                        movieDetails.Genre = strGenre;
+                    }
+                    if (parser.skipToEndOfNoCase("SINOPSIS CORTA: "))
+                    {
+                        if (parser.extractTo("SINOPSIS LARGA: ", ref strPlot)) {
+                            strPlot = HTMLParser.removeHtml(strPlot);
+                            Log.Write("FilmAffinity:Plot Outline:{0}", strPlot);
+                            movieDetails.PlotOutline = strPlot.Trim();
+                            if (parser.extractTo("</td", ref strPlot))
+                            {
+                                strPlot = HTMLParser.removeHtml(strPlot);
+                                Log.Write("FilmAffinity:Plot:{0}", strPlot);
+                                movieDetails.Plot = strPlot;
+                            }
+                        } else if (parser.extractTo("</td", ref strPlot))
+                        {
+                            strPlot = HTMLParser.removeHtml(strPlot);
+                            Log.Write("FilmAffinity:Plot:{0}", strPlot);
+                            movieDetails.PlotOutline = strPlot.Trim();
+                            movieDetails.Plot = movieDetails.PlotOutline.Trim();
+                        }
+                    }
+                    else if (parser.skipToEndOfNoCase("SINOPSIS: "))
+                    {
+                        if (parser.extractTo("</td", ref strPlot))
+                        {
+                            strPlot = HTMLParser.removeHtml(strPlot);
+                            Log.Write("FilmAffinity:Plot:{0}", strPlot);
+                            movieDetails.PlotOutline = strPlot.Trim();
+                            movieDetails.Plot = movieDetails.PlotOutline.Trim();
+                        }
+                    }
+                    if (parser.skipToEndOfNoCase("<b>TU CRÍTICA</b>") &&
+                                            parser.skipToEndOfNoCase("<a href=\"/es/addreview.php?movie_id=") &&
+                                            parser.extractTo("\"", ref strNumber))
+                    {
+                        Log.Write("FilmAffinity:Number:{0}", strNumber);
+                        movieDetails.IMDBNumber = strNumber;
+                    }
+                    if (parser.skipToEndOfNoCase("<b>Votaciones de tus Amigos:</b>") &&
+                        parser.skipToEndOfNoCase("</table>") &&
+                        parser.skipToEndOfNoCase("</table>") &&
+                        parser.skipToEndOfNoCase("<img src=\"") &&
+                        parser.extractTo("\"", ref strThumb))
+                    {
+                        Log.Write("FilmAffinity:Thumb:{0}", strThumb);
+                        movieDetails.ThumbURL = strThumb;
+                    }
+                    if (parser.skipToEndOfNoCase("<tr>") &&
+                        parser.skipToEndOfNoCase("<td") &&
+                        parser.skipToEndOfNoCase(">") &&
+                        parser.extractTo("</td>", ref strRating))
+                    {
+                        Log.Write("FilmAffinity:Rating:{0}", strRating);
+                        try
+                        {
+                            movieDetails.Rating = (float)System.Double.Parse(strRating);
+                        }
+                        catch (Exception)
+                        {
+                            movieDetails.Rating = 0;
+                        }
+                    }
+                    if (parser.skipToEndOfNoCase("</OBJECT>") &&
+                        parser.skipToEndOfNoCase("<td") &&
+                        parser.skipToEndOfNoCase(">(") &&
+                        parser.extractTo(" votos)", ref strVotes))
+                    {
+                        Log.Write("FilmAffinity:Votes:{0}", strVotes);
+                        movieDetails.Votes = strVotes;
+                    }
+                    movieDetails.Top250 = 0;
+                    if (movieDetails.PlotOutline != string.Empty)
+                    {
+                        int index = movieDetails.PlotOutline.IndexOf(".");
+                        if (index <= 80)
+                        {
+                            movieDetails.TagLine = movieDetails.PlotOutline.Substring(0, index);
+                        }
+                        else
+                        {
+                            movieDetails.TagLine = movieDetails.PlotOutline.Substring(0, 77) + "...";
+                        }
+                    }
+                    movieDetails.MPARating = "-";
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteFile(Log.LogType.Log, true, "exception for filmaffinity lookup of {0} err:{1} stack:{2}", url.URL, ex.Message, ex.StackTrace);
+            }
+            return false;
+        }
+
+        #endregion
 	
 	} // END class IMDB
 
