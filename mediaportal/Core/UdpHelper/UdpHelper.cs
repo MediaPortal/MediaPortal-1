@@ -149,6 +149,9 @@ namespace UdpHelper
       catch (System.ObjectDisposedException)
       {
       }
+      catch (SocketException)
+      {
+      }
     }
 
   }
