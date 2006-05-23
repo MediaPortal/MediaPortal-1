@@ -106,15 +106,15 @@ namespace MediaPortal.InputDevices
     /// </summary>
     class RemoteMap
     {
-      int code;
+      string code;
       string name;
       ArrayList mapping = new ArrayList();
 
-      public int Code { get { return code; } }
+      public string Code { get { return code; } }
       public string Name { get { return name; } }
       public ArrayList Mapping { get { return mapping; } }
 
-      public RemoteMap(int newCode, string newName, ArrayList newMapping)
+      public RemoteMap(string newCode, string newName, ArrayList newMapping)
       {
         code = newCode;
         name = newName;
@@ -208,7 +208,7 @@ namespace MediaPortal.InputDevices
         foreach (XmlNode nodeButton in listButtons)
         {
           string name = nodeButton.Attributes["name"].Value;
-          int value = Convert.ToInt32(nodeButton.Attributes["code"].Value);
+          string value = nodeButton.Attributes["code"].Value;
 
           ArrayList mapping = new ArrayList();
           XmlNodeList listActions = nodeButton.SelectNodes("action");
@@ -251,6 +251,15 @@ namespace MediaPortal.InputDevices
     /// <param name="btnCode">Button code (ref: XML file)</param>
     public bool MapAction(int btnCode)
     {
+      return DoMapAction(btnCode.ToString(), -1);
+    }
+
+    /// <summary>
+    /// Evaluates the button number, gets its mapping and executes the action
+    /// </summary>
+    /// <param name="btnCode">Button code (ref: XML file)</param>
+    public bool MapAction(string btnCode)
+    {
       return DoMapAction(btnCode, -1);
     }
 
@@ -262,6 +271,17 @@ namespace MediaPortal.InputDevices
     /// <param name="processID">Process-ID for close/kill commands</param>
     public bool MapAction(int btnCode, int processID)
     {
+      return DoMapAction(btnCode.ToString(), processID);
+    }
+
+
+    /// <summary>
+    /// Evaluates the button number, gets its mapping and executes the action with an optional paramter
+    /// </summary>
+    /// <param name="btnCode">Button code (ref: XML file)</param>
+    /// <param name="processID">Process-ID for close/kill commands</param>
+    public bool MapAction(string btnCode, int processID)
+    {
       return DoMapAction(btnCode, processID);
     }
 
@@ -271,7 +291,7 @@ namespace MediaPortal.InputDevices
     /// </summary>
     /// <param name="btnCode">Button code (ref: XML file)</param>
     /// <param name="processID">Process-ID for close/kill commands</param>
-    bool DoMapAction(int btnCode, int processID)
+    bool DoMapAction(string btnCode, int processID)
     {
       if (!_isLoaded)   // No mapping loaded
       {
@@ -392,7 +412,7 @@ namespace MediaPortal.InputDevices
     /// </summary>
     /// <param name="btnCode">Button code (ref: XML file)</param>
     /// <returns>Mapping</returns>
-    public Mapping GetMapping(int btnCode)
+    public Mapping GetMapping(string btnCode)
     {
       RemoteMap button = null;
       Mapping found = null;
