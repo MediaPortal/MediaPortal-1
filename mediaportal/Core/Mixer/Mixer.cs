@@ -101,6 +101,7 @@ namespace MediaPortal.Mixer
               _componentType = MixerComponentType.SourceWave;
               break;
           }
+        // not enough to change this..
 
 				if(_mixerEventListener == null)
 				{
