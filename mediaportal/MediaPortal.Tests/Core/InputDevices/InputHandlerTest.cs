@@ -160,7 +160,7 @@ namespace MediaPortal.Tests.Core.InputDevices
       bool   focus       = true;
 
       InputHandler.Mapping mapExpected = new InputHandler.Mapping(layer, condition, conProperty, command, cmdProperty, cmdKeyChar, cmdKeyCode, sound, focus);
-      InputHandler.Mapping mapTest = inputHandler.GetMapping(0);
+      InputHandler.Mapping mapTest = inputHandler.GetMapping("0");
 
       Assert.AreEqual(mapExpected.Layer      , mapTest.Layer);
       Assert.AreEqual(mapExpected.Condition  , mapTest.Condition);
@@ -178,7 +178,7 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestDefault";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(null, inputHandler.GetMapping(1));
+      Assert.AreEqual(null, inputHandler.GetMapping("1"));
     }
 
     [Test]
