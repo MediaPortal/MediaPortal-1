@@ -171,19 +171,15 @@ namespace MediaPortal.Util
           item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
                 share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
         }
-        Utils.SetDefaultIcons(item);
-        string coverArt = Utils.GetCoverArtName(item.Path, "folder");
-        string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
-        Log.Write("*************COVERT ART:{0}-{1}", coverArt, largeCoverArt);
-        if (coverArt != string.Empty)
+        if (File.Exists(item.Path + "\folder.jpg"))
         {
-            item.IconImage = coverArt;
+          item.IconImage = Utils.GetCoverArtName(item.Path, "folder");
+          item.IconImageBig = Utils.GetLargeCoverArtName(item.Path, "folder");
         }
-        if (largeCoverArt != string.Empty)
+        else
         {
-            item.IconImageBig = largeCoverArt;
+          Utils.SetDefaultIcons(item);
         }
-        Log.Write("*************ICONS :{0}-{1}", item.IconImage, item.IconImageBig);
         items.Add(item);
       }
 
@@ -1852,16 +1848,14 @@ namespace MediaPortal.Util
           item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
                 share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
         }
-        Utils.SetDefaultIcons(item);
-        string coverArt = Utils.GetCoverArtName(item.Path, "folder");
-        string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
-        if (coverArt != string.Empty)
+        if (Directory.Exists(item.Path))
         {
-            item.IconImage = coverArt;
+          item.IconImage = Utils.GetCoverArtName(item.Path, "folder");
+          item.IconImageBig = Utils.GetLargeCoverArtName(item.Path, "folder");
         }
-        if (largeCoverArt != string.Empty)
+        else
         {
-            item.IconImageBig = largeCoverArt;
+          Utils.SetDefaultIcons(item);
         }
         items.Add(item);
       }
