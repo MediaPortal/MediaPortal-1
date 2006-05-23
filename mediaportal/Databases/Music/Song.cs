@@ -25,6 +25,7 @@ namespace MediaPortal.Music.Database
 	/// <summary>
 	/// 
 	/// </summary>
+  [Serializable()]
 	public class Song
 	{
 

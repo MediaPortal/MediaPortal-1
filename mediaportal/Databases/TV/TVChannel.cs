@@ -95,7 +95,8 @@ namespace MediaPortal.TV.Database
   /// <summary>
 	/// Class which holds all information about a tv channel
 	/// </summary>
-	public class TVChannel 
+  [Serializable()]
+  public class TVChannel 
   {
     #region special channels
     public static SpecialChannelsStruct[] SpecialChannels = 

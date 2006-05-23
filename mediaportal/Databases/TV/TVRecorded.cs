@@ -28,7 +28,8 @@ namespace MediaPortal.TV.Database
 	/// <summary>
 	/// Class which holds all information about a recorded TV program
 	/// </summary>
-	public class TVRecorded
+  [Serializable()]
+  public class TVRecorded
 	{
 		public enum KeepMethod
 		{

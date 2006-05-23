@@ -28,6 +28,7 @@ namespace MediaPortal.TV.Database
   /// <summary>
   /// Class which holds all details about a TV program
   /// </summary>
+  [Serializable()]
   public class TVProgram : IComparable, IComparable<TVProgram>
   {
     string _channelName = String.Empty;

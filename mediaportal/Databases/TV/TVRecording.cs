@@ -30,6 +30,7 @@ namespace MediaPortal.TV.Database
   /// <summary>
   /// Class which contains all information about a scheduled recording
   /// </summary>
+  [Serializable()]
   public class TVRecording
   {
     public class PriorityComparer : System.Collections.Generic.IComparer<TVRecording>
