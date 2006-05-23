@@ -115,6 +115,7 @@ namespace MediaPortal
     protected bool ready;
     protected bool hasFocus;
     protected bool isMultiThreaded = true;
+    protected bool _fromTray = false;
 
     protected bool frameMoving; // Internal variables used for timing
     protected bool singleStep;
@@ -259,14 +260,12 @@ namespace MediaPortal
     protected virtual void OnExit()
     { }
 
-
-    private bool m_bWasPlaying = false;
-    private int m_iActiveWindow = -1;
-    private bool m_bRestore = false;
-    private double m_dCurrentPos = 0;
-    private string m_strCurrentFile;
-    private PlayListType m_currentPlayListType = PlayListType.PLAYLIST_NONE;
-    private PlayList m_currentPlayList = null;
+    private bool _wasPlayingVideo = false;
+    private int _iActiveWindow = -1;
+    private double _currentPlayerPos = 0;
+    private string _strCurrentFile;
+    private PlayListType _currentPlayListType = PlayListType.PLAYLIST_NONE;
+    private PlayList _currentPlayList = null;
     private bool _fullscreen = false;
     private bool _wasTV = false;
     private string _tvChannel = string.Empty;
@@ -1210,6 +1209,77 @@ namespace MediaPortal
       ready = true;
     }
 
+    protected void RestorePlayers()
+    {
+      if (_wasPlayingVideo)
+      {
+        _wasPlayingVideo = false;
+
+        if (_wasTV)
+        {
+          Log.Write("D3D: RestorePlayers - Resuming: {0}", _tvChannel);
+          string _errorMessage = string.Empty;
+          bool success = Recorder.StartViewing(_tvChannel, true, _tvTimeshift, true, out _errorMessage);
+          if (success)
+            if ((_iActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) ||
+              (_iActiveWindow == (int)GUIWindow.Window.WINDOW_TV))
+            {
+              GUIWindowManager.ActivateWindow(_iActiveWindow);
+              Log.Write("D3D: Resumed TV successfully");
+            }
+            else
+            {
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
+              Thread tvWaitThread = new Thread(TvWaitThread);
+              tvWaitThread.Start();
+            }
+          else
+            Log.Write("D3D: Error resuming TV: {0}", _errorMessage);
+        }
+        else
+        {
+          Log.Write("D3D: RestorePlayers - Resuming: {0}", _strCurrentFile);
+          playlistPlayer.Init();
+          playlistPlayer.Reset();
+          playlistPlayer.CurrentPlaylistType = _currentPlayListType;
+          PlayList playlist = playlistPlayer.GetPlaylist(_currentPlayListType);
+          playlist.Clear();
+          if (_currentPlayList != null)
+            for (int i = 0; i < (int)_currentPlayList.Count; ++i)
+            {
+              PlayListItem itemNew = _currentPlayList[i];
+              playlist.Add(itemNew);
+            }
+          if (playlist[0].Type.Equals(PlayListItem.PlayListItemType.DVD))
+          {
+            IMDBMovie movieDetails = new IMDBMovie();
+            string fileName = playlist[0].FileName;
+            VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
+            int idFile = VideoDatabase.GetFileId(fileName);
+            int idMovie = VideoDatabase.GetMovieId(fileName);
+            int timeMovieStopped = 0;
+            byte[] resumeData = null;
+            if ((idMovie >= 0) && (idFile >= 0))
+            {
+              timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
+              g_Player.PlayDVD();
+              if (g_Player.Playing)
+                g_Player.Player.SetResumeState(resumeData);
+            }
+          }
+          else
+          {
+            playlistPlayer.Play(_strCurrentFile);
+          }
+
+          if (g_Player.Playing)
+            g_Player.SeekAbsolute(_currentPlayerPos);
+
+          GUIGraphicsContext.IsFullScreenVideo = _fullscreen;
+          GUIWindowManager.ReplaceWindow(_iActiveWindow);
+        }
+      }
+    }
 
     /// <summary>
     /// Called when our sample has nothing else to do, and it's time to render
@@ -1221,6 +1291,8 @@ namespace MediaPortal
         Thread.Sleep(100);
         return;
       }
+
+      RestorePlayers();
 
       if (GUIGraphicsContext.Vmr9Active)
       {
@@ -1329,9 +1401,7 @@ namespace MediaPortal
           }
 
           // Reset the device and resize it
-
           Log.Write("D3D: Resetting DX9 device");
-
           try
           {
             GUIGraphicsContext.DX9Device.Reset(GUIGraphicsContext.DX9Device.PresentationParameters);
@@ -1346,76 +1416,6 @@ namespace MediaPortal
         _needUpdate = true;
       }
 
-      if (!deviceLost && !m_bNeedReset)
-        if (m_bRestore)
-        {
-          m_bRestore = false;
-          if (m_bWasPlaying)
-          {
-            Log.Write("D3D: Render3DEnvironment - Resuming: {0}", m_strCurrentFile);
-            m_bWasPlaying = false;
-
-            playlistPlayer.Init();
-            playlistPlayer.Reset();
-            playlistPlayer.CurrentPlaylistType = m_currentPlayListType;
-            PlayList playlist = playlistPlayer.GetPlaylist(m_currentPlayListType);
-            playlist.Clear();
-            if (m_currentPlayList != null)
-              for (int i = 0; i < (int)m_currentPlayList.Count; ++i)
-              {
-                PlayListItem itemNew = m_currentPlayList[i];
-                playlist.Add(itemNew);
-              }
-              if (playlist[0].Type.Equals(PlayListItem.PlayListItemType.DVD))
-              {
-                IMDBMovie movieDetails = new IMDBMovie();
-                string fileName = playlist[0].FileName;
-                VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
-                int idFile = VideoDatabase.GetFileId(fileName);
-                int idMovie = VideoDatabase.GetMovieId(fileName);
-                int timeMovieStopped = 0;
-                byte[] resumeData = null;
-                if ((idMovie >= 0) && (idFile >= 0))
-                {
-                    timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
-                    g_Player.PlayDVD();
-                    if (g_Player.Playing)
-                        g_Player.Player.SetResumeState(resumeData);
-                }
-              }
-              else
-              {
-                  playlistPlayer.Play(m_strCurrentFile);
-
-                  if (g_Player.Playing)
-                      g_Player.SeekAbsolute(m_dCurrentPos);
-              }
-
-            GUIGraphicsContext.IsFullScreenVideo = _fullscreen;
-            GUIWindowManager.ActivateWindow(m_iActiveWindow);
-          }
-          else if (_wasTV)
-          {
-            Log.Write("D3D: Render3DEnvironment - Resuming: {0}", _tvChannel);
-            string _errorMessage = string.Empty;
-            bool success = Recorder.StartViewing(_tvChannel, true, _tvTimeshift, true, out _errorMessage);
-            if (success)
-              if ((m_iActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) ||
-                (m_iActiveWindow == (int)GUIWindow.Window.WINDOW_TV))
-              {
-                GUIWindowManager.ActivateWindow(m_iActiveWindow);
-                Log.Write("D3D: Resumed TV successfully");
-              }
-              else
-              {
-                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_TVFULLSCREEN);
-                Thread tvWaitThread = new Thread(TvWaitThread);
-                tvWaitThread.Start();
-              }
-            else
-              Log.Write("D3D: Error resuming TV: {0}", _errorMessage);
-          }
-        }
       try
       {
         if (!GUIGraphicsContext.Vmr9Active)
@@ -1434,7 +1434,7 @@ namespace MediaPortal
 
       Log.Write("D3D: Resumed TV successfully");
       GUIGraphicsContext.IsFullScreenVideo = _fullscreen;
-      GUIWindowManager.ActivateWindow(m_iActiveWindow);
+      GUIWindowManager.ReplaceWindow(_iActiveWindow);
     }
 
     private void HandleCursor()
@@ -2119,60 +2119,56 @@ namespace MediaPortal
     /// </summary>
     protected override void OnResize(EventArgs e)
     {
-      bool m_bRestoreTmp = false;
-
-      if (!m_bRestore && g_Player.Playing && (g_Player.IsTV || g_Player.IsVideo || g_Player.IsDVD))
-      {
-        _wasTV = Recorder.IsViewing();
-        _fullscreen = g_Player.FullScreen;
-        m_bRestore = false;
-        m_bRestoreTmp = true;
-
-        if (_wasTV)
+      if (_fromTray)
+        _fromTray = false;
+      else
+        if (WindowState != FormWindowState.Minimized &&
+          !_wasPlayingVideo &&
+          (g_Player.Playing && (g_Player.IsTV || g_Player.IsVideo || g_Player.IsDVD)))
         {
-          _tvChannel = Recorder.TVChannelName;
-          _tvTimeshift = Recorder.IsTimeShifting();
-          m_bRestoreTmp = true;
-          Log.Write("D3D: Form resized - Stopping TV - Current channel: {0} / Timeshifting: {1}", _tvChannel, _tvTimeshift);
-          Recorder.StopViewing();
-        }
-        else
-        {
-          m_bWasPlaying = true;
-          m_dCurrentPos = g_Player.CurrentPosition;
-          m_currentPlayListType = playlistPlayer.CurrentPlaylistType;
-          m_currentPlayList = new PlayList();
+          _wasPlayingVideo = true;
+          _wasTV = Recorder.IsViewing();
+          _fullscreen = g_Player.FullScreen;
 
-          Log.Write("D3D: Saving fullscreen state for resume: {0}", _fullscreen);
-          PlayList tempList = playlistPlayer.GetPlaylist(m_currentPlayListType);
-          if (tempList.Count == 0 && g_Player.IsDVD == true)
+          if (_wasTV)
           {
-                  PlayListItem itemDVD = new PlayListItem();
-                  itemDVD.FileName = g_Player.CurrentFile;
-                  itemDVD.Played = true;
-                  itemDVD.Type = PlayListItem.PlayListItemType.DVD;
-                  tempList.Add(itemDVD);
+            _tvChannel = Recorder.TVChannelName;
+            _tvTimeshift = Recorder.IsTimeShifting();
+            Log.Write("D3D: Form resized - Stopping TV - Current channel: {0} / Timeshifting: {1}", _tvChannel, _tvTimeshift);
+            Recorder.StopViewing();
           }
-          if (tempList != null)
+          else
           {
-            for (int i = 0; i < (int)tempList.Count; ++i)
+            _currentPlayerPos = g_Player.CurrentPosition;
+            _currentPlayListType = playlistPlayer.CurrentPlaylistType;
+            _currentPlayList = new PlayList();
+
+            Log.Write("D3D: Saving fullscreen state for resume: {0}", _fullscreen);
+            PlayList tempList = playlistPlayer.GetPlaylist(_currentPlayListType);
+            if (tempList.Count == 0 && g_Player.IsDVD == true)
             {
-              PlayListItem itemNew = tempList[i];
-              m_currentPlayList.Add(itemNew);
+              PlayListItem itemDVD = new PlayListItem();
+              itemDVD.FileName = g_Player.CurrentFile;
+              itemDVD.Played = true;
+              itemDVD.Type = PlayListItem.PlayListItemType.DVD;
+              tempList.Add(itemDVD);
             }
+            if (tempList != null)
+            {
+              for (int i = 0; i < (int)tempList.Count; ++i)
+              {
+                PlayListItem itemNew = tempList[i];
+                _currentPlayList.Add(itemNew);
+              }
+            }
+            _strCurrentFile = playlistPlayer.Get(playlistPlayer.CurrentSong);
+            if (_strCurrentFile.Equals(String.Empty) && g_Player.IsDVD == true)
+              _strCurrentFile = g_Player.CurrentFile;
+            Log.Write("D3D: Form resized - Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}", _currentPlayListType, _currentPlayList.Count, playlistPlayer.CurrentSong, _strCurrentFile, _currentPlayerPos);
+            g_Player.Stop();
           }
-          m_strCurrentFile = playlistPlayer.Get(playlistPlayer.CurrentSong);
-          if (m_strCurrentFile.Equals(String.Empty) && g_Player.IsDVD == true)
-              m_strCurrentFile = g_Player.CurrentFile;
-          Log.Write("D3D: Form resized - Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}", m_currentPlayListType, m_currentPlayList.Count, playlistPlayer.CurrentSong, m_strCurrentFile, m_dCurrentPos);
-          g_Player.Stop();
+          _iActiveWindow = GUIWindowManager.ActiveWindow;
         }
-
-        m_iActiveWindow = GUIWindowManager.ActiveWindow;
-      }
-
-      if (m_bRestoreTmp)
-        m_bRestore = true;
 
       if (notifyIcon != null)
         if (notifyIcon.Visible == false && this.WindowState == FormWindowState.Minimized)
@@ -2576,13 +2572,12 @@ namespace MediaPortal
     public void Restore()
     {
       Log.Write("D3D: Restoring from tray");
-
+      _fromTray = true;
       Show();
       notifyIcon.Visible = false;
       this.WindowState = FormWindowState.Normal;
       Activate();
       active = true;
-
       // If the Minimize On Gui Exit option is set and we are restoring to fullscreen
       // we should check whether the autoHideTaskbar option is set...
 
