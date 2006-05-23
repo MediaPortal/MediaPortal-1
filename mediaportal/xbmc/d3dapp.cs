@@ -57,6 +57,7 @@ using SurfaceDescription = Microsoft.DirectX.DirectDraw.SurfaceDescription;
 using Timer = System.Windows.Forms.Timer;
 using Utils = MediaPortal.Util.Utils;
 using MediaPortal.TV.Recording;
+using MediaPortal.Video.Database;
 
 namespace MediaPortal
 {
@@ -1365,10 +1366,30 @@ namespace MediaPortal
                 PlayListItem itemNew = m_currentPlayList[i];
                 playlist.Add(itemNew);
               }
-            playlistPlayer.Play(m_strCurrentFile);
-            
-            if (g_Player.Playing)
-              g_Player.SeekAbsolute(m_dCurrentPos);
+              if (playlist[0].Type.Equals(PlayListItem.PlayListItemType.DVD))
+              {
+                IMDBMovie movieDetails = new IMDBMovie();
+                string fileName = playlist[0].FileName;
+                VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
+                int idFile = VideoDatabase.GetFileId(fileName);
+                int idMovie = VideoDatabase.GetMovieId(fileName);
+                int timeMovieStopped = 0;
+                byte[] resumeData = null;
+                if ((idMovie >= 0) && (idFile >= 0))
+                {
+                    timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
+                    g_Player.PlayDVD();
+                    if (g_Player.Playing)
+                        g_Player.Player.SetResumeState(resumeData);
+                }
+              }
+              else
+              {
+                  playlistPlayer.Play(m_strCurrentFile);
+
+                  if (g_Player.Playing)
+                      g_Player.SeekAbsolute(m_dCurrentPos);
+              }
 
             GUIGraphicsContext.IsFullScreenVideo = _fullscreen;
             GUIWindowManager.ActivateWindow(m_iActiveWindow);
@@ -2124,6 +2145,14 @@ namespace MediaPortal
 
           Log.Write("D3D: Saving fullscreen state for resume: {0}", _fullscreen);
           PlayList tempList = playlistPlayer.GetPlaylist(m_currentPlayListType);
+          if (tempList.Count == 0 && g_Player.IsDVD == true)
+          {
+                  PlayListItem itemDVD = new PlayListItem();
+                  itemDVD.FileName = g_Player.CurrentFile;
+                  itemDVD.Played = true;
+                  itemDVD.Type = PlayListItem.PlayListItemType.DVD;
+                  tempList.Add(itemDVD);
+          }
           if (tempList != null)
           {
             for (int i = 0; i < (int)tempList.Count; ++i)
@@ -2133,6 +2162,8 @@ namespace MediaPortal
             }
           }
           m_strCurrentFile = playlistPlayer.Get(playlistPlayer.CurrentSong);
+          if (m_strCurrentFile.Equals(String.Empty) && g_Player.IsDVD == true)
+              m_strCurrentFile = g_Player.CurrentFile;
           Log.Write("D3D: Form resized - Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}", m_currentPlayListType, m_currentPlayList.Count, playlistPlayer.CurrentSong, m_strCurrentFile, m_dCurrentPos);
           g_Player.Stop();
         }
