@@ -2409,7 +2409,7 @@ namespace MediaPortal.TV.Recording
         if ((g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing))
         {
           TimeSpan ts = DateTime.Now - _signalLostTimer;
-          if (ts.TotalSeconds < 5)
+          if (ts.TotalSeconds < 10)
           {
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
             return;
