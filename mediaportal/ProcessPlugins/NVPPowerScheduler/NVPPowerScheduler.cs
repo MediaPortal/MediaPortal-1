@@ -515,8 +515,11 @@ namespace MediaPortal.PowerScheduler
             case (TVRecording.RecordingType.Daily):
               {
                 tmpNextStarttime = recording.StartTime.AddMinutes(-m_iPreRecordInterval);
-                double days = -tmpNextStarttime.Subtract(earliestStarttime).TotalDays;
-                tmpNextStarttime = tmpNextStarttime.AddDays(Math.Round(days, 0) + 1);
+                tmpNextStarttime = new DateTime(earliestStarttime.Year, earliestStarttime.Month, earliestStarttime.Day,
+                                                tmpNextStarttime.Hour, tmpNextStarttime.Minute, tmpNextStarttime.Second, 0);
+                if (tmpNextStarttime.Ticks < earliestStarttime.Ticks) tmpNextStarttime.AddDays(1);
+                //double days = -tmpNextStarttime.Subtract(earliestStarttime).TotalDays;
+                //tmpNextStarttime = tmpNextStarttime.AddDays(Math.Round(days, 0) + 1);
                 if (m_bExtensiveLog)
                   Log.Write(" PowerScheduler:  Next date/time:{0} Type:Daily     {1}  {2} ",
                     tmpNextStarttime, recording.Channel, recording.Title);
