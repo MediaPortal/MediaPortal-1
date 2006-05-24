@@ -1268,9 +1268,7 @@ namespace MediaPortal
             }
           }
           else
-          {
             playlistPlayer.Play(_strCurrentFile);
-          }
 
           if (g_Player.Playing)
             g_Player.SeekAbsolute(_currentPlayerPos);
