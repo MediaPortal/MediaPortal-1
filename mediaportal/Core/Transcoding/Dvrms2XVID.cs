@@ -264,7 +264,7 @@ namespace MediaPortal.Core.Transcoding
 			}
 			catch(Exception ex)
 			{
-				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:Unable create graph", ex.Message);
+				Log.WriteFile(Log.LogType.Log,true,"DVR2XVID:Unable create graph: {0}", ex.Message);
 				Cleanup();
 				return false;
 			}
