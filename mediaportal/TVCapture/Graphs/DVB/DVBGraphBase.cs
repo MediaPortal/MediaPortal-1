@@ -1,23 +1,28 @@
-/*
- *	Copyright (C) 2005 Team MediaPortal
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2, or (at your option)
  *  any later version.
- *
+ *   
  *  This Program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- *
+ *   
  *  You should have received a copy of the GNU General Public License
  *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 #define HW_PID_FILTERING
 //#define DUMP
 
@@ -306,7 +311,7 @@ namespace MediaPortal.TV.Recording
     protected DateTime _processTimer = DateTime.MinValue;
     protected IPin _pinTeletext;
     protected string _currentTimeShiftFileName;
-    protected string _lastError=String.Empty;
+    protected string _lastError = String.Empty;
 
 #if DUMP
 		System.IO.FileStream fileout;
@@ -534,7 +539,7 @@ namespace MediaPortal.TV.Recording
       GetTvChannelFromDatabase(channel);
       if (_currentTuningObject == null)
       {
-        _lastError=String.Format("No tuning information for {0}",channel.Name);
+        _lastError = String.Format("No tuning information for {0}", channel.Name);
         return false;
       }
 
@@ -546,7 +551,7 @@ namespace MediaPortal.TV.Recording
         // render the video/audio pins of the mpeg2 demultiplexer so they get connected to the video/audio codecs
         if (_graphBuilder.Render(_pinDemuxerVideoMPEG4) != 0)
         {
-          _lastError=String.Format("Unable to connect MPG4 pin");
+          _lastError = String.Format("Unable to connect MPG4 pin");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render MPEG4 video out pin MPEG-2 Demultiplexer");
           return false;
         }
@@ -559,7 +564,7 @@ namespace MediaPortal.TV.Recording
         // render the video/audio pins of the mpeg2 demultiplexer so they get connected to the video/audio codecs
         if (_graphBuilder.Render(_pinDemuxerVideo) != 0)
         {
-          _lastError=String.Format("Unable to connect MPG2 pin");
+          _lastError = String.Format("Unable to connect MPG2 pin");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render video out pin MPEG-2 Demultiplexer");
           return false;
         }
@@ -578,7 +583,7 @@ namespace MediaPortal.TV.Recording
         //Log.WriteFile(Log.LogType.Log, false, "DVBGraph:render MP2 audio pin");
         if (_graphBuilder.Render(_pinDemuxerAudio) != 0)
         {
-          _lastError=String.Format("Unable to connect audio pin");
+          _lastError = String.Format("Unable to connect audio pin");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render audio out pin MPEG-2 Demultiplexer");
           return false;
         }
@@ -589,7 +594,7 @@ namespace MediaPortal.TV.Recording
         //Log.WriteFile(Log.LogType.Log, false, "DVBGraph:render AC3 audio pin");
         if (_graphBuilder.Render(_pinAC3Out) != 0)
         {
-          _lastError=String.Format("Unable to connect AC3 pin");
+          _lastError = String.Format("Unable to connect AC3 pin");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:Failed to render AC3 pin MPEG-2 Demultiplexer");
           return false;
         }
@@ -621,7 +626,7 @@ namespace MediaPortal.TV.Recording
         _videoWindowInterface = _graphBuilder as IVideoWindow;
         if (_videoWindowInterface == null)
         {
-          _lastError=String.Format("IVideoWindow not present");
+          _lastError = String.Format("IVideoWindow not present");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED:Unable to get IVideoWindow");
           return false;
         }
@@ -629,7 +634,7 @@ namespace MediaPortal.TV.Recording
         _basicVideoInterFace = _graphBuilder as IBasicVideo2;
         if (_basicVideoInterFace == null)
         {
-          _lastError=String.Format("IBasicVideo2 not present");
+          _lastError = String.Format("IBasicVideo2 not present");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED:Unable to get IBasicVideo2");
           return false;
         }
@@ -654,7 +659,7 @@ namespace MediaPortal.TV.Recording
       hr = _mediaControl.Run();
       if (hr < 0)
       {
-        _lastError=String.Format("Unable to start graph");
+        _lastError = String.Format("Unable to start graph");
         Log.WriteFile(Log.LogType.Log, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
         return false;
       }
@@ -769,7 +774,7 @@ namespace MediaPortal.TV.Recording
       GetTvChannelFromDatabase(channel);
       if (_currentTuningObject == null)
       {
-        _lastError=String.Format("Tuning details for {0} not found", channel.Name);
+        _lastError = String.Format("Tuning details for {0} not found", channel.Name);
         return false;
       }
       _isUsingAC3 = false;
@@ -808,7 +813,7 @@ namespace MediaPortal.TV.Recording
         int hr = _mediaControl.Run();
         if (hr < 0)
         {
-          _lastError=String.Format("Unable to run graph");
+          _lastError = String.Format("Unable to run graph");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph: FAILED unable to start graph :0x{0:X}", hr);
           return false;
         }
@@ -1075,7 +1080,7 @@ namespace MediaPortal.TV.Recording
         Log.WriteFile(Log.LogType.Log, true, "DVBGraph: resending PMT to CAM");
         UpdateCAM();
       }
-      
+
       //      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }
 
@@ -1308,7 +1313,7 @@ namespace MediaPortal.TV.Recording
         hr = _graphBuilder.AddFilter((IBaseFilter)m_StreamBufferSink, "StreamBufferSink");
         if (hr != 0)
         {
-          _lastError=String.Format("Unable to add StreamBufferSink filter");
+          _lastError = String.Format("Unable to add StreamBufferSink filter");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot add StreamBufferSink:{0:X}", hr);
           return false;
         }
@@ -1317,7 +1322,7 @@ namespace MediaPortal.TV.Recording
         hr = _graphBuilder.AddFilter((IBaseFilter)m_mpeg2Analyzer, "Mpeg2 Analyzer");
         if (hr != 0)
         {
-          _lastError=String.Format("Unable to add mpeg2 analyzer filter");
+          _lastError = String.Format("Unable to add mpeg2 analyzer filter");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot add mpeg2 analyzer to graph:{0:X}", hr);
           return false;
         }
@@ -1328,7 +1333,7 @@ namespace MediaPortal.TV.Recording
         pinObj0 = DsFindPin.ByDirection((IBaseFilter)m_mpeg2Analyzer, PinDirection.Input, 0);
         if (pinObj0 == null)
         {
-          _lastError=String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
+          _lastError = String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot find mpeg2 analyzer input pin");
           return false;
         }
@@ -1337,7 +1342,7 @@ namespace MediaPortal.TV.Recording
         hr = _graphBuilder.Connect(_pinDemuxerVideo, pinObj0);
         if (hr != 0)
         {
-          _lastError=String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
+          _lastError = String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to connect demux video output->mpeg2 analyzer:{0:X}", hr);
           return false;
         }
@@ -1348,7 +1353,7 @@ namespace MediaPortal.TV.Recording
         pinObj1 = DsFindPin.ByDirection((IBaseFilter)m_mpeg2Analyzer, PinDirection.Output, 0);
         if (hr != 0)
         {
-          _lastError=String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
+          _lastError = String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot find mpeg2 analyzer output pin:{0:X}", hr);
           return false;
         }
@@ -1357,7 +1362,7 @@ namespace MediaPortal.TV.Recording
         pinObj2 = DsFindPin.ByDirection((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 0);
         if (hr != 0)
         {
-          _lastError=String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
+          _lastError = String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot find SBE input pin:{0:X}", hr);
           return false;
         }
@@ -1365,7 +1370,7 @@ namespace MediaPortal.TV.Recording
         hr = _graphBuilder.Connect(pinObj1, pinObj2);
         if (hr != 0)
         {
-          _lastError=String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
+          _lastError = String.Format("failed connect mpeg2 demuxer to mpeg2 analyzer");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to connect mpeg2 analyzer->streambuffer sink:{0:X}", hr);
           return false;
         }
@@ -1380,14 +1385,14 @@ namespace MediaPortal.TV.Recording
           pinObj3 = DsFindPin.ByDirection((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);
           if (hr != 0)
           {
-            _lastError=String.Format("failed connect stream buffer sink");
+            _lastError = String.Format("failed connect stream buffer sink");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot find SBE input pin#2");
             return false;
           }
           hr = _graphBuilder.Connect(_pinDemuxerAudio, pinObj3);
           if (hr != 0)
           {
-            _lastError=String.Format("failed connect stream buffer sink");
+            _lastError = String.Format("failed connect stream buffer sink");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to connect mpeg2 demuxer audio out->streambuffer sink in#2:{0:X}", hr);
             return false;
           }
@@ -1401,21 +1406,21 @@ namespace MediaPortal.TV.Recording
             pinObj3 = DsFindPin.ByDirection((IBaseFilter)m_StreamBufferSink, PinDirection.Input, 1);
             if (hr != 0)
             {
-              _lastError=String.Format("failed connect stream buffer sink");
+              _lastError = String.Format("failed connect stream buffer sink");
               Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED cannot find SBE input pin#2");
               return false;
             }
             hr = _graphBuilder.Connect(_pinAC3Out, pinObj3);
             if (hr != 0)
             {
-              _lastError=String.Format("failed connect stream buffer sink");
+              _lastError = String.Format("failed connect stream buffer sink");
               Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to connect mpeg2 demuxer AC3 out->streambuffer sink in#2:{0:X}", hr);
               return false;
             }
           }
           else
           {
-            _lastError=String.Format("failed AC3 audio pin not found");
+            _lastError = String.Format("failed AC3 audio pin not found");
             Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED ac3 pin not found?");
           }
         }
@@ -1437,7 +1442,7 @@ namespace MediaPortal.TV.Recording
         hr = m_IStreamBufferConfig.SetDirectory(strDir);
         if (hr != 0)
         {
-          _lastError=String.Format("Timeshifting folder not present");
+          _lastError = String.Format("Timeshifting folder not present");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to set timeshift folder to:{0} {1:X}", strDir, hr);
           return false;
         }
@@ -1446,7 +1451,7 @@ namespace MediaPortal.TV.Recording
         hr = m_IStreamBufferConfig.SetBackingFileCount(6, 8);    //4-6 files
         if (hr != 0)
         {
-          _lastError=String.Format("Unable to set timeshift buffer files to 6-8 files");
+          _lastError = String.Format("Unable to set timeshift buffer files to 6-8 files");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to set timeshifting files to 6-8 {0:X}", hr);
           return false;
         }
@@ -1455,7 +1460,7 @@ namespace MediaPortal.TV.Recording
         hr = m_IStreamBufferConfig.SetBackingFileDuration((int)iFileDuration); // 60sec * 4 files= 4 mins
         if (hr != 0)
         {
-          _lastError=String.Format("Unable to set timeshift buffer length to {0}",iFileDuration);
+          _lastError = String.Format("Unable to set timeshift buffer length to {0}", iFileDuration);
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to set timeshifting filesduration to {0} {1:X}", iFileDuration, hr);
           return false;
         }
@@ -1477,7 +1482,7 @@ namespace MediaPortal.TV.Recording
         hr = m_IStreamBufferSink.LockProfile(fileName);
         if (hr != 0 && hr != 1)
         {
-          _lastError=String.Format("Unable to start timeshifting");
+          _lastError = String.Format("Unable to start timeshifting");
           Log.WriteFile(Log.LogType.Log, true, "DVBGraph:FAILED to set timeshift file to:{0} {1:X}", fileName, hr);
           return false;
         }
@@ -1638,9 +1643,9 @@ namespace MediaPortal.TV.Recording
       if (hr != 0)
         throw new NotSupportedException("No devices in this category");
 
-      IntPtr fetched=IntPtr.Zero;
+      IntPtr fetched = IntPtr.Zero;
       IMoniker[] deviceMoniker = new IMoniker[1];
-      while (enumMoniker.Next(1, deviceMoniker,  fetched) == 0) // while == S_OK
+      while (enumMoniker.Next(1, deviceMoniker, fetched) == 0) // while == S_OK
       {
         object bagObj = null;
         Guid bagId = typeof(IPropertyBag).GUID;
@@ -2409,7 +2414,7 @@ namespace MediaPortal.TV.Recording
         if ((g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing))
         {
           TimeSpan ts = DateTime.Now - _signalLostTimer;
-          if (ts.TotalSeconds < 5)
+          if (ts.TotalSeconds < VideoRendererStatistics.NoSignalTimeOut)
           {
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
             return;
@@ -3472,7 +3477,7 @@ namespace MediaPortal.TV.Recording
           {
             // tv channel with the service name already exists
             // check if there is a DVB channel mapped to the TVChannel
-            
+
             string providerName;
             if (TVDatabase.IsMapped(existingTvChannel,
                                     Network() == NetworkType.ATSC,
@@ -3481,26 +3486,26 @@ namespace MediaPortal.TV.Recording
                                     Network() == NetworkType.DVBS,
                                     out providerName))
             {
-              
+
               //channel is already mapped
               //check if provider differs
               if (String.Compare(providerName, newchannel.ServiceProvider, true) != 0)
               {
                 //different provider. change Tv channel name to include the provider as well
-                
+
                 isNewChannel = true;
                 channelId = -1;
                 newchannel.ServiceName = String.Format("{0}-{1}", newchannel.ServiceName, newchannel.ServiceProvider);
                 existingTvChannel = new TVChannel();
                 existingTvChannel.Name = newchannel.ServiceName;
-                
+
                 //check if there is a TV channel with the name: servicename-providername
                 foreach (TVChannel tvchan in tvChannels)
                 {
-                  if (String.Compare(tvchan.Name,newchannel.ServiceName,true)==0)
+                  if (String.Compare(tvchan.Name, newchannel.ServiceName, true) == 0)
                   {
                     //yes TV channel with this name exists in the database...
-                    
+
                     existingTvChannel = tvchan;
                     isNewChannel = false;
                     channelId = tvchan.ID;
@@ -4344,7 +4349,7 @@ namespace MediaPortal.TV.Recording
       if (_pinDemuxerTS != null)
         DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinDemuxerTS);
       if (_pinDemuxerVideoMPEG4 != null)
-      DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinDemuxerVideoMPEG4);
+        DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinDemuxerVideoMPEG4);
       DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinAC3Out);
       DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinMPG1Out);
       DirectShowUtil.RemoveDownStreamFilters(_graphBuilder, _pinDemuxerAudio);
@@ -4362,7 +4367,7 @@ namespace MediaPortal.TV.Recording
       _graphState = State.Created;
       return true;
     }
-    
+
     public virtual bool SupportsHardwarePidFiltering()
     {
       if (_cardProperties == null) return false;
@@ -4370,8 +4375,8 @@ namespace MediaPortal.TV.Recording
     }
     public virtual bool Supports5vAntennae()
     {
-        if (_cardProperties == null) return false;
-        return _cardProperties.Supports5vAntennae;
+      if (_cardProperties == null) return false;
+      return _cardProperties.Supports5vAntennae;
     }
     public bool SupportsCamSelection()
     {
