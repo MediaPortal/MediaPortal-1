@@ -326,13 +326,14 @@ namespace MediaPortal
       minDepthBits = 16;
       minStencilBits = 0;
       showCursorWhenFullscreen = false;
-
+      bool debugChangeDeviceHack = false;
 
       using (Settings xmlreader = new Settings("MediaPortal.xml"))
       {
         useExclusiveDirectXMode = xmlreader.GetValueAsBool("general", "exclusivemode", true);
         autoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
         alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
+        debugChangeDeviceHack = xmlreader.GetValueAsBool("debug", "changedevicehack", false);
       }
 
       // When clipCursorWhenFullscreen is TRUE, the cursor is limited to
@@ -346,6 +347,15 @@ namespace MediaPortal
       clipCursorWhenFullscreen = true;
 #endif
       InitializeComponent();
+      if (debugChangeDeviceHack)
+      {
+        this.menuItemFile.MenuItems.Clear();
+        this.menuItemExit.Index = 2;
+        this.menuItemFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.menuItemChangeDevice,
+            this.menuBreakFile,
+            this.menuItemExit});
+      }
       this.TopMost = alwaysOnTop;
 
       playlistPlayer = PlayListPlayer.SingletonPlayer;
@@ -762,7 +772,7 @@ namespace MediaPortal
 
       if (bRemoveHandler)
         GUIGraphicsContext.DX9Device.DeviceReset -= new EventHandler(this.OnDeviceReset);
-      
+
       if (bWindowed)
         Log.Write("D3D: Switch to windowed mode - Playing media: {0}", g_Player.Playing);
       else
@@ -935,7 +945,7 @@ namespace MediaPortal
         {
           Rectangle rcWindow = this.ClientRectangle;
         }
-       
+
         // Setup the event handlers for our device
         //GUIGraphicsContext.DX9Device.DeviceLost += new System.EventHandler(this.OnDeviceLost);
         GUIGraphicsContext.DX9Device.DeviceReset += new EventHandler(this.OnDeviceReset);
@@ -1054,7 +1064,7 @@ namespace MediaPortal
       // is not the form, if so, cancel the resize
       if ((ourRenderTarget != this) && (this.WindowState == FormWindowState.Minimized))
         e.Cancel = true;
-      
+
       if (!isWindowActive)
         e.Cancel = true;
 
@@ -1209,14 +1219,76 @@ namespace MediaPortal
       ready = true;
     }
 
-    protected void RestorePlayers()
+    /// <summary>
+    /// Save player state (when form was resized)
+    /// </summary>
+    protected void SavePlayerState()
     {
-      if (_wasPlayingVideo)
+      // Is App not minimized to tray and is a player active?
+      if (WindowState != FormWindowState.Minimized &&
+        !_wasPlayingVideo &&
+        (g_Player.Playing && (g_Player.IsTV || g_Player.IsVideo || g_Player.IsDVD)))
+      {
+        _wasPlayingVideo = true;
+        _wasTV = Recorder.IsViewing();
+        _fullscreen = g_Player.FullScreen;
+
+        if (_wasTV)
+        {
+          // TV is active
+          _tvChannel = Recorder.TVChannelName;
+          _tvTimeshift = Recorder.IsTimeShifting();
+          Log.Write("D3D: Form resized - Stopping TV - Current channel: {0} / Timeshifting: {1}", _tvChannel, _tvTimeshift);
+          Recorder.StopViewing();
+        }
+        else
+        {
+          // Some Audio/video is playing
+          _currentPlayerPos = g_Player.CurrentPosition;
+          _currentPlayListType = playlistPlayer.CurrentPlaylistType;
+          _currentPlayList = new PlayList();
+
+          Log.Write("D3D: Saving fullscreen state for resume: {0}", _fullscreen);
+          PlayList tempList = playlistPlayer.GetPlaylist(_currentPlayListType);
+          if (tempList.Count == 0 && g_Player.IsDVD == true)
+          {
+            // DVD is playing
+            PlayListItem itemDVD = new PlayListItem();
+            itemDVD.FileName = g_Player.CurrentFile;
+            itemDVD.Played = true;
+            itemDVD.Type = PlayListItem.PlayListItemType.DVD;
+            tempList.Add(itemDVD);
+          }
+          if (tempList != null)
+          {
+            for (int i = 0; i < (int)tempList.Count; ++i)
+            {
+              PlayListItem itemNew = tempList[i];
+              _currentPlayList.Add(itemNew);
+            }
+          }
+          _strCurrentFile = playlistPlayer.Get(playlistPlayer.CurrentSong);
+          if (_strCurrentFile.Equals(String.Empty) && g_Player.IsDVD == true)
+            _strCurrentFile = g_Player.CurrentFile;
+          Log.Write("D3D: Form resized - Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}", _currentPlayListType, _currentPlayList.Count, playlistPlayer.CurrentSong, _strCurrentFile, _currentPlayerPos);
+          g_Player.Stop();
+        }
+        _iActiveWindow = GUIWindowManager.ActiveWindow;
+      }
+    }
+
+    /// <summary>
+    /// Restore player from saved state (after resizing form)
+    /// </summary>
+    protected void ResumePlayer()
+    {
+      if (_wasPlayingVideo) // was any player active at all?
       {
         _wasPlayingVideo = false;
 
         if (_wasTV)
         {
+          // we were watching TV
           Log.Write("D3D: RestorePlayers - Resuming: {0}", _tvChannel);
           string _errorMessage = string.Empty;
           bool success = Recorder.StartViewing(_tvChannel, true, _tvTimeshift, true, out _errorMessage);
@@ -1238,6 +1310,7 @@ namespace MediaPortal
         }
         else
         {
+          // we were watching some audio/video
           Log.Write("D3D: RestorePlayers - Resuming: {0}", _strCurrentFile);
           playlistPlayer.Init();
           playlistPlayer.Reset();
@@ -1252,6 +1325,7 @@ namespace MediaPortal
             }
           if (playlist[0].Type.Equals(PlayListItem.PlayListItemType.DVD))
           {
+            // we were watching DVD
             IMDBMovie movieDetails = new IMDBMovie();
             string fileName = playlist[0].FileName;
             VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
@@ -1268,7 +1342,7 @@ namespace MediaPortal
             }
           }
           else
-            playlistPlayer.Play(_strCurrentFile);
+            playlistPlayer.Play(_strCurrentFile); // some standard audio/video
 
           if (g_Player.Playing)
             g_Player.SeekAbsolute(_currentPlayerPos);
@@ -1290,7 +1364,7 @@ namespace MediaPortal
         return;
       }
 
-      RestorePlayers();
+      ResumePlayer();
 
       if (GUIGraphicsContext.Vmr9Active)
       {
@@ -1738,7 +1812,7 @@ namespace MediaPortal
       if (notifyIcon != null)
         //we dispose our tray icon here
         this.notifyIcon.Dispose();
-      
+
       base.Dispose(disposing);
 
       if (autoHideTaskbar)
@@ -1964,8 +2038,8 @@ namespace MediaPortal
       // 
       this.menuItemFile.Index = 0;
       this.menuItemFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemChangeDevice,
-            this.menuBreakFile,
+            //this.menuItemChangeDevice,
+            //this.menuBreakFile,
             this.menuItemExit});
       this.menuItemFile.Text = "&File";
       // 
@@ -1982,7 +2056,7 @@ namespace MediaPortal
       // 
       // menuItemExit
       // 
-      this.menuItemExit.Index = 2;
+      this.menuItemExit.Index = 0;
       this.menuItemExit.Text = "Exit";
       this.menuItemExit.Click += new System.EventHandler(this.ExitSample);
       // 
@@ -2106,7 +2180,7 @@ namespace MediaPortal
       if ((GUIGraphicsContext.DX9Device != null) && (!GUIGraphicsContext.DX9Device.Disposed))
         // Move the D3D cursor
         GUIGraphicsContext.DX9Device.SetCursorPosition(e.X, e.Y, false);
-      
+
       // Let the control handle the mouse now
       base.OnMouseMove(e);
     }
@@ -2120,53 +2194,7 @@ namespace MediaPortal
       if (_fromTray)
         _fromTray = false;
       else
-        if (WindowState != FormWindowState.Minimized &&
-          !_wasPlayingVideo &&
-          (g_Player.Playing && (g_Player.IsTV || g_Player.IsVideo || g_Player.IsDVD)))
-        {
-          _wasPlayingVideo = true;
-          _wasTV = Recorder.IsViewing();
-          _fullscreen = g_Player.FullScreen;
-
-          if (_wasTV)
-          {
-            _tvChannel = Recorder.TVChannelName;
-            _tvTimeshift = Recorder.IsTimeShifting();
-            Log.Write("D3D: Form resized - Stopping TV - Current channel: {0} / Timeshifting: {1}", _tvChannel, _tvTimeshift);
-            Recorder.StopViewing();
-          }
-          else
-          {
-            _currentPlayerPos = g_Player.CurrentPosition;
-            _currentPlayListType = playlistPlayer.CurrentPlaylistType;
-            _currentPlayList = new PlayList();
-
-            Log.Write("D3D: Saving fullscreen state for resume: {0}", _fullscreen);
-            PlayList tempList = playlistPlayer.GetPlaylist(_currentPlayListType);
-            if (tempList.Count == 0 && g_Player.IsDVD == true)
-            {
-              PlayListItem itemDVD = new PlayListItem();
-              itemDVD.FileName = g_Player.CurrentFile;
-              itemDVD.Played = true;
-              itemDVD.Type = PlayListItem.PlayListItemType.DVD;
-              tempList.Add(itemDVD);
-            }
-            if (tempList != null)
-            {
-              for (int i = 0; i < (int)tempList.Count; ++i)
-              {
-                PlayListItem itemNew = tempList[i];
-                _currentPlayList.Add(itemNew);
-              }
-            }
-            _strCurrentFile = playlistPlayer.Get(playlistPlayer.CurrentSong);
-            if (_strCurrentFile.Equals(String.Empty) && g_Player.IsDVD == true)
-              _strCurrentFile = g_Player.CurrentFile;
-            Log.Write("D3D: Form resized - Stopping media - Current playlist: Type: {0} / Size: {1} / Current item: {2} / Filename: {3} / Position: {4}", _currentPlayListType, _currentPlayList.Count, playlistPlayer.CurrentSong, _strCurrentFile, _currentPlayerPos);
-            g_Player.Stop();
-          }
-          _iActiveWindow = GUIWindowManager.ActiveWindow;
-        }
+        SavePlayerState();
 
       if (notifyIcon != null)
         if (notifyIcon.Visible == false && this.WindowState == FormWindowState.Minimized)
