@@ -875,7 +875,6 @@ public class MediaPortalApp : D3DApp, IRender
 
     GUIWaitCursor.Dispose();
     GUITextureManager.Dispose();
-    GUIFontManager.Dispose();
 
     if (splashScreen != null)
     {
@@ -995,9 +994,7 @@ public class MediaPortalApp : D3DApp, IRender
     if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
     {
       Log.Write("Main: Resetting DX9 device");
-      //g_Player.Stop();
       GUIGraphicsContext.Load();
-      GUIFontManager.Dispose();
       GUIWaitCursor.Dispose();
       GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
       GUIFontManager.InitializeDeviceObjects();
