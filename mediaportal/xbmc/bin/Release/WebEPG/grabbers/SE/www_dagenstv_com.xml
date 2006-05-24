@@ -18,7 +18,8 @@
 	<entry name="kanal5.se">10</entry>			<!-- Kanal 5 -->
 	<entry name="action@viasat.se">28</entry>		<!-- Viasat Action/Nature -->
 	<entry name="history@viasat.se">215</entry>		<!-- Viasat History -->
-	<entry name="ztv.se">42</entry>				<!-- ZTV -->
+	<entry name="ztv.se">240</entry>			<!-- ZTV -->
+	<entry name="tv6@viasat.se">42</entry> 			<!-- TV6 --> 
 	<entry name="tv8.se">43</entry>				<!-- TV8 -->
 	<entry name="tv1000@tv1000.se">33</entry>		<!-- TV1000 -->
 	<entry name="plusone@tv1000.se">206</entry>		<!-- TV1000 Plus One -->
