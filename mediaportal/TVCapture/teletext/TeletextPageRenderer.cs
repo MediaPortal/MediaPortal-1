@@ -845,8 +845,8 @@ namespace MediaPortal.TV.Teletext
       int x;
       int width = _pageRenderWidth / 40;
       int height = (_pageRenderHeight - 2) / 25;
-      int fntSizeX = (width - 2 < 10) ? 10 : width - 2;
-      int fntSizeY = (height - 8 < 10) ? 10 : height - 8;
+      float fntSizeX = (width - 2 < 10) ? 10 : width - 2;
+      float fntSizeY = (height - 8.7f < 10f) ? 10f : height - 8.7f;
       _fontTeletext = new System.Drawing.Font("Verdana", Math.Min(fntSizeX, fntSizeY), System.Drawing.FontStyle.Regular);
       System.Drawing.SolidBrush brush=null;
       try
