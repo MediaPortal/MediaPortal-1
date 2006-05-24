@@ -30,6 +30,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using System.IO;
+using System.Threading;
 
 using MediaPortal.GUI.Library;
 using MediaPortal.Playlists;
@@ -478,7 +479,7 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(80, 16);
       this.label2.TabIndex = 0;
-      this.label2.Text = "Scanned files:";
+      this.label2.Text = "Scanning file:";
       // 
       // progressBar
       // 
@@ -1311,17 +1312,9 @@ namespace MediaPortal.Configuration.Sections
     {
       groupBox2.Enabled = true;
       groupBox1.Enabled = false;
+      Thread workerThread = new Thread(new ThreadStart(RebuildDatabase));
+      workerThread.Start();
 
-      RebuildDatabase();
-    }
-
-    private enum RebuildState
-    {
-      None,
-      Counting,
-      Scanning,
-      Updating,
-      Done
     }
 
     /// <summary>
@@ -1334,68 +1327,48 @@ namespace MediaPortal.Configuration.Sections
       //
       // Start by counting files
       //
-      RebuildState rebuildState = RebuildState.None;
+      SetStatus("Counting files in selected folders");
 
-      while (stopRebuild != true)
+      //
+      // Count files
+      //
+      availableFiles = new ArrayList();
+      totalFiles = CountFiles();
+
+      //
+      // Initialize progress bar
+      //
+      progressBar.Value = 0;
+      progressBar.Maximum = totalFiles;
+      progressBar.Step = 1;
+      if (stopRebuild)
       {
-        switch (rebuildState)
-        {
-          case RebuildState.None:
-            rebuildState = RebuildState.Counting;
-            break;
-
-          case RebuildState.Counting:
-            {
-              SetStatus("Counting files in selected folders");
-
-              //
-              // Count files
-              //
-              availableFiles = new ArrayList();
-              totalFiles = CountFiles();
-
-              //
-              // Initialize progress bar
-              //
-              progressBar.Value = 0;
-              progressBar.Maximum = totalFiles;
-              progressBar.Step = 1;
-              rebuildState = RebuildState.Scanning;
-              break;
-            }
-
-          case RebuildState.Scanning:
-            {
-              SetStatus("Scanning movie files...");
-              extractedTags = new ArrayList(totalFiles);
-              ScanFiles(totalFiles);
-              rebuildState = RebuildState.Updating;
-              break;
-            }
-
-          case RebuildState.Updating:
-            {
-              rebuildState = RebuildState.Done;
-              break;
-            }
-
-          case RebuildState.Done:
-            SetStatus("Database has been successfully rebuilt");
-            stopRebuild = true;
-            rebuildState = RebuildState.None;
-
-
-            labelLine1.Text = "";
-            labelLine2.Text = "";
-            break;
-        }
+          StopRebuild();
+          return;
       }
+      SetStatus("Scanning movie files...");
+      extractedTags = new ArrayList(totalFiles);
+      ScanFiles(totalFiles);
+      if (stopRebuild)
+      {
+          StopRebuild();
+          return;
+      }
+      SetStatus("Database has been successfully rebuilt");
+      StopRebuild();
+  }
 
-      stopRebuild = false;
-      groupBox1.Enabled = true;
-      groupBox2.Enabled = false;
-    }
-
+      private void StopRebuild()
+      {
+          labelLine1.Text = "";
+          labelLine2.Text = "";
+          progressBar.Value = 0;
+          SetStatus("");
+          countLabel.Text = "";
+          stopRebuild = false;
+          groupBox1.Enabled = true;
+          groupBox2.Enabled = false;
+      }
     /// <summary>
     /// 
     /// </summary>
@@ -1512,16 +1485,12 @@ namespace MediaPortal.Configuration.Sections
 
       foreach (string file in availableFiles)
       {
-         SetCount(currentCount, totalFiles);
+         SetCount(++currentCount, totalFiles);
          progressBar.PerformStep();
          ScanFile(file);
-
         //
         // Update stats
         //
-        SetCount(++currentCount, totalFiles);
-
-        progressBar.PerformStep();
 
         //
         // Exit counting if we requested so

@@ -29,6 +29,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Globalization;
+using MediaPortal.Util;
+
 #pragma warning disable 108
 namespace MediaPortal.Configuration.Sections
 {
@@ -53,6 +55,7 @@ namespace MediaPortal.Configuration.Sections
     string fontColor;
     bool fontIsBold;
     private MediaPortal.UserInterface.Controls.MPTextBox dropShadowTextBox;
+    private MediaPortal.UserInterface.Controls.MPTextBox listViewTextBox;
     int fontSize;
     private MediaPortal.UserInterface.Controls.MPComboBox defaultZoomModeComboBox;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
@@ -89,6 +92,8 @@ namespace MediaPortal.Configuration.Sections
               return String.Format("{0} ({1})",database, language);
           }
       }
+      // The LVI being edited
+      private ListViewItem _editItem;
 
     string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
 
@@ -318,6 +323,7 @@ namespace MediaPortal.Configuration.Sections
         this.bDatabaseDown = new MediaPortal.UserInterface.Controls.MPButton();
         this.bDatabaseUp = new MediaPortal.UserInterface.Controls.MPButton();
         this.lvDatabase = new System.Windows.Forms.ListView();
+        this.listViewTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
         this.chDatabaseDB = new System.Windows.Forms.ColumnHeader();
         this.chDatabaseLanguage = new System.Windows.Forms.ColumnHeader();
         this.chDatabaseLimit = new System.Windows.Forms.ColumnHeader();
@@ -463,6 +469,7 @@ namespace MediaPortal.Configuration.Sections
         this.dropShadowTextBox.Name = "dropShadowTextBox";
         this.dropShadowTextBox.Size = new System.Drawing.Size(280, 20);
         this.dropShadowTextBox.TabIndex = 5;
+
         // 
         // label4
         // 
@@ -523,6 +530,7 @@ namespace MediaPortal.Configuration.Sections
         this.groupBox2.Controls.Add(this.bDatabaseDown);
         this.groupBox2.Controls.Add(this.bDatabaseUp);
         this.groupBox2.Controls.Add(this.lvDatabase);
+        this.groupBox2.Controls.Add(this.listViewTextBox);
         this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
         this.groupBox2.Location = new System.Drawing.Point(16, 16);
         this.groupBox2.Name = "groupBox2";
@@ -530,6 +538,17 @@ namespace MediaPortal.Configuration.Sections
         this.groupBox2.TabIndex = 0;
         this.groupBox2.TabStop = false;
         this.groupBox2.Text = "IMDB Database search results";
+        // 
+        // listviewTextBox
+        // 
+        this.listViewTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                    | System.Windows.Forms.AnchorStyles.Right)));
+        this.listViewTextBox.Location = new System.Drawing.Point(136, 76);
+        this.listViewTextBox.Name = "listViewTextBox";
+        this.listViewTextBox.Size = new System.Drawing.Size(280, 20);
+        this.listViewTextBox.Visible = false;
+        this.listViewTextBox.Leave += new EventHandler(listViewTextBox_Leave);
+        this.listViewTextBox.PreviewKeyDown += new PreviewKeyDownEventHandler(listViewTextBox_KeyPress);
         // 
         // mpButton1
         // 
@@ -602,6 +621,7 @@ namespace MediaPortal.Configuration.Sections
         this.lvDatabase.UseCompatibleStateImageBehavior = false;
         this.lvDatabase.View = System.Windows.Forms.View.Details;
         this.lvDatabase.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lvDatabase_KeyUp);
+        this.lvDatabase.DoubleClick +=new EventHandler(lvDatabase_DoubleClick);
         // 
         // chDatabaseDB
         // 
@@ -855,7 +875,10 @@ namespace MediaPortal.Configuration.Sections
             }
         }
     }
+      private void lvDatabase_PreviewKeyDown(Object o, KeyEventArgs e)
+      {
 
+      }
       private void mpButton1_Click(object sender, EventArgs e)
       {
           ComboBoxItemDatabase database = mpComboBox1.SelectedItem as ComboBoxItemDatabase;
@@ -871,6 +894,94 @@ namespace MediaPortal.Configuration.Sections
               }
               SaveSettings();
           }
+      }
+
+      private void lvDatabase_DoubleClick(object sender, EventArgs e)
+      {
+          Point pt = lvDatabase.PointToClient(Cursor.Position);
+          ListViewItem item = lvDatabase.GetItemAt(pt.X, pt.Y);
+          if (item != null)
+          {
+              Rectangle lviBounds;
+              int subItemX;
+
+              Rectangle subItemRect = Rectangle.Empty;
+              lviBounds = item.GetBounds(ItemBoundsPortion.Entire);
+              subItemX = lviBounds.Left + lvDatabase.Columns[0].Width + lvDatabase.Columns[1].Width;
+              subItemRect = new Rectangle(subItemX, lviBounds.Top, lvDatabase.Columns[2].Width, lviBounds.Height);
+              if (subItemRect.X < 0)
+              {
+                  // Left edge of SubItem not visible - adjust rectangle position and width
+                  subItemRect.Width += subItemRect.X;
+                  subItemRect.X = 0;
+              }
+              if (subItemRect.X + subItemRect.Width > lvDatabase.Width)
+              {
+                  // Right edge of SubItem not visible - adjust rectangle width
+                  subItemRect.Width = lvDatabase.Width - subItemRect.Left;
+              }
+
+              // Subitem bounds are relative to the location of the ListView!
+              subItemRect.Offset(lvDatabase.Left, lvDatabase.Top);
+
+              // In case the editing control and the listview are on different parents,
+              // account for different origins
+              Point origin = new Point(0, 0);
+              Point lvOrigin = lvDatabase.Parent.PointToScreen(origin);
+              Point ctlOrigin = listViewTextBox.Parent.PointToScreen(origin);
+
+              subItemRect.Offset(lvOrigin.X - ctlOrigin.X, lvOrigin.Y - ctlOrigin.Y);
+
+              // Position and show editor
+              listViewTextBox.Bounds = subItemRect;
+              listViewTextBox.Text = item.SubItems[2].Text;
+              listViewTextBox.Visible = true;
+              listViewTextBox.BringToFront();
+              listViewTextBox.Focus();
+
+              _editItem = item;
+          }
+      }
+      private void listViewTextBox_Leave(object sender, EventArgs e)
+      {
+          // cell editor losing focus
+          EndEditing(true);
+      }
+
+      private void listViewTextBox_KeyPress(object sender, System.Windows.Forms.PreviewKeyDownEventArgs e)
+      {
+          MediaPortal.GUI.Library.Log.Write("Keypressed:{0}", e.KeyCode);
+
+          switch (e.KeyCode)
+          {
+              case System.Windows.Forms.Keys.Escape:
+                  {
+                      e.IsInputKey = true;
+                      EndEditing(false);
+                      break;
+                  }
+
+              case System.Windows.Forms.Keys.Enter:
+                  {
+                      e.IsInputKey = true;
+                      EndEditing(true);
+                      break;
+                  }
+          }
+      }
+
+      /// <summary>
+      /// Accept or discard current value of cell editor control
+      /// </summary>
+      /// <param name="AcceptChanges">Use the _editingControl's Text as new SubItem text or discard changes?</param>
+      public void EndEditing(bool AcceptChanges)
+      {
+          if (AcceptChanges)
+          {
+              _editItem.SubItems[2].Text = listViewTextBox.Text;
+          }
+          listViewTextBox.Visible = false;
+          _editItem = null;
       }
   }
 }
