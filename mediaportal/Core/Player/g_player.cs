@@ -926,30 +926,30 @@ namespace MediaPortal.Player
         if ( Step >= 3600 )
           {
           if ( ( Convert.ToSingle(Step) / 3600 ) > 1 && ( Convert.ToSingle(Step) / 3600 ) != 2 )
-            return Convert.ToString(Step / 60) + " " + GUILocalizeStrings.Get(2998);// "min"
+            return "+ " + Convert.ToString(Step / 60) + " " + GUILocalizeStrings.Get(2998);// "min"
           else
-            return Convert.ToString(Step / 3600) + " " + GUILocalizeStrings.Get(2997);// "hrs"
+            return "+ " + Convert.ToString(Step / 3600) + " " + GUILocalizeStrings.Get(2997);// "hrs"
           }
         else
           if ( Step >= 60 )
-            return Convert.ToString(Step / 60) + " " + GUILocalizeStrings.Get(2998);// "min"
+            return "+ " + Convert.ToString(Step / 60) + " " + GUILocalizeStrings.Get(2998);// "min"
           else
-            return Convert.ToString(Step) + " " + GUILocalizeStrings.Get(2999);// "sec"
+            return "+ " + Convert.ToString(Step) + " " + GUILocalizeStrings.Get(2999);// "sec"
         }
-      else
+      else // back = negative
         {
         if ( Step <= -3600 )
           {
           if ( ( Convert.ToSingle(Step) / 3600 ) < 1 && ( Convert.ToSingle(Step) / 3600 ) != 2 )
-            return Convert.ToString(Step / 60) + " " + GUILocalizeStrings.Get(2998);// "min"
+            return "- " + Convert.ToString(Math.Abs(Step / 60)) + " " + GUILocalizeStrings.Get(2998);// "min"
           else
-            return Convert.ToString(Step / 3600) + " " + GUILocalizeStrings.Get(2997);// "hrs"
+            return "- " + Convert.ToString(Math.Abs(Step / 3600)) + " " + GUILocalizeStrings.Get(2997);// "hrs"
           }
         else
           if ( Step <= -60 )
-            return Convert.ToString(Step / 60) + " " + GUILocalizeStrings.Get(2998);// "min"
+            return "- " + Convert.ToString(Math.Abs(Step / 60)) + " " + GUILocalizeStrings.Get(2998);// "min"
           else
-            return Convert.ToString(Step) + " " + GUILocalizeStrings.Get(2999);// "sec"
+            return "- " + Convert.ToString(Math.Abs(Step)) + " " + GUILocalizeStrings.Get(2999);// "sec"
       }
     }  
 
