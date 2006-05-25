@@ -410,7 +410,11 @@ namespace MediaPortal.TV.Recording
 
       AddTeeSinkToGraph(_graphBuilderInterface); //Tee/Sink-to-Sink Converter
       IBaseFilter teesink = DirectShowUtil.GetFilterByName(_graphBuilderInterface, "Kernel Tee");
-      if (teesink == null) return;
+      if (teesink == null)
+      {
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx.SetupTeletext(): Failed to find Kernel Tee");
+        return;
+      }
 
       AddWstCodecToGraph(_graphBuilderInterface);//WST Codec
       IBaseFilter wstCodec = DirectShowUtil.GetFilterByName(_graphBuilderInterface, "WST Codec");
@@ -418,6 +422,7 @@ namespace MediaPortal.TV.Recording
       {
         _graphBuilderInterface.RemoveFilter(teesink);
         Marshal.ReleaseComObject(teesink);
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx.SetupTeletext(): Failed to find WST Codec");
         return;
       }
 
@@ -428,7 +433,7 @@ namespace MediaPortal.TV.Recording
         _graphBuilderInterface.RemoveFilter(wstCodec);
         Marshal.ReleaseComObject(teesink);
         Marshal.ReleaseComObject(wstCodec);
-        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx: Failed to find VBI pin");
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx.SetupTeletext(): Failed to find VBI pin");
         return;
       }
 
@@ -452,7 +457,7 @@ namespace MediaPortal.TV.Recording
         Marshal.ReleaseComObject(teesink);
         Marshal.ReleaseComObject(wstCodec);
         Marshal.ReleaseComObject(_filterSampleGrabber);
-        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx: Failed to find Teletext info");
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx.SetupTeletext(): Failed to find Teletext info");
         return;
       }
       Marshal.ReleaseComObject(teesink);
