@@ -1013,7 +1013,7 @@ namespace MediaPortal.Player
     {
       int[] m_seekStep = new int[15];
       ArrayList _seekStepList = LoadSettings();
-      for (int i = 0; i < 14; i++)
+      for (int i = 0; i < 15; i++)
       {
         m_seekStep[i] = (int)_seekStepList[i];
       } 
