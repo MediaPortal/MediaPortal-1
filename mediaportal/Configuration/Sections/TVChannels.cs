@@ -1011,9 +1011,6 @@ namespace MediaPortal.Configuration.Sections
       base.OnPaint(e);
     }
 
-
-
-
     private void channelsListView_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
     {
       if (_columnSorter == null)
@@ -1891,6 +1888,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
         SaveTVChannels();
+        reloadList = true;
         SaveSettings();
 
 
