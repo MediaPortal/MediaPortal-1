@@ -71,8 +71,7 @@ namespace MediaPortal.Util
             }
             catch (Exception ex)
             {
-                Log.Write("IMPawardsSearch: {0}", ex.Message);
-                imageList.Add(String.Empty);
+                return;
             }
             finally
             {
@@ -92,8 +91,7 @@ namespace MediaPortal.Util
                 }
                 catch (Exception ex)
                 {
-                    Log.Write("IMPawardsSearch: {0}", ex.Message);
-                    imageList.Add(String.Empty);
+                    return;
                 }
                 finally
                 {
@@ -114,10 +112,10 @@ namespace MediaPortal.Util
                     }
                 }
                 else
-                    imageList.Add(String.Empty);
+                    return;
             }
             else
-                imageList.Add(String.Empty);
+                return;
 
         }
     }
