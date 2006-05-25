@@ -217,6 +217,7 @@ namespace MediaPortal.GUI.Library
 
             if (fPosCX <= 0) fPosCX = 0;
             if (fPosCY <= 0) fPosCY = 0;*/
+            if (_width < 6) return;
 
             _font.DrawText((float)_positionX, (float)_positionY, color, _cachedTextLabel, _textAlignment, (int)_width-5);
           }

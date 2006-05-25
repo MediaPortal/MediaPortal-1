@@ -413,6 +413,7 @@ namespace MediaPortal.GUI.TV
         case Action.ActionType.ACTION_INCREASE_TIMEBLOCK:
           {
             _timePerBlock += 15;
+            if (_timePerBlock > 60) _timePerBlock = 60;
             Update(false);
             SetFocus();
           }
