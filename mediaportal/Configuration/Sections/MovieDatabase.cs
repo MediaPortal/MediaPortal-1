@@ -1174,9 +1174,9 @@ namespace MediaPortal.Configuration.Sections
       this.btnAmazon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnAmazon.Location = new System.Drawing.Point(16, 44);
       this.btnAmazon.Name = "btnAmazon";
-      this.btnAmazon.Size = new System.Drawing.Size(96, 22);
+      this.btnAmazon.Size = new System.Drawing.Size(110, 22);
       this.btnAmazon.TabIndex = 3;
-      this.btnAmazon.Text = "Search Amazon";
+      this.btnAmazon.Text = "Search Cover Art";
       this.btnAmazon.Click += new System.EventHandler(this.btnAmazon_Click);
       // 
       // comboBoxPictures
@@ -1577,15 +1577,27 @@ namespace MediaPortal.Configuration.Sections
         {
                 if (movieDetails.ThumbURL == string.Empty)
                 {
-                    AmazonImageSearch search = new AmazonImageSearch();
-                    search.Search(movieDetails.Title);
-                    if (search.Count > 0)
+                    IMPawardsSearch impSearch = new IMPawardsSearch();
+                    impSearch.Search(movieDetails.Title);
+                    if ((impSearch.Count > 0)&&(impSearch[0] != string.Empty))
                     {
-                        movieDetails.ThumbURL = search[0];
+                        movieDetails.ThumbURL = impSearch[0];
+                    }
+                    else
+                    {
+                        AmazonImageSearch search = new AmazonImageSearch();
+                        search.Search(movieDetails.Title);
+                        if (search.Count > 0)
+                        {
+                            movieDetails.ThumbURL = search[0];
+                        }
                     }
                 }
-                //download thumbnail
-                DownloadThumnail(Thumbs.MovieTitle, movieDetails.ThumbURL, movieDetails.Title);
+                if (movieDetails.ThumbURL != string.Empty)
+                {
+                    //download thumbnail
+                    DownloadThumnail(Thumbs.MovieTitle, movieDetails.ThumbURL, movieDetails.Title);
+                }
                 //"Cast overview:\nNaomi Watts as Rachel Keller\nMartin Henderson as Noah Clay\nDavid Dorfman as Aidan Keller\nBrian Cox as Richard Morgan\nJane Alexander as Dr. Grasnik\nLindsay Frost as Ruth Embry\nAmber Tamblyn as Katie Embry\nRachael Bella as Rebecca ''Becca'' Kotler\nDaveigh Chase as Samara Morgan\nShannon Cochran as Anna Morgan\nSandra Thigpen as Teacher\nRichard Lineback as Innkeeper\nSasha Barrese as Girl Teen #1\nTess Hall as Girl Teen #2\nAdam Brody as Kellen, Male Teen #1"
                 DownloadActors(movieDetails);
                 DownloadDirector(movieDetails);
@@ -2144,22 +2156,32 @@ namespace MediaPortal.Configuration.Sections
               btnAmazon.Enabled = false;
               comboBoxPictures.Items.Clear();
               comboBoxPictures.Enabled = false;
-              comboBoxPictures.Items.Add(new ComboBoxArt("Loading from Amazon", ""));
+              comboBoxPictures.Items.Add(new ComboBoxArt("Searching the Internet...", ""));
               comboBoxPictures.SelectedIndex = 0;
+              IMPawardsSearch impSearch = new IMPawardsSearch();
+              impSearch.Search(CurrentMovie.Title);
               AmazonImageSearch search = new AmazonImageSearch();
               search.Search(CurrentMovie.Title);
-              if (search.Count > 0)
+              comboBoxPictures.Items.Clear();
+              if ((impSearch.Count > 0)&&(impSearch[0]!=string.Empty))
               {
-                  comboBoxPictures.Items.Clear();
-                  for (int i = 0; i < search.Count; ++i)
+                  for (int i = 0; i < impSearch.Count; ++i)
                   {
-                      ComboBoxArt art = new ComboBoxArt(String.Format("Picture {0}", (i + 1)), search[i]);
+                      ComboBoxArt art = new ComboBoxArt(String.Format("IMP Awards Picture {0}", (i + 1)), impSearch[i]);
                       comboBoxPictures.Items.Add(art);
                   }
                   comboBoxPictures.Enabled = true;
               }
-              else
+              if (search.Count > 0)
               {
+                  for (int i = 0; i < search.Count; ++i)
+                  {
+                      ComboBoxArt art = new ComboBoxArt(String.Format("Amazon Picture {0}", (i + 1)), search[i]);
+                      comboBoxPictures.Items.Add(art);
+                  }
+                  comboBoxPictures.Enabled = true;
+              }
+              if (comboBoxPictures.Items.Count==0){
                   comboBoxPictures.Items.Clear();
                   comboBoxPictures.Items.Add(new ComboBoxArt("No results found...", ""));
                   comboBoxPictures.SelectedIndex = 0;

@@ -67,7 +67,7 @@ namespace MediaPortal.GUI.Video
     bool m_bRefresh = false;
     IMDBMovie currentMovie = null;
     bool m_bPrevOverlay = false;
-    AmazonImageSearch amazonSearch = new AmazonImageSearch();
+    string[] coverArtUrls = new string[1];
     string imdbCoverArtUrl = String.Empty;
 
     public GUIVideoInfo()
@@ -144,8 +144,14 @@ namespace MediaPortal.GUI.Video
 
 			// Default picture					
 			imdbCoverArtUrl = currentMovie.ThumbURL;
-			spinImages.Reset();
-			spinImages.SetRange(0,0);
+            coverArtUrls[0] = imdbCoverArtUrl;
+            spinImages.Reset();
+            spinImages.SetReverse(true);
+            spinImages.SetRange(1, 1);
+            spinImages.Value = 1;
+
+            spinImages.ShowRange = true;
+            spinImages.UpDownType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
       
 			spinDisc.Reset();
 			viewmode=ViewMode.Image;			    
@@ -232,23 +238,8 @@ namespace MediaPortal.GUI.Video
 			{
 				int item=spinImages.Value-1;
 
-				if (imdbCoverArtUrl == String.Empty)
-				{
-					if (item < 0 || item >= amazonSearch.Count) item=0;
-					currentMovie.ThumbURL = amazonSearch[item];
-				}
-				else
-				{
-					if (item == 0)
-					{
-						currentMovie.ThumbURL = imdbCoverArtUrl;
-					}
-					else
-					{
-						if (item-1 < 0 || item-1 >= amazonSearch.Count) item=1;
-						currentMovie.ThumbURL = amazonSearch[item-1];
-					}
-				}
+    			if (item < 0 || item >= coverArtUrls.Length) item=0;
+                currentMovie.ThumbURL = coverArtUrls[item];
 						
 				string coverArtImage = Utils.GetCoverArtName(Thumbs.MovieTitle,currentMovie.Title);
 				string largeCoverArtImage = Utils.GetLargeCoverArtName(Thumbs.MovieTitle,currentMovie.Title);
@@ -429,48 +420,40 @@ namespace MediaPortal.GUI.Video
     }
 		void AmazonLookupThread()
 		{
-			// Search for more pictures
-			IMDBMovie movie=currentMovie;
-			amazonSearch.Search(movie.Title);
+            if (currentMovie == null) return;
+            // Search for more pictures
+            IMDBMovie movie = currentMovie;
+            IMPawardsSearch impSearch = new IMPawardsSearch();
+            impSearch.Search(movie.Title);
+            AmazonImageSearch amazonSearch = new AmazonImageSearch();
+            amazonSearch.Search(movie.Title);
+            int pictureCount = amazonSearch.Count + impSearch.Count + 1;
+            int pictureIndex = 0;
+            coverArtUrls = new string[pictureCount];
+            coverArtUrls[pictureIndex++] = movie.ThumbURL;
+            if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
+            {
+                for (int i = 0; i < impSearch.Count; ++i)
+                {
+                    coverArtUrls[pictureIndex++] = impSearch[i];
+                }
+            }
+            if (amazonSearch.Count > 0)
+            {
+                for (int i = 0; i < amazonSearch.Count; ++i)
+                {
+                    coverArtUrls[pictureIndex++] = amazonSearch[i];
+                }
+            }
 
-			// Set number of picture URL's (x from Search + 1 from movie database)					
-			int pictureCount = amazonSearch.Count+1;
-			int pictureIndex = 1;
 
-			// Search selected picture in amazonSearch list					
-			int counter=0;
-			while (counter < amazonSearch.Count)
-			{
-				string url=amazonSearch[counter].ToLower();
-				if (url.Equals(movie.ThumbURL.ToLower() ) )
-				{
-					// Duplicate URL found in search list
-					imdbCoverArtUrl = String.Empty;
-					pictureCount--;
-					pictureIndex--;
-					break;
-				}
-				counter++;
-			}
-
-			if (currentMovie==null) return;
 			spinImages.Reset();
 			spinImages.SetReverse(true);
-			spinImages.SetRange(1,pictureCount);
+			spinImages.SetRange(1,pictureCount-1);
 			spinImages.Value = 1;
 
 			spinImages.ShowRange=true;
 			spinImages.UpDownType =GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT;
-			for (int i=0; i < amazonSearch.Count;++i)
-			{
-				string url=amazonSearch[i].ToLower();
-				if (url.Equals(movie.ThumbURL.ToLower() ) )
-				{
-					spinImages.Value=pictureIndex+1;								
-					break;
-				}
-				pictureIndex++;
-			}
 		}
 
     #region IRenderLayer

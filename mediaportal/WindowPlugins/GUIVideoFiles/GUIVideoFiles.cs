@@ -1114,13 +1114,24 @@ namespace MediaPortal.GUI.Video
 
           if (_imdb.GetDetails(url, ref movieDetails))
           {
-            // get & save thumbnail
-            AmazonImageSearch search = new AmazonImageSearch();
-            search.Search(movieDetails.Title);
-            if (search.Count > 0)
-            {
-              movieDetails.ThumbURL = search[0];
-            }
+              if (movieDetails.ThumbURL == string.Empty)
+              {
+                  IMPawardsSearch impSearch = new IMPawardsSearch();
+                  impSearch.Search(movieDetails.Title);
+                  if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
+                  {
+                      movieDetails.ThumbURL = impSearch[0];
+                  }
+                  else
+                  {
+                      AmazonImageSearch search = new AmazonImageSearch();
+                      search.Search(movieDetails.Title);
+                      if (search.Count > 0)
+                      {
+                          movieDetails.ThumbURL = search[0];
+                      }
+                  }
+              }
             string orgMovieTitle = movieDetails.Title;
             VideoDatabase.SetMovieInfo(movieFileName, ref movieDetails);
             string strThumb = String.Empty;
@@ -1443,18 +1454,28 @@ namespace MediaPortal.GUI.Video
                   // got all movie details :-)
                     if (movieDetails.ThumbURL == string.Empty)
                     {
-                        AmazonImageSearch search = new AmazonImageSearch();
-                        search.Search(movieDetails.Title);
-                        if (search.Count > 0)
+                        IMPawardsSearch impSearch = new IMPawardsSearch();
+                        impSearch.Search(movieDetails.Title);
+                        if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
                         {
-                            movieDetails.ThumbURL = search[0];
+                            movieDetails.ThumbURL = impSearch[0];
                         }
-                        if (movieDetails.ThumbURL == string.Empty)
+                        else
                         {
-                            //download thumbnail
-                            DownloadThumnail(Thumbs.MovieTitle, movieDetails.ThumbURL, movieDetails.Title);
+                            AmazonImageSearch search = new AmazonImageSearch();
+                            search.Search(movieDetails.Title);
+                            if (search.Count > 0)
+                            {
+                                movieDetails.ThumbURL = search[0];
+                            }
                         }
                     }
+                    if (movieDetails.ThumbURL != string.Empty)
+                    {
+                        //download thumbnail
+                        DownloadThumnail(Thumbs.MovieTitle, movieDetails.ThumbURL, movieDetails.Title);
+                    }
+
                   //get all actors...
                   DownloadActors(movieDetails);
                   DownloadDirector(movieDetails);
@@ -3269,16 +3290,25 @@ namespace MediaPortal.GUI.Video
         if (imdb.GetDetails(url, ref movieDetails) == false)
           return;
 
-        // get & save thumbnail
-        AmazonImageSearch search = new AmazonImageSearch();
-
-        search.Search(movieDetails.Title);
-
-        if (search.Count == 0)
-          return;
-
-        movieDetails.ThumbURL = search[0];
-
+      if (movieDetails.ThumbURL == string.Empty)
+      {
+          IMPawardsSearch impSearch = new IMPawardsSearch();
+          impSearch.Search(movieDetails.Title);
+          if ((impSearch.Count > 0) && (impSearch[0] != string.Empty))
+          {
+              movieDetails.ThumbURL = impSearch[0];
+          }
+          else
+          {
+              AmazonImageSearch search = new AmazonImageSearch();
+              search.Search(movieDetails.Title);
+              if (search.Count > 0)
+              {
+                  movieDetails.ThumbURL = search[0];
+              }
+          }
+      }
+      
         VideoDatabase.SetMovieInfo(movieFileName, ref movieDetails);
 
         string strThumb = String.Empty;
