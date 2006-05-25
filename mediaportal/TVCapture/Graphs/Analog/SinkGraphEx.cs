@@ -428,6 +428,7 @@ namespace MediaPortal.TV.Recording
         _graphBuilderInterface.RemoveFilter(wstCodec);
         Marshal.ReleaseComObject(teesink);
         Marshal.ReleaseComObject(wstCodec);
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx: Failed to find VBI pin");
         return;
       }
 
@@ -451,6 +452,7 @@ namespace MediaPortal.TV.Recording
         Marshal.ReleaseComObject(teesink);
         Marshal.ReleaseComObject(wstCodec);
         Marshal.ReleaseComObject(_filterSampleGrabber);
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx: Failed to find Teletext info");
         return;
       }
       Marshal.ReleaseComObject(teesink);
