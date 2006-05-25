@@ -1441,12 +1441,20 @@ namespace MediaPortal.GUI.Video
                 if (_imdb.GetDetails(url, ref movieDetails))
                 {
                   // got all movie details :-)
-                  AmazonImageSearch search = new AmazonImageSearch();
-                  search.Search(movieDetails.Title);
-                  if (search.Count > 0)
-                  {
-                    movieDetails.ThumbURL = search[0];
-                  }
+                    if (movieDetails.ThumbURL == string.Empty)
+                    {
+                        AmazonImageSearch search = new AmazonImageSearch();
+                        search.Search(movieDetails.Title);
+                        if (search.Count > 0)
+                        {
+                            movieDetails.ThumbURL = search[0];
+                        }
+                        if (movieDetails.ThumbURL == string.Empty)
+                        {
+                            //download thumbnail
+                            DownloadThumnail(Thumbs.MovieTitle, movieDetails.ThumbURL, movieDetails.Title);
+                        }
+                    }
                   //get all actors...
                   DownloadActors(movieDetails);
                   DownloadDirector(movieDetails);
@@ -1560,14 +1568,21 @@ namespace MediaPortal.GUI.Video
                 if (info.File == strFile /*|| pItem->GetLabel() == info.Title*/)
                 {
                   string strThumb;
+                  string strLargeThumb;
                   if (Utils.IsDVD(pItem.Path))
                     pItem.Label = String.Format("({0}:) {1}", pItem.Path.Substring(0, 1), info.Title);
                   strThumb = Utils.GetCoverArt(Thumbs.MovieTitle, info.Title);
+                  strLargeThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, info.Title);
                   if (System.IO.File.Exists(strThumb))
                   {
-                    pItem.ThumbnailImage = strThumb;
-                    pItem.IconImageBig = strThumb;
-                    pItem.IconImage = strThumb;
+                      pItem.ThumbnailImage = strThumb;
+                      pItem.IconImageBig = strThumb;
+                      pItem.IconImage = strThumb;
+                  }
+                  if (System.IO.File.Exists(strLargeThumb))
+                  {
+                    pItem.ThumbnailImage = strLargeThumb;
+                    pItem.IconImageBig = strLargeThumb;
                   }
                   break;
                 }
@@ -1598,12 +1613,19 @@ namespace MediaPortal.GUI.Video
               if (info.File == strFile /*|| pItem->GetLabel() == info.Title*/)
               {
                 string strThumb;
+                string strLargeThumb;
                 strThumb = Utils.GetCoverArt(Thumbs.MovieTitle, info.Title);
+                strLargeThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, info.Title);
                 if (System.IO.File.Exists(strThumb))
                 {
                   pItem.ThumbnailImage = strThumb;
                   pItem.IconImageBig = strThumb;
                   pItem.IconImage = strThumb;
+                }
+                if (System.IO.File.Exists(strLargeThumb))
+                {
+                    pItem.ThumbnailImage = strLargeThumb;
+                    pItem.IconImageBig = strLargeThumb;
                 }
                 break;
               }
@@ -1959,7 +1981,6 @@ namespace MediaPortal.GUI.Video
 
       if (!mapSettings.Stack) dlg.AddLocalizedString(346); //Stack
       else dlg.AddLocalizedString(347); //Unstack
-      dlg.AddLocalizedString(654); //Eject
 
       if (!facadeView.Focus)
       {
@@ -1976,6 +1997,13 @@ namespace MediaPortal.GUI.Video
           dlg.AddLocalizedString(99845); //TV.com
           dlg.AddLocalizedString(208); //play
           dlg.AddLocalizedString(926); //Queue
+        }
+        if (item.IsFolder && !Utils.IsDVD(item.Path))
+        {
+            if (item.Label != "..")
+            {
+                if (!item.IsRemote) dlg.AddLocalizedString(102); //Scan
+            }
         }
         if (Utils.getDriveType(item.Path) == 5) dlg.AddLocalizedString(654); //Eject
 
@@ -2037,7 +2065,20 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 102: //Scan
-          ArrayList itemlist = m_directory.GetDirectory(currentFolder);
+          string folder = currentFolder;
+          if (facadeView.Focus)
+          {
+              if (item.IsFolder)
+              {
+                  if (item.Label != "..")
+                  {
+                      if (!item.IsRemote) {
+                                        folder = item.Path;
+                      }
+                  }
+              }
+          }
+          ArrayList itemlist = m_directory.GetDirectory(folder);
           OnScan(itemlist);
           LoadDirectory(currentFolder);
           break;
