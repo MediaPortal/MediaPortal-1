@@ -940,7 +940,7 @@ namespace MediaPortal.Player
         {
         if ( Step <= -3600 )
           {
-          if ( ( Convert.ToSingle(Step) / 3600 ) < 1 && ( Convert.ToSingle(Step) / 3600 ) != 2 )
+          if ( ( Convert.ToSingle(Step) / 3600 ) < -1 && ( Convert.ToSingle(Step) / 3600 ) != -2 )
             return "- " + Convert.ToString(Math.Abs(Step / 60)) + " " + GUILocalizeStrings.Get(2998);// "min"
           else
             return "- " + Convert.ToString(Math.Abs(Step / 3600)) + " " + GUILocalizeStrings.Get(2997);// "hrs"
@@ -1062,7 +1062,7 @@ namespace MediaPortal.Player
                         else goto case Steps.Secm15; break;
           case Steps.Secm15:
                         if (m_seekStep[0] == 1) _currentStep = Steps.Secm5;
-                        else _currentStep = Steps.Sec0; break;
+                        else goto case Steps.Secm5; break;
 
           case Steps.Secm5: _currentStep = Steps.Sec0; break;
 
@@ -1171,7 +1171,7 @@ namespace MediaPortal.Player
 
           case Steps.Sec15:
             if (m_seekStep[0] == 1) _currentStep = Steps.Sec5;
-            else _currentStep = Steps.Sec5; break;
+            else goto case Steps.Sec5; break;
           case Steps.Sec30:
             if (m_seekStep[1] == 1) _currentStep = Steps.Sec15;
             else goto case Steps.Sec15; break;
