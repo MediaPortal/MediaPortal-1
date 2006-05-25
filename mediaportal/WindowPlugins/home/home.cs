@@ -1211,14 +1211,19 @@ namespace MediaPortal.GUI.Home
               if (pluginEnabled == true)
                 myPlgInCount++;
             }
-            if (inMyPlugins == true)
-            {
-              inhome = xmlreader.GetValueAsBool("myplugins", setup.PluginName(), bHomeDefault);
-            }
+
+            bool showHomeDefault;
+            IShowPlugin showPlugin = setup as IShowPlugin;
+            if (showPlugin != null)
+              showHomeDefault = showPlugin.ShowDefaultHome();
             else
-            {
-              inhome = xmlreader.GetValueAsBool("home", setup.PluginName(), bHomeDefault);
-            }
+              showHomeDefault = false;
+
+            if (inMyPlugins == true)
+              inhome = xmlreader.GetValueAsBool("myplugins", setup.PluginName(), !showHomeDefault);
+            else
+              inhome = xmlreader.GetValueAsBool("home", setup.PluginName(), showHomeDefault);
+
             if (!inhome) continue;
           }
           string strButtonText;
