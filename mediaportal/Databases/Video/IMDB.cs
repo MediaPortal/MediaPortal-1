@@ -910,6 +910,8 @@ namespace MediaPortal.Video.Database
 					movieDetails.Title = url.Title.Substring(0,iEnd);
 				else
 					movieDetails.Title = url.Title;
+                movieDetails.Title = movieDetails.Title.Trim();
+                string movieTitle = System.Web.HttpUtility.HtmlEncode(movieDetails.Title);
 				int iDirectedBy=strBody.IndexOf("Directed by");
 				int iCredits=strBody.IndexOf("Writing credits");
 				int iGenre=strBody.IndexOf("Genre:");
@@ -917,24 +919,10 @@ namespace MediaPortal.Video.Database
 				int iPlotOutline=strBody.IndexOf("Plot Outline:</b>");	
 				int iPlotSummary=strBody.IndexOf("Plot Summary:</b>");	
 				int iPlot=strBody.IndexOf("<a href=\"plotsummary");
-				int iImage=strBody.IndexOf("<img alt=\"cover\" align=\"left\" src=\"");
+                int iImage = strBody.IndexOf("<img border=\"0\" alt=\"" + movieTitle + "\" title=\"" + movieTitle + "\" src=\"");
 				if (iImage>=0)
 				{
-					iImage+="<img alt=\"cover\" align=\"left\" src=\"".Length;
-				}
-				else
-				{
-					iImage=strBody.IndexOf("<img border=\"0\" alt=\"cover\" src=\"");
-					if (iImage>=0) iImage+="<img border=\"0\" alt=\"cover\" src=\"".Length;
-					else 
-					{
-						int ipos=strBody.IndexOf("alt=\"cover\"");
-						if (ipos>0)
-						{
-							ipos=strBody.IndexOf("src=\"",ipos);
-							if (ipos>0) iImage=ipos+"src=\"".Length;
-						}
-					}
+                    iImage += ("<img border=\"0\" alt=\"" + movieTitle + "\" title=\"" + movieTitle + "\" src=\"").Length;
 				}
 				int iRating=strBody.IndexOf("User Rating:</b>");
 				int iCast=strBody.IndexOf("first billed only: </b></td></tr>");
