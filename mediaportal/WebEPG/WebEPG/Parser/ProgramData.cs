@@ -203,6 +203,7 @@ namespace MediaPortal.WebEPG
 
     private ProgramDateTime getTime(string strTime)
     {
+      strTime = strTime.Replace(" ", "");
       if(strTime == "")
         return null;
 
