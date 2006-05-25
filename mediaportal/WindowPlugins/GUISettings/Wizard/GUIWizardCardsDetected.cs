@@ -63,13 +63,13 @@ namespace MediaPortal.GUI.Settings.Wizard
 						TVCaptureDevice cd		= new TVCaptureDevice();
 						cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
 						cd.VideoDevice				= (string)availableVideoDevices[i];
-            cd.CommercialName = "SkyStar 2 DVB-S";
-            cd.CardType = TVCapture.CardTypes.Digital_SS2;
+						cd.CommercialName = "SkyStar 2 DVB-S";
+						cd.CardType = TVCapture.CardTypes.Digital_SS2;
 						cd.DeviceId						= (string)availableVideoDevices[i];
 						cd.FriendlyName			  = String.Format("card{0}",captureCards.Count+1);
 						cd.RecordingPath			= recFolder;
-                        cd.SupportsTV = true;
-                        cd.SupportsRadio = true;
+						cd.SupportsTV = true;
+						cd.SupportsRadio = true;
 						cd.UseForRecording=true;
 						cd.UseForTV=true;
 						cd.Priority=10;
@@ -129,8 +129,7 @@ namespace MediaPortal.GUI.Settings.Wizard
 						cd.VideoDeviceMoniker = availableVideoDeviceMonikers[i].ToString();
 						cd.VideoDevice				= ccd.CaptureName;
 						cd.CommercialName			= ccd.CommercialName;
-						cd.LoadDefinitions();
-            cd.CardType						= ccd.Capabilities.CardType;
+						cd.CardType						= ccd.Capabilities.CardType;
 						cd.SupportsTV					= ccd.Capabilities.HasTv;
 						cd.SupportsRadio			= ccd.Capabilities.HasRadio;
 						cd.DeviceId						= ccd.DeviceId;
