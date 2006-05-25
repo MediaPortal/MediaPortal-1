@@ -369,7 +369,8 @@ namespace MediaPortal.GUI.Library
       float fTextPosY = (float)dwPosY + (float)_textureHeight;
 
       long dwColor = _textColor;
-      if (pItem.Selected)    dwColor = _selectedColor;
+      //if (pItem.Selected)    dwColor = _selectedColor;
+      if (bFocus) dwColor = _selectedColor;
       if (!bFocus && Focus) dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
       if (pItem.IsRemote)
       {
