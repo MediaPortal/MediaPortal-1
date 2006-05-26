@@ -120,6 +120,7 @@ namespace MediaPortal.GUI.TV
     FullScreenState _screenState = new FullScreenState();
     bool _isVolumeVisible = false;
     DateTime _volumeTimer = DateTime.MinValue;
+    bool _isStartingTSForRecording = false;
 
     [SkinControlAttribute(500)]
     protected GUIImage imgVolumeMuteIcon;
@@ -768,11 +769,13 @@ namespace MediaPortal.GUI.TV
               {
                 case 875:
                   //record current program
+                  _isStartingTSForRecording = !g_Player.IsTimeShifting;
                   Recorder.RecordNow(channel, false);
                   break;
 
                 case 876:
                   //manual record
+                  _isStartingTSForRecording = !g_Player.IsTimeShifting;
                   Recorder.RecordNow(channel, true);
                   break;
                 default:
@@ -785,9 +788,26 @@ namespace MediaPortal.GUI.TV
           {
 
             Log.Write("bah");
+            _isStartingTSForRecording = !g_Player.IsTimeShifting;
             Recorder.RecordNow(channel, true);
           }
 
+          // check if recorder has to start timeshifting for this recording
+          if (_isStartingTSForRecording)
+          {
+            // wait for the recording to be started by recorder
+            string errMsg;
+            int count = 1;
+            while (!Recorder.IsAnyCardRecording() && count < 40)
+            {
+              Thread.Sleep(50);
+              GUIWindowManager.Process();
+              count++;
+            }
+            // recording has started, now start viewing TV
+            Recorder.StartViewing(Recorder.TVChannelName, true, true, true, out errMsg);
+            _isStartingTSForRecording = false;
+          }
 
           GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
           if (dlgNotify == null) return true;
@@ -1826,6 +1846,8 @@ namespace MediaPortal.GUI.TV
       if (Recorder.IsViewing()) return;
       if (g_Player.Playing && g_Player.IsTVRecording) return;
       if ((Recorder.CommandProcessor != null) && (Recorder.CommandProcessor.IsBusy)) return;
+      if (_isStartingTSForRecording) return;
+
       //close window
       GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _osdWindow.GetID, 0, 0, GetID, 0, null);
       _osdWindow.OnMessage(msg2);	// Send a de-init msg to the OSD
@@ -1840,7 +1862,6 @@ namespace MediaPortal.GUI.TV
       msg2 = null;
       _msnWindowVisible = false;
       GUIWindowManager.IsOsdVisible = false;
-
       Log.Write("fullscreentv:not viewing anymore");
       GUIWindowManager.ShowPreviousWindow();
     }
