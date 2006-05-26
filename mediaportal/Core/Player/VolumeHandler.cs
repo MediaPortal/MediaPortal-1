@@ -59,7 +59,7 @@ namespace MediaPortal.Player
 			}
 
 			_mixer = new Mixer.Mixer();
-      _mixer.Open(0, true);
+            _mixer.Open(0, isDigital);
 			_volumeTable = volumeTable;
 		}
 

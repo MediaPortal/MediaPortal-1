@@ -33,7 +33,8 @@ namespace MediaPortal.Player
     #region enums
     public enum Steps : int
     {
-      Hourm2 = -2 * 60 * 60, // 0
+      Hourm3 = -3 * 60 * 60,
+      Hourm2 = -2 * 60 * 60,
       Minm90 = -90 * 60,
       Hourm1 = -60 * 60,
       Minm45 = -45 * 60,
@@ -63,7 +64,8 @@ namespace MediaPortal.Player
       Min45 = 45 * 60,
       Hour1 = 60 * 60,
       Min90 = 90 * 60,
-      Hour2 = 2 * 60 * 60
+      Hour2 = 2 * 60 * 60,
+      Hour3 = 3 * 60 * 60
     };
     public enum MediaType { Video, TV, Radio, Music, Recording };
     #endregion
@@ -79,6 +81,8 @@ namespace MediaPortal.Player
     static MediaType _currentMedia;
     static Player.IPlayerFactory _factory;
     static public bool Starting = false;
+    static ArrayList _seekStepList = new ArrayList();
+    static bool _configLoaded = false;
     #endregion
 
     #region events
@@ -119,12 +123,16 @@ namespace MediaPortal.Player
       ArrayList StepArray = new ArrayList();
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      foreach ( string token in ( xmlreader.GetValueAsString("movieplayer", "skipsteps", "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1").Split(new char[] { ',', ';', ' ' }) ) )
+      foreach ( string token in ( xmlreader.GetValueAsString("movieplayer", "skipsteps", "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1;0").Split(new char[] { ',', ';', ' ' }) ) )
       {
         if ( token == string.Empty )
-          continue;
-        StepArray.Add(Convert.ToInt32(token));
+          StepArray.Add(0);
+        else
+          StepArray.Add(Convert.ToInt32(token));
       }
+      _seekStepList = StepArray;
+      _configLoaded = true;
+
       return StepArray;      
     }
     
@@ -963,6 +971,7 @@ namespace MediaPortal.Player
       if ( _player.CurrentPosition + m_iTimeToStep >= _player.Duration ) return GUILocalizeStrings.Get(774);// "END"
       switch (_currentStep)
       {
+        case Steps.Hourm3: { int i = (int)Steps.Hourm3; return GetSingleStep(i); };
         case Steps.Hourm2: { int i = (int)Steps.Hourm2; return GetSingleStep(i); };
         case Steps.Minm90: { int i = (int)Steps.Minm90; return GetSingleStep(i); };
         case Steps.Hourm1: { int i = (int)Steps.Hourm1; return GetSingleStep(i); };
@@ -994,6 +1003,7 @@ namespace MediaPortal.Player
         case Steps.Hour1: { int i = (int)Steps.Hour1;  return GetSingleStep(i); };
         case Steps.Min90: { int i = (int)Steps.Min90;  return GetSingleStep(i); };
         case Steps.Hour2: { int i = (int)Steps.Hour2;  return GetSingleStep(i); };
+        case Steps.Hour3: { int i = (int)Steps.Hour3;  return GetSingleStep(i); };
         default: return "Skip";        
       }   
     }
@@ -1011,9 +1021,15 @@ namespace MediaPortal.Player
     //   0    1     2     3     4     5     6     7     8      9      10     11     12    13     14
     static public void SeekStep(bool bFF)
     {
-      int[] m_seekStep = new int[15];
-      ArrayList _seekStepList = LoadSettings();
-      for (int i = 0; i < 15; i++)
+      int[] m_seekStep = new int[16];
+
+      if ( ! _configLoaded )
+        {
+          _seekStepList = LoadSettings();
+          Log.Write("g_Player loading seekstep config {0}","");// Convert.ToString(_seekStepList[0]));
+        }
+        
+      for (int i = 0; i < 16; i++)
       {
         m_seekStep[i] = (int)_seekStepList[i];
       } 
@@ -1021,6 +1037,9 @@ namespace MediaPortal.Player
       {
         switch (_currentStep)
         {
+          case Steps.Hourm3:
+                        if ( m_seekStep[14] == 1 ) _currentStep = Steps.Hourm2;
+                        else goto case Steps.Hourm2; break;
           case Steps.Hourm2:
                         if ( m_seekStep[13] == 1 ) _currentStep = Steps.Minm90;
                         else goto case Steps.Minm90; break;
@@ -1111,7 +1130,10 @@ namespace MediaPortal.Player
           case Steps.Min90:
                         if (m_seekStep[14] == 1) _currentStep = Steps.Hour2;
                         else goto case Steps.Hour2; break;
-          case Steps.Hour2: break;
+          case Steps.Hour2:
+                        if (m_seekStep[15] == 1) _currentStep = Steps.Hour3;
+                        else goto case Steps.Hour3; break;
+          case Steps.Hour3: break;
         }
       }
       else
@@ -1120,7 +1142,10 @@ namespace MediaPortal.Player
         {
           // "0=5 ;1=15 ;1=30 ;0=45 ;1=1m ;1=3m ;1=5m ;0=7m ;1=10m ;1=15m ;1=30m ;0=45m ;1=1h ;0=90m ;1=2h"
           //   0    1     2     3     4     5     6     7     8      9      10     11     12    13     14
-          case Steps.Hourm2: break;
+          case Steps.Hourm3: break;
+          case Steps.Hourm2:
+            if (m_seekStep[15] == 1) _currentStep = Steps.Hourm3;
+            else goto case Steps.Hourm3; break;
           case Steps.Minm90:
             if (m_seekStep[14] == 1) _currentStep = Steps.Hourm2;
             else goto case Steps.Hourm2; break;
@@ -1211,6 +1236,9 @@ namespace MediaPortal.Player
           case Steps.Hour2:
             if (m_seekStep[13] == 1) _currentStep = Steps.Min90;
             else goto case Steps.Min90; break;
+          case Steps.Hour3:
+            if (m_seekStep[14] == 1) _currentStep = Steps.Hour2;
+            else goto case Steps.Hour2; break;
         }
       }
       _seekTimer = DateTime.Now;
