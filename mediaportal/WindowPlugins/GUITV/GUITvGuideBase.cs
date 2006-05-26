@@ -1445,11 +1445,11 @@ namespace MediaPortal.GUI.TV
           for (int iBlok = 0; iBlok < _numberOfBlocks; iBlok++)
           {
             float fWidthEnd = (float)width;
-            DateTime dtBlokEnd = dtBlokStart.AddSeconds(_timePerBlock * 60);
+            DateTime dtBlokEnd = dtBlokStart.AddMinutes(_timePerBlock-1); //
             if (program.RunningAt(dtBlokStart, dtBlokEnd))
             {
-              dtBlokEnd = dtBlokStart.AddSeconds(_timePerBlock * 60);
-              if (program.EndTime < dtBlokEnd)
+              //dtBlokEnd = dtBlokStart.AddSeconds(_timePerBlock * 60);
+              if (program.EndTime <= dtBlokEnd)
               {
                 TimeSpan dtSpan = dtBlokEnd - program.EndTime;
                 int iEndMin = _timePerBlock - (dtSpan.Minutes);
@@ -1461,7 +1461,8 @@ namespace MediaPortal.GUI.TV
               if (iStartXPos == 0)
               {
                 TimeSpan ts = program.StartTime - dtBlokStart;
-                int iStartMin = ts.Minutes;
+								int iStartMin = ts.Hours * 60;
+								iStartMin += ts.Minutes;
                 if (ts.Seconds == 59) iStartMin += 1;
                 float fWidth = (((float)iStartMin) / ((float)_timePerBlock)) * ((float)(width));
 

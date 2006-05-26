@@ -185,7 +185,7 @@ namespace MediaPortal.GUI.Library
               if (fwidth < 1) return;
               if (heighteight < 1) return;
               */
-
+							if (_width < 6) return;
               _font.DrawText((float)_positionX - _textwidth, (float)_positionY, color, _cachedTextLabel, GUIControl.Alignment.ALIGN_LEFT, (int)_width-5);
               //if (_useViewPort)
               //  GUIGraphicsContext.DX9Device.Viewport = oldviewport;
