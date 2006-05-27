@@ -798,14 +798,14 @@ namespace MediaPortal.GUI.TV
             // wait for the recording to be started by recorder
             string errMsg;
             int count = 1;
-            while (!Recorder.IsAnyCardRecording() && count < 40)
+            while (!Recorder.IsRecordingChannel(channel) && count < 40)
             {
               Thread.Sleep(50);
               GUIWindowManager.Process();
               count++;
             }
             // recording has started, now start viewing TV
-            Recorder.StartViewing(Recorder.TVChannelName, true, true, true, out errMsg);
+            Recorder.StartViewing(channel, true, true, true, out errMsg);
             _isStartingTSForRecording = false;
           }
 
