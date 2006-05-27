@@ -111,14 +111,6 @@ namespace MediaPortal.TV.Recording
           return false;
         }
 
-        //load card definition from CaptureCardDefinitions.xml
-        if (!_card.LoadDefinitions())
-        {
-          _lastError = "No definitions for card";
-          Log.WriteFile(Log.LogType.Log, "DVBGraphBDA: Loading card definitions for card {0} failed", _card.Graph.CommercialName);
-          return false;
-        }
-
         //check if definition contains a tv filter graph
         if ((_card.Graph == null) || (_card.Graph.TvFilterDefinitions == null))
         {
