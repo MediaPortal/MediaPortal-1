@@ -152,7 +152,7 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     DateTime _epgTimeOutTimer = DateTime.Now;
     [NonSerialized]
-    GraphHelper _graphHelper = new GraphHelper();
+    private GraphHelper _graphHelper = null;
     [NonSerialized]
     static Hashtable _devices = new Hashtable();
 
@@ -186,7 +186,6 @@ namespace MediaPortal.TV.Recording
     }
     void CtorInit()
     {
-      _graphHelper = new GraphHelper();
       int countryCode = 31;
       string tunerInput = "Antenna";
       using (MediaPortal.Profile.Settings xmlReader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
@@ -1156,7 +1155,6 @@ namespace MediaPortal.TV.Recording
           return false;
         return true;
       }
-
       Log.WriteFile(Log.LogType.Log, "TVCapture.StartTimeShifting() Card:{0} :{1}", ID, channelName);
       TVChannel channel = GetChannel(channelName);
 
