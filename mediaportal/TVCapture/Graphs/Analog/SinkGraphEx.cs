@@ -109,12 +109,6 @@ namespace MediaPortal.TV.Recording
           return false;
         }
 
-        if (!_card.LoadDefinitions())											// Load configuration for this card
-        {
-          _lastError = "Unable to load card definition";
-          Log.WriteFile(Log.LogType.Log, "SinkGraphEx: Loading card definitions for card {0} failed", _card.Graph.CommercialName);
-          return false;
-        }
         if ((_card.Graph == null) || (_card.Graph.TvFilterDefinitions == null))
         {
           _lastError = "Card definition does not contain any filters";
