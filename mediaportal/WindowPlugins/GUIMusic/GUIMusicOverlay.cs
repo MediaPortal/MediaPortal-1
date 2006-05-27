@@ -190,22 +190,22 @@ namespace MediaPortal.GUI.Music
         SetCurrentFile(m_strFile);
       }
 
-      if (m_iPosOrgIcon == 0)
-      {
-        m_iPosXRect = GetControlXPosition((int)Controls.CONTROL_LOGO_RECT);
-        m_iPosYRect = GetControlYPosition((int)Controls.CONTROL_LOGO_RECT);
-        m_iPosOrgRectangle = GetControlYPosition((int)Controls.CONTROL_LOGO_RECT);
-        m_iPosOrgIcon = GetControlYPosition((int)Controls.CONTROL_LOGO_PIC);
-        m_iPosOrgPlay = GetControlYPosition((int)Controls.CONTROL_PLAY_LOGO);
-        m_iPosOrgPause = GetControlYPosition((int)Controls.CONTROL_PAUSE_LOGO);
-        m_iPosOrgInfo = GetControlYPosition((int)Controls.CONTROL_INFO);
-        m_iPosOrgPlayTime = GetControlYPosition((int)Controls.CONTROL_PLAYTIME);
-        m_iPosOrgBigPlayTime = GetControlYPosition((int)Controls.CONTROL_BIG_PLAYTIME);
-      }
+
+      // Aways get the positions before we do anything, because the window could be resized.
+      m_iPosXRect = GetControlXPosition((int)Controls.CONTROL_LOGO_RECT);
+      m_iPosYRect = GetControlYPosition((int)Controls.CONTROL_LOGO_RECT);
+      m_iPosOrgRectangle = GetControlYPosition((int)Controls.CONTROL_LOGO_RECT);
+      m_iPosOrgIcon = GetControlYPosition((int)Controls.CONTROL_LOGO_PIC);
+      m_iPosOrgPlay = GetControlYPosition((int)Controls.CONTROL_PLAY_LOGO);
+      m_iPosOrgPause = GetControlYPosition((int)Controls.CONTROL_PAUSE_LOGO);
+      m_iPosOrgInfo = GetControlYPosition((int)Controls.CONTROL_INFO);
+      m_iPosOrgPlayTime = GetControlYPosition((int)Controls.CONTROL_PLAYTIME);
+      m_iPosOrgBigPlayTime = GetControlYPosition((int)Controls.CONTROL_BIG_PLAYTIME);
+
       int iSteps = 25;
       if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_VISUALISATION)
       {
-        SetPosition(0, 50, 50, m_iPosOrgRectangle);
+        SetPosition((int)Controls.CONTROL_LOGO_RECT, 50, 50, m_iPosOrgRectangle);
         SetPosition((int)Controls.CONTROL_LOGO_PIC, 50, 50, m_iPosOrgIcon);
         SetPosition((int)Controls.CONTROL_PLAY_LOGO, 50, 50, m_iPosOrgPlay);
         SetPosition((int)Controls.CONTROL_PAUSE_LOGO, 50, 50, m_iPosOrgPause);
@@ -221,7 +221,7 @@ namespace MediaPortal.GUI.Music
         if (m_iFrames < iSteps)
         {
           // scroll up
-          SetPosition(0, m_iFrames, iSteps, m_iPosOrgRectangle);
+          SetPosition((int)Controls.CONTROL_LOGO_RECT, m_iFrames, iSteps, m_iPosOrgRectangle);
           SetPosition((int)Controls.CONTROL_LOGO_PIC, m_iFrames, iSteps, m_iPosOrgIcon);
           SetPosition((int)Controls.CONTROL_PLAY_LOGO, m_iFrames, iSteps, m_iPosOrgPlay);
           SetPosition((int)Controls.CONTROL_PAUSE_LOGO, m_iFrames, iSteps, m_iPosOrgPause);
@@ -235,7 +235,7 @@ namespace MediaPortal.GUI.Music
         else if (m_iFrames >= iSteps && m_iFrames <= 5 * iSteps + iSteps)
         {
           //show
-          SetPosition(0, iSteps, iSteps, m_iPosOrgRectangle);
+          SetPosition((int)Controls.CONTROL_LOGO_RECT, iSteps, iSteps, m_iPosOrgRectangle);
           SetPosition((int)Controls.CONTROL_LOGO_PIC, iSteps, iSteps, m_iPosOrgIcon);
           SetPosition((int)Controls.CONTROL_PLAY_LOGO, iSteps, iSteps, m_iPosOrgPlay);
           SetPosition((int)Controls.CONTROL_PAUSE_LOGO, iSteps, iSteps, m_iPosOrgPause);
@@ -253,7 +253,7 @@ namespace MediaPortal.GUI.Music
             m_iFrames = 5 * iSteps + 2 * iSteps;
           }
           //scroll down
-          SetPosition(0, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgRectangle);
+          SetPosition((int)Controls.CONTROL_LOGO_RECT, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgRectangle);
           SetPosition((int)Controls.CONTROL_LOGO_PIC, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgIcon);
           SetPosition((int)Controls.CONTROL_PLAY_LOGO, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgPlay);
           SetPosition((int)Controls.CONTROL_PAUSE_LOGO, 5 * iSteps + 2 * iSteps - m_iFrames, iSteps, m_iPosOrgPause);
@@ -342,7 +342,6 @@ namespace MediaPortal.GUI.Music
           //make Overlay Background visible
           OverlayBackground.IsVisible = true;
           OverlayBackground.SetPosition(m_iPosXRect, m_iPosYRect);
-
           // and position the video/visualisation in middle of the rectangle
           fx = AlbumArtPicture.XPosition;
           fy = AlbumArtPicture.YPosition;
