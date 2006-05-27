@@ -994,7 +994,7 @@ public class MediaPortalApp : D3DApp, IRender
     if (GUIGraphicsContext.CurrentState != GUIGraphicsContext.State.STOPPING)
     {
       Log.Write("Main: Resetting DX9 device");
-      GUIGraphicsContext.Load();
+     // GUIGraphicsContext.Load();
       GUIWaitCursor.Dispose();
       GUIFontManager.LoadFonts(@"skin\" + m_strSkin + @"\fonts.xml");
       GUIFontManager.InitializeDeviceObjects();
@@ -1007,8 +1007,8 @@ public class MediaPortalApp : D3DApp, IRender
         GUIGraphicsContext.Load();
       }
       Log.Write("Main: Resetting DX9 device done");
-      g_Player.PositionX++;
-      g_Player.PositionX--;
+      //g_Player.PositionX++;
+      //g_Player.PositionX--;
     }
   }
 
