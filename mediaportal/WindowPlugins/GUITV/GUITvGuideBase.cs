@@ -1398,6 +1398,7 @@ namespace MediaPortal.GUI.TV
       if (programs.Count > 0)
       {
         int iProgram = 0;
+				int iPreviousEndXPos = 0;
         foreach (TVProgram program in programs)
         {
           string strTitle = program.Title;
@@ -1482,6 +1483,9 @@ namespace MediaPortal.GUI.TV
 
           if (iStartXPos >= 0)
           {
+						if (iPreviousEndXPos > iStartXPos) iStartXPos = iPreviousEndXPos;
+						if (iEndXPos <= iStartXPos + 5) iEndXPos = iStartXPos + 6; // at least 1 pixel width
+
             int ypos = GetControl(iChannel + (int)Controls.IMG_CHAN1).YPosition;
             int iControlId = 100 + iChannel * RowID + iProgram * ColID;
             GUIButton3PartControl img = (GUIButton3PartControl)GetControl(iControlId);
@@ -1617,6 +1621,7 @@ namespace MediaPortal.GUI.TV
             img.DoUpdate();
             iProgram++;
           }
+					iPreviousEndXPos = iEndXPos;
         }
       }
     }//void RenderChannel(int iChannel,TVChannel channel, long iStart, long iEnd, bool selectCurrentShow)
