@@ -149,7 +149,6 @@ namespace MediaPortal.Configuration
             for (int i = 0; i < captureCards.Count; i++)
             {
               ((TVCaptureDevice)captureCards[i]).ID = (i + 1);
-              ((TVCaptureDevice)captureCards[i]).LoadDefinitions();
             }
             //
             // Finally close our file stream
@@ -345,7 +344,6 @@ namespace MediaPortal.Configuration
             {
               cd.VideoDevice = ccd.CaptureName;////Hauppauge WinTV PVR PCI II Capture
               cd.CommercialName = ccd.CommercialName;//PVR 150MCE
-              cd.LoadDefinitions();
               cd.CardType = ccd.Capabilities.CardType;
               cd.DeviceId = ccd.DeviceId;
               cd.SupportsTV = ccd.Capabilities.HasTv;
