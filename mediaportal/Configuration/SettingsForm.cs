@@ -132,6 +132,7 @@ namespace MediaPortal.Configuration
       AddChildSection(general, new KeyboardControl());
       AddChildSection(general, new Keys());
       AddChildSection(general, new GeneralOSD());
+      AddChildSection(general, new GeneralSkipSteps());
       AddChildSection(general, new Sections.DaemonTools());
       AddChildSection(general, new FileMenu());
       AddChildSection(general, new Volume());

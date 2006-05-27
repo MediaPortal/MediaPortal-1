@@ -281,6 +281,9 @@
     <Compile Include="Sections\EncoderFilters.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Sections\GeneralSkipSteps.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\InterVideoEncoderFilters.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -578,6 +581,10 @@
     <EmbeddedResource Include="Sections\EncoderFilters.resx">
       <SubType>Designer</SubType>
       <DependentUpon>EncoderFilters.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralSkipSteps.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>GeneralSkipSteps.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\InterVideoEncoderFilters.resx">
       <DependentUpon>InterVideoEncoderFilters.cs</DependentUpon>
