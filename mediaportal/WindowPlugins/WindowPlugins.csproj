@@ -171,10 +171,6 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AxInterop.MOZILLACONTROLLib">
-      <Name>AxInterop.MOZILLACONTROLLib</Name>
-      <HintPath>..\AxInterop.MOZILLACONTROLLib.dll</HintPath>
-    </Reference>
     <Reference Include="Communications">
       <Name>Communications</Name>
       <HintPath>..\Communications.dll</HintPath>
