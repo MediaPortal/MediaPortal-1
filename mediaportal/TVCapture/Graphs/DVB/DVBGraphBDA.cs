@@ -1376,8 +1376,6 @@ namespace MediaPortal.TV.Recording
     {
       if (_networkType == NetworkType.Unknown)
       {
-        if (_card.LoadDefinitions())
-        {
           foreach (FilterDefinition dsFilter in _card.Graph.TvFilterDefinitions)
           {
             string catName = dsFilter.Category;
@@ -1402,7 +1400,6 @@ namespace MediaPortal.TV.Recording
               return _networkType;
             }
           }
-        }
       }
       return _networkType;
     }
