@@ -131,7 +131,12 @@
 	<entry name="rtve.es">41</entry>			<!-- TVE -->
 	<entry name="Canal7">80</entry>				<!-- Canal 7 -->
 	<entry name="spiceplatinum.nl">222</entry>		<!-- Spice Platinum -->
-
+	<entry name="stockholm@kanalokal.se">2388</entry>	<!-- Kanal Lokal Stockholm --> 
+	<entry name="goteborg@kanallokal.se">2398</entry>	<!-- Kanal Lokal Goteborg --> 
+	<entry name="ostgotland@kanallokal.se">2348</entry>	<!-- Kanal Lokal Ostergotland --> 
+	<entry name="Silver">2418</entry>			<!-- Silver --> 
+	<entry name="Axess TV">2478</entry>			<!-- Axess TV --> 
+	<entry name="The Voice">2168</entry>			<!-- The Voice --> 
   </section>
 
 <!-- Formating of Listing -->
