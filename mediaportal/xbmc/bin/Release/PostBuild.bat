@@ -48,7 +48,7 @@ copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .
 copy ..\..\..\core\fontengine\fontengine\release\fontengine.dll .
 rem copy ..\..\..\Interop.DirectShowHelperLib.dll .
 rem copy ..\..\..\AxInterop.MOZILLACONTROLLib.dll .
-copy ..\..\..\Interop.MOZILLACONTROLLib.dll .
+rem copy ..\..\..\Interop.MOZILLACONTROLLib.dll .
 copy ..\..\..\mfc71.dll .
 copy ..\..\..\msvcp71.dll .
 copy ..\..\..\msvcr71.dll .
