@@ -1,5 +1,5 @@
 // Structure that holds Windows hotfix information.
-// Copyright (C) 2005  Michel Otte
+// Copyright (C) 2005-2006  Michel Otte
 // 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
