@@ -25,7 +25,7 @@
 </a3:ViewDefinition>
 <a3:ViewDefinition id="ref-6" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2334.41718%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <listFilters href="#ref-14"/>
-<name id="ref-15">Años</name>
+<name id="ref-15">Years</name>
 </a3:ViewDefinition>
 <a1:ArrayList id="ref-8" xmlns:a1="http://schemas.microsoft.com/clr/ns/System.Collections">
 <_items href="#ref-16"/>
