@@ -920,10 +920,20 @@ namespace MediaPortal.TV.Database
             int grabepg = 0;
             if (channel.AutoGrabEpg) grabepg = 1;
 
-            strSQL = String.Format("insert into channel (idChannel, strChannel,iChannelNr ,frequency,iSort, bExternal, ExternalChannel,standard, Visible, Country, scrambled,grabEpg,epgHours,epgLastUpdate) values ( NULL, '{0}', {1}, {2}, {3}, {4},'{5}', {6}, {7}, {8}, {9},{10},{11},'{12}' )",
+            if (channel.ID > 0)
+            {
+              strSQL = String.Format("insert into channel (idChannel, strChannel,iChannelNr ,frequency,iSort, bExternal, ExternalChannel,standard, Visible, Country, scrambled,grabEpg,epgHours,epgLastUpdate) values ( {13}, '{0}', {1}, {2}, {3}, {4},'{5}', {6}, {7}, {8}, {9},{10},{11},'{12}' )",
+              strChannel, channel.Number, channel.Frequency.ToString(),
+              totalchannels + 1, iExternal, strExternal, (int)channel.TVStandard, iVisible, channel.Country, scrambled, grabepg, channel.EpgHours,
+              Utils.datetolong(channel.LastDateTimeEpgGrabbed), channel.ID);
+            }
+            else
+            {
+              strSQL = String.Format("insert into channel (idChannel, strChannel,iChannelNr ,frequency,iSort, bExternal, ExternalChannel,standard, Visible, Country, scrambled,grabEpg,epgHours,epgLastUpdate) values ( NULL, '{0}', {1}, {2}, {3}, {4},'{5}', {6}, {7}, {8}, {9},{10},{11},'{12}' )",
               strChannel, channel.Number, channel.Frequency.ToString(),
               totalchannels + 1, iExternal, strExternal, (int)channel.TVStandard, iVisible, channel.Country, scrambled, grabepg, channel.EpgHours,
               Utils.datetolong(channel.LastDateTimeEpgGrabbed));
+            } 
             m_db.Execute(strSQL);
             int iNewID = m_db.LastInsertID();
 
