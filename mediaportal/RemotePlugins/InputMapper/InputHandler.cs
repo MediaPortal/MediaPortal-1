@@ -32,6 +32,7 @@ using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Player;
+using MediaPortal.TV.Recording;
 
 
 namespace MediaPortal.InputDevices
@@ -446,7 +447,7 @@ namespace MediaPortal.InputDevices
                   switch (map.ConProperty)
                   {
                     case "TV":
-                      if (g_Player.IsTV)
+                      if (Recorder.IsViewing())
                         found = map;
                       break;
                     case "DVD":
