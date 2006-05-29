@@ -224,15 +224,15 @@
 <string><id>291</id><value>Βίντεο</value></string>
 <string><id>292</id><value>Ήχος</value></string>
 <string><id>293</id><value>Υπότιτλοι</value></string>
-<string><id>294</id><value>Create bookmark</value></string>
-<string><id>295</id><value>Cycle bookmarks</value></string>
-<string><id>296</id><value>Clear bookmarks</value></string>
+<string><id>294</id><value>Δημιουργία σελιδοδείκτη</value></string>
+<string><id>295</id><value>Εναλλαγή σελιδοδεικτών</value></string>
+<string><id>296</id><value>Καθάρισμα σελιδοδεικτών</value></string>
 <string><id>297</id><value>AVDelay</value></string>
 <string><id>298</id><value>Slider</value></string>
 <string><id>299</id><value>Διάρκεια:</value></string>
 <string><id>300</id><value>1. Γλώσσα</value></string>
 <string><id>301</id><value>2. Ένταση</value></string>
-<string><id>302</id><value>3. Stream</value></string>
+<string><id>302</id><value>3. Ροή</value></string>
 <string><id>303</id><value>Καθυστέρηση</value></string>
 <string><id>304</id><value>Γλώσσα</value></string>
 <string><id>305</id><value>Ενεργοποιημένο</value></string>
@@ -243,21 +243,21 @@
 <string><id>310</id><value>Auto brightness/contrast</value></string>
 <string><id>311</id><value>Dering</value></string>
 <string><id>312</id><value>(0=auto)</value></string>
-<string><id>313</id><value>Reorganize database</value></string>
+<string><id>313</id><value>Αναδιοργάνωση βάσης</value></string>
 <string><id>314</id><value>Ετοιμασία...</value></string>
-<string><id>315</id><value>Database error</value></string>
+<string><id>315</id><value>Πρόβλημα βάσης</value></string>
 <string><id>316</id><value>Αναζήτηση Τραγουδιών...</value></string>
 <string><id>317</id><value>Αναδιοργάνωση Επιτυχής</value></string>
-<string><id>318</id><value>Marking deleted songs</value></string>
+<string><id>318</id><value>Σημείωση σβησμένων τραγουδιών</value></string>
 <string><id>319</id><value>Λάθος αναδιο/σης songs</value></string>
 <string><id>320</id><value>Αναζήτηση Καλ/χνών...</value></string>
 <string><id>321</id><value>Λάθος αναδιο/σης artists</value></string>
 <string><id>322</id><value>Αναζήτηση κατηγοριών...</value></string>
 <string><id>323</id><value>Πρόβλημα στην αναδιοργάνωση κατηγοριών</value></string>
-<string><id>324</id><value>Αναζήτηση pathes...</value></string>
-<string><id>325</id><value>Λάθος αναδ/σης pathes</value></string>
-<string><id>326</id><value>Αναζήτηση Aλμπουμ...</value></string>
-<string><id>327</id><value>Error reorganizing albums</value></string>
+<string><id>324</id><value>Αναζήτηση διαδρομών...</value></string>
+<string><id>325</id><value>Λάθος αναδ/σης διαδρομών</value></string>
+<string><id>326</id><value>Αναζήτηση άλμπουμ...</value></string>
+<string><id>327</id><value>Πρόβλημα αναδιοργάνωσης άλμπουμ</value></string>
 <string><id>328</id><value>Εγγραφή Αλλαγών...</value></string>
 <string><id>329</id><value>Λάθος εγγραφής αλλαγών</value></string>
 <string><id>330</id><value>Αυτό Μπορεί Να Διαρκέσει Πολύ Ώρα...</value></string>
@@ -266,14 +266,14 @@
 <string><id>333</id><value>Θέλετε να αναδιοργανωθεί η βάση μουσικής;</value></string>
 <string><id>334</id><value>Αναδιοργάνωση βάσης μουσικής</value></string>
 <string><id>335</id><value>Έναρξη</value></string>
-<string><id>336</id><value>Adj. Framerate</value></string>
-<string><id>337</id><value>Audio Output:</value></string>
-<string><id>338</id><value>Analog</value></string>
-<string><id>339</id><value>Digital</value></string>
-<string><id>340</id><value>Various Artists</value></string>
+<string><id>336</id><value>Ρύθμιση ρυθμού καρέ</value></string>
+<string><id>337</id><value>Έξοδος ήχου:</value></string>
+<string><id>338</id><value>Αναλογικό</value></string>
+<string><id>339</id><value>Ψηφιακό</value></string>
+<string><id>340</id><value>Διάφοροι καλιτέχνες</value></string>
 <string><id>341</id><value>Έναρξη DVD</value></string>
 <string><id>342</id><value>Ταινίες</value></string>
-<string><id>343</id><value>Adjust Framerate</value></string>
+<string><id>343</id><value>Ρύθμιση ρυθμού καρέ</value></string>
 <string><id>344</id><value>Ηθοποιοί</value></string>
 <string><id>345</id><value>Χρονιά</value></string>
 <string><id>346</id><value>Πακετάρισμα</value></string>
@@ -318,13 +318,14 @@
 <string><id>385</id><value>Αίθριος</value></string>
 <string><id>386</id><value>Καθαρός</value></string>
 <string><id>387</id><value>Νωρίς</value></string>
-<string><id>388</id><value>and</value></string>
-<string><id>389</id><value>Fog</value></string>
-<string><id>390</id><value>Haze</value></string>
-<string><id>391</id><value>Windy</value></string>
-<string><id>392</id><value>Drizzle</value></string>
-<string><id>393</id><value>Freezing</value></string>
+<string><id>388</id><value>και</value></string>
+<string><id>389</id><value>Ομίχλη</value></string>
+<string><id>390</id><value>Καταχνιά</value></string>
+<string><id>391</id><value>Αέρα</value></string>
+<string><id>392</id><value>Ψιλόβροχο</value></string>
+<string><id>393</id><value>Παγωνιά</value></string>
 <string><id>394</id><value>Μη διαθέσιμο</value></string>
+<string><id>395</id><value>Ομίχλη</value></string>
 <string><id>396</id><value>Επιλογή Τοποθεσίας</value></string>
 <string><id>397</id><value>Ανανέωση Χρόνου</value></string>
 <string><id>398</id><value>Μονάδες Θερμοκρασίας</value></string>
@@ -346,28 +347,28 @@
 <string><id>415</id><value>Λήψη thumbnail...</value></string>
 <string><id>416</id><value>Μη Διαθέσιμο</value></string>
 <string><id>417</id><value>Όψη: Μεγάλα Εικονίδια</value></string>
-<string><id>418</id><value>Τα Βίντεό μου/Είδη</value></string>
-<string><id>419</id><value>Τα Βίντεό μου/Ηθοποιοί</value></string>
-<string><id>420</id><value>Τα Βίντεό μου/Χρονιά</value></string>
-<string><id>421</id><value>Τα Βίντεό μου/Τίτλος</value></string>
+<string><id>418</id><value>Βίντεο/Είδη</value></string>
+<string><id>419</id><value>Βίντεο/Ηθοποιοί</value></string>
+<string><id>420</id><value>Βίντεο/Χρονιά</value></string>
+<string><id>421</id><value>Βίντεο/Τίτλος</value></string>
 <string><id>422</id><value>Διαγραφή Πληροφοριών Αλμπουμ</value></string>
-<string><id>423</id><value>Delete CDDB info</value></string>
+<string><id>423</id><value>Διαγραφή πληφορορίας CDDB</value></string>
 <string><id>424</id><value>Επιλογή</value></string>
-<string><id>425</id><value>No albuminfo found.</value></string>
-<string><id>426</id><value>No CDDB info found.</value></string>
+<string><id>425</id><value>Δεν βρέθηκε πληροφορία άλμπουμ.</value></string>
+<string><id>426</id><value>Δεν βρέθηκε πληροφορία CDDB.</value></string>
 <string><id>427</id><value>Δίσκος:</value></string>
 <string><id>428</id><value>Εισαγωγή Σωστού CD/DVD</value></string>
 <string><id>429</id><value>Παρακαλώ Εισάγετε Το Εξής CD/DVD</value></string>
 <string><id>430</id><value>Ταξινόμηση: Αρ. DVD</value></string>
-<string><id>431</id><value>No Cache</value></string>
-<string><id>432</id><value>Διαγραφή Ταινίας Από Βάση Δεδομένων</value></string>
-<string><id>433</id><value>Είστε Σίγουροι Για Τη Μεταφορά</value></string>
-<string><id>434</id><value>Της Ταινίας;</value></string>
+<string><id>431</id><value>Όχι κασέ</value></string>
+<string><id>432</id><value>Διαγραφή ταινίας από βάση</value></string>
+<string><id>433</id><value>Μεταφορά σίγουρα</value></string>
+<string><id>434</id><value>Της ταινίας;</value></string>
 <string><id>435</id><value>Κομμάτι</value></string>
 <string><id>436</id><value>Χρονιά:</value></string>
 <string><id>437</id><value>Διάρκεια:</value></string>
 <string><id>438</id><value>’νοιγμα Αρχείου</value></string>
-<string><id>439</id><value>Cache</value></string>
+<string><id>439</id><value>Κασέ</value></string>
 <string><id>440</id><value>Σκληρός Δίσκος</value></string>
 <string><id>441</id><value>UDF</value></string>
 <string><id>442</id><value>Δίκτυο</value></string>
