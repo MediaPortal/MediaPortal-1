@@ -35,7 +35,6 @@ using System.Diagnostics;
 using System.Reflection;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
-using MediaPortal.InputDevices;
 
 #pragma warning disable 108
 
