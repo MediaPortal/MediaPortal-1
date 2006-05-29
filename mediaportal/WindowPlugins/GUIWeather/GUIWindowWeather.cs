@@ -1052,7 +1052,7 @@ namespace MediaPortal.GUI.Weather
           localizedWord = GUILocalizeStrings.Get(378);
         else if (String.Compare(tokenSplit, "PM", true) == 0)
           localizedWord = GUILocalizeStrings.Get(379);
-        else if (String.Compare(tokenSplit, "Showers", true) == 0)
+        else if (String.Compare(tokenSplit, "Showers", true) == 0 || String.Compare(tokenSplit, "Shower", true) == 0)
           localizedWord = GUILocalizeStrings.Get(380);
         else if (String.Compare(tokenSplit, "Few", true) == 0)
           localizedWord = GUILocalizeStrings.Get(381);
@@ -1084,6 +1084,10 @@ namespace MediaPortal.GUI.Weather
           localizedWord = GUILocalizeStrings.Get(394);
         else if (String.Compare(tokenSplit, "Mist", true) == 0)
           localizedWord = GUILocalizeStrings.Get(395);
+        else if ( String.Compare(tokenSplit, "High", true) == 0 )
+          localizedWord = GUILocalizeStrings.Get(746);
+        else if ( String.Compare(tokenSplit, "Low", true) == 0 )
+          localizedWord = GUILocalizeStrings.Get(747);
 
         if (localizedWord == String.Empty)
           localizedWord = tokenSplit;	//if not found, let fallback
@@ -1243,7 +1247,7 @@ namespace MediaPortal.GUI.Weather
         {
           GetInteger(pNestElement, "i", out tempInteger);
           GetString(pNestElement, "t", out  tempString, String.Empty);
-          _nowUVId = String.Format("{0} {1}", tempInteger, tempString);
+          _nowUVId = String.Format("{0} {1}", tempInteger, LocalizeOverview(tempString));
         }
 
         GetInteger(element, "dewp", out tempInteger);				//current dew point
