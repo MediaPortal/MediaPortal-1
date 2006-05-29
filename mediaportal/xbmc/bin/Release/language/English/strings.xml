@@ -1,4 +1,4 @@
-﻿<strings>
+<strings>
   <characters>512</characters>
   <string Prefix="My ">
     <id>0</id>
@@ -3694,7 +3694,16 @@
     <value>No Entry!</value>
   </string>
   <!-- End of My Recipie Strings -->
-
+  
+  <string>
+    <id>2090</id>
+    <value>Dvr-MpegCut</value>
+  </string>
+  <string>
+    <id>2091</id>
+    <value>Process has been canceled</value>
+  </string>  
+  
   <!-- My Burner Strings -->
   <string Prefix="My ">
     <id>2100</id>

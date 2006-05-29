@@ -80,7 +80,7 @@ namespace DvrMpegCutMP
 		#region Own variables
 		double durationOld;
 		double durationNew;
-		double curPosition;
+		//double curPosition;
 		double startCut = 0;
 		double endCut = 0;
 		ArrayList cutList = new ArrayList();
@@ -185,7 +185,7 @@ namespace DvrMpegCutMP
 				if (cutThread != null)
 				{
 					cutThread.Abort();
-					MessageBox("Process was canceled", "Cancel");
+          MessageBox(GUILocalizeStrings.Get(2091), GUILocalizeStrings.Get(510));
 				}
 			}
 			if (control == startBtn)

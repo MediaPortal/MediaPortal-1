@@ -51,12 +51,12 @@ namespace DvrMpegCutMP
 
 		public string Description()
 		{
-			return "to cut mpeg and dvr-ms files";
+			return "This plugin allows to cut .mpeg and .dvr-ms files";
 		}
 
 		public bool GetHome(out string strButtonText, out string strButtonImage, out string strButtonImageFocus, out string strPictureImage)
 		{
-			strButtonText = PluginName();
+      strButtonText = GUILocalizeStrings.Get(2090);
 			strButtonImage = String.Empty;
 			strButtonImageFocus = String.Empty;
 			strPictureImage = String.Empty;
@@ -75,12 +75,12 @@ namespace DvrMpegCutMP
 
 		public string PluginName()
 		{
-			return "Dvr-MpegCut";
+      return "Dvr-MpegCut";
 		}
 
 		public void ShowPlugin()
 		{
-			System.Windows.Forms.MessageBox.Show("Nothing to configure, just enable and start MP ;)");
+			System.Windows.Forms.MessageBox.Show("Nothing to configure - just enable and start MP ;)");
 		}
 
 		#endregion

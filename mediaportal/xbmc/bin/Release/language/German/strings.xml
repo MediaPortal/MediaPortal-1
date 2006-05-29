@@ -1300,6 +1300,10 @@
 	<string>
 		<id>394</id>
 		<value>nicht verfügbar</value>
+    </string>
+    <string>
+      <id>395</id>
+      <value>Nebel</value>
 	</string>
 	<string>
 		<id>396</id>
@@ -3660,6 +3664,17 @@
 		<id>2054</id>
 		<value>Kein Eintrag!</value>
 	</string>
+
+  <string>
+    <id>2090</id>
+    <value>Videoschnitt</value>
+  </string>
+  <string>
+    <id>2091</id>
+    <value>Vorgang wurde abgebrochen</value>
+  </string>
+  
+    <!-- My Burner Strings -->
 	<string>
 		<id>2100</id>
 		<value>Brennen</value>
