@@ -53,11 +53,11 @@ namespace MediaPortal.WebEPG
 
     override public Profiler GetPageProfiler(HTTPRequest page)
     {
-      if(_page == null && page != _page)
+      if(_page != page)
       {
         HTMLPage webPage = new HTMLPage(page);
         _strSource = webPage.GetPage();
-        _page = page;
+        _page = new HTTPRequest(page);
       }
       return new XMLProfiler(_strSource, _Data);
     }

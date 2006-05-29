@@ -48,8 +48,8 @@ namespace MediaPortal.EPG.WebEPGTester
       ILog log = new Log("WebEPG-Tester", Log.Level.Debug);
 
       StringWriter logString = new StringWriter();
-      ILog errorLog = new Log(logString, Log.Level.Error);
-      services.Add<ILog>(errorLog);
+      ILog webepgLog = new Log(logString, Log.Level.Debug);
+      services.Add<ILog>(webepgLog);
       ChannelsList config = new ChannelsList(Environment.CurrentDirectory + "\\WebEPG");
 
       string testDir = Environment.CurrentDirectory + "\\test";
@@ -127,7 +127,7 @@ namespace MediaPortal.EPG.WebEPGTester
               {
                 log.Error("WebEPG: Grabber failed for: {0}", channel.ChannelID);
               }
-              if(logString.ToString() != String.Empty)
+              if(logString.ToString().IndexOf("[ERROR]") != -1)
                 log.Error("WebEPG: Grabber failed for: {0}", channel.ChannelID);
               logString.Flush();
             }

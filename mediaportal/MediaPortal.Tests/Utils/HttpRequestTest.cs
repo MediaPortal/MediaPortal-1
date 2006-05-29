@@ -33,51 +33,74 @@ using MediaPortal.Utils.Web;
 
 namespace MediaPortal.Tests.Utils.Web
 {
-    [TestFixture]
-    [Category("Web")]
-    public class HttpRequestTest
+  [TestFixture]
+  [Category("Web")]
+  public class HttpRequestTest
+  {
+    [Test]
+    public void Base()
     {
-        [Test]
-        public void Base()
-        {
-          HTTPRequest request = new HTTPRequest("http://www.somewhere.com/path/path/file.html");
+      HTTPRequest request = new HTTPRequest("http://www.somewhere.com/path/path/file.html");
 
-          Assert.IsTrue("www.somewhere.com" == request.Host);
-          Assert.IsTrue("/path/path/file.html" == request.GetQuery);
-        }
-
-        [Test]
-        public void Add()
-        {
-          HTTPRequest requestBase = new HTTPRequest("http://www.somewhere.com/path/path/file.html");
-
-          HTTPRequest request;
-          request = requestBase.Add("../relpath/relfile.html");
-          Assert.IsTrue("http://www.somewhere.com/path/relpath/relfile.html" == request.Url);
-
-          request = requestBase.Add("/newpath/newfile.html");
-          Assert.IsTrue("http://www.somewhere.com/newpath/newfile.html" == request.Url);
-
-          request = requestBase.Add("http://www.somewhere_else.com/path/file.html");
-          Assert.IsTrue("http://www.somewhere_else.com/path/file.html" == request.Url);
-        }
-
-        [Test]
-        public void ReplaceTag()
-        {
-          HTTPRequest request = new HTTPRequest("http://www.somewhere.com/[PATH]/[FILE]");
-          request.PostQuery = "[PATH]?[POSTDATA]";
-
-          request.ReplaceTag("[PATH]", "tagpath");
-          Assert.IsTrue("/tagpath/[FILE]" == request.GetQuery);
-          Assert.IsTrue("tagpath?[POSTDATA]" == request.PostQuery);
-          
-          request.ReplaceTag("[FILE]", "tagfile.html");
-          Assert.IsTrue("/tagpath/tagfile.html" == request.GetQuery);
-
-          request.ReplaceTag("[POSTDATA]", "tagpostdata");
-          Assert.IsTrue("tagpath?tagpostdata" == request.PostQuery);
-          
-        }
+      Assert.IsTrue("www.somewhere.com" == request.Host);
+      Assert.IsTrue("/path/path/file.html" == request.GetQuery);
     }
+
+    [Test]
+    public void Add()
+    {
+      HTTPRequest requestBase = new HTTPRequest("http://www.somewhere.com/path/path/file.html");
+
+      HTTPRequest request;
+      request = requestBase.Add("../relpath/relfile.html");
+      Assert.IsTrue("http://www.somewhere.com/path/relpath/relfile.html" == request.Url);
+
+      request = requestBase.Add("/newpath/newfile.html");
+      Assert.IsTrue("http://www.somewhere.com/newpath/newfile.html" == request.Url);
+
+      request = requestBase.Add("http://www.somewhere_else.com/path/file.html");
+      Assert.IsTrue("http://www.somewhere_else.com/path/file.html" == request.Url);
+    }
+
+    [Test]
+    public void ReplaceTag()
+    {
+      HTTPRequest request = new HTTPRequest("http://www.somewhere.com/[PATH]/[FILE]");
+      request.PostQuery = "[PATH]?[POSTDATA]";
+
+      request.ReplaceTag("[PATH]", "tagpath");
+      Assert.IsTrue("/tagpath/[FILE]" == request.GetQuery);
+      Assert.IsTrue("tagpath?[POSTDATA]" == request.PostQuery);
+
+      request.ReplaceTag("[FILE]", "tagfile.html");
+      Assert.IsTrue("/tagpath/tagfile.html" == request.GetQuery);
+
+      request.ReplaceTag("[POSTDATA]", "tagpostdata");
+      Assert.IsTrue("tagpath?tagpostdata" == request.PostQuery);
+
+    }
+
+    [Test]
+    public void EqualOperator()
+    {
+      HTTPRequest request1 = new HTTPRequest("http://www.somewhere.com/1/1");
+      HTTPRequest request2 = new HTTPRequest("http://www.somewhere.com/2/2");
+
+      Assert.IsTrue(request1 == request1);
+      Assert.IsFalse(request1 == request2);
+      Assert.IsTrue(request1 != request2);
+
+      request1.PostQuery = "post1";
+      request2.PostQuery = "post2";
+
+      Assert.IsTrue(request1 == request1);
+      Assert.IsFalse(request1 == request2);
+      Assert.IsTrue(request1 != request2);
+
+      HTTPRequest request = null;
+
+      Assert.IsTrue(request == null);
+      Assert.IsTrue(request1 != null);
+    }
+  }
 }

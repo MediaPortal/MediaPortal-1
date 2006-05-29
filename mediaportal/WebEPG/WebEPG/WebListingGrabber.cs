@@ -508,7 +508,7 @@ namespace MediaPortal.EPG
         // Check TimeZone
         if (_SiteTimeZone != null && !_SiteTimeZone.IsLocalTimeZone())
         {
-          _log.Debug("[Debug] WebEPG: TimeZone, Adjusting from end Guide Time: {0} {1}", dtEnd.ToShortTimeString(), dtEnd.ToShortDateString());
+          _log.Debug("WebEPG: TimeZone, Adjusting from end Guide Time: {0} {1}", dtEnd.ToShortTimeString(), dtEnd.ToShortDateString());
           dtEnd = _SiteTimeZone.ToLocalTime(dtEnd);
           //if (_timeAdjustOnly)
           //  dtEnd = new DateTime(guideData.EndTime.Year, guideData.EndTime.Month, guideData.EndTime.Day, dtEnd.Hour, dtEnd.Minute, 0, 0);

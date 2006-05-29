@@ -24,7 +24,7 @@ using System.Net;
 
 namespace MediaPortal.Utils.Web
 {
-  public class HTTPRequest : IComparable
+  public class HTTPRequest
   {
     private string _scheme = string.Empty;
     private string _host = string.Empty;
@@ -79,17 +79,17 @@ namespace MediaPortal.Utils.Web
 
     public string Host
     {
-      get { return _host;}
+      get { return _host; }
     }
 
     public string GetQuery
     {
-      get { return _getQuery;}
+      get { return _getQuery; }
     }
 
     public string PostQuery
     {
-      get { return _postQuery;}
+      get { return _postQuery; }
       set { _postQuery = value; }
     }
 
@@ -137,14 +137,31 @@ namespace MediaPortal.Utils.Web
       return Url + " POST: " + _postQuery;
     }
 
-    #region IComparable Members
+    #region Operator Members
 
-    public int CompareTo(object obj)
+    public static bool operator ==(HTTPRequest r1, HTTPRequest r2)
     {
-      HTTPRequest compareObj = (HTTPRequest)obj;
-      string local = _host + _getQuery + _postQuery;
-      string compare = compareObj.Host + compareObj.GetQuery + compareObj.PostQuery;
-      return local.CompareTo(compare);
+      object o1 = (object) r1;
+      object o2 = (object) r2;
+      if (o1 == null || o2 == null)
+      {
+        if (o1 == null && o2 == null)
+          return true;
+        return false;
+      }
+
+      if (r1._scheme == r2._scheme &&
+          r1._host == r2._host &&
+          r1._getQuery == r2._getQuery &&
+          r1._postQuery == r2._postQuery)
+        return true;
+
+      return false;
+    }
+
+    public static bool operator !=(HTTPRequest r1, HTTPRequest r2)
+    {
+      return !(r1 == r2);
     }
 
     #endregion
