@@ -1302,6 +1302,10 @@
 		<value>Ukjent</value>
 	</string>
 	<string>
+		<id>395</id>
+		<value>Yr</value>
+	</string>
+	<string>
 		<id>396</id>
 		<value>Velg Sted</value>
 	</string>
@@ -1766,6 +1770,10 @@
 		<value>Slette denne sangen?</value>
 	</string>
 	<string>
+		<id>529</id>
+		<value>Vis: Store Ikoner</value>
+	</string>
+	<string>
 		<id>530</id>
 		<value>Foto-disk er satt inn, vil du åpne denne?</value>
 	</string>
@@ -1776,6 +1784,10 @@
 	<string>
 		<id>532</id>
 		<value>Lyd-disk er satt inn, vil du åpne denne?</value>
+	</string>
+	<string>
+		<id>533</id>
+		<value>Guide</value>
 	</string>
 	<string>
 		<id>550</id>
@@ -2275,7 +2287,7 @@
 	</string>
 	<string>
 		<id>731</id>
-		<value>dette planlagte opptaket vil oppåtaket stoppes.</value>
+		<value>dette planlagte opptaket vil opptaket stoppes.</value>
 	</string>
 	<string>
 		<id>732</id>
@@ -2349,6 +2361,102 @@
 		<id>750</id>
 		<value>Bilder</value>
 	</string>
+  <string>
+    <id>751</id>
+    <value>Vis alle sangene fra denne artisten</value>
+  </string>
+  <string>
+    <id>752</id>
+    <value>Ingen opptak er spesifisert</value>
+  </string>
+  <string>
+    <id>753</id>
+    <value>Ingen TV-kort er installert</value>
+  </string>
+  <string>
+    <id>754</id>
+    <value>Ingen TV-kort er satt til å ta opp dette programmet</value>
+  </string>
+  <string>
+    <id>755</id>
+    <value>Ingen TV-kort er i bruk</value>
+  </string>
+  <string>
+    <id>756</id>
+    <value>Ingen TV-kort kan ta imot:{0}</value>
+  </string>
+  <string>
+    <id>757</id>
+    <value>Alle TV-kort er opptatte</value>
+  </string>
+  <string>
+    <id>758</id>
+    <value>TV-kortet tar ikke opp noe</value>
+  </string>
+  <string>
+    <id>759</id>
+    <value>Kan ikke starte timeshifting</value>
+  </string>
+  <string>
+    <id>760</id>
+    <value>Ingen TV-kort ledig for å starte timeshifting</value>
+  </string>
+  <string>
+    <id>761</id>
+    <value>Kunne ikke stoppe timeshifting</value>
+  </string>
+  <string>
+    <id>762</id>
+    <value>Kunne ikke starte TV visning</value>
+  </string>
+  <string>
+    <id>763</id>
+    <value>Opptakeren er opptatt</value>
+  </string>
+  <string>
+    <id>764</id>
+    <value>Opptakeren er pauset</value>
+  </string>
+  <string>
+    <id>765</id>
+    <value>Ikke nok ledig diskplass</value>
+  </string>
+  <string>
+    <id>766</id>
+    <value>Importering allerede startet...</value>
+  </string>
+  <string>
+    <id>767</id>
+    <value>Ikke gyldig XMLTV fil</value>
+  </string>
+  <string>
+    <id>768</id>
+    <value>Ingen kanaler funnet</value>
+  </string>
+    <string>
+    <id>769</id>
+    <value>Ingen programmer funnet</value>
+  </string>
+    <string>
+    <id>770</id>
+    <value>Ingen XMLTV fil funnet</value>
+  </string>
+	<string>
+	<id>771</id>
+	<value>Ugyldig PIN kode</value>
+  </string>
+  <string>
+	<id>772</id>
+	<value>Vil du prøve igjen?</value>
+  </string>
+  <string>
+	<id>773</id>
+	<value>START</value>
+  </string>
+  <string>
+	<id>774</id>
+    <value>Slutt</value>
+  </string>    
 	<string>
 		<id>800</id>
 		<value>Start med</value>
@@ -3149,6 +3257,53 @@
 		<id>1048</id>
 		<value>Innstillinger</value>
 	</string>
+  <string>
+    <id>1049</id>
+    <value>Dvale</value>
+  </string>
+
+  <!-- Recording Type: WeekEnds -->
+  <string>
+    <id>1050</id>
+    <value>Lør-Søn</value>
+  </string>
+  <string>
+    <id>1051</id>
+    <value>Opptak Lør-Søn</value>
+  </string>
+  <string>
+    <id>1052</id>
+    <value>Sanger</value>
+  </string>
+  <!-- End Recording Type: WeekEnds -->
+  
+  <!-- Music Import Strings -->
+  <string>
+    <id>1100</id>
+    <value>Importere CD</value>
+  </string>
+  <string>
+    <id>1101</id>
+    <value>Importere valgte spor</value>
+  </string>
+  <string>
+    <id>1102</id>
+    <value>Avbryte CD-Import</value>
+  </string>
+  <string>
+    <id>1103</id>
+    <value>Importerer spor</value>
+  </string>
+  <string>
+    <id>1104</id>
+    <value>igjen</value>
+  </string>
+  <string>
+    <id>1105</id>
+    <value>Importerer spor</value>
+  </string>
+  <!-- End Music Import Strings -->
+  
 	<string>
 		<id>1440</id>
 		<value>Mitt tekst-TV</value>
@@ -3181,6 +3336,18 @@
 		<id>1447</id>
 		<value>Opptak stoppet:</value>
 	</string>
+  <string>
+    <id>1448</id>
+    <value>Velg Ingen</value>
+  </string>
+  <string>
+    <id>1449</id>
+    <value>Stopp opptak</value>
+  </string>
+  <string>
+    <id>1450</id>
+    <value>Er du sikker på at du vil stoppe opptaket?</value>
+  </string>
 	<string>
 		<id>1950</id>
 		<value>Min status</value>
@@ -3497,6 +3664,14 @@
 		<id>2054</id>
 		<value>Ingen innslag!</value>
 	</string>
+  <string>
+    <id>2090</id>
+    <value>Dvr-MpegCut</value>
+  </string>
+  <string>
+    <id>2091</id>
+    <value>Prosessen ble avbrutt</value>
+  </string>  
 	<string>
 		<id>2100</id>
 		<value>Lag CD/DVD</value>
@@ -3777,6 +3952,18 @@
 		<id>2225</id>
 		<value>Opprettet katalog</value>
 	</string>
+  <string>
+    <id>2997</id>
+    <value>t</value>
+  </string>
+  <string>
+    <id>2998</id>
+    <value>min</value>
+  </string>
+  <string>
+    <id>2999</id>
+    <value>sek</value>
+  </string>
 	<string>
 		<id>3000</id>
 		<value>Programvalg</value>
@@ -3870,6 +4057,167 @@
 		<value>av</value>
 	</string>
 	<string>
+		<id>4000</id>
+		<value>Nettleser</value>
+	</string>
+	<string>
+		<id>4001</id>
+		<value>Favoritter</value>
+	</string>
+  <string>
+    <id>4002</id>
+    <value>Kan ikke laste ned URL</value>
+  </string>
+  <string>
+    <id>4003</id>
+    <value>Vennligst spesifiser din favoritt folder i instillinger.</value>
+  </string>
+  
+ <!-- Begin Cover Art Grabber Strings -->
+  <string>
+    <id>4500</id>
+    <value>Hopp over album som har cover bilde</value>
+  </string>
+  <string>
+    <id>4501</id>
+    <value>Lagre cover bilde i album folderen</value>
+  </string>
+  <string>
+    <id>4502</id>
+    <value>Lagre cover bilde i thumbs folderen</value>
+  </string>
+  <string>
+    <id>4503</id>
+    <value>Henter album informasjon. Vennligst vent...</value>
+  </string>
+  <string>
+    <id>4504</id>
+    <value>{0}% - {1} av {2}</value>
+  </string>
+  <string>
+    <id>4505</id>
+    <value>Søker {0}...</value>
+  </string>
+  <string>
+    <id>4506</id>
+    <value>[Blank]</value>
+  </string>
+  <string>
+    <id>4507</id>
+    <value>Cover grabber avbrutt av bruker</value>
+  </string>
+  <string>
+    <id>4508</id>
+    <value>Cover grabber ferdig</value>
+  </string>
+  <string>
+    <id>4509</id>
+    <value>Cover grabber ferdig men med feil</value>
+  </string>
+  <string>
+    <id>4510</id>
+    <value>{0} cover bilde oppdatert</value>
+  </string>
+  <string>
+    <id>4511</id>
+    <value>Cover grabber ferdig</value>
+  </string>
+  <string>
+    <id>4512</id>
+    <value>Alle cover er nå oppdatert</value>
+  </string>
+  <string>
+    <id>4513</id>
+    <value>Forskjellige</value>
+  </string>
+  <string>
+    <id>4514</id>
+    <value>Cover Grabber</value>
+  </string>
+  <string>
+    <id>4515</id>
+    <value>Cover Grabber Søke Resultat</value>
+  </string>
+  <string>
+    <id>4516</id>
+    <value>Ingen cover funnet</value>
+  </string>
+  <string>
+    <id>4517</id>
+    <value>Avslutt</value>
+  </string>
+  <string>
+    <id>4518</id>
+    <value>Album tittel ikke funnet\r\nPrøver: {0}</value>
+  </string>
+  <string>
+    <id>4519</id>
+    <value>Nåværende cover</value>
+  </string>
+  <string>
+    <id>4520</id>
+    <value>Hopp over</value>
+  </string>
+  <string>
+    <id>4521</id>
+    <value>Vis album informasjon</value>
+  </string>
+  <string>
+    <id>4522</id>
+    <value>Grabbing: {0}...</value>
+  </string>
+  <!-- End Cover Art Grabber Strings -->
+  
+  <!-- Begin Playing Now Strings -->
+  <string>
+    <id>4540</id>
+    <value>Spiller</value>
+  </string>  <string>
+    <id>4541</id>
+    <value>Avspill neste</value>
+  </string>
+  <string>
+    <id>4542</id>
+    <value>Ingen spilleliste lastet</value>
+  </string>
+  <string>
+    <id>4543</id>
+    <value>Informasjon om spor ikke tilgjengelig</value>
+  </string>  
+  <!-- End Playing Now Strings -->
+  
+  <!-- Begin Addtional MyMusic Strings -->
+  <string>
+    <id>4550</id>
+    <value>Enqueue</value>
+  </string>  
+  <string>
+    <id>4551</id>
+    <value>Spill neste</value>
+  </string>  
+  <string>
+    <id>4552</id>
+    <value>Spill nå</value>
+  </string>  
+  <string>
+    <id>4553</id>
+    <value>Vis spilleliste</value>
+  </string>  
+  <string>
+    <id>4554</id>
+    <value>Hent CD Informasjon</value>
+  </string>  
+  <string>
+    <id>4555</id>
+    <value>Gjeldende spilleliste</value>
+  </string>  
+  <string>
+    <id>4557</id>
+    <value>Legg til alle i spillelisten</value>
+  </string>  
+  <!-- End Addtional MyMusic Strings -->
+  
+	<string>
 		<id>5900</id>
 		<value>Forfilmer</value>
 	</string>
@@ -3941,6 +4289,38 @@
 		<id>5917</id>
 		<value>Tyske forfilmer</value>
 	</string>
+  <string>
+   <id>5918</id>
+   <value>Télévision Suisse Romande VOD</value>
+ </string>
+ <string>
+   <id>5919</id>
+   <value>Filmtoppen</value>
+ </string>
+ <string>
+   <id>5920</id>
+   <value>Film premierer denne uken</value>
+ </string>
+ <string>
+   <id>5921</id>
+   <value>Kommende filmer</value>
+ </string>
+ <string>
+   <id>5922</id>
+   <value>Best selgende DVD-er</value>
+ </string>
+ <string>
+   <id>5923</id>
+   <value>DVD premierer denne uken</value>
+ </string>
+ <string>
+   <id>5924</id>
+   <value>DVD premierer neste uke</value>
+ </string>
+ <string>
+   <id>5925</id>
+   <value>Forhånds bestilte DVD-er</value>
+ </string>
 	<string>
 		<id>8000</id>
 		<value>Min epost</value>
@@ -4105,6 +4485,28 @@
 		<id>9011</id>
 		<value>Vis komentarer:</value>
 	</string>
+  <!-- Begin Minesweeper Strings -->
+  <string>
+    <id>10100</id>
+    <value>Gjemte miner</value>
+  </string>
+  <string>
+    <id>10101</id>
+    <value>Spille tid</value>
+  </string>
+  <string>
+    <id>10102</id>
+    <value>Kjappeste tid</value>
+  </string>
+  <string Prefix="Min ">
+    <id>10103</id>
+    <value>Minesveiper</value>
+  </string>    
+  <!-- End Minesweeper Strings -->
+  <string>
+	<id>10104</id>
+	<value>Mini EPG</value>
+  </string>
 	<string>
 		<id>99845</id>
 		<value>TV.com sjekk</value>
@@ -4785,6 +5187,10 @@
 		<id>200011</id>
 		<value>Med MediaPortal kan du nyte din favorittmusikk, radioprogram</value>
 	</string>
+  <string>
+    <id>200012</id>
+    <value>se på video, DVD og TV pluss mye mye mer.</value>
+  </string>
 	<string>
 		<id>200013</id>
 		<value>Den gir deg muligheten til å høre på favorittmusikk og radio, se på video og DVD</value>
@@ -4841,20 +5247,48 @@
 		<id>200027</id>
 		<value>Oppsett - Generelt</value>
 	</string>
-	<string>
-		<id>200031</id>
-		<value>Ja</value>
-	</string>
-	<string>
-		<id>200032</id>
-		<value>Nei</value>
-	</string>
-	<string>
-		<id>4000</id>
-		<value>Nettleser</value>
-	</string>
-	<string>
-		<id>4001</id>
-		<value>Favoritter</value>
-	</string>
+  <string>
+    <id>200028</id>
+    <value>Har denne maskinen alltid tilgang til internett?</value>
+  </string>
+  <string>
+    <id>200029</id>
+    <value>Hvordan vil Du bruke MediaPortal?</value>
+  </string>
+  <string>
+    <id>200030</id>
+    <value>På en egen PC</value>
+  </string>
+  <string>
+    <id>200038</id>
+    <value>På en PC delt med andre programmer</value>
+  </string>
+  <string>
+    <id>200031</id>
+    <value>Ja</value>
+  </string>
+  <string>
+    <id>200032</id>
+    <value>Nei</value>
+  </string>
+  <string>
+    <id>200033</id>
+    <value>TV Oppsett - Analog TV</value>
+  </string>
+  <string>
+    <id>200034</id>
+    <value>Vennligst velg din by fra følgende liste.</value>
+  </string>
+  <string>
+    <id>200035</id>
+    <value>NB hvis din by ikke er listet må du manuelt instille kanalene.</value>
+  </string>
+  <string>
+    <id>200036</id>
+    <value>Manual Tune</value>
+  </string>
+  <string>
+    <id>200037</id>
+    <value>Skip &gt;</value>
+  </string>
 </strings>
