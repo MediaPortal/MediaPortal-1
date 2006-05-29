@@ -337,7 +337,7 @@ int m_bufferPositionPMT=0;
         channelName, _pidMp2Audio, _pidVideo, _pidTeletext, _pidPmt, _pidSubtitle, _programNumber);
 
     }
-    public bool RecevingPackets
+    public bool ReceivingPackets
     {
       get { return _isReceivingPackets; }
     }
