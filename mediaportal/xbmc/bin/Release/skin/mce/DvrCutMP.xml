@@ -1,4 +1,4 @@
-﻿<window>
+<window>
    <id>170601</id>
    <defaultcontrol>101</defaultcontrol>
    <allowoverlay>no</allowoverlay>
@@ -25,7 +25,7 @@
 		<posY>55</posY>
 		<align>left</align>
 		<font>font14</font> 
-		<label>Please, choose a file you would like to edit:</label>
+		<label>2092</label>
 	</control>
       	<control>
          	<type>button</type>
@@ -34,7 +34,7 @@
          	<posY>96</posY>
          	<onup>100</onup>
          	<ondown>25</ondown>
-         	<label>Back</label>
+         	<label>712</label>
          	<posX>56</posX>
          	<posY>96</posY>
 		<align>center</align>
@@ -47,7 +47,7 @@
 		<posY>97</posY>
 		<width>420</width>
 		<height>500</height>
-		<label>Videoliste</label>
+		<label>2094</label>
 		<onleft>24</onleft>
 		<onup>2</onup>
 		<ondown>2</ondown>

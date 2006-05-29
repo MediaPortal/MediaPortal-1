@@ -1,4 +1,4 @@
-﻿<window>
+<window>
    <id>170602</id>
    <defaultcontrol>100</defaultcontrol>
    <allowoverlay>no</allowoverlay>
@@ -21,7 +21,7 @@
         		<onup>25</onup>
          		<ondown>25</ondown>		
 			<onright>100</onright>
-         		<label>Cut</label>
+         		<label>2095</label>
       		</control>
       		<control>
         		<type>button</type>
@@ -31,7 +31,7 @@
          		<onup>24</onup>
          		<ondown>24</ondown>
 			<onright>100</onright>
-         		<label>Cancel</label>
+         		<label>510</label>
       		</control>
 	   	<control>
 		   	<type>label</type>
@@ -59,7 +59,7 @@
          		<posY>180</posY>
          		<onup>24</onup>
          		<ondown>24</ondown>
-         		<label>old duration:</label>
+         		<label>2097</label>
       		</control>
 	   	<control>
 		   	<type>label</type>
@@ -79,7 +79,7 @@
          		<posY>220</posY>
          		<onup>24</onup>
          		<ondown>24</ondown>
-         		<label>new duration:</label>
+         		<label>2098</label>
       			</control>
 	   	<control>
 		   	<type>label</type>
@@ -99,7 +99,7 @@
 		   	<posY>260</posY>
 		   	<onup>24</onup>
 		   	<ondown>24</ondown>
-		   	<label>current position:</label>
+		   	<label>2099</label>
 	 	</control>
 	   	<control>
 		   	<type>label</type>
@@ -130,7 +130,7 @@
 		   	<posX>560</posX>
 		   	<posY>423</posY>
 			<align>center</align>
-		   	<label>add</label>
+		   	<label>2093</label>
 	   	</control>
 	   	<control>
 		   	<type>button</type>
@@ -150,7 +150,7 @@
 		   	<posX>355</posX>
 		   	<posY>423</posY>
 			<align>center</align>
-		   	<label>start</label>
+		   	<label>2084</label>
 	   	</control>
 	   	<control>
 		   	<type>label</type>
@@ -182,7 +182,7 @@
 		   	<posX>450</posX>
 		   	<posY>423</posY>
 			<align>center</align>
-		   	<label>end</label>
+		   	<label>2085</label>
 	   	</control>
 	   	<control>
 		   	<type>label</type>
@@ -211,7 +211,7 @@
 		   	<posX>608</posX>
 		   	<posY>395</posY>
 			<align>center</align>
-		   	<label>forward</label>
+		   	<label>2086</label>
 	   	</control>
 	   	<control>
 		   	<type>button</type>
@@ -227,12 +227,12 @@
 			<onleft>24</onleft>
 	   	</control>
 	   	<control>
-		   	<type>label</type>
 		   	<label>backward</label>
+		   	<type>label</type>		   	
 		   	<posX>346</posX>
 		   	<posY>395</posY>
 			<align>center</align>
-		   	<label>backward</label>
+            <label>2087</label>
 	   	</control>
 		<control>
 		   	<type>slider</type>
@@ -244,7 +244,7 @@
 		   	<ondown>34</ondown>
 		   	<textureSliderBar>osd_slider_bg.png</textureSliderBar>
 		   	<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
-		   	<label>Qualität einstellen</label>
+		   	<label>2089</label>
 		   	<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
 	   	</control>
 	   	<control>
@@ -264,11 +264,10 @@
 	   	</control>
 	   	<control>
 		   	<type>label</type>
-		   	<label>backward</label>
 		   	<posX>58</posX>
 		   	<posY>310</posY>
 			<align>left</align>
-		   	<label>Cutlist:</label>
+		   	<label>2088</label>
 	   	</control>
 	   	<control>
 		  	<description>TV background</description>

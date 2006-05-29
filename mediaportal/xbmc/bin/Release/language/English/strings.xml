@@ -3692,9 +3692,50 @@
   <string>
     <id>2054</id>
     <value>No Entry!</value>
+	</string>	
+  <string>
+    <id>2080</id>
+    <value>Unsupported filetype</value>
+  </string>	
+  <string>
+    <id>2081</id>
+    <value>Cannot cut</value>
   </string>
+  <string>
+    <id>2082</id>
+    <value>Mpeg:Finished to cut the video file</value>
+  </string>
+  <string>
+    <id>2083</id>
+    <value>Dvrms:Finished to cut the video file</value>
+  </string>
+
   <!-- End of My Recipie Strings -->
   
+  <string>
+    <id>2084</id>
+    <value>start</value>
+  </string>   
+  <string>
+    <id>2085</id>
+    <value>end</value>
+  </string>   
+  <string>
+    <id>2086</id>
+    <value>forward</value>
+  </string>   
+  <string>
+    <id>2087</id>
+    <value>backward</value>
+  </string>   
+  <string>
+    <id>2088</id>
+    <value>Cutlist:</value>
+  </string>   
+  <string>
+    <id>2089</id>
+    <value>adjust quality</value>
+  </string>   
   <string>
     <id>2090</id>
     <value>Dvr-MpegCut</value>
@@ -3703,7 +3744,35 @@
     <id>2091</id>
     <value>Process has been canceled</value>
   </string>  
-  
+    <string>
+  <id>2092</id>
+    <value>Please, choose a file you would like to edit:</value>
+  </string> 
+  <string>
+    <id>2093</id>
+    <value>add</value>
+  </string> 
+  <string>
+    <id>2094</id>
+    <value>Video list</value>
+  </string>
+  <string>
+    <id>2095</id>
+    <value>Cut</value>
+  </string> 
+
+  <string>
+    <id>2097</id>
+    <value>old duration:</value>
+  </string>
+  <string>
+    <id>2098</id>
+    <value>new duration:</value>
+  </string>          
+  <string>
+    <id>2099</id>
+    <value>current position:</value>
+  </string> 
   <!-- My Burner Strings -->
   <string Prefix="My ">
     <id>2100</id>

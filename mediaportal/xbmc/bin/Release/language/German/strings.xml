@@ -3663,8 +3663,50 @@
 	<string>
 		<id>2054</id>
 		<value>Kein Eintrag!</value>
-	</string>
+	</string>	
+  <string>
+    <id>2080</id>
+    <value>Video-Typ wird nicht unterstützt</value>
+  </string>	
+  <string>
+    <id>2081</id>
+    <value>Schneiden nicht möglich</value>
+  </string>	  	
+  <string>
+    <id>2082</id>
+    <value>mpeg: Schnitt-Vorgang abgeschlossen</value>
+  </string>	
+  <string>
+    <id>2083</id>
+    <value>dvr-ms: Schnitt-Vorgang abgeschlossen</value>
+  </string>
 
+  <!-- End of My Recipie Strings -->
+  
+  <string>
+    <id>2084</id>
+    <value>Startpunkt</value>
+  </string>   
+  <string>
+    <id>2085</id>
+    <value>Endpunkt</value>
+  </string>   
+  <string>
+    <id>2086</id>
+    <value>vor</value>
+  </string>   
+  <string>
+    <id>2087</id>
+    <value>zurück</value>
+  </string>   
+  <string>
+    <id>2088</id>
+    <value>Schnitt-Liste:</value>
+  </string>   
+  <string>
+    <id>2089</id>
+    <value>Qualität einstellen</value>
+  </string>   
   <string>
     <id>2090</id>
     <value>Videoschnitt</value>
@@ -3672,8 +3714,36 @@
   <string>
     <id>2091</id>
     <value>Vorgang wurde abgebrochen</value>
+  </string>  
+    <string>
+  <id>2092</id>
+    <value>Welche Datei soll editiert werden:</value>
+  </string> 
+  <string>
+    <id>2093</id>
+    <value>Hinzufügen</value>
+  </string> 
+  <string>
+    <id>2094</id>
+    <value>Video-Liste</value>
   </string>
-  
+  <string>
+    <id>2095</id>
+    <value>Schneide jetzt</value>
+  </string> 
+
+  <string>
+    <id>2097</id>
+    <value>Alte Länge:</value>
+  </string>
+  <string>
+    <id>2098</id>
+    <value>Neue Länge:</value>
+  </string>          
+  <string>
+    <id>2099</id>
+    <value>Aktuelle Position:</value>
+  </string>  
     <!-- My Burner Strings -->
 	<string>
 		<id>2100</id>

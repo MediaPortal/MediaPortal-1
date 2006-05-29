@@ -319,7 +319,7 @@ namespace DvrMpegCutMP
 					CutMpeg();
 					break;
 				default:
-					MessageBox("Unsupported filetype","Cannot cut");
+          MessageBox(GUILocalizeStrings.Get(2080), GUILocalizeStrings.Get(2081)); // Unsupported filetype, Cannot cut
 					break;
 			}
 			
@@ -355,7 +355,7 @@ namespace DvrMpegCutMP
 					}
 					recCompcut.Close();
 					Marshal.ReleaseComObject((object)recCompcut);
-					MessageBox("Dvrms:Finished to cut the video file", "Finished");
+          MessageBox(GUILocalizeStrings.Get(2083) , GUILocalizeStrings.Get(2111)); //Dvrms:Finished to cut the video file , Finished !
 					
 				}
 			}
@@ -381,7 +381,7 @@ namespace DvrMpegCutMP
             {
                 cMpeg2Splitter.Trim(inFilename.FullName, outFilename.FullName, ref tStamp[0]);
             }
-            MessageBox("Mpeg:Finished to cut the video file", "Finished");
+            MessageBox(GUILocalizeStrings.Get(2082), GUILocalizeStrings.Get(2111));
 		}
 		#endregion
 
