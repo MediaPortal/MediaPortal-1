@@ -57,7 +57,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebEPG-xmltv", "WebEPG\WebE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{6DA0E4DF-6230-4642-98B5-E690BB6942BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HcwHelper", "RemotePlugins\HCWHelper\HCWHelper\HcwHelper.csproj", "{596BDC58-35E0-488F-BED2-FC7A133BC047}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HcwHelper", "RemotePlugins\Remotes\HcwRemote\HCWHelper\HcwHelper.csproj", "{596BDC58-35E0-488F-BED2-FC7A133BC047}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Tests", "MediaPortal.Tests\MediaPortal.Tests.csproj", "{DF3AC5D1-762E-4807-8642-1AE773B65E07}"
 EndProject
