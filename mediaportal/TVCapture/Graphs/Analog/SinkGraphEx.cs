@@ -61,6 +61,8 @@ namespace MediaPortal.TV.Recording
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     unsafe private static extern bool AddTeeSinkToGraph(IGraphBuilder graph);
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    unsafe private static extern bool AddTeeSinkNameToGraph(IGraphBuilder graph, string name);
+    [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     unsafe private static extern void AddWstCodecToGraph(IGraphBuilder graph);
     #endregion
 
@@ -406,8 +408,30 @@ namespace MediaPortal.TV.Recording
       IBaseFilter teesink = DirectShowUtil.GetFilterByName(_graphBuilderInterface, "Kernel Tee");
       if (teesink == null)
       {
-        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx.SetupTeletext(): Failed to find Kernel Tee");
-        return;
+        Log.Write("SinkGraphEx.SetupTeletext(): Trying to find Kernel Tee...");
+        DsDevice[] devices = DsDevice.GetDevicesOfCat(DirectShowLib.FilterCategory.AMKSSplitter);
+        bool found = false;
+        foreach (DsDevice dev in devices)
+        {
+          Guid clsID;
+          string dName;
+          dev.Mon.GetClassID(out clsID);
+          dev.Mon.GetDisplayName(null, null, out dName);
+          Log.Write("SinkGraphEx.SetupTeletext(): trying filter with ClassID: {0} ; Display Name: {1} ; Name: {2}", clsID, dName, dev.Name);
+          AddTeeSinkNameToGraph(_graphBuilderInterface, dev.Name);
+          teesink = DirectShowUtil.GetFilterByName(_graphBuilderInterface, "Kernel Tee");
+          if (teesink != null)
+          {
+            Log.Write("SinkGraphEx.SetupTeletext(): Found Kernel Tee: {0}", dev.Name);
+            found = true;
+            break;
+          }
+        }
+        if (!found)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx.SetupTeletext(): Failed to find Kernel Tee");
+          return;
+        }
       }
 
       AddWstCodecToGraph(_graphBuilderInterface);//WST Codec

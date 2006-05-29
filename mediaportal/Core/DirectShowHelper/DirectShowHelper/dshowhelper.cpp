@@ -668,16 +668,21 @@ HRESULT CreateKernelFilter(
     pEnum->Release();
     return (bFound ? hr : E_FAIL);
 }
-void AddTeeSinkToGraph(IGraphBuilder* pGraph)
+void AddTeeSinkNameToGraph(IGraphBuilder* pGraph, LPCOLESTR szName)
 {
 	IBaseFilter* pKernelTee = NULL;
-	int hr = CreateKernelFilter(AM_KSCATEGORY_SPLITTER, OLESTR("Tee"),clsidTeeSink, &pKernelTee);
+	int hr = CreateKernelFilter(AM_KSCATEGORY_SPLITTER, szName, clsidTeeSink, &pKernelTee);
 	if (SUCCEEDED(hr))
 	{
 		pGraph->AddFilter(pKernelTee, L"Kernel Tee");
 		pKernelTee->Release();
 	}
 
+}
+
+void AddTeeSinkToGraph(IGraphBuilder* pGraph)
+{
+	AddTeeSinkNameToGraph(pGraph, OLESTR("Tee"));
 }
 
 void AddWstCodecToGraph(IGraphBuilder* pGraph)

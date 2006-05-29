@@ -13,4 +13,5 @@ DvrMsStart					@6
 DvrMsStop					@7
 AddTeeSinkToGraph			@8
 AddWstCodecToGraph			@9
-GrabBitmaps @10
+GrabBitmaps					@10
+AddTeeSinkNameToGraph		@11
