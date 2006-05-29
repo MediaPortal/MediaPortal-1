@@ -32,7 +32,7 @@ using System.Xml;
 using System.IO;
 using MediaPortal.GUI.Library;
 
-namespace MediaPortal.Configuration
+namespace MediaPortal.InputDevices
 {
   /// <summary>
   /// Summary description for ButtonMappingForm.

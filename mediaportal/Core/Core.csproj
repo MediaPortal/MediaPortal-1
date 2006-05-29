@@ -272,7 +272,6 @@
     <Compile Include="guilib\GUIGridRow.cs" />
     <Compile Include="guilib\GUIPlayListItemListControl.cs" />
     <Compile Include="guilib\GUIPlayListtButtonControl.cs" />
-    <Compile Include="InputDevices\Force.cs" />
     <Compile Include="Player\DummyPlayer.cs" />
     <Compile Include="Player\DummyPlayerFactory.cs" />
     <Compile Include="Player\IPlayerFactory.cs" />
@@ -905,7 +904,6 @@
     <Compile Include="id3\TagsException.cs" />
     <Compile Include="id3\TagUtil.cs" />
     <Compile Include="id3\TemporaryFile.cs" />
-    <Compile Include="InputDevices\InputHandler.cs" />
     <Compile Include="Mixer\Mixer.cs">
       <SubType>Code</SubType>
     </Compile>
