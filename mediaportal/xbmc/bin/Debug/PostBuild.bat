@@ -42,8 +42,8 @@ regsvr32 /s TTPremiumSource.ax
 copy ..\..\..\MediaPortal.Support\bin\debug\MediaPortal.Support.dll .
 copy ..\..\..\MediaPortal.Support\bin\debug\MediaPortal.Support.pdb .
 copy ..\..\..\MediaPortal.Support\bin\debug\ICSharpCode.SharpZipLib.dll .
-copy ..\..\..\RemotePlugins\HCWHelper\HCWHelper\bin\debug\HCWHelper.exe .
-copy ..\..\..\RemotePlugins\HCWHelper\HCWHelper\bin\debug\HCWHelper.pdb .
+copy ..\..\..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\debug\HCWHelper.exe .
+copy ..\..\..\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\debug\HCWHelper.pdb .
 copy ..\..\..\RemotePlugins\Remotes\X10Remote\AxInterop.X10.dll .
 copy ..\..\..\RemotePlugins\Remotes\X10Remote\Interop.X10.dll .
 copy ..\..\..\core\directshowhelper\directshowhelper\release\dshowhelper.dll .
