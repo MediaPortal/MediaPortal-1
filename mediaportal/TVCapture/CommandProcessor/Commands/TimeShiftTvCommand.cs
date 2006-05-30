@@ -86,8 +86,8 @@ namespace MediaPortal.TV.Recording
           //can card view the new channel we want?
           if (TVDatabase.CanCardViewTVChannel(_channelName, dev.ID) || handler.TVCards.Count == 1)
           {
-            // is it not recording ? or is it recording the channel we want to watch ?
-            if (!dev.IsRecording || (dev.IsRecording && dev.TVChannel == _channelName))
+            // is  not recording and tuned on the channel we want ? or is it recording the channel we want to watch ?
+            if (!dev.IsRecording && dev.TVChannel == _channelName || (dev.IsRecording && dev.TVChannel == _channelName))
             {
               cardNo = i;
               if (dev.IsRecording)

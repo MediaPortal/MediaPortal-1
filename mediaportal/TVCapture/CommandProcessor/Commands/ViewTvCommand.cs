@@ -85,8 +85,8 @@ namespace MediaPortal.TV.Recording
           //can card view the new channel we want?
           if (TVDatabase.CanCardViewTVChannel(_channelName, dev.ID) || handler.TVCards.Count == 1)
           {
-            // is it not recording ? or is it recording the channel we want to watch ?
-            if (!dev.IsRecording || (dev.IsRecording && dev.TVChannel == _channelName))
+            // is  not recording and tuned on the channel we want ? or is it recording the channel we want to watch ?
+            if ((!dev.IsRecording && dev.TVChannel == _channelName) || (dev.IsRecording && dev.TVChannel == _channelName))
             {
               cardNo = i;
               if (dev.IsRecording)
@@ -195,9 +195,11 @@ namespace MediaPortal.TV.Recording
       for (int i = 0; i < handler.TVCards.Count; ++i)
       {
         dev = handler.TVCards[i];
+        Log.WriteFile(Log.LogType.Recorder, "Analysing Card {0}",i.ToString());
         if (TVDatabase.CanCardViewTVChannel(_channelName, dev.ID) || handler.TVCards.Count == 1)
         {
           cardCanViewChannel = true;
+          Log.WriteFile(Log.LogType.Recorder, "Card {0} can view channel {1} recording={2}", i.ToString(), _channelName, dev.IsRecording.ToString());
           if (!dev.IsRecording)
           {
             if (dev.Priority > prio)
@@ -221,7 +223,6 @@ namespace MediaPortal.TV.Recording
         return; // no card available
       }
       TurnTvOff(handler, card);
-
       handler.CurrentCardIndex = card;
       handler.TVChannelName = _channelName;
       dev = handler.TVCards[handler.CurrentCardIndex];
