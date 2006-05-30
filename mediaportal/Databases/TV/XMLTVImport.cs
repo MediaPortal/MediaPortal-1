@@ -704,71 +704,79 @@ namespace MediaPortal.TV.Database
 
     public void RemoveOverlappingPrograms(ref ArrayList TVPrograms)
     {
-      TVPrograms.Sort(this);
-      TVProgram prevProg = (TVProgram)TVPrograms[0];
-      for (int i = 1; i < TVPrograms.Count; i++)
-      {
-        TVProgram newProg = (TVProgram)TVPrograms[i];
-        if (newProg.Start < prevProg.End)   // we have an overlap here
-        {
-          // let us find out which one is the correct one
-          if (newProg.Start > prevProg.Start)  // newProg will create hole -> delete it
-          {
-            TVPrograms.Remove(newProg);
-            i--;                              // stay at the same position
-            continue;
-          }
+			try
+			{
+				if (TVPrograms.Count == 0) return;
+				TVPrograms.Sort(this);
+				TVProgram prevProg = (TVProgram)TVPrograms[0];
+				for (int i = 1; i < TVPrograms.Count; i++)
+				{
+					TVProgram newProg = (TVProgram)TVPrograms[i];
+					if (newProg.Start < prevProg.End)   // we have an overlap here
+					{
+						// let us find out which one is the correct one
+						if (newProg.Start > prevProg.Start)  // newProg will create hole -> delete it
+						{
+							TVPrograms.Remove(newProg);
+							i--;                              // stay at the same position
+							continue;
+						}
 
-          List<TVProgram> prevList = new List<TVProgram>();
-          List<TVProgram> newList = new List<TVProgram>();
-          prevList.Add(prevProg);
-          newList.Add(newProg);
-          TVProgram syncPrev = prevProg;
-          TVProgram syncProg = newProg;
-          for (int j = i + 1; j < TVPrograms.Count; j++)
-          {
-            TVProgram syncNew = (TVProgram)TVPrograms[j];
-            if (syncPrev.End == syncNew.Start)
-            {
-              prevList.Add(syncNew);
-              syncPrev = syncNew;
-              if (syncNew.Start > syncProg.End)
-              {
-                // stop point reached => delete TVPrograms in newList
-                foreach (TVProgram Prog in newList) TVPrograms.Remove(Prog);
-                i = j - 1;
-                prevProg = syncPrev;
-                newList.Clear();
-                prevList.Clear();
-                break;
-              }
-            }
-            else if (syncProg.End == syncNew.Start)
-            {
-              newList.Add(syncNew);
-              syncProg = syncNew;
-              if (syncNew.Start > syncPrev.End)
-              {
-                // stop point reached => delete TVPrograms in prevList
-                foreach (TVProgram Prog in prevList) TVPrograms.Remove(Prog);
-                i = j - 1;
-                prevProg = syncProg;
-                newList.Clear();
-                prevList.Clear();
-                break;
-              }
-            }
-          }
-          // check if a stop point was reached => if not delete newList
-          if (newList.Count > 0)
-          {
-            foreach (TVProgram Prog in prevList) TVPrograms.Remove(Prog);
-            i = TVPrograms.Count;
-            break;
-          }
-        }
-        prevProg = newProg;
-      }
+						List<TVProgram> prevList = new List<TVProgram>();
+						List<TVProgram> newList = new List<TVProgram>();
+						prevList.Add(prevProg);
+						newList.Add(newProg);
+						TVProgram syncPrev = prevProg;
+						TVProgram syncProg = newProg;
+						for (int j = i + 1; j < TVPrograms.Count; j++)
+						{
+							TVProgram syncNew = (TVProgram)TVPrograms[j];
+							if (syncPrev.End == syncNew.Start)
+							{
+								prevList.Add(syncNew);
+								syncPrev = syncNew;
+								if (syncNew.Start > syncProg.End)
+								{
+									// stop point reached => delete TVPrograms in newList
+									foreach (TVProgram Prog in newList) TVPrograms.Remove(Prog);
+									i = j - 1;
+									prevProg = syncPrev;
+									newList.Clear();
+									prevList.Clear();
+									break;
+								}
+							}
+							else if (syncProg.End == syncNew.Start)
+							{
+								newList.Add(syncNew);
+								syncProg = syncNew;
+								if (syncNew.Start > syncPrev.End)
+								{
+									// stop point reached => delete TVPrograms in prevList
+									foreach (TVProgram Prog in prevList) TVPrograms.Remove(Prog);
+									i = j - 1;
+									prevProg = syncProg;
+									newList.Clear();
+									prevList.Clear();
+									break;
+								}
+							}
+						}
+						// check if a stop point was reached => if not delete newList
+						if (newList.Count > 0)
+						{
+							foreach (TVProgram Prog in prevList) TVPrograms.Remove(Prog);
+							i = TVPrograms.Count;
+							break;
+						}
+					}
+					prevProg = newProg;
+				}
+			}
+			catch (Exception ex)
+			{
+				Log.WriteFile(Log.LogType.Log, true, "XML tv import error:{1} ", ex.Message);
+			}
     }
 
     public void FillInMissingDataFromDB(ref ArrayList TVPrograms, ArrayList dbEPG)
