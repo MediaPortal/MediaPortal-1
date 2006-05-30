@@ -48,7 +48,7 @@ namespace MediaPortal.GUI.Video
 				//genres
 				FilterDefinition filter1,filter2;
 				ViewDefinition viewGenre = new ViewDefinition();
-				viewGenre.Name="Genres";
+				viewGenre.Name="135";
 				filter1 = new FilterDefinition();filter1.Where="genre";;filter1.SortAscending=true;
 				filter2 = new FilterDefinition();filter2.Where="title";;filter2.SortAscending=true;
 				viewGenre.Filters.Add(filter1);
@@ -56,7 +56,7 @@ namespace MediaPortal.GUI.Video
 
 				//artists
 				ViewDefinition viewArtists = new ViewDefinition();
-				viewArtists.Name="Actors";
+				viewArtists.Name="344";
 				filter1 = new FilterDefinition();filter1.Where="actor";;filter1.SortAscending=true;
 				filter2 = new FilterDefinition();filter2.Where="title";;filter2.SortAscending=true;
 				viewArtists.Filters.Add(filter1);
@@ -64,13 +64,13 @@ namespace MediaPortal.GUI.Video
 
 				//title
 				ViewDefinition viewTitles = new ViewDefinition();
-				viewTitles.Name="Title";
+				viewTitles.Name="369";
 				filter1 = new FilterDefinition();filter1.Where="title";;filter1.SortAscending=true;
 				viewTitles.Filters.Add(filter1);
 
 				//years
 				ViewDefinition viewYears = new ViewDefinition();
-				viewYears.Name="Years";
+				viewYears.Name="987";
 				filter1 = new FilterDefinition();filter1.Where="year";;filter1.SortAscending=true;
 				filter2 = new FilterDefinition();filter2.Where="title";;filter2.SortAscending=true;
 				viewYears.Filters.Add(filter1);
@@ -124,6 +124,15 @@ namespace MediaPortal.GUI.Video
 			set { views=value;}
 		}
 
+        public string LocalizedCurrentView
+        {
+            get
+            {
+                if (currentView == null)
+                    return String.Empty;
+                return currentView.LocalizedName;
+            }
+        }
 		public string CurrentView 
 		{
 			get 
@@ -133,15 +142,25 @@ namespace MediaPortal.GUI.Video
 				return currentView.Name; 
 			}
 			set 
-			{ 
+			{
+                bool done = false;
 				foreach (ViewDefinition definition in views)
 				{
 					if (definition.Name == value) 
 					{
-						View=definition;
+						currentView=definition;
 						CurrentLevel=0;
+                        done = true;
+                        break;
 					}
 				}
+                if (!done)
+                {
+                    if (views.Count > 0)
+                    {
+                        currentView = (ViewDefinition)views[0];
+                    }
+                }
 			}
 		}
 

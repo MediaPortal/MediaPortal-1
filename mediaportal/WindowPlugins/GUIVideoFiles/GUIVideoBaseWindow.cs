@@ -292,10 +292,10 @@ namespace MediaPortal.GUI.Video
 
     protected virtual void UpdateButtonStates()
     {
-      GUIPropertyManager.SetProperty("#view", handler.CurrentView);
+      GUIPropertyManager.SetProperty("#view", handler.LocalizedCurrentView);
       if (GetID == (int)GUIWindow.Window.WINDOW_VIDEO_TITLE)
       {
-        GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100006), handler.CurrentView));
+          GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100006), handler.LocalizedCurrentView));
       }
       else
       {
@@ -472,10 +472,10 @@ namespace MediaPortal.GUI.Video
       if (dlg == null) return;
       dlg.Reset();
       dlg.SetHeading(924); // menu
-      dlg.Add(GUILocalizeStrings.Get(342));//videos
+      dlg.Add(GUILocalizeStrings.Get(134));//videos
       foreach (ViewDefinition view in handler.Views)
       {
-        dlg.Add(view.Name); //play
+        dlg.Add(view.LocalizedName); //play
       }
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;

@@ -66,7 +66,7 @@ namespace MediaPortal.GUI.Video
 		public override bool Init()
 		{
 			currentFolder=String.Empty;
-			handler.CurrentView="Title";
+			handler.CurrentView="369";
 			return Load (GUIGraphicsContext.Skin+@"\myvideoTitle.xml");
 		}
 		protected override string SerializeName

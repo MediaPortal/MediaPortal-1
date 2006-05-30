@@ -54,7 +54,7 @@ namespace MediaPortal.GUI.Music
                 //genres
                 FilterDefinition filter1, filter2, filter3;
                 ViewDefinition viewGenre = new ViewDefinition();
-                viewGenre.Name = "Genres";
+                viewGenre.Name = "135";
                 filter1 = new FilterDefinition(); filter1.Where = "genre"; filter1.SortAscending = true;
                 filter2 = new FilterDefinition(); filter2.Where = "title"; filter2.SortAscending = true;
                 viewGenre.Filters.Add(filter1);
@@ -62,7 +62,7 @@ namespace MediaPortal.GUI.Music
 
                 //top100
                 ViewDefinition viewTop100 = new ViewDefinition();
-                viewTop100.Name = "Top100";
+                viewTop100.Name = "271";
                 filter1 = new FilterDefinition(); filter1.Where = "timesplayed"; filter1.SortAscending = false; filter1.Limit = 100;
                 filter1.SqlOperator = ">";
                 filter1.Restriction = "0";
@@ -70,7 +70,7 @@ namespace MediaPortal.GUI.Music
 
                 //artists
                 ViewDefinition viewArtists = new ViewDefinition();
-                viewArtists.Name = "Artists";
+                viewArtists.Name = "133";
                 filter1 = new FilterDefinition(); filter1.Where = "artist"; ; filter1.SortAscending = true;
                 filter2 = new FilterDefinition(); filter2.Where = "album"; ; filter2.SortAscending = true;
                 filter3 = new FilterDefinition(); filter3.Where = "title"; ; filter3.SortAscending = true;
@@ -80,7 +80,7 @@ namespace MediaPortal.GUI.Music
 
                 //albums
                 ViewDefinition viewAlbums = new ViewDefinition();
-                viewAlbums.Name = "Albums";
+                viewAlbums.Name = "132";
                 filter1 = new FilterDefinition(); filter1.Where = "album"; ; filter1.SortAscending = true;
                 filter2 = new FilterDefinition(); filter2.Where = "title"; ; filter2.SortAscending = true;
                 viewAlbums.Filters.Add(filter1);
@@ -88,7 +88,7 @@ namespace MediaPortal.GUI.Music
 
                 //years
                 ViewDefinition viewYears = new ViewDefinition();
-                viewYears.Name = "Years";
+                viewYears.Name = "987";
                 filter1 = new FilterDefinition(); filter1.Where = "year"; ; filter1.SortAscending = true;
                 filter2 = new FilterDefinition(); filter2.Where = "title"; ; filter2.SortAscending = true;
                 viewYears.Filters.Add(filter1);
@@ -96,13 +96,13 @@ namespace MediaPortal.GUI.Music
 
                 //favorites
                 ViewDefinition viewFavorites = new ViewDefinition();
-                viewFavorites.Name = "Favorites";
+                viewFavorites.Name = "932";
                 filter1 = new FilterDefinition(); filter1.Where = "favorites"; filter1.SqlOperator = "="; filter1.Restriction = "1"; filter1.SortAscending = true;
                 viewFavorites.Filters.Add(filter1);
 
                 //all songs
                 ViewDefinition viewAllSongs = new ViewDefinition();
-                viewAllSongs.Name = "All songs";
+                viewAllSongs.Name = "1052";
                 filter1 = new FilterDefinition(); filter1.Where = "title"; filter1.SqlOperator = ""; filter1.Restriction = ""; filter1.SortAscending = true;
                 viewAllSongs.Filters.Add(filter1);
 
@@ -157,6 +157,15 @@ namespace MediaPortal.GUI.Music
             get { return views; }
             set { views = value; }
         }
+        public string LocalizedCurrentView
+        {
+            get
+            {
+                if (currentView == null)
+                    return String.Empty;
+                return currentView.LocalizedName;
+            }
+        }
 
         public string CurrentView
         {
@@ -168,16 +177,27 @@ namespace MediaPortal.GUI.Music
             }
             set
             {
+                bool done = false;
                 foreach (ViewDefinition definition in views)
                 {
                     if (definition.Name == value)
                     {
-                        View = definition;
+                        currentView = definition;
                         CurrentLevel = 0;
+                        done = true;
+                        break;
+                    }
+                }
+                if (!done)
+                {
+                    if (views.Count > 0)
+                    {
+                        currentView = (ViewDefinition)views[0];
                     }
                 }
             }
         }
+
 
         public void Restore(ViewDefinition view, int level)
         {

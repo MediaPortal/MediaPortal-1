@@ -392,10 +392,10 @@ namespace MediaPortal.GUI.Music
 
         protected virtual void UpdateButtonStates()
         {
-            GUIPropertyManager.SetProperty("#view", handler.CurrentView);
+            GUIPropertyManager.SetProperty("#view", handler.LocalizedCurrentView);
             if (GetID == (int)GUIWindow.Window.WINDOW_MUSIC_GENRE)
             {
-                GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), handler.CurrentView));
+                GUIPropertyManager.SetProperty("#currentmodule", String.Format("{0}/{1}", GUILocalizeStrings.Get(100005), handler.LocalizedCurrentView));
             }
             else
             {
@@ -814,7 +814,7 @@ namespace MediaPortal.GUI.Music
             dlg.Add(GUILocalizeStrings.Get(134));//songs
             foreach (ViewDefinition view in handler.Views)
             {
-                dlg.Add(view.Name); //play
+                dlg.Add(view.LocalizedName); //play
             }
 
             string playingNow = GUILocalizeStrings.Get(4540);

@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Net;
 using System.Xml.Serialization;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.GUI.View
 {
@@ -50,5 +51,19 @@ namespace MediaPortal.GUI.View
 			get { return listFilters;}
 			set { listFilters=value;}
 		}
+        public string LocalizedName
+        {
+            get
+            {
+                String localizedName = this.name;
+                GUILocalizeStrings.LocalizeLabel(ref localizedName);
+                return localizedName;
+            }
+        }
+
+        public override string ToString()
+        {
+            return LocalizedName;
+        }
 	}
 }

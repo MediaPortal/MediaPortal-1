@@ -576,7 +576,7 @@ namespace MediaPortal.GUI.Music
                     dlg.AddLocalizedString(931); //Rating
                 }
             }
-            if (handler.CurrentView == "Top100")
+            if (handler.CurrentView == "271")
             {
                 dlg.AddLocalizedString(718); //Clear top100
             }
