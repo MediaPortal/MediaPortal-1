@@ -196,16 +196,16 @@ namespace MediaPortal.Video.Database
                 {
                     return;
                 }
-                string cast = movieDetails.Cast + ", " + movieDetails.Director;
+                string cast = movieDetails.Cast + "," + movieDetails.Director;
                 char[] splitter = { '\n', ',' };
                 string[] temp = cast.Split(splitter);
                 ArrayList actors = new ArrayList();
                 foreach (string element in temp)
                 {
-                    element.Trim();
-                    if (element != string.Empty)
+                    string el = element.Trim();
+                    if (el != string.Empty)
                     {
-                        actors.Add(element);
+                        actors.Add(el);
                     }
                 }
                 if (actors.Count > 0)
@@ -218,8 +218,8 @@ namespace MediaPortal.Video.Database
                         int pos = actor.IndexOf(" as ");
                         if (pos >= 0)
                         {
-                            actor = actor.Substring(0, pos);
                             role = actor.Substring(pos + 4);
+                            actor = actor.Substring(0, pos);
                         }
                         actor = actor.Trim();
                         string line1, line2, line3;
@@ -228,7 +228,6 @@ namespace MediaPortal.Video.Database
                         line3 = "";
                         OnProgress(line1, line2, line3, percent);
                         _imdb.FindActor(actor);
-                        ////Log.Write("Found actors:{0}", _imdb.Count);
                         IMDBActor imdbActor = new IMDBActor();
                         if (_imdb.Count > 0)
                         {

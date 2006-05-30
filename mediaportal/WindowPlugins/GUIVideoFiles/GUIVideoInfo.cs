@@ -204,11 +204,16 @@ namespace MediaPortal.GUI.Video
 
 			if (control==spinImages)
 			{
+                int currentValue = spinImages.Value;
 				int item=spinImages.Value-1;
 
     			if (item < 0 || item >= coverArtUrls.Length) item=0;
-                currentMovie.ThumbURL = coverArtUrls[item];
-						
+                if (currentValue == item)
+                {
+                    return;
+                }
+
+                currentMovie.ThumbURL = coverArtUrls[item];		
 				string coverArtImage = Utils.GetCoverArtName(Thumbs.MovieTitle,currentMovie.Title);
 				string largeCoverArtImage = Utils.GetLargeCoverArtName(Thumbs.MovieTitle,currentMovie.Title);
 				Utils.FileDelete(coverArtImage);
