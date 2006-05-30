@@ -1768,11 +1768,16 @@
 	<string>
 		<id>518</id>
 		<value>Dieses Lied löschen?</value>
+    </string>
+    <string>
+      <id>519</id>
+  	  <value>Untertitel aus</value>
 	</string>
-  <string>
-    <id>529</id>
-    <value>Ansicht: Vorschau-Liste</value>
-  </string>
+	  	
+    <string>
+      <id>529</id>
+      <value>Ansicht: Vorschau-Liste</value>
+    </string>
 	<string>
 		<id>530</id>
 		<value>Foto-CD eingelegt! Öffnen?</value>
@@ -3470,6 +3475,9 @@
 		<id>1978</id>
 		<value>Virtueller Speicher</value>
 	</string>
+  <!-- End of My Status Strings -->
+
+  <!-- My Recipie Strings -->
 	<string>
 		<id>2005</id>
 		<value>Löschen</value>
