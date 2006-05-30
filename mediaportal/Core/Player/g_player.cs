@@ -48,8 +48,8 @@ namespace MediaPortal.Player
       Secm45 = -45,
       Secm30 = -30,
       Secm15 = -15,
-      Secm5  = -5,
-      Sec0 = 0,             
+      Secm5 = -5,
+      Sec0 = 0,
       Sec5 = 5,
       Sec15 = 15,
       Sec30 = 30,
@@ -98,8 +98,8 @@ namespace MediaPortal.Player
     #region ctor/dtor
     // singleton. Dont allow any instance of this class
     private g_Player()
-    {   
-      _factory = new PlayerFactory();     
+    {
+      _factory = new PlayerFactory();
     }
     public static Player.IPlayer Player
     {
@@ -123,19 +123,19 @@ namespace MediaPortal.Player
       ArrayList StepArray = new ArrayList();
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      foreach ( string token in ( xmlreader.GetValueAsString("movieplayer", "skipsteps", "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1;0").Split(new char[] { ',', ';', ' ' }) ) )
-      {
-        if ( token == string.Empty )
-          StepArray.Add(0);
-        else
-          StepArray.Add(Convert.ToInt32(token));
-      }
+        foreach (string token in (xmlreader.GetValueAsString("movieplayer", "skipsteps", "0;1;1;0;1;1;1;0;1;1;1;0;1;0;1;0").Split(new char[] { ',', ';', ' ' })))
+        {
+          if (token == string.Empty)
+            StepArray.Add(0);
+          else
+            StepArray.Add(Convert.ToInt32(token));
+        }
       _seekStepList = StepArray;
       _configLoaded = true;
 
-      return StepArray;      
+      return StepArray;
     }
-    
+
     #endregion
 
 
@@ -927,39 +927,39 @@ namespace MediaPortal.Player
 
     }
 
-    static public string GetSingleStep( int Step )
+    static public string GetSingleStep(int Step)
     {
-      if ( Step >= 0 )
+      if (Step >= 0)
+      {
+        if (Step >= 3600)
         {
-        if ( Step >= 3600 )
-          {
-          if ( ( Convert.ToSingle(Step) / 3600 ) > 1 && ( Convert.ToSingle(Step) / 3600 ) != 2 )
+          if ((Convert.ToSingle(Step) / 3600) > 1 && (Convert.ToSingle(Step) / 3600) != 2)
             return "+ " + Convert.ToString(Step / 60) + " " + GUILocalizeStrings.Get(2998);// "min"
           else
             return "+ " + Convert.ToString(Step / 3600) + " " + GUILocalizeStrings.Get(2997);// "hrs"
-          }
+        }
         else
-          if ( Step >= 60 )
+          if (Step >= 60)
             return "+ " + Convert.ToString(Step / 60) + " " + GUILocalizeStrings.Get(2998);// "min"
           else
             return "+ " + Convert.ToString(Step) + " " + GUILocalizeStrings.Get(2999);// "sec"
-        }
+      }
       else // back = negative
+      {
+        if (Step <= -3600)
         {
-        if ( Step <= -3600 )
-          {
-          if ( ( Convert.ToSingle(Step) / 3600 ) < -1 && ( Convert.ToSingle(Step) / 3600 ) != -2 )
+          if ((Convert.ToSingle(Step) / 3600) < -1 && (Convert.ToSingle(Step) / 3600) != -2)
             return "- " + Convert.ToString(Math.Abs(Step / 60)) + " " + GUILocalizeStrings.Get(2998);// "min"
           else
             return "- " + Convert.ToString(Math.Abs(Step / 3600)) + " " + GUILocalizeStrings.Get(2997);// "hrs"
-          }
+        }
         else
-          if ( Step <= -60 )
+          if (Step <= -60)
             return "- " + Convert.ToString(Math.Abs(Step / 60)) + " " + GUILocalizeStrings.Get(2998);// "min"
           else
             return "- " + Convert.ToString(Math.Abs(Step)) + " " + GUILocalizeStrings.Get(2999);// "sec"
       }
-    }  
+    }
 
     static public string GetStepDescription()
     {
@@ -967,8 +967,8 @@ namespace MediaPortal.Player
       int m_iTimeToStep = (int)_currentStep;
       if (m_iTimeToStep == 0) return "";
       _player.Process();
-      if ( _player.CurrentPosition + m_iTimeToStep <= 0 ) return GUILocalizeStrings.Get(773);// "START"
-      if ( _player.CurrentPosition + m_iTimeToStep >= _player.Duration ) return GUILocalizeStrings.Get(774);// "END"
+      if (_player.CurrentPosition + m_iTimeToStep <= 0) return GUILocalizeStrings.Get(773);// "START"
+      if (_player.CurrentPosition + m_iTimeToStep >= _player.Duration) return GUILocalizeStrings.Get(774);// "END"
       switch (_currentStep)
       {
         case Steps.Hourm3: { int i = (int)Steps.Hourm3; return GetSingleStep(i); };
@@ -979,33 +979,33 @@ namespace MediaPortal.Player
         case Steps.Minm30: { int i = (int)Steps.Minm30; return GetSingleStep(i); };
         case Steps.Minm15: { int i = (int)Steps.Minm15; return GetSingleStep(i); };
         case Steps.Minm10: { int i = (int)Steps.Minm10; return GetSingleStep(i); };
-        case Steps.Minm7:  { int i = (int)Steps.Minm7;  return GetSingleStep(i); };
-        case Steps.Minm5:  { int i = (int)Steps.Minm5;  return GetSingleStep(i); };
-        case Steps.Minm3:  { int i = (int)Steps.Minm3;  return GetSingleStep(i); };
-        case Steps.Minm1:  { int i = (int)Steps.Minm1;  return GetSingleStep(i); };
+        case Steps.Minm7: { int i = (int)Steps.Minm7; return GetSingleStep(i); };
+        case Steps.Minm5: { int i = (int)Steps.Minm5; return GetSingleStep(i); };
+        case Steps.Minm3: { int i = (int)Steps.Minm3; return GetSingleStep(i); };
+        case Steps.Minm1: { int i = (int)Steps.Minm1; return GetSingleStep(i); };
         case Steps.Secm45: { int i = (int)Steps.Secm45; return GetSingleStep(i); };
         case Steps.Secm30: { int i = (int)Steps.Secm30; return GetSingleStep(i); };
         case Steps.Secm15: { int i = (int)Steps.Secm15; return GetSingleStep(i); };
-        case Steps.Secm5: { int i = (int)Steps.Secm5;   return GetSingleStep(i); };
-        case Steps.Sec0:  { int i = (int)Steps.Sec0;  return GetSingleStep(i); };
-        case Steps.Sec5:  { int i = (int)Steps.Sec5;   return GetSingleStep(i); };
-        case Steps.Sec15: { int i = (int)Steps.Sec15;  return GetSingleStep(i); };
-        case Steps.Sec30: { int i = (int)Steps.Sec30;  return GetSingleStep(i); };
-        case Steps.Sec45: { int i = (int)Steps.Sec45;  return GetSingleStep(i); };
-        case Steps.Min1:  { int i = (int)Steps.Min1;   return GetSingleStep(i); };
-        case Steps.Min3:  { int i = (int)Steps.Min3;   return GetSingleStep(i); };
-        case Steps.Min5:  { int i = (int)Steps.Min5;   return GetSingleStep(i); };
-        case Steps.Min7:  { int i = (int)Steps.Min7;   return GetSingleStep(i); };
-        case Steps.Min10: { int i = (int)Steps.Min10;  return GetSingleStep(i); };
-        case Steps.Min15: { int i = (int)Steps.Min15;  return GetSingleStep(i); };
-        case Steps.Min30: { int i = (int)Steps.Min30;  return GetSingleStep(i); };
-        case Steps.Min45: { int i = (int)Steps.Min45;  return GetSingleStep(i); };
-        case Steps.Hour1: { int i = (int)Steps.Hour1;  return GetSingleStep(i); };
-        case Steps.Min90: { int i = (int)Steps.Min90;  return GetSingleStep(i); };
-        case Steps.Hour2: { int i = (int)Steps.Hour2;  return GetSingleStep(i); };
-        case Steps.Hour3: { int i = (int)Steps.Hour3;  return GetSingleStep(i); };
-        default: return "Skip";        
-      }   
+        case Steps.Secm5: { int i = (int)Steps.Secm5; return GetSingleStep(i); };
+        case Steps.Sec0: { int i = (int)Steps.Sec0; return GetSingleStep(i); };
+        case Steps.Sec5: { int i = (int)Steps.Sec5; return GetSingleStep(i); };
+        case Steps.Sec15: { int i = (int)Steps.Sec15; return GetSingleStep(i); };
+        case Steps.Sec30: { int i = (int)Steps.Sec30; return GetSingleStep(i); };
+        case Steps.Sec45: { int i = (int)Steps.Sec45; return GetSingleStep(i); };
+        case Steps.Min1: { int i = (int)Steps.Min1; return GetSingleStep(i); };
+        case Steps.Min3: { int i = (int)Steps.Min3; return GetSingleStep(i); };
+        case Steps.Min5: { int i = (int)Steps.Min5; return GetSingleStep(i); };
+        case Steps.Min7: { int i = (int)Steps.Min7; return GetSingleStep(i); };
+        case Steps.Min10: { int i = (int)Steps.Min10; return GetSingleStep(i); };
+        case Steps.Min15: { int i = (int)Steps.Min15; return GetSingleStep(i); };
+        case Steps.Min30: { int i = (int)Steps.Min30; return GetSingleStep(i); };
+        case Steps.Min45: { int i = (int)Steps.Min45; return GetSingleStep(i); };
+        case Steps.Hour1: { int i = (int)Steps.Hour1; return GetSingleStep(i); };
+        case Steps.Min90: { int i = (int)Steps.Min90; return GetSingleStep(i); };
+        case Steps.Hour2: { int i = (int)Steps.Hour2; return GetSingleStep(i); };
+        case Steps.Hour3: { int i = (int)Steps.Hour3; return GetSingleStep(i); };
+        default: return "Skip";
+      }
     }
     static public int GetSeekStep(out bool bStart, out bool bEnd)
     {
@@ -1023,116 +1023,116 @@ namespace MediaPortal.Player
     {
       int[] m_seekStep = new int[16];
 
-      if ( ! _configLoaded )
-        {
-          _seekStepList = LoadSettings();
-          Log.Write("g_Player loading seekstep config {0}","");// Convert.ToString(_seekStepList[0]));
-        }
-        
+      if (!_configLoaded)
+      {
+        _seekStepList = LoadSettings();
+        Log.Write("g_Player loading seekstep config {0}", "");// Convert.ToString(_seekStepList[0]));
+      }
+
       for (int i = 0; i < 16; i++)
       {
         m_seekStep[i] = (int)_seekStepList[i];
-      } 
+      }
       if (bFF)
       {
         switch (_currentStep)
         {
           case Steps.Hourm3:
-                        if ( m_seekStep[14] == 1 ) _currentStep = Steps.Hourm2;
-                        else goto case Steps.Hourm2; break;
+            if (m_seekStep[14] == 1) _currentStep = Steps.Hourm2;
+            else goto case Steps.Hourm2; break;
           case Steps.Hourm2:
-                        if ( m_seekStep[13] == 1 ) _currentStep = Steps.Minm90;
-                        else goto case Steps.Minm90; break;
+            if (m_seekStep[13] == 1) _currentStep = Steps.Minm90;
+            else goto case Steps.Minm90; break;
           case Steps.Minm90:
-                        if ( m_seekStep[12] == 1 ) _currentStep = Steps.Hourm1;
-                        else goto case Steps.Hourm1; break;
+            if (m_seekStep[12] == 1) _currentStep = Steps.Hourm1;
+            else goto case Steps.Hourm1; break;
           case Steps.Hourm1:
-                        if ( m_seekStep[11] == 1 ) _currentStep = Steps.Minm45;
-                        else goto case Steps.Minm45; break;
+            if (m_seekStep[11] == 1) _currentStep = Steps.Minm45;
+            else goto case Steps.Minm45; break;
           case Steps.Minm45:
-                        if ( m_seekStep[10] == 1 ) _currentStep = Steps.Minm30;
-                        else goto case Steps.Minm30; break;
+            if (m_seekStep[10] == 1) _currentStep = Steps.Minm30;
+            else goto case Steps.Minm30; break;
           case Steps.Minm30:
-                        if (m_seekStep[9] == 1) _currentStep = Steps.Minm15;
-                        else goto case Steps.Minm15; break;
+            if (m_seekStep[9] == 1) _currentStep = Steps.Minm15;
+            else goto case Steps.Minm15; break;
           case Steps.Minm15:
-                        if (m_seekStep[8] == 1) _currentStep = Steps.Minm10;
-                        else goto case Steps.Minm10; break;
+            if (m_seekStep[8] == 1) _currentStep = Steps.Minm10;
+            else goto case Steps.Minm10; break;
           case Steps.Minm10:
-                        if (m_seekStep[7] == 1) _currentStep = Steps.Minm7;
-                        else goto case Steps.Minm7; break;
+            if (m_seekStep[7] == 1) _currentStep = Steps.Minm7;
+            else goto case Steps.Minm7; break;
           case Steps.Minm7:
-                        if (m_seekStep[6] == 1) _currentStep = Steps.Minm5;
-                        else goto case Steps.Minm5; break;
+            if (m_seekStep[6] == 1) _currentStep = Steps.Minm5;
+            else goto case Steps.Minm5; break;
           case Steps.Minm5:
-                        if (m_seekStep[5] == 1) _currentStep = Steps.Minm3;
-                        else goto case Steps.Minm3; break;
+            if (m_seekStep[5] == 1) _currentStep = Steps.Minm3;
+            else goto case Steps.Minm3; break;
           case Steps.Minm3:
-                        if (m_seekStep[4] == 1) _currentStep = Steps.Minm1;
-                        else goto case Steps.Minm1; break;
+            if (m_seekStep[4] == 1) _currentStep = Steps.Minm1;
+            else goto case Steps.Minm1; break;
           case Steps.Minm1:
-                        if (m_seekStep[3] == 1) _currentStep = Steps.Secm45;
-                        else goto case Steps.Secm45; break;
+            if (m_seekStep[3] == 1) _currentStep = Steps.Secm45;
+            else goto case Steps.Secm45; break;
           case Steps.Secm45:
-                        if (m_seekStep[2] == 1) _currentStep = Steps.Secm30;
-                        else goto case Steps.Secm30; break;
+            if (m_seekStep[2] == 1) _currentStep = Steps.Secm30;
+            else goto case Steps.Secm30; break;
           case Steps.Secm30:
-                        if (m_seekStep[1] == 1) _currentStep = Steps.Secm15;
-                        else goto case Steps.Secm15; break;
+            if (m_seekStep[1] == 1) _currentStep = Steps.Secm15;
+            else goto case Steps.Secm15; break;
           case Steps.Secm15:
-                        if (m_seekStep[0] == 1) _currentStep = Steps.Secm5;
-                        else goto case Steps.Secm5; break;
+            if (m_seekStep[0] == 1) _currentStep = Steps.Secm5;
+            else goto case Steps.Secm5; break;
 
           case Steps.Secm5: _currentStep = Steps.Sec0; break;
 
           case Steps.Sec0:
-                        if (m_seekStep[0] == 1) _currentStep = Steps.Sec5;
-                        else goto case Steps.Sec5; break;
+            if (m_seekStep[0] == 1) _currentStep = Steps.Sec5;
+            else goto case Steps.Sec5; break;
           case Steps.Sec5:
-                        if (m_seekStep[1] == 1) _currentStep = Steps.Sec15;
-                        else goto case Steps.Sec15; break;
+            if (m_seekStep[1] == 1) _currentStep = Steps.Sec15;
+            else goto case Steps.Sec15; break;
           case Steps.Sec15:
-                        if (m_seekStep[2] == 1) _currentStep = Steps.Sec30;
-                        else goto case Steps.Sec30; break;
+            if (m_seekStep[2] == 1) _currentStep = Steps.Sec30;
+            else goto case Steps.Sec30; break;
           case Steps.Sec30:
-                        if (m_seekStep[3] == 1) _currentStep = Steps.Sec45;
-                        else goto case Steps.Sec45; break;
+            if (m_seekStep[3] == 1) _currentStep = Steps.Sec45;
+            else goto case Steps.Sec45; break;
           case Steps.Sec45:
-                        if (m_seekStep[4] == 1) _currentStep = Steps.Min1;
-                        else goto case Steps.Min1; break;
+            if (m_seekStep[4] == 1) _currentStep = Steps.Min1;
+            else goto case Steps.Min1; break;
           case Steps.Min1:
-                        if (m_seekStep[5] == 1) _currentStep = Steps.Min3;
-                        else goto case Steps.Min3; break;
+            if (m_seekStep[5] == 1) _currentStep = Steps.Min3;
+            else goto case Steps.Min3; break;
           case Steps.Min3:
-                        if (m_seekStep[6] == 1) _currentStep = Steps.Min5;
-                        else goto case Steps.Min5; break;
+            if (m_seekStep[6] == 1) _currentStep = Steps.Min5;
+            else goto case Steps.Min5; break;
           case Steps.Min5:
-                        if (m_seekStep[7] == 1) _currentStep = Steps.Min7;
-                        else goto case Steps.Min7; break;
+            if (m_seekStep[7] == 1) _currentStep = Steps.Min7;
+            else goto case Steps.Min7; break;
           case Steps.Min7:
-                        if (m_seekStep[8] == 1) _currentStep = Steps.Min10;
-                        else goto case Steps.Min10; break;
+            if (m_seekStep[8] == 1) _currentStep = Steps.Min10;
+            else goto case Steps.Min10; break;
           case Steps.Min10:
-                        if (m_seekStep[9] == 1) _currentStep = Steps.Min15;
-                        else goto case Steps.Min15; break;
+            if (m_seekStep[9] == 1) _currentStep = Steps.Min15;
+            else goto case Steps.Min15; break;
           case Steps.Min15:
-                        if (m_seekStep[10] == 1) _currentStep = Steps.Min30;
-                        else goto case Steps.Min30; break;
+            if (m_seekStep[10] == 1) _currentStep = Steps.Min30;
+            else goto case Steps.Min30; break;
           case Steps.Min30:
-                        if (m_seekStep[11] == 1) _currentStep = Steps.Min45;
-                        else goto case Steps.Min45; break;
+            if (m_seekStep[11] == 1) _currentStep = Steps.Min45;
+            else goto case Steps.Min45; break;
           case Steps.Min45:
-                        if (m_seekStep[12] == 1) _currentStep = Steps.Hour1;
-                        else goto case Steps.Hour1; break;
+            if (m_seekStep[12] == 1) _currentStep = Steps.Hour1;
+            else goto case Steps.Hour1; break;
           case Steps.Hour1:
-                        if (m_seekStep[13] == 1) _currentStep = Steps.Min90;
-                        else goto case Steps.Min90; break;
+            if (m_seekStep[13] == 1) _currentStep = Steps.Min90;
+            else goto case Steps.Min90; break;
           case Steps.Min90:
-                        if (m_seekStep[14] == 1) _currentStep = Steps.Hour2;
-                        else goto case Steps.Hour2; break;
+            if (m_seekStep[14] == 1) _currentStep = Steps.Hour2;
+            else goto case Steps.Hour2; break;
           case Steps.Hour2:
-                        if (m_seekStep[15] == 1) _currentStep = Steps.Hour3;
-                        else goto case Steps.Hour3; break;
+            if (m_seekStep[15] == 1) _currentStep = Steps.Hour3;
+            else goto case Steps.Hour3; break;
           case Steps.Hour3: break;
         }
       }
@@ -1519,19 +1519,35 @@ namespace MediaPortal.Player
       }
     }
 
-      static public void SwitchToNextLanguage()
+    static public void SwitchToNextAudio()
+    {
+      if (AudioStreams > 1)
+        if (CurrentAudioStream < AudioStreams - 1)
+          CurrentAudioStream++;
+        else
+          CurrentAudioStream = 0;
+    }
+
+    static public void SwitchToNextSubtitle()
+    {
+      if (EnableSubtitle)
       {
-          //AudioStreams
-          //CurrentAudioStream
-          if (AudioStreams > 1)
+        if (SubtitleStreams > 1)
+          if (CurrentSubtitleStream < SubtitleStreams - 1)
+            CurrentSubtitleStream++;
+          else
           {
-              if (CurrentAudioStream < AudioStreams - 1)
-                  CurrentAudioStream++;
-              else
-                  CurrentAudioStream = 0;
+            EnableSubtitle = false;
+            CurrentSubtitleStream = 0;
           }
       }
-      
+      else
+      {
+        CurrentSubtitleStream = 0;
+        EnableSubtitle = true;
+      }
+    }
+
     #endregion
 
   }

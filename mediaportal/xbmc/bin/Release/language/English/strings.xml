@@ -1768,7 +1768,11 @@
     <id>518</id>
     <value>Delete this song?</value>
   </string>
-
+  <string>
+  	<id>519</id>
+  	<value>Subtitles off</value>
+  </string>
+  	
   <string>
     <id>529</id>
     <value>View: Big Icon List</value>
