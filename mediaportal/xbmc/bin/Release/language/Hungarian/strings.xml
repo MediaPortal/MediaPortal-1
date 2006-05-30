@@ -1687,7 +1687,7 @@
 	</string>
 	<string>
 		<id>493</id>
-		<value>Elõadó</value>
+		<value>Elad</value>
 	</string>
 	<string>
 		<id>500</id>
@@ -3147,7 +3147,7 @@
 	</string>
 	<string>
 		<id>1048</id>
-		<value>Beállítások</value>
+		<value>Belltsok</value>
 	</string>
 	<string>
 		<id>1440</id>
@@ -3871,31 +3871,31 @@
 	</string>
 	<string>
 		<id>5900</id>
-		<value>Elõzetesek</value>
+		<value>Elzetesek</value>
 	</string>
 	<string>
 		<id>5901</id>
-		<value>Videók rendezése</value>
+		<value>Videk rendezse</value>
 	</string>
 	<string>
 		<id>5902</id>
-		<value>Rendezzem a videókat?</value>
+		<value>Rendezzem a videkat?</value>
 	</string>
 	<string>
 		<id>5903</id>
-		<value>Hozzáadás a videókhoz</value>
+		<value>Hozzads a videkhoz</value>
 	</string>
 	<string>
 		<id>5904</id>
-		<value>Legtöbbet nézett videók</value>
+		<value>Legtbbet nzett videk</value>
 	</string>
 	<string>
 		<id>5905</id>
-		<value>Minden videó</value>
+		<value>Minden vide</value>
 	</string>
 	<string>
 		<id>5906</id>
-		<value>Elõzetesek</value>
+		<value>Elzetesek</value>
 	</string>
 	<string>
 		<id>5907</id>
@@ -3903,43 +3903,43 @@
 	</string>
 	<string>
 		<id>5908</id>
-		<value>Több</value>
+		<value>Tbb</value>
 	</string>
 	<string>
 		<id>5909</id>
-		<value>Nem lehet betölteni a videót!</value>
+		<value>Nem lehet betlteni a videt!</value>
 	</string>
 	<string>
 		<id>5910</id>
-		<value>Videó infó szerzése</value>
+		<value>Vide inf szerzse</value>
 	</string>
 	<string>
 		<id>5911</id>
-		<value>Új a színházban</value>
+		<value>j a sznhzban</value>
 	</string>
 	<string>
 		<id>5912</id>
-		<value>Következõ hét</value>
+		<value>Kvetkez ht</value>
 	</string>
 	<string>
 		<id>5913</id>
-		<value>Ez a hét</value>
+		<value>Ez a ht</value>
 	</string>
 	<string>
 		<id>5914</id>
-		<value>Elõzõ hét</value>
+		<value>Elz ht</value>
 	</string>
 	<string>
 		<id>5915</id>
-		<value>Még nincs megtekinthetõ videó</value>
+		<value>Mg nincs megtekinthet vide</value>
 	</string>
 	<string>
 		<id>5916</id>
-		<value>Nem találtam elõzeteseket</value>
+		<value>Nem talltam elzeteseket</value>
 	</string>
 	<string>
 		<id>5917</id>
-		<value>Német elõzetesek</value>
+		<value>Nmet elzetesek</value>
 	</string>
 	<string>
 		<id>8000</id>
@@ -4107,7 +4107,7 @@
 	</string>
 	<string>
 		<id>99845</id>
-		<value>TV.com megkeresése</value>
+		<value>TV.com megkeresse</value>
 	</string>
 	<string>
 		<id>12902</id>
@@ -4447,147 +4447,147 @@
 	</string>
 	<string>
 		<id>100607</id>
-		<value>TV/Ütemezõ/Prioritások</value>
+		<value>TV/temez/Prioritsok</value>
 	</string>
 	<string>
 		<id>100608</id>
-		<value>TV/Ütemezõ/Ütközések</value>
+		<value>TV/temez/tkzsek</value>
 	</string>
 	<string>
 		<id>100609</id>
-		<value>TV/Tömörítés/Elsõdleges</value>
+		<value>TV/Tmrts/Elsdleges</value>
 	</string>
 	<string>
 		<id>100610</id>
-		<value>TV/Tömörítés/Beállítások</value>
+		<value>TV/Tmrts/Belltsok</value>
 	</string>
 	<string>
 		<id>100611</id>
-		<value>TV/Tömörítés/Auto</value>
+		<value>TV/Tmrts/Auto</value>
 	</string>
 	<string>
 		<id>100612</id>
-		<value>TV/Tömörítés/Tömörítés</value>
+		<value>TV/Tmrts/Tmrts</value>
 	</string>
 	<string>
 		<id>100613</id>
-		<value>TV/Tömörítés/Állapot</value>
+		<value>TV/Tmrts/llapot</value>
 	</string>
 	<string>
 		<id>100614</id>
-		<value>Videó elõadó infó</value>
+		<value>Vide elad inf</value>
 	</string>
 	<string>
 		<id>100615</id>
-		<value>Varázsló/Kezdés</value>
+		<value>Varzsl/Kezds</value>
 	</string>
 	<string>
 		<id>100616</id>
-		<value>Varázsló/Kártya detektálása</value>
+		<value>Varzsl/Krtya detektlsa</value>
 	</string>
 	<string>
 		<id>100617</id>
-		<value>Varázsló/Ország</value>
+		<value>Varzsl/Orszg</value>
 	</string>
 	<string>
 		<id>100618</id>
-		<value>Varázsló/Keresés</value>
+		<value>Varzsl/Keress</value>
 	</string>
 	<string>
 		<id>100619</id>
-		<value>Varázsló/DVBC/Ország</value>
+		<value>Varzsl/DVBC/Orszg</value>
 	</string>
 	<string>
 		<id>100620</id>
-		<value>Varázsló/DVBC/Keresés</value>
+		<value>Varzsl/DVBC/Keress</value>
 	</string>
 	<string>
 		<id>100621</id>
-		<value>Varázsló/DVBC/LNB</value>
+		<value>Varzsl/DVBC/LNB</value>
 	</string>
 	<string>
 		<id>100622</id>
-		<value>Varázsló/DVBC/LNB részletek</value>
+		<value>Varzsl/DVBC/LNB rszletek</value>
 	</string>
 	<string>
 		<id>100623</id>
-		<value>Varázsló/DVBC/Transponder</value>
+		<value>Varzsl/DVBC/Transponder</value>
 	</string>
 	<string>
 		<id>100624</id>
-		<value>Varázsló/DVBC/Keresés</value>
+		<value>Varzsl/DVBC/Keress</value>
 	</string>
 	<string>
 		<id>100625</id>
-		<value>Varázsló/ATSC/Keresés</value>
+		<value>Varzsl/ATSC/Keress</value>
 	</string>
 	<string>
 		<id>100626</id>
-		<value>Varázsló/Analóg/Ország</value>
+		<value>Varzsl/Analg/Orszg</value>
 	</string>
 	<string>
 		<id>100627</id>
-		<value>Varázsló/Analóg/Város</value>
+		<value>Varzsl/Analg/Vros</value>
 	</string>
 	<string>
 		<id>100628</id>
-		<value>Varázsló/Analóg/Importál</value>
+		<value>Varzsl/Analg/Importl</value>
 	</string>
 	<string>
 		<id>100629</id>
-		<value>Varázsló/Analóg/Kézi</value>
+		<value>Varzsl/Analg/Kzi</value>
 	</string>
 	<string>
 		<id>100630</id>
-		<value>Varázsló/Analóg/Keresés</value>
+		<value>Varzsl/Analg/Keress</value>
 	</string>
 	<string>
 		<id>100631</id>
-		<value>Varázsló/Analóg/Átnevez</value>
+		<value>Varzsl/Analg/tnevez</value>
 	</string>
 	<string>
 		<id>100632</id>
-		<value>Varázsló/Analóg/Rádió</value>
+		<value>Varzsl/Analg/Rdi</value>
 	</string>
 	<string>
 		<id>100633</id>
-		<value>Varázsló/Analóg/Rádió átnevezése</value>
+		<value>Varzsl/Analg/Rdi tnevezse</value>
 	</string>
 	<string>
 		<id>100634</id>
-		<value>Varázsló/Távirányító</value>
+		<value>Varzsl/Tvirnyt</value>
 	</string>
 	<string>
 		<id>100635</id>
-		<value>Varázsló/EPG</value>
+		<value>Varzsl/EPG</value>
 	</string>
 	<string>
 		<id>100699</id>
-		<value>Varázsló/Kész</value>
+		<value>Varzsl/Ksz</value>
 	</string>
 	<string>
 		<id>100700</id>
-		<value>TV Beállítások</value>
+		<value>TV Belltsok</value>
 	</string>
 	<string>
 		<id>100701</id>
-		<value>TV felvételi beállítások</value>
+		<value>TV felvteli belltsok</value>
 	</string>
 	<string>
 		<id>100702</id>
-		<value>TV Csatorna fejták</value>
+		<value>TV Csatorna fejtk</value>
 	</string>
 	<string>
 		<id>100703</id>
-		<value>TV Videó beállítások</value>
+		<value>TV Vide belltsok</value>
 	</string>
 	<string>
 		<id>100704</id>
-		<value>DVD Beállítások</value>
+		<value>DVD Belltsok</value>
 	</string>
 	<string>
 		<id>100705</id>
-		<value>Skin beállítások</value>
+		<value>Skin belltsok</value>
 	</string>
 	<string>
 		<id>100748</id>
@@ -4619,7 +4619,7 @@
 	</string>
 	<string>
 		<id>100759</id>
-		<value>Felvett TV Infó</value>
+		<value>Felvett TV Inf</value>
 	</string>
 	<string>
 		<id>100760</id>
@@ -4835,7 +4835,7 @@
 	</string>
 	<string>
 		<id>4000</id>
-		<value>Webböngészõ</value>
+		<value>Webbngsz</value>
 	</string>
 	<string>
 		<id>4001</id>
