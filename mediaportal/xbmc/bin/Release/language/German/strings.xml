@@ -1271,7 +1271,7 @@
 	</string>
 	<string>
 		<id>387</id>
-		<value>früh</value>
+		<value>morgens</value>
 	</string>
 	<string>
 		<id>388</id>
@@ -1784,10 +1784,14 @@
 	<string>
 		<id>532</id>
 		<value>Musik-CD eingelegt! Öffnen?</value>
+    </string>
+    <string>
+        <id>533</id>
+        <value>Radio-Programm</value>
 	</string>
 	<string>
-		<id>533</id>
-		<value>Radio-Programm</value>
+		<id>534</id>
+		<value>Mittel</value>
 	</string>
 	<string>
 		<id>550</id>
@@ -3265,6 +3269,8 @@
 		<id>1049</id>
 		<value>Ruhezustand</value>
 	</string>
+
+  <!-- Recording Type: WeekEnds -->
 	<string>
 		<id>1050</id>
 		<value>Sa+So</value>

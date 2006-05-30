@@ -1787,13 +1787,14 @@
     <id>532</id>
     <value>Audio disc inserted, do you want to open it?</value>
   </string>
-
   <string>
     <id>533</id>
     <value>Guide</value>
   </string>
-
-
+  <string>
+    <id>534</id>
+    <value>Moderate</value>
+  </string>  
   <string>
     <id>550</id>
     <value>Crop</value>

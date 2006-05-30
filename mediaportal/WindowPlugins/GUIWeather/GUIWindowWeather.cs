@@ -1088,6 +1088,8 @@ namespace MediaPortal.GUI.Weather
           localizedWord = GUILocalizeStrings.Get(746);
         else if ( String.Compare(tokenSplit, "Low", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(747);
+        else if (String.Compare(tokenSplit, "Moderate", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(534);
 
         if (localizedWord == String.Empty)
           localizedWord = tokenSplit;	//if not found, let fallback
