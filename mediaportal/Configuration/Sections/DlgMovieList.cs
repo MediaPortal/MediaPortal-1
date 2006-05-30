@@ -46,7 +46,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel label2;
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxTitle;
     private MediaPortal.UserInterface.Controls.MPButton buttonFind;
-    IMDB _imdb;
+    private bool newFind = false;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -204,6 +204,7 @@ namespace MediaPortal.Configuration.Sections
       this.Controls.Add(this.listView1);
       this.Name = "DlgMovieList";
       this.Text = "IMDB Movie results";
+      this.StartPosition = FormStartPosition.CenterScreen;
       this.ResumeLayout(false);
 
     }
@@ -235,21 +236,17 @@ namespace MediaPortal.Configuration.Sections
       button1.Enabled = false;
       button2.Enabled = false;
       textBoxTitle.Enabled = false;
-      imdb.Find(textBoxTitle.Text);
-      listView1.Items.Clear();
-      for (int i = 0; i < imdb.Count; ++i)
-        AddMovie(imdb[i].Title);
-
-      buttonFind.Enabled = true;
-      button1.Enabled = true;
-      button2.Enabled = true;
-      textBoxTitle.Enabled = true;
-
+      this.newFind = true;
+      this.DialogResult = DialogResult.OK;
+      this.Close();
     }
-    public IMDB imdb
-    {
-      get { return _imdb; }
-      set { _imdb = value; }
-    }
+      public bool IsNewFind
+      {
+         get { return this.newFind; }
+      }
+      public string NewTitleToFind
+      {
+          get { return this.textBoxTitle.Text; }
+      }
   }
 }

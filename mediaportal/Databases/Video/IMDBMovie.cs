@@ -205,30 +205,26 @@ namespace MediaPortal.Video.Database
 	}
     public void Reset()
     {
-      m_strDirector=String.Empty;
-      m_strWritingCredits=String.Empty;
-      m_strGenre=String.Empty;
-      m_strTagLine=String.Empty;
-      m_strPlotOutline=String.Empty;
-      m_strPlot=String.Empty;
-      m_strPictureURL=String.Empty;
-      m_strTitle=String.Empty;
-      m_strVotes=String.Empty;
-      m_strCast=String.Empty;
-      m_strSearchString=String.Empty;
-      m_strFile=String.Empty;
-      m_strPath=String.Empty;
-      m_strDVDLabel=String.Empty;
-      m_strIMDBNumber=String.Empty;
-      m_iTop250=0;
-      m_iYear=1900;
-      m_fRating=0.0f;
-			m_strDatabase = String.Empty;
-			m_id=-1;
-			m_strMPARating=String.Empty;
-			m_iRunTime=0;
-			m_iWatched=0;
-		}
+          m_strDirector=String.Empty;
+          m_strWritingCredits=String.Empty;
+          m_strGenre=String.Empty;
+          m_strTagLine=String.Empty;
+          m_strPlotOutline=String.Empty;
+          m_strPlot=String.Empty;
+          m_strPictureURL=String.Empty;
+          m_strTitle=String.Empty;
+          m_strVotes=String.Empty;
+          m_strCast=String.Empty;
+          m_strSearchString=String.Empty;
+          m_strIMDBNumber=String.Empty;
+          m_iTop250=0;
+          m_iYear=1900;
+          m_fRating=0.0f;
+	      m_strDatabase = String.Empty;
+		  m_strMPARating=String.Empty;
+		  m_iRunTime=0;
+	      m_iWatched=0;
+	}
 		public void SetProperties()
 		{
 			string strThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle,Title);

@@ -145,7 +145,6 @@ namespace MediaPortal.Video.Database
 				strFilenameAndPath=strFilenameAndPath.Trim();
 				DatabaseUtility.Split(strFilenameAndPath, out strPath, out strFileName); 
 				DatabaseUtility.RemoveInvalidChars(ref strPath);
-    
 				lPathId = GetPath(strPath);
 				if (lPathId < 0) return -1;
 
@@ -272,7 +271,7 @@ namespace MediaPortal.Video.Database
 				strSQL =String.Format("select * from path where strPath like '{0}' and cdlabel like '{1}'",strPath,cdlabel);
 				SQLiteResultSet results;
 				results=m_db.Execute(strSQL);
-				if (results.Rows.Count > 0)
+                if (results.Rows.Count > 0)
 				{
 					int lPathId = System.Int32.Parse ( DatabaseUtility.Get(results,0,"idPath") );
 					return lPathId;
@@ -497,7 +496,6 @@ namespace MediaPortal.Video.Database
 			{
 				string strActor=strActor1;
 				DatabaseUtility.RemoveInvalidChars(ref strActor);
-
 				if (null==m_db) return -1;
 				string strSQL="select * from Actors where strActor like '";
 				strSQL += strActor;
@@ -708,11 +706,9 @@ namespace MediaPortal.Video.Database
 		}
 		public void SetMovieInfoById( int lMovieId, ref IMDBMovie details)
 		{
-            Log.Write("Saving movie info:{0}", details.Title);
 			try
 			{
 				details.ID=lMovieId;
-				details.SearchString=String.Format("{0}", lMovieId);
 
 				IMDBMovie details1=details;
 				string strLine;
@@ -731,47 +727,54 @@ namespace MediaPortal.Video.Database
 				strLine=details1.MPARating;DatabaseUtility.RemoveInvalidChars(ref strLine);  details1.MPARating=strLine;  
 
 				// add director
-				int lDirector=AddActor(details.Director);
-				AddActorToMovie(lMovieId,lDirector);
-    
+                int lDirector = -1;
+                if (details.Director != Strings.Unknown)
+                {
+                    lDirector = AddActor(details.Director);
+                    AddActorToMovie(lMovieId, lDirector);
+                }
 				// add all genres
 				string szGenres=details.Genre;
-				ArrayList vecGenres=new ArrayList();
-				if ( szGenres.IndexOf("/")>=0 )
-				{
-					Tokens f = new Tokens(szGenres, new char[] {'/'} );
-					foreach (string strGenre in f)
-					{ 
-						strGenre.Trim();
-						int lGenreId=AddGenre(strGenre);
-						vecGenres.Add(lGenreId);
-					}
-				}
-				else
-				{
-					string strGenre=details.Genre; 
-					strGenre.Trim();
-					int lGenreId=AddGenre(strGenre);
-					vecGenres.Add(lGenreId);
-				}
-
-				// add cast...
-				ArrayList vecActors = new ArrayList();
-                char[] splitter = { '\n', ',' };
-                string[] actors = details.Cast.Split(splitter);
-                for (int i = 0; i < actors.Length; ++i)
-				{
-					int pos =actors[i].IndexOf(" as ");
-                    string actor = actors[i];
-                    if (pos >= 0)
+                ArrayList vecGenres = new ArrayList();
+                if (szGenres != Strings.Unknown)
+                {
+                    if (szGenres.IndexOf("/") >= 0)
                     {
-                        actor = actors[i].Substring(0, pos);
+                        Tokens f = new Tokens(szGenres, new char[] { '/' });
+                        foreach (string strGenre in f)
+                        {
+                            strGenre.Trim();
+                            int lGenreId = AddGenre(strGenre);
+                            vecGenres.Add(lGenreId);
+                        }
                     }
-                    actor = actor.Trim();
-                    int lActorId = AddActor(actor);
-					vecActors.Add(lActorId);
-				}
-
+                    else
+                    {
+                        string strGenre = details.Genre;
+                        strGenre.Trim();
+                        int lGenreId = AddGenre(strGenre);
+                        vecGenres.Add(lGenreId);
+                    }
+                }
+				// add cast...
+                ArrayList vecActors = new ArrayList();
+                if (details.Cast != Strings.Unknown)
+                {
+                    char[] splitter = { '\n', ',' };
+                    string[] actors = details.Cast.Split(splitter);
+                    for (int i = 0; i < actors.Length; ++i)
+                    {
+                        int pos = actors[i].IndexOf(" as ");
+                        string actor = actors[i];
+                        if (pos >= 0)
+                        {
+                            actor = actors[i].Substring(0, pos);
+                        }
+                        actor = actor.Trim();
+                        int lActorId = AddActor(actor);
+                        vecActors.Add(lActorId);
+                    }
+                }
 				for (int i=0; i < vecGenres.Count; ++i)
 				{
 					AddGenreToMovie(lMovieId,(int)vecGenres[i]);
@@ -873,13 +876,13 @@ namespace MediaPortal.Video.Database
 			{
 				if (null==m_db) return false;
 				int lMovieId=GetMovie(strFilenameAndPath,false);
-				if ( lMovieId < 0) return false;
+                if (lMovieId < 0) return false;
 				string strSQL;
 				strSQL=String.Format("select * from movieinfo where movieinfo.idmovie={0}",lMovieId);
 
 				SQLiteResultSet results;
 				results=m_db.Execute(strSQL);
-				if (results.Rows.Count == 0) 
+                if (results.Rows.Count == 0) 
 				{
 					return false;
 				}
@@ -899,7 +902,7 @@ namespace MediaPortal.Video.Database
 			if (lMovieId<0) return -1;
 
 			if (!HasMovieInfo(strFilenameAndPath)) return -1;
-			GetMovieInfoById(lMovieId, ref details);
+            GetMovieInfoById(lMovieId, ref details);
 			return lMovieId;
 		}
 
@@ -930,8 +933,8 @@ namespace MediaPortal.Video.Database
 				details.DVDLabel=DatabaseUtility.Get(results,0,"movie.discid") ;
 				details.IMDBNumber=DatabaseUtility.Get(results,0,"movieinfo.IMDBID") ;
 				lMovieId=System.Int32.Parse( DatabaseUtility.Get(results,0,"movieinfo.idMovie") );
-				details.SearchString= String.Format("{0}", lMovieId);
-				details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
+                details.SearchString = String.Format("{0}", details.Title);
+                details.CDLabel = DatabaseUtility.Get(results, 0, "path.cdlabel");
 				details.MPARating=DatabaseUtility.Get(results,0,"movieinfo.mpaa") ;
 				details.RunTime=System.Int32.Parse(DatabaseUtility.Get(results,0,"movieinfo.runtime"));
 				details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,0,"movieinfo.iswatched"));
@@ -1211,7 +1214,7 @@ namespace MediaPortal.Video.Database
 				int lMovieId = GetMovie(strFilenameAndPath, false);
 				if (lMovieId < 0)
 				{
-					string strSQL;
+                    string strSQL;
 
 					int lPathId = AddPath(strPath);
 					
@@ -1223,7 +1226,7 @@ namespace MediaPortal.Video.Database
 					m_db.Execute(strSQL);
 					lMovieId=m_db.LastInsertID();
 					AddFile(lMovieId,lPathId,strFileName);
-				}
+                }
 				else
 				{
 					int lPathId = GetPath(strPath);
@@ -1283,7 +1286,7 @@ namespace MediaPortal.Video.Database
 					details.DVDLabel=DatabaseUtility.Get(results,iRow,"movie.discid") ;
 					details.IMDBNumber=DatabaseUtility.Get(results,iRow,"movieinfo.IMDBID") ;
 					long lMovieId=System.Int32.Parse( DatabaseUtility.Get(results,iRow,"movieinfo.idMovie") );
-					details.SearchString= String.Format("{0}", lMovieId);
+					details.SearchString= String.Format("{0}", details.Title);
 					details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
 					details.MPARating=DatabaseUtility.Get(results,0,"movieinfo.mpaa") ;
 					details.RunTime=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.runtime"));
@@ -1437,8 +1440,8 @@ namespace MediaPortal.Video.Database
 					details.DVDLabel=DatabaseUtility.Get(results,iRow,"movie.discid") ;
 					details.IMDBNumber=DatabaseUtility.Get(results,iRow,"movieinfo.IMDBID") ;
 					long lMovieId=System.Int32.Parse( DatabaseUtility.Get(results,iRow,"movieinfo.idMovie") );
-					details.SearchString= String.Format("{0}", lMovieId);
-					details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
+                    details.SearchString = String.Format("{0}", details.Title);
+                    details.CDLabel = DatabaseUtility.Get(results, 0, "path.cdlabel");
 					details.MPARating=DatabaseUtility.Get(results,0,"movieinfo.mpaa") ;
 					details.RunTime=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.runtime"));
 					details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.iswatched"));
@@ -1488,8 +1491,8 @@ namespace MediaPortal.Video.Database
 					details.DVDLabel=DatabaseUtility.Get(results,iRow,"movie.discid") ;
 					details.IMDBNumber=DatabaseUtility.Get(results,iRow,"movieinfo.IMDBID") ;
 					long lMovieId=System.Int32.Parse( DatabaseUtility.Get(results,iRow,"movieinfo.idMovie") );
-					details.SearchString= String.Format("{0}", lMovieId);
-					details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
+                    details.SearchString = String.Format("{0}", details.Title);
+                    details.CDLabel = DatabaseUtility.Get(results, 0, "path.cdlabel");
 					details.MPARating=DatabaseUtility.Get(results,0,"movieinfo.mpaa") ;
 					details.RunTime=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.runtime"));
 					details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.iswatched"));
@@ -1538,8 +1541,8 @@ namespace MediaPortal.Video.Database
 					details.DVDLabel=DatabaseUtility.Get(results,iRow,"movie.discid") ;
 					details.IMDBNumber=DatabaseUtility.Get(results,iRow,"movieinfo.IMDBID") ;
 					long lMovieId=System.Int32.Parse( DatabaseUtility.Get(results,iRow,"movieinfo.idMovie") );
-					details.SearchString= String.Format("{0}", lMovieId);
-					details.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
+                    details.SearchString = String.Format("{0}", details.Title);
+                    details.CDLabel = DatabaseUtility.Get(results, 0, "path.cdlabel");
 					details.MPARating=DatabaseUtility.Get(results,0,"movieinfo.mpaa") ;
 					details.RunTime=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.runtime"));
 					details.Watched=System.Int32.Parse(DatabaseUtility.Get(results,iRow,"movieinfo.iswatched"));
@@ -1584,8 +1587,8 @@ namespace MediaPortal.Video.Database
 				{
 					IMDBMovie details=new IMDBMovie();
 					long lMovieId=System.Int32.Parse( DatabaseUtility.Get(results,iRow,"files.idMovie") );
-					details.SearchString= String.Format("{0}", lMovieId);
-					details.IMDBNumber=DatabaseUtility.Get(results,iRow,"movieinfo.IMDBID") ;
+                    details.SearchString = String.Format("{0}", details.Title);
+                    details.IMDBNumber = DatabaseUtility.Get(results, iRow, "movieinfo.IMDBID");
 					details.Title=DatabaseUtility.Get(results,iRow,"movieinfo.strTitle");
 					details.File=DatabaseUtility.Get(results,iRow,"files.strFilename");
 					details.ID=(int)lMovieId;
@@ -1641,8 +1644,8 @@ namespace MediaPortal.Video.Database
 						movie.DVDLabel=DatabaseUtility.Get(results,i,"movie.discid") ;
 						movie.IMDBNumber=DatabaseUtility.Get(results,i,"movieinfo.IMDBID") ;
 						long lMovieId=System.Int32.Parse( DatabaseUtility.Get(results,i,"movieinfo.idMovie") );
-						movie.SearchString= String.Format("{0}", lMovieId);
-						movie.CDLabel=DatabaseUtility.Get(results,0,"path.cdlabel") ;
+                        movie.SearchString = String.Format("{0}", movie.Title);
+                        movie.CDLabel = DatabaseUtility.Get(results, 0, "path.cdlabel");
 						movie.MPARating=DatabaseUtility.Get(results,0,"movieinfo.mpaa") ;
 						movie.RunTime=System.Int32.Parse(DatabaseUtility.Get(results,i,"movieinfo.runtime"));
 						movie.Watched=System.Int32.Parse(DatabaseUtility.Get(results,i,"movieinfo.iswatched"));

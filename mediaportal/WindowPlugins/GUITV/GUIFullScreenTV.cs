@@ -691,6 +691,7 @@ namespace MediaPortal.GUI.TV
     }
     public override void SetObject(object obj)
     {
+      base.SetObject(obj);
       if (obj.GetType() == typeof(VMR9OSD))
       {
         _vmr9OSD = (VMR9OSD)obj;

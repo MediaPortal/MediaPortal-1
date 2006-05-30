@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<profile>
+  <section name="ChannelList">
+    <entry name="tve1@tve.es">tve1</entry>
+    <entry name="tve2@tve.es">la2</entry>
+    <entry name="antena3tv.es">antena3</entry>	<!--Antena 3 -->
+    <entry name="cuatro@cuatro.com">cuatro</entry>
+    <entry name="telecinco@telecinco.es">telecinco</entry>
+    <entry name="telemadrid@telemadrid.es">telemadrid</entry>
+    <entry name="24h@tve.es">24-horas</entry>
+    <entry name="teledeporte@tve.es">teledeporte</entry>
+    <entry name="lasexta@lasexta.com">la-sexta</entry>
+    <entry name="40latino@sogecable.es">40-latino</entry>
+    <entry name="andaluciatv@andaluciatv.es">andalucia-tv</entry>
+    <entry name="axn@sogecable.es">axn</entry>
+    <entry name="bloomberg@sogecable.es">bloomberg</entry>
+    <entry name="boomerang@sogecable.es">boomerang</entry>
+    <entry name="calle13@sogecable.es">calle-13</entry>
+    <entry name="canalbarca@sogecable.es">canal-barca</entry>
+    <entry name="canalclasico@sogecable.es">canal-clasico</entry>
+    <entry name="canalcocina@sogecable.es">canal-cocina</entry>
+    <entry name="canal+@sogecable.es">canal-plus</entry>
+    <entry name="canal+30@sogecable.es">canal-plus-30</entry>
+    <entry name="canal+2@sogecable.es">canal-plus-2</entry>
+    <entry name="canal+cine1@sogecable.es">canal-plus-cine-1</entry>
+    <entry name="canal+cine2@sogecable.es">canal-plus-cine-2</entry>
+    <entry name="canal+cine3@sogecable.es">canal-plus-cine-3</entry>
+    <entry name="canal+deporte1@sogecable.es">canal-plus-deporte-1</entry>
+    <entry name="canal+deporte2@sogecable.es">canal-plus-deporte-2</entry>
+    <entry name="canal+deporte3@sogecable.es">canal-plus-deporte-3</entry>
+    <entry name="cartoon-network@sogecable.es">cartoon-network</entry>
+    <entry name="caza-y-pesca@sogecable.es">caza-y-pesca</entry>
+    <entry name="ccvalenciana@sogecable.es">ccvalenciana</entry>
+    <entry name="cinemania@sogecable.es">cinemania</entry>
+    <entry name="cinemania-2@sogecable.es">cinemania-2</entry>
+    <entry name="cinemania-30@sogecable.es">cinemania-30</entry>
+    <entry name="cinemania-clasico@sogecable.es">cinemania-clasico</entry>
+    <entry name="cnbc@sogecable.es">cnbc</entry>
+    <entry name="cnn-plus@sogecable.es">cnn-plus</entry>
+    <entry name="cosmopolitan@sogecable.es">cosmopolitan</entry>
+    <entry name="discovery-channel@sogecable.es">discovery-channel</entry>
+    <entry name="dcine-espanol@sogecable.es">dcine-espanol</entry>
+    <entry name="dcine-clasico@sogecable.es">dcine-clasico</entry>
+    <entry name="disney-channel@sogecable.es">disney-channel</entry>
+    <entry name="disney-channel-1@sogecable.es">disney-channel-1</entry>
+    <entry name="documania@sogecable.es">documania</entry>
+    <entry name="eurosport@sogecable.es">eurosport</entry>
+    <entry name="fox@sogecable.es">fox</entry>
+    <entry name="fox-kids@sogecable.es">fox-kids</entry>
+    <entry name="fox-news@sogecable.es">fox-news</entry>
+    <entry name="galavision@sogecable.es">galavision</entry>
+    <entry name="golf-plus@sogecable.es">golf-plus</entry>
+    <entry name="historia@sogecable.es">historia</entry>
+    <entry name="hollywood@sogecable.es">hollywood</entry>
+    <entry name="jetix@sogecable.es">jetix</entry>
+    <entry name="meteo@sogecable.es">meteo</entry>
+    <entry name="mezzo@sogecable.es">mezzo</entry>
+    <entry name="mtv@sogecable.es">mtv</entry>
+    <entry name="national-geographic@sogecable.es">national-geographic</entry>
+    <entry name="nickelodeon@sogecable.es">nickelodeon</entry>
+    <entry name="paramount@sogecable.es">paramount</entry>
+    <entry name="people-and-arts@sogecable.es">people-and-arts</entry>
+    <entry name="playhouse-disney@sogecable.es">playhouse-disney</entry>
+    <entry name="real-madrid-tv@sogecable.es">real-madrid-tv</entry>
+    <entry name="sportmania@sogecable.es">sportmania</entry>
+    <entry name="tcm@sogecable.es">tcm</entry>
+    <entry name="telemadrid-sat@sogecable.es">telemadrid-sat</entry>
+    <entry name="telenovelas@sogecable.es">telenovelas</entry>
+    <entry name="television-canaria@sogecable.es">television-canaria</entry>
+    <entry name="toon-disney@sogecable.es">toon-disney</entry>
+    <entry name="tv-galicia@sogecable.es">tv-galicia</entry>
+    <entry name="tv5@sogecable.es">tv5</entry>
+    <entry name="tvc-internacional@sogecable.es">tvc-internacional</entry>
+    <entry name="viajar@sogecable.es">viajar</entry>
+
+  </section>
+  <section name="Listing">
+    <entry name="BaseURL">http://www.miguiatv.com/</entry>
+    <entry name="SearchURL">#YYYY#MM#DD/#ID.html</entry>
+
+<!-- Unique Listing Start string -->
+    <entry name="Start">listing</entry>
+
+<!-- Unique Listing End string -->
+    <entry name="End">listing_sky</entry>
+
+<!-- Template of the Listing information -->
+    <entry name="Template">
+	&#60;tr&#62;&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;table&#62;&#60;tr&#62;
+	&#60;td&#62;&#60;strong&#62;&#60;#TITLE&#62;&#60;/strong&#62;&#60;/td&#62;
+	&#60;td&#62;&#60;strong&#62;&#60;#GENRE&#62;&#60;/strong&#62;&#60;/td&#62;&#60;/tr&#62;
+	&#60;tr&#62;&#60;td&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;&#60;/tr&#62;
+	&#60;/table&#62;&#60;/td&#62;&#60;/tr&#62;
+    </entry>
+  </section>
+  <section name="DateTime">
+    <entry name="Months">no</entry>
+  </section>
+</profile>

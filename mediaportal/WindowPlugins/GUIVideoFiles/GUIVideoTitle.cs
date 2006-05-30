@@ -442,12 +442,10 @@ namespace MediaPortal.GUI.Video
 			if (movie==null) return;
 			if (movie.ID>=0)
 			{
-				GUIVideoFiles.ShowIMDB(movie.ID);
-			}
-			if (movie.actorId>=0)
-			{
-				ShowActorInfo(movie.actorId);
-			}
+                GUIVideoInfo videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_INFO);
+                videoInfo.Movie = movie;
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_INFO);
+            }
 		}
 		void ShowActorInfo(int actorId)
 		{

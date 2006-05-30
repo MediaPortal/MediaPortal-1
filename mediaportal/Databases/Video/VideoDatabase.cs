@@ -30,6 +30,10 @@ namespace MediaPortal.Video.Database
   public class VideoDatabase 
   {
     static IVideoDatabase _database = DatabaseFactory.GetVideoDatabase();
+    static public void ReOpen()
+    {
+        _database = DatabaseFactory.GetVideoDatabase();
+    }
     static public void Dispose()
     {
       _database.Dispose();

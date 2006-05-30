@@ -134,16 +134,7 @@ namespace MediaPortal.GUI.Video
 			}
 
       int speed = g_Player.Speed;
-			double pos = g_Player.CurrentPosition;
-      if (pos < 5d)
-      {
-        if (speed < 1)
-        {
-          speed = 1;
-          g_Player.Speed = speed;
-          g_Player.SeekAbsolute(0.0d);
-        }
-      }
+      double pos = g_Player.CurrentPosition;
       if (_imagePlayLogo != null)
         _imagePlayLogo.Visible = (g_Player.Paused == false);
 

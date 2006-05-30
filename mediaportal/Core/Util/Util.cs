@@ -809,14 +809,22 @@ namespace MediaPortal.Util
         strFileNameAndPath = strFileNameAndPath.Trim();
         if (strFileNameAndPath.Length == 0) return;
         int i = strFileNameAndPath.Length - 1;
-        while (i > 0)
+        while (i >= 0)
         {
           char ch = strFileNameAndPath[i];
           if (ch == ':' || ch == '/' || ch == '\\') break;
           else i--;
         }
-        strPath = strFileNameAndPath.Substring(0, i).Trim();
-        strFileName = strFileNameAndPath.Substring(i, strFileNameAndPath.Length - i).Trim();
+        if (i >= 0)
+        {
+            strPath = strFileNameAndPath.Substring(0, i).Trim();
+            strFileName = strFileNameAndPath.Substring(i + 1).Trim();
+        }
+        else
+        {
+            strPath = "";
+            strFileName = strFileNameAndPath;
+        }
       }
       catch (Exception)
       {
@@ -1518,6 +1526,35 @@ namespace MediaPortal.Util
       return strName;
     }
 
+      static public string RemoveParenthesis(string name)
+      {
+          while (name.IndexOf("(")!=-1) {
+              int start = name.IndexOf("(");
+              int end = name.IndexOf(")");
+              if (end != -1)
+              {
+                  name = name.Substring(0, start) + name.Substring(end + 1);
+              }
+              else
+              {
+                  break;
+              }
+          }
+          while (name.IndexOf("[") != -1)
+          {
+              int start = name.IndexOf("[");
+              int end = name.IndexOf("]");
+              if (end != -1)
+              {
+                  name = name.Substring(0, start) + name.Substring(end + 1);
+              }
+              else
+              {
+                  break;
+              }
+          }
+          return name;
+      }
     static public string EncryptLine(string strLine)
     {
       if (strLine == null) return String.Empty;

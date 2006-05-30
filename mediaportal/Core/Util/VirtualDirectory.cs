@@ -806,7 +806,12 @@ namespace MediaPortal.Util
       if (strDir == null) return GetRoot();
       if (strDir == "") return GetRoot();
 
-      if (strDir.Substring(1) == @"\") strDir = strDir.Substring(0, strDir.Length - 1);
+      //if we have a folder like D:\
+      //then remove the \
+      if (strDir.EndsWith(@"\"))
+      {
+          strDir = strDir.Substring(0, strDir.Length - 1);
+      }
       ArrayList items = new ArrayList();
 
       string strParent = "";
@@ -844,7 +849,7 @@ namespace MediaPortal.Util
       string[] strFiles = null;
       try
       {
-        strDirs = System.IO.Directory.GetDirectories(strDir + @"\");
+        strDirs = System.IO.Directory.GetDirectories(strDir +@"\");
         strFiles = System.IO.Directory.GetFiles(strDir + @"\");
       }
       catch (Exception)
@@ -869,7 +874,7 @@ namespace MediaPortal.Util
         else
           item.Path = strParent;
         items.Add(item);
-      }
+    }
       else
       {
         item = new GUIListItem();
@@ -880,7 +885,8 @@ namespace MediaPortal.Util
         Utils.SetDefaultIcons(item);
         Utils.SetThumbnails(ref item);
         items.Add(item);
-      }
+        
+    }
       if (strDirs != null)
       {
         for (int i = 0; i < strDirs.Length; ++i)

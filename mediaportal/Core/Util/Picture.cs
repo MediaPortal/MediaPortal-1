@@ -835,7 +835,7 @@ namespace MediaPortal.Util
     /// </param>
     static public void CreateThumbnail(string strFile, string strThumb, int iMaxWidth, int iMaxHeight, int iRotate)
     {
-      Log.Write("create thumbnail for {0}-{1}", strFile, strThumb);
+      //Log.Write("create thumbnail for {0}-{1}", strFile, strThumb);
       if (strFile == null || strThumb == null || iMaxHeight <= 0 || iMaxHeight <= 0) return;
       if (strFile == String.Empty || strThumb == String.Empty) return;
 
@@ -879,7 +879,7 @@ namespace MediaPortal.Util
       if (strThumb == String.Empty) return;
       if (theImage == null) return;
 
-      Log.Write("create {0}x{1} thumbnail ->{2}", iMaxWidth, iMaxHeight, strThumb);
+      //Log.Write("create {0}x{1} thumbnail ->{2}", iMaxWidth, iMaxHeight, strThumb);
 
       try
       {

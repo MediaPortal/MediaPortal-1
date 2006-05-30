@@ -231,6 +231,7 @@ namespace MediaPortal.GUI.Library
     protected List<CPosition> _listPositions = new List<CPosition>();
     protected string _windowXmlFileName = "";
     protected bool _isOverlayAllowed = true;
+    private Object instance;
 
     //-1=default from topbar.xml 
     // 0=flase from skin.xml
@@ -716,6 +717,7 @@ namespace MediaPortal.GUI.Library
 
     public virtual void SetObject(object obj)
     {
+        this.instance = obj;
     }
     protected virtual void OnPageLoad()
     {
@@ -1321,6 +1323,11 @@ namespace MediaPortal.GUI.Library
     public virtual bool IsDialog
     {
       get { return false; }
+    }
+
+    public virtual bool IsInstance(Object obj)
+    {
+        return obj == instance;
     }
 
     /// XAML related code follows

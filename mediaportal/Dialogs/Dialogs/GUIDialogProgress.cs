@@ -30,6 +30,7 @@ namespace MediaPortal.Dialogs
   public class GUIDialogProgress : GUIWindow, IRenderLayer
   {
     const int CONTROL_PROGRESS_BAR = 20;
+    const int CONTROL_CANCEL = 10;
 
     #region Base Dialog Variables
     bool m_bRunning = false;
@@ -88,10 +89,11 @@ namespace MediaPortal.Dialogs
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
         OnMessage(msg);
-
-        GUIWindowManager.UnRoute();
+        if (GUIWindowManager.RoutedWindow == GetID)
+        {
+            GUIWindowManager.UnRoute();
+        }
         m_pParentWindow = null;
-        m_bRunning = false;
         GUIGraphicsContext.Overlay = m_bOverlay;
         if (m_bShowWaitCursor && (null != cursor))
         {
@@ -100,7 +102,8 @@ namespace MediaPortal.Dialogs
         }
       }
       GUIWindowManager.IsSwitchingToNewWindow = false;
-    }
+      m_bRunning = false;
+  }
 
     public void StartModal(int dwParentId)
     {
@@ -189,7 +192,6 @@ namespace MediaPortal.Dialogs
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
             m_pParentWindow = null;
-            m_bRunning = false;
             GUIGraphicsContext.Overlay = m_bOverlay;
             base.OnMessage(message);
             FreeResources();
@@ -207,6 +209,7 @@ namespace MediaPortal.Dialogs
             GUIGraphicsContext.Overlay = m_pParentWindow.IsOverlayAllowed;
             m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
+            DisableCancel(false);
           }
           return true;
 
@@ -214,9 +217,10 @@ namespace MediaPortal.Dialogs
           {
             int iAction = message.Param1;
             int iControl = message.SenderControlId;
-            if (iControl == 10)
+            if (iControl == CONTROL_CANCEL)
             {
               m_bCanceled = true;
+              Close();
               return true;
             }
           }
@@ -295,6 +299,20 @@ namespace MediaPortal.Dialogs
         OnMessage(msg);
       }
     }
+      public void DisableCancel(bool bOnOff)
+      {
+          if (bOnOff)
+          {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_DISABLED, GetID, 0, CONTROL_CANCEL, 0, 0, null);
+              OnMessage(msg);
+
+          }
+          else
+          {
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ENABLED, GetID, 0, CONTROL_CANCEL, 0, 0, null);
+              OnMessage(msg);
+          }
+      }
 
     #region IRenderLayer
     public bool ShouldRenderLayer()

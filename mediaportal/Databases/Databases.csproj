@@ -287,6 +287,7 @@
     <Compile Include="TV\XMLTVImport.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Video\IMDBFetcher.cs" />
     <Compile Include="Video\SqlLite\VideoDatabaseSqlLite.cs">
       <SubType>Code</SubType>
     </Compile>
