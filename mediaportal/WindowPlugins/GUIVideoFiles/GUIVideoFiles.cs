@@ -1094,7 +1094,6 @@ namespace MediaPortal.GUI.Video
                   }
                   if (System.IO.File.Exists(strLargeThumb))
                   {
-                    pItem.ThumbnailImage = strLargeThumb;
                     pItem.IconImageBig = strLargeThumb;
                   }
                   break;
@@ -1137,7 +1136,6 @@ namespace MediaPortal.GUI.Video
                 }
                 if (System.IO.File.Exists(strLargeThumb))
                 {
-                    pItem.ThumbnailImage = strLargeThumb;
                     pItem.IconImageBig = strLargeThumb;
                 }
                 break;
