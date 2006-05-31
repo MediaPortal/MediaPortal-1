@@ -263,11 +263,11 @@
 	</string>
 	<string>
 		<id>134</id>
-		<value>Sammlung</value>
+		<value>Ordner-Struktur</value>
 	</string>
 	<string>
 		<id>135</id>
-		<value>Genres</value>
+		<value>Genre</value>
 	</string>
 	<string>
 		<id>136</id>
@@ -787,7 +787,7 @@
 	</string>
 	<string>
 		<id>266</id>
-		<value>Sortiere: Track</value>
+		<value>Sortiere: Titel</value>
 	</string>
 	<string>
 		<id>267</id>
@@ -807,7 +807,7 @@
 	</string>
 	<string>
 		<id>271</id>
-		<value>Top 100</value>
+		<value>Häufig gehört</value>
 	</string>
 	<string>
 		<id>272</id>
@@ -1103,7 +1103,7 @@
 	</string>
 	<string>
 		<id>345</id>
-		<value>Jahr</value>
+		<value>Jahre</value>
 	</string>
 	<string>
 		<id>346</id>
@@ -1199,7 +1199,7 @@
 	</string>
 	<string>
 		<id>369</id>
-		<value>Titel</value>
+		<value>Alle Filme</value>
 	</string>
 	<string>
 		<id>370</id>
@@ -3286,7 +3286,7 @@
 	</string>
 	<string>
 		<id>1052</id>
-		<value>Lieder</value>
+		<value>Alle Titel</value>
 	</string>
   <!-- End Recording Type: WeekEnds -->
 
