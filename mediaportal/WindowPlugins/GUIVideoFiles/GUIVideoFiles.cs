@@ -119,6 +119,7 @@ namespace MediaPortal.GUI.Video
     int scanningFileNumber = 1;
     int scanningFileTotal = 1;
     bool _isFuzzyMatching = false;
+    ArrayList conflictFiles = new ArrayList();
 
     static GUIVideoFiles()
     {
@@ -179,8 +180,8 @@ namespace MediaPortal.GUI.Video
       bool result = Load(GUIGraphicsContext.Skin + @"\myVideo.xml");
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-          _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", false);
-          VideoState.StartWindow = xmlreader.GetValueAsInt("movies", "startWindow", GetID);
+        _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", false);
+        VideoState.StartWindow = xmlreader.GetValueAsInt("movies", "startWindow", GetID);
       }
       LoadSettings();
       return result;
@@ -909,29 +910,29 @@ namespace MediaPortal.GUI.Video
           if (temporaryListItem.IsFolder) continue;
           if (temporaryListItem.Path != strFile)
           {
-              if (Utils.ShouldStack(temporaryListItem.Path, strFile))
-              {
-                  allFiles.Add(items[i]);
-              }
+            if (Utils.ShouldStack(temporaryListItem.Path, strFile))
+            {
+              allFiles.Add(items[i]);
+            }
           }
         }
         int iidMovie = VideoDatabase.AddMovieFile(strFile);
         foreach (GUIListItem item in allFiles)
         {
-            string strPath, strFileName;
+          string strPath, strFileName;
 
-            MediaPortal.Database.DatabaseUtility.Split(item.Path, out strPath, out strFileName);
-            MediaPortal.Database.DatabaseUtility.RemoveInvalidChars(ref strPath);
-            MediaPortal.Database.DatabaseUtility.RemoveInvalidChars(ref strFileName);
-            int pathId = VideoDatabase.AddPath(strPath);
-            VideoDatabase.AddFile(iidMovie, pathId, strFileName);
+          MediaPortal.Database.DatabaseUtility.Split(item.Path, out strPath, out strFileName);
+          MediaPortal.Database.DatabaseUtility.RemoveInvalidChars(ref strPath);
+          MediaPortal.Database.DatabaseUtility.RemoveInvalidChars(ref strFileName);
+          int pathId = VideoDatabase.AddPath(strPath);
+          VideoDatabase.AddFile(iidMovie, pathId, strFileName);
         }
 
         IMDBMovie movieDetails = new IMDBMovie();
         int tempMovieId = VideoDatabase.GetMovieInfo(strFile, ref movieDetails);
-        if ((iidMovie >= 0) && (tempMovieId<0))
+        if ((iidMovie >= 0) && (tempMovieId < 0))
         {
-            movieDetails.ID = iidMovie;
+          movieDetails.ID = iidMovie;
           if (Utils.IsDVD(strFile))
           {
             //DVD
@@ -956,40 +957,40 @@ namespace MediaPortal.GUI.Video
     }
 
 
-      protected bool CanShowIMDB()
+    protected bool CanShowIMDB()
+    {
+      int iSelectedItem = facadeView.SelectedListItemIndex;
+      GUIListItem pItem = facadeView.SelectedListItem;
+      if (pItem == null) return false;
+      if (pItem.IsRemote) return false;
+      // Use DVD label as movie name
+      if (Utils.IsDVD(pItem.Path) && (pItem.DVDLabel != String.Empty))
       {
-          int iSelectedItem = facadeView.SelectedListItemIndex;
-          GUIListItem pItem = facadeView.SelectedListItem;
-          if (pItem == null) return false;
-          if (pItem.IsRemote) return false;
-          // Use DVD label as movie name
-          if (Utils.IsDVD(pItem.Path) && (pItem.DVDLabel != String.Empty))
-          {
-              return true;
-          }
-          if (pItem.IsFolder)
-          {
-              string strExtension = System.IO.Path.GetExtension(pItem.Path).ToLower();
-              if (VirtualDirectory.IsImageFile(strExtension))
-              {
-                  return true;
-              }
-              else
-              {
-                  ArrayList vecitems = m_directory.GetDirectory(pItem.Path);
-                  for (int i = 0; i < vecitems.Count; ++i)
-                  {
-                      pItem = (GUIListItem)vecitems[i];
-                      if (pItem.Path.ToLower().IndexOf("video_ts") >= 0)
-                      {
-                          return true;
-                      }
-                  }
-              }
-              return false;
-          }
-          return true;
+        return true;
       }
+      if (pItem.IsFolder)
+      {
+        string strExtension = System.IO.Path.GetExtension(pItem.Path).ToLower();
+        if (VirtualDirectory.IsImageFile(strExtension))
+        {
+          return true;
+        }
+        else
+        {
+          ArrayList vecitems = m_directory.GetDirectory(pItem.Path);
+          for (int i = 0; i < vecitems.Count; ++i)
+          {
+            pItem = (GUIListItem)vecitems[i];
+            if (pItem.Path.ToLower().IndexOf("video_ts") >= 0)
+            {
+              return true;
+            }
+          }
+        }
+        return false;
+      }
+      return true;
+    }
     protected override void OnInfo(int iItem)
     {
       currentSelectedItem = facadeView.SelectedListItemIndex;
@@ -1024,13 +1025,13 @@ namespace MediaPortal.GUI.Video
           ArrayList vecitems = m_directory.GetDirectory(pItem.Path);
           for (int i = 0; i < vecitems.Count; ++i)
           {
-              GUIListItem tempItem = (GUIListItem)vecitems[i];
-              if (tempItem.Path.ToLower().IndexOf("video_ts") >= 0)
-              {
-                  strFile = String.Format(@"{0}\VIDEO_TS.IFO", tempItem.Path);
-                  bFoundFile = true;
-                  break;
-              }
+            GUIListItem tempItem = (GUIListItem)vecitems[i];
+            if (tempItem.Path.ToLower().IndexOf("video_ts") >= 0)
+            {
+              strFile = String.Format(@"{0}\VIDEO_TS.IFO", tempItem.Path);
+              bFoundFile = true;
+              break;
+            }
           }
         }
         if (!bFoundFile)
@@ -1042,8 +1043,8 @@ namespace MediaPortal.GUI.Video
       IMDBMovie movieDetails = new IMDBMovie();
       if (VideoDatabase.GetMovieInfo(strFile, ref movieDetails) == -1)
       {
-          AddFileToDatabase(strFile);
-          VideoDatabase.GetMovieInfo(strFile, ref movieDetails);
+        AddFileToDatabase(strFile);
+        VideoDatabase.GetMovieInfo(strFile, ref movieDetails);
       }
       movieDetails.File = System.IO.Path.GetFileName(strFile);
       movieDetails.Path = strFile.Substring(0, strFile.IndexOf(movieDetails.File) - 1);
@@ -1088,9 +1089,9 @@ namespace MediaPortal.GUI.Video
                   strLargeThumb = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, info.Title);
                   if (System.IO.File.Exists(strThumb))
                   {
-                      pItem.ThumbnailImage = strThumb;
-                      pItem.IconImageBig = strThumb;
-                      pItem.IconImage = strThumb;
+                    pItem.ThumbnailImage = strThumb;
+                    pItem.IconImageBig = strThumb;
+                    pItem.IconImage = strThumb;
                   }
                   if (System.IO.File.Exists(strLargeThumb))
                   {
@@ -1136,7 +1137,7 @@ namespace MediaPortal.GUI.Video
                 }
                 if (System.IO.File.Exists(strLargeThumb))
                 {
-                    pItem.IconImageBig = strLargeThumb;
+                  pItem.IconImageBig = strLargeThumb;
                 }
                 break;
               }
@@ -1480,10 +1481,10 @@ namespace MediaPortal.GUI.Video
       if (!facadeView.Focus)
       {
         // Menu button context menuu
-          if (CanShowIMDB())
-          {
-              dlg.AddLocalizedString(368); //IMDB
-          }
+        if (CanShowIMDB())
+        {
+          dlg.AddLocalizedString(368); //IMDB
+        }
         if (!m_directory.IsRemote(currentFolder)) dlg.AddLocalizedString(102); //Scan
       }
       else
@@ -1493,7 +1494,7 @@ namespace MediaPortal.GUI.Video
           if (Utils.getDriveType(item.Path) != 5) dlg.AddLocalizedString(925); //delete
           if (CanShowIMDB())
           {
-              dlg.AddLocalizedString(368); //IMDB
+            dlg.AddLocalizedString(368); //IMDB
           }
           dlg.AddLocalizedString(99845); //TV.com
           dlg.AddLocalizedString(208); //play
@@ -1501,10 +1502,10 @@ namespace MediaPortal.GUI.Video
         }
         if (item.IsFolder && !Utils.IsDVD(item.Path))
         {
-            if (item.Label != "..")
-            {
-                if (!item.IsRemote) dlg.AddLocalizedString(102); //Scan
-            }
+          if (item.Label != "..")
+          {
+            if (!item.IsRemote) dlg.AddLocalizedString(102); //Scan
+          }
         }
         if (Utils.getDriveType(item.Path) == 5) dlg.AddLocalizedString(654); //Eject
 
@@ -1569,15 +1570,16 @@ namespace MediaPortal.GUI.Video
           string folder = currentFolder;
           if (facadeView.Focus)
           {
-              if (item.IsFolder)
+            if (item.IsFolder)
+            {
+              if (item.Label != "..")
               {
-                  if (item.Label != "..")
-                  {
-                      if (!item.IsRemote) {
-                                        folder = item.Path;
-                      }
-                  }
+                if (!item.IsRemote)
+                {
+                  folder = item.Path;
+                }
               }
+            }
           }
           ArrayList availablePaths = new ArrayList();
           availablePaths.Add(item.Path);
@@ -1845,7 +1847,7 @@ namespace MediaPortal.GUI.Video
           string actor = actors[i];
           if (pos >= 0)
           {
-              actor = actors[i].Substring(0, pos);
+            actor = actors[i].Substring(0, pos);
           }
           actor = actor.Trim();
           string strThumb = Utils.GetCoverArtName(Thumbs.MovieActors, actor);
@@ -2725,66 +2727,73 @@ namespace MediaPortal.GUI.Video
     #region IMDB.IProgress
     public bool OnDisableCancel(IMDBFetcher fetcher)
     {
-        GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-        if (pDlgProgress.IsInstance(fetcher))
-        {
-            pDlgProgress.DisableCancel(true);
-        }
-        return true;
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      if (pDlgProgress.IsInstance(fetcher))
+      {
+        pDlgProgress.DisableCancel(true);
+      }
+      return true;
     }
     public void OnProgress(string line1, string line2, string line3, int percent)
     {
-        if (!GUIWindowManager.IsRouted) return;
-        GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-        pDlgProgress.ShowProgressBar(true);
-        pDlgProgress.SetLine(1, line1);
-        pDlgProgress.SetLine(2, line2);
-        if (percent > 0)
-            pDlgProgress.SetPercentage(percent);
-        pDlgProgress.Progress();
+      if (!GUIWindowManager.IsRouted) return;
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.ShowProgressBar(true);
+      pDlgProgress.SetLine(1, line1);
+      pDlgProgress.SetLine(2, line2);
+      if (percent > 0)
+        pDlgProgress.SetPercentage(percent);
+      pDlgProgress.Progress();
     }
     public bool OnSearchStarting(IMDBFetcher fetcher)
     {
-        GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-        // show dialog that we're busy querying www.imdb.com
-        String heading;
-        if (_scanning)
-        {
-            heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(197), scanningFileNumber, scanningFileTotal);
-        }
-        else
-        {
-            heading = GUILocalizeStrings.Get(197);
-        }
-        pDlgProgress.SetHeading(heading);
-        pDlgProgress.SetLine(1, fetcher.MovieName);
-        pDlgProgress.SetLine(2, String.Empty);
-        pDlgProgress.SetObject(fetcher);
-        pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
-        return true;
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      // show dialog that we're busy querying www.imdb.com
+      String heading;
+      if (_scanning)
+      {
+        heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(197), scanningFileNumber, scanningFileTotal);
+      }
+      else
+      {
+        heading = GUILocalizeStrings.Get(197);
+      }
+      pDlgProgress.SetHeading(heading);
+      pDlgProgress.SetLine(1, fetcher.MovieName);
+      pDlgProgress.SetLine(2, String.Empty);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
+      return true;
     }
     public bool OnSearchStarted(IMDBFetcher fetcher)
     {
-        GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-        pDlgProgress.SetObject(fetcher);
-        pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
-        if (pDlgProgress.IsCanceled)
-        {
-            return false;
-        }
-        return true;
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
+      if (pDlgProgress.IsCanceled)
+      {
+        return false;
+      }
+      return true;
     }
     public bool OnSearchEnd(IMDBFetcher fetcher)
     {
-        GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-        if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
-        {
-            pDlgProgress.Close();
-        }
-        return true;
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
+      {
+        pDlgProgress.Close();
+      }
+      return true;
     }
     public bool OnMovieNotFound(IMDBFetcher fetcher)
     {
+      if (_scanning)
+      {
+        conflictFiles.Add(fetcher.Movie);
+        return false;
+      }
+      else
+      {
         // show dialog...
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
         pDlgOK.SetHeading(195);
@@ -2792,86 +2801,94 @@ namespace MediaPortal.GUI.Video
         pDlgOK.SetLine(2, String.Empty);
         pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
         return true;
+      }
     }
     public bool OnDetailsStarting(IMDBFetcher fetcher)
     {
-        GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-        // show dialog that we're downloading the movie info
-        String heading;
-        if (_scanning)
-        {
-            heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(198), scanningFileNumber, scanningFileTotal);
-        }
-        else
-        {
-            heading = GUILocalizeStrings.Get(198);
-        }
-        pDlgProgress.SetHeading(heading);
-        //pDlgProgress.SetLine(0, strMovieName);
-        pDlgProgress.SetLine(1, fetcher.MovieName);
-        pDlgProgress.SetLine(2, String.Empty);
-        pDlgProgress.SetObject(fetcher);
-        pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
-        return true;
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      // show dialog that we're downloading the movie info
+      String heading;
+      if (_scanning)
+      {
+        heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(198), scanningFileNumber, scanningFileTotal);
+      }
+      else
+      {
+        heading = GUILocalizeStrings.Get(198);
+      }
+      pDlgProgress.SetHeading(heading);
+      //pDlgProgress.SetLine(0, strMovieName);
+      pDlgProgress.SetLine(1, fetcher.MovieName);
+      pDlgProgress.SetLine(2, String.Empty);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
+      return true;
     }
     public bool OnDetailsStarted(IMDBFetcher fetcher)
     {
-        GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-        pDlgProgress.SetObject(fetcher);
-        pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
-        if (pDlgProgress.IsCanceled)
-        {
-            return false;
-        }
-        return true;
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
+      if (pDlgProgress.IsCanceled)
+      {
+        return false;
+      }
+      return true;
     }
     public bool OnDetailsEnd(IMDBFetcher fetcher)
     {
-        GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-        if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
-        {
-            pDlgProgress.Close();
-        }
-        return true;
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      if ((pDlgProgress != null) && (pDlgProgress.IsInstance(fetcher)))
+      {
+        pDlgProgress.Close();
+      }
+      return true;
     }
     public bool OnActorsStarting(IMDBFetcher fetcher)
     {
-        GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-        // show dialog that we're downloading the actor info
-        String heading;
-        if (_scanning)
-        {
-            heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(986), scanningFileNumber, scanningFileTotal);
-        }
-        else
-        {
-            heading = GUILocalizeStrings.Get(986);
-        }
-        pDlgProgress.SetHeading(heading);
-        //pDlgProgress.SetLine(0, strMovieName);
-        pDlgProgress.SetLine(1, fetcher.MovieName);
-        pDlgProgress.SetLine(2, String.Empty);
-        pDlgProgress.SetObject(fetcher);
-        pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
-        return true;
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      // show dialog that we're downloading the actor info
+      String heading;
+      if (_scanning)
+      {
+        heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(986), scanningFileNumber, scanningFileTotal);
+      }
+      else
+      {
+        heading = GUILocalizeStrings.Get(986);
+      }
+      pDlgProgress.SetHeading(heading);
+      //pDlgProgress.SetLine(0, strMovieName);
+      pDlgProgress.SetLine(1, fetcher.MovieName);
+      pDlgProgress.SetLine(2, String.Empty);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
+      return true;
     }
     public bool OnActorsStarted(IMDBFetcher fetcher)
     {
-        GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-        pDlgProgress.SetObject(fetcher);
-        pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
-        if (pDlgProgress.IsCanceled)
-        {
-            return false;
-        }
-        return true;
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.DoModal(GUIWindowManager.ActiveWindow);
+      if (pDlgProgress.IsCanceled)
+      {
+        return false;
+      }
+      return true;
     }
     public bool OnActorsEnd(IMDBFetcher fetcher)
     {
-        return true;
+      return true;
     }
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
+      if (_scanning)
+      {
+        conflictFiles.Add(fetcher.Movie);
+        return false;
+      }
+      else
+      {
         // show dialog...
         GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
         // show dialog...
@@ -2880,21 +2897,42 @@ namespace MediaPortal.GUI.Video
         pDlgOK.SetLine(2, String.Empty);
         pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
         return false;
+      }
     }
 
     public bool OnRequestMovieTitle(IMDBFetcher fetcher, out string movieName)
     {
-        string strMovieName = "";
-        GetStringFromKeyboard(ref strMovieName);
-        movieName = strMovieName;
-        if (movieName == string.Empty)
+      if (_scanning)
+      {
+        conflictFiles.Add(fetcher.Movie);
+        movieName = string.Empty;
+        return false;
+      }
+      else
+      {
+        movieName = fetcher.Movie.Title;
+        if (GetKeyboard(ref movieName))
         {
+          if (movieName == string.Empty)
+          {
             return false;
+          }
+          return true;
         }
-        return true;
+        movieName = string.Empty;
+        return false;
+      }
     }
     public bool OnSelectMovie(IMDBFetcher fetcher, out int selectedMovie)
     {
+      if (_scanning)
+      {
+        conflictFiles.Add(fetcher.Movie);
+        selectedMovie = -1;
+        return false;
+      }
+      else
+      {
         GUIDialogSelect pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
         // more then 1 movie found
         // ask user to select 1
@@ -2902,7 +2940,7 @@ namespace MediaPortal.GUI.Video
         pDlgSelect.Reset();
         for (int i = 0; i < fetcher.Count; ++i)
         {
-            pDlgSelect.Add(fetcher[i].Title);
+          pDlgSelect.Add(fetcher[i].Title);
         }
         pDlgSelect.EnableButton(true);
         pDlgSelect.SetButtonLabel(413); // manual
@@ -2910,35 +2948,100 @@ namespace MediaPortal.GUI.Video
 
         // and wait till user selects one
         selectedMovie = pDlgSelect.SelectedLabel;
-        if (!pDlgSelect.IsButtonPressed) return false;
+        if (pDlgSelect.IsButtonPressed) return true;
+        if (selectedMovie == -1) return false;
         else return true;
+      }
     }
     public bool OnScanStart(int total)
     {
-        _scanning = true;
-        scanningFileTotal = total;
-        scanningFileNumber = 1;
-        return true;
+      _scanning = true;
+      conflictFiles = new ArrayList();
+      scanningFileTotal = total;
+      scanningFileNumber = 1;
+      return true;
     }
     public bool OnScanEnd()
     {
-        _scanning = false;
-        return true;
+      _scanning = false;
+      if (conflictFiles.Count > 0)
+      {
+        GUIDialogSelect pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_SELECT);
+        // more then 1 movie found
+        // ask user to select 1
+        do
+        {
+          pDlgSelect.SetHeading(892);//select movie
+          pDlgSelect.Reset();
+          for (int i = 0; i < conflictFiles.Count; ++i)
+          {
+            IMDBMovie currentMovie = (IMDBMovie)conflictFiles[i];
+            string strFileName = string.Empty;
+            string path = currentMovie.Path;
+            string filename = currentMovie.File;
+            if (path != string.Empty)
+            {
+              if (path.EndsWith(@"\"))
+              {
+                path = path.Substring(0, path.Length - 1);
+                currentMovie.Path = path;
+              }
+              if (filename.StartsWith(@"\"))
+              {
+                filename = filename.Substring(1);
+                currentMovie.File = filename;
+              }
+              strFileName = path + @"\" + filename;
+            }
+            else
+            {
+              strFileName = filename;
+            }
+            pDlgSelect.Add(strFileName);
+          }
+          pDlgSelect.EnableButton(true);
+          pDlgSelect.SetButtonLabel(4517); // manual
+          pDlgSelect.DoModal(GUIWindowManager.ActiveWindow);
+
+          // and wait till user selects one
+          int selectedMovie = pDlgSelect.SelectedLabel;
+          if (pDlgSelect.IsButtonPressed) break;
+          if (selectedMovie == -1) break;
+          IMDBMovie movieDetails = (IMDBMovie)conflictFiles[selectedMovie];
+          string searchText = movieDetails.Title;
+          if (GetKeyboard(ref searchText))
+          {
+            if (searchText != string.Empty)
+            {
+              movieDetails.SearchString = searchText;
+              if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false))
+              {
+                if (movieDetails != null)
+                {
+
+                  conflictFiles.RemoveAt(selectedMovie);
+                }
+              }
+            }
+          }
+        } while (conflictFiles.Count > 0);
+      }
+      return true;
     }
     public bool OnScanIterating(int count)
     {
-        scanningFileNumber = count;
-        return true;
+      scanningFileNumber = count;
+      return true;
     }
     public bool OnScanIterated(int count)
     {
-        scanningFileNumber = count;
-        GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-        if (pDlgProgress.IsCanceled)
-        {
-            return false;
-        }
-        return true;
+      scanningFileNumber = count;
+      GUIDialogProgress pDlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+      if (pDlgProgress.IsCanceled)
+      {
+        return false;
+      }
+      return true;
     }
 
     #endregion

@@ -456,6 +456,7 @@ namespace MediaPortal.GUI.Video
       VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
       if (null == keyboard) return false;
       keyboard.Reset();
+      keyboard.Text = strLine;
       keyboard.DoModal(GetID);
       if (keyboard.IsConfirmed)
       {
