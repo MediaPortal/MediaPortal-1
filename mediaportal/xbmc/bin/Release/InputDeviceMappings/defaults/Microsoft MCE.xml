@@ -26,7 +26,7 @@
 		</button>
 		<button name="Forward" code="20">
 			<action layer="0" condition="WINDOW" conproperty="600" command="ACTION" cmdproperty="86" sound="cursor.wav" />
-			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="29" sound="cursor.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2007" command="ACTION" cmdproperty="28" sound="cursor.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="16" sound="cursor.wav" />
 		</button>
 		<button name="Replay" code="27">
@@ -161,6 +161,8 @@
 			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="2" sound="click.wav" />
 		</button>
 		<button name="My Videos" code="74">
+			<action layer="0" condition="WINDOW" conproperty="6" command="ACTION" cmdproperty="18" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="2005" command="ACTION" cmdproperty="18" sound="click.wav" />
 			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="6" sound="click.wav" />
 		</button>
 		<button name="My Radio" code="80">
