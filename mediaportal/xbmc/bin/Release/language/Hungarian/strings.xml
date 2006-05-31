@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <strings>
 	<characters>512</characters>
 	<string>
@@ -2739,7 +2739,7 @@
 	</string>
 	<string>
 		<id>936</id>
-		<value>Ide továbbít:</value>
+		<value>Innen folytat:</value>
 	</string>
 	<string>
 		<id>937</id>
@@ -2747,7 +2747,7 @@
 	</string>
 	<string>
 		<id>938</id>
-		<value>Nézet this channel</value>
+		<value>Vissza a csatornához</value>
 	</string>
 	<string>
 		<id>939</id>
@@ -2763,7 +2763,7 @@
 	</string>
 	<string>
 		<id>942</id>
-		<value>Kihúz</value>
+		<value>Nyújtás</value>
 	</string>
 	<string>
 		<id>943</id>
@@ -3115,7 +3115,7 @@
 	</string>
 	<string>
 		<id>1040</id>
-		<value>Riasszonengem</value>
+		<value>Riasztás</value>
 	</string>
 	<string>
 		<id>1041</id>
@@ -3123,7 +3123,7 @@
 	</string>
 	<string>
 		<id>1042</id>
-		<value>Tart míg</value>
+		<value>Addig tart...</value>
 	</string>
 	<string>
 		<id>1043</id>
@@ -3147,7 +3147,7 @@
 	</string>
 	<string>
 		<id>1048</id>
-		<value>Belltsok</value>
+		<value>Beállítások</value>
 	</string>
 	<string>
 		<id>1440</id>
