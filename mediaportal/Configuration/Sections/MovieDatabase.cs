@@ -1655,7 +1655,7 @@ namespace MediaPortal.Configuration.Sections
     {
       if (conflictFiles.Count > 0)
       {
-        //DlgMovieConflicts dlg = new DlgMovieConflicts();
+        DlgMovieConflicts dlg = new DlgMovieConflicts();
         for (int i = 0; i < this.conflictFiles.Count; ++i)
         {
           IMDBMovie currentMovie = (IMDBMovie)conflictFiles[i];
@@ -1680,9 +1680,9 @@ namespace MediaPortal.Configuration.Sections
           {
             strFileName = filename;
           }
-          //dlg.AddMovie(strFileName);
+          dlg.AddMovie(strFileName);
         }
-        //dlg.ShowDialog(this);
+        dlg.ShowDialog(this);
       }
       _scanning = false;
       return true;
