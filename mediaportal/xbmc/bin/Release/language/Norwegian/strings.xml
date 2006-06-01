@@ -1770,6 +1770,10 @@
 		<value>Slette denne sangen?</value>
 	</string>
 	<string>
+		<id>519</id>
+		<value>Undertekst av</value>
+	</string>
+	<string>
 		<id>529</id>
 		<value>Vis: Store Ikoner</value>
 	</string>
@@ -1788,6 +1792,10 @@
 	<string>
 		<id>533</id>
 		<value>Guide</value>
+	</string>
+	<string>
+		<id>534</id>
+		<value>Moderat</value>
 	</string>
 	<string>
 		<id>550</id>
@@ -3665,12 +3673,80 @@
 		<value>Ingen innslag!</value>
 	</string>
   <string>
+    <id>2080</id>
+    <value>Ugyldig filtype</value>
+  </string>	
+  <string>
+    <id>2081</id>
+    <value>Kan ikke kutte</value>
+  </string>
+  <string>
+    <id>2082</id>
+    <value>Mpeg:Ferdig med å kutte videoen</value>
+  </string>
+  <string>
+    <id>2083</id>
+    <value>Dvrms:Ferdig med å kutte videoen</value>
+  </string>
+  <string>
+    <id>2084</id>
+    <value>start</value>
+  </string>   
+  <string>
+    <id>2085</id>
+    <value>slutt</value>
+  </string>   
+  <string>
+    <id>2086</id>
+    <value>forover</value>
+  </string>   
+  <string>
+    <id>2087</id>
+    <value>bakover</value>
+  </string>   
+  <string>
+    <id>2088</id>
+    <value>Kutte liste:</value>
+  </string>   
+  <string>
+    <id>2089</id>
+    <value>juster kvalitet</value>
+  </string>   
+  <string>
     <id>2090</id>
     <value>Dvr-MpegCut</value>
   </string>
   <string>
     <id>2091</id>
     <value>Prosessen ble avbrutt</value>
+  </string>  
+    <string>
+  <id>2092</id>
+    <value>Vennligst velg en fil du vil redigere:</value>
+  </string> 
+  <string>
+    <id>2093</id>
+    <value>legg till</value>
+  </string> 
+  <string>
+    <id>2094</id>
+    <value>Video liste</value>
+  </string>
+  <string>
+    <id>2095</id>
+    <value>Kutt</value>
+  </string> 
+  <string>
+    <id>2097</id>
+    <value>gammel varighet:</value>
+  </string>
+  <string>
+    <id>2098</id>
+    <value>ny varighet:</value>
+  </string>          
+  <string>
+    <id>2099</id>
+    <value>Nåværende posisjon:</value>
   </string>  
 	<string>
 		<id>2100</id>
@@ -5165,7 +5241,7 @@
 	</string>
 	<string>
 		<id>200006</id>
-		<value>Trykk "neste" for å fortsette oppsettet:</value>
+		<value>Trykk "Neste" for å fortsette oppsettet:</value>
 	</string>
 	<string>
 		<id>200007</id>
@@ -5181,27 +5257,27 @@
 	</string>
 	<string>
 		<id>200010</id>
-		<value>MediaPortal gjør PCen din om til et avansert multimediasenter / HTPC.</value>
+		<value>MediaPortal gjør din PC om til et avansert multimediasenter (HTPC).</value>
 	</string>
 	<string>
 		<id>200011</id>
-		<value>Med MediaPortal kan du nyte din favorittmusikk, radioprogram</value>
+		<value>Med MediaPortal kan du nyte din favoritt musikk, lytte til radioprogram, se på bilder, video,</value>
 	</string>
   <string>
     <id>200012</id>
-    <value>se på video, DVD og TV pluss mye mye mer.</value>
+    <value>DVD, samt se på / ta opp direktesendt TV, pluss mye mye mer.</value>
   </string>
 	<string>
 		<id>200013</id>
-		<value>Den gir deg muligheten til å høre på favorittmusikk og radio, se på video og DVD</value>
+		<value>Denne wizarden lar deg sette opp MediaPortal raskt og enkelt. Vennligst gå gjennom trinnene,</value>
 	</string>
 	<string>
 		<id>200014</id>
-		<value>bilder, videoer og se på/ta opp direktesendt TV og mye mer.</value>
+		<value>begynn med å velge språk og land nedenfor:</value>
 	</string>
 	<string>
 		<id>200015</id>
-		<value>Denne wizarden lar deg sette opp MediaPortal raskt of enkelt. Vennligst gå gjennom trinnene.</value>
+		<value>Trykk "Neste" for å gå videre.</value>
 	</string>
 	<string>
 		<id>200017</id>
@@ -5213,7 +5289,7 @@
 	</string>
 	<string>
 		<id>200019</id>
-		<value>Trykk "avslutt" for å lukke wizarden.</value>
+		<value>Trykk "Avslutt" for å lukke wizarden.</value>
 	</string>
 	<string>
 		<id>200020</id>
@@ -5229,7 +5305,7 @@
 	</string>
 	<string>
 		<id>200023</id>
-		<value>Trykk "neste" for å konfiguere disse kortene</value>
+		<value>Trykk "Neste" for å konfiguere disse kortene</value>
 	</string>
 	<string>
 		<id>200024</id>
@@ -5253,7 +5329,7 @@
   </string>
   <string>
     <id>200029</id>
-    <value>Hvordan vil Du bruke MediaPortal?</value>
+    <value>Hvordan vil du bruke MediaPortal?</value>
   </string>
   <string>
     <id>200030</id>
@@ -5285,7 +5361,7 @@
   </string>
   <string>
     <id>200036</id>
-    <value>Manual Tune</value>
+    <value>Manuell Tuning</value>
   </string>
   <string>
     <id>200037</id>
