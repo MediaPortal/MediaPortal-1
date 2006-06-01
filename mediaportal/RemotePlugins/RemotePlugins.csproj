@@ -169,6 +169,7 @@
     <Compile Include="InputDevices.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Remotes\IrTrans\IrTRans.cs" />
     <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\Device.cs" />
     <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\DeviceCollection.cs" />
     <Compile Include="Remotes\MCE2005Remote\MediaPortal.Hardware\DeviceEventHandler.cs" />

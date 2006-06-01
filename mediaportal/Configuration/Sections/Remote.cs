@@ -36,6 +36,7 @@ using System.Reflection;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
+using System.Net.Sockets;
 
 #pragma warning disable 108
 
@@ -99,20 +100,13 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxX10ChannelControl;
     private MediaPortal.UserInterface.Controls.MPButton buttonX10LearnChannel;
     private System.ComponentModel.IContainer components = null;
-    private Label labelX10Status;
-    private TabPage tabPageHid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelX10Status;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageHid;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHidGeneral;
     private MediaPortal.UserInterface.Controls.MPButton buttonHidMapping;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHidEnabled;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHidInfo;
-    private Label labelHidInfo;
-
-    X10RemoteForm x10Form = null;
-    private enum hcwRepeatSpeed { slow, medium, fast };
-    private int x10Channel = 0;
-
-    const string errHcwNotInstalled = "The Hauppauge IR components have not been found.\nInstall the latest Hauppauge IR drivers and use XPSP2.";
-    const string errHcwOutOfDate = "The driver components are not up to date.\nUpdate your Hauppauge IR drivers to the current version.";
+    private MediaPortal.UserInterface.Controls.MPLabel labelHidInfo;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxHidSettings;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHidExtendedLogging;
     private MediaPortal.UserInterface.Controls.MPButton buttonHidDefaults;
@@ -121,7 +115,31 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMceExtendedLogging;
     private MediaPortal.UserInterface.Controls.MPButton buttonMceDefaults;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxMceColouredButtons;
-    private GroupBox groupBoxMceSettings;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxMceSettings;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageIrTrans;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIrTransGeneral;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxIrTransEnabled;
+    private MediaPortal.UserInterface.Controls.MPButton buttonIrTransMapping;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIrTransStatus;
+    private MediaPortal.UserInterface.Controls.MPLabel labelIrTransStatus;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIrTransServerSettings;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxIrTransExtendedLogging;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxRemoteModel;
+    private MediaPortal.UserInterface.Controls.MPLabel labelIrTransRemoteModel;
+    private MediaPortal.UserInterface.Controls.MPNumericTextBox textBoxIrTransServerPort;
+    private MediaPortal.UserInterface.Controls.MPLabel labelIrTransServerPort;
+    private MediaPortal.UserInterface.Controls.MPLabel labelIrTransNoteWarning;
+    private MediaPortal.UserInterface.Controls.MPLabel labelIrTransNoteModel;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIrTransSettings;
+    private MediaPortal.UserInterface.Controls.MPButton buttonIrTransDefaults;
+
+    X10RemoteForm x10Form = null;
+    private enum hcwRepeatSpeed { slow, medium, fast };
+    private int x10Channel = 0;
+
+    const string errHcwNotInstalled = "The Hauppauge IR components have not been found.\nInstall the latest Hauppauge IR drivers and use XPSP2.";
+    const string errHcwOutOfDate = "The driver components are not up to date.\nUpdate your Hauppauge IR drivers to the current version.";
+    private MediaPortal.UserInterface.Controls.MPButton buttonIrTransTest;
     const string errHcwMissingExe = "IR application not found. You might want to use it to control external applications.\nReinstall the Hauppauge IR drivers to fix this problem.";
 
     #endregion
@@ -310,6 +328,18 @@ namespace MediaPortal.Configuration.Sections
 
         #endregion
 
+        #region IRTrans
+
+        checkBoxIrTransEnabled.Checked = xmlreader.GetValueAsBool("remote", "IRTrans", false);
+        textBoxRemoteModel.Text = xmlreader.GetValueAsString("remote", "IRTransRemoteModel", "mediacenter");
+        textBoxIrTransServerPort.Value = xmlreader.GetValueAsInt("remote", "IRTransServerPort", 21000);
+        textBoxIrTransServerPort.Text = textBoxIrTransServerPort.Value.ToString();
+        checkBoxIrTransExtendedLogging.Checked = xmlreader.GetValueAsBool("remote", "IRTransVerboseLog", false);
+        buttonIrTransMapping.Enabled = checkBoxIrTransEnabled.Checked;
+        groupBoxIrTransSettings.Enabled = groupBoxIrTransStatus.Enabled = groupBoxIrTransServerSettings.Enabled = checkBoxIrTransEnabled.Checked;
+
+        #endregion
+
       }
 
       #region FireDTV
@@ -363,6 +393,15 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("remote", "HIDVerboseLog", checkBoxHidExtendedLogging.Checked);
 
         #endregion
+
+        #region IRTRans
+
+        xmlwriter.SetValueAsBool("remote", "IRTrans", checkBoxIrTransEnabled.Checked);
+        xmlwriter.SetValue("remote", "IRTransRemoteModel", textBoxRemoteModel.Text);
+        xmlwriter.SetValue("remote", "IRTransServerPort", textBoxIrTransServerPort.Text);
+        xmlwriter.SetValueAsBool("remote", "IRTransVerboseLog", checkBoxIrTransExtendedLogging.Checked);
+
+        #endregion
       }
 
       #region FireDTV
@@ -404,7 +443,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxMceEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlRemotes = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageMce = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.groupBoxMceSettings = new System.Windows.Forms.GroupBox();
+      this.groupBoxMceSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxMceExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.buttonMceDefaults = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxMceGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -444,7 +483,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxX10Status = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelX10DriverInfo = new System.Windows.Forms.Label();
       this.linkLabelDownloadX10 = new System.Windows.Forms.LinkLabel();
-      this.labelX10Status = new System.Windows.Forms.Label();
+      this.labelX10Status = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxX10General = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.radioButtonX10Other = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonX10Ati = new MediaPortal.UserInterface.Controls.MPRadioButton();
@@ -456,15 +495,32 @@ namespace MediaPortal.Configuration.Sections
       this.buttonX10LearnChannel = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxX10ChannelControl = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxX10ExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tabPageHid = new System.Windows.Forms.TabPage();
+      this.tabPageHid = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.buttonHidDefaults = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBoxHidSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxHidExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxHidInfo = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.labelHidInfo = new System.Windows.Forms.Label();
+      this.labelHidInfo = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxHidGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonHidMapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxHidEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.tabPageIrTrans = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.groupBoxIrTransSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxIrTransExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.groupBoxIrTransStatus = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.buttonIrTransDefaults = new MediaPortal.UserInterface.Controls.MPButton();
+      this.labelIrTransStatus = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBoxIrTransServerSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.buttonIrTransTest = new MediaPortal.UserInterface.Controls.MPButton();
+      this.labelIrTransNoteWarning = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelIrTransNoteModel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxRemoteModel = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelIrTransRemoteModel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxIrTransServerPort = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
+      this.labelIrTransServerPort = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.groupBoxIrTransGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxIrTransEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.buttonIrTransMapping = new MediaPortal.UserInterface.Controls.MPButton();
       this.tabPageFireDtv = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.fireDtvRemote = new MediaPortal.Configuration.Sections.FireDtvRemote();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -488,6 +544,11 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxHidSettings.SuspendLayout();
       this.groupBoxHidInfo.SuspendLayout();
       this.groupBoxHidGeneral.SuspendLayout();
+      this.tabPageIrTrans.SuspendLayout();
+      this.groupBoxIrTransSettings.SuspendLayout();
+      this.groupBoxIrTransStatus.SuspendLayout();
+      this.groupBoxIrTransServerSettings.SuspendLayout();
+      this.groupBoxIrTransGeneral.SuspendLayout();
       this.tabPageFireDtv.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -522,6 +583,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlRemotes.Controls.Add(this.tabPageHcw);
       this.tabControlRemotes.Controls.Add(this.tabPageX10);
       this.tabControlRemotes.Controls.Add(this.tabPageHid);
+      this.tabControlRemotes.Controls.Add(this.tabPageIrTrans);
       this.tabControlRemotes.Controls.Add(this.tabPageFireDtv);
       this.tabControlRemotes.Location = new System.Drawing.Point(0, 8);
       this.tabControlRemotes.Name = "tabControlRemotes";
@@ -545,6 +607,7 @@ namespace MediaPortal.Configuration.Sections
       // groupBoxMceSettings
       // 
       this.groupBoxMceSettings.Controls.Add(this.checkBoxMceExtendedLogging);
+      this.groupBoxMceSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxMceSettings.Location = new System.Drawing.Point(12, 72);
       this.groupBoxMceSettings.Name = "groupBoxMceSettings";
       this.groupBoxMceSettings.Size = new System.Drawing.Size(440, 56);
@@ -1271,6 +1334,190 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxHidEnabled.UseVisualStyleBackColor = true;
       this.checkBoxHidEnabled.CheckedChanged += new System.EventHandler(this.checkBoxHidEnabled_CheckedChanged);
       // 
+      // tabPageIrTrans
+      // 
+      this.tabPageIrTrans.Controls.Add(this.groupBoxIrTransSettings);
+      this.tabPageIrTrans.Controls.Add(this.groupBoxIrTransStatus);
+      this.tabPageIrTrans.Controls.Add(this.groupBoxIrTransServerSettings);
+      this.tabPageIrTrans.Controls.Add(this.groupBoxIrTransGeneral);
+      this.tabPageIrTrans.Location = new System.Drawing.Point(4, 22);
+      this.tabPageIrTrans.Name = "tabPageIrTrans";
+      this.tabPageIrTrans.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageIrTrans.Size = new System.Drawing.Size(464, 374);
+      this.tabPageIrTrans.TabIndex = 5;
+      this.tabPageIrTrans.Text = "IRTrans";
+      this.tabPageIrTrans.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxIrTransSettings
+      // 
+      this.groupBoxIrTransSettings.Controls.Add(this.checkBoxIrTransExtendedLogging);
+      this.groupBoxIrTransSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxIrTransSettings.Location = new System.Drawing.Point(12, 72);
+      this.groupBoxIrTransSettings.Name = "groupBoxIrTransSettings";
+      this.groupBoxIrTransSettings.Size = new System.Drawing.Size(440, 56);
+      this.groupBoxIrTransSettings.TabIndex = 6;
+      this.groupBoxIrTransSettings.TabStop = false;
+      this.groupBoxIrTransSettings.Text = "Settings";
+      // 
+      // checkBoxIrTransExtendedLogging
+      // 
+      this.checkBoxIrTransExtendedLogging.AutoSize = true;
+      this.checkBoxIrTransExtendedLogging.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxIrTransExtendedLogging.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxIrTransExtendedLogging.Name = "checkBoxIrTransExtendedLogging";
+      this.checkBoxIrTransExtendedLogging.Size = new System.Drawing.Size(106, 17);
+      this.checkBoxIrTransExtendedLogging.TabIndex = 7;
+      this.checkBoxIrTransExtendedLogging.Text = "Extended logging";
+      this.checkBoxIrTransExtendedLogging.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxIrTransStatus
+      // 
+      this.groupBoxIrTransStatus.Controls.Add(this.buttonIrTransDefaults);
+      this.groupBoxIrTransStatus.Controls.Add(this.labelIrTransStatus);
+      this.groupBoxIrTransStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxIrTransStatus.Location = new System.Drawing.Point(12, 308);
+      this.groupBoxIrTransStatus.Name = "groupBoxIrTransStatus";
+      this.groupBoxIrTransStatus.Size = new System.Drawing.Size(440, 52);
+      this.groupBoxIrTransStatus.TabIndex = 5;
+      this.groupBoxIrTransStatus.TabStop = false;
+      this.groupBoxIrTransStatus.Text = "Status";
+      // 
+      // buttonIrTransDefaults
+      // 
+      this.buttonIrTransDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonIrTransDefaults.Location = new System.Drawing.Point(352, 20);
+      this.buttonIrTransDefaults.Name = "buttonIrTransDefaults";
+      this.buttonIrTransDefaults.Size = new System.Drawing.Size(72, 22);
+      this.buttonIrTransDefaults.TabIndex = 10;
+      this.buttonIrTransDefaults.Text = "&Defaults";
+      this.buttonIrTransDefaults.UseVisualStyleBackColor = true;
+      this.buttonIrTransDefaults.Click += new System.EventHandler(this.buttonIrTransDefaults_Click);
+      // 
+      // labelIrTransStatus
+      // 
+      this.labelIrTransStatus.Location = new System.Drawing.Point(16, 20);
+      this.labelIrTransStatus.Name = "labelIrTransStatus";
+      this.labelIrTransStatus.Size = new System.Drawing.Size(324, 20);
+      this.labelIrTransStatus.TabIndex = 8;
+      this.labelIrTransStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+      // 
+      // groupBoxIrTransServerSettings
+      // 
+      this.groupBoxIrTransServerSettings.Controls.Add(this.buttonIrTransTest);
+      this.groupBoxIrTransServerSettings.Controls.Add(this.labelIrTransNoteWarning);
+      this.groupBoxIrTransServerSettings.Controls.Add(this.labelIrTransNoteModel);
+      this.groupBoxIrTransServerSettings.Controls.Add(this.textBoxRemoteModel);
+      this.groupBoxIrTransServerSettings.Controls.Add(this.labelIrTransRemoteModel);
+      this.groupBoxIrTransServerSettings.Controls.Add(this.textBoxIrTransServerPort);
+      this.groupBoxIrTransServerSettings.Controls.Add(this.labelIrTransServerPort);
+      this.groupBoxIrTransServerSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxIrTransServerSettings.Location = new System.Drawing.Point(12, 136);
+      this.groupBoxIrTransServerSettings.Name = "groupBoxIrTransServerSettings";
+      this.groupBoxIrTransServerSettings.Size = new System.Drawing.Size(440, 164);
+      this.groupBoxIrTransServerSettings.TabIndex = 4;
+      this.groupBoxIrTransServerSettings.TabStop = false;
+      this.groupBoxIrTransServerSettings.Text = "Server Settings";
+      // 
+      // buttonIrTransTest
+      // 
+      this.buttonIrTransTest.Location = new System.Drawing.Point(352, 20);
+      this.buttonIrTransTest.Name = "buttonIrTransTest";
+      this.buttonIrTransTest.Size = new System.Drawing.Size(72, 22);
+      this.buttonIrTransTest.TabIndex = 10;
+      this.buttonIrTransTest.Text = "Test";
+      this.buttonIrTransTest.UseVisualStyleBackColor = true;
+      this.buttonIrTransTest.Click += new System.EventHandler(this.buttonIrTransTest_Click);
+      // 
+      // labelIrTransNoteWarning
+      // 
+      this.labelIrTransNoteWarning.Location = new System.Drawing.Point(16, 124);
+      this.labelIrTransNoteWarning.Name = "labelIrTransNoteWarning";
+      this.labelIrTransNoteWarning.Size = new System.Drawing.Size(412, 32);
+      this.labelIrTransNoteWarning.TabIndex = 9;
+      this.labelIrTransNoteWarning.Text = "You have to rename \\Program Files\\Irtrans\\remotes\\apps.cfg to i.e. apps.cfg.bak o" +
+          "r actions will be executed twice.";
+      // 
+      // labelIrTransNoteModel
+      // 
+      this.labelIrTransNoteModel.Location = new System.Drawing.Point(136, 76);
+      this.labelIrTransNoteModel.Name = "labelIrTransNoteModel";
+      this.labelIrTransNoteModel.Size = new System.Drawing.Size(292, 44);
+      this.labelIrTransNoteModel.TabIndex = 8;
+      this.labelIrTransNoteModel.Text = "This must be exactly the name of the remote as found in the *.rem file of IRTrans" +
+          ", for example \"mediacenter\", when using the MCE remote.";
+      // 
+      // textBoxRemoteModel
+      // 
+      this.textBoxRemoteModel.Location = new System.Drawing.Point(138, 52);
+      this.textBoxRemoteModel.MaxLength = 128;
+      this.textBoxRemoteModel.Name = "textBoxRemoteModel";
+      this.textBoxRemoteModel.Size = new System.Drawing.Size(128, 20);
+      this.textBoxRemoteModel.TabIndex = 3;
+      // 
+      // labelIrTransRemoteModel
+      // 
+      this.labelIrTransRemoteModel.AutoSize = true;
+      this.labelIrTransRemoteModel.Location = new System.Drawing.Point(16, 56);
+      this.labelIrTransRemoteModel.Name = "labelIrTransRemoteModel";
+      this.labelIrTransRemoteModel.Size = new System.Drawing.Size(79, 13);
+      this.labelIrTransRemoteModel.TabIndex = 2;
+      this.labelIrTransRemoteModel.Text = "Remote Model:";
+      // 
+      // textBoxIrTransServerPort
+      // 
+      this.textBoxIrTransServerPort.Location = new System.Drawing.Point(138, 25);
+      this.textBoxIrTransServerPort.MaxLength = 5;
+      this.textBoxIrTransServerPort.Name = "textBoxIrTransServerPort";
+      this.textBoxIrTransServerPort.Size = new System.Drawing.Size(58, 20);
+      this.textBoxIrTransServerPort.TabIndex = 1;
+      this.textBoxIrTransServerPort.Text = "21000";
+      this.textBoxIrTransServerPort.Value = 21000;
+      // 
+      // labelIrTransServerPort
+      // 
+      this.labelIrTransServerPort.AutoSize = true;
+      this.labelIrTransServerPort.Location = new System.Drawing.Point(16, 28);
+      this.labelIrTransServerPort.Name = "labelIrTransServerPort";
+      this.labelIrTransServerPort.Size = new System.Drawing.Size(104, 13);
+      this.labelIrTransServerPort.TabIndex = 0;
+      this.labelIrTransServerPort.Text = "IRTrans Server Port:";
+      // 
+      // groupBoxIrTransGeneral
+      // 
+      this.groupBoxIrTransGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxIrTransGeneral.Controls.Add(this.checkBoxIrTransEnabled);
+      this.groupBoxIrTransGeneral.Controls.Add(this.buttonIrTransMapping);
+      this.groupBoxIrTransGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxIrTransGeneral.Location = new System.Drawing.Point(12, 8);
+      this.groupBoxIrTransGeneral.Name = "groupBoxIrTransGeneral";
+      this.groupBoxIrTransGeneral.Size = new System.Drawing.Size(440, 56);
+      this.groupBoxIrTransGeneral.TabIndex = 3;
+      this.groupBoxIrTransGeneral.TabStop = false;
+      // 
+      // checkBoxIrTransEnabled
+      // 
+      this.checkBoxIrTransEnabled.AutoSize = true;
+      this.checkBoxIrTransEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxIrTransEnabled.Location = new System.Drawing.Point(16, 24);
+      this.checkBoxIrTransEnabled.Name = "checkBoxIrTransEnabled";
+      this.checkBoxIrTransEnabled.Size = new System.Drawing.Size(125, 17);
+      this.checkBoxIrTransEnabled.TabIndex = 0;
+      this.checkBoxIrTransEnabled.Text = "Use IRTrans receiver";
+      this.checkBoxIrTransEnabled.UseVisualStyleBackColor = true;
+      this.checkBoxIrTransEnabled.CheckedChanged += new System.EventHandler(this.checkBoxIrTransEnabled_CheckedChanged);
+      // 
+      // buttonIrTransMapping
+      // 
+      this.buttonIrTransMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonIrTransMapping.Location = new System.Drawing.Point(352, 20);
+      this.buttonIrTransMapping.Name = "buttonIrTransMapping";
+      this.buttonIrTransMapping.Size = new System.Drawing.Size(72, 22);
+      this.buttonIrTransMapping.TabIndex = 1;
+      this.buttonIrTransMapping.Text = "Mapping";
+      this.buttonIrTransMapping.UseVisualStyleBackColor = true;
+      this.buttonIrTransMapping.Click += new System.EventHandler(this.buttonIrTransMapping_Click);
+      // 
       // tabPageFireDtv
       // 
       this.tabPageFireDtv.Controls.Add(this.fireDtvRemote);
@@ -1330,6 +1577,14 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxHidInfo.ResumeLayout(false);
       this.groupBoxHidGeneral.ResumeLayout(false);
       this.groupBoxHidGeneral.PerformLayout();
+      this.tabPageIrTrans.ResumeLayout(false);
+      this.groupBoxIrTransSettings.ResumeLayout(false);
+      this.groupBoxIrTransSettings.PerformLayout();
+      this.groupBoxIrTransStatus.ResumeLayout(false);
+      this.groupBoxIrTransServerSettings.ResumeLayout(false);
+      this.groupBoxIrTransServerSettings.PerformLayout();
+      this.groupBoxIrTransGeneral.ResumeLayout(false);
+      this.groupBoxIrTransGeneral.PerformLayout();
       this.tabPageFireDtv.ResumeLayout(false);
       this.ResumeLayout(false);
 
@@ -1590,9 +1845,50 @@ namespace MediaPortal.Configuration.Sections
 
     #endregion
 
+    #region Form control commands IRTrans
 
+    private void checkBoxIrTransEnabled_CheckedChanged(object sender, EventArgs e)
+    {
+      buttonIrTransMapping.Enabled = checkBoxIrTransEnabled.Checked;
+      groupBoxIrTransSettings.Enabled = groupBoxIrTransStatus.Enabled = groupBoxIrTransServerSettings.Enabled = checkBoxIrTransEnabled.Checked;
+    }
 
+    private void buttonIrTransMapping_Click(object sender, EventArgs e)
+    {
+      // Construct xml file name "IrTrans " + remotename
+      string keyfile = "IrTrans " + textBoxRemoteModel.Text.Trim();
+      InputMappingForm dlg = new InputMappingForm(keyfile);
+      dlg.ShowDialog(this);
+    }
 
+    private void buttonIrTransDefaults_Click(object sender, EventArgs e)
+    {
+      textBoxRemoteModel.Text = "mediacenter";
+      textBoxIrTransServerPort.Value = 21000;
+      textBoxIrTransServerPort.Text = textBoxIrTransServerPort.Value.ToString();
+      checkBoxIrTransExtendedLogging.Checked = false;
+    }
 
+    private void buttonIrTransTest_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        Socket m_Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        m_Socket.Connect("localhost", Convert.ToInt32(textBoxIrTransServerPort.Text.Trim()));
+        // Send Client id to Server
+        int clientID = 0;
+        byte[] sendData = BitConverter.GetBytes(clientID);
+        m_Socket.Send(sendData, sendData.Length, SocketFlags.None);
+        m_Socket.Close();
+        labelIrTransStatus.Text = "No problems found.";
+      }
+      catch (SocketException)
+      {
+        labelIrTransStatus.Text = "No IRTrans server found.";
+      }
+    }
+
+    #endregion
   }
+
 }
