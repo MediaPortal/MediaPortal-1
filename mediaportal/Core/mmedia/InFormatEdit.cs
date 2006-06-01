@@ -43,7 +43,7 @@ namespace Yeti.MMedia
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxBitsPerSample;
     private MediaPortal.UserInterface.Controls.MPLabel label3;
     private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private Yeti.Controls.NumericTextBox textBoxSampleRate;
+    private MediaPortal.UserInterface.Controls.MPNumericTextBox textBoxSampleRate;
     private MediaPortal.UserInterface.Controls.MPLabel label1;
     private System.Windows.Forms.ToolTip toolTip1;
     private System.ComponentModel.IContainer components;
@@ -99,7 +99,7 @@ namespace Yeti.MMedia
       this.comboBoxBitsPerSample = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.textBoxSampleRate = new Yeti.Controls.NumericTextBox();
+      this.textBoxSampleRate = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
       this.errorProvider1 = new System.Windows.Forms.ErrorProvider();
