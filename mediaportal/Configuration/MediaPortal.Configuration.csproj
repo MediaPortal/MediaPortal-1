@@ -272,7 +272,7 @@
     <Compile Include="SectionSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\DlgProgress.cs">
+    <Compile Include="Sections\Subdialogs\DlgProgress.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Sections\GeneralOSD.cs">
@@ -320,7 +320,7 @@
     <Compile Include="Sections\DirectInputRemote.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\DlgMovieList.cs">
+    <Compile Include="Sections\Subdialogs\DlgMovieList.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Sections\DScalerAudioFilter.cs">
@@ -455,7 +455,7 @@
     <Compile Include="Sections\TVCaptureCards.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\TvChannelLookupService.cs">
+    <Compile Include="Sections\Subdialogs\TvChannelLookupService.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Sections\TVChannels.cs">
@@ -570,7 +570,7 @@
       <DependentUpon>SectionSettings.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\DlgProgress.resx">
+    <EmbeddedResource Include="Sections\Subdialogs\DlgProgress.resx">
       <DependentUpon>DlgProgress.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -628,7 +628,7 @@
     <EmbeddedResource Include="Sections\DirectInputRemote.resx">
       <DependentUpon>DirectInputRemote.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\DlgMovieList.resx">
+    <EmbeddedResource Include="Sections\Subdialogs\DlgMovieList.resx">
       <DependentUpon>DlgMovieList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DScalerAudioFilter.resx">
@@ -760,7 +760,7 @@
     <EmbeddedResource Include="Sections\TVCaptureCards.resx">
       <DependentUpon>TVCaptureCards.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\TvChannelLookupService.resx">
+    <EmbeddedResource Include="Sections\Subdialogs\TvChannelLookupService.resx">
       <DependentUpon>TvChannelLookupService.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVChannels.resx">
