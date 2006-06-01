@@ -247,7 +247,7 @@ namespace MediaPortal.Video.Database
               line2 = imdbActor.Name;
               line3 = "";
               OnProgress(line1, line2, line3, -1);
-              VideoDatabase.AddActorInfo(actorId, imdbActor);
+              VideoDatabase.SetActorInfo(actorId, imdbActor);
               VideoDatabase.AddActorToMovie(movieDetails.ID, actorId);
               if (imdbActor.ThumbnailUrl != string.Empty)
               {
@@ -274,7 +274,7 @@ namespace MediaPortal.Video.Database
             imdbActorMovie.Year = movieDetails.Year;
             imdbActorMovie.Role = role;
             imdbActor.Add(imdbActorMovie);
-            VideoDatabase.AddActorInfo(actorId, imdbActor);
+            VideoDatabase.SetActorInfo(actorId, imdbActor);
             VideoDatabase.AddActorToMovie(movieDetails.ID, actorId);
           }
           percent += 100 / actors.Count;

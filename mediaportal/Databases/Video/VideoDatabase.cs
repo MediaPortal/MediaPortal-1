@@ -247,9 +247,9 @@ namespace MediaPortal.Video.Database
     {
       return _database.GetDVDLabel(strFile);
     }
-    static public void AddActorInfo(int idActor, IMDBActor actor)
+    static public void SetActorInfo(int idActor, IMDBActor actor)
     {
-      _database.AddActorInfo(idActor, actor);
+      _database.SetActorInfo(idActor, actor);
     }
     static public void AddActorInfoMovie(int idActor, IMDBActor.IMDBActorMovie movie)
     {

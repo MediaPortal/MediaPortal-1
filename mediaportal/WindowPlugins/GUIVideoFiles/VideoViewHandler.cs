@@ -403,6 +403,7 @@ namespace MediaPortal.GUI.Video
 			if (definition.Where=="actor")
 			{
 				item.Label=movie.Actor;
+        item.AlbumInfoTag = VideoDatabase.GetActorInfo(movie.actorId);
 				item.Label2=String.Empty;
 				item.Label3=String.Empty;
 			}

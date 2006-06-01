@@ -82,7 +82,7 @@ namespace MediaPortal.Video.Database
 		void GetMoviesByFilter(string sql, out ArrayList movies, bool actorTable,  bool movieinfoTable, bool genreTable);
 		void UpdateCDLabel(IMDBMovie movieDetails, string CDlabel);
 		string GetDVDLabel(string strFile);
-		void AddActorInfo(int idActor, IMDBActor actor);
+		void SetActorInfo(int idActor, IMDBActor actor);
 		void AddActorInfoMovie(int idActor, IMDBActor.IMDBActorMovie movie);
 		IMDBActor GetActorInfo(int idActor);
     SQLiteResultSet GetResults(string sql);

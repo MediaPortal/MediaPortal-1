@@ -1867,7 +1867,7 @@ namespace MediaPortal.GUI.Video
                 int actorId = VideoDatabase.AddActor(actor);
                 if (actorId > 0)
                 {
-                  VideoDatabase.AddActorInfo(actorId, imdbActor);
+                  VideoDatabase.SetActorInfo(actorId, imdbActor);
                 }
                 //ShowProgress(GUILocalizeStrings.Get(1009), actor, "", percent);
                 DownloadThumnail(Thumbs.MovieActors, imdbActor.ThumbnailUrl, actor);

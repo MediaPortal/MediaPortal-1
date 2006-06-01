@@ -211,11 +211,20 @@ namespace MediaPortal.GUI.Video
       GUIPropertyManager.SetProperty("#Actor.Name", currentActor.Name);
       GUIPropertyManager.SetProperty("#Actor.DateOfBirth", currentActor.DateOfBirth);
       GUIPropertyManager.SetProperty("#Actor.PlaceOfBirth", currentActor.PlaceOfBirth);
-      GUIPropertyManager.SetProperty("#Actor.Biography", currentActor.Biography);
+      string biography = currentActor.Biography;
+      if ((biography == string.Empty) || ( biography == Strings.Unknown))
+      {
+        biography = currentActor.MiniBiography;
+        if (biography == Strings.Unknown)
+        {
+          biography = "";
+        }
+      }
+      GUIPropertyManager.SetProperty("#Actor.Biography", biography);
       string movies = "";
       for (int i = 0; i < currentActor.Count; ++i)
       {
-        string line = String.Format("{0}. {1}\n", i + 1, currentActor[i].Role);
+        string line = String.Format("{0}. {1} ({2})\n            {3}\n", i + 1, currentActor[i].MovieTitle, currentActor[i].Year, currentActor[i].Role);
         movies += line;
       }
       GUIPropertyManager.SetProperty("#Actor.Movies", movies);

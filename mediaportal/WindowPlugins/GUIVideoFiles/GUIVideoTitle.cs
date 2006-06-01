@@ -209,12 +209,29 @@ namespace MediaPortal.GUI.Video
 			GUIListItem item=facadeView.SelectedListItem;
 			int itemNo=facadeView.SelectedListItemIndex;
 			if (item==null) return;
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null) return;
+      IMDBActor actor = item.AlbumInfoTag as IMDBActor;
+      if (actor != null)
+      {
+        dlg.Reset();
+        dlg.SetHeading(924); // menu
+        dlg.Add(GUILocalizeStrings.Get(368)); //IMDB
+
+        dlg.DoModal(GetID);
+        if (dlg.SelectedLabel == -1) return;
+        switch (dlg.SelectedLabel)
+        {
+          case 0: // IMDB
+            OnVideoArtistInfo(actor);
+            break;
+        }
+        return;
+      }
 			IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
 			if (movie==null) return;
 			if (movie.ID<0) return;
 
-			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-			if (dlg==null) return;
 			dlg.Reset();
 			dlg.SetHeading(924); // menu
 			dlg.Add( GUILocalizeStrings.Get(925)); //delete
@@ -447,11 +464,10 @@ namespace MediaPortal.GUI.Video
                 GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_INFO);
             }
 		}
-		void ShowActorInfo(int actorId)
+		void OnVideoArtistInfo(IMDBActor actor)
 		{
 			GUIVideoArtistInfo infoDlg = (GUIVideoArtistInfo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIDEO_ARTIST_INFO);
 			if (infoDlg==null) return;
-			IMDBActor actor= VideoDatabase.GetActorInfo(actorId);
 			if (actor==null) return;
 			infoDlg.Actor=actor;
 			infoDlg.DoModal(GetID);
