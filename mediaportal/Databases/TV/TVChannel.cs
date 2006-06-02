@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -30,59 +35,59 @@ namespace MediaPortal.TV.Database
 {
   #region TVNotify class
   public class TVNotify
-	{
-		public int ID=-1;
-		public TVProgram Program=null;
+  {
+    public int ID = -1;
+    public TVProgram Program = null;
   }
   #endregion
 
 
   #region Special Channels structure
   public struct SpecialChannelsStruct
-	{
-		public string Name;
-		public long Frequency;
-		public int Number;
-		public SpecialChannelsStruct(string name, long frequency, int number)
-		{
-			Name=name;
-			Frequency=frequency;
-			Number=number;
-		}
+  {
+    public string Name;
+    public long Frequency;
+    public int Number;
+    public SpecialChannelsStruct(string name, long frequency, int number)
+    {
+      Name = name;
+      Frequency = frequency;
+      Number = number;
+    }
   }
   #endregion
 
   #region enums
-  public enum ExternalInputs:int
-	{
-		svhs =250000,
-		cvbs1=250001,
-		cvbs2=250002,
-		rgb=250003
+  public enum ExternalInputs : int
+  {
+    svhs = 250000,
+    cvbs1 = 250001,
+    cvbs2 = 250002,
+    rgb = 250003
   }
   #endregion
 
 
   #region TVGroup class
   public class TVGroup
-	{
-		public int    ID;
-		public string GroupName;
-		public int    Sort;
-		public int    Pincode;
+  {
+    public int ID;
+    public string GroupName;
+    public int Sort;
+    public int Pincode;
     private List<TVChannel> tvChannels = null;
-		public override string ToString()
-		{
-			return GroupName;
-		}
+    public override string ToString()
+    {
+      return GroupName;
+    }
     public List<TVChannel> TvChannels
     {
       get
       {
-        if (tvChannels== null)
+        if (tvChannels == null)
         {
           tvChannels = new List<TVChannel>();
-          TVDatabase.GetTVChannelsForGroup(ID,tvChannels);
+          TVDatabase.GetTVChannelsForGroup(ID, tvChannels);
         }
         return tvChannels;
       }
@@ -93,10 +98,10 @@ namespace MediaPortal.TV.Database
 
   #region TVChannel class
   /// <summary>
-	/// Class which holds all information about a tv channel
-	/// </summary>
+  /// Class which holds all information about a tv channel
+  /// </summary>
   [Serializable()]
-  public class TVChannel 
+  public class TVChannel
   {
     #region special channels
     public static SpecialChannelsStruct[] SpecialChannels = 
@@ -210,23 +215,23 @@ namespace MediaPortal.TV.Database
     int _epgHours = 1;
     bool _autoGrabEpg = true;
     string _channelName;
-		int    _channelNumber;
-		int    _channelId;
-		long   _channelFrequency;
-		string _externalXmlTvId;
-		bool   _isExternalChannel=false;
-		string _externalTuneCommand="";
-		bool   _isVisibleInTvGuide=true;
-		int    _country=-1;
-		string _providerName="";
+    int _channelNumber;
+    int _channelId;
+    long _channelFrequency;
+    string _externalXmlTvId = string.Empty;
+    bool _isExternalChannel = false;
+    string _externalTuneCommand = string.Empty;
+    bool _isVisibleInTvGuide = true;
+    int _country = -1;
+    string _providerName = string.Empty;
     private bool _isScrambled = false;
     private int _sortIndex = -1;
-		private TVProgram _currentProgram=null;
-		private TVProgram _previousProgram=null;
-		private TVProgram _nextProgram=null;
+    private TVProgram _currentProgram = null;
+    private TVProgram _previousProgram = null;
+    private TVProgram _nextProgram = null;
     private DateTime _lastTimeEpgGrabbed = DateTime.MinValue;
 
-		AnalogVideoStandard _TVStandard;
+    AnalogVideoStandard _TVStandard;
 
     #endregion
 
@@ -240,30 +245,30 @@ namespace MediaPortal.TV.Database
     }
 
     public TVChannel Clone()
-		{
-			TVChannel newChan=new TVChannel();
-			newChan.Name=_channelName;
-			newChan.Number=_channelNumber;
-			newChan.ID=_channelId;
-			newChan.Frequency=_channelFrequency;
-			newChan.XMLId=_externalXmlTvId;
-			newChan.External=_isExternalChannel;
-			newChan.ExternalTunerChannel=_externalTuneCommand;
-			newChan.VisibleInGuide=_isVisibleInTvGuide;
-			newChan.Country=_country;
-			newChan.ProviderName=_providerName;
-			newChan.Scrambled=_isScrambled;
-			newChan.Sort=_sortIndex;
+    {
+      TVChannel newChan = new TVChannel();
+      newChan.Name = _channelName;
+      newChan.Number = _channelNumber;
+      newChan.ID = _channelId;
+      newChan.Frequency = _channelFrequency;
+      newChan.XMLId = _externalXmlTvId;
+      newChan.External = _isExternalChannel;
+      newChan.ExternalTunerChannel = _externalTuneCommand;
+      newChan.VisibleInGuide = _isVisibleInTvGuide;
+      newChan.Country = _country;
+      newChan.ProviderName = _providerName;
+      newChan.Scrambled = _isScrambled;
+      newChan.Sort = _sortIndex;
       newChan.EpgHours = _epgHours;
       newChan.AutoGrabEpg = _autoGrabEpg;
       newChan.LastDateTimeEpgGrabbed = LastDateTimeEpgGrabbed;
-			return newChan;
+      return newChan;
     }
     #endregion
 
     public override bool Equals(object obj)
     {
-      if ((obj as TVChannel)==null) return false;
+      if ((obj as TVChannel) == null) return false;
       TVChannel chan = (TVChannel)obj;
 
       if (chan.ID != ID) return false;
@@ -287,9 +292,9 @@ namespace MediaPortal.TV.Database
       if (chan.LastDateTimeEpgGrabbed.Minute != LastDateTimeEpgGrabbed.Minute) return false;
       return true;
     }
-    public override int GetHashCode() 
+    public override int GetHashCode()
     {
-      return base.GetHashCode() ^ID.GetHashCode() ^Frequency.GetHashCode() ^
+      return base.GetHashCode() ^ ID.GetHashCode() ^ Frequency.GetHashCode() ^
           Number.GetHashCode() ^ Name.GetHashCode() ^ XMLId.GetHashCode() ^
           External.GetHashCode() ^ ExternalTunerChannel.GetHashCode() ^
           VisibleInGuide.GetHashCode() ^ Country.GetHashCode() ^
@@ -303,142 +308,142 @@ namespace MediaPortal.TV.Database
       set { _lastTimeEpgGrabbed = value; }
     }
     /// <summary> 
-		/// Property to indicate if this channel is scrambled or not
-		/// </summary>
-		public bool Scrambled
-		{
-			get { return _isScrambled;}
-			set {_isScrambled=value;}
-		}
+    /// Property to indicate if this channel is scrambled or not
+    /// </summary>
+    public bool Scrambled
+    {
+      get { return _isScrambled; }
+      set { _isScrambled = value; }
+    }
 
-		/// <summary> 
-		/// Property to indicate if this is an internal or external (USB-UIRT) channel
-		/// </summary>
-		public bool External
-		{
-			get { return _isExternalChannel;}
-			set {_isExternalChannel=value;}
-		}
-		public int Sort
-		{
-			get 
-			{
-				return _sortIndex;
-			}
-			set { _sortIndex=value;}
-		}
+    /// <summary> 
+    /// Property to indicate if this is an internal or external (USB-UIRT) channel
+    /// </summary>
+    public bool External
+    {
+      get { return _isExternalChannel; }
+      set { _isExternalChannel = value; }
+    }
+    public int Sort
+    {
+      get
+      {
+        return _sortIndex;
+      }
+      set { _sortIndex = value; }
+    }
 
-		/// <summary>
-		/// Property to specify the TV standard
-		/// </summary>
-		public AnalogVideoStandard TVStandard
-		{
-			get { return _TVStandard;}
-			set { _TVStandard =value;}
-		}
+    /// <summary>
+    /// Property to specify the TV standard
+    /// </summary>
+    public AnalogVideoStandard TVStandard
+    {
+      get { return _TVStandard; }
+      set { _TVStandard = value; }
+    }
 
-		/// <summary>
-		/// Property that indicates if this channel should be visible in the EPG or not.
-		/// </summary>
-		public bool VisibleInGuide
-		{
-			get { return _isVisibleInTvGuide; }
-			set { _isVisibleInTvGuide = value; }
-		}
+    /// <summary>
+    /// Property that indicates if this channel should be visible in the EPG or not.
+    /// </summary>
+    public bool VisibleInGuide
+    {
+      get { return _isVisibleInTvGuide; }
+      set { _isVisibleInTvGuide = value; }
+    }
 
-		/// <summary> 
-		/// Property to get/set the external tuner channel
-		/// </summary>
-		public string ExternalTunerChannel
-		{
-			get { return _externalTuneCommand;}
-			set 
-			{
-				_externalTuneCommand=value;
-				if (_externalTuneCommand.Equals(Strings.Unknown) ) _externalTuneCommand="";
-			}
-		}
+    /// <summary> 
+    /// Property to get/set the external tuner channel
+    /// </summary>
+    public string ExternalTunerChannel
+    {
+      get { return _externalTuneCommand; }
+      set
+      {
+        _externalTuneCommand = value;
+        if (_externalTuneCommand.Equals(Strings.Unknown)) _externalTuneCommand = "";
+      }
+    }
 
-		/// <summary> 
-		/// Property to get/set the ID the tv channel has in the XMLTV file
-		/// </summary>
-		public string XMLId
-		{
-			get { return _externalXmlTvId;}
-			set {_externalXmlTvId=value;}
-		}
+    /// <summary> 
+    /// Property to get/set the ID the tv channel has in the XMLTV file
+    /// </summary>
+    public string XMLId
+    {
+      get { return _externalXmlTvId; }
+      set { _externalXmlTvId = value; }
+    }
 
-		/// <summary>
-		/// Property to get/set the ID the tvchannel has in the tv database
-		/// </summary>
-		public int ID
-		{
-			get { return _channelId;}
-			set {_channelId=value;}
-		}
- 
-		/// <summary>
-		/// Property to get/set the name of the tvchannel
-		/// </summary>
-		public string Name
-		{
-			get { return _channelName;}
-			set {_channelName=value;}
-		}
- 
-		/// <summary>
-		/// Property to get/set the name of the tvchannel
-		/// </summary>
-		public string ProviderName
-		{
-			get { return _providerName;}
-			set {_providerName=value;}
-		}
- 
-		/// <summary>
-		/// Property to get/set the the tvchannel number
-		/// </summary>
-		public int Number
-		{
-			get { return _channelNumber;}
-			set {_channelNumber=value;}
-		}
+    /// <summary>
+    /// Property to get/set the ID the tvchannel has in the tv database
+    /// </summary>
+    public int ID
+    {
+      get { return _channelId; }
+      set { _channelId = value; }
+    }
 
-		
-		/// <summary>
-		/// Property to get/set the the tvchannel country
-		/// </summary>
-		public int Country
-		{
-			get { return _country;}
-			set {_country=value;}
-		}
+    /// <summary>
+    /// Property to get/set the name of the tvchannel
+    /// </summary>
+    public string Name
+    {
+      get { return _channelName; }
+      set { _channelName = value; }
+    }
 
-		/// <summary>
-		/// Property to get/set the the frequency of the tvchannel (0=use default)
-		/// </summary>
-		public long Frequency
-		{
-			get { return _channelFrequency;}
-			set {_channelFrequency=value;}
-		}
+    /// <summary>
+    /// Property to get/set the name of the tvchannel
+    /// </summary>
+    public string ProviderName
+    {
+      get { return _providerName; }
+      set { _providerName = value; }
+    }
 
-		//return the current running program for this channel
-		public TVProgram CurrentProgram
-		{
-			get
-			{				
-				DateTime dtNow=DateTime.Now;
-				long lNow=Utils.datetolong(dtNow);
-				if (_currentProgram!=null)
-				{
-					if (_currentProgram.Start <= lNow && _currentProgram.End >= lNow) return _currentProgram;
-					_currentProgram=null;
-				}
+    /// <summary>
+    /// Property to get/set the the tvchannel number
+    /// </summary>
+    public int Number
+    {
+      get { return _channelNumber; }
+      set { _channelNumber = value; }
+    }
 
-				Update();
-				return _currentProgram;
-			}
+
+    /// <summary>
+    /// Property to get/set the the tvchannel country
+    /// </summary>
+    public int Country
+    {
+      get { return _country; }
+      set { _country = value; }
+    }
+
+    /// <summary>
+    /// Property to get/set the the frequency of the tvchannel (0=use default)
+    /// </summary>
+    public long Frequency
+    {
+      get { return _channelFrequency; }
+      set { _channelFrequency = value; }
+    }
+
+    //return the current running program for this channel
+    public TVProgram CurrentProgram
+    {
+      get
+      {
+        DateTime dtNow = DateTime.Now;
+        long lNow = Utils.datetolong(dtNow);
+        if (_currentProgram != null)
+        {
+          if (_currentProgram.Start <= lNow && _currentProgram.End >= lNow) return _currentProgram;
+          _currentProgram = null;
+        }
+
+        Update();
+        return _currentProgram;
+      }
     }
     public bool AutoGrabEpg
     {
@@ -461,75 +466,75 @@ namespace MediaPortal.TV.Database
 
     #region methods
     private void Update()
-		{
-			DateTime dt = DateTime.Now;
-			_previousProgram=null;
-			_currentProgram=null;
-			_nextProgram=null;
-			long lNow=Utils.datetolong(dt);
+    {
+      DateTime dt = DateTime.Now;
+      _previousProgram = null;
+      _currentProgram = null;
+      _nextProgram = null;
+      long lNow = Utils.datetolong(dt);
       List<TVProgram> progs = new List<TVProgram>();
-			long starttime=Utils.datetolong( dt.AddDays(-2) );
-			long endtime  =Utils.datetolong( dt.AddDays(2));
-			TVDatabase.GetProgramsPerChannel(Name,starttime,endtime,ref progs);
-			for (int i=0; i < progs.Count;++i)
-			{
-				TVProgram prog = progs[i];
-				if (prog.Start <= lNow && prog.End >= lNow)
-				{
-					_currentProgram=prog;
-					if (i-1 >=0 )
-						_previousProgram=progs[i-1] ;
-					if (i+1 < progs.Count)
-						_nextProgram=progs[i+1] ;
-					break;
-				}
-			}
-		}
+      long starttime = Utils.datetolong(dt.AddDays(-2));
+      long endtime = Utils.datetolong(dt.AddDays(2));
+      TVDatabase.GetProgramsPerChannel(Name, starttime, endtime, ref progs);
+      for (int i = 0; i < progs.Count; ++i)
+      {
+        TVProgram prog = progs[i];
+        if (prog.Start <= lNow && prog.End >= lNow)
+        {
+          _currentProgram = prog;
+          if (i - 1 >= 0)
+            _previousProgram = progs[i - 1];
+          if (i + 1 < progs.Count)
+            _nextProgram = progs[i + 1];
+          break;
+        }
+      }
+    }
 
-		public TVProgram GetProgramAt(DateTime dt)
-		{	
-			long lNow=Utils.datetolong(DateTime.Now);
-			
-			if (_currentProgram==null) 
-				Update();
-			
-			if (_currentProgram!=null)
-			{
-				if (_currentProgram.End < lNow) 
-					Update();
-			}
-				
-			lNow=Utils.datetolong(dt);
-			if (_previousProgram!=null)
-			{
-				if (_previousProgram.Start <= lNow && _previousProgram.End >= lNow) 
-					return _previousProgram;
-			}
-			if (_nextProgram!=null)
-			{
-				if (_nextProgram.Start <= lNow && _nextProgram.End >= lNow) 
-					return _nextProgram;
-			}
-			if (_currentProgram!=null)
-			{
-				if (_currentProgram.Start <= lNow && _currentProgram.End >= lNow) 
-					return _currentProgram;
-			}
+    public TVProgram GetProgramAt(DateTime dt)
+    {
+      long lNow = Utils.datetolong(DateTime.Now);
+
+      if (_currentProgram == null)
+        Update();
+
+      if (_currentProgram != null)
+      {
+        if (_currentProgram.End < lNow)
+          Update();
+      }
+
+      lNow = Utils.datetolong(dt);
+      if (_previousProgram != null)
+      {
+        if (_previousProgram.Start <= lNow && _previousProgram.End >= lNow)
+          return _previousProgram;
+      }
+      if (_nextProgram != null)
+      {
+        if (_nextProgram.Start <= lNow && _nextProgram.End >= lNow)
+          return _nextProgram;
+      }
+      if (_currentProgram != null)
+      {
+        if (_currentProgram.Start <= lNow && _currentProgram.End >= lNow)
+          return _currentProgram;
+      }
 
       List<TVProgram> progs = new List<TVProgram>();
-			long starttime=Utils.datetolong( dt.AddDays(-2) );
-			long endtime  =Utils.datetolong( dt.AddDays(2));
-			TVDatabase.GetProgramsPerChannel(Name,starttime,endtime,ref progs);
-			foreach (TVProgram prog in progs)
-			{
-				if (prog.Start <= lNow && prog.End >= lNow)
-				{
-					return prog;
-				}
-			}
-			return null;
+      long starttime = Utils.datetolong(dt.AddDays(-2));
+      long endtime = Utils.datetolong(dt.AddDays(2));
+      TVDatabase.GetProgramsPerChannel(Name, starttime, endtime, ref progs);
+      foreach (TVProgram prog in progs)
+      {
+        if (prog.Start <= lNow && prog.End >= lNow)
+        {
+          return prog;
+        }
+      }
+      return null;
     }
     #endregion
   }
-  #endregion 
+  #endregion
 }
