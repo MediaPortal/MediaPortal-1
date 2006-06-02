@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--  Hungarian Language file updated by Helli Gábor 2006.05.31. --> 
 <strings>
 	<characters>512</characters>
 	<string>
@@ -763,7 +764,7 @@
 	</string>
 	<string>
 		<id>260</id>
-		<value>Kidobás</value>
+		<value>Korong kiadása</value>
 	</string>
 	<string>
 		<id>261</id>
@@ -1043,7 +1044,7 @@
 	</string>
 	<string>
 		<id>330</id>
-		<value>This may take some time...</value>
+		<value>Ez elrtarthat egy darabig...</value>
 	</string>
 	<string>
 		<id>331</id>
@@ -1067,7 +1068,7 @@
 	</string>
 	<string>
 		<id>336</id>
-		<value>Adj. Framerate</value>
+		<value>Képsebesség megadás</value>
 	</string>
 	<string>
 		<id>337</id>
@@ -1143,7 +1144,7 @@
 	</string>
 	<string>
 		<id>355</id>
-		<value>Képernyőpihentető idő letelte után</value>
+		<value>Képernyőpihentető bizonyos idő letelte után</value>
 	</string>
 	<string>
 		<id>356</id>
@@ -1151,7 +1152,7 @@
 	</string>
 	<string>
 		<id>357</id>
-		<value>Leállítás idő letelte után</value>
+		<value>Leállítás bizonyos idő letelte után</value>
 	</string>
 	<string>
 		<id>358</id>
@@ -1167,7 +1168,7 @@
 	</string>
 	<string>
 		<id>361</id>
-		<value>R. Verítés</value>
+		<value>Véletlen Vetítés</value>
 	</string>
 	<string>
 		<id>362</id>
@@ -1439,7 +1440,7 @@
 	</string>
 	<string>
 		<id>431</id>
-		<value>Kevés a cache mérete.</value>
+		<value>Kicsi a cache mérete.</value>
 	</string>
 	<string>
 		<id>432</id>
@@ -1519,19 +1520,19 @@
 	</string>
 	<string>
 		<id>451</id>
-		<value>Row 1 adress:</value>
+		<value>1. sor címe:</value>
 	</string>
 	<string>
 		<id>452</id>
-		<value>Row 2 adress:</value>
+		<value>2. sor címe:</value>
 	</string>
 	<string>
 		<id>453</id>
-		<value>Row 3 adress:</value>
+		<value>3. sor címe:</value>
 	</string>
 	<string>
 		<id>454</id>
-		<value>Row 4 adress:</value>
+		<value>4. sor címe:</value>
 	</string>
 	<string>
 		<id>455</id>
@@ -1543,15 +1544,15 @@
 	</string>
 	<string>
 		<id>457</id>
-		<value>Nézet átváltása</value>
+		<value>Nézet váltás</value>
 	</string>
 	<string>
 		<id>458</id>
-		<value>B/Mark</value>
+		<value>B/Jel</value>
 	</string>
 	<string>
 		<id>459</id>
-		<value>Subs</value>
+		<value>Feliratok</value>
 	</string>
 	<string>
 		<id>460</id>
@@ -1567,7 +1568,7 @@
 	</string>
 	<string>
 		<id>463</id>
-		<value>Hátsó megvilágítás</value>
+		<value>Megvilágítás</value>
 	</string>
 	<string>
 		<id>464</id>
@@ -1607,15 +1608,15 @@
 	</string>
 	<string>
 		<id>473</id>
-		<value>High Quality Resampling</value>
+		<value>Magas Minőségű Resampling</value>
 	</string>
 	<string>
 		<id>474</id>
-		<value>Off</value>
+		<value>ki</value>
 	</string>
 	<string>
 		<id>475</id>
-		<value>Music Only</value>
+		<value>csakis Zene</value>
 	</string>
 	<string>
 		<id>476</id>
@@ -1631,7 +1632,7 @@
 	</string>
 	<string>
 		<id>479</id>
-		<value>Bőr és nyelv</value>
+		<value>Skin és nyelv</value>
 	</string>
 	<string>
 		<id>480</id>
@@ -1687,7 +1688,7 @@
 	</string>
 	<string>
 		<id>493</id>
-		<value>Elad</value>
+		<value>Előadó</value>
 	</string>
 	<string>
 		<id>500</id>
@@ -1695,11 +1696,11 @@
 	</string>
 	<string>
 		<id>501</id>
-		<value>Rendeltetési hely beállítása</value>
+		<value>Cél beállítása</value>
 	</string>
 	<string>
 		<id>502</id>
-		<value>Képtelen a teljes akcióra</value>
+		<value>Nem tudom befejezni a műveletet</value>
 	</string>
 	<string>
 		<id>503</id>
@@ -1719,7 +1720,7 @@
 	</string>
 	<string>
 		<id>507</id>
-		<value>elem</value>
+		<value>elemek</value>
 	</string>
 	<string>
 		<id>508</id>
@@ -1743,23 +1744,23 @@
 	</string>
 	<string>
 		<id>513</id>
-		<value>Művelet nem elvégezhető, folyamat nem futott le</value>
+		<value>Művelet nem elvégezhető, a folyamat nem fejeződött be</value>
 	</string>
 	<string>
 		<id>514</id>
-		<value>Hiba a könyvtár létrehozásakor, folyamat nem futott le</value>
+		<value>Hiba a könyvtár létrehozásakor, a folyamat nem fejeződött be</value>
 	</string>
 	<string>
 		<id>515</id>
-		<value>Hiba a könyvtár törlésekor, folyamat nem futott le</value>
+		<value>Hiba a könyvtár törlésekor, a folyamat nem fejeződött be</value>
 	</string>
 	<string>
 		<id>516</id>
-		<value>A fájlt nem lehet törölni, folyamat nem futott le</value>
+		<value>A fájlt nem lehet törölni, a folyamat nem fejeződött be</value>
 	</string>
 	<string>
 		<id>517</id>
-		<value>Végzetes hiba, folyamat nem futott le</value>
+		<value>Végzetes hiba, a folyamat nem fejeződött be</value>
 	</string>
 	<string>
 		<id>518</id>
@@ -1767,19 +1768,19 @@
 	</string>
 	<string>
 		<id>530</id>
-		<value>Kép lemez beszúrása, akarja, hogy megnyissam?</value>
+		<value>Kép lemezt érzékelek, akarja, hogy lejátszam?</value>
 	</string>
 	<string>
 		<id>531</id>
-		<value>Film lemez beszúrása, akarja, hogy megnyissam?</value>
+		<value>Film lemezt érzékelek, akarja, hogy lejátszam?</value>
 	</string>
 	<string>
 		<id>532</id>
-		<value>Audio lemez beszúrása, akarja, hogy megnyissam?</value>
+		<value>Audio lemezt érzékelek, akarja, hogy lejátszam?</value>
 	</string>
 	<string>
 		<id>550</id>
-		<value>Körülvágás</value>
+		<value>Levágás</value>
 	</string>
 	<string>
 		<id>600</id>
@@ -1899,7 +1900,7 @@
 	</string>
 	<string>
 		<id>629</id>
-		<value>Felvétel álj!</value>
+		<value>Felvétel állj!</value>
 	</string>
 	<string>
 		<id>630</id>
@@ -1911,11 +1912,11 @@
 	</string>
 	<string>
 		<id>632</id>
-		<value>Obiektum</value>
+		<value>Objektumok</value>
 	</string>
 	<string>
 		<id>633</id>
-		<value>Kezdete Dátum/Idő</value>
+		<value>Kezdet Dátum/Idő</value>
 	</string>
 	<string>
 		<id>634</id>
@@ -1943,7 +1944,7 @@
 	</string>
 	<string>
 		<id>640</id>
-		<value>Telítettség</value>
+		<value>Szín telítettség</value>
 	</string>
 	<string>
 		<id>641</id>
@@ -1999,7 +2000,7 @@
 	</string>
 	<string>
 		<id>654</id>
-		<value>Kidobás</value>
+		<value>Korong kiadása</value>
 	</string>
 	<string>
 		<id>655</id>
@@ -2051,7 +2052,7 @@
 	</string>
 	<string>
 		<id>667</id>
-		<value>Autó keresés</value>
+		<value>Auto keresés</value>
 	</string>
 	<string>
 		<id>668</id>
@@ -2127,7 +2128,7 @@
 	</string>
 	<string>
 		<id>686</id>
-		<value>Born</value>
+		<value>született</value>
 	</string>
 	<string>
 		<id>687</id>
@@ -2183,11 +2184,11 @@
 	</string>
 	<string>
 		<id>708</id>
-		<value>Timeshifting</value>
+		<value>Időcsúsztatás</value>
 	</string>
 	<string>
 		<id>709</id>
-		<value>Auto frissítése</value>
+		<value>Auto frissítés</value>
 	</string>
 	<string>
 		<id>710</id>
@@ -2207,11 +2208,11 @@
 	</string>
 	<string>
 		<id>714</id>
-		<value>Lemez beszúrása, akarja, hogy lejátszam?</value>
+		<value>Lemezt érzékelek, akarja, hogy lejátszam?</value>
 	</string>
 	<string>
 		<id>715</id>
-		<value>CD beszúrása, akarja, hogy lejátszam?</value>
+		<value>CD-t érzékelek, akarja, hogy lejátszam?</value>
 	</string>
 	<string>
 		<id>716</id>
@@ -2707,7 +2708,7 @@
 	</string>
 	<string>
 		<id>928</id>
-		<value>Find coverart</value>
+		<value>Borító keresés</value>
 	</string>
 	<string>
 		<id>929</id>
@@ -2795,11 +2796,11 @@
 	</string>
 	<string>
 		<id>950</id>
-		<value>Be Right Back</value>
+		<value>Nemsokára itt vagyok</value>
 	</string>
 	<string>
 		<id>951</id>
-		<value>Away</value>
+		<value>Távol</value>
 	</string>
 	<string>
 		<id>952</id>
@@ -2983,7 +2984,7 @@
 	</string>
 	<string>
 		<id>1005</id>
-		<value>csatornában</value>
+		<value>csatornán</value>
 	</string>
 	<string>
 		<id>1006</id>
@@ -2999,7 +3000,7 @@
 	</string>
 	<string>
 		<id>1009</id>
-		<value>Downloading coverart</value>
+		<value>Borító letöltése</value>
 	</string>
 	<string>
 		<id>1010</id>
@@ -3091,7 +3092,7 @@
 	</string>
 	<string>
 		<id>1034</id>
-		<value>Nincs érzékelhető szignál!</value>
+		<value>Nincs érzékelhető jel!</value>
 	</string>
 	<string>
 		<id>1035</id>
@@ -3191,7 +3192,7 @@
 	</string>
 	<string>
 		<id>1952</id>
-		<value>Fan</value>
+		<value>Ventilátor</value>
 	</string>
 	<string>
 		<id>1953</id>
@@ -3295,7 +3296,7 @@
 	</string>
 	<string>
 		<id>1978</id>
-		<value>VirtualMem</value>
+		<value>Virtuális Memória</value>
 	</string>
 	<string>
 		<id>2005</id>
@@ -3375,7 +3376,7 @@
 	</string>
 	<string>
 		<id>2024</id>
-		<value>csíp</value>
+		<value>szorítás</value>
 	</string>
 	<string>
 		<id>2025</id>
@@ -3387,39 +3388,39 @@
 	</string>
 	<string>
 		<id>2027</id>
-		<value>carton</value>
+		<value>csipet</value>
 	</string>
 	<string>
 		<id>2028</id>
-		<value>bunch</value>
+		<value>köteg</value>
 	</string>
 	<string>
 		<id>2029</id>
-		<value>slice</value>
+		<value>szelet</value>
 	</string>
 	<string>
 		<id>2030</id>
-		<value>each</value>
+		<value>minden</value>
 	</string>
 	<string>
 		<id>2031</id>
-		<value>teaspoon</value>
+		<value>teáskanál</value>
 	</string>
 	<string>
 		<id>2032</id>
-		<value>teaspoon</value>
+		<value>teáskanál</value>
 	</string>
 	<string>
 		<id>2033</id>
-		<value>tablespoon</value>
+		<value>evőkanál</value>
 	</string>
 	<string>
 		<id>2034</id>
-		<value>tablespoon</value>
+		<value>evőkanál</value>
 	</string>
 	<string>
 		<id>2035</id>
-		<value>quart</value>
+		<value>negyed gallon</value>
 	</string>
 	<string>
 		<id>2036</id>
@@ -3427,11 +3428,11 @@
 	</string>
 	<string>
 		<id>2037</id>
-		<value>ounce</value>
+		<value>uncia</value>
 	</string>
 	<string>
 		<id>2038</id>
-		<value>pound</value>
+		<value>found</value>
 	</string>
 	<string>
 		<id>2039</id>
@@ -3523,7 +3524,7 @@
 	</string>
 	<string>
 		<id>2106</id>
-		<value>Adat -DVD Írása</value>
+		<value>Adat-DVD Írása</value>
 	</string>
 	<string>
 		<id>2107</id>
@@ -3603,7 +3604,7 @@
 	</string>
 	<string>
 		<id>2126</id>
-		<value>CD kiadása</value>
+		<value>CD / DVD kiadása</value>
 	</string>
 	<string>
 		<id>2127</id>
@@ -3867,75 +3868,75 @@
 	</string>
 	<string>
 		<id>3022</id>
-		<value>of</value>
+		<value>a</value>
 	</string>
 	<string>
 		<id>5900</id>
-		<value>Elzetesek</value>
+		<value>Előzetesek</value>
 	</string>
 	<string>
 		<id>5901</id>
-		<value>Videk rendezse</value>
+		<value>Mozifilmek megtekintése</value>
 	</string>
 	<string>
 		<id>5902</id>
-		<value>Rendezzem a videkat?</value>
+		<value>Mely mozifilmeket mutassam?</value>
 	</string>
 	<string>
 		<id>5903</id>
-		<value>Hozzads a videkhoz</value>
+		<value>Népszerűbb előzetesek</value>
 	</string>
 	<string>
 		<id>5904</id>
-		<value>Legtbbet nzett videk</value>
+		<value>Legtöbbet nézett előzetesek</value>
 	</string>
 	<string>
 		<id>5905</id>
-		<value>Minden vide</value>
+		<value>Összes előzetes</value>
 	</string>
 	<string>
 		<id>5906</id>
-		<value>Elzetesek</value>
+		<value>Előzetesek</value>
 	</string>
 	<string>
 		<id>5907</id>
-		<value>Klipek</value>
+		<value>Klippek</value>
 	</string>
 	<string>
 		<id>5908</id>
-		<value>Tbb</value>
+		<value>Több</value>
 	</string>
 	<string>
 		<id>5909</id>
-		<value>Nem lehet betlteni a videt!</value>
+		<value>Nem lehet betölteni a videót!</value>
 	</string>
 	<string>
 		<id>5910</id>
-		<value>Vide inf szerzse</value>
+		<value>Mozi információ letöltése</value>
 	</string>
 	<string>
 		<id>5911</id>
-		<value>j a sznhzban</value>
+		<value>Új a moziban</value>
 	</string>
 	<string>
 		<id>5912</id>
-		<value>Kvetkez ht</value>
+		<value>Következő hét</value>
 	</string>
 	<string>
 		<id>5913</id>
-		<value>Ez a ht</value>
+		<value>Ez a hét</value>
 	</string>
 	<string>
 		<id>5914</id>
-		<value>Elz ht</value>
+		<value>Elöző hét</value>
 	</string>
 	<string>
 		<id>5915</id>
-		<value>Mg nincs megtekinthet vide</value>
+		<value>Még nincs megtekinthető videó</value>
 	</string>
 	<string>
 		<id>5916</id>
-		<value>Nem talltam elzeteseket</value>
+		<value>Nem találtam előzeteseket</value>
 	</string>
 	<string>
 		<id>5917</id>
@@ -3983,7 +3984,7 @@
 	</string>
 	<string>
 		<id>8011</id>
-		<value>Kérem menjen el a Beállításokhoz</value>
+		<value>Kérem ellenörizze a Beállításokat</value>
 	</string>
 	<string>
 		<id>8012</id>
@@ -4167,7 +4168,7 @@
 	</string>
 	<string>
 		<id>13013</id>
-		<value>Vdeó betöltése, kérem várjon</value>
+		<value>Videó betöltése, kérem várjon</value>
 	</string>
 	<string>
 		<id>13014</id>
@@ -4199,7 +4200,7 @@
 	</string>
 	<string>
 		<id>19001</id>
-		<value>Tetrisz</value>
+		<value>Tetris</value>
 	</string>
 	<string>
 		<id>19002</id>
@@ -4447,147 +4448,147 @@
 	</string>
 	<string>
 		<id>100607</id>
-		<value>TV/temez/Prioritsok</value>
+		<value>TV/temez/Prioritások</value>
 	</string>
 	<string>
 		<id>100608</id>
-		<value>TV/temez/tkzsek</value>
+		<value>TV/Ütemező/Ütközések</value>
 	</string>
 	<string>
 		<id>100609</id>
-		<value>TV/Tmrts/Elsdleges</value>
+		<value>TV/Tömörítés/Elsődleges</value>
 	</string>
 	<string>
 		<id>100610</id>
-		<value>TV/Tmrts/Belltsok</value>
+		<value>TV/Tömörítés/Beállítások</value>
 	</string>
 	<string>
 		<id>100611</id>
-		<value>TV/Tmrts/Auto</value>
+		<value>TV/Tömörítés/Auto</value>
 	</string>
 	<string>
 		<id>100612</id>
-		<value>TV/Tmrts/Tmrts</value>
+		<value>TV/Tömörítés/Tmrts</value>
 	</string>
 	<string>
 		<id>100613</id>
-		<value>TV/Tmrts/llapot</value>
+		<value>TV/Tömörítés/állapot</value>
 	</string>
 	<string>
 		<id>100614</id>
-		<value>Vide elad inf</value>
+		<value>Videó előadó információ</value>
 	</string>
 	<string>
 		<id>100615</id>
-		<value>Varzsl/Kezds</value>
+		<value>Varázsló/Kezdés</value>
 	</string>
 	<string>
 		<id>100616</id>
-		<value>Varzsl/Krtya detektlsa</value>
+		<value>Varázsló/Kártya detektálása</value>
 	</string>
 	<string>
 		<id>100617</id>
-		<value>Varzsl/Orszg</value>
+		<value>Varázsló/Ország</value>
 	</string>
 	<string>
 		<id>100618</id>
-		<value>Varzsl/Keress</value>
+		<value>Varázsló/Keress</value>
 	</string>
 	<string>
 		<id>100619</id>
-		<value>Varzsl/DVBC/Orszg</value>
+		<value>Varázsló/DVBC/Ország</value>
 	</string>
 	<string>
 		<id>100620</id>
-		<value>Varzsl/DVBC/Keress</value>
+		<value>Varázsló/DVBC/Keress</value>
 	</string>
 	<string>
 		<id>100621</id>
-		<value>Varzsl/DVBC/LNB</value>
+		<value>Varázsló/DVBC/LNB</value>
 	</string>
 	<string>
 		<id>100622</id>
-		<value>Varzsl/DVBC/LNB rszletek</value>
+		<value>Varázsló/DVBC/LNB részletek</value>
 	</string>
 	<string>
 		<id>100623</id>
-		<value>Varzsl/DVBC/Transponder</value>
+		<value>Varázsló/DVBC/Transponder</value>
 	</string>
 	<string>
 		<id>100624</id>
-		<value>Varzsl/DVBC/Keress</value>
+		<value>Varázsló/DVBC/Keress</value>
 	</string>
 	<string>
 		<id>100625</id>
-		<value>Varzsl/ATSC/Keress</value>
+		<value>Varázsló/ATSC/Keress</value>
 	</string>
 	<string>
 		<id>100626</id>
-		<value>Varzsl/Analg/Orszg</value>
+		<value>Varázsló/Analóg/Ország</value>
 	</string>
 	<string>
 		<id>100627</id>
-		<value>Varzsl/Analg/Vros</value>
+		<value>Varázsló/Analóg/Város</value>
 	</string>
 	<string>
 		<id>100628</id>
-		<value>Varzsl/Analg/Importl</value>
+		<value>Varázsló/Analóg/Importálás</value>
 	</string>
 	<string>
 		<id>100629</id>
-		<value>Varzsl/Analg/Kzi</value>
+		<value>Varázsló/Analóg/Manuális</value>
 	</string>
 	<string>
 		<id>100630</id>
-		<value>Varzsl/Analg/Keress</value>
+		<value>Varázsló/Analóg/Keress</value>
 	</string>
 	<string>
 		<id>100631</id>
-		<value>Varzsl/Analg/tnevez</value>
+		<value>Varázsló/Analóg/Átnevez</value>
 	</string>
 	<string>
 		<id>100632</id>
-		<value>Varzsl/Analg/Rdi</value>
+		<value>Varázsló/Analóg/Rádió</value>
 	</string>
 	<string>
 		<id>100633</id>
-		<value>Varzsl/Analg/Rdi tnevezse</value>
+		<value>Varázsló/Analóg/Rádió Átnevezése</value>
 	</string>
 	<string>
 		<id>100634</id>
-		<value>Varzsl/Tvirnyt</value>
+		<value>Varázsló/Távirányító</value>
 	</string>
 	<string>
 		<id>100635</id>
-		<value>Varzsl/EPG</value>
+		<value>Varázsló/EPG</value>
 	</string>
 	<string>
 		<id>100699</id>
-		<value>Varzsl/Ksz</value>
+		<value>Varázsló/Kész</value>
 	</string>
 	<string>
 		<id>100700</id>
-		<value>TV Belltsok</value>
+		<value>TV Beállítások</value>
 	</string>
 	<string>
 		<id>100701</id>
-		<value>TV felvteli belltsok</value>
+		<value>TV felvételi beállítások</value>
 	</string>
 	<string>
 		<id>100702</id>
-		<value>TV Csatorna fejtk</value>
+		<value>TV Csatorna rendezés</value>
 	</string>
 	<string>
 		<id>100703</id>
-		<value>TV Vide belltsok</value>
+		<value>TV Mozi beállítások</value>
 	</string>
 	<string>
 		<id>100704</id>
-		<value>DVD Belltsok</value>
+		<value>DVD Beállítások</value>
 	</string>
 	<string>
 		<id>100705</id>
-		<value>Skin belltsok</value>
+		<value>Skin beállítások</value>
 	</string>
 	<string>
 		<id>100748</id>
@@ -4615,11 +4616,11 @@
 	</string>
 	<string>
 		<id>100758</id>
-		<value>Fájl dialog</value>
+		<value>Fájl dialogus</value>
 	</string>
 	<string>
 		<id>100759</id>
-		<value>Felvett TV Inf</value>
+		<value>Felvett TV Információ</value>
 	</string>
 	<string>
 		<id>100760</id>
@@ -4671,7 +4672,7 @@
 	</string>
 	<string>
 		<id>102009</id>
-		<value>Kiválasztás dialog</value>
+		<value>Kiválasztás dialogus</value>
 	</string>
 	<string>
 		<id>102010</id>
@@ -4687,7 +4688,7 @@
 	</string>
 	<string>
 		<id>102013</id>
-		<value>Set Rating</value>
+		<value>Értékelés beállítás</value>
 	</string>
 	<string>
 		<id>102014</id>
@@ -4739,19 +4740,19 @@
 	</string>
 	<string>
 		<id>200000</id>
-		<value>Kérem adja meg az EPG keresőt. Ha az Ön országában</value>
+		<value>Kérlek add meg az EPG keresőt. Ha nem találod az országodat</value>
 	</string>
 	<string>
 		<id>200001</id>
-		<value>nincs lista akkor állítsa be kézzel az EPG beállításokat.</value>
+		<value>a listán, akkor kézzel kell beállítani az EPG-t.</value>
 	</string>
 	<string>
 		<id>200002</id>
-		<value>Rendelje a TV csatornához az EPG csatornákat</value>
+		<value>Rendeld a TV csatornához az EPG csatornákat</value>
 	</string>
 	<string>
 		<id>200003</id>
-		<value>jelölje ki csatornát és nyomjon Entert a hozzárendeléshez.</value>
+		<value>jelöld ki a csatornát és nyomj Entert a hozzárendeléshez.</value>
 	</string>
 	<string>
 		<id>200004</id>
@@ -4759,17 +4760,17 @@
 	</string>
 	<string>
 		<id>200005</id>
-		<value>Kérem adja meg a távirányító típusát:</value>
+		<value>Kérlek add meg a távirányító típusát:</value>
 	</string>
 	<string>
 		<id>200006</id>
-		<value>Ugorjon a következő beállítási lapra:</value>
+		<value>Tovább a következő beállítási oldalra:</value>
 	</string>
 	<string>
 		<id>200007</id>
 		<value>&lt;Vissza</value>
 	</string>
-	<string>
+<string>
 		<id>200008</id>
 		<value>Beállítások - Távirányító</value>
 	</string>
@@ -4779,39 +4780,36 @@
 	</string>
 	<string>
 		<id>200010</id>
-		<value>A MediaPortal az Ön PC-ből tökéletes Multi-Media Központot / HTPC-t készít.</value>
+		<value>A MediaPortal a számítógépedet egy tökéletes Multi-Média Központtá (HTPC) változtatja.</value>
 	</string>
 	<string>
 		<id>200011</id>
-		<value>Ön a MediaPortal-lal élvezni fogja a zenehallgatást és filmnézést</value>
+		<value>Élvezetssebbé válik a kedvenc zenéidnek a hallgatása, a rádiózás, a digitális fényképek</value>
 	</string>
 	<string>
 		<id>200013</id>
-		<value>Hozzájárul, hogy Ön hallgassa kedvenc zenéit és rádióit, megtekintse videóit és DVD-it</value>
+		<value>A varázsló segít, hogy a Mediaportal-t egyszerűen és gyorsan beállítsd. Kérlek kövesd a lépéseket.</value>
 	</string>
 	<string>
 		<id>200014</id>
-		<value>képeket, videókat nézhet és felveheti kedvenc TV műsorait.</value>
+		<value>Kezdjük a nyelv beállításokkal:</value>
 	</string>
 	<string>
 		<id>200015</id>
-		<value>Ez a varázsló segít, hogy a Mediaportal-t gyorsan és könnyen beállítsa. Kövesse végig a lépéseket</value>
+		<value>Kattints a Továbbra, ha kezdhetjük.</value>
 	</string>
-	<string>
-		<id>200016</id>
-		<value>Kattintson a Továbbra, ha kezdhetjük</value>
-	</string>
+	
 	<string>
 		<id>200017</id>
-		<value>Üdvözöljük a MediaPortal-ban.</value>
+		<value>Üdvözöllek a MediaPortal-ban!</value>
 	</string>
 	<string>
 		<id>200018</id>
-		<value>Gratulálunk! A Mediaportált telepítette és készen áll a használatra</value>
+		<value>Gratulálok! A Mediaportál telepítése sikeresen befejeződött és készen áll a használatra.</value>
 	</string>
 	<string>
 		<id>200019</id>
-		<value>Nyomjon Entert a varázsló befejezéséhez</value>
+		<value>Nyomj Entert a varázsló befejezéséhez.</value>
 	</string>
 	<string>
 		<id>200020</id>
@@ -4827,7 +4825,7 @@
 	</string>
 	<string>
 		<id>200023</id>
-		<value>Kattintson a Továbbra, hogy a kártyákat konfigurálja</value>
+		<value>Kattints a Továbbra, hogy a kártyákat konfiguráljam.</value>
 	</string>
 	<string>
 		<id>200024</id>
@@ -4835,10 +4833,564 @@
 	</string>
 	<string>
 		<id>4000</id>
-		<value>Webbngsz</value>
+		<value>Webböngésző</value>
 	</string>
 	<string>
 		<id>4001</id>
 		<value>Kedvencek</value>
 	</string>
+
+
+
+<!--  Begin Addtional strings updated by Helli Gábor 2006.06.01. --> 
+
+<string>
+    <id>395</id>
+    <value>Köd</value>
+  </string>
+
+<string>
+  	<id>519</id>
+  	<value>Feliratok ki</value>
+  </string> 
+
+<string>
+    <id>529</id>
+    <value>Nézet: Nagy Ikon Lista</value>
+  </string>
+<string>
+    <id>533</id>
+    <value>Műsorfüzet</value>
+  </string>
+<string>
+    <id>534</id>
+    <value>Mérsékelt</value>
+  </string>
+
+<string>
+    <id>751</id>
+    <value>Mutasd az előadó összes számát</value>
+  </string>
+<string>
+    <id>752</id>
+    <value>Nincs a rögzités beállítva</value>
+  </string>
+<string>
+    <id>753</id>
+    <value>Nincs tuner kártya telepítve</value>
+  </string>
+<string>
+    <id>754</id>
+    <value>Nincs tuner a műsor rögzitésére</value>
+  </string>
+<string>
+    <id>755</id>
+    <value>Nincs tuner a tévézéshez</value>
+  </string>
+<string>
+    <id>756</id>
+    <value>Nincs tuner a vételhez:{0}</value>
+  </string>
+<string>
+    <id>757</id>
+    <value>Az összes tuner várakozik</value>
+	 </string>
+<string>
+    <id>758</id>
+    <value>A tuner nem rögzít</value>
+  </string>
+<string>
+    <id>759</id>
+    <value>Nem tudom a elindítani az időcsúsztatást</value>
+  </string>
+<string>
+    <id>760</id>
+    <value>Nincs tuner a időcsúsztatáshoz</value>
+  </string>
+<string>
+    <id>761</id>
+    <value>Nem tudom leállítani a időcsúsztatást</value>
+  </string>
+<string>
+    <id>762</id>
+    <value>Nem tudom elindítani tévét</value>
+  </string>
+<string>
+    <id>763</id>
+    <value>A rögzítő várakozik</value>
+  </string>
+<string>
+    <id>764</id>
+    <value>A rögzítő szünetel</value>
+  </string>
+<string>
+    <id>765</id>
+    <value>Nincs elég üres hely</value>
+  </string>
+<string>
+    <id>766</id>
+    <value>már importálva...</value>
+  </string>
+<string>
+    <id>767</id>
+    <value>Rossz XMLTV fájl</value>
+  </string>
+<string>
+    <id>768</id>
+    <value>Nem találtam csatornákat</value>
+	</string>
+<string>
+    <id>769</id>
+    <value>Nem találtam programot</value>
+	</string>
+<string>
+    <id>770</id>
+    <value>Nem találtam xmltv fájlt</value>
+	  </string>
+<string>
+	<id>771</id>
+	<value>A megadott PIN nem elfogadható</value>
+	  </string>
+<string>
+	<id>772</id>
+	<value>Megprobálod újra?</value>
+	  </string>
+<string>
+	<id>773</id>
+	<value>KEZDET</value>
+  </string>
+<string>
+	<id>774</id>
+    <value>VÉG</value>
+  </string>    
+<string>
+	<id>1049</id>
+    <value>Hibernálás</value>
+  </string>
+
+  <!-- Recording Type: WeekEnds -->
+<string>
+    <id>1050</id>
+    <value>Sz-V</value>
+  </string>
+<string>
+    <id>1051</id>
+    <value>Rögzít Sz-V</value>
+  </string>
+<string>
+    <id>1052</id>
+    <value>zene</value>
+  </string>
+  <!-- End Recording Type: WeekEnds -->
+
+<!-- Music Import Strings -->
+<string>
+    <id>1100</id>
+    <value>CD importálása</value>
+  </string>
+<string>
+    <id>1101</id>
+    <value>A kiválasztott szám importálása</value>
+  </string>
+<string>
+    <id>1102</id>
+    <value>CD importálás bezárása</value>
+  </string>
+<string>
+    <id>1103</id>
+    <value>Szám importálás</value>
+  </string>
+<string>
+    <id>1104</id>
+    <value>bal</value>
+  </string>
+  <string>
+    <id>1105</id>
+    <value>Számok importálása</value>
+  </string>
+  <!-- End Music Import Strings -->
+
+<string>
+    <id>1448</id>
+    <value>Nincs kijelölve semmi</value>
+  </string>
+<string>
+    <id>1449</id>
+    <value>Rögzítés leállítása</value>
+  </string>
+<string>
+    <id>1450</id>
+    <value>Biztos vagy benne hogy leállítsam a rögzítést?</value>
+  </string>
+
+<string>
+    <id>2080</id>
+    <value>Nem támogatott fájl típus</value>
+  </string>	
+<string>
+    <id>2081</id>
+    <value>Nem tudom vágni</value>
+  </string>
+<string>
+    <id>2082</id>
+    <value>Mpeg:A vágás befejeződött</value>
+  </string>
+<string>
+    <id>2083</id>
+    <value>Dvrms:A vágás befejeződött</value>
+  </string>
+
+  <!-- End of My Recipie Strings -->
+  
+<string>
+    <id>2084</id>
+    <value>kezdet</value>
+  </string>   
+<string>
+    <id>2085</id>
+    <value>vége</value>
+  </string>   
+<string>
+    <id>2086</id>
+    <value>előre</value>
+  </string>   
+<string>
+    <id>2087</id>
+    <value>vissza</value>
+  </string>   
+<string>
+    <id>2088</id>
+    <value>Vágás lista:</value>
+  </string>   
+<string>
+    <id>2089</id>
+    <value>minőség beállítás</value>
+  </string>   
+<string>
+    <id>2090</id>
+    <value>Dvr-MpegCut</value>
+  </string>
+<string>
+    <id>2091</id>
+    <value>A folyamat be lett zárva</value>
+</string>  
+    <string>
+  <id>2092</id>
+    <value>Kérlek, válassz fájlt a szerkesztéshez:</value>
+  </string> 
+<string>
+    <id>2093</id>
+    <value>hozzáad</value>
+  </string> 
+<string>
+    <id>2094</id>
+    <value>Videó lista</value>
+  </string>
+<string>
+    <id>2095</id>
+    <value>Vág</value>
+  </string> 
+
+<string>
+    <id>2097</id>
+    <value>régi időtartam:</value>
+  </string>
+<string>
+    <id>2098</id>
+    <value>új időtartam:</value>
+  </string>          
+<string>
+    <id>2099</id>
+    <value>jelenlegi pozició:</value>
+  </string> 
+<string>
+	<id>2997</id>
+    <value>ó</value>
+  </string>
+<string>
+    <id>2998</id>
+    <value>p</value>
+  </string>
+<string>
+    <id>2999</id>
+    <value>mp</value>
+  </string>    
+
+<string>
+   <id>5918</id>
+   <value>Television Suisse Romande VOD</value>
+ </string>
+<string>
+   <id>5919</id>
+   <value>Hétvégi box office</value>
+ </string>
+<string>
+   <id>5920</id>
+   <value>Új mozik ezek a héten</value>
+ </string>
+<string>
+   <id>5921</id>
+   <value>Mozifilmek a közeljövőben</value>
+ </string>
+<string>
+   <id>5922</id>
+   <value>A legjobban fogyó DVD-k</value>
+ </string>
+<string>
+   <id>5923</id>
+   <value>Új DVD-k ezen a héten</value>
+ </string>
+<string>
+   <id>5924</id>
+   <value>Új DVD-k a következő héten</value>
+ </string>
+<string>
+   <id>5925</id>
+   <value>DVD előrendelések</value>
+ </string>
+
+<string>
+    <id>200012</id>
+    <value>nézegetése, a videózás, dvd filmek nézése és sok más dolog.</value>
+  </string>
+
+<string>
+    <id>200025</id>
+    <value>Nyelv</value>
+  </string>
+<string>
+    <id>200026</id>
+    <value>Ország</value>
+  </string>
+
+<string>
+    <id>200027</id>
+    <value>Fő Beállítások</value>
+  </string>
+<string>
+    <id>200028</id>
+    <value>Ez a PC rendelkezik állandó Internet kapcsolattal?</value>
+  </string>
+<string>
+    <id>200029</id>
+    <value>Hogyan használod MediaPortal-t?</value>
+  </string>
+<string>
+    <id>200030</id>
+    <value>A kijelölt PC-n</value>
+  </string>
+
+<string>
+    <id>200038</id>
+    <value>Asztali PC-n, más alkalmazásokkal osztozkodva</value>
+  </string>
+
+<string>
+    <id>200031</id>
+    <value>Igen</value>
+  </string>
+<string>
+    <id>200032</id>
+    <value>Nem</value>
+  </string>
+
+<string>
+    <id>200033</id>
+    <value>TV beállítás - Analog TV</value>
+  </string>
+<string>
+    <id>200034</id>
+    <value>Kérlek válasz várost a következő listából.</value>
+  </string>
+<string>
+    <id>200035</id>
+    <value>Figyelmeztetés, ha a listában nem szerepel a városod, akkor manuálisan kell kerestetni csatornát.</value>
+  </string>
+
+<string>
+    <id>200036</id>
+    <value>Manuális Keresés</value>
+  </string>
+<string>
+    <id>200037</id>
+    <value>Átugrik &gt;</value>
+  </string>
+
+<string>
+    <id>4002</id>
+    <value>Nem tudom betölteni az URL-t</value>
+  </string>
+<string>
+    <id>4003</id>
+    <value>Kérlek adj meg egy Kedvencek mappát a beállításnál.</value>
+  </string>
+
+
+  <!-- Begin Cover Art Grabber Strings -->
+<string>
+    <id>4500</id>
+    <value>Kihagyva azok az albumok, melyeknek már van borítója</value>
+  </string>
+<string>
+    <id>4501</id>
+    <value>Borító mentése az album mappába</value>
+  </string>
+<string>
+    <id>4502</id>
+    <value>Borító mentése az album mappába a thumbs mappába</value>
+  </string>
+<string>
+    <id>4503</id>
+    <value>Megállapítom az albumok számát. Kérlek várj...</value>
+  </string>
+<string>
+    <id>4504</id>
+    <value>{0}% - {1} of {2}</value>
+  </string>
+<string>
+    <id>4505</id>
+    <value>Keresés {0}...</value>
+  </string>
+<string>
+    <id>4506</id>
+    <value>[Üres]</value>
+  </string>
+<string>
+    <id>4507</id>
+    <value>Borító leszedő leállítva</value>
+  </string>
+<string>
+    <id>4508</id>
+    <value>Borító leszedő sikeresen végzet</value>
+  </string>
+<string>
+    <id>4509</id>
+    <value>A borító leszedés hibával fejeződött be</value>
+  </string>
+<string>
+    <id>4510</id>
+    <value>{0} borító képek frissítve</value>
+  </string>
+<string>
+    <id>4511</id>
+    <value>Borító leszedő Rendben</value>
+  </string>
+<string>
+    <id>4512</id>
+    <value>Összes borító felfrissítése</value>
+  </string>
+<string>
+    <id>4513</id>
+    <value>különböző</value>
+  </string>
+<string>
+    <id>4514</id>
+    <value>Borító Leszedő</value>
+  </string>
+<string>
+    <id>4515</id>
+    <value>Borító leszedő keresési eredmény:</value>
+  </string>
+<string>
+    <id>4516</id>
+    <value>Nem találtam borítót</value>
+  </string>
+<string>
+    <id>4517</id>
+    <value>Bezár</value>
+  </string>
+<string>
+    <id>4518</id>
+    <value>Az album címet nem találom\r\nProbáld meg: {0}</value>
+  </string>
+<string>
+    <id>4519</id>
+    <value>Jelenlegi borító</value>
+  </string>
+<string>
+    <id>4520</id>
+    <value>Átugrás</value>
+  </string>
+<string>
+    <id>4521</id>
+    <value>Mutatni az album információkat</value>
+	 </string>
+<string>
+    <id>4522</id>
+    <value>Leszedés: {0}...</value>
+  </string>
+  <!-- End Cover Art Grabber Strings -->
+  <!-- Begin Playing Now Strings -->
+<string>
+    <id>4540</id>
+    <value>Jelenlegi lejátszása</value>
+  </string>  
+<string>
+    <id>4541</id>
+    <value>Következő lejátszása</value>
+  </string>
+<string>
+    <id>4542</id>
+    <value>Nincs lejátszási lista betöltve</value>
+  </string>
+<string>
+    <id>4543</id>
+    <value>Szám információk nem állnak rendelkezésre</value>
+  </string>  
+  <!-- End Playing Now Strings -->
+  <!-- Begin Addtional MyMusic Strings -->
+<string>
+    <id>4550</id>
+    <value>Várakozó sorba helyez</value>
+  </string>  
+<string>
+    <id>4551</id>
+    <value>Következő lejátszása</value>
+  </string>  
+<string>
+    <id>4552</id>
+    <value>Jelenlegi lejátszása</value>
+  </string>  
+<string>
+    <id>4553</id>
+    <value>Mutassam a lejátszási listát</value>
+  </string>  
+<string>
+    <id>4554</id>
+    <value>Keresem a CD információt</value>
+  </string>  
+<string>
+    <id>4555</id>
+    <value>Jelenlegi lejátszás lista</value>
+  </string>  
+<string>
+    <id>4557</id>
+    <value>Add all to playlist</value>
+</string>  
+  <!-- End Addtional MyMusic Strings -->
+  <!-- Begin Minesweeper Strings -->
+<string>
+    <id>10100</id>
+    <value>Rejtett aknák</value>
+  </string>
+<string>
+    <id>10101</id>
+    <value>Játék idő</value>
+  </string>
+<string>
+    <id>10102</id>
+    <value>Leggyorsabb idő</value>
+  </string>
+<string Prefix="Én ">
+    <id>10103</id>
+    <value>Aknakereső</value>
+  </string>    
+  <!-- End Minesweeper Strings -->
+<string>
+	<id>10104</id>
+	<value>Mini EPG</value>
+  </string>
+
+
 </strings>
+
