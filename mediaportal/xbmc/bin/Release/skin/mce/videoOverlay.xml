@@ -54,7 +54,7 @@
 		<posY>530</posY>
 		<align>left</align>  
 		<font>font13</font> 
-		<label>#title\r#genre\r#year\r#director</label>
+		<label>#Play.Current.Title\r#Play.Current.Genre\r#Play.Current.Year\r#Play.Current.Director</label>
 		<id>5</id> 
 	</control>
 	<control>
