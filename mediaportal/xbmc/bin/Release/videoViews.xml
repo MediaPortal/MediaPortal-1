@@ -11,19 +11,19 @@
 <item href="#ref-5"/>
 <item href="#ref-6"/>
 </SOAP-ENC:Array>
-<a3:ViewDefinition id="ref-3" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2342.875%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:ViewDefinition id="ref-3" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2343.18200%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <listFilters href="#ref-8"/>
 <name id="ref-9">135</name>
 </a3:ViewDefinition>
-<a3:ViewDefinition id="ref-4" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2342.875%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:ViewDefinition id="ref-4" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2343.18200%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <listFilters href="#ref-10"/>
 <name id="ref-11">344</name>
 </a3:ViewDefinition>
-<a3:ViewDefinition id="ref-5" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2342.875%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:ViewDefinition id="ref-5" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2343.18200%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <listFilters href="#ref-12"/>
 <name id="ref-13">369</name>
 </a3:ViewDefinition>
-<a3:ViewDefinition id="ref-6" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2342.875%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:ViewDefinition id="ref-6" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2343.18200%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <listFilters href="#ref-14"/>
 <name id="ref-15">987</name>
 </a3:ViewDefinition>
@@ -62,7 +62,7 @@
 <item href="#ref-25"/>
 <item href="#ref-26"/>
 </SOAP-ENC:Array>
-<a3:FilterDefinition id="ref-20" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2342.875%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-20" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2343.18200%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction id="ref-27"></restriction>
@@ -74,7 +74,7 @@
 <defaultView id="ref-30">List</defaultView>
 <limit>-1</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-21" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2342.875%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-21" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2343.18200%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-27"/>
@@ -86,7 +86,7 @@
 <defaultView href="#ref-30"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-22" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2342.875%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-22" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2343.18200%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-27"/>
@@ -98,7 +98,7 @@
 <defaultView href="#ref-30"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-23" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2342.875%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-23" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2343.18200%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-27"/>
@@ -110,7 +110,7 @@
 <defaultView href="#ref-30"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-24" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2342.875%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-24" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2343.18200%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-27"/>
@@ -122,7 +122,7 @@
 <defaultView href="#ref-30"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-25" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2342.875%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-25" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2343.18200%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-27"/>
@@ -134,7 +134,7 @@
 <defaultView href="#ref-30"/>
 <limit>-1</limit>
 </a3:FilterDefinition>
-<a3:FilterDefinition id="ref-26" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2342.875%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
+<a3:FilterDefinition id="ref-26" xmlns:a3="http://schemas.microsoft.com/clr/nsassem/MediaPortal.GUI.View/Core%2C%20Version%3D1.0.2343.18200%2C%20Culture%3Dneutral%2C%20PublicKeyToken%3Dnull">
 <distinct>false</distinct>
 <sortAscending>true</sortAscending>
 <restriction href="#ref-27"/>
