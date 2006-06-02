@@ -38,8 +38,8 @@ namespace MediaPortal.Configuration.Sections
 {
   public class MovieViews : SectionSettings
   {
-      private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-  
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
+
     public class SyncedCheckBox : CheckBox
     {
       private DataGrid grid;
@@ -125,19 +125,20 @@ namespace MediaPortal.Configuration.Sections
         catch (Exception)
         { }
       }
-  }
-      private DataGrid dataGrid1;
-      private MediaPortal.UserInterface.Controls.MPLabel label1;
-      private MediaPortal.UserInterface.Controls.MPComboBox cbViews;
-      private MediaPortal.UserInterface.Controls.MPButton btnSave;
-      private MediaPortal.UserInterface.Controls.MPButton btnDelete;
+    }
+    private DataGrid dataGrid1;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPComboBox cbViews;
+    private MediaPortal.UserInterface.Controls.MPButton btnSave;
+    private MediaPortal.UserInterface.Controls.MPButton btnDelete;
     private IContainer components = null;
 
     private ViewDefinition currentView;
-      private ArrayList views;
-      private MediaPortal.UserInterface.Controls.MPLabel label2;
-      private MediaPortal.UserInterface.Controls.MPTextBox tbViewName;
+    private ArrayList views;
+    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPTextBox tbViewName;
     private bool updating = false;
+    private bool settingsChanged = false;
 
     private string[] selections = new string[]
       {
@@ -237,7 +238,7 @@ namespace MediaPortal.Configuration.Sections
       currentView = (ViewDefinition)cbViews.SelectedItem;
       if (currentView == null)
       {
-          return;
+        return;
       }
       tbViewName.Text = currentView.Name;
 
@@ -415,118 +416,118 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-        this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-        this.tbViewName = new MediaPortal.UserInterface.Controls.MPTextBox();
-        this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
-        this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
-        this.cbViews = new MediaPortal.UserInterface.Controls.MPComboBox();
-        this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.dataGrid1 = new System.Windows.Forms.DataGrid();
-        this.groupBox1.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
-        this.SuspendLayout();
-        // 
-        // groupBox1
-        // 
-        this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                    | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.groupBox1.Controls.Add(this.tbViewName);
-        this.groupBox1.Controls.Add(this.label2);
-        this.groupBox1.Controls.Add(this.btnDelete);
-        this.groupBox1.Controls.Add(this.btnSave);
-        this.groupBox1.Controls.Add(this.cbViews);
-        this.groupBox1.Controls.Add(this.label1);
-        this.groupBox1.Controls.Add(this.dataGrid1);
-        this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-        this.groupBox1.Location = new System.Drawing.Point(0, 0);
-        this.groupBox1.Name = "groupBox1";
-        this.groupBox1.Size = new System.Drawing.Size(472, 352);
-        this.groupBox1.TabIndex = 0;
-        this.groupBox1.TabStop = false;
-        // 
-        // tbViewName
-        // 
-        this.tbViewName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.tbViewName.Location = new System.Drawing.Point(198, 44);
-        this.tbViewName.Name = "tbViewName";
-        this.tbViewName.Size = new System.Drawing.Size(258, 20);
-        this.tbViewName.TabIndex = 3;
-        // 
-        // label2
-        // 
-        this.label2.Location = new System.Drawing.Point(16, 48);
-        this.label2.Name = "label2";
-        this.label2.Size = new System.Drawing.Size(146, 16);
-        this.label2.TabIndex = 2;
-        this.label2.Text = "Name or Localized Code:";
-        // 
-        // btnDelete
-        // 
-        this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-        this.btnDelete.Location = new System.Drawing.Point(384, 320);
-        this.btnDelete.Name = "btnDelete";
-        this.btnDelete.Size = new System.Drawing.Size(72, 22);
-        this.btnDelete.TabIndex = 6;
-        this.btnDelete.Text = "Delete";
-        this.btnDelete.UseVisualStyleBackColor = true;
-        this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-        // 
-        // btnSave
-        // 
-        this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-        this.btnSave.Location = new System.Drawing.Point(304, 320);
-        this.btnSave.Name = "btnSave";
-        this.btnSave.Size = new System.Drawing.Size(72, 22);
-        this.btnSave.TabIndex = 5;
-        this.btnSave.Text = "Save";
-        this.btnSave.UseVisualStyleBackColor = true;
-        this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-        // 
-        // cbViews
-        // 
-        this.cbViews.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.cbViews.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-        this.cbViews.Location = new System.Drawing.Point(198, 20);
-        this.cbViews.Name = "cbViews";
-        this.cbViews.Size = new System.Drawing.Size(258, 21);
-        this.cbViews.TabIndex = 1;
-        this.cbViews.SelectedIndexChanged += new System.EventHandler(this.cbViews_SelectedIndexChanged);
-        // 
-        // label1
-        // 
-        this.label1.Location = new System.Drawing.Point(16, 24);
-        this.label1.Name = "label1";
-        this.label1.Size = new System.Drawing.Size(32, 16);
-        this.label1.TabIndex = 0;
-        this.label1.Text = "View:";
-        // 
-        // dataGrid1
-        // 
-        this.dataGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                    | System.Windows.Forms.AnchorStyles.Left)
-                    | System.Windows.Forms.AnchorStyles.Right)));
-        this.dataGrid1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-        this.dataGrid1.DataMember = "";
-        this.dataGrid1.FlatMode = true;
-        this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
-        this.dataGrid1.Location = new System.Drawing.Point(16, 72);
-        this.dataGrid1.Name = "dataGrid1";
-        this.dataGrid1.Size = new System.Drawing.Size(440, 237);
-        this.dataGrid1.TabIndex = 4;
-        // 
-        // MovieViews
-        // 
-        this.Controls.Add(this.groupBox1);
-        this.Name = "MovieViews";
-        this.Size = new System.Drawing.Size(472, 408);
-        this.groupBox1.ResumeLayout(false);
-        this.groupBox1.PerformLayout();
-        ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).EndInit();
-        this.ResumeLayout(false);
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.tbViewName = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
+      this.cbViews = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.dataGrid1 = new System.Windows.Forms.DataGrid();
+      this.groupBox1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).BeginInit();
+      this.SuspendLayout();
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.tbViewName);
+      this.groupBox1.Controls.Add(this.label2);
+      this.groupBox1.Controls.Add(this.btnDelete);
+      this.groupBox1.Controls.Add(this.btnSave);
+      this.groupBox1.Controls.Add(this.cbViews);
+      this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.Controls.Add(this.dataGrid1);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(472, 352);
+      this.groupBox1.TabIndex = 0;
+      this.groupBox1.TabStop = false;
+      // 
+      // tbViewName
+      // 
+      this.tbViewName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbViewName.Location = new System.Drawing.Point(198, 44);
+      this.tbViewName.Name = "tbViewName";
+      this.tbViewName.Size = new System.Drawing.Size(258, 20);
+      this.tbViewName.TabIndex = 3;
+      // 
+      // label2
+      // 
+      this.label2.Location = new System.Drawing.Point(16, 48);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(146, 16);
+      this.label2.TabIndex = 2;
+      this.label2.Text = "Name or Localized Code:";
+      // 
+      // btnDelete
+      // 
+      this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnDelete.Location = new System.Drawing.Point(384, 320);
+      this.btnDelete.Name = "btnDelete";
+      this.btnDelete.Size = new System.Drawing.Size(72, 22);
+      this.btnDelete.TabIndex = 6;
+      this.btnDelete.Text = "Delete";
+      this.btnDelete.UseVisualStyleBackColor = true;
+      this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+      // 
+      // btnSave
+      // 
+      this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnSave.Location = new System.Drawing.Point(304, 320);
+      this.btnSave.Name = "btnSave";
+      this.btnSave.Size = new System.Drawing.Size(72, 22);
+      this.btnSave.TabIndex = 5;
+      this.btnSave.Text = "Save";
+      this.btnSave.UseVisualStyleBackColor = true;
+      this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+      // 
+      // cbViews
+      // 
+      this.cbViews.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbViews.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.cbViews.Location = new System.Drawing.Point(198, 20);
+      this.cbViews.Name = "cbViews";
+      this.cbViews.Size = new System.Drawing.Size(258, 21);
+      this.cbViews.TabIndex = 1;
+      this.cbViews.SelectedIndexChanged += new System.EventHandler(this.cbViews_SelectedIndexChanged);
+      // 
+      // label1
+      // 
+      this.label1.Location = new System.Drawing.Point(16, 24);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(32, 16);
+      this.label1.TabIndex = 0;
+      this.label1.Text = "View:";
+      // 
+      // dataGrid1
+      // 
+      this.dataGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.dataGrid1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+      this.dataGrid1.DataMember = "";
+      this.dataGrid1.FlatMode = true;
+      this.dataGrid1.HeaderForeColor = System.Drawing.SystemColors.ControlText;
+      this.dataGrid1.Location = new System.Drawing.Point(16, 72);
+      this.dataGrid1.Name = "dataGrid1";
+      this.dataGrid1.Size = new System.Drawing.Size(440, 237);
+      this.dataGrid1.TabIndex = 4;
+      // 
+      // MovieViews
+      // 
+      this.Controls.Add(this.groupBox1);
+      this.Name = "MovieViews";
+      this.Size = new System.Drawing.Size(472, 408);
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGrid1)).EndInit();
+      this.ResumeLayout(false);
 
     }
 
@@ -621,20 +622,21 @@ namespace MediaPortal.Configuration.Sections
     {
       StoreGridInView();
     }
-      public override void SaveSettings()
-      {
-          try
+    public override void SaveSettings()
+    {
+      if (settingsChanged)
+        try
+        {
+          using (FileStream fileStream = new FileStream("VideoViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
           {
-              using (FileStream fileStream = new FileStream("VideoViews.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
-              {
-                  SoapFormatter formatter = new SoapFormatter();
-                  formatter.Serialize(fileStream, views);
-                  fileStream.Close();
-              }
+            SoapFormatter formatter = new SoapFormatter();
+            formatter.Serialize(fileStream, views);
+            fileStream.Close();
           }
-          catch (Exception)
-          { }
-      }
+        }
+        catch (Exception)
+        { }
+    }
     private void StoreGridInView()
     {
       try
@@ -651,6 +653,7 @@ namespace MediaPortal.Configuration.Sections
         {
           return;
         }
+        settingsChanged = true;
         ViewDefinition view = currentView;
         DataTable dt = dataGrid1.DataSource as DataTable;
         if (view.Name == "new...")
@@ -675,7 +678,7 @@ namespace MediaPortal.Configuration.Sections
           int index = cbViews.Items.IndexOf(view);
           if (index >= 0)
           {
-              cbViews.Items[index] = view;
+            cbViews.Items[index] = view;
           }
           cbViews.Update();
           updating = false;
@@ -712,21 +715,21 @@ namespace MediaPortal.Configuration.Sections
 
     private void btnDelete_Click(object sender, EventArgs e)
     {
-          ViewDefinition viewSelected = cbViews.SelectedItem as ViewDefinition;
-          if (viewSelected == null)
-          {
-              return;
-          }
-          for (int i = 0; i < views.Count; ++i)
-          {
-              ViewDefinition view = views[i] as ViewDefinition;
-              if (view == viewSelected)
-              {
-                  views.RemoveAt(i);
-                  break;
-              }
-          }
-          LoadViews();
+      ViewDefinition viewSelected = cbViews.SelectedItem as ViewDefinition;
+      if (viewSelected == null)
+      {
+        return;
+      }
+      for (int i = 0; i < views.Count; ++i)
+      {
+        ViewDefinition view = views[i] as ViewDefinition;
+        if (view == viewSelected)
+        {
+          views.RemoveAt(i);
+          break;
+        }
+      }
+      LoadViews();
     }
 
   }
