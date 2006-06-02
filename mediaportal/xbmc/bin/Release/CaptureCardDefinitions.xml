@@ -9190,7 +9190,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Micro PCTV" capturename="Pinnacle WDM PCTV Video Capture" devid="ven_109e&amp;dev_0350&amp;subsys_00000000&amp;rev_12">
+  <capturecard commercialname="Miro PCTV" capturename="Pinnacle WDM PCTV Video Capture" devid="ven_109e&amp;dev_0350&amp;subsys_00000000&amp;rev_12">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
