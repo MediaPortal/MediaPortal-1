@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Text;
@@ -28,96 +33,96 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
 {
-    /// <summary>
-    /// Search IMPaward.com for movie-posters
-    /// </summary>
-    public class IMPawardsSearch
+  /// <summary>
+  /// Search IMPaward.com for movie-posters
+  /// </summary>
+  public class IMPawardsSearch
+  {
+    ArrayList imageList = new ArrayList();
+
+    public IMPawardsSearch()
     {
-        ArrayList imageList = new ArrayList();
-
-        public IMPawardsSearch()
-        {
-        }
-
-        public int Count
-        {
-            get { return imageList.Count; }
-        }
-
-        public string this[int index]
-        {
-            get
-            {
-                if (index < 0 || index >= imageList.Count) return String.Empty;
-                return (string)imageList[index];
-            }
-        }
-
-        public void Search(string searchtag)
-        {
-            if (searchtag == null) return;
-            if (searchtag == string.Empty) return;
-            imageList.Clear();
-            searchtag = searchtag.Replace(" ", "+");
-            string result = String.Empty;
-
-            string url = "http://www.google.com/custom?domains=www.impawards.com&q=" + searchtag + "&sa=Google+Search&sitesearch=www.impawards.com";
-            WebClient wc = new WebClient();
-            try
-            {
-                byte[] buffer;
-                buffer = wc.DownloadData(url);
-                result = Encoding.UTF8.GetString(buffer);
-            }
-            catch (Exception ex)
-            {
-                return;
-            }
-            finally
-            {
-                wc.Dispose();
-            }
-
-            Match m = Regex.Match(result,@"http://www.impawards.com/(?<year>\d{4})/.*?.html");
-            if (m.Success)
-            {
-                string year = m.Groups["year"].Value;
-                string url2 = m.Value;
-                try
-                {
-                    byte[] buffer;
-                    buffer = wc.DownloadData(url2);
-                    result = Encoding.UTF8.GetString(buffer);
-                }
-                catch (Exception ex)
-                {
-                    return;
-                }
-                finally
-                {
-                    wc.Dispose();
-                }
-
-                //get main poster displayed on html-page
-                m = Regex.Match(result, @"posters/.*?.jpg");
-                if (m.Success)
-                {
-                    imageList.Add("http://www.impawards.com/" + year + "/" + m.Value);
-
-                    //get other posters displayed on this html-page as thumbs
-                    MatchCollection mc = Regex.Matches(result, @"thumbs/imp_(?<poster>.*?.jpg)");
-                    foreach (Match m1 in mc)
-                    {
-                        imageList.Add("http://www.impawards.com/" + year + "/posters/" + m1.Groups["poster"].Value);
-                    }
-                }
-                else
-                    return;
-            }
-            else
-                return;
-
-        }
     }
+
+    public int Count
+    {
+      get { return imageList.Count; }
+    }
+
+    public string this[int index]
+    {
+      get
+      {
+        if (index < 0 || index >= imageList.Count) return String.Empty;
+        return (string)imageList[index];
+      }
+    }
+
+    public void Search(string searchtag)
+    {
+      if (searchtag == null) return;
+      if (searchtag == string.Empty) return;
+      imageList.Clear();
+      searchtag = searchtag.Replace(" ", "+");
+      string result = String.Empty;
+
+      string url = "http://www.google.com/custom?domains=www.impawards.com&q=" + searchtag + "&sa=Google+Search&sitesearch=www.impawards.com";
+      WebClient wc = new WebClient();
+      try
+      {
+        byte[] buffer;
+        buffer = wc.DownloadData(url);
+        result = Encoding.UTF8.GetString(buffer);
+      }
+      catch (Exception)
+      {
+        return;
+      }
+      finally
+      {
+        wc.Dispose();
+      }
+
+      Match m = Regex.Match(result, @"http://www.impawards.com/(?<year>\d{4})/.*?.html");
+      if (m.Success)
+      {
+        string year = m.Groups["year"].Value;
+        string url2 = m.Value;
+        try
+        {
+          byte[] buffer;
+          buffer = wc.DownloadData(url2);
+          result = Encoding.UTF8.GetString(buffer);
+        }
+        catch (Exception)
+        {
+          return;
+        }
+        finally
+        {
+          wc.Dispose();
+        }
+
+        //get main poster displayed on html-page
+        m = Regex.Match(result, @"posters/.*?.jpg");
+        if (m.Success)
+        {
+          imageList.Add("http://www.impawards.com/" + year + "/" + m.Value);
+
+          //get other posters displayed on this html-page as thumbs
+          MatchCollection mc = Regex.Matches(result, @"thumbs/imp_(?<poster>.*?.jpg)");
+          foreach (Match m1 in mc)
+          {
+            imageList.Add("http://www.impawards.com/" + year + "/posters/" + m1.Groups["poster"].Value);
+          }
+        }
+        else
+          return;
+      }
+      else
+        return;
+
+    }
+  }
 }
 

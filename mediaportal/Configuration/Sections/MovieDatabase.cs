@@ -116,7 +116,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     bool _isFuzzyMatching = true;
-    ArrayList extractedTags;
+    //ArrayList extractedTags;
     private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
     private MediaPortal.UserInterface.Controls.MPTabPage tabPage2;

@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.IO;
 using System.Drawing;
@@ -82,7 +87,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>The width of in which the texture will be rendered after scaling texture.</summary>
     private int m_iRenderWidth = 0;
     private int m_iRenderHeight = 0;
-    private System.Drawing.Image m_image = null;
+    //private System.Drawing.Image m_image = null;
     private Rectangle m_destRect;
     string _cachedTextureFileName = "";
     int g_nAnisotropy = 0;
@@ -431,7 +436,7 @@ namespace MediaPortal.GUI.Library
         int frameCount = 0;
         if (fileName.StartsWith("["))
         {
-          frameCount = GUITextureManager.LoadFromMemory(memoryImage, fileName,m_dwColorKey, m_iRenderWidth, _textureHeight);
+          frameCount = GUITextureManager.LoadFromMemory(memoryImage, fileName, m_dwColorKey, m_iRenderWidth, _textureHeight);
           if (0 == frameCount)
           {
             return;// unable to load texture
@@ -489,7 +494,7 @@ namespace MediaPortal.GUI.Library
     void FreeResourcesAndRegEvent()
     {
       FreeResources();
-      if (_registeredForEvent==false)
+      if (_registeredForEvent == false)
       {
         GUIPropertyManager.OnPropertyChanged += new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
         _registeredForEvent = true;
@@ -526,11 +531,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    
+
     void Cleanup()
     {
       _cachedTextureFileName = "";
-      m_image = null;
+      //m_image = null;
       if (_listTextures != null)
       {
         for (int i = 0; i < _listTextures.Length; ++i)
@@ -967,7 +972,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void Render(float timePassed)
     {
-      if (!IsVisible) return; 
+      if (!IsVisible) return;
       if (!GUIGraphicsContext.ShowBackground && _isFullScreenImage) return;
       if (_packedTextureNo >= 0 && _packedTexture != null)
       {
@@ -1234,11 +1239,11 @@ namespace MediaPortal.GUI.Library
     }
     public override void Animate(float timePassed, Animator animator)
     {
-      base.Animate( timePassed, animator);
-      _reCalculate=true;
+      base.Animate(timePassed, animator);
+      _reCalculate = true;
     }
 
-    protected override void Update() 
+    protected override void Update()
     {
       _reCalculate = true;
     }

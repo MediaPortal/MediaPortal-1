@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Collections;
 using System.IO;
@@ -286,7 +291,7 @@ namespace MediaPortal.Video.Database
 
         absoluteUri = result.ResponseUri.AbsoluteUri;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         //Log.WriteFile(Log.LogType.Log, true, "Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
       }
@@ -854,7 +859,7 @@ namespace MediaPortal.Video.Database
         }
         return true;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         //Log.Write("IMDB.GetActorDetails({0} exception:{1} {2} {3}", url.URL,ex.Message,ex.Source,ex.StackTrace);
       }

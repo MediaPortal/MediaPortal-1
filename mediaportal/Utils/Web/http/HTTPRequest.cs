@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Net;
@@ -141,8 +146,8 @@ namespace MediaPortal.Utils.Web
 
     public static bool operator ==(HTTPRequest r1, HTTPRequest r2)
     {
-      object o1 = (object) r1;
-      object o2 = (object) r2;
+      object o1 = (object)r1;
+      object o2 = (object)r2;
       if (o1 == null || o2 == null)
       {
         if (o1 == null && o2 == null)

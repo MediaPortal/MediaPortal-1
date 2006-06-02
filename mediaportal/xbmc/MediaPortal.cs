@@ -1506,7 +1506,7 @@ public class MediaPortalApp : D3DApp, IRender
               dlg.AddLocalizedString(1032); //Suspend
               dlg.AddLocalizedString(1049); //Hibernate
               dlg.DoModal(GUIWindowManager.ActiveWindow);
-              RestartOptions option = RestartOptions.Suspend;
+              //RestartOptions option = RestartOptions.Suspend;
               if (dlg.SelectedId < 0)
               {
                 GUIWindow win = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_HOME);

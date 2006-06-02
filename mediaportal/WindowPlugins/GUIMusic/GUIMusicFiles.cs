@@ -137,7 +137,7 @@ namespace MediaPortal.GUI.Music
     bool m_bScan = false;
     bool m_bAutoShuffle = true;
     string m_strDiscId = String.Empty;
-    string m_strPlayListPath = String.Empty;
+    new string m_strPlayListPath = String.Empty;
     string m_strCurrentFolder = String.Empty;
     int m_iSelectedAlbum = -1;
     static Freedb.CDInfoDetail m_musicCD = null;
