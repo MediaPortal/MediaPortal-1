@@ -176,11 +176,11 @@ namespace MediaPortal.Util
         string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
         if (System.IO.File.Exists(coverArt))
         {
-            item.IconImage = coverArt;
+          item.IconImage = coverArt;
         }
         if (System.IO.File.Exists(largeCoverArt))
         {
-            item.IconImageBig = largeCoverArt;
+          item.IconImageBig = largeCoverArt;
         }
         items.Add(item);
       }
@@ -810,7 +810,7 @@ namespace MediaPortal.Util
       //then remove the \
       if (strDir.EndsWith(@"\"))
       {
-          strDir = strDir.Substring(0, strDir.Length - 1);
+        strDir = strDir.Substring(0, strDir.Length - 1);
       }
       ArrayList items = new ArrayList();
 
@@ -849,7 +849,7 @@ namespace MediaPortal.Util
       string[] strFiles = null;
       try
       {
-        strDirs = System.IO.Directory.GetDirectories(strDir +@"\");
+        strDirs = System.IO.Directory.GetDirectories(strDir + @"\");
         strFiles = System.IO.Directory.GetFiles(strDir + @"\");
       }
       catch (Exception)
@@ -874,7 +874,7 @@ namespace MediaPortal.Util
         else
           item.Path = strParent;
         items.Add(item);
-    }
+      }
       else
       {
         item = new GUIListItem();
@@ -885,8 +885,8 @@ namespace MediaPortal.Util
         Utils.SetDefaultIcons(item);
         Utils.SetThumbnails(ref item);
         items.Add(item);
-        
-    }
+
+      }
       if (strDirs != null)
       {
         for (int i = 0; i < strDirs.Length; ++i)
@@ -1198,6 +1198,7 @@ namespace MediaPortal.Util
       return ftp;
     }
     #region generics
+
     /// <summary>
     /// This method returns an arraylist of GUIListItems for the specified folder
     /// If the folder is protected by a pincode then the user is asked to enter the pincode
@@ -1482,15 +1483,67 @@ namespace MediaPortal.Util
       }
       else
       {
-        try
+        /* Here is the trick to play Enhanced CD and not only CD-DA: 
+         * we force the creation of GUIListItem of Red Book tracks.
+         * Track names are made up on-the-fly, using naming conventions
+         * (Track%%.cda) and are not really retrieved from the drive
+         * directory, as opposed to the old method.
+         * If the data session happens to be the first to be recorded
+         * then the old method can't read the Red Book structure.
+         * Current audio tracks number is found using Windows API 
+         * (dependances on the Ripper package).
+         * These are not really limitations (because it was already
+         * the way CD-DA playing was handled before) but worth noting:
+         * -The drive structure is browsed twice, once in Autoplay and
+         *    the other one here.
+         * -CD-DA and Enhanced CD share the same methods.
+         * -A CD Audio must be a Windows drive letter followed by a
+         *    semi-colon (mounted images should work, Windows shared
+         *    drives seem not to).
+         * Works with Windows Media Player
+         * Seems to work with Winamp (didn't make more than one experiment)
+         * Wasn't tested with other players
+         */
+
+        bool doesContainRedBookData = false;
+
+        if (item.IsFolder && strDir.Length == 2 && strDir[1] == ':')
         {
-          strDirs = System.IO.Directory.GetDirectories(strDir + @"\");
-          strFiles = System.IO.Directory.GetFiles(strDir + @"\");
-        }
-        catch (Exception)
-        {
+          try
+          {
+            CDDrive m_Drive = new CDDrive();
+
+            if (m_Drive.IsOpened)
+              m_Drive.Close();
+
+            if (m_Drive.Open(strDir[0]) && m_Drive.IsCDReady() && m_Drive.Refresh())
+            {
+              int totalNumberOfTracks = m_Drive.GetNumTracks();
+              int totalNumberOfRedBookTracks = 0;
+              for (int i = 1; i <= totalNumberOfTracks; i++)
+                if (m_Drive.IsAudioTrack(i))
+                {
+                  doesContainRedBookData = true;
+                  totalNumberOfRedBookTracks++;
+                }
+              strFiles = new string[totalNumberOfRedBookTracks];
+              for (int j = 1; j <= totalNumberOfRedBookTracks; j++)
+                strFiles[j - 1] = string.Format("{0}\\Track{1:00}.cda", strDir, j);
+            }
+            m_Drive.Close();
+          }
+          catch (Exception)
+          { }
         }
 
+        if (!doesContainRedBookData)
+          try
+          {
+            strDirs = System.IO.Directory.GetDirectories(strDir + @"\");
+            strFiles = System.IO.Directory.GetFiles(strDir + @"\");
+          }
+          catch (Exception)
+          { }
 
         if (strDirs != null)
         {
@@ -1520,7 +1573,15 @@ namespace MediaPortal.Util
         {
           for (int i = 0; i < strFiles.Length; ++i)
           {
-            string extensionension = System.IO.Path.GetExtension(strFiles[i]);
+
+            //<OKAY_AWRIGHT-310506>
+            string extensionension;
+            if (!doesContainRedBookData)
+              extensionension = System.IO.Path.GetExtension(strFiles[i]);
+            else
+              extensionension = ".cda";
+            //</OKAY_AWRIGHT-310506>
+
             if (IsImageFile(extensionension))
             {
               if (DaemonTools.IsEnabled)
@@ -1541,7 +1602,9 @@ namespace MediaPortal.Util
             if (IsValidExtension(strFiles[i]))
             {
               // Skip hidden files
-              if ((File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
+              //<OKAY_AWRIGHT-310506>
+              if (!doesContainRedBookData && (File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
+              //</OKAY_AWRIGHT-310506>
               {
                 continue;
               }
@@ -1552,10 +1615,21 @@ namespace MediaPortal.Util
               item.Label2 = "";
               item.Path = strFiles[i];
 
-              item.FileInfo = new FileInformation(strFiles[i]);
+              //<OKAY_AWRIGHT-310506>
+              if (!doesContainRedBookData)
+                item.FileInfo = new FileInformation(strFiles[i]);
+              else
+              {
+                item.FileInfo = new FileInformation();
+                DateTime modified = System.DateTime.Now;
+                item.FileInfo.CreationTime = modified;
+                item.FileInfo.Length = 0;
+              }
+
               Utils.SetDefaultIcons(item);
               Utils.SetThumbnails(ref item);
               items.Add(item);
+              //</OKAY_AWRIGHT-310506>
             }
           }
         }
@@ -1861,12 +1935,12 @@ namespace MediaPortal.Util
         string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
         if (System.IO.File.Exists(coverArt))
         {
-            item.IconImage = coverArt;
+          item.IconImage = coverArt;
         }
         if (System.IO.File.Exists(largeCoverArt))
         {
-            item.IconImageBig = largeCoverArt;
-        } 
+          item.IconImageBig = largeCoverArt;
+        }
         items.Add(item);
       }
 

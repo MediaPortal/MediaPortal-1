@@ -429,6 +429,32 @@ namespace MediaPortal.Ripper
       }
     }
 
+    private static bool isARedBookCD(string driveLetter)
+    {
+      try
+      {
+        if (driveLetter.Length < 1) return false;
+        int cddaTracks = 0;
+        CDDrive m_Drive = new CDDrive();
+
+        if (m_Drive.IsOpened)
+          m_Drive.Close();
+        if (m_Drive.Open(driveLetter[0]) && m_Drive.IsCDReady() && m_Drive.Refresh())
+        {
+          cddaTracks = m_Drive.GetNumAudioTracks();
+          m_Drive.Close();
+        }
+        if (cddaTracks > 0)
+          return true;
+        else
+          return false;
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+    }
+
     private static void GetAllFiles(string strFolder, ref ArrayList allfiles)
     {
       if (strFolder == null) return;
@@ -451,6 +477,7 @@ namespace MediaPortal.Ripper
       {
       }
     }
+
     /// <summary>
     /// Detects the media type of the CD/DVD inserted into a drive.
     /// </summary>
@@ -458,20 +485,24 @@ namespace MediaPortal.Ripper
     /// <returns>The media type of the drive.</returns>
     private static MediaType DetectMediaType(string strDrive)
     {
-      if (strDrive == null) return MediaType.UNKNOWN;
-      if (strDrive == String.Empty) return MediaType.UNKNOWN;
+      if (strDrive == null)
+        return MediaType.UNKNOWN;
+      if (strDrive == String.Empty)
+        return MediaType.UNKNOWN;
       try
       {
         if (Directory.Exists(strDrive + "\\VIDEO_TS"))
-        {
           return MediaType.DVD;
-        }
 
-        string[] files = Directory.GetFiles(strDrive + "\\", "*.cda");
-        if (files != null && files.Length != 0)
-        {
+        // following has been replaced by isARedBookCD:
+        //string[] files = Directory.GetFiles(strDrive + "\\", "*.cda");
+        //if (files != null && files.Length != 0)
+        //{
+        //  return MediaType.AUDIO_CD;
+        //}
+
+        if (isARedBookCD(strDrive))
           return MediaType.AUDIO_CD;
-        }
 
         ArrayList allfiles = new ArrayList();
         GetAllFiles(strDrive + "\\", ref allfiles);
@@ -495,8 +526,6 @@ namespace MediaPortal.Ripper
       catch (Exception)
       {
       }
-
-
       return MediaType.UNKNOWN;
     }
     #endregion
