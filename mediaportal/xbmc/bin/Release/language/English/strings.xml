@@ -3335,11 +3335,11 @@
 
   <string Prefix="My ">
     <id>1440</id>
-    <value>TeleText</value>
+    <value>Teletext</value>
   </string>
   <string>
     <id>1441</id>
-    <value>TeleText</value>
+    <value>Teletext</value>
   </string>
   <string>
     <id>1442</id>
