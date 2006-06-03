@@ -102,7 +102,7 @@ namespace MediaPortal.GUI.TV
         m_navigator.LoadSettings(xmlreader);
         _isTvOn = xmlreader.GetValueAsBool("mytv", "tvon", true);
         _isTimeShifting = xmlreader.GetValueAsBool("mytv", "timeshifting", true);
-        _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "_autoTurnOnTv", false);
+        _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoTurnOnTv", false);
 
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
         if (strValue.Equals("zoom")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
