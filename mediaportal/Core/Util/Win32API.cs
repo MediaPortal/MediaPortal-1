@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,18 +20,22 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace MediaPortal.Util
 {
-	/// <summary>
-	/// Summary description for Win32API.
-	/// </summary>
-	public static class Win32API
+  /// <summary>
+  /// Summary description for Win32API.
+  /// </summary>
+  public static class Win32API
   {
     #region Interop declarations
-	  
+
     #region Constants
     private const int SW_HIDE = 0;
     private const int SW_SHOWNORMAL = 1;
@@ -37,39 +43,43 @@ namespace MediaPortal.Util
     private const int SW_SHOWMAXIMIZED = 3;
     private const int SW_RESTORE = 9;
     private const int WPF_RESTORETOMAXIMIZED = 2;
-	  public const int WM_SHOWWINDOW = 0x0018;
+    public const int WM_SHOWWINDOW = 0x0018;
+    private const int SHGFP_TYPE_CURRENT = 0;
+    public const int CSIDL_MYMUSIC = 0x000d;     // "My Music" folder
+    public const int CSIDL_MYVIDEO = 0x000e;     // "My Videos" folder
+    public const int CSIDL_MYPICTURES = 0x0027;  // "My Pictures" folder
     #endregion
 
     #region Methods
 
-//    [DllImportAttribute("kernel32", EntryPoint="RtlMoveMemory", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
-//    public static extern void CopyMemory(ref KBDLLHOOKSTRUCT Destination, int Source, int Length);
+    //    [DllImportAttribute("kernel32", EntryPoint="RtlMoveMemory", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
+    //    public static extern void CopyMemory(ref KBDLLHOOKSTRUCT Destination, int Source, int Length);
 
- //   [DllImportAttribute("user32", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
- //   public static extern int GetKeyState(int nVirtKey);
+    //   [DllImportAttribute("user32", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
+    //   public static extern int GetKeyState(int nVirtKey);
 
-//    [DllImportAttribute("user32", EntryPoint="SetWindowsHookExA", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
-//    public static extern int SetWindowsHookEx(int idHook, LowLevelKeyboardDelegate lpfn, int hmod, int dwThreadId);
+    //    [DllImportAttribute("user32", EntryPoint="SetWindowsHookExA", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
+    //    public static extern int SetWindowsHookEx(int idHook, LowLevelKeyboardDelegate lpfn, int hmod, int dwThreadId);
 
-	  [DllImport("gdi32.dll", EntryPoint="CreateCompatibleDC")]
-		public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
+    [DllImport("gdi32.dll", EntryPoint = "CreateCompatibleDC")]
+    public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
 
-		[DllImport("gdi32.dll", EntryPoint="SelectObject")]
-		public static extern IntPtr SelectObject(IntPtr hdc,IntPtr bmp);
+    [DllImport("gdi32.dll", EntryPoint = "SelectObject")]
+    public static extern IntPtr SelectObject(IntPtr hdc, IntPtr bmp);
 
-		[DllImport("gdi32.dll", EntryPoint="DeleteDC")]
-		public static extern IntPtr DeleteDC(IntPtr hDc);
+    [DllImport("gdi32.dll", EntryPoint = "DeleteDC")]
+    public static extern IntPtr DeleteDC(IntPtr hDc);
 
-    [DllImportAttribute("user32", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
+    [DllImportAttribute("user32", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
     public static extern int CallNextHookEx(int hHook, int nCode, int wParam, ref int lParam);
 
-    [DllImportAttribute("user32", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
+    [DllImportAttribute("user32", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
     public static extern int UnhookWindowsHookEx(int hHook);
 
-    [DllImportAttribute("user32", EntryPoint="FindWindowA", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
+    [DllImportAttribute("user32", EntryPoint = "FindWindowA", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
     public static extern uint FindWindow([MarshalAs(UnmanagedType.VBByRefStr)] ref string lpClassName, [MarshalAs(UnmanagedType.VBByRefStr)] ref string lpWindowName);
 
-	  [DllImportAttribute("user32", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
+    [DllImportAttribute("user32", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
     public static extern int GetWindow(int hwnd, int wCmd);
 
     [DllImport("user32", SetLastError = true)]
@@ -99,7 +109,7 @@ namespace MediaPortal.Util
     [DllImport("user32", SetLastError = true)]
     private static extern uint ShowWindow(uint _hwnd, int _showCommand);
 
-    [DllImportAttribute("user32", ExactSpelling=true, CharSet=CharSet.Ansi, SetLastError=true)]
+    [DllImportAttribute("user32", ExactSpelling = true, CharSet = CharSet.Ansi, SetLastError = true)]
     public static extern int EnableWindow(uint hwnd, int fEnable);
 
     [DllImport("user32", SetLastError = true)]
@@ -110,6 +120,17 @@ namespace MediaPortal.Util
 
     [DllImport("wininet.dll")]
     private extern static bool InternetGetConnectedState(out int Description, int ReservedValue);
+
+    // Takes the CSIDL of a folder and returns the pathname.
+    [DllImport("shell32.dll")]
+    public static extern Int32 SHGetFolderPath(
+        IntPtr hwndOwner,        // Handle to an owner window.
+        Int32 nFolder,           // A CSIDL value that identifies the folder whose path is to be retrieved.
+        IntPtr hToken,           // An access token that can be used to represent a particular user.
+        UInt32 dwFlags,          // Flags to specify which path is to be returned. It is used for cases where the folder associated with a CSIDL may be moved or renamed by the user. 
+        StringBuilder pszPath);  // Pointer to a null-terminated string which will receive the path.
+
+
 
     #endregion
 
@@ -178,29 +199,29 @@ namespace MediaPortal.Util
     }
 
     #endregion
-	  
+
     #endregion
 
 
     //Checks if the computer is connected to the internet...
-    public static bool IsConnectedToInternet( )
+    public static bool IsConnectedToInternet()
     {
 #if DEBUG
       return true;
 #else
-      int Desc ;
-      return InternetGetConnectedState( out Desc, 0 ) ;
+      int Desc;
+      return InternetGetConnectedState(out Desc, 0);
 #endif
     }
-		
-		public static bool IsConnectedToInternet(ref int code)
-		{
+
+    public static bool IsConnectedToInternet(ref int code)
+    {
 #if DEBUG
       return true;
 #else
-			return InternetGetConnectedState( out code, 0 ) ;
+      return InternetGetConnectedState(out code, 0);
 #endif
-		}
+    }
 
     public static void Show(string ClassName, string WindowName, bool bVisible)
     {
@@ -230,22 +251,22 @@ namespace MediaPortal.Util
 
     public static void ShowStartBar(bool bVisible)
     {
-			try
-			{
-				Show("Shell_TrayWnd", "", bVisible);
-			}
-			catch(Exception){}
+      try
+      {
+        Show("Shell_TrayWnd", "", bVisible);
+      }
+      catch (Exception) { }
     }
 
     public static void EnableStartBar(bool bEnable)
     {
-			try
-			{
-				Enable("Shell_TrayWnd", "", bEnable);
-			}
-			catch(Exception){}
+      try
+      {
+        Enable("Shell_TrayWnd", "", bEnable);
+      }
+      catch (Exception) { }
     }
-	  
+
     /// <summary> 
     /// Finds the specified window by its Process ID. Then brings it to 
     /// the foreground. 
@@ -276,5 +297,11 @@ namespace MediaPortal.Util
       }
     }
 
+    public static string GetFolderPath(int csidl)
+    {
+      StringBuilder folder = new System.Text.StringBuilder(256);
+      SHGetFolderPath(IntPtr.Zero, csidl, IntPtr.Zero, SHGFP_TYPE_CURRENT, folder);
+      return folder.ToString();
+    }
   }
 }

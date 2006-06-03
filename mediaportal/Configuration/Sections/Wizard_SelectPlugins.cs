@@ -32,7 +32,9 @@ using System.Windows.Forms;
 using MediaPortal.Util;
 using MediaPortal.TagReader;
 using MediaPortal.Music.Database;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
   public class Wizard_SelectPlugins : MediaPortal.Configuration.SectionSettings
@@ -64,6 +66,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.Timer timer1;
     private MediaPortal.UserInterface.Controls.MPLabel fileLabel;
     bool isScanning = false;
+
     public Wizard_SelectPlugins()
       : this("Media Search")
     {
@@ -76,6 +79,7 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // TODO: Add any initialization after the InitializeComponent call
+      SetDefaultShares();
     }
 
     /// <summary>
@@ -145,7 +149,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Find local media";
-      this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
       // 
       // fileLabel
       // 
@@ -290,8 +293,6 @@ namespace MediaPortal.Configuration.Sections
     }
     #endregion
 
-
-
     enum DriveType
     {
       Removable = 2,
@@ -316,13 +317,8 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    void DoScan()
+    void SetDefaultShares()
     {
-      isScanning = true;
-      stopScanning = false;
-      totalAudio = 0;
-      totalPhotos = 0;
-      totalVideo = 0;
       string[] drives = Environment.GetLogicalDrives();
       foreach (string drive in drives)
       {
@@ -334,13 +330,30 @@ namespace MediaPortal.Configuration.Sections
           sharesMusic.Add(share);
           sharesPhotos.Add(share);
           sharesVideos.Add(share);
-
         }
       }
+
+      AddAudioShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYMUSIC));
+      AddPhotoShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYPICTURES));
+      AddVideoShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYVIDEO));
+
+      SaveShare(sharesMusic, "music");
+      SaveShare(sharesPhotos, "pictures");
+      SaveShare(sharesVideos, "movies");
+    }
+
+    void DoScan()
+    {
+      isScanning = true;
+      stopScanning = false;
+      totalAudio = 0;
+      totalPhotos = 0;
+      totalVideo = 0;
       fileLabel.Text = "";
       progressBar1.Visible = true;
       progressBar1.Value = 0;
       timer1.Enabled = true;
+      string[] drives = Environment.GetLogicalDrives();
       foreach (string drive in drives)
       {
         int driveType = Util.Utils.getDriveType(drive);
@@ -349,9 +362,6 @@ namespace MediaPortal.Configuration.Sections
         ScanFolder(labelHD.Text, true, true, true);
         if (stopScanning) break;
       }
-      SaveShare(sharesMusic, "music");
-      SaveShare(sharesVideos, "movies");
-      SaveShare(sharesPhotos, "pictures");
 
       ScanMusic();
       progressBar1.Visible = false;
@@ -372,11 +382,13 @@ namespace MediaPortal.Configuration.Sections
       m_dbs.DatabaseReorgChanged += new MusicDBReorgEventHandler(SetPercentDonebyEvent);
       int appel = m_dbs.MusicDatabaseReorg(null);
     }
+
     void SetPercentDonebyEvent(object sender, DatabaseReorgEventArgs e)
     {
       progressBar1.Value = e.progress;
       SetStatus(e.phase);
     }
+
     private void SetStatus(string status)
     {
       fileLabel.Text = status;
@@ -518,6 +530,7 @@ namespace MediaPortal.Configuration.Sections
           AddPhotoShare(folder);
       }
     }
+
     void AddAudioShare(string folder)
     {
       string name = folder;
@@ -529,6 +542,7 @@ namespace MediaPortal.Configuration.Sections
       Shares.ShareData share = new Shares.ShareData(name, folder, "");
       sharesMusic.Add(share);
     }
+
     void AddVideoShare(string folder)
     {
       string name = folder;
@@ -540,6 +554,7 @@ namespace MediaPortal.Configuration.Sections
       Shares.ShareData share = new Shares.ShareData(name, folder, "");
       sharesVideos.Add(share);
     }
+
     void AddPhotoShare(string folder)
     {
       string name = folder;
@@ -556,7 +571,6 @@ namespace MediaPortal.Configuration.Sections
     {
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-
         for (int index = 0; index < MaximumShares; index++)
         {
           string shareName = String.Format("sharename{0}", index);
@@ -614,11 +628,6 @@ namespace MediaPortal.Configuration.Sections
         }
 
       }
-    }
-
-    private void groupBox1_Enter(object sender, System.EventArgs e)
-    {
-
     }
 
     private void timer1_Tick(object sender, System.EventArgs e)
