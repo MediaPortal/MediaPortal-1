@@ -90,6 +90,7 @@ namespace MediaPortal.GUI.Library
         _images[index] = new GUIImage(ParentID, _imageId + index, 0, 0, 0, 0, (string)_filenames[index], Color.White);
         _images[index].ParentControl = this;
         _images[index].AllocResources();
+        _images[index].ScaleToScreenResolution();
 
         w = Math.Max(w, _images[index].Width);
         h = Math.Max(h, _images[index].Height);
