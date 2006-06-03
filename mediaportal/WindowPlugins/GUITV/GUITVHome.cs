@@ -313,7 +313,7 @@ namespace MediaPortal.GUI.TV
         Log.Write("tv home init:{0}", channelName);
         ViewChannelAndCheck(channelName);
       }
-      UpdateChannelButton();
+
       UpdateStateOfButtons();
       UpdateProgressPercentageBar();
     }
@@ -432,7 +432,6 @@ namespace MediaPortal.GUI.TV
 
         // turn tv on/off
         ViewChannelAndCheck(Navigator.CurrentChannel);
-        UpdateChannelButton();
         UpdateStateOfButtons();
         UpdateProgressPercentageBar();
       }
@@ -507,7 +506,14 @@ namespace MediaPortal.GUI.TV
 
     public override void Process()
     {
-      if (GUIGraphicsContext.InVmr9Render) return;
+      TimeSpan ts = DateTime.Now - _updateTimer;
+
+      if (GUIGraphicsContext.InVmr9Render)
+        return;
+      if (ts.TotalMilliseconds < 100)
+        return;
+      _updateTimer = DateTime.Now;
+
       if ((Recorder.CommandProcessor != null) && (Recorder.CommandProcessor.IsBusy))
       {
         btnChannel.Disabled = true;
@@ -536,41 +542,11 @@ namespace MediaPortal.GUI.TV
 
       UpdateStateOfButtons();
       UpdateProgressPercentageBar();
-      // Has the channel changed?
-      if (channelchanged)
-      {
-        UpdateChannelButton();
-      }
+      UpdateRecordingIndicator();
 
-      // if we're recording tv, update gui with info
-      if (Recorder.IsRecording())
-      {
-        TVRecording rec = Recorder.GetTVRecording();
-        if (rec != null)
-        {
-          if (rec.RecType != TVRecording.RecordingType.Once)
-            imgRecordingIcon.SetFileName(Thumbs.TvRecordingSeriesIcon);
-          else
-            imgRecordingIcon.SetFileName(Thumbs.TvRecordingIcon);
-        }
-        imgRecordingIcon.IsVisible = true;
-      }
-      else
-      {
-        imgRecordingIcon.IsVisible = false;
-      }
-      TimeSpan ts = DateTime.Now - _updateTimer;
-      if (ts.TotalMilliseconds > 500)
-      {
-        _updateTimer = DateTime.Now;
-
-        GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
-        GUIControl.HideControl(GetID, (int)Controls.IMG_REC_RECTANGLE);
-        GUIControl.HideControl(GetID, (int)Controls.IMG_REC_CHANNEL);
-        UpdateProgressPercentageBar();
-
-        UpdateStateOfButtons();
-      }
+      GUIControl.HideControl(GetID, (int)Controls.LABEL_REC_INFO);
+      GUIControl.HideControl(GetID, (int)Controls.IMG_REC_RECTANGLE);
+      GUIControl.HideControl(GetID, (int)Controls.IMG_REC_CHANNEL);
 
     }
 
@@ -637,7 +613,8 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     void UpdateStateOfButtons()
     {
-      btnTvOnOff.Selected = Recorder.IsViewing(); ;
+      btnTvOnOff.Selected = Recorder.IsViewing();
+      btnTeletext.IsVisible = Recorder.HasTeletext();
       //are we recording a tv program?
       if (Recorder.IsRecording())
       {
@@ -685,6 +662,26 @@ namespace MediaPortal.GUI.TV
 
     }
 
+    void UpdateRecordingIndicator()
+    {
+      // if we're recording tv, update gui with info
+      if (Recorder.IsRecording())
+      {
+        TVRecording rec = Recorder.GetTVRecording();
+        if (rec != null)
+        {
+          if (rec.RecType != TVRecording.RecordingType.Once)
+            imgRecordingIcon.SetFileName(Thumbs.TvRecordingSeriesIcon);
+          else
+            imgRecordingIcon.SetFileName(Thumbs.TvRecordingIcon);
+        }
+        imgRecordingIcon.IsVisible = true;
+      }
+      else
+      {
+        imgRecordingIcon.IsVisible = false;
+      }
+    }
 
     /// <summary>
     /// Update the the progressbar in the GUI which shows
