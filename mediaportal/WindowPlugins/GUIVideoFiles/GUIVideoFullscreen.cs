@@ -511,28 +511,34 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE:
         case Action.ActionType.ACTION_NEXT_AUDIO:
           {
-            m_bShowStatus = true;
-            m_dwTimeStatusShowTime = (DateTime.Now.Ticks / 10000);
-            g_Player.SwitchToNextAudio();
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
-            msg.Label = string.Format("{0} ({1}/{2})", g_Player.AudioLanguage(g_Player.CurrentAudioStream), g_Player.CurrentAudioStream + 1, g_Player.AudioStreams);
-            OnMessage(msg);
-            Log.Write("GUIVideoFullscreen: switched audio to {0}", msg.Label);
+            if (g_Player.AudioStreams > 1)
+            {
+              m_bShowStatus = true;
+              m_dwTimeStatusShowTime = (DateTime.Now.Ticks / 10000);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+              g_Player.SwitchToNextAudio();
+              msg.Label = string.Format("{0} ({1}/{2})", g_Player.AudioLanguage(g_Player.CurrentAudioStream), g_Player.CurrentAudioStream + 1, g_Player.AudioStreams);
+              OnMessage(msg);
+              Log.Write("GUIVideoFullscreen: switched audio to {0}", msg.Label);
+            }
           }
           break;
 
         case Action.ActionType.ACTION_NEXT_SUBTITLE:
           {
-            m_bShowStatus = true;
-            m_dwTimeStatusShowTime = (DateTime.Now.Ticks / 10000);
-            g_Player.SwitchToNextSubtitle();
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
-            if (g_Player.EnableSubtitle)
-              msg.Label = string.Format("{0} ({1}/{2})", g_Player.SubtitleLanguage(g_Player.CurrentSubtitleStream), g_Player.CurrentSubtitleStream + 1, g_Player.SubtitleStreams);
-            else
-              msg.Label = GUILocalizeStrings.Get(519); // Subtitles off
-            OnMessage(msg);
-            Log.Write("GUIVideoFullscreen: switched subtitle to {0}", msg.Label);
+            if (g_Player.SubtitleStreams > 0)
+            {
+              m_bShowStatus = true;
+              m_dwTimeStatusShowTime = (DateTime.Now.Ticks / 10000);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+              g_Player.SwitchToNextSubtitle();
+              if (g_Player.EnableSubtitle)
+                msg.Label = string.Format("{0} ({1}/{2})", g_Player.SubtitleLanguage(g_Player.CurrentSubtitleStream), g_Player.CurrentSubtitleStream + 1, g_Player.SubtitleStreams);
+              else
+                msg.Label = GUILocalizeStrings.Get(519); // Subtitles off
+              OnMessage(msg);
+              Log.Write("GUIVideoFullscreen: switched subtitle to {0}", msg.Label);
+            }
           }
           break;
 
