@@ -333,10 +333,12 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
-      AddAudioShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYMUSIC));
-      AddPhotoShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYPICTURES));
-      AddVideoShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYVIDEO));
-
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+      {
+        xmlwriter.SetValue("music", "default", AddAudioShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYMUSIC)));
+        xmlwriter.SetValue("pictures", "default", AddPhotoShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYPICTURES)));
+        xmlwriter.SetValue("movies", "default", AddVideoShare(Util.Win32API.GetFolderPath(Util.Win32API.CSIDL_MYVIDEO)));
+      }
       SaveShare(sharesMusic, "music");
       SaveShare(sharesPhotos, "pictures");
       SaveShare(sharesVideos, "movies");
@@ -531,7 +533,7 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-    void AddAudioShare(string folder)
+    string AddAudioShare(string folder)
     {
       string name = folder;
       int pos = folder.LastIndexOf(@"\");
@@ -541,9 +543,10 @@ namespace MediaPortal.Configuration.Sections
       }
       Shares.ShareData share = new Shares.ShareData(name, folder, "");
       sharesMusic.Add(share);
+      return name;
     }
 
-    void AddVideoShare(string folder)
+    string AddVideoShare(string folder)
     {
       string name = folder;
       int pos = folder.LastIndexOf(@"\");
@@ -553,9 +556,10 @@ namespace MediaPortal.Configuration.Sections
       }
       Shares.ShareData share = new Shares.ShareData(name, folder, "");
       sharesVideos.Add(share);
+      return name;
     }
 
-    void AddPhotoShare(string folder)
+    string AddPhotoShare(string folder)
     {
       string name = folder;
       int pos = folder.LastIndexOf(@"\");
@@ -565,6 +569,7 @@ namespace MediaPortal.Configuration.Sections
       }
       Shares.ShareData share = new Shares.ShareData(name, folder, "");
       sharesPhotos.Add(share);
+      return name;
     }
 
     void SaveShare(ArrayList sharesList, string mediaType)
