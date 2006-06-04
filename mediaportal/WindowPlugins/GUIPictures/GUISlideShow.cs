@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 #region usings
 using System;
 using System.Collections.Generic;
@@ -230,6 +235,7 @@ namespace MediaPortal.GUI.Pictures
           _slideTime = (int)(DateTime.Now.Ticks / 10000);
           break;
 
+        case Action.ActionType.ACTION_STOP:
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           ShowPreviousWindow();
           break;
@@ -449,7 +455,7 @@ namespace MediaPortal.GUI.Pictures
           if (_currentTexture == null)
           {
             int totalFrames = (_speed * (int)(1.0 / TIME_PER_FRAME)) + _slideShowTransistionFrames;
-            if (_useKenBurns) totalFrames =_kenBurnTransistionSpeed * 30;
+            if (_useKenBurns) totalFrames = _kenBurnTransistionSpeed * 30;
             if (_frameCounter >= totalFrames || _backgroundTexture == null)
             {
               if ((!_isPaused && !_isPictureZoomed) || _backgroundTexture == null)
