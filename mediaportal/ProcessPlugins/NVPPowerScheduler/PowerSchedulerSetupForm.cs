@@ -265,13 +265,15 @@ namespace MediaPortal.PowerScheduler
       {
         if (nud_wakeup.Value >= nud_shutdown.Value)
         {
-          if (MessageBox.Show(
+          MessageBox.Show(
                "Resume time (before recording) is not smaller then Idle time!\n" +
                "This will lead to recording problems!\n" +
                "\n" +
-               "Do you want to correct it (highly recommmended)?", 
+               "One Minute will be added to Resume time", 
                "PROBLEM found at value check",
-               MessageBoxButtons.YesNo) == DialogResult.Yes) return false;  
+							 MessageBoxButtons.OK);
+					nud_shutdown.Value = nud_wakeup.Value + 1;
+					return true;  
         }
       }
       return true;

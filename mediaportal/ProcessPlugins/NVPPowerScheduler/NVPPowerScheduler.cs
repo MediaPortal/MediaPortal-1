@@ -445,6 +445,15 @@ namespace MediaPortal.PowerScheduler
 
         m_bDisabled = xmlreader.GetValueAsString("plugins", "Power Scheduler", "no") == "no";
 
+				// ensure that shutdown time is longer then Startup time
+				if (m_iShutdownInterval > 0)
+				{
+					if (m_iStartupInterval >= m_iShutdownInterval)
+					{
+						m_iShutdownInterval = m_iStartupInterval + 1;
+					}
+				}
+
         if (m_bDisabled)
         {
           Log.Write("PowerScheduler: Disabled");
