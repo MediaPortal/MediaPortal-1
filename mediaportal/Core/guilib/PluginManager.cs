@@ -375,8 +375,8 @@ namespace MediaPortal.GUI.Library
       }
       catch (Exception ex)
       {
-        string strEx = ex.Message;
-        Log.WriteFile(Log.LogType.Log, true, "ex:{0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
+        Log.Write("PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!", strFile.Substring(strFile.LastIndexOf(@"\") + 1));
+        Log.Write("PluginManager: Exception: {0}", ex);
       }
     }
 
