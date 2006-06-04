@@ -717,7 +717,7 @@ namespace MediaPortal.GUI.Library
 
     public virtual void SetObject(object obj)
     {
-        this.instance = obj;
+      this.instance = obj;
     }
     protected virtual void OnPageLoad()
     {
@@ -814,7 +814,7 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// Resets all the controls to their original positions, width&height
+    /// Resets all the controls to their original positions, width and height
     /// </summary>
     public virtual void ResetAllControls()
     {
@@ -1327,7 +1327,7 @@ namespace MediaPortal.GUI.Library
 
     public virtual bool IsInstance(Object obj)
     {
-        return obj == instance;
+      return obj == instance;
     }
 
     /// XAML related code follows
