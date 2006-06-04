@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,8 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
 
 using System;
 using System.IO;
@@ -91,7 +95,7 @@ namespace MediaPortal.Profile
       string strValue = (string)xmlDoc.GetValue(section, entry);
       if (strValue == null) return bDefault;
       if (strValue.Length == 0) return bDefault;
-      if (strValue == "yes") return true;
+      if (strValue.ToLower() == "yes") return true;
       return false;
     }
     public int GetValueAsInt(string section, string entry, int iDefault)
