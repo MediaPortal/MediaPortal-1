@@ -2063,13 +2063,13 @@ namespace MediaPortal.Configuration.Sections
       movieDetails.Path = path;
       movieDetails.File = filename;
       movieDetails.SearchString = tbTitle.Text;
-      GetInfoFromIMDB(ref movieDetails);
+      GetInfoFromIMDB(ref movieDetails, false);
       buttonLookupMovie.Enabled = true;
       btnSave.Enabled = true;
       tabControl2.Enabled = true;
       tabControl1.Enabled = true;
     }
-    private void GetInfoFromIMDB(ref IMDBMovie movieDetails)
+    private void GetInfoFromIMDB(ref IMDBMovie movieDetails, bool fuzzyMatch)
     {
       string file, path, filename;
       path = movieDetails.Path;
@@ -2120,7 +2120,7 @@ namespace MediaPortal.Configuration.Sections
         VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
         movieDetails.SearchString = searchString;
       }
-      if (IMDBFetcher.RefreshIMDB(this, ref movieDetails, _isFuzzyMatching))
+      if (IMDBFetcher.RefreshIMDB(this, ref movieDetails, fuzzyMatch))
       {
         if (movieDetails != null)
         {

@@ -75,7 +75,6 @@ namespace MediaPortal.GUI.Video
     string[] coverArtUrls = new string[1];
     string imdbCoverArtUrl = String.Empty;
     Thread imageSearchThread = null;
-    bool _isFuzzyMatching = false;
 
     public GUIVideoInfo()
     {
@@ -83,8 +82,6 @@ namespace MediaPortal.GUI.Video
     }
     public override bool Init()
     {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-        _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", false);
       return Load(GUIGraphicsContext.Skin + @"\DialogVideoInfo.xml");
 
     }
@@ -191,7 +188,7 @@ namespace MediaPortal.GUI.Video
       base.OnClicked(controlId, control, actionType);
       if (control == btnRefresh)
       {
-        if (IMDBFetcher.RefreshIMDB(this, ref currentMovie, _isFuzzyMatching))
+        if (IMDBFetcher.RefreshIMDB(this, ref currentMovie, false))
         {
           if ((imageSearchThread != null) && (imageSearchThread.IsAlive))
           {
