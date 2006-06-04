@@ -198,10 +198,10 @@ namespace MediaPortal.GUI.TV
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
-      FillChannelList();
-      FillGroupList();
       AllocResources();
       ResetAllControls();							// make sure the controls are positioned relevant to the OSD Y offset
+      FillChannelList();
+      FillGroupList();
       base.OnPageLoad();
     }
 
