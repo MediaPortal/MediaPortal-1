@@ -640,8 +640,8 @@ namespace MediaPortal.GUI.TV
         int stoptime = 0;
         if (idMovie >= 0 && idFile >= 0 )
         {
-          Log.Write("play got movie id:{0} for {1}", movieid, rec.FileName);
-          stoptime = VideoDatabase.GetMovieStopTime(movieid);
+          Log.Write("play got movie id:{0} for {1}", idMovie, rec.FileName);
+          stoptime = VideoDatabase.GetMovieStopTime(idMovie);
           if (stoptime > 0)
           {
             string title = System.IO.Path.GetFileName(rec.FileName);
