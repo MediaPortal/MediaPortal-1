@@ -315,41 +315,26 @@ namespace MediaPortal.GUI.Music
           if (facadeView.Focus)
           {
             GUIListItem item = facadeView[0];
-            if (item != null)
+            if ((item != null) && item.IsFolder && (item.Label == "..") && (currentFolder != m_strDirectoryStart))
             {
-              if (item.IsFolder && item.Label == "..")
-              {
-                if (currentFolder != m_strDirectoryStart)
-                {
-                  LoadDirectory(item.Path);
-                  return;
-                }
-              }
+              LoadDirectory(item.Path);
+              return;
             }
           }
         }
-        else
+        else if (facadeView.Focus)
         {
-          if (facadeView.Focus)
-          {
-            LoadDirectory(m_strCurrentFolder);
-            return;
-          }
+          LoadDirectory(m_strCurrentFolder);
+          return;
         }
       }
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
         GUIListItem item = facadeView[0];
-        if (item != null)
-        {
-          if (item.IsFolder && item.Label == "..")
-          {
-            LoadDirectory(item.Path);
-          }
-        }
+        if ((item != null) && item.IsFolder && (item.Label == ".."))
+          LoadDirectory(item.Path);
         return;
       }
-
       base.OnAction(action);
     }
 
@@ -1165,12 +1150,14 @@ namespace MediaPortal.GUI.Music
         facadeView.Add(item);
       }
       OnSort();
+      bool itemSelected = false;
       for (int i = 0; i < facadeView.Count; ++i)
       {
         GUIListItem item = facadeView[i];
         if (item.Label == strSelectedItem)
         {
           GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
+          itemSelected = true;
           break;
         }
         iItem++;
@@ -1190,7 +1177,7 @@ namespace MediaPortal.GUI.Music
 
       GUIPropertyManager.SetProperty("#itemcount", strObjects);
 
-      if (m_iItemSelected >= 0)
+      if (m_iItemSelected >= 0 && !itemSelected)
       {
         GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
       }

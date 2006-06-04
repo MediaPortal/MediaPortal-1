@@ -260,34 +260,21 @@ namespace MediaPortal.GUI.Video
     #region BaseWindow Members
     public override void OnAction(Action action)
     {
-      if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+      if ((action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) && (facadeView.Focus))
       {
-        if (facadeView.Focus)
+        GUIListItem item = facadeView[0];
+        if ((item != null) && item.IsFolder && (item.Label == "..") && (currentFolder != m_strDirectoryStart))
         {
-          GUIListItem item = facadeView[0];
-          if (item != null)
-          {
-            if (item.IsFolder && item.Label == "..")
-            {
-              if (currentFolder != m_strDirectoryStart)
-              {
-                LoadDirectory(item.Path);
-                return;
-              }
-            }
-          }
+          LoadDirectory(item.Path);
+          return;
         }
       }
+
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
         GUIListItem item = facadeView[0];
-        if (item != null)
-        {
-          if (item.IsFolder && item.Label == "..")
-          {
-            LoadDirectory(item.Path);
-          }
-        }
+        if ((item != null) && item.IsFolder && (item.Label == ".."))
+          LoadDirectory(item.Path);
         return;
       }
       base.OnAction(action);
@@ -499,22 +486,22 @@ namespace MediaPortal.GUI.Video
 
       SetIMDBThumbs(itemlist);
       string selectedItemLabel = m_history.Get(currentFolder);
-      int itemIndex = 0;
       foreach (GUIListItem item in itemlist)
       {
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         facadeView.Add(item);
       }
       OnSort();
+      bool itemSelected = false;
       for (int i = 0; i < facadeView.Count; ++i)
       {
         GUIListItem item = facadeView[i];
         if (item.Label == selectedItemLabel)
         {
           GUIControl.SelectItemControl(GetID, facadeView.GetID, i);
+          itemSelected = true;
           break;
         }
-        itemIndex++;
       }
       int totalItems = itemlist.Count;
       if (itemlist.Count > 0)
@@ -524,7 +511,7 @@ namespace MediaPortal.GUI.Video
       }
       objectCount = String.Format("{0} {1}", totalItems, GUILocalizeStrings.Get(632));
       GUIPropertyManager.SetProperty("#itemcount", objectCount);
-      if (currentSelectedItem >= 0)
+      if (currentSelectedItem >= 0 && !itemSelected)
       {
         GUIControl.SelectItemControl(GetID, facadeView.GetID, currentSelectedItem);
       }
