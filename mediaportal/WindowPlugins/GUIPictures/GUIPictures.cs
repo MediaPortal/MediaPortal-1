@@ -547,6 +547,11 @@ namespace MediaPortal.GUI.Pictures
 
     void UpdateButtonStates()
     {
+      GUIControl.HideControl(GetID, facadeView.GetID);
+      int iControl = facadeView.GetID;
+      GUIControl.ShowControl(GetID, iControl);
+      GUIControl.FocusControl(GetID, iControl);
+
       string textLine = String.Empty;
       View view = (View)mapSettings.ViewAs;
       SortMethod method = (SortMethod)mapSettings.SortBy;
