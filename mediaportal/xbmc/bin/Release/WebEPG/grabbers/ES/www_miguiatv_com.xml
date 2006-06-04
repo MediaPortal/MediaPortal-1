@@ -76,7 +76,7 @@
   </section>
   <section name="Listing">
     <entry name="BaseURL">http://www.miguiatv.com/</entry>
-    <entry name="SearchURL">#YYYY#MM#DD/#ID.html</entry>
+    <entry name="SearchURL">[YYYY][MM][DD]/[ID].html</entry>
 
 <!-- Unique Listing Start string -->
     <entry name="Start">listing</entry>
