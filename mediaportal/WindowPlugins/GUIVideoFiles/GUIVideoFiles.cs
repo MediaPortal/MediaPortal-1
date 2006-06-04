@@ -246,7 +246,11 @@ namespace MediaPortal.GUI.Video
         m_askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
 
         if (xmlreader.GetValueAsBool("movies", "rememberlastfolder", false))
-          currentFolder = xmlreader.GetValueAsString("movies", "lastfolder", currentFolder);
+        {
+          string lastFolder = xmlreader.GetValueAsString("movies", "lastfolder", currentFolder);
+          if (lastFolder != "root")
+            currentFolder = lastFolder;
+        }
       }
     }
 

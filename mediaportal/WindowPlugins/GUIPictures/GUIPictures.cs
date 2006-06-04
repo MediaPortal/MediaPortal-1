@@ -205,7 +205,11 @@ namespace MediaPortal.GUI.Pictures
           else break;
         }
         if (xmlreader.GetValueAsBool("pictures", "rememberlastfolder", false))
-          currentFolder = xmlreader.GetValueAsString("pictures", "lastfolder", currentFolder);
+        {
+          string lastFolder = xmlreader.GetValueAsString("pictures", "lastfolder", currentFolder);
+          if (lastFolder != "root")
+            currentFolder = lastFolder;
+        }
       }
     }
 

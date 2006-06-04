@@ -273,7 +273,11 @@ namespace MediaPortal.GUI.Music
           else break;
         }
         if (xmlreader.GetValueAsBool("music", "rememberlastfolder", false))
-          currentFolder = xmlreader.GetValueAsString("music", "lastfolder", currentFolder);
+        {
+          string lastFolder = xmlreader.GetValueAsString("music", "lastfolder", currentFolder);
+          if (lastFolder != "root")
+            currentFolder = lastFolder;
+        }
       }
     }
     #endregion
