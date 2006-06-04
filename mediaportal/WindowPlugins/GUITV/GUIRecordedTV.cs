@@ -635,9 +635,10 @@ namespace MediaPortal.GUI.TV
         TVDatabase.PlayedRecordedTV(rec);
         IMDBMovie movieDetails = new IMDBMovie();
         VideoDatabase.GetMovieInfo(rec.FileName, ref movieDetails);
-        int movieid = VideoDatabase.GetMovieId(rec.FileName);
+        int idMovie = VideoDatabase.GetMovieId(rec.FileName);
+        int idFile = VideoDatabase.GetFileId(rec.FileName);
         int stoptime = 0;
-        if (movieid >= 0)
+        if (idMovie >= 0 && idFile >= 0 )
         {
           Log.Write("play got movie id:{0} for {1}", movieid, rec.FileName);
           stoptime = VideoDatabase.GetMovieStopTime(movieid);
