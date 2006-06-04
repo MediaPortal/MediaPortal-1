@@ -204,6 +204,8 @@ namespace MediaPortal.GUI.Pictures
           }
           else break;
         }
+        if (xmlreader.GetValueAsBool("pictures", "rememberlastfolder", false))
+          currentFolder = xmlreader.GetValueAsString("pictures", "lastfolder", currentFolder);
       }
     }
 
@@ -626,11 +628,11 @@ namespace MediaPortal.GUI.Pictures
     #endregion
 
     #region folder settings
-    void LoadFolderSettings(string folder)
+    void LoadFolderSettings(string folderName)
     {
-      if (folder == String.Empty) folder = "root";
+      if (folderName == String.Empty) folderName = "root";
       object o;
-      FolderSettings.GetFolderSetting(folder, "Pictures", typeof(GUIPictures.MapSettings), out o);
+      FolderSettings.GetFolderSetting(folderName, "Pictures", typeof(GUIPictures.MapSettings), out o);
       if (o != null)
       {
         mapSettings = o as MapSettings;
@@ -638,16 +640,18 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        Share share = virtualDirectory.GetShare(folder);
+        Share share = virtualDirectory.GetShare(folderName);
         if (share != null)
         {
           if (mapSettings == null) mapSettings = new MapSettings();
           mapSettings.ViewAs = (int)share.DefaultView;
         }
       }
-
-
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        if (xmlreader.GetValueAsBool("pictures", "rememberlastfolder", false))
+          xmlreader.SetValue("pictures", "lastfolder", folderName);
     }
+
     void SaveFolderSettings(string folder)
     {
       if (folder == String.Empty) folder = "root";

@@ -57,6 +57,7 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         string defaultShare = xmlreader.GetValueAsString("music", "default", "");
+        RememberLastFolder = xmlreader.GetValueAsBool("music", "rememberlastfolder", false);
 
         for (int index = 0; index < MaximumShares; index++)
         {
@@ -160,7 +161,6 @@ namespace MediaPortal.Configuration.Sections
                 defaultShare = shareNameData;
             }
           }
-
           xmlwriter.SetValue("music", shareName, shareNameData);
           xmlwriter.SetValue("music", sharePath, sharePathData);
           xmlwriter.SetValue("music", sharePin, Utils.EncryptPin(sharePinData));
@@ -173,8 +173,8 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("music", sharePort, sharePortData.ToString());
           xmlwriter.SetValue("music", shareRemotePath, shareRemotePathData);
         }
-
         xmlwriter.SetValue("music", "default", defaultShare);
+        xmlwriter.SetValueAsBool("music", "rememberlastfolder", RememberLastFolder);
       }
     }
 

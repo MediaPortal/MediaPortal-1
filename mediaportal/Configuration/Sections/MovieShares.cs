@@ -58,6 +58,7 @@ namespace MediaPortal.Configuration.Sections
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         string defaultShare = xmlreader.GetValueAsString("movies", "default", "");
+        RememberLastFolder = xmlreader.GetValueAsBool("movies", "rememberlastfolder", false);
 
         for (int index = 0; index < MaximumShares; index++)
         {
@@ -157,13 +158,10 @@ namespace MediaPortal.Configuration.Sections
               shareRemotePathData = shareData.RemoteFolder;
               shareView = (int)shareData.DefaultView;
 
-
-
               if (CurrentShares[index] == DefaultShare)
                 defaultShare = shareNameData;
             }
           }
-
           xmlwriter.SetValue("movies", shareName, shareNameData);
           xmlwriter.SetValue("movies", sharePath, sharePathData);
           xmlwriter.SetValue("movies", sharePin, Utils.EncryptPin(sharePinData));
@@ -175,10 +173,9 @@ namespace MediaPortal.Configuration.Sections
           xmlwriter.SetValue("movies", sharePort, sharePortData.ToString());
           xmlwriter.SetValue("movies", shareRemotePath, shareRemotePathData);
           xmlwriter.SetValue("movies", shareViewPath, shareView);
-
         }
-
         xmlwriter.SetValue("movies", "default", defaultShare);
+        xmlwriter.SetValueAsBool("movies", "rememberlastfolder", RememberLastFolder);
       }
     }
 

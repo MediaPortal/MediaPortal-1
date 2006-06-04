@@ -244,6 +244,9 @@ namespace MediaPortal.GUI.Video
           else break;
         }
         m_askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
+
+        if (xmlreader.GetValueAsBool("movies", "rememberlastfolder", false))
+          currentFolder = xmlreader.GetValueAsString("movies", "lastfolder", currentFolder);
       }
     }
 
@@ -308,8 +311,8 @@ namespace MediaPortal.GUI.Video
     protected override void OnPageDestroy(int newWindowId)
     {
       currentSelectedItem = facadeView.SelectedListItemIndex;
-
       SaveFolderSettings(currentFolder);
+
       base.OnPageDestroy(newWindowId);
     }
 
@@ -387,9 +390,15 @@ namespace MediaPortal.GUI.Video
           currentView = (View)share.DefaultView;
         }
       }
+
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        if (xmlreader.GetValueAsBool("movies", "rememberlastfolder", false))
+          xmlreader.SetValue("movies", "lastfolder", folderName);
+
       SwitchView();
       UpdateButtonStates();
     }
+
     void SaveFolderSettings(string folderName)
     {
       if (folderName == String.Empty) folderName = "root";
@@ -517,8 +526,6 @@ namespace MediaPortal.GUI.Video
       }
     }
     #endregion
-
-
 
     protected override void OnClick(int iItem)
     {

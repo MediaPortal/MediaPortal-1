@@ -77,6 +77,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPButton addButton;
     private MediaPortal.UserInterface.Controls.MPListView sharesListView;
     private System.Windows.Forms.ColumnHeader columnHeader3;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxRemember;
     private System.ComponentModel.IContainer components = null;
 
     public Shares()
@@ -120,6 +121,7 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxRemember = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.deleteButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.editButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.addButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -133,17 +135,30 @@ namespace MediaPortal.Configuration.Sections
       // groupBox1
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.checkBoxRemember);
       this.groupBox1.Controls.Add(this.deleteButton);
       this.groupBox1.Controls.Add(this.editButton);
       this.groupBox1.Controls.Add(this.addButton);
       this.groupBox1.Controls.Add(this.sharesListView);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
+      // 
+      // checkBoxRemember
+      // 
+      this.checkBoxRemember.AutoSize = true;
+      this.checkBoxRemember.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxRemember.Location = new System.Drawing.Point(16, 378);
+      this.checkBoxRemember.Name = "checkBoxRemember";
+      this.checkBoxRemember.Size = new System.Drawing.Size(149, 17);
+      this.checkBoxRemember.TabIndex = 4;
+      this.checkBoxRemember.Text = "Remember last used folder";
+      this.checkBoxRemember.UseVisualStyleBackColor = true;
       // 
       // deleteButton
       // 
@@ -154,6 +169,7 @@ namespace MediaPortal.Configuration.Sections
       this.deleteButton.Size = new System.Drawing.Size(72, 22);
       this.deleteButton.TabIndex = 3;
       this.deleteButton.Text = "Delete";
+      this.deleteButton.UseVisualStyleBackColor = true;
       this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
       // 
       // editButton
@@ -165,6 +181,7 @@ namespace MediaPortal.Configuration.Sections
       this.editButton.Size = new System.Drawing.Size(72, 22);
       this.editButton.TabIndex = 2;
       this.editButton.Text = "Edit";
+      this.editButton.UseVisualStyleBackColor = true;
       this.editButton.Click += new System.EventHandler(this.editButton_Click);
       // 
       // addButton
@@ -175,23 +192,25 @@ namespace MediaPortal.Configuration.Sections
       this.addButton.Size = new System.Drawing.Size(72, 22);
       this.addButton.TabIndex = 1;
       this.addButton.Text = "Add";
+      this.addButton.UseVisualStyleBackColor = true;
       this.addButton.Click += new System.EventHandler(this.addButton_Click);
       // 
       // sharesListView
       // 
       this.sharesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.sharesListView.CheckBoxes = true;
       this.sharesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-                                                                                     this.columnHeader1,
-                                                                                     this.columnHeader3,
-                                                                                     this.columnHeader2});
+            this.columnHeader1,
+            this.columnHeader3,
+            this.columnHeader2});
       this.sharesListView.FullRowSelect = true;
       this.sharesListView.Location = new System.Drawing.Point(16, 24);
       this.sharesListView.Name = "sharesListView";
       this.sharesListView.Size = new System.Drawing.Size(440, 344);
       this.sharesListView.TabIndex = 0;
+      this.sharesListView.UseCompatibleStateImageBehavior = false;
       this.sharesListView.View = System.Windows.Forms.View.Details;
       this.sharesListView.SelectedIndexChanged += new System.EventHandler(this.sharesListView_SelectedIndexChanged);
       this.sharesListView.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListView_ItemCheck);
@@ -217,6 +236,7 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "Shares";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -365,6 +385,18 @@ namespace MediaPortal.Configuration.Sections
       get
       {
         return currentlyCheckedItem;
+      }
+    }
+
+    public bool RememberLastFolder
+    {
+      get
+      {
+        return checkBoxRemember.Checked;
+      }
+      set
+      {
+        checkBoxRemember.Checked = value;
       }
     }
 

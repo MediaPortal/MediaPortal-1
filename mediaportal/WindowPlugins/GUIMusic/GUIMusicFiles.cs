@@ -129,7 +129,7 @@ namespace MediaPortal.GUI.Music
     MapSettings _MapSettings = new MapSettings();
 
     DirectoryHistory m_history = new DirectoryHistory();
-    string m_strDirectory = String.Empty;
+    string currentFolder = String.Empty;
     string m_strDirectoryStart = String.Empty;
     int m_iItemSelected = -1;
     GUIListItem m_itemItemSelected = null;
@@ -262,9 +262,9 @@ namespace MediaPortal.GUI.Music
             if (strDefault == share.Name)
             {
               share.Default = true;
-              if (m_strDirectory.Length == 0)
+              if (currentFolder.Length == 0)
               {
-                m_strDirectory = share.Path;
+                currentFolder = share.Path;
                 m_strDirectoryStart = share.Path;
               }
             }
@@ -272,6 +272,8 @@ namespace MediaPortal.GUI.Music
           }
           else break;
         }
+        if (xmlreader.GetValueAsBool("music", "rememberlastfolder", false))
+          currentFolder = xmlreader.GetValueAsString("music", "lastfolder", currentFolder);
       }
     }
     #endregion
@@ -294,7 +296,7 @@ namespace MediaPortal.GUI.Music
 
     public override bool Init()
     {
-      m_strDirectory = String.Empty;
+      currentFolder = String.Empty;
 
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mymusicsongs.xml");
       return bResult;
@@ -304,7 +306,7 @@ namespace MediaPortal.GUI.Music
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
-        if (m_strDirectory != m_strPlayListPath)
+        if (currentFolder != m_strPlayListPath)
         {
           if (facadeView.Focus)
           {
@@ -313,7 +315,7 @@ namespace MediaPortal.GUI.Music
             {
               if (item.IsFolder && item.Label == "..")
               {
-                if (m_strDirectory != m_strDirectoryStart)
+                if (currentFolder != m_strDirectoryStart)
                 {
                   LoadDirectory(item.Path);
                   return;
@@ -358,15 +360,15 @@ namespace MediaPortal.GUI.Music
           return;
         }
       }
-      LoadFolderSettings(m_strDirectory);
-      LoadDirectory(m_strDirectory);
+      LoadFolderSettings(currentFolder);
+      LoadDirectory(currentFolder);
 
       btnSearch.Disabled = true;
     }
     protected override void OnPageDestroy(int newWindowId)
     {
       m_iItemSelected = facadeView.SelectedListItemIndex;
-      SaveFolderSettings(m_strDirectory);
+      SaveFolderSettings(currentFolder);
       base.OnPageDestroy(newWindowId);
     }
 
@@ -386,16 +388,16 @@ namespace MediaPortal.GUI.Music
       }
       if (control == btnPlaylistFolder)
       {
-        if (m_strDirectory != m_strPlayListPath)
+        if (currentFolder != m_strPlayListPath)
         {
-          m_strCurrentFolder = m_strDirectory;
-          m_strDirectory = m_strPlayListPath;
+          m_strCurrentFolder = currentFolder;
+          currentFolder = m_strPlayListPath;
         }
         else
         {
-          m_strDirectory = m_strCurrentFolder;
+          currentFolder = m_strCurrentFolder;
         }
-        LoadDirectory(m_strDirectory);
+        LoadDirectory(currentFolder);
       }
       base.OnClicked(controlId, control, actionType);
     }
@@ -426,10 +428,10 @@ namespace MediaPortal.GUI.Music
           }
           if (GUIWindowManager.ActiveWindow == GetID)
           {
-            if (Utils.IsDVD(m_strDirectory))
+            if (Utils.IsDVD(currentFolder))
             {
-              m_strDirectory = String.Empty;
-              LoadDirectory(m_strDirectory);
+              currentFolder = String.Empty;
+              LoadDirectory(currentFolder);
             }
           }
           break;
@@ -447,16 +449,16 @@ namespace MediaPortal.GUI.Music
           break;
 
         case GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY:
-          m_strDirectory = message.Label;
-          LoadDirectory(m_strDirectory);
+          currentFolder = message.Label;
+          LoadDirectory(currentFolder);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_VOLUME_INSERTED:
         case GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED:
-          if (m_strDirectory == String.Empty || m_strDirectory.Substring(0, 2) == message.Label)
+          if (currentFolder == String.Empty || currentFolder.Substring(0, 2) == message.Label)
           {
-            m_strDirectory = String.Empty;
-            LoadDirectory(m_strDirectory);
+            currentFolder = String.Empty;
+            LoadDirectory(currentFolder);
           }
           break;
       }
@@ -664,7 +666,7 @@ namespace MediaPortal.GUI.Music
           dlg.AddLocalizedString(1102); //Cancel Import
       }
 
-      if (!m_directory.IsRemote(m_strDirectory)) dlg.AddLocalizedString(102); //Scan
+      if (!m_directory.IsRemote(currentFolder)) dlg.AddLocalizedString(102); //Scan
       //dlg.AddLocalizedString(654); //Eject
 
       if (!facadeView.Focus)
@@ -745,7 +747,7 @@ namespace MediaPortal.GUI.Music
 
         case 136: // show playlist
           m_iItemSelected = facadeView.SelectedListItemIndex;
-          SaveFolderSettings(m_strDirectory);
+          SaveFolderSettings(currentFolder);
           GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST);
           break;
 
@@ -857,7 +859,7 @@ namespace MediaPortal.GUI.Music
 
       // File operation settings
       dlgFile.SetSourceItem(item);
-      dlgFile.SetSourceDir(m_strDirectory);
+      dlgFile.SetSourceDir(currentFolder);
       dlgFile.SetDestinationDir(m_strDestination);
       dlgFile.SetDirectoryStructure(m_directory);
       dlgFile.DoModal(GetID);
@@ -866,7 +868,7 @@ namespace MediaPortal.GUI.Music
       //final		
       if (dlgFile.Reload())
       {
-        LoadDirectory(m_strDirectory);
+        LoadDirectory(currentFolder);
         if (m_iItemSelected >= 0)
         {
           GUIControl.SelectItemControl(GetID, facadeView.GetID, m_iItemSelected);
@@ -961,7 +963,7 @@ namespace MediaPortal.GUI.Music
 
         //	Save current window and directory to know where the selected item was
         MusicState.TempPlaylistWindow = GetID;
-        MusicState.TempPlaylistDirectory = m_strDirectory;
+        MusicState.TempPlaylistDirectory = currentFolder;
 
         playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC_TEMP;
         playlistPlayer.Play(item.Path);
@@ -1045,9 +1047,9 @@ namespace MediaPortal.GUI.Music
       m_database.GetSongs(searchKind, strSearchText, ref itemlist);
       // this will set all to move up
       // from a search result
-      m_history.Set(m_strDirectory, m_strDirectory); //save where we are
+      m_history.Set(currentFolder, currentFolder); //save where we are
       GUIListItem dirUp = new GUIListItem("..");
-      dirUp.Path = m_strDirectory; // to get where we are
+      dirUp.Path = currentFolder; // to get where we are
       dirUp.IsFolder = true;
       dirUp.ThumbnailImage = String.Empty;
       dirUp.IconImage = "defaultFolderBack.png";
@@ -1074,11 +1076,11 @@ namespace MediaPortal.GUI.Music
 
     }
 
-    void LoadFolderSettings(string strDirectory)
+    void LoadFolderSettings(string folderName)
     {
-      if (strDirectory == String.Empty) strDirectory = "root";
+      if (folderName == String.Empty) folderName = "root";
       object o;
-      FolderSettings.GetFolderSetting(strDirectory, "MusicFiles", typeof(GUIMusicFiles.MapSettings), out o);
+      FolderSettings.GetFolderSetting(folderName, "MusicFiles", typeof(GUIMusicFiles.MapSettings), out o);
       if (o != null)
       {
         _MapSettings = o as MapSettings;
@@ -1089,7 +1091,7 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        Share share = m_directory.GetShare(strDirectory);
+        Share share = m_directory.GetShare(folderName);
         if (share != null)
         {
           if (_MapSettings == null) _MapSettings = new MapSettings();
@@ -1098,6 +1100,10 @@ namespace MediaPortal.GUI.Music
           currentView = (View)share.DefaultView;
         }
       }
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+        if (xmlreader.GetValueAsBool("music", "rememberlastfolder", false))
+          xmlreader.SetValue("music", "lastfolder", folderName);
+
       SwitchView();
       UpdateButtonStates();
     }
@@ -1118,27 +1124,27 @@ namespace MediaPortal.GUI.Music
       {
         if (SelectedItem.IsFolder && SelectedItem.Label != "..")
         {
-          m_history.Set(SelectedItem.Label, m_strDirectory);
+          m_history.Set(SelectedItem.Label, currentFolder);
         }
       }
-      if (strNewDirectory != m_strDirectory && _MapSettings != null)
+      if (strNewDirectory != currentFolder && _MapSettings != null)
       {
-        SaveFolderSettings(m_strDirectory);
+        SaveFolderSettings(currentFolder);
       }
 
-      if (strNewDirectory != m_strDirectory || _MapSettings == null)
+      if (strNewDirectory != currentFolder || _MapSettings == null)
       {
         LoadFolderSettings(strNewDirectory);
       }
-      m_strDirectory = strNewDirectory;
+      currentFolder = strNewDirectory;
       GUIControl.ClearControl(GetID, facadeView.GetID);
 
       string strObjects = String.Empty;
       TimeSpan totalPlayingTime = new TimeSpan();
 
-      List<GUIListItem> itemlist = m_directory.GetDirectoryExt(m_strDirectory);
+      List<GUIListItem> itemlist = m_directory.GetDirectoryExt(currentFolder);
 
-      string strSelectedItem = m_history.Get(m_strDirectory);
+      string strSelectedItem = m_history.Get(currentFolder);
       int iItem = 0;
       OnRetrieveMusicInfo(ref itemlist);
       foreach (GUIListItem item in itemlist)
@@ -1149,7 +1155,7 @@ namespace MediaPortal.GUI.Music
           if (tag.Duration > 0)
             totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
         }
-        if (item.Label == ".." && m_strDirectory == m_strPlayListPath) continue;
+        if (item.Label == ".." && currentFolder == m_strPlayListPath) continue;
         item.OnRetrieveArt += new MediaPortal.GUI.Library.GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         facadeView.Add(item);
@@ -1207,10 +1213,10 @@ namespace MediaPortal.GUI.Music
       {
         // recursive
         if (pItem.Label == "..") return;
-        string strDirectory = m_strDirectory;
-        m_strDirectory = pItem.Path;
+        string strDirectory = currentFolder;
+        currentFolder = pItem.Path;
 
-        List<GUIListItem> itemlist = m_directory.GetDirectoryExt(m_strDirectory);
+        List<GUIListItem> itemlist = m_directory.GetDirectoryExt(currentFolder);
         OnRetrieveMusicInfo(ref itemlist);
 
         // Sort share folder tracks.  
@@ -1228,7 +1234,7 @@ namespace MediaPortal.GUI.Music
         {
           AddItemToPlayList(item, ref playList);
         }
-        m_strDirectory = strDirectory;
+        currentFolder = strDirectory;
       }
       else
       {
@@ -1437,11 +1443,11 @@ namespace MediaPortal.GUI.Music
 
       GUIDialogProgress dlg = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
 
-      if (m_strDirectory.Length == 0) return;
+      if (currentFolder.Length == 0) return;
       //string strItem;
       List<SongMap> songsMap = new List<SongMap>();
       // get all information for all files in current directory from database 
-      m_database.GetSongsByPath2(m_strDirectory, ref songsMap);
+      m_database.GetSongsByPath2(currentFolder, ref songsMap);
 
       //musicCD is the information about the cd...
       //delete old CD info
@@ -1457,7 +1463,7 @@ namespace MediaPortal.GUI.Music
         if (pItem.Path.Length == 0) continue;
         string strFilePath = System.IO.Path.GetFullPath(pItem.Path);
         strFilePath = strFilePath.Substring(0, strFilePath.Length - (1 + System.IO.Path.GetFileName(pItem.Path).Length));
-        if (strFilePath != m_strDirectory)
+        if (strFilePath != currentFolder)
         {
           return;
         }
@@ -1498,7 +1504,7 @@ namespace MediaPortal.GUI.Music
                 string strPathName;
                 string strFileName;
                 DatabaseUtility.Split(pItem.Path, out strPathName, out strFileName);
-                if (strPathName != m_strDirectory)
+                if (strPathName != currentFolder)
                 {
                   if (m_database.GetSongByFileName(pItem.Path, ref song))
                   {
@@ -1761,14 +1767,14 @@ namespace MediaPortal.GUI.Music
           if (pItem.Label != "..")
           {
             // load subfolder
-            string strPrevDir = m_strDirectory;
-            m_strDirectory = pItem.Path;
-            List<GUIListItem> subDirItems = m_directory.GetDirectoryExt(m_strDirectory);
-            if (!DoScan(m_strDirectory, ref subDirItems))
+            string strPrevDir = currentFolder;
+            currentFolder = pItem.Path;
+            List<GUIListItem> subDirItems = m_directory.GetDirectoryExt(currentFolder);
+            if (!DoScan(currentFolder, ref subDirItems))
             {
               bCancel = true;
             }
-            m_strDirectory = strPrevDir;
+            currentFolder = strPrevDir;
             if (bCancel) break;
           }
         }
@@ -1792,7 +1798,7 @@ namespace MediaPortal.GUI.Music
       }
       if (null != dlg)
       {
-        string strPath = System.IO.Path.GetFileName(m_strDirectory);
+        string strPath = System.IO.Path.GetFileName(currentFolder);
         dlg.SetHeading(189);
         dlg.SetLine(1, 330);
         //dlg.SetLine(1, String.Empty);
@@ -1801,7 +1807,7 @@ namespace MediaPortal.GUI.Music
       }
 
       m_database.BeginTransaction();
-      if (DoScan(m_strDirectory, ref items))
+      if (DoScan(currentFolder, ref items))
       {
         dlg.SetLine(1, 328);
         dlg.SetLine(2, String.Empty);
@@ -1817,7 +1823,7 @@ namespace MediaPortal.GUI.Music
       m_bScan = false;
       GUIGraphicsContext.Overlay = _isOverlayAllowed;
 
-      LoadDirectory(m_strDirectory);
+      LoadDirectory(currentFolder);
     }
 
     protected override void OnFindCoverArt(int iItem)
@@ -1845,7 +1851,7 @@ namespace MediaPortal.GUI.Music
           return;
         }
 
-        string oldFolder = m_strDirectory;
+        string oldFolder = currentFolder;
         VirtualDirectory dir = new VirtualDirectory();
         dir.SetExtensions(Utils.AudioExtensions);
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(pItem.Path, true);
@@ -1854,9 +1860,9 @@ namespace MediaPortal.GUI.Music
           return;
 
         m_bScan = true;
-        m_strDirectory = pItem.Path;
+        currentFolder = pItem.Path;
         OnRetrieveMusicInfo(ref items);
-        m_strDirectory = oldFolder;
+        currentFolder = oldFolder;
         m_bScan = false;
         GUIListItem item = items[1] as GUIListItem;
         MusicTag tag = item.MusicTag as MusicTag;
@@ -1893,7 +1899,7 @@ namespace MediaPortal.GUI.Music
 
       if (pItem.IsFolder && pItem.Label != "..")
       {
-        string oldFolder = m_strDirectory;
+        string oldFolder = currentFolder;
         VirtualDirectory dir = new VirtualDirectory();
         dir.SetExtensions(Utils.AudioExtensions);
         List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(pItem.Path, true);
@@ -1902,9 +1908,9 @@ namespace MediaPortal.GUI.Music
           return;
 
         m_bScan = true;
-        m_strDirectory = pItem.Path;
+        currentFolder = pItem.Path;
         OnRetrieveMusicInfo(ref items);
-        m_strDirectory = oldFolder;
+        currentFolder = oldFolder;
         m_bScan = false;
         GUIListItem item = items[1] as GUIListItem;
         MusicTag tag = item.MusicTag as MusicTag;
