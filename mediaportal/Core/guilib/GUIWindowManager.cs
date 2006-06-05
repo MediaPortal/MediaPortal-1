@@ -383,7 +383,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// call ResetallControls() for every window
     /// This will cause each control to use the default
-    /// position, width & size as mentioned in the skin files
+    /// position, width and size as mentioned in the skin files
     /// </summary>
     static public void ResetAllControls()
     {
