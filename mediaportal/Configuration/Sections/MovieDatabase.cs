@@ -2138,6 +2138,29 @@ namespace MediaPortal.Configuration.Sections
         VideoDatabase.RemoveActorsForMovie(details.ID);
         VideoDatabase.RemoveFilesForMovie(details.ID);
       }
+      else
+      {
+        string file;
+        if (listViewFiles.Items.Count > 0)
+        {
+          file = listViewFiles.Items[0].Text;
+        }
+        else
+        {
+          file = details.Title;
+        }
+        if (file == string.Empty)
+        {
+          MessageBox.Show("Please enter a movie title or movie file", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          return;
+        }
+        details.ID = VideoDatabase.AddMovieFile(file);
+        if (details.ID == -1)
+        {
+          MessageBox.Show("Could not save movie to database", "Information", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+          return;
+        }
+      }
 
       VideoDatabase.SetMovieInfoById(details.ID, ref details);
 

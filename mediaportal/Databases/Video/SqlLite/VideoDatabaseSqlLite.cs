@@ -728,11 +728,8 @@ namespace MediaPortal.Video.Database
 
         // add director
         int lDirector = -1;
-        if (details.Director != Strings.Unknown)
-        {
-          lDirector = AddActor(details.Director);
-          AddActorToMovie(lMovieId, lDirector);
-        }
+        lDirector = AddActor(details.Director);
+        AddActorToMovie(lMovieId, lDirector);
         // add all genres
         string szGenres = details.Genre;
         ArrayList vecGenres = new ArrayList();
