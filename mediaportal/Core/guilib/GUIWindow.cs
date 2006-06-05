@@ -240,6 +240,7 @@ namespace MediaPortal.GUI.Library
     protected bool _autoHideTopbar = false;
     bool _isSkinLoaded = false;
     bool _shouldRestore = false;
+    private string _lastSkin = string.Empty;
     #endregion
 
     #region ctor
@@ -394,13 +395,15 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public virtual bool Load(string _skinFileName)
     {
-      if (_skinFileName == null) return true;
       _isSkinLoaded = false;
-      if (_skinFileName == "") return true;
+      if ((_skinFileName == null) || (_skinFileName == ""))
+        return false;
+
       _windowXmlFileName = _skinFileName;
 
       // if windows supports delayed loading then do nothing
-      if (SupportsDelayedLoad) return true;
+      if (SupportsDelayedLoad)
+        return true;
 
       //else load xml file now
       return LoadSkin();
@@ -413,15 +416,17 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public bool LoadSkin()
     {
+      _lastSkin = GUIGraphicsContext.Skin;
       // no filename is configured
       if (_windowXmlFileName == "") return false;
       // TODO what is the reason for this check
       if (Children.Count > 0) return false;
       _defaultControlId = 0;
       // Load the reference controls
-      int iPos = _windowXmlFileName.LastIndexOf('\\');
-      string strReferenceFile = _windowXmlFileName.Substring(0, iPos);
-      strReferenceFile += @"\references.xml";
+      //int iPos = _windowXmlFileName.LastIndexOf('\\');
+      //string strReferenceFile = _windowXmlFileName.Substring(0, iPos);
+      _windowXmlFileName = GUIGraphicsContext.Skin + _windowXmlFileName.Substring(_windowXmlFileName.LastIndexOf("\\"));
+      string strReferenceFile = GUIGraphicsContext.Skin + @"\references.xml";
       GUIControlFactory.LoadReferences(strReferenceFile);
 
       if (!System.IO.File.Exists(_windowXmlFileName))
@@ -721,6 +726,8 @@ namespace MediaPortal.GUI.Library
     }
     protected virtual void OnPageLoad()
     {
+      if (_isSkinLoaded && (_lastSkin != GUIGraphicsContext.Skin))
+        LoadSkin();
     }
     protected virtual void OnPageDestroy(int new_windowId)
     {
@@ -836,6 +843,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     protected virtual void OnWindowLoaded()
     {
+
       _listPositions = new List<CPosition>();
 
       for (int i = 0; i < Children.Count; ++i)
