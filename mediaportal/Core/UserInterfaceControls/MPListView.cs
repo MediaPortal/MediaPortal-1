@@ -27,6 +27,7 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace MediaPortal.UserInterface.Controls
 {
@@ -35,9 +36,12 @@ namespace MediaPortal.UserInterface.Controls
   /// </summary>
   public class MPListView : System.Windows.Forms.ListView
   {
+    [DllImport("user32")]
+    static extern int GetDoubleClickTime();
 
     private const string REORDER = "Reorder";
     private bool allowRowReorder = true;
+    private DateTime lastClick = DateTime.MinValue;
 
     public bool AllowRowReorder
     {
@@ -202,6 +206,30 @@ namespace MediaPortal.UserInterface.Controls
       }
       base.OnDragDrop(e);
       EndUpdate();
+    }
+
+    protected override void OnMouseUp(MouseEventArgs e)
+    {
+      if (SelectedItems.Count == 0)
+      {
+        if (((TimeSpan)(DateTime.Now - lastClick)).TotalMilliseconds < GetDoubleClickTime())
+        {
+          OnDoubleClick(e);
+          lastClick = DateTime.MinValue;
+        }
+        else
+          lastClick = DateTime.Now;
+      }
+      else
+        lastClick = DateTime.MinValue;
+
+      base.OnMouseUp(e);
+    }
+
+    protected override void OnDoubleClick(EventArgs e)
+    {
+      lastClick = DateTime.MinValue;
+      base.OnDoubleClick(e);
     }
 
   }
