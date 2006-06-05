@@ -37,13 +37,14 @@ using MWCommon;
 using MWControls;
 using Microsoft.Win32;
 using MediaPortal.Configuration.Controls;
-
 using SQLite.NET;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using DShowNET;
 using DirectShowLib;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
   public class TVChannels : MediaPortal.Configuration.SectionSettings
@@ -92,7 +93,7 @@ namespace MediaPortal.Configuration.Sections
     private System.Windows.Forms.ColumnHeader columnHeader11;
     ListViewColumnSorter _columnSorter;
     private MediaPortal.UserInterface.Controls.MPButton buttonCombine;
-    bool _init=false;
+    bool _init = false;
 
     //
     // Private members
@@ -1333,7 +1334,7 @@ namespace MediaPortal.Configuration.Sections
               channels.SetValue(listItem.Index.ToString(), "DVBSVideoPid", ch.VideoPid.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBSTeletextPid", ch.TeletextPid.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBSECMpid", ch.ECMPid.ToString());
-              channels.SetValue(listItem.Index.ToString(), "DVBCPmtPid", ch.PMTPid.ToString());
+              channels.SetValue(listItem.Index.ToString(), "DVBSPmtPid", ch.PMTPid.ToString()); //giovortu
 
               channels.SetValue(listItem.Index.ToString(), "DVBSAudio1Pid", ch.Audio1.ToString());
               channels.SetValue(listItem.Index.ToString(), "DVBSAudio2Pid", ch.Audio2.ToString());
@@ -1402,31 +1403,27 @@ namespace MediaPortal.Configuration.Sections
           channels.SetValue("GROUPS", "TOTAL", groups.Count.ToString());
           GROUP_EXPORT = true;
         }
-        for (int i = 0; i < groups.Count; i++)
+        int count = 1; //mjsystem
+        foreach (TVGroup group in groups)
         {
-          foreach (TVGroup group in groups)
+          channels.SetValue("Group " + count.ToString(), "ID", group.ID.ToString());
+          channels.SetValue("Group " + count.ToString(), "NAME", group.GroupName);
+          channels.SetValue("Group " + count.ToString(), "PINCODE", group.Pincode.ToString());
+          channels.SetValue("Group " + count.ToString(), "SORT", group.Sort.ToString());
+
+          //Save total channels added to this group
+          //TVDatabase.GetTVChannelsForGroup(group);
+          channels.SetValue("Group " + count.ToString(), "TOTAL CHANNELS", group.TvChannels.Count.ToString());
+
+          //Save current channel ID's under this group
+          int channel_index = 0;
+          foreach (TVChannel tvChan in group.TvChannels)
           {
-            if (group.Sort == i)
-            {
-              channels.SetValue("Group " + i.ToString(), "ID", group.ID.ToString());
-              channels.SetValue("Group " + i.ToString(), "NAME", group.GroupName);
-              channels.SetValue("Group " + i.ToString(), "PINCODE", group.Pincode.ToString());
-              channels.SetValue("Group " + i.ToString(), "SORT", group.Sort.ToString());
-
-              //Save total channels added to this group
-              //TVDatabase.GetTVChannelsForGroup(group);
-              channels.SetValue("Group " + i.ToString(), "TOTAL CHANNELS", group.TvChannels.Count.ToString());
-
-              //Save current channel ID's under this group
-              int channel_index = 0;
-              foreach (TVChannel tvChan in group.TvChannels)
-              {
-                channels.SetValue("Group " + i.ToString(), "CHANNEL " + channel_index.ToString(), tvChan.ID.ToString());
-                channel_index++;
-              }
-              break;
-            }
+            channels.SetValue("Group " + count.ToString(), "CHANNEL " + channel_index.ToString(), tvChan.ID.ToString());
+            channel_index++;
           }
+
+          count++;
         }
 
         //Card mapping data
@@ -1479,7 +1476,7 @@ namespace MediaPortal.Configuration.Sections
           RECORDED_EXPORT = true;
         }
 
-        int count = 0;
+        count = 1; //mjsystem
         foreach (TVRecorded show in Recorded)
         {
           channels.SetValue("Recorded " + count.ToString(), "ID", show.ID.ToString());
@@ -1824,6 +1821,7 @@ namespace MediaPortal.Configuration.Sections
                     ch.AudioLanguage3 = audioLanguage3;
                     ch.HasEITSchedule = HasEITSchedule;
                     ch.HasEITPresentFollow = HasEITPresentFollow;
+                    ch.PMTPid = pmtPid;
 
                     TVDatabase.RemoveSatChannel(ch);
                     TVDatabase.AddSatChannel(ch);
@@ -1867,11 +1865,11 @@ namespace MediaPortal.Configuration.Sections
                   HasEITSchedule = channels.GetValueAsBool(i.ToString(), "ATSCHasEITSchedule", false);
                   pcrPid = channels.GetValueAsInt(i.ToString(), "ATSCPCRPid", -1);
 
-                  if (physicalChannel > 0 && minorChannel >= 0 && majorChannel >=0 )
+                  if (physicalChannel > 0 && minorChannel >= 0 && majorChannel >= 0)
                   {
-                    TVDatabase.MapATSCChannel(Import_Chan.Name, physicalChannel,minorChannel,majorChannel,provider, Import_Chan.ID, 
-                                              freq, symbolrate, innerFec, modulation, ONID, TSID, SID, audioPid, videoPid, teletextPid, 
-                                              pmtPid, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2, 
+                    TVDatabase.MapATSCChannel(Import_Chan.Name, physicalChannel, minorChannel, majorChannel, provider, Import_Chan.ID,
+                                              freq, symbolrate, innerFec, modulation, ONID, TSID, SID, audioPid, videoPid, teletextPid,
+                                              pmtPid, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2,
                                               audioLanguage3, HasEITPresentFollow, HasEITSchedule);
                   }
                 }
@@ -1906,7 +1904,7 @@ namespace MediaPortal.Configuration.Sections
         {
           MessageBox.Show("There is a total of " + group_index.ToString() + " groups to import");
 
-          for (int i = 0; i < group_index; i++)
+          for (int i = 1; i <= group_index; i++) //mjsystem
           {
             int overwrite = 0;
             TVGroup Import_Group = new TVGroup();
@@ -1934,6 +1932,7 @@ namespace MediaPortal.Configuration.Sections
                     int tmpID = channels.GetValueAsInt("Group " + i.ToString(), "CHANNEL " + j.ToString(), 0);
 
                     //Locate Channel so it can be added to group
+
                     foreach (TVChannel FindChan in Group_Channels)
                     {
                       if (FindChan.ID == tmpID)

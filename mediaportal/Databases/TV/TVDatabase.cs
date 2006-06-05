@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -18,6 +20,9 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
+
+#endregion
+
 using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
@@ -933,7 +938,7 @@ namespace MediaPortal.TV.Database
               strChannel, channel.Number, channel.Frequency.ToString(),
               totalchannels + 1, iExternal, strExternal, (int)channel.TVStandard, iVisible, channel.Country, scrambled, grabepg, channel.EpgHours,
               Utils.datetolong(channel.LastDateTimeEpgGrabbed));
-            } 
+            }
             m_db.Execute(strSQL);
             int iNewID = m_db.LastInsertID();
 
@@ -1112,7 +1117,7 @@ namespace MediaPortal.TV.Database
 
           strSQL = String.Format("SELECT * FROM tblPrograms WHERE idChannel={0} AND ", iChannelId);
           strSQL += String.Format("  ( ('{0}' < iEndTime and '{1}' > iEndTime) or  ",
-                                         prog.Start.ToString(),  prog.End.ToString());
+                                         prog.Start.ToString(), prog.End.ToString());
           strSQL += String.Format("    ('{0}' <= iStartTime and '{1}' >= iEndTime) or  ",
                                          prog.Start.ToString(), prog.End.ToString());
           strSQL += String.Format("    ('{0}' < iStartTime and '{1}' > iStartTime ) )",
@@ -1139,7 +1144,7 @@ namespace MediaPortal.TV.Database
             for (int i = 0; i < results2.Rows.Count; ++i)
             {
               long idProgram = DatabaseUtility.GetAsInt64(results2, i, "idProgram");
-              Log.WriteFile(Log.LogType.EPG, "sql: del {0} id:{1} {2}-{3}", i, idProgram,DatabaseUtility.Get(results2, i, "iStartTime"), DatabaseUtility.Get(results2, i, "iEndTime"));
+              Log.WriteFile(Log.LogType.EPG, "sql: del {0} id:{1} {2}-{3}", i, idProgram, DatabaseUtility.Get(results2, i, "iStartTime"), DatabaseUtility.Get(results2, i, "iEndTime"));
               strSQL = String.Format("DELETE FROM tblPrograms WHERE idProgram={0}", idProgram);
               m_db.Execute(strSQL);
             }
@@ -2157,22 +2162,45 @@ namespace MediaPortal.TV.Database
           int iContentRec = 1;
           if (!recording.IsContentRecording) iContentRec = 0;
 
-          strSQL = String.Format("insert into recording (idRecording,idChannel,iRecordingType,strProgram,iStartTime,iEndTime,iCancelTime,bContentRecording,quality,priority,episodesToKeep,keepMethod,keepDate,paddingFront,paddingEnd ) values ( NULL, {0}, {1}, '{2}','{3}', '{4}', '{5}', {6}, {7}, {8},{9},{10},'{11}',{12},{13})",
-            iChannelId,
-            (int)recording.RecType,
-            strTitle,
-            recording.Start.ToString(),
-            recording.End.ToString(),
-            recording.Canceled.ToString(),
-            iContentRec,
-            (int)recording.Quality,
-            recording.Priority,
-            recording.EpisodesToKeep,
-            (int)recording.KeepRecordingMethod,
-            Utils.datetolong(recording.KeepRecordingTill),
-            recording.PaddingFront,
-            recording.PaddingEnd
-            );
+          if (recording.ID > 0)
+          { //mjsystem
+            strSQL = String.Format("insert into recording (idRecording,idChannel,iRecordingType,strProgram,iStartTime,iEndTime,iCancelTime,bContentRecording,quality,priority,episodesToKeep,keepMethod,keepDate,paddingFront,paddingEnd ) values ( {14}, {0}, {1}, '{2}','{3}', '{4}', '{5}', {6}, {7}, {8},{9},{10},'{11}',{12},{13})",
+              iChannelId,
+              (int)recording.RecType,
+              strTitle,
+              recording.Start.ToString(),
+              recording.End.ToString(),
+              recording.Canceled.ToString(),
+              iContentRec,
+              (int)recording.Quality,
+              recording.Priority,
+              recording.EpisodesToKeep,
+              (int)recording.KeepRecordingMethod,
+              Utils.datetolong(recording.KeepRecordingTill),
+              recording.PaddingFront,
+              recording.PaddingEnd,
+              recording.ID
+              );
+          }
+          else
+          {
+            strSQL = String.Format("insert into recording (idRecording,idChannel,iRecordingType,strProgram,iStartTime,iEndTime,iCancelTime,bContentRecording,quality,priority,episodesToKeep,keepMethod,keepDate,paddingFront,paddingEnd ) values ( NULL, {0}, {1}, '{2}','{3}', '{4}', '{5}', {6}, {7}, {8},{9},{10},'{11}',{12},{13})",
+              iChannelId,
+              (int)recording.RecType,
+              strTitle,
+              recording.Start.ToString(),
+              recording.End.ToString(),
+              recording.Canceled.ToString(),
+              iContentRec,
+              (int)recording.Quality,
+              recording.Priority,
+              recording.EpisodesToKeep,
+              (int)recording.KeepRecordingMethod,
+              Utils.datetolong(recording.KeepRecordingTill),
+              recording.PaddingFront,
+              recording.PaddingEnd
+              );
+          }
           m_db.Execute(strSQL);
           lNewId = m_db.LastInsertID();
           recording.ID = lNewId;
@@ -2414,17 +2442,35 @@ namespace MediaPortal.TV.Database
           int iGenreId = AddGenre(recording.Genre);
           if (iGenreId < 0) return -1;
 
-          strSQL = String.Format("insert into recorded (idRecorded,idChannel,idGenre,strProgram,iStartTime,iEndTime,strDescription,strFileName,iPlayed,keepMethod,keepDate) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', {7}, {8}, '{9}')",
-            iChannelId,
-            iGenreId,
-            strTitle,
-            recording.Start.ToString(),
-            recording.End.ToString(),
-            strDescription,
-            strFileName,
-            recording.Played,
-            (int)recording.KeepRecordingMethod,
-            Utils.datetolong(recording.KeepRecordingTill));
+          if (recording.ID > 0) //mjsystem
+          {
+            strSQL = String.Format("insert into recorded (idRecorded,idChannel,idGenre,strProgram,iStartTime,iEndTime,strDescription,strFileName,iPlayed,keepMethod,keepDate) values ( {10}, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', {7}, {8}, '{9}')",
+              iChannelId,
+              iGenreId,
+              strTitle,
+              recording.Start.ToString(),
+              recording.End.ToString(),
+              strDescription,
+              strFileName,
+              recording.Played,
+              (int)recording.KeepRecordingMethod,
+              Utils.datetolong(recording.KeepRecordingTill),
+              recording.ID);
+          }
+          else
+          {
+            strSQL = String.Format("insert into recorded (idRecorded,idChannel,idGenre,strProgram,iStartTime,iEndTime,strDescription,strFileName,iPlayed,keepMethod,keepDate) values ( NULL, {0}, {1}, '{2}', '{3}', '{4}', '{5}', '{6}', {7}, {8}, '{9}')",
+              iChannelId,
+              iGenreId,
+              strTitle,
+              recording.Start.ToString(),
+              recording.End.ToString(),
+              strDescription,
+              strFileName,
+              recording.Played,
+              (int)recording.KeepRecordingMethod,
+              Utils.datetolong(recording.KeepRecordingTill));
+          }
           m_db.Execute(strSQL);
           lNewId = m_db.LastInsertID();
           recording.ID = lNewId;
@@ -3941,8 +3987,17 @@ namespace MediaPortal.TV.Database
           if (results.Rows.Count == 0)
           {
             // doesnt exists, add it
-            strSQL = String.Format("insert into tblGroups (idGroup, strName,iSort ,Pincode) values ( NULL, '{0}', {1}, {2})",
-                                                      strgroupName, totalgroups + 1, group.Pincode);
+            //mjsystem
+            if (group.ID > 0)
+            {
+              strSQL = String.Format("insert into tblGroups (idGroup, strName,iSort ,Pincode) values ( {3}, '{0}', {1}, {2})",
+                                              strgroupName, totalgroups + 1, group.Pincode, group.ID);
+            }
+            else
+            {
+              strSQL = String.Format("insert into tblGroups (idGroup, strName,iSort ,Pincode) values ( NULL, '{0}', {1}, {2})",
+                                                  strgroupName, totalgroups + 1, group.Pincode);
+            }
             m_db.Execute(strSQL);
             int iNewID = m_db.LastInsertID();
             return iNewID;
