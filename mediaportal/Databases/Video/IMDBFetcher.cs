@@ -849,9 +849,6 @@ namespace MediaPortal.Video.Database
           }
         }
         movieDetails.ID = id;
-        string searchString = movieDetails.SearchString;
-        VideoDatabase.SetMovieInfoById(movieDetails.ID, ref movieDetails);
-        movieDetails.SearchString = searchString;
       }
       if (IMDBFetcher.RefreshIMDB(progress, ref movieDetails, isFuzzyMatching))
       {

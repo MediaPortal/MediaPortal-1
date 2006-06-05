@@ -66,6 +66,14 @@ namespace MediaPortal.Video.Database
 			get { return m_id;}
 			set { m_id=value;}
 		}
+    public bool IsEmpty
+    {
+      get
+      {
+        if ((m_strTitle != String.Empty)&&(m_strTitle != Strings.Unknown)) return false;
+        return true;
+      }
+    }
 		public int actorId
 		{
 			get { return m_actorid;}

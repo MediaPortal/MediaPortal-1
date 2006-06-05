@@ -163,6 +163,15 @@ namespace MediaPortal.GUI.Video
                 }
 			}
 		}
+    public string CurrentLevelWhere
+    {
+      get
+      {
+        FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
+        if (definition == null) return string.Empty;
+        return definition.Where;
+      }
+    }
 
 		public int CurrentLevel
 		{
@@ -403,7 +412,6 @@ namespace MediaPortal.GUI.Video
 			if (definition.Where=="actor")
 			{
 				item.Label=movie.Actor;
-        item.AlbumInfoTag = VideoDatabase.GetActorInfo(movie.actorId);
 				item.Label2=String.Empty;
 				item.Label3=String.Empty;
 			}

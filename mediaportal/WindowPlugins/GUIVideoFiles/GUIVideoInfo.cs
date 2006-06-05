@@ -72,6 +72,7 @@ namespace MediaPortal.GUI.Video
 
     ViewMode viewmode = ViewMode.Image;
     IMDBMovie currentMovie = null;
+    string folderForThumbs = string.Empty;
     string[] coverArtUrls = new string[1];
     string imdbCoverArtUrl = String.Empty;
     Thread imageSearchThread = null;
@@ -285,6 +286,11 @@ namespace MediaPortal.GUI.Video
       get { return currentMovie; }
       set { currentMovie = value; }
     }
+    public string FolderForThumbs
+    {
+      get { return folderForThumbs; }
+      set { folderForThumbs = value; }
+    }
 
     void Update()
     {
@@ -357,6 +363,20 @@ namespace MediaPortal.GUI.Video
             else
             {
               Log.Write("image has no extension:{0}", imageUrl);
+            }
+          }
+          if ((System.IO.File.Exists(coverArtImage))&&(FolderForThumbs != string.Empty))
+          {
+            // copy icon to folder also;
+            string strFolderImage = System.IO.Path.GetFullPath(FolderForThumbs);
+            strFolderImage += "\\folder.jpg"; //TODO                  
+            try
+            {
+              Utils.FileDelete(strFolderImage);
+              System.IO.File.Copy(coverArtImage, strFolderImage);
+            }
+            catch (Exception)
+            {
             }
           }
         }
