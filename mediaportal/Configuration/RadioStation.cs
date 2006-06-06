@@ -1,3 +1,5 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
 /* 
  *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
@@ -19,33 +21,35 @@
  *
  */
 
+#endregion
+
 using System;
 
 namespace MediaPortal.Configuration
 {
-	public class RadioStation
-	{
-		public bool Scrambled=false;
-		public int ID=-1;
-		public string Type="";
-		public string Name="";
-		public string Genre="";
-		public int Bitrate=0;
-		public string URL="";
-		public Frequency Frequency;
+  public class RadioStation
+  {
+    public bool Scrambled = false;
+    public int ID = -1;
+    public string Type = "";
+    public string Name = "";
+    public string Genre = "";
+    public int Bitrate = 0;
+    public string URL = "";
+    public Frequency Frequency;
 
-		public RadioStation()
-		{
-		}
+    public RadioStation()
+    {
+    }
 
-		public RadioStation(int channel, long frequency)
-		{
-			this.Frequency = frequency;
-		}
+    public RadioStation(int channel, long frequency)
+    {
+      this.Frequency = frequency;
+    }
 
-		public override string ToString()
-		{
-			return String.Format("Frequency: {0}", Frequency.ToString(Frequency.Format.Hertz));
-		}
-	}
+    public override string ToString()
+    {
+      return String.Format("Frequency: {0}", Frequency.ToString(Frequency.Format.Hertz));
+    }
+  }
 }
