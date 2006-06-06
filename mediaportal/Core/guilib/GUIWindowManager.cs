@@ -420,6 +420,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     static public void Clear()
     {
+      CloseCurrentWindow();
       GUIGraphicsContext.Receivers -= new SendMessageHandler(SendThreadMessage);
       GUIGraphicsContext.OnNewAction -= new OnActionHandler(OnActionReceived);
       for (int x = 0; x < _windowCount; ++x)
@@ -760,6 +761,53 @@ namespace MediaPortal.GUI.Library
           OnActivateWindow(pWindow.GetID);
         msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, pWindow.GetID, 0, 0, (int)GUIWindow.Window.WINDOW_INVALID, 0, null);
         pWindow.OnMessage(msg);
+      }
+      finally
+      {
+        _isSwitchingToNewWindow = false;
+      }
+    }
+    /// <summary>
+    /// Close current window. When MediaPortal closes
+    /// we need to close current window
+    /// </summary>
+    static public void CloseCurrentWindow()
+    {
+      Log.Write("Windowmanager:closing current window");
+      _isSwitchingToNewWindow = true;
+      try
+      {
+        int fromWindowId = ActiveWindow;
+
+        if (OnPostRenderAction != null)
+        {
+          OnPostRenderAction(null, null, false);
+        }
+        GUIMessage msg;
+        GUIWindow pWindow;
+        if ((_activeWindowIndex >= 0 && _activeWindowIndex < _windowCount))
+        {
+          // deactivate current window
+          pWindow = _listWindows[_activeWindowIndex];
+
+
+
+          // deactivate any window
+          if (_routedWindow != null)
+          {
+            GUIMessage msgDlg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _routedWindow.GetID, 0, 0, pWindow.GetID, 0, null);
+            _routedWindow.OnMessage(msgDlg);
+            _routedWindow = null;
+          }
+
+
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, pWindow.GetID, 0, 0, _previousActiveWindowId, 0, null);
+          pWindow.OnMessage(msg);
+          if (OnDeActivateWindow != null)
+            OnDeActivateWindow(pWindow.GetID);
+          _activeWindowIndex = -1;
+          _activeWindowId = -1;
+        }
       }
       finally
       {
