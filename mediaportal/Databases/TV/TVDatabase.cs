@@ -4419,7 +4419,9 @@ namespace MediaPortal.TV.Database
         if (dvbc)
         {
           TVDatabase.GetDVBCTuneRequest(chan.ID, out provider, out freq, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
-          if (serviceid == SID && transportid == TSID) return chan;
+          //if (serviceid == SID && transportid == TSID) return chan;
+          if ( serviceid == SID && transportid == TSID && networkid == ONID ) //check if networkid has changed during channel update
+            return chan;
         }
         if (dvbs)
         {
@@ -4434,7 +4436,9 @@ namespace MediaPortal.TV.Database
         if (dvbt)
         {
           TVDatabase.GetDVBTTuneRequest(chan.ID, out provider, out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandWidth, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out HasEITPresentFollow, out HasEITSchedule, out pcrPid);
-          if (serviceid == SID && transportid == TSID) return chan;
+          //if (serviceid == SID && transportid == TSID) return chan;
+          if ( serviceid == SID && transportid == TSID && networkid == ONID ) // forums patch: http://forum.team-mediaportal.com/viewtopic.php?t=13551
+            return chan;
         }
       }
       provider = "";
