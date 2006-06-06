@@ -348,7 +348,7 @@ namespace MediaPortal.Configuration
     /// </summary>
     private void InitializeComponent()
     {
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(WizardForm));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WizardForm));
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.nextButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.backButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -360,6 +360,7 @@ namespace MediaPortal.Configuration
       this.panel2 = new System.Windows.Forms.Panel();
       this.holderPanel = new System.Windows.Forms.Panel();
       this.topPanel.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.SuspendLayout();
       // 
       // cancelButton
@@ -371,6 +372,7 @@ namespace MediaPortal.Configuration
       this.cancelButton.Size = new System.Drawing.Size(72, 22);
       this.cancelButton.TabIndex = 1;
       this.cancelButton.Text = "&Cancel";
+      this.cancelButton.UseVisualStyleBackColor = true;
       this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
       // 
       // nextButton
@@ -381,6 +383,7 @@ namespace MediaPortal.Configuration
       this.nextButton.Size = new System.Drawing.Size(72, 22);
       this.nextButton.TabIndex = 0;
       this.nextButton.Text = "&Next >";
+      this.nextButton.UseVisualStyleBackColor = true;
       this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
       // 
       // backButton
@@ -391,6 +394,7 @@ namespace MediaPortal.Configuration
       this.backButton.Size = new System.Drawing.Size(72, 22);
       this.backButton.TabIndex = 5;
       this.backButton.Text = "< &Back";
+      this.backButton.UseVisualStyleBackColor = true;
       this.backButton.Click += new System.EventHandler(this.backButton_Click);
       // 
       // topPanel
@@ -416,7 +420,7 @@ namespace MediaPortal.Configuration
       // 
       // infoLabel
       // 
-      this.infoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.infoLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.infoLabel.Location = new System.Drawing.Point(8, 26);
       this.infoLabel.Name = "infoLabel";
       this.infoLabel.Size = new System.Drawing.Size(512, 40);
@@ -425,7 +429,7 @@ namespace MediaPortal.Configuration
       // 
       // topicLabel
       // 
-      this.topicLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
+      this.topicLabel.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.topicLabel.Location = new System.Drawing.Point(8, 8);
       this.topicLabel.Name = "topicLabel";
       this.topicLabel.Size = new System.Drawing.Size(272, 23);
@@ -471,9 +475,11 @@ namespace MediaPortal.Configuration
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "WizardForm";
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "WizardForm";
       this.Load += new System.EventHandler(this.WizardForm_Load);
       this.topPanel.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.ResumeLayout(false);
 
     }
