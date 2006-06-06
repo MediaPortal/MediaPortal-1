@@ -1164,7 +1164,7 @@ namespace MediaPortal.Configuration.Sections
               }
           }
           listView1.Update();
-          TVChannels.UpdateList();
+          SectionTvChannels.UpdateList();
       }
 
   }
