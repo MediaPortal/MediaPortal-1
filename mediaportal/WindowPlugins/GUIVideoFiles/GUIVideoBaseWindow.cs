@@ -384,6 +384,7 @@ namespace MediaPortal.GUI.Video
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         xmlwriter.SetValue("movies", "startWindow", VideoState.StartWindow.ToString());
+        xmlwriter.SetValue("movies", "startview", VideoState.View);
       }
     }
 

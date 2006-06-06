@@ -182,6 +182,7 @@ namespace MediaPortal.GUI.Video
       {
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", false);
         VideoState.StartWindow = xmlreader.GetValueAsInt("movies", "startWindow", GetID);
+        VideoState.View = xmlreader.GetValueAsString("movies", "startview", "369");
       }
       return result;
     }
