@@ -40,7 +40,7 @@ namespace MediaPortal.UserInterface.Controls
     static extern int GetDoubleClickTime();
 
     private const string REORDER = "Reorder";
-    private bool allowRowReorder = true;
+    private bool allowRowReorder = false;
     private DateTime lastClick = DateTime.MinValue;
 
     public bool AllowRowReorder
