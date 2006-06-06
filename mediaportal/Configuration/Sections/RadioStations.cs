@@ -442,13 +442,13 @@ namespace MediaPortal.Configuration.Sections
         station.Genre = editStation.Station.Genre;
         station.BitRate = editStation.Station.Bitrate;
         station.URL = editStation.Station.URL;
-        station.Frequency = editStation.Station.Frequency.Herz;
+        station.Frequency = editStation.Station.Frequency.Hertz;
         if (station.Frequency < 1000)
           station.Frequency *= 1000000L;
 
         ListViewItem listItem = new ListViewItem(new string[] { editStation.Station.Type, 
 																																editStation.Station.Name,
-																																editStation.Station.Frequency.ToString(Frequency.Format.MegaHerz),
+																																editStation.Station.Frequency.ToString(Frequency.Format.MegaHertz),
 																																editStation.Station.Genre, 
 																																editStation.Station.Bitrate.ToString(),
 																																editStation.Station.URL 
@@ -485,7 +485,7 @@ namespace MediaPortal.Configuration.Sections
 
           listItem.SubItems[0].Text = editStation.Station.Type;
           listItem.SubItems[1].Text = editStation.Station.Name;
-          listItem.SubItems[2].Text = editStation.Station.Frequency.ToString(Frequency.Format.MegaHerz);
+          listItem.SubItems[2].Text = editStation.Station.Frequency.ToString(Frequency.Format.MegaHertz);
           listItem.SubItems[3].Text = editStation.Station.Genre;
           listItem.SubItems[4].Text = editStation.Station.Bitrate.ToString();
           listItem.SubItems[5].Text = editStation.Station.URL;
@@ -497,7 +497,7 @@ namespace MediaPortal.Configuration.Sections
           station.Genre = editStation.Station.Genre;
           station.BitRate = editStation.Station.Bitrate;
           station.URL = editStation.Station.URL;
-          station.Frequency = editStation.Station.Frequency.Herz;
+          station.Frequency = editStation.Station.Frequency.Hertz;
           if (station.Frequency < 1000)
             station.Frequency *= 1000000L;
           station.Channel = listItem.Index;
@@ -580,7 +580,7 @@ namespace MediaPortal.Configuration.Sections
 
         ListViewItem listItem = new ListViewItem(new string[] { radioStation.Type, 
 																		radioStation.Name,
-																		radioStation.Frequency.ToString(Frequency.Format.MegaHerz),
+																		radioStation.Frequency.ToString(Frequency.Format.MegaHertz),
 																		radioStation.Genre,
 																		radioStation.Bitrate.ToString(),
 																		radioStation.URL

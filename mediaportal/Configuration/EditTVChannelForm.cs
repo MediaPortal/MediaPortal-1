@@ -2844,7 +2844,7 @@ namespace MediaPortal.Configuration
                 frequencyTextBox.Text = frequencyTextBox.Text.Replace('.', separators[index]);
 
                 //
-                // MegaHerz
+                // MegaHertz
                 //
                 channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
 
@@ -2861,7 +2861,7 @@ namespace MediaPortal.Configuration
           else
           {
             //
-            // Herz
+            // Hertz
             //
             if (frequencyTextBox.Text.Length > 3)
             {
@@ -2954,7 +2954,7 @@ namespace MediaPortal.Configuration
             chanNr = comboBoxChannels.Text.ToUpper().Trim();
           for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
           {
-            if (channel.Frequency.Herz == TVChannel.SpecialChannels[i].Frequency)
+            if (channel.Frequency.Hertz == TVChannel.SpecialChannels[i].Frequency)
             {
               labelSpecial.Text = TVChannel.SpecialChannels[i].Name;
             }
@@ -3270,9 +3270,9 @@ namespace MediaPortal.Configuration
         comboBoxChannels.SelectedItem = tvchannel.Number.ToString();
       }
 
-      tvchannel.Frequency = chan.Frequency.Herz;
-      if (chan.Frequency.Herz < 1000)
-        tvchannel.Frequency = chan.Frequency.Herz * 1000000L;
+      tvchannel.Frequency = chan.Frequency.Hertz;
+      if (chan.Frequency.Hertz < 1000)
+        tvchannel.Frequency = chan.Frequency.Hertz * 1000000L;
 
       if (tvchannel.ID < 0)
       {
@@ -3765,55 +3765,55 @@ namespace MediaPortal.Configuration
   {
     public enum Format
     {
-      Herz,
-      MegaHerz
+      Hertz,
+      MegaHertz
     }
 
-    public Frequency(long herz)
+    public Frequency(long hertz)
     {
-      this.herz = herz;
+      this.hertz = hertz;
     }
 
-    public Frequency(double megaherz)
+    public Frequency(double megahertz)
     {
-      this.herz = (long)(megaherz * (1000000d));
+      this.hertz = (long)(megahertz * (1000000d));
     }
 
-    private long herz = 0;
+    private long hertz = 0;
 
-    public long Herz
+    public long Hertz
     {
-      get { return herz; }
+      get { return hertz; }
       set
       {
-        herz = value;
-        if (herz <= 1000)
-          herz *= (int)1000000d;
+        hertz = value;
+        if (hertz <= 1000)
+          hertz *= (int)1000000d;
       }
     }
 
-    public double MegaHerz
+    public double MegaHertz
     {
-      get { return (double)herz / 1000000d; }
+      get { return (double)hertz / 1000000d; }
       set
       {
-        herz = (long)(value * 1000000d);
+        hertz = (long)(value * 1000000d);
       }
     }
 
-    public static implicit operator Frequency(int herz)
+    public static implicit operator Frequency(int hertz)
     {
-      return new Frequency(herz);
+      return new Frequency(hertz);
     }
 
-    public static implicit operator Frequency(long herz)
+    public static implicit operator Frequency(long hertz)
     {
-      return new Frequency(herz);
+      return new Frequency(hertz);
     }
 
-    public static implicit operator Frequency(double megaHerz)
+    public static implicit operator Frequency(double megaHertz)
     {
-      return new Frequency((long)(megaHerz * (1000000d)));
+      return new Frequency((long)(megaHertz * (1000000d)));
     }
 
     public string ToString(Format format)
@@ -3824,12 +3824,12 @@ namespace MediaPortal.Configuration
       {
         switch (format)
         {
-          case Format.Herz:
-            result = String.Format("{0}", Herz);
+          case Format.Hertz:
+            result = String.Format("{0}", Hertz);
             break;
 
-          case Format.MegaHerz:
-            result = String.Format("{0:#,###0.000}", MegaHerz);
+          case Format.MegaHertz:
+            result = String.Format("{0:#,###0.000}", MegaHertz);
             break;
         }
       }
@@ -3845,7 +3845,7 @@ namespace MediaPortal.Configuration
 
     public override string ToString()
     {
-      return ToString(Format.MegaHerz);
+      return ToString(Format.MegaHertz);
     }
   }
 

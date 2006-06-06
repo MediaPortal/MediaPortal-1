@@ -904,7 +904,7 @@ namespace MediaPortal.Configuration.Sections
                           editStation.Station.URL = String.Empty;
 
                       listItem.SubItems[0].Text = editStation.Station.Name;
-                      listItem.SubItems[1].Text = editStation.Station.Frequency.ToString(Frequency.Format.MegaHerz);
+                      listItem.SubItems[1].Text = editStation.Station.Frequency.ToString(Frequency.Format.MegaHertz);
 
                       station.Scrambled = editStation.Station.Scrambled;
                       station.ID = editStation.Station.ID;
@@ -913,7 +913,7 @@ namespace MediaPortal.Configuration.Sections
                       station.BitRate = editStation.Station.Bitrate;
                       station.URL = editStation.Station.URL;
                       long currentTunedFrequency = station.Frequency;
-                      station.Frequency = editStation.Station.Frequency.Herz;
+                      station.Frequency = editStation.Station.Frequency.Hertz;
                       if (station.Frequency < 1000)
                           station.Frequency *= 1000000L;
                       RadioDatabase.UpdateStation(station);

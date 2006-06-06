@@ -389,7 +389,7 @@ namespace MediaPortal.Configuration
                 frequencyTextBox.Text = frequencyTextBox.Text.Replace('.', separators[index]);
 
                 //
-                // MegaHerz
+                // MegaHertz
                 //
                 station.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
 
@@ -406,7 +406,7 @@ namespace MediaPortal.Configuration
           else
           {
             //
-            // Herz
+            // Hertz
             //
             if (frequencyTextBox.Text.Length > 3)
             {
@@ -436,7 +436,7 @@ namespace MediaPortal.Configuration
 
         typeComboBox.SelectedItem = (string)station.Type;
         nameTextBox.Text = station.Name;
-        frequencyTextBox.Text = station.Frequency.ToString(Frequency.Format.MegaHerz);
+        frequencyTextBox.Text = station.Frequency.ToString(Frequency.Format.MegaHertz);
         genreTextBox.Text = station.Genre;
         bitrateTextBox.Text = station.Bitrate.ToString();
         urlTextBox.Text = station.URL;

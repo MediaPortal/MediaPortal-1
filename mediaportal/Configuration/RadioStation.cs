@@ -45,7 +45,7 @@ namespace MediaPortal.Configuration
 
 		public override string ToString()
 		{
-			return String.Format("Frequency: {0}", Frequency.ToString(Frequency.Format.Herz));
+			return String.Format("Frequency: {0}", Frequency.ToString(Frequency.Format.Hertz));
 		}
 	}
 }
