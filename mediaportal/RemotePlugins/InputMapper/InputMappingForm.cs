@@ -181,6 +181,7 @@ namespace MediaPortal.InputDevices
             case (int)GUIWindow.Window.WINDOW_INVALID:
             case (int)GUIWindow.Window.WINDOW_MINI_GUIDE:
             case (int)GUIWindow.Window.WINDOW_MSNOSD:
+            case (int)GUIWindow.Window.WINDOW_MUSIC:
             case (int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS:
             case (int)GUIWindow.Window.WINDOW_MUSIC_INFO:
             case (int)GUIWindow.Window.WINDOW_OSD:
