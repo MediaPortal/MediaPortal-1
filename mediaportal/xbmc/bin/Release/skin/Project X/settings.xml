@@ -26,6 +26,7 @@
 				<label>Setup Wizard</label>
 				<hyperlink>615</hyperlink>
 				<onup>17</onup>
+				<ondown>4</ondown>
 			</control>
 			<control>
 				<description>General</description>
@@ -33,6 +34,8 @@
 				<id>4</id>
 				<width>197</width>
 				<label>128</label>
+				<onup>3</onup>
+				<ondown>5</ondown>
 				<hyperlink>705</hyperlink>
 			</control>
 			<control>
@@ -41,6 +44,8 @@
 				<id>5</id>
 				<width>197</width>
 				<label>214</label>
+				<onup>4</onup>
+				<ondown>6</ondown>
 				<hyperlink>9</hyperlink>
 			</control>
 			<control>
@@ -49,6 +54,8 @@
 				<id>6</id>
 				<width>197</width>
 				<label>2</label>
+				<onup>5</onup>
+				<ondown>7</ondown>
 				<hyperlink>14</hyperlink>
 			</control>
 			<control>
@@ -57,6 +64,8 @@
 				<id>7</id>
 				<width>197</width>
 				<label>1</label>
+				<onup>6</onup>
+				<ondown>8</ondown>
 				<hyperlink>12</hyperlink>
 			</control>
 			<control>
@@ -65,6 +74,8 @@
 				<id>8</id>
 				<width>197</width>
 				<label>3</label>
+				<onup>7</onup>
+				<ondown>9</ondown>
 				<hyperlink>703</hyperlink>
 			</control>
 			<control>
@@ -73,6 +84,8 @@
 				<id>9</id>
 				<width>197</width>
 				<label>1027</label>
+				<onup>8</onup>
+				<ondown>10</ondown>
 				<hyperlink>704</hyperlink>
 			</control>
 			<!-- last item needs an ondown with a value of 3 to support wraparound -->
