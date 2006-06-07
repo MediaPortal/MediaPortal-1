@@ -1434,8 +1434,8 @@ namespace MediaPortal.Configuration.Sections
       this.labelIrTransNoteWarning.Name = "labelIrTransNoteWarning";
       this.labelIrTransNoteWarning.Size = new System.Drawing.Size(412, 32);
       this.labelIrTransNoteWarning.TabIndex = 9;
-      this.labelIrTransNoteWarning.Text = "You have to rename \\Program Files\\Irtrans\\remotes\\apps.cfg to i.e. apps.cfg.bak o" +
-          "r actions will be executed twice.";
+      this.labelIrTransNoteWarning.Text = "You have to modify \\Program Files\\Irtrans\\remotes\\apps.cfg  or actions will be ex" +
+          "ecuted twice.";
       // 
       // labelIrTransNoteModel
       // 
@@ -1880,7 +1880,7 @@ namespace MediaPortal.Configuration.Sections
         byte[] sendData = BitConverter.GetBytes(clientID);
         m_Socket.Send(sendData, sendData.Length, SocketFlags.None);
         m_Socket.Close();
-        labelIrTransStatus.Text = "No problems found.";
+        labelIrTransStatus.Text = "IRTrans server up and running.";
       }
       catch (SocketException)
       {

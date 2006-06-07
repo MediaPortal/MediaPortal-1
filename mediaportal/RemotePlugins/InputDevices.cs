@@ -49,6 +49,7 @@ namespace MediaPortal.InputDevices
       FireDTVRemote.Init(GUIGraphicsContext.ActiveForm);
       HCWRemote.Init(GUIGraphicsContext.ActiveForm);
       X10Remote.Init(GUIGraphicsContext.ActiveForm);
+      IrTrans.Init(GUIGraphicsContext.ActiveForm);
     }
 
     public static void Stop()
@@ -64,6 +65,7 @@ namespace MediaPortal.InputDevices
       FireDTVRemote.DeInit();
       HCWRemote.DeInit();
       X10Remote.DeInit();
+      IrTrans.DeInit();
       diRemote.Stop();
 
       _initialized = false;
@@ -114,6 +116,7 @@ namespace MediaPortal.InputDevices
     static HcwRemote HCWRemote = new HcwRemote();
     static X10Remote X10Remote = new X10Remote();
     static DirectInputHandler diRemote = new DirectInputHandler();
+    static IrTrans IrTrans = new IrTrans();
     static RemoteControls.FireDTVRemote FireDTVRemote = new RemoteControls.FireDTVRemote();
     static AppCommands _lastHidRequest;
     static int _lastHidRequestTick;

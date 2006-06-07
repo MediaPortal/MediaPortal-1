@@ -1,7 +1,7 @@
-#region Copyright (C) 2005-2006 Team MediaPortal - Author: hwahrmann
+#region Copyright (C) 2005-2006 Team MediaPortal
 
 /* 
- *	Copyright (C) 2005-2006 Team MediaPortal - Author: hwahrmann
+ *	Copyright (C) 2005-2006 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -33,20 +33,21 @@ using MediaPortal.GUI.Library;
 namespace MediaPortal.InputDevices
 {
   /// <summary>
-  /// This plugin enables IRTrans Remote support inside Mediaportal.
+  /// Support for remote commands transmitted via the IRTrans Server.
+  /// Remote buttons are defined in the XML file.
+  /// The name of the remote to load is defined in the Configuration. It os prefixed with "IrTrans"
   /// </summary>
   public class IrTrans
   {
     #region Variables and Constants
-    private const string _version = "0.1";
     InputHandler irtransHandler;
     Socket m_Socket;
     IAsyncResult m_asynResult;
     AsyncCallback pfnCallBack;
-    bool IrTransEnabled = false;
+    bool irTransEnabled = false;
     string remoteKeyFile = "";
     string remoteModel = "";
-    int irTransPort = 21000;
+    int irTransServerPort = 21000;
     bool logVerbose = false;
     #endregion
 
@@ -95,57 +96,61 @@ namespace MediaPortal.InputDevices
     {
     }
 
-    public void Start()
+    /// <summary>
+    /// Read Port number of IRTrans Server and Remote Key file as specified on Configuration
+    /// and if IrTrans support enabled connect to the IRTRans Server.
+    /// </summary>
+    /// <param name="hwnd"></param>
+    public void Init(IntPtr hwnd)
     {
-      Log.Write("IrTrans Plugin {0} starting.", _version);
-      LoadSettings();
-      remoteKeyFile = "IrTrans " + remoteModel;
-      irtransHandler = new InputHandler(remoteKeyFile);
-      // Now connect to the IRTrans Server
-      if (Connect_IrTrans(irTransPort))
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        Log.Write("IRTrans: Connection established");
-        IrTransEnabled = true;
+        irTransEnabled = xmlreader.GetValueAsBool("remote", "IRTrans", false);
+        remoteModel = xmlreader.GetValueAsString("remote", "IRTransRemoteModel", "mediacenter");
+        irTransServerPort = xmlreader.GetValueAsInt("remote", "IRTransServerPort", 21000);
+        logVerbose = xmlreader.GetValueAsBool("remote", "IRTransVerboseLog", false);
+      }
+      if (irTransEnabled)
+      {
+        // Build the XML File name to be used for Button mapping.
+        remoteKeyFile = "IrTrans " + remoteModel;
+        irtransHandler = new InputHandler(remoteKeyFile);
+      }
+      else
+        return;
+      // Now Connect to the IRTransServer 
+      if (Connect_IrTrans(irTransServerPort))
+      {
+        if (logVerbose)
+          Log.Write("IRTrans: Connection established.");
         // Now Wait for data to be sent
         WaitForData();
       }
       else
-      {
-        Log.Write("IRTrans: Failed to connect to server - check port configuration");
-        IrTransEnabled = false;
-      }
-      return;
+        return;
     }
 
-    public void Stop()
+    /// <summary>
+    /// Close the connection to IRTrans when MP is terminated
+    /// </summary>
+    public void DeInit()
     {
-      Log.Write("IrTrans: Plugin {0} stopping", _version);
-      if (!IrTransEnabled)
+      if (!irTransEnabled)
         return;
 
       try
       {
         m_Socket.Close();
         if (logVerbose)
-          Log.Write("IRTrans: Connection closed");
+          Log.Write("IRTrans: Connection closed.");
       }
       catch (SocketException se)
       {
         if (logVerbose)
-          Log.Write("IRTrans: Exception on closing socket: {0}", se.Message);
+          Log.Write("IRTrans: Exception on closing socket. {0}", se.Message);
       }
-      return;
     }
 
-    private void LoadSettings()
-    {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-      {
-        remoteModel = xmlreader.GetValueAsString("remote", "IRTransRemoteModel", "mediacenter");
-        irTransPort = xmlreader.GetValueAsInt("remote", "IRTransServerPort", 21000);
-        logVerbose = xmlreader.GetValueAsBool("remote", "IRTransVerboseLog", false);
-      }
-    }
 
     /// <summary>
     /// Establishes a connection to the IRTransServer on "localhost" at the given Port.
@@ -232,7 +237,7 @@ namespace MediaPortal.InputDevices
           Log.Write("IRTrans: Command End ----------------------------------------------");
         }
 
-        // Do an action only on Receive and if the command came from the selected Remote 
+        // Do an action only on Receive and if the command came from the selected Remote
         if ((IrTransStatus)netrecv.statustype == IrTransStatus.STATUS_RECEIVE)
         {
           if (netrecv.remote.Trim() == remoteModel)
