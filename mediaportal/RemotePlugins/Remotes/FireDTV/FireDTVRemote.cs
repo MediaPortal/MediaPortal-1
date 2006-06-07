@@ -94,17 +94,27 @@ namespace MediaPortal.RemoteControls
 			{
 				_windowHandle = hwnd;
 
-        RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DigitalEverywhere\\FireDTV");
-        if (rkey != null)
+        using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DigitalEverywhere\\FireDTV"))
         {
-          string dllPath = rkey.GetValue("InstallFolder").ToString();
-          string fullDllPath = string.Format("{0}{1}", dllPath.Substring(0, dllPath.LastIndexOf('\\') + 1), "Tools\\");
-          _FireSAPapiFound = File.Exists(fullDllPath + "FiresatApi.dll");
-          if (!_FireSAPapiFound)
+          try
+          {
+            if (rkey != null)
+            {
+              string dllPath = rkey.GetValue("InstallFolder").ToString();
+              string fullDllPath = string.Format("{0}{1}", dllPath.Substring(0, dllPath.LastIndexOf('\\') + 1), "Tools\\");
+              _FireSAPapiFound = File.Exists(fullDllPath + "FiresatApi.dll");
+              if (!_FireSAPapiFound)
+                _remoteEnabled = false;
+              MediaPortal.GUI.Library.Log.Write("FireDTV: DLL found in directory: {0}", fullDllPath);
+            }
+          }
+          catch (Exception)
+          {
+            MediaPortal.GUI.Library.Log.Write("FireDTV: unable to determine firedtv directory" );
             _remoteEnabled = false;
-          MediaPortal.GUI.Library.Log.Write("FireDTV: DLL found in directory: {0}", fullDllPath);
+            return;
+          }
         }
-
 				using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
 				{
 					_remoteEnabled	= ((xmlreader.GetValueAsBool("remote", "FireDTV", false)) && (_FireSAPapiFound));
