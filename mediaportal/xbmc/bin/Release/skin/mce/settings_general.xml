@@ -12,6 +12,8 @@
 			<id>10</id>
 			<posX>60</posX>
 			<posY>131</posY>
+			<width>210</width>
+			<height>32</height>
 			<label>166</label>
 			<onup>99</onup>
 			<ondown>11</ondown>
@@ -22,6 +24,8 @@
 			<id>11</id>
 			<posX>60</posX>
 			<posY>165</posY>
+			<width>210</width>
+			<height>32</height>
 			<label>248</label>
 			<onup>10</onup>
 			<ondown>12</ondown>

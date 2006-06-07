@@ -21,6 +21,8 @@
   			<posX>60</posX>
   			<posY>131</posY>
   			<label>166</label>
+  			<onup>99</onup>
+				<ondown>11</ondown>
   		</control>
   		<control>
   			<description>Language</description>
@@ -29,6 +31,9 @@
   			<posX>60</posX>
   			<posY>165</posY>
   			<label>248</label>
+  			<onup>10</onup>
+  			<ondown>12</ondown>
+				<onright>99</onright>
   		</control>
     	<control>
     		<description>Panel Split</description>
@@ -43,6 +48,8 @@
   			<posX>60</posX>
   			<posY>199</posY>
   			<label>1047</label>
+  			<onup>11</onup>
+				<ondown>13</ondown>
   		</control>
   		<control>
   			<description>Screensaver</description>
@@ -51,6 +58,7 @@
   			<posX>60</posX>
   			<posY>233</posY>
   			<label>360</label>
+  			<onup>12</onup>
   			<ondown>10</ondown>
   		</control>
  		</control>

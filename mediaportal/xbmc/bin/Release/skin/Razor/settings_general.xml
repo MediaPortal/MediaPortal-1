@@ -45,7 +45,7 @@
 				<id>13</id>
 				<label>360</label>
 				<onup>12</onup>
-				<ondown>14</ondown>
+				<ondown>10</ondown>
 			</control>
 		</control>
 		<control>
