@@ -206,12 +206,20 @@ void Vmr9Deinit()
 	int hr;
 	if (m_allocator!=NULL)
 	{
-		hr=m_allocator->Release();
+		do
+    {
+      hr=m_allocator->Release();
+    } while (hr>0);
 		m_allocator=NULL;
 		Log("Vmr9Deinit:allocator release:%d", hr);
 	}
 	if (m_vmr9Presenter!=NULL)
 	{
+		do
+    {
+      hr=m_vmr9Presenter->Release();
+    } while (hr>0);
+
 		delete m_vmr9Presenter;
 		Log("Vmr9Deinit:m_vmr9Presenter release:%d", hr);
 	}

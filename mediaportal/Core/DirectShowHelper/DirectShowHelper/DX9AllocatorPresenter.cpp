@@ -45,7 +45,7 @@ void Log(const char *fmt, ...) ;
 CVMR9AllocatorPresenter::CVMR9AllocatorPresenter(IDirect3DDevice9* direct3dDevice, IVMR9Callback* callback, HMONITOR monitor)
 : m_refCount(1)
 {
-	Log("----------v0.36---------------------------");
+	Log("----------v0.37---------------------------");
 	m_hMonitor=monitor;
 	m_pD3DDev=direct3dDevice;
 	m_pCallback=callback;
@@ -112,9 +112,11 @@ ULONG CVMR9AllocatorPresenter::AddRef()
 
 ULONG CVMR9AllocatorPresenter::Release()
 {
+    Log("CVMR9AllocatorPresenter::Release()");
     ULONG ret = InterlockedDecrement(& m_refCount);
     if( ret == 0 )
     {
+        Log("CVMR9AllocatorPresenter::Cleanup()");
         delete this;
     }
 

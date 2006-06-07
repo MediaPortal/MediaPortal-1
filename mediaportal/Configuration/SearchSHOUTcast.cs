@@ -441,12 +441,12 @@ namespace MediaPortal.Configuration
         return;
       }
       //Create necessary registry temp keys to begin search
+      bool reged = false;
       using (RegistryKey rk = Registry.ClassesRoot)
       {
         using (RegistryKey rs = rk.OpenSubKey("CLSID\\"))
         {
           string[] names = rs.GetSubKeyNames();
-          bool reged = false;
           foreach (string s in names)
           {
             //Check for shoutcastsource.ax key is registered
