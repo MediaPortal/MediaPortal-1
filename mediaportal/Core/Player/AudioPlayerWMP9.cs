@@ -70,17 +70,21 @@ namespace MediaPortal.Player
       try
       {
         UInt32 dwValue = (UInt32)0;
-        RegistryKey hkcu = Registry.CurrentUser;
-        RegistryKey subkey = hkcu.OpenSubKey(@"Software\Microsoft\MediaPlayer\Preferences", true);
+        using (RegistryKey hkcu = Registry.CurrentUser)
+        {
+          using (RegistryKey subkey = hkcu.OpenSubKey(@"Software\Microsoft\MediaPlayer\Preferences", true))
+          {
 
-        subkey.SetValue("CDAutoPlay", (Int32)dwValue);
+            subkey.SetValue("CDAutoPlay", (Int32)dwValue);
 
-        // enable metadata lookup for CD's
-        dwValue = (UInt32)Convert.ToInt32(subkey.GetValue("MetadataRetrieval"));
-        dwValue |= 1;
-        subkey.SetValue("MetadataRetrieval", (Int32)dwValue);
-        subkey.Close();
-        hkcu.Close();
+            // enable metadata lookup for CD's
+            dwValue = (UInt32)Convert.ToInt32(subkey.GetValue("MetadataRetrieval"));
+            dwValue |= 1;
+            subkey.SetValue("MetadataRetrieval", (Int32)dwValue);
+            subkey.Close();
+            hkcu.Close();
+          }
+        }
       }
       catch (Exception) { }
 

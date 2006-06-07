@@ -343,10 +343,17 @@ namespace MediaPortal.TV.Recording
       //create registry keys needed by the streambuffer engine for timeshifting/recording
       try
       {
-        RegistryKey hkcu = Registry.CurrentUser;
-        hkcu.CreateSubKey(@"Software\MediaPortal");
-        RegistryKey hklm = Registry.LocalMachine;
-        hklm.CreateSubKey(@"Software\MediaPortal");
+        using (RegistryKey hkcu = Registry.CurrentUser)
+        {
+          RegistryKey newKey = hkcu.CreateSubKey(@"Software\MediaPortal");
+          newKey.Close();
+          using (RegistryKey hklm = Registry.LocalMachine)
+          {
+            newKey = hklm.CreateSubKey(@"Software\MediaPortal");
+            newKey.Close();
+          }
+        }
+
       }
       catch (Exception) { }
 

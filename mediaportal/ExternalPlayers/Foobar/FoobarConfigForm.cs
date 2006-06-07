@@ -336,12 +336,16 @@ namespace MediaPortal.FoobarPlugin
       }
       if (textBoxFoobarPath.Text == "")
       {
-        RegistryKey pRegKey = Registry.CurrentUser;
-        pRegKey = pRegKey.OpenSubKey("Software\\foobar2000");
-        Object val = pRegKey.GetValue("InstallDir");
-        if (val.ToString().Trim().Length > 0)
+        using (RegistryKey pRegKey = Registry.CurrentUser)
         {
-          textBoxFoobarPath.Text = val.ToString() + "\\foobar2000.exe";
+          using (RegistryKey subkey = pRegKey.OpenSubKey("Software\\foobar2000"))
+          {
+            Object val = subkey.GetValue("InstallDir");
+            if (val.ToString().Trim().Length > 0)
+            {
+              textBoxFoobarPath.Text = val.ToString() + "\\foobar2000.exe";
+            }
+          }
         }
       }
     }
@@ -370,7 +374,7 @@ namespace MediaPortal.FoobarPlugin
             buff.Append('.');
           buff.Append(ext);
         }
-        xmlWriter.SetValue("foobarplugin", "enabledextensions", buff.ToString());        
+        xmlWriter.SetValue("foobarplugin", "enabledextensions", buff.ToString());
       }
     }
 
@@ -407,7 +411,7 @@ namespace MediaPortal.FoobarPlugin
 }
 
 
-    
-  
+
+
 
 

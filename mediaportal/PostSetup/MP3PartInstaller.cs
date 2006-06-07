@@ -769,11 +769,13 @@ namespace PostSetup
     {
       try
       {
-        RegistryKey key = Registry.LocalMachine.OpenSubKey(hklmRegKey);
-        if (key == null)
-          return false;
-        else
-          return true;
+        using (RegistryKey key = Registry.LocalMachine.OpenSubKey(hklmRegKey))
+        {
+          if (key == null)
+            return false;
+          else
+            return true;
+        }
       }
       catch (Exception)
       {

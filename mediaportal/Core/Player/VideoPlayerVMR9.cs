@@ -259,10 +259,26 @@ namespace MediaPortal.Player
         basicVideo = null;
         videoWin = null;
 
-        if (videoCodecFilter != null) Marshal.ReleaseComObject(videoCodecFilter); videoCodecFilter = null;
-        if (audioCodecFilter != null) Marshal.ReleaseComObject(audioCodecFilter); audioCodecFilter = null;
-        if (audioRendererFilter != null) Marshal.ReleaseComObject(audioRendererFilter); audioRendererFilter = null;
-        if (ffdShowFilter != null) Marshal.ReleaseComObject(ffdShowFilter); ffdShowFilter = null;
+        if (videoCodecFilter != null)
+        {
+          while (Marshal.ReleaseComObject(videoCodecFilter)>0); 
+          videoCodecFilter = null;
+        }
+        if (audioCodecFilter != null)
+        {
+          while (Marshal.ReleaseComObject(audioCodecFilter)>0); 
+          audioCodecFilter = null;
+        }
+        if (audioRendererFilter != null)
+        {
+          while (Marshal.ReleaseComObject(audioRendererFilter)>0); 
+          audioRendererFilter = null;
+        }
+        if (ffdShowFilter != null)
+        {
+          while (Marshal.ReleaseComObject(ffdShowFilter)>0); 
+          ffdShowFilter = null;
+        }
 
         if (vobSub != null)
         {

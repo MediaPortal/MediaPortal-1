@@ -389,13 +389,15 @@ namespace MPTestTool
       try
       {
         string subKey = @"Software\Microsoft\Installer\Assemblies";
-        RegistryKey rk = Registry.CurrentUser.OpenSubKey(subKey, false);
-        foreach (string keyName in rk.GetSubKeyNames())
+        using (RegistryKey rk = Registry.CurrentUser.OpenSubKey(subKey, false))
         {
-          if (keyName.EndsWith(searchKey))
+          foreach (string keyName in rk.GetSubKeyNames())
           {
-            strMPDir = keyName.Substring(0, keyName.IndexOf(searchKey) - 1);
-            strMPDir = strMPDir.Replace(@"|", @"\");
+            if (keyName.EndsWith(searchKey))
+            {
+              strMPDir = keyName.Substring(0, keyName.IndexOf(searchKey) - 1);
+              strMPDir = strMPDir.Replace(@"|", @"\");
+            }
           }
         }
       }
@@ -409,13 +411,15 @@ namespace MPTestTool
       try
       {
         string subKey = @"Software\Classes\Installer\Assemblies";
-        RegistryKey rk = Registry.LocalMachine.OpenSubKey(subKey, false);
-        foreach (string keyName in rk.GetSubKeyNames())
+        using (RegistryKey rk = Registry.LocalMachine.OpenSubKey(subKey, false))
         {
-          if (keyName.EndsWith(searchKey))
+          foreach (string keyName in rk.GetSubKeyNames())
           {
-            strMPDir = keyName.Substring(0, keyName.IndexOf(searchKey) - 1);
-            strMPDir = strMPDir.Replace(@"|", @"\");
+            if (keyName.EndsWith(searchKey))
+            {
+              strMPDir = keyName.Substring(0, keyName.IndexOf(searchKey) - 1);
+              strMPDir = strMPDir.Replace(@"|", @"\");
+            }
           }
         }
       }

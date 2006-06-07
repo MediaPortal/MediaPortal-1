@@ -272,12 +272,14 @@ namespace MediaPortal.InputDevices.HcwHelper
       string dllPath = string.Empty;
       try
       {
-        RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Hauppauge WinTV Infrared Remote");
-        dllPath = rkey.GetValue("UninstallString").ToString();
-        if (dllPath.IndexOf("UNir32") > 0)
-          dllPath = dllPath.Substring(0, dllPath.IndexOf("UNir32"));
-        else if (dllPath.IndexOf("UNIR32") > 0)
-          dllPath = dllPath.Substring(0, dllPath.IndexOf("UNIR32"));
+        using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Hauppauge WinTV Infrared Remote"))
+        {
+          dllPath = rkey.GetValue("UninstallString").ToString();
+          if (dllPath.IndexOf("UNir32") > 0)
+            dllPath = dllPath.Substring(0, dllPath.IndexOf("UNir32"));
+          else if (dllPath.IndexOf("UNIR32") > 0)
+            dllPath = dllPath.Substring(0, dllPath.IndexOf("UNIR32"));
+        }
       }
       catch (System.NullReferenceException)
       {

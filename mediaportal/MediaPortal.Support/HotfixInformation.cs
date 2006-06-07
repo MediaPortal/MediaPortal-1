@@ -39,12 +39,14 @@ namespace MediaPortal.Support
 
     public HotfixInformation()
     {
-      RegistryKey rk = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\UnInstall");
-      foreach (string keyName in rk.GetSubKeyNames())
+      using (RegistryKey rk = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\UnInstall"))
       {
-        if (keyName.StartsWith("KB"))
+        foreach (string keyName in rk.GetSubKeyNames())
         {
-          ParseHotfixKey(rk.OpenSubKey(keyName));
+          if (keyName.StartsWith("KB"))
+          {
+            ParseHotfixKey(rk.OpenSubKey(keyName));
+          }
         }
       }
     }

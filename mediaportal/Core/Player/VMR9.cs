@@ -704,19 +704,20 @@ namespace MediaPortal.Player
       catch (Exception)
       {
       }
-      Vmr9Deinit();
 
       try
       {
-        result = Marshal.ReleaseComObject(_vmr9Filter);
-        if (result != 0)
+        do
         {
+          result = Marshal.ReleaseComObject(_vmr9Filter);
           Log.WriteThreadId("VMR9:ReleaseComObject():{0}", result);
         }
+        while (result > 0);
       }
       catch (Exception)
       {
       }
+      Vmr9Deinit();
       _vmr9Filter = null;
       _graphBuilderInterface = null;
       _scene = null;

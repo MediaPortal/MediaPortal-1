@@ -86,19 +86,21 @@ public class DXUtil
 	{
 		get
 		{
-			Microsoft.Win32.RegistryKey rKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(sdkPath);
-			string sReg = string.Empty;
-			if (rKey != null)
-			{
-				sReg = (string)rKey.GetValue(sdkKey);
-				rKey.Close();
-			}
-			if (sReg != null)
-				sReg += @"\Media\";
-			else 
-				return string.Empty;
+      using (Microsoft.Win32.RegistryKey rKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(sdkPath))
+      {
+        string sReg = string.Empty;
+        if (rKey != null)
+        {
+          sReg = (string)rKey.GetValue(sdkKey);
+          rKey.Close();
+        }
+        if (sReg != null)
+          sReg += @"\Media\";
+        else
+          return string.Empty;
 
-			return sReg;
+        return sReg;
+      }
 		}
 	}
 

@@ -155,16 +155,18 @@ namespace MediaPortal.WinampPlayer
 
     private bool StartWinamp()
     {
-      RegistryKey pRegKey = Registry.CurrentUser;
-      pRegKey = pRegKey.OpenSubKey("Software\\Winamp");
-      Object val = pRegKey.GetValue("");
-      if(val.ToString().Trim().Length > 0)
+      using (RegistryKey pRegKey = Registry.CurrentUser)
       {
-        System.Console.Out.WriteLine("directory = {0}", val);
+        pRegKey = pRegKey.OpenSubKey("Software\\Winamp");
+        Object val = pRegKey.GetValue("");
+        if (val.ToString().Trim().Length > 0)
+        {
+          System.Console.Out.WriteLine("directory = {0}", val);
 
-        ChangeIniToMinimize(val + "\\" + WINAMPINI);
-        RunProgram(val + "\\" + WINAMPEXE, "");
-        return true;
+          ChangeIniToMinimize(val + "\\" + WINAMPINI);
+          RunProgram(val + "\\" + WINAMPEXE, "");
+          return true;
+        }
       }
       return false;
     }

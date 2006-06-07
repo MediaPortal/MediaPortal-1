@@ -84,20 +84,24 @@ namespace MediaPortal.Core.Transcoding
 			//disable xvid status window while encoding
 			try
 			{
-				RegistryKey hkcu = Registry.CurrentUser;
-				RegistryKey subkey = hkcu.OpenSubKey(@"Software\GNU\XviD",true);
-				if (subkey != null)
-				{
-					Int32 uivalue=0;
-					subkey.SetValue("display_status", (Int32)uivalue);
-					subkey.SetValue("debug", (Int32)uivalue);
-					subkey.SetValue("bitrate", (Int32)bitrate);
+        using (RegistryKey hkcu = Registry.CurrentUser)
+        {
+          using (RegistryKey subkey = hkcu.OpenSubKey(@"Software\GNU\XviD", true))
+          {
+            if (subkey != null)
+            {
+              Int32 uivalue = 0;
+              subkey.SetValue("display_status", (Int32)uivalue);
+              subkey.SetValue("debug", (Int32)uivalue);
+              subkey.SetValue("bitrate", (Int32)bitrate);
 
-					uivalue=1;
-					subkey.SetValue("interlacing", (Int32)uivalue);
-					subkey.Close();
-				}
-				hkcu.Close();
+              uivalue = 1;
+              subkey.SetValue("interlacing", (Int32)uivalue);
+              subkey.Close();
+            }
+          }
+          hkcu.Close();
+        }
 			}
 			catch(Exception)
 			{
