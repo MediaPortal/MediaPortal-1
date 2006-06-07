@@ -442,11 +442,13 @@
 <string><id>516</id><value>Πρόβλημα στη διαγραφή του τελικού αρχείου, η ενέργεια δεν ολοκληρώθηκε</value></string>
 <string><id>517</id><value>Σοβαρό πρόβλημα, η ενέργεια δεν ολοκληρώθηκε</value></string>
 <string><id>518</id><value>Διαγραφή αυτού του τραγουδιού;</value></string>
+<string><id>519</id>	<value>Όχι υπότιτλοι</value></string>
 <string><id>529</id><value>Όψη: Λίστα Εικονιδίων</value></string>
 <string><id>530</id><value>Δίσκος με φωτογραφίες εισήχθει, θέλετε να τον ανοίξετε ;</value></string>
 <string><id>531</id><value>Δίσκος με βίντεο εισήχθει, θέλετε να τον ανοίξετε ;</value></string>
 <string><id>532</id><value>Δίσκος με ήχο εισήχθει, θέλετε να τον ανοίξετε ;</value></string>
 <string><id>533</id><value>Οδηγός</value></string>
+<string><id>534</id><value>Moderate</value></string>  
 <string><id>550</id><value>Κοπή</value></string>
 <string><id>600</id><value>Οδηγός TV</value></string>
 <string><id>601</id><value>Εγγραφή Τώρα</value></string>
@@ -612,6 +614,8 @@
 <string><id>770</id><value>Δεν βρέθηκε αρχείο XMLTV</value></string>
 <string><id>771</id>	<value>Το PIN που εισήχθει είναι λάθος</value></string>
 <string><id>772</id>	<value>Θα δοκιμάσετε πάλι;</value></string>
+<string><id>773</id>	<value>ΕΚΚΙΝΗΣΗ</value></string>
+<string><id>774</id><value>ΤΕΛΟΣ</value></string>
 <string><id>800</id><value>Εναρξη με</value></string>
 <string><id>801</id><value>Περιέχει</value></string>
 <string><id>802</id><value>Τελειώνει με</value></string>
@@ -922,6 +926,25 @@
 <string><id>2052</id><value>Search in Recipie</value></string>
 <string><id>2053</id><value>Categorie</value></string>
 <string><id>2054</id><value>No Entry!</value></string>
+<string><id>2080</id><value>Μη υποστηριζόμενο είδος αρχείου</value></string>
+<string><id>2081</id><value>Δεν μπορεί να γίνει κοπή</value></string>
+<string><id>2082</id><value>MPEG: Τέλος κοπής αρχείου βίντεο</value></string>
+<string><id>2083</id><value>DVRMS: Τέλος κοπής αρχείου βίντεο</value></string>
+<string><id>2084</id><value>αρχή</value></string>
+<string><id>2085</id><value>τέλος</value></string>
+<string><id>2086</id><value>μπροστά</value></string>
+<string><id>2087</id><value>πίσω</value></string>
+<string><id>2088</id><value>Λίστα κοπής:</value></string>
+<string><id>2089</id><value>ρύθμιση ποιότητας</value></string>
+<string><id>2090</id><value>DVR-MPEGCut</value></string>
+<string><id>2091</id><value>Η διαδικασία διεκόπη</value></string>
+<string><id>2092</id><value>Επιλογή αρχείου για επεξεργασία:</value></string>
+<string><id>2093</id><value>προσθήκη</value></string>
+<string><id>2094</id><value>Λίστα βίντεο</value></string>
+<string><id>2095</id><value>Κοπή</value></string>
+<string><id>2097</id><value>παλαιά διάρκεια:</value></string>
+<string><id>2098</id><value>νέα διάρκεια:</value></string>
+<string><id>2099</id><value>τωρινή θέση:</value></string>
 <!-- End of My Recipie Strings -->
 <!-- My Burner Strings -->
 <string><id>2100</id><value>Εγγραφή</value></string>
@@ -997,6 +1020,9 @@
 <string><id>2224</id><value> Ο φάκελος υπάρχει!</value></string>
 <string><id>2225</id><value>Ο φάκελος δημιουργήθηκε</value></string>
 <!-- End of My Explorer Strings -->
+<string><id>2997</id><value>ω</value></string>
+<string><id>2998</id><value>λ</value></string>
+<string><id>2999</id><value>δ</value></string>
 <string><id>3000</id><value>Program Options</value></string>
 <string><id>3001</id><value>Ωρα</value></string>
 <string><id>3002</id><value>Ωρες</value></string>
