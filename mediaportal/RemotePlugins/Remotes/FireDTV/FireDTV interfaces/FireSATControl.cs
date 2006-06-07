@@ -340,15 +340,24 @@ namespace MadMouse.FireDTV
 		#region Constructor / Destructor
 		public FireDTVBaseControl(int windowHandle):base()
 		{
-      RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DigitalEverywhere\\FireDTV");
-      if (rkey != null)
+      using (RegistryKey rkey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\DigitalEverywhere\\FireDTV"))
       {
-        string dllPath = rkey.GetValue("InstallFolder").ToString();
-        string fullDllPath = string.Format("{0}{1}", dllPath.Substring(0, dllPath.LastIndexOf('\\') + 1), "Tools\\");
-        bool success = SetDllDirectory(fullDllPath);
-        MediaPortal.GUI.Library.Log.Write("FireDTV: Set DLL directory: {0} / {1}", fullDllPath, success);
+        if (rkey != null)
+        {
+          try
+          {
+            string dllPath = rkey.GetValue("InstallFolder").ToString();
+            string fullDllPath = string.Format("{0}{1}", dllPath.Substring(0, dllPath.LastIndexOf('\\') + 1), "Tools\\");
+            bool success = SetDllDirectory(fullDllPath);
+            MediaPortal.GUI.Library.Log.Write("FireDTV: Set DLL directory: {0} / {1}", fullDllPath, success);
+          }
+          catch (Exception)
+          {
+            MediaPortal.GUI.Library.Log.Write("FireDTV: Unable to determine directory");
+            return;
+          }
+        }
       }
-
 			_windowHandle = windowHandle;
 			InitializeFireDTVLibrary();
 			RegisterGeneralNotifications();
