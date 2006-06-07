@@ -202,31 +202,32 @@ BOOL Vmr9Init(IVMR9Callback* callback, DWORD dwD3DDevice, IBaseFilter* vmr9Filte
 
 void Vmr9Deinit()
 {
+  try
+  {
+	  int hr;
+	  if (m_allocator!=NULL)
+	  {
+		  m_allocator=NULL;
+	  }
+	  if (m_vmr9Presenter!=NULL)
+	  {
+		  do
+      {
+        hr=m_vmr9Presenter->Release();
+      } while (hr>0);
 
-	int hr;
-	if (m_allocator!=NULL)
-	{
-		do
-    {
-      hr=m_allocator->Release();
-    } while (hr>0);
-		m_allocator=NULL;
-		Log("Vmr9Deinit:allocator release:%d", hr);
-	}
-	if (m_vmr9Presenter!=NULL)
-	{
-		do
-    {
-      hr=m_vmr9Presenter->Release();
-    } while (hr>0);
+		  m_vmr9Presenter=NULL;
+		  Log("Vmr9Deinit:m_vmr9Presenter release:%d", hr);
+	  }
+	  m_vmr9Presenter=NULL;
 
-		delete m_vmr9Presenter;
-		Log("Vmr9Deinit:m_vmr9Presenter release:%d", hr);
-	}
-	m_vmr9Presenter=NULL;
-
-	m_pDevice=NULL;
-	m_pVMR9Filter=NULL;
+	  m_pDevice=NULL;
+	  m_pVMR9Filter=NULL;
+  }
+  catch(...)
+  {
+		  Log("Vmr9Deinit:exception");
+  }
 
 }
 void Vmr9SetDeinterlaceMode(int mode)
