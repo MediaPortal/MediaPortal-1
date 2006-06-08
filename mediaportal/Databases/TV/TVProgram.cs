@@ -286,6 +286,7 @@ namespace MediaPortal.TV.Database
         return _epsiodeFullDetails;
       }
     }
+    /// <summary>
     /// Property to get/set the starttime in xmltv format (yyyymmddhhmmss) of this tv program
     /// </summary>
     public long Start
