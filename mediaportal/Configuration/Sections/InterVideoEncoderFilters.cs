@@ -28,47 +28,47 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-
   public class InterVideoEncoderFilters : MediaPortal.Configuration.SectionSettings
   {
-      private Int32 _regQuality;
-	  private Int32 _regMode;
-	  private Int32 _regFrameRate;
-	  private Int32 _regAspectRatio;
-	  private Int32 _regVideoBitRate;
-	  private Int32 _regVideoPeakBitRate;
-	  private int _regFrequecy;
-      private MediaPortal.UserInterface.Controls.MPComboBox comboBoxFrameRate;
-      private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-      private MediaPortal.UserInterface.Controls.MPLabel FrameRate;
-      private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-      private MediaPortal.UserInterface.Controls.MPComboBox comboBoxAudioBitrate;
-      private MediaPortal.UserInterface.Controls.MPComboBox comboBoxFrequency;
-      private MediaPortal.UserInterface.Controls.MPLabel SampleFrequency;
-      private MediaPortal.UserInterface.Controls.MPLabel AudioBitrate;
-      private MediaPortal.UserInterface.Controls.MPComboBox comboBoxAspectRatio;
-      private MediaPortal.UserInterface.Controls.MPLabel EncoderQuality;
-      private MediaPortal.UserInterface.Controls.MPLabel VideoFormat;
-      private MediaPortal.UserInterface.Controls.MPComboBox comboBoxEncoderQuality;
-      private MediaPortal.UserInterface.Controls.MPComboBox comboBoxVideoFormat;
-      private MediaPortal.UserInterface.Controls.MPLabel AspectRatio;
-      private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonQualityGood;
-      private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonQualityHigh;
-      private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonModeMono;
-      private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonModeDualChannel;
-      private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonModeJointStereo;
-      private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonModeStereo;
-      private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonQualityLow;
-      private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonQualityMedium;
-      private MediaPortal.UserInterface.Controls.MPGroupBox AudioQuality;
-      private MediaPortal.UserInterface.Controls.MPGroupBox AudioMode;
-      private System.ComponentModel.IContainer components = null;
+    private Int32 _regQuality;
+    private Int32 _regMode;
+    private Int32 _regFrameRate;
+    private Int32 _regAspectRatio;
+    private Int32 _regVideoBitRate;
+    private Int32 _regVideoPeakBitRate;
+    private int _regFrequecy;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxFrameRate;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+    private MediaPortal.UserInterface.Controls.MPLabel FrameRate;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxAudioBitrate;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxFrequency;
+    private MediaPortal.UserInterface.Controls.MPLabel SampleFrequency;
+    private MediaPortal.UserInterface.Controls.MPLabel AudioBitrate;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxAspectRatio;
+    private MediaPortal.UserInterface.Controls.MPLabel EncoderQuality;
+    private MediaPortal.UserInterface.Controls.MPLabel VideoFormat;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxEncoderQuality;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxVideoFormat;
+    private MediaPortal.UserInterface.Controls.MPLabel AspectRatio;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonQualityGood;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonQualityHigh;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonModeMono;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonModeDualChannel;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonModeJointStereo;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonModeStereo;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonQualityLow;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonQualityMedium;
+    private MediaPortal.UserInterface.Controls.MPGroupBox AudioQuality;
+    private MediaPortal.UserInterface.Controls.MPGroupBox AudioMode;
+    private System.ComponentModel.IContainer components = null;
 
     /// <summary>
     /// 
@@ -276,7 +276,6 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxAudioBitrate.Name = "comboBoxAudioBitrate";
       this.comboBoxAudioBitrate.Size = new System.Drawing.Size(125, 21);
       this.comboBoxAudioBitrate.TabIndex = 1;
-      this.comboBoxAudioBitrate.SelectedIndexChanged += new System.EventHandler(this.comboBoxAudioBitrate_SelectedIndexChanged);
       // 
       // AudioMode
       // 
@@ -475,411 +474,390 @@ namespace MediaPortal.Configuration.Sections
     public override void LoadSettings()
     {
       Int32 regValue;
- 
-      RegistryKey hkcu = Registry.CurrentUser;
-      #region Video Settings
-      RegistryKey subkey = hkcu.CreateSubKey(@"Software\InterVideo\Common\Video");
 
-      if (subkey != null)
-      {
+      #region Video Settings
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\Video"))
+        if (subkey != null)
+        {
           try
           {
-              regValue = (Int32)subkey.GetValue("VideoFrameRate", 3);
-							switch (regValue)
-							{
-								case 3:
-								case 4:
-									comboBoxFrameRate.SelectedIndex = regValue - 3;
-									break;
-								default:
-									comboBoxFrameRate.SelectedIndex = 0;
-									break;
-							}
+            regValue = (Int32)subkey.GetValue("VideoFrameRate", 3);
+            switch (regValue)
+            {
+              case 3:
+              case 4:
+                comboBoxFrameRate.SelectedIndex = regValue - 3;
+                break;
+              default:
+                comboBoxFrameRate.SelectedIndex = 0;
+                break;
+            }
 
-						  // also possible
-              // if (regValue == 3 || regValue == 4) comboBoxFrameRate.SelectedIndex = regValue - 3;
-              // else comboBoxFrameRate.SelectedIndex = 0;
+            // also possible
+            // if (regValue == 3 || regValue == 4) comboBoxFrameRate.SelectedIndex = regValue - 3;
+            // else comboBoxFrameRate.SelectedIndex = 0;
 
-              regValue = (Int32)subkey.GetValue("VideoAspectRatio", 2);
-							switch (regValue)
-							{
-								case 1:
-								case 2:
-								case 3:
-									comboBoxAspectRatio.SelectedIndex = regValue - 1;
-									break;
-								default:
-									comboBoxAspectRatio.SelectedIndex = 1;
-									break;
-							}
-              
-			  // if (regValue >= 1 && regValue <= 3) comboBoxAspectRatio.SelectedIndex = regValue - 1;
-              // else comboBoxAspectRatio.SelectedIndex = 1;
+            regValue = (Int32)subkey.GetValue("VideoAspectRatio", 2);
+            switch (regValue)
+            {
+              case 1:
+              case 2:
+              case 3:
+                comboBoxAspectRatio.SelectedIndex = regValue - 1;
+                break;
+              default:
+                comboBoxAspectRatio.SelectedIndex = 1;
+                break;
+            }
 
-              regValue = (Int32)subkey.GetValue("VideoFormat", 1);
-							switch (regValue)
-							{
-								case 1:
-									comboBoxVideoFormat.SelectedIndex = 1;
-									break;
-								case 2:
-									comboBoxVideoFormat.SelectedIndex = 0;
-									break;
-								case 3:
-									comboBoxVideoFormat.SelectedIndex = 2;
-									break;
-								default:
-									comboBoxVideoFormat.SelectedIndex = 1;
-									break;
-							}
-			    //if (regValue == 2) comboBoxVideoFormat.SelectedIndex = 0;
-			    //if (regValue == 1) comboBoxVideoFormat.SelectedIndex = 1;
-			    //if (regValue == 3) comboBoxVideoFormat.SelectedIndex = 2;
-			    //else comboBoxVideoFormat.SelectedIndex = 1;
+            // if (regValue >= 1 && regValue <= 3) comboBoxAspectRatio.SelectedIndex = regValue - 1;
+            // else comboBoxAspectRatio.SelectedIndex = 1;
 
-              regValue = (Int32)subkey.GetValue("VideoBitRate", 1);
-							switch (regValue)
-							{
-								case 2000:
-									comboBoxEncoderQuality.SelectedIndex = 0;
-									break;
-								case 4000:
-									comboBoxEncoderQuality.SelectedIndex = 1;
-									break;
-								case 6000:
-									comboBoxEncoderQuality.SelectedIndex = 2;
-									break;
-								default:
-									comboBoxEncoderQuality.SelectedIndex = 1;
-									break;
-							}
-				//if (regValue == 2000) comboBoxEncoderQuality.SelectedIndex = 0;
-				//if (regValue == 4000) comboBoxEncoderQuality.SelectedIndex = 1;
-				//if (regValue == 6000) comboBoxEncoderQuality.SelectedIndex = 2;
-				//else comboBoxEncoderQuality.SelectedIndex = 1;
+            regValue = (Int32)subkey.GetValue("VideoFormat", 1);
+            switch (regValue)
+            {
+              case 1:
+                comboBoxVideoFormat.SelectedIndex = 1;
+                break;
+              case 2:
+                comboBoxVideoFormat.SelectedIndex = 0;
+                break;
+              case 3:
+                comboBoxVideoFormat.SelectedIndex = 2;
+                break;
+              default:
+                comboBoxVideoFormat.SelectedIndex = 1;
+                break;
+            }
+            //if (regValue == 2) comboBoxVideoFormat.SelectedIndex = 0;
+            //if (regValue == 1) comboBoxVideoFormat.SelectedIndex = 1;
+            //if (regValue == 3) comboBoxVideoFormat.SelectedIndex = 2;
+            //else comboBoxVideoFormat.SelectedIndex = 1;
+
+            regValue = (Int32)subkey.GetValue("VideoBitRate", 1);
+            switch (regValue)
+            {
+              case 2000:
+                comboBoxEncoderQuality.SelectedIndex = 0;
+                break;
+              case 4000:
+                comboBoxEncoderQuality.SelectedIndex = 1;
+                break;
+              case 6000:
+                comboBoxEncoderQuality.SelectedIndex = 2;
+                break;
+              default:
+                comboBoxEncoderQuality.SelectedIndex = 1;
+                break;
+            }
+            //if (regValue == 2000) comboBoxEncoderQuality.SelectedIndex = 0;
+            //if (regValue == 4000) comboBoxEncoderQuality.SelectedIndex = 1;
+            //if (regValue == 6000) comboBoxEncoderQuality.SelectedIndex = 2;
+            //else comboBoxEncoderQuality.SelectedIndex = 1;
           }
           catch (Exception)
           {
           }
-          finally
-          {
-              subkey.Close();
+        }
       #endregion
-          }
-      }
 
       #region Audio Settings
-      RegistryKey subkey2 = hkcu.CreateSubKey(@"Software\InterVideo\Common\Audio");
-
-      if (subkey2 != null)
-      {
-        try
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\Audio"))
+        if (subkey != null)
         {
-						switch ((Int32)subkey2.GetValue("MPEGAudioBitRate", 2))
-						{
-							case 128:
-								comboBoxAudioBitrate.SelectedIndex = 0;
-								break;
-							case 160:
-								comboBoxAudioBitrate.SelectedIndex = 1;
-								break;
-							case 192:
-								comboBoxAudioBitrate.SelectedIndex = 2;
-								break;
-							case 224:
-								comboBoxAudioBitrate.SelectedIndex = 3;
-								break;
-							case 256:
-								comboBoxAudioBitrate.SelectedIndex = 4;
-								break;
-							case 320:
-								comboBoxAudioBitrate.SelectedIndex = 5;
-								break;
-							case 384:
-								comboBoxAudioBitrate.SelectedIndex = 6;
-								break;
-							default:
-								comboBoxAudioBitrate.SelectedIndex = 2;
-								break;
-						}
+          try
+          {
+            switch ((Int32)subkey.GetValue("MPEGAudioBitRate", 2))
+            {
+              case 128:
+                comboBoxAudioBitrate.SelectedIndex = 0;
+                break;
+              case 160:
+                comboBoxAudioBitrate.SelectedIndex = 1;
+                break;
+              case 192:
+                comboBoxAudioBitrate.SelectedIndex = 2;
+                break;
+              case 224:
+                comboBoxAudioBitrate.SelectedIndex = 3;
+                break;
+              case 256:
+                comboBoxAudioBitrate.SelectedIndex = 4;
+                break;
+              case 320:
+                comboBoxAudioBitrate.SelectedIndex = 5;
+                break;
+              case 384:
+                comboBoxAudioBitrate.SelectedIndex = 6;
+                break;
+              default:
+                comboBoxAudioBitrate.SelectedIndex = 2;
+                break;
+            }
 
-					 Int32 regSamplingFreq = (Int32)subkey2.GetValue("MPEGAudioSamplingFreq", 0);
-                     switch(regSamplingFreq)
-						{
-							case 0:
-							case 1:
-							case 2:
-							case 3:
-								comboBoxFrequency.SelectedIndex = regSamplingFreq;
-								break;
-							default:
-								comboBoxFrequency.SelectedIndex = 0;
-								break;
-						}
+            Int32 regSamplingFreq = (Int32)subkey.GetValue("MPEGAudioSamplingFreq", 0);
+            switch (regSamplingFreq)
+            {
+              case 0:
+              case 1:
+              case 2:
+              case 3:
+                comboBoxFrequency.SelectedIndex = regSamplingFreq;
+                break;
+              default:
+                comboBoxFrequency.SelectedIndex = 0;
+                break;
+            }
 
-            Int32 regAudioQuality = (Int32)subkey2.GetValue("MPEGAudioQuality", 75);
+            Int32 regAudioQuality = (Int32)subkey.GetValue("MPEGAudioQuality", 75);
             radioButtonQualityHigh.Checked = (regAudioQuality == 100);
             radioButtonQualityGood.Checked = (regAudioQuality == 75);
             radioButtonQualityMedium.Checked = (regAudioQuality == 50);
             radioButtonQualityLow.Checked = (regAudioQuality == 25);
 
-            Int32 regSystemMode = (Int32)subkey2.GetValue("MPEGAudioSystemMode", 0);
+            Int32 regSystemMode = (Int32)subkey.GetValue("MPEGAudioSystemMode", 0);
             radioButtonModeStereo.Checked = (regSystemMode == 0);
             radioButtonModeJointStereo.Checked = (regSystemMode == 1);
             radioButtonModeDualChannel.Checked = (regSystemMode == 2);
             radioButtonModeMono.Checked = (regSystemMode == 3);
+          }
+          catch (Exception)
+          {
+          }
         }
-        catch (Exception)
-        {
-        }
-        finally
-        {
-            subkey2.Close();
       #endregion
+    }
+
+    public override void SaveSettings()
+    {
+      #region Video Settings
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\Video"))
+        if (subkey != null)
+        {
+          // Framerate - 25 or 29.97 fps
+          subkey.SetValue("VideoFrameRate", _regFrameRate + 3);
+
+          // Aspect Ratio - square, 4:3, 16:9
+          subkey.SetValue("VideoAspectRatio", _regAspectRatio);
+
+          // Video Format - NTSC, PAL, SECAM
+          int Format;
+          Int32 regValue;
+          Format = comboBoxVideoFormat.SelectedIndex;
+          if (Format == 0)
+          {
+            regValue = 2;
+            subkey.SetValue("VideoFormat", regValue);
+            // Force frame rate to 29.97 regardless
+            subkey.SetValue("VideoFrameRate", 4);
+          }
+          if (Format == 1)
+          {
+            regValue = 1;
+            subkey.SetValue("VideoFormat", regValue);
+            // Force frame rate to 25 regardless
+            subkey.SetValue("VideoFrameRate", 3);
+          }
+          if (Format == 2)
+          {
+            regValue = 3;
+            subkey.SetValue("VideoFormat", regValue);
+            // Force frame rate to 25 regardless
+            subkey.SetValue("VideoFrameRate", 3);
+          }
+
+          // Encoder Quality - Low, Medium, High
+          subkey.SetValue("VideoBitRate", _regVideoBitRate);
+          subkey.SetValue("VideoPeakBitRate", _regVideoPeakBitRate);
+
+          // Force Variable BitRate
+          subkey.SetValue("VideoBitRateMode", 2);
+
+          // Force Raltime Encoding - essential for on the fly encoding.
+          subkey.SetValue("VideoRealtimeEncode", 1);
+
+          // Force MPEG-2 Video - essential for DVR-MS
+          subkey.SetValue("VideoMPEG2", 1);
+
+          // Force each GOP
+          subkey.SetValue("VideoSeqHdr", 1);
+
+          // Force Width & Height based on format chosen. i.e. we set it to 720x576 for PAL.
+          // The filter should adjust based on input framesize however.
+          if (comboBoxVideoFormat.SelectedIndex == 0)
+          {
+            subkey.SetValue("VideoWidth", 720);
+            subkey.SetValue("VideoHeight", 480);
+          }
+          if (comboBoxVideoFormat.SelectedIndex >= 1)
+          {
+            subkey.SetValue("VideoWidth", 720);
+            subkey.SetValue("VideoHeight", 576);
+          }
         }
-    }
-    }
+      #endregion
 
-      public override void SaveSettings()
-      {
-          RegistryKey hkcu = Registry.CurrentUser;
-          #region Video Settings
-          RegistryKey subkey = hkcu.CreateSubKey(@"Software\InterVideo\Common\Video");
-          if (subkey != null)
+      #region Audio Settings
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\Audio"))
+        if (subkey != null)
+        {
+          // Audio BitRate - 128 - 384 kbit/s
+          int AudioBitrate;
+          Int32 regValue;
+          AudioBitrate = comboBoxAudioBitrate.SelectedIndex;
+          if (AudioBitrate == 0)
           {
-              // Framerate - 25 or 29.97 fps
-              subkey.SetValue("VideoFrameRate", _regFrameRate +3);
-              
-              // Aspect Ratio - square, 4:3, 16:9
-              subkey.SetValue("VideoAspectRatio", _regAspectRatio);
-
-              // Video Format - NTSC, PAL, SECAM
-              int Format;
-			  Int32 regValue;
-              Format = comboBoxVideoFormat.SelectedIndex;
-              if (Format == 0)
-              {
-                  regValue = 2;
-                  subkey.SetValue("VideoFormat", regValue);
-                  // Force frame rate to 29.97 regardless
-                  subkey.SetValue("VideoFrameRate", 4);
-              }
-              if (Format == 1)
-              {
-                  regValue = 1;
-                  subkey.SetValue("VideoFormat", regValue);
-                  // Force frame rate to 25 regardless
-                  subkey.SetValue("VideoFrameRate", 3);
-              }
-              if (Format == 2)
-              {
-                  regValue = 3;
-                  subkey.SetValue("VideoFormat", regValue);
-                  // Force frame rate to 25 regardless
-                  subkey.SetValue("VideoFrameRate", 3);
-              }
-
-              // Encoder Quality - Low, Medium, High
-			  subkey.SetValue("VideoBitRate", _regVideoBitRate);
-			  subkey.SetValue("VideoPeakBitRate", _regVideoPeakBitRate);
-
-              // Force Variable BitRate
-              subkey.SetValue("VideoBitRateMode", 2);
-              
-              // Force Raltime Encoding - essential for on the fly encoding.
-              subkey.SetValue("VideoRealtimeEncode", 1);
-              
-              // Force MPEG-2 Video - essential for DVR-MS
-              subkey.SetValue("VideoMPEG2", 1);
-              
-              // Force each GOP
-              subkey.SetValue("VideoSeqHdr", 1);
-
-              // Force Width & Height based on format chosen. i.e. we set it to 720x576 for PAL.
-              // The filter should adjust based on input framesize however.
-              if (comboBoxVideoFormat.SelectedIndex == 0)
-              {
-                  subkey.SetValue("VideoWidth", 720);
-                  subkey.SetValue("VideoHeight", 480);
-              }
-              if (comboBoxVideoFormat.SelectedIndex >= 1)
-              {
-                  subkey.SetValue("VideoWidth", 720);
-                  subkey.SetValue("VideoHeight", 576);
-              }
-              subkey.Close();
-#endregion
+            regValue = 128;
+            subkey.SetValue("MPEGAudioBitRate", regValue);
+          }
+          if (AudioBitrate == 1)
+          {
+            regValue = 160;
+            subkey.SetValue("MPEGAudioBitRate", regValue);
+          }
+          if (AudioBitrate == 2)
+          {
+            regValue = 192;
+            subkey.SetValue("MPEGAudioBitRate", regValue);
+          }
+          if (AudioBitrate == 3)
+          {
+            regValue = 224;
+            subkey.SetValue("MPEGAudioBitRate", regValue);
+          }
+          if (AudioBitrate == 4)
+          {
+            regValue = 256;
+            subkey.SetValue("MPEGAudioBitRate", regValue);
+          }
+          if (AudioBitrate == 5)
+          {
+            regValue = 320;
+            subkey.SetValue("MPEGAudioBitRate", regValue);
+          }
+          if (AudioBitrate == 6)
+          {
+            regValue = 384;
+            subkey.SetValue("MPEGAudioBitRate", regValue);
           }
 
-          #region Audio Settings
-          RegistryKey subkey2 = hkcu.CreateSubKey(@"Software\InterVideo\Common\Audio");
+          // Sample Frequency - from source, 44.1, 48 or 32 kHz
+          subkey.SetValue("MPEGAudioSamplingFreq", _regFrequecy);
 
-          if (subkey2 != null)
-          {
-              // Audio BitRate - 128 - 384 kbit/s
-              int AudioBitrate;
-              Int32 regValue;
-              AudioBitrate = comboBoxAudioBitrate.SelectedIndex;
-              if (AudioBitrate == 0)
-              {
-                  regValue = 128;
-                  subkey2.SetValue("MPEGAudioBitRate", regValue);
-              }
-              if (AudioBitrate == 1)
-              {
-                  regValue = 160;
-                  subkey2.SetValue("MPEGAudioBitRate", regValue);
-              }
-              if (AudioBitrate == 2)
-              {
-                  regValue = 192;
-                  subkey2.SetValue("MPEGAudioBitRate", regValue);
-              }
-              if (AudioBitrate == 3)
-              {
-                  regValue = 224;
-                  subkey2.SetValue("MPEGAudioBitRate", regValue);
-              }
-              if (AudioBitrate == 4)
-              {
-                  regValue = 256;
-                  subkey2.SetValue("MPEGAudioBitRate", regValue);
-              }
-              if (AudioBitrate == 5)
-              {
-                  regValue = 320;
-                  subkey2.SetValue("MPEGAudioBitRate", regValue);
-              }
-              if (AudioBitrate == 6)
-              {
-                  regValue = 384;
-                  subkey2.SetValue("MPEGAudioBitRate", regValue);
-              }
-              
-              // Sample Frequency - from source, 44.1, 48 or 32 kHz
-			  subkey2.SetValue("MPEGAudioSamplingFreq", _regFrequecy);
-              
-              // Audio Quality - Low, Medium, Good & High
-              //regQuality = 75;				// default to Medium Quality
-              subkey2.SetValue("MPEGAudioQuality", _regQuality);
+          // Audio Quality - Low, Medium, Good & High
+          //regQuality = 75;				// default to Medium Quality
+          subkey.SetValue("MPEGAudioQuality", _regQuality);
 
-              // Audio Channels - Stereo, Joint Stereo, Dual Channel or Mono
-              //regMode = 0;
-              subkey2.SetValue("MPEGAudioSystemMode", _regMode);
-              
-              // Force MPEG-1 Layer II for compatibility - encoder is capable of Layer III, LPCM or AC3
-              subkey2.SetValue("MPEGAudioSystemLayer", 2);
-              
-              // Force Realtime Encoding - essential for speed.
-              subkey2.SetValue("MPEGAudioRealtimeEncode", 1);
-              subkey2.SetValue("MPEGAudioForceNonRealtime", 0);
-              
-              subkey2.Close();
-#endregion
-          }
+          // Audio Channels - Stereo, Joint Stereo, Dual Channel or Mono
+          //regMode = 0;
+          subkey.SetValue("MPEGAudioSystemMode", _regMode);
 
-          #region Mux
-          RegistryKey subkey3 = hkcu.CreateSubKey(@"Software\InterVideo\Common\Mux");
+          // Force MPEG-1 Layer II for compatibility - encoder is capable of Layer III, LPCM or AC3
+          subkey.SetValue("MPEGAudioSystemLayer", 2);
 
-                    if (subkey3 != null)
-                    {
-                        // Here we just ensure the InterVideo Mux is set to MPEG2 & Realtime Encoding
-                        subkey3.SetValue("MuxMpeg2Mode", 1);
-                        subkey3.SetValue("MuxRealtimeEncode", 1);
-                    }
-          #endregion
-                }
+          // Force Realtime Encoding - essential for speed.
+          subkey.SetValue("MPEGAudioRealtimeEncode", 1);
+          subkey.SetValue("MPEGAudioForceNonRealtime", 0);
+        }
+      #endregion
 
-      private void comboBoxFrameRate_SelectedIndexChanged(object sender, EventArgs e)
+      #region Mux
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\Mux"))
+        if (subkey != null)
+        {
+          // Here we just ensure the InterVideo Mux is set to MPEG2 & Realtime Encoding
+          subkey.SetValue("MuxMpeg2Mode", 1);
+          subkey.SetValue("MuxRealtimeEncode", 1);
+        }
+      #endregion
+    }
+
+    private void comboBoxFrameRate_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      if (comboBoxFrameRate.SelectedIndex == 0)
+        _regFrameRate = 3;
+
+      if (comboBoxFrameRate.SelectedIndex == 1)
+        _regFrameRate = 4;
+    }
+
+    private void comboBoxVideoFormat_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void comboBoxAspectRatio_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      _regAspectRatio = comboBoxAspectRatio.SelectedIndex + 1;
+    }
+
+    private void comboBoxEncoderQuality_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      switch (comboBoxEncoderQuality.SelectedIndex)
       {
-				if (comboBoxFrameRate.SelectedIndex == 0)
-					_regFrameRate = 3;
-
-				if (comboBoxFrameRate.SelectedIndex == 1)
-					_regFrameRate = 4;
+        case 0:
+          _regVideoBitRate = 2000;
+          _regVideoPeakBitRate = 4000;
+          break;
+        case 1:
+          _regVideoBitRate = 4000;
+          _regVideoPeakBitRate = 6000;
+          break;
+        case 2:
+          _regVideoBitRate = 6000;
+          _regVideoPeakBitRate = 8000;
+          break;
+        default:
+          _regVideoBitRate = 4000;
+          _regVideoPeakBitRate = 6000;
+          break;
       }
+    }
 
-      private void comboBoxVideoFormat_SelectedIndexChanged(object sender, EventArgs e)
-      {
+    private void comboBoxFrequency_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      _regFrequecy = comboBoxFrequency.SelectedIndex;
+    }
 
-      }
+    private void radioButtonQualityHigh_CheckedChanged(object sender, EventArgs e)
+    {
+      if (radioButtonQualityHigh.Checked) _regQuality = 100;
+    }
 
-      private void comboBoxAspectRatio_SelectedIndexChanged(object sender, EventArgs e)
-      {
-				_regAspectRatio = comboBoxAspectRatio.SelectedIndex + 1;
-      }
+    private void radioButtonQualityGood_CheckedChanged(object sender, EventArgs e)
+    {
+      if (radioButtonQualityGood.Checked) _regQuality = 75;
+    }
 
-      private void comboBoxEncoderQuality_SelectedIndexChanged(object sender, EventArgs e)
-      {
-				switch (comboBoxEncoderQuality.SelectedIndex)
-				{
-					case 0:
-						_regVideoBitRate = 2000;
-						_regVideoPeakBitRate = 4000;
-						break;
-					case 1:
-						_regVideoBitRate = 4000;
-                        _regVideoPeakBitRate = 6000;
-						break;
-					case 2:
-						_regVideoBitRate = 6000;
-                        _regVideoPeakBitRate = 8000;
-						break;
-					default:
-						_regVideoBitRate = 4000;
-                        _regVideoPeakBitRate = 6000;
-						break;
-				}
-      }
+    private void radioButtonQualityMedium_CheckedChanged(object sender, EventArgs e)
+    {
+      if (radioButtonQualityMedium.Checked) _regQuality = 50;
+    }
 
-      private void comboBoxAudioBitrate_SelectedIndexChanged(object sender, EventArgs e)
-      {
+    private void radioButtonQualityLow_CheckedChanged(object sender, EventArgs e)
+    {
+      if (radioButtonQualityLow.Checked) _regQuality = 25;
+    }
 
-      }
+    private void radioButtonModeStereo_CheckedChanged(object sender, EventArgs e)
+    {
+      if (radioButtonModeStereo.Checked) _regMode = 0;
+    }
 
-      private void comboBoxFrequency_SelectedIndexChanged(object sender, EventArgs e)
-      {
-				_regFrequecy = comboBoxFrequency.SelectedIndex;
-      }
+    private void radioButtonModeJointStereo_CheckedChanged(object sender, EventArgs e)
+    {
+      if (radioButtonModeJointStereo.Checked) _regMode = 1;
+    }
 
-      private void radioButtonQualityHigh_CheckedChanged(object sender, EventArgs e)
-      {
-				if (radioButtonQualityHigh.Checked) _regQuality = 100;
-      }
+    private void radioButtonModeDualChannel_CheckedChanged(object sender, EventArgs e)
+    {
+      if (radioButtonModeDualChannel.Checked) _regMode = 2;
+    }
 
-      private void radioButtonQualityGood_CheckedChanged(object sender, EventArgs e)
-      {
-				if (radioButtonQualityGood.Checked) _regQuality = 75;	
-      }
+    private void radioButtonModeMono_CheckedChanged(object sender, EventArgs e)
+    {
+      if (radioButtonModeMono.Checked) _regMode = 3;
+    }
 
-      private void radioButtonQualityMedium_CheckedChanged(object sender, EventArgs e)
-      {
-				if (radioButtonQualityMedium.Checked) _regQuality = 50;
-      }
-
-      private void radioButtonQualityLow_CheckedChanged(object sender, EventArgs e)
-      {
-				if (radioButtonQualityLow.Checked) _regQuality = 25;
-      }
-
-      private void radioButtonModeStereo_CheckedChanged(object sender, EventArgs e)
-      {
-				if (radioButtonModeStereo.Checked) _regMode = 0;
-      }
-
-      private void radioButtonModeJointStereo_CheckedChanged(object sender, EventArgs e)
-      {
-				if (radioButtonModeJointStereo.Checked) _regMode = 1;
-      }
-
-      private void radioButtonModeDualChannel_CheckedChanged(object sender, EventArgs e)
-      {
-				if (radioButtonModeDualChannel.Checked) _regMode = 2;
-      }
-
-      private void radioButtonModeMono_CheckedChanged(object sender, EventArgs e)
-      {
-				if (radioButtonModeMono.Checked) _regMode = 3;
-      }
   }
 }

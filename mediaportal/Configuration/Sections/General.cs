@@ -178,7 +178,6 @@ namespace MediaPortal.Configuration.Sections
         for (int index = 0; index < sectionEntries.Length; index++)
         {
           string[] currentSection = sectionEntries[index];
-
           settingsCheckedListBox.SetItemChecked(index, xmlreader.GetValueAsBool(currentSection[0], currentSection[1], bool.Parse(currentSection[2])));
         }
 
@@ -189,11 +188,8 @@ namespace MediaPortal.Configuration.Sections
         //numericUpDown1.Value=xmlreader.GetValueAsInt("vmr9OSDSkin","alphaValue",10);
 
         // Allow Focus
-        RegistryKey hkcu = Registry.CurrentUser;
-        RegistryKey subkey = hkcu.OpenSubKey(@"Control Panel\Desktop", false);
-        settingsCheckedListBox.SetItemChecked(17, ((int)subkey.GetValue("ForegroundLockTimeout", 2000000) == 0));
-        subkey.Close();
-        hkcu.Close();
+        using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", false))
+          settingsCheckedListBox.SetItemChecked(17, ((int)subkey.GetValue("ForegroundLockTimeout", 2000000) == 0));
       }
     }
 
@@ -215,9 +211,8 @@ namespace MediaPortal.Configuration.Sections
         string prevLanguage = xmlwriter.GetValueAsString("skin", "language", "English");
         string skin = xmlwriter.GetValueAsString("skin", "name", "mce");
         if (prevLanguage != languageComboBox.Text)
-        {
           Utils.DeleteFiles(@"skin\" + skin + @"\fonts", "*");
-        }
+
         xmlwriter.SetValue("skin", "language", languageComboBox.Text);
 
         //xmlwriter.SetValue("vmr9OSDSkin","alphaValue",numericUpDown1.Value);
@@ -225,51 +220,38 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        RegistryKey hkcu = Registry.CurrentUser;
-        RegistryKey subkey;
         if (settingsCheckedListBox.GetItemChecked(7))
         {
           string fileName = String.Format("\"{0}\"", System.IO.Path.GetFullPath("mediaportal.exe"));
-          subkey = hkcu.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-          subkey.SetValue("MediaPortal", fileName);
-          subkey.Close();
+          using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
+            subkey.SetValue("MediaPortal", fileName);
         }
         else
-        {
-          subkey = hkcu.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
-          subkey.DeleteValue("MediaPortal", false);
-          subkey.Close();
-        }
+          using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
+            subkey.DeleteValue("MediaPortal", false);
 
         Int32 iValue = 1;
         if (settingsCheckedListBox.GetItemChecked(8))
-        {
           iValue = 0;
-        }
-        subkey = hkcu.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", true);
-        subkey.SetValue("EnableBalloonTips", iValue);
-        subkey.Close();
 
+        using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer", true))
+          subkey.SetValue("EnableBalloonTips", iValue);
 
         if (settingsCheckedListBox.GetItemChecked(17))
-        {
-          subkey = hkcu.OpenSubKey(@"Control Panel\Desktop", true);
-          subkey.SetValue("ForegroundLockTimeout", 0);
-          subkey.Close();
-        }
+          using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
+            subkey.SetValue("ForegroundLockTimeout", 0);
 
         // Allow Focus
-        subkey = hkcu.OpenSubKey(@"Control Panel\Desktop", true);
-        bool focusChecked = ((int)subkey.GetValue("ForegroundLockTimeout", 200000) == 0);
+        using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
+        {
+          bool focusChecked = ((int)subkey.GetValue("ForegroundLockTimeout", 200000) == 0);
 
-        if (focusChecked != settingsCheckedListBox.GetItemChecked(17))
-          if (settingsCheckedListBox.GetItemChecked(17))
-            subkey.SetValue("ForegroundLockTimeout", 0);
-          else
-            subkey.SetValue("ForegroundLockTimeout", 200000);
-
-        subkey.Close();
-        hkcu.Close();
+          if (focusChecked != settingsCheckedListBox.GetItemChecked(17))
+            if (settingsCheckedListBox.GetItemChecked(17))
+              subkey.SetValue("ForegroundLockTimeout", 0);
+            else
+              subkey.SetValue("ForegroundLockTimeout", 200000);
+        }
 
         IntPtr result = IntPtr.Zero;
         SendMessageTimeout((IntPtr)HWND_BROADCAST, (IntPtr)WM_SETTINGCHANGE, IntPtr.Zero, Marshal.StringToBSTR(String.Empty), (IntPtr)SMTO_ABORTIFHUNG, (IntPtr)3, out result);

@@ -37,7 +37,6 @@ using DirectShowLib;
 
 namespace MediaPortal.Configuration.Sections
 {
-
   public class MPEG2DecVideoFilter : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxSettings;
@@ -355,114 +354,105 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.OpenSubKey(@"Software\Gabest\Filters\MPEG Video Decoder");
-      if (subkey != null)
-      {
-        try
+      using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Gabest\Filters\MPEG Video Decoder"))
+        if (subkey != null)
         {
-          if ((int)subkey.GetValue("PlanarYUV") == 1)
-            checkBoxPlanar.Checked = true;
-          else
-            checkBoxPlanar.Checked = false;
+          try
+          {
+            if ((int)subkey.GetValue("PlanarYUV") == 1)
+              checkBoxPlanar.Checked = true;
+            else
+              checkBoxPlanar.Checked = false;
 
-          if ((int)subkey.GetValue("ForcedSubtitles") == 1)
-            checkBoxForcedSubtitles.Checked = true;
-          else
-            checkBoxForcedSubtitles.Checked = false;
+            if ((int)subkey.GetValue("ForcedSubtitles") == 1)
+              checkBoxForcedSubtitles.Checked = true;
+            else
+              checkBoxForcedSubtitles.Checked = false;
 
-          if ((int)subkey.GetValue("Interlaced") == 1)
-            checkBoxOutputInterlaced.Checked = true;
-          else
-            checkBoxOutputInterlaced.Checked = false;
-          
-          comboBoxDeinterlace.SelectedIndex = (int)subkey.GetValue("DeinterlaceMethod");
+            if ((int)subkey.GetValue("Interlaced") == 1)
+              checkBoxOutputInterlaced.Checked = true;
+            else
+              checkBoxOutputInterlaced.Checked = false;
 
-          byte[] convertedKey;
+            comboBoxDeinterlace.SelectedIndex = (int)subkey.GetValue("DeinterlaceMethod");
 
-          convertedKey = ConvertFromRegisty((int)subkey.GetValue("Brightness"));
-          trackBarBrightness.Value = (int)((BitConverter.ToSingle(convertedKey, 0)) + ((BitConverter.ToSingle(convertedKey, 0)) >= 0 ? 0.5f : -0.5f)) + 128;
+            byte[] convertedKey;
 
-          convertedKey = ConvertFromRegisty((int)subkey.GetValue("Contrast"));
-          trackBarContrast.Value = (int)((100 * BitConverter.ToSingle(convertedKey, 0) + 0.5f));
+            convertedKey = ConvertFromRegisty((int)subkey.GetValue("Brightness"));
+            trackBarBrightness.Value = (int)((BitConverter.ToSingle(convertedKey, 0)) + ((BitConverter.ToSingle(convertedKey, 0)) >= 0 ? 0.5f : -0.5f)) + 128;
 
-          convertedKey = ConvertFromRegisty((int)subkey.GetValue("Hue"));
-          trackBarHue.Value = (int)((BitConverter.ToSingle(convertedKey, 0)) + ((BitConverter.ToSingle(convertedKey, 0)) >= 0 ? 0.5f : -0.5f)) + 180;
+            convertedKey = ConvertFromRegisty((int)subkey.GetValue("Contrast"));
+            trackBarContrast.Value = (int)((100 * BitConverter.ToSingle(convertedKey, 0) + 0.5f));
 
-          convertedKey = ConvertFromRegisty((int)subkey.GetValue("Saturation"));
-          trackBarSaturation.Value = (int)((100 * BitConverter.ToSingle(convertedKey, 0) + 0.5f));
+            convertedKey = ConvertFromRegisty((int)subkey.GetValue("Hue"));
+            trackBarHue.Value = (int)((BitConverter.ToSingle(convertedKey, 0)) + ((BitConverter.ToSingle(convertedKey, 0)) >= 0 ? 0.5f : -0.5f)) + 180;
+
+            convertedKey = ConvertFromRegisty((int)subkey.GetValue("Saturation"));
+            trackBarSaturation.Value = (int)((100 * BitConverter.ToSingle(convertedKey, 0) + 0.5f));
+          }
+          catch (Exception ex)
+          {
+            MediaPortal.GUI.Library.Log.Write("Exception while loading MPV settings: {0}", ex.Message);
+          }
         }
-        catch (Exception ex)
-        {
-          MediaPortal.GUI.Library.Log.Write("Exception while loading MPV settings: {0}", ex.Message);
-        }
-        finally
-        {
-          subkey.Close();
-        }
-      }
-      else
-        MediaPortal.GUI.Library.Log.Write("Registry Key not found: {0}", "Software\\Gabest\\Filters\\MPEG Video Decoder", true);
+        else
+          MediaPortal.GUI.Library.Log.Write("Registry Key not found: {0}", "Software\\Gabest\\Filters\\MPEG Video Decoder", true);
     }
 
     public override void SaveSettings()
     {
-      RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.CreateSubKey(@"Software\Gabest\Filters\MPEG Video Decoder");
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Gabest\Filters\MPEG Video Decoder"))
+        if (subkey != null)
+        {
+          int regValue;
 
-      if (subkey != null)
-      {
-        int regValue;
+          if (checkBoxPlanar.Checked)
+            regValue = 1;
+          else
+            regValue = 0;
+          subkey.SetValue("PlanarYUV", regValue);
 
-        if (checkBoxPlanar.Checked)
-          regValue = 1;
-        else
-          regValue = 0;
-        subkey.SetValue("PlanarYUV", regValue);
+          if (checkBoxForcedSubtitles.Checked)
+            regValue = 1;
+          else
+            regValue = 0;
+          subkey.SetValue("ForcedSubtitles", regValue);
 
-        if (checkBoxForcedSubtitles.Checked)
-          regValue = 1;
-        else
-          regValue = 0;
-        subkey.SetValue("ForcedSubtitles", regValue);
+          if (checkBoxOutputInterlaced.Checked)
+            regValue = 1;
+          else
+            regValue = 0;
+          subkey.SetValue("Interlaced", regValue);
 
-        if (checkBoxOutputInterlaced.Checked)
-          regValue = 1;
-        else
-          regValue = 0;
-        subkey.SetValue("Interlaced", regValue);
+          subkey.SetValue("DeinterlaceMethod", (int)comboBoxDeinterlace.SelectedIndex);
 
-        subkey.SetValue("DeinterlaceMethod", (int)comboBoxDeinterlace.SelectedIndex);
+          float brightness = Convert.ToSingle((UInt32)(trackBarBrightness.Value));
+          brightness = (brightness - (brightness >= 0 ? 0.5f : -0.5f)) - 127.5f;
+          subkey.SetValue("Brightness", BitConverter.ToInt32(BitConverter.GetBytes(brightness), 0), RegistryValueKind.DWord);
 
-        float brightness = Convert.ToSingle((UInt32)(trackBarBrightness.Value));
-        brightness = (brightness - (brightness >= 0 ? 0.5f : -0.5f)) - 127.5f;
-        subkey.SetValue("Brightness", BitConverter.ToInt32(BitConverter.GetBytes(brightness), 0), RegistryValueKind.DWord);
+          float contrast = Convert.ToSingle((UInt32)(trackBarContrast.Value));
+          contrast = contrast / 100;
+          subkey.SetValue("Contrast", BitConverter.ToInt32(BitConverter.GetBytes(contrast), 0), RegistryValueKind.DWord);
 
-        float contrast = Convert.ToSingle((UInt32)(trackBarContrast.Value));
-        contrast = contrast / 100;
-        subkey.SetValue("Contrast", BitConverter.ToInt32(BitConverter.GetBytes(contrast), 0), RegistryValueKind.DWord);
+          float hue = Convert.ToSingle((UInt32)(trackBarHue.Value));
+          hue = (hue - (hue >= 0 ? 0.5f : -0.5f)) - 179.5f;
+          subkey.SetValue("Hue", BitConverter.ToInt32(BitConverter.GetBytes(hue), 0), RegistryValueKind.DWord);
 
-        float hue = Convert.ToSingle((UInt32)(trackBarHue.Value));
-        hue = (hue - (hue >= 0 ? 0.5f : -0.5f)) - 179.5f;
-        subkey.SetValue("Hue", BitConverter.ToInt32(BitConverter.GetBytes(hue), 0), RegistryValueKind.DWord);
+          float saturation = Convert.ToSingle((UInt32)(trackBarSaturation.Value));
+          saturation = saturation / 100;
+          subkey.SetValue("Saturation", BitConverter.ToInt32(BitConverter.GetBytes(saturation), 0), RegistryValueKind.DWord);
 
-        float saturation = Convert.ToSingle((UInt32)(trackBarSaturation.Value));
-        saturation = saturation / 100;
-        subkey.SetValue("Saturation", BitConverter.ToInt32(BitConverter.GetBytes(saturation), 0), RegistryValueKind.DWord);
+          /// Floats are dumped to the registry by taking their address and moving 4 bytes into it (unsigned long conversion)
+          /// see ~CMpeg2DecFilter()
 
-        subkey.Close();
-
-        /// Floats are dumped to the registry by taking their address and moving 4 bytes into it (unsigned long conversion)
-        /// see ~CMpeg2DecFilter()
-
-        //regValue = 1;
-        //byte[] arBitshift = new byte[4];
-        //arBitshift[0] = regValue & FF;
-        //arBitshift[1] = (regValue >> 8) & FF;
-        //arBitshift[2] = (regValue >> 16) & FF;
-        //arBitshift[3] = (regValue >> 24) & FF;
-        //subkey.SetValue("Contrast", BitConverter.GetBytes(arBitshift), RegistryValueKind.DWord);
-      }
+          //regValue = 1;
+          //byte[] arBitshift = new byte[4];
+          //arBitshift[0] = regValue & FF;
+          //arBitshift[1] = (regValue >> 8) & FF;
+          //arBitshift[2] = (regValue >> 16) & FF;
+          //arBitshift[3] = (regValue >> 24) & FF;
+          //subkey.SetValue("Contrast", BitConverter.GetBytes(arBitshift), RegistryValueKind.DWord);
+        }
     }
 
     private void btnReset_Click(object sender, EventArgs e)

@@ -442,19 +442,16 @@ namespace MediaPortal.Configuration
       }
       //Create necessary registry temp keys to begin search
       bool reged = false;
-      using (RegistryKey rk = Registry.ClassesRoot)
+      using (RegistryKey rs = Registry.ClassesRoot.OpenSubKey("CLSID\\"))
       {
-        using (RegistryKey rs = rk.OpenSubKey("CLSID\\"))
+        string[] names = rs.GetSubKeyNames();
+        foreach (string s in names)
         {
-          string[] names = rs.GetSubKeyNames();
-          foreach (string s in names)
+          //Check for shoutcastsource.ax key is registered
+          if (s.StartsWith("{68F540E9-766F-44D2-AB07-E26CC6D27A79}"))
           {
-            //Check for shoutcastsource.ax key is registered
-            if (s.StartsWith("{68F540E9-766F-44D2-AB07-E26CC6D27A79}"))
-            {
-              reged = true;
-              break;
-            }
+            reged = true;
+            break;
           }
         }
       }

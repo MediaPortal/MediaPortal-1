@@ -95,12 +95,9 @@ namespace MediaPortal.Configuration.Sections
       {
         try
         {
-          RegistryKey hklm = Registry.LocalMachine;
-          RegistryKey subkey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Components\5DF1C3B1C87EFD376582F3A8B81F52D4");
-          if (subkey != null)
-          {
-            textBoxDaemonTools.Text = (string)subkey.GetValue("27A3DED38A1678B4895AFEB08C30A80A");
-          }
+          using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UserData\S-1-5-18\Components\5DF1C3B1C87EFD376582F3A8B81F52D4"))
+            if (subkey != null)
+              textBoxDaemonTools.Text = (string)subkey.GetValue("27A3DED38A1678B4895AFEB08C30A80A");
         }
         catch (Exception) { }
       }

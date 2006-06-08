@@ -28,16 +28,15 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
-
 using DShowNET;
 using DirectShowLib;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-
   public class DScalerAudioFilter : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
@@ -146,7 +145,6 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
       this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(288, 21);
       this.comboBoxSpeakerConfig.TabIndex = 1;
-      this.comboBoxSpeakerConfig.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpeakerConfig_SelectedIndexChanged);
       // 
       // checkBoxMPEGOverSPDIF
       // 
@@ -201,75 +199,62 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.CreateSubKey(@"Software\DScaler5\Mpeg Audio Filter");
-      if (subkey != null)
-      {
-        try
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\DScaler5\Mpeg Audio Filter"))
+        if (subkey != null)
         {
-          Int32 regValue = (Int32)subkey.GetValue("Dynamic Range Control");
-          if (regValue == 1) checkBoxDynamicRange.Checked = true;
-          else checkBoxDynamicRange.Checked = false;
+          try
+          {
+            Int32 regValue = (Int32)subkey.GetValue("Dynamic Range Control");
+            if (regValue == 1) checkBoxDynamicRange.Checked = true;
+            else checkBoxDynamicRange.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("MPEG Audio over SPDIF");
-          if (regValue == 1) checkBoxMPEGOverSPDIF.Checked = true;
-          else checkBoxMPEGOverSPDIF.Checked = false;
+            regValue = (Int32)subkey.GetValue("MPEG Audio over SPDIF");
+            if (regValue == 1) checkBoxMPEGOverSPDIF.Checked = true;
+            else checkBoxMPEGOverSPDIF.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("Use SPDIF for AC3 & DTS");
-          if (regValue == 1) checkBoxSPDIF.Checked = true;
-          else checkBoxSPDIF.Checked = false;
+            regValue = (Int32)subkey.GetValue("Use SPDIF for AC3 & DTS");
+            if (regValue == 1) checkBoxSPDIF.Checked = true;
+            else checkBoxSPDIF.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("SPDIF Audio Time Offset");
-          textBoxAudioOffset.Text = regValue.ToString();
+            regValue = (Int32)subkey.GetValue("SPDIF Audio Time Offset");
+            textBoxAudioOffset.Text = regValue.ToString();
 
-          regValue = (Int32)subkey.GetValue("Speaker Config");
-          comboBoxSpeakerConfig.SelectedIndex = regValue;
-
+            regValue = (Int32)subkey.GetValue("Speaker Config");
+            comboBoxSpeakerConfig.SelectedIndex = regValue;
+          }
+          catch (Exception)
+          {
+          }
         }
-        catch (Exception)
-        {
-        }
-        finally
-        {
-          subkey.Close();
-        }
-      }
     }
 
     public override void SaveSettings()
     {
-      RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.CreateSubKey(@"Software\DScaler5\Mpeg Audio Filter");
-      if (subkey != null)
-      {
-        Int32 regValue;
-        if (checkBoxDynamicRange.Checked) regValue = 1;
-        else regValue = 0;
-        subkey.SetValue("Dynamic Range Control", regValue);
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\DScaler5\Mpeg Audio Filter"))
+        if (subkey != null)
+        {
+          Int32 regValue;
+          if (checkBoxDynamicRange.Checked) regValue = 1;
+          else regValue = 0;
+          subkey.SetValue("Dynamic Range Control", regValue);
 
 
-        if (checkBoxMPEGOverSPDIF.Checked) regValue = 1;
-        else regValue = 0;
-        subkey.SetValue("MPEG Audio over SPDIF", regValue);
+          if (checkBoxMPEGOverSPDIF.Checked) regValue = 1;
+          else regValue = 0;
+          subkey.SetValue("MPEG Audio over SPDIF", regValue);
 
-        if (checkBoxSPDIF.Checked) regValue = 1;
-        else regValue = 0;
-        subkey.SetValue("Use SPDIF for AC3 & DTS", regValue);
+          if (checkBoxSPDIF.Checked) regValue = 1;
+          else regValue = 0;
+          subkey.SetValue("Use SPDIF for AC3 & DTS", regValue);
 
-        regValue = Int32.Parse(textBoxAudioOffset.Text);
-        subkey.SetValue("SPDIF Audio Time Offset", regValue);
+          regValue = Int32.Parse(textBoxAudioOffset.Text);
+          subkey.SetValue("SPDIF Audio Time Offset", regValue);
 
-        regValue = comboBoxSpeakerConfig.SelectedIndex;
-        subkey.SetValue("Speaker Config", regValue);
-
-        subkey.Close();
-      }
+          regValue = comboBoxSpeakerConfig.SelectedIndex;
+          subkey.SetValue("Speaker Config", regValue);
+        }
     }
 
-    private void comboBoxSpeakerConfig_SelectedIndexChanged(object sender, System.EventArgs e)
-    {
-
-    }
   }
 }
 

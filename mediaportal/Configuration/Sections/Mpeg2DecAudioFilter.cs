@@ -36,7 +36,6 @@ using DirectShowLib;
 
 namespace MediaPortal.Configuration.Sections
 {
-
   public class MPEG2DecAudioFilter : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPRadioButton radioButtonPcm16Bit;
@@ -487,243 +486,233 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.OpenSubKey(@"Software\Gabest\Filters\MPEG Audio Decoder");
-      if (subkey != null)
-      {
-        try
+      using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Gabest\Filters\MPEG Audio Decoder"))
+        if (subkey != null)
         {
-          int regValue;
-
-          regValue = (int)subkey.GetValue("AacSpeakerConfig");
-          if (regValue == 1)
-            checkBoxAacDownmix.Checked = true;
-          else
-            checkBoxAacDownmix.Checked = false;
-
-          regValue = (int)subkey.GetValue("AacDynamicRangeControl");
-          if (regValue == 1)
-            checkBoxAacDynamic.Checked = true;
-          else
-            checkBoxAacDynamic.Checked = false;
-
-          regValue = (int)subkey.GetValue("Ac3DynamicRangeControl");
-          if (regValue == 1)
-            checkBoxAc3DynamicRange.Checked = true;
-          else
-            checkBoxAc3DynamicRange.Checked = false;
-
-          regValue = (int)subkey.GetValue("DtsDynamicRangeControl");
-          if (regValue == 1)
-            checkBoxDtsDynamicRange.Checked = true;
-          else
-            checkBoxDtsDynamicRange.Checked = false;
-
-          regValue = (int)subkey.GetValue("Normalize");
-          if (regValue == 1)
-            checkBoxNormalize.Checked = true;
-          else
-            checkBoxNormalize.Checked = false;
-
-          regValue = (int)subkey.GetValue("Ac3SpeakerConfig");
-          if (regValue < 27)
+          try
           {
-            if (regValue > 11)
-            {
-              regValue = (regValue - 16); // LFE enabled
-              checkBoxAc3Lfe.Checked = true;
-            }
-            else
-              checkBoxAc3Lfe.Checked = false;
+            int regValue;
 
-            if (regValue > -1)
+            regValue = (int)subkey.GetValue("AacSpeakerConfig");
+            if (regValue == 1)
+              checkBoxAacDownmix.Checked = true;
+            else
+              checkBoxAacDownmix.Checked = false;
+
+            regValue = (int)subkey.GetValue("AacDynamicRangeControl");
+            if (regValue == 1)
+              checkBoxAacDynamic.Checked = true;
+            else
+              checkBoxAacDynamic.Checked = false;
+
+            regValue = (int)subkey.GetValue("Ac3DynamicRangeControl");
+            if (regValue == 1)
+              checkBoxAc3DynamicRange.Checked = true;
+            else
+              checkBoxAc3DynamicRange.Checked = false;
+
+            regValue = (int)subkey.GetValue("DtsDynamicRangeControl");
+            if (regValue == 1)
+              checkBoxDtsDynamicRange.Checked = true;
+            else
+              checkBoxDtsDynamicRange.Checked = false;
+
+            regValue = (int)subkey.GetValue("Normalize");
+            if (regValue == 1)
+              checkBoxNormalize.Checked = true;
+            else
+              checkBoxNormalize.Checked = false;
+
+            regValue = (int)subkey.GetValue("Ac3SpeakerConfig");
+            if (regValue < 27)
             {
-              comboBoxAc3SpeakerConfig.SelectedIndex = (int)regValue;
-              radioButtonAc3Speakers.Checked = (regValue >= 0);
+              if (regValue > 11)
+              {
+                regValue = (regValue - 16); // LFE enabled
+                checkBoxAc3Lfe.Checked = true;
+              }
+              else
+                checkBoxAc3Lfe.Checked = false;
+
+              if (regValue > -1)
+              {
+                comboBoxAc3SpeakerConfig.SelectedIndex = (int)regValue;
+                radioButtonAc3Speakers.Checked = (regValue >= 0);
+              }
+              else
+              {
+                regValue = (regValue * -1);
+                comboBoxAc3SpeakerConfig.SelectedIndex = (int)regValue;
+                radioButtonAc3Spdif.Checked = true;
+              }
             }
             else
-            {
-              regValue = (regValue * -1);
-              comboBoxAc3SpeakerConfig.SelectedIndex = (int)regValue;
               radioButtonAc3Spdif.Checked = true;
-            }
-          }
-          else
-            radioButtonAc3Spdif.Checked = true;
 
-          /// Evaluating DTS Settings
-          /// If S/PDIF is enabled Gabest adds a negative sign to the speaker selection
-          /// therefore he can "remember" which settings have been used earlier
-          regValue = (int)subkey.GetValue("DtsSpeakerConfig");
-          if (regValue < 139)
-          {
-            if (regValue > 11)
+            /// Evaluating DTS Settings
+            /// If S/PDIF is enabled Gabest adds a negative sign to the speaker selection
+            /// therefore he can "remember" which settings have been used earlier
+            regValue = (int)subkey.GetValue("DtsSpeakerConfig");
+            if (regValue < 139)
             {
-              regValue = (regValue - 128);
-              checkBoxDtsLfe.Checked = true;
+              if (regValue > 11)
+              {
+                regValue = (regValue - 128);
+                checkBoxDtsLfe.Checked = true;
+              }
+              else
+                checkBoxDtsLfe.Checked = false;
+
+              if (regValue > -1)
+              {
+                if ((int)regValue < 3) comboBoxDtsSpeakerConfig.SelectedIndex = (int)regValue;
+                else comboBoxDtsSpeakerConfig.SelectedIndex = (int)regValue - 2;
+                radioButtonDtsSpeakers.Checked = (regValue >= 0);
+              }
+              else
+              {
+                regValue = (regValue * -1);
+                if ((int)regValue < 3) comboBoxDtsSpeakerConfig.SelectedIndex = (int)regValue;
+                else comboBoxDtsSpeakerConfig.SelectedIndex = (int)regValue - 2;
+                radioButtonDtsSpdif.Checked = true;
+              }
             }
             else
-              checkBoxDtsLfe.Checked = false;
-
-            if (regValue > -1)
-            {
-              if ((int)regValue < 3) comboBoxDtsSpeakerConfig.SelectedIndex = (int)regValue;
-              else comboBoxDtsSpeakerConfig.SelectedIndex = (int)regValue - 2;
-              radioButtonDtsSpeakers.Checked = (regValue >= 0);
-            }
-            else
-            {
-              regValue = (regValue * -1);
-              if ((int)regValue < 3) comboBoxDtsSpeakerConfig.SelectedIndex = (int)regValue;
-              else comboBoxDtsSpeakerConfig.SelectedIndex = (int)regValue - 2;
               radioButtonDtsSpdif.Checked = true;
+
+            regValue = (int)subkey.GetValue("Boost");
+            trackBarBoost.Value = (int)regValue;
+            labelBoostValue.Text = trackBarBoost.Value.ToString();
+
+
+            regValue = (int)subkey.GetValue("SampleFormat");
+            switch (regValue)
+            {
+              case 0:
+                radioButtonPcm16Bit.Checked = true;
+                break;
+              case 1:
+                radioButtonPcm24Bit.Checked = true;
+                break;
+              case 2:
+                radioButtonPcm32Bit.Checked = true;
+                break;
+              case 3:
+                radioButtonIeee.Checked = true;
+                break;
+              default:
+                radioButtonPcm16Bit.Checked = true;
+                break;
             }
           }
-          else
-            radioButtonDtsSpdif.Checked = true;
-
-          regValue = (int)subkey.GetValue("Boost");
-          trackBarBoost.Value = (int)regValue;
-          labelBoostValue.Text = trackBarBoost.Value.ToString();
-
-
-          regValue = (int)subkey.GetValue("SampleFormat");
-          switch (regValue)
+          catch (Exception ex)
           {
-            case 0:
-              radioButtonPcm16Bit.Checked = true;
-              break;
-            case 1:
-              radioButtonPcm24Bit.Checked = true;
-              break;
-            case 2:
-              radioButtonPcm32Bit.Checked = true;
-              break;
-            case 3:
-              radioButtonIeee.Checked = true;
-              break;
-            default:
-              radioButtonPcm16Bit.Checked = true;
-              break;
+            MediaPortal.GUI.Library.Log.Write("Exception while loading MPA settings: {0}", ex.Message);
           }
         }
-        catch (Exception ex)
-        {
-          MediaPortal.GUI.Library.Log.Write("Exception while loading MPA settings: {0}", ex.Message);
-        }
-        finally
-        {
-          subkey.Close();
-        }
-      }
     }
 
     public override void SaveSettings()
     {
-      RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.CreateSubKey(@"Software\Gabest\Filters\MPEG Audio Decoder");
-      if (subkey != null)
-      {
-        try
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Gabest\Filters\MPEG Audio Decoder"))
+        if (subkey != null)
         {
-          Int32 regValue;
-
-          if (checkBoxAacDownmix.Checked)
-            regValue = 1;
-          else
-            regValue = 0;
-          subkey.SetValue("AacSpeakerConfig", regValue, RegistryValueKind.DWord);
-
-          if (checkBoxAacDynamic.Checked)
-            regValue = 1;
-          else
-            regValue = 0;
-          subkey.SetValue("AacDynamicRangeControl", regValue, RegistryValueKind.DWord);
-
-          if (checkBoxAc3DynamicRange.Checked)
-            regValue = 1;
-          else
-            regValue = 0;
-          subkey.SetValue("Ac3DynamicRangeControl", regValue, RegistryValueKind.DWord);
-
-          if (checkBoxDtsDynamicRange.Checked)
-            regValue = 1;
-          else
-            regValue = 0;
-          subkey.SetValue("DtsDynamicRangeControl", regValue, RegistryValueKind.DWord);
-
-          if (checkBoxNormalize.Checked)
-            regValue = 1;
-          else
-            regValue = 0;
-          subkey.SetValue("Normalize", regValue, RegistryValueKind.DWord);
-
-          /// not using unchecked leads to Registry ArgumentException as this is near UInt32.MaxValue
-          /// but Gabest expects this and Windows doesn't moan ;-)
-          if (radioButtonAc3Spdif.Checked)
-            subkey.SetValue("Ac3SpeakerConfig", unchecked((Int32)4294967289), RegistryValueKind.DWord);
-          else
+          try
           {
-            if (checkBoxAc3Lfe.Checked)
-              subkey.SetValue("Ac3SpeakerConfig", (int)(comboBoxAc3SpeakerConfig.SelectedIndex + 16), RegistryValueKind.DWord);
+            Int32 regValue;
+
+            if (checkBoxAacDownmix.Checked)
+              regValue = 1;
             else
-              subkey.SetValue("Ac3SpeakerConfig", (int)comboBoxAc3SpeakerConfig.SelectedIndex, RegistryValueKind.DWord);
-          }
+              regValue = 0;
+            subkey.SetValue("AacSpeakerConfig", regValue, RegistryValueKind.DWord);
 
-
-          float SPDIFSetting;
-          int DTSRegValue;
-          int DTSConfig = comboBoxDtsSpeakerConfig.SelectedIndex;
-          if (DTSConfig < 3)
-            DTSRegValue = DTSConfig;
-          else
-            DTSRegValue = (DTSConfig + 2);
-
-          if (radioButtonDtsSpdif.Checked)
-          {
-            if (DTSRegValue >= 0)
-              DTSRegValue = (DTSRegValue * -1);
-            SPDIFSetting = Convert.ToSingle(DTSRegValue);
-            //MediaPortal.GUI.Library.Log.Write("DEBUG: Write S/PDIF-DTSSpeakerConfig: {0}", SPDIFSetting.ToString());
-            //This didn't work but Gabest uses a type overflow well knowing that the values subtract from MaxValue after this
-            //subkey.SetValue("DtsSpeakerConfig", BitConverter.ToInt32(BitConverter.GetBytes(SPDIFSetting), 0), RegistryValueKind.DWord);
-            subkey.SetValue("DtsSpeakerConfig", unchecked((Int32)4294967287), RegistryValueKind.DWord);
-          }
-          else
-          {
-            if (checkBoxDtsLfe.Checked)
-              subkey.SetValue("DtsSpeakerConfig", (DTSRegValue + 128), RegistryValueKind.DWord);
+            if (checkBoxAacDynamic.Checked)
+              regValue = 1;
             else
-              subkey.SetValue("DtsSpeakerConfig", DTSRegValue, RegistryValueKind.DWord);
+              regValue = 0;
+            subkey.SetValue("AacDynamicRangeControl", regValue, RegistryValueKind.DWord);
+
+            if (checkBoxAc3DynamicRange.Checked)
+              regValue = 1;
+            else
+              regValue = 0;
+            subkey.SetValue("Ac3DynamicRangeControl", regValue, RegistryValueKind.DWord);
+
+            if (checkBoxDtsDynamicRange.Checked)
+              regValue = 1;
+            else
+              regValue = 0;
+            subkey.SetValue("DtsDynamicRangeControl", regValue, RegistryValueKind.DWord);
+
+            if (checkBoxNormalize.Checked)
+              regValue = 1;
+            else
+              regValue = 0;
+            subkey.SetValue("Normalize", regValue, RegistryValueKind.DWord);
+
+            /// not using unchecked leads to Registry ArgumentException as this is near UInt32.MaxValue
+            /// but Gabest expects this and Windows doesn't moan ;-)
+            if (radioButtonAc3Spdif.Checked)
+              subkey.SetValue("Ac3SpeakerConfig", unchecked((Int32)4294967289), RegistryValueKind.DWord);
+            else
+            {
+              if (checkBoxAc3Lfe.Checked)
+                subkey.SetValue("Ac3SpeakerConfig", (int)(comboBoxAc3SpeakerConfig.SelectedIndex + 16), RegistryValueKind.DWord);
+              else
+                subkey.SetValue("Ac3SpeakerConfig", (int)comboBoxAc3SpeakerConfig.SelectedIndex, RegistryValueKind.DWord);
+            }
+
+
+            float SPDIFSetting;
+            int DTSRegValue;
+            int DTSConfig = comboBoxDtsSpeakerConfig.SelectedIndex;
+            if (DTSConfig < 3)
+              DTSRegValue = DTSConfig;
+            else
+              DTSRegValue = (DTSConfig + 2);
+
+            if (radioButtonDtsSpdif.Checked)
+            {
+              if (DTSRegValue >= 0)
+                DTSRegValue = (DTSRegValue * -1);
+              SPDIFSetting = Convert.ToSingle(DTSRegValue);
+              //MediaPortal.GUI.Library.Log.Write("DEBUG: Write S/PDIF-DTSSpeakerConfig: {0}", SPDIFSetting.ToString());
+              //This didn't work but Gabest uses a type overflow well knowing that the values subtract from MaxValue after this
+              //subkey.SetValue("DtsSpeakerConfig", BitConverter.ToInt32(BitConverter.GetBytes(SPDIFSetting), 0), RegistryValueKind.DWord);
+              subkey.SetValue("DtsSpeakerConfig", unchecked((Int32)4294967287), RegistryValueKind.DWord);
+            }
+            else
+            {
+              if (checkBoxDtsLfe.Checked)
+                subkey.SetValue("DtsSpeakerConfig", (DTSRegValue + 128), RegistryValueKind.DWord);
+              else
+                subkey.SetValue("DtsSpeakerConfig", DTSRegValue, RegistryValueKind.DWord);
+            }
+
+            subkey.SetValue("Boost", trackBarBoost.Value);
+
+            if (radioButtonPcm16Bit.Checked)
+              regValue = 0;
+
+            if (radioButtonPcm24Bit.Checked)
+              regValue = 1;
+
+            if (radioButtonPcm32Bit.Checked)
+              regValue = 2;
+
+            if (radioButtonIeee.Checked)
+              regValue = 3;
+
+            subkey.SetValue("SampleFormat", regValue, RegistryValueKind.DWord);
           }
-
-          subkey.SetValue("Boost", trackBarBoost.Value);
-
-          if (radioButtonPcm16Bit.Checked)
-            regValue = 0;
-
-          if (radioButtonPcm24Bit.Checked)
-            regValue = 1;
-
-          if (radioButtonPcm32Bit.Checked)
-            regValue = 2;
-
-          if (radioButtonIeee.Checked)
-            regValue = 3;
-
-          subkey.SetValue("SampleFormat", regValue, RegistryValueKind.DWord);
+          catch (Exception ex)
+          {
+            MediaPortal.GUI.Library.Log.Write("Exception while writing MPA settings: {0}", ex.Message);
+          }
         }
-        catch (Exception ex)
-        {
-          MediaPortal.GUI.Library.Log.Write("Exception while writing MPA settings: {0}", ex.Message);
-        }
-        finally
-        {
-          subkey.Close();
-        }
-      }
-      else
-        MediaPortal.GUI.Library.Log.Write("Registry access error while trying to write MPA settings.");
+        else
+          MediaPortal.GUI.Library.Log.Write("Registry access error while trying to write MPA settings.");
     }
 
 

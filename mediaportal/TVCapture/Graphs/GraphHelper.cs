@@ -1,3 +1,28 @@
+#region Copyright (C) 2005-2006 Team MediaPortal
+
+/* 
+ *	Copyright (C) 2005-2006 Team MediaPortal
+ *	http://www.team-mediaportal.com
+ *
+ *  This Program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
+ *   
+ *  This Program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *   
+ *  You should have received a copy of the GNU General Public License
+ *  along with GNU Make; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
+ *  http://www.gnu.org/copyleft/gpl.html
+ *
+ */
+
+#endregion
+
 using System;
 using System.IO;
 using System.Management;
@@ -196,60 +221,56 @@ namespace MediaPortal.TV.Recording
         registryKeyName = registryKeyName.Substring(@"@device:pnp:\\?\".Length);
       registryKeyName = @"SYSTEM\CurrentControlSet\Enum\" + registryKeyName;
       Log.Write("      key:{0}", registryKeyName);
-      RegistryKey hklm = Registry.LocalMachine;
-      RegistryKey subkey = hklm.OpenSubKey(registryKeyName, false);
-      if (subkey != null)
-      {
-        //Get the name of the service which handles this device
-        string serviceName = (string)subkey.GetValue("Service");
 
-        //next open the service entry in SYSTEM\CurrentControlSet\Services\[Service name\enum
-        Log.Write("        serviceName:{0}", serviceName);
-        registryKeyName = @"SYSTEM\CurrentControlSet\Services\" + serviceName + @"\Enum";
-        Log.Write("        key:{0}", registryKeyName);
-        subkey = hklm.OpenSubKey(registryKeyName, false);
+      using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
         if (subkey != null)
         {
-          // get the number of instances for the device
-          Int32 count = (Int32)subkey.GetValue("Count");
+          //Get the name of the service which handles this device
+          string serviceName = (string)subkey.GetValue("Service");
 
-          Log.Write("        Number of cards:{0}", count);
-          for (int i = 0; i < count; i++)
-          {
-            string moniker = (string)subkey.GetValue(i.ToString());
-            moniker = moniker.Replace(@"\", "#");
-            moniker = moniker.Replace(@"/", "#");
-            Log.Write("          card#{0}={1}", i, moniker);
-          }
+          //next open the service entry in SYSTEM\CurrentControlSet\Services\[Service name\enum
+          Log.Write("        serviceName:{0}", serviceName);
+          registryKeyName = @"SYSTEM\CurrentControlSet\Services\" + serviceName + @"\Enum";
+          Log.Write("        key:{0}", registryKeyName);
 
-          // for each instance
-          for (int i = 0; i < count; i++)
-          {
-            //get the moniker
-            string moniker = (string)subkey.GetValue(i.ToString());
-            moniker = moniker.Replace(@"\", "#");
-            moniker = moniker.Replace(@"/", "#");
-
-            // and check if its the same as the device moniker
-            if (monikerName.ToLower().IndexOf(moniker.ToLower()) >= 0)
+          using (RegistryKey subkey2 = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
+            if (subkey2 != null)
             {
-              //yes then return this instance
-              Log.Write("        using card:#{0}", i);
-              subkey.Close();
-              hklm.Close();
-              return i;
+              // get the number of instances for the device
+              Int32 count = (Int32)subkey2.GetValue("Count");
+
+              Log.Write("        Number of cards:{0}", count);
+              for (int i = 0; i < count; i++)
+              {
+                string moniker = (string)subkey2.GetValue(i.ToString());
+                moniker = moniker.Replace(@"\", "#");
+                moniker = moniker.Replace(@"/", "#");
+                Log.Write("          card#{0}={1}", i, moniker);
+              }
+
+              // for each instance
+              for (int i = 0; i < count; i++)
+              {
+                //get the moniker
+                string moniker = (string)subkey2.GetValue(i.ToString());
+                moniker = moniker.Replace(@"\", "#");
+                moniker = moniker.Replace(@"/", "#");
+
+                // and check if its the same as the device moniker
+                if (monikerName.ToLower().IndexOf(moniker.ToLower()) >= 0)
+                {
+                  //yes then return this instance
+                  Log.Write("        using card:#{0}", i);
+                  return i;
+                }
+              }
             }
-          }
+            else
+            {
+              Log.Write("        using default card:0 (subkey not found)");
+              return 0;
+            }
         }
-        else
-        {
-          Log.Write("        using default card:0 (subkey not found)");
-          hklm.Close();
-          return 0;
-        }
-        subkey.Close();
-      }
-      hklm.Close();
       return -1;
     }
     /// <summary>
@@ -291,41 +312,38 @@ namespace MediaPortal.TV.Recording
 
       registryKeyName = @"SYSTEM\CurrentControlSet\Enum\" + registryKeyName;
       Log.Write("        key:{0}", registryKeyName);
-      RegistryKey hklm = Registry.LocalMachine;
-      RegistryKey subkey = hklm.OpenSubKey(registryKeyName, false);
-      if (subkey != null)
-      {
-        string serviceName = (string)subkey.GetValue("Service");
-        Log.Write("        serviceName:{0}", serviceName);
-        registryKeyName = @"SYSTEM\CurrentControlSet\Services\" + serviceName + @"\Enum";
-        Log.Write("        key:{0}", registryKeyName);
-        subkey = hklm.OpenSubKey(registryKeyName, false);
+
+      using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
         if (subkey != null)
         {
-          Int32 count = (Int32)subkey.GetValue("Count");
-          Log.Write("        filters available:{0}", count);
-          for (int i = 0; i < count; ++i)
-          {
-            string moniker = (string)subkey.GetValue(i.ToString());
-            moniker = moniker.Replace(@"\", "#");
-            moniker = moniker.Replace(@"/", "#");
-            Log.Write("          filter#:{0}={1}", i, moniker);
-          }
-          string monikerToUse = (string)subkey.GetValue(instance.ToString());
-          monikerToUse = monikerToUse.Replace(@"\", "#");
-          monikerToUse = monikerToUse.Replace(@"/", "#");
-          Log.Write("        using filter #:{0}={1}", instance, monikerToUse);
-          subkey.Close();
-          hklm.Close();
-          return monikerToUse;
+          string serviceName = (string)subkey.GetValue("Service");
+          Log.Write("        serviceName:{0}", serviceName);
+          registryKeyName = @"SYSTEM\CurrentControlSet\Services\" + serviceName + @"\Enum";
+          Log.Write("        key:{0}", registryKeyName);
+
+          using (RegistryKey subkey2 = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
+            if (subkey2 != null)
+            {
+              Int32 count = (Int32)subkey2.GetValue("Count");
+              Log.Write("        filters available:{0}", count);
+              for (int i = 0; i < count; ++i)
+              {
+                string moniker = (string)subkey2.GetValue(i.ToString());
+                moniker = moniker.Replace(@"\", "#");
+                moniker = moniker.Replace(@"/", "#");
+                Log.Write("          filter#:{0}={1}", i, moniker);
+              }
+              string monikerToUse = (string)subkey2.GetValue(instance.ToString());
+              monikerToUse = monikerToUse.Replace(@"\", "#");
+              monikerToUse = monikerToUse.Replace(@"/", "#");
+              Log.Write("        using filter #:{0}={1}", instance, monikerToUse);
+              return monikerToUse;
+            }
+            else
+            {
+              return String.Empty;
+            }
         }
-        else
-        {
-          hklm.Close();
-          return String.Empty;
-        }
-      }
-      hklm.Close();
       return String.Empty;
     }
 
@@ -353,18 +371,16 @@ namespace MediaPortal.TV.Recording
       registryKeyName = @"SYSTEM\CurrentControlSet\Enum\PCI\" + mid;
       Log.Write("        key:{0}", registryKeyName);
 
-      RegistryKey hklm = Registry.LocalMachine;
-      RegistryKey subkey = hklm.OpenSubKey(registryKeyName, false);
-      if (subkey != null)
-      {
-        string locInfo = (string)subkey.GetValue("LocationInformation");
-        if (locInfo == null) locInfo = string.Empty;
-        //Log.Write("        LocationInformation:{0}", locInfo);
-        int fPos = locInfo.LastIndexOf(",");
-        locInfo = locInfo.Substring(0, fPos);
-        return locInfo;
-      }
-      hklm.Close();
+      using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey(registryKeyName, false))
+        if (subkey != null)
+        {
+          string locInfo = (string)subkey.GetValue("LocationInformation");
+          if (locInfo == null) locInfo = string.Empty;
+          //Log.Write("        LocationInformation:{0}", locInfo);
+          int fPos = locInfo.LastIndexOf(",");
+          locInfo = locInfo.Substring(0, fPos);
+          return locInfo;
+        }
       return String.Empty;
     }
 
@@ -525,7 +541,7 @@ namespace MediaPortal.TV.Recording
           foreach (string key in AvailableFilters.Filters.Keys)
           {
             Filter filter;
-            List<Filter> al = AvailableFilters.Filters[key] ;
+            List<Filter> al = AvailableFilters.Filters[key];
             filter = (Filter)al[0];
 
             // if directshow filter name == video filter name

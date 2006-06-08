@@ -28,27 +28,27 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
-
   public class WinDVD7DecoderFilters : MediaPortal.Configuration.SectionSettings
   {
-      private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDxVA;
-      private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHWMC;
-      private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDeInterlace;
-      private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
-      private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-      private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
-      private MediaPortal.UserInterface.Controls.MPComboBox comboBoxSpeakerConfig;
-      private MediaPortal.UserInterface.Controls.MPComboBox comboBoxOutPutMode;
-      private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
-      private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
-      private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
-      private System.ComponentModel.IContainer components = null;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDxVA;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxHWMC;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDeInterlace;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox2;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxSpeakerConfig;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxOutPutMode;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
+    private System.ComponentModel.IContainer components = null;
 
     /// <summary>
     /// 
@@ -115,7 +115,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxDxVA.TabIndex = 2;
       this.checkBoxDxVA.Text = "Enable DxVA";
       this.checkBoxDxVA.UseVisualStyleBackColor = true;
-      this.checkBoxDxVA.CheckedChanged += new System.EventHandler(this.checkBoxDxVA_CheckedChanged);
       // 
       // checkBoxHWMC
       // 
@@ -127,7 +126,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxHWMC.TabIndex = 3;
       this.checkBoxHWMC.Text = "Enable HWMC";
       this.checkBoxHWMC.UseVisualStyleBackColor = true;
-      this.checkBoxHWMC.CheckedChanged += new System.EventHandler(this.checkBoxHWMC_CheckedChanged);
       // 
       // comboBoxDeInterlace
       // 
@@ -142,7 +140,6 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxDeInterlace.Name = "comboBoxDeInterlace";
       this.comboBoxDeInterlace.Size = new System.Drawing.Size(125, 21);
       this.comboBoxDeInterlace.TabIndex = 4;
-      this.comboBoxDeInterlace.SelectedIndexChanged += new System.EventHandler(this.comboBoxDeInterlace_SelectedIndexChanged);
       // 
       // mpGroupBox1
       // 
@@ -224,7 +221,6 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxOutPutMode.Name = "comboBoxOutPutMode";
       this.comboBoxOutPutMode.Size = new System.Drawing.Size(372, 21);
       this.comboBoxOutPutMode.TabIndex = 0;
-      this.comboBoxOutPutMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxOutPutMode_SelectedIndexChanged);
       // 
       // comboBoxSpeakerConfig
       // 
@@ -265,241 +261,227 @@ namespace MediaPortal.Configuration.Sections
       Int32 regAUDIO;
       Int32 regAUDIOCHAN;
 
-      RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.CreateSubKey(@"Software\InterVideo\Common\AudioDec\MediaPortal");
-
-      if (subkey != null)
-      {
-        try
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\AudioDec\MediaPortal"))
+        if (subkey != null)
         {
-          regAUDIOCHAN = (Int32)subkey.GetValue("AUDIOCHAN", 1);
-          switch (regAUDIOCHAN)
+          try
           {
-            //2 Speaker (comboBoxSpeakerConfig index 0)
-            case 1:
-              #region 2 Speaker
-              comboBoxSpeakerConfig.SelectedIndex = 0;
-              comboBoxOutPutMode.Items.Clear();
-              comboBoxOutPutMode.Enabled = true;
-              comboBoxOutPutMode.Items.AddRange(new object[] {
+            regAUDIOCHAN = (Int32)subkey.GetValue("AUDIOCHAN", 1);
+            switch (regAUDIOCHAN)
+            {
+              //2 Speaker (comboBoxSpeakerConfig index 0)
+              case 1:
+                #region 2 Speaker
+                comboBoxSpeakerConfig.SelectedIndex = 0;
+                comboBoxOutPutMode.Items.Clear();
+                comboBoxOutPutMode.Enabled = true;
+                comboBoxOutPutMode.Items.AddRange(new object[] {
                                                     "Mono",
                                                     "Stereo",
                                                     "Dolby Surround Capable"});
-              regAUDIO = (Int32)subkey.GetValue("AUDIO", 1);
-              if (regAUDIO == 0) iIndex = 0;
-              if (regAUDIO == 1) iIndex = 1;
-              if (regAUDIO == 2) iIndex = 2;
-              comboBoxOutPutMode.SelectedIndex = iIndex;
+                regAUDIO = (Int32)subkey.GetValue("AUDIO", 1);
+                if (regAUDIO == 0) iIndex = 0;
+                if (regAUDIO == 1) iIndex = 1;
+                if (regAUDIO == 2) iIndex = 2;
+                comboBoxOutPutMode.SelectedIndex = iIndex;
+                #endregion
+                break;
+              //4 Speaker (comboBoxSpeakerConfig index 1)
+              case 3:
+                #region 4 Speaker
+                comboBoxSpeakerConfig.SelectedIndex = 1;
+                comboBoxOutPutMode.Items.Clear();
+                comboBoxOutPutMode.Enabled = false;
+                #endregion
+                break;
+              //6 Speaker (comboBoxSpeakerConfig index 2)
+              case 4:
+                #region 6 Speaker (5.1)
+                comboBoxSpeakerConfig.SelectedIndex = 2;
+                comboBoxOutPutMode.Items.Clear();
+                comboBoxOutPutMode.Enabled = false;
+                #endregion
+                break;
+              //7 Speaker (comboBoxSpeakerConfig index 3)
+              case 5:
+                #region 7 Speaker (6.1)
+                comboBoxSpeakerConfig.SelectedIndex = 3;
+                comboBoxOutPutMode.Items.Clear();
+                comboBoxOutPutMode.Enabled = false;
+                #endregion
+                break;
+              //8 Speaker (comboBoxSpeakerConfig index 4)
+              case 8:
+                #region 8 Speaker (7.1)
+                comboBoxSpeakerConfig.SelectedIndex = 4;
+                comboBoxOutPutMode.Items.Clear();
+                comboBoxOutPutMode.Enabled = false;
+                #endregion
+                break;
+              //SPDIF Out (comboBoxSpeakerConfig index 5)
+              case 6:
+                #region S/PDIF Out
+                comboBoxSpeakerConfig.SelectedIndex = 5;
+                comboBoxOutPutMode.Items.Clear();
+                comboBoxOutPutMode.Enabled = false;
+                #endregion
+                break;
+            }
+          }
+          catch (Exception)
+          {
+          }
+        }
+
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal"))
+        if (subkey != null)
+        {
+          try
+          {
+            Int32 regDxVA = (Int32)subkey.GetValue("DXVA", 1);
+            if (regDxVA == 1) checkBoxDxVA.Checked = true;
+            else checkBoxDxVA.Checked = false;
+
+            Int32 regHWMC = (Int32)subkey.GetValue("HWMC", 1);
+            if (regHWMC == 1) checkBoxHWMC.Checked = true;
+            else checkBoxHWMC.Checked = false;
+
+            Int32 regBOBWEAVE = (Int32)subkey.GetValue("BOBWEAVE", 0);
+            if (regBOBWEAVE == 0) comboBoxDeInterlace.SelectedIndex = 0;
+            if (regBOBWEAVE == 1) comboBoxDeInterlace.SelectedIndex = 1;
+            if (regBOBWEAVE == 2) comboBoxDeInterlace.SelectedIndex = 2;
+            if (regBOBWEAVE == 3) comboBoxDeInterlace.SelectedIndex = 3;
+            else comboBoxDeInterlace.SelectedIndex = 0;
+          }
+          catch (Exception)
+          {
+          }
+        }
+    }
+
+    public override void SaveSettings()
+    {
+      Int32 regValue;
+      int OutPutModeIndex;
+
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\AudioDec\MediaPortal"))
+        if (subkey != null)
+        {
+          switch (comboBoxSpeakerConfig.SelectedIndex)
+          {
+            //2 Speakers
+            case 0:
+              #region 2 Speaker
+              regValue = 1;
+              subkey.SetValue("AUDIOCHAN", regValue);
+              OutPutModeIndex = comboBoxOutPutMode.SelectedIndex;
+              if (OutPutModeIndex == 0)
+              {
+                regValue = 0;
+                subkey.SetValue("AUDIO", regValue);
+              }
+              if (OutPutModeIndex == 1)
+              {
+                regValue = 1;
+                subkey.SetValue("AUDIO", regValue);
+              }
+              if (OutPutModeIndex == 2)
+              {
+                regValue = 2;
+                subkey.SetValue("AUDIO", regValue);
+              }
               #endregion
               break;
-            //4 Speaker (comboBoxSpeakerConfig index 1)
-            case 3:
+            //4 Speakers
+            case 1:
               #region 4 Speaker
-              comboBoxSpeakerConfig.SelectedIndex = 1;
-              comboBoxOutPutMode.Items.Clear();
-              comboBoxOutPutMode.Enabled = false;
+              regValue = 3;
+              subkey.SetValue("AUDIOCHAN", regValue);
+              regValue = 4;
+              subkey.SetValue("AUDIO", regValue);
               #endregion
               break;
-            //6 Speaker (comboBoxSpeakerConfig index 2)
-            case 4:
+            //6 Speakers
+            case 2:
               #region 6 Speaker (5.1)
-              comboBoxSpeakerConfig.SelectedIndex = 2;
-              comboBoxOutPutMode.Items.Clear();
-              comboBoxOutPutMode.Enabled = false;
+              regValue = 4;
+              subkey.SetValue("AUDIOCHAN", regValue);
+              regValue = 5;
+              subkey.SetValue("AUDIO", regValue);
               #endregion
               break;
-            //7 Speaker (comboBoxSpeakerConfig index 3)
-            case 5:
+            //7 Speakers
+            case 3:
               #region 7 Speaker (6.1)
-              comboBoxSpeakerConfig.SelectedIndex = 3;
-              comboBoxOutPutMode.Items.Clear();
-              comboBoxOutPutMode.Enabled = false;
+              regValue = 5;
+              subkey.SetValue("AUDIOCHAN", regValue);
+              regValue = 6;
+              subkey.SetValue("AUDIO", regValue);
               #endregion
               break;
-            //8 Speaker (comboBoxSpeakerConfig index 4)
-            case 8:
+            //8 Speakers
+            case 4:
               #region 8 Speaker (7.1)
-              comboBoxSpeakerConfig.SelectedIndex = 4;
-              comboBoxOutPutMode.Items.Clear();
-              comboBoxOutPutMode.Enabled = false;
+              regValue = 8;
+              subkey.SetValue("AUDIOCHAN", regValue);
+              regValue = 7;
+              subkey.SetValue("AUDIO", regValue);
               #endregion
               break;
-            //SPDIF Out (comboBoxSpeakerConfig index 5)
-            case 6:
+            // SPDIF Out 
+            case 5:
               #region S/PDIF Out
-              comboBoxSpeakerConfig.SelectedIndex = 5;
-              comboBoxOutPutMode.Items.Clear();
-              comboBoxOutPutMode.Enabled = false;
+              regValue = 6;
+              subkey.SetValue("AUDIOCHAN", regValue);
+              regValue = 7;
+              subkey.SetValue("AUDIO", regValue);
               #endregion
-              break;            
+              break;
           }
         }
-        catch (Exception)
-        {
-        }
-        finally
-        {
-          subkey.Close();
-        }
-      }
 
-      RegistryKey subkey2 = hkcu.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal");
-
-      if (subkey2 != null)
-      {
-        try
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal"))
+        if (subkey != null)
         {
-          Int32 regDxVA = (Int32)subkey2.GetValue("DXVA", 1);
-          if (regDxVA == 1) checkBoxDxVA.Checked = true;
-          else checkBoxDxVA.Checked = false;
+          Int32 regDxVA;
+          if (checkBoxDxVA.Checked) regDxVA = 1;
+          else regDxVA = 0;
+          subkey.SetValue("DXVA", regDxVA);
+          using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
+          {
+            xmlwriter.SetValue("videocodec", "intervideo", regDxVA);
+          }
 
-          Int32 regHWMC = (Int32)subkey2.GetValue("HWMC", 1);
-          if (regHWMC == 1) checkBoxHWMC.Checked = true;
-          else checkBoxHWMC.Checked = false;
+          Int32 regHWMC;
+          if (checkBoxHWMC.Checked) regHWMC = 1;
+          else regHWMC = 0;
+          subkey.SetValue("HWMC", regHWMC);
 
-          Int32 regBOBWEAVE = (Int32)subkey2.GetValue("BOBWEAVE", 0);
-          if (regBOBWEAVE == 0) comboBoxDeInterlace.SelectedIndex = 0;
-          if (regBOBWEAVE == 1) comboBoxDeInterlace.SelectedIndex = 1;
-          if (regBOBWEAVE == 2) comboBoxDeInterlace.SelectedIndex = 2;
-          if (regBOBWEAVE == 3) comboBoxDeInterlace.SelectedIndex = 3;
-          else comboBoxDeInterlace.SelectedIndex = 0;
-        }
-        catch (Exception)
-        {
-        }
-        finally
-        {
-            subkey2.Close();
+          int DeInterlace;
+          Int32 regDeInterlace;
+          DeInterlace = comboBoxDeInterlace.SelectedIndex;
+          if (DeInterlace == 0)
+          {
+            regDeInterlace = 0;
+            subkey.SetValue("BOBWEAVE", regDeInterlace);
+          }
+          if (DeInterlace == 1)
+          {
+            regDeInterlace = 1;
+            subkey.SetValue("BOBWEAVE", regDeInterlace);
+          }
+          if (DeInterlace == 2)
+          {
+            regDeInterlace = 2;
+            subkey.SetValue("BOBWEAVE", regDeInterlace);
+          }
+          if (DeInterlace == 3)
+          {
+            regDeInterlace = 3;
+            subkey.SetValue("BOBWEAVE", regDeInterlace);
+          }
         }
     }
-    }
-
-      public override void SaveSettings()
-      {
-          Int32 regValue;
-          int OutPutModeIndex;
-          RegistryKey hkcu = Registry.CurrentUser;
-          RegistryKey subkey = hkcu.CreateSubKey(@"Software\InterVideo\Common\AudioDec\MediaPortal");
-          if (subkey != null)
-          {
-              switch (comboBoxSpeakerConfig.SelectedIndex)
-              {
-                  //2 Speakers
-                  case 0:
-                      #region 2 Speaker
-                      regValue = 1;
-                      subkey.SetValue("AUDIOCHAN", regValue);
-                      OutPutModeIndex = comboBoxOutPutMode.SelectedIndex;
-                      if (OutPutModeIndex == 0)
-                      {
-                          regValue = 0;
-                          subkey.SetValue("AUDIO", regValue);
-                      }
-                      if (OutPutModeIndex == 1)
-                      {
-                          regValue = 1;
-                          subkey.SetValue("AUDIO", regValue);
-                      }
-                      if (OutPutModeIndex == 2)
-                      {
-                          regValue = 2;
-                          subkey.SetValue("AUDIO", regValue);
-                      }
-                      #endregion
-                      break;
-                  //4 Speakers
-                  case 1:
-                      #region 4 Speaker
-                      regValue = 3;
-                      subkey.SetValue("AUDIOCHAN", regValue);
-                      regValue = 4;
-                      subkey.SetValue("AUDIO", regValue);
-                      #endregion
-                      break;
-                  //6 Speakers
-                  case 2:
-                      #region 6 Speaker (5.1)
-                      regValue = 4;
-                      subkey.SetValue("AUDIOCHAN", regValue);
-                      regValue = 5;
-                      subkey.SetValue("AUDIO", regValue);
-                      #endregion
-                      break;
-                  //7 Speakers
-                  case 3:
-                      #region 7 Speaker (6.1)
-                      regValue = 5;
-                      subkey.SetValue("AUDIOCHAN", regValue);
-                      regValue = 6;
-                      subkey.SetValue("AUDIO", regValue);
-                      #endregion
-                      break;
-                  //8 Speakers
-                  case 4:
-                      #region 8 Speaker (7.1)
-                      regValue = 8;
-                      subkey.SetValue("AUDIOCHAN", regValue);
-                      regValue = 7;
-                      subkey.SetValue("AUDIO", regValue);
-                      #endregion
-                      break;
-                  // SPDIF Out 
-                  case 5:
-                      #region S/PDIF Out
-                      regValue = 6;
-                      subkey.SetValue("AUDIOCHAN", regValue);
-                      regValue = 7;
-                      subkey.SetValue("AUDIO", regValue);
-                      #endregion
-                      break;
-              }
-              subkey.Close();
-          }
-
-          RegistryKey subkey2 = hkcu.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal");
-
-          if (subkey2 != null)
-          {
-              Int32 regDxVA;
-              if (checkBoxDxVA.Checked) regDxVA = 1;
-              else regDxVA = 0;
-              subkey2.SetValue("DXVA", regDxVA);
-              using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-              {
-                xmlwriter.SetValue("videocodec", "intervideo", regDxVA);
-              }
-
-              Int32 regHWMC;
-              if (checkBoxHWMC.Checked) regHWMC = 1;
-              else regHWMC = 0;
-              subkey2.SetValue("HWMC", regHWMC);
-
-              int DeInterlace;
-              Int32 regDeInterlace;
-              DeInterlace = comboBoxDeInterlace.SelectedIndex;
-              if (DeInterlace == 0)
-              {
-                  regDeInterlace = 0;
-                  subkey2.SetValue("BOBWEAVE", regDeInterlace);
-              }
-              if (DeInterlace == 1)
-              {
-                  regDeInterlace = 1;
-                  subkey2.SetValue("BOBWEAVE", regDeInterlace);
-              }
-              if (DeInterlace == 2)
-              {
-                  regDeInterlace = 2;
-                  subkey2.SetValue("BOBWEAVE", regDeInterlace);
-              }
-              if (DeInterlace == 3)
-              {
-                  regDeInterlace = 3;
-                  subkey2.SetValue("BOBWEAVE", regDeInterlace);
-              }
-              subkey2.Close();
-          }
-      }
 
     private void comboBoxSpeakerConfig_SelectedIndexChanged(object sender, System.EventArgs e)
     {
@@ -528,24 +510,5 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-      private void comboBoxDeInterlace_SelectedIndexChanged(object sender, EventArgs e)
-      {
-
-      }
-
-      private void checkBoxDxVA_CheckedChanged(object sender, EventArgs e)
-      {
-
-      }
-
-      private void checkBoxHWMC_CheckedChanged(object sender, EventArgs e)
-      {
-
-      }
-
-      private void comboBoxOutPutMode_SelectedIndexChanged(object sender, EventArgs e)
-      {
-
-      }
   }
 }

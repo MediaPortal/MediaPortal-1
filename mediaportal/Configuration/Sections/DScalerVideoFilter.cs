@@ -28,17 +28,15 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
-
 using DShowNET;
 using DirectShowLib;
+
 #pragma warning disable 108
 
 namespace MediaPortal.Configuration.Sections
 {
-
   public class DScalerVideoFilter : MediaPortal.Configuration.SectionSettings
   {
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
@@ -311,99 +309,91 @@ namespace MediaPortal.Configuration.Sections
 
     public override void LoadSettings()
     {
-      RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.CreateSubKey(@"Software\DScaler5\MpegVideo Filter");
-      if (subkey != null)
-      {
-        try
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\DScaler5\MpegVideo Filter"))
+        if (subkey != null)
         {
-          Int32 regValue = (Int32)subkey.GetValue("3:2 playback smoothing");
-          if (regValue == 1) cbSmoothing.Checked = true;
-          else cbSmoothing.Checked = false;
+          try
+          {
+            Int32 regValue = (Int32)subkey.GetValue("3:2 playback smoothing");
+            if (regValue == 1) cbSmoothing.Checked = true;
+            else cbSmoothing.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("Display Forced Subtitles");
-          if (regValue == 1) cbForcedSubtitles.Checked = true;
-          else cbForcedSubtitles.Checked = false;
+            regValue = (Int32)subkey.GetValue("Display Forced Subtitles");
+            if (regValue == 1) cbForcedSubtitles.Checked = true;
+            else cbForcedSubtitles.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("Use accurate aspect ratios");
-          if (regValue == 1) cbAspectRatio.Checked = true;
-          else cbAspectRatio.Checked = false;
+            regValue = (Int32)subkey.GetValue("Use accurate aspect ratios");
+            if (regValue == 1) cbAspectRatio.Checked = true;
+            else cbAspectRatio.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("Hardcode for PAL with ffdshow");
-          if (regValue == 1) cbHardcodePal.Checked = true;
-          else cbHardcodePal.Checked = false;
+            regValue = (Int32)subkey.GetValue("Hardcode for PAL with ffdshow");
+            if (regValue == 1) cbHardcodePal.Checked = true;
+            else cbHardcodePal.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("Do Analog Blanking");
-          if (regValue == 1) cbAnalogBlanking.Checked = true;
-          else cbAnalogBlanking.Checked = false;
+            regValue = (Int32)subkey.GetValue("Do Analog Blanking");
+            if (regValue == 1) cbAnalogBlanking.Checked = true;
+            else cbAnalogBlanking.Checked = false;
 
-          regValue = (Int32)subkey.GetValue("Video Delay");
-          tbVideoOffset.Text = regValue.ToString();
+            regValue = (Int32)subkey.GetValue("Video Delay");
+            tbVideoOffset.Text = regValue.ToString();
 
-          regValue = (Int32)subkey.GetValue("Deinterlace Mode");
-          cbDeinterlace.SelectedIndex = regValue;
+            regValue = (Int32)subkey.GetValue("Deinterlace Mode");
+            cbDeinterlace.SelectedIndex = regValue;
 
-          regValue = (Int32)subkey.GetValue("DVB Aspect Preferences");
-          cbDVBAR.SelectedIndex = regValue;
+            regValue = (Int32)subkey.GetValue("DVB Aspect Preferences");
+            cbDVBAR.SelectedIndex = regValue;
 
-          regValue = (Int32)subkey.GetValue("IDCT to Use");
-          cbIDCT.SelectedIndex = regValue;
+            regValue = (Int32)subkey.GetValue("IDCT to Use");
+            cbIDCT.SelectedIndex = regValue;
 
-          regValue = (Int32)subkey.GetValue("Colour space to output");
-          cbColorSpace.SelectedIndex = regValue;
+            regValue = (Int32)subkey.GetValue("Colour space to output");
+            cbColorSpace.SelectedIndex = regValue;
 
+          }
+          catch (Exception)
+          {
+          }
         }
-        catch (Exception)
-        {
-        }
-        finally
-        {
-          subkey.Close();
-        }
-      }
     }
 
     public override void SaveSettings()
     {
-      RegistryKey hkcu = Registry.CurrentUser;
-      RegistryKey subkey = hkcu.CreateSubKey(@"Software\DScaler5\MpegVideo Filter");
-      if (subkey != null)
-      {
-        Int32 regValue;
-        if (cbSmoothing.Checked) regValue = 1;
-        else regValue = 0;
-        subkey.SetValue("3:2 playback smoothing", regValue);
+      using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\DScaler5\MpegVideo Filter"))
+        if (subkey != null)
+        {
+          Int32 regValue;
+          if (cbSmoothing.Checked) regValue = 1;
+          else regValue = 0;
+          subkey.SetValue("3:2 playback smoothing", regValue);
 
-        if (cbForcedSubtitles.Checked) regValue = 1;
-        else regValue = 0;
-        subkey.SetValue("Display Forced Subtitles", regValue);
+          if (cbForcedSubtitles.Checked) regValue = 1;
+          else regValue = 0;
+          subkey.SetValue("Display Forced Subtitles", regValue);
 
-        if (cbAspectRatio.Checked) regValue = 1;
-        else regValue = 0;
-        subkey.SetValue("Use accurate aspect ratios", regValue);
+          if (cbAspectRatio.Checked) regValue = 1;
+          else regValue = 0;
+          subkey.SetValue("Use accurate aspect ratios", regValue);
 
-        if (cbHardcodePal.Checked) regValue = 1;
-        else regValue = 0;
-        subkey.SetValue("Hardcode for PAL with ffdshow", regValue);
+          if (cbHardcodePal.Checked) regValue = 1;
+          else regValue = 0;
+          subkey.SetValue("Hardcode for PAL with ffdshow", regValue);
 
-        if (cbAnalogBlanking.Checked) regValue = 1;
-        else regValue = 0;
-        subkey.SetValue("Do Analog Blanking", regValue);
+          if (cbAnalogBlanking.Checked) regValue = 1;
+          else regValue = 0;
+          subkey.SetValue("Do Analog Blanking", regValue);
 
-        regValue = (Int32)Int32.Parse(tbVideoOffset.Text);
-        subkey.SetValue("Video Delay", regValue);
+          regValue = (Int32)Int32.Parse(tbVideoOffset.Text);
+          subkey.SetValue("Video Delay", regValue);
 
-        subkey.SetValue("Deinterlace Mode", (Int32)cbDeinterlace.SelectedIndex);
+          subkey.SetValue("Deinterlace Mode", (Int32)cbDeinterlace.SelectedIndex);
 
-        subkey.SetValue("DVB Aspect Preferences", (Int32)cbDVBAR.SelectedIndex);
+          subkey.SetValue("DVB Aspect Preferences", (Int32)cbDVBAR.SelectedIndex);
 
-        subkey.SetValue("IDCT to Use", (Int32)cbIDCT.SelectedIndex);
+          subkey.SetValue("IDCT to Use", (Int32)cbIDCT.SelectedIndex);
 
-        subkey.SetValue("Colour space to output", (Int32)cbColorSpace.SelectedIndex);
-        subkey.Close();
-      }
+          subkey.SetValue("Colour space to output", (Int32)cbColorSpace.SelectedIndex);
+        }
     }
-
 
   }
 }
