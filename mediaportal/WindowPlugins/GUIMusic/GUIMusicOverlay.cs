@@ -496,15 +496,15 @@ namespace MediaPortal.GUI.Music
       if (tag != null)
       {
         string strText = GUILocalizeStrings.Get(437);	//	"Duration"
-        string strDuration = String.Format("{0}{1}", strText, Utils.SecondsToHMSString(tag.Duration));
+        string strDuration = String.Format("{0} {1}", strText, Utils.SecondsToHMSString(tag.Duration));
         if (tag.Duration <= 0) strDuration = String.Empty;
 
         strText = GUILocalizeStrings.Get(435);	//	"Track"
-        string strTrack = String.Format("{0}{1}", strText, tag.Track);
+        string strTrack = String.Format("{0} {1}", strText, tag.Track);
         if (tag.Track <= 0) strTrack = String.Empty;
 
         strText = GUILocalizeStrings.Get(436);	//	"Year"
-        string strYear = String.Format("{0}{1}", strText, tag.Year);
+        string strYear = String.Format("{0} {1}", strText, tag.Year);
         if (tag.Year <= 1900) strYear = String.Empty;
 
         GUIPropertyManager.SetProperty("#Play.Current.Genre", tag.Genre);
