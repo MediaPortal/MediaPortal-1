@@ -41,7 +41,6 @@
     <entry name="nationalgeographicchannel.dk">Region=4&amp;KanalID=43</entry>	<!-- National Geographic Channel  -->
     <entry name="vh1.com">Region=4&amp;KanalID=52</entry>				<!-- VH-1  -->
     <entry name="hallmarkchannel.co.uk">Region=4&amp;KanalID=98</entry>		<!-- Hallmark -->
-    <entry name="playboytv.co.uk">Region=4&amp;KanalID=100</entry>			<!-- Playboy Channel -->
     <entry name="tcmeurope.com">Region=4&amp;KanalID=101</entry>				<!-- TCM -->
 
   </section>
@@ -51,12 +50,12 @@
     <entry name="BaseURL">http://tv.tv2.dk/tv/</entry>
     <entry name="SearchURL">listning.php?[ID]&amp;Soegeord=&amp;Dato=[DAY_OFFSET]&amp;Kategori=0&amp;Periode=1</entry>
 
-    <entry name="Tags">DS</entry>
+    <entry name="Tags">D</entry>
 
 <!-- Template of the Listing information -->
     <entry name="Template">
 &#60;div&#62;
-&#60;div&#62;&#60;span&#62;&#60;#START&#62;&#60;/span&#62;&#60;span&#62;&#60;#TITLE&#62;&#60;/span&#62;&#60;span&#62;&#60;/span&#62;&#60;/div&#62;
+&#60;div&#62;&#60;#START&#62; &#60;#TITLE&#62;&#60;/div&#62;
 &#60;div&#62;&#60;#GENRE&#62;&#60;/div&#62;
 &#60;div&#62;&#60;#DESCRIPTION&#62;&#60;div&#62;
     </entry>
