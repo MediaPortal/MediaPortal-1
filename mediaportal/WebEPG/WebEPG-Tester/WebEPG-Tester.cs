@@ -89,6 +89,7 @@ namespace MediaPortal.EPG.WebEPGTester
             XMLTVExport xmltv = new XMLTVExport(grabberDir);
             xmltv.Open();
 
+            LogFileWriter countryLog = new LogFileWriter("log", countries[c] + "-" + grabbers[g]);
             while (enumerator.MoveNext())
             {
               ChannelInfo channel = (ChannelInfo)enumerator.Value;
@@ -128,12 +129,17 @@ namespace MediaPortal.EPG.WebEPGTester
               {
                 log.Error("WebEPG: Grabber failed for: {0}", channel.ChannelID);
               }
-              if(logString.ToString().IndexOf("[ERROR]") != -1)
+              if (logString.ToString().IndexOf("[ERROR]") != -1)
+              {
                 log.Error("WebEPG: Grabber error for: {0}", channel.ChannelID);
-              logString.Flush();
+                logString.Flush();
+                countryLog.Write(sb.ToString());
+                countryLog.Flush();
+              }
               sb.Remove(0, sb.Length);
             }
             xmltv.Close();
+            countryLog.Close();
           }
         }
       }
