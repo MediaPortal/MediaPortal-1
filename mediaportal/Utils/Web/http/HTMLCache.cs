@@ -118,9 +118,9 @@ namespace MediaPortal.Utils.Web
 
     static private string GetCacheFileName(Uri Page)
 		{
-			int hash = Page.GetHashCode();
+			uint hash = (uint) Page.GetHashCode();
 				
-			return CACHE_DIR + "/" + hash.ToString() + ".html";
+			return CACHE_DIR + "/" + Page.Host + "_" + hash.ToString() + ".html";
 		}
   }
 }
