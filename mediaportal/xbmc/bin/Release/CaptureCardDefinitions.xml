@@ -9648,10 +9648,10 @@
         <filter cat="tvaudio"     name="ATI T200 AVStream Analog TV Audio"  checkdevice="false"/>
         <filter cat="crossbar"    name="ATI T200 AVStream Analog Xbar"      checkdevice="true"/>
         <filter cat="capture"     name="ATI T200 AVStream Analog Capture"   checkdevice="true"/>
-	<filter cat="audcapture"  name="%soundcard%" checkdevice="true"/>
-        <filter cat="videncoder"	name="ATI MPEG Video Encoder"     checkdevice="false"/>
-        <filter cat="audencoder"	name="ATI MPEG Audio Encoder"     checkdevice="false"/>
-        <filter cat="mux"      		name="ATI MPEG Multiplexer"       checkdevice="false"/>
+        <filter cat="audcapture"  name="%soundcard%"                        checkdevice="true"/>
+        <filter cat="videncoder"	name="ATI Media Center Video Encoder"     checkdevice="false"/>
+        <filter cat="audencoder"	name="ATI Media Center Audio Encoder" 	  checkdevice="false"/>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"		    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
@@ -9659,7 +9659,7 @@
         <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
         <connection sourcefilter="capture"			sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-        <connection sourcefilter="audcapture"			sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"   sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
         <connection sourcefilter="videncoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
         <connection sourcefilter="audencoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
       </connections>
@@ -9675,10 +9675,10 @@
         <filter cat="tvaudio"     name="ATI T200 AVStream Analog TV Audio"  checkdevice="false"/>
         <filter cat="crossbar"    name="ATI T200 AVStream Analog Xbar"      checkdevice="true"/>
         <filter cat="capture"     name="ATI T200 AVStream Analog Capture"   checkdevice="true"/>
-	<filter cat="audcapture"  name="%soundcard%" checkdevice="true"/>
-        <filter cat="videncoder"	name="ATI MPEG Video Encoder"     checkdevice="false"/>
-        <filter cat="audencoder"	name="ATI MPEG Audio Encoder"     checkdevice="false"/>
-        <filter cat="mux"      		name="ATI MPEG Multiplexer"       checkdevice="false"/>
+        <filter cat="audcapture"  name="%soundcard%"                        checkdevice="true"/>
+        <filter cat="videncoder"	name="ATI Media Center Video Encoder"     checkdevice="false"/>
+        <filter cat="audencoder"	name="ATI Media Center Audio Encoder" 	  checkdevice="false"/>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"		    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
@@ -9686,7 +9686,7 @@
         <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
         <connection sourcefilter="capture"			sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-        <connection sourcefilter="audcapture"			sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"   sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
         <connection sourcefilter="videncoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
         <connection sourcefilter="audencoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
       </connections>
@@ -9702,10 +9702,10 @@
         <filter cat="tvaudio"     name="ATI T200 AVStream Analog TV Audio"  checkdevice="false"/>
         <filter cat="crossbar"    name="ATI T200 AVStream Analog Xbar"      checkdevice="true"/>
         <filter cat="capture"     name="ATI T200 AVStream Analog Capture"   checkdevice="true"/>
-	<filter cat="audcapture"  name="%soundcard%" checkdevice="true"/>
-        <filter cat="videncoder"	name="ATI MPEG Video Encoder"     checkdevice="false"/>
-        <filter cat="audencoder"	name="ATI MPEG Audio Encoder"     checkdevice="false"/>
-        <filter cat="mux"      		name="ATI MPEG Multiplexer"       checkdevice="false"/>
+        <filter cat="audcapture"  name="%soundcard%"                        checkdevice="true"/>
+        <filter cat="videncoder"	name="ATI Media Center Video Encoder"     checkdevice="false"/>
+        <filter cat="audencoder"	name="ATI Media Center Audio Encoder" 	  checkdevice="false"/>
+        <filter cat="mux"      		name="ATI Media Center Multiplexer"		    checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
@@ -9713,7 +9713,7 @@
         <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
         <connection sourcefilter="capture"			sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-        <connection sourcefilter="audcapture"			sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture"   sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
         <connection sourcefilter="videncoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
         <connection sourcefilter="audencoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
       </connections>
@@ -13001,6 +13001,38 @@
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter=" tunerdevice"	sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Yuan PG700" capturename="DVB-T Digital TV Capture" devid="ven_14f1&amp;dev_8800&amp;subsys_370012ab&amp;rev_05">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="true" />
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false" />
+        <filter cat="tunerdevice"     name="DVB-T Tuner"                      checkdevice="true" />
+        <filter cat="capture"         name="DVB-T Digital TV Capture"         checkdevice="true" />
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0" />
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0" />
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="AVerMedia DVB-T 777" capturename="AVerMedia BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_2c051461&amp;rev_d1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"/>
+      <filters>
+        <filter cat="networkprovider" 	name="Microsoft DVBT Network Provider" 	checkdevice="false"/>
+        <filter cat="tunerdevice" 		  name="AVerMedia BDA DVBT Tuner" 		    checkdevice="true"/>
+        <filter cat="capture" 			    name="AVerMedia BDA Digital Capture" 	  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"		  sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
