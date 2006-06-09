@@ -484,11 +484,12 @@ namespace MediaPortal.Configuration.Sections
       // listViewTVChannelsForCard
       // 
       this.listViewTVChannelsForCard.AllowDrop = true;
-      this.listViewTVChannelsForCard.AllowRowReorder = true;
+      this.listViewTVChannelsForCard.AllowRowReorder = false;
       this.listViewTVChannelsForCard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.listViewTVChannelsForCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderAssignedTvChannels});
+      this.listViewTVChannelsForCard.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.listViewTVChannelsForCard.Location = new System.Drawing.Point(272, 56);
       this.listViewTVChannelsForCard.Name = "listViewTVChannelsForCard";
       this.listViewTVChannelsForCard.Size = new System.Drawing.Size(176, 304);
@@ -505,11 +506,12 @@ namespace MediaPortal.Configuration.Sections
       // listViewTVChannelsCard
       // 
       this.listViewTVChannelsCard.AllowDrop = true;
-      this.listViewTVChannelsCard.AllowRowReorder = true;
+      this.listViewTVChannelsCard.AllowRowReorder = false;
       this.listViewTVChannelsCard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)));
       this.listViewTVChannelsCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderAvailableTvChannels});
+      this.listViewTVChannelsCard.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.listViewTVChannelsCard.Location = new System.Drawing.Point(16, 56);
       this.listViewTVChannelsCard.Name = "listViewTVChannelsCard";
       this.listViewTVChannelsCard.Size = new System.Drawing.Size(176, 304);

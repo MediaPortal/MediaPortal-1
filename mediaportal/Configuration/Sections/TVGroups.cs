@@ -66,6 +66,7 @@ namespace MediaPortal.Configuration.Sections
     private bool _itemsModified = false;
     private ListViewColumnSorter _columnSorter;
     private static bool _reloadList = false;
+    private static bool _providerInit = false;
 
     public SectionTvGroups()
       : this("TV Channel Groups")
@@ -232,6 +233,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewGroups.TabIndex = 0;
       this.listViewGroups.UseCompatibleStateImageBehavior = false;
       this.listViewGroups.View = System.Windows.Forms.View.Details;
+      this.listViewGroups.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewGroups_DragDrop);
       this.listViewGroups.DoubleClick += new System.EventHandler(this.listViewGroups_DoubleClick);
       this.listViewGroups.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewGroups_ColumnClick);
       // 
@@ -272,6 +274,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewHeaderProviders.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderAvailableTvChannels});
       this.listViewHeaderProviders.FullRowSelect = true;
+      this.listViewHeaderProviders.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.listViewHeaderProviders.HideSelection = false;
       this.listViewHeaderProviders.Location = new System.Drawing.Point(16, 56);
       this.listViewHeaderProviders.Name = "listViewHeaderProviders";
@@ -353,6 +356,7 @@ namespace MediaPortal.Configuration.Sections
       this.listViewTVChannelsInGroup.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderTvChannelsInGroup});
       this.listViewTVChannelsInGroup.FullRowSelect = true;
+      this.listViewTVChannelsInGroup.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.listViewTVChannelsInGroup.HideSelection = false;
       this.listViewTVChannelsInGroup.Location = new System.Drawing.Point(272, 56);
       this.listViewTVChannelsInGroup.Name = "listViewTVChannelsInGroup";
@@ -546,6 +550,8 @@ namespace MediaPortal.Configuration.Sections
           listViewGroups.Items.Insert(index - 1, listItem);
         }
 
+      SaveGroups();
+
       listViewGroups.EndUpdate();
     }
 
@@ -567,6 +573,8 @@ namespace MediaPortal.Configuration.Sections
           else
             listViewGroups.Items.Add(listItem);
         }
+
+      SaveGroups();
 
       listViewGroups.EndUpdate();
     }
@@ -608,10 +616,13 @@ namespace MediaPortal.Configuration.Sections
         ListViewItem listItem = new ListViewItem(new string[] { chan.Name });
         listItem.Tag = chan;
         listViewTVChannelsInGroup.Items.Add(listItem);
+        TreeNode parentNode = node.Node.Parent;
         treeViewProviders.Nodes.Remove(node.Node);
+        if (parentNode.Nodes.Count == 0)
+          treeViewProviders.Nodes.Remove(parentNode);
       }
       SaveTVGroupChannelsAndMapping();
-      UpdateGroupChannels(null, true);
+      //UpdateGroupChannels(null, true);
 
       listViewTVChannelsInGroup.EndUpdate();
       treeViewProviders.EndUpdate();
@@ -625,6 +636,8 @@ namespace MediaPortal.Configuration.Sections
       treeViewProviders.BeginUpdate();
       listViewTVChannelsInGroup.BeginUpdate();
 
+      int selectedChannelId = 0;
+
       for (int i = 0; i < listViewTVChannelsInGroup.SelectedItems.Count; ++i)
       {
         ListViewItem listItem = listViewTVChannelsInGroup.SelectedItems[i];
@@ -637,6 +650,7 @@ namespace MediaPortal.Configuration.Sections
             subnode.Tag = chan;
             node.Nodes.Add(subnode);
           }
+        selectedChannelId = chan.ID;
       }
       TVGroup group = comboBoxTvChannelGroups.SelectedItem as TVGroup;
       for (int i = listViewTVChannelsInGroup.SelectedItems.Count - 1; i >= 0; --i)
@@ -648,7 +662,15 @@ namespace MediaPortal.Configuration.Sections
         listViewTVChannelsInGroup.Items.Remove(listItem);
       }
       SaveTVGroupChannelsAndMapping();
-      UpdateGroupChannels(null, true);
+      UpdateGroupChannels(group, true);
+
+      foreach (TreeNode providerNode in treeViewProviders.Nodes)
+        foreach (TreeNode channelNode in providerNode.Nodes)
+          if (((TVChannel)channelNode.Tag).ID == selectedChannelId)
+          {
+            providerNode.Expand();
+            treeViewProviders.SelectedNode = channelNode;
+          }
 
       listViewTVChannelsInGroup.EndUpdate();
       treeViewProviders.EndUpdate();
@@ -656,6 +678,7 @@ namespace MediaPortal.Configuration.Sections
 
     private void comboBoxTvChannelGroups_SelectedIndexChanged(object sender, System.EventArgs e)
     {
+      _providerInit = false;
       TVGroup group = (TVGroup)comboBoxTvChannelGroups.SelectedItem;
       UpdateGroupChannels(group, false);
     }
@@ -733,14 +756,16 @@ namespace MediaPortal.Configuration.Sections
               if (node.Text == providerName)
                 node.Expand();
 
-            // do we have a new provider?
-            bool providerExisted = false;
-            foreach (string providerName in existingProviders)
-              if (node.Text == providerName)
-                providerExisted = true;
-            if (!providerExisted)
-              node.Expand();
-
+            if (_providerInit)
+            {
+              // do we have a new provider?
+              bool providerExisted = false;
+              foreach (string providerName in existingProviders)
+                if (node.Text == providerName)
+                  providerExisted = true;
+              if (!providerExisted)
+                node.Expand();
+            }
             node.Tag = "";
           }
           TreeNode nodeChan = new TreeNode(chan.Name);
@@ -756,6 +781,8 @@ namespace MediaPortal.Configuration.Sections
       comboBoxTvChannelGroups.EndUpdate();
       listViewTVChannelsInGroup.EndUpdate();
       treeViewProviders.EndUpdate();
+
+      _providerInit = true;
     }
 
     private void listViewTVChannelsInGroup_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
@@ -899,6 +926,12 @@ namespace MediaPortal.Configuration.Sections
         buttonEditGroup_Click(sender, e);
       else
         buttonAddGroup_Click(sender, e);
+    }
+
+    private void listViewGroups_DragDrop(object sender, DragEventArgs e)
+    {
+      _itemsModified = true;
+      SaveSettings();
     }
   }
 }
