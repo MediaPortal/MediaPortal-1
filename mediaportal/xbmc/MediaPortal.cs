@@ -771,10 +771,21 @@ public class MediaPortalApp : D3DApp, IRender
       string strDefault = xmlreader.GetValueAsString("myradio", "default", "");
       if (strDefault != "")
       {
-        GUIMessage msg =
-          new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO, (int)GUIWindow.Window.WINDOW_RADIO, 0, 0,
-                         0, 0, null);
-        msg.Label = strDefault;
+        MediaPortal.Radio.Database.RadioStation station;
+        MediaPortal.Radio.Database.RadioDatabase.GetStation(strDefault, out station);
+        GUIMessage msg;
+        if (station.URL != null && !station.URL.Equals(String.Empty))
+        {
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
+          msg.Label = station.URL;
+          station = null;
+        }
+        else
+        {
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO,
+                           (int)GUIWindow.Window.WINDOW_RADIO, 0, 0, 0, 0, null);
+          msg.Label = strDefault;
+        }
         GUIGraphicsContext.SendMessage(msg);
       }
     }
