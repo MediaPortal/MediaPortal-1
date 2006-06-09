@@ -24,37 +24,6 @@ using System.IO;
 
 namespace MediaPortal.Utils.Services
 {
-	public class LogFile
-	{
-		private string _directory;
-		private string _name;
-
-		public LogFile(string directory, string name)
-		{
-			_directory = directory;
-			_name = name;
-
-			if(!System.IO.Directory.Exists(directory))
-				System.IO.Directory.CreateDirectory(directory);
-
-		  string logName = directory + "\\" + name + ".log";
-			string bakName = directory + "\\" + name + ".bak";
-			if (System.IO.File.Exists(bakName))
-				System.IO.File.Delete(bakName);
-			if (System.IO.File.Exists(logName))
-				System.IO.File.Move(logName, bakName);
-		}
-
-		public LogFile(string name) : this("log", name)
-		{
-		}
-
-		public TextWriter GetStream()
-		{
-			return (TextWriter)new LogFileWriter(_directory, _name);
-		}
-	}
-
 	public class LogFileWriter : StreamWriter
 	{
 		private StreamWriter _errorStream;
