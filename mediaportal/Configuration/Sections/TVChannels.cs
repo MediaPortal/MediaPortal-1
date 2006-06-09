@@ -27,22 +27,12 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.Windows.Forms;
-using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
-using System.Xml;
-using MWCommon;
-using MWControls;
 using Microsoft.Win32;
-using MediaPortal.Configuration.Controls;
-using SQLite.NET;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
-using DShowNET;
 using DirectShowLib;
-using System.Threading;
 
 #pragma warning disable 108
 
@@ -87,6 +77,7 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelMapChannelsToTvCard;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxCard;
     private MediaPortal.UserInterface.Controls.MPButton buttonCombine;
+    private MediaPortal.UserInterface.Controls.MPButton buttonDeleteScrambled;
     private System.Windows.Forms.ColumnHeader columnHeaderChannelName;
     private System.Windows.Forms.ColumnHeader columnHeaderChannel;
     private System.Windows.Forms.ColumnHeader columnHeaderStandard;
@@ -100,8 +91,16 @@ namespace MediaPortal.Configuration.Sections
     private bool _init = false;
     private bool _itemsModified = false;
     private ListViewColumnSorter _columnSorter;
-    private MediaPortal.UserInterface.Controls.MPButton buttonDeleteScrambled;
     private static bool _reloadList = false;
+
+    private enum ImportError
+    {
+      CHANNEL_ANALOG_FAILED = -1,
+      CHANNEL_ATSC_FAILED = -2,
+      CHANNEL_DVBC_FAILED = -3,
+      CHANNEL_DVBS_FAILED = -4,
+      CHANNEL_DVBT_FAILED = -5
+    }
 
     public SectionTvChannels()
       : this("TV Channels")
@@ -147,416 +146,416 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-    this.components = new System.ComponentModel.Container();
-    System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SectionTvChannels));
-    this.imageListLocks = new System.Windows.Forms.ImageList(this.components);
-    this.xmlOpenDialog = new System.Windows.Forms.OpenFileDialog();
-    this.xmlSaveDialog = new System.Windows.Forms.SaveFileDialog();
-    this.tabControlTvChannels = new MediaPortal.UserInterface.Controls.MPTabControl();
-    this.tabPageTvChannels = new MediaPortal.UserInterface.Controls.MPTabPage();
-    this.buttonDeleteScrambled = new MediaPortal.UserInterface.Controls.MPButton();
-    this.buttonCombine = new MediaPortal.UserInterface.Controls.MPButton();
-    this.buttonLookup = new MediaPortal.UserInterface.Controls.MPButton();
-    this.buttonRestore = new MediaPortal.UserInterface.Controls.MPButton();
-    this.buttonBackup = new MediaPortal.UserInterface.Controls.MPButton();
-    this.buttonAddCvbsSvhs = new MediaPortal.UserInterface.Controls.MPButton();
-    this.buttonImportFromTvGuide = new MediaPortal.UserInterface.Controls.MPButton();
-    this.buttonClearChannels = new MediaPortal.UserInterface.Controls.MPButton();
-    this.buttonAddChannel = new MediaPortal.UserInterface.Controls.MPButton();
-    this.buttonDeleteChannel = new MediaPortal.UserInterface.Controls.MPButton();
-    this.buttonEditChannel = new MediaPortal.UserInterface.Controls.MPButton();
-    this.buttonChannelUp = new MediaPortal.UserInterface.Controls.MPButton();
-    this.buttonChannelDown = new MediaPortal.UserInterface.Controls.MPButton();
-    this.listViewTvChannels = new MediaPortal.UserInterface.Controls.MPListView();
-    this.columnHeaderChannelName = new System.Windows.Forms.ColumnHeader();
-    this.columnHeaderChannel = new System.Windows.Forms.ColumnHeader();
-    this.columnHeaderStandard = new System.Windows.Forms.ColumnHeader();
-    this.columnHeaderType = new System.Windows.Forms.ColumnHeader();
-    this.tabPageTvCards = new MediaPortal.UserInterface.Controls.MPTabPage();
-    this.buttonMap = new MediaPortal.UserInterface.Controls.MPButton();
-    this.buttonUnmap = new MediaPortal.UserInterface.Controls.MPButton();
-    this.listViewTVChannelsForCard = new MediaPortal.UserInterface.Controls.MPListView();
-    this.columnHeaderAssignedTvChannels = new System.Windows.Forms.ColumnHeader();
-    this.listViewTVChannelsCard = new MediaPortal.UserInterface.Controls.MPListView();
-    this.columnHeaderAvailableTvChannels = new System.Windows.Forms.ColumnHeader();
-    this.labelMapChannelsToTvCard = new MediaPortal.UserInterface.Controls.MPLabel();
-    this.comboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
-    this.tabControlTvChannels.SuspendLayout();
-    this.tabPageTvChannels.SuspendLayout();
-    this.tabPageTvCards.SuspendLayout();
-    this.SuspendLayout();
-    // 
-    // imageListLocks
-    // 
-    this.imageListLocks.ImageStream = ( (System.Windows.Forms.ImageListStreamer)( resources.GetObject("imageListLocks.ImageStream") ) );
-    this.imageListLocks.TransparentColor = System.Drawing.Color.Transparent;
-    this.imageListLocks.Images.SetKeyName(0, "");
-    this.imageListLocks.Images.SetKeyName(1, "");
-    // 
-    // xmlOpenDialog
-    // 
-    this.xmlOpenDialog.DefaultExt = "xml";
-    this.xmlOpenDialog.FileName = "ChannelList";
-    this.xmlOpenDialog.Filter = "xml|*.xml";
-    this.xmlOpenDialog.InitialDirectory = ".";
-    this.xmlOpenDialog.Title = "Open....";
-    // 
-    // xmlSaveDialog
-    // 
-    this.xmlSaveDialog.CreatePrompt = true;
-    this.xmlSaveDialog.DefaultExt = "xml";
-    this.xmlSaveDialog.FileName = "ChannelList";
-    this.xmlSaveDialog.Filter = "xml|*.xml";
-    this.xmlSaveDialog.InitialDirectory = ".";
-    this.xmlSaveDialog.Title = "Save to....";
-    // 
-    // tabControlTvChannels
-    // 
-    this.tabControlTvChannels.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                | System.Windows.Forms.AnchorStyles.Left )
-                | System.Windows.Forms.AnchorStyles.Right ) ) );
-    this.tabControlTvChannels.Controls.Add(this.tabPageTvChannels);
-    this.tabControlTvChannels.Controls.Add(this.tabPageTvCards);
-    this.tabControlTvChannels.Location = new System.Drawing.Point(0, 0);
-    this.tabControlTvChannels.Name = "tabControlTvChannels";
-    this.tabControlTvChannels.SelectedIndex = 0;
-    this.tabControlTvChannels.Size = new System.Drawing.Size(472, 408);
-    this.tabControlTvChannels.TabIndex = 0;
-    this.tabControlTvChannels.SelectedIndexChanged += new System.EventHandler(this.tabControlTvChannels_SelectedIndexChanged);
-    // 
-    // tabPageTvChannels
-    // 
-    this.tabPageTvChannels.AutoScroll = true;
-    this.tabPageTvChannels.Controls.Add(this.buttonDeleteScrambled);
-    this.tabPageTvChannels.Controls.Add(this.buttonCombine);
-    this.tabPageTvChannels.Controls.Add(this.buttonLookup);
-    this.tabPageTvChannels.Controls.Add(this.buttonRestore);
-    this.tabPageTvChannels.Controls.Add(this.buttonBackup);
-    this.tabPageTvChannels.Controls.Add(this.buttonAddCvbsSvhs);
-    this.tabPageTvChannels.Controls.Add(this.buttonImportFromTvGuide);
-    this.tabPageTvChannels.Controls.Add(this.buttonClearChannels);
-    this.tabPageTvChannels.Controls.Add(this.buttonAddChannel);
-    this.tabPageTvChannels.Controls.Add(this.buttonDeleteChannel);
-    this.tabPageTvChannels.Controls.Add(this.buttonEditChannel);
-    this.tabPageTvChannels.Controls.Add(this.buttonChannelUp);
-    this.tabPageTvChannels.Controls.Add(this.buttonChannelDown);
-    this.tabPageTvChannels.Controls.Add(this.listViewTvChannels);
-    this.tabPageTvChannels.Location = new System.Drawing.Point(4, 22);
-    this.tabPageTvChannels.Name = "tabPageTvChannels";
-    this.tabPageTvChannels.Size = new System.Drawing.Size(464, 382);
-    this.tabPageTvChannels.TabIndex = 0;
-    this.tabPageTvChannels.Text = "TV Channels";
-    this.tabPageTvChannels.UseVisualStyleBackColor = true;
-    // 
-    // buttonDeleteScrambled
-    // 
-    this.buttonDeleteScrambled.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
-    this.buttonDeleteScrambled.Location = new System.Drawing.Point(333, 355);
-    this.buttonDeleteScrambled.Name = "buttonDeleteScrambled";
-    this.buttonDeleteScrambled.Size = new System.Drawing.Size(115, 20);
-    this.buttonDeleteScrambled.TabIndex = 13;
-    this.buttonDeleteScrambled.Text = "Delete scrambled";
-    this.buttonDeleteScrambled.UseVisualStyleBackColor = true;
-    this.buttonDeleteScrambled.Click += new System.EventHandler(this.buttonDeleteScrambled_Click);
-    // 
-    // buttonCombine
-    // 
-    this.buttonCombine.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left ) ) );
-    this.buttonCombine.Location = new System.Drawing.Point(16, 312);
-    this.buttonCombine.Name = "buttonCombine";
-    this.buttonCombine.Size = new System.Drawing.Size(60, 20);
-    this.buttonCombine.TabIndex = 1;
-    this.buttonCombine.Text = "Combine";
-    this.buttonCombine.UseVisualStyleBackColor = true;
-    this.buttonCombine.Click += new System.EventHandler(this.buttonCombine_Click);
-    // 
-    // buttonLookup
-    // 
-    this.buttonLookup.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
-    this.buttonLookup.Location = new System.Drawing.Point(256, 312);
-    this.buttonLookup.Name = "buttonLookup";
-    this.buttonLookup.Size = new System.Drawing.Size(60, 20);
-    this.buttonLookup.TabIndex = 8;
-    this.buttonLookup.Text = "Lookup";
-    this.buttonLookup.UseVisualStyleBackColor = true;
-    this.buttonLookup.Click += new System.EventHandler(this.buttonLookup_Click);
-    // 
-    // buttonRestore
-    // 
-    this.buttonRestore.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
-    this.buttonRestore.Location = new System.Drawing.Point(256, 355);
-    this.buttonRestore.Name = "buttonRestore";
-    this.buttonRestore.Size = new System.Drawing.Size(60, 20);
-    this.buttonRestore.TabIndex = 10;
-    this.buttonRestore.Text = "Restore";
-    this.buttonRestore.UseVisualStyleBackColor = true;
-    this.buttonRestore.Click += new System.EventHandler(this.buttonRestore_Click);
-    // 
-    // buttonBackup
-    // 
-    this.buttonBackup.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
-    this.buttonBackup.Location = new System.Drawing.Point(256, 333);
-    this.buttonBackup.Name = "buttonBackup";
-    this.buttonBackup.Size = new System.Drawing.Size(60, 20);
-    this.buttonBackup.TabIndex = 9;
-    this.buttonBackup.Text = "Backup";
-    this.buttonBackup.UseVisualStyleBackColor = true;
-    this.buttonBackup.Click += new System.EventHandler(this.buttonBackup_Click);
-    // 
-    // buttonAddCvbsSvhs
-    // 
-    this.buttonAddCvbsSvhs.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
-    this.buttonAddCvbsSvhs.Location = new System.Drawing.Point(333, 333);
-    this.buttonAddCvbsSvhs.Name = "buttonAddCvbsSvhs";
-    this.buttonAddCvbsSvhs.Size = new System.Drawing.Size(115, 20);
-    this.buttonAddCvbsSvhs.TabIndex = 12;
-    this.buttonAddCvbsSvhs.Text = "Add CVBS/SVHS";
-    this.buttonAddCvbsSvhs.UseVisualStyleBackColor = true;
-    this.buttonAddCvbsSvhs.Click += new System.EventHandler(this.buttonAddCvbsSvhs_Click);
-    // 
-    // buttonImportFromTvGuide
-    // 
-    this.buttonImportFromTvGuide.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
-    this.buttonImportFromTvGuide.Location = new System.Drawing.Point(333, 312);
-    this.buttonImportFromTvGuide.Name = "buttonImportFromTvGuide";
-    this.buttonImportFromTvGuide.Size = new System.Drawing.Size(115, 20);
-    this.buttonImportFromTvGuide.TabIndex = 11;
-    this.buttonImportFromTvGuide.Text = "Import from tvguide";
-    this.buttonImportFromTvGuide.UseVisualStyleBackColor = true;
-    this.buttonImportFromTvGuide.Click += new System.EventHandler(this.buttonImportFromTvGuide_Click);
-    // 
-    // buttonClearChannels
-    // 
-    this.buttonClearChannels.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left ) ) );
-    this.buttonClearChannels.Location = new System.Drawing.Point(16, 355);
-    this.buttonClearChannels.Name = "buttonClearChannels";
-    this.buttonClearChannels.Size = new System.Drawing.Size(60, 20);
-    this.buttonClearChannels.TabIndex = 3;
-    this.buttonClearChannels.Text = "Clear";
-    this.buttonClearChannels.UseVisualStyleBackColor = true;
-    this.buttonClearChannels.Click += new System.EventHandler(this.buttonClearChannels_Click);
-    // 
-    // buttonAddChannel
-    // 
-    this.buttonAddChannel.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left ) ) );
-    this.buttonAddChannel.Location = new System.Drawing.Point(16, 333);
-    this.buttonAddChannel.Name = "buttonAddChannel";
-    this.buttonAddChannel.Size = new System.Drawing.Size(60, 20);
-    this.buttonAddChannel.TabIndex = 2;
-    this.buttonAddChannel.Text = "Add";
-    this.buttonAddChannel.UseVisualStyleBackColor = true;
-    this.buttonAddChannel.Click += new System.EventHandler(this.buttonAddChannel_Click);
-    // 
-    // buttonDeleteChannel
-    // 
-    this.buttonDeleteChannel.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left ) ) );
-    this.buttonDeleteChannel.Enabled = false;
-    this.buttonDeleteChannel.Location = new System.Drawing.Point(86, 355);
-    this.buttonDeleteChannel.Name = "buttonDeleteChannel";
-    this.buttonDeleteChannel.Size = new System.Drawing.Size(60, 20);
-    this.buttonDeleteChannel.TabIndex = 5;
-    this.buttonDeleteChannel.Text = "Delete";
-    this.buttonDeleteChannel.UseVisualStyleBackColor = true;
-    this.buttonDeleteChannel.Click += new System.EventHandler(this.buttonDeleteChannel_Click);
-    // 
-    // buttonEditChannel
-    // 
-    this.buttonEditChannel.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left ) ) );
-    this.buttonEditChannel.Enabled = false;
-    this.buttonEditChannel.Location = new System.Drawing.Point(86, 333);
-    this.buttonEditChannel.Name = "buttonEditChannel";
-    this.buttonEditChannel.Size = new System.Drawing.Size(60, 20);
-    this.buttonEditChannel.TabIndex = 4;
-    this.buttonEditChannel.Text = "Edit";
-    this.buttonEditChannel.UseVisualStyleBackColor = true;
-    this.buttonEditChannel.Click += new System.EventHandler(this.buttonEditChannel_Click);
-    // 
-    // buttonChannelUp
-    // 
-    this.buttonChannelUp.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left ) ) );
-    this.buttonChannelUp.Enabled = false;
-    this.buttonChannelUp.Location = new System.Drawing.Point(156, 333);
-    this.buttonChannelUp.Name = "buttonChannelUp";
-    this.buttonChannelUp.Size = new System.Drawing.Size(60, 20);
-    this.buttonChannelUp.TabIndex = 6;
-    this.buttonChannelUp.Text = "Up";
-    this.buttonChannelUp.UseVisualStyleBackColor = true;
-    this.buttonChannelUp.Click += new System.EventHandler(this.buttonChannelUp_Click);
-    // 
-    // buttonChannelDown
-    // 
-    this.buttonChannelDown.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left ) ) );
-    this.buttonChannelDown.Enabled = false;
-    this.buttonChannelDown.Location = new System.Drawing.Point(156, 355);
-    this.buttonChannelDown.Name = "buttonChannelDown";
-    this.buttonChannelDown.Size = new System.Drawing.Size(60, 20);
-    this.buttonChannelDown.TabIndex = 7;
-    this.buttonChannelDown.Text = "Down";
-    this.buttonChannelDown.UseVisualStyleBackColor = true;
-    this.buttonChannelDown.Click += new System.EventHandler(this.buttonChannelDown_Click);
-    // 
-    // listViewTvChannels
-    // 
-    this.listViewTvChannels.AllowDrop = true;
-    this.listViewTvChannels.AllowRowReorder = true;
-    this.listViewTvChannels.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                | System.Windows.Forms.AnchorStyles.Left )
-                | System.Windows.Forms.AnchorStyles.Right ) ) );
-    this.listViewTvChannels.CheckBoxes = true;
-    this.listViewTvChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+      this.components = new System.ComponentModel.Container();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SectionTvChannels));
+      this.imageListLocks = new System.Windows.Forms.ImageList(this.components);
+      this.xmlOpenDialog = new System.Windows.Forms.OpenFileDialog();
+      this.xmlSaveDialog = new System.Windows.Forms.SaveFileDialog();
+      this.tabControlTvChannels = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPageTvChannels = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.buttonDeleteScrambled = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonCombine = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonLookup = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonRestore = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonBackup = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonAddCvbsSvhs = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonImportFromTvGuide = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonClearChannels = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonAddChannel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonDeleteChannel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonEditChannel = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonChannelUp = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonChannelDown = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewTvChannels = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeaderChannelName = new System.Windows.Forms.ColumnHeader();
+      this.columnHeaderChannel = new System.Windows.Forms.ColumnHeader();
+      this.columnHeaderStandard = new System.Windows.Forms.ColumnHeader();
+      this.columnHeaderType = new System.Windows.Forms.ColumnHeader();
+      this.tabPageTvCards = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.buttonMap = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonUnmap = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewTVChannelsForCard = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeaderAssignedTvChannels = new System.Windows.Forms.ColumnHeader();
+      this.listViewTVChannelsCard = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeaderAvailableTvChannels = new System.Windows.Forms.ColumnHeader();
+      this.labelMapChannelsToTvCard = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxCard = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.tabControlTvChannels.SuspendLayout();
+      this.tabPageTvChannels.SuspendLayout();
+      this.tabPageTvCards.SuspendLayout();
+      this.SuspendLayout();
+      // 
+      // imageListLocks
+      // 
+      this.imageListLocks.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListLocks.ImageStream")));
+      this.imageListLocks.TransparentColor = System.Drawing.Color.Transparent;
+      this.imageListLocks.Images.SetKeyName(0, "");
+      this.imageListLocks.Images.SetKeyName(1, "");
+      // 
+      // xmlOpenDialog
+      // 
+      this.xmlOpenDialog.DefaultExt = "xml";
+      this.xmlOpenDialog.FileName = "ChannelList";
+      this.xmlOpenDialog.Filter = "xml|*.xml";
+      this.xmlOpenDialog.InitialDirectory = ".";
+      this.xmlOpenDialog.Title = "Open....";
+      // 
+      // xmlSaveDialog
+      // 
+      this.xmlSaveDialog.CreatePrompt = true;
+      this.xmlSaveDialog.DefaultExt = "xml";
+      this.xmlSaveDialog.FileName = "ChannelList";
+      this.xmlSaveDialog.Filter = "xml|*.xml";
+      this.xmlSaveDialog.InitialDirectory = ".";
+      this.xmlSaveDialog.Title = "Save to....";
+      // 
+      // tabControlTvChannels
+      // 
+      this.tabControlTvChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControlTvChannels.Controls.Add(this.tabPageTvChannels);
+      this.tabControlTvChannels.Controls.Add(this.tabPageTvCards);
+      this.tabControlTvChannels.Location = new System.Drawing.Point(0, 0);
+      this.tabControlTvChannels.Name = "tabControlTvChannels";
+      this.tabControlTvChannels.SelectedIndex = 0;
+      this.tabControlTvChannels.Size = new System.Drawing.Size(472, 408);
+      this.tabControlTvChannels.TabIndex = 0;
+      this.tabControlTvChannels.SelectedIndexChanged += new System.EventHandler(this.tabControlTvChannels_SelectedIndexChanged);
+      // 
+      // tabPageTvChannels
+      // 
+      this.tabPageTvChannels.AutoScroll = true;
+      this.tabPageTvChannels.Controls.Add(this.buttonDeleteScrambled);
+      this.tabPageTvChannels.Controls.Add(this.buttonCombine);
+      this.tabPageTvChannels.Controls.Add(this.buttonLookup);
+      this.tabPageTvChannels.Controls.Add(this.buttonRestore);
+      this.tabPageTvChannels.Controls.Add(this.buttonBackup);
+      this.tabPageTvChannels.Controls.Add(this.buttonAddCvbsSvhs);
+      this.tabPageTvChannels.Controls.Add(this.buttonImportFromTvGuide);
+      this.tabPageTvChannels.Controls.Add(this.buttonClearChannels);
+      this.tabPageTvChannels.Controls.Add(this.buttonAddChannel);
+      this.tabPageTvChannels.Controls.Add(this.buttonDeleteChannel);
+      this.tabPageTvChannels.Controls.Add(this.buttonEditChannel);
+      this.tabPageTvChannels.Controls.Add(this.buttonChannelUp);
+      this.tabPageTvChannels.Controls.Add(this.buttonChannelDown);
+      this.tabPageTvChannels.Controls.Add(this.listViewTvChannels);
+      this.tabPageTvChannels.Location = new System.Drawing.Point(4, 22);
+      this.tabPageTvChannels.Name = "tabPageTvChannels";
+      this.tabPageTvChannels.Size = new System.Drawing.Size(464, 382);
+      this.tabPageTvChannels.TabIndex = 0;
+      this.tabPageTvChannels.Text = "TV Channels";
+      this.tabPageTvChannels.UseVisualStyleBackColor = true;
+      // 
+      // buttonDeleteScrambled
+      // 
+      this.buttonDeleteScrambled.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonDeleteScrambled.Location = new System.Drawing.Point(332, 352);
+      this.buttonDeleteScrambled.Name = "buttonDeleteScrambled";
+      this.buttonDeleteScrambled.Size = new System.Drawing.Size(115, 20);
+      this.buttonDeleteScrambled.TabIndex = 13;
+      this.buttonDeleteScrambled.Text = "Delete scrambled";
+      this.buttonDeleteScrambled.UseVisualStyleBackColor = true;
+      this.buttonDeleteScrambled.Click += new System.EventHandler(this.buttonDeleteScrambled_Click);
+      // 
+      // buttonCombine
+      // 
+      this.buttonCombine.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCombine.Location = new System.Drawing.Point(16, 308);
+      this.buttonCombine.Name = "buttonCombine";
+      this.buttonCombine.Size = new System.Drawing.Size(72, 20);
+      this.buttonCombine.TabIndex = 1;
+      this.buttonCombine.Text = "Combine";
+      this.buttonCombine.UseVisualStyleBackColor = true;
+      this.buttonCombine.Click += new System.EventHandler(this.buttonCombine_Click);
+      // 
+      // buttonLookup
+      // 
+      this.buttonLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonLookup.Location = new System.Drawing.Point(253, 308);
+      this.buttonLookup.Name = "buttonLookup";
+      this.buttonLookup.Size = new System.Drawing.Size(72, 20);
+      this.buttonLookup.TabIndex = 8;
+      this.buttonLookup.Text = "Lookup";
+      this.buttonLookup.UseVisualStyleBackColor = true;
+      this.buttonLookup.Click += new System.EventHandler(this.buttonLookup_Click);
+      // 
+      // buttonRestore
+      // 
+      this.buttonRestore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonRestore.Location = new System.Drawing.Point(253, 352);
+      this.buttonRestore.Name = "buttonRestore";
+      this.buttonRestore.Size = new System.Drawing.Size(72, 20);
+      this.buttonRestore.TabIndex = 10;
+      this.buttonRestore.Text = "Restore";
+      this.buttonRestore.UseVisualStyleBackColor = true;
+      this.buttonRestore.Click += new System.EventHandler(this.buttonRestore_Click);
+      // 
+      // buttonBackup
+      // 
+      this.buttonBackup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonBackup.Location = new System.Drawing.Point(253, 330);
+      this.buttonBackup.Name = "buttonBackup";
+      this.buttonBackup.Size = new System.Drawing.Size(72, 20);
+      this.buttonBackup.TabIndex = 9;
+      this.buttonBackup.Text = "Backup";
+      this.buttonBackup.UseVisualStyleBackColor = true;
+      this.buttonBackup.Click += new System.EventHandler(this.buttonBackup_Click);
+      // 
+      // buttonAddCvbsSvhs
+      // 
+      this.buttonAddCvbsSvhs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonAddCvbsSvhs.Location = new System.Drawing.Point(332, 330);
+      this.buttonAddCvbsSvhs.Name = "buttonAddCvbsSvhs";
+      this.buttonAddCvbsSvhs.Size = new System.Drawing.Size(115, 20);
+      this.buttonAddCvbsSvhs.TabIndex = 12;
+      this.buttonAddCvbsSvhs.Text = "Add CVBS/SVHS";
+      this.buttonAddCvbsSvhs.UseVisualStyleBackColor = true;
+      this.buttonAddCvbsSvhs.Click += new System.EventHandler(this.buttonAddCvbsSvhs_Click);
+      // 
+      // buttonImportFromTvGuide
+      // 
+      this.buttonImportFromTvGuide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonImportFromTvGuide.Location = new System.Drawing.Point(333, 308);
+      this.buttonImportFromTvGuide.Name = "buttonImportFromTvGuide";
+      this.buttonImportFromTvGuide.Size = new System.Drawing.Size(115, 20);
+      this.buttonImportFromTvGuide.TabIndex = 11;
+      this.buttonImportFromTvGuide.Text = "Import from TV guide";
+      this.buttonImportFromTvGuide.UseVisualStyleBackColor = true;
+      this.buttonImportFromTvGuide.Click += new System.EventHandler(this.buttonImportFromTvGuide_Click);
+      // 
+      // buttonClearChannels
+      // 
+      this.buttonClearChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonClearChannels.Location = new System.Drawing.Point(95, 352);
+      this.buttonClearChannels.Name = "buttonClearChannels";
+      this.buttonClearChannels.Size = new System.Drawing.Size(72, 20);
+      this.buttonClearChannels.TabIndex = 5;
+      this.buttonClearChannels.Text = "Clear";
+      this.buttonClearChannels.UseVisualStyleBackColor = true;
+      this.buttonClearChannels.Click += new System.EventHandler(this.buttonClearChannels_Click);
+      // 
+      // buttonAddChannel
+      // 
+      this.buttonAddChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonAddChannel.Location = new System.Drawing.Point(16, 330);
+      this.buttonAddChannel.Name = "buttonAddChannel";
+      this.buttonAddChannel.Size = new System.Drawing.Size(72, 20);
+      this.buttonAddChannel.TabIndex = 2;
+      this.buttonAddChannel.Text = "Add";
+      this.buttonAddChannel.UseVisualStyleBackColor = true;
+      this.buttonAddChannel.Click += new System.EventHandler(this.buttonAddChannel_Click);
+      // 
+      // buttonDeleteChannel
+      // 
+      this.buttonDeleteChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonDeleteChannel.Enabled = false;
+      this.buttonDeleteChannel.Location = new System.Drawing.Point(16, 352);
+      this.buttonDeleteChannel.Name = "buttonDeleteChannel";
+      this.buttonDeleteChannel.Size = new System.Drawing.Size(72, 20);
+      this.buttonDeleteChannel.TabIndex = 3;
+      this.buttonDeleteChannel.Text = "Delete";
+      this.buttonDeleteChannel.UseVisualStyleBackColor = true;
+      this.buttonDeleteChannel.Click += new System.EventHandler(this.buttonDeleteChannel_Click);
+      // 
+      // buttonEditChannel
+      // 
+      this.buttonEditChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonEditChannel.Enabled = false;
+      this.buttonEditChannel.Location = new System.Drawing.Point(95, 330);
+      this.buttonEditChannel.Name = "buttonEditChannel";
+      this.buttonEditChannel.Size = new System.Drawing.Size(72, 20);
+      this.buttonEditChannel.TabIndex = 4;
+      this.buttonEditChannel.Text = "Edit";
+      this.buttonEditChannel.UseVisualStyleBackColor = true;
+      this.buttonEditChannel.Click += new System.EventHandler(this.buttonEditChannel_Click);
+      // 
+      // buttonChannelUp
+      // 
+      this.buttonChannelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonChannelUp.Enabled = false;
+      this.buttonChannelUp.Location = new System.Drawing.Point(174, 330);
+      this.buttonChannelUp.Name = "buttonChannelUp";
+      this.buttonChannelUp.Size = new System.Drawing.Size(72, 20);
+      this.buttonChannelUp.TabIndex = 6;
+      this.buttonChannelUp.Text = "Up";
+      this.buttonChannelUp.UseVisualStyleBackColor = true;
+      this.buttonChannelUp.Click += new System.EventHandler(this.buttonChannelUp_Click);
+      // 
+      // buttonChannelDown
+      // 
+      this.buttonChannelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonChannelDown.Enabled = false;
+      this.buttonChannelDown.Location = new System.Drawing.Point(174, 352);
+      this.buttonChannelDown.Name = "buttonChannelDown";
+      this.buttonChannelDown.Size = new System.Drawing.Size(72, 20);
+      this.buttonChannelDown.TabIndex = 7;
+      this.buttonChannelDown.Text = "Down";
+      this.buttonChannelDown.UseVisualStyleBackColor = true;
+      this.buttonChannelDown.Click += new System.EventHandler(this.buttonChannelDown_Click);
+      // 
+      // listViewTvChannels
+      // 
+      this.listViewTvChannels.AllowDrop = true;
+      this.listViewTvChannels.AllowRowReorder = true;
+      this.listViewTvChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewTvChannels.CheckBoxes = true;
+      this.listViewTvChannels.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderChannelName,
             this.columnHeaderChannel,
             this.columnHeaderStandard,
             this.columnHeaderType});
-    this.listViewTvChannels.FullRowSelect = true;
-    this.listViewTvChannels.HideSelection = false;
-    this.listViewTvChannels.Location = new System.Drawing.Point(16, 16);
-    this.listViewTvChannels.Name = "listViewTvChannels";
-    this.listViewTvChannels.Size = new System.Drawing.Size(432, 294);
-    this.listViewTvChannels.SmallImageList = this.imageListLocks;
-    this.listViewTvChannels.TabIndex = 0;
-    this.listViewTvChannels.UseCompatibleStateImageBehavior = false;
-    this.listViewTvChannels.View = System.Windows.Forms.View.Details;
-    this.listViewTvChannels.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listViewTvChannels_ItemChecked);
-    this.listViewTvChannels.DoubleClick += new System.EventHandler(this.listViewTvChannels_DoubleClick);
-    this.listViewTvChannels.SelectedIndexChanged += new System.EventHandler(this.listViewTvChannels_SelectedIndexChanged);
-    this.listViewTvChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewTvChannels_ColumnClick);
-    // 
-    // columnHeaderChannelName
-    // 
-    this.columnHeaderChannelName.Text = "Channel name";
-    this.columnHeaderChannelName.Width = 236;
-    // 
-    // columnHeaderChannel
-    // 
-    this.columnHeaderChannel.Text = "Channel";
-    this.columnHeaderChannel.Width = 64;
-    // 
-    // columnHeaderStandard
-    // 
-    this.columnHeaderStandard.Text = "Standard";
-    this.columnHeaderStandard.Width = 64;
-    // 
-    // columnHeaderType
-    // 
-    this.columnHeaderType.Text = "Type";
-    this.columnHeaderType.Width = 64;
-    // 
-    // tabPageTvCards
-    // 
-    this.tabPageTvCards.AutoScroll = true;
-    this.tabPageTvCards.Controls.Add(this.buttonMap);
-    this.tabPageTvCards.Controls.Add(this.buttonUnmap);
-    this.tabPageTvCards.Controls.Add(this.listViewTVChannelsForCard);
-    this.tabPageTvCards.Controls.Add(this.listViewTVChannelsCard);
-    this.tabPageTvCards.Controls.Add(this.labelMapChannelsToTvCard);
-    this.tabPageTvCards.Controls.Add(this.comboBoxCard);
-    this.tabPageTvCards.Location = new System.Drawing.Point(4, 22);
-    this.tabPageTvCards.Name = "tabPageTvCards";
-    this.tabPageTvCards.Size = new System.Drawing.Size(464, 382);
-    this.tabPageTvCards.TabIndex = 3;
-    this.tabPageTvCards.Text = "TV Cards";
-    this.tabPageTvCards.UseVisualStyleBackColor = true;
-    this.tabPageTvCards.Visible = false;
-    // 
-    // buttonMap
-    // 
-    this.buttonMap.Anchor = System.Windows.Forms.AnchorStyles.None;
-    this.buttonMap.Location = new System.Drawing.Point(212, 168);
-    this.buttonMap.Name = "buttonMap";
-    this.buttonMap.Size = new System.Drawing.Size(40, 22);
-    this.buttonMap.TabIndex = 3;
-    this.buttonMap.Text = ">>";
-    this.buttonMap.UseVisualStyleBackColor = true;
-    this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
-    // 
-    // buttonUnmap
-    // 
-    this.buttonUnmap.Anchor = System.Windows.Forms.AnchorStyles.None;
-    this.buttonUnmap.Location = new System.Drawing.Point(212, 200);
-    this.buttonUnmap.Name = "buttonUnmap";
-    this.buttonUnmap.Size = new System.Drawing.Size(40, 22);
-    this.buttonUnmap.TabIndex = 4;
-    this.buttonUnmap.Text = "<<";
-    this.buttonUnmap.UseVisualStyleBackColor = true;
-    this.buttonUnmap.Click += new System.EventHandler(this.buttonUnmap_Click);
-    // 
-    // listViewTVChannelsForCard
-    // 
-    this.listViewTVChannelsForCard.AllowDrop = true;
-    this.listViewTVChannelsForCard.AllowRowReorder = true;
-    this.listViewTVChannelsForCard.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                | System.Windows.Forms.AnchorStyles.Right ) ) );
-    this.listViewTVChannelsForCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+      this.listViewTvChannels.FullRowSelect = true;
+      this.listViewTvChannels.HideSelection = false;
+      this.listViewTvChannels.Location = new System.Drawing.Point(16, 16);
+      this.listViewTvChannels.Name = "listViewTvChannels";
+      this.listViewTvChannels.Size = new System.Drawing.Size(432, 280);
+      this.listViewTvChannels.SmallImageList = this.imageListLocks;
+      this.listViewTvChannels.TabIndex = 0;
+      this.listViewTvChannels.UseCompatibleStateImageBehavior = false;
+      this.listViewTvChannels.View = System.Windows.Forms.View.Details;
+      this.listViewTvChannels.DragDrop += new System.Windows.Forms.DragEventHandler(this.listViewTvChannels_DragDrop);
+      this.listViewTvChannels.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listViewTvChannels_ItemChecked);
+      this.listViewTvChannels.DoubleClick += new System.EventHandler(this.listViewTvChannels_DoubleClick);
+      this.listViewTvChannels.SelectedIndexChanged += new System.EventHandler(this.listViewTvChannels_SelectedIndexChanged);
+      this.listViewTvChannels.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewTvChannels_ColumnClick);
+      // 
+      // columnHeaderChannelName
+      // 
+      this.columnHeaderChannelName.Text = "Channel name";
+      this.columnHeaderChannelName.Width = 236;
+      // 
+      // columnHeaderChannel
+      // 
+      this.columnHeaderChannel.Text = "Channel";
+      this.columnHeaderChannel.Width = 64;
+      // 
+      // columnHeaderStandard
+      // 
+      this.columnHeaderStandard.Text = "Standard";
+      this.columnHeaderStandard.Width = 64;
+      // 
+      // columnHeaderType
+      // 
+      this.columnHeaderType.Text = "Type";
+      this.columnHeaderType.Width = 64;
+      // 
+      // tabPageTvCards
+      // 
+      this.tabPageTvCards.AutoScroll = true;
+      this.tabPageTvCards.Controls.Add(this.buttonMap);
+      this.tabPageTvCards.Controls.Add(this.buttonUnmap);
+      this.tabPageTvCards.Controls.Add(this.listViewTVChannelsForCard);
+      this.tabPageTvCards.Controls.Add(this.listViewTVChannelsCard);
+      this.tabPageTvCards.Controls.Add(this.labelMapChannelsToTvCard);
+      this.tabPageTvCards.Controls.Add(this.comboBoxCard);
+      this.tabPageTvCards.Location = new System.Drawing.Point(4, 22);
+      this.tabPageTvCards.Name = "tabPageTvCards";
+      this.tabPageTvCards.Size = new System.Drawing.Size(464, 382);
+      this.tabPageTvCards.TabIndex = 3;
+      this.tabPageTvCards.Text = "TV Cards";
+      this.tabPageTvCards.UseVisualStyleBackColor = true;
+      this.tabPageTvCards.Visible = false;
+      // 
+      // buttonMap
+      // 
+      this.buttonMap.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.buttonMap.Location = new System.Drawing.Point(212, 168);
+      this.buttonMap.Name = "buttonMap";
+      this.buttonMap.Size = new System.Drawing.Size(40, 22);
+      this.buttonMap.TabIndex = 3;
+      this.buttonMap.Text = ">>";
+      this.buttonMap.UseVisualStyleBackColor = true;
+      this.buttonMap.Click += new System.EventHandler(this.buttonMap_Click);
+      // 
+      // buttonUnmap
+      // 
+      this.buttonUnmap.Anchor = System.Windows.Forms.AnchorStyles.None;
+      this.buttonUnmap.Location = new System.Drawing.Point(212, 200);
+      this.buttonUnmap.Name = "buttonUnmap";
+      this.buttonUnmap.Size = new System.Drawing.Size(40, 22);
+      this.buttonUnmap.TabIndex = 4;
+      this.buttonUnmap.Text = "<<";
+      this.buttonUnmap.UseVisualStyleBackColor = true;
+      this.buttonUnmap.Click += new System.EventHandler(this.buttonUnmap_Click);
+      // 
+      // listViewTVChannelsForCard
+      // 
+      this.listViewTVChannelsForCard.AllowDrop = true;
+      this.listViewTVChannelsForCard.AllowRowReorder = true;
+      this.listViewTVChannelsForCard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewTVChannelsForCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderAssignedTvChannels});
-    this.listViewTVChannelsForCard.Location = new System.Drawing.Point(272, 56);
-    this.listViewTVChannelsForCard.Name = "listViewTVChannelsForCard";
-    this.listViewTVChannelsForCard.Size = new System.Drawing.Size(176, 304);
-    this.listViewTVChannelsForCard.TabIndex = 5;
-    this.listViewTVChannelsForCard.UseCompatibleStateImageBehavior = false;
-    this.listViewTVChannelsForCard.View = System.Windows.Forms.View.Details;
-    this.listViewTVChannelsForCard.DoubleClick += new System.EventHandler(this.listViewTVChannelsForCard_DoubleClick);
-    // 
-    // columnHeaderAssignedTvChannels
-    // 
-    this.columnHeaderAssignedTvChannels.Text = "Assigned TV Channels";
-    this.columnHeaderAssignedTvChannels.Width = 154;
-    // 
-    // listViewTVChannelsCard
-    // 
-    this.listViewTVChannelsCard.AllowDrop = true;
-    this.listViewTVChannelsCard.AllowRowReorder = true;
-    this.listViewTVChannelsCard.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                | System.Windows.Forms.AnchorStyles.Left ) ) );
-    this.listViewTVChannelsCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+      this.listViewTVChannelsForCard.Location = new System.Drawing.Point(272, 56);
+      this.listViewTVChannelsForCard.Name = "listViewTVChannelsForCard";
+      this.listViewTVChannelsForCard.Size = new System.Drawing.Size(176, 304);
+      this.listViewTVChannelsForCard.TabIndex = 5;
+      this.listViewTVChannelsForCard.UseCompatibleStateImageBehavior = false;
+      this.listViewTVChannelsForCard.View = System.Windows.Forms.View.Details;
+      this.listViewTVChannelsForCard.DoubleClick += new System.EventHandler(this.listViewTVChannelsForCard_DoubleClick);
+      // 
+      // columnHeaderAssignedTvChannels
+      // 
+      this.columnHeaderAssignedTvChannels.Text = "Assigned TV Channels";
+      this.columnHeaderAssignedTvChannels.Width = 154;
+      // 
+      // listViewTVChannelsCard
+      // 
+      this.listViewTVChannelsCard.AllowDrop = true;
+      this.listViewTVChannelsCard.AllowRowReorder = true;
+      this.listViewTVChannelsCard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.listViewTVChannelsCard.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeaderAvailableTvChannels});
-    this.listViewTVChannelsCard.Location = new System.Drawing.Point(16, 56);
-    this.listViewTVChannelsCard.Name = "listViewTVChannelsCard";
-    this.listViewTVChannelsCard.Size = new System.Drawing.Size(176, 304);
-    this.listViewTVChannelsCard.TabIndex = 2;
-    this.listViewTVChannelsCard.UseCompatibleStateImageBehavior = false;
-    this.listViewTVChannelsCard.View = System.Windows.Forms.View.Details;
-    this.listViewTVChannelsCard.DoubleClick += new System.EventHandler(this.listViewTVChannelsCard_DoubleClick);
-    // 
-    // columnHeaderAvailableTvChannels
-    // 
-    this.columnHeaderAvailableTvChannels.Text = "Available TV Channels";
-    this.columnHeaderAvailableTvChannels.Width = 154;
-    // 
-    // labelMapChannelsToTvCard
-    // 
-    this.labelMapChannelsToTvCard.AutoSize = true;
-    this.labelMapChannelsToTvCard.Location = new System.Drawing.Point(16, 24);
-    this.labelMapChannelsToTvCard.Name = "labelMapChannelsToTvCard";
-    this.labelMapChannelsToTvCard.Size = new System.Drawing.Size(130, 13);
-    this.labelMapChannelsToTvCard.TabIndex = 0;
-    this.labelMapChannelsToTvCard.Text = "Map channels to TV card:";
-    // 
-    // comboBoxCard
-    // 
-    this.comboBoxCard.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                | System.Windows.Forms.AnchorStyles.Right ) ) );
-    this.comboBoxCard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-    this.comboBoxCard.Location = new System.Drawing.Point(160, 20);
-    this.comboBoxCard.Name = "comboBoxCard";
-    this.comboBoxCard.Size = new System.Drawing.Size(288, 21);
-    this.comboBoxCard.TabIndex = 1;
-    this.comboBoxCard.SelectedIndexChanged += new System.EventHandler(this.comboBoxCard_SelectedIndexChanged);
-    // 
-    // SectionTvChannels
-    // 
-    this.Controls.Add(this.tabControlTvChannels);
-    this.Name = "SectionTvChannels";
-    this.Size = new System.Drawing.Size(472, 408);
-    this.tabControlTvChannels.ResumeLayout(false);
-    this.tabPageTvChannels.ResumeLayout(false);
-    this.tabPageTvCards.ResumeLayout(false);
-    this.tabPageTvCards.PerformLayout();
-    this.ResumeLayout(false);
+      this.listViewTVChannelsCard.Location = new System.Drawing.Point(16, 56);
+      this.listViewTVChannelsCard.Name = "listViewTVChannelsCard";
+      this.listViewTVChannelsCard.Size = new System.Drawing.Size(176, 304);
+      this.listViewTVChannelsCard.TabIndex = 2;
+      this.listViewTVChannelsCard.UseCompatibleStateImageBehavior = false;
+      this.listViewTVChannelsCard.View = System.Windows.Forms.View.Details;
+      this.listViewTVChannelsCard.DoubleClick += new System.EventHandler(this.listViewTVChannelsCard_DoubleClick);
+      // 
+      // columnHeaderAvailableTvChannels
+      // 
+      this.columnHeaderAvailableTvChannels.Text = "Available TV Channels";
+      this.columnHeaderAvailableTvChannels.Width = 154;
+      // 
+      // labelMapChannelsToTvCard
+      // 
+      this.labelMapChannelsToTvCard.AutoSize = true;
+      this.labelMapChannelsToTvCard.Location = new System.Drawing.Point(16, 24);
+      this.labelMapChannelsToTvCard.Name = "labelMapChannelsToTvCard";
+      this.labelMapChannelsToTvCard.Size = new System.Drawing.Size(130, 13);
+      this.labelMapChannelsToTvCard.TabIndex = 0;
+      this.labelMapChannelsToTvCard.Text = "Map channels to TV card:";
+      // 
+      // comboBoxCard
+      // 
+      this.comboBoxCard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxCard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxCard.Location = new System.Drawing.Point(160, 20);
+      this.comboBoxCard.Name = "comboBoxCard";
+      this.comboBoxCard.Size = new System.Drawing.Size(288, 21);
+      this.comboBoxCard.TabIndex = 1;
+      this.comboBoxCard.SelectedIndexChanged += new System.EventHandler(this.comboBoxCard_SelectedIndexChanged);
+      // 
+      // SectionTvChannels
+      // 
+      this.Controls.Add(this.tabControlTvChannels);
+      this.Name = "SectionTvChannels";
+      this.Size = new System.Drawing.Size(472, 408);
+      this.tabControlTvChannels.ResumeLayout(false);
+      this.tabPageTvChannels.ResumeLayout(false);
+      this.tabPageTvCards.ResumeLayout(false);
+      this.tabPageTvCards.PerformLayout();
+      this.ResumeLayout(false);
 
     }
     #endregion
-
 
     private void buttonAddChannel_Click(object sender, System.EventArgs e)
     {
@@ -685,8 +684,6 @@ namespace MediaPortal.Configuration.Sections
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
           countryCode = xmlreader.GetValueAsInt("capture", "country", 31);
 
-        RegistryKey registryKey = Registry.LocalMachine;
-
         string[] registryLocations = new string[] { String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-1", countryCode),
 																  String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS{0}-0", countryCode),
 																  String.Format(@"Software\Microsoft\TV System Services\TVAutoTune\TS0-1"),
@@ -721,13 +718,9 @@ namespace MediaPortal.Configuration.Sections
           //
           for (int index = 0; index < registryLocations.Length; index++)
           {
-            registryKey = Registry.LocalMachine;
-            registryKey = registryKey.CreateSubKey(registryLocations[index]);
-
-            for (int channelIndex = 0; channelIndex < 200; channelIndex++)
-              registryKey.DeleteValue(channelIndex.ToString(), false);
-
-            registryKey.Close();
+            using (RegistryKey registryKey = Registry.LocalMachine.CreateSubKey(registryLocations[index]))
+              for (int channelIndex = 0; channelIndex < 200; channelIndex++)
+                registryKey.DeleteValue(channelIndex.ToString(), false);
           }
         }
 
@@ -790,30 +783,29 @@ namespace MediaPortal.Configuration.Sections
         //
         for (int index = 0; index < registryLocations.Length; index++)
         {
-          registryKey = Registry.LocalMachine;
-          registryKey = registryKey.CreateSubKey(registryLocations[index]);
-
-          foreach (ListViewItem listItem in listViewTvChannels.Items)
+          using (RegistryKey registryKey = Registry.LocalMachine.CreateSubKey(registryLocations[index]))
           {
-            TelevisionChannel tvChannel = listItem.Tag as TelevisionChannel;
-
-            if (tvChannel != null)
+            foreach (ListViewItem listItem in listViewTvChannels.Items)
             {
-              //
-              // Don't add frequency to the registry if it has no frequency or if we have the predefined
-              // channels for Composite and SVIDEO
-              //
-              if (tvChannel.Frequency.Hertz > 0 &&
-                tvChannel.Channel != (int)ExternalInputs.svhs &&
-                tvChannel.Channel != (int)ExternalInputs.cvbs1 &&
-                tvChannel.Channel != (int)ExternalInputs.cvbs2 &&
-                tvChannel.Channel != (int)ExternalInputs.rgb)
+              TelevisionChannel tvChannel = listItem.Tag as TelevisionChannel;
+
+              if (tvChannel != null)
               {
-                registryKey.SetValue(tvChannel.Channel.ToString(), (int)tvChannel.Frequency.Hertz);
+                //
+                // Don't add frequency to the registry if it has no frequency or if we have the predefined
+                // channels for Composite and SVIDEO
+                //
+                if (tvChannel.Frequency.Hertz > 0 &&
+                  tvChannel.Channel != (int)ExternalInputs.svhs &&
+                  tvChannel.Channel != (int)ExternalInputs.cvbs1 &&
+                  tvChannel.Channel != (int)ExternalInputs.cvbs2 &&
+                  tvChannel.Channel != (int)ExternalInputs.rgb)
+                {
+                  registryKey.SetValue(tvChannel.Channel.ToString(), (int)tvChannel.Frequency.Hertz);
+                }
               }
             }
           }
-          registryKey.Close();
         }
       }
     }
@@ -866,7 +858,6 @@ namespace MediaPortal.Configuration.Sections
 
         listViewTvChannels.Items.Add(listItem);
       }
-
       listViewTvChannels.EndUpdate();
     }
 
@@ -903,6 +894,8 @@ namespace MediaPortal.Configuration.Sections
         }
       }
 
+      SaveSettings();
+
       listViewTvChannels.EndUpdate();
     }
 
@@ -929,6 +922,8 @@ namespace MediaPortal.Configuration.Sections
               listViewTvChannels.Items.Add(listItem);
           }
         }
+
+      SaveSettings();
 
       listViewTvChannels.EndUpdate();
     }
@@ -986,7 +981,9 @@ namespace MediaPortal.Configuration.Sections
       DialogResult result = MessageBox.Show(this, "Are you sure you want to delete all channels?", "Delete channels", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
       if (result != DialogResult.Yes)
         return;
+
       listViewTvChannels.Items.Clear();
+
       SaveSettings();
     }
 
@@ -1026,16 +1023,31 @@ namespace MediaPortal.Configuration.Sections
       // Perform the sort with these new sort options.
       listViewTvChannels.Sort();
       listViewTvChannels.Update();
+
+      //SaveSettings();
     }
 
     private void buttonAddCvbsSvhs_Click(object sender, System.EventArgs e)
     {
       SaveSettings();
       TVChannel chan = new TVChannel();
-      chan.Name = "CVBS#1"; chan.Number = (int)ExternalInputs.cvbs1; TVDatabase.AddChannel(chan);
-      chan.Name = "CVBS#2"; chan.Number = (int)ExternalInputs.cvbs2; TVDatabase.AddChannel(chan);
-      chan.Name = "SVHS"; chan.Number = (int)ExternalInputs.svhs; TVDatabase.AddChannel(chan);
-      chan.Name = "RGB"; chan.Number = (int)ExternalInputs.rgb; TVDatabase.AddChannel(chan);
+
+      chan.Name = "CVBS#1";
+      chan.Number = (int)ExternalInputs.cvbs1;
+      TVDatabase.AddChannel(chan);
+
+      chan.Name = "CVBS#2";
+      chan.Number = (int)ExternalInputs.cvbs2;
+      TVDatabase.AddChannel(chan);
+
+      chan.Name = "SVHS";
+      chan.Number = (int)ExternalInputs.svhs;
+      TVDatabase.AddChannel(chan);
+
+      chan.Name = "RGB";
+      chan.Number = (int)ExternalInputs.rgb;
+      TVDatabase.AddChannel(chan);
+
       LoadSettings();
     }
 
@@ -1171,6 +1183,8 @@ namespace MediaPortal.Configuration.Sections
         listViewTVChannelsCard.Items.Remove(listItem);
       }
 
+      //SaveSettings();
+
       listViewTVChannelsCard.EndUpdate();
       listViewTVChannelsForCard.EndUpdate();
     }
@@ -1209,6 +1223,8 @@ namespace MediaPortal.Configuration.Sections
           TVDatabase.UnmapChannelFromCard(channel, card);
         listViewTVChannelsForCard.Items.Remove(listItem);
       }
+
+      //SaveSettings();
 
       listViewTVChannelsCard.EndUpdate();
       listViewTVChannelsForCard.EndUpdate();
@@ -1514,12 +1530,12 @@ namespace MediaPortal.Configuration.Sections
         exportFile.SetValue("Recording " + i.ToString(), "CANCELED SERIES TOTAL", scheduledRecording.CanceledSeries.Count.ToString());
         if (scheduledRecording.CanceledSeries.Count > 0)
         {
-          int canxCount = 0;
+          int canceledCount = 0;
           List<long> getScheduledRecording = scheduledRecording.CanceledSeries;
           foreach (long canxScheduledRecording in getScheduledRecording)
           {
-            exportFile.SetValue("Recording " + i.ToString(), "CANCELED SERIES CANCELEDTIME " + canxCount.ToString(), canxScheduledRecording.ToString());
-            canxCount++;
+            exportFile.SetValue("Recording " + i.ToString(), "CANCELED SERIES CANCELEDTIME " + canceledCount.ToString(), canxScheduledRecording.ToString());
+            canceledCount++;
           }
         }
         exportedScheduledRecordings++;
@@ -1530,6 +1546,9 @@ namespace MediaPortal.Configuration.Sections
 
     private void ExportToXml(string fileName)
     {
+      if (File.Exists(fileName))
+        File.Delete(fileName);
+
       int exportedChannels = 0;
       int exportedGroups = 0;
       int exportedCards = 0;
@@ -1538,6 +1557,8 @@ namespace MediaPortal.Configuration.Sections
 
       //Current version number of this exporter (change when needed)
       int currentVersion = 1;  //<--- Make sure this same number is given to Import_from_XML
+
+      SaveSettings();
 
       using (MediaPortal.Profile.Settings exportFile = new MediaPortal.Profile.Settings(fileName, false))
       {
@@ -1558,6 +1579,7 @@ namespace MediaPortal.Configuration.Sections
         (exportedScheduledRecordings == 0))
       {
         File.Delete(fileName);
+        MessageBox.Show("No items could be exported", "Export Results", MessageBoxButtons.OK, MessageBoxIcon.Warning);
       }
       else
       {
@@ -1597,621 +1619,536 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    private bool ImportChannelDvbT(MediaPortal.Profile.Settings importFile, TelevisionChannel importChannel, int channelIndex)
+    {
+      int freq, ONID, TSID, SID;
+      int bandWidth, pmtPid, audioPid, videoPid, teletextPid;
+      int audio1, audio2, audio3, ac3Pid, pcrPid;
+      string audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3;
+      string provider;
+      bool HasEITPresentFollow, HasEITSchedule;
+
+      try
+      {
+        freq = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTFreq", 0);
+        ONID = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTONID", 0);
+        TSID = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTTSID", 0);
+        SID = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTSID", 0);
+        audioPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTAudioPid", 0);
+        videoPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTVideoPid", 0);
+        teletextPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTTeletextPid", 0);
+        pmtPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTPmtPid", 0);
+        provider = importFile.GetValueAsString(channelIndex.ToString(), "DVBTProvider", "");
+        bandWidth = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTBandwidth", -1);
+        audio1 = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTAudio1Pid", -1);
+        audio2 = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTAudio2Pid", -1);
+        audio3 = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTAudio3Pid", -1);
+        ac3Pid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTAC3Pid", -1);
+        pcrPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBTPCRPid", -1);
+        audioLanguage = importFile.GetValueAsString(channelIndex.ToString(), "DVBTAudioLanguage", "");
+        audioLanguage1 = importFile.GetValueAsString(channelIndex.ToString(), "DVBTAudioLanguage1", "");
+        audioLanguage2 = importFile.GetValueAsString(channelIndex.ToString(), "DVBTAudioLanguage2", "");
+        audioLanguage3 = importFile.GetValueAsString(channelIndex.ToString(), "DVBTAudioLanguage3", "");
+        HasEITPresentFollow = importFile.GetValueAsBool(channelIndex.ToString(), "DVBTHasEITPresentFollow", false);
+        HasEITSchedule = importFile.GetValueAsBool(channelIndex.ToString(), "DVBTHasEITSchedule", false);
+        if (ONID > 0 && TSID > 0 && SID > 0 && freq > 0)
+          TVDatabase.MapDVBTChannel(importChannel.Name, provider, importChannel.ID, freq, ONID, TSID, SID, audioPid, videoPid, teletextPid, pmtPid, bandWidth, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3, HasEITPresentFollow, HasEITSchedule);
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+      return true;
+    }
+
+    private bool ImportChannelDvbC(MediaPortal.Profile.Settings importFile, TelevisionChannel importChannel, int channelIndex)
+    {
+      int freq, ONID, TSID, SID, symbolrate, innerFec, modulation;
+      int pmtPid, audioPid, videoPid, teletextPid;
+      int audio1, audio2, audio3, ac3Pid, pcrPid;
+      string audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3;
+      string provider;
+      bool HasEITPresentFollow, HasEITSchedule;
+
+      try
+      {
+        freq = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCFreq", 0);
+        ONID = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCONID", 0);
+        TSID = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCTSID", 0);
+        SID = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCSID", 0);
+        symbolrate = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCSR", 0);
+        innerFec = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCInnerFeq", 0);
+        modulation = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCModulation", 0);
+        provider = importFile.GetValueAsString(channelIndex.ToString(), "DVBCProvider", "");
+        audioPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCAudioPid", 0);
+        videoPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCVideoPid", 0);
+        teletextPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCTeletextPid", 0);
+        pmtPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCPmtPid", 0);
+        audio1 = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCAudio1Pid", -1);
+        audio2 = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCAudio2Pid", -1);
+        audio3 = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCAudio3Pid", -1);
+        ac3Pid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCAC3Pid", -1);
+        pcrPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBCPCRPid", -1);
+        audioLanguage = importFile.GetValueAsString(channelIndex.ToString(), "DVBCAudioLanguage", "");
+        audioLanguage1 = importFile.GetValueAsString(channelIndex.ToString(), "DVBCAudioLanguage1", "");
+        audioLanguage2 = importFile.GetValueAsString(channelIndex.ToString(), "DVBCAudioLanguage2", "");
+        audioLanguage3 = importFile.GetValueAsString(channelIndex.ToString(), "DVBCAudioLanguage3", "");
+        HasEITPresentFollow = importFile.GetValueAsBool(channelIndex.ToString(), "DVBCHasEITPresentFollow", false);
+        HasEITSchedule = importFile.GetValueAsBool(channelIndex.ToString(), "DVBCHasEITSchedule", false);
+
+        if (ONID > 0 && TSID > 0 && SID > 0 && freq > 0)
+          TVDatabase.MapDVBCChannel(importChannel.Name, provider, importChannel.ID, freq, symbolrate, innerFec, modulation, ONID, TSID, SID, audioPid, videoPid, teletextPid, pmtPid, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3, HasEITPresentFollow, HasEITSchedule);
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+      return true;
+    }
+
+    private bool ImportChannelDvbS(MediaPortal.Profile.Settings importFile, TelevisionChannel importChannel, int channelIndex)
+    {
+      int freq, ONID, TSID, SID, symbolrate, innerFec, polarisation;
+      int pmtPid, audioPid, videoPid, teletextPid;
+      int audio1, audio2, audio3, ac3Pid, pcrPid;
+      string audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3;
+      string provider;
+      bool HasEITPresentFollow, HasEITSchedule;
+
+      try
+      {
+        DVBChannel ch = new DVBChannel();
+        TVDatabase.GetSatChannel(importChannel.ID, 1, ref ch);
+
+        freq = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSFreq", 0);
+        ONID = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSONID", 0);
+        TSID = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSTSID", 0);
+        SID = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSSID", 0);
+        symbolrate = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSSymbolrate", 0);
+        innerFec = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSInnerFec", 0);
+        polarisation = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSPolarisation", 0);
+        provider = importFile.GetValueAsString(channelIndex.ToString(), "DVBSProvider", "");
+        audioPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSAudioPid", 0);
+        videoPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSVideoPid", 0);
+        teletextPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSTeletextPid", 0);
+        pmtPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSPmtPid", 0);
+        audio1 = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSAudio1Pid", -1);
+        audio2 = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSAudio2Pid", -1);
+        audio3 = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSAudio3Pid", -1);
+        ac3Pid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSAC3Pid", -1);
+        pcrPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSPCRPid", -1);
+        audioLanguage = importFile.GetValueAsString(channelIndex.ToString(), "DVBSAudioLanguage", "");
+        audioLanguage1 = importFile.GetValueAsString(channelIndex.ToString(), "DVBSAudioLanguage1", "");
+        audioLanguage2 = importFile.GetValueAsString(channelIndex.ToString(), "DVBSAudioLanguage2", "");
+        audioLanguage3 = importFile.GetValueAsString(channelIndex.ToString(), "DVBSAudioLanguage3", "");
+        HasEITPresentFollow = importFile.GetValueAsBool(channelIndex.ToString(), "DVBSHasEITPresentFollow", false);
+        HasEITSchedule = importFile.GetValueAsBool(channelIndex.ToString(), "DVBSHasEITSchedule", false);
+
+        if (ONID > 0 && TSID > 0 && SID > 0 && freq > 0)
+        {
+          ch.ServiceType = 1;
+          ch.Frequency = freq;
+          ch.NetworkID = ONID;
+          ch.TransportStreamID = TSID;
+          ch.ProgramNumber = SID;
+          ch.Symbolrate = symbolrate;
+          ch.FEC = innerFec;
+          ch.Polarity = polarisation;
+          ch.ServiceProvider = provider;
+          ch.ServiceName = importChannel.Name;
+          ch.ID = importChannel.ID;
+          ch.AudioPid = audioPid;
+          ch.VideoPid = videoPid;
+          ch.TeletextPid = teletextPid;
+          ch.PCRPid = pcrPid;
+          ch.ECMPid = importFile.GetValueAsInt(channelIndex.ToString(), "DVBSECMpid", 0);
+          ch.Audio1 = audio1;
+          ch.Audio2 = audio2;
+          ch.Audio3 = audio3;
+          ch.AudioLanguage = audioLanguage;
+          ch.AudioLanguage1 = audioLanguage1;
+          ch.AudioLanguage2 = audioLanguage2;
+          ch.AudioLanguage3 = audioLanguage3;
+          ch.HasEITSchedule = HasEITSchedule;
+          ch.HasEITPresentFollow = HasEITPresentFollow;
+          ch.PMTPid = pmtPid;
+
+          TVDatabase.RemoveSatChannel(ch);
+          TVDatabase.AddSatChannel(ch);
+        }
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+      return true;
+    }
+
+    private bool ImportChannelAtsc(MediaPortal.Profile.Settings importFile, TelevisionChannel importChannel, int channelIndex)
+    {
+      int freq, ONID, TSID, SID, symbolrate, innerFec, modulation;
+      int pmtPid, audioPid, videoPid, teletextPid;
+      int audio1, audio2, audio3, ac3Pid, pcrPid;
+      string audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3;
+      string provider;
+      bool HasEITPresentFollow, HasEITSchedule;
+
+      try
+      {
+        int minorChannel, majorChannel, physicalChannel;
+        physicalChannel = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCPhysical", -1);
+        provider = importFile.GetValueAsString(channelIndex.ToString(), "ATSCProvider", "");
+        freq = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCFreq", 0);
+        symbolrate = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCSymbolrate", 0);
+        innerFec = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCInnerFec", 0);
+        modulation = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCModulation", 0);
+
+        ONID = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCONID", 0);
+        TSID = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCTSID", 0);
+        SID = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCSID", 0);
+        audioPid = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCAudioPid", 0);
+        videoPid = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCVideoPid", 0);
+        teletextPid = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCTeletextPid", 0);
+        pmtPid = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCPmtPid", 0);
+        audio1 = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCAudio1Pid", -1);
+        audio2 = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCAudio2Pid", -1);
+        audio3 = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCAudio3Pid", -1);
+        ac3Pid = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCAC3Pid", -1);
+        audioLanguage = importFile.GetValueAsString(channelIndex.ToString(), "ATSCAudioLanguage", "");
+        audioLanguage1 = importFile.GetValueAsString(channelIndex.ToString(), "ATSCAudioLanguage1", "");
+        audioLanguage2 = importFile.GetValueAsString(channelIndex.ToString(), "ATSCAudioLanguage2", "");
+        audioLanguage3 = importFile.GetValueAsString(channelIndex.ToString(), "ATSCAudioLanguage3", "");
+        minorChannel = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCMinor", -1);
+        majorChannel = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCMajor", -1);
+        HasEITPresentFollow = importFile.GetValueAsBool(channelIndex.ToString(), "ATSCHasEITPresentFollow", false);
+        HasEITSchedule = importFile.GetValueAsBool(channelIndex.ToString(), "ATSCHasEITSchedule", false);
+        pcrPid = importFile.GetValueAsInt(channelIndex.ToString(), "ATSCPCRPid", -1);
+
+        if (physicalChannel > 0 && minorChannel >= 0 && majorChannel >= 0)
+          TVDatabase.MapATSCChannel(importChannel.Name, physicalChannel, minorChannel, majorChannel, provider, importChannel.ID,
+                                    freq, symbolrate, innerFec, modulation, ONID, TSID, SID, audioPid, videoPid, teletextPid,
+                                    pmtPid, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2,
+                                    audioLanguage3, HasEITPresentFollow, HasEITSchedule);
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+      return true;
+    }
+
+    private int ImportChannels(MediaPortal.Profile.Settings importFile)
+    {
+      //Count how many channels we have to import
+      int counter = 0;
+      for (int i = 0; ; i++)
+      {
+        if (importFile.GetValueAsInt(i.ToString(), "INDEX", -1) == -1)
+        {
+          if (counter == 0)
+            return counter;
+          else
+            break;
+        }
+        else
+          counter++;
+      }
+
+      listViewTvChannels.BeginUpdate();
+
+      for (int channelIndex = 0; channelIndex < counter; channelIndex++)
+      {
+        TelevisionChannel importChannel = new TelevisionChannel();
+        importChannel.ID = importFile.GetValueAsInt(channelIndex.ToString(), "ID", 0);
+        importChannel.Channel = importFile.GetValueAsInt(channelIndex.ToString(), "Number", 0);
+        importChannel.Name = importFile.GetValueAsString(channelIndex.ToString(), "Name", "");
+        importChannel.Country = importFile.GetValueAsInt(channelIndex.ToString(), "Country", 0);
+        importChannel.External = importFile.GetValueAsBool(channelIndex.ToString(), "External", false);
+        importChannel.ExternalTunerChannel = importFile.GetValueAsString(channelIndex.ToString(), "External Tuner Channel", "");
+        importChannel.Frequency.Hertz = importFile.GetValueAsInt(channelIndex.ToString(), "Frequency", 0);
+        importChannel.standard = ConvertAvs(importFile.GetValueAsString(channelIndex.ToString(), "Analog Standard Index", "None"));
+        importChannel.VisibleInGuide = importFile.GetValueAsBool(channelIndex.ToString(), "Visible in Guide", false);
+        importChannel.Scrambled = importFile.GetValueAsBool(channelIndex.ToString(), "Scrambled", false);
+
+        TelevisionChannel editedChannel = importChannel;
+        ListViewItem listItem = new ListViewItem(new string[] { editedChannel.Name, 
+																					  editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString(),
+																					  GetStandardName(editedChannel.standard),
+																					  editedChannel.External ? "External" : "Internal"});
+        listItem.Tag = editedChannel;
+
+        listViewTvChannels.Items.Add(listItem);
+        listViewTvChannels.Items[listViewTvChannels.Items.IndexOf(listItem)].Checked = true;
+
+        if (importChannel.Channel >= 0)
+        {
+          ImportChannelDvbT(importFile, importChannel, channelIndex);
+          ImportChannelDvbC(importFile, importChannel, channelIndex);
+          ImportChannelDvbS(importFile, importChannel, channelIndex);
+          ImportChannelAtsc(importFile, importChannel, channelIndex);
+        }
+      }
+      SaveTVChannels();
+      _reloadList = true;
+      SaveSettings();
+      listViewTvChannels.EndUpdate();
+
+      return counter;
+    }
+
+    private int ImportGroups(MediaPortal.Profile.Settings importFile)
+    {
+      int totalGroups = importFile.GetValueAsInt("GROUPS", "TOTAL", -1);
+
+      if (totalGroups > 0)
+      {
+        for (int groupIndex = 1; groupIndex <= totalGroups; groupIndex++)
+        {
+          TVGroup importGroup = new TVGroup();
+          importGroup.ID = importFile.GetValueAsInt("Group " + groupIndex.ToString(), "ID", 0);
+          importGroup.GroupName = importFile.GetValueAsString("Group " + groupIndex.ToString(), "NAME", "");
+          importGroup.Pincode = importFile.GetValueAsInt("Group " + groupIndex.ToString(), "PINCODE", 0);
+          importGroup.Sort = importFile.GetValueAsInt("Group " + groupIndex.ToString(), "SORT", 0);
+
+          TVDatabase.AddGroup(importGroup);
+
+          ArrayList groupChannels = new ArrayList();
+          TVDatabase.GetChannels(ref groupChannels);
+
+          int totalChannels = importFile.GetValueAsInt("Group " + groupIndex.ToString(), "TOTAL CHANNELS", 0);
+
+          if (totalChannels > 0)
+            for (int channelIndex = 0; channelIndex < totalChannels; channelIndex++)
+            {
+              int channelId = importFile.GetValueAsInt("Group " + groupIndex.ToString(), "CHANNEL " + channelIndex.ToString(), 0);
+
+              //Locate Channel so it can be added to group
+              foreach (TVChannel databaseChannel in groupChannels)
+                if (databaseChannel.ID == channelId)
+                {
+                  importGroup.TvChannels.Add(databaseChannel);
+
+                  //Have to re-grab group from database in order to map correctly
+                  ArrayList databaseGroups = new ArrayList();
+                  TVDatabase.GetGroups(ref databaseGroups);
+
+                  foreach (TVGroup databaseGroup in databaseGroups)
+                    if (importGroup.ID == databaseGroup.ID)
+                      TVDatabase.MapChannelToGroup(databaseGroup, databaseChannel);
+                }
+            }
+        }
+      }
+      return totalGroups;
+    }
+
+    private int ImportCards(MediaPortal.Profile.Settings importFile)
+    {
+      int totalCards = importFile.GetValueAsInt("CARDS", "TOTAL", -1);
+
+      if (totalCards > 0)
+      {
+        for (int cardsIndex = 1; cardsIndex < totalCards + 1; cardsIndex++)
+        {
+          //Re-Map channels to available cards
+          ArrayList cardChannels = new ArrayList();
+          TVDatabase.GetChannels(ref cardChannels);
+          int channelIndex = importFile.GetValueAsInt("Card " + cardsIndex.ToString(), "TOTAL CHANNELS", 0);
+
+          if (channelIndex > 0)
+            for (int j = 0; j < channelIndex; j++)
+            {
+              int channelId = importFile.GetValueAsInt("Card " + cardsIndex.ToString(), "CHANNEL " + j.ToString(), 0);
+
+              //Locate Channel so it can be added to Card
+              foreach (TVChannel databaseChannel in cardChannels)
+                if (databaseChannel.ID == channelId)
+                  TVDatabase.MapChannelToCard(databaseChannel.ID, cardsIndex);
+            }
+        }
+      }
+      return totalCards;
+    }
+
+    private int ImportRecordedTv(MediaPortal.Profile.Settings importFile)
+    {
+      int totalRecTv = importFile.GetValueAsInt("RECORDED", "TOTAL", -1);
+
+      if (totalRecTv > 0)
+      {
+        for (int recTvIndex = 1; recTvIndex < totalRecTv + 1; recTvIndex++)
+        {
+          //Create temp TVRecorded to hold data to import
+          TVRecorded importedRecTv = new TVRecorded();
+          importedRecTv.ID = importFile.GetValueAsInt("Recorded " + recTvIndex.ToString(), "ID", 0);
+          importedRecTv.Title = importFile.GetValueAsString("Recorded " + recTvIndex.ToString(), "TITLE", "");
+          importedRecTv.Channel = importFile.GetValueAsString("Recorded " + recTvIndex.ToString(), "CHANNEL", "");
+          importedRecTv.Description = importFile.GetValueAsString("Recorded " + recTvIndex.ToString(), "DESC", "");
+          importedRecTv.Genre = importFile.GetValueAsString("Recorded " + recTvIndex.ToString(), "GENRE", "");
+          importedRecTv.FileName = importFile.GetValueAsString("Recorded " + recTvIndex.ToString(), "FILENAME", "");
+          importedRecTv.Start = Convert.ToInt64(importFile.GetValueAsString("Recorded " + recTvIndex.ToString(), "STARTTIME", "0"));
+          if (importedRecTv.Start == 0)
+            importedRecTv.Start = Convert.ToInt64(importFile.GetValueAsString("Recorded " + recTvIndex.ToString(), "START", "0"));
+          importedRecTv.End = Convert.ToInt64(importFile.GetValueAsString("Recorded " + recTvIndex.ToString(), "ENDTIME", "0"));
+          importedRecTv.Played = importFile.GetValueAsInt("Recorded " + recTvIndex.ToString(), "PLAYED", 0);
+
+          //Add or gathered info to the TVDatabase
+          ArrayList recordedTv = new ArrayList();
+          TVDatabase.GetRecordedTV(ref recordedTv);
+          TVRecorded databaseRecordedTv = new TVRecorded();
+          TVDatabase.AddRecordedTV(importedRecTv);
+        }
+      }
+      return totalRecTv;
+    }
+
+    private int ImportScheduledRecordings(MediaPortal.Profile.Settings importFile)
+    {
+      int totalScheduled = importFile.GetValueAsInt("RECORDINGS", "TOTAL", -1);
+
+      if (totalScheduled > 0)
+      {
+        for (int scheduledIndex = 1; scheduledIndex < totalScheduled + 1; scheduledIndex++)
+        {
+          //Create temp TVRecording to hold data to import
+          TV.Database.TVRecording importedScheduled = new TV.Database.TVRecording();
+          importedScheduled.ID = importFile.GetValueAsInt("Recording " + scheduledIndex.ToString(), "ID", 0);
+          importedScheduled.Title = importFile.GetValueAsString("Recording " + scheduledIndex.ToString(), "TITLE", "");
+          importedScheduled.Channel = importFile.GetValueAsString("Recording " + scheduledIndex.ToString(), "CHANNEL", "");
+          importedScheduled.Start = Convert.ToInt64(importFile.GetValueAsString("Recording " + scheduledIndex.ToString(), "STARTTIME", "0"));
+          importedScheduled.End = Convert.ToInt64(importFile.GetValueAsString("Recording " + scheduledIndex.ToString(), "ENDTIME", "0"));
+          importedScheduled.Canceled = Convert.ToInt64(importFile.GetValueAsString("Recording " + scheduledIndex.ToString(), "CANCELEDTIME", "0"));
+          importedScheduled.RecType = ConvertRecordingType(importFile.GetValueAsString("Recording " + scheduledIndex.ToString(), "TYPE", ""));
+          importedScheduled.Priority = importFile.GetValueAsInt("Recording " + scheduledIndex.ToString(), "PRIORITY", 0);
+          importedScheduled.Quality = ConvertQualityType(importFile.GetValueAsString("Recording " + scheduledIndex.ToString(), "QUALITY", ""));
+          importedScheduled.IsContentRecording = importFile.GetValueAsBool("Recording " + scheduledIndex.ToString(), "ISCONTENTREC", false);
+          importedScheduled.Series = importFile.GetValueAsBool("Recording " + scheduledIndex.ToString(), "SERIES", false);
+          importedScheduled.EpisodesToKeep = importFile.GetValueAsInt("Recording " + scheduledIndex.ToString(), "EPISODES", Int32.MaxValue);
+
+          //Add this recording to TVDatabase
+          ArrayList checkRecordingList = new ArrayList();
+          TVDatabase.GetRecordings(ref checkRecordingList);
+          MediaPortal.TV.Database.TVRecording checkRecording = new MediaPortal.TV.Database.TVRecording();
+
+          //Check if this recording has had any cancels
+          int canceledCount = importFile.GetValueAsInt("Recording " + scheduledIndex.ToString(), "CANCELED SERIES TOTAL", 0);
+          if (canceledCount > 0)
+          {
+            importedScheduled.CanceledSeries.Clear();
+            long lastCanceledTime = 0;
+            for (int canceledIndex = 0; canceledIndex < canceledCount; canceledIndex++)
+            {
+              //Add the canceled time to TVDatabase
+              long canceledTime = 0;
+              canceledTime = Convert.ToInt64(importFile.GetValueAsString("Recording " + scheduledIndex.ToString(), "CANCELED SERIES CANCELEDTIME " + canceledIndex.ToString(), "0"));
+              //Check if we had the same time from before if so stop adding
+              if (canceledTime == lastCanceledTime)
+                break;
+              importedScheduled.CanceledSeries.Add((long)canceledTime);
+              lastCanceledTime = canceledTime;
+            }
+          }
+          TVDatabase.AddRecording(ref importedScheduled);
+        }
+      }
+      return totalScheduled;
+    }
+
     private void ImportFromXml(string fileName)
     {
       //Check if we have a file just in case
       if (!File.Exists(fileName))
         return;
 
-      TVDatabase.ClearAll();
-      LoadSettings();
+      int importedChannels = 0;
+      int importedGroups = 0;
+      int importedCards = 0;
+      int importedRecordedTv = 0;
+      int importedScheduledRecordings = 0;
+
       //Current Version change to reflect the above exporter in order for compatibility
-      int currentVersion = 1;   //<--- Make sure that is the same number as in Export_to_XML
-      int version = 1;			 //Set to:  0 = old ; 1 = current ; 2 = newer
-      using (MediaPortal.Profile.Settings channels = new MediaPortal.Profile.Settings(fileName))
+      int currentVersion = 1;   // <--- Make sure that is the same number as in Export_to_XML
+
+      using (MediaPortal.Profile.Settings importFile = new MediaPortal.Profile.Settings(fileName))
       {
         //Check version if not the right version prompt/do stuff/accomodate/change
-        int versionCheck = channels.GetValueAsInt("MP channel export list", "version", -1);
+        int versionCheck = importFile.GetValueAsInt("MP channel export list", "version", -1);
         if (versionCheck == -1)
         {
           //Not a valid channel list
-          MessageBox.Show("This is not a valid channel list.");
+          MessageBox.Show("This is not a valid channel list.", "Import Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
         else if (versionCheck >= 0 && versionCheck < currentVersion)
         {
           //Older file
-          MessageBox.Show("This is an older channel list. Trying to import.");
-          version = 0;
+          MessageBox.Show("This is an older channel list. Trying to import.", "Possible Import Problem", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
         else if (versionCheck == currentVersion)
         {
           //Current file, this is good stuff
-          version = 1;
         }
         else if (versionCheck > currentVersion)
         {
           //Newer? This person lives in a cave
-          MessageBox.Show("This is a newer channel list. Trying to import.\nConsider upgrading to a later MediaPortal version.");
-          version = 2;
+          MessageBox.Show("Detected channel list created by a later MediaPortal version.\nTrying to import. Consider upgrading to a later MediaPortal version.", "Possible Import Problem", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
-        //Count how many channels we have to import
-        int counter = 0;
-        for (int i = 0; ; i++)
+        TVDatabase.ClearAll();
+        LoadSettings();
+
+        importedChannels = ImportChannels(importFile);
+        importedGroups = ImportGroups(importFile);
+        importedCards = ImportCards(importFile);
+        importedRecordedTv = ImportRecordedTv(importFile);
+        importedScheduledRecordings = ImportScheduledRecordings(importFile);
+      }
+
+      if ((importedChannels > 0) ||
+        (importedGroups > 0) ||
+        (importedCards > 0) ||
+        (importedRecordedTv > 0) ||
+        (importedScheduledRecordings > 0))
+      {
+        string messageText = "Imported successfully:                  \n";
+        if (importedChannels > 0)
         {
-          if (channels.GetValueAsInt(i.ToString(), "INDEX", -1) == -1)
-          {
-            if (counter == 0)
-            {
-              MessageBox.Show("No channels found in channel list.");
-              return;
-            }
-            else
-              break;
-          }
-          else
-            counter++;
+          messageText += string.Format("\n{0} TV channel", importedChannels);
+          if (importedChannels > 1)
+            messageText += "s";
         }
-        MessageBox.Show("Importing " + counter.ToString() + " channels.");
-
-        listViewTvChannels.BeginUpdate();
-
-        for (int i = 0; i < counter; i++)
+        if (importedGroups > 0)
         {
-          int overwrite = 0;
-          int overwriteIndex = 0;
-          TelevisionChannel importChannel = new TelevisionChannel();
-          importChannel.ID = channels.GetValueAsInt(i.ToString(), "ID", 0);
-          importChannel.Channel = channels.GetValueAsInt(i.ToString(), "Number", 0);
-          importChannel.Name = channels.GetValueAsString(i.ToString(), "Name", "");
-          importChannel.Country = channels.GetValueAsInt(i.ToString(), "Country", 0);
-          importChannel.External = channels.GetValueAsBool(i.ToString(), "External", false);
-          importChannel.ExternalTunerChannel = channels.GetValueAsString(i.ToString(), "External Tuner Channel", "");
-          importChannel.Frequency.Hertz = channels.GetValueAsInt(i.ToString(), "Frequency", 0);
-          importChannel.standard = ConvertAvs(channels.GetValueAsString(i.ToString(), "Analog Standard Index", "None"));
-          importChannel.VisibleInGuide = channels.GetValueAsBool(i.ToString(), "Visible in Guide", false);
-          importChannel.Scrambled = channels.GetValueAsBool(i.ToString(), "Scrambled", false);
-
-          //Check to see if this channel exists prompt to overwrite
-          foreach (ListViewItem listItem in listViewTvChannels.Items)
-          {
-            TelevisionChannel Check_Chan = listItem.Tag as TelevisionChannel;
-            if (Check_Chan.ID == importChannel.ID && Check_Chan.Name == importChannel.Name)
-            {
-              if (MessageBox.Show(importChannel.Name + " (Channel " + importChannel.Channel.ToString() + ") already exists.\nWould you like to overwrite this channel?", "Channel Conflict", MessageBoxButtons.YesNo) == DialogResult.Yes)
-              {
-                overwrite = 1;
-                overwriteIndex = listItem.Index;
-              }
-              else
-                overwrite = -1;
-
-              break;
-            }
-          }
-
-          if (overwrite != -1)
-          {
-            if (overwrite == 1)
-            {
-              TelevisionChannel editedChannel = importChannel;
-              listViewTvChannels.Items[overwriteIndex].Tag = editedChannel;
-
-              listViewTvChannels.Items[overwriteIndex].SubItems[0].Text = editedChannel.Name;
-              listViewTvChannels.Items[overwriteIndex].SubItems[1].Text = editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString();
-              listViewTvChannels.Items[overwriteIndex].SubItems[2].Text = GetStandardName(editedChannel.standard);
-              listViewTvChannels.Items[overwriteIndex].SubItems[3].Text = editedChannel.External ? "External" : "Internal";
-            }
-            else
-            {
-              TelevisionChannel editedChannel = importChannel;
-              ListViewItem listItem = new ListViewItem(new string[] { editedChannel.Name, 
-																					  editedChannel.External ? String.Format("{0}/{1}", editedChannel.Channel, editedChannel.ExternalTunerChannel) : editedChannel.Channel.ToString(),
-																					  GetStandardName(editedChannel.standard),
-																					  editedChannel.External ? "External" : "Internal"});
-              listItem.Tag = editedChannel;
-
-              listViewTvChannels.Items.Add(listItem);
-              listViewTvChannels.Items[listViewTvChannels.Items.IndexOf(listItem)].Checked = true;
-            }
-
-            //Check if required to do anything specific for compatibility reasons
-            switch (version)
-            {
-              //Do stuff for backward compatibility if needed
-              case 0:
-
-                break;
-              //Do stuff for current version only
-              case 1:
-
-                break;
-              //Do stuff for forward compatibility if needed
-              case 2:
-
-                break;
-            }
-
-            //This is done for every version regardless
-            if (version == 0 || version == 1 || version == 2)
-            {
-              if (importChannel.Channel >= 0)
-              {
-                int freq, ONID, TSID, SID, symbolrate, innerFec, modulation, polarisation;
-                int bandWidth, pmtPid, audioPid, videoPid, teletextPid;
-                int audio1, audio2, audio3, ac3Pid, pcrPid;
-                string audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3;
-                string provider;
-                bool HasEITPresentFollow, HasEITSchedule;
-                //dvb-T
-                try
-                {
-                  freq = channels.GetValueAsInt(i.ToString(), "DVBTFreq", 0);
-                  ONID = channels.GetValueAsInt(i.ToString(), "DVBTONID", 0);
-                  TSID = channels.GetValueAsInt(i.ToString(), "DVBTTSID", 0);
-                  SID = channels.GetValueAsInt(i.ToString(), "DVBTSID", 0);
-                  audioPid = channels.GetValueAsInt(i.ToString(), "DVBTAudioPid", 0);
-                  videoPid = channels.GetValueAsInt(i.ToString(), "DVBTVideoPid", 0);
-                  teletextPid = channels.GetValueAsInt(i.ToString(), "DVBTTeletextPid", 0);
-                  pmtPid = channels.GetValueAsInt(i.ToString(), "DVBTPmtPid", 0);
-                  provider = channels.GetValueAsString(i.ToString(), "DVBTProvider", "");
-                  bandWidth = channels.GetValueAsInt(i.ToString(), "DVBTBandwidth", -1);
-                  audio1 = channels.GetValueAsInt(i.ToString(), "DVBTAudio1Pid", -1);
-                  audio2 = channels.GetValueAsInt(i.ToString(), "DVBTAudio2Pid", -1);
-                  audio3 = channels.GetValueAsInt(i.ToString(), "DVBTAudio3Pid", -1);
-                  ac3Pid = channels.GetValueAsInt(i.ToString(), "DVBTAC3Pid", -1);
-                  pcrPid = channels.GetValueAsInt(i.ToString(), "DVBTPCRPid", -1);
-                  audioLanguage = channels.GetValueAsString(i.ToString(), "DVBTAudioLanguage", "");
-                  audioLanguage1 = channels.GetValueAsString(i.ToString(), "DVBTAudioLanguage1", "");
-                  audioLanguage2 = channels.GetValueAsString(i.ToString(), "DVBTAudioLanguage2", "");
-                  audioLanguage3 = channels.GetValueAsString(i.ToString(), "DVBTAudioLanguage3", "");
-                  HasEITPresentFollow = channels.GetValueAsBool(i.ToString(), "DVBTHasEITPresentFollow", false);
-                  HasEITSchedule = channels.GetValueAsBool(i.ToString(), "DVBTHasEITSchedule", false);
-                  if (ONID > 0 && TSID > 0 && SID > 0 && freq > 0)
-                    TVDatabase.MapDVBTChannel(importChannel.Name, provider, importChannel.ID, freq, ONID, TSID, SID, audioPid, videoPid, teletextPid, pmtPid, bandWidth, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3, HasEITPresentFollow, HasEITSchedule);
-                }
-                catch (Exception)
-                {
-                  MessageBox.Show("Importing DVB-T failed.");
-                }
-
-                //dvb-C
-                try
-                {
-                  freq = channels.GetValueAsInt(i.ToString(), "DVBCFreq", 0);
-                  ONID = channels.GetValueAsInt(i.ToString(), "DVBCONID", 0);
-                  TSID = channels.GetValueAsInt(i.ToString(), "DVBCTSID", 0);
-                  SID = channels.GetValueAsInt(i.ToString(), "DVBCSID", 0);
-                  symbolrate = channels.GetValueAsInt(i.ToString(), "DVBCSR", 0);
-                  innerFec = channels.GetValueAsInt(i.ToString(), "DVBCInnerFeq", 0);
-                  modulation = channels.GetValueAsInt(i.ToString(), "DVBCModulation", 0);
-                  provider = channels.GetValueAsString(i.ToString(), "DVBCProvider", "");
-                  audioPid = channels.GetValueAsInt(i.ToString(), "DVBCAudioPid", 0);
-                  videoPid = channels.GetValueAsInt(i.ToString(), "DVBCVideoPid", 0);
-                  teletextPid = channels.GetValueAsInt(i.ToString(), "DVBCTeletextPid", 0);
-                  pmtPid = channels.GetValueAsInt(i.ToString(), "DVBCPmtPid", 0);
-                  audio1 = channels.GetValueAsInt(i.ToString(), "DVBCAudio1Pid", -1);
-                  audio2 = channels.GetValueAsInt(i.ToString(), "DVBCAudio2Pid", -1);
-                  audio3 = channels.GetValueAsInt(i.ToString(), "DVBCAudio3Pid", -1);
-                  ac3Pid = channels.GetValueAsInt(i.ToString(), "DVBCAC3Pid", -1);
-                  pcrPid = channels.GetValueAsInt(i.ToString(), "DVBCPCRPid", -1);
-                  audioLanguage = channels.GetValueAsString(i.ToString(), "DVBCAudioLanguage", "");
-                  audioLanguage1 = channels.GetValueAsString(i.ToString(), "DVBCAudioLanguage1", "");
-                  audioLanguage2 = channels.GetValueAsString(i.ToString(), "DVBCAudioLanguage2", "");
-                  audioLanguage3 = channels.GetValueAsString(i.ToString(), "DVBCAudioLanguage3", "");
-                  HasEITPresentFollow = channels.GetValueAsBool(i.ToString(), "DVBCHasEITPresentFollow", false);
-                  HasEITSchedule = channels.GetValueAsBool(i.ToString(), "DVBCHasEITSchedule", false);
-
-                  if (ONID > 0 && TSID > 0 && SID > 0 && freq > 0)
-                    TVDatabase.MapDVBCChannel(importChannel.Name, provider, importChannel.ID, freq, symbolrate, innerFec, modulation, ONID, TSID, SID, audioPid, videoPid, teletextPid, pmtPid, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3, HasEITPresentFollow, HasEITSchedule);
-                }
-                catch (Exception)
-                {
-                  MessageBox.Show("Importing DVB-C data failed.");
-                }
-
-                //dvb-S
-                try
-                {
-                  DVBChannel ch = new DVBChannel();
-                  TVDatabase.GetSatChannel(importChannel.ID, 1, ref ch);
-
-                  freq = channels.GetValueAsInt(i.ToString(), "DVBSFreq", 0);
-                  ONID = channels.GetValueAsInt(i.ToString(), "DVBSONID", 0);
-                  TSID = channels.GetValueAsInt(i.ToString(), "DVBSTSID", 0);
-                  SID = channels.GetValueAsInt(i.ToString(), "DVBSSID", 0);
-                  symbolrate = channels.GetValueAsInt(i.ToString(), "DVBSSymbolrate", 0);
-                  innerFec = channels.GetValueAsInt(i.ToString(), "DVBSInnerFec", 0);
-                  polarisation = channels.GetValueAsInt(i.ToString(), "DVBSPolarisation", 0);
-                  provider = channels.GetValueAsString(i.ToString(), "DVBSProvider", "");
-                  audioPid = channels.GetValueAsInt(i.ToString(), "DVBSAudioPid", 0);
-                  videoPid = channels.GetValueAsInt(i.ToString(), "DVBSVideoPid", 0);
-                  teletextPid = channels.GetValueAsInt(i.ToString(), "DVBSTeletextPid", 0);
-                  pmtPid = channels.GetValueAsInt(i.ToString(), "DVBSPmtPid", 0);
-                  audio1 = channels.GetValueAsInt(i.ToString(), "DVBSAudio1Pid", -1);
-                  audio2 = channels.GetValueAsInt(i.ToString(), "DVBSAudio2Pid", -1);
-                  audio3 = channels.GetValueAsInt(i.ToString(), "DVBSAudio3Pid", -1);
-                  ac3Pid = channels.GetValueAsInt(i.ToString(), "DVBSAC3Pid", -1);
-                  pcrPid = channels.GetValueAsInt(i.ToString(), "DVBSPCRPid", -1);
-                  audioLanguage = channels.GetValueAsString(i.ToString(), "DVBSAudioLanguage", "");
-                  audioLanguage1 = channels.GetValueAsString(i.ToString(), "DVBSAudioLanguage1", "");
-                  audioLanguage2 = channels.GetValueAsString(i.ToString(), "DVBSAudioLanguage2", "");
-                  audioLanguage3 = channels.GetValueAsString(i.ToString(), "DVBSAudioLanguage3", "");
-                  HasEITPresentFollow = channels.GetValueAsBool(i.ToString(), "DVBSHasEITPresentFollow", false);
-                  HasEITSchedule = channels.GetValueAsBool(i.ToString(), "DVBSHasEITSchedule", false);
-
-                  if (ONID > 0 && TSID > 0 && SID > 0 && freq > 0)
-                  {
-                    ch.ServiceType = 1;
-                    ch.Frequency = freq;
-                    ch.NetworkID = ONID;
-                    ch.TransportStreamID = TSID;
-                    ch.ProgramNumber = SID;
-                    ch.Symbolrate = symbolrate;
-                    ch.FEC = innerFec;
-                    ch.Polarity = polarisation;
-                    ch.ServiceProvider = provider;
-                    ch.ServiceName = importChannel.Name;
-                    ch.ID = importChannel.ID;
-                    ch.AudioPid = audioPid;
-                    ch.VideoPid = videoPid;
-                    ch.TeletextPid = teletextPid;
-                    ch.PCRPid = pcrPid;
-                    ch.ECMPid = channels.GetValueAsInt(i.ToString(), "DVBSECMpid", 0);
-                    ch.Audio1 = audio1;
-                    ch.Audio2 = audio2;
-                    ch.Audio3 = audio3;
-                    ch.AudioLanguage = audioLanguage;
-                    ch.AudioLanguage1 = audioLanguage1;
-                    ch.AudioLanguage2 = audioLanguage2;
-                    ch.AudioLanguage3 = audioLanguage3;
-                    ch.HasEITSchedule = HasEITSchedule;
-                    ch.HasEITPresentFollow = HasEITPresentFollow;
-                    ch.PMTPid = pmtPid;
-
-                    TVDatabase.RemoveSatChannel(ch);
-                    TVDatabase.AddSatChannel(ch);
-                  }
-                }
-                catch (Exception)
-                {
-                  MessageBox.Show("Importing DVB-S data failed.");
-                }
-
-                //ATSC
-                try
-                {
-                  int minorChannel, majorChannel, physicalChannel;
-                  physicalChannel = channels.GetValueAsInt(i.ToString(), "ATSCPhysical", -1);
-                  provider = channels.GetValueAsString(i.ToString(), "ATSCProvider", "");
-                  freq = channels.GetValueAsInt(i.ToString(), "ATSCFreq", 0);
-                  symbolrate = channels.GetValueAsInt(i.ToString(), "ATSCSymbolrate", 0);
-                  innerFec = channels.GetValueAsInt(i.ToString(), "ATSCInnerFec", 0);
-                  modulation = channels.GetValueAsInt(i.ToString(), "ATSCModulation", 0);
-
-                  ONID = channels.GetValueAsInt(i.ToString(), "ATSCONID", 0);
-                  TSID = channels.GetValueAsInt(i.ToString(), "ATSCTSID", 0);
-                  SID = channels.GetValueAsInt(i.ToString(), "ATSCSID", 0);
-                  audioPid = channels.GetValueAsInt(i.ToString(), "ATSCAudioPid", 0);
-                  videoPid = channels.GetValueAsInt(i.ToString(), "ATSCVideoPid", 0);
-                  teletextPid = channels.GetValueAsInt(i.ToString(), "ATSCTeletextPid", 0);
-                  pmtPid = channels.GetValueAsInt(i.ToString(), "ATSCPmtPid", 0);
-                  audio1 = channels.GetValueAsInt(i.ToString(), "ATSCAudio1Pid", -1);
-                  audio2 = channels.GetValueAsInt(i.ToString(), "ATSCAudio2Pid", -1);
-                  audio3 = channels.GetValueAsInt(i.ToString(), "ATSCAudio3Pid", -1);
-                  ac3Pid = channels.GetValueAsInt(i.ToString(), "ATSCAC3Pid", -1);
-                  audioLanguage = channels.GetValueAsString(i.ToString(), "ATSCAudioLanguage", "");
-                  audioLanguage1 = channels.GetValueAsString(i.ToString(), "ATSCAudioLanguage1", "");
-                  audioLanguage2 = channels.GetValueAsString(i.ToString(), "ATSCAudioLanguage2", "");
-                  audioLanguage3 = channels.GetValueAsString(i.ToString(), "ATSCAudioLanguage3", "");
-                  minorChannel = channels.GetValueAsInt(i.ToString(), "ATSCMinor", -1);
-                  majorChannel = channels.GetValueAsInt(i.ToString(), "ATSCMajor", -1);
-                  HasEITPresentFollow = channels.GetValueAsBool(i.ToString(), "ATSCHasEITPresentFollow", false);
-                  HasEITSchedule = channels.GetValueAsBool(i.ToString(), "ATSCHasEITSchedule", false);
-                  pcrPid = channels.GetValueAsInt(i.ToString(), "ATSCPCRPid", -1);
-
-                  if (physicalChannel > 0 && minorChannel >= 0 && majorChannel >= 0)
-                    TVDatabase.MapATSCChannel(importChannel.Name, physicalChannel, minorChannel, majorChannel, provider, importChannel.ID,
-                                              freq, symbolrate, innerFec, modulation, ONID, TSID, SID, audioPid, videoPid, teletextPid,
-                                              pmtPid, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2,
-                                              audioLanguage3, HasEITPresentFollow, HasEITSchedule);
-                }
-                catch (Exception)
-                {
-                  MessageBox.Show("Importing ATSC data failed");
-                }
-              }
-            }
-          }
+          messageText += string.Format("\n{0} TV channel group", importedGroups);
+          if (importedGroups > 1)
+            messageText += "s";
         }
-        SaveTVChannels();
+        if (importedCards > 0)
+        {
+          messageText += string.Format("\n{0} assigned capture card", importedCards);
+          if (importedCards > 1)
+            messageText += "s";
+        }
+        if (importedRecordedTv > 0)
+        {
+          messageText += string.Format("\n{0} completed recording", importedRecordedTv);
+          if (importedRecordedTv > 1)
+            messageText += "s";
+        }
+        if (importedScheduledRecordings > 0)
+        {
+          messageText += string.Format("\n{0} scheduled recording", importedScheduledRecordings);
+          if (importedScheduledRecordings > 1)
+            messageText += "s";
+        }
+
         _reloadList = true;
         SaveSettings();
 
-        listViewTvChannels.EndUpdate();
-
-        //Grab group Data and channel maping
-        int groupIndex = 0, channelIndex = 0;
-
-        //Grab total groups for reference
-        groupIndex = channels.GetValueAsInt("GROUPS", "TOTAL", -1);
-        //Check if we have any groups
-        if (groupIndex > 0)
-        {
-          MessageBox.Show("Importing " + groupIndex.ToString() + " groups.");
-
-          for (int i = 1; i <= groupIndex; i++) //mjsystem
-          {
-            int overwrite = 0;
-            TVGroup importGroup = new TVGroup();
-            importGroup.ID = channels.GetValueAsInt("Group " + i.ToString(), "ID", 0);
-            importGroup.GroupName = channels.GetValueAsString("Group " + i.ToString(), "NAME", "");
-            importGroup.Pincode = channels.GetValueAsInt("Group " + i.ToString(), "PINCODE", 0);
-            importGroup.Sort = channels.GetValueAsInt("Group " + i.ToString(), "SORT", 0);
-
-            if (overwrite != -1)
-            {
-              //Add Group to database
-              TVDatabase.AddGroup(importGroup);
-              //This is done for every version regardless
-              if (version == 0 || version == 1 || version == 2)
-              {
-                //Add channels to this group
-                ArrayList Group_Channels = new ArrayList();
-                TVDatabase.GetChannels(ref Group_Channels);
-                channelIndex = channels.GetValueAsInt("Group " + i.ToString(), "TOTAL CHANNELS", 0);
-
-                if (channelIndex > 0)
-                  for (int j = 0; j < channelIndex; j++)
-                  {
-                    int tmpID = channels.GetValueAsInt("Group " + i.ToString(), "CHANNEL " + j.ToString(), 0);
-
-                    //Locate Channel so it can be added to group
-
-                    foreach (TVChannel FindChan in Group_Channels)
-                      if (FindChan.ID == tmpID)
-                      {
-                        //Add channel to group
-                        importGroup.TvChannels.Add(FindChan);
-
-                        //Have to re-grab group from database in order to map correctly :|
-                        ArrayList GrabGroup = new ArrayList();
-                        TVDatabase.GetGroups(ref GrabGroup);
-
-                        foreach (TVGroup tmpGroup in GrabGroup)
-                          if (importGroup.ID == tmpGroup.ID)
-                            TVDatabase.MapChannelToGroup(tmpGroup, FindChan);
-                      }
-                  }
-              }
-            }
-          }
-          SaveSettings();
-        }
-
-        //Grab Saved Card mapping
-
-        //Check if we have cards first
-        int cardsIndex = 0;
-        channelIndex = 0;
-
-        //Grab total cards for reference
-        cardsIndex = channels.GetValueAsInt("CARDS", "TOTAL", -1);
-
-        //Check if we have any cards
-        for (int i = 1; i < cardsIndex + 1; i++)
-        {
-          //This is done for every version regardless
-          //Re-Map channels to available cards
-          ArrayList Card_Channels = new ArrayList();
-          TVDatabase.GetChannels(ref Card_Channels);
-          channelIndex = channels.GetValueAsInt("Card " + i.ToString(), "TOTAL CHANNELS", 0);
-
-          if (channelIndex > 0)
-            for (int j = 0; j < channelIndex; j++)
-            {
-              int tmpID = channels.GetValueAsInt("Card " + i.ToString(), "CHANNEL " + j.ToString(), 0);
-
-              //Locate Channel so it can be added to Card
-              foreach (TVChannel FindChan in Card_Channels)
-                if (FindChan.ID == tmpID)
-                  //Map it
-                  TVDatabase.MapChannelToCard(FindChan.ID, i);
-            }
-        }
-
-        //Grab recorded show information
-        int recordedCount = 0;
-
-        //Grab recorded shows saved for referrence
-        recordedCount = channels.GetValueAsInt("RECORDED", "TOTAL", -1);
-        if (recordedCount > 0)
-        {
-          MessageBox.Show("Importing " + recordedCount.ToString() + " recorded items.");
-
-          //Check if required to do anything specific for compatibility reasons
-          switch (version)
-          {
-            //Do stuff for backward compatibility if needed
-            case 0:
-
-              break;
-            //Do stuff for current version only
-            case 1:
-
-              break;
-            //Do stuff for forward compatibility if needed
-            case 2:
-
-              break;
-          }
-
-          //This is done for every version regardless
-          if (version == 0 || version == 1 || version == 2)
-          {
-            for (int i = 1; i < recordedCount + 1; i++)
-            {
-              //Create temp TVRecorded to hold data to import
-              TVRecorded tempRecorded = new TVRecorded();
-              tempRecorded.ID = channels.GetValueAsInt("Recorded " + i.ToString(), "ID", 0);
-              tempRecorded.Title = channels.GetValueAsString("Recorded " + i.ToString(), "TITLE", "");
-              tempRecorded.Channel = channels.GetValueAsString("Recorded " + i.ToString(), "CHANNEL", "");
-              tempRecorded.Description = channels.GetValueAsString("Recorded " + i.ToString(), "DESC", "");
-              tempRecorded.Genre = channels.GetValueAsString("Recorded " + i.ToString(), "GENRE", "");
-              tempRecorded.FileName = channels.GetValueAsString("Recorded " + i.ToString(), "FILENAME", "");
-              tempRecorded.Start = Convert.ToInt64(channels.GetValueAsString("Recorded " + i.ToString(), "STARTTIME", "0"));
-              if (tempRecorded.Start == 0)
-                tempRecorded.Start = Convert.ToInt64(channels.GetValueAsString("Recorded " + i.ToString(), "START", "0"));
-              tempRecorded.End = Convert.ToInt64(channels.GetValueAsString("Recorded " + i.ToString(), "ENDTIME", "0"));
-              tempRecorded.Played = channels.GetValueAsInt("Recorded " + i.ToString(), "PLAYED", 0);
-
-              //Add or gathered info to the TVDatabase
-              bool recordedOverwrite = false;
-              ArrayList checkRecordedList = new ArrayList();
-              TVDatabase.GetRecordedTV(ref checkRecordedList);
-              TVRecorded check_recorded = new TVRecorded();
-              foreach (TVRecorded checkRecorded in checkRecordedList)
-                if (checkRecorded.ID == tempRecorded.ID && checkRecorded.Start.ToString() == tempRecorded.Start.ToString())
-                {
-                  check_recorded = checkRecorded;
-                  recordedOverwrite = true;
-                  break;
-                }
-              if (recordedOverwrite)
-                //Ask if user if overwrite ok
-                if (MessageBox.Show("Would you like to overwrite the entry for \"" + check_recorded.Title + "\" (start time: " + check_recorded.Start.ToString() + ")\nwith the entry \"" + tempRecorded.Title + "\" (start time: " + tempRecorded.Start.ToString() + ")?",
-                "Import Conflict", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                  TVDatabase.RemoveRecordedTV(check_recorded);
-                  TVDatabase.AddRecordedTV(tempRecorded);
-                }
-                else
-                  //Check if this file exists first, if not ask user to locate it or no update
-                  TVDatabase.AddRecordedTV(tempRecorded);
-            }
-          }
-        }
-
-        //Grab recording shows information
-        int recordingsCount = 0;
-
-        //Grab recorded shows saved for referrence
-        recordingsCount = channels.GetValueAsInt("RECORDINGS", "TOTAL", -1);
-
-        if (recordingsCount > 0)
-        {
-          MessageBox.Show("Importing " + recordingsCount.ToString() + " scheduled recordings.");
-
-          //Check if required to do anything specific for compatibility reasons
-          switch (version)
-          {
-            //Do stuff for backward compatibility if needed
-            case 0:
-
-              break;
-            //Do stuff for current version only
-            case 1:
-
-              break;
-            //Do stuff for forward compatibility if needed
-            case 2:
-
-              break;
-          }
-
-          //This is done for every version regardless
-          if (version == 0 || version == 1 || version == 2)
-            for (int i = 1; i < recordingsCount + 1; i++)
-            {
-              //Create temp TVRecording to hold data to import
-              MediaPortal.TV.Database.TVRecording tempRecording = new MediaPortal.TV.Database.TVRecording();
-              tempRecording.ID = channels.GetValueAsInt("Recording " + i.ToString(), "ID", 0);
-              tempRecording.Title = channels.GetValueAsString("Recording " + i.ToString(), "TITLE", "");
-              tempRecording.Channel = channels.GetValueAsString("Recording " + i.ToString(), "CHANNEL", "");
-              tempRecording.Start = Convert.ToInt64(channels.GetValueAsString("Recording " + i.ToString(), "STARTTIME", "0"));
-              tempRecording.End = Convert.ToInt64(channels.GetValueAsString("Recording " + i.ToString(), "ENDTIME", "0"));
-              tempRecording.Canceled = Convert.ToInt64(channels.GetValueAsString("Recording " + i.ToString(), "CANCELEDTIME", "0"));
-              tempRecording.RecType = ConvertRecordingType(channels.GetValueAsString("Recording " + i.ToString(), "TYPE", ""));
-              tempRecording.Priority = channels.GetValueAsInt("Recording " + i.ToString(), "PRIORITY", 0);
-              tempRecording.Quality = ConvertQualityType(channels.GetValueAsString("Recording " + i.ToString(), "QUALITY", ""));
-              tempRecording.IsContentRecording = channels.GetValueAsBool("Recording " + i.ToString(), "ISCONTENTREC", false);
-              tempRecording.Series = channels.GetValueAsBool("Recording " + i.ToString(), "SERIES", false);
-              tempRecording.EpisodesToKeep = channels.GetValueAsInt("Recording " + i.ToString(), "EPISODES", Int32.MaxValue);
-
-              //Add this recording to TVDatabase
-              bool recordingOverwrite = false;
-              ArrayList checkRecordingList = new ArrayList();
-              TVDatabase.GetRecordings(ref checkRecordingList);
-              MediaPortal.TV.Database.TVRecording checkRecording = new MediaPortal.TV.Database.TVRecording();
-              foreach (MediaPortal.TV.Database.TVRecording tvRecording in checkRecordingList)
-                if (tvRecording.ID == tempRecording.ID && tvRecording.Start.ToString() == tempRecording.Start.ToString())
-                {
-                  checkRecording = tvRecording;
-                  recordingOverwrite = true;
-                  break;
-                }
-              if (recordingOverwrite)
-              {
-                //Ask if user if overwrite ok
-                if (MessageBox.Show("Would you like to overwrite the entry for \"" + checkRecording.Title + "\" (start time: " + checkRecording.Start.ToString() + ")\nwith the entry \"" + tempRecording.Title + "\" (start time: " + tempRecording.Start.ToString() + ")?",
-                  "Import Conflict", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                  //Delete Canceled series information
-                  for (int z = 0; z < checkRecording.CanceledSeries.Count; ++z)
-                    TVDatabase.DeleteCanceledSeries(checkRecording);
-                  //Check if this recording has had any cancels
-                  int canxCount = 0;
-                  canxCount = channels.GetValueAsInt("Recording " + i.ToString(), "CANCELED SERIES TOTAL", 0);
-                  if (canxCount > 0)
-                  {
-                    tempRecording.CanceledSeries.Clear();
-                    long lastCanxTime = 0;
-                    for (int j = 0; j < canxCount; j++)
-                    {
-                      //Add the canceled time to TVDatabase
-                      long canxTime = 0;
-                      canxTime = Convert.ToInt64(channels.GetValueAsString("Recording " + i.ToString(), "CANCELED SERIES CANCELEDTIME " + j.ToString(), "0"));
-                      //Check if we had the same time from before if so stop adding
-                      if (canxTime == lastCanxTime) break;
-                      //TVDatabase.AddCanceledSerie(temp_recording,canx_time);
-                      tempRecording.CanceledSeries.Add((long)canxTime);
-                      lastCanxTime = canxTime;
-                    }
-                  }
-                  //Delete old entry
-                  TVDatabase.RemoveRecording(checkRecording);
-                  //Add new overwrite entry
-                  TVDatabase.AddRecording(ref tempRecording);
-                }
-              }
-              else
-              {
-                //Check if this recording has had any cancels
-                int canxCount = 0;
-                canxCount = channels.GetValueAsInt("Recording " + i.ToString(), "CANCELED SERIES TOTAL", 0);
-                if (canxCount > 0)
-                {
-                  tempRecording.CanceledSeries.Clear();
-                  long lastCanxTime = 0;
-                  for (int j = 0; j < canxCount; j++)
-                  {
-                    //Add the canceled time to TVDatabase
-                    long canxTime = 0;
-                    canxTime = Convert.ToInt64(channels.GetValueAsString("Recording " + i.ToString(), "CANCELED SERIES CANCELEDTIME " + j.ToString(), "0"));
-                    //Check if we had the same time from before if so stop adding
-                    if (canxTime == lastCanxTime) break;
-                    //TVDatabase.AddCanceledSerie(temp_recording,canx_time);
-                    tempRecording.CanceledSeries.Add((long)canxTime);
-                    lastCanxTime = canxTime;
-                  }
-                }
-                //Add new entry
-                TVDatabase.AddRecording(ref tempRecording);
-              }
-            }
-        }
+        MessageBox.Show(messageText, "Import Results", MessageBoxButtons.OK, MessageBoxIcon.Information);
       }
+      else
+        MessageBox.Show("No items could be imported.", "Import Results", MessageBoxButtons.OK, MessageBoxIcon.Warning);
     }
 
     private AnalogVideoStandard ConvertAvs(object avs)
@@ -2356,24 +2293,27 @@ namespace MediaPortal.Configuration.Sections
       buttonUnmap_Click(sender, e);
     }
 
-    private void buttonDeleteScrambled_Click( object sender, EventArgs e )
+    private void buttonDeleteScrambled_Click(object sender, EventArgs e)
     {
-       listViewTvChannels.BeginUpdate();
-       _itemsModified = true;
-            
-       int itemCount = listViewTvChannels.Items.Count;
+      listViewTvChannels.BeginUpdate();
+      _itemsModified = true;
 
-       for ( int index = 0; index < itemCount; index++ )
-       {
-         if ( listViewTvChannels.Items[index].ImageIndex == 1 ) // channel is scrambled
-         {
-           listViewTvChannels.Items.RemoveAt(index);
-           itemCount -= 1;
-         }
-       }
+      int itemCount = listViewTvChannels.Items.Count;
 
-       SaveSettings();
-       listViewTvChannels.EndUpdate();
+      for (int index = 0; index < itemCount; index++)
+        if (((TelevisionChannel)listViewTvChannels.Items[index].Tag).Scrambled) // channel is scrambled
+        {
+          listViewTvChannels.Items.RemoveAt(index);
+          itemCount -= 1;
+        }
+
+      SaveSettings();
+      listViewTvChannels.EndUpdate();
+    }
+
+    private void listViewTvChannels_DragDrop(object sender, DragEventArgs e)
+    {
+      SaveSettings();
     }
 
   }

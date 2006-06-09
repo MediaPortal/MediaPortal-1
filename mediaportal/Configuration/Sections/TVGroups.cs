@@ -647,6 +647,7 @@ namespace MediaPortal.Configuration.Sections
           TVDatabase.UnmapChannelFromGroup(group, channel);
         listViewTVChannelsInGroup.Items.Remove(listItem);
       }
+      SaveTVGroupChannelsAndMapping();
       UpdateGroupChannels(null, true);
 
       listViewTVChannelsInGroup.EndUpdate();
@@ -664,6 +665,8 @@ namespace MediaPortal.Configuration.Sections
       listViewTVChannelsInGroup.BeginUpdate();
       treeViewProviders.BeginUpdate();
       comboBoxTvChannelGroups.BeginUpdate();
+
+      string selectedTvChannelGroup = comboBoxTvChannelGroups.Text;
 
       if (reloadgroups || comboBoxTvChannelGroups.Items.Count == 0)
       {
@@ -747,6 +750,8 @@ namespace MediaPortal.Configuration.Sections
       }
       if (node != null && node.Nodes.Count > 0)
         treeViewProviders.Nodes.Add(node);
+
+      comboBoxTvChannelGroups.Text = selectedTvChannelGroup;
 
       comboBoxTvChannelGroups.EndUpdate();
       listViewTVChannelsInGroup.EndUpdate();
