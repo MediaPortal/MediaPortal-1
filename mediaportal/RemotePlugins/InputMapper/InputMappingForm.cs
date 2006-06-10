@@ -31,6 +31,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.IO;
 using MediaPortal.GUI.Library;
+using System.Threading;
 
 namespace MediaPortal.InputDevices
 {
@@ -64,7 +65,7 @@ namespace MediaPortal.InputDevices
                                               "{RIGHT}", "{SCROLLLOCK}", "{TAB}", "{UP}", "{F1}", "{F2}", "{F3}", "{F4}", "{F5}", "{F6}",
                                               "{F7}", "{F8}", "{F9}", "{F10}", "{F11}", "{F12}", "{F13}", "{F14}", "{F15}", "{F16}",
                                               "{ADD}", "{SUBTRACT}", "{MULTIPLY}", "{DIVIDE}"};
-    
+
     string inputClassName;
 
     bool changedSettings = false;
@@ -123,9 +124,9 @@ namespace MediaPortal.InputDevices
     private MediaPortal.UserInterface.Controls.MPLabel labelSound;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxAction;
     private MediaPortal.UserInterface.Controls.MPGradientLabel headerLabel;
-    private MediaPortal.UserInterface.Controls.MPButton applyButton;
-    private MediaPortal.UserInterface.Controls.MPButton okButton;
-    private MediaPortal.UserInterface.Controls.MPButton cancelButton;
+    private MediaPortal.UserInterface.Controls.MPButton buttonApply;
+    private MediaPortal.UserInterface.Controls.MPButton buttonOk;
+    private MediaPortal.UserInterface.Controls.MPButton buttonCancel;
     private MediaPortal.UserInterface.Controls.MPBeveledLine beveledLine1;
     private MediaPortal.UserInterface.Controls.MPLabel labelLayer;
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxLayer;
@@ -244,9 +245,9 @@ namespace MediaPortal.InputDevices
       this.buttonDown = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonUp = new MediaPortal.UserInterface.Controls.MPButton();
       this.beveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
-      this.applyButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonApply = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonOk = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.headerLabel = new MediaPortal.UserInterface.Controls.MPGradientLabel();
       this.groupBoxAction = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxGainFocus = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -307,7 +308,7 @@ namespace MediaPortal.InputDevices
       this.buttonDefault.TabIndex = 28;
       this.buttonDefault.Text = "Default";
       this.buttonDefault.UseVisualStyleBackColor = true;
-      this.buttonDefault.Click += new System.EventHandler(this.buttonReset_Click);
+      this.buttonDefault.Click += new System.EventHandler(this.buttonDefault_Click);
       // 
       // buttonRemove
       // 
@@ -362,38 +363,38 @@ namespace MediaPortal.InputDevices
       this.beveledLine1.Size = new System.Drawing.Size(574, 2);
       this.beveledLine1.TabIndex = 21;
       // 
-      // applyButton
+      // buttonApply
       // 
-      this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.applyButton.Location = new System.Drawing.Point(348, 437);
-      this.applyButton.Name = "applyButton";
-      this.applyButton.Size = new System.Drawing.Size(75, 23);
-      this.applyButton.TabIndex = 20;
-      this.applyButton.Text = "Apply";
-      this.applyButton.UseVisualStyleBackColor = true;
-      this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
+      this.buttonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonApply.Location = new System.Drawing.Point(348, 437);
+      this.buttonApply.Name = "buttonApply";
+      this.buttonApply.Size = new System.Drawing.Size(75, 23);
+      this.buttonApply.TabIndex = 20;
+      this.buttonApply.Text = "Apply";
+      this.buttonApply.UseVisualStyleBackColor = true;
+      this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
       // 
-      // okButton
+      // buttonOk
       // 
-      this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.okButton.Location = new System.Drawing.Point(428, 437);
-      this.okButton.Name = "okButton";
-      this.okButton.Size = new System.Drawing.Size(75, 23);
-      this.okButton.TabIndex = 19;
-      this.okButton.Text = "OK";
-      this.okButton.UseVisualStyleBackColor = true;
-      this.okButton.Click += new System.EventHandler(this.okButton_Click);
+      this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOk.Location = new System.Drawing.Point(428, 437);
+      this.buttonOk.Name = "buttonOk";
+      this.buttonOk.Size = new System.Drawing.Size(75, 23);
+      this.buttonOk.TabIndex = 19;
+      this.buttonOk.Text = "OK";
+      this.buttonOk.UseVisualStyleBackColor = true;
+      this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
       // 
-      // cancelButton
+      // buttonCancel
       // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelButton.Location = new System.Drawing.Point(507, 437);
-      this.cancelButton.Name = "cancelButton";
-      this.cancelButton.Size = new System.Drawing.Size(75, 23);
-      this.cancelButton.TabIndex = 18;
-      this.cancelButton.Text = "Cancel";
-      this.cancelButton.UseVisualStyleBackColor = true;
+      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+      this.buttonCancel.Location = new System.Drawing.Point(507, 437);
+      this.buttonCancel.Name = "buttonCancel";
+      this.buttonCancel.Size = new System.Drawing.Size(75, 23);
+      this.buttonCancel.TabIndex = 18;
+      this.buttonCancel.Text = "Cancel";
+      this.buttonCancel.UseVisualStyleBackColor = true;
       // 
       // headerLabel
       // 
@@ -690,9 +691,9 @@ namespace MediaPortal.InputDevices
       this.Controls.Add(this.buttonDown);
       this.Controls.Add(this.buttonUp);
       this.Controls.Add(this.beveledLine1);
-      this.Controls.Add(this.applyButton);
-      this.Controls.Add(this.okButton);
-      this.Controls.Add(this.cancelButton);
+      this.Controls.Add(this.buttonApply);
+      this.Controls.Add(this.buttonOk);
+      this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.headerLabel);
       this.Controls.Add(this.groupBoxAction);
       this.Controls.Add(this.groupBoxCondition);
@@ -700,6 +701,7 @@ namespace MediaPortal.InputDevices
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "InputMappingForm";
       this.ShowInTaskbar = false;
+      this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
       this.Text = "MediaPortal - Setup";
       this.groupBoxAction.ResumeLayout(false);
       this.groupBoxAction.PerformLayout();
@@ -713,6 +715,11 @@ namespace MediaPortal.InputDevices
     }
     #endregion
 
+    void CloseThread()
+    {
+      Thread.Sleep(200);
+      this.Close();
+    }
 
     void LoadMapping(string xmlFile, bool defaults)
     {
@@ -726,6 +733,16 @@ namespace MediaPortal.InputDevices
         string path = "InputDeviceMappings\\defaults\\" + xmlFile;
         if (!defaults && File.Exists("InputDeviceMappings\\custom\\" + xmlFile))
           path = "InputDeviceMappings\\custom\\" + xmlFile;
+        if (!File.Exists(path))
+        {
+          MessageBox.Show("Can't locate mapping file " + xmlFile + "\n\nMake sure it exists in /InputDeviceMappings/defaults", "Mapping file missing", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          buttonUp.Enabled = buttonDown.Enabled = buttonNew.Enabled = buttonRemove.Enabled = buttonDefault.Enabled = buttonApply.Enabled = false;
+          this.ShowInTaskbar = true;
+          this.WindowState = FormWindowState.Minimized;
+          Thread closeThread = new Thread(new ThreadStart(CloseThread));
+          closeThread.Start();
+          return;
+        }
         doc.Load(path);
         XmlNodeList listRemotes = doc.DocumentElement.SelectNodes("/mappings/remote");
 
@@ -949,7 +966,7 @@ namespace MediaPortal.InputDevices
                       }
                       condition = (string)((Data)conditionNode.Tag).Parameter;
                       conProperty = ((Data)conditionNode.Tag).Value.ToString();
-                      layer = Convert.ToString( ((Data)layerNode.Tag).Value );
+                      layer = Convert.ToString(((Data)layerNode.Tag).Value);
                       writer.WriteStartElement("action"); // <action>
                       writer.WriteAttributeString("layer", layer);
                       writer.WriteAttributeString("condition", condition);
@@ -1304,7 +1321,7 @@ namespace MediaPortal.InputDevices
     {
       return "ACTION_" + friendlyName.Replace(' ', '_').ToUpper();
     }
-    
+
 
     void CleanAbbreviation(ref string name, string abbreviation)
     {
@@ -1425,14 +1442,14 @@ namespace MediaPortal.InputDevices
       changedSettings = true;
     }
 
-    private void okButton_Click(object sender, System.EventArgs e)
+    private void buttonOk_Click(object sender, System.EventArgs e)
     {
       if (changedSettings)
         SaveMapping(inputClassName + ".xml");
       this.Close();
     }
 
-    private void applyButton_Click(object sender, System.EventArgs e)
+    private void buttonApply_Click(object sender, System.EventArgs e)
     {
       if (changedSettings)
         SaveMapping(inputClassName + ".xml");
@@ -1570,7 +1587,7 @@ namespace MediaPortal.InputDevices
       treeMapping_AfterSelect(this, new TreeViewEventArgs(treeMapping.SelectedNode, TreeViewAction.ByKeyboard));
     }
 
-    private void buttonReset_Click(object sender, System.EventArgs e)
+    private void buttonDefault_Click(object sender, System.EventArgs e)
     {
       if (File.Exists("InputDeviceMappings\\custom\\" + inputClassName + ".xml"))
         File.Delete("InputDeviceMappings\\custom\\" + inputClassName + ".xml");
