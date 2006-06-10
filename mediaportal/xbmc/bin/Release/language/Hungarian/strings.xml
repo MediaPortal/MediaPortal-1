@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<!--  Hungarian Language file updated by Helli Gábor 2006.05.31. --> 
+<!--  Hungarian Language file updated by Helli Gábor 2006.06.07. --> 
 <strings>
 	<characters>512</characters>
 	<string>
@@ -544,7 +544,7 @@
 	</string>
 	<string>
 		<id>204</id>
-		<value>Rating:</value>
+		<value>Értékelés:</value>
 	</string>
 	<string>
 		<id>205</id>
@@ -764,7 +764,7 @@
 	</string>
 	<string>
 		<id>260</id>
-		<value>Korong kiadása</value>
+		<value>Lemez kiadása</value>
 	</string>
 	<string>
 		<id>261</id>
@@ -788,7 +788,7 @@
 	</string>
 	<string>
 		<id>266</id>
-		<value>Rendezés: Track</value>
+		<value>Rendezés: Szám</value>
 	</string>
 	<string>
 		<id>267</id>
@@ -828,7 +828,7 @@
 	</string>
 	<string>
 		<id>276</id>
-		<value>FIGYELEM! – Mozgassa a videót a megfelelő pozícióba 0,0.</value>
+		<value>FIGYELEM! – Mozgasd a videót a megfelelő pozícióba 0,0.</value>
 	</string>
 	<string>
 		<id>277</id>
@@ -836,11 +836,11 @@
 	</string>
 	<string>
 		<id>278</id>
-		<value>Fontos! – Ha szabályos négyszöget lát helyes a beállítás.</value>
+		<value>Fontos! – Ha szabályos négyszöget látsz helyes a beállítás.</value>
 	</string>
 	<string>
 		<id>279</id>
-		<value>Beállításokat nem lehet betölteni</value>
+		<value>A beállításokat nem lehet betölteni</value>
 	</string>
 	<string>
 		<id>280</id>
@@ -848,11 +848,11 @@
 	</string>
 	<string>
 		<id>281</id>
-		<value>Ellenőrizze a(z) .xml fájlt.</value>
+		<value>Ellenőrizd a(z) .xml fájlt.</value>
 	</string>
 	<string>
 		<id>282</id>
-		<value>found %i items</value>
+		<value>találtam %i elemet</value>
 	</string>
 	<string>
 		<id>283</id>
@@ -1144,11 +1144,11 @@
 	</string>
 	<string>
 		<id>355</id>
-		<value>Képernyőpihentető bizonyos idő letelte után</value>
+		<value>Képernyővédő bizonyos idő letelte után</value>
 	</string>
 	<string>
 		<id>356</id>
-		<value>Képernyőpihentető mód</value>
+		<value>Képernyővédő mód</value>
 	</string>
 	<string>
 		<id>357</id>
@@ -1164,7 +1164,7 @@
 	</string>
 	<string>
 		<id>360</id>
-		<value>Képernyőpihentető</value>
+		<value>Képernyővédő</value>
 	</string>
 	<string>
 		<id>361</id>
@@ -1328,7 +1328,7 @@
 	</string>
 	<string>
 		<id>402</id>
-		<value>Atmoszféra:</value>
+		<value>Érzékelt:</value>
 	</string>
 	<string>
 		<id>403</id>
@@ -1348,11 +1348,11 @@
 	</string>
 	<string>
 		<id>407</id>
-		<value>Az</value>
+		<value></value>
 	</string>
 	<string>
 		<id>408</id>
-		<value>szerint:</value>
+		<value>irányú,</value>
 	</string>
 	<string>
 		<id>410</id>
@@ -1768,15 +1768,15 @@
 	</string>
 	<string>
 		<id>530</id>
-		<value>Kép lemezt érzékelek, akarja, hogy lejátszam?</value>
+		<value>Kép lemezt érzékelek, akarod, hogy lejátszam?</value>
 	</string>
 	<string>
 		<id>531</id>
-		<value>Film lemezt érzékelek, akarja, hogy lejátszam?</value>
+		<value>Film lemezt érzékelek, akarod, hogy lejátszam?</value>
 	</string>
 	<string>
 		<id>532</id>
-		<value>Audio lemezt érzékelek, akarja, hogy lejátszam?</value>
+		<value>Audio lemezt érzékelek, akarod, hogy lejátszam?</value>
 	</string>
 	<string>
 		<id>550</id>
@@ -1788,7 +1788,7 @@
 	</string>
 	<string>
 		<id>601</id>
-		<value>Felvétel most</value>
+		<value>Rögzít</value>
 	</string>
 	<string>
 		<id>602</id>
@@ -1800,7 +1800,7 @@
 	</string>
 	<string>
 		<id>604</id>
-		<value>Felvétel TV-ből</value>
+		<value>TV felvételek</value>
 	</string>
 	<string>
 		<id>605</id>
@@ -1912,7 +1912,7 @@
 	</string>
 	<string>
 		<id>632</id>
-		<value>Objektumok</value>
+		<value>Objektum</value>
 	</string>
 	<string>
 		<id>633</id>
@@ -2000,7 +2000,7 @@
 	</string>
 	<string>
 		<id>654</id>
-		<value>Korong kiadása</value>
+		<value>Lemez kiadása</value>
 	</string>
 	<string>
 		<id>655</id>
@@ -2296,7 +2296,7 @@
 	</string>
 	<string>
 		<id>736</id>
-		<value>Nem áll rendelkezésre műsorfüzet</value>
+		<value>Műsorfüzet nem áll rendelkezésre!</value>
 	</string>
 	<string>
 		<id>737</id>
@@ -2328,19 +2328,19 @@
 	</string>
 	<string>
 		<id>744</id>
-		<value>Napfelkelte:</value>
+		<value>Napkelte:</value>
 	</string>
 	<string>
 		<id>745</id>
-		<value>Nap beállítása:</value>
+		<value>Napnyukta:</value>
 	</string>
 	<string>
 		<id>746</id>
-		<value>Max. hőmérséklet:</value>
+		<value>magas</value>
 	</string>
 	<string>
 		<id>747</id>
-		<value>Min. hőmérséklet:</value>
+		<value>alacsony</value>
 	</string>
 	<string>
 		<id>748</id>
@@ -2556,7 +2556,7 @@
 	</string>
 	<string>
 		<id>890</id>
-		<value>CD lejátszása</value>
+		<value>Lemez lejátszása</value>
 	</string>
 	<string>
 		<id>891</id>
@@ -2596,7 +2596,7 @@
 	</string>
 	<string>
 		<id>900</id>
-		<value>Film folytatása az utolsó időponttól?</value>
+		<value>Folytatás az utolsó időponttól?</value>
 	</string>
 	<string>
 		<id>901</id>
@@ -2960,23 +2960,23 @@
 	</string>
 	<string>
 		<id>999</id>
-		<value>Ez a plugin engedélyezi az átkódolást</value>
+		<value>Itt lehetőség van a felvételek áttömörítésére</value>
 	</string>
 	<string>
 		<id>1000</id>
-		<value>TV felvétel dvr-ms-ből mpg-be, xvid vagy wmv</value>
+		<value>dvr-ms-ből mpg-be vagy xvid-be, wmv-be.</value>
 	</string>
 	<string>
 		<id>1001</id>
-		<value>Kérem figyeljen. Önnek installálnia kell az</value>
+		<value>Az Xvid-be való áttömörítéshez szükséges az</value>
 	</string>
 	<string>
 		<id>1002</id>
-		<value>Elecard MPEG2 video decoder-t</value>
+		<value>Elecard MPEG2 video decoder feltelepítésére</value>
 	</string>
 	<string>
 		<id>1003</id>
-		<value>az Xvid átkódoláshoz</value>
+		<value>a gépre.</value>
 	</string>
 	<string>
 		<id>1004</id>
@@ -3144,7 +3144,7 @@
 	</string>
 	<string>
 		<id>1047</id>
-		<value>Teljes képernyővel indul</value>
+		<value>Teljes képernyővel indít</value>
 	</string>
 	<string>
 		<id>1048</id>
@@ -3564,7 +3564,7 @@
 	</string>
 	<string>
 		<id>2116</id>
-		<value>Meghajtó nem áll készen</value>
+		<value>A meghajtó nem áll készen!</value>
 	</string>
 	<string>
 		<id>2117</id>
@@ -3940,7 +3940,7 @@
 	</string>
 	<string>
 		<id>5917</id>
-		<value>Nmet elzetesek</value>
+		<value>Német előzetesek</value>
 	</string>
 	<string>
 		<id>8000</id>
@@ -4712,7 +4712,7 @@
 	</string>
 	<string>
 		<id>102900</id>
-		<value>Képernyőpihentető</value>
+		<value>Képernyővédő</value>
 	</string>
 	<string>
 		<id>102901</id>
@@ -5323,11 +5323,11 @@
   <!-- Begin Playing Now Strings -->
 <string>
     <id>4540</id>
-    <value>Jelenlegi lejátszása</value>
+    <value>Aktuállis szám</value>
   </string>  
 <string>
     <id>4541</id>
-    <value>Következő lejátszása</value>
+    <value>Következő szám</value>
   </string>
 <string>
     <id>4542</id>
@@ -5335,7 +5335,7 @@
   </string>
 <string>
     <id>4543</id>
-    <value>Szám információk nem állnak rendelkezésre</value>
+    <value>Nem áll rendelkezésre szám információ!</value>
   </string>  
   <!-- End Playing Now Strings -->
   <!-- Begin Addtional MyMusic Strings -->
@@ -5345,11 +5345,11 @@
   </string>  
 <string>
     <id>4551</id>
-    <value>Következő lejátszása</value>
+    <value>Következő szám</value>
   </string>  
 <string>
     <id>4552</id>
-    <value>Jelenlegi lejátszása</value>
+    <value>Aktuállis szám</value>
   </string>  
 <string>
     <id>4553</id>
@@ -5361,11 +5361,11 @@
   </string>  
 <string>
     <id>4555</id>
-    <value>Jelenlegi lejátszás lista</value>
+    <value>Aktu. lejátszási lista</value>
   </string>  
 <string>
     <id>4557</id>
-    <value>Add all to playlist</value>
+    <value>Összeset a lejátszási listához</value>
 </string>  
   <!-- End Addtional MyMusic Strings -->
   <!-- Begin Minesweeper Strings -->
