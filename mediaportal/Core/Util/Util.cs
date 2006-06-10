@@ -1930,7 +1930,13 @@ namespace MediaPortal.Util
           {
             if (fileName.ToLower().IndexOf(filename) >= 0)
             {
+              //delete all Timeshift buffer files
               if (fileName.ToLower().IndexOf(".sbe") >= 0)
+              {
+                System.IO.File.Delete(fileName);
+              }
+              //delete Thumbnails
+              if ( fileName.ToLower().IndexOf(".jpg") >= 0 )
               {
                 System.IO.File.Delete(fileName);
               }
