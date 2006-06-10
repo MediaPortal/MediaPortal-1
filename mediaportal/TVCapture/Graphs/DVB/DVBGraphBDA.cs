@@ -1903,8 +1903,8 @@ namespace MediaPortal.TV.Recording
               myTuneRequest.Locator = (TunerLib.Locator)myLocator;
               //Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:SubmitTuneRequest() submit tuning request");
               myTuner.TuneRequest = newTuneRequest;
-              //Marshal.ReleaseComObject(myTuneRequest);
-
+              Marshal.ReleaseComObject(myTuneRequest);
+              Marshal.ReleaseComObject(newTuneRequest);
 
             } break;
 
