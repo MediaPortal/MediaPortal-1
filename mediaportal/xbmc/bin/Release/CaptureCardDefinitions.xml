@@ -9644,8 +9644,6 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"     name="ATI T200 AVStream Analog Tuner"     checkdevice="false"/>
-        <filter cat="tvaudio"     name="ATI T200 AVStream Analog TV Audio"  checkdevice="false"/>
         <filter cat="crossbar"    name="ATI T200 AVStream Analog Xbar"      checkdevice="true"/>
         <filter cat="capture"     name="ATI T200 AVStream Analog Capture"   checkdevice="true"/>
         <filter cat="audcapture"  name="%soundcard%"                        checkdevice="true"/>
