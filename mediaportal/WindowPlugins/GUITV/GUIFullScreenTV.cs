@@ -413,10 +413,16 @@ namespace MediaPortal.GUI.TV
             }
             else
             {
-              if (!GUIWindowManager.IsRouted)
-              {
-                GUITVHome.OnLastViewedChannel();
-              }
+              GUIMiniGuide miniGuide = (GUIMiniGuide)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MINI_GUIDE);
+              _isDialogVisible = true;
+              miniGuide.DoModal(GetID);
+              _isDialogVisible = false;
+
+              // LastChannel has been moved to "0"
+              //if (!GUIWindowManager.IsRouted)
+              //{
+              //  GUITVHome.OnLastViewedChannel();
+              //}
             }
           }
           break;
@@ -1952,6 +1958,11 @@ namespace MediaPortal.GUI.TV
       {
         Action showInfo = new Action(Action.ActionType.ACTION_SHOW_CURRENT_TV_INFO, 0, 0);
         OnAction(showInfo);
+        return;
+      }
+      if (chKey == '0' && !_channelInputVisible)
+      {
+        GUITVHome.OnLastViewedChannel();
         return;
       }
       if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
