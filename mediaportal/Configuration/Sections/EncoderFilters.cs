@@ -40,27 +40,27 @@ namespace MediaPortal.Configuration.Sections
 
     private void InitializeComponent()
     {
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EncoderFiltersSection));
-        this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-        this.SuspendLayout();
-        // 
-        // mpLabel1
-        // 
-        this.mpLabel1.AutoSize = true;
-        this.mpLabel1.Location = new System.Drawing.Point(42, 51);
-        this.mpLabel1.MaximumSize = new System.Drawing.Size(400, 0);
-        this.mpLabel1.Name = "mpLabel1";
-        this.mpLabel1.Size = new System.Drawing.Size(388, 39);
-        this.mpLabel1.TabIndex = 0;
-        this.mpLabel1.Text = resources.GetString("mpLabel1.Text");
-        // 
-        // EncoderFiltersSection
-        // 
-        this.Controls.Add(this.mpLabel1);
-        this.Name = "EncoderFiltersSection";
-        this.Size = new System.Drawing.Size(472, 408);
-        this.ResumeLayout(false);
-        this.PerformLayout();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EncoderFiltersSection));
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.SuspendLayout();
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.Location = new System.Drawing.Point(42, 51);
+      this.mpLabel1.MaximumSize = new System.Drawing.Size(400, 0);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(385, 52);
+      this.mpLabel1.TabIndex = 0;
+      this.mpLabel1.Text = resources.GetString("mpLabel1.Text");
+      // 
+      // EncoderFiltersSection
+      // 
+      this.Controls.Add(this.mpLabel1);
+      this.Name = "EncoderFiltersSection";
+      this.Size = new System.Drawing.Size(472, 408);
+      this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 

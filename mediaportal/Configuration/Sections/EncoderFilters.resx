@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="mpLabel1.Text" xml:space="preserve">
-    <value>The settings here adjust the recording quality of Software Encoding cards. We support the CyberLink and InterVideo MPEG Encoders. These are obtained from common applications such as PowerCinema and WinDVR 3 respecively.</value>
+    <value>The settings here adjust the recording quality of Software Encoding cards. MediaPortal supports the CyberLink and InterVideo MPEG Encoders. These are obtained from common applications such as PowerCinema and WinDVR 3 respectively.</value>
   </data>
 </root>
