@@ -1175,7 +1175,7 @@ namespace MediaPortal.GUI.TV
       dlg.Reset();
       dlg.SetHeading(924); // menu
 
-      dlg.AddLocalizedString(10104); // TV MiniEPG
+      //dlg.AddLocalizedString(10104); // TV MiniEPG
       //dlg.AddLocalizedString(915); // TV Channels
       dlg.AddLocalizedString(4); // TV Guide
 
@@ -1214,14 +1214,14 @@ namespace MediaPortal.GUI.TV
             _isDialogVisible = false;
             break;
           }
-        case 10104: // MiniEPG
-          {
-            GUIMiniGuide miniGuide = (GUIMiniGuide)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MINI_GUIDE);
-            _isDialogVisible = true;
-            miniGuide.DoModal(GetID);
-            _isDialogVisible = false;
-            break;
-          }
+        //case 10104: // MiniEPG
+        //  {
+        //    GUIMiniGuide miniGuide = (GUIMiniGuide)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_MINI_GUIDE);
+        //    _isDialogVisible = true;
+        //    miniGuide.DoModal(GetID);
+        //    _isDialogVisible = false;
+        //    break;
+        //  }
 
         //TV Channels not needed anymore after MiniEPG
         /*case 915: //TVChannels
