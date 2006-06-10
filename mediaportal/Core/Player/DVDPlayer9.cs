@@ -97,18 +97,11 @@ namespace MediaPortal.Player
             if (codecValue == 1)
             {
               Log.Write("DVDPlayer9:Turning InterVideo DXVA off");
-              using (RegistryKey hkcu = Registry.CurrentUser)
-              {
-                using (RegistryKey subkey = hkcu.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal"))
-                {
-                  subkey.SetValue("DXVA", 0);
-                }
-              }
+              using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal"))
+                subkey.SetValue("DXVA", 0);
             }
             if (codecValue == 0)
-            {
               Log.Write("DVDPlayer9:InterVideo DXVA already off");
-            }
           }
           if (codecType == "CyberLink Video/SP Decoder")
           {
@@ -116,18 +109,11 @@ namespace MediaPortal.Player
             if (codecValue == 1)
             {
               Log.Write("DVDPlayer9:Turning CyberLink DXVA off");
-              using (RegistryKey hkcu2 = Registry.CurrentUser)
-              {
-                using (RegistryKey subkey2 = hkcu2.CreateSubKey(@"Software\Cyberlink\Common\CLVSD\MediaPortal"))
-                {
-                  subkey2.SetValue("UIUseHVA", 0);
-                }
-              }
+              using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Cyberlink\Common\CLVSD\MediaPortal"))
+                subkey.SetValue("UIUseHVA", 0);
             }
             if (codecValue == 0)
-            {
               Log.Write("DVDPlayer9:CyberLink DXVA already off");
-            }
           }
           if (codecType == "NVIDIA Video Decoder")
           {
@@ -135,18 +121,11 @@ namespace MediaPortal.Player
             if (codecValue == 1)
             {
               Log.Write("DVDPlayer9:Turning NVIDIA DXVA off");
-              using (RegistryKey hklm = Registry.LocalMachine)
-              {
-                using (RegistryKey subkey3 = hklm.CreateSubKey(@"Software\NVIDIA Corporation\Filters\Video"))
-                {
-                  subkey3.SetValue("EnableDXVA", 0);
-                }
-              }
+              using (RegistryKey subkey = Registry.LocalMachine.CreateSubKey(@"Software\NVIDIA Corporation\Filters\Video"))
+                subkey.SetValue("EnableDXVA", 0);
             }
             if (codecValue == 0)
-            {
               Log.Write("DVDPlayer9:NVIDIA DXVA already off");
-            }
           }
         }
       }
@@ -311,37 +290,22 @@ namespace MediaPortal.Player
         {
           codecValue = xmlreader.GetValueAsInt("videocodec", "intervideo", 1);
           Log.Write("DVDPlayer9:Resetting InterVideo DXVA to {0}", codecValue);
-          using (RegistryKey hkcu = Registry.CurrentUser)
-          {
-            using (RegistryKey subkey = hkcu.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal"))
-            {
-              subkey.SetValue("DXVA", codecValue);
-            }
-          }
+          using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\InterVideo\Common\VideoDec\MediaPortal"))
+            subkey.SetValue("DXVA", codecValue);
         }
         if (codecType == "CyberLink Video/SP Decoder")
         {
           codecValue = xmlreader.GetValueAsInt("videocodec", "cyberlink", 1);
           Log.Write("DVDPlayer9:Resetting CyberLink DXVA to {0}", codecValue);
-          using (RegistryKey hkcu2 = Registry.CurrentUser)
-          {
-            using (RegistryKey subkey2 = hkcu2.CreateSubKey(@"Software\Cyberlink\Common\CLVSD\MediaPortal"))
-            {
-              subkey2.SetValue("UIUseHVA", codecValue);
-            }
-          }
+          using (RegistryKey subkey = Registry.CurrentUser.CreateSubKey(@"Software\Cyberlink\Common\CLVSD\MediaPortal"))
+            subkey.SetValue("UIUseHVA", codecValue);
         }
         if (codecType == "NVIDIA Video Decoder")
         {
           codecValue = xmlreader.GetValueAsInt("videocodec", "nvidia", 1);
           Log.Write("DVDPlayer9:Resetting NVIDIA DXVA to {0}", codecValue);
-          using (RegistryKey hklm = Registry.LocalMachine)
-          {
-            using (RegistryKey subkey3 = hklm.CreateSubKey(@"Software\NVIDIA Corporation\Filters\Video"))
-            {
-              subkey3.SetValue("EnableDXVA", codecValue);
-            }
-          }
+          using (RegistryKey subkey = Registry.LocalMachine.CreateSubKey(@"Software\NVIDIA Corporation\Filters\Video"))
+            subkey.SetValue("EnableDXVA", codecValue);
         }
       }
       try
