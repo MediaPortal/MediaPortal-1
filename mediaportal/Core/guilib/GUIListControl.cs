@@ -505,61 +505,55 @@ namespace MediaPortal.GUI.Library
       GUIListItem pItem = _listItems[buttonNr + _offset];
       long dwColor = _textColor;
       if (pItem.Shaded)
-      {
         dwColor = ShadedColor;
-      }
-      //if (pItem.Selected)
+
 			if (gotFocus && Focus)
-      {
         dwColor = _selectedColor;
-      }
 
       dwPosX += _textOffsetX;
       bool bSelected = false;
       if (buttonNr == _cursorX && IsFocused && _listType == ListType.CONTROL_LIST)
-      {
         bSelected = true;
-      }
-      
-      int dMaxWidth = (_width - _textOffsetX -_imageWidth - GUIGraphicsContext.ScaleHorizontal(20));
-      if (_text2Visible && pItem.Label2.Length > 0)
-      {
-        if (_textOffsetY == _textOffsetY2)
-        {
-          dwColor = _textColor2;
-          //if (pItem.Selected)
-					if (gotFocus && Focus)
-          {
-            dwColor = _selectedColor2;
-          }
-          if (pItem.IsRemote)
-          {
-            dwColor = _remoteColor;
-            if (pItem.IsDownloading) dwColor = _downloadColor;
-          }
-          int xpos = dwPosX;
-          int ypos = dwPosY;
-          if (0 == _textOffsetX2)
-            xpos = _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16);
-          else
-            xpos = _positionX + _textOffsetX2;
 
-          if (_labelControls2 != null)
+      int dMaxWidth = (_width - _textOffsetX - _imageWidth - GUIGraphicsContext.ScaleHorizontal(20));
+      if ((_text2Visible && pItem.Label2.Length > 0) &&
+        (_textOffsetY == _textOffsetY2))
+      {
+        dwColor = _textColor2;
+
+        if (gotFocus && Focus)
+          dwColor = _selectedColor2;
+
+        if (pItem.IsRemote)
+        {
+          dwColor = _remoteColor;
+          if (pItem.IsDownloading) dwColor = _downloadColor;
+        }
+        int xpos = dwPosX;
+        int ypos = dwPosY;
+
+        if (0 == _textOffsetX2)
+          xpos = _positionX + _width - GUIGraphicsContext.ScaleHorizontal(16);
+        else
+          xpos = _positionX + _textOffsetX2;
+
+        if ((_labelControls2 != null) &&
+          (buttonNr >= 0) && (buttonNr < _labelControls2.Count))
+        {
+          GUILabelControl label2 = _labelControls2[buttonNr];
+          if (label2 != null)
           {
-            if (buttonNr >= 0 && buttonNr < _labelControls2.Count)
-            {
-              GUILabelControl label2 = _labelControls2[buttonNr];
-              if (label2 != null)
-              {
-                label2.SetPosition(xpos, ypos + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
-                if (gotFocus || !Focus) label2.TextColor = dwColor;
-                else                    label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-                label2.Label = pItem.Label2;
-                label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
-                label2.FontName = _fontName2Name;
-                dMaxWidth -= (label2.TextWidth + GUIGraphicsContext.ScaleHorizontal(20));
-              }
-            }
+            label2.SetPosition(xpos, ypos + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
+
+            if (gotFocus || !Focus)
+              label2.TextColor = dwColor;
+            else
+              label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+
+            label2.Label = pItem.Label2;
+            label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
+            label2.FontName = _fontName2Name;
+            dMaxWidth -= (label2.TextWidth + GUIGraphicsContext.ScaleHorizontal(20));
           }
         }
       }
@@ -568,29 +562,27 @@ namespace MediaPortal.GUI.Library
       if (_text1Visible)
       {
         dwColor = _textColor;
-				if (gotFocus && Focus)
-				//if (pItem.Selected)
-        {
+
+        if (gotFocus && Focus)
           dwColor = _selectedColor;
-        }
 
         if (pItem.IsRemote)
         {
           dwColor = _remoteColor;
           if (pItem.IsDownloading) dwColor = _downloadColor;
         }
-        if (!gotFocus && Focus) dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+        if (!gotFocus && Focus)
+          dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+
         RenderText(timePassed, buttonNr, (float)dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, (float)dMaxWidth, dwColor, _textLine, bSelected);
-      } //if (_text1Visible)
+      }
 
       if (pItem.Label2.Length > 0)
       {
         dwColor = _textColor2;
-				if (gotFocus && Focus)
-				//if (pItem.Selected)
-        {
+
+        if (gotFocus && Focus)
           dwColor = _selectedColor2;
-        }
 
         if (pItem.IsRemote)
         {
@@ -604,76 +596,74 @@ namespace MediaPortal.GUI.Library
           dwPosX = _positionX + _textOffsetX2;
 
         _textLine = pItem.Label2;
-        if (_text2Visible)
+
+        if (_text2Visible &&
+          (_labelControls2 != null) &&
+          (buttonNr >= 0) && (buttonNr < _labelControls2.Count))
         {
-          if (_labelControls2 != null)
+          GUILabelControl label2 = _labelControls2[buttonNr];
+          if (label2 != null)
           {
-            if (buttonNr >= 0 && buttonNr < _labelControls2.Count)
-            {
-              GUILabelControl label2 = _labelControls2[buttonNr];
-              if (label2 != null)
-              {
-                label2.SetPosition(dwPosX-GUIGraphicsContext.ScaleHorizontal(6), dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
-                if (gotFocus || !Focus)  label2.TextColor = dwColor;
-                else                     label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-                label2.Label = _textLine;
-                label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
-                label2.FontName = _fontName2Name;
-                label2.Render(timePassed);
-                label2 = null;
-                //_font.DrawText((float)dwPosX, (float)dwPosY + 2 + _textOffsetY2, dwColor, _textLine, GUIControl.Alignment.ALIGN_RIGHT);
-              } //if (label2!=null)
-            } //if (i>=0 && i < _labelControls2.Count)
-          } //if (_labelControls2!=null)
-        } //if (_text2Visible)
-      } //if (pItem.Label2.Length > 0)	
+            label2.SetPosition(dwPosX - GUIGraphicsContext.ScaleHorizontal(6), dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY2);
+            if (gotFocus || !Focus) label2.TextColor = dwColor;
+            else label2.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+            label2.Label = _textLine;
+            label2.TextAlignment = GUIControl.Alignment.ALIGN_RIGHT;
+            label2.FontName = _fontName2Name;
+            label2.Render(timePassed);
+            label2 = null;
+          }
+        }
+      }
+
       if (pItem.Label3.Length > 0)
       {
         dwColor = _textColor3;
-				if (gotFocus && Focus)
-				//if (pItem.Selected)
-        {
+
+        if (gotFocus && Focus)
           dwColor = _selectedColor3;
-        }
 
         if (pItem.IsRemote)
         {
           dwColor = _remoteColor;
           if (pItem.IsDownloading) dwColor = _downloadColor;
         }
+
         if (0 == _textOffsetX3)
           dwPosX = _positionX + _textOffsetX;
         else
           dwPosX = _positionX + _textOffsetX3;
 
         int ypos = dwPosY;
+
         if (0 == _textOffsetY3)
           ypos += _textOffsetY2;
         else
           ypos += _textOffsetY3;
-        if (_text3Visible)
+
+        if (_text3Visible &&
+          (_labelControls3 != null) &&
+          (buttonNr >= 0) && (buttonNr < _labelControls3.Count))
         {
-          if (_labelControls3 != null)
+          GUILabelControl label3 = _labelControls3[buttonNr];
+
+          if (label3 != null)
           {
-            if (buttonNr >= 0 && buttonNr < _labelControls3.Count)
-            {
-              GUILabelControl label3 = _labelControls3[buttonNr];
-              if (label3 != null)
-              {
-                label3.SetPosition(dwPosX, ypos);
-                if (gotFocus || !Focus) label3.TextColor = dwColor;
-                else                    label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
-                label3.Label = pItem.Label3;
-                label3.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
-                label3.FontName = _fontName3Name;
-                label3.Render(timePassed);
-                label3 = null;
-                //_font.DrawText((float)dwPosX, (float)ypos, dwColor, pItem.Label3, GUIControl.Alignment.ALIGN_LEFT);
-              } //if (label3!=null)
-            } //if (i>=0 && i < _labelControls3.Count)
-          } //if (_labelControls3!=null)
-        } //if (_text3Visible)
-      } //if (pItem.Label3.Length > 0)
+            label3.SetPosition(dwPosX, ypos);
+            if (gotFocus || !Focus)
+              label3.TextColor = dwColor;
+            else
+              label3.TextColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
+            label3.Label = pItem.Label3;
+            label3.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
+            label3.FontName = _fontName3Name;
+            label3.Width = (_width - _textOffsetX - _imageWidth - GUIGraphicsContext.ScaleHorizontal(34));
+
+            RenderText(timePassed, buttonNr, label3, bSelected);
+            label3 = null;
+          }
+        }
+      }
       pItem = null;
     }
 
@@ -780,59 +770,86 @@ namespace MediaPortal.GUI.Library
     /// <param name="fPosY">The Y position of the text.</param>
     /// <param name="fMaxWidth">The maximum render width.</param>
     /// <param name="dwTextColor">The color of the text.</param>
+    /// <param name="labelNumber">The number of the label (1 or 3)</param>
     /// <param name="strTextToRender">The actual text.</param>
     /// <param name="bScroll">A bool indication if there is scrolling or not.</param>
     protected void RenderText(float timePassed, int Item, float fPosX, float fPosY, float fMaxWidth, long dwTextColor, string strTextToRender, bool bScroll)
     {
       // TODO Unify render text methods into one general rendertext method.
-      if (_labelControls1 == null) return;
-      if (Item < 0 || Item >= _labelControls1.Count) return;
+      if (_labelControls1 == null)
+        return;
+      if (Item < 0 || Item >= _labelControls1.Count)
+        return;
 
-      GUILabelControl label1 = _labelControls1[Item];
-      if (label1 == null) return;
-      label1.SetPosition((int)fPosX, (int)fPosY);
-      label1.TextColor = dwTextColor;
-      label1.Label = strTextToRender;
-      label1.Width = (int)fMaxWidth;
-      label1.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
-      label1.FontName = _fontName;
-      if (false == bScroll)
+      GUILabelControl label = _labelControls1[Item];
+      if (label == null) return;
+      label.SetPosition((int)fPosX, (int)fPosY);
+      label.TextColor = dwTextColor;
+      label.Label = strTextToRender;
+      label.Width = (int)fMaxWidth;
+      label.TextAlignment = GUIControl.Alignment.ALIGN_LEFT;
+      label.FontName = _fontName;
+      RenderText(timePassed, Item, label, bScroll);
+    }
+
+    /// <summary>
+    /// Renders the text.
+    /// </summary>
+    /// <param name="label">The label to render</param>
+    /// <param name="bScroll">A bool indication if there is scrolling or not.</param>
+    protected void RenderText(float timePassed, int Item, GUILabelControl label, bool bScroll)
+    {
+      float fPosX = label._positionX;
+      float fPosY = label._positionY;
+      float fMaxWidth = label.Width;
+      long dwTextColor = label.TextColor;
+      string strTextToRender = label.Label;
+      GUIFont font = GUIFontManager.GetFont(label.FontName);
+
+      if (!bScroll ||
+        (label.TextWidth <= fMaxWidth))
       {
         // don't scroll here => x-position is constant
-        label1.Render(timePassed);
+        label.Render(timePassed);
         return;
       }
 
-
-      if (label1.TextWidth <= fMaxWidth)
-      {
-        label1.Render(timePassed);
-        return;
-      }
-
-
-      float fTextHeight = 0, fTextWidth = 0;
-      _font.GetTextExtent(strTextToRender, ref fTextWidth, ref fTextHeight);
+      float fTextHeight = 0;
+      float fTextWidth = 0;
+      font.GetTextExtent(strTextToRender, ref fTextWidth, ref fTextHeight);
       float fWidth = 0;
 
       float fPosCX = fPosX;
       float fPosCY = fPosY;
       GUIGraphicsContext.Correct(ref fPosCX, ref fPosCY);
-      if (fPosCX < 0) fPosCX = 0.0f;
-      if (fPosCY < 0) fPosCY = 0.0f;
-      if (fPosCY > GUIGraphicsContext.Height) fPosCY = (float)GUIGraphicsContext.Height;
+
+      if (fPosCX < 0)
+        fPosCX = 0.0f;
+      if (fPosCY < 0)
+        fPosCY = 0.0f;
+
+      if (fPosCY > GUIGraphicsContext.Height)
+        fPosCY = (float)GUIGraphicsContext.Height;
+
       float fHeight = 60.0f;
       if (fHeight + fPosCY >= GUIGraphicsContext.Height)
         fHeight = GUIGraphicsContext.Height - fPosCY - 1;
-      if (fHeight <= 0) return;
+      if (fHeight <= 0)
+        return;
 
-      float fwidth = fMaxWidth - 5.0f;
+      //float fwidth = fMaxWidth - 5.0f;
+      float fwidth = fMaxWidth + 6f;
 
-      if (fwidth < 1) return;
-      if (fHeight < 1) return;
+      if (fwidth < 1)
+        return;
+      if (fHeight < 1)
+        return;
 
-      if (fPosCX <= 0) fPosCX = 0;
-      if (fPosCY <= 0) fPosCY = 0;
+      if (fPosCX <= 0)
+        fPosCX = 0;
+      if (fPosCY <= 0)
+        fPosCY = 0;
+
       Viewport newviewport, oldviewport;
       newviewport = new Viewport();
       oldviewport = GUIGraphicsContext.DX9Device.Viewport;
@@ -843,89 +860,78 @@ namespace MediaPortal.GUI.Library
       newviewport.MinZ = 0.0f;
       newviewport.MaxZ = 1.0f;
       GUIGraphicsContext.DX9Device.Viewport = newviewport;
+      // scroll
+      int iItem = _cursorX + _offset;
+      _brackedText = strTextToRender;
+      _brackedText += ("  " + _suffix + " ");
+      font.GetTextExtent(_brackedText, ref fTextWidth, ref fTextHeight);
+
+      if (fTextWidth > fMaxWidth)
       {
-        // scroll
-        int iItem = _cursorX + _offset;
-        _brackedText = strTextToRender;
-        _brackedText += (" " + _suffix + " ");
-        _font.GetTextExtent(_brackedText, ref fTextWidth, ref fTextHeight);
-
-        if (fTextWidth > fMaxWidth)
+        // scrolling necessary
+        fMaxWidth += 50.0f;
+        _textLine2 = "";
+        if (_lastItem != iItem)
         {
-          // scrolling necessary
-          fMaxWidth += 50.0f;
-          _textLine2 = "";
-          if (_lastItem != iItem)
-          {
-            _scrollPosition = 0;
-            _lastItem = iItem;
-            _scrollPosititionX = 0;
-            _scrollOffset = 0.0f;
-            _currentFrame = 0;
-            _timeElapsed = 0.0f;
-            _scrollContinuosly = false;
-          }
-          if ((_currentFrame > 25 + 12) || _scrollContinuosly)
-          {
-            if (_scrollContinuosly)
-            {
-              _scrollPosititionX = _currentFrame;
-            }
-            else
-            {
-              _scrollPosititionX = _currentFrame - (25 + 12);
-            }
-            char wTmp;
-            if (_scrollPosition >= _brackedText.Length)
-              wTmp = ' ';
-            else
-              wTmp = _brackedText[_scrollPosition];
-
-            _font.GetTextExtent(wTmp.ToString(), ref fWidth, ref fHeight);
-            if (_scrollPosititionX - _scrollOffset >= fWidth)
-            {
-              ++_scrollPosition;
-              if (_scrollPosition > _brackedText.Length)
-              {
-                _scrollPosition = 0;
-                _scrollPosititionX = 0;
-                _scrollOffset = 0.0f;
-                _currentFrame = 0;
-                _timeElapsed = 0.0f;
-                _scrollContinuosly = true;
-              }
-              else
-              {
-                _scrollOffset += fWidth;
-              }
-            }
-            int ipos = 0;
-            for (int i = 0; i < _brackedText.Length; i++)
-            {
-              if (i + _scrollPosition < _brackedText.Length)
-                _textLine2 += _brackedText[i + _scrollPosition];
-              else
-              {
-                if (ipos == 0) _textLine2 += ' ';
-                else _textLine2 += _brackedText[ipos - 1];
-                ipos++;
-              }
-            }
-            if (fPosY >= 0.0)
-            {
-              //              _font.DrawText((int) (fPosX - _scrollPosititionX + _scrollOffset), fPosY, dwTextColor, _textLine2, GUIControl.Alignment.ALIGN_LEFT, (int) (fMaxWidth - 50f));
-              _font.DrawText((int)(fPosX - _scrollPosititionX + _scrollOffset), fPosY, dwTextColor, _textLine2, GUIControl.Alignment.ALIGN_LEFT, (int)(fMaxWidth - 50f + _scrollPosititionX - _scrollOffset));
-            }
-          }
-          else
-          {
-            if (fPosY >= 0.0)
-              _font.DrawText(fPosX, fPosY, dwTextColor, strTextToRender, GUIControl.Alignment.ALIGN_LEFT, (int)(fMaxWidth - 50f));
-          }
+          _scrollPosition = 0;
+          _lastItem = iItem;
+          _scrollPosititionX = 0;
+          _scrollOffset = 0.0f;
+          _currentFrame = 0;
+          _timeElapsed = 0.0f;
+          _scrollContinuosly = false;
         }
+        if ((_currentFrame > 25 + 12) || _scrollContinuosly)
+        {
+          if (_scrollContinuosly)
+            _scrollPosititionX = _currentFrame;
+          else
+            _scrollPosititionX = _currentFrame - (25 + 12);
+
+          char wTmp;
+          if (_scrollPosition >= _brackedText.Length)
+            wTmp = ' ';
+          else
+            wTmp = _brackedText[_scrollPosition];
+
+          font.GetTextExtent(wTmp.ToString(), ref fWidth, ref fHeight);
+          if (_scrollPosititionX - _scrollOffset >= fWidth)
+          {
+            ++_scrollPosition;
+            if (_scrollPosition > _brackedText.Length)
+            {
+              _scrollPosition = 0;
+              _scrollPosititionX = 0;
+              _scrollOffset = 0.0f;
+              _currentFrame = 0;
+              _timeElapsed = 0.0f;
+              _scrollContinuosly = true;
+            }
+            else
+              _scrollOffset += fWidth;
+          }
+          int ipos = 0;
+          for (int i = 0; i < _brackedText.Length; i++)
+            if (i + _scrollPosition < _brackedText.Length)
+              _textLine2 += _brackedText[i + _scrollPosition];
+            else
+            {
+              if (ipos == 0)
+                _textLine2 += ' ';
+              else
+                _textLine2 += _brackedText[ipos - 1];
+              ipos++;
+            }
+
+          if (fPosY >= 0.0)
+            font.DrawText((int)(fPosX - _scrollPosititionX + _scrollOffset),
+              fPosY, dwTextColor, _textLine2, GUIControl.Alignment.ALIGN_LEFT,
+              (int)(fMaxWidth - 50f + _scrollPosititionX - _scrollOffset));
+        }
+        else if (fPosY >= 0.0)
+          font.DrawText(fPosX, fPosY, dwTextColor, strTextToRender, GUIControl.Alignment.ALIGN_LEFT, (int)(fMaxWidth - 50f));
       }
       GUIGraphicsContext.DX9Device.Viewport = oldviewport;
-
     }
 
     /// <summary>
