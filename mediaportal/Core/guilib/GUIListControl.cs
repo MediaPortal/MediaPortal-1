@@ -284,7 +284,7 @@ namespace MediaPortal.GUI.Library
       _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth, _spinControlHeight, _upTextureName, _downTextureName, _upTextureNameFocus, _downTextureNameFocus, _fontName, _colorSpinColor, GUISpinControl.SpinType.SPIN_CONTROL_TYPE_INT, GUIControl.Alignment.ALIGN_LEFT);
       _upDownControl.ParentControl = this;
       _upDownControl.DimColor = DimColor;
-      
+
       _verticalScrollbar = new GUIverticalScrollbar(_controlId, 0, 5 + _positionX + _width, _positionY, 15, _height, _scrollbarBackgroundName, _scrollbarTopName, _scrollbarBottomName);
       _verticalScrollbar.ParentControl = this;
       _verticalScrollbar.SendNotifies = false;
@@ -312,7 +312,7 @@ namespace MediaPortal.GUI.Library
     protected void OnSelectionChanged()
     {
       if (!IsVisible) return;
-      
+
       _scrollPosition = 0;
       _scrollPosititionX = 0;
       _lastItem = -1;
@@ -419,7 +419,7 @@ namespace MediaPortal.GUI.Library
           if (btn != null)
           {
             if (gotFocus || !Focus) btn.ColourDiffuse = 0xffffffff;
-            else                    btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+            else btn.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
             btn.Focus = gotFocus;
             btn.SetPosition(x, y);
             btn.Render(timePassed);
@@ -455,7 +455,7 @@ namespace MediaPortal.GUI.Library
         pImage.Height = _imageHeight;
         pImage.SetPosition(x, y);
         if (gotFocus || !Focus) pImage.ColourDiffuse = 0xffffffff;
-        else                    pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+        else pImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
         pImage.DimColor = DimColor;
         pImage.Render(timePassed);
         pImage = null;
@@ -492,7 +492,7 @@ namespace MediaPortal.GUI.Library
           pinImage.SetPosition(x + PinIconOffsetX, y + PinIconOffsetY);
         }
         if (gotFocus || !Focus) pinImage.ColourDiffuse = 0xffffffff;
-        else                    pinImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
+        else pinImage.ColourDiffuse = Color.FromArgb(_unfocusedAlpha, Color.White).ToArgb();
         pinImage.DimColor = DimColor;
         pinImage.Render(timePassed);
         pinImage = null;
@@ -507,7 +507,7 @@ namespace MediaPortal.GUI.Library
       if (pItem.Shaded)
         dwColor = ShadedColor;
 
-			if (gotFocus && Focus)
+      if (gotFocus && Focus)
         dwColor = _selectedColor;
 
       dwPosX += _textOffsetX;
@@ -1756,10 +1756,10 @@ namespace MediaPortal.GUI.Library
         {
           _upDownControl.OnAction(action);
         }
-          if (!_upDownControl.Focus)
-          {
-            _listType = ListType.CONTROL_LIST;
-          }
+        if (!_upDownControl.Focus)
+        {
+          _listType = ListType.CONTROL_LIST;
+        }
       }
     }
 
@@ -2019,26 +2019,26 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public string Font3
     {
-        get { return _fontName3Name; }
-        set
+      get { return _fontName3Name; }
+      set
+      {
+        if (value == null) return;
+        if (value != "")
         {
-            if (value == null) return;
-            if (value != "")
-            {
-                _fontName3Name = value;
-                _font3 = GUIFontManager.GetFont(value);
-                if (null == _font3)
-                {
-                    _fontName3Name = _fontName2Name;
-                    _font3 = GUIFontManager.GetFont(_fontName2Name);
-                }
-            }
-            else
-            {
-                _fontName3Name = _fontName2Name;
-                _font3 = GUIFontManager.GetFont(_fontName2Name);
-            }
+          _fontName3Name = value;
+          _font3 = GUIFontManager.GetFont(value);
+          if (null == _font3)
+          {
+            _fontName3Name = _fontName2Name;
+            _font3 = GUIFontManager.GetFont(_fontName2Name);
+          }
         }
+        else
+        {
+          _fontName3Name = _fontName2Name;
+          _font3 = GUIFontManager.GetFont(_fontName2Name);
+        }
+      }
     }
 
     /// <summary>
