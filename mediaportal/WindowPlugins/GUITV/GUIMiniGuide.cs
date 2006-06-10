@@ -268,7 +268,7 @@ namespace MediaPortal.GUI.TV
         if (prog != null)
         {
           //                    item.Label3 = prog.Title + " [" + prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
-          item.Label3 = prog.Title + " : " + CalculateProgress(prog).ToString() + "%";
+          item.Label3 = prog.Title + ": " + CalculateProgress(prog).ToString() + "%";
         }
         prognext = GetNextProgram(current, prog);
         if (prognext != null)
