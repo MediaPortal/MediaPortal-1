@@ -1508,7 +1508,7 @@ namespace MediaPortal.GUI.Music
               {
                 // if id3 tag scanning is turned on OR we're scanning the directory
                 // then parse id3tag from file
-                if (UseID3 || m_bScan)
+                if (UseID3 && m_bScan)
                 {
                   // get correct tag parser
                   tag = TagReader.TagReader.ReadTag(pItem.Path);
