@@ -260,13 +260,13 @@ namespace MediaPortal.EPG
           }
           if (_progStart >= _mergeStart && _progStart <= _mergeEnd && _progEnd > _mergeEnd)
           { // sets program end to mergeEnd
-            prog.End = prog.End / 1000000 + channel.mergeEnd[channelOffset].Hour * 10000 + channel.mergeEnd[channelOffset].Minute * 100;
+            prog.End = 0;
             programs[_index] = prog;
            
           }
         }
           _index += 1;
-          if (_index == _count-1) done = true;
+          if (_index == _count) done = true;
       }
 
     }
