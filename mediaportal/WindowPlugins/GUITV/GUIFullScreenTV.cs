@@ -454,6 +454,7 @@ namespace MediaPortal.GUI.TV
             else
             {
               _zapWindow.UpdateChannelInfo();
+              _zapTimeOutTimer = DateTime.Now;
             }
           }
           break;
@@ -1963,6 +1964,22 @@ namespace MediaPortal.GUI.TV
       if (chKey == '0' && !_channelInputVisible)
       {
         GUITVHome.OnLastViewedChannel();
+        if (!_zapOsdVisible)
+        {
+          if (!_useVMR9Zap)
+          {
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _zapWindow.GetID, 0, 0, GetID, 0, null);
+            _zapWindow.OnMessage(msg);
+            Log.Write("ZAP OSD:ON");
+            _zapTimeOutTimer = DateTime.Now;
+            _zapOsdVisible = true;
+          }
+        }
+        else
+        {
+          _zapWindow.UpdateChannelInfo();
+          _zapTimeOutTimer = DateTime.Now;
+        }
         return;
       }
       if (chKey >= '0' && chKey <= '9') //Make sure it's only for the remote
@@ -1985,9 +2002,9 @@ namespace MediaPortal.GUI.TV
             }
 
         if (displayedChannelName != string.Empty)
-          msg.Label = String.Format("{0} {1} ({2})", GUILocalizeStrings.Get(602), _channelName, displayedChannelName);
+          msg.Label = String.Format("{0} {1} ({2})", GUILocalizeStrings.Get(602), _channelName, displayedChannelName);  // Channel
         else
-          msg.Label = String.Format("{0} {1}", GUILocalizeStrings.Get(602), _channelName);
+          msg.Label = String.Format("{0} {1}", GUILocalizeStrings.Get(602), _channelName);  // Channel
 
         GUIControl cntTarget = base.GetControl((int)Control.LABEL_ROW1);
         if (cntTarget != null)

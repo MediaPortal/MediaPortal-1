@@ -256,6 +256,13 @@ namespace MediaPortal.GUI.TV
             GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
           }
           break;
+
+        case Action.ActionType.ACTION_KEY_PRESSED:
+          {
+            if ((char)action.m_key.KeyChar == '0')
+              OnLastViewedChannel();
+          }
+          break;
       }
       base.OnAction(action);
     }
@@ -445,7 +452,7 @@ namespace MediaPortal.GUI.TV
         ViewChannelAndCheck(Navigator.CurrentChannel);
 
         _isTimeShifting = Recorder.IsTimeShifting();
-        
+
         UpdateStateOfButtons();
         UpdateProgressPercentageBar();
       }
@@ -759,10 +766,12 @@ namespace MediaPortal.GUI.TV
       else
         Log.Write("GUITVHome.ViewChannel(): turn tv off");
 
-      string errorMessage;
+      if (channel != Navigator.CurrentChannel)
+        Navigator.LastViewedChannel = Navigator.CurrentChannel;
 
-      bool succeeded=Recorder.StartViewing(channel, _isTvOn, _isTimeShifting, true, out errorMessage);
-      
+      string errorMessage;
+      bool succeeded = Recorder.StartViewing(channel, _isTvOn, _isTimeShifting, true, out errorMessage);
+
       if (succeeded) return true;
 
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
@@ -784,6 +793,7 @@ namespace MediaPortal.GUI.TV
       }
       return false;
     }
+
     static public void ViewChannel(string channel)
     {
       if (g_Player.Playing)
@@ -798,9 +808,11 @@ namespace MediaPortal.GUI.TV
       else
         Log.Write("GUITVHome.ViewChannel(): turn tv off");
 
+      if (channel != Navigator.CurrentChannel)
+        Navigator.LastViewedChannel = Navigator.CurrentChannel;
+
       string errorMessage;
       Recorder.StartViewing(channel, _isTvOn, _isTimeShifting, false, out errorMessage);
-      
     }
 
     /// <summary>
@@ -831,6 +843,7 @@ namespace MediaPortal.GUI.TV
     {
       Navigator.ZapToLastViewedChannel();
     }
+
     /// <summary>
     /// Returns true if the specified window belongs to the my tv plugin
     /// </summary>
@@ -957,7 +970,7 @@ namespace MediaPortal.GUI.TV
     private long m_zapdelay;
     private string m_zapchannel = null;
     private int m_zapgroup = -1;
-    private string lastViewedChannel = null; // saves the last viewed Channel  // mPod
+    private string _lastViewedChannel = string.Empty; // saves the last viewed Channel  // mPod
     private TVChannel m_currentTvChannel = null;
     private List<TVChannel> channels = new List<TVChannel>();
     private bool reentrant = false;
@@ -1001,6 +1014,16 @@ namespace MediaPortal.GUI.TV
     public string CurrentChannel
     {
       get { return m_currentchannel; }
+    }
+
+    /// <summary>
+    /// Gets and sets the last viewed channel
+    /// Returns empty string if no zap occurred before
+    /// </summary>
+    public string LastViewedChannel
+    {
+      get { return _lastViewedChannel; }
+      set { _lastViewedChannel = value; }
     }
 
     /// <summary>
@@ -1104,7 +1127,8 @@ namespace MediaPortal.GUI.TV
           }
           m_zapgroup = -1;
 
-          lastViewedChannel = m_currentchannel;
+          //if (m_zapchannel != m_currentchannel)
+          //  lastViewedChannel = m_currentchannel;
           // Zap to desired channel
           string zappingTo = m_zapchannel;
           m_zapchannel = null;
@@ -1342,8 +1366,11 @@ namespace MediaPortal.GUI.TV
     /// </summary>
     public void ZapToLastViewedChannel()
     {
-      m_zapchannel = lastViewedChannel;
-      m_zaptime = DateTime.Now;
+      if (_lastViewedChannel != string.Empty)
+      {
+        m_zapchannel = _lastViewedChannel;
+        m_zaptime = DateTime.Now;
+      }
     }
     #endregion
 
