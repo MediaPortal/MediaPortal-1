@@ -34,6 +34,7 @@ using DirectShowLib;
 namespace MediaPortal.TV.Database
 {
   #region TVNotify class
+  [Serializable()]
   public class TVNotify
   {
     public int ID = -1;
@@ -69,6 +70,7 @@ namespace MediaPortal.TV.Database
 
 
   #region TVGroup class
+  [Serializable()]
   public class TVGroup
   {
     public int ID;

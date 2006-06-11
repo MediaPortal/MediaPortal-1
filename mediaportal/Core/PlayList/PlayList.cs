@@ -27,6 +27,7 @@ using System.Collections;
 namespace MediaPortal.Playlists
 {
     //public class PlayList : IEnumerable<PlayListItem>
+    [Serializable()]
     public class PlayList : IEnumerable<PlayListItem> //, IComparer
     {
         protected string _playListName = "";

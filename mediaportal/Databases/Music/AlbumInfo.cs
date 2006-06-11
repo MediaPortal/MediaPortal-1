@@ -25,6 +25,7 @@ namespace MediaPortal.Music.Database
 	/// <summary>
 	/// 
 	/// </summary>
+  [Serializable()]
 	public class AlbumInfo 
 	{
     int    m_iIdAlbum=0;

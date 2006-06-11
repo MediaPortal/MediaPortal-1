@@ -5,6 +5,7 @@ using MediaPortal.TagReader;
 
 namespace MediaPortal.Playlists
 {
+    [Serializable()]
     public class PlayListItem
     {
         public enum PlayListItemType
