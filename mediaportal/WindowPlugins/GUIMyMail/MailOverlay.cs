@@ -28,71 +28,71 @@ using MediaPortal.GUI.Library;
 
 namespace MyMail
 {
-	/// <summary>
-	/// Zusammenfassung für MailOverlay.
-	/// </summary>
-	public class MailOverlay : GUIOverlayWindow
-	{
-    bool Enabled=false;
-		enum Controls
-		{
-			CONTROL_INFO=2
-		}
-		public MailOverlay()
-		{
-			GetID=8002;
-			//
-			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
-			//
-		}
-		public override bool DoesPostRender()
-		{
+  /// <summary>
+  /// Zusammenfassung für MailOverlay.
+  /// </summary>
+  public class MailOverlay : GUIOverlayWindow
+  {
+    bool Enabled = false;
+    enum Controls
+    {
+      CONTROL_INFO = 2
+    }
+    public MailOverlay()
+    {
+      GetID = 8002;
+      //
+      // TODO: Fügen Sie hier die Konstruktorlogik hinzu
+      //
+    }
+    public override bool DoesPostRender()
+    {
       if (!Enabled) return false;
-			if (GUIGraphicsContext.IsFullScreenVideo) return false;
-			if (!GUIGraphicsContext.Overlay) return false;
-			return true;
-		}
+      if (GUIGraphicsContext.IsFullScreenVideo) return false;
+      if (!GUIGraphicsContext.Overlay) return false;
+      return true;
+    }
 
-		public override bool Init()
-		{
-			bool bResult=Load (GUIGraphicsContext.Skin+@"\mailnotify.xml");
-			GetID=8002;
+    public override bool Init()
+    {
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\mailnotify.xml");
+      GetID = 8002;
 
-			GUIFadeLabel fader =(GUIFadeLabel)GetControl((int)Controls.CONTROL_INFO);
-			if (fader!=null)
-			{
-				fader.IsVisible=false;// hide notification on init
-			}
+      GUIFadeLabel fader = (GUIFadeLabel)GetControl((int)Controls.CONTROL_INFO);
+      if (fader != null)
+      {
+        fader.IsVisible = false;// hide notification on init
+      }
 
       if (PluginManager.IsPluginNameEnabled("My Mail"))
       {
-        Enabled=true;
+        Enabled = true;
       }
-			return bResult;
-		}
+      return bResult;
+    }
 
-		public override bool SupportsDelayedLoad
-		{
-			get { return false;}
-		}    
-		public override void PreInit()
-		{
-			base.PreInit();
-			AllocResources();
-		}
-		public override void PostRender(float timePassed, int iLayer)
-		{
-			if (iLayer!=3) return;
-			GUIFadeLabel fader =(GUIFadeLabel)GetControl((int)Controls.CONTROL_INFO);
-			if (fader!=null)
-			{
-				fader.AllowScrolling=true;
-			}
-			if (GUIGraphicsContext.Overlay==false) 
-			{
-				return;
-			}
-			base.Render(timePassed);
-		}
-	}
+    public override bool SupportsDelayedLoad
+    {
+      get { return false; }
+    }
+    public override void PreInit()
+    {
+      base.PreInit();
+      AllocResources();
+    }
+    public override void PostRender(float timePassed, int iLayer)
+    {
+      if (iLayer != 3) return;
+      GUIFadeLabel fader = (GUIFadeLabel)GetControl((int)Controls.CONTROL_INFO);
+      if (fader != null)
+      {
+        fader.AllowScrolling = true;
+      }
+      if (GUIGraphicsContext.Overlay == false)
+      {
+        return;
+      }
+      base.Render(timePassed);
+    }
+  }
 }

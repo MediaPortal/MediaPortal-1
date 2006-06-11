@@ -39,13 +39,13 @@ namespace MyMail
   {
     ArrayList m_mailBox = new ArrayList();
     private NumericUpDown numericUpDown1;
-    private Label label1;
-    private GroupBox gbMailboxes;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox gbMailboxes;
     private ListBox lbMailboxes;
-    private Button btnAdd;
-    private Button btnDelete;
-    private Button btnEdit;
-    private Button btnClose;
+    private MediaPortal.UserInterface.Controls.MPButton btnAdd;
+    private MediaPortal.UserInterface.Controls.MPButton btnDelete;
+    private MediaPortal.UserInterface.Controls.MPButton btnEdit;
+    private MediaPortal.UserInterface.Controls.MPButton btnClose;
 
     /// <summary>
     /// Erforderliche Designervariable.
@@ -106,13 +106,14 @@ namespace MyMail
       this.btnAdd.Size = new System.Drawing.Size(80, 24);
       this.btnAdd.TabIndex = 1;
       this.btnAdd.Text = "Add...";
+      this.btnAdd.UseVisualStyleBackColor = true;
       this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
       // 
       // lbMailboxes
       // 
       this.lbMailboxes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.lbMailboxes.Location = new System.Drawing.Point(8, 16);
       this.lbMailboxes.Name = "lbMailboxes";
       this.lbMailboxes.Size = new System.Drawing.Size(280, 277);
@@ -127,6 +128,7 @@ namespace MyMail
       this.btnDelete.Size = new System.Drawing.Size(80, 24);
       this.btnDelete.TabIndex = 3;
       this.btnDelete.Text = "Delete...";
+      this.btnDelete.UseVisualStyleBackColor = true;
       this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
       // 
       // btnClose
@@ -137,23 +139,26 @@ namespace MyMail
       this.btnClose.Size = new System.Drawing.Size(80, 24);
       this.btnClose.TabIndex = 2;
       this.btnClose.Text = "Close";
+      this.btnClose.UseVisualStyleBackColor = true;
       this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
       // 
       // gbMailboxes
       // 
       this.gbMailboxes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.gbMailboxes.Controls.Add(this.btnEdit);
       this.gbMailboxes.Controls.Add(this.btnAdd);
       this.gbMailboxes.Controls.Add(this.btnDelete);
       this.gbMailboxes.Controls.Add(this.lbMailboxes);
+      this.gbMailboxes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbMailboxes.Location = new System.Drawing.Point(16, 8);
       this.gbMailboxes.Name = "gbMailboxes";
       this.gbMailboxes.Size = new System.Drawing.Size(384, 304);
       this.gbMailboxes.TabIndex = 0;
       this.gbMailboxes.TabStop = false;
       this.gbMailboxes.Text = "Current Mailbox List";
+      this.gbMailboxes.Enter += new System.EventHandler(this.gbMailboxes_Enter);
       // 
       // btnEdit
       // 
@@ -162,6 +167,7 @@ namespace MyMail
       this.btnEdit.Size = new System.Drawing.Size(80, 23);
       this.btnEdit.TabIndex = 2;
       this.btnEdit.Text = "Edit...";
+      this.btnEdit.UseVisualStyleBackColor = true;
       this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
       // 
       // numericUpDown1
@@ -171,11 +177,11 @@ namespace MyMail
       this.numericUpDown1.Name = "numericUpDown1";
       this.numericUpDown1.Size = new System.Drawing.Size(40, 20);
       this.numericUpDown1.TabIndex = 1;
-      this.numericUpDown1.Value = new System.Decimal(new int[] {
-                                                                 1,
-                                                                 0,
-                                                                 0,
-                                                                 0});
+      this.numericUpDown1.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
       // 
       // label1
       // 
@@ -294,7 +300,9 @@ namespace MyMail
             return false;
           }
           //
-          string mailBoxString = tmpBox.BoxLabel + ";" + tmpBox.Username + ";" + tmpBox.Password + ";" + tmpBox.ServerAddress + ";" + Convert.ToString(tmpBox.Port) + ";" + tmpBox.MailboxFolder + ";" + tmpBox.AttachmentFolder;
+          //<OKAY_AWRIGHT>
+          string mailBoxString = tmpBox.BoxLabel + ";" + tmpBox.Username + ";" + tmpBox.Password + ";" + tmpBox.ServerAddress + ";" + Convert.ToString(tmpBox.Port) + ";" + Convert.ToString(tmpBox.TLS) + ";" + tmpBox.MailboxFolder + ";" + tmpBox.AttachmentFolder;
+          //</OKAY_AWRIGHT>
           if (tmpBox.Enabled)
           { mailBoxString += ";T"; }
           else
@@ -308,7 +316,9 @@ namespace MyMail
 
     void AddItem()
     {
-      MailBox mailbox = new MailBox("New MailBox", "", "", "", 110, @"MyMailFiles" + Convert.ToString(m_mailBox.Count + 1), @"MailBoxAttachments");
+      //<OKAY_AWRIGHT>
+      MailBox mailbox = new MailBox("New MailBox", "", "", "", 110, MailBox.NO_SSL, @"MyMailFiles" + Convert.ToString(m_mailBox.Count + 1), @"MailBoxAttachments");
+      //</OKAY_AWRIGHT>
       MailDetailSetup frmMailDetails = new MailDetailSetup();
       frmMailDetails.CurMailBox = mailbox;
       DialogResult dialogResult = frmMailDetails.ShowDialog(this);
@@ -339,14 +349,16 @@ namespace MyMail
             if (mailBoxString.Length > 0)
             {
               boxData = mailBoxString.Split(new char[] { ';' });
-              if (boxData.Length >= 7)
+              //<OKAY_AWRIGHT>
+              if (boxData.Length >= 8)
               {
-                tmpBox = new MailBox(boxData[0], boxData[1], boxData[2], boxData[3], Convert.ToInt16(boxData[4]), boxData[5], boxData[6]);
+                tmpBox = new MailBox(boxData[0], boxData[1], boxData[2], boxData[3], Convert.ToInt16(boxData[4]), Convert.ToByte(boxData[5]), boxData[6], boxData[7]);
+                //</OKAY_AWRIGHT>
                 if (tmpBox != null)
                 {
-                  if (boxData.Length > 7)
+                  if (boxData.Length > 8)
                   {
-                    tmpBox.Enabled = (boxData[7] == "T");
+                    tmpBox.Enabled = (boxData[8] == "T");
                   }
                   m_mailBox.Add(tmpBox);
                 }
@@ -404,6 +416,11 @@ namespace MyMail
     {
       if (SaveConfigFile() == true)
         this.Close();
+    }
+
+    private void gbMailboxes_Enter(object sender, EventArgs e)
+    {
+
     }
 
   }

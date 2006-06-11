@@ -68,6 +68,12 @@ namespace MyMail
 
     MailBox m_CurMailBox = null;
     private MediaPortal.UserInterface.Controls.MPButton btnTest;
+    private RadioButton rdbSTLSCommand;
+    private RadioButton rdbSSLPort;
+    private RadioButton rdbNoSSL;
+    private MediaPortal.UserInterface.Controls.MPLabel lblSSL;
+    private Panel panelSSL;
+
     ConditionChecker checker = new ConditionChecker();
 
     public MailDetailSetup()
@@ -104,10 +110,16 @@ namespace MyMail
     /// </summary>
     private void InitializeComponent()
     {
-      System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(MailDetailSetup));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MailDetailSetup));
       this.btnOk = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.gbConnection = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.panelSSL = new System.Windows.Forms.Panel();
+      this.rdbSTLSCommand = new System.Windows.Forms.RadioButton();
+      this.rdbSSLPort = new System.Windows.Forms.RadioButton();
+      this.rdbNoSSL = new System.Windows.Forms.RadioButton();
+      this.lblSSL = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.btnTest = new MediaPortal.UserInterface.Controls.MPButton();
       this.tbPassword = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.tbUsername = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.tbPort = new MediaPortal.UserInterface.Controls.MPTextBox();
@@ -128,8 +140,8 @@ namespace MyMail
       this.lblBoxLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.dialogFolder = new System.Windows.Forms.FolderBrowserDialog();
-      this.btnTest = new MediaPortal.UserInterface.Controls.MPButton();
       this.gbConnection.SuspendLayout();
+      this.panelSSL.SuspendLayout();
       this.gbStorage.SuspendLayout();
       this.gbGeneral.SuspendLayout();
       this.SuspendLayout();
@@ -137,25 +149,31 @@ namespace MyMail
       // btnOk
       // 
       this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnOk.Location = new System.Drawing.Point(296, 344);
+      this.btnOk.Location = new System.Drawing.Point(296, 372);
       this.btnOk.Name = "btnOk";
+      this.btnOk.Size = new System.Drawing.Size(75, 23);
       this.btnOk.TabIndex = 3;
       this.btnOk.Text = "OK";
+      this.btnOk.UseVisualStyleBackColor = true;
       this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
       // 
       // btnCancel
       // 
       this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.btnCancel.Location = new System.Drawing.Point(376, 344);
+      this.btnCancel.Location = new System.Drawing.Point(376, 372);
       this.btnCancel.Name = "btnCancel";
+      this.btnCancel.Size = new System.Drawing.Size(75, 23);
       this.btnCancel.TabIndex = 4;
       this.btnCancel.Text = "Cancel";
+      this.btnCancel.UseVisualStyleBackColor = true;
       // 
       // gbConnection
       // 
       this.gbConnection.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.gbConnection.Controls.Add(this.panelSSL);
+      this.gbConnection.Controls.Add(this.lblSSL);
       this.gbConnection.Controls.Add(this.btnTest);
       this.gbConnection.Controls.Add(this.tbPassword);
       this.gbConnection.Controls.Add(this.tbUsername);
@@ -165,46 +183,111 @@ namespace MyMail
       this.gbConnection.Controls.Add(this.lblPassword);
       this.gbConnection.Controls.Add(this.lblUsername);
       this.gbConnection.Controls.Add(this.lblServerAddress);
+      this.gbConnection.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbConnection.Location = new System.Drawing.Point(8, 88);
       this.gbConnection.Name = "gbConnection";
-      this.gbConnection.Size = new System.Drawing.Size(448, 160);
+      this.gbConnection.Size = new System.Drawing.Size(448, 191);
       this.gbConnection.TabIndex = 1;
       this.gbConnection.TabStop = false;
       this.gbConnection.Text = "Connection";
       // 
+      // panelSSL
+      // 
+      this.panelSSL.Controls.Add(this.rdbSTLSCommand);
+      this.panelSSL.Controls.Add(this.rdbSSLPort);
+      this.panelSSL.Controls.Add(this.rdbNoSSL);
+      this.panelSSL.Location = new System.Drawing.Point(112, 56);
+      this.panelSSL.Name = "panelSSL";
+      this.panelSSL.Size = new System.Drawing.Size(316, 20);
+      this.panelSSL.TabIndex = 4;
+      // 
+      // rdbSTLSCommand
+      // 
+      this.rdbSTLSCommand.AutoSize = true;
+      this.rdbSTLSCommand.Location = new System.Drawing.Point(156, 0);
+      this.rdbSTLSCommand.Name = "rdbSTLSCommand";
+      this.rdbSTLSCommand.Size = new System.Drawing.Size(106, 17);
+      this.rdbSTLSCommand.TabIndex = 3;
+      this.rdbSTLSCommand.Text = "Explicit SSL/TLS";
+      this.rdbSTLSCommand.UseVisualStyleBackColor = true;
+      this.rdbSTLSCommand.CheckedChanged += new System.EventHandler(this.rdbSTLSCommand_CheckedChanged);
+      // 
+      // rdbSSLPort
+      // 
+      this.rdbSSLPort.AutoSize = true;
+      this.rdbSSLPort.Location = new System.Drawing.Point(45, 0);
+      this.rdbSSLPort.Name = "rdbSSLPort";
+      this.rdbSSLPort.Size = new System.Drawing.Size(105, 17);
+      this.rdbSSLPort.TabIndex = 2;
+      this.rdbSSLPort.Text = "Implicit SSL/TLS";
+      this.rdbSSLPort.UseVisualStyleBackColor = true;
+      this.rdbSSLPort.CheckedChanged += new System.EventHandler(this.rdbSSLPort_CheckedChanged);
+      // 
+      // rdbNoSSL
+      // 
+      this.rdbNoSSL.AutoSize = true;
+      this.rdbNoSSL.Checked = true;
+      this.rdbNoSSL.Location = new System.Drawing.Point(0, 0);
+      this.rdbNoSSL.Name = "rdbNoSSL";
+      this.rdbNoSSL.Size = new System.Drawing.Size(39, 17);
+      this.rdbNoSSL.TabIndex = 1;
+      this.rdbNoSSL.TabStop = true;
+      this.rdbNoSSL.Text = "No";
+      this.rdbNoSSL.UseVisualStyleBackColor = true;
+      this.rdbNoSSL.CheckedChanged += new System.EventHandler(this.rdbNoSSL_CheckedChanged);
+      // 
+      // lblSSL
+      // 
+      this.lblSSL.Location = new System.Drawing.Point(11, 47);
+      this.lblSSL.Name = "lblSSL";
+      this.lblSSL.Size = new System.Drawing.Size(102, 29);
+      this.lblSSL.TabIndex = 13;
+      this.lblSSL.Text = "Secure Authentication:";
+      // 
+      // btnTest
+      // 
+      this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnTest.Enabled = false;
+      this.btnTest.Location = new System.Drawing.Point(353, 160);
+      this.btnTest.Name = "btnTest";
+      this.btnTest.Size = new System.Drawing.Size(75, 23);
+      this.btnTest.TabIndex = 8;
+      this.btnTest.Text = "Test";
+      this.btnTest.UseVisualStyleBackColor = true;
+      // 
       // tbPassword
       // 
       this.tbPassword.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.tbPassword.Location = new System.Drawing.Point(112, 94);
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbPassword.Location = new System.Drawing.Point(112, 134);
       this.tbPassword.Name = "tbPassword";
       this.tbPassword.PasswordChar = '*';
       this.tbPassword.Size = new System.Drawing.Size(316, 20);
-      this.tbPassword.TabIndex = 3;
+      this.tbPassword.TabIndex = 7;
       this.tbPassword.Text = "textBox5";
       // 
       // tbUsername
       // 
       this.tbUsername.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.tbUsername.Location = new System.Drawing.Point(112, 70);
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.tbUsername.Location = new System.Drawing.Point(112, 108);
       this.tbUsername.Name = "tbUsername";
       this.tbUsername.Size = new System.Drawing.Size(316, 20);
-      this.tbUsername.TabIndex = 2;
+      this.tbUsername.TabIndex = 6;
       this.tbUsername.Text = "textBox4";
       // 
       // tbPort
       // 
-      this.tbPort.Location = new System.Drawing.Point(112, 45);
+      this.tbPort.Location = new System.Drawing.Point(112, 82);
       this.tbPort.Name = "tbPort";
       this.tbPort.Size = new System.Drawing.Size(64, 20);
-      this.tbPort.TabIndex = 1;
+      this.tbPort.TabIndex = 5;
       this.tbPort.Text = "textBox3";
       // 
       // tbServerAddress
       // 
       this.tbServerAddress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tbServerAddress.Location = new System.Drawing.Point(112, 21);
       this.tbServerAddress.Name = "tbServerAddress";
       this.tbServerAddress.Size = new System.Drawing.Size(316, 20);
@@ -213,7 +296,7 @@ namespace MyMail
       // 
       // lblPort
       // 
-      this.lblPort.Location = new System.Drawing.Point(12, 48);
+      this.lblPort.Location = new System.Drawing.Point(12, 85);
       this.lblPort.Name = "lblPort";
       this.lblPort.Size = new System.Drawing.Size(90, 23);
       this.lblPort.TabIndex = 8;
@@ -221,7 +304,7 @@ namespace MyMail
       // 
       // lblPassword
       // 
-      this.lblPassword.Location = new System.Drawing.Point(12, 96);
+      this.lblPassword.Location = new System.Drawing.Point(12, 137);
       this.lblPassword.Name = "lblPassword";
       this.lblPassword.Size = new System.Drawing.Size(90, 23);
       this.lblPassword.TabIndex = 7;
@@ -229,7 +312,7 @@ namespace MyMail
       // 
       // lblUsername
       // 
-      this.lblUsername.Location = new System.Drawing.Point(12, 72);
+      this.lblUsername.Location = new System.Drawing.Point(12, 111);
       this.lblUsername.Name = "lblUsername";
       this.lblUsername.Size = new System.Drawing.Size(90, 23);
       this.lblUsername.TabIndex = 6;
@@ -246,14 +329,15 @@ namespace MyMail
       // gbStorage
       // 
       this.gbStorage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.gbStorage.Controls.Add(this.btnAttachmentFolder);
       this.gbStorage.Controls.Add(this.btnMailboxFolder);
       this.gbStorage.Controls.Add(this.tbAttachmentFolder);
       this.gbStorage.Controls.Add(this.tbMailboxFolder);
       this.gbStorage.Controls.Add(this.lblAttachmentFolder);
       this.gbStorage.Controls.Add(this.lblMailboxFolder);
-      this.gbStorage.Location = new System.Drawing.Point(8, 256);
+      this.gbStorage.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.gbStorage.Location = new System.Drawing.Point(8, 285);
       this.gbStorage.Name = "gbStorage";
       this.gbStorage.Size = new System.Drawing.Size(448, 80);
       this.gbStorage.TabIndex = 2;
@@ -268,6 +352,7 @@ namespace MyMail
       this.btnAttachmentFolder.Name = "btnAttachmentFolder";
       this.btnAttachmentFolder.Size = new System.Drawing.Size(20, 20);
       this.btnAttachmentFolder.TabIndex = 3;
+      this.btnAttachmentFolder.UseVisualStyleBackColor = true;
       this.btnAttachmentFolder.Click += new System.EventHandler(this.btnAttachmentFolder_Click);
       // 
       // btnMailboxFolder
@@ -278,12 +363,13 @@ namespace MyMail
       this.btnMailboxFolder.Name = "btnMailboxFolder";
       this.btnMailboxFolder.Size = new System.Drawing.Size(20, 20);
       this.btnMailboxFolder.TabIndex = 1;
+      this.btnMailboxFolder.UseVisualStyleBackColor = true;
       this.btnMailboxFolder.Click += new System.EventHandler(this.btnMailboxFolder_Click);
       // 
       // tbAttachmentFolder
       // 
       this.tbAttachmentFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tbAttachmentFolder.Location = new System.Drawing.Point(111, 42);
       this.tbAttachmentFolder.Name = "tbAttachmentFolder";
       this.tbAttachmentFolder.Size = new System.Drawing.Size(289, 20);
@@ -293,7 +379,7 @@ namespace MyMail
       // tbMailboxFolder
       // 
       this.tbMailboxFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tbMailboxFolder.Location = new System.Drawing.Point(111, 17);
       this.tbMailboxFolder.Name = "tbMailboxFolder";
       this.tbMailboxFolder.Size = new System.Drawing.Size(289, 20);
@@ -319,10 +405,11 @@ namespace MyMail
       // gbGeneral
       // 
       this.gbGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.gbGeneral.Controls.Add(this.tbBoxLabel);
       this.gbGeneral.Controls.Add(this.lblBoxLabel);
       this.gbGeneral.Controls.Add(this.cbEnabled);
+      this.gbGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbGeneral.Location = new System.Drawing.Point(8, 8);
       this.gbGeneral.Name = "gbGeneral";
       this.gbGeneral.Size = new System.Drawing.Size(448, 72);
@@ -333,7 +420,7 @@ namespace MyMail
       // tbBoxLabel
       // 
       this.tbBoxLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tbBoxLabel.Location = new System.Drawing.Point(112, 42);
       this.tbBoxLabel.Name = "tbBoxLabel";
       this.tbBoxLabel.Size = new System.Drawing.Size(316, 20);
@@ -350,28 +437,21 @@ namespace MyMail
       // 
       // cbEnabled
       // 
+      this.cbEnabled.AutoSize = true;
       this.cbEnabled.Checked = true;
       this.cbEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.cbEnabled.Location = new System.Drawing.Point(12, 16);
       this.cbEnabled.Name = "cbEnabled";
-      this.cbEnabled.Size = new System.Drawing.Size(136, 24);
+      this.cbEnabled.Size = new System.Drawing.Size(63, 17);
       this.cbEnabled.TabIndex = 8;
       this.cbEnabled.Text = "Enabled";
-      // 
-      // btnTest
-      // 
-      this.btnTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnTest.Enabled = false;
-      this.btnTest.Location = new System.Drawing.Point(353, 128);
-      this.btnTest.Name = "btnTest";
-      this.btnTest.TabIndex = 9;
-      this.btnTest.Text = "Test";
-      this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+      this.cbEnabled.UseVisualStyleBackColor = true;
       // 
       // MailDetailSetup
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(464, 374);
+      this.ClientSize = new System.Drawing.Size(464, 402);
       this.Controls.Add(this.gbGeneral);
       this.Controls.Add(this.gbStorage);
       this.Controls.Add(this.gbConnection);
@@ -382,8 +462,13 @@ namespace MyMail
       this.Text = "Edit Mailbox Details";
       this.Load += new System.EventHandler(this.MailDetailSetup_Load);
       this.gbConnection.ResumeLayout(false);
+      this.gbConnection.PerformLayout();
+      this.panelSSL.ResumeLayout(false);
+      this.panelSSL.PerformLayout();
       this.gbStorage.ResumeLayout(false);
+      this.gbStorage.PerformLayout();
       this.gbGeneral.ResumeLayout(false);
+      this.gbGeneral.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -427,6 +512,12 @@ namespace MyMail
         this.tbBoxLabel.Text = m_CurMailBox.BoxLabel;
         this.tbServerAddress.Text = m_CurMailBox.ServerAddress;
         this.tbPort.Text = m_CurMailBox.Port.ToString();
+        if (m_CurMailBox.TLS == MailBox.SSL_PORT)
+          this.rdbSSLPort.Checked = true;
+        else if (m_CurMailBox.TLS == MailBox.STLS)
+          this.rdbSTLSCommand.Checked = true;
+        else
+          this.rdbNoSSL.Checked = true;
         this.tbUsername.Text = m_CurMailBox.Username;
         this.tbPassword.Text = m_CurMailBox.Password;
         this.tbMailboxFolder.Text = m_CurMailBox.MailboxFolder;
@@ -443,6 +534,12 @@ namespace MyMail
       { m_CurMailBox.Port = Int32.Parse(this.tbPort.Text); }
       catch (System.FormatException)
       { m_CurMailBox.Port = 110; }
+      if (rdbSSLPort.Checked)
+        m_CurMailBox.TLS = MailBox.SSL_PORT;
+      else if (rdbSTLSCommand.Checked)
+        m_CurMailBox.TLS = MailBox.STLS;
+      else
+        m_CurMailBox.TLS = MailBox.NO_SSL;
 
       m_CurMailBox.Username = tbUsername.Text;
       m_CurMailBox.Password = tbPassword.Text;
@@ -486,12 +583,20 @@ namespace MyMail
       return true;
     }
 
-    private void btnTest_Click(object sender, System.EventArgs e)
+    private void rdbNoSSL_CheckedChanged(object sender, EventArgs e)
     {
-
+      if (rdbNoSSL.Checked) tbPort.Text = "110";
     }
 
+    private void rdbSSLPort_CheckedChanged(object sender, EventArgs e)
+    {
+      if (rdbSSLPort.Checked) tbPort.Text = "995";
+    }
 
+    private void rdbSTLSCommand_CheckedChanged(object sender, EventArgs e)
+    {
+      if (rdbSTLSCommand.Checked) tbPort.Text = "110";
+    }
 
   }
 }

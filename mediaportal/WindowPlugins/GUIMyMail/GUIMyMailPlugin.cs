@@ -500,9 +500,11 @@ namespace MyMail
             if (mailBoxString.Length > 0)
             {
               boxData = mailBoxString.Split(new char[] { ';' });
-              if ((boxData.Length == 7) || ((boxData.Length > 7) && (boxData[7] == "T")))
+              //<OKAY_AWRIGHT>
+              if ((boxData.Length == 8) || ((boxData.Length > 8) && (boxData[8] == "T")))
               {
-                tmpBox = new MailBox(boxData[0], boxData[1], boxData[2], boxData[3], Convert.ToInt16(boxData[4]), boxData[5], boxData[6]);
+                tmpBox = new MailBox(boxData[0], boxData[1], boxData[2], boxData[3], Convert.ToInt16(boxData[4]), Convert.ToByte(boxData[5]), boxData[6], boxData[7]);
+                //</OKAY_AWRIGHT>
                 tmpBox.MailCount = m_mc.GetEMailList(tmpBox.MailboxFolder, ref theMails);
                 if (tmpBox != null)
                   m_mailBox.Add(tmpBox);
