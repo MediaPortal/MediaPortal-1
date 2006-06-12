@@ -964,7 +964,7 @@ namespace MediaPortal.GUI.Video
       }
       return true;
     }
-    private string GetFolderVideoFile(string path)
+    private string GetFolderVideoFile(string path, bool ignoreProtected)
     {
       // IMDB is done on a folder, find first file in folder
       string strExtension = System.IO.Path.GetExtension(path).ToLower();
@@ -974,24 +974,29 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        ArrayList vecitems = m_directory.GetDirectory(path);
-        GUIListItem tempItem;
-        for (int i = 0; i < vecitems.Count; ++i)
+        int pinCode = 0;
+        if (!ignoreProtected || !m_directory.IsProtectedShare(path, out pinCode))
         {
-          tempItem = (GUIListItem)vecitems[i];
-          if (!tempItem.IsFolder
-          || (tempItem.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(tempItem.Path).ToLower())))
+          ArrayList vecitems = m_directory.GetDirectory(path);
+
+          GUIListItem tempItem;
+          for (int i = 0; i < vecitems.Count; ++i)
           {
-            if (Utils.IsVideo(tempItem.Path) && /*!Utils.IsNFO(tempItem.Path) && */!PlayListFactory.IsPlayList(tempItem.Path))
+            tempItem = (GUIListItem)vecitems[i];
+            if (!tempItem.IsFolder
+            || (tempItem.IsFolder && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(tempItem.Path).ToLower())))
             {
-              return tempItem.Path;
+              if (Utils.IsVideo(tempItem.Path) && /*!Utils.IsNFO(tempItem.Path) && */!PlayListFactory.IsPlayList(tempItem.Path))
+              {
+                return tempItem.Path;
+              }
             }
-          }
-          else
-          {
-            if (tempItem.Path.ToLower().IndexOf("video_ts") >= 0)
+            else
             {
-              return String.Format(@"{0}\VIDEO_TS.IFO", tempItem.Path);
+              if (tempItem.Path.ToLower().IndexOf("video_ts") >= 0)
+              {
+                return String.Format(@"{0}\VIDEO_TS.IFO", tempItem.Path);
+              }
             }
           }
         }
@@ -1011,7 +1016,7 @@ namespace MediaPortal.GUI.Video
       bool bFoundFile = true;
       if (pItem.IsFolder)
       {
-        strFile = GetFolderVideoFile(pItem.Path);
+        strFile = GetFolderVideoFile(pItem.Path, false);
         Log.Write("Searching for folder:{0}- file:{1}", pItem.Path, strFile);
         if (strFile == string.Empty)
         {
@@ -1080,7 +1085,7 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
-            file = GetFolderVideoFile(pItem.Path);
+            file = GetFolderVideoFile(pItem.Path, true);
           }
         } // of if (pItem.IsFolder)
         else if (!pItem.IsFolder

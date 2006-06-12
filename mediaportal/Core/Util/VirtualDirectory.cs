@@ -477,7 +477,7 @@ namespace MediaPortal.Util
 
       //is this directory protected
       int iPincodeCorrect;
-      if (IsProtectedShare(strDir, out iPincodeCorrect) && !m_strPreviousDir.StartsWith(currentShare))
+      if (IsProtectedShare(strDir, out iPincodeCorrect))
       {
         bool retry = true;
         {
@@ -509,16 +509,19 @@ namespace MediaPortal.Util
                   itemTmp.IsFolder = true;
                   itemTmp.Label = "..";
                   itemTmp.Label2 = "";
-                  itemTmp.Path = m_strPreviousDir;
+                  itemTmp.Path = "";
                   Utils.SetDefaultIcons(itemTmp);
                   Utils.SetThumbnails(ref itemTmp);
                   items.Add(itemTmp);
+                  previousShare = currentShare;
                   return items;
                 }
               }
               else
                 retry = false;
             }
+            else
+              retry = false;
           }
         }
       }
@@ -1990,5 +1993,7 @@ namespace MediaPortal.Util
     }
 
     #endregion
+
+
   }
 }
