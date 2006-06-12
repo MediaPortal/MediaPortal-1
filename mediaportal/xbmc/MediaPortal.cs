@@ -278,37 +278,37 @@ public class MediaPortalApp : D3DApp, IRender
       try
       {
 #endif
-        if (splashScreen != null)
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Initializing DirectX...");
+      }
+      MediaPortalApp app = new MediaPortalApp();
+      Log.Write("Main: Initializing DirectX");
+      if (app.CreateGraphicsSample())
+      {
+        IMessageFilter filter = new ThreadMessageFilter(app);
+        Application.AddMessageFilter(filter);
+        try
         {
-          splashScreen.SetInformation("Initializing DirectX...");
+          //app.PreRun();
+          Log.Write("Main: Running");
+          GUIGraphicsContext.BlankScreen = false;
+          Application.Run(app);
+          Debug.WriteLine("after Application.Run");
         }
-        MediaPortalApp app = new MediaPortalApp();
-        Log.Write("Main: Initializing DirectX");
-        if (app.CreateGraphicsSample())
+        //#if !DEBUG
+        catch (Exception ex)
         {
-          IMessageFilter filter = new ThreadMessageFilter(app);
-          Application.AddMessageFilter(filter);
-          try
-          {
-            //app.PreRun();
-            Log.Write("Main: Running");
-            GUIGraphicsContext.BlankScreen = false;
-            Application.Run(app);
-            Debug.WriteLine("after Application.Run");
-          }
-          //#if !DEBUG
-          catch (Exception ex)
-          {
-            Log.Write(ex);
-            Log.WriteFile(Log.LogType.Log, true, "MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-          }
-          //#endif
-          finally
-          {
-            Application.RemoveMessageFilter(filter);
-          }
-          app.OnExit();
+          Log.Write(ex);
+          Log.WriteFile(Log.LogType.Log, true, "MediaPortal stopped due 2 an exception {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
         }
+        //#endif
+        finally
+        {
+          Application.RemoveMessageFilter(filter);
+        }
+        app.OnExit();
+      }
 #if !DEBUG
       }
       catch (Exception ex)
@@ -1884,7 +1884,7 @@ public class MediaPortalApp : D3DApp, IRender
         screenSaverTimer = DateTime.Now;
         GUIGraphicsContext.BlankScreen = false;
       }
-      // check any still waiting single click events
+      //check any still waiting single click events
       if (GUIGraphicsContext.DBLClickAsRightClick && bMouseClickFired)
       {
         if ((Math.Abs(m_iLastMousePositionX - iCursorX) > 10) || (Math.Abs(m_iLastMousePositionY - iCursorY) > 10))
@@ -1912,6 +1912,57 @@ public class MediaPortalApp : D3DApp, IRender
         GUIGraphicsContext.OnAction(action);
       }
     }
+  }
+
+  protected override void mousedoubleclick(MouseEventArgs e)
+  {
+    if ((GUIGraphicsContext.DBLClickAsRightClick))
+      return;
+
+    screenSaverTimer = DateTime.Now;
+    GUIGraphicsContext.BlankScreen = false;
+    // Disable first mouse action when mouse was hidden
+    if (!_showCursor)
+    {
+      base.mouseclick(e);
+      return;
+    }
+    Action actionMove;
+    Action action;
+
+    // Calculate Mouse position
+    Point ptClientUL;
+    Point ptScreenUL = new Point();
+
+    ptScreenUL.X = Cursor.Position.X;
+    ptScreenUL.Y = Cursor.Position.Y;
+    ptClientUL = PointToClient(ptScreenUL);
+
+    int iCursorX = ptClientUL.X;
+    int iCursorY = ptClientUL.Y;
+
+    // first move mouse
+    float fX = ((float)GUIGraphicsContext.Width) / ((float)ClientSize.Width);
+    float fY = ((float)GUIGraphicsContext.Height) / ((float)ClientSize.Height);
+    float x = (fX * iCursorX) - GUIGraphicsContext.OffsetX;
+    float y = (fY * iCursorY) - GUIGraphicsContext.OffsetY;
+
+    // Save last position
+    m_iLastMousePositionX = iCursorX;
+    m_iLastMousePositionY = iCursorY;
+
+    // Send move moved action
+    actionMove = new Action(Action.ActionType.ACTION_MOUSE_MOVE, x, y);
+    GUIGraphicsContext.OnAction(actionMove);
+
+    action = new Action(Action.ActionType.ACTION_MOUSE_DOUBLECLICK, x, y);
+    action.MouseButton = e.Button;
+    action.SoundFileName = "click.wav";
+    if (action.SoundFileName.Length > 0)
+      Utils.PlaySound(action.SoundFileName, false, true);
+
+    GUIGraphicsContext.OnAction(action);
+    return;
   }
 
   protected override void mouseclick(MouseEventArgs e)

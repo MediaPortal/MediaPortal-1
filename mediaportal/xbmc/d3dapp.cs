@@ -2008,8 +2008,6 @@ namespace MediaPortal
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(D3DApp));
       this.menuStripMain = new System.Windows.Forms.MainMenu(this.components);
       this.menuItemFile = new System.Windows.Forms.MenuItem();
-      this.menuItemChangeDevice = new System.Windows.Forms.MenuItem();
-      this.menuBreakFile = new System.Windows.Forms.MenuItem();
       this.menuItemExit = new System.Windows.Forms.MenuItem();
       this.menuItemOptions = new System.Windows.Forms.MenuItem();
       this.menuItemFullscreen = new System.Windows.Forms.MenuItem();
@@ -2020,6 +2018,8 @@ namespace MediaPortal
       this.menuItemMusic = new System.Windows.Forms.MenuItem();
       this.menuItemPictures = new System.Windows.Forms.MenuItem();
       this.menuItemTelevision = new System.Windows.Forms.MenuItem();
+      this.menuItemChangeDevice = new System.Windows.Forms.MenuItem();
+      this.menuBreakFile = new System.Windows.Forms.MenuItem();
       this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
       this.contextMenu = new System.Windows.Forms.ContextMenu();
       this.menuItemContext = new System.Windows.Forms.MenuItem();
@@ -2038,21 +2038,8 @@ namespace MediaPortal
       // 
       this.menuItemFile.Index = 0;
       this.menuItemFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            //this.menuItemChangeDevice,
-            //this.menuBreakFile,
             this.menuItemExit});
       this.menuItemFile.Text = "&File";
-      // 
-      // menuItemChangeDevice
-      // 
-      this.menuItemChangeDevice.Index = 0;
-      this.menuItemChangeDevice.Text = "&Change Device...";
-      this.menuItemChangeDevice.Click += new System.EventHandler(this.UserSelectNewDevice);
-      // 
-      // menuBreakFile
-      // 
-      this.menuBreakFile.Index = 1;
-      this.menuBreakFile.Text = "-";
       // 
       // menuItemExit
       // 
@@ -2122,6 +2109,17 @@ namespace MediaPortal
       this.menuItemTelevision.Text = "Television";
       this.menuItemTelevision.Click += new System.EventHandler(this.televisionMenuItem_Click);
       // 
+      // menuItemChangeDevice
+      // 
+      this.menuItemChangeDevice.Index = -1;
+      this.menuItemChangeDevice.Text = "&Change Device...";
+      this.menuItemChangeDevice.Click += new System.EventHandler(this.UserSelectNewDevice);
+      // 
+      // menuBreakFile
+      // 
+      this.menuBreakFile.Index = -1;
+      this.menuBreakFile.Text = "-";
+      // 
       // notifyIcon
       // 
       this.notifyIcon.ContextMenu = this.contextMenu;
@@ -2160,6 +2158,7 @@ namespace MediaPortal
       this.KeyPreview = true;
       this.MinimumSize = new System.Drawing.Size(100, 100);
       this.Name = "D3DApp";
+      this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseDoubleClick);
       this.Closing += new System.ComponentModel.CancelEventHandler(this.D3DApp_Closing);
       this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.OnKeyPress);
       this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
@@ -2302,6 +2301,20 @@ namespace MediaPortal
     }
 
     protected virtual void mouseclick(MouseEventArgs e)
+    {
+      //this.Text=String.Format("show click");
+      Cursor ourCursor = this.Cursor;
+      if (!_showCursor)
+      {
+        Cursor.Show();
+        _showCursor = true;
+        _needUpdate = true;
+        Invalidate(true);
+      }
+      _mouseTimeOutTimer = DateTime.Now;
+    }
+
+    protected virtual void mousedoubleclick(MouseEventArgs e)
     {
       //this.Text=String.Format("show click");
       Cursor ourCursor = this.Cursor;
@@ -2696,6 +2709,14 @@ namespace MediaPortal
       WindowState = FormWindowState.Minimized;
       Hide();
       notifyIcon.Visible = true;
+    }
+
+    private void D3DApp_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+      if (ActiveForm != this)
+        return;
+
+      mousedoubleclick(e);
     }
   }
 
