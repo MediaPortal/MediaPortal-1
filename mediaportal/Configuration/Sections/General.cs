@@ -337,6 +337,7 @@ namespace MediaPortal.Configuration.Sections
       this.settingsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.settingsCheckedListBox.CheckOnClick = true;
       this.settingsCheckedListBox.Items.AddRange(new object[] {
             "Start MediaPortal in fullscreen mode",
             "Minimize to tray on start up",
@@ -355,8 +356,8 @@ namespace MediaPortal.Configuration.Sections
             "Blank screen in fullscreen mode when MediaPortal is idle",
             "Turn off monitor when blanking screen",
             "Start with basic home screen",
-            "Allow MediaPortal (and other apps) to gain focus (per-user setting - needs reboo" +
-                "t!)"});
+            "Allow MediaPortal (and other apps) to gain focus (per-user setting - needs reboot" +
+                "!)"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(16, 24);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
       this.settingsCheckedListBox.Size = new System.Drawing.Size(440, 274);

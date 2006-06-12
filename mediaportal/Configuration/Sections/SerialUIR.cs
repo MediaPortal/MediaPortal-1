@@ -28,10 +28,11 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-
 using MediaPortal.SerialIR;
 using MediaPortal.GUI.Library;
+
 #pragma warning disable 108
+
 namespace MediaPortal.Configuration.Sections
 {
   public class SerialUIR : MediaPortal.Configuration.SectionSettings
@@ -196,8 +197,8 @@ namespace MediaPortal.Configuration.Sections
       // groupBox1
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.checkBoxRTS);
       this.groupBox1.Controls.Add(this.checkBoxDTR);
       this.groupBox1.Controls.Add(this.label8);
@@ -222,6 +223,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.CommPortCombo);
       this.groupBox1.Controls.Add(this.internalCommandsButton);
       this.groupBox1.Controls.Add(this.inputCheckBox);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(0, 0);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(472, 336);
@@ -231,22 +233,28 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxRTS
       // 
+      this.checkBoxRTS.AutoSize = true;
       this.checkBoxRTS.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.checkBoxRTS.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxRTS.Location = new System.Drawing.Point(16, 200);
       this.checkBoxRTS.Name = "checkBoxRTS";
-      this.checkBoxRTS.Size = new System.Drawing.Size(48, 16);
+      this.checkBoxRTS.Size = new System.Drawing.Size(46, 17);
       this.checkBoxRTS.TabIndex = 12;
       this.checkBoxRTS.Text = "RTS";
+      this.checkBoxRTS.UseVisualStyleBackColor = true;
       this.checkBoxRTS.CheckedChanged += new System.EventHandler(this.checkBoxRTS_CheckedChanged);
       // 
       // checkBoxDTR
       // 
+      this.checkBoxDTR.AutoSize = true;
       this.checkBoxDTR.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.checkBoxDTR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxDTR.Location = new System.Drawing.Point(16, 176);
       this.checkBoxDTR.Name = "checkBoxDTR";
-      this.checkBoxDTR.Size = new System.Drawing.Size(48, 16);
+      this.checkBoxDTR.Size = new System.Drawing.Size(47, 17);
       this.checkBoxDTR.TabIndex = 10;
       this.checkBoxDTR.Text = "DTR";
+      this.checkBoxDTR.UseVisualStyleBackColor = true;
       this.checkBoxDTR.CheckedChanged += new System.EventHandler(this.checkBoxDTR_CheckedChanged);
       // 
       // label8
@@ -261,11 +269,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.ParityCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.ParityCombo.Items.AddRange(new object[] {
-                                                     "None",
-                                                     "Odd",
-                                                     "Even",
-                                                     "Mark",
-                                                     "Space"});
+            "None",
+            "Odd",
+            "Even",
+            "Mark",
+            "Space"});
       this.ParityCombo.Location = new System.Drawing.Point(120, 136);
       this.ParityCombo.Name = "ParityCombo";
       this.ParityCombo.Size = new System.Drawing.Size(88, 21);
@@ -280,6 +288,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonNoneCodes.Size = new System.Drawing.Size(56, 16);
       this.buttonNoneCodes.TabIndex = 20;
       this.buttonNoneCodes.Text = "Mini";
+      this.buttonNoneCodes.UseVisualStyleBackColor = true;
       this.buttonNoneCodes.Click += new System.EventHandler(this.buttonNoneCodes_Click);
       // 
       // buttonDefaultCodes
@@ -290,6 +299,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonDefaultCodes.Size = new System.Drawing.Size(56, 16);
       this.buttonDefaultCodes.TabIndex = 21;
       this.buttonDefaultCodes.Text = "Extended";
+      this.buttonDefaultCodes.UseVisualStyleBackColor = true;
       this.buttonDefaultCodes.Click += new System.EventHandler(this.buttonDefaultCodes_Click);
       // 
       // buttonAllCodes
@@ -300,6 +310,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonAllCodes.Size = new System.Drawing.Size(56, 16);
       this.buttonAllCodes.TabIndex = 22;
       this.buttonAllCodes.Text = "All";
+      this.buttonAllCodes.UseVisualStyleBackColor = true;
       this.buttonAllCodes.Click += new System.EventHandler(this.buttonAllCodes_Click);
       // 
       // label7
@@ -314,8 +325,9 @@ namespace MediaPortal.Configuration.Sections
       // ActionsCheckList
       // 
       this.ActionsCheckList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.ActionsCheckList.CheckOnClick = true;
       this.ActionsCheckList.Location = new System.Drawing.Point(224, 40);
       this.ActionsCheckList.Name = "ActionsCheckList";
       this.ActionsCheckList.Size = new System.Drawing.Size(240, 289);
@@ -333,14 +345,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.CommandDelayCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.CommandDelayCombo.Items.AddRange(new object[] {
-                                                           "150",
-                                                           "200",
-                                                           "250",
-                                                           "300",
-                                                           "250",
-                                                           "400",
-                                                           "450",
-                                                           "500"});
+            "150",
+            "200",
+            "250",
+            "300",
+            "250",
+            "400",
+            "450",
+            "500"});
       this.CommandDelayCombo.Location = new System.Drawing.Point(120, 224);
       this.CommandDelayCombo.Name = "CommandDelayCombo";
       this.CommandDelayCombo.Size = new System.Drawing.Size(88, 21);
@@ -359,16 +371,16 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.LearningTimeoutCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.LearningTimeoutCombo.Items.AddRange(new object[] {
-                                                              "1",
-                                                              "2",
-                                                              "3",
-                                                              "4",
-                                                              "5",
-                                                              "6",
-                                                              "7",
-                                                              "8",
-                                                              "9",
-                                                              "10"});
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"});
       this.LearningTimeoutCombo.Location = new System.Drawing.Point(120, 264);
       this.LearningTimeoutCombo.Name = "LearningTimeoutCombo";
       this.LearningTimeoutCombo.Size = new System.Drawing.Size(88, 21);
@@ -387,38 +399,38 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.IRLengthCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.IRLengthCombo.Items.AddRange(new object[] {
-                                                       "1",
-                                                       "2",
-                                                       "3",
-                                                       "4",
-                                                       "5",
-                                                       "6",
-                                                       "7",
-                                                       "8",
-                                                       "9",
-                                                       "10",
-                                                       "11",
-                                                       "12",
-                                                       "13",
-                                                       "14",
-                                                       "15",
-                                                       "16",
-                                                       "17",
-                                                       "18",
-                                                       "19",
-                                                       "20",
-                                                       "21",
-                                                       "22",
-                                                       "23",
-                                                       "24",
-                                                       "25",
-                                                       "26",
-                                                       "27",
-                                                       "28",
-                                                       "29",
-                                                       "30",
-                                                       "31",
-                                                       "32"});
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32"});
       this.IRLengthCombo.Location = new System.Drawing.Point(120, 184);
       this.IRLengthCombo.Name = "IRLengthCombo";
       this.IRLengthCombo.Size = new System.Drawing.Size(88, 21);
@@ -437,10 +449,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.HandShakeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.HandShakeCombo.Items.AddRange(new object[] {
-                                                        "None",
-                                                        "CtsRts",
-                                                        "DsrDtr",
-                                                        "XonXoff"});
+            "None",
+            "CtsRts",
+            "DsrDtr",
+            "XonXoff"});
       this.HandShakeCombo.Location = new System.Drawing.Point(16, 136);
       this.HandShakeCombo.Name = "HandShakeCombo";
       this.HandShakeCombo.Size = new System.Drawing.Size(88, 21);
@@ -459,19 +471,19 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.BaudRateCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.BaudRateCombo.Items.AddRange(new object[] {
-                                                       "300",
-                                                       "600",
-                                                       "1200",
-                                                       "2400",
-                                                       "4800",
-                                                       "9600",
-                                                       "14400",
-                                                       "19200",
-                                                       "28800",
-                                                       "38400",
-                                                       "56000",
-                                                       "57600",
-                                                       "115200"});
+            "300",
+            "600",
+            "1200",
+            "2400",
+            "4800",
+            "9600",
+            "14400",
+            "19200",
+            "28800",
+            "38400",
+            "56000",
+            "57600",
+            "115200"});
       this.BaudRateCombo.Location = new System.Drawing.Point(120, 88);
       this.BaudRateCombo.Name = "BaudRateCombo";
       this.BaudRateCombo.Size = new System.Drawing.Size(88, 21);
@@ -480,14 +492,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxInitUIRIrman
       // 
+      this.checkBoxInitUIRIrman.AutoSize = true;
       this.checkBoxInitUIRIrman.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
       this.checkBoxInitUIRIrman.Checked = true;
       this.checkBoxInitUIRIrman.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxInitUIRIrman.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxInitUIRIrman.Location = new System.Drawing.Point(16, 48);
       this.checkBoxInitUIRIrman.Name = "checkBoxInitUIRIrman";
-      this.checkBoxInitUIRIrman.Size = new System.Drawing.Size(192, 16);
+      this.checkBoxInitUIRIrman.Size = new System.Drawing.Size(184, 17);
       this.checkBoxInitUIRIrman.TabIndex = 1;
       this.checkBoxInitUIRIrman.Text = "Initialize UIR/IRMan type receiver";
+      this.checkBoxInitUIRIrman.UseVisualStyleBackColor = true;
       this.checkBoxInitUIRIrman.CheckedChanged += new System.EventHandler(this.checkBoxInitUIRIrman_CheckedChanged);
       // 
       // label1
@@ -502,14 +517,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.CommPortCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.CommPortCombo.Items.AddRange(new object[] {
-                                                       "COM1:",
-                                                       "COM2:",
-                                                       "COM3:",
-                                                       "COM4:",
-                                                       "COM5:",
-                                                       "COM6:",
-                                                       "COM7:",
-                                                       "COM8:"});
+            "COM1:",
+            "COM2:",
+            "COM3:",
+            "COM4:",
+            "COM5:",
+            "COM6:",
+            "COM7:",
+            "COM8:"});
       this.CommPortCombo.Location = new System.Drawing.Point(16, 88);
       this.CommPortCombo.Name = "CommPortCombo";
       this.CommPortCombo.Size = new System.Drawing.Size(88, 21);
@@ -523,22 +538,27 @@ namespace MediaPortal.Configuration.Sections
       this.internalCommandsButton.Size = new System.Drawing.Size(192, 23);
       this.internalCommandsButton.TabIndex = 18;
       this.internalCommandsButton.Text = "Learn selected commands";
+      this.internalCommandsButton.UseVisualStyleBackColor = true;
       this.internalCommandsButton.Click += new System.EventHandler(this.internalCommandsButton_Click);
       // 
       // inputCheckBox
       // 
+      this.inputCheckBox.AutoSize = true;
+      this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
       this.inputCheckBox.Name = "inputCheckBox";
-      this.inputCheckBox.Size = new System.Drawing.Size(200, 16);
+      this.inputCheckBox.Size = new System.Drawing.Size(198, 17);
       this.inputCheckBox.TabIndex = 0;
       this.inputCheckBox.Text = "Enable Serial UIR for remote controls";
+      this.inputCheckBox.UseVisualStyleBackColor = true;
       this.inputCheckBox.CheckedChanged += new System.EventHandler(this.inputCheckBox_CheckedChanged);
       // 
       // groupBox2
       // 
       this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.statusLabel);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(0, 344);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(472, 64);
@@ -549,7 +569,7 @@ namespace MediaPortal.Configuration.Sections
       // statusLabel
       // 
       this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.statusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
       this.statusLabel.Location = new System.Drawing.Point(16, 24);
       this.statusLabel.Name = "statusLabel";
@@ -563,6 +583,7 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "SerialUIR";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
 

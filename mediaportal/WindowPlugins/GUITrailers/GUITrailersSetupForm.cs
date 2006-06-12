@@ -39,18 +39,18 @@ namespace MediaPortal.GUI.Video
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBox300;
     private MediaPortal.UserInterface.Controls.MPButton button1;
     private MediaPortal.UserInterface.Controls.MPCheckBox GermanTrailerCheckBox;
-      private CheckedListBox YahooServerListBox;
-      private MediaPortal.UserInterface.Controls.MPLabel label1;
-      private MediaPortal.UserInterface.Controls.MPCheckBox TsrVodCheckBox;
-      private MediaPortal.UserInterface.Controls.MPGroupBox TsrVodBitrateStreamGrpBox;
-      private MediaPortal.UserInterface.Controls.MPRadioButton bitrate1500;
-      private MediaPortal.UserInterface.Controls.MPRadioButton bitrate450;
-      private MediaPortal.UserInterface.Controls.MPRadioButton bitrate160;
-      private MediaPortal.UserInterface.Controls.MPRadioButton bitrate80;
-      private NumericUpDown upDowNmbOfResults;
-      private MediaPortal.UserInterface.Controls.MPGroupBox TsrVodnbrOfResultGrpBox;
-      private MediaPortal.UserInterface.Controls.MPRadioButton radioButton2;
-      private MediaPortal.UserInterface.Controls.MPRadioButton rbnmbOfResultsDef;
+    private CheckedListBox YahooServerListBox;
+    private MediaPortal.UserInterface.Controls.MPLabel label1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox TsrVodCheckBox;
+    private MediaPortal.UserInterface.Controls.MPGroupBox TsrVodBitrateStreamGrpBox;
+    private MediaPortal.UserInterface.Controls.MPRadioButton bitrate1500;
+    private MediaPortal.UserInterface.Controls.MPRadioButton bitrate450;
+    private MediaPortal.UserInterface.Controls.MPRadioButton bitrate160;
+    private MediaPortal.UserInterface.Controls.MPRadioButton bitrate80;
+    private NumericUpDown upDowNmbOfResults;
+    private MediaPortal.UserInterface.Controls.MPGroupBox TsrVodnbrOfResultGrpBox;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioButton2;
+    private MediaPortal.UserInterface.Controls.MPRadioButton rbnmbOfResultsDef;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -146,6 +146,7 @@ namespace MediaPortal.GUI.Video
       // 
       // YahooServerListBox
       // 
+      this.YahooServerListBox.CheckOnClick = true;
       this.YahooServerListBox.Items.AddRange(new object[] {
             "wmcontent74.bcst.yahoo.com",
             "wmcontent78.bcst.yahoo.com"});
