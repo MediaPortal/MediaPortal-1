@@ -729,10 +729,8 @@ namespace MediaPortal.Util
             string strPath = strDirs[i].Substring(strDir.Length + 1);
 
             // Skip hidden folders
-            if ((File.GetAttributes(strDir + @"\" + strPath) & FileAttributes.Hidden) == FileAttributes.Hidden)
-            {
+            if (File.Exists(Path.Combine(strDir, strPath)) && (File.GetAttributes(Path.Combine(strDir, strPath)) & FileAttributes.Hidden) == FileAttributes.Hidden)
               continue;
-            }
 
             item = new GUIListItem();
             item.IsFolder = true;
