@@ -263,7 +263,7 @@ namespace MediaPortal.GUI.Library
 
       _upDownControl.Orientation = GUISpinControl.eOrientation.Horizontal;
       _upDownControl.SetReverse(true);
-      
+
       _imageBackground = new GUIImage(0, 0, _backGroundPositionX, _backGroundPositionY, _backGroundWidth, _backGroundHeight, _backgroundTextureName, 0);
       _imageBackground.ParentControl = this;
       _imageBackground.DimColor = DimColor;
@@ -756,7 +756,7 @@ namespace MediaPortal.GUI.Library
 
         case Action.ActionType.ACTION_MOVE_LEFT:
           {
-            _searchString = ""; 
+            _searchString = "";
             OnLeft();
             _refresh = true;
           }
@@ -775,8 +775,8 @@ namespace MediaPortal.GUI.Library
             if (action.m_key != null)
             {
               // Check key
-              if (((action.m_key.KeyChar >= 49) && (action.m_key.KeyChar <= 57)) ||
-                action.m_key.KeyChar == '*' || action.m_key.KeyChar == '#')
+              if (((action.m_key.KeyChar >= '0') && (action.m_key.KeyChar <= '9')) ||
+                action.m_key.KeyChar == '*' || action.m_key.KeyChar == '(' || action.m_key.KeyChar == '#' || action.m_key.KeyChar == '§')
               {
                 Press((char)action.m_key.KeyChar);
                 return;
@@ -1091,7 +1091,7 @@ namespace MediaPortal.GUI.Library
       if ((Key != _previousKey) && (Key >= '1' && Key <= '9'))
         _currentKey = (char)0;
 
-      if (Key == '*')
+      if (Key == '*' || Key == '(')
       {
         // Backspace
         if (_searchString.Length > 0)
@@ -1100,7 +1100,7 @@ namespace MediaPortal.GUI.Library
         _currentKey = (char)0;
         _timerKey = DateTime.Now;
       }
-      else if (Key == '#')
+      if (Key == '#' || Key == '§')
       {
         _timerKey = DateTime.Now;
       }
@@ -1205,7 +1205,7 @@ namespace MediaPortal.GUI.Library
       {
         _previousKey = (char)0;
         _currentKey = (char)0;
-//        _searchString = string.Empty;
+        //        _searchString = string.Empty;
       }
     }
 
@@ -2210,190 +2210,190 @@ namespace MediaPortal.GUI.Library
     {
       get { return _infoImagePositionY; }
       set
-			{
-				if (value < 0) return;
-				_infoImagePositionY = value;
-				if (_imageInfo != null) _imageInfo.YPosition = value;
-			}
-		}
-
-		public int InfoImageWidth
-  {
-			get { return _infoImageWidth; }
-			set
-    {
-				if (value < 0) return;
-				_infoImageWidth = value;
-				if (_imageInfo != null) _imageInfo.Width = value;
-			}
-   }
-
-		public int InfoImageHeight
-  {
-			get { return _infoImageHeight; }
-			set
-    {
-				if (value < 0) return;
-				_infoImageHeight = value;
-				if (_imageInfo != null) _imageInfo.Height = value;
-			}
-   }
-
-		public long InfoImageDiffuse
-  {
-			get
-    {
-				if (_imageInfo != null)
-					return _imageInfo.ColourDiffuse;
-				return 0;
-  }
-			set { if (_imageInfo != null) _imageInfo.ColourDiffuse = value; }
-}
-
-		public string InfoImageFileName
-  {
-			get
-    {
-				if (_imageInfo != null)
-					return _imageInfo.FileName;
-				return String.Empty;
-  }
-			set
-  {
-				if (value == null) return;
-				_newInfoImageName = value;
-				_infoChanged = true;
-				_idleTimer = DateTime.Now;
-			}
-   }
-
-		void UpdateInfoImage()
-  {
-			if (_imageInfo == null) return;
-			if (_infoChanged)
-   {
-				TimeSpan ts = DateTime.Now - _idleTimer;
-				if (ts.TotalMilliseconds > 500)
-				{
-					_imageInfo.SetFileName(_newInfoImageName);
-					_newInfoImageName = "";
-					_infoChanged = false;
-				}
-			}
-   }
-
-
-		/// <summary>
-		/// Method to store(save) the current control rectangle
-		/// </summary>
-		public override void StorePosition()
-  {
-			if (_imageInfo != null) _imageInfo.StorePosition();
-			if (_upDownControl != null) _upDownControl.StorePosition();
-			if (_imageBackground != null) _imageBackground.StorePosition();
-			if (_imageFolder != null) _imageFolder.StorePosition();
-			if (_imageFolderFocus != null) _imageFolderFocus.StorePosition();
-			if (_horizontalScrollbar != null) _horizontalScrollbar.StorePosition();
-
-			base.StorePosition();
- }
-
-		/// <summary>
-		/// Method to restore the saved-current control rectangle
-		/// </summary>
-		public override void ReStorePosition()
-		{
-			if (_imageInfo != null) _imageInfo.ReStorePosition();
-			if (_upDownControl != null) _upDownControl.ReStorePosition();
-			if (_imageBackground != null) _imageBackground.ReStorePosition();
-			if (_imageFolder != null) _imageFolder.ReStorePosition();
-			if (_imageFolderFocus != null) _imageFolderFocus.ReStorePosition();
-			if (_horizontalScrollbar != null) _horizontalScrollbar.ReStorePosition();
-
-			if (_imageInfo != null) _imageInfo.GetRect(out _infoImagePositionX, out _infoImagePositionY, out _infoImageWidth, out _infoImageHeight);
-			if (_imageBackground != null) _imageBackground.GetRect(out _backGroundPositionX, out _backGroundPositionY, out _backGroundWidth, out _backGroundHeight);
-			if (_upDownControl != null) _upDownControl.GetRect(out _spinControlPositionX, out _spinControlPositionY, out _spinControlWidth, out _spinControlHeight);
-
-			base.ReStorePosition();
-		}
-
-  /// <summary>
-  /// Method to get animate the current control
-  /// </summary>
-  public override void Animate(float timePassed, Animator animator)
-  {   
-    if (animator == null) return;
-    if (_imageInfo != null) _imageInfo.Animate(timePassed, animator);
-    if (_upDownControl != null) _upDownControl.Animate(timePassed, animator);
-    if (_imageBackground != null) _imageBackground.Animate(timePassed, animator);
-    base.Animate(timePassed, animator);
-  }
-
-
-  /// <summary>
-  /// Gets the ID of the control.
-  /// </summary>
-  public override int GetID
-  {
-    get { return _controlId; }
-    set
-    {
-      _controlId = value;
-      if (_upDownControl != null) _upDownControl.ParentID = value;
-    }
-  }
-
-  public int Count
-  {
-    get { return _listItems.Count; }
-  }
-
-  public GUIListItem this[int index]
-  {
-    get
-    {
-      if (index < 0 || index >= _listItems.Count) return null;
-      return _listItems[index];
-    }
-  }
-
-  public GUIListItem SelectedListItem
-  {
-    get
-    {
-      int iItem = _offset + _cursorX;
-      if (iItem >= 0 && iItem < _listItems.Count)
       {
-        GUIListItem pItem = _listItems[iItem];
-        return pItem;
+        if (value < 0) return;
+        _infoImagePositionY = value;
+        if (_imageInfo != null) _imageInfo.YPosition = value;
       }
-      return null;
     }
-  }
 
-  public int SelectedListItemIndex
-  {
-    get
+    public int InfoImageWidth
     {
-      int iItem = _offset + _cursorX;
-      if (iItem >= 0 && iItem < _listItems.Count)
+      get { return _infoImageWidth; }
+      set
       {
-        return iItem;
+        if (value < 0) return;
+        _infoImageWidth = value;
+        if (_imageInfo != null) _imageInfo.Width = value;
       }
-      return -1;
     }
-  }
 
-  public void Clear()
-  {
-    _listItems.Clear();
-    //GUITextureManager.CleanupThumbs();
-    _upDownControl.SetRange(1, 1);
-    _upDownControl.Value = 1;
-    _cursorX = _offset = 0;
-    _refresh = true;
-    OnSelectionChanged();
-  }
+    public int InfoImageHeight
+    {
+      get { return _infoImageHeight; }
+      set
+      {
+        if (value < 0) return;
+        _infoImageHeight = value;
+        if (_imageInfo != null) _imageInfo.Height = value;
+      }
+    }
+
+    public long InfoImageDiffuse
+    {
+      get
+      {
+        if (_imageInfo != null)
+          return _imageInfo.ColourDiffuse;
+        return 0;
+      }
+      set { if (_imageInfo != null) _imageInfo.ColourDiffuse = value; }
+    }
+
+    public string InfoImageFileName
+    {
+      get
+      {
+        if (_imageInfo != null)
+          return _imageInfo.FileName;
+        return String.Empty;
+      }
+      set
+      {
+        if (value == null) return;
+        _newInfoImageName = value;
+        _infoChanged = true;
+        _idleTimer = DateTime.Now;
+      }
+    }
+
+    void UpdateInfoImage()
+    {
+      if (_imageInfo == null) return;
+      if (_infoChanged)
+      {
+        TimeSpan ts = DateTime.Now - _idleTimer;
+        if (ts.TotalMilliseconds > 500)
+        {
+          _imageInfo.SetFileName(_newInfoImageName);
+          _newInfoImageName = "";
+          _infoChanged = false;
+        }
+      }
+    }
+
+
+    /// <summary>
+    /// Method to store(save) the current control rectangle
+    /// </summary>
+    public override void StorePosition()
+    {
+      if (_imageInfo != null) _imageInfo.StorePosition();
+      if (_upDownControl != null) _upDownControl.StorePosition();
+      if (_imageBackground != null) _imageBackground.StorePosition();
+      if (_imageFolder != null) _imageFolder.StorePosition();
+      if (_imageFolderFocus != null) _imageFolderFocus.StorePosition();
+      if (_horizontalScrollbar != null) _horizontalScrollbar.StorePosition();
+
+      base.StorePosition();
+    }
+
+    /// <summary>
+    /// Method to restore the saved-current control rectangle
+    /// </summary>
+    public override void ReStorePosition()
+    {
+      if (_imageInfo != null) _imageInfo.ReStorePosition();
+      if (_upDownControl != null) _upDownControl.ReStorePosition();
+      if (_imageBackground != null) _imageBackground.ReStorePosition();
+      if (_imageFolder != null) _imageFolder.ReStorePosition();
+      if (_imageFolderFocus != null) _imageFolderFocus.ReStorePosition();
+      if (_horizontalScrollbar != null) _horizontalScrollbar.ReStorePosition();
+
+      if (_imageInfo != null) _imageInfo.GetRect(out _infoImagePositionX, out _infoImagePositionY, out _infoImageWidth, out _infoImageHeight);
+      if (_imageBackground != null) _imageBackground.GetRect(out _backGroundPositionX, out _backGroundPositionY, out _backGroundWidth, out _backGroundHeight);
+      if (_upDownControl != null) _upDownControl.GetRect(out _spinControlPositionX, out _spinControlPositionY, out _spinControlWidth, out _spinControlHeight);
+
+      base.ReStorePosition();
+    }
+
+    /// <summary>
+    /// Method to get animate the current control
+    /// </summary>
+    public override void Animate(float timePassed, Animator animator)
+    {
+      if (animator == null) return;
+      if (_imageInfo != null) _imageInfo.Animate(timePassed, animator);
+      if (_upDownControl != null) _upDownControl.Animate(timePassed, animator);
+      if (_imageBackground != null) _imageBackground.Animate(timePassed, animator);
+      base.Animate(timePassed, animator);
+    }
+
+
+    /// <summary>
+    /// Gets the ID of the control.
+    /// </summary>
+    public override int GetID
+    {
+      get { return _controlId; }
+      set
+      {
+        _controlId = value;
+        if (_upDownControl != null) _upDownControl.ParentID = value;
+      }
+    }
+
+    public int Count
+    {
+      get { return _listItems.Count; }
+    }
+
+    public GUIListItem this[int index]
+    {
+      get
+      {
+        if (index < 0 || index >= _listItems.Count) return null;
+        return _listItems[index];
+      }
+    }
+
+    public GUIListItem SelectedListItem
+    {
+      get
+      {
+        int iItem = _offset + _cursorX;
+        if (iItem >= 0 && iItem < _listItems.Count)
+        {
+          GUIListItem pItem = _listItems[iItem];
+          return pItem;
+        }
+        return null;
+      }
+    }
+
+    public int SelectedListItemIndex
+    {
+      get
+      {
+        int iItem = _offset + _cursorX;
+        if (iItem >= 0 && iItem < _listItems.Count)
+        {
+          return iItem;
+        }
+        return -1;
+      }
+    }
+
+    public void Clear()
+    {
+      _listItems.Clear();
+      //GUITextureManager.CleanupThumbs();
+      _upDownControl.SetRange(1, 1);
+      _upDownControl.Value = 1;
+      _cursorX = _offset = 0;
+      _refresh = true;
+      OnSelectionChanged();
+    }
 
     public override int DimColor
     {
@@ -2411,5 +2411,5 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-}
+  }
 }

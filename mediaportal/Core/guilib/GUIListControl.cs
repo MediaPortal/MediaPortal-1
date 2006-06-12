@@ -1035,8 +1035,8 @@ namespace MediaPortal.GUI.Library
             if (action.m_key != null)
             {
               // Check key
-              if (((action.m_key.KeyChar >= 49) && (action.m_key.KeyChar <= 57)) ||
-                action.m_key.KeyChar == '*' || action.m_key.KeyChar == '#')
+              if (((action.m_key.KeyChar >= '0') && (action.m_key.KeyChar <= '9')) ||
+                action.m_key.KeyChar == '*' || action.m_key.KeyChar == '(' || action.m_key.KeyChar == '#' || action.m_key.KeyChar == '§')
               {
                 Press((char)action.m_key.KeyChar);
                 return;
@@ -1444,7 +1444,7 @@ namespace MediaPortal.GUI.Library
       if ((Key != _previousKey) && (Key >= '1' && Key <= '9'))
         _currentKey = (char)0;
 
-      if (Key == '*')
+      if (Key == '*' || Key == '(')
       {
         // Backspace
         if (_searchString.Length > 0)
@@ -1453,7 +1453,7 @@ namespace MediaPortal.GUI.Library
         _currentKey = (char)0;
         _timerKey = DateTime.Now;
       }
-      else if (Key == '#')
+      else if (Key == '#' || Key == '§')
       {
         _timerKey = DateTime.Now;
       }
