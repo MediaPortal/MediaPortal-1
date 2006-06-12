@@ -1085,7 +1085,7 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
-            file = GetFolderVideoFile(pItem.Path, true);
+            //file = GetFolderVideoFile(pItem.Path, true);
           }
         } // of if (pItem.IsFolder)
         else if (!pItem.IsFolder
