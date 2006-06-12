@@ -42,16 +42,35 @@ namespace MediaPortal.EPG
     {
       public string id;
       public string name;
-      public string[] grabber;
-      public string[] mergeId;
-      public bool[] Linked;
-      public int[] linkStart;
-      public int[] linkEnd;
-      public ProgramDateTime[] mergeStart;
-      public ProgramDateTime[] mergeEnd;
+      public string grabber;
+      public bool Linked;
+      public int linkStart;
+      public int linkEnd;
       public int copies;
       public bool iscopy;
-      public int mergedChannelsCount;
+      public bool isMerged;
+    }
+
+    struct MergeChannelLocation
+    {
+      public int mergeNum;
+      public int mergeChannel;
+    }
+
+    struct MergeInfo
+    {
+      public int count;
+      public string name;
+      public MergeChannelData[] channels;
+    }
+
+    struct MergeChannelData
+    {
+      public int startHour;
+      public int startMin;
+      public int endHour;
+      public int endMin;
+      public ArrayList programs;
     }
 
     public WebEPG()
@@ -79,9 +98,11 @@ namespace MediaPortal.EPG
       }
 
       //TVProgram program;
-      ArrayList programs = new ArrayList();
-      ArrayList programsArray = new ArrayList();
+      ArrayList programs;
+      ArrayList mergedPrograms;
       ArrayList channels = new ArrayList();
+      MergeInfo[] mergedList = null;
+      Hashtable mergedChannels = new Hashtable();
       Hashtable idList = new Hashtable();
       XMLTVExport xmltv = new XMLTVExport(Environment.CurrentDirectory + "\\xmltv\\");
 
@@ -105,6 +126,36 @@ namespace MediaPortal.EPG
         MediaPortal.Utils.Web.HTTPAuth.Add(site, auth);
       }
 
+      int MergeCount = m_xmlreader.GetValueAsInt("MergeChannels", "Count", 0);
+
+      if (MergeCount > 0)
+      {
+        mergedList = new MergeInfo[MergeCount];
+
+        for (int i = 1; i <= MergeCount; i++)
+        {
+          MergeInfo merged = new MergeInfo();
+          merged.count = m_xmlreader.GetValueAsInt("Merge" + i.ToString(), "Channels", 0);
+          merged.name = m_xmlreader.GetValueAsString("Merge" + i.ToString(), "DisplayName", "");
+          merged.channels = new MergeChannelData[merged.count];
+          for (int c = 1; c <= merged.count; c++)
+          {
+            string channelId = m_xmlreader.GetValueAsString("Merge" + i.ToString(), "Channel" + c.ToString(), "");
+            MergeChannelData mergeTime = new MergeChannelData();
+            MergeChannelLocation location = new MergeChannelLocation();
+            location.mergeChannel = c;
+            location.mergeNum = i;
+            mergeTime.startHour = m_xmlreader.GetValueAsInt("Merge" + i.ToString(), "StartHour" + c.ToString(), 0); ;
+            mergeTime.startMin = m_xmlreader.GetValueAsInt("Merge" + i.ToString(), "StartMin" + c.ToString(), 0); ;
+            mergeTime.endHour = m_xmlreader.GetValueAsInt("Merge" + i.ToString(), "EndHour" + c.ToString(), 0); ;
+            mergeTime.endMin = m_xmlreader.GetValueAsInt("Merge" + i.ToString(), "EndMin" + c.ToString(), 0); ;
+            merged.channels[c] = mergeTime;
+            mergedChannels.Add(channelId, location);
+          }
+          mergedList[i] = merged;
+        }
+      }
+
       channelCount = m_xmlreader.GetValueAsInt("ChannelMap", "Count", 0);
 
       for (int i = 1; i <= channelCount; i++)
@@ -112,46 +163,17 @@ namespace MediaPortal.EPG
         GrabberInfo channel = new GrabberInfo();
         channel.copies = 0;
         channel.iscopy = false;
+        channel.isMerged = false;
         channel.name = m_xmlreader.GetValueAsString(i.ToString(), "DisplayName", "");
-        channel.mergedChannelsCount = m_xmlreader.GetValueAsInt(i.ToString(), "mergedChannelsCount", 1);
         channel.id = m_xmlreader.GetValueAsString(i.ToString(), "ChannelID", "");
-        // create the needed arrays with the needed number of elements
-        channel.mergeId = new string[channel.mergedChannelsCount];
-        channel.grabber = new string[channel.mergedChannelsCount];
-        channel.Linked = new bool[channel.mergedChannelsCount];
-        channel.linkStart = new int[channel.mergedChannelsCount];
-        channel.linkEnd = new int[channel.mergedChannelsCount];
-        channel.mergeStart = new ProgramDateTime[channel.mergedChannelsCount];
-        for (int x = 0; x < channel.mergedChannelsCount; x++)
+        channel.grabber = m_xmlreader.GetValueAsString(i.ToString(), "Grabber1", "");
+        channel.Linked = m_xmlreader.GetValueAsBool(i.ToString(), "Grabber1-Linked", false);
+        if(channel.Linked)
         {
-          channel.mergeStart[x] = new ProgramDateTime();
+          channel.linkStart = m_xmlreader.GetValueAsInt(i.ToString(), "Grabber1-Start", 18);
+          channel.linkEnd = m_xmlreader.GetValueAsInt(i.ToString(), "Grabber1-End", 23);
         }
-        channel.mergeEnd = new ProgramDateTime[channel.mergedChannelsCount];
-        for (int x = 0; x < channel.mergedChannelsCount; x++)
-        {
-          channel.mergeEnd[x] = new ProgramDateTime();
-        }
-        //
-        for (int j = 0; j < channel.mergedChannelsCount; j++)
-        {
-          int _grabnum = j + 1;
-          string strGrabberNum = _grabnum.ToString();
-          ProgramData timeGrabber = new ProgramData(); // only used for conversion purpose
-          channel.mergeId[j] = m_xmlreader.GetValueAsString(i.ToString(), "mergeChannelID" + strGrabberNum, "");
-          timeGrabber.SetElement("<#START>", m_xmlreader.GetValueAsString(i.ToString(), "mergeStart" + strGrabberNum, "00:00"));
-          channel.mergeStart[j].Hour = timeGrabber.StartTime.Hour;
-          channel.mergeStart[j].Minute = timeGrabber.StartTime.Minute;
-          timeGrabber.SetElement("<#START>", m_xmlreader.GetValueAsString(i.ToString(), "mergeEnd" + strGrabberNum, "00:00"));
-          channel.mergeEnd[j].Hour = timeGrabber.StartTime.Hour;
-          channel.mergeEnd[j].Minute = timeGrabber.StartTime.Minute;
-          channel.grabber[j] = m_xmlreader.GetValueAsString(i.ToString(), "Grabber" + strGrabberNum, "");
-          channel.Linked[j] = m_xmlreader.GetValueAsBool(i.ToString(), "Grabber" + strGrabberNum + "-Linked", false);
-          if (channel.Linked[j])
-          {
-            channel.linkStart[j] = m_xmlreader.GetValueAsInt(i.ToString(), "Grabber" + strGrabberNum + "-Start", 18);
-            channel.linkEnd[j] = m_xmlreader.GetValueAsInt(i.ToString(), "Grabber" + strGrabberNum + "-End", 23);
-          }
-        }
+
         object obj = idList[channel.id];
         if (obj == null)
         {
@@ -168,9 +190,22 @@ namespace MediaPortal.EPG
           channels.RemoveAt(pos);
           channels.Insert(pos, orig);
         }
+
         channels.Add(channel);
-        xmltv.WriteChannel(channel.id, channel.name);
+
+        MergeChannelLocation mergedPos;
+        if (mergedChannels.Contains(channel.id))
+        {
+          mergedPos = (MergeChannelLocation)mergedChannels[channel.id];
+          channel.isMerged = true;
+          xmltv.WriteChannel("merged"+ mergedPos.mergeNum.ToString(), mergedList[mergedPos.mergeNum].name);
+        }
+        else
+        {
+          xmltv.WriteChannel(channel.id, channel.name);
+        }
       }
+
 
       for (int i = 1; i <= channelCount; i++)
       {
@@ -184,31 +219,24 @@ namespace MediaPortal.EPG
         }
         else
         {
-          for (int j = 0; j < channel.mergedChannelsCount; j++)
+          if(channel.grabber != grabberLast)
+            initResult = m_EPGGrabber.Initalise(channel.grabber);
+
+          grabberLast = channel.grabber;
+
+          if (initResult)
           {
-            if (channel.grabber[j] != grabberLast)
-              initResult = m_EPGGrabber.Initalise(channel.grabber[j]);
-
-            grabberLast = channel.grabber[j];
-
-            if (initResult)
+            programs = m_EPGGrabber.GetGuide(channel.id, channel.Linked, channel.linkStart, channel.linkEnd);
+            if(programs != null )
             {
-              if (channel.mergedChannelsCount > 1)
+              if (channel.isMerged)
               {
-                programsArray.Add(m_EPGGrabber.GetGuide(channel.mergeId[j], channel.Linked[j], channel.linkStart[j], channel.linkEnd[j]));
+                MergeChannelLocation mergedPos = (MergeChannelLocation)mergedChannels[channel.id];
+                mergedList[mergedPos.mergeNum].channels[mergedPos.mergeChannel].programs = programs;
               }
               else
               {
-                programsArray.Add(m_EPGGrabber.GetGuide(channel.id, channel.Linked[j], channel.linkStart[j], channel.linkEnd[j]));
-              }
-              programs = (ArrayList)programsArray[j];
-
-              // merge programs
-              mergePrograms(ref programs, ref channel, j);
-
-              if (programs != null)
-              {
-                programCount = programs.Count;
+                programCount = programs.Count;  // is this neeeded?
                 for (int c = 0; c <= channel.copies; c++)
                 {
                   for (int p = 0; p < programCount; p++)
@@ -218,12 +246,11 @@ namespace MediaPortal.EPG
                 }
               }
             }
-            else
-            {
-              log.Info("WebEPG: Grabber failed for: {0}", channel.name);
-            }
           }
-          programsArray.Clear();
+          else
+          {
+            log.Info("WebEPG: Grabber failed for: {0}", channel.name);
+          }
         }
 
       }
@@ -233,41 +260,42 @@ namespace MediaPortal.EPG
       return true;
 
     }
+
     private void mergePrograms(ref ArrayList programs, ref GrabberInfo channel, int channelOffset)
     {
       // if the channel is merged, remove unneeded programs regarding to their time
-      int _index = 0;
-      bool done = false;
-      int _count = programs.Count;
-      while (!done)
-      { 
-        TVProgram prog = (TVProgram)programs[_index];
-        prog.Channel = channel.id;
-        programs[_index] = prog; //apply changes
-        if (channel.mergedChannelsCount > 1) 
-        {
-          int _progStart = prog.StartTime.Hour * 10000 + prog.StartTime.Minute*100;
-          int _progEnd = prog.EndTime.Hour * 10000 + prog.EndTime.Minute*100;
-          int _mergeStart = channel.mergeStart[channelOffset].Hour * 10000 + channel.mergeStart[channelOffset].Minute * 100;
-          int _mergeEnd = channel.mergeEnd[channelOffset].Hour * 10000 + channel.mergeEnd[channelOffset].Minute * 100;
-          if (_mergeEnd <= _mergeStart) _mergeEnd += 240000; // ie start=23:00, end 1:00  
-          if (_progEnd <= _progStart) _progEnd += 240000; // add 24h for testing purpose
-          if (_progStart < _mergeStart || _progStart >= _mergeEnd) // program is out of time bounds
-          {
-            programs.RemoveAt(_index); // then remove it
-            _count -= 1;
-            _index -= 1;
-          }
-          if (_progStart >= _mergeStart && _progStart <= _mergeEnd && _progEnd > _mergeEnd)
-          { // sets program end to mergeEnd
-            prog.End = 0;
-            programs[_index] = prog;
+      //int _index = 0;
+      //bool done = false;
+      //int _count = programs.Count;
+      //while (!done)
+      //{ 
+      //  TVProgram prog = (TVProgram)programs[_index];
+      //  prog.Channel = channel.id;
+      //  programs[_index] = prog; //apply changes
+      //  if (channel.mergedChannelsCount > 1) 
+      //  {
+      //    int _progStart = prog.StartTime.Hour * 10000 + prog.StartTime.Minute*100;
+      //    int _progEnd = prog.EndTime.Hour * 10000 + prog.EndTime.Minute*100;
+      //    int _mergeStart = channel.mergeStart[channelOffset].Hour * 10000 + channel.mergeStart[channelOffset].Minute * 100;
+      //    int _mergeEnd = channel.mergeEnd[channelOffset].Hour * 10000 + channel.mergeEnd[channelOffset].Minute * 100;
+      //    if (_mergeEnd <= _mergeStart) _mergeEnd += 240000; // ie start=23:00, end 1:00  
+      //    if (_progEnd <= _progStart) _progEnd += 240000; // add 24h for testing purpose
+      //    if (_progStart < _mergeStart || _progStart >= _mergeEnd) // program is out of time bounds
+      //    {
+      //      programs.RemoveAt(_index); // then remove it
+      //      _count -= 1;
+      //      _index -= 1;
+      //    }
+      //    if (_progStart >= _mergeStart && _progStart <= _mergeEnd && _progEnd > _mergeEnd)
+      //    { // sets program end to mergeEnd
+      //      prog.End = 0;
+      //      programs[_index] = prog;
            
-          }
-        }
-          _index += 1;
-          if (_index == _count) done = true;
-      }
+      //    }
+      //  }
+      //    _index += 1;
+      //    if (_index == _count) done = true;
+      //}
 
     }
   }
