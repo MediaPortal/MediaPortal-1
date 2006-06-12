@@ -1346,7 +1346,6 @@ namespace MediaPortal.TV.Recording
           //Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA:UpdateSignalPresent() quality :{0}", ex.Message);
         }
         //Log.WriteFile(Log.LogType.Log, "  #{0}  locked:{1} present:{2} quality:{3} strength:{4}", i, isLocked, isPresent, quality, strength);
-        Marshal.ReleaseComObject(stat);
       }
       if (_tunerStatistics.Count > 0)
       {
