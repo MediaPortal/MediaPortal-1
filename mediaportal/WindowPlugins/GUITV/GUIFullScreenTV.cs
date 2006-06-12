@@ -405,6 +405,7 @@ namespace MediaPortal.GUI.TV
       //Log.WriteFile(Log.LogType.Error, "action:{0}",action.wID);
       switch (action.wID)
       {
+        case Action.ActionType.ACTION_MOUSE_DOUBLECLICK:
         case Action.ActionType.ACTION_SELECT_ITEM:
           {
             if (_zapOsdVisible)
@@ -1176,7 +1177,9 @@ namespace MediaPortal.GUI.TV
       dlg.Reset();
       dlg.SetHeading(924); // menu
 
-      //dlg.AddLocalizedString(10104); // TV MiniEPG
+      if (GUIGraphicsContext.DBLClickAsRightClick)
+        dlg.AddLocalizedString(10104); // TV MiniEPG
+
       //dlg.AddLocalizedString(915); // TV Channels
       dlg.AddLocalizedString(4); // TV Guide
 
