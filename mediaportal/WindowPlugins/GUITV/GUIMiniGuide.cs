@@ -166,13 +166,13 @@ namespace MediaPortal.GUI.TV
           return;
         case Action.ActionType.ACTION_MOVE_LEFT:
           // switch group
-          spinGroup.MoveDown();
+          spinGroup.MoveUp();
           GUITVHome.Navigator.SetCurrentGroup(spinGroup.GetLabel());
           FillChannelList();
           return;
         case Action.ActionType.ACTION_MOVE_RIGHT:
           // switch group
-          spinGroup.MoveUp();
+          spinGroup.MoveDown();
           GUITVHome.Navigator.SetCurrentGroup(spinGroup.GetLabel());
           FillChannelList();
           return;
