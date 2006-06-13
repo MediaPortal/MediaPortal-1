@@ -14,7 +14,7 @@
     <entry name="biographychannel.tv">BIOC</entry>
     <entry name="bloomberg.co.uk">BLG</entry>
     <entry name="cartoonnetwork.co.uk">CART</entry>
-    <entry name="cancaonova.com">CN</entry>
+<!--    <entry name="cancaonova.com">CN</entry> -->
     <entry name="cnbceurope.com">CNBC</entry>
     <entry name="cnni-emea@cnn.com">CNN</entry>
     <entry name="disney.pt">DC</entry>
@@ -28,7 +28,7 @@
     <entry name="eurosport@eurosport.com">EURS</entry>
     <entry name="fox-pt">Fox</entry>
     <entry name="foxlife-pt">FOXF</entry>
-    <entry name="gntpt.globo.com">GNT</entry>
+<!--    <entry name="gntpt.globo.com">GNT</entry> -->
     <entry name="canalhistoria.com">HIST</entry>
     <entry name="canal-hollywood.com">HOLL</entry>
     <entry name="LusomundoAction@lusomundo.pt">LUSA</entry>
@@ -39,7 +39,7 @@
     <entry name="mtv.pt">MTV</entry>
     <entry name="mtv2europe.com">MTV2</entry>
     <entry name="mtvbase.co.uk">MTVB</entry>
-    <entry name="mtvhits@mtv.co.uk">MTVH</entry>
+<!--    <entry name="mtvhits@mtv.co.uk">MTVH</entry> -->
     <entry name="nationalgeographic.pt">NG</entry>
     <entry name="nickelodeon.pt">NICK</entry>
     <entry name="odisea-odisseia.com">ODIS</entry>
@@ -58,8 +58,9 @@
     <entry name="SIC Noticias@sapo.pt">SICN</entry>
     <entry name="SIC Radical@sapo.pt">SICR</entry>
     <entry name="skynews@sky.com">SKYN</entry>
-    <entry name="sms-tv-pt">SMSTV</entry>
-    <entry name="sporttv.pt">SPTV</entry>
+<!--    <entry name="sms-tv-pt">SMSTV</entry> -->
+    <entry name="sporttv1@sporttv.pt">SPTV1</entry>
+    <entry name="sporttv2@sporttv.pt">SPTV2</entry>
     <entry name="LusomundoGallery@lusomundo.pt">TCG</entry>
     <entry name="tcmeurope.com">TCM</entry>
     <entry name="LusomundoPremium@lusomundo.pt">TCP</entry>

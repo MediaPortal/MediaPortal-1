@@ -4,7 +4,7 @@
 
     <entry name="antena3tv.es">3-Antena+3</entry>	<!--Antena 3 -->
     <entry name="rtvcanal9.com">8-Canal+9</entry>
-    <entry name="Canalplus@plus.es">5-Canal+Plus</entry>
+<!--    <entry name="Canalplus@plus.es">5-Canal+Plus</entry> -->
     <entry name="canalsur@canalsur.es">9-Canal+Sur</entry>
     <entry name="canalsur2@canalsur.es">9-Canal+Sur+2</entry>
     <entry name="canal33-es">14-Canal+33</entry>
@@ -13,7 +13,7 @@
     <entry name="etb2@eitb.com">12-ETB+2</entry>
     <entry name="tvela2@tve.es">2-La+2+de+TVE</entry>
     <entry name="rtvcm.es">17-PROGRAMACION+DE+CASTILLA+LA+MANCHA+TELEVISI&#211;N</entry>
-    <entry name="k3-es">20-PROGRAMACION+DE+K3</entry>
+    <entry name="k3-es">20-K3</entry>
     <entry name="punt2-es">15-Punt+2</entry>
     <entry name="telecinco.es">4-Tele+5</entry>
     <entry name="telemadrid.es">6-Telemadrid</entry>

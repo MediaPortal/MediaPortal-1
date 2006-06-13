@@ -132,9 +132,9 @@
     <entry name="ab4@absat.fr">142</entry>
     <entry name="cine2@betv.be">143</entry>
     <entry name="cine1@betv.be">144</entry>
-    <entry name="cinebox@absat.fr">146</entry>
+<!--    <entry name="cinebox@absat.fr">146</entry> -->
     <entry name="cinepolar@absat.fr">147</entry>
-    <entry name="cinefx@absat.fr">148</entry>
+<!--    <entry name="cinefx@absat.fr">148</entry> -->
 
     <entry name="cinefamily@tps.fr">150</entry>	<!-- TPS Cinéfamily -->
     <entry name="cinextreme@tps.fr">151</entry>	<!-- TPS Cinextreme -->

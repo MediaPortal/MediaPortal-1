@@ -25,7 +25,7 @@
     <entry name="een.be">TV1</entry>					<!-- één -->
     <entry name="ketnet.be">Ketnet</entry>				<!-- Ketnet -->
     <entry name="canvas.be">Canvas</entry>				<!-- Canvas -->
-    <entry name="sporza.be">SPORZA</entry>				<!-- Sporza -->
+<!--    <entry name="sporza.be">SPORZA</entry>				no program data Sporza -->
     <entry name="vtm.be">VTM</entry>					<!-- VTM -->
     <entry name="vt4.be">VT4</entry>					<!-- VT4 -->
 
@@ -47,11 +47,11 @@
     <entry name="ard.de">ALL1</entry>					<!-- ARD - Allemagne 1 -->
     <entry name="zdf.de">ALL2</entry>					<!-- ZDF - Allemagne 2 -->
     <entry name="wdr.de">ALL3%20WDR</entry>				<!-- WDR - Allemagne 3 -->
-    <entry name="sw.de">ALL3%20SW</entry>				<!-- SWF - Allemagne 3 -->
+    <entry name="sw.de">ALL3%20SWF</entry>				<!-- SWF - Allemagne 3 -->
     <entry name="rtl.de">RTL%20Allemagne</entry>			<!-- RTL Allemagne -->
     <entry name="raiuno.rai.it">RAI</entry>				<!-- Rai Uno -->
     <entry name="tve.es">TVE</entry>					<!-- TVE -->
-    <entry name="international@rtp.pt">RTP%20International</entry>	<!-- RTPi -->
+    <entry name="international@rtp.pt">RTP%20Internacional</entry>	<!-- RTPi -->
 
 <!-- International -->
     <entry name="cnni-emea@cnn.com">CNN</entry>				<!-- CNN International - EMEA -->

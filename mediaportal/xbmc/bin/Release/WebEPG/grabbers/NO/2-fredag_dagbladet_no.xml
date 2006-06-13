@@ -34,7 +34,7 @@
 	<entry name="TCM_CARTOONNETWORK">32</entry>		<!-- TCM & Cartoon Network -->
 	<entry name="tv1000@tv1000.no">34</entry>		<!-- TV 1000 -->
 	<entry name="canalplus@canalplus.no">39</entry>		<!-- CANAL+ -->
-	<entry name="cinema@canaldigital.no">42</entry>		<!-- Cinema -->	
+<!--	<entry name="cinema@canaldigital.no">42</entry>		 Cinema -->	
 	<entry name="hallmarkchannel.com">59</entry>		<!-- Hallmark -->
 	<entry name="realitychannel.tv">61</entry>		<!-- Reality TV -->
 	<entry name="film1@canalplus.no">69</entry>		<!-- Canal+ Film 1 -->

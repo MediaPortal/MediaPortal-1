@@ -72,7 +72,7 @@
     	<entry name="hallmarkchannel.com">13</entry>		<!-- Hallmark -->
     	<entry name="star">114</entry>				<!-- Star! -->
     	<entry name="ftv.com">82</entry>			<!-- Fashion TV -->
-    	<entry name="club">115</entry>				<!-- Club -->
+<!--    	<entry name="club">115</entry>				 Club -->
     	<entry name="realitychannel.tv">117</entry>		<!-- Reality TV -->
     	<entry name="godnetwork.com">111</entry>		<!-- God Channel -->
     	<entry name="rtvpink.com">109</entry>			<!-- Pink Plus -->
@@ -106,7 +106,7 @@
 	<entry name="bbcprime.com">2</entry>			<!-- BBC Prime -->
 	<entry name="bbcfood.com">149</entry>			<!-- BBC Food -->
 	<entry name="bbcworld.com">3</entry>			<!-- BBC World -->
-	<entry name="mbc.co.kr">88</entry>			<!-- MBC -->
+<!--	<entry name="mbc.co.kr">88</entry>			 MBC -->
 	<entry name="arte-tv.com">84</entry>			<!-- Arte -->
 	<entry name="mdr.de">91</entry>				<!-- MDR Fernsehen -->
 	<entry name="pro-sieben.de">98</entry>			<!-- PRO 7 -->
@@ -119,7 +119,7 @@
 	<entry name="sat1.de">17</entry>			<!-- SAT1 -->
 	<entry name="3sat.de">1</entry>				<!-- 3SAT -->
 	<entry name="dsf.de">8</entry>				<!-- DSF -->
-	<entry name="dw-world.de">6</entry>			<!-- Deutche Welle -->
+<!--	<entry name="dw-world.de">6</entry>			 Deutche Welle -->
 	<entry name="vox.de">107</entry>			<!-- Vox -->
 	<entry name="kabel1.de">113</entry>			<!-- Kabel 1 -->
 	<entry name="tvchile.cl">52</entry>			<!-- TV Chile -->
@@ -131,12 +131,14 @@
 	<entry name="rtve.es">41</entry>			<!-- TVE -->
 	<entry name="Canal7">80</entry>				<!-- Canal 7 -->
 	<entry name="spiceplatinum.nl">222</entry>		<!-- Spice Platinum -->
-	<entry name="stockholm@kanalokal.se">2388</entry>	<!-- Kanal Lokal Stockholm --> 
-	<entry name="goteborg@kanallokal.se">2398</entry>	<!-- Kanal Lokal Goteborg --> 
-	<entry name="ostgotland@kanallokal.se">2348</entry>	<!-- Kanal Lokal Ostergotland --> 
-	<entry name="Silver">2418</entry>			<!-- Silver --> 
-	<entry name="Axess TV">2478</entry>			<!-- Axess TV --> 
-	<entry name="The Voice">2168</entry>			<!-- The Voice --> 
+	<entry name="stockholm@kanalokal.se">238</entry>	<!-- Kanal Lokal Stockholm --> 
+	<entry name="goteborg@kanallokal.se">239</entry>	<!-- Kanal Lokal Goteborg --> 
+	<entry name="ostgotland@kanallokal.se">234</entry>	<!-- Kanal Lokal Ostergotland --> 
+	<entry name="Silver-se">241</entry>			<!-- Silver --> 
+<!--	<entry name="Axess_Tv-se">247</entry>			 Axess TV --> 
+	<entry name="voice.fi">216</entry>			<!-- The Voice --> 
+<!--        <entry name="tv@aftonbladet.se">248</entry>              Aftonbladet TV --> 
+        <entry name="OneTelevision@kanal5.se">246</entry>       <!-- One Television --> 
   </section>
 
 <!-- Formating of Listing -->

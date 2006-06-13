@@ -34,7 +34,7 @@
 	<entry name="n24.de">40</entry> <!--N24-->
 	<entry name="euronews.net">94</entry> <!--EuroNews-->
 	<entry name="cnni-emea@cnn.com">93</entry> <!--CNN-->
-	<entry name="giga.de">80</entry> <!--NBC-->
+<!--	<entry name="giga.de">80</entry> NBC-->
 	<entry name="bloomberg.co.uk">98</entry> <!--BloombergTV-->	
 	<entry name="bbcworld.com">123</entry> <!--BBC-->
 	
@@ -43,7 +43,7 @@
 	<entry name="dsf.de">7</entry> <!--DSF-->
 	<entry name="kika.de">13</entry> <!--Kinderkanal-->
 	<entry name="mtv.de">46</entry> <!--MTV-->
-	<entry name="mtv2.de">124</entry> <!--MTV2-->
+<!--	<entry name="mtv2.de">124</entry> MTV2-->
 	<entry name="viva.tv">32</entry> <!--VIVA-->
 	<entry name="vivaplus.tv">148</entry> <!--VIVA PLUS-->
 	<entry name="tele5.de">152</entry> <!--Tele 5-->
@@ -54,8 +54,8 @@
 	<entry name="alpha@br-online.de">3</entry> <!--BR-Alpha-->
 	<entry name="phoenix.de">20</entry> <!--Phoenix-->
 	<entry name="dw-world.de">100</entry> <!--DW-tv-->
-	<entry name="cityinfotv.de">180</entry> <!--CityInfo-->
-	<entry name="sports@extreme.com">189</entry> <!--Extreme Sports Channel-->
+<!--	<entry name="cityinfotv.de">180</entry> CityInfo-->
+<!--	<entry name="sports@extreme.com">189</entry> Extreme Sports Channel-->
 	<entry name="bibeltv.de">191</entry> <!--Bibel TV-->
 	<entry name="bahntv.de">195</entry> <!--Bahn TV-->
 	<entry name="spikatv.de">204</entry> <!--Spi.ka tv-->
@@ -92,7 +92,7 @@
 	<entry name="tw1.at">136</entry> <!--TW1-->
 	<entry name="steiermark1.at">137</entry> <!--Steiermark 1-->
 	<entry name="tsr1@tsr.ch">27</entry> <!--TSR1-->
-	<entry name="tsr2@tsr.ch">28</entry> <!--TSR2-->
+<!--	<entry name="tsr2@tsr.ch">28</entry> TSR2-->
 	<entry name="rtl.lu">102</entry> <!--RTL Lux-->
 	<entry name="1@rtvslo.si">146</entry> <!--TV Slovenija 1-->
 	<entry name="2@rtvslo.si">147</entry> <!--TV Slovenija 2-->
@@ -144,7 +144,7 @@
 	<entry name="hit24.tv">194</entry> <!-- hit24 -->
 	<entry name="bluemovie.cc">196</entry> <!-- Blue Movie -->
 	<entry name="extra@bluemovie.cc">197</entry> <!-- Blue Movie Extra -->
-	<entry name="dir-er@premiere.de">199</entry> <!-- Premiere Direkt Erotik -->
+<!--	<entry name="dir-er@premiere.de">199</entry>  Premiere Direkt Erotik -->
 	<entry name="dir1@premiere.de">201</entry> <!-- Premiere Direkt -->
 	
   </section>

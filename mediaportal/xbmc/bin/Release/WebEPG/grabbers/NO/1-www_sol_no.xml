@@ -29,7 +29,7 @@
     <entry name="film3@canalplus.no">canplfilm3</entry>             <!-- Canal+ Film3 -->
     <entry name="sport@canalplus.no">canplspo</entry>               <!-- Canal+ Sport -->
     <entry name="cartoonnetwork.no">cartoon</entry>                 <!-- Cartoon Network -->
-    <entry name="cinema@canaldigital.no">cinema</entry>             <!-- Cinema -->
+<!--    <entry name="cinema@canaldigital.no">cinema</entry>              Cinema -->
     <entry name="club">club</entry>                                 <!-- Club -->
     <entry name="cnbc@msn.com">cnbc</entry>                         <!-- CNBC -->
     <entry name="CNBC_NGC">cnbcnatgeoch</entry>                     <!-- CNBC og National Geographic Channel -->
@@ -43,7 +43,7 @@
     <entry name="dr2@dr.dk">dr2</entry>                             <!--  -->
     <entry name="dsf.de">dsf</entry>                                <!--  -->
     <entry name="dw-world.de">dw</entry>                            <!--  -->
-    <entry name="eonline.com">e</entry>                             <!--  -->
+<!--    <entry name="eonline.com">e</entry>                             <!--  -->
     <entry name="eurosport@eurosport.com">eurospo</entry>           <!--  -->
     <entry name="extremesports.tv">extreme</entry>                  <!--  -->
     <entry name="hallmarkchannel.com">hallmark</entry>              <!--  -->
@@ -64,7 +64,7 @@
     <entry name="svt2@svt.se">svtv2</entry>                         <!--  -->
     <entry name="tcm.com">tcm</entry>                               <!--  -->
     <entry name="TCM_CARTOONNETWORK">tcmcartoon</entry>             <!--  -->
-    <entry name="THE_STUDIO">thestudio</entry>                      <!--  -->
+<!--    <entry name="THE_STUDIO">thestudio</entry>                      <!--  -->
     <entry name="travelchannel.com">travel</entry>                  <!--  -->
     <entry name="tv1000@tv1000.no">tv1000</entry>                   <!--  -->
     <entry name="action@tv1000.no">tv1kaction</entry>               <!--  -->

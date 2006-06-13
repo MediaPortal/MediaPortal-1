@@ -8,7 +8,7 @@
   </section>
 <!-- Formating of Listing -->
   <section name="Listing"> 
-    <entry name="BaseURL">http://www.sfdrs.ch/content/tv-guide/</entry>
+    <entry name="BaseURL">http://www.sf.tv/tvprogramm/</entry>
     <entry name="SearchURL">index.php?tvdate=[YYYY]-[MM]-[DD]&amp;channel=[ID]</entry>
 
 <!-- Unique Listing Start string -->

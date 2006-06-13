@@ -16,8 +16,6 @@
     <entry name="BaseURL">http://programas.rtp.pt/EPG/</entry>
     <entry name="SearchURL">epg-dia.php?datai=-2&amp;dia=[DD]-[MM]-[YYYY]&amp;sem=e&amp;canal=[ID]&amp;gen=&amp;time=</entry>
 
-<!--    <entry name="Ahrefs">yes</entry> -->
-
 <!-- Unique Listing Start string -->
     <entry name="Start">&#60;!-- INICIO GRELHA</entry>
 

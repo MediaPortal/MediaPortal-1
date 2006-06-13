@@ -8,8 +8,8 @@
 	<entry name="rete4.mediaset.it">3</entry>
 	<entry name="canale5.mediaset.it">4</entry>
 	<entry name="italia1.mediaset.it">5</entry>
-	<entry name="tmc.tv">6</entry>
-	<entry name="mtv.com">6</entry>
+<!--	<entry name="tmc.tv">6</entry> -->
+<!--	<entry name="mtv.com">6</entry> -->
 	<entry name="la7.it">7</entry>
   </section>
 
@@ -17,8 +17,8 @@
 
   <section name="Listing">
 
-    	<entry name="BaseURL">http://www.adnkronos.com/Pages/GuidaTv</entry>
-    	<entry name="SearchURL">/index.php?codCanale=[ID]&amp;codDay=[DAY_OFFSET]</entry>
+    	<entry name="BaseURL">http://www.adnkronos.com</entry>
+    	<entry name="SearchURL">/Pages/GuidaTv/index.php?codCanale=[ID]&amp;codDay=[DAY_OFFSET]</entry>
     	<entry name="GrabDelay">5000</entry>
 
 <!-- Unique Listing Start string -->
