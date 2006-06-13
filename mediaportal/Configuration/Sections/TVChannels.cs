@@ -250,9 +250,9 @@ namespace MediaPortal.Configuration.Sections
       // buttonDeleteScrambled
       // 
       this.buttonDeleteScrambled.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonDeleteScrambled.Location = new System.Drawing.Point(332, 352);
+      this.buttonDeleteScrambled.Location = new System.Drawing.Point(328, 352);
       this.buttonDeleteScrambled.Name = "buttonDeleteScrambled";
-      this.buttonDeleteScrambled.Size = new System.Drawing.Size(115, 20);
+      this.buttonDeleteScrambled.Size = new System.Drawing.Size(119, 20);
       this.buttonDeleteScrambled.TabIndex = 13;
       this.buttonDeleteScrambled.Text = "Delete scrambled";
       this.buttonDeleteScrambled.UseVisualStyleBackColor = true;
@@ -272,7 +272,7 @@ namespace MediaPortal.Configuration.Sections
       // buttonLookup
       // 
       this.buttonLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonLookup.Location = new System.Drawing.Point(253, 308);
+      this.buttonLookup.Location = new System.Drawing.Point(250, 308);
       this.buttonLookup.Name = "buttonLookup";
       this.buttonLookup.Size = new System.Drawing.Size(72, 20);
       this.buttonLookup.TabIndex = 8;
@@ -283,7 +283,7 @@ namespace MediaPortal.Configuration.Sections
       // buttonRestore
       // 
       this.buttonRestore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonRestore.Location = new System.Drawing.Point(253, 352);
+      this.buttonRestore.Location = new System.Drawing.Point(250, 352);
       this.buttonRestore.Name = "buttonRestore";
       this.buttonRestore.Size = new System.Drawing.Size(72, 20);
       this.buttonRestore.TabIndex = 10;
@@ -294,7 +294,7 @@ namespace MediaPortal.Configuration.Sections
       // buttonBackup
       // 
       this.buttonBackup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonBackup.Location = new System.Drawing.Point(253, 330);
+      this.buttonBackup.Location = new System.Drawing.Point(250, 330);
       this.buttonBackup.Name = "buttonBackup";
       this.buttonBackup.Size = new System.Drawing.Size(72, 20);
       this.buttonBackup.TabIndex = 9;
@@ -305,9 +305,9 @@ namespace MediaPortal.Configuration.Sections
       // buttonAddCvbsSvhs
       // 
       this.buttonAddCvbsSvhs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonAddCvbsSvhs.Location = new System.Drawing.Point(332, 330);
+      this.buttonAddCvbsSvhs.Location = new System.Drawing.Point(328, 330);
       this.buttonAddCvbsSvhs.Name = "buttonAddCvbsSvhs";
-      this.buttonAddCvbsSvhs.Size = new System.Drawing.Size(115, 20);
+      this.buttonAddCvbsSvhs.Size = new System.Drawing.Size(119, 20);
       this.buttonAddCvbsSvhs.TabIndex = 12;
       this.buttonAddCvbsSvhs.Text = "Add CVBS/SVHS";
       this.buttonAddCvbsSvhs.UseVisualStyleBackColor = true;
@@ -316,9 +316,9 @@ namespace MediaPortal.Configuration.Sections
       // buttonImportFromTvGuide
       // 
       this.buttonImportFromTvGuide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonImportFromTvGuide.Location = new System.Drawing.Point(333, 308);
+      this.buttonImportFromTvGuide.Location = new System.Drawing.Point(328, 308);
       this.buttonImportFromTvGuide.Name = "buttonImportFromTvGuide";
-      this.buttonImportFromTvGuide.Size = new System.Drawing.Size(115, 20);
+      this.buttonImportFromTvGuide.Size = new System.Drawing.Size(120, 20);
       this.buttonImportFromTvGuide.TabIndex = 11;
       this.buttonImportFromTvGuide.Text = "Import from TV guide";
       this.buttonImportFromTvGuide.UseVisualStyleBackColor = true;
@@ -327,7 +327,7 @@ namespace MediaPortal.Configuration.Sections
       // buttonClearChannels
       // 
       this.buttonClearChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonClearChannels.Location = new System.Drawing.Point(95, 352);
+      this.buttonClearChannels.Location = new System.Drawing.Point(94, 352);
       this.buttonClearChannels.Name = "buttonClearChannels";
       this.buttonClearChannels.Size = new System.Drawing.Size(72, 20);
       this.buttonClearChannels.TabIndex = 5;
@@ -362,7 +362,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.buttonEditChannel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonEditChannel.Enabled = false;
-      this.buttonEditChannel.Location = new System.Drawing.Point(95, 330);
+      this.buttonEditChannel.Location = new System.Drawing.Point(94, 330);
       this.buttonEditChannel.Name = "buttonEditChannel";
       this.buttonEditChannel.Size = new System.Drawing.Size(72, 20);
       this.buttonEditChannel.TabIndex = 4;
@@ -374,7 +374,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.buttonChannelUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonChannelUp.Enabled = false;
-      this.buttonChannelUp.Location = new System.Drawing.Point(174, 330);
+      this.buttonChannelUp.Location = new System.Drawing.Point(172, 330);
       this.buttonChannelUp.Name = "buttonChannelUp";
       this.buttonChannelUp.Size = new System.Drawing.Size(72, 20);
       this.buttonChannelUp.TabIndex = 6;
@@ -386,7 +386,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.buttonChannelDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonChannelDown.Enabled = false;
-      this.buttonChannelDown.Location = new System.Drawing.Point(174, 352);
+      this.buttonChannelDown.Location = new System.Drawing.Point(172, 352);
       this.buttonChannelDown.Name = "buttonChannelDown";
       this.buttonChannelDown.Size = new System.Drawing.Size(72, 20);
       this.buttonChannelDown.TabIndex = 7;
