@@ -2381,6 +2381,7 @@ namespace MediaPortal.TV.Recording
     protected void UpdateVideoState()
     {
       bool isViewing = Recorder.IsCardViewing(_cardId);
+      Log.Write("DVBGraphBase.UpdateVideoState() Viewing: {0}", isViewing);
       if (!isViewing) return;
       //      Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3} locked:{4} quality:{5} level:{6}",
       //      _streamDemuxer.ReceivingPackets, _lastPMTVersion, GUIGraphicsContext.Vmr9Active, GUIGraphicsContext.Vmr9FPS, TunerLocked(), SignalQuality(), SignalStrength());
@@ -2408,6 +2409,12 @@ namespace MediaPortal.TV.Recording
       }
       else 
        */
+      if (_streamDemuxer.IsScrambled)
+      {
+        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.Scrambled;
+        _signalLostTimer = DateTime.Now;
+        return;
+      }
       if (GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.Vmr9FPS < 1f)
       {
         if ((g_Player.Playing && !g_Player.Paused) || (!g_Player.Playing))
@@ -2459,8 +2466,8 @@ namespace MediaPortal.TV.Recording
         else
         {
           TimeSpan tsProc = DateTime.Now - _processTimer;
-          if (tsProc.TotalSeconds < 5) return;
-          _processTimer = DateTime.Now;
+          if (tsProc.TotalMilliseconds < 2000) return; // original value was set to 5' 
+          _processTimer = DateTime.Now;                // try less for 697 related
         }
       }
       UpdateSignalPresent();
@@ -2485,6 +2492,7 @@ namespace MediaPortal.TV.Recording
           if (GUIGraphicsContext.Vmr9Active && _vmr9 != null)
           {
             _vmr9.Process();
+            _signalLostTimer = DateTime.Now;
           }
         }
 
@@ -2545,6 +2553,27 @@ namespace MediaPortal.TV.Recording
             }
             Marshal.FreeCoTaskMem(pmtMem);
           }
+        }
+        _signalLostTimer = DateTime.Now;
+      }
+      else // tuner is unlocked
+      {
+        Log.Write("DVBGraph: wait for tunerlock");
+        // give one more chance to the tuner to be locked
+        DateTime dt = DateTime.Now;
+        while (!SignalPresent()) 
+        {
+          TimeSpan ts = DateTime.Now - dt;
+          if (ts.TotalMilliseconds >= 2000) break; // no more than 2'
+          System.Threading.Thread.Sleep(100); // will check 10 times per second
+          UpdateSignalPresent();
+        }
+        Log.Write("Tuner locked: {0}", SignalPresent());
+        if (SignalPresent())
+        {
+          VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+          _signalLostTimer = DateTime.Now;
+
         }
       }
 
