@@ -996,8 +996,12 @@ namespace MediaPortal.TV.Recording
       switch (Network())
       {
         case NetworkType.ATSC:
-          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Channel:{0} kHz", ch.PhysicalChannel);
-          hr = _interfaceB2C2TunerCtrl.SetChannel(ch.PhysicalChannel);
+          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Channel:{0}", ch.PhysicalChannel);
+          //#DMAN#
+          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Channel:{0} KHz", ch.Frequency);
+          //#DMAN# B2C2 SDK says ATSC is tuned by frequency...
+          //hr = _interfaceB2C2TunerCtrl.SetChannel(ch.PhysicalChannel);
+          hr = _interfaceB2C2TunerCtrl.SetFrequencyKHz(ch.Frequency);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetChannel() failed:0x{0:X}", hr);
