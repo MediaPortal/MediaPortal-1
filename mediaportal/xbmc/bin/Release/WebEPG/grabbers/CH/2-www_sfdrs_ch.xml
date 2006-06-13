@@ -4,6 +4,8 @@
 
 <profile>
   <section name="ChannelList">
+    <entry name="sf1@sfdrs.ch">1</entry>
+    <entry name="sf2@sfdrs.ch">2</entry>
     <entry name="sfi@sfdrs.ch">3</entry>		<!-- SFi -->
   </section>
 <!-- Formating of Listing -->
@@ -12,16 +14,23 @@
     <entry name="SearchURL">index.php?tvdate=[YYYY]-[MM]-[DD]&amp;channel=[ID]</entry>
 
 <!-- Unique Listing Start string -->
-    <entry name="Start">vom</entry>
+    <entry name="Start">cm_tvprogramm_tbody</entry>
 
 <!-- Unique Listing End string -->
-    <entry name="End">Button_top_p.gif</entry>
+    <entry name="End">End TABLE Body</entry>
 
 <!-- Template of the Listing information -->
     <entry name="Template">
-	&#60;table&#62;&#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;/tr&#62;&#60;/table&#62;
-	&#60;table&#62;&#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;td&#62;&#60;#START&#62; &#60;#TITLE&#62;&#60;/td&#62;&#60;/tr&#62;&#60;tr&#62;&#60;td&#62;&#60;/td&#62;&#60;td&#62;&#60;/td&#62;&#60;/tr&#62;&#60;/table&#62;
-    </entry>
+&#60;tr&#62;
+&#60;td&#62;&#60;/td&#62;
+&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+&#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
+&#60;td&#62;&#60;/td&#62;
+&#60;/tr&#62;
+&#60;tr&#62;
+&#60;td&#62;&#60;/td&#62;
+&#60;td&#62;&#60;#DESCRIPTION&#62;&#60;/td&#62;
+&#60;/tr&#62;   </entry>
   </section>
   <section name="Info">
     <entry name="GuideDays">3</entry>
