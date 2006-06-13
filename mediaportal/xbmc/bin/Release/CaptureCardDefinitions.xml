@@ -13031,4 +13031,20 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV Hybrid Pro* Stick Digital" capturename="PCTV Hybrid Pro* Stick Digital Capture" devid="vid_eb1a&amp;pid_2881&amp;mi_00">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"        checkdevice="false"/>
+        <filter cat="tunerdevice"     name="PCTV Hybrid Pro* Stick Digital TVTuner" checkdevice="true"/>
+        <filter cat="capture"         name="PCTV Hybrid Pro* Stick Digital Capture" checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
