@@ -115,7 +115,7 @@ namespace MediaPortal.EPG.WebEPGTester
 
               if (m_EPGGrabber.Initalise(countryGrabber))
               {
-                ArrayList programs = m_EPGGrabber.GetGuide(channel.ChannelID, true, 0, 23, grabDateTime);
+                ArrayList programs = m_EPGGrabber.GetGuide(channel.ChannelID, false, 0, 23, grabDateTime);
                 if (programs != null)
                 {
                   for (int p = 0; p < programs.Count; p++)
