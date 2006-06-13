@@ -558,6 +558,12 @@ namespace MediaPortal.GUI.TV
     }
 
     #endregion
+
+    public static void UpdateTimeShift()
+    {
+      _isTimeShifting = Recorder.IsTimeShifting();
+    }
+
     void OnRecord()
     {
       //record now.

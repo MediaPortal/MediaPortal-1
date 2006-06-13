@@ -651,6 +651,10 @@ namespace MediaPortal.GUI.TV
               //so first start timeshifting
               string message;
               Recorder.StartViewing(Recorder.TVChannelName, true, true, true, out message);
+              
+              // Let GUITVHome know about it
+              GUITVHome.UpdateTimeShift();
+
               //wait until playback has been started
               int count = 1;
               while (!g_Player.Playing && count < 40)
