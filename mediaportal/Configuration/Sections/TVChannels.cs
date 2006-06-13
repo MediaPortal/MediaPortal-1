@@ -2249,7 +2249,8 @@ namespace MediaPortal.Configuration.Sections
         ch2.External = ch1.External;
       }
       //remap all atsc,dvb mappings from ch1->ch2...
-      TVDatabase.ReMapDigitalMapping(ch1.ID, ch2.ID);
+      if (TVDatabase.IsDigitalChannel(TVDatabase.GetChannelById(ch1.ID)))
+        TVDatabase.ReMapDigitalMapping(ch1.ID, ch2.ID);
 
       listViewTvChannels.BeginUpdate();
 
