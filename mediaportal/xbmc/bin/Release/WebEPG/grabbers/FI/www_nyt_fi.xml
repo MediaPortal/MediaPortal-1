@@ -27,7 +27,7 @@
 
 <!-- Formating of Listing -->
   <section name="Listing">
-    <entry name="BaseURL">http://www.nyt.fi/televisio/</entry>
+    <entry name="BaseURL">http://nyt.hs.fi/televisio/</entry>
     <entry name="SearchURL">[ID]/[DAY_NAME]</entry>
 
 <!-- Unique Listing Start string -->
