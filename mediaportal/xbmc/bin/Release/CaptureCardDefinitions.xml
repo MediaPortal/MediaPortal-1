@@ -12302,16 +12302,17 @@
         <filter cat="tvaudio"     name="WinTV HVR-900 TVAudio"          checkdevice="true"/>
         <filter cat="crossbar"    name="WinTV HVR-900 Crossbar"         checkdevice="true"/>
         <filter cat="capture"     name="WinTV HVR-900 Capture"          checkdevice="true"/>
-        <filter cat="audcapture"  name="%soundcard%"                    checkdevice="true"/>
-        <filter cat="mux"			    name="MainConcept (MCE) MPEG Encoder" checkdevice="false"/>    
+        <filter cat="audcapture"  name="WinTV HVR-900"                  checkdevice="true"/>
+        <filter cat="encoder"     name="MainConcept (MCE) MPEG Encoder" checkdevice="false"/>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
-        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
-        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
-        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
-        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="mux"	sinkpin="0"/>
-        <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="mux"	sinkpin="1"/>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"    sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"    sinkpin="0"/>
+        <connection sourcefilter="crossbar"   sourcepin="1" sinkfilter="audcapture" sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="encoder"    sinkpin="0"/>
+        <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="encoder"    sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -13060,6 +13061,49 @@
       <connections>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"  sinkpin="0"/>
         <connection sourcefilter="capture"  sourcepin="0" sinkfilter="encoder"  sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Generic Conexant Analogue" capturename="Conexant Video Capture" devid="ven_109e&amp;dev_036e&amp;subsys_00000000&amp;rev_11">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="Conexant TvTuner"       checkdevice="true"/>
+        <filter cat="tvaudio"     name="Conexant TvAudio"       checkdevice="true"/>
+        <filter cat="crossbar"    name="Conexant Crossbar"      checkdevice="true"/>
+        <filter cat="capture"     name="Conexant Video Capture" checkdevice="true"/>
+        <filter cat="audcapture"  name="%soundcard%"            checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"         checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"         checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"              checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"	      sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"	      sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="MSI TV@nywhere A/D Driver 2.10.2.451" capturename="713X BDA Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_33064e42&amp;rev_d1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="true" bda="true"/>
+    <tv>
+      <interface cat="capture" video="3" audio="4" mpeg2="1" sectionsandtables="2"></interface>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"></filter>
+        <filter cat="tunerdevice"     name="713X BDA DVBT Tuner"              checkdevice="false"></filter>
+        <filter cat="capture"         name="713x BDA Digital Capture"         checkdevice="false"></filter>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
