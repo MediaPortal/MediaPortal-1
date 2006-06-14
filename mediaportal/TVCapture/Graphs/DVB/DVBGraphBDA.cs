@@ -1838,11 +1838,7 @@ namespace MediaPortal.TV.Recording
               myATSCTuneRequest.Channel = ch.MajorChannel;
               myATSCTuneRequest.Locator = (TunerLib.Locator)myLocator;
               myTuner.TuneRequest = newTuneRequest;
-              //release com objects
-              Marshal.ReleaseComObject(myATSCTuneRequest);
-              Marshal.ReleaseComObject(newTuneRequest);
-              Marshal.ReleaseComObject(myLocator);
-              Marshal.ReleaseComObject(myTuner.TuneRequest);
+              //Marshal.ReleaseComObject(myATSCTuneRequest);
 
             }
             break;
@@ -1907,11 +1903,9 @@ namespace MediaPortal.TV.Recording
               myTuneRequest.Locator = (TunerLib.Locator)myLocator;
               //Log.WriteFile(Log.LogType.Log,"DVBGraphBDA:SubmitTuneRequest() submit tuning request");
               myTuner.TuneRequest = newTuneRequest;
-              //release com objects
-              Marshal.ReleaseComObject(myTuneRequest);
-              Marshal.ReleaseComObject(newTuneRequest);
-              Marshal.ReleaseComObject(myLocator);
-              Marshal.ReleaseComObject(myTuner.TuneRequest);
+              //Marshal.ReleaseComObject(myTuneRequest);
+
+
             } break;
 
           case NetworkType.DVBS:
@@ -1983,11 +1977,10 @@ namespace MediaPortal.TV.Recording
               //and submit the tune request
 
               myTuner.TuneRequest = newTuneRequest;
-              Marshal.ReleaseComObject(myTuneRequest);
-              Marshal.ReleaseComObject(newTuneRequest);
-              Marshal.ReleaseComObject(myLocator);
-              Marshal.ReleaseComObject(dvbSpace);
-              Marshal.ReleaseComObject(myTuner.TuneRequest);
+              //Marshal.ReleaseComObject(myTuneRequest);
+              //Marshal.ReleaseComObject(newTuneRequest);
+              //Marshal.ReleaseComObject(myLocator);
+              //Marshal.ReleaseComObject(dvbSpace);
             }
             break;
 
@@ -2045,10 +2038,7 @@ namespace MediaPortal.TV.Recording
               myTuneRequest.SID = ch.ProgramNumber;					//service id
               myTuneRequest.Locator = (TunerLib.Locator)myLocator;
               myTuner.TuneRequest = newTuneRequest;
-              Marshal.ReleaseComObject(myTuneRequest);
-              Marshal.ReleaseComObject(newTuneRequest);
-              Marshal.ReleaseComObject(myLocator);
-              Marshal.ReleaseComObject(myTuner.TuneRequest);
+              //Marshal.ReleaseComObject(myTuneRequest);
             } break;
         }
       }
