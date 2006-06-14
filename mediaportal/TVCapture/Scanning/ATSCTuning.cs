@@ -45,9 +45,7 @@ namespace MediaPortal.TV.Scanning
     
     TVCaptureDevice _captureCard;
     AutoTuneCallback _callback = null;
-    //#DM - changed starting channel number so tuning starts at 2#
-    //int _currentIndex = -1;
-    int _currentIndex = 1;
+    int _currentIndex = -1;
 
     int _newChannels, _updatedChannels;
     int _newRadioChannels, _updatedRadioChannels;
@@ -61,8 +59,10 @@ namespace MediaPortal.TV.Scanning
       _updatedRadioChannels = 0;
       _newChannels = 0;
       _updatedChannels = 0;
-
-      _currentIndex = 0;
+      
+      //#DM - changed starting channel number so tuning starts at 2#
+      //_currentIndex = 0;
+      _currentIndex = 2;
       _callback.OnProgress(0);
     }
     public void Next()
