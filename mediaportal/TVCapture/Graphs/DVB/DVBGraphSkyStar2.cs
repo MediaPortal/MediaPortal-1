@@ -1001,10 +1001,10 @@ namespace MediaPortal.TV.Recording
           int atscfreq = 0;
           if (ch.PhysicalChannel <= 6) atscfreq = 45000+(ch.PhysicalChannel*6000);
           else atscfreq = 177000+((ch.PhysicalChannel-7)*6000);
-          //Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Channel:{0} KHz", ch.Frequency);
-          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Channel:{0} KHz", atscfreq);
           //#DM changed tuning parameter from physical channel to calculated frequency above.
+          //Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Channel:{0} KHz", ch.Frequency);
           //hr = _interfaceB2C2TunerCtrl.SetChannel(ch.PhysicalChannel);
+          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Channel:{0} KHz", atscfreq);
           hr = _interfaceB2C2TunerCtrl.SetFrequencyKHz(atscfreq);
           if (hr != 0)
           {
