@@ -128,10 +128,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPLabel labelIrTransRemoteModel;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox textBoxIrTransServerPort;
     private MediaPortal.UserInterface.Controls.MPLabel labelIrTransServerPort;
-    private MediaPortal.UserInterface.Controls.MPLabel labelIrTransNoteWarning;
     private MediaPortal.UserInterface.Controls.MPLabel labelIrTransNoteModel;
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxIrTransSettings;
-    private MediaPortal.UserInterface.Controls.MPButton buttonIrTransDefaults;
 
     X10RemoteForm x10Form = null;
     private enum hcwRepeatSpeed { slow, medium, fast };
@@ -140,6 +138,8 @@ namespace MediaPortal.Configuration.Sections
     const string errHcwNotInstalled = "The Hauppauge IR components have not been found.\nInstall the latest Hauppauge IR drivers and use XPSP2.";
     const string errHcwOutOfDate = "The driver components are not up to date.\nUpdate your Hauppauge IR drivers to the current version.";
     private MediaPortal.UserInterface.Controls.MPButton buttonIrTransTest;
+    private LinkLabel linkLabelIRTransConfig;
+    private MediaPortal.UserInterface.Controls.MPLabel labelIrTransNoteWarning;
     const string errHcwMissingExe = "IR application not found. You might want to use it to control external applications.\nReinstall the Hauppauge IR drivers to fix this problem.";
 
     #endregion
@@ -508,11 +508,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxIrTransSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxIrTransExtendedLogging = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxIrTransStatus = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.buttonIrTransDefaults = new MediaPortal.UserInterface.Controls.MPButton();
       this.labelIrTransStatus = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxIrTransServerSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.buttonIrTransTest = new MediaPortal.UserInterface.Controls.MPButton();
-      this.labelIrTransNoteWarning = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelIrTransNoteModel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxRemoteModel = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.labelIrTransRemoteModel = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -524,6 +522,8 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageFireDtv = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.fireDtvRemote = new MediaPortal.Configuration.Sections.FireDtvRemote();
       this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+      this.labelIrTransNoteWarning = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.linkLabelIRTransConfig = new System.Windows.Forms.LinkLabel();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMceUsa)).BeginInit();
       this.tabControlRemotes.SuspendLayout();
       this.tabPageMce.SuspendLayout();
@@ -1372,7 +1372,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxIrTransStatus
       // 
-      this.groupBoxIrTransStatus.Controls.Add(this.buttonIrTransDefaults);
       this.groupBoxIrTransStatus.Controls.Add(this.labelIrTransStatus);
       this.groupBoxIrTransStatus.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxIrTransStatus.Location = new System.Drawing.Point(12, 308);
@@ -1382,27 +1381,17 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxIrTransStatus.TabStop = false;
       this.groupBoxIrTransStatus.Text = "Status";
       // 
-      // buttonIrTransDefaults
-      // 
-      this.buttonIrTransDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonIrTransDefaults.Location = new System.Drawing.Point(352, 20);
-      this.buttonIrTransDefaults.Name = "buttonIrTransDefaults";
-      this.buttonIrTransDefaults.Size = new System.Drawing.Size(72, 22);
-      this.buttonIrTransDefaults.TabIndex = 10;
-      this.buttonIrTransDefaults.Text = "&Defaults";
-      this.buttonIrTransDefaults.UseVisualStyleBackColor = true;
-      this.buttonIrTransDefaults.Click += new System.EventHandler(this.buttonIrTransDefaults_Click);
-      // 
       // labelIrTransStatus
       // 
       this.labelIrTransStatus.Location = new System.Drawing.Point(16, 20);
       this.labelIrTransStatus.Name = "labelIrTransStatus";
-      this.labelIrTransStatus.Size = new System.Drawing.Size(324, 20);
+      this.labelIrTransStatus.Size = new System.Drawing.Size(408, 20);
       this.labelIrTransStatus.TabIndex = 8;
       this.labelIrTransStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
       // groupBoxIrTransServerSettings
       // 
+      this.groupBoxIrTransServerSettings.Controls.Add(this.linkLabelIRTransConfig);
       this.groupBoxIrTransServerSettings.Controls.Add(this.buttonIrTransTest);
       this.groupBoxIrTransServerSettings.Controls.Add(this.labelIrTransNoteWarning);
       this.groupBoxIrTransServerSettings.Controls.Add(this.labelIrTransNoteModel);
@@ -1427,15 +1416,6 @@ namespace MediaPortal.Configuration.Sections
       this.buttonIrTransTest.Text = "Test";
       this.buttonIrTransTest.UseVisualStyleBackColor = true;
       this.buttonIrTransTest.Click += new System.EventHandler(this.buttonIrTransTest_Click);
-      // 
-      // labelIrTransNoteWarning
-      // 
-      this.labelIrTransNoteWarning.Location = new System.Drawing.Point(16, 124);
-      this.labelIrTransNoteWarning.Name = "labelIrTransNoteWarning";
-      this.labelIrTransNoteWarning.Size = new System.Drawing.Size(412, 32);
-      this.labelIrTransNoteWarning.TabIndex = 9;
-      this.labelIrTransNoteWarning.Text = "You have to modify \\Program Files\\Irtrans\\remotes\\apps.cfg  or actions will be ex" +
-          "ecuted twice.";
       // 
       // labelIrTransNoteModel
       // 
@@ -1539,6 +1519,26 @@ namespace MediaPortal.Configuration.Sections
       // toolTip
       // 
       this.toolTip.ShowAlways = true;
+      // 
+      // labelIrTransNoteWarning
+      // 
+      this.labelIrTransNoteWarning.Location = new System.Drawing.Point(16, 124);
+      this.labelIrTransNoteWarning.Name = "labelIrTransNoteWarning";
+      this.labelIrTransNoteWarning.Size = new System.Drawing.Size(412, 32);
+      this.labelIrTransNoteWarning.TabIndex = 9;
+      this.labelIrTransNoteWarning.Text = "You have to modify \\Program Files\\Irtrans\\remotes\\apps.cfg  or actions will be ex" +
+          "ecuted twice.";
+      // 
+      // linkLabelIRTransConfig
+      // 
+      this.linkLabelIRTransConfig.AutoSize = true;
+      this.linkLabelIRTransConfig.Location = new System.Drawing.Point(95, 138);
+      this.linkLabelIRTransConfig.Name = "linkLabelIRTransConfig";
+      this.linkLabelIRTransConfig.Size = new System.Drawing.Size(132, 13);
+      this.linkLabelIRTransConfig.TabIndex = 11;
+      this.linkLabelIRTransConfig.TabStop = true;
+      this.linkLabelIRTransConfig.Text = "Look here for more details.";
+      this.linkLabelIRTransConfig.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelIRTransConfig_LinkClicked);
       // 
       // Remote
       // 
@@ -1888,7 +1888,11 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
+    private void linkLabelIRTransConfig_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+    {
+      System.Diagnostics.Process.Start("http://wiki.team-mediaportal.com/MediaPortalSetup_Remote/IRTrans");
+    }
     #endregion
-  }
+   }
 
 }
