@@ -1271,6 +1271,14 @@ namespace MediaPortal.GUI.Music
         strLine = keyboard.Text;
       }
     }
+    protected override void OnRetrieveCoverArt(GUIListItem item)
+    {
+      Utils.SetDefaultIcons(item);
+      if (item.Label == "..") return;
+      int pin;
+      if (item.IsFolder && (m_directory.IsProtectedShare(item.Path, out pin))) return;
+      base.OnRetrieveCoverArt(item);
+    }
 
     static public string GetCoverArt(bool isfolder, string filename, MusicTag tag)
     {

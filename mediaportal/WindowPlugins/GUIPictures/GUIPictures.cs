@@ -751,9 +751,9 @@ namespace MediaPortal.GUI.Pictures
     {
       if (item.IsRemote) return;
       Utils.SetDefaultIcons(item);
-      Utils.SetThumbnails(ref item);
       if (!item.IsFolder)
       {
+        Utils.SetThumbnails(ref item);
         string thumbnailImage = GetThumbnail(item.Path);
         item.ThumbnailImage = thumbnailImage;
       }
@@ -761,10 +761,10 @@ namespace MediaPortal.GUI.Pictures
       {
         if (item.Label != "..")
         {
-          string thumbnailImage = item.Path + @"\folder.jpg";
-          if (System.IO.File.Exists(thumbnailImage))
+          int pin;
+          if (!virtualDirectory.IsProtectedShare(item.Path, out pin))
           {
-            item.ThumbnailImage = thumbnailImage;
+            Utils.SetThumbnails(ref item);
           }
         }
       }
@@ -1438,7 +1438,8 @@ namespace MediaPortal.GUI.Pictures
           }
           else
           {
-            if (item.Label != "..")
+            int pin;
+            if ((item.Label != "..")&&(!virtualDirectory.IsProtectedShare(item.Path, out pin)))
             {
               string thumbnailImage = item.Path + @"\folder.jpg";
               if (!item.IsRemote && !System.IO.File.Exists(thumbnailImage))

@@ -188,15 +188,18 @@ namespace MediaPortal.Util
           item.IsRemote = true;
         }
         Utils.SetDefaultIcons(item);
-        string coverArt = Utils.GetCoverArtName(item.Path, "folder");
-        string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
-        if (System.IO.File.Exists(coverArt))
+        if (share.Pincode < 0)
         {
-          item.IconImage = coverArt;
-        }
-        if (System.IO.File.Exists(largeCoverArt))
-        {
-          item.IconImageBig = largeCoverArt;
+          string coverArt = Utils.GetCoverArtName(item.Path, "folder");
+          string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
+          if (System.IO.File.Exists(coverArt))
+          {
+            item.IconImage = coverArt;
+          }
+          if (System.IO.File.Exists(largeCoverArt))
+          {
+            item.IconImageBig = largeCoverArt;
+          }
         }
         items.Add(item);
       }
@@ -335,7 +338,6 @@ namespace MediaPortal.Util
     }
     public Share GetShare(string strDir)
     {
-      Log.Write("Calling get Share:{0}", strDir);
       if (strDir == null) return null;
       if (strDir.Length <= 0) return null;
       string strRoot = strDir;
@@ -512,7 +514,6 @@ namespace MediaPortal.Util
                 itemTmp.Label2 = "";
                 itemTmp.Path = m_strPreviousDir;
                 Utils.SetDefaultIcons(itemTmp);
-                Utils.SetThumbnails(ref itemTmp);
                 items.Add(itemTmp);
                 return items;
               }
@@ -597,7 +598,6 @@ namespace MediaPortal.Util
         item.Label = "..";
         item.Label2 = "";
         Utils.SetDefaultIcons(item);
-        Utils.SetThumbnails(ref item);
 
         if (strParent == strDir)
         {
@@ -615,7 +615,6 @@ namespace MediaPortal.Util
         item.Label2 = "";
         item.Path = "";
         Utils.SetDefaultIcons(item);
-        Utils.SetThumbnails(ref item);
         items.Add(item);
       }
 
@@ -675,7 +674,11 @@ namespace MediaPortal.Util
               item.IsRemote = true;
               item.FileInfo = null;
               Utils.SetDefaultIcons(item);
-              Utils.SetThumbnails(ref item);
+              int pin;
+              if (!IsProtectedShare(item.Path, out pin))
+              {
+                Utils.SetThumbnails(ref item);
+              }
               items.Add(item);
             }
           }
@@ -737,8 +740,11 @@ namespace MediaPortal.Util
             item.Label2 = "";
             item.Path = strDirs[i];
             Utils.SetDefaultIcons(item);
-            Utils.SetThumbnails(ref item);
-
+            int pin;
+            if (!IsProtectedShare(item.Path, out pin))
+            {
+              Utils.SetThumbnails(ref item);
+            }
             items.Add(item);
           }
         }
@@ -865,7 +871,6 @@ namespace MediaPortal.Util
         item.Label = "..";
         item.Label2 = "";
         Utils.SetDefaultIcons(item);
-        Utils.SetThumbnails(ref item);
 
         if (strParent == strDir)
         {
@@ -883,7 +888,6 @@ namespace MediaPortal.Util
         item.Label2 = "";
         item.Path = "";
         Utils.SetDefaultIcons(item);
-        Utils.SetThumbnails(ref item);
         items.Add(item);
 
       }
@@ -903,8 +907,11 @@ namespace MediaPortal.Util
           item.Label2 = "";
           item.Path = strDirs[i];
           Utils.SetDefaultIcons(item);
-          Utils.SetThumbnails(ref item);
-
+          int pin;
+          if (!IsProtectedShare(item.Path, out pin))
+          {
+            Utils.SetThumbnails(ref item);
+          }
           items.Add(item);
         }
       }
@@ -1303,7 +1310,6 @@ namespace MediaPortal.Util
                 itemTmp.Label2 = "";
                 itemTmp.Path = m_strPreviousDir;
                 Utils.SetDefaultIcons(itemTmp);
-                Utils.SetThumbnails(ref itemTmp);
                 items.Add(itemTmp);
                 return items;
               }
@@ -1388,7 +1394,6 @@ namespace MediaPortal.Util
         item.Label = "..";
         item.Label2 = "";
         Utils.SetDefaultIcons(item);
-        Utils.SetThumbnails(ref item);
 
         if (strParent == strDir)
         {
@@ -1406,7 +1411,6 @@ namespace MediaPortal.Util
         item.Label2 = "";
         item.Path = "";
         Utils.SetDefaultIcons(item);
-        Utils.SetThumbnails(ref item);
         items.Add(item);
       }
 
@@ -1466,7 +1470,11 @@ namespace MediaPortal.Util
               item.IsRemote = true;
               item.FileInfo = null;
               Utils.SetDefaultIcons(item);
-              Utils.SetThumbnails(ref item);
+              int pin;
+              if (!IsProtectedShare(item.Path, out pin))
+              {
+                Utils.SetThumbnails(ref item);
+              }
               items.Add(item);
             }
           }
@@ -1580,8 +1588,11 @@ namespace MediaPortal.Util
             item.Label2 = "";
             item.Path = strDirs[i];
             Utils.SetDefaultIcons(item);
-            Utils.SetThumbnails(ref item);
-
+            int pin;
+            if (!IsProtectedShare(item.Path, out pin))
+            {
+              Utils.SetThumbnails(ref item);
+            }
             items.Add(item);
           }
         }
@@ -1737,7 +1748,11 @@ namespace MediaPortal.Util
               item.IsRemote = true;
               item.FileInfo = null;
               Utils.SetDefaultIcons(item);
-              Utils.SetThumbnails(ref item);
+              int pin;
+              if (!IsProtectedShare(item.Path, out pin))
+              {
+                Utils.SetThumbnails(ref item);
+              }
               items.Add(item);
             }
           }
@@ -1815,7 +1830,6 @@ namespace MediaPortal.Util
         item.Label = "..";
         item.Label2 = "";
         Utils.SetDefaultIcons(item);
-        Utils.SetThumbnails(ref item);
 
         if (strParent == strDir)
         {
@@ -1833,7 +1847,6 @@ namespace MediaPortal.Util
         item.Label2 = "";
         item.Path = "";
         Utils.SetDefaultIcons(item);
-        Utils.SetThumbnails(ref item);
         items.Add(item);
       }
       if (strDirs != null)
@@ -1854,8 +1867,11 @@ namespace MediaPortal.Util
           item.Label2 = "";
           item.Path = strDirs[i];
           Utils.SetDefaultIcons(item);
-          Utils.SetThumbnails(ref item);
-
+          int pin;
+          if (!IsProtectedShare(item.Path, out pin))
+          {
+            Utils.SetThumbnails(ref item);
+          }
           items.Add(item);
         }
       }
@@ -1949,15 +1965,18 @@ namespace MediaPortal.Util
           item.IsRemote = true;
         }
         Utils.SetDefaultIcons(item);
-        string coverArt = Utils.GetCoverArtName(item.Path, "folder");
-        string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
-        if (System.IO.File.Exists(coverArt))
+        if (share.Pincode < 0)
         {
-          item.IconImage = coverArt;
-        }
-        if (System.IO.File.Exists(largeCoverArt))
-        {
-          item.IconImageBig = largeCoverArt;
+          string coverArt = Utils.GetCoverArtName(item.Path, "folder");
+          string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
+          if (System.IO.File.Exists(coverArt))
+          {
+            item.IconImage = coverArt;
+          }
+          if (System.IO.File.Exists(largeCoverArt))
+          {
+            item.IconImageBig = largeCoverArt;
+          }
         }
         items.Add(item);
       }
