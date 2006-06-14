@@ -39,11 +39,15 @@ namespace MediaPortal.TV.Scanning
   /// </summary>
   public class ATSCTuning : ITuning
   {
-    const int MaxATSCChannel = 255;
+    //#DM - changed maximum number of channels to tune to 69#
+    //const int MaxATSCChannel = 255;
+    const int MaxATSCChannel = 69;
     
     TVCaptureDevice _captureCard;
     AutoTuneCallback _callback = null;
-    int _currentIndex = -1;
+    //#DM - changed starting channel number so tuning starts at 2#
+    //int _currentIndex = -1;
+    int _currentIndex = 1;
 
     int _newChannels, _updatedChannels;
     int _newRadioChannels, _updatedRadioChannels;
