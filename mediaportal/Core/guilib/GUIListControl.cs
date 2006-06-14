@@ -1322,9 +1322,16 @@ namespace MediaPortal.GUI.Library
               if (item.FileInfo != null)
               {
                 double length = (double)item.FileInfo.Length;
-                double percent = ((double)message.Param1) / length;
-                percent *= 100.0f;
-                item.Label2 = String.Format("{0:N}%", percent);
+                if (length == 0)
+                {
+                  item.Label2 = "100%";
+                }
+                else
+                {
+                  double percent = ((double)message.Param1) / length;
+                  percent *= 100.0f;
+                  item.Label2 = String.Format("{0:n}%", percent);
+                }
               }
             }
           }
@@ -1341,6 +1348,10 @@ namespace MediaPortal.GUI.Library
               item.Path = message.Label2;
               item.IsRemote = false;
               item.IsDownloading = false;
+              if (item.FileInfo != null)
+              {
+                item.Label2 = Utils.GetSize(item.FileInfo.Length);
+              }
             }
           }
         }
