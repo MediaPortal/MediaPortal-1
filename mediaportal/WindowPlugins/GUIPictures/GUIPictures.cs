@@ -281,6 +281,10 @@ namespace MediaPortal.GUI.Pictures
 
     protected override void OnPageLoad()
     {
+      if (!KeepVirtualDirectory(PreviousWindowId))
+      {
+        virtualDirectory.Reset();
+      }
       base.OnPageLoad();
       GUITextureManager.CleanupThumbs();
       LoadSettings();
@@ -1081,6 +1085,20 @@ namespace MediaPortal.GUI.Pictures
     #endregion
 
     #region various
+    /// <summary>
+    /// Returns true if the specified window should maintain virtual directory
+    /// </summary>
+    /// <param name="windowId">id of window</param>
+    /// <returns>
+    /// true: if the specified window should maintain virtual directory
+    /// false: if the specified window should not maintain virtual directory</returns>
+    static public bool KeepVirtualDirectory(int windowId)
+    {
+      if (windowId == (int)GUIWindow.Window.WINDOW_PICTURES) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_SLIDESHOW) return true;
+      return false;
+    }
+
     void LoadDirectory(string strNewDirectory)
     {
       GUIListItem SelectedItem = GetSelectedItem();

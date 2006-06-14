@@ -63,6 +63,20 @@ namespace MediaPortal.Util
     public VirtualDirectory()
     {
     }
+    public string CurrentShare
+    {
+      get { return currentShare; }
+      set
+      {
+        previousShare = currentShare;
+        currentShare = value;
+        Log.Write("*****Setting current share:{0}-Previous:{1}", currentShare, previousShare);
+      }
+    }
+    public string PreviousShare
+    {
+      get { return previousShare; }
+    }
 
     public bool ShowFilesWithoutExtension
     {
@@ -76,6 +90,7 @@ namespace MediaPortal.Util
 
     public void Reset()
     {
+      currentShare = String.Empty;
       previousShare = String.Empty;
       m_strPreviousDir = String.Empty;
     }
@@ -170,6 +185,7 @@ namespace MediaPortal.Util
         {
           item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
                 share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+          item.IsRemote = true;
         }
         Utils.SetDefaultIcons(item);
         string coverArt = Utils.GetCoverArtName(item.Path, "folder");
@@ -240,48 +256,22 @@ namespace MediaPortal.Util
     /// </returns>
     public bool IsRootShare(string strDir)
     {
-      if (strDir == null) return false;
-      if (strDir.Length <= 0) return false;
-      string strRoot = strDir;
-      bool isRemote = IsRemote(strDir);
-      if (!isRemote)
+      Share share = GetShare(strDir);
+      if (share == null) return false;
+      if (share.IsFtpShare)
       {
-        if (strDir != "cdda:")
+        string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+          share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+        if (strDir == remoteFolder)
         {
-          try
-          {
-            strRoot = System.IO.Path.GetFullPath(strDir);
-          }
-          catch (Exception ex)
-          {
-            Log.Write("VirtualDirectory: Unable to get path for Root Share:{0} reason:{1}", strDir, ex.Message);
-          }
+          return true;
         }
       }
-
-      foreach (Share share in m_shares)
+      else
       {
-        try
+        if (strDir == share.Path)
         {
-          if (isRemote)
-          {
-            if (share.IsFtpShare)
-            {
-              string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-                share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
-              if (remoteFolder == strDir) return true;
-            }
-          }
-          else
-          {
-            if (System.IO.Path.GetFullPath(share.Path) == strRoot)
-            {
-              return true;
-            }
-          }
-        }
-        catch (Exception)
-        {
+          return true;
         }
       }
       return false;
@@ -299,67 +289,53 @@ namespace MediaPortal.Util
     public bool IsProtectedShare(string strDir, out int iPincode)
     {
       iPincode = -1;
-      if (strDir == null) return false;
-      if (strDir.Length <= 0) return false;
-      string strRoot = strDir;
-
-      bool isRemote = IsRemote(strDir);
-      if (!isRemote)
+      Share share = GetShare(strDir);
+      if (share == null) return false;
+      iPincode = share.Pincode;
+      if (share.Pincode >= 0)
       {
-        if (strDir != "cdda:")
+        if (share.IsFtpShare)
         {
-          try
+          string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+            share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+          if (CurrentShare == remoteFolder)
           {
-            strRoot = System.IO.Path.GetFullPath(strDir);
-          }
-          catch (Exception ex)
-          {
-            Log.Write("VirtualDirectory: Unable to get path for Protected Share:{0} reason:{1)", strDir, ex.Message);
+            return false;
           }
         }
-      }
-
-      foreach (Share share in m_shares)
-      {
-        try
+        else
         {
-          if (isRemote)
+          if (CurrentShare == share.Path)
           {
-            if (share.IsFtpShare)
-            {
-              string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
-                share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
-              if (strDir == remoteFolder)
-              {
-                iPincode = share.Pincode;
-                if (share.Pincode >= 0)
-                  return true;
-                return false;
-              }
-            }
-          }
-          else
-          {
-            string strFullPath = System.IO.Path.GetFullPath(share.Path);
-            //if (strRoot.ToLower().StartsWith(strFullPath.ToLower()))
-            if (strRoot.ToLower() == strFullPath.ToLower())
-            {
-              currentShare = strFullPath;
-              iPincode = share.Pincode;
-              if (share.Pincode >= 0)
-                return true;
-              return false;
-            }
+            return false;
           }
         }
-        catch (Exception)
-        {
-        }
+        return true;
       }
       return false;
     }
+    public void SetCurrentShare(string strDir)
+    {
+      //Setting current share;
+      Share share = GetShare(strDir);
+      if (share == null)
+      {
+        CurrentShare = "";
+      }
+      else if (share.IsFtpShare)
+      {
+        string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+          share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+        CurrentShare = remoteFolder;
+      }
+      else
+      {
+        CurrentShare = share.Path;
+      }
+    }
     public Share GetShare(string strDir)
     {
+      Log.Write("Calling get Share:{0}", strDir);
       if (strDir == null) return null;
       if (strDir.Length <= 0) return null;
       string strRoot = strDir;
@@ -368,9 +344,15 @@ namespace MediaPortal.Util
       if (!isRemote)
       {
         if (strDir != "cdda:")
-          strRoot = System.IO.Path.GetFullPath(strDir);
+          try
+          {
+            strRoot = System.IO.Path.GetFullPath(strDir);
+          }
+          catch (Exception)
+          {
+          }
       }
-
+      Share foundShare = null;
       foreach (Share share in m_shares)
       {
         try
@@ -381,9 +363,21 @@ namespace MediaPortal.Util
             {
               string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
                 share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
-              if (strDir == remoteFolder)
+              if (strDir.ToLower().StartsWith(remoteFolder.ToLower()))
               {
-                return share;
+                if (foundShare == null)
+                {
+                  foundShare = share;
+                }
+                else
+                {
+                  string foundRemoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
+                    foundShare.FtpServer, foundShare.FtpPort, foundShare.FtpLoginName, foundShare.FtpPassword, Utils.RemoveTrailingSlash(foundShare.FtpFolder));
+                  if (foundRemoteFolder.Length < remoteFolder.Length)
+                  {
+                    foundShare = share;
+                  }
+                }
               }
             }
           }
@@ -392,8 +386,18 @@ namespace MediaPortal.Util
             string strFullPath = System.IO.Path.GetFullPath(share.Path);
             if (strRoot.ToLower().StartsWith(strFullPath.ToLower()))
             {
-              currentShare = strFullPath;
-              return share;
+              if (foundShare == null)
+              {
+                foundShare = share;
+              }
+              else
+              {
+                string foundFullPath = System.IO.Path.GetFullPath(foundShare.Path);
+                if (foundFullPath.Length < strFullPath.Length)
+                {
+                  foundShare = share;
+                }
+              }
             }
           }
         }
@@ -401,7 +405,7 @@ namespace MediaPortal.Util
         {
         }
       }
-      return null;
+      return foundShare;
     }
 
     /// <summary>
@@ -445,6 +449,7 @@ namespace MediaPortal.Util
       if ((strDir == null) || (strDir == ""))
       {
         m_strPreviousDir = "";
+        CurrentShare = "";
         return GetRoot();
       }
 
@@ -483,48 +488,42 @@ namespace MediaPortal.Util
         {
           while (retry)
           {
-            //yes, check if this is a subdirectory of the share
-            if (previousShare != currentShare)
-            //if (previousShare==String.Empty || strDir.IndexOf(previousShare) < 0)
+            //no, then ask user to enter the pincode
+            GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+            GUIWindowManager.SendMessage(msgGetPassword);
+            int iPincode = -1;
+            try
             {
-              //no, then ask user to enter the pincode
-              GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
-              GUIWindowManager.SendMessage(msgGetPassword);
-              int iPincode = -1;
-              try
-              {
-                iPincode = Int32.Parse(msgGetPassword.Label);
-              }
-              catch (Exception)
-              {
-              }
-              if (iPincode != iPincodeCorrect)
-              {
-                GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0, 0);
-                GUIWindowManager.SendMessage(msgWrongPassword);
+              iPincode = Int32.Parse(msgGetPassword.Label);
+            }
+            catch (Exception)
+            {
+            }
+            if (iPincode != iPincodeCorrect)
+            {
+              GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0, 0);
+              GUIWindowManager.SendMessage(msgWrongPassword);
 
-                if (!(bool)msgWrongPassword.Object)
-                {
-                  GUIListItem itemTmp = new GUIListItem();
-                  itemTmp.IsFolder = true;
-                  itemTmp.Label = "..";
-                  itemTmp.Label2 = "";
-                  itemTmp.Path = "";
-                  Utils.SetDefaultIcons(itemTmp);
-                  Utils.SetThumbnails(ref itemTmp);
-                  items.Add(itemTmp);
-                  previousShare = currentShare;
-                  return items;
-                }
+              if (!(bool)msgWrongPassword.Object)
+              {
+                GUIListItem itemTmp = new GUIListItem();
+                itemTmp.IsFolder = true;
+                itemTmp.Label = "..";
+                itemTmp.Label2 = "";
+                itemTmp.Path = m_strPreviousDir;
+                Utils.SetDefaultIcons(itemTmp);
+                Utils.SetThumbnails(ref itemTmp);
+                items.Add(itemTmp);
+                return items;
               }
-              else
-                retry = false;
             }
             else
               retry = false;
           }
         }
       }
+      //Setting current share;
+      SetCurrentShare(strDir);
 
       //check if this is an image file like .iso, .nrg,...
       //ifso then ask daemontools to automount it
@@ -686,7 +685,7 @@ namespace MediaPortal.Util
             {
               item = new GUIListItem();
               item.IsFolder = false;
-              item.Label = file.Name;
+              item.Label = Utils.GetFilename(file.Name);
               item.Label2 = "";
               item.Path = String.Format("{0}/{1}", strDir, file.Name);
               item.IsRemote = true;
@@ -731,7 +730,7 @@ namespace MediaPortal.Util
             // Skip hidden folders
             if (File.Exists(Path.Combine(strDir, strPath)) && (File.GetAttributes(Path.Combine(strDir, strPath)) & FileAttributes.Hidden) == FileAttributes.Hidden)
               continue;
-
+ 
             item = new GUIListItem();
             item.IsFolder = true;
             item.Label = strPath;
@@ -895,10 +894,8 @@ namespace MediaPortal.Util
           string strPath = strDirs[i].Substring(strDir.Length + 1);
 
           // Skip hidden folders
-          if ((File.GetAttributes(strDir + @"\" + strPath) & FileAttributes.Hidden) == FileAttributes.Hidden)
-          {
+          if (File.Exists(Path.Combine(strDir, strPath)) && (File.GetAttributes(Path.Combine(strDir, strPath)) & FileAttributes.Hidden) == FileAttributes.Hidden)
             continue;
-          }
 
           item = new GUIListItem();
           item.IsFolder = true;
@@ -967,7 +964,7 @@ namespace MediaPortal.Util
     /// true : file has a valid extension
     /// false: file has an unknown extension
     /// </returns>
-    bool IsValidExtension(string strPath)
+    public bool IsValidExtension(string strPath)
     {
       if (strPath == null) return false;
       if (strPath == String.Empty) return false;
@@ -981,6 +978,35 @@ namespace MediaPortal.Util
         for (int i = 0; i < m_extensions.Count; ++i)
         {
           if ((m_extensions[i] as string) == extensionFile) return true;
+        }
+      }
+      catch (Exception) { }
+
+      return false;
+    }
+    /// <summary>
+    /// This method checks if the extension of the specified file is valid for the current virtual folder
+    /// The virtual directory will only show files with valid extensions
+    /// </summary>
+    /// <param name="strPath">filename</param>
+    /// <returns>
+    /// true : file has a valid extension
+    /// false: file has an unknown extension
+    /// </returns>
+    public static bool IsValidExtension(string strPath, ArrayList extensions, bool filesWithoutExtension)
+    {
+      if (strPath == null) return false;
+      if (strPath == String.Empty) return false;
+      try
+      {
+        //				if (!System.IO.Path.HasExtension(strPath)) return false;
+        // waeberd: allow searching for files without an extension
+        if (!System.IO.Path.HasExtension(strPath)) return filesWithoutExtension;
+        string extensionFile = System.IO.Path.GetExtension(strPath).ToLower();
+        if ((extensions[0] as string) == "*") return true;   // added for explorer modul by gucky
+        for (int i = 0; i < extensions.Count; ++i)
+        {
+          if ((extensions[i] as string) == extensionFile) return true;
         }
       }
       catch (Exception) { }
@@ -1211,14 +1237,10 @@ namespace MediaPortal.Util
     /// </returns>
     public List<GUIListItem> GetDirectoryExt(string strDir)
     {
-      if (strDir == null)
+      if ((strDir == null) || (strDir == ""))
       {
         m_strPreviousDir = "";
-        return GetRootExt();
-      }
-      if (strDir == "")
-      {
-        m_strPreviousDir = "";
+        CurrentShare = "";
         return GetRootExt();
       }
 
@@ -1257,46 +1279,42 @@ namespace MediaPortal.Util
         {
           while (retry)
           {
-            //yes, check if this is a subdirectory of the share
-            if (previousShare != currentShare)
-            //if (previousShare==String.Empty || strDir.IndexOf(previousShare) < 0)
+            //no, then ask user to enter the pincode
+            GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+            GUIWindowManager.SendMessage(msgGetPassword);
+            int iPincode = -1;
+            try
             {
-              //no, then ask user to enter the pincode
-              GUIMessage msgGetPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
-              GUIWindowManager.SendMessage(msgGetPassword);
-              int iPincode = -1;
-              try
-              {
-                iPincode = Int32.Parse(msgGetPassword.Label);
-              }
-              catch (Exception)
-              {
-              }
-              if (iPincode != iPincodeCorrect)
-              {
-                GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0, 0);
-                GUIWindowManager.SendMessage(msgWrongPassword);
-
-                if (!(bool)msgWrongPassword.Object)
-                {
-                  GUIListItem itemTmp = new GUIListItem();
-                  itemTmp.IsFolder = true;
-                  itemTmp.Label = "..";
-                  itemTmp.Label2 = "";
-                  itemTmp.Path = m_strPreviousDir;
-                  Utils.SetDefaultIcons(itemTmp);
-                  Utils.SetThumbnails(ref itemTmp);
-                  items.Add(itemTmp);
-                  return items;
-                }
-              }
-              else
-                retry = false;
+              iPincode = Int32.Parse(msgGetPassword.Label);
             }
+            catch (Exception)
+            {
+            }
+            if (iPincode != iPincodeCorrect)
+            {
+              GUIMessage msgWrongPassword = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WRONG_PASSWORD, 0, 0, 0, 0, 0, 0);
+              GUIWindowManager.SendMessage(msgWrongPassword);
+
+              if (!(bool)msgWrongPassword.Object)
+              {
+                GUIListItem itemTmp = new GUIListItem();
+                itemTmp.IsFolder = true;
+                itemTmp.Label = "..";
+                itemTmp.Label2 = "";
+                itemTmp.Path = m_strPreviousDir;
+                Utils.SetDefaultIcons(itemTmp);
+                Utils.SetThumbnails(ref itemTmp);
+                items.Add(itemTmp);
+                return items;
+              }
+            }
+            else
+              retry = false;
           }
         }
       }
-      previousShare = currentShare;
+      //Setting current share;
+      SetCurrentShare(strDir);
 
       //check if this is an image file like .iso, .nrg,...
       //ifso then ask daemontools to automount it
@@ -1458,7 +1476,7 @@ namespace MediaPortal.Util
             {
               item = new GUIListItem();
               item.IsFolder = false;
-              item.Label = file.Name;
+              item.Label = Utils.GetFilename(file.Name);
               item.Label2 = "";
               item.Path = String.Format("{0}/{1}", strDir, file.Name);
               item.IsRemote = true;
@@ -1553,10 +1571,8 @@ namespace MediaPortal.Util
             string strPath = strDirs[i].Substring(strDir.Length + 1);
 
             // Skip hidden folders
-            if ((File.GetAttributes(strDir + @"\" + strPath) & FileAttributes.Hidden) == FileAttributes.Hidden)
-            {
+            if (File.Exists(Path.Combine(strDir, strPath)) && (File.GetAttributes(Path.Combine(strDir, strPath)) & FileAttributes.Hidden) == FileAttributes.Hidden)
               continue;
-            }
 
             item = new GUIListItem();
             item.IsFolder = true;
@@ -1731,7 +1747,7 @@ namespace MediaPortal.Util
             {
               item = new GUIListItem();
               item.IsFolder = false;
-              item.Label = file.Name;
+              item.Label = Utils.GetFilename(file.Name);
               item.Label2 = "";
               item.Path = String.Format("{0}/{1}", strDir, file.Name);
               item.IsRemote = true;
@@ -1930,6 +1946,7 @@ namespace MediaPortal.Util
         {
           item.Path = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
                 share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+          item.IsRemote = true;
         }
         Utils.SetDefaultIcons(item);
         string coverArt = Utils.GetCoverArtName(item.Path, "folder");

@@ -340,6 +340,10 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnPageLoad()
     {
+      if (!KeepVirtualDirectory(PreviousWindowId))
+      {
+        m_directory.Reset();
+      }
       base.OnPageLoad();
       if (MusicState.StartWindow != GetID)
       {
@@ -2173,5 +2177,32 @@ namespace MediaPortal.GUI.Music
 
       return false;
     }
+    /// <summary>
+    /// Returns true if the specified window should maintain virtual directory
+    /// </summary>
+    /// <param name="windowId">id of window</param>
+    /// <returns>
+    /// true: if the specified window should maintain virtual directory
+    /// false: if the specified window should not maintain virtual directory</returns>
+    static public bool KeepVirtualDirectory(int windowId)
+    {
+      if (windowId == (int)GUIWindow.Window.WINDOW_ARTIST_INFO) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_MUSIC) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_MUSIC_ALBUM) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_MUSIC_ARTIST) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_PROGRESS) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_MUSIC_FAVORITES) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_MUSIC_FILES) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_MUSIC_GENRE) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_MUSIC_INFO) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYLIST) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_MUSIC_TOP100) return true;
+      if (windowId == (int)GUIWindow.Window.WINDOW_MUSIC_YEARS) return true;
+      return false;
+    }
+
   }
 }

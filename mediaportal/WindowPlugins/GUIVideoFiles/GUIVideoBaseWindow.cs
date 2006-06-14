@@ -256,7 +256,28 @@ namespace MediaPortal.GUI.Video
 
       if (control == btnPlayDVD)
       {
-        OnPlayDVD();
+              //check if dvd is inserted
+        string[] drives = Environment.GetLogicalDrives();
+
+        foreach (string drive in drives)
+        {
+          if (Util.Utils.getDriveType(drive) == 5) //cd or dvd drive
+          {
+            string driverLetter = drive.Substring(0, 1);
+            string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
+            if (System.IO.File.Exists(fileName))
+            {
+              OnPlayDVD(drive);
+              return;
+            }
+          }
+        }
+        //no disc in drive...
+        GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
+        dlgOk.SetHeading(3);//my videos
+        dlgOk.SetLine(1, 219);//no disc
+        dlgOk.DoModal(GetID);
+        return;
       }
 
       if (control == facadeView)
@@ -487,6 +508,7 @@ namespace MediaPortal.GUI.Video
         VideoState.StartWindow = nNewWindow;
         if (nNewWindow != GetID)
         {
+          GUIVideoFiles.Reset();
           GUIWindowManager.ReplaceWindow(nNewWindow);
         }
       }
@@ -525,73 +547,10 @@ namespace MediaPortal.GUI.Video
     protected virtual void OnInfo(int iItem)
     {
     }
-
-    protected void OnPlayDVD()
+    public virtual bool OnPlayDVD(String drive)
     {
-      Log.Write("GUIVideoFiles playDVD");
-      //check if dvd is inserted
-      string[] drives = Environment.GetLogicalDrives();
-
-      foreach (string drive in drives)
-      {
-        if (Util.Utils.getDriveType(drive) == 5) //cd or dvd drive
-        {
-          string driverLetter = drive.Substring(0, 1);
-          string fileName = String.Format(@"{0}:\VIDEO_TS\VIDEO_TS.IFO", driverLetter);
-          if (System.IO.File.Exists(fileName))
-          {
-            IMDBMovie movieDetails = new IMDBMovie();
-            VideoDatabase.GetMovieInfo(fileName, ref movieDetails);
-            int idFile = VideoDatabase.GetFileId(fileName);
-            int idMovie = VideoDatabase.GetMovieId(fileName);
-            int timeMovieStopped = 0;
-            byte[] resumeData = null;
-            if ((idMovie >= 0) && (idFile >= 0))
-            {
-              timeMovieStopped = VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
-              Log.Write("GUIVideoFiles::OnPlayBackStopped idFile={0} timeMovieStopped={1} resumeData={2}", idFile, timeMovieStopped, resumeData);
-              if (timeMovieStopped > 0)
-              {
-                string title = System.IO.Path.GetFileName(fileName);
-                VideoDatabase.GetMovieInfoById(idMovie, ref movieDetails);
-                if (movieDetails.Title != String.Empty) title = movieDetails.Title;
-
-                GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-                if (null == dlgYesNo) return;
-                dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
-                dlgYesNo.SetLine(1, title);
-                dlgYesNo.SetLine(2, GUILocalizeStrings.Get(936) + Utils.SecondsToHMSString(timeMovieStopped));
-                dlgYesNo.SetDefaultToYes(true);
-                dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
-
-                if (!dlgYesNo.IsConfirmed) timeMovieStopped = 0;
-              }
-            }
-
-            g_Player.PlayDVD();
-            if (g_Player.Playing && timeMovieStopped > 0)
-            {
-              if (g_Player.IsDVD)
-              {
-                g_Player.Player.SetResumeState(resumeData);
-              }
-              else
-              {
-                g_Player.SeekAbsolute(timeMovieStopped);
-              }
-            }
-            return;
-          }
-        }
-      }
-      //no disc in drive...
-      GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-      dlgOk.SetHeading(3);//my videos
-      dlgOk.SetLine(1, 219);//no disc
-      dlgOk.DoModal(GetID);
+      return false;
     }
-
-
     protected virtual void AddItemToPlayList(GUIListItem pItem)
     {
       if (!pItem.IsFolder)
