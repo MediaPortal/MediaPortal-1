@@ -3248,27 +3248,28 @@ namespace MediaPortal.TV.Database
           HasEITSchedule = DatabaseUtility.GetAsInt(results, 0, "HasEITSchedule") != 0;
           pcrPid = DatabaseUtility.GetAsInt(results, 0, "pcrPid");
 
-          retChannel.Bandwidth = bandwidth;
           retChannel.Frequency = frequency;
           retChannel.NetworkID = ONID;
           retChannel.TransportStreamID = TSID;
           retChannel.ProgramNumber = SID;
+          retChannel.ServiceProvider = strProvider;
           retChannel.AudioPid = audioPid;
           retChannel.VideoPid = videoPid;
           retChannel.TeletextPid = teletextPid;
           retChannel.SubtitlePid = 0;
           retChannel.PMTPid = pmtPid;
+          retChannel.Bandwidth = bandwidth;
+          retChannel.Audio1 = audio1;
+          retChannel.Audio2 = audio2;
+          retChannel.Audio3 = audio3;
+          retChannel.AC3Pid = ac3Pid;
           retChannel.AudioLanguage = audioLanguage;
           retChannel.AudioLanguage1 = audioLanguage1;
           retChannel.AudioLanguage2 = audioLanguage2;
           retChannel.AudioLanguage3 = audioLanguage3;
-          retChannel.AC3Pid = ac3Pid;
-          retChannel.PCRPid = pcrPid;
-          retChannel.Audio1 = audio1;
-          retChannel.Audio2 = audio2;
-          retChannel.Audio3 = audio3;
           retChannel.HasEITPresentFollow = HasEITPresentFollow;
           retChannel.HasEITSchedule = HasEITSchedule;
+          retChannel.PCRPid = pcrPid;
 
           return true;
         }
@@ -3348,22 +3349,24 @@ namespace MediaPortal.TV.Database
           retChannel.NetworkID = ONID;
           retChannel.TransportStreamID = TSID;
           retChannel.ProgramNumber = SID;
+          retChannel.ServiceProvider = strProvider;
           retChannel.AudioPid = audioPid;
           retChannel.VideoPid = videoPid;
           retChannel.TeletextPid = teletextPid;
           retChannel.SubtitlePid = 0;
           retChannel.PMTPid = pmtPid;
+          retChannel.Audio1 = audio1;
+          retChannel.Audio2 = audio2;
+          retChannel.Audio3 = audio3;
+          retChannel.AC3Pid = ac3Pid;
           retChannel.AudioLanguage = audioLanguage;
           retChannel.AudioLanguage1 = audioLanguage1;
           retChannel.AudioLanguage2 = audioLanguage2;
           retChannel.AudioLanguage3 = audioLanguage3;
-          retChannel.AC3Pid = ac3Pid;
-          retChannel.Audio1 = audio1;
-          retChannel.Audio2 = audio2;
-          retChannel.Audio3 = audio3;
-          retChannel.PCRPid = pcrPid;
           retChannel.HasEITPresentFollow = HasEITPresentFollow;
           retChannel.HasEITSchedule = HasEITSchedule;
+          retChannel.PCRPid = pcrPid;
+          
           return true;
         }
         catch (Exception ex)
@@ -3440,9 +3443,6 @@ namespace MediaPortal.TV.Database
           HasEITSchedule = DatabaseUtility.GetAsInt(results, 0, "HasEITSchedule") != 0;
           pcrPid = DatabaseUtility.GetAsInt(results, 0, "pcrPid");
 
-          retChannel.PhysicalChannel = physicalChannel;
-          retChannel.MinorChannel = minorChannel;
-          retChannel.MajorChannel = majorChannel;
           retChannel.Frequency = frequency;
           retChannel.Symbolrate = symbolrate;
           retChannel.FEC = innerFec;
@@ -3450,22 +3450,27 @@ namespace MediaPortal.TV.Database
           retChannel.NetworkID = ONID;
           retChannel.TransportStreamID = TSID;
           retChannel.ProgramNumber = SID;
+          retChannel.ServiceProvider = strProvider;
           retChannel.AudioPid = audioPid;
           retChannel.VideoPid = videoPid;
           retChannel.TeletextPid = teletextPid;
           retChannel.SubtitlePid = 0;
           retChannel.PMTPid = pmtPid;
+          retChannel.Audio1 = audio1;
+          retChannel.Audio2 = audio2;
+          retChannel.Audio3 = audio3;
+          retChannel.AC3Pid = ac3Pid;
           retChannel.AudioLanguage = audioLanguage;
           retChannel.AudioLanguage1 = audioLanguage1;
           retChannel.AudioLanguage2 = audioLanguage2;
           retChannel.AudioLanguage3 = audioLanguage3;
-          retChannel.AC3Pid = ac3Pid;
-          retChannel.PCRPid = pcrPid;
-          retChannel.Audio1 = audio1;
-          retChannel.Audio2 = audio2;
-          retChannel.Audio3 = audio3;
+          retChannel.PhysicalChannel = physicalChannel;
+          retChannel.MinorChannel = minorChannel;
+          retChannel.MajorChannel = majorChannel;
           retChannel.HasEITSchedule = HasEITSchedule;
           retChannel.HasEITPresentFollow = HasEITPresentFollow;
+          retChannel.PCRPid = pcrPid;
+
           return true;
         }
         catch (Exception ex)
