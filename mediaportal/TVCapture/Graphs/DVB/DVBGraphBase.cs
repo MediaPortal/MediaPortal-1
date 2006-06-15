@@ -301,7 +301,7 @@ namespace MediaPortal.TV.Recording
     protected bool _isUsingAC3 = false;
     protected bool _isOverlayVisible = true;
     protected DateTime _signalLostTimer = DateTime.Now;
-    protected bool _notifySignalLost= false;
+    protected bool _notifySignalLost = false;
     protected int _pmtRetyCount = 0;
     protected int _signalQuality;
     protected int _signalLevel;
@@ -2434,6 +2434,11 @@ namespace MediaPortal.TV.Recording
             VideoRendererStatistics.VideoState = VideoRendererStatistics.State.NoSignal;
             return;
           }
+          else
+          {
+            VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+            return;
+          }
         }
       }
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
@@ -2458,9 +2463,11 @@ namespace MediaPortal.TV.Recording
       return false;
     }
 
+    /// <summary>
+    /// Checks signal and handles signal loss 
+    /// </summary>
     protected void ProcessSignal()
-  {
-    #region Signal control
+    {
       if (!TunerLocked()) // tuner is unlocked
       {
         Log.Write("DVBGraph: Unlocked... wait for tunerlock");
@@ -2489,12 +2496,12 @@ namespace MediaPortal.TV.Recording
           //  notify nosignal
           _notifySignalLost = true;
           UpdateVideoState();
-          // channel must be retuned there
+          // 
           // todo
         }
       }
-      #endregion
-  }
+
+    }
 
 
     public void Process()
@@ -2510,10 +2517,11 @@ namespace MediaPortal.TV.Recording
         else
         {
           TimeSpan tsProc = DateTime.Now - _processTimer;
-          if (tsProc.TotalMilliseconds < 1500) return; // original value was set to 5' 
+          if (tsProc.TotalMilliseconds < 2500) return; // original value was set to 5' 
           _processTimer = DateTime.Now;                // try less for 697 related
         }
       }
+      UpdateSignalPresent();
 
       if (_graphState == State.Created) return;
 
@@ -2523,10 +2531,6 @@ namespace MediaPortal.TV.Recording
       //  _streamDemuxer.Process();
 
       if (ProcessEpg()) return;
-
-      UpdateSignalPresent();
-
-      ProcessSignal();
 
       if (_graphState != State.Epg)
       {
@@ -2602,7 +2606,10 @@ namespace MediaPortal.TV.Recording
         }
         //_signalLostTimer = DateTime.Now;
       }
-
+      else
+      {
+                ProcessSignal();
+      }
       if (_graphState != State.Epg)
       {
         if (_graphPaused /*&& !_streamDemuxer.IsScrambled*/)
