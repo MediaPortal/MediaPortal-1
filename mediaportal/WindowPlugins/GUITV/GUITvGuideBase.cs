@@ -526,7 +526,7 @@ namespace MediaPortal.GUI.TV
             _recordingList.Clear();
             if (!GUIGraphicsContext.IsTvWindow(message.Param1))
             {
-              if (!g_Player.Playing)
+              if (!g_Player.Playing && !Recorder.IsRadio())
               {
                 if (GUIGraphicsContext.ShowBackground)
                 {
