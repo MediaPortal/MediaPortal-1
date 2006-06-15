@@ -24,6 +24,8 @@
 #endregion
 
 using System;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace MediaPortal.UserInterface.Controls
 {
@@ -32,10 +34,33 @@ namespace MediaPortal.UserInterface.Controls
   /// </summary>
   public class MPComboBox : System.Windows.Forms.ComboBox
   {
+    Color _borderColor = Color.Empty;
+
+    public Color BorderColor
+    {
+      get { return _borderColor; }
+      set { _borderColor = value; }
+    }
+
     public MPComboBox()
     {
+    }
 
-
+    protected override void WndProc(ref Message msg)
+    {
+      if (msg.Msg == 0x000F && _borderColor != Color.Empty)
+      {
+        Graphics graphics = Graphics.FromHwnd(this.Parent.Handle);
+        Rectangle rectangle = new Rectangle(
+             this.Left - 1,
+             this.Top - 1,
+             this.Width + 1,
+             this.Height + 1);
+        graphics.DrawRectangle(new Pen(_borderColor), rectangle);
+        graphics.Dispose();
+      }
+      base.WndProc(ref msg);
     }
   }
+
 }
