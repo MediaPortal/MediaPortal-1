@@ -2906,7 +2906,7 @@ namespace MediaPortal.TV.Database
         {
           string strChannel = channelName;
           string epgId = xmlTvId;
-          DatabaseUtility.RemoveInvalidChars(ref channelName);
+          DatabaseUtility.RemoveInvalidChars(ref strChannel);
           DatabaseUtility.RemoveInvalidChars(ref epgId);
           strSQL = String.Format("select * from tblEPGMapping where idChannel like {0}", idChannel);
           SQLiteResultSet results;
