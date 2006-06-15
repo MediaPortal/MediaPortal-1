@@ -279,6 +279,19 @@ namespace MediaPortal.GUI.Video
           LoadDirectory(item.Path);
         return;
       }
+
+      if (action.wID == Action.ActionType.ACTION_DELETE_ITEM)
+      {
+        GUIListItem item = facadeView.SelectedListItem;
+        if (item != null)
+        {
+          if (item.IsFolder == false)
+          {
+            OnDeleteItem(item);
+          }
+        }
+      }
+
       base.OnAction(action);
     }
 
@@ -980,6 +993,7 @@ namespace MediaPortal.GUI.Video
       }
       return string.Empty;
     }
+
     public override bool OnPlayDVD(String drive)
     {
       Log.Write("GUIVideoFiles playDVD");
