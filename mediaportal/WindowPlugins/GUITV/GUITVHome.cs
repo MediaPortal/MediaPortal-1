@@ -227,7 +227,7 @@ namespace MediaPortal.GUI.TV
           {
             // goto home 
             // are we watching tv & doing timeshifting
-            if (!g_Player.Playing)
+            if (!g_Player.Playing && !Recorder.IsRadio())
             {
               //yes, do we want tv as background
               if (GUIGraphicsContext.ShowBackground)
