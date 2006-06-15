@@ -1872,19 +1872,19 @@
 	</string>
 	<string>
 		<id>590</id>
-		<value>S. 100</value>
+		<value>Übersicht</value>
 	</string>	
 	<string>
 		<id>591</id>
-		<value>S. 200</value>
+		<value>Sport</value>
 	</string>
 	<string>
 		<id>592</id>
-		<value>S. 300</value>
+		<value>Programm</value>
     </string>
 	<string>
 		<id>593</id>
-		<value>Versteckt</value>
+		<value>Alles anzeigen</value>
     </string>    
 	<string>
 		<id>594</id>
@@ -1892,7 +1892,7 @@
     </string>     
 	<string>
 		<id>595</id>
-		<value>Vollbild</value>
+		<value>Vollbildmodus</value>
     </string>      
 	<string>
 		<id>596</id>

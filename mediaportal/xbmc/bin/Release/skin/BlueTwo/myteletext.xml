@@ -131,51 +131,51 @@
 				<ondown>507</ondown>
 				<onright>506</onright>
 				<subitems>
-					<subitem>Subpage 0</subitem>
-					<subitem>Subpage 1</subitem>
-					<subitem>Subpage 2</subitem>
-					<subitem>Subpage 3</subitem>
-					<subitem>Subpage 4</subitem>
-					<subitem>Subpage 5</subitem>
-					<subitem>Subpage 6</subitem>
-					<subitem>Subpage 7</subitem>
-					<subitem>Subpage 8</subitem>
-					<subitem>Subpage 9</subitem>
-					<subitem>Subpage 10</subitem>
-					<subitem>Subpage 11</subitem>
-					<subitem>Subpage 12</subitem>
-					<subitem>Subpage 13</subitem>
-					<subitem>Subpage 14</subitem>
-					<subitem>Subpage 15</subitem>
-					<subitem>Subpage 16</subitem>
-					<subitem>Subpage 17</subitem>
-					<subitem>Subpage 18</subitem>
-					<subitem>Subpage 19</subitem>
-					<subitem>Subpage 20</subitem>
-					<subitem>Subpage 21</subitem>
-					<subitem>Subpage 22</subitem>
-					<subitem>Subpage 23</subitem>
-					<subitem>Subpage 24</subitem>
-					<subitem>Subpage 25</subitem>
-					<subitem>Subpage 26</subitem>
-					<subitem>Subpage 27</subitem>
-					<subitem>Subpage 28</subitem>
-					<subitem>Subpage 29</subitem>
-					<subitem>Subpage 30</subitem>
-					<subitem>Subpage 31</subitem>
-					<subitem>Subpage 32</subitem>
-					<subitem>Subpage 33</subitem>
-					<subitem>Subpage 34</subitem>
-					<subitem>Subpage 35</subitem>
+					<subitem>./1</subitem>
+					<subitem>./2</subitem>
+					<subitem>./3</subitem>
+					<subitem>./4</subitem>
+					<subitem>./5</subitem>
+					<subitem>./6</subitem>
+					<subitem>./7</subitem>
+					<subitem>./8</subitem>
+					<subitem>./9</subitem>
+					<subitem>./10</subitem>
+					<subitem>./11</subitem>
+					<subitem>./12</subitem>
+					<subitem>./13</subitem>
+					<subitem>./14</subitem>
+					<subitem>./15</subitem>
+					<subitem>./16</subitem>
+					<subitem>./17</subitem>
+					<subitem>./18</subitem>
+					<subitem>./19</subitem>
+					<subitem>./20</subitem>
+					<subitem>./21</subitem>
+					<subitem>./22</subitem>
+					<subitem>./23</subitem>
+					<subitem>./24</subitem>
+					<subitem>./25</subitem>
+					<subitem>./26</subitem>
+					<subitem>./27</subitem>
+					<subitem>./28</subitem>
+					<subitem>./29</subitem>
+					<subitem>./30</subitem>
+					<subitem>./31</subitem>
+					<subitem>./32</subitem>
+					<subitem>./33</subitem>
+					<subitem>./34</subitem>
+					<subitem>./35</subitem>
+					<subitem>./36</subitem>
 				</subitems>
 			</control>
 			<control>
-				<description>595</description>
+				<description>Fullscreen</description>
 				<type>button</type>
 				<id>507</id>
 				<posX>60</posX>
 				<posY>267</posY>
-				<label>Fullscreen</label>
+				<label>595</label>
 				<width>170</width>
 				<height>32</height>
 				<onup>506</onup>
