@@ -48,7 +48,7 @@
 		<id>502</id>
 		<posX>55</posX>
 		<posY>115</posY>
-		<label>P. 100</label>
+		<label>590</label>
 		<onup>507</onup>
 		<ondown>503</ondown>
 		<onright>502</onright>
@@ -59,7 +59,7 @@
 		<id>503</id>
 		<posX>55</posX>
 		<posY>143</posY>
-		<label>P. 200</label>
+		<label>591</label>
 		<onup>502</onup>
 		<ondown>504</ondown>
 		<onright>503</onright>
@@ -80,7 +80,7 @@
 		<id>504</id>
 		<posX>55</posX>
 		<posY>189</posY>
-		<label>P. 300</label>
+		<label>592</label>
 		<onup>503</onup>
 		<ondown>505</ondown>
 		<onright>504</onright>
@@ -91,7 +91,7 @@
 		<id>505</id>
 		<posX>55</posX>
 		<posY>217</posY>
-		<label>Hidden</label>
+		<label>593</label>
 		<width>180</width>
 		<height>28</height>
     <textXOff>10</textXOff>
@@ -113,7 +113,7 @@
 		<id>506</id>
 		<posX>55</posX>
 		<posY>245</posY>
-		<label>Subpage</label>
+		<label>594</label>
 		<onup>505</onup>
 		<ondown>506</ondown>
 		<onright>506</onright>

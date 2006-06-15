@@ -60,7 +60,7 @@
 				<id>502</id>
 				<posX>60</posX>
 				<posY>97</posY>
-				<label>P. 100</label>
+				<label>590</label>
 				<onup>507</onup>
 				<ondown>503</ondown>
 				<onright>502</onright>
@@ -73,7 +73,7 @@
 				<id>503</id>
 				<posX>60</posX>
 				<posY>131</posY>
-				<label>P. 200</label>
+				<label>591</label>
 				<width>170</width>
 				<height>32</height>
 				<onup>502</onup>
@@ -86,7 +86,7 @@
 				<id>504</id>
 				<posX>60</posX>
 				<posY>165</posY>
-				<label>P. 300</label>
+				<label>592</label>
 				<width>170</width>
 				<height>32</height>
 				<onup>503</onup>
@@ -99,7 +99,7 @@
 				<id>505</id>
 				<posX>60</posX>
 				<posY>199</posY>
-				<label>Hidden</label>
+				<label>593</label>
 				<width>170</width>
 				<height>32</height>
 				<textXOff>10</textXOff>
@@ -122,7 +122,7 @@
 				<id>506</id>
 				<posX>60</posX>
 				<posY>233</posY>
-				<label>Subpage</label>
+				<label>594</label>
 				<width>170</width>
 				<height>32</height>
 				<onup>505</onup>
@@ -168,7 +168,7 @@
 				</subitems>
 			</control>
 			<control>
-				<description>Fullscreen</description>
+				<description>595</description>
 				<type>button</type>
 				<id>507</id>
 				<posX>60</posX>

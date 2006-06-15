@@ -1871,6 +1871,34 @@
 		<value>Schneiden</value>
 	</string>
 	<string>
+		<id>590</id>
+		<value>S. 100</value>
+	</string>	
+	<string>
+		<id>591</id>
+		<value>S. 200</value>
+	</string>
+	<string>
+		<id>592</id>
+		<value>S. 300</value>
+    </string>
+	<string>
+		<id>593</id>
+		<value>Versteckt</value>
+    </string>    
+	<string>
+		<id>594</id>
+		<value>Umblättern</value>
+    </string>     
+	<string>
+		<id>595</id>
+		<value>Vollbild</value>
+    </string>      
+	<string>
+		<id>596</id>
+		<value>Warte auf Seite {0}/{1}...</value>
+	</string>	
+	<string>
 		<id>600</id>
 		<value>TV-Programm</value>
 	</string>

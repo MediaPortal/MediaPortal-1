@@ -353,7 +353,7 @@ namespace MediaPortal.GUI.TV
 		void ShowMessage(int page,int subpage)
 		{
 			if (lblMessage==null) return;
-			lblMessage.Label=String.Format("Waiting for Page {0}/{1}...",page,subpage);
+          lblMessage.Label = String.Format(GUILocalizeStrings.Get(596), page, subpage); // Waiting for Page {0}/{1}...
 			lblMessage.IsVisible=true;
 		}
 		//

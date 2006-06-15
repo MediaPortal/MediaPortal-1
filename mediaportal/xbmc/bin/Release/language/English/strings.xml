@@ -1850,27 +1850,55 @@
   <string>
 		<id>547</id>
 		<value>SSE</value>
-	</string>	
+  </string>	
   <string>
 		<id>548</id>
 		<value>SSW</value>
-	</string>	
+  </string>	
   <string>
 		<id>549</id>
 		<value>WSW</value>
-	</string>	
+  </string>	
   <string>
 		<id>551</id>
 		<value>WNW</value>
-	</string>	
+  </string>	
   <string>
 		<id>552</id>
 		<value>NNW</value>
   </string>  
   <string>
     <id>550</id>
-    <value>Crop</value>
+		<value>Crop</value>
   </string>
+	<string>
+		<id>590</id>
+		<value>P. 100</value>
+	</string>	
+	<string>
+		<id>591</id>
+		<value>P. 200</value>
+	</string>
+	<string>
+		<id>592</id>
+		<value>P. 300</value>
+    </string>
+	<string>
+		<id>593</id>
+		<value>Hidden</value>
+    </string>    
+	<string>
+		<id>594</id>
+		<value>Subpage</value>
+    </string>     
+	<string>
+		<id>595</id>
+		<value>Fullscreen</value>
+    </string>      
+	<string>
+		<id>596</id>
+		<value>Waiting for Page {0}/{1}...</value>
+    </string>      
   <string>
     <id>600</id>
     <value>TVGuide</value>
