@@ -810,7 +810,10 @@ namespace MediaPortal.Player
     #region IRenderLayer members
     public void RenderLayer(float timePassed)
     {
-      if (VideoRendererStatistics.VideoState == VideoRendererStatistics.State.VideoPresent)
+      // if (VideoRendererStatistics.VideoState == VideoRendererStatistics.State.VideoPresent)
+      // Before , we got a black screen until GUI_MSG_NOTIFY command has finished
+      // That we don't want ( do we ?) 
+      if (VideoRendererStatistics.VideoState == VideoRendererStatistics.State.VideoPresent || VideoRendererStatistics.VideoState == VideoRendererStatistics.State.NoSignal)
       {
         //Render video texture
         if (_renderTexture == false) return;
