@@ -1870,6 +1870,34 @@
 		<value>Beskjær</value>
 	</string>
 	<string>
+		<id>590</id>
+		<value>S. 100</value>
+	</string>	
+	<string>
+		<id>591</id>
+		<value>S. 200</value>
+	</string>
+	<string>
+		<id>592</id>
+		<value>S. 300</value>
+    </string>
+	<string>
+		<id>593</id>
+		<value>Gjemt</value>
+    </string>    
+	<string>
+		<id>594</id>
+		<value>Undersider</value>
+    </string>     
+	<string>
+		<id>595</id>
+		<value>Fullskjerm</value>
+    </string>      
+	<string>
+		<id>596</id>
+		<value>Venter på Side {0}/{1}...</value>
+    </string>
+  <string>      
 		<id>600</id>
 		<value>TV-Guide</value>
 	</string>
