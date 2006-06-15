@@ -714,6 +714,8 @@ namespace MediaPortal.GUI.TV
     public override bool OnMessage(GUIMessage message)
     {
       _needToClearScreen = true;
+
+      #region case GUI_MSG_RECORD
       if (message.Message == GUIMessage.MessageType.GUI_MSG_RECORD)
       {
         string channel = Recorder.TVChannelName;
@@ -847,6 +849,9 @@ namespace MediaPortal.GUI.TV
         }
         return true;
       }
+      #endregion
+
+      #region case GUI_MSG_NOTIFY_TV_PROGRAM
       if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
       {
         _dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
@@ -861,7 +866,9 @@ namespace MediaPortal.GUI.TV
         _dialogNotify.DoModal(GetID);
         _notifyDialogVisible = false;
       }
+      #endregion
 
+      #region case GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING
       if (message.Message == GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING)
       {
         TVRecording rec = message.Object as TVRecording;
@@ -926,6 +933,9 @@ namespace MediaPortal.GUI.TV
         }
         _bottomDialogMenuVisible = false;
       }
+      #endregion
+
+      #region case GUI_MSG_NOTIFY
       if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY)
       {
         GUIDialogNotify dlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
@@ -944,8 +954,9 @@ namespace MediaPortal.GUI.TV
         Log.Write("Notify Message:" + channel + ", " + message.Label);
         return true;
       }
+      #endregion
 
-
+      #region case GUI_MSG_WINDOW_DEINIT
       if (_isOsdVisible)
       {
 
@@ -964,15 +975,19 @@ namespace MediaPortal.GUI.TV
           _osdWindow.OnMessage(message);
         }
       }
+      #endregion
 
       switch (message.Message)
       {
+        #region case GUI_MSG_HIDE_MESSAGE
         case GUIMessage.MessageType.GUI_MSG_HIDE_MESSAGE:
           {
             _messageBoxVisible = false;
           }
           break;
+        #endregion
 
+        #region case GUI_MSG_SHOW_MESSAGE
         case GUIMessage.MessageType.GUI_MSG_SHOW_MESSAGE:
           {
             GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.MSG_BOX_LABEL1, 0, 0, null);
@@ -997,6 +1012,9 @@ namespace MediaPortal.GUI.TV
             _msgTimer = DateTime.Now;
           }
           break;
+        #endregion
+
+        #region case GUI_MSG_MSN_CLOSECONVERSATION
 
         case GUIMessage.MessageType.GUI_MSG_MSN_CLOSECONVERSATION:
           if (_msnWindowVisible)
@@ -1008,7 +1026,15 @@ namespace MediaPortal.GUI.TV
           GUIWindowManager.IsOsdVisible = false;
           break;
 
+        #endregion
+
+        #region case GUI_MSG_MSN_STATUS_MESSAGE
+
         case GUIMessage.MessageType.GUI_MSG_MSN_STATUS_MESSAGE:
+
+        #endregion
+
+        #region case GUI_MSG_MSN_MESSAGE
         case GUIMessage.MessageType.GUI_MSG_MSN_MESSAGE:
           if (_isOsdVisible && _isMsnChatPopup)
           {
@@ -1030,6 +1056,9 @@ namespace MediaPortal.GUI.TV
 
           }
           break;
+        #endregion
+
+        #region case GUI_MSG_WINDOW_DEINIT
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
@@ -1103,6 +1132,9 @@ namespace MediaPortal.GUI.TV
             return true;
           }
 
+        #endregion
+
+        #region case GUI_MSG_WINDOW_INIT
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
@@ -1155,14 +1187,20 @@ namespace MediaPortal.GUI.TV
 
             return true;
           }
+        #endregion
+
+        #region case GUI_MSG_SETFOCUS
         case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
           goto case GUIMessage.MessageType.GUI_MSG_LOSTFOCUS;
+        #endregion
 
+        #region case GUI_MSG_LOSTFOCUS
         case GUIMessage.MessageType.GUI_MSG_LOSTFOCUS:
           if (_isOsdVisible) return true;
           if (_msnWindowVisible) return true;
           if (message.SenderControlId != (int)GUIWindow.Window.WINDOW_TVFULLSCREEN) return true;
           break;
+        #endregion
 
       }
 
