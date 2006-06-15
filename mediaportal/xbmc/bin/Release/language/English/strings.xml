@@ -1797,7 +1797,75 @@
   </string>
   <string>
     <id>534</id>
-    <value>Moderate</value>
+		<value>Moderate</value>
+	</string>
+	<string>
+		<id>535</id>
+		<value>N</value>
+	</string>
+	<string>
+		<id>536</id>
+		<value>E</value>
+	</string>
+	<string>
+		<id>537</id>
+		<value>S</value>
+	</string>
+	<string>
+		<id>538</id>
+		<value>W</value>
+	</string>
+	<string>
+		<id>539</id>
+		<value>NE</value>
+	</string>
+	<string>
+		<id>540</id>
+		<value>SE</value>
+	</string>
+	<string>
+		<id>541</id>
+		<value>SW</value>
+	</string>
+	<string>
+		<id>542</id>
+		<value>NW</value>
+	</string>		
+	<string>
+		<id>543</id>
+		<value>Thunder</value>
+	</string>								
+  <string>
+		<id>544</id>
+		<value>NNE</value>
+	</string>		
+  <string>
+		<id>545</id>
+		<value>ENE</value>
+	</string>	
+  <string>
+		<id>546</id>
+		<value>ESE</value>
+	</string>	
+  <string>
+		<id>547</id>
+		<value>SSE</value>
+	</string>	
+  <string>
+		<id>548</id>
+		<value>SSW</value>
+	</string>	
+  <string>
+		<id>549</id>
+		<value>WSW</value>
+	</string>	
+  <string>
+		<id>551</id>
+		<value>WNW</value>
+	</string>	
+  <string>
+		<id>552</id>
+		<value>NNW</value>
   </string>  
   <string>
     <id>550</id>

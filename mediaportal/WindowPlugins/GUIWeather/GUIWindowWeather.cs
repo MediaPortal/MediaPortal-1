@@ -1090,6 +1090,41 @@ namespace MediaPortal.GUI.Weather
           localizedWord = GUILocalizeStrings.Get(747);
         else if (String.Compare(tokenSplit, "Moderate", true) == 0)
           localizedWord = GUILocalizeStrings.Get(534);
+        // wind directions
+        else if (String.Compare(tokenSplit, "N", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(535);
+        else if (String.Compare(tokenSplit, "E", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(536);
+        else if (String.Compare(tokenSplit, "S", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(537);
+        else if (String.Compare(tokenSplit, "W", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(538);
+        else if (String.Compare(tokenSplit, "NE", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(539);
+        else if (String.Compare(tokenSplit, "SE", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(540);
+        else if (String.Compare(tokenSplit, "SW", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(541);
+        else if (String.Compare(tokenSplit, "NW", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(542);
+        else if (String.Compare(tokenSplit, "Thunder", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(543);
+        else if (String.Compare(tokenSplit, "NNE", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(544);
+        else if (String.Compare(tokenSplit, "ENE", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(545);
+        else if (String.Compare(tokenSplit, "ESE", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(546);
+        else if (String.Compare(tokenSplit, "SSE", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(547);
+        else if (String.Compare(tokenSplit, "SSW", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(548);
+        else if (String.Compare(tokenSplit, "WSW", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(549);
+        else if (String.Compare(tokenSplit, "WNW", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(551);
+        else if (String.Compare(tokenSplit, "NNW", true) == 0)
+          localizedWord = GUILocalizeStrings.Get(552);
 
         if (localizedWord == String.Empty)
           localizedWord = tokenSplit;	//if not found, let fallback
@@ -1237,7 +1272,7 @@ namespace MediaPortal.GUI.Weather
           string windAt = GUILocalizeStrings.Get(408);
 
           _nowWind = String.Format("{0} {1} {2} {3} {4}",
-            windFrom, tempString,
+            windFrom, LocalizeOverview(tempString),
             windAt, tempInteger, unitSpeed);
         }
 

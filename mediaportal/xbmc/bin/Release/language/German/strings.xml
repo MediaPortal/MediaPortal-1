@@ -1789,15 +1789,83 @@
 	<string>
 		<id>532</id>
 		<value>Musik-CD eingelegt! Öffnen?</value>
-    </string>
-    <string>
-        <id>533</id>
-        <value>Radio-Programm</value>
+  </string>
+  <string>
+    <id>533</id>
+    <value>Radio-Programm</value>
 	</string>
 	<string>
 		<id>534</id>
 		<value>Mittel</value>
 	</string>
+	<string>
+		<id>535</id>
+		<value>N</value>
+	</string>
+	<string>
+		<id>536</id>
+		<value>O</value>
+	</string>
+	<string>
+		<id>537</id>
+		<value>S</value>
+	</string>
+	<string>
+		<id>538</id>
+		<value>W</value>
+	</string>
+	<string>
+		<id>539</id>
+		<value>NO</value>
+	</string>
+	<string>
+		<id>540</id>
+		<value>SO</value>
+	</string>
+	<string>
+		<id>541</id>
+		<value>SW</value>
+	</string>
+	<string>
+		<id>542</id>
+		<value>NW</value>
+	</string>		
+	<string>
+		<id>543</id>
+		<value>Gewitter</value>
+	</string>								
+  <string>
+		<id>544</id>
+		<value>NNO</value>
+	</string>		
+  <string>
+		<id>545</id>
+		<value>ONO</value>
+	</string>	
+  <string>
+		<id>546</id>
+		<value>OSO</value>
+	</string>	
+  <string>
+		<id>547</id>
+		<value>SSO</value>
+	</string>	
+  <string>
+		<id>548</id>
+		<value>SSW</value>
+	</string>	
+  <string>
+		<id>549</id>
+		<value>WSW</value>
+	</string>	
+  <string>
+		<id>551</id>
+		<value>WNW</value>
+	</string>	
+  <string>
+		<id>552</id>
+		<value>NNW</value>
+	</string>								
 	<string>
 		<id>550</id>
 		<value>Schneiden</value>

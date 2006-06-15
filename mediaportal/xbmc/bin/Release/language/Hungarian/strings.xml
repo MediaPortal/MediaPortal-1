@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--  Hungarian Language file updated by Helli Gábor 2006.06.07. --> 
 <strings>
 	<characters>512</characters>
@@ -36,7 +36,7 @@
 	</string>
 	<string>
 		<id>8</id>
-		<value>Időjárás</value>
+		<value>Idojárás</value>
 	</string>
 	<string>
 		<id>9</id>
@@ -48,7 +48,7 @@
 	</string>
 	<string>
 		<id>11</id>
-		<value>Hétfő</value>
+		<value>Hétfo</value>
 	</string>
 	<string>
 		<id>12</id>
@@ -164,7 +164,7 @@
 	</string>
 	<string>
 		<id>109</id>
-		<value>Könyvjelző létrehozás</value>
+		<value>Könyvjelzo létrehozás</value>
 	</string>
 	<string>
 		<id>110</id>
@@ -252,7 +252,7 @@
 	</string>
 	<string>
 		<id>131</id>
-		<value>Képernyő</value>
+		<value>Képernyo</value>
 	</string>
 	<string>
 		<id>132</id>
@@ -260,7 +260,7 @@
 	</string>
 	<string>
 		<id>133</id>
-		<value>Előadók</value>
+		<value>Eloadók</value>
 	</string>
 	<string>
 		<id>134</id>
@@ -268,7 +268,7 @@
 	</string>
 	<string>
 		<id>135</id>
-		<value>Műfajok</value>
+		<value>Mufajok</value>
 	</string>
 	<string>
 		<id>136</id>
@@ -284,7 +284,7 @@
 	</string>
 	<string>
 		<id>139</id>
-		<value>Hőmérsékletek:</value>
+		<value>Homérsékletek:</value>
 	</string>
 	<string>
 		<id>140</id>
@@ -296,7 +296,7 @@
 	</string>
 	<string>
 		<id>142</id>
-		<value>Idő:</value>
+		<value>Ido:</value>
 	</string>
 	<string>
 		<id>143</id>
@@ -400,7 +400,7 @@
 	</string>
 	<string>
 		<id>168</id>
-		<value>Idő szinkronizálás:</value>
+		<value>Ido szinkronizálás:</value>
 	</string>
 	<string>
 		<id>169</id>
@@ -412,7 +412,7 @@
 	</string>
 	<string>
 		<id>171</id>
-		<value>Előadó:</value>
+		<value>Eloadó:</value>
 	</string>
 	<string>
 		<id>172</id>
@@ -424,7 +424,7 @@
 	</string>
 	<string>
 		<id>174</id>
-		<value>Műfaj:</value>
+		<value>Mufaj:</value>
 	</string>
 	<string>
 		<id>175</id>
@@ -448,7 +448,7 @@
 	</string>
 	<string>
 		<id>180</id>
-		<value>Időtartam</value>
+		<value>Idotartam</value>
 	</string>
 	<string>
 		<id>181</id>
@@ -524,7 +524,7 @@
 	</string>
 	<string>
 		<id>199</id>
-		<value>Rendező:</value>
+		<value>Rendezo:</value>
 	</string>
 	<string>
 		<id>200</id>
@@ -564,11 +564,11 @@
 	</string>
 	<string>
 		<id>209</id>
-		<value>Következő</value>
+		<value>Következo</value>
 	</string>
 	<string>
 		<id>210</id>
-		<value>Előző</value>
+		<value>Elozo</value>
 	</string>
 	<string>
 		<id>211</id>
@@ -584,7 +584,7 @@
 	</string>
 	<string>
 		<id>214</id>
-		<value>Képernyő Kalib.</value>
+		<value>Képernyo Kalib.</value>
 	</string>
 	<string>
 		<id>215</id>
@@ -628,7 +628,7 @@
 	</string>
 	<string>
 		<id>225</id>
-		<value>Átmeneti idő</value>
+		<value>Átmeneti ido</value>
 	</string>
 	<string>
 		<id>226</id>
@@ -640,7 +640,7 @@
 	</string>
 	<string>
 		<id>228</id>
-		<value>Lejátszási listák véletlenszerű betöltése</value>
+		<value>Lejátszási listák véletlenszeru betöltése</value>
 	</string>
 	<string>
 		<id>229</id>
@@ -792,7 +792,7 @@
 	</string>
 	<string>
 		<id>267</id>
-		<value>Rendezés: Idő</value>
+		<value>Rendezés: Ido</value>
 	</string>
 	<string>
 		<id>268</id>
@@ -800,7 +800,7 @@
 	</string>
 	<string>
 		<id>269</id>
-		<value>Rendezés: Előadó</value>
+		<value>Rendezés: Eloadó</value>
 	</string>
 	<string>
 		<id>270</id>
@@ -812,7 +812,7 @@
 	</string>
 	<string>
 		<id>272</id>
-		<value>Felső bal kompenzálása</value>
+		<value>Felso bal kompenzálása</value>
 	</string>
 	<string>
 		<id>273</id>
@@ -828,11 +828,11 @@
 	</string>
 	<string>
 		<id>276</id>
-		<value>FIGYELEM! – Mozgasd a videót a megfelelő pozícióba 0,0.</value>
+		<value>FIGYELEM! – Mozgasd a videót a megfelelo pozícióba 0,0.</value>
 	</string>
 	<string>
 		<id>277</id>
-		<value>Mozgassa a feliratot a megfelelő pozícióba.</value>
+		<value>Mozgassa a feliratot a megfelelo pozícióba.</value>
 	</string>
 	<string>
 		<id>278</id>
@@ -848,7 +848,7 @@
 	</string>
 	<string>
 		<id>281</id>
-		<value>Ellenőrizd a(z) .xml fájlt.</value>
+		<value>Ellenorizd a(z) .xml fájlt.</value>
 	</string>
 	<string>
 		<id>282</id>
@@ -876,7 +876,7 @@
 	</string>
 	<string>
 		<id>288</id>
-		<value>Betűtípus</value>
+		<value>Betutípus</value>
 	</string>
 	<string>
 		<id>289</id>
@@ -884,7 +884,7 @@
 	</string>
 	<string>
 		<id>290</id>
-		<value>Hangerő növelése (dB)</value>
+		<value>Hangero növelése (dB)</value>
 	</string>
 	<string>
 		<id>291</id>
@@ -900,15 +900,15 @@
 	</string>
 	<string>
 		<id>294</id>
-		<value>Könyvjelző létrehozása</value>
+		<value>Könyvjelzo létrehozása</value>
 	</string>
 	<string>
 		<id>295</id>
-		<value>Ciklikus könyvjelző</value>
+		<value>Ciklikus könyvjelzo</value>
 	</string>
 	<string>
 		<id>296</id>
-		<value>Könyvjelző törlése</value>
+		<value>Könyvjelzo törlése</value>
 	</string>
 	<string>
 		<id>297</id>
@@ -920,7 +920,7 @@
 	</string>
 	<string>
 		<id>299</id>
-		<value>Valós időben:</value>
+		<value>Valós idoben:</value>
 	</string>
 	<string>
 		<id>300</id>
@@ -928,7 +928,7 @@
 	</string>
 	<string>
 		<id>301</id>
-		<value>2. Hangerő</value>
+		<value>2. Hangero</value>
 	</string>
 	<string>
 		<id>302</id>
@@ -964,7 +964,7 @@
 	</string>
 	<string>
 		<id>310</id>
-		<value>Auto fényerő/kontraszt</value>
+		<value>Auto fényero/kontraszt</value>
 	</string>
 	<string>
 		<id>311</id>
@@ -996,7 +996,7 @@
 	</string>
 	<string>
 		<id>318</id>
-		<value>Törlendő dalok jelölése</value>
+		<value>Törlendo dalok jelölése</value>
 	</string>
 	<string>
 		<id>319</id>
@@ -1004,19 +1004,19 @@
 	</string>
 	<string>
 		<id>320</id>
-		<value>Előadók keresése...</value>
+		<value>Eloadók keresése...</value>
 	</string>
 	<string>
 		<id>321</id>
-		<value>Hiba az előadók frissítésekor</value>
+		<value>Hiba az eloadók frissítésekor</value>
 	</string>
 	<string>
 		<id>322</id>
-		<value>Műfajok keresése...</value>
+		<value>Mufajok keresése...</value>
 	</string>
 	<string>
 		<id>323</id>
-		<value>Hiba a műfajok frissítésekor</value>
+		<value>Hiba a mufajok frissítésekor</value>
 	</string>
 	<string>
 		<id>324</id>
@@ -1084,7 +1084,7 @@
 	</string>
 	<string>
 		<id>340</id>
-		<value>Változó előadók</value>
+		<value>Változó eloadók</value>
 	</string>
 	<string>
 		<id>341</id>
@@ -1100,7 +1100,7 @@
 	</string>
 	<string>
 		<id>344</id>
-		<value>Előadók</value>
+		<value>Eloadók</value>
 	</string>
 	<string>
 		<id>345</id>
@@ -1144,15 +1144,15 @@
 	</string>
 	<string>
 		<id>355</id>
-		<value>Képernyővédő bizonyos idő letelte után</value>
+		<value>Képernyovédo bizonyos ido letelte után</value>
 	</string>
 	<string>
 		<id>356</id>
-		<value>Képernyővédő mód</value>
+		<value>Képernyovédo mód</value>
 	</string>
 	<string>
 		<id>357</id>
-		<value>Leállítás bizonyos idő letelte után</value>
+		<value>Leállítás bizonyos ido letelte után</value>
 	</string>
 	<string>
 		<id>358</id>
@@ -1164,7 +1164,7 @@
 	</string>
 	<string>
 		<id>360</id>
-		<value>Képernyővédő</value>
+		<value>Képernyovédo</value>
 	</string>
 	<string>
 		<id>361</id>
@@ -1172,7 +1172,7 @@
 	</string>
 	<string>
 		<id>362</id>
-		<value>Képernyőp. elhalványítási szint (%)</value>
+		<value>Képernyop. elhalványítási szint (%)</value>
 	</string>
 	<string>
 		<id>363</id>
@@ -1212,15 +1212,15 @@
 	</string>
 	<string>
 		<id>372</id>
-		<value>Főként</value>
+		<value>Foként</value>
 	</string>
 	<string>
 		<id>373</id>
-		<value>Derűs</value>
+		<value>Derus</value>
 	</string>
 	<string>
 		<id>374</id>
-		<value>Felhős</value>
+		<value>Felhos</value>
 	</string>
 	<string>
 		<id>375</id>
@@ -1228,7 +1228,7 @@
 	</string>
 	<string>
 		<id>376</id>
-		<value>Esős</value>
+		<value>Esos</value>
 	</string>
 	<string>
 		<id>377</id>
@@ -1236,7 +1236,7 @@
 	</string>
 	<string>
 		<id>378</id>
-		<value>Délelőtt</value>
+		<value>Délelott</value>
 	</string>
 	<string>
 		<id>379</id>
@@ -1260,7 +1260,7 @@
 	</string>
 	<string>
 		<id>384</id>
-		<value>Erős</value>
+		<value>Eros</value>
 	</string>
 	<string>
 		<id>385</id>
@@ -1308,11 +1308,11 @@
 	</string>
 	<string>
 		<id>397</id>
-		<value>Idő frissítése</value>
+		<value>Ido frissítése</value>
 	</string>
 	<string>
 		<id>398</id>
-		<value>Hőmérséklet mértékegysége</value>
+		<value>Homérséklet mértékegysége</value>
 	</string>
 	<string>
 		<id>399</id>
@@ -1320,11 +1320,11 @@
 	</string>
 	<string>
 		<id>400</id>
-		<value>Időjárás</value>
+		<value>Idojárás</value>
 	</string>
 	<string>
 		<id>401</id>
-		<value>Hőmérséklet:</value>
+		<value>Homérséklet:</value>
 	</string>
 	<string>
 		<id>402</id>
@@ -1360,11 +1360,11 @@
 	</string>
 	<string>
 		<id>411</id>
-		<value>Időjárási adatok letöltése:</value>
+		<value>Idojárási adatok letöltése:</value>
 	</string>
 	<string>
 		<id>412</id>
-		<value>Nem lehet az időjárási adatokat letölteni</value>
+		<value>Nem lehet az idojárási adatokat letölteni</value>
 	</string>
 	<string>
 		<id>413</id>
@@ -1380,7 +1380,7 @@
 	</string>
 	<string>
 		<id>416</id>
-		<value>Nem elérhető</value>
+		<value>Nem elérheto</value>
 	</string>
 	<string>
 		<id>417</id>
@@ -1388,11 +1388,11 @@
 	</string>
 	<string>
 		<id>418</id>
-		<value>Videók/Műfajok</value>
+		<value>Videók/Mufajok</value>
 	</string>
 	<string>
 		<id>419</id>
-		<value>Videók /Előadók</value>
+		<value>Videók /Eloadók</value>
 	</string>
 	<string>
 		<id>420</id>
@@ -1432,7 +1432,7 @@
 	</string>
 	<string>
 		<id>429</id>
-		<value>Helyezze be a következő CD/DVD-t</value>
+		<value>Helyezze be a következo CD/DVD-t</value>
 	</string>
 	<string>
 		<id>430</id>
@@ -1464,7 +1464,7 @@
 	</string>
 	<string>
 		<id>437</id>
-		<value>Időtartam:</value>
+		<value>Idotartam:</value>
 	</string>
 	<string>
 		<id>438</id>
@@ -1572,7 +1572,7 @@
 	</string>
 	<string>
 		<id>464</id>
-		<value>Fényerő</value>
+		<value>Fényero</value>
 	</string>
 	<string>
 		<id>465</id>
@@ -1608,7 +1608,7 @@
 	</string>
 	<string>
 		<id>473</id>
-		<value>Magas Minőségű Resampling</value>
+		<value>Magas Minoségu Resampling</value>
 	</string>
 	<string>
 		<id>474</id>
@@ -1652,7 +1652,7 @@
 	</string>
 	<string>
 		<id>484</id>
-		<value>Előadó</value>
+		<value>Eloadó</value>
 	</string>
 	<string>
 		<id>485</id>
@@ -1688,7 +1688,7 @@
 	</string>
 	<string>
 		<id>493</id>
-		<value>Előadó</value>
+		<value>Eloadó</value>
 	</string>
 	<string>
 		<id>500</id>
@@ -1700,7 +1700,7 @@
 	</string>
 	<string>
 		<id>502</id>
-		<value>Nem tudom befejezni a műveletet</value>
+		<value>Nem tudom befejezni a muveletet</value>
 	</string>
 	<string>
 		<id>503</id>
@@ -1744,23 +1744,23 @@
 	</string>
 	<string>
 		<id>513</id>
-		<value>Művelet nem elvégezhető, a folyamat nem fejeződött be</value>
+		<value>Muvelet nem elvégezheto, a folyamat nem fejezodött be</value>
 	</string>
 	<string>
 		<id>514</id>
-		<value>Hiba a könyvtár létrehozásakor, a folyamat nem fejeződött be</value>
+		<value>Hiba a könyvtár létrehozásakor, a folyamat nem fejezodött be</value>
 	</string>
 	<string>
 		<id>515</id>
-		<value>Hiba a könyvtár törlésekor, a folyamat nem fejeződött be</value>
+		<value>Hiba a könyvtár törlésekor, a folyamat nem fejezodött be</value>
 	</string>
 	<string>
 		<id>516</id>
-		<value>A fájlt nem lehet törölni, a folyamat nem fejeződött be</value>
+		<value>A fájlt nem lehet törölni, a folyamat nem fejezodött be</value>
 	</string>
 	<string>
 		<id>517</id>
-		<value>Végzetes hiba, a folyamat nem fejeződött be</value>
+		<value>Végzetes hiba, a folyamat nem fejezodött be</value>
 	</string>
 	<string>
 		<id>518</id>
@@ -1779,12 +1779,76 @@
 		<value>Audio lemezt érzékelek, akarod, hogy lejátszam?</value>
 	</string>
 	<string>
+		<id>535</id>
+		<value>É</value>
+	</string>
+	<string>
+		<id>536</id>
+		<value>K</value>
+	</string>
+	<string>
+		<id>537</id>
+		<value>D</value>
+	</string>
+	<string>
+		<id>538</id>
+		<value>NY</value>
+	</string>
+	<string>
+		<id>539</id>
+		<value>ÉK</value>
+	</string>
+	<string>
+		<id>540</id>
+		<value>DK</value>
+	</string>
+	<string>
+		<id>541</id>
+		<value>DNY</value>
+	</string>
+	<string>
+		<id>542</id>
+		<value>ÉNY</value>
+	</string>									
+  <string>
+		<id>544</id>
+		<value>ÉÉK</value>
+	</string>		
+  <string>
+		<id>545</id>
+		<value>KÉK</value>
+	</string>	
+  <string>
+		<id>546</id>
+		<value>KDK</value>
+	</string>	
+  <string>
+		<id>547</id>
+		<value>DDK</value>
+	</string>	
+  <string>
+		<id>548</id>
+		<value>DDNY</value>
+	</string>	
+  <string>
+		<id>549</id>
+		<value>NYDNY</value>
+	</string>	
+  <string>
+		<id>551</id>
+		<value>NYÉNY</value>
+	</string>	
+  <string>
+		<id>552</id>
+		<value>NÉNY</value>
+	</string>								
+	<string>
 		<id>550</id>
 		<value>Levágás</value>
 	</string>
 	<string>
 		<id>600</id>
-		<value>TV műsor</value>
+		<value>TV musor</value>
 	</string>
 	<string>
 		<id>601</id>
@@ -1808,7 +1872,7 @@
 	</string>
 	<string>
 		<id>606</id>
-		<value>Új TV műsor betöltése</value>
+		<value>Új TV musor betöltése</value>
 	</string>
 	<string>
 		<id>607</id>
@@ -1816,11 +1880,11 @@
 	</string>
 	<string>
 		<id>608</id>
-		<value>TV műsor importálása sikertelen</value>
+		<value>TV musor importálása sikertelen</value>
 	</string>
 	<string>
 		<id>609</id>
-		<value>TV műsor beimportálva</value>
+		<value>TV musor beimportálva</value>
 	</string>
 	<string>
 		<id>610</id>
@@ -1832,7 +1896,7 @@
 	</string>
 	<string>
 		<id>612</id>
-		<value>Felvétel mindig erről a csatornáról</value>
+		<value>Felvétel mindig errol a csatornáról</value>
 	</string>
 	<string>
 		<id>613</id>
@@ -1840,11 +1904,11 @@
 	</string>
 	<string>
 		<id>614</id>
-		<value>Felvétel minden héten ebben az időben</value>
+		<value>Felvétel minden héten ebben az idoben</value>
 	</string>
 	<string>
 		<id>615</id>
-		<value>Felvétel mindennap ebben az időben</value>
+		<value>Felvétel mindennap ebben az idoben</value>
 	</string>
 	<string>
 		<id>616</id>
@@ -1860,7 +1924,7 @@
 	</string>
 	<string>
 		<id>619</id>
-		<value>Szerkesztés Dátum/Idő</value>
+		<value>Szerkesztés Dátum/Ido</value>
 	</string>
 	<string>
 		<id>620</id>
@@ -1916,15 +1980,15 @@
 	</string>
 	<string>
 		<id>633</id>
-		<value>Kezdet Dátum/Idő</value>
+		<value>Kezdet Dátum/Ido</value>
 	</string>
 	<string>
 		<id>634</id>
-		<value>Vége Dátum/Idő</value>
+		<value>Vége Dátum/Ido</value>
 	</string>
 	<string>
 		<id>635</id>
-		<value>Idő</value>
+		<value>Ido</value>
 	</string>
 	<string>
 		<id>636</id>
@@ -1984,7 +2048,7 @@
 	</string>
 	<string>
 		<id>650</id>
-		<value>Mindig erről a csatornáról</value>
+		<value>Mindig errol a csatornáról</value>
 	</string>
 	<string>
 		<id>651</id>
@@ -1992,7 +2056,7 @@
 	</string>
 	<string>
 		<id>652</id>
-		<value>Felvétel TV-ből</value>
+		<value>Felvétel TV-bol</value>
 	</string>
 	<string>
 		<id>653</id>
@@ -2060,7 +2124,7 @@
 	</string>
 	<string>
 		<id>669</id>
-		<value>Rendezés: Műfaj</value>
+		<value>Rendezés: Mufaj</value>
 	</string>
 	<string>
 		<id>670</id>
@@ -2092,11 +2156,11 @@
 	</string>
 	<string>
 		<id>677</id>
-		<value>idők</value>
+		<value>idok</value>
 	</string>
 	<string>
 		<id>678</id>
-		<value>Rendezés: Műfaj</value>
+		<value>Rendezés: Mufaj</value>
 	</string>
 	<string>
 		<id>679</id>
@@ -2136,7 +2200,7 @@
 	</string>
 	<string>
 		<id>688</id>
-		<value>Műszerek</value>
+		<value>Muszerek</value>
 	</string>
 	<string>
 		<id>689</id>
@@ -2160,7 +2224,7 @@
 	</string>
 	<string>
 		<id>702</id>
-		<value>Nincs ilyen előadó!</value>
+		<value>Nincs ilyen eloadó!</value>
 	</string>
 	<string>
 		<id>703</id>
@@ -2184,7 +2248,7 @@
 	</string>
 	<string>
 		<id>708</id>
-		<value>Időcsúsztatás</value>
+		<value>Idocsúsztatás</value>
 	</string>
 	<string>
 		<id>709</id>
@@ -2216,11 +2280,11 @@
 	</string>
 	<string>
 		<id>716</id>
-		<value>Műholdvevő</value>
+		<value>Muholdvevo</value>
 	</string>
 	<string>
 		<id>717</id>
-		<value>Időjárás</value>
+		<value>Idojárás</value>
 	</string>
 	<string>
 		<id>718</id>
@@ -2232,11 +2296,11 @@
 	</string>
 	<string>
 		<id>720</id>
-		<value>Mutat: Időtartam</value>
+		<value>Mutat: Idotartam</value>
 	</string>
 	<string>
 		<id>721</id>
-		<value>Mutat: Időben lejátszott</value>
+		<value>Mutat: Idoben lejátszott</value>
 	</string>
 	<string>
 		<id>722</id>
@@ -2248,11 +2312,11 @@
 	</string>
 	<string>
 		<id>724</id>
-		<value>TV műsor keresése</value>
+		<value>TV musor keresése</value>
 	</string>
 	<string>
 		<id>725</id>
-		<value>Műfajok</value>
+		<value>Mufajok</value>
 	</string>
 	<string>
 		<id>726</id>
@@ -2296,15 +2360,15 @@
 	</string>
 	<string>
 		<id>736</id>
-		<value>Műsorfüzet nem áll rendelkezésre!</value>
+		<value>Musorfüzet nem áll rendelkezésre!</value>
 	</string>
 	<string>
 		<id>737</id>
-		<value>Nézet: Műhold</value>
+		<value>Nézet: Muhold</value>
 	</string>
 	<string>
 		<id>738</id>
-		<value>Nézet: Hőmérséklet</value>
+		<value>Nézet: Homérséklet</value>
 	</string>
 	<string>
 		<id>739</id>
@@ -2324,7 +2388,7 @@
 	</string>
 	<string>
 		<id>743</id>
-		<value>4 napos előrejelzés</value>
+		<value>4 napos elorejelzés</value>
 	</string>
 	<string>
 		<id>744</id>
@@ -2412,7 +2476,7 @@
 	</string>
 	<string>
 		<id>854</id>
-		<value>Időpont engedélyezése</value>
+		<value>Idopont engedélyezése</value>
 	</string>
 	<string>
 		<id>855</id>
@@ -2420,7 +2484,7 @@
 	</string>
 	<string>
 		<id>856</id>
-		<value>Elalvás időzítő</value>
+		<value>Elalvás idozíto</value>
 	</string>
 	<string>
 		<id>857</id>
@@ -2432,11 +2496,11 @@
 	</string>
 	<string>
 		<id>859</id>
-		<value>Elalvás időzítő</value>
+		<value>Elalvás idozíto</value>
 	</string>
 	<string>
 		<id>860</id>
-		<value>Hangerő növelése az időzítés végéig</value>
+		<value>Hangero növelése az idozítés végéig</value>
 	</string>
 	<string>
 		<id>861</id>
@@ -2460,7 +2524,7 @@
 	</string>
 	<string>
 		<id>866</id>
-		<value>Hangerő csökkentése az időzítés végéig</value>
+		<value>Hangero csökkentése az idozítés végéig</value>
 	</string>
 	<string>
 		<id>867</id>
@@ -2472,7 +2536,7 @@
 	</string>
 	<string>
 		<id>869</id>
-		<value>Új időzítés</value>
+		<value>Új idozítés</value>
 	</string>
 	<string>
 		<id>870</id>
@@ -2516,7 +2580,7 @@
 	</string>
 	<string>
 		<id>880</id>
-		<value>Idő bejegyzése:</value>
+		<value>Ido bejegyzése:</value>
 	</string>
 	<string>
 		<id>881</id>
@@ -2524,7 +2588,7 @@
 	</string>
 	<string>
 		<id>882</id>
-		<value>Minőségi beállítások</value>
+		<value>Minoségi beállítások</value>
 	</string>
 	<string>
 		<id>883</id>
@@ -2568,7 +2632,7 @@
 	</string>
 	<string>
 		<id>893</id>
-		<value>Átvihető</value>
+		<value>Átviheto</value>
 	</string>
 	<string>
 		<id>894</id>
@@ -2596,7 +2660,7 @@
 	</string>
 	<string>
 		<id>900</id>
-		<value>Folytatás az utolsó időponttól?</value>
+		<value>Folytatás az utolsó idoponttól?</value>
 	</string>
 	<string>
 		<id>901</id>
@@ -2608,15 +2672,15 @@
 	</string>
 	<string>
 		<id>903</id>
-		<value>Bejövő jel</value>
+		<value>Bejövo jel</value>
 	</string>
 	<string>
 		<id>904</id>
-		<value>Kimenő jel</value>
+		<value>Kimeno jel</value>
 	</string>
 	<string>
 		<id>905</id>
-		<value>Szükség van a plugin első beállításaára</value>
+		<value>Szükség van a plugin elso beállításaára</value>
 	</string>
 	<string>
 		<id>906</id>
@@ -2744,7 +2808,7 @@
 	</string>
 	<string>
 		<id>937</id>
-		<value>TV Műsor importálása</value>
+		<value>TV Musor importálása</value>
 	</string>
 	<string>
 		<id>938</id>
@@ -2828,7 +2892,7 @@
 	</string>
 	<string>
 		<id>958</id>
-		<value>Beszélő</value>
+		<value>Beszélo</value>
 	</string>
 	<string>
 		<id>959</id>
@@ -2836,7 +2900,7 @@
 	</string>
 	<string>
 		<id>960</id>
-		<value>kilépett a beszélgetésből</value>
+		<value>kilépett a beszélgetésbol</value>
 	</string>
 	<string>
 		<id>961</id>
@@ -2844,7 +2908,7 @@
 	</string>
 	<string>
 		<id>970</id>
-		<value>Előző képernyő</value>
+		<value>Elozo képernyo</value>
 	</string>
 	<string>
 		<id>971</id>
@@ -2860,19 +2924,19 @@
 	</string>
 	<string>
 		<id>974</id>
-		<value>Főmenü</value>
+		<value>Fomenü</value>
 	</string>
 	<string>
 		<id>975</id>
-		<value>Előző fejezet</value>
+		<value>Elozo fejezet</value>
 	</string>
 	<string>
 		<id>976</id>
-		<value>Következő fejezet</value>
+		<value>Következo fejezet</value>
 	</string>
 	<string>
 		<id>977</id>
-		<value>Nincs szabad elérhető kártya</value>
+		<value>Nincs szabad elérheto kártya</value>
 	</string>
 	<string>
 		<id>978</id>
@@ -2880,7 +2944,7 @@
 	</string>
 	<string>
 		<id>979</id>
-		<value>Felvétel lejátszása az elejétől</value>
+		<value>Felvétel lejátszása az elejétol</value>
 	</string>
 	<string>
 		<id>980</id>
@@ -2908,7 +2972,7 @@
 	</string>
 	<string>
 		<id>986</id>
-		<value>Előadó letöltése</value>
+		<value>Eloadó letöltése</value>
 	</string>
 	<string>
 		<id>987</id>
@@ -2916,7 +2980,7 @@
 	</string>
 	<string>
 		<id>988</id>
-		<value>Minőség</value>
+		<value>Minoség</value>
 	</string>
 	<string>
 		<id>989</id>
@@ -2960,11 +3024,11 @@
 	</string>
 	<string>
 		<id>999</id>
-		<value>Itt lehetőség van a felvételek áttömörítésére</value>
+		<value>Itt lehetoség van a felvételek áttömörítésére</value>
 	</string>
 	<string>
 		<id>1000</id>
-		<value>dvr-ms-ből mpg-be vagy xvid-be, wmv-be.</value>
+		<value>dvr-ms-bol mpg-be vagy xvid-be, wmv-be.</value>
 	</string>
 	<string>
 		<id>1001</id>
@@ -2992,7 +3056,7 @@
 	</string>
 	<string>
 		<id>1007</id>
-		<value>Csatorna felvétele és a TV megtekintése egyidőben</value>
+		<value>Csatorna felvétele és a TV megtekintése egyidoben</value>
 	</string>
 	<string>
 		<id>1008</id>
@@ -3020,11 +3084,11 @@
 	</string>
 	<string>
 		<id>1014</id>
-		<value>Értesítés küldése a befejezésről</value>
+		<value>Értesítés küldése a befejezésrol</value>
 	</string>
 	<string>
 		<id>1015</id>
-		<value>Ne értesítsen a befejezésről</value>
+		<value>Ne értesítsen a befejezésrol</value>
 	</string>
 	<string>
 		<id>1016</id>
@@ -3032,7 +3096,7 @@
 	</string>
 	<string>
 		<id>1017</id>
-		<value>Rendezés: Időtartam</value>
+		<value>Rendezés: Idotartam</value>
 	</string>
 	<string>
 		<id>1020</id>
@@ -3048,7 +3112,7 @@
 	</string>
 	<string>
 		<id>1023</id>
-		<value>Bejövő telefonhívás</value>
+		<value>Bejövo telefonhívás</value>
 	</string>
 	<string>
 		<id>1024</id>
@@ -3092,7 +3156,7 @@
 	</string>
 	<string>
 		<id>1034</id>
-		<value>Nincs érzékelhető jel!</value>
+		<value>Nincs érzékelheto jel!</value>
 	</string>
 	<string>
 		<id>1035</id>
@@ -3120,7 +3184,7 @@
 	</string>
 	<string>
 		<id>1041</id>
-		<value>Következő epizód</value>
+		<value>Következo epizód</value>
 	</string>
 	<string>
 		<id>1042</id>
@@ -3136,7 +3200,7 @@
 	</string>
 	<string>
 		<id>1045</id>
-		<value>Időig tart</value>
+		<value>Idoig tart</value>
 	</string>
 	<string>
 		<id>1046</id>
@@ -3144,7 +3208,7 @@
 	</string>
 	<string>
 		<id>1047</id>
-		<value>Teljes képernyővel indít</value>
+		<value>Teljes képernyovel indít</value>
 	</string>
 	<string>
 		<id>1048</id>
@@ -3164,11 +3228,11 @@
 	</string>
 	<string>
 		<id>1443</id>
-		<value>Görgetés (függőleges)</value>
+		<value>Görgetés (függoleges)</value>
 	</string>
 	<string>
 		<id>1444</id>
-		<value>Előzetes rögzítés</value>
+		<value>Elozetes rögzítés</value>
 	</string>
 	<string>
 		<id>1445</id>
@@ -3200,7 +3264,7 @@
 	</string>
 	<string>
 		<id>1954</id>
-		<value>Hőmérséklet</value>
+		<value>Homérséklet</value>
 	</string>
 	<string>
 		<id>1955</id>
@@ -3252,7 +3316,7 @@
 	</string>
 	<string>
 		<id>1967</id>
-		<value>Legfelső riasztási küszöb</value>
+		<value>Legfelso riasztási küszöb</value>
 	</string>
 	<string>
 		<id>1968</id>
@@ -3284,7 +3348,7 @@
 	</string>
 	<string>
 		<id>1975</id>
-		<value>Következő lap</value>
+		<value>Következo lap</value>
 	</string>
 	<string>
 		<id>1976</id>
@@ -3412,11 +3476,11 @@
 	</string>
 	<string>
 		<id>2033</id>
-		<value>evőkanál</value>
+		<value>evokanál</value>
 	</string>
 	<string>
 		<id>2034</id>
-		<value>evőkanál</value>
+		<value>evokanál</value>
 	</string>
 	<string>
 		<id>2035</id>
@@ -3612,11 +3676,11 @@
 	</string>
 	<string>
 		<id>2128</id>
-		<value>Írás előkészítése: becsült idő:</value>
+		<value>Írás elokészítése: becsült ido:</value>
 	</string>
 	<string>
 		<id>2129</id>
-		<value>Írás előkészítése</value>
+		<value>Írás elokészítése</value>
 	</string>
 	<string>
 		<id>2130</id>
@@ -3628,7 +3692,7 @@
 	</string>
 	<string>
 		<id>2132</id>
-		<value>Lemez lezárása: becsült idő:</value>
+		<value>Lemez lezárása: becsült ido:</value>
 	</string>
 	<string>
 		<id>2133</id>
@@ -3676,7 +3740,7 @@
 	</string>
 	<string>
 		<id>2200</id>
-		<value>Intéző</value>
+		<value>Intézo</value>
 	</string>
 	<string>
 		<id>2201</id>
@@ -3752,7 +3816,7 @@
 	</string>
 	<string>
 		<id>2219</id>
-		<value>Válassza ki az áthelyezendő meghajtót!</value>
+		<value>Válassza ki az áthelyezendo meghajtót!</value>
 	</string>
 	<string>
 		<id>2220</id>
@@ -3800,19 +3864,19 @@
 	</string>
 	<string>
 		<id>3005</id>
-		<value>Óra előtt</value>
+		<value>Óra elott</value>
 	</string>
 	<string>
 		<id>3006</id>
-		<value>Órák előtt</value>
+		<value>Órák elott</value>
 	</string>
 	<string>
 		<id>3007</id>
-		<value>Perc előtt</value>
+		<value>Perc elott</value>
 	</string>
 	<string>
 		<id>3008</id>
-		<value>Percek előtt</value>
+		<value>Percek elott</value>
 	</string>
 	<string>
 		<id>3009</id>
@@ -3820,15 +3884,15 @@
 	</string>
 	<string>
 		<id>3010</id>
-		<value>Hátralévő percek</value>
+		<value>Hátralévo percek</value>
 	</string>
 	<string>
 		<id>3011</id>
-		<value>Hátralévő óra</value>
+		<value>Hátralévo óra</value>
 	</string>
 	<string>
 		<id>3012</id>
-		<value>Hátralévő órák</value>
+		<value>Hátralévo órák</value>
 	</string>
 	<string>
 		<id>3013</id>
@@ -3852,7 +3916,7 @@
 	</string>
 	<string>
 		<id>3018</id>
-		<value>Hátralévő perc</value>
+		<value>Hátralévo perc</value>
 	</string>
 	<string>
 		<id>3019</id>
@@ -3872,7 +3936,7 @@
 	</string>
 	<string>
 		<id>5900</id>
-		<value>Előzetesek</value>
+		<value>Elozetesek</value>
 	</string>
 	<string>
 		<id>5901</id>
@@ -3884,19 +3948,19 @@
 	</string>
 	<string>
 		<id>5903</id>
-		<value>Népszerűbb előzetesek</value>
+		<value>Népszerubb elozetesek</value>
 	</string>
 	<string>
 		<id>5904</id>
-		<value>Legtöbbet nézett előzetesek</value>
+		<value>Legtöbbet nézett elozetesek</value>
 	</string>
 	<string>
 		<id>5905</id>
-		<value>Összes előzetes</value>
+		<value>Összes elozetes</value>
 	</string>
 	<string>
 		<id>5906</id>
-		<value>Előzetesek</value>
+		<value>Elozetesek</value>
 	</string>
 	<string>
 		<id>5907</id>
@@ -3920,7 +3984,7 @@
 	</string>
 	<string>
 		<id>5912</id>
-		<value>Következő hét</value>
+		<value>Következo hét</value>
 	</string>
 	<string>
 		<id>5913</id>
@@ -3928,19 +3992,19 @@
 	</string>
 	<string>
 		<id>5914</id>
-		<value>Elöző hét</value>
+		<value>Elözo hét</value>
 	</string>
 	<string>
 		<id>5915</id>
-		<value>Még nincs megtekinthető videó</value>
+		<value>Még nincs megtekintheto videó</value>
 	</string>
 	<string>
 		<id>5916</id>
-		<value>Nem találtam előzeteseket</value>
+		<value>Nem találtam elozeteseket</value>
 	</string>
 	<string>
 		<id>5917</id>
-		<value>Német előzetesek</value>
+		<value>Német elozetesek</value>
 	</string>
 	<string>
 		<id>8000</id>
@@ -3952,11 +4016,11 @@
 	</string>
 	<string>
 		<id>8002</id>
-		<value>Autó ellenőrzés ki</value>
+		<value>Autó ellenorzés ki</value>
 	</string>
 	<string>
 		<id>8003</id>
-		<value>Autó ellenőrzés be</value>
+		<value>Autó ellenorzés be</value>
 	</string>
 	<string>
 		<id>8004</id>
@@ -4092,7 +4156,7 @@
 	</string>
 	<string>
 		<id>9008</id>
-		<value>Expozíciós idő:</value>
+		<value>Expozíciós ido:</value>
 	</string>
 	<string>
 		<id>9009</id>
@@ -4152,7 +4216,7 @@
 	</string>
 	<string>
 		<id>13009</id>
-		<value>Véletlenszerű átmenet</value>
+		<value>Véletlenszeru átmenet</value>
 	</string>
 	<string>
 		<id>13010</id>
@@ -4232,7 +4296,7 @@
 	</string>
 	<string>
 		<id>19009</id>
-		<value>Következő</value>
+		<value>Következo</value>
 	</string>
 	<string>
 		<id>19010</id>
@@ -4288,15 +4352,15 @@
 	</string>
 	<string>
 		<id>100009</id>
-		<value>Beállítások-&gt;Képernyő</value>
+		<value>Beállítások-&gt;Képernyo</value>
 	</string>
 	<string>
 		<id>100010</id>
-		<value>Beállítások-&gt;Képernyő -&gt;UI kalibráció</value>
+		<value>Beállítások-&gt;Képernyo -&gt;UI kalibráció</value>
 	</string>
 	<string>
 		<id>100011</id>
-		<value>Beállítások-&gt;Képernyő -&gt;Képernyő kalibráció</value>
+		<value>Beállítások-&gt;Képernyo -&gt;Képernyo kalibráció</value>
 	</string>
 	<string>
 		<id>100012</id>
@@ -4304,7 +4368,7 @@
 	</string>
 	<string>
 		<id>100013</id>
-		<value>Beállítások-&gt;Képernyő -&gt;Filterek</value>
+		<value>Beállítások-&gt;Képernyo -&gt;Filterek</value>
 	</string>
 	<string>
 		<id>100014</id>
@@ -4312,15 +4376,15 @@
 	</string>
 	<string>
 		<id>100015</id>
-		<value>Beállítások-&gt;Képernyő -&gt;Feliratok</value>
+		<value>Beállítások-&gt;Képernyo -&gt;Feliratok</value>
 	</string>
 	<string>
 		<id>100016</id>
-		<value>Beállítások-&gt;Képernyő -&gt;Képernyőkímélő</value>
+		<value>Beállítások-&gt;Képernyo -&gt;Képernyokímélo</value>
 	</string>
 	<string>
 		<id>100017</id>
-		<value>Beállítások-&gt;Időjárás</value>
+		<value>Beállítások-&gt;Idojárás</value>
 	</string>
 	<string>
 		<id>100020</id>
@@ -4328,11 +4392,11 @@
 	</string>
 	<string>
 		<id>100021</id>
-		<value>Videók/Műfaj</value>
+		<value>Videók/Mufaj</value>
 	</string>
 	<string>
 		<id>100022</id>
-		<value>Videók /Előadó</value>
+		<value>Videók /Eloadó</value>
 	</string>
 	<string>
 		<id>100023</id>
@@ -4368,7 +4432,7 @@
 	</string>
 	<string>
 		<id>100031</id>
-		<value>Beállítások-&gt;Képernyő-&gt;Görgetés sebessége</value>
+		<value>Beállítások-&gt;Képernyo-&gt;Görgetés sebessége</value>
 	</string>
 	<string>
 		<id>100032</id>
@@ -4404,11 +4468,11 @@
 	</string>
 	<string>
 		<id>100503</id>
-		<value>Zenék/Előadók</value>
+		<value>Zenék/Eloadók</value>
 	</string>
 	<string>
 		<id>100504</id>
-		<value>Zenék/Műfajok</value>
+		<value>Zenék/Mufajok</value>
 	</string>
 	<string>
 		<id>100505</id>
@@ -4420,15 +4484,15 @@
 	</string>
 	<string>
 		<id>100600</id>
-		<value>Televízió/Műsorfüzet</value>
+		<value>Televízió/Musorfüzet</value>
 	</string>
 	<string>
 		<id>100601</id>
-		<value>Televízió/Ütemező</value>
+		<value>Televízió/Ütemezo</value>
 	</string>
 	<string>
 		<id>100602</id>
-		<value>Televízió/Teljes képernyő</value>
+		<value>Televízió/Teljes képernyo</value>
 	</string>
 	<string>
 		<id>100603</id>
@@ -4440,7 +4504,7 @@
 	</string>
 	<string>
 		<id>100605</id>
-		<value>Televízió/Felvételek/Műfaj</value>
+		<value>Televízió/Felvételek/Mufaj</value>
 	</string>
 	<string>
 		<id>100606</id>
@@ -4452,11 +4516,11 @@
 	</string>
 	<string>
 		<id>100608</id>
-		<value>TV/Ütemező/Ütközések</value>
+		<value>TV/Ütemezo/Ütközések</value>
 	</string>
 	<string>
 		<id>100609</id>
-		<value>TV/Tömörítés/Elsődleges</value>
+		<value>TV/Tömörítés/Elsodleges</value>
 	</string>
 	<string>
 		<id>100610</id>
@@ -4476,7 +4540,7 @@
 	</string>
 	<string>
 		<id>100614</id>
-		<value>Videó előadó információ</value>
+		<value>Videó eloadó információ</value>
 	</string>
 	<string>
 		<id>100615</id>
@@ -4628,11 +4692,11 @@
 	</string>
 	<string>
 		<id>100770</id>
-		<value>Intéző</value>
+		<value>Intézo</value>
 	</string>
 	<string>
 		<id>101000</id>
-		<value>billentyűzet</value>
+		<value>billentyuzet</value>
 	</string>
 	<string>
 		<id>102000</id>
@@ -4656,7 +4720,7 @@
 	</string>
 	<string>
 		<id>102005</id>
-		<value>Teljesképernyős videó</value>
+		<value>Teljesképernyos videó</value>
 	</string>
 	<string>
 		<id>102006</id>
@@ -4676,11 +4740,11 @@
 	</string>
 	<string>
 		<id>102010</id>
-		<value>Dátum/Idő</value>
+		<value>Dátum/Ido</value>
 	</string>
 	<string>
 		<id>102011</id>
-		<value>Előadó infó</value>
+		<value>Eloadó infó</value>
 	</string>
 	<string>
 		<id>102012</id>
@@ -4704,7 +4768,7 @@
 	</string>
 	<string>
 		<id>102600</id>
-		<value>Időjárás</value>
+		<value>Idojárás</value>
 	</string>
 	<string>
 		<id>102700</id>
@@ -4712,11 +4776,11 @@
 	</string>
 	<string>
 		<id>102900</id>
-		<value>Képernyővédő</value>
+		<value>Képernyovédo</value>
 	</string>
 	<string>
 		<id>102901</id>
-		<value>Teljesképernyős OSD</value>
+		<value>Teljesképernyos OSD</value>
 	</string>
 	<string>
 		<id>103003</id>
@@ -4740,7 +4804,7 @@
 	</string>
 	<string>
 		<id>200000</id>
-		<value>Kérlek add meg az EPG keresőt. Ha nem találod az országodat</value>
+		<value>Kérlek add meg az EPG keresot. Ha nem találod az országodat</value>
 	</string>
 	<string>
 		<id>200001</id>
@@ -4764,7 +4828,7 @@
 	</string>
 	<string>
 		<id>200006</id>
-		<value>Tovább a következő beállítási oldalra:</value>
+		<value>Tovább a következo beállítási oldalra:</value>
 	</string>
 	<string>
 		<id>200007</id>
@@ -4788,7 +4852,7 @@
 	</string>
 	<string>
 		<id>200013</id>
-		<value>A varázsló segít, hogy a Mediaportal-t egyszerűen és gyorsan beállítsd. Kérlek kövesd a lépéseket.</value>
+		<value>A varázsló segít, hogy a Mediaportal-t egyszeruen és gyorsan beállítsd. Kérlek kövesd a lépéseket.</value>
 	</string>
 	<string>
 		<id>200014</id>
@@ -4805,7 +4869,7 @@
 	</string>
 	<string>
 		<id>200018</id>
-		<value>Gratulálok! A Mediaportál telepítése sikeresen befejeződött és készen áll a használatra.</value>
+		<value>Gratulálok! A Mediaportál telepítése sikeresen befejezodött és készen áll a használatra.</value>
 	</string>
 	<string>
 		<id>200019</id>
@@ -4821,7 +4885,7 @@
 	</string>
 	<string>
 		<id>200022</id>
-		<value>A MediaPortal a következő TV-kártyákat találta:</value>
+		<value>A MediaPortal a következo TV-kártyákat találta:</value>
 	</string>
 	<string>
 		<id>200023</id>
@@ -4833,7 +4897,7 @@
 	</string>
 	<string>
 		<id>4000</id>
-		<value>Webböngésző</value>
+		<value>Webböngészo</value>
 	</string>
 	<string>
 		<id>4001</id>
@@ -4860,7 +4924,7 @@
   </string>
 <string>
     <id>533</id>
-    <value>Műsorfüzet</value>
+    <value>Musorfüzet</value>
   </string>
 <string>
     <id>534</id>
@@ -4869,7 +4933,7 @@
 
 <string>
     <id>751</id>
-    <value>Mutasd az előadó összes számát</value>
+    <value>Mutasd az eloadó összes számát</value>
   </string>
 <string>
     <id>752</id>
@@ -4881,7 +4945,7 @@
   </string>
 <string>
     <id>754</id>
-    <value>Nincs tuner a műsor rögzitésére</value>
+    <value>Nincs tuner a musor rögzitésére</value>
   </string>
 <string>
     <id>755</id>
@@ -4901,15 +4965,15 @@
   </string>
 <string>
     <id>759</id>
-    <value>Nem tudom a elindítani az időcsúsztatást</value>
+    <value>Nem tudom a elindítani az idocsúsztatást</value>
   </string>
 <string>
     <id>760</id>
-    <value>Nincs tuner a időcsúsztatáshoz</value>
+    <value>Nincs tuner a idocsúsztatáshoz</value>
   </string>
 <string>
     <id>761</id>
-    <value>Nem tudom leállítani a időcsúsztatást</value>
+    <value>Nem tudom leállítani a idocsúsztatást</value>
   </string>
 <string>
     <id>762</id>
@@ -4917,11 +4981,11 @@
   </string>
 <string>
     <id>763</id>
-    <value>A rögzítő várakozik</value>
+    <value>A rögzíto várakozik</value>
   </string>
 <string>
     <id>764</id>
-    <value>A rögzítő szünetel</value>
+    <value>A rögzíto szünetel</value>
   </string>
 <string>
     <id>765</id>
@@ -5033,11 +5097,11 @@
   </string>
 <string>
     <id>2082</id>
-    <value>Mpeg:A vágás befejeződött</value>
+    <value>Mpeg:A vágás befejezodött</value>
   </string>
 <string>
     <id>2083</id>
-    <value>Dvrms:A vágás befejeződött</value>
+    <value>Dvrms:A vágás befejezodött</value>
   </string>
 
   <!-- End of My Recipie Strings -->
@@ -5052,7 +5116,7 @@
   </string>   
 <string>
     <id>2086</id>
-    <value>előre</value>
+    <value>elore</value>
   </string>   
 <string>
     <id>2087</id>
@@ -5064,7 +5128,7 @@
   </string>   
 <string>
     <id>2089</id>
-    <value>minőség beállítás</value>
+    <value>minoség beállítás</value>
   </string>   
 <string>
     <id>2090</id>
@@ -5093,11 +5157,11 @@
 
 <string>
     <id>2097</id>
-    <value>régi időtartam:</value>
+    <value>régi idotartam:</value>
   </string>
 <string>
     <id>2098</id>
-    <value>új időtartam:</value>
+    <value>új idotartam:</value>
   </string>          
 <string>
     <id>2099</id>
@@ -5130,7 +5194,7 @@
  </string>
 <string>
    <id>5921</id>
-   <value>Mozifilmek a közeljövőben</value>
+   <value>Mozifilmek a közeljövoben</value>
  </string>
 <string>
    <id>5922</id>
@@ -5142,11 +5206,11 @@
  </string>
 <string>
    <id>5924</id>
-   <value>Új DVD-k a következő héten</value>
+   <value>Új DVD-k a következo héten</value>
  </string>
 <string>
    <id>5925</id>
-   <value>DVD előrendelések</value>
+   <value>DVD elorendelések</value>
  </string>
 
 <string>
@@ -5165,7 +5229,7 @@
 
 <string>
     <id>200027</id>
-    <value>Fő Beállítások</value>
+    <value>Fo Beállítások</value>
   </string>
 <string>
     <id>200028</id>
@@ -5200,7 +5264,7 @@
   </string>
 <string>
     <id>200034</id>
-    <value>Kérlek válasz várost a következő listából.</value>
+    <value>Kérlek válasz várost a következo listából.</value>
   </string>
 <string>
     <id>200035</id>
@@ -5257,15 +5321,15 @@
   </string>
 <string>
     <id>4507</id>
-    <value>Borító leszedő leállítva</value>
+    <value>Borító leszedo leállítva</value>
   </string>
 <string>
     <id>4508</id>
-    <value>Borító leszedő sikeresen végzet</value>
+    <value>Borító leszedo sikeresen végzet</value>
   </string>
 <string>
     <id>4509</id>
-    <value>A borító leszedés hibával fejeződött be</value>
+    <value>A borító leszedés hibával fejezodött be</value>
   </string>
 <string>
     <id>4510</id>
@@ -5273,7 +5337,7 @@
   </string>
 <string>
     <id>4511</id>
-    <value>Borító leszedő Rendben</value>
+    <value>Borító leszedo Rendben</value>
   </string>
 <string>
     <id>4512</id>
@@ -5281,15 +5345,15 @@
   </string>
 <string>
     <id>4513</id>
-    <value>különböző</value>
+    <value>különbözo</value>
   </string>
 <string>
     <id>4514</id>
-    <value>Borító Leszedő</value>
+    <value>Borító Leszedo</value>
   </string>
 <string>
     <id>4515</id>
-    <value>Borító leszedő keresési eredmény:</value>
+    <value>Borító leszedo keresési eredmény:</value>
   </string>
 <string>
     <id>4516</id>
@@ -5327,7 +5391,7 @@
   </string>  
 <string>
     <id>4541</id>
-    <value>Következő szám</value>
+    <value>Következo szám</value>
   </string>
 <string>
     <id>4542</id>
@@ -5345,7 +5409,7 @@
   </string>  
 <string>
     <id>4551</id>
-    <value>Következő szám</value>
+    <value>Következo szám</value>
   </string>  
 <string>
     <id>4552</id>
@@ -5375,15 +5439,15 @@
   </string>
 <string>
     <id>10101</id>
-    <value>Játék idő</value>
+    <value>Játék ido</value>
   </string>
 <string>
     <id>10102</id>
-    <value>Leggyorsabb idő</value>
+    <value>Leggyorsabb ido</value>
   </string>
 <string Prefix="Én ">
     <id>10103</id>
-    <value>Aknakereső</value>
+    <value>Aknakereso</value>
   </string>    
   <!-- End Minesweeper Strings -->
 <string>
