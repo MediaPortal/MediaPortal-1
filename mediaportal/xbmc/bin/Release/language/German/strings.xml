@@ -1300,10 +1300,10 @@
 	<string>
 		<id>394</id>
 		<value>nicht verfügbar</value>
-    </string>
-    <string>
-      <id>395</id>
-      <value>Nebel</value>
+        </string>
+        <string>
+                <id>395</id>
+                <value>Nebel</value>
 	</string>
 	<string>
 		<id>396</id>
@@ -1768,16 +1768,15 @@
 	<string>
 		<id>518</id>
 		<value>Dieses Lied löschen?</value>
-    </string>
-    <string>
-      <id>519</id>
-  	  <value>Untertitel aus</value>
-	</string>
-	  	
-    <string>
-      <id>529</id>
-      <value>Ansicht: Vorschau-Liste</value>
-    </string>
+        </string>
+        <string>
+                <id>519</id>
+                <value>Untertitel aus</value>
+	</string>	  	
+        <string>
+                <id>529</id>
+                <value>Ansicht: Vorschau-Liste</value>
+        </string>
 	<string>
 		<id>530</id>
 		<value>Foto-CD eingelegt! Öffnen?</value>
@@ -1789,10 +1788,10 @@
 	<string>
 		<id>532</id>
 		<value>Musik-CD eingelegt! Öffnen?</value>
-  </string>
-  <string>
-    <id>533</id>
-    <value>Radio-Programm</value>
+        </string>
+        <string>
+                <id>533</id>
+                <value>Radio-Programm</value>
 	</string>
 	<string>
 		<id>534</id>
@@ -1834,38 +1833,42 @@
 		<id>543</id>
 		<value>Gewitter</value>
 	</string>								
-  <string>
+        <string>
 		<id>544</id>
 		<value>NNO</value>
 	</string>		
-  <string>
+        <string>
 		<id>545</id>
 		<value>ONO</value>
 	</string>	
-  <string>
+        <string>
 		<id>546</id>
 		<value>OSO</value>
 	</string>	
-  <string>
+        <string>
 		<id>547</id>
 		<value>SSO</value>
 	</string>	
-  <string>
+        <string>
 		<id>548</id>
 		<value>SSW</value>
 	</string>	
-  <string>
+        <string>
 		<id>549</id>
 		<value>WSW</value>
 	</string>	
-  <string>
+        <string>
 		<id>551</id>
 		<value>WNW</value>
 	</string>	
-  <string>
+        <string>
 		<id>552</id>
 		<value>NNW</value>
-	</string>								
+	</string>	
+        <string>
+		<id>553</id>
+		<value>Abends</value>
+	</string>							
 	<string>
 		<id>550</id>
 		<value>Schneiden</value>

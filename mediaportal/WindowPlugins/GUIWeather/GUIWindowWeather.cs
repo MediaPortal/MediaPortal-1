@@ -1052,7 +1052,7 @@ namespace MediaPortal.GUI.Weather
           localizedWord = GUILocalizeStrings.Get(378);
         else if (String.Compare(tokenSplit, "PM", true) == 0)
           localizedWord = GUILocalizeStrings.Get(379);
-        else if (String.Compare(tokenSplit, "Showers", true) == 0 || String.Compare(tokenSplit, "Shower", true) == 0)
+        else if ( String.Compare(tokenSplit, "Showers", true) == 0 || String.Compare(tokenSplit, "Shower", true) == 0 || String.Compare(tokenSplit, "T-Showers", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(380);
         else if (String.Compare(tokenSplit, "Few", true) == 0)
           localizedWord = GUILocalizeStrings.Get(381);
@@ -1090,6 +1090,8 @@ namespace MediaPortal.GUI.Weather
           localizedWord = GUILocalizeStrings.Get(747);
         else if (String.Compare(tokenSplit, "Moderate", true) == 0)
           localizedWord = GUILocalizeStrings.Get(534);
+        else if ( String.Compare(tokenSplit, "Late", true) == 0 )
+          localizedWord = GUILocalizeStrings.Get(553);
         // wind directions
         else if (String.Compare(tokenSplit, "N", true) == 0)
           localizedWord = GUILocalizeStrings.Get(535);
