@@ -370,7 +370,6 @@ namespace MediaPortal.TV.Recording
         _videoProcAmpHelper = new VideoProcAmp(_filterCapture as IAMVideoProcAmp);
         if (_videoProcAmpHelper != null)
         {
-          Log.WriteFile(Log.LogType.Log, "SinkGraphEx: VideoProcAmp setting defaults");
           IBaseFilter capture;
           _graphBuilderInterface.FindFilterByName("NVTV", out capture);
           if (capture != null)
@@ -384,6 +383,7 @@ namespace MediaPortal.TV.Recording
           }
           if (capture == null)
           {
+            Log.WriteFile(Log.LogType.Log, "SinkGraphEx: VideoProcAmp setting defaults");
             _videoProcAmpHelper.Contrast = _videoProcAmpHelper.ContrastDefault;
             _videoProcAmpHelper.Brightness = _videoProcAmpHelper.BrightnessDefault;
             _videoProcAmpHelper.Gamma = _videoProcAmpHelper.GammaDefault;
@@ -466,6 +466,7 @@ namespace MediaPortal.TV.Recording
         Marshal.ReleaseComObject(teesink);
         Marshal.ReleaseComObject(wstCodec);
         Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx.SetupTeletext(): Failed to find VBI pin");
+        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx.SetupTeletext(): Teletext not available on this card");
         return;
       }
 
