@@ -1,4 +1,4 @@
-﻿<strings>
+<strings>
   <characters>512</characters>
   <string Prefix="My ">
     <id>0</id>
@@ -2613,6 +2613,10 @@
     <id>810</id>
     <value>Card</value>
   </string>
+  <string>
+    <id>820</id>
+    <value>Delete unseen recording?</value>
+  </string>  
   <!-- My Alarm Strings -->
   <string Prefix="My ">
     <id>850</id>

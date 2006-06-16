@@ -769,6 +769,7 @@ namespace MediaPortal.GUI.TV
               GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
               if (null != dlgYesNo)
               {
+                dlgYesNo.SetDefaultToYes(false);
                 dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
                 dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
                 dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.
@@ -802,6 +803,7 @@ namespace MediaPortal.GUI.TV
               GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
               if (null != dlgYesNo)
               {
+                dlgYesNo.SetDefaultToYes(false);
                 dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));//Delete this recording?
                 dlgYesNo.SetLine(1, GUILocalizeStrings.Get(730));//This schedule is recording. If you delete
                 dlgYesNo.SetLine(2, GUILocalizeStrings.Get(731));//the schedule then the recording is stopped.

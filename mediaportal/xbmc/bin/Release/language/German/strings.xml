@@ -2610,6 +2610,10 @@
 		<value>Karte</value>
 	</string>
 	<string>
+                <id>820</id>
+                <value>Noch nicht gesehene Aufnahme löschen?</value>
+        </string>  
+        <string>
 		<id>850</id>
 		<value>Alarm</value>
 	</string>

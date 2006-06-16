@@ -685,13 +685,15 @@ namespace MediaPortal.GUI.TV
       if (pItem == null) return;
       if (pItem.IsFolder) return;
       TVRecorded rec = (TVRecorded)pItem.TVTag;
+
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (null == dlgYesNo) return;
-      dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
+      if (rec.Played > 0) dlgYesNo.SetHeading(GUILocalizeStrings.Get(653));
+        else dlgYesNo.SetHeading(GUILocalizeStrings.Get(820));
       dlgYesNo.SetLine(1, rec.Channel);
       dlgYesNo.SetLine(2, rec.Title);
       dlgYesNo.SetLine(3, String.Empty);
-      dlgYesNo.SetDefaultToYes(true);
+      dlgYesNo.SetDefaultToYes(false);
       dlgYesNo.DoModal(GetID);
 
       if (!dlgYesNo.IsConfirmed)
