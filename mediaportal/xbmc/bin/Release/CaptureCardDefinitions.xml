@@ -97,7 +97,7 @@
         <filter cat="tvtuner"		  name="NVTV Tuner"				        checkdevice="true"/>
         <filter cat="tvaudio"		  name="NVTV Audio"				        checkdevice="true"/>
         <filter cat="crossbar"		name="NVTV Crossbar"			      checkdevice="true"/>
-        <filter cat="capture"		  name="NVTV"						          checkdevice="true"/>
+        <filter cat="capture"		  name="NVTV" 					          checkdevice="true"/>
         <filter cat="videncoder"	name="NVTV Encoder"				      checkdevice="true"/>
         <filter cat="audencoder"	name="NVIDIA Audio Encoder"		  checkdevice="false"/>
         <filter cat="mux"			    name="NVIDIA MPEG Multiplexer"	checkdevice="false"/>
@@ -121,51 +121,51 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="NVTV Tuner"              checkdevice="true"/>
-        <filter cat="tvaudio"		name="NVTV Audio"              checkdevice="true"/>
-        <filter cat="crossbar"		name="NVTV Crossbar"           checkdevice="true"/>
-        <filter cat="capture"		name="NVTV"                    checkdevice="true"/>
-        <filter cat="videncoder"	name="NVTV Encoder"            checkdevice="true"/>
-        <filter cat="audencoder"	name="NVIDIA Audio Encoder"    checkdevice="false"/>
-        <filter cat="mux"			name="NVIDIA MPEG Multiplexer" checkdevice="false"/>
+        <filter cat="tvtuner"     name="NVTV Tuner"              checkdevice="true"/>
+        <filter cat="tvaudio"     name="NVTV Audio"              checkdevice="true"/>
+        <filter cat="crossbar"    name="NVTV Crossbar"           checkdevice="true"/>
+        <filter cat="capture"     name="NVTV"                    checkdevice="true"/>
+        <filter cat="videncoder"  name="NVTV Encoder"            checkdevice="true"/>
+        <filter cat="audencoder"  name="NVIDIA Audio Encoder"    checkdevice="false"/>
+        <filter cat="mux"         name="NVIDIA MPEG Multiplexer" checkdevice="false"/>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-        <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-        <connection sourcefilter="crossbar"     sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
-        <connection sourcefilter="capture"      sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-        <connection sourcefilter="capture"      sourcepin="1" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"   sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="1" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"        sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Aopen VA2000N" capturename="NVTV" devid="ven_123f&amp;dev_8120&amp;subsys_01e310de&amp;rev_b1">
+  <capturecard commercialname="NVTV Single Tuner" capturename="NVTV" devid="ven_123f&amp;dev_8120&amp;subsys_01e310de&amp;rev_b1">
     <capabilities tv="true" radio="false" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		name="NVTV Tuner"              checkdevice="true"/>
-        <filter cat="tvaudio"		name="NVTV Audio"              checkdevice="true"/>
+        <filter cat="tvtuner"		  name="NVTV Tuner"              checkdevice="true"/>
+        <filter cat="tvaudio"		  name="NVTV Audio"              checkdevice="true"/>
         <filter cat="crossbar"		name="NVTV Crossbar"           checkdevice="true"/>
-        <filter cat="capture"		name="NVTV"                    checkdevice="true"/>
+        <filter cat="capture"		  name="NVTV"                    checkdevice="true"/>
         <filter cat="videncoder"	name="NVTV Encoder"            checkdevice="true"/>
         <filter cat="audencoder"	name="NVIDIA Audio Encoder"    checkdevice="false"/>
-        <filter cat="mux"			name="NVIDIA MPEG Multiplexer" checkdevice="false"/>
+        <filter cat="mux"			    name="NVIDIA MPEG Multiplexer" checkdevice="false"/>
       </filters>
       <connections>
-        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
-        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
-        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
-        <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
-        <connection sourcefilter="crossbar"     sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
-        <connection sourcefilter="capture"      sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-        <connection sourcefilter="capture"      sourcepin="1" sinkfilter="audencoder"	sinkpin="0"/>
-        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			sinkpin="1"/>
-        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			sinkpin="0"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="crossbar"   sourcepin="1" sinkfilter="capture"		sinkpin="1"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="1" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
