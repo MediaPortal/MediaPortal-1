@@ -424,6 +424,7 @@ namespace MediaPortal.GUI.Video
           m_history.Set(selectedListItem.Label, currentFolder);
         }
       }
+
       if (newFolderName != currentFolder && mapSettings != null)
       {
         SaveFolderSettings(currentFolder);
@@ -503,22 +504,34 @@ namespace MediaPortal.GUI.Video
       }
 
       SetIMDBThumbs(itemlist);
-      string selectedItemLabel = m_history.Get(currentFolder);
-      foreach (GUIListItem item in itemlist)
+
+     foreach (GUIListItem item in itemlist)
       {
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         facadeView.Add(item);
       }
       OnSort();
+
+      //string selectedItemLabel = string.Empty;
+      //if (selectedListItem != null || currentSelectedItem == -1)
+        
+      //else
+      //  selectedItemLabel = facadeView[currentSelectedItem].Label;
+
       bool itemSelected = false;
-      for (int i = 0; i < facadeView.Count; ++i)
+
+      if (selectedListItem != null)
       {
-        GUIListItem item = facadeView[i];
-        if (item.Label == selectedItemLabel)
+        string selectedItemLabel = m_history.Get(currentFolder);
+        for (int i = 0; i < facadeView.Count; ++i)
         {
-          GUIControl.SelectItemControl(GetID, facadeView.GetID, i);
-          itemSelected = true;
-          break;
+          GUIListItem item = facadeView[i];
+          if (item.Label == selectedItemLabel)
+          {
+            GUIControl.SelectItemControl(GetID, facadeView.GetID, i);
+            itemSelected = true;
+            break;
+          }
         }
       }
       int totalItems = itemlist.Count;
