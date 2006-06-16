@@ -92,7 +92,7 @@
 			<description>group element</description>
 			<animation>FlyInFromLeft</animation>
 			<control>
-				<type>button</type>
+				<type>sortbutton</type>
 				<id>2</id>
 				<posX>60</posX>
 				<posY>97</posY>
