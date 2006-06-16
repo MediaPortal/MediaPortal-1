@@ -371,11 +371,25 @@ namespace MediaPortal.TV.Recording
         if (_videoProcAmpHelper != null)
         {
           Log.WriteFile(Log.LogType.Log, "SinkGraphEx: VideoProcAmp setting defaults");
-          _videoProcAmpHelper.Contrast = _videoProcAmpHelper.ContrastDefault;
-          _videoProcAmpHelper.Brightness = _videoProcAmpHelper.BrightnessDefault;
-          _videoProcAmpHelper.Gamma = _videoProcAmpHelper.GammaDefault;
-          _videoProcAmpHelper.Saturation = _videoProcAmpHelper.SaturationDefault;
-          _videoProcAmpHelper.Sharpness = _videoProcAmpHelper.SharpnessDefault;
+          IBaseFilter capture;
+          _graphBuilderInterface.FindFilterByName("NVTV", out capture);
+          if (capture != null)
+          {
+            Log.WriteFile(Log.LogType.Log, "SinkGraphEx: NVTV Capture filter detected");
+            _videoProcAmpHelper.Contrast = 7000;
+            _videoProcAmpHelper.Saturation = 6800;
+            _videoProcAmpHelper.Brightness = _videoProcAmpHelper.BrightnessDefault;
+            _videoProcAmpHelper.Gamma = _videoProcAmpHelper.GammaDefault;
+            _videoProcAmpHelper.Sharpness = _videoProcAmpHelper.SharpnessDefault;
+          }
+          if (capture == null)
+          {
+            _videoProcAmpHelper.Contrast = _videoProcAmpHelper.ContrastDefault;
+            _videoProcAmpHelper.Brightness = _videoProcAmpHelper.BrightnessDefault;
+            _videoProcAmpHelper.Gamma = _videoProcAmpHelper.GammaDefault;
+            _videoProcAmpHelper.Saturation = _videoProcAmpHelper.SaturationDefault;
+            _videoProcAmpHelper.Sharpness = _videoProcAmpHelper.SharpnessDefault;
+          }
         }
 
         _graphState = State.Created;
