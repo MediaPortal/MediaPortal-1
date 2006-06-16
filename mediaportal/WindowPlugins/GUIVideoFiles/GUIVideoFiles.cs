@@ -505,18 +505,12 @@ namespace MediaPortal.GUI.Video
 
       SetIMDBThumbs(itemlist);
 
-     foreach (GUIListItem item in itemlist)
+      foreach (GUIListItem item in itemlist)
       {
         item.OnItemSelected += new MediaPortal.GUI.Library.GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         facadeView.Add(item);
       }
       OnSort();
-
-      //string selectedItemLabel = string.Empty;
-      //if (selectedListItem != null || currentSelectedItem == -1)
-        
-      //else
-      //  selectedItemLabel = facadeView[currentSelectedItem].Label;
 
       bool itemSelected = false;
 
@@ -542,10 +536,9 @@ namespace MediaPortal.GUI.Video
       }
       objectCount = String.Format("{0} {1}", totalItems, GUILocalizeStrings.Get(632));
       GUIPropertyManager.SetProperty("#itemcount", objectCount);
+
       if (currentSelectedItem >= 0 && !itemSelected)
-      {
         GUIControl.SelectItemControl(GetID, facadeView.GetID, currentSelectedItem);
-      }
     }
     #endregion
 
@@ -958,14 +951,14 @@ namespace MediaPortal.GUI.Video
         string[] strDirs = null;
         try
         {
-          strDirs = System.IO.Directory.GetDirectories(path,"video_ts");
+          strDirs = System.IO.Directory.GetDirectories(path, "video_ts");
         }
         catch (Exception)
         {
         }
         if (strDirs != null)
         {
-          if (strDirs.Length== 1)
+          if (strDirs.Length == 1)
           {
             Log.Write("**************Is a DVD folder:{0}", strDirs[0]);
             return String.Format(@"{0}\VIDEO_TS.IFO", strDirs[0]);
@@ -997,7 +990,7 @@ namespace MediaPortal.GUI.Video
               // Skip hidden files
               if ((File.GetAttributes(strFiles[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
               {
-                  continue;
+                continue;
               }
               return strFiles[i];
             }
@@ -1045,7 +1038,7 @@ namespace MediaPortal.GUI.Video
               if (movieDetails.Title != String.Empty) title = movieDetails.Title;
 
               GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-              if (null == dlgYesNo) return false; 
+              if (null == dlgYesNo) return false;
               dlgYesNo.SetHeading(GUILocalizeStrings.Get(900)); //resume movie?
               dlgYesNo.SetLine(1, title);
               dlgYesNo.SetLine(2, GUILocalizeStrings.Get(936) + Utils.SecondsToHMSString(timeMovieStopped));
@@ -1179,9 +1172,10 @@ namespace MediaPortal.GUI.Video
         if (pItem.IsFolder)
         {
           if (pItem.Label == "..") continue;
-          if (IsFolderPinProtected(pItem.Path)) {
-              Utils.SetDefaultIcons(pItem);
-              continue;
+          if (IsFolderPinProtected(pItem.Path))
+          {
+            Utils.SetDefaultIcons(pItem);
+            continue;
           }
           if (System.IO.File.Exists(pItem.Path + "\\folder.jpg"))
           {
