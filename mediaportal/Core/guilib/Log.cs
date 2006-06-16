@@ -37,7 +37,8 @@ namespace MediaPortal.GUI.Library
       Recorder,
       Error,
       EPG,
-      TVCom
+      TVCom,
+      VMR9
     }
     /// <summary>
     /// Private constructor of the GUIPropertyManager. Singleton. Do not allow any instance of this class.
@@ -62,6 +63,7 @@ namespace MediaPortal.GUI.Library
       BackupLogFile(LogType.Error);
       BackupLogFile(LogType.EPG);
       BackupLogFile(LogType.TVCom);
+      BackupLogFile(LogType.VMR9);
     }
 
     public static void BackupLogFile(LogType logType)
@@ -158,6 +160,9 @@ namespace MediaPortal.GUI.Library
           break;
         case LogType.TVCom:
           fname = @"log\TVCom.log";
+          break;
+        case LogType.VMR9:
+          fname = @"log\vmr9.log";
           break;
       }
       return fname;
