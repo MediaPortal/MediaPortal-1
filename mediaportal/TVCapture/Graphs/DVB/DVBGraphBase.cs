@@ -2487,7 +2487,7 @@ namespace MediaPortal.TV.Recording
           _notifySignalLost = false;
           VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
           _processTimer.AddSeconds(-10); // next process() call won't return 
-          this.Process(); // signal is back, so let's call process() again as
+          //this.Process(); // signal is back, so let's call process() again as
           // is was actually entered with a lost signal
 
         }
@@ -2518,10 +2518,9 @@ namespace MediaPortal.TV.Recording
         {
           TimeSpan tsProc = DateTime.Now - _processTimer;
           if (tsProc.TotalMilliseconds < 2500) return; // original value was set to 5' 
-          _processTimer = DateTime.Now;                // try less for 697 related
+          _processTimer = DateTime.Now;                // try less for 697 related changes
         }
       }
-      UpdateSignalPresent();
 
       if (_graphState == State.Created) return;
 
@@ -2531,6 +2530,8 @@ namespace MediaPortal.TV.Recording
       //  _streamDemuxer.Process();
 
       if (ProcessEpg()) return;
+
+      UpdateSignalPresent();
 
       if (_graphState != State.Epg)
       {
@@ -2606,10 +2607,7 @@ namespace MediaPortal.TV.Recording
         }
         //_signalLostTimer = DateTime.Now;
       }
-      else
-      {
-                ProcessSignal();
-      }
+      ProcessSignal();
       if (_graphState != State.Epg)
       {
         if (_graphPaused /*&& !_streamDemuxer.IsScrambled*/)
@@ -2643,6 +2641,7 @@ namespace MediaPortal.TV.Recording
           }
         }*/
       }
+
     }//public void Process()
 
     #endregion
@@ -3082,17 +3081,17 @@ namespace MediaPortal.TV.Recording
         SetupDemuxerPin(_pinDemuxerSections, 0x11, (int)MediaSampleContent.Mpeg2PSI, false);
       }
 
-      /*Log.Write("DVBGraph: wait for tunerlock");
-      //wait until tuner has locked
+      Log.Write("DVBGraph: wait for tunerlock");
+      //wait until tuner is locked
       DateTime dt = DateTime.Now;
-      while (true)                                    // that was adding a permanent 2'second delay
-      {                                               // on each channel zap
-        TimeSpan ts = DateTime.Now - dt;              // tuner can be locked in less than 2'
-        if (ts.TotalMilliseconds >= 2000) break;      // or more....
-        System.Threading.Thread.Sleep(200);           // so while(!signalPresent()) would be better
-      }                                               // Now This is done in process() as we have
-      _signalLostTimer = DateTime.Now;                // to keep a look on the tuner lock status
-      UpdateSignalPresent();*/
+      while (true)                                    
+      {                    
+        TimeSpan ts = DateTime.Now - dt;              
+        if (ts.TotalMilliseconds >= 2000) break;      
+        System.Threading.Thread.Sleep(200);           
+      }                                             
+      //_signalLostTimer = DateTime.Now;               
+      UpdateSignalPresent();
       //         
       //      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }//public void Tune(object tuningObject)
