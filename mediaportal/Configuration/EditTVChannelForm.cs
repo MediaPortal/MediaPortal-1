@@ -43,204 +43,204 @@ namespace MediaPortal.Configuration
   {
     private MediaPortal.UserInterface.Controls.MPButton cancelButton;
     private MediaPortal.UserInterface.Controls.MPButton okButton;
-    private MediaPortal.UserInterface.Controls.MPTextBox nameTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
-    private MediaPortal.UserInterface.Controls.MPTextBox frequencyTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPTextBox externalChannelTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPComboBox typeComboBox;
-    private MediaPortal.UserInterface.Controls.MPComboBox inputComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private MediaPortal.UserInterface.Controls.MPLabel label7;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboTvStandard;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxGeneralName;
+    private MediaPortal.UserInterface.Controls.MPLabel labelGeneralName;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAnalogFrequency;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAnalogFrequency;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxExternalChannelNumber;
+    private MediaPortal.UserInterface.Controls.MPLabel labelExternalChannelNumber;
+    private MediaPortal.UserInterface.Controls.MPLabel labelExternalType;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxExternalType;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxExternalInput;
+    private MediaPortal.UserInterface.Controls.MPLabel labelExternalInput;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAnalogTvStandard;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxAnalogTvStandard;
     private MediaPortal.UserInterface.Controls.MPTabControl tabControl1;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage2;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage3;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage4;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage5;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage6;
-    private MediaPortal.UserInterface.Controls.MPComboBox countryComboBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label8;
-    private MediaPortal.UserInterface.Controls.MPLabel label9;
-    private MediaPortal.UserInterface.Controls.MPLabel label10;
-    private MediaPortal.UserInterface.Controls.MPLabel label11;
-    private MediaPortal.UserInterface.Controls.MPLabel label12;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTONID;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTSID;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTTSID;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTFreq;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCFreq;
-    private MediaPortal.UserInterface.Controls.MPLabel label13;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCTSID;
-    private MediaPortal.UserInterface.Controls.MPLabel label14;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCSID;
-    private MediaPortal.UserInterface.Controls.MPLabel label15;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCONID;
-    private MediaPortal.UserInterface.Controls.MPLabel label16;
-    private MediaPortal.UserInterface.Controls.MPLabel label17;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCSR;
-    private MediaPortal.UserInterface.Controls.MPLabel label18;
-    private MediaPortal.UserInterface.Controls.MPLabel label19;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbDVBCInnerFeq;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbDVBCModulation;
-    private MediaPortal.UserInterface.Controls.MPLabel label20;
-    private MediaPortal.UserInterface.Controls.MPLabel label21;
-    private MediaPortal.UserInterface.Controls.MPLabel label22;
-    private MediaPortal.UserInterface.Controls.MPLabel label23;
-    private MediaPortal.UserInterface.Controls.MPLabel label24;
-    private MediaPortal.UserInterface.Controls.MPLabel label25;
-    private MediaPortal.UserInterface.Controls.MPLabel label26;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbDVBSPolarisation;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbDvbSInnerFec;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSSymbolrate;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSFreq;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSTSID;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSSID;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSONID;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageGeneral;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageAnalog;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageDvbt;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageDvbc;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageDvbs;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageExternal;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxAnalogCountry;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAnalogCountry;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtNetworkId;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtServiceId;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtTransportId;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtCarrierFrequency;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtNetworkId;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtServiceId;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtTransportId;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtCarrierFrequency;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcCarrierFrequency;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcCarrierFrequency;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcTransportId;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcTransportId;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcServiceId;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcServiceId;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcNetworkId;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcNetworkId;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcSymbolrate;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcSymbolrate;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcInnerFec;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcModulation;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDvbcInnerFec;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDvbcModulation;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsPolarisation;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsInnerFec;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsSymbolrate;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsCarrierFrequency;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsTransportId;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsServiceId;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsNetworkId;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDvbsPolarisation;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxDvbsInnerFec;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsSymbolrate;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsCarrierFrequency;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsTransportId;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsServiceId;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsNetworkId;
     private int sortPlace = 0;
     private int channelId = -1;
-    private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPLabel label27;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTProvider;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCProvider;
-    private MediaPortal.UserInterface.Controls.MPLabel label28;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSProvider;
-    private MediaPortal.UserInterface.Controls.MPLabel label29;
-    private MediaPortal.UserInterface.Controls.MPLabel label30;
-    private MediaPortal.UserInterface.Controls.MPLabel label31;
-    private MediaPortal.UserInterface.Controls.MPLabel label32;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTAudioPid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTVideoPid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTTeletextPid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCTeletextPid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCVideoPid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCAudioPid;
-    private MediaPortal.UserInterface.Controls.MPLabel label33;
-    private MediaPortal.UserInterface.Controls.MPLabel label34;
-    private MediaPortal.UserInterface.Controls.MPLabel label35;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSTeletextPid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSVideoPid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSAudioPid;
-    private MediaPortal.UserInterface.Controls.MPLabel label36;
-    private MediaPortal.UserInterface.Controls.MPLabel label37;
-    private MediaPortal.UserInterface.Controls.MPLabel label38;
-    private MediaPortal.UserInterface.Controls.MPLabel label39;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSECMpid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelGeneralChannel;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtProvider;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtProvider;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcProvider;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcProvider;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsProvider;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsProvider;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtAudioPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtVideoPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtTeletextPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtAudioPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtVideoPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtTeletextPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcTeletextPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcVideoPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcAudioPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcTeletextPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcVideoPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcAudioPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsTeletextPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsVideoPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsAudioPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsTeletextPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsVideoPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsAudioPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsEcmPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsEcmPid;
     private MediaPortal.UserInterface.Controls.MPLabel label40;
     private MediaPortal.UserInterface.Controls.MPLabel label41;
     private MediaPortal.UserInterface.Controls.MPLabel label42;
     private MediaPortal.UserInterface.Controls.MPLabel label43;
     private MediaPortal.UserInterface.Controls.MPLabel label44;
     private MediaPortal.UserInterface.Controls.MPLabel label45;
-    private MediaPortal.UserInterface.Controls.MPLabel label46;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCPmtPid;
-    private MediaPortal.UserInterface.Controls.MPLabel label47;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTPmtPid;
-    private MediaPortal.UserInterface.Controls.MPLabel label48;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSPmtPid;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxScrambled;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbBandWidth;
-    private MediaPortal.UserInterface.Controls.MPLabel label49;
-    private MediaPortal.UserInterface.Controls.MPLabel label50;
-    private MediaPortal.UserInterface.Controls.MPLabel label51;
-    private MediaPortal.UserInterface.Controls.MPLabel label52;
-    private MediaPortal.UserInterface.Controls.MPLabel label53;
-    private MediaPortal.UserInterface.Controls.MPLabel label54;
-    private MediaPortal.UserInterface.Controls.MPLabel label55;
-    private MediaPortal.UserInterface.Controls.MPLabel label56;
-    private MediaPortal.UserInterface.Controls.MPLabel label57;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCAudio1;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCAudioLanguage3;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCAudioLanguage2;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCAudioLanguage1;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCAudioLanguage;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCAC3;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCAudio3;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCAudio2;
-    private MediaPortal.UserInterface.Controls.MPLabel label58;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTAudioLanguage3;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTAudioLanguage2;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTAudioLanguage1;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTAudioLanguage;
-    private MediaPortal.UserInterface.Controls.MPLabel label59;
-    private MediaPortal.UserInterface.Controls.MPLabel label60;
-    private MediaPortal.UserInterface.Controls.MPLabel label61;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTAC3;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTAudio3;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTAudio2;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTAudio1;
-    private MediaPortal.UserInterface.Controls.MPLabel label62;
-    private MediaPortal.UserInterface.Controls.MPLabel label63;
-    private MediaPortal.UserInterface.Controls.MPLabel label64;
-    private MediaPortal.UserInterface.Controls.MPLabel label65;
-    private MediaPortal.UserInterface.Controls.MPLabel label66;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSAudioLanguage3;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSAudioLanguage2;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSAudioLanguage1;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSAudioLanguage;
-    private MediaPortal.UserInterface.Controls.MPLabel label67;
-    private MediaPortal.UserInterface.Controls.MPLabel label68;
-    private MediaPortal.UserInterface.Controls.MPLabel label69;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSAC3;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSAudio3;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSAudio2;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSAudio1;
-    private MediaPortal.UserInterface.Controls.MPLabel label70;
-    private MediaPortal.UserInterface.Controls.MPLabel label71;
-    private MediaPortal.UserInterface.Controls.MPLabel label72;
-    private MediaPortal.UserInterface.Controls.MPLabel label73;
-    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxChannels;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcPmtPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcPmtPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtPmtPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtPmtPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsPmtPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsPmtPid;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxGeneralEncryptedChannel;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtBandWidth;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtBandWidth;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcAudio1Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcAudio2Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcAudio3Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcAc3Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcAudioLanguage2;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcAudioLanguage1;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcAudioLanguage;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcAudioLanguage3;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcAudio1Pid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcAudioLanguage3;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcAudioLanguage2;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcAudioLanguage1;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcAudioLanguage;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcAc3Pid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcAudio3Pid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcAudio2Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtAudioLanguage3;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtAudioLanguage3;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtAudioLanguage2;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtAudioLanguage1;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtAudioLanguage;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtAudioLanguage2;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtAudioLanguage1;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtAudioLanguage;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtAc3Pid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtAudio3Pid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtAudio2Pid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtAudio1Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtAc3Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtAudio3Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtAudio2Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtAudio1Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsAudioLanguage3;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsAudioLanguage3;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsAudioLanguage2;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsAudioLanguage1;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsAudioLanguage;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsAudioLanguage2;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsAudioLanguage1;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsAudioLanguage;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsAc3Pid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsAudio3Pid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsAudio2Pid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsAudio1Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsAc3Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsAudio3Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsAudio2Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsAudio1Pid;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxGeneralChannel;
     /// <summary>
     /// Required designer variable.
     /// </summary>
     private System.ComponentModel.Container components = null;
     private MediaPortal.UserInterface.Controls.MPLabel labelSpecial;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage7;
-    private MediaPortal.UserInterface.Controls.MPLabel label74;
-    private MediaPortal.UserInterface.Controls.MPLabel label75;
-    private MediaPortal.UserInterface.Controls.MPLabel label76;
-    private MediaPortal.UserInterface.Controls.MPLabel label77;
-    private MediaPortal.UserInterface.Controls.MPLabel label78;
-    private MediaPortal.UserInterface.Controls.MPLabel label79;
-    private MediaPortal.UserInterface.Controls.MPLabel label80;
-    private MediaPortal.UserInterface.Controls.MPLabel label81;
-    private MediaPortal.UserInterface.Controls.MPLabel label82;
-    private MediaPortal.UserInterface.Controls.MPLabel label84;
-    private MediaPortal.UserInterface.Controls.MPLabel label85;
-    private MediaPortal.UserInterface.Controls.MPLabel label86;
-    private MediaPortal.UserInterface.Controls.MPLabel label87;
-    private MediaPortal.UserInterface.Controls.MPLabel label88;
-    private MediaPortal.UserInterface.Controls.MPLabel label89;
-    private MediaPortal.UserInterface.Controls.MPLabel label90;
-    private MediaPortal.UserInterface.Controls.MPLabel label91;
-    private MediaPortal.UserInterface.Controls.MPLabel label92;
-    private MediaPortal.UserInterface.Controls.MPLabel label93;
-    private MediaPortal.UserInterface.Controls.MPLabel label94;
-    private MediaPortal.UserInterface.Controls.MPLabel label83;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCPhysicalChannel;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbATSCInnerFec;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCSymbolRate;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCFrequency;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCTSID;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCMajor;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCMinor;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCAudioLanguage3;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCAudioLanguage2;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCAudioLanguage1;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCAudioLanguage;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCAC3Pid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCAudio3Pid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCAudio2Pid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCAudio1Pid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCPMTPid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCTeletextPid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCVideoPid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCAudioPid;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCProvider;
-    private MediaPortal.UserInterface.Controls.MPComboBox cbATSCModulation;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageAtsc;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscAudioLanguage3;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscAudioLanguage2;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscAudioLanguage1;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscAudioLanguage;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscAc3Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscAudio3Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscAudio2Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscAudio1Pid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscPmtPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscTeletextPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscVideoPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscAudioPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscProvider;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscModulation;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscInnerFec;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscSymbolRate;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscCarrierFrequency;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscTransportId;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscMajorChannel;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscPhysicalChannel;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscMinorChannel;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscPhysicalChannel;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxAtscInnerFec;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscSymbolRate;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscCarrierFrequency;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscTransportId;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscMajorChannel;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscMinorChannel;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscAudioLanguage3;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscAudioLanguage2;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscAudioLanguage1;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscAudioLanguage;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscAc3Pid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscAudio3Pid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscAudio2Pid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscAudio1Pid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscPmtPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscTeletextPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscVideoPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscAudioPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscProvider;
+    private MediaPortal.UserInterface.Controls.MPComboBox comboBoxAtscModulation;
     private MediaPortal.UserInterface.Controls.MPLabel label95;
     private MediaPortal.UserInterface.Controls.MPLabel label96;
     private MediaPortal.UserInterface.Controls.MPLabel label97;
@@ -255,19 +255,19 @@ namespace MediaPortal.Configuration
     bool DVBCHasEITPresentFollow, DVBCHasEITSchedule;
     bool DVBSHasEITPresentFollow, DVBSHasEITSchedule;
     bool ATSCHasEITPresentFollow, ATSCHasEITSchedule;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBCPCR;
-    private MediaPortal.UserInterface.Controls.MPLabel label104;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBTPCR;
-    private MediaPortal.UserInterface.Controls.MPLabel label105;
-    private MediaPortal.UserInterface.Controls.MPLabel label106;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbDVBSPCR;
-    private MediaPortal.UserInterface.Controls.MPTextBox tbATSCPCR;
-    private MediaPortal.UserInterface.Controls.MPLabel label108;
-    private MediaPortal.UserInterface.Controls.MPLabel label109;
-    private MediaPortal.UserInterface.Controls.MPLabel label110;
-    private MediaPortal.UserInterface.Controls.MPLabel label111;
-    private MediaPortal.UserInterface.Controls.MPLabel label112;
-    private MediaPortal.UserInterface.Controls.MPLabel label107;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbcPcrPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcPcrPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbtPcrPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtPcrPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsPcrPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxDvbsPcrPid;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxAtscPcrPid;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbcRedNote;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbtRedNote;
+    private MediaPortal.UserInterface.Controls.MPLabel labelDvbsRedNote;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscRedNote;
+    private MediaPortal.UserInterface.Controls.MPLabel labelGeneralRedNote;
+    private MediaPortal.UserInterface.Controls.MPLabel labelAtscPcrPid;
 
     public EditTVChannelForm()
     {
@@ -279,22 +279,22 @@ namespace MediaPortal.Configuration
       //
       // Set size of window
       //
-      typeComboBox.SelectedIndex = 0;
-      comboTvStandard.Text = "Default";
+      comboBoxExternalType.SelectedIndex = 0;
+      comboBoxAnalogTvStandard.Text = "Default";
       TunerCountry country = new TunerCountry(-1, "Default", "");
-      countryComboBox.Items.Add(country);
-      countryComboBox.Items.AddRange(TunerCountries.Countries);
-      countryComboBox.Text = "Default";
-      comboBoxChannels.Items.Clear();
+      comboBoxAnalogCountry.Items.Add(country);
+      comboBoxAnalogCountry.Items.AddRange(TunerCountries.Countries);
+      comboBoxAnalogCountry.Text = "Default";
+      comboBoxGeneralChannel.Items.Clear();
       for (int i = 1; i < 255; ++i)
-        comboBoxChannels.Items.Add(i.ToString());
+        comboBoxGeneralChannel.Items.Add(i.ToString());
       for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
-        comboBoxChannels.Items.Add(TVChannel.SpecialChannels[i].Name);
+        comboBoxGeneralChannel.Items.Add(TVChannel.SpecialChannels[i].Name);
 
-      comboBoxChannels.Items.Add("SVHS");
-      comboBoxChannels.Items.Add("RGB");
-      comboBoxChannels.Items.Add("CVBS#1");
-      comboBoxChannels.Items.Add("CVBS#2");
+      comboBoxGeneralChannel.Items.Add("SVHS");
+      comboBoxGeneralChannel.Items.Add("RGB");
+      comboBoxGeneralChannel.Items.Add("CVBS#1");
+      comboBoxGeneralChannel.Items.Add("CVBS#2");
 
     }
 
@@ -338,236 +338,237 @@ namespace MediaPortal.Configuration
     private void InitializeComponent()
     {
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditTVChannelForm));
-      this.comboTvStandard = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.frequencyTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.nameTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxAnalogTvStandard = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.labelAnalogTvStandard = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxAnalogFrequency = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelAnalogFrequency = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxGeneralName = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelGeneralName = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.inputComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.typeComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.externalChannelTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxExternalInput = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.labelExternalInput = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxExternalType = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.labelExternalType = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxExternalChannelNumber = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelExternalChannelNumber = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
-      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.label112 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tabPageGeneral = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.labelGeneralRedNote = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label97 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label96 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label95 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelSpecial = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.comboBoxChannels = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.checkBoxScrambled = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.comboBoxGeneralChannel = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.checkBoxGeneralEncryptedChannel = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.label45 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label44 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage2 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.labelGeneralChannel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tabPageAnalog = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.label98 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label43 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.countryComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.label109 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBTPCR = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label105 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxAnalogCountry = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.labelAnalogCountry = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tabPageDvbt = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.labelDvbtRedNote = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbtPcrPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbtPcrPid = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label100 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label58 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBTAudioLanguage3 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBTAudioLanguage2 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBTAudioLanguage1 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBTAudioLanguage = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label59 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label60 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label61 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBTAC3 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBTAudio3 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBTAudio2 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBTAudio1 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label62 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label63 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label64 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label65 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label49 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbBandWidth = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBTPmtPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label47 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBTTeletextPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBTVideoPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBTAudioPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label32 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label31 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label30 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBTProvider = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label27 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBTFreq = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label12 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBTTSID = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label11 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBTSID = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label10 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBTONID = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label9 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbtAudioLanguage3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbtAudioLanguage3 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbtAudioLanguage2 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbtAudioLanguage1 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbtAudioLanguage = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbtAudioLanguage2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbtAudioLanguage1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbtAudioLanguage = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbtAc3Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbtAudio3Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbtAudio2Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbtAudio1Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbtAc3Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbtAudio3Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbtAudio2Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbtAudio1Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbtBandWidth = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbtBandWidth = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbtPmtPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbtPmtPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbtTeletextPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbtVideoPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbtAudioPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbtTeletextPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbtVideoPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbtAudioPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbtProvider = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbtProvider = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbtCarrierFrequency = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbtCarrierFrequency = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbtTransportId = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbtTransportId = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbtServiceId = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbtServiceId = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbtNetworkId = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbtNetworkId = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label42 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage4 = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.label108 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBCPCR = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label104 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tabPageDvbc = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.labelDvbcRedNote = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbcPcrPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbcPcrPid = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label99 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label57 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBCAudioLanguage3 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBCAudioLanguage2 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBCAudioLanguage1 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBCAudioLanguage = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label54 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label55 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label56 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBCAC3 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBCAudio3 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBCAudio2 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBCAudio1 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label53 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label52 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label51 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label50 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBCPmtPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label46 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbcAudioLanguage3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbcAudioLanguage3 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbcAudioLanguage2 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbcAudioLanguage1 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbcAudioLanguage = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbcAudioLanguage2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbcAudioLanguage1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbcAudioLanguage = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbcAc3Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbcAudio3Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbcAudio2Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbcAudio1Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbcAc3Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbcAudio3Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbcAudio2Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbcAudio1Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbcPmtPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbcPmtPid = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label41 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBCTeletextPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBCVideoPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBCAudioPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label33 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label34 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label35 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBCProvider = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label28 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbDVBCModulation = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.cbDVBCInnerFeq = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label19 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label18 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBCSR = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label17 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBCFreq = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label13 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBCTSID = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label14 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBCSID = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBCONID = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label16 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage5 = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.label110 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBSPCR = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label106 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbcTeletextPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbcVideoPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbcAudioPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbcTeletextPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbcVideoPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbcAudioPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbcProvider = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbcProvider = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxDvbcModulation = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.comboBoxDvbcInnerFec = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.labelDvbcModulation = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbcInnerFec = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbcSymbolrate = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbcSymbolrate = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbcCarrierFrequency = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbcCarrierFrequency = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbcTransportId = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbcTransportId = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbcServiceId = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbcServiceId = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbcNetworkId = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbcNetworkId = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tabPageDvbs = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.labelDvbsRedNote = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbsPcrPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbsPcrPid = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label101 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label66 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBSAudioLanguage3 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBSAudioLanguage2 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBSAudioLanguage1 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBSAudioLanguage = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label67 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label68 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label69 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBSAC3 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBSAudio3 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBSAudio2 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBSAudio1 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label70 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label71 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label72 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label73 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBSPmtPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label48 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbsAudioLanguage3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbsAudioLanguage3 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbsAudioLanguage2 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbsAudioLanguage1 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbsAudioLanguage = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbsAudioLanguage2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbsAudioLanguage1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbsAudioLanguage = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbsAc3Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbsAudio3Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbsAudio2Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbsAudio1Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbsAc3Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbsAudio3Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbsAudio2Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbsAudio1Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbsPmtPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbsPmtPid = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label40 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBSECMpid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label39 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBSTeletextPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBSVideoPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbDVBSAudioPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label36 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label37 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label38 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBSProvider = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label29 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbDVBSPolarisation = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.cbDvbSInnerFec = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label20 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label21 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBSSymbolrate = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label22 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBSFreq = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label23 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBSTSID = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label24 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBSSID = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label25 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbDVBSONID = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label26 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage7 = new MediaPortal.UserInterface.Controls.MPTabPage();
-      this.label111 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbATSCPCR = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label107 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbsEcmPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbsEcmPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbsTeletextPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbsVideoPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxDvbsAudioPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbsTeletextPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbsVideoPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbsAudioPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbsProvider = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbsProvider = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxDvbsPolarisation = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.comboBoxDvbsInnerFec = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.labelDvbsPolarisation = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelDvbsInnerFec = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbsSymbolrate = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbsSymbolrate = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbsCarrierFrequency = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbsCarrierFrequency = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbsTransportId = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbsTransportId = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbsServiceId = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbsServiceId = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxDvbsNetworkId = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelDvbsNetworkId = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tabPageAtsc = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.labelAtscRedNote = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxAtscPcrPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelAtscPcrPid = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label102 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbATSCMinor = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label83 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label74 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbATSCAudioLanguage3 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbATSCAudioLanguage2 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbATSCAudioLanguage1 = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbATSCAudioLanguage = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label75 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label76 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label77 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbATSCAC3Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbATSCAudio3Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbATSCAudio2Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbATSCAudio1Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label78 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label79 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label80 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label81 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbATSCPMTPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label82 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbATSCTeletextPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbATSCVideoPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbATSCAudioPid = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label84 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label85 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label86 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbATSCProvider = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label87 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.cbATSCModulation = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.cbATSCInnerFec = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.label88 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label89 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbATSCSymbolRate = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label90 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbATSCFrequency = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label91 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbATSCTSID = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label92 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbATSCMajor = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label93 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tbATSCPhysicalChannel = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label94 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabPage6 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.textBoxAtscMinorChannel = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelAtscMinorChannel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelAtscAudioLanguage3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxAtscAudioLanguage3 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxAtscAudioLanguage2 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxAtscAudioLanguage1 = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxAtscAudioLanguage = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelAtscAudioLanguage2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelAtscAudioLanguage1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelAtscAudioLanguage = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxAtscAc3Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxAtscAudio3Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxAtscAudio2Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxAtscAudio1Pid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelAtscAc3Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelAtscAudio3Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelAtscAudio2Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelAtscAudio1Pid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxAtscPmtPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelAtscPmtPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxAtscTeletextPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxAtscVideoPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.textBoxAtscAudioPid = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelAtscTeletextPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelAtscVideoPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelAtscAudioPid = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxAtscProvider = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelAtscProvider = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBoxAtscModulation = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.comboBoxAtscInnerFec = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.labelAtscModulation = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.labelAtscInnerFec = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxAtscSymbolRate = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelAtscSymbolRate = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxAtscCarrierFrequency = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelAtscCarrierFrequency = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxAtscTransportId = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelAtscTransportId = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxAtscMajorChannel = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelAtscMajorChannel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxAtscPhysicalChannel = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelAtscPhysicalChannel = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tabPageExternal = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.label103 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
-      this.tabPage1.SuspendLayout();
-      this.tabPage2.SuspendLayout();
-      this.tabPage3.SuspendLayout();
-      this.tabPage4.SuspendLayout();
-      this.tabPage5.SuspendLayout();
-      this.tabPage7.SuspendLayout();
-      this.tabPage6.SuspendLayout();
+      this.tabPageGeneral.SuspendLayout();
+      this.tabPageAnalog.SuspendLayout();
+      this.tabPageDvbt.SuspendLayout();
+      this.tabPageDvbc.SuspendLayout();
+      this.tabPageDvbs.SuspendLayout();
+      this.tabPageAtsc.SuspendLayout();
+      this.tabPageExternal.SuspendLayout();
       this.SuspendLayout();
       // 
-      // comboTvStandard
+      // comboBoxAnalogTvStandard
       // 
-      this.comboTvStandard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboTvStandard.Items.AddRange(new object[] {
+      this.comboBoxAnalogTvStandard.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxAnalogTvStandard.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxAnalogTvStandard.Items.AddRange(new object[] {
             "Default",
             "NTSC M",
             "NTSC M J",
@@ -589,57 +590,60 @@ namespace MediaPortal.Configuration
             "SECAM L",
             "SECAM L1",
             "PAL N COMBO"});
-      this.comboTvStandard.Location = new System.Drawing.Point(128, 80);
-      this.comboTvStandard.Name = "comboTvStandard";
-      this.comboTvStandard.Size = new System.Drawing.Size(224, 21);
-      this.comboTvStandard.TabIndex = 3;
-      this.comboTvStandard.SelectedIndexChanged += new System.EventHandler(this.comboTvStandard_SelectedIndexChanged);
+      this.comboBoxAnalogTvStandard.Location = new System.Drawing.Point(128, 80);
+      this.comboBoxAnalogTvStandard.Name = "comboBoxAnalogTvStandard";
+      this.comboBoxAnalogTvStandard.Size = new System.Drawing.Size(224, 21);
+      this.comboBoxAnalogTvStandard.TabIndex = 3;
+      this.comboBoxAnalogTvStandard.SelectedIndexChanged += new System.EventHandler(this.comboTvStandard_SelectedIndexChanged);
       // 
-      // label7
+      // labelAnalogTvStandard
       // 
-      this.label7.Location = new System.Drawing.Point(24, 80);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(88, 16);
-      this.label7.TabIndex = 11;
-      this.label7.Text = "TV Standard:";
+      this.labelAnalogTvStandard.AutoSize = true;
+      this.labelAnalogTvStandard.Location = new System.Drawing.Point(24, 80);
+      this.labelAnalogTvStandard.Name = "labelAnalogTvStandard";
+      this.labelAnalogTvStandard.Size = new System.Drawing.Size(70, 13);
+      this.labelAnalogTvStandard.TabIndex = 11;
+      this.labelAnalogTvStandard.Text = "TV Standard:";
       // 
-      // frequencyTextBox
+      // textBoxAnalogFrequency
       // 
-      this.frequencyTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.textBoxAnalogFrequency.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.frequencyTextBox.Location = new System.Drawing.Point(128, 48);
-      this.frequencyTextBox.MaxLength = 10;
-      this.frequencyTextBox.Name = "frequencyTextBox";
-      this.frequencyTextBox.Size = new System.Drawing.Size(168, 20);
-      this.frequencyTextBox.TabIndex = 2;
-      this.frequencyTextBox.Text = "0";
-      this.frequencyTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.frequencyTextBox_KeyPress);
+      this.textBoxAnalogFrequency.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAnalogFrequency.Location = new System.Drawing.Point(128, 48);
+      this.textBoxAnalogFrequency.MaxLength = 10;
+      this.textBoxAnalogFrequency.Name = "textBoxAnalogFrequency";
+      this.textBoxAnalogFrequency.Size = new System.Drawing.Size(168, 20);
+      this.textBoxAnalogFrequency.TabIndex = 2;
+      this.textBoxAnalogFrequency.Text = "0";
+      this.textBoxAnalogFrequency.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.frequencyTextBox_KeyPress);
       // 
-      // label1
+      // labelAnalogFrequency
       // 
-      this.label1.Location = new System.Drawing.Point(24, 48);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(104, 32);
-      this.label1.TabIndex = 10;
-      this.label1.Text = "Frequency (leave 0 for default)";
+      this.labelAnalogFrequency.Location = new System.Drawing.Point(24, 48);
+      this.labelAnalogFrequency.Name = "labelAnalogFrequency";
+      this.labelAnalogFrequency.Size = new System.Drawing.Size(104, 32);
+      this.labelAnalogFrequency.TabIndex = 10;
+      this.labelAnalogFrequency.Text = "Frequency (leave 0 for default)";
       // 
-      // nameTextBox
+      // textBoxGeneralName
       // 
-      this.nameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.textBoxGeneralName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.nameTextBox.Location = new System.Drawing.Point(128, 16);
-      this.nameTextBox.Name = "nameTextBox";
-      this.nameTextBox.Size = new System.Drawing.Size(264, 20);
-      this.nameTextBox.TabIndex = 0;
+      this.textBoxGeneralName.BorderColor = System.Drawing.Color.Red;
+      this.textBoxGeneralName.Location = new System.Drawing.Point(128, 16);
+      this.textBoxGeneralName.Name = "textBoxGeneralName";
+      this.textBoxGeneralName.Size = new System.Drawing.Size(264, 20);
+      this.textBoxGeneralName.TabIndex = 0;
       // 
-      // label2
+      // labelGeneralName
       // 
-      this.label2.ForeColor = System.Drawing.Color.Red;
-      this.label2.Location = new System.Drawing.Point(24, 16);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(100, 23);
-      this.label2.TabIndex = 6;
-      this.label2.Text = "* Name";
+      this.labelGeneralName.AutoSize = true;
+      this.labelGeneralName.Location = new System.Drawing.Point(24, 16);
+      this.labelGeneralName.Name = "labelGeneralName";
+      this.labelGeneralName.Size = new System.Drawing.Size(35, 13);
+      this.labelGeneralName.TabIndex = 6;
+      this.labelGeneralName.Text = "Name";
       // 
       // cancelButton
       // 
@@ -664,117 +668,124 @@ namespace MediaPortal.Configuration
       this.okButton.UseVisualStyleBackColor = true;
       this.okButton.Click += new System.EventHandler(this.okButton_Click);
       // 
-      // inputComboBox
+      // comboBoxExternalInput
       // 
-      this.inputComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.inputComboBox.Enabled = false;
-      this.inputComboBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-      this.inputComboBox.Items.AddRange(new object[] {
+      this.comboBoxExternalInput.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxExternalInput.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxExternalInput.Enabled = false;
+      this.comboBoxExternalInput.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+      this.comboBoxExternalInput.Items.AddRange(new object[] {
             "CVBS#1",
             "CVBS#2",
             "SVHS",
             "RGB"});
-      this.inputComboBox.Location = new System.Drawing.Point(128, 56);
-      this.inputComboBox.Name = "inputComboBox";
-      this.inputComboBox.Size = new System.Drawing.Size(224, 21);
-      this.inputComboBox.TabIndex = 1;
+      this.comboBoxExternalInput.Location = new System.Drawing.Point(128, 56);
+      this.comboBoxExternalInput.Name = "comboBoxExternalInput";
+      this.comboBoxExternalInput.Size = new System.Drawing.Size(224, 21);
+      this.comboBoxExternalInput.TabIndex = 1;
       // 
-      // label6
+      // labelExternalInput
       // 
-      this.label6.Location = new System.Drawing.Point(24, 56);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(100, 23);
-      this.label6.TabIndex = 12;
-      this.label6.Text = "Input via";
+      this.labelExternalInput.AutoSize = true;
+      this.labelExternalInput.Location = new System.Drawing.Point(24, 56);
+      this.labelExternalInput.Name = "labelExternalInput";
+      this.labelExternalInput.Size = new System.Drawing.Size(48, 13);
+      this.labelExternalInput.TabIndex = 12;
+      this.labelExternalInput.Text = "Input via";
       // 
-      // typeComboBox
+      // comboBoxExternalType
       // 
-      this.typeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.typeComboBox.Items.AddRange(new object[] {
+      this.comboBoxExternalType.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxExternalType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxExternalType.Items.AddRange(new object[] {
             "Received by tv card",
             "Received by external settop box"});
-      this.typeComboBox.Location = new System.Drawing.Point(128, 24);
-      this.typeComboBox.Name = "typeComboBox";
-      this.typeComboBox.Size = new System.Drawing.Size(224, 21);
-      this.typeComboBox.TabIndex = 0;
-      this.typeComboBox.SelectedIndexChanged += new System.EventHandler(this.typeComboBox_SelectedIndexChanged);
+      this.comboBoxExternalType.Location = new System.Drawing.Point(128, 24);
+      this.comboBoxExternalType.Name = "comboBoxExternalType";
+      this.comboBoxExternalType.Size = new System.Drawing.Size(224, 21);
+      this.comboBoxExternalType.TabIndex = 0;
+      this.comboBoxExternalType.SelectedIndexChanged += new System.EventHandler(this.typeComboBox_SelectedIndexChanged);
       // 
-      // label5
+      // labelExternalType
       // 
-      this.label5.Location = new System.Drawing.Point(24, 32);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(100, 23);
-      this.label5.TabIndex = 10;
-      this.label5.Text = "Type";
+      this.labelExternalType.AutoSize = true;
+      this.labelExternalType.Location = new System.Drawing.Point(24, 32);
+      this.labelExternalType.Name = "labelExternalType";
+      this.labelExternalType.Size = new System.Drawing.Size(31, 13);
+      this.labelExternalType.TabIndex = 10;
+      this.labelExternalType.Text = "Type";
       // 
-      // externalChannelTextBox
+      // textBoxExternalChannelNumber
       // 
-      this.externalChannelTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.textBoxExternalChannelNumber.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.externalChannelTextBox.Enabled = false;
-      this.externalChannelTextBox.Location = new System.Drawing.Point(128, 88);
-      this.externalChannelTextBox.Name = "externalChannelTextBox";
-      this.externalChannelTextBox.Size = new System.Drawing.Size(272, 20);
-      this.externalChannelTextBox.TabIndex = 2;
+      this.textBoxExternalChannelNumber.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxExternalChannelNumber.Enabled = false;
+      this.textBoxExternalChannelNumber.Location = new System.Drawing.Point(128, 88);
+      this.textBoxExternalChannelNumber.Name = "textBoxExternalChannelNumber";
+      this.textBoxExternalChannelNumber.Size = new System.Drawing.Size(272, 20);
+      this.textBoxExternalChannelNumber.TabIndex = 2;
       // 
-      // label4
+      // labelExternalChannelNumber
       // 
-      this.label4.Location = new System.Drawing.Point(24, 88);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(88, 32);
-      this.label4.TabIndex = 8;
-      this.label4.Text = "channel number on settopbox";
+      this.labelExternalChannelNumber.Location = new System.Drawing.Point(24, 88);
+      this.labelExternalChannelNumber.Name = "labelExternalChannelNumber";
+      this.labelExternalChannelNumber.Size = new System.Drawing.Size(88, 32);
+      this.labelExternalChannelNumber.TabIndex = 8;
+      this.labelExternalChannelNumber.Text = "channel number on settopbox";
       // 
       // tabControl1
       // 
-      this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Controls.Add(this.tabPage2);
-      this.tabControl1.Controls.Add(this.tabPage3);
-      this.tabControl1.Controls.Add(this.tabPage4);
-      this.tabControl1.Controls.Add(this.tabPage5);
-      this.tabControl1.Controls.Add(this.tabPage7);
-      this.tabControl1.Controls.Add(this.tabPage6);
+      this.tabControl1.Controls.Add(this.tabPageGeneral);
+      this.tabControl1.Controls.Add(this.tabPageAnalog);
+      this.tabControl1.Controls.Add(this.tabPageDvbt);
+      this.tabControl1.Controls.Add(this.tabPageDvbc);
+      this.tabControl1.Controls.Add(this.tabPageDvbs);
+      this.tabControl1.Controls.Add(this.tabPageAtsc);
+      this.tabControl1.Controls.Add(this.tabPageExternal);
       this.tabControl1.Location = new System.Drawing.Point(8, 8);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
       this.tabControl1.Size = new System.Drawing.Size(488, 408);
       this.tabControl1.TabIndex = 4;
       // 
-      // tabPage1
+      // tabPageGeneral
       // 
-      this.tabPage1.Controls.Add(this.label112);
-      this.tabPage1.Controls.Add(this.label97);
-      this.tabPage1.Controls.Add(this.label96);
-      this.tabPage1.Controls.Add(this.label95);
-      this.tabPage1.Controls.Add(this.labelSpecial);
-      this.tabPage1.Controls.Add(this.comboBoxChannels);
-      this.tabPage1.Controls.Add(this.checkBoxScrambled);
-      this.tabPage1.Controls.Add(this.label45);
-      this.tabPage1.Controls.Add(this.label44);
-      this.tabPage1.Controls.Add(this.label3);
-      this.tabPage1.Controls.Add(this.label2);
-      this.tabPage1.Controls.Add(this.nameTextBox);
-      this.tabPage1.Location = new System.Drawing.Point(4, 22);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Size = new System.Drawing.Size(480, 382);
-      this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "General";
-      this.tabPage1.UseVisualStyleBackColor = true;
+      this.tabPageGeneral.Controls.Add(this.labelGeneralRedNote);
+      this.tabPageGeneral.Controls.Add(this.label97);
+      this.tabPageGeneral.Controls.Add(this.label96);
+      this.tabPageGeneral.Controls.Add(this.label95);
+      this.tabPageGeneral.Controls.Add(this.labelSpecial);
+      this.tabPageGeneral.Controls.Add(this.comboBoxGeneralChannel);
+      this.tabPageGeneral.Controls.Add(this.checkBoxGeneralEncryptedChannel);
+      this.tabPageGeneral.Controls.Add(this.label45);
+      this.tabPageGeneral.Controls.Add(this.label44);
+      this.tabPageGeneral.Controls.Add(this.labelGeneralChannel);
+      this.tabPageGeneral.Controls.Add(this.labelGeneralName);
+      this.tabPageGeneral.Controls.Add(this.textBoxGeneralName);
+      this.tabPageGeneral.Location = new System.Drawing.Point(4, 22);
+      this.tabPageGeneral.Name = "tabPageGeneral";
+      this.tabPageGeneral.Size = new System.Drawing.Size(480, 382);
+      this.tabPageGeneral.TabIndex = 0;
+      this.tabPageGeneral.Text = "General";
+      this.tabPageGeneral.UseVisualStyleBackColor = true;
       // 
-      // label112
+      // labelGeneralRedNote
       // 
-      this.label112.ForeColor = System.Drawing.Color.Red;
-      this.label112.Location = new System.Drawing.Point(24, 336);
-      this.label112.Name = "label112";
-      this.label112.Size = new System.Drawing.Size(336, 23);
-      this.label112.TabIndex = 19;
-      this.label112.Text = "Fields with * and in red are required fields";
+      this.labelGeneralRedNote.AutoSize = true;
+      this.labelGeneralRedNote.ForeColor = System.Drawing.Color.Red;
+      this.labelGeneralRedNote.Location = new System.Drawing.Point(296, 352);
+      this.labelGeneralRedNote.Name = "labelGeneralRedNote";
+      this.labelGeneralRedNote.Size = new System.Drawing.Size(171, 13);
+      this.labelGeneralRedNote.TabIndex = 19;
+      this.labelGeneralRedNote.Text = "Red fields denote  required values.";
       // 
       // label97
       // 
+      this.label97.AutoSize = true;
       this.label97.Location = new System.Drawing.Point(32, 264);
       this.label97.Name = "label97";
-      this.label97.Size = new System.Drawing.Size(248, 23);
+      this.label97.Size = new System.Drawing.Size(229, 13);
       this.label97.TabIndex = 18;
       this.label97.Text = "For digital TV, the channel number is not used. ";
       // 
@@ -788,9 +799,10 @@ namespace MediaPortal.Configuration
       // 
       // label95
       // 
+      this.label95.AutoSize = true;
       this.label95.Location = new System.Drawing.Point(16, 248);
       this.label95.Name = "label95";
-      this.label95.Size = new System.Drawing.Size(344, 16);
+      this.label95.Size = new System.Drawing.Size(56, 13);
       this.label95.TabIndex = 16;
       this.label95.Text = "Digital TV:";
       // 
@@ -801,30 +813,32 @@ namespace MediaPortal.Configuration
       this.labelSpecial.Size = new System.Drawing.Size(64, 16);
       this.labelSpecial.TabIndex = 15;
       // 
-      // comboBoxChannels
+      // comboBoxGeneralChannel
       // 
-      this.comboBoxChannels.Location = new System.Drawing.Point(128, 48);
-      this.comboBoxChannels.Name = "comboBoxChannels";
-      this.comboBoxChannels.Size = new System.Drawing.Size(121, 21);
-      this.comboBoxChannels.TabIndex = 1;
-      this.comboBoxChannels.SelectedIndexChanged += new System.EventHandler(this.comboBoxChannels_SelectedIndexChanged);
+      this.comboBoxGeneralChannel.BorderColor = System.Drawing.Color.Red;
+      this.comboBoxGeneralChannel.Location = new System.Drawing.Point(128, 48);
+      this.comboBoxGeneralChannel.Name = "comboBoxGeneralChannel";
+      this.comboBoxGeneralChannel.Size = new System.Drawing.Size(121, 21);
+      this.comboBoxGeneralChannel.TabIndex = 1;
+      this.comboBoxGeneralChannel.SelectedIndexChanged += new System.EventHandler(this.comboBoxChannels_SelectedIndexChanged);
       // 
-      // checkBoxScrambled
+      // checkBoxGeneralEncryptedChannel
       // 
-      this.checkBoxScrambled.AutoSize = true;
-      this.checkBoxScrambled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxScrambled.Location = new System.Drawing.Point(24, 80);
-      this.checkBoxScrambled.Name = "checkBoxScrambled";
-      this.checkBoxScrambled.Size = new System.Drawing.Size(228, 17);
-      this.checkBoxScrambled.TabIndex = 2;
-      this.checkBoxScrambled.Text = "Tv channel is encrypted (only for digital TV)";
-      this.checkBoxScrambled.UseVisualStyleBackColor = true;
+      this.checkBoxGeneralEncryptedChannel.AutoSize = true;
+      this.checkBoxGeneralEncryptedChannel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxGeneralEncryptedChannel.Location = new System.Drawing.Point(24, 80);
+      this.checkBoxGeneralEncryptedChannel.Name = "checkBoxGeneralEncryptedChannel";
+      this.checkBoxGeneralEncryptedChannel.Size = new System.Drawing.Size(214, 17);
+      this.checkBoxGeneralEncryptedChannel.TabIndex = 2;
+      this.checkBoxGeneralEncryptedChannel.Text = "TV channel is encrypted (digital TV only)";
+      this.checkBoxGeneralEncryptedChannel.UseVisualStyleBackColor = true;
       // 
       // label45
       // 
+      this.label45.AutoSize = true;
       this.label45.Location = new System.Drawing.Point(16, 160);
       this.label45.Name = "label45";
-      this.label45.Size = new System.Drawing.Size(344, 16);
+      this.label45.Size = new System.Drawing.Size(60, 13);
       this.label45.TabIndex = 12;
       this.label45.Text = "Analog TV:";
       // 
@@ -834,43 +848,44 @@ namespace MediaPortal.Configuration
       this.label44.Name = "label44";
       this.label44.Size = new System.Drawing.Size(344, 32);
       this.label44.TabIndex = 11;
-      this.label44.Text = "Enter the name of this TV Channel. If you\'re using the TVGuide then make sure it " +
-          "matches the channel name from the TVGuide";
+      this.label44.Text = "Enter the name of this TV Channel. If you\'re using the TV guide then make sure it" +
+          " matches the channel name from the TV guide.";
       // 
-      // label3
+      // labelGeneralChannel
       // 
-      this.label3.ForeColor = System.Drawing.Color.Red;
-      this.label3.Location = new System.Drawing.Point(24, 48);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(88, 16);
-      this.label3.TabIndex = 10;
-      this.label3.Text = "* Channel";
+      this.labelGeneralChannel.AutoSize = true;
+      this.labelGeneralChannel.Location = new System.Drawing.Point(24, 48);
+      this.labelGeneralChannel.Name = "labelGeneralChannel";
+      this.labelGeneralChannel.Size = new System.Drawing.Size(46, 13);
+      this.labelGeneralChannel.TabIndex = 10;
+      this.labelGeneralChannel.Text = "Channel";
       // 
-      // tabPage2
+      // tabPageAnalog
       // 
-      this.tabPage2.Controls.Add(this.label98);
-      this.tabPage2.Controls.Add(this.label43);
-      this.tabPage2.Controls.Add(this.countryComboBox);
-      this.tabPage2.Controls.Add(this.label8);
-      this.tabPage2.Controls.Add(this.label1);
-      this.tabPage2.Controls.Add(this.frequencyTextBox);
-      this.tabPage2.Controls.Add(this.label7);
-      this.tabPage2.Controls.Add(this.comboTvStandard);
-      this.tabPage2.Location = new System.Drawing.Point(4, 22);
-      this.tabPage2.Name = "tabPage2";
-      this.tabPage2.Size = new System.Drawing.Size(480, 382);
-      this.tabPage2.TabIndex = 1;
-      this.tabPage2.Text = "Analog";
-      this.tabPage2.UseVisualStyleBackColor = true;
+      this.tabPageAnalog.Controls.Add(this.label98);
+      this.tabPageAnalog.Controls.Add(this.label43);
+      this.tabPageAnalog.Controls.Add(this.comboBoxAnalogCountry);
+      this.tabPageAnalog.Controls.Add(this.labelAnalogCountry);
+      this.tabPageAnalog.Controls.Add(this.labelAnalogFrequency);
+      this.tabPageAnalog.Controls.Add(this.textBoxAnalogFrequency);
+      this.tabPageAnalog.Controls.Add(this.labelAnalogTvStandard);
+      this.tabPageAnalog.Controls.Add(this.comboBoxAnalogTvStandard);
+      this.tabPageAnalog.Location = new System.Drawing.Point(4, 22);
+      this.tabPageAnalog.Name = "tabPageAnalog";
+      this.tabPageAnalog.Size = new System.Drawing.Size(480, 382);
+      this.tabPageAnalog.TabIndex = 1;
+      this.tabPageAnalog.Text = "Analog";
+      this.tabPageAnalog.UseVisualStyleBackColor = true;
       // 
       // label98
       // 
+      this.label98.AutoSize = true;
       this.label98.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.label98.Location = new System.Drawing.Point(24, 8);
       this.label98.Name = "label98";
-      this.label98.Size = new System.Drawing.Size(224, 23);
+      this.label98.Size = new System.Drawing.Size(114, 13);
       this.label98.TabIndex = 18;
-      this.label98.Text = "Analog TV settings for this TV channel";
+      this.label98.Text = "Analog TV settings";
       // 
       // label43
       // 
@@ -880,690 +895,753 @@ namespace MediaPortal.Configuration
       this.label43.TabIndex = 17;
       this.label43.Text = resources.GetString("label43.Text");
       // 
-      // countryComboBox
+      // comboBoxAnalogCountry
       // 
-      this.countryComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.comboBoxAnalogCountry.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.countryComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.countryComboBox.Location = new System.Drawing.Point(128, 112);
-      this.countryComboBox.MaxDropDownItems = 16;
-      this.countryComboBox.Name = "countryComboBox";
-      this.countryComboBox.Size = new System.Drawing.Size(312, 21);
-      this.countryComboBox.Sorted = true;
-      this.countryComboBox.TabIndex = 15;
+      this.comboBoxAnalogCountry.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxAnalogCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxAnalogCountry.Location = new System.Drawing.Point(128, 112);
+      this.comboBoxAnalogCountry.MaxDropDownItems = 16;
+      this.comboBoxAnalogCountry.Name = "comboBoxAnalogCountry";
+      this.comboBoxAnalogCountry.Size = new System.Drawing.Size(312, 21);
+      this.comboBoxAnalogCountry.Sorted = true;
+      this.comboBoxAnalogCountry.TabIndex = 15;
       // 
-      // label8
+      // labelAnalogCountry
       // 
-      this.label8.Location = new System.Drawing.Point(24, 112);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(56, 16);
-      this.label8.TabIndex = 16;
-      this.label8.Text = "Country";
+      this.labelAnalogCountry.AutoSize = true;
+      this.labelAnalogCountry.Location = new System.Drawing.Point(24, 112);
+      this.labelAnalogCountry.Name = "labelAnalogCountry";
+      this.labelAnalogCountry.Size = new System.Drawing.Size(43, 13);
+      this.labelAnalogCountry.TabIndex = 16;
+      this.labelAnalogCountry.Text = "Country";
       // 
-      // tabPage3
+      // tabPageDvbt
       // 
-      this.tabPage3.Controls.Add(this.label109);
-      this.tabPage3.Controls.Add(this.tbDVBTPCR);
-      this.tabPage3.Controls.Add(this.label105);
-      this.tabPage3.Controls.Add(this.label100);
-      this.tabPage3.Controls.Add(this.label58);
-      this.tabPage3.Controls.Add(this.tbDVBTAudioLanguage3);
-      this.tabPage3.Controls.Add(this.tbDVBTAudioLanguage2);
-      this.tabPage3.Controls.Add(this.tbDVBTAudioLanguage1);
-      this.tabPage3.Controls.Add(this.tbDVBTAudioLanguage);
-      this.tabPage3.Controls.Add(this.label59);
-      this.tabPage3.Controls.Add(this.label60);
-      this.tabPage3.Controls.Add(this.label61);
-      this.tabPage3.Controls.Add(this.tbDVBTAC3);
-      this.tabPage3.Controls.Add(this.tbDVBTAudio3);
-      this.tabPage3.Controls.Add(this.tbDVBTAudio2);
-      this.tabPage3.Controls.Add(this.tbDVBTAudio1);
-      this.tabPage3.Controls.Add(this.label62);
-      this.tabPage3.Controls.Add(this.label63);
-      this.tabPage3.Controls.Add(this.label64);
-      this.tabPage3.Controls.Add(this.label65);
-      this.tabPage3.Controls.Add(this.label49);
-      this.tabPage3.Controls.Add(this.tbBandWidth);
-      this.tabPage3.Controls.Add(this.tbDVBTPmtPid);
-      this.tabPage3.Controls.Add(this.label47);
-      this.tabPage3.Controls.Add(this.tbDVBTTeletextPid);
-      this.tabPage3.Controls.Add(this.tbDVBTVideoPid);
-      this.tabPage3.Controls.Add(this.tbDVBTAudioPid);
-      this.tabPage3.Controls.Add(this.label32);
-      this.tabPage3.Controls.Add(this.label31);
-      this.tabPage3.Controls.Add(this.label30);
-      this.tabPage3.Controls.Add(this.tbDVBTProvider);
-      this.tabPage3.Controls.Add(this.label27);
-      this.tabPage3.Controls.Add(this.tbDVBTFreq);
-      this.tabPage3.Controls.Add(this.label12);
-      this.tabPage3.Controls.Add(this.tbDVBTTSID);
-      this.tabPage3.Controls.Add(this.label11);
-      this.tabPage3.Controls.Add(this.tbDVBTSID);
-      this.tabPage3.Controls.Add(this.label10);
-      this.tabPage3.Controls.Add(this.tbDVBTONID);
-      this.tabPage3.Controls.Add(this.label9);
-      this.tabPage3.Controls.Add(this.label42);
-      this.tabPage3.Location = new System.Drawing.Point(4, 22);
-      this.tabPage3.Name = "tabPage3";
-      this.tabPage3.Size = new System.Drawing.Size(480, 382);
-      this.tabPage3.TabIndex = 2;
-      this.tabPage3.Text = "DVB-T";
-      this.tabPage3.UseVisualStyleBackColor = true;
+      this.tabPageDvbt.Controls.Add(this.labelDvbtRedNote);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtPcrPid);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtPcrPid);
+      this.tabPageDvbt.Controls.Add(this.label100);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtAudioLanguage3);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtAudioLanguage3);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtAudioLanguage2);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtAudioLanguage1);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtAudioLanguage);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtAudioLanguage2);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtAudioLanguage1);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtAudioLanguage);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtAc3Pid);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtAudio3Pid);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtAudio2Pid);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtAudio1Pid);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtAc3Pid);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtAudio3Pid);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtAudio2Pid);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtAudio1Pid);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtBandWidth);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtBandWidth);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtPmtPid);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtPmtPid);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtTeletextPid);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtVideoPid);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtAudioPid);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtTeletextPid);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtVideoPid);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtAudioPid);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtProvider);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtProvider);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtCarrierFrequency);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtCarrierFrequency);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtTransportId);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtTransportId);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtServiceId);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtServiceId);
+      this.tabPageDvbt.Controls.Add(this.textBoxDvbtNetworkId);
+      this.tabPageDvbt.Controls.Add(this.labelDvbtNetworkId);
+      this.tabPageDvbt.Controls.Add(this.label42);
+      this.tabPageDvbt.Location = new System.Drawing.Point(4, 22);
+      this.tabPageDvbt.Name = "tabPageDvbt";
+      this.tabPageDvbt.Size = new System.Drawing.Size(480, 382);
+      this.tabPageDvbt.TabIndex = 2;
+      this.tabPageDvbt.Text = "DVB-T";
+      this.tabPageDvbt.UseVisualStyleBackColor = true;
       // 
-      // label109
+      // labelDvbtRedNote
       // 
-      this.label109.ForeColor = System.Drawing.Color.Red;
-      this.label109.Location = new System.Drawing.Point(16, 352);
-      this.label109.Name = "label109";
-      this.label109.Size = new System.Drawing.Size(248, 16);
-      this.label109.TabIndex = 68;
-      this.label109.Text = "Fields with * and in red are required";
+      this.labelDvbtRedNote.AutoSize = true;
+      this.labelDvbtRedNote.ForeColor = System.Drawing.Color.Red;
+      this.labelDvbtRedNote.Location = new System.Drawing.Point(296, 352);
+      this.labelDvbtRedNote.Name = "labelDvbtRedNote";
+      this.labelDvbtRedNote.Size = new System.Drawing.Size(171, 13);
+      this.labelDvbtRedNote.TabIndex = 68;
+      this.labelDvbtRedNote.Text = "Red fields denote  required values.";
       // 
-      // tbDVBTPCR
+      // textBoxDvbtPcrPid
       // 
-      this.tbDVBTPCR.Location = new System.Drawing.Point(360, 80);
-      this.tbDVBTPCR.Name = "tbDVBTPCR";
-      this.tbDVBTPCR.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTPCR.TabIndex = 67;
+      this.textBoxDvbtPcrPid.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbtPcrPid.Location = new System.Drawing.Point(360, 104);
+      this.textBoxDvbtPcrPid.Name = "textBoxDvbtPcrPid";
+      this.textBoxDvbtPcrPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtPcrPid.TabIndex = 67;
       // 
-      // label105
+      // labelDvbtPcrPid
       // 
-      this.label105.ForeColor = System.Drawing.Color.Red;
-      this.label105.Location = new System.Drawing.Point(288, 80);
-      this.label105.Name = "label105";
-      this.label105.Size = new System.Drawing.Size(72, 16);
-      this.label105.TabIndex = 66;
-      this.label105.Text = "* PCR PID";
+      this.labelDvbtPcrPid.AutoSize = true;
+      this.labelDvbtPcrPid.Location = new System.Drawing.Point(288, 104);
+      this.labelDvbtPcrPid.Name = "labelDvbtPcrPid";
+      this.labelDvbtPcrPid.Size = new System.Drawing.Size(50, 13);
+      this.labelDvbtPcrPid.TabIndex = 66;
+      this.labelDvbtPcrPid.Text = "PCR PID";
       // 
       // label100
       // 
+      this.label100.AutoSize = true;
       this.label100.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label100.Location = new System.Drawing.Point(16, 8);
+      this.label100.Location = new System.Drawing.Point(32, 16);
       this.label100.Name = "label100";
-      this.label100.Size = new System.Drawing.Size(272, 23);
+      this.label100.Size = new System.Drawing.Size(168, 13);
       this.label100.TabIndex = 65;
-      this.label100.Text = "Digital TV Terrestrial settings for this TV channel";
-      // 
-      // label58
-      // 
-      this.label58.Location = new System.Drawing.Point(288, 288);
-      this.label58.Name = "label58";
-      this.label58.Size = new System.Drawing.Size(72, 16);
-      this.label58.TabIndex = 64;
-      this.label58.Text = "Audio 3:";
-      // 
-      // tbDVBTAudioLanguage3
-      // 
-      this.tbDVBTAudioLanguage3.Location = new System.Drawing.Point(360, 288);
-      this.tbDVBTAudioLanguage3.Name = "tbDVBTAudioLanguage3";
-      this.tbDVBTAudioLanguage3.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTAudioLanguage3.TabIndex = 63;
-      // 
-      // tbDVBTAudioLanguage2
-      // 
-      this.tbDVBTAudioLanguage2.Location = new System.Drawing.Point(360, 264);
-      this.tbDVBTAudioLanguage2.Name = "tbDVBTAudioLanguage2";
-      this.tbDVBTAudioLanguage2.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTAudioLanguage2.TabIndex = 62;
-      // 
-      // tbDVBTAudioLanguage1
-      // 
-      this.tbDVBTAudioLanguage1.Location = new System.Drawing.Point(360, 240);
-      this.tbDVBTAudioLanguage1.Name = "tbDVBTAudioLanguage1";
-      this.tbDVBTAudioLanguage1.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTAudioLanguage1.TabIndex = 61;
-      // 
-      // tbDVBTAudioLanguage
-      // 
-      this.tbDVBTAudioLanguage.Location = new System.Drawing.Point(360, 216);
-      this.tbDVBTAudioLanguage.Name = "tbDVBTAudioLanguage";
-      this.tbDVBTAudioLanguage.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTAudioLanguage.TabIndex = 60;
-      // 
-      // label59
-      // 
-      this.label59.Location = new System.Drawing.Point(288, 264);
-      this.label59.Name = "label59";
-      this.label59.Size = new System.Drawing.Size(72, 16);
-      this.label59.TabIndex = 59;
-      this.label59.Text = "Audio 2:";
-      // 
-      // label60
-      // 
-      this.label60.Location = new System.Drawing.Point(288, 240);
-      this.label60.Name = "label60";
-      this.label60.Size = new System.Drawing.Size(72, 16);
-      this.label60.TabIndex = 58;
-      this.label60.Text = "Audio 1:";
-      // 
-      // label61
-      // 
-      this.label61.Location = new System.Drawing.Point(288, 216);
-      this.label61.Name = "label61";
-      this.label61.Size = new System.Drawing.Size(72, 16);
-      this.label61.TabIndex = 57;
-      this.label61.Text = "Audio :";
-      // 
-      // tbDVBTAC3
-      // 
-      this.tbDVBTAC3.Location = new System.Drawing.Point(360, 184);
-      this.tbDVBTAC3.Name = "tbDVBTAC3";
-      this.tbDVBTAC3.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTAC3.TabIndex = 56;
-      // 
-      // tbDVBTAudio3
-      // 
-      this.tbDVBTAudio3.Location = new System.Drawing.Point(360, 160);
-      this.tbDVBTAudio3.Name = "tbDVBTAudio3";
-      this.tbDVBTAudio3.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTAudio3.TabIndex = 55;
-      // 
-      // tbDVBTAudio2
-      // 
-      this.tbDVBTAudio2.Location = new System.Drawing.Point(360, 136);
-      this.tbDVBTAudio2.Name = "tbDVBTAudio2";
-      this.tbDVBTAudio2.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTAudio2.TabIndex = 54;
-      // 
-      // tbDVBTAudio1
-      // 
-      this.tbDVBTAudio1.Location = new System.Drawing.Point(360, 112);
-      this.tbDVBTAudio1.Name = "tbDVBTAudio1";
-      this.tbDVBTAudio1.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTAudio1.TabIndex = 53;
-      // 
-      // label62
-      // 
-      this.label62.Location = new System.Drawing.Point(288, 184);
-      this.label62.Name = "label62";
-      this.label62.Size = new System.Drawing.Size(72, 16);
-      this.label62.TabIndex = 52;
-      this.label62.Text = "AC3 Pid:";
-      // 
-      // label63
-      // 
-      this.label63.Location = new System.Drawing.Point(288, 160);
-      this.label63.Name = "label63";
-      this.label63.Size = new System.Drawing.Size(72, 16);
-      this.label63.TabIndex = 51;
-      this.label63.Text = "Audio Pid3:";
-      // 
-      // label64
-      // 
-      this.label64.Location = new System.Drawing.Point(288, 136);
-      this.label64.Name = "label64";
-      this.label64.Size = new System.Drawing.Size(72, 16);
-      this.label64.TabIndex = 50;
-      this.label64.Text = "Audio Pid2:";
-      // 
-      // label65
-      // 
-      this.label65.Location = new System.Drawing.Point(288, 112);
-      this.label65.Name = "label65";
-      this.label65.Size = new System.Drawing.Size(72, 16);
-      this.label65.TabIndex = 49;
-      this.label65.Text = "Audio Pid1:";
-      // 
-      // label49
-      // 
-      this.label49.ForeColor = System.Drawing.Color.Red;
-      this.label49.Location = new System.Drawing.Point(16, 296);
-      this.label49.Name = "label49";
-      this.label49.Size = new System.Drawing.Size(100, 23);
-      this.label49.TabIndex = 36;
-      this.label49.Text = "* Bandwidth:";
-      // 
-      // tbBandWidth
-      // 
-      this.tbBandWidth.Location = new System.Drawing.Point(152, 296);
-      this.tbBandWidth.Name = "tbBandWidth";
-      this.tbBandWidth.Size = new System.Drawing.Size(100, 20);
-      this.tbBandWidth.TabIndex = 35;
-      // 
-      // tbDVBTPmtPid
-      // 
-      this.tbDVBTPmtPid.Location = new System.Drawing.Point(152, 272);
-      this.tbDVBTPmtPid.Name = "tbDVBTPmtPid";
-      this.tbDVBTPmtPid.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTPmtPid.TabIndex = 34;
-      // 
-      // label47
-      // 
-      this.label47.ForeColor = System.Drawing.Color.Red;
-      this.label47.Location = new System.Drawing.Point(16, 272);
-      this.label47.Name = "label47";
-      this.label47.Size = new System.Drawing.Size(72, 16);
-      this.label47.TabIndex = 33;
-      this.label47.Text = "* PMT pid:";
-      // 
-      // tbDVBTTeletextPid
-      // 
-      this.tbDVBTTeletextPid.Location = new System.Drawing.Point(152, 248);
-      this.tbDVBTTeletextPid.Name = "tbDVBTTeletextPid";
-      this.tbDVBTTeletextPid.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTTeletextPid.TabIndex = 15;
-      // 
-      // tbDVBTVideoPid
-      // 
-      this.tbDVBTVideoPid.Location = new System.Drawing.Point(152, 224);
-      this.tbDVBTVideoPid.Name = "tbDVBTVideoPid";
-      this.tbDVBTVideoPid.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTVideoPid.TabIndex = 14;
-      // 
-      // tbDVBTAudioPid
-      // 
-      this.tbDVBTAudioPid.Location = new System.Drawing.Point(152, 200);
-      this.tbDVBTAudioPid.Name = "tbDVBTAudioPid";
-      this.tbDVBTAudioPid.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTAudioPid.TabIndex = 13;
-      // 
-      // label32
-      // 
-      this.label32.Location = new System.Drawing.Point(16, 248);
-      this.label32.Name = "label32";
-      this.label32.Size = new System.Drawing.Size(72, 16);
-      this.label32.TabIndex = 12;
-      this.label32.Text = "Teletext pid:";
-      // 
-      // label31
-      // 
-      this.label31.ForeColor = System.Drawing.Color.Red;
-      this.label31.Location = new System.Drawing.Point(16, 224);
-      this.label31.Name = "label31";
-      this.label31.Size = new System.Drawing.Size(72, 16);
-      this.label31.TabIndex = 11;
-      this.label31.Text = "* Video pid:";
-      // 
-      // label30
-      // 
-      this.label30.ForeColor = System.Drawing.Color.Red;
-      this.label30.Location = new System.Drawing.Point(16, 200);
-      this.label30.Name = "label30";
-      this.label30.Size = new System.Drawing.Size(72, 16);
-      this.label30.TabIndex = 10;
-      this.label30.Text = "* Audio pid:";
-      // 
-      // tbDVBTProvider
-      // 
-      this.tbDVBTProvider.Location = new System.Drawing.Point(152, 176);
-      this.tbDVBTProvider.Name = "tbDVBTProvider";
-      this.tbDVBTProvider.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTProvider.TabIndex = 9;
-      // 
-      // label27
-      // 
-      this.label27.Location = new System.Drawing.Point(16, 176);
-      this.label27.Name = "label27";
-      this.label27.Size = new System.Drawing.Size(100, 16);
-      this.label27.TabIndex = 8;
-      this.label27.Text = "Provider:";
-      // 
-      // tbDVBTFreq
-      // 
-      this.tbDVBTFreq.Location = new System.Drawing.Point(152, 152);
-      this.tbDVBTFreq.Name = "tbDVBTFreq";
-      this.tbDVBTFreq.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTFreq.TabIndex = 7;
-      // 
-      // label12
-      // 
-      this.label12.ForeColor = System.Drawing.Color.Red;
-      this.label12.Location = new System.Drawing.Point(16, 152);
-      this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(136, 16);
-      this.label12.TabIndex = 6;
-      this.label12.Text = "* Carrier Frequency (kHz)";
-      // 
-      // tbDVBTTSID
-      // 
-      this.tbDVBTTSID.Location = new System.Drawing.Point(152, 128);
-      this.tbDVBTTSID.Name = "tbDVBTTSID";
-      this.tbDVBTTSID.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTTSID.TabIndex = 5;
-      // 
-      // label11
-      // 
-      this.label11.ForeColor = System.Drawing.Color.Red;
-      this.label11.Location = new System.Drawing.Point(16, 128);
-      this.label11.Name = "label11";
-      this.label11.Size = new System.Drawing.Size(88, 16);
-      this.label11.TabIndex = 4;
-      this.label11.Text = "* Transport ID:";
-      // 
-      // tbDVBTSID
-      // 
-      this.tbDVBTSID.Location = new System.Drawing.Point(152, 104);
-      this.tbDVBTSID.Name = "tbDVBTSID";
-      this.tbDVBTSID.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBTSID.TabIndex = 3;
-      // 
-      // label10
-      // 
-      this.label10.ForeColor = System.Drawing.Color.Red;
-      this.label10.Location = new System.Drawing.Point(16, 104);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(88, 16);
-      this.label10.TabIndex = 2;
-      this.label10.Text = "* Service ID:";
-      // 
-      // tbDVBTONID
-      // 
-      this.tbDVBTONID.Location = new System.Drawing.Point(152, 80);
-      this.tbDVBTONID.Name = "tbDVBTONID";
-      this.tbDVBTONID.Size = new System.Drawing.Size(56, 20);
-      this.tbDVBTONID.TabIndex = 1;
-      // 
-      // label9
-      // 
-      this.label9.ForeColor = System.Drawing.Color.Red;
-      this.label9.Location = new System.Drawing.Point(16, 80);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(88, 16);
-      this.label9.TabIndex = 0;
-      this.label9.Text = "* Network ID:";
+      this.label100.Text = "Digital terrestrial TV settings";
+      // 
+      // labelDvbtAudioLanguage3
+      // 
+      this.labelDvbtAudioLanguage3.AutoSize = true;
+      this.labelDvbtAudioLanguage3.Location = new System.Drawing.Point(288, 312);
+      this.labelDvbtAudioLanguage3.Name = "labelDvbtAudioLanguage3";
+      this.labelDvbtAudioLanguage3.Size = new System.Drawing.Size(43, 13);
+      this.labelDvbtAudioLanguage3.TabIndex = 64;
+      this.labelDvbtAudioLanguage3.Text = "Audio 3";
+      // 
+      // textBoxDvbtAudioLanguage3
+      // 
+      this.textBoxDvbtAudioLanguage3.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbtAudioLanguage3.Location = new System.Drawing.Point(360, 312);
+      this.textBoxDvbtAudioLanguage3.Name = "textBoxDvbtAudioLanguage3";
+      this.textBoxDvbtAudioLanguage3.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtAudioLanguage3.TabIndex = 63;
+      // 
+      // textBoxDvbtAudioLanguage2
+      // 
+      this.textBoxDvbtAudioLanguage2.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbtAudioLanguage2.Location = new System.Drawing.Point(360, 288);
+      this.textBoxDvbtAudioLanguage2.Name = "textBoxDvbtAudioLanguage2";
+      this.textBoxDvbtAudioLanguage2.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtAudioLanguage2.TabIndex = 62;
+      // 
+      // textBoxDvbtAudioLanguage1
+      // 
+      this.textBoxDvbtAudioLanguage1.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbtAudioLanguage1.Location = new System.Drawing.Point(360, 264);
+      this.textBoxDvbtAudioLanguage1.Name = "textBoxDvbtAudioLanguage1";
+      this.textBoxDvbtAudioLanguage1.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtAudioLanguage1.TabIndex = 61;
+      // 
+      // textBoxDvbtAudioLanguage
+      // 
+      this.textBoxDvbtAudioLanguage.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbtAudioLanguage.Location = new System.Drawing.Point(360, 240);
+      this.textBoxDvbtAudioLanguage.Name = "textBoxDvbtAudioLanguage";
+      this.textBoxDvbtAudioLanguage.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtAudioLanguage.TabIndex = 60;
+      // 
+      // labelDvbtAudioLanguage2
+      // 
+      this.labelDvbtAudioLanguage2.AutoSize = true;
+      this.labelDvbtAudioLanguage2.Location = new System.Drawing.Point(288, 288);
+      this.labelDvbtAudioLanguage2.Name = "labelDvbtAudioLanguage2";
+      this.labelDvbtAudioLanguage2.Size = new System.Drawing.Size(43, 13);
+      this.labelDvbtAudioLanguage2.TabIndex = 59;
+      this.labelDvbtAudioLanguage2.Text = "Audio 2";
+      // 
+      // labelDvbtAudioLanguage1
+      // 
+      this.labelDvbtAudioLanguage1.AutoSize = true;
+      this.labelDvbtAudioLanguage1.Location = new System.Drawing.Point(288, 264);
+      this.labelDvbtAudioLanguage1.Name = "labelDvbtAudioLanguage1";
+      this.labelDvbtAudioLanguage1.Size = new System.Drawing.Size(43, 13);
+      this.labelDvbtAudioLanguage1.TabIndex = 58;
+      this.labelDvbtAudioLanguage1.Text = "Audio 1";
+      // 
+      // labelDvbtAudioLanguage
+      // 
+      this.labelDvbtAudioLanguage.AutoSize = true;
+      this.labelDvbtAudioLanguage.Location = new System.Drawing.Point(288, 240);
+      this.labelDvbtAudioLanguage.Name = "labelDvbtAudioLanguage";
+      this.labelDvbtAudioLanguage.Size = new System.Drawing.Size(34, 13);
+      this.labelDvbtAudioLanguage.TabIndex = 57;
+      this.labelDvbtAudioLanguage.Text = "Audio";
+      // 
+      // textBoxDvbtAc3Pid
+      // 
+      this.textBoxDvbtAc3Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbtAc3Pid.Location = new System.Drawing.Point(360, 208);
+      this.textBoxDvbtAc3Pid.Name = "textBoxDvbtAc3Pid";
+      this.textBoxDvbtAc3Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtAc3Pid.TabIndex = 56;
+      // 
+      // textBoxDvbtAudio3Pid
+      // 
+      this.textBoxDvbtAudio3Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbtAudio3Pid.Location = new System.Drawing.Point(360, 184);
+      this.textBoxDvbtAudio3Pid.Name = "textBoxDvbtAudio3Pid";
+      this.textBoxDvbtAudio3Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtAudio3Pid.TabIndex = 55;
+      // 
+      // textBoxDvbtAudio2Pid
+      // 
+      this.textBoxDvbtAudio2Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbtAudio2Pid.Location = new System.Drawing.Point(360, 160);
+      this.textBoxDvbtAudio2Pid.Name = "textBoxDvbtAudio2Pid";
+      this.textBoxDvbtAudio2Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtAudio2Pid.TabIndex = 54;
+      // 
+      // textBoxDvbtAudio1Pid
+      // 
+      this.textBoxDvbtAudio1Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbtAudio1Pid.Location = new System.Drawing.Point(360, 136);
+      this.textBoxDvbtAudio1Pid.Name = "textBoxDvbtAudio1Pid";
+      this.textBoxDvbtAudio1Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtAudio1Pid.TabIndex = 53;
+      // 
+      // labelDvbtAc3Pid
+      // 
+      this.labelDvbtAc3Pid.AutoSize = true;
+      this.labelDvbtAc3Pid.Location = new System.Drawing.Point(288, 208);
+      this.labelDvbtAc3Pid.Name = "labelDvbtAc3Pid";
+      this.labelDvbtAc3Pid.Size = new System.Drawing.Size(48, 13);
+      this.labelDvbtAc3Pid.TabIndex = 52;
+      this.labelDvbtAc3Pid.Text = "AC3 PID";
+      // 
+      // labelDvbtAudio3Pid
+      // 
+      this.labelDvbtAudio3Pid.AutoSize = true;
+      this.labelDvbtAudio3Pid.Location = new System.Drawing.Point(288, 184);
+      this.labelDvbtAudio3Pid.Name = "labelDvbtAudio3Pid";
+      this.labelDvbtAudio3Pid.Size = new System.Drawing.Size(64, 13);
+      this.labelDvbtAudio3Pid.TabIndex = 51;
+      this.labelDvbtAudio3Pid.Text = "Audio 3 PID";
+      // 
+      // labelDvbtAudio2Pid
+      // 
+      this.labelDvbtAudio2Pid.AutoSize = true;
+      this.labelDvbtAudio2Pid.Location = new System.Drawing.Point(288, 160);
+      this.labelDvbtAudio2Pid.Name = "labelDvbtAudio2Pid";
+      this.labelDvbtAudio2Pid.Size = new System.Drawing.Size(64, 13);
+      this.labelDvbtAudio2Pid.TabIndex = 50;
+      this.labelDvbtAudio2Pid.Text = "Audio 2 PID";
+      // 
+      // labelDvbtAudio1Pid
+      // 
+      this.labelDvbtAudio1Pid.AutoSize = true;
+      this.labelDvbtAudio1Pid.Location = new System.Drawing.Point(288, 136);
+      this.labelDvbtAudio1Pid.Name = "labelDvbtAudio1Pid";
+      this.labelDvbtAudio1Pid.Size = new System.Drawing.Size(64, 13);
+      this.labelDvbtAudio1Pid.TabIndex = 49;
+      this.labelDvbtAudio1Pid.Text = "Audio 1 PID";
+      // 
+      // labelDvbtBandWidth
+      // 
+      this.labelDvbtBandWidth.AutoSize = true;
+      this.labelDvbtBandWidth.Location = new System.Drawing.Point(32, 256);
+      this.labelDvbtBandWidth.Name = "labelDvbtBandWidth";
+      this.labelDvbtBandWidth.Size = new System.Drawing.Size(57, 13);
+      this.labelDvbtBandWidth.TabIndex = 36;
+      this.labelDvbtBandWidth.Text = "Bandwidth";
+      // 
+      // textBoxDvbtBandWidth
+      // 
+      this.textBoxDvbtBandWidth.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbtBandWidth.Location = new System.Drawing.Point(168, 256);
+      this.textBoxDvbtBandWidth.Name = "textBoxDvbtBandWidth";
+      this.textBoxDvbtBandWidth.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtBandWidth.TabIndex = 35;
+      // 
+      // textBoxDvbtPmtPid
+      // 
+      this.textBoxDvbtPmtPid.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbtPmtPid.Location = new System.Drawing.Point(168, 232);
+      this.textBoxDvbtPmtPid.Name = "textBoxDvbtPmtPid";
+      this.textBoxDvbtPmtPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtPmtPid.TabIndex = 34;
+      // 
+      // labelDvbtPmtPid
+      // 
+      this.labelDvbtPmtPid.AutoSize = true;
+      this.labelDvbtPmtPid.Location = new System.Drawing.Point(32, 232);
+      this.labelDvbtPmtPid.Name = "labelDvbtPmtPid";
+      this.labelDvbtPmtPid.Size = new System.Drawing.Size(51, 13);
+      this.labelDvbtPmtPid.TabIndex = 33;
+      this.labelDvbtPmtPid.Text = "PMT PID";
+      // 
+      // textBoxDvbtTeletextPid
+      // 
+      this.textBoxDvbtTeletextPid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbtTeletextPid.Location = new System.Drawing.Point(168, 208);
+      this.textBoxDvbtTeletextPid.Name = "textBoxDvbtTeletextPid";
+      this.textBoxDvbtTeletextPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtTeletextPid.TabIndex = 15;
+      // 
+      // textBoxDvbtVideoPid
+      // 
+      this.textBoxDvbtVideoPid.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbtVideoPid.Location = new System.Drawing.Point(168, 184);
+      this.textBoxDvbtVideoPid.Name = "textBoxDvbtVideoPid";
+      this.textBoxDvbtVideoPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtVideoPid.TabIndex = 14;
+      // 
+      // textBoxDvbtAudioPid
+      // 
+      this.textBoxDvbtAudioPid.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbtAudioPid.Location = new System.Drawing.Point(168, 160);
+      this.textBoxDvbtAudioPid.Name = "textBoxDvbtAudioPid";
+      this.textBoxDvbtAudioPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtAudioPid.TabIndex = 13;
+      // 
+      // labelDvbtTeletextPid
+      // 
+      this.labelDvbtTeletextPid.AutoSize = true;
+      this.labelDvbtTeletextPid.Location = new System.Drawing.Point(32, 208);
+      this.labelDvbtTeletextPid.Name = "labelDvbtTeletextPid";
+      this.labelDvbtTeletextPid.Size = new System.Drawing.Size(66, 13);
+      this.labelDvbtTeletextPid.TabIndex = 12;
+      this.labelDvbtTeletextPid.Text = "Teletext PID";
+      // 
+      // labelDvbtVideoPid
+      // 
+      this.labelDvbtVideoPid.AutoSize = true;
+      this.labelDvbtVideoPid.Location = new System.Drawing.Point(32, 184);
+      this.labelDvbtVideoPid.Name = "labelDvbtVideoPid";
+      this.labelDvbtVideoPid.Size = new System.Drawing.Size(55, 13);
+      this.labelDvbtVideoPid.TabIndex = 11;
+      this.labelDvbtVideoPid.Text = "Video PID";
+      // 
+      // labelDvbtAudioPid
+      // 
+      this.labelDvbtAudioPid.AutoSize = true;
+      this.labelDvbtAudioPid.Location = new System.Drawing.Point(32, 160);
+      this.labelDvbtAudioPid.Name = "labelDvbtAudioPid";
+      this.labelDvbtAudioPid.Size = new System.Drawing.Size(55, 13);
+      this.labelDvbtAudioPid.TabIndex = 10;
+      this.labelDvbtAudioPid.Text = "Audio PID";
+      // 
+      // textBoxDvbtProvider
+      // 
+      this.textBoxDvbtProvider.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbtProvider.Location = new System.Drawing.Point(168, 136);
+      this.textBoxDvbtProvider.Name = "textBoxDvbtProvider";
+      this.textBoxDvbtProvider.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtProvider.TabIndex = 9;
+      // 
+      // labelDvbtProvider
+      // 
+      this.labelDvbtProvider.AutoSize = true;
+      this.labelDvbtProvider.Location = new System.Drawing.Point(32, 136);
+      this.labelDvbtProvider.Name = "labelDvbtProvider";
+      this.labelDvbtProvider.Size = new System.Drawing.Size(46, 13);
+      this.labelDvbtProvider.TabIndex = 8;
+      this.labelDvbtProvider.Text = "Provider";
+      // 
+      // textBoxDvbtCarrierFrequency
+      // 
+      this.textBoxDvbtCarrierFrequency.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbtCarrierFrequency.Location = new System.Drawing.Point(168, 112);
+      this.textBoxDvbtCarrierFrequency.Name = "textBoxDvbtCarrierFrequency";
+      this.textBoxDvbtCarrierFrequency.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtCarrierFrequency.TabIndex = 7;
+      // 
+      // labelDvbtCarrierFrequency
+      // 
+      this.labelDvbtCarrierFrequency.AutoSize = true;
+      this.labelDvbtCarrierFrequency.Location = new System.Drawing.Point(32, 112);
+      this.labelDvbtCarrierFrequency.Name = "labelDvbtCarrierFrequency";
+      this.labelDvbtCarrierFrequency.Size = new System.Drawing.Size(118, 13);
+      this.labelDvbtCarrierFrequency.TabIndex = 6;
+      this.labelDvbtCarrierFrequency.Text = "Carrier Frequency (kHz)";
+      // 
+      // textBoxDvbtTransportId
+      // 
+      this.textBoxDvbtTransportId.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbtTransportId.Location = new System.Drawing.Point(168, 88);
+      this.textBoxDvbtTransportId.Name = "textBoxDvbtTransportId";
+      this.textBoxDvbtTransportId.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtTransportId.TabIndex = 5;
+      // 
+      // labelDvbtTransportId
+      // 
+      this.labelDvbtTransportId.AutoSize = true;
+      this.labelDvbtTransportId.Location = new System.Drawing.Point(32, 88);
+      this.labelDvbtTransportId.Name = "labelDvbtTransportId";
+      this.labelDvbtTransportId.Size = new System.Drawing.Size(66, 13);
+      this.labelDvbtTransportId.TabIndex = 4;
+      this.labelDvbtTransportId.Text = "Transport ID";
+      // 
+      // textBoxDvbtServiceId
+      // 
+      this.textBoxDvbtServiceId.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbtServiceId.Location = new System.Drawing.Point(168, 64);
+      this.textBoxDvbtServiceId.Name = "textBoxDvbtServiceId";
+      this.textBoxDvbtServiceId.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtServiceId.TabIndex = 3;
+      // 
+      // labelDvbtServiceId
+      // 
+      this.labelDvbtServiceId.AutoSize = true;
+      this.labelDvbtServiceId.Location = new System.Drawing.Point(32, 64);
+      this.labelDvbtServiceId.Name = "labelDvbtServiceId";
+      this.labelDvbtServiceId.Size = new System.Drawing.Size(57, 13);
+      this.labelDvbtServiceId.TabIndex = 2;
+      this.labelDvbtServiceId.Text = "Service ID";
+      // 
+      // textBoxDvbtNetworkId
+      // 
+      this.textBoxDvbtNetworkId.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbtNetworkId.Location = new System.Drawing.Point(168, 40);
+      this.textBoxDvbtNetworkId.Name = "textBoxDvbtNetworkId";
+      this.textBoxDvbtNetworkId.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbtNetworkId.TabIndex = 1;
+      // 
+      // labelDvbtNetworkId
+      // 
+      this.labelDvbtNetworkId.AutoSize = true;
+      this.labelDvbtNetworkId.Location = new System.Drawing.Point(32, 40);
+      this.labelDvbtNetworkId.Name = "labelDvbtNetworkId";
+      this.labelDvbtNetworkId.Size = new System.Drawing.Size(61, 13);
+      this.labelDvbtNetworkId.TabIndex = 0;
+      this.labelDvbtNetworkId.Text = "Network ID";
       // 
       // label42
       // 
-      this.label42.Location = new System.Drawing.Point(208, 32);
+      this.label42.Location = new System.Drawing.Point(208, 16);
       this.label42.Name = "label42";
-      this.label42.Size = new System.Drawing.Size(256, 32);
+      this.label42.Size = new System.Drawing.Size(248, 16);
       this.label42.TabIndex = 16;
+      this.label42.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
-      // tabPage4
+      // tabPageDvbc
       // 
-      this.tabPage4.Controls.Add(this.label108);
-      this.tabPage4.Controls.Add(this.tbDVBCPCR);
-      this.tabPage4.Controls.Add(this.label104);
-      this.tabPage4.Controls.Add(this.label99);
-      this.tabPage4.Controls.Add(this.label57);
-      this.tabPage4.Controls.Add(this.tbDVBCAudioLanguage3);
-      this.tabPage4.Controls.Add(this.tbDVBCAudioLanguage2);
-      this.tabPage4.Controls.Add(this.tbDVBCAudioLanguage1);
-      this.tabPage4.Controls.Add(this.tbDVBCAudioLanguage);
-      this.tabPage4.Controls.Add(this.label54);
-      this.tabPage4.Controls.Add(this.label55);
-      this.tabPage4.Controls.Add(this.label56);
-      this.tabPage4.Controls.Add(this.tbDVBCAC3);
-      this.tabPage4.Controls.Add(this.tbDVBCAudio3);
-      this.tabPage4.Controls.Add(this.tbDVBCAudio2);
-      this.tabPage4.Controls.Add(this.tbDVBCAudio1);
-      this.tabPage4.Controls.Add(this.label53);
-      this.tabPage4.Controls.Add(this.label52);
-      this.tabPage4.Controls.Add(this.label51);
-      this.tabPage4.Controls.Add(this.label50);
-      this.tabPage4.Controls.Add(this.tbDVBCPmtPid);
-      this.tabPage4.Controls.Add(this.label46);
-      this.tabPage4.Controls.Add(this.label41);
-      this.tabPage4.Controls.Add(this.tbDVBCTeletextPid);
-      this.tabPage4.Controls.Add(this.tbDVBCVideoPid);
-      this.tabPage4.Controls.Add(this.tbDVBCAudioPid);
-      this.tabPage4.Controls.Add(this.label33);
-      this.tabPage4.Controls.Add(this.label34);
-      this.tabPage4.Controls.Add(this.label35);
-      this.tabPage4.Controls.Add(this.tbDVBCProvider);
-      this.tabPage4.Controls.Add(this.label28);
-      this.tabPage4.Controls.Add(this.cbDVBCModulation);
-      this.tabPage4.Controls.Add(this.cbDVBCInnerFeq);
-      this.tabPage4.Controls.Add(this.label19);
-      this.tabPage4.Controls.Add(this.label18);
-      this.tabPage4.Controls.Add(this.tbDVBCSR);
-      this.tabPage4.Controls.Add(this.label17);
-      this.tabPage4.Controls.Add(this.tbDVBCFreq);
-      this.tabPage4.Controls.Add(this.label13);
-      this.tabPage4.Controls.Add(this.tbDVBCTSID);
-      this.tabPage4.Controls.Add(this.label14);
-      this.tabPage4.Controls.Add(this.tbDVBCSID);
-      this.tabPage4.Controls.Add(this.label15);
-      this.tabPage4.Controls.Add(this.tbDVBCONID);
-      this.tabPage4.Controls.Add(this.label16);
-      this.tabPage4.Location = new System.Drawing.Point(4, 22);
-      this.tabPage4.Name = "tabPage4";
-      this.tabPage4.Size = new System.Drawing.Size(480, 382);
-      this.tabPage4.TabIndex = 3;
-      this.tabPage4.Text = "DVB-C";
-      this.tabPage4.UseVisualStyleBackColor = true;
+      this.tabPageDvbc.Controls.Add(this.labelDvbcRedNote);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcPcrPid);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcPcrPid);
+      this.tabPageDvbc.Controls.Add(this.label99);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcAudioLanguage3);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcAudioLanguage3);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcAudioLanguage2);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcAudioLanguage1);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcAudioLanguage);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcAudioLanguage2);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcAudioLanguage1);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcAudioLanguage);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcAc3Pid);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcAudio3Pid);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcAudio2Pid);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcAudio1Pid);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcAc3Pid);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcAudio3Pid);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcAudio2Pid);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcAudio1Pid);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcPmtPid);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcPmtPid);
+      this.tabPageDvbc.Controls.Add(this.label41);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcTeletextPid);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcVideoPid);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcAudioPid);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcTeletextPid);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcVideoPid);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcAudioPid);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcProvider);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcProvider);
+      this.tabPageDvbc.Controls.Add(this.comboBoxDvbcModulation);
+      this.tabPageDvbc.Controls.Add(this.comboBoxDvbcInnerFec);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcModulation);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcInnerFec);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcSymbolrate);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcSymbolrate);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcCarrierFrequency);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcCarrierFrequency);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcTransportId);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcTransportId);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcServiceId);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcServiceId);
+      this.tabPageDvbc.Controls.Add(this.textBoxDvbcNetworkId);
+      this.tabPageDvbc.Controls.Add(this.labelDvbcNetworkId);
+      this.tabPageDvbc.Location = new System.Drawing.Point(4, 22);
+      this.tabPageDvbc.Name = "tabPageDvbc";
+      this.tabPageDvbc.Size = new System.Drawing.Size(480, 382);
+      this.tabPageDvbc.TabIndex = 3;
+      this.tabPageDvbc.Text = "DVB-C";
+      this.tabPageDvbc.UseVisualStyleBackColor = true;
       // 
-      // label108
+      // labelDvbcRedNote
       // 
-      this.label108.ForeColor = System.Drawing.Color.Red;
-      this.label108.Location = new System.Drawing.Point(24, 352);
-      this.label108.Name = "label108";
-      this.label108.Size = new System.Drawing.Size(248, 16);
-      this.label108.TabIndex = 52;
-      this.label108.Text = "Fields with * and in red are required";
+      this.labelDvbcRedNote.AutoSize = true;
+      this.labelDvbcRedNote.ForeColor = System.Drawing.Color.Red;
+      this.labelDvbcRedNote.Location = new System.Drawing.Point(296, 352);
+      this.labelDvbcRedNote.Name = "labelDvbcRedNote";
+      this.labelDvbcRedNote.Size = new System.Drawing.Size(171, 13);
+      this.labelDvbcRedNote.TabIndex = 52;
+      this.labelDvbcRedNote.Text = "Red fields denote  required values.";
       // 
-      // tbDVBCPCR
+      // textBoxDvbcPcrPid
       // 
-      this.tbDVBCPCR.Location = new System.Drawing.Point(360, 104);
-      this.tbDVBCPCR.Name = "tbDVBCPCR";
-      this.tbDVBCPCR.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCPCR.TabIndex = 51;
+      this.textBoxDvbcPcrPid.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbcPcrPid.Location = new System.Drawing.Point(360, 104);
+      this.textBoxDvbcPcrPid.Name = "textBoxDvbcPcrPid";
+      this.textBoxDvbcPcrPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcPcrPid.TabIndex = 51;
       // 
-      // label104
+      // labelDvbcPcrPid
       // 
-      this.label104.ForeColor = System.Drawing.Color.Red;
-      this.label104.Location = new System.Drawing.Point(288, 104);
-      this.label104.Name = "label104";
-      this.label104.Size = new System.Drawing.Size(72, 16);
-      this.label104.TabIndex = 50;
-      this.label104.Text = "* PCR PID";
+      this.labelDvbcPcrPid.AutoSize = true;
+      this.labelDvbcPcrPid.Location = new System.Drawing.Point(288, 104);
+      this.labelDvbcPcrPid.Name = "labelDvbcPcrPid";
+      this.labelDvbcPcrPid.Size = new System.Drawing.Size(50, 13);
+      this.labelDvbcPcrPid.TabIndex = 50;
+      this.labelDvbcPcrPid.Text = "PCR PID";
       // 
       // label99
       // 
+      this.label99.AutoSize = true;
       this.label99.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label99.Location = new System.Drawing.Point(24, 8);
+      this.label99.Location = new System.Drawing.Point(32, 16);
       this.label99.Name = "label99";
-      this.label99.Size = new System.Drawing.Size(272, 23);
+      this.label99.Size = new System.Drawing.Size(146, 13);
       this.label99.TabIndex = 49;
-      this.label99.Text = "Digital Cable TV settings for this TV channel";
+      this.label99.Text = "Digital cable TV settings";
       // 
-      // label57
+      // labelDvbcAudioLanguage3
       // 
-      this.label57.Location = new System.Drawing.Point(288, 312);
-      this.label57.Name = "label57";
-      this.label57.Size = new System.Drawing.Size(72, 16);
-      this.label57.TabIndex = 48;
-      this.label57.Text = "Audio 3:";
+      this.labelDvbcAudioLanguage3.AutoSize = true;
+      this.labelDvbcAudioLanguage3.Location = new System.Drawing.Point(288, 312);
+      this.labelDvbcAudioLanguage3.Name = "labelDvbcAudioLanguage3";
+      this.labelDvbcAudioLanguage3.Size = new System.Drawing.Size(43, 13);
+      this.labelDvbcAudioLanguage3.TabIndex = 48;
+      this.labelDvbcAudioLanguage3.Text = "Audio 3";
       // 
-      // tbDVBCAudioLanguage3
+      // textBoxDvbcAudioLanguage3
       // 
-      this.tbDVBCAudioLanguage3.Location = new System.Drawing.Point(360, 312);
-      this.tbDVBCAudioLanguage3.Name = "tbDVBCAudioLanguage3";
-      this.tbDVBCAudioLanguage3.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCAudioLanguage3.TabIndex = 47;
+      this.textBoxDvbcAudioLanguage3.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbcAudioLanguage3.Location = new System.Drawing.Point(360, 312);
+      this.textBoxDvbcAudioLanguage3.Name = "textBoxDvbcAudioLanguage3";
+      this.textBoxDvbcAudioLanguage3.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcAudioLanguage3.TabIndex = 47;
       // 
-      // tbDVBCAudioLanguage2
+      // textBoxDvbcAudioLanguage2
       // 
-      this.tbDVBCAudioLanguage2.Location = new System.Drawing.Point(360, 288);
-      this.tbDVBCAudioLanguage2.Name = "tbDVBCAudioLanguage2";
-      this.tbDVBCAudioLanguage2.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCAudioLanguage2.TabIndex = 46;
+      this.textBoxDvbcAudioLanguage2.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbcAudioLanguage2.Location = new System.Drawing.Point(360, 288);
+      this.textBoxDvbcAudioLanguage2.Name = "textBoxDvbcAudioLanguage2";
+      this.textBoxDvbcAudioLanguage2.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcAudioLanguage2.TabIndex = 46;
       // 
-      // tbDVBCAudioLanguage1
+      // textBoxDvbcAudioLanguage1
       // 
-      this.tbDVBCAudioLanguage1.Location = new System.Drawing.Point(360, 264);
-      this.tbDVBCAudioLanguage1.Name = "tbDVBCAudioLanguage1";
-      this.tbDVBCAudioLanguage1.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCAudioLanguage1.TabIndex = 45;
+      this.textBoxDvbcAudioLanguage1.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbcAudioLanguage1.Location = new System.Drawing.Point(360, 264);
+      this.textBoxDvbcAudioLanguage1.Name = "textBoxDvbcAudioLanguage1";
+      this.textBoxDvbcAudioLanguage1.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcAudioLanguage1.TabIndex = 45;
       // 
-      // tbDVBCAudioLanguage
+      // textBoxDvbcAudioLanguage
       // 
-      this.tbDVBCAudioLanguage.Location = new System.Drawing.Point(360, 240);
-      this.tbDVBCAudioLanguage.Name = "tbDVBCAudioLanguage";
-      this.tbDVBCAudioLanguage.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCAudioLanguage.TabIndex = 44;
+      this.textBoxDvbcAudioLanguage.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbcAudioLanguage.Location = new System.Drawing.Point(360, 240);
+      this.textBoxDvbcAudioLanguage.Name = "textBoxDvbcAudioLanguage";
+      this.textBoxDvbcAudioLanguage.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcAudioLanguage.TabIndex = 44;
       // 
-      // label54
+      // labelDvbcAudioLanguage2
       // 
-      this.label54.Location = new System.Drawing.Point(288, 288);
-      this.label54.Name = "label54";
-      this.label54.Size = new System.Drawing.Size(72, 16);
-      this.label54.TabIndex = 43;
-      this.label54.Text = "Audio 2:";
+      this.labelDvbcAudioLanguage2.AutoSize = true;
+      this.labelDvbcAudioLanguage2.Location = new System.Drawing.Point(288, 288);
+      this.labelDvbcAudioLanguage2.Name = "labelDvbcAudioLanguage2";
+      this.labelDvbcAudioLanguage2.Size = new System.Drawing.Size(43, 13);
+      this.labelDvbcAudioLanguage2.TabIndex = 43;
+      this.labelDvbcAudioLanguage2.Text = "Audio 2";
       // 
-      // label55
+      // labelDvbcAudioLanguage1
       // 
-      this.label55.Location = new System.Drawing.Point(288, 264);
-      this.label55.Name = "label55";
-      this.label55.Size = new System.Drawing.Size(72, 16);
-      this.label55.TabIndex = 42;
-      this.label55.Text = "Audio 1:";
+      this.labelDvbcAudioLanguage1.AutoSize = true;
+      this.labelDvbcAudioLanguage1.Location = new System.Drawing.Point(288, 264);
+      this.labelDvbcAudioLanguage1.Name = "labelDvbcAudioLanguage1";
+      this.labelDvbcAudioLanguage1.Size = new System.Drawing.Size(43, 13);
+      this.labelDvbcAudioLanguage1.TabIndex = 42;
+      this.labelDvbcAudioLanguage1.Text = "Audio 1";
       // 
-      // label56
+      // labelDvbcAudioLanguage
       // 
-      this.label56.Location = new System.Drawing.Point(288, 240);
-      this.label56.Name = "label56";
-      this.label56.Size = new System.Drawing.Size(72, 16);
-      this.label56.TabIndex = 41;
-      this.label56.Text = "Audio :";
+      this.labelDvbcAudioLanguage.AutoSize = true;
+      this.labelDvbcAudioLanguage.Location = new System.Drawing.Point(288, 240);
+      this.labelDvbcAudioLanguage.Name = "labelDvbcAudioLanguage";
+      this.labelDvbcAudioLanguage.Size = new System.Drawing.Size(34, 13);
+      this.labelDvbcAudioLanguage.TabIndex = 41;
+      this.labelDvbcAudioLanguage.Text = "Audio";
       // 
-      // tbDVBCAC3
+      // textBoxDvbcAc3Pid
       // 
-      this.tbDVBCAC3.Location = new System.Drawing.Point(360, 208);
-      this.tbDVBCAC3.Name = "tbDVBCAC3";
-      this.tbDVBCAC3.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCAC3.TabIndex = 40;
+      this.textBoxDvbcAc3Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbcAc3Pid.Location = new System.Drawing.Point(360, 208);
+      this.textBoxDvbcAc3Pid.Name = "textBoxDvbcAc3Pid";
+      this.textBoxDvbcAc3Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcAc3Pid.TabIndex = 40;
       // 
-      // tbDVBCAudio3
+      // textBoxDvbcAudio3Pid
       // 
-      this.tbDVBCAudio3.Location = new System.Drawing.Point(360, 184);
-      this.tbDVBCAudio3.Name = "tbDVBCAudio3";
-      this.tbDVBCAudio3.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCAudio3.TabIndex = 39;
+      this.textBoxDvbcAudio3Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbcAudio3Pid.Location = new System.Drawing.Point(360, 184);
+      this.textBoxDvbcAudio3Pid.Name = "textBoxDvbcAudio3Pid";
+      this.textBoxDvbcAudio3Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcAudio3Pid.TabIndex = 39;
       // 
-      // tbDVBCAudio2
+      // textBoxDvbcAudio2Pid
       // 
-      this.tbDVBCAudio2.Location = new System.Drawing.Point(360, 160);
-      this.tbDVBCAudio2.Name = "tbDVBCAudio2";
-      this.tbDVBCAudio2.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCAudio2.TabIndex = 38;
+      this.textBoxDvbcAudio2Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbcAudio2Pid.Location = new System.Drawing.Point(360, 160);
+      this.textBoxDvbcAudio2Pid.Name = "textBoxDvbcAudio2Pid";
+      this.textBoxDvbcAudio2Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcAudio2Pid.TabIndex = 38;
       // 
-      // tbDVBCAudio1
+      // textBoxDvbcAudio1Pid
       // 
-      this.tbDVBCAudio1.Location = new System.Drawing.Point(360, 136);
-      this.tbDVBCAudio1.Name = "tbDVBCAudio1";
-      this.tbDVBCAudio1.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCAudio1.TabIndex = 37;
+      this.textBoxDvbcAudio1Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbcAudio1Pid.Location = new System.Drawing.Point(360, 136);
+      this.textBoxDvbcAudio1Pid.Name = "textBoxDvbcAudio1Pid";
+      this.textBoxDvbcAudio1Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcAudio1Pid.TabIndex = 37;
       // 
-      // label53
+      // labelDvbcAc3Pid
       // 
-      this.label53.Location = new System.Drawing.Point(288, 208);
-      this.label53.Name = "label53";
-      this.label53.Size = new System.Drawing.Size(72, 16);
-      this.label53.TabIndex = 36;
-      this.label53.Text = "AC3 Pid:";
+      this.labelDvbcAc3Pid.AutoSize = true;
+      this.labelDvbcAc3Pid.Location = new System.Drawing.Point(288, 208);
+      this.labelDvbcAc3Pid.Name = "labelDvbcAc3Pid";
+      this.labelDvbcAc3Pid.Size = new System.Drawing.Size(48, 13);
+      this.labelDvbcAc3Pid.TabIndex = 36;
+      this.labelDvbcAc3Pid.Text = "AC3 PID";
       // 
-      // label52
+      // labelDvbcAudio3Pid
       // 
-      this.label52.Location = new System.Drawing.Point(288, 184);
-      this.label52.Name = "label52";
-      this.label52.Size = new System.Drawing.Size(72, 16);
-      this.label52.TabIndex = 35;
-      this.label52.Text = "Audio Pid3:";
+      this.labelDvbcAudio3Pid.AutoSize = true;
+      this.labelDvbcAudio3Pid.Location = new System.Drawing.Point(288, 184);
+      this.labelDvbcAudio3Pid.Name = "labelDvbcAudio3Pid";
+      this.labelDvbcAudio3Pid.Size = new System.Drawing.Size(64, 13);
+      this.labelDvbcAudio3Pid.TabIndex = 35;
+      this.labelDvbcAudio3Pid.Text = "Audio 3 PID";
       // 
-      // label51
+      // labelDvbcAudio2Pid
       // 
-      this.label51.Location = new System.Drawing.Point(288, 160);
-      this.label51.Name = "label51";
-      this.label51.Size = new System.Drawing.Size(72, 16);
-      this.label51.TabIndex = 34;
-      this.label51.Text = "Audio Pid2:";
+      this.labelDvbcAudio2Pid.AutoSize = true;
+      this.labelDvbcAudio2Pid.Location = new System.Drawing.Point(288, 160);
+      this.labelDvbcAudio2Pid.Name = "labelDvbcAudio2Pid";
+      this.labelDvbcAudio2Pid.Size = new System.Drawing.Size(64, 13);
+      this.labelDvbcAudio2Pid.TabIndex = 34;
+      this.labelDvbcAudio2Pid.Text = "Audio 2 PID";
       // 
-      // label50
+      // labelDvbcAudio1Pid
       // 
-      this.label50.Location = new System.Drawing.Point(288, 136);
-      this.label50.Name = "label50";
-      this.label50.Size = new System.Drawing.Size(72, 16);
-      this.label50.TabIndex = 33;
-      this.label50.Text = "Audio Pid1:";
+      this.labelDvbcAudio1Pid.AutoSize = true;
+      this.labelDvbcAudio1Pid.Location = new System.Drawing.Point(288, 136);
+      this.labelDvbcAudio1Pid.Name = "labelDvbcAudio1Pid";
+      this.labelDvbcAudio1Pid.Size = new System.Drawing.Size(64, 13);
+      this.labelDvbcAudio1Pid.TabIndex = 33;
+      this.labelDvbcAudio1Pid.Text = "Audio 1 PID";
       // 
-      // tbDVBCPmtPid
+      // textBoxDvbcPmtPid
       // 
-      this.tbDVBCPmtPid.Location = new System.Drawing.Point(160, 312);
-      this.tbDVBCPmtPid.Name = "tbDVBCPmtPid";
-      this.tbDVBCPmtPid.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCPmtPid.TabIndex = 32;
+      this.textBoxDvbcPmtPid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbcPmtPid.Location = new System.Drawing.Point(168, 304);
+      this.textBoxDvbcPmtPid.Name = "textBoxDvbcPmtPid";
+      this.textBoxDvbcPmtPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcPmtPid.TabIndex = 32;
       // 
-      // label46
+      // labelDvbcPmtPid
       // 
-      this.label46.Location = new System.Drawing.Point(24, 312);
-      this.label46.Name = "label46";
-      this.label46.Size = new System.Drawing.Size(72, 16);
-      this.label46.TabIndex = 31;
-      this.label46.Text = "* PMT pid:";
+      this.labelDvbcPmtPid.AutoSize = true;
+      this.labelDvbcPmtPid.Location = new System.Drawing.Point(32, 304);
+      this.labelDvbcPmtPid.Name = "labelDvbcPmtPid";
+      this.labelDvbcPmtPid.Size = new System.Drawing.Size(51, 13);
+      this.labelDvbcPmtPid.TabIndex = 31;
+      this.labelDvbcPmtPid.Text = "PMT PID";
       // 
       // label41
       // 
-      this.label41.Location = new System.Drawing.Point(224, 48);
+      this.label41.Location = new System.Drawing.Point(184, 16);
       this.label41.Name = "label41";
-      this.label41.Size = new System.Drawing.Size(160, 16);
+      this.label41.Size = new System.Drawing.Size(264, 16);
       this.label41.TabIndex = 30;
+      this.label41.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
-      // tbDVBCTeletextPid
+      // textBoxDvbcTeletextPid
       // 
-      this.tbDVBCTeletextPid.Location = new System.Drawing.Point(160, 288);
-      this.tbDVBCTeletextPid.Name = "tbDVBCTeletextPid";
-      this.tbDVBCTeletextPid.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCTeletextPid.TabIndex = 29;
+      this.textBoxDvbcTeletextPid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbcTeletextPid.Location = new System.Drawing.Point(168, 280);
+      this.textBoxDvbcTeletextPid.Name = "textBoxDvbcTeletextPid";
+      this.textBoxDvbcTeletextPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcTeletextPid.TabIndex = 29;
       // 
-      // tbDVBCVideoPid
+      // textBoxDvbcVideoPid
       // 
-      this.tbDVBCVideoPid.Location = new System.Drawing.Point(160, 264);
-      this.tbDVBCVideoPid.Name = "tbDVBCVideoPid";
-      this.tbDVBCVideoPid.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCVideoPid.TabIndex = 28;
+      this.textBoxDvbcVideoPid.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbcVideoPid.Location = new System.Drawing.Point(168, 256);
+      this.textBoxDvbcVideoPid.Name = "textBoxDvbcVideoPid";
+      this.textBoxDvbcVideoPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcVideoPid.TabIndex = 28;
       // 
-      // tbDVBCAudioPid
+      // textBoxDvbcAudioPid
       // 
-      this.tbDVBCAudioPid.Location = new System.Drawing.Point(160, 240);
-      this.tbDVBCAudioPid.Name = "tbDVBCAudioPid";
-      this.tbDVBCAudioPid.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCAudioPid.TabIndex = 27;
+      this.textBoxDvbcAudioPid.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbcAudioPid.Location = new System.Drawing.Point(168, 232);
+      this.textBoxDvbcAudioPid.Name = "textBoxDvbcAudioPid";
+      this.textBoxDvbcAudioPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcAudioPid.TabIndex = 27;
       // 
-      // label33
+      // labelDvbcTeletextPid
       // 
-      this.label33.Location = new System.Drawing.Point(24, 288);
-      this.label33.Name = "label33";
-      this.label33.Size = new System.Drawing.Size(72, 16);
-      this.label33.TabIndex = 26;
-      this.label33.Text = "Teletext pid:";
+      this.labelDvbcTeletextPid.AutoSize = true;
+      this.labelDvbcTeletextPid.Location = new System.Drawing.Point(32, 280);
+      this.labelDvbcTeletextPid.Name = "labelDvbcTeletextPid";
+      this.labelDvbcTeletextPid.Size = new System.Drawing.Size(66, 13);
+      this.labelDvbcTeletextPid.TabIndex = 26;
+      this.labelDvbcTeletextPid.Text = "Teletext PID";
       // 
-      // label34
+      // labelDvbcVideoPid
       // 
-      this.label34.ForeColor = System.Drawing.Color.Red;
-      this.label34.Location = new System.Drawing.Point(24, 264);
-      this.label34.Name = "label34";
-      this.label34.Size = new System.Drawing.Size(72, 16);
-      this.label34.TabIndex = 25;
-      this.label34.Text = "* Video pid:";
+      this.labelDvbcVideoPid.AutoSize = true;
+      this.labelDvbcVideoPid.Location = new System.Drawing.Point(32, 256);
+      this.labelDvbcVideoPid.Name = "labelDvbcVideoPid";
+      this.labelDvbcVideoPid.Size = new System.Drawing.Size(55, 13);
+      this.labelDvbcVideoPid.TabIndex = 25;
+      this.labelDvbcVideoPid.Text = "Video PID";
       // 
-      // label35
+      // labelDvbcAudioPid
       // 
-      this.label35.ForeColor = System.Drawing.Color.Red;
-      this.label35.Location = new System.Drawing.Point(24, 240);
-      this.label35.Name = "label35";
-      this.label35.Size = new System.Drawing.Size(72, 16);
-      this.label35.TabIndex = 24;
-      this.label35.Text = "* Audio pid:";
+      this.labelDvbcAudioPid.AutoSize = true;
+      this.labelDvbcAudioPid.Location = new System.Drawing.Point(32, 232);
+      this.labelDvbcAudioPid.Name = "labelDvbcAudioPid";
+      this.labelDvbcAudioPid.Size = new System.Drawing.Size(55, 13);
+      this.labelDvbcAudioPid.TabIndex = 24;
+      this.labelDvbcAudioPid.Text = "Audio PID";
       // 
-      // tbDVBCProvider
+      // textBoxDvbcProvider
       // 
-      this.tbDVBCProvider.Location = new System.Drawing.Point(160, 216);
-      this.tbDVBCProvider.Name = "tbDVBCProvider";
-      this.tbDVBCProvider.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCProvider.TabIndex = 23;
+      this.textBoxDvbcProvider.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbcProvider.Location = new System.Drawing.Point(168, 208);
+      this.textBoxDvbcProvider.Name = "textBoxDvbcProvider";
+      this.textBoxDvbcProvider.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcProvider.TabIndex = 23;
       // 
-      // label28
+      // labelDvbcProvider
       // 
-      this.label28.Location = new System.Drawing.Point(24, 216);
-      this.label28.Name = "label28";
-      this.label28.Size = new System.Drawing.Size(100, 16);
-      this.label28.TabIndex = 22;
-      this.label28.Text = "Provider:";
+      this.labelDvbcProvider.AutoSize = true;
+      this.labelDvbcProvider.Location = new System.Drawing.Point(32, 208);
+      this.labelDvbcProvider.Name = "labelDvbcProvider";
+      this.labelDvbcProvider.Size = new System.Drawing.Size(46, 13);
+      this.labelDvbcProvider.TabIndex = 22;
+      this.labelDvbcProvider.Text = "Provider";
       // 
-      // cbDVBCModulation
+      // comboBoxDvbcModulation
       // 
-      this.cbDVBCModulation.Items.AddRange(new object[] {
+      this.comboBoxDvbcModulation.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxDvbcModulation.Items.AddRange(new object[] {
             "Not Set",
             "1024QAM",
             "112QAM",
@@ -1590,854 +1668,928 @@ namespace MediaPortal.Configuration
             "BPSK",
             "OQPSK",
             "QPSK"});
-      this.cbDVBCModulation.Location = new System.Drawing.Point(160, 192);
-      this.cbDVBCModulation.Name = "cbDVBCModulation";
-      this.cbDVBCModulation.Size = new System.Drawing.Size(121, 21);
-      this.cbDVBCModulation.TabIndex = 21;
+      this.comboBoxDvbcModulation.Location = new System.Drawing.Point(168, 184);
+      this.comboBoxDvbcModulation.Name = "comboBoxDvbcModulation";
+      this.comboBoxDvbcModulation.Size = new System.Drawing.Size(80, 21);
+      this.comboBoxDvbcModulation.TabIndex = 21;
       // 
-      // cbDVBCInnerFeq
+      // comboBoxDvbcInnerFec
       // 
-      this.cbDVBCInnerFeq.Items.AddRange(new object[] {
+      this.comboBoxDvbcInnerFec.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxDvbcInnerFec.Items.AddRange(new object[] {
             "Max",
             "Not Defined",
             "Not set",
             "RS 204/188",
             "ViterBi"});
-      this.cbDVBCInnerFeq.Location = new System.Drawing.Point(160, 168);
-      this.cbDVBCInnerFeq.Name = "cbDVBCInnerFeq";
-      this.cbDVBCInnerFeq.Size = new System.Drawing.Size(121, 21);
-      this.cbDVBCInnerFeq.TabIndex = 20;
+      this.comboBoxDvbcInnerFec.Location = new System.Drawing.Point(168, 160);
+      this.comboBoxDvbcInnerFec.Name = "comboBoxDvbcInnerFec";
+      this.comboBoxDvbcInnerFec.Size = new System.Drawing.Size(80, 21);
+      this.comboBoxDvbcInnerFec.TabIndex = 20;
       // 
-      // label19
+      // labelDvbcModulation
       // 
-      this.label19.Location = new System.Drawing.Point(24, 192);
-      this.label19.Name = "label19";
-      this.label19.Size = new System.Drawing.Size(100, 16);
-      this.label19.TabIndex = 19;
-      this.label19.Text = "Modulation";
+      this.labelDvbcModulation.AutoSize = true;
+      this.labelDvbcModulation.Location = new System.Drawing.Point(32, 184);
+      this.labelDvbcModulation.Name = "labelDvbcModulation";
+      this.labelDvbcModulation.Size = new System.Drawing.Size(59, 13);
+      this.labelDvbcModulation.TabIndex = 19;
+      this.labelDvbcModulation.Text = "Modulation";
       // 
-      // label18
+      // labelDvbcInnerFec
       // 
-      this.label18.Location = new System.Drawing.Point(24, 168);
-      this.label18.Name = "label18";
-      this.label18.Size = new System.Drawing.Size(100, 16);
-      this.label18.TabIndex = 18;
-      this.label18.Text = "InnerFEC";
+      this.labelDvbcInnerFec.AutoSize = true;
+      this.labelDvbcInnerFec.Location = new System.Drawing.Point(32, 160);
+      this.labelDvbcInnerFec.Name = "labelDvbcInnerFec";
+      this.labelDvbcInnerFec.Size = new System.Drawing.Size(51, 13);
+      this.labelDvbcInnerFec.TabIndex = 18;
+      this.labelDvbcInnerFec.Text = "InnerFEC";
       // 
-      // tbDVBCSR
+      // textBoxDvbcSymbolrate
       // 
-      this.tbDVBCSR.Location = new System.Drawing.Point(160, 144);
-      this.tbDVBCSR.Name = "tbDVBCSR";
-      this.tbDVBCSR.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCSR.TabIndex = 17;
+      this.textBoxDvbcSymbolrate.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbcSymbolrate.Location = new System.Drawing.Point(168, 136);
+      this.textBoxDvbcSymbolrate.Name = "textBoxDvbcSymbolrate";
+      this.textBoxDvbcSymbolrate.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcSymbolrate.TabIndex = 17;
       // 
-      // label17
+      // labelDvbcSymbolrate
       // 
-      this.label17.ForeColor = System.Drawing.Color.Red;
-      this.label17.Location = new System.Drawing.Point(24, 144);
-      this.label17.Name = "label17";
-      this.label17.Size = new System.Drawing.Size(100, 16);
-      this.label17.TabIndex = 16;
-      this.label17.Text = "* Symbolrate";
+      this.labelDvbcSymbolrate.AutoSize = true;
+      this.labelDvbcSymbolrate.Location = new System.Drawing.Point(32, 136);
+      this.labelDvbcSymbolrate.Name = "labelDvbcSymbolrate";
+      this.labelDvbcSymbolrate.Size = new System.Drawing.Size(59, 13);
+      this.labelDvbcSymbolrate.TabIndex = 16;
+      this.labelDvbcSymbolrate.Text = "Symbolrate";
       // 
-      // tbDVBCFreq
+      // textBoxDvbcCarrierFrequency
       // 
-      this.tbDVBCFreq.Location = new System.Drawing.Point(160, 120);
-      this.tbDVBCFreq.Name = "tbDVBCFreq";
-      this.tbDVBCFreq.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCFreq.TabIndex = 15;
+      this.textBoxDvbcCarrierFrequency.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbcCarrierFrequency.Location = new System.Drawing.Point(168, 112);
+      this.textBoxDvbcCarrierFrequency.Name = "textBoxDvbcCarrierFrequency";
+      this.textBoxDvbcCarrierFrequency.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcCarrierFrequency.TabIndex = 15;
       // 
-      // label13
+      // labelDvbcCarrierFrequency
       // 
-      this.label13.ForeColor = System.Drawing.Color.Red;
-      this.label13.Location = new System.Drawing.Point(24, 120);
-      this.label13.Name = "label13";
-      this.label13.Size = new System.Drawing.Size(128, 16);
-      this.label13.TabIndex = 14;
-      this.label13.Text = "* Carrier Frequency (kHz)";
+      this.labelDvbcCarrierFrequency.AutoSize = true;
+      this.labelDvbcCarrierFrequency.Location = new System.Drawing.Point(32, 112);
+      this.labelDvbcCarrierFrequency.Name = "labelDvbcCarrierFrequency";
+      this.labelDvbcCarrierFrequency.Size = new System.Drawing.Size(118, 13);
+      this.labelDvbcCarrierFrequency.TabIndex = 14;
+      this.labelDvbcCarrierFrequency.Text = "Carrier Frequency (kHz)";
       // 
-      // tbDVBCTSID
+      // textBoxDvbcTransportId
       // 
-      this.tbDVBCTSID.Location = new System.Drawing.Point(160, 96);
-      this.tbDVBCTSID.Name = "tbDVBCTSID";
-      this.tbDVBCTSID.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCTSID.TabIndex = 13;
+      this.textBoxDvbcTransportId.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbcTransportId.Location = new System.Drawing.Point(168, 88);
+      this.textBoxDvbcTransportId.Name = "textBoxDvbcTransportId";
+      this.textBoxDvbcTransportId.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcTransportId.TabIndex = 13;
       // 
-      // label14
+      // labelDvbcTransportId
       // 
-      this.label14.ForeColor = System.Drawing.Color.Red;
-      this.label14.Location = new System.Drawing.Point(24, 96);
-      this.label14.Name = "label14";
-      this.label14.Size = new System.Drawing.Size(104, 16);
-      this.label14.TabIndex = 12;
-      this.label14.Text = "* Transport ID:";
+      this.labelDvbcTransportId.AutoSize = true;
+      this.labelDvbcTransportId.Location = new System.Drawing.Point(32, 88);
+      this.labelDvbcTransportId.Name = "labelDvbcTransportId";
+      this.labelDvbcTransportId.Size = new System.Drawing.Size(66, 13);
+      this.labelDvbcTransportId.TabIndex = 12;
+      this.labelDvbcTransportId.Text = "Transport ID";
       // 
-      // tbDVBCSID
+      // textBoxDvbcServiceId
       // 
-      this.tbDVBCSID.Location = new System.Drawing.Point(160, 72);
-      this.tbDVBCSID.Name = "tbDVBCSID";
-      this.tbDVBCSID.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBCSID.TabIndex = 11;
+      this.textBoxDvbcServiceId.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbcServiceId.Location = new System.Drawing.Point(168, 64);
+      this.textBoxDvbcServiceId.Name = "textBoxDvbcServiceId";
+      this.textBoxDvbcServiceId.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcServiceId.TabIndex = 11;
       // 
-      // label15
+      // labelDvbcServiceId
       // 
-      this.label15.ForeColor = System.Drawing.Color.Red;
-      this.label15.Location = new System.Drawing.Point(24, 72);
-      this.label15.Name = "label15";
-      this.label15.Size = new System.Drawing.Size(96, 16);
-      this.label15.TabIndex = 10;
-      this.label15.Text = "* Service ID:";
+      this.labelDvbcServiceId.AutoSize = true;
+      this.labelDvbcServiceId.Location = new System.Drawing.Point(32, 64);
+      this.labelDvbcServiceId.Name = "labelDvbcServiceId";
+      this.labelDvbcServiceId.Size = new System.Drawing.Size(57, 13);
+      this.labelDvbcServiceId.TabIndex = 10;
+      this.labelDvbcServiceId.Text = "Service ID";
       // 
-      // tbDVBCONID
+      // textBoxDvbcNetworkId
       // 
-      this.tbDVBCONID.Location = new System.Drawing.Point(160, 48);
-      this.tbDVBCONID.Name = "tbDVBCONID";
-      this.tbDVBCONID.Size = new System.Drawing.Size(56, 20);
-      this.tbDVBCONID.TabIndex = 9;
+      this.textBoxDvbcNetworkId.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbcNetworkId.Location = new System.Drawing.Point(168, 40);
+      this.textBoxDvbcNetworkId.Name = "textBoxDvbcNetworkId";
+      this.textBoxDvbcNetworkId.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbcNetworkId.TabIndex = 9;
       // 
-      // label16
+      // labelDvbcNetworkId
       // 
-      this.label16.ForeColor = System.Drawing.Color.Red;
-      this.label16.Location = new System.Drawing.Point(24, 48);
-      this.label16.Name = "label16";
-      this.label16.Size = new System.Drawing.Size(64, 16);
-      this.label16.TabIndex = 8;
-      this.label16.Text = "* Network ID:";
+      this.labelDvbcNetworkId.AutoSize = true;
+      this.labelDvbcNetworkId.Location = new System.Drawing.Point(32, 40);
+      this.labelDvbcNetworkId.Name = "labelDvbcNetworkId";
+      this.labelDvbcNetworkId.Size = new System.Drawing.Size(61, 13);
+      this.labelDvbcNetworkId.TabIndex = 8;
+      this.labelDvbcNetworkId.Text = "Network ID";
       // 
-      // tabPage5
+      // tabPageDvbs
       // 
-      this.tabPage5.Controls.Add(this.label110);
-      this.tabPage5.Controls.Add(this.tbDVBSPCR);
-      this.tabPage5.Controls.Add(this.label106);
-      this.tabPage5.Controls.Add(this.label101);
-      this.tabPage5.Controls.Add(this.label66);
-      this.tabPage5.Controls.Add(this.tbDVBSAudioLanguage3);
-      this.tabPage5.Controls.Add(this.tbDVBSAudioLanguage2);
-      this.tabPage5.Controls.Add(this.tbDVBSAudioLanguage1);
-      this.tabPage5.Controls.Add(this.tbDVBSAudioLanguage);
-      this.tabPage5.Controls.Add(this.label67);
-      this.tabPage5.Controls.Add(this.label68);
-      this.tabPage5.Controls.Add(this.label69);
-      this.tabPage5.Controls.Add(this.tbDVBSAC3);
-      this.tabPage5.Controls.Add(this.tbDVBSAudio3);
-      this.tabPage5.Controls.Add(this.tbDVBSAudio2);
-      this.tabPage5.Controls.Add(this.tbDVBSAudio1);
-      this.tabPage5.Controls.Add(this.label70);
-      this.tabPage5.Controls.Add(this.label71);
-      this.tabPage5.Controls.Add(this.label72);
-      this.tabPage5.Controls.Add(this.label73);
-      this.tabPage5.Controls.Add(this.tbDVBSPmtPid);
-      this.tabPage5.Controls.Add(this.label48);
-      this.tabPage5.Controls.Add(this.label40);
-      this.tabPage5.Controls.Add(this.tbDVBSECMpid);
-      this.tabPage5.Controls.Add(this.label39);
-      this.tabPage5.Controls.Add(this.tbDVBSTeletextPid);
-      this.tabPage5.Controls.Add(this.tbDVBSVideoPid);
-      this.tabPage5.Controls.Add(this.tbDVBSAudioPid);
-      this.tabPage5.Controls.Add(this.label36);
-      this.tabPage5.Controls.Add(this.label37);
-      this.tabPage5.Controls.Add(this.label38);
-      this.tabPage5.Controls.Add(this.tbDVBSProvider);
-      this.tabPage5.Controls.Add(this.label29);
-      this.tabPage5.Controls.Add(this.cbDVBSPolarisation);
-      this.tabPage5.Controls.Add(this.cbDvbSInnerFec);
-      this.tabPage5.Controls.Add(this.label20);
-      this.tabPage5.Controls.Add(this.label21);
-      this.tabPage5.Controls.Add(this.tbDVBSSymbolrate);
-      this.tabPage5.Controls.Add(this.label22);
-      this.tabPage5.Controls.Add(this.tbDVBSFreq);
-      this.tabPage5.Controls.Add(this.label23);
-      this.tabPage5.Controls.Add(this.tbDVBSTSID);
-      this.tabPage5.Controls.Add(this.label24);
-      this.tabPage5.Controls.Add(this.tbDVBSSID);
-      this.tabPage5.Controls.Add(this.label25);
-      this.tabPage5.Controls.Add(this.tbDVBSONID);
-      this.tabPage5.Controls.Add(this.label26);
-      this.tabPage5.Location = new System.Drawing.Point(4, 22);
-      this.tabPage5.Name = "tabPage5";
-      this.tabPage5.Size = new System.Drawing.Size(480, 382);
-      this.tabPage5.TabIndex = 4;
-      this.tabPage5.Text = "DVB-S";
-      this.tabPage5.UseVisualStyleBackColor = true;
+      this.tabPageDvbs.Controls.Add(this.labelDvbsRedNote);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsPcrPid);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsPcrPid);
+      this.tabPageDvbs.Controls.Add(this.label101);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsAudioLanguage3);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsAudioLanguage3);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsAudioLanguage2);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsAudioLanguage1);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsAudioLanguage);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsAudioLanguage2);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsAudioLanguage1);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsAudioLanguage);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsAc3Pid);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsAudio3Pid);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsAudio2Pid);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsAudio1Pid);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsAc3Pid);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsAudio3Pid);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsAudio2Pid);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsAudio1Pid);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsPmtPid);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsPmtPid);
+      this.tabPageDvbs.Controls.Add(this.label40);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsEcmPid);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsEcmPid);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsTeletextPid);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsVideoPid);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsAudioPid);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsTeletextPid);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsVideoPid);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsAudioPid);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsProvider);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsProvider);
+      this.tabPageDvbs.Controls.Add(this.comboBoxDvbsPolarisation);
+      this.tabPageDvbs.Controls.Add(this.comboBoxDvbsInnerFec);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsPolarisation);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsInnerFec);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsSymbolrate);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsSymbolrate);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsCarrierFrequency);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsCarrierFrequency);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsTransportId);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsTransportId);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsServiceId);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsServiceId);
+      this.tabPageDvbs.Controls.Add(this.textBoxDvbsNetworkId);
+      this.tabPageDvbs.Controls.Add(this.labelDvbsNetworkId);
+      this.tabPageDvbs.Location = new System.Drawing.Point(4, 22);
+      this.tabPageDvbs.Name = "tabPageDvbs";
+      this.tabPageDvbs.Size = new System.Drawing.Size(480, 382);
+      this.tabPageDvbs.TabIndex = 4;
+      this.tabPageDvbs.Text = "DVB-S";
+      this.tabPageDvbs.UseVisualStyleBackColor = true;
       // 
-      // label110
+      // labelDvbsRedNote
       // 
-      this.label110.ForeColor = System.Drawing.Color.Red;
-      this.label110.Location = new System.Drawing.Point(24, 352);
-      this.label110.Name = "label110";
-      this.label110.Size = new System.Drawing.Size(248, 16);
-      this.label110.TabIndex = 84;
-      this.label110.Text = "Fields with * and in red are required";
+      this.labelDvbsRedNote.AutoSize = true;
+      this.labelDvbsRedNote.ForeColor = System.Drawing.Color.Red;
+      this.labelDvbsRedNote.Location = new System.Drawing.Point(296, 352);
+      this.labelDvbsRedNote.Name = "labelDvbsRedNote";
+      this.labelDvbsRedNote.Size = new System.Drawing.Size(171, 13);
+      this.labelDvbsRedNote.TabIndex = 84;
+      this.labelDvbsRedNote.Text = "Red fields denote  required values.";
       // 
-      // tbDVBSPCR
+      // textBoxDvbsPcrPid
       // 
-      this.tbDVBSPCR.Location = new System.Drawing.Point(368, 104);
-      this.tbDVBSPCR.Name = "tbDVBSPCR";
-      this.tbDVBSPCR.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSPCR.TabIndex = 83;
+      this.textBoxDvbsPcrPid.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbsPcrPid.Location = new System.Drawing.Point(360, 104);
+      this.textBoxDvbsPcrPid.Name = "textBoxDvbsPcrPid";
+      this.textBoxDvbsPcrPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsPcrPid.TabIndex = 83;
       // 
-      // label106
+      // labelDvbsPcrPid
       // 
-      this.label106.ForeColor = System.Drawing.Color.Red;
-      this.label106.Location = new System.Drawing.Point(296, 104);
-      this.label106.Name = "label106";
-      this.label106.Size = new System.Drawing.Size(72, 16);
-      this.label106.TabIndex = 82;
-      this.label106.Text = "* PCR Pid:";
+      this.labelDvbsPcrPid.AutoSize = true;
+      this.labelDvbsPcrPid.Location = new System.Drawing.Point(288, 104);
+      this.labelDvbsPcrPid.Name = "labelDvbsPcrPid";
+      this.labelDvbsPcrPid.Size = new System.Drawing.Size(50, 13);
+      this.labelDvbsPcrPid.TabIndex = 82;
+      this.labelDvbsPcrPid.Text = "PCR PID";
       // 
       // label101
       // 
+      this.label101.AutoSize = true;
       this.label101.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.label101.Location = new System.Drawing.Point(24, 8);
       this.label101.Name = "label101";
-      this.label101.Size = new System.Drawing.Size(272, 23);
+      this.label101.Size = new System.Drawing.Size(159, 13);
       this.label101.TabIndex = 81;
-      this.label101.Text = "Digital TV Satelite settings for this TV channel";
+      this.label101.Text = "Digital satellite TV settings";
       // 
-      // label66
+      // labelDvbsAudioLanguage3
       // 
-      this.label66.Location = new System.Drawing.Point(296, 312);
-      this.label66.Name = "label66";
-      this.label66.Size = new System.Drawing.Size(72, 16);
-      this.label66.TabIndex = 80;
-      this.label66.Text = "Audio 3:";
+      this.labelDvbsAudioLanguage3.AutoSize = true;
+      this.labelDvbsAudioLanguage3.Location = new System.Drawing.Point(288, 312);
+      this.labelDvbsAudioLanguage3.Name = "labelDvbsAudioLanguage3";
+      this.labelDvbsAudioLanguage3.Size = new System.Drawing.Size(43, 13);
+      this.labelDvbsAudioLanguage3.TabIndex = 80;
+      this.labelDvbsAudioLanguage3.Text = "Audio 3";
       // 
-      // tbDVBSAudioLanguage3
+      // textBoxDvbsAudioLanguage3
       // 
-      this.tbDVBSAudioLanguage3.Location = new System.Drawing.Point(368, 312);
-      this.tbDVBSAudioLanguage3.Name = "tbDVBSAudioLanguage3";
-      this.tbDVBSAudioLanguage3.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSAudioLanguage3.TabIndex = 79;
+      this.textBoxDvbsAudioLanguage3.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbsAudioLanguage3.Location = new System.Drawing.Point(360, 312);
+      this.textBoxDvbsAudioLanguage3.Name = "textBoxDvbsAudioLanguage3";
+      this.textBoxDvbsAudioLanguage3.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsAudioLanguage3.TabIndex = 79;
       // 
-      // tbDVBSAudioLanguage2
+      // textBoxDvbsAudioLanguage2
       // 
-      this.tbDVBSAudioLanguage2.Location = new System.Drawing.Point(368, 288);
-      this.tbDVBSAudioLanguage2.Name = "tbDVBSAudioLanguage2";
-      this.tbDVBSAudioLanguage2.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSAudioLanguage2.TabIndex = 78;
+      this.textBoxDvbsAudioLanguage2.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbsAudioLanguage2.Location = new System.Drawing.Point(360, 288);
+      this.textBoxDvbsAudioLanguage2.Name = "textBoxDvbsAudioLanguage2";
+      this.textBoxDvbsAudioLanguage2.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsAudioLanguage2.TabIndex = 78;
       // 
-      // tbDVBSAudioLanguage1
+      // textBoxDvbsAudioLanguage1
       // 
-      this.tbDVBSAudioLanguage1.Location = new System.Drawing.Point(368, 264);
-      this.tbDVBSAudioLanguage1.Name = "tbDVBSAudioLanguage1";
-      this.tbDVBSAudioLanguage1.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSAudioLanguage1.TabIndex = 77;
+      this.textBoxDvbsAudioLanguage1.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbsAudioLanguage1.Location = new System.Drawing.Point(360, 264);
+      this.textBoxDvbsAudioLanguage1.Name = "textBoxDvbsAudioLanguage1";
+      this.textBoxDvbsAudioLanguage1.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsAudioLanguage1.TabIndex = 77;
       // 
-      // tbDVBSAudioLanguage
+      // textBoxDvbsAudioLanguage
       // 
-      this.tbDVBSAudioLanguage.Location = new System.Drawing.Point(368, 240);
-      this.tbDVBSAudioLanguage.Name = "tbDVBSAudioLanguage";
-      this.tbDVBSAudioLanguage.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSAudioLanguage.TabIndex = 76;
+      this.textBoxDvbsAudioLanguage.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbsAudioLanguage.Location = new System.Drawing.Point(360, 240);
+      this.textBoxDvbsAudioLanguage.Name = "textBoxDvbsAudioLanguage";
+      this.textBoxDvbsAudioLanguage.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsAudioLanguage.TabIndex = 76;
       // 
-      // label67
+      // labelDvbsAudioLanguage2
       // 
-      this.label67.Location = new System.Drawing.Point(296, 288);
-      this.label67.Name = "label67";
-      this.label67.Size = new System.Drawing.Size(72, 16);
-      this.label67.TabIndex = 75;
-      this.label67.Text = "Audio 2:";
+      this.labelDvbsAudioLanguage2.AutoSize = true;
+      this.labelDvbsAudioLanguage2.Location = new System.Drawing.Point(288, 288);
+      this.labelDvbsAudioLanguage2.Name = "labelDvbsAudioLanguage2";
+      this.labelDvbsAudioLanguage2.Size = new System.Drawing.Size(43, 13);
+      this.labelDvbsAudioLanguage2.TabIndex = 75;
+      this.labelDvbsAudioLanguage2.Text = "Audio 2";
       // 
-      // label68
+      // labelDvbsAudioLanguage1
       // 
-      this.label68.Location = new System.Drawing.Point(296, 264);
-      this.label68.Name = "label68";
-      this.label68.Size = new System.Drawing.Size(72, 16);
-      this.label68.TabIndex = 74;
-      this.label68.Text = "Audio 1:";
+      this.labelDvbsAudioLanguage1.AutoSize = true;
+      this.labelDvbsAudioLanguage1.Location = new System.Drawing.Point(288, 264);
+      this.labelDvbsAudioLanguage1.Name = "labelDvbsAudioLanguage1";
+      this.labelDvbsAudioLanguage1.Size = new System.Drawing.Size(43, 13);
+      this.labelDvbsAudioLanguage1.TabIndex = 74;
+      this.labelDvbsAudioLanguage1.Text = "Audio 1";
       // 
-      // label69
+      // labelDvbsAudioLanguage
       // 
-      this.label69.Location = new System.Drawing.Point(296, 240);
-      this.label69.Name = "label69";
-      this.label69.Size = new System.Drawing.Size(72, 16);
-      this.label69.TabIndex = 73;
-      this.label69.Text = "Audio :";
+      this.labelDvbsAudioLanguage.AutoSize = true;
+      this.labelDvbsAudioLanguage.Location = new System.Drawing.Point(288, 240);
+      this.labelDvbsAudioLanguage.Name = "labelDvbsAudioLanguage";
+      this.labelDvbsAudioLanguage.Size = new System.Drawing.Size(34, 13);
+      this.labelDvbsAudioLanguage.TabIndex = 73;
+      this.labelDvbsAudioLanguage.Text = "Audio";
       // 
-      // tbDVBSAC3
+      // textBoxDvbsAc3Pid
       // 
-      this.tbDVBSAC3.Location = new System.Drawing.Point(368, 208);
-      this.tbDVBSAC3.Name = "tbDVBSAC3";
-      this.tbDVBSAC3.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSAC3.TabIndex = 72;
+      this.textBoxDvbsAc3Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbsAc3Pid.Location = new System.Drawing.Point(360, 208);
+      this.textBoxDvbsAc3Pid.Name = "textBoxDvbsAc3Pid";
+      this.textBoxDvbsAc3Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsAc3Pid.TabIndex = 72;
       // 
-      // tbDVBSAudio3
+      // textBoxDvbsAudio3Pid
       // 
-      this.tbDVBSAudio3.Location = new System.Drawing.Point(368, 184);
-      this.tbDVBSAudio3.Name = "tbDVBSAudio3";
-      this.tbDVBSAudio3.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSAudio3.TabIndex = 71;
+      this.textBoxDvbsAudio3Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbsAudio3Pid.Location = new System.Drawing.Point(360, 184);
+      this.textBoxDvbsAudio3Pid.Name = "textBoxDvbsAudio3Pid";
+      this.textBoxDvbsAudio3Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsAudio3Pid.TabIndex = 71;
       // 
-      // tbDVBSAudio2
+      // textBoxDvbsAudio2Pid
       // 
-      this.tbDVBSAudio2.Location = new System.Drawing.Point(368, 160);
-      this.tbDVBSAudio2.Name = "tbDVBSAudio2";
-      this.tbDVBSAudio2.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSAudio2.TabIndex = 70;
+      this.textBoxDvbsAudio2Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbsAudio2Pid.Location = new System.Drawing.Point(360, 160);
+      this.textBoxDvbsAudio2Pid.Name = "textBoxDvbsAudio2Pid";
+      this.textBoxDvbsAudio2Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsAudio2Pid.TabIndex = 70;
       // 
-      // tbDVBSAudio1
+      // textBoxDvbsAudio1Pid
       // 
-      this.tbDVBSAudio1.Location = new System.Drawing.Point(368, 136);
-      this.tbDVBSAudio1.Name = "tbDVBSAudio1";
-      this.tbDVBSAudio1.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSAudio1.TabIndex = 69;
+      this.textBoxDvbsAudio1Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbsAudio1Pid.Location = new System.Drawing.Point(360, 136);
+      this.textBoxDvbsAudio1Pid.Name = "textBoxDvbsAudio1Pid";
+      this.textBoxDvbsAudio1Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsAudio1Pid.TabIndex = 69;
       // 
-      // label70
+      // labelDvbsAc3Pid
       // 
-      this.label70.Location = new System.Drawing.Point(296, 208);
-      this.label70.Name = "label70";
-      this.label70.Size = new System.Drawing.Size(72, 16);
-      this.label70.TabIndex = 68;
-      this.label70.Text = "AC3 Pid:";
+      this.labelDvbsAc3Pid.AutoSize = true;
+      this.labelDvbsAc3Pid.Location = new System.Drawing.Point(288, 208);
+      this.labelDvbsAc3Pid.Name = "labelDvbsAc3Pid";
+      this.labelDvbsAc3Pid.Size = new System.Drawing.Size(48, 13);
+      this.labelDvbsAc3Pid.TabIndex = 68;
+      this.labelDvbsAc3Pid.Text = "AC3 PID";
       // 
-      // label71
+      // labelDvbsAudio3Pid
       // 
-      this.label71.Location = new System.Drawing.Point(296, 184);
-      this.label71.Name = "label71";
-      this.label71.Size = new System.Drawing.Size(72, 16);
-      this.label71.TabIndex = 67;
-      this.label71.Text = "Audio Pid3:";
+      this.labelDvbsAudio3Pid.AutoSize = true;
+      this.labelDvbsAudio3Pid.Location = new System.Drawing.Point(288, 184);
+      this.labelDvbsAudio3Pid.Name = "labelDvbsAudio3Pid";
+      this.labelDvbsAudio3Pid.Size = new System.Drawing.Size(64, 13);
+      this.labelDvbsAudio3Pid.TabIndex = 67;
+      this.labelDvbsAudio3Pid.Text = "Audio 3 PID";
       // 
-      // label72
+      // labelDvbsAudio2Pid
       // 
-      this.label72.Location = new System.Drawing.Point(296, 160);
-      this.label72.Name = "label72";
-      this.label72.Size = new System.Drawing.Size(72, 16);
-      this.label72.TabIndex = 66;
-      this.label72.Text = "Audio Pid2:";
+      this.labelDvbsAudio2Pid.AutoSize = true;
+      this.labelDvbsAudio2Pid.Location = new System.Drawing.Point(288, 160);
+      this.labelDvbsAudio2Pid.Name = "labelDvbsAudio2Pid";
+      this.labelDvbsAudio2Pid.Size = new System.Drawing.Size(64, 13);
+      this.labelDvbsAudio2Pid.TabIndex = 66;
+      this.labelDvbsAudio2Pid.Text = "Audio 2 PID";
       // 
-      // label73
+      // labelDvbsAudio1Pid
       // 
-      this.label73.Location = new System.Drawing.Point(296, 136);
-      this.label73.Name = "label73";
-      this.label73.Size = new System.Drawing.Size(72, 16);
-      this.label73.TabIndex = 65;
-      this.label73.Text = "Audio Pid1:";
+      this.labelDvbsAudio1Pid.AutoSize = true;
+      this.labelDvbsAudio1Pid.Location = new System.Drawing.Point(288, 136);
+      this.labelDvbsAudio1Pid.Name = "labelDvbsAudio1Pid";
+      this.labelDvbsAudio1Pid.Size = new System.Drawing.Size(64, 13);
+      this.labelDvbsAudio1Pid.TabIndex = 65;
+      this.labelDvbsAudio1Pid.Text = "Audio 1 PID";
       // 
-      // tbDVBSPmtPid
+      // textBoxDvbsPmtPid
       // 
-      this.tbDVBSPmtPid.Location = new System.Drawing.Point(160, 320);
-      this.tbDVBSPmtPid.Name = "tbDVBSPmtPid";
-      this.tbDVBSPmtPid.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSPmtPid.TabIndex = 48;
+      this.textBoxDvbsPmtPid.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbsPmtPid.Location = new System.Drawing.Point(168, 328);
+      this.textBoxDvbsPmtPid.Name = "textBoxDvbsPmtPid";
+      this.textBoxDvbsPmtPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsPmtPid.TabIndex = 48;
       // 
-      // label48
+      // labelDvbsPmtPid
       // 
-      this.label48.ForeColor = System.Drawing.Color.Red;
-      this.label48.Location = new System.Drawing.Point(24, 320);
-      this.label48.Name = "label48";
-      this.label48.Size = new System.Drawing.Size(72, 16);
-      this.label48.TabIndex = 47;
-      this.label48.Text = "* PMT pid:";
+      this.labelDvbsPmtPid.AutoSize = true;
+      this.labelDvbsPmtPid.Location = new System.Drawing.Point(32, 328);
+      this.labelDvbsPmtPid.Name = "labelDvbsPmtPid";
+      this.labelDvbsPmtPid.Size = new System.Drawing.Size(51, 13);
+      this.labelDvbsPmtPid.TabIndex = 47;
+      this.labelDvbsPmtPid.Text = "PMT PID";
       // 
       // label40
       // 
-      this.label40.Location = new System.Drawing.Point(232, 32);
+      this.label40.Location = new System.Drawing.Point(280, 40);
       this.label40.Name = "label40";
       this.label40.Size = new System.Drawing.Size(152, 16);
       this.label40.TabIndex = 46;
       // 
-      // tbDVBSECMpid
+      // textBoxDvbsEcmPid
       // 
-      this.tbDVBSECMpid.Location = new System.Drawing.Point(160, 296);
-      this.tbDVBSECMpid.Name = "tbDVBSECMpid";
-      this.tbDVBSECMpid.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSECMpid.TabIndex = 45;
+      this.textBoxDvbsEcmPid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbsEcmPid.Location = new System.Drawing.Point(168, 304);
+      this.textBoxDvbsEcmPid.Name = "textBoxDvbsEcmPid";
+      this.textBoxDvbsEcmPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsEcmPid.TabIndex = 45;
       // 
-      // label39
+      // labelDvbsEcmPid
       // 
-      this.label39.Location = new System.Drawing.Point(24, 296);
-      this.label39.Name = "label39";
-      this.label39.Size = new System.Drawing.Size(100, 16);
-      this.label39.TabIndex = 44;
-      this.label39.Text = "ECM pid:";
+      this.labelDvbsEcmPid.AutoSize = true;
+      this.labelDvbsEcmPid.Location = new System.Drawing.Point(32, 304);
+      this.labelDvbsEcmPid.Name = "labelDvbsEcmPid";
+      this.labelDvbsEcmPid.Size = new System.Drawing.Size(51, 13);
+      this.labelDvbsEcmPid.TabIndex = 44;
+      this.labelDvbsEcmPid.Text = "ECM PID";
       // 
-      // tbDVBSTeletextPid
+      // textBoxDvbsTeletextPid
       // 
-      this.tbDVBSTeletextPid.Location = new System.Drawing.Point(160, 272);
-      this.tbDVBSTeletextPid.Name = "tbDVBSTeletextPid";
-      this.tbDVBSTeletextPid.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSTeletextPid.TabIndex = 43;
+      this.textBoxDvbsTeletextPid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbsTeletextPid.Location = new System.Drawing.Point(168, 280);
+      this.textBoxDvbsTeletextPid.Name = "textBoxDvbsTeletextPid";
+      this.textBoxDvbsTeletextPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsTeletextPid.TabIndex = 43;
       // 
-      // tbDVBSVideoPid
+      // textBoxDvbsVideoPid
       // 
-      this.tbDVBSVideoPid.Location = new System.Drawing.Point(160, 248);
-      this.tbDVBSVideoPid.Name = "tbDVBSVideoPid";
-      this.tbDVBSVideoPid.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSVideoPid.TabIndex = 42;
+      this.textBoxDvbsVideoPid.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbsVideoPid.Location = new System.Drawing.Point(168, 256);
+      this.textBoxDvbsVideoPid.Name = "textBoxDvbsVideoPid";
+      this.textBoxDvbsVideoPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsVideoPid.TabIndex = 42;
       // 
-      // tbDVBSAudioPid
+      // textBoxDvbsAudioPid
       // 
-      this.tbDVBSAudioPid.Location = new System.Drawing.Point(160, 224);
-      this.tbDVBSAudioPid.Name = "tbDVBSAudioPid";
-      this.tbDVBSAudioPid.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSAudioPid.TabIndex = 41;
+      this.textBoxDvbsAudioPid.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbsAudioPid.Location = new System.Drawing.Point(168, 232);
+      this.textBoxDvbsAudioPid.Name = "textBoxDvbsAudioPid";
+      this.textBoxDvbsAudioPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsAudioPid.TabIndex = 41;
       // 
-      // label36
+      // labelDvbsTeletextPid
       // 
-      this.label36.Location = new System.Drawing.Point(24, 272);
-      this.label36.Name = "label36";
-      this.label36.Size = new System.Drawing.Size(72, 16);
-      this.label36.TabIndex = 40;
-      this.label36.Text = "Teletext pid:";
+      this.labelDvbsTeletextPid.AutoSize = true;
+      this.labelDvbsTeletextPid.Location = new System.Drawing.Point(32, 280);
+      this.labelDvbsTeletextPid.Name = "labelDvbsTeletextPid";
+      this.labelDvbsTeletextPid.Size = new System.Drawing.Size(66, 13);
+      this.labelDvbsTeletextPid.TabIndex = 40;
+      this.labelDvbsTeletextPid.Text = "Teletext PID";
       // 
-      // label37
+      // labelDvbsVideoPid
       // 
-      this.label37.ForeColor = System.Drawing.Color.Red;
-      this.label37.Location = new System.Drawing.Point(24, 248);
-      this.label37.Name = "label37";
-      this.label37.Size = new System.Drawing.Size(72, 16);
-      this.label37.TabIndex = 39;
-      this.label37.Text = "* Video pid:";
+      this.labelDvbsVideoPid.AutoSize = true;
+      this.labelDvbsVideoPid.Location = new System.Drawing.Point(32, 256);
+      this.labelDvbsVideoPid.Name = "labelDvbsVideoPid";
+      this.labelDvbsVideoPid.Size = new System.Drawing.Size(55, 13);
+      this.labelDvbsVideoPid.TabIndex = 39;
+      this.labelDvbsVideoPid.Text = "Video PID";
       // 
-      // label38
+      // labelDvbsAudioPid
       // 
-      this.label38.ForeColor = System.Drawing.Color.Red;
-      this.label38.Location = new System.Drawing.Point(24, 224);
-      this.label38.Name = "label38";
-      this.label38.Size = new System.Drawing.Size(72, 16);
-      this.label38.TabIndex = 38;
-      this.label38.Text = "* Audio pid:";
+      this.labelDvbsAudioPid.AutoSize = true;
+      this.labelDvbsAudioPid.Location = new System.Drawing.Point(32, 232);
+      this.labelDvbsAudioPid.Name = "labelDvbsAudioPid";
+      this.labelDvbsAudioPid.Size = new System.Drawing.Size(55, 13);
+      this.labelDvbsAudioPid.TabIndex = 38;
+      this.labelDvbsAudioPid.Text = "Audio PID";
       // 
-      // tbDVBSProvider
+      // textBoxDvbsProvider
       // 
-      this.tbDVBSProvider.Location = new System.Drawing.Point(160, 200);
-      this.tbDVBSProvider.Name = "tbDVBSProvider";
-      this.tbDVBSProvider.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSProvider.TabIndex = 37;
+      this.textBoxDvbsProvider.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxDvbsProvider.Location = new System.Drawing.Point(168, 208);
+      this.textBoxDvbsProvider.Name = "textBoxDvbsProvider";
+      this.textBoxDvbsProvider.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsProvider.TabIndex = 37;
       // 
-      // label29
+      // labelDvbsProvider
       // 
-      this.label29.Location = new System.Drawing.Point(24, 200);
-      this.label29.Name = "label29";
-      this.label29.Size = new System.Drawing.Size(100, 16);
-      this.label29.TabIndex = 36;
-      this.label29.Text = "Provider:";
+      this.labelDvbsProvider.AutoSize = true;
+      this.labelDvbsProvider.Location = new System.Drawing.Point(32, 208);
+      this.labelDvbsProvider.Name = "labelDvbsProvider";
+      this.labelDvbsProvider.Size = new System.Drawing.Size(46, 13);
+      this.labelDvbsProvider.TabIndex = 36;
+      this.labelDvbsProvider.Text = "Provider";
       // 
-      // cbDVBSPolarisation
+      // comboBoxDvbsPolarisation
       // 
-      this.cbDVBSPolarisation.Items.AddRange(new object[] {
+      this.comboBoxDvbsPolarisation.BorderColor = System.Drawing.Color.Red;
+      this.comboBoxDvbsPolarisation.Items.AddRange(new object[] {
             "Horizontal",
             "Vertical"});
-      this.cbDVBSPolarisation.Location = new System.Drawing.Point(160, 176);
-      this.cbDVBSPolarisation.Name = "cbDVBSPolarisation";
-      this.cbDVBSPolarisation.Size = new System.Drawing.Size(121, 21);
-      this.cbDVBSPolarisation.TabIndex = 35;
+      this.comboBoxDvbsPolarisation.Location = new System.Drawing.Point(168, 184);
+      this.comboBoxDvbsPolarisation.Name = "comboBoxDvbsPolarisation";
+      this.comboBoxDvbsPolarisation.Size = new System.Drawing.Size(80, 21);
+      this.comboBoxDvbsPolarisation.TabIndex = 35;
       // 
-      // cbDvbSInnerFec
+      // comboBoxDvbsInnerFec
       // 
-      this.cbDvbSInnerFec.Items.AddRange(new object[] {
+      this.comboBoxDvbsInnerFec.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxDvbsInnerFec.Items.AddRange(new object[] {
             "Max",
             "Not Defined",
             "Not Set",
             "RS 204/188",
             "ViterBi"});
-      this.cbDvbSInnerFec.Location = new System.Drawing.Point(160, 152);
-      this.cbDvbSInnerFec.Name = "cbDvbSInnerFec";
-      this.cbDvbSInnerFec.Size = new System.Drawing.Size(121, 21);
-      this.cbDvbSInnerFec.TabIndex = 34;
+      this.comboBoxDvbsInnerFec.Location = new System.Drawing.Point(168, 160);
+      this.comboBoxDvbsInnerFec.Name = "comboBoxDvbsInnerFec";
+      this.comboBoxDvbsInnerFec.Size = new System.Drawing.Size(80, 21);
+      this.comboBoxDvbsInnerFec.TabIndex = 34;
       // 
-      // label20
+      // labelDvbsPolarisation
       // 
-      this.label20.ForeColor = System.Drawing.Color.Red;
-      this.label20.Location = new System.Drawing.Point(24, 176);
-      this.label20.Name = "label20";
-      this.label20.Size = new System.Drawing.Size(100, 16);
-      this.label20.TabIndex = 33;
-      this.label20.Text = "* Polarisation";
+      this.labelDvbsPolarisation.AutoSize = true;
+      this.labelDvbsPolarisation.Location = new System.Drawing.Point(32, 184);
+      this.labelDvbsPolarisation.Name = "labelDvbsPolarisation";
+      this.labelDvbsPolarisation.Size = new System.Drawing.Size(61, 13);
+      this.labelDvbsPolarisation.TabIndex = 33;
+      this.labelDvbsPolarisation.Text = "Polarisation";
       // 
-      // label21
+      // labelDvbsInnerFec
       // 
-      this.label21.Location = new System.Drawing.Point(24, 152);
-      this.label21.Name = "label21";
-      this.label21.Size = new System.Drawing.Size(100, 16);
-      this.label21.TabIndex = 32;
-      this.label21.Text = "InnerFEC";
+      this.labelDvbsInnerFec.AutoSize = true;
+      this.labelDvbsInnerFec.Location = new System.Drawing.Point(32, 160);
+      this.labelDvbsInnerFec.Name = "labelDvbsInnerFec";
+      this.labelDvbsInnerFec.Size = new System.Drawing.Size(51, 13);
+      this.labelDvbsInnerFec.TabIndex = 32;
+      this.labelDvbsInnerFec.Text = "InnerFEC";
       // 
-      // tbDVBSSymbolrate
+      // textBoxDvbsSymbolrate
       // 
-      this.tbDVBSSymbolrate.Location = new System.Drawing.Point(160, 128);
-      this.tbDVBSSymbolrate.Name = "tbDVBSSymbolrate";
-      this.tbDVBSSymbolrate.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSSymbolrate.TabIndex = 31;
+      this.textBoxDvbsSymbolrate.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbsSymbolrate.Location = new System.Drawing.Point(168, 136);
+      this.textBoxDvbsSymbolrate.Name = "textBoxDvbsSymbolrate";
+      this.textBoxDvbsSymbolrate.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsSymbolrate.TabIndex = 31;
       // 
-      // label22
+      // labelDvbsSymbolrate
       // 
-      this.label22.ForeColor = System.Drawing.Color.Red;
-      this.label22.Location = new System.Drawing.Point(24, 128);
-      this.label22.Name = "label22";
-      this.label22.Size = new System.Drawing.Size(100, 16);
-      this.label22.TabIndex = 30;
-      this.label22.Text = "* Symbolrate";
+      this.labelDvbsSymbolrate.AutoSize = true;
+      this.labelDvbsSymbolrate.Location = new System.Drawing.Point(32, 136);
+      this.labelDvbsSymbolrate.Name = "labelDvbsSymbolrate";
+      this.labelDvbsSymbolrate.Size = new System.Drawing.Size(59, 13);
+      this.labelDvbsSymbolrate.TabIndex = 30;
+      this.labelDvbsSymbolrate.Text = "Symbolrate";
       // 
-      // tbDVBSFreq
+      // textBoxDvbsCarrierFrequency
       // 
-      this.tbDVBSFreq.Location = new System.Drawing.Point(160, 104);
-      this.tbDVBSFreq.Name = "tbDVBSFreq";
-      this.tbDVBSFreq.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSFreq.TabIndex = 29;
+      this.textBoxDvbsCarrierFrequency.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbsCarrierFrequency.Location = new System.Drawing.Point(168, 112);
+      this.textBoxDvbsCarrierFrequency.Name = "textBoxDvbsCarrierFrequency";
+      this.textBoxDvbsCarrierFrequency.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsCarrierFrequency.TabIndex = 29;
       // 
-      // label23
+      // labelDvbsCarrierFrequency
       // 
-      this.label23.ForeColor = System.Drawing.Color.Red;
-      this.label23.Location = new System.Drawing.Point(24, 104);
-      this.label23.Name = "label23";
-      this.label23.Size = new System.Drawing.Size(136, 16);
-      this.label23.TabIndex = 28;
-      this.label23.Text = "* Carrier Frequency (kHz)";
+      this.labelDvbsCarrierFrequency.AutoSize = true;
+      this.labelDvbsCarrierFrequency.Location = new System.Drawing.Point(32, 112);
+      this.labelDvbsCarrierFrequency.Name = "labelDvbsCarrierFrequency";
+      this.labelDvbsCarrierFrequency.Size = new System.Drawing.Size(118, 13);
+      this.labelDvbsCarrierFrequency.TabIndex = 28;
+      this.labelDvbsCarrierFrequency.Text = "Carrier Frequency (kHz)";
       // 
-      // tbDVBSTSID
+      // textBoxDvbsTransportId
       // 
-      this.tbDVBSTSID.Location = new System.Drawing.Point(160, 80);
-      this.tbDVBSTSID.Name = "tbDVBSTSID";
-      this.tbDVBSTSID.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSTSID.TabIndex = 27;
+      this.textBoxDvbsTransportId.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbsTransportId.Location = new System.Drawing.Point(168, 88);
+      this.textBoxDvbsTransportId.Name = "textBoxDvbsTransportId";
+      this.textBoxDvbsTransportId.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsTransportId.TabIndex = 27;
       // 
-      // label24
+      // labelDvbsTransportId
       // 
-      this.label24.ForeColor = System.Drawing.Color.Red;
-      this.label24.Location = new System.Drawing.Point(24, 80);
-      this.label24.Name = "label24";
-      this.label24.Size = new System.Drawing.Size(88, 16);
-      this.label24.TabIndex = 26;
-      this.label24.Text = "* Transport ID:";
+      this.labelDvbsTransportId.AutoSize = true;
+      this.labelDvbsTransportId.Location = new System.Drawing.Point(32, 88);
+      this.labelDvbsTransportId.Name = "labelDvbsTransportId";
+      this.labelDvbsTransportId.Size = new System.Drawing.Size(66, 13);
+      this.labelDvbsTransportId.TabIndex = 26;
+      this.labelDvbsTransportId.Text = "Transport ID";
       // 
-      // tbDVBSSID
+      // textBoxDvbsServiceId
       // 
-      this.tbDVBSSID.Location = new System.Drawing.Point(160, 56);
-      this.tbDVBSSID.Name = "tbDVBSSID";
-      this.tbDVBSSID.Size = new System.Drawing.Size(100, 20);
-      this.tbDVBSSID.TabIndex = 25;
+      this.textBoxDvbsServiceId.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbsServiceId.Location = new System.Drawing.Point(168, 64);
+      this.textBoxDvbsServiceId.Name = "textBoxDvbsServiceId";
+      this.textBoxDvbsServiceId.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsServiceId.TabIndex = 25;
       // 
-      // label25
+      // labelDvbsServiceId
       // 
-      this.label25.ForeColor = System.Drawing.Color.Red;
-      this.label25.Location = new System.Drawing.Point(24, 56);
-      this.label25.Name = "label25";
-      this.label25.Size = new System.Drawing.Size(80, 16);
-      this.label25.TabIndex = 24;
-      this.label25.Text = "* Service ID:";
+      this.labelDvbsServiceId.AutoSize = true;
+      this.labelDvbsServiceId.Location = new System.Drawing.Point(32, 64);
+      this.labelDvbsServiceId.Name = "labelDvbsServiceId";
+      this.labelDvbsServiceId.Size = new System.Drawing.Size(57, 13);
+      this.labelDvbsServiceId.TabIndex = 24;
+      this.labelDvbsServiceId.Text = "Service ID";
       // 
-      // tbDVBSONID
+      // textBoxDvbsNetworkId
       // 
-      this.tbDVBSONID.Location = new System.Drawing.Point(160, 32);
-      this.tbDVBSONID.Name = "tbDVBSONID";
-      this.tbDVBSONID.Size = new System.Drawing.Size(64, 20);
-      this.tbDVBSONID.TabIndex = 23;
+      this.textBoxDvbsNetworkId.BorderColor = System.Drawing.Color.Red;
+      this.textBoxDvbsNetworkId.Location = new System.Drawing.Point(168, 40);
+      this.textBoxDvbsNetworkId.Name = "textBoxDvbsNetworkId";
+      this.textBoxDvbsNetworkId.Size = new System.Drawing.Size(80, 20);
+      this.textBoxDvbsNetworkId.TabIndex = 23;
       // 
-      // label26
+      // labelDvbsNetworkId
       // 
-      this.label26.ForeColor = System.Drawing.Color.Red;
-      this.label26.Location = new System.Drawing.Point(24, 32);
-      this.label26.Name = "label26";
-      this.label26.Size = new System.Drawing.Size(80, 16);
-      this.label26.TabIndex = 22;
-      this.label26.Text = "* Network ID:";
+      this.labelDvbsNetworkId.AutoSize = true;
+      this.labelDvbsNetworkId.Location = new System.Drawing.Point(32, 40);
+      this.labelDvbsNetworkId.Name = "labelDvbsNetworkId";
+      this.labelDvbsNetworkId.Size = new System.Drawing.Size(61, 13);
+      this.labelDvbsNetworkId.TabIndex = 22;
+      this.labelDvbsNetworkId.Text = "Network ID";
       // 
-      // tabPage7
+      // tabPageAtsc
       // 
-      this.tabPage7.Controls.Add(this.label111);
-      this.tabPage7.Controls.Add(this.tbATSCPCR);
-      this.tabPage7.Controls.Add(this.label107);
-      this.tabPage7.Controls.Add(this.label102);
-      this.tabPage7.Controls.Add(this.tbATSCMinor);
-      this.tabPage7.Controls.Add(this.label83);
-      this.tabPage7.Controls.Add(this.label74);
-      this.tabPage7.Controls.Add(this.tbATSCAudioLanguage3);
-      this.tabPage7.Controls.Add(this.tbATSCAudioLanguage2);
-      this.tabPage7.Controls.Add(this.tbATSCAudioLanguage1);
-      this.tabPage7.Controls.Add(this.tbATSCAudioLanguage);
-      this.tabPage7.Controls.Add(this.label75);
-      this.tabPage7.Controls.Add(this.label76);
-      this.tabPage7.Controls.Add(this.label77);
-      this.tabPage7.Controls.Add(this.tbATSCAC3Pid);
-      this.tabPage7.Controls.Add(this.tbATSCAudio3Pid);
-      this.tabPage7.Controls.Add(this.tbATSCAudio2Pid);
-      this.tabPage7.Controls.Add(this.tbATSCAudio1Pid);
-      this.tabPage7.Controls.Add(this.label78);
-      this.tabPage7.Controls.Add(this.label79);
-      this.tabPage7.Controls.Add(this.label80);
-      this.tabPage7.Controls.Add(this.label81);
-      this.tabPage7.Controls.Add(this.tbATSCPMTPid);
-      this.tabPage7.Controls.Add(this.label82);
-      this.tabPage7.Controls.Add(this.tbATSCTeletextPid);
-      this.tabPage7.Controls.Add(this.tbATSCVideoPid);
-      this.tabPage7.Controls.Add(this.tbATSCAudioPid);
-      this.tabPage7.Controls.Add(this.label84);
-      this.tabPage7.Controls.Add(this.label85);
-      this.tabPage7.Controls.Add(this.label86);
-      this.tabPage7.Controls.Add(this.tbATSCProvider);
-      this.tabPage7.Controls.Add(this.label87);
-      this.tabPage7.Controls.Add(this.cbATSCModulation);
-      this.tabPage7.Controls.Add(this.cbATSCInnerFec);
-      this.tabPage7.Controls.Add(this.label88);
-      this.tabPage7.Controls.Add(this.label89);
-      this.tabPage7.Controls.Add(this.tbATSCSymbolRate);
-      this.tabPage7.Controls.Add(this.label90);
-      this.tabPage7.Controls.Add(this.tbATSCFrequency);
-      this.tabPage7.Controls.Add(this.label91);
-      this.tabPage7.Controls.Add(this.tbATSCTSID);
-      this.tabPage7.Controls.Add(this.label92);
-      this.tabPage7.Controls.Add(this.tbATSCMajor);
-      this.tabPage7.Controls.Add(this.label93);
-      this.tabPage7.Controls.Add(this.tbATSCPhysicalChannel);
-      this.tabPage7.Controls.Add(this.label94);
-      this.tabPage7.Location = new System.Drawing.Point(4, 22);
-      this.tabPage7.Name = "tabPage7";
-      this.tabPage7.Size = new System.Drawing.Size(480, 382);
-      this.tabPage7.TabIndex = 6;
-      this.tabPage7.Text = "ATSC";
-      this.tabPage7.UseVisualStyleBackColor = true;
+      this.tabPageAtsc.Controls.Add(this.labelAtscRedNote);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscPcrPid);
+      this.tabPageAtsc.Controls.Add(this.labelAtscPcrPid);
+      this.tabPageAtsc.Controls.Add(this.label102);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscMinorChannel);
+      this.tabPageAtsc.Controls.Add(this.labelAtscMinorChannel);
+      this.tabPageAtsc.Controls.Add(this.labelAtscAudioLanguage3);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscAudioLanguage3);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscAudioLanguage2);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscAudioLanguage1);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscAudioLanguage);
+      this.tabPageAtsc.Controls.Add(this.labelAtscAudioLanguage2);
+      this.tabPageAtsc.Controls.Add(this.labelAtscAudioLanguage1);
+      this.tabPageAtsc.Controls.Add(this.labelAtscAudioLanguage);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscAc3Pid);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscAudio3Pid);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscAudio2Pid);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscAudio1Pid);
+      this.tabPageAtsc.Controls.Add(this.labelAtscAc3Pid);
+      this.tabPageAtsc.Controls.Add(this.labelAtscAudio3Pid);
+      this.tabPageAtsc.Controls.Add(this.labelAtscAudio2Pid);
+      this.tabPageAtsc.Controls.Add(this.labelAtscAudio1Pid);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscPmtPid);
+      this.tabPageAtsc.Controls.Add(this.labelAtscPmtPid);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscTeletextPid);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscVideoPid);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscAudioPid);
+      this.tabPageAtsc.Controls.Add(this.labelAtscTeletextPid);
+      this.tabPageAtsc.Controls.Add(this.labelAtscVideoPid);
+      this.tabPageAtsc.Controls.Add(this.labelAtscAudioPid);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscProvider);
+      this.tabPageAtsc.Controls.Add(this.labelAtscProvider);
+      this.tabPageAtsc.Controls.Add(this.comboBoxAtscModulation);
+      this.tabPageAtsc.Controls.Add(this.comboBoxAtscInnerFec);
+      this.tabPageAtsc.Controls.Add(this.labelAtscModulation);
+      this.tabPageAtsc.Controls.Add(this.labelAtscInnerFec);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscSymbolRate);
+      this.tabPageAtsc.Controls.Add(this.labelAtscSymbolRate);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscCarrierFrequency);
+      this.tabPageAtsc.Controls.Add(this.labelAtscCarrierFrequency);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscTransportId);
+      this.tabPageAtsc.Controls.Add(this.labelAtscTransportId);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscMajorChannel);
+      this.tabPageAtsc.Controls.Add(this.labelAtscMajorChannel);
+      this.tabPageAtsc.Controls.Add(this.textBoxAtscPhysicalChannel);
+      this.tabPageAtsc.Controls.Add(this.labelAtscPhysicalChannel);
+      this.tabPageAtsc.Location = new System.Drawing.Point(4, 22);
+      this.tabPageAtsc.Name = "tabPageAtsc";
+      this.tabPageAtsc.Size = new System.Drawing.Size(480, 382);
+      this.tabPageAtsc.TabIndex = 6;
+      this.tabPageAtsc.Text = "ATSC";
+      this.tabPageAtsc.UseVisualStyleBackColor = true;
       // 
-      // label111
+      // labelAtscRedNote
       // 
-      this.label111.ForeColor = System.Drawing.Color.Red;
-      this.label111.Location = new System.Drawing.Point(24, 360);
-      this.label111.Name = "label111";
-      this.label111.Size = new System.Drawing.Size(248, 16);
-      this.label111.TabIndex = 95;
-      this.label111.Text = "Fields with * and in red are required";
+      this.labelAtscRedNote.AutoSize = true;
+      this.labelAtscRedNote.ForeColor = System.Drawing.Color.Red;
+      this.labelAtscRedNote.Location = new System.Drawing.Point(296, 352);
+      this.labelAtscRedNote.Name = "labelAtscRedNote";
+      this.labelAtscRedNote.Size = new System.Drawing.Size(171, 13);
+      this.labelAtscRedNote.TabIndex = 95;
+      this.labelAtscRedNote.Text = "Red fields denote  required values.";
       // 
-      // tbATSCPCR
+      // textBoxAtscPcrPid
       // 
-      this.tbATSCPCR.Location = new System.Drawing.Point(360, 96);
-      this.tbATSCPCR.Name = "tbATSCPCR";
-      this.tbATSCPCR.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCPCR.TabIndex = 94;
+      this.textBoxAtscPcrPid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscPcrPid.Location = new System.Drawing.Point(360, 104);
+      this.textBoxAtscPcrPid.Name = "textBoxAtscPcrPid";
+      this.textBoxAtscPcrPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscPcrPid.TabIndex = 94;
       // 
-      // label107
+      // labelAtscPcrPid
       // 
-      this.label107.Location = new System.Drawing.Point(288, 96);
-      this.label107.Name = "label107";
-      this.label107.Size = new System.Drawing.Size(72, 16);
-      this.label107.TabIndex = 93;
-      this.label107.Text = "PCR Pid:";
+      this.labelAtscPcrPid.AutoSize = true;
+      this.labelAtscPcrPid.Location = new System.Drawing.Point(288, 104);
+      this.labelAtscPcrPid.Name = "labelAtscPcrPid";
+      this.labelAtscPcrPid.Size = new System.Drawing.Size(50, 13);
+      this.labelAtscPcrPid.TabIndex = 93;
+      this.labelAtscPcrPid.Text = "PCR PID";
       // 
       // label102
       // 
+      this.label102.AutoSize = true;
       this.label102.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.label102.Location = new System.Drawing.Point(24, 8);
       this.label102.Name = "label102";
-      this.label102.Size = new System.Drawing.Size(272, 23);
+      this.label102.Size = new System.Drawing.Size(147, 13);
       this.label102.TabIndex = 92;
-      this.label102.Text = "Digital TV (ATSC) settings for this TV channel";
+      this.label102.Text = "Digital ATSC TV settings";
       // 
-      // tbATSCMinor
+      // textBoxAtscMinorChannel
       // 
-      this.tbATSCMinor.Location = new System.Drawing.Point(160, 88);
-      this.tbATSCMinor.Name = "tbATSCMinor";
-      this.tbATSCMinor.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCMinor.TabIndex = 91;
+      this.textBoxAtscMinorChannel.BorderColor = System.Drawing.Color.Red;
+      this.textBoxAtscMinorChannel.Location = new System.Drawing.Point(168, 88);
+      this.textBoxAtscMinorChannel.Name = "textBoxAtscMinorChannel";
+      this.textBoxAtscMinorChannel.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscMinorChannel.TabIndex = 91;
       // 
-      // label83
+      // labelAtscMinorChannel
       // 
-      this.label83.ForeColor = System.Drawing.Color.Red;
-      this.label83.Location = new System.Drawing.Point(16, 88);
-      this.label83.Name = "label83";
-      this.label83.Size = new System.Drawing.Size(88, 16);
-      this.label83.TabIndex = 90;
-      this.label83.Text = "* Minor channel";
+      this.labelAtscMinorChannel.AutoSize = true;
+      this.labelAtscMinorChannel.Location = new System.Drawing.Point(32, 88);
+      this.labelAtscMinorChannel.Name = "labelAtscMinorChannel";
+      this.labelAtscMinorChannel.Size = new System.Drawing.Size(74, 13);
+      this.labelAtscMinorChannel.TabIndex = 90;
+      this.labelAtscMinorChannel.Text = "Minor channel";
       // 
-      // label74
+      // labelAtscAudioLanguage3
       // 
-      this.label74.Location = new System.Drawing.Point(286, 304);
-      this.label74.Name = "label74";
-      this.label74.Size = new System.Drawing.Size(72, 16);
-      this.label74.TabIndex = 89;
-      this.label74.Text = "Audio 3:";
+      this.labelAtscAudioLanguage3.AutoSize = true;
+      this.labelAtscAudioLanguage3.Location = new System.Drawing.Point(288, 312);
+      this.labelAtscAudioLanguage3.Name = "labelAtscAudioLanguage3";
+      this.labelAtscAudioLanguage3.Size = new System.Drawing.Size(43, 13);
+      this.labelAtscAudioLanguage3.TabIndex = 89;
+      this.labelAtscAudioLanguage3.Text = "Audio 3";
       // 
-      // tbATSCAudioLanguage3
+      // textBoxAtscAudioLanguage3
       // 
-      this.tbATSCAudioLanguage3.Location = new System.Drawing.Point(358, 304);
-      this.tbATSCAudioLanguage3.Name = "tbATSCAudioLanguage3";
-      this.tbATSCAudioLanguage3.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCAudioLanguage3.TabIndex = 88;
+      this.textBoxAtscAudioLanguage3.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscAudioLanguage3.Location = new System.Drawing.Point(360, 312);
+      this.textBoxAtscAudioLanguage3.Name = "textBoxAtscAudioLanguage3";
+      this.textBoxAtscAudioLanguage3.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscAudioLanguage3.TabIndex = 88;
       // 
-      // tbATSCAudioLanguage2
+      // textBoxAtscAudioLanguage2
       // 
-      this.tbATSCAudioLanguage2.Location = new System.Drawing.Point(358, 280);
-      this.tbATSCAudioLanguage2.Name = "tbATSCAudioLanguage2";
-      this.tbATSCAudioLanguage2.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCAudioLanguage2.TabIndex = 87;
+      this.textBoxAtscAudioLanguage2.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscAudioLanguage2.Location = new System.Drawing.Point(360, 288);
+      this.textBoxAtscAudioLanguage2.Name = "textBoxAtscAudioLanguage2";
+      this.textBoxAtscAudioLanguage2.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscAudioLanguage2.TabIndex = 87;
       // 
-      // tbATSCAudioLanguage1
+      // textBoxAtscAudioLanguage1
       // 
-      this.tbATSCAudioLanguage1.Location = new System.Drawing.Point(358, 256);
-      this.tbATSCAudioLanguage1.Name = "tbATSCAudioLanguage1";
-      this.tbATSCAudioLanguage1.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCAudioLanguage1.TabIndex = 86;
+      this.textBoxAtscAudioLanguage1.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscAudioLanguage1.Location = new System.Drawing.Point(360, 264);
+      this.textBoxAtscAudioLanguage1.Name = "textBoxAtscAudioLanguage1";
+      this.textBoxAtscAudioLanguage1.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscAudioLanguage1.TabIndex = 86;
       // 
-      // tbATSCAudioLanguage
+      // textBoxAtscAudioLanguage
       // 
-      this.tbATSCAudioLanguage.Location = new System.Drawing.Point(358, 232);
-      this.tbATSCAudioLanguage.Name = "tbATSCAudioLanguage";
-      this.tbATSCAudioLanguage.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCAudioLanguage.TabIndex = 85;
+      this.textBoxAtscAudioLanguage.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscAudioLanguage.Location = new System.Drawing.Point(360, 240);
+      this.textBoxAtscAudioLanguage.Name = "textBoxAtscAudioLanguage";
+      this.textBoxAtscAudioLanguage.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscAudioLanguage.TabIndex = 85;
       // 
-      // label75
+      // labelAtscAudioLanguage2
       // 
-      this.label75.Location = new System.Drawing.Point(286, 280);
-      this.label75.Name = "label75";
-      this.label75.Size = new System.Drawing.Size(72, 16);
-      this.label75.TabIndex = 84;
-      this.label75.Text = "Audio 2:";
+      this.labelAtscAudioLanguage2.AutoSize = true;
+      this.labelAtscAudioLanguage2.Location = new System.Drawing.Point(288, 288);
+      this.labelAtscAudioLanguage2.Name = "labelAtscAudioLanguage2";
+      this.labelAtscAudioLanguage2.Size = new System.Drawing.Size(43, 13);
+      this.labelAtscAudioLanguage2.TabIndex = 84;
+      this.labelAtscAudioLanguage2.Text = "Audio 2";
       // 
-      // label76
+      // labelAtscAudioLanguage1
       // 
-      this.label76.Location = new System.Drawing.Point(286, 256);
-      this.label76.Name = "label76";
-      this.label76.Size = new System.Drawing.Size(72, 16);
-      this.label76.TabIndex = 83;
-      this.label76.Text = "Audio 1:";
+      this.labelAtscAudioLanguage1.AutoSize = true;
+      this.labelAtscAudioLanguage1.Location = new System.Drawing.Point(288, 264);
+      this.labelAtscAudioLanguage1.Name = "labelAtscAudioLanguage1";
+      this.labelAtscAudioLanguage1.Size = new System.Drawing.Size(43, 13);
+      this.labelAtscAudioLanguage1.TabIndex = 83;
+      this.labelAtscAudioLanguage1.Text = "Audio 1";
       // 
-      // label77
+      // labelAtscAudioLanguage
       // 
-      this.label77.Location = new System.Drawing.Point(286, 232);
-      this.label77.Name = "label77";
-      this.label77.Size = new System.Drawing.Size(72, 16);
-      this.label77.TabIndex = 82;
-      this.label77.Text = "Audio :";
+      this.labelAtscAudioLanguage.AutoSize = true;
+      this.labelAtscAudioLanguage.Location = new System.Drawing.Point(288, 240);
+      this.labelAtscAudioLanguage.Name = "labelAtscAudioLanguage";
+      this.labelAtscAudioLanguage.Size = new System.Drawing.Size(34, 13);
+      this.labelAtscAudioLanguage.TabIndex = 82;
+      this.labelAtscAudioLanguage.Text = "Audio";
       // 
-      // tbATSCAC3Pid
+      // textBoxAtscAc3Pid
       // 
-      this.tbATSCAC3Pid.Location = new System.Drawing.Point(358, 200);
-      this.tbATSCAC3Pid.Name = "tbATSCAC3Pid";
-      this.tbATSCAC3Pid.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCAC3Pid.TabIndex = 81;
+      this.textBoxAtscAc3Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscAc3Pid.Location = new System.Drawing.Point(360, 208);
+      this.textBoxAtscAc3Pid.Name = "textBoxAtscAc3Pid";
+      this.textBoxAtscAc3Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscAc3Pid.TabIndex = 81;
       // 
-      // tbATSCAudio3Pid
+      // textBoxAtscAudio3Pid
       // 
-      this.tbATSCAudio3Pid.Location = new System.Drawing.Point(358, 176);
-      this.tbATSCAudio3Pid.Name = "tbATSCAudio3Pid";
-      this.tbATSCAudio3Pid.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCAudio3Pid.TabIndex = 80;
+      this.textBoxAtscAudio3Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscAudio3Pid.Location = new System.Drawing.Point(360, 184);
+      this.textBoxAtscAudio3Pid.Name = "textBoxAtscAudio3Pid";
+      this.textBoxAtscAudio3Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscAudio3Pid.TabIndex = 80;
       // 
-      // tbATSCAudio2Pid
+      // textBoxAtscAudio2Pid
       // 
-      this.tbATSCAudio2Pid.Location = new System.Drawing.Point(358, 152);
-      this.tbATSCAudio2Pid.Name = "tbATSCAudio2Pid";
-      this.tbATSCAudio2Pid.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCAudio2Pid.TabIndex = 79;
+      this.textBoxAtscAudio2Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscAudio2Pid.Location = new System.Drawing.Point(360, 160);
+      this.textBoxAtscAudio2Pid.Name = "textBoxAtscAudio2Pid";
+      this.textBoxAtscAudio2Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscAudio2Pid.TabIndex = 79;
       // 
-      // tbATSCAudio1Pid
+      // textBoxAtscAudio1Pid
       // 
-      this.tbATSCAudio1Pid.Location = new System.Drawing.Point(358, 128);
-      this.tbATSCAudio1Pid.Name = "tbATSCAudio1Pid";
-      this.tbATSCAudio1Pid.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCAudio1Pid.TabIndex = 78;
+      this.textBoxAtscAudio1Pid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscAudio1Pid.Location = new System.Drawing.Point(360, 136);
+      this.textBoxAtscAudio1Pid.Name = "textBoxAtscAudio1Pid";
+      this.textBoxAtscAudio1Pid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscAudio1Pid.TabIndex = 78;
       // 
-      // label78
+      // labelAtscAc3Pid
       // 
-      this.label78.Location = new System.Drawing.Point(286, 200);
-      this.label78.Name = "label78";
-      this.label78.Size = new System.Drawing.Size(72, 16);
-      this.label78.TabIndex = 77;
-      this.label78.Text = "AC3 Pid:";
+      this.labelAtscAc3Pid.AutoSize = true;
+      this.labelAtscAc3Pid.Location = new System.Drawing.Point(288, 208);
+      this.labelAtscAc3Pid.Name = "labelAtscAc3Pid";
+      this.labelAtscAc3Pid.Size = new System.Drawing.Size(48, 13);
+      this.labelAtscAc3Pid.TabIndex = 77;
+      this.labelAtscAc3Pid.Text = "AC3 PID";
       // 
-      // label79
+      // labelAtscAudio3Pid
       // 
-      this.label79.Location = new System.Drawing.Point(286, 176);
-      this.label79.Name = "label79";
-      this.label79.Size = new System.Drawing.Size(72, 16);
-      this.label79.TabIndex = 76;
-      this.label79.Text = "Audio Pid3:";
+      this.labelAtscAudio3Pid.AutoSize = true;
+      this.labelAtscAudio3Pid.Location = new System.Drawing.Point(288, 184);
+      this.labelAtscAudio3Pid.Name = "labelAtscAudio3Pid";
+      this.labelAtscAudio3Pid.Size = new System.Drawing.Size(64, 13);
+      this.labelAtscAudio3Pid.TabIndex = 76;
+      this.labelAtscAudio3Pid.Text = "Audio 3 PID";
       // 
-      // label80
+      // labelAtscAudio2Pid
       // 
-      this.label80.Location = new System.Drawing.Point(286, 152);
-      this.label80.Name = "label80";
-      this.label80.Size = new System.Drawing.Size(72, 16);
-      this.label80.TabIndex = 75;
-      this.label80.Text = "Audio Pid2:";
+      this.labelAtscAudio2Pid.AutoSize = true;
+      this.labelAtscAudio2Pid.Location = new System.Drawing.Point(288, 160);
+      this.labelAtscAudio2Pid.Name = "labelAtscAudio2Pid";
+      this.labelAtscAudio2Pid.Size = new System.Drawing.Size(64, 13);
+      this.labelAtscAudio2Pid.TabIndex = 75;
+      this.labelAtscAudio2Pid.Text = "Audio 2 PID";
       // 
-      // label81
+      // labelAtscAudio1Pid
       // 
-      this.label81.Location = new System.Drawing.Point(286, 128);
-      this.label81.Name = "label81";
-      this.label81.Size = new System.Drawing.Size(72, 16);
-      this.label81.TabIndex = 74;
-      this.label81.Text = "Audio Pid1:";
+      this.labelAtscAudio1Pid.AutoSize = true;
+      this.labelAtscAudio1Pid.Location = new System.Drawing.Point(288, 136);
+      this.labelAtscAudio1Pid.Name = "labelAtscAudio1Pid";
+      this.labelAtscAudio1Pid.Size = new System.Drawing.Size(64, 13);
+      this.labelAtscAudio1Pid.TabIndex = 74;
+      this.labelAtscAudio1Pid.Text = "Audio 1 PID";
       // 
-      // tbATSCPMTPid
+      // textBoxAtscPmtPid
       // 
-      this.tbATSCPMTPid.Location = new System.Drawing.Point(160, 328);
-      this.tbATSCPMTPid.Name = "tbATSCPMTPid";
-      this.tbATSCPMTPid.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCPMTPid.TabIndex = 73;
+      this.textBoxAtscPmtPid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscPmtPid.Location = new System.Drawing.Point(168, 328);
+      this.textBoxAtscPmtPid.Name = "textBoxAtscPmtPid";
+      this.textBoxAtscPmtPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscPmtPid.TabIndex = 73;
       // 
-      // label82
+      // labelAtscPmtPid
       // 
-      this.label82.Location = new System.Drawing.Point(16, 328);
-      this.label82.Name = "label82";
-      this.label82.Size = new System.Drawing.Size(64, 16);
-      this.label82.TabIndex = 72;
-      this.label82.Text = "PMT pid:";
+      this.labelAtscPmtPid.AutoSize = true;
+      this.labelAtscPmtPid.Location = new System.Drawing.Point(32, 328);
+      this.labelAtscPmtPid.Name = "labelAtscPmtPid";
+      this.labelAtscPmtPid.Size = new System.Drawing.Size(51, 13);
+      this.labelAtscPmtPid.TabIndex = 72;
+      this.labelAtscPmtPid.Text = "PMT PID";
       // 
-      // tbATSCTeletextPid
+      // textBoxAtscTeletextPid
       // 
-      this.tbATSCTeletextPid.Location = new System.Drawing.Point(160, 304);
-      this.tbATSCTeletextPid.Name = "tbATSCTeletextPid";
-      this.tbATSCTeletextPid.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCTeletextPid.TabIndex = 70;
+      this.textBoxAtscTeletextPid.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscTeletextPid.Location = new System.Drawing.Point(168, 304);
+      this.textBoxAtscTeletextPid.Name = "textBoxAtscTeletextPid";
+      this.textBoxAtscTeletextPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscTeletextPid.TabIndex = 70;
       // 
-      // tbATSCVideoPid
+      // textBoxAtscVideoPid
       // 
-      this.tbATSCVideoPid.Location = new System.Drawing.Point(160, 280);
-      this.tbATSCVideoPid.Name = "tbATSCVideoPid";
-      this.tbATSCVideoPid.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCVideoPid.TabIndex = 69;
+      this.textBoxAtscVideoPid.BorderColor = System.Drawing.Color.Red;
+      this.textBoxAtscVideoPid.Location = new System.Drawing.Point(168, 280);
+      this.textBoxAtscVideoPid.Name = "textBoxAtscVideoPid";
+      this.textBoxAtscVideoPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscVideoPid.TabIndex = 69;
       // 
-      // tbATSCAudioPid
+      // textBoxAtscAudioPid
       // 
-      this.tbATSCAudioPid.Location = new System.Drawing.Point(160, 256);
-      this.tbATSCAudioPid.Name = "tbATSCAudioPid";
-      this.tbATSCAudioPid.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCAudioPid.TabIndex = 68;
+      this.textBoxAtscAudioPid.BorderColor = System.Drawing.Color.Red;
+      this.textBoxAtscAudioPid.Location = new System.Drawing.Point(168, 256);
+      this.textBoxAtscAudioPid.Name = "textBoxAtscAudioPid";
+      this.textBoxAtscAudioPid.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscAudioPid.TabIndex = 68;
       // 
-      // label84
+      // labelAtscTeletextPid
       // 
-      this.label84.Location = new System.Drawing.Point(16, 304);
-      this.label84.Name = "label84";
-      this.label84.Size = new System.Drawing.Size(72, 16);
-      this.label84.TabIndex = 67;
-      this.label84.Text = "Teletext pid:";
+      this.labelAtscTeletextPid.AutoSize = true;
+      this.labelAtscTeletextPid.Location = new System.Drawing.Point(32, 304);
+      this.labelAtscTeletextPid.Name = "labelAtscTeletextPid";
+      this.labelAtscTeletextPid.Size = new System.Drawing.Size(66, 13);
+      this.labelAtscTeletextPid.TabIndex = 67;
+      this.labelAtscTeletextPid.Text = "Teletext PID";
       // 
-      // label85
+      // labelAtscVideoPid
       // 
-      this.label85.ForeColor = System.Drawing.Color.Red;
-      this.label85.Location = new System.Drawing.Point(16, 280);
-      this.label85.Name = "label85";
-      this.label85.Size = new System.Drawing.Size(72, 16);
-      this.label85.TabIndex = 66;
-      this.label85.Text = "* Video pid:";
+      this.labelAtscVideoPid.AutoSize = true;
+      this.labelAtscVideoPid.Location = new System.Drawing.Point(32, 280);
+      this.labelAtscVideoPid.Name = "labelAtscVideoPid";
+      this.labelAtscVideoPid.Size = new System.Drawing.Size(55, 13);
+      this.labelAtscVideoPid.TabIndex = 66;
+      this.labelAtscVideoPid.Text = "Video PID";
       // 
-      // label86
+      // labelAtscAudioPid
       // 
-      this.label86.ForeColor = System.Drawing.Color.Red;
-      this.label86.Location = new System.Drawing.Point(16, 256);
-      this.label86.Name = "label86";
-      this.label86.Size = new System.Drawing.Size(72, 16);
-      this.label86.TabIndex = 65;
-      this.label86.Text = "* Audio pid:";
+      this.labelAtscAudioPid.AutoSize = true;
+      this.labelAtscAudioPid.Location = new System.Drawing.Point(32, 256);
+      this.labelAtscAudioPid.Name = "labelAtscAudioPid";
+      this.labelAtscAudioPid.Size = new System.Drawing.Size(55, 13);
+      this.labelAtscAudioPid.TabIndex = 65;
+      this.labelAtscAudioPid.Text = "Audio PID";
       // 
-      // tbATSCProvider
+      // textBoxAtscProvider
       // 
-      this.tbATSCProvider.Location = new System.Drawing.Point(158, 232);
-      this.tbATSCProvider.Name = "tbATSCProvider";
-      this.tbATSCProvider.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCProvider.TabIndex = 64;
+      this.textBoxAtscProvider.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscProvider.Location = new System.Drawing.Point(168, 232);
+      this.textBoxAtscProvider.Name = "textBoxAtscProvider";
+      this.textBoxAtscProvider.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscProvider.TabIndex = 64;
       // 
-      // label87
+      // labelAtscProvider
       // 
-      this.label87.Location = new System.Drawing.Point(16, 232);
-      this.label87.Name = "label87";
-      this.label87.Size = new System.Drawing.Size(100, 16);
-      this.label87.TabIndex = 63;
-      this.label87.Text = "Provider:";
+      this.labelAtscProvider.AutoSize = true;
+      this.labelAtscProvider.Location = new System.Drawing.Point(32, 232);
+      this.labelAtscProvider.Name = "labelAtscProvider";
+      this.labelAtscProvider.Size = new System.Drawing.Size(46, 13);
+      this.labelAtscProvider.TabIndex = 63;
+      this.labelAtscProvider.Text = "Provider";
       // 
-      // cbATSCModulation
+      // comboBoxAtscModulation
       // 
-      this.cbATSCModulation.Items.AddRange(new object[] {
+      this.comboBoxAtscModulation.BorderColor = System.Drawing.Color.Red;
+      this.comboBoxAtscModulation.Items.AddRange(new object[] {
             "Not Set",
             "1024QAM",
             "112QAM",
@@ -2464,134 +2616,143 @@ namespace MediaPortal.Configuration
             "BPSK",
             "OQPSK",
             "QPSK"});
-      this.cbATSCModulation.Location = new System.Drawing.Point(158, 208);
-      this.cbATSCModulation.Name = "cbATSCModulation";
-      this.cbATSCModulation.Size = new System.Drawing.Size(121, 21);
-      this.cbATSCModulation.TabIndex = 62;
+      this.comboBoxAtscModulation.Location = new System.Drawing.Point(168, 208);
+      this.comboBoxAtscModulation.Name = "comboBoxAtscModulation";
+      this.comboBoxAtscModulation.Size = new System.Drawing.Size(80, 21);
+      this.comboBoxAtscModulation.TabIndex = 62;
       // 
-      // cbATSCInnerFec
+      // comboBoxAtscInnerFec
       // 
-      this.cbATSCInnerFec.Items.AddRange(new object[] {
+      this.comboBoxAtscInnerFec.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxAtscInnerFec.Items.AddRange(new object[] {
             "Max",
             "Not Defined",
             "Not set",
             "RS 204/188",
             "ViterBi"});
-      this.cbATSCInnerFec.Location = new System.Drawing.Point(158, 184);
-      this.cbATSCInnerFec.Name = "cbATSCInnerFec";
-      this.cbATSCInnerFec.Size = new System.Drawing.Size(121, 21);
-      this.cbATSCInnerFec.TabIndex = 61;
+      this.comboBoxAtscInnerFec.Location = new System.Drawing.Point(168, 184);
+      this.comboBoxAtscInnerFec.Name = "comboBoxAtscInnerFec";
+      this.comboBoxAtscInnerFec.Size = new System.Drawing.Size(80, 21);
+      this.comboBoxAtscInnerFec.TabIndex = 61;
       // 
-      // label88
+      // labelAtscModulation
       // 
-      this.label88.ForeColor = System.Drawing.Color.Red;
-      this.label88.Location = new System.Drawing.Point(16, 208);
-      this.label88.Name = "label88";
-      this.label88.Size = new System.Drawing.Size(100, 16);
-      this.label88.TabIndex = 60;
-      this.label88.Text = "* Modulation";
+      this.labelAtscModulation.AutoSize = true;
+      this.labelAtscModulation.Location = new System.Drawing.Point(32, 208);
+      this.labelAtscModulation.Name = "labelAtscModulation";
+      this.labelAtscModulation.Size = new System.Drawing.Size(59, 13);
+      this.labelAtscModulation.TabIndex = 60;
+      this.labelAtscModulation.Text = "Modulation";
       // 
-      // label89
+      // labelAtscInnerFec
       // 
-      this.label89.Location = new System.Drawing.Point(16, 184);
-      this.label89.Name = "label89";
-      this.label89.Size = new System.Drawing.Size(100, 16);
-      this.label89.TabIndex = 59;
-      this.label89.Text = "InnerFEC";
+      this.labelAtscInnerFec.AutoSize = true;
+      this.labelAtscInnerFec.Location = new System.Drawing.Point(32, 184);
+      this.labelAtscInnerFec.Name = "labelAtscInnerFec";
+      this.labelAtscInnerFec.Size = new System.Drawing.Size(51, 13);
+      this.labelAtscInnerFec.TabIndex = 59;
+      this.labelAtscInnerFec.Text = "InnerFEC";
       // 
-      // tbATSCSymbolRate
+      // textBoxAtscSymbolRate
       // 
-      this.tbATSCSymbolRate.Location = new System.Drawing.Point(158, 160);
-      this.tbATSCSymbolRate.Name = "tbATSCSymbolRate";
-      this.tbATSCSymbolRate.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCSymbolRate.TabIndex = 58;
+      this.textBoxAtscSymbolRate.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscSymbolRate.Location = new System.Drawing.Point(168, 160);
+      this.textBoxAtscSymbolRate.Name = "textBoxAtscSymbolRate";
+      this.textBoxAtscSymbolRate.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscSymbolRate.TabIndex = 58;
       // 
-      // label90
+      // labelAtscSymbolRate
       // 
-      this.label90.Location = new System.Drawing.Point(16, 160);
-      this.label90.Name = "label90";
-      this.label90.Size = new System.Drawing.Size(100, 16);
-      this.label90.TabIndex = 57;
-      this.label90.Text = "Symbolrate";
+      this.labelAtscSymbolRate.AutoSize = true;
+      this.labelAtscSymbolRate.Location = new System.Drawing.Point(32, 160);
+      this.labelAtscSymbolRate.Name = "labelAtscSymbolRate";
+      this.labelAtscSymbolRate.Size = new System.Drawing.Size(59, 13);
+      this.labelAtscSymbolRate.TabIndex = 57;
+      this.labelAtscSymbolRate.Text = "Symbolrate";
       // 
-      // tbATSCFrequency
+      // textBoxAtscCarrierFrequency
       // 
-      this.tbATSCFrequency.Location = new System.Drawing.Point(158, 136);
-      this.tbATSCFrequency.Name = "tbATSCFrequency";
-      this.tbATSCFrequency.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCFrequency.TabIndex = 56;
+      this.textBoxAtscCarrierFrequency.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxAtscCarrierFrequency.Location = new System.Drawing.Point(168, 136);
+      this.textBoxAtscCarrierFrequency.Name = "textBoxAtscCarrierFrequency";
+      this.textBoxAtscCarrierFrequency.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscCarrierFrequency.TabIndex = 56;
       // 
-      // label91
+      // labelAtscCarrierFrequency
       // 
-      this.label91.Location = new System.Drawing.Point(16, 136);
-      this.label91.Name = "label91";
-      this.label91.Size = new System.Drawing.Size(128, 16);
-      this.label91.TabIndex = 55;
-      this.label91.Text = "Carrier Frequency (kHz)";
+      this.labelAtscCarrierFrequency.AutoSize = true;
+      this.labelAtscCarrierFrequency.Location = new System.Drawing.Point(32, 136);
+      this.labelAtscCarrierFrequency.Name = "labelAtscCarrierFrequency";
+      this.labelAtscCarrierFrequency.Size = new System.Drawing.Size(118, 13);
+      this.labelAtscCarrierFrequency.TabIndex = 55;
+      this.labelAtscCarrierFrequency.Text = "Carrier Frequency (kHz)";
       // 
-      // tbATSCTSID
+      // textBoxAtscTransportId
       // 
-      this.tbATSCTSID.Location = new System.Drawing.Point(158, 112);
-      this.tbATSCTSID.Name = "tbATSCTSID";
-      this.tbATSCTSID.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCTSID.TabIndex = 54;
+      this.textBoxAtscTransportId.BorderColor = System.Drawing.Color.Red;
+      this.textBoxAtscTransportId.Location = new System.Drawing.Point(168, 112);
+      this.textBoxAtscTransportId.Name = "textBoxAtscTransportId";
+      this.textBoxAtscTransportId.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscTransportId.TabIndex = 54;
       // 
-      // label92
+      // labelAtscTransportId
       // 
-      this.label92.ForeColor = System.Drawing.Color.Red;
-      this.label92.Location = new System.Drawing.Point(16, 112);
-      this.label92.Name = "label92";
-      this.label92.Size = new System.Drawing.Size(72, 16);
-      this.label92.TabIndex = 53;
-      this.label92.Text = "* Transport ID:";
+      this.labelAtscTransportId.AutoSize = true;
+      this.labelAtscTransportId.Location = new System.Drawing.Point(32, 112);
+      this.labelAtscTransportId.Name = "labelAtscTransportId";
+      this.labelAtscTransportId.Size = new System.Drawing.Size(66, 13);
+      this.labelAtscTransportId.TabIndex = 53;
+      this.labelAtscTransportId.Text = "Transport ID";
       // 
-      // tbATSCMajor
+      // textBoxAtscMajorChannel
       // 
-      this.tbATSCMajor.Location = new System.Drawing.Point(160, 64);
-      this.tbATSCMajor.Name = "tbATSCMajor";
-      this.tbATSCMajor.Size = new System.Drawing.Size(100, 20);
-      this.tbATSCMajor.TabIndex = 52;
+      this.textBoxAtscMajorChannel.BorderColor = System.Drawing.Color.Red;
+      this.textBoxAtscMajorChannel.Location = new System.Drawing.Point(168, 64);
+      this.textBoxAtscMajorChannel.Name = "textBoxAtscMajorChannel";
+      this.textBoxAtscMajorChannel.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscMajorChannel.TabIndex = 52;
       // 
-      // label93
+      // labelAtscMajorChannel
       // 
-      this.label93.ForeColor = System.Drawing.Color.Red;
-      this.label93.Location = new System.Drawing.Point(16, 64);
-      this.label93.Name = "label93";
-      this.label93.Size = new System.Drawing.Size(88, 16);
-      this.label93.TabIndex = 51;
-      this.label93.Text = "* Major channel";
+      this.labelAtscMajorChannel.AutoSize = true;
+      this.labelAtscMajorChannel.Location = new System.Drawing.Point(32, 64);
+      this.labelAtscMajorChannel.Name = "labelAtscMajorChannel";
+      this.labelAtscMajorChannel.Size = new System.Drawing.Size(74, 13);
+      this.labelAtscMajorChannel.TabIndex = 51;
+      this.labelAtscMajorChannel.Text = "Major channel";
       // 
-      // tbATSCPhysicalChannel
+      // textBoxAtscPhysicalChannel
       // 
-      this.tbATSCPhysicalChannel.Location = new System.Drawing.Point(160, 40);
-      this.tbATSCPhysicalChannel.Name = "tbATSCPhysicalChannel";
-      this.tbATSCPhysicalChannel.Size = new System.Drawing.Size(56, 20);
-      this.tbATSCPhysicalChannel.TabIndex = 50;
+      this.textBoxAtscPhysicalChannel.BorderColor = System.Drawing.Color.Red;
+      this.textBoxAtscPhysicalChannel.Location = new System.Drawing.Point(168, 40);
+      this.textBoxAtscPhysicalChannel.Name = "textBoxAtscPhysicalChannel";
+      this.textBoxAtscPhysicalChannel.Size = new System.Drawing.Size(80, 20);
+      this.textBoxAtscPhysicalChannel.TabIndex = 50;
       // 
-      // label94
+      // labelAtscPhysicalChannel
       // 
-      this.label94.ForeColor = System.Drawing.Color.Red;
-      this.label94.Location = new System.Drawing.Point(16, 40);
-      this.label94.Name = "label94";
-      this.label94.Size = new System.Drawing.Size(138, 16);
-      this.label94.TabIndex = 49;
-      this.label94.Text = "* Physical channel number";
+      this.labelAtscPhysicalChannel.AutoSize = true;
+      this.labelAtscPhysicalChannel.Location = new System.Drawing.Point(32, 40);
+      this.labelAtscPhysicalChannel.Name = "labelAtscPhysicalChannel";
+      this.labelAtscPhysicalChannel.Size = new System.Drawing.Size(125, 13);
+      this.labelAtscPhysicalChannel.TabIndex = 49;
+      this.labelAtscPhysicalChannel.Text = "Physical channel number";
       // 
-      // tabPage6
+      // tabPageExternal
       // 
-      this.tabPage6.Controls.Add(this.label103);
-      this.tabPage6.Controls.Add(this.typeComboBox);
-      this.tabPage6.Controls.Add(this.label4);
-      this.tabPage6.Controls.Add(this.externalChannelTextBox);
-      this.tabPage6.Controls.Add(this.label5);
-      this.tabPage6.Controls.Add(this.label6);
-      this.tabPage6.Controls.Add(this.inputComboBox);
-      this.tabPage6.Location = new System.Drawing.Point(4, 22);
-      this.tabPage6.Name = "tabPage6";
-      this.tabPage6.Size = new System.Drawing.Size(480, 382);
-      this.tabPage6.TabIndex = 5;
-      this.tabPage6.Text = "External";
-      this.tabPage6.UseVisualStyleBackColor = true;
+      this.tabPageExternal.Controls.Add(this.label103);
+      this.tabPageExternal.Controls.Add(this.comboBoxExternalType);
+      this.tabPageExternal.Controls.Add(this.labelExternalChannelNumber);
+      this.tabPageExternal.Controls.Add(this.textBoxExternalChannelNumber);
+      this.tabPageExternal.Controls.Add(this.labelExternalType);
+      this.tabPageExternal.Controls.Add(this.labelExternalInput);
+      this.tabPageExternal.Controls.Add(this.comboBoxExternalInput);
+      this.tabPageExternal.Location = new System.Drawing.Point(4, 22);
+      this.tabPageExternal.Name = "tabPageExternal";
+      this.tabPageExternal.Size = new System.Drawing.Size(480, 382);
+      this.tabPageExternal.TabIndex = 5;
+      this.tabPageExternal.Text = "External";
+      this.tabPageExternal.UseVisualStyleBackColor = true;
       // 
       // label103
       // 
@@ -2619,20 +2780,20 @@ namespace MediaPortal.Configuration
       this.Text = "Edit properties of TV channel";
       this.Load += new System.EventHandler(this.EditTVChannelForm_Load);
       this.tabControl1.ResumeLayout(false);
-      this.tabPage1.ResumeLayout(false);
-      this.tabPage1.PerformLayout();
-      this.tabPage2.ResumeLayout(false);
-      this.tabPage2.PerformLayout();
-      this.tabPage3.ResumeLayout(false);
-      this.tabPage3.PerformLayout();
-      this.tabPage4.ResumeLayout(false);
-      this.tabPage4.PerformLayout();
-      this.tabPage5.ResumeLayout(false);
-      this.tabPage5.PerformLayout();
-      this.tabPage7.ResumeLayout(false);
-      this.tabPage7.PerformLayout();
-      this.tabPage6.ResumeLayout(false);
-      this.tabPage6.PerformLayout();
+      this.tabPageGeneral.ResumeLayout(false);
+      this.tabPageGeneral.PerformLayout();
+      this.tabPageAnalog.ResumeLayout(false);
+      this.tabPageAnalog.PerformLayout();
+      this.tabPageDvbt.ResumeLayout(false);
+      this.tabPageDvbt.PerformLayout();
+      this.tabPageDvbc.ResumeLayout(false);
+      this.tabPageDvbc.PerformLayout();
+      this.tabPageDvbs.ResumeLayout(false);
+      this.tabPageDvbs.PerformLayout();
+      this.tabPageAtsc.ResumeLayout(false);
+      this.tabPageAtsc.PerformLayout();
+      this.tabPageExternal.ResumeLayout(false);
+      this.tabPageExternal.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -2653,7 +2814,7 @@ namespace MediaPortal.Configuration
       //
       if (e.KeyChar == '.' || e.KeyChar == ',')
       {
-        if (frequencyTextBox.Text.IndexOfAny(new char[] { ',', '.' }) >= 0)
+        if (textBoxAnalogFrequency.Text.IndexOfAny(new char[] { ',', '.' }) >= 0)
         {
           e.Handled = true;
           return;
@@ -2705,8 +2866,8 @@ namespace MediaPortal.Configuration
 
     private void typeComboBox_SelectedIndexChanged(object sender, System.EventArgs e)
     {
-      externalChannelTextBox.Enabled = inputComboBox.Enabled = (typeComboBox.SelectedIndex > 0);
-      comboBoxChannels.Enabled = frequencyTextBox.Enabled = !externalChannelTextBox.Enabled;
+      textBoxExternalChannelNumber.Enabled = comboBoxExternalInput.Enabled = (comboBoxExternalType.SelectedIndex > 0);
+      comboBoxGeneralChannel.Enabled = textBoxAnalogFrequency.Enabled = !textBoxExternalChannelNumber.Enabled;
 
     }
 
@@ -2733,23 +2894,23 @@ namespace MediaPortal.Configuration
         TelevisionChannel channel = new TelevisionChannel();
 
         channel.ID = channelId;
-        channel.Name = nameTextBox.Text;
-        channel.External = (typeComboBox.SelectedIndex > 0);
+        channel.Name = textBoxGeneralName.Text;
+        channel.External = (comboBoxExternalType.SelectedIndex > 0);
         if (!channel.External)
         {
           //					if (orgChannelNumber>255)
           //						channel.Channel=orgChannelNumber;
           //					else
           {
-            if (comboBoxChannels.Text.Length == 0 && comboBoxChannels.SelectedIndex < 0 && orgChannelNumber == -1)
+            if (comboBoxGeneralChannel.Text.Length == 0 && comboBoxGeneralChannel.SelectedIndex < 0 && orgChannelNumber == -1)
             {
               channel.Channel = TVDatabase.FindFreeTvChannelNumber(1);
             }
             else
             {
-              string chanNr = (string)comboBoxChannels.SelectedItem;
+              string chanNr = (string)comboBoxGeneralChannel.SelectedItem;
               if (chanNr == null)
-                chanNr = comboBoxChannels.Text.ToUpper().Trim();
+                chanNr = comboBoxGeneralChannel.Text.ToUpper().Trim();
               channel.Channel = -1;
               for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
               {
@@ -2769,7 +2930,7 @@ namespace MediaPortal.Configuration
                   }
 
                   Frequency freq = new Frequency(TVChannel.SpecialChannels[i].Frequency);
-                  frequencyTextBox.Text = freq.ToString();
+                  textBoxAnalogFrequency.Text = freq.ToString();
 
                   break;
                 }
@@ -2786,11 +2947,11 @@ namespace MediaPortal.Configuration
           }
         }
 
-        channel.Scrambled = checkBoxScrambled.Checked;
+        channel.Scrambled = checkBoxGeneralEncryptedChannel.Checked;
         try
         {
 
-          if (frequencyTextBox.Text.IndexOfAny(new char[] { ',', '.' }) >= 0)
+          if (textBoxAnalogFrequency.Text.IndexOfAny(new char[] { ',', '.' }) >= 0)
           {
             char[] separators = new char[] { '.', ',' };
 
@@ -2798,13 +2959,13 @@ namespace MediaPortal.Configuration
             {
               try
               {
-                frequencyTextBox.Text = frequencyTextBox.Text.Replace(',', separators[index]);
-                frequencyTextBox.Text = frequencyTextBox.Text.Replace('.', separators[index]);
+                textBoxAnalogFrequency.Text = textBoxAnalogFrequency.Text.Replace(',', separators[index]);
+                textBoxAnalogFrequency.Text = textBoxAnalogFrequency.Text.Replace('.', separators[index]);
 
                 //
                 // MegaHertz
                 //
-                channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
+                channel.Frequency = Convert.ToDouble(textBoxAnalogFrequency.Text.Length > 0 ? textBoxAnalogFrequency.Text : "0", CultureInfo.InvariantCulture);
 
                 break;
               }
@@ -2821,13 +2982,13 @@ namespace MediaPortal.Configuration
             //
             // Hertz
             //
-            if (frequencyTextBox.Text.Length > 3)
+            if (textBoxAnalogFrequency.Text.Length > 3)
             {
-              channel.Frequency = Convert.ToInt32(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0");
+              channel.Frequency = Convert.ToInt32(textBoxAnalogFrequency.Text.Length > 0 ? textBoxAnalogFrequency.Text : "0");
             }
             else
             {
-              channel.Frequency = Convert.ToDouble(frequencyTextBox.Text.Length > 0 ? frequencyTextBox.Text : "0", CultureInfo.InvariantCulture);
+              channel.Frequency = Convert.ToDouble(textBoxAnalogFrequency.Text.Length > 0 ? textBoxAnalogFrequency.Text : "0", CultureInfo.InvariantCulture);
             }
           }
         }
@@ -2839,14 +3000,14 @@ namespace MediaPortal.Configuration
         //
         // Fetch advanced settings
         //
-        channel.ExternalTunerChannel = externalChannelTextBox.Text;
+        channel.ExternalTunerChannel = textBoxExternalChannelNumber.Text;
 
         if (channel.External)
         {
           channel.Frequency = 0;
-          if (inputComboBox.SelectedIndex >= 0)
+          if (comboBoxExternalInput.SelectedIndex >= 0)
           {
-            string externalName = (string)inputComboBox.SelectedItem;
+            string externalName = (string)comboBoxExternalInput.SelectedItem;
             if (externalName.Equals("SVHS")) channel.Channel = (int)ExternalInputs.svhs;
             if (externalName.Equals("CVBS#1")) channel.Channel = (int)ExternalInputs.cvbs1;
             if (externalName.Equals("CVBS#2")) channel.Channel = (int)ExternalInputs.cvbs2;
@@ -2854,7 +3015,7 @@ namespace MediaPortal.Configuration
           }
         }
 
-        string standard = comboTvStandard.Text;
+        string standard = comboBoxAnalogTvStandard.Text;
         if (standard == "Default") channel.standard = AnalogVideoStandard.None;
         if (standard == "NTSC M") channel.standard = AnalogVideoStandard.NTSC_M;
         if (standard == "NTSC M J") channel.standard = AnalogVideoStandard.NTSC_M_J;
@@ -2877,7 +3038,7 @@ namespace MediaPortal.Configuration
         if (standard == "SECAM L1") channel.standard = AnalogVideoStandard.SECAM_L1;
         if (standard == "PAL N COMBO") channel.standard = AnalogVideoStandard.PAL_N_COMBO;
 
-        TunerCountry tunerCountry = countryComboBox.SelectedItem as TunerCountry;
+        TunerCountry tunerCountry = comboBoxAnalogCountry.SelectedItem as TunerCountry;
         if (tunerCountry != null)
           channel.Country = tunerCountry.Id;
         else
@@ -2893,23 +3054,23 @@ namespace MediaPortal.Configuration
         {
           orgChannelNumber = channel.Channel;
           channelId = channel.ID;
-          for (int i = 0; i < countryComboBox.Items.Count; ++i)
+          for (int i = 0; i < comboBoxAnalogCountry.Items.Count; ++i)
           {
-            TunerCountry tunerCountry = countryComboBox.Items[i] as TunerCountry;
+            TunerCountry tunerCountry = comboBoxAnalogCountry.Items[i] as TunerCountry;
             if (tunerCountry.Id == channel.Country)
             {
-              countryComboBox.SelectedIndex = i;
+              comboBoxAnalogCountry.SelectedIndex = i;
               break;
             }
           }
-          checkBoxScrambled.Checked = channel.Scrambled;
-          nameTextBox.Text = channel.Name;
-          comboBoxChannels.SelectedItem = channel.Channel.ToString();
-          comboBoxChannels.Text = channel.Channel.ToString();
+          checkBoxGeneralEncryptedChannel.Checked = channel.Scrambled;
+          textBoxGeneralName.Text = channel.Name;
+          comboBoxGeneralChannel.SelectedItem = channel.Channel.ToString();
+          comboBoxGeneralChannel.Text = channel.Channel.ToString();
           labelSpecial.Text = String.Empty;
-          string chanNr = (string)comboBoxChannels.SelectedItem;
+          string chanNr = (string)comboBoxGeneralChannel.SelectedItem;
           if (chanNr == null)
-            chanNr = comboBoxChannels.Text.ToUpper().Trim();
+            chanNr = comboBoxGeneralChannel.Text.ToUpper().Trim();
           for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
           {
             if (channel.Frequency.Hertz == TVChannel.SpecialChannels[i].Frequency)
@@ -2917,25 +3078,25 @@ namespace MediaPortal.Configuration
               labelSpecial.Text = TVChannel.SpecialChannels[i].Name;
             }
           }
-          frequencyTextBox.Text = channel.Frequency.ToString();
+          textBoxAnalogFrequency.Text = channel.Frequency.ToString();
 
-          typeComboBox.SelectedIndex = channel.External ? 1 : 0;
-          externalChannelTextBox.Text = channel.ExternalTunerChannel;
+          comboBoxExternalType.SelectedIndex = channel.External ? 1 : 0;
+          textBoxExternalChannelNumber.Text = channel.ExternalTunerChannel;
 
           if (channel.External == true)
           {
             switch (channel.Channel)
             {
               case (int)ExternalInputs.svhs:
-                inputComboBox.Text = "SVHS";
+                comboBoxExternalInput.Text = "SVHS";
                 break;
 
               case (int)ExternalInputs.cvbs1:
-                inputComboBox.Text = "CVBS#1";
+                comboBoxExternalInput.Text = "CVBS#1";
                 break;
 
               case (int)ExternalInputs.cvbs2:
-                inputComboBox.Text = "CVBS#2";
+                comboBoxExternalInput.Text = "CVBS#2";
                 break;
             }
           }
@@ -2945,32 +3106,32 @@ namespace MediaPortal.Configuration
           //
           if (channel.Name.Equals("CVBS#1") || channel.Name.Equals("CVBS#2") || channel.Name.Equals("SVHS") || channel.Name.Equals("RGB"))
           {
-            comboBoxChannels.SelectedItem = channel.Name;
-            comboTvStandard.Enabled = true;
-            nameTextBox.Enabled = comboBoxChannels.Enabled = frequencyTextBox.Enabled = false;
+            comboBoxGeneralChannel.SelectedItem = channel.Name;
+            comboBoxAnalogTvStandard.Enabled = true;
+            textBoxGeneralName.Enabled = comboBoxGeneralChannel.Enabled = textBoxAnalogFrequency.Enabled = false;
           }
-          comboTvStandard.SelectedIndex = 0;
-          if (channel.standard == AnalogVideoStandard.None) comboTvStandard.SelectedIndex = 0;
-          if (channel.standard == AnalogVideoStandard.NTSC_M) comboTvStandard.SelectedIndex = 1;
-          if (channel.standard == AnalogVideoStandard.NTSC_M_J) comboTvStandard.SelectedIndex = 2;
-          if (channel.standard == AnalogVideoStandard.NTSC_433) comboTvStandard.SelectedIndex = 3;
-          if (channel.standard == AnalogVideoStandard.PAL_B) comboTvStandard.SelectedIndex = 4;
-          if (channel.standard == AnalogVideoStandard.PAL_D) comboTvStandard.SelectedIndex = 5;
-          if (channel.standard == AnalogVideoStandard.PAL_G) comboTvStandard.SelectedIndex = 6;
-          if (channel.standard == AnalogVideoStandard.PAL_H) comboTvStandard.SelectedIndex = 7;
-          if (channel.standard == AnalogVideoStandard.PAL_I) comboTvStandard.SelectedIndex = 8;
-          if (channel.standard == AnalogVideoStandard.PAL_M) comboTvStandard.SelectedIndex = 9;
-          if (channel.standard == AnalogVideoStandard.PAL_N) comboTvStandard.SelectedIndex = 10;
-          if (channel.standard == AnalogVideoStandard.PAL_60) comboTvStandard.SelectedIndex = 11;
-          if (channel.standard == AnalogVideoStandard.SECAM_B) comboTvStandard.SelectedIndex = 12;
-          if (channel.standard == AnalogVideoStandard.SECAM_D) comboTvStandard.SelectedIndex = 13;
-          if (channel.standard == AnalogVideoStandard.SECAM_G) comboTvStandard.SelectedIndex = 14;
-          if (channel.standard == AnalogVideoStandard.SECAM_H) comboTvStandard.SelectedIndex = 15;
-          if (channel.standard == AnalogVideoStandard.SECAM_K) comboTvStandard.SelectedIndex = 16;
-          if (channel.standard == AnalogVideoStandard.SECAM_K1) comboTvStandard.SelectedIndex = 17;
-          if (channel.standard == AnalogVideoStandard.SECAM_L) comboTvStandard.SelectedIndex = 18;
-          if (channel.standard == AnalogVideoStandard.SECAM_L1) comboTvStandard.SelectedIndex = 19;
-          if (channel.standard == AnalogVideoStandard.PAL_N_COMBO) comboTvStandard.SelectedIndex = 20;
+          comboBoxAnalogTvStandard.SelectedIndex = 0;
+          if (channel.standard == AnalogVideoStandard.None) comboBoxAnalogTvStandard.SelectedIndex = 0;
+          if (channel.standard == AnalogVideoStandard.NTSC_M) comboBoxAnalogTvStandard.SelectedIndex = 1;
+          if (channel.standard == AnalogVideoStandard.NTSC_M_J) comboBoxAnalogTvStandard.SelectedIndex = 2;
+          if (channel.standard == AnalogVideoStandard.NTSC_433) comboBoxAnalogTvStandard.SelectedIndex = 3;
+          if (channel.standard == AnalogVideoStandard.PAL_B) comboBoxAnalogTvStandard.SelectedIndex = 4;
+          if (channel.standard == AnalogVideoStandard.PAL_D) comboBoxAnalogTvStandard.SelectedIndex = 5;
+          if (channel.standard == AnalogVideoStandard.PAL_G) comboBoxAnalogTvStandard.SelectedIndex = 6;
+          if (channel.standard == AnalogVideoStandard.PAL_H) comboBoxAnalogTvStandard.SelectedIndex = 7;
+          if (channel.standard == AnalogVideoStandard.PAL_I) comboBoxAnalogTvStandard.SelectedIndex = 8;
+          if (channel.standard == AnalogVideoStandard.PAL_M) comboBoxAnalogTvStandard.SelectedIndex = 9;
+          if (channel.standard == AnalogVideoStandard.PAL_N) comboBoxAnalogTvStandard.SelectedIndex = 10;
+          if (channel.standard == AnalogVideoStandard.PAL_60) comboBoxAnalogTvStandard.SelectedIndex = 11;
+          if (channel.standard == AnalogVideoStandard.SECAM_B) comboBoxAnalogTvStandard.SelectedIndex = 12;
+          if (channel.standard == AnalogVideoStandard.SECAM_D) comboBoxAnalogTvStandard.SelectedIndex = 13;
+          if (channel.standard == AnalogVideoStandard.SECAM_G) comboBoxAnalogTvStandard.SelectedIndex = 14;
+          if (channel.standard == AnalogVideoStandard.SECAM_H) comboBoxAnalogTvStandard.SelectedIndex = 15;
+          if (channel.standard == AnalogVideoStandard.SECAM_K) comboBoxAnalogTvStandard.SelectedIndex = 16;
+          if (channel.standard == AnalogVideoStandard.SECAM_K1) comboBoxAnalogTvStandard.SelectedIndex = 17;
+          if (channel.standard == AnalogVideoStandard.SECAM_L) comboBoxAnalogTvStandard.SelectedIndex = 18;
+          if (channel.standard == AnalogVideoStandard.SECAM_L1) comboBoxAnalogTvStandard.SelectedIndex = 19;
+          if (channel.standard == AnalogVideoStandard.PAL_N_COMBO) comboBoxAnalogTvStandard.SelectedIndex = 20;
 
           if (channel.Channel >= 0)
           {
@@ -2983,107 +3144,107 @@ namespace MediaPortal.Configuration
             //DVB-T
             TVDatabase.GetDVBTTuneRequest(channelId, out provider, out freq, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out bandwidth, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out DVBTHasEITPresentFollow, out DVBTHasEITSchedule, out pcrPid);
             label42.Text = dvbSections.GetNetworkProvider(ONID);
-            tbDVBTFreq.Text = freq.ToString(); ;
-            tbDVBTONID.Text = ONID.ToString(); ;
-            tbDVBTTSID.Text = TSID.ToString(); ;
-            tbDVBTSID.Text = SID.ToString();
-            tbDVBTProvider.Text = provider;
-            tbDVBTAudioPid.Text = audioPid.ToString();
-            tbDVBTVideoPid.Text = videoPid.ToString();
-            tbDVBTTeletextPid.Text = teletextPid.ToString();
-            tbDVBTPmtPid.Text = pmtPid.ToString();
-            tbBandWidth.Text = bandwidth.ToString();
-            tbDVBTAudio1.Text = audio1.ToString();
-            tbDVBTAudio2.Text = audio2.ToString();
-            tbDVBTAudio3.Text = audio3.ToString();
-            tbDVBTAC3.Text = ac3Pid.ToString();
-            tbDVBTAudioLanguage.Text = audioLanguage;
-            tbDVBTAudioLanguage1.Text = audioLanguage1;
-            tbDVBTAudioLanguage2.Text = audioLanguage2;
-            tbDVBTAudioLanguage3.Text = audioLanguage3;
-            tbDVBTPCR.Text = pcrPid.ToString();
+            textBoxDvbtCarrierFrequency.Text = freq.ToString(); ;
+            textBoxDvbtNetworkId.Text = ONID.ToString(); ;
+            textBoxDvbtTransportId.Text = TSID.ToString(); ;
+            textBoxDvbtServiceId.Text = SID.ToString();
+            textBoxDvbtProvider.Text = provider;
+            textBoxDvbtAudioPid.Text = audioPid.ToString();
+            textBoxDvbtVideoPid.Text = videoPid.ToString();
+            textBoxDvbtTeletextPid.Text = teletextPid.ToString();
+            textBoxDvbtPmtPid.Text = pmtPid.ToString();
+            textBoxDvbtBandWidth.Text = bandwidth.ToString();
+            textBoxDvbtAudio1Pid.Text = audio1.ToString();
+            textBoxDvbtAudio2Pid.Text = audio2.ToString();
+            textBoxDvbtAudio3Pid.Text = audio3.ToString();
+            textBoxDvbtAc3Pid.Text = ac3Pid.ToString();
+            textBoxDvbtAudioLanguage.Text = audioLanguage;
+            textBoxDvbtAudioLanguage1.Text = audioLanguage1;
+            textBoxDvbtAudioLanguage2.Text = audioLanguage2;
+            textBoxDvbtAudioLanguage3.Text = audioLanguage3;
+            textBoxDvbtPcrPid.Text = pcrPid.ToString();
 
             //DVB-C
             TVDatabase.GetDVBCTuneRequest(channelId, out provider, out freq, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out DVBCHasEITPresentFollow, out DVBCHasEITSchedule, out pcrPid);
             label41.Text = dvbSections.GetNetworkProvider(ONID);
-            tbDVBCFreq.Text = freq.ToString(); ;
-            tbDVBCONID.Text = ONID.ToString(); ;
-            tbDVBCTSID.Text = TSID.ToString(); ;
-            tbDVBCSID.Text = SID.ToString();
-            tbDVBCSR.Text = symbolrate.ToString();
-            cbDVBCInnerFeq.SelectedIndex = FecToIndex(innerFec);
-            cbDVBCModulation.SelectedIndex = ModulationToIndex(modulation);
-            tbDVBCProvider.Text = provider;
-            tbDVBCAudioPid.Text = audioPid.ToString();
-            tbDVBCVideoPid.Text = videoPid.ToString();
-            tbDVBCTeletextPid.Text = teletextPid.ToString();
-            tbDVBCPmtPid.Text = pmtPid.ToString();
-            tbDVBCAudio1.Text = audio1.ToString();
-            tbDVBCAudio2.Text = audio2.ToString();
-            tbDVBCAudio3.Text = audio3.ToString();
-            tbDVBCAC3.Text = ac3Pid.ToString();
-            tbDVBCAudioLanguage.Text = audioLanguage;
-            tbDVBCAudioLanguage1.Text = audioLanguage1;
-            tbDVBCAudioLanguage2.Text = audioLanguage2;
-            tbDVBCAudioLanguage3.Text = audioLanguage3;
-            tbDVBCPCR.Text = pcrPid.ToString();
+            textBoxDvbcCarrierFrequency.Text = freq.ToString(); ;
+            textBoxDvbcNetworkId.Text = ONID.ToString(); ;
+            textBoxDvbcTransportId.Text = TSID.ToString(); ;
+            textBoxDvbcServiceId.Text = SID.ToString();
+            textBoxDvbcSymbolrate.Text = symbolrate.ToString();
+            comboBoxDvbcInnerFec.SelectedIndex = FecToIndex(innerFec);
+            comboBoxDvbcModulation.SelectedIndex = ModulationToIndex(modulation);
+            textBoxDvbcProvider.Text = provider;
+            textBoxDvbcAudioPid.Text = audioPid.ToString();
+            textBoxDvbcVideoPid.Text = videoPid.ToString();
+            textBoxDvbcTeletextPid.Text = teletextPid.ToString();
+            textBoxDvbcPmtPid.Text = pmtPid.ToString();
+            textBoxDvbcAudio1Pid.Text = audio1.ToString();
+            textBoxDvbcAudio2Pid.Text = audio2.ToString();
+            textBoxDvbcAudio3Pid.Text = audio3.ToString();
+            textBoxDvbcAc3Pid.Text = ac3Pid.ToString();
+            textBoxDvbcAudioLanguage.Text = audioLanguage;
+            textBoxDvbcAudioLanguage1.Text = audioLanguage1;
+            textBoxDvbcAudioLanguage2.Text = audioLanguage2;
+            textBoxDvbcAudioLanguage3.Text = audioLanguage3;
+            textBoxDvbcPcrPid.Text = pcrPid.ToString();
 
             //DVB-S
             DVBChannel ch = new DVBChannel();
             TVDatabase.GetSatChannel(channelId, 1, ref ch);
             label40.Text = dvbSections.GetNetworkProvider(ch.NetworkID);
-            tbDVBSFreq.Text = ch.Frequency.ToString(); ;
-            tbDVBSONID.Text = ch.NetworkID.ToString(); ;
+            textBoxDvbsCarrierFrequency.Text = ch.Frequency.ToString(); ;
+            textBoxDvbsNetworkId.Text = ch.NetworkID.ToString(); ;
 
-            tbDVBSTSID.Text = ch.TransportStreamID.ToString(); ;
-            tbDVBSSID.Text = ch.ProgramNumber.ToString();
-            tbDVBSSymbolrate.Text = ch.Symbolrate.ToString();
-            cbDvbSInnerFec.SelectedIndex = FecToIndex(ch.FEC);
-            cbDVBSPolarisation.SelectedIndex = PolarisationToIndex(ch.Polarity);
-            tbDVBSProvider.Text = ch.ServiceProvider;
-            tbDVBSAudioPid.Text = ch.AudioPid.ToString();
-            tbDVBSVideoPid.Text = ch.VideoPid.ToString();
-            tbDVBSTeletextPid.Text = ch.TeletextPid.ToString();
-            tbDVBSECMpid.Text = ch.ECMPid.ToString();
-            tbDVBSPmtPid.Text = ch.PMTPid.ToString();
-            tbDVBSAudio1.Text = ch.Audio1.ToString();
-            tbDVBSAudio2.Text = ch.Audio2.ToString();
-            tbDVBSAudio3.Text = ch.Audio3.ToString();
-            tbDVBSAC3.Text = ch.AC3Pid.ToString();
-            tbDVBSAudioLanguage.Text = ch.AudioLanguage;
-            tbDVBSAudioLanguage1.Text = ch.AudioLanguage1;
-            tbDVBSAudioLanguage2.Text = ch.AudioLanguage2;
-            tbDVBSAudioLanguage3.Text = ch.AudioLanguage3;
+            textBoxDvbsTransportId.Text = ch.TransportStreamID.ToString(); ;
+            textBoxDvbsServiceId.Text = ch.ProgramNumber.ToString();
+            textBoxDvbsSymbolrate.Text = ch.Symbolrate.ToString();
+            comboBoxDvbsInnerFec.SelectedIndex = FecToIndex(ch.FEC);
+            comboBoxDvbsPolarisation.SelectedIndex = PolarisationToIndex(ch.Polarity);
+            textBoxDvbsProvider.Text = ch.ServiceProvider;
+            textBoxDvbsAudioPid.Text = ch.AudioPid.ToString();
+            textBoxDvbsVideoPid.Text = ch.VideoPid.ToString();
+            textBoxDvbsTeletextPid.Text = ch.TeletextPid.ToString();
+            textBoxDvbsEcmPid.Text = ch.ECMPid.ToString();
+            textBoxDvbsPmtPid.Text = ch.PMTPid.ToString();
+            textBoxDvbsAudio1Pid.Text = ch.Audio1.ToString();
+            textBoxDvbsAudio2Pid.Text = ch.Audio2.ToString();
+            textBoxDvbsAudio3Pid.Text = ch.Audio3.ToString();
+            textBoxDvbsAc3Pid.Text = ch.AC3Pid.ToString();
+            textBoxDvbsAudioLanguage.Text = ch.AudioLanguage;
+            textBoxDvbsAudioLanguage1.Text = ch.AudioLanguage1;
+            textBoxDvbsAudioLanguage2.Text = ch.AudioLanguage2;
+            textBoxDvbsAudioLanguage3.Text = ch.AudioLanguage3;
 
             DVBSHasEITPresentFollow = ch.HasEITPresentFollow;
             DVBSHasEITSchedule = ch.HasEITSchedule;
-            tbDVBSPCR.Text = ch.PCRPid.ToString();
+            textBoxDvbsPcrPid.Text = ch.PCRPid.ToString();
 
             //ATSC
             int physical, minor, major;
             TVDatabase.GetATSCTuneRequest(channelId, out  physical, out provider, out freq, out symbolrate, out innerFec, out modulation, out ONID, out TSID, out SID, out audioPid, out videoPid, out teletextPid, out pmtPid, out audio1, out audio2, out audio3, out ac3Pid, out audioLanguage, out audioLanguage1, out audioLanguage2, out audioLanguage3, out minor, out major, out ATSCHasEITPresentFollow, out ATSCHasEITSchedule, out pcrPid);
-            tbATSCPhysicalChannel.Text = physical.ToString();
-            tbATSCMinor.Text = minor.ToString();
-            tbATSCMajor.Text = major.ToString();
-            tbATSCFrequency.Text = freq.ToString(); ;
-            tbATSCTSID.Text = TSID.ToString(); ;
-            tbATSCSymbolRate.Text = symbolrate.ToString();
-            cbATSCInnerFec.SelectedIndex = FecToIndex(innerFec);
-            cbATSCModulation.SelectedIndex = ModulationToIndex(modulation);
-            tbATSCProvider.Text = provider;
-            tbATSCAudioPid.Text = audioPid.ToString();
-            tbATSCVideoPid.Text = videoPid.ToString();
-            tbATSCTeletextPid.Text = teletextPid.ToString();
-            tbATSCPMTPid.Text = pmtPid.ToString();
-            tbATSCAudio1Pid.Text = audio1.ToString();
-            tbATSCAudio2Pid.Text = audio2.ToString();
-            tbATSCAudio3Pid.Text = audio3.ToString();
-            tbATSCAC3Pid.Text = ac3Pid.ToString();
-            tbATSCAudioLanguage.Text = audioLanguage;
-            tbATSCAudioLanguage1.Text = audioLanguage1;
-            tbATSCAudioLanguage2.Text = audioLanguage2;
-            tbATSCAudioLanguage3.Text = audioLanguage3;
-            tbATSCPCR.Text = pcrPid.ToString();
+            textBoxAtscPhysicalChannel.Text = physical.ToString();
+            textBoxAtscMinorChannel.Text = minor.ToString();
+            textBoxAtscMajorChannel.Text = major.ToString();
+            textBoxAtscCarrierFrequency.Text = freq.ToString(); ;
+            textBoxAtscTransportId.Text = TSID.ToString(); ;
+            textBoxAtscSymbolRate.Text = symbolrate.ToString();
+            comboBoxAtscInnerFec.SelectedIndex = FecToIndex(innerFec);
+            comboBoxAtscModulation.SelectedIndex = ModulationToIndex(modulation);
+            textBoxAtscProvider.Text = provider;
+            textBoxAtscAudioPid.Text = audioPid.ToString();
+            textBoxAtscVideoPid.Text = videoPid.ToString();
+            textBoxAtscTeletextPid.Text = teletextPid.ToString();
+            textBoxAtscPmtPid.Text = pmtPid.ToString();
+            textBoxAtscAudio1Pid.Text = audio1.ToString();
+            textBoxAtscAudio2Pid.Text = audio2.ToString();
+            textBoxAtscAudio3Pid.Text = audio3.ToString();
+            textBoxAtscAc3Pid.Text = ac3Pid.ToString();
+            textBoxAtscAudioLanguage.Text = audioLanguage;
+            textBoxAtscAudioLanguage1.Text = audioLanguage1;
+            textBoxAtscAudioLanguage2.Text = audioLanguage2;
+            textBoxAtscAudioLanguage3.Text = audioLanguage3;
+            textBoxAtscPcrPid.Text = pcrPid.ToString();
 
           }
         }//if(channel != null)
@@ -3225,7 +3386,7 @@ namespace MediaPortal.Configuration
           }
           if (ok) break;
         }
-        comboBoxChannels.SelectedItem = tvchannel.Number.ToString();
+        comboBoxGeneralChannel.SelectedItem = tvchannel.Number.ToString();
       }
 
       tvchannel.Frequency = chan.Frequency.Hertz;
@@ -3251,25 +3412,25 @@ namespace MediaPortal.Configuration
 
       try
       {
-        freq = ParseInt(tbDVBTFreq.Text);
-        ONID = ParseInt(tbDVBTONID.Text);
-        TSID = ParseInt(tbDVBTTSID.Text);
-        SID = ParseInt(tbDVBTSID.Text);
-        audioPid = ParseInt(tbDVBTAudioPid.Text);
-        videoPid = ParseInt(tbDVBTVideoPid.Text);
-        teletextPid = ParseInt(tbDVBTTeletextPid.Text);
-        pmtPid = ParseInt(tbDVBTPmtPid.Text);
-        provider = tbDVBTProvider.Text;
-        bandWidth = ParseInt(tbBandWidth.Text);
-        audio1 = ParseInt(tbDVBTAudio1.Text);
-        audio2 = ParseInt(tbDVBTAudio2.Text);
-        audio3 = ParseInt(tbDVBTAudio3.Text);
-        ac3Pid = ParseInt(tbDVBTAC3.Text);
-        audioLanguage = tbDVBTAudioLanguage.Text;
-        audioLanguage1 = tbDVBTAudioLanguage1.Text;
-        audioLanguage2 = tbDVBTAudioLanguage2.Text;
-        audioLanguage3 = tbDVBTAudioLanguage3.Text;
-        pcrPid = ParseInt(tbDVBTPCR.Text);
+        freq = ParseInt(textBoxDvbtCarrierFrequency.Text);
+        ONID = ParseInt(textBoxDvbtNetworkId.Text);
+        TSID = ParseInt(textBoxDvbtTransportId.Text);
+        SID = ParseInt(textBoxDvbtServiceId.Text);
+        audioPid = ParseInt(textBoxDvbtAudioPid.Text);
+        videoPid = ParseInt(textBoxDvbtVideoPid.Text);
+        teletextPid = ParseInt(textBoxDvbtTeletextPid.Text);
+        pmtPid = ParseInt(textBoxDvbtPmtPid.Text);
+        provider = textBoxDvbtProvider.Text;
+        bandWidth = ParseInt(textBoxDvbtBandWidth.Text);
+        audio1 = ParseInt(textBoxDvbtAudio1Pid.Text);
+        audio2 = ParseInt(textBoxDvbtAudio2Pid.Text);
+        audio3 = ParseInt(textBoxDvbtAudio3Pid.Text);
+        ac3Pid = ParseInt(textBoxDvbtAc3Pid.Text);
+        audioLanguage = textBoxDvbtAudioLanguage.Text;
+        audioLanguage1 = textBoxDvbtAudioLanguage1.Text;
+        audioLanguage2 = textBoxDvbtAudioLanguage2.Text;
+        audioLanguage3 = textBoxDvbtAudioLanguage3.Text;
+        pcrPid = ParseInt(textBoxDvbtPcrPid.Text);
         if (ONID > 0 && TSID > 0 && SID > 0 && freq > 0)
         {
           TVDatabase.MapDVBTChannel(tvchannel.Name, provider, tvchannel.ID, freq, ONID, TSID, SID, audioPid, videoPid, teletextPid, pmtPid, bandWidth, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3, DVBTHasEITPresentFollow, DVBTHasEITSchedule);
@@ -3281,27 +3442,27 @@ namespace MediaPortal.Configuration
       //dvb-C
       try
       {
-        freq = ParseInt(tbDVBCFreq.Text);
-        ONID = ParseInt(tbDVBCONID.Text);
-        TSID = ParseInt(tbDVBCTSID.Text);
-        SID = ParseInt(tbDVBCSID.Text);
-        symbolrate = ParseInt(tbDVBCSR.Text);
-        innerFec = IndexToFec(cbDVBCInnerFeq.SelectedIndex);
-        modulation = IndexToModulation(cbDVBCModulation.SelectedIndex);
-        provider = tbDVBCProvider.Text;
-        audioPid = ParseInt(tbDVBCAudioPid.Text);
-        videoPid = ParseInt(tbDVBCVideoPid.Text);
-        teletextPid = ParseInt(tbDVBCTeletextPid.Text);
-        pmtPid = ParseInt(tbDVBCPmtPid.Text);
-        audio1 = ParseInt(tbDVBCAudio1.Text);
-        audio2 = ParseInt(tbDVBCAudio2.Text);
-        audio3 = ParseInt(tbDVBCAudio3.Text);
-        ac3Pid = ParseInt(tbDVBCAC3.Text);
-        audioLanguage = tbDVBCAudioLanguage.Text;
-        audioLanguage1 = tbDVBCAudioLanguage1.Text;
-        audioLanguage2 = tbDVBCAudioLanguage2.Text;
-        audioLanguage3 = tbDVBCAudioLanguage3.Text;
-        pcrPid = ParseInt(tbDVBCPCR.Text);
+        freq = ParseInt(textBoxDvbcCarrierFrequency.Text);
+        ONID = ParseInt(textBoxDvbcNetworkId.Text);
+        TSID = ParseInt(textBoxDvbcTransportId.Text);
+        SID = ParseInt(textBoxDvbcServiceId.Text);
+        symbolrate = ParseInt(textBoxDvbcSymbolrate.Text);
+        innerFec = IndexToFec(comboBoxDvbcInnerFec.SelectedIndex);
+        modulation = IndexToModulation(comboBoxDvbcModulation.SelectedIndex);
+        provider = textBoxDvbcProvider.Text;
+        audioPid = ParseInt(textBoxDvbcAudioPid.Text);
+        videoPid = ParseInt(textBoxDvbcVideoPid.Text);
+        teletextPid = ParseInt(textBoxDvbcTeletextPid.Text);
+        pmtPid = ParseInt(textBoxDvbcPmtPid.Text);
+        audio1 = ParseInt(textBoxDvbcAudio1Pid.Text);
+        audio2 = ParseInt(textBoxDvbcAudio2Pid.Text);
+        audio3 = ParseInt(textBoxDvbcAudio3Pid.Text);
+        ac3Pid = ParseInt(textBoxDvbcAc3Pid.Text);
+        audioLanguage = textBoxDvbcAudioLanguage.Text;
+        audioLanguage1 = textBoxDvbcAudioLanguage1.Text;
+        audioLanguage2 = textBoxDvbcAudioLanguage2.Text;
+        audioLanguage3 = textBoxDvbcAudioLanguage3.Text;
+        pcrPid = ParseInt(textBoxDvbcPcrPid.Text);
         if (ONID > 0 && TSID > 0 && SID > 0 && freq > 0)
         {
           TVDatabase.MapDVBCChannel(tvchannel.Name, provider, tvchannel.ID, freq, symbolrate, innerFec, modulation, ONID, TSID, SID, audioPid, videoPid, teletextPid, pmtPid, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3, DVBCHasEITPresentFollow, DVBCHasEITSchedule);
@@ -3313,28 +3474,28 @@ namespace MediaPortal.Configuration
       try
       {
         int physical, minor, major;
-        physical = ParseInt(tbATSCPhysicalChannel.Text);
-        minor = ParseInt(tbATSCMinor.Text);
-        major = ParseInt(tbATSCMajor.Text);
-        freq = ParseInt(tbATSCFrequency.Text);
-        TSID = ParseInt(tbATSCTSID.Text);
-        symbolrate = ParseInt(tbATSCSymbolRate.Text);
-        innerFec = IndexToFec(cbATSCInnerFec.SelectedIndex);
-        modulation = IndexToModulation(cbATSCModulation.SelectedIndex);
-        provider = tbATSCProvider.Text;
-        audioPid = ParseInt(tbATSCAudioPid.Text);
-        videoPid = ParseInt(tbATSCVideoPid.Text);
-        teletextPid = ParseInt(tbATSCTeletextPid.Text);
-        pmtPid = ParseInt(tbATSCPMTPid.Text);
-        audio1 = ParseInt(tbATSCAudio1Pid.Text);
-        audio2 = ParseInt(tbATSCAudio2Pid.Text);
-        audio3 = ParseInt(tbATSCAudio3Pid.Text);
-        ac3Pid = ParseInt(tbATSCAC3Pid.Text);
-        audioLanguage = tbATSCAudioLanguage.Text;
-        audioLanguage1 = tbATSCAudioLanguage1.Text;
-        audioLanguage2 = tbATSCAudioLanguage2.Text;
-        audioLanguage3 = tbATSCAudioLanguage3.Text;
-        pcrPid = ParseInt(tbATSCPCR.Text);
+        physical = ParseInt(textBoxAtscPhysicalChannel.Text);
+        minor = ParseInt(textBoxAtscMinorChannel.Text);
+        major = ParseInt(textBoxAtscMajorChannel.Text);
+        freq = ParseInt(textBoxAtscCarrierFrequency.Text);
+        TSID = ParseInt(textBoxAtscTransportId.Text);
+        symbolrate = ParseInt(textBoxAtscSymbolRate.Text);
+        innerFec = IndexToFec(comboBoxAtscInnerFec.SelectedIndex);
+        modulation = IndexToModulation(comboBoxAtscModulation.SelectedIndex);
+        provider = textBoxAtscProvider.Text;
+        audioPid = ParseInt(textBoxAtscAudioPid.Text);
+        videoPid = ParseInt(textBoxAtscVideoPid.Text);
+        teletextPid = ParseInt(textBoxAtscTeletextPid.Text);
+        pmtPid = ParseInt(textBoxAtscPmtPid.Text);
+        audio1 = ParseInt(textBoxAtscAudio1Pid.Text);
+        audio2 = ParseInt(textBoxAtscAudio2Pid.Text);
+        audio3 = ParseInt(textBoxAtscAudio3Pid.Text);
+        ac3Pid = ParseInt(textBoxAtscAc3Pid.Text);
+        audioLanguage = textBoxAtscAudioLanguage.Text;
+        audioLanguage1 = textBoxAtscAudioLanguage1.Text;
+        audioLanguage2 = textBoxAtscAudioLanguage2.Text;
+        audioLanguage3 = textBoxAtscAudioLanguage3.Text;
+        pcrPid = ParseInt(textBoxAtscPcrPid.Text);
         if (major > 0 && TSID > 0 && minor > 0 && physical > 0)
         {
           TVDatabase.MapATSCChannel(tvchannel.Name, physical, minor, major, provider, tvchannel.ID, freq, symbolrate, innerFec, modulation, -1, TSID, -1, audioPid, videoPid, teletextPid, pmtPid, audio1, audio2, audio3, ac3Pid, pcrPid, audioLanguage, audioLanguage1, audioLanguage2, audioLanguage3, ATSCHasEITPresentFollow, ATSCHasEITSchedule);
@@ -3348,27 +3509,27 @@ namespace MediaPortal.Configuration
         DVBChannel ch = new DVBChannel();
         TVDatabase.GetSatChannel(tvchannel.ID, 1, ref ch);
 
-        freq = ParseInt(tbDVBSFreq.Text);
-        ONID = ParseInt(tbDVBSONID.Text);
-        TSID = ParseInt(tbDVBSTSID.Text);
-        SID = ParseInt(tbDVBSSID.Text);
-        symbolrate = ParseInt(tbDVBSSymbolrate.Text);
-        innerFec = IndexToFec(cbDvbSInnerFec.SelectedIndex);
-        polarisation = IndexToPolarisation(cbDVBSPolarisation.SelectedIndex);
-        provider = tbDVBSProvider.Text;
-        audioPid = ParseInt(tbDVBSAudioPid.Text);
-        videoPid = ParseInt(tbDVBSVideoPid.Text);
-        teletextPid = ParseInt(tbDVBSTeletextPid.Text);
-        pmtPid = ParseInt(tbDVBSPmtPid.Text);
-        audio1 = ParseInt(tbDVBSAudio1.Text);
-        audio2 = ParseInt(tbDVBSAudio2.Text);
-        audio3 = ParseInt(tbDVBSAudio3.Text);
-        ac3Pid = ParseInt(tbDVBSAC3.Text);
-        audioLanguage = tbDVBSAudioLanguage.Text;
-        audioLanguage1 = tbDVBSAudioLanguage1.Text;
-        audioLanguage2 = tbDVBSAudioLanguage2.Text;
-        audioLanguage3 = tbDVBSAudioLanguage3.Text;
-        pcrPid = ParseInt(tbDVBSPCR.Text);
+        freq = ParseInt(textBoxDvbsCarrierFrequency.Text);
+        ONID = ParseInt(textBoxDvbsNetworkId.Text);
+        TSID = ParseInt(textBoxDvbsTransportId.Text);
+        SID = ParseInt(textBoxDvbsServiceId.Text);
+        symbolrate = ParseInt(textBoxDvbsSymbolrate.Text);
+        innerFec = IndexToFec(comboBoxDvbsInnerFec.SelectedIndex);
+        polarisation = IndexToPolarisation(comboBoxDvbsPolarisation.SelectedIndex);
+        provider = textBoxDvbsProvider.Text;
+        audioPid = ParseInt(textBoxDvbsAudioPid.Text);
+        videoPid = ParseInt(textBoxDvbsVideoPid.Text);
+        teletextPid = ParseInt(textBoxDvbsTeletextPid.Text);
+        pmtPid = ParseInt(textBoxDvbsPmtPid.Text);
+        audio1 = ParseInt(textBoxDvbsAudio1Pid.Text);
+        audio2 = ParseInt(textBoxDvbsAudio2Pid.Text);
+        audio3 = ParseInt(textBoxDvbsAudio3Pid.Text);
+        ac3Pid = ParseInt(textBoxDvbsAc3Pid.Text);
+        audioLanguage = textBoxDvbsAudioLanguage.Text;
+        audioLanguage1 = textBoxDvbsAudioLanguage1.Text;
+        audioLanguage2 = textBoxDvbsAudioLanguage2.Text;
+        audioLanguage3 = textBoxDvbsAudioLanguage3.Text;
+        pcrPid = ParseInt(textBoxDvbsPcrPid.Text);
         if (ONID > 0 && TSID > 0 && SID > 0 && freq > 0)
         {
           ch.ServiceType = 1;
@@ -3385,7 +3546,7 @@ namespace MediaPortal.Configuration
           ch.AudioPid = audioPid;
           ch.VideoPid = videoPid;
           ch.TeletextPid = teletextPid;
-          ch.ECMPid = ParseInt(tbDVBSECMpid.Text);
+          ch.ECMPid = ParseInt(textBoxDvbsEcmPid.Text);
           ch.PMTPid = pmtPid;
           ch.PCRPid = pcrPid;
           ch.Audio1 = audio1;
@@ -3409,15 +3570,15 @@ namespace MediaPortal.Configuration
     private void comboBoxChannels_SelectedIndexChanged(object sender, System.EventArgs e)
     {
       labelSpecial.Text = String.Empty;
-      string chanNr = (string)comboBoxChannels.SelectedItem;
+      string chanNr = (string)comboBoxGeneralChannel.SelectedItem;
       if (chanNr == null)
-        chanNr = comboBoxChannels.Text.ToUpper().Trim();
+        chanNr = comboBoxGeneralChannel.Text.ToUpper().Trim();
       for (int i = 0; i < TVChannel.SpecialChannels.Length; ++i)
       {
         if (chanNr.Equals(TVChannel.SpecialChannels[i].Name))
         {
           Frequency freq = new Frequency(TVChannel.SpecialChannels[i].Frequency);
-          frequencyTextBox.Text = freq.ToString();
+          textBoxAnalogFrequency.Text = freq.ToString();
           labelSpecial.Text = TVChannel.SpecialChannels[i].Name;
           break;
         }

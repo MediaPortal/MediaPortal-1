@@ -124,6 +124,6 @@
     <value>You can leave the frequency to 0. In this case Mediaportal will use the default frequency for this channel. However if you have channels like 24-- or 63+ then you might need to fill in the correct frequency which you can normally find on the website of you analog cable tv provider</value>
   </data>
   <data name="label103.Text" xml:space="preserve">
-    <value>If you would like mediaportal to remote control your settopbox (sattelite receiver for example) then specify that the channel is received by the external settopbox. Next specify which video input of your tvcard receives the video output of your settop box and on which channel number the settopbox receives this tvchannel. To get mediaportal to remote control the settop box you will need a USBUIRT, MCE remote blaster or other remote control device.</value>
+    <value>If you would like mediaportal to remote control your settopbox (e.g. satellite receiver) then specify that the channel is received by the external settopbox. Next specify which video input of your tvcard receives the video output of your settop box and on which channel number the settopbox receives this tvchannel. To get mediaportal to remote control the settop box you will need a USBUIRT, MCE remote blaster or other remote control device.</value>
   </data>
 </root>
