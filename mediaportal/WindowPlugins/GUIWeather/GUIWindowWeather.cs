@@ -1092,6 +1092,8 @@ namespace MediaPortal.GUI.Weather
           localizedWord = GUILocalizeStrings.Get(534);
         else if ( String.Compare(tokenSplit, "Late", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(553);
+        else if ( String.Compare(tokenSplit, "Very", true) == 0 )
+          localizedWord = GUILocalizeStrings.Get(554);
         // wind directions
         else if (String.Compare(tokenSplit, "N", true) == 0)
           localizedWord = GUILocalizeStrings.Get(535);

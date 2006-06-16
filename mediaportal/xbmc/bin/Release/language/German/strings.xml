@@ -1351,11 +1351,11 @@
 	</string>
 	<string>
 		<id>407</id>
-		<value>von</value>
+		<value>aus</value>
 	</string>
 	<string>
 		<id>408</id>
-		<value>bis</value>
+		<value>mit ca.</value>
 	</string>
 	<string>
 		<id>410</id>
@@ -1865,9 +1865,13 @@
 		<id>552</id>
 		<value>NNW</value>
 	</string>	
-        <string>
+  <string>
 		<id>553</id>
 		<value>Abends</value>
+  </string>
+  <string>
+		<id>554</id>
+		<value>Sehr</value>
 	</string>							
 	<string>
 		<id>550</id>
