@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-7"?><strings><characters>999</characters>
 <!-- translation by NLS -->
-<string><id>0</id>	<value>Προγράμματα</value></string>
+<string><id>0</id><value>Προγράμματα</value></string>
 <string><id>1</id><value>Φωτογραφίες</value></string>
 <string><id>2</id><value>Μουσική</value></string>
 <string><id>3</id><value>Βίντεο</value></string>
@@ -442,14 +442,39 @@
 <string><id>516</id><value>Πρόβλημα στη διαγραφή του τελικού αρχείου, η ενέργεια δεν ολοκληρώθηκε</value></string>
 <string><id>517</id><value>Σοβαρό πρόβλημα, η ενέργεια δεν ολοκληρώθηκε</value></string>
 <string><id>518</id><value>Διαγραφή αυτού του τραγουδιού;</value></string>
-<string><id>519</id>	<value>Όχι υπότιτλοι</value></string>
+<string><id>519</id><value>Όχι υπότιτλοι</value></string>
 <string><id>529</id><value>Όψη: Λίστα Εικονιδίων</value></string>
 <string><id>530</id><value>Δίσκος με φωτογραφίες εισήχθει, θέλετε να τον ανοίξετε ;</value></string>
 <string><id>531</id><value>Δίσκος με βίντεο εισήχθει, θέλετε να τον ανοίξετε ;</value></string>
 <string><id>532</id><value>Δίσκος με ήχο εισήχθει, θέλετε να τον ανοίξετε ;</value></string>
 <string><id>533</id><value>Οδηγός</value></string>
-<string><id>534</id><value>Moderate</value></string>  
+<string><id>534</id><value>Moderate</value></string>
+<string><id>535</id><value>Β</value></string>
+<string><id>536</id><value>Α</value></string>
+<string><id>537</id><value>Ν</value></string>
+<string><id>538</id><value>Δ</value></string>
+<string><id>539</id><value>ΒΑ</value></string>
+<string><id>540</id><value>ΝΑ</value></string>
+<string><id>541</id><value>ΝΔ</value></string>
+<string><id>542</id><value>ΒΔ</value></string>
+<string><id>543</id><value>Αστραπές</value></string>
+<string><id>544</id><value>ΒΒΑ</value></string>
+<string><id>545</id><value>ΑΒΑ</value></string>
+<string><id>546</id><value>ΑΝΑ</value></string>
+<string><id>547</id><value>ΝΝΑ</value></string>
+<string><id>548</id><value>ΝΝΔ</value></string>
+<string><id>549</id><value>ΔΝΔ</value></string>
 <string><id>550</id><value>Κοπή</value></string>
+<string><id>551</id><value>ΔΒΔ</value></string>
+<string><id>552</id><value>ΒΒΔ</value></string>
+<string><id>553</id><value>Αργά</value></string>
+<string><id>590</id><value>Σ. 100</value></string>
+<string><id>591</id><value>Σ. 200</value></string>
+<string><id>592</id><value>Σ. 300</value></string>
+<string><id>593</id><value>Κρυμένο</value></string>
+<string><id>594</id><value>Υποσελίδα</value></string>
+<string><id>595</id><value>Πλήρης σελίδα</value></string>
+<string><id>596</id><value>Αναμονή για σελίδα {0}/{1}...</value></string>
 <string><id>600</id><value>Οδηγός TV</value></string>
 <string><id>601</id><value>Εγγραφή Τώρα</value></string>
 <string><id>602</id><value>Κανάλι</value></string>
@@ -612,9 +637,9 @@
 <string><id>768</id><value>Δεν βρέθηκαν κανάλια</value></string>
 <string><id>769</id><value>Δεν βρέθηκαν προγράμματα</value></string>
 <string><id>770</id><value>Δεν βρέθηκε αρχείο XMLTV</value></string>
-<string><id>771</id>	<value>Το PIN που εισήχθει είναι λάθος</value></string>
-<string><id>772</id>	<value>Θα δοκιμάσετε πάλι;</value></string>
-<string><id>773</id>	<value>ΕΚΚΙΝΗΣΗ</value></string>
+<string><id>771</id><value>Το PIN που εισήχθει είναι λάθος</value></string>
+<string><id>772</id><value>Θα δοκιμάσετε πάλι;</value></string>
+<string><id>773</id><value>ΕΚΚΙΝΗΣΗ</value></string>
 <string><id>774</id><value>ΤΕΛΟΣ</value></string>
 <string><id>800</id><value>Εναρξη με</value></string>
 <string><id>801</id><value>Περιέχει</value></string>
