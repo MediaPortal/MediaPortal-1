@@ -465,8 +465,8 @@ namespace MediaPortal.TV.Recording
         _graphBuilderInterface.RemoveFilter(wstCodec);
         Marshal.ReleaseComObject(teesink);
         Marshal.ReleaseComObject(wstCodec);
-        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx.SetupTeletext(): Failed to find VBI pin");
-        Log.WriteFile(Log.LogType.Log, true, "SinkGraphEx.SetupTeletext(): Teletext not available on this card");
+        Log.WriteFile(Log.LogType.Error, "SinkGraphEx.SetupTeletext(): Failed to find VBI pin");
+        Log.WriteFile(Log.LogType.Log, "Teletext not available on {0}", _cardName);
         return;
       }
 
