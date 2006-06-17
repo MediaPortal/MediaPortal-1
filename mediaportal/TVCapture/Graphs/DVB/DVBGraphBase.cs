@@ -2463,31 +2463,33 @@ namespace MediaPortal.TV.Recording
       return false;
     }
 
-    /// <summary>
-    /// Checks signal and handles signal loss 
+    /// <summary>Checks signal and waits for Tuner Lock while a max given duration, then updates videostate 
     /// </summary>
-    protected void ProcessSignal()
+    /// <param name="_duration">Specifies how long, in milliseconds, we are waiting for the signal to be back</param>
+
+
+    protected void ProcessSignal(int _duration)
     {
-      if (!TunerLocked()) // tuner is unlocked
+      if (_duration == 0) _duration = 3000; //default
+      if (!SignalPresent()) // tuner is unlocked
       {
         Log.Write("DVBGraph: Unlocked... wait for tunerlock");
         // give one more chance to the tuner to be locked
         DateTime dt = DateTime.Now;
-        while (!TunerLocked())
+        while (!SignalPresent())
         {
           TimeSpan ts = DateTime.Now - dt;
-          if (ts.TotalMilliseconds >= 5000) break; // no more than 5'
-          System.Threading.Thread.Sleep(100); // will check 10 times per second
+          if (ts.TotalMilliseconds >= 3000) break; // no more than 2'
+          System.Threading.Thread.Sleep(200); // will check 5 times per second
           UpdateSignalPresent();
         }
         Log.Write("Tuner locked: {0}", TunerLocked());
-        if (TunerLocked()) // got signal back ?
+        if (SignalPresent()) // got signal back ?
         {
           _signalPresent = true;
           _notifySignalLost = false;
           VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
           _processTimer.AddSeconds(-10); // next process() call won't return 
-          //this.Process(); // signal is back, so let's call process() again as
           // is was actually entered with a lost signal
 
         }
@@ -2607,7 +2609,7 @@ namespace MediaPortal.TV.Recording
         }
         //_signalLostTimer = DateTime.Now;
       }
-      ProcessSignal();
+      ProcessSignal(3000);
       if (_graphState != State.Epg)
       {
         if (_graphPaused /*&& !_streamDemuxer.IsScrambled*/)
