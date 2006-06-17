@@ -1864,6 +1864,14 @@
   <string>
 		<id>552</id>
 		<value>NNV</value>
+  </string>
+  <string>
+		<id>553</id>
+		<value>Sen</value>
+  </string>
+  <string>
+		<id>554</id>
+		<value>Veldig</value>
   </string>  
 	<string>
 		<id>550</id>
@@ -2604,6 +2612,10 @@
 	<string>
 		<id>810</id>
 		<value>Kort</value>
+	</string>
+	<string>
+		<id>820</id>
+		<value>Slette usette opptak?</value>
 	</string>
 	<string>
 		<id>850</id>
