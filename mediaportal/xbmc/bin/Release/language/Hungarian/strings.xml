@@ -1208,7 +1208,7 @@
 	</string>
 	<string>
 		<id>371</id>
-		<value>Részleges</value>
+		<value>Részlegesen</value>
 	</string>
 	<string>
 		<id>372</id>
@@ -1850,6 +1850,34 @@
 		<id>550</id>
 		<value>Levágás</value>
 	</string>
+	<string>
+		<id>590</id>
+		<value>P. 100</value>
+	</string>	
+	<string>
+		<id>591</id>
+		<value>P. 200</value>
+	</string>
+	<string>
+		<id>592</id>
+		<value>P. 300</value>
+    </string>
+	<string>
+		<id>593</id>
+		<value>Rejtett</value>
+    </string>    
+	<string>
+		<id>594</id>
+		<value>Aloldal</value>
+    </string>     
+	<string>
+		<id>595</id>
+		<value>Teljes képernyő</value>
+    </string>      
+	<string>
+		<id>596</id>
+		<value>Várakozás az oldalra {0}/{1}...</value>
+    </string>      
 	<string>
 		<id>600</id>
 		<value>TV műsor</value>
