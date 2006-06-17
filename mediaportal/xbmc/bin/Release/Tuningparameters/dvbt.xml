@@ -730,6 +730,13 @@
 		<carrier frequency="706000" bandwidth="8" />
 		<carrier frequency="746000" bandwidth="8" />
 	</country>
+	<country name="Sweden - Malmo - Jagersro" offset="125">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+	</country>
 	<country name="Taiwan - All Regions" offset="0">
 		<carrier frequency="533000" bandwidth="6" />
 		<carrier frequency="539000" bandwidth="6" />
