@@ -2479,11 +2479,11 @@ namespace MediaPortal.TV.Recording
         while (!_signalPresent)
         {
           TimeSpan ts = DateTime.Now - dt;
-          if (ts.TotalMilliseconds >= 3000) break; // no more than 2'
-          System.Threading.Thread.Sleep(200); // will check 5 times per second
+          if (ts.TotalMilliseconds >= 5000) break; // no more than 5'
+          System.Threading.Thread.Sleep(100); // will check 10 times per second
           UpdateSignalPresent();
         }
-        Log.Write("Tuner locked: {0}", TunerLocked());
+        Log.Write("Tuner locked: {0}", _signalPresent);
         if (_signalPresent) // got signal back ?
         {
           _signalPresent = true;
@@ -2997,7 +2997,8 @@ namespace MediaPortal.TV.Recording
         //_analyzerInterface.SetPidFilterCallback(this);
       }
       catch (Exception) { }
-      UpdateSignalPresent();
+      _signalPresent = false; // needed for first process() call
+      //UpdateSignalPresent();
       Log.Write("DVBGraph:TuneChannel done signal strength:{0} signal quality:{1} locked:{2}", SignalStrength(), SignalQuality(), _tunerLocked);
     }//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -3083,10 +3084,12 @@ namespace MediaPortal.TV.Recording
         SetupDemuxerPin(_pinDemuxerSections, 0x11, (int)MediaSampleContent.Mpeg2PSI, false);
       }
 
-      Log.Write("DVBGraph: wait for tunerlock");
+      //Log.Write("DVBGraph: wait for tunerlock");
+      _signalPresent = false; // needed to be false for the first process() call
+      /*
       //wait until tuner is locked
       DateTime dt = DateTime.Now;
-      /*while (true)                                    
+      while (true)                                    
       {                    
         TimeSpan ts = DateTime.Now - dt;              
         if (ts.TotalMilliseconds >= 2000) break;      
