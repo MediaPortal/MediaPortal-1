@@ -6,13 +6,45 @@
 
   <section name="ChannelList">
 
-    <entry name="dr1@dr.dk">1</entry>			<!-- DR1 -->
-    <entry name="dr2@dr.dk">2</entry>			<!-- DR2 -->
-    <entry name="tv2@tv2.dk">3</entry>			<!-- TV2 -->
-    <entry name="tv3+@tv2.dk">6</entry>			<!-- tv3+ -->
-    <entry name="tvdanmark2@tvdanmark.dk">8</entry>	<!-- TV Danmark -->
-    <entry name="kanal5.dk">7</entry>			<!-- Kanal 5 -->
-    <entry name="dk4.dk">15</entry>			<!-- DK4 -->
+    <entry name="dr1@dr.dk">1</entry>				<!-- DR1 -->
+    <entry name="dr2@dr.dk">2</entry>				<!-- DR2 -->
+    <entry name="tv2@tv2.dk">3</entry>				<!-- TV2 -->
+    <entry name="tv2zulu@tv2.dk">4</entry>			<!-- TV2 Zulu -->
+    <entry name="tv2charlie@tv2.dk">31</entry>			<!-- TV2 Charlie -->
+    <entry name="tv3@tv3.dk">5</entry>				<!-- TV3 -->
+    <entry name="tv3+@tv2.dk">6</entry>				<!-- TV3+ -->
+    <entry name="kanal4.dk">8</entry>				<!-- Kanal 4 -->
+    <entry name="kanal5.dk">7</entry>				<!-- Kanal 5 -->
+    <entry name="dk4.dk">15</entry>				<!-- DK4 -->
+    <entry name="tv2film@tv2.dk">77</entry>			<!-- TV2 Film -->
+    <entry name="tv1000@tv1000.dk">9</entry>			<!-- tv1000 -->
+    <entry name="tv1000action@tv1000.dk">10</entry>		<!-- tv1000 action-->
+    <entry name="tv1000classic@tv1000.dk">11</entry>		<!-- tv1000 Classic-->
+    <entry name="tv1000family@tv1000.dk">12</entry>		<!-- tv1000 family -->
+    <entry name="tv1000nordic@tv1000.dk">13</entry>		<!-- tv1000 Nordic-->
+    <entry name="canal+@canalplus.dk">25</entry>		<!-- Canal+ -->
+    <entry name="canal+film1@canalplus.dk">26</entry>		<!-- Canal+ Film -->
+    <entry name="canal+film2@canalplus.dk">27</entry>		<!-- Canal+ Film2 -->
+    <entry name="canal+film3@canalplus.dk">78</entry>		<!-- Canal+ Film3 -->
+    <entry name="cmorefilm@canalplus.dk">38</entry>		<!-- Cmore Film -->
+    <entry name="cmorefilm2@canalplus.dk">79</entry>		<!-- Cmore Film2 -->
+    <entry name="cmorehd@canalplus.dk">80</entry>		<!-- Cmore HD -->
+    <entry name="viasatsport1@viasat.dk">16</entry>		<!-- Viasat sport 1 -->
+    <entry name="viasatsport2@viasat.dk">17</entry>		<!-- Viasat sport 2 -->
+    <entry name="viasatsport3@viasat.dk">18</entry>		<!-- Viasat sport 3 -->
+    <entry name="canal+sport@canalplus.dk">37</entry>		<!-- Canal+ Sport -->
+    <entry name="explorer@viasat.dk">19</entry>			<!-- Viasat Explorer -->
+    <entry name="history@viasat.dk">39</entry>			<!-- Viasat History -->
+    <entry name="discovery.dk">70</entry>			<!-- Discovery Channel -->
+    <entry name="animalplanet.dk">93</entry>			<!-- Animal Planet  -->
+    <entry name="nationalgeographicchannel.dk">94</entry>	<!-- National Geographic Channel  -->
+    <entry name="civilisation@discovery.dk">116</entry>		<!-- Discovery Civilisation -->
+    <entry name="science@discovery.dk">117</entry>		<!-- Discovery Science -->
+    <entry name="travelandliving@discovery.dk">118</entry>	<!-- Discovery Travel & Living -->
+    <entry name="disney.dk">14</entry>				<!-- Disney Channel -->
+    <entry name="toon@disney.dk">74</entry>			<!-- Toon Disney -->
+    <entry name="mtve.com">71</entry>				<!-- MTV Europe  -->
+    <entry name="natureaction@viasat.dk">20</entry>		<!-- Viasat nature/action -->
 
   </section>
 
