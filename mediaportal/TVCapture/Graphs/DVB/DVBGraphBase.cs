@@ -2382,7 +2382,7 @@ namespace MediaPortal.TV.Recording
     protected void UpdateVideoState()
     {
       bool isViewing = Recorder.IsCardViewing(_cardId);
-      Log.Write("DVBGraphBase.UpdateVideoState() Viewing: {0}", isViewing);
+      //Log.Write("DVBGraphBase.UpdateVideoState() Viewing: {0}", isViewing);
       if (!isViewing) return;
       //      Log.Write("packets:{0} pmt:{1:X}  vmr9:{2} fps:{3} locked:{4} quality:{5} level:{6}",
       //      _streamDemuxer.ReceivingPackets, _lastPMTVersion, GUIGraphicsContext.Vmr9Active, GUIGraphicsContext.Vmr9FPS, TunerLocked(), SignalQuality(), SignalStrength());
