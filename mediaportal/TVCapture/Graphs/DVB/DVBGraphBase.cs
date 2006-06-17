@@ -2471,12 +2471,12 @@ namespace MediaPortal.TV.Recording
     protected void ProcessSignal(int _duration)
     {
       if (_duration == 0) _duration = 3000; //default
-      if (!TunerLocked()) // tuner is unlocked
+      if (!_signalPresent) // tuner is unlocked
       {
         Log.Write("DVBGraph: Unlocked... wait for tunerlock");
         // give one more chance to the tuner to be locked
         DateTime dt = DateTime.Now;
-        while (!TunerLocked())
+        while (!_signalPresent)
         {
           TimeSpan ts = DateTime.Now - dt;
           if (ts.TotalMilliseconds >= 3000) break; // no more than 2'
@@ -2484,7 +2484,7 @@ namespace MediaPortal.TV.Recording
           UpdateSignalPresent();
         }
         Log.Write("Tuner locked: {0}", TunerLocked());
-        if (TunerLocked()) // got signal back ?
+        if (_signalPresent) // got signal back ?
         {
           _signalPresent = true;
           _notifySignalLost = false;
@@ -2519,8 +2519,8 @@ namespace MediaPortal.TV.Recording
         else
         {
           TimeSpan tsProc = DateTime.Now - _processTimer;
-          if (tsProc.TotalMilliseconds < 2500) return; // original value was set to 5' 
-          _processTimer = DateTime.Now;                // try less for 697 related changes
+          if (tsProc.TotalMilliseconds < 5000 && _signalPresent ) return; // original value was set to 5' 
+          _processTimer = DateTime.Now;                // will not return if we got no signal
         }
       }
 
@@ -3086,14 +3086,14 @@ namespace MediaPortal.TV.Recording
       Log.Write("DVBGraph: wait for tunerlock");
       //wait until tuner is locked
       DateTime dt = DateTime.Now;
-      while (true)                                    
+      /*while (true)                                    
       {                    
         TimeSpan ts = DateTime.Now - dt;              
         if (ts.TotalMilliseconds >= 2000) break;      
         System.Threading.Thread.Sleep(200);           
       }                                             
       //_signalLostTimer = DateTime.Now;               
-      UpdateSignalPresent();
+      UpdateSignalPresent();*/
       //         
       //      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }//public void Tune(object tuningObject)
