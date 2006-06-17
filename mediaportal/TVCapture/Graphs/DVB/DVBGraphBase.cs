@@ -2479,7 +2479,7 @@ namespace MediaPortal.TV.Recording
         while (!_signalPresent)
         {
           TimeSpan ts = DateTime.Now - dt;
-          if (ts.TotalMilliseconds >= 5000) break; // no more than 5'
+          if (ts.TotalMilliseconds >= _duration) break; // no longer than _duration
           System.Threading.Thread.Sleep(100); // will check 10 times per second
           UpdateSignalPresent();
         }
@@ -2609,7 +2609,7 @@ namespace MediaPortal.TV.Recording
         }
         //_signalLostTimer = DateTime.Now;
       }
-      ProcessSignal(3000);
+      ProcessSignal(5000);
       if (_graphState != State.Epg)
       {
         if (_graphPaused /*&& !_streamDemuxer.IsScrambled*/)
@@ -2997,8 +2997,7 @@ namespace MediaPortal.TV.Recording
         //_analyzerInterface.SetPidFilterCallback(this);
       }
       catch (Exception) { }
-      _signalPresent = false; // needed for first process() call
-      //UpdateSignalPresent();
+      UpdateSignalPresent();
       Log.Write("DVBGraph:TuneChannel done signal strength:{0} signal quality:{1} locked:{2}", SignalStrength(), SignalQuality(), _tunerLocked);
     }//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
@@ -3084,19 +3083,16 @@ namespace MediaPortal.TV.Recording
         SetupDemuxerPin(_pinDemuxerSections, 0x11, (int)MediaSampleContent.Mpeg2PSI, false);
       }
 
-      //Log.Write("DVBGraph: wait for tunerlock");
-      _signalPresent = false; // needed to be false for the first process() call
-      /*
+      Log.Write("DVBGraph: wait for tunerlock");
       //wait until tuner is locked
       DateTime dt = DateTime.Now;
-      while (true)                                    
+      while (!_signalPresent)                     // will exit if we found a signal                              
       {                    
         TimeSpan ts = DateTime.Now - dt;              
-        if (ts.TotalMilliseconds >= 2000) break;      
-        System.Threading.Thread.Sleep(200);           
-      }                                             
-      //_signalLostTimer = DateTime.Now;               
-      UpdateSignalPresent();*/
+        if (ts.TotalMilliseconds >= 5000) break;  // won't wait more than 5'    
+        System.Threading.Thread.Sleep(100);       // 10 checks/s
+        UpdateSignalPresent();  
+      }                                                       
       //         
       //      DumpMpeg2DemuxerMappings(_filterMpeg2Demultiplexer);
     }//public void Tune(object tuningObject)
