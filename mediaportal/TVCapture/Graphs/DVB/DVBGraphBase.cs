@@ -2519,7 +2519,7 @@ namespace MediaPortal.TV.Recording
         else
         {
           TimeSpan tsProc = DateTime.Now - _processTimer;
-          if (tsProc.TotalMilliseconds < 5000 && _signalPresent ) return; // original value was set to 5' 
+          if (tsProc.TotalMilliseconds < 5000 && _signalPresent && _refreshPmtTable == false) return; // original value was set to 5' 
           _processTimer = DateTime.Now;                // will not return if we got no signal
         }
       }
@@ -2997,7 +2997,16 @@ namespace MediaPortal.TV.Recording
         //_analyzerInterface.SetPidFilterCallback(this);
       }
       catch (Exception) { }
-      UpdateSignalPresent();
+      Log.Write("DVBGraph: wait for tunerlock");
+      //wait until tuner is locked
+      DateTime dt = DateTime.Now;
+      while (!_signalPresent)                     // will exit if we found a signal                              
+      {
+        TimeSpan ts = DateTime.Now - dt;
+        if (ts.TotalMilliseconds >= 5000) break;  // won't wait more than 5'    
+        System.Threading.Thread.Sleep(100);       // 10 checks/s
+        UpdateSignalPresent();
+      } 
       Log.Write("DVBGraph:TuneChannel done signal strength:{0} signal quality:{1} locked:{2}", SignalStrength(), SignalQuality(), _tunerLocked);
     }//public void TuneChannel(AnalogVideoStandard standard,int iChannel,int country)
 
