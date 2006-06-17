@@ -6674,22 +6674,22 @@
 	</tv> 
   </capturecard>
 
-  <capturecard commercialname="Leadtek WinFast DTV2000 H (Digital)" capturename="WinFast DTV2000 H BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665e107d&amp;rev_05"> 
-	<capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/> 
-	<tv> 
-	  <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/> 
-	  <filters> 
-		<filter cat="networkprovider"	name="Microsoft DVBT Network Provider"								checkdevice="false"/> 
-		<filter cat="tunerdevice"		name="WinFast DTV2000 H BDA DVB-T Tuner/Demod (Philips FMD1216ME)"	checkdevice="true"/> 
-		<filter cat="capture"			name="WinFast DTV2000 H BDA Transport Stream Capture"				checkdevice="true"/> 
-	  </filters> 
-	  <connections> 
-		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/> 
-		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/> 
-		</connections> 
-	</tv> 
+  <capturecard commercialname="Leadtek WinFast DTV2000 H (Digital)" capturename="WinFast DTV2000 H BDA Transport Stream Capture" devid="ven_14f1&amp;dev_8802&amp;subsys_665e107d&amp;rev_05">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"								              checkdevice="false"/>
+        <filter cat="tunerdevice"		  name="WinFast DTV2000 H BDA DVB-T Tuner/Demod (Philips FMD1216ME)"	checkdevice="true"/>
+        <filter cat="capture"			    name="WinFast DTV2000 H BDA Transport Stream Capture"				        checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"		  sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
+      </connections>
+    </tv>
   </capturecard>
-
+  
   <capturecard commercialname="AVerMedia AVerTV Video Capture (M104)" capturename="AVerMedia AVerTV Video Capture (AF2)" devid="ven_4444&amp;dev_0016&amp;subsys_c1361461&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
     <tv>
@@ -9639,22 +9639,27 @@
     </tv> 
   </capturecard>
 
-  <capturecard commercialname="ATI AIW X series" capturename="ATI T200 AVStream Analog Capture" devid="ntativrv01">
-    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+  <capturecard commercialname="ATI All-in-Wonder X series (Analogue)" capturename="ATI T200 AVStream Analog Capture" devid="ntativrv01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
+        <filter cat="tvtuner"     name="ATI T200 AVStream Analog Tuner"     checkdevice="false"/>
+        <filter cat="tvaudio"     name="ATI T200 AVStream Analog TV Audio"  checkdevice="false"/>
         <filter cat="crossbar"    name="ATI T200 AVStream Analog Xbar"      checkdevice="true"/>
         <filter cat="capture"     name="ATI T200 AVStream Analog Capture"   checkdevice="true"/>
-        <filter cat="audcapture"  name="%soundcard%"                        checkdevice="true"/>
         <filter cat="videncoder"	name="ATI Media Center Video Encoder"     checkdevice="false"/>
         <filter cat="audencoder"	name="ATI Media Center Audio Encoder" 	  checkdevice="false"/>
         <filter cat="mux"      		name="ATI Media Center Multiplexer"		    checkdevice="false"/>
       </filters>
       <connections>
+        <connection sourcefilter="tvtuner"      sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"      sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"      sourcepin="0" sinkfilter="crossbar"   sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar"     sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="crossbar"     sourcepin="1" sinkfilter="capture"	  sinkpin="1"/>
         <connection sourcefilter="capture"			sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
-        <connection sourcefilter="audcapture"   sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"      sourcepin="4" sinkfilter="audencoder"	sinkpin="0"/>
         <connection sourcefilter="videncoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
         <connection sourcefilter="audencoder"		sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
       </connections>
@@ -13116,6 +13121,22 @@
         <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
         <filter cat="tunerdevice"     name="AVIO DVB Tuner Filter"            checkdevice="true"/>
         <filter cat="capture"         name="AVIO Capture Filter"              checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="ATI All-in-Wonder X series (DVB-T)" capturename="ATI T200 AVStream BDA Capture" devid="ntativrv01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="ATI BDA Tuner"                    checkdevice="true"/>
+        <filter cat="capture"         name="ATI T200 AVStream BDA Capture"    checkdevice="true"/>
       </filters>
       <connections>
         <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
