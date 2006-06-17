@@ -2471,12 +2471,12 @@ namespace MediaPortal.TV.Recording
     protected void ProcessSignal(int _duration)
     {
       if (_duration == 0) _duration = 3000; //default
-      if (!SignalPresent()) // tuner is unlocked
+      if (!TunerLocked()) // tuner is unlocked
       {
         Log.Write("DVBGraph: Unlocked... wait for tunerlock");
         // give one more chance to the tuner to be locked
         DateTime dt = DateTime.Now;
-        while (!SignalPresent())
+        while (!TunerLocked())
         {
           TimeSpan ts = DateTime.Now - dt;
           if (ts.TotalMilliseconds >= 3000) break; // no more than 2'
@@ -2484,7 +2484,7 @@ namespace MediaPortal.TV.Recording
           UpdateSignalPresent();
         }
         Log.Write("Tuner locked: {0}", TunerLocked());
-        if (SignalPresent()) // got signal back ?
+        if (TunerLocked()) // got signal back ?
         {
           _signalPresent = true;
           _notifySignalLost = false;
