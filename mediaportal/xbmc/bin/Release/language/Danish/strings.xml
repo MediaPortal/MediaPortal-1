@@ -1346,14 +1346,6 @@
 		<value>Fugtighed</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>Fra</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>på</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Tilslutter til Weather.com</value>
 	</string>
@@ -1784,6 +1776,10 @@
 	<string>
 		<id>550</id>
 		<value>Marker</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Fra {0} på {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
