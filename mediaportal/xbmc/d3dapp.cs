@@ -126,6 +126,8 @@ namespace MediaPortal
     //protected TextureStates textureStates;
     private Caps graphicsCaps; // Caps for the device
 
+    internal static string _fullscreenOverride = string.Empty;
+
     protected Caps Caps
     {
       get { return graphicsCaps; }
@@ -412,10 +414,13 @@ namespace MediaPortal
         storedLocation = this.Location;
         oldBounds = new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height);
 
-
         using (Settings xmlreader = new Settings("MediaPortal.xml"))
         {
-          string strStartFull = (string)xmlreader.GetValue("general", "startfullscreen");
+          string strStartFull;
+          if (_fullscreenOverride == "yes")
+            strStartFull = _fullscreenOverride;
+          else
+            strStartFull = (string)xmlreader.GetValue("general", "startfullscreen");
           if (strStartFull != null && strStartFull == "yes")
           {
             if (autoHideTaskbar && !_minimizeOnStartup)

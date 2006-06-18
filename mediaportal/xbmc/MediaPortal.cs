@@ -137,8 +137,13 @@ public class MediaPortalApp : D3DApp, IRender
   //NProf doesnt work if the [STAThread] attribute is set
   //but is needed when you want to play music or video
   [STAThread]
-  public static void Main()
+  public static void Main(string[] args)
   {
+    if (args.Length > 0)
+      foreach (string arg in args)
+        if (arg == "/fullscreen")
+          _fullscreenOverride = "yes";
+
     AddExceptionHandler();
 
     Log.BackupLogFiles();
