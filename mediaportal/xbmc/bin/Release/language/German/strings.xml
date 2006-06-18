@@ -1350,14 +1350,6 @@
 		<value>Feuchtigkeit:</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>aus</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>mit ca.</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Öffne Weather.com...</value>
 	</string>
@@ -1876,6 +1868,10 @@
 	<string>
 		<id>550</id>
 		<value>Schneiden</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>aus {0} mit ca. {1} {2}</value>
 	</string>
 	<string>
 		<id>590</id>
