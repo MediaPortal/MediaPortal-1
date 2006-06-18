@@ -1346,14 +1346,6 @@
 		<value>Hezetasuna</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>Nondik</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>nora</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Weather.com-en begiratzen</value>
 	</string>
@@ -1780,6 +1772,10 @@
 	<string>
 		<id>550</id>
 		<value>Crop</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Nondik {0} nora {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
