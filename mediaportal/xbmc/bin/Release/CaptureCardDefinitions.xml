@@ -9640,7 +9640,7 @@
   </capturecard>
 
   <capturecard commercialname="ATI All-in-Wonder X series (Analogue)" capturename="ATI T200 AVStream Analog Capture" devid="ntativrv01">
-    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
