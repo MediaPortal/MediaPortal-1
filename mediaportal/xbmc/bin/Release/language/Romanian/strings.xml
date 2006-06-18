@@ -1346,14 +1346,6 @@
 		<value>Umiditate</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>De la</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>la</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Accesez Weather.com</value>
 	</string>
@@ -1780,6 +1772,10 @@
 	<string>
 		<id>550</id>
 		<value>Tãiere</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>De la {0} la {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
