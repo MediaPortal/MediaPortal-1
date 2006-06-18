@@ -926,17 +926,22 @@ namespace MediaPortal.Player
       _seekTimer = DateTime.MinValue;
 
     }
-
+    /// <summary>
+    /// This function returns the localized time units for "Step" (seconds) in human readable format.
+    /// </summary>
+    /// <param name="Step"></param>
+    /// <returns></returns>
     static public string GetSingleStep(int Step)
     {
       if (Step >= 0)
       {
         if (Step >= 3600)
         {
-          if ((Convert.ToSingle(Step) / 3600) > 1 && (Convert.ToSingle(Step) / 3600) != 2)
-            return "+ " + Convert.ToString(Step / 60) + " " + GUILocalizeStrings.Get(2998);// "min"
-          else
-            return "+ " + Convert.ToString(Step / 3600) + " " + GUILocalizeStrings.Get(2997);// "hrs"
+        // check for 'full' hours
+        if ( (Convert.ToSingle(Step) / 3600 ) > 1 && (Convert.ToSingle(Step) / 3600) != 2 && (Convert.ToSingle(Step) / 3600) != 3 )
+          return "+ " + Convert.ToString(Step / 60) + " " + GUILocalizeStrings.Get(2998);// "min"
+        else
+          return "+ " + Convert.ToString(Step / 3600) + " " + GUILocalizeStrings.Get(2997);// "hrs"
         }
         else
           if (Step >= 60)
@@ -948,7 +953,7 @@ namespace MediaPortal.Player
       {
         if (Step <= -3600)
         {
-          if ((Convert.ToSingle(Step) / 3600) < -1 && (Convert.ToSingle(Step) / 3600) != -2)
+        if ( (Convert.ToSingle(Step) / 3600) < -1 && (Convert.ToSingle(Step) / 3600) != -2 && (Convert.ToSingle(Step) / 3600) != -3 )
             return "- " + Convert.ToString(Math.Abs(Step / 60)) + " " + GUILocalizeStrings.Get(2998);// "min"
           else
             return "- " + Convert.ToString(Math.Abs(Step / 3600)) + " " + GUILocalizeStrings.Get(2997);// "hrs"
