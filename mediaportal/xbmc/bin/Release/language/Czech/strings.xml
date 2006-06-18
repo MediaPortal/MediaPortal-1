@@ -1270,14 +1270,6 @@
 		<value>Vlhkost</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>Od</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>do</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Pøipojuji se k weather.com</value>
 	</string>
@@ -1684,6 +1676,10 @@
 	<string>
 		<id>550</id>
 		<value>Støíhat</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Od {0} do {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
