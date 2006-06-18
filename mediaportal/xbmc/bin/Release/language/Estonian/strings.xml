@@ -1326,14 +1326,6 @@
 		<value>Niiskus</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>From</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>at</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Ühendamine Weather.com</value>
 	</string>
@@ -1744,6 +1736,10 @@
 	<string>
 		<id>550</id>
 		<value>Lõika</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>From {0} at {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
