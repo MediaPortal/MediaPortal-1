@@ -142,7 +142,7 @@
 	</string>
 	<string>
 		<id>105</id>
-		<value>Ordenar por: TamaÒo</value>
+		<value>Ordenar por: Tama√±o</value>
 	</string>
 	<string>
 		<id>106</id>
@@ -526,7 +526,7 @@
 	</string>
 	<string>
 		<id>201</id>
-		<value>AÒo:</value>
+		<value>A√±o:</value>
 	</string>
 	<string>
 		<id>202</id>
@@ -874,7 +874,7 @@
 	</string>
 	<string>
 		<id>289</id>
-		<value>TamaÒo</value>
+		<value>Tama√±o</value>
 	</string>
 	<string>
 		<id>290</id>
@@ -1094,7 +1094,7 @@
 	</string>
 	<string>
 		<id>345</id>
-		<value>AÒo</value>
+		<value>A√±o</value>
 	</string>
 	<string>
 		<id>346</id>
@@ -1178,7 +1178,7 @@
 	</string>
 	<string>
 		<id>366</id>
-		<value>Ordenar por: AÒo</value>
+		<value>Ordenar por: A√±o</value>
 	</string>
 	<string>
 		<id>367</id>
@@ -1262,7 +1262,7 @@
 	</string>
 	<string>
 		<id>387</id>
-		<value>TempraÒo</value>
+		<value>Tempra√±o</value>
 	</string>
 	<string>
 		<id>388</id>
@@ -1341,14 +1341,6 @@
 		<value>Humedad</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>Desde</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>a</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Accediendo a Weather.com</value>
 	</string>
@@ -1390,7 +1382,7 @@
 	</string>
 	<string>
 		<id>420</id>
-		<value>Mis Videos/AÒos</value>
+		<value>Mis Videos/A√±os</value>
 	</string>
 	<string>
 		<id>421</id>
@@ -1454,7 +1446,7 @@
 	</string>
 	<string>
 		<id>436</id>
-		<value>AÒo:</value>
+		<value>A√±o:</value>
 	</string>
 	<string>
 		<id>437</id>
@@ -1675,6 +1667,10 @@
 	<string>
 		<id>491</id>
 		<value>Usar iconos Grandes</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Desde {0} a {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
@@ -2106,7 +2102,7 @@
 	</string>
 	<string>
 		<id>100023</id>
-		<value>Mis Videos/aÒo</value>
+		<value>Mis Videos/a√±o</value>
 	</string>
 	<string>
 		<id>100024</id>
@@ -2322,7 +2318,7 @@
 	</string>
 	<string>
 		<id>687</id>
-		<value>AÒos Activo</value>
+		<value>A√±os Activo</value>
 	</string>
 	<string>
 		<id>688</id>
@@ -2466,7 +2462,7 @@
 	</string>
 	<string>
 		<id>731</id>
-		<value>el programa entonces se detendr· la grabacion</value>
+		<value>el programa entonces se detendr√° la grabacion</value>
 	</string>
 	<string>
 		<id>732</id>
@@ -2550,7 +2546,7 @@
 	</string>
 	<string>
 		<id>854</id>
-		<value>Activado en estos dÌas</value>
+		<value>Activado en estos d√≠as</value>
 	</string>
 	<string>
 		<id>855</id>
@@ -3026,7 +3022,7 @@
 	</string>
 	<string>
 		<id>2016</id>
-		<value>pequeÒo</value>
+		<value>peque√±o</value>
 	</string>
 	<string>
 		<id>2017</id>
@@ -3106,7 +3102,7 @@
 	</string>
 	<string>
 		<id>2036</id>
-		<value>galÛn</value>
+		<value>gal√≥n</value>
 	</string>
 	<string>
 		<id>2037</id>
@@ -3174,7 +3170,7 @@
 	</string>
 	<string>
 		<id>2053</id>
-		<value>CategorÌa</value>
+		<value>Categor√≠a</value>
 	</string>
 	<string>
 		<id>2054</id>
@@ -3346,7 +3342,7 @@
 	</string>
 	<string>
 		<id>8005</id>
-		<value>Actualizando buzÛn de correo</value>
+		<value>Actualizando buz√≥n de correo</value>
 	</string>
 	<string>
 		<id>8007</id>
@@ -3442,7 +3438,7 @@
 	</string>
 	<string>
 		<id>9000</id>
-		<value>TamaÒo de la imagen:</value>
+		<value>Tama√±o de la imagen:</value>
 	</string>
 	<string>
 		<id>9001</id>
@@ -3514,7 +3510,7 @@
 	</string>
 	<string>
 		<id>13006</id>
-		<value>Imagen pequeÒa</value>
+		<value>Imagen peque√±a</value>
 	</string>
 	<string>
 		<id>13007</id>
@@ -3778,7 +3774,7 @@
 	</string>
 	<string>
 		<id>743</id>
-		<value>Pronostico de 4 dÌas</value>
+		<value>Pronostico de 4 d√≠as</value>
 	</string>
 	<string>
 		<id>742</id>
