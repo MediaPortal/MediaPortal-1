@@ -9639,6 +9639,7 @@
     </tv> 
   </capturecard>
 
+<!--  
   <capturecard commercialname="ATI All-in-Wonder X series (Analogue)" capturename="ATI T200 AVStream Analog Capture" devid="ntativrv01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
@@ -9719,6 +9720,7 @@
       </connections>
     </tv>
   </capturecard>
+-->
 
   <capturecard commercialname="AVerMedia AVerTV PVR 150 Plus" capturename="AVerMedia AVerTV Video Capture (AF2)" devid="ven_4444&amp;dev_0016&amp;subsys_c0351461&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="true" mce="true" sw="false" bda="false"/>
