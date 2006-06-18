@@ -1347,14 +1347,6 @@
 		<value>Páratartalom:</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value></value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>irányú,</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Bejelentkezés a Weather.com-ra</value>
 	</string>
@@ -1849,6 +1841,10 @@
 	<string>
 		<id>550</id>
 		<value>Levágás</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>{0} irányú, {1} {2}</value>
 	</string>
 	<string>
 		<id>590</id>
