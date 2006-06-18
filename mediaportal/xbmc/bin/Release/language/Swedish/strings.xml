@@ -1790,8 +1790,80 @@
 		<value>Guide</value>
 	</string>
 	<string>
+		<id>535</id>
+		<value>N</value>
+	</string>
+	<string>
+		<id>536</id>
+		<value>O</value>
+	</string>
+	<string>
+		<id>537</id>
+		<value>S</value>
+	</string>
+	<string>
+		<id>538</id>
+		<value>V</value>
+	</string>
+	<string>
+		<id>539</id>
+		<value>NO</value>
+	</string>
+	<string>
+		<id>540</id>
+		<value>SO</value>
+	</string>
+	<string>
+		<id>541</id>
+		<value>SV</value>
+	</string>
+	<string>
+		<id>542</id>
+		<value>NV</value>
+	</string>
+	<string>
+		<id>543</id>
+		<value>Åska</value>
+	</string>
+	<string>
+		<id>544</id>
+		<value>NNO</value>
+	</string>
+	<string>
+		<id>545</id>
+		<value>ONN</value>
+	</string>
+	<string>
+		<id>546</id>
+		<value>OSO</value>
+	</string>
+	<string>
+		<id>547</id>
+		<value>SSO</value>
+	</string>
+	<string>
+		<id>548</id>
+		<value>SSV</value>
+	</string>
+	<string>
+		<id>549</id>
+		<value>VSV</value>
+	</string>
+	<string>
+		<id>551</id>
+		<value>VNV</value>
+	</string>
+	<string>
+		<id>552</id>
+		<value>NNV</value>
+	</string>
+	<string>
 		<id>550</id>
 		<value>Beskär</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>{1} {2} från {0}</value>
 	</string>
 	<string>
 		<id>600</id>
