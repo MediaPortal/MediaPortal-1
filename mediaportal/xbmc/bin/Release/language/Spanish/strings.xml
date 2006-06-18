@@ -1350,14 +1350,6 @@
 		<value>Humedad</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>Desde</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>hasta</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Accediendo a Weather.com</value>
 	</string>
@@ -1800,6 +1792,10 @@
 	<string>
 		<id>550</id>
 		<value>Corte</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Desde {0} hasta {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
