@@ -1346,14 +1346,6 @@
 		<value>Kosteus</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>Suunta</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>,</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Haetaan säätiedot Weather.com:sta</value>
 	</string>
@@ -1784,6 +1776,10 @@
 	<string>
 		<id>550</id>
 		<value>Rajaa</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Suunta {0} , {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
