@@ -1346,14 +1346,6 @@
 		<value>Nem Oraný</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>Yön</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>alaný</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Weather.com aranýyor</value>
 	</string>
@@ -1780,6 +1772,10 @@
 	<string>
 		<id>550</id>
 		<value>Kes</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Yön {0} alaný {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
