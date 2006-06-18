@@ -935,6 +935,8 @@ public class MediaPortalApp : D3DApp, IRender
     {
       splashScreen.SetInformation("Initializing skin...");
     }
+    Log.Write("Main: Resizing windowmanager");
+    GUIWindowManager.OnResize();
     Log.Write("Main: Initializing windowmanager");
     GUIWindowManager.PreInit();
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
