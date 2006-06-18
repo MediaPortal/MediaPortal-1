@@ -1350,14 +1350,6 @@
 		<value>Umidità</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>Da</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>a</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Accesso a Weather.com</value>
 	</string>
@@ -1876,6 +1868,10 @@
 	<string>
 		<id>550</id>
 		<value>Taglia</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Da {0} a {1} {2}</value>
 	</string>
 	<string>
 		<id>590</id>
