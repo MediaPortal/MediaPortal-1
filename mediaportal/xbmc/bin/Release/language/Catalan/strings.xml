@@ -1346,14 +1346,6 @@
 		<value>Humitat</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>Des de</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>a</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Accedint Weather.com</value>
 	</string>
@@ -1780,6 +1772,10 @@
 	<string>
 		<id>550</id>
 		<value>Retallar</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Des de {0} a {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
