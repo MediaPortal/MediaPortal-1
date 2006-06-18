@@ -507,7 +507,7 @@ namespace MediaPortal.GUI.Library
       if (pItem.Shaded)
         dwColor = ShadedColor;
 
-      if (gotFocus && Focus)
+      if (pItem.Selected)
         dwColor = _selectedColor;
 
       dwPosX += _textOffsetX;
@@ -521,7 +521,7 @@ namespace MediaPortal.GUI.Library
       {
         dwColor = _textColor2;
 
-        if (gotFocus && Focus)
+        if (pItem.Selected)
           dwColor = _selectedColor2;
 
         if (pItem.IsRemote)
@@ -563,7 +563,7 @@ namespace MediaPortal.GUI.Library
       {
         dwColor = _textColor;
 
-        if (gotFocus && Focus)
+        if (pItem.Selected)
           dwColor = _selectedColor;
 
         if (pItem.IsRemote)
@@ -571,7 +571,7 @@ namespace MediaPortal.GUI.Library
           dwColor = _remoteColor;
           if (pItem.IsDownloading) dwColor = _downloadColor;
         }
-        if (!gotFocus && Focus)
+        if (!pItem.Selected)
           dwColor = Color.FromArgb(_unfocusedAlpha, Color.FromArgb((int)dwColor)).ToArgb();
 
         RenderText(timePassed, buttonNr, (float)dwPosX, (float)dwPosY + GUIGraphicsContext.ScaleVertical(2) + _textOffsetY, (float)dMaxWidth, dwColor, _textLine, bSelected);
@@ -581,7 +581,7 @@ namespace MediaPortal.GUI.Library
       {
         dwColor = _textColor2;
 
-        if (gotFocus && Focus)
+        if (pItem.Selected)
           dwColor = _selectedColor2;
 
         if (pItem.IsRemote)
@@ -620,7 +620,7 @@ namespace MediaPortal.GUI.Library
       {
         dwColor = _textColor3;
 
-        if (gotFocus && Focus)
+        if (pItem.Selected)
           dwColor = _selectedColor3;
 
         if (pItem.IsRemote)
