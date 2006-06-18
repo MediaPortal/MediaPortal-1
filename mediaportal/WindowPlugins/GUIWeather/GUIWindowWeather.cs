@@ -1269,15 +1269,14 @@ namespace MediaPortal.GUI.Weather
           GetInteger(pNestElement, "s", out tempInteger);			//current wind strength
           tempInteger = ConvertSpeed(tempInteger);				//convert speed if needed
           GetString(pNestElement, "t", out  tempString, "N");		//current wind direction
+          tempString = LocalizeOverview(tempString);
 
-          //From <dir eg NW> at <speed> km/h		 GUILocalizeStrings.Get(407)
-          //This is a bit untidy, but i'm fed up with localization and string formats :)
-          string windFrom = GUILocalizeStrings.Get(407);
-          string windAt = GUILocalizeStrings.Get(408);
-
-          _nowWind = String.Format("{0} {1} {2} {3} {4}",
-            windFrom, LocalizeOverview(tempString),
-            windAt, tempInteger, unitSpeed);
+          //From <dir eg NW> at <speed> km/h	
+          string format = GUILocalizeStrings.Get(555);
+          if(format == "")
+            format = "From {0} at {1} {2}";
+          _nowWind = String.Format(format,
+            tempString, tempInteger, unitSpeed);
         }
 
         GetInteger(element, "hmid", out tempInteger);				//current humidity
@@ -1366,15 +1365,15 @@ namespace MediaPortal.GUI.Weather
               GetInteger(pWindElement, "s", out tempInteger);			//current wind strength
               tempInteger = ConvertSpeed(tempInteger);				//convert speed if needed
               GetString(pWindElement, "t", out  tempString, "N");		//current wind direction
+              tempString = LocalizeOverview(tempString);
 
-              //From <dir eg NW> at <speed> km/h		 GUILocalizeStrings.Get(407)
-              //This is a bit untidy, but i'm fed up with localization and string formats :)
-              string windFrom = GUILocalizeStrings.Get(407);
-              string windAt = GUILocalizeStrings.Get(408);
+              //From <dir eg NW> at <speed> km/h	
+              string format = GUILocalizeStrings.Get(555);
 
-              _forecast[i].Wind = String.Format("{0} {1} {2} {3} {4}",
-                windFrom, tempString,
-                windAt, tempInteger, unitSpeed);
+              if(format == "")
+                format = "From {0} at {1} {2}";
+              _forecast[i].Wind = String.Format(format,
+                tempString, tempInteger, unitSpeed);
             }
           }
           pOneDayElement = pOneDayElement.NextSibling;//Element("day");
