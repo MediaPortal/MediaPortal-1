@@ -1234,14 +1234,6 @@
 		<value>Vlhkos»</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>Od</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>na</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Pripojovanie na Weather.com</value>
 	</string>
@@ -1592,6 +1584,10 @@
 	<string>
 		<id>550</id>
 		<value>Vyre¾</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Od {0} na {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
