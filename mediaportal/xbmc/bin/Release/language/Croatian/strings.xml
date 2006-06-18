@@ -1310,14 +1310,6 @@
 		<value>Vlaga</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>Do</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>na</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Prikljucujem se na Weather.com</value>
 	</string>
@@ -1644,6 +1636,10 @@
 	<string>
 		<id>491</id>
 		<value>Koristi velike ikone</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Do {0} na {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
