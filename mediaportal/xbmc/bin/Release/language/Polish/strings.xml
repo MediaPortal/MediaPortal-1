@@ -1342,14 +1342,6 @@
 		<value>Wilgotno¶æ</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>kier.</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>prêd.</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>£±czenie z Weather.com</value>
 	</string>
@@ -1780,6 +1772,10 @@
 	<string>
 		<id>550</id>
 		<value>Przytnij</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>kier. {0} prêd. {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
