@@ -1346,14 +1346,6 @@
 		<value>Humidité</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>De</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>à</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Interrogation de Weather.com</value>
 	</string>
@@ -1784,6 +1776,10 @@
 	<string>
 		<id>550</id>
 		<value>Couper</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>De {0} à {1} {2}</value>
 	</string>
 	<string>
 		<id>600</id>
