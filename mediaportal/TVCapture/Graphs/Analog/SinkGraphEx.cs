@@ -374,9 +374,11 @@ namespace MediaPortal.TV.Recording
           _graphBuilderInterface.FindFilterByName("NVTV", out capture);
           if (capture != null)
           {
-            Log.WriteFile(Log.LogType.Log, "SinkGraphEx: NVTV Capture filter detected");
-            _videoProcAmpHelper.Contrast = 7000;
-            _videoProcAmpHelper.Saturation = 6800;
+            Log.WriteFile(Log.LogType.Log, "SinkGraphEx: NVTV capture filter detected");
+            _videoProcAmpHelper.Contrast = 70;
+            //Log.WriteFile(Log.LogType.Log, "SinkGraphEx: _videoProcAmpHelper.Contrast {0}", _videoProcAmpHelper.Contrast);
+            _videoProcAmpHelper.Saturation = 68;
+            //Log.WriteFile(Log.LogType.Log, "SinkGraphEx: _videoProcAmpHelper.Saturation {0}", _videoProcAmpHelper.Saturation);
             _videoProcAmpHelper.Brightness = _videoProcAmpHelper.BrightnessDefault;
             _videoProcAmpHelper.Gamma = _videoProcAmpHelper.GammaDefault;
             _videoProcAmpHelper.Sharpness = _videoProcAmpHelper.SharpnessDefault;
@@ -385,10 +387,15 @@ namespace MediaPortal.TV.Recording
           {
             Log.WriteFile(Log.LogType.Log, "SinkGraphEx: VideoProcAmp setting defaults");
             _videoProcAmpHelper.Contrast = _videoProcAmpHelper.ContrastDefault;
+            //Log.WriteFile(Log.LogType.Log, "SinkGraphEx: _videoProcAmpHelper.Contrast {0}", _videoProcAmpHelper.Contrast);
             _videoProcAmpHelper.Brightness = _videoProcAmpHelper.BrightnessDefault;
+            //Log.WriteFile(Log.LogType.Log, "SinkGraphEx: _videoProcAmpHelper.Brightness {0}", _videoProcAmpHelper.Brightness);
             _videoProcAmpHelper.Gamma = _videoProcAmpHelper.GammaDefault;
+            //Log.WriteFile(Log.LogType.Log, "SinkGraphEx: _videoProcAmpHelper.Gamma {0}", _videoProcAmpHelper.Gamma);
             _videoProcAmpHelper.Saturation = _videoProcAmpHelper.SaturationDefault;
+            //Log.WriteFile(Log.LogType.Log, "SinkGraphEx: _videoProcAmpHelper.Saturation {0}", _videoProcAmpHelper.Saturation);
             _videoProcAmpHelper.Sharpness = _videoProcAmpHelper.SharpnessDefault;
+            //Log.WriteFile(Log.LogType.Log, "SinkGraphEx: _videoProcAmpHelper.Sharpness {0}", _videoProcAmpHelper.Sharpness);
           }
         }
 
