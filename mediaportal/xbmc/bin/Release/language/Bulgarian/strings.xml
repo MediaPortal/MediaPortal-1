@@ -1026,14 +1026,6 @@
 		<value>Влажност</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>От</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>на</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Свърване с Weather.com</value>
 	</string>
@@ -1324,6 +1316,10 @@
 	<string>
 		<id>518</id>
 		<value>Изтрий тази песен</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>От {0} на {1} {2}</value>
 	</string>
 	<string>
 		<id>601</id>
