@@ -1350,14 +1350,6 @@
 		<value>Fuktighet</value>
 	</string>
 	<string>
-		<id>407</id>
-		<value>Fra</value>
-	</string>
-	<string>
-		<id>408</id>
-		<value>ved</value>
-	</string>
-	<string>
 		<id>410</id>
 		<value>Kobler til Weather.com</value>
 	</string>
@@ -1876,6 +1868,10 @@
 	<string>
 		<id>550</id>
 		<value>Beskjær</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>Fra {0} ved {1} {2}</value>
 	</string>
 	<string>
 		<id>590</id>
