@@ -337,8 +337,6 @@
 <string><id>404</id><value>Aνεμος</value></string>
 <string><id>405</id><value>Πάχνη</value></string>
 <string><id>406</id><value>Υγρασία</value></string>
-<string><id>407</id><value>Από</value></string>
-<string><id>408</id><value>με</value></string>
 <string><id>410</id><value>Σύνδεση με Weather.com</value></string>
 <string><id>411</id><value>Λήψη Καιρού για:</value></string>
 <string><id>412</id><value>Αδύνατη η λήψη του καιρού</value></string>
@@ -468,6 +466,7 @@
 <string><id>551</id><value>ΔΒΔ</value></string>
 <string><id>552</id><value>ΒΒΔ</value></string>
 <string><id>553</id><value>Αργά</value></string>
+<string><id>555</id><value>Από {0} με {1} {2}</value></string>
 <string><id>590</id><value>Σ. 100</value></string>
 <string><id>591</id><value>Σ. 200</value></string>
 <string><id>592</id><value>Σ. 300</value></string>
