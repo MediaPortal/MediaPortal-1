@@ -1,4 +1,4 @@
-<strings>
+﻿<strings>
   <characters>512</characters>
   <string Prefix="My ">
     <id>0</id>
@@ -1349,14 +1349,6 @@
     <value>Humidity</value>
   </string>
   <string>
-    <id>407</id>
-    <value>From</value>
-  </string>
-  <string>
-    <id>408</id>
-    <value>at</value>
-  </string>
-  <string>
     <id>410</id>
     <value>Accessing Weather.com</value>
   </string>
@@ -1874,11 +1866,15 @@
   <string>
 		<id>554</id>
 		<value>Very</value>
-  </string>  
-  <string>
-    <id>550</id>
-		<value>Crop</value>
-  </string>
+	</string>
+	<string>
+	<id>550</id>
+	<value>Crop</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>From {0} at {1} {2}</value>
+	</string>
 	<string>
 		<id>590</id>
 		<value>P. 100</value>
