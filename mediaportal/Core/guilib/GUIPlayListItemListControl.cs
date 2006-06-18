@@ -738,8 +738,7 @@ namespace MediaPortal.GUI.Library
             {
                 dwColor = ShadedColor;
             }
-					  if (gotFocus && Focus)
-            //if (pItem.Selected)
+					  if (pItem.Selected)
             {
                 dwColor = _selectedColor;
             }
@@ -763,8 +762,7 @@ namespace MediaPortal.GUI.Library
                 if (_textOffsetY == _textOffsetY2)
                 {
                     dwColor = _textColor2;
-										if (gotFocus && Focus)
-                    //if (pItem.Selected)
+										if (pItem.Selected)
                     {
                         dwColor = _selectedColor2;
                     }
@@ -809,8 +807,7 @@ namespace MediaPortal.GUI.Library
             if (_text1Visible)
             {
                 dwColor = _textColor;
-								if (gotFocus && Focus)
-                //if (pItem.Selected)
+								if (pItem.Selected)
                 {
                     dwColor = _selectedColor;
                 }
@@ -830,8 +827,7 @@ namespace MediaPortal.GUI.Library
             if (pItem.Label2.Length > 0)
             {
                 dwColor = _textColor2;
-								if (gotFocus && Focus)
-                //if (pItem.Selected)
+								if (pItem.Selected)
                 {
                     dwColor = _selectedColor2;
                 }
@@ -878,9 +874,7 @@ namespace MediaPortal.GUI.Library
             if (pItem.Label3.Length > 0)
             {
                 dwColor = _textColor3;
-
-                //if (pItem.Selected)
-								if (gotFocus && Focus)
+                if (pItem.Selected)
                 {
                     dwColor = _selectedColor3;
                 }
