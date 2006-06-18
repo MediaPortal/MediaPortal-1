@@ -243,41 +243,44 @@ namespace MediaPortal.GUI.TV
       for (int i = 0; i < tvChannelList.Count; i++)
       {
         current = tvChannelList[i];
-        item = new GUIListItem("");
-        item.Label2 = current.Name;
-        logo = Utils.GetCoverArt(Thumbs.TVChannel, current.Name);
+        if (current.VisibleInGuide)
+        {
+          item = new GUIListItem("");
+          item.Label2 = current.Name;
+          logo = Utils.GetCoverArt(Thumbs.TVChannel, current.Name);
 
-        // if we are watching this channel mark it
-        if (GUITVHome.Navigator.CurrentChannel.CompareTo(tvChannelList[i].Name) == 0)
-        {
-          item.IsRemote = true;
-          selected = i;
-        }
+          // if we are watching this channel mark it
+          if (GUITVHome.Navigator.CurrentChannel.CompareTo(tvChannelList[i].Name) == 0)
+          {
+            item.IsRemote = true;
+            selected = i;
+          }
 
-        if (System.IO.File.Exists(logo))
-        {
-          item.IconImageBig = logo;
-          item.IconImage = logo;
+          if (System.IO.File.Exists(logo))
+          {
+            item.IconImageBig = logo;
+            item.IconImage = logo;
+          }
+          else
+          {
+            item.IconImageBig = string.Empty;
+            item.IconImage = string.Empty;
+          }
+          prog = GetCurrentProgram(current);
+          if (prog != null)
+          {
+            //                    item.Label3 = prog.Title + " [" + prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
+            item.Label3 = prog.Title + ": " + CalculateProgress(prog).ToString() + "%";
+          }
+          prognext = GetNextProgram(current, prog);
+          if (prognext != null)
+          {
+            //                    item.Label = prognext.Title + " [" + prognext.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prognext.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
+            item.Label = prognext.Title;
+          }
+          lstChannels.Add(item);
+          lstChannels.SelectedListItemIndex = selected;
         }
-        else
-        {
-          item.IconImageBig = string.Empty;
-          item.IconImage = string.Empty;
-        }
-        prog = GetCurrentProgram(current);
-        if (prog != null)
-        {
-          //                    item.Label3 = prog.Title + " [" + prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
-          item.Label3 = prog.Title + ": " + CalculateProgress(prog).ToString() + "%";
-        }
-        prognext = GetNextProgram(current, prog);
-        if (prognext != null)
-        {
-          //                    item.Label = prognext.Title + " [" + prognext.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "-" + prognext.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat) + "]";
-          item.Label = prognext.Title;
-        }
-        lstChannels.Add(item);
-        lstChannels.SelectedListItemIndex = selected;
       }
     }
 
