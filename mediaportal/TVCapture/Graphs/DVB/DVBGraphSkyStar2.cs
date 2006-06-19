@@ -996,24 +996,24 @@ namespace MediaPortal.TV.Recording
       switch (Network())
       {
         case NetworkType.ATSC:
-          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Channel:{0}", ch.PhysicalChannel);
+          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  ATSC Channel:{0}", ch.PhysicalChannel);
           //#DM B2C2 SDK says ATSC is tuned by frequency. Here we work the OTA frequency by channel number#
           int atscfreq = 0;
-          if (ch.PhysicalChannel <= 6) atscfreq = 45000+(ch.PhysicalChannel*6000);
-          if (ch.PhysicalChannel >= 7 && ch.PhysicalChannel <= 13) atscfreq = 177000 + ((ch.PhysicalChannel - 7) * 6000);
-          if (ch.PhysicalChannel >= 14) atscfreq = 473000+((ch.PhysicalChannel - 14) * 6000);
+          if (ch.PhysicalChannel <= 6) atscfreq = 45+(ch.PhysicalChannel*6);
+          if (ch.PhysicalChannel >= 7 && ch.PhysicalChannel <= 13) atscfreq = 177 + ((ch.PhysicalChannel - 7) * 6);
+          if (ch.PhysicalChannel >= 14) atscfreq = 473+((ch.PhysicalChannel - 14) * 6);
           //#DM changed tuning parameter from physical channel to calculated frequency above.
           //Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Channel:{0} KHz", ch.Frequency);
           //hr = _interfaceB2C2TunerCtrl.SetChannel(ch.PhysicalChannel);
-          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Channel:{0} KHz", atscfreq);
-          hr = _interfaceB2C2TunerCtrl.SetFrequencyKHz(atscfreq);
+          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  ATSC Frequency:{0} MHz", atscfreq);
+          hr = _interfaceB2C2TunerCtrl.SetFrequency(atscfreq);
           if (hr != 0)
           {
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetChannel() failed:0x{0:X}", hr);
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetFrequency() failed:0x{0:X}", hr);
             return;
           }
           break;
-
+        
         case NetworkType.DVBC:
           {
             Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  SymbolRate:{0} KS/s", ch.Symbolrate);
