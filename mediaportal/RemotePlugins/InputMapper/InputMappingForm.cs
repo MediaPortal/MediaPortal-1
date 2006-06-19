@@ -1383,6 +1383,7 @@ namespace MediaPortal.InputDevices
       node.Tag = data;
       UpdateCombo(ref comboBoxCmdProperty, actionList, GetFriendlyName(Enum.GetName(typeof(Action.ActionType), Convert.ToInt32(data.Value))));
       node.Text = "Action \"" + (string)comboBoxCmdProperty.SelectedItem + "\"";
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
@@ -1396,6 +1397,7 @@ namespace MediaPortal.InputDevices
       node.Tag = data;
       UpdateCombo(ref comboBoxCmdProperty, windowsListFiltered, GetFriendlyName(Enum.GetName(typeof(GUIWindow.Window), Convert.ToInt32(data.Value))));
       node.Text = "Window \"" + (string)comboBoxCmdProperty.SelectedItem + "\"";
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
@@ -1411,6 +1413,7 @@ namespace MediaPortal.InputDevices
       Data data = new Data("COMMAND", "TOGGLE", "-1");
       node.Tag = data;
       node.Text = "Toggle Layer";
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
@@ -1425,6 +1428,7 @@ namespace MediaPortal.InputDevices
       node.Tag = new Data("COMMAND", "POWER", "EXIT");
       node.Text = powerList[0];
       UpdateCombo(ref comboBoxCmdProperty, powerList, powerList[0]);
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
@@ -1439,6 +1443,7 @@ namespace MediaPortal.InputDevices
       node.Tag = new Data("COMMAND", "PROCESS", "CLOSE");
       node.Text = processList[0];
       UpdateCombo(ref comboBoxCmdProperty, processList, processList[0]);
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
@@ -1692,6 +1697,7 @@ namespace MediaPortal.InputDevices
           node.Text = (string)comboBoxCmdProperty.SelectedItem;
           break;
       }
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
@@ -1721,6 +1727,7 @@ namespace MediaPortal.InputDevices
       Key key = new Key(Convert.ToInt32(keyChar), Convert.ToInt32(keyCode));
       node.Tag = new Data("COMMAND", "KEY", key);
       node.Text = string.Format("Key Pressed: {0} [{1}]", keyChar, keyCode);
+      ((Data)node.Tag).Focus = checkBoxGainFocus.Checked;
       changedSettings = true;
     }
 
