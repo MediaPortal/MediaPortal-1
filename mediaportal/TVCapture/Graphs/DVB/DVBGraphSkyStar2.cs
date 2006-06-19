@@ -1240,7 +1240,7 @@ namespace MediaPortal.TV.Recording
       _interfaceB2C2TunerCtrl.CheckLock();
       UpdateSignalPresent();
       if (!_inScanningMode)
-        SetHardwarePidFiltering();
+        //SetHardwarePidFiltering();
       _processTimer = DateTime.MinValue;
       _pmtSendCounter = 0;
       Log.Write("DVBGraphSkyStar2: signal strength:{0} signal quality:{1} signal present:{2}", SignalStrength(), SignalQuality(), SignalPresent());
