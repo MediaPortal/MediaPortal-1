@@ -1161,9 +1161,10 @@ namespace MediaPortal.GUI.Video
         string strLargeThumb = string.Empty;
         pItem = (GUIListItem)items[x];
         string file = string.Empty;
+        bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
         if (pItem.ThumbnailImage != String.Empty)
         {
-          if (IsFolderPinProtected(pItem.Path))
+          if (isFolderPinProtected)
           {
             Utils.SetDefaultIcons(pItem);
           }
@@ -1172,7 +1173,7 @@ namespace MediaPortal.GUI.Video
         if (pItem.IsFolder)
         {
           if (pItem.Label == "..") continue;
-          if (IsFolderPinProtected(pItem.Path))
+          if (isFolderPinProtected)
           {
             Utils.SetDefaultIcons(pItem);
             continue;
@@ -1182,7 +1183,7 @@ namespace MediaPortal.GUI.Video
             strThumb = pItem.Path + "\\folder.jpg";
             strLargeThumb = strThumb;
           }
-          else if (!IsFolderPinProtected(pItem.Path))
+          else if (!isFolderPinProtected)
           {
             file = GetFolderVideoFile(pItem.Path);
           }

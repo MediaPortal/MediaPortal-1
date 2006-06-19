@@ -341,7 +341,6 @@ namespace MediaPortal.Util
       if (strDir == null) return null;
       if (strDir.Length <= 0) return null;
       string strRoot = strDir;
-
       bool isRemote = IsRemote(strDir);
       if (!isRemote)
       {
@@ -355,6 +354,7 @@ namespace MediaPortal.Util
           }
       }
       Share foundShare = null;
+      string foundFullPath = string.Empty;
       foreach (Share share in m_shares)
       {
         try
@@ -365,11 +365,16 @@ namespace MediaPortal.Util
             {
               string remoteFolder = String.Format("remote:{0}?{1}?{2}?{3}?{4}",
                 share.FtpServer, share.FtpPort, share.FtpLoginName, share.FtpPassword, Utils.RemoveTrailingSlash(share.FtpFolder));
+              if (strDir.ToLower() == remoteFolder.ToLower())
+              {
+                return share;
+              }
               if (strDir.ToLower().StartsWith(remoteFolder.ToLower()))
               {
                 if (foundShare == null)
                 {
                   foundShare = share;
+                  foundFullPath = foundShare.Path;
                 }
                 else
                 {
@@ -378,6 +383,7 @@ namespace MediaPortal.Util
                   if (foundRemoteFolder.Length < remoteFolder.Length)
                   {
                     foundShare = share;
+                    foundFullPath = foundShare.Path;
                   }
                 }
               }
@@ -385,19 +391,24 @@ namespace MediaPortal.Util
           }
           else
           {
-            string strFullPath = System.IO.Path.GetFullPath(share.Path);
+            string strFullPath = share.Path;
             if (strRoot.ToLower().StartsWith(strFullPath.ToLower()))
             {
+              if (strRoot.ToLower() == strFullPath.ToLower())
+              {
+                return share;
+              }
               if (foundShare == null)
               {
                 foundShare = share;
+                foundFullPath = foundShare.Path;
               }
               else
               {
-                string foundFullPath = System.IO.Path.GetFullPath(foundShare.Path);
                 if (foundFullPath.Length < strFullPath.Length)
                 {
                   foundShare = share;
+                  foundFullPath = foundShare.Path;
                 }
               }
             }
@@ -729,11 +740,13 @@ namespace MediaPortal.Util
           for (int i = 0; i < strDirs.Length; ++i)
           {
             string strPath = strDirs[i].Substring(strDir.Length + 1);
-
+           
             // Skip hidden folders
-            if (File.Exists(Path.Combine(strDir, strPath)) && (File.GetAttributes(Path.Combine(strDir, strPath)) & FileAttributes.Hidden) == FileAttributes.Hidden)
+            if ((File.GetAttributes(strDirs[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
+            {
               continue;
- 
+            }
+
             item = new GUIListItem();
             item.IsFolder = true;
             item.Label = strPath;
@@ -898,8 +911,10 @@ namespace MediaPortal.Util
           string strPath = strDirs[i].Substring(strDir.Length + 1);
 
           // Skip hidden folders
-          if (File.Exists(Path.Combine(strDir, strPath)) && (File.GetAttributes(Path.Combine(strDir, strPath)) & FileAttributes.Hidden) == FileAttributes.Hidden)
+          if ((File.GetAttributes(strDirs[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
+          {
             continue;
+          }
 
           item = new GUIListItem();
           item.IsFolder = true;
@@ -1579,8 +1594,10 @@ namespace MediaPortal.Util
             string strPath = strDirs[i].Substring(strDir.Length + 1);
 
             // Skip hidden folders
-            if (File.Exists(Path.Combine(strDir, strPath)) && (File.GetAttributes(Path.Combine(strDir, strPath)) & FileAttributes.Hidden) == FileAttributes.Hidden)
+            if ((File.GetAttributes(strDirs[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
+            {
               continue;
+            }
 
             item = new GUIListItem();
             item.IsFolder = true;
@@ -1856,7 +1873,7 @@ namespace MediaPortal.Util
           string strPath = strDirs[i].Substring(strDir.Length + 1);
 
           // Skip hidden folders
-          if ((File.GetAttributes(strDir + @"\" + strPath) & FileAttributes.Hidden) == FileAttributes.Hidden)
+          if ((File.GetAttributes(strDirs[i]) & FileAttributes.Hidden) == FileAttributes.Hidden)
           {
             continue;
           }
