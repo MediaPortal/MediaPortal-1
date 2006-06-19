@@ -14,6 +14,16 @@
 		<texture>background.png</texture>
 	</control>
 	<control>
+		<description>calibration image</description>
+		<type>image</type>
+		<id>1</id>
+		<posX>0</posX>
+		<posY>0</posY>
+		<width>720</width>
+		<height>576</height>
+		<texture>settingsUICalibration.png</texture>
+	</control>
+	<control>
 		<description>rectangle image</description>
 		<type>image</type>
 		<id>1</id>
