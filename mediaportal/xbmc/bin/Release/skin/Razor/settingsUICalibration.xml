@@ -13,8 +13,8 @@
 		<id>1</id>
 		<posX>0</posX>
 		<posY>0</posY>
-		<width>720</width>
-		<height>576</height>
+		<width>1280</width>
+		<height>720</height>
 		<texture>settingsUICalibration.png</texture>
 	</control>
 	<control>
