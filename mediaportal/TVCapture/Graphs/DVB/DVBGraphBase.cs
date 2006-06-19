@@ -2563,7 +2563,7 @@ namespace MediaPortal.TV.Recording
 
       if (SignalPresent())
       {
-        if (_refreshPmtTable && Network() != NetworkType.ATSC)
+        if (_refreshPmtTable && Network() != NetworkType.ATSC && _cardProperties.IsCISupported())
         {
           //FilterState state;
           //_mediaControl.GetState(50, out state);
