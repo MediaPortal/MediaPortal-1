@@ -731,7 +731,13 @@
     <action>
       <id>48</id>
       <key>F1</key>
-      <sound />
+      <sound>back.wav</sound>
+      <description>Reset the calibration</description>
+    </action>
+    <action>
+      <id>48</id>
+      <key>0</key>
+      <sound>back.wav</sound>
       <description>Reset the calibration</description>
     </action>
   </window>

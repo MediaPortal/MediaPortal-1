@@ -299,16 +299,16 @@ namespace MediaPortal.GUI.Settings
         break;
 
         case Action.ActionType.ACTION_CALIBRATE_RESET:
-            if (m_iMode == 1)
-            {
+            //if (m_iMode == 1)
+            //{
                 m_iLogWidth = GUIGraphicsContext.Width;
                 m_iLogHeight = GUIGraphicsContext.Height;
-            }
-            else
-            {
+            //}
+            //else
+            //{
                 iXOff = 0;
                 iYOff = 0;
-            }
+            //}
             bChanged = true;
             m_iSpeed=1;
             m_iCountU=0;
