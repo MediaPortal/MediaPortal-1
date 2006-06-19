@@ -2607,6 +2607,7 @@ namespace MediaPortal.TV.Recording
             Marshal.FreeCoTaskMem(pmtMem);
           }
         }
+        if (!_cardProperties.IsCISupported()) _refreshPmtTable = false;
         //_signalLostTimer = DateTime.Now;
       }
       ProcessSignal(5000);
