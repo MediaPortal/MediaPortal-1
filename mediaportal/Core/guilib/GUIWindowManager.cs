@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.Library
   /// <summary>
   /// static class which takes care of window management
   /// Things done are:
-  ///   - loading & initizling all windows
+  ///   - loading and initizling all windows
   ///   - routing messages, keypresses, mouse clicks etc to the currently active window
   ///   - rendering the currently active window
   ///   - methods for switching to the previous window
