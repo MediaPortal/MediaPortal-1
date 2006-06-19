@@ -101,7 +101,7 @@ namespace MediaPortal.GUI.TV
       {
         m_navigator.LoadSettings(xmlreader);
         _isTvOn = xmlreader.GetValueAsBool("mytv", "tvon", true);
-        _isTimeShifting = xmlreader.GetValueAsBool("mytv", "timeshifting", true);
+        _isTimeShifting = xmlreader.GetValueAsBool("mytv", "autoturnontimeshifting", false);
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
 
         string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "normal");
@@ -120,7 +120,6 @@ namespace MediaPortal.GUI.TV
       {
         m_navigator.SaveSettings(xmlwriter);
         xmlwriter.SetValueAsBool("mytv", "tvon", _isTvOn);
-        xmlwriter.SetValueAsBool("mytv", "timeshifting", _isTimeShifting);
       }
     }
     #endregion
@@ -448,7 +447,6 @@ namespace MediaPortal.GUI.TV
         //turn timeshifting off 
         _isTimeShifting = !Recorder.IsTimeShifting();
         Log.Write("tv home timeshift onoff:{0}", _isTimeShifting);
-        SaveSettings();
         ViewChannelAndCheck(Navigator.CurrentChannel);
 
         _isTimeShifting = Recorder.IsTimeShifting();
