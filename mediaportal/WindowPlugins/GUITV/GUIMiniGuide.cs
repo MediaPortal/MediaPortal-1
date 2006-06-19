@@ -253,7 +253,7 @@ namespace MediaPortal.GUI.TV
           if (GUITVHome.Navigator.CurrentChannel.CompareTo(tvChannelList[i].Name) == 0)
           {
             item.IsRemote = true;
-            selected = i;
+            selected = lstChannels.Count;
           }
 
           if (System.IO.File.Exists(logo))
