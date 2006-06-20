@@ -1842,34 +1842,34 @@
   <string>
 		<id>547</id>
 		<value>SSE</value>
-  </string>	
-  <string>
+	</string>	
+	<string>
 		<id>548</id>
 		<value>SSW</value>
-  </string>	
-  <string>
+	</string>	
+	<string>
 		<id>549</id>
 		<value>WSW</value>
-  </string>	
+  </string>
+	<string>
+		<id>550</id>
+		<value>Crop</value>
+	</string>
   <string>
 		<id>551</id>
 		<value>WNW</value>
-  </string>	
+  </string>
   <string>
 		<id>552</id>
 		<value>NNW</value>
-  </string>  
-  <string>
+	</string>  
+	<string>
 		<id>553</id>
 		<value>Late</value>
-  </string>
-  <string>
-		<id>554</id>
-		<value>very</value>
 	</string>
 	<string>
-	<id>550</id>
-	<value>Crop</value>
+		<id>554</id>
+		<value>very</value>
 	</string>
 	<string>
 		<id>555</id>
@@ -1882,7 +1882,11 @@
 	<string>
 		<id>557</id>
 		<value>calm</value>
-	</string>		
+	</string>
+	<string>
+		<id>558</id>
+		<value>No wind</value>
+	</string>
 	<string>
 		<id>590</id>
 		<value>P. 100</value>
