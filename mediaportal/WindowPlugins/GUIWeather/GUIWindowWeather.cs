@@ -1198,6 +1198,38 @@ namespace MediaPortal.GUI.Weather
         }
     }
 
+    void ParseAndBuildWindString(XmlNode node, string unitSpeed, out string wind)
+    {
+      int tempInteger = 0;
+      string tempString = String.Empty;
+
+      if (node == null)
+      {
+        wind = String.Empty;
+        return;
+      }
+
+      GetInteger(node, "s", out tempInteger);			//current wind strength
+      tempInteger = ConvertSpeed(tempInteger);				//convert speed if needed
+      GetString(node, "t", out  tempString, "N");		//current wind direction
+      tempString = LocalizeOverview(tempString);
+
+      if (tempInteger != 0) // Have wind
+      {
+        //From <dir eg NW> at <speed> km/h	
+        string format = GUILocalizeStrings.Get(555);
+        if (format == "")
+          format = "From {0} at {1} {2}";
+        wind = String.Format(format, tempString, tempInteger, unitSpeed);
+      }
+      else // Calm
+      {
+        wind = GUILocalizeStrings.Get(558);
+        if (wind == "")
+          wind = "No wind";
+      }
+    }
+
     bool LoadWeather(string weatherFile)
     {
       int tempInteger = 0;
@@ -1268,20 +1300,7 @@ namespace MediaPortal.GUI.Weather
         _nowFeel = String.Format("{0}{1}{2}", tempInteger, DEGREE_CHARACTER, unitTemperature);
 
         XmlNode pNestElement = element.SelectSingleNode("wind");	//current wind
-        if (null != pNestElement)
-        {
-          GetInteger(pNestElement, "s", out tempInteger);			//current wind strength
-          tempInteger = ConvertSpeed(tempInteger);				//convert speed if needed
-          GetString(pNestElement, "t", out  tempString, "N");		//current wind direction
-          tempString = LocalizeOverview(tempString);
-
-          //From <dir eg NW> at <speed> km/h	
-          string format = GUILocalizeStrings.Get(555);
-          if(format == "")
-            format = "From {0} at {1} {2}";
-          _nowWind = String.Format(format,
-            tempString, tempInteger, unitSpeed);
-        }
+        ParseAndBuildWindString(pNestElement, unitSpeed, out _nowWind);
 
         GetInteger(element, "hmid", out tempInteger);				//current humidity
         _nowHumd = String.Format("{0}%", tempInteger);
@@ -1364,21 +1383,7 @@ namespace MediaPortal.GUI.Weather
               _forecast[i].Precipitation = String.Format("{0}%", tempInteger);
             }
             XmlNode pWindElement = pDayTimeElement.SelectSingleNode("wind");	//current wind
-            if (null != pWindElement)
-            {
-              GetInteger(pWindElement, "s", out tempInteger);			//current wind strength
-              tempInteger = ConvertSpeed(tempInteger);				//convert speed if needed
-              GetString(pWindElement, "t", out  tempString, "N");		//current wind direction
-              tempString = LocalizeOverview(tempString);
-
-              //From <dir eg NW> at <speed> km/h	
-              string format = GUILocalizeStrings.Get(555);
-
-              if(format == "")
-                format = "From {0} at {1} {2}";
-              _forecast[i].Wind = String.Format(format,
-                tempString, tempInteger, unitSpeed);
-            }
+            ParseAndBuildWindString(pWindElement, unitSpeed, out _forecast[i].Wind);
           }
           pOneDayElement = pOneDayElement.NextSibling;//Element("day");
         }
