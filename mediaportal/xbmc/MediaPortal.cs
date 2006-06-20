@@ -990,6 +990,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     new GUILayerRenderer();
     Recorder.Start();
+    WorkingSet.Minimize();
   }
 
   /// <summary>
@@ -1786,6 +1787,12 @@ public class MediaPortalApp : D3DApp, IRender
     if (key.KeyChar == '!')
     {
       m_bShowStats = !m_bShowStats;
+    }
+    if (key.KeyChar == '|' && g_Player.Playing==false)
+    {
+      g_Player.Play("rtsp://localhost/stream0");
+      GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
+      return;
     }
     if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
     {

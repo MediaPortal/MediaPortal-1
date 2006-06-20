@@ -275,6 +275,7 @@
     <Compile Include="Player\DummyPlayer.cs" />
     <Compile Include="Player\DummyPlayerFactory.cs" />
     <Compile Include="Player\IPlayerFactory.cs" />
+    <Compile Include="Player\RTSPPlayer.cs" />
     <Compile Include="ThumbDbLib\Thumbnail.cs" />
     <Compile Include="ThumbDbLib\ThumbnailCreator.cs" />
     <Compile Include="ThumbDbLib\ThumbnailCreatorNet.cs" />

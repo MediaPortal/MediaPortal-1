@@ -299,6 +299,7 @@ namespace MediaPortal.Util
     static public bool IsVideo(string strPath)
     {
       if (strPath == null) return false;
+      if (strPath.ToLower().IndexOf("rtsp:") >= 0) return true;
       try
       {
         if (!System.IO.Path.HasExtension(strPath)) return false;

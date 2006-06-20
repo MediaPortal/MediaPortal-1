@@ -110,6 +110,10 @@ namespace MediaPortal.Player
     public IPlayer Create(string fileName)
     {
       IPlayer newPlayer = null;
+      if (fileName.ToLower().IndexOf("rtsp:") >= 0)
+      {
+        return new RTSPPlayer();
+      }
       string extension = System.IO.Path.GetExtension(fileName).ToLower();
       if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms"
               && fileName.ToLower().IndexOf("live.tsbuffer") < 0
