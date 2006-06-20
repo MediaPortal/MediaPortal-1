@@ -309,10 +309,11 @@ namespace MediaPortal.InputDevices
       Action action;
       if (map.Sound != string.Empty)
         Utils.PlaySound(map.Sound, false, true);
-      if (map.Focus)
+      if (map.Focus && !GUIGraphicsContext.HasFocus)
       {
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GETFOCUS, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendThreadMessage(msg);
+        return true;
       }
       switch (map.Command)
       {
