@@ -460,12 +460,25 @@ public class MediaPortalApp : D3DApp, IRender
     SetStyle(ControlStyles.AllPaintingInWmPaint, true);
     SetStyle(ControlStyles.DoubleBuffer, false);
 
+    this.Activated += new EventHandler(MediaPortalApp_Activated);
+    this.Deactivate += new EventHandler(MediaPortalApp_Deactivate);
+
     Log.Write("Main: Checking skin version");
     CheckSkinVersion();
 
     DoStartupJobs();
     //    startThread.Priority = ThreadPriority.BelowNormal;
     //    startThread.Start();
+  }
+
+  void MediaPortalApp_Deactivate(object sender, EventArgs e)
+  {
+    GUIGraphicsContext.HasFocus = false;
+  }
+
+  void MediaPortalApp_Activated(object sender, EventArgs e)
+  {
+    GUIGraphicsContext.HasFocus = true;
   }
 
   #endregion

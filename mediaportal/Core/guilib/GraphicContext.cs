@@ -124,6 +124,7 @@ namespace MediaPortal.GUI.Library
     static PresentParameters presentParameters;
     static bool vmr9Allowed = true;
     static Size videoSize;
+    static bool hasFocus = false;
 
     const uint SC_MONITORPOWER = 0xF170;
     const uint WM_SYSCOMMAND = 0x0112;
@@ -1037,6 +1038,11 @@ namespace MediaPortal.GUI.Library
     {
       get { return videoSize; }
       set { videoSize = value; }
+    }
+    static public bool HasFocus
+    {
+      get { return hasFocus; }
+      set { hasFocus = value; }
     }
     /// <summary>
     /// Returns true if the specified window belongs to the my tv plugin
