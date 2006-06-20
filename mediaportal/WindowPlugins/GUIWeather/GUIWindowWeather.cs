@@ -1129,6 +1129,10 @@ namespace MediaPortal.GUI.Weather
           localizedWord = GUILocalizeStrings.Get(551);
         else if (String.Compare(tokenSplit, "NNW", true) == 0)
           localizedWord = GUILocalizeStrings.Get(552);
+        else if ( String.Compare(tokenSplit, "VAR", true) == 0 )
+          localizedWord = GUILocalizeStrings.Get(556);
+        else if ( String.Compare(tokenSplit, "CALM", true) == 0 )
+          localizedWord = GUILocalizeStrings.Get(557);
 
         if (localizedWord == String.Empty)
           localizedWord = tokenSplit;	//if not found, let fallback

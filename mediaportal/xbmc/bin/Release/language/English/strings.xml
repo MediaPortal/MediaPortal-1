@@ -1865,7 +1865,7 @@
   </string>
   <string>
 		<id>554</id>
-		<value>Very</value>
+		<value>very</value>
 	</string>
 	<string>
 	<id>550</id>
@@ -1875,6 +1875,14 @@
 		<id>555</id>
 		<value>From {0} at {1} {2}</value>
 	</string>
+	<string>
+		<id>556</id>
+		<value>various</value>
+	</string>
+	<string>
+		<id>557</id>
+		<value>calm</value>
+	</string>		
 	<string>
 		<id>590</id>
 		<value>P. 100</value>
@@ -2459,11 +2467,11 @@
   </string>
   <string>
     <id>746</id>
-    <value>High</value>
+    <value>high</value>
   </string>
   <string>
     <id>747</id>
-    <value>Low</value>
+    <value>low</value>
   </string>
   <string>
     <id>748</id>

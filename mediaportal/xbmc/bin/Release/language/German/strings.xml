@@ -1247,11 +1247,11 @@
 	</string>
 	<string>
 		<id>381</id>
-		<value>wenige</value>
+		<value>vereinzelt</value>
 	</string>
 	<string>
 		<id>382</id>
-		<value>vereinzelt</value>
+		<value>örtlich</value>
 	</string>
 	<string>
 		<id>383</id>
@@ -1271,7 +1271,7 @@
 	</string>
 	<string>
 		<id>387</id>
-		<value>morgens</value>
+		<value>vormittags</value>
 	</string>
 	<string>
 		<id>388</id>
@@ -1300,10 +1300,10 @@
 	<string>
 		<id>394</id>
 		<value>nicht verfügbar</value>
-        </string>
-        <string>
-                <id>395</id>
-                <value>Nebel</value>
+  </string>
+  <string>
+    <id>395</id>
+    <value>Nebel</value>
 	</string>
 	<string>
 		<id>396</id>
@@ -1351,7 +1351,7 @@
 	</string>
 	<string>
 		<id>410</id>
-		<value>Öffne Weather.com...</value>
+		<value>Aktualisiere Daten...</value>
 	</string>
 	<string>
 		<id>411</id>
@@ -1780,14 +1780,14 @@
 	<string>
 		<id>532</id>
 		<value>Musik-CD eingelegt! Öffnen?</value>
-        </string>
-        <string>
-                <id>533</id>
-                <value>Radio-Programm</value>
+  </string>
+  <string>
+    <id>533</id>
+    <value>Radio-Programm</value>
 	</string>
 	<string>
 		<id>534</id>
-		<value>Mittel</value>
+		<value>mäßig</value>
 	</string>
 	<string>
 		<id>535</id>
@@ -1863,7 +1863,7 @@
   </string>
   <string>
 		<id>554</id>
-		<value>Sehr</value>
+		<value>sehr</value>
 	</string>							
 	<string>
 		<id>550</id>
@@ -1871,7 +1871,15 @@
 	</string>
 	<string>
 		<id>555</id>
-		<value>aus {0} mit ca. {1} {2}</value>
+		<value>Aus {0} mit {1} {2}</value>
+	</string>
+	<string>
+		<id>556</id>
+		<value>div.Richtg.</value>
+	</string>
+	<string>
+		<id>557</id>
+		<value>windstill</value>
 	</string>
 	<string>
 		<id>590</id>
@@ -2455,11 +2463,11 @@
 	</string>
 	<string>
 		<id>746</id>
-		<value>Hoch</value>
+		<value>hoch</value>
 	</string>
 	<string>
 		<id>747</id>
-		<value>Niedrig</value>
+		<value>niedrig</value>
 	</string>
 	<string>
 		<id>748</id>
@@ -4145,15 +4153,15 @@
   <!-- End of My Explorer Strings -->
     <string>
       <id>2997</id>
-        <value>Std</value>
+      <value>Std</value>
     </string>
     <string>
       <id>2998</id>
-        <value>Min</value>
+      <value>Min</value>
     </string>
     <string>
       <id>2999</id>
-        <value>Sek</value>
+      <value>Sek</value>
     </string> 
   	<string>
 		<id>3000</id>
