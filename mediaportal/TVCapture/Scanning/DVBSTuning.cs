@@ -58,16 +58,19 @@ namespace MediaPortal.TV.Scanning
     public DVBSTuning()
     {
     }
+
     #region ITuning Members
 
     public void AutoTuneTV(TVCaptureDevice card, AutoTuneCallback statusCallback, string[] tplFileNames)
     {
-        if ((tplFileNames == null) || (tplFileNames.Length == 0))
-        {
-            return;
-        }
-        GetNumberOfDiseqcs(card);
-        Log.Write("dvbs-scan: diseqc loops:{0}", _diseqcLoops);
+      if ((tplFileNames == null) || (tplFileNames.Length == 0))
+      {
+        return;
+      }
+
+      GetNumberOfDiseqcs(card);
+        
+      Log.Write("dvbs-scan: diseqc loops:{0}", _diseqcLoops);
         _tplFiles = (string[])tplFileNames.Clone();
       for (int i = 0; i < _tplFiles.Length; ++i)
       {
@@ -104,7 +107,7 @@ namespace MediaPortal.TV.Scanning
 
     void LoadFrequencies()
     {
-      Log.Write("dvbs-scan: load transponders for diseqc:{0}", _currentDiseqc);
+      Log.Write("dvbs-scan: load transponders for LNB: {0}", _currentDiseqc);
       _currentIndex = 0;
 
       string fileName = _tplFiles[_currentDiseqc - 1];
@@ -233,7 +236,6 @@ namespace MediaPortal.TV.Scanning
       return false;
     }
 
-
     void DetectAvailableStreams()
     {
       if (IsFinished()) return;
@@ -287,6 +289,7 @@ namespace MediaPortal.TV.Scanning
       if (IsFinished()) return;
       DVBChannel newchan = new DVBChannel();
       newchan.NetworkID = -1;
+      newchan.CurrentLNB = _currentDiseqc;
       newchan.TransportStreamID = -1;
       newchan.ProgramNumber = -1;
 

@@ -448,7 +448,7 @@ namespace MediaPortal.TV.Recording
       int GetLnbKHz(
         [Out] out int plLnbKHz
         );
-
+      
       int GetLnbFrequency(
         [Out] out int plFrequencyMHz
         );

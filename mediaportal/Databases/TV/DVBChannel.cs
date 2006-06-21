@@ -110,6 +110,7 @@ namespace MediaPortal.TV.Database
 		int m_minorChannel;
 		int m_majorChannel;
 		int m_SubtitlePID=-1;
+    int _currentLNB;
 		//
 		[BrowsableAttribute(true),ReadOnly(true)]
 		public int SubtitlePid
@@ -130,6 +131,18 @@ namespace MediaPortal.TV.Database
 			{m_idChannel=value;}
 		}		
 		
+     public int CurrentLNB
+     {
+       get
+     {
+         return _currentLNB;
+       }
+       set
+       {
+         _currentLNB = value;
+       }
+     }
+
 		[BrowsableAttribute(true),Category("Service Data"),
 		ReadOnly(true)]
 		public bool HasEITSchedule

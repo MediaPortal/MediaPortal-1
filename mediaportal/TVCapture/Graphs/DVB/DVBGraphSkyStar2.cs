@@ -1078,10 +1078,10 @@ namespace MediaPortal.TV.Recording
         case NetworkType.DVBS:
 
           int lowOsc, hiOsc, disEqcUsed, lnbKhzTone;
-          if (ch.DiSEqC < 1) ch.DiSEqC = 1;
-          if (ch.DiSEqC > 4) ch.DiSEqC = 4;
+          //#DM - I think the new driver allows for expanded DiSEqC support so lets try it :) #
+          //if (ch.DiSEqC < 1) ch.DiSEqC = 1;
+          //if (ch.DiSEqC > 4) ch.DiSEqC = 4;
           GetDisEqcSettings(ref ch, out lowOsc, out hiOsc, out lnbKhzTone, out disEqcUsed);
-
           if (ch.LNBFrequency >= frequency)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:  Error: LNB Frequency must be less than Transponder frequency");
@@ -1091,6 +1091,16 @@ namespace MediaPortal.TV.Recording
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetSymbolRate() failed:0x{0:X}", hr);
+            return;
+          }
+
+          // #DM - whats the line below all about ??? #
+          //ch.LnbSwitchFrequency /= 1000;//in MHz
+          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  LNBFrequency:{0} MHz", ch.LNBFrequency);
+          hr = _interfaceB2C2TunerCtrl.SetLnbFrequency(ch.LNBFrequency);
+          if (hr != 0)
+          {
+            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetLnbFrequency() failed:0x{0:X}", hr);
             return;
           }
 
@@ -1165,20 +1175,11 @@ namespace MediaPortal.TV.Recording
               disType = DisEqcType.Level_1_B_B;
               break;
           }
-          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Diseqc:{0} {1}", disType, disType);
+          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Diseqc:{0} {1}", disType, (int)disType);
           hr = _interfaceB2C2TunerCtrl.SetDiseqc((int)disType);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetDiseqc() failed:0x{0:X}", hr);
-            return;
-          }
-
-          ch.LnbSwitchFrequency /= 1000;//in MHz
-          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  LNBFrequency:{0} MHz", ch.LNBFrequency);
-          hr = _interfaceB2C2TunerCtrl.SetLnbFrequency(ch.LNBFrequency);
-          if (hr != 0)
-          {
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetLnbFrequency() failed:0x{0:X}", hr);
             return;
           }
 
@@ -1192,49 +1193,40 @@ namespace MediaPortal.TV.Recording
       {
         Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:could not lock tuner");
         //dump all values:
-        int dummy;
-
-        hr = _interfaceB2C2TunerCtrl.GetFrequency(out dummy);
+        int ss2freq, ss2symb, ss2lnbfreq, ss2fec, ss2pol, ss2lnbkhz, ss2diseqc;
         Log.Write("DVBGraphSkyStar2 tuner dump:");
-        Log.Write("DVBGraphSkyStar2    freq:{0} MHz {1:X}", dummy, hr);
 
-        dummy = 0;
-        hr = _interfaceB2C2TunerCtrl.GetLnbFrequency(out dummy);
-        Log.Write("DVBGraphSkyStar2    LNB freq:{0} MHz {1:X}", dummy, hr);
+        _interfaceB2C2TunerCtrl.GetFrequency(out ss2freq);
+        Log.Write("DVBGraphSkyStar2    freq:{0} MHz", ss2freq);
 
-        dummy = 0;
-        hr = _interfaceB2C2TunerCtrl.GetLnbKHz(out dummy);
-        Log.Write("DVBGraphSkyStar2    LNB kHz:{0} {1:X}", ((LNBSelectionType)dummy), hr);
+        _interfaceB2C2TunerCtrl.GetSymbolRate(out ss2symb);
+        Log.Write("DVBGraphSkyStar2    symbol rate:{0} KS/s", ss2symb);
 
-        dummy = 0;
-        hr = _interfaceB2C2TunerCtrl.GetDiseqc(out dummy);
-        Log.Write("DVBGraphSkyStar2    diseqc:{0} {1:X}", ((DisEqcType)dummy), hr);
+        _interfaceB2C2TunerCtrl.GetLnbFrequency(out ss2lnbfreq);
+        Log.Write("DVBGraphSkyStar2    LNB freq:{0} MHz", ss2lnbfreq);
 
-        dummy = 0;
-        hr = _interfaceB2C2TunerCtrl.GetFec(out dummy);
-        Log.Write("DVBGraphSkyStar2    fec:{0} {1:X}", ((FecType)dummy), hr);
+        _interfaceB2C2TunerCtrl.GetFec(out ss2fec);
+        Log.Write("DVBGraphSkyStar2    fec:{0}", (FecType)ss2fec);
+        //Log.Write("DVBGraphSkyStar2    fec:{0}", ss2fec);
 
-        dummy = 0;
-        hr = _interfaceB2C2TunerCtrl.GetPolarity(out dummy);
-        Log.Write("DVBGraphSkyStar2    polarity:{0} {1:X}", ((PolarityType)dummy), hr);
+        _interfaceB2C2TunerCtrl.GetPolarity(out ss2pol);
+        Log.Write("DVBGraphSkyStar2    polarity:{0}", (PolarityType)ss2pol);
 
-        dummy = 0;
-        hr = _interfaceB2C2TunerCtrl.GetSymbolRate(out dummy);
-        Log.Write("DVBGraphSkyStar2    symbol rate:{0} kHz {1:X}", dummy, hr);
+        _interfaceB2C2TunerCtrl.GetLnbKHz(out ss2lnbkhz);
+        Log.Write("DVBGraphSkyStar2    LNB {0} kHz: ", ss2lnbkhz);
+
+        _interfaceB2C2TunerCtrl.GetDiseqc(out ss2diseqc);
+        Log.Write("DVBGraphSkyStar2    diseqc:{0}", (DisEqcType)ss2diseqc);
+        //Log.Write("DVBGraphSkyStar2    diseqc:{0}", ss2diseqc);
       }
       else
       {
         if (hr != 0)
-        {
           hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
-          if (hr != 0)
-            hr = _interfaceB2C2TunerCtrl.SetTunerStatus();
-          if (hr != 0)
-          {
-            Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetTunerStatus failed:0x{0:X}", hr);
-            return;
-          }
-          //
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "DVBGraphSkyStar2:SetTunerStatus failed:0x{0:X}", hr);
+          return;
         }
       }
       _interfaceB2C2TunerCtrl.CheckLock();
@@ -1276,7 +1268,6 @@ namespace MediaPortal.TV.Recording
         }
       }
     }
-
 
     DVBChannel LoadDiseqcSettings(DVBChannel ch, int disNo)
     {
@@ -1357,7 +1348,8 @@ namespace MediaPortal.TV.Recording
         ch.LNBFrequency = lnb0MHZ;
         ch.LnbSwitchFrequency = 0;
       }
-      Log.WriteFile(Log.LogType.Log, "auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LnbSwitchFrequency, ch.LNBFrequency, ch.DiSEqC);
+      //Log.WriteFile(Log.LogType.Log, "auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LnbSwitchFrequency, ch.LNBFrequency, ch.DiSEqC);
+      Log.WriteFile(Log.LogType.Log, "auto-tune ss2: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, lnbKhz, ch.LNBFrequency, ch.DiSEqC);
       return ch;
 
     }// LoadDiseqcSettings()

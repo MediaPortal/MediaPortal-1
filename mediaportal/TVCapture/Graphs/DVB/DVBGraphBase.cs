@@ -56,6 +56,7 @@ using MediaPortal.Radio.Database;
 using Toub.MediaCenter.Dvrms.Metadata;
 using MediaPortal.TV.BDA;
 using DShowNET.TsFileSink;
+using MediaPortal.TV.Scanning;
 #endregion
 #pragma warning disable 618
 namespace MediaPortal.TV.Recording
@@ -2222,7 +2223,11 @@ namespace MediaPortal.TV.Recording
           lnbswMHZ = xmlreader.GetValueAsInt("dvbs", "Switch", 11700);
           cbandMHZ = xmlreader.GetValueAsInt("dvbs", "CBand", 5150);
           circularMHZ = xmlreader.GetValueAsInt("dvbs", "Circular", 10750);
-          switch (ch.DiSEqC)
+          // #DM old switch method below was incorrect, it took the DiSEqC tuning value instead of the actual LNB number #
+          //switch (ch.DiSEqC)
+          // #DM we now use the LNB number to determine the DiSEqC tuning values #
+          int _lnbNumber = ch.CurrentLNB;
+          switch (_lnbNumber)
           {
             case 1:
               // config a
@@ -2269,7 +2274,7 @@ namespace MediaPortal.TV.Recording
 
 
         // LNB switch frequency
-        ch.LnbSwitchFrequency = lnbswMHZ * 1000;//11700
+        ch.LnbSwitchFrequency = lnbswMHZ * 1000;//so 11700000
 
         if (ch.Frequency >= lnbswMHZ * 1000)
         {
