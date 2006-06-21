@@ -390,6 +390,10 @@
 		<carrier frequency="816500" />
 		<carrier frequency="866000" />
 	</country>
+	<country name="Norway - Oslo (trials)" offset="0">
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+	</country> 
 	<country name="UK - All Regions" offset="167">
 		<carrier frequency="474000" bandwidth="8" />
 		<carrier frequency="482000" bandwidth="8" />
