@@ -77,7 +77,7 @@
 			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="102" sound="cursor.wav" />
 		</button>
 		<button name="Start" code="ehome">
-			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="0" sound="click.wav" focus="True" />
+			<action layer="0" condition="*" conproperty="-1" command="ACTION" cmdproperty="115" sound="click.wav" focus="True" />
 		</button>
 		<button name="Channel Up" code="ch+">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9979" sound="cursor.wav" />
@@ -178,6 +178,8 @@
 		<button name="Teletext" code="teletext">
 			<action layer="0" condition="WINDOW" conproperty="602" command="WINDOW" cmdproperty="7701" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="1" command="WINDOW" cmdproperty="7700" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7701" command="WINDOW" cmdproperty="7700" sound="click.wav" />
+			<action layer="0" condition="WINDOW" conproperty="7700" command="WINDOW" cmdproperty="7701" sound="click.wav" />
 		</button>
 		<button name="Red" code="red">
 			<action layer="0" condition="WINDOW" conproperty="7701" command="ACTION" cmdproperty="9975" sound="click.wav" />
