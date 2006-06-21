@@ -914,7 +914,7 @@ namespace MediaPortal.Configuration.Sections
         useLNB3_CheckedChanged(null, null);
         useLNB4_CheckedChanged(null, null);
 
-        int lnbTone = xmlreader.GetValueAsInt("dvbs", "lnb", 1);
+        int lnbTone = xmlreader.GetValueAsInt("dvbs", "lnb", 22);
         switch (lnbTone)
         {
           case 0: lnbTone1.SelectedIndex = 0; break;
@@ -922,7 +922,7 @@ namespace MediaPortal.Configuration.Sections
           case 33: lnbTone1.SelectedIndex = 2; break;
           case 44: lnbTone1.SelectedIndex = 3; break;
         }
-        lnbTone = xmlreader.GetValueAsInt("dvbs", "lnb2", 1);
+        lnbTone = xmlreader.GetValueAsInt("dvbs", "lnb2", 22);
         switch (lnbTone)
         {
           case 0: lnbTone2.SelectedIndex = 0; break;
@@ -930,7 +930,7 @@ namespace MediaPortal.Configuration.Sections
           case 33: lnbTone2.SelectedIndex = 2; break;
           case 44: lnbTone2.SelectedIndex = 3; break;
         }
-        lnbTone = xmlreader.GetValueAsInt("dvbs", "lnb3", 1);
+        lnbTone = xmlreader.GetValueAsInt("dvbs", "lnb3", 22);
         switch (lnbTone)
         {
           case 0: lnbTone3.SelectedIndex = 0; break;
@@ -938,7 +938,7 @@ namespace MediaPortal.Configuration.Sections
           case 33: lnbTone3.SelectedIndex = 2; break;
           case 44: lnbTone3.SelectedIndex = 3; break;
         }
-        lnbTone = xmlreader.GetValueAsInt("dvbs", "lnb4", 1);
+        lnbTone = xmlreader.GetValueAsInt("dvbs", "lnb4", 22);
         switch (lnbTone)
         {
           case 0: lnbTone4.SelectedIndex = 0; break;
@@ -1168,6 +1168,7 @@ namespace MediaPortal.Configuration.Sections
       cbTransponder.Enabled = useLNB1.Checked;
       diseqca.Enabled = useLNB1.Checked;
       lnbkind1.Enabled = useLNB1.Checked;
+      lnbTone1.Enabled = useLNB1.Checked;
     }
 
     private void useLNB2_CheckedChanged(object sender, EventArgs e)
@@ -1175,6 +1176,7 @@ namespace MediaPortal.Configuration.Sections
       cbTransponder2.Enabled = useLNB2.Checked;
       diseqcb.Enabled = useLNB2.Checked;
       lnbkind2.Enabled = useLNB2.Checked;
+      lnbTone2.Enabled = useLNB2.Checked;
     }
 
     private void useLNB3_CheckedChanged(object sender, EventArgs e)
@@ -1182,6 +1184,7 @@ namespace MediaPortal.Configuration.Sections
       cbTransponder3.Enabled = useLNB3.Checked;
       diseqcc.Enabled = useLNB3.Checked;
       lnbkind3.Enabled = useLNB3.Checked;
+      lnbTone3.Enabled = useLNB3.Checked;
     }
 
     private void useLNB4_CheckedChanged(object sender, EventArgs e)
@@ -1189,6 +1192,7 @@ namespace MediaPortal.Configuration.Sections
       cbTransponder4.Enabled = useLNB4.Checked;
       diseqcd.Enabled = useLNB4.Checked;
       lnbkind4.Enabled = useLNB4.Checked;
+      lnbTone4.Enabled = useLNB4.Checked;
     }
 
     private void groupBox2_Enter(object sender, EventArgs e)
