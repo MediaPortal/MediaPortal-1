@@ -2206,8 +2206,8 @@ namespace MediaPortal.TV.Recording
       {
         string filename = String.Format(@"database\card_{0}.xml", _card.FriendlyName);
 
-        int lnbKhz = 0;
-        int diseqc = 0;
+        int lnbKhz = -1;
+        int diseqc = -1;
         int lnbKind = 0;
         // lnb config
         int lnb0MHZ = 0;
@@ -2288,8 +2288,12 @@ namespace MediaPortal.TV.Recording
         }
         lowOsc = lnb0MHZ;
         hiOsc = lnb1MHZ;
-        lnbKhzTone = lnbKhz;
-        diseqcUsed = diseqc;
+        //#DM We cheat here and force 22KHz if the xml info is not read.
+        if (lnbKhz == -1) lnbKhzTone = 22;
+        else lnbKhzTone = lnbKhz;
+        //#DM Checks to see if xml values have been read, if not takes DB values for DiSEqC
+        if (diseqc == -1) diseqcUsed = ch.DiSEqC;
+        else diseqcUsed = diseqc;
         Log.WriteFile(Log.LogType.Log, "DVBGraph: LNB Settings: freq={0} lnbKHz={1} lnbFreq={2} diseqc={3}", ch.Frequency, ch.LnbSwitchFrequency, ch.LNBFrequency, ch.DiSEqC);
       }
       catch (Exception)

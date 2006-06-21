@@ -91,35 +91,35 @@ namespace MediaPortal.TV.Recording
     protected enum DisEqcType
     {
       None = 0,
-      Simple_A,
-      Simple_B,
-      Level_1_A_A,
-      Level_1_B_A,
-      Level_1_A_B,
-      Level_1_B_B
+      Simple_A = 1,
+      Simple_B = 2,
+      Level_1_A_A = 3,
+      Level_1_B_A = 4,
+      Level_1_A_B = 5,
+      Level_1_B_B = 6,
     };
     protected enum FecType
     {
       Fec_1_2 = 1,
-      Fec_2_3,
-      Fec_3_4,
-      Fec_5_6,
-      Fec_7_8,
-      Fec_Auto
+      Fec_2_3 =2,
+      Fec_3_4 = 3,
+      Fec_5_6 = 4,
+      Fec_7_8 = 5,
+      Fec_Auto =6,
     }
 
     protected enum LNBSelectionType
     {
       Lnb0 = 0,
-      Lnb22kHz,
-      Lnb33kHz,
-      Lnb44kHz,
+      Lnb22kHz = 1,
+      Lnb33kHz = 2,
+      Lnb44kHz = 3,
     } ;
 
     protected enum PolarityType
     {
       Horizontal = 0,
-      Vertical,
+      Vertical = 1,
     };
 
     #endregion
@@ -1142,7 +1142,7 @@ namespace MediaPortal.TV.Recording
           {
             lnbSelection = LNBSelectionType.Lnb0;
           }
-          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Lnb:{0}", lnbSelection);
+          Log.WriteFile(Log.LogType.Log, false, "DVBGraphSkyStar2:  Lnb: {0} Khz", lnbKhzTone);
           hr = _interfaceB2C2TunerCtrl.SetLnbKHz((int)lnbSelection);
           if (hr != 0)
           {
