@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="iso-8859-1" ?>
-<!-- changed : 16-May-2006 by Maschine				-->
+<!-- changed : 20-June-2006 by Maschine				-->
 <!-- contains:								-->
-<!--   - Europe 								-->
 <!--   - Australia 								-->
 <!--   - Belgium   								-->
 <!--   - Danmmark  								-->
+<!--   - Europe 								-->
 <!--   - Finland 								-->
 <!--   - France								-->
-<!--   - Sweden 								-->
 <!--   - Germany 								-->
-<!--   - UK 									-->
-<!--   - Netherlands 							-->
-<!--   - Taiwan 								-->
 <!--   - Italy 									-->
+<!--   - Netherlands 							-->
+<!--   - Norway 								-->
 <!--   - Spain 								-->
+<!--   - Sweden 								-->
+<!--   - Taiwan 								-->
+<!--   - UK 									-->
 <dvbt>
 	<country name="Australia - All Regions" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
@@ -390,70 +391,6 @@
 		<carrier frequency="816500" />
 		<carrier frequency="866000" />
 	</country>
-	<country name="Norway - Oslo (trials)" offset="0">
-		<carrier frequency="722000" bandwidth="8" />
-		<carrier frequency="770000" bandwidth="8" />
-	</country> 
-	<country name="UK - All Regions" offset="167">
-		<carrier frequency="474000" bandwidth="8" />
-		<carrier frequency="482000" bandwidth="8" />
-		<carrier frequency="490000" bandwidth="8" />
-		<carrier frequency="498000" bandwidth="8" />
-		<carrier frequency="506000" bandwidth="8" />
-		<carrier frequency="514000" bandwidth="8" />
-		<carrier frequency="522000" bandwidth="8" />
-		<carrier frequency="530000" bandwidth="8" />
-		<carrier frequency="538000" bandwidth="8" />
-		<carrier frequency="546000" bandwidth="8" />
-		<carrier frequency="554000" bandwidth="8" />
-		<carrier frequency="562000" bandwidth="8" />
-		<carrier frequency="570000" bandwidth="8" />
-		<carrier frequency="578000" bandwidth="8" />
-		<carrier frequency="586000" bandwidth="8" />
-		<carrier frequency="594000" bandwidth="8" />
-		<carrier frequency="602000" bandwidth="8" />
-		<carrier frequency="610000" bandwidth="8" />
-		<carrier frequency="618000" bandwidth="8" />
-		<carrier frequency="626000" bandwidth="8" />
-		<carrier frequency="634000" bandwidth="8" />
-		<carrier frequency="642000" bandwidth="8" />
-		<carrier frequency="650000" bandwidth="8" />
-		<carrier frequency="658000" bandwidth="8" />
-		<carrier frequency="666000" bandwidth="8" />
-		<carrier frequency="674000" bandwidth="8" />
-		<carrier frequency="682000" bandwidth="8" />
-		<carrier frequency="690000" bandwidth="8" />
-		<carrier frequency="698000" bandwidth="8" />
-		<carrier frequency="706000" bandwidth="8" />
-		<carrier frequency="714000" bandwidth="8" />
-		<carrier frequency="722000" bandwidth="8" />
-		<carrier frequency="730000" bandwidth="8" />
-		<carrier frequency="738000" bandwidth="8" />
-		<carrier frequency="746000" bandwidth="8" />
-		<carrier frequency="754000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="802000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="818000" bandwidth="8" />
-		<carrier frequency="826000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="UK - Winter Hill" offset="167">
-		<carrier frequency="754000" bandwidth="8" />
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="826000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-	</country>
 	<country name="Finland - All Regions" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
 		<carrier frequency="184500" bandwidth="7" />
@@ -512,6 +449,288 @@
 		<carrier frequency="842000" bandwidth="8" />
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="France - All Regions" offset="167"> 
+		<carrier frequency="474000"/> 
+		<carrier frequency="482000"/> 
+		<carrier frequency="490000"/> 
+		<carrier frequency="498000"/> 
+		<carrier frequency="506000"/> 
+		<carrier frequency="514000"/> 
+		<carrier frequency="522000"/> 
+		<carrier frequency="530000"/> 
+		<carrier frequency="538000"/> 
+		<carrier frequency="546000"/> 
+		<carrier frequency="554000"/> 
+		<carrier frequency="562000"/> 
+		<carrier frequency="570000"/> 
+		<carrier frequency="578000"/> 
+		<carrier frequency="586000"/> 
+		<carrier frequency="594000"/> 
+		<carrier frequency="602000"/> 
+		<carrier frequency="610000"/> 
+		<carrier frequency="618000"/> 
+		<carrier frequency="626000"/> 
+		<carrier frequency="634000"/> 
+		<carrier frequency="642000"/> 
+		<carrier frequency="650000"/> 
+		<carrier frequency="658000"/> 
+		<carrier frequency="666000"/> 
+		<carrier frequency="674000"/> 
+		<carrier frequency="682000"/> 
+		<carrier frequency="690000"/> 
+		<carrier frequency="698000"/> 
+		<carrier frequency="706000"/> 
+		<carrier frequency="714000"/> 
+		<carrier frequency="722000"/> 
+		<carrier frequency="730000"/> 
+		<carrier frequency="738000"/> 
+		<carrier frequency="746000"/> 
+		<carrier frequency="754000"/> 
+		<carrier frequency="762000"/> 
+		<carrier frequency="770000"/> 
+		<carrier frequency="778000"/> 
+		<carrier frequency="786000"/> 
+		<carrier frequency="794000"/> 
+		<carrier frequency="802000"/> 
+		<carrier frequency="810000"/> 
+		<carrier frequency="818000"/> 
+		<carrier frequency="826000"/> 
+		<carrier frequency="834000"/> 
+		<carrier frequency="842000"/> 
+		<carrier frequency="850000"/> 
+	</country>
+	<country name="France - Ajaccio" offset="166">
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="610000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+	</country>
+	<country name="France - Bayonne" offset="166">
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+	</country>
+	<country name="France - Bourges" offset="166">
+		<carrier frequency="586000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+	</country>
+	<country name="France - Bordeaux - Caudéran" offset="166">
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+	</country>
+	<country name="France - Bordeaux Est" offset="166">
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+	</country>
+	<country name="France - Brest" offset="166">
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+	</country>
+	<country name="France - Caen" offset="166">
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+	</country>
+	<country name="France - Cherbourg" offset="166">
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+	</country>
+	<country name="France - Grenoble" offset="166">
+		<carrier frequency="602000" bandwidth="8" />
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+	</country>
+	<country name="France - Le Havre" offset="166">
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+	</country>
+	<country name="France - Le Mans" offset="166">
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="602000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+	</country>
+	<country name="France - Lille" offset="166">
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+		<carrier frequency="586000" bandwidth="8" />
+	</country>
+	<country name="France - Lyon - Fourvière" offset="166">
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+	</country>
+	<country name="France - Lyon - Mont-Pilat" offset="166">
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+	</country>
+	<country name="France - Mantes" offset="166">
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="610000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="626000" bandwidth="8" />
+	</country>
+	<country name="France - Marseille" offset="166">
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+	</country>
+	<country name="France - Nantes" offset="166">
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+	</country>
+	<country name="France - Niort" offset="166">
+		<carrier frequency="602000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+	</country>
+	<country name="France - Orleans" offset="166">
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="610000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+	</country>
+	<country name="France - Paris - Est/Nord/Sud" offset="166">
+		<carrier frequency="586000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+	</country>
+	<country name="France - Paris - Tour Eiffel" offset="166">
+		<carrier frequency="586000" bandwidth="8" />
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+	</country>
+	<country name="France - Rennes" offset="166">
+		<carrier frequency="586000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="602000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+	</country>
+	<country name="France - Reims" offset="166">
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="602000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+	</country>
+	<country name="France - Rouen" offset="166">
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="602000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+	</country>
+	<country name="France - St Etienne" offset="166">
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+	</country>
+	<country name="France - Toulon" offset="166">
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+	</country>
+	<country name="France - Toulouse - Bonhoure" offset="166">
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+	</country>
+	<country name="France - Toulouse - Pic du Midi" offset="166">
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+	</country>
+	<country name="France - Vannes" offset="166">
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
 	</country>
 	<country name="Germany - All Regions" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
@@ -584,22 +803,28 @@
 		<carrier frequency="778000" bandwidth="8" />
 		<carrier frequency="826000" bandwidth="8" />		
 	</country>
-	<country name="Germany - Hannover" offset="125">
-		<carrier frequency="198500" bandwidth="7" />
-		<carrier frequency="490000" bandwidth="8" />
+	<country name="Germany - Bremen-Unterweser" offset="125">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+	</country>
+	
+	<country name="Germany - Bremerhaven-Cuxhaven" offset="125">
+		<carrier frequency="482000" bandwidth="8" />
 		<carrier frequency="498000" bandwidth="8" />
-		<carrier frequency="530000" bandwidth="8" />
-		<carrier frequency="594000" bandwidth="8" />
-		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
 	</country>
-	<country name="Germany - Muenchen" offset="125">
-		<carrier frequency="212500" bandwidth="10" />
-		<carrier frequency="578000" bandwidth="10" />
-		<carrier frequency="586000" bandwidth="10" />
-		<carrier frequency="690000" bandwidth="10" />
-		<carrier frequency="754000" bandwidth="10" />
-		<carrier frequency="834000" bandwidth="10" />
-	</country>
+	
 	<country name="Germany - Duesseldorf/Ruhrgebiet" offset="125">
 	   <carrier frequency="506000" bandwidth="8" />
 	   <carrier frequency="538000" bandwidth="8" />
@@ -609,6 +834,117 @@
 	   <carrier frequency="722000" bandwidth="8" />
 	   <carrier frequency="746000" bandwidth="8" />
 	   <carrier frequency="778000" bandwidth="8" />
+	</country>
+	<country name="Germany - Goettingen" offset="125">
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+	</country>
+	<country name="Germany - Hannover/Braunschweig" offset="125">
+		<carrier frequency="198500" bandwidth="7" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+	</country>
+	<country name="Germany - Koeln/Bonn" offset="125">
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+	</country>
+	<country name="Germany - Muenchen" offset="125">
+		<carrier frequency="212500" bandwidth="10" />
+		<carrier frequency="578000" bandwidth="10" />
+		<carrier frequency="586000" bandwidth="10" />
+		<carrier frequency="690000" bandwidth="10" />
+		<carrier frequency="754000" bandwidth="10" />
+		<carrier frequency="834000" bandwidth="10" />
+	</country>
+	<country name="Germany - Osnabrueck/Lingen" offset="125">
+		<carrier frequency="602000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+	</country>
+	<country name="Germany - Ostfriesland" offset="125">
+		<carrier frequency="586000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+	</country>
+	<country name="Germany - Weserbergland Nord" offset="125">
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+	</country>
+	<country name="Italy - All Regions" offset="125">
+		<carrier frequency="177500" bandwidth="7" />
+		<carrier frequency="184500" bandwidth="7" />
+		<carrier frequency="186000" bandwidth="7" />
+		<carrier frequency="194500" bandwidth="7" />
+		<carrier frequency="191500" bandwidth="7" />
+		<carrier frequency="191625" bandwidth="7" />
+		<carrier frequency="198500" bandwidth="7" />
+		<carrier frequency="203500" bandwidth="7" />
+		<carrier frequency="205500" bandwidth="7" />
+		<carrier frequency="212500" bandwidth="7" />
+		<carrier frequency="219500" bandwidth="7" />
+		<carrier frequency="226500" bandwidth="7" />
+		<carrier frequency="474000" bandwidth="8" />
+		<carrier frequency="482000" bandwidth="8" />
+		<carrier frequency="490000" bandwidth="8" />
+		<carrier frequency="498000" bandwidth="8" />
+		<carrier frequency="506000" bandwidth="8" />
+		<carrier frequency="514000" bandwidth="8" />
+		<carrier frequency="522000" bandwidth="8" />
+		<carrier frequency="530000" bandwidth="8" />
+		<carrier frequency="538000" bandwidth="8" />
+		<carrier frequency="546000" bandwidth="8" />
+		<carrier frequency="554000" bandwidth="8" />
+		<carrier frequency="562000" bandwidth="8" />
+		<carrier frequency="570000" bandwidth="8" />
+		<carrier frequency="578000" bandwidth="8" />
+		<carrier frequency="586000" bandwidth="8" />
+		<carrier frequency="594000" bandwidth="8" />
+		<carrier frequency="602000" bandwidth="8" />
+		<carrier frequency="610000" bandwidth="8" />
+		<carrier frequency="618000" bandwidth="8" />
+		<carrier frequency="626000" bandwidth="8" />
+		<carrier frequency="634000" bandwidth="8" />
+		<carrier frequency="642000" bandwidth="8" />
+		<carrier frequency="650000" bandwidth="8" />
+		<carrier frequency="658000" bandwidth="8" />
+		<carrier frequency="666000" bandwidth="8" />
+		<carrier frequency="674000" bandwidth="8" />
+		<carrier frequency="682000" bandwidth="8" />
+		<carrier frequency="690000" bandwidth="8" />
+		<carrier frequency="698000" bandwidth="8" />
+		<carrier frequency="706000" bandwidth="8" />
+		<carrier frequency="714000" bandwidth="8" />
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="730000" bandwidth="8" />
+		<carrier frequency="738000" bandwidth="8" />
+		<carrier frequency="746000" bandwidth="8" />
+		<carrier frequency="754000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
 	</country>
 	<country name="Netherlands - All Regions">
 		<carrier frequency="177500" />
@@ -667,6 +1003,426 @@
 		<carrier frequency="842000" />
 		<carrier frequency="850000" />
 		<carrier frequency="858000" />
+	</country>
+	<country name="Norway - Oslo (trials)" offset="0">
+		<carrier frequency="722000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+	</country> 
+	<country name="Spain - Andalucia - Almeria">
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Andalucia - Cadiz">
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Andalucia - Cordoba">
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Andalucia - Granada">
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Andalucia - Huelva">
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Andalucia - Jaen">
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Andalucia - Malaga">
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Andalucia - Sevilla">
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Aragon - Huesca">
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Aragon - Teruel">
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Aragon - Zaragoza">
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Asturias">
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="820000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Baleares">
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - C. Valenciana - Alicante">
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - C. Valenciana - Castellon">
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - C. Valenciana - Valencia">
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Canarias - Las Palmas">
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Canarias - Tenerife">
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Cantabria">
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla La Mancha - Albacete">
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla La Mancha - Ciudad Real">
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla La Mancha - Cuenca">
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla La Mancha - Guadalajara">
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla La Mancha - Toledo">
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla y Leon - Avila">
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla y Leon - Burgos">
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla y Leon - Leon">
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla y Leon - Palencia">
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla y Leon - Salamanca">
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla y Leon - Segovia">
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla y Leon - Soria">
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla y Leon - Valladolid">
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Castilla y Leon - Zamora">
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="762000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Cataluna - Barcelona">
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Cataluna - Girona">
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Cataluna - Lleida">
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Cataluna - Tarragona">
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Ceuta">
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="826000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Extremadura - Badajoz">
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Extremadura - Caceres">
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Galicia - A Coruna">
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Galicia - Lugo">
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Galicia - Orense">
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Galicia - Pontevedra">
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - La Rioja">
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Madrid">
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Melilla">
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="818000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Murcia">
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Navarra">
+		<carrier frequency="778000" bandwidth="8" />
+		<carrier frequency="802000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Pais Vasco - Alava">
+		<carrier frequency="770000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Pais Vasco - Guipuzcoa">
+		<carrier frequency="786000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
+	</country>
+	<country name="Spain - Pais Vasco - Vizcaya">
+		<carrier frequency="794000" bandwidth="8" />
+		<carrier frequency="810000" bandwidth="8" />
+		<carrier frequency="834000" bandwidth="8" />
+		<carrier frequency="842000" bandwidth="8" />
+		<carrier frequency="850000" bandwidth="8" />
+		<carrier frequency="858000" bandwidth="8" />
 	</country>
 	<country name="Sweden - All Regions" offset="125">
 		<carrier frequency="177500" bandwidth="7" />
@@ -1078,301 +1834,7 @@
 		<carrier frequency="593000" bandwidth="6" />
 		<carrier frequency="599000" bandwidth="6" />
 	</country>
-	<country name="France - All Regions" offset="167"> 
-		<carrier frequency="474000"/> 
-		<carrier frequency="482000"/> 
-		<carrier frequency="490000"/> 
-		<carrier frequency="498000"/> 
-		<carrier frequency="506000"/> 
-		<carrier frequency="514000"/> 
-		<carrier frequency="522000"/> 
-		<carrier frequency="530000"/> 
-		<carrier frequency="538000"/> 
-		<carrier frequency="546000"/> 
-		<carrier frequency="554000"/> 
-		<carrier frequency="562000"/> 
-		<carrier frequency="570000"/> 
-		<carrier frequency="578000"/> 
-		<carrier frequency="586000"/> 
-		<carrier frequency="594000"/> 
-		<carrier frequency="602000"/> 
-		<carrier frequency="610000"/> 
-		<carrier frequency="618000"/> 
-		<carrier frequency="626000"/> 
-		<carrier frequency="634000"/> 
-		<carrier frequency="642000"/> 
-		<carrier frequency="650000"/> 
-		<carrier frequency="658000"/> 
-		<carrier frequency="666000"/> 
-		<carrier frequency="674000"/> 
-		<carrier frequency="682000"/> 
-		<carrier frequency="690000"/> 
-		<carrier frequency="698000"/> 
-		<carrier frequency="706000"/> 
-		<carrier frequency="714000"/> 
-		<carrier frequency="722000"/> 
-		<carrier frequency="730000"/> 
-		<carrier frequency="738000"/> 
-		<carrier frequency="746000"/> 
-		<carrier frequency="754000"/> 
-		<carrier frequency="762000"/> 
-		<carrier frequency="770000"/> 
-		<carrier frequency="778000"/> 
-		<carrier frequency="786000"/> 
-		<carrier frequency="794000"/> 
-		<carrier frequency="802000"/> 
-		<carrier frequency="810000"/> 
-		<carrier frequency="818000"/> 
-		<carrier frequency="826000"/> 
-		<carrier frequency="834000"/> 
-		<carrier frequency="842000"/> 
-		<carrier frequency="850000"/> 
-	</country>
-	<country name="France - Ajaccio" offset="166">
-		<carrier frequency="538000" bandwidth="8" />
-		<carrier frequency="514000" bandwidth="8" />
-		<carrier frequency="642000" bandwidth="8" />
-		<carrier frequency="610000" bandwidth="8" />
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="730000" bandwidth="8" />
-	</country>
-	<country name="France - Bayonne" offset="166">
-		<carrier frequency="826000" bandwidth="8" />
-		<carrier frequency="642000" bandwidth="8" />
-		<carrier frequency="714000" bandwidth="8" />
-		<carrier frequency="698000" bandwidth="8" />
-		<carrier frequency="802000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-	</country>
-	<country name="France - Bourges" offset="166">
-		<carrier frequency="586000" bandwidth="8" />
-		<carrier frequency="498000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="522000" bandwidth="8" />
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="562000" bandwidth="8" />
-	</country>
-	<country name="France - Bordeaux - Caudéran" offset="166">
-		<carrier frequency="490000" bandwidth="8" />
-		<carrier frequency="514000" bandwidth="8" />
-		<carrier frequency="482000" bandwidth="8" />
-		<carrier frequency="562000" bandwidth="8" />
-		<carrier frequency="594000" bandwidth="8" />
-		<carrier frequency="546000" bandwidth="8" />
-	</country>
-	<country name="France - Bordeaux Est" offset="166">
-		<carrier frequency="490000" bandwidth="8" />
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="802000" bandwidth="8" />
-		<carrier frequency="658000" bandwidth="8" />
-		<carrier frequency="634000" bandwidth="8" />
-		<carrier frequency="546000" bandwidth="8" />
-	</country>
-	<country name="France - Brest" offset="166">
-		<carrier frequency="546000" bandwidth="8" />
-		<carrier frequency="482000" bandwidth="8" />
-		<carrier frequency="506000" bandwidth="8" />
-		<carrier frequency="490000" bandwidth="8" />
-		<carrier frequency="530000" bandwidth="8" />
-		<carrier frequency="514000" bandwidth="8" />
-	</country>
-	<country name="France - Caen" offset="166">
-		<carrier frequency="554000" bandwidth="8" />
-		<carrier frequency="546000" bandwidth="8" />
-		<carrier frequency="562000" bandwidth="8" />
-		<carrier frequency="570000" bandwidth="8" />
-		<carrier frequency="706000" bandwidth="8" />
-		<carrier frequency="770000" bandwidth="8" />
-	</country>
-	<country name="France - Cherbourg" offset="166">
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="578000" bandwidth="8" />
-		<carrier frequency="698000" bandwidth="8" />
-		<carrier frequency="730000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="562000" bandwidth="8" />
-	</country>
-	<country name="France - Grenoble" offset="166">
-		<carrier frequency="602000" bandwidth="8" />
-		<carrier frequency="474000" bandwidth="8" />
-		<carrier frequency="498000" bandwidth="8" />
-		<carrier frequency="554000" bandwidth="8" />
-		<carrier frequency="522000" bandwidth="8" />
-		<carrier frequency="578000" bandwidth="8" />
-	</country>
-	<country name="France - Le Havre" offset="166">
-		<carrier frequency="690000" bandwidth="8" />
-		<carrier frequency="642000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="738000" bandwidth="8" />
-		<carrier frequency="770000" bandwidth="8" />
-	</country>
-	<country name="France - Le Mans" offset="166">
-		<carrier frequency="514000" bandwidth="8" />
-		<carrier frequency="490000" bandwidth="8" />
-		<carrier frequency="754000" bandwidth="8" />
-		<carrier frequency="554000" bandwidth="8" />
-		<carrier frequency="602000" bandwidth="8" />
-		<carrier frequency="594000" bandwidth="8" />
-	</country>
-	<country name="France - Lille" offset="166">
-		<carrier frequency="594000" bandwidth="8" />
-		<carrier frequency="538000" bandwidth="8" />
-		<carrier frequency="562000" bandwidth="8" />
-		<carrier frequency="546000" bandwidth="8" />
-		<carrier frequency="570000" bandwidth="8" />
-		<carrier frequency="586000" bandwidth="8" />
-	</country>
-	<country name="France - Lyon - Fourvière" offset="166">
-		<carrier frequency="754000" bandwidth="8" />
-		<carrier frequency="594000" bandwidth="8" />
-		<carrier frequency="474000" bandwidth="8" />
-		<carrier frequency="738000" bandwidth="8" />
-		<carrier frequency="522000" bandwidth="8" />
-		<carrier frequency="498000" bandwidth="8" />
-	</country>
-	<country name="France - Lyon - Mont-Pilat" offset="166">
-		<carrier frequency="666000" bandwidth="8" />
-		<carrier frequency="594000" bandwidth="8" />
-		<carrier frequency="618000" bandwidth="8" />
-		<carrier frequency="738000" bandwidth="8" />
-		<carrier frequency="642000" bandwidth="8" />
-		<carrier frequency="682000" bandwidth="8" />
-	</country>
-	<country name="France - Mantes" offset="166">
-		<carrier frequency="690000" bandwidth="8" />
-		<carrier frequency="610000" bandwidth="8" />
-		<carrier frequency="650000" bandwidth="8" />
-		<carrier frequency="674000" bandwidth="8" />
-		<carrier frequency="714000" bandwidth="8" />
-		<carrier frequency="626000" bandwidth="8" />
-	</country>
-	<country name="France - Marseille" offset="166">
-		<carrier frequency="802000" bandwidth="8" />
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="530000" bandwidth="8" />
-		<carrier frequency="506000" bandwidth="8" />
-		<carrier frequency="482000" bandwidth="8" />
-		<carrier frequency="546000" bandwidth="8" />
-	</country>
-	<country name="France - Nantes" offset="166">
-		<carrier frequency="530000" bandwidth="8" />
-		<carrier frequency="658000" bandwidth="8" />
-		<carrier frequency="802000" bandwidth="8" />
-		<carrier frequency="506000" bandwidth="8" />
-		<carrier frequency="522000" bandwidth="8" />
-		<carrier frequency="498000" bandwidth="8" />
-	</country>
-	<country name="France - Niort" offset="166">
-		<carrier frequency="602000" bandwidth="8" />
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="802000" bandwidth="8" />
-		<carrier frequency="738000" bandwidth="8" />
-		<carrier frequency="522000" bandwidth="8" />
-		<carrier frequency="498000" bandwidth="8" />
-	</country>
-	<country name="France - Orleans" offset="166">
-		<carrier frequency="674000" bandwidth="8" />
-		<carrier frequency="610000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="690000" bandwidth="8" />
-		<carrier frequency="626000" bandwidth="8" />
-		<carrier frequency="714000" bandwidth="8" />
-	</country>
-	<country name="France - Paris - Est/Nord/Sud" offset="166">
-		<carrier frequency="586000" bandwidth="8" />
-		<carrier frequency="738000" bandwidth="8" />
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="714000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-	</country>
-	<country name="France - Paris - Tour Eiffel" offset="166">
-		<carrier frequency="586000" bandwidth="8" />
-		<carrier frequency="474000" bandwidth="8" />
-		<carrier frequency="522000" bandwidth="8" />
-		<carrier frequency="498000" bandwidth="8" />
-		<carrier frequency="538000" bandwidth="8" />
-		<carrier frequency="562000" bandwidth="8" />
-	</country>
-	<country name="France - Rennes" offset="166">
-		<carrier frequency="586000" bandwidth="8" />
-		<carrier frequency="674000" bandwidth="8" />
-		<carrier frequency="650000" bandwidth="8" />
-		<carrier frequency="626000" bandwidth="8" />
-		<carrier frequency="602000" bandwidth="8" />
-		<carrier frequency="562000" bandwidth="8" />
-	</country>
-	<country name="France - Reims" offset="166">
-		<carrier frequency="562000" bandwidth="8" />
-		<carrier frequency="554000" bandwidth="8" />
-		<carrier frequency="602000" bandwidth="8" />
-		<carrier frequency="578000" bandwidth="8" />
-		<carrier frequency="666000" bandwidth="8" />
-		<carrier frequency="642000" bandwidth="8" />
-	</country>
-	<country name="France - Rouen" offset="166">
-		<carrier frequency="538000" bandwidth="8" />
-		<carrier frequency="474000" bandwidth="8" />
-		<carrier frequency="522000" bandwidth="8" />
-		<carrier frequency="498000" bandwidth="8" />
-		<carrier frequency="602000" bandwidth="8" />
-		<carrier frequency="562000" bandwidth="8" />
-	</country>
-	<country name="France - St Etienne" offset="166">
-		<carrier frequency="706000" bandwidth="8" />
-		<carrier frequency="490000" bandwidth="8" />
-		<carrier frequency="618000" bandwidth="8" />
-		<carrier frequency="738000" bandwidth="8" />
-		<carrier frequency="538000" bandwidth="8" />
-		<carrier frequency="514000" bandwidth="8" />
-	</country>
-	<country name="France - Toulon" offset="166">
-		<carrier frequency="746000" bandwidth="8" />
-		<carrier frequency="682000" bandwidth="8" />
-		<carrier frequency="706000" bandwidth="8" />
-		<carrier frequency="698000" bandwidth="8" />
-		<carrier frequency="730000" bandwidth="8" />
-		<carrier frequency="722000" bandwidth="8" />
-	</country>
-	<country name="France - Toulouse - Bonhoure" offset="166">
-		<carrier frequency="754000" bandwidth="8" />
-		<carrier frequency="698000" bandwidth="8" />
-		<carrier frequency="722000" bandwidth="8" />
-		<carrier frequency="714000" bandwidth="8" />
-		<carrier frequency="746000" bandwidth="8" />
-		<carrier frequency="730000" bandwidth="8" />
-	</country>
-	<country name="France - Toulouse - Pic du Midi" offset="166">
-		<carrier frequency="738000" bandwidth="8" />
-		<carrier frequency="690000" bandwidth="8" />
-		<carrier frequency="706000" bandwidth="8" />
-		<carrier frequency="482000" bandwidth="8" />
-		<carrier frequency="514000" bandwidth="8" />
-		<carrier frequency="594000" bandwidth="8" />
-	</country>
-	<country name="France - Vannes" offset="166">
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="674000" bandwidth="8" />
-		<carrier frequency="818000" bandwidth="8" />
-		<carrier frequency="698000" bandwidth="8" />
-		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="778000" bandwidth="8" />
-	</country>
-	<country name="Italy - All Regions" offset="125">
-		<carrier frequency="177500" bandwidth="7" />
-		<carrier frequency="184500" bandwidth="7" />
-		<carrier frequency="186000" bandwidth="7" />
-		<carrier frequency="194500" bandwidth="7" />
-		<carrier frequency="191500" bandwidth="7" />
-		<carrier frequency="191625" bandwidth="7" />
-		<carrier frequency="198500" bandwidth="7" />
-		<carrier frequency="203500" bandwidth="7" />
-		<carrier frequency="205500" bandwidth="7" />
-		<carrier frequency="212500" bandwidth="7" />
-		<carrier frequency="219500" bandwidth="7" />
-		<carrier frequency="226500" bandwidth="7" />
+	<country name="UK - All Regions" offset="167">
 		<carrier frequency="474000" bandwidth="8" />
 		<carrier frequency="482000" bandwidth="8" />
 		<carrier frequency="490000" bandwidth="8" />
@@ -1423,420 +1885,13 @@
 		<carrier frequency="850000" bandwidth="8" />
 		<carrier frequency="858000" bandwidth="8" />
 	</country>
-	<country name="Spain - Galicia - A Coruna">
-		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Galicia - Lugo">
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Galicia - Orense">
-		<carrier frequency="802000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Galicia - Pontevedra">
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Asturias">
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="820000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Cantabria">
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Pais Vasco - Vizcaya">
-		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Pais Vasco - Guipuzcoa">
+	<country name="UK - Winter Hill" offset="167">
+		<carrier frequency="754000" bandwidth="8" />
 		<carrier frequency="786000" bandwidth="8" />
 		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Pais Vasco - Alava">
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Navarra">
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="802000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Aragon - Huesca">
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Aragon - Zaragoza">
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Aragon - Teruel">
-		<carrier frequency="802000" bandwidth="8" />
-		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Cataluna - Lleida">
-		<carrier frequency="818000" bandwidth="8" />
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Cataluna - Girona">
-		<carrier frequency="818000" bandwidth="8" />
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Cataluna - Barcelona">
-		<carrier frequency="818000" bandwidth="8" />
-		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Cataluna - Tarragona">
-		<carrier frequency="818000" bandwidth="8" />
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - La Rioja">
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="818000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla y Leon - Avila">
-		<carrier frequency="818000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla y Leon - Segovia">
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla y Leon - Soria">
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla y Leon - Burgos">
-		<carrier frequency="826000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla y Leon - Valladolid">
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla y Leon - Salamanca">
-		<carrier frequency="826000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla y Leon - Leon">
-		<carrier frequency="826000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla y Leon - Palencia">
-		<carrier frequency="802000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla y Leon - Zamora">
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Madrid">
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla La Mancha - Guadalajara">
-		<carrier frequency="826000" bandwidth="8" />
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla La Mancha - Ciudad Real">
-		<carrier frequency="826000" bandwidth="8" />
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla La Mancha - Cuenca">
-		<carrier frequency="818000" bandwidth="8" />
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla La Mancha - Toledo">
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Castilla La Mancha - Albacete">
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - C. Valenciana - Castellon">
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - C. Valenciana - Valencia">
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - C. Valenciana - Alicante">
-		<carrier frequency="802000" bandwidth="8" />
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Baleares">
-		<carrier frequency="826000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Murcia">
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Andalucia - Almeria">
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Andalucia - Granada">
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Andalucia - Jaen">
-		<carrier frequency="802000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Andalucia - Cordoba">
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Andalucia - Malaga">
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Andalucia - Sevilla">
-		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="762000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Andalucia - Cadiz">
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="818000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Andalucia - Huelva">
-		<carrier frequency="770000" bandwidth="8" />
-		<carrier frequency="818000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Extremadura - Caceres">
-		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Extremadura - Badajoz">
-		<carrier frequency="802000" bandwidth="8" />
-		<carrier frequency="810000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Ceuta">
-		<carrier frequency="802000" bandwidth="8" />
 		<carrier frequency="826000" bandwidth="8" />
 		<carrier frequency="834000" bandwidth="8" />
 		<carrier frequency="842000" bandwidth="8" />
 		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
 	</country>
-	<country name="Spain - Melilla">
-		<carrier frequency="794000" bandwidth="8" />
-		<carrier frequency="818000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Canarias - Tenerife">
-		<carrier frequency="778000" bandwidth="8" />
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>
-	<country name="Spain - Canarias - Las Palmas">
-		<carrier frequency="826000" bandwidth="8" />
-		<carrier frequency="786000" bandwidth="8" />
-		<carrier frequency="834000" bandwidth="8" />
-		<carrier frequency="842000" bandwidth="8" />
-		<carrier frequency="850000" bandwidth="8" />
-		<carrier frequency="858000" bandwidth="8" />
-	</country>	
 </dvbt>
