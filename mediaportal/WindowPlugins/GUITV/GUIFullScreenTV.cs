@@ -481,32 +481,32 @@ namespace MediaPortal.GUI.TV
             {
               case MediaPortal.GUI.Library.Geometry.Type.Zoom:
                 GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
-                status = "Stretch";
+                status = GUILocalizeStrings.Get(942); // "Stretch";
                 break;
 
               case MediaPortal.GUI.Library.Geometry.Type.Stretch:
                 GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
-                status = "Normal";
+                status = GUILocalizeStrings.Get(943); //"Normal";
                 break;
 
               case MediaPortal.GUI.Library.Geometry.Type.Normal:
                 GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
-                status = "Original";
+                status = GUILocalizeStrings.Get(944); //"Original";
                 break;
 
               case MediaPortal.GUI.Library.Geometry.Type.Original:
                 GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
-                status = "Letterbox 4:3";
+                status = GUILocalizeStrings.Get(945); //"Letterbox 4:3";
                 break;
 
               case MediaPortal.GUI.Library.Geometry.Type.LetterBox43:
                 GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
-                status = "PanScan 4:3";
+                status = GUILocalizeStrings.Get(946); //"Pan and Scan 4:3";
                 break;
 
               case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
                 GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
-                status = "Zoom";
+                status = GUILocalizeStrings.Get(947); //"Zoom";
                 break;
             }
 

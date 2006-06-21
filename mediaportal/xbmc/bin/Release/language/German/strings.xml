@@ -2995,11 +2995,11 @@
 	</string>
 	<string>
 		<id>942</id>
-		<value>Dehnen</value>
+		<value>Strecken</value>
 	</string>
 	<string>
 		<id>943</id>
-		<value>Standard</value>
+		<value>Normal</value>
 	</string>
 	<string>
 		<id>944</id>
@@ -3007,7 +3007,7 @@
 	</string>
 	<string>
 		<id>945</id>
-		<value>Letterbox</value>
+		<value>Letterbox 4:3</value>
 	</string>
 	<string>
 		<id>946</id>

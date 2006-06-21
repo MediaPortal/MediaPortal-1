@@ -391,32 +391,32 @@ namespace MediaPortal.GUI.Video
             {
               case MediaPortal.GUI.Library.Geometry.Type.Zoom:
                 GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
-                strStatus = "Stretch";
+                strStatus = GUILocalizeStrings.Get(942); // "Stretch";
                 break;
 
               case MediaPortal.GUI.Library.Geometry.Type.Stretch:
                 GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Normal;
-                strStatus = "Normal";
+                strStatus = GUILocalizeStrings.Get(943); //"Normal";
                 break;
 
               case MediaPortal.GUI.Library.Geometry.Type.Normal:
                 GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Original;
-                strStatus = "Original";
+                strStatus = GUILocalizeStrings.Get(944); //"Original";
                 break;
 
               case MediaPortal.GUI.Library.Geometry.Type.Original:
                 GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.LetterBox43;
-                strStatus = "Letterbox 4:3";
+                strStatus = GUILocalizeStrings.Get(945); //"Letterbox 4:3";
                 break;
 
               case MediaPortal.GUI.Library.Geometry.Type.LetterBox43:
                 GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.PanScan43;
-                strStatus = "PanScan 4:3";
+                strStatus = GUILocalizeStrings.Get(946); //"Pan and Scan 4:3";
                 break;
 
               case MediaPortal.GUI.Library.Geometry.Type.PanScan43:
                 GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
-                strStatus = "Zoom";
+                strStatus = GUILocalizeStrings.Get(947); //"Zoom";
                 break;
             }
             SaveSettings();

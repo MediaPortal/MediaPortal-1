@@ -1,4 +1,4 @@
-﻿<strings>
+<strings>
   <characters>512</characters>
   <string Prefix="My ">
     <id>0</id>
@@ -3018,7 +3018,7 @@
   </string>
   <string>
     <id>945</id>
-    <value>Letterbox</value>
+    <value>Letterbox 4:3</value>
   </string>
   <string>
     <id>946</id>
