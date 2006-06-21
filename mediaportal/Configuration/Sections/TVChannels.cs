@@ -2302,15 +2302,20 @@ namespace MediaPortal.Configuration.Sections
       _itemsModified = true;
 
       int itemCount = listViewTvChannels.Items.Count;
+      int deletedChans = 0;
 
+      MediaPortal.GUI.Library.Log.Write("Scanning {0} channels for scrambled status", Convert.ToString(itemCount));
       for (int index = 0; index < itemCount; index++)
         if (((TelevisionChannel)listViewTvChannels.Items[index].Tag).Scrambled) // channel is scrambled
         {
+          MediaPortal.GUI.Library.Log.Write("Deleting scrambled channel: {0}", ( (TelevisionChannel)listViewTvChannels.Items[index].Tag ).Name);
           listViewTvChannels.Items.RemoveAt(index);
           itemCount -= 1;
+          deletedChans += 1;
         }
 
       SaveSettings();
+      MediaPortal.GUI.Library.Log.Write("Deleted {0} scrambled channels", Convert.ToString(deletedChans));
       listViewTvChannels.EndUpdate();
     }
 
