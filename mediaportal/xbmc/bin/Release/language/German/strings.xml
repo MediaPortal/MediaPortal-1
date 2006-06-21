@@ -1882,6 +1882,10 @@
 		<value>windstill</value>
 	</string>
 	<string>
+		<id>558</id>
+		<value>Kein Wind</value>
+	</string>
+	<string>
 		<id>590</id>
 		<value>Übersicht</value>
 	</string>	

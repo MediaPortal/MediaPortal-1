@@ -1874,6 +1874,18 @@
 		<value>Fra {0} ved {1} {2}</value>
 	</string>
 	<string>
+		<id>556</id>
+		<value>variert</value>
+	</string>
+	<string>
+		<id>557</id>
+		<value>rolig</value>
+	</string>
+	<string>
+		<id>558</id>
+		<value>Ingen vind</value>
+	</string>
+	<string>
 		<id>590</id>
 		<value>S. 100</value>
 	</string>	
