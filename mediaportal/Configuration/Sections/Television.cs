@@ -271,7 +271,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbTurnOnTimeShift.AutoSize = true;
       this.cbTurnOnTimeShift.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbTurnOnTimeShift.Location = new System.Drawing.Point(19, 22);
+      this.cbTurnOnTimeShift.Location = new System.Drawing.Point(16, 32);
       this.cbTurnOnTimeShift.Name = "cbTurnOnTimeShift";
       this.cbTurnOnTimeShift.Size = new System.Drawing.Size(230, 17);
       this.cbTurnOnTimeShift.TabIndex = 3;
@@ -283,7 +283,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxTimeShiftBuffer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTimeShiftBuffer.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxTimeShiftBuffer.Location = new System.Drawing.Point(168, 68);
+      this.textBoxTimeShiftBuffer.Location = new System.Drawing.Point(168, 88);
       this.textBoxTimeShiftBuffer.Name = "textBoxTimeShiftBuffer";
       this.textBoxTimeShiftBuffer.Size = new System.Drawing.Size(288, 20);
       this.textBoxTimeShiftBuffer.TabIndex = 2;
@@ -291,7 +291,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label7
       // 
-      this.label7.Location = new System.Drawing.Point(16, 72);
+      this.label7.Location = new System.Drawing.Point(16, 92);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(136, 16);
       this.label7.TabIndex = 1;
@@ -301,7 +301,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbTurnOnTv.AutoSize = true;
       this.cbTurnOnTv.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbTurnOnTv.Location = new System.Drawing.Point(19, 45);
+      this.cbTurnOnTv.Location = new System.Drawing.Point(16, 56);
       this.cbTurnOnTv.Name = "cbTurnOnTv";
       this.cbTurnOnTv.Size = new System.Drawing.Size(206, 17);
       this.cbTurnOnTv.TabIndex = 0;
@@ -314,7 +314,7 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.byIndexCheckBox);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox3.Location = new System.Drawing.Point(3, 286);
+      this.groupBox3.Location = new System.Drawing.Point(0, 286);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(472, 53);
       this.groupBox3.TabIndex = 3;
