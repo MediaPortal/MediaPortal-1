@@ -221,10 +221,43 @@ namespace MediaPortal.Player
         MovieEnded(true);
       }
     }
+
     public override int Speed
     {
-      get { return 1; }
-      set { }
+      get 
+      {
+        if (m_state == PlayState.Init) return 1;
+        if (mediaCtrl == null) return 1;
+        double rate = 0;
+        mediaPos.get_Rate(out rate);
+        return (int)rate;
+      }
+      set {
+        if (mediaCtrl == null) return;
+        if (m_state != PlayState.Init)
+        {
+          // For Rewind, we receive a negative value, which needs to be converted:
+          // DX does not allow changing the rate to rewing, so we get the current position
+          // and go back as many seconds as received.
+          double position = 0.0;
+          if (value < 0)
+          {
+            mediaPos.get_CurrentPosition(out position);
+            position += value;
+            mediaPos.put_CurrentPosition(position);
+          }
+          else
+          {
+            try
+            {
+              mediaPos.put_Rate((double)value);
+            }
+            catch (Exception)
+            {
+            }
+          }
+        }
+      }
     }
 
     public override int Volume
