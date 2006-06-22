@@ -167,14 +167,14 @@ namespace MediaPortal.Configuration.Sections
       this.cbDeinterlace.Location = new System.Drawing.Point(168, 92);
       this.cbDeinterlace.Name = "cbDeinterlace";
       this.cbDeinterlace.Size = new System.Drawing.Size(288, 21);
-      this.cbDeinterlace.TabIndex = 7;
+      this.cbDeinterlace.TabIndex = 5;
       // 
       // label8
       // 
       this.label8.Location = new System.Drawing.Point(16, 96);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(96, 16);
-      this.label8.TabIndex = 6;
+      this.label8.TabIndex = 4;
       this.label8.Text = "Deinterlace mode:";
       // 
       // defaultZoomModeComboBox
@@ -193,14 +193,14 @@ namespace MediaPortal.Configuration.Sections
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 116);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
       this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
-      this.defaultZoomModeComboBox.TabIndex = 9;
+      this.defaultZoomModeComboBox.TabIndex = 7;
       // 
       // label6
       // 
       this.label6.Location = new System.Drawing.Point(16, 120);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(112, 16);
-      this.label6.TabIndex = 8;
+      this.label6.TabIndex = 6;
       this.label6.Text = "Default zoom mode:";
       // 
       // videoCodecComboBox
@@ -262,8 +262,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox4.Location = new System.Drawing.Point(0, 158);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(472, 122);
-      this.groupBox4.TabIndex = 2;
+      this.groupBox4.Size = new System.Drawing.Size(472, 114);
+      this.groupBox4.TabIndex = 1;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "Timeshifting";
       // 
@@ -271,10 +271,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.cbTurnOnTimeShift.AutoSize = true;
       this.cbTurnOnTimeShift.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbTurnOnTimeShift.Location = new System.Drawing.Point(16, 32);
+      this.cbTurnOnTimeShift.Location = new System.Drawing.Point(16, 48);
       this.cbTurnOnTimeShift.Name = "cbTurnOnTimeShift";
       this.cbTurnOnTimeShift.Size = new System.Drawing.Size(230, 17);
-      this.cbTurnOnTimeShift.TabIndex = 3;
+      this.cbTurnOnTimeShift.TabIndex = 1;
       this.cbTurnOnTimeShift.Text = "Auto turn timeshift on when entering My TV ";
       this.cbTurnOnTimeShift.UseVisualStyleBackColor = true;
       // 
@@ -283,25 +283,25 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxTimeShiftBuffer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxTimeShiftBuffer.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxTimeShiftBuffer.Location = new System.Drawing.Point(168, 88);
+      this.textBoxTimeShiftBuffer.Location = new System.Drawing.Point(168, 80);
       this.textBoxTimeShiftBuffer.Name = "textBoxTimeShiftBuffer";
       this.textBoxTimeShiftBuffer.Size = new System.Drawing.Size(288, 20);
-      this.textBoxTimeShiftBuffer.TabIndex = 2;
+      this.textBoxTimeShiftBuffer.TabIndex = 3;
       this.textBoxTimeShiftBuffer.Text = "30";
       // 
       // label7
       // 
-      this.label7.Location = new System.Drawing.Point(16, 92);
+      this.label7.Location = new System.Drawing.Point(16, 84);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(136, 16);
-      this.label7.TabIndex = 1;
+      this.label7.TabIndex = 2;
       this.label7.Text = "Timeshift buffer (minutes):";
       // 
       // cbTurnOnTv
       // 
       this.cbTurnOnTv.AutoSize = true;
       this.cbTurnOnTv.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbTurnOnTv.Location = new System.Drawing.Point(16, 56);
+      this.cbTurnOnTv.Location = new System.Drawing.Point(16, 24);
       this.cbTurnOnTv.Name = "cbTurnOnTv";
       this.cbTurnOnTv.Size = new System.Drawing.Size(206, 17);
       this.cbTurnOnTv.TabIndex = 0;
@@ -314,10 +314,10 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.byIndexCheckBox);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox3.Location = new System.Drawing.Point(0, 286);
+      this.groupBox3.Location = new System.Drawing.Point(0, 280);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(472, 53);
-      this.groupBox3.TabIndex = 3;
+      this.groupBox3.TabIndex = 2;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Channel Numeric Selection";
       // 
