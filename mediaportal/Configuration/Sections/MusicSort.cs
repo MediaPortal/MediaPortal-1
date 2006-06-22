@@ -38,9 +38,10 @@ namespace MediaPortal.Configuration.Sections
     private TextBox tbSortLeft;
 
     const string defaultTrackTag = "[%track%. ][%artist% - ][%title%]";
+    const string defaultFileTag = "[%filename%]";
     const string albumTrackTag = "[%track%. ][%artist% - ][%title%]";
-    string[] sortModes = { "Name", "Date", "Size", "Track", "Duration", "Title", "Artist", "Album", "Filename", "Rating" };
-    string[] defaultSortTags1 = { defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, albumTrackTag, defaultTrackTag, defaultTrackTag };
+    string[] sortModes =        { "Name",        "Date",           "Size",          "Track",         "Duration",      "Title",         "Artist",        "Album",       "Filename",     "Rating" };
+    string[] defaultSortTags1 = { defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag, albumTrackTag, defaultFileTag, defaultTrackTag };
     string[] defaultSortTags2 = { "%duration%", "%year%", "%filesize%", "%duration%", "%duration%", "%duration%", "%duration%", "%duration%", "%filesize%", "%rating%" };
 
     string[] sortTags1 = new string[20];
