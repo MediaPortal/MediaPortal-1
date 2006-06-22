@@ -159,7 +159,7 @@ namespace WindowPlugins.GUISettings
           //
           // Exclude cvs folder
           //
-          if (fileName.ToLower() != "cvs")
+          if ((fileName.ToLower() != "cvs") && (fileName.ToLower() != ".svn"))
           {
             if (fileName.Length > 0)
             {
@@ -264,6 +264,7 @@ namespace WindowPlugins.GUISettings
       GUILocalizeStrings.Clear();
       GUILocalizeStrings.Load(@"language\" + btnLanguage.SelectedLabel + @"\strings.xml");
       GUIWindowManager.OnResize();
+      GUIWindowManager.ActivateWindow(GetID); // without this you cannot change skins / lang any more..
       GUIControl.FocusControl(GetID, btnLanguage.GetID);
     }
   }
