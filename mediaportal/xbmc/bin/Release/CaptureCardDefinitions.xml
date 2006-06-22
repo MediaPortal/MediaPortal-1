@@ -13189,4 +13189,70 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV-USB2" capturename="WinTV USB Video" devid="vid_2040&amp;pid_4201&amp;mi_00">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="WinTV USB2 TVTuner"       checkdevice="true"/>
+        <filter cat="tvaudio"     name="WinTV USB2 TVAudio"       checkdevice="true"/>
+        <filter cat="crossbar"    name="WinTV USB2 Crossbar"      checkdevice="true"/>
+        <filter cat="capture"     name="WinTV USB2 Video"	checkdevice="true"/>
+        <filter cat="audcapture"  name="%soundcard%"            checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"         checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"         checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"              checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="audcapture" sourcepin="0" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"	      sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"	      sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="LifeView TV Walker Q DVB-T" capturename="USB 2.0 DVBT Digital Capture" devid="vid_10fd&amp;pid_0500">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"/>
+        <filter cat="tunerdevice"		name="USB 2.0 DVBT Digital Tuner"		checkdevice="true"/>
+        <filter cat="capture"			name="USB 2.0 DVBT Digital Capture"	checkdevice="true"/>
+      </filters>
+      <connections>
+		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Hauppauge WinTV USB" capturename="Hauppauge WinTV USB Pro Capture" devid="vid_0573&amp;pid_4d22">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="Hauppauge WinTV USB Pro Tuner (I)" 	checkdevice="true"/>
+        <filter cat="crossbar"		name="Hauppauge WinTV USB Pro Crossbar"		  checkdevice="true"/>
+        <filter cat="capture"		  name="Hauppauge WinTV USB Pro Capture"		  checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"						            checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"						            checkdevice="false"/>
+        <filter cat="mux"			    name="%mpegmux%"							              checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="4" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
