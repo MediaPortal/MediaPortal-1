@@ -1027,7 +1027,7 @@ namespace MediaPortal.GUI.TV
       dlg.SetHeading(142);//select time
       dlg.ShowQuickNumbers = false;
       //time
-      int no = 0;
+      //int no = 0;
       int hour, minute;
       for (hour = 0; hour <= 23; hour++)
       {
@@ -1041,15 +1041,12 @@ namespace MediaPortal.GUI.TV
           if (minute < 10) time = time + "0" + minute.ToString();
           else time += minute.ToString();
 
-          if (hour < 1) time = String.Format("{0} {1}", minute, GUILocalizeStrings.Get(3004));
-
+          //if (hour < 1) time = String.Format("{0} {1}", minute, GUILocalizeStrings.Get(3004));
           dlg.Add(time);
-
-          if (DateTime.Now.Hour <= hour && DateTime.Now.Minute <= minute)
-            dlg.SelectedLabel = no;
-          no++;
         }
       }
+      // pre-select the current time
+      dlg.SelectedLabel = (DateTime.Now.Hour * 12) + (Convert.ToInt16(DateTime.Now.Minute / 5)); 
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
 
