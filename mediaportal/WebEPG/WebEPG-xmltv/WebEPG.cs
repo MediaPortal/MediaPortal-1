@@ -99,7 +99,6 @@ namespace MediaPortal.EPG
 
       //TVProgram program;
       ArrayList programs;
-      ArrayList mergedPrograms;
       ArrayList channels = new ArrayList();
       MergeInfo[] mergedList = null;
       Hashtable mergedChannels = new Hashtable();
