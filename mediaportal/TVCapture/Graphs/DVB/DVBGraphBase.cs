@@ -2572,7 +2572,7 @@ namespace MediaPortal.TV.Recording
 
       if (SignalPresent())
       {
-        if (_refreshPmtTable && Network() != NetworkType.ATSC && _cardProperties.IsCISupported())
+        if (_refreshPmtTable && Network() != NetworkType.ATSC)
         {
           //FilterState state;
           //_mediaControl.GetState(50, out state);
@@ -2616,7 +2616,6 @@ namespace MediaPortal.TV.Recording
             Marshal.FreeCoTaskMem(pmtMem);
           }
         }
-        if (!_cardProperties.IsCISupported()) _refreshPmtTable = false;
         //_signalLostTimer = DateTime.Now;
       }
       ProcessSignal(5000);
