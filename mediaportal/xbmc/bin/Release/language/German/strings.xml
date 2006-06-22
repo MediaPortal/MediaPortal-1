@@ -295,7 +295,7 @@
 	</string>
 	<string>
 		<id>142</id>
-		<value>Zeit:</value>
+		<value>Aufnahmebeginn:</value>
 	</string>
 	<string>
 		<id>143</id>
@@ -2576,6 +2576,18 @@
     <string>
 	  <id>774</id>
       <value>Ende</value>
+  </string>  
+  <string>
+	  <id>780</id>
+    <value>Eingabemethode wählen</value>
+  </string>
+  <string>
+	  <id>781</id>
+    <value>Schnell</value>
+  </string>
+  <string>
+	  <id>782</id>
+    <value>Erweitert</value>
     </string> 
 	<string>
 		<id>800</id>

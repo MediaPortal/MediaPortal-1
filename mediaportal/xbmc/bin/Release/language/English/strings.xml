@@ -294,7 +294,7 @@
   </string>
   <string>
     <id>142</id>
-    <value>Time:</value>
+    <value>Start time:</value>
   </string>
   <string>
     <id>143</id>
@@ -2580,7 +2580,19 @@
   <string>
 	<id>774</id>
     <value>END</value>
-  </string>    
+  </string>  
+  <string>
+	  <id>780</id>
+    <value>Select scheduling method</value>
+  </string>
+  <string>
+	  <id>781</id>
+    <value>Quick record</value>
+  </string>
+  <string>
+	  <id>782</id>
+    <value>Advanced record</value>
+  </string>        
   <string>
     <id>800</id>
     <value>Starts with</value>
