@@ -955,8 +955,7 @@ namespace MediaPortal.GUI.TV
 
       dlg.Reset();
       dlg.SetHeading(GUILocalizeStrings.Get(891));  //Select TV Channel
-      List<TVChannel> channels = new List<TVChannel>();
-      TVDatabase.GetChannels(ref channels);
+      List<TVChannel> channels = GUITVHome.Navigator.CurrentGroup.TvChannels;
       foreach (TVChannel chan in channels)
       {
         GUIListItem item = new GUIListItem(chan.Name);
