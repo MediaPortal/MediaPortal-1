@@ -135,8 +135,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.groupBox1.Controls.Add(this.cbDeinterlace);
       this.groupBox1.Controls.Add(this.label8);
       this.groupBox1.Controls.Add(this.defaultZoomModeComboBox);
@@ -155,8 +155,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cbDeinterlace
       // 
-      this.cbDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbDeinterlace.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.cbDeinterlace.BorderColor = System.Drawing.Color.Empty;
       this.cbDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbDeinterlace.Items.AddRange(new object[] {
@@ -179,8 +179,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultZoomModeComboBox
       // 
-      this.defaultZoomModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultZoomModeComboBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.defaultZoomModeComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultZoomModeComboBox.Items.AddRange(new object[] {
@@ -205,8 +205,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // videoCodecComboBox
       // 
-      this.videoCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.videoCodecComboBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.videoCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.videoCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.videoCodecComboBox.Location = new System.Drawing.Point(168, 20);
@@ -232,8 +232,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioCodecComboBox
       // 
-      this.audioCodecComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioCodecComboBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.audioCodecComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioCodecComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioCodecComboBox.Location = new System.Drawing.Point(168, 44);
@@ -253,8 +253,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox4
       // 
-      this.groupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox4.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.groupBox4.Controls.Add(this.cbTurnOnTimeShift);
       this.groupBox4.Controls.Add(this.textBoxTimeShiftBuffer);
       this.groupBox4.Controls.Add(this.label7);
@@ -277,11 +277,12 @@ namespace MediaPortal.Configuration.Sections
       this.cbTurnOnTimeShift.TabIndex = 1;
       this.cbTurnOnTimeShift.Text = "Auto turn timeshift on when entering My TV ";
       this.cbTurnOnTimeShift.UseVisualStyleBackColor = true;
+      this.cbTurnOnTimeShift.CheckedChanged += new System.EventHandler(this.cbTurnOnTimeShift_CheckedChanged);
       // 
       // textBoxTimeShiftBuffer
       // 
-      this.textBoxTimeShiftBuffer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxTimeShiftBuffer.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.textBoxTimeShiftBuffer.BorderColor = System.Drawing.Color.Empty;
       this.textBoxTimeShiftBuffer.Location = new System.Drawing.Point(168, 80);
       this.textBoxTimeShiftBuffer.Name = "textBoxTimeShiftBuffer";
@@ -307,11 +308,12 @@ namespace MediaPortal.Configuration.Sections
       this.cbTurnOnTv.TabIndex = 0;
       this.cbTurnOnTv.Text = "Auto turn TV on when entering My TV ";
       this.cbTurnOnTv.UseVisualStyleBackColor = true;
+      this.cbTurnOnTv.CheckedChanged += new System.EventHandler(this.cbTurnOnTv_CheckedChanged);
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.groupBox3.Controls.Add(this.byIndexCheckBox);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(0, 280);
@@ -458,6 +460,18 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("mytv", "videocodec", videoCodecComboBox.Text);
 
       }
+    }
+
+    private void cbTurnOnTimeShift_CheckedChanged(object sender, EventArgs e)
+    {
+      if ( cbTurnOnTimeShift.Checked )
+        cbTurnOnTv.Checked = true;
+    }
+
+    private void cbTurnOnTv_CheckedChanged( object sender, EventArgs e )
+    {
+      if ( !cbTurnOnTv.Checked )
+        cbTurnOnTimeShift.Checked = false;
     }
 
   }
