@@ -13195,14 +13195,14 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"     name="WinTV USB2 TVTuner"       checkdevice="true"/>
-        <filter cat="tvaudio"     name="WinTV USB2 TVAudio"       checkdevice="true"/>
-        <filter cat="crossbar"    name="WinTV USB2 Crossbar"      checkdevice="true"/>
-        <filter cat="capture"     name="WinTV USB2 Video"	checkdevice="true"/>
-        <filter cat="audcapture"  name="%soundcard%"            checkdevice="true"/>
-        <filter cat="videncoder"	name="%videoencoder%"         checkdevice="false"/>
-        <filter cat="audencoder"	name="%audioencoder%"         checkdevice="false"/>
-        <filter cat="mux"         name="%mpegmux%"              checkdevice="false"/>
+        <filter cat="tvtuner"     name="WinTV USB2 TVTuner"   checkdevice="true"/>
+        <filter cat="tvaudio"     name="WinTV USB2 TVAudio"   checkdevice="true"/>
+        <filter cat="crossbar"    name="WinTV USB2 Crossbar"  checkdevice="true"/>
+        <filter cat="capture"     name="WinTV USB2 Video"	    checkdevice="true"/>
+        <filter cat="audcapture"  name="%soundcard%"          checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"       checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"       checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"            checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
@@ -13222,13 +13222,13 @@
     <tv>
       <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
       <filters>
-        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"		checkdevice="false"/>
-        <filter cat="tunerdevice"		name="USB 2.0 DVBT Digital Tuner"		checkdevice="true"/>
-        <filter cat="capture"			name="USB 2.0 DVBT Digital Capture"	checkdevice="true"/>
+        <filter cat="networkprovider"	name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"		  name="USB 2.0 DVBT Digital Tuner"		    checkdevice="true"/>
+        <filter cat="capture"			    name="USB 2.0 DVBT Digital Capture"	    checkdevice="true"/>
       </filters>
       <connections>
-		<connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
-		<connection sourcefilter="tunerdevice"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="networkprovider"	sourcepin="0" sinkfilter="tunerdevice"	sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"		  sourcepin="0" sinkfilter="capture"		  sinkpin="0"/>
       </connections>
     </tv>
   </capturecard>
@@ -13238,18 +13238,44 @@
     <tv>
       <interface cat="mux" video="" audio="" mpeg2="0"/>
       <filters>
-        <filter cat="tvtuner"		  name="Hauppauge WinTV USB Pro Tuner (I)" 	checkdevice="true"/>
-        <filter cat="crossbar"		name="Hauppauge WinTV USB Pro Crossbar"		  checkdevice="true"/>
-        <filter cat="capture"		  name="Hauppauge WinTV USB Pro Capture"		  checkdevice="true"/>
-        <filter cat="videncoder"	name="%videoencoder%"						            checkdevice="false"/>
-        <filter cat="audencoder"	name="%audioencoder%"						            checkdevice="false"/>
-        <filter cat="mux"			    name="%mpegmux%"							              checkdevice="false"/>
+        <filter cat="tvtuner"		  name="Hauppauge WinTV USB Pro Tuner (I)"  checkdevice="true"/>
+        <filter cat="crossbar"		name="Hauppauge WinTV USB Pro Crossbar"		checkdevice="true"/>
+        <filter cat="capture"		  name="Hauppauge WinTV USB Pro Capture"		checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"						          checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"						          checkdevice="false"/>
+        <filter cat="mux"			    name="%mpegmux%"							            checkdevice="false"/>
       </filters>
       <connections>
         <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
         <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
         <connection sourcefilter="capture"		sourcepin="4" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
+        <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Terratec Cinergy 250 TV" capturename="Cinergy 250 PCI BDA Analog Capture" devid="ven_1131&amp;dev_7133&amp;subsys_1160153b&amp;rev_d1">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"		  name="Cinergy 250 PCI BDA Analog TV Tuner"  checkdevice="true"/>
+        <filter cat="tvaudio"		  name="Cinergy 250 PCI BDA Analog TV Audio"	checkdevice="true"/>
+        <filter cat="crossbar"    name="Cinergy 250 PCI BDA Analog Xbar"	    checkdevice="true"/>
+        <filter cat="capture"		  name="Cinergy 250 PCI BDA Analog Capture"	  checkdevice="true"/>
+        <filter cat="videncoder"  name="%videoencoder%"			                  checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"			                  checkdevice="false"/>
+        <filter cat="mux"			    name="%mpegmux%"				                    checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"		sourcepin="1" sinkfilter="tvaudio"		sinkpin="0"/>
+        <connection sourcefilter="tvaudio"		sourcepin="0" sinkfilter="crossbar"		sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"		sourcepin="0" sinkfilter="capture"		sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
         <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
         <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
       </connections>
