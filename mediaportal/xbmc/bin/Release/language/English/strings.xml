@@ -2582,6 +2582,14 @@
     <value>END</value>
   </string>  
   <string>
+	  <id>775</id>
+    <value>Start TV in MyTV sections automatically</value>
+  </string>
+  <string>
+	  <id>776</id>
+    <value>Do not start / switch to TV automatically</value>
+  </string>    
+  <string>
 	  <id>780</id>
     <value>Select scheduling method</value>
   </string>
@@ -4402,8 +4410,84 @@
    <id>5925</id>
    <value>DVD pre-orders</value>
  </string>
- 
+  <string>
+    <id>6000</id>
+    <value>Video Codec</value>
+  </string>
+  <string>
+    <id>6001</id>
+    <value>Audio Codec</value>
+  </string>
+  <string>
+    <id>6002</id>
+    <value>Audio Renderer</value>
+  </string>
+  <string>
+    <id>6003</id>
+    <value>Deinterlacing</value>
+  </string>  
+  <string>
+    <id>6004</id>
+    <value>Aspect ratio</value>
+  </string>
+  <string>
+    <id>6005</id>
+    <value>Timeshift buffer</value>
+  </string>
+  <string>
+    <id>6006</id>
+    <value>Auto turn on TV</value>
+  </string>
+  <string>
+    <id>6007</id>
+    <value>Recording options</value>
+  </string>  
+  <string>
+    <id>6008</id>
+    <value>Channel sorting</value>
+  </string>  
+  <string>
+    <id>6009</id>
+    <value>DVB Guide</value>
+  </string>
+  <string>
+    <id>6010</id>
+    <value>XMLTV EPG grabber</value>
+  </string> 
+  <string>
+    <id>6011</id>
+    <value>DVB EPG:</value>
+  </string>  
+  <string>
+    <id>6012</id>
+    <value>Update TVGuide from the following DVB channels:</value>
+  </string>
+  <string>
+    <id>6013</id>
+    <value>Manual xmltv</value>
+  </string>
+  <string>
+    <id>6014</id>
+    <value>TV setup</value>
+  </string>
 
+  <string>
+    <id>6016</id>
+    <value>Auto delete recordings after watching them</value>
+  </string>
+  <string>
+    <id>6017</id>
+    <value>Add recordings to movie database</value>
+  </string>
+  <string>
+    <id>6018</id>
+    <value>minutes before program starts</value>
+  </string>
+  <string>
+    <id>6019</id>
+    <value>minutes after program ends</value>
+  </string>                              
+ 
   <!-- End of My Trailers Strings -->
   <string Prefix="My ">
     <id>8000</id>

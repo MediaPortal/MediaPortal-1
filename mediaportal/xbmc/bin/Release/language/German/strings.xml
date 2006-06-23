@@ -2576,6 +2576,14 @@
     <string>
 	  <id>774</id>
       <value>Ende</value>
+</string>  
+  <string>
+	  <id>775</id>
+    <value>Starte TV automatisch (z.B. in EPG-Ansicht)</value>
+  </string>
+  <string>
+	  <id>776</id>
+    <value>Starte TV nicht automatisch</value>
   </string>  
   <string>
 	  <id>780</id>
@@ -4373,9 +4381,88 @@
 	</string>
 	<string>
 		<id>5925</id>
-		<value>DVD Vorbestellungen</value>
+   <value>DVD Vorbestellungen</value>
+ </string>
+  <string>
+    <id>6000</id>
+    <value>Video Codec</value>
+  </string>
+  <string>
+    <id>6001</id>
+    <value>Audio Codec</value>
+  </string>
+  <string>
+    <id>6002</id>
+    <value>Audio Gerät</value>
+  </string>
+  <string>
+    <id>6003</id>
+    <value>Kammfilter</value>
 	</string>
 	<string>
+    <id>6004</id>
+    <value>Seitenverhältnis</value>
+  </string>
+  <string>
+    <id>6005</id>
+    <value>Timeshift-Speicher</value>
+  </string>
+  <string>
+    <id>6006</id>
+    <value>TV-Autostart</value>
+  </string>
+  <string>
+    <id>6007</id>
+    <value>Aufnahme-Optionen</value>
+  </string>  
+  <string>
+    <id>6008</id>
+    <value>Kanäle sortieren</value>
+  </string>  
+  <string>
+    <id>6009</id>
+    <value>DVB-EPG</value>
+  </string>
+  <string>
+    <id>6010</id>
+    <value>Internet-EPG</value>
+  </string> 
+  <string>
+    <id>6011</id>
+    <value>DVB-EPG:</value>
+  </string> 
+  <string>
+    <id>6012</id>
+    <value>TV-Programm folgender DVB-Kanäle empfangen:</value>
+  </string>
+  <string>
+    <id>6013</id>
+    <value>xmltv Zuordnung</value>
+  </string>
+  <string>
+    <id>6014</id>
+    <value>TV-Konfiguration</value>
+  </string>
+
+  <string>
+    <id>6016</id>
+    <value>Aufnahmen nach dem Sehen löschen</value>
+  </string>
+  <string>
+    <id>6017</id>
+    <value>Aufnahmen zur Filmdatenbank hinzufügen</value>
+  </string>
+  <string>
+    <id>6018</id>
+    <value>Minuten bevor das Programm startet</value>
+  </string>
+  <string>
+    <id>6019</id>
+    <value>Minuten nachdem das Programm endet</value>
+  </string>                
+
+  <!-- End of My Trailers Strings -->
+  <string>
 		<id>8000</id>
 		<value>E-Mail</value>
 	</string>

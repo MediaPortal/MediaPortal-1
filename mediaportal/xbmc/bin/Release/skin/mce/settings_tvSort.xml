@@ -32,7 +32,7 @@
          <id>1</id>
          <posX>32</posX>
          <posY>96</posY>
-         <label>TV Setup</label>
+         <label>6008</label>
          <font>font18</font>
       </control>
       <control>
@@ -40,7 +40,7 @@
          <id>24</id>
          <posX>56</posX>
          <posY>151</posY>
-         <label>TV Group</label>
+         <label>971</label>
          <ondown>25</ondown>
          <onup>24</onup>
          <onleft>10</onleft>

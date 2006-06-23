@@ -34,7 +34,7 @@
          <id>1</id>
          <posX>32</posX>
          <posY>96</posY>
-         <label>TV Setup</label>
+         <label>6011</label>
          <font>font18</font>
       </control>
      <control>
@@ -43,7 +43,7 @@
        <id>1</id>
        <posX>260</posX>
        <posY>96</posY>
-       <label>Update TVGuide from the following DVB channels:</label>
+       <label>6012</label>
      </control>
       <control>
          <type>group</type>

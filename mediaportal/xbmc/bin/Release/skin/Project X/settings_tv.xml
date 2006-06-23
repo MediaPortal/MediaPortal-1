@@ -14,56 +14,62 @@
 			<control>
 				<type>button</type>
 				<id>24</id>
-				<label>Video Codec</label>
+				<label>6000</label>
 			</control>
 			<control>
 				<type>button</type>
 				<id>25</id>
-				<label>Audio Codec</label>
+				<label>6001</label>
 			</control>
 			<control>
 				<type>button</type>
 				<id>33</id>
-				<label>Audio Renderer</label>
+				<label>6002</label>
 			</control>
 			<control>
 				<type>button</type>
 				<id>27</id>
-				<label>Deinterlacing</label>
+				<label>6003</label>
 			</control>
 			<control>
 				<type>button</type>
 				<id>28</id>
-				<label>Aspect ratio</label>
+				<label>6004</label>
 			</control>
 			<control>
 				<type>button</type>
 				<id>29</id>
-				<label>Timeshift buffer</label>
+				<label>6005</label>
 			</control>
 			<control>
 				<type>button</type>
 				<id>30</id>
-				<label>Auto turn on TV</label>
+				<label>6006</label>
 			</control>
 			<control>
 				<type>button</type>
 				<id>31</id>
-				<label>Recording options</label>
+				<label>6007</label>
 				<hyperlink>701</hyperlink>
 			</control>
 			<control>
 				<type>button</type>
 				<id>32</id>
-				<label>Channel sorting</label>
+				<label>6008</label>
 				<hyperlink>702</hyperlink>
 			</control>
-			<control>
-				<type>button</type>
-				<id>34</id>
-				<label>EPG</label>
-				<hyperlink>706</hyperlink>
-			</control>
+                  <control>
+                        <type>button</type>
+                        <id>34</id>
+                        <label>6009</label>
+                        <hyperlink>706</hyperlink>
+                  </control>
+                  <control>
+                        <type>button</type>
+                        <id>35</id>
+                        <label>6010</label>
+                        <hyperlink>707</hyperlink>
+                  </control>
 		</control>
 	</controls>
 </window>

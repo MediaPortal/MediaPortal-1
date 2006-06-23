@@ -7,17 +7,16 @@
 
    <controls>
     	<import>common.settings.xml</import>
-
-  		<control>
-  			<type>group</type>
-  			<layout>StackLayout</layout>
-        <posX>55</posX>
-        <posY>115</posY>
-  			<width>180</width>
+  	<control>
+  		<type>group</type>
+  		<layout>StackLayout</layout>
+	        <posX>55</posX>
+        	<posY>115</posY>
+  		<width>180</width>
         <control>
            <type>button</type>
            <id>24</id>
-           <label>TV Group</label>
+           <label>971</label>
            <ondown>25</ondown>
            <onup>24</onup>
            <onleft>10</onleft>

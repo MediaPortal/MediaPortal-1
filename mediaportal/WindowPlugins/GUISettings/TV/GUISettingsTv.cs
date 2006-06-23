@@ -179,9 +179,9 @@ namespace WindowPlugins.GUISettings.TV
 				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
 				int selected=0;
 				int count=0;
-				for (int i=30; i <=90; i+=30)
+				for (int i=30; i <=180; i+=30)
 				{
-					dlg.Add( String.Format("{0} mins", i.ToString() ) ) ;
+					dlg.Add( String.Format("{0} min", i.ToString() ) ) ;
 					if (i==buflen)
 					{
 						selected=count;
@@ -240,8 +240,8 @@ namespace WindowPlugins.GUISettings.TV
 			{
 				dlg.Reset();
 				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
-				dlg.Add("Dont automaticly turn on tv when entering My TV");
-				dlg.Add("Automaticly turn on tv when entering My TV");
+        dlg.Add(GUILocalizeStrings.Get(775));       //Start TV in MyTV sections automatically
+        dlg.Add(GUILocalizeStrings.Get(776));       //Do not start / switch to TV automatically
 				dlg.SelectedLabel=autoTurnOn?1:0;
 				dlg.DoModal(GetID);
 				if (dlg.SelectedLabel<0) return;
