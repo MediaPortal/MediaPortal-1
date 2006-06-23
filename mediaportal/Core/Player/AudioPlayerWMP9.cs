@@ -714,12 +714,19 @@ namespace MediaPortal.Player
         if (_wmp10Player == null) return;
         if (_graphState != PlayState.Init)
         {
-          try
+          if (value < 0)
           {
-            _wmp10Player.settings.rate = (double)value;
+            _wmp10Player.Ctlcontrols.currentPosition += (double)value;
           }
-          catch (Exception)
+          else
           {
+            try
+            {
+              _wmp10Player.settings.rate = (double)value;
+            }
+            catch (Exception)
+            {
+            }
           }
         }
       }
