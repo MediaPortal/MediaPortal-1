@@ -44,79 +44,80 @@ namespace DShowNET.Helper
 	///   Filter mySelectedFilter = new Filter( savedMonikerString );
 	///  </div></code>
 	/// </remarks>
-	public class Filter : IComparable 
+	public class Filter : IComparable
 	{
 		/// <summary> Human-readable name of the filter </summary>
-		string _name=String.Empty;
-    bool _nameResolved = false;
+		string _name = String.Empty;
+		bool _nameResolved = false;
 
 		/// <summary> Unique string referencing this filter. This string can be used to recreate this filter. </summary>
 		public string MonikerString;
-
+		/// <summary> getAnyMoniker take very long time, so use a cached value </summary>
+		static IMoniker[] mon = null;
 
 		/// <summary> Create a new filter from its moniker string. </summary>
-		public Filter( string monikerString )
+		public Filter(string monikerString)
 		{
 			MonikerString = monikerString;
 		}
 
 		/// <summary> Create a new filter from its moniker </summary>
-    internal Filter(IMoniker moniker)
+		internal Filter(IMoniker moniker)
 		{
-			MonikerString = getMonikerString( moniker );
+			MonikerString = getMonikerString(moniker);
 		}
-    public string Name
-    {
-      get
-      {
-        if (_nameResolved) return _name;
-        _name = getName(MonikerString);
-        return _name;
-      }
-    }
-    public void ResolveName()
-    {
-      if (_nameResolved) return;
-      _name = getName(MonikerString);
-    }
+		public string Name
+		{
+			get
+			{
+				if (_nameResolved) return _name;
+				_name = getName(MonikerString);
+				return _name;
+			}
+		}
+		public void ResolveName()
+		{
+			if (_nameResolved) return;
+			_name = getName(MonikerString);
+		}
 		/// <summary> Retrieve the a moniker's display name (i.e. it's unique string) </summary>
-    protected string getMonikerString(IMoniker moniker)
+		protected string getMonikerString(IMoniker moniker)
 		{
 			string s;
-			moniker.GetDisplayName( null, null, out s );
-			return( s );
+			moniker.GetDisplayName(null, null, out s);
+			return (s);
 		}
 
 		/// <summary> Retrieve the human-readable name of the filter </summary>
-    protected string getName(IMoniker moniker)
+		protected string getName(IMoniker moniker)
 		{
 			object bagObj = null;
 			IPropertyBag bag = null;
-			try 
+			try
 			{
-				Guid bagId = typeof( IPropertyBag ).GUID;
-				moniker.BindToStorage( null, null, ref bagId, out bagObj );
-				bag = (IPropertyBag) bagObj;
+				Guid bagId = typeof(IPropertyBag).GUID;
+				moniker.BindToStorage(null, null, ref bagId, out bagObj);
+				bag = (IPropertyBag)bagObj;
 				object val = "";
-				int hr = bag.Read( "FriendlyName", out val, null );
-				if( hr != 0 )
-					Marshal.ThrowExceptionForHR( hr );
+				int hr = bag.Read("FriendlyName", out val, null);
+				if (hr != 0)
+					Marshal.ThrowExceptionForHR(hr);
 				string ret = val as string;
-				if( (ret == null) || (ret.Length < 1) )
-					throw new NotImplementedException( "Device FriendlyName" );
-				return( ret );
+				if ((ret == null) || (ret.Length < 1))
+					throw new NotImplementedException("Device FriendlyName");
+				return (ret);
 			}
-			catch( Exception )
+			catch (Exception)
 			{
-				return( "" );
+				return ("");
 			}
 			finally
 			{
 				bag = null;
-				if( bagObj != null )
-					Marshal.ReleaseComObject( bagObj ); bagObj = null;
+				if (bagObj != null)
+					Marshal.ReleaseComObject(bagObj); bagObj = null;
 
-        _nameResolved = true;
+				_nameResolved = true;
 			}
 		}
 
@@ -124,21 +125,19 @@ namespace DShowNET.Helper
 		protected string getName(string monikerString)
 		{
 			IMoniker parser = null;
-      IMoniker moniker = null;
+			IMoniker moniker = null;
 			try
 			{
 				parser = getAnyMoniker();
 				int eaten;
-				parser.ParseDisplayName( null, null, monikerString, out eaten, out moniker );
-				return( getName( parser ) );
+				parser.ParseDisplayName(null, null, monikerString, out eaten, out moniker);
+				return (getName(parser));
 			}
 			finally
 			{
-				if ( parser != null )
-					Marshal.ReleaseComObject( parser ); parser = null;
-				if ( moniker != null )
-					Marshal.ReleaseComObject( moniker ); moniker = null;
-        _nameResolved = true;
+				if (moniker != null)
+					Marshal.ReleaseComObject(moniker); moniker = null;
+				_nameResolved = true;
 			}
 		}
 
@@ -153,58 +152,61 @@ namespace DShowNET.Helper
 		///  This assumes there is at least one video compressor filter
 		///  installed on the system.
 		/// </summary>
-    protected IMoniker getAnyMoniker()
+		protected IMoniker getAnyMoniker()
 		{
-			Guid				category = FilterCategory.VideoCompressorCategory;
-			int					hr;
-			object				comObj = null;
-			ICreateDevEnum		enumDev = null;
-      IEnumMoniker enumMon = null;
-      IMoniker[] mon = new IMoniker[1];
+			Guid category = FilterCategory.VideoCompressorCategory;
+			int hr;
+			object comObj = null;
+			ICreateDevEnum enumDev = null;
+			IEnumMoniker enumMon = null;
 
-			try 
+			if (mon != null)
+				return mon[0];
+
+			mon = new IMoniker[1];
+
+			try
 			{
 				// Get the system device enumerator
-				Type srvType = Type.GetTypeFromCLSID( ClassId.SystemDeviceEnum );
-				if( srvType == null )
-					throw new NotImplementedException( "System Device Enumerator" );
-				comObj = Activator.CreateInstance( srvType );
-				enumDev = (ICreateDevEnum) comObj;
+				Type srvType = Type.GetTypeFromCLSID(ClassId.SystemDeviceEnum);
+				if (srvType == null)
+					throw new NotImplementedException("System Device Enumerator");
+				comObj = Activator.CreateInstance(srvType);
+				enumDev = (ICreateDevEnum)comObj;
 
 				// Create an enumerator to find filters in category
-				hr = enumDev.CreateClassEnumerator(  category, out enumMon, 0 );
-				if( hr != 0 )
-					throw new NotSupportedException( "No devices of the category" );
+				hr = enumDev.CreateClassEnumerator(category, out enumMon, 0);
+				if (hr != 0)
+					throw new NotSupportedException("No devices of the category");
 
 				// Get first filter
-        IntPtr f= IntPtr.Zero;
-				hr = enumMon.Next( 1, mon,   f );
-				if( (hr != 0) )
+				IntPtr f = IntPtr.Zero;
+				hr = enumMon.Next(1, mon, f);
+				if ((hr != 0))
 					mon[0] = null;
 
-        return (mon[0]);
+				return (mon[0]);
 			}
 			finally
 			{
 				enumDev = null;
-				if( enumMon != null )
-					Marshal.ReleaseComObject( enumMon ); enumMon = null;
-				if( comObj != null )
-					Marshal.ReleaseComObject( comObj ); comObj = null;
+				if (enumMon != null)
+					Marshal.ReleaseComObject(enumMon); enumMon = null;
+				if (comObj != null)
+					Marshal.ReleaseComObject(comObj); comObj = null;
 			}
 		}
-	
+
 		/// <summary>
 		///  Compares the current instance with another object of 
 		///  the same type.
 		/// </summary>
 		public int CompareTo(object obj)
 		{
-			if ( obj == null )
-				return( 1 );
-			Filter f = (Filter) obj;
-			return( this.Name.CompareTo( f.Name ) );
+			if (obj == null)
+				return (1);
+			Filter f = (Filter)obj;
+			return (this.Name.CompareTo(f.Name));
 		}
-
 	}
 }
