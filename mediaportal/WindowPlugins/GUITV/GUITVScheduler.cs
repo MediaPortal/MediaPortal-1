@@ -1045,11 +1045,13 @@ namespace MediaPortal.GUI.TV
       dlg.ShowQuickNumbers = false;
       //time
       //int no = 0;
-      int hour, minute;
+      int hour, minute, steps;
+      if ( isQuickRecord ) steps = 15;
+      else steps = 5;
       dlg.Add("00:00");
       for (hour = 0; hour <= 23; hour++)
       {
-        for (minute = 0; minute < 60; minute += 15)
+        for (minute = 0; minute < 60; minute += steps)
         {
           if (hour == 0 && minute == 0) continue;
           string time = "";
@@ -1064,11 +1066,11 @@ namespace MediaPortal.GUI.TV
         }
       }
       // pre-select the current time
-      dlg.SelectedLabel = (DateTime.Now.Hour * 4) + (Convert.ToInt16(DateTime.Now.Minute / 15)); 
+      dlg.SelectedLabel = (DateTime.Now.Hour * (60 / steps)) + (Convert.ToInt16(DateTime.Now.Minute / steps)); 
       dlg.DoModal(GetID);
       if (dlg.SelectedLabel == -1) return;
 
-      int mins = (dlg.SelectedLabel) * 15;
+      int mins = (dlg.SelectedLabel) * steps;
       hour = (mins) / 60;
       minute = ((mins) % 60);
 
