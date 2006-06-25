@@ -1842,7 +1842,7 @@ namespace MediaPortal.TV.Recording
               Marshal.ReleaseComObject(myATSCTuneRequest);
               Marshal.ReleaseComObject(newTuneRequest);
               Marshal.ReleaseComObject(myLocator);
-              //Marshal.ReleaseComObject(myTuner.TuneRequest);
+              Marshal.ReleaseComObject(myTuner.TuneRequest);
 
             }
             break;
@@ -1911,7 +1911,7 @@ namespace MediaPortal.TV.Recording
               Marshal.ReleaseComObject(myTuneRequest);
               Marshal.ReleaseComObject(newTuneRequest);
               Marshal.ReleaseComObject(myLocator);
-              //Marshal.ReleaseComObject(myTuner.TuneRequest);
+              Marshal.ReleaseComObject(myTuner.TuneRequest);
             } break;
 
           case NetworkType.DVBS:
@@ -1987,7 +1987,7 @@ namespace MediaPortal.TV.Recording
               Marshal.ReleaseComObject(newTuneRequest);
               Marshal.ReleaseComObject(myLocator);
               Marshal.ReleaseComObject(dvbSpace);
-              //Marshal.ReleaseComObject(myTuner.TuneRequest);
+              Marshal.ReleaseComObject(myTuner.TuneRequest);
             }
             break;
 
@@ -2048,7 +2048,7 @@ namespace MediaPortal.TV.Recording
               Marshal.ReleaseComObject(myTuneRequest);
               Marshal.ReleaseComObject(newTuneRequest);
               Marshal.ReleaseComObject(myLocator);
-              //Marshal.ReleaseComObject(myTuner.TuneRequest);
+              Marshal.ReleaseComObject(myTuner.TuneRequest);
             } break;
         }
       }
