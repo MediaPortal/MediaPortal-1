@@ -5464,4 +5464,110 @@
 	<id>10104</id>
 	<value>Mini EPG</value>
 	</string>
+	<string>
+		<id>556</id>
+		<value>vario</value>
+	</string>
+	<string>
+		<id>557</id>
+		<value>calmo</value>
+	</string>
+	<string>
+		<id>558</id>
+		<value>Vento assente</value>
+	</string>
+	<string>
+		<id>775</id>
+		<value>Avvio TV in sezioni MyTV automatico</value>
+	</string>
+	<string>
+		<id>776</id>
+		<value>Non avviare / selezionare la TV automaticamente</value>
+	</string>
+	<string>
+		<id>780</id>
+		<value>Seleziona metodo programmazione</value>
+	</string>
+	<string>
+		<id>781</id>
+		<value>Registrazione veloce</value>
+	</string>
+	<string>
+		<id>782</id>
+		<value>Registrazione avanzata</value>
+	</string>
+	<string>
+		<id>6000</id>
+		<value>Codec Video</value>
+	<string>
+		<id>6001</id>
+		<value>Codec audio</value>
+	</string>
+	<string>
+		<id>6002</id>
+		<value>Renderer audio</value>
+	</string>
+	<string>
+		<id>6003</id>
+		<value>Deinterlacciamento</value>
+	</string>
+	<string>
+		<id>6004</id>
+		<value>Aspetto</value>
+	</string>
+	<string>
+		<id>6005</id>
+		<value>Buffer pausa digitale</value>
+	</string>
+	<string>
+		<id>6006</id>
+		<value>Accendi automaticamente TV</value>
+	</string>
+	<string>
+		<id>6007</id>
+		<value>Opzioni registrazione</value>
+	</string>
+	<string>
+		<id>6008</id>
+		<value>Ordinamento canali</value>
+	</string>
+	<string>
+		<id>6009</id>
+		<value>Guida DVB</value>
+	</string>
+	<string>
+		<id>6010</id>
+		<value>Grabber EPG via XMLTV</value>
+	</string>
+	<string>
+		<id>6011</id>
+		<value>EPG DVB:</value>
+	</string>
+	<string>
+		<id>6012</id>
+		<value>Aggiornamento Guida TV dai seguenti canali DVB:</value>
+	<string>
+		<id>6013</id>
+		<value>XMLTV manuale</value>
+	</string>	
+	<string>
+		<id>6014</id>
+		<value>Setup TV</value>
+	</string>
+	<string>
+		<id>6016</id>
+		<value>Cancellazione automatica registrazioni quando viste</value>
+	</string>
+	<string>
+		<id>6017</id>
+		<value>Inserisci registrazioni nel database filmati</value>
+	</string>
+	<string>
+		<id>6018</id>
+		<value>minuti prima dell'inizio del programma</value>
+	</string>
+	<string>
+		<id>6019</id>
+		<value>minuti dopo il termine del programma</value>
+	</string>
 </strings>
