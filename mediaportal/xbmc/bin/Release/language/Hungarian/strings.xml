@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<!--  Hungarian Language file updated by Sentinel (Helli Gábor) 2006.06.21.-->
+<!--  Hungarian Language file updated by Sentinel (Helli Gábor) 2006.06.29.-->
 <strings>
 	<characters>512</characters>
 	<string>
@@ -584,7 +584,7 @@
 	</string>
 	<string>
 		<id>214</id>
-		<value>Képernyő Kalib.</value>
+		<value>Képernyő Kalibrálás</value>
 	</string>
 	<string>
 		<id>215</id>
@@ -1556,7 +1556,7 @@
 	</string>
 	<string>
 		<id>460</id>
-		<value>Audio Stream</value>
+		<value>Audió sáv</value>
 	</string>
 	<string>
 		<id>461</id>
@@ -3300,7 +3300,7 @@
 	</string>
 	<string>
 		<id>1445</id>
-		<value>Utólagos felvétel</value>
+		<value>Utólagos rögzítés</value>
 	</string>
 	<string>
 		<id>1446</id>
@@ -4276,7 +4276,7 @@
 	</string>
 	<string>
 		<id>13008</id>
-		<value>Írás felismerése</value>
+		<value>Ken Burns effektus</value>
 	</string>
 	<string>
 		<id>13009</id>
@@ -4288,7 +4288,7 @@
 	</string>
 	<string>
 		<id>13011</id>
-		<value>Írási sebesség felismerése</value>
+		<value>Ken Burns sebesség</value>
 	</string>
 	<string>
 		<id>13012</id>
@@ -5519,6 +5519,102 @@
 	<value>Mini EPG</value>
   </string>
 
+  <string>
+	  <id>775</id>
+    <value>Automatikus TV a Televízió menűben</value>
+  </string>
+  <string>
+	  <id>776</id>
+    <value>Nincs automatikus TV a Televízió menűben</value>
+  </string>    
+  <string>
+	  <id>780</id>
+    <value>válasz ütemezési módot</value>
+  </string>
+  <string>
+	  <id>781</id>
+    <value>Gyors rögzítés</value>
+  </string>
+  <string>
+	  <id>782</id>
+    <value>Fejlett rögzítés</value>
+  </string> 
+ <string>
+    <id>6000</id>
+    <value>Videó kódek</value>
+  </string>
+  <string>
+    <id>6001</id>
+    <value>Audió kódek</value>
+  </string>
+  <string>
+    <id>6002</id>
+    <value>Audio Renderelő</value>
+  </string>
+  <string>
+    <id>6003</id>
+    <value>Deinterlacing</value>
+  </string>  
+  <string>
+    <id>6004</id>
+    <value>Képarány</value>
+  </string>
+  <string>
+    <id>6005</id>
+    <value>Időcsúsztatás buffer</value>
+  </string>
+  <string>
+    <id>6006</id>
+    <value>Automatikus TV be</value>
+  </string>
+  <string>
+    <id>6007</id>
+    <value>Rögzítési beállítások</value>
+  </string>  
+  <string>
+    <id>6008</id>
+    <value>Csatorna rendezés</value>
+  </string>  
+  <string>
+    <id>6009</id>
+    <value>DVB Műsorfüzet</value>
+  </string>
+  <string>
+    <id>6010</id>
+    <value>XMLTV leszedő</value>
+  </string> 
+  <string>
+    <id>6011</id>
+    <value>DVB EPG:</value>
+  </string>  
+  <string>
+    <id>6012</id>
+    <value>TV műsorfüzet frissítése a következő DVB csatornákról:</value>
+  </string>
+  <string>
+    <id>6013</id>
+    <value>Manuális xmltv</value>
+  </string>
+  <string>
+    <id>6014</id>
+    <value>TV beállítások</value>
+  </string>
+  <string>
+    <id>6016</id>
+    <value>Felvételek automatikus törlése megtekintés után</value>
+  </string>
+  <string>
+    <id>6017</id>
+    <value>Felvételek hozzáadása a videó adatbázishoz</value>
+  </string>
+  <string>
+    <id>6018</id>
+    <value>perccel a műsor kezdete előtt</value>
+  </string>
+  <string>
+    <id>6019</id>
+    <value>perccel a műsor vége után</value>
+  </string>                   
 
 </strings>
 
