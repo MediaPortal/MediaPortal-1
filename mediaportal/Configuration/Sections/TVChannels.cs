@@ -870,8 +870,11 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void listViewTvChannels_DoubleClick(object sender, System.EventArgs e)
     {
-      listViewTvChannels.SelectedItems[0].Checked = !listViewTvChannels.SelectedItems[0].Checked;
-      buttonEditChannel_Click(sender, e);
+      if (listViewTvChannels.SelectedItems.Count > 0)
+      {
+        listViewTvChannels.SelectedItems[0].Checked = !listViewTvChannels.SelectedItems[0].Checked;
+        buttonEditChannel_Click(sender, e);
+      }
     }
 
     private void buttonChannelUp_Click(object sender, System.EventArgs e)
