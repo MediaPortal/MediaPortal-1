@@ -24,19 +24,19 @@ using System.Xml;
 using System.IO;
 using System.Net;
 using System.Web;
-//using MediaPortal.Webepg.GUI.Library;
+using mshtml;
+using SHDocVw;
 
 namespace MediaPortal.Utils.Web
 {
   public class HTMLPage
   {
-		HTTPTransaction Page = new HTTPTransaction();
-		string _strPageHead = string.Empty;
+    string _strPageHead = string.Empty;
     string _strPageSource = string.Empty;
-		string _defaultEncode = "iso-8859-1";
+    string _defaultEncode = "iso-8859-1";
     string _pageEncodingMessage = string.Empty;
-		string _Encoding = string.Empty;
-		string _Error;
+    string _Encoding = string.Empty;
+    string _Error;
 
     public HTMLPage()
     {
@@ -48,139 +48,178 @@ namespace MediaPortal.Utils.Web
     }
 
     public HTMLPage(HTTPRequest page, string encoding)
-		{
-			_Encoding = encoding;
-			LoadPage(page);
-		}
+    {
+      _Encoding = encoding;
+      LoadPage(page);
+    }
 
-		public string Encoding
-		{
-			get { return _Encoding;}
-			set { _Encoding = value;}
-		}
+    public string Encoding
+    {
+      get { return _Encoding; }
+      set { _Encoding = value; }
+    }
 
     public string PageEncodingMessage
     {
       get { return _pageEncodingMessage; }
     }
 
-		public string Error
-		{
+    public string Error
+    {
       get { return _Error; }
-		}
+    }
 
     public bool LoadPage(HTTPRequest page)
-		{
-			if(HTMLCache.Initialised)
-			{
-				if(HTMLCache.LoadPage(page.Uri))
-				{
-					_strPageSource = HTMLCache.GetPage();
-					return true;
-				}
-			}
-
-			Encoding encode;
-			string strEncode = _defaultEncode;
-
-			if(Page.HTTPGet(page))
-			{
-				byte[] pageData = Page.GetData();
-				int i;
-
-				if(_Encoding != "")
-				{
-					strEncode = _Encoding;
-          _pageEncodingMessage = "Forced: " + _Encoding;
-				}
-				else
-				{
-					encode = System.Text.Encoding.GetEncoding(_defaultEncode);
-					_strPageSource = encode.GetString(pageData);
-                    int headEnd;
-                    if ((headEnd = _strPageSource.ToLower().IndexOf("</head")) != -1)
-                    {
-                        if ((i = _strPageSource.ToLower().IndexOf("charset", 0, headEnd)) != -1)
-                        {
-                            strEncode = "";
-                            i += 8;
-                            for (; i < _strPageSource.Length && _strPageSource[i] != '\"'; i++)
-                                strEncode += _strPageSource[i];
-                            _Encoding = strEncode;
-                        }
-
-                        if (strEncode == "")
-                        {
-                          strEncode = _defaultEncode;
-                          _pageEncodingMessage = "Default: " + _defaultEncode;
-                        }
-                        else
-                        {
-                          _pageEncodingMessage = strEncode;
-                        }
-                    }
-				}
-
-				// Encoding: depends on selected page
-				if(_strPageSource == "" || strEncode.ToLower() != _defaultEncode)
-				{
-                    try
-                    { 
-                        encode = System.Text.Encoding.GetEncoding(strEncode);
-                        _strPageSource = encode.GetString(pageData);
-                    }
-                    catch(System.ArgumentException)
-                    {
-                    }
-				}
-
-				if(HTMLCache.Initialised)
-					HTMLCache.SavePage(page.Uri, _strPageSource);
-
-				return true;
-			}
-			_Error = Page.GetError();
-			return false;
-        }
-
-        public string GetPage()
+    {
+      if (HTMLCache.Initialised)
+      {
+        if (HTMLCache.LoadPage(page.Uri))
         {
-            return _strPageSource;
+          _strPageSource = HTMLCache.GetPage();
+          return true;
         }
+      }
 
-        public string GetBody()
-        {
-            //return _strPageSource.Substring(_startIndex, _endIndex - _startIndex);
-            //try
-            //{
-            //    XmlDocument xmlDoc = new XmlDocument();
-            //    xmlDoc.LoadXml(_strPageSource);
-            //    XmlNode bodyNode = xmlDoc.DocumentElement.SelectSingleNode("//body");
-            //    return bodyNode.InnerText;
-            //}
-            //catch (System.Xml.XmlException ex)
-            //{
-            //    _Error = "XML Error finding Body"; 
-            //}
-            int startIndex = _strPageSource.ToLower().IndexOf("<body", 0);
-            if (startIndex == -1)
-            {
-                // report Error
-                _Error = "No body start found"; 
-                return null;
-            }
+      bool success;
 
-            int endIndex = _strPageSource.ToLower().IndexOf("</body", startIndex);
+      if (page.External)
+      {
+        success = GetExternal(page);
+      }
+      else
+      {
+        success = GetInternal(page);
+      }
 
-            if (endIndex == -1)
-            {
-                //report Error
-                _Error = "No body end found";
-                endIndex = _strPageSource.Length;
-            }
+      if (success)
+      {
+        if (HTMLCache.Initialised)
+          HTMLCache.SavePage(page.Uri, _strPageSource);
 
-            return _strPageSource.Substring(startIndex, endIndex - startIndex);
-            
-        }
+        return true;
+      }
+      return false;
     }
+
+    public string GetPage()
+    {
+      return _strPageSource;
+    }
+
+    public string GetBody()
+    {
+      //return _strPageSource.Substring(_startIndex, _endIndex - _startIndex);
+      //try
+      //{
+      //    XmlDocument xmlDoc = new XmlDocument();
+      //    xmlDoc.LoadXml(_strPageSource);
+      //    XmlNode bodyNode = xmlDoc.DocumentElement.SelectSingleNode("//body");
+      //    return bodyNode.InnerText;
+      //}
+      //catch (System.Xml.XmlException ex)
+      //{
+      //    _Error = "XML Error finding Body"; 
+      //}
+      int startIndex = _strPageSource.ToLower().IndexOf("<body", 0);
+      if (startIndex == -1)
+      {
+        // report Error
+        _Error = "No body start found";
+        return null;
+      }
+
+      int endIndex = _strPageSource.ToLower().IndexOf("</body", startIndex);
+
+      if (endIndex == -1)
+      {
+        //report Error
+        _Error = "No body end found";
+        endIndex = _strPageSource.Length;
+      }
+
+      return _strPageSource.Substring(startIndex, endIndex - startIndex);
+
+    }
+
+    private bool GetExternal(HTTPRequest page)
+    {
+      // Use External Browser (IE) to get HTML page
+      // IE downloads all linked graphics ads, etc
+      // IE will run Javascript source if required to renderthe page
+      SHDocVw.InternetExplorer IE = new SHDocVw.InternetExplorer();
+      IWebBrowser2 webBrowser = (IWebBrowser2)IE;
+
+      object empty = System.Reflection.Missing.Value;
+      webBrowser.Navigate(page.Url, ref empty, ref empty, ref empty, ref empty);
+      while (webBrowser.Busy == true) System.Threading.Thread.Sleep(500);
+      HTMLDocumentClass doc = (HTMLDocumentClass)webBrowser.Document;
+
+      _strPageSource = doc.body.innerHTML;
+
+      return true;
+    }
+
+    private bool GetInternal(HTTPRequest page)
+    {
+      // Use internal code to get HTML page
+      HTTPTransaction Page = new HTTPTransaction();
+      Encoding encode;
+      string strEncode = _defaultEncode;
+
+      if (Page.HTTPGet(page))
+      {
+        byte[] pageData = Page.GetData();
+        int i;
+
+        if (_Encoding != "")
+        {
+          strEncode = _Encoding;
+          _pageEncodingMessage = "Forced: " + _Encoding;
+        }
+        else
+        {
+          encode = System.Text.Encoding.GetEncoding(_defaultEncode);
+          _strPageSource = encode.GetString(pageData);
+          int headEnd;
+          if ((headEnd = _strPageSource.ToLower().IndexOf("</head")) != -1)
+          {
+            if ((i = _strPageSource.ToLower().IndexOf("charset", 0, headEnd)) != -1)
+            {
+              strEncode = "";
+              i += 8;
+              for (; i < _strPageSource.Length && _strPageSource[i] != '\"'; i++)
+                strEncode += _strPageSource[i];
+              _Encoding = strEncode;
+            }
+
+            if (strEncode == "")
+            {
+              strEncode = _defaultEncode;
+              _pageEncodingMessage = "Default: " + _defaultEncode;
+            }
+            else
+            {
+              _pageEncodingMessage = strEncode;
+            }
+          }
+        }
+
+        // Encoding: depends on selected page
+        if (_strPageSource == "" || strEncode.ToLower() != _defaultEncode)
+        {
+          try
+          {
+            encode = System.Text.Encoding.GetEncoding(strEncode);
+            _strPageSource = encode.GetString(pageData);
+          }
+          catch (System.ArgumentException)
+          {
+          }
+        }
+        return true;
+      }
+      _Error = Page.GetError();
+      return false;
+    }
+  }
 }

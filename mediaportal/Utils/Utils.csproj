@@ -94,6 +94,7 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -115,6 +116,8 @@
     <Compile Include="Service\Log.cs" />
     <Compile Include="Service\LogFileWriter.cs" />
     <Compile Include="Service\ServiceProvider.cs" />
+    <Compile Include="Time\BasicTime.cs" />
+    <Compile Include="Time\TimeRange.cs" />
     <Compile Include="Time\WorldTimeZone.cs" />
     <Compile Include="Web\http\HTTPRequest.cs" />
     <Compile Include="Web\http\HTTPAuth.cs" />
@@ -139,6 +142,16 @@
     <Compile Include="Web\Parser\Profiler.cs">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="SHDocVw">
+      <Guid>{EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>1</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -53,7 +53,8 @@ namespace MediaPortal.EPG.TestWebEPG
       WebEPG epg = new WebEPG();
       epg.Import();
         
-#else
+#else 
+      // Catch and log all exceptions - fail cleanly
       try
       {
         WebEPG epg = new WebEPG();

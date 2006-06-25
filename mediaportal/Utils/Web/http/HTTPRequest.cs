@@ -35,6 +35,7 @@ namespace MediaPortal.Utils.Web
     private string _host = string.Empty;
     private string _getQuery = string.Empty;
     private string _postQuery = string.Empty;
+    private bool _externalBrowser = false;
 
     public HTTPRequest()
     {
@@ -135,6 +136,12 @@ namespace MediaPortal.Utils.Web
         return true;
 
       return false;
+    }
+
+    public bool External
+    {
+      get { return _externalBrowser; }
+      set { _externalBrowser = value; }
     }
 
     public override string ToString()

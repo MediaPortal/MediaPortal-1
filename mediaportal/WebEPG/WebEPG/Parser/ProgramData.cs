@@ -22,6 +22,8 @@
 using System;
 using System.Text;
 using MediaPortal.Utils.Web;
+using MediaPortal.Utils.Time;
+
 
 namespace MediaPortal.WebEPG
 {
@@ -105,35 +107,35 @@ namespace MediaPortal.WebEPG
     {
       switch (tag)
       {
-      case "<#START>":
-        _startTime = getTime(element);
-        break;
-      case "<#END>":
-        _endTime = getTime(element);
-        break;
-      case "<#DAY>":
-        _day = int.Parse(element);
-        break;
-      case "<#DESCRIPTION>":
-        if(_description == string.Empty)
-          _description = element.Trim(' ', '\n', '\t');
-        else
-          _description = _description + "\n" + element.Trim(' ', '\n', '\t');
-        break;
-      case "<#MONTH>":
-        _month = element.Trim(' ', '\n', '\t');
-        break;
-      case "<#TITLE>":
-        _title = element.Trim(' ', '\n', '\t');
-        break;
-      case "<#SUBTITLE>":
-        _subTitle = element.Trim(' ', '\n', '\t');
-        break;
-      case "<#GENRE>":
-        _genre = element.Trim(' ', '\n', '\t');
-        break;
-      default:
-        break;
+        case "<#START>":
+          _startTime = getTime(element);
+          break;
+        case "<#END>":
+          _endTime = getTime(element);
+          break;
+        case "<#DAY>":
+          _day = int.Parse(element);
+          break;
+        case "<#DESCRIPTION>":
+          if (_description == string.Empty)
+            _description = element.Trim(' ', '\n', '\t');
+          else
+            _description = _description + "\n" + element.Trim(' ', '\n', '\t');
+          break;
+        case "<#MONTH>":
+          _month = element.Trim(' ', '\n', '\t');
+          break;
+        case "<#TITLE>":
+          _title = element.Trim(' ', '\n', '\t');
+          break;
+        case "<#SUBTITLE>":
+          _subTitle = element.Trim(' ', '\n', '\t');
+          break;
+        case "<#GENRE>":
+          _genre = element.Trim(' ', '\n', '\t');
+          break;
+        default:
+          break;
       }
     }
 
@@ -145,16 +147,16 @@ namespace MediaPortal.WebEPG
       {
         switch (Params[i, 0])
         {
-        case "TITLE":
-          if (Title.Contains(Params[i, 1]))
-            return true;
-          break;
-        case "DESC":
-          if (Description.Contains(Params[i, 1]))
-            return true;
-          break;
-        default:
-          break;
+          case "TITLE":
+            if (Title.Contains(Params[i, 1]))
+              return true;
+            break;
+          case "DESC":
+            if (Description.Contains(Params[i, 1]))
+              return true;
+            break;
+          default:
+            break;
         }
       }
 
@@ -203,62 +205,21 @@ namespace MediaPortal.WebEPG
 
     private ProgramDateTime getTime(string strTime)
     {
-      strTime = strTime.Replace(" ", "");
-      if(strTime == "")
-        return null;
+      BasicTime time;
 
-      int sepPos;
-      //bool found = false;
+      try
+      {
+        time = new BasicTime(strTime);
+      }
+      catch (Exception)
+      {
+        // log exception - time parsing error (Warning) - template got some other text
+        return null;
+      }
       ProgramDateTime dt = new ProgramDateTime();
-      char[] timeSeperators = { ':', '.', 'h' };
 
-      if ((sepPos = strTime.IndexOfAny(timeSeperators)) != -1) // IndexOf(":")) != -1)
-      {
-        try
-        {
-          dt.Hour = int.Parse(strTime.Substring(0, sepPos));
-          dt.Minute = int.Parse(strTime.Substring(sepPos + 1, 2));
-        }
-        catch(Exception)
-        {
-          // log exception - time parsing error (Warning) - template got some other text
-          return null;
-        }
-      }
-      else
-      {
-        return null;
-      }
-
-      /*
-        if ((sepPos = strTime.IndexOf(".")) != -1)
-        {
-        iTime[0] = int.Parse(strTime.Substring(0, sepPos));
-        iTime[1] = int.Parse(strTime.Substring(sepPos+1, 2));
-        found = true;
-        }
-
-        if ((sepPos = strTime.IndexOf("h")) != -1)
-        {
-        iTime[0] = int.Parse(strTime.Substring(0, sepPos));
-        iTime[1] = int.Parse(strTime.Substring(sepPos+1, 2));
-        found = true;
-        }
-
-        if (!found)
-        */
-
-      if (strTime.ToLower().IndexOf("pm") != -1 && dt.Hour != 0)
-      {
-        if(dt.Hour != 12)
-          dt.Hour += 12;
-      }
-
-      if (strTime.ToLower().IndexOf("am") != -1 && dt.Hour == 12)
-        dt.Hour = 0;
-
-      if (dt.Hour == 24)
-        dt.Hour = 0;
+      dt.Hour = time.Hour;
+      dt.Minute = time.Minute;
 
       return dt;
     }
