@@ -1087,10 +1087,15 @@ namespace MediaPortal.GUI.TV
       if (dlg.SelectedLabel == -1) return;
       int duration = (dlg.SelectedLabel + 1) * 30;
 
+      if (! isQuickRecord)
+      {
+        GUITVPriorities.OnSetQuality(rec);
+      }
+      
       dtNow = DateTime.Now.AddDays(day);
       rec.Start = Utils.datetolong(new DateTime(dtNow.Year, dtNow.Month, dtNow.Day, hour, minute, 0, 0));
       rec.End = Utils.datetolong(rec.StartTime.AddMinutes(duration));
-      rec.Title = GUILocalizeStrings.Get(413);
+      rec.Title = GUILocalizeStrings.Get(413) + " (" + rec.Channel +")";
       Recorder.AddRecording(ref rec);
       LoadDirectory();
     }
