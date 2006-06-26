@@ -74,7 +74,7 @@ namespace MediaPortal.Configuration.Sections
         textBoxZapDelay.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2));
         textBoxZapTimeout.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5));
         textBoxNotifyTimeoutVal.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 15));
-        checkBoxNotifyPlaySound.Checked = xmlreader.GetValueAsBool("movieplayer", "playNotifyBeep", true);
+        checkBoxNotifyPlaySound.Checked = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
       }
     }
 
@@ -86,7 +86,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("movieplayer", "zapdelay", textBoxZapDelay.Text);
         xmlwriter.SetValue("movieplayer", "zaptimeout", textBoxZapTimeout.Text);
         xmlwriter.SetValue("movieplayer", "notifyTVTimeout", textBoxNotifyTimeoutVal.Text);
-        xmlwriter.SetValue("movieplayer", "playNotifyBeep", checkBoxNotifyPlaySound.Checked);
+        xmlwriter.SetValueAsBool("movieplayer", "notifybeep", checkBoxNotifyPlaySound.Checked);
       }
     }
 

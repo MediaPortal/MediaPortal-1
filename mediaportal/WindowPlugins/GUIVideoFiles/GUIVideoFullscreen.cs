@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.Video
         m_bMSNChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);
         m_iMaxTimeOSDOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
-        _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "playNotifyBeep", true);
+        _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
         string strValue = xmlreader.GetValueAsString(key, "defaultar", "normal");
         if (strValue.Equals("zoom")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
         if (strValue.Equals("stretch")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
