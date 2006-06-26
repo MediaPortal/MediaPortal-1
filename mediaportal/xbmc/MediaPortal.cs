@@ -1433,17 +1433,19 @@ public class MediaPortalApp : D3DApp, IRender
 
         //switch between several home windows
         case Action.ActionType.ACTION_SWITCH_HOME:
+          GUIMessage homeMsg;
           if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_HOME)
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+            homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
           else if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME)
-            GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+            homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_HOME, 0, null);
           else
           {
             if (startWithBasicHome)
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
+              homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_SECOND_HOME, 0, null);
             else
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
+              homeMsg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GOTO_WINDOW, 0, 0, 0, (int)GUIWindow.Window.WINDOW_HOME, 0, null);
           }
+          GUIWindowManager.SendThreadMessage(homeMsg);
           return;
 
         //exit mediaportal
@@ -1801,7 +1803,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       m_bShowStats = !m_bShowStats;
     }
-    if (key.KeyChar == '|' && g_Player.Playing==false)
+    if (key.KeyChar == '|' && g_Player.Playing == false)
     {
       g_Player.Play("rtsp://localhost/stream0");
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO);
