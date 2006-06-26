@@ -3447,7 +3447,10 @@
     <value>Importerer spor</value>
   </string>
   <!-- End Music Import Strings -->
-  
+  <string>
+    <id>1200</id>
+    <value>Oppsett Wizard</value>
+  </string>
 	<string>
 		<id>1440</id>
 		<value>Mitt tekst-TV</value>
@@ -3612,6 +3615,7 @@
 		<id>2005</id>
 		<value>Slett</value>
 	</string>
+
 	<string>
 		<id>2006</id>
 		<value>Tittel</value>
@@ -4594,6 +4598,10 @@
     <value>TV oppsett</value>
   </string>
   <string>
+    <id>6015</id>
+    <value>DVD oppsett</value>
+  </string>
+  <string>
     <id>6016</id>
     <value>Automatisk slette sette opptak</value>
   </string>
@@ -4608,7 +4616,23 @@
   <string>
     <id>6019</id>
     <value>minutter etter at programmet er slutt</value>
-  </string>             
+  </string>
+  <string>
+    <id>6020</id>
+    <value>Repeter/gjenta slideshows</value>
+  </string>  
+  <string>
+    <id>6021</id>
+    <value>Automatisk blande slideshow</value>
+  </string>   
+  <string>
+    <id>6022</id>
+    <value>Film oppsett</value>
+  </string> 
+  <string>
+    <id>6023</id>
+    <value>Skjerm oppsett</value>
+  </string>            
 	<string>
 		<id>8000</id>
 		<value>Min epost</value>
