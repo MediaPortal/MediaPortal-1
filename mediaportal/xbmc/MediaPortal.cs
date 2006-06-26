@@ -544,7 +544,7 @@ public class MediaPortalApp : D3DApp, IRender
             Log.Write("Main: Incoming action: {0}", action.wID);
             if (ActionTranslator.GetActionDetail(GUIWindowManager.ActiveWindowEx, action))
             {
-              if (action.SoundFileName.Length > 0)
+              if (action.SoundFileName.Length > 0 && !g_Player.Playing)
               {
                 Utils.PlaySound(action.SoundFileName, false, true);
               }
@@ -1783,7 +1783,7 @@ public class MediaPortalApp : D3DApp, IRender
         (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_MSNOSD) &&
         (GUIWindowManager.ActiveWindowEx != (int)GUIWindow.Window.WINDOW_TVMSNOSD))
       {
-        if (action.SoundFileName.Length > 0)
+        if (action.SoundFileName.Length > 0 && !g_Player.Playing)
         {
           Utils.PlaySound(action.SoundFileName, false, true);
         }
@@ -1814,7 +1814,7 @@ public class MediaPortalApp : D3DApp, IRender
         screenSaverTimer = DateTime.Now;
       }
 
-      if (action.SoundFileName.Length > 0)
+      if (action.SoundFileName.Length > 0 && !g_Player.Playing)
       {
         Utils.PlaySound(action.SoundFileName, false, true);
       }
@@ -1836,7 +1836,7 @@ public class MediaPortalApp : D3DApp, IRender
     Action action = new Action();
     if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
     {
-      if (action.SoundFileName.Length > 0)
+      if (action.SoundFileName.Length > 0 && !g_Player.Playing)
       {
         Utils.PlaySound(action.SoundFileName, false, true);
       }
@@ -1988,7 +1988,7 @@ public class MediaPortalApp : D3DApp, IRender
     action = new Action(Action.ActionType.ACTION_MOUSE_DOUBLECLICK, x, y);
     action.MouseButton = e.Button;
     action.SoundFileName = "click.wav";
-    if (action.SoundFileName.Length > 0)
+    if (action.SoundFileName.Length > 0 && !g_Player.Playing)
       Utils.PlaySound(action.SoundFileName, false, true);
 
     GUIGraphicsContext.OnAction(action);
@@ -2065,7 +2065,7 @@ public class MediaPortalApp : D3DApp, IRender
         action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, x, y);
         action.MouseButton = e.Button;
         action.SoundFileName = "click.wav";
-        if (action.SoundFileName.Length > 0)
+        if (action.SoundFileName.Length > 0 && !g_Player.Playing)
         {
           Utils.PlaySound(action.SoundFileName, false, true);
         }
@@ -2086,7 +2086,7 @@ public class MediaPortalApp : D3DApp, IRender
         action = new Action(Action.ActionType.ACTION_CONTEXT_MENU, x, y);
         action.MouseButton = e.Button;
         action.SoundFileName = "click.wav";
-        if (action.SoundFileName.Length > 0)
+        if (action.SoundFileName.Length > 0 && !g_Player.Playing)
         {
           Utils.PlaySound(action.SoundFileName, false, true);
         }
@@ -2099,7 +2099,7 @@ public class MediaPortalApp : D3DApp, IRender
         action = new Action();
         if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
         {
-          if (action.SoundFileName.Length > 0)
+          if (action.SoundFileName.Length > 0 && !g_Player.Playing)
           {
             Utils.PlaySound(action.SoundFileName, false, true);
           }
@@ -2116,7 +2116,7 @@ public class MediaPortalApp : D3DApp, IRender
       action = new Action();
       if (ActionTranslator.GetAction(GUIWindowManager.ActiveWindowEx, key, ref action))
       {
-        if (action.SoundFileName.Length > 0)
+        if (action.SoundFileName.Length > 0 && !g_Player.Playing)
         {
           Utils.PlaySound(action.SoundFileName, false, true);
         }
@@ -2161,7 +2161,7 @@ public class MediaPortalApp : D3DApp, IRender
         action = new Action(Action.ActionType.ACTION_MOUSE_CLICK, x, y);
         action.MouseButton = eLastMouseClickEvent.Button;
         action.SoundFileName = "click.wav";
-        if (action.SoundFileName.Length > 0)
+        if (action.SoundFileName.Length > 0 && !g_Player.Playing)
         {
           Utils.PlaySound(action.SoundFileName, false, true);
         }
