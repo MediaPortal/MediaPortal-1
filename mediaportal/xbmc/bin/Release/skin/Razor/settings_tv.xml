@@ -2,7 +2,7 @@
 	<id>700</id>
 	<defaultcontrol>24</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
-	<define>#header.label:TV Setup</define>
+	<define>#header.label:6014</define>
 	<define>#header.location:</define>
 	<define>#header.hover:hover_my tv.png</define>
 	<controls>

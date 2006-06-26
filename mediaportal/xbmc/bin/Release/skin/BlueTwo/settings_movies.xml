@@ -2,7 +2,7 @@
 	<id>703</id>
 	<defaultcontrol>24</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
-	<define>#header.label:Movie Setup</define>
+	<define>#header.label:6022</define>
 	<define>#header.hover:hover_my videos.png</define>
 	<controls>
 		<import>common.settings.xml</import>

@@ -2,18 +2,17 @@
 	<id>9</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
-	<define>#header.label:100009</define>
+	<define>#header.label:6023</define>
 	<define>#header.hover:hover_settings.png</define>
-
-<controls>
+	<controls>
 	<import>common.settings.xml</import>
 
-  <control>
-    <type>group</type>
-    <layout>StackLayout(0)</layout>
-    <posX>55</posX>
-    <posY>115</posY>
-  	<width>180</width>
+	  <control>
+	    <type>group</type>
+	    <layout>StackLayout(0)</layout>
+	    <posX>55</posX>
+	    <posY>115</posY>
+  	    <width>180</width>
 
   	<control>
   		<description>UI Calibration button</description>

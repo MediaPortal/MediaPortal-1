@@ -4474,7 +4474,10 @@
     <id>6014</id>
     <value>TV setup</value>
   </string>
-
+  <string>
+    <id>6015</id>
+    <value>DVD setup</value>
+  </string>
   <string>
     <id>6016</id>
     <value>Auto delete recordings after watching them</value>
@@ -4498,7 +4501,15 @@
   <string>
     <id>6021</id>
     <value>Auto shuffle slideshow</value>
-  </string>                                 
+  </string>   
+  <string>
+    <id>6022</id>
+    <value>Movie setup</value>
+  </string> 
+  <string>
+    <id>6023</id>
+    <value>Screen setup</value>
+  </string>                                  
  
   <!-- End of My Trailers Strings -->
   <string Prefix="My ">

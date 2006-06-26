@@ -2,7 +2,7 @@
 	<id>704</id>
 	<defaultcontrol>24</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
-	<define>#header.label:DVD Setup</define>
+	<define>#header.label:6015</define>
 	<define>#header.location:</define>
 	<define>#header.hover:hover_my videos.png</define>
 	<controls>
