@@ -6334,6 +6334,7 @@
     </tv>
   </capturecard>
 
+<!--
   <capturecard commercialname="KNC-1 TV-Station DVR Digital" capturename="713x BDA Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_a0061894&amp;rev_01">
     <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
     <tv>
@@ -6349,6 +6350,7 @@
       </connections>
     </tv>
   </capturecard>
+-->
 
   <capturecard commercialname="KNC-1 TV-Station DVR Analog" capturename="713x BDA Analog Capture" devid="ven_1131&amp;dev_7134&amp;subsys_a0061894&amp;rev_01">
     <capabilities tv="true" radio="true" mpeg2="false" mce="true" sw="false" bda="false"/>
@@ -11495,7 +11497,7 @@
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Adaptec Dual TV Tuner (Tuner #1)" capturename="Adaptec USB Capture Device" devid="vid_03f3&amp;pid_0091">
+  <capturecard commercialname="Adaptec AVC-3610 Dual TV Tuner (Tuner #1)" capturename="Adaptec USB Capture Device" devid="vid_03f3&amp;pid_0091">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"/>
@@ -11510,11 +11512,12 @@
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
 
-  <capturecard commercialname="Adaptec Dual TV Tuner (Tuner #2)" capturename="Adaptec USB Capture Device" devid="vid_03f3&amp;pid_0093">
+  <capturecard commercialname="Adaptec AVC-3610 Dual TV Tuner (Tuner #2)" capturename="Adaptec USB Capture Device" devid="vid_03f3&amp;pid_0093">
     <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
     <tv>
       <interface cat="capture" video="" audio="" mpeg2="0"/>
@@ -11529,6 +11532,7 @@
         <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -13278,6 +13282,85 @@
         <connection sourcefilter="capture"		sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
         <connection sourcefilter="videncoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="0"/>
         <connection sourcefilter="audencoder"	sourcepin="0" sinkfilter="mux"			  sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="YUAN MPB800" capturename="Python2 USB WDM Encoder" devid="vid_1164&amp;pid_0800">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="capture" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"    name="Python2 USB TvTuner"		checkdevice="true"/>
+        <filter cat="tvaudio"    name="Python2 USB TvAudio"		checkdevice="true"/>
+        <filter cat="crossbar"   name="Python2 USB Crossbar"	checkdevice="true"/>
+        <filter cat="capture"    name="Python2 USB WDM Encoder"     	checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"  sourcepin="1" sinkfilter="tvaudio"	sinkpin="0"/>
+        <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
+        <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Compro VideoMate DVB-T300 (Digital)" capturename="VideoMate Hybrid A+DVB-T Digital Capture" devid="ven_1131&amp;dev_7134&amp;subsys_c900185b&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="VideoMate Hybrid A+DVB-T DVBT Tuner"       checkdevice="true"/>
+        <filter cat="capture"         name="VideoMate Hybrid A+DVB-T Digital Capture"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Compro VideoMate DVB-T300" capturename="VideoMate Hybrid A+DVB-T Digital Capture" devid="ven_1131&amp;dev_7133&amp;subsys_c900185b&amp;rev_01">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="VideoMate Hybrid A+DVB-T DVBT Tuner"       checkdevice="true"/>
+        <filter cat="capture"         name="VideoMate Hybrid A+DVB-T Digital Capture"  checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider"  sourcepin="0" sinkfilter="tunerdevice"  sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"      sourcepin="0" sinkfilter="capture"      sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
+
+  <capturecard commercialname="Compro VideoMate DVB-T300 (Analogue)" capturename="VideoMate Hybrid A+DVB-T Capture" devid="ven_1131&amp;dev_7134&amp;subsys_c900185b&amp;rev_01">
+    <capabilities tv="true" radio="true" mpeg2="true" mce="false" sw="false" bda="false"/>
+    <tv>
+      <interface cat="mux" video="" audio="" mpeg2="0"/>
+      <filters>
+        <filter cat="tvtuner"     name="VideoMate Hybrid A+DVB-T TV Tuner"  checkdevice="true"/>
+        <filter cat="tvaudio"     name="VideoMate Hybrid A+DVB-T TV Audio"  checkdevice="true"/>
+        <filter cat="crossbar"    name="VideoMate Hybrid A+DVB-T XBar" checkdevice="true"/>
+        <filter cat="capture"     name="VideoMate Hybrid A+DVB-T Capture"  checkdevice="true"/>
+        <filter cat="videncoder"	name="%videoencoder%"           checkdevice="false"/>
+        <filter cat="audencoder"	name="%audioencoder%"           checkdevice="false"/>
+        <filter cat="mux"         name="%mpegmux%"                checkdevice="false"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="tvtuner"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%tvtuner%"/>
+        <connection sourcefilter="tvtuner"    sourcepin="1" sinkfilter="tvaudio"	  sinkpin="0"/>
+        <connection sourcefilter="tvaudio"    sourcepin="0" sinkfilter="crossbar"	  sinkpin="%audiotuner%"/>
+        <connection sourcefilter="crossbar"   sourcepin="0" sinkfilter="capture"	  sinkpin="0"/>
+        <connection sourcefilter="crossbar"   sourcepin="1" sinkfilter="capture"	  sinkpin="1"/>
+        <connection sourcefilter="capture"    sourcepin="0" sinkfilter="videncoder"	sinkpin="0"/>
+        <connection sourcefilter="capture"    sourcepin="3" sinkfilter="audencoder"	sinkpin="0"/>
+        <connection sourcefilter="videncoder" sourcepin="0" sinkfilter="mux"	      sinkpin="0"/>
+        <connection sourcefilter="audencoder" sourcepin="0" sinkfilter="mux"	      sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
