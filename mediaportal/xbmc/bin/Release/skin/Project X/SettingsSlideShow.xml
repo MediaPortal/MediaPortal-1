@@ -162,7 +162,7 @@
 			<id>8</id>
 			<posX>260</posX>
 			<posY>380</posY>
-			<label>Repeat/loop slideshows</label>
+			<label>6020</label>
 			<textcolor>FFFFFFFF</textcolor>
 			<onleft>8</onleft>
 			<onright>8</onright>
@@ -176,7 +176,7 @@
 			<id>9</id>
 			<posX>260</posX>
 			<posY>414</posY>
-			<label>Auto shuffle slideshow</label>
+			<label>6021</label>
 			<textcolor>FFFFFFFF</textcolor>
 			<onleft>9</onleft>
 			<onright>9</onright>

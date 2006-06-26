@@ -3468,6 +3468,10 @@
   </string>
   <!-- End Music Import Strings -->
 
+  <string>
+    <id>1200</id>
+    <value>Setup Wizard</value>
+  </string>
 
   <string Prefix="My ">
     <id>1440</id>
@@ -4486,7 +4490,15 @@
   <string>
     <id>6019</id>
     <value>minutes after program ends</value>
-  </string>                              
+  </string>
+  <string>
+    <id>6020</id>
+    <value>Repeat/loop slideshows</value>
+  </string>  
+  <string>
+    <id>6021</id>
+    <value>Auto shuffle slideshow</value>
+  </string>                                 
  
   <!-- End of My Trailers Strings -->
   <string Prefix="My ">
@@ -5226,7 +5238,7 @@
   </string>
   <string>
     <id>102006</id>
-    <value>Audio visisalisation</value>
+    <value>Audio visualisation</value>
   </string>
   <string Prefix="My ">
     <id>102007</id>
@@ -5246,7 +5258,7 @@
   </string>
   <string>
     <id>102011</id>
-    <value>Artis info</value>
+    <value>Artist info</value>
   </string>
   <string>
     <id>102012</id>
@@ -5262,7 +5274,7 @@
   </string>
   <string>
     <id>102015</id>
-    <value>Mini Menu</value>
+    <value>Mini menu</value>
   </string>
   <string>
     <id>102016</id>

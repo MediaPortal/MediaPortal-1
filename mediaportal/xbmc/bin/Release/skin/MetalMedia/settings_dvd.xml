@@ -16,23 +16,23 @@
 			<control>
 				<type>button</type>
 				<id>24</id>
-				<label>Video Codec</label>
+				<label>6000</label>
 				<onup>1234</onup>  <!-- Use non existing ID to go to topbar -->
 			</control>
 			<control>
 				<type>button</type>
 				<id>25</id>
-				<label>Audio Codec</label>
+				<label>6001</label>
 			</control>
 			<control>
 				<type>button</type>
 				<id>27</id>
-				<label>Audio Renderer</label>
+				<label>6002</label>
 			</control>
 			<control>
 				<type>button</type>
 				<id>28</id>
-				<label>Aspect ratio</label>
+				<label>6004</label>
 			</control>
 			<control>
 				<type>button</type>

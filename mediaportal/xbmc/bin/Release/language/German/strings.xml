@@ -755,7 +755,7 @@
 	</string>
 	<string>
 		<id>258</id>
-		<value>ID3-Tags anzeigen</value>
+		<value>ID3-Tags verwenden</value>
 	</string>
 	<string>
 		<id>259</id>
@@ -3450,6 +3450,11 @@
 		<id>1105</id>
 		<value>Importiere Titel</value>
 	</string>
+  <string>
+    <id>1200</id>
+    <value>Einrichtungs-Assistent</value>
+  </string>
+  
 	<string>
 		<id>1440</id>
 		<value>Videotext</value>
@@ -4459,6 +4464,14 @@
   <string>
     <id>6019</id>
     <value>Minuten nachdem das Programm endet</value>
+  </string>
+  <string>
+    <id>6020</id>
+    <value>Diashows wiederholen</value>
+  </string>  
+  <string>
+    <id>6021</id>
+    <value>Diashows in zufälliger Folge</value>
   </string>                
 
   <!-- End of My Trailers Strings -->

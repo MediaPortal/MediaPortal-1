@@ -26,7 +26,7 @@
 				<type>button</type>
 				<id>3</id>
 				<width>500</width>
-				<label>Setup Wizard</label>
+				<label>1200</label>
 				<hyperlink>615</hyperlink>
 				<onup>17</onup>
 			</control>
