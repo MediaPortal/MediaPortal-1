@@ -114,6 +114,8 @@ namespace MediaPortal.GUI.TV
     bool _messageBoxVisible = false;
     DateTime _msgTimer = DateTime.Now;
     int _msgBoxTimeout = 0;
+    int _notifyTVTimeout = 15;
+    bool _playNotifyBeep = true;
     bool _needToClearScreen = false;
     bool _useVMR9Zap = false;
     VMR9OSD _vmr9OSD = null;
@@ -204,6 +206,8 @@ namespace MediaPortal.GUI.TV
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _useVMR9Zap = xmlreader.GetValueAsBool("general", "useVMR9ZapOSD", false);
+        _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
+        _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "playNotifyBeep", true);
       }
       return Load(GUIGraphicsContext.Skin + @"\mytvFullScreen.xml");
     }
@@ -861,8 +865,10 @@ namespace MediaPortal.GUI.TV
         _dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
         string logo = Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
         _dialogNotify.SetImage(logo);
-        _dialogNotify.TimeOut = 10;
+        _dialogNotify.TimeOut = _notifyTVTimeout;
         _notifyDialogVisible = true;
+        if (_playNotifyBeep)
+          Utils.PlaySound("notify.wav", false, true);
         _dialogNotify.DoModal(GetID);
         _notifyDialogVisible = false;
       }
