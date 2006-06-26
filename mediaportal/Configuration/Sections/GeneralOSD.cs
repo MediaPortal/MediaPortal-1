@@ -114,6 +114,10 @@ namespace MediaPortal.Configuration.Sections
     {
       this.tabControlGeneralOSD = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageOSD = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.groupBoxNotifyTV = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxNotifyPlaySound = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.textBoxNotifyTimeoutVal = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelNotifyTimeout = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxZapOSD = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.textBoxZapTimeout = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.labelZapTimeOut = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -122,15 +126,11 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxOSD = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.textBoxDisplayTimeout = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.labelDisplayTimeout = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.groupBoxNotifyTV = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.textBoxNotifyTimeoutVal = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.labelNotifyTimeout = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.checkBoxNotifyPlaySound = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.tabControlGeneralOSD.SuspendLayout();
       this.tabPageOSD.SuspendLayout();
+      this.groupBoxNotifyTV.SuspendLayout();
       this.groupBoxZapOSD.SuspendLayout();
       this.groupBoxOSD.SuspendLayout();
-      this.groupBoxNotifyTV.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabControlGeneralOSD
@@ -156,6 +156,54 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageOSD.TabIndex = 3;
       this.tabPageOSD.Text = "On-Screen Display";
       this.tabPageOSD.UseVisualStyleBackColor = true;
+      // 
+      // groupBoxNotifyTV
+      // 
+      this.groupBoxNotifyTV.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBoxNotifyTV.Controls.Add(this.checkBoxNotifyPlaySound);
+      this.groupBoxNotifyTV.Controls.Add(this.textBoxNotifyTimeoutVal);
+      this.groupBoxNotifyTV.Controls.Add(this.labelNotifyTimeout);
+      this.groupBoxNotifyTV.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxNotifyTV.Location = new System.Drawing.Point(16, 166);
+      this.groupBoxNotifyTV.Name = "groupBoxNotifyTV";
+      this.groupBoxNotifyTV.Size = new System.Drawing.Size(432, 74);
+      this.groupBoxNotifyTV.TabIndex = 2;
+      this.groupBoxNotifyTV.TabStop = false;
+      this.groupBoxNotifyTV.Text = "Program start notification";
+      // 
+      // checkBoxNotifyPlaySound
+      // 
+      this.checkBoxNotifyPlaySound.AutoSize = true;
+      this.checkBoxNotifyPlaySound.Checked = true;
+      this.checkBoxNotifyPlaySound.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxNotifyPlaySound.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxNotifyPlaySound.Location = new System.Drawing.Point(19, 46);
+      this.checkBoxNotifyPlaySound.Name = "checkBoxNotifyPlaySound";
+      this.checkBoxNotifyPlaySound.Size = new System.Drawing.Size(105, 17);
+      this.checkBoxNotifyPlaySound.TabIndex = 2;
+      this.checkBoxNotifyPlaySound.Text = "Play \"notify.wav\"";
+      this.checkBoxNotifyPlaySound.UseVisualStyleBackColor = true;
+      // 
+      // textBoxNotifyTimeoutVal
+      // 
+      this.textBoxNotifyTimeoutVal.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxNotifyTimeoutVal.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxNotifyTimeoutVal.Location = new System.Drawing.Point(160, 20);
+      this.textBoxNotifyTimeoutVal.Name = "textBoxNotifyTimeoutVal";
+      this.textBoxNotifyTimeoutVal.Size = new System.Drawing.Size(256, 20);
+      this.textBoxNotifyTimeoutVal.TabIndex = 1;
+      this.textBoxNotifyTimeoutVal.Text = "15";
+      // 
+      // labelNotifyTimeout
+      // 
+      this.labelNotifyTimeout.AutoSize = true;
+      this.labelNotifyTimeout.Location = new System.Drawing.Point(16, 24);
+      this.labelNotifyTimeout.Name = "labelNotifyTimeout";
+      this.labelNotifyTimeout.Size = new System.Drawing.Size(127, 13);
+      this.labelNotifyTimeout.TabIndex = 0;
+      this.labelNotifyTimeout.Text = "notification timeout (sec.):";
       // 
       // groupBoxZapOSD
       // 
@@ -244,54 +292,6 @@ namespace MediaPortal.Configuration.Sections
       this.labelDisplayTimeout.TabIndex = 0;
       this.labelDisplayTimeout.Text = "Display timeout (sec.):";
       // 
-      // groupBoxNotifyTV
-      // 
-      this.groupBoxNotifyTV.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
-      this.groupBoxNotifyTV.Controls.Add(this.checkBoxNotifyPlaySound);
-      this.groupBoxNotifyTV.Controls.Add(this.textBoxNotifyTimeoutVal);
-      this.groupBoxNotifyTV.Controls.Add(this.labelNotifyTimeout);
-      this.groupBoxNotifyTV.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxNotifyTV.Location = new System.Drawing.Point(16, 166);
-      this.groupBoxNotifyTV.Name = "groupBoxNotifyTV";
-      this.groupBoxNotifyTV.Size = new System.Drawing.Size(432, 74);
-      this.groupBoxNotifyTV.TabIndex = 2;
-      this.groupBoxNotifyTV.TabStop = false;
-      this.groupBoxNotifyTV.Text = "Program start notification";
-      // 
-      // textBoxNotifyTimeoutVal
-      // 
-      this.textBoxNotifyTimeoutVal.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
-      this.textBoxNotifyTimeoutVal.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxNotifyTimeoutVal.Location = new System.Drawing.Point(160, 20);
-      this.textBoxNotifyTimeoutVal.Name = "textBoxNotifyTimeoutVal";
-      this.textBoxNotifyTimeoutVal.Size = new System.Drawing.Size(256, 20);
-      this.textBoxNotifyTimeoutVal.TabIndex = 1;
-      this.textBoxNotifyTimeoutVal.Text = "15";
-      // 
-      // labelNotifyTimeout
-      // 
-      this.labelNotifyTimeout.AutoSize = true;
-      this.labelNotifyTimeout.Location = new System.Drawing.Point(16, 24);
-      this.labelNotifyTimeout.Name = "labelNotifyTimeout";
-      this.labelNotifyTimeout.Size = new System.Drawing.Size(127, 13);
-      this.labelNotifyTimeout.TabIndex = 0;
-      this.labelNotifyTimeout.Text = "notification timeout (sec.):";
-      // 
-      // checkBoxNotifyPlaySound
-      // 
-      this.checkBoxNotifyPlaySound.AutoSize = true;
-      this.checkBoxNotifyPlaySound.Checked = true;
-      this.checkBoxNotifyPlaySound.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxNotifyPlaySound.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxNotifyPlaySound.Location = new System.Drawing.Point(19, 50);
-      this.checkBoxNotifyPlaySound.Name = "checkBoxNotifyPlaySound";
-      this.checkBoxNotifyPlaySound.Size = new System.Drawing.Size(105, 17);
-      this.checkBoxNotifyPlaySound.TabIndex = 2;
-      this.checkBoxNotifyPlaySound.Text = "Play \"notify.wav\"";
-      this.checkBoxNotifyPlaySound.UseVisualStyleBackColor = true;
-      // 
       // GeneralOSD
       // 
       this.Controls.Add(this.tabControlGeneralOSD);
@@ -299,12 +299,12 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.tabControlGeneralOSD.ResumeLayout(false);
       this.tabPageOSD.ResumeLayout(false);
+      this.groupBoxNotifyTV.ResumeLayout(false);
+      this.groupBoxNotifyTV.PerformLayout();
       this.groupBoxZapOSD.ResumeLayout(false);
       this.groupBoxZapOSD.PerformLayout();
       this.groupBoxOSD.ResumeLayout(false);
       this.groupBoxOSD.PerformLayout();
-      this.groupBoxNotifyTV.ResumeLayout(false);
-      this.groupBoxNotifyTV.PerformLayout();
       this.ResumeLayout(false);
 
     }

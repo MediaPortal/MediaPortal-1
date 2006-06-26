@@ -115,6 +115,8 @@ namespace MediaPortal.GUI.Video
     GUIVideoMSNOSD m_msnWindow = null;
     GUIDialogNotify dialogNotify = null;
     bool NotifyDialogVisible = false;
+    int _notifyTVTimeout = 15;
+    bool _playNotifyBeep = true;
     DateTime _volumeTimer = DateTime.MinValue;
     VMR9OSD m_vmr9OSD = new VMR9OSD();
     PlayListPlayer playlistPlayer;
@@ -146,6 +148,8 @@ namespace MediaPortal.GUI.Video
       {
         m_bMSNChatPopup = (xmlreader.GetValueAsInt("MSNmessenger", "popupwindow", 0) == 1);
         m_iMaxTimeOSDOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
+        _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
+        _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "playNotifyBeep", true);
         string strValue = xmlreader.GetValueAsString(key, "defaultar", "normal");
         if (strValue.Equals("zoom")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Zoom;
         if (strValue.Equals("stretch")) GUIGraphicsContext.ARType = MediaPortal.GUI.Library.Geometry.Type.Stretch;
@@ -672,8 +676,10 @@ namespace MediaPortal.GUI.Video
         dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
         dialogNotify.SetImage(strLogo);
-        dialogNotify.TimeOut = 10;
+        dialogNotify.TimeOut = _notifyTVTimeout;
         NotifyDialogVisible = true;
+        if ( _playNotifyBeep )
+          Utils.PlaySound("notify.wav", false, true);
         dialogNotify.DoModal(GetID);
         NotifyDialogVisible = false;
       }
