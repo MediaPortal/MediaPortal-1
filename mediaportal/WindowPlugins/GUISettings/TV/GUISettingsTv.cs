@@ -39,7 +39,7 @@ namespace WindowPlugins.GUISettings.TV
 			if (control==btnTimeshiftBuffer) OnTimeshiftBuffer();
 			if (control==btnDeinterlace) OnDeinterlace();
 			if (control==btnAutoTurnOnTv) OnAutoTurnOnTv();
-      if ( control == btnAutoTurnOnTS ) OnAutoTurnOnTS();
+            if ( control == btnAutoTurnOnTS ) OnAutoTurnOnTS();
 			base.OnClicked (controlId, control, actionType);
 		}
 		void OnVideoCodec()
