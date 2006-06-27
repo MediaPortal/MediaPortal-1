@@ -378,6 +378,7 @@ namespace MediaPortal.GUI.Library
       //Log.Write("Add window :{0} id:{1}", Window.ToString(), Window.GetID);
       _listWindows[_windowCount] = Window;
       _windowCount++;
+      Window.OnAdded();
     }
 
     /// <summary>
@@ -1122,13 +1123,28 @@ namespace MediaPortal.GUI.Library
     }
     static public void Replace(int windowId, GUIWindow window)
     {
+      Log.Write("WindowManager::replace {0}" , windowId);
       for (int i = 0; i < _listWindows.Length; ++i)
       {
         if (_listWindows[i] != null)
         {
           if (_listWindows[i].GetID == windowId)
           {
+            Log.Write("WindowManager::replaced {0} with {1}", _listWindows[i], window);
+            ISetupForm frm = window as ISetupForm;
+            if (frm != null)
+            {
+              for (int x = 0; x < PluginManager.SetupForms.Count; ++x)
+              {
+                if (((ISetupForm)PluginManager.SetupForms[x]).GetWindowId() == windowId)
+                {
+                  Log.Write("WindowManager::setup...");
+                  PluginManager.SetupForms[x] = frm;
+                }
+              }
+            }
             _listWindows[i] = window;
+
           }
         }
       }

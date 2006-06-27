@@ -99,9 +99,12 @@ namespace MediaPortal.GUI.Library
         System.IO.Directory.CreateDirectory(@"plugins\windows");
       }
       catch(Exception){}
+      LoadWindowPlugin(@"plugins\windows\WindowPlugins.dll");//need to load this first!!!
+
       string [] strFiles=System.IO.Directory.GetFiles(@"plugins\windows", "*.dll");
       foreach (string strFile in strFiles)
       {
+        if (strFile.ToLower().IndexOf("windowplugins.dll") >= 0) continue;
         LoadWindowPlugin(strFile);
       }
       //LoadWindowPlugin("Dialogs.dll");

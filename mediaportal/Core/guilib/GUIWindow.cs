@@ -1345,6 +1345,9 @@ namespace MediaPortal.GUI.Library
         return false;
       }
     }
+    public virtual void OnAdded()
+    {
+    }
     /// XAML related code follows
 
     #region Properties
