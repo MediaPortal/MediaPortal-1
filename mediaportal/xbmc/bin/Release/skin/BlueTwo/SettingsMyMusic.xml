@@ -53,7 +53,9 @@
 		<textXOff>20</textXOff>
 		<textYOff>2</textYOff>		
 		<width>76</width>
-		<height>25</height>		                                		<textureFocus>button_small_settings_focus.png</textureFocus>		                                		<textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>	
+		<height>25</height>
+		<textureFocus>button_small_settings_focus.png</textureFocus>
+		<textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
 		<onleft>8</onleft>
 		<onright>8</onright>
 		<onup>6</onup>
@@ -80,7 +82,8 @@
 		<textYOff>2</textYOff>
 		<width>76</width>
 		<height>25</height>
-		<textureFocus>button_small_settings_focus.png</textureFocus>		                                		<textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
+		<textureFocus>button_small_settings_focus.png</textureFocus>
+		<textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
 		<onup>8</onup>
 		<ondown>10</ondown>
 		<onleft>13</onleft>
@@ -106,7 +109,9 @@
 		<textXOff>15</textXOff>
 		<textYOff>2</textYOff>
 		<width>76</width>
-		<height>25</height>		                                		<textureFocus>button_small_settings_focus.png</textureFocus>		                                		<textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
+		<height>25</height>
+		<textureFocus>button_small_settings_focus.png</textureFocus>
+		<textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
 		<onleft>10</onleft>
 		<onright>10</onright>
 		<onup>13</onup>

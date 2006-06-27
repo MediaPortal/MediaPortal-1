@@ -2584,7 +2584,19 @@
   <string>
 	  <id>776</id>
     <value>Ikke start / sett på TV automatisk</value>
+  </string> 
+  <string>
+	  <id>777</id>
+    <value>Timeshift metoder</value>
   </string>  
+  <string>
+	  <id>778</id>
+    <value>Starte med timeshift automatisk på</value>
+  </string>
+  <string>
+	  <id>779</id>
+    <value>Starte timeshift manuelt</value>
+  </string> 
  <string>
 	  <id>780</id>
     <value>Velg metode for planlagt opptak</value>
@@ -2596,7 +2608,15 @@
   <string>
 	  <id>782</id>
     <value>Avansert opptak</value>
-  </string>    
+  </string>
+  <string>
+    <id>798</id>
+    <value>lav</value>
+  </string>
+  <string>
+    <id>799</id>
+    <value>høy</value>
+  </string>   
 	<string>
 		<id>800</id>
 		<value>Start med</value>
