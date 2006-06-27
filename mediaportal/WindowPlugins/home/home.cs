@@ -226,6 +226,7 @@ namespace MediaPortal.GUI.Home
         _previewSelected = false;
       }
     }
+    
 
     private void OnGlobalMessage(GUIMessage message)
     {
@@ -959,10 +960,13 @@ namespace MediaPortal.GUI.Home
             }            
           }
           break;
+
       }
 
       return base.OnMessage(message);
     }
+    #endregion
+
     #endregion
 
     #region Private Methods
