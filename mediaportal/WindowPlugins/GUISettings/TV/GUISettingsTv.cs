@@ -13,16 +13,14 @@ namespace WindowPlugins.GUISettings.TV
 	public class GUISettingsTv : GUIWindow
 	{
 		[SkinControlAttribute(24)]			protected GUIButtonControl btnVideoCodec=null;
-		[SkinControlAttribute(25)]			protected GUIButtonControl btnAudioCodec=null;
-		//[SkinControlAttribute(26)]			protected GUIButtonControl btnVideoRenderer=null;
+		[SkinControlAttribute(25)]			protected GUIButtonControl btnAudioCodec=null;		
 		[SkinControlAttribute(27)]			protected GUIButtonControl btnDeinterlace=null;
 		[SkinControlAttribute(28)]			protected GUIButtonControl btnAspectRatio=null;
 		[SkinControlAttribute(29)]			protected GUIButtonControl btnTimeshiftBuffer=null;
 		[SkinControlAttribute(30)]			protected GUIButtonControl btnAutoTurnOnTv=null;
-    [SkinControlAttribute(33)]
-    protected GUIButtonControl btnAudioRenderer = null;
-    [SkinControlAttribute(34)]
-    protected GUIButtonControl btnEpg = null;
+    [SkinControlAttribute(26)]      protected GUIButtonControl btnAutoTurnOnTS = null;
+    [SkinControlAttribute(33)]      protected GUIButtonControl btnAudioRenderer = null;
+    [SkinControlAttribute(34)]      protected GUIButtonControl btnEpg = null;
 		public GUISettingsTv()
 		{
 			GetID=(int)GUIWindow.Window.WINDOW_SETTINGS_TV;
@@ -36,12 +34,12 @@ namespace WindowPlugins.GUISettings.TV
 		{
 			if (control==btnAudioRenderer) OnAudioRenderer();
 			if (control==btnVideoCodec) OnVideoCodec();
-			if (control==btnAudioCodec) OnAudioCodec();
-			//if (control==btnVideoRenderer) OnVideoRenderer();
+			if (control==btnAudioCodec) OnAudioCodec();			
 			if (control==btnAspectRatio) OnAspectRatio();
 			if (control==btnTimeshiftBuffer) OnTimeshiftBuffer();
 			if (control==btnDeinterlace) OnDeinterlace();
 			if (control==btnAutoTurnOnTv) OnAutoTurnOnTv();
+      if ( control == btnAutoTurnOnTS ) OnAutoTurnOnTS();
 			base.OnClicked (controlId, control, actionType);
 		}
 		void OnVideoCodec()
@@ -133,6 +131,7 @@ namespace WindowPlugins.GUISettings.TV
 				}
 			}
 		}*/
+
 		void OnAspectRatio()
 		{
 			string[] aspectRatio = { "normal", "original", "stretch", "zoom", "letterbox", "panscan" };
@@ -228,7 +227,6 @@ namespace WindowPlugins.GUISettings.TV
 		}
 		void OnAutoTurnOnTv()
 		{
-
 			bool autoTurnOn=true;
 			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
@@ -242,7 +240,7 @@ namespace WindowPlugins.GUISettings.TV
 				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
         dlg.Add(GUILocalizeStrings.Get(775));       //Start TV in MyTV sections automatically
         dlg.Add(GUILocalizeStrings.Get(776));       //Do not start / switch to TV automatically
-				dlg.SelectedLabel=autoTurnOn?1:0;
+				dlg.SelectedLabel=autoTurnOn?1:0;  // WHY is it the other way?
 				dlg.DoModal(GetID);
 				if (dlg.SelectedLabel<0) return;
 				using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
@@ -251,6 +249,36 @@ namespace WindowPlugins.GUISettings.TV
 				}
 			}
 		}
+
+    void OnAutoTurnOnTS()
+    {
+      bool autoTurnOnTS = true;
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      {
+        autoTurnOnTS = xmlreader.GetValueAsBool("mytv", "autoturnontimeshifting", true);
+      }
+
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if ( dlg != null )
+      {
+        dlg.Reset();
+        dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+        dlg.Add(GUILocalizeStrings.Get(778));       //Start with timeshift automatically enabled
+        dlg.Add(GUILocalizeStrings.Get(779));       //Timeshift must be enabled manually
+        dlg.SelectedLabel = autoTurnOnTS ? 1 : 0;
+        dlg.DoModal(GetID);
+        if ( dlg.SelectedLabel < 0 ) return;
+        using ( MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+        {
+          if ( dlg.SelectedLabel == 1 ) autoTurnOnTS = true;
+          else autoTurnOnTS = false;
+          xmlwriter.SetValueAsBool("mytv", "autoturnontimeshifting", autoTurnOnTS);
+          if ( autoTurnOnTS ) // as long as timeshift on causes this behaviour - needs to be fixed
+            xmlwriter.SetValueAsBool("mytv", "tvon", false);
+        }
+      }
+    }
+
 		void OnAudioRenderer()
 		{
 			string strAudioRenderer="";

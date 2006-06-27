@@ -3,8 +3,7 @@
 	<defaultcontrol>24</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:6014</define>
-	<define>#header.location:</define>
-	<define>#header.hover:hover_my tv.png</define>
+	<define>#header.hover:</define>
 	<controls>
 		<import>common.settings.xml</import>
 		<control>
@@ -39,8 +38,9 @@
 			</control>
 			<control>
 				<type>button</type>
-				<id>29</id>
-				<label>6005</label>
+				<id>31</id>
+				<label>6007</label>
+				<hyperlink>701</hyperlink>
 			</control>
 			<control>
 				<type>button</type>
@@ -49,10 +49,15 @@
 			</control>
 			<control>
 				<type>button</type>
-				<id>31</id>
-				<label>6007</label>
-				<hyperlink>701</hyperlink>
+				<id>26</id>
+				<label>777</label>
 			</control>
+			<control>
+				<type>button</type>
+				<id>29</id>
+				<label>6005</label>
+			</control>
+
 			<control>
 				<type>button</type>
 				<id>32</id>

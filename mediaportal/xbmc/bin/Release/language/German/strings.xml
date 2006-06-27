@@ -2584,6 +2584,18 @@
   <string>
 	  <id>776</id>
     <value>Starte TV nicht automatisch</value>
+  </string>
+  <string>
+	  <id>777</id>
+    <value>Timeshift-Start-Modus</value>
+  </string>
+  <string>
+	  <id>778</id>
+    <value>Timeshift wird automatisch verwendet</value>
+  </string>
+  <string>
+	  <id>779</id>
+    <value>Timeshift muss manuell gestartet werden</value>
   </string>  
   <string>
 	  <id>780</id>
@@ -4414,7 +4426,7 @@
   </string>
   <string>
     <id>6006</id>
-    <value>TV-Autostart</value>
+    <value>TV-Start-Modus</value>
   </string>
   <string>
     <id>6007</id>

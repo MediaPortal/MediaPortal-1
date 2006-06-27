@@ -2588,7 +2588,19 @@
   <string>
 	  <id>776</id>
     <value>Do not start / switch to TV automatically</value>
-  </string>    
+  </string>
+  <string>
+	  <id>777</id>
+    <value>Timeshift usage mode</value>
+  </string>  
+  <string>
+	  <id>778</id>
+    <value>Start with timeshift automatically enabled</value>
+  </string>
+  <string>
+	  <id>779</id>
+    <value>Timeshift must be enabled manually</value>
+  </string>        
   <string>
 	  <id>780</id>
     <value>Select scheduling method</value>
