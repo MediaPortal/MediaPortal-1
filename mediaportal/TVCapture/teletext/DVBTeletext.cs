@@ -182,7 +182,6 @@ namespace MediaPortal.TV.Teletext
     {
       _decoder.Clear();
       _renderer.Clear();
-      _pageCache.Clear();
     }
 
 
