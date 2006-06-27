@@ -441,6 +441,7 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
+      VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       if (_vmr9 != null)
       {
         _videoWidth = _vmr9.VideoWidth;

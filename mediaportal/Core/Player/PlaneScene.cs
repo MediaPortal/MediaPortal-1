@@ -509,10 +509,20 @@ namespace MediaPortal.Player
           _arVideoHeight = 0;
           return 0;
         }
+        else
+        {
+          _vmr9Util.VideoWidth = width;
+          _vmr9Util.VideoHeight = height;
+          _vmr9Util.VideoAspectRatioX = arWidth;
+          _vmr9Util.VideoAspectRatioY = arHeight;
+          _arVideoWidth = arWidth;
+          _arVideoHeight = arHeight;
+        }
         if (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.STOPPING) return 0;
         if (!_drawVideoAllowed || !_isEnabled)
         {
-          Log.Write("planescene: PresentSurface() frame:{0} enabled:{1} allowed:{2}", _vmr9Util.FrameCounter, _isEnabled, _drawVideoAllowed);
+          Log.Write("planescene: PresentSurface() frame:{0} enabled:{1} allowed:{2} {3}x{4}",
+            _vmr9Util.FrameCounter, _isEnabled, _drawVideoAllowed,width,height);
           _vmr9Util.FrameCounter++;
           return 0;
         }
@@ -830,6 +840,7 @@ namespace MediaPortal.Player
       }
       else
       {
+       // Log.Write("render black");
         _blackImage.SetPosition((int)_fx, (int)_fy);
         _blackImage.Width = (int)_nw;
         _blackImage.Height = (int)_nh;

@@ -138,12 +138,11 @@ namespace MediaPortal.Player
       _duration = -1d;
       if (strFile.ToLower().IndexOf(".tsbuffer") >= 0)
       {
+        Log.Write("Streambufferplayer: live tv");
         _isLive = true;
       }
-      else
-      {
-        VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
-      }
+      VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
+
 
 
 
@@ -234,38 +233,45 @@ namespace MediaPortal.Player
       _interfaceTsFileSource = _fileSource as ITSFileSource;
       if (_isLive)
       {
-        _mediaCtrl.Run();
-        _mediaCtrl.Pause();
-        long duration = 0;
-        ushort vpid = 0, apid = 0, pmtpid = 0, sid = 0, pcr = 0, prgmNumb = 0, ac3 = 0;
-        Log.Write("TsBaseStreamBuffer:parse file");
+        /*        _mediaCtrl.Run();
+                _mediaCtrl.Pause();
+                long duration = 0;
+                ushort vpid = 0, apid = 0, pmtpid = 0, sid = 0, pcr = 0, prgmNumb = 0, ac3 = 0;
+                Log.Write("TsBaseStreamBuffer:parse file");
 
-        while (true)
-        {
-          _interfaceTsFileSource.Refresh();
-          _interfaceTsFileSource.GetVideoPid(ref vpid);
-          _interfaceTsFileSource.GetAudioPid(ref apid);
-          _interfaceTsFileSource.GetPMTPid(ref pmtpid);
-          _interfaceTsFileSource.GetSIDPid(ref sid);
-          _interfaceTsFileSource.GetPCRPid(ref pcr);
-          _interfaceTsFileSource.GetAC3Pid(ref ac3);
-          _interfaceTsFileSource.GetDuration(ref duration);
-          _interfaceTsFileSource.GetPgmNumb(ref prgmNumb);
-          double dur = duration;
-          dur /= 10000000d;
-          if (dur >= 1.0d) break;
-          else System.Threading.Thread.Sleep(100);
-        }
-        Log.Write("TsBaseStreamBuffer: vpid:0x{0:X} apid:0x{1:X} pmt:0x{2:X} sid:0x{3:X} pcr:0x{4:X} ac3pid:0x{5:X} prgmNumb:0x{6:X} duration:{7}",vpid, apid, pmtpid, sid, pcr, ac3, prgmNumb, duration);
+                while (true)
+                {
+                  _interfaceTsFileSource.Refresh();
+                  _interfaceTsFileSource.GetVideoPid(ref vpid);
+                  _interfaceTsFileSource.GetAudioPid(ref apid);
+                  _interfaceTsFileSource.GetPMTPid(ref pmtpid);
+                  _interfaceTsFileSource.GetSIDPid(ref sid);
+                  _interfaceTsFileSource.GetPCRPid(ref pcr);
+                  _interfaceTsFileSource.GetAC3Pid(ref ac3);
+                  _interfaceTsFileSource.GetDuration(ref duration);
+                  _interfaceTsFileSource.GetPgmNumb(ref prgmNumb);
+                  double dur = duration;
+                  dur /= 10000000d;
+                  if (dur >= 1.0d) break;
+                  else System.Threading.Thread.Sleep(100);
+                }
+                Log.Write("TsBaseStreamBuffer: vpid:0x{0:X} apid:0x{1:X} pmt:0x{2:X} sid:0x{3:X} pcr:0x{4:X} ac3pid:0x{5:X} prgmNumb:0x{6:X} duration:{7}",vpid, apid, pmtpid, sid, pcr, ac3, prgmNumb, duration);
+                _mediaCtrl.Run();
+                UpdateDuration();
+                UpdateCurrentPosition();
+                double dPos = _duration - 2;
+                if (dPos >= 0 && CurrentPosition < dPos)
+                {
+                  Log.Write("TsBaseStreamBuffer:Seek to end");
+                  SeekAbsolute(dPos);
+                }
+         */
         _mediaCtrl.Run();
         UpdateDuration();
         UpdateCurrentPosition();
         double dPos = _duration - 2;
-        if (dPos >= 0 && CurrentPosition < dPos)
-        {
-          Log.Write("TsBaseStreamBuffer:Seek to end");
-          SeekAbsolute(dPos);
-        }
+        Log.Write("TsBaseStreamBuffer:Seek to end:{0}",dPos);
+        SeekAbsolute(dPos);
       }
       else
       {
@@ -1007,7 +1013,7 @@ namespace MediaPortal.Player
       double fPos = _currentPos;
       fCurrentPos -= fContentStart;
       _currentPos = fCurrentPos;
-    //  Log.Write("Position:{0}", _currentPos.ToString("f2"));
+      //  Log.Write("Position:{0}", _currentPos.ToString("f2"));
       _contentStart = fContentStart;
 #if DEBUG
       TimeSpan ts=DateTime.Now-dtStart;
@@ -1039,7 +1045,7 @@ namespace MediaPortal.Player
       _mediaSeeking.GetDuration(out lDuration);
       _duration = lDuration;
       _duration /= 10000000d;
-      Log.Write("Duration:{0}", _duration.ToString("f2"));
+      //.Write("Duration:{0}", _duration.ToString("f2"));
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>
