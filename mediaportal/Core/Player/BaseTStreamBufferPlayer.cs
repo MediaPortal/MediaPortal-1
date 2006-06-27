@@ -136,7 +136,7 @@ namespace MediaPortal.Player
       _speedRate = 10000;
       _isLive = false;
       _duration = -1d;
-      if (strFile.ToLower().IndexOf("live.tsbuffer") >= 0)
+      if (strFile.ToLower().IndexOf(".tsbuffer") >= 0)
       {
         _isLive = true;
       }
@@ -1039,7 +1039,7 @@ namespace MediaPortal.Player
       _mediaSeeking.GetDuration(out lDuration);
       _duration = lDuration;
       _duration /= 10000000d;
-      //Log.Write("Duration:{0}", _duration.ToString("f2"));
+      Log.Write("Duration:{0}", _duration.ToString("f2"));
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>

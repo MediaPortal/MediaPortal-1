@@ -161,6 +161,8 @@ namespace MediaPortal.Player
       get
       {
         int windowId = GUIWindowManager.ActiveWindow;
+        GUIWindow window=GUIWindowManager.GetWindow(windowId);
+        if (window.IsTv) return true;
         if (windowId == (int)GUIWindow.Window.WINDOW_TV ||
           windowId == (int)GUIWindow.Window.WINDOW_TVGUIDE ||
           windowId == (int)GUIWindow.Window.WINDOW_SEARCHTV ||

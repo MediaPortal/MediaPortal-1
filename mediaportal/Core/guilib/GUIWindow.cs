@@ -1338,6 +1338,13 @@ namespace MediaPortal.GUI.Library
       return obj == instance;
     }
 
+    public virtual bool IsTv
+    {
+      get
+      {
+        return false;
+      }
+    }
     /// XAML related code follows
 
     #region Properties
