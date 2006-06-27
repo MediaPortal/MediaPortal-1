@@ -180,12 +180,12 @@ namespace WebEPG_conf
       this.tbGrabSite = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.importFile = new System.Windows.Forms.OpenFileDialog();
       this.groupBox2.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.nMaxGrab)).BeginInit();
+      ( (System.ComponentModel.ISupportInitialize)( this.nMaxGrab ) ).BeginInit();
       this.gbChannelDetails.SuspendLayout();
       this.gbGrabber.SuspendLayout();
       this.gbLinked.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.nEnd)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.nStart)).BeginInit();
+      ( (System.ComponentModel.ISupportInitialize)( this.nEnd ) ).BeginInit();
+      ( (System.ComponentModel.ISupportInitialize)( this.nStart ) ).BeginInit();
       this.SuspendLayout();
       // 
       // bAdd
@@ -199,6 +199,7 @@ namespace WebEPG_conf
       // 
       // bImport
       // 
+      this.bImport.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left ) ) );
       this.bImport.Location = new System.Drawing.Point(16, 368);
       this.bImport.Name = "bImport";
       this.bImport.Size = new System.Drawing.Size(72, 24);
@@ -208,6 +209,9 @@ namespace WebEPG_conf
       // 
       // lbChannels
       // 
+      this.lbChannels.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.lbChannels.Location = new System.Drawing.Point(32, 32);
       this.lbChannels.Name = "lbChannels";
       this.lbChannels.Size = new System.Drawing.Size(168, 277);
@@ -215,6 +219,9 @@ namespace WebEPG_conf
       // 
       // groupBox2
       // 
+      this.groupBox2.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.groupBox2.Controls.Add(this.lCount);
       this.groupBox2.Controls.Add(this.tbCount);
       this.groupBox2.Controls.Add(this.bImport);
@@ -232,6 +239,7 @@ namespace WebEPG_conf
       // 
       // lCount
       // 
+      this.lCount.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.lCount.Location = new System.Drawing.Point(104, 312);
       this.lCount.Name = "lCount";
       this.lCount.Size = new System.Drawing.Size(80, 16);
@@ -240,6 +248,9 @@ namespace WebEPG_conf
       // 
       // tbCount
       // 
+      this.tbCount.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.tbCount.BorderColor = System.Drawing.Color.Empty;
       this.tbCount.Location = new System.Drawing.Point(16, 304);
       this.tbCount.Name = "tbCount";
       this.tbCount.Size = new System.Drawing.Size(72, 20);
@@ -247,6 +258,7 @@ namespace WebEPG_conf
       // 
       // bSave
       // 
+      this.bSave.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.bSave.Location = new System.Drawing.Point(112, 368);
       this.bSave.Name = "bSave";
       this.bSave.Size = new System.Drawing.Size(72, 24);
@@ -256,6 +268,7 @@ namespace WebEPG_conf
       // 
       // lGrabDay
       // 
+      this.lGrabDay.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.lGrabDay.Location = new System.Drawing.Point(104, 336);
       this.lGrabDay.Name = "lGrabDay";
       this.lGrabDay.Size = new System.Drawing.Size(72, 16);
@@ -264,6 +277,8 @@ namespace WebEPG_conf
       // 
       // nMaxGrab
       // 
+      this.nMaxGrab.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.nMaxGrab.Location = new System.Drawing.Point(16, 328);
       this.nMaxGrab.Maximum = new decimal(new int[] {
             14,
@@ -286,6 +301,8 @@ namespace WebEPG_conf
       // 
       // gbChannelDetails
       // 
+      this.gbChannelDetails.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.gbChannelDetails.Controls.Add(this.bUpdate);
       this.gbChannelDetails.Controls.Add(this.tbDisplayName);
       this.gbChannelDetails.Controls.Add(this.label4);
@@ -317,6 +334,7 @@ namespace WebEPG_conf
       // 
       // tbDisplayName
       // 
+      this.tbDisplayName.BorderColor = System.Drawing.Color.Empty;
       this.tbDisplayName.Location = new System.Drawing.Point(88, 24);
       this.tbDisplayName.Name = "tbDisplayName";
       this.tbDisplayName.Size = new System.Drawing.Size(176, 20);
@@ -349,6 +367,7 @@ namespace WebEPG_conf
       // 
       // tbChannelName
       // 
+      this.tbChannelName.BorderColor = System.Drawing.Color.Empty;
       this.tbChannelName.Location = new System.Drawing.Point(88, 48);
       this.tbChannelName.Name = "tbChannelName";
       this.tbChannelName.ReadOnly = true;
@@ -366,6 +385,7 @@ namespace WebEPG_conf
       // 
       // tbLanguage
       // 
+      this.tbLanguage.BorderColor = System.Drawing.Color.Empty;
       this.tbLanguage.Location = new System.Drawing.Point(88, 72);
       this.tbLanguage.Name = "tbLanguage";
       this.tbLanguage.ReadOnly = true;
@@ -480,6 +500,7 @@ namespace WebEPG_conf
       // tbSiteDescription
       // 
       this.tbSiteDescription.BackColor = System.Drawing.SystemColors.ScrollBar;
+      this.tbSiteDescription.BorderColor = System.Drawing.Color.Empty;
       this.tbSiteDescription.Location = new System.Drawing.Point(80, 48);
       this.tbSiteDescription.Multiline = true;
       this.tbSiteDescription.Name = "tbSiteDescription";
@@ -506,6 +527,7 @@ namespace WebEPG_conf
       // 
       // tbGrabDays
       // 
+      this.tbGrabDays.BorderColor = System.Drawing.Color.Empty;
       this.tbGrabDays.Location = new System.Drawing.Point(80, 144);
       this.tbGrabDays.Name = "tbGrabDays";
       this.tbGrabDays.ReadOnly = true;
@@ -531,6 +553,7 @@ namespace WebEPG_conf
       // 
       // tbGrabSite
       // 
+      this.tbGrabSite.BorderColor = System.Drawing.Color.Empty;
       this.tbGrabSite.Location = new System.Drawing.Point(80, 24);
       this.tbGrabSite.Name = "tbGrabSite";
       this.tbGrabSite.ReadOnly = true;
@@ -555,15 +578,15 @@ namespace WebEPG_conf
       this.Text = "WebEPG Config";
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.nMaxGrab)).EndInit();
+      ( (System.ComponentModel.ISupportInitialize)( this.nMaxGrab ) ).EndInit();
       this.gbChannelDetails.ResumeLayout(false);
       this.gbChannelDetails.PerformLayout();
       this.gbGrabber.ResumeLayout(false);
       this.gbGrabber.PerformLayout();
       this.gbLinked.ResumeLayout(false);
       this.gbLinked.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.nEnd)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.nStart)).EndInit();
+      ( (System.ComponentModel.ISupportInitialize)( this.nEnd ) ).EndInit();
+      ( (System.ComponentModel.ISupportInitialize)( this.nStart ) ).EndInit();
       this.ResumeLayout(false);
 
     }

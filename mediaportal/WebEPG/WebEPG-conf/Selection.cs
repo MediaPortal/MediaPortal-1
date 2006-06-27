@@ -127,15 +127,19 @@ namespace WebEPG_conf
       // 
       // treeView1
       // 
-      this.treeView1.ImageIndex = -1;
+      this.treeView1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.treeView1.Location = new System.Drawing.Point(16, 48);
       this.treeView1.Name = "treeView1";
-      this.treeView1.SelectedImageIndex = -1;
       this.treeView1.Size = new System.Drawing.Size(256, 272);
       this.treeView1.TabIndex = 0;
       // 
       // gbSelection
       // 
+      this.gbSelection.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.gbSelection.Controls.Add(this.bClose);
       this.gbSelection.Controls.Add(this.bSelect);
       this.gbSelection.Controls.Add(this.rbWebsites);
@@ -143,6 +147,7 @@ namespace WebEPG_conf
       this.gbSelection.Controls.Add(this.tbAInfo);
       this.gbSelection.Controls.Add(this.label5);
       this.gbSelection.Controls.Add(this.lList);
+      this.gbSelection.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.gbSelection.Location = new System.Drawing.Point(0, 8);
       this.gbSelection.Name = "gbSelection";
       this.gbSelection.Size = new System.Drawing.Size(424, 352);
@@ -152,37 +157,52 @@ namespace WebEPG_conf
       // 
       // bClose
       // 
+      this.bClose.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.bClose.Location = new System.Drawing.Point(336, 320);
       this.bClose.Name = "bClose";
       this.bClose.Size = new System.Drawing.Size(72, 24);
       this.bClose.TabIndex = 14;
       this.bClose.Text = "Close";
+      this.bClose.UseVisualStyleBackColor = true;
       // 
       // bSelect
       // 
+      this.bSelect.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left ) ) );
       this.bSelect.Location = new System.Drawing.Point(16, 320);
       this.bSelect.Name = "bSelect";
       this.bSelect.Size = new System.Drawing.Size(72, 24);
       this.bSelect.TabIndex = 13;
       this.bSelect.Text = "Select";
+      this.bSelect.UseVisualStyleBackColor = true;
       // 
       // rbWebsites
       // 
+      this.rbWebsites.AutoSize = true;
+      this.rbWebsites.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.rbWebsites.Location = new System.Drawing.Point(160, 16);
       this.rbWebsites.Name = "rbWebsites";
+      this.rbWebsites.Size = new System.Drawing.Size(68, 17);
       this.rbWebsites.TabIndex = 12;
       this.rbWebsites.Text = "Websites";
+      this.rbWebsites.UseVisualStyleBackColor = true;
       // 
       // rbChannels
       // 
+      this.rbChannels.AutoSize = true;
+      this.rbChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.rbChannels.Location = new System.Drawing.Point(64, 16);
       this.rbChannels.Name = "rbChannels";
+      this.rbChannels.Size = new System.Drawing.Size(68, 17);
       this.rbChannels.TabIndex = 11;
       this.rbChannels.Text = "Channels";
+      this.rbChannels.UseVisualStyleBackColor = true;
       // 
       // tbAInfo
       // 
+      this.tbAInfo.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.tbAInfo.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
+      this.tbAInfo.BorderColor = System.Drawing.Color.Empty;
       this.tbAInfo.Location = new System.Drawing.Point(272, 40);
       this.tbAInfo.Multiline = true;
       this.tbAInfo.Name = "tbAInfo";
@@ -218,6 +238,7 @@ namespace WebEPG_conf
       this.Name = "fSelection";
       this.Text = "Selection";
       this.gbSelection.ResumeLayout(false);
+      this.gbSelection.PerformLayout();
       this.ResumeLayout(false);
 
     }
