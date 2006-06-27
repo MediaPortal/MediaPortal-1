@@ -2744,7 +2744,7 @@
 	</string>
 	<string>
 		<id>905</id>
-		<value>Szükség van a plugin első beállításaára</value>
+		<value>Szükség van a plugin első beállítására</value>
 	</string>
 	<string>
 		<id>906</id>
@@ -3800,7 +3800,7 @@
 	</string>
 	<string>
 		<id>2143</id>
-		<value>Home</value>
+		<value>Központ</value>
 	</string>
 	<string>
 		<id>2200</id>
@@ -4380,7 +4380,7 @@
 	</string>
 	<string>
 		<id>100000</id>
-		<value>Home</value>
+		<value>Központ</value>
 	</string>
 	<string>
 		<id>100001</id>
@@ -4492,7 +4492,7 @@
 	</string>
 	<string>
 		<id>100030</id>
-		<value>My Radio</value>
+		<value>Rádiók</value>
 	</string>
 	<string>
 		<id>100031</id>
@@ -4772,7 +4772,7 @@
 	</string>
 	<string>
 		<id>102002</id>
-		<value>Dialog OK</value>
+		<value>OK dialógus</value>
 	</string>
 	<string>
 		<id>102003</id>
@@ -4788,7 +4788,7 @@
 	</string>
 	<string>
 		<id>102006</id>
-		<value>Audio visisalisation</value>
+		<value>Audio vizualizáció</value>
 	</string>
 	<string>
 		<id>102007</id>
@@ -4796,7 +4796,7 @@
 	</string>
 	<string>
 		<id>102008</id>
-		<value>Files tacking dialog</value>
+		<value>Fájl összevonás dialógus</value>
 	</string>
 	<string>
 		<id>102009</id>
@@ -5615,6 +5615,31 @@
     <id>6019</id>
     <value>perccel a műsor vége után</value>
   </string>                   
-
+<!-- -->
+<string>
+    <id>1200</id>
+    <value>Beállítások varázsló</value>
+  </string>
+	<string>
+    <id>6015</id>
+    <value>DVD beállítások</value>
+  </string>
+ <string>
+    <id>6020</id>
+    <value>Diavetítés ismétlés/hurok</value>
+  </string>  
+  <string>
+    <id>6021</id>
+    <value>Diavetítés automatikus keverése</value>
+  </string>   
+  <string>
+    <id>6022</id>
+    <value>Videó beállítások</value>
+  </string> 
+  <string>
+    <id>6023</id>
+    <value>Képernyő beállítások</value>
+  </string>                
+<!-- -->
 </strings>
 
