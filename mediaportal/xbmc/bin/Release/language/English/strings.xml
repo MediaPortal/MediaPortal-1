@@ -2471,16 +2471,17 @@
   </string>
   <string>
     <id>746</id>
-    <value>high</value>
+    <value>max</value>
   </string>
   <string>
     <id>747</id>
-    <value>low</value>
+    <value>min</value>
   </string>
   <string>
     <id>748</id>
     <value>Precipitation</value>
   </string>
+
   <string>
     <id>750</id>
     <value>Images</value>
@@ -2612,7 +2613,15 @@
   <string>
 	  <id>782</id>
     <value>Advanced record</value>
-  </string>        
+  </string>   
+  <string>
+    <id>798</id>
+    <value>low</value>
+  </string>
+  <string>
+    <id>799</id>
+    <value>high</value>
+  </string>         
   <string>
     <id>800</id>
     <value>Starts with</value>

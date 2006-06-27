@@ -1056,7 +1056,7 @@ namespace MediaPortal.GUI.Weather
           localizedWord = GUILocalizeStrings.Get(380);
         else if (String.Compare(tokenSplit, "Few", true) == 0)
           localizedWord = GUILocalizeStrings.Get(381);
-        else if (String.Compare(tokenSplit, "Scattered", true) == 0)
+        else if ( String.Compare(tokenSplit, "Scattered", true) == 0 || String.Compare(tokenSplit, "Isolated", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(382);
         else if (String.Compare(tokenSplit, "Wind", true) == 0)
           localizedWord = GUILocalizeStrings.Get(383);
@@ -1085,9 +1085,9 @@ namespace MediaPortal.GUI.Weather
         else if (String.Compare(tokenSplit, "Mist", true) == 0)
           localizedWord = GUILocalizeStrings.Get(395);
         else if ( String.Compare(tokenSplit, "High", true) == 0 )
-          localizedWord = GUILocalizeStrings.Get(746);
+          localizedWord = GUILocalizeStrings.Get(799);
         else if ( String.Compare(tokenSplit, "Low", true) == 0 )
-          localizedWord = GUILocalizeStrings.Get(747);
+          localizedWord = GUILocalizeStrings.Get(798);
         else if (String.Compare(tokenSplit, "Moderate", true) == 0)
           localizedWord = GUILocalizeStrings.Get(534);
         else if ( String.Compare(tokenSplit, "Late", true) == 0 )

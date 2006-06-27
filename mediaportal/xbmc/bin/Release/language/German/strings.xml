@@ -2467,16 +2467,17 @@
 	</string>
 	<string>
 		<id>746</id>
-		<value>hoch</value>
+		<value>Max</value>
 	</string>
 	<string>
 		<id>747</id>
-		<value>niedrig</value>
+		<value>Min</value>
 	</string>
 	<string>
 		<id>748</id>
 		<value>Niederschlag</value>
-	</string>
+  </string>
+
 	<string>
 		<id>750</id>
 		<value>Wetter</value>
@@ -2608,6 +2609,14 @@
   <string>
 	  <id>782</id>
     <value>Erweitert</value>
+  </string>   
+  <string>
+    <id>798</id>
+    <value>niedrig</value>
+  </string>
+  <string>
+    <id>799</id>
+    <value>hoch</value>
     </string> 
 	<string>
 		<id>800</id>
