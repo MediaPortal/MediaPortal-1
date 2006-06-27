@@ -372,6 +372,7 @@ namespace MediaPortal.GUI.Library
         if (_listWindows[i].GetID == Window.GetID)
         {
           Log.WriteFile(Log.LogType.Log, true, "Window:{0} and window {1} have the same id's!!!", Window, _listWindows[i]);
+          Window.OnAdded();
           return;
         }
       }
