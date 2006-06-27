@@ -1120,7 +1120,19 @@ namespace MediaPortal.GUI.Library
       msg.Param3 = iLine2;
       GUIWindowManager.SendThreadMessage(msg);
     }
-
+    static public void Replace(int windowId, GUIWindow window)
+    {
+      for (int i = 0; i < _listWindows.Length; ++i)
+      {
+        if (_listWindows[i] != null)
+        {
+          if (_listWindows[i].GetID == windowId)
+          {
+            _listWindows[i] = window;
+          }
+        }
+      }
+    }
     #endregion
   }
 }
