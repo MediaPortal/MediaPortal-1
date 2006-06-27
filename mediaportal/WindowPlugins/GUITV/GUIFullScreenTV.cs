@@ -206,7 +206,7 @@ namespace MediaPortal.GUI.TV
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         _useVMR9Zap = xmlreader.GetValueAsBool("general", "useVMR9ZapOSD", false);
-        _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
+        _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 15);
         _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
       }
       return Load(GUIGraphicsContext.Skin + @"\mytvFullScreen.xml");

@@ -674,6 +674,7 @@ namespace MediaPortal.GUI.Home
       switch (message.Message)
       {
         // Initialization of the window
+        #region case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
@@ -710,9 +711,11 @@ namespace MediaPortal.GUI.Home
             m_bSkipFirstMouseMove = true;
             return true;
           }
-
+        #endregion
+          
         // Sets the focus for the controls that are on the window.
         // if the focus changed, then show the correct sub-picture
+        #region case GUIMessage.MessageType.GUI_MSG_SETFOCUS
         case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
           {
             int iControl = message.TargetControlId;
@@ -729,53 +732,156 @@ namespace MediaPortal.GUI.Home
             }
           }
           break;
+        #endregion
+
+        #region case GUIMessage.MessageType.GUI_MSG_CLICKED
         case GUIMessage.MessageType.GUI_MSG_CLICKED:  // Handle Menu tags
-          //get sender control
-          Log.Write(" OnMessage : MessageType.GUI_MSG_CLICKED");
-          base.OnMessage(message);
-          int bControl = message.SenderControlId;
-          if (bControl > 1 && bControl < 60)
           {
-            GUIControl cntl = GetControl(bControl) as GUIControl;
-            if (cntl != null)
-            { // Call SubMenu									
-              if (useMyPlugins == true)
-              {
-                bool isplugin = false;
-                for (int i = 0; i < myPluginsCount; i++)
+            //get sender control
+            Log.Write(" OnMessage : MessageType.GUI_MSG_CLICKED");
+            base.OnMessage(message);
+            int bControl = message.SenderControlId;
+            if ( bControl > 1 && bControl < 60 )
+            {
+              GUIControl cntl = GetControl(bControl) as GUIControl;
+              if ( cntl != null )
+              { // Call SubMenu									
+                if ( useMyPlugins == true )
                 {
-                  if (bControl == myPlugins[i])
+                  bool isplugin = false;
+                  for ( int i = 0; i < myPluginsCount; i++ )
                   {
-                    isplugin = true;
+                    if ( bControl == myPlugins[i] )
+                    {
+                      isplugin = true;
+                    }
+                  }
+                  if ( isplugin == true )
+                  {
+                    for ( int i = 102; i < 160; i++ )
+                    {
+                      GUIControl.HideControl(GetID, i);
+                    }
+                    m_iButtons = 0;
+                    inMyPlugins = true;
+                    if ( useTopBarSub == true )
+                    {
+                      topBar.UseTopBarSub = true;
+                      topBarHome.UseTopBarSub = true;
+                    }
+
+                    for ( int iButt = 2; iButt < 60; iButt++ )
+                    {
+                      m_iButtonIds[iButt] = 0;
+                      GUIControl bCntl = GetControl(iButt) as GUIControl;
+                      if ( bCntl != null )
+                      {
+                        Remove(iButt);
+                      }
+                    }
+                    for ( int iButt = 102; iButt < 160; iButt++ )
+                    {
+                      GUIControl bCntl = GetControl(iButt) as GUIControl;
+                      if ( bCntl != null )
+                      {
+                        Remove(iButt);
+                      }
+                    }
+                    ResetButtons();
+                    ArrayList plugins = PluginManager.SetupForms;
+                    ProcessPlugins(ref plugins);
+                    if ( m_iButtons > 0 )
+                    {
+                      while ( m_iButtons < 10 )
+                        ProcessPlugins(ref plugins);
+                    }
+                    m_aryPreControlList.Clear();
+                    m_aryPostControlList.Clear();
+                    plugins = null;
+                    m_iCurrentButton = m_iButtons / 2;
+                    VerifyButtonIndex(ref m_iCurrentButton);
+                    LayoutButtons(0);
+                    if ( m_iOffset != 0 )
+                    {
+                      FocusControl(GetID, m_iButtonIds[m_iOffset + m_iMiddle]);
+                    }
+                    else
+                    {
+                      int buttonIndex = m_iCurrentButton;
+
+                      //
+                      // Verify the button index
+                      //
+                      VerifyButtonIndex(ref buttonIndex);
+
+                      //
+                      // Focus the currently selected control
+                      //
+                      FocusControl(GetID, buttonIndex + 2);
+                    }
                   }
                 }
-                if (isplugin == true)
+                if ( useMenus == true ) // Call submenu new style
                 {
-                  for (int i = 102; i < 160; i++)
+                  GUIButtonControl button = GetControl(bControl) as GUIButtonControl;
+                  if ( button.HyperLink == -2 )
                   {
-                    GUIControl.HideControl(GetID, i);
+                    break;
                   }
-                  m_iButtons = 0;
-                  inMyPlugins = true;
-                  if (useTopBarSub == true)
+                  if ( button.HyperLink == -3 )
+                  {
+                    GoBackMenu();
+                    break;
+                  }
+                  if ( button.HyperLink == -500 )
+                  {
+                    gScript.SetGlobalVar("insubmenu", inSubMenu);
+                    gScript.StartScript(button.Label);
+                    break;
+                  }
+                  if ( inSecondMenu == true )
+                  {
+                    break;
+                  }
+                  if ( inSubMenu == true )
+                  {
+                    inSecondMenu = true;
+                  }
+                  else
+                  {
+                    inSubMenu = true;
+                  }
+                  if ( useTopBarSub == true )
                   {
                     topBar.UseTopBarSub = true;
                     topBarHome.UseTopBarSub = true;
                   }
+                  if ( noTopBar == true )
+                  {
+                    topBar.UseTopBarSub = false;
+                    topBarHome.UseTopBarSub = true;
+                  }
 
-                  for (int iButt = 2; iButt < 60; iButt++)
+                  GUIButtonControl cButt = GetControl(bControl) as GUIButtonControl;
+                  selectedButton = cButt.Label;
+                  for ( int i = 102; i < 160; i++ )
+                  {
+                    GUIControl.HideControl(GetID, i);
+                  }
+                  m_iButtons = 0;
+                  for ( int iButt = 2; iButt < 60; iButt++ )
                   {
                     m_iButtonIds[iButt] = 0;
                     GUIControl bCntl = GetControl(iButt) as GUIControl;
-                    if (bCntl != null)
+                    if ( bCntl != null )
                     {
                       Remove(iButt);
                     }
                   }
-                  for (int iButt = 102; iButt < 160; iButt++)
+                  for ( int iButt = 102; iButt < 160; iButt++ )
                   {
                     GUIControl bCntl = GetControl(iButt) as GUIControl;
-                    if (bCntl != null)
+                    if ( bCntl != null )
                     {
                       Remove(iButt);
                     }
@@ -783,18 +889,54 @@ namespace MediaPortal.GUI.Home
                   ResetButtons();
                   ArrayList plugins = PluginManager.SetupForms;
                   ProcessPlugins(ref plugins);
-                  if (m_iButtons > 0)
+                  if ( menuView > m_iButtons && noScrollSubs == true )
                   {
-                    while (m_iButtons < 10)
-                      ProcessPlugins(ref plugins);
+                    int xm = ( menuView - m_iButtons ) / 2;
+                    for ( int iButt = 2; iButt < 60; iButt++ )
+                    {
+                      m_iButtonIds[iButt] = 0;
+                      GUIControl bCntl = GetControl(iButt) as GUIControl;
+                      if ( bCntl != null )
+                      {
+                        Remove(iButt);
+                      }
+                    }
+                    for ( int iButt = 102; iButt < 160; iButt++ )
+                    {
+                      GUIControl bCntl = GetControl(iButt) as GUIControl;
+                      if ( bCntl != null )
+                      {
+                        Remove(iButt);
+                      }
+                    }
+                    m_iButtons = 0;
+                    for ( int i = 0; i < xm - 1; i++ ) AddPluginButton(-2, " ", "", "", "");
+                    ProcessPlugins(ref plugins);
+                    for ( int i = 0; i < xm + 1; i++ ) AddPluginButton(-2, " ", "", "", "");
+                    ProcessPlugins(ref plugins);
+                    for ( int i = 0; i < xm + 1; i++ ) AddPluginButton(-2, " ", "", "", "");
+                    ProcessPlugins(ref plugins);
+                    AddPluginButton(-2, " ", "", "", "");
+                  }
+                  else
+                  {
+                    if ( m_iButtons > 0 )
+                    {
+                      while ( m_iButtons < 10 )
+                        ProcessPlugins(ref plugins);
+                    }
                   }
                   m_aryPreControlList.Clear();
                   m_aryPostControlList.Clear();
                   plugins = null;
                   m_iCurrentButton = m_iButtons / 2;
+                  for ( int i = 102; i < 160; i++ )
+                  {
+                    GUIControl.HideControl(GetID, i);
+                  }
                   VerifyButtonIndex(ref m_iCurrentButton);
                   LayoutButtons(0);
-                  if (m_iOffset != 0)
+                  if ( m_iOffset != 0 )
                   {
                     FocusControl(GetID, m_iButtonIds[m_iOffset + m_iMiddle]);
                   }
@@ -814,144 +956,11 @@ namespace MediaPortal.GUI.Home
                   }
                 }
               }
-              if (useMenus == true) // Call submenu new style
-              {
-                GUIButtonControl button = GetControl(bControl) as GUIButtonControl;
-                if (button.HyperLink == -2)
-                {
-                  break;
-                }
-                if (button.HyperLink == -3)
-                {
-                  GoBackMenu();
-                  break;
-                }
-                if (button.HyperLink == -500)
-                {
-                  gScript.SetGlobalVar("insubmenu", inSubMenu);
-                  gScript.StartScript(button.Label);
-                  break;
-                }
-                if (inSecondMenu == true)
-                {
-                  break;
-                }
-                if (inSubMenu == true)
-                {
-                  inSecondMenu = true;
-                }
-                else
-                {
-                  inSubMenu = true;
-                }
-                if (useTopBarSub == true)
-                {
-                  topBar.UseTopBarSub = true;
-                  topBarHome.UseTopBarSub = true;
-                }
-                if (noTopBar == true)
-                {
-                  topBar.UseTopBarSub = false;
-                  topBarHome.UseTopBarSub = true;
-                }
-
-                GUIButtonControl cButt = GetControl(bControl) as GUIButtonControl;
-                selectedButton = cButt.Label;
-                for (int i = 102; i < 160; i++)
-                {
-                  GUIControl.HideControl(GetID, i);
-                }
-                m_iButtons = 0;
-                for (int iButt = 2; iButt < 60; iButt++)
-                {
-                  m_iButtonIds[iButt] = 0;
-                  GUIControl bCntl = GetControl(iButt) as GUIControl;
-                  if (bCntl != null)
-                  {
-                    Remove(iButt);
-                  }
-                }
-                for (int iButt = 102; iButt < 160; iButt++)
-                {
-                  GUIControl bCntl = GetControl(iButt) as GUIControl;
-                  if (bCntl != null)
-                  {
-                    Remove(iButt);
-                  }
-                }
-                ResetButtons();
-                ArrayList plugins = PluginManager.SetupForms;
-                ProcessPlugins(ref plugins);
-                if (menuView > m_iButtons && noScrollSubs == true)
-                {
-                  int xm = (menuView - m_iButtons) / 2;
-                  for (int iButt = 2; iButt < 60; iButt++)
-                  {
-                    m_iButtonIds[iButt] = 0;
-                    GUIControl bCntl = GetControl(iButt) as GUIControl;
-                    if (bCntl != null)
-                    {
-                      Remove(iButt);
-                    }
-                  }
-                  for (int iButt = 102; iButt < 160; iButt++)
-                  {
-                    GUIControl bCntl = GetControl(iButt) as GUIControl;
-                    if (bCntl != null)
-                    {
-                      Remove(iButt);
-                    }
-                  }
-                  m_iButtons = 0;
-                  for (int i = 0; i < xm - 1; i++) AddPluginButton(-2, " ", "", "", "");
-                  ProcessPlugins(ref plugins);
-                  for (int i = 0; i < xm + 1; i++) AddPluginButton(-2, " ", "", "", "");
-                  ProcessPlugins(ref plugins);
-                  for (int i = 0; i < xm + 1; i++) AddPluginButton(-2, " ", "", "", "");
-                  ProcessPlugins(ref plugins);
-                  AddPluginButton(-2, " ", "", "", "");
-                }
-                else
-                {
-                  if (m_iButtons > 0)
-                  {
-                    while (m_iButtons < 10)
-                      ProcessPlugins(ref plugins);
-                  }
-                }
-                m_aryPreControlList.Clear();
-                m_aryPostControlList.Clear();
-                plugins = null;
-                m_iCurrentButton = m_iButtons / 2;
-                for (int i = 102; i < 160; i++)
-                {
-                  GUIControl.HideControl(GetID, i);
-                }
-                VerifyButtonIndex(ref m_iCurrentButton);
-                LayoutButtons(0);
-                if (m_iOffset != 0)
-                {
-                  FocusControl(GetID, m_iButtonIds[m_iOffset + m_iMiddle]);
-                }
-                else
-                {
-                  int buttonIndex = m_iCurrentButton;
-
-                  //
-                  // Verify the button index
-                  //
-                  VerifyButtonIndex(ref buttonIndex);
-
-                  //
-                  // Focus the currently selected control
-                  //
-                  FocusControl(GetID, buttonIndex + 2);
-                }
-              }
-            }
+            }            
           }
           break;
       }
+
       return base.OnMessage(message);
     }
     #endregion
