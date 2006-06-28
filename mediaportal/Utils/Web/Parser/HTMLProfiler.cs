@@ -71,7 +71,7 @@ namespace MediaPortal.Utils.Web
     override public Profiler GetPageProfiler(HTTPRequest page)
     {
       HTMLPage webPage = new HTMLPage(page, _strEncoding);
-      string source = webPage.GetBody();
+      string source = webPage.GetPage();
       HTMLProfiler retProfiler = null;
 
       if (source != null)
