@@ -1,4 +1,4 @@
-<window>
+﻿<window>
 	<id>708</id>
 	<defaultcontrol>2</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
@@ -40,6 +40,23 @@
 			<texture>hover_settings.png</texture>
 		</control>
 
+		<control>
+			<description>reset button</description>
+			<type>button</type>
+			<id>18</id>
+			<label>886</label>
+			<posX>144</posX>
+			<posY>194</posY>
+			<width>90</width>
+			<height>33</height>
+			<align>center</align>
+			<textureFocus>button_small_settings_focus.png</textureFocus>
+			<textureNoFocus>button_small_settings_nofocus.png</textureNoFocus>
+			<onup>99</onup>
+			<ondown>2</ondown>
+			<onleft>2</onleft>
+			<onright>2</onright>
+		</control>
 
 
 		<control>
@@ -60,9 +77,9 @@
 			<posX>288</posX>
 			<posY>225</posY>			
 			<textcolor>FFFFFFFF</textcolor>
-			<onleft>13</onleft>
+			<onleft>18</onleft>
 			<onright>6</onright>
-			<onup>99</onup>
+			<onup>18</onup>
 			<align>right</align>
 		</control>
 
@@ -74,7 +91,7 @@
 			<posX>288</posX>
 			<posY>250</posY>			
 			<textcolor>FFFFFFFF</textcolor>
-			<onleft>13</onleft>
+			<onleft>18</onleft>
 			<onright>6</onright>
 			<align>right</align>
 		</control>
@@ -87,7 +104,7 @@
 			<posX>288</posX>
 			<posY>275</posY>			
 			<textcolor>FFFFFFFF</textcolor>
-			<onleft>13</onleft>
+			<onleft>18</onleft>
 			<onright>6</onright>
 			<align>right</align>
 		</control>
@@ -100,7 +117,7 @@
 			<posX>288</posX>
 			<posY>300</posY>			
 			<textcolor>FFFFFFFF</textcolor>
-			<onleft>13</onleft>
+			<onleft>18</onleft>
 			<onright>6</onright>
 			<ondown>2</ondown>
 			<align>right</align>
@@ -126,7 +143,7 @@
 			<textcolor>FFFFFFFF</textcolor>
 			<onleft>2</onleft>
 			<onright>14</onright>
-			<onup>5</onup>
+			<onup>18</onup>
 			<align>right</align>
 		</control>
 
@@ -243,7 +260,7 @@
 			<textcolor>FFFFFFFF</textcolor>
 			<onleft>6</onleft>
 			<onright>2</onright>
-			<onup>13</onup>
+			<onup>18</onup>
 			<align>right</align>
 		</control>
 
