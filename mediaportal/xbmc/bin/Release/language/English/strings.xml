@@ -4637,6 +4637,14 @@
       <id>6023</id>
       <value>Screen setup</value>
    </string>
+   <string>
+      <id>6024</id>
+      <value>Skip steps</value>
+   </string>
+   <string>
+      <id>6025</id>
+      <value>Skip step setup</value>
+   </string>      
    <string Prefix="My ">
       <id>8000</id>
       <value>Mail</value>
@@ -4801,6 +4809,18 @@
       <id>9011</id>
       <value>View comments:</value>
    </string>
+   <string>
+      <id>9997</id>
+      <value>Seconds:</value>
+   </string>
+   <string>
+      <id>9998</id>
+      <value>Minutes:</value>
+   </string>
+   <string>
+      <id>9999</id>
+      <value>Hours:</value>
+   </string>         
    <string>
       <id>10100</id>
       <value>Hidden mines</value>

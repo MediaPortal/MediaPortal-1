@@ -34,7 +34,7 @@ namespace WindowPlugins.GUISettings
 {
 	public class GUISettingsSkipSteps : GUIWindow
 	{
-		[SkinControlAttribute(2)]			protected GUIToggleButtonControl toggleButtonStep1 =null;
+		[SkinControlAttribute(2)]			protected GUICheckMarkControl checkMarkButtonStep1 =null;
 
     public GUISettingsSkipSteps()
 		{
@@ -51,7 +51,7 @@ namespace WindowPlugins.GUISettings
       base.OnPageLoad();
       //Load settings
       Log.Write("DEBUG - GUISkipSteps: {0}", "LoadSettings");
-      GUIControl.FocusControl(GetID, toggleButtonStep1.GetID);
+      GUIControl.FocusControl(GetID, checkMarkButtonStep1.GetID);
     }
 
     protected override void OnPageDestroy( int newWindowId )
@@ -72,9 +72,9 @@ namespace WindowPlugins.GUISettings
 
 		protected override void OnClicked(int controlId, GUIControl control, MediaPortal.GUI.Library.Action.ActionType actionType)
 		{
-      if (control == toggleButtonStep1)
+      if ( control == checkMarkButtonStep1 )
       {
-          Log.Write("DEBUG - GUISkipSteps: {0}", "toggleButtonStep1.onclick");
+        Log.Write("DEBUG - GUISkipSteps: {0}", "checkMarkButtonStep1.onclick");
       }
 			base.OnClicked (controlId, control, actionType);
 		}

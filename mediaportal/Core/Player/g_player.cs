@@ -1022,8 +1022,8 @@ namespace MediaPortal.Player
       if (_player.CurrentPosition + m_iTimeToStep >= _player.Duration) bEnd = true;
       return m_iTimeToStep;
     }
-    // "0=5 ;1=15 ;1=30 ;0=45 ;1=1m ;1=3m ;1=5m ;0=7m ;1=10m ;1=15m ;1=30m ;0=45m ;1=1h ;0=90m ;1=2h"
-    //   0    1     2     3     4     5     6     7     8      9      10     11     12    13     14
+    // "0=5 ;1=15 ;1=30 ;0=45 ;1=1m ;1=3m ;1=5m ;0=7m ;1=10m ;1=15m ;1=30m ;0=45m ;1=1h ;0=90m ;1=2h ;0=3h"
+    //   0    1     2     3     4     5     6     7     8      9      10     11     12    13     14    15
     static public void SeekStep(bool bFF)
     {
       int[] m_seekStep = new int[16];

@@ -4638,6 +4638,14 @@
       <value>Anzeigen-Konfiguration</value>
    </string>
    <string>
+      <id>6024</id>
+      <value>Skip-Stufen</value>
+   </string>
+   <string>
+      <id>6025</id>
+      <value>Skip-Stufen-Konfiguration</value>
+   </string>      
+   <string>
       <id>8000</id>
       <value>E-Mail</value>
    </string>
@@ -4800,6 +4808,18 @@
    <string>
       <id>9011</id>
       <value>Kommentar:</value>
+   </string>
+   <string>
+      <id>9997</id>
+      <value>Sekunden:</value>
+   </string>
+   <string>
+      <id>9998</id>
+      <value>Minuten:</value>
+   </string>
+   <string>
+      <id>9999</id>
+      <value>Stunden:</value>
    </string>
    <string>
       <id>10100</id>
