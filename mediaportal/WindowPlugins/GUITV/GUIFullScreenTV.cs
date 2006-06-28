@@ -521,7 +521,41 @@ namespace MediaPortal.GUI.TV
             SaveSettings();
           }
           break;
-
+        case Action.ActionType.ACTION_AUDIO_NEXT_LANGUAGE:
+        case Action.ActionType.ACTION_NEXT_AUDIO:
+          {
+            Log.Write("GUIFullscreenTV: switching audio");
+            DVBSections.AudioLanguage al;
+            ArrayList audioPidList = new ArrayList();
+            audioPidList = Recorder.GetAudioLanguageList();
+            if (audioPidList.Count > 1)
+            {
+              _statusVisible = true;
+              _statusTimeOutTimer = DateTime.Now;
+              int selected = 0;
+              for (int i = 0; i < audioPidList.Count; i++)
+              {
+                al = (DVBSections.AudioLanguage)audioPidList[i];
+                if (al.AudioPid == Recorder.GetAudioLanguage())
+                {
+                  selected = i;
+                }
+              }
+              selected++;
+              if (selected >= audioPidList.Count)
+              {
+                selected = 0;
+              }
+              al = (DVBSections.AudioLanguage)audioPidList[selected];
+              Recorder.SetAudioLanguage(al.AudioPid);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0, (int)Control.LABEL_ROW1, 0, 0, null);
+              string strLanguage = DVBSections.GetLanguageFromCode(al.AudioLanguageCode);
+              msg.Label = string.Format("{0} ({1}/{2})", strLanguage, selected + 1, audioPidList.Count);
+              OnMessage(msg);
+              Log.Write("GUIFullscreenTV: switched audio to {0}", msg.Label);
+            }
+          }
+          break;
         case Action.ActionType.ACTION_PAGE_UP:
           OnPageUp();
           break;
