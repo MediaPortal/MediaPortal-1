@@ -110,7 +110,7 @@ namespace MediaPortal.GUI.Video
     int currentSelectedItem = -1;
     static VirtualDirectory m_directory = new VirtualDirectory();
     MapSettings mapSettings = new MapSettings();
-    bool m_askBeforePlayingDVDImage = false;
+    static bool m_askBeforePlayingDVDImage = false;
     // File menu
     string destinationFolder = String.Empty;
     bool fileMenuEnabled = false;
@@ -444,15 +444,15 @@ namespace MediaPortal.GUI.Video
       // Mounting and loading a DVD image file takes a long time,
       // so display a message letting the user know that something 
       // is happening.
-      if (!m_askBeforePlayingDVDImage && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(currentFolder)))
+      if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(currentFolder)))
       {
         itemlist = PlayMountedImageFile(GetID, currentFolder);
-
         // Remember the directory that the image file is in rather than the
         // image file itself.  This prevents repeated playing of the image file.
-        if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(currentFolder)))
+        currentFolder = System.IO.Path.GetDirectoryName(currentFolder);
+        if (itemlist == null)
         {
-          currentFolder = System.IO.Path.GetDirectoryName(currentFolder);
+          return;
         }
       }
       else
@@ -807,9 +807,55 @@ namespace MediaPortal.GUI.Video
       {
         // recursive
         if (listItem.Label == "..") return;
-        currentFolder = listItem.Path;
+        // Mounting and loading a DVD image file takes a long time,
+        // so display a message letting the user know that something 
+        // is happening.
+        if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(listItem.Path)))
+        {
+          if (!DaemonTools.IsMounted(listItem.Path))
+          {
+            if (m_askBeforePlayingDVDImage)
+            {
+              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+              if (dlgYesNo != null)
+              {
+                dlgYesNo.SetHeading(713);
+                dlgYesNo.SetLine(1, 531);
+                dlgYesNo.DoModal(GetID);
+                if (!dlgYesNo.IsConfirmed) return;
+              }
+            }
+            GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+            if (dlgProgress != null)
+            {
+              dlgProgress.SetHeading(13013);
+              dlgProgress.SetLine(1, System.IO.Path.GetFileNameWithoutExtension(listItem.Path));
+              dlgProgress.StartModal(GetID);
+              dlgProgress.Progress();
+              if (dlgProgress != null) dlgProgress.Close();
+            }
+            ArrayList items = m_directory.GetDirectory(listItem.Path);
+            if (items.Count == 1 && listItem.Path != String.Empty) return; // protected share, with wrong pincode
+          }
+          if (DaemonTools.IsMounted(listItem.Path))
+          {
+            string strDir = DaemonTools.GetVirtualDrive();
 
-        ArrayList itemlist = m_directory.GetDirectoryUnProtected(currentFolder, true);
+            // Check if the mounted image is actually a DVD. If so, bypass
+            // autoplay to play the DVD without user intervention
+            if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
+            {
+              PlayListItem newitem = new PlayListItem();
+              newitem.FileName = strDir + @"\VIDEO_TS\VIDEO_TS.IFO";
+              newitem.Description = listItem.Label;
+              newitem.Duration = listItem.Duration;
+              newitem.Type = Playlists.PlayListItem.PlayListItemType.Video;
+              playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(newitem);
+            }
+          }
+          return;
+        }
+        ArrayList itemlist = m_directory.GetDirectoryUnProtected(listItem.Path, true);
         foreach (GUIListItem item in itemlist)
         {
           AddItemToPlayList(item);
@@ -1436,19 +1482,34 @@ namespace MediaPortal.GUI.Video
 
     static public ArrayList PlayMountedImageFile(int WindowID, string file)
     {
-      GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-      if (dlgProgress != null)
+      Log.Write("*************PlayMountedImageFile");
+      ArrayList itemlist = null;
+      if (!DaemonTools.IsMounted(file))
       {
-        dlgProgress.SetHeading(13013);
-        dlgProgress.SetLine(1, System.IO.Path.GetFileNameWithoutExtension(file));
-        dlgProgress.StartModal(WindowID);
-        dlgProgress.Progress();
+        if (m_askBeforePlayingDVDImage)
+        {
+          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
+          if (dlgYesNo != null)
+          {
+            dlgYesNo.SetHeading(713);
+            dlgYesNo.SetLine(1, 531);
+            dlgYesNo.DoModal(WindowID);
+            if (!dlgYesNo.IsConfirmed) return null;
+          }
+        }
+        GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
+        if (dlgProgress != null)
+        {
+          dlgProgress.SetHeading(13013);
+          dlgProgress.SetLine(1, System.IO.Path.GetFileNameWithoutExtension(file));
+          dlgProgress.StartModal(WindowID);
+          dlgProgress.Progress();
+          if (dlgProgress != null) dlgProgress.Close();
+        }
+        itemlist = m_directory.GetDirectory(file);
+        if (itemlist.Count == 1 && file != String.Empty) return itemlist; // protected share, with wrong pincode
       }
-
-      ArrayList itemlist = m_directory.GetDirectory(file);
-      if (itemlist.Count == 1 && file != String.Empty) return itemlist; // protected share, with wrong pincode
-
-      if (DaemonTools.IsMounted(file) && !g_Player.Playing)
+      if (DaemonTools.IsMounted(file))
       {
         string strDir = DaemonTools.GetVirtualDrive();
 
@@ -1471,7 +1532,6 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      if (dlgProgress != null) dlgProgress.Close();
 
       return itemlist;
     }
@@ -1585,6 +1645,10 @@ namespace MediaPortal.GUI.Video
           }
           else if (item.IsFolder)
           {
+            if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path)))
+            {
+              dlg.AddLocalizedString(208); //play
+            } 
             dlg.AddLocalizedString(926); //Queue
             dlg.AddLocalizedString(102); //Scan
             dlg.AddLocalizedString(368); //IMDB
@@ -2132,23 +2196,7 @@ namespace MediaPortal.GUI.Video
       if (movies.Count == 1 && VirtualDirectory.IsImageFile(System.IO.Path.GetExtension((string)movies[0]).ToLower()))
       {
 
-        bool askBeforePlayingDVDImage = false;
-
-        using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-        {
-          askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
-        }
-
-        if (!askBeforePlayingDVDImage)
-        {
-          GUIVideoFiles.PlayMountedImageFile(GUIWindowManager.ActiveWindow, (string)movies[0]);
-        }
-        else
-        {
-          // GetDirectory mounts the image file
-          ArrayList itemlist = m_directory.GetDirectory((string)movies[0]);
-        }
-
+        GUIVideoFiles.PlayMountedImageFile(GUIWindowManager.ActiveWindow, (string)movies[0]);
         return;
       }
 

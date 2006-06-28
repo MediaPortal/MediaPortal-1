@@ -548,22 +548,9 @@ namespace MediaPortal.Util
           string extensionension = System.IO.Path.GetExtension(strDir);
           if (IsImageFile(extensionension))
           {
-            bool askBeforePlayingDVDImage = false;
-
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-            {
-              askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
-            }
-
             if (!DaemonTools.IsMounted(strDir))
             {
-              if (!askBeforePlayingDVDImage)
-              {
-                AutoPlay.StopListening();
-
-                // yield some time before we try to mount
-                System.Threading.Thread.Sleep(50);
-              }
+              AutoPlay.StopListening();
 
               string virtualPath;
               if (DaemonTools.Mount(strDir, out virtualPath))
@@ -571,11 +558,8 @@ namespace MediaPortal.Util
                 strDir = virtualPath;
                 VirtualShare = true;
               }
-
-              if (!askBeforePlayingDVDImage)
-              {
-                AutoPlay.StartListening();
-              }
+              //Start listening to Volume Events.Wait 10 seconds in another thread and start listeneing again
+              new System.Threading.Thread(new System.Threading.ThreadStart(this._startListening)).Start();
             }
             else
             {
@@ -585,14 +569,11 @@ namespace MediaPortal.Util
 
             if (VirtualShare/* && !g_Player.Playing*/) // dont interrupt if we're already playing
             {
-              if (!askBeforePlayingDVDImage)
+              // If it looks like a DVD directory structure then return so
+              // that the playing of the DVD is handled by the caller.
+              if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
               {
-                // If it looks like a DVD directory structure then return so
-                // that the playing of the DVD is handled by the caller.
-                if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
-                {
-                  return items;
-                }
+                return items;
               }
             }
           }
@@ -847,6 +828,7 @@ namespace MediaPortal.Util
         string extensionension = System.IO.Path.GetExtension(strDir);
         if (IsImageFile(extensionension))
         {
+          AutoPlay.StopListening();
           if (!DaemonTools.IsMounted(strDir))
           {
             string virtualPath;
@@ -855,6 +837,8 @@ namespace MediaPortal.Util
               strDir = virtualPath;
               VirtualShare = true;
             }
+            //Start listening to Volume Events (Hack to start listening after 10 seconds)
+            new System.Threading.Thread(new System.Threading.ThreadStart(this._startListening)).Start();
           }
           else
           {
@@ -1348,34 +1332,17 @@ namespace MediaPortal.Util
           string extensionension = System.IO.Path.GetExtension(strDir);
           if (IsImageFile(extensionension))
           {
-            bool askBeforePlayingDVDImage = false;
-
-            using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-            {
-              askBeforePlayingDVDImage = xmlreader.GetValueAsBool("daemon", "askbeforeplaying", false);
-            }
-
             if (!DaemonTools.IsMounted(strDir))
             {
-              if (!askBeforePlayingDVDImage)
-              {
-                AutoPlay.StopListening();
-
-                // yield some time before we try to mount
-                System.Threading.Thread.Sleep(50);
-              }
-
+              AutoPlay.StopListening();
               string virtualPath;
               if (DaemonTools.Mount(strDir, out virtualPath))
               {
                 strDir = virtualPath;
                 VirtualShare = true;
               }
-
-              if (!askBeforePlayingDVDImage)
-              {
-                AutoPlay.StartListening();
-              }
+              //Start listening to Volume Events (Hack to start listening after 10 seconds)
+              new System.Threading.Thread(new System.Threading.ThreadStart(this._startListening)).Start();
             }
             else
             {
@@ -1385,14 +1352,11 @@ namespace MediaPortal.Util
 
             if (VirtualShare /*&& !g_Player.Playing*/) // dont interrupt if we're already playing
             {
-              if (!askBeforePlayingDVDImage)
+              // If it looks like a DVD directory structure then return so
+              // that the playing of the DVD is handled by the caller.
+              if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
               {
-                // If it looks like a DVD directory structure then return so
-                // that the playing of the DVD is handled by the caller.
-                if (System.IO.File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
-                {
-                  return items;
-                }
+                return items;
               }
             }
           }
@@ -1813,12 +1777,15 @@ namespace MediaPortal.Util
         {
           if (!DaemonTools.IsMounted(strDir))
           {
+            AutoPlay.StopListening();
             string virtualPath;
             if (DaemonTools.Mount(strDir, out virtualPath))
             {
               strDir = virtualPath;
               VirtualShare = true;
             }
+            //Start listening to Volume Events.Wait 10 seconds in another thread and start listeneing again
+            new System.Threading.Thread(new System.Threading.ThreadStart(this._startListening)).Start();
           }
           else
           {
@@ -2042,7 +2009,12 @@ namespace MediaPortal.Util
 
       return items;
     }
-
+    private void _startListening()
+    {
+      System.Threading.Thread.Sleep(5000);
+      AutoPlay.StartListening();
+      Log.Write("*****Start listening to drives");
+    }
     #endregion
 
 

@@ -19,6 +19,7 @@
  *
  */
 using System;
+using System.Diagnostics;
 using MediaPortal.GUI.Library;
 namespace MediaPortal.Util
 {
@@ -54,7 +55,17 @@ namespace MediaPortal.Util
 			if (IsoFile==null) return false;
 			if (IsoFile==String.Empty) return false;
       IsoFile=Utils.RemoveTrailingSlash(IsoFile);
-      if (_MountedIsoFile.Equals(IsoFile)) return true;
+      if (_MountedIsoFile.Equals(IsoFile))
+      {
+        if (System.IO.Directory.Exists(_Drive+@"\"))
+        {
+          return true;
+        }
+        else
+        {
+          return false;
+        }
+      }
       return false;
     }
 
@@ -70,7 +81,13 @@ namespace MediaPortal.Util
   
       IsoFile=Utils.RemoveTrailingSlash(IsoFile);
       string strParams=String.Format("-mount {0},\"{1}\"",_DriveNo,IsoFile);
-      Utils.StartProcess(_Path, strParams, true , true);
+      Process p = Utils.StartProcess(_Path, strParams, true , true);
+      int timeout = 0;
+      while (!p.HasExited && (timeout<10000))
+      {
+        System.Threading.Thread.Sleep(100);
+        timeout += 100;
+      }
       VirtualDrive=_Drive;
       _MountedIsoFile=IsoFile;
       return true;
@@ -82,7 +99,14 @@ namespace MediaPortal.Util
       if (!System.IO.File.Exists(_Path)) return ;
       
       string strParams=String.Format("-unmount {0}",_DriveNo);
-      Utils.StartProcess(_Path, strParams, true , true);
+      Process p = Utils.StartProcess(_Path, strParams, true , true);
+      int timeout = 0;
+      while (!p.HasExited && (timeout < 10000))
+      {
+        System.Threading.Thread.Sleep(100);
+        timeout += 100;
+      }
+
       _MountedIsoFile=String.Empty;
     }
 
