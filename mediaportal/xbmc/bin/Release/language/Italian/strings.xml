@@ -5500,6 +5500,7 @@
 		<id>6000</id>
 		<value>Codec Video</value>
 	</string>
+	<string>	
 		<id>6001</id>
 		<value>Codec audio</value>
 	</string>
@@ -5547,6 +5548,7 @@
 		<id>6012</id>
 		<value>Aggiornamento Guida TV dai seguenti canali DVB:</value>
 	</string>
+	<string>	
 		<id>6013</id>
 		<value>XMLTV manuale</value>
 	</string>	
