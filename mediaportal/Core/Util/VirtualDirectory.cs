@@ -468,8 +468,10 @@ namespace MediaPortal.Util
 
       //if we have a folder like D:\
       //then remove the \
-      if (strDir.Length == 2 && strDir.Substring(1) == @"\")
+      if (strDir.EndsWith(@"\"))
+      {
         strDir = strDir.Substring(0, strDir.Length - 1);
+      }
 
       ArrayList items = new ArrayList();
 
@@ -1252,8 +1254,10 @@ namespace MediaPortal.Util
 
       //if we have a folder like D:\
       //then remove the \
-      if (strDir.Length == 2 && strDir.Substring(1) == @"\")
+      if (strDir.EndsWith(@"\"))
+      {
         strDir = strDir.Substring(0, strDir.Length - 1);
+      }
 
       List<GUIListItem> items = new List<GUIListItem>();
 
