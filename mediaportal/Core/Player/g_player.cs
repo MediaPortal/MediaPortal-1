@@ -82,7 +82,7 @@ namespace MediaPortal.Player
     static Player.IPlayerFactory _factory;
     static public bool Starting = false;
     static ArrayList _seekStepList = new ArrayList();
-    static bool _configLoaded = false;
+    static public bool configLoaded = false;
     #endregion
 
     #region events
@@ -119,7 +119,6 @@ namespace MediaPortal.Player
     /// </summary>
     public static ArrayList LoadSettings()
     {
-      //int[] _enabledSkipSteps;// = new int[30];
       ArrayList StepArray = new ArrayList();
 
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
@@ -131,7 +130,7 @@ namespace MediaPortal.Player
             StepArray.Add(Convert.ToInt32(token));
         }
       _seekStepList = StepArray;
-      _configLoaded = true;
+      configLoaded = true;
 
       return StepArray;
     }
@@ -1028,7 +1027,7 @@ namespace MediaPortal.Player
     {
       int[] m_seekStep = new int[16];
 
-      if (!_configLoaded)
+      if (!configLoaded)
       {
         _seekStepList = LoadSettings();
         Log.Write("g_Player loading seekstep config {0}", "");// Convert.ToString(_seekStepList[0]));

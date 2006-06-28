@@ -3,7 +3,6 @@
 	<defaultcontrol>10</defaultcontrol>
 	<allowoverlay>yes</allowoverlay>
 	<define>#header.label:128</define>
-	<define>#header.location:</define>
 	<define>#header.hover:hover_settings.png</define>
 	<controls>
 		<import>common.settings.xml</import>
@@ -45,6 +44,15 @@
 				<id>13</id>
 				<label>360</label>
 				<onup>12</onup>
+				<ondown>21</ondown>
+			</control>
+			<control>
+				<description>Skip steps screen button</description>
+				<type>button</type>
+				<id>21</id>
+				<label>6024</label>
+				<hyperlink>708</hyperlink>
+				<onup>13</onup>
 				<ondown>10</ondown>
 			</control>
 		</control>
@@ -59,5 +67,6 @@
 			<colordiffuse>ffffffff</colordiffuse>
 			<texture></texture>
 		</control>
+		
 	</controls>
 </window>

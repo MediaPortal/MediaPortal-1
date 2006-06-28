@@ -7,13 +7,12 @@
 	<controls>
 		<import>common.settings.xml</import>
 
-   <control>
-      <type>group</type>
-      <layout>StackLayout(0)</layout>
-      <posX>55</posX>
-      <posY>115</posY>
+   		<control>
+			<type>group</type>
+			<layout>StackLayout(0)</layout>
+			<posX>55</posX>
+			<posY>115</posY>
 			<width>180</width>
-
   		<control>
   			<description>Skin</description>
   			<type>selectbutton</type>
@@ -22,7 +21,7 @@
   			<posY>131</posY>
   			<label>166</label>
   			<onup>99</onup>
-				<ondown>11</ondown>
+			<ondown>11</ondown>
   		</control>
   		<control>
   			<description>Language</description>
@@ -33,7 +32,7 @@
   			<label>248</label>
   			<onup>10</onup>
   			<ondown>12</ondown>
-				<onright>99</onright>
+			<onright>99</onright>
   		</control>
     	<control>
     		<description>Panel Split</description>
@@ -59,7 +58,7 @@
   			<posY>233</posY>
   			<label>360</label>
   			<onup>12</onup>
-  			<ondown>10</ondown>
+			<ondown>21</ondown>
   		</control>
  		</control>
 
@@ -74,6 +73,17 @@
 			<height>300</height>
 			<colordiffuse>ffffffff</colordiffuse>
 			<texture></texture>
+		</control>
+		<control>
+			<description>Skip steps screen button</description>
+			<type>button</type>
+			<id>21</id>
+			<posX>60</posX>
+			<posY>266</posY>
+			<label>6024</label>
+			<hyperlink>708</hyperlink>
+			<onup>13</onup>
+			<ondown>10</ondown>
 		</control>
 	</controls>
 </window>

@@ -73,7 +73,7 @@
 			<textureFocus>togglebutton-on-focus.png</textureFocus>
 			<textureNoFocus>togglebutton-on-nofocus.png</textureNoFocus>
 			<onup>12</onup>
-			<ondown>14</ondown>
+			<ondown>21</ondown>
 		</control>
 		<control>
 			<description>Skin Preview</description>
@@ -86,6 +86,19 @@
 			<height>300</height>
 			<colordiffuse>ffffffff</colordiffuse>
 			<texture></texture>
+		</control>
+		<control>
+			<description>Skip steps screen button</description>
+			<type>button</type>
+			<id>21</id>
+			<posX>60</posX>
+			<posY>266</posY>
+			<width>210</width>
+			<height>32</height>
+			<label>6024</label>
+			<hyperlink>708</hyperlink>
+			<onup>13</onup>
+			<ondown>10</ondown>
 		</control>
 	</controls>
 </window>
