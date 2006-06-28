@@ -10,6 +10,7 @@
 <!--   - Germany 								-->
 <!--   - Italy 									-->
 <!--   - Netherlands 							-->
+<!--   - New Zealand                                                                                            -->
 <!--   - Norway 								-->
 <!--   - Spain 								-->
 <!--   - Sweden 								-->
@@ -1012,6 +1013,9 @@
 		<carrier frequency="850000" />
 		<carrier frequency="858000" />
 	</country>
+  <country name="New Zealand Auckland">
+    <carrier frequency="698000" bandwidth="8" />
+  </country>
 	<country name="Norway - Oslo (trials)" offset="0">
 		<carrier frequency="722000" bandwidth="8" />
 		<carrier frequency="770000" bandwidth="8" />
