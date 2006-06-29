@@ -1302,6 +1302,10 @@
 		<value>N/D</value>
 	</string>
 	<string>
+		<id>395</id>
+		<value>Brume</value>
+	</string>
+	<string>
 		<id>396</id>
 		<value>Choisissez un lieu</value>
 	</string>
@@ -1757,6 +1761,15 @@
 		<id>518</id>
 		<value>Effacer ce morceau ?</value>
 	</string>
+  <string>
+  	<id>519</id>
+  	<value>Sous-titres off</value>
+  </string>
+  	
+  <string>
+    <id>529</id>
+    <value>Vue: Liste Grandes Icones</value>
+  </string>
 	<string>
 		<id>530</id>
 		<value>Disque de Photo inséré, voulez-vous l&apos;ouvrir ?</value>
@@ -1773,6 +1786,135 @@
 		<id>533</id>
 		<value>Guide</value>
 	</string>
+  <string>
+    <id>534</id>
+		<value>Moderé</value>
+	</string>
+	<string>
+		<id>535</id>
+		<value>N</value>
+	</string>
+	<string>
+		<id>536</id>
+		<value>E</value>
+	</string>
+	<string>
+		<id>537</id>
+		<value>S</value>
+	</string>
+	<string>
+		<id>538</id>
+		<value>W</value>
+	</string>
+	<string>
+		<id>539</id>
+		<value>NE</value>
+	</string>
+	<string>
+		<id>540</id>
+		<value>SE</value>
+	</string>
+	<string>
+		<id>541</id>
+		<value>SW</value>
+	</string>
+	<string>
+		<id>542</id>
+		<value>NW</value>
+	</string>		
+	<string>
+		<id>543</id>
+		<value>Tonerre</value>
+	</string>								
+  <string>
+		<id>544</id>
+		<value>NNE</value>
+	</string>		
+  <string>
+		<id>545</id>
+		<value>ENE</value>
+	</string>	
+  <string>
+		<id>546</id>
+		<value>ESE</value>
+	</string>	
+  <string>
+		<id>547</id>
+		<value>SSE</value>
+	</string>	
+	<string>
+		<id>548</id>
+		<value>SSW</value>
+	</string>	
+	<string>
+		<id>549</id>
+		<value>WSW</value>
+  </string>
+	<string>
+		<id>550</id>
+		<value>Crop</value>
+	</string>
+  <string>
+		<id>551</id>
+		<value>WNW</value>
+  </string>
+  <string>
+		<id>552</id>
+		<value>NNW</value>
+	</string>  
+	<string>
+		<id>553</id>
+		<value>Tard</value>
+	</string>
+	<string>
+		<id>554</id>
+		<value>très</value>
+	</string>
+	<string>
+		<id>555</id>
+		<value>De {0} à {1} {2}</value>
+	</string>
+	<string>
+		<id>556</id>
+		<value>divers</value>
+	</string>
+	<string>
+		<id>557</id>
+		<value>calme</value>
+	</string>
+	<string>
+		<id>558</id>
+		<value>Pas de vent</value>
+	</string>
+	<string>
+		<id>590</id>
+		<value>P. 100</value>
+	</string>	
+	<string>
+		<id>591</id>
+		<value>P. 200</value>
+	</string>
+	<string>
+		<id>592</id>
+		<value>P. 300</value>
+    </string>
+	<string>
+		<id>593</id>
+		<value>Caché</value>
+    </string>    
+	<string>
+		<id>594</id>
+		<value>Sous-page</value>
+    </string>     
+	<string>
+		<id>595</id>
+		<value>Plein écran</value>
+    </string>      
+	<string>
+		<id>596</id>
+		<value>Attente de la Page {0}/{1}...</value>
+    </string>      
+
 	<string>
 		<id>550</id>
 		<value>Couper</value>
@@ -2354,12 +2496,136 @@
 		<value>Montrez toutes les chansons de cet artiste</value>
 	</string>
 	<string>
+		<id>752</id>
+		<value>Pas d&apos;enregistrement spécifié</value>
+	</string>
+	<string>
 		<id>753</id>
-		<value>Aucune carte TV installé</value>
+		<value>Aucune carte TV installée</value>
+	</string>
+	<string>
+		<id>754</id>
+		<value>Aucun tuner n&apos;enregistre le programme spécifié</value>
+	</string>
+	<string>
+		<id>755</id>
+		<value>Aucun tuner affiche la tv</value>
+	</string>
+	<string>
+		<id>756</id>
+		<value>Pas de tuner pour recevoir:{0}</value>
+	</string>
+	<string>
+		<id>757</id>
+		<value>Tous les tuners sont occupés</value>
+	</string>
+	<string>
+		<id>758</id>
+		<value>Tuner n&apos;enregistre pas</value>
+	</string>
+	<string>
+		<id>759</id>
+		<value>Démarrage timeshifting échoué</value>
+	</string>
+	<string>
+		<id>760</id>
+		<value>Auncun tuner disponible pour timeshifting</value>
+	</string>
+	<string>
+		<id>761</id>
+		<value>Arret impossible timeshifting</value>
+	</string>
+	<string>
+		<id>762</id>
+		<value>Démarrage TV échoué</value>
+	</string>
+	<string>
+		<id>763</id>
+		<value>Enregistreur est occupé</value>
 	</string>
 	<string>
 		<id>764</id>
 		<value>Enregistrement en pause</value>
+	</string>
+	<string>
+		<id>765</id>
+		<value>Pas assez de place disque</value>
+	</string>
+	<string>
+		<id>766</id>
+		<value>déjà importé...</value>
+	</string>
+	<string>
+		<id>767</id>
+		<value>Fichier XMLTV invalide</value>
+	</string>
+	<string>
+		<id>768</id>
+		<value>Pas de chaines trouvées</value>
+	</string>
+	<string>
+		<id>769</id>
+		<value>Pas de programmes trouvés</value>
+	</string>
+	<string>
+		<id>770</id>
+		<value>Pas de fichier xmltv trouvé</value>
+	</string>
+	<string>
+		<id>771</id>
+		<value>Le code PIN entré pourrait ne pas etre accepté</value>
+	</string>
+	<string>
+		<id>772</id>
+		<value>Voulez vous réessayer?</value>
+	</string>
+	<string>
+		<id>773</id>
+		<value>DEPART</value>
+	</string>
+	<string>
+		<id>774</id>
+		<value>FIN</value>
+	</string>    
+	<string>
+		<id>775</id>
+		<value>Lance TV dans la section MyTV automatiquement</value>
+	</string>
+	<string>
+		<id>776</id>
+		<value>Ne pas lancer / basculer sur TV automatiquement</value>
+	</string>    
+	<string>
+		<id>777</id>
+		<value>Mode d&apos;utilisation du Timeshift</value>
+	</string>
+	<string>
+		<id>778</id>
+		<value>Départ avec timeshift automatiquement activé</value>
+	</string>
+	<string>
+		<id>779</id>
+		<value>Timeshift doit etre activé manuellement</value>
+	</string>
+	<string>
+		<id>780</id>
+		<value>Choisir methode de programmation d&apos;enregistrement</value>
+	</string>
+	<string>
+		<id>781</id>
+		<value>Enregistrement rapide</value>
+	</string>
+	<string>
+		<id>782</id>
+		<value>Enregistrement avancé</value>
+	</string>        
+	<string>
+		<id>798</id>
+		<value>faible</value>
+	</string>
+	<string>
+		<id>799</id>
+		<value>élevé</value>
 	</string>
 	<string>
 		<id>800</id>
@@ -2405,6 +2671,10 @@
 		<id>810</id>
 		<value>Carte</value>
 	</string>
+	<string>
+		<id>820</id>
+		<value>Supprimer enregistrements non-vus ?</value>
+	</string>  
 	<string>
 		<id>850</id>
 		<value>Réveil</value>
@@ -3135,7 +3405,7 @@
 	</string>
 	<string>
 		<id>1042</id>
-		<value>Conserver jusque à</value>
+		<value>Conserver jusqu&apos;à</value>
 	</string>
 	<string>
 		<id>1043</id>
@@ -3200,6 +3470,12 @@
 	<string>
 		<id>1105</id>
 		<value>Importation des chansons</value>
+	</string>
+  <!-- End Music Import Strings -->
+
+	<string>
+		<id>1200</id>
+		<value>Assistant de configuration</value>
 	</string>
 	<string>
 		<id>1440</id>
@@ -3495,7 +3771,7 @@
 	</string>
 	<string>
 		<id>2038</id>
-		<value>pound</value>
+		<value>livre</value>
 	</string>
 	<string>
 		<id>2039</id>
@@ -3561,6 +3837,85 @@
 		<id>2054</id>
 		<value>Pas de saisie !</value>
 	</string>
+	<string>
+		<id>2080</id>
+		<value>Type de fichier non supporté</value>
+	</string>	
+	<string>
+		<id>2081</id>
+		<value>Ne peut pas couper</value>
+	</string>
+	<string>
+		<id>2082</id>
+		<value>Mpeg:Couper fichier video terminé</value>
+	</string>
+	<string>
+		<id>2083</id>
+		<value>Dvrms:Couper fichier video terminé</value>
+	</string>
+
+  <!-- End of My Recipie Strings -->
+  
+	<string>
+		<id>2084</id>
+		<value>début</value>
+	</string>   
+	<string>
+		<id>2085</id>
+		<value>fin</value>
+	</string>   
+	<string>
+		<id>2086</id>
+		<value>avance</value>
+	</string>   
+	<string>
+		<id>2087</id>
+		<value>recule</value>
+	</string>   
+	<string>
+		<id>2088</id>
+		<value>liste de coupe:</value>
+	</string>   
+	<string>
+		<id>2089</id>
+		<value>ajuste la qualité</value>
+	</string>   
+	<string>
+		<id>2090</id>
+		<value>Dvr-MpegCut</value>
+	</string>
+	<string>
+		<id>2091</id>
+		<value>Processus a été arrété</value>
+	</string>  
+	<string>
+		<id>2092</id>
+		<value>Choisissez un fichier à éditer:</value>
+	</string> 
+	<string>
+		<id>2093</id>
+		<value>ajoute</value>
+	</string> 
+	<string>
+		<id>2094</id>
+		<value>Liste Video</value>
+	</string>
+	<string>
+		<id>2095</id>
+		<value>Couper</value>
+	</string> 
+	<string>
+		<id>2097</id>
+		<value>ancienne durée:</value>
+	</string>
+	<string>
+		<id>2098</id>
+		<value>nouvelle durée:</value>
+	</string>          
+	<string>
+		<id>2099</id>
+		<value>position courante:</value>
+	</string> 
 	<string>
 		<id>2100</id>
 		<value>Graver</value>
@@ -3842,6 +4197,18 @@
 		<value>Répertoire créé</value>
 	</string>
 	<string>
+		<id>2997</id>
+		<value>h</value>
+	</string>
+	<string>
+		<id>2998</id>
+		<value>min</value>
+	</string>
+	<string>
+		<id>2999</id>
+		<value>sec</value>
+	</string>    
+	<string>
 		<id>3000</id>
 		<value>Options du programme</value>
 	</string>
@@ -4038,6 +4405,112 @@
 		<value>précommande de DVD</value>
 	</string>
 	<string>
+		<id>6000</id>
+		<value>Codec Vidéo</value>
+	</string>
+	<string>
+		<id>6001</id>
+		<value>Codec Audio</value>
+	</string>
+	<string>
+		<id>6002</id>
+		<value>Audio Renderer</value>
+	</string>
+	<string>
+		<id>6003</id>
+		<value>Désentrelacement</value>
+	</string>  
+	<string>
+		<id>6004</id>
+		<value>Aspect ratio</value>
+	</string>
+	<string>
+		<id>6005</id>
+		<value>Timeshift buffer</value>
+	</string>
+	<string>
+		<id>6006</id>
+		<value>TV on automatique</value>
+	</string>
+	<string>
+		<id>6007</id>
+		<value>Options d&apos;enregistrement</value>
+	</string>  
+	<string>
+		<id>6008</id>
+		<value>Tri des canaux</value>
+	</string>  
+	<string>
+		<id>6009</id>
+		<value>Guide DVB</value>
+	</string>
+	<string>
+		<id>6010</id>
+		<value>XMLTV EPG grabber</value>
+	</string> 
+	<string>
+		<id>6011</id>
+		<value>DVB EPG:</value>
+	</string>  
+	<string>
+		<id>6012</id>
+		<value>Mise à jour TVGuide à partir des canaux DVB suivants:</value>
+	</string>
+	<string>
+		<id>6013</id>
+		<value>xmltv manuel</value>
+	</string>
+	<string>
+		<id>6014</id>
+		<value>TV setup</value>
+	</string>
+	<string>
+		<id>6015</id>
+		<value>Configuration DVD</value>
+	</string>
+	<string>
+		<id>6016</id>
+		<value>Supprimer automatiquement les enregistrements après les avoir vus</value>
+	</string>
+	<string>
+		<id>6017</id>
+		<value>Ajouter enregistrements à la base de donnée films</value>
+	</string>
+	<string>
+		<id>6018</id>
+		<value>minutes avant que le programme débute</value>
+	</string>
+	<string>
+		<id>6019</id>
+		<value>minutes après que le programme finisse</value>
+	</string>                              
+	<string>
+		<id>6020</id>
+		<value>Répéter/boucler diaporama</value>
+	</string>  
+	<string>
+		<id>6021</id>
+		<value>Auto shuffle diaporama</value>
+	</string>   
+	<string>
+		<id>6022</id>
+		<value>Configuration Film</value>
+	</string> 
+	<string>
+		<id>6023</id>
+		<value>Configuration écran</value>
+	</string>                                  
+	<string>
+		<id>6024</id>
+		<value>Saute étape</value>
+	</string>
+	<string>
+		<id>6025</id>
+		<value>Saute étape config.</value>
+	</string>      
+
+  <!-- End of My Trailers Strings -->
+	<string>
 		<id>8000</id>
 		<value>Messages</value>
 	</string>
@@ -4202,6 +4675,18 @@
 		<value>Voir commentaires :</value>
 	</string>
 	<string>
+		<id>9997</id>
+		<value>Secondes :</value>
+	</string>
+	<string>
+		<id>9998</id>
+		<value>Minutes :</value>
+	</string>
+	<string>
+		<id>9999</id>
+		<value>Heures :</value>
+	</string>         
+	<string>
 		<id>99845</id>
 		<value>Recherche sur TV.com</value>
 	</string>
@@ -4345,6 +4830,10 @@
 		<id>19100</id>
 		<value>Geoclock</value>
 	</string>
+	<string> 
+		<id>79861</id> 
+		<value>Mise à jour</value> 
+	</string> 
 	<string>
 		<id>100000</id>
 		<value>Accueil</value>
@@ -4391,7 +4880,7 @@
 	</string>
 	<string>
 		<id>100011</id>
-		<value>Réglages-&gt;Ecran-&gt;Calibrationécran</value>
+		<value>Réglages-&gt;Ecran-&gt;Calibration écran</value>
 	</string>
 	<string>
 		<id>100012</id>
@@ -4523,7 +5012,7 @@
 	</string>
 	<string>
 		<id>100602</id>
-		<value>TV/Pleinécran</value>
+		<value>TV/Plein écran</value>
 	</string>
 	<string>
 		<id>100603</id>
@@ -5109,6 +5598,12 @@
 		<id>4543</id>
 		<value>Information non disponible</value>
 	</string>
+  <!-- End Playing Now Strings -->
+  <!-- Begin Addtional MyMusic Strings -->
+	<string>
+		<id>4550</id>
+		<value>File d&apos;attente</value>
+	</string>  
 	<string>
 		<id>4551</id>
 		<value>Lancer après</value>
@@ -5122,9 +5617,17 @@
 		<value>Montrez la playlist</value>
 	</string>
 	<string>
+		<id>4554</id>
+		<value>consultation info CD</value>
+	</string>  
+	<string>
 		<id>4555</id>
 		<value>Playlist actuelle</value>
 	</string>
+	<string>
+		<id>4557</id>
+		<value>Tout ajouter à la liste de lecure</value>
+	</string>  
 	<string>
 		<id>10100</id>
 		<value>Mines cachées</value>
@@ -5140,5 +5643,10 @@
 	<string>
 		<id>10103</id>
 		<value>Démineur</value>
+	</string>
+  <!-- End Minesweeper Strings -->
+	<string>
+		<id>10104</id>
+		<value>Mini EPG</value>
 	</string>
 </strings>
