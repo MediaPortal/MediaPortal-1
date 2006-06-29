@@ -2215,6 +2215,9 @@ namespace MediaPortal.TV.Recording
         int lnbswMHZ = 0;
         int cbandMHZ = 0;
         int circularMHZ = 0;
+        int _lnbNumber = 0;
+        if (ch.Diseqc == null) _lnbNumber = ch.CurrentLNB;
+        else _lnbNumber = ch.Diseqc;
 
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
         {
@@ -2226,7 +2229,7 @@ namespace MediaPortal.TV.Recording
           // #DM old switch method below was incorrect, it took the DiSEqC tuning value instead of the actual LNB number #
           //switch (ch.DiSEqC)
           // #DM we now use the LNB number to determine the DiSEqC tuning values #
-          int _lnbNumber = ch.CurrentLNB;
+          //int _lnbNumber = ch.CurrentLNB;
           switch (_lnbNumber)
           {
             case 1:
