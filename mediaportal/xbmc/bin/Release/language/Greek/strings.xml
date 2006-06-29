@@ -466,7 +466,11 @@
 <string><id>551</id><value>ΔΒΔ</value></string>
 <string><id>552</id><value>ΒΒΔ</value></string>
 <string><id>553</id><value>Αργά</value></string>
+<string><id>554</id><value>πολύ</value></string>
 <string><id>555</id><value>Από {0} με {1} {2}</value></string>
+<string><id>556</id><value>διάφορα</value></string>
+<string><id>557</id><value>ήρεμα</value></string>
+<string><id>558</id><value>Χωρίς αέρα</value></string>
 <string><id>590</id><value>Σ. 100</value></string>
 <string><id>591</id><value>Σ. 200</value></string>
 <string><id>592</id><value>Σ. 300</value></string>
@@ -640,6 +644,16 @@
 <string><id>772</id><value>Θα δοκιμάσετε πάλι;</value></string>
 <string><id>773</id><value>ΕΚΚΙΝΗΣΗ</value></string>
 <string><id>774</id><value>ΤΕΛΟΣ</value></string>
+<string><id>775</id><value>Ξεκίνημα TV αυτόματα</value></string>
+<string><id>776</id><value>Όχι ξεκίνημα TV αυτόματα</value></string>
+<string><id>777</id><value>Είδος χρήσης προεγγραφής</value></string>
+<string><id>778</id><value>Ξεκίνημα με ενεργοποιημένη προεγγραφή</value></string>
+<string><id>779</id><value>Η προεγγραφή πρέπει να ενεργοποιηθεί δια χειρός</value></string>
+<string><id>780</id><value>Είδος προγραμματισμού</value></string>
+<string><id>781</id><value>Γρήγορη εγγραφή</value></string>
+<string><id>782</id><value>Ειδικευμένη εγγραφή</value></string>
+<string><id>798</id><value>χαμηλή</value></string>
+<string><id>799</id><value>υψηλή</value></string>
 <string><id>800</id><value>Εναρξη με</value></string>
 <string><id>801</id><value>Περιέχει</value></string>
 <string><id>802</id><value>Τελειώνει με</value></string>
@@ -651,6 +665,7 @@
 <string><id>808</id><value>Συστατικά</value></string>
 <string><id>809</id><value>Κατευθύνσεις</value></string>
 <string><id>810</id><value>Κάρτα</value></string>
+<string><id>820</id><value>Σβήσιμο εγγραφής που δεν έχει προβληθεί;</value></string>
 <!-- My Alarm Strings -->
 <string><id>850</id><value>Ξυπνητήρι</value></string>
 <string><id>851</id><value>Playlist</value></string>
@@ -857,6 +872,7 @@
 <string><id>1104</id><value>left</value></string>
 <string><id>1105</id><value>Importing Tracks</value></string>
 <!-- End Music Import Strings -->
+<string><id>1200</id><value>Καθοδηγητής ρυθμίσεων</value></string>
 <string><id>1440</id><value>Teletext</value></string>
 <string><id>1441</id><value>Teletext</value></string>
 <string><id>1442</id><value>Ταχύτητα κύλισης (οριζόντια)</value></string>
@@ -1143,6 +1159,32 @@
 <string><id>5923</id><value>Νέα DVD αυτή την εβδομάδα</value></string>
 <string><id>5924</id><value>Νέα DVD την επόμενη εβδομάδα</value></string>
 <string><id>5925</id><value>DVD προ-παραγγελίες</value></string>
+<string><id>6000</id><value>CODEC βίντεο</value></string>
+<string><id>6001</id><value>CODEC ήχου</value></string>
+<string><id>6002</id><value>Απόδοση ήχου</value></string>
+<string><id>6003</id><value>Αποσύμπλεξη</value></string>
+<string><id>6004</id><value>Αναλογία</value></string>
+<string><id>6005</id><value>Χρόνος προεγγραφής</value></string>
+<string><id>6006</id><value>Αυτόματο άνοιγμα TV</value></string>
+<string><id>6007</id><value>Ρυθμίσεις εγγραφής</value></string>
+<string><id>6008</id><value>Ταξινόμηση καναλιών</value></string>
+<string><id>6009</id><value>Οδηγός DVB</value></string>
+<string><id>6010</id><value>Υφαρπαγέας XMLTV EPG</value></string>
+<string><id>6011</id><value>DVB EPG:</value></string>
+<string><id>6012</id><value>Ενημέρωση οδηγού από τα ακόλουθα DVB κανάλια:</value></string>
+<string><id>6013</id><value>>Χειροκίνητο xmltv</value></string>
+<string><id>6014</id><value>Ρύθμιση TV</value></string>
+<string><id>6015</id><value>Ρύθμιση DVD</value></string>
+<string><id>6016</id><value>Αυτόματη διαγραφή προγραμμάτων αφού προβληθούν</value></string>
+<string><id>6017</id><value>Προσθήκη εγγραφών στη βάση ταινιών</value></string>
+<string><id>6018</id><value>λεπτά πριν αρχίσει το πρόγραμμα</value></string>
+<string><id>6019</id><value>λεπτά αφού τελειώσει το πρόγραμμα</value></string>
+<string><id>6020</id><value>Επανάληψη παρουσιάσεων</value></string>
+<string><id>6021</id><value>Ανακάτεμα παρουσιάσεων</value></string>
+<string><id>6022</id><value>Ρύθμιση ταινιών</value></string>
+<string><id>6023</id><value>Ρύθμιση οθόνης</value></string>
+<string><id>6024</id><value>Αποφυγή βημάτων</value></string>
+<string><id>6025</id><value>Αποφυγή βήματος ρύθμισης</value></string>
 <string><id>8000</id><value>Ηλεκτρονικό ταχυδρομείο</value></string>
 <string><id>8001</id><value>Ελεγχος Mailbox</value></string>
 <string><id>8002</id><value>Autocheck off</value></string>
@@ -1163,7 +1205,7 @@
 <string><id>8018</id><value>Θέμα</value></string>
 <string><id>8019</id><value>Μήνυμα</value></string>
 <string><id>8020</id><value>Διαγραφή Mail</value></string>
-<string><id>8021</id><value>Set as read</value></string>
+<string><id>8021</id><value>Όρισμος ως διαβασμένο</value></string>
 <string><id>8022</id><value>Προβολή Attachments</value></string>
 <string><id>8023</id><value>Νεο Μήνυμα Ελήφθει</value></string>
 <string><id>8024</id><value>Προβολή Μυνήματος</value></string>
@@ -1175,7 +1217,7 @@
 <string><id>9000</id><value>Διαστάσεις Εικόνας:</value></string>
 <string><id>9001</id><value>Ανάλυση:</value></string>
 <string><id>9002</id><value>Φλας:</value></string>
-<string><id>9003</id><value>Metering Mode:</value></string>
+<string><id>9003</id><value>Είδος μέτρησης:</value></string>
 <string><id>9004</id><value>Compensation:</value></string>
 <string><id>9005</id><value>Ταχύτητα κλείστρου:</value></string>
 <string><id>9006</id><value>Ημέρα Λήψης:</value></string>
@@ -1184,7 +1226,10 @@
 <string><id>9009</id><value>Μοντέλο κάμερας:</value></string>
 <string><id>9010</id><value>Equipment make:</value></string>
 <string><id>9011</id><value>Προβολή σχολίων:</value></string>
-<string><id>10000</id><value>Home</value></string>
+<string><id>9997</id><value>Δεύτερα:</value></string>
+<string><id>9998</id><value>Λεπτά:</value></string>
+<string><id>9999</id><value>Ώρες:</value></string>
+<string><id>10000</id><value>Βασική οθόνη</value></string>
 <string><id>10001</id><value>Τηλεόραση</value></string>
 <string><id>10002</id><value>Φωτογραφίες</value></string>
 <string><id>10003</id><value>Αρχεία</value></string>
