@@ -2216,8 +2216,8 @@ namespace MediaPortal.TV.Recording
         int cbandMHZ = 0;
         int circularMHZ = 0;
         int _lnbNumber = 0;
-        if (ch.Diseqc == null) _lnbNumber = ch.CurrentLNB;
-        else _lnbNumber = ch.Diseqc;
+        if (ch.DiSEqC == null) _lnbNumber = ch.CurrentLNB;
+        else _lnbNumber = ch.DiSEqC;
 
         using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings(filename))
         {
