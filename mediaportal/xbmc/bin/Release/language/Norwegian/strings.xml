@@ -4638,6 +4638,14 @@
       <value>Skjerm oppsett</value>
    </string>
    <string>
+      <id>6024</id>
+      <value>Stegvis</value>
+   </string>
+   <string>
+      <id>6025</id>
+      <value>Stegvis oppsett</value>
+   </string>      
+   <string>
       <id>8000</id>
       <value>Min epost</value>
    </string>
@@ -4801,6 +4809,18 @@
       <id>9011</id>
       <value>Vis komentarer:</value>
    </string>
+   <string>
+      <id>9997</id>
+      <value>Sekunder:</value>
+   </string>
+   <string>
+      <id>9998</id>
+      <value>Minutter:</value>
+   </string>
+   <string>
+      <id>9999</id>
+      <value>Timer:</value>
+   </string>         
    <string>
       <id>10100</id>
       <value>Gjemte miner</value>
