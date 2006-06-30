@@ -792,7 +792,7 @@ public class MediaPortalApp : D3DApp, IRender
         MediaPortal.Radio.Database.RadioStation station;
         MediaPortal.Radio.Database.RadioDatabase.GetStation(strDefault, out station);
         GUIMessage msg;
-        if (station.URL != null && !station.URL.Equals(String.Empty))
+        if (station.URL != null && !station.URL.Equals(String.Empty) && station.Frequency == 0)
         {
           msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAY_FILE, 0, 0, 0, 0, 0, null);
           msg.Label = station.URL;
