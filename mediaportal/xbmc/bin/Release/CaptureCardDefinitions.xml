@@ -965,8 +965,8 @@
         <connection sourcefilter="tvaudio"  sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/>
         <connection sourcefilter="crossbar" sourcepin="0" sinkfilter="capture"	sinkpin="0"/>
         <connection sourcefilter="crossbar" sourcepin="1" sinkfilter="capture"	sinkpin="1"/>
-        <connection sourcefilter="capture"  sourcepin="4" sinkfilter="mux"		sinkpin="0"/>
-        <connection sourcefilter="capture"  sourcepin="5" sinkfilter="mux"		sinkpin="1"/>
+        <connection sourcefilter="capture"  sourcepin="3" sinkfilter="mux"		sinkpin="0"/>
+        <connection sourcefilter="capture"  sourcepin="4" sinkfilter="mux"		sinkpin="1"/>
       </connections>
     </tv>
   </capturecard>
@@ -4972,8 +4972,8 @@
 		<connection sourcefilter="tvaudio"	sourcepin="0" sinkfilter="crossbar"	sinkpin="%audiotuner%"/> 
 		<connection sourcefilter="crossbar"	sourcepin="0" sinkfilter="capture"	sinkpin="0"/> 
 		<connection sourcefilter="crossbar"	sourcepin="1" sinkfilter="capture"	sinkpin="1"/> 
-		<connection sourcefilter="capture"	sourcepin="4" sinkfilter="mux"		sinkpin="0"/> 
-		<connection sourcefilter="capture"	sourcepin="5" sinkfilter="mux"		sinkpin="1"/> 
+		<connection sourcefilter="capture"	sourcepin="3" sinkfilter="mux"		sinkpin="0"/> 
+		<connection sourcefilter="capture"	sourcepin="4" sinkfilter="mux"		sinkpin="1"/> 
       </connections> 
     </tv> 
   </capturecard>
