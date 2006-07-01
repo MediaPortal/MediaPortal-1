@@ -5572,4 +5572,68 @@
 		<id>6019</id>
 		<value>minuti dopo il termine del programma</value>
 	</string>
+	<string>
+		<id>777</id>
+		<value>Modalità di utilizzo pausa digitale</value>
+	</string>
+	<string>
+		<id>778</id>
+		<value>Avvia automaticamenta pausa digitale</value>
+	</string>
+	<string>
+		<id>779</id>
+		<value>La pausa digitale deve essere attivata</value>
+	</string>
+	<string>
+		<id>798</id>
+		<value>basso</value>
+	</string>
+	<string>
+		<id>799</id>
+		<value>alto</value>
+	</string>
+	<string>
+		<id>1200</id>
+		<value>Wizard configurazione</value>
+	</string>
+	<string>
+		<id>6015</id>
+		<value>Impostazioni DVD</value>
+	</string>
+	<string>
+		<id>6020</id>
+		<value>Ripeti/cicla diapositive</value>
+	</string>
+	<string>
+		<id>6021</id>
+		<value>Sequenza diapositive casuale</value>
+	</string>
+	<string>
+		<id>6022</id>
+		<value>Impostazione filmati</value>
+	</string>
+	<string>
+		<id>6023</id>
+		<value>Impostazione schermo</value>
+	</string>
+	<string>
+		<id>6024</id>
+		<value>Salta</value>
+	</string>
+	<string>
+		<id>6025</id>
+		<value>Impostazione durata salti</value>
+	</string>
+	<string>
+		<id>9997</id>
+		<value>Secondi:</value>
+	</string>
+	<string>
+		<id>9998</id>
+		<value>Minuti:</value>
+	</string>
+	<string>
+		<id>9999</id>
+		<value>Ore:</value>
+	</string>
 </strings>
