@@ -36,15 +36,19 @@ namespace ProcessPlugins.TVNotifies
     System.Windows.Forms.Timer _timer;
     // flag indicating that notifies have been added/changed/removed
     bool _notifiesListChanged;
-    //list of all notifies (alert me 2 minutes before program starts)
+    int _preNotifyConfig;
+    //list of all notifies (alert me n minutes before program starts)
     List<TVNotify> _notifiesList;
 
     public NotifyManager()
     {
       _notifiesList = new List<TVNotify>();
       TVDatabase.OnNotifiesChanged += new MediaPortal.TV.Database.TVDatabase.OnChangedHandler(OnNotifiesChanged);
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+        _preNotifyConfig = xmlreader.GetValueAsInt("movieplayer", "notifyTVBefore", 300);
       _timer = new System.Windows.Forms.Timer();
-      _timer.Interval = 30000;
+      // check every 15 seconds for notifies
+      _timer.Interval = 15000;
       _timer.Enabled = false;
       _timer.Tick += new EventHandler(_timer_Tick);
     }
@@ -67,11 +71,11 @@ namespace ProcessPlugins.TVNotifies
         LoadNotifies(); 
         _notifiesListChanged = false;
       }
-      DateTime dt5Mins = DateTime.Now.AddMinutes(5);
+      DateTime preNotifySecs = DateTime.Now.AddSeconds(_preNotifyConfig);
       for (int i = 0; i < _notifiesList.Count; ++i)
       {
         TVNotify notify = _notifiesList[i];
-        if (dt5Mins > notify.Program.StartTime)
+        if ( preNotifySecs > notify.Program.StartTime )
         {
           TVDatabase.DeleteNotify(notify);
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM, 0, 0, 0, 0, 0, null);
@@ -106,7 +110,7 @@ namespace ProcessPlugins.TVNotifies
 
     public string Description()
     {
-      return "Sends notifications 5 minutes before a program starts";
+      return "Launch a notification before a program starts";
     }
 
     public bool DefaultEnabled()

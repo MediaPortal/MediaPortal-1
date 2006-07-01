@@ -241,7 +241,7 @@ namespace MediaPortal.GUI.Home
         GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
         TVProgram notify = message.Object as TVProgram;
         if (notify == null) return;
-        dialogNotify.SetHeading(1016);
+        dialogNotify.SetHeading(1019); // Program is about to begin
         dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
         dialogNotify.SetImage(strLogo);

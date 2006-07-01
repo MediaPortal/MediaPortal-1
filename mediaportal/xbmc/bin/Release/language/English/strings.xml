@@ -3291,7 +3291,7 @@
    </string>
    <string>
       <id>1014</id>
-      <value>Notify me when program begins</value>
+      <value>Notify me before program begins</value>
    </string>
    <string>
       <id>1015</id>
@@ -3305,6 +3305,14 @@
       <id>1017</id>
       <value>Sort by: Duration</value>
    </string>
+   <string>
+      <id>1018</id>
+      <value>Program starts in {0} minutes</value>
+   </string>
+   <string>
+      <id>1019</id>
+      <value>Program is about to begin</value>
+   </string>      
    <string>
       <id>1020</id>
       <value>Information</value>

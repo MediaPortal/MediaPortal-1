@@ -52,6 +52,8 @@ namespace MediaPortal.Configuration.Sections
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxNotifyTimeoutVal;
     private MediaPortal.UserInterface.Controls.MPLabel labelNotifyTimeout;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxNotifyPlaySound;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxPreNotify;
+    private MediaPortal.UserInterface.Controls.MPLabel labelPreNotify;
     private MediaPortal.UserInterface.Controls.MPTextBox textBoxZapTimeout;
 
     public GeneralOSD()
@@ -73,6 +75,7 @@ namespace MediaPortal.Configuration.Sections
         textBoxDisplayTimeout.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 0));
         textBoxZapDelay.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "zapdelay", 2));
         textBoxZapTimeout.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "zaptimeout", 5));
+        textBoxPreNotify.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "notifyTVBefore", 300));
         textBoxNotifyTimeoutVal.Text = Convert.ToString(xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 15));
         checkBoxNotifyPlaySound.Checked = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
       }
@@ -85,6 +88,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("movieplayer", "osdtimeout", textBoxDisplayTimeout.Text);
         xmlwriter.SetValue("movieplayer", "zapdelay", textBoxZapDelay.Text);
         xmlwriter.SetValue("movieplayer", "zaptimeout", textBoxZapTimeout.Text);
+        xmlwriter.SetValue("movieplayer", "notifyTVBefore", textBoxPreNotify.Text);
         xmlwriter.SetValue("movieplayer", "notifyTVTimeout", textBoxNotifyTimeoutVal.Text);
         xmlwriter.SetValueAsBool("movieplayer", "notifybeep", checkBoxNotifyPlaySound.Checked);
       }
@@ -126,6 +130,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxOSD = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.textBoxDisplayTimeout = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.labelDisplayTimeout = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.textBoxPreNotify = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.labelPreNotify = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControlGeneralOSD.SuspendLayout();
       this.tabPageOSD.SuspendLayout();
       this.groupBoxNotifyTV.SuspendLayout();
@@ -161,13 +167,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBoxNotifyTV.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
                   | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBoxNotifyTV.Controls.Add(this.textBoxPreNotify);
+      this.groupBoxNotifyTV.Controls.Add(this.labelPreNotify);
       this.groupBoxNotifyTV.Controls.Add(this.checkBoxNotifyPlaySound);
       this.groupBoxNotifyTV.Controls.Add(this.textBoxNotifyTimeoutVal);
       this.groupBoxNotifyTV.Controls.Add(this.labelNotifyTimeout);
       this.groupBoxNotifyTV.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxNotifyTV.Location = new System.Drawing.Point(16, 166);
       this.groupBoxNotifyTV.Name = "groupBoxNotifyTV";
-      this.groupBoxNotifyTV.Size = new System.Drawing.Size(432, 74);
+      this.groupBoxNotifyTV.Size = new System.Drawing.Size(432, 102);
       this.groupBoxNotifyTV.TabIndex = 2;
       this.groupBoxNotifyTV.TabStop = false;
       this.groupBoxNotifyTV.Text = "Program start notification";
@@ -178,7 +186,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxNotifyPlaySound.Checked = true;
       this.checkBoxNotifyPlaySound.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxNotifyPlaySound.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxNotifyPlaySound.Location = new System.Drawing.Point(19, 46);
+      this.checkBoxNotifyPlaySound.Location = new System.Drawing.Point(19, 76);
       this.checkBoxNotifyPlaySound.Name = "checkBoxNotifyPlaySound";
       this.checkBoxNotifyPlaySound.Size = new System.Drawing.Size(105, 17);
       this.checkBoxNotifyPlaySound.TabIndex = 2;
@@ -190,7 +198,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxNotifyTimeoutVal.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
                   | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.textBoxNotifyTimeoutVal.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxNotifyTimeoutVal.Location = new System.Drawing.Point(160, 20);
+      this.textBoxNotifyTimeoutVal.Location = new System.Drawing.Point(160, 47);
       this.textBoxNotifyTimeoutVal.Name = "textBoxNotifyTimeoutVal";
       this.textBoxNotifyTimeoutVal.Size = new System.Drawing.Size(256, 20);
       this.textBoxNotifyTimeoutVal.TabIndex = 1;
@@ -199,11 +207,11 @@ namespace MediaPortal.Configuration.Sections
       // labelNotifyTimeout
       // 
       this.labelNotifyTimeout.AutoSize = true;
-      this.labelNotifyTimeout.Location = new System.Drawing.Point(16, 24);
+      this.labelNotifyTimeout.Location = new System.Drawing.Point(16, 50);
       this.labelNotifyTimeout.Name = "labelNotifyTimeout";
-      this.labelNotifyTimeout.Size = new System.Drawing.Size(127, 13);
+      this.labelNotifyTimeout.Size = new System.Drawing.Size(129, 13);
       this.labelNotifyTimeout.TabIndex = 0;
-      this.labelNotifyTimeout.Text = "notification timeout (sec.):";
+      this.labelNotifyTimeout.Text = "Notification timeout (sec.):";
       // 
       // groupBoxZapOSD
       // 
@@ -291,6 +299,26 @@ namespace MediaPortal.Configuration.Sections
       this.labelDisplayTimeout.Size = new System.Drawing.Size(110, 13);
       this.labelDisplayTimeout.TabIndex = 0;
       this.labelDisplayTimeout.Text = "Display timeout (sec.):";
+      // 
+      // textBoxPreNotify
+      // 
+      this.textBoxPreNotify.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxPreNotify.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxPreNotify.Location = new System.Drawing.Point(160, 21);
+      this.textBoxPreNotify.Name = "textBoxPreNotify";
+      this.textBoxPreNotify.Size = new System.Drawing.Size(256, 20);
+      this.textBoxPreNotify.TabIndex = 4;
+      this.textBoxPreNotify.Text = "300";
+      // 
+      // labelPreNotify
+      // 
+      this.labelPreNotify.AutoSize = true;
+      this.labelPreNotify.Location = new System.Drawing.Point(16, 24);
+      this.labelPreNotify.Name = "labelPreNotify";
+      this.labelPreNotify.Size = new System.Drawing.Size(122, 13);
+      this.labelPreNotify.TabIndex = 3;
+      this.labelPreNotify.Text = "Notify n seconds before:";
       // 
       // GeneralOSD
       // 

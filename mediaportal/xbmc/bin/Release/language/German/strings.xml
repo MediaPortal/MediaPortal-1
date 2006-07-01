@@ -3291,11 +3291,11 @@
    </string>
    <string>
       <id>1014</id>
-      <value>Erinnern wenn Sendung beginnt</value>
+      <value>Erinnern bevor Sendung beginnt</value>
    </string>
    <string>
       <id>1015</id>
-      <value>Keine Erinnerung</value>
+      <value>Erinnerung aufheben</value>
    </string>
    <string>
       <id>1016</id>
@@ -3304,6 +3304,14 @@
    <string>
       <id>1017</id>
       <value>Sortiere: Dauer</value>
+   </string>
+   <string>
+      <id>1018</id>
+      <value>Sendung beginnt in {0} Minuten:</value>
+   </string>
+   <string>
+      <id>1019</id>
+      <value>Sendung beginnt gleich:</value>
    </string>
    <string>
       <id>1020</id>
