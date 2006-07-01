@@ -17,3 +17,4 @@ SetWmvProfile			@10
 DeliverMediaSample		@11
 SetupDemuxerPin			@12
 DumpMpeg2DemuxerMappings @13
+SetupDemuxerPids			@14

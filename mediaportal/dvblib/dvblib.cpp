@@ -24,7 +24,7 @@
 #include "stdafx.h"
 #include <initguid.h>
 #include <streams.h>
-#include <dshowasf.h>
+//#include <dshowasf.h>
 #include <comdef.h>
 //#include <Dshow.h>
 #include <bdaiface.h>
@@ -465,6 +465,7 @@ HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, int elementary_stream, bool u
 	int				maxCounter;
 	HRESULT hr=0;
 
+	Log("setup pid:%x", videoPID);
 	// video
 	if (pVideo!=NULL)
 	{
@@ -472,6 +473,7 @@ HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, int elementary_stream, bool u
 		if(FAILED(hr) || pMap==NULL)
 			return 1;
 		// 
+		BOOL mapped=false;
 		if (unmapOtherPids)
 		{
 			hr=pMap->EnumPIDMap(&pPidEnum);
@@ -485,19 +487,109 @@ HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, int elementary_stream, bool u
 				if (maxCounter<0) break;
 				if (count !=1) break;
 				umPid=pm.ulPID;
-				hr=pMap->UnmapPID(1,&umPid);
+				if (umPid != videoPID)
+				{
+					Log("  unmap pid:%x", umPid);
+					hr=pMap->UnmapPID(1,&umPid);
+				}
+				else
+				{
+					Log("  pid:%x already mapped", umPid);
+					mapped=TRUE;
+				}
 				if(FAILED(hr))
 					return 6;
 			}
 			pPidEnum->Release();
 		}
-		if (videoPID>=0)
+
+		if (FALSE==mapped)
 		{
-			// map new pid
-			pid = (ULONG)videoPID;
-				hr=pMap->MapPID(1,&pid,(MEDIA_SAMPLE_CONTENT)elementary_stream);
-			if(FAILED(hr))
-				return 2;
+			if (videoPID>=0)
+			{
+				// map new pid
+					Log("  map pid:%x", videoPID);
+				pid = (ULONG)videoPID;
+					hr=pMap->MapPID(1,&pid,(MEDIA_SAMPLE_CONTENT)elementary_stream);
+				if(FAILED(hr))
+					return 2;
+			}
+		}
+		pMap->Release();
+	}
+	return S_OK;
+
+}
+
+HRESULT SetupDemuxerPids(IPin *pVideo,int *videoPID, int pidCount,int elementary_stream, bool unmapOtherPids)
+{
+	IMPEG2PIDMap	*pMap=NULL;
+	IEnumPIDMap		*pPidEnum=NULL;
+	ULONG			pid;
+	PID_MAP			pm;
+	ULONG			count;
+	ULONG			umPid;
+	int				maxCounter;
+	HRESULT hr=0;
+
+	Log("setup pids:%d", pidCount);
+	// video
+	if (pVideo!=NULL)
+	{
+		hr=pVideo->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
+		if(FAILED(hr) || pMap==NULL)
+			return 1;
+		// 
+		BOOL mapped=false;
+		if (unmapOtherPids)
+		{
+			hr=pMap->EnumPIDMap(&pPidEnum);
+			if(FAILED(hr) || pPidEnum==NULL)
+				return 5;
+			// enum and unmap the pids
+			maxCounter=20;
+			while(pPidEnum->Next(1,&pm,&count)== S_OK)
+			{
+				maxCounter--;
+				if (maxCounter<0) break;
+				if (count !=1) break;
+				umPid=pm.ulPID;
+				for (int i=0; i < pidCount;++i)
+				{
+					if (umPid == videoPID[i]) 
+					{
+						videoPID[i]=0x2000;
+						mapped=TRUE;
+					}
+				}
+
+				if (!mapped)
+				{
+					Log("  unmap pid:%x", umPid);
+					hr=pMap->UnmapPID(1,&umPid);
+				}
+				else
+				{
+					Log("  pid:%x already mapped", umPid);
+					mapped=TRUE;
+				}
+				if(FAILED(hr))
+					return 6;
+			}
+			pPidEnum->Release();
+		}
+
+		for (int i=0; i <pidCount;++i)
+		{
+			if (videoPID[i]>=0 && videoPID[i] < 0x2000)
+			{
+				// map new pid
+					Log("  map pid:%x", videoPID[i]);
+				pid = (ULONG)videoPID[i];
+					hr=pMap->MapPID(1,&pid,(MEDIA_SAMPLE_CONTENT)elementary_stream);
+				if(FAILED(hr))
+					return 2;
+			}
 		}
 		pMap->Release();
 	}
@@ -506,6 +598,7 @@ HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, int elementary_stream, bool u
 }
 HRESULT DumpMpeg2DemuxerMappings(IBaseFilter* mpeg2Demuxer)
 {
+	Log("Mpeg2DemuxerMappings");
   IEnumPins* enumPins;
   if ( FAILED(mpeg2Demuxer->EnumPins(&enumPins)))
   {
@@ -530,7 +623,7 @@ HRESULT DumpMpeg2DemuxerMappings(IBaseFilter* mpeg2Demuxer)
     pins[0]->QueryInterface(IID_IMPEG2PIDMap,(void**)&pMap);
     if (pMap!=NULL)
     {
-      Log("pin:%s", (char*)  _bstr_t(pinInfo.achName));
+      Log("  pin:%s", (char*)  _bstr_t(pinInfo.achName));
       if (SUCCEEDED( pMap->EnumPIDMap(&pPidEnum) ))
       {
 	      PID_MAP			pm;
@@ -538,7 +631,7 @@ HRESULT DumpMpeg2DemuxerMappings(IBaseFilter* mpeg2Demuxer)
         while(pPidEnum->Next(1,&pm,&count)== S_OK)
 		    {
           if (count<1) break;
-          Log("  pid:0x%x type:%d", pm.ulPID,pm.MediaSampleContent);
+          Log("    pid:0x%x type:%d", pm.ulPID,pm.MediaSampleContent);
         }
 		    pPidEnum->Release();
       }
@@ -576,7 +669,7 @@ IPin *GetPin(IBaseFilter *pFilter, PIN_DIRECTION PinDir)
 
 HRESULT SetWmvProfile(IBaseFilter* baseFilter, ULONG bitrate, ULONG fps, ULONG screenX, ULONG screenY)
 {
-
+/*
 	HRESULT hr;
 	Log("WMV:SetProfile (%d, %d %x) ",screenX,screenY,baseFilter);
 
@@ -725,5 +818,6 @@ HRESULT SetWmvProfile(IBaseFilter* baseFilter, ULONG bitrate, ULONG fps, ULONG s
 		else Log("WMV:Could not get IWMWriterAdvanced2");
 	}
 	else Log("WMV:Could not get IServiceProvider");
+	*/
 	return S_OK;
 }
