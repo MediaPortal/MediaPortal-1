@@ -175,7 +175,8 @@ namespace MediaPortal.Player
 
         int hr;
         MPEG2Demultiplexer demux = new MPEG2Demultiplexer();
-        hr = _graphBuilder.AddFilter((IBaseFilter)demux, "MPEG-2 Demultiplexer");
+        _mpegDemux = (IBaseFilter)demux;
+        hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
         _fileSource = new TsFileSource();
         /*
         if (IsTimeShifting)
@@ -292,9 +293,9 @@ namespace MediaPortal.Player
         }
         if (_audioRendererFilter != null)
         {
-          IMediaFilter mp = _graphBuilder as IMediaFilter;
-          IReferenceClock clock = _audioRendererFilter as IReferenceClock;
-          hr = mp.SetSyncSource(clock);
+          //IMediaFilter mp = _graphBuilder as IMediaFilter;
+          //IReferenceClock clock = _audioRendererFilter as IReferenceClock;
+          //hr = mp.SetSyncSource(clock);
         }
 
 
@@ -404,6 +405,12 @@ namespace MediaPortal.Player
           while ((hr = Marshal.ReleaseComObject(_ffdShowFilter)) > 0) ;
           _ffdShowFilter = null;
         }
+        if (_mpegDemux != null)
+        {
+          while ((hr = Marshal.ReleaseComObject(_mpegDemux)) > 0) ;
+          _mpegDemux = null;
+        }
+
 
         DirectShowUtil.RemoveFilters(_graphBuilder);
 
