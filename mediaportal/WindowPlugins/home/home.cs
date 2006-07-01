@@ -122,6 +122,8 @@ namespace MediaPortal.GUI.Home
     string currentDate = "";
     int menuView = 0;
     bool firstDate = false;
+    int _notifyTVTimeout = 15;
+    bool _playNotifyBeep = true;
     Viewport m_newviewport = new Viewport();
     Viewport m_oldviewport;
     ScriptHandler gScript = new ScriptHandler();
@@ -183,6 +185,8 @@ namespace MediaPortal.GUI.Home
         useTopBarSub = xmlreader.GetValueAsBool("home", "useTopBarSub", false);
         noTopBar = xmlreader.GetValueAsBool("home", "noTopBarSub", false);
         useMenuShortcuts = xmlreader.GetValueAsBool("home", "useMenuShortcuts", false);
+        _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 15);
+        _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
       }
       if (useMenus == true)
       {
@@ -233,7 +237,7 @@ namespace MediaPortal.GUI.Home
 
       if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
       {
-        if (GUIGraphicsContext.IsFullScreenVideo) return;
+        //if (GUIGraphicsContext.IsFullScreenVideo) return;
         GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
         TVProgram notify = message.Object as TVProgram;
         if (notify == null) return;
@@ -241,7 +245,9 @@ namespace MediaPortal.GUI.Home
         dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
         dialogNotify.SetImage(strLogo);
-        dialogNotify.TimeOut = 10;
+        dialogNotify.TimeOut = _notifyTVTimeout;
+        if ( _playNotifyBeep )
+          Utils.PlaySound("notify.wav", false, true);
         dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
       }
       switch (message.Message)
@@ -796,6 +802,7 @@ namespace MediaPortal.GUI.Home
                       while ( m_iButtons < 10 )
                         ProcessPlugins(ref plugins);
                     }
+
                     m_aryPreControlList.Clear();
                     m_aryPostControlList.Clear();
                     plugins = null;

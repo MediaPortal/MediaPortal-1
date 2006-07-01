@@ -890,22 +890,22 @@ namespace MediaPortal.GUI.TV
       #endregion
 
       #region case GUI_MSG_NOTIFY_TV_PROGRAM
-      if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
-      {
-        _dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-        TVProgram notify = message.Object as TVProgram;
-        if (notify == null) return true;
-        _dialogNotify.SetHeading(1016);
-        _dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
-        string logo = Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
-        _dialogNotify.SetImage(logo);
-        _dialogNotify.TimeOut = _notifyTVTimeout;
-        _notifyDialogVisible = true;
-        if (_playNotifyBeep)
-          Utils.PlaySound("notify.wav", false, true);
-        _dialogNotify.DoModal(GetID);
-        _notifyDialogVisible = false;
-      }
+      //if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
+      //{
+      //  _dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+      //  TVProgram notify = message.Object as TVProgram;
+      //  if (notify == null) return true;
+      //  _dialogNotify.SetHeading(1016);
+      //  _dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
+      //  string logo = Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
+      //  _dialogNotify.SetImage(logo);
+      //  _dialogNotify.TimeOut = _notifyTVTimeout;
+      //  _notifyDialogVisible = true;
+      //  if (_playNotifyBeep)
+      //    Utils.PlaySound("notify.wav", false, true);
+      //  _dialogNotify.DoModal(GetID);
+      //  _notifyDialogVisible = false;
+      //}
       #endregion
 
       #region case GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING
