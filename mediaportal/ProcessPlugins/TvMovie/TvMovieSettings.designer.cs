@@ -73,18 +73,20 @@ namespace ProcessPlugins.TvMovie
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.mpBeveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+      this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxShowAudioFormat = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxMapping.SuspendLayout();
       this.panelTimeSpan.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      ( (System.ComponentModel.ISupportInitialize)( this.pictureBox2 ) ).BeginInit();
+      ( (System.ComponentModel.ISupportInitialize)( this.pictureBox1 ) ).BeginInit();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.SuspendLayout();
       // 
       // treeViewChannels
       // 
-      this.treeViewChannels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.treeViewChannels.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Left ) ) );
       this.treeViewChannels.HideSelection = false;
       this.treeViewChannels.Location = new System.Drawing.Point(16, 48);
       this.treeViewChannels.Name = "treeViewChannels";
@@ -99,8 +101,8 @@ namespace ProcessPlugins.TvMovie
       // 
       // treeViewStations
       // 
-      this.treeViewStations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.treeViewStations.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.treeViewStations.HideSelection = false;
       this.treeViewStations.Location = new System.Drawing.Point(288, 48);
       this.treeViewStations.Name = "treeViewStations";
@@ -114,7 +116,7 @@ namespace ProcessPlugins.TvMovie
       // 
       // buttonOk
       // 
-      this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOk.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.buttonOk.Location = new System.Drawing.Point(376, 434);
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(75, 23);
@@ -125,9 +127,9 @@ namespace ProcessPlugins.TvMovie
       // 
       // groupBoxMapping
       // 
-      this.groupBoxMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxMapping.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.groupBoxMapping.Controls.Add(this.panelTimeSpan);
       this.groupBoxMapping.Controls.Add(this.treeViewChannels);
       this.groupBoxMapping.Controls.Add(this.treeViewStations);
@@ -143,7 +145,7 @@ namespace ProcessPlugins.TvMovie
       // 
       // panelTimeSpan
       // 
-      this.panelTimeSpan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.panelTimeSpan.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left ) ) );
       this.panelTimeSpan.AutoSize = true;
       this.panelTimeSpan.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this.panelTimeSpan.Controls.Add(this.maskedTextBoxTimeStart);
@@ -219,7 +221,7 @@ namespace ProcessPlugins.TvMovie
       // 
       this.listView2.AllowDrop = true;
       this.listView2.AllowRowReorder = true;
-      this.listView2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.listView2.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.listView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
       this.listView2.Location = new System.Drawing.Point(288, 27);
@@ -237,7 +239,7 @@ namespace ProcessPlugins.TvMovie
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonCancel.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.buttonCancel.Location = new System.Drawing.Point(456, 434);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
@@ -248,8 +250,8 @@ namespace ProcessPlugins.TvMovie
       // 
       // pictureBox2
       // 
-      this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.pictureBox2.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.pictureBox2.Image = global::ProcessPlugins.Properties.Resources.tvmovie4_topgrafikrepeat_nw;
       this.pictureBox2.Location = new System.Drawing.Point(24, 16);
       this.pictureBox2.Name = "pictureBox2";
@@ -270,9 +272,9 @@ namespace ProcessPlugins.TvMovie
       // 
       // mpTabControl1
       // 
-      this.mpTabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpTabControl1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.mpTabControl1.Controls.Add(this.tabPage1);
       this.mpTabControl1.Location = new System.Drawing.Point(16, 72);
       this.mpTabControl1.Name = "mpTabControl1";
@@ -293,8 +295,8 @@ namespace ProcessPlugins.TvMovie
       // 
       // mpBeveledLine1
       // 
-      this.mpBeveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpBeveledLine1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
       this.mpBeveledLine1.Location = new System.Drawing.Point(16, 424);
       this.mpBeveledLine1.Name = "mpBeveledLine1";
       this.mpBeveledLine1.Size = new System.Drawing.Size(508, 2);
@@ -307,18 +309,42 @@ namespace ProcessPlugins.TvMovie
       this.openFileDialog.Filter = "TV Movie Database|*.mdb";
       this.openFileDialog.RestoreDirectory = true;
       // 
+      // checkBoxUseShortDesc
+      // 
+      this.checkBoxUseShortDesc.AutoSize = true;
+      this.checkBoxUseShortDesc.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxUseShortDesc.Location = new System.Drawing.Point(16, 437);
+      this.checkBoxUseShortDesc.Name = "checkBoxUseShortDesc";
+      this.checkBoxUseShortDesc.Size = new System.Drawing.Size(128, 17);
+      this.checkBoxUseShortDesc.TabIndex = 11;
+      this.checkBoxUseShortDesc.Text = "Use short descriptions";
+      this.checkBoxUseShortDesc.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxShowAudioFormat
+      // 
+      this.checkBoxShowAudioFormat.AutoSize = true;
+      this.checkBoxShowAudioFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxShowAudioFormat.Location = new System.Drawing.Point(150, 437);
+      this.checkBoxShowAudioFormat.Name = "checkBoxShowAudioFormat";
+      this.checkBoxShowAudioFormat.Size = new System.Drawing.Size(112, 17);
+      this.checkBoxShowAudioFormat.TabIndex = 12;
+      this.checkBoxShowAudioFormat.Text = "Show audio format";
+      this.checkBoxShowAudioFormat.UseVisualStyleBackColor = true;
+      // 
       // TvMovieSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(540, 464);
+      this.Controls.Add(this.checkBoxShowAudioFormat);
+      this.Controls.Add(this.checkBoxUseShortDesc);
       this.Controls.Add(this.pictureBox2);
       this.Controls.Add(this.mpBeveledLine1);
       this.Controls.Add(this.mpTabControl1);
       this.Controls.Add(this.pictureBox1);
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.buttonOk);
-      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+      this.Icon = ( (System.Drawing.Icon)( resources.GetObject("$this.Icon") ) );
       this.MaximumSize = new System.Drawing.Size(548, 5680);
       this.MinimizeBox = false;
       this.MinimumSize = new System.Drawing.Size(548, 402);
@@ -331,8 +357,8 @@ namespace ProcessPlugins.TvMovie
       this.groupBoxMapping.PerformLayout();
       this.panelTimeSpan.ResumeLayout(false);
       this.panelTimeSpan.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+      ( (System.ComponentModel.ISupportInitialize)( this.pictureBox2 ) ).EndInit();
+      ( (System.ComponentModel.ISupportInitialize)( this.pictureBox1 ) ).EndInit();
       this.mpTabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.ResumeLayout(false);
@@ -361,6 +387,8 @@ namespace ProcessPlugins.TvMovie
     private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
     private MediaPortal.UserInterface.Controls.MPBeveledLine mpBeveledLine1;
     private System.Windows.Forms.OpenFileDialog openFileDialog;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseShortDesc;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowAudioFormat;
   }
 }
 

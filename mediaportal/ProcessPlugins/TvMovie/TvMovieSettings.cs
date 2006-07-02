@@ -45,6 +45,8 @@ namespace ProcessPlugins.TvMovie
     #region Membervariables
 
     string _xmlFile = "TVMovieMapping.xml";
+    bool _useShortProgramDesc = false;
+    bool _showAudioFormat = false;
 
     #endregion
 
@@ -90,6 +92,7 @@ namespace ProcessPlugins.TvMovie
       InitializeComponent();
       LoadStations();
       LoadMapping();
+      LoadOptions();
       //this.mpTabControl1.Controls.Remove(this.tabPage2);
     }
 
@@ -115,6 +118,7 @@ namespace ProcessPlugins.TvMovie
     private void buttonOk_Click(object sender, EventArgs e)
     {
       SaveMapping();
+      SaveOptions();
       this.Close();
     }
 
@@ -129,7 +133,27 @@ namespace ProcessPlugins.TvMovie
 
     #region Implementation
 
+    private void LoadOptions()
+    {
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      {
+        _useShortProgramDesc = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
+        _showAudioFormat = xmlreader.GetValueAsBool("tvmovie", "showaudioformat", false);
+      }
+      checkBoxUseShortDesc.Checked = _useShortProgramDesc ? true : false;
+      checkBoxShowAudioFormat.Checked = _showAudioFormat ? true : false;
+    }
 
+    private void SaveOptions()
+    {
+      _useShortProgramDesc = checkBoxUseShortDesc.Checked ? true : false;
+      _showAudioFormat = checkBoxShowAudioFormat.Checked ? true : false;
+      using ( MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      {
+        xmlwriter.SetValueAsBool("tvmovie", "shortprogramdesc", _useShortProgramDesc);
+        xmlwriter.SetValueAsBool("tvmovie", "showaudioformat", _showAudioFormat);
+      }
+    }
     /// <summary>
     /// Load stations from databases and fill controls with that data
     /// </summary>

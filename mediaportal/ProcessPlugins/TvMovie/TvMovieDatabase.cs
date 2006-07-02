@@ -358,15 +358,63 @@ namespace ProcessPlugins.TvMovie
 
       return true;
     }
+    /// <summary>
+    /// passing the TV movie sound bool params this method returns the audio format as string
+    /// </summary>
+    /// <param name="audioDesc"></param>
+    /// <param name="dolbyDigital"></param>
+    /// <param name="dolbySuround"></param>
+    /// <param name="dolby"></param>
+    /// <param name="stereo"></param>
+    /// <param name="dualAudio"></param>
+    /// <returns></returns>
+    private string BuildAudioDescription( bool audioDesc, bool dolbyDigital, bool dolbySuround, bool dolby, bool stereo, bool dualAudio )
+    {
+      string audioFormat = String.Empty;
 
+      if ( dolbyDigital )
+        audioFormat = "Dolby Digital";
+      if ( dolbySuround )
+        audioFormat = "Dolby Surround";
+      if ( dolby )
+        audioFormat = "Dolby 2.0";
+      if ( stereo )
+        audioFormat = "Stereo";
+      if ( dualAudio )
+        audioFormat = "Mehrkanal-Ton";
+
+      return audioFormat;
+    }
 
     private int ImportStation(string stationName, ArrayList channelNames)
     {
+      bool useShortProgramDesc;
+      bool showAudioFormat;
+      string sqlSelect;
+      string audioFormat = String.Empty;
+
       if (_databaseConnection == null)
         return 0;
 
-      string sqlSelect = string.Format("SELECT TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Beschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
+      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      {
+        useShortProgramDesc = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
+        showAudioFormat = xmlreader.GetValueAsBool("tvmovie", "showaudioformat", false);
+      }
 
+      if ( useShortProgramDesc )
+      {
+        if ( showAudioFormat )
+          sqlSelect = string.Format("SELECT TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.KurzBeschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung, TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
+        else
+          sqlSelect = string.Format("SELECT TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.KurzBeschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
+      }
+      else
+        if ( showAudioFormat )
+          sqlSelect = string.Format("SELECT TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Beschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung, TVDaten.Audiodescription, TVDaten.DolbySuround, TVDaten.Stereo, TVDaten.DolbyDigital, TVDaten.Dolby, TVDaten.Zweikanalton FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
+        else
+          sqlSelect = string.Format("SELECT TVDaten.FSK, TVDaten.Herstellungsjahr, TVDaten.Beschreibung, TVDaten.Ende, TVDaten.Originaltitel, TVDaten.Genre, TVDaten.Wiederholung, TVDaten.Interessant, TVDaten.Beginn, TVDaten.Sendung FROM TVDaten WHERE (((TVDaten.SenderKennung)=\"{0}\") AND ([Ende]>=Now())) ORDER BY TVDaten.Beginn;", stationName);
+      
       OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection);
       OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand);
 
@@ -391,7 +439,9 @@ namespace ProcessPlugins.TvMovie
         string channel = stationName;                                     // idChannel (table channel) ==> Senderkennung match strChannel
         string classification = guideEntry["FSK"].ToString();             // strClassification ==> FSK
         string date = guideEntry["Herstellungsjahr"].ToString();          // strDate ==> Herstellungsjahr
-        string description = guideEntry["Beschreibung"].ToString();       // strDescription ==> Beschreibung
+        string description;
+        if (useShortProgramDesc) description = guideEntry["KurzBeschreibung"].ToString();
+          else description = guideEntry["Beschreibung"].ToString();         // strDescription ==> Beschreibung
         DateTime end = DateTime.Parse(guideEntry["Ende"].ToString());     // iEndTime ==> Ende  (15.06.2006 22:45:00 ==> 20060615224500)
         string episode = guideEntry["Originaltitel"].ToString();          // strEpisodeName ==> Originaltitel
         //string episodeNum;                                              // strEpisodeNum ==> "unknown"
@@ -402,7 +452,16 @@ namespace ProcessPlugins.TvMovie
         int starRating = Convert.ToInt16(guideEntry["Interessant"]) - 1;  // strStarRating ==> Interessant + "/5"
         DateTime start = DateTime.Parse(guideEntry["Beginn"].ToString()); // iStartTime ==> Beginn (15.06.2006 22:45:00 ==> 20060615224500)
         string title = guideEntry["Sendung"].ToString();                  // strTitle ==> Sendung
-
+        if ( showAudioFormat )
+        {
+          bool audioDesc = Convert.ToBoolean(guideEntry["Audiodescription"]);     // strAudioDesc ==> Tonformat "Stereo"
+          bool dolbyDigital = Convert.ToBoolean(guideEntry["DolbyDigital"]);
+          bool dolbySuround = Convert.ToBoolean(guideEntry["DolbySuround"]);
+          bool dolby = Convert.ToBoolean(guideEntry["Dolby"]);
+          bool stereo = Convert.ToBoolean(guideEntry["Stereo"]);
+          bool dualAudio = Convert.ToBoolean(guideEntry["Zweikanalton"]);
+          audioFormat = BuildAudioDescription(audioDesc, dolbyDigital, dolbySuround, dolby, stereo, dualAudio);
+        }
         if (OnProgramsChanged != null)
           OnProgramsChanged(counter, programsCount + 1, title);
 
@@ -421,7 +480,10 @@ namespace ProcessPlugins.TvMovie
             epgEntry.Start = Utils.datetolong(newStartDate);
             epgEntry.End = Utils.datetolong(newEndDate);
             epgEntry.Title = title;
-            epgEntry.Description = description.Replace("<br>", "\n");
+            if ( audioFormat == String.Empty )
+              epgEntry.Description = description.Replace("<br>", "\n");
+            else
+              epgEntry.Description = "Ton: " + audioFormat + "\n"+ description.Replace("<br>", "\n");
             epgEntry.Genre = genre;
             epgEntry.Classification = classification;
             epgEntry.Date = date;
@@ -429,7 +491,7 @@ namespace ProcessPlugins.TvMovie
             if (repeat != 0)
               epgEntry.Repeat = "Repeat";
             if (starRating != -1)
-              epgEntry.StarRating = string.Format("{0}/5", starRating);
+              epgEntry.StarRating = string.Format("{0}/5", starRating);       
 
             TVDatabase.UpdateProgram(epgEntry);
           }
