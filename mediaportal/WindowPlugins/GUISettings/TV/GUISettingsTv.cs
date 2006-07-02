@@ -227,27 +227,28 @@ namespace WindowPlugins.GUISettings.TV
 		}
 		void OnAutoTurnOnTv()
 		{
-			bool autoTurnOn=true;
+			bool autoTurnOn=false;
 			using (MediaPortal.Profile.Settings   xmlreader=new MediaPortal.Profile.Settings("MediaPortal.xml"))
 			{
-				autoTurnOn= xmlreader.GetValueAsBool("mytv", "tvon", true);
+              autoTurnOn = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
 			}
 
 			GUIDialogMenu dlg=(GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-			if (dlg!=null)
-			{
-				dlg.Reset();
-				dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
-        dlg.Add(GUILocalizeStrings.Get(775));       //Start TV in MyTV sections automatically
-        dlg.Add(GUILocalizeStrings.Get(776));       //Do not start / switch to TV automatically
-				dlg.SelectedLabel=autoTurnOn?1:0;  // WHY is it the other way?
-				dlg.DoModal(GetID);
-				if (dlg.SelectedLabel<0) return;
-				using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
-				{
-					xmlwriter.SetValueAsBool("mytv", "tvon", (dlg.SelectedLabel==1));
-				}
-			}
+            if ( dlg != null )
+            {
+              dlg.Reset();
+              dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
+              dlg.Add(GUILocalizeStrings.Get(775));       //Start TV in MyTV sections automatically
+              dlg.Add(GUILocalizeStrings.Get(776));       //Do not start / switch to TV automatically
+              dlg.SelectedLabel = autoTurnOn ? 0 : 1;
+              dlg.DoModal(GetID);
+              if ( dlg.SelectedLabel < 0 )
+                return;
+              using ( MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+              {
+                xmlwriter.SetValueAsBool("mytv", "autoturnontv", ( dlg.SelectedLabel == 0 ));
+              }
+            }
 		}
 
     void OnAutoTurnOnTS()
@@ -265,16 +266,16 @@ namespace WindowPlugins.GUISettings.TV
         dlg.SetHeading(GUILocalizeStrings.Get(924));//Menu
         dlg.Add(GUILocalizeStrings.Get(778));       //Start with timeshift automatically enabled
         dlg.Add(GUILocalizeStrings.Get(779));       //Timeshift must be enabled manually
-        dlg.SelectedLabel = autoTurnOnTS ? 1 : 0;
+        dlg.SelectedLabel = autoTurnOnTS ? 0 : 1;
         dlg.DoModal(GetID);
         if ( dlg.SelectedLabel < 0 ) return;
         using ( MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml") )
         {
-          if ( dlg.SelectedLabel == 1 ) autoTurnOnTS = true;
+          if ( dlg.SelectedLabel == 0 ) autoTurnOnTS = true;
           else autoTurnOnTS = false;
           xmlwriter.SetValueAsBool("mytv", "autoturnontimeshifting", autoTurnOnTS);
-          if ( autoTurnOnTS ) // as long as timeshift on causes this behaviour - needs to be fixed
-            xmlwriter.SetValueAsBool("mytv", "tvon", false);
+          //if ( autoTurnOnTS ) // as long as timeshift on causes this behaviour - needs to be fixed
+          //  xmlwriter.SetValueAsBool("mytv", "autoturnontv", false);
         }
       }
     }
