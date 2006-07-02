@@ -99,7 +99,7 @@ namespace MediaPortal.Configuration.Sections
         else if (temperature.Equals("F"))
           temperatureComboBox.Text = "Fahrenheit";
 
-        intervalTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("weather", "refresh", 30));
+        intervalTextBox.Text = Convert.ToString(xmlreader.GetValueAsInt("weather", "refresh", 120));
 
         for (int index = 0; index < MaximumCities; index++)
         {

@@ -36,28 +36,29 @@ namespace MediaPortal.Configuration
   /// </summary>
   public class SearchCityForm : System.Windows.Forms.Form
   {
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox1;
-    private MediaPortal.UserInterface.Controls.MPButton closeButton;
-    private System.Windows.Forms.ListBox resultListBox;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxNewCity;
+    private System.Windows.Forms.ListBox listBoxCityResults;
     private MediaPortal.UserInterface.Controls.MPTextBox searchTextBox;
-    private MediaPortal.UserInterface.Controls.MPButton searchButton;
-    private MediaPortal.UserInterface.Controls.MPButton addButton;
-    private MediaPortal.UserInterface.Controls.MPTextBox precipitationTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label7;
-    private MediaPortal.UserInterface.Controls.MPTextBox humidityTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label6;
-    private MediaPortal.UserInterface.Controls.MPTextBox windsTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label5;
-    private MediaPortal.UserInterface.Controls.MPTextBox uvIndexTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label4;
-    private MediaPortal.UserInterface.Controls.MPTextBox temperatureTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label2;
+    private MediaPortal.UserInterface.Controls.MPButton buttonCitySearch;
+    private MediaPortal.UserInterface.Controls.MPButton buttonAddCity;
     private MediaPortal.UserInterface.Controls.MPLabel label3;
-    private MediaPortal.UserInterface.Controls.MPTextBox locationTextBox;
-    private MediaPortal.UserInterface.Controls.MPLabel label1;
-    private MediaPortal.UserInterface.Controls.MPLabel label8;
-    private MediaPortal.UserInterface.Controls.MPLabel label9;
-    private MediaPortal.UserInterface.Controls.MPGroupBox groupBox2;
+    private MediaPortal.UserInterface.Controls.MPLabel labelCity;
+    private MediaPortal.UserInterface.Controls.MPLabel labelCityResults;
+    private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxCityDetails;
+    private MediaPortal.UserInterface.Controls.MPTabControl tabControlCityURLs;
+    private TabPage tabPageSatImg;
+    private TabPage tabPageTempImg;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxSatURL;
+    private TabPage tabPageUVImg;
+    private TabPage tabPageWindsImg;
+    private TabPage tabPageHumImg;
+    private TabPage tabPagePrecImg;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxTempURL;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxUVURL;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxWindURL;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxHumURL;
+    private MediaPortal.UserInterface.Controls.MPTextBox textBoxPrecURL;
+    private MediaPortal.UserInterface.Controls.MPButton buttonCancelCity;
     /// <summary>
     /// Required designer variable.
     /// </summary>
@@ -97,264 +98,329 @@ namespace MediaPortal.Configuration
     /// </summary>
     private void InitializeComponent()
     {
-      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.locationTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label7 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.uvIndexTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label5 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.humidityTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label6 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.temperatureTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.resultListBox = new System.Windows.Forms.ListBox();
-      this.label9 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.windsTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.groupBoxNewCity = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.buttonCancelCity = new MediaPortal.UserInterface.Controls.MPButton();
+      this.groupBoxCityDetails = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.tabControlCityURLs = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPageSatImg = new System.Windows.Forms.TabPage();
+      this.textBoxSatURL = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tabPageTempImg = new System.Windows.Forms.TabPage();
+      this.textBoxTempURL = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tabPageUVImg = new System.Windows.Forms.TabPage();
+      this.textBoxUVURL = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tabPageWindsImg = new System.Windows.Forms.TabPage();
+      this.textBoxWindURL = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tabPageHumImg = new System.Windows.Forms.TabPage();
+      this.textBoxHumURL = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.tabPagePrecImg = new System.Windows.Forms.TabPage();
+      this.textBoxPrecURL = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.listBoxCityResults = new System.Windows.Forms.ListBox();
+      this.labelCityResults = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label3 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.precipitationTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.addButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.closeButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.label8 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.searchButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.buttonAddCity = new MediaPortal.UserInterface.Controls.MPButton();
+      this.labelCity = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.buttonCitySearch = new MediaPortal.UserInterface.Controls.MPButton();
       this.searchTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.groupBox1.SuspendLayout();
-      this.groupBox2.SuspendLayout();
+      this.groupBoxNewCity.SuspendLayout();
+      this.groupBoxCityDetails.SuspendLayout();
+      this.tabControlCityURLs.SuspendLayout();
+      this.tabPageSatImg.SuspendLayout();
+      this.tabPageTempImg.SuspendLayout();
+      this.tabPageUVImg.SuspendLayout();
+      this.tabPageWindsImg.SuspendLayout();
+      this.tabPageHumImg.SuspendLayout();
+      this.tabPagePrecImg.SuspendLayout();
       this.SuspendLayout();
       // 
-      // groupBox1
+      // groupBoxNewCity
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.groupBox2);
-      this.groupBox1.Controls.Add(this.label8);
-      this.groupBox1.Controls.Add(this.searchButton);
-      this.groupBox1.Controls.Add(this.searchTextBox);
-      this.groupBox1.Location = new System.Drawing.Point(8, 8);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(480, 464);
-      this.groupBox1.TabIndex = 0;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Add new city";
+      this.groupBoxNewCity.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBoxNewCity.Controls.Add(this.buttonCancelCity);
+      this.groupBoxNewCity.Controls.Add(this.groupBoxCityDetails);
+      this.groupBoxNewCity.Controls.Add(this.labelCity);
+      this.groupBoxNewCity.Controls.Add(this.buttonCitySearch);
+      this.groupBoxNewCity.Controls.Add(this.searchTextBox);
+      this.groupBoxNewCity.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxNewCity.Location = new System.Drawing.Point(8, 8);
+      this.groupBoxNewCity.Name = "groupBoxNewCity";
+      this.groupBoxNewCity.Size = new System.Drawing.Size(490, 356);
+      this.groupBoxNewCity.TabIndex = 0;
+      this.groupBoxNewCity.TabStop = false;
+      this.groupBoxNewCity.Text = "Add new city";
       // 
-      // groupBox2
+      // buttonCancelCity
       // 
-      this.groupBox2.Controls.Add(this.locationTextBox);
-      this.groupBox2.Controls.Add(this.label7);
-      this.groupBox2.Controls.Add(this.uvIndexTextBox);
-      this.groupBox2.Controls.Add(this.label5);
-      this.groupBox2.Controls.Add(this.humidityTextBox);
-      this.groupBox2.Controls.Add(this.label6);
-      this.groupBox2.Controls.Add(this.label1);
-      this.groupBox2.Controls.Add(this.label4);
-      this.groupBox2.Controls.Add(this.temperatureTextBox);
-      this.groupBox2.Controls.Add(this.resultListBox);
-      this.groupBox2.Controls.Add(this.label9);
-      this.groupBox2.Controls.Add(this.label2);
-      this.groupBox2.Controls.Add(this.windsTextBox);
-      this.groupBox2.Controls.Add(this.label3);
-      this.groupBox2.Controls.Add(this.precipitationTextBox);
-      this.groupBox2.Controls.Add(this.addButton);
-      this.groupBox2.Controls.Add(this.closeButton);
-      this.groupBox2.Location = new System.Drawing.Point(16, 56);
-      this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(456, 400);
-      this.groupBox2.TabIndex = 37;
-      this.groupBox2.TabStop = false;
+      this.buttonCancelCity.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.buttonCancelCity.Location = new System.Drawing.Point(381, 327);
+      this.buttonCancelCity.Name = "buttonCancelCity";
+      this.buttonCancelCity.Size = new System.Drawing.Size(75, 23);
+      this.buttonCancelCity.TabIndex = 38;
+      this.buttonCancelCity.Text = "Cancel";
+      this.buttonCancelCity.UseVisualStyleBackColor = true;
+      this.buttonCancelCity.Visible = false;
       // 
-      // locationTextBox
+      // groupBoxCityDetails
       // 
-      this.locationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.locationTextBox.Location = new System.Drawing.Point(24, 128);
-      this.locationTextBox.Name = "locationTextBox";
-      this.locationTextBox.Size = new System.Drawing.Size(336, 20);
-      this.locationTextBox.TabIndex = 23;
-      this.locationTextBox.Text = "";
+      this.groupBoxCityDetails.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBoxCityDetails.Controls.Add(this.tabControlCityURLs);
+      this.groupBoxCityDetails.Controls.Add(this.listBoxCityResults);
+      this.groupBoxCityDetails.Controls.Add(this.labelCityResults);
+      this.groupBoxCityDetails.Controls.Add(this.label3);
+      this.groupBoxCityDetails.Controls.Add(this.buttonAddCity);
+      this.groupBoxCityDetails.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxCityDetails.Location = new System.Drawing.Point(18, 47);
+      this.groupBoxCityDetails.Name = "groupBoxCityDetails";
+      this.groupBoxCityDetails.Size = new System.Drawing.Size(453, 274);
+      this.groupBoxCityDetails.TabIndex = 37;
+      this.groupBoxCityDetails.TabStop = false;
       // 
-      // label7
+      // tabControlCityURLs
       // 
-      this.label7.Location = new System.Drawing.Point(8, 312);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(176, 16);
-      this.label7.TabIndex = 33;
-      this.label7.Text = "Precipitation Image";
+      this.tabControlCityURLs.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.tabControlCityURLs.Controls.Add(this.tabPageSatImg);
+      this.tabControlCityURLs.Controls.Add(this.tabPageTempImg);
+      this.tabControlCityURLs.Controls.Add(this.tabPageUVImg);
+      this.tabControlCityURLs.Controls.Add(this.tabPageWindsImg);
+      this.tabControlCityURLs.Controls.Add(this.tabPageHumImg);
+      this.tabControlCityURLs.Controls.Add(this.tabPagePrecImg);
+      this.tabControlCityURLs.Location = new System.Drawing.Point(9, 175);
+      this.tabControlCityURLs.Name = "tabControlCityURLs";
+      this.tabControlCityURLs.SelectedIndex = 0;
+      this.tabControlCityURLs.Size = new System.Drawing.Size(433, 58);
+      this.tabControlCityURLs.TabIndex = 37;
       // 
-      // uvIndexTextBox
+      // tabPageSatImg
       // 
-      this.uvIndexTextBox.Location = new System.Drawing.Point(24, 208);
-      this.uvIndexTextBox.Name = "uvIndexTextBox";
-      this.uvIndexTextBox.Size = new System.Drawing.Size(336, 20);
-      this.uvIndexTextBox.TabIndex = 28;
-      this.uvIndexTextBox.Text = "";
+      this.tabPageSatImg.Controls.Add(this.textBoxSatURL);
+      this.tabPageSatImg.Location = new System.Drawing.Point(4, 22);
+      this.tabPageSatImg.Name = "tabPageSatImg";
+      this.tabPageSatImg.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageSatImg.Size = new System.Drawing.Size(425, 32);
+      this.tabPageSatImg.TabIndex = 0;
+      this.tabPageSatImg.Text = "Satellite";
+      this.tabPageSatImg.UseVisualStyleBackColor = true;
       // 
-      // label5
+      // textBoxSatURL
       // 
-      this.label5.Location = new System.Drawing.Point(8, 232);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(168, 16);
-      this.label5.TabIndex = 29;
-      this.label5.Text = "Winds image";
+      this.textBoxSatURL.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxSatURL.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxSatURL.Location = new System.Drawing.Point(6, 6);
+      this.textBoxSatURL.Name = "textBoxSatURL";
+      this.textBoxSatURL.Size = new System.Drawing.Size(413, 20);
+      this.textBoxSatURL.TabIndex = 25;
       // 
-      // humidityTextBox
+      // tabPageTempImg
       // 
-      this.humidityTextBox.Location = new System.Drawing.Point(24, 288);
-      this.humidityTextBox.Name = "humidityTextBox";
-      this.humidityTextBox.Size = new System.Drawing.Size(336, 20);
-      this.humidityTextBox.TabIndex = 32;
-      this.humidityTextBox.Text = "";
+      this.tabPageTempImg.Controls.Add(this.textBoxTempURL);
+      this.tabPageTempImg.Location = new System.Drawing.Point(4, 22);
+      this.tabPageTempImg.Name = "tabPageTempImg";
+      this.tabPageTempImg.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageTempImg.Size = new System.Drawing.Size(425, 32);
+      this.tabPageTempImg.TabIndex = 1;
+      this.tabPageTempImg.Text = "Temperature";
+      this.tabPageTempImg.UseVisualStyleBackColor = true;
       // 
-      // label6
+      // textBoxTempURL
       // 
-      this.label6.Location = new System.Drawing.Point(8, 272);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(168, 16);
-      this.label6.TabIndex = 31;
-      this.label6.Text = "Humidity image";
+      this.textBoxTempURL.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxTempURL.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxTempURL.Location = new System.Drawing.Point(6, 6);
+      this.textBoxTempURL.Name = "textBoxTempURL";
+      this.textBoxTempURL.Size = new System.Drawing.Size(413, 20);
+      this.textBoxTempURL.TabIndex = 27;
       // 
-      // label1
+      // tabPageUVImg
       // 
-      this.label1.Location = new System.Drawing.Point(8, 112);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(168, 23);
-      this.label1.TabIndex = 22;
-      this.label1.Text = "Satellite image";
+      this.tabPageUVImg.Controls.Add(this.textBoxUVURL);
+      this.tabPageUVImg.Location = new System.Drawing.Point(4, 22);
+      this.tabPageUVImg.Name = "tabPageUVImg";
+      this.tabPageUVImg.Size = new System.Drawing.Size(425, 32);
+      this.tabPageUVImg.TabIndex = 2;
+      this.tabPageUVImg.Text = "UV Index";
+      this.tabPageUVImg.UseVisualStyleBackColor = true;
       // 
-      // label4
+      // textBoxUVURL
       // 
-      this.label4.Location = new System.Drawing.Point(8, 192);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(160, 16);
-      this.label4.TabIndex = 27;
-      this.label4.Text = "UV Index image";
+      this.textBoxUVURL.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxUVURL.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxUVURL.Location = new System.Drawing.Point(6, 6);
+      this.textBoxUVURL.Name = "textBoxUVURL";
+      this.textBoxUVURL.Size = new System.Drawing.Size(413, 20);
+      this.textBoxUVURL.TabIndex = 40;
       // 
-      // temperatureTextBox
+      // tabPageWindsImg
       // 
-      this.temperatureTextBox.Location = new System.Drawing.Point(24, 168);
-      this.temperatureTextBox.Name = "temperatureTextBox";
-      this.temperatureTextBox.Size = new System.Drawing.Size(336, 20);
-      this.temperatureTextBox.TabIndex = 26;
-      this.temperatureTextBox.Text = "";
+      this.tabPageWindsImg.Controls.Add(this.textBoxWindURL);
+      this.tabPageWindsImg.Location = new System.Drawing.Point(4, 22);
+      this.tabPageWindsImg.Name = "tabPageWindsImg";
+      this.tabPageWindsImg.Size = new System.Drawing.Size(425, 32);
+      this.tabPageWindsImg.TabIndex = 3;
+      this.tabPageWindsImg.Text = "Winds";
+      this.tabPageWindsImg.UseVisualStyleBackColor = true;
       // 
-      // resultListBox
+      // textBoxWindURL
       // 
-      this.resultListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-        | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.resultListBox.Location = new System.Drawing.Point(80, 16);
-      this.resultListBox.Name = "resultListBox";
-      this.resultListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-      this.resultListBox.Size = new System.Drawing.Size(264, 56);
-      this.resultListBox.TabIndex = 6;
-      this.resultListBox.SelectedIndexChanged += new System.EventHandler(this.resultListBox_SelectedIndexChanged);
+      this.textBoxWindURL.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxWindURL.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxWindURL.Location = new System.Drawing.Point(6, 6);
+      this.textBoxWindURL.Name = "textBoxWindURL";
+      this.textBoxWindURL.Size = new System.Drawing.Size(413, 20);
+      this.textBoxWindURL.TabIndex = 31;
       // 
-      // label9
+      // tabPageHumImg
       // 
-      this.label9.Location = new System.Drawing.Point(16, 24);
-      this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(48, 32);
-      this.label9.TabIndex = 36;
-      this.label9.Text = "Cities found:";
+      this.tabPageHumImg.Controls.Add(this.textBoxHumURL);
+      this.tabPageHumImg.Location = new System.Drawing.Point(4, 22);
+      this.tabPageHumImg.Name = "tabPageHumImg";
+      this.tabPageHumImg.Size = new System.Drawing.Size(425, 32);
+      this.tabPageHumImg.TabIndex = 4;
+      this.tabPageHumImg.Text = "Humidity";
+      this.tabPageHumImg.UseVisualStyleBackColor = true;
       // 
-      // label2
+      // textBoxHumURL
       // 
-      this.label2.Location = new System.Drawing.Point(8, 152);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(168, 16);
-      this.label2.TabIndex = 25;
-      this.label2.Text = "Temperature image";
+      this.textBoxHumURL.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxHumURL.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxHumURL.Location = new System.Drawing.Point(6, 6);
+      this.textBoxHumURL.Name = "textBoxHumURL";
+      this.textBoxHumURL.Size = new System.Drawing.Size(413, 20);
+      this.textBoxHumURL.TabIndex = 33;
       // 
-      // windsTextBox
+      // tabPagePrecImg
       // 
-      this.windsTextBox.Location = new System.Drawing.Point(24, 248);
-      this.windsTextBox.Name = "windsTextBox";
-      this.windsTextBox.Size = new System.Drawing.Size(336, 20);
-      this.windsTextBox.TabIndex = 30;
-      this.windsTextBox.Text = "";
+      this.tabPagePrecImg.Controls.Add(this.textBoxPrecURL);
+      this.tabPagePrecImg.Location = new System.Drawing.Point(4, 22);
+      this.tabPagePrecImg.Name = "tabPagePrecImg";
+      this.tabPagePrecImg.Size = new System.Drawing.Size(425, 32);
+      this.tabPagePrecImg.TabIndex = 5;
+      this.tabPagePrecImg.Text = "Precipitation";
+      this.tabPagePrecImg.UseVisualStyleBackColor = true;
+      // 
+      // textBoxPrecURL
+      // 
+      this.textBoxPrecURL.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.textBoxPrecURL.BorderColor = System.Drawing.Color.Empty;
+      this.textBoxPrecURL.Location = new System.Drawing.Point(6, 6);
+      this.textBoxPrecURL.Name = "textBoxPrecURL";
+      this.textBoxPrecURL.Size = new System.Drawing.Size(413, 20);
+      this.textBoxPrecURL.TabIndex = 35;
+      // 
+      // listBoxCityResults
+      // 
+      this.listBoxCityResults.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
+                  | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.listBoxCityResults.Location = new System.Drawing.Point(62, 18);
+      this.listBoxCityResults.Name = "listBoxCityResults";
+      this.listBoxCityResults.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+      this.listBoxCityResults.Size = new System.Drawing.Size(378, 82);
+      this.listBoxCityResults.TabIndex = 6;
+      this.listBoxCityResults.SelectedIndexChanged += new System.EventHandler(this.listBoxCityResults_SelectedIndexChanged);
+      // 
+      // labelCityResults
+      // 
+      this.labelCityResults.Location = new System.Drawing.Point(8, 18);
+      this.labelCityResults.Name = "labelCityResults";
+      this.labelCityResults.Size = new System.Drawing.Size(48, 32);
+      this.labelCityResults.TabIndex = 36;
+      this.labelCityResults.Text = "Cities found:";
       // 
       // label3
       // 
-      this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.label3.Location = new System.Drawing.Point(16, 80);
+      this.label3.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.label3.AutoEllipsis = true;
+      this.label3.Location = new System.Drawing.Point(8, 126);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(408, 32);
+      this.label3.Size = new System.Drawing.Size(439, 48);
       this.label3.TabIndex = 24;
-      this.label3.Text = "Below you can enter the location of the various weather images. The image locatio" +
-        "n should be entered as a normal http-address.";
+      this.label3.Text = "Below you can enter the location of the various weather images.\r\nThe image locati" +
+          "on should be entered as a normal http-address.\r\nYou\'ll find many pictures at www" +
+          ".weather.com or your local news site.";
       // 
-      // precipitationTextBox
+      // buttonAddCity
       // 
-      this.precipitationTextBox.Location = new System.Drawing.Point(24, 328);
-      this.precipitationTextBox.Name = "precipitationTextBox";
-      this.precipitationTextBox.Size = new System.Drawing.Size(336, 20);
-      this.precipitationTextBox.TabIndex = 34;
-      this.precipitationTextBox.Text = "";
+      this.buttonAddCity.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.buttonAddCity.Enabled = false;
+      this.buttonAddCity.Location = new System.Drawing.Point(363, 239);
+      this.buttonAddCity.Name = "buttonAddCity";
+      this.buttonAddCity.Size = new System.Drawing.Size(75, 23);
+      this.buttonAddCity.TabIndex = 0;
+      this.buttonAddCity.Text = "Add City";
+      this.buttonAddCity.UseVisualStyleBackColor = true;
+      this.buttonAddCity.Click += new System.EventHandler(this.buttonAddCity_Click);
       // 
-      // addButton
+      // labelCity
       // 
-      this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.addButton.Enabled = false;
-      this.addButton.Location = new System.Drawing.Point(288, 368);
-      this.addButton.Name = "addButton";
-      this.addButton.TabIndex = 0;
-      this.addButton.Text = "OK";
-      this.addButton.Click += new System.EventHandler(this.addButton_Click);
+      this.labelCity.AutoSize = true;
+      this.labelCity.Location = new System.Drawing.Point(16, 24);
+      this.labelCity.Name = "labelCity";
+      this.labelCity.Size = new System.Drawing.Size(63, 13);
+      this.labelCity.TabIndex = 35;
+      this.labelCity.Text = "Search city:";
       // 
-      // closeButton
+      // buttonCitySearch
       // 
-      this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.closeButton.Location = new System.Drawing.Point(376, 368);
-      this.closeButton.Name = "closeButton";
-      this.closeButton.TabIndex = 1;
-      this.closeButton.Text = "Cancel";
-      this.closeButton.Click += new System.EventHandler(this.closeButton_Click);
-      // 
-      // label8
-      // 
-      this.label8.Location = new System.Drawing.Point(16, 24);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(56, 16);
-      this.label8.TabIndex = 35;
-      this.label8.Text = "City:";
-      // 
-      // searchButton
-      // 
-      this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.searchButton.Enabled = false;
-      this.searchButton.Location = new System.Drawing.Point(360, 24);
-      this.searchButton.Name = "searchButton";
-      this.searchButton.TabIndex = 1;
-      this.searchButton.Text = "Search";
-      this.searchButton.Click += new System.EventHandler(this.searchButton_Click);
+      this.buttonCitySearch.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.buttonCitySearch.Enabled = false;
+      this.buttonCitySearch.Location = new System.Drawing.Point(381, 19);
+      this.buttonCitySearch.Name = "buttonCitySearch";
+      this.buttonCitySearch.Size = new System.Drawing.Size(75, 23);
+      this.buttonCitySearch.TabIndex = 1;
+      this.buttonCitySearch.Text = "Search";
+      this.buttonCitySearch.UseVisualStyleBackColor = true;
+      this.buttonCitySearch.Click += new System.EventHandler(this.buttonCitySearch_Click);
       // 
       // searchTextBox
       // 
-      this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-        | System.Windows.Forms.AnchorStyles.Right)));
-      this.searchTextBox.Location = new System.Drawing.Point(72, 24);
+      this.searchTextBox.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
+                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.searchTextBox.BorderColor = System.Drawing.Color.Empty;
+      this.searchTextBox.Location = new System.Drawing.Point(80, 21);
       this.searchTextBox.Name = "searchTextBox";
-      this.searchTextBox.Size = new System.Drawing.Size(272, 20);
+      this.searchTextBox.Size = new System.Drawing.Size(292, 20);
       this.searchTextBox.TabIndex = 0;
-      this.searchTextBox.Text = "";
+      this.searchTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.searchTextBox_KeyUp);
       this.searchTextBox.TextChanged += new System.EventHandler(this.searchTextBox_TextChanged);
-      this.searchTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchTextBox_KeyDown);
       // 
       // SearchCityForm
       // 
       this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-      this.ClientSize = new System.Drawing.Size(506, 480);
-      this.Controls.Add(this.groupBox1);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+      this.ClientSize = new System.Drawing.Size(506, 372);
+      this.Controls.Add(this.groupBoxNewCity);
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
       this.Name = "SearchCityForm";
       this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
       this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
       this.Text = "Add new cities to my weather";
       this.Load += new System.EventHandler(this.SearchCityForm_Load);
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox2.ResumeLayout(false);
+      this.groupBoxNewCity.ResumeLayout(false);
+      this.groupBoxNewCity.PerformLayout();
+      this.groupBoxCityDetails.ResumeLayout(false);
+      this.tabControlCityURLs.ResumeLayout(false);
+      this.tabPageSatImg.ResumeLayout(false);
+      this.tabPageSatImg.PerformLayout();
+      this.tabPageTempImg.ResumeLayout(false);
+      this.tabPageTempImg.PerformLayout();
+      this.tabPageUVImg.ResumeLayout(false);
+      this.tabPageUVImg.PerformLayout();
+      this.tabPageWindsImg.ResumeLayout(false);
+      this.tabPageWindsImg.PerformLayout();
+      this.tabPageHumImg.ResumeLayout(false);
+      this.tabPageHumImg.PerformLayout();
+      this.tabPagePrecImg.ResumeLayout(false);
+      this.tabPagePrecImg.PerformLayout();
       this.ResumeLayout(false);
 
     }
@@ -365,12 +431,13 @@ namespace MediaPortal.Configuration
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void searchButton_Click(object sender, System.EventArgs e)
+    private void buttonCitySearch_Click( object sender, System.EventArgs e )
     {
+      
       //
       // Disable add button
       //
-      addButton.Enabled = false;
+      buttonAddCity.Enabled = false;
 
       try
       {
@@ -383,18 +450,19 @@ namespace MediaPortal.Configuration
         //
         // Clear previous results
         //
-        resultListBox.Items.Clear();
+        listBoxCityResults.Items.Clear();
 
         foreach (WeatherChannel.City city in cities)
         {
-          resultListBox.Items.Add(city);
+          listBoxCityResults.Items.Add(city);
 
-          if (resultListBox.Items.Count == 1)
-            resultListBox.SelectedItem = resultListBox.Items[0];
+          if (listBoxCityResults.Items.Count == 1)
+            listBoxCityResults.SelectedItem = listBoxCityResults.Items[0];
         }
-        if (resultListBox.Items.Count > 0)
+        if (listBoxCityResults.Items.Count > 0)
         {
-          groupBox2.Visible = true;
+          groupBoxCityDetails.Visible = true;
+          buttonCancelCity.Visible = true;
           this.Height = 488 + 40;
         }
         else
@@ -424,15 +492,15 @@ namespace MediaPortal.Configuration
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void searchTextBox_TextChanged(object sender, System.EventArgs e)
+    private void searchTextBox_TextChanged( object sender, System.EventArgs e )
     {
-      searchButton.Enabled = searchTextBox.Text.Length > 0;
+      buttonCitySearch.Enabled = searchTextBox.Text.Length > 0;
     }
 
-    private void searchTextBox_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+    private void searchTextBox_KeyUp( object sender, System.Windows.Forms.KeyEventArgs e )
     {
         if (e.KeyCode == Keys.Enter)
-            this.searchButton.PerformClick();
+            this.buttonCitySearch.PerformClick();
     }
 
 
@@ -441,9 +509,9 @@ namespace MediaPortal.Configuration
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void addButton_Click(object sender, System.EventArgs e)
+    private void buttonAddCity_Click(object sender, System.EventArgs e)
     {
-      foreach (WeatherChannel.City city in resultListBox.SelectedItems)
+      foreach (WeatherChannel.City city in listBoxCityResults.SelectedItems)
       {
         selectedCities.Add(city);
       }
@@ -468,51 +536,51 @@ namespace MediaPortal.Configuration
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void resultListBox_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void listBoxCityResults_SelectedIndexChanged( object sender, System.EventArgs e )
     {
-      addButton.Enabled = resultListBox.SelectedItems.Count > 0;
+      buttonAddCity.Enabled = listBoxCityResults.SelectedItems.Count > 0;
     }
 
     private void SearchCityForm_Load(object sender, System.EventArgs e)
     {
       this.Height = 56 + 50;
-      groupBox2.Visible = false;
+      groupBoxCityDetails.Visible = false;
     }
 
     public string SatteliteImage
     {
-      get { return locationTextBox.Text; }
-      set { locationTextBox.Text = value; }
+      get { return textBoxSatURL.Text; }
+      set { textBoxSatURL.Text = value; }
     }
 
     public string TemperatureImage
     {
-      get { return temperatureTextBox.Text; }
-      set { temperatureTextBox.Text = value; }
+      get { return textBoxTempURL.Text; }
+      set { textBoxTempURL.Text = value; }
     }
 
     public string UVIndexImage
     {
-      get { return uvIndexTextBox.Text; }
-      set { uvIndexTextBox.Text = value; }
+      get { return textBoxUVURL.Text; }
+      set { textBoxUVURL.Text = value; }
     }
 
     public string WindsImage
     {
-      get { return windsTextBox.Text; }
-      set { windsTextBox.Text = value; }
+      get { return textBoxWindURL.Text; }
+      set { textBoxWindURL.Text = value; }
     }
 
     public string HumidityImage
     {
-      get { return humidityTextBox.Text; }
-      set { humidityTextBox.Text = value; }
+      get { return textBoxHumURL.Text; }
+      set { textBoxHumURL.Text = value; }
     }
 
     public string PrecipitationImage
     {
-      get { return precipitationTextBox.Text; }
-      set { precipitationTextBox.Text = value; }
+      get { return textBoxPrecURL.Text; }
+      set { textBoxPrecURL.Text = value; }
     }
 
   }
