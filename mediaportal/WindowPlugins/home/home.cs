@@ -124,6 +124,7 @@ namespace MediaPortal.GUI.Home
     bool firstDate = false;
     int _notifyTVTimeout = 15;
     bool _playNotifyBeep = true;
+    int _preNotifyConfig = 60;
     Viewport m_newviewport = new Viewport();
     Viewport m_oldviewport;
     ScriptHandler gScript = new ScriptHandler();
@@ -187,6 +188,7 @@ namespace MediaPortal.GUI.Home
         useMenuShortcuts = xmlreader.GetValueAsBool("home", "useMenuShortcuts", false);
         _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 15);
         _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
+        _preNotifyConfig = xmlreader.GetValueAsInt("movieplayer", "notifyTVBefore", 300);
       }
       if (useMenus == true)
       {
@@ -234,14 +236,17 @@ namespace MediaPortal.GUI.Home
 
     private void OnGlobalMessage(GUIMessage message)
     {
-
       if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
       {
         //if (GUIGraphicsContext.IsFullScreenVideo) return;
         GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
         TVProgram notify = message.Object as TVProgram;
         if (notify == null) return;
-        dialogNotify.SetHeading(1019); // Program is about to begin
+        int minUntilStart = _preNotifyConfig / 60;
+        if ( minUntilStart >= 1 )
+          dialogNotify.SetHeading(String.Format(GUILocalizeStrings.Get(1018),minUntilStart));
+        else
+          dialogNotify.SetHeading(1019); // Program is about to begin
         dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
         dialogNotify.SetImage(strLogo);
