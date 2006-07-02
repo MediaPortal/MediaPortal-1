@@ -113,7 +113,6 @@ namespace MediaPortal.GUI.Video
     GUIDialogMenu dlg;
     GUIVideoOSD m_osdWindow = null;
     GUIVideoMSNOSD m_msnWindow = null;
-    GUIDialogNotify dialogNotify = null;
     bool NotifyDialogVisible = false;
     int _notifyTVTimeout = 15;
     bool _playNotifyBeep = true;

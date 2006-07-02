@@ -104,7 +104,6 @@ namespace MediaPortal.GUI.TV
     bool _isDialogVisible = false;
     bool _isMsnChatPopup = false;
     GUIDialogMenu dlg;
-    GUIDialogNotify _dialogNotify = null;
     GUIDialogMenuBottomRight _dialogBottomMenu = null;
     GUIDialogYesNo _dlgYesNo = null;
     // Message box
