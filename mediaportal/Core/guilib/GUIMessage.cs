@@ -115,7 +115,9 @@ namespace MediaPortal.GUI.Library
       GUI_MSG_PLAYER_POSITION_CHANGED,
       GUI_MSG_RECORD,
       GUI_MSG_GETFOCUS,
-      GUI_MSG_WRONG_PASSWORD
+      GUI_MSG_WRONG_PASSWORD,
+      GUI_MSG_RECORDER_STOP,
+      GUI_MSG_RECORDER_START,
     };
 
     private string _label = "";
