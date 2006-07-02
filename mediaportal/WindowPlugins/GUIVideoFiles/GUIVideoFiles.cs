@@ -117,6 +117,7 @@ namespace MediaPortal.GUI.Video
     string fileMenuPinCode = String.Empty;
     static PlayListPlayer playlistPlayer;
     bool ShowTrailerButton = true;
+    bool showTVComButton = true;
     bool _scanning = false;
     int scanningFileNumber = 1;
     int scanningFileTotal = 1;
@@ -195,6 +196,7 @@ namespace MediaPortal.GUI.Video
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         ShowTrailerButton = xmlreader.GetValueAsBool("plugins", "My Trailers", true);
+        showTVComButton = xmlreader.GetValueAsBool("plugins", "TV.com Parser", false);
         fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         fileMenuPinCode = Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", String.Empty));
         m_directory.Clear();
@@ -1643,46 +1645,38 @@ namespace MediaPortal.GUI.Video
               dlg.AddLocalizedString(102); //Scan
             }
             dlg.AddLocalizedString(368); //IMDB
-            dlg.AddLocalizedString(99845); //TV.com
+            if (showTVComButton)
+              dlg.AddLocalizedString(99845); //TV.com
             dlg.AddLocalizedString(654); //Eject
           }
           else if (item.IsFolder)
           {
-            if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path)))
-            {
-              dlg.AddLocalizedString(208); //play
-            } 
+            if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path)))            
+              dlg.AddLocalizedString(208); //play             
             dlg.AddLocalizedString(926); //Queue
-            if (!VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path)))
-            {
-              dlg.AddLocalizedString(102); //Scan
-            }
+            if (!VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path)))            
+              dlg.AddLocalizedString(102); //Scan            
             dlg.AddLocalizedString(368); //IMDB
-            dlg.AddLocalizedString(99845); //TV.com
-            if (Utils.getDriveType(item.Path) != 5)
-            {
-              dlg.AddLocalizedString(925); //delete
-            }
-            else
-            {
-              dlg.AddLocalizedString(654); //Eject
-            }
-            if (!IsFolderPinProtected(item.Path) && fileMenuEnabled)
-            {
-              dlg.AddLocalizedString(500); // FileMenu
-            }
+            if (showTVComButton)
+              dlg.AddLocalizedString(99845); //TV.com
+            if (Utils.getDriveType(item.Path) != 5)            
+              dlg.AddLocalizedString(925); //delete            
+            else            
+              dlg.AddLocalizedString(654); //Eject            
+            if (!IsFolderPinProtected(item.Path) && fileMenuEnabled)            
+              dlg.AddLocalizedString(500); // FileMenu            
           }
           else
           {
             dlg.AddLocalizedString(208); //play
             dlg.AddLocalizedString(926); //Queue
             dlg.AddLocalizedString(368); //IMDB
-            dlg.AddLocalizedString(99845); //TV.com
+            if (showTVComButton)
+              dlg.AddLocalizedString(99845); //TV.com
             if (Utils.getDriveType(item.Path) != 5) dlg.AddLocalizedString(925); //delete
-            if (!IsFolderPinProtected(item.Path) && !item.IsRemote && fileMenuEnabled)
-            {
+            if (!IsFolderPinProtected(item.Path) && !item.IsRemote && fileMenuEnabled)            
               dlg.AddLocalizedString(500); // FileMenu
-            }
+            
           }
         }
       }
@@ -2328,7 +2322,6 @@ namespace MediaPortal.GUI.Video
 
     private void onTVcom(string pathAndFilename, out string newPathAndFilename)
     {
-
       string strFileName = pathAndFilename.Remove(0, pathAndFilename.LastIndexOf("\\") + 1);
       string strPath = pathAndFilename.Substring(0, pathAndFilename.LastIndexOf("\\"));
       newPathAndFilename = pathAndFilename;

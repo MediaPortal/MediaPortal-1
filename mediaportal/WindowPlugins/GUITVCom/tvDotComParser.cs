@@ -1183,7 +1183,7 @@ namespace MediaPortal.GUI.Video
     // Indicates whether plugin can be enabled/disabled
     public bool CanEnable()
     {
-      return false;
+      return true;
     }
 
     // get ID of windowplugin belonging to this setup
