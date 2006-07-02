@@ -117,7 +117,8 @@ namespace MediaPortal.Player
     protected const int WS_CLIPSIBLINGS = 0x04000000;
     protected DateTime _updateTimer = DateTime.Now;
     protected MediaPortal.GUI.Library.Geometry.Type _geometry = MediaPortal.GUI.Library.Geometry.Type.Normal;
-    protected bool _seekToBegin = false;
+    
+    protected bool _startingUp;
     #endregion
 
     #region ctor/dtor
@@ -233,9 +234,9 @@ namespace MediaPortal.Player
 
       _interfaceTsFileSource = _fileSource as ITSFileSource;
 
-
+      _startingUp = true;
       if (_isLive)
-      {
+      {/*
         long dur = 0;
         _interfaceTsFileSource.GetDuration(ref dur);
         if (dur < 1000)
@@ -244,6 +245,33 @@ namespace MediaPortal.Player
           CloseInterfaces();
           return false;
         }
+        IAMStreamSelect control = _fileSource as IAMStreamSelect;
+        if (control != null)
+        {
+          int streamCount=0;
+
+          DateTime timeSt = DateTime.Now;
+          while (streamCount == 0)
+          {
+            hr = control.Count(out streamCount);
+            if (streamCount > 0) break;
+            System.Threading.Thread.Sleep(100);
+            TimeSpan ts = DateTime.Now - timeSt;
+            if (ts.TotalMilliseconds >= 2000) break;
+          }
+          Log.Write("TSFileSource::get stream count :0x{0:X}", hr);
+          if (streamCount == 0)
+          {
+            Log.Write("TSFileSource::0 streams");
+            _currentFile = "";
+            CloseInterfaces();
+            return false;
+          }
+          Log.Write("TSFileSource::got {0} streams", streamCount);
+          hr = control.Enable(1, AMStreamSelectEnableFlags.EnableAll);
+          Log.Write("TSFileSource::enable stream 1 :0x{0:X}", hr);
+        }*/
+
       }
       DirectShowUtil.EnableDeInterlace(_graphBuilder);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
@@ -251,7 +279,7 @@ namespace MediaPortal.Player
       GUIWindowManager.SendThreadMessage(msg);
 
       _state = PlayState.Playing;
-      
+      /*
       if (_isLive)
       {
         //long duration = 0;
@@ -311,7 +339,8 @@ namespace MediaPortal.Player
       if (_mpegDemux != null)
       {
         DumpMpeg2DemuxerMappings(_mpegDemux);
-      }
+      }*/
+      //_mediaCtrl.Run();        
       Log.Write("TsBaseStreamBuffer:playing state");
       _state = PlayState.Playing;
       Log.Write("TsBaseStreamBuffer:oninitialized");
@@ -419,20 +448,46 @@ namespace MediaPortal.Player
 
     public override void Process()
     {
+
       if (!Playing) return;
-      if (!_isStarted) return;
       if (GUIGraphicsContext.InVmr9Render) return;
+      if (_startingUp && _isLive)
+      {
+        IAMStreamSelect control = _fileSource as IAMStreamSelect;
+        if (control != null)
+        {
+          int streamCount = 0;
+          control.Count(out streamCount);
+          if (streamCount > 0)
+          {
+            Log.Write("streams:{0}, enable stream 1", streamCount);
+            control.Enable(1, AMStreamSelectEnableFlags.EnableAll);
+            Log.Write("get duration", streamCount);
+            UpdateDuration();
+            double dPos = _duration - 2;
+            Log.Write("_duration:{0}", _duration);
+            if (dPos >= 0 && CurrentPosition < dPos)
+            {
+              Log.Write("seek:{0}/{0}", dPos,_duration);
+              SeekAbsolute(dPos);
+              Log.Write("seek:{0}/{0} done", dPos, _duration);
+            }
+            _mediaCtrl.Run();        
+            _startingUp = false;
+          }
+        }
+      }
+      if (VMR9Util.g_vmr9.IsRepainting)
+      {
+        VMR9Util.g_vmr9.Process();
+      }
       TimeSpan ts = DateTime.Now - _updateTimer;
-      if (ts.TotalMilliseconds >= 5000 || iSpeed != 1)
+      if (ts.TotalMilliseconds >= 800 || iSpeed != 1)
       {
         UpdateCurrentPosition();
         UpdateDuration();
 
         _updateTimer = DateTime.Now;
-      }
-      if (_seekToBegin)
-      {
-        SeekAbsolute(0);
       }
 
       if (IsTimeShifting)
@@ -854,17 +909,8 @@ namespace MediaPortal.Player
 
     public override void SeekAbsolute(double dTimeInSecs)
     {
-      Log.Write("SeekAbsolute:seekabs:{0}, dTimeInSecs");
-      if (IsTimeShifting && IsTV && dTimeInSecs == 0)
-      {
-        if (Duration < 5)
-        {
-          Log.Write("SeekAbsolute:seek to begin");
-          _seekToBegin = true;
-          return;
-        }
-      }
-      _seekToBegin = false;
+      Log.Write("SeekAbsolute:seekabs:{0}", dTimeInSecs);
+
 
       if (_state != PlayState.Init)
       {
@@ -1042,7 +1088,7 @@ namespace MediaPortal.Player
       double fPos = _currentPos;
       fCurrentPos -= fContentStart;
       _currentPos = fCurrentPos;
-      //  Log.Write("Position:{0}", _currentPos.ToString("f2"));
+      // Log.Write("Position:{0}", _currentPos.ToString("f2"));
       _contentStart = fContentStart;
 #if DEBUG
       TimeSpan ts=DateTime.Now-dtStart;
@@ -1074,7 +1120,7 @@ namespace MediaPortal.Player
       _mediaSeeking.GetDuration(out lDuration);
       _duration = lDuration;
       _duration /= 10000000d;
-      //.Write("Duration:{0}", _duration.ToString("f2"));
+      //Log.Write("Duration:{0}", _duration.ToString("f2"));
     }
 
     /// <summary> create the used COM components and get the interfaces. </summary>

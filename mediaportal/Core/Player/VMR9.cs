@@ -426,6 +426,13 @@ namespace MediaPortal.Player
 			currentVmr9State = Vmr9PlayState.Repaint;
 			_scene.DrawVideo=false;
 		}
+    public bool IsRepainting
+    {
+      get
+      {
+        return (currentVmr9State == Vmr9PlayState.Repaint);
+      }
+    }
     public void Process()
 		{
 			if (!_isVmr9Initialized) return;

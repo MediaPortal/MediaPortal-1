@@ -127,6 +127,7 @@ namespace MediaPortal.Player
     }
     protected override void OnInitialized()
     {
+      Log.Write("tsplayer9:OnInitialized");
       if (_vmr9 != null)
       {
         _vmr9.Enable(true);
@@ -178,9 +179,9 @@ namespace MediaPortal.Player
         _mpegDemux = (IBaseFilter)demux;
         hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
         _fileSource = new TsFileSource();
-        /*
-        if (IsTimeShifting)
-        {
+        
+        //if (IsTimeShifting)
+        //{
           IPin pinAudio, pinVideo;
           //create mpeg-2 demux output pins
           IMpeg2Demultiplexer demuxer = demux as IMpeg2Demultiplexer;
@@ -195,7 +196,7 @@ namespace MediaPortal.Player
           mpegAudioOut.formatSize = MPEG1AudioFormat.GetLength(0);
           mpegAudioOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegAudioOut.formatSize);
           System.Runtime.InteropServices.Marshal.Copy(MPEG1AudioFormat, 0, mpegAudioOut.formatPtr, mpegAudioOut.formatSize);
-          hr = demuxer.CreateOutputPin(mpegAudioOut, "audio", out pinAudio);
+          hr = demuxer.CreateOutputPin(mpegAudioOut, "Audio", out pinAudio);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA: FAILED to create audio output pin on demuxer");
@@ -217,7 +218,7 @@ namespace MediaPortal.Player
           mpegVideoOut.formatSize = Mpeg2ProgramVideo.GetLength(0);
           mpegVideoOut.formatPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(mpegVideoOut.formatSize);
           System.Runtime.InteropServices.Marshal.Copy(Mpeg2ProgramVideo, 0, mpegVideoOut.formatPtr, mpegVideoOut.formatSize);
-          hr = demuxer.CreateOutputPin(mpegVideoOut, "video", out pinVideo);
+          hr = demuxer.CreateOutputPin(mpegVideoOut, "Video", out pinVideo);
           if (hr != 0)
           {
             Log.WriteFile(Log.LogType.Log, true, "DVBGraphBDA: FAILED to create video output pin on demuxer");
@@ -228,32 +229,15 @@ namespace MediaPortal.Player
           SetupDemuxerPin(pinVideo, 0xe0, 1, true);
 
           DumpMpeg2DemuxerMappings((IBaseFilter)demux);
-        }
-        */
-        IBaseFilter filter = (IBaseFilter)_fileSource;
-        hr = _graphBuilder.AddFilter(filter, "TsFileSource");
+        //}
+        
+        IBaseFilter tsBaseFilter = (IBaseFilter)_fileSource;
+        hr = _graphBuilder.AddFilter(tsBaseFilter, "TsFileSource");
         if (hr != 0)
         {
           Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer9:Failed to add SBE to graph");
           return false;
         }
-
-        IFileSourceFilter interfaceFile = (IFileSourceFilter)_fileSource;
-        if (interfaceFile == null)
-        {
-          Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer9:Failed to get IFileSourceFilter");
-          return false;
-        }
-
-
-        //Log.Write("TSStreamBufferPlayer9: open file:{0}",filename);
-        hr = interfaceFile.Load(filename, null);
-        if (hr != 0)
-        {
-          Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer9:Failed to open file:{0} :0x{1:x}", filename, hr);
-          return false;
-        }
-
 
         //Log.Write("TSStreamBufferPlayer9: add codecs");
         // add preferred video & audio codecs
@@ -282,7 +266,46 @@ namespace MediaPortal.Player
         if (bAddFFDshow) _ffdShowFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "ffdshow raw video filter");
 
         // render output pins of SBE
-        DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
+        //DirectShowUtil.RenderOutputPins(_graphBuilder, (IBaseFilter)_fileSource);
+        IPin pinTsOut = DsFindPin.ByDirection(tsBaseFilter, PinDirection.Output, 0);
+        IPin pinDemuxIn = DsFindPin.ByDirection(_mpegDemux, PinDirection.Input, 0);
+        _graphBuilder.Connect(pinTsOut, pinDemuxIn);
+        Marshal.ReleaseComObject(pinTsOut);
+        Marshal.ReleaseComObject(pinDemuxIn);
+
+        _graphBuilder.Render(pinAudio);
+        _graphBuilder.Render(pinVideo);
+
+
+        IFileSourceFilter interfaceFile = (IFileSourceFilter)_fileSource;
+        if (interfaceFile == null)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer9:Failed to get IFileSourceFilter");
+          return false;
+        }
+
+
+        //Log.Write("TSStreamBufferPlayer9: open file:{0}",filename);
+        AMMediaType mpeg2ProgramStream = new AMMediaType();
+        mpeg2ProgramStream.majorType = MediaType.Stream;
+        mpeg2ProgramStream.subType = MediaSubType.Mpeg2Program;
+
+        mpeg2ProgramStream.unkPtr = IntPtr.Zero;
+        mpeg2ProgramStream.sampleSize = 0;
+        mpeg2ProgramStream.temporalCompression = false;
+        mpeg2ProgramStream.fixedSizeSamples = true;
+        mpeg2ProgramStream.formatType = FormatType.Null;
+        mpeg2ProgramStream.formatSize = 0;
+        mpeg2ProgramStream.formatPtr = IntPtr.Zero;
+
+        hr = interfaceFile.Load(filename, mpeg2ProgramStream);
+        if (hr != 0)
+        {
+          Log.WriteFile(Log.LogType.Log, true, "TSStreamBufferPlayer9:Failed to open file:{0} :0x{1:x}", filename, hr);
+          return false;
+        }
+
+
 
         _mediaCtrl = (IMediaControl)_graphBuilder;
         _mediaEvt = (IMediaEventEx)_graphBuilder;
@@ -448,6 +471,7 @@ namespace MediaPortal.Player
 
     protected override void OnProcess()
     {
+
       VideoRendererStatistics.VideoState = VideoRendererStatistics.State.VideoPresent;
       if (_vmr9 != null)
       {
@@ -459,24 +483,8 @@ namespace MediaPortal.Player
 
     public override void SeekAbsolute(double dTimeInSecs)
     {
-      if (IsTimeShifting && IsTV && dTimeInSecs == 0)
-      {
-        if (Duration < 5)
-        {
-          if (_vmr9 != null)
-          {
-            _vmr9.Enable(false);
-          }
-          _seekToBegin = true;
-          return;
-        }
-      }
-      _seekToBegin = false;
 
-      if (_vmr9 != null)
-      {
-        _vmr9.Enable(true);
-      }
+      Log.Write("SeekAbsolute:seekabs:{0}", dTimeInSecs);
       if (_state != PlayState.Init)
       {
         if (_mediaCtrl != null && _mediaSeeking != null)
@@ -502,7 +510,7 @@ namespace MediaPortal.Player
           }
         }
         UpdateCurrentPosition();
-        //Log.Write("StreamBufferPlayer: current pos:{0}", CurrentPosition);
+        Log.Write("StreamBufferPlayer: current pos:{0}", CurrentPosition);
 
       }
     }
