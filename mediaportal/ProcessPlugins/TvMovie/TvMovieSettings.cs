@@ -135,33 +135,40 @@ namespace ProcessPlugins.TvMovie
     /// </summary>
     private void LoadStations()
     {
-      TvMovieDatabase database = new TvMovieDatabase();
-
-      treeViewStations.BeginUpdate();
-
-      foreach (string station in database.Stations)
+      try
       {
-        TreeNode stationNode = new TreeNode(station);
-        ChannelInfo channelInfo = new ChannelInfo();
-        channelInfo.Name = station;
-        stationNode.Tag = channelInfo;
-        treeViewStations.Nodes.Add(stationNode);
+        TvMovieDatabase database = new TvMovieDatabase();
+
+        treeViewStations.BeginUpdate();
+
+        foreach ( string station in database.Stations )
+        {
+          TreeNode stationNode = new TreeNode(station);
+          ChannelInfo channelInfo = new ChannelInfo();
+          channelInfo.Name = station;
+          stationNode.Tag = channelInfo;
+          treeViewStations.Nodes.Add(stationNode);
+        }
+
+        treeViewStations.EndUpdate();
+
+        treeViewChannels.BeginUpdate();
+
+        ArrayList mpChannelList = new ArrayList();
+        TVDatabase.GetChannels(ref mpChannelList);
+
+        foreach ( TVChannel channel in mpChannelList )
+        {
+          TreeNode stationNode = new TreeNode(channel.Name);
+          treeViewChannels.Nodes.Add(stationNode);
+        }
+
+        treeViewChannels.EndUpdate();
       }
-
-      treeViewStations.EndUpdate();
-
-      treeViewChannels.BeginUpdate();
-
-      ArrayList mpChannelList = new ArrayList();
-      TVDatabase.GetChannels(ref mpChannelList);
-
-      foreach (TVChannel channel in mpChannelList)
+      catch(Exception Ex)
       {
-        TreeNode stationNode = new TreeNode(channel.Name);
-        treeViewChannels.Nodes.Add(stationNode);
+        MessageBox.Show("Cannot find TV Movie database!"); // most likely ;-)
       }
-
-      treeViewChannels.EndUpdate();
     }
 
 
