@@ -1914,6 +1914,10 @@
       <value>Waiting for Page {0}/{1}...</value>
    </string>
    <string>
+      <id>599</id>
+      <value>Storm</value>
+   </string>
+   <string>
       <id>600</id>
       <value>TVGuide</value>
    </string>

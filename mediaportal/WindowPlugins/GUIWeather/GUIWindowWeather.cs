@@ -1032,107 +1032,109 @@ namespace MediaPortal.GUI.Weather
       {
         string localizedWord = String.Empty;
 
-        if (String.Compare(tokenSplit, "T-Storms", true) == 0)
+        if ( String.Compare(tokenSplit, "T-Storms", true) == 0 || String.Compare(tokenSplit, "T-Storm", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(370);
-        else if (String.Compare(tokenSplit, "Partly", true) == 0)
+        else if ( String.Compare(tokenSplit, "Partly", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(371);
-        else if (String.Compare(tokenSplit, "Mostly", true) == 0)
+        else if ( String.Compare(tokenSplit, "Mostly", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(372);
-        else if (String.Compare(tokenSplit, "Sunny", true) == 0)
+        else if ( String.Compare(tokenSplit, "Sunny", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(373);
-        else if (String.Compare(tokenSplit, "Cloudy", true) == 0 || String.Compare(tokenSplit, "Clouds", true) == 0)
+        else if ( String.Compare(tokenSplit, "Cloudy", true) == 0 || String.Compare(tokenSplit, "Clouds", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(374);
-        else if (String.Compare(tokenSplit, "Snow", true) == 0)
+        else if ( String.Compare(tokenSplit, "Snow", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(375);
-        else if (String.Compare(tokenSplit, "Rain", true) == 0)
+        else if ( String.Compare(tokenSplit, "Rain", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(376);
-        else if (String.Compare(tokenSplit, "Light", true) == 0)
+        else if ( String.Compare(tokenSplit, "Light", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(377);
-        else if (String.Compare(tokenSplit, "AM", true) == 0)
+        else if ( String.Compare(tokenSplit, "AM", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(378);
-        else if (String.Compare(tokenSplit, "PM", true) == 0)
+        else if ( String.Compare(tokenSplit, "PM", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(379);
         else if ( String.Compare(tokenSplit, "Showers", true) == 0 || String.Compare(tokenSplit, "Shower", true) == 0 || String.Compare(tokenSplit, "T-Showers", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(380);
-        else if (String.Compare(tokenSplit, "Few", true) == 0)
+        else if ( String.Compare(tokenSplit, "Few", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(381);
         else if ( String.Compare(tokenSplit, "Scattered", true) == 0 || String.Compare(tokenSplit, "Isolated", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(382);
-        else if (String.Compare(tokenSplit, "Wind", true) == 0)
+        else if ( String.Compare(tokenSplit, "Wind", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(383);
-        else if (String.Compare(tokenSplit, "Strong", true) == 0)
+        else if ( String.Compare(tokenSplit, "Strong", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(384);
-        else if (String.Compare(tokenSplit, "Fair", true) == 0)
+        else if ( String.Compare(tokenSplit, "Fair", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(385);
-        else if (String.Compare(tokenSplit, "Clear", true) == 0)
+        else if ( String.Compare(tokenSplit, "Clear", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(386);
-        else if (String.Compare(tokenSplit, "Early", true) == 0)
+        else if ( String.Compare(tokenSplit, "Early", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(387);
-        else if (String.Compare(tokenSplit, "and", true) == 0)
+        else if ( String.Compare(tokenSplit, "and", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(388);
-        else if (String.Compare(tokenSplit, "Fog", true) == 0)
+        else if ( String.Compare(tokenSplit, "Fog", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(389);
-        else if (String.Compare(tokenSplit, "Haze", true) == 0)
+        else if ( String.Compare(tokenSplit, "Haze", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(390);
-        else if (String.Compare(tokenSplit, "Windy", true) == 0)
+        else if ( String.Compare(tokenSplit, "Windy", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(391);
-        else if (String.Compare(tokenSplit, "Drizzle", true) == 0)
+        else if ( String.Compare(tokenSplit, "Drizzle", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(392);
-        else if (String.Compare(tokenSplit, "Freezing", true) == 0)
+        else if ( String.Compare(tokenSplit, "Freezing", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(393);
-        else if (String.Compare(tokenSplit, "N/A", true) == 0)
+        else if ( String.Compare(tokenSplit, "N/A", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(394);
-        else if (String.Compare(tokenSplit, "Mist", true) == 0)
+        else if ( String.Compare(tokenSplit, "Mist", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(395);
         else if ( String.Compare(tokenSplit, "High", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(799);
         else if ( String.Compare(tokenSplit, "Low", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(798);
-        else if (String.Compare(tokenSplit, "Moderate", true) == 0)
+        else if ( String.Compare(tokenSplit, "Moderate", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(534);
         else if ( String.Compare(tokenSplit, "Late", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(553);
         else if ( String.Compare(tokenSplit, "Very", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(554);
         // wind directions
-        else if (String.Compare(tokenSplit, "N", true) == 0)
+        else if ( String.Compare(tokenSplit, "N", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(535);
-        else if (String.Compare(tokenSplit, "E", true) == 0)
+        else if ( String.Compare(tokenSplit, "E", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(536);
-        else if (String.Compare(tokenSplit, "S", true) == 0)
+        else if ( String.Compare(tokenSplit, "S", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(537);
-        else if (String.Compare(tokenSplit, "W", true) == 0)
+        else if ( String.Compare(tokenSplit, "W", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(538);
-        else if (String.Compare(tokenSplit, "NE", true) == 0)
+        else if ( String.Compare(tokenSplit, "NE", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(539);
-        else if (String.Compare(tokenSplit, "SE", true) == 0)
+        else if ( String.Compare(tokenSplit, "SE", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(540);
-        else if (String.Compare(tokenSplit, "SW", true) == 0)
+        else if ( String.Compare(tokenSplit, "SW", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(541);
-        else if (String.Compare(tokenSplit, "NW", true) == 0)
+        else if ( String.Compare(tokenSplit, "NW", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(542);
-        else if (String.Compare(tokenSplit, "Thunder", true) == 0)
+        else if ( String.Compare(tokenSplit, "Thunder", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(543);
-        else if (String.Compare(tokenSplit, "NNE", true) == 0)
+        else if ( String.Compare(tokenSplit, "NNE", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(544);
-        else if (String.Compare(tokenSplit, "ENE", true) == 0)
+        else if ( String.Compare(tokenSplit, "ENE", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(545);
-        else if (String.Compare(tokenSplit, "ESE", true) == 0)
+        else if ( String.Compare(tokenSplit, "ESE", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(546);
-        else if (String.Compare(tokenSplit, "SSE", true) == 0)
+        else if ( String.Compare(tokenSplit, "SSE", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(547);
-        else if (String.Compare(tokenSplit, "SSW", true) == 0)
+        else if ( String.Compare(tokenSplit, "SSW", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(548);
-        else if (String.Compare(tokenSplit, "WSW", true) == 0)
+        else if ( String.Compare(tokenSplit, "WSW", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(549);
-        else if (String.Compare(tokenSplit, "WNW", true) == 0)
+        else if ( String.Compare(tokenSplit, "WNW", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(551);
-        else if (String.Compare(tokenSplit, "NNW", true) == 0)
+        else if ( String.Compare(tokenSplit, "NNW", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(552);
         else if ( String.Compare(tokenSplit, "VAR", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(556);
         else if ( String.Compare(tokenSplit, "CALM", true) == 0 )
           localizedWord = GUILocalizeStrings.Get(557);
+        else if ( String.Compare(tokenSplit, "Storm", true) == 0 || String.Compare(tokenSplit, "Gale", true) == 0 || String.Compare(tokenSplit, "Tempest", true) == 0 )
+          localizedWord = GUILocalizeStrings.Get(599);
 
         if (localizedWord == String.Empty)
           localizedWord = tokenSplit;	//if not found, let fallback
