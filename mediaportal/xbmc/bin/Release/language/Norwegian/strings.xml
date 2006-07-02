@@ -3306,6 +3306,14 @@
       <value>Sorter etter: Varighet</value>
    </string>
    <string>
+      <id>1018</id>
+      <value>Programmet starter om {0} minutter</value>
+   </string>
+   <string>
+      <id>1019</id>
+      <value>Programmet er i ferd med å starte</value>
+   </string>
+   <string>
       <id>1020</id>
       <value>Informasjon</value>
    </string>
