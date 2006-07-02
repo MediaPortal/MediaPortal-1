@@ -55,6 +55,7 @@ using Microsoft.Win32;
 using Geometry = MediaPortal.GUI.Library.Geometry;
 using Timer = System.Timers.Timer;
 using Utils = MediaPortal.Util.Utils;
+using MediaPortal.InputDevices;
 
 #endregion
 
@@ -652,6 +653,8 @@ public class MediaPortalApp : D3DApp, IRender
   {
     //stop playback
     _suspended = true;
+    InputDevices.Stop();
+
     Log.Write("Main: Stopping playback");
     g_Player.Stop();
     Log.Write("Main: Stopping recorder");
@@ -663,6 +666,7 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Write("Main: Switching to windowed mode");
       SwitchFullScreenOrWindowed(true, true);
     }
+    
   }
 
   //called when windows wakes up again
@@ -671,6 +675,8 @@ public class MediaPortalApp : D3DApp, IRender
     Log.Write("Main: Switch to home screen");
     GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_HOME);
     _suspended = false;
+
+    InputDevices.Init();
 
     if (Recorder.Running) return;
     if (_onResumeRunning)
