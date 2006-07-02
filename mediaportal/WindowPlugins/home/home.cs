@@ -243,7 +243,7 @@ namespace MediaPortal.GUI.Home
         TVProgram notify = message.Object as TVProgram;
         if (notify == null) return;
         int minUntilStart = _preNotifyConfig / 60;
-        if ( minUntilStart >= 1 )
+        if ( minUntilStart > 1 )
           dialogNotify.SetHeading(String.Format(GUILocalizeStrings.Get(1018),minUntilStart));
         else
           dialogNotify.SetHeading(1019); // Program is about to begin

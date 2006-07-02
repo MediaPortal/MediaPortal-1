@@ -464,14 +464,14 @@ namespace MediaPortal.Configuration.Sections
 
     private void cbTurnOnTimeShift_CheckedChanged(object sender, EventArgs e)
     {
-      if ( cbTurnOnTimeShift.Checked )
-        cbTurnOnTv.Checked = true;
+      //if ( cbTurnOnTimeShift.Checked )
+      //  cbTurnOnTv.Checked = true;
     }
 
     private void cbTurnOnTv_CheckedChanged( object sender, EventArgs e )
     {
-      if ( !cbTurnOnTv.Checked )
-        cbTurnOnTimeShift.Checked = false;
+      //if ( !cbTurnOnTv.Checked )
+      //  cbTurnOnTimeShift.Checked = false;
     }
 
   }

@@ -101,6 +101,7 @@ namespace MediaPortal.GUI.TV
     static string _tvGuideFileName;
     static System.IO.FileSystemWatcher _tvGuideFileWatcher = null;
     bool _needUpdate = false;
+    bool _autoTurnOnTv = false;
     DateTime m_dtStartTime = DateTime.Now;
     bool _useColorsForGenres = false;
     ArrayList _colorList = new ArrayList();
@@ -166,6 +167,7 @@ namespace MediaPortal.GUI.TV
         _currentTvChannel = xmlreader.GetValueAsString("tvguide", "channel", String.Empty);
         _cursorX = xmlreader.GetValueAsInt("tvguide", "ypos", 0);
         _channelOffset = xmlreader.GetValueAsInt("tvguide", "yoffset", 0);
+        _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
       }
     }
 
@@ -635,10 +637,15 @@ namespace MediaPortal.GUI.TV
             }
             UpdateCurrentProgram();
 
-            Log.Write("turn tv on");
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
-            msg.SendToTargetWindow = true;
-            GUIWindowManager.SendThreadMessage(msg);
+            if ( _autoTurnOnTv )
+            {
+              Log.Write("TVGuide: automatically turn on TV");
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RESUME_TV, (int)GUIWindow.Window.WINDOW_TV, GetID, 0, 0, 0, null);
+              msg.SendToTargetWindow = true;
+              GUIWindowManager.SendThreadMessage(msg);
+            }
+            else
+              Log.Write("TVGuide: do not turn tv on automatically");
 
             return true;
           }

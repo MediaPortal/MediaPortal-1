@@ -100,7 +100,7 @@ namespace MediaPortal.GUI.TV
       using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
         m_navigator.LoadSettings(xmlreader);
-        _isTvOn = xmlreader.GetValueAsBool("mytv", "tvon", true);
+        _isTvOn = xmlreader.GetValueAsBool("mytv", "tvon", false);
         _isTimeShifting = xmlreader.GetValueAsBool("mytv", "autoturnontimeshifting", false);
         _autoTurnOnTv = xmlreader.GetValueAsBool("mytv", "autoturnontv", false);
 
@@ -766,10 +766,10 @@ namespace MediaPortal.GUI.TV
         if ((g_Player.IsMusic && g_Player.HasVideo)) return true;
       }
       if (_isTvOn)
-        Log.Write("GUITVHome.ViewChannel(): View channel={0} ts:{1}", channel, _isTimeShifting);
+        Log.Write("GUITVHome.ViewChannelAndCheck(): View channel={0} ts:{1}", channel, _isTimeShifting);
       else
-        Log.Write("GUITVHome.ViewChannel(): turn tv off");
-
+        Log.Write("GUITVHome.ViewChannelAndCheckl(): _isTvOn = off - autostart doesn't apply");
+        
       if (channel != Navigator.CurrentChannel)
         Navigator.LastViewedChannel = Navigator.CurrentChannel;
 
@@ -810,7 +810,7 @@ namespace MediaPortal.GUI.TV
       if (_isTvOn)
         Log.Write("GUITVHome.ViewChannel(): View channel={0} ts:{1}", channel, _isTimeShifting);
       else
-        Log.Write("GUITVHome.ViewChannel(): turn tv off");
+        Log.Write("GUITVHome.ViewChannel(): _isTvOn = off");
 
       if (channel != Navigator.CurrentChannel)
         Navigator.LastViewedChannel = Navigator.CurrentChannel;
