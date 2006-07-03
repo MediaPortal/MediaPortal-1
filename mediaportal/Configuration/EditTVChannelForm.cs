@@ -590,7 +590,7 @@ namespace MediaPortal.Configuration
             "SECAM L",
             "SECAM L1",
             "PAL N COMBO"});
-      this.comboBoxAnalogTvStandard.Location = new System.Drawing.Point(128, 80);
+      this.comboBoxAnalogTvStandard.Location = new System.Drawing.Point(136, 80);
       this.comboBoxAnalogTvStandard.Name = "comboBoxAnalogTvStandard";
       this.comboBoxAnalogTvStandard.Size = new System.Drawing.Size(224, 21);
       this.comboBoxAnalogTvStandard.TabIndex = 3;
@@ -599,7 +599,7 @@ namespace MediaPortal.Configuration
       // labelAnalogTvStandard
       // 
       this.labelAnalogTvStandard.AutoSize = true;
-      this.labelAnalogTvStandard.Location = new System.Drawing.Point(24, 80);
+      this.labelAnalogTvStandard.Location = new System.Drawing.Point(32, 80);
       this.labelAnalogTvStandard.Name = "labelAnalogTvStandard";
       this.labelAnalogTvStandard.Size = new System.Drawing.Size(70, 13);
       this.labelAnalogTvStandard.TabIndex = 11;
@@ -610,7 +610,7 @@ namespace MediaPortal.Configuration
       this.textBoxAnalogFrequency.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxAnalogFrequency.BorderColor = System.Drawing.Color.Empty;
-      this.textBoxAnalogFrequency.Location = new System.Drawing.Point(128, 48);
+      this.textBoxAnalogFrequency.Location = new System.Drawing.Point(136, 48);
       this.textBoxAnalogFrequency.MaxLength = 10;
       this.textBoxAnalogFrequency.Name = "textBoxAnalogFrequency";
       this.textBoxAnalogFrequency.Size = new System.Drawing.Size(168, 20);
@@ -620,7 +620,7 @@ namespace MediaPortal.Configuration
       // 
       // labelAnalogFrequency
       // 
-      this.labelAnalogFrequency.Location = new System.Drawing.Point(24, 48);
+      this.labelAnalogFrequency.Location = new System.Drawing.Point(32, 48);
       this.labelAnalogFrequency.Name = "labelAnalogFrequency";
       this.labelAnalogFrequency.Size = new System.Drawing.Size(104, 32);
       this.labelAnalogFrequency.TabIndex = 10;
@@ -631,7 +631,7 @@ namespace MediaPortal.Configuration
       this.textBoxGeneralName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxGeneralName.BorderColor = System.Drawing.Color.Red;
-      this.textBoxGeneralName.Location = new System.Drawing.Point(128, 16);
+      this.textBoxGeneralName.Location = new System.Drawing.Point(136, 24);
       this.textBoxGeneralName.Name = "textBoxGeneralName";
       this.textBoxGeneralName.Size = new System.Drawing.Size(264, 20);
       this.textBoxGeneralName.TabIndex = 0;
@@ -639,7 +639,7 @@ namespace MediaPortal.Configuration
       // labelGeneralName
       // 
       this.labelGeneralName.AutoSize = true;
-      this.labelGeneralName.Location = new System.Drawing.Point(24, 16);
+      this.labelGeneralName.Location = new System.Drawing.Point(32, 24);
       this.labelGeneralName.Name = "labelGeneralName";
       this.labelGeneralName.Size = new System.Drawing.Size(35, 13);
       this.labelGeneralName.TabIndex = 6;
@@ -783,7 +783,7 @@ namespace MediaPortal.Configuration
       // label97
       // 
       this.label97.AutoSize = true;
-      this.label97.Location = new System.Drawing.Point(32, 264);
+      this.label97.Location = new System.Drawing.Point(40, 272);
       this.label97.Name = "label97";
       this.label97.Size = new System.Drawing.Size(229, 13);
       this.label97.TabIndex = 18;
@@ -791,7 +791,7 @@ namespace MediaPortal.Configuration
       // 
       // label96
       // 
-      this.label96.Location = new System.Drawing.Point(32, 176);
+      this.label96.Location = new System.Drawing.Point(40, 184);
       this.label96.Name = "label96";
       this.label96.Size = new System.Drawing.Size(328, 64);
       this.label96.TabIndex = 17;
@@ -800,7 +800,7 @@ namespace MediaPortal.Configuration
       // label95
       // 
       this.label95.AutoSize = true;
-      this.label95.Location = new System.Drawing.Point(16, 248);
+      this.label95.Location = new System.Drawing.Point(24, 256);
       this.label95.Name = "label95";
       this.label95.Size = new System.Drawing.Size(56, 13);
       this.label95.TabIndex = 16;
@@ -808,7 +808,7 @@ namespace MediaPortal.Configuration
       // 
       // labelSpecial
       // 
-      this.labelSpecial.Location = new System.Drawing.Point(264, 56);
+      this.labelSpecial.Location = new System.Drawing.Point(272, 64);
       this.labelSpecial.Name = "labelSpecial";
       this.labelSpecial.Size = new System.Drawing.Size(64, 16);
       this.labelSpecial.TabIndex = 15;
@@ -816,7 +816,7 @@ namespace MediaPortal.Configuration
       // comboBoxGeneralChannel
       // 
       this.comboBoxGeneralChannel.BorderColor = System.Drawing.Color.Red;
-      this.comboBoxGeneralChannel.Location = new System.Drawing.Point(128, 48);
+      this.comboBoxGeneralChannel.Location = new System.Drawing.Point(136, 56);
       this.comboBoxGeneralChannel.Name = "comboBoxGeneralChannel";
       this.comboBoxGeneralChannel.Size = new System.Drawing.Size(121, 21);
       this.comboBoxGeneralChannel.TabIndex = 1;
@@ -826,7 +826,7 @@ namespace MediaPortal.Configuration
       // 
       this.checkBoxGeneralEncryptedChannel.AutoSize = true;
       this.checkBoxGeneralEncryptedChannel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxGeneralEncryptedChannel.Location = new System.Drawing.Point(24, 80);
+      this.checkBoxGeneralEncryptedChannel.Location = new System.Drawing.Point(32, 88);
       this.checkBoxGeneralEncryptedChannel.Name = "checkBoxGeneralEncryptedChannel";
       this.checkBoxGeneralEncryptedChannel.Size = new System.Drawing.Size(214, 17);
       this.checkBoxGeneralEncryptedChannel.TabIndex = 2;
@@ -836,7 +836,7 @@ namespace MediaPortal.Configuration
       // label45
       // 
       this.label45.AutoSize = true;
-      this.label45.Location = new System.Drawing.Point(16, 160);
+      this.label45.Location = new System.Drawing.Point(24, 168);
       this.label45.Name = "label45";
       this.label45.Size = new System.Drawing.Size(60, 13);
       this.label45.TabIndex = 12;
@@ -844,7 +844,7 @@ namespace MediaPortal.Configuration
       // 
       // label44
       // 
-      this.label44.Location = new System.Drawing.Point(16, 120);
+      this.label44.Location = new System.Drawing.Point(24, 128);
       this.label44.Name = "label44";
       this.label44.Size = new System.Drawing.Size(344, 32);
       this.label44.TabIndex = 11;
@@ -854,7 +854,7 @@ namespace MediaPortal.Configuration
       // labelGeneralChannel
       // 
       this.labelGeneralChannel.AutoSize = true;
-      this.labelGeneralChannel.Location = new System.Drawing.Point(24, 48);
+      this.labelGeneralChannel.Location = new System.Drawing.Point(32, 56);
       this.labelGeneralChannel.Name = "labelGeneralChannel";
       this.labelGeneralChannel.Size = new System.Drawing.Size(46, 13);
       this.labelGeneralChannel.TabIndex = 10;
@@ -881,7 +881,7 @@ namespace MediaPortal.Configuration
       // 
       this.label98.AutoSize = true;
       this.label98.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label98.Location = new System.Drawing.Point(24, 8);
+      this.label98.Location = new System.Drawing.Point(32, 16);
       this.label98.Name = "label98";
       this.label98.Size = new System.Drawing.Size(114, 13);
       this.label98.TabIndex = 18;
@@ -889,7 +889,7 @@ namespace MediaPortal.Configuration
       // 
       // label43
       // 
-      this.label43.Location = new System.Drawing.Point(24, 152);
+      this.label43.Location = new System.Drawing.Point(32, 152);
       this.label43.Name = "label43";
       this.label43.Size = new System.Drawing.Size(344, 72);
       this.label43.TabIndex = 17;
@@ -901,7 +901,7 @@ namespace MediaPortal.Configuration
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxAnalogCountry.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxAnalogCountry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxAnalogCountry.Location = new System.Drawing.Point(128, 112);
+      this.comboBoxAnalogCountry.Location = new System.Drawing.Point(136, 112);
       this.comboBoxAnalogCountry.MaxDropDownItems = 16;
       this.comboBoxAnalogCountry.Name = "comboBoxAnalogCountry";
       this.comboBoxAnalogCountry.Size = new System.Drawing.Size(312, 21);
@@ -911,7 +911,7 @@ namespace MediaPortal.Configuration
       // labelAnalogCountry
       // 
       this.labelAnalogCountry.AutoSize = true;
-      this.labelAnalogCountry.Location = new System.Drawing.Point(24, 112);
+      this.labelAnalogCountry.Location = new System.Drawing.Point(32, 112);
       this.labelAnalogCountry.Name = "labelAnalogCountry";
       this.labelAnalogCountry.Size = new System.Drawing.Size(43, 13);
       this.labelAnalogCountry.TabIndex = 16;
@@ -1312,9 +1312,9 @@ namespace MediaPortal.Configuration
       // 
       // label42
       // 
-      this.label42.Location = new System.Drawing.Point(208, 16);
+      this.label42.Location = new System.Drawing.Point(288, 16);
       this.label42.Name = "label42";
-      this.label42.Size = new System.Drawing.Size(248, 16);
+      this.label42.Size = new System.Drawing.Size(152, 80);
       this.label42.TabIndex = 16;
       this.label42.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
@@ -1564,9 +1564,9 @@ namespace MediaPortal.Configuration
       // 
       // label41
       // 
-      this.label41.Location = new System.Drawing.Point(184, 16);
+      this.label41.Location = new System.Drawing.Point(288, 16);
       this.label41.Name = "label41";
-      this.label41.Size = new System.Drawing.Size(264, 16);
+      this.label41.Size = new System.Drawing.Size(152, 80);
       this.label41.TabIndex = 30;
       this.label41.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
@@ -1877,7 +1877,7 @@ namespace MediaPortal.Configuration
       // 
       this.label101.AutoSize = true;
       this.label101.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label101.Location = new System.Drawing.Point(24, 8);
+      this.label101.Location = new System.Drawing.Point(32, 16);
       this.label101.Name = "label101";
       this.label101.Size = new System.Drawing.Size(159, 13);
       this.label101.TabIndex = 81;
@@ -2038,10 +2038,11 @@ namespace MediaPortal.Configuration
       // 
       // label40
       // 
-      this.label40.Location = new System.Drawing.Point(280, 40);
+      this.label40.Location = new System.Drawing.Point(288, 16);
       this.label40.Name = "label40";
-      this.label40.Size = new System.Drawing.Size(152, 16);
+      this.label40.Size = new System.Drawing.Size(152, 80);
       this.label40.TabIndex = 46;
+      this.label40.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // textBoxDvbsEcmPid
       // 
@@ -2342,7 +2343,7 @@ namespace MediaPortal.Configuration
       // 
       this.label102.AutoSize = true;
       this.label102.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label102.Location = new System.Drawing.Point(24, 8);
+      this.label102.Location = new System.Drawing.Point(32, 16);
       this.label102.Name = "label102";
       this.label102.Size = new System.Drawing.Size(147, 13);
       this.label102.TabIndex = 92;
