@@ -117,7 +117,7 @@ namespace MediaPortal.Player
     protected const int WS_CLIPSIBLINGS = 0x04000000;
     protected DateTime _updateTimer = DateTime.Now;
     protected MediaPortal.GUI.Library.Geometry.Type _geometry = MediaPortal.GUI.Library.Geometry.Type.Normal;
-    
+
     protected bool _startingUp;
     #endregion
 
@@ -234,116 +234,21 @@ namespace MediaPortal.Player
 
       _interfaceTsFileSource = _fileSource as ITSFileSource;
 
-      _startingUp = true;
-      if (_isLive)
-      {/*
-        long dur = 0;
-        _interfaceTsFileSource.GetDuration(ref dur);
-        if (dur < 1000)
-        {
-          _currentFile = "";
-          CloseInterfaces();
-          return false;
-        }
-        IAMStreamSelect control = _fileSource as IAMStreamSelect;
-        if (control != null)
-        {
-          int streamCount=0;
+      _startingUp = _isLive;
 
-          DateTime timeSt = DateTime.Now;
-          while (streamCount == 0)
-          {
-            hr = control.Count(out streamCount);
-            if (streamCount > 0) break;
-            System.Threading.Thread.Sleep(100);
-            TimeSpan ts = DateTime.Now - timeSt;
-            if (ts.TotalMilliseconds >= 2000) break;
-          }
-          Log.Write("TSFileSource::get stream count :0x{0:X}", hr);
-          if (streamCount == 0)
-          {
-            Log.Write("TSFileSource::0 streams");
-            _currentFile = "";
-            CloseInterfaces();
-            return false;
-          }
-          Log.Write("TSFileSource::got {0} streams", streamCount);
-          hr = control.Enable(1, AMStreamSelectEnableFlags.EnableAll);
-          Log.Write("TSFileSource::enable stream 1 :0x{0:X}", hr);
-        }*/
-
-      }
       DirectShowUtil.EnableDeInterlace(_graphBuilder);
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
       msg.Label = strFile;
       GUIWindowManager.SendThreadMessage(msg);
 
       _state = PlayState.Playing;
-      /*
-      if (_isLive)
+      if (_startingUp == false)
       {
-        //long duration = 0;
-        //ushort vpid = 0, apid = 0, pmtpid = 0, sid = 0, pcr = 0, prgmNumb = 0, ac3 = 0;
-        Log.Write("TsBaseStreamBuffer:parse file");
-
-        _mediaCtrl.Run();        
-        UpdateDuration();
-        if (_duration < 1)
-        {
-          DateTime timeSt = DateTime.Now;
-          while (true)
-          {
-            UpdateDuration();
-
-            Log.Write("TsBaseStreamBuffer: duration:{0}", _duration);
-            if (_duration >= 2.0d) break;
-            else System.Threading.Thread.Sleep(100);
-            Application.DoEvents();
-            TimeSpan ts = DateTime.Now - timeSt;
-            if (ts.TotalMilliseconds >= 5000) break;
-          }
-        }
-        double dPos = _duration - 2;
-        if (dPos >= 0 && CurrentPosition < dPos)
-        {
-          if (_duration > 5)
-          {
-            Log.Write("TsBaseStreamBuffer:Seek to end:{0}", dPos);
-            //_interfaceTsFileSource.SetDelayMode(0);
-            SeekAbsolute(dPos);
-            //_interfaceTsFileSource.SetDelayMode(1);
-            Log.Write("TsBaseStreamBuffer:Seek done");
-          }
-        }
-        //_mediaCtrl.Run();        
-        Log.Write("TsBaseStreamBuffer:graph running");
-      }
-      else
-      {
-        //seek to end of file
-        long lTime = 5 * 60 * 60;
-        lTime *= 10000000;
-        long pStop = 0;
-        hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-        if (hr == 0)
-        {
-          long lStreamPos;
-          _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
-          _duration = lStreamPos;
-          _duration /= 10000000d;
-          SeekAsolutePercentage(0);
-        }
+        Log.Write("TsBaseStreamBuffer:start graph");
         _mediaCtrl.Run();
       }
-
-      if (_mpegDemux != null)
-      {
-        DumpMpeg2DemuxerMappings(_mpegDemux);
-      }*/
-      //_mediaCtrl.Run();        
       Log.Write("TsBaseStreamBuffer:playing state");
       _state = PlayState.Playing;
-      Log.Write("TsBaseStreamBuffer:oninitialized");
       OnInitialized();
       Log.Write("TsBaseStreamBuffer:done");
       return true;
@@ -448,7 +353,6 @@ namespace MediaPortal.Player
 
     public override void Process()
     {
-
       if (!Playing) return;
       if (GUIGraphicsContext.InVmr9Render) return;
       if (_startingUp && _isLive)
@@ -468,11 +372,11 @@ namespace MediaPortal.Player
             Log.Write("_duration:{0}", _duration);
             if (dPos >= 0 && CurrentPosition < dPos)
             {
-              Log.Write("seek:{0}/{0}", dPos,_duration);
+              Log.Write("seek:{0}/{0}", dPos, _duration);
               SeekAbsolute(dPos);
               Log.Write("seek:{0}/{0} done", dPos, _duration);
             }
-            _mediaCtrl.Run();        
+            _mediaCtrl.Run();
             _startingUp = false;
           }
         }
