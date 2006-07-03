@@ -72,9 +72,9 @@ namespace ProcessPlugins.TvMovie
       this.mpTabControl = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageMapChannels = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.tabPageSettings = new System.Windows.Forms.TabPage();
-      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpGroupBoxDescriptions = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxSlowImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpGroupBoxSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpGroupBoxGeneral = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxShowAudioFormat = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpBeveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
@@ -86,8 +86,8 @@ namespace ProcessPlugins.TvMovie
       this.mpTabControl.SuspendLayout();
       this.tabPageMapChannels.SuspendLayout();
       this.tabPageSettings.SuspendLayout();
-      this.mpGroupBox1.SuspendLayout();
-      this.mpGroupBoxSettings.SuspendLayout();
+      this.mpGroupBoxDescriptions.SuspendLayout();
+      this.mpGroupBoxGeneral.SuspendLayout();
       this.SuspendLayout();
       // 
       // treeViewChannels
@@ -303,8 +303,8 @@ namespace ProcessPlugins.TvMovie
       // 
       // tabPageSettings
       // 
-      this.tabPageSettings.Controls.Add(this.mpGroupBox1);
-      this.tabPageSettings.Controls.Add(this.mpGroupBoxSettings);
+      this.tabPageSettings.Controls.Add(this.mpGroupBoxDescriptions);
+      this.tabPageSettings.Controls.Add(this.mpGroupBoxGeneral);
       this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageSettings.Name = "tabPageSettings";
       this.tabPageSettings.Padding = new System.Windows.Forms.Padding(3);
@@ -313,39 +313,39 @@ namespace ProcessPlugins.TvMovie
       this.tabPageSettings.Text = "Settings";
       this.tabPageSettings.UseVisualStyleBackColor = true;
       // 
-      // mpGroupBox1
+      // mpGroupBoxDescriptions
       // 
-      this.mpGroupBox1.Controls.Add(this.checkBoxSlowImport);
-      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(16, 120);
-      this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(472, 64);
-      this.mpGroupBox1.TabIndex = 13;
-      this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "Descriptions";
+      this.mpGroupBoxDescriptions.Controls.Add(this.checkBoxSlowImport);
+      this.mpGroupBoxDescriptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBoxDescriptions.Location = new System.Drawing.Point(16, 120);
+      this.mpGroupBoxDescriptions.Name = "mpGroupBoxDescriptions";
+      this.mpGroupBoxDescriptions.Size = new System.Drawing.Size(472, 64);
+      this.mpGroupBoxDescriptions.TabIndex = 13;
+      this.mpGroupBoxDescriptions.TabStop = false;
+      this.mpGroupBoxDescriptions.Text = "Descriptions";
       // 
-      // mpCheckBoxSlowImport
+      // checkBoxSlowImport
       // 
       this.checkBoxSlowImport.AutoSize = true;
       this.checkBoxSlowImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxSlowImport.Location = new System.Drawing.Point(16, 26);
-      this.checkBoxSlowImport.Name = "mpCheckBoxSlowImport";
+      this.checkBoxSlowImport.Name = "checkBoxSlowImport";
       this.checkBoxSlowImport.Size = new System.Drawing.Size(87, 17);
       this.checkBoxSlowImport.TabIndex = 11;
       this.checkBoxSlowImport.Text = "Slower import";
       this.checkBoxSlowImport.UseVisualStyleBackColor = true;
       // 
-      // mpGroupBoxSettings
+      // mpGroupBoxGeneral
       // 
-      this.mpGroupBoxSettings.Controls.Add(this.checkBoxShowAudioFormat);
-      this.mpGroupBoxSettings.Controls.Add(this.checkBoxUseShortDesc);
-      this.mpGroupBoxSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBoxSettings.Location = new System.Drawing.Point(16, 16);
-      this.mpGroupBoxSettings.Name = "mpGroupBoxSettings";
-      this.mpGroupBoxSettings.Size = new System.Drawing.Size(472, 88);
-      this.mpGroupBoxSettings.TabIndex = 0;
-      this.mpGroupBoxSettings.TabStop = false;
-      this.mpGroupBoxSettings.Text = "Descriptions";
+      this.mpGroupBoxGeneral.Controls.Add(this.checkBoxShowAudioFormat);
+      this.mpGroupBoxGeneral.Controls.Add(this.checkBoxUseShortDesc);
+      this.mpGroupBoxGeneral.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBoxGeneral.Location = new System.Drawing.Point(16, 16);
+      this.mpGroupBoxGeneral.Name = "mpGroupBoxGeneral";
+      this.mpGroupBoxGeneral.Size = new System.Drawing.Size(472, 88);
+      this.mpGroupBoxGeneral.TabIndex = 0;
+      this.mpGroupBoxGeneral.TabStop = false;
+      this.mpGroupBoxGeneral.Text = "General";
       // 
       // checkBoxShowAudioFormat
       // 
@@ -414,10 +414,10 @@ namespace ProcessPlugins.TvMovie
       this.mpTabControl.ResumeLayout(false);
       this.tabPageMapChannels.ResumeLayout(false);
       this.tabPageSettings.ResumeLayout(false);
-      this.mpGroupBox1.ResumeLayout(false);
-      this.mpGroupBox1.PerformLayout();
-      this.mpGroupBoxSettings.ResumeLayout(false);
-      this.mpGroupBoxSettings.PerformLayout();
+      this.mpGroupBoxDescriptions.ResumeLayout(false);
+      this.mpGroupBoxDescriptions.PerformLayout();
+      this.mpGroupBoxGeneral.ResumeLayout(false);
+      this.mpGroupBoxGeneral.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -447,8 +447,8 @@ namespace ProcessPlugins.TvMovie
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseShortDesc;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowAudioFormat;
     private System.Windows.Forms.TabPage tabPageSettings;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxSettings;
-    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxGeneral;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxDescriptions;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSlowImport;
   }
 }
