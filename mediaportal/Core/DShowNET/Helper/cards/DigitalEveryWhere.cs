@@ -704,7 +704,7 @@ namespace DShowNET
           antennaNr = 1;
         break;
         case 2: // Simple B
-          antennaNr = 1;
+          antennaNr = 2;
         break;
         case 3: // Level 1 A/A
           antennaNr = 1;
