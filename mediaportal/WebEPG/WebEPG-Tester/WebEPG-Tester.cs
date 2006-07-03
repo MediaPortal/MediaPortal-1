@@ -83,15 +83,21 @@ namespace MediaPortal.EPG.WebEPGTester
             SortedList channels = config.GetChannelList(countries[c], grabbers[g]);
 
             IDictionaryEnumerator enumerator = channels.GetEnumerator();
-            WebListingGrabber m_EPGGrabber = new WebListingGrabber(2, Environment.CurrentDirectory + "\\WebEPG\\grabbers\\");
+            WebListingGrabber m_EPGGrabber = new WebListingGrabber(14, Environment.CurrentDirectory + "\\WebEPG\\grabbers\\");
 
             log.Info("WebEPG: Grabber {0}\\{1}", countries[c], grabbers[g]);
+
+            //MediaPortal.Webepg.Profile.Xml grabReader = new MediaPortal.Webepg.Profile.Xml(Environment.CurrentDirectory + "\\WebEPG\\grabbers\\" + countries[c] + "\\" + grabbers[g]);
+            //int siteGuideDays = grabReader.GetValueAsInt("Info", "GuideDays", 0);
+
             XMLTVExport xmltv = new XMLTVExport(grabberDir);
             xmltv.Open();
 
             LogFileWriter countryLog = new LogFileWriter("log", countries[c] + "-" + grabbers[g]);
             while (enumerator.MoveNext())
             {
+            //if (enumerator.MoveNext())
+            //{
               ChannelInfo channel = (ChannelInfo)enumerator.Value;
               xmltv.WriteChannel(channel.ChannelID, channel.FullName);
               log.Info("WebEPG: Getting Channel {0}", channel.ChannelID);
@@ -99,6 +105,7 @@ namespace MediaPortal.EPG.WebEPGTester
               string countryGrabber = countries[c] + "\\" + grabbers[g];
               string grabTimeStr = xmlreader.GetValueAsString("Grabbers", countryGrabber, "");
               DateTime grabDateTime;
+              //grabDateTime = DateTime.Now.AddDays(siteGuideDays);
               if (grabTimeStr == "")
               {
                 grabDateTime = DateTime.Now;

@@ -13,7 +13,7 @@
     <entry name="SearchURL">whatson.asp?dayID=[DAY_OFFSET]</entry>
 
 <!-- Unique Listing Start string -->
-    <entry name="Start">epg_programmes_content_container</entry>
+<!--    <entry name="Start">epg_programmes_content_container</entry> -->
 
 <!-- Unique Listing End string -->
 
@@ -24,16 +24,16 @@
     <entry name="Template">
 &#60;tr&#62;
 &#60;td&#62;&#60;/td&#62;
-&#60;td&#62;&#60;#START&#62;&#60;/TD&#62;
-&#60;TD&#62;&#60;#TITLE&#62;&#60;/TD&#62;
-&#60;TD&#62;&#60;/TD&#62;
-&#60;TD&#62;&#60;/td&#62;
-&#60;TD&#62;&#60;/TD&#62;
+&#60;td&#62;&#60;#START&#62;&#60;/td&#62;
+&#60;td&#62;&#60;#TITLE&#62;&#60;/td&#62;
+&#60;td&#62;&#60;/td&#62;
+&#60;td&#62;&#60;/td&#62;
+&#60;td&#62;&#60;/td&#62;
 &#60;/tr&#62;
     </entry>
   </section>
   <section name="Info">
-    <entry name="GuideDays">7</entry>
+    <entry name="GuideDays">5</entry>
     <entry name="Language">en</entry>
     <entry name="TimeZone">New Zealand Standard Time</entry>
   </section>

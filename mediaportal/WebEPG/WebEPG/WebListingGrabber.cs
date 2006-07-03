@@ -88,7 +88,8 @@ namespace MediaPortal.EPG
     ArrayList _dbPrograms;
     DateTime _StartGrab;
     int _dbLastProg;
-    int _MaxGrabDays;
+    int _maxGrabDays;
+    int _siteGuideDays;
     int _GrabDay;
     ILog _log;
 
@@ -101,7 +102,7 @@ namespace MediaPortal.EPG
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
-      _MaxGrabDays = maxGrabDays;
+      _maxGrabDays = maxGrabDays;
       _strBaseDir = baseDir;
     }
 
@@ -183,6 +184,12 @@ namespace MediaPortal.EPG
           break;
 
         default: // HTML
+          _siteGuideDays = _xmlreader.GetValueAsInt("Info", "GuideDays", 0);
+          if (_siteGuideDays < _maxGrabDays)
+          {
+            _log.Warn("WebEPG: GrabDays {0} more than GuideDays {0}, limiting grab days", _siteGuideDays, _maxGrabDays);
+            _maxGrabDays = _siteGuideDays;
+          }
           string strGuideStart = _xmlreader.GetValueAsString("Listing", "Start", "<body");
           string strGuideEnd = _xmlreader.GetValueAsString("Listing", "End", "</body");
           //bool bAhrefs = _xmlreader.GetValueAsBool("Listing", "Ahrefs", false);
@@ -708,7 +715,7 @@ namespace MediaPortal.EPG
           }
         }
 
-        if (_GrabDay > _MaxGrabDays)
+        if (_GrabDay > _maxGrabDays)
           bMore = false;
       }
 
@@ -760,6 +767,25 @@ namespace MediaPortal.EPG
       _GrabDay = 0;
       _StartGrab = startDateTime;
       _log.Debug("WebEPG: Grab Start {0} {1}", _StartGrab.ToShortTimeString(), _StartGrab.ToShortDateString());
+      int requestedStartDay = startDateTime.Subtract(DateTime.Now).Days;
+      if (requestedStartDay > 0)
+      {
+        if (requestedStartDay > _siteGuideDays)
+        {
+          _log.Error("WebEPG: Trying to grab pass guide days");
+          return null;
+        }
+
+        if (requestedStartDay + _maxGrabDays > _siteGuideDays)
+        {
+          _maxGrabDays = _siteGuideDays - requestedStartDay;
+          _log.Warn("WebEPG: Grab days more than Guide days, limiting to {0}", _maxGrabDays);
+        }
+
+        _GrabDay = requestedStartDay;
+        if (_GrabDay > _maxGrabDays)
+          _maxGrabDays = _GrabDay + _maxGrabDays;
+      }
 
       //TVDatabase.BeginTransaction();
       //TVDatabase.ClearCache();
@@ -774,7 +800,7 @@ namespace MediaPortal.EPG
       {
         if (TVDatabase.GetEPGMapping(strChannelID, out dbChannelId, out dbChannelName)) // (nodeId.InnerText, out idTvChannel, out strTvChannel);
         {
-          DateTime endGrab = _StartGrab.AddDays(_MaxGrabDays + 1);
+          DateTime endGrab = _StartGrab.AddDays(_maxGrabDays + 1);
           DateTime startGrab = _StartGrab.AddHours(-1);
           TVDatabase.GetProgramsPerChannel(dbChannelName, GetLongDateTime(startGrab), GetLongDateTime(endGrab), ref _dbPrograms);
         }
@@ -786,7 +812,7 @@ namespace MediaPortal.EPG
       }
 
 
-      while (_GrabDay < _MaxGrabDays)
+      while (_GrabDay < _maxGrabDays)
       {
         pageRequest = new HTTPRequest(channelRequest);
         if (_strDayNames != null)

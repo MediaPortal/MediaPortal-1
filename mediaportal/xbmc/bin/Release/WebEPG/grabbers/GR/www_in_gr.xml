@@ -47,7 +47,7 @@
     </entry>
   </section>
   <section name="Info">
-    <entry name="GuideDays">14</entry>
+    <entry name="GuideDays">7</entry>
     <entry name="Lang">el</entry>
     <entry name="SiteDescription">Λαμβάνει το πρόγραμμα από τις σελίδες TV του in.gr (ΔΟΛ)</entry>
     <entry name="TimeZone">Central European Standard Time</entry>
