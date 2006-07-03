@@ -657,6 +657,8 @@ namespace MediaPortal.Configuration.Sections
               subkey.SetValue("Ac3SpeakerConfig", unchecked((Int32)4294967289), RegistryValueKind.DWord);
             else
             {
+              if (comboBoxAc3SpeakerConfig.SelectedIndex == -1) // for missing first time defaults of MPA
+                comboBoxAc3SpeakerConfig.SelectedIndex = 2;
               if (checkBoxAc3Lfe.Checked)
                 subkey.SetValue("Ac3SpeakerConfig", (int)(comboBoxAc3SpeakerConfig.SelectedIndex + 16), RegistryValueKind.DWord);
               else
@@ -684,7 +686,9 @@ namespace MediaPortal.Configuration.Sections
             }
             else
             {
-              if (checkBoxDtsLfe.Checked)
+              if (DTSRegValue == -1) // for missing first time defaults of MPA
+                DTSRegValue = 2;
+              if (checkBoxDtsLfe.Checked)              
                 subkey.SetValue("DtsSpeakerConfig", (DTSRegValue + 128), RegistryValueKind.DWord);
               else
                 subkey.SetValue("DtsSpeakerConfig", DTSRegValue, RegistryValueKind.DWord);
