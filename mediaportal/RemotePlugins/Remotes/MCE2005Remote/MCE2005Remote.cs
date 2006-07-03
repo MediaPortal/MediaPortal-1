@@ -127,6 +127,8 @@ namespace MediaPortal.InputDevices
       {
         if (logVerbose) Log.Write("MCE: Stopping MCE remote");
         Remote.Click -= new RemoteEventHandler(OnRemoteClick);
+        Remote.DeviceRemoval -= new DeviceEventHandler(OnDeviceRemoval);
+        Remote.DeviceArrival -= new DeviceEventHandler(OnDeviceArrival);
         _inputHandler = null;
         controlEnabled = false;
       }
