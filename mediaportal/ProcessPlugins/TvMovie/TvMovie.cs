@@ -29,7 +29,7 @@ using System.Text;
 using MediaPortal.GUI.Library;
 using System.Windows.Forms;
 using System.Threading;
-using Microsoft.Win32;
+
 
 namespace ProcessPlugins.TvMovie
 {
@@ -136,7 +136,8 @@ namespace ProcessPlugins.TvMovie
 
     public void Stop()
     {
-      _database.Canceled = true;
+      if (_database != null)
+        _database.Canceled = true;
     }
 
 

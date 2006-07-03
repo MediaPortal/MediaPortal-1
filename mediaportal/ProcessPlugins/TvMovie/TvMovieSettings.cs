@@ -37,6 +37,7 @@ using System.IO;
 using Microsoft.Win32;
 using MediaPortal.GUI.Library;
 
+
 namespace ProcessPlugins.TvMovie
 {
   public partial class TvMovieSettings : Form
@@ -45,8 +46,6 @@ namespace ProcessPlugins.TvMovie
     #region Membervariables
 
     string _xmlFile = "TVMovieMapping.xml";
-    bool _useShortProgramDesc = false;
-    bool _showAudioFormat = false;
 
     #endregion
 
@@ -133,27 +132,29 @@ namespace ProcessPlugins.TvMovie
 
     #region Implementation
 
+
     private void LoadOptions()
     {
-      using ( MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        _useShortProgramDesc = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
-        _showAudioFormat = xmlreader.GetValueAsBool("tvmovie", "showaudioformat", false);
+        checkBoxUseShortDesc.Checked = xmlreader.GetValueAsBool("tvmovie", "shortprogramdesc", false);
+        checkBoxShowAudioFormat.Checked = xmlreader.GetValueAsBool("tvmovie", "showaudioformat", false);
+        checkBoxSlowImport.Checked = xmlreader.GetValueAsBool("tvmovie", "slowimport", false);
       }
-      checkBoxUseShortDesc.Checked = _useShortProgramDesc ? true : false;
-      checkBoxShowAudioFormat.Checked = _showAudioFormat ? true : false;
     }
+
 
     private void SaveOptions()
     {
-      _useShortProgramDesc = checkBoxUseShortDesc.Checked ? true : false;
-      _showAudioFormat = checkBoxShowAudioFormat.Checked ? true : false;
-      using ( MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml") )
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.Settings("MediaPortal.xml"))
       {
-        xmlwriter.SetValueAsBool("tvmovie", "shortprogramdesc", _useShortProgramDesc);
-        xmlwriter.SetValueAsBool("tvmovie", "showaudioformat", _showAudioFormat);
+        xmlwriter.SetValueAsBool("tvmovie", "shortprogramdesc", checkBoxUseShortDesc.Checked);
+        xmlwriter.SetValueAsBool("tvmovie", "showaudioformat", checkBoxShowAudioFormat.Checked);
+        xmlwriter.SetValueAsBool("tvmovie", "slowimport", checkBoxSlowImport.Checked);
       }
     }
+
+
     /// <summary>
     /// Load stations from databases and fill controls with that data
     /// </summary>
@@ -165,7 +166,7 @@ namespace ProcessPlugins.TvMovie
 
         treeViewStations.BeginUpdate();
 
-        foreach ( string station in database.Stations )
+        foreach (string station in database.Stations)
         {
           TreeNode stationNode = new TreeNode(station);
           ChannelInfo channelInfo = new ChannelInfo();
@@ -181,7 +182,7 @@ namespace ProcessPlugins.TvMovie
         ArrayList mpChannelList = new ArrayList();
         TVDatabase.GetChannels(ref mpChannelList);
 
-        foreach ( TVChannel channel in mpChannelList )
+        foreach (TVChannel channel in mpChannelList)
         {
           TreeNode stationNode = new TreeNode(channel.Name);
           treeViewChannels.Nodes.Add(stationNode);
@@ -189,9 +190,9 @@ namespace ProcessPlugins.TvMovie
 
         treeViewChannels.EndUpdate();
       }
-      catch(Exception Ex)
+      catch (Exception)
       {
-        MessageBox.Show("Cannot find TV Movie database!"); // most likely ;-)
+        MessageBox.Show("Please make sure TV Movie Clickfinder has been installed and licensed locally.", "Error loading TV Movie database", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
     }
 

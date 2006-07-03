@@ -69,24 +69,31 @@ namespace ProcessPlugins.TvMovie
       this.buttonCancel = new MediaPortal.UserInterface.Controls.MPButton();
       this.pictureBox2 = new System.Windows.Forms.PictureBox();
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
-      this.mpTabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
-      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.mpTabControl = new MediaPortal.UserInterface.Controls.MPTabControl();
+      this.tabPageMapChannels = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.tabPageSettings = new System.Windows.Forms.TabPage();
+      this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxSlowImport = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpGroupBoxSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.checkBoxShowAudioFormat = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpBeveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
       this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-      this.checkBoxUseShortDesc = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.checkBoxShowAudioFormat = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBoxMapping.SuspendLayout();
       this.panelTimeSpan.SuspendLayout();
-      ( (System.ComponentModel.ISupportInitialize)( this.pictureBox2 ) ).BeginInit();
-      ( (System.ComponentModel.ISupportInitialize)( this.pictureBox1 ) ).BeginInit();
-      this.mpTabControl1.SuspendLayout();
-      this.tabPage1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+      this.mpTabControl.SuspendLayout();
+      this.tabPageMapChannels.SuspendLayout();
+      this.tabPageSettings.SuspendLayout();
+      this.mpGroupBox1.SuspendLayout();
+      this.mpGroupBoxSettings.SuspendLayout();
       this.SuspendLayout();
       // 
       // treeViewChannels
       // 
-      this.treeViewChannels.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left ) ) );
+      this.treeViewChannels.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)));
       this.treeViewChannels.HideSelection = false;
       this.treeViewChannels.Location = new System.Drawing.Point(16, 48);
       this.treeViewChannels.Name = "treeViewChannels";
@@ -101,8 +108,8 @@ namespace ProcessPlugins.TvMovie
       // 
       // treeViewStations
       // 
-      this.treeViewStations.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.treeViewStations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.treeViewStations.HideSelection = false;
       this.treeViewStations.Location = new System.Drawing.Point(288, 48);
       this.treeViewStations.Name = "treeViewStations";
@@ -116,7 +123,7 @@ namespace ProcessPlugins.TvMovie
       // 
       // buttonOk
       // 
-      this.buttonOk.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonOk.Location = new System.Drawing.Point(376, 434);
       this.buttonOk.Name = "buttonOk";
       this.buttonOk.Size = new System.Drawing.Size(75, 23);
@@ -127,9 +134,9 @@ namespace ProcessPlugins.TvMovie
       // 
       // groupBoxMapping
       // 
-      this.groupBoxMapping.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.groupBoxMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxMapping.Controls.Add(this.panelTimeSpan);
       this.groupBoxMapping.Controls.Add(this.treeViewChannels);
       this.groupBoxMapping.Controls.Add(this.treeViewStations);
@@ -145,7 +152,7 @@ namespace ProcessPlugins.TvMovie
       // 
       // panelTimeSpan
       // 
-      this.panelTimeSpan.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left ) ) );
+      this.panelTimeSpan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.panelTimeSpan.AutoSize = true;
       this.panelTimeSpan.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
       this.panelTimeSpan.Controls.Add(this.maskedTextBoxTimeStart);
@@ -221,7 +228,7 @@ namespace ProcessPlugins.TvMovie
       // 
       this.listView2.AllowDrop = true;
       this.listView2.AllowRowReorder = true;
-      this.listView2.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.listView2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.listView2.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader2});
       this.listView2.Location = new System.Drawing.Point(288, 27);
@@ -239,7 +246,7 @@ namespace ProcessPlugins.TvMovie
       // 
       // buttonCancel
       // 
-      this.buttonCancel.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonCancel.Location = new System.Drawing.Point(456, 434);
       this.buttonCancel.Name = "buttonCancel";
       this.buttonCancel.Size = new System.Drawing.Size(75, 23);
@@ -250,8 +257,8 @@ namespace ProcessPlugins.TvMovie
       // 
       // pictureBox2
       // 
-      this.pictureBox2.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.pictureBox2.Image = global::ProcessPlugins.Properties.Resources.tvmovie4_topgrafikrepeat_nw;
       this.pictureBox2.Location = new System.Drawing.Point(24, 16);
       this.pictureBox2.Name = "pictureBox2";
@@ -270,33 +277,102 @@ namespace ProcessPlugins.TvMovie
       this.pictureBox1.TabIndex = 7;
       this.pictureBox1.TabStop = false;
       // 
-      // mpTabControl1
+      // mpTabControl
       // 
-      this.mpTabControl1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( ( System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom )
-                  | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
-      this.mpTabControl1.Controls.Add(this.tabPage1);
-      this.mpTabControl1.Location = new System.Drawing.Point(16, 72);
-      this.mpTabControl1.Name = "mpTabControl1";
-      this.mpTabControl1.SelectedIndex = 0;
-      this.mpTabControl1.Size = new System.Drawing.Size(512, 338);
-      this.mpTabControl1.TabIndex = 9;
+      this.mpTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpTabControl.Controls.Add(this.tabPageMapChannels);
+      this.mpTabControl.Controls.Add(this.tabPageSettings);
+      this.mpTabControl.Location = new System.Drawing.Point(16, 72);
+      this.mpTabControl.Name = "mpTabControl";
+      this.mpTabControl.SelectedIndex = 0;
+      this.mpTabControl.Size = new System.Drawing.Size(512, 338);
+      this.mpTabControl.TabIndex = 9;
       // 
-      // tabPage1
+      // tabPageMapChannels
       // 
-      this.tabPage1.Controls.Add(this.groupBoxMapping);
-      this.tabPage1.Location = new System.Drawing.Point(4, 22);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(504, 312);
-      this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Map Channels";
-      this.tabPage1.UseVisualStyleBackColor = true;
+      this.tabPageMapChannels.Controls.Add(this.groupBoxMapping);
+      this.tabPageMapChannels.Location = new System.Drawing.Point(4, 22);
+      this.tabPageMapChannels.Name = "tabPageMapChannels";
+      this.tabPageMapChannels.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageMapChannels.Size = new System.Drawing.Size(504, 312);
+      this.tabPageMapChannels.TabIndex = 0;
+      this.tabPageMapChannels.Text = "Map Channels";
+      this.tabPageMapChannels.UseVisualStyleBackColor = true;
+      // 
+      // tabPageSettings
+      // 
+      this.tabPageSettings.Controls.Add(this.mpGroupBox1);
+      this.tabPageSettings.Controls.Add(this.mpGroupBoxSettings);
+      this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
+      this.tabPageSettings.Name = "tabPageSettings";
+      this.tabPageSettings.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPageSettings.Size = new System.Drawing.Size(504, 312);
+      this.tabPageSettings.TabIndex = 1;
+      this.tabPageSettings.Text = "Settings";
+      this.tabPageSettings.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox1
+      // 
+      this.mpGroupBox1.Controls.Add(this.checkBoxSlowImport);
+      this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox1.Location = new System.Drawing.Point(16, 120);
+      this.mpGroupBox1.Name = "mpGroupBox1";
+      this.mpGroupBox1.Size = new System.Drawing.Size(472, 64);
+      this.mpGroupBox1.TabIndex = 13;
+      this.mpGroupBox1.TabStop = false;
+      this.mpGroupBox1.Text = "Descriptions";
+      // 
+      // mpCheckBoxSlowImport
+      // 
+      this.checkBoxSlowImport.AutoSize = true;
+      this.checkBoxSlowImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxSlowImport.Location = new System.Drawing.Point(16, 26);
+      this.checkBoxSlowImport.Name = "mpCheckBoxSlowImport";
+      this.checkBoxSlowImport.Size = new System.Drawing.Size(87, 17);
+      this.checkBoxSlowImport.TabIndex = 11;
+      this.checkBoxSlowImport.Text = "Slower import";
+      this.checkBoxSlowImport.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBoxSettings
+      // 
+      this.mpGroupBoxSettings.Controls.Add(this.checkBoxShowAudioFormat);
+      this.mpGroupBoxSettings.Controls.Add(this.checkBoxUseShortDesc);
+      this.mpGroupBoxSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBoxSettings.Location = new System.Drawing.Point(16, 16);
+      this.mpGroupBoxSettings.Name = "mpGroupBoxSettings";
+      this.mpGroupBoxSettings.Size = new System.Drawing.Size(472, 88);
+      this.mpGroupBoxSettings.TabIndex = 0;
+      this.mpGroupBoxSettings.TabStop = false;
+      this.mpGroupBoxSettings.Text = "Descriptions";
+      // 
+      // checkBoxShowAudioFormat
+      // 
+      this.checkBoxShowAudioFormat.AutoSize = true;
+      this.checkBoxShowAudioFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxShowAudioFormat.Location = new System.Drawing.Point(16, 48);
+      this.checkBoxShowAudioFormat.Name = "checkBoxShowAudioFormat";
+      this.checkBoxShowAudioFormat.Size = new System.Drawing.Size(112, 17);
+      this.checkBoxShowAudioFormat.TabIndex = 12;
+      this.checkBoxShowAudioFormat.Text = "Show audio format";
+      this.checkBoxShowAudioFormat.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxUseShortDesc
+      // 
+      this.checkBoxUseShortDesc.AutoSize = true;
+      this.checkBoxUseShortDesc.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxUseShortDesc.Location = new System.Drawing.Point(16, 26);
+      this.checkBoxUseShortDesc.Name = "checkBoxUseShortDesc";
+      this.checkBoxUseShortDesc.Size = new System.Drawing.Size(128, 17);
+      this.checkBoxUseShortDesc.TabIndex = 11;
+      this.checkBoxUseShortDesc.Text = "Use short descriptions";
+      this.checkBoxUseShortDesc.UseVisualStyleBackColor = true;
       // 
       // mpBeveledLine1
       // 
-      this.mpBeveledLine1.Anchor = ( (System.Windows.Forms.AnchorStyles)( ( ( System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left )
-                  | System.Windows.Forms.AnchorStyles.Right ) ) );
+      this.mpBeveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpBeveledLine1.Location = new System.Drawing.Point(16, 424);
       this.mpBeveledLine1.Name = "mpBeveledLine1";
       this.mpBeveledLine1.Size = new System.Drawing.Size(508, 2);
@@ -309,42 +385,18 @@ namespace ProcessPlugins.TvMovie
       this.openFileDialog.Filter = "TV Movie Database|*.mdb";
       this.openFileDialog.RestoreDirectory = true;
       // 
-      // checkBoxUseShortDesc
-      // 
-      this.checkBoxUseShortDesc.AutoSize = true;
-      this.checkBoxUseShortDesc.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUseShortDesc.Location = new System.Drawing.Point(16, 437);
-      this.checkBoxUseShortDesc.Name = "checkBoxUseShortDesc";
-      this.checkBoxUseShortDesc.Size = new System.Drawing.Size(128, 17);
-      this.checkBoxUseShortDesc.TabIndex = 11;
-      this.checkBoxUseShortDesc.Text = "Use short descriptions";
-      this.checkBoxUseShortDesc.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxShowAudioFormat
-      // 
-      this.checkBoxShowAudioFormat.AutoSize = true;
-      this.checkBoxShowAudioFormat.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxShowAudioFormat.Location = new System.Drawing.Point(150, 437);
-      this.checkBoxShowAudioFormat.Name = "checkBoxShowAudioFormat";
-      this.checkBoxShowAudioFormat.Size = new System.Drawing.Size(112, 17);
-      this.checkBoxShowAudioFormat.TabIndex = 12;
-      this.checkBoxShowAudioFormat.Text = "Show audio format";
-      this.checkBoxShowAudioFormat.UseVisualStyleBackColor = true;
-      // 
       // TvMovieSettings
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(540, 464);
-      this.Controls.Add(this.checkBoxShowAudioFormat);
-      this.Controls.Add(this.checkBoxUseShortDesc);
       this.Controls.Add(this.pictureBox2);
       this.Controls.Add(this.mpBeveledLine1);
-      this.Controls.Add(this.mpTabControl1);
+      this.Controls.Add(this.mpTabControl);
       this.Controls.Add(this.pictureBox1);
       this.Controls.Add(this.buttonCancel);
       this.Controls.Add(this.buttonOk);
-      this.Icon = ( (System.Drawing.Icon)( resources.GetObject("$this.Icon") ) );
+      this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximumSize = new System.Drawing.Size(548, 5680);
       this.MinimizeBox = false;
       this.MinimumSize = new System.Drawing.Size(548, 402);
@@ -357,10 +409,15 @@ namespace ProcessPlugins.TvMovie
       this.groupBoxMapping.PerformLayout();
       this.panelTimeSpan.ResumeLayout(false);
       this.panelTimeSpan.PerformLayout();
-      ( (System.ComponentModel.ISupportInitialize)( this.pictureBox2 ) ).EndInit();
-      ( (System.ComponentModel.ISupportInitialize)( this.pictureBox1 ) ).EndInit();
-      this.mpTabControl1.ResumeLayout(false);
-      this.tabPage1.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+      this.mpTabControl.ResumeLayout(false);
+      this.tabPageMapChannels.ResumeLayout(false);
+      this.tabPageSettings.ResumeLayout(false);
+      this.mpGroupBox1.ResumeLayout(false);
+      this.mpGroupBox1.PerformLayout();
+      this.mpGroupBoxSettings.ResumeLayout(false);
+      this.mpGroupBoxSettings.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -383,12 +440,16 @@ namespace ProcessPlugins.TvMovie
     private System.Windows.Forms.ColumnHeader columnHeader2;
     private MediaPortal.UserInterface.Controls.MPListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader1;
-    private MediaPortal.UserInterface.Controls.MPTabControl mpTabControl1;
-    private MediaPortal.UserInterface.Controls.MPTabPage tabPage1;
+    private MediaPortal.UserInterface.Controls.MPTabControl mpTabControl;
+    private MediaPortal.UserInterface.Controls.MPTabPage tabPageMapChannels;
     private MediaPortal.UserInterface.Controls.MPBeveledLine mpBeveledLine1;
     private System.Windows.Forms.OpenFileDialog openFileDialog;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseShortDesc;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxShowAudioFormat;
+    private System.Windows.Forms.TabPage tabPageSettings;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBoxSettings;
+    private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
+    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxSlowImport;
   }
 }
 
