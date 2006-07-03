@@ -2678,9 +2678,9 @@ public class MediaPortalApp : D3DApp, IRender
     // Set Cyberlink H.264 decoder to use dxva - great for Nvidia Geforce 6 & 7 cards 
     try
     {
-      using (RegistryKey hkcu = Registry.LocalMachine)
+      using (RegistryKey hklm = Registry.LocalMachine)
       {
-        SetDWORDRegKey(hkcu, @"SOFTWARE\Cyberlink\Common\cl264dec", "UIUseHVA", 1);
+        SetDWORDRegKey(hklm, @"SOFTWARE\Cyberlink\Common\cl264dec", "UIUseHVA", 1);
       }
     }
     catch (Exception)
