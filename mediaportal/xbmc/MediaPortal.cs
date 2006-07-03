@@ -2680,7 +2680,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       using (RegistryKey hkcu = Registry.LocalMachine)
       {
-        SetDWORDRegKey(hklm, @"SOFTWARE\Cyberlink\Common\cl264dec", "UIUseHVA", 1);
+        SetDWORDRegKey(hkcu, @"SOFTWARE\Cyberlink\Common\cl264dec", "UIUseHVA", 1);
       }
     }
     catch (Exception)
