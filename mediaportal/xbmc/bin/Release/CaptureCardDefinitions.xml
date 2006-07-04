@@ -13507,4 +13507,20 @@
       </connections>
     </tv>
   </capturecard>
+
+  <capturecard commercialname="Pinnacle PCTV DVB-T USB Stick" capturename="Pinnacle PCTV DVB-T USB Stick" devid="vid_eb1a&amp;pid_2870">
+    <capabilities tv="true" radio="false" mpeg2="true" mce="false" sw="false" bda="true"/>
+    <tv>
+      <interface cat="capture" video="2" audio="3" mpeg2="1" sectionsandtables="5"/>
+      <filters>
+        <filter cat="networkprovider" name="Microsoft DVBT Network Provider"  checkdevice="false"/>
+        <filter cat="tunerdevice"     name="BDA 2870 TVTuner"                 checkdevice="true"/>
+        <filter cat="capture"         name="Pinnacle PCTV DVB-T USB Stick"    checkdevice="true"/>
+      </filters>
+      <connections>
+        <connection sourcefilter="networkprovider" sourcepin="0" sinkfilter="tunerdevice" sinkpin="0"/>
+        <connection sourcefilter="tunerdevice"     sourcepin="0" sinkfilter="capture"     sinkpin="0"/>
+      </connections>
+    </tv>
+  </capturecard>
 </capturecards>
