@@ -1774,6 +1774,10 @@
 		<value>Folder</value>
 	</string>
 	<string>
+		<id>529</id>
+		<value>Visa: Album</value>
+	</string>
+	<string>
 		<id>530</id>
 		<value>Fotoskiva isatt, vill du öppna den?</value>
 	</string>
@@ -1788,6 +1792,10 @@
 	<string>
 		<id>533</id>
 		<value>Guide</value>
+	</string>
+	<string>
+		<id>534</id>
+		<value>Måttligt</value>
 	</string>
 	<string>
 		<id>535</id>
@@ -1872,6 +1880,34 @@
 	<string>
 		<id>558</id>
 		<value>Vindstilla</value>
+	</string>
+	<string>
+		<id>590</id>
+		<value>S. 100</value>
+	</string>
+	<string>
+		<id>591</id>
+		<value>S. 200</value>
+	</string>
+	<string>
+		<id>592</id>
+		<value>S. 300</value>
+	</string>
+	<string>
+		<id>593</id>
+		<value>Dold text</value>
+	</string>
+	<string>
+		<id>594</id>
+		<value>Delsida</value>
+	</string>
+	<string>
+		<id>595</id>
+		<value>Fullskärm</value>
+	</string>
+	<string>
+		<id>599</id>
+		<value>Storm</value>
 	</string>
 	<string>
 		<id>600</id>
