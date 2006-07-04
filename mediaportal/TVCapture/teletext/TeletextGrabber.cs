@@ -43,16 +43,16 @@ namespace MediaPortal.TV.Teletext
 
     static private void OnTvViewingStarted(int card, TVCaptureDevice device)
     {
-      _teletextDecoder.ClearBuffer();
-      device.GrabTeletext(true);
+      _grabbing = false;
+      device.GrabTeletext(_grabbing);
       _device = device;
       Log.Write("teletext: grab teletext for card:{0}", device.Graph.CommercialName);
     }
 
     static private void OnTvViewingStopped(int card, TVCaptureDevice device)
     {
-      _teletextDecoder.ClearBuffer();
-      device.GrabTeletext(false);
+      _grabbing = false;
+      device.GrabTeletext(_grabbing);
       Log.Write("teletext: stop grabbing teletext for card:{0}", device.Graph.CommercialName);
     }
 
