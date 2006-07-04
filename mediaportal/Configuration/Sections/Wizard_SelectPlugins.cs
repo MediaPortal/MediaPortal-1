@@ -477,6 +477,7 @@ namespace MediaPortal.Configuration.Sections
         if (Utils.IsPicture(file))
         {
           if (file.Length < 260)
+          {
             if (file.ToLower() != "folder.jpg")
             {
               FileInfo info = new FileInfo(file);
@@ -490,8 +491,9 @@ namespace MediaPortal.Configuration.Sections
                 }
               }
             }
-            else
-              Log.Write("ScanFolder: Path > 260: {0}", file);
+          }
+          else
+            Log.Write("ScanFolder: Path > 260: {0}", file);
         }
       }
       foreach (string subfolder in folders)
