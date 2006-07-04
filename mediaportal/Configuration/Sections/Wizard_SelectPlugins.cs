@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using MediaPortal.Util;
 using MediaPortal.TagReader;
 using MediaPortal.Music.Database;
+using MediaPortal.GUI.Library;
 
 #pragma warning disable 108
 
@@ -475,19 +476,22 @@ namespace MediaPortal.Configuration.Sections
         }
         if (Utils.IsPicture(file))
         {
-          if (file.ToLower() != "folder.jpg")
-          {
-            FileInfo info = new FileInfo(file);
-            if (info.Length >= 500 * 1024) // > 500KByte
+          if (file.Length < 260)
+            if (file.ToLower() != "folder.jpg")
             {
-              totalPhotos++;
-              if (scanForPhotos)
+              FileInfo info = new FileInfo(file);
+              if (info.Length >= 500 * 1024) // > 500KByte
               {
-                isPhotoFolder = true;
-                scanForPhotos = false;//no need to scan subfolders
+                totalPhotos++;
+                if (scanForPhotos)
+                {
+                  isPhotoFolder = true;
+                  scanForPhotos = false;//no need to scan subfolders
+                }
               }
             }
-          }
+            else
+              Log.Write("ScanFolder: Path > 260: {0}", file);
         }
       }
       foreach (string subfolder in folders)
