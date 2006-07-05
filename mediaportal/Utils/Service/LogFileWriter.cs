@@ -41,7 +41,14 @@ namespace MediaPortal.Utils.Services
 
 		public override void WriteLine(string value)
 		{
-			base.WriteLine(value);
+      try
+      {
+        base.WriteLine(value);
+      }
+      catch (Exception)
+      {
+        return; // if stream is closed .. leave quitely .. MP not shuting down cleanly
+      }
 			if (value.IndexOf("[ERROR]") != -1)
 			{
 				if (_errorStream == null)

@@ -113,7 +113,7 @@ namespace MediaPortal.EPG
 
       string grabberLast = "";
       ArrayList programs;
-      ArrayList mergedPrograms;
+      //ArrayList mergedPrograms;
       bool initResult = false;
 
       for (int i = 0; i < _channels.Count; i++)
