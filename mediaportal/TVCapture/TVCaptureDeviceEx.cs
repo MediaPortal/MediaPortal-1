@@ -157,8 +157,6 @@ namespace MediaPortal.TV.Recording
     [NonSerialized]
     static Hashtable _devices = new Hashtable();
 
-    protected ILog _log;
-
     /// <summary>
     /// #MW#
     /// </summary>
@@ -185,9 +183,6 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public TVCaptureDevice()
     {
-      ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
-
       CtorInit();
     }
     void CtorInit()
@@ -578,7 +573,9 @@ namespace MediaPortal.TV.Recording
 
         if (value.Equals(_currentTvChannelName)) return;//nothing todo
 
-        _log.Info("TVCapture: change channel to :{0}", value);
+        ServiceProvider services = GlobalServiceProvider.Instance;
+        ILog log = services.Get<ILog>();
+        log.Info("TVCapture: change channel to :{0}", value);
         if (IsTimeShifting || IsRecording)
         {
           if (g_Player.Playing && g_Player.CurrentFile == TimeShiftFullFileName)
@@ -628,12 +625,15 @@ namespace MediaPortal.TV.Recording
     }
     public bool StopViewing()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+
       if (_currentGraphState != State.Viewing) return false;
       bool result = false;
       StopEpgGrabbing();
       if (_currentGraphState == State.Viewing)
       {
-        _log.Info("TVCapture.Stop Viewing() Card:{0} {1}", ID, _currentTvChannelName);
+        log.Info("TVCapture.Stop Viewing() Card:{0} {1}", ID, _currentTvChannelName);
         result = _currentGraph.StopViewing();
         _currentTvChannelName = "";
       }
@@ -653,9 +653,12 @@ namespace MediaPortal.TV.Recording
 
     public bool StartViewing(string channelName)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+
       if (channelName == null || channelName.Length == 0)
       {
-        _log.Error("TVCapture.Start Viewing channel name is empty");
+        log.Error("TVCapture.Start Viewing channel name is empty");
         return false;
       }
       StopEpgGrabbing();
@@ -671,11 +674,11 @@ namespace MediaPortal.TV.Recording
 
       if (CreateGraph())
       {
-        _log.Info("TVCapture.Start Viewing() Card:{0} :{1}", ID, channelName);
+        log.Info("TVCapture.Start Viewing() Card:{0} :{1}", ID, channelName);
         TVChannel chan = GetChannel(channelName);
         if (chan == null)
         {
-          _log.Error("TVCapture.Start Viewing() Card:{0} :{1} unknown channel", ID, channelName);
+          log.Error("TVCapture.Start Viewing() Card:{0} :{1} unknown channel", ID, channelName);
           return false;
         }
         if (_currentGraph.StartViewing(chan))
@@ -921,7 +924,9 @@ namespace MediaPortal.TV.Recording
     {
       if (!IsRecording) return;
 
-      _log.Info("TVCapture.StopRecording() Card:{0}", ID);
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+      log.Info("TVCapture.StopRecording() Card:{0}", ID);
       // todo : stop recorder
       _currentGraph.StopRecording();
 
@@ -955,7 +960,7 @@ namespace MediaPortal.TV.Recording
       {
         OnTvRecordingEnded(RecordingFileName, _currentTvRecording, _currentTvProgramRecording);
       }
-      //_log.Info("TVCapture.StopRecording():_currentTvProgramRecording=null");
+      //log.Info("TVCapture.StopRecording():_currentTvProgramRecording=null");
       // cleanup...
       _currentTvProgramRecording = null;
       _currentTvRecording = null;
@@ -992,6 +997,9 @@ namespace MediaPortal.TV.Recording
     /// <seealso>MediaPortal.TV.Database.TVProgram</seealso>
     public void Record(TVRecording recording, TVProgram currentProgram, int iPreRecordInterval, int iPostRecordInterval)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+
       if (_currentGraphState != State.Initialized && _currentGraphState != State.Timeshifting)
       {
         //DeleteGraph();TESTTEST
@@ -1004,13 +1012,13 @@ namespace MediaPortal.TV.Recording
 
       if (currentProgram != null)
         _currentTvProgramRecording = currentProgram.Clone();
-      //_log.Info("dev.Record():_currentTvProgramRecording={0}", _currentTvProgramRecording);
+      //log.Info("dev.Record():_currentTvProgramRecording={0}", _currentTvProgramRecording);
       _currentTvRecording = new TVRecording(recording);
       _preRecordInterval = iPreRecordInterval;
       _postRecordInterval = iPostRecordInterval;
       _currentTvChannelName = recording.Channel;
 
-      _log.Info("TVCapture.Record() Card:{0} {1} on {2} from {3}-{4}", ID, recording.Title, _currentTvChannelName, recording.StartTime.ToLongTimeString(), recording.EndTime.ToLongTimeString());
+      log.Info("TVCapture.Record() Card:{0} {1} on {2} from {3}-{4}", ID, recording.Title, _currentTvChannelName, recording.StartTime.ToLongTimeString(), recording.EndTime.ToLongTimeString());
       // create sink graph
       if (CreateGraph())
       {
@@ -1045,6 +1053,9 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void Process()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+
       // set postrecording status
       if (IsRecording)
       {
@@ -1068,7 +1079,7 @@ namespace MediaPortal.TV.Recording
           else
           {
             //recording ended
-            _log.Info("TVCapture.Proces() Card:{0} recording has ended '{1}' on channel:{2} from {3}-{4} id:{5} _cardPriority:{6} quality:{7}",
+            log.Info("TVCapture.Proces() Card:{0} recording has ended '{1}' on channel:{2} from {3}-{4} id:{5} _cardPriority:{6} quality:{7}",
               ID,
               _currentTvRecording.Title, _currentTvRecording.Channel,
               _currentTvRecording.StartTime.ToLongTimeString(), _currentTvRecording.EndTime.ToLongTimeString(),
@@ -1091,7 +1102,10 @@ namespace MediaPortal.TV.Recording
     /// </summary>
     public void Stop()
     {
-      _log.Info("TVCapture.Stop() Card:{0}", ID);
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+
+      log.Info("TVCapture.Stop() Card:{0}", ID);
       StopRecording();
       StopTimeShifting();
       StopViewing();
@@ -1106,11 +1120,14 @@ namespace MediaPortal.TV.Recording
     /// <returns>bool indicating if graph is created or not</returns>
     public bool CreateGraph()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+
       if (Allocated) return false;
       if (_currentGraph == null)
       {
         LoadContrastGammaBrightnessSettings();
-        _log.Info("TVCapture.CreateGraph() Card:{0}", ID);
+        log.Info("TVCapture.CreateGraph() Card:{0}", ID);
         _currentGraph = GraphFactory.CreateGraph(this);
         if (_currentGraph == null) return false;
         return _currentGraph.CreateGraph(Quality);
@@ -1131,10 +1148,13 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool DeleteGraph()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+
       if (_currentGraph != null)
       {
         SaveContrastGammaBrightnessSettings();
-        _log.Info("TVCapture.DeleteGraph() Card:{0}", ID);
+        log.Info("TVCapture.DeleteGraph() Card:{0}", ID);
         _currentGraph.DeleteGraph();
         _currentGraph = null;
       }
@@ -1152,6 +1172,8 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     public bool StartTimeShifting(string channelName)
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
 
       StopEpgGrabbing();
       StopRadio();
@@ -1161,7 +1183,7 @@ namespace MediaPortal.TV.Recording
           return false;
         return true;
       }
-      _log.Info("TVCapture.StartTimeShifting() Card:{0} :{1}", ID, channelName);
+      log.Info("TVCapture.StartTimeShifting() Card:{0} :{1}", ID, channelName);
       TVChannel channel = GetChannel(channelName);
 
       if (_currentGraphState == State.Timeshifting)
@@ -1194,7 +1216,7 @@ namespace MediaPortal.TV.Recording
 
 
       string strFileName = TimeShiftFullFileName;
-      //_log.Info("Card:{0} timeshift to file:{1}", ID, strFileName);
+      //log.Info("Card:{0} timeshift to file:{1}", ID, strFileName);
       bool bResult = _currentGraph.StartTimeShifting(channel, strFileName);
       if (bResult == true)
       {
@@ -1218,8 +1240,10 @@ namespace MediaPortal.TV.Recording
     {
       if (!IsTimeShifting) return false;
 
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
       //stopping timeshifting will also remove the live.tv file 
-      _log.Info("TVCapture.StopTimeShifting() Card:{0}", ID);
+      log.Info("TVCapture.StopTimeShifting() Card:{0}", ID);
       bool result = _currentGraph.StopTimeShifting();
       string fileName = TimeShiftFullFileName;
       MediaPortal.Util.Utils.FileDelete(fileName);
@@ -1232,7 +1256,10 @@ namespace MediaPortal.TV.Recording
     public void Tune(TVChannel channel)
     {
       if (_currentGraphState != State.Viewing) return;
-      _log.Info("TVCapture.Tune({0}", channel.Name);
+
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+      log.Info("TVCapture.Tune({0}", channel.Name);
       _currentGraph.TuneChannel(channel);
       _lastChannelChange = DateTime.Now;
       _currentTvChannelName = channel.Name;
@@ -1399,7 +1426,9 @@ namespace MediaPortal.TV.Recording
     #region private members
     void RebuildGraph()
     {
-      _log.Info("TvCaptureDevice:RebuildGraph() Card:{0} chan:{1}", ID, _currentTvChannelName);
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+      log.Info("TvCaptureDevice:RebuildGraph() Card:{0} chan:{1}", ID, _currentTvChannelName);
 
       //stop playback of this channel
       if (_currentGraph != null)
@@ -1408,18 +1437,18 @@ namespace MediaPortal.TV.Recording
         {
           if (Recorder.CommandProcessor != null) Recorder.CommandProcessor.StopPlayer();
         }
-        //_log.Info("TvCaptureDevice:RebuildGraph() delete graph");
+        //log.Info("TvCaptureDevice:RebuildGraph() delete graph");
         _currentGraph.StopEpgGrabbing();
         _currentGraph.StopTimeShifting();
         _currentGraph.StopViewing();
         _currentGraph.StopRadio();
-        //_log.Info("TvCaptureDevice:RebuildGraph() graph deleted");
+        //log.Info("TvCaptureDevice:RebuildGraph() graph deleted");
       }
 
       TVChannel channel = GetChannel(_currentTvChannelName);
       if (_currentGraphState == State.Timeshifting)
       {
-        _log.Info("TvCaptureDevice:RebuildGraph() recreate timeshifting graph");
+        log.Info("TvCaptureDevice:RebuildGraph() recreate timeshifting graph");
         _currentGraph.StartTimeShifting(channel, TimeShiftFullFileName);
         _lastChannelChange = DateTime.Now;
         if (Recorder.Running)
@@ -1429,11 +1458,11 @@ namespace MediaPortal.TV.Recording
       }
       else
       {
-        _log.Info("TvCaptureDevice:RebuildGraph() recreate viewing graph");
+        log.Info("TvCaptureDevice:RebuildGraph() recreate viewing graph");
         _currentGraph.StartViewing(channel);
         _lastChannelChange = DateTime.Now;
       }
-      // _log.Info("Card:{0} rebuild graph done", ID);
+      // log.Info("Card:{0} rebuild graph done", ID);
     }
 
     string StripIllegalChars(string recordingAttribute)
@@ -1491,7 +1520,9 @@ namespace MediaPortal.TV.Recording
     /// </remarks>
     bool StartRecording(TVRecording recording)
     {
-      _log.Info("TVCapture.StartRecording() Card:{0}  content:{1}", ID, recording.IsContentRecording);
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      ILog log = services.Get<ILog>();
+      log.Info("TVCapture.StartRecording() Card:{0}  content:{1}", ID, recording.IsContentRecording);
 
       TVProgram prog = null;
       DateTime dtNow = DateTime.Now.AddMinutes(_preRecordInterval);
@@ -1609,10 +1640,10 @@ namespace MediaPortal.TV.Recording
       ulong freeSpace = MediaPortal.Util.Utils.GetFreeDiskSpace(fullFileName);
       if (freeSpace < (1024L * 1024L * 1024L))// 1 GB
       {
-        _log.Error("Recorder:  failed to start recording since drive {0}: has less then 1GB freediskspace", fullFileName[0]);
+        log.Error("Recorder:  failed to start recording since drive {0}: has less then 1GB freediskspace", fullFileName[0]);
         return false;
       }
-      _log.Info("Recorder: recording to {0}", fullFileName);
+      log.Info("Recorder: recording to {0}", fullFileName);
 
       TVChannel channel = GetChannel(_currentTvChannelName);
 

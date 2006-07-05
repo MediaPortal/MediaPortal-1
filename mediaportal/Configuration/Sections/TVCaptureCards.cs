@@ -34,7 +34,6 @@ using DShowNET.Helper;
 using DirectShowLib;
 using MediaPortal.GUI.Library;
 using TVCapture;
-
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 using MediaPortal.TV.Database;
