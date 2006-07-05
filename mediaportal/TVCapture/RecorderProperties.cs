@@ -44,12 +44,11 @@ namespace MediaPortal.TV.Recording
     static bool _subscribeRecorderHandler = false;
     static ILog _log;
 
-    private RecorderProperties()
+    static RecorderProperties()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
       _log = services.Get<ILog>();
     }
-
 
     static public void Init()
     {
