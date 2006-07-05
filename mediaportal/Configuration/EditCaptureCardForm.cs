@@ -356,7 +356,8 @@ namespace MediaPortal.Configuration
               cd.SupportsRadio = true;
             }
 
-            _log.Info("Adding name:{0} capture:{1} id:{2} type:{3}",
+            // only 3 values ?? "Adding name:{0} capture:{1} id:{2} type:{3}",
+            _log.Info("Adding name:{0} id:{1} type:{2}",
               cd.CommercialName,
               cd.DeviceId,
               cd.CardType.ToString());
