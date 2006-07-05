@@ -107,7 +107,7 @@ namespace MediaPortal.TV.Recording
     /// <param name="countryCode">country code</param>
     /// <param name="cable">use Cable or antenna</param>
     /// <param name="videoCaptureFilter">Filter name of the capture device</param>
-    public SinkGraph(int ID, int countryCode, bool cable, string videoCaptureFilter, Size frameSize, double frameRate, string friendlyName)
+    public SinkGraph(int ID, int countryCode, bool cable, string videoCaptureFilter, Size frameSize, double frameRate, string friendlyName) : this()
     {
       _cardName = friendlyName;
       _cardId = ID;
@@ -137,7 +137,7 @@ namespace MediaPortal.TV.Recording
     /// Easier to handle and to extent...
     /// </summary>
     /// <param name="pCard"></param>
-    public SinkGraph(TVCaptureDevice pCard)
+    public SinkGraph(TVCaptureDevice pCard) : this()
     {
       _card = pCard;
 
