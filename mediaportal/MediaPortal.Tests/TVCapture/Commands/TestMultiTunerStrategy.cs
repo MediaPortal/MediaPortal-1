@@ -10,6 +10,9 @@ using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
 using MediaPortal.Radio.Database;
 using System.Diagnostics;
+using System.IO;
+using MediaPortal.Utils.Services;
+
 namespace MediaPortal.Tests.TVCapture.Commands
 {
   [TestFixture]
@@ -26,6 +29,11 @@ namespace MediaPortal.Tests.TVCapture.Commands
     [SetUp]
     public void Init()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      StringWriter logString = new StringWriter();
+      Log log = new Log(logString, Log.Level.Debug);
+      services.Replace<ILog>(log);
+
       TVChannel ch;
       TVDatabase.ClearAll();
       g_Player.Factory = new DummyPlayerFactory();

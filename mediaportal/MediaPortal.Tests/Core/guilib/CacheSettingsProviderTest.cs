@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using MediaPortal.Profile;
+using System.IO;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Tests.Core.Profile
 {
@@ -60,6 +62,11 @@ namespace MediaPortal.Tests.Core.Profile
     [SetUp]
     public void Init()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      StringWriter logString = new StringWriter();
+      Log log = new Log(logString, Log.Level.Debug);
+      services.Replace<ILog>(log);
+
       this.getValueReturns = null;
       this.getValueHits = 0;
       this.removeEntryHits = 0;

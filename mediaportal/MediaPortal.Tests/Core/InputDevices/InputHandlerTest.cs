@@ -28,6 +28,8 @@ using System.Collections.Generic;
 using System.Text;
 using MediaPortal.InputDevices;
 using NUnit.Framework;
+using System.IO;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Tests.Core.InputDevices
 {
@@ -35,6 +37,15 @@ namespace MediaPortal.Tests.Core.InputDevices
   [Category("InputHandler")]
   public class InputHandlerTest
   {
+    [SetUp]
+    public void Init()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      StringWriter logString = new StringWriter();
+      Log log = new Log(logString, Log.Level.Debug);
+      services.Replace<ILog>(log);
+    }
+
     [Test]
     public void GetPathDefaultXml()
     {

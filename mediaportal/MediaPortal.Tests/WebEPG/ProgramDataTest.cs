@@ -3,13 +3,24 @@ using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using MediaPortal.WebEPG;
+using System.IO;
 using MediaPortal.Utils.Services;
+
 namespace MediaPortal.Tests.WebEPG.Parser
 {
   [TestFixture]
   [Category("EPG")]
   public class ProgramDataTest
   {
+    [SetUp]
+    public void Init()
+    {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      StringWriter logString = new StringWriter();
+      Log log = new Log(logString, Log.Level.Debug);
+      services.Replace<ILog>(log);
+    }
+
     [Test]
     public void SetElementTime()
     {

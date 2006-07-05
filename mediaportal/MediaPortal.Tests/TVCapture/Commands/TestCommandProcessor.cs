@@ -10,13 +10,14 @@ using MediaPortal.Util;
 using MediaPortal.Radio.Database;
 using MediaPortal.TV.Database;
 using MediaPortal.TV.Recording;
+using System.IO;
+using MediaPortal.Utils.Services;
 
 namespace MediaPortal.Tests.Commands
 {
   [TestFixture]
   public class TestCommandProcessor
   {
-    
     #region dummy command
     public class DummyCommand : CardCommand
     {
@@ -36,6 +37,11 @@ namespace MediaPortal.Tests.Commands
     [SetUp]
     public void Init()
     {
+      ServiceProvider services = GlobalServiceProvider.Instance;
+      StringWriter logString = new StringWriter();
+      ILog log = new MediaPortal.Utils.Services.Log(logString, MediaPortal.Utils.Services.Log.Level.Debug);
+      services.Replace<ILog>(log);
+
       TVChannel ch;
       TVDatabase.ClearAll();
       RadioDatabase.ClearAll();
