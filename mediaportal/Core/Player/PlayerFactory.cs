@@ -116,7 +116,7 @@ namespace MediaPortal.Player
       }
       string extension = System.IO.Path.GetExtension(fileName).ToLower();
       if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms"
-              && fileName.ToLower().IndexOf("live.tsbuffer") < 0
+              && fileName.ToLower().IndexOf(".tsbuffer") < 0
               && fileName.ToLower().IndexOf("radio.tsbuffer") < 0)
       {
         newPlayer = GetExternalPlayer(fileName);

@@ -163,13 +163,13 @@ namespace MediaPortal.Player
       _geometry = MediaPortal.GUI.Library.Geometry.Type.Normal;
 
       _updateNeeded = true;
-      if (_fileSource != null)
-      {
-        Log.Write("TSStreamBufferPlayer:replay {0}", strFile);
-        IFileSourceFilter interFaceFile = (IFileSourceFilter)_fileSource;
-        interFaceFile.Load(strFile, null);
-      }
-      else
+      //if (_fileSource != null)
+      //{
+      //  Log.Write("TSStreamBufferPlayer:replay {0}", strFile);
+      //  IFileSourceFilter interFaceFile = (IFileSourceFilter)_fileSource;
+      //  interFaceFile.Load(strFile, null);
+      //}
+      //else
       {
         Log.Write("TSStreamBufferPlayer:play {0}", strFile);
         GC.Collect();
@@ -183,6 +183,8 @@ namespace MediaPortal.Player
           return false;
         }
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
+
+
       }
 
       int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
@@ -242,13 +244,9 @@ namespace MediaPortal.Player
       GUIWindowManager.SendThreadMessage(msg);
 
       _state = PlayState.Playing;
-      if (_startingUp == false)
-      {
-        Log.Write("TsBaseStreamBuffer:start graph");
-        _mediaCtrl.Run();
-      }
+      Log.Write("TsBaseStreamBuffer:start graph");
+      _mediaCtrl.Run();
       Log.Write("TsBaseStreamBuffer:playing state");
-      _state = PlayState.Playing;
       OnInitialized();
       Log.Write("TsBaseStreamBuffer:done");
       return true;
@@ -368,7 +366,7 @@ namespace MediaPortal.Player
             control.Enable(1, AMStreamSelectEnableFlags.EnableAll);
             Log.Write("get duration", streamCount);
             UpdateDuration();
-            double dPos = _duration - 2;
+            double dPos = _duration;
             Log.Write("_duration:{0}", _duration);
             if (dPos >= 0 && CurrentPosition < dPos)
             {
@@ -376,7 +374,6 @@ namespace MediaPortal.Player
               SeekAbsolute(dPos);
               Log.Write("seek:{0}/{0} done", dPos, _duration);
             }
-            _mediaCtrl.Run();
             _startingUp = false;
           }
         }
